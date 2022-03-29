@@ -79,6 +79,7 @@ compose() {
 
   # Vars to use in compose file
   export APP_DATA_DIR="${app_data_dir}"
+  export APP_PASSWORD="password"
 
   docker-compose \
     --env-file "${env_file}" \
