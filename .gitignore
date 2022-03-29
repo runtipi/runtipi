@@ -1,12 +1,19 @@
 .env
 nginx/*
 letsencrypt/*
-app-data/nextcloud/*
 app-data/wg-easy/*
 
 # Commit empty directories
 !nignx/.gitkeep
 !letsencrypt/.gitkeep
 
-!app-data/nextcloud/.gitkeep
+# Nextcloud app
+app-data/nextcloud/data/nextcloud/*
+app-data/nextcloud/data/db/*
+app-data/nextcloud/data/redis/*
+
+!app-data/nextcloud/data/db/.gitkeep
+!app-data/nextcloud/data/redis/.gitkeep
+
+# wg-easy app
 !app-data/wg-easy/.gitkeep
