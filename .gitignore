@@ -1,7 +1,6 @@
 .env
 nginx/*
 letsencrypt/*
-
 app-data/*
 
 # Commit empty directories

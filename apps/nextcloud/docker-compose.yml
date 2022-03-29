@@ -2,6 +2,7 @@ version: "3.7"
 
 services:
   db:
+    user: '1000:1000'
     image: mariadb:10.5.12
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     restart: on-failure
@@ -17,6 +18,7 @@ services:
         ipv4_address: $APP_NEXTCLOUD_DB_IP
 
   redis:
+    user: '1000:1000'
     image: redis:6.2.2-buster
     restart: on-failure
     volumes:
