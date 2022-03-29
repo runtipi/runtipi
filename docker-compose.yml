@@ -2,8 +2,10 @@ version: '3.7'
 
 services:
   nginx-proxy:
+    container_name: nginx-proxy
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
+    # user: "1000:1000"
     ports:
       - '80:80'
       - '81:81'
@@ -11,3 +13,14 @@ services:
     volumes:
       - ${PWD}/nginx:/data
       - ${PWD}/letsencrypt:/etc/letsencrypt
+    networks:
+      default:
+          ipv4_address: $NGINX_PROXY_IP
+
+networks:
+    default:
+      name: tipi_main_network
+      ipam:
+          driver: default
+          config:
+              - subnet: "$NETWORK_IP/24"

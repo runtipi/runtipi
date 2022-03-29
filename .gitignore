@@ -1,0 +1,7 @@
+.env
+nginx/*
+letsencrypt/*
+
+# Commit empty directories
+!nignx/.gitkeep
+!letsencrypt/.gitkeep

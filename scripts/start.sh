@@ -4,3 +4,5 @@ if [[ $UID != 0 ]]; then
     echo "  sudo ./scripts/start"
     exit 1
 fi
+
+# run docker-compose
