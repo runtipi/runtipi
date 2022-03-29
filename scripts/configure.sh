@@ -22,6 +22,13 @@ ENV_FILE="./templates/.env"
 [[ -f "./templates/.env-sample" ]] && cp "./templates/.env-sample" "$ENV_FILE"
 [[ -f "./templates/ansible-hosts-sample.cfg" ]] && cp "./templates/ansible-hosts-sample.cfg" "$ANSIBLE_HOSTS_FILE"
 
+# Install jq if not installed
+if ! command -v jq > /dev/null; then
+    echo "Installing jq..."
+    apt-get update
+    apt-get install -y jq
+fi
+
 # Install ansible if not installed
 if ! command -v ansible > /dev/null; then
     echo "Installing Ansible..."

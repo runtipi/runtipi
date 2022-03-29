@@ -5,7 +5,7 @@ services:
       image: 'weejewel/wg-easy'
       restart: unless-stopped
       volumes:
-        - ${PWD}/wg-easy:/etc/wireguard
+        - ${DATA_FOLDER}/wg-easy:/etc/wireguard
       environment:
         WG_HOST: 'wireguard.meienberger.dev'
         PASSWORD: 'moneyprintergobrrr'
