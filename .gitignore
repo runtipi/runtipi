@@ -19,4 +19,6 @@ app-data/nextcloud/data/redis/*
 !app-data/wg-easy/.gitkeep
 
 # Pi-hole app
-app-data/pi-hole/*
+app-data/pi-hole/data/pihole/*
+app-data/pi-hole/data/dnsmasq/*
+!app-data/pi-hole/data/unbound

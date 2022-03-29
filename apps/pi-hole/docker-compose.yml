@@ -1,6 +1,14 @@
 version: "3.7"
 
 services:
+  unbound:
+    image: "klutchell/unbound:latest"
+    volumes:
+      - ${APP_DATA_DIR}/data/unbound:/etc/unbound
+    networks:
+      default:
+       ipv4_address: $APP_UNBOUND_IP
+
   server:
     image: pihole/pihole
     restart: on-failure
@@ -14,6 +22,9 @@ services:
     environment:
       - VIRTUAL_HOST=${APP_DOMAIN}
       - WEBPASSWORD=${APP_PASSWORD}
+      - PIHOLE_DNS=${APP_UNBOUND_IP}
+    depends_on:
+      - unbound
     networks:
       default:
         ipv4_address: $APP_PI_HOLE_IP
