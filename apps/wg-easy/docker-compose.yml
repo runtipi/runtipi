@@ -1,11 +1,10 @@
 version: '3.7'
 services:
   wg-easy:
-      container_name: wg-easy
       image: 'weejewel/wg-easy'
       restart: unless-stopped
       volumes:
-        - ${DATA_FOLDER}/wg-easy:/etc/wireguard
+        - ${APP_DATA_DIR}:/etc/wireguard
       environment:
         WG_HOST: 'wireguard.meienberger.dev'
         PASSWORD: 'moneyprintergobrrr'

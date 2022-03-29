@@ -2,6 +2,11 @@
 nginx/*
 letsencrypt/*
 
+app-data/*
+
 # Commit empty directories
 !nignx/.gitkeep
 !letsencrypt/.gitkeep
+
+!app-data/nextcloud/.gitkeep
+!app-data/wg-easy/.gitkeep

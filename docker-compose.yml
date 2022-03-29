@@ -2,10 +2,8 @@ version: '3.7'
 
 services:
   nginx-proxy:
-    container_name: nginx-proxy
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
-    # user: "1000:1000"
     ports:
       - '80:80'
       - '81:81'
