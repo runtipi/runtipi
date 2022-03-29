@@ -1,0 +1,15 @@
+packages:
+  - nano
+  - exfat-fuse
+  - exfat-utils
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - nfs-common
+  - unbound
+  - dnsutils
+
+### ZSH Settings
+zsh_theme: "powerlevel10k/powerlevel10k"
+ohmyzsh_git_url: https://github.com/robbyrussell/oh-my-zsh
