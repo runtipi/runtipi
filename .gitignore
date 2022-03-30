@@ -1,24 +1,14 @@
 .env
 nginx/*
 letsencrypt/*
-app-data/wg-easy/*
+app-data/*
+!app-data/.gitkeep
+
+state/*
+!state/.gitkeep
+
+tipi.config.json
 
 # Commit empty directories
 !nignx/.gitkeep
 !letsencrypt/.gitkeep
-
-# Nextcloud app
-app-data/nextcloud/data/nextcloud/*
-app-data/nextcloud/data/db/*
-app-data/nextcloud/data/redis/*
-
-!app-data/nextcloud/data/db/.gitkeep
-!app-data/nextcloud/data/redis/.gitkeep
-
-# wg-easy app
-!app-data/wg-easy/.gitkeep
-
-# Pi-hole app
-app-data/pi-hole/data/pihole/*
-app-data/pi-hole/data/dnsmasq/*
-!app-data/pi-hole/data/unbound

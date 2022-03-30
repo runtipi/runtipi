@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# use greadlink instead of readlink on osx
+if [[ "$(uname)" == "Darwin" ]]; then
+  readlink=greadlink
+else
+  readlink=readlink
+fi
+
+
 if [[ $UID != 0 ]]; then
     echo "Tipi must be stopped as root"
     echo "Please re-run this script as"
@@ -8,7 +16,7 @@ if [[ $UID != 0 ]]; then
     exit 1
 fi
 
-ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
+ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 
 cd "$ROOT_FOLDER"
@@ -32,4 +40,4 @@ done
 
 echo "Stopping Docker services..."
 echo
-docker-compose down
+docker-compose down --remove-orphans --rmi local

@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
+# use greadlink instead of readlink on osx
+if [[ "$(uname)" == "Darwin" ]]; then
+  rdlk=greadlink
+else
+  rdlk=readlink
+fi
+
+ROOT_FOLDER="$($rdlk -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
+DOMAIN="thisprops.com"
 
 show_help() {
   cat << EOF
@@ -74,17 +82,17 @@ compose() {
   
   # App data folder
   local env_file="${ROOT_FOLDER}/.env"
-  local app_base_compose_file="${ROOT_FOLDER}/apps/docker-compose.common.yml"
   local app_compose_file="${app_dir}/docker-compose.yml"
+  local app_url="${app}.${DOMAIN}"
 
   # Vars to use in compose file
   export APP_DATA_DIR="${app_data_dir}"
+  export APP_URL="${app_url}"
   export APP_PASSWORD="password"
 
   docker-compose \
     --env-file "${env_file}" \
     --project-name "${app}" \
-    --file "${app_base_compose_file}" \
     --file "${app_compose_file}" \
     "${@}"
 }

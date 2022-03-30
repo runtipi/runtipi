@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 
-ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
+# use greadlink instead of readlink on osx
+if [[ "$(uname)" == "Darwin" ]]; then
+  readlink=greadlink
+else
+  readlink=readlink
+fi
+
+ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
+DOMAIN=local
 
 if [[ $UID != 0 ]]; then
     echo "Tipi must be started as root"
@@ -10,8 +18,19 @@ if [[ $UID != 0 ]]; then
     exit 1
 fi
 
+# Configure Umbrel if it isn't already configured
+if [[ ! -f "${STATE_FOLDER}/configured" ]]; then
+  "${ROOT_FOLDER}/scripts/configure.sh"
+fi
+
+export DOCKER_CLIENT_TIMEOUT=240
+export COMPOSE_HTTP_TIMEOUT=240
+
 # Run docker-compose
-docker-compose up -d
+docker-compose up --detach --remove-orphans --build || {
+  echo "Failed to start containers"
+  exit 1
+}
 
 # Get field from json file
 function get_json_field() {

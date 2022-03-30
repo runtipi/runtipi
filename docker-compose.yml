@@ -1,24 +1,64 @@
 version: '3.7'
 
 services:
-  nginx-proxy:
-    image: 'jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
+  gluetun:
+    container_name: gluetun
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_SERVICE_PROVIDER=mullvad
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - SERVER_COUNTRIES=Switzerland
+      - OWNED_ONLY=yes
     ports:
+      - "${APP_WGEASY_PORT}:51821"
+      - '51820:51820'
       - '80:80'
       - '81:81'
       - '443:443'
+
+  nginx-proxy:
+    network_mode: "service:gluetun"
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
     volumes:
       - ${PWD}/nginx:/data
       - ${PWD}/letsencrypt:/etc/letsencrypt
-    networks:
-      default:
-          ipv4_address: $NGINX_PROXY_IP
+  
+  # traefik-app:
+  #   image: traefik:latest
+  #   restart: always
+  #   # ports:
+  #   #   - 80:80
+  #   #   - 443:443
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ${PWD}/letsencrypt:/letsencrypt
+  #   command: 
+  #     - --api.insecure=true
+  #     - --providers.docker
+  #     - --providers.docker.exposedbydefault=false
+  #     - --entrypoints.web.address=:80
+  #     - --entrypoints.web.http.redirections.entrypoint.to=websecure
+  #     # - --entrypoints.web.forwardedHeaders.trustedIPs=172.26.0.0/16,172.80.0.0/24
+  #     - --entrypoints.websecure.address=:443
+  #     # - --entrypoints.websecure.forwardedHeaders.trustedIPs=172.26.0.0/16,172.80.0.0/24
+  #     # - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}
+  #     # - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN}
+  #     - --entrypoints.websecure.http.tls.certresolver=myresolver
+  #     # - --certificatesresolvers.myresolver.acme.dnschallenge=true
+  #     # - --certificatesresolvers.myresolver.acme.dnschallenge.provider=infomaniak
+  #     # - --certificatesresolvers.myresolver.acme.email=${MAIL_ADR}
+  #     - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+  #   environment:
+  #     # INFOMANIAK_ACCESS_TOKEN: ${INFOMANIAK_ACCESS_TOKEN}
+  #     INFOMANIAK_POLLING_NTERVAL: 10
+  #     INFOMANIAK_PROPAGATION_TIMEOUT: 180
+  #   labels:
+  #     traefik.enable: true
+  #     traefik.http.routers.traefik.rule: Host(`proxy.${DOMAIN}`)
+  #     traefik.http.services.traefik.loadbalancer.server.port: 8080
 
-networks:
-    default:
-      name: tipi_main_network
-      ipam:
-          driver: default
-          config:
-              - subnet: "$NETWORK_IP/24"
