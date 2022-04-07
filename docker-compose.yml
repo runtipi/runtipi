@@ -36,6 +36,7 @@ services:
       - ${PWD}/traefik:/root/.config
     networks:
       - tipi_main_network
+
   dashboard:
     build:
       context: ./dashboard
@@ -51,8 +52,8 @@ services:
     labels:
         traefik.enable: true
         traefik.http.routers.dashboard.rule: Host(`tipi.local`)
-        traefik.http.routers.dashboard.tls: true
-        traefik.http.routers.dashboard.entrypoints: websecure
+        # traefik.http.routers.dashboard.tls: true
+        traefik.http.routers.dashboard.entrypoints: webinsecure
         traefik.http.routers.dashboard.service: dashboard
         traefik.http.services.dashboard.loadbalancer.server.port: 3000
 

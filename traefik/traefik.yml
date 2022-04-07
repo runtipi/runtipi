@@ -9,18 +9,20 @@ providers:
     watch: true
     exposedByDefault: false
 
-  file:
-    filename: /root/.config/dynamic.yml
-    watch: true
+  # TODO: Add TLS support
+  # file:
+  #   filename: /root/.config/dynamic.yml
+  #   watch: true
 
 entryPoints:
   webinsecure:
     address: ":80"
-    http:
-      redirections:
-        entryPoint:
-          to: websecure
-          scheme: https
+    # TODO: Redirect when TLS is working
+    # http:
+    #   redirections:
+    #     entryPoint:
+    #       to: websecure
+    #       scheme: https
   websecure:
     address: ":443"
 

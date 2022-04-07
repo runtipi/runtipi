@@ -102,7 +102,7 @@ compose() {
 if [[ "$command" = "install" ]]; then
   compose "${app}" pull
   
-  # # Copy env file sample to .env
+  # # # Copy env file sample to .env
   # if [[ -f "${app_dir}/.env-sample" ]]; then
   #   # Append to .env
   #   echo "Copying .env-sample to .env for ${app} if not already done"

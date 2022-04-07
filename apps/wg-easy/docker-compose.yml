@@ -20,10 +20,10 @@ services:
         - net.ipv4.ip_forward=1
       networks:
         - tipi_main_network
-      labels:
-        traefik.enable: true
-        traefik.http.routers.wireguard.rule: Host(`wireguard.tipi.local`)
-        traefik.http.routers.wireguard.service: wireguard
-        traefik.http.routers.wireguard.tls: true
-        traefik.http.routers.wireguard.entrypoints: websecure
-        traefik.http.services.wireguard.loadbalancer.server.port: 51821
+      # labels:
+      #   traefik.enable: true
+      #   traefik.http.routers.wireguard.rule: Host(`wireguard.tipi.home`)
+      #   traefik.http.routers.wireguard.service: wireguard
+      #   traefik.http.routers.wireguard.tls: true
+      #   traefik.http.routers.wireguard.entrypoints: websecure
+      #   traefik.http.services.wireguard.loadbalancer.server.port: 51821

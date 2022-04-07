@@ -50,7 +50,7 @@ services:
       - tipi_main_network
     labels:
         traefik.enable: true
-        traefik.http.routers.anonaddy.rule: Host(`anonaddy.tipi.local`)
+        traefik.http.routers.anonaddy.rule: Host(`anonaddy.tipi.home`)
         traefik.http.routers.anonaddy.tls: true
         traefik.http.routers.anonaddy.entrypoints: websecure
         traefik.http.routers.anonaddy.service: anonaddy
