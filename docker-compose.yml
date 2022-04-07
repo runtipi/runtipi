@@ -1,64 +1,60 @@
 version: '3.7'
 
 services:
-  gluetun:
-    container_name: gluetun
-    image: qmcgaw/gluetun
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - VPN_SERVICE_PROVIDER=mullvad
-      - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
-      - SERVER_COUNTRIES=Switzerland
-      - OWNED_ONLY=yes
-    ports:
-      - "${APP_WGEASY_PORT}:51821"
-      - '51820:51820'
-      - '80:80'
-      - '81:81'
-      - '443:443'
-
-  nginx-proxy:
-    network_mode: "service:gluetun"
-    image: 'jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
-    volumes:
-      - ${PWD}/nginx:/data
-      - ${PWD}/letsencrypt:/etc/letsencrypt
-  
-  # traefik-app:
-  #   image: traefik:latest
-  #   restart: always
-  #   # ports:
-  #   #   - 80:80
-  #   #   - 443:443
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #     - ${PWD}/letsencrypt:/letsencrypt
-  #   command: 
-  #     - --api.insecure=true
-  #     - --providers.docker
-  #     - --providers.docker.exposedbydefault=false
-  #     - --entrypoints.web.address=:80
-  #     - --entrypoints.web.http.redirections.entrypoint.to=websecure
-  #     # - --entrypoints.web.forwardedHeaders.trustedIPs=172.26.0.0/16,172.80.0.0/24
-  #     - --entrypoints.websecure.address=:443
-  #     # - --entrypoints.websecure.forwardedHeaders.trustedIPs=172.26.0.0/16,172.80.0.0/24
-  #     # - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}
-  #     # - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN}
-  #     - --entrypoints.websecure.http.tls.certresolver=myresolver
-  #     # - --certificatesresolvers.myresolver.acme.dnschallenge=true
-  #     # - --certificatesresolvers.myresolver.acme.dnschallenge.provider=infomaniak
-  #     # - --certificatesresolvers.myresolver.acme.email=${MAIL_ADR}
-  #     - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+  # gluetun:
+  #   container_name: gluetun
+  #   image: qmcgaw/gluetun
+  #   cap_add:
+  #     - NET_ADMIN
   #   environment:
-  #     # INFOMANIAK_ACCESS_TOKEN: ${INFOMANIAK_ACCESS_TOKEN}
-  #     INFOMANIAK_POLLING_NTERVAL: 10
-  #     INFOMANIAK_PROPAGATION_TIMEOUT: 180
-  #   labels:
-  #     traefik.enable: true
-  #     traefik.http.routers.traefik.rule: Host(`proxy.${DOMAIN}`)
-  #     traefik.http.services.traefik.loadbalancer.server.port: 8080
+  #     - VPN_SERVICE_PROVIDER=mullvad
+  #     - VPN_TYPE=wireguard
+  #     - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+  #     - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+  #     - SERVER_COUNTRIES=Switzerland
+  #     - OWNED_ONLY=yes
+  #   ports:
+  #     - 80:80
+  #     - 8080:8080
+  #   networks:
+  #     - tipi_main_network
+  
 
+  
+  reverse-proxy:
+    container_name: reverse-proxy
+    image: traefik:v2.6
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/traefik:/root/.config
+    networks:
+      - tipi_main_network
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: dashboard
+    volumes:
+      - ${PWD}/state:/app/state
+      - ${PWD}/config:/app/config:ro
+    ports:
+      - 3000:3000
+    networks:
+      - tipi_main_network
+    labels:
+        traefik.enable: true
+        traefik.http.routers.dashboard.rule: Host(`tipi.local`)
+        traefik.http.routers.dashboard.tls: true
+        traefik.http.routers.dashboard.entrypoints: websecure
+        traefik.http.routers.dashboard.service: dashboard
+        traefik.http.services.dashboard.loadbalancer.server.port: 3000
+
+networks:
+    tipi_main_network:

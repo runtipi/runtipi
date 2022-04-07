@@ -1,3 +1,6 @@
 {
-  "installed": ""
+  "installed": "freshrss",
+  "environment": {
+    "anonaddy": {}
+  }
 }

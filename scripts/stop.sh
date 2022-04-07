@@ -34,9 +34,12 @@ function get_json_field() {
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
 apps_to_start=($str)
 
-for app in "${apps_to_start[@]}"; do
-    "${ROOT_FOLDER}/scripts/app.sh" stop $app
-done
+# If apps_to_start is not empty, then we're stopping all apps
+if [[ ${#apps_to_start[@]} -gt 0 ]]; then
+    for app in "${apps_to_start[@]}"; do
+        "${ROOT_FOLDER}/scripts/app.sh" stop $app
+    done
+fi
 
 echo "Stopping Docker services..."
 echo

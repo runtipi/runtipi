@@ -25,26 +25,16 @@ ENV_FILE="./templates/.env"
 # Copy template configs to intermediary configs
 [[ -f "./templates/.env-sample" ]] && cp "./templates/.env-sample" "$ENV_FILE"
 
-# Install jq if not installed
-if ! command -v jq > /dev/null; then
-    echo "Installing jq..."
-    apt-get update
-    apt-get install -y jq
+# Install ansible if not installed
+if ! command -v ansible-playbook > /dev/null; then
+  echo "Installing Ansible..."
+  sudo apt-get install -y software-properties-common
+  sudo apt-add-repository -y ppa:ansible/ansible
+  sudo apt-get update
+  sudo apt-get install -y ansible
 fi
 
-# Install docker if not installed
-if ! command -v docker > /dev/null; then
-    echo "Installing docker..."
-    curl -fsSL https://get.docker.com -o get-docker.sh
-    sh get-docker.sh
-fi
-
-# Install docker-compose if not installed
-if ! command -v docker-compose > /dev/null; then
-    echo "Installing docker-compose..."
-    curl -L "https://github.com/docker/compose/releases/download/v2.3.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    chmod +x /usr/local/bin/docker-compose
-fi
+ansible-playbook ansible/setup.yml -K
 
 echo "Generating config files..."
 for template in "${ENV_FILE}"; do

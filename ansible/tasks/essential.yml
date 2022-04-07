@@ -1,0 +1,115 @@
+- name: Create new user for system
+  user:
+    name: tipi
+    comment: Tipi user
+    uid: 1040
+    group: admin
+
+- name: Update packages
+  become: tipi
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install essential packages
+  package:
+    name: "{{ packages }}"
+    state: latest
+
+- name: Check if docker is installed
+  stat:
+    path: /usr/bin/docker
+  register: docker_status
+
+- name: Check if docker pgp key is installed
+  stat:
+    path: /usr/share/keyrings/docker-archive-keyring.gpg
+  register: docker_pgp_key_status
+
+- name: Download docker
+  shell: "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg"
+  when: not docker_pgp_key_status.stat.exists
+
+- name: Setup stable docker repository
+  shell: 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
+  when: not docker_status.stat.exists
+
+- name: Update packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install essential packages
+  package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+
+- name: Check if docker-compose is installed
+  stat:
+    path: /usr/local/bin/docker-compose
+  register: docker_compose_status
+
+- name: Install docker-compose
+  shell: 'curl -L "https://github.com/docker/compose/releases/download/v2.3.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
+  when: not docker_compose_status.stat.exists
+
+- name: Disable iptables for increased security with docker
+  lineinfile:
+    path: /etc/default/docker
+    regexp: "^DOCKER_OPTS="
+    line: 'DOCKER_OPTS="--iptables=false"'
+
+- name: Add group docker
+  group:
+    name: docker
+
+- name: Add user to group docker
+  user:
+    name: tipi
+    group: docker
+
+- name: Disable SSH password auth
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#PasswordAuthentication yes"
+    line: "PasswordAuthentication no"
+  register: sshd_config
+
+- name: Enable passwordless sudo for tipi user
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^%wheel"
+    line: "tipi ALL=(ALL) NOPASSWD: ALL"
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Restart SSH daemon
+  service:
+    name: sshd
+    state: restarted
+  when: sshd_config.changed
+
+- name: Allow SSH in UFW
+  community.general.ufw:
+    rule: allow
+    port: 22
+    from: 192.168.2.0/24
+    proto: tcp
+
+- name: Allow port 80 in UFW
+  community.general.ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+
+- name: Allow port 443 in UFW
+  community.general.ufw:
+    rule: allow
+    port: 443
+    proto: tcp
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled

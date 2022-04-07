@@ -10,7 +10,6 @@ fi
 
 ROOT_FOLDER="$($rdlk -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
-DOMAIN="thisprops.com"
 
 show_help() {
   cat << EOF
@@ -83,19 +82,35 @@ compose() {
   # App data folder
   local env_file="${ROOT_FOLDER}/.env"
   local app_compose_file="${app_dir}/docker-compose.yml"
-  local app_url="${app}.${DOMAIN}"
+  local common_compose_file="${ROOT_FOLDER}/apps/docker-compose.common.yml"
+  local app_dir="${ROOT_FOLDER}/apps/${app}"
 
   # Vars to use in compose file
   export APP_DATA_DIR="${app_data_dir}"
-  export APP_URL="${app_url}"
   export APP_PASSWORD="password"
+  export APP_DIR="${app_dir}"
 
   docker-compose \
     --env-file "${env_file}" \
     --project-name "${app}" \
     --file "${app_compose_file}" \
+    --file "${common_compose_file}" \
     "${@}"
 }
+
+# Install new app
+if [[ "$command" = "install" ]]; then
+  compose "${app}" pull
+  
+  # # Copy env file sample to .env
+  # if [[ -f "${app_dir}/.env-sample" ]]; then
+  #   # Append to .env
+  #   echo "Copying .env-sample to .env for ${app} if not already done"
+  # fi
+
+  compose "${app}" up -d
+  exit
+fi
 
 # Removes images and destroys all data for an app
 if [[ "$command" = "uninstall" ]]; then
