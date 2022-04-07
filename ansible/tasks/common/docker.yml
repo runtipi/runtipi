@@ -2,7 +2,6 @@
   package:
     name: docker
     state: latest
-  when: not docker_status.stat.exists
 
 - name: Install essential packages
   package:

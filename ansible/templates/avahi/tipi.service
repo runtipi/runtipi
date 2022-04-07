@@ -1,6 +1,5 @@
 <?xml version="1.0" standalone='no'?><!--*-nxml-*-->
 <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
-
 <service-group>
   <name replace-wildcards="yes">%h</name>
   <service>
@@ -8,7 +7,6 @@
     <port>80</port>
   </service>
 </service-group>
-
 <service-group>
   <name replace-wildcards="yes">%h</name>
   <service>

@@ -3,8 +3,9 @@
   become: yes
 
   tasks:
-    - import_tasks: ./tasks/arch/essential.yml
-    - import_tasks: ./tasks/zsh.yml
+    - import_tasks: ./tasks/common/essential.yml
+    - import_tasks: ./tasks/common/zsh.yml
+    - import_tasks: ./tasks/common/docker.yml
     - import_tasks: ./tasks/network/avahi.yml
     # - import_tasks: tasks/zsh.yml
     # - import_tasks: tasks/nginx.yml

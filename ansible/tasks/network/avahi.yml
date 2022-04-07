@@ -23,9 +23,9 @@
     regexp: '^hosts:.*'
     line: 'hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns'
 
-- name: Allow port 5353
-  ufw:
-    action: allow
+- name: Allow port 5353 in UFW
+  community.general.ufw:
+    rule: allow
     port: 5353
     proto: udp
 
@@ -34,11 +34,11 @@
     src: "{{ playbook_dir }}/templates/avahi/tipi.service"
     dest: /etc/avahi/services/tipi.service
     group: avahi
-    user: avahi
+    owner: avahi
 
 - name: Start and enable avahi-daemon
   service:
     name: avahi-daemon
-    state: started
+    state: restarted
     enabled: yes
 ###
