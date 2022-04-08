@@ -54,8 +54,8 @@ services:
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      - NEXTCLOUD_ADMIN_USER=tipi
-      - NEXTCLOUD_ADMIN_PASSWORD=password
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
       - NEXTCLOUD_TRUSTED_DOMAINS=tipi.local
     depends_on:
       - db-nextcloud
@@ -69,5 +69,3 @@ services:
     #     traefik.http.routers.nextcloud.tls: true
     #     traefik.http.routers.nextcloud.entrypoints: websecure
     #     traefik.http.services.nextcloud.loadbalancer.server.port: 80
-      
-

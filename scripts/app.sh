@@ -92,6 +92,7 @@ compose() {
 
   docker-compose \
     --env-file "${env_file}" \
+    --env-file "${app_dir}/.env" \
     --project-name "${app}" \
     --file "${app_compose_file}" \
     --file "${common_compose_file}" \
@@ -101,12 +102,6 @@ compose() {
 # Install new app
 if [[ "$command" = "install" ]]; then
   compose "${app}" pull
-  
-  # # # Copy env file sample to .env
-  # if [[ -f "${app_dir}/.env-sample" ]]; then
-  #   # Append to .env
-  #   echo "Copying .env-sample to .env for ${app} if not already done"
-  # fi
 
   compose "${app}" up -d
   exit

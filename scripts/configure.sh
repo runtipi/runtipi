@@ -39,7 +39,7 @@ if ! command -v ansible-playbook > /dev/null; then
   sudo apt-get install -y ansible
 fi
 
-ansible-playbook ansible/setup.yml -i ansible/hosts
+ansible-playbook ansible/setup.yml -i ansible/hosts -K
 
 echo "Generating config files..."
 for template in "${ENV_FILE}"; do

@@ -19,8 +19,6 @@ services:
   #   networks:
   #     - tipi_main_network
   
-
-  
   reverse-proxy:
     container_name: reverse-proxy
     image: traefik:v2.6

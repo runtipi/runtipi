@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import si from "systeminformation";
+import { Request, Response } from 'express';
+import si from 'systeminformation';
 
 type CpuData = {
   load: number;
@@ -37,10 +37,10 @@ const getCpuInfo = async (req: Request, res: Response<CpuData>) => {
 const getDiskInfo = async (req: Request, res: Response<DiskData>) => {
   const disk = await si.fsSize();
 
-  const rootDisk = disk.find((item) => item.mount === "/");
+  const rootDisk = disk.find(item => item.mount === '/');
 
   if (!rootDisk) {
-    throw new Error("Could not find root disk");
+    throw new Error('Could not find root disk');
   }
 
   const result: DiskData = {

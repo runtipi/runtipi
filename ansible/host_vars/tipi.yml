@@ -8,6 +8,8 @@ packages:
   - base-devel
   - docker
   - avahi
+  - nodejs
+  - npm
 
 username: nicolas
 

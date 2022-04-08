@@ -23,6 +23,8 @@ if [[ ! -f "${STATE_FOLDER}/configured" ]]; then
   "${ROOT_FOLDER}/scripts/configure.sh"
 fi
 
+ansible-playbook ansible/start.yml -i ansible/hosts -K
+
 export DOCKER_CLIENT_TIMEOUT=240
 export COMPOSE_HTTP_TIMEOUT=240
 
