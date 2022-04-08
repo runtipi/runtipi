@@ -6,6 +6,9 @@ import { AppConfig } from '../config/types';
 
 const appScript = `${config.ROOT_FOLDER}/scripts/app.sh`;
 
+const getAppFolder = (appName: string) => `${config.ROOT_FOLDER}/apps/${appName}`;
+const getDataFolder = (appName: string) => `${config.ROOT_FOLDER}/app-data/${appName}`;
+
 const getStateFile = () => {
   // Add app to apps.json
   const rawFile = fs.readFileSync(`${config.ROOT_FOLDER}/state/apps.json`).toString();
@@ -15,16 +18,13 @@ const getStateFile = () => {
 };
 
 const generateEnvFile = (appName: string, form: Record<string, string>) => {
-  const appFolder = `${config.ROOT_FOLDER}/apps/${appName}`;
-  const appDataFolder = `${config.ROOT_FOLDER}/app-data/${appName}`;
-
-  const appExists = fs.existsSync(appDataFolder);
+  const appExists = fs.existsSync(getDataFolder(appName));
 
   if (!appExists) {
     throw new Error(`App ${appName} not installed`);
   }
 
-  const rawFile = fs.readFileSync(`${appFolder}/config.json`).toString();
+  const rawFile = fs.readFileSync(`${getAppFolder(appName)}/config.json`).toString();
   let configFile: AppConfig = JSON.parse(rawFile);
   let envFile = '';
 
@@ -39,7 +39,7 @@ const generateEnvFile = (appName: string, form: Record<string, string>) => {
     }
   });
 
-  fs.writeFileSync(`${appDataFolder}/.env`, envFile);
+  fs.writeFileSync(`${getDataFolder(appName)}/.env`, envFile);
 };
 
 const installApp = (req: Request, res: Response) => {
@@ -88,18 +88,14 @@ const uninstallApp = (req: Request, res: Response) => {
     if (!appName) {
       throw new Error('App name is required');
     }
-
-    const appDataFolder = `${config.ROOT_FOLDER}/app-data/${appName}`;
-    const appFolder = `${config.ROOT_FOLDER}/apps/${appName}`;
-
-    const appExists = fs.existsSync(appDataFolder);
+    const appExists = fs.existsSync(getDataFolder(appName));
 
     if (!appExists) {
       throw new Error(`App ${appName} not installed`);
     }
 
     // Delete app folder
-    fs.rmdirSync(appFolder, { recursive: true });
+    fs.rmdirSync(getAppFolder(appName), { recursive: true });
 
     // Remove app from apps.json
     const state = getStateFile();
@@ -123,9 +119,7 @@ const stopApp = (req: Request, res: Response) => {
       throw new Error('App name is required');
     }
 
-    const appDataFolder = `${config.ROOT_FOLDER}/app-data/${appName}`;
-
-    const appExists = fs.existsSync(appDataFolder);
+    const appExists = fs.existsSync(getDataFolder(appName));
 
     if (!appExists) {
       throw new Error(`App ${appName} not installed`);
@@ -148,9 +142,7 @@ const updateAppConfig = (req: Request, res: Response) => {
       throw new Error('App name is required');
     }
 
-    const appDataFolder = `${config.ROOT_FOLDER}/app-data/${appName}`;
-
-    const appExists = fs.existsSync(appDataFolder);
+    const appExists = fs.existsSync(getDataFolder(appName));
 
     if (!appExists) {
       throw new Error(`App ${appName} not installed`);
