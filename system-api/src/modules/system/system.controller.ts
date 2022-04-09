@@ -37,7 +37,7 @@ const getCpuInfo = async (req: Request, res: Response<CpuData>) => {
 const getDiskInfo = async (req: Request, res: Response<DiskData>) => {
   const disk = await si.fsSize();
 
-  const rootDisk = disk.find(item => item.mount === '/');
+  const rootDisk = disk.find((item) => item.mount === '/');
 
   if (!rootDisk) {
     throw new Error('Could not find root disk');

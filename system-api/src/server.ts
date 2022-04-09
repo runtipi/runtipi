@@ -1,19 +1,20 @@
 import express from 'express';
 import compression from 'compression';
 import helmet from 'helmet';
-import { __prod__ } from './constants/constants';
-import { appRoutes, systemRoutes } from './routes';
+import { isProd } from './constants/constants';
+import appsRoutes from './modules/apps/apps.routes';
+import systemRoutes from './modules/system/system.routes';
 
 const app = express();
 const port = 3001;
 
-if (__prod__) {
+if (isProd) {
   app.use(compression());
   app.use(helmet());
 }
 
 app.use('/system', systemRoutes);
-app.use('/app', appRoutes);
+app.use('/app', appsRoutes);
 
 app.listen(port, () => {
   console.log(`System API listening on port ${port}`);

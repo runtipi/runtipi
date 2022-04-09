@@ -5,6 +5,7 @@
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
+    "lint": "eslint . --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --minify --analyze=verbose --external:./node_modules/* --format=esm",
     "build:watch": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --external:./node_modules/* --format=esm --watch",
@@ -26,8 +27,17 @@
   "devDependencies": {
     "@types/compression": "^1.7.2",
     "@types/express": "^4.17.13",
+    "@types/validator": "^13.7.2",
     "concurrently": "^7.1.0",
     "esbuild": "^0.14.32",
-    "nodemon": "^2.0.15"
+    "eslint": "^8.13.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-hardcore": "^24.5.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-unicorn": "^42.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "2.6.2"
   }
 }
