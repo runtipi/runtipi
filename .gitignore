@@ -1,0 +1,16 @@
+.env
+nginx/*
+letsencrypt/*
+app-data/*
+traefik/ssl/*
+!traefik/ssl/.gitkeep
+!app-data/.gitkeep
+!letsencrypt/mkcert/.gitkeep
+
+state/*
+!state/.gitkeep
+
+tipi.config.json
+
+# Commit empty directories
+!nignx/.gitkeep

@@ -1,0 +1,2 @@
+[localhost]
+tipi ansible_connection=local

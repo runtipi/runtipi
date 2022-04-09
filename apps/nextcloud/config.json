@@ -1,0 +1,22 @@
+{
+  "name": "Nextcloud",
+  "description": "Nextcloud is a self-hosted, open source, and fully-featured cloud storage solution for your personal files, office documents, and photos.",
+  "form_fields": {
+    "username": {
+      "type": "text",
+      "label": "Username",
+      "max": 50,
+      "min": 3,
+      "required": true,
+      "env_variable": "NEXTCLOUD_USERNAME"
+    },
+    "password": {
+      "type": "password",
+      "label": "Password",
+      "max": 50,
+      "min": 3,
+      "required": true,
+      "env_variable": "NEXTCLOUD_PASSWORD"
+    }
+  }
+}

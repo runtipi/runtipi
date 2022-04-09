@@ -1,0 +1,18 @@
+packages:
+  - jq
+  - mkcert
+  - ufw
+  - iptables
+  - coreutils
+  - git
+  - base-devel
+  - docker
+  - avahi
+  - nodejs
+  - npm
+
+username: nicolas
+
+### ZSH Settings
+zsh_theme: "powerlevel10k/powerlevel10k"
+ohmyzsh_git_url: https://github.com/robbyrussell/oh-my-zsh

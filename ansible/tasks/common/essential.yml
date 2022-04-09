@@ -1,0 +1,73 @@
+- name: Change machine hostname to tipi.local
+  shell: hostnamectl set-hostname tipi.local
+
+- name: Update packages
+  become: yes
+  pacman:
+    update_cache: yes
+    upgrade: yes
+
+- name: Add user to root group
+  user:
+    name: "{{ username }}"
+    group: root
+
+- name: Install essential packages
+  package:
+    name: "{{ packages }}"
+    state: latest
+
+- name: Disable SSH password auth
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#PasswordAuthentication yes"
+    line: "PasswordAuthentication no"
+  register: sshd_config
+
+- name: Enable passwordless sudo for user
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^%wheel"
+    line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Restart SSH daemon
+  service:
+    name: sshd
+    state: restarted
+  when: sshd_config.changed
+
+- name: Allow SSH in UFW
+  community.general.ufw:
+    rule: allow
+    port: 22
+    from: 192.168.2.0/24
+    proto: tcp
+
+- name: Allow port 80 in UFW
+  community.general.ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+
+- name: Allow port 443 in UFW
+  community.general.ufw:
+    rule: allow
+    port: 443
+    proto: tcp
+
+- name: Allow ports for apps
+  community.general.ufw:
+    rule: allow
+    port: 8080:8180
+    proto: tcp
+
+- name: Enable ufw daemon
+  service:
+    name: ufw
+    state: started
+    enabled: yes
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled

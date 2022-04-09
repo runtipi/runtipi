@@ -1,0 +1,16 @@
+---
+- hosts: tipi
+  become: yes
+
+  tasks:
+    - import_tasks: ./tasks/common/essential.yml
+    - import_tasks: ./tasks/common/zsh.yml
+    - import_tasks: ./tasks/common/docker.yml
+    - import_tasks: ./tasks/network/avahi.yml
+    # - import_tasks: tasks/zsh.yml
+    # - import_tasks: tasks/nginx.yml
+    # - import_tasks: tasks/pi-hole.yml
+    # - import_tasks: tasks/pi-vpn.yml
+    # - import_tasks: tasks/nextcloud.yml
+    # - name: Reboot machine
+    #   reboot:

@@ -1,0 +1,40 @@
+- name: Install docker
+  package:
+    name: docker
+    state: latest
+
+- name: Install essential packages
+  package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+  when: ansible_os_family == "Debian"
+
+- name: Check if docker-compose is installed
+  stat:
+    path: /usr/local/bin/docker-compose
+  register: docker_compose_status
+
+- name: Install docker-compose
+  shell: 'curl -L "https://github.com/docker/compose/releases/download/v2.3.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
+  when: not docker_compose_status.stat.exists
+
+- name: Make docker-compose executable
+  shell: chmod +x /usr/local/bin/docker-compose
+
+- name: Create group docker
+  group:
+    name: docker
+
+- name: Put user in docker group
+  user:
+    name: "{{ username }}"
+    group: docker
+
+- name: Start docker service
+  service:
+    enabled: yes
+    name: docker
+    state: started
