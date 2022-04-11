@@ -1,6 +1,4 @@
 import { Request, Response } from 'express';
-import process from 'child_process';
-import config from '../../config';
 import { AppConfig } from '../../config/types';
 import { createFolder, fileExists, readJsonFile, writeFile, copyFile, runScript, deleteFolder } from '../fs/fs.helpers';
 
@@ -153,7 +151,11 @@ const installedApps = (req: Request, res: Response) => {
     const apps = readJsonFile('/state/apps.json');
     const appNames = apps.installed.split(' ');
 
-    res.status(200).json(appNames);
+    if (appNames.length === 0) {
+      res.status(204).json([]);
+    } else {
+      res.status(200).json(appNames);
+    }
   } catch (e) {
     res.status(500).end(e);
   }

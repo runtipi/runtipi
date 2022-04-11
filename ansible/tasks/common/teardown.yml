@@ -1,0 +1,9 @@
+- name: Check if app is already running
+  become_user: "{{ username }}"
+  shell: pm2 list
+  register: pm2_result
+
+- name: Stop app
+  become_user: "{{ username }}"
+  shell: pm2 stop "system-api"
+  when: pm2_result.stdout.find("system-api") != -1
