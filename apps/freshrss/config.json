@@ -1,0 +1,10 @@
+{
+  "name": "FreshRSS",
+  "id": "freshrss",
+  "description": "FreshRSS is a self-hosted RSS feed aggregator like Leed or Kriss Feed.\nIt is lightweight, easy to work with, powerful, and customizable.\n\nIt is a multi-user application with an anonymous reading mode. It supports custom tags. There is an API for (mobile) clients, and a Command-Line Interface.\n\nThanks to the WebSub standard (formerly PubSubHubbub), FreshRSS is able to receive instant push notifications from compatible sources, such as Mastodon, Friendica, WordPress, Blogger, FeedBurner, etc.\n\nFreshRSS natively supports basic Web scraping, based on XPath, for Web sites not providing any RSS / Atom feed.\n\nFinally, it supports extensions for further tuning.",
+  "short_desc": "A free, self-hostable aggregator… ",
+  "author": "https://freshrss.org/",
+  "source": "https://github.com/FreshRSS/FreshRSS",
+  "image": "https://avatars.githubusercontent.com/u/9414285?s=200&v=4",
+  "form_fields": {}
+}

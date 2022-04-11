@@ -1,6 +1,11 @@
 {
   "name": "Nextcloud",
+  "id": "nextcloud",
   "description": "Nextcloud is a self-hosted, open source, and fully-featured cloud storage solution for your personal files, office documents, and photos.",
+  "short_desc": "Productivity platform that keeps you in control",
+  "author": "Nextcloud GmbH",
+  "source": "https://github.com/nextcloud/server",
+  "image": "https://avatars.githubusercontent.com/u/19211038?s=200&v=4",
   "form_fields": {
     "username": {
       "type": "text",

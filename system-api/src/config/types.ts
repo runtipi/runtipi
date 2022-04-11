@@ -11,5 +11,7 @@ export interface AppConfig {
   name: string;
   description: string;
   version: string;
+  image: string;
   form_fields: Record<string, FormField>;
+  installed: boolean;
 }

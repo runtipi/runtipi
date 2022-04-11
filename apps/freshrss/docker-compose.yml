@@ -15,10 +15,10 @@ services:
       TZ: $TZ
     networks:
       - tipi_main_network
-    labels:
-        traefik.enable: true
-        traefik.http.routers.freshrss.rule: Host(`freshrss.tipi.home`)
-        traefik.http.routers.freshrss.service: freshrss
-        traefik.http.routers.freshrss.tls: true
-        traefik.http.routers.freshrss.entrypoints: websecure
-        traefik.http.services.freshrss.loadbalancer.server.port: 80
+    # labels:
+    #     traefik.enable: true
+    #     traefik.http.routers.freshrss.rule: Host(`freshrss.tipi.home`)
+    #     traefik.http.routers.freshrss.service: freshrss
+    #     traefik.http.routers.freshrss.tls: true
+    #     traefik.http.routers.freshrss.entrypoints: websecure
+    #     traefik.http.services.freshrss.loadbalancer.server.port: 80

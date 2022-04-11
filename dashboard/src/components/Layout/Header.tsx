@@ -1,27 +1,22 @@
-import React from "react";
-import Img from "next/image";
-import Link from "next/link";
-import { Button, Flex, useBreakpointValue } from "@chakra-ui/react";
+import React from 'react';
+import Link from 'next/link';
+import { Flex } from '@chakra-ui/react';
+import { FiMenu } from 'react-icons/fi';
 
 interface IProps {
   onClickMenu: () => void;
 }
 
 const Header: React.FC<IProps> = ({ onClickMenu }) => {
-  const buttonVisibility = useBreakpointValue<"visible" | "hidden">({
-    base: "visible",
-    md: "hidden",
-  });
-
   return (
-    <header>
-      <Flex alignItems="center" bg="tomato" paddingLeft={5} paddingRight={5}>
-        <Flex position="absolute" visibility={buttonVisibility || "visible"}>
-          <Button onClick={onClickMenu}>O</Button>
-        </Flex>
+    <header style={{ width: '100%' }} className="flex">
+      <Flex className="items-center bg-gray-700 drop-shadow-md px-5 flex-1">
+        <div onClick={onClickMenu} className="visible md:invisible absolute cursor-pointer py-2">
+          <FiMenu color="white" />
+        </div>
         <Flex justifyContent="center" flex="1">
           <Link href="/" passHref>
-            <Img src="/logo.svg" alt="Tipi" width={100} height={60} />
+            <img src="/logo.png" alt="Tipi" width={230} height={60} />
           </Link>
         </Flex>
       </Flex>

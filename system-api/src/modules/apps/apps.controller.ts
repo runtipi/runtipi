@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import si from 'systeminformation';
+import { appNames } from '../../config/apps';
 import { AppConfig } from '../../config/types';
 import { createFolder, fileExists, readJsonFile, writeFile, copyFile, runScript, deleteFolder } from '../fs/fs.helpers';
 
@@ -34,31 +36,38 @@ const generateEnvFile = (appName: string, form: Record<string, string>) => {
 
 const installApp = (req: Request, res: Response) => {
   try {
-    const { appName, form } = req.body;
+    const { id } = req.params;
+    const { form } = req.body;
 
-    if (!appName) {
+    if (!id) {
       throw new Error('App name is required');
     }
 
-    const appExists = fileExists(`/app-data/${appName}`);
+    const appExists = fileExists(`/app-data/${id}`);
 
     if (appExists) {
-      throw new Error(`App ${appName} already installed`);
+      throw new Error(`App ${id} already installed`);
+    }
+
+    const appIsAvailable = appNames.includes(id);
+
+    if (!appIsAvailable) {
+      throw new Error(`App ${id} not available`);
     }
 
     // Create app folder
-    createFolder(`/app-data/${appName}`);
+    createFolder(`/app-data/${id}`);
     // Copy default app files from app-data folder
-    copyFile(`/apps/${appName}/data`, `/app-data/${appName}/data`);
+    copyFile(`/apps/${id}/data`, `/app-data/${id}/data`);
 
     // Create env file
-    generateEnvFile(appName, form);
+    generateEnvFile(id, form);
     const state = getStateFile();
-    state.installed += ` ${appName}`;
+    state.installed += ` ${id}`;
     writeFile('/state/apps.json', JSON.stringify(state));
 
     // Run script
-    runScript('/scripts/app.sh', ['install', appName]);
+    runScript('/scripts/app.sh', ['install', id]);
 
     res.status(200).json({ message: 'App installed successfully' });
   } catch (e) {
@@ -99,20 +108,20 @@ const uninstallApp = (req: Request, res: Response) => {
 
 const stopApp = (req: Request, res: Response) => {
   try {
-    const { appName } = req.body;
+    const { name } = req.params;
 
-    if (!appName) {
+    if (!name) {
       throw new Error('App name is required');
     }
 
-    const appExists = fileExists(`/app-data/${appName}`);
+    const appExists = fileExists(`/app-data/${name}`);
 
     if (!appExists) {
-      throw new Error(`App ${appName} not installed`);
+      throw new Error(`App ${name} not installed`);
     }
 
     // Run script
-    runScript('/scripts/app.sh', ['stop', appName]);
+    runScript('/scripts/app.sh', ['stop', name]);
 
     res.status(200).json({ message: 'App stopped successfully' });
   } catch (e) {
@@ -146,32 +155,45 @@ const updateAppConfig = (req: Request, res: Response) => {
   }
 };
 
-const installedApps = (req: Request, res: Response) => {
+const getAppInfo = (req: Request, res: Response<AppConfig>) => {
   try {
-    const apps = readJsonFile('/state/apps.json');
-    const appNames = apps.installed.split(' ');
+    const { id } = req.params;
 
-    if (appNames.length === 0) {
-      res.status(204).json([]);
-    } else {
-      res.status(200).json(appNames);
+    if (!id) {
+      throw new Error('App name is required');
     }
+
+    const configFile: AppConfig = readJsonFile(`/apps/${id}/config.json`);
+
+    const state = getStateFile();
+    const installed: string[] = state.installed.split(' ').filter(Boolean);
+    configFile.installed = installed.includes(id);
+
+    res.status(200).json(configFile);
   } catch (e) {
     res.status(500).end(e);
   }
 };
 
-const getAppInfo = (req: Request, res: Response<AppConfig>) => {
+const listApps = async (req: Request, res: Response) => {
   try {
-    const { appName } = req.body;
+    const apps = appNames.map((app) => {
+      return readJsonFile(`/apps/${app}/config.json`);
+    });
 
-    if (!appName) {
-      throw new Error('App name is required');
-    }
+    const dockerContainers = await si.dockerContainers();
 
-    const configFile: AppConfig = readJsonFile(`/apps/${appName}/config.json`);
+    const state = getStateFile();
+    const installed: string[] = state.installed.split(' ').filter(Boolean);
 
-    res.status(200).json(configFile);
+    apps.forEach((app) => {
+      app.installed = installed.includes(app.id);
+      app.status = dockerContainers.find((container) => container.name === `${app.id}`)?.state || 'stopped';
+    });
+
+    console.log(apps);
+
+    res.status(200).json(apps);
   } catch (e) {
     res.status(500).end(e);
   }
@@ -182,8 +204,8 @@ const AppController = {
   installApp,
   stopApp,
   updateAppConfig,
-  installedApps,
   getAppInfo,
+  listApps,
 };
 
 export default AppController;

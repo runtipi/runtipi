@@ -3,8 +3,9 @@ import AppController from './apps.controller';
 
 const router = Router();
 
-router.route('/install').post(AppController.installApp);
+router.route('/install/:id').post(AppController.installApp);
 router.route('/uninstall').post(AppController.uninstallApp);
-router.route('/list').get(AppController.installedApps);
+router.route('/list').get(AppController.listApps);
+router.route('/info/:id').get(AppController.getAppInfo);
 
 export default router;

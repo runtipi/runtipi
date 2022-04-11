@@ -1,30 +1,60 @@
-import {
-  Button,
-  Flex,
-  useBreakpointValue,
-  useDisclosure,
-} from "@chakra-ui/react";
-import React from "react";
-import Header from "./Header";
-import Menu from "./Menu";
-import MenuDrawer from "./MenuDrawer";
+import { Flex, useDisclosure, Spinner, Breadcrumb, BreadcrumbItem } from '@chakra-ui/react';
+import Link from 'next/link';
+import React from 'react';
+import { FiChevronRight } from 'react-icons/fi';
+import Header from './Header';
+import Menu from './Menu';
+import MenuDrawer from './MenuDrawer';
 
-const Layout: React.FC = ({ children }) => {
-  const menuWidth = useBreakpointValue({ base: 0, md: 200 });
+interface IProps {
+  loading?: boolean;
+  breadcrumbs?: { name: string; href: string; current?: boolean }[];
+}
+
+const Layout: React.FC<IProps> = ({ children, loading, breadcrumbs }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <Flex className="justify-center flex-1">
+          <Spinner />
+        </Flex>
+      );
+    }
+
+    return children;
+  };
+
+  const renderBreadcrumbs = () => {
+    return (
+      <Breadcrumb spacing="8px" separator={<FiChevronRight color="gray.500" />}>
+        {breadcrumbs?.map((breadcrumb, index) => {
+          return (
+            <BreadcrumbItem className="hover:underline" isCurrentPage={breadcrumb.current} key={index}>
+              <Link href={breadcrumb.href}>{breadcrumb.name}</Link>
+            </BreadcrumbItem>
+          );
+        })}
+      </Breadcrumb>
+    );
+  };
+
   return (
-    <Flex height="100vh" bg="green.500" direction="column">
+    <Flex height="100vh" className="drop-shadow-md border-r-8" direction="column">
       <MenuDrawer isOpen={isOpen} onClose={onClose}>
         <Menu />
       </MenuDrawer>
       <Header onClickMenu={onOpen} />
       <Flex flex="1">
-        <Flex width={menuWidth} bg="blue.500">
+        <Flex className="invisible md:visible w-0 md:w-56">
           <Menu />
         </Flex>
-        <Flex flex="1" padding={5} bg="yellow.300">
-          {children}
+        <Flex className="bg-slate-200 flex flex-1 p-5">
+          <div className="flex-1 flex flex-col">
+            {renderBreadcrumbs()}
+            <div className="flex-1 ">{renderContent()}</div>
+          </div>
         </Flex>
       </Flex>
     </Flex>
