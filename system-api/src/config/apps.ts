@@ -1,1 +1,1 @@
-export const appNames = ['nextcloud', 'simple-torrent', 'freshrss', 'anonaddy'];
+export const appNames = ['nextcloud', 'freshrss', 'anonaddy', 'filerun', 'wg-easy', 'radarr', 'transmission', 'jellyfin'];

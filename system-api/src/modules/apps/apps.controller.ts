@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import si from 'systeminformation';
 import { appNames } from '../../config/apps';
 import { AppConfig } from '../../config/types';
-import { createFolder, fileExists, readJsonFile, writeFile, copyFile, runScript, deleteFolder } from '../fs/fs.helpers';
+import { createFolder, fileExists, readJsonFile, writeFile, runScript, deleteFolder, readFile } from '../fs/fs.helpers';
 
 type AppsState = { installed: string };
 
@@ -12,13 +12,14 @@ const getStateFile = (): AppsState => {
 
 const generateEnvFile = (appName: string, form: Record<string, string>) => {
   const appExists = fileExists(`/app-data/${appName}`);
+  const baseEnvFile = readFile('/.env');
 
   if (!appExists) {
     throw new Error(`App ${appName} not installed`);
   }
 
   const configFile: AppConfig = readJsonFile(`/apps/${appName}/config.json`);
-  let envFile = '';
+  let envFile = `${baseEnvFile}\n`;
 
   Object.keys(configFile.form_fields).forEach((key) => {
     const value = form[key];
@@ -31,7 +32,7 @@ const generateEnvFile = (appName: string, form: Record<string, string>) => {
     }
   });
 
-  writeFile(`/app-data/${appName}/.env`, envFile);
+  writeFile(`/app-data/${appName}/app.env`, envFile);
 };
 
 const installApp = (req: Request, res: Response) => {
@@ -58,7 +59,7 @@ const installApp = (req: Request, res: Response) => {
     // Create app folder
     createFolder(`/app-data/${id}`);
     // Copy default app files from app-data folder
-    copyFile(`/apps/${id}/data`, `/app-data/${id}/data`);
+    // copyFile(`/apps/${id}/data/`, `/app-data/${id}/data`);
 
     // Create env file
     generateEnvFile(id, form);
@@ -67,9 +68,13 @@ const installApp = (req: Request, res: Response) => {
     writeFile('/state/apps.json', JSON.stringify(state));
 
     // Run script
-    runScript('/scripts/app.sh', ['install', id]);
+    runScript('/scripts/app.sh', ['install', id], (err: any) => {
+      if (err) {
+        throw new Error(err);
+      }
 
-    res.status(200).json({ message: 'App installed successfully' });
+      res.status(200).json({ message: 'App installed successfully' });
+    });
   } catch (e) {
     res.status(500).send(e);
   }
@@ -77,7 +82,7 @@ const installApp = (req: Request, res: Response) => {
 
 const uninstallApp = (req: Request, res: Response) => {
   try {
-    const { appName } = req.body;
+    const { id: appName } = req.params;
 
     if (!appName) {
       throw new Error('App name is required');
@@ -89,18 +94,22 @@ const uninstallApp = (req: Request, res: Response) => {
       throw new Error(`App ${appName} not installed`);
     }
 
-    // Delete app folder
-    deleteFolder(`/app-data/${appName}`);
-
     // Remove app from apps.json
     const state = getStateFile();
     state.installed = state.installed.replace(` ${appName}`, '');
+
     writeFile('/state/apps.json', JSON.stringify(state));
 
     // Run script
-    runScript('/scripts/app.sh', ['uninstall', appName]);
+    runScript('/scripts/app.sh', ['uninstall', appName], (err: any) => {
+      if (err) {
+        throw new Error(err);
+      }
 
-    res.status(200).json({ message: 'App uninstalled successfully' });
+      deleteFolder(`/app-data/${appName}`);
+
+      res.status(200).json({ message: 'App uninstalled successfully' });
+    });
   } catch (e) {
     res.status(500).send(e);
   }
@@ -108,22 +117,26 @@ const uninstallApp = (req: Request, res: Response) => {
 
 const stopApp = (req: Request, res: Response) => {
   try {
-    const { name } = req.params;
+    const { id: appName } = req.params;
 
-    if (!name) {
+    if (!appName) {
       throw new Error('App name is required');
     }
 
-    const appExists = fileExists(`/app-data/${name}`);
+    const appExists = fileExists(`/app-data/${appName}`);
 
     if (!appExists) {
-      throw new Error(`App ${name} not installed`);
+      throw new Error(`App ${appName} not installed`);
     }
 
     // Run script
-    runScript('/scripts/app.sh', ['stop', name]);
+    runScript('/scripts/app.sh', ['stop', appName], (err: string) => {
+      if (err) {
+        throw new Error(err);
+      }
 
-    res.status(200).json({ message: 'App stopped successfully' });
+      res.status(200).json({ message: 'App stopped successfully' });
+    });
   } catch (e) {
     res.status(500).end(e);
   }
@@ -146,16 +159,25 @@ const updateAppConfig = (req: Request, res: Response) => {
     generateEnvFile(appName, form);
 
     // Run script
-    runScript('/scripts/app.sh', ['stop', appName]);
-    runScript('/scripts/app.sh', ['start', appName]);
+    runScript('/scripts/app.sh', ['stop', appName], (err: string) => {
+      if (err) {
+        throw new Error(err);
+      }
 
-    res.status(200).json({ message: 'App updated successfully' });
+      runScript('/scripts/app.sh', ['start', appName], (error: string) => {
+        if (error) {
+          throw new Error(error);
+        }
+
+        res.status(200).json({ message: 'App updated successfully' });
+      });
+    });
   } catch (e) {
     res.status(500).end(e);
   }
 };
 
-const getAppInfo = (req: Request, res: Response<AppConfig>) => {
+const getAppInfo = async (req: Request, res: Response<AppConfig>) => {
   try {
     const { id } = req.params;
 
@@ -163,11 +185,13 @@ const getAppInfo = (req: Request, res: Response<AppConfig>) => {
       throw new Error('App name is required');
     }
 
+    const dockerContainers = await si.dockerContainers();
     const configFile: AppConfig = readJsonFile(`/apps/${id}/config.json`);
 
     const state = getStateFile();
     const installed: string[] = state.installed.split(' ').filter(Boolean);
     configFile.installed = installed.includes(id);
+    configFile.status = (dockerContainers.find((container) => container.name === `${id}`)?.state as 'running') || 'stopped';
 
     res.status(200).json(configFile);
   } catch (e) {
@@ -177,9 +201,15 @@ const getAppInfo = (req: Request, res: Response<AppConfig>) => {
 
 const listApps = async (req: Request, res: Response) => {
   try {
-    const apps = appNames.map((app) => {
-      return readJsonFile(`/apps/${app}/config.json`);
-    });
+    const apps = appNames
+      .map((app) => {
+        try {
+          return readJsonFile(`/apps/${app}/config.json`);
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
 
     const dockerContainers = await si.dockerContainers();
 
@@ -191,13 +221,39 @@ const listApps = async (req: Request, res: Response) => {
       app.status = dockerContainers.find((container) => container.name === `${app.id}`)?.state || 'stopped';
     });
 
-    console.log(apps);
-
     res.status(200).json(apps);
   } catch (e) {
     res.status(500).end(e);
   }
 };
+
+const startApp = (req: Request, res: Response) => {
+  try {
+    const { id: appName } = req.params;
+
+    if (!appName) {
+      throw new Error('App name is required');
+    }
+
+    const appExists = fileExists(`/app-data/${appName}`);
+
+    if (!appExists) {
+      throw new Error(`App ${appName} not installed`);
+    }
+
+    // Run script
+    runScript('/scripts/app.sh', ['start', appName], (err: string) => {
+      if (err) {
+        throw new Error(err);
+      }
+
+      res.status(200).json({ message: 'App started successfully' });
+    });
+  } catch (e) {
+    res.status(500).end(e);
+  }
+};
+// console.log('');
 
 const AppController = {
   uninstallApp,
@@ -206,6 +262,7 @@ const AppController = {
   updateAppConfig,
   getAppInfo,
   listApps,
+  startApp,
 };
 
 export default AppController;

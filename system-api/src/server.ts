@@ -9,6 +9,8 @@ import systemRoutes from './modules/system/system.routes';
 const app = express();
 const port = 3001;
 
+app.use(express.json());
+
 if (isProd) {
   app.use(compression());
   app.use(helmet());
