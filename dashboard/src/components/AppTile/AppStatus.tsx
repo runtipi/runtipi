@@ -1,7 +1,8 @@
 import React from 'react';
 import { FiPauseCircle, FiPlayCircle } from 'react-icons/fi';
+import { AppStatus as TAppStatus } from '../../core/types';
 
-const AppStatus: React.FC<{ status: 'running' | 'stopped' }> = ({ status }) => {
+const AppStatus: React.FC<{ status: TAppStatus }> = ({ status }) => {
   if (status === 'running') {
     return (
       <>
