@@ -15,7 +15,13 @@ const InstallForm: React.FC<IProps> = ({ formFields, onSubmit }) => {
   const fields = objectKeys(formFields).map((key) => ({ ...formFields[key], id: key }));
 
   const renderField = (field: typeof fields[0]) => {
-    return <Field key={field.id} name={field.id} render={({ input, meta }) => <FormInput className="mb-3" error={meta.error} label={field.label} {...input} />} />;
+    return (
+      <Field
+        key={field.id}
+        name={field.id}
+        render={({ input, meta }) => <FormInput className="mb-3" error={meta.error} isInvalid={meta.invalid && (meta.submitError || meta.submitFailed)} label={field.label} {...input} />}
+      />
+    );
   };
 
   return (

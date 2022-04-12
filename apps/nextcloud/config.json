@@ -13,7 +13,7 @@
       "max": 50,
       "min": 3,
       "required": true,
-      "env_variable": "NEXTCLOUD_USERNAME"
+      "env_variable": "NEXTCLOUD_ADMIN_USER"
     },
     "password": {
       "type": "password",
@@ -21,7 +21,7 @@
       "max": 50,
       "min": 3,
       "required": true,
-      "env_variable": "NEXTCLOUD_PASSWORD"
+      "env_variable": "NEXTCLOUD_ADMIN_PASSWORD"
     }
   }
 }

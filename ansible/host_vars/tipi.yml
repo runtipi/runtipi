@@ -10,6 +10,7 @@ packages:
   - avahi
   - nodejs
   - npm
+  # - libusb
 
 username: nicolas
 

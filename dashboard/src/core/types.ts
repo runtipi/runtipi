@@ -1,5 +1,14 @@
+export enum FieldTypes {
+  text = 'text',
+  password = 'password',
+  email = 'email',
+  number = 'number',
+  fqdn = 'fqdn',
+  ip = 'ip',
+}
+
 interface FormField {
-  type: string;
+  type: FieldTypes;
   label: string;
   max?: number;
   min?: number;
@@ -18,7 +27,7 @@ export interface AppConfig {
   author: string;
   source: string;
   installed: boolean;
-  status: 'running' | 'stopped';
+  status: AppStatus;
 }
 
 export enum RequestStatus {
@@ -31,4 +40,7 @@ export enum AppStatus {
   RUNNING = 'running',
   STOPPED = 'stopped',
   INSTALLING = 'installing',
+  UNINSTALLING = 'uninstalling',
+  STOPPING = 'stopping',
+  STARTING = 'starting',
 }

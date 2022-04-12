@@ -7,7 +7,7 @@ interface IProps {
   app: AppConfig;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: Record<string, unknown>) => void;
+  onSubmit: (values: Record<string, any>) => void;
 }
 
 const InstallModal: React.FC<IProps> = ({ app, isOpen, onClose, onSubmit }) => {

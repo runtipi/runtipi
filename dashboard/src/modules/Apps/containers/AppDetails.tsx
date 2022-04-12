@@ -2,18 +2,40 @@ import { SlideFade, Image, VStack, Flex, Divider, useDisclosure } from '@chakra-
 import React from 'react';
 import { FiExternalLink } from 'react-icons/fi';
 import { AppConfig } from '../../../core/types';
+import { useAppsStore } from '../../../state/appsStore';
 import AppActions from '../components/AppActions';
 import InstallModal from '../components/InstallModal';
+import StopModal from '../components/StopModal';
+import UninstallModal from '../components/UninstallModal';
 
 interface IProps {
   app: AppConfig;
 }
 
 const AppDetails: React.FC<IProps> = ({ app }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const installDisclosure = useDisclosure();
+  const uninstallDisclosure = useDisclosure();
+  const stopDisclosure = useDisclosure();
 
-  const handleInstallSubmit = (values: Record<string, unknown>) => {
-    console.error(values);
+  const { install, uninstall, stop, start } = useAppsStore((state) => state);
+
+  const handleInstallSubmit = async (values: Record<string, any>) => {
+    installDisclosure.onClose();
+    await install(app.id, values);
+  };
+
+  const handleUnistallSubmit = async () => {
+    uninstallDisclosure.onClose();
+    await uninstall(app.id);
+  };
+
+  const handleStopSubmit = async () => {
+    stopDisclosure.onClose();
+    await stop(app.id);
+  };
+
+  const handleStartSubmit = async () => {
+    await start(app.id);
   };
 
   return (
@@ -33,13 +55,15 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
               <p className="text-xs text-gray-600">By {app?.author}</p>
             </div>
             <div className="flex justify-center sm:absolute md:static top-0 right-5 self-center sm:self-auto">
-              <AppActions onStart={() => null} onStop={() => null} onUninstall={() => null} onInstall={onOpen} app={app} />
+              <AppActions onStart={handleStartSubmit} onStop={stopDisclosure.onOpen} onUninstall={uninstallDisclosure.onOpen} onInstall={installDisclosure.onOpen} app={app} />
             </div>
           </VStack>
         </Flex>
         <Divider className="mt-5" />
         <p className="mt-3">{app?.description}</p>
-        <InstallModal onSubmit={handleInstallSubmit} isOpen={isOpen} onClose={onClose} app={app} />
+        <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.onClose} app={app} />
+        <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.onClose} app={app} />
+        <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.onClose} app={app} />
       </div>
     </SlideFade>
   );

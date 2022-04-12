@@ -6,15 +6,17 @@ interface IFetchParams {
   endpoint: string;
   method?: Method;
   params?: JSON;
+  data?: Record<string, unknown>;
 }
 
 const api = async <T = unknown>(fetchParams: IFetchParams): Promise<T> => {
-  const { endpoint, method = 'GET', params } = fetchParams;
+  const { endpoint, method = 'GET', params, data } = fetchParams;
 
   try {
     const response = await axios.request<T>({
       method,
       params,
+      data,
       url: `${BASE_URL}${endpoint}`,
     });
 

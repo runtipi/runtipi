@@ -89,10 +89,13 @@ compose() {
   export APP_DATA_DIR="${app_data_dir}"
   export APP_PASSWORD="password"
   export APP_DIR="${app_dir}"
+  export ROOT_FOLDER="${ROOT_FOLDER}"
+
+  # Docker-compose does not support multiple env files
+  # --env-file "${env_file}" \
 
   docker-compose \
-    --env-file "${env_file}" \
-    --env-file "${app_dir}/.env" \
+    --env-file "${ROOT_FOLDER}/app-data/${app}/app.env" \
     --project-name "${app}" \
     --file "${app_compose_file}" \
     --file "${common_compose_file}" \
@@ -109,7 +112,6 @@ fi
 
 # Removes images and destroys all data for an app
 if [[ "$command" = "uninstall" ]]; then
-
   echo "Removing images for app ${app}..."
   compose "${app}" down --rmi all --remove-orphans
 
@@ -117,9 +119,6 @@ if [[ "$command" = "uninstall" ]]; then
   if [[ -d "${app_data_dir}" ]]; then
     rm -rf "${app_data_dir}"
   fi
-
-  echo "Removing app ${app} from DB..."
-  update_installed_apps remove "${app}"
 
   echo "Successfully uninstalled app ${app}"
   exit

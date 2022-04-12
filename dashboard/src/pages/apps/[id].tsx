@@ -4,13 +4,12 @@ import Layout from '../../components/Layout';
 import { useAppsStore } from '../../state/appsStore';
 import AppDetails from '../../modules/Apps/containers/AppDetails';
 
-interface Props {
+interface IProps {
   appId: string;
 }
 
-const AppDetailsPage: NextPage<Props> = ({ appId }) => {
-  const { getApp, fetchApp } = useAppsStore((state) => state);
-
+const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
+  const { fetchApp, getApp } = useAppsStore((state) => state);
   const app = getApp(appId);
 
   useEffect(() => {
@@ -29,8 +28,10 @@ const AppDetailsPage: NextPage<Props> = ({ appId }) => {
   );
 };
 
-AppDetailsPage.getInitialProps = async ({ query, pathname }) => {
-  const appId = (query.id as string) || pathname.split('/')[1];
+AppDetailsPage.getInitialProps = async (ctx) => {
+  const { query } = ctx;
+
+  const appId = query.id as string;
 
   return { appId };
 };

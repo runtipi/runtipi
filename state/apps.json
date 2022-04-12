@@ -1,6 +1,1 @@
-{
-  "installed": "nextcloud",
-  "environment": {
-    "anonaddy": {}
-  }
-}
+{"installed":" filerun nextcloud wg-easy freshrss radarr transmission plex jellyfin","environment":{"anonaddy":{}}}

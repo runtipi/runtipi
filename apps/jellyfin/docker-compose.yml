@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin
+    container_name: jellyfin
+    # user: 1000:1000
+    volumes:
+      - ${APP_DATA_DIR}/data/config:/config
+      - ${ROOT_FOLDER}/app-data/transmission/data/downloads/complete:/data/movies
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      # - JELLYFIN_PublishedServerUrl=192.168.0.5 #optional
+    restart: "unless-stopped"
+    ports:
+      - ${APP_JELLYFIN_PORT}:8096
+    networks:
+      - tipi_main_network
+    # Optional - alternative address used for autodiscovery
+    # environment:
+    #   - JELLYFIN_PublishedServerUrl=http://example.com

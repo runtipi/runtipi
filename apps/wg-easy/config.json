@@ -1,0 +1,25 @@
+{
+  "name": "Wireguard",
+  "id": "wg-easy",
+  "description": "Access your homeserver from anywhere even on your mobile device. Wireguard-easy is a simple tool to configure and manage Wireguard VPN servers. It is written in Go and uses the official Wireguard client. You have to open and redirect port 51820 to your homeserver in order to connect.",
+  "short_desc": "VPN server for your homeserver",
+  "author": "WeeJeWel",
+  "source": "https://github.com/WeeJeWel/wg-easy/",
+  "image": "https://avatars.githubusercontent.com/u/13991055?s=200&v=4",
+  "form_fields": {
+    "host": {
+      "type": "ip",
+      "label": "Your public IP address or domain name",
+      "required": true,
+      "env_variable": "WIREGUARD_HOST"
+    },
+    "password": {
+      "type": "password",
+      "label": "Password",
+      "max": 50,
+      "min": 3,
+      "required": true,
+      "env_variable": "WIREGUARD_PASSWORD"
+    }
+  }
+}
