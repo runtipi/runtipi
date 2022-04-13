@@ -27,9 +27,9 @@ services:
     volumes:
       - ${APP_DATA_DIR}/data/config:/config
       - ${APP_DATA_DIR}/data/movies:/movies #optional
-      - ${ROOT_FOLDER}/app-data/transmission/data/downloads:/downloads #optional
+      - ${ROOT_FOLDER}/app-data/${TORRENT_CLIENT}/data/downloads:/downloads #optional
     ports:
-      - ${APP_RADARR_PORT}:7878
+      - ${APP_PORT}:7878
     restart: unless-stopped
     networks:
       - tipi_main_network

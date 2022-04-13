@@ -17,7 +17,7 @@ services:
       - ${APP_DATA_DIR}/data/downloads:/downloads
       - ${APP_DATA_DIR}/data/watch:/watch
     ports:
-      - ${APP_TRANSMISSION_PORT}:9091
+      - ${APP_PORT}:9091
       - 51413:51413
       - 51413:51413/udp
     restart: unless-stopped

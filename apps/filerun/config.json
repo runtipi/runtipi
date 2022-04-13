@@ -1,5 +1,6 @@
 {
   "name": "FileRun",
+  "port": 8087,
   "id": "filerun",
   "description": "Reliable and Performant File Management Desktop Sync and File Sharing",
   "short_desc": "Access your homeserver files from your browser",

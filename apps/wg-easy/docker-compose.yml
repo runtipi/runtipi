@@ -8,7 +8,7 @@ services:
         - ${APP_DATA_DIR}:/etc/wireguard
       ports:
         - 51820:51820
-        - ${APP_WGEASY_PORT}:51821
+        - ${APP_PORT}:51821
       environment:
         WG_HOST: '${WIREGUARD_HOST}'
         PASSWORD: '${WIREGUARD_PASSWORD}'

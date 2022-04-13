@@ -18,6 +18,10 @@ interface FormField {
 
 export interface AppConfig {
   id: string;
+  port: number;
+  requirements?: {
+    ports?: number[];
+  };
   name: string;
   description: string;
   version: string;

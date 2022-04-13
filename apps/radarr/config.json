@@ -1,5 +1,6 @@
 {
   "name": "Radarr",
+  "port": 8088,
   "id": "radarr",
   "description": "",
   "short_desc": "",
@@ -7,5 +8,22 @@
   "source": "",
   "image": "https://avatars.githubusercontent.com/u/25025331?s=200&v=4",
   "dependencies": ["transmission"],
-  "form_fields": {}
+  "form_fields": {
+    "torrent-client": {
+      "type": "text",
+      "label": "Torrent Client",
+      "max": 50,
+      "min": 3,
+      "required": true,
+      "env_variable": "TORRENT_CLIENT"
+    },
+    "test": {
+      "type": "text",
+      "label": "testvar",
+      "max": 50,
+      "min": 3,
+      "required": true,
+      "env_variable": "TEST_VAR"
+    }
+  }
 }

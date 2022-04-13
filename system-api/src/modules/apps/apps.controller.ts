@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import si from 'systeminformation';
 import { appNames } from '../../config/apps';
 import { AppConfig } from '../../config/types';
-import { createFolder, fileExists, readJsonFile, writeFile, runScript, deleteFolder, readFile } from '../fs/fs.helpers';
+import { createFolder, fileExists, readJsonFile, writeFile, readFile } from '../fs/fs.helpers';
+import { checkAppExists, checkAppRequirements, checkEnvFile, getInitalFormValues, runAppScript } from './apps.helpers';
 
 type AppsState = { installed: string };
 
@@ -11,15 +12,9 @@ const getStateFile = (): AppsState => {
 };
 
 const generateEnvFile = (appName: string, form: Record<string, string>) => {
-  const appExists = fileExists(`/app-data/${appName}`);
-  const baseEnvFile = readFile('/.env');
-
-  if (!appExists) {
-    throw new Error(`App ${appName} not installed`);
-  }
-
   const configFile: AppConfig = readJsonFile(`/apps/${appName}/config.json`);
-  let envFile = `${baseEnvFile}\n`;
+  const baseEnvFile = readFile('/.env').toString();
+  let envFile = `${baseEnvFile}\nAPP_PORT=${configFile.port}\n`;
 
   Object.keys(configFile.form_fields).forEach((key) => {
     const value = form[key];
@@ -35,7 +30,7 @@ const generateEnvFile = (appName: string, form: Record<string, string>) => {
   writeFile(`/app-data/${appName}/app.env`, envFile);
 };
 
-const installApp = (req: Request, res: Response, next: NextFunction) => {
+const installApp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { form } = req.body;
@@ -56,10 +51,14 @@ const installApp = (req: Request, res: Response, next: NextFunction) => {
       throw new Error(`App ${id} not available`);
     }
 
+    const appIsValid = await checkAppRequirements(id);
+
+    if (!appIsValid) {
+      throw new Error(`App ${id} requirements not met`);
+    }
+
     // Create app folder
     createFolder(`/app-data/${id}`);
-    // Copy default app files from app-data folder
-    // copyFile(`/apps/${id}/data/`, `/app-data/${id}/data`);
 
     // Create env file
     generateEnvFile(id, form);
@@ -68,19 +67,15 @@ const installApp = (req: Request, res: Response, next: NextFunction) => {
     writeFile('/state/apps.json', JSON.stringify(state));
 
     // Run script
-    runScript('/scripts/app.sh', ['install', id], (err: any) => {
-      if (err) {
-        throw new Error(err);
-      }
+    await runAppScript(['install', id]);
 
-      res.status(200).json({ message: 'App installed successfully' });
-    });
+    res.status(200).json({ message: 'App installed successfully' });
   } catch (e) {
     next(e);
   }
 };
 
-const uninstallApp = (req: Request, res: Response, next: NextFunction) => {
+const uninstallApp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: appName } = req.params;
 
@@ -88,11 +83,7 @@ const uninstallApp = (req: Request, res: Response, next: NextFunction) => {
       throw new Error('App name is required');
     }
 
-    const appExists = fileExists(`/app-data/${appName}`);
-
-    if (!appExists) {
-      throw new Error(`App ${appName} not installed`);
-    }
+    checkAppExists(appName);
 
     // Remove app from apps.json
     const state = getStateFile();
@@ -101,19 +92,15 @@ const uninstallApp = (req: Request, res: Response, next: NextFunction) => {
     writeFile('/state/apps.json', JSON.stringify(state));
 
     // Run script
-    runScript('/scripts/app.sh', ['uninstall', appName], (err: any) => {
-      if (err) {
-        throw new Error(err);
-      }
+    await runAppScript(['uninstall', appName]);
 
-      res.status(200).json({ message: 'App uninstalled successfully' });
-    });
+    res.status(200).json({ message: 'App uninstalled successfully' });
   } catch (e) {
     next(e);
   }
 };
 
-const stopApp = (req: Request, res: Response) => {
+const stopApp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: appName } = req.params;
 
@@ -121,61 +108,35 @@ const stopApp = (req: Request, res: Response) => {
       throw new Error('App name is required');
     }
 
-    const appExists = fileExists(`/app-data/${appName}`);
-
-    if (!appExists) {
-      throw new Error(`App ${appName} not installed`);
-    }
-
+    checkAppExists(appName);
     // Run script
-    runScript('/scripts/app.sh', ['stop', appName], (err: string) => {
-      if (err) {
-        throw new Error(err);
-      }
+    await runAppScript(['stop', appName]);
 
-      res.status(200).json({ message: 'App stopped successfully' });
-    });
+    res.status(200).json({ message: 'App stopped successfully' });
   } catch (e) {
-    res.status(500).end(e);
+    next(e);
   }
 };
 
-const updateAppConfig = (req: Request, res: Response) => {
+const updateAppConfig = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { appName, form } = req.body;
+    const { id: appName } = req.params;
+    const { form } = req.body;
 
     if (!appName) {
       throw new Error('App name is required');
     }
 
-    const appExists = fileExists(`/app-data/${appName}`);
-
-    if (!appExists) {
-      throw new Error(`App ${appName} not installed`);
-    }
-
+    checkAppExists(appName);
     generateEnvFile(appName, form);
 
-    // Run script
-    runScript('/scripts/app.sh', ['stop', appName], (err: string) => {
-      if (err) {
-        throw new Error(err);
-      }
-
-      runScript('/scripts/app.sh', ['start', appName], (error: string) => {
-        if (error) {
-          throw new Error(error);
-        }
-
-        res.status(200).json({ message: 'App updated successfully' });
-      });
-    });
+    res.status(200).json({ message: 'App updated successfully' });
   } catch (e) {
-    res.status(500).end(e);
+    next(e);
   }
 };
 
-const getAppInfo = async (req: Request, res: Response<AppConfig>) => {
+const getAppInfo = async (req: Request, res: Response<AppConfig>, next: NextFunction) => {
   try {
     const { id } = req.params;
 
@@ -193,11 +154,11 @@ const getAppInfo = async (req: Request, res: Response<AppConfig>) => {
 
     res.status(200).json(configFile);
   } catch (e) {
-    res.status(500).end(e);
+    next(e);
   }
 };
 
-const listApps = async (req: Request, res: Response) => {
+const listApps = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const apps = appNames
       .map((app) => {
@@ -221,11 +182,11 @@ const listApps = async (req: Request, res: Response) => {
 
     res.status(200).json(apps);
   } catch (e) {
-    res.status(500).end(e);
+    next(e);
   }
 };
 
-const startApp = (req: Request, res: Response) => {
+const startApp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: appName } = req.params;
 
@@ -233,25 +194,31 @@ const startApp = (req: Request, res: Response) => {
       throw new Error('App name is required');
     }
 
-    const appExists = fileExists(`/app-data/${appName}`);
-
-    if (!appExists) {
-      throw new Error(`App ${appName} not installed`);
-    }
+    checkAppExists(appName);
+    checkEnvFile(appName);
 
     // Run script
-    runScript('/scripts/app.sh', ['start', appName], (err: string) => {
-      if (err) {
-        throw new Error(err);
-      }
+    await runAppScript(['start', appName]);
 
-      res.status(200).json({ message: 'App started successfully' });
-    });
+    res.status(200).json({ message: 'App started successfully' });
   } catch (e) {
-    res.status(500).end(e);
+    next(e);
   }
 };
-// console.log('');
+
+const initalFormValues = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      throw new Error('App name is required');
+    }
+
+    res.status(200).json(getInitalFormValues(id));
+  } catch (e) {
+    next(e);
+  }
+};
 
 const AppController = {
   uninstallApp,
@@ -261,6 +228,7 @@ const AppController = {
   getAppInfo,
   listApps,
   startApp,
+  initalFormValues,
 };
 
 export default AppController;

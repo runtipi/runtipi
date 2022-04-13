@@ -12,6 +12,7 @@ type AppsStore = {
   getApp: (id: string) => AppConfig | undefined;
   fetchApp: (id: string) => void;
   install: (id: string, form: Record<string, string>) => Promise<void>;
+  update: (id: string, form: Record<string, string>) => Promise<void>;
   uninstall: (id: string) => Promise<void>;
   stop: (id: string) => Promise<void>;
   start: (id: string) => Promise<void>;
@@ -79,54 +80,47 @@ export const useAppsStore = create<AppsStore>((set, get) => ({
   install: async (appId: string, form?: Record<string, string>) => {
     setAppStatus(appId, AppStatus.INSTALLING, set);
 
-    try {
-      await api.fetch({
-        endpoint: `/apps/install/${appId}`,
-        method: 'POST',
-        data: { form },
-      });
-    } catch (e) {
-      console.error(e);
-    }
+    await api.fetch({
+      endpoint: `/apps/install/${appId}`,
+      method: 'POST',
+      data: { form },
+    });
+
+    await get().fetchApp(appId);
+  },
+  update: async (appId: string, form?: Record<string, string>) => {
+    await api.fetch({
+      endpoint: `/apps/update/${appId}`,
+      method: 'POST',
+      data: { form },
+    });
 
     await get().fetchApp(appId);
   },
   uninstall: async (appId: string) => {
     setAppStatus(appId, AppStatus.UNINSTALLING, set);
 
-    try {
-      await api.fetch({
-        endpoint: `/apps/uninstall/${appId}`,
-      });
-    } catch (e) {
-      console.error(e);
-    }
+    await api.fetch({
+      endpoint: `/apps/uninstall/${appId}`,
+    });
 
     await get().fetchApp(appId);
   },
   stop: async (appId: string) => {
     setAppStatus(appId, AppStatus.STOPPING, set);
 
-    try {
-      await api.fetch({
-        endpoint: `/apps/stop/${appId}`,
-      });
-    } catch (e) {
-      console.error(e);
-    }
+    await api.fetch({
+      endpoint: `/apps/stop/${appId}`,
+    });
 
     await get().fetchApp(appId);
   },
   start: async (appId: string) => {
     setAppStatus(appId, AppStatus.STARTING, set);
 
-    try {
-      await api.fetch({
-        endpoint: `/apps/start/${appId}`,
-      });
-    } catch (e) {
-      console.error(e);
-    }
+    await api.fetch({
+      endpoint: `/apps/start/${appId}`,
+    });
 
     await get().fetchApp(appId);
   },

@@ -106,8 +106,10 @@ compose() {
 if [[ "$command" = "install" ]]; then
   compose "${app}" pull
 
-  # Copy default data dir to app data dir
-  cp -r "${ROOT_FOLDER}/apps/${app}/data" "${app_data_dir}/data"
+  # Copy default data dir to app data dir if it exists
+  if [[ -d "${ROOT_FOLDER}/apps/${app}/data" ]]; then
+    cp -r "${ROOT_FOLDER}/apps/${app}/data" "${app_data_dir}/data"
+  fi
 
   compose "${app}" up -d
   exit

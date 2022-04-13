@@ -1,5 +1,6 @@
 {
   "name": "Jellyfin",
+  "port": 8091,
   "id": "jellyfin",
   "description": "",
   "short_desc": "",

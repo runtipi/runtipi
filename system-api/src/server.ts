@@ -1,10 +1,11 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import compression from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
 import { isProd } from './constants/constants';
 import appsRoutes from './modules/apps/apps.routes';
 import systemRoutes from './modules/system/system.routes';
+import networkRoutes from './modules/network/network.routes';
 
 const app = express();
 const port = 3001;
@@ -20,11 +21,11 @@ app.use(cors());
 
 app.use('/system', systemRoutes);
 app.use('/apps', appsRoutes);
+app.use('/network', networkRoutes);
 
-app.use((err, req, res, next) => {
-  // logic
-  console.error('Middleware', err);
-  res.status(500).send('Something broke!');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+  res.status(200).json({ error: err.message });
 });
 
 app.listen(port, () => {

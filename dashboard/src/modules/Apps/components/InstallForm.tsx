@@ -9,9 +9,10 @@ import { objectKeys } from '../../../utils/typescript';
 interface IProps {
   formFields: AppConfig['form_fields'];
   onSubmit: (values: Record<string, unknown>) => void;
+  initalValues?: Record<string, string>;
 }
 
-const InstallForm: React.FC<IProps> = ({ formFields, onSubmit }) => {
+const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues }) => {
   const fields = objectKeys(formFields).map((key) => ({ ...formFields[key], id: key }));
 
   const renderField = (field: typeof fields[0]) => {
@@ -26,6 +27,7 @@ const InstallForm: React.FC<IProps> = ({ formFields, onSubmit }) => {
 
   return (
     <Form<Record<string, string>>
+      initialValues={initalValues}
       onSubmit={onSubmit}
       validateOnBlur={true}
       validate={(values) => validateAppConfig(values, fields)}
@@ -33,7 +35,7 @@ const InstallForm: React.FC<IProps> = ({ formFields, onSubmit }) => {
         <form className="flex flex-col" onSubmit={handleSubmit}>
           {fields.map(renderField)}
           <Button isLoading={validating || submitting} className="self-end mb-2" colorScheme="green" type="submit">
-            Install
+            {initalValues ? 'Update' : 'Install'}
           </Button>
         </form>
       )}

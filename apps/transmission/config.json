@@ -1,5 +1,9 @@
 {
   "name": "Transmission",
+  "port": 8089,
+  "requirements": {
+    "ports": [51413]
+  },
   "id": "transmission",
   "description": "",
   "short_desc": "",

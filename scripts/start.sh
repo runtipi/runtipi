@@ -35,17 +35,17 @@ docker-compose up --detach --remove-orphans --build || {
 }
 
 # Get field from json file
-function get_json_field() {
-    local json_file="$1"
-    local field="$2"
+# function get_json_field() {
+#     local json_file="$1"
+#     local field="$2"
 
-    echo $(jq -r ".${field}" "${json_file}")
-}
+#     echo $(jq -r ".${field}" "${json_file}")
+# }
 
-str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-apps_to_start=($str)
+# str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
+# apps_to_start=($str)
 
-for app in "${apps_to_start[@]}"; do
-    "${ROOT_FOLDER}/scripts/app.sh" start $app
-done
+# for app in "${apps_to_start[@]}"; do
+#     "${ROOT_FOLDER}/scripts/app.sh" start $app
+# done
 
