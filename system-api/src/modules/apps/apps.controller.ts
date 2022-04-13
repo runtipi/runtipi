@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import si from 'systeminformation';
 import { appNames } from '../../config/apps';
 import { AppConfig } from '../../config/types';
@@ -35,7 +35,7 @@ const generateEnvFile = (appName: string, form: Record<string, string>) => {
   writeFile(`/app-data/${appName}/app.env`, envFile);
 };
 
-const installApp = (req: Request, res: Response) => {
+const installApp = (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { form } = req.body;
@@ -76,11 +76,11 @@ const installApp = (req: Request, res: Response) => {
       res.status(200).json({ message: 'App installed successfully' });
     });
   } catch (e) {
-    res.status(500).send(e);
+    next(e);
   }
 };
 
-const uninstallApp = (req: Request, res: Response) => {
+const uninstallApp = (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: appName } = req.params;
 
@@ -106,12 +106,10 @@ const uninstallApp = (req: Request, res: Response) => {
         throw new Error(err);
       }
 
-      deleteFolder(`/app-data/${appName}`);
-
       res.status(200).json({ message: 'App uninstalled successfully' });
     });
   } catch (e) {
-    res.status(500).send(e);
+    next(e);
   }
 };
 

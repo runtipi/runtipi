@@ -42,7 +42,6 @@ services:
     container_name: dashboard
     volumes:
       - ${PWD}/state:/app/state
-      - ${PWD}/config:/app/config:ro
     ports:
       - 3000:3000
     networks:

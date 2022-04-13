@@ -21,6 +21,12 @@ app.use(cors());
 app.use('/system', systemRoutes);
 app.use('/apps', appsRoutes);
 
+app.use((err, req, res, next) => {
+  // logic
+  console.error('Middleware', err);
+  res.status(500).send('Something broke!');
+});
+
 app.listen(port, () => {
   console.log(`System API listening on port ${port}`);
 });

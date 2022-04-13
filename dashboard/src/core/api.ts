@@ -1,6 +1,6 @@
 import axios, { Method } from 'axios';
 
-const BASE_URL = 'http://192.168.2.146:3001';
+const BASE_URL = 'http://localhost:3001';
 
 interface IFetchParams {
   endpoint: string;
