@@ -118,7 +118,7 @@ fi
 # Removes images and destroys all data for an app
 if [[ "$command" = "uninstall" ]]; then
   echo "Removing images for app ${app}..."
-  compose "${app}" down --rmi all --remove-orphans
+  compose "${app}" down --remove-orphans
 
   echo "Deleting app data for app ${app}..."
   if [[ -d "${app_data_dir}" ]]; then

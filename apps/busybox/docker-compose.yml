@@ -1,0 +1,6 @@
+version: "3.7"
+services:
+  test:
+    image: meienberger/ubuntu-test
+    networks:
+      - tipi_main_network

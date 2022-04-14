@@ -6,7 +6,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
+      - TZ=${TZ}
       - AUTO_UPDATE=true
     volumes:
       - ${APP_DATA_DIR}/data/config:/config
@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
     networks:
       - tipi_main_network
-      
+
   radarr:
     image: lscr.io/linuxserver/radarr
     container_name: radarr

@@ -12,7 +12,7 @@
   "image": "https://avatars.githubusercontent.com/u/13991055?s=200&v=4",
   "form_fields": {
     "host": {
-      "type": "ip",
+      "type": "fqdnip",
       "label": "Your public IP address or domain name",
       "required": true,
       "env_variable": "WIREGUARD_HOST"

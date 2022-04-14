@@ -19,6 +19,8 @@ export const validateAppConfig = (values: Record<string, string>, fields: (AppCo
       errors[field.id] = 'Field must be a valid domain';
     } else if (values[field.id] && field.type === FieldTypes.ip && !validator.isIP(values[field.id])) {
       errors[field.id] = 'Field must be a valid IP address';
+    } else if (values[field.id] && field.type === FieldTypes.fqdnip && !validator.isFQDN(values[field.id] || '') && !validator.isIP(values[field.id])) {
+      errors[field.id] = 'Field must be a valid domain or IP address';
     }
   });
 

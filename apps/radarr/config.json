@@ -7,7 +7,6 @@
   "author": "",
   "source": "",
   "image": "https://avatars.githubusercontent.com/u/25025331?s=200&v=4",
-  "dependencies": ["transmission"],
   "form_fields": {
     "torrent-client": {
       "type": "text",
@@ -16,14 +15,6 @@
       "min": 3,
       "required": true,
       "env_variable": "TORRENT_CLIENT"
-    },
-    "test": {
-      "type": "text",
-      "label": "testvar",
-      "max": 50,
-      "min": 3,
-      "required": true,
-      "env_variable": "TEST_VAR"
     }
   }
 }

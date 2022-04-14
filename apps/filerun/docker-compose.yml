@@ -14,7 +14,7 @@ services:
 
   filerun:
     container_name: filerun
-    image: filerun/filerun
+    image: filerun/filerun:arm64v8
     environment:
       FR_DB_HOST: filerun-db
       FR_DB_PORT: 3306
@@ -36,4 +36,3 @@ services:
       - ${ROOT_FOLDER}/app-data:/user-files
     networks:
       - tipi_main_network
-    
