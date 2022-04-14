@@ -32,29 +32,32 @@ services:
     container_name: anonaddy
     ports:
       - 25:25
-      - ${APP_ANONADDY_PORT}:8000
+      - ${APP_PORT}:8000
     depends_on:
       - db
       - redis
     volumes:
       - "${APP_DATA_DIR}/data:/data"
     environment:
+      TZ: ${TZ}
       DB_HOST: db-anonaddy
       DB_PASSWORD: anonaddy
       REDIS_HOST: redis-anonaddy
-      APP_KEY: ${APP_ANONADDY_KEY}
-      ANONADDY_DOMAIN: ${APP_ANONADDY_DOMAIN}
-      ANONADDY_SECRET: ${APP_ANONADDY_SECRET}
+      APP_KEY: ${ANONADDY_KEY}
+      ANONADDY_DOMAIN: ${ANONADDY_DOMAIN}
+      ANONADDY_SECRET: ${ANONADDY_SECRET}
+      ANONADDY_ADMIN_USERNAME: ${ANONADDY_USERNAME}
+      POSTFIX_DEBUG: true
     restart: unless-stopped
     networks:
       - tipi_main_network
-    labels:
-        traefik.enable: true
-        traefik.http.routers.anonaddy.rule: Host(`anonaddy.tipi.home`)
-        traefik.http.routers.anonaddy.tls: true
-        traefik.http.routers.anonaddy.entrypoints: websecure
-        traefik.http.routers.anonaddy.service: anonaddy
-        traefik.http.services.anonaddy.loadbalancer.server.port: 8000
+    # labels:
+    #     traefik.enable: true
+    #     traefik.http.routers.anonaddy.rule: Host(`anonaddy.tipi.home`)
+    #     traefik.http.routers.anonaddy.tls: true
+    #     traefik.http.routers.anonaddy.entrypoints: websecure
+    #     traefik.http.routers.anonaddy.service: anonaddy
+    #     traefik.http.services.anonaddy.loadbalancer.server.port: 8000
     # labels:
     #     traefik.enable: true
     #     traefik.http.routers.anonaddy.rule: PathPrefix(`/anonaddy`)

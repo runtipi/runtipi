@@ -1,7 +1,7 @@
 import portUsed from 'tcp-port-used';
 import p from 'p-iteration';
 import { AppConfig } from '../../config/types';
-import { fileExists, readFile, readJsonFile, runScript } from '../fs/fs.helpers';
+import { fileExists, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import { internalIpV4 } from 'internal-ip';
 
 export const checkAppRequirements = async (appName: string) => {
@@ -82,4 +82,20 @@ export const runAppScript = (params: string[]): Promise<void> => {
       resolve();
     });
   });
+};
+
+export const ensureAppState = (appName: string, installed: boolean) => {
+  const state = readJsonFile('/state/apps.json');
+
+  if (installed) {
+    if (state.installed.indexOf(appName) === -1) {
+      state.installed += ` ${appName}`;
+      writeFile('/state/apps.json', JSON.stringify(state));
+    }
+  } else {
+    if (state.installed.indexOf(appName) !== -1) {
+      state.installed = state.installed.replace(` ${appName}`, '');
+      writeFile('/state/apps.json', JSON.stringify(state));
+    }
+  }
 };

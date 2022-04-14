@@ -1,10 +1,45 @@
 {
   "name": "Anonaddy",
+  "port": 8084,
   "id": "anonaddy",
   "description": "",
   "short_desc": "Anonymous email forwarding",
   "author": "",
   "source": "https://github.com/anonaddy/anonaddy",
   "image": "https://avatars.githubusercontent.com/u/51450862?s=200&v=4",
-  "form_fields": {}
+  "requirements": {
+    "ports": [25]
+  },
+  "form_fields": {
+    "username": {
+      "type": "text",
+      "label": "Username",
+      "required": true,
+      "env_variable": "ANONADDY_USERNAME"
+    },
+    "key": {
+      "type": "text",
+      "label": "App key",
+      "hint": "Application key for encrypter service. Generate one with : echo \"base64:$(openssl rand -base64 32)\"",
+      "required": true,
+      "env_variable": "ANONADDY_KEY"
+    },
+    "domain": {
+      "type": "fqdn",
+      "label": "Your email domain (eg. example.com)",
+      "max": 50,
+      "min": 3,
+      "required": true,
+      "env_variable": "ANONADDY_DOMAIN"
+    },
+    "secret": {
+      "type": "text",
+      "label": "App secret",
+      "hint": "Long random string used when hashing data for the anonymous replies",
+      "max": 50,
+      "min": 3,
+      "required": true,
+      "env_variable": "ANONADDY_SECRET"
+    }
+  }
 }

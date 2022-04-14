@@ -14,6 +14,8 @@ interface IProps {
 }
 
 const AppActions: React.FC<IProps> = ({ app, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate }) => {
+  const hasSettings = Object.keys(app.form_fields).length > 0;
+
   if (app?.installed && app.status === AppStatus.STOPPED) {
     return (
       <div className="flex flex-wrap justify-center">
@@ -25,10 +27,12 @@ const AppActions: React.FC<IProps> = ({ app, onInstall, onUninstall, onStart, on
           Remove
           <FiTrash2 className="ml-1" />
         </Button>
-        <Button onClick={onUpdate} width={160} className="mt-3 mr-2">
-          Settings
-          <FiSettings className="ml-1" />
-        </Button>
+        {hasSettings && (
+          <Button onClick={onUpdate} width={160} className="mt-3 mr-2">
+            Settings
+            <FiSettings className="ml-1" />
+          </Button>
+        )}
       </div>
     );
   } else if (app?.installed && app.status === AppStatus.RUNNING) {

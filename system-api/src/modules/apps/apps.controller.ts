@@ -3,7 +3,7 @@ import si from 'systeminformation';
 import { appNames } from '../../config/apps';
 import { AppConfig } from '../../config/types';
 import { createFolder, fileExists, readJsonFile, writeFile, readFile } from '../fs/fs.helpers';
-import { checkAppExists, checkAppRequirements, checkEnvFile, getInitalFormValues, runAppScript } from './apps.helpers';
+import { checkAppExists, checkAppRequirements, checkEnvFile, ensureAppState, getInitalFormValues, runAppScript } from './apps.helpers';
 
 type AppsState = { installed: string };
 
@@ -30,51 +30,6 @@ const generateEnvFile = (appName: string, form: Record<string, string>) => {
   writeFile(`/app-data/${appName}/app.env`, envFile);
 };
 
-const installApp = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-    const { form } = req.body;
-
-    if (!id) {
-      throw new Error('App name is required');
-    }
-
-    const appExists = fileExists(`/app-data/${id}`);
-
-    if (appExists) {
-      throw new Error(`App ${id} already installed`);
-    }
-
-    const appIsAvailable = appNames.includes(id);
-
-    if (!appIsAvailable) {
-      throw new Error(`App ${id} not available`);
-    }
-
-    const appIsValid = await checkAppRequirements(id);
-
-    if (!appIsValid) {
-      throw new Error(`App ${id} requirements not met`);
-    }
-
-    // Create app folder
-    createFolder(`/app-data/${id}`);
-
-    // Create env file
-    generateEnvFile(id, form);
-    const state = getStateFile();
-    state.installed += ` ${id}`;
-    writeFile('/state/apps.json', JSON.stringify(state));
-
-    // Run script
-    await runAppScript(['install', id]);
-
-    res.status(200).json({ message: 'App installed successfully' });
-  } catch (e) {
-    next(e);
-  }
-};
-
 const uninstallApp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id: appName } = req.params;
@@ -84,12 +39,7 @@ const uninstallApp = async (req: Request, res: Response, next: NextFunction) => 
     }
 
     checkAppExists(appName);
-
-    // Remove app from apps.json
-    const state = getStateFile();
-    state.installed = state.installed.replace(` ${appName}`, '');
-
-    writeFile('/state/apps.json', JSON.stringify(state));
+    ensureAppState(appName, false);
 
     // Run script
     await runAppScript(['uninstall', appName]);
@@ -200,7 +150,52 @@ const startApp = async (req: Request, res: Response, next: NextFunction) => {
     // Run script
     await runAppScript(['start', appName]);
 
+    ensureAppState(appName, true);
+
     res.status(200).json({ message: 'App started successfully' });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const installApp = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const { form } = req.body;
+
+    if (!id) {
+      throw new Error('App name is required');
+    }
+
+    const appIsAvailable = appNames.includes(id);
+
+    if (!appIsAvailable) {
+      throw new Error(`App ${id} not available`);
+    }
+
+    const appExists = fileExists(`/app-data/${id}`);
+
+    if (appExists) {
+      await startApp(req, res, next);
+    } else {
+      const appIsValid = await checkAppRequirements(id);
+
+      if (!appIsValid) {
+        throw new Error(`App ${id} requirements not met`);
+      }
+
+      // Create app folder
+      createFolder(`/app-data/${id}`);
+
+      // Create env file
+      generateEnvFile(id, form);
+      ensureAppState(id, true);
+
+      // Run script
+      await runAppScript(['install', id]);
+
+      res.status(200).json({ message: 'App installed successfully' });
+    }
   } catch (e) {
     next(e);
   }
