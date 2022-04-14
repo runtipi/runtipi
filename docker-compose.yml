@@ -56,3 +56,8 @@ services:
 
 networks:
     tipi_main_network:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.21.21.0/24

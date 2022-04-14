@@ -24,6 +24,20 @@
 - name: Make docker-compose executable
   shell: chmod +x /usr/local/bin/docker-compose
 
+- name: Disable iptables for docker by editing file /etc/default/docker
+  lineinfile:
+    path: /etc/default/docker
+    regexp: "^DOCKER_OPTS="
+    line: "DOCKER_OPTS=\"--iptables=false\""
+    state: present
+
+- name: Create file /etc/docker/daemon.json with content hello world written inside
+  lineinfile:
+    path: /etc/docker/daemon.json
+    regexp: "^"
+    line: "{ \"iptables\": false }"
+    state: present
+
 - name: Create group docker
   group:
     name: docker
