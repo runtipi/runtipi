@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e  # Exit immediately if a command exits with a non-zero status.
 
 # use greadlink instead of readlink on osx
 if [[ "$(uname)" == "Darwin" ]]; then

@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -e  # Exit immediately if a command exits with a non-zero status.
+
 ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 
 # Constants
@@ -33,10 +36,9 @@ ENV_FILE="./templates/.env"
 # Install ansible if not installed
 if ! command -v ansible-playbook > /dev/null; then
   echo "Installing Ansible..."
-  sudo apt-get install -y software-properties-common
-  sudo apt-add-repository -y ppa:ansible/ansible
   sudo apt-get update
-  sudo apt-get install -y ansible
+  sudo apt-get install python3 python3-pip -y
+  sudo pip3 install ansible
 fi
 
 ansible-playbook ansible/setup.yml -i ansible/hosts -K
