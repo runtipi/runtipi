@@ -1,6 +1,6 @@
 - name: Install "pm2" package globally.
   community.general.npm:
-    name: yarn
+    name: pm2
     global: yes
 
 - name: Run pm2 first time
