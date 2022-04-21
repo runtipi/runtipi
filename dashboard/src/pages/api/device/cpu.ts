@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-import si from "systeminformation";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import si from 'systeminformation';
 
 type Data = Awaited<ReturnType<typeof si.currentLoad>>;
 

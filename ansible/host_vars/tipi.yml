@@ -5,9 +5,8 @@ packages:
   - iptables
   - coreutils
   - git
-  - base-devel
   - docker
-  - avahi
+  - avahi-daemon
   - nodejs
   - npm
 

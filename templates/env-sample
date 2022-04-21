@@ -1,0 +1,9 @@
+# Only edit this file if you know what you are doing!
+# It will be overwritten on update.
+
+TZ=<tz>
+PUID=<puid>
+PGID=<pgid>
+INTERNAL_IP=<internal_ip>
+
+

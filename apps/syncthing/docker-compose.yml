@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  server:
+    image: syncthing/syncthing:1.19
+    stop_grace_period: 1m
+    hostname: tipi
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ${APP_DATA_DIR}/data:/var/syncthing
+    ports:
+      - ${APP_PORT}:8384
+      - 22000:22000/tcp # TCP file transfers
+      - 22000:22000/udp # QUIC file transfers
+      - 21027:21027/udp # Receive local discovery broadcasts
+    restart: unless-stopped
+    networks:
+      - tipi_main_network

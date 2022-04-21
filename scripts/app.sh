@@ -87,12 +87,17 @@ compose() {
 
   # Vars to use in compose file
   export APP_DATA_DIR="${app_data_dir}"
-  export APP_PASSWORD="password"
   export APP_DIR="${app_dir}"
 
+  # TODO: Fix for dynamic detection
+  export DEVICE_IP="192.168.2.132"
+  export ROOT_FOLDER="${ROOT_FOLDER}"
+
+  # Docker-compose does not support multiple env files
+  # --env-file "${env_file}" \
+
   docker-compose \
-    --env-file "${env_file}" \
-    --env-file "${app_dir}/.env" \
+    --env-file "${ROOT_FOLDER}/app-data/${app}/app.env" \
     --project-name "${app}" \
     --file "${app_compose_file}" \
     --file "${common_compose_file}" \
@@ -103,23 +108,24 @@ compose() {
 if [[ "$command" = "install" ]]; then
   compose "${app}" pull
 
+  # Copy default data dir to app data dir if it exists
+  if [[ -d "${ROOT_FOLDER}/apps/${app}/data" ]]; then
+    cp -r "${ROOT_FOLDER}/apps/${app}/data" "${app_data_dir}/data"
+  fi
+
   compose "${app}" up -d
   exit
 fi
 
 # Removes images and destroys all data for an app
 if [[ "$command" = "uninstall" ]]; then
-
   echo "Removing images for app ${app}..."
-  compose "${app}" down --rmi all --remove-orphans
+  compose "${app}" down --remove-orphans
 
   echo "Deleting app data for app ${app}..."
   if [[ -d "${app_data_dir}" ]]; then
     rm -rf "${app_data_dir}"
   fi
-
-  echo "Removing app ${app} from DB..."
-  update_installed_apps remove "${app}"
 
   echo "Successfully uninstalled app ${app}"
   exit

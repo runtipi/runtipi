@@ -1,7 +1,32 @@
 - name: Install docker
   package:
-    name: docker
+    name:
+      - docker
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
     state: latest
+
+- name: Add docker gpg key
+  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+- name: Check lsb_release -cs
+  shell: lsb_release -cs
+  register: lsb_release
+
+- name: Add deb for bookworm release
+  shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  when: lsb_release.stdout == "bookworm"
+
+- name: Add deb for non-bookworm
+  shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  when: lsb_release.stdout != "bookworm"
+
+- name: Update packages
+  apt:
+    update_cache: yes
+    upgrade: yes
 
 - name: Install essential packages
   package:
@@ -23,6 +48,20 @@
 
 - name: Make docker-compose executable
   shell: chmod +x /usr/local/bin/docker-compose
+
+# - name: Disable iptables for docker by editing file /etc/default/docker
+#   lineinfile:
+#     path: /etc/default/docker
+#     regexp: "^DOCKER_OPTS="
+#     line: "DOCKER_OPTS=\"--iptables=false\""
+#     state: present
+
+# - name: Create file /etc/docker/daemon.json with content hello world written inside
+#   lineinfile:
+#     path: /etc/docker/daemon.json
+#     regexp: "^"
+#     line: "{ \"iptables\": false }"
+#     state: present
 
 - name: Create group docker
   group:

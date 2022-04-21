@@ -1,0 +1,23 @@
+{
+    "name": "PiHole",
+    "port": 8081,
+    "requirements": {
+        "ports": [53]
+    },
+    "id": "pihole",
+    "description": "",
+    "short_desc": "",
+    "author": "",
+    "source": "",
+    "image": "https://avatars.githubusercontent.com/u/16827203?s=200&v=4",
+    "form_fields": {
+        "password": {
+            "type": "password",
+            "label": "Password",
+            "max": 50,
+            "min": 3,
+            "required": true,
+            "env_variable": "APP_PASSWORD"
+        }
+    }
+}
