@@ -10,13 +10,9 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
-      # - JELLYFIN_PublishedServerUrl=192.168.0.5 #optional
+      - TZ=${TZ}
     restart: "unless-stopped"
     ports:
       - ${APP_PORT}:8096
     networks:
       - tipi_main_network
-    # Optional - alternative address used for autodiscovery
-    # environment:
-    #   - JELLYFIN_PublishedServerUrl=http://example.com

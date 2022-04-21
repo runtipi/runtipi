@@ -24,6 +24,11 @@ if [[ ! -f "${STATE_FOLDER}/configured" ]]; then
   "${ROOT_FOLDER}/scripts/configure.sh"
 fi
 
+# Copy the app state if it isn't here
+if [[ ! -d "${STATE_FOLDER}/apps.json" ]]; then
+  cp "${STATE_FOLDER}/apps.example.json" "${STATE_FOLDER}/apps.json"
+fi
+
 ansible-playbook ansible/start.yml -i ansible/hosts -K
 
 export DOCKER_CLIENT_TIMEOUT=240

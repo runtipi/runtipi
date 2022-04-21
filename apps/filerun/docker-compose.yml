@@ -21,9 +21,9 @@ services:
       FR_DB_NAME: tipi
       FR_DB_USER: tipi
       FR_DB_PASS: tipi
-      APACHE_RUN_USER: www-data
+      APACHE_RUN_USER: ${PUID}
+      APACHE_RUN_GROUP: ${PGID}
       APACHE_RUN_USER_ID: 33
-      APACHE_RUN_GROUP: www-data
       APACHE_RUN_GROUP_ID: 33
     depends_on:
       - db

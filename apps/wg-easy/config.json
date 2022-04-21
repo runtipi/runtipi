@@ -24,6 +24,12 @@
       "min": 3,
       "required": true,
       "env_variable": "WIREGUARD_PASSWORD"
+    },
+    "dns": {
+      "type": "ip",
+      "label": "Default DNS server",
+      "required": false,
+      "env_variable": "WIREGUARD_DNS"
     }
   }
 }

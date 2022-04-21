@@ -1,6 +1,7 @@
 version: "3.7"
 services:
   transmission:
+    user: 1000:1000
     image: lscr.io/linuxserver/transmission
     container_name: transmission
     environment:
