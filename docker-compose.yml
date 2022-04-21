@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 services:
   # gluetun:
@@ -18,46 +18,48 @@ services:
   #     - 8080:8080
   #   networks:
   #     - tipi_main_network
-  
-  reverse-proxy:
-    container_name: reverse-proxy
-    image: traefik:v2.6
-    restart: always
-    ports:
-      - 80:80
-      - 443:443
-      - 8080:8080
-    security_opt:
-      - no-new-privileges:true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}/traefik:/root/.config
-    networks:
-      - tipi_main_network
+
+  # reverse-proxy:
+  #   container_name: reverse-proxy
+  #   image: traefik:v2.6
+  #   restart: always
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #     - 8080:8080
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ${PWD}/traefik:/root/.config
+  #   networks:
+  #     - tipi_main_network
 
   dashboard:
     build:
       context: ./dashboard
       dockerfile: Dockerfile
+      args:
+        INTERNAL_IP_ARG: ${INTERNAL_IP}
     container_name: dashboard
     volumes:
       - ${PWD}/state:/app/state
     ports:
-      - 3000:3000
+      - 3300:3000
     networks:
       - tipi_main_network
-    labels:
-        traefik.enable: true
-        traefik.http.routers.dashboard.rule: Host(`tipi.local`)
-        # traefik.http.routers.dashboard.tls: true
-        traefik.http.routers.dashboard.entrypoints: webinsecure
-        traefik.http.routers.dashboard.service: dashboard
-        traefik.http.services.dashboard.loadbalancer.server.port: 3000
+    # labels:
+    #   traefik.enable: true
+    #   traefik.http.routers.dashboard.rule: Host(`tipi.local`)
+    #   # traefik.http.routers.dashboard.tls: true
+    #   traefik.http.routers.dashboard.entrypoints: webinsecure
+    #   traefik.http.routers.dashboard.service: dashboard
+    #   traefik.http.services.dashboard.loadbalancer.server.port: 3000
 
 networks:
-    tipi_main_network:
-        driver: bridge
-        ipam:
-            driver: default
-            config:
-                - subnet: 10.21.21.0/24
+  tipi_main_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.21.21.0/24

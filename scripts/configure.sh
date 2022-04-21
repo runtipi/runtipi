@@ -24,15 +24,6 @@ echo "=============== TIPI ================="
 echo "======================================"
 echo
 
-# Store paths to intermediary config files
-ENV_FILE="./templates/.env"
-
-# Remove intermediary config files
-[[ -f "$ENV_FILE" ]] && rm -f "$ENV_FILE"
-
-# Copy template configs to intermediary configs
-[[ -f "./templates/.env-sample" ]] && cp "./templates/.env-sample" "$ENV_FILE"
-
 # Install ansible if not installed
 if ! command -v ansible-playbook > /dev/null; then
   echo "Installing Ansible..."
@@ -41,7 +32,14 @@ if ! command -v ansible-playbook > /dev/null; then
   sudo pip3 install ansible
 fi
 
-ansible-playbook ansible/setup.yml -i ansible/hosts -K
+# Store paths to intermediary config files
+ENV_FILE="$ROOT_FOLDER/templates/.env"
+
+# Remove intermediary config files
+[[ -f "$ENV_FILE" ]] && rm -f "$ENV_FILE"
+
+# Copy template configs to intermediary configs
+[[ -f "$ROOT_FOLDER/templates/.env-sample" ]] && cp "$ROOT_FOLDER/templates/.env-sample" "$ENV_FILE"
 
 echo "Generating config files..."
 for template in "${ENV_FILE}"; do
@@ -54,6 +52,8 @@ for template in "${ENV_FILE}"; do
   sed -i "s/<app-simpletorrent-port>/${APP_SIMPLETORRENT_PORT}/g" "${template}"
   sed -i "s/<app-freshrss-port>/${APP_FRESHRSS_PORT}/g" "${template}"
 done
+
+ansible-playbook ansible/setup.yml -i ansible/hosts -K
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 
