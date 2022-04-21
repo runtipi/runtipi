@@ -45,7 +45,7 @@ services:
     volumes:
       - ${PWD}/state:/app/state
     ports:
-      - 3300:3000
+      - 3000:3000
     networks:
       - tipi_main_network
     # labels:

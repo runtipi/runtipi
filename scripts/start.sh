@@ -10,12 +10,11 @@ fi
 
 ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
-DOMAIN=local
 
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 PUID="$(id -u)"
 PGID="$(id -g)"
-TZ="$(cat /etc/timezone)"
+TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
 
 if [[ $UID != 0 ]]; then
     echo "Tipi must be started as root"
@@ -30,12 +29,16 @@ if [[ ! -f "${STATE_FOLDER}/configured" ]]; then
 fi
 
 # Copy the app state if it isn't here
-if [[ ! -d "${STATE_FOLDER}/apps.json" ]]; then
-  cp "${STATE_FOLDER}/apps.example.json" "${STATE_FOLDER}/apps.json"
+if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
+  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json"
 fi
 
 export DOCKER_CLIENT_TIMEOUT=240
 export COMPOSE_HTTP_TIMEOUT=240
+
+echo "Generating config files..."
+# Remove current .env file
+[[ -f "${ROOT_FOLDER}/.env" ]] && rm -f "${ROOT_FOLDER}/.env"
 
 # Store paths to intermediary config files
 ENV_FILE="$ROOT_FOLDER/templates/.env"
@@ -44,9 +47,9 @@ ENV_FILE="$ROOT_FOLDER/templates/.env"
 [[ -f "$ENV_FILE" ]] && rm -f "$ENV_FILE"
 
 # Copy template configs to intermediary configs
-[[ -f "$ROOT_FOLDER/templates/.env-sample" ]] && cp "$ROOT_FOLDER/templates/.env-sample" "$ENV_FILE"
+[[ -f "$ROOT_FOLDER/templates/env-sample" ]] && cp "$ROOT_FOLDER/templates/env-sample" "$ENV_FILE"
 
-echo "Generating config files..."
+echo $TZ
 for template in "${ENV_FILE}"; do
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<puid>/${PUID}/g" "${template}"
@@ -64,21 +67,47 @@ docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --b
   exit 1
 }
 
-echo "Tipi is now running"
-echo "To stop it, run sudo ./scripts/stop.sh"
-echo "Visit http://${INTERNAL_IP}:3000 to view the dashboard"
 # Get field from json file
-# function get_json_field() {
-#     local json_file="$1"
-#     local field="$2"
+function get_json_field() {
+    local json_file="$1"
+    local field="$2"
 
-#     echo $(jq -r ".${field}" "${json_file}")
-# }
+    echo $(jq -r ".${field}" "${json_file}")
+}
 
-# str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-# apps_to_start=($str)
+str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
+apps_to_start=($str)
 
-# for app in "${apps_to_start[@]}"; do
-#     "${ROOT_FOLDER}/scripts/app.sh" start $app
-# done
+for app in "${apps_to_start[@]}"; do
+    "${ROOT_FOLDER}/scripts/app.sh" start $app
+done
+
+echo "Tipi is now running"
+echo ""
+cat << "EOF"
+       _,.
+     ,` -.)
+    '( _/'-\\-.               
+   /,|`--._,-^|            ,     
+   \_| |`-._/||          ,'|       
+     |  `-, / |         /  /      
+     |     || |        /  /       
+      `r-._||/   __   /  /  
+  __,-<_     )`-/  `./  /
+ '  \   `---'   \   /  / 
+     |           |./  /  
+     /           //  /     
+ \_/' \         |/  /         
+  |    |   _,^-'/  /              
+  |    , ``  (\/  /_        
+   \,.->._    \X-=/^         
+   (  /   `-._//^`  
+    `Y-.____(__}              
+     |     {__)           
+           ()`     
+EOF
+echo ""
+echo "Visit http://${INTERNAL_IP}:3000 to view the dashboard"
+echo ""
+
 
