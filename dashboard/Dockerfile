@@ -14,6 +14,4 @@ ENV INTERNAL_IP $INTERNAL_IP_ARG
 
 RUN yarn build
 
-RUN echo "$INTERNAL_IP $INTERNAL_IP"
-
 CMD ["yarn", "start"]

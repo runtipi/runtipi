@@ -5,12 +5,10 @@ packages:
   - iptables
   - coreutils
   - git
-  # - base-devel
   - docker
   - avahi-daemon
   - nodejs
   - npm
-  # - libusb
 
 username: nicolas
 

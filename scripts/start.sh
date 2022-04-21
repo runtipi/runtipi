@@ -49,7 +49,6 @@ ENV_FILE="$ROOT_FOLDER/templates/.env"
 # Copy template configs to intermediary configs
 [[ -f "$ROOT_FOLDER/templates/env-sample" ]] && cp "$ROOT_FOLDER/templates/env-sample" "$ENV_FILE"
 
-echo $TZ
 for template in "${ENV_FILE}"; do
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<puid>/${PUID}/g" "${template}"
