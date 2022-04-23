@@ -28,7 +28,7 @@ const AppActions: React.FC<IProps> = ({ app, onInstall, onUninstall, onStart, on
           <FiTrash2 className="ml-1" />
         </Button>
         {hasSettings && (
-          <Button onClick={onUpdate} width={160} className="mt-3 mr-2">
+          <Button onClick={onUpdate} width={160} colorScheme="gray" className="mt-3 mr-2">
             Settings
             <FiSettings className="ml-1" />
           </Button>

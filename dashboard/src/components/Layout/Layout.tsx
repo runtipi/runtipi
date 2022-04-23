@@ -1,4 +1,5 @@
-import { Flex, useDisclosure, Spinner, Breadcrumb, BreadcrumbItem } from '@chakra-ui/react';
+import { Flex, useDisclosure, Spinner, Breadcrumb, BreadcrumbItem, useColorModeValue, Box } from '@chakra-ui/react';
+import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
 import { FiChevronRight } from 'react-icons/fi';
@@ -12,7 +13,9 @@ interface IProps {
 }
 
 const Layout: React.FC<IProps> = ({ children, loading, breadcrumbs }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const menubg = useColorModeValue('#F1F3F4', '#202736');
+  const bg = useColorModeValue('white', '#1a202c');
 
   const renderContent = () => {
     if (loading) {
@@ -41,23 +44,26 @@ const Layout: React.FC<IProps> = ({ children, loading, breadcrumbs }) => {
   };
 
   return (
-    <Flex height="100vh" className="drop-shadow-md border-r-8" direction="column">
-      <MenuDrawer isOpen={isOpen} onClose={onClose}>
-        <Menu />
-      </MenuDrawer>
-      <Header onClickMenu={onOpen} />
-      <Flex flex="1">
-        <Flex className="invisible md:visible w-0 md:w-56">
+    <>
+      <Head>
+        <title>Tipi</title>
+      </Head>
+      <Flex height="100vh" direction="column">
+        <MenuDrawer isOpen={isOpen} onClose={onClose}>
           <Menu />
-        </Flex>
-        <Flex className="bg-slate-200 flex flex-1 p-5">
-          <div className="flex-1 flex flex-col">
+        </MenuDrawer>
+        <Header onClickMenu={onOpen} />
+        <Flex flex={1}>
+          <Flex height="100vh" bg={menubg} className="sticky top-0 invisible md:visible w-0 md:w-64">
+            <Menu />
+          </Flex>
+          <Box bg={bg} className="flex-1 px-4 py-4 md:px-10 md:py-8">
             {renderBreadcrumbs()}
-            <div className="flex-1 ">{renderContent()}</div>
-          </div>
+            {renderContent()}
+          </Box>
         </Flex>
       </Flex>
-    </Flex>
+    </>
   );
 };
 

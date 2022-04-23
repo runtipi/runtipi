@@ -16,8 +16,7 @@ services:
       TZ: ${TZ}
       WEBPASSWORD: ${APP_PASSWORD}
       PIHOLE_DNS_: 127.0.0.1#5335
-      FTLCONF_REPLY_ADDR4: 192.168.2.132
-      PIHOLE_DNS_: 127.0.0.1#5335
+      FTLCONF_REPLY_ADDR4: ${INTERNAL_IP}
       DNSSEC: "true"
       DNSMASQ_LISTENING: single
     networks:

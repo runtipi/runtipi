@@ -89,8 +89,6 @@ compose() {
   export APP_DATA_DIR="${app_data_dir}"
   export APP_DIR="${app_dir}"
 
-  # TODO: Fix for dynamic detection
-  export DEVICE_IP="192.168.2.132"
   export ROOT_FOLDER="${ROOT_FOLDER}"
 
   # Docker-compose does not support multiple env files
