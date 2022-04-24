@@ -93,7 +93,7 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
 
   return (
     <SlideFade in className="flex flex-1" offsetY="20px">
-      <div className="flex flex-1 bg-white p-4 mt-3 rounded-lg drop-shadow-xl flex-col">
+      <div className="flex flex-1  p-4 mt-3 rounded-lg flex-col">
         <Flex className="flex-col md:flex-row">
           <Image src={app?.image} height={180} width={180} className="rounded-xl self-center sm:self-auto" alt={app.name} />
           <VStack align="flex-start" justify="space-between" className="ml-0 md:ml-4">

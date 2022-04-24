@@ -9,14 +9,14 @@ interface IProps {
 
 const Header: React.FC<IProps> = ({ onClickMenu }) => {
   return (
-    <header style={{ width: '100%' }} className="flex">
-      <Flex className="items-center bg-gray-700 drop-shadow-md px-5 flex-1">
+    <header style={{ width: '100%' }} className="flex h-12 md:h-0">
+      <Flex className="items-center border-b-2 bg-graycool px-5 flex-1 py-2">
         <div onClick={onClickMenu} className="visible md:invisible absolute cursor-pointer py-2">
-          <FiMenu color="white" />
+          <FiMenu color="black" />
         </div>
         <Flex justifyContent="center" flex="1">
           <Link href="/" passHref>
-            <img src="/logo.png" alt="Tipi" width={230} height={60} />
+            <img src="/tipi.png" alt="Tipi Logo" width={30} height={30} />
           </Link>
         </Flex>
       </Flex>
