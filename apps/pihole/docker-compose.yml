@@ -14,7 +14,7 @@ services:
 
   pihole:
     depends_on: [unbound]
-    container_name: pihole
+    container_name: pihole:2022.04.3
     image: pihole/pihole:latest
     restart: unless-stopped
     hostname: pihole
@@ -31,7 +31,7 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${APP_PASSWORD}
-      PIHOLE_DNS_: 10.21.21.200 #127.0.0.1#5335
+      PIHOLE_DNS_: 10.21.21.200 # Points to unbound
       FTLCONF_REPLY_ADDR4: 10.21.21.201
     cap_add:
       - NET_ADMIN
