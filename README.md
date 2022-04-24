@@ -5,4 +5,3 @@
 ![RunsOn](https://img.shields.io/badge/Fedora-Not%20Supported-red?logo=fedora&style=flat-square)
 
 ![Preview](https://raw.githubusercontent.com/meienberger/runtipi/app/ttypd/screenshots/1.png)
-![Preview](https://raw.githubusercontent.com/meienberger/runtipi/app/ttypd/screenshots/1-dark.png)
