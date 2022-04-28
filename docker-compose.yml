@@ -1,39 +1,19 @@
 version: "3.7"
 
 services:
-  # gluetun:
-  #   container_name: gluetun
-  #   image: qmcgaw/gluetun
-  #   cap_add:
-  #     - NET_ADMIN
-  #   environment:
-  #     - VPN_SERVICE_PROVIDER=mullvad
-  #     - VPN_TYPE=wireguard
-  #     - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-  #     - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
-  #     - SERVER_COUNTRIES=Switzerland
-  #     - OWNED_ONLY=yes
-  #   ports:
-  #     - 80:80
-  #     - 8080:8080
-  #   networks:
-  #     - tipi_main_network
-
-  # reverse-proxy:
-  #   container_name: reverse-proxy
-  #   image: traefik:v2.6
-  #   restart: always
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #     - 8080:8080
-  #   security_opt:
-  #     - no-new-privileges:true
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #     - ${PWD}/traefik:/root/.config
-  #   networks:
-  #     - tipi_main_network
+  reverse-proxy:
+    container_name: reverse-proxy
+    image: traefik:v2.6
+    restart: always
+    ports:
+      - 80:80
+      - 8080:8080
+    command: --api.insecure=true --providers.docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/traefik:/root/.config
+    networks:
+      - tipi_main_network
 
   dashboard:
     build:
@@ -48,17 +28,19 @@ services:
       - 3000:3000
     networks:
       - tipi_main_network
-    # labels:
-    #   traefik.enable: true
-    #   traefik.http.routers.dashboard.rule: Host(`tipi.local`)
-    #   # traefik.http.routers.dashboard.tls: true
-    #   traefik.http.routers.dashboard.entrypoints: webinsecure
-    #   traefik.http.routers.dashboard.service: dashboard
-    #   traefik.http.services.dashboard.loadbalancer.server.port: 3000
+    labels:
+      traefik.enable: true
+      traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&
+      traefik.http.routers.dashboard.entrypoints: webinsecure
+      traefik.http.routers.dashboard.service: dashboard
+      traefik.http.services.dashboard.loadbalancer.server.port: 3000
 
 networks:
   tipi_main_network:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+      com.docker.network.bridge.enable_icc: "true"
     ipam:
       driver: default
       config:

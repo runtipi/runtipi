@@ -2,7 +2,6 @@ api:
   dashboard: true
   insecure: true
 
-
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
@@ -23,8 +22,8 @@ entryPoints:
     #     entryPoint:
     #       to: websecure
     #       scheme: https
-  websecure:
-    address: ":443"
+  # websecure:
+  #   address: ":443"
 
 log:
   level: DEBUG

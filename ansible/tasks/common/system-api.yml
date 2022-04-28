@@ -29,15 +29,15 @@
 
 - name: Check if app is already running
   become_user: "{{ username }}"
-  shell: pm2 list
+  shell: pm2 status system-api
   register: pm2_result
 
 - name: Start app
   become_user: "{{ username }}"
   shell: cd {{ playbook_dir }}/../system-api && pm2 start npm --name "system-api" -- start
-  when: pm2_result.stdout.find("system-api") == -1
+  when: pm2_result.stdout.find("online") == -1
 
 - name: Reload app
   become_user: "{{ username }}"
   shell: pm2 reload system-api
-  when: pm2_result.stdout.find("system-api") != -1
+  when: pm2_result.stdout.find("online") != -1

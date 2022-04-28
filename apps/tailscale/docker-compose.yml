@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  tailscale:
+    container_name: tailscale
+    network_mode: "host" # TODO: Find a way to remove this
+    image: tailscale/tailscale:v1.24.0
+    privileged: true
+    restart: on-failure
+    stop_grace_period: 1m
+    command: "sh -c 'tailscale web --listen 0.0.0.0:${APP_PORT} & exec tailscaled --tun=userspace-networking'"
+    volumes:
+      - /var/lib:/var/lib
+      - /dev/net/tun:/dev/net/tun
