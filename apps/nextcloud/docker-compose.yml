@@ -53,7 +53,7 @@ services:
       - POSTGRES_DB=nextcloud
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
-      - NEXTCLOUD_TRUSTED_DOMAINS=tipi.local ${DEVICE_IP}:${APP_PORT}
+      - NEXTCLOUD_TRUSTED_DOMAINS=${DEVICE_IP}:${APP_PORT}
     depends_on:
       - db-nextcloud
       - redis-nextcloud
