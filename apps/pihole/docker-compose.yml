@@ -1,10 +1,25 @@
 version: "3.7"
 
 services:
-  pihole:
-    container_name: pihole
-    image: cbcrowe/pihole-unbound:latest
+  unbound:
+    image: "klutchell/unbound"
+    container_name: unbound
     restart: unless-stopped
+    volumes:
+      - "${APP_DATA_DIR}/data/unbound:/etc/unbound"
+    networks:
+      tipi_main_network:
+        ipv4_address: 10.21.21.200
+
+  pihole:
+    depends_on: [unbound]
+    container_name: pihole:2022.04.3
+    image: pihole/pihole:latest
+    restart: unless-stopped
+    hostname: pihole
+    dns:
+      - 127.0.0.1
+      - 10.21.21.200 # Points to unbound
     ports:
       - 53:53/tcp
       - 53:53/udp
@@ -15,10 +30,10 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${APP_PASSWORD}
-      PIHOLE_DNS_: 127.0.0.1#5335
-      FTLCONF_REPLY_ADDR4: 192.168.2.132
-      PIHOLE_DNS_: 127.0.0.1#5335
-      DNSSEC: "true"
-      DNSMASQ_LISTENING: single
+      PIHOLE_DNS_: 10.21.21.200 # Points to unbound
+      FTLCONF_REPLY_ADDR4: 10.21.21.201
+    cap_add:
+      - NET_ADMIN
     networks:
-      - tipi_main_network
+      tipi_main_network:
+        ipv4_address: 10.21.21.201

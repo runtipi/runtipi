@@ -1,8 +1,6 @@
 import axios, { Method } from 'axios';
 
-export const BASE_URL = 'http://192.168.2.132:3001';
-
-console.log(process.env);
+export const BASE_URL = `http://${process.env.INTERNAL_IP}:3001`;
 
 interface IFetchParams {
   endpoint: string;

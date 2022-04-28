@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
-console.log(process.env);
+const { NODE_ENV, INTERNAL_IP } = process.env;
 
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    INTERNAL_IP: process.env.INTERNAL_IP,
+    INTERNAL_IP: NODE_ENV === 'development' ? 'localhost' : INTERNAL_IP,
   },
 };
 

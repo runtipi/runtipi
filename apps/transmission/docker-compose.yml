@@ -14,8 +14,7 @@ services:
       # - HOST_WHITELIST=dnsnane list #optional
     volumes:
       - ${APP_DATA_DIR}/data/config:/config
-      - ${APP_DATA_DIR}/data/downloads:/downloads
-      - ${APP_DATA_DIR}/data/watch:/watch
+      - ${ROOT_FOLDER}/media/torrents:/downloads
     ports:
       - ${APP_PORT}:9091
       - 51413:51413
