@@ -14,3 +14,9 @@ tipi.config.json
 
 # Commit empty directories
 !nignx/.gitkeep
+
+media/data/movies/*
+!media/data/movies/.gitkeep
+
+media/torrents/*
+!media/torrents/.gitkeep

@@ -106,7 +106,7 @@ cat << "EOF"
            ()`     
 EOF
 echo ""
-echo "Visit http://${INTERNAL_IP}:3000 to view the dashboard"
+echo "Visit http://${INTERNAL_IP}/ to view the dashboard"
 echo ""
 
 

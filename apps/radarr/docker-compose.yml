@@ -9,8 +9,8 @@ services:
       - TZ=${TZ}
       - AUTO_UPDATE=true
     volumes:
-      - ${APP_DATA_DIR}/data/config:/config
-      - ${APP_DATA_DIR}/data/downloads:/downloads
+      - ${APP_DATA_DIR}/data/jackett:/config
+      - ${ROOT_FOLDER}/media/torrents:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -25,9 +25,9 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ${APP_DATA_DIR}/data/config:/config
-      - ${APP_DATA_DIR}/data/movies:/movies #optional
-      - ${ROOT_FOLDER}/app-data/${TORRENT_CLIENT}/data/downloads:/downloads #optional
+      - ${APP_DATA_DIR}/data/radarr:/config
+      - ${ROOT_FOLDER}/media/data/movies:/movies #optional
+      - ${ROOT_FOLDER}/media/torrents:/downloads #optional
     ports:
       - ${APP_PORT}:7878
     restart: unless-stopped
