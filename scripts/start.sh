@@ -77,9 +77,9 @@ function get_json_field() {
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
 apps_to_start=($str)
 
-for app in "${apps_to_start[@]}"; do
-    "${ROOT_FOLDER}/scripts/app.sh" start $app
-done
+# for app in "${apps_to_start[@]}"; do
+#     "${ROOT_FOLDER}/scripts/app.sh" start $app
+# done
 
 echo "Tipi is now running"
 echo ""

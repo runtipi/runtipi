@@ -13,6 +13,7 @@ interface FormField {
   label: string;
   max?: number;
   min?: number;
+  hint?: string;
   required?: boolean;
   env_variable: string;
 }
@@ -48,4 +49,8 @@ export enum AppStatus {
   UNINSTALLING = 'uninstalling',
   STOPPING = 'stopping',
   STARTING = 'starting',
+}
+
+export interface IUser {
+  first_name: string;
 }
