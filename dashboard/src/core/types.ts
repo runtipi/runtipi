@@ -52,5 +52,6 @@ export enum AppStatus {
 }
 
 export interface IUser {
-  first_name: string;
+  name: string;
+  email: string;
 }

@@ -48,6 +48,7 @@ const Layout: React.FC<IProps> = ({ children, loading, breadcrumbs }) => {
       <Head>
         <title>Tipi</title>
       </Head>
+
       <Flex height="100vh" direction="column">
         <MenuDrawer isOpen={isOpen} onClose={onClose}>
           <Menu />
