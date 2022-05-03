@@ -1,5 +1,5 @@
-- name: Change machine hostname to tipi.local
-  shell: hostnamectl set-hostname tipi.local
+# - name: Change machine hostname to tipi.local
+#   shell: hostnamectl set-hostname tipi.local
 
 # - name: Update packages
 #   apt:

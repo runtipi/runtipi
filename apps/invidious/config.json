@@ -1,0 +1,11 @@
+{
+  "name": "Invidious",
+  "port": 8095,
+  "id": "invidious",
+  "description": "",
+  "short_desc": "",
+  "author": "",
+  "source": "https://github.com/iv-org/invidious",
+  "image": "https://raw.githubusercontent.com/iv-org/invidious/master/assets/invidious-colored-vector.svg",
+  "form_fields": {}
+}

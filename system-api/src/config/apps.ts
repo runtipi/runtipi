@@ -1,1 +1,18 @@
-export const appNames = ['nextcloud', 'freshrss', 'anonaddy', 'filerun', 'wg-easy', 'radarr', 'transmission', 'jellyfin', 'pihole', 'busybox'];
+export const appNames = [
+  'nextcloud',
+  'syncthing',
+  'freshrss',
+  'anonaddy',
+  'filebrowser',
+  'wg-easy',
+  'jackett',
+  'sonarr',
+  'radarr',
+  'transmission',
+  'jellyfin',
+  'pihole',
+  'tailscale',
+  'n8n',
+  'invidious',
+  'joplin',
+];

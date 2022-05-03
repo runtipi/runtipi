@@ -1,0 +1,12 @@
+{
+  "name": "n8n",
+  "port": 8094,
+  "id": "n8n",
+  "description": "n8n is an extendable workflow automation tool. With a fair-code distribution model, n8n will always have visible source code, be available to self-host, and allow you to add your own custom functions, logic and apps. n8n's node-based approach makes it highly versatile, enabling you to connect anything to everything.",
+  "short_desc": "Workflow Automation Tool. Alternative to Zapier",
+  "author": "n8n.io",
+  "source": "https://github.com/n8n-io/n8n",
+  "website": "https://n8n.io/",
+  "image": "https://avatars.githubusercontent.com/u/45487711?s=200&v=4",
+  "form_fields": {}
+}

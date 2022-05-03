@@ -1,7 +1,8 @@
 version: "3.7"
 
 services:
-  server:
+  syncthing:
+    container_name: syncthing
     image: syncthing/syncthing:1.19
     stop_grace_period: 1m
     hostname: tipi

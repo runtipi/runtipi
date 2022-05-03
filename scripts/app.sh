@@ -122,7 +122,7 @@ if [[ "$command" = "uninstall" ]]; then
 
   echo "Deleting app data for app ${app}..."
   if [[ -d "${app_data_dir}" ]]; then
-    rm -rf "${app_data_dir}"
+    sudo rm -rf "${app_data_dir}"
   fi
 
   echo "Successfully uninstalled app ${app}"

@@ -1,0 +1,12 @@
+{
+  "name": "Joplin Server",
+  "port": 8099,
+  "id": "joplin",
+  "description": "",
+  "short_desc": "Note taking and to-do application with synchronisation",
+  "author": "https://github.com/laurent22",
+  "source": "https://github.com/laurent22/joplin",
+  "website": "https://joplinapp.org",
+  "image": "https://raw.githubusercontent.com/laurent22/joplin/dev/Assets/LinuxIcons/256x256.png",
+  "form_fields": {}
+}

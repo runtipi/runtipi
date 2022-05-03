@@ -2,19 +2,18 @@ version: "3.7"
 
 services:
   unbound:
-    image: "klutchell/unbound:1.15.0"
+    image: "klutchell/unbound"
     container_name: unbound
     restart: unless-stopped
-    hostname: "unbound"
     volumes:
-      - "${APP_DATA_DIR}/data/unbound:/opt/unbound/etc/unbound/"
+      - "${APP_DATA_DIR}/data/unbound:/etc/unbound"
     networks:
       tipi_main_network:
         ipv4_address: 10.21.21.200
 
   pihole:
     depends_on: [unbound]
-    container_name: pihole:2022.04.3
+    container_name: pihole
     image: pihole/pihole:latest
     restart: unless-stopped
     hostname: pihole

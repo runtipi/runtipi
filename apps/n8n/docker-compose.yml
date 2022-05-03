@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  db-n8n:
+    container_name: db-n8n
+    image: postgres:14.2
+    restart: on-failure
+    volumes:
+      - ${APP_DATA_DIR}/data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=tipi
+      - POSTGRES_USER=tipi
+      - POSTGRES_DB=n8n
+    networks:
+      - tipi_main_network
+
+  n8n:
+    container_name: n8n
+    image: n8nio/n8n:0.174.0
+    restart: unless-stopped
+    ports:
+      - ${APP_PORT}:5678
+    volumes:
+      - ${APP_DATA_DIR}/data/n8n:/home/node/.n8n
+    command: /bin/sh -c "sleep 5; n8n start"
+    environment:
+      - DB-TYPE=postgresdb
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_HOST=db-n8n
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_USER=tipi
+      - DB_POSTGRESDB_PASSWORD=tipi
+    depends_on:
+      - db-n8n
+    networks:
+      - tipi_main_network

@@ -147,6 +147,10 @@ const startApp = async (req: Request, res: Response, next: NextFunction) => {
     checkAppExists(appName);
     checkEnvFile(appName);
 
+    // Regenerate env file
+    const form = getInitalFormValues(appName);
+    generateEnvFile(appName, form);
+
     // Run script
     await runAppScript(['start', appName]);
 
