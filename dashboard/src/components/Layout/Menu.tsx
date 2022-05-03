@@ -1,5 +1,6 @@
 import { AiOutlineDashboard, AiOutlineSetting, AiOutlineAppstore } from 'react-icons/ai';
 import { FaRegMoon } from 'react-icons/fa';
+import { FiLogOut } from 'react-icons/fi';
 import Package from '../../../package.json';
 import { Box, Divider, Flex, List, ListItem, Switch, useColorMode } from '@chakra-ui/react';
 import React from 'react';
@@ -7,10 +8,12 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { IconType } from 'react-icons';
+import { useAuthStore } from '../../state/authStore';
 
 const SideMenu: React.FC = () => {
   const router = useRouter();
   const { colorMode, setColorMode } = useColorMode();
+  const { logout } = useAuthStore();
   const path = router.pathname.split('/')[1];
 
   const renderMenuItem = (title: string, name: string, Icon: IconType) => {
@@ -49,6 +52,10 @@ const SideMenu: React.FC = () => {
       <Flex flex="1" />
       <List>
         <div className="mx-3">
+          <ListItem onClick={logout} className="cursor-pointer hover:font-bold flex items-center mb-5">
+            <FiLogOut size={20} className="mr-3" />
+            <p className="flex-1">Log out</p>
+          </ListItem>
           <ListItem className="flex items-center">
             <FaRegMoon size={20} className="mr-3" />
             <p className="flex-1">Dark mode</p>
