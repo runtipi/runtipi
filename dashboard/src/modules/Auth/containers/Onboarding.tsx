@@ -4,7 +4,7 @@ import { Field, Form } from 'react-final-form';
 import validator from 'validator';
 import FormInput from '../../../components/Form/FormInput';
 
-type FormValues = { email: string; password: string };
+type FormValues = { email: string; password: string; passwordConfirm: string };
 
 interface IProps {
   onSubmit: (values: FormValues) => void;
@@ -21,6 +21,10 @@ const Onboarding: React.FC<IProps> = ({ onSubmit, loading }) => {
 
     if (!values.password) {
       errors.password = 'Required';
+    }
+
+    if (values.password !== values.passwordConfirm) {
+      errors.passwordConfirm = 'Passwords do not match';
     }
 
     return errors;
@@ -64,7 +68,7 @@ const Onboarding: React.FC<IProps> = ({ onSubmit, loading }) => {
                   )}
                 />
                 <Field
-                  name="password-repeat"
+                  name="passwordConfirm"
                   render={({ input, meta }) => (
                     <FormInput
                       size="lg"
