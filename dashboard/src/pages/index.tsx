@@ -1,10 +1,11 @@
-import type { NextPage } from "next";
-import Layout from "../components/Layout";
+import type { NextPage } from 'next';
+import Layout from '../components/Layout';
+import Dashboard from '../modules/Dashboard/containers/Dashboard';
 
 const Home: NextPage = () => {
   return (
     <Layout>
-      <div>Content</div>
+      <Dashboard />
     </Layout>
   );
 };

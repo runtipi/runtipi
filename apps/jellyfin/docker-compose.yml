@@ -1,0 +1,18 @@
+version: "3.7"
+
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin
+    container_name: jellyfin
+    volumes:
+      - ${APP_DATA_DIR}/data/config:/config
+      - ${ROOT_FOLDER}/media/data:/data/media
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    restart: "unless-stopped"
+    ports:
+      - ${APP_PORT}:8096
+    networks:
+      - tipi_main_network

@@ -1,13 +1,5 @@
-import {
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-} from "@chakra-ui/react";
-import React from "react";
+import { Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, useColorModeValue } from '@chakra-ui/react';
+import React from 'react';
 
 interface IProps {
   isOpen: boolean;
@@ -15,16 +7,15 @@ interface IProps {
 }
 
 const MenuDrawer: React.FC<IProps> = ({ children, isOpen, onClose }) => {
+  const menubg = useColorModeValue('#F1F3F4', '#202736');
+
   return (
-    <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+    <Drawer size="xs" isOpen={isOpen} placement="left" onClose={onClose}>
       <DrawerOverlay />
-      <DrawerContent>
+      <DrawerContent bg={menubg}>
         <DrawerCloseButton />
-        <DrawerHeader>Create your account</DrawerHeader>
-        <DrawerBody>{children}</DrawerBody>
-        <DrawerFooter>
-          <div>Github</div>
-        </DrawerFooter>
+        <DrawerHeader>My Tipi</DrawerHeader>
+        <DrawerBody display="flex">{children}</DrawerBody>
       </DrawerContent>
     </Drawer>
   );

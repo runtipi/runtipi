@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  jackett:
+    image: lscr.io/linuxserver/jackett
+    container_name: jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - AUTO_UPDATE=true
+    dns:
+      - ${DNS_IP}
+    volumes:
+      - ${APP_DATA_DIR}/data:/config
+      - ${ROOT_FOLDER}/media/torrents:/downloads
+    ports:
+      - ${APP_PORT}:9117
+    restart: unless-stopped
+    networks:
+      - tipi_main_network

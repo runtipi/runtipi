@@ -9,6 +9,8 @@ export const readJsonFile = (path: string): any => {
   return JSON.parse(rawFile);
 };
 
+export const readFile = (path: string): string => fs.readFileSync(getAbsolutePath(path)).toString();
+
 export const fileExists = (path: string): boolean => fs.existsSync(getAbsolutePath(path));
 
 export const writeFile = (path: string, data: any) => fs.writeFileSync(getAbsolutePath(path), data);
@@ -18,4 +20,4 @@ export const deleteFolder = (path: string) => fs.rmSync(getAbsolutePath(path), {
 
 export const copyFile = (source: string, destination: string) => fs.copyFileSync(getAbsolutePath(source), getAbsolutePath(destination));
 
-export const runScript = (path: string, args: string[]) => childProcess.spawnSync(getAbsolutePath(path), args, {});
+export const runScript = (path: string, args: string[], callback?: any) => childProcess.execFile(getAbsolutePath(path), args, {}, callback);
