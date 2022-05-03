@@ -1,8 +1,8 @@
 version: "3.7"
 services:
   radarr:
-    image: lscr.io/linuxserver/radarr
-    container_name: radarr
+    image: lscr.io/linuxserver/sonarr
+    container_name: sonarr
     environment:
       - PUID=1000
       - PGID=1000
@@ -11,10 +11,10 @@ services:
       - ${DNS_IP}
     volumes:
       - ${APP_DATA_DIR}/data:/config
-      - ${ROOT_FOLDER}/media/data/movies:/movies #optional
+      - ${ROOT_FOLDER}/media/data/tv:/tv #optional
       - ${ROOT_FOLDER}/media/torrents:/downloads #optional
     ports:
-      - ${APP_PORT}:7878
+      - ${APP_PORT}:8989
     restart: unless-stopped
     networks:
       - tipi_main_network

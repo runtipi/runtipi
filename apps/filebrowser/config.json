@@ -1,0 +1,12 @@
+{
+  "name": "File Browser",
+  "port": 8096,
+  "id": "filebrowser",
+  "description": "Reliable and Performant File Management Desktop Sync and File Sharing",
+  "short_desc": "Access your homeserver files from your browser",
+  "author": "",
+  "website": "https://filebrowser.org/",
+  "source": "https://github.com/filebrowser/filebrowser",
+  "image": "https://avatars.githubusercontent.com/u/35781395?s=200&v=4",
+  "form_fields": {}
+}

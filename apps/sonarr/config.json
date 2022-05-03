@@ -1,0 +1,13 @@
+{
+  "name": "Sonarr",
+  "port": 8098,
+  "id": "sonarr",
+  "description": "",
+  "short_desc": "",
+  "author": "",
+  "source": "",
+  "image": "https://avatars.githubusercontent.com/u/1082903?s=200&v=4",
+  "form_fields": {
+
+  }
+}

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import express, { NextFunction, Request, Response } from 'express';
 import compression from 'compression';
+// import suExec from 'su-exec';
 import helmet from 'helmet';
 import cors from 'cors';
 import { isProd } from './constants/constants';
@@ -9,6 +10,8 @@ import systemRoutes from './modules/system/system.routes';
 import authRoutes from './modules/auth/auth.routes';
 import { tradeTokenForUser } from './modules/auth/auth.helpers';
 import cookieParser from 'cookie-parser';
+
+// suExec.init();
 
 const app = express();
 const port = 3001;

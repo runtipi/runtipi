@@ -16,7 +16,9 @@ tipi.config.json
 !nignx/.gitkeep
 
 media/data/movies/*
+media/data/tv/*
 !media/data/movies/.gitkeep
+!media/data/tv/.gitkeep
 
 media/torrents/*
 !media/torrents/.gitkeep
