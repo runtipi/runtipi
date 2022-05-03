@@ -3,7 +3,6 @@ import React from 'react';
 import { FiExternalLink } from 'react-icons/fi';
 import { AppConfig } from '../../../core/types';
 import { useAppsStore } from '../../../state/appsStore';
-import { useNetworkStore } from '../../../state/networkStore';
 import AppActions from '../components/AppActions';
 import InstallModal from '../components/InstallModal';
 import StopModal from '../components/StopModal';
@@ -21,7 +20,6 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
   const stopDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
 
-  const { internalIp } = useNetworkStore();
   const { install, update, uninstall, stop, start, fetchApp } = useAppsStore();
 
   const handleError = (error: unknown) => {
@@ -88,7 +86,7 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
   };
 
   const handleOpen = () => {
-    window.open(`http://${internalIp}:${app.port}`, '_blank');
+    window.open(`http://${process.env.INTERNAL_IP}:${app.port}`, '_blank');
   };
 
   return (

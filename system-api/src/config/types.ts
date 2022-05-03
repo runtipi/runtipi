@@ -15,6 +15,8 @@ interface FormField {
   env_variable: string;
 }
 
+export type Maybe<T> = T | null | undefined;
+
 export interface AppConfig {
   id: string;
   port: number;
@@ -31,4 +33,10 @@ export interface AppConfig {
   source: string;
   installed: boolean;
   status: 'running' | 'stopped';
+}
+
+export interface IUser {
+  email: string;
+  name: string;
+  password: string;
 }

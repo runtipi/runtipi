@@ -17,6 +17,7 @@ const api = async <T = unknown>(fetchParams: IFetchParams): Promise<T> => {
     params,
     data,
     url: `${BASE_URL}${endpoint}`,
+    withCredentials: true,
   });
 
   if (response.data.error) {

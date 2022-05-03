@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -e  # Exit immediately if a command exits with a non-zero status.
 
+# Get field from json file
+function get_json_field() {
+    local json_file="$1"
+    local field="$2"
+
+    echo $(jq -r ".${field}" "${json_file}")
+}
+
 # use greadlink instead of readlink on osx
 if [[ "$(uname)" == "Darwin" ]]; then
   readlink=greadlink
@@ -10,8 +18,17 @@ fi
 
 ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
-
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
+DNS_IP=9.9.9.9
+
+# Get dns ip if pihole is installed
+str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
+
+# if pihole is present in str add it as DNS
+if [[ $str = *"pihole"* ]]; then
+  DNS_IP=10.21.21.201
+fi
+
 PUID="$(id -u)"
 PGID="$(id -g)"
 TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
@@ -50,6 +67,7 @@ ENV_FILE="$ROOT_FOLDER/templates/.env"
 [[ -f "$ROOT_FOLDER/templates/env-sample" ]] && cp "$ROOT_FOLDER/templates/env-sample" "$ENV_FILE"
 
 for template in "${ENV_FILE}"; do
+  sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<puid>/${PUID}/g" "${template}"
   sed -i "s/<pgid>/${PGID}/g" "${template}"
@@ -66,20 +84,14 @@ docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --b
   exit 1
 }
 
-# Get field from json file
-function get_json_field() {
-    local json_file="$1"
-    local field="$2"
 
-    echo $(jq -r ".${field}" "${json_file}")
-}
 
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
 apps_to_start=($str)
 
-for app in "${apps_to_start[@]}"; do
-    "${ROOT_FOLDER}/scripts/app.sh" start $app
-done
+# for app in "${apps_to_start[@]}"; do
+#     "${ROOT_FOLDER}/scripts/app.sh" start $app
+# done
 
 echo "Tipi is now running"
 echo ""

@@ -1,22 +1,5 @@
 version: "3.7"
 services:
-  jackett:
-    image: lscr.io/linuxserver/jackett
-    container_name: jackett
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - AUTO_UPDATE=true
-    volumes:
-      - ${APP_DATA_DIR}/data/jackett:/config
-      - ${ROOT_FOLDER}/media/torrents:/downloads
-    ports:
-      - 9117:9117
-    restart: unless-stopped
-    networks:
-      - tipi_main_network
-
   radarr:
     image: lscr.io/linuxserver/radarr
     container_name: radarr
@@ -24,8 +7,10 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
+    dns:
+      - ${DNS_IP}
     volumes:
-      - ${APP_DATA_DIR}/data/radarr:/config
+      - ${APP_DATA_DIR}/data:/config
       - ${ROOT_FOLDER}/media/data/movies:/movies #optional
       - ${ROOT_FOLDER}/media/torrents:/downloads #optional
     ports:
