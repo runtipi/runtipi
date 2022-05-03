@@ -1,11 +1,14 @@
 import express, { NextFunction, Request, Response } from 'express';
 import compression from 'compression';
+// import suExec from 'su-exec';
 import helmet from 'helmet';
 import cors from 'cors';
 import { isProd } from './constants/constants';
 import appsRoutes from './modules/apps/apps.routes';
 import systemRoutes from './modules/system/system.routes';
 import networkRoutes from './modules/network/network.routes';
+
+// suExec.init();
 
 const app = express();
 const port = 3001;

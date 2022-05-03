@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  db-joplin:
+    container_name: db-joplin
+    image: postgres:14.2
+    volumes:
+      - ${APP_DATA_DIR}/data/postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=tipi
+      - POSTGRES_USER=tipi
+      - POSTGRES_DB=joplin
+    networks:
+      - tipi_main_network
+
+  joplin:
+    container_name: joplin
+    image: florider89/joplin-server:2.7.4
+    restart: unless-stopped
+    depends_on:
+      - db-joplin
+    ports:
+      - ${APP_PORT}:22300
+    dns:
+      - ${DNS_IP}
+    environment:
+      - APP_PORT=22300
+      - APP_BASE_URL=http://${INTERNAL_IP}:${APP_PORT}
+      - DB_CLIENT=pg
+      - POSTGRES_PASSWORD=tipi
+      - POSTGRES_USER=tipi
+      - POSTGRES_DATABASE=joplin
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=db-joplin
+      - MAX_TIME_DRIFT=0
+    networks:
+      - tipi_main_network

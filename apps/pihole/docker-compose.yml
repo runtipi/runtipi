@@ -13,7 +13,7 @@ services:
 
   pihole:
     depends_on: [unbound]
-    container_name: pihole:2022.04.3
+    container_name: pihole
     image: pihole/pihole:latest
     restart: unless-stopped
     hostname: pihole
