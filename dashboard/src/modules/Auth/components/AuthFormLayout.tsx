@@ -4,6 +4,7 @@ import React from 'react';
 interface IProps {
   title: string;
   description: string;
+  children: React.ReactNode;
 }
 
 const AuthFormLayout: React.FC<IProps> = ({ children, title, description }) => {

@@ -47,7 +47,12 @@ fi
 
 # Copy the app state if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json"
+  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json" && chown -R "1000:1000" "${STATE_FOLDER}/users.json"
+fi
+
+# Copy the user state if it isn't here
+if [[ ! -f "${STATE_FOLDER}/users.json" ]]; then
+  cp "${ROOT_FOLDER}/templates/users-sample.json" "${STATE_FOLDER}/users.json" && chown -R "1000:1000" "${STATE_FOLDER}/users.json"
 fi
 
 export DOCKER_CLIENT_TIMEOUT=240
@@ -83,8 +88,6 @@ docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --b
   echo "Failed to start containers"
   exit 1
 }
-
-
 
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
 apps_to_start=($str)

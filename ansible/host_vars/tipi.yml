@@ -11,6 +11,7 @@ packages:
   - npm
 
 username: nicolas
+jwt_secret: test
 
 ### ZSH Settings
 zsh_theme: "powerlevel10k/powerlevel10k"

@@ -10,6 +10,7 @@ import MenuDrawer from './MenuDrawer';
 interface IProps {
   loading?: boolean;
   breadcrumbs?: { name: string; href: string; current?: boolean }[];
+  children: React.ReactNode;
 }
 
 const Layout: React.FC<IProps> = ({ children, loading, breadcrumbs }) => {
