@@ -1,0 +1,3 @@
+ROOT_FOLDER=<root_folder>
+JWT_SECRET=<jwt_secret>
+INTERNAL_IP=<internal_ip>
