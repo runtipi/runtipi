@@ -22,13 +22,9 @@ if ! command -v ansible-playbook > /dev/null; then
   sudo pip3 install ansible
 fi
 
-# Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
-if [[ ! -f "${ROOT_FOLDER}/state/seed" ]]; then
-  echo "Generating seed..."
-  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 > "${ROOT_FOLDER}/state/seed"
-fi
 
-ansible-playbook ansible/setup.yml -i ansible/hosts -K
+
+ansible-playbook ansible/setup.yml -i ansible/hosts -K -e username="$USER"
 
 # echo "Configuring permissions..."
 # echo

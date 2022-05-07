@@ -1,5 +1,6 @@
 .env
 .env*
+node_modules/
 nginx/*
 letsencrypt/*
 app-data/*

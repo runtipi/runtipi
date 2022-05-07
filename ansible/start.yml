@@ -3,4 +3,4 @@
   become: yes
 
   tasks:
-    - import_tasks: ./tasks/common/system-api.yml
+    - import_tasks: ./tasks/common/packages.yml

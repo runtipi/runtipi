@@ -23,7 +23,7 @@ const config: IConfig = {
   NODE_ENV,
   ROOT_FOLDER,
   JWT_SECRET,
-  CLIENT_URLS: ['locahost:3000', `${INTERNAL_IP}`, `${INTERNAL_IP}:3000`],
+  CLIENT_URLS: ['http://locahost:3000', `http://${INTERNAL_IP}`, `http://${INTERNAL_IP}:3000`],
 };
 
 export default config;
