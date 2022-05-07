@@ -4,11 +4,12 @@ interface IConfig {
   NODE_ENV: string;
   ROOT_FOLDER: string;
   JWT_SECRET: string;
+  CLIENT_URLS: string[];
 }
 
 dotenv.config();
 
-const { NODE_ENV = 'development', ROOT_FOLDER = '', JWT_SECRET = '' } = process.env;
+const { NODE_ENV = 'development', ROOT_FOLDER = '', JWT_SECRET = '', INTERNAL_IP = '' } = process.env;
 
 const missing = [];
 
@@ -22,6 +23,7 @@ const config: IConfig = {
   NODE_ENV,
   ROOT_FOLDER,
   JWT_SECRET,
+  CLIENT_URLS: ['locahost:3000', `${INTERNAL_IP}`, `${INTERNAL_IP}:3000`],
 };
 
 export default config;
