@@ -10,6 +10,7 @@ fi
 
 ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
+SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9
 
@@ -72,6 +73,12 @@ if [[ ! -f "${STATE_FOLDER}/users.json" ]]; then
   cp "${ROOT_FOLDER}/templates/users-sample.json" "${STATE_FOLDER}/users.json" && chown -R "1000:1000" "${STATE_FOLDER}/users.json"
 fi
 
+# Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
+if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
+  echo "Generating seed..."
+  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 > "${STATE_FOLDER}/seed"
+fi
+
 export DOCKER_CLIENT_TIMEOUT=240
 export COMPOSE_HTTP_TIMEOUT=240
 
@@ -102,8 +109,8 @@ for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
   sed -i "s/<puid>/${PUID}/g" "${template}"
   sed -i "s/<pgid>/${PGID}/g" "${template}"
   sed -i "s/<tz>/${TZ}/g" "${template}"
-  sed -i "s/<root_folder>/${ROOT_FOLDER}/g" "${template}"
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
+  sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
