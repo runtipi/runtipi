@@ -4,6 +4,7 @@ import React from 'react';
 interface IProps {
   isOpen: boolean;
   onClose: () => void;
+  children: React.ReactNode;
 }
 
 const MenuDrawer: React.FC<IProps> = ({ children, isOpen, onClose }) => {

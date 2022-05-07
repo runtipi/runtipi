@@ -10,8 +10,7 @@ import systemRoutes from './modules/system/system.routes';
 import authRoutes from './modules/auth/auth.routes';
 import { tradeTokenForUser } from './modules/auth/auth.helpers';
 import cookieParser from 'cookie-parser';
-
-// suExec.init();
+import config from './config';
 
 const app = express();
 const port = 3001;
@@ -24,7 +23,7 @@ if (isProd) {
   app.use(helmet());
 }
 
-app.use(cors());
+app.use(cors({ credentials: true, origin: config.CLIENT_URLS }));
 
 // Get user from token
 app.use((req, res, next) => {

@@ -14,6 +14,7 @@
     dest: "{{ playbook_dir }}/../system-api/.env"
     content: |
       ROOT_FOLDER={{ playbook_dir }}/../
+      JWT_SECRET={{ jwt_secret }}
 
 - name: Install packages based on package.json.
   community.general.npm:

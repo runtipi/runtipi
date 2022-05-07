@@ -4,7 +4,11 @@ import { useAuthStore } from '../../../state/authStore';
 import Login from './Login';
 import Onboarding from './Onboarding';
 
-const AuthWrapper: React.FC = ({ children }) => {
+interface IProps {
+  children: React.ReactNode;
+}
+
+const AuthWrapper: React.FC<IProps> = ({ children }) => {
   const [initialLoad, setInitialLoad] = useState(true);
   const { configured, user, me, fetchConfigured } = useAuthStore();
 
