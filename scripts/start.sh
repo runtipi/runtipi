@@ -12,7 +12,7 @@ ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
-DNS_IP=9.9.9.9
+DNS_IP=9.9.9.9 # Default to Quad9 DNS
 
 # Get field from json file
 function get_json_field() {
@@ -58,7 +58,7 @@ if [[ $UID != 0 ]]; then
     exit 1
 fi
 
-# Configure Umbrel if it isn't already configured
+# Configure Tipi if it isn't already configured
 if [[ ! -f "${STATE_FOLDER}/configured" ]]; then
   "${ROOT_FOLDER}/scripts/configure.sh"
 fi
@@ -85,7 +85,7 @@ export COMPOSE_HTTP_TIMEOUT=240
 echo "Generating config files..."
 # Remove current .env file
 [[ -f "${ROOT_FOLDER}/.env" ]] && rm -f "${ROOT_FOLDER}/.env"
-[[ -f "${ROOT_FOLDER}/system-api/.env" ]] && rm -f "${ROOT_FOLDER}/system-api/.env"
+[[ -f "${ROOT_FOLDER}/packages/system-api/.env" ]] && rm -f "${ROOT_FOLDER}/packages/system-api/.env"
 
 # Store paths to intermediary config files
 ENV_FILE="$ROOT_FOLDER/templates/.env"
@@ -101,8 +101,6 @@ ENV_FILE_SYSTEM_API="$ROOT_FOLDER/templates/.env-api"
 
 JWT_SECRET=$(derive_entropy "jwt")
 
-echo $JWT_SECRET
-
 for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
@@ -114,9 +112,9 @@ for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
-mv -f "$ENV_FILE_SYSTEM_API" "$ROOT_FOLDER/system-api/.env"
+mv -f "$ENV_FILE_SYSTEM_API" "$ROOT_FOLDER/packages/system-api/.env"
 
-ansible-playbook ansible/start.yml -i ansible/hosts -K
+ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USER"
 
 # Run docker-compose
 docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {

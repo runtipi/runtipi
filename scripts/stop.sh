@@ -21,7 +21,7 @@ STATE_FOLDER="${ROOT_FOLDER}/state"
 
 cd "$ROOT_FOLDER"
 
-ansible-playbook ansible/stop.yml -i ansible/hosts
+ansible-playbook ansible/stop.yml -i ansible/hosts -e username="$USER"
 
 export DOCKER_CLIENT_TIMEOUT=240
 export COMPOSE_HTTP_TIMEOUT=240

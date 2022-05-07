@@ -3,23 +3,25 @@
     name: pm2
     global: yes
 
+- name: Install "pnpm" package globally.
+  community.general.npm:
+    name: pnpm
+    global: yes
+
 - name: Run pm2 first time
   shell: pm2 list
 
 - name: Enable pm2 as a service
   shell: sudo env PATH=$PATH:/usr/local/bin pm2 startup -u {{ username }}
 
-- name: Install packages based on package.json.
-  community.general.npm:
-    path: "{{ playbook_dir }}/../system-api"
+- name: Install dependencies
+  shell: cd {{ playbook_dir }} && pnpm install
 
-- name: Remove dist folder
-  ansible.builtin.file:
-    path: "{{ playbook_dir }}/../system-api/dist"
-    state: absent
+- name: Clean packages
+  shell: cd {{ playbook_dir }} && pnpm -r clean
 
-- name: Build system-api
-  shell: cd {{ playbook_dir }}/../system-api && npm run build
+- name: Build packages
+  shell: cd {{ playbook_dir }} && pnpm -r build-prod
 
 - name: Check if app is already running
   become_user: "{{ username }}"
@@ -28,7 +30,7 @@
 
 - name: Start app
   become_user: "{{ username }}"
-  shell: cd {{ playbook_dir }}/../system-api && pm2 start npm --name "system-api" -- start
+  shell: cd {{ playbook_dir }}/../packages/system-api && pm2 start npm --name "system-api" -- start
   when: pm2_result.stdout.find("online") == -1
 
 - name: Reload app

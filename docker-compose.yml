@@ -17,7 +17,7 @@ services:
 
   dashboard:
     build:
-      context: ./dashboard
+      context: ./packages/dashboard
       dockerfile: Dockerfile
       args:
         INTERNAL_IP_ARG: ${INTERNAL_IP}

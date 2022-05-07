@@ -24,7 +24,7 @@ fi
 
 
 
-ansible-playbook ansible/setup.yml -i ansible/hosts -K
+ansible-playbook ansible/setup.yml -i ansible/hosts -K -e username="$USER"
 
 # echo "Configuring permissions..."
 # echo
