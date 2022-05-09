@@ -7,11 +7,7 @@ interface IConfig {
   CLIENT_URLS: string[];
 }
 
-if (process.env.NODE_ENV === 'test') {
-  dotenv.config({ path: '.env.test' });
-} else {
-  dotenv.config();
-}
+dotenv.config();
 
 const { NODE_ENV = 'development', ROOT_FOLDER = '', JWT_SECRET = '', INTERNAL_IP = '' } = process.env;
 

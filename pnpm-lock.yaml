@@ -86,6 +86,7 @@ importers:
       '@types/express': ^4.17.13
       '@types/jest': ^27.5.0
       '@types/jsonwebtoken': ^8.5.8
+      '@types/mock-fs': ^4.13.1
       '@types/passport': ^1.0.7
       '@types/passport-http-bearer': ^1.0.37
       '@types/tcp-port-used': ^1.0.1
@@ -109,6 +110,7 @@ importers:
       internal-ip: ^6.0.0
       jest: ^28.1.0
       jsonwebtoken: ^8.5.1
+      mock-fs: ^5.1.2
       node-port-scanner: ^3.0.1
       nodemon: ^2.0.15
       p-iteration: ^1.1.8
@@ -131,6 +133,7 @@ importers:
       helmet: 5.0.2
       internal-ip: 6.2.0
       jsonwebtoken: 8.5.1
+      mock-fs: 5.1.2
       node-port-scanner: 3.0.1
       p-iteration: 1.1.8
       passport: 0.5.2
@@ -147,6 +150,7 @@ importers:
       '@types/express': 4.17.13
       '@types/jest': 27.5.0
       '@types/jsonwebtoken': 8.5.8
+      '@types/mock-fs': 4.13.1
       '@types/passport': 1.0.7
       '@types/passport-http-bearer': 1.0.37
       '@types/tcp-port-used': 1.0.1
@@ -2188,6 +2192,12 @@ packages:
     resolution: {integrity: sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==}
     dev: true
 
+  /@types/mock-fs/4.13.1:
+    resolution: {integrity: sha512-m6nFAJ3lBSnqbvDZioawRvpLXSaPyn52Srf7OfzjubYbYX8MTUdIgDxQl0wEapm4m/pNYSd9TXocpQ0TvZFlYA==}
+    dependencies:
+      '@types/node': 17.0.31
+    dev: true
+
   /@types/node/17.0.31:
     resolution: {integrity: sha512-AR0x5HbXGqkEx9CadRH3EBYx/VkiUgZIhP4wvPn/+5KIsgpNoyFaRlVe0Zlx9gRtg8fA06a9tskE2MSN7TcG4Q==}
 
@@ -3968,8 +3978,6 @@ packages:
     dependencies:
       debug: 3.2.7
       resolve: 1.22.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /eslint-import-resolver-typescript/2.4.0_l3k33lf43msdtqtpwrwceacqke:
@@ -6078,6 +6086,11 @@ packages:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
     engines: {node: '>=10'}
     hasBin: true
+    dev: false
+
+  /mock-fs/5.1.2:
+    resolution: {integrity: sha512-YkjQkdLulFrz0vD4BfNQdQRVmgycXTV7ykuHMlyv+C8WCHazpkiQRDthwa02kSyo8wKnY9wRptHfQLgmf0eR+A==}
+    engines: {node: '>=12.0.0'}
     dev: false
 
   /ms/2.0.0:

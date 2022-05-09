@@ -1,7 +1,7 @@
 import portUsed from 'tcp-port-used';
 import p from 'p-iteration';
 import { AppConfig } from '../../config/types';
-import { fileExists, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
+import { fileExists, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
 
 type AppsState = { installed: string };
@@ -96,7 +96,7 @@ export const ensureAppState = (appName: string, installed: boolean) => {
     }
   } else {
     if (state.installed.indexOf(appName) !== -1) {
-      state.installed = state.installed.replace(` ${appName}`, '');
+      state.installed = state.installed.replace(`${appName}`, '');
       writeFile('/state/apps.json', JSON.stringify(state));
     }
   }
@@ -123,4 +123,22 @@ export const generateEnvFile = (appName: string, form: Record<string, string>) =
 
 export const getStateFile = (): AppsState => {
   return readJsonFile('/state/apps.json');
+};
+
+export const getAvailableApps = (): string[] => {
+  const apps: string[] = [];
+
+  const appsDir = readdirSync('/apps');
+
+  appsDir.forEach((app) => {
+    if (fileExists(`/apps/${app}/config.json`)) {
+      const configFile: AppConfig = readJsonFile(`/apps/${app}/config.json`);
+
+      if (configFile.available) {
+        apps.push(app);
+      }
+    }
+  });
+
+  return apps;
 };

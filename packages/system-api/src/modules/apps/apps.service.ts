@@ -1,8 +1,7 @@
 import si from 'systeminformation';
-import { appNames } from '../../config/apps';
 import { AppConfig } from '../../config/types';
 import { createFolder, fileExists, readJsonFile } from '../fs/fs.helpers';
-import { checkAppExists, checkAppRequirements, checkEnvFile, ensureAppState, generateEnvFile, getInitalFormValues, getStateFile, runAppScript } from './apps.helpers';
+import { checkAppExists, checkAppRequirements, checkEnvFile, ensureAppState, generateEnvFile, getAvailableApps, getInitalFormValues, getStateFile, runAppScript } from './apps.helpers';
 
 const startApp = async (appName: string): Promise<void> => {
   checkAppExists(appName);
@@ -19,12 +18,6 @@ const startApp = async (appName: string): Promise<void> => {
 };
 
 const installApp = async (id: string, form: Record<string, string>): Promise<void> => {
-  const appIsAvailable = appNames.includes(id);
-
-  if (!appIsAvailable) {
-    throw new Error(`App ${id} not available`);
-  }
-
   const appExists = fileExists(`/app-data/${id}`);
 
   if (appExists) {
@@ -46,10 +39,12 @@ const installApp = async (id: string, form: Record<string, string>): Promise<voi
     // Run script
     await runAppScript(['install', id]);
   }
+
+  return Promise.resolve();
 };
 
 const listApps = async (): Promise<AppConfig[]> => {
-  const apps: AppConfig[] = appNames
+  const apps: AppConfig[] = getAvailableApps()
     .map((app) => {
       try {
         return readJsonFile(`/apps/${app}/config.json`);

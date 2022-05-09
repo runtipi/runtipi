@@ -36,7 +36,8 @@
     "passport-http-bearer": "^1.0.1",
     "public-ip": "^5.0.0",
     "systeminformation": "^5.11.9",
-    "tcp-port-used": "^1.0.2"
+    "tcp-port-used": "^1.0.2",
+    "mock-fs": "^5.1.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -46,6 +47,7 @@
     "@types/express": "^4.17.13",
     "@types/jest": "^27.5.0",
     "@types/jsonwebtoken": "^8.5.8",
+    "@types/mock-fs": "^4.13.1",
     "@types/passport": "^1.0.7",
     "@types/passport-http-bearer": "^1.0.37",
     "@types/tcp-port-used": "^1.0.1",
