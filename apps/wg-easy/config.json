@@ -1,5 +1,6 @@
 {
   "name": "Wireguard",
+  "available": true,
   "port": 8082,
   "requirements": {
     "ports": [51820]
