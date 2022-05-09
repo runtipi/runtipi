@@ -1,3 +1,4 @@
+.pnpm-debug.log
 .env
 .env*
 node_modules/

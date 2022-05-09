@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import publicIp from 'public-ip';
 import portScanner from 'node-port-scanner';
-import { internalIpV4 } from 'internal-ip';
+import internalIp from 'internal-ip';
 
 const isPortOpen = async (req: Request, res: Response<boolean>) => {
   const { port } = req.params;
@@ -14,7 +14,7 @@ const isPortOpen = async (req: Request, res: Response<boolean>) => {
 };
 
 const getInternalIp = async (req: Request, res: Response<string>) => {
-  const ip = await internalIpV4();
+  const ip = await internalIp.v4();
 
   res.status(200).send(ip);
 };
