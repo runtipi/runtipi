@@ -1,6 +1,9 @@
 name: Tipi CI
 on:
   push:
+
+env:
+  ROOT_FOLDER: /test    
     
 jobs:
   cache-and-install:
