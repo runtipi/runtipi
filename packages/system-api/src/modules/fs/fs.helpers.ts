@@ -11,6 +11,8 @@ export const readJsonFile = (path: string): any => {
 
 export const readFile = (path: string): string => fs.readFileSync(getAbsolutePath(path)).toString();
 
+export const readdirSync = (path: string): string[] => fs.readdirSync(getAbsolutePath(path));
+
 export const fileExists = (path: string): boolean => fs.existsSync(getAbsolutePath(path));
 
 export const writeFile = (path: string, data: any) => fs.writeFileSync(getAbsolutePath(path), data);

@@ -19,6 +19,7 @@ export type Maybe<T> = T | null | undefined;
 
 export interface AppConfig {
   id: string;
+  available: boolean;
   port: number;
   name: string;
   requirements?: {
