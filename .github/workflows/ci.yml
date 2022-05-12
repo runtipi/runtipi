@@ -3,7 +3,8 @@ on:
   push:
 
 env:
-  ROOT_FOLDER: /test    
+  ROOT_FOLDER: /test
+  JWT_SECRET: "secret"
     
 jobs:
   ci:
