@@ -1,5 +1,6 @@
 {
   "name": "Invidious",
+  "available": true,
   "port": 8095,
   "id": "invidious",
   "description": "",

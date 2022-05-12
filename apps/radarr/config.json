@@ -1,5 +1,6 @@
 {
   "name": "Radarr",
+  "available": true,
   "port": 8088,
   "id": "radarr",
   "description": "",

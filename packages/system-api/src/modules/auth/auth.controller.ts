@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import bcrypt from 'bcrypt';
 import { IUser } from '../../config/types';
-import { readJsonFile, writeFile } from '../fs/fs.helpers';
-import { getJwtToken, getUser } from './auth.helpers';
+import { readJsonFile } from '../fs/fs.helpers';
+import AuthService from './auth.service';
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -12,13 +11,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       throw new Error('Missing id or password');
     }
 
-    const user = getUser(email);
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const token = await getJwtToken(user, password);
+    const token = await AuthService.login(email, password);
 
     res.cookie('tipi_token', token, {
       httpOnly: false,
@@ -34,26 +27,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users: IUser[] = readJsonFile('/state/users.json');
-
-    if (users.length > 0) {
-      throw new Error('There is already an admin user');
-    }
-
     const { email, password, name } = req.body;
 
-    if (!email || !password) {
-      throw new Error('Missing email or password');
-    }
-
-    if (users.find((user) => user.email === email)) {
-      throw new Error('User already exists');
-    }
-
-    const hash = await bcrypt.hash(password, 10);
-    const newuser: IUser = { email, name, password: hash };
-
-    const token = await getJwtToken(newuser, password);
+    const token = await AuthService.register(email, password, name);
 
     res.cookie('tipi_token', token, {
       httpOnly: false,
@@ -61,28 +37,34 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
-    writeFile('/state/users.json', JSON.stringify([newuser]));
-
     res.status(200).json({ token });
   } catch (e) {
     next(e);
   }
 };
 
-const me = async (req: Request, res: Response) => {
-  const { user } = req;
+const me = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { user } = req;
 
-  if (user) {
-    res.status(200).json({ user });
-  } else {
-    res.status(200).json({ user: null });
+    if (user) {
+      res.status(200).json({ user });
+    } else {
+      res.status(200).json({ user: null });
+    }
+  } catch (e) {
+    next(e);
   }
 };
 
-const isConfigured = async (req: Request, res: Response) => {
-  const users: IUser[] = readJsonFile('/state/users.json');
+const isConfigured = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const users: IUser[] = readJsonFile('/state/users.json');
 
-  res.status(200).json({ configured: users.length > 0 });
+    res.status(200).json({ configured: users.length > 0 });
+  } catch (e) {
+    next(e);
+  }
 };
 
 export default { login, me, register, isConfigured };

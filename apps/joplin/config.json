@@ -1,5 +1,6 @@
 {
   "name": "Joplin Server",
+  "available": true,
   "port": 8099,
   "id": "joplin",
   "description": "",

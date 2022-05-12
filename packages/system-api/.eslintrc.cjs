@@ -1,5 +1,5 @@
 module.exports = {
-  env: { node: true },
+  env: { node: true, jest: true },
   extends: ['airbnb-typescript', 'eslint:recommended', 'plugin:import/typescript'],
   parser: '@typescript-eslint/parser',
   parserOptions: {

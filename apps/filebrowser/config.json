@@ -1,5 +1,6 @@
 {
   "name": "File Browser",
+  "available": true,
   "port": 8096,
   "id": "filebrowser",
   "description": "Reliable and Performant File Management Desktop Sync and File Sharing",

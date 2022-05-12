@@ -1,5 +1,6 @@
 {
   "name": "Tailscale",
+  "available": true,
   "port": 8093,
   "id": "tailscale",
   "description": "",
