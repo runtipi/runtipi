@@ -3,12 +3,12 @@ on:
   push:
 
 env:
-  ROOT_FOLDER: /test    
+  ROOT_FOLDER: /test
+  JWT_SECRET: "secret"
     
 jobs:
-  cache-and-install:
+  ci:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
