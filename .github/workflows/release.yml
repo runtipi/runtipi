@@ -3,8 +3,8 @@ name: Build & Deploy
 on:
   push:
     branches:    
-      - 'release/**'
-
+      - master
+      
 jobs:
   release:
     runs-on: ubuntu-latest
