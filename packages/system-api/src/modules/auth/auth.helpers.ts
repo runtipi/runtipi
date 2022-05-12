@@ -1,10 +1,10 @@
 import jsonwebtoken from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import * as argon2 from 'argon2';
 import { IUser, Maybe } from '../../config/types';
 import { readJsonFile } from '../fs/fs.helpers';
 import config from '../../config';
 
-export const getUser = (email: string): Maybe<IUser> => {
+const getUser = (email: string): Maybe<IUser> => {
   const savedUser: IUser[] = readJsonFile('/state/users.json');
 
   const user = savedUser.find((u) => u.email === email);
@@ -13,17 +13,19 @@ export const getUser = (email: string): Maybe<IUser> => {
 };
 
 const compareHashPassword = (password: string, hash = ''): Promise<boolean> => {
-  return bcrypt.compare(password, hash || '');
+  return argon2.verify(hash, password);
 };
 
 const getJwtToken = async (user: IUser, password: string) => {
-  const validPassword = await compareHashPassword(password, user.password || '');
+  const validPassword = await compareHashPassword(password, user.password);
 
   if (validPassword) {
     if (config.JWT_SECRET) {
       return jsonwebtoken.sign({ email: user.email }, config.JWT_SECRET, {
         expiresIn: '7d',
       });
+    } else {
+      throw new Error('JWT_SECRET is not set');
     }
   }
 
@@ -33,6 +35,7 @@ const getJwtToken = async (user: IUser, password: string) => {
 const tradeTokenForUser = (token: string): Maybe<IUser> => {
   try {
     const { email } = jsonwebtoken.verify(token, config.JWT_SECRET) as { email: string };
+
     const users: IUser[] = readJsonFile('/state/users.json');
 
     return users.find((user) => user.email === email);
@@ -41,4 +44,4 @@ const tradeTokenForUser = (token: string): Maybe<IUser> => {
   }
 };
 
-export { tradeTokenForUser, getJwtToken };
+export default { tradeTokenForUser, getJwtToken, getUser };

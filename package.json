@@ -1,0 +1,36 @@
+{
+  "name": "runtipi",
+  "version": "0.0.1",
+  "description": "A homeserver for everyone",
+  "dependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-next": "^12.1.4",
+    "eslint-import-resolver-node": "^0.3.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-module-utils": "^2.7.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.29.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-scope": "^7.1.1",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-utils": "^3.0.0",
+    "eslint-visitor-keys": "^3.3.0",
+    "prettier": "^2.6.2",
+    "prettier-linter-helpers": "^1.0.0",
+    "eslint-import-resolver-typescript": "^2.4.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meienberger/runtipi.git"
+  },
+  "author": "",
+  "license": "GNU General Public License v3.0",
+  "bugs": {
+    "url": "https://github.com/meienberger/runtipi/issues"
+  },
+  "homepage": "https://github.com/meienberger/runtipi#readme"
+}

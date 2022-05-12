@@ -6,9 +6,8 @@ env:
   ROOT_FOLDER: /test    
     
 jobs:
-  cache-and-install:
+  ci:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
