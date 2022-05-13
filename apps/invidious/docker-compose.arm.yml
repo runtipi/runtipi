@@ -3,14 +3,11 @@ services:
   invidious:
     user: 1000:1000
     container_name: invidious
-    image: quay.io/invidious/invidious:latest
+    image: quay.io/invidious/invidious:latest-arm64
     restart: unless-stopped
     ports:
       - "${APP_PORT}:3000"
     environment:
-      # Please read the following file for a comprehensive list of all available
-      # configuration options and their associated syntax:
-      # https://github.com/iv-org/invidious/blob/master/config/config.example.yml
       INVIDIOUS_CONFIG: |
         db:
           dbname: invidious

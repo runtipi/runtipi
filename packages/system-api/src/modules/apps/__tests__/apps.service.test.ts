@@ -37,6 +37,10 @@ const testApp2: Partial<AppConfig> = {
   id: 'test-app2',
 };
 
+const testApp3: Partial<AppConfig> = {
+  id: 'test-app3',
+};
+
 const MOCK_FILE_EMPTY = {
   [`${config.ROOT_FOLDER}/apps/test-app/config.json`]: JSON.stringify(testApp),
   [`${config.ROOT_FOLDER}/.env`]: 'TEST=test',
@@ -46,6 +50,7 @@ const MOCK_FILE_EMPTY = {
 const MOCK_FILE_INSTALLED = {
   [`${config.ROOT_FOLDER}/apps/test-app/config.json`]: JSON.stringify(testApp),
   [`${config.ROOT_FOLDER}/apps/test-app2/config.json`]: JSON.stringify(testApp2),
+  [`${config.ROOT_FOLDER}/apps/test-app3/config.json`]: JSON.stringify(testApp3),
   [`${config.ROOT_FOLDER}/.env`]: 'TEST=test',
   [`${config.ROOT_FOLDER}/state/apps.json`]: '{"installed": "test-app"}',
   [`${config.ROOT_FOLDER}/app-data/test-app`]: '',

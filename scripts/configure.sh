@@ -2,6 +2,7 @@
 set -e  # Exit immediately if a command exits with a non-zero status.
 
 ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
+USERNAME="$(id -nu 1000)"
 
 echo
 echo "======================================"
@@ -24,7 +25,7 @@ fi
 
 
 
-ansible-playbook ansible/setup.yml -i ansible/hosts -K -e username="$USER"
+ansible-playbook ansible/setup.yml -i ansible/hosts -K -e username="$USERNAME"
 
 # echo "Configuring permissions..."
 # echo

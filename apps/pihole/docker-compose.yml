@@ -19,7 +19,7 @@ services:
     hostname: pihole
     dns:
       - 127.0.0.1
-      - 10.21.21.200 # Points to unbound
+      # - 10.21.21.200 # Points to unbound
     ports:
       - 53:53/tcp
       - 53:53/udp
@@ -30,7 +30,7 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${APP_PASSWORD}
-      PIHOLE_DNS_: 10.21.21.200 # Points to unbound
+      # PIHOLE_DNS_: 10.21.21.200 # Points to unbound
       FTLCONF_REPLY_ADDR4: 10.21.21.201
     cap_add:
       - NET_ADMIN

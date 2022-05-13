@@ -21,6 +21,7 @@
   shell: cd {{ playbook_dir }} && pnpm -r clean
 
 - name: Build packages
+  become_user: "{{ username }}"
   shell: cd {{ playbook_dir }} && pnpm -r build-prod
 
 - name: Check if app is already running
