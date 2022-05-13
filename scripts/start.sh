@@ -13,6 +13,7 @@ STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
+USERNAME="$(id -nu 1000)"
 
 if [[ $UID != 0 ]]; then
     echo "Tipi must be started as root"
@@ -65,13 +66,16 @@ TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
 
 # Copy the app state if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json" && chown -R "1000:1000" "${STATE_FOLDER}/apps.json"
+  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json"
 fi
 
 # Copy the user state if it isn't here
 if [[ ! -f "${STATE_FOLDER}/users.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/users-sample.json" "${STATE_FOLDER}/users.json" && chown -R "1000:1000" "${STATE_FOLDER}/users.json"
+  cp "${ROOT_FOLDER}/templates/users-sample.json" "${STATE_FOLDER}/users.json"
 fi
+
+chown -R 1000:1000 "${STATE_FOLDER}/apps.json"
+chown -R 1000:1000 "${STATE_FOLDER}/users.json"
 
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
@@ -114,7 +118,7 @@ done
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 mv -f "$ENV_FILE_SYSTEM_API" "$ROOT_FOLDER/packages/system-api/.env"
 
-ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USER"
+ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
 
 # Run docker-compose
 docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
