@@ -40,7 +40,6 @@
       - docker-ce-cli
       - containerd.io
     state: latest
-  when: ansible_os_family == "Debian"
 
 - name: Check if docker-compose is installed
   stat:
