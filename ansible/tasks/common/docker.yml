@@ -13,11 +13,11 @@
   register: lsb_release
 
 - name: Add docker gpg key (Ubuntu)
-  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg -y
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   when: lsb-release.stdout == 'Ubuntu'
 
 - name: Add docker gpg key (Debian)
-  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg -y
+  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   when: lsb-release.stdout == 'Debian'
 
 - name: Add deb repo for docker (Ubuntu)
