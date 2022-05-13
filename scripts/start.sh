@@ -13,13 +13,17 @@ STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
-ARCHITECTURE="$(uname -m)"
-USERNAME="$(id -nu 1000)"
 
-if [[ "$ARCHITECTURE" == "x86_64" ]]; then
-  ARCHITECTURE="amd64"
-elif [[ "$ARCHITECTURE" == "aarch64" ]]; then
-  ARCHITECTURE="arm64"
+if [[ $UID != 0 ]]; then
+    echo "Tipi must be started as root"
+    echo "Please re-run this script as"
+    echo "  sudo ./scripts/start"
+    exit 1
+fi
+
+# Configure Tipi if it isn't already configured
+if [[ ! -f "${STATE_FOLDER}/configured" ]]; then
+  "${ROOT_FOLDER}/scripts/configure.sh"
 fi
 
 # Get field from json file
@@ -45,6 +49,8 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
+
+
 # Get dns ip if pihole is installed
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
 
@@ -57,21 +63,11 @@ PUID="$(id -u)"
 PGID="$(id -g)"
 TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
 
-if [[ $UID != 0 ]]; then
-    echo "Tipi must be started as root"
-    echo "Please re-run this script as"
-    echo "  sudo ./scripts/start"
-    exit 1
-fi
 
-# Configure Tipi if it isn't already configured
-if [[ ! -f "${STATE_FOLDER}/configured" ]]; then
-  "${ROOT_FOLDER}/scripts/configure.sh"
-fi
 
 # Copy the app state if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json" && chown -R "1000:1000" "${STATE_FOLDER}/apps.json"
+  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json" && chown -R "1000:1000" "${STATE_FOLDER}/users.json"
 fi
 
 # Copy the user state if it isn't here
@@ -108,7 +104,6 @@ ENV_FILE_SYSTEM_API="$ROOT_FOLDER/templates/.env-api"
 JWT_SECRET=$(derive_entropy "jwt")
 
 for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
-  # Replace placeholders with actual values
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<puid>/${PUID}/g" "${template}"
@@ -116,13 +111,12 @@ for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
   sed -i "s/<tz>/${TZ}/g" "${template}"
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
-  sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 mv -f "$ENV_FILE_SYSTEM_API" "$ROOT_FOLDER/packages/system-api/.env"
 
-ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
+ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USER"
 
 # Run docker-compose
 docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
