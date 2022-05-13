@@ -14,19 +14,19 @@
 
 - name: Add docker gpg key (Ubuntu)
   shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-  when: lsb-release.stdout == 'Ubuntu'
+  when: lsb_release.stdout == 'Ubuntu'
 
 - name: Add docker gpg key (Debian)
   shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-  when: lsb-release.stdout == 'Debian'
+  when: lsb_release.stdout == 'Debian'
 
 - name: Add deb repo for docker (Ubuntu)
   shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  when: lsb-release.stdout == 'Ubuntu'
+  when: lsb_release.stdout == 'Ubuntu'
 
 - name: Add deb repo for docker (Debian)
   shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  when: lsb-release.stdout == 'Debian'
+  when: lsb_release.stdout == 'Debian'
 
 - name: Update packages
   apt:
