@@ -1,5 +1,5 @@
 import { SlideFade, Image, VStack, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FiExternalLink } from 'react-icons/fi';
 import { AppConfig } from '../../../core/types';
 import { useAppsStore } from '../../../state/appsStore';
@@ -21,6 +21,14 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
   const updateDisclosure = useDisclosure();
 
   const { install, update, uninstall, stop, start, fetchApp } = useAppsStore();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchApp(app.id);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [app.id, fetchApp]);
 
   const handleError = (error: unknown) => {
     if (error instanceof Error) {

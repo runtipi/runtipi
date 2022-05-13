@@ -50,16 +50,6 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
-
-
-# Get dns ip if pihole is installed
-str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-
-# if pihole is present in str add it as DNS
-if [[ $str = *"pihole"* ]]; then
-  DNS_IP=10.21.21.201
-fi
-
 PUID="$(id -u)"
 PGID="$(id -g)"
 TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
@@ -76,6 +66,14 @@ fi
 
 chown -R 1000:1000 "${STATE_FOLDER}/apps.json"
 chown -R 1000:1000 "${STATE_FOLDER}/users.json"
+
+# Get dns ip if pihole is installed
+str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
+
+# if pihole is present in str add it as DNS
+if [[ $str = *"pihole"* ]]; then
+  DNS_IP=10.21.21.201
+fi
 
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
