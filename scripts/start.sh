@@ -71,7 +71,7 @@ fi
 
 # Copy the app state if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json" && chown -R "1000:1000" "${STATE_FOLDER}/users.json"
+  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json" && chown -R "1000:1000" "${STATE_FOLDER}/apps.json"
 fi
 
 # Copy the user state if it isn't here

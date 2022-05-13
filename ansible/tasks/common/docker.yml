@@ -9,7 +9,7 @@
     state: latest
 
 - name: Add docker gpg key
-  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg -y
 
 - name: Check lsb_release -cs
   shell: lsb_release -cs
@@ -54,9 +54,7 @@
     name: docker
 
 - name: Put user in docker group
-  user:
-    name: "{{ username }}"
-    group: docker
+  shell: usermod -aG docker {{ username }}
 
 - name: Start docker service
   service:

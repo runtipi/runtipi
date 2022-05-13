@@ -1,7 +1,13 @@
-# - name: Update packages
-#   apt:
-#     update_cache: yes
-#     upgrade: yes
+- name: Update packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install node 16
+  shell: curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+
+- name: Install node
+  shell: apt-get install -y nodejs
 
 - name: Install essential packages
   package:
@@ -31,7 +37,6 @@
   service:
     name: sshd
     state: restarted
-  when: sshd_config.changed
 
 - name: Allow SSH in UFW
   community.general.ufw:
@@ -55,7 +60,7 @@
 - name: Allow ports for apps
   community.general.ufw:
     rule: allow
-    port: 8080:8180
+    port: 3000:3001
     proto: tcp
 
 - name: Enable ufw daemon
