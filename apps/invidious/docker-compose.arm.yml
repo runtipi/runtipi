@@ -3,7 +3,7 @@ services:
   invidious:
     user: 1000:1000
     container_name: invidious
-    image: quay.io/invidious/invidious:latest
+    image: quay.io/invidious/invidious:latest-arm64
     restart: unless-stopped
     ports:
       - "${APP_PORT}:3000"

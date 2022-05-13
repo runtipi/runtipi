@@ -78,10 +78,22 @@ fi
 compose() {
   local app="${1}"
   shift
-  
+
+  local architecture="$(uname -m)"
+
+  if [[ "$architecture" == "aarch64" ]]; then
+    architecture="arm64"
+  fi
+
   # App data folder
   local env_file="${ROOT_FOLDER}/.env"
   local app_compose_file="${app_dir}/docker-compose.yml"
+
+  # Pick arm architecture if running on arm
+  if [[ "$architecture" == "arm"* ]]; then
+    app_compose_file="${app_dir}/docker-compose.arm.yml"
+  fi
+
   local common_compose_file="${ROOT_FOLDER}/apps/docker-compose.common.yml"
   local app_dir="${ROOT_FOLDER}/apps/${app}"
 

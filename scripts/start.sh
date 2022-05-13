@@ -13,6 +13,13 @@ STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
+ARCHITECTURE="$(uname -m)"
+
+if [[ "$ARCHITECTURE" == "x86_64" ]]; then
+  ARCHITECTURE="amd64"
+else if [[ "$ARCHITECTURE" == "aarch64" ]]; then
+  ARCHITECTURE="arm64"
+fi
 
 # Get field from json file
 function get_json_field() {
@@ -102,6 +109,7 @@ ENV_FILE_SYSTEM_API="$ROOT_FOLDER/templates/.env-api"
 JWT_SECRET=$(derive_entropy "jwt")
 
 for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
+  # Replace placeholders with actual values
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<puid>/${PUID}/g" "${template}"
@@ -109,6 +117,7 @@ for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
   sed -i "s/<tz>/${TZ}/g" "${template}"
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
+  sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
@@ -156,5 +165,3 @@ EOF
 echo ""
 echo "Visit http://${INTERNAL_IP}/ to view the dashboard"
 echo ""
-
-
