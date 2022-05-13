@@ -89,10 +89,10 @@ compose() {
   local env_file="${ROOT_FOLDER}/.env"
   local app_compose_file="${app_dir}/docker-compose.yml"
 
-  # Pick arm architecture if running on arm
-  if [[ "$architecture" == "arm"* ]]; then
+  # Pick arm architecture if running on arm and if the app has a docker-compose.arm.yml file
+  if [[ "$architecture" == "arm"* ]] && [[ -f "${app_dir}/docker-compose.arm.yml" ]]; then
     app_compose_file="${app_dir}/docker-compose.arm.yml"
-  fi
+  fi  
 
   local common_compose_file="${ROOT_FOLDER}/apps/docker-compose.common.yml"
   local app_dir="${ROOT_FOLDER}/apps/${app}"
