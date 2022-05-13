@@ -14,10 +14,11 @@ SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
+USERNAME="$(id -nu 1000)"
 
 if [[ "$ARCHITECTURE" == "x86_64" ]]; then
   ARCHITECTURE="amd64"
-else if [[ "$ARCHITECTURE" == "aarch64" ]]; then
+elif [[ "$ARCHITECTURE" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
 fi
 
@@ -43,8 +44,6 @@ function derive_entropy() {
   # We need `sed 's/^.* //'` to trim the "(stdin)= " prefix from some versions of openssl
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
-
-
 
 # Get dns ip if pihole is installed
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
@@ -123,7 +122,7 @@ done
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 mv -f "$ENV_FILE_SYSTEM_API" "$ROOT_FOLDER/packages/system-api/.env"
 
-ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USER"
+ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
 
 # Run docker-compose
 docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
@@ -165,3 +164,5 @@ EOF
 echo ""
 echo "Visit http://${INTERNAL_IP}/ to view the dashboard"
 echo ""
+
+

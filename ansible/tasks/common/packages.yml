@@ -20,7 +20,11 @@
 - name: Clean packages
   shell: cd {{ playbook_dir }} && pnpm -r clean
 
+- name: Remove packages/system-api/dist folder
+  shell: rm -rf {{ playbook_dir }}/packages/system-api/dist
+
 - name: Build packages
+  become_user: "{{ username }}"
   shell: cd {{ playbook_dir }} && pnpm -r build-prod
 
 - name: Check if app is already running

@@ -8,7 +8,7 @@ import { isProd } from './constants/constants';
 import appsRoutes from './modules/apps/apps.routes';
 import systemRoutes from './modules/system/system.routes';
 import authRoutes from './modules/auth/auth.routes';
-import { tradeTokenForUser } from './modules/auth/auth.helpers';
+import AuthHelpers from './modules/auth/auth.helpers';
 import cookieParser from 'cookie-parser';
 import config from './config';
 
@@ -30,7 +30,7 @@ app.use((req, res, next) => {
   let user = null;
 
   if (req?.cookies?.tipi_token) {
-    user = tradeTokenForUser(req.cookies.tipi_token);
+    user = AuthHelpers.tradeTokenForUser(req.cookies.tipi_token);
     if (user) req.user = user;
   }
 

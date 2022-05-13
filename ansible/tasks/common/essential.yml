@@ -13,12 +13,12 @@
     name: "{{ username }}"
     group: root
 
-- name: Disable SSH password auth
-  lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: "^#PasswordAuthentication yes"
-    line: "PasswordAuthentication no"
-  register: sshd_config
+# - name: Disable SSH password auth
+#   lineinfile:
+#     dest: /etc/ssh/sshd_config
+#     regexp: "^#PasswordAuthentication yes"
+#     line: "PasswordAuthentication no"
+#   register: sshd_config
 
 - name: Enable passwordless sudo for user
   lineinfile:
