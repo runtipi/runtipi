@@ -7,8 +7,6 @@ packages:
   - git
   - docker
   - avahi-daemon
-  - nodejs
-  - npm
 
 ### ZSH Settings
 zsh_theme: "powerlevel10k/powerlevel10k"
