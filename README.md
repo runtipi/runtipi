@@ -30,7 +30,7 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 ### Installation Requirements
 - Ubuntu 18.04 LTS or higher (or Debian 10)
 
-Make sure your User ID is `1000` (verify it by running `id -u`) and ensure that your account is [correctly permissioned to use docker](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user).
+Make sure your User ID is `1000` (verify it by running `id -u`)
 
 ### Step 1. Download Tipi
 Run this in an empty directory where you want to install Tipi.
