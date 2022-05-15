@@ -104,6 +104,8 @@ const installApp = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     await AppsService.installApp(id, form);
+
+    res.status(200).json({ message: 'App installed successfully' });
   } catch (e) {
     next(e);
   }

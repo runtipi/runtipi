@@ -11,7 +11,7 @@ const Settings: NextPage = () => {
   const isLatest = latestVersion === `v${Package.version}`;
 
   const renderUpdate = () => {
-    if (!isLatest) {
+    if (isLatest) {
       return (
         <Text fontSize="md" color="green.500">
           Your Tipi install is up to date. Version {Package.version}
@@ -24,7 +24,7 @@ const Settings: NextPage = () => {
         You are not using the latest version of Tipi. There is a new version ({latestVersion}) available. Visit{' '}
         <a className="text-blue-600" target="_blank" rel="noreferrer" href={`https://github.com/meienberger/runtipi/releases/${latestVersion}`}>
           Github
-        </a>
+        </a>{' '}
         for update instructions.
       </Text>
     );
