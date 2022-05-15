@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import si from 'systeminformation';
+import fetch from 'node-fetch';
+import TipiCache from '../../config/cache';
 
 type CpuData = {
   load: number;
@@ -69,4 +71,21 @@ const getMemoryInfo = async (req: Request, res: Response<MemoryData>) => {
   res.status(200).json(result);
 };
 
-export default { getCpuInfo, getDiskInfo, getMemoryInfo };
+const getLatestVersion = async (req: Request, res: Response<string>) => {
+  let version = TipiCache.get<string>('latestVersion');
+
+  console.log('CACHED', version);
+
+  if (!version) {
+    const response = await fetch('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+    const json = (await response.json()) as { name: string };
+    TipiCache.set('latestVersion', json.name);
+    version = json.name;
+  }
+
+  console.log(version);
+
+  res.status(200).send(version);
+};
+
+export default { getCpuInfo, getDiskInfo, getMemoryInfo, getLatestVersion };
