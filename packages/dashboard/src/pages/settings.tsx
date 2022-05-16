@@ -3,7 +3,7 @@ import { Text } from '@chakra-ui/react';
 import useSWR from 'swr';
 import Layout from '../components/Layout';
 import fetcher from '../core/fetcher';
-import Package from '../../../../package.json';
+import Package from '../../package.json';
 
 const Settings: NextPage = () => {
   const { data: latestVersion } = useSWR<string>('/system/version/latest', fetcher);

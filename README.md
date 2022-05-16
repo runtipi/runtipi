@@ -1,9 +1,10 @@
 # ⛺️ Tipi — A personal homeserver for everyone
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
+![Issues](https://img.shields.io/github/issues/meienberger/runtipi)
 ![RunsOn](https://img.shields.io/badge/Debian-Supported-green?logo=debian)
 ![RunsOn](https://img.shields.io/badge/Ubuntu-Supported-green?logo=ubuntu)
-
+![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
 ![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/1.png)
 > ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
 
@@ -30,7 +31,7 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 ### Installation Requirements
 - Ubuntu 18.04 LTS or higher (or Debian 10)
 
-Make sure your User ID is `1000` (verify it by running `id -u`) and ensure that your account is [correctly permissioned to use docker](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user).
+Make sure your User ID is `1000` (verify it by running `id -u`)
 
 ### Step 1. Download Tipi
 Run this in an empty directory where you want to install Tipi.
@@ -66,3 +67,7 @@ If you want to support a new app or feature, you can:
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 
 Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may copy, distribute and modify the software as long as you track changes/dates in source files. Any modifications to or software including (via compiler) GPL-licensed code must also be made available under the GPL along with build & install instructions.
+
+## 🗣 Community
+- [Matrix](https://matrix.to/#/#runtipi:matrix.org)<br />
+- [Twitter](https://twitter.com/runtipi)
