@@ -26,6 +26,8 @@ services:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}:/tipi
+    environment:
+      - INTERNAL_IP=${INTERNAL_IP}
     networks:
       tipi_main_network:
         ipv4_address: 10.21.21.3
@@ -38,8 +40,6 @@ services:
     networks:
       tipi_main_network:
         ipv4_address: 10.21.21.4
-    environment:
-      - INTERNAL_IP=${INTERNAL_IP}
     labels:
       traefik.enable: true
       traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&

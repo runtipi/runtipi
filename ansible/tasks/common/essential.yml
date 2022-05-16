@@ -60,7 +60,3 @@
     name: ufw
     state: started
     enabled: yes
-
-- name: Enable UFW
-  community.general.ufw:
-    state: enabled
