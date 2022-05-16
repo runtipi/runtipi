@@ -1,8 +1,10 @@
 # ⛺️ Tipi — A personal homeserver for everyone
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
+![Issues](https://img.shields.io/github/issues/meienberger/runtipi)
 ![RunsOn](https://img.shields.io/badge/Debian-Supported-green?logo=debian)
 ![RunsOn](https://img.shields.io/badge/Ubuntu-Supported-green?logo=ubuntu)
+![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
 
 ![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/1.png)
 > ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
