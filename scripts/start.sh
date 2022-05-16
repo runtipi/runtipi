@@ -116,7 +116,7 @@ done
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 mv -f "$ENV_FILE_SYSTEM_API" "$ROOT_FOLDER/packages/system-api/.env"
 
-ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
+ansible-playbook ansible/start.yml -i ansible/hosts -e username="$USERNAME"
 
 # Run docker-compose
 docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
