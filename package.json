@@ -1,9 +1,10 @@
 {
   "name": "runtipi",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A homeserver for everyone",
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "act": "act --container-architecture linux/amd64 -j test-install"
   },
   "dependencies": {
     "eslint": "^8.15.0",
