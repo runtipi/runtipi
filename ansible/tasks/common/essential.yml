@@ -35,7 +35,6 @@
   community.general.ufw:
     rule: allow
     port: 22
-    from: 192.168.2.0/24
     proto: tcp
 
 - name: Allow port 80 in UFW
