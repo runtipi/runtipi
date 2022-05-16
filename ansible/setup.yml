@@ -4,8 +4,6 @@
 
   tasks:
     - import_tasks: ./tasks/common/essential.yml
-    # - import_tasks: ./tasks/common/zsh.yml
     - import_tasks: ./tasks/common/docker.yml
-    # - import_tasks: ./tasks/network/avahi.yml
     # - name: Reboot machine
     #   reboot:
