@@ -26,11 +26,6 @@
     line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
     validate: "/usr/sbin/visudo -cf %s"
 
-- name: Restart SSH daemon
-  service:
-    name: sshd
-    state: restarted
-
 - name: Allow SSH in UFW
   community.general.ufw:
     rule: allow
