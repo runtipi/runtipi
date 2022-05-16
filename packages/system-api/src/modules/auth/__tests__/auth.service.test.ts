@@ -1,5 +1,4 @@
 import fs from 'fs';
-// import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
 import * as argon2 from 'argon2';
 import config from '../../../config';

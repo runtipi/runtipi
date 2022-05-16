@@ -9,21 +9,13 @@ interface IConfig {
 
 dotenv.config();
 
-const { NODE_ENV = 'development', ROOT_FOLDER = '', JWT_SECRET = '', INTERNAL_IP = '' } = process.env;
-
-const missing = [];
-
-if (!ROOT_FOLDER) missing.push('ROOT_FOLDER');
-
-if (missing.length > 0) {
-  throw new Error(`Missing environment variables: ${missing.join(', ')}`);
-}
+const { NODE_ENV = 'development', JWT_SECRET = '' } = process.env;
 
 const config: IConfig = {
   NODE_ENV,
-  ROOT_FOLDER,
+  ROOT_FOLDER: '/tipi',
   JWT_SECRET,
-  CLIENT_URLS: ['http://locahost:3000', `http://${INTERNAL_IP}`, `http://${INTERNAL_IP}:3000`],
+  CLIENT_URLS: ['http://locahost:3000', 'http://10.21.21.4', 'http://10.21.21.4:3000'],
 };
 
 export default config;

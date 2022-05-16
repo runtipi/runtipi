@@ -13,21 +13,33 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}/traefik:/root/.config
     networks:
-      - tipi_main_network
+      tipi_main_network:
+        ipv4_address: 10.21.21.2
+
+  
+  api:
+    image: meienberger/tipi-api:latest
+    container_name: api
+    ports:
+      - 3001:3001
+    volumes:
+      ## Docker sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}:/tipi
+    networks:
+      tipi_main_network:
+        ipv4_address: 10.21.21.3
 
   dashboard:
-    build:
-      context: ./packages/dashboard
-      dockerfile: Dockerfile
-      args:
-        INTERNAL_IP_ARG: ${INTERNAL_IP}
+    image: meienberger/tipi-dashboard:latest
     container_name: dashboard
-    volumes:
-      - ${PWD}/state:/app/state
     ports:
       - 3000:3000
     networks:
-      - tipi_main_network
+      tipi_main_network:
+        ipv4_address: 10.21.21.4
+    environment:
+      - INTERNAL_IP=${INTERNAL_IP}
     labels:
       traefik.enable: true
       traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&

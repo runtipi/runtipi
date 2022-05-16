@@ -2,7 +2,7 @@
 const { NODE_ENV, INTERNAL_IP } = process.env;
 
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   env: {
     INTERNAL_IP: NODE_ENV === 'development' ? 'localhost' : INTERNAL_IP,
   },
