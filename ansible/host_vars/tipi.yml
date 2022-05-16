@@ -1,13 +1,7 @@
 packages:
   - jq
-  - mkcert
   - ufw
-  - iptables
   - coreutils
   - git
   - docker
-  - avahi-daemon
-
-### ZSH Settings
-zsh_theme: "powerlevel10k/powerlevel10k"
-ohmyzsh_git_url: https://github.com/robbyrussell/oh-my-zsh
+  - openssh-server
