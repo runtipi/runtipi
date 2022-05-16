@@ -4,4 +4,4 @@ packages:
   - coreutils
   - git
   - docker
-  - openssh-server
+  - iptables

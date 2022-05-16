@@ -52,13 +52,18 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 14
-
       - name: Create user and group
         run: useradd -u 1000 test
+
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      # This is normally done in the start script but
+      # we need to do it here to cache the dependency
+      - name: Install ansible
+        run: pip install -r requirements.txt
 
       - name: Run install script
         run: sudo ./scripts/start.sh

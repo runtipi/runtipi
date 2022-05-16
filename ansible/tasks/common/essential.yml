@@ -14,6 +14,10 @@
     name: "{{ packages }}"
     state: latest
 
+- name: Upgrade packages
+  apt:
+    upgrade: yes
+
 - name: Add user to root group
   user:
     name: "{{ username }}"
@@ -25,11 +29,6 @@
     regexp: "^%wheel"
     line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
     validate: "/usr/sbin/visudo -cf %s"
-
-- name: Restart SSH daemon
-  service:
-    name: sshd
-    state: restarted
 
 - name: Allow SSH in UFW
   community.general.ufw:
