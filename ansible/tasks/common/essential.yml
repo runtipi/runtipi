@@ -19,13 +19,6 @@
     name: "{{ username }}"
     group: root
 
-# - name: Disable SSH password auth
-#   lineinfile:
-#     dest: /etc/ssh/sshd_config
-#     regexp: "^#PasswordAuthentication yes"
-#     line: "PasswordAuthentication no"
-#   register: sshd_config
-
 - name: "Enable passwordless sudo for {{ username }}"
   lineinfile:
     dest: /etc/sudoers
@@ -42,7 +35,6 @@
   community.general.ufw:
     rule: allow
     port: 22
-    from: 192.168.2.0/24
     proto: tcp
 
 - name: Allow port 80 in UFW
