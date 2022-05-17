@@ -13,9 +13,9 @@ USED_DISK_SPACE_BYTES=$(($TOTAL_DISK_SPACE_BYTES - $AVAILABLE_DISK_SPACE_BYTES))
 CPU_LOAD_PERCENTAGE=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1}')
 
 # Memory info
-MEM_TOTAL_BYTES=$(cat /proc/meminfo | grep MemTotal | awk '{print $2}')
-MEM_FREE_BYTES=$(cat /proc/meminfo | grep MemFree | awk '{print $2}')
-MEM_USED_BYTES=$(($MEM_TOTAL_BYTES - $MEM_FREE_BYTES))
+MEM_TOTAL_BYTES=$(free -b | grep Mem | awk '{print $2}')
+MEM_AVAILABLE_BYTES=$(free -b | grep Mem | awk '{print $7}')
+MEM_USED_BYTES=$(($MEM_TOTAL_BYTES - $MEM_AVAILABLE_BYTES))
 
 # Create temporary json file
 TEMP_JSON_FILE=$(mktemp)
