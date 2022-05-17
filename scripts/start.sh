@@ -109,7 +109,6 @@ for template in "${ENV_FILE}"; do
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
-mv -f "$ENV_FILE_SYSTEM_API" "$ROOT_FOLDER/packages/system-api/.env"
 
 # Run system-info.sh
 echo "Running system-info.sh..."
