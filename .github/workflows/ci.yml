@@ -55,7 +55,7 @@ jobs:
       - uses: actions/checkout@master
 
       - name: Create user and group
-        run: useradd -u 1000 test
+        run: sudo useradd -u 1000 test
 
       - name: Run install script
         run: sudo ./scripts/start.sh
