@@ -12,4 +12,6 @@
 - name: Stop app
   become_user: "{{ username }}"
   shell: pm2 stop "system-api"
-  when: pm2_status.stat.exists && pm2_result.stdout.find("system-api") != -1
+  when:
+    - pm2_status.stat.exists
+    - pm2_result.stdout.find("system-api") != -1
