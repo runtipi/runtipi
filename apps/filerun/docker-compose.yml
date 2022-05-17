@@ -33,6 +33,6 @@ services:
     ports:
       - ${APP_PORT}:80
     volumes:
-      - ${ROOT_FOLDER}/app-data/medias:/user-files
+      - ${ROOT_FOLDER_HOST}/app-data/medias:/user-files
     networks:
       - tipi_main_network

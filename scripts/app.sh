@@ -106,7 +106,7 @@ compose() {
   # Vars to use in compose file
   export APP_DATA_DIR="${root_folder_host}/app-data/${app}"
   export APP_DIR="${app_dir}"
-
+  export ROOT_FOLDER_HOST="${root_folder_host}"
   export ROOT_FOLDER="${ROOT_FOLDER}"
 
   # Docker-compose does not support multiple env files
