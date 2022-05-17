@@ -71,3 +71,4 @@ Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may co
 ## 🗣 Community
 - [Matrix](https://matrix.to/#/#runtipi:matrix.org)<br />
 - [Twitter](https://twitter.com/runtipi)
+- [Telegram](https://t.me/+72-y10MnLBw2ZGI0)
