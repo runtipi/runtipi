@@ -30,6 +30,7 @@ services:
       - INTERNAL_IP=${INTERNAL_IP}
       - TIPI_VERSION=${TIPI_VERSION}
       - JWT_SECRET=${JWT_SECRET}
+      - ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}
     networks:
       tipi_main_network:
         ipv4_address: 10.21.21.3
