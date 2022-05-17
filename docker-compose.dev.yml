@@ -1,0 +1,55 @@
+version: "3.7"
+
+services:
+  api:
+    build:
+      context: ./packages/system-api
+      dockerfile: Dockerfile.dev
+    container_name: api
+    ports:
+      - 3001:3001
+    volumes:
+      ## Docker sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}:/tipi
+      - ${PWD}/packages/system-api:/app
+      - /app/node_modules
+    environment:
+      - INTERNAL_IP=${INTERNAL_IP}
+      - TIPI_VERSION=${TIPI_VERSION}
+      - JWT_SECRET=${JWT_SECRET}
+      - ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}
+    networks:
+      - tipi_main_network
+
+  dashboard:
+    build:
+      context: ./packages/dashboard
+      dockerfile: Dockerfile.dev
+    container_name: dashboard
+    ports:
+      - 3000:3000
+    networks:
+      - tipi_main_network
+    environment:
+      - INTERNAL_IP=${INTERNAL_IP}
+    volumes:
+      - ${PWD}/packages/dashboard:/app
+      - /app/node_modules
+    labels:
+      traefik.enable: true
+      traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&
+      traefik.http.routers.dashboard.entrypoints: webinsecure
+      traefik.http.routers.dashboard.service: dashboard
+      traefik.http.services.dashboard.loadbalancer.server.port: 3000
+
+networks:
+  tipi_main_network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+      com.docker.network.bridge.enable_icc: "true"
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.21.21.0/24
