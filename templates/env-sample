@@ -7,3 +7,5 @@ PGID=<pgid>
 INTERNAL_IP=<internal_ip>
 DNS_IP=<dns_ip>
 ARCHITECTURE=<architecture>
+TIPI_VERSION=<tipi_version>
+JWT_SECRET=<jwt_secret>

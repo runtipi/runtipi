@@ -90,20 +90,14 @@ echo "Generating config files..."
 [[ -f "${ROOT_FOLDER}/packages/system-api/.env" ]] && rm -f "${ROOT_FOLDER}/packages/system-api/.env"
 
 # Store paths to intermediary config files
-ENV_FILE="$ROOT_FOLDER/templates/.env"
-ENV_FILE_SYSTEM_API="$ROOT_FOLDER/templates/.env-api"
-
-# Remove intermediary config files
-[[ -f "$ENV_FILE" ]] && rm -f "$ENV_FILE"
-[[ -f "$ENV_FILE_SYSTEM_API" ]] && rm -f "$ENV_FILE_SYSTEM_API"
+ENV_FILE=$(mktemp)
 
 # Copy template configs to intermediary configs
 [[ -f "$ROOT_FOLDER/templates/env-sample" ]] && cp "$ROOT_FOLDER/templates/env-sample" "$ENV_FILE"
-[[ -f "$ROOT_FOLDER/templates/env-api-sample" ]] && cp "$ROOT_FOLDER/templates/env-api-sample" "$ENV_FILE_SYSTEM_API"
 
 JWT_SECRET=$(derive_entropy "jwt")
 
-for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
+for template in "${ENV_FILE}"; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<puid>/${PUID}/g" "${template}"
@@ -111,10 +105,15 @@ for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
   sed -i "s/<tz>/${TZ}/g" "${template}"
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
+  sed -i "s/<tipi_version>/$(cat "${ROOT_FOLDER}/VERSION")/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 mv -f "$ENV_FILE_SYSTEM_API" "$ROOT_FOLDER/packages/system-api/.env"
+
+# Run system-info.sh
+echo "Running system-info.sh..."
+bash "${ROOT_FOLDER}/scripts/system-info.sh"
 
 # ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
 

@@ -5,17 +5,19 @@ interface IConfig {
   ROOT_FOLDER: string;
   JWT_SECRET: string;
   CLIENT_URLS: string[];
+  VERSION: string;
 }
 
 dotenv.config();
 
-const { NODE_ENV = 'development', JWT_SECRET = '' } = process.env;
+const { NODE_ENV = 'development', JWT_SECRET = '', INTERNAL_IP = '', TIPI_VERSION = '' } = process.env;
 
 const config: IConfig = {
   NODE_ENV,
   ROOT_FOLDER: '/tipi',
   JWT_SECRET,
-  CLIENT_URLS: ['http://locahost:3000', 'http://10.21.21.4', 'http://10.21.21.4:3000'],
+  CLIENT_URLS: ['http://localhost:3000', `http://${INTERNAL_IP}`, `http://${INTERNAL_IP}:3000`],
+  VERSION: TIPI_VERSION,
 };
 
 export default config;

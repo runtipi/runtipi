@@ -5,8 +5,7 @@
   "scripts": {
     "prepare": "husky install",
     "act:test-install": "act --container-architecture linux/amd64 -j test-install",
-    "act:docker": "act --container-architecture linux/amd64 --secret-file github.secrets -j docker",
-    "docker:build": "docker build ./packages/system-api/ -t meienberger/tipi-api:latest && docker build ./packages/dashboard/ -t meienberger/tipi-dashboard:latest"
+    "act:docker": "act --container-architecture linux/amd64 --secret-file github.secrets -j docker"
   },
   "dependencies": {
     "eslint": "^8.15.0",

@@ -3,17 +3,21 @@ import api from '../core/api';
 
 type Store = {
   cpuLoad: number;
-  disk: { size: number; used: number; available: number };
-  memory: { total: number; used: number; free: number };
+  internalIp: string;
+  disk: { total: number; used: number; available: number };
+  memory: { total: number; used: number; available: number };
   fetchDiskSpace: () => void;
   fetchCpuLoad: () => void;
   fetchMemoryLoad: () => void;
+  setInternalIp: (internalIp: string) => void;
 };
 
 export const useSytemStore = create<Store>((set) => ({
   cpuLoad: 0,
-  memory: { total: 0, used: 0, free: 0 },
-  disk: { size: 0, used: 0, available: 0 },
+  internalIp: '',
+  setInternalIp: (internalIp: string) => set((state) => ({ ...state, internalIp })),
+  memory: { total: 0, used: 0, available: 0 },
+  disk: { total: 0, used: 0, available: 0 },
   fetchDiskSpace: async () => {
     const response = await api.fetch<any>({
       endpoint: '/system/disk',
