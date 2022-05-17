@@ -123,14 +123,15 @@ bash "${ROOT_FOLDER}/scripts/system-info.sh"
 
 # ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
 
+docker-compose --env-file "${ROOT_FOLDER}/.env" pull
 # Run docker-compose
 docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
   echo "Failed to start containers"
   exit 1
 }
 
-str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-apps_to_start=($str)
+# str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
+# apps_to_start=($str)
 
 # for app in "${apps_to_start[@]}"; do
 #     "${ROOT_FOLDER}/scripts/app.sh" start $app
