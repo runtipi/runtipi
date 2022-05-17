@@ -1,4 +1,5 @@
 - name: Check if pm2 is installed
+  become_user: "{{ username }}"
   stat:
     path: /usr/local/bin/pm2
   register: pm2_status
