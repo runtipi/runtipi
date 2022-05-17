@@ -30,7 +30,7 @@ const register = async (email: string, password: string, name: string) => {
     throw new Error('User already exists');
   }
 
-  const hash = await argon2.hash(password); // bcrypt.hash(password, 10);
+  const hash = await argon2.hash(password);
   const newuser: IUser = { email, name, password: hash };
 
   const token = await AuthHelpers.getJwtToken(newuser, password);

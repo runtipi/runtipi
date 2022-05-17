@@ -3,12 +3,6 @@
     update_cache: yes
     upgrade: yes
 
-- name: Install node 16
-  shell: curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-
-- name: Install node
-  shell: apt-get install -y nodejs
-
 - name: Install essential packages
   package:
     name: "{{ packages }}"
@@ -30,36 +24,10 @@
     line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
     validate: "/usr/sbin/visudo -cf %s"
 
-- name: Allow SSH in UFW
-  community.general.ufw:
-    rule: allow
-    port: 22
-    proto: tcp
-
-- name: Allow port 80 in UFW
-  community.general.ufw:
-    rule: allow
-    port: 80
-    proto: tcp
-
-- name: Allow port 443 in UFW
-  community.general.ufw:
-    rule: allow
-    port: 443
-    proto: tcp
-
-- name: Allow ports for apps
-  community.general.ufw:
-    rule: allow
-    port: 3000:3001
-    proto: tcp
-
-- name: Enable ufw daemon
-  service:
-    name: ufw
-    state: started
-    enabled: yes
-
-- name: Enable UFW
-  community.general.ufw:
-    state: enabled
+- name: Create cron every minute running system-info.sh
+  cron:
+    name: "system-info"
+    user: "{{ username }}"
+    minute: "*/1"
+    job: "{{ playbook_dir }}/../scripts/system-info.sh"
+  ignore_errors: yes

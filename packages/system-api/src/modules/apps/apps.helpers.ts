@@ -3,6 +3,7 @@ import p from 'p-iteration';
 import { AppConfig } from '../../config/types';
 import { fileExists, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
+import config from '../../config';
 
 type AppsState = { installed: string };
 
@@ -76,7 +77,7 @@ export const checkAppExists = (appName: string) => {
 
 export const runAppScript = (params: string[]): Promise<void> => {
   return new Promise((resolve, reject) => {
-    runScript('/scripts/app.sh', params, (err: string) => {
+    runScript('/scripts/app.sh', [...params, config.ROOT_FOLDER_HOST], (err: string) => {
       if (err) {
         reject(err);
       }

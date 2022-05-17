@@ -25,12 +25,12 @@ const Dashboard: React.FC = () => {
 
   // Convert bytes to GB
   const diskFree = Math.round(disk.available / 1024 / 1024 / 1024);
-  const diskSize = Math.round(disk.size / 1024 / 1024 / 1024);
+  const diskSize = Math.round(disk.total / 1024 / 1024 / 1024);
   const diskUsed = diskSize - diskFree;
   const percentUsed = Math.round((diskUsed / diskSize) * 100);
 
   const memoryTotal = Math.round(memory?.total / 1024 / 1024 / 1024);
-  const memoryFree = Math.round(memory?.free / 1024 / 1024 / 1024);
+  const memoryFree = Math.round(memory?.available / 1024 / 1024 / 1024);
   const percentUsedMemory = Math.round(((memoryTotal - memoryFree) / memoryTotal) * 100);
 
   return (

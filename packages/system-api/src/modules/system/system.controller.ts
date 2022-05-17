@@ -1,22 +1,29 @@
 import { Request, Response } from 'express';
-import si from 'systeminformation';
 import fetch from 'node-fetch';
+import config from '../../config';
 import TipiCache from '../../config/cache';
+import { readJsonFile } from '../fs/fs.helpers';
 
 type CpuData = {
   load: number;
 };
 
 type DiskData = {
-  size: number;
+  total: number;
   used: number;
   available: number;
 };
 
 type MemoryData = {
   total: number;
-  free: number;
+  available: number;
   used: number;
+};
+
+type SystemInfo = {
+  cpu: CpuData;
+  disk: DiskData;
+  memory: MemoryData;
 };
 
 /**
@@ -25,10 +32,11 @@ type MemoryData = {
  * @param res
  */
 const getCpuInfo = async (req: Request, res: Response<CpuData>) => {
-  //   const cpuInfo = await cpu.getCpuInfo();
-  const cpuLoad = await si.currentLoad();
+  const systemInfo: SystemInfo = readJsonFile('/state/system-info.json');
 
-  res.status(200).send({ load: cpuLoad.currentLoad });
+  const cpu = systemInfo.cpu;
+
+  res.status(200).send({ load: cpu.load });
 };
 
 /**
@@ -37,19 +45,9 @@ const getCpuInfo = async (req: Request, res: Response<CpuData>) => {
  * @param res
  */
 const getDiskInfo = async (req: Request, res: Response<DiskData>) => {
-  const disk = await si.fsSize();
+  const systemInfo: SystemInfo = readJsonFile('/state/system-info.json');
 
-  const rootDisk = disk.find((item) => item.mount === '/');
-
-  if (!rootDisk) {
-    throw new Error('Could not find root disk');
-  }
-
-  const result: DiskData = {
-    size: rootDisk.size,
-    used: rootDisk.used,
-    available: rootDisk.available,
-  };
+  const result: DiskData = systemInfo.disk;
 
   res.status(200).send(result);
 };
@@ -60,32 +58,24 @@ const getDiskInfo = async (req: Request, res: Response<DiskData>) => {
  * @param res
  */
 const getMemoryInfo = async (req: Request, res: Response<MemoryData>) => {
-  const memory = await si.mem();
+  const systemInfo: SystemInfo = readJsonFile('/state/system-info.json');
 
-  const result: MemoryData = {
-    total: memory.total,
-    free: memory.free,
-    used: memory.used,
-  };
+  const result: MemoryData = systemInfo.memory;
 
   res.status(200).json(result);
 };
 
-const getLatestVersion = async (req: Request, res: Response<string>) => {
+const getVersion = async (_: Request, res: Response<{ current: string; latest: string }>) => {
   let version = TipiCache.get<string>('latestVersion');
-
-  console.log('CACHED', version);
 
   if (!version) {
     const response = await fetch('https://api.github.com/repos/meienberger/runtipi/releases/latest');
     const json = (await response.json()) as { name: string };
     TipiCache.set('latestVersion', json.name);
-    version = json.name;
+    version = json.name.replace('v', '');
   }
 
-  console.log(version);
-
-  res.status(200).send(version);
+  res.status(200).send({ current: config.VERSION, latest: version });
 };
 
-export default { getCpuInfo, getDiskInfo, getMemoryInfo, getLatestVersion };
+export default { getCpuInfo, getDiskInfo, getMemoryInfo, getVersion };

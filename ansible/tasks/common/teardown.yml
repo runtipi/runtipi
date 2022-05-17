@@ -1,9 +1,18 @@
+- name: Check if pm2 is installed
+  become_user: "{{ username }}"
+  stat:
+    path: /usr/local/bin/pm2
+  register: pm2_status
+
 - name: Check if app is already running
   become_user: "{{ username }}"
   shell: pm2 list
   register: pm2_result
+  when: pm2_status.stat.exists
 
 - name: Stop app
   become_user: "{{ username }}"
   shell: pm2 stop "system-api"
-  when: pm2_result.stdout.find("system-api") != -1
+  when:
+    - pm2_status.stat.exists
+    - pm2_result.stdout.find("system-api") != -1

@@ -1,23 +1,10 @@
 version: "3.7"
 
 services:
-  reverse-proxy:
-    container_name: reverse-proxy
-    image: traefik:v2.6
-    restart: always
-    ports:
-      - 80:80
-      - 8080:8080
-    command: --api.insecure=true --providers.docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}/traefik:/root/.config
-    networks:
-      - tipi_main_network
-
-  
   api:
-    image: meienberger/tipi-api:${TIPI_VERSION}
+    build:
+      context: ./packages/system-api
+      dockerfile: Dockerfile.dev
     container_name: api
     ports:
       - 3001:3001
@@ -25,6 +12,8 @@ services:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}:/tipi
+      - ${PWD}/packages/system-api:/app
+      - /app/node_modules
     environment:
       - INTERNAL_IP=${INTERNAL_IP}
       - TIPI_VERSION=${TIPI_VERSION}
@@ -34,7 +23,9 @@ services:
       - tipi_main_network
 
   dashboard:
-    image: meienberger/tipi-dashboard:${TIPI_VERSION}
+    build:
+      context: ./packages/dashboard
+      dockerfile: Dockerfile.dev
     container_name: dashboard
     ports:
       - 3000:3000
@@ -42,6 +33,9 @@ services:
       - tipi_main_network
     environment:
       - INTERNAL_IP=${INTERNAL_IP}
+    volumes:
+      - ${PWD}/packages/dashboard:/app
+      - /app/node_modules
     labels:
       traefik.enable: true
       traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&
