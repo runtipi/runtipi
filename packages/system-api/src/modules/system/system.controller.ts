@@ -65,7 +65,7 @@ const getMemoryInfo = async (req: Request, res: Response<MemoryData>) => {
   res.status(200).json(result);
 };
 
-const getVersion = async (req: Request, res: Response<{ current: string; latest: string }>) => {
+const getVersion = async (_: Request, res: Response<{ current: string; latest: string }>) => {
   let version = TipiCache.get<string>('latestVersion');
 
   if (!version) {
