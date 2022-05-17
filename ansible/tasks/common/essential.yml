@@ -25,4 +25,4 @@
     name: "system-info"
     user: "{{ username }}"
     minute: "*/1"
-    command: "{{ playbook_dir }}/../scripts/system-info.sh"
+    job: "{{ playbook_dir }}/../scripts/system-info.sh"
