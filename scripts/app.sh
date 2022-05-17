@@ -129,6 +129,9 @@ if [[ "$command" = "install" ]]; then
     cp -r "${ROOT_FOLDER}/apps/${app}/data" "${app_data_dir}/data"
   fi
 
+  # Remove all .gitkeep files from app data dir
+  find "${app_data_dir}" -name ".gitkeep" -exec rm -f {} \;
+
   chown -R "1000:1000" "${app_data_dir}"
 
   compose "${app}" up -d

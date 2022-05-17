@@ -3,7 +3,7 @@
   "available": true,
   "port": 8099,
   "id": "joplin",
-  "description": "",
+  "description": "Default credentials: admin@localhost / admin",
   "short_desc": "Note taking and to-do application with synchronisation",
   "author": "https://github.com/laurent22",
   "source": "https://github.com/laurent22/joplin",
