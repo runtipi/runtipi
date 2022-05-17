@@ -13,8 +13,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}/traefik:/root/.config
     networks:
-      tipi_main_network:
-        ipv4_address: 10.21.21.2
+      - tipi_main_network
 
   
   api:
@@ -32,8 +31,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}
     networks:
-      tipi_main_network:
-        ipv4_address: 10.21.21.3
+      - tipi_main_network
 
   dashboard:
     image: meienberger/tipi-dashboard:${TIPI_VERSION}
@@ -41,8 +39,7 @@ services:
     ports:
       - 3000:3000
     networks:
-      tipi_main_network:
-        ipv4_address: 10.21.21.4
+      - tipi_main_network
     environment:
       - INTERNAL_IP=${INTERNAL_IP}
     labels:
