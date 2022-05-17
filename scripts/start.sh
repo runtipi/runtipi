@@ -14,6 +14,11 @@ SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 USERNAME="$(id -nu 1000)"
+ARCHITECTURE="$(uname -m)"
+
+if [[ "$architecture" == "aarch64" ]]; then
+  ARCHITECTURE="arm64"
+fi
 
 if [[ $UID != 0 ]]; then
     echo "Tipi must be started as root"
@@ -90,20 +95,14 @@ echo "Generating config files..."
 [[ -f "${ROOT_FOLDER}/packages/system-api/.env" ]] && rm -f "${ROOT_FOLDER}/packages/system-api/.env"
 
 # Store paths to intermediary config files
-ENV_FILE="$ROOT_FOLDER/templates/.env"
-ENV_FILE_SYSTEM_API="$ROOT_FOLDER/templates/.env-api"
-
-# Remove intermediary config files
-[[ -f "$ENV_FILE" ]] && rm -f "$ENV_FILE"
-[[ -f "$ENV_FILE_SYSTEM_API" ]] && rm -f "$ENV_FILE_SYSTEM_API"
+ENV_FILE=$(mktemp)
 
 # Copy template configs to intermediary configs
 [[ -f "$ROOT_FOLDER/templates/env-sample" ]] && cp "$ROOT_FOLDER/templates/env-sample" "$ENV_FILE"
-[[ -f "$ROOT_FOLDER/templates/env-api-sample" ]] && cp "$ROOT_FOLDER/templates/env-api-sample" "$ENV_FILE_SYSTEM_API"
 
 JWT_SECRET=$(derive_entropy "jwt")
 
-for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
+for template in "${ENV_FILE}"; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<puid>/${PUID}/g" "${template}"
@@ -111,25 +110,35 @@ for template in "${ENV_FILE}" "${ENV_FILE_SYSTEM_API}"; do
   sed -i "s/<tz>/${TZ}/g" "${template}"
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
+  sed -i "s/<tipi_version>/$(cat "${ROOT_FOLDER}/VERSION")/g" "${template}"
+  sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
+
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
-mv -f "$ENV_FILE_SYSTEM_API" "$ROOT_FOLDER/packages/system-api/.env"
 
-ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
+# Run system-info.sh
+echo "Running system-info.sh..."
+bash "${ROOT_FOLDER}/scripts/system-info.sh"
 
+# ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
+
+docker-compose --env-file "${ROOT_FOLDER}/.env" pull
 # Run docker-compose
 docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
   echo "Failed to start containers"
   exit 1
 }
 
-str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-apps_to_start=($str)
+# str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
+# apps_to_start=($str)
 
 # for app in "${apps_to_start[@]}"; do
 #     "${ROOT_FOLDER}/scripts/app.sh" start $app
 # done
+
+# Give permissions 1000:1000 to app data
+chown -R 1000:1000 "${ROOT_FOLDER}/app-data"
 
 echo "Tipi is now running"
 echo ""

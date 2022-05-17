@@ -84,7 +84,7 @@ describe('Install app', () => {
 
     await AppsService.installApp('test-app', { test: 'test' });
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', 'test-app'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', 'test-app', '/tipi'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -96,8 +96,8 @@ describe('Install app', () => {
     await AppsService.installApp('test-app', { test: 'test' });
 
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', 'test-app'], {}, expect.any(Function)]);
-    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', 'test-app'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', 'test-app', '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', 'test-app', '/tipi'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -126,7 +126,7 @@ describe('Uninstall app', () => {
 
     await AppsService.uninstallApp('test-app');
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', 'test-app'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', 'test-app', '/tipi'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -147,7 +147,7 @@ describe('Start app', () => {
 
     await AppsService.startApp('test-app');
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', 'test-app'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', 'test-app', '/tipi'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -193,7 +193,7 @@ describe('Stop app', () => {
 
     await AppsService.stopApp('test-app');
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', 'test-app'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', 'test-app', '/tipi'], {}, expect.any(Function)]);
   });
 
   it('Should throw if app is not installed', async () => {

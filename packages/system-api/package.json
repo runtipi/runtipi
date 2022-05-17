@@ -12,17 +12,16 @@
     "lint": "eslint . --ext .ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "build-prod": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --minify --analyze=verbose --external:./node_modules/* --format=esm",
+    "build": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --minify --analyze=verbose --external:./node_modules/* --format=esm",
     "build:watch": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --external:./node_modules/* --format=esm --watch",
     "start:dev": "NODE_ENV=development nodemon --trace-deprecation --trace-warnings --watch dist dist/server.js",
-    "dev": "concurrently \"yarn build:watch\" \"yarn start:dev\"",
+    "dev": "concurrently \"npm run build:watch\" \"npm run start:dev\"",
     "start": "NODE_ENV=production node dist/server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "argon2": "^0.28.5",
-    "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -44,7 +43,6 @@
     "tcp-port-used": "^1.0.2"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
     "@types/compression": "^1.7.2",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.12",

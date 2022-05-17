@@ -1,6 +1,5 @@
 import axios, { Method } from 'axios';
-
-export const BASE_URL = `http://${process.env.INTERNAL_IP}:3001`;
+import { useSytemStore } from '../state/systemStore';
 
 interface IFetchParams {
   endpoint: string;
@@ -11,6 +10,9 @@ interface IFetchParams {
 
 const api = async <T = unknown>(fetchParams: IFetchParams): Promise<T> => {
   const { endpoint, method = 'GET', params, data } = fetchParams;
+
+  const { getState } = useSytemStore;
+  const BASE_URL = `http://${getState().internalIp}:3001`;
 
   const response = await axios.request<T & { error?: string }>({
     method,

@@ -23,7 +23,22 @@ if (isProd) {
   app.use(helmet());
 }
 
-app.use(cors({ credentials: true, origin: config.CLIENT_URLS }));
+app.use(
+  cors({
+    credentials: true,
+    origin: function (origin, callback) {
+      // allow requests with no origin
+      if (!origin) return callback(null, true);
+
+      if (config.CLIENT_URLS.indexOf(origin) === -1) {
+        var message = "The CORS policy for this origin doesn't allow access from the particular origin.";
+        return callback(new Error(message), false);
+      }
+
+      return callback(null, true);
+    },
+  }),
+);
 
 // Get user from token
 app.use((req, res, next) => {

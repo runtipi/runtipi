@@ -23,8 +23,6 @@ if ! command -v ansible-playbook > /dev/null; then
   sudo pip3 install ansible
 fi
 
-
-
 ansible-playbook ansible/setup.yml -i ansible/hosts -K -e username="$USERNAME"
 
 # echo "Configuring permissions..."

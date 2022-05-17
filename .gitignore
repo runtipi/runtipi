@@ -1,6 +1,7 @@
 .pnpm-debug.log
 .env
 .env*
+github.secrets
 node_modules/
 nginx/*
 letsencrypt/*
