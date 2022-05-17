@@ -20,7 +20,7 @@ if ! grep -q "${USERNAME} ALL=(ALL) NOPASSWD: ALL" /etc/sudoers; then
   echo "${USERNAME} ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
 fi
 
-sudo apt-get upgrade
+sudo apt-get update
 sudo apt-get install -y jq coreutils ca-certificates curl gnupg lsb-release
 
 LSB="$(lsb_release -is)"
@@ -45,7 +45,8 @@ if [[ "${LSB}" == "Ubuntu" ]]; then
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 fi
 
-sudo apt-get upgrade
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
 # Install docker compose if not here
 if ! command -v docker-compose > /dev/null; then
