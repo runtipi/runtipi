@@ -54,8 +54,14 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Create user and group
-        run: sudo useradd -u 1000 test
+      - name: Check if user id 1000 exists
+        run: |
+          if [[ ! $(id -u 1000) -eq 1000 ]]; then
+            echo "Creating user 1000"
+            sudo useradd -u 1000 test
+          fi
+        id: check-user-id
+          
 
       - name: Run install script
         run: sudo ./scripts/start.sh
