@@ -62,6 +62,5 @@ jobs:
           fi
         id: check-user-id
           
-
       - name: Run install script
-        run: sudo ./scripts/start.sh
+        run: sudo ./scripts/start.sh true

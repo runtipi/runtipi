@@ -125,10 +125,11 @@ mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 echo "Running system-info.sh..."
 bash "${ROOT_FOLDER}/scripts/system-info.sh"
 
-# ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
+# Give permissions 1000:1000 to app data
+chown -R 1000:1000 "${ROOT_FOLDER}/app-data"
 
 ## Don't run if config-only
-if [[ ! "$config_only" == "true" ]]; then
+if [[ ! $config_only == "true" ]]; then
   docker-compose --env-file "${ROOT_FOLDER}/.env" pull
   # Run docker-compose
   docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
@@ -136,16 +137,6 @@ if [[ ! "$config_only" == "true" ]]; then
     exit 1
   }
 fi
-
-# str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-# apps_to_start=($str)
-
-# for app in "${apps_to_start[@]}"; do
-#     "${ROOT_FOLDER}/scripts/app.sh" start $app
-# done
-
-# Give permissions 1000:1000 to app data
-chown -R 1000:1000 "${ROOT_FOLDER}/app-data"
 
 echo "Tipi is now running"
 echo ""
