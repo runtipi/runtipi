@@ -3,7 +3,7 @@
   "available": true,
   "port": 8096,
   "id": "filebrowser",
-  "description": "Reliable and Performant File Management Desktop Sync and File Sharing",
+  "description": "Reliable and Performant File Management Desktop Sync and File Sharing\n Default credentials: admin / admin",
   "short_desc": "Access your homeserver files from your browser",
   "author": "",
   "website": "https://filebrowser.org/",

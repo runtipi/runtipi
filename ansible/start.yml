@@ -1,6 +1,0 @@
----
-- hosts: tipi
-  become: yes
-
-  tasks:
-    - import_tasks: ./tasks/common/packages.yml

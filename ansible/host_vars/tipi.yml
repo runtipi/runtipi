@@ -1,7 +1,4 @@
 packages:
   - jq
-  - ufw
   - coreutils
-  - git
   - docker
-  - openssh-server

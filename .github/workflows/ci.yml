@@ -5,6 +5,7 @@ on:
 env:
   ROOT_FOLDER: /test
   JWT_SECRET: "secret"
+  ROOT_FOLDER_HOST: /tipi
     
 jobs:
   ci:

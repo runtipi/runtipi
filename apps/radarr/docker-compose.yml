@@ -11,8 +11,8 @@ services:
       - ${DNS_IP}
     volumes:
       - ${APP_DATA_DIR}/data:/config
-      - ${ROOT_FOLDER}/media/data/movies:/movies #optional
-      - ${ROOT_FOLDER}/media/torrents:/downloads #optional
+      - ${ROOT_FOLDER_HOST}/media/data/movies:/movies #optional
+      - ${ROOT_FOLDER_HOST}/media/torrents:/downloads #optional
     ports:
       - ${APP_PORT}:7878
     restart: unless-stopped

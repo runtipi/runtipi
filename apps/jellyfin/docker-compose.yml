@@ -6,7 +6,7 @@ services:
     container_name: jellyfin
     volumes:
       - ${APP_DATA_DIR}/data/config:/config
-      - ${ROOT_FOLDER}/media/data:/data/media
+      - ${ROOT_FOLDER_HOST}/media/data:/data/media
     environment:
       - PUID=1000
       - PGID=1000
