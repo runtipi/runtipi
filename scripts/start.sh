@@ -14,6 +14,11 @@ SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 USERNAME="$(id -nu 1000)"
+ARCHITECTURE="$(uname -m)"
+
+if [[ "$architecture" == "aarch64" ]]; then
+  ARCHITECTURE="arm64"
+fi
 
 if [[ $UID != 0 ]]; then
     echo "Tipi must be started as root"
@@ -106,6 +111,8 @@ for template in "${ENV_FILE}"; do
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
   sed -i "s/<tipi_version>/$(cat "${ROOT_FOLDER}/VERSION")/g" "${template}"
+  sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
+
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
@@ -128,6 +135,9 @@ apps_to_start=($str)
 # for app in "${apps_to_start[@]}"; do
 #     "${ROOT_FOLDER}/scripts/app.sh" start $app
 # done
+
+# Give permissions 1000:1000 to app data
+chown -R 1000:1000 "${ROOT_FOLDER}/app-data"
 
 echo "Tipi is now running"
 echo ""

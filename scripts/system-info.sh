@@ -19,7 +19,7 @@ MEM_USED_BYTES=$(($MEM_TOTAL_BYTES - $MEM_AVAILABLE_BYTES))
 
 # Create temporary json file
 TEMP_JSON_FILE=$(mktemp)
-echo '{ "cpu": { "load": '"${CPU_LOAD_PERCENTAGE}"' }, "memory": { "total": '"${MEM_TOTAL_BYTES}"' , "used": '"${MEM_USED_BYTES}"', "available": '"${MEM_FREE_BYTES}"' }, "disk": { "total": '"${TOTAL_DISK_SPACE_BYTES}"' , "used": '"${USED_DISK_SPACE_BYTES}"', "available": '"${AVAILABLE_DISK_SPACE_BYTES}"' } }' > "${TEMP_JSON_FILE}"
+echo '{ "cpu": { "load": '"${CPU_LOAD_PERCENTAGE}"' }, "memory": { "total": '"${MEM_TOTAL_BYTES}"' , "used": '"${MEM_USED_BYTES}"', "available": '"${MEM_AVAILABLE_BYTES}"' }, "disk": { "total": '"${TOTAL_DISK_SPACE_BYTES}"' , "used": '"${USED_DISK_SPACE_BYTES}"', "available": '"${AVAILABLE_DISK_SPACE_BYTES}"' } }' > "${TEMP_JSON_FILE}"
 
 # Write to state file
 echo "$(cat "${TEMP_JSON_FILE}")" > "${STATE_FOLDER}/system-info.json"

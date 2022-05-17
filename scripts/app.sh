@@ -60,11 +60,17 @@ if [ -z ${2+x} ]; then
   exit 1
 else
   app="$2"
+  root_folder_host="$3"
   app_dir="${ROOT_FOLDER}/apps/${app}"
   app_data_dir="${ROOT_FOLDER}/app-data/${app}"
 
   if [[ -z "${app}" ]] || [[ ! -d "${app_dir}" ]]; then
     echo "Error: \"${app}\" is not a valid app"
+    exit 1
+  fi
+
+  if [[ -z "${root_folder_host}" ]]; then
+    echo "Error: Root folder not provided"
     exit 1
   fi
 fi
@@ -98,7 +104,7 @@ compose() {
   local app_dir="${ROOT_FOLDER}/apps/${app}"
 
   # Vars to use in compose file
-  export APP_DATA_DIR="${app_data_dir}"
+  export APP_DATA_DIR="${root_folder_host}/app-data/${app}"
   export APP_DIR="${app_dir}"
 
   export ROOT_FOLDER="${ROOT_FOLDER}"
@@ -123,6 +129,8 @@ if [[ "$command" = "install" ]]; then
     cp -r "${ROOT_FOLDER}/apps/${app}/data" "${app_data_dir}/data"
   fi
 
+  chown -R "1000:1000" "${app_data_dir}"
+
   compose "${app}" up -d
   exit
 fi
@@ -130,11 +138,12 @@ fi
 # Removes images and destroys all data for an app
 if [[ "$command" = "uninstall" ]]; then
   echo "Removing images for app ${app}..."
-  compose "${app}" down --remove-orphans
+
+  # compose "${app}" down --remove-orphans
 
   echo "Deleting app data for app ${app}..."
   if [[ -d "${app_data_dir}" ]]; then
-    sudo rm -rf "${app_data_dir}"
+    rm -rf "${app_data_dir}"
   fi
 
   echo "Successfully uninstalled app ${app}"
@@ -145,6 +154,7 @@ fi
 if [[ "$command" = "stop" ]]; then
 
   echo "Stopping app ${app}..."
+  compose "${app}" down --remove-orphans --rmi all
   compose "${app}" rm --force --stop
 
   exit
@@ -153,6 +163,8 @@ fi
 # Starts an installed app
 if [[ "$command" = "start" ]]; then
   echo "Starting app ${app}..."
+  compose "${app}" pull
+
   compose "${app}" up --detach
 
   exit

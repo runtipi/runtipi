@@ -9,3 +9,4 @@ DNS_IP=<dns_ip>
 ARCHITECTURE=<architecture>
 TIPI_VERSION=<tipi_version>
 JWT_SECRET=<jwt_secret>
+ROOT_FOLDER_HOST=<root_folder>
