@@ -8,6 +8,8 @@ else
   readlink=readlink
 fi
 
+config_only="$1"
+
 ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
@@ -15,6 +17,8 @@ INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 USERNAME="$(id -nu 1000)"
 ARCHITECTURE="$(uname -m)"
+
+
 
 if [[ "$architecture" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
@@ -123,12 +127,15 @@ bash "${ROOT_FOLDER}/scripts/system-info.sh"
 
 # ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
 
-docker-compose --env-file "${ROOT_FOLDER}/.env" pull
-# Run docker-compose
-docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
-  echo "Failed to start containers"
-  exit 1
-}
+## Don't run if config-only
+if [[ ! "$config_only" == "true" ]]; then
+  docker-compose --env-file "${ROOT_FOLDER}/.env" pull
+  # Run docker-compose
+  docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
+    echo "Failed to start containers"
+    exit 1
+  }
+fi
 
 # str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
 # apps_to_start=($str)
