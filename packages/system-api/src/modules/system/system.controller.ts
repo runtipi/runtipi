@@ -75,7 +75,9 @@ const getVersion = async (_: Request, res: Response<{ current: string; latest: s
     version = json.name.replace('v', '');
   }
 
-  res.status(200).send({ current: config.VERSION, latest: version });
+  TipiCache.set('latestVersion', version.replace('v', ''));
+
+  res.status(200).send({ current: config.VERSION, latest: version.replace('v', '') });
 };
 
 export default { getCpuInfo, getDiskInfo, getMemoryInfo, getVersion };

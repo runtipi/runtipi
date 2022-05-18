@@ -8,6 +8,10 @@
     name: "{{ packages }}"
     state: latest
 
+- name: Upgrade packages
+  apt:
+    upgrade: yes
+
 - name: Add user to root group
   user:
     name: "{{ username }}"
@@ -26,3 +30,4 @@
     user: "{{ username }}"
     minute: "*/1"
     job: "{{ playbook_dir }}/../scripts/system-info.sh"
+  ignore_errors: yes

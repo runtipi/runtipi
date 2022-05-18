@@ -7,6 +7,7 @@
     "act:test-install": "act --container-architecture linux/amd64 -j test-install",
     "act:docker": "act --container-architecture linux/amd64 --secret-file github.secrets -j docker",
     "start:dev": "docker-compose -f docker-compose.dev.yml --env-file .env.dev up --build",
+    "start:rc": "docker-compose -f docker-compose.rc.yml --env-file .env up --build",
     "start:prod": "docker-compose --env-file .env up --build"
   },
   "dependencies": {},

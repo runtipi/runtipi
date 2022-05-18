@@ -1,13 +1,13 @@
-FROM node:18
+FROM node:18-buster-slim 
 
 WORKDIR /app
 
 COPY ./package.json ./
 
-RUN yarn
+RUN npm install
 
 COPY ./ ./
 
-RUN yarn build
+RUN npm run build
 
-CMD ["yarn", "start"]
+CMD ["npm", "run", "start"]

@@ -8,15 +8,34 @@ else
   readlink=readlink
 fi
 
+while [ -n "$1" ]; do # while loop starts
+
+	case "$1" in
+	--rc) rc="true" ;;
+	--ci) ci="true" ;;
+	--)
+		shift # The double dash makes them parameters
+		break
+		;;
+	*) echo "Option $1 not recognized" && exit 1 ;;
+	esac
+	shift
+done
+
+# Check we are on linux
+if [[ "$(uname)" != "Linux" ]]; then
+  echo "Tipi only works on Linux"
+  exit 1
+fi
+
 ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
-USERNAME="$(id -nu 1000)"
 ARCHITECTURE="$(uname -m)"
 
-if [[ "$architecture" == "aarch64" ]]; then
+if [[ "$ARCHITECTURE" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
 fi
 
@@ -44,7 +63,7 @@ function get_json_field() {
 function derive_entropy() {
   SEED_FILE="${STATE_FOLDER}/seed"
   identifier="${1}"
-  tipi_seed=$(cat "${SEED_FILE}") || true
+  tipi_seed=$(cat "${SEED_FILE}") || true 
 
   if [[ -z "$tipi_seed" ]] || [[ -z "$identifier" ]]; then
     >&2 echo "Missing derivation parameter, this is unsafe, exiting."
@@ -71,6 +90,11 @@ fi
 
 chown -R 1000:1000 "${STATE_FOLDER}/apps.json"
 chown -R 1000:1000 "${STATE_FOLDER}/users.json"
+
+# Get current dns from host
+if [[ -f "/etc/resolv.conf" ]]; then
+  TEMP=$(cat /etc/resolv.conf | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -n 1)
+fi
 
 # Get dns ip if pihole is installed
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
@@ -121,24 +145,28 @@ mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 echo "Running system-info.sh..."
 bash "${ROOT_FOLDER}/scripts/system-info.sh"
 
-# ansible-playbook ansible/start.yml -i ansible/hosts -K -e username="$USERNAME"
-
-docker-compose --env-file "${ROOT_FOLDER}/.env" pull
-# Run docker-compose
-docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
-  echo "Failed to start containers"
-  exit 1
-}
-
-# str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-# apps_to_start=($str)
-
-# for app in "${apps_to_start[@]}"; do
-#     "${ROOT_FOLDER}/scripts/app.sh" start $app
-# done
-
 # Give permissions 1000:1000 to app data
-chown -R 1000:1000 "${ROOT_FOLDER}/app-data"
+# chown -R 1000:1000 "${ROOT_FOLDER}/app-data"
+
+## Don't run if config-only
+if [[ ! $ci == "true" ]]; then
+
+  if [[ $rc == "true" ]]; then
+    docker-compose -f docker-compose.rc.yml --env-file "${ROOT_FOLDER}/.env" pull
+    # Run docker-compose
+    docker-compose -f docker-compose.rc.yml --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
+      echo "Failed to start containers"
+      exit 1
+    }
+  else
+    docker-compose --env-file "${ROOT_FOLDER}/.env" pull
+    # Run docker-compose
+    docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
+      echo "Failed to start containers"
+      exit 1
+    }
+  fi
+fi
 
 echo "Tipi is now running"
 echo ""
