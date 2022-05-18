@@ -12,7 +12,7 @@ ROOT_FOLDER="$($rdlk -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 
 show_help() {
-  cat << EOF
+  cat <<EOF
 app 0.0.1
 
 CLI for managing Tipi apps
@@ -31,10 +31,10 @@ EOF
 
 # Get field from json file
 function get_json_field() {
-    local json_file="$1"
-    local field="$2"
+  local json_file="$1"
+  local field="$2"
 
-    echo $(jq -r ".${field}" "${json_file}")
+  echo $(jq -r ".${field}" "${json_file}")
 }
 
 list_installed_apps() {
@@ -98,7 +98,7 @@ compose() {
   # Pick arm architecture if running on arm and if the app has a docker-compose.arm.yml file
   if [[ "$architecture" == "arm"* ]] && [[ -f "${app_dir}/docker-compose.arm.yml" ]]; then
     app_compose_file="${app_dir}/docker-compose.arm.yml"
-  fi  
+  fi
 
   local common_compose_file="${ROOT_FOLDER}/apps/docker-compose.common.yml"
   local app_dir="${ROOT_FOLDER}/apps/${app}"

@@ -32,8 +32,6 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 ### Installation Requirements
 - Ubuntu 18.04 LTS or higher (or Debian 10)
 
-Make sure your User ID is `1000` (verify it by running `id -u`)
-
 ### Step 1. Download Tipi
 Run this in an empty directory where you want to install Tipi.
 
@@ -49,6 +47,11 @@ cd runtipi && sudo ./scripts/start.sh
 ```
 
 The script will prompt you the ip address of the dashboard once configured.
+Tipi will run by default on port 80. To select another port you can run the start script with the `--port` argument
+
+```bash
+sudo ./scripts/start.sh --port 7000
+```
 
 To stop Tipi, run the stop script.
 

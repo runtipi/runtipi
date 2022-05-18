@@ -16,7 +16,7 @@ services:
       - tipi_main_network
 
   api:
-    image: meienberger/tipi-api:${TIPI_VERSION}
+    image: meienberger/tipi-api:rc-${TIPI_VERSION}
     container_name: api
     ports:
       - 3001:3001
@@ -29,12 +29,11 @@ services:
       - TIPI_VERSION=${TIPI_VERSION}
       - JWT_SECRET=${JWT_SECRET}
       - ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}
-      - NGINX_PORT=${NGINX_PORT}
     networks:
       - tipi_main_network
 
   dashboard:
-    image: meienberger/tipi-dashboard:${TIPI_VERSION}
+    image: meienberger/tipi-dashboard:rc-${TIPI_VERSION}
     container_name: dashboard
     ports:
       - 3000:3000
