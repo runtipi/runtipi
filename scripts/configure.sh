@@ -2,7 +2,6 @@
 set -e # Exit immediately if a command exits with a non-zero status.
 
 ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
-USERNAME="$(id -nu 1000)"
 
 echo
 echo "======================================"
@@ -14,11 +13,6 @@ fi
 echo "=============== TIPI ================="
 echo "======================================"
 echo
-
-# Enable passwordless sudo for $USERNAME
-if ! grep -q "${USERNAME} ALL=(ALL) NOPASSWD: ALL" /etc/sudoers; then
-  echo "${USERNAME} ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
-fi
 
 sudo apt-get update
 sudo apt-get install -y jq coreutils ca-certificates curl gnupg lsb-release
@@ -53,16 +47,6 @@ if ! command -v docker-compose >/dev/null; then
   sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
   sudo chmod +x /usr/local/bin/docker-compose
 fi
-
-# create docker group
-if ! getent group docker >/dev/null; then
-  sudo groupadd docker
-fi
-sudo usermod -aG docker "${USERNAME}"
-
-# echo "Configuring permissions..."
-# echo
-# find "$ROOT_FOLDER" -path "$ROOT_FOLDER/app-data" -prune -o -exec chown 1000:1000 {} + || true
 
 # Create configured status
 touch "${ROOT_FOLDER}/state/configured"

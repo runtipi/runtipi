@@ -112,9 +112,6 @@ if [[ ! -f "${STATE_FOLDER}/users.json" ]]; then
   cp "${ROOT_FOLDER}/templates/users-sample.json" "${STATE_FOLDER}/users.json"
 fi
 
-chown -R 1000:1000 "${STATE_FOLDER}/apps.json"
-chown -R 1000:1000 "${STATE_FOLDER}/users.json"
-
 # Get current dns from host
 if [[ -f "/etc/resolv.conf" ]]; then
   TEMP=$(cat /etc/resolv.conf | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -n 1)
@@ -169,9 +166,6 @@ mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 # Run system-info.sh
 echo "Running system-info.sh..."
 bash "${ROOT_FOLDER}/scripts/system-info.sh"
-
-# Give permissions 1000:1000 to app data
-# chown -R 1000:1000 "${ROOT_FOLDER}/app-data"
 
 ## Don't run if config-only
 if [[ ! $ci == "true" ]]; then
