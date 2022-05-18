@@ -6,7 +6,8 @@ on:
       - master
 
 jobs:
-  verify:
+  # Build images and publish RCs to DockerHub
+  build-images:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,11 +38,7 @@ jobs:
           repo: meienberger/runtipi
           workflow_id: ${{ github.run_id }}
           access_token: ${{ github.token }}
-  
-  # Build images and publish RCs to DockerHub
-  build-images:
-    runs-on: ubuntu-latest
-    steps:
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       
