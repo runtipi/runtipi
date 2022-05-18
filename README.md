@@ -49,6 +49,11 @@ cd runtipi && sudo ./scripts/start.sh
 ```
 
 The script will prompt you the ip address of the dashboard once configured.
+Tipi will run by default on port 80. To select another port you can run the start script with the `--port` argument
+
+```bash
+sudo ./scripts/start.sh --port 7000
+```
 
 To stop Tipi, run the stop script.
 
