@@ -2,6 +2,8 @@
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
 ![Issues](https://img.shields.io/github/issues/meienberger/runtipi)
+[![Docker Pulls](https://badgen.net/docker/pulls/meienberger/tipi-dashboard?icon=docker&label=pulls)](https://hub.docker.com/r/meienberger/tipi-dashboard/)
+[![Docker Image Size](https://badgen.net/docker/size/meienberger/tipi-dashboard?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/tipi-dashboard/)
 ![RunsOn](https://img.shields.io/badge/Debian-Supported-green?logo=debian)
 ![RunsOn](https://img.shields.io/badge/Ubuntu-Supported-green?logo=ubuntu)
 ![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
@@ -11,7 +13,6 @@
 Tipi is a personal homeserver orchestrator. It is running docker containers under the hood and provides a simple web interface to manage them. Every service comes with an opinionated configuration in order to remove the need for manual configuration and network setup.
 
 ## Apps available
-- [Anonaddy](https://github.com/anonaddy/anonaddy) - Anonymous email forwarding
 - [Filebrowser](https://github.com/filebrowser/filebrowser) - Web File Browser
 - [Freshrss](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
 - [Invidious](https://github.com/iv-org/invidious) - An alternative front-end to YouTube
