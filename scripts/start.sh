@@ -160,8 +160,8 @@ for template in "${ENV_FILE}"; do
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
   sed -i "s/<tipi_version>/$(cat "${ROOT_FOLDER}/VERSION")/g" "${template}"
   sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
-  sed -i "/<nginx_port>/${NGINX_PORT}" "${template}"
-  sed -i "/<proxy_port>/${PROXY_PORT}" "${template}"
+  sed -i "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
+  sed -i "s/<proxy_port>/${PROXY_PORT}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
