@@ -8,7 +8,8 @@ services:
       - PUID=1000
       - PGID=1000
     volumes:
-      - ${APP_DATA_DIR}/../..:/srv
+      - ${ROOT_FOLDER_HOST}/app-data:/srv/app-data
+      - ${ROOT_FOLDER_HOST}/media:/srv/media
       - ${APP_DATA_DIR}/data/db:/database
       - ${APP_DATA_DIR}/data/config:/config
     networks:
