@@ -217,6 +217,12 @@ cat <<"EOF"
      |     {__)           
            ()`     
 EOF
+
+port_display=""
+if [[ $NGINX_PORT != "80" ]]; then
+  port_display=":${NGINX_PORT}"
+fi
+
 echo ""
-echo "Visit http://${INTERNAL_IP}/ to view the dashboard"
+echo "Visit http://${INTERNAL_IP}${port_display}/ to view the dashboard"
 echo ""
