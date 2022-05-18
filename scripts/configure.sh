@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e  # Exit immediately if a command exits with a non-zero status.
+set -e # Exit immediately if a command exits with a non-zero status.
 
 ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 USERNAME="$(id -nu 1000)"
@@ -37,25 +37,25 @@ fi
 
 # Add deb repo for docker (Debian)
 if [[ "${LSB}" == "Debian" ]]; then
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 fi
 
 # Add deb repo for docker (Ubuntu)
 if [[ "${LSB}" == "Ubuntu" ]]; then
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 fi
 
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
 # Install docker compose if not here
-if ! command -v docker-compose > /dev/null; then
+if ! command -v docker-compose >/dev/null; then
   sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
   sudo chmod +x /usr/local/bin/docker-compose
 fi
 
 # create docker group
-if ! getent group docker > /dev/null; then
+if ! getent group docker >/dev/null; then
   sudo groupadd docker
 fi
 sudo usermod -aG docker "${USERNAME}"
