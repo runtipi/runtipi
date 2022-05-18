@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e  # Exit immediately if a command exits with a non-zero status.
+set -e # Exit immediately if a command exits with a non-zero status.
 
 # use greadlink instead of readlink on osx
 if [[ "$(uname)" == "Darwin" ]]; then
@@ -8,18 +8,42 @@ else
   readlink=readlink
 fi
 
-while [ -n "$1" ]; do # while loop starts
+NGINX_PORT=80
+PROXY_PORT=8080
 
-	case "$1" in
-	--rc) rc="true" ;;
-	--ci) ci="true" ;;
-	--)
-		shift # The double dash makes them parameters
-		break
-		;;
-	*) echo "Option $1 not recognized" && exit 1 ;;
-	esac
-	shift
+while [ -n "$1" ]; do # while loop starts
+  case "$1" in
+  --rc) rc="true" ;;
+  --ci) ci="true" ;;
+  --port)
+    port="$2"
+
+    if [[ "${port}" =~ ^[0-9]+$ ]]; then
+      NGINX_PORT="${port}"
+    else
+      echo "--port must be a number"
+      exit 1
+    fi
+    shift
+    ;;
+  --proxy-port)
+    proxy_port="$2"
+
+    if [[ "${proxy_port}" =~ ^[0-9]+$ ]]; then
+      PROXY_PORT="${proxy_port}"
+    else
+      echo "--proxy-port must be a number"
+      exit 1
+    fi
+    shift
+    ;;
+  --)
+    shift # The double dash makes them parameters
+    break
+    ;;
+  *) echo "Option $1 not recognized" && exit 1 ;;
+  esac
+  shift
 done
 
 # Check we are on linux
@@ -40,10 +64,10 @@ if [[ "$ARCHITECTURE" == "aarch64" ]]; then
 fi
 
 if [[ $UID != 0 ]]; then
-    echo "Tipi must be started as root"
-    echo "Please re-run this script as"
-    echo "  sudo ./scripts/start"
-    exit 1
+  echo "Tipi must be started as root"
+  echo "Please re-run this script as"
+  echo "  sudo ./scripts/start"
+  exit 1
 fi
 
 # Configure Tipi if it isn't already configured
@@ -53,20 +77,20 @@ fi
 
 # Get field from json file
 function get_json_field() {
-    local json_file="$1"
-    local field="$2"
+  local json_file="$1"
+  local field="$2"
 
-    echo $(jq -r ".${field}" "${json_file}")
+  echo $(jq -r ".${field}" "${json_file}")
 }
 
 # Deterministically derives 128 bits of cryptographically secure entropy
 function derive_entropy() {
   SEED_FILE="${STATE_FOLDER}/seed"
   identifier="${1}"
-  tipi_seed=$(cat "${SEED_FILE}") || true 
+  tipi_seed=$(cat "${SEED_FILE}") || true
 
   if [[ -z "$tipi_seed" ]] || [[ -z "$identifier" ]]; then
-    >&2 echo "Missing derivation parameter, this is unsafe, exiting."
+    echo >&2 "Missing derivation parameter, this is unsafe, exiting."
     exit 1
   fi
 
@@ -107,7 +131,7 @@ fi
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
   echo "Generating seed..."
-  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 > "${STATE_FOLDER}/seed"
+  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 >"${STATE_FOLDER}/seed"
 fi
 
 export DOCKER_CLIENT_TIMEOUT=240
@@ -136,7 +160,8 @@ for template in "${ENV_FILE}"; do
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
   sed -i "s/<tipi_version>/$(cat "${ROOT_FOLDER}/VERSION")/g" "${template}"
   sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
-
+  sed -i "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
+  sed -i "s/<proxy_port>/${PROXY_PORT}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
@@ -170,7 +195,7 @@ fi
 
 echo "Tipi is now running"
 echo ""
-cat << "EOF"
+cat <<"EOF"
        _,.
      ,` -.)
     '( _/'-\\-.               
@@ -192,8 +217,12 @@ cat << "EOF"
      |     {__)           
            ()`     
 EOF
-echo ""
-echo "Visit http://${INTERNAL_IP}/ to view the dashboard"
-echo ""
 
+port_display=""
+if [[ $NGINX_PORT != "80" ]]; then
+  port_display=":${NGINX_PORT}"
+fi
 
+echo ""
+echo "Visit http://${INTERNAL_IP}${port_display}/ to view the dashboard"
+echo ""

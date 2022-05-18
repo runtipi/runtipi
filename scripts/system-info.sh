@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e  # Exit immediately if a command exits with a non-zero status.
+set -e # Exit immediately if a command exits with a non-zero status.
 
 ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
@@ -19,7 +19,7 @@ MEM_USED_BYTES=$(($MEM_TOTAL_BYTES - $MEM_AVAILABLE_BYTES))
 
 # Create temporary json file
 TEMP_JSON_FILE=$(mktemp)
-echo '{ "cpu": { "load": '"${CPU_LOAD_PERCENTAGE}"' }, "memory": { "total": '"${MEM_TOTAL_BYTES}"' , "used": '"${MEM_USED_BYTES}"', "available": '"${MEM_AVAILABLE_BYTES}"' }, "disk": { "total": '"${TOTAL_DISK_SPACE_BYTES}"' , "used": '"${USED_DISK_SPACE_BYTES}"', "available": '"${AVAILABLE_DISK_SPACE_BYTES}"' } }' > "${TEMP_JSON_FILE}"
+echo '{ "cpu": { "load": '"${CPU_LOAD_PERCENTAGE}"' }, "memory": { "total": '"${MEM_TOTAL_BYTES}"' , "used": '"${MEM_USED_BYTES}"', "available": '"${MEM_AVAILABLE_BYTES}"' }, "disk": { "total": '"${TOTAL_DISK_SPACE_BYTES}"' , "used": '"${USED_DISK_SPACE_BYTES}"', "available": '"${AVAILABLE_DISK_SPACE_BYTES}"' } }' >"${TEMP_JSON_FILE}"
 
 # Write to state file
-echo "$(cat "${TEMP_JSON_FILE}")" > "${STATE_FOLDER}/system-info.json"
+echo "$(cat "${TEMP_JSON_FILE}")" >"${STATE_FOLDER}/system-info.json"
