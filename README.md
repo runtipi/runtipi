@@ -16,6 +16,7 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 - [Filebrowser](https://github.com/filebrowser/filebrowser) - Web File Browser
 - [Freshrss](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
 - [Invidious](https://github.com/iv-org/invidious) - An alternative front-end to YouTube
+= [Homarr](https://github.com/ajnart/homarr) - A homepage for your server.
 - [Jackett](https://github.com/Jackett/Jackett) - API Support for your favorite torrent trackers
 - [Jellyfin](https://github.com/jellyfin/jellyfin) - A media server for your home collection
 - [Joplin](https://github.com/laurent22/joplin) - Privacy focused note-taking app

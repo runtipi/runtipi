@@ -15,4 +15,5 @@ export const appNames = [
   'n8n',
   'invidious',
   'joplin',
+  'homar',
 ];
