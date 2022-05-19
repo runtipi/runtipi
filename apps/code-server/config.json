@@ -1,5 +1,6 @@
 {
     "name": "Code-Server - Web VS Code",
+    "available": true,
     "port": 8443,
     "id": "code-server",
     "description": "",

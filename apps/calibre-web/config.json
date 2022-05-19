@@ -1,5 +1,6 @@
 {
     "name": "Calibre-Web - EBook Reader",
+    "available": true,
     "port": 8083,
     "id": "calibre-web",
     "description": "On the initial setup screen, enter /books as your calibre library location. \n Default admin login: Username: admin Password: admin123",
