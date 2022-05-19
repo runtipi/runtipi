@@ -13,6 +13,7 @@
 Tipi is a personal homeserver orchestrator. It is running docker containers under the hood and provides a simple web interface to manage them. Every service comes with an opinionated configuration in order to remove the need for manual configuration and network setup.
 
 ## Apps available
+- [Code-Server](https://github.com/filebrowser/filebrowser) - Web VS Code
 - [Filebrowser](https://github.com/filebrowser/filebrowser) - Web File Browser
 - [Freshrss](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
 - [Invidious](https://github.com/iv-org/invidious) - An alternative front-end to YouTube

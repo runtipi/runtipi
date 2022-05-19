@@ -16,4 +16,5 @@ export const appNames = [
   'invidious',
   'joplin',
   'homarr',
+  'code-server',
 ];
