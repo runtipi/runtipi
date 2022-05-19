@@ -17,4 +17,5 @@ export const appNames = [
   'joplin',
   'homarr',
   'code-server',
+  'calibre-web',
 ];
