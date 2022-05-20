@@ -63,9 +63,7 @@ sudo ./scripts/stop.sh
 
 Tipi is made to be very easy to plug in new apps. We welcome and appreciate new contributions.
 
-If you want to support a new app or feature, you can:
-- Fork the repository and create a new branch for your changes.
-- Create a pull request.
+If you want to add a new app or feature, you can follow the [Contribution guide](https://github.com/meienberger/runtipi/wiki/Contributing-to-Tipi) for instructions on how to do so.
 
 ## 📜 License
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
