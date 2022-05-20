@@ -1,0 +1,12 @@
+version: '3'
+services:
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    volumes:
+      - ${APP_DATA_DIR}/data/homarr:/app/data/configs
+    ports:
+      - ${APP_PORT}:7575
+    networks:
+      - tipi_main_network

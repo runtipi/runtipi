@@ -15,4 +15,7 @@ export const appNames = [
   'n8n',
   'invidious',
   'joplin',
+  'homarr',
+  'code-server',
+  'calibre-web',
 ];
