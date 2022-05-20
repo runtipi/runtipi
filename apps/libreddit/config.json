@@ -1,7 +1,7 @@
 {
     "name": "LibReddit",
     "available": true,
-    "port": 8092,
+    "port": 8105,
     "id": "libreddit",
     "description": "LibReddit is a bloat free reddit frontend written in Rust, no ads, no tracking and strong Content Security Policy prevents any request from going to reddit, everything is proxied.",
     "short_desc": "Browse reddit without problems!",
