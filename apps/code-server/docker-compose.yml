@@ -1,0 +1,19 @@
+version: "2.1"
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - PASSWORD=${CODESERVER_PASSWORD}
+      - DEFAULT_WORKSPACE=/config/workspace #optional
+    volumes:
+      - ${APP_DATA_DIR}/data/config:/config #config dir
+      - ${APP_DATA_DIR}/data/projects:/projects
+    ports:
+      - ${APP_PORT}:8443
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
