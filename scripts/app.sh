@@ -60,7 +60,8 @@ if [ -z ${2+x} ]; then
   exit 1
 else
   app="$2"
-  root_folder_host="$3"
+  root_folder_host="${3:-$ROOT_FOLDER}"
+
   app_dir="${ROOT_FOLDER}/apps/${app}"
   app_data_dir="${ROOT_FOLDER}/app-data/${app}"
 

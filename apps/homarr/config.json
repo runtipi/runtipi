@@ -1,0 +1,13 @@
+{
+  "name": "Homarr",
+  "available": true,
+  "port": 8102,
+  "id": "homarr",
+  "description": "A homepage for your server.",
+  "short_desc": "Homarr is a simple and lightweight homepage for your server, that helps you easily access all of your services in one place.",
+  "author": "https://github.com/ajnart/",
+  "source": "https://github.com/ajnart/homar",
+  "website": "https://discord.gg/C2WTXkzkwK",
+  "image": "https://raw.githubusercontent.com/ajnart/homarr/master/public/imgs/logo.png",
+  "form_fields": {}
+}
