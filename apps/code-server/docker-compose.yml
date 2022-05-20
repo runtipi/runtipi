@@ -10,8 +10,8 @@ services:
       - PASSWORD=${CODESERVER_PASSWORD}
       - DEFAULT_WORKSPACE=/config/workspace #optional
     volumes:
-      - ${APP_DATA_DIR}/data/code-server/config:/config #config dir
-      - ${APP_DATA_DIR}/data/code-server/projects:/projects
+      - ${APP_DATA_DIR}/data/config:/config #config dir
+      - ${APP_DATA_DIR}/data/projects:/projects
     ports:
       - ${APP_PORT}:8443
     restart: unless-stopped

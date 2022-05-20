@@ -8,8 +8,8 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ${APP_DATA_DIR}/data/calibre-web/config:/config
-      - ${APP_DATA_DIR}/data/calibre-web/books:/books
+      - ${APP_DATA_DIR}/data/config:/config
+      - ${APP_DATA_DIR}/data/books:/books
     ports:
       - ${APP_PORT}:8083
     restart: unless-stopped
