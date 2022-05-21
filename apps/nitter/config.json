@@ -1,0 +1,12 @@
+{
+    "name": "Nitter",
+    "available": true,
+    "port": 8106,
+    "id": "nitter",
+    "description": "A free and open source alternative Twitter front-end focused on privacy and performance.",
+    "short_desc": "Twitter without annoyances!",
+    "author": "Stetsed",
+    "source": "https://github.com/zedeus/nitter",
+    "image": "https://raw.githubusercontent.com/zedeus/nitter/master/public/favicon.ico",
+    "form_fields": {}
+  } 
