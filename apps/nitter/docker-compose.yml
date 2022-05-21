@@ -6,7 +6,6 @@ services:
     image: zedeus/nitter:latest
     container_name: nitter
     networks:
-      - nitter_internal
       - tipi_main_network
     ports:
       - ${APP_PORT}:8080
@@ -19,7 +18,7 @@ services:
     image: redis:6-alpine
     container_name: nitter-redis
     networks:
-      - nitter_internal
+      - tipi_main_network
     command: redis-server --save 60 1 --loglevel warning
     volumes:
       - nitter-redis:/data
@@ -27,6 +26,3 @@ services:
 
 volumes:
   nitter-redis:
-
-networks:
-  nitter_internal:
