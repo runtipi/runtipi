@@ -11,6 +11,6 @@ services:
       - tipi_main_network
     environment:
       - WEBSOCKET_ENABLED=true
-      - ADMIN_TOKEN=$VAULTWARDEN_ADMIN_PASSWORD
+      - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_PASSWORD}
     volumes:
       - ${APP_DATA_DIR}/data:/data
