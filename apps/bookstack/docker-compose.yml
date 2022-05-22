@@ -1,0 +1,39 @@
+version: "2"
+services:
+  bookstack:
+    image: lscr.io/linuxserver/bookstack
+    container_name: bookstack
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - APP_URL=${BOOKSTACK_APP_URL}
+      - DB_HOST=bookstack_db
+      - DB_USER=tipi
+      - DB_PASS=tipi
+      - DB_DATABASE=bookstackapp
+    volumes:
+      - ${APP_DATA_DIR}/bookstack/config:/config
+    ports:
+      - ${APP_PORT}:80
+    restart: unless-stopped
+    depends_on:
+      - bookstack_db
+    networks:
+      - tipi_main_network
+
+  bookstack_db:
+    image: lscr.io/linuxserver/mariadb
+    container_name: bookstack_db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MYSQL_ROOT_PASSWORD=tipi
+      - TZ=Europe/London
+      - MYSQL_DATABASE=bookstackapp
+      - MYSQL_USER=tipi
+      - MYSQL_PASSWORD=tipi
+    volumes:
+      - ${APP_DATA_DIR}/mariadb/config:/config
+    restart: unless-stopped
+    networks:
+      - tipi_main_network

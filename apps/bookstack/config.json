@@ -1,0 +1,19 @@
+{
+  "name": "Bookstack",
+  "available": true,
+  "port": 8103,
+  "id": "bookstack",
+  "description": "BookStack is a simple, self-hosted, easy-to-use platform for organising and storing information. Default login: admin@admin.com password: password",
+  "short_desc": "BookStack is a self-hosted platform for organising and storing information.",
+  "author": "ArneNaessens",
+  "source": "https://github.com/BookStackApp/BookStack",
+  "image": "https://avatars.githubusercontent.com/u/20912696?s=200&v=4",
+  "form_fields": {
+    "domain": {
+      "type": "text",
+      "label": "Your public IP address or domain name including http(s)://",
+      "required": false,
+      "env_variable": "BOOKSTACK_APP_URL"
+    }
+  }
+}
