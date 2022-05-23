@@ -6,6 +6,7 @@ export enum FieldTypes {
   fqdn = 'fqdn',
   ip = 'ip',
   fqdnip = 'fqdnip',
+  url = 'url',
 }
 
 interface FormField {
