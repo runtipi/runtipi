@@ -32,6 +32,10 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 - [Transmission](https://github.com/transmission/transmission) - Fast, easy, and free BitTorrent client
 - [Wireguard Easy](https://github.com/WeeJeWel/wg-easy) - WireGuard VPN + Web-based Admin UI
 - [Adguard Home](https://github.com/AdguardTeam/AdGuardHome) - Adguard Home DNS adblocker
+- [Libreddit](https://github.com/spikecodes/libreddit) - Private front-end for Reddit
+- [Nitter](https://github.com/zedeus/nitter) - Alternative Twitter front-end
+- [Vaultwarden](https://github.com/dani-garcia/vaultwarden) - Unofficial Bitwarden compatible server
+- [Prowlarr](https://github.com/Prowlarr/Prowlarr/) - A torrent/usenet indexer manager/proxy
 ## 🛠 Installation
 ### Installation Requirements
 - Ubuntu 18.04 LTS or higher (or Debian 10)
