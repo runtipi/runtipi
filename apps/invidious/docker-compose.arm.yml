@@ -31,8 +31,8 @@ services:
     restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/data/postgres:/var/lib/postgresql/data
-      - ${APP_DATA_DIR}/data/sql:/config/sql
-      - ./docker/init-invidious-db.sh:/docker-entrypoint-initdb.d/init-invidious-db.sh
+      - ${APP_DATA_DIR}/data/init/sql:/config/sql
+      - ${APP_DATA_DIR}/data/init/init-invidious-db.sh:/docker-entrypoint-initdb.d/init-invidious-db.sh
     environment:
       POSTGRES_DB: invidious
       POSTGRES_USER: tipi

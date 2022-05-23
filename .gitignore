@@ -15,7 +15,7 @@ media/data/tv/*
 media/data/books/*
 !media/data/movies/.gitkeep
 !media/data/tv/.gitkeep
-!media/data/books/.gitkeep
+!media/data/books/metadata.db
 
 media/torrents/complete/*
 !media/torrents/complete/.gitkeep

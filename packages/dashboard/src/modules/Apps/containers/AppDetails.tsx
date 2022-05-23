@@ -103,6 +103,7 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
               {app.source && (
                 <a target="_blank" rel="noreferrer" className="text-blue-500 text-xs" href={app?.source}>
                   <Flex className="mt-2 items-center">
+                    Source
                     <FiExternalLink className="ml-1" />
                   </Flex>
                 </a>
