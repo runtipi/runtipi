@@ -1,7 +1,6 @@
-version: "3"
+version: "3.7"
 
 services:
-
   nitter:
     image: zedeus/nitter:latest
     container_name: nitter
@@ -21,8 +20,5 @@ services:
       - tipi_main_network
     command: redis-server --save 60 1 --loglevel warning
     volumes:
-      - nitter-redis:/data
+      - "${APP_DATA_DIR}/data/redis:/data"
     restart: unless-stopped
-
-volumes:
-  nitter-redis: 
