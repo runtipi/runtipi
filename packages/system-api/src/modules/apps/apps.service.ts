@@ -17,7 +17,7 @@ const startApp = async (appName: string): Promise<void> => {
   ensureAppState(appName, true);
 };
 
-const installApp = async (id: string, form: Record<string, string>): Promise<void> => {
+const installApp = async (id: string, form: Record<string, string>, stdout?: (data: string) => void): Promise<void> => {
   const appExists = fileExists(`/app-data/${id}`);
 
   if (appExists) {
@@ -37,7 +37,7 @@ const installApp = async (id: string, form: Record<string, string>): Promise<voi
     ensureAppState(id, true);
 
     // Run script
-    await runAppScript(['install', id]);
+    await runAppScript(['install', id], stdout);
   }
 
   return Promise.resolve();

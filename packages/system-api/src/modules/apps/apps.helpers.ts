@@ -75,15 +75,21 @@ export const checkAppExists = (appName: string) => {
   }
 };
 
-export const runAppScript = (params: string[]): Promise<void> => {
+export const runAppScript = (params: string[], processClbk?: (data: string) => void): Promise<void> => {
   return new Promise((resolve, reject) => {
-    runScript('/scripts/app.sh', [...params, config.ROOT_FOLDER_HOST], (err: string) => {
+    const process = runScript('/scripts/app.sh', [...params, config.ROOT_FOLDER_HOST], (err: string) => {
       if (err) {
         reject(err);
       }
 
       resolve();
     });
+
+    if (processClbk) {
+      process.stdout?.on('data', (data: string) => {
+        processClbk?.(data);
+      });
+    }
   });
 };
 

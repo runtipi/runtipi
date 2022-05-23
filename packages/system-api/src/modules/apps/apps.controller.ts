@@ -103,7 +103,10 @@ const installApp = async (req: Request, res: Response, next: NextFunction) => {
       throw new Error('App name is required');
     }
 
-    await AppsService.installApp(id, form);
+    await AppsService.installApp(id, form, (data: string) => {
+      console.log('Stream:', data);
+      res.write(data);
+    });
 
     res.status(200).json({ message: 'App installed successfully' });
   } catch (e) {
