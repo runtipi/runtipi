@@ -5,6 +5,8 @@ services:
     container_name: invidious
     image: quay.io/invidious/invidious:latest-arm64
     restart: unless-stopped
+    dns:
+      - ${DNS_IP}
     ports:
       - "${APP_PORT}:3000"
     environment:
