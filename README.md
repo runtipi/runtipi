@@ -54,7 +54,8 @@ git clone https://github.com/meienberger/runtipi.git
 cd into the downloaded directory and run the start script.
 
 ```bash
-cd runtipi && sudo ./scripts/start.sh
+cd runtipi
+sudo ./scripts/start.sh
 ```
 
 The script will prompt you the ip address of the dashboard once configured.
