@@ -11,8 +11,7 @@ services:
       - ${DNS_IP}
     volumes:
       - ${APP_DATA_DIR}/data:/config
-      - ${ROOT_FOLDER_HOST}/media/data/tv:/tv #optional
-      - ${ROOT_FOLDER_HOST}/media/torrents:/downloads #optional
+      - ${ROOT_FOLDER_HOST}/media:/media
     ports:
       - ${APP_PORT}:8989
     restart: unless-stopped
