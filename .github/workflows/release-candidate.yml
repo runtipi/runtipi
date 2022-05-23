@@ -1,9 +1,9 @@
 name: Release candidate
 
 on:
-  pull_request:
+  push:
     branches:
-      - master
+      - release/*
 
 jobs:
   # Build images and publish RCs to DockerHub

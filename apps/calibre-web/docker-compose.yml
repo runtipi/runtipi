@@ -1,4 +1,4 @@
-version: "2.1"
+version: "3.7"
 services:
   calibre-web:
     image: lscr.io/linuxserver/calibre-web:latest
@@ -9,7 +9,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${APP_DATA_DIR}/data/config:/config
-      - ${APP_DATA_DIR}/data/books:/books
+      - ${ROOT_FOLDER_HOST}/media/data/books:/books
     ports:
       - ${APP_PORT}:8083
     restart: unless-stopped

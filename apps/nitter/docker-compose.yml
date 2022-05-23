@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  nitter:
+    image: zedeus/nitter:latest
+    container_name: nitter
+    networks:
+      - tipi_main_network
+    ports:
+      - ${APP_PORT}:8080
+    volumes:
+      - "${APP_DATA_DIR}/data/nitter.conf:/src/nitter.conf:ro"
+    depends_on:
+      - nitter-redis
+    restart: unless-stopped
+  nitter-redis:
+    image: redis:6-alpine
+    container_name: nitter-redis
+    networks:
+      - tipi_main_network
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - "${APP_DATA_DIR}/data/redis:/data"
+    restart: unless-stopped

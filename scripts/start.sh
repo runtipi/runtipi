@@ -121,9 +121,9 @@ fi
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
 
 # if pihole is present in str add it as DNS
-if [[ $str = *"pihole"* ]]; then
-  DNS_IP=10.21.21.201
-fi
+# if [[ $str = *"pihole"* ]]; then
+#   DNS_IP=10.21.21.201
+# fi
 
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
