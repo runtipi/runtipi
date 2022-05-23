@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  gitea:
+    image: gitea/gitea:1.16.8
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=mysql
+      - GITEA__database__HOST=gitea_db:3306
+      - GITEA__database__NAME=tipi_gitea
+      - GITEA__database__USER=tipi_gitea
+      - GITEA__database__PASSWD=tipi_gitea
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
+    volumes:
+      - ${APP_DATA_DIR}/gitea/data:/data
+    ports:
+      - ${APP_PORT}:3000
+      - "222:22"
+    depends_on:
+      - gitea_db
+  
+  gitea_db:
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=tipi_gitea
+      - MYSQL_USER=tipi_gitea
+      - MYSQL_PASSWORD=tipi_gitea
+      - MYSQL_DATABASE=tipi_gitea
+    networks:
+      - tipi_main_network
+    volumes:
+      - ${APP_DATA_DIR}/mysql/var/lib/mysql:/var/lib/mysql

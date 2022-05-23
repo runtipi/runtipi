@@ -36,6 +36,7 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 - [Nitter](https://github.com/zedeus/nitter) - Alternative Twitter front-end
 - [Vaultwarden](https://github.com/dani-garcia/vaultwarden) - Unofficial Bitwarden compatible server
 - [Prowlarr](https://github.com/Prowlarr/Prowlarr/) - A torrent/usenet indexer manager/proxy
+- [Gitea](https://github.com/go-gitea/gitea) - Gitea - A painless self-hosted Git service.
 ## 🛠 Installation
 ### Installation Requirements
 - Ubuntu 18.04 LTS or higher (or Debian 10)
