@@ -1,28 +1,25 @@
 .pnpm-debug.log
-.env
 .env*
 github.secrets
 node_modules/
-nginx/*
-letsencrypt/*
 app-data/*
 traefik/ssl/*
 !traefik/ssl/.gitkeep
 !app-data/.gitkeep
-!letsencrypt/mkcert/.gitkeep
 
 state/*
 !state/.gitkeep
 
-tipi.config.json
-
-# Commit empty directories
-!nignx/.gitkeep
-
 media/data/movies/*
 media/data/tv/*
+media/data/books/*
 !media/data/movies/.gitkeep
 !media/data/tv/.gitkeep
+!media/data/books/.gitkeep
 
-media/torrents/*
-!media/torrents/.gitkeep
+media/torrents/complete/*
+!media/torrents/complete/.gitkeep
+media/torrents/incomplete/*
+!media/torrents/incomplete/.gitkeep
+media/torrents/watch/*
+!media/torrents/watch/.gitkeep

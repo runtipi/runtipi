@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 services:
   gitea:
@@ -22,7 +22,7 @@ services:
       - "222:22"
     depends_on:
       - gitea-db
-  
+
   gitea-db:
     container_name: gitea-db
     image: postgres:14

@@ -1,7 +1,7 @@
-version: "2.1"
+version: "3.7"
 services:
   prowlarr: # Should be exact same name as "id" field in config.json
-    container_name: prowlarr  # Should be exact same name as "id" field in config.json
+    container_name: prowlarr # Should be exact same name as "id" field in config.json
     image: ghcr.io/linuxserver/prowlarr:develop
     environment:
       - TZ=${TZ} # Can use any env variable. List in runtipi/templates/env-sample

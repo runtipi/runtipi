@@ -9,12 +9,14 @@ services:
       - TZ=${TZ}
       - USER=${TRANSMISSION_USERNAME}
       - PASS=${TRANSMISSION_PASSWORD}
+      - TRANSMISSION_WEB_HOME=/transmission-web-control/
       # - WHITELIST=iplist #optional
       # - PEERPORT=peerport #optional
       # - HOST_WHITELIST=dnsnane list #optional
     volumes:
       - ${APP_DATA_DIR}/data/config:/config
-      - ${ROOT_FOLDER_HOST}/media/torrents:/media/torrents
+      - ${ROOT_FOLDER_HOST}/media/torrents:/downloads
+      - ${ROOT_FOLDER_HOST}/media/torrents/watch:/watch
     ports:
       - ${APP_PORT}:9091
       - 51413:51413
