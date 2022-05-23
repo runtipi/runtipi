@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  libreddit:
+    container_name: libreddit
+    image: spikecodes/libreddit
+    ports:
+      - ${APP_PORT}:8080
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
