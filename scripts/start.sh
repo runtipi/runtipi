@@ -54,7 +54,7 @@ fi
 
 function host_check {
   INTERNAL_IP="$(hostname -I 2>&1| awk '{print $1}')"
-  if [ '$(grep -q "hostname: invalid option $IP' ]; then 
+  if [ '$(grep -q "hostname: invalid option $INTERNAL_IP' ]; then 
     INTERNAL_IP="$(ip route show | grep -i default | awk -F' ' '{print $9}')"
   fi
 }
