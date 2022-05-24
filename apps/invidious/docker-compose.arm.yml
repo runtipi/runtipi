@@ -25,6 +25,8 @@ services:
       retries: 2
     depends_on:
       - invidious-db
+    networks:
+      - tipi_main_network
 
   invidious-db:
     user: 1000:1000
