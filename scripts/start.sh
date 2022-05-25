@@ -98,8 +98,6 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
-PUID="$(id -u)"
-PGID="$(id -g)"
 TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
 
 # Copy the app state if it isn't here
@@ -145,8 +143,6 @@ JWT_SECRET=$(derive_entropy "jwt")
 for template in "${ENV_FILE}"; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
-  sed -i "s/<puid>/${PUID}/g" "${template}"
-  sed -i "s/<pgid>/${PGID}/g" "${template}"
   sed -i "s/<tz>/${TZ}/g" "${template}"
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
