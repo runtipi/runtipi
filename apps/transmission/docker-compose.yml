@@ -3,12 +3,15 @@ services:
   transmission:
     image: lscr.io/linuxserver/transmission
     container_name: transmission
+    dns:
+      - ${DNS_IP}
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
       - USER=${TRANSMISSION_USERNAME}
       - PASS=${TRANSMISSION_PASSWORD}
+      - TRANSMISSION_WEB_HOME=/transmission-web-control/
       # - WHITELIST=iplist #optional
       # - PEERPORT=peerport #optional
       # - HOST_WHITELIST=dnsnane list #optional

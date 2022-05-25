@@ -2,8 +2,6 @@
 # It will be overwritten on update.
 
 TZ=<tz>
-PUID=<puid>
-PGID=<pgid>
 INTERNAL_IP=<internal_ip>
 DNS_IP=<dns_ip>
 ARCHITECTURE=<architecture>

@@ -8,9 +8,9 @@
   "author": "ArneNaessens",
   "source": "https://github.com/AdguardTeam",
   "image": "https://avatars.githubusercontent.com/u/8361145?s=200&v=4",
+  "cagegories": ["network", "security"],
   "requirements": {
     "ports": [53]
   },
-  "form_fields": {
-  }
+  "form_fields": {}
 }

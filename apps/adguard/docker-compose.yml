@@ -1,8 +1,7 @@
 
-version: "3.5"
-
+version: "3.7"
 services:
-  adguardhome:
+  adguard:
     image: adguard/adguardhome:v0.107.6
     container_name: adguard
     volumes:
