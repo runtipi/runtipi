@@ -17,7 +17,7 @@ interface AppConfig {
   available: boolean;
 }
 
-const networkExceptions = ["pihole", "tailscale"];
+const networkExceptions = ["pihole", "tailscale", "homeassistant"];
 const getAppConfigs = (): AppConfig[] => {
   const apps: AppConfig[] = [];
 
