@@ -54,3 +54,5 @@ services:
       MARIADB_USER: "photoprism"
       MARIADB_PASSWORD: "photoprism"
       MARIADB_ROOT_PASSWORD: "photoprism"
+    networks:
+      - tipi_main_network
