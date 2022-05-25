@@ -14,10 +14,10 @@ echo "=============== TIPI ================="
 echo "======================================"
 echo
 
-sudo wget -O /usr/local/bin/pacapt https://github.com/icy/pacapt/raw/ng/pacapt
-sudo chmod 755 /usr/local/bin/pacapt
-sudo ln -sv /usr/local/bin/pacapt /usr/local/bin/pacman || true
-sudo pacapt -Sy; sudo pacapt -S docker docker-ce docker-compose containerd.io jq coreutils curl -y
+sudo wget -O "${ROOT_FOLDER}"/scripts/pacapt https://github.com/icy/pacapt/raw/ng/pacapt
+sudo chmod 755 "${ROOT_FOLDER}"/scripts/pacapt
+sudo "${ROOT_FOLDER}"/scripts/pacapt -Sy
+sudo "${ROOT_FOLDER}"/scripts/pacapt -S docker docker-ce docker-compose containerd.io jq coreutils curl -y
 
 # Create configured status
 touch "${ROOT_FOLDER}/state/configured"
