@@ -120,11 +120,6 @@ fi
 # Get dns ip if pihole is installed
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
 
-# if pihole is present in str add it as DNS
-# if [[ $str = *"pihole"* ]]; then
-#   DNS_IP=10.21.21.201
-# fi
-
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
   echo "Generating seed..."
@@ -166,6 +161,9 @@ mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 # Run system-info.sh
 echo "Running system-info.sh..."
 bash "${ROOT_FOLDER}/scripts/system-info.sh"
+
+# Add crontab to run system-info.sh every minute
+! (crontab -l | grep -q "${ROOT_FOLDER}/scripts/system-info.sh") && (crontab -l; echo "* * * * * ${ROOT_FOLDER}/scripts/system-info.sh") | crontab -
 
 ## Don't run if config-only
 if [[ ! $ci == "true" ]]; then
