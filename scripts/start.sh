@@ -98,8 +98,6 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
-PUID="$(id -u)"
-PGID="$(id -g)"
 TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
 
 # Copy the app state if it isn't here
@@ -119,11 +117,6 @@ fi
 
 # Get dns ip if pihole is installed
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-
-# if pihole is present in str add it as DNS
-# if [[ $str = *"pihole"* ]]; then
-#   DNS_IP=10.21.21.201
-# fi
 
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
@@ -150,8 +143,6 @@ JWT_SECRET=$(derive_entropy "jwt")
 for template in "${ENV_FILE}"; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
-  sed -i "s/<puid>/${PUID}/g" "${template}"
-  sed -i "s/<pgid>/${PGID}/g" "${template}"
   sed -i "s/<tz>/${TZ}/g" "${template}"
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
@@ -166,6 +157,9 @@ mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 # Run system-info.sh
 echo "Running system-info.sh..."
 bash "${ROOT_FOLDER}/scripts/system-info.sh"
+
+# Add crontab to run system-info.sh every minute
+! (crontab -l | grep -q "${ROOT_FOLDER}/scripts/system-info.sh") && (crontab -l; echo "* * * * * ${ROOT_FOLDER}/scripts/system-info.sh") | crontab -
 
 ## Don't run if config-only
 if [[ ! $ci == "true" ]]; then
