@@ -28,10 +28,14 @@ const getAppConfigs = (): AppConfig[] => {
 
     if (fs.existsSync(path)) {
       const configFile = fs.readFileSync(path).toString();
-      const config: AppConfig = JSON.parse(configFile);
 
-      if (config.available) {
-        apps.push(config);
+      try {
+        const config: AppConfig = JSON.parse(configFile);
+        if (config.available) {
+          apps.push(config);
+        }
+      } catch (e) {
+        console.error("Error parsing config file", app);
       }
     }
   });
