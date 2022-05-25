@@ -5,7 +5,7 @@ services:
     image: photoprism/photoprism:latest
     container_name: photoprism
     depends_on:
-      - mariadb
+      - photoprism-db
     restart: unless-stopped
     ports:
       - "${APP_PORT}:2342"
@@ -39,6 +39,8 @@ services:
     volumes:
       - "${APP_DATA_DIR}/data/photoprism/originals:/photoprism/originals"
       - "${APP_DATA_DIR}/data/photoprism/storage:/photoprism/storage"
+    networks:
+      - tipi_main_network
 
   photoprism-db:
     restart: unless-stopped
