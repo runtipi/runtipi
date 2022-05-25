@@ -6,7 +6,7 @@ services:
     image: nodered/node-red:2.2.2-12
     restart: unless-stopped
     ports:
-      - "${APP_PORT}:1880"
+      - ${APP_PORT}:1880
     volumes:
       - ${APP_DATA_DIR}/data:/data
     networks:
