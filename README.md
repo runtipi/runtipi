@@ -20,6 +20,7 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 - [Freshrss](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
 - [Gitea](https://github.com/go-gitea/gitea) - Gitea - A painless self-hosted Git service
 - [Homarr](https://github.com/ajnart/homarr) - A homepage for your server
+- [Home Assistant](https://github.com/home-assistant/core) - Open source home automation that puts local control and privacy first
 - [Invidious](https://github.com/iv-org/invidious) - An alternative front-end to YouTube
 - [Jackett](https://github.com/Jackett/Jackett) - API Support for your favorite torrent trackers
 - [Jellyfin](https://github.com/jellyfin/jellyfin) - A media server for your home collection
@@ -40,6 +41,7 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 - [Vaultwarden](https://github.com/dani-garcia/vaultwarden) - Unofficial Bitwarden compatible server
 
 ## 🛠 Installation
+
 ### Installation Requirements
 - Ubuntu 18.04 LTS or higher (or Debian 10)
 
