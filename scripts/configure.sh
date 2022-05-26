@@ -17,10 +17,16 @@ echo
 sudo wget -O "${ROOT_FOLDER}"/scripts/pacapt https://github.com/icy/pacapt/raw/ng/pacapt
 sudo chmod 755 "${ROOT_FOLDER}"/scripts/pacapt
 sudo "${ROOT_FOLDER}"/scripts/pacapt -Sy
-sudo "${ROOT_FOLDER}"/scripts/pacapt -S docker docker-compose jq coreutils curl -y
+sudo "${ROOT_FOLDER}"/scripts/pacapt -S docker docker-compose jq coreutils curl lsb-release -y
+
+LSB="$(lsb_release -is)"
 
 systemctl start docker.service
 systemctl enable docker.service
+
+# If we are on Arch
+# if [[ "${LSB}" == "Arch" ]]; then
+# fi
 
 # Create configured status
 touch "${ROOT_FOLDER}/state/configured"
