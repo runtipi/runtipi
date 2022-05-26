@@ -17,7 +17,7 @@ echo
 sudo wget -O "${ROOT_FOLDER}"/scripts/pacapt https://github.com/icy/pacapt/raw/ng/pacapt
 sudo chmod 755 "${ROOT_FOLDER}"/scripts/pacapt
 sudo "${ROOT_FOLDER}"/scripts/pacapt -Sy
-sudo "${ROOT_FOLDER}"/scripts/pacapt -S docker docker-ce docker-compose containerd.io jq coreutils curl -y
+sudo "${ROOT_FOLDER}"/scripts/pacapt -S docker docker-compose jq coreutils curl -y
 
 # Create configured status
 touch "${ROOT_FOLDER}/state/configured"
