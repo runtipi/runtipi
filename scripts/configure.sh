@@ -19,5 +19,8 @@ sudo chmod 755 "${ROOT_FOLDER}"/scripts/pacapt
 sudo "${ROOT_FOLDER}"/scripts/pacapt -Sy
 sudo "${ROOT_FOLDER}"/scripts/pacapt -S docker docker-compose jq coreutils curl -y
 
+systemctl start docker.service
+systemctl enable docker.service
+
 # Create configured status
 touch "${ROOT_FOLDER}/state/configured"
