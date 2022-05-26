@@ -24,8 +24,8 @@ LSB="$(lsb_release -is)"
 systemctl start docker.service
 systemctl enable docker.service
 
-# If we are on Arch
 # if [[ "${LSB}" == "Arch" ]]; then
+#   sudo "${ROOT_FOLDER}"/scripts/pacapt -S hostname -y
 # fi
 
 # Create configured status
