@@ -115,7 +115,7 @@ fi
 
 # Get current dns from host
 if [[ -f "/etc/resolv.conf" ]]; then
-  TEMP=$(cat /etc/resolv.conf | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -n 1)
+  TEMP=$(grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' /etc/resolv.conf | head -n 1)
 fi
 
 # Get dns ip if pihole is installed
@@ -143,7 +143,7 @@ ENV_FILE=$(mktemp)
 
 JWT_SECRET=$(derive_entropy "jwt")
 
-for template in "${ENV_FILE}"; do
+for template in ${ENV_FILE}; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<tz>/${TZ}/g" "${template}"
