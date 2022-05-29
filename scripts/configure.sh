@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e # Exit immediately if a command exits with a non-zero status.
 
-ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
+ROOT_FOLDER="$(readlink -f "$(dirname "${BASH_SOURCE[0]}")"/..)"
 
 echo
 echo "======================================"
@@ -17,7 +17,7 @@ echo
 sudo wget -O "${ROOT_FOLDER}"/scripts/pacapt https://github.com/icy/pacapt/raw/ng/pacapt
 sudo chmod 755 "${ROOT_FOLDER}"/scripts/pacapt
 sudo "${ROOT_FOLDER}"/scripts/pacapt -Sy
-sudo "${ROOT_FOLDER}"/scripts/pacapt -S docker docker-compose jq coreutils curl lsb-release -y
+yes | sudo "${ROOT_FOLDER}"/scripts/pacapt -S docker docker-compose jq coreutils curl lsb-release
 
 LSB="$(lsb_release -is)"
 
