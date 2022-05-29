@@ -52,6 +52,13 @@ if [[ "$(uname)" != "Linux" ]]; then
   exit 1
 fi
 
+function host_check {
+  INTERNAL_IP="$(hostname -I 2>&1| awk '{print $1}')"
+  if [ '$(grep -q "hostname: invalid option" $INTERNAL_IP' ]; then 
+    INTERNAL_IP="$(ip route show | grep -i default | awk -F' ' '{print $9}')"
+  fi
+}
+host_check
 ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
@@ -59,6 +66,7 @@ SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}')"
 INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
 # INTERNAL_IP="$(hostname -I | awk '{print $1}')"
+
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
 
