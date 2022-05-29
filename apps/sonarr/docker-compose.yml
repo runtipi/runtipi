@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  radarr:
+  sonarr:
     image: lscr.io/linuxserver/sonarr
     container_name: sonarr
     environment:

@@ -19,6 +19,7 @@ services:
       - TIPI_VERSION=${TIPI_VERSION}
       - JWT_SECRET=${JWT_SECRET}
       - ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}
+      - NGINX_PORT=${NGINX_PORT}
     networks:
       - tipi_main_network
 
