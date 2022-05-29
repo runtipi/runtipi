@@ -52,10 +52,21 @@ if [[ "$(uname)" != "Linux" ]]; then
   exit 1
 fi
 
+function host_check {
+  INTERNAL_IP="$(hostname -I 2>&1| awk '{print $1}')"
+  if [ '$(grep -q "hostname: invalid option" $INTERNAL_IP' ]; then 
+    INTERNAL_IP="$(ip route show | grep -i default | awk -F' ' '{print $9}')"
+  fi
+}
+host_check
 ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
-INTERNAL_IP="$(hostname -I | awk '{print $1}')"
+
+NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}')"
+INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
+# INTERNAL_IP="$(hostname -I | awk '{print $1}')"
+
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
 
@@ -112,7 +123,7 @@ fi
 
 # Get current dns from host
 if [[ -f "/etc/resolv.conf" ]]; then
-  TEMP=$(cat /etc/resolv.conf | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -n 1)
+  TEMP=$(grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' /etc/resolv.conf | head -n 1)
 fi
 
 # Get dns ip if pihole is installed
@@ -140,7 +151,7 @@ ENV_FILE=$(mktemp)
 
 JWT_SECRET=$(derive_entropy "jwt")
 
-for template in "${ENV_FILE}"; do
+for template in ${ENV_FILE}; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<tz>/${TZ}/g" "${template}"
@@ -159,7 +170,10 @@ echo "Running system-info.sh..."
 bash "${ROOT_FOLDER}/scripts/system-info.sh"
 
 # Add crontab to run system-info.sh every minute
-! (crontab -l | grep -q "${ROOT_FOLDER}/scripts/system-info.sh") && (crontab -l; echo "* * * * * ${ROOT_FOLDER}/scripts/system-info.sh") | crontab -
+! (crontab -l | grep -q "${ROOT_FOLDER}/scripts/system-info.sh") && (
+  crontab -l
+  echo "* * * * * ${ROOT_FOLDER}/scripts/system-info.sh"
+) | crontab -
 
 ## Don't run if config-only
 if [[ ! $ci == "true" ]]; then
