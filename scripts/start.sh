@@ -56,7 +56,7 @@ ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 
-NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}')"
+NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
 INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
 # INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
@@ -115,7 +115,7 @@ fi
 
 # Get current dns from host
 if [[ -f "/etc/resolv.conf" ]]; then
-  TEMP=$(cat /etc/resolv.conf | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -n 1)
+  TEMP=$(grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' /etc/resolv.conf | head -n 1)
 fi
 
 # Get dns ip if pihole is installed
@@ -143,7 +143,7 @@ ENV_FILE=$(mktemp)
 
 JWT_SECRET=$(derive_entropy "jwt")
 
-for template in "${ENV_FILE}"; do
+for template in ${ENV_FILE}; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
   sed -i "s/<tz>/${TZ}/g" "${template}"
