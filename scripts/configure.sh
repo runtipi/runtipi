@@ -49,7 +49,8 @@ else
     sudo systemctl start docker
     sudo systemctl enable docker
   elif [[ "${OS}" == "arch" ]]; then
-    sudo pacman -Sy --noconfirm docker
+    sudo pacman -Sy --noconfirm docker cronie
+    systemctl enable --now cronie.service
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
   else

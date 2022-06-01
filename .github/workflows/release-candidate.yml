@@ -38,15 +38,12 @@ jobs:
           repo: meienberger/runtipi
           workflow_id: ${{ github.run_id }}
           access_token: ${{ github.token }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
       
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -59,24 +56,24 @@ jobs:
           echo "::set-output name=tag::${TAG}"
       
       - name: Build and push dashboard
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./packages/dashboard
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: meienberger/tipi-dashboard:rc-${{ steps.meta.outputs.TAG }}
-          cache-from: type=registry,ref=meienberger/tipi-dashboard:latest
-          cache-to: type=inline
+          cache-from: type=registry,ref=meienberger/tipi-dashboard:buildcache
+          cache-to: type=registry,ref=meienberger/tipi-dashboard:buildcache,mode=max
       
       - name: Build and push api
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./packages/system-api
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: meienberger/tipi-api:rc-${{ steps.meta.outputs.TAG }}
-          cache-from: type=registry,ref=meienberger/tipi-api:latest
-          cache-to: type=inline
+          cache-from: type=registry,ref=meienberger/tipi-api:buildcache
+          cache-to: type=registry,ref=meienberger/tipi-api:buildcache,mode=max
 
   # Test installation script
   # test-install:
