@@ -29,6 +29,8 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 - [n8n](https://github.com/n8n-io/n8n) - Workflow Automation Tool
 - [Nextcloud](https://github.com/nextcloud/server) - A safe home for all your data
 - [Nitter](https://github.com/zedeus/nitter) - Alternative Twitter front-end
+- [Node-RED](https://github.com/node-red/node-red) - Low-code programming for event-driven applications
+- [Photoprism](https://github.com/photoprism/photoprism) - AI-Powered Photos App for the Decentralized Web. We are on a mission to protect your freedom and privacy.
 - [Pihole](https://github.com/pi-hole/pi-hole) - A black hole for Internet advertisements
 - [Prowlarr](https://github.com/Prowlarr/Prowlarr/) - A torrent/usenet indexer manager/proxy
 - [Radarr](https://github.com/Radarr/Radarr) - Movie collection manager for Usenet and BitTorrent users
