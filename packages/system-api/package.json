@@ -22,6 +22,7 @@
   "license": "ISC",
   "dependencies": {
     "argon2": "^0.28.5",
+    "axios": "^0.26.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -32,7 +33,6 @@
     "jsonwebtoken": "^8.5.1",
     "mock-fs": "^5.1.2",
     "node-cache": "^5.1.2",
-    "node-fetch": "^3.2.4",
     "node-port-scanner": "^3.0.1",
     "p-iteration": "^1.1.8",
     "passport": "^0.5.2",
