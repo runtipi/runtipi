@@ -1,0 +1,13 @@
+
+version: '3'
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ${APP_DATA_DIR}/config:/config
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - ${APP_PORT}:8123
+    network_mode: host

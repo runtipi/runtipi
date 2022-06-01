@@ -3,6 +3,8 @@ services:
   transmission:
     image: lscr.io/linuxserver/transmission
     container_name: transmission
+    dns:
+      - ${DNS_IP}
     environment:
       - PUID=1000
       - PGID=1000
@@ -16,7 +18,6 @@ services:
     volumes:
       - ${APP_DATA_DIR}/data/config:/config
       - ${ROOT_FOLDER_HOST}/media/torrents:/downloads
-      - ${ROOT_FOLDER_HOST}/media/torrents/watch:/watch
     ports:
       - ${APP_PORT}:9091
       - 51413:51413

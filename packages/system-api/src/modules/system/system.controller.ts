@@ -1,5 +1,5 @@
+import axios from 'axios';
 import { Request, Response } from 'express';
-import fetch from 'node-fetch';
 import config from '../../config';
 import TipiCache from '../../config/cache';
 import { readJsonFile } from '../fs/fs.helpers';
@@ -65,19 +65,19 @@ const getMemoryInfo = async (req: Request, res: Response<MemoryData>) => {
   res.status(200).json(result);
 };
 
-const getVersion = async (req: Request, res: Response<{ current: string; latest: string }>) => {
+const getVersion = async (req: Request, res: Response<{ current: string; latest?: string }>) => {
   let version = TipiCache.get<string>('latestVersion');
 
   if (!version) {
-    const response = await fetch('https://api.github.com/repos/meienberger/runtipi/releases/latest');
-    const json = (await response.json()) as { name: string };
-    TipiCache.set('latestVersion', json.name);
-    version = json.name.replace('v', '');
+    const { data } = await axios.get('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+
+    TipiCache.set('latestVersion', data.name);
+    version = data.name.replace('v', '');
   }
 
-  TipiCache.set('latestVersion', version.replace('v', ''));
+  TipiCache.set('latestVersion', version?.replace('v', ''));
 
-  res.status(200).send({ current: config.VERSION, latest: version.replace('v', '') });
+  res.status(200).send({ current: config.VERSION, latest: version?.replace('v', '') });
 };
 
 export default { getCpuInfo, getDiskInfo, getMemoryInfo, getVersion };

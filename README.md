@@ -13,31 +13,37 @@
 Tipi is a personal homeserver orchestrator. It is running docker containers under the hood and provides a simple web interface to manage them. Every service comes with an opinionated configuration in order to remove the need for manual configuration and network setup.
 
 ## Apps available
+- [Adguard Home](https://github.com/AdguardTeam/AdGuardHome) - Adguard Home DNS adblocker
 - [Calibre-Web](https://github.com/janeczku/calibre-web) - Web Ebook Reader
 - [Code-Server](https://github.com/coder/code-server) - Web VS Code 
 - [Filebrowser](https://github.com/filebrowser/filebrowser) - Web File Browser
 - [Freshrss](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
+- [Gitea](https://github.com/go-gitea/gitea) - Gitea - A painless self-hosted Git service
+- [Homarr](https://github.com/ajnart/homarr) - A homepage for your server
+- [Home Assistant](https://github.com/home-assistant/core) - Open source home automation that puts local control and privacy first
 - [Invidious](https://github.com/iv-org/invidious) - An alternative front-end to YouTube
-- [Homarr](https://github.com/ajnart/homarr) - A homepage for your server.
 - [Jackett](https://github.com/Jackett/Jackett) - API Support for your favorite torrent trackers
 - [Jellyfin](https://github.com/jellyfin/jellyfin) - A media server for your home collection
 - [Joplin](https://github.com/laurent22/joplin) - Privacy focused note-taking app
+- [Libreddit](https://github.com/spikecodes/libreddit) - Private front-end for Reddit
 - [n8n](https://github.com/n8n-io/n8n) - Workflow Automation Tool
 - [Nextcloud](https://github.com/nextcloud/server) - A safe home for all your data
+- [Nitter](https://github.com/zedeus/nitter) - Alternative Twitter front-end
+- [Node-RED](https://github.com/node-red/node-red) - Low-code programming for event-driven applications
+- [Photoprism](https://github.com/photoprism/photoprism) - AI-Powered Photos App for the Decentralized Web. We are on a mission to protect your freedom and privacy.
 - [Pihole](https://github.com/pi-hole/pi-hole) - A black hole for Internet advertisements
-- [Radarr](https://github.com/Radarr/Radarr) - Movie collection manager for Usenet and BitTorrent users.
+- [Prowlarr](https://github.com/Prowlarr/Prowlarr/) - A torrent/usenet indexer manager/proxy
+- [Radarr](https://github.com/Radarr/Radarr) - Movie collection manager for Usenet and BitTorrent users
 - [Sonarr](https://github.com/Sonarr/Sonarr) - TV show manager for Usenet and BitTorrent
 - [Syncthing](https://github.com/syncthing/syncthing) - Continuous File Synchronization
-- [Tailscale](https://github.com/tailscale/tailscale) - The easiest, most secure way to use WireGuard and 2FA.
+- [Tailscale](https://github.com/tailscale/tailscale) - The easiest, most secure way to use WireGuard and 2FA
+- [Tautulli](https://github.com/Tautulli/Tautulli) - A Python based monitoring and tracking tool for Plex Media Server
 - [Transmission](https://github.com/transmission/transmission) - Fast, easy, and free BitTorrent client
 - [Wireguard Easy](https://github.com/WeeJeWel/wg-easy) - WireGuard VPN + Web-based Admin UI
-- [Adguard Home](https://github.com/AdguardTeam/AdGuardHome) - Adguard Home DNS adblocker
-- [Libreddit](https://github.com/spikecodes/libreddit) - Private front-end for Reddit
-- [Nitter](https://github.com/zedeus/nitter) - Alternative Twitter front-end
 - [Vaultwarden](https://github.com/dani-garcia/vaultwarden) - Unofficial Bitwarden compatible server
-- [Prowlarr](https://github.com/Prowlarr/Prowlarr/) - A torrent/usenet indexer manager/proxy
-- [Gitea](https://github.com/go-gitea/gitea) - Gitea - A painless self-hosted Git service.
+
 ## 🛠 Installation
+
 ### Installation Requirements
 - Ubuntu 18.04 LTS or higher (or Debian 10)
 
@@ -52,7 +58,8 @@ git clone https://github.com/meienberger/runtipi.git
 cd into the downloaded directory and run the start script.
 
 ```bash
-cd runtipi && sudo ./scripts/start.sh
+cd runtipi
+sudo ./scripts/start.sh
 ```
 
 The script will prompt you the ip address of the dashboard once configured.

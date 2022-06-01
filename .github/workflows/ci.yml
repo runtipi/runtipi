@@ -42,6 +42,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Run global tests
+        run: pnpm test
+
       - name: Run tests
         run: pnpm -r lint
       
