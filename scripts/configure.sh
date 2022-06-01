@@ -49,10 +49,14 @@ else
     sudo systemctl start docker
     sudo systemctl enable docker
   elif [[ "${OS}" == "arch" ]]; then
-    sudo pacman -Sy --noconfirm docker cronie
-    systemctl enable --now cronie.service
+    sudo pacman -Sy --noconfirm docker
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
+
+    if ! command -v crontab >/dev/null; then
+      sudo pacman -Sy --noconfirm cronie
+      systemctl enable --now cronie.service
+    fi
   else
     echo "Your OS ${OS} is not supported by this script. Please install docker and docker-compose manually."
     exit 1
