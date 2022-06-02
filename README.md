@@ -4,8 +4,6 @@
 ![Issues](https://img.shields.io/github/issues/meienberger/runtipi)
 [![Docker Pulls](https://badgen.net/docker/pulls/meienberger/tipi-dashboard?icon=docker&label=pulls)](https://hub.docker.com/r/meienberger/tipi-dashboard/)
 [![Docker Image Size](https://badgen.net/docker/size/meienberger/tipi-dashboard?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/tipi-dashboard/)
-![RunsOn](https://img.shields.io/badge/Debian-Supported-green?logo=debian)
-![RunsOn](https://img.shields.io/badge/Ubuntu-Supported-green?logo=ubuntu)
 ![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
 #### Join the discussion
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
@@ -49,7 +47,7 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 ## 🛠 Installation
 
 ### Installation Requirements
-- Ubuntu 18.04 LTS or higher (or Debian 10)
+- Ubuntu 18.04 LTS or higher is recommended. However other major Linux distribution are supported but may lead to installation issues. Please file an issue if you encounter one.
 
 ### Step 1. Download Tipi
 Run this in an empty directory where you want to install Tipi.
