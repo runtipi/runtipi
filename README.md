@@ -7,6 +7,10 @@
 ![RunsOn](https://img.shields.io/badge/Debian-Supported-green?logo=debian)
 ![RunsOn](https://img.shields.io/badge/Ubuntu-Supported-green?logo=ubuntu)
 ![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
+#### Join the discussion
+![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)
+![Matrix](https://img.shields.io/matrix/runtipi:matrix.org?label=matrix&logo=matrix)
+
 ![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/1.png)
 > ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
 
