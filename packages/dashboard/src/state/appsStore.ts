@@ -1,13 +1,12 @@
 import produce from 'immer';
-import create, { GetState, SetState } from 'zustand';
+import create, { SetState } from 'zustand';
 import api from '../core/api';
-import { AppConfig, AppStatus, RequestStatus } from '../core/types';
+import { AppConfig, AppStatusEnum } from '@runtipi/common';
+import { RequestStatus } from '../core/types';
 
 type AppsStore = {
   apps: AppConfig[];
   status: RequestStatus;
-  installed: () => AppConfig[];
-  available: () => AppConfig[];
   fetch: () => void;
   getApp: (id: string) => AppConfig | undefined;
   fetchApp: (id: string) => void;
@@ -19,22 +18,16 @@ type AppsStore = {
 };
 
 type Set = SetState<AppsStore>;
-type Get = GetState<AppsStore>;
 
 const sortApps = (apps: AppConfig[]) => apps.sort((a, b) => a.name.localeCompare(b.name));
 
-const setAppStatus = (appId: string, status: AppStatus, set: Set) => {
+const setAppStatus = (appId: string, status: AppStatusEnum, set: Set) => {
   set((state) => {
     return produce(state, (draft) => {
       const app = draft.apps.find((a) => a.id === appId);
       if (app) app.status = status;
     });
   });
-};
-
-const installed = (get: Get) => {
-  const i = get().apps.filter((app) => app.installed);
-  return i;
 };
 
 /**
@@ -59,10 +52,6 @@ const fetchApp = async (appId: string, set: Set) => {
 export const useAppsStore = create<AppsStore>((set, get) => ({
   apps: [],
   status: RequestStatus.LOADING,
-  installed: () => installed(get),
-  available: () => {
-    return get().apps.filter((app) => !app.installed);
-  },
   fetchApp: async (appId: string) => fetchApp(appId, set),
   fetch: async () => {
     set({ status: RequestStatus.LOADING });
@@ -72,13 +61,15 @@ export const useAppsStore = create<AppsStore>((set, get) => ({
       method: 'get',
     });
 
-    set({ apps: sortApps(response), status: RequestStatus.SUCCESS });
+    const apps = sortApps(response);
+
+    set({ apps, status: RequestStatus.SUCCESS });
   },
   getApp: (appId: string) => {
     return get().apps.find((app) => app.id === appId);
   },
   install: async (appId: string, form?: Record<string, string>) => {
-    setAppStatus(appId, AppStatus.INSTALLING, set);
+    setAppStatus(appId, AppStatusEnum.INSTALLING, set);
 
     await api.fetch({
       endpoint: `/apps/install/${appId}`,
@@ -98,7 +89,7 @@ export const useAppsStore = create<AppsStore>((set, get) => ({
     await get().fetchApp(appId);
   },
   uninstall: async (appId: string) => {
-    setAppStatus(appId, AppStatus.UNINSTALLING, set);
+    setAppStatus(appId, AppStatusEnum.UNINSTALLING, set);
 
     await api.fetch({
       endpoint: `/apps/uninstall/${appId}`,
@@ -107,7 +98,7 @@ export const useAppsStore = create<AppsStore>((set, get) => ({
     await get().fetchApp(appId);
   },
   stop: async (appId: string) => {
-    setAppStatus(appId, AppStatus.STOPPING, set);
+    setAppStatus(appId, AppStatusEnum.STOPPING, set);
 
     await api.fetch({
       endpoint: `/apps/stop/${appId}`,
@@ -116,7 +107,7 @@ export const useAppsStore = create<AppsStore>((set, get) => ({
     await get().fetchApp(appId);
   },
   start: async (appId: string) => {
-    setAppStatus(appId, AppStatus.STARTING, set);
+    setAppStatus(appId, AppStatusEnum.STARTING, set);
 
     await api.fetch({
       endpoint: `/apps/start/${appId}`,

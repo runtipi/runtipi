@@ -1,6 +1,6 @@
 import portUsed from 'tcp-port-used';
 import p from 'p-iteration';
-import { AppConfig } from '../../config/types';
+import { AppConfig } from '@runtipi/common';
 import { fileExists, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
 import config from '../../config';

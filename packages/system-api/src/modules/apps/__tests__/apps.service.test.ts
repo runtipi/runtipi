@@ -1,7 +1,7 @@
 import AppsService from '../apps.service';
 import fs from 'fs';
 import config from '../../../config';
-import { AppConfig, FieldTypes } from '../../../config/types';
+import { AppConfig, FieldTypes } from '@runtipi/common';
 import childProcess from 'child_process';
 
 jest.mock('fs');

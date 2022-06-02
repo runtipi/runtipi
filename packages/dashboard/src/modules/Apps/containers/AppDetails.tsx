@@ -1,7 +1,7 @@
 import { SlideFade, Image, VStack, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { FiExternalLink } from 'react-icons/fi';
-import { AppConfig } from '../../../core/types';
+import { AppConfig } from '@runtipi/common';
 import { useAppsStore } from '../../../state/appsStore';
 import { useSytemStore } from '../../../state/systemStore';
 import AppActions from '../components/AppActions';
@@ -88,7 +88,7 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
   };
 
   const handleOpen = () => {
-    window.open(`http://${internalIp}:${app.port}`, '_blank');
+    window.open(`http://${internalIp}:${app.port}`, '_blank', 'noreferrer');
   };
 
   return (

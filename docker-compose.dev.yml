@@ -37,6 +37,7 @@ services:
     volumes:
       - ${PWD}/packages/dashboard:/app
       - /app/node_modules
+      - /app/.next
     labels:
       traefik.enable: true
       traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&

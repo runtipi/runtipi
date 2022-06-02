@@ -2,7 +2,7 @@ import { Box, SlideFade, Image, useColorModeValue } from '@chakra-ui/react';
 import Link from 'next/link';
 import React from 'react';
 import { FiChevronRight } from 'react-icons/fi';
-import { AppConfig } from '../../core/types';
+import { AppConfig } from '@runtipi/common';
 import AppStatus from './AppStatus';
 
 const AppTile: React.FC<{ app: AppConfig }> = ({ app }) => {

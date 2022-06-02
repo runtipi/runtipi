@@ -1,9 +1,9 @@
 import React from 'react';
 import { FiPauseCircle, FiPlayCircle } from 'react-icons/fi';
-import { AppStatus as TAppStatus } from '../../core/types';
+import { AppStatusEnum } from '@runtipi/common';
 
-const AppStatus: React.FC<{ status: TAppStatus }> = ({ status }) => {
-  if (status === 'running') {
+const AppStatus: React.FC<{ status: AppStatusEnum }> = ({ status }) => {
+  if (status === AppStatusEnum.RUNNING) {
     return (
       <>
         <FiPlayCircle className="text-green-500 mr-1" size={20} />

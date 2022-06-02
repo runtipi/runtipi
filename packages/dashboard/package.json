@@ -9,10 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.0.2",
+    "@chakra-ui/react": "^2.1.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fontsource/open-sans": "^4.5.8",
+    "@runtipi/common": "^0.2.7",
     "axios": "^0.26.1",
     "clsx": "^1.1.1",
     "final-form": "^4.20.6",
@@ -38,11 +39,11 @@
     "@types/validator": "^13.7.2",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.0.0",
-    "eslint-plugin-import": "^2.25.3",
     "autoprefixer": "^10.4.4",
     "eslint": "8.12.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-next": "12.1.4",
+    "eslint-plugin-import": "^2.25.3",
     "postcss": "^8.4.12",
     "tailwindcss": "^3.0.23",
     "typescript": "4.6.4"

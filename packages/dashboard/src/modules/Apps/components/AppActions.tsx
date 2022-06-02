@@ -1,7 +1,7 @@
 import { Button } from '@chakra-ui/react';
 import React from 'react';
 import { FiExternalLink, FiPause, FiPlay, FiSettings, FiTrash2 } from 'react-icons/fi';
-import { AppConfig, AppStatus } from '../../../core/types';
+import { AppConfig, AppStatusEnum } from '@runtipi/common';
 
 interface IProps {
   app: AppConfig;
@@ -16,7 +16,7 @@ interface IProps {
 const AppActions: React.FC<IProps> = ({ app, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate }) => {
   const hasSettings = Object.keys(app.form_fields).length > 0;
 
-  if (app?.installed && app.status === AppStatus.STOPPED) {
+  if (app?.installed && app.status === AppStatusEnum.STOPPED) {
     return (
       <div className="flex flex-wrap justify-center">
         <Button onClick={onStart} width={160} colorScheme="green" className="mt-3 mr-2">
@@ -35,7 +35,7 @@ const AppActions: React.FC<IProps> = ({ app, onInstall, onUninstall, onStart, on
         )}
       </div>
     );
-  } else if (app?.installed && app.status === AppStatus.RUNNING) {
+  } else if (app?.installed && app.status === AppStatusEnum.RUNNING) {
     return (
       <div>
         <Button onClick={onOpen} width={160} colorScheme="gray" className="mt-3 mr-2">
@@ -48,7 +48,7 @@ const AppActions: React.FC<IProps> = ({ app, onInstall, onUninstall, onStart, on
         </Button>
       </div>
     );
-  } else if (app.status === AppStatus.INSTALLING || app.status === AppStatus.UNINSTALLING || app.status === AppStatus.STARTING || app.status === AppStatus.STOPPING) {
+  } else if (app.status === AppStatusEnum.INSTALLING || app.status === AppStatusEnum.UNINSTALLING || app.status === AppStatusEnum.STARTING || app.status === AppStatusEnum.STOPPING) {
     return (
       <div className="flex items-center flex-col md:flex-row">
         <Button isLoading onClick={() => null} width={160} colorScheme="green" className="mt-3">
