@@ -47,7 +47,7 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 ## 🛠 Installation
 
 ### Installation Requirements
-- Ubuntu 18.04 LTS or higher is recommended. However other major Linux distribution are supported but may lead to installation issues. Please file an issue if you encounter one.
+Ubuntu 18.04 LTS or higher is recommended. However other major Linux distribution are supported but may lead to installation issues. Please file an issue if you encounter one.
 
 ### Step 1. Download Tipi
 Run this in an empty directory where you want to install Tipi.
