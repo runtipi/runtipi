@@ -15,12 +15,14 @@ echo "======================================"
 echo
 
 OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
+SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
+
 
 if command -v docker >/dev/null; then
   echo "Docker is already installed"
 else
   echo "Installing Docker"
-  if [[ "${OS}" == "debian" ]]; then
+  if [[ "${OS}" == "debian" || "${SUB_OS}" == "debian" ]]; then
     sudo apt-get update
     sudo apt-get install ca-certificates curl gnupg lsb-release -y
     sudo mkdir -p /etc/apt/keyrings
@@ -28,7 +30,7 @@ else
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
     sudo apt-get update
     sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
-  elif [[ "${OS}" == "ubuntu" ]]; then
+  elif [[ "${OS}" == "ubuntu" || "${SUB_OS}" == "ubuntu" ]]; then
     sudo apt-get update
     sudo apt-get install ca-certificates curl gnupg lsb-release -y
     sudo mkdir -p /etc/apt/keyrings
@@ -36,19 +38,19 @@ else
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
     sudo apt-get update
     sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
-  elif [[ "${OS}" == "centos" ]]; then
+  elif [[ "${OS}" == "centos" || "${SUB_OS}" == "centos" ]]; then
     sudo yum install -y yum-utils
     sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     sudo yum install -y --allowerasing docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
-  elif [[ "${OS}" == "fedora" ]]; then
+  elif [[ "${OS}" == "fedora" || "${SUB_OS}" == "fedora" ]]; then
     sudo dnf -y install dnf-plugins-core
     sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
     sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
-  elif [[ "${OS}" == "arch" ]]; then
+  elif [[ "${OS}" == "arch" || "${SUB_OS}" == "arch" ]]; then
     sudo pacman -Sy --noconfirm docker
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
