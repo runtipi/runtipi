@@ -16,7 +16,7 @@ echo
 
 OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 
-if ! command -v docker >/dev/null; then
+if command -v docker >/dev/null; then
   echo "Docker is already installed"
 else
   echo "Installing Docker"
