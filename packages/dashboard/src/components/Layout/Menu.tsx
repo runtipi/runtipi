@@ -1,5 +1,5 @@
 import { AiOutlineDashboard, AiOutlineSetting, AiOutlineAppstore } from 'react-icons/ai';
-import { FaRegMoon } from 'react-icons/fa';
+import { FaAppStore, FaRegMoon } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import Package from '../../../package.json';
 import { Box, Divider, Flex, List, ListItem, Switch, useColorMode } from '@chakra-ui/react';
@@ -45,7 +45,8 @@ const SideMenu: React.FC = () => {
       <img className="self-center mb-5 logo mt-0 md:mt-5" src="/tipi.png" width={512} height={512} />
       <List spacing={3} className="pt-5">
         {renderMenuItem('Dashboard', '', AiOutlineDashboard)}
-        {renderMenuItem('Apps', 'apps', AiOutlineAppstore)}
+        {renderMenuItem('My Apps', 'apps', AiOutlineAppstore)}
+        {renderMenuItem('App Store', 'app-store', FaAppStore)}
         {renderMenuItem('Settings', 'settings', AiOutlineSetting)}
       </List>
       <Divider className="my-3" />

@@ -7,6 +7,7 @@ export enum AppCategoriesEnum {
   UTILITIES = 'utilities',
   PHOTOGRAPHY = 'photography',
   SECURITY = 'security',
+  FEATURED = 'featured',
 }
 
 export enum FieldTypes {

@@ -1,12 +1,12 @@
 {
   "name": "@runtipi/common",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "main": "./dist/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage --passWithNoTests",
     "build": "tsc -b tsconfig.build.json"
   },
   "author": "",

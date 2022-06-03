@@ -48,7 +48,7 @@ const listApps = async (): Promise<AppConfig[]> => {
     .map((app) => {
       try {
         return readJsonFile(`/apps/${app}/config.json`);
-      } catch {
+      } catch (e) {
         return null;
       }
     })
@@ -62,7 +62,7 @@ const listApps = async (): Promise<AppConfig[]> => {
   apps.forEach((app) => {
     app.installed = installed.includes(app.id);
     app.status = (dockerContainers.find((container) => container.name === `${app.id}`)?.state as AppStatusEnum) || AppStatusEnum.STOPPED;
-    app.description = readFile(`/apps/${app.id}/description.md`);
+    app.description = readFile(`/apps/${app.id}/metadata/description.md`);
   });
 
   return apps;

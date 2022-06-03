@@ -26,10 +26,6 @@ const register = async (email: string, password: string, name: string) => {
     throw new Error('Missing email or password');
   }
 
-  if (users.find((user) => user.email === email)) {
-    throw new Error('User already exists');
-  }
-
   const hash = await argon2.hash(password);
   const newuser: IUser = { email, name, password: hash };
 

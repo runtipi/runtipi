@@ -37,11 +37,12 @@ importers:
       '@emotion/react': ^11
       '@emotion/styled': ^11
       '@fontsource/open-sans': ^4.5.8
-      '@runtipi/common': ^0.2.1
+      '@runtipi/common': file:../common
       '@types/js-cookie': ^3.0.2
       '@types/node': 17.0.31
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
+      '@types/react-slick': ^0.23.8
       '@types/validator': ^13.7.2
       '@typescript-eslint/eslint-plugin': ^5.18.0
       '@typescript-eslint/parser': ^5.0.0
@@ -59,6 +60,7 @@ importers:
       next: 12.1.6
       postcss: ^8.4.12
       react: 18.1.0
+      react-awesome-slider: ^4.1.0
       react-dom: 18.1.0
       react-final-form: ^6.5.9
       react-icons: ^4.3.1
@@ -73,7 +75,7 @@ importers:
       '@emotion/react': 11.9.0_4mdsreeeydipjms3kbrjyybtve
       '@emotion/styled': 11.8.1_tnefweo2a67ybg6wfzi6ieqilm
       '@fontsource/open-sans': 4.5.8
-      '@runtipi/common': link:../common
+      '@runtipi/common': file:packages/common
       axios: 0.26.1
       clsx: 1.1.1
       final-form: 4.20.7
@@ -82,6 +84,7 @@ importers:
       js-cookie: 3.0.1
       next: 12.1.6_talmm3uuvp6ssixt2qevhfgvue
       react: 18.1.0
+      react-awesome-slider: 4.1.0
       react-dom: 18.1.0_react@18.1.0
       react-final-form: 6.5.9_bnxchjdfy45cdln7bu7hnhf37u
       react-icons: 4.3.1_react@18.1.0
@@ -95,6 +98,7 @@ importers:
       '@types/node': 17.0.31
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
+      '@types/react-slick': 0.23.8
       '@types/validator': 13.7.2
       '@typescript-eslint/eslint-plugin': 5.22.0_oztpoyrbzkyaikrhdkppp3gagu
       '@typescript-eslint/parser': 5.22.0_uhoeudlwl7kc47h4kncsfowede
@@ -109,7 +113,7 @@ importers:
 
   packages/system-api:
     specifiers:
-      '@runtipi/common': ^0.2.2
+      '@runtipi/common': file:../common
       '@types/compression': ^1.7.2
       '@types/cookie-parser': ^1.4.3
       '@types/cors': ^2.8.12
@@ -157,7 +161,7 @@ importers:
       ts-jest: ^28.0.2
       typescript: 4.6.4
     dependencies:
-      '@runtipi/common': link:../common
+      '@runtipi/common': file:packages/common
       argon2: 0.28.5
       axios: 0.26.1
       compression: 1.7.4
@@ -2243,6 +2247,12 @@ packages:
       '@types/react': 18.0.8
     dev: true
 
+  /@types/react-slick/0.23.8:
+    resolution: {integrity: sha512-SfzSg++/3uyftVZaCgHpW+2fnJFsyJEQ/YdsuqfOWQ5lqUYV/gY/UwAnkw4qksCj5jalto/T5rKXJ8zeFldQeA==}
+    dependencies:
+      '@types/react': 18.0.8
+    dev: true
+
   /@types/react/18.0.8:
     resolution: {integrity: sha512-+j2hk9BzCOrrOSJASi5XiOyBbERk9jG5O73Ya4M0env5Ixi6vUNli4qy994AINcEF+1IEHISYFfIT4zwr++LKw==}
     dependencies:
@@ -4045,7 +4055,7 @@ packages:
       eslint-import-resolver-webpack:
         optional: true
     dependencies:
-      '@typescript-eslint/parser': 5.22.0_hcfsmds2fshutdssjqluwm76uu
+      '@typescript-eslint/parser': 5.22.0_uhoeudlwl7kc47h4kncsfowede
       debug: 3.2.7
       eslint-import-resolver-node: 0.3.6
       find-up: 2.1.0
@@ -6806,6 +6816,12 @@ packages:
       strip-json-comments: 2.0.1
     dev: true
 
+  /react-awesome-slider/4.1.0:
+    resolution: {integrity: sha512-cbPI1MTpVLKbEH6gf9bwtJb8Ja6R/YJonKbUQehfq2B2AAJkgDMeHntaa4SgGCRqWd55xKiT+CkjfKau1QRsKw==}
+    dependencies:
+      web-animation-club: 0.6.0
+    dev: false
+
   /react-clientside-effect/1.2.6_react@18.1.0:
     resolution: {integrity: sha512-XGGGRQAKY+q25Lz9a/4EPqom7WRjz3z9R2k4jhVKA/puQFH/5Nt27vFZYql4m4NVNdUvX8PS3O7r/Zzm7cjUlg==}
     peerDependencies:
@@ -7759,6 +7775,10 @@ packages:
       makeerror: 1.0.12
     dev: true
 
+  /web-animation-club/0.6.0:
+    resolution: {integrity: sha512-9W+EQu1HiaPLe/7WZlhJ2ULqQ4VL80RPDYW+ZcjfTKp6ayOuT1k3SVO6+tu0VBRmOqueJ/mrG+rjjInIv8Aglg==}
+    dev: false
+
   /webidl-conversions/3.0.1:
     resolution: {integrity: sha1-JFNCdeKnvGvnvIZhHMFq4KVlSHE=}
     dev: false
@@ -7902,4 +7922,10 @@ packages:
         optional: true
     dependencies:
       react: 18.1.0
+    dev: false
+
+  file:packages/common:
+    resolution: {directory: packages/common, type: directory}
+    name: '@runtipi/common'
+    version: 0.2.8
     dev: false

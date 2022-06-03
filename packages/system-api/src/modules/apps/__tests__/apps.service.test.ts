@@ -43,14 +43,18 @@ const testApp3: Partial<AppConfig> = {
 
 const MOCK_FILE_EMPTY = {
   [`${config.ROOT_FOLDER}/apps/test-app/config.json`]: JSON.stringify(testApp),
+  [`${config.ROOT_FOLDER}/apps/test-app/metadata/description.md`]: 'md desc',
   [`${config.ROOT_FOLDER}/.env`]: 'TEST=test',
   [`${config.ROOT_FOLDER}/state/apps.json`]: '{"installed": ""}',
 };
 
 const MOCK_FILE_INSTALLED = {
   [`${config.ROOT_FOLDER}/apps/test-app/config.json`]: JSON.stringify(testApp),
+  [`${config.ROOT_FOLDER}/apps/test-app/metadata/description.md`]: 'md desc',
   [`${config.ROOT_FOLDER}/apps/test-app2/config.json`]: JSON.stringify(testApp2),
+  [`${config.ROOT_FOLDER}/apps/test-app2/metadata/description.md`]: 'md desc',
   [`${config.ROOT_FOLDER}/apps/test-app3/config.json`]: JSON.stringify(testApp3),
+  [`${config.ROOT_FOLDER}/apps/test-app3/metadata/description.md`]: 'md desc',
   [`${config.ROOT_FOLDER}/.env`]: 'TEST=test',
   [`${config.ROOT_FOLDER}/state/apps.json`]: '{"installed": "test-app"}',
   [`${config.ROOT_FOLDER}/app-data/test-app`]: '',
@@ -253,8 +257,8 @@ describe('List apps', () => {
     const apps = await AppsService.listApps();
 
     expect(apps).toEqual([
-      { ...testApp, installed: true, status: 'stopped' },
-      { ...testApp2, installed: false, status: 'stopped' },
+      { ...testApp, installed: true, status: 'stopped', description: 'md desc' },
+      { ...testApp2, installed: false, status: 'stopped', description: 'md desc' },
     ]);
     expect(apps.length).toBe(2);
     expect(apps[0].id).toBe('test-app');

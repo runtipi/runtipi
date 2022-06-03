@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "lint": "eslint . --ext .ts",
-    "test": "jest",
+    "test": "jest --colors",
     "test:watch": "jest --watch",
     "build": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --minify --analyze=verbose --external:./node_modules/* --format=esm",
     "build:watch": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --external:./node_modules/* --format=esm --watch",
@@ -21,7 +21,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@runtipi/common": "^0.2.7",
+    "@runtipi/common": "file:../common",
     "argon2": "^0.28.5",
     "axios": "^0.26.1",
     "compression": "^1.7.4",

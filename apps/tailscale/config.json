@@ -3,6 +3,7 @@
   "available": true,
   "port": 8093,
   "id": "tailscale",
+  "categories": ["featured"],
   "description": "Zero config VPN. Installs on any device in minutes, manages firewall rules for you, and works from anywhere.",
   "short_desc": "The easiest, most secure way to use WireGuard and 2FA.",
   "author": "© Tailscale Inc.",

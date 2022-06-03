@@ -1,3 +1,15 @@
+### BUILD ###
+FROM node:18-buster-slim AS build
+
+WORKDIR /app
+COPY ./package.json ./
+
+RUN npm install --quiet node-gyp -g
+RUN npm install
+
+RUN npm run build
+
+### MAIN ###
 FROM ubuntu:20.04
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -33,10 +45,8 @@ RUN chmod +x /usr/local/bin/docker-compose
 
 COPY ./package.json ./
 
-RUN npm install
+RUN npm install --production
 
-COPY ./ ./
-
-RUN npm run build
+COPY --from=build /app/dist /app/dist
 
 CMD ["npm", "run", "start"]
