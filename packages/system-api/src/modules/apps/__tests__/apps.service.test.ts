@@ -237,13 +237,13 @@ describe('Get app config', () => {
   it('Should correctly get app config', async () => {
     const appconfig = await AppsService.getAppInfo('test-app');
 
-    expect(appconfig).toEqual({ ...testApp, installed: true, status: 'stopped' });
+    expect(appconfig).toEqual({ ...testApp, installed: true, status: 'stopped', description: 'md desc' });
   });
 
   it('Should have installed false if app is not installed', async () => {
     const appconfig = await AppsService.getAppInfo('test-app2');
 
-    expect(appconfig).toEqual({ ...testApp2, installed: false, status: 'stopped' });
+    expect(appconfig).toEqual({ ...testApp2, installed: false, status: 'stopped', description: 'md desc' });
   });
 });
 

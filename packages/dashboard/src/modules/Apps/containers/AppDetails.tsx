@@ -1,4 +1,6 @@
-import { SlideFade, Image, VStack, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
+import { SlideFade, VStack, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import React from 'react';
 import { FiExternalLink } from 'react-icons/fi';
 import { AppConfig } from '@runtipi/common';
@@ -9,6 +11,7 @@ import InstallModal from '../components/InstallModal';
 import StopModal from '../components/StopModal';
 import UninstallModal from '../components/UninstallModal';
 import UpdateModal from '../components/UpdateModal';
+import AppLogo from '../../../components/AppLogo/AppLogo';
 
 interface IProps {
   app: AppConfig;
@@ -91,11 +94,13 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
     window.open(`http://${internalIp}:${app.port}`, '_blank', 'noreferrer');
   };
 
+  console.log(app.description);
+
   return (
     <SlideFade in className="flex flex-1" offsetY="20px">
       <div className="flex flex-1  p-4 mt-3 rounded-lg flex-col">
         <Flex className="flex-col md:flex-row">
-          <Image src={app?.image} height={180} width={180} className="rounded-xl self-center sm:self-auto" alt={app.name} />
+          <AppLogo src={app?.image} size={180} className="self-center sm:self-auto" alt={app.name} />
           <VStack align="flex-start" justify="space-between" className="ml-0 md:ml-4">
             <div className="mt-3 items-center self-center flex flex-col sm:items-start sm:self-start md:mt-0">
               <h1 className="font-bold text-2xl">{app?.name}</h1>
@@ -124,7 +129,9 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
           </VStack>
         </Flex>
         <Divider className="mt-5" />
-        <p className="mt-3">{app?.description}</p>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} className="mt-3">
+          {app?.description}
+        </ReactMarkdown>
         <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.onClose} app={app} />
         <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.onClose} app={app} />
         <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.onClose} app={app} />

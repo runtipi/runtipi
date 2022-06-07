@@ -76,6 +76,7 @@ const getAppInfo = async (id: string): Promise<AppConfig> => {
   const installed: string[] = state.installed.split(' ').filter(Boolean);
   configFile.installed = installed.includes(id);
   configFile.status = (dockerContainers.find((container) => container.name === `${id}`)?.state as AppStatusEnum) || AppStatusEnum.STOPPED;
+  configFile.description = readFile(`/apps/${id}/metadata/description.md`);
 
   return configFile;
 };

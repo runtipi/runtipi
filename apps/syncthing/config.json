@@ -3,11 +3,12 @@
   "available": true,
   "port": 8090,
   "id": "syncthing",
+  "categories": ["data", "utilities"],
   "description": "Syncthing is a peer-to-peer continuous file synchronization program. It synchronizes files between two or more computers in real time, safely protected from prying eyes. Your data is your data alone and you deserve to choose where it is stored, whether it is shared with some third party, and how it's transmitted over the internet.\n\nInstall the Syncthing app on your Umbrel and pair it with the Syncthing app on your phone or computer for a self hosted peer-to-peer backup solution.",
   "short_desc": "Peer-to-peer file synchronization between your devices",
   "author": "The Syncthing Foundation",
   "source": "https://github.com/syncthing",
   "website": "https://syncthing.net",
-  "image": "https://avatars.githubusercontent.com/u/7628018?s=200&v=4",
+  "image": "/logos/apps/syncthing.jpg",
   "form_fields": {}
 }

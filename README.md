@@ -9,7 +9,7 @@
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 [![Matrix](https://img.shields.io/matrix/runtipi:matrix.org?label=matrix&logo=matrix)](https://matrix.to/#/#runtipi:matrix.org)
 
-![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/1.png)
+![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/appstore.png)
 > ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
 
 Tipi is a personal homeserver orchestrator. It is running docker containers under the hood and provides a simple web interface to manage them. Every service comes with an opinionated configuration in order to remove the need for manual configuration and network setup.
@@ -92,3 +92,4 @@ Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may co
 - [Matrix](https://matrix.to/#/#runtipi:matrix.org)<br />
 - [Twitter](https://twitter.com/runtipi)
 - [Telegram](https://t.me/+72-y10MnLBw2ZGI0)
+- [Discord](https://discord.gg/Bu9qEPnHsc)

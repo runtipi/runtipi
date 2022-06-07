@@ -11,4 +11,6 @@ export const APP_CATEGORIES = [
   { name: 'Photography', id: AppCategoriesEnum.PHOTOGRAPHY, icon: 'FaCamera' },
   { name: 'Security', id: AppCategoriesEnum.SECURITY, icon: 'FaShieldAlt' },
   { name: 'Featured', id: AppCategoriesEnum.FEATURED, icon: 'FaStar' },
+  { name: 'Books', id: AppCategoriesEnum.BOOKS, icon: 'FaBook' },
+  { name: 'Data', id: AppCategoriesEnum.DATA, icon: 'FaDatabase' },
 ];

@@ -6,14 +6,14 @@ import { useAppsStore } from '../../state/appsStore';
 import { RequestStatus } from '../../core/types';
 
 const Apps: NextPage = () => {
-  const { fetch, status } = useAppsStore((state) => state);
+  const { fetch, status, apps } = useAppsStore((state) => state);
 
   useEffect(() => {
     fetch();
   }, [fetch]);
 
   return (
-    <Layout loading={status === RequestStatus.LOADING}>
+    <Layout loading={status === RequestStatus.LOADING && apps.length === 0}>
       <AppStoreContainer />
     </Layout>
   );

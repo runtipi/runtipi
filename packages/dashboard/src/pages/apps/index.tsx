@@ -22,7 +22,13 @@ const Apps: NextPage = () => {
     <Layout loading={loading}>
       <Flex className="flex-col">
         {installedCount > 0 && <h1 className="font-bold text-3xl mb-5">Your Apps ({installedCount})</h1>}
-        <SimpleGrid minChildWidth="400px" spacing="20px">
+        {installedCount === 0 && (
+          <div>
+            <h1 className="font-bold text-3xl mb-5">No apps installed</h1>
+            <h2>Visit the App Store to install your first app</h2>
+          </div>
+        )}
+        <SimpleGrid minChildWidth="375px" spacing="20px">
           {installed.map((app) => (
             <AppTile key={app.name} app={app} />
           ))}

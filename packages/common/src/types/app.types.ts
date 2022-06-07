@@ -8,6 +8,8 @@ export enum AppCategoriesEnum {
   PHOTOGRAPHY = 'photography',
   SECURITY = 'security',
   FEATURED = 'featured',
+  BOOKS = 'books',
+  DATA = 'data',
 }
 
 export enum FieldTypes {

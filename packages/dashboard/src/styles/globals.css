@@ -36,3 +36,13 @@ a {
   width: 80px;
   height: 80px;
 }
+
+.app-store-tile {
+  height: 150px;
+  cursor: pointer;
+}
+
+.app-store-tile-logo {
+  width: 80px;
+  height: 80px;
+}
