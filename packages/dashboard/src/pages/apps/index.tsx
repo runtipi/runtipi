@@ -21,7 +21,7 @@ const Apps: NextPage = () => {
   return (
     <Layout loading={loading}>
       <Flex className="flex-col">
-        {installedCount > 0 && <h1 className="font-bold text-3xl mb-5">Your Apps ({installedCount})</h1>}
+        {installedCount > 0 && <h1 className="font-bold text-3xl mb-5">My Apps ({installedCount})</h1>}
         {installedCount === 0 && (
           <div>
             <h1 className="font-bold text-3xl mb-5">No apps installed</h1>

@@ -5,6 +5,7 @@ import { FiChevronRight } from 'react-icons/fi';
 import { AppConfig } from '@runtipi/common';
 import AppStatus from './AppStatus';
 import AppLogo from '../AppLogo/AppLogo';
+import { limitText } from '../../modules/AppStore/helpers/table.helpers';
 
 const AppTile: React.FC<{ app: AppConfig }> = ({ app }) => {
   const bg = useColorModeValue('white', '#1a202c');
@@ -16,7 +17,7 @@ const AppTile: React.FC<{ app: AppConfig }> = ({ app }) => {
           <AppLogo alt={`${app.name} logo`} className="drop-shadow mr-3 group-hover:scale-105 transition-all" src={app.image} size={100} />
           <div className="mr-3 flex-1">
             <h3 className="font-bold text-xl">{app.name}</h3>
-            <span>{app.short_desc}</span>
+            <span>{limitText(app.short_desc, 100)}</span>
             {app.installed && (
               <div className="flex mt-1">
                 <AppStatus status={app.status} />

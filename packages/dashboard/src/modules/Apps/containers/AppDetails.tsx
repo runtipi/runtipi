@@ -1,6 +1,4 @@
 import { SlideFade, VStack, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import React from 'react';
 import { FiExternalLink } from 'react-icons/fi';
 import { AppConfig } from '@runtipi/common';
@@ -12,6 +10,7 @@ import StopModal from '../components/StopModal';
 import UninstallModal from '../components/UninstallModal';
 import UpdateModal from '../components/UpdateModal';
 import AppLogo from '../../../components/AppLogo/AppLogo';
+import Markdown from '../../../components/Markdown/Markdown';
 
 interface IProps {
   app: AppConfig;
@@ -129,9 +128,7 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
           </VStack>
         </Flex>
         <Divider className="mt-5" />
-        <ReactMarkdown remarkPlugins={[remarkGfm]} className="mt-3">
-          {app?.description}
-        </ReactMarkdown>
+        <Markdown className="mt-3">{app?.description}</Markdown>
         <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.onClose} app={app} />
         <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.onClose} app={app} />
         <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.onClose} app={app} />
