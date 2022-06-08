@@ -55,7 +55,6 @@ importers:
       eslint-plugin-import: ^2.25.3
       final-form: ^4.20.6
       framer-motion: ^6
-      i: ^0.3.7
       immer: ^9.0.12
       js-cookie: ^3.0.1
       next: 12.1.6
@@ -87,7 +86,6 @@ importers:
       clsx: 1.1.1
       final-form: 4.20.7
       framer-motion: 6.3.3_ef5jwxihqo6n7gxfmzogljlgcm
-      i: 0.3.7
       immer: 9.0.12
       js-cookie: 3.0.1
       next: 12.1.6_talmm3uuvp6ssixt2qevhfgvue
@@ -4188,7 +4186,7 @@ packages:
       eslint-import-resolver-webpack:
         optional: true
     dependencies:
-      '@typescript-eslint/parser': 5.22.0_uhoeudlwl7kc47h4kncsfowede
+      '@typescript-eslint/parser': 5.22.0_hcfsmds2fshutdssjqluwm76uu
       debug: 3.2.7
       eslint-import-resolver-node: 0.3.6
       find-up: 2.1.0
@@ -5147,11 +5145,6 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
     dev: true
-
-  /i/0.3.7:
-    resolution: {integrity: sha512-FYz4wlXgkQwIPqhzC5TdNMLSE5+GS1IIDJZY/1ZiEPCT2S3COUVZeT5OW4BmW4r5LHLQuOosSwsvnroG9GR59Q==}
-    engines: {node: '>=0.4'}
-    dev: false
 
   /iconv-lite/0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
