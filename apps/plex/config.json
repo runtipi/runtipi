@@ -1,0 +1,20 @@
+{
+  "name": "Plex",
+  "available": true,
+  "port": 8103,
+  "id": "plex",
+  "url_suffix": "/web",
+  "categories": ["media"],
+  "description": "",
+  "short_desc": "",
+  "author": "",
+  "source": "",
+  "image": "",
+  "form_fields": {
+    "claim": {
+      "type": "text",
+      "label": "Plex claim (Optional)",
+      "env_variable": "PLEX_CLAIM"
+    }
+  }
+}
