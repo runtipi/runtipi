@@ -3,6 +3,7 @@
   "available": true,
   "port": 8101,
   "id": "code-server",
+  "categories": ["development"],
   "description": "",
   "short_desc": "Code-server is VS Code running on a remote server, accessible through the browser.",
   "author": "https://github.com/coder",

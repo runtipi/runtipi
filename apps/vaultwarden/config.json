@@ -3,11 +3,12 @@
   "available": true,
   "port": 8107,
   "id": "vaultwarden",
+  "categories": ["utilities"],
   "description": "Alternative implementation of the Bitwarden server API written in Rust and compatible with upstream Bitwarden clients, perfect for self-hosted deployment where running the official resource-heavy service might not be ideal.",
   "short_desc": "All your passwords in your control!",
   "author": "Daniel García",
   "source": "https://github.com/dani-garcia/vaultwarden",
-  "image": "https://raw.githubusercontent.com/dani-garcia/vaultwarden/b636d20c6475bfb1b36561cb95812faee26ea7db/resources/vaultwarden-icon.svg",
+  "image": "/logos/apps/vaultwarden.jpg",
   "form_fields": {
     "admin_password": {
       "type": "password",

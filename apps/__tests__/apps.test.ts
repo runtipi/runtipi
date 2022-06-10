@@ -58,6 +58,22 @@ describe("App configs", () => {
     });
   });
 
+  it("Each app should have a md description", () => {
+    const apps = getAppConfigs();
+
+    apps.forEach((app) => {
+      const path = `./apps/${app.id}/metadata/description.md`;
+
+      if (fs.existsSync(path)) {
+        const description = fs.readFileSync(path).toString();
+        expect(description).toBeDefined();
+      } else {
+        console.error(`Missing description for app ${app.id}`);
+        expect(true).toBe(false);
+      }
+    });
+  });
+
   it("Each app should have a name", () => {
     const apps = getAppConfigs();
 

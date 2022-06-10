@@ -1,6 +1,6 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react';
 import React from 'react';
-import { AppConfig } from '../../../core/types';
+import { AppConfig } from '@runtipi/common';
 import InstallForm from './InstallForm';
 
 interface IProps {

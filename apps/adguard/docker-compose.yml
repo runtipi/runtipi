@@ -2,7 +2,7 @@
 version: "3.7"
 services:
   adguard:
-    image: adguard/adguardhome:v0.107.6
+    image: adguard/adguardhome:v0.107.7
     container_name: adguard
     volumes:
       - "${APP_DATA_DIR}/data/work:/opt/adguardhome/work"
