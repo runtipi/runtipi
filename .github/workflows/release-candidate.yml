@@ -12,32 +12,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - uses: technote-space/get-diff-action@v6
-        with:
-          FILES: |
-            VERSION
-
-      - name: Ensure env.MATCHED_FILES has VERSION in it
-        id: check-version
-        run: |
-          if [[ -z "${{ env.MATCHED_FILES }}" ]]; then
-            echo "::error::VERSION not modified"
-            exit 1
-          fi
-          if [[ ! "${{ env.MATCHED_FILES }}" =~ VERSION ]]; then
-            echo "::error::VERSION not modified"
-            exit 1
-          fi
-      
-      - uses: vishnudxb/cancel-workflow@v1.2
-        if: failure()
-        with:
-          repo: meienberger/runtipi
-          workflow_id: ${{ github.run_id }}
-          access_token: ${{ github.token }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
