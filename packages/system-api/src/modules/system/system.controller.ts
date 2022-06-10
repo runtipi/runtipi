@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Request, Response } from 'express';
 import config from '../../config';
-import TipiCache from '../../config/cache';
+import TipiCache from '../../config/TipiCache';
 import { readJsonFile } from '../fs/fs.helpers';
 
 type CpuData = {
@@ -31,7 +31,7 @@ type SystemInfo = {
  * @param req
  * @param res
  */
-const getCpuInfo = async (req: Request, res: Response<CpuData>) => {
+const getCpuInfo = async (_req: Request, res: Response<CpuData>) => {
   const systemInfo: SystemInfo = readJsonFile('/state/system-info.json');
 
   const cpu = systemInfo.cpu;
@@ -44,7 +44,7 @@ const getCpuInfo = async (req: Request, res: Response<CpuData>) => {
  * @param req
  * @param res
  */
-const getDiskInfo = async (req: Request, res: Response<DiskData>) => {
+const getDiskInfo = async (_req: Request, res: Response<DiskData>) => {
   const systemInfo: SystemInfo = readJsonFile('/state/system-info.json');
 
   const result: DiskData = systemInfo.disk;
@@ -57,7 +57,7 @@ const getDiskInfo = async (req: Request, res: Response<DiskData>) => {
  * @param req
  * @param res
  */
-const getMemoryInfo = async (req: Request, res: Response<MemoryData>) => {
+const getMemoryInfo = async (_req: Request, res: Response<MemoryData>) => {
   const systemInfo: SystemInfo = readJsonFile('/state/system-info.json');
 
   const result: MemoryData = systemInfo.memory;
@@ -65,7 +65,7 @@ const getMemoryInfo = async (req: Request, res: Response<MemoryData>) => {
   res.status(200).json(result);
 };
 
-const getVersion = async (req: Request, res: Response<{ current: string; latest?: string }>) => {
+const getVersion = async (_req: Request, res: Response<{ current: string; latest?: string }>) => {
   let version = TipiCache.get<string>('latestVersion');
 
   if (!version) {

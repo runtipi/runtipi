@@ -19,7 +19,7 @@ type AppsStore = {
 
 type Set = SetState<AppsStore>;
 
-const sortApps = (apps: AppConfig[]) => apps.sort((a, b) => a.name.localeCompare(b.name));
+const sortApps = (a: AppConfig, b: AppConfig) => a.name.localeCompare(b.name);
 
 const setAppStatus = (appId: string, status: AppStatusEnum, set: Set) => {
   set((state) => {
@@ -45,7 +45,7 @@ const fetchApp = async (appId: string, set: Set) => {
     const apps = state.apps.filter((app) => app.id !== appId);
     apps.push(response);
 
-    return { ...state, apps: sortApps(apps) };
+    return { ...state, apps: apps.sort(sortApps) };
   });
 };
 
@@ -61,7 +61,7 @@ export const useAppsStore = create<AppsStore>((set, get) => ({
       method: 'get',
     });
 
-    const apps = sortApps(response);
+    const apps = response.sort(sortApps);
 
     set({ apps, status: RequestStatus.SUCCESS });
   },

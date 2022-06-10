@@ -10,9 +10,7 @@ const login = async (email: string, password: string) => {
     throw new Error('User not found');
   }
 
-  const token = await AuthHelpers.getJwtToken(user, password);
-
-  return token;
+  return AuthHelpers.getJwtToken(user, password);
 };
 
 const register = async (email: string, password: string, name: string) => {

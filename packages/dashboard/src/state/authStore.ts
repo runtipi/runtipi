@@ -44,7 +44,6 @@ export const useAuthStore = create<AppsStore>((set) => ({
     }
   },
   logout: async () => {
-    // Cookies.remove('token2');
     Cookies.remove('tipi_token');
 
     set({ user: null, loading: false });

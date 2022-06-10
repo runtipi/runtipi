@@ -21,7 +21,7 @@ export const sortTable = (data: AppConfig[], col: keyof Pick<AppConfig, 'name'>,
 };
 
 export const limitText = (text: string, limit: number) => {
-  return text.length > limit ? `${text.substr(0, limit)}...` : text;
+  return text.length > limit ? `${text.substring(0, limit)}...` : text;
 };
 
 export const colorSchemeForCategory: Record<AppCategoriesEnum, string> = {

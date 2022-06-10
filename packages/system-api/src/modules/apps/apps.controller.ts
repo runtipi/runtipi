@@ -68,7 +68,7 @@ const getAppInfo = async (req: Request, res: Response<AppConfig>, next: NextFunc
   }
 };
 
-const listApps = async (req: Request, res: Response, next: NextFunction) => {
+const listApps = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const apps = await AppsService.listApps();
 
