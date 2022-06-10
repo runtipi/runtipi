@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:1.26.2
+    container_name: plex
+    # network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+    volumes:
+      - ${APP_DATA_DIR}/data/config:/config
+      - ${ROOT_FOLDER_HOST}/media/data:/media
+    restart: unless-stopped
+    ports:
+      - ${APP_PORT}:32400
+    networks:
+      - tipi_main_network
