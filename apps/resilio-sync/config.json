@@ -1,0 +1,12 @@
+{
+  "name": "Resilio",
+  "port": 8113,
+  "available": true,
+  "id": "resilio-sync",
+  "description": "",
+  "short_desc": "Resilio Sync is a fast, reliable, and simple file sync and share solution, powered by P2P technology",
+  "author": "Resilio, Inc.",
+  "source": "https://github.com/bt-sync",
+  "image": "https://avatars.githubusercontent.com/u/12284211?s=200&v=4",
+  "form_fields": {}
+}
