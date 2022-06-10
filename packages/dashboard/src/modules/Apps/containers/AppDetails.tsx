@@ -114,7 +114,7 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
               )}
               <p className="text-xs text-gray-600">By {app?.author}</p>
             </div>
-            <div className="flex justify-center sm:absolute md:static top-0 right-5 self-center sm:self-auto">
+            <div className="flex justify-center xs:absolute md:static top-0 right-5 self-center sm:self-auto">
               <AppActions
                 onUpdate={updateDisclosure.onOpen}
                 onOpen={handleOpen}

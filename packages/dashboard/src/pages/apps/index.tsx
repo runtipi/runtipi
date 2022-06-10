@@ -28,7 +28,7 @@ const Apps: NextPage = () => {
             <h2>Visit the App Store to install your first app</h2>
           </div>
         )}
-        <SimpleGrid minChildWidth="375px" spacing="20px">
+        <SimpleGrid minChildWidth="340px" spacing="20px">
           {installed.map((app) => (
             <AppTile key={app.name} app={app} />
           ))}
