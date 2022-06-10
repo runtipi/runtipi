@@ -15,12 +15,14 @@ echo "======================================"
 echo
 
 OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
+SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 
-if ! command -v docker >/dev/null; then
+
+if command -v docker >/dev/null; then
   echo "Docker is already installed"
 else
   echo "Installing Docker"
-  if [[ "${OS}" == "debian" ]]; then
+  if [[ "${OS}" == "debian" || "${SUB_OS}" == "debian" ]]; then
     sudo apt-get update
     sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
     sudo mkdir -p /etc/apt/keyrings
