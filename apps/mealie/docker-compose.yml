@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+  mealie:
+    container_name: mealie
+    image: hkotel/mealie:v0.5.6
+    restart: unless-stopped
+    ports:
+      - ${APP_PORT}:80
+    environment:
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - ${APP_DATA_DIR}/data:/app/data
+    networks:
+      - tipi_main_network
