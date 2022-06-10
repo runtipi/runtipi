@@ -9,7 +9,8 @@
     "act:docker": "act --container-architecture linux/amd64 --secret-file github.secrets -j build-images",
     "start:dev": "docker-compose -f docker-compose.dev.yml --env-file .env.dev up --build",
     "start:rc": "docker-compose -f docker-compose.rc.yml --env-file .env up --build",
-    "start:prod": "docker-compose --env-file .env up --build"
+    "start:prod": "docker-compose --env-file .env up --build",
+    "build:common": "cd packages/common && npm run build"
   },
   "devDependencies": {
     "@types/jest": "^27.5.0",

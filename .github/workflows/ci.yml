@@ -42,10 +42,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build packages
+        run: pnpm -r build
+
       - name: Run global tests
         run: pnpm test
 
-      - name: Run tests
+      - name: Run linter
         run: pnpm -r lint
       
       - name: Run tests
