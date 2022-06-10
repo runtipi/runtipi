@@ -90,7 +90,7 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
   };
 
   const handleOpen = () => {
-    window.open(`http://${internalIp}:${app.port}`, '_blank', 'noreferrer');
+    window.open(`http://${internalIp}:${app.port}${app.url_suffix || ''}`, '_blank', 'noreferrer');
   };
 
   console.log(app.description);

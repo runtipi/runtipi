@@ -6,10 +6,10 @@
   "url_suffix": "/web",
   "categories": ["media"],
   "description": "",
-  "short_desc": "",
-  "author": "",
-  "source": "",
-  "image": "",
+  "short_desc": "Stream Movies & TV Shows",
+  "author": "plexinc",
+  "source": "https://github.com/plexinc/pms-docker",
+  "image": "/logos/apps/plex.png",
   "form_fields": {
     "claim": {
       "type": "text",

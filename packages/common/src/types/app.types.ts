@@ -60,4 +60,5 @@ export interface AppConfig {
   installed: boolean;
   categories: AppCategoriesEnum[];
   status: AppStatusEnum;
+  url_suffix: string;
 }
