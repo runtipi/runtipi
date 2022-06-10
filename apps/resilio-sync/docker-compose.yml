@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   resilio-sync:
-    image: lscr.io/linuxserver/resilio-sync:latest
+    image: lscr.io/linuxserver/resilio-sync:2.7.3
     container_name: resilio-sync
     environment:
       - PUID=1000
@@ -14,3 +14,5 @@ services:
       - ${APP_PORT}:8888
       - 55555:55555
     restart: unless-stopped
+    networks:
+      - tipi_main_network
