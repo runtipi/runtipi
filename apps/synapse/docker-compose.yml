@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  synapse:
+    container_name: synapse
+    image: matrixdotorg/synapse:v1.60.0
+    restart: on-failure
+    stop_grace_period: 1m
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    entrypoint: "bash"
+    command: "-c './start.py generate && ./start.py migrate_config && exec ./start.py'"
+    volumes:
+      - ${APP_DATA_DIR}/data/synapse:/data
+    environment:
+      SYNAPSE_HTTP_PORT: "${APP_PORT}"
+      SYNAPSE_REPORT_STATS: "yes"
+      SYNAPSE_ENABLE_REGISTRATION: "yes"
+      SYNAPSE_NO_TLS: "yes"
+      SYNAPSE_SERVER_NAME: ${SYNAPSE_SERVER_NAME}
+    networks:
+      - tipi_main_network
