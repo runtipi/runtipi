@@ -1,6 +1,9 @@
 FROM node:18-buster-slim AS build
 
+WORKDIR /common
 COPY ./packages/common /common
+RUN npm i
+RUN npm run build
 
 WORKDIR /api
 COPY ./packages/system-api/package.json /api/package.json
@@ -45,7 +48,7 @@ RUN npm install --quiet node-gyp -g
 RUN curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 RUN chmod +x /usr/local/bin/docker-compose
 
-COPY ./packages/common /common
+COPY --from=build /common /common
 
 WORKDIR /api
 COPY ./packages/system-api/package.json /api/package.json
