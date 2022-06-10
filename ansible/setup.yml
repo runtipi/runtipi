@@ -1,9 +1,0 @@
----
-- hosts: tipi
-  become: yes
-
-  tasks:
-    - import_tasks: ./tasks/common/essential.yml
-    - import_tasks: ./tasks/common/docker.yml
-    # - name: Reboot machine
-    #   reboot:

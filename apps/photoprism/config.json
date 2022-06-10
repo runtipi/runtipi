@@ -3,11 +3,12 @@
   "port": 8110,
   "available": true,
   "id": "photoprism",
+  "categories": ["photography"],
   "description": "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web. It makes use of the latest technologies to tag and find pictures automatically without getting in your way. You can run it at home, on a private server, or in the cloud. Default username: admin",
   "short_desc": "AI-Powered Photos App for the Decentralized Web. We are on a mission to protect your freedom and privacy.",
   "author": "PhotoPrism",
   "source": "https://github.com/photoprism/photoprism",
-  "image": "https://avatars.githubusercontent.com/u/32436079?s=200&v=4",
+  "image": "/logos/apps/photoprism.jpg",
   "form_fields": {
     "password": {
       "type": "password",

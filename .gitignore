@@ -25,3 +25,4 @@ media/torrents/incomplete/*
 !media/torrents/incomplete/.gitkeep
 media/torrents/watch/*
 !media/torrents/watch/.gitkeep
+packages/dashboard/package-lock.json

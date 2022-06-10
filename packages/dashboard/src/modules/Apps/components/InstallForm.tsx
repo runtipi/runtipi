@@ -3,7 +3,7 @@ import React from 'react';
 import { Form, Field } from 'react-final-form';
 import FormInput from '../../../components/Form/FormInput';
 import { validateAppConfig } from '../../../components/Form/validators';
-import { AppConfig } from '../../../core/types';
+import { AppConfig } from '@runtipi/common';
 import { objectKeys } from '../../../utils/typescript';
 
 interface IProps {
