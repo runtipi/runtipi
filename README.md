@@ -31,14 +31,17 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 - [Jellyfin](https://github.com/jellyfin/jellyfin) - A media server for your home collection
 - [Joplin](https://github.com/laurent22/joplin) - Privacy focused note-taking app
 - [Libreddit](https://github.com/spikecodes/libreddit) - Private front-end for Reddit
+- [Mealie](https://github.com/hay-kot/mealie) - Self-hosted recipe manager and meal planner.
 - [n8n](https://github.com/n8n-io/n8n) - Workflow Automation Tool
 - [Nextcloud](https://github.com/nextcloud/server) - A safe home for all your data
 - [Nitter](https://github.com/zedeus/nitter) - Alternative Twitter front-end
 - [Node-RED](https://github.com/node-red/node-red) - Low-code programming for event-driven applications
 - [Photoprism](https://github.com/photoprism/photoprism) - AI-Powered Photos App for the Decentralized Web. We are on a mission to protect your freedom and privacy.
 - [Pihole](https://github.com/pi-hole/pi-hole) - A black hole for Internet advertisements
+- [Plex](https://github.com/plexinc/pms-docker) - Stream Movies & TV Shows
 - [Prowlarr](https://github.com/Prowlarr/Prowlarr/) - A torrent/usenet indexer manager/proxy
 - [Radarr](https://github.com/Radarr/Radarr) - Movie collection manager for Usenet and BitTorrent users
+- [Resilio Sync](https://github.com/bt-sync) - Fast, reliable, and simple file sync and share solution
 - [Sonarr](https://github.com/Sonarr/Sonarr) - TV show manager for Usenet and BitTorrent
 - [Syncthing](https://github.com/syncthing/syncthing) - Continuous File Synchronization
 - [Tailscale](https://github.com/tailscale/tailscale) - The easiest, most secure way to use WireGuard and 2FA
