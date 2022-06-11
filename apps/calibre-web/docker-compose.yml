@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   calibre-web:
-    image: lscr.io/linuxserver/calibre-web:latest
+    image: lscr.io/linuxserver/calibre-web:0.6.18
     container_name: calibre-web
     environment:
       - PUID=1000

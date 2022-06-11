@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   transmission:
-    image: lscr.io/linuxserver/transmission
+    image: lscr.io/linuxserver/transmission:latest
     container_name: transmission
     dns:
       - ${DNS_IP}
