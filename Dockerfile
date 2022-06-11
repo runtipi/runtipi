@@ -1,5 +1,7 @@
 FROM node:18-buster-slim AS build
 
+RUN npm install --quiet node-gyp -g
+
 WORKDIR /common
 COPY ./packages/common /common
 RUN npm i
