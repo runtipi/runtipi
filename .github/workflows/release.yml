@@ -56,10 +56,10 @@ jobs:
           TAG=${VERSION}
           echo "::set-output name=tag::${TAG}"
       
-      - name: Build and push dashboard
+      - name: Build and push images
         uses: docker/build-push-action@v3
         with:
-          context: ./packages/dashboard
+          context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: meienberger/runtipi:latest,meienberger/runtipi:${{ steps.meta.outputs.TAG }}

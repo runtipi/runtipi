@@ -32,7 +32,7 @@ jobs:
           TAG=${VERSION}
           echo "::set-output name=tag::${TAG}"
       
-      - name: Build and push dashboard
+      - name: Build and push images
         uses: docker/build-push-action@v3
         with:
           context: .
