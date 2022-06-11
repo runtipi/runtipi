@@ -1,8 +1,5 @@
 FROM node:18-buster-slim AS build
 
-RUN npm install --quiet -g node-gyp
-RUN npm install --quiet -g node-pre-gyp
-
 WORKDIR /common
 COPY ./packages/common /common
 RUN npm i
@@ -33,6 +30,9 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     lsb-release
 
+RUN apt-get install -y \
+    g++ gcc make python
+
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
 RUN echo \
@@ -46,7 +46,6 @@ RUN apt-get install -y docker-ce docker-ce-cli containerd.io
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install --quiet -g node-gyp
-RUN npm install --quiet -g node-pre-gyp
 
 # Install docker-compose
 RUN curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
