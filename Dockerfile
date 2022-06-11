@@ -1,5 +1,10 @@
 FROM node:18-buster-slim AS build
 
+RUN apt-get install -y \
+    g++ gcc make python
+
+RUN npm install node-gyp -g
+
 WORKDIR /common
 COPY ./packages/common /common
 RUN npm i
@@ -18,7 +23,7 @@ COPY ./packages/dashboard /dashboard
 RUN npm run build
 
 
-FROM ubuntu:20.04
+FROM ubuntu:18.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /
@@ -45,7 +50,7 @@ RUN apt-get install -y docker-ce docker-ce-cli containerd.io
 # Install node
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
-RUN npm install --quiet -g node-gyp
+RUN npm install node-gyp -g
 
 # Install docker-compose
 RUN curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
