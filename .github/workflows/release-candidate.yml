@@ -36,7 +36,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/arm/v7
           push: true
           tags: meienberger/runtipi:rc-${{ steps.meta.outputs.TAG }}
           cache-from: type=registry,ref=meienberger/runtipi:buildcache
