@@ -1,7 +1,4 @@
-FROM node:18-buster-slim AS build
-
-RUN apt-get install -y \
-    g++ gcc make python
+FROM node:18 AS build
 
 RUN npm install node-gyp -g
 
