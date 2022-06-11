@@ -20,7 +20,7 @@ COPY ./packages/dashboard /dashboard
 RUN npm run build
 
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /
