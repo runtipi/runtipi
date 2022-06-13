@@ -17,6 +17,7 @@ services:
 
   api:
     image: meienberger/runtipi:rc-${TIPI_VERSION}
+    command: bash -c "cd /api && npm run start"
     container_name: api
     ports:
       - 3001:3001
@@ -35,6 +36,7 @@ services:
 
   dashboard:
     image: meienberger/runtipi:rc-${TIPI_VERSION}
+    command: bash -c "cd /dashboard && npm run dev"
     container_name: dashboard
     ports:
       - 3000:3000
