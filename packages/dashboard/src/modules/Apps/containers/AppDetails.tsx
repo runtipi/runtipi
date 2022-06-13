@@ -93,8 +93,6 @@ const AppDetails: React.FC<IProps> = ({ app }) => {
     window.open(`http://${internalIp}:${app.port}${app.url_suffix || ''}`, '_blank', 'noreferrer');
   };
 
-  console.log(app.description);
-
   return (
     <SlideFade in className="flex flex-1" offsetY="20px">
       <div className="flex flex-1  p-4 mt-3 rounded-lg flex-col">
