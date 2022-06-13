@@ -4,7 +4,7 @@ services:
   plex:
     image: lscr.io/linuxserver/plex:1.26.2
     container_name: plex
-    # network_mode: host
+    network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
@@ -15,5 +15,3 @@ services:
     restart: unless-stopped
     ports:
       - ${APP_PORT}:32400
-    networks:
-      - tipi_main_network

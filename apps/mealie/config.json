@@ -6,6 +6,7 @@
   "description": "Mealie is a self-hosted recipe manager and meal planner with a RestAPI backend and a reactive frontend application built in Vue for a pleasant user experience for the whole family. Easily add recipes into your database by providing the url and Mealie will automatically import the relevant data or add a family recipe with the UI editor. Mealie also provides an API for interactions from 3rd party applications. Default username / password is changeme@email.com / MyPassword",
   "short_desc": "Mealie is a self-hosted recipe manager and meal planner.",
   "author": "hay-kot",
+  "categories": [],
   "source": "https://github.com/hay-kot/mealie",
   "image": "https://raw.githubusercontent.com/hay-kot/mealie/mealie-next/frontend/static/icons/android-chrome-512x512.png",
   "form_fields": {}
