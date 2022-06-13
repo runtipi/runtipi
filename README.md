@@ -17,6 +17,8 @@
 
 Tipi is a personal homeserver orchestrator. It is running docker containers under the hood and provides a simple web interface to manage them. Every service comes with an opinionated configuration in order to remove the need for manual configuration and network setup.
 
+Check our demo instance : **95.179.210.152** / username: **user@runtipi.com** / password: **runtipi**
+
 ## Apps available
 - [Adguard Home](https://github.com/AdguardTeam/AdGuardHome) - Adguard Home DNS adblocker
 - [Calibre-Web](https://github.com/janeczku/calibre-web) - Web Ebook Reader
