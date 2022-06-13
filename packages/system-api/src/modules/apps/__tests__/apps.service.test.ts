@@ -80,7 +80,7 @@ describe('Install app', () => {
 
     const stateFile = JSON.parse(fs.readFileSync(`${config.ROOT_FOLDER}/state/apps.json`).toString());
 
-    expect(stateFile.installed).toBe(' test-app');
+    expect(stateFile.installed).toBe('test-app');
   });
 
   it('Should correctly run app script', async () => {

@@ -60,7 +60,7 @@ const SideMenu: React.FC = () => {
           <ListItem className="flex items-center">
             <FaRegMoon size={20} className="mr-3" />
             <p className="flex-1">Dark mode</p>
-            <Switch checked={colorMode === 'dark'} onChange={(event) => handleChangeColorMode(event.target.checked)} />
+            <Switch isChecked={colorMode === 'dark'} onChange={(event) => handleChangeColorMode(event.target.checked)} />
           </ListItem>
         </div>
       </List>

@@ -66,18 +66,22 @@ const getMemoryInfo = async (_req: Request, res: Response<MemoryData>) => {
 };
 
 const getVersion = async (_req: Request, res: Response<{ current: string; latest?: string }>) => {
-  let version = TipiCache.get<string>('latestVersion');
+  try {
+    let version = TipiCache.get<string>('latestVersion');
 
-  if (!version) {
-    const { data } = await axios.get('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+    if (!version) {
+      const { data } = await axios.get('https://api.github.com/repos/meienberger/runtipi/releases/latest');
 
-    TipiCache.set('latestVersion', data.name);
-    version = data.name.replace('v', '');
+      TipiCache.set('latestVersion', data.name);
+      version = data.name.replace('v', '');
+    }
+
+    TipiCache.set('latestVersion', version?.replace('v', ''));
+
+    res.status(200).send({ current: config.VERSION, latest: version?.replace('v', '') });
+  } catch (e) {
+    res.status(500).send({ current: config.VERSION, latest: undefined });
   }
-
-  TipiCache.set('latestVersion', version?.replace('v', ''));
-
-  res.status(200).send({ current: config.VERSION, latest: version?.replace('v', '') });
 };
 
 export default { getCpuInfo, getDiskInfo, getMemoryInfo, getVersion };
