@@ -56,22 +56,12 @@ jobs:
           TAG=${VERSION}
           echo "::set-output name=tag::${TAG}"
       
-      - name: Build and push dashboard
+      - name: Build and push images
         uses: docker/build-push-action@v3
         with:
-          context: ./packages/dashboard
+          context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: meienberger/tipi-dashboard:latest,meienberger/tipi-dashboard:${{ steps.meta.outputs.TAG }}
-          cache-from: type=registry,ref=meienberger/tipi-dashboard:buildcache
-          cache-to: type=registry,ref=meienberger/tipi-dashboard:buildcache,mode=max
-      
-      - name: Build and push api
-        uses: docker/build-push-action@v3
-        with:
-          context: ./packages/system-api
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
-          push: true
-          tags: meienberger/tipi-api:latest,meienberger/tipi-api:${{ steps.meta.outputs.TAG }}
-          cache-from: type=registry,ref=meienberger/tipi-api:buildcache
-          cache-to: type=registry,ref=meienberger/tipi-api:buildcache,mode=max
+          tags: meienberger/runtipi:latest,meienberger/runtipi:${{ steps.meta.outputs.TAG }}
+          cache-from: type=registry,ref=meienberger/runtipi:buildcache
+          cache-to: type=registry,ref=meienberger/runtipi:buildcache,mode=max

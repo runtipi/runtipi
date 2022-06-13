@@ -6,6 +6,7 @@
     "ports": [51413]
   },
   "id": "transmission",
+  "categories": ["utilities"],
   "description": "Transmission is a fast, easy, and free BitTorrent client.",
   "short_desc": "Fast, easy, and free BitTorrent client",
   "author": "Transmission Project",

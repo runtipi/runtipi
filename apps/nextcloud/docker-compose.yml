@@ -25,7 +25,7 @@ services:
       - tipi_main_network
 
   cron:
-    image: nextcloud:23.0.3-apache
+    image: nextcloud:24.0.1-apache
     restart: on-failure
     volumes:
       - ${APP_DATA_DIR}/data/nextcloud:/var/www/html
@@ -38,7 +38,7 @@ services:
 
   nextcloud:
     container_name: nextcloud
-    image: nextcloud:23.0.3-apache
+    image: nextcloud:24.0.1-apache
     restart: unless-stopped
     ports:
       - ${APP_PORT}:80

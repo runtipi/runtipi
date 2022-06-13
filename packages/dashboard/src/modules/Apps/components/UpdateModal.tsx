@@ -2,7 +2,7 @@ import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOve
 import React, { useEffect } from 'react';
 import useSWR from 'swr';
 import fetcher from '../../../core/fetcher';
-import { AppConfig } from '../../../core/types';
+import { AppConfig } from '@runtipi/common';
 import InstallForm from './InstallForm';
 
 interface IProps {

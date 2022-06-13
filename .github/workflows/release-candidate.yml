@@ -12,32 +12,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - uses: technote-space/get-diff-action@v6
-        with:
-          FILES: |
-            VERSION
-
-      - name: Ensure env.MATCHED_FILES has VERSION in it
-        id: check-version
-        run: |
-          if [[ -z "${{ env.MATCHED_FILES }}" ]]; then
-            echo "::error::VERSION not modified"
-            exit 1
-          fi
-          if [[ ! "${{ env.MATCHED_FILES }}" =~ VERSION ]]; then
-            echo "::error::VERSION not modified"
-            exit 1
-          fi
-      
-      - uses: vishnudxb/cancel-workflow@v1.2
-        if: failure()
-        with:
-          repo: meienberger/runtipi
-          workflow_id: ${{ github.run_id }}
-          access_token: ${{ github.token }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -58,41 +32,15 @@ jobs:
           TAG=${VERSION}
           echo "::set-output name=tag::${TAG}"
       
-      - name: Build and push dashboard
+      - name: Build and push images
         uses: docker/build-push-action@v3
         with:
-          context: ./packages/dashboard
+          context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: meienberger/tipi-dashboard:rc-${{ steps.meta.outputs.TAG }}
-          cache-from: type=registry,ref=meienberger/tipi-dashboard:buildcache
-          cache-to: type=registry,ref=meienberger/tipi-dashboard:buildcache,mode=max
-      
-      - name: Build and push api
-        uses: docker/build-push-action@v3
-        with:
-          context: ./packages/system-api
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
-          push: true
-          tags: meienberger/tipi-api:rc-${{ steps.meta.outputs.TAG }}
-          cache-from: type=registry,ref=meienberger/tipi-api:buildcache
-          cache-to: type=registry,ref=meienberger/tipi-api:buildcache,mode=max
+          tags: meienberger/runtipi:rc-${{ steps.meta.outputs.TAG }}
+          cache-from: type=registry,ref=meienberger/runtipi:buildcache
+          cache-to: type=registry,ref=meienberger/runtipi:buildcache,mode=max
 
-  # Test installation script
-  # test-install:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-
-  #     - name: Check if user id 1000 exists
-  #       run: |
-  #         if [[ ! $(id -u 1000) -eq 1000 ]]; then
-  #           echo "Creating user 1000"
-  #           sudo useradd -u 1000 test
-  #         fi
-  #       id: check-user-id
-          
-  #     - name: Run install script
-  #       run: sudo ./scripts/start.sh --rc --ci
 
           

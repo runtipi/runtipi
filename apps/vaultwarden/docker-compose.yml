@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   vaultwarden:
-    image: vaultwarden/server:1.24.0
+    image: vaultwarden/server:1.25.0
     container_name: vaultwarden
     restart: unless-stopped
     ports:

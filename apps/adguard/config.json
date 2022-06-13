@@ -3,12 +3,12 @@
   "available": true,
   "port": 8104,
   "id": "adguard",
+  "categories": ["network", "security"],
   "description": "Adguard is the best way to get rid of annoying ads and online tracking and protect your computer from malware. Make your web surfing fast, safe and ad-free.",
   "short_desc": "World's most advanced adblocker!",
-  "author": "ArneNaessens",
+  "author": "AdguardTeam",
   "source": "https://github.com/AdguardTeam",
-  "image": "https://avatars.githubusercontent.com/u/8361145?s=200&v=4",
-  "cagegories": ["network", "security"],
+  "image": "/logos/apps/adguard.jpg",
   "requirements": {
     "ports": [53]
   },

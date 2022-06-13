@@ -1,7 +1,7 @@
 import AppsService from '../apps.service';
 import fs from 'fs';
 import config from '../../../config';
-import { AppConfig, FieldTypes } from '../../../config/types';
+import { AppConfig, FieldTypes } from '@runtipi/common';
 import childProcess from 'child_process';
 
 jest.mock('fs');
@@ -43,14 +43,18 @@ const testApp3: Partial<AppConfig> = {
 
 const MOCK_FILE_EMPTY = {
   [`${config.ROOT_FOLDER}/apps/test-app/config.json`]: JSON.stringify(testApp),
+  [`${config.ROOT_FOLDER}/apps/test-app/metadata/description.md`]: 'md desc',
   [`${config.ROOT_FOLDER}/.env`]: 'TEST=test',
   [`${config.ROOT_FOLDER}/state/apps.json`]: '{"installed": ""}',
 };
 
 const MOCK_FILE_INSTALLED = {
   [`${config.ROOT_FOLDER}/apps/test-app/config.json`]: JSON.stringify(testApp),
+  [`${config.ROOT_FOLDER}/apps/test-app/metadata/description.md`]: 'md desc',
   [`${config.ROOT_FOLDER}/apps/test-app2/config.json`]: JSON.stringify(testApp2),
+  [`${config.ROOT_FOLDER}/apps/test-app2/metadata/description.md`]: 'md desc',
   [`${config.ROOT_FOLDER}/apps/test-app3/config.json`]: JSON.stringify(testApp3),
+  [`${config.ROOT_FOLDER}/apps/test-app3/metadata/description.md`]: 'md desc',
   [`${config.ROOT_FOLDER}/.env`]: 'TEST=test',
   [`${config.ROOT_FOLDER}/state/apps.json`]: '{"installed": "test-app"}',
   [`${config.ROOT_FOLDER}/app-data/test-app`]: '',
@@ -76,7 +80,7 @@ describe('Install app', () => {
 
     const stateFile = JSON.parse(fs.readFileSync(`${config.ROOT_FOLDER}/state/apps.json`).toString());
 
-    expect(stateFile.installed).toBe(' test-app');
+    expect(stateFile.installed).toBe('test-app');
   });
 
   it('Should correctly run app script', async () => {
@@ -233,13 +237,13 @@ describe('Get app config', () => {
   it('Should correctly get app config', async () => {
     const appconfig = await AppsService.getAppInfo('test-app');
 
-    expect(appconfig).toEqual({ ...testApp, installed: true, status: 'stopped' });
+    expect(appconfig).toEqual({ ...testApp, installed: true, status: 'stopped', description: 'md desc' });
   });
 
   it('Should have installed false if app is not installed', async () => {
     const appconfig = await AppsService.getAppInfo('test-app2');
 
-    expect(appconfig).toEqual({ ...testApp2, installed: false, status: 'stopped' });
+    expect(appconfig).toEqual({ ...testApp2, installed: false, status: 'stopped', description: 'md desc' });
   });
 });
 
@@ -253,8 +257,8 @@ describe('List apps', () => {
     const apps = await AppsService.listApps();
 
     expect(apps).toEqual([
-      { ...testApp, installed: true, status: 'stopped' },
-      { ...testApp2, installed: false, status: 'stopped' },
+      { ...testApp, installed: true, status: 'stopped', description: 'md desc' },
+      { ...testApp2, installed: false, status: 'stopped', description: 'md desc' },
     ]);
     expect(apps.length).toBe(2);
     expect(apps[0].id).toBe('test-app');

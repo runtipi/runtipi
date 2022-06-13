@@ -7,9 +7,7 @@ import config from '../../config';
 const getUser = (email: string): Maybe<IUser> => {
   const savedUser: IUser[] = readJsonFile('/state/users.json');
 
-  const user = savedUser.find((u) => u.email === email);
-
-  return user;
+  return savedUser.find((u) => u.email === email);
 };
 
 const compareHashPassword = (password: string, hash = ''): Promise<boolean> => {

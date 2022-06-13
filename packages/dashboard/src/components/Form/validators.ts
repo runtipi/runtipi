@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { AppConfig, FieldTypes } from '../../core/types';
+import { AppConfig, FieldTypes } from '@runtipi/common';
 
 const validateField = (field: AppConfig['form_fields'][0], value: string): string | undefined => {
   if (field.required && !value) {

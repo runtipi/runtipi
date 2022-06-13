@@ -94,7 +94,7 @@ describe('Me', () => {
   it('Should return user if present in request', async () => {
     const json = jest.fn();
     const res = { status: jest.fn(() => ({ json })) } as unknown as Response;
-    const req = { user } as Request;
+    const req = { user } as unknown as Request;
 
     await AuthController.me(req, res, next);
 
@@ -137,7 +137,7 @@ describe('isConfigured', () => {
 
     const json = jest.fn();
     const res = { status: jest.fn(() => ({ json })) } as unknown as Response;
-    const req = { user } as Request;
+    const req = { user } as unknown as Request;
 
     await AuthController.isConfigured(req, res, next);
 

@@ -4,7 +4,7 @@ services:
   tailscale:
     container_name: tailscale
     network_mode: "host" # TODO: Find a way to remove this
-    image: tailscale/tailscale:v1.24.0
+    image: tailscale/tailscale:v1.27.12
     privileged: true
     restart: on-failure
     stop_grace_period: 1m

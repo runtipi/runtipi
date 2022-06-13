@@ -3,10 +3,11 @@
   "available": true,
   "port": 8100,
   "id": "calibre-web",
+  "categories": ["books"],
   "description": "On the initial setup screen, enter /books as your calibre library location. \n Default admin login: Username: admin Password: admin123",
   "short_desc": "Calibre-web is a web app providing a clean interface for browsing, reading and downloading eBooks using an existing Calibre database.",
   "author": "https://github.com/janeczku/",
   "source": "https://github.com/janeczku/calibre-web",
-  "image": "https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/calibre-web-icon.png",
+  "image": "/logos/apps/calibre-web.jpg",
   "form_fields": {}
 }

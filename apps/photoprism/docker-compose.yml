@@ -2,6 +2,7 @@ version: "3.7"
 
 services:
   photoprism:
+    # TODO: Special image for arm/v7 is available
     image: photoprism/photoprism:latest
     container_name: photoprism
     depends_on:

@@ -57,7 +57,7 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const isConfigured = async (req: Request, res: Response, next: NextFunction) => {
+const isConfigured = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const users: IUser[] = readJsonFile('/state/users.json');
 

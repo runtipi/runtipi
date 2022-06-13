@@ -10,9 +10,7 @@ const login = async (email: string, password: string) => {
     throw new Error('User not found');
   }
 
-  const token = await AuthHelpers.getJwtToken(user, password);
-
-  return token;
+  return AuthHelpers.getJwtToken(user, password);
 };
 
 const register = async (email: string, password: string, name: string) => {
@@ -24,10 +22,6 @@ const register = async (email: string, password: string, name: string) => {
 
   if (!email || !password) {
     throw new Error('Missing email or password');
-  }
-
-  if (users.find((user) => user.email === email)) {
-    throw new Error('User already exists');
   }
 
   const hash = await argon2.hash(password);

@@ -13,7 +13,7 @@ const isPortOpen = async (req: Request, res: Response<boolean>) => {
   res.status(200).send(isOpen);
 };
 
-const getInternalIp = async (req: Request, res: Response<string>) => {
+const getInternalIp = async (_req: Request, res: Response<string>) => {
   const ip = await internalIp.v4();
 
   res.status(200).send(ip);

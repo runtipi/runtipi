@@ -5,14 +5,14 @@
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
 ![Issues](https://img.shields.io/github/issues/meienberger/runtipi)
-[![Docker Pulls](https://badgen.net/docker/pulls/meienberger/tipi-dashboard?icon=docker&label=pulls)](https://hub.docker.com/r/meienberger/tipi-dashboard/)
-[![Docker Image Size](https://badgen.net/docker/size/meienberger/tipi-dashboard?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/tipi-dashboard/)
+[![Docker Pulls](https://badgen.net/docker/pulls/meienberger/runtipi?icon=docker&label=pulls)](https://hub.docker.com/r/meienberger/runtipi/)
+[![Docker Image Size](https://badgen.net/docker/size/meienberger/runtipi?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/runtipi/)
 ![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
 #### Join the discussion
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 [![Matrix](https://img.shields.io/matrix/runtipi:matrix.org?label=matrix&logo=matrix)](https://matrix.to/#/#runtipi:matrix.org)
 
-![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/1.png)
+![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/appstore.png)
 > ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
 
 Tipi is a personal homeserver orchestrator. It is running docker containers under the hood and provides a simple web interface to manage them. Every service comes with an opinionated configuration in order to remove the need for manual configuration and network setup.
@@ -31,14 +31,17 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 - [Jellyfin](https://github.com/jellyfin/jellyfin) - A media server for your home collection
 - [Joplin](https://github.com/laurent22/joplin) - Privacy focused note-taking app
 - [Libreddit](https://github.com/spikecodes/libreddit) - Private front-end for Reddit
+- [Mealie](https://github.com/hay-kot/mealie) - Self-hosted recipe manager and meal planner.
 - [n8n](https://github.com/n8n-io/n8n) - Workflow Automation Tool
 - [Nextcloud](https://github.com/nextcloud/server) - A safe home for all your data
 - [Nitter](https://github.com/zedeus/nitter) - Alternative Twitter front-end
 - [Node-RED](https://github.com/node-red/node-red) - Low-code programming for event-driven applications
 - [Photoprism](https://github.com/photoprism/photoprism) - AI-Powered Photos App for the Decentralized Web. We are on a mission to protect your freedom and privacy.
 - [Pihole](https://github.com/pi-hole/pi-hole) - A black hole for Internet advertisements
+- [Plex](https://github.com/plexinc/pms-docker) - Stream Movies & TV Shows
 - [Prowlarr](https://github.com/Prowlarr/Prowlarr/) - A torrent/usenet indexer manager/proxy
 - [Radarr](https://github.com/Radarr/Radarr) - Movie collection manager for Usenet and BitTorrent users
+- [Resilio Sync](https://github.com/bt-sync) - Fast, reliable, and simple file sync and share solution
 - [Sonarr](https://github.com/Sonarr/Sonarr) - TV show manager for Usenet and BitTorrent
 - [Syncthing](https://github.com/syncthing/syncthing) - Continuous File Synchronization
 - [Tailscale](https://github.com/tailscale/tailscale) - The easiest, most secure way to use WireGuard and 2FA
@@ -95,6 +98,7 @@ Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may co
 - [Matrix](https://matrix.to/#/#runtipi:matrix.org)<br />
 - [Twitter](https://twitter.com/runtipi)
 - [Telegram](https://t.me/+72-y10MnLBw2ZGI0)
+- [Discord](https://discord.gg/Bu9qEPnHsc)
 
 ## Contributors ✨
 
