@@ -16,7 +16,7 @@ services:
       - tipi_main_network
 
   api:
-    image: meienberger/tipi-api:rc-${TIPI_VERSION}
+    image: meienberger/runtipi:rc-${TIPI_VERSION}
     container_name: api
     ports:
       - 3001:3001
@@ -34,7 +34,7 @@ services:
       - tipi_main_network
 
   dashboard:
-    image: meienberger/tipi-dashboard:rc-${TIPI_VERSION}
+    image: meienberger/runtipi:rc-${TIPI_VERSION}
     container_name: dashboard
     ports:
       - 3000:3000
