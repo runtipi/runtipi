@@ -37,7 +37,7 @@ services:
 
   dashboard:
     image: meienberger/runtipi:${TIPI_VERSION}
-    command: bash -c "cd /dasboard && npm run start"
+    command: bash -c "cd /dashboard && npm run start"
     restart: unless-stopped
     container_name: dashboard
     ports:
