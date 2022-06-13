@@ -4,6 +4,7 @@ import jsyaml from "js-yaml";
 interface AppConfig {
   id: string;
   port: number;
+  categories: string[];
   requirements?: {
     ports?: number[];
   };
@@ -17,7 +18,7 @@ interface AppConfig {
   available: boolean;
 }
 
-const networkExceptions = ["pihole", "tailscale", "homeassistant"];
+const networkExceptions = ["pihole", "tailscale", "homeassistant", "plex"];
 const getAppConfigs = (): AppConfig[] => {
   const apps: AppConfig[] = [];
 
@@ -71,6 +72,15 @@ describe("App configs", () => {
         console.error(`Missing description for app ${app.id}`);
         expect(true).toBe(false);
       }
+    });
+  });
+
+  it("Each app should have categories defined as an array", () => {
+    const apps = getAppConfigs();
+
+    apps.forEach((app) => {
+      expect(app.categories).toBeDefined();
+      expect(app.categories).toBeInstanceOf(Array);
     });
   });
 
