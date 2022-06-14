@@ -4,6 +4,7 @@ services:
 
   ghost:
     image: ghost:alpine
+    container_name: ghost
     depends_on:
     - ghostdb
     restart: unless-stopped
