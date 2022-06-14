@@ -8,7 +8,7 @@
   "short_desc": "Ghost - Turn your audience into a business.",
   "author": "TryGhost",
   "source": "https://github.com/TryGhost/Ghost",
-  "image": "/logos/apps/ghost.jpg",
+  "image": "/logos/apps/ghost.png",
   "form_fields": {
     "dbpassword": {
       "type": "password",
