@@ -38,6 +38,15 @@
         "ideas",
         "test"
       ]
+    },
+    {
+      "login": "CobreDev",
+      "name": "Cooper",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36574329?v=4",
+      "profile": "https://cobre.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
