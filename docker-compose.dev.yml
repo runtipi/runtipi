@@ -8,7 +8,7 @@ services:
     command: bash -c "cd /api && npm run dev"
     container_name: api
     ports:
-      - 3002:3001
+      - 3001:3001
     volumes:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -31,7 +31,7 @@ services:
     command: bash -c "cd /dashboard && npm run dev"
     container_name: dashboard
     ports:
-      - 3001:3000
+      - 3000:3000
     networks:
       - tipi_main_network
     environment:
@@ -45,7 +45,7 @@ services:
       traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&
       traefik.http.routers.dashboard.entrypoints: webinsecure
       traefik.http.routers.dashboard.service: dashboard
-      traefik.http.services.dashboard.loadbalancer.server.port: 3001
+      traefik.http.services.dashboard.loadbalancer.server.port: 3000
 
 networks:
   tipi_main_network:
