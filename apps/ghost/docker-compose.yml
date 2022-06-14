@@ -24,7 +24,6 @@ services:
 
   ghostdb:
     container_name: ghostdb
-    user: 1000:1000
     image: mariadb:latest
     environment:
       MYSQL_ROOT_PASSWORD: ${GHOST_DATABASE_PASSWORD}
