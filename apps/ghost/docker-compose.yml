@@ -12,7 +12,7 @@ services:
     environment:
       # see https://ghost.org/docs/config/#configuration-options
       database__client: mysql
-      database__connection__host: db
+      database__connection__host: ghostdb
       database__connection__user: tipi
       database__connection__password: ${GHOST_DATABASE_PASSWORD}
       database__connection__database: ghosttipi
