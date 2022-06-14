@@ -1,0 +1,27 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "meienberger",
+      "name": "Nicolas Meienberger",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47644445?v=4",
+      "profile": "https://meienberger.dev/",
+      "contributions": [
+        "code",
+        "infra",
+        "test",
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "runtipi",
+  "projectOwner": "meienberger",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
