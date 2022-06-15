@@ -18,4 +18,5 @@ export const appNames = [
   'homarr',
   'code-server',
   'calibre-web',
+  'ghost',
 ];
