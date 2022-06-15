@@ -55,7 +55,10 @@ fi
 ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
-INTERNAL_IP="$(hostname -I | awk '{print $1}')"
+
+NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
+INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
+# INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
 
@@ -98,8 +101,6 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
-PUID="$(id -u)"
-PGID="$(id -g)"
 TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
 
 # Copy the app state if it isn't here
@@ -114,16 +115,11 @@ fi
 
 # Get current dns from host
 if [[ -f "/etc/resolv.conf" ]]; then
-  TEMP=$(cat /etc/resolv.conf | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -n 1)
+  TEMP=$(grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' /etc/resolv.conf | head -n 1)
 fi
 
 # Get dns ip if pihole is installed
 str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-
-# if pihole is present in str add it as DNS
-if [[ $str = *"pihole"* ]]; then
-  DNS_IP=10.21.21.201
-fi
 
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
@@ -147,11 +143,9 @@ ENV_FILE=$(mktemp)
 
 JWT_SECRET=$(derive_entropy "jwt")
 
-for template in "${ENV_FILE}"; do
+for template in ${ENV_FILE}; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
-  sed -i "s/<puid>/${PUID}/g" "${template}"
-  sed -i "s/<pgid>/${PGID}/g" "${template}"
   sed -i "s/<tz>/${TZ}/g" "${template}"
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
@@ -166,6 +160,12 @@ mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 # Run system-info.sh
 echo "Running system-info.sh..."
 bash "${ROOT_FOLDER}/scripts/system-info.sh"
+
+# Add crontab to run system-info.sh every minute
+! (crontab -l | grep -q "${ROOT_FOLDER}/scripts/system-info.sh") && (
+  crontab -l
+  echo "* * * * * ${ROOT_FOLDER}/scripts/system-info.sh"
+) | crontab -
 
 ## Don't run if config-only
 if [[ ! $ci == "true" ]]; then

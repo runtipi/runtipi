@@ -1,0 +1,13 @@
+{
+  "name": "Nitter",
+  "available": true,
+  "port": 8106,
+  "id": "nitter",
+  "categories": ["social"],
+  "description": "A free and open source alternative Twitter front-end focused on privacy and performance.",
+  "short_desc": "Twitter without annoyances!",
+  "author": "zedeus",
+  "source": "https://github.com/zedeus/nitter",
+  "image": "/logos/apps/nitter.jpg",
+  "form_fields": {}
+}

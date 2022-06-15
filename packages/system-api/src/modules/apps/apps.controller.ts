@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+import { AppConfig } from '@runtipi/common';
 import AppsService from './apps.service';
-import { AppConfig } from '../../config/types';
 import { getInitalFormValues } from './apps.helpers';
 
 const uninstallApp = async (req: Request, res: Response, next: NextFunction) => {
@@ -68,7 +68,7 @@ const getAppInfo = async (req: Request, res: Response<AppConfig>, next: NextFunc
   }
 };
 
-const listApps = async (req: Request, res: Response, next: NextFunction) => {
+const listApps = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const apps = await AppsService.listApps();
 

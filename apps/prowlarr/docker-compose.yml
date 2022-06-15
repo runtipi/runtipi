@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  prowlarr: # Should be exact same name as "id" field in config.json
+    container_name: prowlarr # Should be exact same name as "id" field in config.json
+    image: ghcr.io/linuxserver/prowlarr:develop
+    environment:
+      - TZ=${TZ} # Can use any env variable. List in runtipi/templates/env-sample
+    dns:
+      - ${DNS_IP}
+    volumes:
+      - ${APP_DATA_DIR}/data/config:/config #Always start the path with ${APP_DATA_DIR}. This will put all data inside app-data/my-app/data
+    ports:
+      - ${APP_PORT}:9696
+    restart: unless-stopped
+    networks:
+      - tipi_main_network

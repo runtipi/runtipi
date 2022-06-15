@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   radarr:
-    image: lscr.io/linuxserver/radarr
+    image: lscr.io/linuxserver/radarr:4.1.0
     container_name: radarr
     environment:
       - PUID=1000
@@ -10,9 +10,9 @@ services:
     dns:
       - ${DNS_IP}
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ${APP_DATA_DIR}/data:/config
-      - ${ROOT_FOLDER_HOST}/media/data/movies:/movies #optional
-      - ${ROOT_FOLDER_HOST}/media/torrents:/downloads #optional
+      - ${ROOT_FOLDER_HOST}/media:/media
     ports:
       - ${APP_PORT}:7878
     restart: unless-stopped

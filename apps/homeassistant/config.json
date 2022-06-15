@@ -1,0 +1,13 @@
+{
+  "name": "Home Assistant",
+  "available": true,
+  "port": 8123,
+  "id": "homeassistant",
+  "categories": ["automation"],
+  "description": "Open source home automation that puts local control and privacy first. Powered by a worldwide community of tinkerers and DIY enthusiasts. Perfect to run on a Raspberry Pi or a local server.",
+  "short_desc": "Open source home automation that puts local control and privacy first",
+  "author": "ArneNaessens",
+  "source": "https://github.com/home-assistant/core",
+  "image": "/logos/apps/homeassistant.jpg",
+  "form_fields": {}
+}

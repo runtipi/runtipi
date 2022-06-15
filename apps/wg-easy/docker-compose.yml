@@ -2,7 +2,7 @@ version: "3.7"
 services:
   wg-easy:
     container_name: wg-easy
-    image: "meienberger/wg-easy:latest"
+    image: weejewel/wg-easy:5
     restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/data:/etc/wireguard
@@ -16,7 +16,6 @@ services:
       WG_ALLOWED_IPS: 0.0.0.0/0,::/0
       WG_PORT: 51822
       WG_DEFAULT_DNS: "${WIREGUARD_DNS:-8.8.8.8}"
-      WG_FWMARK: 51820
     cap_add:
       - NET_ADMIN
       - SYS_MODULE

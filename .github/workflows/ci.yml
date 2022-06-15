@@ -42,7 +42,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run tests
+      - name: Build packages/common
+        run: |
+          cd ./packages/common
+          npm run build
+          cd ../..
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm -r build
+
+      - name: Run global tests
+        run: pnpm test
+
+      - name: Run linter
         run: pnpm -r lint
       
       - name: Run tests

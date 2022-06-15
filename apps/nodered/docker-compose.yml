@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  nodered:
+    container_name: nodered
+    image: nodered/node-red:2.2.2-12
+    restart: unless-stopped
+    ports:
+      - ${APP_PORT}:1880
+    volumes:
+      - ${APP_DATA_DIR}/data:/data
+    networks:
+      - tipi_main_network

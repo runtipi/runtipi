@@ -1,6 +1,6 @@
 {
   "name": "system-api",
-  "version": "0.1.5",
+  "version": "0.3.0",
   "description": "",
   "exports": "./dist/server.js",
   "type": "module",
@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "lint": "eslint . --ext .ts",
-    "test": "jest",
+    "test": "jest --colors",
     "test:watch": "jest --watch",
     "build": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --minify --analyze=verbose --external:./node_modules/* --format=esm",
     "build:watch": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --external:./node_modules/* --format=esm --watch",
@@ -21,7 +21,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@runtipi/common": "file:../common",
     "argon2": "^0.28.5",
+    "axios": "^0.26.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -32,7 +34,6 @@
     "jsonwebtoken": "^8.5.1",
     "mock-fs": "^5.1.2",
     "node-cache": "^5.1.2",
-    "node-fetch": "^3.2.4",
     "node-port-scanner": "^3.0.1",
     "p-iteration": "^1.1.8",
     "passport": "^0.5.2",
@@ -57,7 +58,7 @@
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.22.0",
     "concurrently": "^7.1.0",
-    "esbuild": "^0.14.32",
+    "esbuild": "^0.14.38",
     "eslint": "^8.13.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",

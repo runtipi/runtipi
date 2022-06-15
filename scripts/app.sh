@@ -143,7 +143,8 @@ fi
 if [[ "$command" = "uninstall" ]]; then
   echo "Removing images for app ${app}..."
 
-  # compose "${app}" down --remove-orphans
+  compose "${app}" up --detach
+  compose "${app}" down --rmi all --remove-orphans
 
   echo "Deleting app data for app ${app}..."
   if [[ -d "${app_data_dir}" ]]; then
@@ -158,7 +159,6 @@ fi
 if [[ "$command" = "stop" ]]; then
 
   echo "Stopping app ${app}..."
-  compose "${app}" down --remove-orphans --rmi all
   compose "${app}" rm --force --stop
 
   exit

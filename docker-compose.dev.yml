@@ -3,8 +3,9 @@ version: "3.7"
 services:
   api:
     build:
-      context: ./packages/system-api
+      context: .
       dockerfile: Dockerfile.dev
+    command: bash -c "cd /api && npm run dev"
     container_name: api
     ports:
       - 3001:3001
@@ -12,20 +13,22 @@ services:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}:/tipi
-      - ${PWD}/packages/system-api:/app
-      - /app/node_modules
+      - ${PWD}/packages/system-api:/api
+      - /api/node_modules
     environment:
       - INTERNAL_IP=${INTERNAL_IP}
       - TIPI_VERSION=${TIPI_VERSION}
       - JWT_SECRET=${JWT_SECRET}
       - ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}
+      - NGINX_PORT=${NGINX_PORT}
     networks:
       - tipi_main_network
 
   dashboard:
     build:
-      context: ./packages/dashboard
+      context: .
       dockerfile: Dockerfile.dev
+    command: bash -c "cd /dashboard && npm run dev"
     container_name: dashboard
     ports:
       - 3000:3000
@@ -34,8 +37,9 @@ services:
     environment:
       - INTERNAL_IP=${INTERNAL_IP}
     volumes:
-      - ${PWD}/packages/dashboard:/app
-      - /app/node_modules
+      - ${PWD}/packages/dashboard:/dashboard
+      - /dashboard/node_modules
+      - /dashboard/.next
     labels:
       traefik.enable: true
       traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&

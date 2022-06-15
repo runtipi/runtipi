@@ -1,6 +1,6 @@
 import portUsed from 'tcp-port-used';
 import p from 'p-iteration';
-import { AppConfig } from '../../config/types';
+import { AppConfig } from '@runtipi/common';
 import { fileExists, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
 import config from '../../config';
@@ -93,14 +93,15 @@ export const ensureAppState = (appName: string, installed: boolean) => {
   if (installed) {
     if (state.installed.indexOf(appName) === -1) {
       state.installed += ` ${appName}`;
-      writeFile('/state/apps.json', JSON.stringify(state));
     }
   } else {
     if (state.installed.indexOf(appName) !== -1) {
       state.installed = state.installed.replace(`${appName}`, '');
-      writeFile('/state/apps.json', JSON.stringify(state));
     }
   }
+
+  state.installed = state.installed.replace(/\s+/g, ' ').trim();
+  writeFile('/state/apps.json', JSON.stringify(state));
 };
 
 export const generateEnvFile = (appName: string, form: Record<string, string>) => {

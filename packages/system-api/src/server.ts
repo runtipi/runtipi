@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import express, { NextFunction, Request, Response } from 'express';
 import compression from 'compression';
-// import suExec from 'su-exec';
 import helmet from 'helmet';
 import cors from 'cors';
 import { isProd } from './constants/constants';
@@ -31,7 +30,7 @@ app.use(
       if (!origin) return callback(null, true);
 
       if (config.CLIENT_URLS.indexOf(origin) === -1) {
-        var message = "The CORS policy for this origin doesn't allow access from the particular origin.";
+        const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
         return callback(new Error(message), false);
       }
 
@@ -41,7 +40,7 @@ app.use(
 );
 
 // Get user from token
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   let user = null;
 
   if (req?.cookies?.tipi_token) {
@@ -65,7 +64,7 @@ app.use('/system', restrict, systemRoutes);
 app.use('/apps', restrict, appsRoutes);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
+app.use((err: Error, _req: Request, res: Response, _: NextFunction) => {
   res.status(200).json({ error: err.message });
 });
 

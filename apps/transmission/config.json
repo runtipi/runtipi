@@ -6,10 +6,11 @@
     "ports": [51413]
   },
   "id": "transmission",
-  "description": "",
-  "short_desc": "",
-  "author": "",
-  "source": "https://transmissionbt.com",
+  "categories": ["utilities"],
+  "description": "Transmission is a fast, easy, and free BitTorrent client.",
+  "short_desc": "Fast, easy, and free BitTorrent client",
+  "author": "Transmission Project",
+  "source": "https://github.com/transmission/transmission",
   "image": "https://avatars.githubusercontent.com/u/223312?s=200&v=4",
   "form_fields": {
     "username": {

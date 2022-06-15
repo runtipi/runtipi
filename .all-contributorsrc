@@ -1,0 +1,67 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "meienberger",
+      "name": "Nicolas Meienberger",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47644445?v=4",
+      "profile": "https://meienberger.dev/",
+      "contributions": [
+        "code",
+        "infra",
+        "test",
+        "doc"
+      ]
+    },
+    {
+      "login": "ArneNaessens",
+      "name": "ArneNaessens",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16622722?v=4",
+      "profile": "https://github.com/ArneNaessens",
+      "contributions": [
+        "code",
+        "ideas",
+        "test"
+      ]
+    },
+    {
+      "login": "DrMxrcy",
+      "name": "DrMxrcy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/58747968?v=4",
+      "profile": "https://github.com/DrMxrcy",
+      "contributions": [
+        "code",
+        "ideas",
+        "test"
+      ]
+    },
+    {
+      "login": "CobreDev",
+      "name": "Cooper",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36574329?v=4",
+      "profile": "https://cobre.dev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "JTruj1ll0923",
+      "name": "JTruj1ll0923",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6656643?v=4",
+      "profile": "https://github.com/JTruj1ll0923",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "runtipi",
+  "projectOwner": "meienberger",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

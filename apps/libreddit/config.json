@@ -1,0 +1,13 @@
+{
+  "name": "LibReddit",
+  "available": true,
+  "port": 8105,
+  "id": "libreddit",
+  "categories": ["social"],
+  "description": "LibReddit is a bloat free reddit frontend written in Rust, no ads, no tracking and strong Content Security Policy prevents any request from going to reddit, everything is proxied.",
+  "short_desc": "Browse reddit without problems!",
+  "author": "spikecodes",
+  "source": "https://github.com/spikecodes/libreddit",
+  "image": "/logos/apps/libreddit.jpg",
+  "form_fields": {}
+}

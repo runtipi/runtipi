@@ -1,0 +1,59 @@
+version: "3.7"
+
+services:
+  photoprism:
+    # TODO: Special image for arm/v7 is available
+    image: photoprism/photoprism:latest
+    container_name: photoprism
+    depends_on:
+      - photoprism-db
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT}:2342"
+    environment:
+      PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_ADMIN_PASSWORD}
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"
+      PHOTOPRISM_LOG_LEVEL: "info"
+      PHOTOPRISM_PUBLIC: "false"
+      PHOTOPRISM_READONLY: "false"
+      PHOTOPRISM_EXPERIMENTAL: "false"
+      PHOTOPRISM_DISABLE_CHOWN: "false"
+      PHOTOPRISM_DISABLE_WEBDAV: "false"
+      PHOTOPRISM_DISABLE_SETTINGS: "false"
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"
+      PHOTOPRISM_DISABLE_FACES: "false"
+      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"
+      PHOTOPRISM_DISABLE_RAW: "false"
+      PHOTOPRISM_RAW_PRESETS: "false"
+      PHOTOPRISM_JPEG_QUALITY: 85
+      PHOTOPRISM_DETECT_NSFW: "false"
+      PHOTOPRISM_UPLOAD_NSFW: "true"
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"
+      PHOTOPRISM_DATABASE_SERVER: "photoprism-db:3306"
+      PHOTOPRISM_DATABASE_NAME: "photoprism"
+      PHOTOPRISM_DATABASE_USER: "photoprism"
+      PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
+    working_dir: "/photoprism"
+    volumes:
+      - "${APP_DATA_DIR}/data/photoprism/originals:/photoprism/originals"
+      - "${APP_DATA_DIR}/data/photoprism/storage:/photoprism/storage"
+    networks:
+      - tipi_main_network
+
+  photoprism-db:
+    restart: unless-stopped
+    image: mariadb:10.8.3
+    container_name: photoprism-db
+    command: mysqld --innodb-buffer-pool-size=128M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    volumes:
+      - "${APP_DATA_DIR}/data/mariadb:/var/lib/mysql"
+    environment:
+      MARIADB_DATABASE: "photoprism"
+      MARIADB_USER: "photoprism"
+      MARIADB_PASSWORD: "photoprism"
+      MARIADB_ROOT_PASSWORD: "photoprism"
+    networks:
+      - tipi_main_network

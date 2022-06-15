@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 services:
   invidious:
     user: 1000:1000
@@ -26,6 +26,8 @@ services:
       retries: 2
     depends_on:
       - invidious-db
+    networks:
+      - tipi_main_network
 
   invidious-db:
     user: 1000:1000
@@ -34,11 +36,13 @@ services:
     restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/data/postgres:/var/lib/postgresql/data
-      - ${APP_DATA_DIR}/data/sql:/config/sql
-      - ./docker/init-invidious-db.sh:/docker-entrypoint-initdb.d/init-invidious-db.sh
+      - ${APP_DATA_DIR}/data/init/sql:/config/sql
+      - ${APP_DATA_DIR}/data/init/init-invidious-db.sh:/docker-entrypoint-initdb.d/init-invidious-db.sh
     environment:
       POSTGRES_DB: invidious
       POSTGRES_USER: tipi
       POSTGRES_PASSWORD: tipi
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+    networks:
+      - tipi_main_network

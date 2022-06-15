@@ -1,7 +1,7 @@
-version: "2.1"
+version: "3.7"
 services:
   calibre-web:
-    image: lscr.io/linuxserver/calibre-web:latest
+    image: lscr.io/linuxserver/calibre-web:0.6.18
     container_name: calibre-web
     environment:
       - PUID=1000
@@ -9,7 +9,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${APP_DATA_DIR}/data/config:/config
-      - ${APP_DATA_DIR}/data/books:/books
+      - ${ROOT_FOLDER_HOST}/media/data/books:/books
     ports:
       - ${APP_PORT}:8083
     restart: unless-stopped
