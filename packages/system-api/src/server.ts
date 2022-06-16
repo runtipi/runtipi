@@ -1,73 +1,44 @@
-/* eslint-disable no-unused-vars */
-import express, { NextFunction, Request, Response } from 'express';
-import compression from 'compression';
-import helmet from 'helmet';
-import cors from 'cors';
-import { isProd } from './constants/constants';
-import appsRoutes from './modules/apps/apps.routes';
-import systemRoutes from './modules/system/system.routes';
-import authRoutes from './modules/auth/auth.routes';
-import AuthHelpers from './modules/auth/auth.helpers';
-import cookieParser from 'cookie-parser';
+import 'reflect-metadata';
+import express from 'express';
+import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from 'apollo-server-core';
 import config from './config';
+import { DataSource } from 'typeorm';
+import { ApolloServer } from 'apollo-server-express';
+import { createSchema } from './schema';
+import { ApolloLogs } from './config/logger/apollo.logger';
+import { createServer } from 'http';
+import logger from './config/logger/logger';
+import getSessionMiddleware from './core/middlewares/sessionMiddleware';
 
-const app = express();
-const port = 3001;
+const main = async () => {
+  try {
+    const app = express();
+    const port = 3001;
 
-app.use(express.json());
-app.use(cookieParser());
+    const sessionMiddleware = await getSessionMiddleware();
+    app.use(sessionMiddleware);
 
-if (isProd) {
-  app.use(compression());
-  app.use(helmet());
-}
+    const AppDataSource = new DataSource(config.typeorm);
+    await AppDataSource.initialize();
 
-app.use(
-  cors({
-    credentials: true,
-    origin: function (origin, callback) {
-      // allow requests with no origin
-      if (!origin) return callback(null, true);
+    const schema = await createSchema();
 
-      if (config.CLIENT_URLS.indexOf(origin) === -1) {
-        const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
-        return callback(new Error(message), false);
-      }
+    const httpServer = createServer(app);
 
-      return callback(null, true);
-    },
-  }),
-);
+    const apolloServer = new ApolloServer({
+      schema,
+      plugins: [Playground({ settings: { 'request.credentials': 'include' } }), ApolloLogs],
+    });
+    await apolloServer.start();
+    apolloServer.applyMiddleware({ app });
 
-// Get user from token
-app.use((req, _res, next) => {
-  let user = null;
-
-  if (req?.cookies?.tipi_token) {
-    user = AuthHelpers.tradeTokenForUser(req.cookies.tipi_token);
-    if (user) req.user = user;
-  }
-
-  next();
-});
-
-const restrict = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    res.status(401).json({ error: 'Unauthorized' });
-  } else {
-    next();
+    httpServer.listen(port, () => {
+      logger.info(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.log(error);
+    logger.error(error);
   }
 };
 
-app.use('/auth', authRoutes);
-app.use('/system', restrict, systemRoutes);
-app.use('/apps', restrict, appsRoutes);
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: Error, _req: Request, res: Response, _: NextFunction) => {
-  res.status(200).json({ error: err.message });
-});
-
-app.listen(port, () => {
-  console.log(`System API listening on port ${port}`);
-});
+main();

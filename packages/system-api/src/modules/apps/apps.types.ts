@@ -1,29 +1,29 @@
-import { AppCategoriesEnum, AppStatusEnum, FieldTypes } from '@runtipi/common';
+import { AppCategoriesEnum, AppStatusEnum } from '@runtipi/common';
 import { Field, ObjectType } from 'type-graphql';
 
-@ObjectType()
-class FormField {
-  @Field()
-  type!: FieldTypes;
+// @ObjectType(() => FormField)
+// class FormField {
+//   @Field()
+//   type!: FieldTypes;
 
-  @Field()
-  label!: string;
+//   @Field()
+//   label!: string;
 
-  @Field({ nullable: true })
-  max?: number;
+//   @Field({ nullable: true })
+//   max?: number;
 
-  @Field({ nullable: true })
-  min?: number;
+//   @Field({ nullable: true })
+//   min?: number;
 
-  @Field({ nullable: true })
-  hint?: string;
+//   @Field({ nullable: true })
+//   hint?: string;
 
-  @Field({ nullable: true })
-  required?: boolean;
+//   @Field({ nullable: true })
+//   required?: boolean;
 
-  @Field()
-  env_variable!: string;
-}
+//   @Field()
+//   env_variable!: string;
+// }
 
 @ObjectType()
 class App {
@@ -69,8 +69,8 @@ class App {
   @Field(() => String, { nullable: true })
   url_suffix?: string;
 
-  @Field(() => [FormField])
-  form_fields?: FormField[];
+  // @Field(() => [FormField])
+  // form_fields?: FormField[];
 }
 
 @ObjectType()

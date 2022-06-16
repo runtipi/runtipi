@@ -45,7 +45,6 @@ services:
       ANONADDY_DOMAIN: ${ANONADDY_DOMAIN}
       ANONADDY_SECRET: ${ANONADDY_SECRET}
       ANONADDY_ADMIN_USERNAME: ${ANONADDY_USERNAME}
-      POSTFIX_DEBUG: true
     restart: unless-stopped
     networks:
       - tipi_main_network

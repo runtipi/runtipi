@@ -1,6 +1,16 @@
 import * as dotenv from 'dotenv';
+import redis from 'redis';
+import { DataSourceOptions } from 'typeorm';
+import { __prod__ } from './constants/constants';
 
 interface IConfig {
+  logs: {
+    LOGS_FOLDER: string;
+    LOGS_APP: string;
+    LOGS_ERROR: string;
+  };
+  typeorm: DataSourceOptions;
+  redis: Parameters<typeof redis.createClient>[0];
   NODE_ENV: string;
   ROOT_FOLDER: string;
   JWT_SECRET: string;
@@ -11,9 +21,42 @@ interface IConfig {
 
 dotenv.config();
 
-const { NODE_ENV = 'development', JWT_SECRET = '', INTERNAL_IP = '', TIPI_VERSION = '', ROOT_FOLDER_HOST = '', NGINX_PORT = '80' } = process.env;
+const {
+  LOGS_FOLDER = 'logs',
+  LOGS_APP = 'app.log',
+  LOGS_ERROR = 'error.log',
+  NODE_ENV = 'development',
+  JWT_SECRET = '',
+  INTERNAL_IP = '',
+  TIPI_VERSION = '',
+  ROOT_FOLDER_HOST = '',
+  NGINX_PORT = '80',
+  POSTGRES_DB = '',
+  POSTGRES_USER = '',
+  POSTGRES_PASSWORD = '',
+} = process.env;
 
 const config: IConfig = {
+  logs: {
+    LOGS_FOLDER,
+    LOGS_APP,
+    LOGS_ERROR,
+  },
+  typeorm: {
+    type: 'postgres',
+    host: 'postgres',
+    database: POSTGRES_DB,
+    username: POSTGRES_USER,
+    password: POSTGRES_PASSWORD,
+    port: 5432,
+    logging: !__prod__,
+    synchronize: true,
+    entities: [],
+  },
+  redis: {
+    url: 'redis://redis:6379',
+    legacyMode: true,
+  },
   NODE_ENV,
   ROOT_FOLDER: '/tipi',
   JWT_SECRET,
