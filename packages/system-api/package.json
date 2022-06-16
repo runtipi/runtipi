@@ -29,6 +29,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "graphql": "^16.5.0",
     "helmet": "^5.0.2",
     "internal-ip": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
@@ -41,7 +42,8 @@
     "passport-http-bearer": "^1.0.1",
     "public-ip": "^5.0.0",
     "systeminformation": "^5.11.9",
-    "tcp-port-used": "^1.0.2"
+    "tcp-port-used": "^1.0.2",
+    "type-graphql": "^1.1.1"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",

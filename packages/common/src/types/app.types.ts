@@ -53,7 +53,7 @@ export interface AppConfig {
   description: string;
   version: string;
   image: string;
-  form_fields: Record<string, FormField>;
+  form_fields: FormField[];
   short_desc: string;
   author: string;
   source: string;

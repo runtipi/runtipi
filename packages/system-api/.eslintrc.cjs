@@ -14,5 +14,7 @@ module.exports = {
     'no-restricted-exports': 0,
     'max-len': [1, { code: 200 }],
     'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never', ts: 'never', tsx: 'never' }],
+    indent: 'off',
+    '@typescript-eslint/indent': 0,
   },
 };

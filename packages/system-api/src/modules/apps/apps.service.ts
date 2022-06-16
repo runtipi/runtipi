@@ -2,6 +2,7 @@ import si from 'systeminformation';
 import { AppConfig, AppStatusEnum } from '@runtipi/common';
 import { createFolder, fileExists, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppExists, checkAppRequirements, checkEnvFile, ensureAppState, generateEnvFile, getAvailableApps, getInitalFormValues, getStateFile, runAppScript } from './apps.helpers';
+import { ListAppsResonse } from './apps.types';
 
 const startApp = async (appName: string): Promise<void> => {
   checkAppExists(appName);
@@ -43,7 +44,7 @@ const installApp = async (id: string, form: Record<string, string>): Promise<voi
   return Promise.resolve();
 };
 
-const listApps = async (): Promise<AppConfig[]> => {
+const listApps = async (): Promise<ListAppsResonse> => {
   const apps: AppConfig[] = getAvailableApps()
     .map((app) => {
       try {
@@ -65,7 +66,7 @@ const listApps = async (): Promise<AppConfig[]> => {
     app.description = readFile(`/apps/${app.id}/metadata/description.md`);
   });
 
-  return apps;
+  return { apps };
 };
 
 const getAppInfo = async (id: string): Promise<AppConfig> => {

@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "isolatedModules": false,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "experimentalDecorators": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "jest.config.cjs"],
   "exclude": ["node_modules"]
