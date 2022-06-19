@@ -9,5 +9,5 @@
   "author": "sonarr.tv",
   "source": "https://github.com/Sonarr/Sonarr",
   "image": "/logos/apps/sonarr.jpg",
-  "form_fields": {}
+  "form_fields": []
 }

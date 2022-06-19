@@ -1,8 +1,8 @@
 import si from 'systeminformation';
-import { AppConfig, AppStatusEnum } from '@runtipi/common';
+import { AppStatusEnum } from '@runtipi/common';
 import { createFolder, fileExists, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppExists, checkAppRequirements, checkEnvFile, ensureAppState, generateEnvFile, getAvailableApps, getInitalFormValues, getStateFile, runAppScript } from './apps.helpers';
-import { ListAppsResonse } from './apps.types';
+import { AppConfig, ListAppsResonse } from './apps.types';
 
 const startApp = async (appName: string): Promise<void> => {
   checkAppExists(appName);
@@ -66,7 +66,7 @@ const listApps = async (): Promise<ListAppsResonse> => {
     app.description = readFile(`/apps/${app.id}/metadata/description.md`);
   });
 
-  return { apps };
+  return { apps, total: apps.length };
 };
 
 const getAppInfo = async (id: string): Promise<AppConfig> => {

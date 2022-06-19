@@ -9,8 +9,8 @@
   "author": "PhotoPrism",
   "source": "https://github.com/photoprism/photoprism",
   "image": "/logos/apps/photoprism.jpg",
-  "form_fields": {
-    "password": {
+  "form_fields": [
+    {
       "type": "password",
       "label": "Photoprism admin password",
       "max": 50,
@@ -18,5 +18,5 @@
       "required": true,
       "env_variable": "PHOTOPRISM_ADMIN_PASSWORD"
     }
-  }
+  ]
 }

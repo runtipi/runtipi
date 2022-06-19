@@ -9,8 +9,8 @@
   "author": "Daniel García",
   "source": "https://github.com/dani-garcia/vaultwarden",
   "image": "/logos/apps/vaultwarden.jpg",
-  "form_fields": {
-    "admin_password": {
+  "form_fields": [
+    {
       "type": "password",
       "label": "Admin Panel Password",
       "max": 50,
@@ -18,5 +18,5 @@
       "required": true,
       "env_variable": "VAULTWARDEN_ADMIN_PASSWORD"
     }
-  }
+  ]
 }

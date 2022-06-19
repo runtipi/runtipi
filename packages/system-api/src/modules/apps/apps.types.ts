@@ -1,32 +1,32 @@
-import { AppCategoriesEnum, AppStatusEnum } from '@runtipi/common';
+import { AppCategoriesEnum, AppStatusEnum, FieldTypes } from '@runtipi/common';
 import { Field, ObjectType } from 'type-graphql';
 
-// @ObjectType(() => FormField)
-// class FormField {
-//   @Field()
-//   type!: FieldTypes;
+@ObjectType()
+class FormField {
+  @Field(() => String)
+  type!: FieldTypes;
 
-//   @Field()
-//   label!: string;
+  @Field(() => String)
+  label!: string;
 
-//   @Field({ nullable: true })
-//   max?: number;
+  @Field(() => Number, { nullable: true })
+  max?: number;
 
-//   @Field({ nullable: true })
-//   min?: number;
+  @Field(() => Number, { nullable: true })
+  min?: number;
 
-//   @Field({ nullable: true })
-//   hint?: string;
+  @Field(() => String, { nullable: true })
+  hint?: string;
 
-//   @Field({ nullable: true })
-//   required?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  required?: boolean;
 
-//   @Field()
-//   env_variable!: string;
-// }
+  @Field(() => String)
+  env_variable!: string;
+}
 
 @ObjectType()
-class App {
+class AppConfig {
   @Field(() => String)
   id!: string;
 
@@ -60,23 +60,26 @@ class App {
   @Field(() => Boolean)
   installed!: boolean;
 
-  @Field(() => [AppCategoriesEnum])
+  @Field(() => [String])
   categories!: AppCategoriesEnum[];
 
-  @Field(() => AppStatusEnum)
+  @Field(() => String)
   status!: AppStatusEnum;
 
   @Field(() => String, { nullable: true })
   url_suffix?: string;
 
-  // @Field(() => [FormField])
-  // form_fields?: FormField[];
+  @Field(() => [FormField])
+  form_fields?: FormField[];
 }
 
 @ObjectType()
 class ListAppsResonse {
-  @Field(() => [App])
-  apps!: App[];
+  @Field(() => [AppConfig])
+  apps!: AppConfig[];
+
+  @Field(() => Number)
+  total!: number;
 }
 
-export { ListAppsResonse, App };
+export { ListAppsResonse, AppConfig };

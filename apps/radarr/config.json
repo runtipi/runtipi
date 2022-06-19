@@ -9,5 +9,5 @@
   "author": "radarr.video",
   "source": "https://github.com/Radarr/Radarr",
   "image": "/logos/apps/radarr.jpg",
-  "form_fields": {}
+  "form_fields": []
 }

@@ -9,5 +9,5 @@
   "author": "ArneNaessens",
   "source": "https://github.com/home-assistant/core",
   "image": "/logos/apps/homeassistant.jpg",
-  "form_fields": {}
+  "form_fields": []
 }

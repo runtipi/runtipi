@@ -15,15 +15,6 @@ services:
     networks:
       - tipi_main_network
 
-  redis:
-    container_name: redis
-    image: redis:latest
-    restart: on-failure
-    volumes:
-      - ./data/redis:/data
-    networks:
-      - tipi_main_network
-
   api:
     build:
       context: .
@@ -31,7 +22,6 @@ services:
     command: bash -c "cd /api && npm run dev"
     depends_on:
       - postgres
-      - redis
     container_name: api
     ports:
       - 3001:3001

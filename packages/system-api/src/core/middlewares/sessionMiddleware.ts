@@ -1,19 +1,14 @@
-import connectRedis from 'connect-redis';
 import session from 'express-session';
-import { createClient } from 'redis';
 import config from '../../config';
+import SessionFileStore from 'session-file-store';
 import { COOKIE_MAX_AGE, __prod__ } from '../../config/constants/constants';
 
 const getSessionMiddleware = async (): Promise<any> => {
-  const RedisStore = connectRedis(session);
-
-  const redisClient = createClient(config.redis);
-
-  await redisClient.connect();
+  const FileStore = SessionFileStore(session);
 
   return session({
     name: 'qid',
-    store: new RedisStore({ client: redisClient as any, disableTouch: true }),
+    store: new FileStore(),
     cookie: { maxAge: COOKIE_MAX_AGE, secure: __prod__, sameSite: 'lax', httpOnly: true },
     secret: config.JWT_SECRET,
     resave: false,

@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
-import redis from 'redis';
 import { DataSourceOptions } from 'typeorm';
+import App from '../modules/apps/app.entity';
 import { __prod__ } from './constants/constants';
 
 interface IConfig {
@@ -10,7 +10,6 @@ interface IConfig {
     LOGS_ERROR: string;
   };
   typeorm: DataSourceOptions;
-  redis: Parameters<typeof redis.createClient>[0];
   NODE_ENV: string;
   ROOT_FOLDER: string;
   JWT_SECRET: string;
@@ -51,11 +50,7 @@ const config: IConfig = {
     port: 5432,
     logging: !__prod__,
     synchronize: true,
-    entities: [],
-  },
-  redis: {
-    url: 'redis://redis:6379',
-    legacyMode: true,
+    entities: [App],
   },
   NODE_ENV,
   ROOT_FOLDER: '/tipi',

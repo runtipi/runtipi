@@ -9,5 +9,5 @@
   "author": "go-gitea",
   "source": "https://github.com/go-gitea/gitea",
   "image": "/logos/apps/gitea.jpg",
-  "form_fields": {}
+  "form_fields": []
 }

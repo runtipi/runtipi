@@ -55,12 +55,12 @@ export const getInitalFormValues = (appName: string): Record<string, string> => 
   const envMap = getEnvMap(appName);
   const formValues: Record<string, string> = {};
 
-  Object.keys(configFile.form_fields).forEach((key) => {
-    const envVar = configFile.form_fields[key].env_variable;
+  configFile.form_fields.forEach((field) => {
+    const envVar = field.env_variable;
     const envVarValue = envMap.get(envVar);
 
     if (envVarValue) {
-      formValues[key] = envVarValue;
+      formValues[field.env_variable] = envVarValue;
     }
   });
 
