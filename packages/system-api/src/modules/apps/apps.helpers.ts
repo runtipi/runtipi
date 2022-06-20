@@ -40,11 +40,11 @@ export const checkEnvFile = (appName: string) => {
   const configFile: AppConfig = readJsonFile(`/apps/${appName}/config.json`);
   const envMap = getEnvMap(appName);
 
-  Object.keys(configFile.form_fields).forEach((key) => {
-    const envVar = configFile.form_fields[key].env_variable;
+  configFile.form_fields.forEach((field) => {
+    const envVar = field.env_variable;
     const envVarValue = envMap.get(envVar);
 
-    if (!envVarValue && configFile.form_fields[key].required) {
+    if (!envVarValue && field.required) {
       throw new Error('New info needed. App config needs to be updated');
     }
   });
@@ -109,14 +109,14 @@ export const generateEnvFile = (appName: string, form: Record<string, string>) =
   const baseEnvFile = readFile('/.env').toString();
   let envFile = `${baseEnvFile}\nAPP_PORT=${configFile.port}\n`;
 
-  Object.keys(configFile.form_fields).forEach((key) => {
-    const value = form[key];
+  configFile.form_fields.forEach((field) => {
+    const formValue = form[field.env_variable];
 
-    if (value) {
-      const envVar = configFile.form_fields[key].env_variable;
-      envFile += `${envVar}=${value}\n`;
-    } else if (configFile.form_fields[key].required) {
-      throw new Error(`Variable ${key} is required`);
+    if (formValue) {
+      const envVar = field.env_variable;
+      envFile += `${envVar}=${formValue}\n`;
+    } else if (field.required) {
+      throw new Error(`Variable ${field.env_variable} is required`);
     }
   });
 

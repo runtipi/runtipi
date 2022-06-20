@@ -4,3 +4,4 @@ dist/
 # testing
 coverage/
 logs/
+sessions/

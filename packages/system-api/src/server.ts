@@ -9,6 +9,7 @@ import { ApolloLogs } from './config/logger/apollo.logger';
 import { createServer } from 'http';
 import logger from './config/logger/logger';
 import getSessionMiddleware from './core/middlewares/sessionMiddleware';
+import { MyContext } from './types';
 
 const main = async () => {
   try {
@@ -27,6 +28,7 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
       schema,
+      context: ({ req, res }): MyContext => ({ req, res }),
       plugins: [Playground({ settings: { 'request.credentials': 'include' } }), ApolloLogs],
     });
     await apolloServer.start();

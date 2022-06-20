@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import { DataSourceOptions } from 'typeorm';
 import App from '../modules/apps/app.entity';
+import User from '../modules/auth/user.entity';
 import { __prod__ } from './constants/constants';
 
 interface IConfig {
@@ -43,14 +44,14 @@ const config: IConfig = {
   },
   typeorm: {
     type: 'postgres',
-    host: 'postgres',
+    host: 'tipi-db',
     database: POSTGRES_DB,
     username: POSTGRES_USER,
     password: POSTGRES_PASSWORD,
     port: 5432,
     logging: !__prod__,
     synchronize: true,
-    entities: [App],
+    entities: [App, User],
   },
   NODE_ENV,
   ROOT_FOLDER: '/tipi',

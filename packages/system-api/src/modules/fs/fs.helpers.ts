@@ -17,7 +17,11 @@ export const fileExists = (path: string): boolean => fs.existsSync(getAbsolutePa
 
 export const writeFile = (path: string, data: any) => fs.writeFileSync(getAbsolutePath(path), data);
 
-export const createFolder = (path: string) => fs.mkdirSync(getAbsolutePath(path));
+export const createFolder = (path: string) => {
+  if (!fileExists(path)) {
+    fs.mkdirSync(getAbsolutePath(path));
+  }
+};
 export const deleteFolder = (path: string) => fs.rmSync(getAbsolutePath(path), { recursive: true });
 
 export const copyFile = (source: string, destination: string) => fs.copyFileSync(getAbsolutePath(source), getAbsolutePath(destination));

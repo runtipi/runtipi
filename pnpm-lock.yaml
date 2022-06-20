@@ -160,6 +160,7 @@ importers:
       express: ^4.17.3
       express-session: ^1.17.3
       graphql: ^15.3.0
+      graphql-type-json: ^0.3.2
       helmet: ^5.0.2
       http: 0.0.1-security
       internal-ip: ^6.0.0
@@ -200,6 +201,7 @@ importers:
       express: 4.18.1
       express-session: 1.17.3
       graphql: 15.8.0
+      graphql-type-json: 0.3.2_graphql@15.8.0
       helmet: 5.0.2
       http: 0.0.1-security
       internal-ip: 6.2.0
@@ -4683,7 +4685,7 @@ packages:
       eslint-import-resolver-webpack:
         optional: true
     dependencies:
-      '@typescript-eslint/parser': 5.22.0_uhoeudlwl7kc47h4kncsfowede
+      '@typescript-eslint/parser': 5.22.0_hcfsmds2fshutdssjqluwm76uu
       debug: 3.2.7
       eslint-import-resolver-node: 0.3.6
       find-up: 2.1.0
@@ -5571,6 +5573,14 @@ packages:
     dependencies:
       graphql: 15.8.0
       tslib: 2.4.0
+    dev: false
+
+  /graphql-type-json/0.3.2_graphql@15.8.0:
+    resolution: {integrity: sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==}
+    peerDependencies:
+      graphql: '>=0.8.0'
+    dependencies:
+      graphql: 15.8.0
     dev: false
 
   /graphql/15.8.0:

@@ -34,6 +34,7 @@
     "express": "^4.17.3",
     "express-session": "^1.17.3",
     "graphql": "^15.3.0",
+    "graphql-type-json": "^0.3.2",
     "helmet": "^5.0.2",
     "http": "0.0.1-security",
     "internal-ip": "^6.0.0",

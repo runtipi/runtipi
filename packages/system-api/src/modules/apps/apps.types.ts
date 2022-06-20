@@ -1,5 +1,6 @@
 import { AppCategoriesEnum, AppStatusEnum, FieldTypes } from '@runtipi/common';
-import { Field, ObjectType } from 'type-graphql';
+import { Field, InputType, ObjectType } from 'type-graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 @ObjectType()
 class FormField {
@@ -82,4 +83,13 @@ class ListAppsResonse {
   total!: number;
 }
 
-export { ListAppsResonse, AppConfig };
+@InputType()
+class AppInputType {
+  @Field(() => String)
+  id!: string;
+
+  @Field(() => GraphQLJSONObject)
+  form!: Record<string, string>;
+}
+
+export { ListAppsResonse, AppConfig, AppInputType };

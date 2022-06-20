@@ -3,6 +3,7 @@ import * as argon2 from 'argon2';
 import { IUser, Maybe } from '../../config/types';
 import { readJsonFile } from '../fs/fs.helpers';
 import config from '../../config';
+import User from './user.entity';
 
 const getUser = (email: string): Maybe<IUser> => {
   const savedUser: IUser[] = readJsonFile('/state/users.json');
@@ -14,12 +15,12 @@ const compareHashPassword = (password: string, hash = ''): Promise<boolean> => {
   return argon2.verify(hash, password);
 };
 
-const getJwtToken = async (user: IUser, password: string) => {
+const getJwtToken = async (user: User, password: string) => {
   const validPassword = await compareHashPassword(password, user.password);
 
   if (validPassword) {
     if (config.JWT_SECRET) {
-      return jsonwebtoken.sign({ email: user.email }, config.JWT_SECRET, {
+      return jsonwebtoken.sign({ email: user.username }, config.JWT_SECRET, {
         expiresIn: '7d',
       });
     } else {

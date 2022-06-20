@@ -1,42 +1,52 @@
 import * as argon2 from 'argon2';
-import { IUser } from '../../config/types';
-import { readJsonFile, writeFile } from '../fs/fs.helpers';
-import AuthHelpers from './auth.helpers';
+import { UsernamePasswordInput, UserResponse } from './auth.types';
+import User from './user.entity';
 
-const login = async (email: string, password: string) => {
-  const user = AuthHelpers.getUser(email);
+const login = async (input: UsernamePasswordInput): Promise<UserResponse> => {
+  const { password, username } = input;
+
+  const user = await User.findOne({ where: { username: username.trim().toLowerCase() } });
 
   if (!user) {
     throw new Error('User not found');
   }
 
-  return AuthHelpers.getJwtToken(user, password);
-};
+  const isPasswordValid = await argon2.verify(user.password, password);
 
-const register = async (email: string, password: string, name: string) => {
-  const users: IUser[] = readJsonFile('/state/users.json');
-
-  if (users.length > 0) {
-    throw new Error('There is already an admin user');
+  if (!isPasswordValid) {
+    throw new Error('Wrong password');
   }
 
-  if (!email || !password) {
+  return { user };
+};
+
+const register = async (input: UsernamePasswordInput): Promise<UserResponse> => {
+  const { password, username } = input;
+
+  if (!username || !password) {
     throw new Error('Missing email or password');
   }
 
   const hash = await argon2.hash(password);
-  const newuser: IUser = { email, name, password: hash };
+  const newUser = await User.create({ username: username.trim().toLowerCase(), password: hash }).save();
 
-  const token = await AuthHelpers.getJwtToken(newuser, password);
+  return { user: newUser };
+};
 
-  writeFile('/state/users.json', JSON.stringify([newuser]));
+const me = async (userId?: number): Promise<User | null> => {
+  if (!userId) return null;
 
-  return token;
+  const user = await User.findOne({ where: { id: userId } });
+
+  if (!user) return null;
+
+  return user;
 };
 
 const AuthService = {
   login,
   register,
+  me,
 };
 
 export default AuthService;
