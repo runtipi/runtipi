@@ -1,5 +1,6 @@
 .pnpm-debug.log
 .env*
+data/
 github.secrets
 node_modules/
 app-data/*

@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-set -e # Exit immediately if a command exits with a non-zero status.
-
 ROOT_FOLDER="$(readlink -f "$(dirname "${BASH_SOURCE[0]}")"/..)"
 
 echo
@@ -16,6 +14,7 @@ echo
 
 function install_docker() {
   local os="${1}"
+  echo "Installing docker for os ${os}" >/dev/tty
 
   if [[ "${OS}" == "debian" ]]; then
     sudo apt-get update
@@ -25,7 +24,7 @@ function install_docker() {
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-    echo "sucess"
+    return 0
   elif [[ "${OS}" == "ubuntu" ]]; then
     sudo apt-get update
     sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
@@ -34,21 +33,21 @@ function install_docker() {
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-    echo "sucess"
+    return 0
   elif [[ "${OS}" == "centos" ]]; then
     sudo yum install -y yum-utils jq
     sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     sudo yum install -y --allowerasing docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
-    echo "sucess"
+    return 0
   elif [[ "${OS}" == "fedora" ]]; then
     sudo dnf -y install dnf-plugins-core jq
     sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
     sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
-    echo "sucess"
+    return 0
   elif [[ "${OS}" == "arch" ]]; then
     sudo pacman -Sy --noconfirm docker jq
     sudo systemctl start docker.service
@@ -59,9 +58,9 @@ function install_docker() {
       systemctl enable --now cronie.service
     fi
 
-    echo "sucess"
+    return 0
   else
-    echo "error"
+    return 1
   fi
 }
 
@@ -71,17 +70,20 @@ SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | un
 if command -v docker >/dev/null; then
   echo "Docker is already installed"
 else
-  echo "Installing Docker"
-  DOCKER_SUCCESS=$(install_docker "${OS}")
-  if [[ "${DOCKER_SUCCESS}" == "sucess" ]]; then
+  install_docker "${OS}"
+  docker_result=$?
+
+  if [[ docker_result -eq 0 ]]; then
     echo "docker installed"
   else
-    DOCKER_SUCCESS=$(install_docker "${SUB_OS}")
+    echo "Your system ${OS} is not supported trying with sub_os ${SUB_OS}"
+    install_docker "${SUB_OS}"
+    docker_sub_result=$?
 
-    if [[ "${DOCKER_SUCCESS}" == "sucess" ]]; then
+    if [[ docker_sub_result -eq 0 ]]; then
       echo "docker installed"
     else
-      echo "Your system ${OS} is not supported please install docker manually"
+      echo "Your system ${SUB_OS} is not supported please install docker manually"
       exit 1
     fi
   fi
