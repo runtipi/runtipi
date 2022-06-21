@@ -1,20 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import type { NextPage } from 'next';
 import Layout from '../../components/Layout';
 import AppStoreContainer from '../../modules/AppStore/containers/AppStoreContainer';
-import { useAppsStore } from '../../state/appsStore';
-import { RequestStatus } from '../../core/types';
+import { useListAppsQuery } from '../../generated/graphql';
 
 const Apps: NextPage = () => {
-  const { fetch, status, apps } = useAppsStore((state) => state);
-
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  const { loading, data } = useListAppsQuery();
 
   return (
-    <Layout loading={status === RequestStatus.LOADING && apps.length === 0}>
-      <AppStoreContainer />
+    <Layout loading={loading && !data}>
+      <AppStoreContainer apps={data?.listAppsInfo.apps || []} />
     </Layout>
   );
 };

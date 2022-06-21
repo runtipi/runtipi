@@ -1,4 +1,4 @@
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { MyContext } from '../../types';
 import { UsernamePasswordInput, UserResponse } from './auth.types';
 
@@ -36,7 +36,6 @@ export default class AuthResolver {
     return { user };
   }
 
-  @Authorized()
   @Mutation(() => Boolean)
   logout(@Ctx() { req }: MyContext): boolean {
     req.session.userId = undefined;

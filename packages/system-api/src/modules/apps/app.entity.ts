@@ -1,6 +1,11 @@
 import { AppStatusEnum } from '@runtipi/common';
-import { Field, ObjectType } from 'type-graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
+import { Field, ObjectType, registerEnumType } from 'type-graphql';
 import { BaseEntity, Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
+
+registerEnumType(AppStatusEnum, {
+  name: 'AppStatusEnum',
+});
 
 @ObjectType()
 @Entity()
@@ -9,7 +14,7 @@ class App extends BaseEntity {
   @Column({ type: 'varchar', primary: true, unique: true })
   id!: string;
 
-  @Field(() => String)
+  @Field(() => AppStatusEnum)
   @Column({ type: 'enum', enum: AppStatusEnum, default: AppStatusEnum.STOPPED, nullable: false })
   status!: AppStatusEnum;
 
@@ -20,6 +25,10 @@ class App extends BaseEntity {
   @Field(() => Number)
   @Column({ type: 'integer', default: 0, nullable: false })
   numOpened!: number;
+
+  @Field(() => GraphQLJSONObject)
+  @Column({ type: 'jsonb', nullable: false })
+  config!: Record<string, string>;
 
   @Field(() => Date)
   @CreateDateColumn()

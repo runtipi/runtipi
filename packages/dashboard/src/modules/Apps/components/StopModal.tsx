@@ -1,9 +1,9 @@
 import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from '@chakra-ui/react';
 import React from 'react';
-import { AppConfig } from '@runtipi/common';
+import { AppInfo } from '../../../generated/graphql';
 
 interface IProps {
-  app: AppConfig;
+  app: AppInfo;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;

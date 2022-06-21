@@ -1,27 +1,17 @@
 import { SimpleGrid, Text } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BsCpu } from 'react-icons/bs';
 import { FaMemory } from 'react-icons/fa';
 import { FiHardDrive } from 'react-icons/fi';
-import { useSytemStore } from '../../../state/systemStore';
+import { SystemInfoResponse } from '../../../generated/graphql';
 import SystemStat from '../components/SystemStat';
 
-const Dashboard: React.FC = () => {
-  const { fetchDiskSpace, fetchCpuLoad, fetchMemoryLoad, disk, cpuLoad, memory } = useSytemStore();
+interface IProps {
+  data: SystemInfoResponse;
+}
 
-  useEffect(() => {
-    fetchDiskSpace();
-    fetchCpuLoad();
-    fetchMemoryLoad();
-
-    const interval = setInterval(() => {
-      fetchDiskSpace();
-      fetchCpuLoad();
-      fetchMemoryLoad();
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [fetchCpuLoad, fetchDiskSpace, fetchMemoryLoad]);
+const Dashboard: React.FC<IProps> = ({ data }) => {
+  const { disk, memory, cpu } = data;
 
   // Convert bytes to GB
   const diskFree = Math.round(disk.available / 1024 / 1024 / 1024);
@@ -43,7 +33,7 @@ const Dashboard: React.FC = () => {
       </Text>
       <SimpleGrid className="mt-5" minChildWidth="180px" spacing="20px">
         <SystemStat title="Disk space" metric={`${diskUsed} GB`} subtitle={`Used out of ${diskSize} GB`} icon={FiHardDrive} progress={percentUsed} />
-        <SystemStat title="CPU Load" metric={`${cpuLoad.toFixed(2)}%`} subtitle="Uninstall apps if there is to much load" icon={BsCpu} progress={cpuLoad} />
+        <SystemStat title="CPU Load" metric={`${cpu.load.toFixed(2)}%`} subtitle="Uninstall apps if there is to much load" icon={BsCpu} progress={cpu.load} />
         <SystemStat title="Memory Used" metric={`${percentUsedMemory}%`} subtitle={`${memoryTotal} GB`} icon={FaMemory} progress={percentUsedMemory} />
       </SimpleGrid>
     </>

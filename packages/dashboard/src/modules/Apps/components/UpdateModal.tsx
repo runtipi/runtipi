@@ -2,11 +2,11 @@ import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOve
 import React, { useEffect } from 'react';
 import useSWR from 'swr';
 import fetcher from '../../../core/fetcher';
-import { AppConfig } from '@runtipi/common';
 import InstallForm from './InstallForm';
+import { AppInfo } from '../../../generated/graphql';
 
 interface IProps {
-  app: AppConfig;
+  app: AppInfo;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (values: Record<string, any>) => void;

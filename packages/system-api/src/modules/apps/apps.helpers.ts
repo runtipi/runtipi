@@ -50,23 +50,6 @@ export const checkEnvFile = (appName: string) => {
   });
 };
 
-export const getInitalFormValues = (appName: string): Record<string, string> => {
-  const configFile: AppConfig = readJsonFile(`/apps/${appName}/config.json`);
-  const envMap = getEnvMap(appName);
-  const formValues: Record<string, string> = {};
-
-  configFile.form_fields.forEach((field) => {
-    const envVar = field.env_variable;
-    const envVarValue = envMap.get(envVar);
-
-    if (envVarValue) {
-      formValues[field.env_variable] = envVarValue;
-    }
-  });
-
-  return formValues;
-};
-
 export const checkAppExists = (appName: string) => {
   const appExists = fileExists(`/app-data/${appName}`);
 

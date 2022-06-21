@@ -27,6 +27,12 @@ const register = async (input: UsernamePasswordInput): Promise<UserResponse> => 
     throw new Error('Missing email or password');
   }
 
+  const user = await User.findOne({ where: { username: username.trim().toLowerCase() } });
+
+  if (user) {
+    throw new Error('User already exists');
+  }
+
   const hash = await argon2.hash(password);
   const newUser = await User.create({ username: username.trim().toLowerCase(), password: hash }).save();
 

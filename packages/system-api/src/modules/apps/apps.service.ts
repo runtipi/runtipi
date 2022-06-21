@@ -1,8 +1,7 @@
-import si from 'systeminformation';
 import { AppStatusEnum } from '@runtipi/common';
 import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, getInitalFormValues, getStateFile, runAppScript } from './apps.helpers';
-import { AppConfig, ListAppsResonse } from './apps.types';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, getStateFile, runAppScript } from './apps.helpers';
+import { AppInfo, AppResponse, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 
 const startApp = async (appName: string): Promise<App> => {
@@ -15,8 +14,7 @@ const startApp = async (appName: string): Promise<App> => {
   checkEnvFile(appName);
 
   // Regenerate env file
-  const form = getInitalFormValues(appName);
-  generateEnvFile(appName, form);
+  generateEnvFile(appName, app.config);
 
   await App.update({ id: appName }, { status: AppStatusEnum.STARTING });
   // Run script
@@ -46,7 +44,7 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
     // Create env file
     generateEnvFile(id, form);
 
-    await App.create({ id, status: AppStatusEnum.INSTALLING }).save();
+    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form }).save();
 
     // Run script
     await runAppScript(['install', id]);
@@ -58,7 +56,7 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
 };
 
 const listApps = async (): Promise<ListAppsResonse> => {
-  const apps: AppConfig[] = getAvailableApps()
+  const apps: AppInfo[] = getAvailableApps()
     .map((app) => {
       try {
         return readJsonFile(`/apps/${app}/config.json`);
@@ -68,41 +66,39 @@ const listApps = async (): Promise<ListAppsResonse> => {
     })
     .filter(Boolean);
 
-  const dockerContainers = await si.dockerContainers();
-
   const state = getStateFile();
   const installed: string[] = state.installed.split(' ').filter(Boolean);
 
   apps.forEach((app) => {
     app.installed = installed.includes(app.id);
-    app.status = (dockerContainers.find((container) => container.name === `${app.id}`)?.state as AppStatusEnum) || AppStatusEnum.STOPPED;
     app.description = readFile(`/apps/${app.id}/metadata/description.md`);
   });
 
   return { apps, total: apps.length };
 };
 
-const getAppInfo = async (id: string): Promise<AppConfig> => {
-  const dockerContainers = await si.dockerContainers();
-  const configFile: AppConfig = readJsonFile(`/apps/${id}/config.json`);
+const getAppInfo = (id: string): AppInfo => {
+  const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
 
   const state = getStateFile();
   const installed: string[] = state.installed.split(' ').filter(Boolean);
   configFile.installed = installed.includes(id);
-  configFile.status = (dockerContainers.find((container) => container.name === `${id}`)?.state as AppStatusEnum) || AppStatusEnum.STOPPED;
   configFile.description = readFile(`/apps/${id}/metadata/description.md`);
 
   return configFile;
 };
 
 const updateAppConfig = async (id: string, form: Record<string, string>): Promise<App> => {
-  const app = await App.findOne({ where: { id } });
+  let app = await App.findOne({ where: { id } });
 
   if (!app) {
     throw new Error(`App ${id} not found`);
   }
 
   generateEnvFile(id, form);
+  await App.update({ id }, { config: form });
+
+  app = (await App.findOne({ where: { id } })) as App;
 
   return app;
 };
@@ -136,4 +132,13 @@ const uninstallApp = async (id: string): Promise<boolean> => {
   return true;
 };
 
-export default { installApp, startApp, listApps, getAppInfo, updateAppConfig, stopApp, uninstallApp };
+const getApp = async (id: string): Promise<AppResponse> => {
+  const app = await App.findOne({ where: { id } });
+
+  return {
+    info: getAppInfo(id),
+    app,
+  };
+};
+
+export default { installApp, startApp, listApps, getApp, updateAppConfig, stopApp, uninstallApp };

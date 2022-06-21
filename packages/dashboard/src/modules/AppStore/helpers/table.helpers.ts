@@ -1,6 +1,8 @@
-import { AppCategoriesEnum, AppConfig } from '@runtipi/common';
+import { AppCategoriesEnum } from '@runtipi/common';
+import { AppConfig } from '../../../generated/graphql';
+import { AppTableData } from './table.types';
 
-export const sortTable = (data: AppConfig[], col: keyof Pick<AppConfig, 'name'>, direction: 'asc' | 'desc', categories: AppCategoriesEnum[], search: string) => {
+export const sortTable = (data: AppTableData, col: keyof Pick<AppConfig, 'name'>, direction: 'asc' | 'desc', categories: AppCategoriesEnum[], search: string) => {
   const sortedData = [...data].sort((a, b) => {
     const aVal = a[col];
     const bVal = b[col];
@@ -14,7 +16,7 @@ export const sortTable = (data: AppConfig[], col: keyof Pick<AppConfig, 'name'>,
   });
 
   if (categories.length > 0) {
-    return sortedData.filter((app) => app.categories.some((c) => categories.includes(c))).filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
+    return sortedData.filter((app) => app.categories.some((c) => categories.includes(c as AppCategoriesEnum))).filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
   } else {
     return sortedData.filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
   }

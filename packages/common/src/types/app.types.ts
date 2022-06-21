@@ -51,7 +51,7 @@ export interface AppConfig {
     ports?: number[];
   };
   description: string;
-  version: string;
+  version?: string;
   image: string;
   form_fields: FormField[];
   short_desc: string;
