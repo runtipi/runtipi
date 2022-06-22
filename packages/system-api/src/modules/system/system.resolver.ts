@@ -9,7 +9,7 @@ export default class AuthResolver {
     return SystemService.systemInfo();
   }
 
-  @Query(() => String)
+  @Query(() => VersionResponse)
   async version(): Promise<VersionResponse> {
     return SystemService.getVersion();
   }

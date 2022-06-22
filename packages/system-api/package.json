@@ -10,6 +10,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest --colors",
     "test:watch": "jest --watch",
     "build": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --analyze=verbose --external:./node_modules/* --format=esm",

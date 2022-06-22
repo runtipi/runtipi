@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react';
 import { ApolloClient } from '@apollo/client';
 import axios from 'axios';
-import * as React from 'react';
 import useSWR, { BareFetcher } from 'swr';
 import { createApolloClient } from '../core/apollo/client';
 import { useSytemStore } from '../state/systemStore';
@@ -17,8 +17,8 @@ const fetcher: BareFetcher<any> = (url: string) => {
 export default function useCachedResources(): IReturnProps {
   const { data } = useSWR('/api/ip', fetcher);
   const { internalIp, setInternalIp } = useSytemStore();
-  const [isLoadingComplete, setLoadingComplete] = React.useState(false);
-  const [client, setClient] = React.useState<ApolloClient<unknown>>();
+  const [isLoadingComplete, setLoadingComplete] = useState(false);
+  const [client, setClient] = useState<ApolloClient<unknown>>();
 
   async function loadResourcesAndDataAsync(ip: string) {
     try {
@@ -33,13 +33,13 @@ export default function useCachedResources(): IReturnProps {
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data?.ip && !internalIp) {
       setInternalIp(data.ip);
     }
   }, [data?.ip, internalIp, setInternalIp]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (internalIp) {
       loadResourcesAndDataAsync(internalIp);
     }

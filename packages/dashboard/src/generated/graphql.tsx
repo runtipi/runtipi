@@ -57,7 +57,7 @@ export type AppInfo = {
   installed: Scalars['Boolean'];
   name: Scalars['String'];
   port: Scalars['Float'];
-  requirements?: Maybe<Requirements>;
+  requirements?: Maybe<Scalars['JSONObject']>;
   short_desc: Scalars['String'];
   source: Scalars['String'];
   url_suffix?: Maybe<Scalars['String']>;
@@ -167,16 +167,11 @@ export type Query = {
   listAppsInfo: ListAppsResonse;
   me?: Maybe<User>;
   systemInfo?: Maybe<SystemInfoResponse>;
-  version: Scalars['String'];
+  version: VersionResponse;
 };
 
 export type QueryGetAppArgs = {
   id: Scalars['String'];
-};
-
-export type Requirements = {
-  __typename?: 'Requirements';
-  ports?: Maybe<Array<Scalars['Float']>>;
 };
 
 export type SystemInfoResponse = {
@@ -202,6 +197,12 @@ export type UserResponse = {
 export type UsernamePasswordInput = {
   password: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type VersionResponse = {
+  __typename?: 'VersionResponse';
+  current: Scalars['String'];
+  latest?: Maybe<Scalars['String']>;
 };
 
 export type InstallAppMutationVariables = Exact<{
@@ -345,6 +346,10 @@ export type SystemInfoQuery = {
     memory: { __typename?: 'DiskMemory'; available: number; used: number; total: number };
   } | null;
 };
+
+export type VersionQueryVariables = Exact<{ [key: string]: never }>;
+
+export type VersionQuery = { __typename?: 'Query'; version: { __typename?: 'VersionResponse'; current: string; latest?: string | null } };
 
 export const InstallAppDocument = gql`
   mutation InstallApp($input: AppInputType!) {
@@ -883,3 +888,38 @@ export function useSystemInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type SystemInfoQueryHookResult = ReturnType<typeof useSystemInfoQuery>;
 export type SystemInfoLazyQueryHookResult = ReturnType<typeof useSystemInfoLazyQuery>;
 export type SystemInfoQueryResult = Apollo.QueryResult<SystemInfoQuery, SystemInfoQueryVariables>;
+export const VersionDocument = gql`
+  query Version {
+    version {
+      current
+      latest
+    }
+  }
+`;
+
+/**
+ * __useVersionQuery__
+ *
+ * To run a query within a React component, call `useVersionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVersionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVersionQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useVersionQuery(baseOptions?: Apollo.QueryHookOptions<VersionQuery, VersionQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<VersionQuery, VersionQueryVariables>(VersionDocument, options);
+}
+export function useVersionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VersionQuery, VersionQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<VersionQuery, VersionQueryVariables>(VersionDocument, options);
+}
+export type VersionQueryHookResult = ReturnType<typeof useVersionQuery>;
+export type VersionLazyQueryHookResult = ReturnType<typeof useVersionLazyQuery>;
+export type VersionQueryResult = Apollo.QueryResult<VersionQuery, VersionQueryVariables>;
