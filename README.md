@@ -1,6 +1,6 @@
 # ⛺️ Tipi — A personal homeserver for everyone
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
@@ -116,6 +116,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/DrMxrcy"><img src="https://avatars.githubusercontent.com/u/58747968?v=4?s=100" width="100px;" alt=""/><br /><sub><b>DrMxrcy</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=DrMxrcy" title="Code">💻</a> <a href="#ideas-DrMxrcy" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/meienberger/runtipi/commits?author=DrMxrcy" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://cobre.dev"><img src="https://avatars.githubusercontent.com/u/36574329?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cooper</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=CobreDev" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/JTruj1ll0923"><img src="https://avatars.githubusercontent.com/u/6656643?v=4?s=100" width="100px;" alt=""/><br /><sub><b>JTruj1ll0923</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=JTruj1ll0923" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Stetsed"><img src="https://avatars.githubusercontent.com/u/33891782?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stetsed</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=Stetsed" title="Code">💻</a></td>
   </tr>
 </table>
 
