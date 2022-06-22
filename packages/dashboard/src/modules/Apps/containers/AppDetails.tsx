@@ -9,7 +9,7 @@ import UninstallModal from '../components/UninstallModal';
 import UpdateModal from '../components/UpdateModal';
 import AppLogo from '../../../components/AppLogo/AppLogo';
 import Markdown from '../../../components/Markdown/Markdown';
-import { AppInfo, AppStatusEnum } from '../../../generated/graphql';
+import { AppInfo, AppStatusEnum, GetAppDocument, useInstallAppMutation } from '../../../generated/graphql';
 
 interface IProps {
   status?: AppStatusEnum;
@@ -22,6 +22,9 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
   const uninstallDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
+
+  // Mutations
+  const [install] = useInstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
 
   const { internalIp } = useSytemStore();
 
@@ -40,7 +43,7 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
   const handleInstallSubmit = async (values: Record<string, any>) => {
     installDisclosure.onClose();
     try {
-      await install(info.id, values);
+      await install({ variables: { input: { form: values, id: info.id } } });
     } catch (error) {
       handleError(error);
     }
