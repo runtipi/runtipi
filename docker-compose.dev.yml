@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: bash -c "cd /api && npm run dev"
+    command: /bin/sh -c "cd /api && npm run dev"
     depends_on:
       - tipi-db
     container_name: api
@@ -31,8 +31,8 @@ services:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}:/tipi
-      - ${PWD}/packages/system-api:/api
-      - /api/node_modules
+      - ${PWD}/packages/system-api/src:/api/src
+      # - /api/node_modules
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       TIPI_VERSION: ${TIPI_VERSION}
@@ -49,7 +49,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: bash -c "cd /dashboard && npm run dev"
+    command: /bin/sh -c "cd /dashboard && npm run dev"
     container_name: dashboard
     ports:
       - 3000:3000
@@ -58,9 +58,9 @@ services:
     environment:
       - INTERNAL_IP=${INTERNAL_IP}
     volumes:
-      - ${PWD}/packages/dashboard:/dashboard
-      - /dashboard/node_modules
-      - /dashboard/.next
+      - ${PWD}/packages/dashboard/src:/dashboard/src
+      # - /dashboard/node_modules
+      # - /dashboard/.next
     labels:
       traefik.enable: true
       traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&
@@ -71,9 +71,6 @@ services:
 networks:
   tipi_main_network:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.enable_ip_masquerade: "true"
-      com.docker.network.bridge.enable_icc: "true"
     ipam:
       driver: default
       config:

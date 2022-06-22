@@ -1,8 +1,8 @@
 import AppsService from '../apps.service';
 import fs from 'fs';
 import config from '../../../config';
-import { AppConfig, FieldTypes } from '@runtipi/common';
 import childProcess from 'child_process';
+import { AppConfig, FieldTypes } from '../apps.types';
 
 jest.mock('fs');
 jest.mock('child_process');
@@ -16,20 +16,20 @@ const testApp: Partial<AppConfig> = {
   id: 'test-app',
   port: 3000,
   available: true,
-  form_fields: {
-    test: {
+  form_fields: [
+    {
       type: FieldTypes.text,
       label: 'Test field',
       required: true,
       env_variable: 'TEST_FIELD',
     },
-    test2: {
+    {
       type: FieldTypes.text,
       label: 'Test field 2',
       required: false,
       env_variable: 'TEST_FIELD_2',
     },
-  },
+  ],
 };
 
 const testApp2: Partial<AppConfig> = {

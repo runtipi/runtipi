@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
-import { AppCategoriesEnum } from '@runtipi/common';
 import React from 'react';
+import { AppCategoriesEnum } from '../../../generated/graphql';
 import AppStoreTable from '../components/AppStoreTable';
 import { sortTable } from '../helpers/table.helpers';
 import { AppTableData, SortableColumns, SortDirection } from '../helpers/table.types';

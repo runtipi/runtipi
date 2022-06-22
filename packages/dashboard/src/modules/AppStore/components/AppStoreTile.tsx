@@ -1,8 +1,8 @@
 import { Tag, TagLabel } from '@chakra-ui/react';
-import { AppCategoriesEnum } from '@runtipi/common';
 import Link from 'next/link';
 import React from 'react';
 import AppLogo from '../../../components/AppLogo/AppLogo';
+import { AppCategoriesEnum } from '../../../generated/graphql';
 import { colorSchemeForCategory, limitText } from '../helpers/table.helpers';
 
 type App = {
@@ -23,7 +23,7 @@ const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
           <div className="text-sm mb-1">{limitText(app.short_desc, 45)}</div>
           {app.categories?.map((category) => (
             <Tag colorScheme={colorSchemeForCategory[category as AppCategoriesEnum]} className="mr-1" borderRadius="full" key={`${app.id}-${category}`} size="sm" variant="solid">
-              <TagLabel>{category}</TagLabel>
+              <TagLabel>{category.toLocaleLowerCase()}</TagLabel>
             </Tag>
           ))}
         </div>

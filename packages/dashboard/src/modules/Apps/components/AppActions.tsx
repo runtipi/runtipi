@@ -56,16 +56,18 @@ const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onS
           Install
           <FiPlay className="ml-1" />
         </Button>
-        <span className="text-gray-500 text-sm ml-2 mt-3 self-center text-center sm:text-left">{`App is ${status} please wait and don't refresh page...`}</span>
+        <span className="text-gray-500 text-sm ml-2 mt-3 self-center text-center sm:text-left">{`App is ${status.toLowerCase()} please wait and don't refresh page...`}</span>
       </div>
+    );
+  } else if (status === AppStatusEnum.Missing) {
+    return (
+      <Button onClick={onInstall} width={160} colorScheme="green" className="mt-3">
+        Install
+      </Button>
     );
   }
 
-  return (
-    <Button onClick={onInstall} width={160} colorScheme="green" className="mt-3">
-      Install
-    </Button>
-  );
+  return null;
 };
 
 export default AppActions;

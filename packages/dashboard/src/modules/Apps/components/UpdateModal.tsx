@@ -1,24 +1,17 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
-import useSWR from 'swr';
-import fetcher from '../../../core/fetcher';
+import React from 'react';
 import InstallForm from './InstallForm';
-import { AppInfo } from '../../../generated/graphql';
+import { App, AppInfo } from '../../../generated/graphql';
 
 interface IProps {
   app: AppInfo;
+  config: App['config'];
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (values: Record<string, any>) => void;
 }
 
-const UpdateModal: React.FC<IProps> = ({ app, isOpen, onClose, onSubmit }) => {
-  const { data, mutate } = useSWR<Record<string, string>>(`/apps/form/${app.id}`, fetcher, { refreshInterval: 10 });
-
-  useEffect(() => {
-    mutate({}, true);
-  }, [isOpen, mutate]);
-
+const UpdateModal: React.FC<IProps> = ({ app, config, isOpen, onClose, onSubmit }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -26,7 +19,7 @@ const UpdateModal: React.FC<IProps> = ({ app, isOpen, onClose, onSubmit }) => {
         <ModalHeader>Update {app.name} config</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <InstallForm onSubmit={onSubmit} formFields={app.form_fields} initalValues={data} />
+          <InstallForm onSubmit={onSubmit} formFields={app.form_fields} initalValues={config} />
         </ModalBody>
       </ModalContent>
     </Modal>

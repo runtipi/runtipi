@@ -9,14 +9,24 @@ import UninstallModal from '../components/UninstallModal';
 import UpdateModal from '../components/UpdateModal';
 import AppLogo from '../../../components/AppLogo/AppLogo';
 import Markdown from '../../../components/Markdown/Markdown';
-import { AppInfo, AppStatusEnum, GetAppDocument, useInstallAppMutation } from '../../../generated/graphql';
+import {
+  App,
+  AppInfo,
+  AppStatusEnum,
+  GetAppDocument,
+  useInstallAppMutation,
+  useStartAppMutation,
+  useStopAppMutation,
+  useUninstallAppMutation,
+  useUpdateAppConfigMutation,
+} from '../../../generated/graphql';
 
 interface IProps {
-  status?: AppStatusEnum;
+  app?: Pick<App, 'status' | 'config'>;
   info: AppInfo;
 }
 
-const AppDetails: React.FC<IProps> = ({ status, info }) => {
+const AppDetails: React.FC<IProps> = ({ app, info }) => {
   const toast = useToast();
   const installDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
@@ -25,6 +35,10 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
 
   // Mutations
   const [install] = useInstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+  const [uninstall] = useUninstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+  const [stop] = useStopAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+  const [start] = useStartAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+  const [update] = useUpdateAppConfigMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
 
   const { internalIp } = useSytemStore();
 
@@ -43,7 +57,7 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
   const handleInstallSubmit = async (values: Record<string, any>) => {
     installDisclosure.onClose();
     try {
-      await install({ variables: { input: { form: values, id: info.id } } });
+      await install({ variables: { input: { form: values, id: info.id } }, optimisticResponse: { installApp: { id: info.id, status: AppStatusEnum.Installing, __typename: 'App' } } });
     } catch (error) {
       handleError(error);
     }
@@ -52,7 +66,7 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
   const handleUnistallSubmit = async () => {
     uninstallDisclosure.onClose();
     try {
-      await uninstall(info.id);
+      await uninstall({ variables: { id: info.id }, optimisticResponse: { uninstallApp: { id: info.id, status: AppStatusEnum.Uninstalling, __typename: 'App' } } });
     } catch (error) {
       handleError(error);
     }
@@ -61,7 +75,7 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
   const handleStopSubmit = async () => {
     stopDisclosure.onClose();
     try {
-      await stop(info.id);
+      await stop({ variables: { id: info.id }, optimisticResponse: { stopApp: { id: info.id, status: AppStatusEnum.Stopping, __typename: 'App' } } });
     } catch (error) {
       handleError(error);
     }
@@ -69,7 +83,7 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
 
   const handleStartSubmit = async () => {
     try {
-      await start(info.id);
+      await start({ variables: { id: info.id }, optimisticResponse: { startApp: { id: info.id, status: AppStatusEnum.Starting, __typename: 'App' } } });
     } catch (e: unknown) {
       handleError(e);
     }
@@ -77,7 +91,7 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
 
   const handleUpdateSubmit = async (values: Record<string, any>) => {
     try {
-      await update(info.id, values);
+      await update({ variables: { input: { form: values, id: info.id } } });
       toast({
         title: 'Success',
         description: 'App config updated successfully',
@@ -122,7 +136,7 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
                 onUninstall={uninstallDisclosure.onOpen}
                 onInstall={installDisclosure.onOpen}
                 app={info}
-                status={status}
+                status={app?.status}
               />
             </div>
           </VStack>
@@ -132,7 +146,7 @@ const AppDetails: React.FC<IProps> = ({ status, info }) => {
         <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.onClose} app={info} />
         <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.onClose} app={info} />
         <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.onClose} app={info} />
-        <UpdateModal onSubmit={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} />
+        <UpdateModal onSubmit={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} config={app?.config} />
       </div>
     </SlideFade>
   );

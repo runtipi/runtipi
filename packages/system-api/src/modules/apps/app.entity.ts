@@ -1,7 +1,8 @@
-import { AppStatusEnum } from '@runtipi/common';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { Field, ObjectType, registerEnumType } from 'type-graphql';
 import { BaseEntity, Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
+import { getAppInfo } from './apps.helpers';
+import { AppInfo, AppStatusEnum } from './apps.types';
 
 registerEnumType(AppStatusEnum, {
   name: 'AppStatusEnum',
@@ -37,6 +38,11 @@ class App extends BaseEntity {
   @Field(() => Date)
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @Field(() => AppInfo)
+  info(): AppInfo {
+    return getAppInfo(this.id);
+  }
 }
 
 export default App;

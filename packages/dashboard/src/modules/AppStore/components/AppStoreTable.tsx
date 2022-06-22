@@ -1,6 +1,6 @@
 import { Flex, Input, SimpleGrid } from '@chakra-ui/react';
-import { AppCategoriesEnum } from '@runtipi/common';
 import React from 'react';
+import { AppCategoriesEnum } from '../../../generated/graphql';
 import { AppTableData, SortableColumns, SortDirection } from '../helpers/table.types';
 import AppStoreTile from './AppStoreTile';
 import CategorySelect from './CategorySelect';

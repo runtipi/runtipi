@@ -3,5 +3,12 @@ query InstalledApps {
     id
     status
     config
+    info {
+      id
+      name
+      description
+      image
+      short_desc
+    }
   }
 }

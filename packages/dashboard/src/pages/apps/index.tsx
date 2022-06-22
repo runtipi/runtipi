@@ -1,25 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Flex, SimpleGrid } from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import Layout from '../../components/Layout';
-import { RequestStatus } from '../../core/types';
-import { useAppsStore } from '../../state/appsStore';
 import AppTile from '../../components/AppTile';
+import { useInstalledAppsQuery } from '../../generated/graphql';
 
 const Apps: NextPage = () => {
-  const { fetch, status, apps } = useAppsStore((state) => state);
+  const { data, loading } = useInstalledAppsQuery();
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
-
-  const installed = apps.filter((app) => app.installed);
-
-  const installedCount: number = installed.length || 0;
-  const loading = status === RequestStatus.LOADING && installedCount === 0;
+  const installedCount: number = data?.installedApps.length || 0;
 
   return (
-    <Layout loading={loading}>
+    <Layout loading={loading || !data?.installedApps}>
       <Flex className="flex-col">
         {installedCount > 0 && <h1 className="font-bold text-3xl mb-5">My Apps ({installedCount})</h1>}
         {installedCount === 0 && (
@@ -29,8 +21,8 @@ const Apps: NextPage = () => {
           </div>
         )}
         <SimpleGrid minChildWidth="340px" spacing="20px">
-          {installed.map((app) => (
-            <AppTile key={app.name} app={app} />
+          {data?.installedApps.map((app) => (
+            <AppTile key={app.id} app={app.info} status={app.status} />
           ))}
         </SimpleGrid>
       </Flex>

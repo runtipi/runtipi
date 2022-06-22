@@ -12,7 +12,7 @@
     "lint": "eslint . --ext .ts",
     "test": "jest --colors",
     "test:watch": "jest --watch",
-    "build": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --minify --analyze=verbose --external:./node_modules/* --format=esm",
+    "build": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --analyze=verbose --external:./node_modules/* --format=esm",
     "build:watch": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --external:./node_modules/* --format=esm --watch",
     "start:dev": "NODE_ENV=development nodemon --trace-deprecation --trace-warnings --watch dist dist/server.js",
     "dev": "concurrently \"npm run build:watch\" \"npm run start:dev\"",
@@ -21,7 +21,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@runtipi/common": "file:../common",
     "apollo-server-core": "^3.9.0",
     "apollo-server-express": "^3.9.0",
     "argon2": "^0.28.5",

@@ -1,6 +1,6 @@
 import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
 import AppsService from './apps.service';
-import { AppInputType, AppResponse, ListAppsResonse } from './apps.types';
+import { AppInputType, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 
 @Resolver()
@@ -10,8 +10,8 @@ export default class AppsResolver {
     return AppsService.listApps();
   }
 
-  @Query(() => AppResponse)
-  getApp(@Arg('id', () => String) id: string): Promise<AppResponse> {
+  @Query(() => App)
+  getApp(@Arg('id', () => String) id: string): Promise<App> {
     return AppsService.getApp(id);
   }
 
@@ -43,7 +43,7 @@ export default class AppsResolver {
 
   @Authorized()
   @Mutation(() => App)
-  async uninstallApp(@Arg('id', () => String) id: string): Promise<boolean> {
+  async uninstallApp(@Arg('id', () => String) id: string): Promise<App> {
     return AppsService.uninstallApp(id);
   }
 

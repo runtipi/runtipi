@@ -1,7 +1,40 @@
-import { AppCategoriesEnum, FieldTypes } from '@runtipi/common';
 import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import App from './app.entity';
+
+export enum AppCategoriesEnum {
+  NETWORK = 'network',
+  MEDIA = 'media',
+  DEVELOPMENT = 'development',
+  AUTOMATION = 'automation',
+  SOCIAL = 'social',
+  UTILITIES = 'utilities',
+  PHOTOGRAPHY = 'photography',
+  SECURITY = 'security',
+  FEATURED = 'featured',
+  BOOKS = 'books',
+  DATA = 'data',
+}
+
+export enum FieldTypes {
+  text = 'text',
+  password = 'password',
+  email = 'email',
+  number = 'number',
+  fqdn = 'fqdn',
+  ip = 'ip',
+  fqdnip = 'fqdnip',
+  url = 'url',
+}
+
+export enum AppStatusEnum {
+  RUNNING = 'running',
+  STOPPED = 'stopped',
+  INSTALLING = 'installing',
+  UNINSTALLING = 'uninstalling',
+  STOPPING = 'stopping',
+  STARTING = 'starting',
+  MISSING = 'missing',
+}
 
 registerEnumType(AppCategoriesEnum, {
   name: 'AppCategoriesEnum',
@@ -33,6 +66,12 @@ class FormField {
 
   @Field(() => String)
   env_variable!: string;
+}
+
+@ObjectType()
+class Requirements {
+  @Field(() => [Number], { nullable: true })
+  ports?: number[];
 }
 
 @ObjectType()
@@ -78,6 +117,9 @@ class AppInfo {
 
   @Field(() => [FormField])
   form_fields?: FormField[];
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  requirements?: Requirements;
 }
 
 @ObjectType()
@@ -89,15 +131,6 @@ class ListAppsResonse {
   total!: number;
 }
 
-@ObjectType()
-class AppResponse {
-  @Field(() => App, { nullable: true })
-  app!: App | null;
-
-  @Field(() => AppInfo)
-  info!: AppInfo;
-}
-
 @InputType()
 class AppInputType {
   @Field(() => String)
@@ -107,4 +140,4 @@ class AppInputType {
   form!: Record<string, string>;
 }
 
-export { ListAppsResonse, AppInfo, AppInputType, AppResponse };
+export { ListAppsResonse, AppInfo, AppInputType };

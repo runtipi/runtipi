@@ -17,7 +17,7 @@ const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
 
   return (
     <Layout breadcrumbs={breadcrumb} loading={!data?.getApp && loading}>
-      {data?.getApp.info && <AppDetails status={data?.getApp.app?.status} info={data?.getApp.info} />}
+      {data?.getApp.info && <AppDetails app={data?.getApp} info={data?.getApp.info} />}
     </Layout>
   );
 };

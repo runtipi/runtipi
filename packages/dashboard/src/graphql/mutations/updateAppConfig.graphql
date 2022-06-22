@@ -1,0 +1,7 @@
+mutation UpdateAppConfig($input: AppInputType!) {
+  updateAppConfig(input: $input) {
+    id
+    status
+    __typename
+  }
+}

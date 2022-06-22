@@ -10,6 +10,7 @@ import { createServer } from 'http';
 import logger from './config/logger/logger';
 import getSessionMiddleware from './core/middlewares/sessionMiddleware';
 import { MyContext } from './types';
+import { __prod__ } from './config/constants/constants';
 
 const main = async () => {
   try {
@@ -26,10 +27,16 @@ const main = async () => {
 
     const httpServer = createServer(app);
 
+    const plugins = [ApolloLogs];
+
+    if (__prod__) {
+      plugins.push(Playground({ settings: { 'request.credentials': 'include' } }));
+    }
+
     const apolloServer = new ApolloServer({
       schema,
       context: ({ req, res }): MyContext => ({ req, res }),
-      plugins: [Playground({ settings: { 'request.credentials': 'include' } }), ApolloLogs],
+      plugins,
     });
     await apolloServer.start();
     apolloServer.applyMiddleware({ app });

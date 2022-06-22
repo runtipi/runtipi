@@ -1,7 +1,6 @@
-import { AppStatusEnum } from '@runtipi/common';
 import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, getStateFile, runAppScript } from './apps.helpers';
-import { AppInfo, AppResponse, ListAppsResonse } from './apps.types';
+import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 
 const startApp = async (appName: string): Promise<App> => {
@@ -77,17 +76,6 @@ const listApps = async (): Promise<ListAppsResonse> => {
   return { apps, total: apps.length };
 };
 
-const getAppInfo = (id: string): AppInfo => {
-  const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
-
-  const state = getStateFile();
-  const installed: string[] = state.installed.split(' ').filter(Boolean);
-  configFile.installed = installed.includes(id);
-  configFile.description = readFile(`/apps/${id}/metadata/description.md`);
-
-  return configFile;
-};
-
 const updateAppConfig = async (id: string, form: Record<string, string>): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
@@ -114,7 +102,7 @@ const stopApp = async (id: string): Promise<App> => {
   return app;
 };
 
-const uninstallApp = async (id: string): Promise<boolean> => {
+const uninstallApp = async (id: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
   if (!app) {
@@ -129,16 +117,17 @@ const uninstallApp = async (id: string): Promise<boolean> => {
   await runAppScript(['uninstall', id]);
   await App.delete({ id });
 
-  return true;
+  return { id, status: AppStatusEnum.MISSING, config: {} } as App;
 };
 
-const getApp = async (id: string): Promise<AppResponse> => {
-  const app = await App.findOne({ where: { id } });
+const getApp = async (id: string): Promise<App> => {
+  let app = await App.findOne({ where: { id } });
 
-  return {
-    info: getAppInfo(id),
-    app,
-  };
+  if (!app) {
+    app = { id, status: AppStatusEnum.MISSING, config: {} } as App;
+  }
+
+  return app;
 };
 
 export default { installApp, startApp, listApps, getApp, updateAppConfig, stopApp, uninstallApp };

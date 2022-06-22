@@ -2,12 +2,14 @@ import { Box, SlideFade, useColorModeValue } from '@chakra-ui/react';
 import Link from 'next/link';
 import React from 'react';
 import { FiChevronRight } from 'react-icons/fi';
-import { AppConfig } from '@runtipi/common';
 import AppStatus from './AppStatus';
 import AppLogo from '../AppLogo/AppLogo';
 import { limitText } from '../../modules/AppStore/helpers/table.helpers';
+import { AppInfo, AppStatusEnum } from '../../generated/graphql';
 
-const AppTile: React.FC<{ app: AppConfig }> = ({ app }) => {
+type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'image' | 'short_desc'>;
+
+const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum }> = ({ app, status }) => {
   const bg = useColorModeValue('white', '#1a202c');
 
   return (
@@ -18,11 +20,9 @@ const AppTile: React.FC<{ app: AppConfig }> = ({ app }) => {
           <div className="mr-3 flex-1">
             <h3 className="font-bold text-xl">{app.name}</h3>
             <span>{limitText(app.short_desc, 50)}</span>
-            {app.installed && (
-              <div className="flex mt-1">
-                <AppStatus status={app.status} />
-              </div>
-            )}
+            <div className="flex mt-1">
+              <AppStatus status={status} />
+            </div>
           </div>
           <FiChevronRight className="text-slate-300" size={30} />
         </Box>

@@ -24,6 +24,7 @@ export type App = {
   config: Scalars['JSONObject'];
   createdAt: Scalars['DateTime'];
   id: Scalars['String'];
+  info: AppInfo;
   lastOpened: Scalars['DateTime'];
   numOpened: Scalars['Float'];
   status: AppStatusEnum;
@@ -56,6 +57,7 @@ export type AppInfo = {
   installed: Scalars['Boolean'];
   name: Scalars['String'];
   port: Scalars['Float'];
+  requirements?: Maybe<Requirements>;
   short_desc: Scalars['String'];
   source: Scalars['String'];
   url_suffix?: Maybe<Scalars['String']>;
@@ -67,14 +69,9 @@ export type AppInputType = {
   id: Scalars['String'];
 };
 
-export type AppResponse = {
-  __typename?: 'AppResponse';
-  app?: Maybe<App>;
-  info: AppInfo;
-};
-
 export enum AppStatusEnum {
   Installing = 'INSTALLING',
+  Missing = 'MISSING',
   Running = 'RUNNING',
   Starting = 'STARTING',
   Stopped = 'STOPPED',
@@ -164,7 +161,7 @@ export type MutationUpdateAppConfigArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  getApp: AppResponse;
+  getApp: App;
   installedApps: Array<App>;
   isConfigured: Scalars['Boolean'];
   listAppsInfo: ListAppsResonse;
@@ -175,6 +172,11 @@ export type Query = {
 
 export type QueryGetAppArgs = {
   id: Scalars['String'];
+};
+
+export type Requirements = {
+  __typename?: 'Requirements';
+  ports?: Maybe<Array<Scalars['Float']>>;
 };
 
 export type SystemInfoResponse = {
@@ -206,7 +208,7 @@ export type InstallAppMutationVariables = Exact<{
   input: AppInputType;
 }>;
 
-export type InstallAppMutation = { __typename?: 'Mutation'; installApp: { __typename?: 'App'; id: string } };
+export type InstallAppMutation = { __typename?: 'Mutation'; installApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
 
 export type LoginMutationVariables = Exact<{
   input: UsernamePasswordInput;
@@ -224,6 +226,30 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation'; register: { __typename?: 'UserResponse'; user?: { __typename?: 'User'; id: string } | null } };
 
+export type StartAppMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+export type StartAppMutation = { __typename?: 'Mutation'; startApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
+
+export type StopAppMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+export type StopAppMutation = { __typename?: 'Mutation'; stopApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
+
+export type UninstallAppMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+export type UninstallAppMutation = { __typename?: 'Mutation'; uninstallApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
+
+export type UpdateAppConfigMutationVariables = Exact<{
+  input: AppInputType;
+}>;
+
+export type UpdateAppConfigMutation = { __typename?: 'Mutation'; updateAppConfig: { __typename: 'App'; id: string; status: AppStatusEnum } };
+
 export type GetAppQueryVariables = Exact<{
   appId: Scalars['String'];
 }>;
@@ -231,8 +257,10 @@ export type GetAppQueryVariables = Exact<{
 export type GetAppQuery = {
   __typename?: 'Query';
   getApp: {
-    __typename?: 'AppResponse';
-    app?: { __typename?: 'App'; id: string; status: AppStatusEnum; config: any } | null;
+    __typename?: 'App';
+    id: string;
+    status: AppStatusEnum;
+    config: any;
     info: {
       __typename?: 'AppInfo';
       id: string;
@@ -264,7 +292,16 @@ export type GetAppQuery = {
 
 export type InstalledAppsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type InstalledAppsQuery = { __typename?: 'Query'; installedApps: Array<{ __typename?: 'App'; id: string; status: AppStatusEnum; config: any }> };
+export type InstalledAppsQuery = {
+  __typename?: 'Query';
+  installedApps: Array<{
+    __typename?: 'App';
+    id: string;
+    status: AppStatusEnum;
+    config: any;
+    info: { __typename?: 'AppInfo'; id: string; name: string; description: string; image: string; short_desc: string };
+  }>;
+};
 
 export type ConfiguredQueryVariables = Exact<{ [key: string]: never }>;
 
@@ -310,9 +347,11 @@ export type SystemInfoQuery = {
 };
 
 export const InstallAppDocument = gql`
-  mutation installApp($input: AppInputType!) {
+  mutation InstallApp($input: AppInputType!) {
     installApp(input: $input) {
       id
+      status
+      __typename
     }
   }
 `;
@@ -442,14 +481,152 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const StartAppDocument = gql`
+  mutation StartApp($id: String!) {
+    startApp(id: $id) {
+      id
+      status
+      __typename
+    }
+  }
+`;
+export type StartAppMutationFn = Apollo.MutationFunction<StartAppMutation, StartAppMutationVariables>;
+
+/**
+ * __useStartAppMutation__
+ *
+ * To run a mutation, you first call `useStartAppMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartAppMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startAppMutation, { data, loading, error }] = useStartAppMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useStartAppMutation(baseOptions?: Apollo.MutationHookOptions<StartAppMutation, StartAppMutationVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<StartAppMutation, StartAppMutationVariables>(StartAppDocument, options);
+}
+export type StartAppMutationHookResult = ReturnType<typeof useStartAppMutation>;
+export type StartAppMutationResult = Apollo.MutationResult<StartAppMutation>;
+export type StartAppMutationOptions = Apollo.BaseMutationOptions<StartAppMutation, StartAppMutationVariables>;
+export const StopAppDocument = gql`
+  mutation StopApp($id: String!) {
+    stopApp(id: $id) {
+      id
+      status
+      __typename
+    }
+  }
+`;
+export type StopAppMutationFn = Apollo.MutationFunction<StopAppMutation, StopAppMutationVariables>;
+
+/**
+ * __useStopAppMutation__
+ *
+ * To run a mutation, you first call `useStopAppMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStopAppMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [stopAppMutation, { data, loading, error }] = useStopAppMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useStopAppMutation(baseOptions?: Apollo.MutationHookOptions<StopAppMutation, StopAppMutationVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<StopAppMutation, StopAppMutationVariables>(StopAppDocument, options);
+}
+export type StopAppMutationHookResult = ReturnType<typeof useStopAppMutation>;
+export type StopAppMutationResult = Apollo.MutationResult<StopAppMutation>;
+export type StopAppMutationOptions = Apollo.BaseMutationOptions<StopAppMutation, StopAppMutationVariables>;
+export const UninstallAppDocument = gql`
+  mutation UninstallApp($id: String!) {
+    uninstallApp(id: $id) {
+      id
+      status
+      __typename
+    }
+  }
+`;
+export type UninstallAppMutationFn = Apollo.MutationFunction<UninstallAppMutation, UninstallAppMutationVariables>;
+
+/**
+ * __useUninstallAppMutation__
+ *
+ * To run a mutation, you first call `useUninstallAppMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUninstallAppMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uninstallAppMutation, { data, loading, error }] = useUninstallAppMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUninstallAppMutation(baseOptions?: Apollo.MutationHookOptions<UninstallAppMutation, UninstallAppMutationVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UninstallAppMutation, UninstallAppMutationVariables>(UninstallAppDocument, options);
+}
+export type UninstallAppMutationHookResult = ReturnType<typeof useUninstallAppMutation>;
+export type UninstallAppMutationResult = Apollo.MutationResult<UninstallAppMutation>;
+export type UninstallAppMutationOptions = Apollo.BaseMutationOptions<UninstallAppMutation, UninstallAppMutationVariables>;
+export const UpdateAppConfigDocument = gql`
+  mutation UpdateAppConfig($input: AppInputType!) {
+    updateAppConfig(input: $input) {
+      id
+      status
+      __typename
+    }
+  }
+`;
+export type UpdateAppConfigMutationFn = Apollo.MutationFunction<UpdateAppConfigMutation, UpdateAppConfigMutationVariables>;
+
+/**
+ * __useUpdateAppConfigMutation__
+ *
+ * To run a mutation, you first call `useUpdateAppConfigMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAppConfigMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAppConfigMutation, { data, loading, error }] = useUpdateAppConfigMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateAppConfigMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAppConfigMutation, UpdateAppConfigMutationVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateAppConfigMutation, UpdateAppConfigMutationVariables>(UpdateAppConfigDocument, options);
+}
+export type UpdateAppConfigMutationHookResult = ReturnType<typeof useUpdateAppConfigMutation>;
+export type UpdateAppConfigMutationResult = Apollo.MutationResult<UpdateAppConfigMutation>;
+export type UpdateAppConfigMutationOptions = Apollo.BaseMutationOptions<UpdateAppConfigMutation, UpdateAppConfigMutationVariables>;
 export const GetAppDocument = gql`
   query GetApp($appId: String!) {
     getApp(id: $appId) {
-      app {
-        id
-        status
-        config
-      }
+      id
+      status
+      config
       info {
         id
         port
@@ -511,6 +688,13 @@ export const InstalledAppsDocument = gql`
       id
       status
       config
+      info {
+        id
+        name
+        description
+        image
+        short_desc
+      }
     }
   }
 `;

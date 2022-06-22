@@ -3,7 +3,7 @@ import React from 'react';
 import { Form, Field } from 'react-final-form';
 import FormInput from '../../../components/Form/FormInput';
 import { validateAppConfig } from '../../../components/Form/validators';
-import { AppInfo } from '../../../generated/graphql';
+import { AppInfo, FormField } from '../../../generated/graphql';
 
 interface IProps {
   formFields: AppInfo['form_fields'];
@@ -12,7 +12,7 @@ interface IProps {
 }
 
 const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues }) => {
-  const renderField = (field: typeof formFields[0]) => {
+  const renderField = (field: FormField) => {
     return (
       <Field
         key={field.env_variable}

@@ -1,7 +1,8 @@
 import { useColorModeValue } from '@chakra-ui/react';
-import { AppCategoriesEnum, APP_CATEGORIES } from '@runtipi/common';
 import React from 'react';
 import Select, { Options } from 'react-select';
+import { APP_CATEGORIES } from '../../../core/constants';
+import { AppCategoriesEnum } from '../../../generated/graphql';
 
 interface IProps {
   onSelect: (value: AppCategoriesEnum[]) => void;

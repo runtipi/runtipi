@@ -10,7 +10,8 @@
     "start:dev": "docker-compose -f docker-compose.dev.yml --env-file .env.dev up --build",
     "start:rc": "docker-compose -f docker-compose.rc.yml --env-file .env up --build",
     "start:prod": "docker-compose --env-file .env up --build",
-    "build:common": "cd packages/common && npm run build"
+    "build:common": "cd packages/common && npm run build",
+    "version": "echo $npm_package_version"
   },
   "devDependencies": {
     "@types/jest": "^27.5.0",
