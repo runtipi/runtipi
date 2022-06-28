@@ -55,15 +55,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build packages/common
-        run: |
-          cd ./packages/common
-          npm run build
-          cd ../..
-
-      - name: Install dependencies
-        run: pnpm install
-
       - name: Build packages
         run: pnpm -r build
 
