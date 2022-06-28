@@ -41,6 +41,3 @@ jobs:
           tags: meienberger/runtipi:rc-${{ steps.meta.outputs.TAG }}
           cache-from: type=registry,ref=meienberger/runtipi:buildcache
           cache-to: type=registry,ref=meienberger/runtipi:buildcache,mode=max
-
-
-          

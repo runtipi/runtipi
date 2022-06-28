@@ -9,7 +9,13 @@ export const readJsonFile = (path: string): any => {
   return JSON.parse(rawFile);
 };
 
-export const readFile = (path: string): string => fs.readFileSync(getAbsolutePath(path)).toString();
+export const readFile = (path: string): string => {
+  try {
+    return fs.readFileSync(getAbsolutePath(path)).toString();
+  } catch {
+    return '';
+  }
+};
 
 export const readdirSync = (path: string): string[] => fs.readdirSync(getAbsolutePath(path));
 

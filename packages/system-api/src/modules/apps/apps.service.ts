@@ -1,5 +1,5 @@
 import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, getStateFile, runAppScript } from './apps.helpers';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 
@@ -10,10 +10,10 @@ const startApp = async (appName: string): Promise<App> => {
     throw new Error(`App ${appName} not found`);
   }
 
-  checkEnvFile(appName);
-
   // Regenerate env file
   generateEnvFile(appName, app.config);
+
+  checkEnvFile(appName);
 
   await App.update({ id: appName }, { status: AppStatusEnum.STARTING });
   // Run script
@@ -65,15 +65,11 @@ const listApps = async (): Promise<ListAppsResonse> => {
     })
     .filter(Boolean);
 
-  const state = getStateFile();
-  const installed: string[] = state.installed.split(' ').filter(Boolean);
-
   apps.forEach((app) => {
-    app.installed = installed.includes(app.id);
     app.description = readFile(`/apps/${app.id}/metadata/description.md`);
   });
 
-  return { apps, total: apps.length };
+  return { apps: apps.sort((a, b) => a.name.localeCompare(b.name)), total: apps.length };
 };
 
 const updateAppConfig = async (id: string, form: Record<string, string>): Promise<App> => {
@@ -93,6 +89,11 @@ const updateAppConfig = async (id: string, form: Record<string, string>): Promis
 
 const stopApp = async (id: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
+
+  if (!app) {
+    throw new Error(`App ${id} not found`);
+  }
+
   // Run script
   await App.update({ id }, { status: AppStatusEnum.STOPPING });
   await runAppScript(['stop', id]);

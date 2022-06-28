@@ -5,8 +5,6 @@ import InternalIp from 'internal-ip';
 import config from '../../config';
 import { AppInfo } from './apps.types';
 
-type AppsState = { installed: string };
-
 export const checkAppRequirements = async (appName: string) => {
   let valid = true;
   const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
@@ -106,10 +104,6 @@ export const generateEnvFile = (appName: string, form: Record<string, string>) =
   writeFile(`/app-data/${appName}/app.env`, envFile);
 };
 
-export const getStateFile = (): AppsState => {
-  return readJsonFile('/state/apps.json');
-};
-
 export const getAvailableApps = (): string[] => {
   const apps: string[] = [];
 
@@ -131,10 +125,6 @@ export const getAvailableApps = (): string[] => {
 export const getAppInfo = (id: string): AppInfo => {
   try {
     const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
-
-    const state = getStateFile();
-    const installed: string[] = state.installed.split(' ').filter(Boolean);
-    configFile.installed = installed.includes(id);
     configFile.description = readFile(`/apps/${id}/metadata/description.md`);
 
     return configFile;

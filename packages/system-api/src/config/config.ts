@@ -50,7 +50,7 @@ const config: IConfig = {
     password: POSTGRES_PASSWORD,
     port: 5432,
     logging: !__prod__,
-    synchronize: true,
+    synchronize: !__prod__,
     entities: [App, User],
   },
   NODE_ENV,

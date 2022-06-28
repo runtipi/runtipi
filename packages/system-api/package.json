@@ -57,6 +57,7 @@
     "winston": "^3.7.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.3.0",
     "@types/compression": "^1.7.2",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.12",
@@ -67,6 +68,7 @@
     "@types/mock-fs": "^4.13.1",
     "@types/passport": "^1.0.7",
     "@types/passport-http-bearer": "^1.0.37",
+    "@types/pg": "^8.6.5",
     "@types/session-file-store": "^1.2.2",
     "@types/tcp-port-used": "^1.0.1",
     "@types/validator": "^13.7.2",

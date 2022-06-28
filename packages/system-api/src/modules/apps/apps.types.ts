@@ -106,9 +106,6 @@ class AppInfo {
   @Field(() => String)
   source!: string;
 
-  @Field(() => Boolean)
-  installed!: boolean;
-
   @Field(() => [AppCategoriesEnum])
   categories!: AppCategoriesEnum[];
 

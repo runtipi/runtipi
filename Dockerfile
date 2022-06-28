@@ -24,7 +24,7 @@ FROM alpine:3.16.0 as app
 WORKDIR /
 
 # Install docker
-RUN apk --no-cache --virtual build-dependencies add docker docker-compose curl nodejs npm bash g++ make
+RUN apk --no-cache add docker docker-compose curl nodejs npm bash g++ make
 
 RUN npm install node-gyp -g
 
@@ -41,7 +41,5 @@ COPY ./packages/system-api /api
 
 COPY --from=build /dashboard/.next /dashboard/.next
 COPY ./packages/dashboard /dashboard
-
-RUN apk del build-dependencies
 
 WORKDIR /
