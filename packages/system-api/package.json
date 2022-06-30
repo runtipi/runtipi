@@ -36,7 +36,7 @@
     "node-cache": "^5.1.2",
     "node-port-scanner": "^3.0.1",
     "p-iteration": "^1.1.8",
-    "passport": "^0.5.2",
+    "passport": "^0.6.0",
     "passport-cookie": "^1.0.9",
     "passport-http-bearer": "^1.0.1",
     "public-ip": "^5.0.0",
