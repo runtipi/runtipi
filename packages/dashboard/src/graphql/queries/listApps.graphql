@@ -4,7 +4,6 @@ query ListApps {
     apps {
       id
       available
-      installed
       image
       port
       name

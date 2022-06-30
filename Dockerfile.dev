@@ -3,7 +3,7 @@ FROM alpine:3.16.0 as app
 WORKDIR /
 
 # Install docker
-RUN apk --no-cache --virtual build-dependencies add docker docker-compose curl nodejs npm bash
+RUN apk --no-cache add docker-compose nodejs npm bash
 
 RUN npm install node-gyp -g
 

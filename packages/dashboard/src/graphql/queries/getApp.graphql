@@ -14,7 +14,6 @@ query GetApp($appId: String!) {
       short_desc
       author
       source
-      installed
       categories
       url_suffix
       form_fields {

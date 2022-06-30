@@ -23,8 +23,8 @@ FROM alpine:3.16.0 as app
 
 WORKDIR /
 
-# Install docker
-RUN apk --no-cache add docker docker-compose curl nodejs npm bash g++ make
+# Install dependencies
+RUN apk --no-cache add docker-compose nodejs npm bash g++ make
 
 RUN npm install node-gyp -g
 

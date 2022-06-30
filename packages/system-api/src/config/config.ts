@@ -19,7 +19,11 @@ interface IConfig {
   ROOT_FOLDER_HOST: string;
 }
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({ path: '.env.dev' });
+} else {
+  dotenv.config({ path: '.env' });
+}
 
 const {
   LOGS_FOLDER = 'logs',
@@ -31,8 +35,9 @@ const {
   TIPI_VERSION = '',
   ROOT_FOLDER_HOST = '',
   NGINX_PORT = '80',
-  POSTGRES_DB = '',
-  POSTGRES_USER = '',
+  POSTGRES_DBNAME = '',
+  POSTGRES_HOST = '',
+  POSTGRES_USERNAME = '',
   POSTGRES_PASSWORD = '',
 } = process.env;
 
@@ -44,9 +49,9 @@ const config: IConfig = {
   },
   typeorm: {
     type: 'postgres',
-    host: 'tipi-db',
-    database: POSTGRES_DB,
-    username: POSTGRES_USER,
+    host: POSTGRES_HOST,
+    database: POSTGRES_DBNAME,
+    username: POSTGRES_USERNAME,
     password: POSTGRES_PASSWORD,
     port: 5432,
     logging: !__prod__,
