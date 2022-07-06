@@ -11,17 +11,37 @@ import logger from './config/logger/logger';
 import getSessionMiddleware from './core/middlewares/sessionMiddleware';
 import { MyContext } from './types';
 import { __prod__ } from './config/constants/constants';
+import cors from 'cors';
 
 const main = async () => {
   try {
     const app = express();
     const port = 3001;
 
-    const sessionMiddleware = await getSessionMiddleware();
-    app.use(sessionMiddleware);
+    app.use(
+      cors({
+        credentials: true,
+        origin: function (origin, callback) {
+          // allow requests with no origin
+          if (!origin) return callback(null, true);
+
+          if (config.CLIENT_URLS.indexOf(origin) === -1) {
+            const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
+            return callback(new Error(message), false);
+          }
+
+          return callback(null, true);
+        },
+      }),
+    );
+    app.use(getSessionMiddleware());
 
     const AppDataSource = new DataSource(config.typeorm);
     await AppDataSource.initialize();
+
+    if (__prod__) {
+      await AppDataSource.runMigrations();
+    }
 
     const schema = await createSchema();
 

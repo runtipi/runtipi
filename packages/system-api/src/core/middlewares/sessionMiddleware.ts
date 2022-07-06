@@ -3,7 +3,7 @@ import config from '../../config';
 import SessionFileStore from 'session-file-store';
 import { COOKIE_MAX_AGE, __prod__ } from '../../config/constants/constants';
 
-const getSessionMiddleware = async (): Promise<any> => {
+const getSessionMiddleware = () => {
   const FileStore = SessionFileStore(session);
 
   return session({

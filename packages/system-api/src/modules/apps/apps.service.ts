@@ -18,11 +18,9 @@ const startApp = async (appName: string): Promise<App> => {
   await App.update({ id: appName }, { status: AppStatusEnum.STARTING });
   // Run script
   await runAppScript(['start', appName]);
-  await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
+  const result = await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
 
-  app = (await App.findOne({ where: { id: appName } })) as App;
-
-  return app;
+  return result.raw[0];
 };
 
 const installApp = async (id: string, form: Record<string, string>): Promise<App> => {
@@ -49,9 +47,9 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
     await runAppScript(['install', id]);
   }
 
-  await App.update({ id }, { status: AppStatusEnum.RUNNING });
-  app = (await App.findOne({ where: { id } })) as App;
-  return app;
+  const result = await App.update({ id }, { status: AppStatusEnum.RUNNING });
+
+  return result.raw[0];
 };
 
 const listApps = async (): Promise<ListAppsResonse> => {
@@ -80,11 +78,9 @@ const updateAppConfig = async (id: string, form: Record<string, string>): Promis
   }
 
   generateEnvFile(id, form);
-  await App.update({ id }, { config: form });
+  const result = await App.update({ id }, { config: form });
 
-  app = (await App.findOne({ where: { id } })) as App;
-
-  return app;
+  return result.raw[0];
 };
 
 const stopApp = async (id: string): Promise<App> => {
@@ -97,10 +93,9 @@ const stopApp = async (id: string): Promise<App> => {
   // Run script
   await App.update({ id }, { status: AppStatusEnum.STOPPING });
   await runAppScript(['stop', id]);
-  await App.update({ id }, { status: AppStatusEnum.STOPPED });
-  app = (await App.findOne({ where: { id } })) as App;
+  const result = await App.update({ id }, { status: AppStatusEnum.STOPPED });
 
-  return app;
+  return result.raw[0];
 };
 
 const uninstallApp = async (id: string): Promise<App> => {

@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/react';
 import React from 'react';
 import { FiExternalLink, FiPause, FiPlay, FiSettings, FiTrash2 } from 'react-icons/fi';
+import { TiCancel } from 'react-icons/ti';
 import { AppInfo, AppStatusEnum } from '../../../generated/graphql';
 
 interface IProps {
@@ -12,9 +13,10 @@ interface IProps {
   onStop: () => void;
   onOpen: () => void;
   onUpdate: () => void;
+  onCancel: () => void;
 }
 
-const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate }) => {
+const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate, onCancel }) => {
   const hasSettings = Object.keys(app.form_fields).length > 0;
 
   if (status === AppStatusEnum.Stopped) {
@@ -55,6 +57,9 @@ const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onS
         <Button isLoading onClick={() => null} width={160} colorScheme="green" className="mt-3">
           Install
           <FiPlay className="ml-1" />
+        </Button>
+        <Button onClick={onCancel} colorScheme="gray" className="mt-3 mr-2 ml-2">
+          <TiCancel />
         </Button>
         <span className="text-gray-500 text-sm ml-2 mt-3 self-center text-center sm:text-left">{`App is ${status.toLowerCase()} please wait and don't refresh page...`}</span>
       </div>

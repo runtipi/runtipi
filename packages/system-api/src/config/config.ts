@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import path from 'path';
 import { DataSourceOptions } from 'typeorm';
 import App from '../modules/apps/app.entity';
 import User from '../modules/auth/user.entity';
@@ -57,6 +58,7 @@ const config: IConfig = {
     logging: !__prod__,
     synchronize: !__prod__,
     entities: [App, User],
+    migrations: [path.join(__dirname, './migrations/*')],
   },
   NODE_ENV,
   ROOT_FOLDER: '/tipi',

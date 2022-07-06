@@ -14,6 +14,7 @@ import {
   AppInfo,
   AppStatusEnum,
   GetAppDocument,
+  InstalledAppsDocument,
   useInstallAppMutation,
   useStartAppMutation,
   useStopAppMutation,
@@ -34,8 +35,8 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
   const updateDisclosure = useDisclosure();
 
   // Mutations
-  const [install] = useInstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
-  const [uninstall] = useUninstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+  const [install] = useInstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }, { query: InstalledAppsDocument }] });
+  const [uninstall] = useUninstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }, { query: InstalledAppsDocument }] });
   const [stop] = useStopAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
   const [start] = useStartAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
   const [update] = useUpdateAppConfigMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
@@ -57,7 +58,10 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
   const handleInstallSubmit = async (values: Record<string, any>) => {
     installDisclosure.onClose();
     try {
-      await install({ variables: { input: { form: values, id: info.id } }, optimisticResponse: { installApp: { id: info.id, status: AppStatusEnum.Installing, __typename: 'App' } } });
+      await install({
+        variables: { input: { form: values, id: info.id } },
+        optimisticResponse: { installApp: { id: info.id, status: AppStatusEnum.Installing, __typename: 'App' } },
+      });
     } catch (error) {
       handleError(error);
     }
@@ -133,6 +137,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
                 onOpen={handleOpen}
                 onStart={handleStartSubmit}
                 onStop={stopDisclosure.onOpen}
+                onCancel={stopDisclosure.onOpen}
                 onUninstall={uninstallDisclosure.onOpen}
                 onInstall={installDisclosure.onOpen}
                 app={info}
