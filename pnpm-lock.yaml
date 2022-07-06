@@ -182,6 +182,7 @@ importers:
       tcp-port-used: ^1.0.2
       ts-jest: ^28.0.2
       ts-node: ^10.8.2
+      tsconfig-paths: ^4.0.0
       type-graphql: ^1.1.1
       typeorm: ^0.3.6
       typescript: 4.6.4
@@ -246,6 +247,7 @@ importers:
       rimraf: 3.0.2
       ts-jest: 28.0.2_k4xvjffwcpckmnpd5fcvxvnd24
       ts-node: 10.8.2_l47be6km5p57gglrggidw5gsgm
+      tsconfig-paths: 4.0.0
       typescript: 4.6.4
 
 packages:
@@ -10926,7 +10928,7 @@ packages:
       ansi-regex: 5.0.1
 
   /strip-bom/3.0.0:
-    resolution: {integrity: sha1-IzTBjpx1n3vdVv3vfprj1YjmjtM=}
+    resolution: {integrity: sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==}
     engines: {node: '>=4'}
     dev: true
 
@@ -11358,6 +11360,14 @@ packages:
     dependencies:
       '@types/json5': 0.0.29
       json5: 1.0.1
+      minimist: 1.2.6
+      strip-bom: 3.0.0
+    dev: true
+
+  /tsconfig-paths/4.0.0:
+    resolution: {integrity: sha512-SLBg2GBKlR6bVtMgJJlud/o3waplKtL7skmLkExomIiaAtLGtVsoXIqP3SYdjbcH9lq/KVv7pMZeCBpLYOit6Q==}
+    dependencies:
+      json5: 2.2.1
       minimist: 1.2.6
       strip-bom: 3.0.0
     dev: true
