@@ -12,8 +12,8 @@ services:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USERNAME: tipi
-      POSTGRES_DBNAME: tipi
+      POSTGRES_USER: tipi
+      POSTGRES_DB: tipi
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d tipi -U tipi" ]
       interval: 5s
@@ -26,7 +26,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: /bin/sh -c "cd /api && npm run dev"
+    command: /bin/sh -c "cd /api && npm run build && npm run dev"
     depends_on:
       tipi-db:
         condition: service_healthy
@@ -45,9 +45,9 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       ROOT_FOLDER_HOST: ${ROOT_FOLDER_HOST}
       NGINX_PORT: ${NGINX_PORT}
-      POSTGRES_PASSWORD: tipi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USERNAME: tipi
-      POSTGRES_DBNAME: ${POSTGRES_DBNAME}
+      POSTGRES_DBNAME: tipi
       POSTGRES_HOST: tipi-db
     networks:
       - tipi_main_network

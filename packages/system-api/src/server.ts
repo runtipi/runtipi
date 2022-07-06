@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import express from 'express';
 import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from 'apollo-server-core';
 import config from './config';
-import { DataSource } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
 import { createSchema } from './schema';
 import { ApolloLogs } from './config/logger/apollo.logger';
@@ -12,6 +11,7 @@ import getSessionMiddleware from './core/middlewares/sessionMiddleware';
 import { MyContext } from './types';
 import { __prod__ } from './config/constants/constants';
 import cors from 'cors';
+import datasource from './config/datasource';
 
 const main = async () => {
   try {
@@ -36,11 +36,10 @@ const main = async () => {
     );
     app.use(getSessionMiddleware());
 
-    const AppDataSource = new DataSource(config.typeorm);
-    await AppDataSource.initialize();
+    await datasource.initialize();
 
     if (__prod__) {
-      await AppDataSource.runMigrations();
+      await datasource.runMigrations();
     }
 
     const schema = await createSchema();
@@ -49,7 +48,7 @@ const main = async () => {
 
     const plugins = [ApolloLogs];
 
-    if (__prod__) {
+    if (!__prod__) {
       plugins.push(Playground({ settings: { 'request.credentials': 'include' } }));
     }
 

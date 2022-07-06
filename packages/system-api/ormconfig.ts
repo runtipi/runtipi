@@ -1,12 +1,14 @@
 import { DataSource } from 'typeorm';
 
-export default new DataSource({
+export const connectionSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
   port: 5432,
   username: 'postgres',
   password: 'postgres',
-  database: 'test-db',
-  entities: ['src/modules/**/*.entity.ts'],
-  migrations: ['src/config/migrations/*.ts'],
+  database: 'postgres',
+  logging: true,
+  synchronize: false,
+  entities: [process.cwd() + '/src/modules/**/*.entity.ts'],
+  migrations: [process.cwd() + '/src/config/migrations/*.ts'],
 });

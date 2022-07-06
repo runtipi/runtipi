@@ -1,9 +1,4 @@
 import * as dotenv from 'dotenv';
-import path from 'path';
-import { DataSourceOptions } from 'typeorm';
-import App from '../modules/apps/app.entity';
-import User from '../modules/auth/user.entity';
-import { __prod__ } from './constants/constants';
 
 interface IConfig {
   logs: {
@@ -11,7 +6,6 @@ interface IConfig {
     LOGS_APP: string;
     LOGS_ERROR: string;
   };
-  typeorm: DataSourceOptions;
   NODE_ENV: string;
   ROOT_FOLDER: string;
   JWT_SECRET: string;
@@ -36,10 +30,6 @@ const {
   TIPI_VERSION = '',
   ROOT_FOLDER_HOST = '',
   NGINX_PORT = '80',
-  POSTGRES_DBNAME = '',
-  POSTGRES_HOST = '',
-  POSTGRES_USERNAME = '',
-  POSTGRES_PASSWORD = '',
 } = process.env;
 
 const config: IConfig = {
@@ -47,18 +37,6 @@ const config: IConfig = {
     LOGS_FOLDER,
     LOGS_APP,
     LOGS_ERROR,
-  },
-  typeorm: {
-    type: 'postgres',
-    host: POSTGRES_HOST,
-    database: POSTGRES_DBNAME,
-    username: POSTGRES_USERNAME,
-    password: POSTGRES_PASSWORD,
-    port: 5432,
-    logging: !__prod__,
-    synchronize: !__prod__,
-    entities: [App, User],
-    migrations: [path.join(__dirname, './migrations/*')],
   },
   NODE_ENV,
   ROOT_FOLDER: '/tipi',

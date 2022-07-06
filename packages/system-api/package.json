@@ -3,7 +3,7 @@
   "version": "0.3.1",
   "description": "",
   "exports": "./dist/server.js",
-  "type": "commonjs",
+  "type": "module",
   "engines": {
     "node": ">=14.16"
   },
@@ -13,12 +13,13 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest --colors",
     "test:watch": "jest --watch",
-    "build": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --analyze=verbose --external:./node_modules/* --format=esm",
-    "build:watch": "esbuild --bundle src/server.ts --outdir=dist --allow-overwrite --sourcemap --platform=node --external:./node_modules/* --format=esm --watch",
-    "start:dev": "NODE_ENV=development nodemon --trace-deprecation --trace-warnings --watch dist dist/server.js",
+    "build": "rm -rf dist && swc ./src -d dist",
+    "build:watch": "swc ./src -d dist --watch",
+    "start:dev": "NODE_ENV=development && nodemon --experimental-specifier-resolution=node --trace-deprecation --trace-warnings --watch dist dist/server.js",
     "dev": "concurrently \"npm run build:watch\" \"npm run start:dev\"",
-    "start": "NODE_ENV=production node dist/server.js",
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js -d ormconfig.ts"
+    "start": "NODE_ENV=production && node --experimental-specifier-resolution=node dist/server.js",
+    "typeorm": "node --experimental-specifier-resolution=node --loader ts-node/esm ./node_modules/typeorm/cli.js -d ormconfig.ts",
+    "migration:generate": "npm run typeorm migration:generate ./src/config/migrations/$npm_config_name"
   },
   "author": "",
   "license": "ISC",
@@ -55,6 +56,8 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.3.0",
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.210",
     "@types/compression": "^1.7.2",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.12",
@@ -71,7 +74,6 @@
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.22.0",
     "concurrently": "^7.1.0",
-    "esbuild": "^0.14.38",
     "eslint": "^8.13.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
@@ -83,7 +85,6 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.2",
     "ts-node": "^10.8.2",
-    "tsconfig-paths": "^4.0.0",
     "typescript": "4.6.4"
   }
 }

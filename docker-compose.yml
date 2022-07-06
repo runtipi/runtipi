@@ -26,8 +26,8 @@ services:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USERNAME: tipi
-      POSTGRES_DBNAME: tipi
+      POSTGRES_USER: tipi
+      POSTGRES_DB: tipi
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d tipi -U tipi" ]
       interval: 5s
