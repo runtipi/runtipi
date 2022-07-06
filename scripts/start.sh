@@ -142,6 +142,7 @@ ENV_FILE=$(mktemp)
 [[ -f "$ROOT_FOLDER/templates/env-sample" ]] && cp "$ROOT_FOLDER/templates/env-sample" "$ENV_FILE"
 
 JWT_SECRET=$(derive_entropy "jwt")
+POSTGRES_PASSWORD=$(derive_entropy "postgres")
 
 for template in ${ENV_FILE}; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
@@ -153,6 +154,7 @@ for template in ${ENV_FILE}; do
   sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
   sed -i "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
   sed -i "s/<proxy_port>/${PROXY_PORT}/g" "${template}"
+  sed -i "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
