@@ -13,7 +13,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest --colors",
     "test:watch": "jest --watch",
-    "build": "rm -rf dist && swc ./src -d dist",
+    "build": "rm -rf dist && swc ./src --ignore **/*.test.* -d dist",
     "build:watch": "swc ./src -d dist --watch",
     "start:dev": "NODE_ENV=development && nodemon --experimental-specifier-resolution=node --trace-deprecation --trace-warnings --watch dist dist/server.js",
     "dev": "concurrently \"npm run build:watch\" \"npm run start:dev\"",

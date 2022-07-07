@@ -1,0 +1,105 @@
+import fs from 'fs';
+import { DataSource } from 'typeorm';
+import App from '../../../modules/apps/app.entity';
+import { AppInfo, AppStatusEnum } from '../../../modules/apps/apps.types';
+import { createApp } from '../../../modules/apps/__tests__/apps.factory';
+import Update, { UpdateStatusEnum } from '../../../modules/system/update.entity';
+import { setupConnection, teardownConnection } from '../../../test/connection';
+import { updateV040 } from '../v040';
+
+jest.mock('fs');
+
+let db: DataSource | null = null;
+const TEST_SUITE = 'updatev040';
+
+beforeAll(async () => {
+  db = await setupConnection(TEST_SUITE);
+});
+
+beforeEach(async () => {
+  jest.resetModules();
+  jest.resetAllMocks();
+  await App.clear();
+  await Update.clear();
+});
+
+afterAll(async () => {
+  await db?.destroy();
+  await teardownConnection(TEST_SUITE);
+});
+
+const createState = (apps: string[]) => {
+  return JSON.stringify({ installed: apps.join(' ') });
+};
+
+describe('No state/apps.json', () => {
+  it('Should do nothing and create the update with status SUCCES', async () => {
+    await updateV040();
+
+    const update = await Update.findOne({ where: { name: 'v040' } });
+
+    expect(update).toBeDefined();
+    expect(update!.status).toBe(UpdateStatusEnum.SUCCESS);
+
+    const apps = await App.find();
+
+    expect(apps).toHaveLength(0);
+  });
+});
+
+describe('State/apps.json exists with no installed app', () => {
+  beforeEach(async () => {
+    const { MockFiles } = await createApp();
+    MockFiles['/tipi/state/apps.json'] = createState([]);
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+  });
+
+  it('Should do nothing and create the update with status SUCCES', async () => {
+    await updateV040();
+    const update = await Update.findOne({ where: { name: 'v040' } });
+
+    expect(update).toBeDefined();
+    expect(update?.status).toBe(UpdateStatusEnum.SUCCESS);
+
+    const apps = await App.find();
+    expect(apps).toHaveLength(0);
+  });
+
+  it('Should delete state file after update', async () => {
+    await updateV040();
+    expect(fs.existsSync('/tipi/state/apps.json')).toBe(false);
+  });
+});
+
+describe('State/apps.json exists with one installed app', () => {
+  let app1: AppInfo | null = null;
+  beforeEach(async () => {
+    const { MockFiles, appInfo } = await createApp();
+    app1 = appInfo;
+    MockFiles['/tipi/state/apps.json'] = createState([appInfo.id]);
+    MockFiles[`/tipi/app-data/${appInfo.id}`] = '';
+    MockFiles[`/tipi/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+  });
+
+  it('Should create a new app and update', async () => {
+    await updateV040();
+
+    const app = await App.findOne({ where: { id: app1?.id } });
+    const update = await Update.findOne({ where: { name: 'v040' } });
+
+    expect(app).toBeDefined();
+    expect(app?.status).toBe(AppStatusEnum.STOPPED);
+    expect(update).toBeDefined();
+    expect(update?.status).toBe('SUCCESS');
+  });
+
+  it("Should correctly pick up app's variables from existing .env file", async () => {
+    await updateV040();
+    const app = await App.findOne({ where: { id: app1?.id } });
+
+    expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
+  });
+});

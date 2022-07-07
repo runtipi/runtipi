@@ -2,6 +2,23 @@ import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
+import datasource from '../../config/datasource';
+
+const startAllApps = async (): Promise<void> => {
+  const apps = await App.find({ where: { status: AppStatusEnum.RUNNING } });
+
+  await Promise.all(
+    apps.map(async (app) => {
+      // Regenerate env file
+      generateEnvFile(app.id, app.config);
+      checkEnvFile(app.id);
+
+      await App.update({ id: app.id }, { status: AppStatusEnum.STARTING });
+      await runAppScript(['start', app.id]);
+      await App.update({ id: app.id }, { status: AppStatusEnum.RUNNING });
+    }),
+  );
+};
 
 const startApp = async (appName: string): Promise<App> => {
   let app = await App.findOne({ where: { id: appName } });
@@ -18,7 +35,7 @@ const startApp = async (appName: string): Promise<App> => {
   await App.update({ id: appName }, { status: AppStatusEnum.STARTING });
   // Run script
   await runAppScript(['start', appName]);
-  const result = await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
+  const result = await datasource.createQueryBuilder().update(App).set({ status: AppStatusEnum.RUNNING }).where('id = :id', { id: appName }).returning('*').execute();
 
   return result.raw[0];
 };
@@ -47,7 +64,7 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
     await runAppScript(['install', id]);
   }
 
-  const result = await App.update({ id }, { status: AppStatusEnum.RUNNING });
+  const result = await datasource.createQueryBuilder().update(App).set({ status: AppStatusEnum.RUNNING }).where('id = :id', { id }).returning('*').execute();
 
   return result.raw[0];
 };
@@ -78,7 +95,7 @@ const updateAppConfig = async (id: string, form: Record<string, string>): Promis
   }
 
   generateEnvFile(id, form);
-  const result = await App.update({ id }, { config: form });
+  const result = await datasource.createQueryBuilder().update(App).set({ config: form }).where('id = :id', { id }).returning('*').execute();
 
   return result.raw[0];
 };
@@ -93,8 +110,7 @@ const stopApp = async (id: string): Promise<App> => {
   // Run script
   await App.update({ id }, { status: AppStatusEnum.STOPPING });
   await runAppScript(['stop', id]);
-  const result = await App.update({ id }, { status: AppStatusEnum.STOPPED });
-
+  const result = await datasource.createQueryBuilder().update(App).set({ status: AppStatusEnum.STOPPED }).where('id = :id', { id }).returning('*').execute();
   return result.raw[0];
 };
 
@@ -126,4 +142,4 @@ const getApp = async (id: string): Promise<App> => {
   return app;
 };
 
-export default { installApp, startApp, listApps, getApp, updateAppConfig, stopApp, uninstallApp };
+export default { installApp, startApp, listApps, getApp, updateAppConfig, stopApp, uninstallApp, startAllApps };

@@ -12,12 +12,15 @@ import { MyContext } from './types';
 import { __prod__ } from './config/constants/constants';
 import cors from 'cors';
 import datasource from './config/datasource';
+import appsService from './modules/apps/apps.service';
+import { runUpdates } from './core/updates/run';
 
 const main = async () => {
   try {
     const app = express();
     const port = 3001;
 
+    app.set('proxy', 1);
     app.use(
       cors({
         credentials: true,
@@ -43,9 +46,7 @@ const main = async () => {
     }
 
     const schema = await createSchema();
-
     const httpServer = createServer(app);
-
     const plugins = [ApolloLogs];
 
     if (!__prod__) {
@@ -57,10 +58,17 @@ const main = async () => {
       context: ({ req, res }): MyContext => ({ req, res }),
       plugins,
     });
+
     await apolloServer.start();
     apolloServer.applyMiddleware({ app });
 
+    // Run migrations
+    // await runUpdates();
+
     httpServer.listen(port, () => {
+      // Start apps
+      appsService.startAllApps();
+
       logger.info(`Server running on port ${port}`);
     });
   } catch (error) {

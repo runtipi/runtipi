@@ -1,5 +1,4 @@
 import portUsed from 'tcp-port-used';
-import p from 'p-iteration';
 import { fileExists, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
 import config from '../../config';
@@ -10,12 +9,12 @@ export const checkAppRequirements = async (appName: string) => {
   const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
 
   if (configFile?.requirements?.ports) {
-    await p.forEachSeries(configFile?.requirements.ports, async (port: number) => {
+    for (const port of configFile.requirements.ports) {
       const ip = await InternalIp.v4();
       const used = await portUsed.check(port, ip);
 
       if (used) valid = false;
-    });
+    }
   }
 
   return valid;
