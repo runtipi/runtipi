@@ -9,9 +9,7 @@ import User from './user.entity';
 export default class AuthResolver {
   @Query(() => User, { nullable: true })
   async me(@Ctx() ctx: MyContext): Promise<User | null> {
-    const user = await AuthService.me(ctx.req.session.userId);
-
-    return user;
+    return AuthService.me(ctx.req.session.userId);
   }
 
   @Mutation(() => UserResponse)

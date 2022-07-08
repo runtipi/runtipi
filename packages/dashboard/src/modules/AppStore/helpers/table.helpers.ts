@@ -15,7 +15,7 @@ export const sortTable = (data: AppTableData, col: keyof Pick<AppInfo, 'name'>, 
   });
 
   if (categories.length > 0) {
-    return sortedData.filter((app) => app.categories.some((c) => categories.includes(c as AppCategoriesEnum))).filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
+    return sortedData.filter((app) => app.categories.some((c) => categories.includes(c))).filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
   } else {
     return sortedData.filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
   }

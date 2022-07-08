@@ -3,6 +3,8 @@ import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, 
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 
+const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
+
 const startAllApps = async (): Promise<void> => {
   const apps = await App.find({ where: { status: AppStatusEnum.RUNNING } });
 
@@ -86,7 +88,7 @@ const listApps = async (): Promise<ListAppsResonse> => {
     app.description = readFile(`/apps/${app.id}/metadata/description.md`);
   });
 
-  return { apps: apps.sort((a, b) => a.name.localeCompare(b.name)), total: apps.length };
+  return { apps: apps.sort(sortApps), total: apps.length };
 };
 
 const updateAppConfig = async (id: string, form: Record<string, string>): Promise<App> => {
