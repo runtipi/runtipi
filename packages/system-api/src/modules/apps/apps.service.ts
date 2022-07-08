@@ -2,7 +2,6 @@ import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
-import datasource from '../../config/datasource';
 
 const startAllApps = async (): Promise<void> => {
   const apps = await App.find({ where: { status: AppStatusEnum.RUNNING } });
@@ -35,9 +34,11 @@ const startApp = async (appName: string): Promise<App> => {
   await App.update({ id: appName }, { status: AppStatusEnum.STARTING });
   // Run script
   await runAppScript(['start', appName]);
-  const result = await datasource.createQueryBuilder().update(App).set({ status: AppStatusEnum.RUNNING }).where('id = :id', { id: appName }).returning('*').execute();
 
-  return result.raw[0];
+  await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
+  app = (await App.findOne({ where: { id: appName } })) as App;
+
+  return app;
 };
 
 const installApp = async (id: string, form: Record<string, string>): Promise<App> => {
@@ -64,9 +65,10 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
     await runAppScript(['install', id]);
   }
 
-  const result = await datasource.createQueryBuilder().update(App).set({ status: AppStatusEnum.RUNNING }).where('id = :id', { id }).returning('*').execute();
+  await App.update({ id }, { status: AppStatusEnum.RUNNING });
+  app = (await App.findOne({ where: { id } })) as App;
 
-  return result.raw[0];
+  return app;
 };
 
 const listApps = async (): Promise<ListAppsResonse> => {
@@ -95,9 +97,10 @@ const updateAppConfig = async (id: string, form: Record<string, string>): Promis
   }
 
   generateEnvFile(id, form);
-  const result = await datasource.createQueryBuilder().update(App).set({ config: form }).where('id = :id', { id }).returning('*').execute();
+  await App.update({ id }, { config: form });
+  app = (await App.findOne({ where: { id } })) as App;
 
-  return result.raw[0];
+  return app;
 };
 
 const stopApp = async (id: string): Promise<App> => {
@@ -110,8 +113,11 @@ const stopApp = async (id: string): Promise<App> => {
   // Run script
   await App.update({ id }, { status: AppStatusEnum.STOPPING });
   await runAppScript(['stop', id]);
-  const result = await datasource.createQueryBuilder().update(App).set({ status: AppStatusEnum.STOPPED }).where('id = :id', { id }).returning('*').execute();
-  return result.raw[0];
+
+  await App.update({ id }, { status: AppStatusEnum.STOPPED });
+  app = (await App.findOne({ where: { id } })) as App;
+
+  return app;
 };
 
 const uninstallApp = async (id: string): Promise<App> => {

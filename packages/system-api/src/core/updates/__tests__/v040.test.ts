@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { DataSource } from 'typeorm';
+import logger from '../../../config/logger/logger';
 import App from '../../../modules/apps/app.entity';
 import { AppInfo, AppStatusEnum } from '../../../modules/apps/apps.types';
 import { createApp } from '../../../modules/apps/__tests__/apps.factory';
@@ -44,6 +45,16 @@ describe('No state/apps.json', () => {
     const apps = await App.find();
 
     expect(apps).toHaveLength(0);
+  });
+
+  it('Should not run the update if already done', async () => {
+    const spy = jest.spyOn(logger, 'info');
+
+    await updateV040();
+    await updateV040();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith('Update v040 already applied');
   });
 });
 
@@ -101,5 +112,21 @@ describe('State/apps.json exists with one installed app', () => {
     const app = await App.findOne({ where: { id: app1?.id } });
 
     expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
+  });
+
+  it('Should not try to migrate app if it already exists', async () => {
+    const { MockFiles, appInfo } = await createApp(true);
+    app1 = appInfo;
+    MockFiles['/tipi/state/apps.json'] = createState([appInfo.id]);
+    MockFiles[`/tipi/app-data/${appInfo.id}`] = '';
+    MockFiles[`/tipi/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    await updateV040();
+    const spy = jest.spyOn(logger, 'info');
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith('App already migrated');
   });
 });

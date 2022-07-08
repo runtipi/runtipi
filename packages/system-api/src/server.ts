@@ -63,7 +63,7 @@ const main = async () => {
     apolloServer.applyMiddleware({ app });
 
     // Run migrations
-    // await runUpdates();
+    await runUpdates();
 
     httpServer.listen(port, () => {
       // Start apps
