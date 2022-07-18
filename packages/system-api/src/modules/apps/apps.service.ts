@@ -134,7 +134,12 @@ const uninstallApp = async (id: string): Promise<App> => {
 
   await App.update({ id }, { status: AppStatusEnum.UNINSTALLING });
   // Run script
-  await runAppScript(['uninstall', id]);
+  try {
+    await runAppScript(['uninstall', id]);
+  } catch (e) {
+    console.log(e);
+  }
+
   await App.delete({ id });
 
   return { id, status: AppStatusEnum.MISSING, config: {} } as App;

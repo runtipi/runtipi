@@ -1,6 +1,8 @@
 {
   "name": "Anonaddy",
   "port": 8084,
+  "available": false,
+  "categories": ["utilities"],
   "id": "anonaddy",
   "description": "",
   "short_desc": "Anonymous email forwarding",
