@@ -101,7 +101,7 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
-TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
+TZ="$(timedatectl | grep "Time zone" | awk '{print $3}') || Europe/Berlin"
 
 # Copy the app state if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
