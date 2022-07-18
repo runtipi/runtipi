@@ -60,6 +60,7 @@ NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
 INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
+TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' || Europe/Berlin)"
 
 if [[ "$ARCHITECTURE" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
@@ -98,8 +99,6 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
-TZ="$(timedatectl | grep "Time zone" | awk '{print $3}') || Europe/Berlin"
-
 # Copy the app state if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
   cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json"
@@ -137,7 +136,7 @@ ENV_FILE=$(mktemp)
 
 JWT_SECRET=$(derive_entropy "jwt")
 POSTGRES_PASSWORD=$(derive_entropy "postgres")
-TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
+TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)§
 
 for template in ${ENV_FILE}; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
