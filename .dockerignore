@@ -4,3 +4,6 @@
 /.next
 node_modules
 .next
+dist/
+**/dist/
+**/next/

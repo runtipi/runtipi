@@ -3,4 +3,4 @@
 
 pnpm test
 pnpm -r test
-pnpm -r lint
+pnpm -r lint:fix

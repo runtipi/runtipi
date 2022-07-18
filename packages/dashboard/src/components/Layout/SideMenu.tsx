@@ -8,12 +8,12 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { IconType } from 'react-icons';
-import { useAuthStore } from '../../state/authStore';
+import { useLogoutMutation } from '../../generated/graphql';
 
 const SideMenu: React.FC = () => {
   const router = useRouter();
   const { colorMode, setColorMode } = useColorMode();
-  const { logout } = useAuthStore();
+  const [logout] = useLogoutMutation({ refetchQueries: ['Me'] });
   const path = router.pathname.split('/')[1];
 
   const renderMenuItem = (title: string, name: string, Icon: IconType) => {
@@ -53,7 +53,7 @@ const SideMenu: React.FC = () => {
       <Flex flex="1" />
       <List>
         <div className="mx-3">
-          <ListItem onClick={logout} className="cursor-pointer hover:font-bold flex items-center mb-5">
+          <ListItem onClick={() => logout()} className="cursor-pointer hover:font-bold flex items-center mb-5">
             <FiLogOut size={20} className="mr-3" />
             <p className="flex-1">Log out</p>
           </ListItem>

@@ -7,6 +7,6 @@ module.exports = {
   // setupFiles: ['<rootDir>/tests/dotenv-config.ts'],
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.{ts,tsx}'],
-  coverageProvider: 'v8',
+  // coverageProvider: 'v8',
   passWithNoTests: true,
 };

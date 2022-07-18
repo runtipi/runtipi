@@ -1,73 +1,80 @@
-/* eslint-disable no-unused-vars */
-import express, { NextFunction, Request, Response } from 'express';
-import compression from 'compression';
-import helmet from 'helmet';
-import cors from 'cors';
-import { isProd } from './constants/constants';
-import appsRoutes from './modules/apps/apps.routes';
-import systemRoutes from './modules/system/system.routes';
-import authRoutes from './modules/auth/auth.routes';
-import AuthHelpers from './modules/auth/auth.helpers';
-import cookieParser from 'cookie-parser';
+import 'reflect-metadata';
+import express from 'express';
+import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from 'apollo-server-core';
 import config from './config';
+import { ApolloServer } from 'apollo-server-express';
+import { createSchema } from './schema';
+import { ApolloLogs } from './config/logger/apollo.logger';
+import { createServer } from 'http';
+import logger from './config/logger/logger';
+import getSessionMiddleware from './core/middlewares/sessionMiddleware';
+import { MyContext } from './types';
+import { __prod__ } from './config/constants/constants';
+import cors from 'cors';
+import datasource from './config/datasource';
+import appsService from './modules/apps/apps.service';
+import { runUpdates } from './core/updates/run';
 
-const app = express();
-const port = 3001;
+const main = async () => {
+  try {
+    const app = express();
+    const port = 3001;
 
-app.use(express.json());
-app.use(cookieParser());
+    app.set('proxy', 1);
+    app.use(
+      cors({
+        credentials: true,
+        origin: function (origin, callback) {
+          // allow requests with no origin
+          if (!origin) return callback(null, true);
 
-if (isProd) {
-  app.use(compression());
-  app.use(helmet());
-}
+          if (config.CLIENT_URLS.indexOf(origin) === -1) {
+            const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
+            return callback(new Error(message), false);
+          }
 
-app.use(
-  cors({
-    credentials: true,
-    origin: function (origin, callback) {
-      // allow requests with no origin
-      if (!origin) return callback(null, true);
+          return callback(null, true);
+        },
+      }),
+    );
+    app.use(getSessionMiddleware());
 
-      if (config.CLIENT_URLS.indexOf(origin) === -1) {
-        const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
-        return callback(new Error(message), false);
-      }
+    await datasource.initialize();
 
-      return callback(null, true);
-    },
-  }),
-);
+    if (__prod__) {
+      await datasource.runMigrations();
+    }
 
-// Get user from token
-app.use((req, _res, next) => {
-  let user = null;
+    const schema = await createSchema();
+    const httpServer = createServer(app);
+    const plugins = [ApolloLogs];
 
-  if (req?.cookies?.tipi_token) {
-    user = AuthHelpers.tradeTokenForUser(req.cookies.tipi_token);
-    if (user) req.user = user;
-  }
+    if (!__prod__) {
+      plugins.push(Playground({ settings: { 'request.credentials': 'include' } }));
+    }
 
-  next();
-});
+    const apolloServer = new ApolloServer({
+      schema,
+      context: ({ req, res }): MyContext => ({ req, res }),
+      plugins,
+    });
 
-const restrict = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    res.status(401).json({ error: 'Unauthorized' });
-  } else {
-    next();
+    await apolloServer.start();
+    apolloServer.applyMiddleware({ app });
+
+    // Run migrations
+    await runUpdates();
+
+    httpServer.listen(port, () => {
+      // Start apps
+      appsService.startAllApps();
+
+      logger.info(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.log(error);
+    logger.error(error);
   }
 };
 
-app.use('/auth', authRoutes);
-app.use('/system', restrict, systemRoutes);
-app.use('/apps', restrict, appsRoutes);
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: Error, _req: Request, res: Response, _: NextFunction) => {
-  res.status(200).json({ error: err.message });
-});
-
-app.listen(port, () => {
-  console.log(`System API listening on port ${port}`);
-});
+main();

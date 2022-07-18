@@ -1,13 +1,14 @@
 import { useToast } from '@chakra-ui/react';
-import React from 'react';
-import { useAuthStore } from '../../../state/authStore';
+import React, { useState } from 'react';
+import { useLoginMutation } from '../../../generated/graphql';
 import AuthFormLayout from '../components/AuthFormLayout';
 import LoginForm from '../components/LoginForm';
 
 type FormValues = { email: string; password: string };
 
 const Login: React.FC = () => {
-  const { me, login, loading } = useAuthStore();
+  const [login] = useLoginMutation({ refetchQueries: ['Me'] });
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const handleError = (error: unknown) => {
@@ -24,10 +25,12 @@ const Login: React.FC = () => {
 
   const handleLogin = async (values: FormValues) => {
     try {
-      await login(values.email, values.password);
-      await me();
+      setLoading(true);
+      await login({ variables: { input: { username: values.email, password: values.password } } });
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 

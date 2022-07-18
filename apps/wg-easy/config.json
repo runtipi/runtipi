@@ -12,14 +12,14 @@
   "author": "WeeJeWel",
   "source": "https://github.com/WeeJeWel/wg-easy/",
   "image": "/logos/apps/wireguard.jpg",
-  "form_fields": {
-    "host": {
+  "form_fields": [
+    {
       "type": "fqdnip",
       "label": "Your public IP address or domain name",
       "required": true,
       "env_variable": "WIREGUARD_HOST"
     },
-    "password": {
+    {
       "type": "password",
       "label": "Password",
       "max": 50,
@@ -27,11 +27,11 @@
       "required": true,
       "env_variable": "WIREGUARD_PASSWORD"
     },
-    "dns": {
+    {
       "type": "ip",
       "label": "Default DNS server",
       "required": false,
       "env_variable": "WIREGUARD_DNS"
     }
-  }
+  ]
 }

@@ -1,0 +1,7 @@
+mutation StartApp($id: String!) {
+  startApp(id: $id) {
+    id
+    status
+    __typename
+  }
+}

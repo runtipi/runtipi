@@ -1,9 +1,9 @@
 import { Flex, ScaleFade } from '@chakra-ui/react';
-import { AppConfig } from '@runtipi/common';
 import React from 'react';
+import { AppInfo } from '../../../generated/graphql';
 
 interface IProps {
-  app: AppConfig;
+  app: AppInfo;
   show: boolean;
 }
 
@@ -16,7 +16,7 @@ const FeaturedCard: React.FC<IProps> = ({ app, show }) => {
         rounded="md"
         shadow="md"
         style={{
-          backgroundImage: `url(https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80)`,
+          backgroundImage: 'url(https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80)',
         }}
       >
         <div className="relative flex flex-1 w-max lg:bg-gradient-to-r from-white via-white">

@@ -1,0 +1,17 @@
+# Write your query or mutation here
+query ListApps {
+  listAppsInfo {
+    apps {
+      id
+      available
+      image
+      port
+      name
+      version
+      short_desc
+      author
+      categories
+    }
+    total
+  }
+}

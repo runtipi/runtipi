@@ -1,23 +1,20 @@
 import portUsed from 'tcp-port-used';
-import p from 'p-iteration';
-import { AppConfig } from '@runtipi/common';
 import { fileExists, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
 import config from '../../config';
-
-type AppsState = { installed: string };
+import { AppInfo } from './apps.types';
 
 export const checkAppRequirements = async (appName: string) => {
   let valid = true;
-  const configFile: AppConfig = readJsonFile(`/apps/${appName}/config.json`);
+  const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
 
-  if (configFile.requirements?.ports) {
-    await p.forEachSeries(configFile.requirements.ports, async (port: number) => {
+  if (configFile?.requirements?.ports) {
+    for (const port of configFile.requirements.ports) {
       const ip = await InternalIp.v4();
       const used = await portUsed.check(port, ip);
 
       if (used) valid = false;
-    });
+    }
   }
 
   return valid;
@@ -37,34 +34,17 @@ export const getEnvMap = (appName: string): Map<string, string> => {
 };
 
 export const checkEnvFile = (appName: string) => {
-  const configFile: AppConfig = readJsonFile(`/apps/${appName}/config.json`);
+  const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
   const envMap = getEnvMap(appName);
 
-  Object.keys(configFile.form_fields).forEach((key) => {
-    const envVar = configFile.form_fields[key].env_variable;
+  configFile.form_fields?.forEach((field) => {
+    const envVar = field.env_variable;
     const envVarValue = envMap.get(envVar);
 
-    if (!envVarValue && configFile.form_fields[key].required) {
+    if (!envVarValue && field.required) {
       throw new Error('New info needed. App config needs to be updated');
     }
   });
-};
-
-export const getInitalFormValues = (appName: string): Record<string, string> => {
-  const configFile: AppConfig = readJsonFile(`/apps/${appName}/config.json`);
-  const envMap = getEnvMap(appName);
-  const formValues: Record<string, string> = {};
-
-  Object.keys(configFile.form_fields).forEach((key) => {
-    const envVar = configFile.form_fields[key].env_variable;
-    const envVarValue = envMap.get(envVar);
-
-    if (envVarValue) {
-      formValues[key] = envVarValue;
-    }
-  });
-
-  return formValues;
 };
 
 export const checkAppExists = (appName: string) => {
@@ -105,26 +85,22 @@ export const ensureAppState = (appName: string, installed: boolean) => {
 };
 
 export const generateEnvFile = (appName: string, form: Record<string, string>) => {
-  const configFile: AppConfig = readJsonFile(`/apps/${appName}/config.json`);
+  const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
   const baseEnvFile = readFile('/.env').toString();
   let envFile = `${baseEnvFile}\nAPP_PORT=${configFile.port}\n`;
 
-  Object.keys(configFile.form_fields).forEach((key) => {
-    const value = form[key];
+  configFile.form_fields?.forEach((field) => {
+    const formValue = form[field.env_variable];
 
-    if (value) {
-      const envVar = configFile.form_fields[key].env_variable;
-      envFile += `${envVar}=${value}\n`;
-    } else if (configFile.form_fields[key].required) {
-      throw new Error(`Variable ${key} is required`);
+    if (formValue) {
+      const envVar = field.env_variable;
+      envFile += `${envVar}=${formValue}\n`;
+    } else if (field.required) {
+      throw new Error(`Variable ${field.env_variable} is required`);
     }
   });
 
   writeFile(`/app-data/${appName}/app.env`, envFile);
-};
-
-export const getStateFile = (): AppsState => {
-  return readJsonFile('/state/apps.json');
 };
 
 export const getAvailableApps = (): string[] => {
@@ -134,7 +110,7 @@ export const getAvailableApps = (): string[] => {
 
   appsDir.forEach((app) => {
     if (fileExists(`/apps/${app}/config.json`)) {
-      const configFile: AppConfig = readJsonFile(`/apps/${app}/config.json`);
+      const configFile: AppInfo = readJsonFile(`/apps/${app}/config.json`);
 
       if (configFile.available) {
         apps.push(app);
@@ -143,4 +119,15 @@ export const getAvailableApps = (): string[] => {
   });
 
   return apps;
+};
+
+export const getAppInfo = (id: string): AppInfo => {
+  try {
+    const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
+    configFile.description = readFile(`/apps/${id}/metadata/description.md`);
+
+    return configFile;
+  } catch (e) {
+    throw new Error(`App ${id} not found`);
+  }
 };

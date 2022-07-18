@@ -10,5 +10,5 @@
   "source": "https://github.com/syncthing",
   "website": "https://syncthing.net",
   "image": "/logos/apps/syncthing.jpg",
-  "form_fields": {}
+  "form_fields": []
 }

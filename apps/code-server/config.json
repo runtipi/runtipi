@@ -9,8 +9,8 @@
   "author": "https://github.com/coder",
   "source": "https://github.com/linuxserver/docker-code-server",
   "image": "https://avatars.githubusercontent.com/u/95932066",
-  "form_fields": {
-    "password": {
+  "form_fields": [
+    {
       "type": "password",
       "label": "Password",
       "max": 50,
@@ -18,5 +18,5 @@
       "required": true,
       "env_variable": "CODESERVER_PASSWORD"
     }
-  }
+  ]
 }

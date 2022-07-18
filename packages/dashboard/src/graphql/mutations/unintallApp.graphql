@@ -1,0 +1,7 @@
+mutation UninstallApp($id: String!) {
+  uninstallApp(id: $id) {
+    id
+    status
+    __typename
+  }
+}

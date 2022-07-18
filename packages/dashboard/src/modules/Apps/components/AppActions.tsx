@@ -1,22 +1,25 @@
 import { Button } from '@chakra-ui/react';
 import React from 'react';
 import { FiExternalLink, FiPause, FiPlay, FiSettings, FiTrash2 } from 'react-icons/fi';
-import { AppConfig, AppStatusEnum } from '@runtipi/common';
+import { TiCancel } from 'react-icons/ti';
+import { AppInfo, AppStatusEnum } from '../../../generated/graphql';
 
 interface IProps {
-  app: AppConfig;
+  app: AppInfo;
+  status?: AppStatusEnum;
   onInstall: () => void;
   onUninstall: () => void;
   onStart: () => void;
   onStop: () => void;
   onOpen: () => void;
   onUpdate: () => void;
+  onCancel: () => void;
 }
 
-const AppActions: React.FC<IProps> = ({ app, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate }) => {
+const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate, onCancel }) => {
   const hasSettings = Object.keys(app.form_fields).length > 0;
 
-  if (app?.installed && app.status === AppStatusEnum.STOPPED) {
+  if (status === AppStatusEnum.Stopped) {
     return (
       <div className="flex flex-wrap justify-center">
         <Button onClick={onStart} width={150} colorScheme="green" className="mt-3 mr-2">
@@ -35,7 +38,7 @@ const AppActions: React.FC<IProps> = ({ app, onInstall, onUninstall, onStart, on
         )}
       </div>
     );
-  } else if (app?.installed && app.status === AppStatusEnum.RUNNING) {
+  } else if (status === AppStatusEnum.Running) {
     return (
       <div>
         <Button onClick={onOpen} width={150} colorScheme="gray" className="mt-3 mr-2">
@@ -48,23 +51,28 @@ const AppActions: React.FC<IProps> = ({ app, onInstall, onUninstall, onStart, on
         </Button>
       </div>
     );
-  } else if (app.status === AppStatusEnum.INSTALLING || app.status === AppStatusEnum.UNINSTALLING || app.status === AppStatusEnum.STARTING || app.status === AppStatusEnum.STOPPING) {
+  } else if (status === AppStatusEnum.Installing || status === AppStatusEnum.Uninstalling || status === AppStatusEnum.Starting || status === AppStatusEnum.Stopping) {
     return (
       <div className="flex items-center sm:items-start flex-col md:flex-row">
         <Button isLoading onClick={() => null} width={160} colorScheme="green" className="mt-3">
           Install
           <FiPlay className="ml-1" />
         </Button>
-        <span className="text-gray-500 text-sm ml-2 mt-3 self-center text-center sm:text-left">{`App is ${app.status} please wait and don't refresh page...`}</span>
+        <Button onClick={onCancel} colorScheme="gray" className="mt-3 mr-2 ml-2">
+          <TiCancel />
+        </Button>
+        <span className="text-gray-500 text-sm ml-2 mt-3 self-center text-center sm:text-left">{`App is ${status.toLowerCase()} please wait and don't refresh page...`}</span>
       </div>
+    );
+  } else if (status === AppStatusEnum.Missing) {
+    return (
+      <Button onClick={onInstall} width={160} colorScheme="green" className="mt-3">
+        Install
+      </Button>
     );
   }
 
-  return (
-    <Button onClick={onInstall} width={160} colorScheme="green" className="mt-3">
-      Install
-    </Button>
-  );
+  return null;
 };
 
 export default AppActions;

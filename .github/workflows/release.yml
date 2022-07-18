@@ -52,7 +52,7 @@ jobs:
       - name: Get tag from VERSION file
         id: meta
         run: |
-          VERSION=$(cat VERSION)
+          VERSION=$(npm run version --silent)
           TAG=${VERSION}
           echo "::set-output name=tag::${TAG}"
       

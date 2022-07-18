@@ -10,5 +10,5 @@
   "author": "plexinc",
   "source": "https://github.com/plexinc/pms-docker",
   "image": "/logos/apps/plex.png",
-  "form_fields": {}
+  "form_fields": []
 }

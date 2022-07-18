@@ -9,5 +9,5 @@
   "author": "Prowlarr",
   "source": "https://github.com/Prowlarr/Prowlarr/",
   "image": "/logos/apps/prowlarr.jpg",
-  "form_fields": {}
+  "form_fields": []
 }

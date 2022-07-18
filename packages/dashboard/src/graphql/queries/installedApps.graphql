@@ -1,0 +1,14 @@
+query InstalledApps {
+  installedApps {
+    id
+    status
+    config
+    info {
+      id
+      name
+      description
+      image
+      short_desc
+    }
+  }
+}

@@ -9,8 +9,8 @@
   "author": "Nextcloud GmbH",
   "source": "https://github.com/nextcloud/server",
   "image": "https://avatars.githubusercontent.com/u/19211038?s=200&v=4",
-  "form_fields": {
-    "username": {
+  "form_fields": [
+    {
       "type": "text",
       "label": "Username",
       "max": 50,
@@ -18,7 +18,7 @@
       "required": true,
       "env_variable": "NEXTCLOUD_ADMIN_USER"
     },
-    "password": {
+    {
       "type": "password",
       "label": "Password",
       "max": 50,
@@ -26,5 +26,5 @@
       "required": true,
       "env_variable": "NEXTCLOUD_ADMIN_PASSWORD"
     }
-  }
+  ]
 }

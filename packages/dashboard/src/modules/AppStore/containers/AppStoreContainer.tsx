@@ -1,17 +1,19 @@
 import { Flex } from '@chakra-ui/react';
-import { AppCategoriesEnum } from '@runtipi/common';
 import React from 'react';
-import { useAppsStore } from '../../../state/appsStore';
+import { AppCategoriesEnum } from '../../../generated/graphql';
 import AppStoreTable from '../components/AppStoreTable';
 import { sortTable } from '../helpers/table.helpers';
-import { SortableColumns, SortDirection } from '../helpers/table.types';
+import { AppTableData, SortableColumns, SortDirection } from '../helpers/table.types';
 
 // function nonNullable<T>(value: T): value is NonNullable<T> {
 //   return value !== null && value !== undefined;
 // }
 
-const AppStoreContainer = () => {
-  const { apps } = useAppsStore();
+interface IProps {
+  apps: AppTableData;
+}
+
+const AppStoreContainer: React.FC<IProps> = ({ apps }) => {
   const [search, setSearch] = React.useState('');
   const [categories, setCategories] = React.useState<AppCategoriesEnum[]>([]);
   const [sort, setSort] = React.useState<SortableColumns>('name');
