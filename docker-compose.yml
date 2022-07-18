@@ -38,7 +38,7 @@ services:
 
   api:
     image: meienberger/runtipi:${TIPI_VERSION}
-    command: bash -c "cd /api && npm run start"
+    command: /bin/sh -c "cd /api && npm run build && npm run start"
     restart: unless-stopped
     container_name: api
     ports:
@@ -65,7 +65,7 @@ services:
 
   dashboard:
     image: meienberger/runtipi:${TIPI_VERSION}
-    command: bash -c "cd /dashboard && npm run start"
+    command: /bin/sh -c "cd /dashboard && npm run start"
     restart: unless-stopped
     container_name: dashboard
     ports:
