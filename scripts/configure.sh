@@ -18,6 +18,7 @@ function install_docker() {
 
   if [[ "${OS}" == "debian" ]]; then
     sudo apt-get update
+    sudo apt-get upgrade
     sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
     sudo mkdir -p /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -27,6 +28,7 @@ function install_docker() {
     return 0
   elif [[ "${OS}" == "ubuntu" ]]; then
     sudo apt-get update
+    sudo apt-get upgrade
     sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
     sudo mkdir -p /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -93,6 +95,3 @@ if ! command -v docker-compose >/dev/null; then
   sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
   sudo chmod +x /usr/local/bin/docker-compose
 fi
-
-# Create configured status
-touch "${ROOT_FOLDER}/state/configured"
