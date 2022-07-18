@@ -38,7 +38,7 @@ services:
 
   api:
     image: meienberger/runtipi:rc-${TIPI_VERSION}
-    command: /bin/sh -c "cd /api && npm run build && npm run start"
+    command: /bin/sh -c "cd /api && npm run start"
     container_name: api
     ports:
       - 3001:3001
