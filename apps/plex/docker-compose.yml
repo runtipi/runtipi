@@ -13,5 +13,3 @@ services:
       - ${APP_DATA_DIR}/data/config:/config
       - ${ROOT_FOLDER_HOST}/media/data:/media
     restart: unless-stopped
-    ports:
-      - ${APP_PORT}:32400
