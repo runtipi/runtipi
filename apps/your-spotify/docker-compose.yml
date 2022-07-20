@@ -8,9 +8,9 @@ services:
     ports:
       - 32500:8080
     links:
-      - mongo
+      - your-spotify-db
     depends_on:
-      - mongo
+      - your-spotify-db
     environment:
       - API_ENDPOINT=http://localhost:32500 # This MUST be included as a valid URL in the spotify dashboard (see below)
       - CLIENT_ENDPOINT=http://${INTERNAL_IP}:${APP_PORT}
