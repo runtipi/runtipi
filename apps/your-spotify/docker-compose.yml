@@ -24,21 +24,20 @@ services:
       - tipi_main_network
 
   your-spotify-db:
-    restart: unless-stopped
     container_name: your-spotify-db
     image: mongo:4.4.8
+    restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/data/db:/data/db
     networks:
       - tipi_main_network
 
   your-spotify:
-    restart: unless-stopped
     container_name: your-spotify
     image: yooooomi/your_spotify_client
     depends_on:
       - your-spotify-server
-    restart: always
+    restart: unless-stopped
     ports:
       - ${APP_PORT}:3000
     environment:
