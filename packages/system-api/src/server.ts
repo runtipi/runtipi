@@ -25,15 +25,15 @@ const main = async () => {
       cors({
         credentials: true,
         origin: function (origin, callback) {
-          // allow requests with no origin
-          if (!origin) return callback(null, true);
+          // disallow requests with no origin
+          if (!origin) return callback(new Error('Not allowed by CORS'));
 
-          if (config.CLIENT_URLS.indexOf(origin) === -1) {
-            const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
-            return callback(new Error(message), false);
+          if (config.CLIENT_URLS.includes(origin)) {
+            return callback(null, true);
           }
 
-          return callback(null, true);
+          const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
+          return callback(new Error(message), false);
         },
       }),
     );
