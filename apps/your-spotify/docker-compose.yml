@@ -4,7 +4,9 @@ services:
   your-spotify-server:
     container_name: your-spotify-server
     image: yooooomi/your_spotify_server
-    restart: always
+    restart: unless-stopped
+    dns:
+      - ${DNS_IP}
     ports:
       - 32500:8080
     links:
@@ -22,6 +24,7 @@ services:
       - tipi_main_network
 
   your-spotify-db:
+    restart: unless-stopped
     container_name: your-spotify-db
     image: mongo:4.4.8
     volumes:
@@ -30,6 +33,7 @@ services:
       - tipi_main_network
 
   your-spotify:
+    restart: unless-stopped
     container_name: your-spotify
     image: yooooomi/your_spotify_client
     depends_on:
