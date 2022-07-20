@@ -2,4 +2,5 @@ version: "3.7"
 
 networks:
   tipi_main_network:
-      name: runtipi_tipi_main_network
+      external:
+        name: runtipi_tipi_main_network

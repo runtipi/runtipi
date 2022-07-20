@@ -1,12 +1,13 @@
 import { useToast } from '@chakra-ui/react';
-import React from 'react';
-import { useAuthStore } from '../../../state/authStore';
+import React, { useState } from 'react';
+import { useRegisterMutation } from '../../../generated/graphql';
 import AuthFormLayout from '../components/AuthFormLayout';
 import RegisterForm from '../components/RegisterForm';
 
 const Onboarding: React.FC = () => {
   const toast = useToast();
-  const { me, register, loading } = useAuthStore();
+  const [register] = useRegisterMutation({ refetchQueries: ['Me'] });
+  const [loading, setLoading] = useState(false);
 
   const handleError = (error: unknown) => {
     if (error instanceof Error) {
@@ -22,10 +23,12 @@ const Onboarding: React.FC = () => {
 
   const handleRegister = async (values: { email: string; password: string }) => {
     try {
-      await register(values.email, values.password);
-      await me();
+      setLoading(true);
+      await register({ variables: { input: { username: values.email, password: values.password } } });
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 

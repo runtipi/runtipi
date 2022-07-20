@@ -8,31 +8,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@master
-
-      - name: Create Tag
-        id: create_tag
-        uses: jaywcjlove/create-tag-action@v1.1.5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          package-path: ./package.json
-    
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@latest
-        if: steps.create_tag.outputs.successful
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.create_tag.outputs.version }}
-          release_name: ${{ steps.create_tag.outputs.version }}
-          draft: false
-          prerelease: false
-
-  docker:
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -52,7 +27,7 @@ jobs:
       - name: Get tag from VERSION file
         id: meta
         run: |
-          VERSION=$(cat VERSION)
+          VERSION=$(npm run version --silent)
           TAG=${VERSION}
           echo "::set-output name=tag::${TAG}"
       
@@ -65,3 +40,22 @@ jobs:
           tags: meienberger/runtipi:latest,meienberger/runtipi:${{ steps.meta.outputs.TAG }}
           cache-from: type=registry,ref=meienberger/runtipi:buildcache
           cache-to: type=registry,ref=meienberger/runtipi:buildcache,mode=max
+
+      - name: Create Tag
+        id: create_tag
+        uses: jaywcjlove/create-tag-action@v1.1.5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          package-path: ./package.json
+    
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        if: steps.create_tag.outputs.successful
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.create_tag.outputs.version }}
+          release_name: ${{ steps.create_tag.outputs.version }}
+          draft: false
+          prerelease: false

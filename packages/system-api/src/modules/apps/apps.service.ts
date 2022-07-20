@@ -1,26 +1,63 @@
-import si from 'systeminformation';
-import { AppConfig, AppStatusEnum } from '@runtipi/common';
-import { createFolder, fileExists, readFile, readJsonFile } from '../fs/fs.helpers';
-import { checkAppExists, checkAppRequirements, checkEnvFile, ensureAppState, generateEnvFile, getAvailableApps, getInitalFormValues, getStateFile, runAppScript } from './apps.helpers';
+import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
+import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
+import App from './app.entity';
 
-const startApp = async (appName: string): Promise<void> => {
-  checkAppExists(appName);
-  checkEnvFile(appName);
+const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
 
-  // Regenerate env file
-  const form = getInitalFormValues(appName);
-  generateEnvFile(appName, form);
+const startAllApps = async (): Promise<void> => {
+  const apps = await App.find({ where: { status: AppStatusEnum.RUNNING } });
 
-  // Run script
-  await runAppScript(['start', appName]);
+  await Promise.all(
+    apps.map(async (app) => {
+      // Regenerate env file
+      try {
+        generateEnvFile(app.id, app.config);
+        checkEnvFile(app.id);
 
-  ensureAppState(appName, true);
+        await App.update({ id: app.id }, { status: AppStatusEnum.STARTING });
+
+        await runAppScript(['start', app.id]);
+        await App.update({ id: app.id }, { status: AppStatusEnum.RUNNING });
+      } catch (e) {
+        await App.update({ id: app.id }, { status: AppStatusEnum.STOPPED });
+        console.log(e);
+      }
+    }),
+  );
 };
 
-const installApp = async (id: string, form: Record<string, string>): Promise<void> => {
-  const appExists = fileExists(`/app-data/${id}`);
+const startApp = async (appName: string): Promise<App> => {
+  let app = await App.findOne({ where: { id: appName } });
 
-  if (appExists) {
+  if (!app) {
+    throw new Error(`App ${appName} not found`);
+  }
+
+  // Regenerate env file
+  generateEnvFile(appName, app.config);
+
+  checkEnvFile(appName);
+
+  await App.update({ id: appName }, { status: AppStatusEnum.STARTING });
+  // Run script
+  try {
+    await runAppScript(['start', appName]);
+    await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
+  } catch (e) {
+    await App.update({ id: appName }, { status: AppStatusEnum.STOPPED });
+    console.log(e);
+  }
+
+  app = (await App.findOne({ where: { id: appName } })) as App;
+
+  return app;
+};
+
+const installApp = async (id: string, form: Record<string, string>): Promise<App> => {
+  let app = await App.findOne({ where: { id } });
+
+  if (app) {
     await startApp(id);
   } else {
     const appIsValid = await checkAppRequirements(id);
@@ -34,17 +71,21 @@ const installApp = async (id: string, form: Record<string, string>): Promise<voi
 
     // Create env file
     generateEnvFile(id, form);
-    ensureAppState(id, true);
+
+    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form }).save();
 
     // Run script
     await runAppScript(['install', id]);
   }
 
-  return Promise.resolve();
+  await App.update({ id }, { status: AppStatusEnum.RUNNING });
+  app = (await App.findOne({ where: { id } })) as App;
+
+  return app;
 };
 
-const listApps = async (): Promise<AppConfig[]> => {
-  const apps: AppConfig[] = getAvailableApps()
+const listApps = async (): Promise<ListAppsResonse> => {
+  const apps: AppInfo[] = getAvailableApps()
     .map((app) => {
       try {
         return readJsonFile(`/apps/${app}/config.json`);
@@ -54,50 +95,75 @@ const listApps = async (): Promise<AppConfig[]> => {
     })
     .filter(Boolean);
 
-  const dockerContainers = await si.dockerContainers();
-
-  const state = getStateFile();
-  const installed: string[] = state.installed.split(' ').filter(Boolean);
-
   apps.forEach((app) => {
-    app.installed = installed.includes(app.id);
-    app.status = (dockerContainers.find((container) => container.name === `${app.id}`)?.state as AppStatusEnum) || AppStatusEnum.STOPPED;
     app.description = readFile(`/apps/${app.id}/metadata/description.md`);
   });
 
-  return apps;
+  return { apps: apps.sort(sortApps), total: apps.length };
 };
 
-const getAppInfo = async (id: string): Promise<AppConfig> => {
-  const dockerContainers = await si.dockerContainers();
-  const configFile: AppConfig = readJsonFile(`/apps/${id}/config.json`);
+const updateAppConfig = async (id: string, form: Record<string, string>): Promise<App> => {
+  let app = await App.findOne({ where: { id } });
 
-  const state = getStateFile();
-  const installed: string[] = state.installed.split(' ').filter(Boolean);
-  configFile.installed = installed.includes(id);
-  configFile.status = (dockerContainers.find((container) => container.name === `${id}`)?.state as AppStatusEnum) || AppStatusEnum.STOPPED;
-  configFile.description = readFile(`/apps/${id}/metadata/description.md`);
+  if (!app) {
+    throw new Error(`App ${id} not found`);
+  }
 
-  return configFile;
-};
-
-const updateAppConfig = async (id: string, form: Record<string, string>): Promise<void> => {
-  checkAppExists(id);
   generateEnvFile(id, form);
+  await App.update({ id }, { config: form });
+  app = (await App.findOne({ where: { id } })) as App;
+
+  return app;
 };
 
-const stopApp = async (id: string): Promise<void> => {
-  checkAppExists(id);
+const stopApp = async (id: string): Promise<App> => {
+  let app = await App.findOne({ where: { id } });
+
+  if (!app) {
+    throw new Error(`App ${id} not found`);
+  }
+
   // Run script
+  await App.update({ id }, { status: AppStatusEnum.STOPPING });
   await runAppScript(['stop', id]);
+
+  await App.update({ id }, { status: AppStatusEnum.STOPPED });
+  app = (await App.findOne({ where: { id } })) as App;
+
+  return app;
 };
 
-const uninstallApp = async (id: string): Promise<void> => {
-  checkAppExists(id);
-  ensureAppState(id, false);
+const uninstallApp = async (id: string): Promise<App> => {
+  let app = await App.findOne({ where: { id } });
 
+  if (!app) {
+    throw new Error(`App ${id} not found`);
+  }
+  if (app.status === AppStatusEnum.RUNNING) {
+    await stopApp(id);
+  }
+
+  await App.update({ id }, { status: AppStatusEnum.UNINSTALLING });
   // Run script
-  await runAppScript(['uninstall', id]);
+  try {
+    await runAppScript(['uninstall', id]);
+  } catch (e) {
+    console.log(e);
+  }
+
+  await App.delete({ id });
+
+  return { id, status: AppStatusEnum.MISSING, config: {} } as App;
 };
 
-export default { installApp, startApp, listApps, getAppInfo, updateAppConfig, stopApp, uninstallApp };
+const getApp = async (id: string): Promise<App> => {
+  let app = await App.findOne({ where: { id } });
+
+  if (!app) {
+    app = { id, status: AppStatusEnum.MISSING, config: {} } as App;
+  }
+
+  return app;
+};
+
+export default { installApp, startApp, listApps, getApp, updateAppConfig, stopApp, uninstallApp, startAllApps };

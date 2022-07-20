@@ -58,9 +58,9 @@ SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 
 NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
 INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
-# INTERNAL_IP="$(hostname -I | awk '{print $1}')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
+TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' | sed 's/\//\\\//g' || Europe\/Berlin)"
 
 if [[ "$ARCHITECTURE" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
@@ -74,9 +74,7 @@ if [[ $UID != 0 ]]; then
 fi
 
 # Configure Tipi if it isn't already configured
-if [[ ! -f "${STATE_FOLDER}/configured" ]]; then
-  "${ROOT_FOLDER}/scripts/configure.sh"
-fi
+"${ROOT_FOLDER}/scripts/configure.sh"
 
 # Get field from json file
 function get_json_field() {
@@ -101,8 +99,6 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
-TZ="$(cat /etc/timezone | sed 's/\//\\\//g' || echo "Europe/Berlin")"
-
 # Copy the app state if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
   cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json"
@@ -117,9 +113,6 @@ fi
 if [[ -f "/etc/resolv.conf" ]]; then
   TEMP=$(grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' /etc/resolv.conf | head -n 1)
 fi
-
-# Get dns ip if pihole is installed
-str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
 
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
@@ -142,6 +135,8 @@ ENV_FILE=$(mktemp)
 [[ -f "$ROOT_FOLDER/templates/env-sample" ]] && cp "$ROOT_FOLDER/templates/env-sample" "$ENV_FILE"
 
 JWT_SECRET=$(derive_entropy "jwt")
+POSTGRES_PASSWORD=$(derive_entropy "postgres")
+TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 
 for template in ${ENV_FILE}; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
@@ -149,10 +144,11 @@ for template in ${ENV_FILE}; do
   sed -i "s/<tz>/${TZ}/g" "${template}"
   sed -i "s/<jwt_secret>/${JWT_SECRET}/g" "${template}"
   sed -i "s/<root_folder>/${SED_ROOT_FOLDER}/g" "${template}"
-  sed -i "s/<tipi_version>/$(cat "${ROOT_FOLDER}/VERSION")/g" "${template}"
+  sed -i "s/<tipi_version>/${TIPI_VERSION}/g" "${template}"
   sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
   sed -i "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
   sed -i "s/<proxy_port>/${PROXY_PORT}/g" "${template}"
+  sed -i "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"

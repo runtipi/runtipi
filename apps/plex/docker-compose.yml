@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   plex:
-    image: lscr.io/linuxserver/plex:1.26.2
+    image: lscr.io/linuxserver/plex:1.27.2
     container_name: plex
     network_mode: host
     environment:
@@ -13,5 +13,3 @@ services:
       - ${APP_DATA_DIR}/data/config:/config
       - ${ROOT_FOLDER_HOST}/media/data:/media
     restart: unless-stopped
-    ports:
-      - ${APP_PORT}:32400

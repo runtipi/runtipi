@@ -1,6 +1,8 @@
 {
   "name": "Anonaddy",
   "port": 8084,
+  "available": false,
+  "categories": ["utilities"],
   "id": "anonaddy",
   "description": "",
   "short_desc": "Anonymous email forwarding",
@@ -10,21 +12,21 @@
   "requirements": {
     "ports": [25]
   },
-  "form_fields": {
-    "username": {
+  "form_fields": [
+    {
       "type": "text",
       "label": "Username",
       "required": true,
       "env_variable": "ANONADDY_USERNAME"
     },
-    "key": {
+    {
       "type": "text",
       "label": "App key",
       "hint": "Application key for encrypter service. Generate one with : echo \"base64:$(openssl rand -base64 32)\"",
       "required": true,
       "env_variable": "ANONADDY_KEY"
     },
-    "domain": {
+    {
       "type": "fqdn",
       "label": "Your email domain (eg. example.com)",
       "max": 50,
@@ -32,7 +34,7 @@
       "required": true,
       "env_variable": "ANONADDY_DOMAIN"
     },
-    "secret": {
+    {
       "type": "text",
       "label": "App secret",
       "hint": "Long random string used when hashing data for the anonymous replies",
@@ -41,5 +43,5 @@
       "required": true,
       "env_variable": "ANONADDY_SECRET"
     }
-  }
+  ]
 }

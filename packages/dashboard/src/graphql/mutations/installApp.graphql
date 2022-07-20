@@ -1,0 +1,7 @@
+mutation InstallApp($input: AppInputType!) {
+  installApp(input: $input) {
+    id
+    status
+    __typename
+  }
+}

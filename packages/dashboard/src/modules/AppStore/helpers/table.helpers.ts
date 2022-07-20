@@ -1,6 +1,7 @@
-import { AppCategoriesEnum, AppConfig } from '@runtipi/common';
+import { AppCategoriesEnum, AppInfo } from '../../../generated/graphql';
+import { AppTableData } from './table.types';
 
-export const sortTable = (data: AppConfig[], col: keyof Pick<AppConfig, 'name'>, direction: 'asc' | 'desc', categories: AppCategoriesEnum[], search: string) => {
+export const sortTable = (data: AppTableData, col: keyof Pick<AppInfo, 'name'>, direction: 'asc' | 'desc', categories: AppCategoriesEnum[], search: string) => {
   const sortedData = [...data].sort((a, b) => {
     const aVal = a[col];
     const bVal = b[col];
@@ -25,15 +26,16 @@ export const limitText = (text: string, limit: number) => {
 };
 
 export const colorSchemeForCategory: Record<AppCategoriesEnum, string> = {
-  [AppCategoriesEnum.NETWORK]: 'blue',
-  [AppCategoriesEnum.MEDIA]: 'green',
-  [AppCategoriesEnum.AUTOMATION]: 'orange',
-  [AppCategoriesEnum.DEVELOPMENT]: 'purple',
-  [AppCategoriesEnum.UTILITIES]: 'gray',
-  [AppCategoriesEnum.PHOTOGRAPHY]: 'red',
-  [AppCategoriesEnum.SECURITY]: 'yellow',
-  [AppCategoriesEnum.SOCIAL]: 'teal',
-  [AppCategoriesEnum.FEATURED]: 'pink',
-  [AppCategoriesEnum.DATA]: 'red',
-  [AppCategoriesEnum.BOOKS]: 'blue',
+  [AppCategoriesEnum.Network]: 'blue',
+  [AppCategoriesEnum.Media]: 'green',
+  [AppCategoriesEnum.Automation]: 'orange',
+  [AppCategoriesEnum.Development]: 'purple',
+  [AppCategoriesEnum.Utilities]: 'gray',
+  [AppCategoriesEnum.Photography]: 'red',
+  [AppCategoriesEnum.Security]: 'yellow',
+  [AppCategoriesEnum.Social]: 'teal',
+  [AppCategoriesEnum.Featured]: 'pink',
+  [AppCategoriesEnum.Data]: 'red',
+  [AppCategoriesEnum.Books]: 'blue',
+  [AppCategoriesEnum.Music]: 'green',
 };

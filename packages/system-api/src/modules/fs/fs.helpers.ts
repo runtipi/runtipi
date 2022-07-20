@@ -9,7 +9,13 @@ export const readJsonFile = (path: string): any => {
   return JSON.parse(rawFile);
 };
 
-export const readFile = (path: string): string => fs.readFileSync(getAbsolutePath(path)).toString();
+export const readFile = (path: string): string => {
+  try {
+    return fs.readFileSync(getAbsolutePath(path)).toString();
+  } catch {
+    return '';
+  }
+};
 
 export const readdirSync = (path: string): string[] => fs.readdirSync(getAbsolutePath(path));
 
@@ -17,7 +23,11 @@ export const fileExists = (path: string): boolean => fs.existsSync(getAbsolutePa
 
 export const writeFile = (path: string, data: any) => fs.writeFileSync(getAbsolutePath(path), data);
 
-export const createFolder = (path: string) => fs.mkdirSync(getAbsolutePath(path));
+export const createFolder = (path: string) => {
+  if (!fileExists(path)) {
+    fs.mkdirSync(getAbsolutePath(path));
+  }
+};
 export const deleteFolder = (path: string) => fs.rmSync(getAbsolutePath(path), { recursive: true });
 
 export const copyFile = (source: string, destination: string) => fs.copyFileSync(getAbsolutePath(source), getAbsolutePath(destination));

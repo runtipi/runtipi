@@ -4,6 +4,7 @@ data/
 github.secrets
 node_modules/
 app-data/*
+data/
 traefik/ssl/*
 !traefik/ssl/.gitkeep
 !app-data/.gitkeep

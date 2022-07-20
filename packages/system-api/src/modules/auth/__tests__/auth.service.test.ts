@@ -1,102 +1,88 @@
-import fs from 'fs';
-import jsonwebtoken from 'jsonwebtoken';
 import * as argon2 from 'argon2';
-import config from '../../../config';
 import AuthService from '../auth.service';
-import { IUser } from '../../../config/types';
+import { createUser } from './user.factory';
+import User from '../user.entity';
+import { faker } from '@faker-js/faker';
+import { setupConnection, teardownConnection } from '../../../test/connection';
+import { DataSource } from 'typeorm';
 
-jest.mock('fs');
-
-let user: any;
-
-const MOCK_USER_REGISTERED = () => ({
-  [`${config.ROOT_FOLDER}/state/users.json`]: `[${user}]`,
-});
-
-const MOCK_NO_USER = {
-  [`${config.ROOT_FOLDER}/state/users.json`]: '[]',
-};
+let db: DataSource | null = null;
+const TEST_SUITE = 'authservice';
 
 beforeAll(async () => {
-  const hash = await argon2.hash('password');
-  user = JSON.stringify({
-    email: 'username',
-    password: hash,
-  });
+  db = await setupConnection(TEST_SUITE);
+});
+
+beforeEach(async () => {
+  await User.clear();
+});
+
+afterAll(async () => {
+  await db?.destroy();
+  await teardownConnection(TEST_SUITE);
 });
 
 describe('Login', () => {
-  beforeEach(() => {
-    // @ts-ignore
-    fs.__createMockFiles(MOCK_USER_REGISTERED());
-  });
+  it('Should return user after login', async () => {
+    const email = faker.internet.email();
+    await createUser(email);
 
-  it('Should return token after login', async () => {
-    const token = await AuthService.login('username', 'password');
+    const { user } = await AuthService.login({ username: email, password: 'password' });
 
-    const { email } = jsonwebtoken.verify(token, config.JWT_SECRET) as { email: string };
-
-    expect(token).toBeDefined();
-    expect(email).toBe('username');
+    expect(user).toBeDefined();
+    expect(user?.id).toBe(1);
   });
 
   it('Should throw if user does not exist', async () => {
-    await expect(AuthService.login('username1', 'password')).rejects.toThrowError('User not found');
+    await expect(AuthService.login({ username: 'test', password: 'test' })).rejects.toThrowError('User not found');
   });
 
   it('Should throw if password is incorrect', async () => {
-    await expect(AuthService.login('username', 'password1')).rejects.toThrowError('Wrong password');
+    const email = faker.internet.email();
+    await createUser(email);
+    await expect(AuthService.login({ username: email, password: 'wrong' })).rejects.toThrowError('Wrong password');
   });
 });
 
 describe('Register', () => {
-  beforeEach(() => {
-    // @ts-ignore
-    fs.__createMockFiles(MOCK_NO_USER);
+  it('Should return new user after register', async () => {
+    const email = faker.internet.email();
+    const { user } = await AuthService.register({ username: email, password: 'test' });
+
+    expect(user).toBeDefined();
   });
 
-  it('Should return token after register', async () => {
-    const token = await AuthService.register('username', 'password', 'name');
+  it('Should correctly trim and lowercase email', async () => {
+    const email = faker.internet.email();
+    await AuthService.register({ username: email, password: 'test' });
 
-    const { email } = jsonwebtoken.verify(token, config.JWT_SECRET) as { email: string };
+    const user = await User.findOne({ where: { username: email.toLowerCase().trim() } });
 
-    expect(token).toBeDefined();
-    expect(email).toBe('username');
-  });
-
-  it('Should correctly write user to file', async () => {
-    await AuthService.register('username', 'password', 'name');
-
-    const users: IUser[] = JSON.parse(fs.readFileSync(`${config.ROOT_FOLDER}/state/users.json`, 'utf8'));
-
-    expect(users.length).toBe(1);
-    expect(users[0].email).toBe('username');
-    expect(users[0].name).toBe('name');
-
-    const valid = await argon2.verify(users[0].password, 'password');
-
-    expect(valid).toBeTruthy();
+    expect(user).toBeDefined();
+    expect(user?.username).toBe(email.toLowerCase().trim());
   });
 
   it('Should throw if user already exists', async () => {
-    await AuthService.register('username', 'password', 'name');
+    const email = faker.internet.email();
 
-    await expect(AuthService.register('username', 'password', 'name')).rejects.toThrowError('There is already an admin user');
+    await createUser(email);
+    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('User already exists');
   });
 
   it('Should throw if email is not provided', async () => {
-    await expect(AuthService.register('', 'password', 'name')).rejects.toThrowError('Missing email or password');
+    await expect(AuthService.register({ username: '', password: 'test' })).rejects.toThrowError('Missing email or password');
   });
 
   it('Should throw if password is not provided', async () => {
-    await expect(AuthService.register('username', '', 'name')).rejects.toThrowError('Missing email or password');
+    await expect(AuthService.register({ username: faker.internet.email(), password: '' })).rejects.toThrowError('Missing email or password');
   });
 
-  it('Does not throw if name is not provided', async () => {
-    await AuthService.register('username', 'password', '');
+  it('Password is correctly hashed', async () => {
+    const email = faker.internet.email();
+    const { user } = await AuthService.register({ username: email, password: 'test' });
 
-    const users: IUser[] = JSON.parse(fs.readFileSync(`${config.ROOT_FOLDER}/state/users.json`, 'utf8'));
+    const isPasswordValid = await argon2.verify(user?.password || '', 'test');
 
-    expect(users.length).toBe(1);
+    expect(isPasswordValid).toBe(true);
   });
 });

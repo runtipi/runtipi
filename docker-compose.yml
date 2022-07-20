@@ -15,29 +15,57 @@ services:
     networks:
       - tipi_main_network
 
+  tipi-db:
+    container_name: tipi-db
+    image: postgres:latest
+    restart: on-failure
+    stop_grace_period: 1m
+    volumes:
+      - ${PWD}/data/postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: tipi
+      POSTGRES_DB: tipi
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d tipi -U tipi" ]
+      interval: 5s
+      timeout: 10s
+      retries: 120
+    networks:
+      - tipi_main_network
+
   api:
     image: meienberger/runtipi:${TIPI_VERSION}
-    command: bash -c "cd /api && npm run start"
+    command: /bin/sh -c "cd /api && npm run start"
     restart: unless-stopped
     container_name: api
     ports:
       - 3001:3001
+    depends_on:
+      tipi-db:
+        condition: service_healthy
     volumes:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}:/tipi
     environment:
-      - INTERNAL_IP=${INTERNAL_IP}
-      - TIPI_VERSION=${TIPI_VERSION}
-      - JWT_SECRET=${JWT_SECRET}
-      - ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}
-      - NGINX_PORT=${NGINX_PORT}
+      INTERNAL_IP: ${INTERNAL_IP}
+      TIPI_VERSION: ${TIPI_VERSION}
+      JWT_SECRET: ${JWT_SECRET}
+      ROOT_FOLDER_HOST: ${ROOT_FOLDER_HOST}
+      NGINX_PORT: ${NGINX_PORT}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USERNAME: tipi
+      POSTGRES_DBNAME: tipi
+      POSTGRES_HOST: tipi-db
     networks:
       - tipi_main_network
 
   dashboard:
     image: meienberger/runtipi:${TIPI_VERSION}
-    command: bash -c "cd /dashboard && npm run start"
+    command: /bin/sh -c "cd /dashboard && npm run start"
     restart: unless-stopped
     container_name: dashboard
     ports:

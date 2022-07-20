@@ -1,267 +1,288 @@
 import AppsService from '../apps.service';
 import fs from 'fs';
 import config from '../../../config';
-import { AppConfig, FieldTypes } from '@runtipi/common';
 import childProcess from 'child_process';
+import { AppInfo, AppStatusEnum } from '../apps.types';
+import App from '../app.entity';
+import { createApp } from './apps.factory';
+import { setupConnection, teardownConnection } from '../../../test/connection';
+import { DataSource } from 'typeorm';
 
 jest.mock('fs');
 jest.mock('child_process');
 
-beforeEach(() => {
-  jest.resetModules();
-  jest.resetAllMocks();
+let db: DataSource | null = null;
+const TEST_SUITE = 'appsservice';
+
+beforeAll(async () => {
+  db = await setupConnection(TEST_SUITE);
 });
 
-const testApp: Partial<AppConfig> = {
-  id: 'test-app',
-  port: 3000,
-  available: true,
-  form_fields: {
-    test: {
-      type: FieldTypes.text,
-      label: 'Test field',
-      required: true,
-      env_variable: 'TEST_FIELD',
-    },
-    test2: {
-      type: FieldTypes.text,
-      label: 'Test field 2',
-      required: false,
-      env_variable: 'TEST_FIELD_2',
-    },
-  },
-};
+beforeEach(async () => {
+  jest.resetModules();
+  jest.resetAllMocks();
+  await App.clear();
+});
 
-const testApp2: Partial<AppConfig> = {
-  available: true,
-  id: 'test-app2',
-};
-
-const testApp3: Partial<AppConfig> = {
-  id: 'test-app3',
-};
-
-const MOCK_FILE_EMPTY = {
-  [`${config.ROOT_FOLDER}/apps/test-app/config.json`]: JSON.stringify(testApp),
-  [`${config.ROOT_FOLDER}/apps/test-app/metadata/description.md`]: 'md desc',
-  [`${config.ROOT_FOLDER}/.env`]: 'TEST=test',
-  [`${config.ROOT_FOLDER}/state/apps.json`]: '{"installed": ""}',
-};
-
-const MOCK_FILE_INSTALLED = {
-  [`${config.ROOT_FOLDER}/apps/test-app/config.json`]: JSON.stringify(testApp),
-  [`${config.ROOT_FOLDER}/apps/test-app/metadata/description.md`]: 'md desc',
-  [`${config.ROOT_FOLDER}/apps/test-app2/config.json`]: JSON.stringify(testApp2),
-  [`${config.ROOT_FOLDER}/apps/test-app2/metadata/description.md`]: 'md desc',
-  [`${config.ROOT_FOLDER}/apps/test-app3/config.json`]: JSON.stringify(testApp3),
-  [`${config.ROOT_FOLDER}/apps/test-app3/metadata/description.md`]: 'md desc',
-  [`${config.ROOT_FOLDER}/.env`]: 'TEST=test',
-  [`${config.ROOT_FOLDER}/state/apps.json`]: '{"installed": "test-app"}',
-  [`${config.ROOT_FOLDER}/app-data/test-app`]: '',
-  [`${config.ROOT_FOLDER}/app-data/test-app/app.env`]: 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test',
-};
+afterAll(async () => {
+  await db?.destroy();
+  await teardownConnection(TEST_SUITE);
+});
 
 describe('Install app', () => {
-  beforeEach(() => {
+  let app1: AppInfo;
+
+  beforeEach(async () => {
+    const { MockFiles, appInfo } = await createApp();
+    app1 = appInfo;
     // @ts-ignore
-    fs.__createMockFiles(MOCK_FILE_EMPTY);
+    fs.__createMockFiles(MockFiles);
   });
 
   it('Should correctly generate env file for app', async () => {
-    await AppsService.installApp('test-app', { test: 'test' });
+    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
+    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`).toString();
 
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/test-app/app.env`).toString();
-
-    expect(envFile.trim()).toBe('TEST=test\nAPP_PORT=3000\nTEST_FIELD=test');
+    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test`);
   });
 
-  it('Should add app to state file', async () => {
-    await AppsService.installApp('test-app', { test: 'test' });
+  it('Should add app in database', async () => {
+    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
-    const stateFile = JSON.parse(fs.readFileSync(`${config.ROOT_FOLDER}/state/apps.json`).toString());
+    const app = await App.findOne({ where: { id: app1.id } });
 
-    expect(stateFile.installed).toBe('test-app');
+    expect(app).toBeDefined();
+    expect(app!.id).toBe(app1.id);
+    expect(app!.config).toStrictEqual({ TEST_FIELD: 'test' });
+    expect(app!.status).toBe(AppStatusEnum.RUNNING);
   });
 
   it('Should correctly run app script', async () => {
     const spy = jest.spyOn(childProcess, 'execFile');
+    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
-    await AppsService.installApp('test-app', { test: 'test' });
-
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', 'test-app', '/tipi'], {}, expect.any(Function)]);
-
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id, '/tipi'], {}, expect.any(Function)]);
     spy.mockRestore();
   });
 
   it('Should start app if already installed', async () => {
     const spy = jest.spyOn(childProcess, 'execFile');
 
-    await AppsService.installApp('test-app', { test: 'test' });
-    await AppsService.installApp('test-app', { test: 'test' });
+    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
+    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', 'test-app', '/tipi'], {}, expect.any(Function)]);
-    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', 'test-app', '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id, '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
 
   it('Should throw if required form fields are missing', async () => {
-    await expect(AppsService.installApp('test-app', {})).rejects.toThrowError('Variable test is required');
+    await expect(AppsService.installApp(app1.id, {})).rejects.toThrowError('Variable TEST_FIELD is required');
   });
 });
 
 describe('Uninstall app', () => {
-  beforeEach(() => {
+  let app1: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp(true);
+    app1 = app1create.appInfo;
     // @ts-ignore
-    fs.__createMockFiles(MOCK_FILE_INSTALLED);
+    fs.__createMockFiles(Object.assign(app1create.MockFiles));
   });
 
-  it('Should correctly remove app from state file', async () => {
-    await AppsService.uninstallApp('test-app');
+  it('App should be installed by default', async () => {
+    const app = await App.findOne({ where: { id: app1.id } });
+    expect(app).toBeDefined();
+    expect(app!.id).toBe(app1.id);
+    expect(app!.status).toBe(AppStatusEnum.RUNNING);
+  });
 
-    const stateFile = JSON.parse(fs.readFileSync(`${config.ROOT_FOLDER}/state/apps.json`).toString());
+  it('Should correctly remove app from database', async () => {
+    await AppsService.uninstallApp(app1.id);
 
-    expect(stateFile.installed).toBe('');
+    const app = await App.findOne({ where: { id: app1.id } });
+
+    expect(app).toBeNull();
   });
 
   it('Should correctly run app script', async () => {
     const spy = jest.spyOn(childProcess, 'execFile');
 
-    await AppsService.uninstallApp('test-app');
+    await AppsService.uninstallApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', 'test-app', '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id, '/tipi'], {}, expect.any(Function)]);
+
+    spy.mockRestore();
+  });
+
+  it('Should stop app if it is running', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+
+    await AppsService.uninstallApp(app1.id);
+
+    expect(spy.mock.calls.length).toBe(2);
+    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id, '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id, '/tipi'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
 
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.uninstallApp('test-app-2')).rejects.toThrowError('App test-app-2 not installed');
+    await expect(AppsService.uninstallApp('any')).rejects.toThrowError('App any not found');
   });
 });
 
 describe('Start app', () => {
-  beforeEach(() => {
+  let app1: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp(true);
+    app1 = app1create.appInfo;
     // @ts-ignore
-    fs.__createMockFiles(MOCK_FILE_INSTALLED);
+    fs.__createMockFiles(Object.assign(app1create.MockFiles));
   });
 
   it('Should correctly run app script', async () => {
     const spy = jest.spyOn(childProcess, 'execFile');
 
-    await AppsService.startApp('test-app');
+    await AppsService.startApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', 'test-app', '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
 
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.startApp('test-app-2')).rejects.toThrowError('App test-app-2 not installed');
+    await expect(AppsService.startApp('any')).rejects.toThrowError('App any not found');
   });
 
   it('Should restart if app is already running', async () => {
     const spy = jest.spyOn(childProcess, 'execFile');
 
-    await AppsService.startApp('test-app');
+    await AppsService.startApp(app1.id);
     expect(spy.mock.calls.length).toBe(1);
-    await AppsService.startApp('test-app');
+    await AppsService.startApp(app1.id);
     expect(spy.mock.calls.length).toBe(2);
 
     spy.mockRestore();
   });
 
-  it('Should throw if app is not installed', async () => {
-    await expect(AppsService.startApp('test-app-2')).rejects.toThrowError('App test-app-2 not installed');
-  });
-
   it('Regenerate env file', async () => {
-    fs.writeFile(`${config.ROOT_FOLDER}/app-data/test-app/app.env`, 'TEST=test\nAPP_PORT=3000', () => {});
+    fs.writeFile(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`, 'TEST=test\nAPP_PORT=3000', () => {});
 
-    await AppsService.startApp('test-app');
+    await AppsService.startApp(app1.id);
 
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/test-app/app.env`).toString();
+    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`).toString();
 
-    expect(envFile.trim()).toBe('TEST=test\nAPP_PORT=3000\nTEST_FIELD=test');
+    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test`);
   });
 });
 
 describe('Stop app', () => {
-  beforeEach(() => {
+  let app1: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp(true);
+    app1 = app1create.appInfo;
     // @ts-ignore
-    fs.__createMockFiles(MOCK_FILE_INSTALLED);
+    fs.__createMockFiles(Object.assign(app1create.MockFiles));
   });
 
   it('Should correctly run app script', async () => {
     const spy = jest.spyOn(childProcess, 'execFile');
 
-    await AppsService.stopApp('test-app');
+    await AppsService.stopApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', 'test-app', '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id, '/tipi'], {}, expect.any(Function)]);
   });
 
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.stopApp('test-app-2')).rejects.toThrowError('App test-app-2 not installed');
+    await expect(AppsService.stopApp('any')).rejects.toThrowError('App any not found');
   });
 });
 
 describe('Update app config', () => {
-  beforeEach(() => {
+  let app1: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp(true);
+    app1 = app1create.appInfo;
     // @ts-ignore
-    fs.__createMockFiles(MOCK_FILE_INSTALLED);
+    fs.__createMockFiles(Object.assign(app1create.MockFiles));
   });
 
   it('Should correctly update app config', async () => {
-    await AppsService.updateAppConfig('test-app', { test: 'test', test2: 'test2' });
+    await AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' });
 
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/test-app/app.env`).toString();
+    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`).toString();
 
-    expect(envFile.trim()).toBe('TEST=test\nAPP_PORT=3000\nTEST_FIELD=test\nTEST_FIELD_2=test2');
+    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test`);
+  });
+
+  it('Should throw if required field is missing', async () => {
+    await expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: '' })).rejects.toThrowError('Variable TEST_FIELD is required');
   });
 
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('App test-app-2 not installed');
-  });
-
-  it('Should throw if required form fields are missing', async () => {
-    await expect(AppsService.updateAppConfig('test-app', {})).rejects.toThrowError('Variable test is required');
+    await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('App test-app-2 not found');
   });
 });
 
 describe('Get app config', () => {
-  beforeEach(() => {
+  let app1: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp(true);
+    app1 = app1create.appInfo;
     // @ts-ignore
-    fs.__createMockFiles(MOCK_FILE_INSTALLED);
+    fs.__createMockFiles(Object.assign(app1create.MockFiles));
   });
 
   it('Should correctly get app config', async () => {
-    const appconfig = await AppsService.getAppInfo('test-app');
+    const app = await AppsService.getApp(app1.id);
 
-    expect(appconfig).toEqual({ ...testApp, installed: true, status: 'stopped', description: 'md desc' });
+    expect(app).toBeDefined();
+    expect(app.config).toStrictEqual({ TEST_FIELD: 'test' });
+    expect(app.id).toBe(app1.id);
+    expect(app.status).toBe(AppStatusEnum.RUNNING);
   });
 
-  it('Should have installed false if app is not installed', async () => {
-    const appconfig = await AppsService.getAppInfo('test-app2');
+  it('Should return default values if app is not installed', async () => {
+    const appconfig = await AppsService.getApp('test-app2');
 
-    expect(appconfig).toEqual({ ...testApp2, installed: false, status: 'stopped', description: 'md desc' });
+    expect(appconfig).toBeDefined();
+    expect(appconfig.id).toBe('test-app2');
+    expect(appconfig.config).toStrictEqual({});
+    expect(appconfig.status).toBe(AppStatusEnum.MISSING);
   });
 });
 
 describe('List apps', () => {
-  beforeEach(() => {
+  let app1: AppInfo;
+  let app2: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp(true);
+    const app2create = await createApp();
+    app1 = app1create.appInfo;
+    app2 = app2create.appInfo;
     // @ts-ignore
-    fs.__createMockFiles(MOCK_FILE_INSTALLED);
+    fs.__createMockFiles(Object.assign(app1create.MockFiles, app2create.MockFiles));
   });
 
-  it('Should correctly list apps', async () => {
-    const apps = await AppsService.listApps();
+  it('Should correctly list apps sorted by name', async () => {
+    const { apps } = await AppsService.listApps();
 
-    expect(apps).toEqual([
-      { ...testApp, installed: true, status: 'stopped', description: 'md desc' },
-      { ...testApp2, installed: false, status: 'stopped', description: 'md desc' },
-    ]);
+    const sortedApps = [app1, app2].sort((a, b) => a.name.localeCompare(b.name));
+
+    expect(apps).toBeDefined();
     expect(apps.length).toBe(2);
-    expect(apps[0].id).toBe('test-app');
-    expect(apps[1].id).toBe('test-app2');
+    expect(apps.length).toBe(2);
+    expect(apps[0].id).toBe(sortedApps[0].id);
+    expect(apps[1].id).toBe(sortedApps[1].id);
+    expect(apps[0].description).toBe('md desc');
   });
 });

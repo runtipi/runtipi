@@ -1,12 +1,12 @@
 import { Flex, Input, SimpleGrid } from '@chakra-ui/react';
-import { AppCategoriesEnum, AppConfig } from '@runtipi/common';
 import React from 'react';
-import { SortableColumns, SortDirection } from '../helpers/table.types';
+import { AppCategoriesEnum } from '../../../generated/graphql';
+import { AppTableData, SortableColumns, SortDirection } from '../helpers/table.types';
 import AppStoreTile from './AppStoreTile';
 import CategorySelect from './CategorySelect';
 
 interface IProps {
-  data: AppConfig[];
+  data: AppTableData;
   onSearch: (value: string) => void;
   onSelectCategories: (value: AppCategoriesEnum[]) => void;
   onSortBy: (value: SortableColumns) => void;

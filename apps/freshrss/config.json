@@ -9,5 +9,5 @@
   "author": "https://freshrss.org/",
   "source": "https://github.com/FreshRSS/FreshRSS",
   "image": "/logos/apps/freshrss.jpg",
-  "form_fields": {}
+  "form_fields": []
 }

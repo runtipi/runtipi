@@ -4,9 +4,8 @@ module.exports = {
   verbose: true,
   testEnvironment: 'node',
   testMatch: ['**/__tests__/**/*.test.ts'],
-  setupFiles: ['<rootDir>/tests/dotenv-config.ts'],
+  setupFiles: ['<rootDir>/src/test/dotenv-config.ts'],
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.{ts,tsx}'],
-  coverageProvider: 'v8',
   passWithNoTests: true,
 };

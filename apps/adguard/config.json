@@ -12,5 +12,5 @@
   "requirements": {
     "ports": [53]
   },
-  "form_fields": {}
+  "form_fields": []
 }

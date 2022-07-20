@@ -1,0 +1,30 @@
+query GetApp($appId: String!) {
+  getApp(id: $appId) {
+    id
+    status
+    config
+    info {
+      id
+      port
+      name
+      description
+      available
+      version
+      image
+      short_desc
+      author
+      source
+      categories
+      url_suffix
+      form_fields {
+        type
+        label
+        max
+        min
+        hint
+        required
+        env_variable
+      }
+    }
+  }
+}
