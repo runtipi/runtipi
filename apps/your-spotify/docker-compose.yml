@@ -12,7 +12,7 @@ services:
     depends_on:
       - your-spotify-db
     environment:
-      - API_ENDPOINT=http://localhost:32500 # This MUST be included as a valid URL in the spotify dashboard (see below)
+      - API_ENDPOINT=http://${INTERNAL_IP}:32500 # This MUST be included as a valid URL in the spotify dashboard (see below)
       - CLIENT_ENDPOINT=http://${INTERNAL_IP}:${APP_PORT}
       - SPOTIFY_PUBLIC=${SPOTIFY_PUBLIC}
       - SPOTIFY_SECRET=${SPOTIFY_SECRET}
