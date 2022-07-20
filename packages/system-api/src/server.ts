@@ -15,27 +15,27 @@ import datasource from './config/datasource';
 import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
 
+const corsOptions = {
+  credentials: true,
+  origin: function (origin: any, callback: any) {
+    // disallow requests with no origin
+    if (!origin) return callback(new Error('Not allowed by CORS'), false);
+
+    if (config.CLIENT_URLS.includes(origin)) {
+      return callback(null, true);
+    }
+
+    const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
+    return callback(new Error(message), false);
+  },
+};
+
 const main = async () => {
   try {
     const app = express();
     const port = 3001;
 
-    app.use(
-      cors({
-        credentials: true,
-        origin: function (origin, callback) {
-          // disallow requests with no origin
-          if (!origin) return callback(new Error('Not allowed by CORS'), false);
-
-          if (config.CLIENT_URLS.includes(origin)) {
-            return callback(null, true);
-          }
-
-          const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
-          return callback(new Error(message), false);
-        },
-      }),
-    );
+    app.use(cors(corsOptions));
     app.use(getSessionMiddleware());
 
     await datasource.initialize();
@@ -59,7 +59,7 @@ const main = async () => {
     });
 
     await apolloServer.start();
-    apolloServer.applyMiddleware({ app });
+    apolloServer.applyMiddleware({ app, cors: corsOptions });
 
     // Run migrations
     await runUpdates();
@@ -67,7 +67,6 @@ const main = async () => {
     httpServer.listen(port, () => {
       // Start apps
       appsService.startAllApps();
-
       logger.info(`Server running on port ${port}`);
     });
   } catch (error) {
