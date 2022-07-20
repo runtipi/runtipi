@@ -24,7 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "apollo-server-core": "^3.9.0",
+    "apollo-server-core": "^3.10.0",
     "apollo-server-express": "^3.9.0",
     "argon2": "^0.28.5",
     "axios": "^0.26.1",

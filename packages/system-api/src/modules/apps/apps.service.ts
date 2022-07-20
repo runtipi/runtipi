@@ -11,12 +11,18 @@ const startAllApps = async (): Promise<void> => {
   await Promise.all(
     apps.map(async (app) => {
       // Regenerate env file
-      generateEnvFile(app.id, app.config);
-      checkEnvFile(app.id);
+      try {
+        generateEnvFile(app.id, app.config);
+        checkEnvFile(app.id);
 
-      await App.update({ id: app.id }, { status: AppStatusEnum.STARTING });
-      await runAppScript(['start', app.id]);
-      await App.update({ id: app.id }, { status: AppStatusEnum.RUNNING });
+        await App.update({ id: app.id }, { status: AppStatusEnum.STARTING });
+
+        await runAppScript(['start', app.id]);
+        await App.update({ id: app.id }, { status: AppStatusEnum.RUNNING });
+      } catch (e) {
+        await App.update({ id: app.id }, { status: AppStatusEnum.STOPPED });
+        console.log(e);
+      }
     }),
   );
 };
@@ -35,9 +41,14 @@ const startApp = async (appName: string): Promise<App> => {
 
   await App.update({ id: appName }, { status: AppStatusEnum.STARTING });
   // Run script
-  await runAppScript(['start', appName]);
+  try {
+    await runAppScript(['start', appName]);
+    await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
+  } catch (e) {
+    await App.update({ id: appName }, { status: AppStatusEnum.STOPPED });
+    console.log(e);
+  }
 
-  await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
   app = (await App.findOne({ where: { id: appName } })) as App;
 
   return app;

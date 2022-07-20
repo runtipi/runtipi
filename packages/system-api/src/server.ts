@@ -20,13 +20,12 @@ const main = async () => {
     const app = express();
     const port = 3001;
 
-    app.set('proxy', 1);
     app.use(
       cors({
         credentials: true,
         origin: function (origin, callback) {
           // disallow requests with no origin
-          if (!origin) return callback(new Error('Not allowed by CORS'));
+          if (!origin) return callback(new Error('Not allowed by CORS'), false);
 
           if (config.CLIENT_URLS.includes(origin)) {
             return callback(null, true);
