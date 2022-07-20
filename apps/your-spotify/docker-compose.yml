@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  your-spotify-server:
+    container_name: your-spotify-server
+    image: yooooomi/your_spotify_server
+    restart: always
+    ports:
+      - 32500:8080
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    environment:
+      - API_ENDPOINT=http://localhost:32500 # This MUST be included as a valid URL in the spotify dashboard (see below)
+      - CLIENT_ENDPOINT=http://${INTERNAL_IP}:${APP_PORT}
+      - SPOTIFY_PUBLIC=${SPOTIFY_PUBLIC}
+      - SPOTIFY_SECRET=${SPOTIFY_SECRET}
+      - CORS=all
+    networks:
+      - tipi_main_network
+
+  your-spotify-db:
+    container_name: your-spotify-db
+    image: mongo:4.4.8
+    volumes:
+      - ${APP_DATA_DIR}/data/db:/data/db
+    networks:
+      - tipi_main_network
+
+  your-spotify:
+    container_name: your-spotify
+    image: yooooomi/your_spotify_client
+    restart: always
+    ports:
+      - ${APP_PORT}:3000
+    environment:
+      - API_ENDPOINT=http://${INTERNAL_IP}:32500
+    networks:
+      - tipi_main_network

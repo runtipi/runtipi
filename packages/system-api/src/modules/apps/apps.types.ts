@@ -13,6 +13,7 @@ export enum AppCategoriesEnum {
   FEATURED = 'featured',
   BOOKS = 'books',
   DATA = 'data',
+  MUSIC = 'music',
 }
 
 export enum FieldTypes {

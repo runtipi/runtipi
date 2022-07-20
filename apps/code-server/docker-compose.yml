@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   code-server:
-    image: lscr.io/linuxserver/code-server:4.4.0
+    image: lscr.io/linuxserver/code-server:4.5.1
     container_name: code-server
     environment:
       - PUID=1000

@@ -1,6 +1,7 @@
 import logger from '../../config/logger/logger';
 import App from '../../modules/apps/app.entity';
 import { AppInfo, AppStatusEnum } from '../../modules/apps/apps.types';
+import User from '../../modules/auth/user.entity';
 import { deleteFolder, fileExists, readFile, readJsonFile } from '../../modules/fs/fs.helpers';
 import Update, { UpdateStatusEnum } from '../../modules/system/update.entity';
 
@@ -17,6 +18,7 @@ export const updateV040 = async (): Promise<void> => {
       return;
     }
 
+    // Migrate apps
     if (fileExists('/state/apps.json')) {
       const state: AppsState = await readJsonFile('/state/apps.json');
       const installed: string[] = state.installed.split(' ').filter(Boolean);
@@ -51,9 +53,19 @@ export const updateV040 = async (): Promise<void> => {
           logger.info('App already migrated');
         }
       }
+      deleteFolder('/state/apps.json');
     }
 
-    deleteFolder('/state/apps.json');
+    // Migrate users
+    if (fileExists('/state/users.json')) {
+      const state: { email: string; password: string }[] = await readJsonFile('/state/users.json');
+
+      for (const user of state) {
+        await User.create({ username: user.email.trim().toLowerCase(), password: user.password }).save();
+      }
+      deleteFolder('/state/users.json');
+    }
+
     await Update.create({ name: UPDATE_NAME, status: UpdateStatusEnum.SUCCESS }).save();
   } catch (error) {
     logger.error(error);
