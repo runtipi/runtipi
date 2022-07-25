@@ -1,4 +1,4 @@
-import { createFolder, deleteFolder, readFile, readJsonFile } from '../fs/fs.helpers';
+import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
@@ -78,7 +78,6 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
     try {
       await runAppScript(['install', id]);
     } catch (e) {
-      deleteFolder(`/app-data/${id}`);
       await App.delete({ id });
       throw e;
     }
