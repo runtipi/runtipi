@@ -2,19 +2,22 @@ import { AiOutlineDashboard, AiOutlineSetting, AiOutlineAppstore } from 'react-i
 import { FaAppStore, FaRegMoon } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import Package from '../../../package.json';
-import { Box, Divider, Flex, List, ListItem, Switch, useColorMode } from '@chakra-ui/react';
+import { Badge, Box, Divider, Flex, List, ListItem, Switch, useColorMode } from '@chakra-ui/react';
 import React from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { IconType } from 'react-icons';
-import { useLogoutMutation } from '../../generated/graphql';
+import { useLogoutMutation, useVersionQuery } from '../../generated/graphql';
 
 const SideMenu: React.FC = () => {
   const router = useRouter();
   const { colorMode, setColorMode } = useColorMode();
   const [logout] = useLogoutMutation({ refetchQueries: ['Me'] });
+  const versionQuery = useVersionQuery();
   const path = router.pathname.split('/')[1];
+
+  const isLatest = versionQuery.data?.version.latest === versionQuery.data?.version.current;
 
   const renderMenuItem = (title: string, name: string, Icon: IconType) => {
     const selected = path === name;
@@ -65,6 +68,11 @@ const SideMenu: React.FC = () => {
         </div>
       </List>
       <div className="pb-1 text-center text-sm text-gray-400 mt-5">Tipi version {Package.version}</div>
+      {!isLatest && (
+        <Badge className="self-center mt-1" colorScheme="green">
+          New version available
+        </Badge>
+      )}
     </Box>
   );
 };
