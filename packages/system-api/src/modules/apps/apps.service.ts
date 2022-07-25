@@ -46,7 +46,7 @@ const startApp = async (appName: string): Promise<App> => {
     await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
   } catch (e) {
     await App.update({ id: appName }, { status: AppStatusEnum.STOPPED });
-    console.log(e);
+    throw e;
   }
 
   app = (await App.findOne({ where: { id: appName } })) as App;
@@ -75,7 +75,12 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
     app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form }).save();
 
     // Run script
-    await runAppScript(['install', id]);
+    try {
+      await runAppScript(['install', id]);
+    } catch (e) {
+      await App.delete({ id });
+      throw e;
+    }
   }
 
   await App.update({ id }, { status: AppStatusEnum.RUNNING });
@@ -125,9 +130,15 @@ const stopApp = async (id: string): Promise<App> => {
 
   // Run script
   await App.update({ id }, { status: AppStatusEnum.STOPPING });
-  await runAppScript(['stop', id]);
 
-  await App.update({ id }, { status: AppStatusEnum.STOPPED });
+  try {
+    await runAppScript(['stop', id]);
+    await App.update({ id }, { status: AppStatusEnum.STOPPED });
+  } catch (e) {
+    await App.update({ id }, { status: AppStatusEnum.RUNNING });
+    throw e;
+  }
+
   app = (await App.findOne({ where: { id } })) as App;
 
   return app;
@@ -148,7 +159,8 @@ const uninstallApp = async (id: string): Promise<App> => {
   try {
     await runAppScript(['uninstall', id]);
   } catch (e) {
-    console.log(e);
+    await App.update({ id }, { status: AppStatusEnum.STOPPED });
+    throw e;
   }
 
   await App.delete({ id });
