@@ -78,6 +78,20 @@ describe('Install app', () => {
     spy.mockRestore();
   });
 
+  it('Should delete app if install script fails', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' })).rejects.toThrow('Test error');
+
+    const app = await App.findOne({ where: { id: app1.id } });
+
+    expect(app).toBeNull();
+    spy.mockRestore();
+  });
+
   it('Should throw if required form fields are missing', async () => {
     await expect(AppsService.installApp(app1.id, {})).rejects.toThrowError('Variable TEST_FIELD is required');
   });
