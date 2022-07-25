@@ -23,22 +23,17 @@ cd "$ROOT_FOLDER"
 export DOCKER_CLIENT_TIMEOUT=240
 export COMPOSE_HTTP_TIMEOUT=240
 
-function get_json_field() {
-  local json_file="$1"
-  local field="$2"
+# Get all app names from the apps folder
+apps_folder="${ROOT_FOLDER}/apps"
+apps_names=($(ls -d ${apps_folder}/*/ | xargs -n 1 basename | sed 's/\///g'))
 
-  echo $(jq -r ".${field}" "${json_file}")
-}
-
-str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-apps_to_start=($str)
-
-# If apps_to_start is not empty, then we're stopping all apps
-if [[ ${#apps_to_start[@]} -gt 0 ]]; then
-  for app in "${apps_to_start[@]}"; do
-    "${ROOT_FOLDER}/scripts/app.sh" stop $app
-  done
-fi
+for app_name in "${apps_names[@]}"; do
+  # if folder ${ROOT_FOLDER}/app-data/app_name exists, then stop app
+  if [[ -d "${ROOT_FOLDER}/app-data/${app_name}" ]]; then
+    echo "Stopping ${app_name}"
+    "${ROOT_FOLDER}/scripts/app.sh" stop $app_name
+  fi
+done
 
 echo "Stopping Docker services..."
 echo
