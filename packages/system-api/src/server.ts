@@ -15,20 +15,24 @@ import datasource from './config/datasource';
 import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
 
-const corsOptions = {
-  credentials: true,
-  origin: function (origin: any, callback: any) {
-    // disallow requests with no origin
-    if (!origin) return callback(new Error('Not allowed by CORS'), false);
+let corsOptions = {};
 
-    if (config.CLIENT_URLS.includes(origin)) {
-      return callback(null, true);
-    }
+if (__prod__) {
+  corsOptions = {
+    credentials: true,
+    origin: function (origin: any, callback: any) {
+      // disallow requests with no origin
+      if (!origin) return callback(new Error('Not allowed by CORS'), false);
 
-    const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
-    return callback(new Error(message), false);
-  },
-};
+      if (config.CLIENT_URLS.includes(origin)) {
+        return callback(null, true);
+      }
+
+      const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
+      return callback(new Error(message), false);
+    },
+  };
+}
 
 const main = async () => {
   try {

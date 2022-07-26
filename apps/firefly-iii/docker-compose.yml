@@ -1,15 +1,16 @@
 version: '3.9'
 
 services:
-  fireflyiii:
+  firefly-iii:
     image: fireflyiii/core:latest
+    container_name: firefly-iii
     restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/data/uplodad:/var/www/html/storage/upload
     ports:
       - ${APP_PORT}:8080
     depends_on:
-      - fireflyiii-db
+      - firefly-iii-db
     environment:
       - APP_ENV=local
       - APP_DEBUG=false
@@ -20,11 +21,11 @@ services:
 
       # Database
       - DB_CONNECTION=mysql
-      - DB_HOST=fireflyiii-db
+      - DB_HOST=firefly-iii-db
       - DB_PORT=3306
       - DB_DATABASE=firefly
       - DB_USERNAME=firefly
-      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PASSWORD=firefly
 
       # Cookie settings
       - COOKIE_PATH="/"
@@ -32,26 +33,18 @@ services:
       - COOKIE_SECURE=false
       - COOKIE_SAMESITE=lax
 
-      # Firefly III can send you the following messages.
-      - SEND_REGISTRATION_MAIL=true
-      - SEND_ERROR_MESSAGE=true
-      - SEND_LOGIN_NEW_IP_WARNING=true
-
       - APP_NAME=FireflyIII
       - BROADCAST_DRIVER=log
       - QUEUE_DRIVER=sync
       - CACHE_PREFIX=firefly
-      - PUSHER_KEY=
-      - IPINFO_TOKEN=
-      - PUSHER_SECRET=
-      - PUSHER_ID=
       - IS_HEROKU=false
       - FIREFLY_III_LAYOUT=v1
       - APP_URL=http://localhost:${APP_PORT}
     networks:
       - tipi_main_network
     
-  fireflyiii-db:
+  firefly-iii-db:
+    container_name: firefly-iii-db
     image: mariadb    
     hostname: fireflyiii-db
     restart: unless-stopped

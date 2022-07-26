@@ -14,6 +14,7 @@ export enum AppCategoriesEnum {
   BOOKS = 'books',
   DATA = 'data',
   MUSIC = 'music',
+  FINANCE = 'finance',
 }
 
 export enum FieldTypes {
@@ -25,6 +26,7 @@ export enum FieldTypes {
   ip = 'ip',
   fqdnip = 'fqdnip',
   url = 'url',
+  random = 'random',
 }
 
 export enum AppStatusEnum {

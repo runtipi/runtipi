@@ -1,6 +1,7 @@
 import portUsed from 'tcp-port-used';
 import { fileExists, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
+import crypto from 'crypto';
 import config from '../../config';
 import { AppInfo } from './apps.types';
 
@@ -84,6 +85,12 @@ export const ensureAppState = (appName: string, installed: boolean) => {
   writeFile('/state/apps.json', JSON.stringify(state));
 };
 
+const getEntropy = (name: string, length: number) => {
+  const hash = crypto.createHash('sha256');
+  hash.update(name);
+  return hash.digest('hex').substring(0, length);
+};
+
 export const generateEnvFile = (appName: string, form: Record<string, string>) => {
   const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
   const baseEnvFile = readFile('/.env').toString();
@@ -91,10 +98,15 @@ export const generateEnvFile = (appName: string, form: Record<string, string>) =
 
   configFile.form_fields?.forEach((field) => {
     const formValue = form[field.env_variable];
+    const envVar = field.env_variable;
 
     if (formValue) {
-      const envVar = field.env_variable;
       envFile += `${envVar}=${formValue}\n`;
+    } else if (field.type === 'random') {
+      const length = field.min || 32;
+      const randomString = getEntropy(field.env_variable, length);
+
+      envFile += `${envVar}=${randomString}\n`;
     } else if (field.required) {
       throw new Error(`Variable ${field.env_variable} is required`);
     }
