@@ -45,6 +45,7 @@ Check our demo instance : **95.179.210.152** / username: **user@runtipi.com** / 
 - [Plex](https://github.com/plexinc/pms-docker) - Stream Movies & TV Shows
 - [Prowlarr](https://github.com/Prowlarr/Prowlarr/) - A torrent/usenet indexer manager/proxy
 - [Radarr](https://github.com/Radarr/Radarr) - Movie collection manager for Usenet and BitTorrent users
+- [Readarr](https://github.com/Readarr/Readarr) - Book Manager and Automation (Sonarr for Ebooks)
 - [Resilio Sync](https://github.com/bt-sync) - Fast, reliable, and simple file sync and share solution
 - [Sonarr](https://github.com/Sonarr/Sonarr) - TV show manager for Usenet and BitTorrent
 - [Syncthing](https://github.com/syncthing/syncthing) - Continuous File Synchronization
