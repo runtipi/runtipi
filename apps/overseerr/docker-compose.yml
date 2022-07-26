@@ -10,5 +10,7 @@ services:
     ports:
       - ${APP_PORT}:5055
     restart: unless-stopped
+    dns:
+      - ${DNS_IP}
     networks:
       - tipi_main_network
