@@ -1,0 +1,14 @@
+version: "3"
+services:
+  overseerr:
+    container_name: overseerr
+    image: sctx/overseerr:latest
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${APP_DATA_DIR}/data/config:/app/config
+    ports:
+      - ${APP_PORT}:5055
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
