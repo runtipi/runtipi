@@ -20,6 +20,8 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: '.env' });
 }
 
+console.log('Production => ', process.env.NODE_ENV === 'production');
+
 const {
   LOGS_FOLDER = 'logs',
   LOGS_APP = 'app.log',
