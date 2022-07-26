@@ -60,6 +60,8 @@ services:
       POSTGRES_DBNAME: tipi
       POSTGRES_HOST: tipi-db
       NODE_ENV: production
+    dns:
+      - ${DNS_IP}
     networks:
       - tipi_main_network
 
