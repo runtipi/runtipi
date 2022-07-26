@@ -24,6 +24,7 @@ Check our demo instance : **95.179.210.152** / username: **user@runtipi.com** / 
 - [Calibre-Web](https://github.com/janeczku/calibre-web) - Web Ebook Reader
 - [Code-Server](https://github.com/coder/code-server) - Web VS Code 
 - [Filebrowser](https://github.com/filebrowser/filebrowser) - Web File Browser
+- [Firefly III](https://github.com/firefly-iii/firefly-iii) - A personal finances manager 
 - [Freshrss](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
 - [Gitea](https://github.com/go-gitea/gitea) - Gitea - A painless self-hosted Git service
 - [Homarr](https://github.com/ajnart/homarr) - A homepage for your server
