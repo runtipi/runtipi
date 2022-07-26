@@ -38,6 +38,7 @@ Check our demo instance : **95.179.210.152** / username: **user@runtipi.com** / 
 - [Nextcloud](https://github.com/nextcloud/server) - A safe home for all your data
 - [Nitter](https://github.com/zedeus/nitter) - Alternative Twitter front-end
 - [Node-RED](https://github.com/node-red/node-red) - Low-code programming for event-driven applications
+- [Overseerr](https://github.com/sct/overseerr) - Request management and media discovery tool for the Plex ecosystem
 - [Photoprism](https://github.com/photoprism/photoprism) - AI-Powered Photos App for the Decentralized Web. We are on a mission to protect your freedom and privacy.
 - [Pihole](https://github.com/pi-hole/pi-hole) - A black hole for Internet advertisements
 - [Plex](https://github.com/plexinc/pms-docker) - Stream Movies & TV Shows
