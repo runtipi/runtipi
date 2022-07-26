@@ -14,6 +14,7 @@ import cors from 'cors';
 import datasource from './config/datasource';
 import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
+import recover from './core/updates/recover-migrations';
 
 let corsOptions = __prod__
   ? {
@@ -42,10 +43,6 @@ const main = async () => {
 
     await datasource.initialize();
 
-    if (__prod__) {
-      await datasource.runMigrations();
-    }
-
     const schema = await createSchema();
     const httpServer = createServer(app);
     const plugins = [ApolloLogs];
@@ -63,13 +60,22 @@ const main = async () => {
     await apolloServer.start();
     apolloServer.applyMiddleware({ app, cors: corsOptions });
 
+    if (__prod__) {
+      try {
+        await datasource.runMigrations();
+      } catch (e) {
+        logger.error(e);
+        await recover();
+      }
+    }
+
     // Run migrations
     await runUpdates();
 
     httpServer.listen(port, () => {
       // Start apps
       appsService.startAllApps();
-      logger.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
+      console.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
     });
   } catch (error) {
     console.log(error);

@@ -29,7 +29,7 @@ services:
       POSTGRES_USER: tipi
       POSTGRES_DB: tipi
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d tipi -U tipi" ]
+      test: ["CMD-SHELL", "pg_isready -d tipi -U tipi"]
       interval: 5s
       timeout: 10s
       retries: 120
@@ -60,6 +60,7 @@ services:
       POSTGRES_USERNAME: tipi
       POSTGRES_DBNAME: tipi
       POSTGRES_HOST: tipi-db
+      NODE_ENV: production
     networks:
       - tipi_main_network
 
@@ -73,7 +74,8 @@ services:
     networks:
       - tipi_main_network
     environment:
-      - INTERNAL_IP=${INTERNAL_IP}
+      INTERNAL_IP: ${INTERNAL_IP}
+      NODE_ENV: production
     labels:
       traefik.enable: true
       traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&
