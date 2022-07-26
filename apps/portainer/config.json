@@ -5,7 +5,7 @@
   "id": "portainer",
   "categories": ["utilities"],
   "description": "",
-  "short_desc": "Making Docker and Kubernetes management easy. ",
+  "short_desc": "Making Docker and Kubernetes management easy.",
   "author": "portainer.io",
   "source": "https://github.com/portainer/portainer",
   "image": "/logos/apps/portainer.jpg",

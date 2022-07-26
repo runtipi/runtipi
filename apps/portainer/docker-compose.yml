@@ -7,8 +7,6 @@ services:
     restart: unless-stopped
     ports:
       - "${APP_PORT}:9443"
-    environment:
-      PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_ADMIN_PASSWORD}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - "${APP_DATA_DIR}/data:/data"
