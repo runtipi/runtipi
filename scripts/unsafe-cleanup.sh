@@ -22,6 +22,7 @@ echo y | docker image prune -a
 
 # Remove everything in app-data folder
 rm -rf "${ROOT_FOLDER}/app-data"
+rm -rf "${ROOT_FOLDER}/data/postgres"
 mkdir -p "${ROOT_FOLDER}/app-data"
 
 # Put {"installed":""} in state/apps.json

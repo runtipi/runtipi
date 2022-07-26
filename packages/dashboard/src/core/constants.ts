@@ -13,4 +13,5 @@ export const APP_CATEGORIES = [
   { name: 'Books', id: AppCategoriesEnum.Books, icon: 'FaBook' },
   { name: 'Data', id: AppCategoriesEnum.Data, icon: 'FaDatabase' },
   { name: 'Music', id: AppCategoriesEnum.Music, icon: 'FaMusic' },
+  { name: 'Finance', id: AppCategoriesEnum.Finance, icon: 'FaMoneyBillAlt' },
 ];

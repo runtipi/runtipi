@@ -14,21 +14,24 @@ import cors from 'cors';
 import datasource from './config/datasource';
 import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
+import recover from './core/updates/recover-migrations';
 
-const corsOptions = {
-  credentials: true,
-  origin: function (origin: any, callback: any) {
-    // disallow requests with no origin
-    if (!origin) return callback(new Error('Not allowed by CORS'), false);
+let corsOptions = __prod__
+  ? {
+      credentials: true,
+      origin: function (origin: any, callback: any) {
+        // disallow requests with no origin
+        if (!origin) return callback(new Error('Not allowed by CORS'), false);
 
-    if (config.CLIENT_URLS.includes(origin)) {
-      return callback(null, true);
+        if (config.CLIENT_URLS.includes(origin)) {
+          return callback(null, true);
+        }
+
+        const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
+        return callback(new Error(message), false);
+      },
     }
-
-    const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
-    return callback(new Error(message), false);
-  },
-};
+  : {};
 
 const main = async () => {
   try {
@@ -39,10 +42,6 @@ const main = async () => {
     app.use(getSessionMiddleware());
 
     await datasource.initialize();
-
-    if (__prod__) {
-      await datasource.runMigrations();
-    }
 
     const schema = await createSchema();
     const httpServer = createServer(app);
@@ -61,13 +60,22 @@ const main = async () => {
     await apolloServer.start();
     apolloServer.applyMiddleware({ app, cors: corsOptions });
 
+    if (__prod__) {
+      try {
+        await datasource.runMigrations();
+      } catch (e) {
+        logger.error(e);
+        await recover();
+      }
+    }
+
     // Run migrations
     await runUpdates();
 
     httpServer.listen(port, () => {
       // Start apps
       appsService.startAllApps();
-      logger.info(`Server running on port ${port}`);
+      console.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
     });
   } catch (error) {
     console.log(error);

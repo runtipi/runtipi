@@ -38,4 +38,5 @@ export const colorSchemeForCategory: Record<AppCategoriesEnum, string> = {
   [AppCategoriesEnum.Data]: 'red',
   [AppCategoriesEnum.Books]: 'blue',
   [AppCategoriesEnum.Music]: 'green',
+  [AppCategoriesEnum.Finance]: 'orange',
 };
