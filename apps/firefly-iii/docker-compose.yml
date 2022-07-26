@@ -25,7 +25,7 @@ services:
       - DB_PORT=3306
       - DB_DATABASE=firefly
       - DB_USERNAME=firefly
-      - DB_PASSWORD=firefly
+      - DB_PASSWORD=${MYSQL_PASSWORD}
 
       # Cookie settings
       - COOKIE_PATH="/"
@@ -51,7 +51,7 @@ services:
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
       - MYSQL_USER=firefly
-      - MYSQL_PASSWORD=firefly
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=firefly
     volumes:
       - ${APP_DATA_DIR}/data/db:/var/lib/mysql

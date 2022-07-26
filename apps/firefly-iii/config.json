@@ -23,6 +23,13 @@
       "max": 32,
       "label": "Random key",
       "env_variable": "APP_KEY"
+    },
+    {
+      "type": "random",
+      "min": 32,
+      "max": 32,
+      "label": "Database password",
+      "env_variable": "MYSQL_PASSWORD"
     }
   ]
 }

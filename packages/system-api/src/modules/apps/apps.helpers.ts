@@ -95,6 +95,7 @@ export const generateEnvFile = (appName: string, form: Record<string, string>) =
   const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
   const baseEnvFile = readFile('/.env').toString();
   let envFile = `${baseEnvFile}\nAPP_PORT=${configFile.port}\n`;
+  const envMap = getEnvMap(appName);
 
   configFile.form_fields?.forEach((field) => {
     const formValue = form[field.env_variable];
@@ -103,10 +104,14 @@ export const generateEnvFile = (appName: string, form: Record<string, string>) =
     if (formValue) {
       envFile += `${envVar}=${formValue}\n`;
     } else if (field.type === 'random') {
-      const length = field.min || 32;
-      const randomString = getEntropy(field.env_variable, length);
+      if (envMap.has(envVar)) {
+        envFile += `${envVar}=${envMap.get(envVar)}\n`;
+      } else {
+        const length = field.min || 32;
+        const randomString = getEntropy(field.env_variable, length);
 
-      envFile += `${envVar}=${randomString}\n`;
+        envFile += `${envVar}=${randomString}\n`;
+      }
     } else if (field.required) {
       throw new Error(`Variable ${field.env_variable} is required`);
     }
