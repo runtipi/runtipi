@@ -1,10 +1,9 @@
 .pnpm-debug.log
 .env*
-data/
 github.secrets
 node_modules/
 app-data/*
-data/
+data/postgres
 traefik/ssl/*
 !traefik/ssl/.gitkeep
 !app-data/.gitkeep
