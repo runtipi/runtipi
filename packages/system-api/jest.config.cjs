@@ -8,4 +8,7 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.{ts,tsx}'],
   passWithNoTests: true,
+  transform: {
+    '^.+\\.graphql$': 'graphql-import-node/jest',
+  },
 };

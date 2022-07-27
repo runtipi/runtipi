@@ -79,6 +79,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "graphql-import-node": "^0.0.5",
     "jest": "^28.1.0",
     "nodemon": "^2.0.15",
     "prettier": "2.6.2",
