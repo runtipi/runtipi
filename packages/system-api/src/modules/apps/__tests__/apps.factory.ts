@@ -3,7 +3,7 @@ import { AppCategoriesEnum, AppInfo, AppStatusEnum, FieldTypes } from '../apps.t
 import config from '../../../config';
 import App from '../app.entity';
 
-const createApp = async (installed = false) => {
+const createApp = async (installed = false, status = AppStatusEnum.RUNNING) => {
   const categories = Object.values(AppCategoriesEnum);
 
   const appInfo: AppInfo = {
@@ -36,7 +36,7 @@ const createApp = async (installed = false) => {
     await App.create({
       id: appInfo.id,
       config: { TEST_FIELD: 'test' },
-      status: AppStatusEnum.RUNNING,
+      status,
     }).save();
 
     MockFiles[`${config.ROOT_FOLDER}/app-data/${appInfo.id}`] = '';

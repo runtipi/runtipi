@@ -68,23 +68,6 @@ export const runAppScript = (params: string[]): Promise<void> => {
   });
 };
 
-export const ensureAppState = (appName: string, installed: boolean) => {
-  const state = readJsonFile('/state/apps.json');
-
-  if (installed) {
-    if (state.installed.indexOf(appName) === -1) {
-      state.installed += ` ${appName}`;
-    }
-  } else {
-    if (state.installed.indexOf(appName) !== -1) {
-      state.installed = state.installed.replace(`${appName}`, '');
-    }
-  }
-
-  state.installed = state.installed.replace(/\s+/g, ' ').trim();
-  writeFile('/state/apps.json', JSON.stringify(state));
-};
-
 const getEntropy = (name: string, length: number) => {
   const hash = crypto.createHash('sha256');
   hash.update(name);
