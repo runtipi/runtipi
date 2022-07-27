@@ -46,6 +46,12 @@ while [ -n "$1" ]; do # while loop starts
   shift
 done
 
+# Ensure BASH_SOURCE is ./scripts/start.sh
+if [[ "${BASH_SOURCE[0]}" != "./scripts/start.sh" ]]; then
+  echo "Please make sure this script is executed from runtipi/"
+  exit 1
+fi
+
 # Check we are on linux
 if [[ "$(uname)" != "Linux" ]]; then
   echo "Tipi only works on Linux"
