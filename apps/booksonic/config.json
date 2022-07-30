@@ -1,0 +1,13 @@
+{
+    "name": "Booksonic",
+    "available": true,
+    "port": 8040,
+    "id": "booksonic",
+    "categories": ["books", "media"],
+    "description": "",
+    "short_desc": "The selfhosted audiobook server",
+    "author": "https://github.com/popeen",
+    "source": "https://github.com/popeen/Booksonic-Air",
+    "image": "/logos/apps/booksonic.jpg",
+    "form_fields": []
+  }
