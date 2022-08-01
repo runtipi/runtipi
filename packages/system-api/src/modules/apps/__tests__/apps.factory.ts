@@ -3,7 +3,7 @@ import { AppCategoriesEnum, AppInfo, AppStatusEnum, FieldTypes } from '../apps.t
 import config from '../../../config';
 import App from '../app.entity';
 
-const createApp = async (installed = false, status = AppStatusEnum.RUNNING) => {
+const createApp = async (installed = false, status = AppStatusEnum.RUNNING, requiredPort?: number) => {
   const categories = Object.values(AppCategoriesEnum);
 
   const appInfo: AppInfo = {
@@ -18,6 +18,11 @@ const createApp = async (installed = false, status = AppStatusEnum.RUNNING) => {
         env_variable: 'TEST_FIELD',
       },
     ],
+    requirements: requiredPort
+      ? {
+          ports: [requiredPort],
+        }
+      : undefined,
     name: faker.random.word(),
     description: faker.random.words(),
     image: faker.internet.url(),

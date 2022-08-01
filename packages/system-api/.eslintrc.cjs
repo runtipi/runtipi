@@ -16,5 +16,7 @@ module.exports = {
     'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never', ts: 'never', tsx: 'never' }],
     indent: 'off',
     '@typescript-eslint/indent': 0,
+    'no-unused-vars': [1, { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': [1, { argsIgnorePattern: '^_' }],
   },
 };

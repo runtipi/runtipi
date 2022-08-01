@@ -9,6 +9,10 @@ export const checkAppRequirements = async (appName: string) => {
   let valid = true;
   const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
 
+  if (!configFile) {
+    throw new Error(`App ${appName} not found`);
+  }
+
   if (configFile?.requirements?.ports) {
     for (const port of configFile.requirements.ports) {
       const ip = await InternalIp.v4();
