@@ -1,6 +1,6 @@
 {
   "name": "Ghost",
-  "port": 8115,
+  "port": 8117,
   "available": true,
   "id": "ghost",
   "categories": ["social", "media"],
@@ -8,14 +8,12 @@
   "short_desc": "Ghost - Turn your audience into a business.",
   "author": "TryGhost",
   "source": "https://github.com/TryGhost/Ghost",
-  "image": "/logos/apps/ghost.png",
+  "image": "/logos/apps/ghost.jpg",
   "form_fields": [
     {
-      "type": "password",
+      "type": "random",
       "label": "Ghost Database password",
-      "max": 50,
-      "min": 8,
-      "random": true,
+      "min": 20,
       "env_variable": "GHOST_DATABASE_PASSWORD"
     }
   ]
