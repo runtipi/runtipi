@@ -1,0 +1,20 @@
+{
+  "name": "Ghost",
+  "port": 8117,
+  "available": true,
+  "id": "ghost",
+  "categories": ["social", "media"],
+  "description": "Ghost is a powerful app for new-media creators to publish, share, and grow a business around their content. It comes with modern tools to build a website, publish content, send newsletters & offer paid subscriptions to members.",
+  "short_desc": "Ghost - Turn your audience into a business.",
+  "author": "TryGhost",
+  "source": "https://github.com/TryGhost/Ghost",
+  "image": "/logos/apps/ghost.jpg",
+  "form_fields": [
+    {
+      "type": "random",
+      "label": "Ghost Database password",
+      "min": 20,
+      "env_variable": "GHOST_DATABASE_PASSWORD"
+    }
+  ]
+}
