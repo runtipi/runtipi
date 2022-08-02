@@ -37,6 +37,7 @@ export enum AppCategoriesEnum {
   Data = 'DATA',
   Development = 'DEVELOPMENT',
   Featured = 'FEATURED',
+  Finance = 'FINANCE',
   Media = 'MEDIA',
   Music = 'MUSIC',
   Network = 'NETWORK',

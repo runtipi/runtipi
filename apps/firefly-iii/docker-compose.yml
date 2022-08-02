@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  firefly-iii:
+    image: fireflyiii/core:latest
+    container_name: firefly-iii
+    restart: unless-stopped
+    volumes:
+      - ${APP_DATA_DIR}/data/uplodad:/var/www/html/storage/upload
+    ports:
+      - ${APP_PORT}:8080
+    depends_on:
+      - firefly-iii-db
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=false
+      - SITE_OWNER=${EMAIL}
+      - APP_KEY=${APP_KEY}
+      - TZ=${TZ}
+      - TRUSTED_PROXIES=**
+
+      # Database
+      - DB_CONNECTION=mysql
+      - DB_HOST=firefly-iii-db
+      - DB_PORT=3306
+      - DB_DATABASE=firefly
+      - DB_USERNAME=firefly
+      - DB_PASSWORD=${MYSQL_PASSWORD}
+
+      # Cookie settings
+      - COOKIE_PATH="/"
+      - COOKIE_DOMAIN=
+      - COOKIE_SECURE=false
+      - COOKIE_SAMESITE=lax
+
+      - APP_NAME=FireflyIII
+      - BROADCAST_DRIVER=log
+      - QUEUE_DRIVER=sync
+      - CACHE_PREFIX=firefly
+      - IS_HEROKU=false
+      - FIREFLY_III_LAYOUT=v1
+      - APP_URL=http://localhost:${APP_PORT}
+    networks:
+      - tipi_main_network
+    
+  firefly-iii-db:
+    container_name: firefly-iii-db
+    image: mariadb    
+    hostname: fireflyiii-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_USER=firefly
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=firefly
+    volumes:
+      - ${APP_DATA_DIR}/data/db:/var/lib/mysql
+    networks:
+      - tipi_main_network

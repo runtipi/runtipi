@@ -1,0 +1,13 @@
+{
+  "name": "Portainer",
+  "port": 9443,
+  "available": true,
+  "id": "portainer",
+  "categories": ["utilities"],
+  "description": "",
+  "short_desc": "Making Docker and Kubernetes management easy.",
+  "author": "portainer.io",
+  "source": "https://github.com/portainer/portainer",
+  "image": "/logos/apps/portainer.jpg",
+  "form_fields": []
+}

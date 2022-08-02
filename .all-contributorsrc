@@ -65,6 +65,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "blushell",
+      "name": "Jones_Town",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3621606?v=4",
+      "profile": "https://github.com/blushell",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

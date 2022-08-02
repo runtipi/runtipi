@@ -11,6 +11,9 @@ interface IProps {
   initalValues?: Record<string, string>;
 }
 
+const hiddenTypes = ['random'];
+const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
+
 const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues }) => {
   const renderField = (field: FormField) => {
     return (
@@ -30,7 +33,7 @@ const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues }) =
       validate={(values) => validateAppConfig(values, formFields)}
       render={({ handleSubmit, validating, submitting }) => (
         <form className="flex flex-col" onSubmit={handleSubmit}>
-          {formFields.map(renderField)}
+          {formFields.filter(typeFilter).map(renderField)}
           <Button isLoading={validating || submitting} className="self-end mb-2" colorScheme="green" type="submit">
             {initalValues ? 'Update' : 'Install'}
           </Button>
