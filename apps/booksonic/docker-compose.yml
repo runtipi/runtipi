@@ -9,7 +9,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${APP_DATA_DIR}/config:/config
-      - ${ROOT_FOLDER_HOST}/media/data/books/audiobooks:/audiobooks
+      - ${ROOT_FOLDER_HOST}/media/data/books/spoken:/audiobooks
       - ${ROOT_FOLDER_HOST}/media/data/podcasts:/podcasts
     ports:
       - ${APP_PORT}:4040
