@@ -2,6 +2,7 @@ import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
+import logger from '../../config/logger/logger';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
 
@@ -21,7 +22,7 @@ const startAllApps = async (): Promise<void> => {
         await App.update({ id: app.id }, { status: AppStatusEnum.RUNNING });
       } catch (e) {
         await App.update({ id: app.id }, { status: AppStatusEnum.STOPPED });
-        console.log(e);
+        logger.error(e);
       }
     }),
   );

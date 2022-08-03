@@ -9,6 +9,10 @@ export const checkAppRequirements = async (appName: string) => {
   let valid = true;
   const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
 
+  if (!configFile) {
+    throw new Error(`App ${appName} not found`);
+  }
+
   if (configFile?.requirements?.ports) {
     for (const port of configFile.requirements.ports) {
       const ip = await InternalIp.v4();
@@ -66,23 +70,6 @@ export const runAppScript = (params: string[]): Promise<void> => {
       resolve();
     });
   });
-};
-
-export const ensureAppState = (appName: string, installed: boolean) => {
-  const state = readJsonFile('/state/apps.json');
-
-  if (installed) {
-    if (state.installed.indexOf(appName) === -1) {
-      state.installed += ` ${appName}`;
-    }
-  } else {
-    if (state.installed.indexOf(appName) !== -1) {
-      state.installed = state.installed.replace(`${appName}`, '');
-    }
-  }
-
-  state.installed = state.installed.replace(/\s+/g, ' ').trim();
-  writeFile('/state/apps.json', JSON.stringify(state));
 };
 
 const getEntropy = (name: string, length: number) => {

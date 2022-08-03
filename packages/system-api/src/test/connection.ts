@@ -4,12 +4,18 @@ import User from '../modules/auth/user.entity';
 import pg from 'pg';
 import Update from '../modules/system/update.entity';
 
+const HOST = 'localhost';
+const USER = 'postgres';
+const DATABASE = 'postgres';
+const PASSWORD = 'postgres';
+const PORT = 5433;
+
 const pgClient = new pg.Client({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'postgres',
-  password: 'postgres',
-  port: 5432,
+  user: USER,
+  host: HOST,
+  database: DATABASE,
+  password: PASSWORD,
+  port: PORT,
 });
 
 export const setupConnection = async (testsuite: string): Promise<DataSource> => {
@@ -21,10 +27,10 @@ export const setupConnection = async (testsuite: string): Promise<DataSource> =>
   const AppDataSource = new DataSource({
     name: 'default',
     type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
+    host: HOST,
+    port: PORT,
+    username: USER,
+    password: PASSWORD,
     database: testsuite,
     dropSchema: true,
     logging: false,

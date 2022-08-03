@@ -6,6 +6,9 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.test.ts'],
   setupFiles: ['<rootDir>/src/test/dotenv-config.ts'],
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.{ts,tsx}'],
+  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/migrations/**/*.{ts,tsx}', '!**/config/**/*.{ts,tsx}'],
   passWithNoTests: true,
+  transform: {
+    '^.+\\.graphql$': 'graphql-import-node/jest',
+  },
 };

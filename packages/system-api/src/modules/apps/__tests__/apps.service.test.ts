@@ -21,6 +21,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   jest.resetModules();
   jest.resetAllMocks();
+  jest.restoreAllMocks();
   await App.clear();
 });
 
@@ -193,6 +194,13 @@ describe('Start app', () => {
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test`);
   });
+
+  it('Should throw if start script fails', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+  });
 });
 
 describe('Stop app', () => {
@@ -298,5 +306,58 @@ describe('List apps', () => {
     expect(apps[0].id).toBe(sortedApps[0].id);
     expect(apps[1].id).toBe(sortedApps[1].id);
     expect(apps[0].description).toBe('md desc');
+  });
+});
+
+describe('Start all apps', () => {
+  let app1: AppInfo;
+  let app2: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp(true);
+    const app2create = await createApp(true);
+    app1 = app1create.appInfo;
+    app2 = app2create.appInfo;
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app1create.MockFiles, app2create.MockFiles));
+  });
+
+  it('Should correctly start all apps', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+
+    await AppsService.startAllApps();
+
+    expect(spy.mock.calls.length).toBe(2);
+    expect(spy.mock.calls).toEqual([
+      [`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi'], {}, expect.any(Function)],
+      [`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app2.id, '/tipi'], {}, expect.any(Function)],
+    ]);
+  });
+
+  it('Should not start app which has not status RUNNING', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    await createApp(true, AppStatusEnum.STOPPED);
+
+    await AppsService.startAllApps();
+    const apps = await App.find();
+
+    expect(spy.mock.calls.length).toBe(2);
+    expect(apps.length).toBe(3);
+  });
+
+  it('Should put app status to STOPPED if start script fails', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await AppsService.startAllApps();
+
+    const apps = await App.find();
+
+    expect(spy.mock.calls.length).toBe(2);
+    expect(apps.length).toBe(2);
+    expect(apps[0].status).toBe(AppStatusEnum.STOPPED);
+    expect(apps[1].status).toBe(AppStatusEnum.STOPPED);
   });
 });
