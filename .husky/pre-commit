@@ -7,4 +7,5 @@ if ! docker ps | grep -q test-db; then
 fi
 
 pnpm test
+pnpm -r test
 pnpm -r lint:fix
