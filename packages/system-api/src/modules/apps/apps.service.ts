@@ -91,7 +91,9 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
 };
 
 const listApps = async (): Promise<ListAppsResonse> => {
-  const apps: AppInfo[] = getAvailableApps()
+  const folders: string[] = await getAvailableApps();
+
+  const apps: AppInfo[] = folders
     .map((app) => {
       try {
         return readJsonFile(`/apps/${app}/config.json`);

@@ -61,8 +61,14 @@ if [ -z ${2+x} ]; then
 else
   app="$2"
   root_folder_host="${3:-$ROOT_FOLDER}"
+  repo_id="${4}"
 
-  app_dir="${ROOT_FOLDER}/apps/${app}"
+  if [[ -z "${root_folder_host}" ]]; then
+    echo "Error: Repo id not provided"
+    exit 1
+  fi
+
+  app_dir="/repos/${repo_id}/apps/${app}"
   app_data_dir="${ROOT_FOLDER}/app-data/${app}"
 
   if [[ -z "${app}" ]] || [[ ! -d "${app_dir}" ]]; then
@@ -101,8 +107,7 @@ compose() {
     app_compose_file="${app_dir}/docker-compose.arm.yml"
   fi
 
-  local common_compose_file="${ROOT_FOLDER}/apps/docker-compose.common.yml"
-  local app_dir="${ROOT_FOLDER}/apps/${app}"
+  local common_compose_file="/repos/${repo_id}/apps/docker-compose.common.yml"
 
   # Vars to use in compose file
   export APP_DATA_DIR="${root_folder_host}/app-data/${app}"
@@ -126,8 +131,8 @@ if [[ "$command" = "install" ]]; then
   compose "${app}" pull
 
   # Copy default data dir to app data dir if it exists
-  if [[ -d "${ROOT_FOLDER}/apps/${app}/data" ]]; then
-    cp -r "${ROOT_FOLDER}/apps/${app}/data" "${app_data_dir}/data"
+  if [[ -d "/repos/${repo_id}/${app}/data" ]]; then
+    cp -r "/repos/${repo_id}/${app}/data" "${app_data_dir}/data"
   fi
 
   # Remove all .gitkeep files from app data dir

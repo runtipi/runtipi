@@ -1,6 +1,7 @@
 # Only edit this file if you know what you are doing!
 # It will be overwritten on update.
 
+APPS_REPOSITORY=https://github.com/meienberger/runtipi-appstore
 TZ=<tz>
 INTERNAL_IP=<internal_ip>
 DNS_IP=<dns_ip>
@@ -10,5 +11,4 @@ JWT_SECRET=<jwt_secret>
 ROOT_FOLDER_HOST=<root_folder>
 NGINX_PORT=<nginx_port>
 PROXY_PORT=<proxy_port>
-
 POSTGRES_PASSWORD=<postgres_password>

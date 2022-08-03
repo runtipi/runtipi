@@ -7,6 +7,8 @@ data/postgres
 traefik/ssl/*
 !traefik/ssl/.gitkeep
 !app-data/.gitkeep
+repos/*
+!repos/.gitkeep
 
 scripts/pacapt
 

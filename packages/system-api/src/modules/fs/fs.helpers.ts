@@ -38,3 +38,8 @@ export const deleteFolder = (path: string) => fs.rmSync(getAbsolutePath(path), {
 export const copyFile = (source: string, destination: string) => fs.copyFileSync(getAbsolutePath(source), getAbsolutePath(destination));
 
 export const runScript = (path: string, args: string[], callback?: any) => childProcess.execFile(getAbsolutePath(path), args, {}, callback);
+
+export const getSeed = () => {
+  const seed = readFile('/state/seed');
+  return seed.toString();
+};

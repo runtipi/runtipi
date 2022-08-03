@@ -36,6 +36,7 @@ services:
     volumes:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/repos:/repos
       - ${PWD}:/tipi
       - ${PWD}/packages/system-api/src:/api/src
       # - /api/node_modules
@@ -49,6 +50,7 @@ services:
       POSTGRES_USERNAME: tipi
       POSTGRES_DBNAME: tipi
       POSTGRES_HOST: tipi-db
+      APPS_REPOSITORY: ${APPS_REPOSITORY}
     networks:
       - tipi_main_network
 

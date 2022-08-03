@@ -40,7 +40,7 @@ class App extends BaseEntity {
   updatedAt!: Date;
 
   @Field(() => AppInfo)
-  info(): AppInfo {
+  info(): Promise<AppInfo> {
     return getAppInfo(this.id);
   }
 }

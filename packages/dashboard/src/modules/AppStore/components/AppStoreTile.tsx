@@ -17,7 +17,7 @@ const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
   return (
     <Link href={`/app-store/${app.id}`} passHref>
       <div key={app.id} className="p-2 rounded-md app-store-tile flex items-center group">
-        <AppLogo src={app.image} className="group-hover:scale-105 transition-all" />
+        <AppLogo id={app.id} className="group-hover:scale-105 transition-all" />
         <div className="ml-2">
           <div className="font-bold">{limitText(app.name, 20)}</div>
           <div className="text-sm mb-1">{limitText(app.short_desc, 45)}</div>

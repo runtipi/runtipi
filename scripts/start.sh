@@ -105,14 +105,9 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
-# Copy the app state if it isn't here
+# Copy the config sample if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json"
-fi
-
-# Copy the user state if it isn't here
-if [[ ! -f "${STATE_FOLDER}/users.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/users-sample.json" "${STATE_FOLDER}/users.json"
+  cp "${ROOT_FOLDER}/templates/config-sample.json" "${STATE_FOLDER}/config.json"
 fi
 
 # Get current dns from host
@@ -132,7 +127,6 @@ export COMPOSE_HTTP_TIMEOUT=240
 echo "Generating config files..."
 # Remove current .env file
 [[ -f "${ROOT_FOLDER}/.env" ]] && rm -f "${ROOT_FOLDER}/.env"
-[[ -f "${ROOT_FOLDER}/packages/system-api/.env" ]] && rm -f "${ROOT_FOLDER}/packages/system-api/.env"
 
 # Store paths to intermediary config files
 ENV_FILE=$(mktemp)

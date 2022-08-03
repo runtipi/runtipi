@@ -1,9 +1,11 @@
 import portUsed from 'tcp-port-used';
-import { fileExists, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
+import { fileExists, getSeed, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
 import crypto from 'crypto';
 import config from '../../config';
 import { AppInfo } from './apps.types';
+import { getRepoId } from '../../helpers/repo-helpers';
+import logger from '../../config/logger/logger';
 
 export const checkAppRequirements = async (appName: string) => {
   let valid = true;
@@ -60,12 +62,17 @@ export const checkAppExists = (appName: string) => {
   }
 };
 
-export const runAppScript = (params: string[]): Promise<void> => {
+export const runAppScript = async (params: string[]): Promise<void> => {
+  const repoId = await getRepoId(config.APPS_REPOSITORY);
+
   return new Promise((resolve, reject) => {
-    runScript('/scripts/app.sh', [...params, config.ROOT_FOLDER_HOST], (err: string) => {
+    runScript('/scripts/app.sh', [...params, config.ROOT_FOLDER_HOST, repoId], (err: string, stdout: string) => {
       if (err) {
+        logger.error(err);
         reject(err);
       }
+
+      logger.info(stdout);
 
       resolve();
     });
@@ -74,7 +81,7 @@ export const runAppScript = (params: string[]): Promise<void> => {
 
 const getEntropy = (name: string, length: number) => {
   const hash = crypto.createHash('sha256');
-  hash.update(name);
+  hash.update(name + getSeed());
   return hash.digest('hex').substring(0, length);
 };
 
@@ -107,13 +114,14 @@ export const generateEnvFile = (appName: string, form: Record<string, string>) =
   writeFile(`/app-data/${appName}/app.env`, envFile);
 };
 
-export const getAvailableApps = (): string[] => {
+export const getAvailableApps = async (): Promise<string[]> => {
   const apps: string[] = [];
 
-  const appsDir = readdirSync('/apps');
+  const repoId = await getRepoId(config.APPS_REPOSITORY);
+  const appsDir = readdirSync(`/repos/${repoId}/apps`);
 
   appsDir.forEach((app) => {
-    if (fileExists(`/apps/${app}/config.json`)) {
+    if (fileExists(`/repos/${repoId}/apps/${app}/config.json`)) {
       const configFile: AppInfo = readJsonFile(`/apps/${app}/config.json`);
 
       if (configFile.available) {
@@ -125,13 +133,21 @@ export const getAvailableApps = (): string[] => {
   return apps;
 };
 
-export const getAppInfo = (id: string): AppInfo => {
+export const getAppInfo = async (id: string): Promise<AppInfo> => {
   try {
-    const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
-    configFile.description = readFile(`/apps/${id}/metadata/description.md`);
+    const repoId = await getRepoId(config.APPS_REPOSITORY);
 
-    return configFile;
+    if (fileExists(`/repos/${repoId}`)) {
+      const configFile: AppInfo = readJsonFile(`/repos/${repoId}/apps/${id}/config.json`);
+      configFile.description = readFile(`/repos/${repoId}/apps/${id}/metadata/description.md`);
+
+      if (configFile.available) {
+        return configFile;
+      }
+    }
+
+    throw new Error('No repository found');
   } catch (e) {
-    throw new Error(`App ${id} not found`);
+    throw new Error(`Error loading app ${id}`);
   }
 };

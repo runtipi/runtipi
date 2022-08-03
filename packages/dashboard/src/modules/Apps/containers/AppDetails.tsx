@@ -116,7 +116,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     <SlideFade in className="flex flex-1" offsetY="20px">
       <div className="flex flex-1  p-4 mt-3 rounded-lg flex-col">
         <Flex className="flex-col md:flex-row">
-          <AppLogo src={info.image} size={180} className="self-center sm:self-auto" alt={info.name} />
+          <AppLogo id={info.id} size={180} className="self-center sm:self-auto" alt={info.name} />
           <VStack align="flex-start" justify="space-between" className="ml-0 md:ml-4">
             <div className="mt-3 items-center self-center flex flex-col sm:items-start sm:self-start md:mt-0">
               <h1 className="font-bold text-2xl">{info.name}</h1>
