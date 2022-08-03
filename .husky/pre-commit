@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# If test-db is not running with docker
+if ! docker ps | grep -q test-db; then
+    npm run start:pg
+fi
+
 pnpm test
 pnpm -r lint:fix

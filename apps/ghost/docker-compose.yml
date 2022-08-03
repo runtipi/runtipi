@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+
+  ghost:
+    image: ghost:alpine
+    container_name: ghost
+    depends_on:
+    - ghostdb
+    restart: unless-stopped
+    ports:
+      - ${APP_PORT}:2368
+    environment:
+      # see https://ghost.org/docs/config/#configuration-options
+      database__client: mysql
+      database__connection__host: ghostdb
+      database__connection__user: tipi
+      database__connection__password: ${GHOST_DATABASE_PASSWORD}
+      database__connection__database: ghosttipi
+      url: http://localhost:${APP_PORT}
+    volumes:
+      - ${APP_DATA_DIR}/content:/var/lib/ghost/content
+    networks:
+      - tipi_main_network
+
+  ghostdb:
+    container_name: ghostdb
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${GHOST_DATABASE_PASSWORD}
+      MYSQL_USER: tipi
+      MYSQL_PASSWORD: ${GHOST_DATABASE_PASSWORD}
+      MYSQL_DATABASE: ghosttipi
+    volumes:
+      - ${APP_DATA_DIR}/data/db:/var/lib/mysql
+    networks:
+      - tipi_main_network

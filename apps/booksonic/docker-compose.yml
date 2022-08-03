@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  booksonic:
+    image: lscr.io/linuxserver/booksonic-air:latest
+    container_name: booksonic
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ${APP_DATA_DIR}/config:/config
+      - ${ROOT_FOLDER_HOST}/media/data/books/spoken:/audiobooks
+      - ${ROOT_FOLDER_HOST}/media/data/podcasts:/podcasts
+    ports:
+      - ${APP_PORT}:4040
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
+      

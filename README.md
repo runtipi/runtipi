@@ -21,6 +21,7 @@ Check our demo instance : **95.179.210.152** / username: **user@runtipi.com** / 
 
 ## Apps available
 - [Adguard Home](https://github.com/AdguardTeam/AdGuardHome) - Adguard Home DNS adblocker
+- [Booksonic](https://github.com/popeen) - A server for streaming your audiobooks
 - [Calibre-Web](https://github.com/janeczku/calibre-web) - Web Ebook Reader
 - [Code-Server](https://github.com/coder/code-server) - Web VS Code 
 - [Filebrowser](https://github.com/filebrowser/filebrowser) - Web File Browser
