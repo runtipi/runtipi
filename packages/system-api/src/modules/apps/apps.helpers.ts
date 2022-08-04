@@ -128,7 +128,7 @@ export const getAvailableApps = async (): Promise<string[]> => {
   return apps;
 };
 
-export const getAppInfo = async (id: string): Promise<AppInfo> => {
+export const getAppInfo = (id: string): AppInfo => {
   try {
     const repoId = config.APPS_REPO_ID;
     if (fileExists(`/repos/${repoId}`)) {

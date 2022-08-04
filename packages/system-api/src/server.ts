@@ -62,13 +62,11 @@ const main = async () => {
     await apolloServer.start();
     apolloServer.applyMiddleware({ app, cors: corsOptions });
 
-    if (__prod__) {
-      try {
-        await datasource.runMigrations();
-      } catch (e) {
-        logger.error(e);
-        await recover();
-      }
+    try {
+      await datasource.runMigrations();
+    } catch (e) {
+      logger.error(e);
+      await recover();
     }
 
     // Run migrations

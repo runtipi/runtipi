@@ -6,9 +6,8 @@ export const connectionSource = new DataSource({
   port: 5432,
   username: 'tipi',
   password: 'postgres',
-  database: 'postgres',
+  database: 'tipi',
   logging: true,
   synchronize: false,
-  entities: ['/src/modules/**/*.entity.ts'],
-  migrations: ['/src/config/migrations/*.ts'],
+  entities: ['src/modules/**/*.entity.ts'],
 });
