@@ -7,7 +7,7 @@ import AppLogo from '../AppLogo/AppLogo';
 import { limitText } from '../../modules/AppStore/helpers/table.helpers';
 import { AppInfo, AppStatusEnum } from '../../generated/graphql';
 
-type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'image' | 'short_desc'>;
+type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc'>;
 
 const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum }> = ({ app, status }) => {
   const bg = useColorModeValue('white', '#1a202c');

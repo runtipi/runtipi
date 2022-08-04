@@ -10,7 +10,6 @@ type App = {
   name: string;
   categories: string[];
   short_desc: string;
-  image: string;
 };
 
 const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
