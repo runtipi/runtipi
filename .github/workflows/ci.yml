@@ -59,9 +59,6 @@ jobs:
       - name: Build packages
         run: pnpm -r build
 
-      - name: Run global tests
-        run: pnpm test
-
       - name: Run linter
         run: pnpm -r lint
       
