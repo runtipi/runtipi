@@ -39,9 +39,8 @@ fi
 # Clone a repo
 if [[ "$command" = "clone" ]]; then
     repo="$2"
-    repo_hash="$(get_hash "${repo}")"
-    echo "Cloning ${repo} to ${ROOT_FOLDER}/repos/${repo_hash}"
-    repo_dir="${ROOT_FOLDER}/repos/${repo_hash}"
+    echo "Cloning ${repo} to ${ROOT_FOLDER}/repos/${repo}"
+    repo_dir="${ROOT_FOLDER}/repos/${repo}"
     if [ -d "${repo_dir}" ]; then
         echo "Repo already exists"
         exit 0
@@ -56,8 +55,7 @@ fi
 # Update a repo
 if [[ "$command" = "update" ]]; then
     repo="$2"
-    repo_hash="$(get_hash "${repo}")"
-    repo_dir="${ROOT_FOLDER}/repos/${repo_hash}"
+    repo_dir="${ROOT_FOLDER}/repos/${repo}"
     if [ ! -d "${repo_dir}" ]; then
         echo "Repo does not exist"
         exit 0

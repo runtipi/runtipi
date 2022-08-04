@@ -19,7 +19,8 @@
     "dev": "concurrently \"npm run build:watch\" \"npm run start:dev\"",
     "start": "NODE_ENV=production && node --experimental-specifier-resolution=node dist/server.js",
     "typeorm": "node --experimental-specifier-resolution=node --loader ts-node/esm ./node_modules/typeorm/cli.js -d ormconfig.ts",
-    "migration:generate": "npm run typeorm migration:generate ./src/config/migrations/$npm_config_name"
+    "migration:generate": "npm run typeorm migration:generate ./src/config/migrations/$npm_config_name",
+    "migration:create": "node --experimental-specifier-resolution=node --loader ts-node/esm ./node_modules/typeorm/cli.js migration:create ./src/config/migrations/$npm_config_name"
   },
   "author": "",
   "license": "ISC",

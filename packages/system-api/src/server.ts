@@ -15,7 +15,7 @@ import datasource from './config/datasource';
 import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
-import { cloneRepo, getRepoId, updateRepo } from './helpers/repo-helpers';
+import { cloneRepo, updateRepo } from './helpers/repo-helpers';
 
 let corsOptions = __prod__
   ? {
@@ -39,9 +39,7 @@ const main = async () => {
     const app = express();
     const port = 3001;
 
-    const repoId = await getRepoId(config.APPS_REPOSITORY);
-
-    app.use(express.static(`${config.ROOT_FOLDER}/repos/${repoId}`));
+    app.use(express.static(`${config.ROOT_FOLDER}/repos/${config.APPS_REPO_ID}`));
     app.use(cors(corsOptions));
     app.use(getSessionMiddleware());
 
@@ -77,8 +75,8 @@ const main = async () => {
     await runUpdates();
 
     httpServer.listen(port, async () => {
-      await cloneRepo(config.APPS_REPOSITORY);
-      await updateRepo(config.APPS_REPOSITORY);
+      await cloneRepo(config.APPS_REPO_ID);
+      await updateRepo(config.APPS_REPO_ID);
       // Start apps
       appsService.startAllApps();
       console.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
