@@ -6,6 +6,5 @@ if ! docker ps | grep -q test-db; then
     npm run start:pg
 fi
 
-pnpm test
 pnpm -r test
 pnpm -r lint:fix

@@ -1,7 +1,7 @@
 # Only edit this file if you know what you are doing!
 # It will be overwritten on update.
 
-APPS_REPOSITORY=https://github.com/meienberger/runtipi-appstore
+APPS_REPO_ID=<apps_repo_id>
 TZ=<tz>
 INTERNAL_IP=<internal_ip>
 DNS_IP=<dns_ip>

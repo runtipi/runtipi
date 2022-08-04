@@ -3,11 +3,12 @@ query InstalledApps {
     id
     status
     config
+    version
     info {
       id
       name
       description
-      image
+      tipi_version
       short_desc
     }
   }

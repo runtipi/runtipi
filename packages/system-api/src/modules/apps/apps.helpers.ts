@@ -4,12 +4,12 @@ import InternalIp from 'internal-ip';
 import crypto from 'crypto';
 import config from '../../config';
 import { AppInfo } from './apps.types';
-import { getRepoId } from '../../helpers/repo-helpers';
 import logger from '../../config/logger/logger';
 
 export const checkAppRequirements = async (appName: string) => {
   let valid = true;
-  const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
+
+  const configFile: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appName}/config.json`);
 
   if (!configFile) {
     throw new Error(`App ${appName} not found`);
@@ -41,7 +41,7 @@ export const getEnvMap = (appName: string): Map<string, string> => {
 };
 
 export const checkEnvFile = (appName: string) => {
-  const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
+  const configFile: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appName}/config.json`);
   const envMap = getEnvMap(appName);
 
   configFile.form_fields?.forEach((field) => {
@@ -63,16 +63,12 @@ export const checkAppExists = (appName: string) => {
 };
 
 export const runAppScript = async (params: string[]): Promise<void> => {
-  const repoId = await getRepoId(config.APPS_REPOSITORY);
-
   return new Promise((resolve, reject) => {
-    runScript('/scripts/app.sh', [...params, config.ROOT_FOLDER_HOST, repoId], (err: string, stdout: string) => {
+    runScript('/scripts/app.sh', [...params, config.ROOT_FOLDER_HOST, config.APPS_REPO_ID], (err: string) => {
       if (err) {
         logger.error(err);
         reject(err);
       }
-
-      logger.info(stdout);
 
       resolve();
     });
@@ -86,7 +82,7 @@ const getEntropy = (name: string, length: number) => {
 };
 
 export const generateEnvFile = (appName: string, form: Record<string, string>) => {
-  const configFile: AppInfo = readJsonFile(`/apps/${appName}/config.json`);
+  const configFile: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appName}/config.json`);
   const baseEnvFile = readFile('/.env').toString();
   let envFile = `${baseEnvFile}\nAPP_PORT=${configFile.port}\n`;
   const envMap = getEnvMap(appName);
@@ -117,12 +113,11 @@ export const generateEnvFile = (appName: string, form: Record<string, string>) =
 export const getAvailableApps = async (): Promise<string[]> => {
   const apps: string[] = [];
 
-  const repoId = await getRepoId(config.APPS_REPOSITORY);
-  const appsDir = readdirSync(`/repos/${repoId}/apps`);
+  const appsDir = readdirSync(`/repos/${config.APPS_REPO_ID}/apps`);
 
   appsDir.forEach((app) => {
-    if (fileExists(`/repos/${repoId}/apps/${app}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/apps/${app}/config.json`);
+    if (fileExists(`/repos/${config.APPS_REPO_ID}/apps/${app}/config.json`)) {
+      const configFile: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${app}/config.json`);
 
       if (configFile.available) {
         apps.push(app);
@@ -135,8 +130,7 @@ export const getAvailableApps = async (): Promise<string[]> => {
 
 export const getAppInfo = async (id: string): Promise<AppInfo> => {
   try {
-    const repoId = await getRepoId(config.APPS_REPOSITORY);
-
+    const repoId = config.APPS_REPO_ID;
     if (fileExists(`/repos/${repoId}`)) {
       const configFile: AppInfo = readJsonFile(`/repos/${repoId}/apps/${id}/config.json`);
       configFile.description = readFile(`/repos/${repoId}/apps/${id}/metadata/description.md`);

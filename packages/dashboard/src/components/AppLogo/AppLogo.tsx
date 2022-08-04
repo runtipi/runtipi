@@ -5,8 +5,6 @@ const AppLogo: React.FC<{ id: string; size?: number; className?: string; alt?: s
   const { internalIp } = useSytemStore();
   const logoUrl = `http://${internalIp}:3001/apps/${id}/metadata/logo.jpg`;
 
-  console.log(logoUrl);
-
   return (
     <div aria-label={alt} className={`drop-shadow ${className}`} style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">

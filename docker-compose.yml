@@ -29,7 +29,7 @@ services:
       POSTGRES_USER: tipi
       POSTGRES_DB: tipi
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d tipi -U tipi"]
+      test: [ "CMD-SHELL", "pg_isready -d tipi -U tipi" ]
       interval: 5s
       timeout: 10s
       retries: 120
@@ -50,7 +50,6 @@ services:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}:/tipi
-      - ${PWD}/repos:/repos
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       TIPI_VERSION: ${TIPI_VERSION}
@@ -62,7 +61,7 @@ services:
       POSTGRES_DBNAME: tipi
       POSTGRES_HOST: tipi-db
       NODE_ENV: production
-      APPS_REPOSITORY: ${APPS_REPOSITORY}
+      APPS_REPO_ID: ${APPS_REPO_ID}
     dns:
       - ${DNS_IP}
     networks:

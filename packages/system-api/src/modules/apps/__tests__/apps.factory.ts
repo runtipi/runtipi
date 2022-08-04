@@ -25,7 +25,7 @@ const createApp = async (installed = false, status = AppStatusEnum.RUNNING, requ
       : undefined,
     name: faker.random.word(),
     description: faker.random.words(),
-    image: faker.internet.url(),
+    tipi_version: faker.datatype.number({ min: 1, max: 10 }),
     short_desc: faker.random.words(),
     author: faker.name.firstName(),
     source: faker.internet.url(),
@@ -34,8 +34,9 @@ const createApp = async (installed = false, status = AppStatusEnum.RUNNING, requ
 
   let MockFiles: any = {};
   MockFiles[`${config.ROOT_FOLDER}/.env`] = 'TEST=test';
-  MockFiles[`${config.ROOT_FOLDER}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
-  MockFiles[`${config.ROOT_FOLDER}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+  MockFiles[`${config.ROOT_FOLDER}/repos/repo-id`] = '';
+  MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+  MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   if (installed) {
     await App.create({

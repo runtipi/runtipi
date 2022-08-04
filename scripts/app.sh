@@ -9,6 +9,7 @@ else
 fi
 
 ROOT_FOLDER="$($rdlk -f $(dirname "${BASH_SOURCE[0]}")/..)"
+REPO_ID="$(echo -n "https://github.com/meienberger/runtipi-appstore" | sha256sum | awk '{print $1}')"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 
 show_help() {
@@ -59,16 +60,17 @@ if [ -z ${2+x} ]; then
   show_help
   exit 1
 else
+
   app="$2"
   root_folder_host="${3:-$ROOT_FOLDER}"
-  repo_id="${4}"
+  repo_id="${4:-$REPO_ID}"
 
-  if [[ -z "${root_folder_host}" ]]; then
+  if [[ -z "${repo_id}" ]]; then
     echo "Error: Repo id not provided"
     exit 1
   fi
 
-  app_dir="/repos/${repo_id}/apps/${app}"
+  app_dir="${ROOT_FOLDER}/repos/${repo_id}/apps/${app}"
   app_data_dir="${ROOT_FOLDER}/app-data/${app}"
 
   if [[ -z "${app}" ]] || [[ ! -d "${app_dir}" ]]; then
@@ -107,7 +109,7 @@ compose() {
     app_compose_file="${app_dir}/docker-compose.arm.yml"
   fi
 
-  local common_compose_file="/repos/${repo_id}/apps/docker-compose.common.yml"
+  local common_compose_file="${ROOT_FOLDER}/repos/${repo_id}/apps/docker-compose.common.yml"
 
   # Vars to use in compose file
   export APP_DATA_DIR="${root_folder_host}/app-data/${app}"
@@ -131,8 +133,8 @@ if [[ "$command" = "install" ]]; then
   compose "${app}" pull
 
   # Copy default data dir to app data dir if it exists
-  if [[ -d "/repos/${repo_id}/${app}/data" ]]; then
-    cp -r "/repos/${repo_id}/${app}/data" "${app_data_dir}/data"
+  if [[ -d "${ROOT_FOLDER}/repos/${repo_id}/${app}/data" ]]; then
+    cp -r "${ROOT_FOLDER}/repos/${repo_id}/${app}/data" "${app_data_dir}/data"
   fi
 
   # Remove all .gitkeep files from app data dir
@@ -160,29 +162,32 @@ if [[ "$command" = "uninstall" ]]; then
   exit
 fi
 
+# Update an app
+if [[ "$command" = "update" ]]; then
+  compose "${app}" up --detach
+  compose "${app}" down --rmi all --remove-orphans
+  compose "${app}" pull
+  compose "${app}" up --detach
+  exit
+fi
+
 # Stops an installed app
 if [[ "$command" = "stop" ]]; then
-
   echo "Stopping app ${app}..."
   compose "${app}" rm --force --stop
-
   exit
 fi
 
 # Starts an installed app
 if [[ "$command" = "start" ]]; then
   echo "Starting app ${app}..."
-  compose "${app}" pull
-
   compose "${app}" up --detach
-
   exit
 fi
 
 # Passes all arguments to docker-compose
 if [[ "$command" = "compose" ]]; then
   compose "${app}" ${args}
-
   exit
 fi
 

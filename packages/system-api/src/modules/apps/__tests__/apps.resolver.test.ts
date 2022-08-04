@@ -100,7 +100,7 @@ describe('GetApp', () => {
       variableValues: { id: 'not-existing' },
     });
 
-    expect(errors?.[0].message).toBe('App not-existing not found');
+    expect(errors?.[0].message).toBe('Error loading app not-existing');
     expect(data?.getApp).toBeUndefined();
   });
 });

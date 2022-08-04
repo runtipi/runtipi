@@ -29,6 +29,7 @@ export type App = {
   numOpened: Scalars['Float'];
   status: AppStatusEnum;
   updatedAt: Scalars['DateTime'];
+  version: Scalars['Float'];
 };
 
 export enum AppCategoriesEnum {
@@ -55,12 +56,12 @@ export type AppInfo = {
   description: Scalars['String'];
   form_fields: Array<FormField>;
   id: Scalars['String'];
-  image: Scalars['String'];
   name: Scalars['String'];
   port: Scalars['Float'];
   requirements?: Maybe<Scalars['JSONObject']>;
   short_desc: Scalars['String'];
   source: Scalars['String'];
+  tipi_version: Scalars['Float'];
   url_suffix?: Maybe<Scalars['String']>;
   version?: Maybe<Scalars['String']>;
 };
@@ -99,6 +100,7 @@ export enum FieldTypesEnum {
   Ip = 'ip',
   Number = 'number',
   Password = 'password',
+  Random = 'random',
   Text = 'text',
   Url = 'url'
 }
@@ -273,12 +275,12 @@ export type GetAppQueryVariables = Exact<{
 }>;
 
 
-export type GetAppQuery = { __typename?: 'Query', getApp: { __typename?: 'App', id: string, status: AppStatusEnum, config: any, info: { __typename?: 'AppInfo', id: string, port: number, name: string, description: string, available: boolean, version?: string | null, image: string, short_desc: string, author: string, source: string, categories: Array<AppCategoriesEnum>, url_suffix?: string | null, form_fields: Array<{ __typename?: 'FormField', type: FieldTypesEnum, label: string, max?: number | null, min?: number | null, hint?: string | null, required?: boolean | null, env_variable: string }> } } };
+export type GetAppQuery = { __typename?: 'Query', getApp: { __typename?: 'App', id: string, status: AppStatusEnum, config: any, version: number, info: { __typename?: 'AppInfo', id: string, port: number, name: string, description: string, available: boolean, version?: string | null, tipi_version: number, short_desc: string, author: string, source: string, categories: Array<AppCategoriesEnum>, url_suffix?: string | null, form_fields: Array<{ __typename?: 'FormField', type: FieldTypesEnum, label: string, max?: number | null, min?: number | null, hint?: string | null, required?: boolean | null, env_variable: string }> } } };
 
 export type InstalledAppsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InstalledAppsQuery = { __typename?: 'Query', installedApps: Array<{ __typename?: 'App', id: string, status: AppStatusEnum, config: any, info: { __typename?: 'AppInfo', id: string, name: string, description: string, image: string, short_desc: string } }> };
+export type InstalledAppsQuery = { __typename?: 'Query', installedApps: Array<{ __typename?: 'App', id: string, status: AppStatusEnum, config: any, version: number, info: { __typename?: 'AppInfo', id: string, name: string, description: string, tipi_version: number, short_desc: string } }> };
 
 export type ConfiguredQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -288,7 +290,7 @@ export type ConfiguredQuery = { __typename?: 'Query', isConfigured: boolean };
 export type ListAppsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListAppsQuery = { __typename?: 'Query', listAppsInfo: { __typename?: 'ListAppsResonse', total: number, apps: Array<{ __typename?: 'AppInfo', id: string, available: boolean, image: string, port: number, name: string, version?: string | null, short_desc: string, author: string, categories: Array<AppCategoriesEnum> }> } };
+export type ListAppsQuery = { __typename?: 'Query', listAppsInfo: { __typename?: 'ListAppsResonse', total: number, apps: Array<{ __typename?: 'AppInfo', id: string, available: boolean, tipi_version: number, port: number, name: string, version?: string | null, short_desc: string, author: string, categories: Array<AppCategoriesEnum> }> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -587,6 +589,7 @@ export const GetAppDocument = gql`
     id
     status
     config
+    version
     info {
       id
       port
@@ -594,7 +597,7 @@ export const GetAppDocument = gql`
       description
       available
       version
-      image
+      tipi_version
       short_desc
       author
       source
@@ -647,11 +650,12 @@ export const InstalledAppsDocument = gql`
     id
     status
     config
+    version
     info {
       id
       name
       description
-      image
+      tipi_version
       short_desc
     }
   }
@@ -722,7 +726,7 @@ export const ListAppsDocument = gql`
     apps {
       id
       available
-      image
+      tipi_version
       port
       name
       version

@@ -41,7 +41,7 @@ const main = async () => {
 
     const repoId = await getRepoId(config.APPS_REPOSITORY);
 
-    app.use(express.static(`/repos/${repoId}`));
+    app.use(express.static(`${config.ROOT_FOLDER}/repos/${repoId}`));
     app.use(cors(corsOptions));
     app.use(getSessionMiddleware());
 
