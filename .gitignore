@@ -9,6 +9,8 @@ traefik/ssl/*
 !app-data/.gitkeep
 repos/*
 !repos/.gitkeep
+apps/*
+!apps/.gitkeep
 
 scripts/pacapt
 

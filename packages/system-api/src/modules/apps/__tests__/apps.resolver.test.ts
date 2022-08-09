@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { setupConnection, teardownConnection } from '../../../test/connection';
-import fs from 'fs';
+import fs from 'fs-extra';
 import { gcall } from '../../../test/gcall';
 import App from '../app.entity';
 import { getAppQuery, InstalledAppsQuery, listAppInfosQuery } from '../../../test/queries';
@@ -43,7 +43,7 @@ describe('ListAppsInfos', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const { MockFiles, appInfo } = await createApp();
+    const { MockFiles, appInfo } = await createApp({});
     app1 = appInfo;
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
@@ -69,8 +69,8 @@ describe('GetApp', () => {
   let app2: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp();
-    const app2create = await createApp(true);
+    const app1create = await createApp({});
+    const app2create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     app2 = app2create.appInfo;
     // @ts-ignore
@@ -109,7 +109,7 @@ describe('InstalledApps', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(app1create.MockFiles);
@@ -153,7 +153,7 @@ describe('InstallApp', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp();
+    const app1create = await createApp({});
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(app1create.MockFiles);
@@ -219,7 +219,7 @@ describe('InstallApp', () => {
   });
 
   it('Should throw an error if the requirements are not met', async () => {
-    const { appInfo, MockFiles } = await createApp(false, undefined, 400);
+    const { appInfo, MockFiles } = await createApp({ requiredPort: 400 });
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 

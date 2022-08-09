@@ -143,6 +143,7 @@ importers:
       '@types/cors': ^2.8.12
       '@types/express': ^4.17.13
       '@types/express-session': ^1.17.4
+      '@types/fs-extra': ^9.0.13
       '@types/jest': ^27.5.0
       '@types/jsonwebtoken': ^8.5.8
       '@types/mock-fs': ^4.13.1
@@ -170,6 +171,7 @@ importers:
       eslint-plugin-prettier: ^4.0.0
       express: ^4.17.3
       express-session: ^1.17.3
+      fs-extra: ^10.1.0
       graphql: ^15.3.0
       graphql-import-node: ^0.0.5
       graphql-type-json: ^0.3.2
@@ -208,6 +210,7 @@ importers:
       dotenv: 16.0.0
       express: 4.18.1
       express-session: 1.17.3
+      fs-extra: 10.1.0
       graphql: 15.8.0
       graphql-type-json: 0.3.2_graphql@15.8.0
       http: 0.0.1-security
@@ -235,6 +238,7 @@ importers:
       '@types/cors': 2.8.12
       '@types/express': 4.17.13
       '@types/express-session': 1.17.4
+      '@types/fs-extra': 9.0.13
       '@types/jest': 27.5.0
       '@types/jsonwebtoken': 8.5.8
       '@types/mock-fs': 4.13.1
@@ -3748,6 +3752,12 @@ packages:
       '@types/qs': 6.9.7
       '@types/serve-static': 1.13.10
 
+  /@types/fs-extra/9.0.13:
+    resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
+    dependencies:
+      '@types/node': 17.0.31
+    dev: true
+
   /@types/glob/7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
@@ -6385,7 +6395,7 @@ packages:
       eslint-import-resolver-webpack:
         optional: true
     dependencies:
-      '@typescript-eslint/parser': 5.22.0_uhoeudlwl7kc47h4kncsfowede
+      '@typescript-eslint/parser': 5.22.0_hcfsmds2fshutdssjqluwm76uu
       debug: 3.2.7
       eslint-import-resolver-node: 0.3.6
       find-up: 2.1.0
@@ -7133,7 +7143,6 @@ packages:
       graceful-fs: 4.2.10
       jsonfile: 6.1.0
       universalify: 2.0.0
-    dev: true
 
   /fs-extra/8.1.0:
     resolution: {integrity: sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g==}
@@ -8801,7 +8810,6 @@ packages:
       universalify: 2.0.0
     optionalDependencies:
       graceful-fs: 4.2.10
-    dev: true
 
   /jsonify/0.0.0:
     resolution: {integrity: sha512-trvBk1ki43VZptdBI5rIlG4YOzyeH/WefQt5rj1grasPn4iiZWKet8nkgc4GlsAylaztn0qZfUYOiTsASJFdNA==}
@@ -11989,7 +11997,7 @@ packages:
       '@types/jest': 27.5.0
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.0_@types+node@17.0.31
+      jest: 28.1.0_qxft4nzwxz7jey57xog52j3doy
       jest-util: 28.1.0
       json5: 2.2.1
       lodash.memoize: 4.1.2
@@ -12398,7 +12406,6 @@ packages:
   /universalify/2.0.0:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
     engines: {node: '>= 10.0.0'}
-    dev: true
 
   /unixify/1.0.0:
     resolution: {integrity: sha512-6bc58dPYhCMHHuwxldQxO3RRNZ4eCogZ/st++0+fcC1nr0jiGUtAdBJ2qzmLQWSxbtz42pWt4QQMiZ9HvZf5cg==}

@@ -1,4 +1,4 @@
-import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
+import { createFolder, ensureAppFolder, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
@@ -57,6 +57,8 @@ const startApp = async (appName: string): Promise<App> => {
 };
 
 const installApp = async (id: string, form: Record<string, string>): Promise<App> => {
+  ensureAppFolder(id);
+
   let app = await App.findOne({ where: { id } });
 
   if (app) {
@@ -74,7 +76,8 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
     // Create env file
     generateEnvFile(id, form);
 
-    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form }).save();
+    const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
+    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form, version: Number(appInfo?.tipi_version || 0) }).save();
 
     // Run script
     try {

@@ -39,8 +39,8 @@ export const updateV040 = async (): Promise<void> => {
 
           const form: Record<string, string> = {};
 
-          const configFile: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appId}/config.json`);
-          configFile.form_fields?.forEach((field) => {
+          const configFile: AppInfo | null = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appId}/config.json`);
+          configFile?.form_fields?.forEach((field) => {
             const envVar = field.env_variable;
             const envVarValue = envVarsMap.get(envVar);
 

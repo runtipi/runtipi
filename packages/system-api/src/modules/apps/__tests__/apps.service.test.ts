@@ -1,5 +1,5 @@
 import AppsService from '../apps.service';
-import fs from 'fs';
+import fs from 'fs-extra';
 import config from '../../../config';
 import childProcess from 'child_process';
 import { AppInfo, AppStatusEnum } from '../apps.types';
@@ -8,7 +8,7 @@ import { createApp } from './apps.factory';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import { DataSource } from 'typeorm';
 
-jest.mock('fs');
+jest.mock('fs-extra');
 jest.mock('child_process');
 
 let db: DataSource | null = null;
@@ -34,7 +34,7 @@ describe('Install app', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const { MockFiles, appInfo } = await createApp();
+    const { MockFiles, appInfo } = await createApp({});
     app1 = appInfo;
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
@@ -96,13 +96,20 @@ describe('Install app', () => {
   it('Should throw if required form fields are missing', async () => {
     await expect(AppsService.installApp(app1.id, {})).rejects.toThrowError('Variable TEST_FIELD is required');
   });
+
+  it('Correctly generates a random value if the field has a "random" type', async () => {
+    // const { appInfo } = await createApp({ randomField: true });
+    // await AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' });
+    // const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`).toString();
+    // expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appInfo.port}\nTEST_FIELD=${appInfo.randomValue}`);
+  });
 });
 
 describe('Uninstall app', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -154,7 +161,7 @@ describe('Start app', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -207,7 +214,7 @@ describe('Stop app', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -230,7 +237,7 @@ describe('Update app config', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -257,7 +264,7 @@ describe('Get app config', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -287,8 +294,8 @@ describe('List apps', () => {
   let app2: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
-    const app2create = await createApp();
+    const app1create = await createApp({ installed: true });
+    const app2create = await createApp({});
     app1 = app1create.appInfo;
     app2 = app2create.appInfo;
     // @ts-ignore
@@ -314,8 +321,8 @@ describe('Start all apps', () => {
   let app2: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
-    const app2create = await createApp(true);
+    const app1create = await createApp({ installed: true });
+    const app2create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     app2 = app2create.appInfo;
     // @ts-ignore
@@ -336,7 +343,7 @@ describe('Start all apps', () => {
 
   it('Should not start app which has not status RUNNING', async () => {
     const spy = jest.spyOn(childProcess, 'execFile');
-    await createApp(true, AppStatusEnum.STOPPED);
+    await createApp({ installed: true, status: AppStatusEnum.STOPPED });
 
     await AppsService.startAllApps();
     const apps = await App.find();

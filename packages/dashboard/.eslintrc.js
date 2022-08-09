@@ -14,4 +14,7 @@ module.exports = {
     'max-len': [1, { code: 200 }],
     'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never', ts: 'never', tsx: 'never' }],
   },
+  globals: {
+    JSX: true,
+  },
 };

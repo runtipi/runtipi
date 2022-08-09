@@ -8,7 +8,8 @@ const fs: {
   rmSync: typeof rmSync;
   readdirSync: typeof readdirSync;
   copyFileSync: typeof copyFileSync;
-} = jest.genMockFromModule('fs');
+  copySync: typeof copyFileSync;
+} = jest.genMockFromModule('fs-extra');
 
 let mockFiles = Object.create(null);
 
@@ -74,6 +75,16 @@ const copyFileSync = (source: string, destination: string) => {
   mockFiles[destination] = mockFiles[source];
 };
 
+const copySync = (source: string, destination: string) => {
+  mockFiles[destination] = mockFiles[source];
+
+  if (mockFiles[source] instanceof Array) {
+    mockFiles[source].forEach((file: string) => {
+      mockFiles[destination + '/' + file] = mockFiles[source + '/' + file];
+    });
+  }
+};
+
 fs.readdirSync = readdirSync;
 fs.existsSync = existsSync;
 fs.readFileSync = readFileSync;
@@ -81,6 +92,7 @@ fs.writeFileSync = writeFileSync;
 fs.mkdirSync = mkdirSync;
 fs.rmSync = rmSync;
 fs.copyFileSync = copyFileSync;
+fs.copySync = copySync;
 fs.__createMockFiles = createMockFiles;
 
 module.exports = fs;

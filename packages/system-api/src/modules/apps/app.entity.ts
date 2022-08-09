@@ -32,7 +32,7 @@ class App extends BaseEntity {
   config!: Record<string, string>;
 
   @Field(() => Number, { nullable: true })
-  @Column({ type: 'integer', default: 0, nullable: false })
+  @Column({ type: 'integer', default: 1, nullable: false })
   version!: number;
 
   @Field(() => Date)

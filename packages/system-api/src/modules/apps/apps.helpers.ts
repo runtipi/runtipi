@@ -9,7 +9,7 @@ import logger from '../../config/logger/logger';
 export const checkAppRequirements = async (appName: string) => {
   let valid = true;
 
-  const configFile: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appName}/config.json`);
+  const configFile: AppInfo | null = readJsonFile(`/apps/${appName}/config.json`);
 
   if (!configFile) {
     throw new Error(`App ${appName} not found`);
@@ -41,10 +41,10 @@ export const getEnvMap = (appName: string): Map<string, string> => {
 };
 
 export const checkEnvFile = (appName: string) => {
-  const configFile: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appName}/config.json`);
+  const configFile: AppInfo | null = readJsonFile(`/apps/${appName}/config.json`);
   const envMap = getEnvMap(appName);
 
-  configFile.form_fields?.forEach((field) => {
+  configFile?.form_fields?.forEach((field) => {
     const envVar = field.env_variable;
     const envVarValue = envMap.get(envVar);
 
@@ -82,7 +82,12 @@ const getEntropy = (name: string, length: number) => {
 };
 
 export const generateEnvFile = (appName: string, form: Record<string, string>) => {
-  const configFile: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appName}/config.json`);
+  const configFile: AppInfo | null = readJsonFile(`/apps/${appName}/config.json`);
+
+  if (!configFile) {
+    throw new Error(`App ${appName} not found`);
+  }
+
   const baseEnvFile = readFile('/.env').toString();
   let envFile = `${baseEnvFile}\nAPP_PORT=${configFile.port}\n`;
   const envMap = getEnvMap(appName);

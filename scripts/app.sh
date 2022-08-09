@@ -70,7 +70,20 @@ else
     exit 1
   fi
 
-  app_dir="${ROOT_FOLDER}/repos/${repo_id}/apps/${app}"
+  if [[ -z "${root_folder_host}" ]]; then
+    echo "Error: Root folder not provided"
+    exit 1
+  fi
+
+  app_dir="${ROOT_FOLDER}/apps/${app}"
+
+  if [[ ! -d "${app_dir}" ]]; then
+    # copy from repo
+    echo "Copying app from repo"
+    mkdir -p "${app_dir}"
+    cp -r "${ROOT_FOLDER}/repos/${repo_id}/apps/${app}"/* "${app_dir}"
+  fi
+
   app_data_dir="${ROOT_FOLDER}/app-data/${app}"
 
   if [[ -z "${app}" ]] || [[ ! -d "${app_dir}" ]]; then
@@ -78,10 +91,6 @@ else
     exit 1
   fi
 
-  if [[ -z "${root_folder_host}" ]]; then
-    echo "Error: Root folder not provided"
-    exit 1
-  fi
 fi
 
 if [ -z ${3+x} ]; then
@@ -133,8 +142,8 @@ if [[ "$command" = "install" ]]; then
   compose "${app}" pull
 
   # Copy default data dir to app data dir if it exists
-  if [[ -d "${ROOT_FOLDER}/repos/${repo_id}/${app}/data" ]]; then
-    cp -r "${ROOT_FOLDER}/repos/${repo_id}/${app}/data" "${app_data_dir}/data"
+  if [[ -d "${app_dir}/data" ]]; then
+    cp -r "${app_dir}/data" "${app_data_dir}/data"
   fi
 
   # Remove all .gitkeep files from app data dir
@@ -158,6 +167,10 @@ if [[ "$command" = "uninstall" ]]; then
     rm -rf "${app_data_dir}"
   fi
 
+  if [[ -d "${app_dir}" ]]; then
+    rm -rf "${app_dir}"
+  fi
+
   echo "Successfully uninstalled app ${app}"
   exit
 fi
@@ -166,6 +179,15 @@ fi
 if [[ "$command" = "update" ]]; then
   compose "${app}" up --detach
   compose "${app}" down --rmi all --remove-orphans
+
+  # Remove app
+  if [[ -d "${app_dir}" ]]; then
+    rm -rf "${app_dir}"
+  fi
+
+  # Copy app from repo
+  cp -r "${ROOT_FOLDER}/repos/${repo_id}/apps/${app}" "${app_dir}"
+
   compose "${app}" pull
   compose "${app}" up --detach
   exit
