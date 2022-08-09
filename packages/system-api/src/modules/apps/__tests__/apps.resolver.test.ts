@@ -94,14 +94,14 @@ describe('GetApp', () => {
     expect(data2?.getApp.info.id).toBe(app2.id);
   });
 
-  it("Should return an error if app doesn't exist", async () => {
-    const { data, errors } = await gcall<{ getApp: TApp }>({
+  it("Should return null info if app doesn't exist", async () => {
+    const { data } = await gcall<{ getApp: TApp }>({
       source: getAppQuery,
       variableValues: { id: 'not-existing' },
     });
 
-    expect(errors?.[0].message).toBe('Error loading app not-existing');
-    expect(data?.getApp).toBeUndefined();
+    expect(data?.getApp.info).toBeNull();
+    expect(data?.getApp.status).toBe(AppStatusEnum.MISSING.toUpperCase());
   });
 });
 
