@@ -4,6 +4,10 @@ query InstalledApps {
     status
     config
     version
+    updateInfo {
+      current
+      latest
+    }
     info {
       id
       name

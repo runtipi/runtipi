@@ -1,26 +1,30 @@
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react';
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from '@chakra-ui/react';
 import React from 'react';
-import InstallForm from './InstallForm';
-import { App, AppInfo } from '../../../generated/graphql';
+import { AppInfo } from '../../../generated/graphql';
 
 interface IProps {
+  newVersion: string;
   app: AppInfo;
-  config: App['config'];
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: Record<string, any>) => void;
+  onConfirm: () => void;
 }
 
-const UpdateModal: React.FC<IProps> = ({ app, config, isOpen, onClose, onSubmit }) => {
+const UpdateModal: React.FC<IProps> = ({ app, newVersion, isOpen, onClose, onConfirm }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Update {app.name} config</ModalHeader>
+        <ModalHeader>Update {app.name} ?</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <InstallForm onSubmit={onSubmit} formFields={app.form_fields} initalValues={config} />
+          Update app to latest verion : <b>{newVersion}</b> ?
         </ModalBody>
+        <ModalFooter>
+          <Button onClick={onConfirm} colorScheme="green">
+            Update
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

@@ -3,12 +3,18 @@ import { Flex, SimpleGrid } from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import Layout from '../../components/Layout';
 import AppTile from '../../components/AppTile';
-import { useInstalledAppsQuery } from '../../generated/graphql';
+import { InstalledAppsQuery, useInstalledAppsQuery } from '../../generated/graphql';
 
 const Apps: NextPage = () => {
   const { data, loading } = useInstalledAppsQuery();
 
   const installedCount: number = data?.installedApps.length || 0;
+
+  const renderApp = (app: InstalledAppsQuery['installedApps'][0]) => {
+    const updateAvailable = Number(app.updateInfo?.current) < Number(app.updateInfo?.latest);
+
+    if (app.info) return <AppTile key={app.id} app={app.info} status={app.status} updateAvailable={updateAvailable} />;
+  };
 
   return (
     <Layout loading={loading || !data?.installedApps}>
@@ -21,9 +27,7 @@ const Apps: NextPage = () => {
           </div>
         )}
         <SimpleGrid minChildWidth="340px" spacing="20px">
-          {data?.installedApps.map((app) => (
-            <AppTile key={app.id} app={app.info} status={app.status} />
-          ))}
+          {data?.installedApps.map((a) => renderApp(a))}
         </SimpleGrid>
       </Flex>
     </Layout>

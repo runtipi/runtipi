@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import config from '../../config';
 import { AppInfo } from './apps.types';
 import logger from '../../config/logger/logger';
+import App from './app.entity';
 
 export const checkAppRequirements = async (appName: string) => {
   let valid = true;
@@ -136,6 +137,13 @@ export const getAvailableApps = async (): Promise<string[]> => {
 export const getAppInfo = (id: string): AppInfo => {
   try {
     const repoId = config.APPS_REPO_ID;
+
+    if (fileExists(`/apps/${id}/config.json`)) {
+      const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
+      configFile.description = readFile(`/apps/${id}/metadata/description.md`).toString();
+      return configFile;
+    }
+
     if (fileExists(`/repos/${repoId}`)) {
       const configFile: AppInfo = readJsonFile(`/repos/${repoId}/apps/${id}/config.json`);
       configFile.description = readFile(`/repos/${repoId}/apps/${id}/metadata/description.md`);
@@ -149,4 +157,19 @@ export const getAppInfo = (id: string): AppInfo => {
   } catch (e) {
     throw new Error(`Error loading app ${id}`);
   }
+};
+
+export const getUpdateInfo = async (id: string) => {
+  const app = await App.findOne({ where: { id } });
+
+  if (!app) {
+    return null;
+  }
+
+  const repoConfig: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${id}/config.json`);
+
+  return {
+    current: app.version,
+    latest: repoConfig.tipi_version,
+  };
 };

@@ -6,7 +6,7 @@ import AppActions from '../components/AppActions';
 import InstallModal from '../components/InstallModal';
 import StopModal from '../components/StopModal';
 import UninstallModal from '../components/UninstallModal';
-import UpdateModal from '../components/UpdateModal';
+import UpdateSettingsModal from '../components/UpdateSettingsModal';
 import AppLogo from '../../../components/AppLogo/AppLogo';
 import Markdown from '../../../components/Markdown/Markdown';
 import {
@@ -20,10 +20,12 @@ import {
   useStopAppMutation,
   useUninstallAppMutation,
   useUpdateAppConfigMutation,
+  useUpdateAppMutation,
 } from '../../../generated/graphql';
+import UpdateModal from '../components/UpdateModal';
 
 interface IProps {
-  app?: Pick<App, 'status' | 'config'>;
+  app?: Pick<App, 'status' | 'config' | 'version' | 'updateInfo'>;
   info: AppInfo;
 }
 
@@ -33,13 +35,17 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
   const uninstallDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
+  const updateSettingsDisclosure = useDisclosure();
 
   // Mutations
+  const [update] = useUpdateAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
   const [install] = useInstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }, { query: InstalledAppsDocument }] });
   const [uninstall] = useUninstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }, { query: InstalledAppsDocument }] });
   const [stop] = useStopAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
   const [start] = useStartAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
-  const [update] = useUpdateAppConfigMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+  const [updateConfig] = useUpdateAppConfigMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+
+  const updateAvailable = Number(app?.updateInfo?.current || 0) < Number(app?.updateInfo?.latest);
 
   const { internalIp } = useSytemStore();
 
@@ -93,16 +99,31 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     }
   };
 
-  const handleUpdateSubmit = async (values: Record<string, any>) => {
+  const handleUpdateSettingsSubmit = async (values: Record<string, any>) => {
     try {
-      await update({ variables: { input: { form: values, id: info.id } } });
+      await updateConfig({ variables: { input: { form: values, id: info.id } } });
       toast({
         title: 'Success',
         description: 'App config updated successfully',
         position: 'top',
         status: 'success',
       });
-      updateDisclosure.onClose();
+      updateSettingsDisclosure.onClose();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const handleUpdateSubmit = async () => {
+    updateDisclosure.onClose();
+    try {
+      await update({ variables: { id: info.id }, optimisticResponse: { updateApp: { id: info.id, status: AppStatusEnum.Updating, __typename: 'App' } } });
+      toast({
+        title: 'Success',
+        description: 'App updated successfully',
+        position: 'top',
+        status: 'success',
+      });
     } catch (error) {
       handleError(error);
     }
@@ -121,6 +142,9 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
             <div className="mt-3 items-center self-center flex flex-col sm:items-start sm:self-start md:mt-0">
               <h1 className="font-bold text-2xl">{info.name}</h1>
               <h2 className="text-center md:text-left">{info.short_desc}</h2>
+              <h3 className="text-center md:text-left text-sm">
+                version: <b>{info.version}</b> ({app?.version})
+              </h3>
               {info.source && (
                 <a target="_blank" rel="noreferrer" className="text-blue-500 text-xs" href={info.source}>
                   <Flex className="mt-2 items-center">
@@ -133,7 +157,9 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
             </div>
             <div className="flex justify-center xs:absolute md:static top-0 right-5 self-center sm:self-auto">
               <AppActions
+                updateAvailable={updateAvailable}
                 onUpdate={updateDisclosure.onOpen}
+                onUpdateSettings={updateSettingsDisclosure.onOpen}
                 onOpen={handleOpen}
                 onStart={handleStartSubmit}
                 onStop={stopDisclosure.onOpen}
@@ -151,7 +177,8 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
         <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.onClose} app={info} />
         <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.onClose} app={info} />
         <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.onClose} app={info} />
-        <UpdateModal onSubmit={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} config={app?.config} />
+        <UpdateSettingsModal onSubmit={handleUpdateSettingsSubmit} isOpen={updateSettingsDisclosure.isOpen} onClose={updateSettingsDisclosure.onClose} app={info} config={app?.config} />
+        <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} newVersion={`${info.version} (${info.tipi_version})`} />
       </div>
     </SlideFade>
   );

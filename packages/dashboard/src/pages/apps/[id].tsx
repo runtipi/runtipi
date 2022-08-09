@@ -12,7 +12,7 @@ const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
 
   const breadcrumb = [
     { name: 'Apps', href: '/apps' },
-    { name: data?.getApp.info.name || '', href: `/apps/${appId}`, current: true },
+    { name: data?.getApp.info?.name || '', href: `/apps/${appId}`, current: true },
   ];
 
   return (

@@ -54,4 +54,10 @@ export default class AppsResolver {
 
     return AppsService.updateAppConfig(id, form);
   }
+
+  @Authorized()
+  @Mutation(() => App)
+  async updateApp(@Arg('id', () => String) id: string): Promise<App> {
+    return AppsService.updateApp(id);
+  }
 }

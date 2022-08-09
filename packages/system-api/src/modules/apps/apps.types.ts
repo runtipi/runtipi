@@ -37,6 +37,7 @@ export enum AppStatusEnum {
   STOPPING = 'stopping',
   STARTING = 'starting',
   MISSING = 'missing',
+  UPDATING = 'updating',
 }
 
 registerEnumType(AppCategoriesEnum, {

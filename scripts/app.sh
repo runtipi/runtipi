@@ -189,7 +189,6 @@ if [[ "$command" = "update" ]]; then
   cp -r "${ROOT_FOLDER}/repos/${repo_id}/apps/${app}" "${app_dir}"
 
   compose "${app}" pull
-  compose "${app}" up --detach
   exit
 fi
 

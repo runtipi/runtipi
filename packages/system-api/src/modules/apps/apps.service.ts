@@ -185,4 +185,30 @@ const getApp = async (id: string): Promise<App> => {
   return app;
 };
 
-export default { installApp, startApp, listApps, getApp, updateAppConfig, stopApp, uninstallApp, startAllApps };
+const updateApp = async (id: string) => {
+  let app = await App.findOne({ where: { id } });
+
+  if (!app) {
+    throw new Error(`App ${id} not found`);
+  }
+
+  await App.update({ id }, { status: AppStatusEnum.UPDATING });
+
+  // Run script
+  try {
+    await runAppScript(['update', id]);
+    const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
+    await App.update({ id }, { status: AppStatusEnum.RUNNING, version: Number(appInfo?.tipi_version) });
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  } finally {
+    await App.update({ id }, { status: AppStatusEnum.STOPPED });
+  }
+
+  app = (await App.findOne({ where: { id } })) as App;
+
+  return app;
+};
+
+export default { installApp, startApp, updateApp, listApps, getApp, updateAppConfig, stopApp, uninstallApp, startAllApps };
