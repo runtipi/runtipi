@@ -7,6 +7,7 @@ import App from '../app.entity';
 import { createApp } from './apps.factory';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import { DataSource } from 'typeorm';
+import { getEnvMap } from '../apps.helpers';
 
 jest.mock('fs-extra');
 jest.mock('child_process');
@@ -98,10 +99,15 @@ describe('Install app', () => {
   });
 
   it('Correctly generates a random value if the field has a "random" type', async () => {
-    // const { appInfo } = await createApp({ randomField: true });
-    // await AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' });
-    // const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`).toString();
-    // expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appInfo.port}\nTEST_FIELD=${appInfo.randomValue}`);
+    const { appInfo, MockFiles } = await createApp({ randomField: true });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    await AppsService.installApp(appInfo.id, { TEST_FIELD: 'yolo' });
+    const envMap = getEnvMap(appInfo.id);
+
+    expect(envMap.get('RANDOM_FIELD')).toBeDefined();
+    expect(envMap.get('RANDOM_FIELD')).toHaveLength(32);
   });
 });
 
@@ -257,6 +263,21 @@ describe('Update app config', () => {
 
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('App test-app-2 not found');
+  });
+
+  it('Should not recreate random field if already present in .env', async () => {
+    const { appInfo, MockFiles } = await createApp({ randomField: true, installed: true });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`).toString();
+    fs.writeFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`, `${envFile}\nRANDOM_FIELD=test`);
+
+    await AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' });
+
+    const envMap = getEnvMap(appInfo.id);
+
+    expect(envMap.get('RANDOM_FIELD')).toBe('test');
   });
 });
 

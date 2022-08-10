@@ -5,6 +5,7 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/__tests__/**/*.test.ts'],
   setupFiles: ['<rootDir>/src/test/dotenv-config.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/test/jest-setup.ts'],
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/migrations/**/*.{ts,tsx}', '!**/config/**/*.{ts,tsx}'],
   passWithNoTests: true,

@@ -8,3 +8,5 @@ fi
 
 pnpm -r test
 pnpm -r lint:fix
+
+docker stop test-db

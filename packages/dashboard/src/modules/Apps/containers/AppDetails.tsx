@@ -1,4 +1,4 @@
-import { SlideFade, VStack, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
+import { SlideFade, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { FiExternalLink } from 'react-icons/fi';
 import { useSytemStore } from '../../../state/systemStore';
@@ -133,17 +133,19 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     window.open(`http://${internalIp}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
   };
 
+  const version = [info?.version || 'unknown', app?.version ? `(${app.version})` : ''].join(' ');
+
   return (
     <SlideFade in className="flex flex-1" offsetY="20px">
-      <div className="flex flex-1  p-4 mt-3 rounded-lg flex-col">
+      <div className="flex flex-1 p-4 mt-3 rounded-lg flex-col">
         <Flex className="flex-col md:flex-row">
-          <AppLogo id={info.id} size={180} className="self-center sm:self-auto" alt={info.name} />
-          <VStack align="flex-start" justify="space-between" className="ml-0 md:ml-4">
-            <div className="mt-3 items-center self-center flex flex-col sm:items-start sm:self-start md:mt-0">
+          <AppLogo id={info.id} size={180} className="self-center md:self-auto" alt={info.name} />
+          <div className="flex flex-col justify-between flex-1 ml-0 md:ml-4">
+            <div className="mt-3 items-center self-center flex flex-col md:items-start md:self-start md:mt-0">
               <h1 className="font-bold text-2xl">{info.name}</h1>
               <h2 className="text-center md:text-left">{info.short_desc}</h2>
               <h3 className="text-center md:text-left text-sm">
-                version: <b>{info.version}</b> ({app?.version})
+                version: <b>{version}</b>
               </h3>
               {info.source && (
                 <a target="_blank" rel="noreferrer" className="text-blue-500 text-xs" href={info.source}>
@@ -155,7 +157,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
               )}
               <p className="text-xs text-gray-600">By {info.author}</p>
             </div>
-            <div className="flex justify-center xs:absolute md:static top-0 right-5 self-center sm:self-auto">
+            <div className="flex flex-1">
               <AppActions
                 updateAvailable={updateAvailable}
                 onUpdate={updateDisclosure.onOpen}
@@ -170,7 +172,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
                 status={app?.status}
               />
             </div>
-          </VStack>
+          </div>
         </Flex>
         <Divider className="mt-5" />
         <Markdown className="mt-3">{info.description}</Markdown>

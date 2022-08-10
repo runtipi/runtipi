@@ -27,11 +27,6 @@ const createApp = async (props: IProps) => {
         env_variable: 'TEST_FIELD',
       },
     ],
-    requirements: requiredPort
-      ? {
-          ports: [requiredPort],
-        }
-      : undefined,
     name: faker.random.word(),
     description: faker.random.words(),
     tipi_version: faker.datatype.number({ min: 1, max: 10 }),
@@ -40,6 +35,20 @@ const createApp = async (props: IProps) => {
     source: faker.internet.url(),
     categories: [categories[faker.datatype.number({ min: 0, max: categories.length - 1 })]],
   };
+
+  if (randomField) {
+    appInfo.form_fields?.push({
+      type: FieldTypes.random,
+      label: faker.random.word(),
+      env_variable: 'RANDOM_FIELD',
+    });
+  }
+
+  if (requiredPort) {
+    appInfo.requirements = {
+      ports: [requiredPort],
+    };
+  }
 
   let MockFiles: any = {};
   MockFiles[`${config.ROOT_FOLDER}/.env`] = 'TEST=test';
