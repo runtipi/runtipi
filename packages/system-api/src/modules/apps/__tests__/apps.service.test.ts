@@ -1,7 +1,7 @@
 import AppsService from '../apps.service';
 import fs from 'fs-extra';
 import config from '../../../config';
-import childProcess from 'child_process';
+import childProcess, { ChildProcess } from 'child_process';
 import { AppInfo, AppStatusEnum } from '../apps.types';
 import App from '../app.entity';
 import { createApp } from './apps.factory';
@@ -161,6 +161,20 @@ describe('Uninstall app', () => {
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.uninstallApp('any')).rejects.toThrowError('App any not found');
   });
+
+  it('Should throw if uninstall script fails', async () => {
+    // Update app
+    await App.update({ id: app1.id }, { status: AppStatusEnum.UPDATING });
+
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow('Test error');
+    const app = await App.findOne({ where: { id: app1.id } });
+    expect(app!.status).toBe(AppStatusEnum.STOPPED);
+  });
 });
 
 describe('Start app', () => {
@@ -213,6 +227,10 @@ describe('Start app', () => {
     spy.mockImplementation(() => {
       throw new Error('Test error');
     });
+
+    await expect(AppsService.startApp(app1.id)).rejects.toThrow('Test error');
+    const app = await App.findOne({ where: { id: app1.id } });
+    expect(app!.status).toBe(AppStatusEnum.STOPPED);
   });
 });
 
@@ -236,6 +254,17 @@ describe('Stop app', () => {
 
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.stopApp('any')).rejects.toThrowError('App any not found');
+  });
+
+  it('Should throw if stop script fails', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await expect(AppsService.stopApp(app1.id)).rejects.toThrow('Test error');
+    const app = await App.findOne({ where: { id: app1.id } });
+    expect(app!.status).toBe(AppStatusEnum.RUNNING);
   });
 });
 
@@ -387,5 +416,42 @@ describe('Start all apps', () => {
     expect(apps.length).toBe(2);
     expect(apps[0].status).toBe(AppStatusEnum.STOPPED);
     expect(apps[1].status).toBe(AppStatusEnum.STOPPED);
+  });
+});
+
+describe('Update app', () => {
+  let app1: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp({ installed: true });
+    app1 = app1create.appInfo;
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app1create.MockFiles));
+  });
+
+  it('Should correctly update app', async () => {
+    await App.update({ id: app1.id }, { version: 0 });
+
+    const app = await AppsService.updateApp(app1.id);
+
+    expect(app).toBeDefined();
+    expect(app.config).toStrictEqual({ TEST_FIELD: 'test' });
+    expect(app.version).toBe(app1.tipi_version);
+    expect(app.status).toBe(AppStatusEnum.STOPPED);
+  });
+
+  it("Should throw if app doesn't exist", async () => {
+    await expect(AppsService.updateApp('test-app2')).rejects.toThrow('App test-app2 not found');
+  });
+
+  it('Should throw if update script fails', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await expect(AppsService.updateApp(app1.id)).rejects.toThrow('Test error');
+    const app = await App.findOne({ where: { id: app1.id } });
+    expect(app!.status).toBe(AppStatusEnum.STOPPED);
   });
 });
