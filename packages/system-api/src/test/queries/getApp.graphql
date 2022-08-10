@@ -21,5 +21,9 @@ query GetApp($id: String!) {
       }
       requirements
     }
+    updateInfo {
+      current
+      latest
+    }
   }
 }
