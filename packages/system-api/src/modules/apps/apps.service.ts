@@ -14,6 +14,7 @@ const startAllApps = async (): Promise<void> => {
     apps.map(async (app) => {
       // Regenerate env file
       try {
+        ensureAppFolder(app.id);
         generateEnvFile(app.id, app.config);
         checkEnvFile(app.id);
 
@@ -36,6 +37,8 @@ const startApp = async (appName: string): Promise<App> => {
     throw new Error(`App ${appName} not found`);
   }
 
+  ensureAppFolder(appName);
+
   // Regenerate env file
   generateEnvFile(appName, app.config);
 
@@ -57,13 +60,12 @@ const startApp = async (appName: string): Promise<App> => {
 };
 
 const installApp = async (id: string, form: Record<string, string>): Promise<App> => {
-  ensureAppFolder(id);
-
   let app = await App.findOne({ where: { id } });
 
   if (app) {
     await startApp(id);
   } else {
+    ensureAppFolder(id);
     const appIsValid = await checkAppRequirements(id);
 
     if (!appIsValid) {
@@ -135,6 +137,8 @@ const stopApp = async (id: string): Promise<App> => {
     throw new Error(`App ${id} not found`);
   }
 
+  ensureAppFolder(id);
+
   // Run script
   await App.update({ id }, { status: AppStatusEnum.STOPPING });
 
@@ -160,6 +164,8 @@ const uninstallApp = async (id: string): Promise<App> => {
   if (app.status === AppStatusEnum.RUNNING) {
     await stopApp(id);
   }
+
+  ensureAppFolder(id);
 
   await App.update({ id }, { status: AppStatusEnum.UNINSTALLING });
   // Run script
@@ -191,6 +197,8 @@ const updateApp = async (id: string) => {
   if (!app) {
     throw new Error(`App ${id} not found`);
   }
+
+  ensureAppFolder(id);
 
   await App.update({ id }, { status: AppStatusEnum.UPDATING });
 
