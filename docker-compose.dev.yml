@@ -49,6 +49,7 @@ services:
       POSTGRES_USERNAME: tipi
       POSTGRES_DBNAME: tipi
       POSTGRES_HOST: tipi-db
+      APPS_REPO_ID: ${APPS_REPO_ID}
     networks:
       - tipi_main_network
 

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import { DataSource } from 'typeorm';
 import logger from '../../../config/logger/logger';
 import App from '../../../modules/apps/app.entity';
@@ -60,7 +60,7 @@ describe('No state/apps.json', () => {
 
 describe('State/apps.json exists with no installed app', () => {
   beforeEach(async () => {
-    const { MockFiles } = await createApp();
+    const { MockFiles } = await createApp({});
     MockFiles['/tipi/state/apps.json'] = createState([]);
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
@@ -86,7 +86,7 @@ describe('State/apps.json exists with no installed app', () => {
 describe('State/apps.json exists with one installed app', () => {
   let app1: AppInfo | null = null;
   beforeEach(async () => {
-    const { MockFiles, appInfo } = await createApp();
+    const { MockFiles, appInfo } = await createApp({});
     app1 = appInfo;
     MockFiles['/tipi/state/apps.json'] = createState([appInfo.id]);
     MockFiles[`/tipi/app-data/${appInfo.id}`] = '';
@@ -115,7 +115,7 @@ describe('State/apps.json exists with one installed app', () => {
   });
 
   it('Should not try to migrate app if it already exists', async () => {
-    const { MockFiles, appInfo } = await createApp(true);
+    const { MockFiles, appInfo } = await createApp({ installed: true });
     app1 = appInfo;
     MockFiles['/tipi/state/apps.json'] = createState([appInfo.id]);
     MockFiles[`/tipi/app-data/${appInfo.id}`] = '';

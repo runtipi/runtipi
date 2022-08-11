@@ -20,7 +20,7 @@ export default new DataSource({
   password: POSTGRES_PASSWORD,
   port: 5432,
   logging: !__prod__,
-  synchronize: !__prod__,
+  synchronize: false,
   entities: [App, User, Update],
   migrations: [process.cwd() + '/dist/config/migrations/*.js'],
 });

@@ -15,6 +15,8 @@ import datasource from './config/datasource';
 import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
+import { cloneRepo, updateRepo } from './helpers/repo-helpers';
+import startJobs from './core/jobs/jobs';
 
 let corsOptions = __prod__
   ? {
@@ -38,6 +40,7 @@ const main = async () => {
     const app = express();
     const port = 3001;
 
+    app.use(express.static(`${config.ROOT_FOLDER}/repos/${config.APPS_REPO_ID}`));
     app.use(cors(corsOptions));
     app.use(getSessionMiddleware());
 
@@ -60,19 +63,20 @@ const main = async () => {
     await apolloServer.start();
     apolloServer.applyMiddleware({ app, cors: corsOptions });
 
-    if (__prod__) {
-      try {
-        await datasource.runMigrations();
-      } catch (e) {
-        logger.error(e);
-        await recover();
-      }
+    try {
+      await datasource.runMigrations();
+    } catch (e) {
+      logger.error(e);
+      await recover();
     }
 
     // Run migrations
     await runUpdates();
 
-    httpServer.listen(port, () => {
+    httpServer.listen(port, async () => {
+      await cloneRepo(config.APPS_REPO_ID);
+      await updateRepo(config.APPS_REPO_ID);
+      startJobs();
       // Start apps
       appsService.startAllApps();
       console.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);

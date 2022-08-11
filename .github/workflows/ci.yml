@@ -6,6 +6,7 @@ env:
   ROOT_FOLDER: /test
   JWT_SECRET: "secret"
   ROOT_FOLDER_HOST: /tipi
+  APPS_REPO_ID: repo-id
     
 jobs:
   ci:
@@ -57,9 +58,6 @@ jobs:
 
       - name: Build packages
         run: pnpm -r build
-
-      - name: Run global tests
-        run: pnpm test
 
       - name: Run linter
         run: pnpm -r lint

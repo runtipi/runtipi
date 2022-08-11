@@ -9,6 +9,7 @@ else
 fi
 
 ROOT_FOLDER="$($rdlk -f $(dirname "${BASH_SOURCE[0]}")/..)"
+REPO_ID="$(echo -n "https://github.com/meienberger/runtipi-appstore" | sha256sum | awk '{print $1}')"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 
 show_help() {
@@ -59,14 +60,13 @@ if [ -z ${2+x} ]; then
   show_help
   exit 1
 else
+
   app="$2"
   root_folder_host="${3:-$ROOT_FOLDER}"
+  repo_id="${4:-$REPO_ID}"
 
-  app_dir="${ROOT_FOLDER}/apps/${app}"
-  app_data_dir="${ROOT_FOLDER}/app-data/${app}"
-
-  if [[ -z "${app}" ]] || [[ ! -d "${app_dir}" ]]; then
-    echo "Error: \"${app}\" is not a valid app"
+  if [[ -z "${repo_id}" ]]; then
+    echo "Error: Repo id not provided"
     exit 1
   fi
 
@@ -74,6 +74,23 @@ else
     echo "Error: Root folder not provided"
     exit 1
   fi
+
+  app_dir="${ROOT_FOLDER}/apps/${app}"
+
+  if [[ ! -d "${app_dir}" ]]; then
+    # copy from repo
+    echo "Copying app from repo"
+    mkdir -p "${app_dir}"
+    cp -r "${ROOT_FOLDER}/repos/${repo_id}/apps/${app}"/* "${app_dir}"
+  fi
+
+  app_data_dir="${ROOT_FOLDER}/app-data/${app}"
+
+  if [[ -z "${app}" ]] || [[ ! -d "${app_dir}" ]]; then
+    echo "Error: \"${app}\" is not a valid app"
+    exit 1
+  fi
+
 fi
 
 if [ -z ${3+x} ]; then
@@ -101,8 +118,7 @@ compose() {
     app_compose_file="${app_dir}/docker-compose.arm.yml"
   fi
 
-  local common_compose_file="${ROOT_FOLDER}/apps/docker-compose.common.yml"
-  local app_dir="${ROOT_FOLDER}/apps/${app}"
+  local common_compose_file="${ROOT_FOLDER}/repos/${repo_id}/apps/docker-compose.common.yml"
 
   # Vars to use in compose file
   export APP_DATA_DIR="${root_folder_host}/app-data/${app}"
@@ -126,8 +142,8 @@ if [[ "$command" = "install" ]]; then
   compose "${app}" pull
 
   # Copy default data dir to app data dir if it exists
-  if [[ -d "${ROOT_FOLDER}/apps/${app}/data" ]]; then
-    cp -r "${ROOT_FOLDER}/apps/${app}/data" "${app_data_dir}/data"
+  if [[ -d "${app_dir}/data" ]]; then
+    cp -r "${app_dir}/data" "${app_data_dir}/data"
   fi
 
   # Remove all .gitkeep files from app data dir
@@ -151,33 +167,48 @@ if [[ "$command" = "uninstall" ]]; then
     rm -rf "${app_data_dir}"
   fi
 
+  if [[ -d "${app_dir}" ]]; then
+    rm -rf "${app_dir}"
+  fi
+
   echo "Successfully uninstalled app ${app}"
+  exit
+fi
+
+# Update an app
+if [[ "$command" = "update" ]]; then
+  compose "${app}" up --detach
+  compose "${app}" down --rmi all --remove-orphans
+
+  # Remove app
+  if [[ -d "${app_dir}" ]]; then
+    rm -rf "${app_dir}"
+  fi
+
+  # Copy app from repo
+  cp -r "${ROOT_FOLDER}/repos/${repo_id}/apps/${app}" "${app_dir}"
+
+  compose "${app}" pull
   exit
 fi
 
 # Stops an installed app
 if [[ "$command" = "stop" ]]; then
-
   echo "Stopping app ${app}..."
   compose "${app}" rm --force --stop
-
   exit
 fi
 
 # Starts an installed app
 if [[ "$command" = "start" ]]; then
   echo "Starting app ${app}..."
-  compose "${app}" pull
-
   compose "${app}" up --detach
-
   exit
 fi
 
 # Passes all arguments to docker-compose
 if [[ "$command" = "compose" ]]; then
   compose "${app}" ${args}
-
   exit
 fi
 

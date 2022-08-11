@@ -3,12 +3,11 @@ import { DataSource } from 'typeorm';
 export const connectionSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
-  port: 5433,
-  username: 'postgres',
+  port: 5432,
+  username: 'tipi',
   password: 'postgres',
-  database: 'postgres',
+  database: 'tipi',
   logging: true,
   synchronize: false,
-  entities: [process.cwd() + '/src/modules/**/*.entity.ts'],
-  migrations: [process.cwd() + '/src/config/migrations/*.ts'],
+  entities: ['src/modules/**/*.entity.ts'],
 });

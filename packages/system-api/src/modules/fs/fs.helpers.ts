@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import childProcess from 'child_process';
 import config from '../../config';
 
@@ -35,6 +35,16 @@ export const createFolder = (path: string) => {
 };
 export const deleteFolder = (path: string) => fs.rmSync(getAbsolutePath(path), { recursive: true });
 
-export const copyFile = (source: string, destination: string) => fs.copyFileSync(getAbsolutePath(source), getAbsolutePath(destination));
-
 export const runScript = (path: string, args: string[], callback?: any) => childProcess.execFile(getAbsolutePath(path), args, {}, callback);
+
+export const getSeed = () => {
+  const seed = readFile('/state/seed');
+  return seed.toString();
+};
+
+export const ensureAppFolder = (appName: string) => {
+  if (!fileExists(`/apps/${appName}`)) {
+    // Copy from apps repo
+    fs.copySync(getAbsolutePath(`/repos/${config.APPS_REPO_ID}/apps/${appName}`), getAbsolutePath(`/apps/${appName}`));
+  }
+};

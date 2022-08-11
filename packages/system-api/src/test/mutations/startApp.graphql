@@ -1,5 +1,7 @@
-query GetApp($id: String!) {
-  getApp(id: $id) {
+# Write your query or mutation here
+mutation StartApp($id: String!) {
+  startApp(id: $id) {
+    id
     status
     config
     info {

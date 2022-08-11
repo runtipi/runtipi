@@ -1,10 +1,11 @@
 import datasource from '../../config/datasource';
+import logger from '../../config/logger/logger';
 import App from '../../modules/apps/app.entity';
 import User from '../../modules/auth/user.entity';
 import Update from '../../modules/system/update.entity';
 
 const recover = async () => {
-  console.log('Recovering broken database');
+  logger.info('Recovering broken database');
   const apps = await App.find();
   const users = await User.find();
   const updated = await Update.find();
@@ -12,7 +13,7 @@ const recover = async () => {
   // drop database
   await datasource.dropDatabase();
 
-  console.log('running migrations');
+  logger.info('running migrations');
   await datasource.runMigrations();
 
   // create users
@@ -30,9 +31,9 @@ const recover = async () => {
     await Update.create(update).save();
   }
 
-  console.log('Users recovered', users.length);
-  console.log('Apps recovered', apps.length);
-  console.log('Database recovered');
+  logger.info('Users recovered', users.length);
+  logger.info('Apps recovered', apps.length);
+  logger.info('Database recovered');
 };
 
 export default recover;

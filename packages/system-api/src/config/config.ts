@@ -12,6 +12,7 @@ interface IConfig {
   CLIENT_URLS: string[];
   VERSION: string;
   ROOT_FOLDER_HOST: string;
+  APPS_REPO_ID: string;
 }
 
 if (process.env.NODE_ENV !== 'production') {
@@ -30,6 +31,7 @@ const {
   TIPI_VERSION = '',
   ROOT_FOLDER_HOST = '',
   NGINX_PORT = '80',
+  APPS_REPO_ID = '',
 } = process.env;
 
 const config: IConfig = {
@@ -44,6 +46,7 @@ const config: IConfig = {
   CLIENT_URLS: ['http://localhost:3000', `http://${INTERNAL_IP}`, `http://${INTERNAL_IP}:${NGINX_PORT}`, `http://${INTERNAL_IP}:3000`],
   VERSION: TIPI_VERSION,
   ROOT_FOLDER_HOST,
+  APPS_REPO_ID,
 };
 
 export default config;

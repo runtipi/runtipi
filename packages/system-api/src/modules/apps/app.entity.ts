@@ -1,12 +1,21 @@
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { Field, ObjectType, registerEnumType } from 'type-graphql';
 import { BaseEntity, Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
-import { getAppInfo } from './apps.helpers';
+import { getAppInfo, getUpdateInfo } from './apps.helpers';
 import { AppInfo, AppStatusEnum } from './apps.types';
 
 registerEnumType(AppStatusEnum, {
   name: 'AppStatusEnum',
 });
+
+@ObjectType()
+class UpdateInfo {
+  @Field(() => Number)
+  current!: number;
+
+  @Field(() => Number)
+  latest!: number;
+}
 
 @ObjectType()
 @Entity()
@@ -31,6 +40,10 @@ class App extends BaseEntity {
   @Column({ type: 'jsonb', nullable: false })
   config!: Record<string, string>;
 
+  @Field(() => Number, { nullable: true })
+  @Column({ type: 'integer', default: 1, nullable: false })
+  version!: number;
+
   @Field(() => Date)
   @CreateDateColumn()
   createdAt!: Date;
@@ -39,9 +52,14 @@ class App extends BaseEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @Field(() => AppInfo)
-  info(): AppInfo {
+  @Field(() => AppInfo, { nullable: true })
+  info(): AppInfo | null {
     return getAppInfo(this.id);
+  }
+
+  @Field(() => UpdateInfo, { nullable: true })
+  updateInfo(): Promise<UpdateInfo | null> {
+    return getUpdateInfo(this.id);
   }
 }
 

@@ -37,6 +37,7 @@ export enum AppStatusEnum {
   STOPPING = 'stopping',
   STARTING = 'starting',
   MISSING = 'missing',
+  UPDATING = 'updating',
 }
 
 registerEnumType(AppCategoriesEnum, {
@@ -97,8 +98,8 @@ class AppInfo {
   @Field(() => String, { nullable: true })
   version?: string;
 
-  @Field(() => String)
-  image!: string;
+  @Field(() => Number, { nullable: false })
+  tipi_version!: number;
 
   @Field(() => String)
   short_desc!: string;

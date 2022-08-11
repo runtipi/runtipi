@@ -1,5 +1,6 @@
-query GetApp($id: String!) {
-  getApp(id: $id) {
+mutation UninstallApp($id: String!) {
+  uninstallApp(id: $id) {
+    id
     status
     config
     info {
