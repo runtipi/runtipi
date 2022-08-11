@@ -148,6 +148,7 @@ importers:
       '@types/jsonwebtoken': ^8.5.8
       '@types/mock-fs': ^4.13.1
       '@types/node': 17.0.31
+      '@types/node-cron': ^3.0.2
       '@types/pg': ^8.6.5
       '@types/session-file-store': ^1.2.2
       '@types/tcp-port-used': ^1.0.1
@@ -181,6 +182,7 @@ importers:
       jsonwebtoken: ^8.5.1
       mock-fs: ^5.1.2
       node-cache: ^5.1.2
+      node-cron: ^3.0.1
       node-port-scanner: ^3.0.1
       nodemon: ^2.0.15
       p-iteration: ^1.1.8
@@ -218,6 +220,7 @@ importers:
       jsonwebtoken: 8.5.1
       mock-fs: 5.1.2
       node-cache: 5.1.2
+      node-cron: 3.0.1
       node-port-scanner: 3.0.1
       p-iteration: 1.1.8
       pg: 8.7.3
@@ -243,6 +246,7 @@ importers:
       '@types/jsonwebtoken': 8.5.8
       '@types/mock-fs': 4.13.1
       '@types/node': 17.0.31
+      '@types/node-cron': 3.0.2
       '@types/pg': 8.6.5
       '@types/session-file-store': 1.2.2
       '@types/tcp-port-used': 1.0.1
@@ -3883,6 +3887,10 @@ packages:
   /@types/ms/0.7.31:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
+
+  /@types/node-cron/3.0.2:
+    resolution: {integrity: sha512-SK/4GYWiWvGLPl/yv+Tm5oLYbzMx1V3y7CsNTvOb3vF8O9oXH11U6/zckISHnBl4YH8MvXHFIUXbYoBONSdmzw==}
+    dev: true
 
   /@types/node/10.17.60:
     resolution: {integrity: sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==}
@@ -9951,6 +9959,11 @@ packages:
     engines: {node: '>= 8.0.0'}
     dependencies:
       clone: 2.1.2
+    dev: false
+
+  /node-cron/3.0.1:
+    resolution: {integrity: sha512-RAWZTNn2M5KDIUV/389UX0EXsqvdFAwc9QwHQceh0Ga56dygqSRthqIjwpgZsoDspHGt2rkHdk9Z4RgfPMdALw==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /node-domexception/1.0.0:

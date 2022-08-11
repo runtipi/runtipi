@@ -16,6 +16,7 @@ import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
 import { cloneRepo, updateRepo } from './helpers/repo-helpers';
+import startJobs from './core/jobs/jobs';
 
 let corsOptions = __prod__
   ? {
@@ -75,6 +76,7 @@ const main = async () => {
     httpServer.listen(port, async () => {
       await cloneRepo(config.APPS_REPO_ID);
       await updateRepo(config.APPS_REPO_ID);
+      startJobs();
       // Start apps
       appsService.startAllApps();
       console.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);

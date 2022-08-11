@@ -258,9 +258,6 @@ describe('getUpdateInfo', () => {
   it('Should return update info', async () => {
     const updateInfo = await getUpdateInfo(app1.id);
 
-    console.log(app1);
-    console.log(updateInfo);
-
     expect(updateInfo?.latest).toBe(app1.tipi_version);
     expect(updateInfo?.current).toBe(1);
   });
