@@ -2,6 +2,7 @@
 # It will be overwritten on update.
 
 APPS_REPO_ID=<apps_repo_id>
+APPS_REPO_URL=<apps_repo_url>
 TZ=<tz>
 INTERNAL_IP=<internal_ip>
 DNS_IP=<dns_ip>

@@ -13,6 +13,7 @@ interface IConfig {
   VERSION: string;
   ROOT_FOLDER_HOST: string;
   APPS_REPO_ID: string;
+  APPS_REPO_URL: string;
 }
 
 if (process.env.NODE_ENV !== 'production') {
@@ -32,6 +33,7 @@ const {
   ROOT_FOLDER_HOST = '',
   NGINX_PORT = '80',
   APPS_REPO_ID = '',
+  APPS_REPO_URL = '',
 } = process.env;
 
 const config: IConfig = {
@@ -47,6 +49,7 @@ const config: IConfig = {
   VERSION: TIPI_VERSION,
   ROOT_FOLDER_HOST,
   APPS_REPO_ID,
+  APPS_REPO_URL,
 };
 
 export default config;

@@ -43,7 +43,8 @@ export const getSeed = () => {
 };
 
 export const ensureAppFolder = (appName: string) => {
-  if (!fileExists(`/apps/${appName}`)) {
+  if (!fileExists(`/apps/${appName}/docker-compose.yml`)) {
+    fs.removeSync(getAbsolutePath(`/apps/${appName}`));
     // Copy from apps repo
     fs.copySync(getAbsolutePath(`/repos/${config.APPS_REPO_ID}/apps/${appName}`), getAbsolutePath(`/apps/${appName}`));
   }

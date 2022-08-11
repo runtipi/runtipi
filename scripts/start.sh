@@ -68,8 +68,8 @@ DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
 TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' | sed 's/\//\\\//g' || Europe\/Berlin)"
 APPS_REPOSITORY="https://github.com/meienberger/runtipi-appstore"
-APPS_REPOSITORY="https://github.com/meienberger/runtipi-appstore"
 REPO_ID="$(${ROOT_FOLDER}/scripts/git.sh get_hash ${APPS_REPOSITORY})"
+APPS_REPOSITORY_ESCAPED="$(echo ${APPS_REPOSITORY} | sed 's/\//\\\//g')"
 
 if [[ "$ARCHITECTURE" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
@@ -153,6 +153,7 @@ for template in ${ENV_FILE}; do
   sed -i "s/<proxy_port>/${PROXY_PORT}/g" "${template}"
   sed -i "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
   sed -i "s/<apps_repo_id>/${REPO_ID}/g" "${template}"
+  sed -i "s/<apps_repo_url>/${APPS_REPOSITORY_ESCAPED}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"

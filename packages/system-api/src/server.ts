@@ -74,8 +74,8 @@ const main = async () => {
     await runUpdates();
 
     httpServer.listen(port, async () => {
-      await cloneRepo(config.APPS_REPO_ID);
-      await updateRepo(config.APPS_REPO_ID);
+      await cloneRepo(config.APPS_REPO_URL);
+      await updateRepo(config.APPS_REPO_URL);
       startJobs();
       // Start apps
       appsService.startAllApps();
