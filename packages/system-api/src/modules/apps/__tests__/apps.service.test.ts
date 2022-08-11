@@ -1,7 +1,7 @@
 import AppsService from '../apps.service';
 import fs from 'fs-extra';
 import config from '../../../config';
-import childProcess, { ChildProcess } from 'child_process';
+import childProcess from 'child_process';
 import { AppInfo, AppStatusEnum } from '../apps.types';
 import App from '../app.entity';
 import { createApp } from './apps.factory';

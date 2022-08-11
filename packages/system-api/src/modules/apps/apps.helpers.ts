@@ -10,7 +10,7 @@ import App from './app.entity';
 export const checkAppRequirements = async (appName: string) => {
   let valid = true;
 
-  const configFile: AppInfo | null = readJsonFile(`/apps/${appName}/config.json`);
+  const configFile: AppInfo | null = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appName}/config.json`);
 
   if (!configFile) {
     throw new Error(`App ${appName} not found`);
@@ -134,9 +134,7 @@ export const getAppInfo = (id: string): AppInfo => {
       const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
       configFile.description = readFile(`/apps/${id}/metadata/description.md`).toString();
       return configFile;
-    }
-
-    if (fileExists(`/repos/${repoId}`)) {
+    } else if (fileExists(`/repos/${repoId}`)) {
       const configFile: AppInfo = readJsonFile(`/repos/${repoId}/apps/${id}/config.json`);
       configFile.description = readFile(`/repos/${repoId}/apps/${id}/metadata/description.md`);
 
