@@ -40,6 +40,7 @@ fi
 if [[ "$command" = "clone" ]]; then
     repo="$2"
     repo_hash=$(get_hash "${repo}")
+
     echo "Cloning ${repo} to ${ROOT_FOLDER}/repos/${repo_hash}"
     repo_dir="${ROOT_FOLDER}/repos/${repo_hash}"
     if [ -d "${repo_dir}" ]; then

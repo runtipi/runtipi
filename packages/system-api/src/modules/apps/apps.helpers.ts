@@ -161,5 +161,6 @@ export const getUpdateInfo = async (id: string) => {
   return {
     current: app.version,
     latest: repoConfig.tipi_version,
+    dockerVersion: repoConfig.version,
   };
 };

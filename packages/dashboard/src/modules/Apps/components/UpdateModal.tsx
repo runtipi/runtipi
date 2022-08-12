@@ -18,7 +18,8 @@ const UpdateModal: React.FC<IProps> = ({ app, newVersion, isOpen, onClose, onCon
         <ModalHeader>Update {app.name} ?</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          Update app to latest verion : <b>{newVersion}</b> ?
+          Update app to latest verion : <b>{newVersion}</b> ?<br />
+          This will reset your custom configuration (e.g. changes in docker-compose.yml)
         </ModalBody>
         <ModalFooter>
           <Button onClick={onConfirm} colorScheme="green">

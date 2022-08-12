@@ -15,6 +15,9 @@ class UpdateInfo {
 
   @Field(() => Number)
   latest!: number;
+
+  @Field(() => String)
+  dockerVersion?: string;
 }
 
 @ObjectType()

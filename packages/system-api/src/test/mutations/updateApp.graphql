@@ -25,6 +25,7 @@ mutation UpdateApp($id: String!) {
     updateInfo {
       current
       latest
+      dockerVersion
     }
   }
 }

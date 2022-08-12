@@ -134,6 +134,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
   };
 
   const version = [info?.version || 'unknown', app?.version ? `(${app.version})` : ''].join(' ');
+  const newVersion = [app?.updateInfo?.dockerVersion ? `${app?.updateInfo?.dockerVersion}` : '', `(${app?.updateInfo?.latest})`].join(' ');
 
   return (
     <SlideFade in className="flex flex-1" offsetY="20px">
@@ -180,7 +181,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
         <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.onClose} app={info} />
         <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.onClose} app={info} />
         <UpdateSettingsModal onSubmit={handleUpdateSettingsSubmit} isOpen={updateSettingsDisclosure.isOpen} onClose={updateSettingsDisclosure.onClose} app={info} config={app?.config} />
-        <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} newVersion={`${info.version} (${info.tipi_version})`} />
+        <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} newVersion={newVersion} />
       </div>
     </SlideFade>
   );

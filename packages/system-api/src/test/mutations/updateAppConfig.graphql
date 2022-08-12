@@ -25,6 +25,7 @@ mutation UpdateAppConfig($input: AppInputType!) {
     updateInfo {
       current
       latest
+      dockerVersion
     }
   }
 }

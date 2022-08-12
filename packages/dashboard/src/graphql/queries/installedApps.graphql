@@ -7,6 +7,7 @@ query InstalledApps {
     updateInfo {
       current
       latest
+      dockerVersion
     }
     info {
       id

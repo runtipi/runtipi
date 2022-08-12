@@ -25,6 +25,7 @@ mutation UninstallApp($id: String!) {
     updateInfo {
       current
       latest
+      dockerVersion
     }
   }
 }

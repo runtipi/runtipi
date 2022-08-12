@@ -24,6 +24,7 @@ query GetApp($id: String!) {
     updateInfo {
       current
       latest
+      dockerVersion
     }
   }
 }
