@@ -46,7 +46,7 @@ export enum AppCategoriesEnum {
   Photography = 'PHOTOGRAPHY',
   Security = 'SECURITY',
   Social = 'SOCIAL',
-  Utilities = 'UTILITIES'
+  Utilities = 'UTILITIES',
 }
 
 export type AppInfo = {
@@ -80,7 +80,7 @@ export enum AppStatusEnum {
   Stopped = 'STOPPED',
   Stopping = 'STOPPING',
   Uninstalling = 'UNINSTALLING',
-  Updating = 'UPDATING'
+  Updating = 'UPDATING',
 }
 
 export type Cpu = {
@@ -104,7 +104,7 @@ export enum FieldTypesEnum {
   Password = 'password',
   Random = 'random',
   Text = 'text',
-  Url = 'url'
+  Url = 'url',
 }
 
 export type FormField = {
@@ -137,41 +137,33 @@ export type Mutation = {
   updateAppConfig: App;
 };
 
-
 export type MutationInstallAppArgs = {
   input: AppInputType;
 };
-
 
 export type MutationLoginArgs = {
   input: UsernamePasswordInput;
 };
 
-
 export type MutationRegisterArgs = {
   input: UsernamePasswordInput;
 };
-
 
 export type MutationStartAppArgs = {
   id: Scalars['String'];
 };
 
-
 export type MutationStopAppArgs = {
   id: Scalars['String'];
 };
-
 
 export type MutationUninstallAppArgs = {
   id: Scalars['String'];
 };
 
-
 export type MutationUpdateAppArgs = {
   id: Scalars['String'];
 };
-
 
 export type MutationUpdateAppConfigArgs = {
   input: AppInputType;
@@ -188,7 +180,6 @@ export type Query = {
   version: VersionResponse;
 };
 
-
 export type QueryGetAppArgs = {
   id: Scalars['String'];
 };
@@ -203,7 +194,7 @@ export type SystemInfoResponse = {
 export type UpdateInfo = {
   __typename?: 'UpdateInfo';
   current: Scalars['Float'];
-  dockerVersion: Scalars['String'];
+  dockerVersion?: Maybe<Scalars['String']>;
   latest: Scalars['Float'];
 };
 
@@ -235,110 +226,165 @@ export type InstallAppMutationVariables = Exact<{
   input: AppInputType;
 }>;
 
-
-export type InstallAppMutation = { __typename?: 'Mutation', installApp: { __typename: 'App', id: string, status: AppStatusEnum } };
+export type InstallAppMutation = { __typename?: 'Mutation'; installApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
 
 export type LoginMutationVariables = Exact<{
   input: UsernamePasswordInput;
 }>;
 
+export type LoginMutation = { __typename?: 'Mutation'; login: { __typename?: 'UserResponse'; user?: { __typename?: 'User'; id: string } | null } };
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string } | null } };
+export type LogoutMutationVariables = Exact<{ [key: string]: never }>;
 
-export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+export type LogoutMutation = { __typename?: 'Mutation'; logout: boolean };
 
 export type RegisterMutationVariables = Exact<{
   input: UsernamePasswordInput;
 }>;
 
-
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string } | null } };
+export type RegisterMutation = { __typename?: 'Mutation'; register: { __typename?: 'UserResponse'; user?: { __typename?: 'User'; id: string } | null } };
 
 export type StartAppMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-
-export type StartAppMutation = { __typename?: 'Mutation', startApp: { __typename: 'App', id: string, status: AppStatusEnum } };
+export type StartAppMutation = { __typename?: 'Mutation'; startApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
 
 export type StopAppMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-
-export type StopAppMutation = { __typename?: 'Mutation', stopApp: { __typename: 'App', id: string, status: AppStatusEnum } };
+export type StopAppMutation = { __typename?: 'Mutation'; stopApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
 
 export type UninstallAppMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-
-export type UninstallAppMutation = { __typename?: 'Mutation', uninstallApp: { __typename: 'App', id: string, status: AppStatusEnum } };
+export type UninstallAppMutation = { __typename?: 'Mutation'; uninstallApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
 
 export type UpdateAppMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-
-export type UpdateAppMutation = { __typename?: 'Mutation', updateApp: { __typename: 'App', id: string, status: AppStatusEnum } };
+export type UpdateAppMutation = { __typename?: 'Mutation'; updateApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
 
 export type UpdateAppConfigMutationVariables = Exact<{
   input: AppInputType;
 }>;
 
-
-export type UpdateAppConfigMutation = { __typename?: 'Mutation', updateAppConfig: { __typename: 'App', id: string, status: AppStatusEnum } };
+export type UpdateAppConfigMutation = { __typename?: 'Mutation'; updateAppConfig: { __typename: 'App'; id: string; status: AppStatusEnum } };
 
 export type GetAppQueryVariables = Exact<{
   appId: Scalars['String'];
 }>;
 
+export type GetAppQuery = {
+  __typename?: 'Query';
+  getApp: {
+    __typename?: 'App';
+    id: string;
+    status: AppStatusEnum;
+    config: any;
+    version?: number | null;
+    updateInfo?: { __typename?: 'UpdateInfo'; current: number; latest: number; dockerVersion?: string | null } | null;
+    info?: {
+      __typename?: 'AppInfo';
+      id: string;
+      port: number;
+      name: string;
+      description: string;
+      available: boolean;
+      version?: string | null;
+      tipi_version: number;
+      short_desc: string;
+      author: string;
+      source: string;
+      categories: Array<AppCategoriesEnum>;
+      url_suffix?: string | null;
+      form_fields: Array<{
+        __typename?: 'FormField';
+        type: FieldTypesEnum;
+        label: string;
+        max?: number | null;
+        min?: number | null;
+        hint?: string | null;
+        required?: boolean | null;
+        env_variable: string;
+      }>;
+    } | null;
+  };
+};
 
-export type GetAppQuery = { __typename?: 'Query', getApp: { __typename?: 'App', id: string, status: AppStatusEnum, config: any, version?: number | null, updateInfo?: { __typename?: 'UpdateInfo', current: number, latest: number, dockerVersion: string } | null, info?: { __typename?: 'AppInfo', id: string, port: number, name: string, description: string, available: boolean, version?: string | null, tipi_version: number, short_desc: string, author: string, source: string, categories: Array<AppCategoriesEnum>, url_suffix?: string | null, form_fields: Array<{ __typename?: 'FormField', type: FieldTypesEnum, label: string, max?: number | null, min?: number | null, hint?: string | null, required?: boolean | null, env_variable: string }> } | null } };
+export type InstalledAppsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type InstalledAppsQueryVariables = Exact<{ [key: string]: never; }>;
+export type InstalledAppsQuery = {
+  __typename?: 'Query';
+  installedApps: Array<{
+    __typename?: 'App';
+    id: string;
+    status: AppStatusEnum;
+    config: any;
+    version?: number | null;
+    updateInfo?: { __typename?: 'UpdateInfo'; current: number; latest: number; dockerVersion?: string | null } | null;
+    info?: { __typename?: 'AppInfo'; id: string; name: string; description: string; tipi_version: number; short_desc: string } | null;
+  }>;
+};
 
+export type ConfiguredQueryVariables = Exact<{ [key: string]: never }>;
 
-export type InstalledAppsQuery = { __typename?: 'Query', installedApps: Array<{ __typename?: 'App', id: string, status: AppStatusEnum, config: any, version?: number | null, updateInfo?: { __typename?: 'UpdateInfo', current: number, latest: number, dockerVersion: string } | null, info?: { __typename?: 'AppInfo', id: string, name: string, description: string, tipi_version: number, short_desc: string } | null }> };
+export type ConfiguredQuery = { __typename?: 'Query'; isConfigured: boolean };
 
-export type ConfiguredQueryVariables = Exact<{ [key: string]: never; }>;
+export type ListAppsQueryVariables = Exact<{ [key: string]: never }>;
 
+export type ListAppsQuery = {
+  __typename?: 'Query';
+  listAppsInfo: {
+    __typename?: 'ListAppsResonse';
+    total: number;
+    apps: Array<{
+      __typename?: 'AppInfo';
+      id: string;
+      available: boolean;
+      tipi_version: number;
+      port: number;
+      name: string;
+      version?: string | null;
+      short_desc: string;
+      author: string;
+      categories: Array<AppCategoriesEnum>;
+    }>;
+  };
+};
 
-export type ConfiguredQuery = { __typename?: 'Query', isConfigured: boolean };
+export type MeQueryVariables = Exact<{ [key: string]: never }>;
 
-export type ListAppsQueryVariables = Exact<{ [key: string]: never; }>;
+export type MeQuery = { __typename?: 'Query'; me?: { __typename?: 'User'; id: string } | null };
 
+export type SystemInfoQueryVariables = Exact<{ [key: string]: never }>;
 
-export type ListAppsQuery = { __typename?: 'Query', listAppsInfo: { __typename?: 'ListAppsResonse', total: number, apps: Array<{ __typename?: 'AppInfo', id: string, available: boolean, tipi_version: number, port: number, name: string, version?: string | null, short_desc: string, author: string, categories: Array<AppCategoriesEnum> }> } };
+export type SystemInfoQuery = {
+  __typename?: 'Query';
+  systemInfo?: {
+    __typename?: 'SystemInfoResponse';
+    cpu: { __typename?: 'Cpu'; load: number };
+    disk: { __typename?: 'DiskMemory'; available: number; used: number; total: number };
+    memory: { __typename?: 'DiskMemory'; available: number; used: number; total: number };
+  } | null;
+};
 
-export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+export type VersionQueryVariables = Exact<{ [key: string]: never }>;
 
-
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string } | null };
-
-export type SystemInfoQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SystemInfoQuery = { __typename?: 'Query', systemInfo?: { __typename?: 'SystemInfoResponse', cpu: { __typename?: 'Cpu', load: number }, disk: { __typename?: 'DiskMemory', available: number, used: number, total: number }, memory: { __typename?: 'DiskMemory', available: number, used: number, total: number } } | null };
-
-export type VersionQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type VersionQuery = { __typename?: 'Query', version: { __typename?: 'VersionResponse', current: string, latest?: string | null } };
-
+export type VersionQuery = { __typename?: 'Query'; version: { __typename?: 'VersionResponse'; current: string; latest?: string | null } };
 
 export const InstallAppDocument = gql`
-    mutation InstallApp($input: AppInputType!) {
-  installApp(input: $input) {
-    id
-    status
-    __typename
+  mutation InstallApp($input: AppInputType!) {
+    installApp(input: $input) {
+      id
+      status
+      __typename
+    }
   }
-}
-    `;
+`;
 export type InstallAppMutationFn = Apollo.MutationFunction<InstallAppMutation, InstallAppMutationVariables>;
 
 /**
@@ -359,21 +405,21 @@ export type InstallAppMutationFn = Apollo.MutationFunction<InstallAppMutation, I
  * });
  */
 export function useInstallAppMutation(baseOptions?: Apollo.MutationHookOptions<InstallAppMutation, InstallAppMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InstallAppMutation, InstallAppMutationVariables>(InstallAppDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<InstallAppMutation, InstallAppMutationVariables>(InstallAppDocument, options);
+}
 export type InstallAppMutationHookResult = ReturnType<typeof useInstallAppMutation>;
 export type InstallAppMutationResult = Apollo.MutationResult<InstallAppMutation>;
 export type InstallAppMutationOptions = Apollo.BaseMutationOptions<InstallAppMutation, InstallAppMutationVariables>;
 export const LoginDocument = gql`
-    mutation Login($input: UsernamePasswordInput!) {
-  login(input: $input) {
-    user {
-      id
+  mutation Login($input: UsernamePasswordInput!) {
+    login(input: $input) {
+      user {
+        id
+      }
     }
   }
-}
-    `;
+`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -394,17 +440,17 @@ export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutati
  * });
  */
 export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
+}
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const LogoutDocument = gql`
-    mutation Logout {
-  logout
-}
-    `;
+  mutation Logout {
+    logout
+  }
+`;
 export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
 
 /**
@@ -424,21 +470,21 @@ export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMut
  * });
  */
 export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+}
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const RegisterDocument = gql`
-    mutation Register($input: UsernamePasswordInput!) {
-  register(input: $input) {
-    user {
-      id
+  mutation Register($input: UsernamePasswordInput!) {
+    register(input: $input) {
+      user {
+        id
+      }
     }
   }
-}
-    `;
+`;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 
 /**
@@ -459,21 +505,21 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  * });
  */
 export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
+}
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const StartAppDocument = gql`
-    mutation StartApp($id: String!) {
-  startApp(id: $id) {
-    id
-    status
-    __typename
+  mutation StartApp($id: String!) {
+    startApp(id: $id) {
+      id
+      status
+      __typename
+    }
   }
-}
-    `;
+`;
 export type StartAppMutationFn = Apollo.MutationFunction<StartAppMutation, StartAppMutationVariables>;
 
 /**
@@ -494,21 +540,21 @@ export type StartAppMutationFn = Apollo.MutationFunction<StartAppMutation, Start
  * });
  */
 export function useStartAppMutation(baseOptions?: Apollo.MutationHookOptions<StartAppMutation, StartAppMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<StartAppMutation, StartAppMutationVariables>(StartAppDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<StartAppMutation, StartAppMutationVariables>(StartAppDocument, options);
+}
 export type StartAppMutationHookResult = ReturnType<typeof useStartAppMutation>;
 export type StartAppMutationResult = Apollo.MutationResult<StartAppMutation>;
 export type StartAppMutationOptions = Apollo.BaseMutationOptions<StartAppMutation, StartAppMutationVariables>;
 export const StopAppDocument = gql`
-    mutation StopApp($id: String!) {
-  stopApp(id: $id) {
-    id
-    status
-    __typename
+  mutation StopApp($id: String!) {
+    stopApp(id: $id) {
+      id
+      status
+      __typename
+    }
   }
-}
-    `;
+`;
 export type StopAppMutationFn = Apollo.MutationFunction<StopAppMutation, StopAppMutationVariables>;
 
 /**
@@ -529,21 +575,21 @@ export type StopAppMutationFn = Apollo.MutationFunction<StopAppMutation, StopApp
  * });
  */
 export function useStopAppMutation(baseOptions?: Apollo.MutationHookOptions<StopAppMutation, StopAppMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<StopAppMutation, StopAppMutationVariables>(StopAppDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<StopAppMutation, StopAppMutationVariables>(StopAppDocument, options);
+}
 export type StopAppMutationHookResult = ReturnType<typeof useStopAppMutation>;
 export type StopAppMutationResult = Apollo.MutationResult<StopAppMutation>;
 export type StopAppMutationOptions = Apollo.BaseMutationOptions<StopAppMutation, StopAppMutationVariables>;
 export const UninstallAppDocument = gql`
-    mutation UninstallApp($id: String!) {
-  uninstallApp(id: $id) {
-    id
-    status
-    __typename
+  mutation UninstallApp($id: String!) {
+    uninstallApp(id: $id) {
+      id
+      status
+      __typename
+    }
   }
-}
-    `;
+`;
 export type UninstallAppMutationFn = Apollo.MutationFunction<UninstallAppMutation, UninstallAppMutationVariables>;
 
 /**
@@ -564,21 +610,21 @@ export type UninstallAppMutationFn = Apollo.MutationFunction<UninstallAppMutatio
  * });
  */
 export function useUninstallAppMutation(baseOptions?: Apollo.MutationHookOptions<UninstallAppMutation, UninstallAppMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UninstallAppMutation, UninstallAppMutationVariables>(UninstallAppDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UninstallAppMutation, UninstallAppMutationVariables>(UninstallAppDocument, options);
+}
 export type UninstallAppMutationHookResult = ReturnType<typeof useUninstallAppMutation>;
 export type UninstallAppMutationResult = Apollo.MutationResult<UninstallAppMutation>;
 export type UninstallAppMutationOptions = Apollo.BaseMutationOptions<UninstallAppMutation, UninstallAppMutationVariables>;
 export const UpdateAppDocument = gql`
-    mutation UpdateApp($id: String!) {
-  updateApp(id: $id) {
-    id
-    status
-    __typename
+  mutation UpdateApp($id: String!) {
+    updateApp(id: $id) {
+      id
+      status
+      __typename
+    }
   }
-}
-    `;
+`;
 export type UpdateAppMutationFn = Apollo.MutationFunction<UpdateAppMutation, UpdateAppMutationVariables>;
 
 /**
@@ -599,21 +645,21 @@ export type UpdateAppMutationFn = Apollo.MutationFunction<UpdateAppMutation, Upd
  * });
  */
 export function useUpdateAppMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAppMutation, UpdateAppMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateAppMutation, UpdateAppMutationVariables>(UpdateAppDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateAppMutation, UpdateAppMutationVariables>(UpdateAppDocument, options);
+}
 export type UpdateAppMutationHookResult = ReturnType<typeof useUpdateAppMutation>;
 export type UpdateAppMutationResult = Apollo.MutationResult<UpdateAppMutation>;
 export type UpdateAppMutationOptions = Apollo.BaseMutationOptions<UpdateAppMutation, UpdateAppMutationVariables>;
 export const UpdateAppConfigDocument = gql`
-    mutation UpdateAppConfig($input: AppInputType!) {
-  updateAppConfig(input: $input) {
-    id
-    status
-    __typename
+  mutation UpdateAppConfig($input: AppInputType!) {
+    updateAppConfig(input: $input) {
+      id
+      status
+      __typename
+    }
   }
-}
-    `;
+`;
 export type UpdateAppConfigMutationFn = Apollo.MutationFunction<UpdateAppConfigMutation, UpdateAppConfigMutationVariables>;
 
 /**
@@ -634,50 +680,50 @@ export type UpdateAppConfigMutationFn = Apollo.MutationFunction<UpdateAppConfigM
  * });
  */
 export function useUpdateAppConfigMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAppConfigMutation, UpdateAppConfigMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateAppConfigMutation, UpdateAppConfigMutationVariables>(UpdateAppConfigDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateAppConfigMutation, UpdateAppConfigMutationVariables>(UpdateAppConfigDocument, options);
+}
 export type UpdateAppConfigMutationHookResult = ReturnType<typeof useUpdateAppConfigMutation>;
 export type UpdateAppConfigMutationResult = Apollo.MutationResult<UpdateAppConfigMutation>;
 export type UpdateAppConfigMutationOptions = Apollo.BaseMutationOptions<UpdateAppConfigMutation, UpdateAppConfigMutationVariables>;
 export const GetAppDocument = gql`
-    query GetApp($appId: String!) {
-  getApp(id: $appId) {
-    id
-    status
-    config
-    version
-    updateInfo {
-      current
-      latest
-      dockerVersion
-    }
-    info {
+  query GetApp($appId: String!) {
+    getApp(id: $appId) {
       id
-      port
-      name
-      description
-      available
+      status
+      config
       version
-      tipi_version
-      short_desc
-      author
-      source
-      categories
-      url_suffix
-      form_fields {
-        type
-        label
-        max
-        min
-        hint
-        required
-        env_variable
+      updateInfo {
+        current
+        latest
+        dockerVersion
+      }
+      info {
+        id
+        port
+        name
+        description
+        available
+        version
+        tipi_version
+        short_desc
+        author
+        source
+        categories
+        url_suffix
+        form_fields {
+          type
+          label
+          max
+          min
+          hint
+          required
+          env_variable
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetAppQuery__
@@ -696,38 +742,38 @@ export const GetAppDocument = gql`
  * });
  */
 export function useGetAppQuery(baseOptions: Apollo.QueryHookOptions<GetAppQuery, GetAppQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAppQuery, GetAppQueryVariables>(GetAppDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAppQuery, GetAppQueryVariables>(GetAppDocument, options);
+}
 export function useGetAppLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAppQuery, GetAppQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAppQuery, GetAppQueryVariables>(GetAppDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetAppQuery, GetAppQueryVariables>(GetAppDocument, options);
+}
 export type GetAppQueryHookResult = ReturnType<typeof useGetAppQuery>;
 export type GetAppLazyQueryHookResult = ReturnType<typeof useGetAppLazyQuery>;
 export type GetAppQueryResult = Apollo.QueryResult<GetAppQuery, GetAppQueryVariables>;
 export const InstalledAppsDocument = gql`
-    query InstalledApps {
-  installedApps {
-    id
-    status
-    config
-    version
-    updateInfo {
-      current
-      latest
-      dockerVersion
-    }
-    info {
+  query InstalledApps {
+    installedApps {
       id
-      name
-      description
-      tipi_version
-      short_desc
+      status
+      config
+      version
+      updateInfo {
+        current
+        latest
+        dockerVersion
+      }
+      info {
+        id
+        name
+        description
+        tipi_version
+        short_desc
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useInstalledAppsQuery__
@@ -745,21 +791,21 @@ export const InstalledAppsDocument = gql`
  * });
  */
 export function useInstalledAppsQuery(baseOptions?: Apollo.QueryHookOptions<InstalledAppsQuery, InstalledAppsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<InstalledAppsQuery, InstalledAppsQueryVariables>(InstalledAppsDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<InstalledAppsQuery, InstalledAppsQueryVariables>(InstalledAppsDocument, options);
+}
 export function useInstalledAppsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InstalledAppsQuery, InstalledAppsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<InstalledAppsQuery, InstalledAppsQueryVariables>(InstalledAppsDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<InstalledAppsQuery, InstalledAppsQueryVariables>(InstalledAppsDocument, options);
+}
 export type InstalledAppsQueryHookResult = ReturnType<typeof useInstalledAppsQuery>;
 export type InstalledAppsLazyQueryHookResult = ReturnType<typeof useInstalledAppsLazyQuery>;
 export type InstalledAppsQueryResult = Apollo.QueryResult<InstalledAppsQuery, InstalledAppsQueryVariables>;
 export const ConfiguredDocument = gql`
-    query Configured {
-  isConfigured
-}
-    `;
+  query Configured {
+    isConfigured
+  }
+`;
 
 /**
  * __useConfiguredQuery__
@@ -777,34 +823,34 @@ export const ConfiguredDocument = gql`
  * });
  */
 export function useConfiguredQuery(baseOptions?: Apollo.QueryHookOptions<ConfiguredQuery, ConfiguredQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ConfiguredQuery, ConfiguredQueryVariables>(ConfiguredDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ConfiguredQuery, ConfiguredQueryVariables>(ConfiguredDocument, options);
+}
 export function useConfiguredLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConfiguredQuery, ConfiguredQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ConfiguredQuery, ConfiguredQueryVariables>(ConfiguredDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ConfiguredQuery, ConfiguredQueryVariables>(ConfiguredDocument, options);
+}
 export type ConfiguredQueryHookResult = ReturnType<typeof useConfiguredQuery>;
 export type ConfiguredLazyQueryHookResult = ReturnType<typeof useConfiguredLazyQuery>;
 export type ConfiguredQueryResult = Apollo.QueryResult<ConfiguredQuery, ConfiguredQueryVariables>;
 export const ListAppsDocument = gql`
-    query ListApps {
-  listAppsInfo {
-    apps {
-      id
-      available
-      tipi_version
-      port
-      name
-      version
-      short_desc
-      author
-      categories
+  query ListApps {
+    listAppsInfo {
+      apps {
+        id
+        available
+        tipi_version
+        port
+        name
+        version
+        short_desc
+        author
+        categories
+      }
+      total
     }
-    total
   }
-}
-    `;
+`;
 
 /**
  * __useListAppsQuery__
@@ -822,23 +868,23 @@ export const ListAppsDocument = gql`
  * });
  */
 export function useListAppsQuery(baseOptions?: Apollo.QueryHookOptions<ListAppsQuery, ListAppsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ListAppsQuery, ListAppsQueryVariables>(ListAppsDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ListAppsQuery, ListAppsQueryVariables>(ListAppsDocument, options);
+}
 export function useListAppsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListAppsQuery, ListAppsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ListAppsQuery, ListAppsQueryVariables>(ListAppsDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ListAppsQuery, ListAppsQueryVariables>(ListAppsDocument, options);
+}
 export type ListAppsQueryHookResult = ReturnType<typeof useListAppsQuery>;
 export type ListAppsLazyQueryHookResult = ReturnType<typeof useListAppsLazyQuery>;
 export type ListAppsQueryResult = Apollo.QueryResult<ListAppsQuery, ListAppsQueryVariables>;
 export const MeDocument = gql`
-    query Me {
-  me {
-    id
+  query Me {
+    me {
+      id
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useMeQuery__
@@ -856,35 +902,35 @@ export const MeDocument = gql`
  * });
  */
 export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
 export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const SystemInfoDocument = gql`
-    query SystemInfo {
-  systemInfo {
-    cpu {
-      load
-    }
-    disk {
-      available
-      used
-      total
-    }
-    memory {
-      available
-      used
-      total
+  query SystemInfo {
+    systemInfo {
+      cpu {
+        load
+      }
+      disk {
+        available
+        used
+        total
+      }
+      memory {
+        available
+        used
+        total
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useSystemInfoQuery__
@@ -902,24 +948,24 @@ export const SystemInfoDocument = gql`
  * });
  */
 export function useSystemInfoQuery(baseOptions?: Apollo.QueryHookOptions<SystemInfoQuery, SystemInfoQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SystemInfoQuery, SystemInfoQueryVariables>(SystemInfoDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SystemInfoQuery, SystemInfoQueryVariables>(SystemInfoDocument, options);
+}
 export function useSystemInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SystemInfoQuery, SystemInfoQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SystemInfoQuery, SystemInfoQueryVariables>(SystemInfoDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SystemInfoQuery, SystemInfoQueryVariables>(SystemInfoDocument, options);
+}
 export type SystemInfoQueryHookResult = ReturnType<typeof useSystemInfoQuery>;
 export type SystemInfoLazyQueryHookResult = ReturnType<typeof useSystemInfoLazyQuery>;
 export type SystemInfoQueryResult = Apollo.QueryResult<SystemInfoQuery, SystemInfoQueryVariables>;
 export const VersionDocument = gql`
-    query Version {
-  version {
-    current
-    latest
+  query Version {
+    version {
+      current
+      latest
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useVersionQuery__
@@ -937,13 +983,13 @@ export const VersionDocument = gql`
  * });
  */
 export function useVersionQuery(baseOptions?: Apollo.QueryHookOptions<VersionQuery, VersionQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<VersionQuery, VersionQueryVariables>(VersionDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<VersionQuery, VersionQueryVariables>(VersionDocument, options);
+}
 export function useVersionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VersionQuery, VersionQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<VersionQuery, VersionQueryVariables>(VersionDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<VersionQuery, VersionQueryVariables>(VersionDocument, options);
+}
 export type VersionQueryHookResult = ReturnType<typeof useVersionQuery>;
 export type VersionLazyQueryHookResult = ReturnType<typeof useVersionLazyQuery>;
 export type VersionQueryResult = Apollo.QueryResult<VersionQuery, VersionQueryVariables>;

@@ -16,7 +16,7 @@ class UpdateInfo {
   @Field(() => Number)
   latest!: number;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   dockerVersion?: string;
 }
 
