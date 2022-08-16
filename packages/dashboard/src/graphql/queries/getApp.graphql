@@ -3,6 +3,12 @@ query GetApp($appId: String!) {
     id
     status
     config
+    version
+    updateInfo {
+      current
+      latest
+      dockerVersion
+    }
     info {
       id
       port
@@ -10,7 +16,7 @@ query GetApp($appId: String!) {
       description
       available
       version
-      image
+      tipi_version
       short_desc
       author
       source

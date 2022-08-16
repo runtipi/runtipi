@@ -6,6 +6,7 @@ env:
   ROOT_FOLDER: /test
   JWT_SECRET: "secret"
   ROOT_FOLDER_HOST: /tipi
+  APPS_REPO_ID: repo-id
     
 jobs:
   ci:
@@ -16,7 +17,7 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
         ports:
-          - 5432:5432
+          - 5433:5432
         # set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -32,7 +33,7 @@ jobs:
         with:
           node-version: 16
 
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2.2.2
         name: Install pnpm
         id: pnpm-install
         with:
@@ -57,9 +58,6 @@ jobs:
 
       - name: Build packages
         run: pnpm -r build
-
-      - name: Run global tests
-        run: pnpm test
 
       - name: Run linter
         run: pnpm -r lint

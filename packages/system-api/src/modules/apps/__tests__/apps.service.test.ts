@@ -1,5 +1,5 @@
 import AppsService from '../apps.service';
-import fs from 'fs';
+import fs from 'fs-extra';
 import config from '../../../config';
 import childProcess from 'child_process';
 import { AppInfo, AppStatusEnum } from '../apps.types';
@@ -7,8 +7,9 @@ import App from '../app.entity';
 import { createApp } from './apps.factory';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import { DataSource } from 'typeorm';
+import { getEnvMap } from '../apps.helpers';
 
-jest.mock('fs');
+jest.mock('fs-extra');
 jest.mock('child_process');
 
 let db: DataSource | null = null;
@@ -21,6 +22,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   jest.resetModules();
   jest.resetAllMocks();
+  jest.restoreAllMocks();
   await App.clear();
 });
 
@@ -33,7 +35,7 @@ describe('Install app', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const { MockFiles, appInfo } = await createApp();
+    const { MockFiles, appInfo } = await createApp({});
     app1 = appInfo;
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
@@ -61,7 +63,7 @@ describe('Install app', () => {
     const spy = jest.spyOn(childProcess, 'execFile');
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id, '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
     spy.mockRestore();
   });
 
@@ -72,8 +74,8 @@ describe('Install app', () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id, '/tipi'], {}, expect.any(Function)]);
-    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -95,13 +97,25 @@ describe('Install app', () => {
   it('Should throw if required form fields are missing', async () => {
     await expect(AppsService.installApp(app1.id, {})).rejects.toThrowError('Variable TEST_FIELD is required');
   });
+
+  it('Correctly generates a random value if the field has a "random" type', async () => {
+    const { appInfo, MockFiles } = await createApp({ randomField: true });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    await AppsService.installApp(appInfo.id, { TEST_FIELD: 'yolo' });
+    const envMap = getEnvMap(appInfo.id);
+
+    expect(envMap.get('RANDOM_FIELD')).toBeDefined();
+    expect(envMap.get('RANDOM_FIELD')).toHaveLength(32);
+  });
 });
 
 describe('Uninstall app', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -127,7 +141,7 @@ describe('Uninstall app', () => {
 
     await AppsService.uninstallApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id, '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -138,8 +152,8 @@ describe('Uninstall app', () => {
     await AppsService.uninstallApp(app1.id);
 
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id, '/tipi'], {}, expect.any(Function)]);
-    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id, '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -147,13 +161,27 @@ describe('Uninstall app', () => {
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.uninstallApp('any')).rejects.toThrowError('App any not found');
   });
+
+  it('Should throw if uninstall script fails', async () => {
+    // Update app
+    await App.update({ id: app1.id }, { status: AppStatusEnum.UPDATING });
+
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow('Test error');
+    const app = await App.findOne({ where: { id: app1.id } });
+    expect(app!.status).toBe(AppStatusEnum.STOPPED);
+  });
 });
 
 describe('Start app', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -164,7 +192,7 @@ describe('Start app', () => {
 
     await AppsService.startApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -193,13 +221,24 @@ describe('Start app', () => {
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test`);
   });
+
+  it('Should throw if start script fails', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await expect(AppsService.startApp(app1.id)).rejects.toThrow('Test error');
+    const app = await App.findOne({ where: { id: app1.id } });
+    expect(app!.status).toBe(AppStatusEnum.STOPPED);
+  });
 });
 
 describe('Stop app', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -210,11 +249,22 @@ describe('Stop app', () => {
 
     await AppsService.stopApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id, '/tipi'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
   });
 
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.stopApp('any')).rejects.toThrowError('App any not found');
+  });
+
+  it('Should throw if stop script fails', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await expect(AppsService.stopApp(app1.id)).rejects.toThrow('Test error');
+    const app = await App.findOne({ where: { id: app1.id } });
+    expect(app!.status).toBe(AppStatusEnum.RUNNING);
   });
 });
 
@@ -222,7 +272,7 @@ describe('Update app config', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -243,13 +293,28 @@ describe('Update app config', () => {
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('App test-app-2 not found');
   });
+
+  it('Should not recreate random field if already present in .env', async () => {
+    const { appInfo, MockFiles } = await createApp({ randomField: true, installed: true });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`).toString();
+    fs.writeFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`, `${envFile}\nRANDOM_FIELD=test`);
+
+    await AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' });
+
+    const envMap = getEnvMap(appInfo.id);
+
+    expect(envMap.get('RANDOM_FIELD')).toBe('test');
+  });
 });
 
 describe('Get app config', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
+    const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
@@ -279,8 +344,8 @@ describe('List apps', () => {
   let app2: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp(true);
-    const app2create = await createApp();
+    const app1create = await createApp({ installed: true });
+    const app2create = await createApp({});
     app1 = app1create.appInfo;
     app2 = app2create.appInfo;
     // @ts-ignore
@@ -298,5 +363,95 @@ describe('List apps', () => {
     expect(apps[0].id).toBe(sortedApps[0].id);
     expect(apps[1].id).toBe(sortedApps[1].id);
     expect(apps[0].description).toBe('md desc');
+  });
+});
+
+describe('Start all apps', () => {
+  let app1: AppInfo;
+  let app2: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp({ installed: true });
+    const app2create = await createApp({ installed: true });
+    app1 = app1create.appInfo;
+    app2 = app2create.appInfo;
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app1create.MockFiles, app2create.MockFiles));
+  });
+
+  it('Should correctly start all apps', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+
+    await AppsService.startAllApps();
+
+    expect(spy.mock.calls.length).toBe(2);
+    expect(spy.mock.calls).toEqual([
+      [`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)],
+      [`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app2.id, '/tipi', 'repo-id'], {}, expect.any(Function)],
+    ]);
+  });
+
+  it('Should not start app which has not status RUNNING', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    await createApp({ installed: true, status: AppStatusEnum.STOPPED });
+
+    await AppsService.startAllApps();
+    const apps = await App.find();
+
+    expect(spy.mock.calls.length).toBe(2);
+    expect(apps.length).toBe(3);
+  });
+
+  it('Should put app status to STOPPED if start script fails', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await AppsService.startAllApps();
+
+    const apps = await App.find();
+
+    expect(spy.mock.calls.length).toBe(2);
+    expect(apps.length).toBe(2);
+    expect(apps[0].status).toBe(AppStatusEnum.STOPPED);
+    expect(apps[1].status).toBe(AppStatusEnum.STOPPED);
+  });
+});
+
+describe('Update app', () => {
+  let app1: AppInfo;
+
+  beforeEach(async () => {
+    const app1create = await createApp({ installed: true });
+    app1 = app1create.appInfo;
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app1create.MockFiles));
+  });
+
+  it('Should correctly update app', async () => {
+    await App.update({ id: app1.id }, { version: 0 });
+
+    const app = await AppsService.updateApp(app1.id);
+
+    expect(app).toBeDefined();
+    expect(app.config).toStrictEqual({ TEST_FIELD: 'test' });
+    expect(app.version).toBe(app1.tipi_version);
+    expect(app.status).toBe(AppStatusEnum.STOPPED);
+  });
+
+  it("Should throw if app doesn't exist", async () => {
+    await expect(AppsService.updateApp('test-app2')).rejects.toThrow('App test-app2 not found');
+  });
+
+  it('Should throw if update script fails', async () => {
+    const spy = jest.spyOn(childProcess, 'execFile');
+    spy.mockImplementation(() => {
+      throw new Error('Test error');
+    });
+
+    await expect(AppsService.updateApp(app1.id)).rejects.toThrow('Test error');
+    const app = await App.findOne({ where: { id: app1.id } });
+    expect(app!.status).toBe(AppStatusEnum.STOPPED);
   });
 });

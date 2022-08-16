@@ -11,8 +11,6 @@ const UpdateBanner = () => {
     return null;
   }
 
-  console.log(data);
-
   const onClose = () => {};
 
   return (

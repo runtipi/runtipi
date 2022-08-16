@@ -8,6 +8,7 @@
 [![Docker Pulls](https://badgen.net/docker/pulls/meienberger/runtipi?icon=docker&label=pulls)](https://hub.docker.com/r/meienberger/runtipi/)
 [![Docker Image Size](https://badgen.net/docker/size/meienberger/runtipi?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/runtipi/)
 ![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
+[![codecov](https://codecov.io/gh/meienberger/runtipi/branch/master/graph/badge.svg?token=FZGO7ZOPSF)](https://codecov.io/gh/meienberger/runtipi)
 #### Join the discussion
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 [![Matrix](https://img.shields.io/matrix/runtipi:matrix.org?label=matrix&logo=matrix)](https://matrix.to/#/#runtipi:matrix.org)
@@ -21,12 +22,14 @@ Check our demo instance : **95.179.210.152** / username: **user@runtipi.com** / 
 
 ## Apps available
 - [Adguard Home](https://github.com/AdguardTeam/AdGuardHome) - Adguard Home DNS adblocker
+- [Booksonic](https://github.com/popeen) - A server for streaming your audiobooks
 - [Calibre-Web](https://github.com/janeczku/calibre-web) - Web Ebook Reader
 - [Code-Server](https://github.com/coder/code-server) - Web VS Code 
 - [Filebrowser](https://github.com/filebrowser/filebrowser) - Web File Browser
 - [Firefly III](https://github.com/firefly-iii/firefly-iii) - A personal finances manager 
 - [Freshrss](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
 - [Gitea](https://github.com/go-gitea/gitea) - Gitea - A painless self-hosted Git service
+- [Ghost](https://github.com/TryGhost/Ghost) - Ghost - Turn your audience into a business
 - [Homarr](https://github.com/ajnart/homarr) - A homepage for your server
 - [Home Assistant](https://github.com/home-assistant/core) - Open source home automation that puts local control and privacy first
 - [Invidious](https://github.com/iv-org/invidious) - An alternative front-end to YouTube

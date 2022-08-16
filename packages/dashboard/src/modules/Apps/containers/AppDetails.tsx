@@ -1,4 +1,4 @@
-import { SlideFade, VStack, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
+import { SlideFade, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { FiExternalLink } from 'react-icons/fi';
 import { useSytemStore } from '../../../state/systemStore';
@@ -6,7 +6,7 @@ import AppActions from '../components/AppActions';
 import InstallModal from '../components/InstallModal';
 import StopModal from '../components/StopModal';
 import UninstallModal from '../components/UninstallModal';
-import UpdateModal from '../components/UpdateModal';
+import UpdateSettingsModal from '../components/UpdateSettingsModal';
 import AppLogo from '../../../components/AppLogo/AppLogo';
 import Markdown from '../../../components/Markdown/Markdown';
 import {
@@ -20,10 +20,12 @@ import {
   useStopAppMutation,
   useUninstallAppMutation,
   useUpdateAppConfigMutation,
+  useUpdateAppMutation,
 } from '../../../generated/graphql';
+import UpdateModal from '../components/UpdateModal';
 
 interface IProps {
-  app?: Pick<App, 'status' | 'config'>;
+  app?: Pick<App, 'status' | 'config' | 'version' | 'updateInfo'>;
   info: AppInfo;
 }
 
@@ -33,13 +35,17 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
   const uninstallDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
+  const updateSettingsDisclosure = useDisclosure();
 
   // Mutations
+  const [update] = useUpdateAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
   const [install] = useInstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }, { query: InstalledAppsDocument }] });
   const [uninstall] = useUninstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }, { query: InstalledAppsDocument }] });
   const [stop] = useStopAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
   const [start] = useStartAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
-  const [update] = useUpdateAppConfigMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+  const [updateConfig] = useUpdateAppConfigMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+
+  const updateAvailable = Number(app?.updateInfo?.current || 0) < Number(app?.updateInfo?.latest);
 
   const { internalIp } = useSytemStore();
 
@@ -93,16 +99,31 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     }
   };
 
-  const handleUpdateSubmit = async (values: Record<string, any>) => {
+  const handleUpdateSettingsSubmit = async (values: Record<string, any>) => {
     try {
-      await update({ variables: { input: { form: values, id: info.id } } });
+      await updateConfig({ variables: { input: { form: values, id: info.id } } });
       toast({
         title: 'Success',
         description: 'App config updated successfully',
         position: 'top',
         status: 'success',
       });
-      updateDisclosure.onClose();
+      updateSettingsDisclosure.onClose();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const handleUpdateSubmit = async () => {
+    updateDisclosure.onClose();
+    try {
+      await update({ variables: { id: info.id }, optimisticResponse: { updateApp: { id: info.id, status: AppStatusEnum.Updating, __typename: 'App' } } });
+      toast({
+        title: 'Success',
+        description: 'App updated successfully',
+        position: 'top',
+        status: 'success',
+      });
     } catch (error) {
       handleError(error);
     }
@@ -112,15 +133,21 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     window.open(`http://${internalIp}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
   };
 
+  const version = [info?.version || 'unknown', app?.version ? `(${app.version})` : ''].join(' ');
+  const newVersion = [app?.updateInfo?.dockerVersion ? `${app?.updateInfo?.dockerVersion}` : '', `(${app?.updateInfo?.latest})`].join(' ');
+
   return (
     <SlideFade in className="flex flex-1" offsetY="20px">
-      <div className="flex flex-1  p-4 mt-3 rounded-lg flex-col">
+      <div className="flex flex-1 p-4 mt-3 rounded-lg flex-col">
         <Flex className="flex-col md:flex-row">
-          <AppLogo src={info.image} size={180} className="self-center sm:self-auto" alt={info.name} />
-          <VStack align="flex-start" justify="space-between" className="ml-0 md:ml-4">
-            <div className="mt-3 items-center self-center flex flex-col sm:items-start sm:self-start md:mt-0">
+          <AppLogo id={info.id} size={180} className="self-center md:self-auto" alt={info.name} />
+          <div className="flex flex-col justify-between flex-1 ml-0 md:ml-4">
+            <div className="mt-3 items-center self-center flex flex-col md:items-start md:self-start md:mt-0">
               <h1 className="font-bold text-2xl">{info.name}</h1>
               <h2 className="text-center md:text-left">{info.short_desc}</h2>
+              <h3 className="text-center md:text-left text-sm">
+                version: <b>{version}</b>
+              </h3>
               {info.source && (
                 <a target="_blank" rel="noreferrer" className="text-blue-500 text-xs" href={info.source}>
                   <Flex className="mt-2 items-center">
@@ -131,9 +158,11 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
               )}
               <p className="text-xs text-gray-600">By {info.author}</p>
             </div>
-            <div className="flex justify-center xs:absolute md:static top-0 right-5 self-center sm:self-auto">
+            <div className="flex flex-1">
               <AppActions
+                updateAvailable={updateAvailable}
                 onUpdate={updateDisclosure.onOpen}
+                onUpdateSettings={updateSettingsDisclosure.onOpen}
                 onOpen={handleOpen}
                 onStart={handleStartSubmit}
                 onStop={stopDisclosure.onOpen}
@@ -144,14 +173,15 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
                 status={app?.status}
               />
             </div>
-          </VStack>
+          </div>
         </Flex>
         <Divider className="mt-5" />
         <Markdown className="mt-3">{info.description}</Markdown>
         <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.onClose} app={info} />
         <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.onClose} app={info} />
         <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.onClose} app={info} />
-        <UpdateModal onSubmit={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} config={app?.config} />
+        <UpdateSettingsModal onSubmit={handleUpdateSettingsSubmit} isOpen={updateSettingsDisclosure.isOpen} onClose={updateSettingsDisclosure.onClose} app={info} config={app?.config} />
+        <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} newVersion={newVersion} />
       </div>
     </SlideFade>
   );

@@ -21,7 +21,6 @@ const FeaturedCard: React.FC<IProps> = ({ app, show }) => {
       >
         <div className="relative flex flex-1 w-max lg:bg-gradient-to-r from-white via-white">
           <div className="flex absolute bottom-0 flex-row p-3">
-            <img src={app.image} width={80} height={80} className="rounded-lg mr-2" />
             <div className="self-end mb-1">
               <div className="font-bold text-xl">{app.name}</div>
               <div className="text-md">{app.short_desc}</div>

@@ -46,6 +46,12 @@ while [ -n "$1" ]; do # while loop starts
   shift
 done
 
+# Ensure BASH_SOURCE is ./scripts/start.sh
+if [[ "${BASH_SOURCE[0]}" != "./scripts/start.sh" ]]; then
+  echo "Please make sure this script is executed from runtipi/"
+  exit 1
+fi
+
 # Check we are on linux
 if [[ "$(uname)" != "Linux" ]]; then
   echo "Tipi only works on Linux"
@@ -61,6 +67,9 @@ INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print 
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
 TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' | sed 's/\//\\\//g' || Europe\/Berlin)"
+APPS_REPOSITORY="https://github.com/meienberger/runtipi-appstore"
+REPO_ID="$(${ROOT_FOLDER}/scripts/git.sh get_hash ${APPS_REPOSITORY})"
+APPS_REPOSITORY_ESCAPED="$(echo ${APPS_REPOSITORY} | sed 's/\//\\\//g')"
 
 if [[ "$ARCHITECTURE" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
@@ -99,14 +108,9 @@ function derive_entropy() {
   printf "%s" "${identifier}" | openssl dgst -sha256 -hmac "${tipi_seed}" | sed 's/^.* //'
 }
 
-# Copy the app state if it isn't here
+# Copy the config sample if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/apps-sample.json" "${STATE_FOLDER}/apps.json"
-fi
-
-# Copy the user state if it isn't here
-if [[ ! -f "${STATE_FOLDER}/users.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/users-sample.json" "${STATE_FOLDER}/users.json"
+  cp "${ROOT_FOLDER}/templates/config-sample.json" "${STATE_FOLDER}/config.json"
 fi
 
 # Get current dns from host
@@ -126,7 +130,6 @@ export COMPOSE_HTTP_TIMEOUT=240
 echo "Generating config files..."
 # Remove current .env file
 [[ -f "${ROOT_FOLDER}/.env" ]] && rm -f "${ROOT_FOLDER}/.env"
-[[ -f "${ROOT_FOLDER}/packages/system-api/.env" ]] && rm -f "${ROOT_FOLDER}/packages/system-api/.env"
 
 # Store paths to intermediary config files
 ENV_FILE=$(mktemp)
@@ -149,6 +152,8 @@ for template in ${ENV_FILE}; do
   sed -i "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
   sed -i "s/<proxy_port>/${PROXY_PORT}/g" "${template}"
   sed -i "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
+  sed -i "s/<apps_repo_id>/${REPO_ID}/g" "${template}"
+  sed -i "s/<apps_repo_url>/${APPS_REPOSITORY_ESCAPED}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
