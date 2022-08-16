@@ -29,6 +29,7 @@ Check our demo instance : **95.179.210.152** / username: **user@runtipi.com** / 
 - [Firefly III](https://github.com/firefly-iii/firefly-iii) - A personal finances manager 
 - [Freshrss](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
 - [Gitea](https://github.com/go-gitea/gitea) - Gitea - A painless self-hosted Git service
+- [Ghost](https://github.com/TryGhost/Ghost) - Ghost - Turn your audience into a business
 - [Homarr](https://github.com/ajnart/homarr) - A homepage for your server
 - [Home Assistant](https://github.com/home-assistant/core) - Open source home automation that puts local control and privacy first
 - [Invidious](https://github.com/iv-org/invidious) - An alternative front-end to YouTube
