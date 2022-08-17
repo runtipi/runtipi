@@ -6,9 +6,11 @@ import Update from '../../modules/system/update.entity';
 
 const recover = async () => {
   logger.info('Recovering broken database');
-  const apps = await App.find();
-  const users = await User.find();
-  const updated = await Update.find();
+
+  const queryRunner = datasource.createQueryRunner();
+  const apps = await queryRunner.query('SELECT * FROM app');
+  const users = await queryRunner.query('SELECT * FROM "user"');
+  const updates = await queryRunner.query('SELECT * FROM update');
 
   // drop database
   await datasource.dropDatabase();
@@ -27,7 +29,7 @@ const recover = async () => {
   }
 
   // create updates
-  for (const update of updated) {
+  for (const update of updates) {
     await Update.create(update).save();
   }
 
