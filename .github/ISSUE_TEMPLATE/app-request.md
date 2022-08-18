@@ -1,17 +1,13 @@
 ---
 name: App Request
 about: Suggest an app to be added
-title: "[REQUEST]"
+title: "[APP REQUEST]"
 labels: app request
 assignees: meienberger
 
 ---
 
-**Describe app**
-A clear and concise description of what the app consists of and how it would benefit the users of Tipi.
+## Read before submitting
+Apps are now hosted in a secondary repository. Please open your app request issues [there](https://github.com/meienberger/runtipi-appstore)
 
-**Links**
-Include links to all the available resources for the app. (eg: github repo, website, license)
-
-**Additional context**
-Add any other context or screenshots about the app request here.
+You can also easily contribute and propose a new app or update. Please check out our [Wiki](https://github.com/meienberger/runtipi/wiki/Adding-your-own-app) on how to do so
