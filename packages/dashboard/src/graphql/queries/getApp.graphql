@@ -22,6 +22,7 @@ query GetApp($appId: String!) {
       source
       categories
       url_suffix
+      https
       form_fields {
         type
         label

@@ -121,6 +121,9 @@ class AppInfo {
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   requirements?: Requirements;
+
+  @Field(() => Boolean, { nullable: true })
+  https?: boolean;
 }
 
 @ObjectType()
