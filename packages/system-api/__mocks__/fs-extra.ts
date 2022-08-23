@@ -36,7 +36,6 @@ const readFileSync = (p: string) => {
 };
 
 const existsSync = (p: string) => {
-  console.log(p);
   return mockFiles[p] !== undefined;
 };
 
