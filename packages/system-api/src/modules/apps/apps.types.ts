@@ -15,6 +15,7 @@ export enum AppCategoriesEnum {
   DATA = 'data',
   MUSIC = 'music',
   FINANCE = 'finance',
+  GAMING = 'gaming',
 }
 
 export enum FieldTypes {

@@ -65,7 +65,7 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
   if (app) {
     await startApp(id);
   } else {
-    ensureAppFolder(id);
+    ensureAppFolder(id, true);
     const appIsValid = await checkAppRequirements(id);
 
     if (!appIsValid) {
