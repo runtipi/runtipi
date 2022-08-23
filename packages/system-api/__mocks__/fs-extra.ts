@@ -1,6 +1,7 @@
 import path from 'path';
 const fs: {
   __createMockFiles: typeof createMockFiles;
+  __resetAllMocks: typeof resetAllMocks;
   readFileSync: typeof readFileSync;
   existsSync: typeof existsSync;
   writeFileSync: typeof writeFileSync;
@@ -35,6 +36,7 @@ const readFileSync = (p: string) => {
 };
 
 const existsSync = (p: string) => {
+  console.log(p);
   return mockFiles[p] !== undefined;
 };
 
@@ -92,6 +94,10 @@ const createFileSync = (p: string) => {
   mockFiles[p] = '';
 };
 
+const resetAllMocks = () => {
+  mockFiles = Object.create(null);
+};
+
 fs.readdirSync = readdirSync;
 fs.existsSync = existsSync;
 fs.readFileSync = readFileSync;
@@ -102,5 +108,6 @@ fs.copyFileSync = copyFileSync;
 fs.copySync = copySync;
 fs.createFileSync = createFileSync;
 fs.__createMockFiles = createMockFiles;
+fs.__resetAllMocks = resetAllMocks;
 
 module.exports = fs;
