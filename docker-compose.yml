@@ -3,7 +3,7 @@ version: "3.9"
 services:
   reverse-proxy:
     container_name: reverse-proxy
-    image: traefik:v2.6
+    image: traefik:v2.8
     restart: always
     ports:
       - ${NGINX_PORT-80}:80

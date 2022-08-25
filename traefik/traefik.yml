@@ -1,6 +1,6 @@
-api:
-  dashboard: true
-  insecure: true
+# api:
+#   dashboard: true
+#   insecure: true
 
 providers:
   docker:
@@ -14,7 +14,7 @@ providers:
   #   watch: true
 
 entryPoints:
-  webinsecure:
+  web:
     address: ":80"
     # TODO: Redirect when TLS is working
     # http:
@@ -22,8 +22,8 @@ entryPoints:
     #     entryPoint:
     #       to: websecure
     #       scheme: https
-  # websecure:
-  #   address: ":443"
+  websecure:
+    address: ":443"
 
 log:
   level: DEBUG
