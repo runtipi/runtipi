@@ -11,6 +11,7 @@ query ListApps {
       short_desc
       author
       categories
+      https
     }
     total
   }

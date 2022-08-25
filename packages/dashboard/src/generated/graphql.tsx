@@ -56,6 +56,7 @@ export type AppInfo = {
   categories: Array<AppCategoriesEnum>;
   description: Scalars['String'];
   form_fields: Array<FormField>;
+  https?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
   name: Scalars['String'];
   port: Scalars['Float'];
@@ -301,6 +302,7 @@ export type GetAppQuery = {
       source: string;
       categories: Array<AppCategoriesEnum>;
       url_suffix?: string | null;
+      https?: boolean | null;
       form_fields: Array<{
         __typename?: 'FormField';
         type: FieldTypesEnum;
@@ -326,7 +328,7 @@ export type InstalledAppsQuery = {
     config: any;
     version?: number | null;
     updateInfo?: { __typename?: 'UpdateInfo'; current: number; latest: number; dockerVersion?: string | null } | null;
-    info?: { __typename?: 'AppInfo'; id: string; name: string; description: string; tipi_version: number; short_desc: string } | null;
+    info?: { __typename?: 'AppInfo'; id: string; name: string; description: string; tipi_version: number; short_desc: string; https?: boolean | null } | null;
   }>;
 };
 
@@ -352,6 +354,7 @@ export type ListAppsQuery = {
       short_desc: string;
       author: string;
       categories: Array<AppCategoriesEnum>;
+      https?: boolean | null;
     }>;
   };
 };
@@ -711,6 +714,7 @@ export const GetAppDocument = gql`
         source
         categories
         url_suffix
+        https
         form_fields {
           type
           label
@@ -770,6 +774,7 @@ export const InstalledAppsDocument = gql`
         description
         tipi_version
         short_desc
+        https
       }
     }
   }
@@ -846,6 +851,7 @@ export const ListAppsDocument = gql`
         short_desc
         author
         categories
+        https
       }
       total
     }

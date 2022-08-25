@@ -130,7 +130,10 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
   };
 
   const handleOpen = () => {
-    window.open(`http://${internalIp}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
+    const { https } = info;
+    const protocol = https ? 'https' : 'http';
+
+    window.open(`${protocol}://${internalIp}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
   };
 
   const version = [info?.version || 'unknown', app?.version ? `(${app.version})` : ''].join(' ');
