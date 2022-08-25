@@ -109,6 +109,32 @@ describe('Install app', () => {
     expect(envMap.get('RANDOM_FIELD')).toBeDefined();
     expect(envMap.get('RANDOM_FIELD')).toHaveLength(32);
   });
+
+  it('Should correctly copy app from repos to apps folder', async () => {
+    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
+    const appFolder = fs.readdirSync(`${config.ROOT_FOLDER}/apps/${app1.id}`);
+
+    expect(appFolder).toBeDefined();
+    expect(appFolder.indexOf('docker-compose.yml')).toBeGreaterThanOrEqual(0);
+  });
+
+  it('Should cleanup any app folder existing before install', async () => {
+    const { MockFiles, appInfo } = await createApp({});
+    app1 = appInfo;
+    MockFiles[`/tipi/apps/${appInfo.id}/docker-compose.yml`] = 'test';
+    MockFiles[`/tipi/apps/${appInfo.id}/test.yml`] = 'test';
+    MockFiles[`/tipi/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
+
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/test.yml`)).toBe(true);
+
+    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
+
+    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/test.yml`)).toBe(false);
+    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/docker-compose.yml`)).toBe(true);
+  });
 });
 
 describe('Uninstall app', () => {

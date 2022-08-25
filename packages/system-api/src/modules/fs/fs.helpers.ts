@@ -42,9 +42,13 @@ export const getSeed = () => {
   return seed.toString();
 };
 
-export const ensureAppFolder = (appName: string) => {
+export const ensureAppFolder = (appName: string, cleanup = false) => {
+  if (cleanup) {
+    deleteFolder(`/apps/${appName}`);
+  }
+
   if (!fileExists(`/apps/${appName}/docker-compose.yml`)) {
-    fs.removeSync(getAbsolutePath(`/apps/${appName}`));
+    deleteFolder(`/apps/${appName}`);
     // Copy from apps repo
     fs.copySync(getAbsolutePath(`/repos/${config.APPS_REPO_ID}/apps/${appName}`), getAbsolutePath(`/apps/${appName}`));
   }

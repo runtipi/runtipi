@@ -54,6 +54,7 @@ const createApp = async (props: IProps) => {
   MockFiles[`${config.ROOT_FOLDER}/.env`] = 'TEST=test';
   MockFiles[`${config.ROOT_FOLDER}/repos/repo-id`] = '';
   MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+  MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
   MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   if (installed) {

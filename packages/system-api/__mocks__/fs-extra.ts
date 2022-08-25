@@ -1,6 +1,7 @@
 import path from 'path';
 const fs: {
   __createMockFiles: typeof createMockFiles;
+  __resetAllMocks: typeof resetAllMocks;
   readFileSync: typeof readFileSync;
   existsSync: typeof existsSync;
   writeFileSync: typeof writeFileSync;
@@ -9,6 +10,7 @@ const fs: {
   readdirSync: typeof readdirSync;
   copyFileSync: typeof copyFileSync;
   copySync: typeof copyFileSync;
+  createFileSync: typeof createFileSync;
 } = jest.genMockFromModule('fs-extra');
 
 let mockFiles = Object.create(null);
@@ -45,12 +47,14 @@ const mkdirSync = (p: string) => {
   mockFiles[p] = Object.create(null);
 };
 
-const rmSync = (p: string, options: { recursive: boolean }) => {
-  if (options.recursive) {
-    delete mockFiles[p];
-  } else {
-    delete mockFiles[p][Object.keys(mockFiles[p])[0]];
+const rmSync = (p: string) => {
+  if (mockFiles[p] instanceof Array) {
+    mockFiles[p].forEach((file: string) => {
+      delete mockFiles[path.join(p, file)];
+    });
   }
+
+  delete mockFiles[p];
 };
 
 const readdirSync = (p: string) => {
@@ -85,6 +89,14 @@ const copySync = (source: string, destination: string) => {
   }
 };
 
+const createFileSync = (p: string) => {
+  mockFiles[p] = '';
+};
+
+const resetAllMocks = () => {
+  mockFiles = Object.create(null);
+};
+
 fs.readdirSync = readdirSync;
 fs.existsSync = existsSync;
 fs.readFileSync = readFileSync;
@@ -93,6 +105,8 @@ fs.mkdirSync = mkdirSync;
 fs.rmSync = rmSync;
 fs.copyFileSync = copyFileSync;
 fs.copySync = copySync;
+fs.createFileSync = createFileSync;
 fs.__createMockFiles = createMockFiles;
+fs.__resetAllMocks = resetAllMocks;
 
 module.exports = fs;
