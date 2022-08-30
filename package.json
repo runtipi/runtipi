@@ -3,7 +3,6 @@
   "version": "0.5.0",
   "description": "A homeserver for everyone",
   "scripts": {
-    "test": "jest",
     "prepare": "husky install",
     "commit": "git-cz",
     "act:test-install": "act --container-architecture linux/amd64 -j test-install",
@@ -11,23 +10,16 @@
     "start:dev": "docker-compose -f docker-compose.dev.yml --env-file .env.dev up --build",
     "start:rc": "docker-compose -f docker-compose.rc.yml --env-file .env up --build",
     "start:prod": "docker-compose --env-file .env up --build",
-    "build:common": "cd packages/common && npm run build",
     "start:pg": "docker run --name test-db -p 5433:5432 -d --rm -e POSTGRES_PASSWORD=postgres postgres",
     "version": "echo $npm_package_version"
   },
   "devDependencies": {
-    "@types/jest": "^27.5.0",
-    "@types/js-yaml": "^4.0.5",
-    "@types/node": "17.0.31",
-    "husky": "^8.0.1",
-    "jest": "^28.1.0",
-    "js-yaml": "^4.1.0",
-    "ts-jest": "^28.0.2",
-    "typescript": "4.6.4",
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
     "@commitlint/cz-commitlint": "^17.0.3",
-    "commitizen": "^4.2.4"
+    "commitizen": "^4.2.4",
+    "husky": "^8.0.1",
+    "inquirer": "8.2.4"
   },
   "repository": {
     "type": "git",
@@ -39,7 +31,6 @@
     "url": "https://github.com/meienberger/runtipi/issues"
   },
   "homepage": "https://github.com/meienberger/runtipi#readme",
-  "dependencies": {},
   "config": {
     "commitizen": {
       "path": "@commitlint/cz-commitlint"
