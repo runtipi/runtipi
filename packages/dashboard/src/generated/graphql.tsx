@@ -23,6 +23,8 @@ export type App = {
   __typename?: 'App';
   config: Scalars['JSONObject'];
   createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  exposed: Scalars['Boolean'];
   id: Scalars['String'];
   info?: Maybe<AppInfo>;
   lastOpened: Scalars['DateTime'];
@@ -55,6 +57,7 @@ export type AppInfo = {
   available: Scalars['Boolean'];
   categories: Array<AppCategoriesEnum>;
   description: Scalars['String'];
+  exposable?: Maybe<Scalars['Boolean']>;
   form_fields: Array<FormField>;
   https?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
@@ -69,6 +72,8 @@ export type AppInfo = {
 };
 
 export type AppInputType = {
+  domain?: InputMaybe<Scalars['String']>;
+  exposed?: InputMaybe<Scalars['Boolean']>;
   form: Scalars['JSONObject'];
   id: Scalars['String'];
 };
@@ -317,7 +322,42 @@ export type GetAppQuery = {
   };
 };
 
-export type InstalledAppsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetAppQuery = {
+  __typename?: 'Query';
+  getApp: {
+    __typename?: 'App';
+    id: string;
+    status: AppStatusEnum;
+    config: any;
+    version?: number | null;
+    updateInfo?: { __typename?: 'UpdateInfo'; current: number; latest: number; dockerVersion?: string | null } | null;
+    info?: {
+      __typename?: 'AppInfo';
+      id: string;
+      port: number;
+      name: string;
+      description: string;
+      available: boolean;
+      version?: string | null;
+      tipi_version: number;
+      short_desc: string;
+      author: string;
+      source: string;
+      categories: Array<AppCategoriesEnum>;
+      url_suffix?: string | null;
+      form_fields: Array<{
+        __typename?: 'FormField';
+        type: FieldTypesEnum;
+        label: string;
+        max?: number | null;
+        min?: number | null;
+        hint?: string | null;
+        required?: boolean | null;
+        env_variable: string;
+      }>;
+    } | null;
+  };
+};
 
 export type InstalledAppsQuery = {
   __typename?: 'Query';
@@ -358,12 +398,6 @@ export type ListAppsQuery = {
     }>;
   };
 };
-
-export type MeQueryVariables = Exact<{ [key: string]: never }>;
-
-export type MeQuery = { __typename?: 'Query'; me?: { __typename?: 'User'; id: string } | null };
-
-export type SystemInfoQueryVariables = Exact<{ [key: string]: never }>;
 
 export type SystemInfoQuery = {
   __typename?: 'Query';

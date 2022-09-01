@@ -127,7 +127,7 @@ class AppInfo {
   https?: boolean;
 
   @Field(() => Boolean, { nullable: true })
-  exposeable?: boolean;
+  exposable?: boolean;
 }
 
 @ObjectType()

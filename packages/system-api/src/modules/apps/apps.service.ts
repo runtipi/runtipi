@@ -81,8 +81,8 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
 
     const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
 
-    if (!appInfo?.exposeable && exposed) {
-      throw new Error(`App ${id} is not exposeable`);
+    if (!appInfo?.exposable && exposed) {
+      throw new Error(`App ${id} is not exposable`);
     }
 
     app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form, version: Number(appInfo?.tipi_version || 0), exposed: exposed || false, domain }).save();
