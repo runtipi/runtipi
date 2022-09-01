@@ -166,7 +166,7 @@ describe('InstallApp', () => {
     const { data } = await gcall<{ installApp: TApp }>({
       source: installAppMutation,
       userId: user.id,
-      variableValues: { input: { id: app1.id, form: { TEST_FIELD: 'hello' } } },
+      variableValues: { input: { id: app1.id, form: { TEST_FIELD: 'hello' }, exposed: false, domain: '' } },
     });
 
     expect(data?.installApp.info.id).toBe(app1.id);
@@ -179,7 +179,7 @@ describe('InstallApp', () => {
     const { data, errors } = await gcall<{ installApp: TApp }>({
       source: installAppMutation,
       userId: user.id,
-      variableValues: { input: { id: 'not-existing', form: { TEST_FIELD: 'hello' } } },
+      variableValues: { input: { id: 'not-existing', form: { TEST_FIELD: 'hello' }, exposed: false, domain: '' } },
     });
 
     expect(errors?.[0].message).toBe('App not-existing not found');
@@ -189,7 +189,7 @@ describe('InstallApp', () => {
   it("Should throw an error if user doesn't exist", async () => {
     const { data, errors } = await gcall<{ installApp: TApp }>({
       source: installAppMutation,
-      variableValues: { input: { id: app1.id, form: { TEST_FIELD: 'hello' } } },
+      variableValues: { input: { id: app1.id, form: { TEST_FIELD: 'hello' }, exposed: false, domain: '' } },
     });
 
     expect(errors?.[0].message).toBe('Access denied! You need to be authorized to perform this action!');
@@ -199,7 +199,7 @@ describe('InstallApp', () => {
   it('Should throw an error if no userId is provided', async () => {
     const { data, errors } = await gcall<{ installApp: TApp }>({
       source: installAppMutation,
-      variableValues: { input: { id: app1.id, form: { TEST_FIELD: 'hello' } } },
+      variableValues: { input: { id: app1.id, form: { TEST_FIELD: 'hello' }, exposed: false, domain: '' } },
     });
 
     expect(errors?.[0].message).toBe('Access denied! You need to be authorized to perform this action!');
@@ -212,7 +212,7 @@ describe('InstallApp', () => {
     const { data, errors } = await gcall<{ installApp: TApp }>({
       source: installAppMutation,
       userId: user.id,
-      variableValues: { input: { id: app1.id, form: {} } },
+      variableValues: { input: { id: app1.id, form: {}, exposed: false, domain: '' } },
     });
 
     expect(errors?.[0].message).toBe(`Variable ${app1.form_fields?.[0].env_variable} is required`);
@@ -229,7 +229,7 @@ describe('InstallApp', () => {
     const { data, errors } = await gcall<{ installApp: TApp }>({
       source: installAppMutation,
       userId: user.id,
-      variableValues: { input: { id: appInfo.id, form: { TEST_FIELD: 'hello' } } },
+      variableValues: { input: { id: appInfo.id, form: { TEST_FIELD: 'hello' }, exposed: false, domain: '' } },
     });
 
     expect(errors?.[0].message).toBe(`App ${appInfo.id} requirements not met`);
@@ -429,7 +429,7 @@ describe('UpdateAppConfig', () => {
     const { data } = await gcall<{ updateAppConfig: TApp }>({
       source: updateAppConfigMutation,
       userId: user.id,
-      variableValues: { input: { id: app1.id, form: { TEST_FIELD: word } } },
+      variableValues: { input: { id: app1.id, form: { TEST_FIELD: word }, exposed: false, domain: '' } },
     });
 
     expect(data?.updateAppConfig.info.id).toBe(app1.id);
@@ -442,7 +442,7 @@ describe('UpdateAppConfig', () => {
     const { data, errors } = await gcall<{ updateAppConfig: TApp }>({
       source: updateAppConfigMutation,
       userId: user.id,
-      variableValues: { input: { id: 'not-existing', form: { TEST_FIELD: faker.random.word() } } },
+      variableValues: { input: { id: 'not-existing', form: { TEST_FIELD: faker.random.word() }, exposed: false, domain: '' } },
     });
 
     expect(errors?.[0].message).toBe('App not-existing not found');
@@ -453,7 +453,7 @@ describe('UpdateAppConfig', () => {
     const { data, errors } = await gcall<{ updateAppConfig: TApp }>({
       source: updateAppConfigMutation,
       userId: 0,
-      variableValues: { input: { id: app1.id, form: { TEST_FIELD: faker.random.word() } } },
+      variableValues: { input: { id: app1.id, form: { TEST_FIELD: faker.random.word() }, exposed: false, domain: '' } },
     });
 
     expect(errors?.[0].message).toBe('Access denied! You need to be authorized to perform this action!');
@@ -463,7 +463,7 @@ describe('UpdateAppConfig', () => {
   it('Should throw an error if no userId is provided', async () => {
     const { data, errors } = await gcall<{ updateAppConfig: TApp }>({
       source: updateAppConfigMutation,
-      variableValues: { input: { id: app1.id, form: { TEST_FIELD: faker.random.word() } } },
+      variableValues: { input: { id: app1.id, form: { TEST_FIELD: faker.random.word() }, exposed: false, domain: '' } },
     });
 
     expect(errors?.[0].message).toBe('Access denied! You need to be authorized to perform this action!');
