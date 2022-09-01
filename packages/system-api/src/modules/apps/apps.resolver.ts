@@ -24,9 +24,9 @@ export default class AppsResolver {
   @Authorized()
   @Mutation(() => App)
   async installApp(@Arg('input', () => AppInputType) input: AppInputType): Promise<App> {
-    const { id, form } = input;
+    const { id, form, exposed, domain } = input;
 
-    return AppsService.installApp(id, form);
+    return AppsService.installApp(id, form, exposed, domain);
   }
 
   @Authorized()

@@ -15,7 +15,7 @@ const startAllApps = async (): Promise<void> => {
       // Regenerate env file
       try {
         ensureAppFolder(app.id);
-        generateEnvFile(app.id, app.config);
+        generateEnvFile(app);
         checkEnvFile(app.id);
 
         await App.update({ id: app.id }, { status: AppStatusEnum.STARTING });
@@ -40,7 +40,7 @@ const startApp = async (appName: string): Promise<App> => {
   ensureAppFolder(appName);
 
   // Regenerate env file
-  generateEnvFile(appName, app.config);
+  generateEnvFile(app);
 
   checkEnvFile(appName);
 
@@ -59,12 +59,16 @@ const startApp = async (appName: string): Promise<App> => {
   return app;
 };
 
-const installApp = async (id: string, form: Record<string, string>): Promise<App> => {
+const installApp = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
   if (app) {
     await startApp(id);
   } else {
+    if (exposed && !domain) {
+      throw new Error('Domain is required if app is exposed');
+    }
+
     ensureAppFolder(id, true);
     const appIsValid = await checkAppRequirements(id);
 
@@ -75,11 +79,16 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
     // Create app folder
     createFolder(`/app-data/${id}`);
 
-    // Create env file
-    generateEnvFile(id, form);
-
     const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
-    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form, version: Number(appInfo?.tipi_version || 0) }).save();
+
+    if (!appInfo?.exposeable && exposed) {
+      throw new Error(`App ${id} is not exposeable`);
+    }
+
+    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form, version: Number(appInfo?.tipi_version || 0), exposed: exposed || false, domain }).save();
+
+    // Create env file
+    generateEnvFile(app);
 
     // Run script
     try {
@@ -116,16 +125,34 @@ const listApps = async (): Promise<ListAppsResonse> => {
   return { apps: apps.sort(sortApps), total: apps.length };
 };
 
-const updateAppConfig = async (id: string, form: Record<string, string>): Promise<App> => {
+const updateAppConfig = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string): Promise<App> => {
+  if (exposed && !domain) {
+    throw new Error('Domain is required if app is exposed');
+  }
+
   let app = await App.findOne({ where: { id } });
 
   if (!app) {
     throw new Error(`App ${id} not found`);
   }
 
-  generateEnvFile(id, form);
-  await App.update({ id }, { config: form });
+  await App.update({ id }, { config: form, exposed: exposed || false, domain });
   app = (await App.findOne({ where: { id } })) as App;
+
+  generateEnvFile(app);
+  app = (await App.findOne({ where: { id } })) as App;
+
+  // Restart app
+  try {
+    await App.update({ id }, { status: AppStatusEnum.STOPPING });
+    await runAppScript(['stop', id]);
+    await App.update({ id }, { status: AppStatusEnum.STARTING });
+    await runAppScript(['start', id]);
+    await App.update({ id }, { status: AppStatusEnum.RUNNING });
+  } catch (e) {
+    await App.update({ id }, { status: AppStatusEnum.STOPPED });
+    throw e;
+  }
 
   return app;
 };

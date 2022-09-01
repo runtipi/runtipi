@@ -57,8 +57,9 @@ const createApp = async (props: IProps) => {
   MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
   MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
+  let appEntity = new App();
   if (installed) {
-    await App.create({
+    appEntity = await App.create({
       id: appInfo.id,
       config: { TEST_FIELD: 'test' },
       status,
@@ -70,7 +71,7 @@ const createApp = async (props: IProps) => {
     MockFiles[`${config.ROOT_FOLDER}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
   }
 
-  return { appInfo, MockFiles };
+  return { appInfo, MockFiles, appEntity };
 };
 
 export { createApp };

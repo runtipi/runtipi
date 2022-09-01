@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import { DataSource } from 'typeorm';
 import config from '../../../config';
 import { setupConnection, teardownConnection } from '../../../test/connection';
+import App from '../app.entity';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo, runAppScript } from '../apps.helpers';
 import { AppInfo } from '../apps.types';
 import { createApp } from './apps.factory';
@@ -127,16 +128,19 @@ describe('runAppScript', () => {
 
 describe('generateEnvFile', () => {
   let app1: AppInfo;
+  let appEntity1: App;
   beforeEach(async () => {
     const app1create = await createApp({ installed: true });
     app1 = app1create.appInfo;
+    appEntity1 = app1create.appEntity;
     // @ts-ignore
     fs.__createMockFiles(app1create.MockFiles);
   });
 
   it('Should generate an env file', async () => {
     const fakevalue = faker.random.alphaNumeric(10);
-    generateEnvFile(app1.id, { TEST_FIELD: fakevalue });
+
+    generateEnvFile(Object.assign(appEntity1, { config: { TEST_FIELD: fakevalue } }));
 
     const envmap = await getEnvMap(app1.id);
 
@@ -144,11 +148,11 @@ describe('generateEnvFile', () => {
   });
 
   it('Should automatically generate value for random field', async () => {
-    const { appInfo, MockFiles } = await createApp({ installed: true, randomField: true });
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, randomField: true });
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    generateEnvFile(appInfo.id, { TEST_FIELD: 'test' });
+    generateEnvFile(appEntity);
 
     const envmap = await getEnvMap(appInfo.id);
 
@@ -157,7 +161,7 @@ describe('generateEnvFile', () => {
   });
 
   it('Should not re-generate random field if it already exists', async () => {
-    const { appInfo, MockFiles } = await createApp({ installed: true, randomField: true });
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, randomField: true });
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
@@ -165,7 +169,7 @@ describe('generateEnvFile', () => {
 
     fs.writeFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`, `RANDOM_FIELD=${randomField}`);
 
-    generateEnvFile(appInfo.id, { TEST_FIELD: 'test' });
+    generateEnvFile(appEntity);
 
     const envmap = await getEnvMap(appInfo.id);
 
@@ -174,7 +178,7 @@ describe('generateEnvFile', () => {
 
   it('Should throw an error if required field is not provided', async () => {
     try {
-      generateEnvFile(app1.id, {});
+      generateEnvFile(Object.assign(appEntity1, { config: { TEST_FIELD: undefined } }));
       expect(true).toBe(false);
     } catch (e: any) {
       expect(e).toBeDefined();
@@ -184,7 +188,7 @@ describe('generateEnvFile', () => {
 
   it('Should throw an error if app does not exist', async () => {
     try {
-      generateEnvFile('not-existing-app', { TEST_FIELD: 'test' });
+      generateEnvFile(Object.assign(appEntity1, { id: 'not-existing-app' }));
       expect(true).toBe(false);
     } catch (e: any) {
       expect(e).toBeDefined();
@@ -220,7 +224,7 @@ describe('getAppInfo', () => {
   it('Should return app info', async () => {
     const appInfo = await getAppInfo(app1.id);
 
-    expect(appInfo.id).toBe(app1.id);
+    expect(appInfo?.id).toBe(app1.id);
   });
 
   it('Should take config.json locally if app is installed', async () => {
@@ -232,7 +236,7 @@ describe('getAppInfo', () => {
 
     const app = await getAppInfo(appInfo.id);
 
-    expect(app.id).toEqual(appInfo.id);
+    expect(app?.id).toEqual(appInfo.id);
   });
 
   it('Should throw an error if app does not exist', async () => {
