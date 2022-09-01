@@ -4,6 +4,8 @@ query GetApp($appId: String!) {
     status
     config
     version
+    exposed
+    domain
     updateInfo {
       current
       latest
@@ -23,6 +25,7 @@ query GetApp($appId: String!) {
       categories
       url_suffix
       https
+      exposable
       form_fields {
         type
         label

@@ -72,8 +72,8 @@ export type AppInfo = {
 };
 
 export type AppInputType = {
-  domain?: InputMaybe<Scalars['String']>;
-  exposed?: InputMaybe<Scalars['Boolean']>;
+  domain: Scalars['String'];
+  exposed: Scalars['Boolean'];
   form: Scalars['JSONObject'];
   id: Scalars['String'];
 };

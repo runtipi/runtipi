@@ -41,7 +41,7 @@ const ActionButton: React.FC<BtnProps> = (props) => {
 };
 
 const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate, onCancel, updateAvailable, onUpdateSettings }) => {
-  const hasSettings = Object.keys(app.form_fields).length > 0;
+  const hasSettings = Object.keys(app.form_fields).length > 0 || app.exposable;
 
   const buttons: JSX.Element[] = [];
 

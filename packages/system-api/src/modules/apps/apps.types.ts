@@ -147,11 +147,11 @@ class AppInputType {
   @Field(() => GraphQLJSONObject)
   form!: Record<string, string>;
 
-  @Field(() => Boolean, { nullable: true })
-  exposed?: boolean;
+  @Field(() => Boolean)
+  exposed!: boolean;
 
-  @Field(() => String, { nullable: true })
-  domain?: string;
+  @Field(() => String)
+  domain!: string;
 }
 
 export { ListAppsResonse, AppInfo, AppInputType };

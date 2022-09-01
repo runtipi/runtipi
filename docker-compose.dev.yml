@@ -20,7 +20,6 @@ services:
   tipi-db:
     container_name: tipi-db
     image: postgres:latest
-    user: 1000:1000
     restart: on-failure
     stop_grace_period: 1m
     volumes:

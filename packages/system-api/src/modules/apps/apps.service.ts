@@ -142,18 +142,6 @@ const updateAppConfig = async (id: string, form: Record<string, string>, exposed
   generateEnvFile(app);
   app = (await App.findOne({ where: { id } })) as App;
 
-  // Restart app
-  try {
-    await App.update({ id }, { status: AppStatusEnum.STOPPING });
-    await runAppScript(['stop', id]);
-    await App.update({ id }, { status: AppStatusEnum.STARTING });
-    await runAppScript(['start', id]);
-    await App.update({ id }, { status: AppStatusEnum.RUNNING });
-  } catch (e) {
-    await App.update({ id }, { status: AppStatusEnum.STOPPED });
-    throw e;
-  }
-
   return app;
 };
 
@@ -212,7 +200,7 @@ const getApp = async (id: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
   if (!app) {
-    app = { id, status: AppStatusEnum.MISSING, config: {} } as App;
+    app = { id, status: AppStatusEnum.MISSING, config: {}, exposed: false, domain: '' } as App;
   }
 
   return app;

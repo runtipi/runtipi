@@ -50,9 +50,9 @@ export default class AppsResolver {
   @Authorized()
   @Mutation(() => App)
   async updateAppConfig(@Arg('input', () => AppInputType) input: AppInputType): Promise<App> {
-    const { id, form } = input;
+    const { id, form, exposed, domain } = input;
 
-    return AppsService.updateAppConfig(id, form);
+    return AppsService.updateAppConfig(id, form, exposed, domain);
   }
 
   @Authorized()

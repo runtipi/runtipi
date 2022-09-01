@@ -56,7 +56,7 @@ class App extends BaseEntity {
   updatedAt!: Date;
 
   @Field(() => Boolean)
-  @Column({ type: 'boolean', default: false, nullable: false })
+  @Column({ type: 'boolean', default: false })
   exposed!: boolean;
 
   @Field(() => String)

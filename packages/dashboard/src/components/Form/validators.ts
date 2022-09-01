@@ -1,12 +1,13 @@
 import validator from 'validator';
 import { FieldTypesEnum, FormField } from '../../generated/graphql';
+import { IFormValues } from '../../modules/Apps/components/InstallForm';
 
-const validateField = (field: FormField, value: string): string | undefined => {
+const validateField = (field: FormField, value: string | undefined | boolean): string | undefined => {
   if (field.required && !value) {
     return `${field.label} is required`;
   }
 
-  if (!value) {
+  if (!value || typeof value !== 'string') {
     return;
   }
 
@@ -59,12 +60,24 @@ const validateField = (field: FormField, value: string): string | undefined => {
   }
 };
 
-export const validateAppConfig = (values: Record<string, string>, fields: FormField[]) => {
+const validateDomain = (domain?: string): string | undefined => {
+  if (!validator.isFQDN(domain || '')) {
+    return `${domain} must be a valid domain`;
+  }
+};
+
+export const validateAppConfig = (values: IFormValues, fields: FormField[]) => {
+  const { exposed, domain, ...config } = values;
+
   const errors: any = {};
 
   fields.forEach((field) => {
-    errors[field.env_variable] = validateField(field, values[field.env_variable]);
+    errors[field.env_variable] = validateField(field, config[field.env_variable]);
   });
+
+  if (exposed) {
+    errors.domain = validateDomain(domain);
+  }
 
   return errors;
 };
