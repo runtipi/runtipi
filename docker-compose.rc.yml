@@ -12,6 +12,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}/traefik:/root/.config
+      - ${PWD}/traefik/shared:/shared
     networks:
       - tipi_main_network
 

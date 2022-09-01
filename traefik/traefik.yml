@@ -8,23 +8,19 @@ providers:
     watch: true
     exposedByDefault: false
 
-  # TODO: Add TLS support
-  # file:
-  #   filename: /root/.config/dynamic.yml
-  #   watch: true
-
 entryPoints:
   web:
     address: ":80"
-    # TODO: Redirect when TLS is working
-    # http:
-    #   redirections:
-    #     entryPoint:
-    #       to: websecure
-    #       scheme: https
   websecure:
     address: ":443"
 
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: acme@thisprops.com 
+      storage: /shared/acme.json
+      httpChallenge:
+        entryPoint: web
 
 log:
   level: DEBUG
