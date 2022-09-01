@@ -33,7 +33,12 @@ let corsOptions = __prod__
         return callback(new Error(message), false);
       },
     }
-  : {};
+  : {
+      credential: true,
+      origin: function (origin: any, callback: any) {
+        return callback(null, true);
+      },
+    };
 
 const main = async () => {
   try {

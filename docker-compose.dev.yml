@@ -1,20 +1,6 @@
 version: "3.7"
 
 services:
-  reverse-proxy:
-    container_name: reverse-proxy
-    image: traefik:v2.8
-    restart: always
-    ports:
-      - ${NGINX_PORT-80}:80
-      - ${PROXY_PORT-8080}:8080
-    command: --api.insecure=true --providers.docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}/traefik:/root/.config
-    networks:
-      - tipi_main_network
-
   tipi-db:
     container_name: tipi-db
     image: postgres:latest
@@ -67,12 +53,6 @@ services:
       APPS_REPO_URL: ${APPS_REPO_URL}
     networks:
       - tipi_main_network
-    # labels:
-    #   traefik.enable: true
-    #   traefik.http.routers.api.rule: PathPrefix("/api") # Host(`tipi.local`) &&
-    #   traefik.http.routers.api.entrypoints: webinsecure
-    #   traefik.http.routers.api.service: api
-    #   traefik.http.services.api.loadbalancer.server.port: 3001
 
   dashboard:
     build:
@@ -90,12 +70,6 @@ services:
       - ${PWD}/packages/dashboard/src:/dashboard/src
       # - /dashboard/node_modules
       # - /dashboard/.next
-    labels:
-      traefik.enable: true
-      traefik.http.routers.dashboard.rule: PathPrefix("/") # Host(`tipi.local`) &&
-      traefik.http.routers.dashboard.entrypoints: web
-      traefik.http.routers.dashboard.service: dashboard
-      traefik.http.services.dashboard.loadbalancer.server.port: 3000
 
 networks:
   tipi_main_network:

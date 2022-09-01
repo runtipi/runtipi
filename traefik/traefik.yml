@@ -1,6 +1,6 @@
-# api:
-#   dashboard: true
-#   insecure: true
+api:
+  dashboard: true
+  insecure: true
 
 providers:
   docker:
@@ -24,6 +24,7 @@ entryPoints:
     #       scheme: https
   websecure:
     address: ":443"
+
 
 log:
   level: DEBUG
