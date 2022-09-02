@@ -59,6 +59,8 @@ Check our demo instance : **95.179.210.152** / username: **user@runtipi.com** / 
 - [Wireguard Easy](https://github.com/WeeJeWel/wg-easy) - WireGuard VPN + Web-based Admin UI
 - [Vaultwarden](https://github.com/dani-garcia/vaultwarden) - Unofficial Bitwarden compatible server
 
+You can find and submit new apps inside of the [RunTipi Appstore](https://github.com/meienberger/runtipi-appstore).
+
 ## 🛠 Installation
 
 ### Installation Requirements
