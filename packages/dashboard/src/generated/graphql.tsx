@@ -42,6 +42,7 @@ export enum AppCategoriesEnum {
   Development = 'DEVELOPMENT',
   Featured = 'FEATURED',
   Finance = 'FINANCE',
+  Gaming = 'GAMING',
   Media = 'MEDIA',
   Music = 'MUSIC',
   Network = 'NETWORK',
@@ -292,6 +293,8 @@ export type GetAppQuery = {
     status: AppStatusEnum;
     config: any;
     version?: number | null;
+    exposed: boolean;
+    domain: string;
     updateInfo?: { __typename?: 'UpdateInfo'; current: number; latest: number; dockerVersion?: string | null } | null;
     info?: {
       __typename?: 'AppInfo';
@@ -308,6 +311,7 @@ export type GetAppQuery = {
       categories: Array<AppCategoriesEnum>;
       url_suffix?: string | null;
       https?: boolean | null;
+      exposable?: boolean | null;
       form_fields: Array<{
         __typename?: 'FormField';
         type: FieldTypesEnum;
@@ -322,42 +326,7 @@ export type GetAppQuery = {
   };
 };
 
-export type GetAppQuery = {
-  __typename?: 'Query';
-  getApp: {
-    __typename?: 'App';
-    id: string;
-    status: AppStatusEnum;
-    config: any;
-    version?: number | null;
-    updateInfo?: { __typename?: 'UpdateInfo'; current: number; latest: number; dockerVersion?: string | null } | null;
-    info?: {
-      __typename?: 'AppInfo';
-      id: string;
-      port: number;
-      name: string;
-      description: string;
-      available: boolean;
-      version?: string | null;
-      tipi_version: number;
-      short_desc: string;
-      author: string;
-      source: string;
-      categories: Array<AppCategoriesEnum>;
-      url_suffix?: string | null;
-      form_fields: Array<{
-        __typename?: 'FormField';
-        type: FieldTypesEnum;
-        label: string;
-        max?: number | null;
-        min?: number | null;
-        hint?: string | null;
-        required?: boolean | null;
-        env_variable: string;
-      }>;
-    } | null;
-  };
-};
+export type InstalledAppsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type InstalledAppsQuery = {
   __typename?: 'Query';
@@ -398,6 +367,12 @@ export type ListAppsQuery = {
     }>;
   };
 };
+
+export type MeQueryVariables = Exact<{ [key: string]: never }>;
+
+export type MeQuery = { __typename?: 'Query'; me?: { __typename?: 'User'; id: string } | null };
+
+export type SystemInfoQueryVariables = Exact<{ [key: string]: never }>;
 
 export type SystemInfoQuery = {
   __typename?: 'Query';
@@ -730,6 +705,8 @@ export const GetAppDocument = gql`
       status
       config
       version
+      exposed
+      domain
       updateInfo {
         current
         latest
@@ -749,6 +726,7 @@ export const GetAppDocument = gql`
         categories
         url_suffix
         https
+        exposable
         form_fields {
           type
           label
