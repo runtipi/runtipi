@@ -16,7 +16,7 @@ const fetcher: BareFetcher<any> = (url: string) => {
 };
 
 export default function useCachedResources(): IReturnProps {
-  const { data } = useSWR('api/ip', fetcher);
+  const { data } = useSWR<{ ip: string; domain: string }>('api/ip', fetcher);
   const { baseUrl, setBaseUrl, setInternalIp, setDomain } = useSytemStore();
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
