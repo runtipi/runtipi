@@ -13,3 +13,4 @@ ROOT_FOLDER_HOST=<root_folder>
 NGINX_PORT=<nginx_port>
 PROXY_PORT=<proxy_port>
 POSTGRES_PASSWORD=<postgres_password>
+DOMAIN=<domain>

@@ -23,4 +23,4 @@ certificatesResolvers:
         entryPoint: web
 
 log:
-  level: DEBUG
+  level: ERROR

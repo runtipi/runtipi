@@ -1,9 +1,10 @@
 import { HttpLink } from '@apollo/client';
 
-const httpLink = (ip: string) =>
-  new HttpLink({
-    uri: `http://${ip}:3001/graphql`,
+const httpLink = (url: string) => {
+  return new HttpLink({
+    uri: `${url}/graphql`,
     credentials: 'include',
   });
+};
 
 export default httpLink;

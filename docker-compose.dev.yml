@@ -14,6 +14,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}/traefik:/root/.config
       - ${PWD}/traefik/shared:/shared
+      - ${PWD}/traefik/letsencrypt:/letsencrypt
     networks:
       - tipi_main_network
 
@@ -67,8 +68,26 @@ services:
       POSTGRES_HOST: tipi-db
       APPS_REPO_ID: ${APPS_REPO_ID}
       APPS_REPO_URL: ${APPS_REPO_URL}
+      DOMAIN: ${DOMAIN}
     networks:
       - tipi_main_network
+    labels:
+      traefik.enable: true
+      # Web
+      traefik.http.routers.api.rule: PathPrefix(`/api`)
+      traefik.http.routers.api.service: api
+      traefik.http.routers.api.entrypoints: web
+      traefik.http.routers.api.middlewares: api-stripprefix
+      traefik.http.services.api.loadbalancer.server.port: 3001
+      # Websecure
+      traefik.http.routers.api-secure.rule: (Host(`${DOMAIN}`) && PathPrefix(`/api`))
+      traefik.http.routers.api-secure.entrypoints: websecure
+      traefik.http.routers.api-secure.service: api-secure
+      traefik.http.routers.api-secure.tls.certresolver: myresolver
+      traefik.http.routers.api-secure.middlewares: api-stripprefix
+      traefik.http.services.api-secure.loadbalancer.server.port: 3001
+      # Middlewares
+      traefik.http.middlewares.api-stripprefix.stripprefix.prefixes: /api
 
   dashboard:
     build:
@@ -82,10 +101,40 @@ services:
       - tipi_main_network
     environment:
       - INTERNAL_IP=${INTERNAL_IP}
+      - DOMAIN=${DOMAIN}
     volumes:
       - ${PWD}/packages/dashboard/src:/dashboard/src
       # - /dashboard/node_modules
       # - /dashboard/.next
+    labels:
+      traefik.enable: true
+      traefik.http.routers.dashboard-redirect.rule: PathPrefix("/")
+      traefik.http.routers.dashboard-redirect.entrypoints: web
+      traefik.http.routers.dashboard-redirect.middlewares: redirect-middleware
+      traefik.http.routers.dashboard-redirect.service: dashboard
+      traefik.http.services.dashboard-redirect.loadbalancer.server.port: 3000
+
+      traefik.http.routers.dashboard-redirect-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/`)
+      traefik.http.routers.dashboard-redirect-secure.entrypoints: websecure
+      traefik.http.routers.dashboard-redirect-secure.middlewares: redirect-middleware
+      traefik.http.routers.dashboard-redirect-secure.service: dashboard
+      traefik.http.routers.dashboard-redirect-secure.tls.certresolver: myresolver
+      traefik.http.services.dashboard-redirect-secure.loadbalancer.server.port: 3000
+
+      # Web
+      traefik.http.routers.dashboard.rule: PathPrefix("/dashboard")
+      traefik.http.routers.dashboard.service: dashboard
+      traefik.http.routers.dashboard.entrypoints: web
+      traefik.http.services.dashboard.loadbalancer.server.port: 3000
+      # Websecure
+      traefik.http.routers.dashboard-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/dashboard`)
+      traefik.http.routers.dashboard-secure.service: dashboard-secure
+      traefik.http.routers.dashboard-secure.entrypoints: websecure
+      traefik.http.routers.dashboard-secure.tls.certresolver: myresolver
+      traefik.http.services.dashboard-secure.loadbalancer.server.port: 3000
+      # Middlewares
+      traefik.http.middlewares.redirect-middleware.redirectregex.regex: .*
+      traefik.http.middlewares.redirect-middleware.redirectregex.replacement: /dashboard
 
 networks:
   tipi_main_network:

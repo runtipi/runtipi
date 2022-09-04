@@ -1,11 +1,19 @@
 import create from 'zustand';
 
 type Store = {
+  baseUrl: string;
   internalIp: string;
-  setInternalIp: (internalIp: string) => void;
+  domain: string;
+  setDomain: (domain: string) => void;
+  setBaseUrl: (url: string) => void;
+  setInternalIp: (ip: string) => void;
 };
 
 export const useSytemStore = create<Store>((set) => ({
+  baseUrl: '',
   internalIp: '',
-  setInternalIp: (internalIp: string) => set((state) => ({ ...state, internalIp })),
+  domain: '',
+  setDomain: (domain: string) => set((state) => ({ ...state, domain })),
+  setBaseUrl: (url: string) => set((state) => ({ ...state, baseUrl: url })),
+  setInternalIp: (ip: string) => set((state) => ({ ...state, internalIp: ip })),
 }));

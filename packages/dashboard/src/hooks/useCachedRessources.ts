@@ -4,6 +4,7 @@ import axios from 'axios';
 import useSWR, { BareFetcher } from 'swr';
 import { createApolloClient } from '../core/apollo/client';
 import { useSytemStore } from '../state/systemStore';
+import { getUrl } from '../core/helpers/url-helpers';
 
 interface IReturnProps {
   client?: ApolloClient<unknown>;
@@ -11,18 +12,18 @@ interface IReturnProps {
 }
 
 const fetcher: BareFetcher<any> = (url: string) => {
-  return axios.get(url).then((res) => res.data);
+  return axios.get(getUrl(url)).then((res) => res.data);
 };
 
 export default function useCachedResources(): IReturnProps {
-  const { data } = useSWR('/api/ip', fetcher);
-  const { internalIp, setInternalIp } = useSytemStore();
+  const { data } = useSWR('api/ip', fetcher);
+  const { baseUrl, setBaseUrl, setInternalIp, setDomain } = useSytemStore();
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
 
-  async function loadResourcesAndDataAsync(ip: string) {
+  async function loadResourcesAndDataAsync(url: string) {
     try {
-      const restoredClient = await createApolloClient(ip);
+      const restoredClient = await createApolloClient(url);
 
       setClient(restoredClient);
     } catch (error) {
@@ -34,16 +35,24 @@ export default function useCachedResources(): IReturnProps {
   }
 
   useEffect(() => {
-    if (data?.ip && !internalIp) {
-      setInternalIp(data.ip);
+    const { ip, domain } = data || {};
+    if (ip && !baseUrl) {
+      setInternalIp(ip);
+      setDomain(domain);
+
+      if (!domain || domain === 'tipi.localhost') {
+        setBaseUrl(`http://${ip}/api`);
+      } else {
+        setBaseUrl(`https://${domain}/api`);
+      }
     }
-  }, [data?.ip, internalIp, setInternalIp]);
+  }, [baseUrl, data.ip, data.domain, setBaseUrl, data, setInternalIp, setDomain]);
 
   useEffect(() => {
-    if (internalIp) {
-      loadResourcesAndDataAsync(internalIp);
+    if (baseUrl) {
+      loadResourcesAndDataAsync(baseUrl);
     }
-  }, [internalIp]);
+  }, [baseUrl]);
 
   return { client, isLoadingComplete };
 }

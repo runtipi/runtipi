@@ -2,8 +2,8 @@ import React from 'react';
 import { useSytemStore } from '../../state/systemStore';
 
 const AppLogo: React.FC<{ id: string; size?: number; className?: string; alt?: string }> = ({ id, size = 80, className = '', alt = '' }) => {
-  const { internalIp } = useSytemStore();
-  const logoUrl = `http://${internalIp}:3001/apps/${id}/metadata/logo.jpg`;
+  const { baseUrl } = useSytemStore();
+  const logoUrl = `${baseUrl}/apps/${id}/metadata/logo.jpg`;
 
   return (
     <div aria-label={alt} className={`drop-shadow ${className}`} style={{ width: size, height: size }}>

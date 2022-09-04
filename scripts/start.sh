@@ -10,6 +10,7 @@ fi
 
 NGINX_PORT=80
 PROXY_PORT=8080
+DOMAIN=tipi.localhost
 
 while [ -n "$1" ]; do # while loop starts
   case "$1" in
@@ -37,6 +38,17 @@ while [ -n "$1" ]; do # while loop starts
     fi
     shift
     ;;
+  --domain)
+    domain="$2"
+
+    if [[ "${domain}" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+      DOMAIN="${domain}"
+    else
+      echo "--domain must be a valid domain"
+      exit 1
+    fi
+    shift
+    ;;
   --)
     shift # The double dash makes them parameters
     break
@@ -55,6 +67,12 @@ fi
 # Check we are on linux
 if [[ "$(uname)" != "Linux" ]]; then
   echo "Tipi only works on Linux"
+  exit 1
+fi
+
+# If port is not 80 and domain is not tipi.localhost, we exit
+if [[ "${NGINX_PORT}" != "80" ]] && [[ "${DOMAIN}" != "tipi.localhost" ]]; then
+  echo "Using a custom domain with a custom port is not supported"
   exit 1
 fi
 
@@ -154,6 +172,7 @@ for template in ${ENV_FILE}; do
   sed -i "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
   sed -i "s/<apps_repo_id>/${REPO_ID}/g" "${template}"
   sed -i "s/<apps_repo_url>/${APPS_REPOSITORY_ESCAPED}/g" "${template}"
+  sed -i "s/<domain>/${DOMAIN}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"

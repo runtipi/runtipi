@@ -45,7 +45,7 @@ const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues, exp
               render={({ input, meta }) => <FormInput className="mb-3" error={meta.error} isInvalid={meta.invalid && (meta.submitError || meta.submitFailed)} label="Domain name" {...input} />}
             />
             <span className="text-sm">
-              Make sur the domain contains an <strong>A</strong> record pointing to your IP.
+              Make sure this exact domain contains an <strong>A</strong> record pointing to your IP.
             </span>
           </>
         )}
