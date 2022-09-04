@@ -46,7 +46,7 @@ export default function useCachedResources(): IReturnProps {
         setBaseUrl(`https://${domain}/api`);
       }
     }
-  }, [baseUrl, data.ip, data.domain, setBaseUrl, data, setInternalIp, setDomain]);
+  }, [baseUrl, setBaseUrl, data, setInternalIp, setDomain]);
 
   useEffect(() => {
     if (baseUrl) {
