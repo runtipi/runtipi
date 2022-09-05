@@ -125,6 +125,9 @@ class AppInfo {
 
   @Field(() => Boolean, { nullable: true })
   https?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  exposable?: boolean;
 }
 
 @ObjectType()
@@ -143,6 +146,12 @@ class AppInputType {
 
   @Field(() => GraphQLJSONObject)
   form!: Record<string, string>;
+
+  @Field(() => Boolean)
+  exposed!: boolean;
+
+  @Field(() => String)
+  domain!: string;
 }
 
 export { ListAppsResonse, AppInfo, AppInputType };

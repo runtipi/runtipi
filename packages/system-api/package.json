@@ -27,7 +27,7 @@
   "dependencies": {
     "apollo-server-core": "^3.10.0",
     "apollo-server-express": "^3.9.0",
-    "argon2": "^0.28.5",
+    "argon2": "^0.29.1",
     "axios": "^0.26.1",
     "class-validator": "^0.13.2",
     "compression": "^1.7.4",

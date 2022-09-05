@@ -23,6 +23,8 @@ export type App = {
   __typename?: 'App';
   config: Scalars['JSONObject'];
   createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  exposed: Scalars['Boolean'];
   id: Scalars['String'];
   info?: Maybe<AppInfo>;
   lastOpened: Scalars['DateTime'];
@@ -40,6 +42,7 @@ export enum AppCategoriesEnum {
   Development = 'DEVELOPMENT',
   Featured = 'FEATURED',
   Finance = 'FINANCE',
+  Gaming = 'GAMING',
   Media = 'MEDIA',
   Music = 'MUSIC',
   Network = 'NETWORK',
@@ -55,6 +58,7 @@ export type AppInfo = {
   available: Scalars['Boolean'];
   categories: Array<AppCategoriesEnum>;
   description: Scalars['String'];
+  exposable?: Maybe<Scalars['Boolean']>;
   form_fields: Array<FormField>;
   https?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
@@ -69,6 +73,8 @@ export type AppInfo = {
 };
 
 export type AppInputType = {
+  domain: Scalars['String'];
+  exposed: Scalars['Boolean'];
   form: Scalars['JSONObject'];
   id: Scalars['String'];
 };
@@ -287,6 +293,8 @@ export type GetAppQuery = {
     status: AppStatusEnum;
     config: any;
     version?: number | null;
+    exposed: boolean;
+    domain: string;
     updateInfo?: { __typename?: 'UpdateInfo'; current: number; latest: number; dockerVersion?: string | null } | null;
     info?: {
       __typename?: 'AppInfo';
@@ -303,6 +311,7 @@ export type GetAppQuery = {
       categories: Array<AppCategoriesEnum>;
       url_suffix?: string | null;
       https?: boolean | null;
+      exposable?: boolean | null;
       form_fields: Array<{
         __typename?: 'FormField';
         type: FieldTypesEnum;
@@ -696,6 +705,8 @@ export const GetAppDocument = gql`
       status
       config
       version
+      exposed
+      domain
       updateInfo {
         current
         latest
@@ -715,6 +726,7 @@ export const GetAppDocument = gql`
         categories
         url_suffix
         https
+        exposable
         form_fields {
           type
           label

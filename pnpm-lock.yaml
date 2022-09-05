@@ -149,7 +149,7 @@ importers:
       '@typescript-eslint/parser': ^5.22.0
       apollo-server-core: ^3.10.0
       apollo-server-express: ^3.9.0
-      argon2: ^0.28.5
+      argon2: ^0.29.1
       axios: ^0.26.1
       class-validator: ^0.13.2
       compression: ^1.7.4
@@ -195,7 +195,7 @@ importers:
     dependencies:
       apollo-server-core: 3.10.0_graphql@15.8.0
       apollo-server-express: 3.9.0_jfj6k5cqxqbusbdzwqjdzioxzm
-      argon2: 0.28.5
+      argon2: 0.29.1
       axios: 0.26.1
       class-validator: 0.13.2
       compression: 1.7.4
@@ -4629,14 +4629,14 @@ packages:
     resolution: {integrity: sha512-e0hDa9H2Z9AwFkk2qDlwhoMYE4eToKarchkQHovNdLTCYMHZHeRjI71crOh+dio4K6u1IcwubQqo79Ga4CyAQA==}
     dev: true
 
-  /argon2/0.28.5:
-    resolution: {integrity: sha512-kGFCctzc3VWmR1aCOYjNgvoTmVF5uVBUtWlXCKKO54d1K+31zRz45KAcDIqMo2746ozv/52d25nfEekitaXP0w==}
-    engines: {node: '>=12.0.0'}
+  /argon2/0.29.1:
+    resolution: {integrity: sha512-bWXzAsQA0B6EFWZh5li+YBk+muoknAb8KacAi1h/bC6Gigy9p5ANbrPvpnjTIb7i9I11/8Df6FeSxpJDK3vy4g==}
+    engines: {node: '>=14.0.0'}
     requiresBuild: true
     dependencies:
       '@mapbox/node-pre-gyp': 1.0.9
       '@phc/format': 1.0.0
-      node-addon-api: 4.3.0
+      node-addon-api: 5.0.0
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -9942,8 +9942,8 @@ packages:
       tslib: 2.4.0
     dev: true
 
-  /node-addon-api/4.3.0:
-    resolution: {integrity: sha512-73sE9+3UaLYYFmDsFZnqCInzPyh3MqIwZO9cw58yIqAZhONrrabrYyYe3TuIqtIiOuTXVhsGau8hcrhhwSsDIQ==}
+  /node-addon-api/5.0.0:
+    resolution: {integrity: sha512-CvkDw2OEnme7ybCykJpVcKH+uAOLV2qLqiyla128dN9TkEWfrYmxG6C2boDe5KcNQqZF3orkqzGgOMvZ/JNekA==}
     dev: false
 
   /node-cache/5.1.2:

@@ -11,5 +11,7 @@ TIPI_VERSION=<tipi_version>
 JWT_SECRET=<jwt_secret>
 ROOT_FOLDER_HOST=<root_folder>
 NGINX_PORT=<nginx_port>
+NGINX_PORT=<nginx_port_ssl>
 PROXY_PORT=<proxy_port>
 POSTGRES_PASSWORD=<postgres_password>
+DOMAIN=<domain>

@@ -18,7 +18,7 @@ const InstallModal: React.FC<IProps> = ({ app, isOpen, onClose, onSubmit }) => {
         <ModalHeader>Install {app.name}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <InstallForm onSubmit={onSubmit} formFields={app.form_fields} />
+          <InstallForm onSubmit={onSubmit} formFields={app.form_fields} exposable={app.exposable} />
         </ModalBody>
       </ModalContent>
     </Modal>

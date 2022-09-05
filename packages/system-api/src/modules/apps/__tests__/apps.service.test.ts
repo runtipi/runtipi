@@ -135,6 +135,22 @@ describe('Install app', () => {
     expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/test.yml`)).toBe(false);
     expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/docker-compose.yml`)).toBe(true);
   });
+
+  it('Should throw if app is exposed and domain is not provided', async () => {
+    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('Domain is required if app is exposed');
+  });
+
+  it('Should throw if app is exposed and config does not allow it', async () => {
+    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`App ${app1.id} is not exposable`);
+  });
+
+  it('Should throw if app is exposed and domain is not valid', async () => {
+    const { MockFiles, appInfo } = await createApp({ exposable: true });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('Domain test is not valid');
+  });
 });
 
 describe('Uninstall app', () => {
@@ -333,6 +349,18 @@ describe('Update app config', () => {
     const envMap = getEnvMap(appInfo.id);
 
     expect(envMap.get('RANDOM_FIELD')).toBe('test');
+  });
+
+  it('Should throw if app is exposed and domain is not provided', () => {
+    return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('Domain is required');
+  });
+
+  it('Should throw if app is exposed and domain is not valid', () => {
+    return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('Domain test is not valid');
+  });
+
+  it('Should throw if app is exposed and config does not allow it', () => {
+    return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`App ${app1.id} is not exposable`);
   });
 });
 

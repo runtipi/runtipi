@@ -74,19 +74,19 @@ const getEntropy = (name: string, length: number) => {
   return hash.digest('hex').substring(0, length);
 };
 
-export const generateEnvFile = (appName: string, form: Record<string, string>) => {
-  const configFile: AppInfo | null = readJsonFile(`/apps/${appName}/config.json`);
+export const generateEnvFile = (app: App) => {
+  const configFile: AppInfo | null = readJsonFile(`/apps/${app.id}/config.json`);
 
   if (!configFile) {
-    throw new Error(`App ${appName} not found`);
+    throw new Error(`App ${app.id} not found`);
   }
 
   const baseEnvFile = readFile('/.env').toString();
   let envFile = `${baseEnvFile}\nAPP_PORT=${configFile.port}\n`;
-  const envMap = getEnvMap(appName);
+  const envMap = getEnvMap(app.id);
 
   configFile.form_fields?.forEach((field) => {
-    const formValue = form[field.env_variable];
+    const formValue = app.config[field.env_variable];
     const envVar = field.env_variable;
 
     if (formValue) {
@@ -105,7 +105,12 @@ export const generateEnvFile = (appName: string, form: Record<string, string>) =
     }
   });
 
-  writeFile(`/app-data/${appName}/app.env`, envFile);
+  if (app.exposed && app.domain) {
+    envFile += 'APP_EXPOSED=true\n';
+    envFile += `APP_DOMAIN=${app.domain}\n`;
+  }
+
+  writeFile(`/app-data/${app.id}/app.env`, envFile);
 };
 
 export const getAvailableApps = async (): Promise<string[]> => {
@@ -126,7 +131,7 @@ export const getAvailableApps = async (): Promise<string[]> => {
   return apps;
 };
 
-export const getAppInfo = (id: string): AppInfo => {
+export const getAppInfo = (id: string): AppInfo | null => {
   try {
     const repoId = config.APPS_REPO_ID;
 
@@ -134,7 +139,7 @@ export const getAppInfo = (id: string): AppInfo => {
       const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
       configFile.description = readFile(`/apps/${id}/metadata/description.md`).toString();
       return configFile;
-    } else if (fileExists(`/repos/${repoId}`)) {
+    } else if (fileExists(`/repos/${repoId}/apps/${id}/config.json`)) {
       const configFile: AppInfo = readJsonFile(`/repos/${repoId}/apps/${id}/config.json`);
       configFile.description = readFile(`/repos/${repoId}/apps/${id}/metadata/description.md`);
 
@@ -143,8 +148,9 @@ export const getAppInfo = (id: string): AppInfo => {
       }
     }
 
-    throw new Error('No repository found');
+    return null;
   } catch (e) {
+    console.error(e);
     throw new Error(`Error loading app ${id}`);
   }
 };

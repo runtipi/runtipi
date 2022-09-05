@@ -23,9 +23,10 @@ import {
   useUpdateAppMutation,
 } from '../../../generated/graphql';
 import UpdateModal from '../components/UpdateModal';
+import { IFormValues } from '../components/InstallForm';
 
 interface IProps {
-  app?: Pick<App, 'status' | 'config' | 'version' | 'updateInfo'>;
+  app?: Pick<App, 'status' | 'config' | 'version' | 'updateInfo' | 'exposed' | 'domain'>;
   info: AppInfo;
 }
 
@@ -61,11 +62,12 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     }
   };
 
-  const handleInstallSubmit = async (values: Record<string, any>) => {
+  const handleInstallSubmit = async (values: IFormValues) => {
     installDisclosure.onClose();
+    const { exposed, domain, ...form } = values;
     try {
       await install({
-        variables: { input: { form: values, id: info.id } },
+        variables: { input: { form, id: info.id, exposed: exposed || false, domain: domain || '' } },
         optimisticResponse: { installApp: { id: info.id, status: AppStatusEnum.Installing, __typename: 'App' } },
       });
     } catch (error) {
@@ -99,12 +101,13 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     }
   };
 
-  const handleUpdateSettingsSubmit = async (values: Record<string, any>) => {
+  const handleUpdateSettingsSubmit = async (values: IFormValues) => {
     try {
-      await updateConfig({ variables: { input: { form: values, id: info.id } } });
+      const { exposed, domain, ...form } = values;
+      await updateConfig({ variables: { input: { form, id: info.id, exposed: exposed || false, domain: domain || '' } } });
       toast({
         title: 'Success',
-        description: 'App config updated successfully',
+        description: 'App config updated successfully. Restart the app to apply the changes.',
         position: 'top',
         status: 'success',
       });
@@ -133,7 +136,9 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     const { https } = info;
     const protocol = https ? 'https' : 'http';
 
-    window.open(`${protocol}://${internalIp}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
+    if (typeof window !== 'undefined') {
+      window.open(`${protocol}://${internalIp}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
+    }
   };
 
   const version = [info?.version || 'unknown', app?.version ? `(${app.version})` : ''].join(' ');
@@ -183,7 +188,15 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
         <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.onClose} app={info} />
         <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.onClose} app={info} />
         <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.onClose} app={info} />
-        <UpdateSettingsModal onSubmit={handleUpdateSettingsSubmit} isOpen={updateSettingsDisclosure.isOpen} onClose={updateSettingsDisclosure.onClose} app={info} config={app?.config} />
+        <UpdateSettingsModal
+          onSubmit={handleUpdateSettingsSubmit}
+          isOpen={updateSettingsDisclosure.isOpen}
+          onClose={updateSettingsDisclosure.onClose}
+          app={info}
+          config={app?.config}
+          exposed={app?.exposed}
+          domain={app?.domain}
+        />
         <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} newVersion={newVersion} />
       </div>
     </SlideFade>

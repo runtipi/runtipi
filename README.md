@@ -92,6 +92,15 @@ To stop Tipi, run the stop script.
 sudo ./scripts/stop.sh
 ```
 
+## Linking a domain to your dashboard
+If you want to link a domain to your dashboard, you can do so by providing the `--domain` option in the start script.
+
+```bash
+sudo ./scripts/start.sh --domain mydomain.com
+```
+
+A Let's Encrypt certificate will be generated and installed automatically. Make sure to have ports 80 and 443 open on your firewall and that your domain has an **A** record pointing to your server IP.
+
 ## ❤️ Contributing
 
 Tipi is made to be very easy to plug in new apps. We welcome and appreciate new contributions.

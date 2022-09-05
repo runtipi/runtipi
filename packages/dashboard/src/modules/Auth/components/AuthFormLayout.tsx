@@ -1,5 +1,6 @@
 import { Container, Flex, SlideFade, Text } from '@chakra-ui/react';
 import React from 'react';
+import { getUrl } from '../../../core/helpers/url-helpers';
 
 interface IProps {
   title: string;
@@ -12,7 +13,7 @@ const AuthFormLayout: React.FC<IProps> = ({ children, title, description }) => {
     <Container maxW="1250px">
       <Flex flex={1} height="100vh" overflowY="hidden">
         <SlideFade in className="flex flex-1 flex-col justify-center items-center" offsetY="20px">
-          <img className="self-center mb-5 logo" src="/tipi.png" width={512} height={512} />
+          <img className="self-center mb-5 logo" src={getUrl('tipi.png')} width={512} height={512} />
           <Text className="text-xl md:text-2xl lg:text-5xl font-bold" size="3xl">
             {title}
           </Text>
