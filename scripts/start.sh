@@ -9,6 +9,7 @@ else
 fi
 
 NGINX_PORT=80
+NGINX_PORT_SSL=443
 PROXY_PORT=8080
 DOMAIN=tipi.localhost
 
@@ -23,6 +24,17 @@ while [ -n "$1" ]; do # while loop starts
       NGINX_PORT="${port}"
     else
       echo "--port must be a number"
+      exit 1
+    fi
+    shift
+    ;;
+  --ssl-port)
+    ssl_port="$2"
+
+    if [[ "${ssl_port}" =~ ^[0-9]+$ ]]; then
+      NGINX_PORT_SSL="${ssl_port}"
+    else
+      echo "--ssl-port must be a number"
       exit 1
     fi
     shift
@@ -168,6 +180,7 @@ for template in ${ENV_FILE}; do
   sed -i "s/<tipi_version>/${TIPI_VERSION}/g" "${template}"
   sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
   sed -i "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
+  sed -i "s/<nginx_port_ssl>/${NGINX_PORT_SSL}/g" "${template}"
   sed -i "s/<proxy_port>/${PROXY_PORT}/g" "${template}"
   sed -i "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
   sed -i "s/<apps_repo_id>/${REPO_ID}/g" "${template}"
