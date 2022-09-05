@@ -139,7 +139,7 @@ export const getAppInfo = (id: string): AppInfo | null => {
       const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
       configFile.description = readFile(`/apps/${id}/metadata/description.md`).toString();
       return configFile;
-    } else if (fileExists(`/repos/${repoId}`)) {
+    } else if (fileExists(`/repos/${repoId}/apps/${id}/config.json`)) {
       const configFile: AppInfo = readJsonFile(`/repos/${repoId}/apps/${id}/config.json`);
       configFile.description = readFile(`/repos/${repoId}/apps/${id}/metadata/description.md`);
 
@@ -150,6 +150,7 @@ export const getAppInfo = (id: string): AppInfo | null => {
 
     return null;
   } catch (e) {
+    console.error(e);
     throw new Error(`Error loading app ${id}`);
   }
 };

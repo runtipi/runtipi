@@ -8,10 +8,13 @@ interface IProps {
   status?: AppStatusEnum;
   requiredPort?: number;
   randomField?: boolean;
+  exposed?: boolean;
+  domain?: string;
+  exposable?: boolean;
 }
 
 const createApp = async (props: IProps) => {
-  const { installed = false, status = AppStatusEnum.RUNNING, requiredPort, randomField = false } = props;
+  const { installed = false, status = AppStatusEnum.RUNNING, requiredPort, randomField = false, exposed = false, domain = '', exposable = false } = props;
 
   const categories = Object.values(AppCategoriesEnum);
 
@@ -34,6 +37,7 @@ const createApp = async (props: IProps) => {
     author: faker.name.firstName(),
     source: faker.internet.url(),
     categories: [categories[faker.datatype.number({ min: 0, max: categories.length - 1 })]],
+    exposable,
   };
 
   if (randomField) {
@@ -63,6 +67,8 @@ const createApp = async (props: IProps) => {
       id: appInfo.id,
       config: { TEST_FIELD: 'test' },
       status,
+      exposed,
+      domain,
     }).save();
 
     MockFiles[`${config.ROOT_FOLDER}/app-data/${appInfo.id}`] = '';

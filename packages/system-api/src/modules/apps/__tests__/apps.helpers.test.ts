@@ -195,6 +195,46 @@ describe('generateEnvFile', () => {
       expect(e.message).toBe('App not-existing-app not found');
     }
   });
+
+  it('Should add APP_EXPOSED to env file', async () => {
+    const domain = faker.internet.domainName();
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, exposed: true, domain });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    generateEnvFile(appEntity);
+
+    const envmap = await getEnvMap(appInfo.id);
+
+    expect(envmap.get('APP_EXPOSED')).toBe('true');
+    expect(envmap.get('APP_DOMAIN')).toBe(domain);
+  });
+
+  it('Should not add APP_EXPOSED if domain is not provided', async () => {
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, exposed: true });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    generateEnvFile(appEntity);
+
+    const envmap = await getEnvMap(appInfo.id);
+
+    expect(envmap.get('APP_EXPOSED')).toBeUndefined();
+    expect(envmap.get('APP_DOMAIN')).toBeUndefined();
+  });
+
+  it('Should not add APP_EXPOSED if app is not exposed', async () => {
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, domain: faker.internet.domainName() });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    generateEnvFile(appEntity);
+
+    const envmap = await getEnvMap(appInfo.id);
+
+    expect(envmap.get('APP_EXPOSED')).toBeUndefined();
+    expect(envmap.get('APP_DOMAIN')).toBeUndefined();
+  });
 });
 
 describe('getAvailableApps', () => {
@@ -239,14 +279,10 @@ describe('getAppInfo', () => {
     expect(app?.id).toEqual(appInfo.id);
   });
 
-  it('Should throw an error if app does not exist', async () => {
-    try {
-      await getAppInfo('not-existing-app');
-      expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e).toBeDefined();
-      expect(e.message).toBe('Error loading app not-existing-app');
-    }
+  it('Should return null if app does not exist', async () => {
+    const app = await getAppInfo(faker.random.word());
+
+    expect(app).toBeNull();
   });
 });
 

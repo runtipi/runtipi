@@ -99,7 +99,7 @@ If you want to link a domain to your dashboard, you can do so by providing the `
 sudo ./scripts/start.sh --domain mydomain.com
 ```
 
-A Let's Encrypt certificate will be generated and installed automatically. Make sure to have port 443 open on your firewall and that your domain has an **A** record pointing to your server IP.
+A Let's Encrypt certificate will be generated and installed automatically. Make sure to have ports 80 and 443 open on your firewall and that your domain has an **A** record pointing to your server IP.
 
 ## ❤️ Contributing
 

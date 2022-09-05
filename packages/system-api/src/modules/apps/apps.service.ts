@@ -1,3 +1,4 @@
+import validator from 'validator';
 import { createFolder, ensureAppFolder, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
@@ -69,6 +70,10 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
       throw new Error('Domain is required if app is exposed');
     }
 
+    if (domain && !validator.isFQDN(domain)) {
+      throw new Error(`Domain ${domain} is not valid`);
+    }
+
     ensureAppFolder(id, true);
     const appIsValid = await checkAppRequirements(id);
 
@@ -128,6 +133,16 @@ const listApps = async (): Promise<ListAppsResonse> => {
 const updateAppConfig = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string): Promise<App> => {
   if (exposed && !domain) {
     throw new Error('Domain is required if app is exposed');
+  }
+
+  if (domain && !validator.isFQDN(domain)) {
+    throw new Error(`Domain ${domain} is not valid`);
+  }
+
+  const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
+
+  if (!appInfo?.exposable && exposed) {
+    throw new Error(`App ${id} is not exposable`);
   }
 
   let app = await App.findOne({ where: { id } });
