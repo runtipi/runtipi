@@ -1,29 +1,45 @@
-FROM node:18
-ENV DEBIAN_FRONTEND=noninteractive
+FROM node:18 AS build
+
+RUN npm install node-gyp -g
+
+WORKDIR /api
+COPY ./packages/system-api/package.json /api/package.json
+RUN npm i
+# ---
+WORKDIR /dashboard
+COPY ./packages/dashboard/package.json /dashboard/package.json
+RUN npm i
+
+WORKDIR /api
+COPY ./packages/system-api /api
+RUN npm run build
+# ---
+WORKDIR /dashboard
+COPY ./packages/dashboard /dashboard
+RUN npm run build
+
+
+FROM alpine:3.16.0 as app
 
 WORKDIR /
 
 # Install dependencies
-RUN apt update && apt install -y bash git g++ make
-# Install docker-compose
-RUN apt install -y docker-compose
+RUN apk --no-cache add docker-compose nodejs npm bash g++ make git
 
 RUN npm install node-gyp -g
 
 WORKDIR /api
 COPY ./packages/system-api/package*.json /api/
-RUN npm install --omit=dev
+RUN npm install --production
 
 WORKDIR /dashboard
 COPY ./packages/dashboard/package*.json /dashboard/
-RUN npm install --omit=dev
+RUN npm install --production
 
-WORKDIR /api
+COPY --from=build /api/dist /api/dist
 COPY ./packages/system-api /api
-RUN npm i -g @swc/cli @swc/core && npm run build && npm uninstall -g @swc/cli @swc/core
-# ---
-WORKDIR /dashboard
+
+COPY --from=build /dashboard/.next /dashboard/.next
 COPY ./packages/dashboard /dashboard
-RUN npm i typescript @types/node && npm run build && npm uninstall typescript @types/node
 
 WORKDIR /
