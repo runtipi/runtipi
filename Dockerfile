@@ -1,9 +1,12 @@
-FROM alpine:3.16.0 as app
+FROM node:18
+ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /
 
 # Install dependencies
-RUN apk --no-cache add docker-compose nodejs npm bash git
+RUN apt update && apt install -y bash git g++ make
+# Install docker-compose
+RUN apt install -y docker-compose
 
 RUN npm install node-gyp -g
 
