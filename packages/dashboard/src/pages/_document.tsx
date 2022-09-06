@@ -8,7 +8,6 @@ export default function MyDocument() {
   return (
     <Html lang="en">
       <Head>
-        <title>Tipi - Dashboard</title>
         <link rel="apple-touch-icon" sizes="180x180" href={getUrl('apple-touch-icon.png')} />
         <link rel="icon" type="image/png" sizes="32x32" href={getUrl('favicon-32x32.png')} />
         <link rel="icon" type="image/png" sizes="16x16" href={getUrl('favicon-16x16.png')} />

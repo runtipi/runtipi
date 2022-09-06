@@ -3,7 +3,7 @@ import { fileExists, getSeed, readdirSync, readFile, readJsonFile, runScript, wr
 import InternalIp from 'internal-ip';
 import crypto from 'crypto';
 import config from '../../config';
-import { AppInfo } from './apps.types';
+import { AppInfo, AppStatusEnum } from './apps.types';
 import logger from '../../config/logger/logger';
 import App from './app.entity';
 
@@ -131,11 +131,14 @@ export const getAvailableApps = async (): Promise<string[]> => {
   return apps;
 };
 
-export const getAppInfo = (id: string): AppInfo | null => {
+export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null => {
   try {
     const repoId = config.APPS_REPO_ID;
 
-    if (fileExists(`/apps/${id}/config.json`)) {
+    // Check if app is installed
+    const installed = typeof status !== 'undefined' && status !== AppStatusEnum.MISSING;
+
+    if (installed && fileExists(`/apps/${id}/config.json`)) {
       const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
       configFile.description = readFile(`/apps/${id}/metadata/description.md`).toString();
       return configFile;
