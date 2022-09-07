@@ -152,6 +152,15 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
           <div className="flex flex-col justify-between flex-1 ml-0 md:ml-4">
             <div className="mt-3 items-center self-center flex flex-col md:items-start md:self-start md:mt-0">
               <h1 className="font-bold text-2xl">{info.name}</h1>
+              {app?.domain && app.exposed && (
+                <a target="_blank" rel="noreferrer" className="text-blue-500 text-md" href={`https://${app.domain}`}>
+                  <Flex className="items-center">
+                    {app.domain}
+                    <FiExternalLink className="ml-1" />
+                  </Flex>
+                </a>
+              )}
+
               <h2 className="text-center md:text-left">{info.short_desc}</h2>
               <h3 className="text-center md:text-left text-sm">
                 version: <b>{version}</b>
@@ -166,6 +175,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
               )}
               <p className="text-xs text-gray-600">By {info.author}</p>
             </div>
+
             <div className="flex flex-1">
               <AppActions
                 updateAvailable={updateAvailable}
