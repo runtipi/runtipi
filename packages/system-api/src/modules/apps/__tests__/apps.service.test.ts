@@ -151,6 +151,17 @@ describe('Install app', () => {
 
     await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('Domain test is not valid');
   });
+
+  it('Should throw if app is exposed and domain is already used', async () => {
+    const app2 = await createApp({ exposable: true });
+    const app3 = await createApp({ exposable: true });
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign({}, app2.MockFiles, app3.MockFiles));
+
+    await AppsService.installApp(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
+
+    await expect(AppsService.installApp(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`Domain test.com already in use by app ${app2.appInfo.id}`);
+  });
 });
 
 describe('Uninstall app', () => {
@@ -361,6 +372,16 @@ describe('Update app config', () => {
 
   it('Should throw if app is exposed and config does not allow it', () => {
     return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`App ${app1.id} is not exposable`);
+  });
+
+  it('Should throw if app is exposed and domain is already used', async () => {
+    const app2 = await createApp({ exposable: true, installed: true });
+    const app3 = await createApp({ exposable: true, installed: true });
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app2.MockFiles, app3.MockFiles));
+
+    await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
+    await expect(AppsService.updateAppConfig(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`Domain test.com already in use by app ${app2.appInfo.id}`);
   });
 });
 

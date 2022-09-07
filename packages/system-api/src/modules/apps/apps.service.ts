@@ -90,6 +90,13 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
       throw new Error(`App ${id} is not exposable`);
     }
 
+    if (exposed) {
+      const appsWithSameDomain = await App.find({ where: { domain, exposed: true } });
+      if (appsWithSameDomain.length > 0) {
+        throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0].id}`);
+      }
+    }
+
     app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form, version: Number(appInfo?.tipi_version || 0), exposed: exposed || false, domain }).save();
 
     // Create env file
@@ -143,6 +150,13 @@ const updateAppConfig = async (id: string, form: Record<string, string>, exposed
 
   if (!appInfo?.exposable && exposed) {
     throw new Error(`App ${id} is not exposable`);
+  }
+
+  if (exposed) {
+    const appsWithSameDomain = await App.find({ where: { domain, exposed: true } });
+    if (appsWithSameDomain.length > 0) {
+      throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0].id}`);
+    }
   }
 
   let app = await App.findOne({ where: { id } });
