@@ -383,6 +383,15 @@ describe('Update app config', () => {
     await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
     await expect(AppsService.updateAppConfig(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`Domain test.com already in use by app ${app2.appInfo.id}`);
   });
+
+  it('Should not throw if updating with same domain', async () => {
+    const app2 = await createApp({ exposable: true, installed: true });
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app2.MockFiles));
+
+    await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
+    await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
+  });
 });
 
 describe('Get app config', () => {

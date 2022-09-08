@@ -5,6 +5,7 @@ import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 import logger from '../../config/logger/logger';
 import config from '../../config';
+import { Not } from 'typeorm';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
 
@@ -153,7 +154,7 @@ const updateAppConfig = async (id: string, form: Record<string, string>, exposed
   }
 
   if (exposed) {
-    const appsWithSameDomain = await App.find({ where: { domain, exposed: true } });
+    const appsWithSameDomain = await App.find({ where: { domain, exposed: true, id: Not(id) } });
     if (appsWithSameDomain.length > 0) {
       throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0].id}`);
     }

@@ -110,6 +110,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
         description: 'App config updated successfully. Restart the app to apply the changes.',
         position: 'top',
         status: 'success',
+        isClosable: true,
       });
       updateSettingsDisclosure.onClose();
     } catch (error) {
@@ -126,6 +127,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
         description: 'App updated successfully',
         position: 'top',
         status: 'success',
+        isClosable: true,
       });
     } catch (error) {
       handleError(error);
