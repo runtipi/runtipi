@@ -23,9 +23,10 @@ import {
   useUpdateAppMutation,
 } from '../../../generated/graphql';
 import UpdateModal from '../components/UpdateModal';
+import { IFormValues } from '../components/InstallForm';
 
 interface IProps {
-  app?: Pick<App, 'status' | 'config' | 'version' | 'updateInfo'>;
+  app?: Pick<App, 'status' | 'config' | 'version' | 'updateInfo' | 'exposed' | 'domain'>;
   info: AppInfo;
 }
 
@@ -61,11 +62,12 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     }
   };
 
-  const handleInstallSubmit = async (values: Record<string, any>) => {
+  const handleInstallSubmit = async (values: IFormValues) => {
     installDisclosure.onClose();
+    const { exposed, domain, ...form } = values;
     try {
       await install({
-        variables: { input: { form: values, id: info.id } },
+        variables: { input: { form, id: info.id, exposed: exposed || false, domain: domain || '' } },
         optimisticResponse: { installApp: { id: info.id, status: AppStatusEnum.Installing, __typename: 'App' } },
       });
     } catch (error) {
@@ -99,14 +101,16 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     }
   };
 
-  const handleUpdateSettingsSubmit = async (values: Record<string, any>) => {
+  const handleUpdateSettingsSubmit = async (values: IFormValues) => {
     try {
-      await updateConfig({ variables: { input: { form: values, id: info.id } } });
+      const { exposed, domain, ...form } = values;
+      await updateConfig({ variables: { input: { form, id: info.id, exposed: exposed || false, domain: domain || '' } } });
       toast({
         title: 'Success',
-        description: 'App config updated successfully',
+        description: 'App config updated successfully. Restart the app to apply the changes.',
         position: 'top',
         status: 'success',
+        isClosable: true,
       });
       updateSettingsDisclosure.onClose();
     } catch (error) {
@@ -123,6 +127,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
         description: 'App updated successfully',
         position: 'top',
         status: 'success',
+        isClosable: true,
       });
     } catch (error) {
       handleError(error);
@@ -130,7 +135,12 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
   };
 
   const handleOpen = () => {
-    window.open(`http://${internalIp}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
+    const { https } = info;
+    const protocol = https ? 'https' : 'http';
+
+    if (typeof window !== 'undefined') {
+      window.open(`${protocol}://${internalIp}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
+    }
   };
 
   const version = [info?.version || 'unknown', app?.version ? `(${app.version})` : ''].join(' ');
@@ -144,6 +154,15 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
           <div className="flex flex-col justify-between flex-1 ml-0 md:ml-4">
             <div className="mt-3 items-center self-center flex flex-col md:items-start md:self-start md:mt-0">
               <h1 className="font-bold text-2xl">{info.name}</h1>
+              {app?.domain && app.exposed && (
+                <a target="_blank" rel="noreferrer" className="text-blue-500 text-md" href={`https://${app.domain}`}>
+                  <Flex className="items-center">
+                    {app.domain}
+                    <FiExternalLink className="ml-1" />
+                  </Flex>
+                </a>
+              )}
+
               <h2 className="text-center md:text-left">{info.short_desc}</h2>
               <h3 className="text-center md:text-left text-sm">
                 version: <b>{version}</b>
@@ -158,6 +177,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
               )}
               <p className="text-xs text-gray-600">By {info.author}</p>
             </div>
+
             <div className="flex flex-1">
               <AppActions
                 updateAvailable={updateAvailable}
@@ -180,7 +200,15 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
         <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.onClose} app={info} />
         <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.onClose} app={info} />
         <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.onClose} app={info} />
-        <UpdateSettingsModal onSubmit={handleUpdateSettingsSubmit} isOpen={updateSettingsDisclosure.isOpen} onClose={updateSettingsDisclosure.onClose} app={info} config={app?.config} />
+        <UpdateSettingsModal
+          onSubmit={handleUpdateSettingsSubmit}
+          isOpen={updateSettingsDisclosure.isOpen}
+          onClose={updateSettingsDisclosure.onClose}
+          app={info}
+          config={app?.config}
+          exposed={app?.exposed}
+          domain={app?.domain}
+        />
         <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} newVersion={newVersion} />
       </div>
     </SlideFade>

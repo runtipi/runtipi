@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { IconType } from 'react-icons';
 import { useLogoutMutation, useVersionQuery } from '../../generated/graphql';
+import { getUrl } from '../../core/helpers/url-helpers';
 
 const SideMenu: React.FC = () => {
   const router = useRouter();
@@ -45,7 +46,7 @@ const SideMenu: React.FC = () => {
 
   return (
     <Box className="flex-1 flex flex-col p-0 md:p-4">
-      <img className="self-center mb-5 logo mt-0 md:mt-5" src="/tipi.png" width={512} height={512} />
+      <img className="self-center mb-5 logo mt-0 md:mt-5" src={getUrl('tipi.png')} width={512} height={512} />
       <List spacing={3} className="pt-5">
         {renderMenuItem('Dashboard', '', AiOutlineDashboard)}
         {renderMenuItem('My Apps', 'apps', AiOutlineAppstore)}

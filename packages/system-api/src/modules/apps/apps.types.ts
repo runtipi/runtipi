@@ -15,6 +15,7 @@ export enum AppCategoriesEnum {
   DATA = 'data',
   MUSIC = 'music',
   FINANCE = 'finance',
+  GAMING = 'gaming',
 }
 
 export enum FieldTypes {
@@ -121,6 +122,12 @@ class AppInfo {
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   requirements?: Requirements;
+
+  @Field(() => Boolean, { nullable: true })
+  https?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  exposable?: boolean;
 }
 
 @ObjectType()
@@ -139,6 +146,12 @@ class AppInputType {
 
   @Field(() => GraphQLJSONObject)
   form!: Record<string, string>;
+
+  @Field(() => Boolean)
+  exposed!: boolean;
+
+  @Field(() => String)
+  domain!: string;
 }
 
 export { ListAppsResonse, AppInfo, AppInputType };

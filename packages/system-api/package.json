@@ -1,6 +1,6 @@
 {
   "name": "system-api",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "",
   "exports": "./dist/server.js",
   "type": "module",
@@ -13,7 +13,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest --colors",
     "test:watch": "jest --watch",
-    "build": "rm -rf dist && swc ./src --ignore **/*.test.* -d dist",
+    "build": "rm -rf dist && swc ./src -d dist",
     "build:watch": "swc ./src -d dist --watch",
     "start:dev": "NODE_ENV=development && nodemon --experimental-specifier-resolution=node --trace-deprecation --trace-warnings --watch dist dist/server.js",
     "dev": "concurrently \"npm run build:watch\" \"npm run start:dev\"",
@@ -27,7 +27,7 @@
   "dependencies": {
     "apollo-server-core": "^3.10.0",
     "apollo-server-express": "^3.9.0",
-    "argon2": "^0.28.5",
+    "argon2": "^0.29.1",
     "axios": "^0.26.1",
     "class-validator": "^0.13.2",
     "compression": "^1.7.4",
@@ -55,6 +55,7 @@
     "tcp-port-used": "^1.0.2",
     "type-graphql": "^1.1.1",
     "typeorm": "^0.3.6",
+    "validator": "^13.7.0",
     "winston": "^3.7.2"
   },
   "devDependencies": {

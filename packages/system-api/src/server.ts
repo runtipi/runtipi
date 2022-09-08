@@ -18,22 +18,23 @@ import recover from './core/updates/recover-migrations';
 import { cloneRepo, updateRepo } from './helpers/repo-helpers';
 import startJobs from './core/jobs/jobs';
 
-let corsOptions = __prod__
-  ? {
-      credentials: true,
-      origin: function (origin: any, callback: any) {
-        // disallow requests with no origin
-        if (!origin) return callback(new Error('Not allowed by CORS'), false);
-
-        if (config.CLIENT_URLS.includes(origin)) {
-          return callback(null, true);
-        }
-
-        const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
-        return callback(new Error(message), false);
-      },
+let corsOptions = {
+  credentials: true,
+  origin: function (origin: any, callback: any) {
+    if (!__prod__) {
+      return callback(null, true);
     }
-  : {};
+    // disallow requests with no origin
+    if (!origin) return callback(new Error('Not allowed by CORS'), false);
+
+    if (config.CLIENT_URLS.includes(origin)) {
+      return callback(null, true);
+    }
+
+    const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
+    return callback(new Error(message), false);
+  },
+};
 
 const main = async () => {
   try {

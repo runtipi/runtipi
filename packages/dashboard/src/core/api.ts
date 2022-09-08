@@ -12,7 +12,7 @@ const api = async <T = unknown>(fetchParams: IFetchParams): Promise<T> => {
   const { endpoint, method = 'GET', params, data } = fetchParams;
 
   const { getState } = useSytemStore;
-  const BASE_URL = `http://${getState().internalIp}:3001`;
+  const BASE_URL = getState().baseUrl;
 
   const response = await axios.request<T & { error?: string }>({
     method,

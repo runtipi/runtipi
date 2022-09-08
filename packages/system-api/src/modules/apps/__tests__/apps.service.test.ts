@@ -109,6 +109,59 @@ describe('Install app', () => {
     expect(envMap.get('RANDOM_FIELD')).toBeDefined();
     expect(envMap.get('RANDOM_FIELD')).toHaveLength(32);
   });
+
+  it('Should correctly copy app from repos to apps folder', async () => {
+    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
+    const appFolder = fs.readdirSync(`${config.ROOT_FOLDER}/apps/${app1.id}`);
+
+    expect(appFolder).toBeDefined();
+    expect(appFolder.indexOf('docker-compose.yml')).toBeGreaterThanOrEqual(0);
+  });
+
+  it('Should cleanup any app folder existing before install', async () => {
+    const { MockFiles, appInfo } = await createApp({});
+    app1 = appInfo;
+    MockFiles[`/tipi/apps/${appInfo.id}/docker-compose.yml`] = 'test';
+    MockFiles[`/tipi/apps/${appInfo.id}/test.yml`] = 'test';
+    MockFiles[`/tipi/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
+
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/test.yml`)).toBe(true);
+
+    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
+
+    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/test.yml`)).toBe(false);
+    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/docker-compose.yml`)).toBe(true);
+  });
+
+  it('Should throw if app is exposed and domain is not provided', async () => {
+    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('Domain is required if app is exposed');
+  });
+
+  it('Should throw if app is exposed and config does not allow it', async () => {
+    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`App ${app1.id} is not exposable`);
+  });
+
+  it('Should throw if app is exposed and domain is not valid', async () => {
+    const { MockFiles, appInfo } = await createApp({ exposable: true });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('Domain test is not valid');
+  });
+
+  it('Should throw if app is exposed and domain is already used', async () => {
+    const app2 = await createApp({ exposable: true });
+    const app3 = await createApp({ exposable: true });
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign({}, app2.MockFiles, app3.MockFiles));
+
+    await AppsService.installApp(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
+
+    await expect(AppsService.installApp(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`Domain test.com already in use by app ${app2.appInfo.id}`);
+  });
 });
 
 describe('Uninstall app', () => {
@@ -307,6 +360,37 @@ describe('Update app config', () => {
     const envMap = getEnvMap(appInfo.id);
 
     expect(envMap.get('RANDOM_FIELD')).toBe('test');
+  });
+
+  it('Should throw if app is exposed and domain is not provided', () => {
+    return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('Domain is required');
+  });
+
+  it('Should throw if app is exposed and domain is not valid', () => {
+    return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('Domain test is not valid');
+  });
+
+  it('Should throw if app is exposed and config does not allow it', () => {
+    return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`App ${app1.id} is not exposable`);
+  });
+
+  it('Should throw if app is exposed and domain is already used', async () => {
+    const app2 = await createApp({ exposable: true, installed: true });
+    const app3 = await createApp({ exposable: true, installed: true });
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app2.MockFiles, app3.MockFiles));
+
+    await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
+    await expect(AppsService.updateAppConfig(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`Domain test.com already in use by app ${app2.appInfo.id}`);
+  });
+
+  it('Should not throw if updating with same domain', async () => {
+    const app2 = await createApp({ exposable: true, installed: true });
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app2.MockFiles));
+
+    await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
+    await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
   });
 });
 

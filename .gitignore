@@ -11,6 +11,7 @@ repos/*
 !repos/.gitkeep
 apps/*
 !apps/.gitkeep
+traefik/shared
 
 scripts/pacapt
 

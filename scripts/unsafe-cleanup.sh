@@ -25,7 +25,5 @@ rm -rf "${ROOT_FOLDER}/app-data"
 rm -rf "${ROOT_FOLDER}/data/postgres"
 mkdir -p "${ROOT_FOLDER}/app-data"
 
-# Put {"installed":""} in state/apps.json
-echo '{"installed":""}' >"${ROOT_FOLDER}/state/apps.json"
-
+cd "$ROOT_FOLDER"
 "${ROOT_FOLDER}/scripts/start.sh"

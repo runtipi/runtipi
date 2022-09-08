@@ -18,7 +18,7 @@
 
 Tipi is a personal homeserver orchestrator. It is running docker containers under the hood and provides a simple web interface to manage them. Every service comes with an opinionated configuration in order to remove the need for manual configuration and network setup.
 
-Check our demo instance : **95.179.210.152** / username: **user@runtipi.com** / password: **runtipi**
+Check our demo instance : **[demo.runtipi.com](https://demo.runtipi.com)** / username: **user@runtipi.com** / password: **runtipi**
 
 ## Apps available
 - [Adguard Home](https://github.com/AdguardTeam/AdGuardHome) - Adguard Home DNS adblocker
@@ -93,6 +93,15 @@ To stop Tipi, run the stop script.
 ```bash
 sudo ./scripts/stop.sh
 ```
+
+## Linking a domain to your dashboard
+If you want to link a domain to your dashboard, you can do so by providing the `--domain` option in the start script.
+
+```bash
+sudo ./scripts/start.sh --domain mydomain.com
+```
+
+A Let's Encrypt certificate will be generated and installed automatically. Make sure to have ports 80 and 443 open on your firewall and that your domain has an **A** record pointing to your server IP.
 
 ## ❤️ Contributing
 

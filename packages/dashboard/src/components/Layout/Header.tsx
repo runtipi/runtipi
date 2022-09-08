@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Flex } from '@chakra-ui/react';
 import { FiMenu } from 'react-icons/fi';
+import { getUrl } from '../../core/helpers/url-helpers';
 
 interface IProps {
   onClickMenu: () => void;
@@ -16,7 +17,7 @@ const Header: React.FC<IProps> = ({ onClickMenu }) => {
         </div>
         <Flex justifyContent="center" flex="1">
           <Link href="/" passHref>
-            <img src="/tipi.png" alt="Tipi Logo" width={30} height={30} />
+            <img src={getUrl('tipi.png')} alt="Tipi Logo" width={30} height={30} />
           </Link>
         </Flex>
       </Flex>

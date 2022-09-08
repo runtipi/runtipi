@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const { NODE_ENV, INTERNAL_IP } = process.env;
+const { INTERNAL_IP, DOMAIN } = process.env;
 
 const nextConfig = {
   webpackDevMiddleware: (config) => {
@@ -12,7 +12,9 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     INTERNAL_IP: INTERNAL_IP,
+    NEXT_PUBLIC_DOMAIN: DOMAIN,
   },
+  basePath: '/dashboard',
 };
 
 module.exports = nextConfig;

@@ -7,6 +7,7 @@ import { theme } from '../styles/theme';
 import AuthWrapper from '../modules/Auth/containers/AuthWrapper';
 import { ApolloProvider } from '@apollo/client';
 import useCachedResources from '../hooks/useCachedRessources';
+import Head from 'next/head';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { client } = useCachedResources();
@@ -18,6 +19,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <ChakraProvider theme={theme}>
+        <Head>
+          <title>Tipi</title>
+        </Head>
         <AuthWrapper>
           <Component {...pageProps} />
         </AuthWrapper>

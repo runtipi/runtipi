@@ -1,9 +1,11 @@
+import validator from 'validator';
 import { createFolder, ensureAppFolder, readFile, readJsonFile } from '../fs/fs.helpers';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 import logger from '../../config/logger/logger';
 import config from '../../config';
+import { Not } from 'typeorm';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
 
@@ -15,7 +17,7 @@ const startAllApps = async (): Promise<void> => {
       // Regenerate env file
       try {
         ensureAppFolder(app.id);
-        generateEnvFile(app.id, app.config);
+        generateEnvFile(app);
         checkEnvFile(app.id);
 
         await App.update({ id: app.id }, { status: AppStatusEnum.STARTING });
@@ -40,7 +42,7 @@ const startApp = async (appName: string): Promise<App> => {
   ensureAppFolder(appName);
 
   // Regenerate env file
-  generateEnvFile(appName, app.config);
+  generateEnvFile(app);
 
   checkEnvFile(appName);
 
@@ -59,13 +61,21 @@ const startApp = async (appName: string): Promise<App> => {
   return app;
 };
 
-const installApp = async (id: string, form: Record<string, string>): Promise<App> => {
+const installApp = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
   if (app) {
     await startApp(id);
   } else {
-    ensureAppFolder(id);
+    if (exposed && !domain) {
+      throw new Error('Domain is required if app is exposed');
+    }
+
+    if (domain && !validator.isFQDN(domain)) {
+      throw new Error(`Domain ${domain} is not valid`);
+    }
+
+    ensureAppFolder(id, true);
     const appIsValid = await checkAppRequirements(id);
 
     if (!appIsValid) {
@@ -75,11 +85,23 @@ const installApp = async (id: string, form: Record<string, string>): Promise<App
     // Create app folder
     createFolder(`/app-data/${id}`);
 
-    // Create env file
-    generateEnvFile(id, form);
-
     const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
-    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form, version: Number(appInfo?.tipi_version || 0) }).save();
+
+    if (!appInfo?.exposable && exposed) {
+      throw new Error(`App ${id} is not exposable`);
+    }
+
+    if (exposed) {
+      const appsWithSameDomain = await App.find({ where: { domain, exposed: true } });
+      if (appsWithSameDomain.length > 0) {
+        throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0].id}`);
+      }
+    }
+
+    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form, version: Number(appInfo?.tipi_version || 0), exposed: exposed || false, domain }).save();
+
+    // Create env file
+    generateEnvFile(app);
 
     // Run script
     try {
@@ -116,15 +138,38 @@ const listApps = async (): Promise<ListAppsResonse> => {
   return { apps: apps.sort(sortApps), total: apps.length };
 };
 
-const updateAppConfig = async (id: string, form: Record<string, string>): Promise<App> => {
+const updateAppConfig = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string): Promise<App> => {
+  if (exposed && !domain) {
+    throw new Error('Domain is required if app is exposed');
+  }
+
+  if (domain && !validator.isFQDN(domain)) {
+    throw new Error(`Domain ${domain} is not valid`);
+  }
+
+  const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
+
+  if (!appInfo?.exposable && exposed) {
+    throw new Error(`App ${id} is not exposable`);
+  }
+
+  if (exposed) {
+    const appsWithSameDomain = await App.find({ where: { domain, exposed: true, id: Not(id) } });
+    if (appsWithSameDomain.length > 0) {
+      throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0].id}`);
+    }
+  }
+
   let app = await App.findOne({ where: { id } });
 
   if (!app) {
     throw new Error(`App ${id} not found`);
   }
 
-  generateEnvFile(id, form);
-  await App.update({ id }, { config: form });
+  await App.update({ id }, { config: form, exposed: exposed || false, domain });
+  app = (await App.findOne({ where: { id } })) as App;
+
+  generateEnvFile(app);
   app = (await App.findOne({ where: { id } })) as App;
 
   return app;
@@ -185,7 +230,7 @@ const getApp = async (id: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
   if (!app) {
-    app = { id, status: AppStatusEnum.MISSING, config: {} } as App;
+    app = { id, status: AppStatusEnum.MISSING, config: {}, exposed: false, domain: '' } as App;
   }
 
   return app;

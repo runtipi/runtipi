@@ -23,6 +23,8 @@ export type App = {
   __typename?: 'App';
   config: Scalars['JSONObject'];
   createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  exposed: Scalars['Boolean'];
   id: Scalars['String'];
   info?: Maybe<AppInfo>;
   lastOpened: Scalars['DateTime'];
@@ -40,6 +42,7 @@ export enum AppCategoriesEnum {
   Development = 'DEVELOPMENT',
   Featured = 'FEATURED',
   Finance = 'FINANCE',
+  Gaming = 'GAMING',
   Media = 'MEDIA',
   Music = 'MUSIC',
   Network = 'NETWORK',
@@ -55,7 +58,9 @@ export type AppInfo = {
   available: Scalars['Boolean'];
   categories: Array<AppCategoriesEnum>;
   description: Scalars['String'];
+  exposable?: Maybe<Scalars['Boolean']>;
   form_fields: Array<FormField>;
+  https?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
   name: Scalars['String'];
   port: Scalars['Float'];
@@ -68,6 +73,8 @@ export type AppInfo = {
 };
 
 export type AppInputType = {
+  domain: Scalars['String'];
+  exposed: Scalars['Boolean'];
   form: Scalars['JSONObject'];
   id: Scalars['String'];
 };
@@ -286,6 +293,8 @@ export type GetAppQuery = {
     status: AppStatusEnum;
     config: any;
     version?: number | null;
+    exposed: boolean;
+    domain: string;
     updateInfo?: { __typename?: 'UpdateInfo'; current: number; latest: number; dockerVersion?: string | null } | null;
     info?: {
       __typename?: 'AppInfo';
@@ -301,6 +310,8 @@ export type GetAppQuery = {
       source: string;
       categories: Array<AppCategoriesEnum>;
       url_suffix?: string | null;
+      https?: boolean | null;
+      exposable?: boolean | null;
       form_fields: Array<{
         __typename?: 'FormField';
         type: FieldTypesEnum;
@@ -326,7 +337,7 @@ export type InstalledAppsQuery = {
     config: any;
     version?: number | null;
     updateInfo?: { __typename?: 'UpdateInfo'; current: number; latest: number; dockerVersion?: string | null } | null;
-    info?: { __typename?: 'AppInfo'; id: string; name: string; description: string; tipi_version: number; short_desc: string } | null;
+    info?: { __typename?: 'AppInfo'; id: string; name: string; description: string; tipi_version: number; short_desc: string; https?: boolean | null } | null;
   }>;
 };
 
@@ -352,6 +363,7 @@ export type ListAppsQuery = {
       short_desc: string;
       author: string;
       categories: Array<AppCategoriesEnum>;
+      https?: boolean | null;
     }>;
   };
 };
@@ -693,6 +705,8 @@ export const GetAppDocument = gql`
       status
       config
       version
+      exposed
+      domain
       updateInfo {
         current
         latest
@@ -711,6 +725,8 @@ export const GetAppDocument = gql`
         source
         categories
         url_suffix
+        https
+        exposable
         form_fields {
           type
           label
@@ -770,6 +786,7 @@ export const InstalledAppsDocument = gql`
         description
         tipi_version
         short_desc
+        https
       }
     }
   }
@@ -846,6 +863,7 @@ export const ListAppsDocument = gql`
         short_desc
         author
         categories
+        https
       }
       total
     }

@@ -55,9 +55,17 @@ class App extends BaseEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
+  @Field(() => Boolean)
+  @Column({ type: 'boolean', default: false })
+  exposed!: boolean;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  domain?: string;
+
   @Field(() => AppInfo, { nullable: true })
   info(): AppInfo | null {
-    return getAppInfo(this.id);
+    return getAppInfo(this.id, this.status);
   }
 
   @Field(() => UpdateInfo, { nullable: true })

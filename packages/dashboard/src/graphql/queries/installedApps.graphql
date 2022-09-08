@@ -15,6 +15,7 @@ query InstalledApps {
       description
       tipi_version
       short_desc
+      https
     }
   }
 }
