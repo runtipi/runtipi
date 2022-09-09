@@ -66,6 +66,28 @@ function install_docker() {
   fi
 }
 
+function install_jq() {
+  local os="${1}"
+  echo "Installing jq for os ${os}" >/dev/tty
+
+  if [[ "${OS}" == "debian" || "${OS}" == "ubuntu" ]]; then
+    sudo apt-get update
+    sudo apt-get install -y jq
+    return 0
+  elif [[ "${OS}" == "centos" ]]; then
+    sudo yum install -y jq
+    return 0
+  elif [[ "${OS}" == "fedora" ]]; then
+    sudo dnf -y install jq
+    return 0
+  elif [[ "${OS}" == "arch" ]]; then
+    sudo pacman -Sy --noconfirm jq
+    return 0
+  else
+    return 1
+  fi
+}
+
 OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 
@@ -94,4 +116,26 @@ fi
 if ! command -v docker-compose >/dev/null; then
   sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
   sudo chmod +x /usr/local/bin/docker-compose
+fi
+
+if command -v jq >/dev/null 2>&1; then
+  echo "jq is already installed"
+else
+  install_jq "${OS}"
+  jq_result=$?
+
+  if [[ jq_result -eq 0 ]]; then
+    echo "jq installed"
+  else
+    echo "Your system ${OS} is not supported trying with sub_os ${SUB_OS}"
+    install_jq "${SUB_OS}"
+    jq_sub_result=$?
+
+    if [[ jq_sub_result -eq 0 ]]; then
+      echo "jq installed"
+    else
+      echo "Your system ${SUB_OS} is not supported please install jq manually"
+      exit 1
+    fi
+  fi
 fi
