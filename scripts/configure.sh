@@ -16,7 +16,7 @@ function install_docker() {
   local os="${1}"
   echo "Installing docker for os ${os}" >/dev/tty
 
-  if [[ "${OS}" == "debian" ]]; then
+  if [[ "${os}" == "debian" ]]; then
     sudo apt-get update
     sudo apt-get upgrade
     sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
@@ -26,7 +26,7 @@ function install_docker() {
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
-  elif [[ "${OS}" == "ubuntu" ]]; then
+  elif [[ "${os}" == "ubuntu" ]]; then
     sudo apt-get update
     sudo apt-get upgrade
     sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
@@ -36,21 +36,21 @@ function install_docker() {
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
-  elif [[ "${OS}" == "centos" ]]; then
+  elif [[ "${os}" == "centos" ]]; then
     sudo yum install -y yum-utils jq
     sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     sudo yum install -y --allowerasing docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
     return 0
-  elif [[ "${OS}" == "fedora" ]]; then
+  elif [[ "${os}" == "fedora" ]]; then
     sudo dnf -y install dnf-plugins-core jq
     sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
     sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
     return 0
-  elif [[ "${OS}" == "arch" ]]; then
+  elif [[ "${os}" == "arch" ]]; then
     sudo pacman -Sy --noconfirm docker jq
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
@@ -70,17 +70,17 @@ function install_jq() {
   local os="${1}"
   echo "Installing jq for os ${os}" >/dev/tty
 
-  if [[ "${OS}" == "debian" || "${OS}" == "ubuntu" ]]; then
+  if [[ "${os}" == "debian" || "${os}" == "ubuntu" ]]; then
     sudo apt-get update
     sudo apt-get install -y jq
     return 0
-  elif [[ "${OS}" == "centos" ]]; then
+  elif [[ "${os}" == "centos" ]]; then
     sudo yum install -y jq
     return 0
-  elif [[ "${OS}" == "fedora" ]]; then
+  elif [[ "${os}" == "fedora" ]]; then
     sudo dnf -y install jq
     return 0
-  elif [[ "${OS}" == "arch" ]]; then
+  elif [[ "${os}" == "arch" ]]; then
     sudo pacman -Sy --noconfirm jq
     return 0
   else
