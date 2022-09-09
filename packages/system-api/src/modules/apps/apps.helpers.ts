@@ -110,7 +110,7 @@ export const generateEnvFile = (app: App) => {
     envFile += `APP_DOMAIN=${app.domain}\n`;
     envFile += `APP_PROTOCOL=https\n`;
   } else {
-    envFile += `APP_DOMAIN=${configFile.port}:${InternalIp.v4()}\n`;
+    envFile += `APP_DOMAIN=${InternalIp.v4()}:${configFile.port}\n`;
   }
 
   writeFile(`/app-data/${app.id}/app.env`, envFile);
