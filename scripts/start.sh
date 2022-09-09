@@ -88,6 +88,12 @@ if [[ "${NGINX_PORT}" != "80" ]] && [[ "${DOMAIN}" != "tipi.localhost" ]]; then
   exit 1
 fi
 
+# Check if JQ is installed
+if ! command -v jq >/dev/null 2>&1; then
+  echo "Tipi requires JQ to be installed (https://stedolan.github.io/jq/)"
+  exit 1
+fi
+
 ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
