@@ -108,6 +108,7 @@ export const generateEnvFile = (app: App) => {
   if (app.exposed && app.domain) {
     envFile += 'APP_EXPOSED=true\n';
     envFile += `APP_DOMAIN=${app.domain}\n`;
+    envFile += `APP_PROTOCOL=https\n`;
   }
 
   writeFile(`/app-data/${app.id}/app.env`, envFile);
