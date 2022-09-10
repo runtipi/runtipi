@@ -92,6 +92,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sethforprivacy",
+      "name": "Seth For Privacy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40500387?v=4",
+      "profile": "https://sethforprivacy.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
