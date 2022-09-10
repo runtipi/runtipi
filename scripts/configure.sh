@@ -19,7 +19,7 @@ function install_docker() {
   if [[ "${os}" == "debian" ]]; then
     sudo apt-get update
     sudo apt-get upgrade
-    sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
+    sudo apt-get install -y ca-certificates curl gnupg lsb-release
     sudo mkdir -p /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
@@ -29,7 +29,7 @@ function install_docker() {
   elif [[ "${os}" == "ubuntu" ]]; then
     sudo apt-get update
     sudo apt-get upgrade
-    sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
+    sudo apt-get install -y ca-certificates curl gnupg lsb-release
     sudo mkdir -p /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
@@ -37,21 +37,21 @@ function install_docker() {
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
   elif [[ "${os}" == "centos" ]]; then
-    sudo yum install -y yum-utils jq
+    sudo yum install -y yum-utils
     sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     sudo yum install -y --allowerasing docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
     return 0
   elif [[ "${os}" == "fedora" ]]; then
-    sudo dnf -y install dnf-plugins-core jq
+    sudo dnf -y install dnf-plugins-core
     sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
     sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
     return 0
   elif [[ "${os}" == "arch" ]]; then
-    sudo pacman -Sy --noconfirm docker jq
+    sudo pacman -Sy --noconfirm docker
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
 
@@ -118,9 +118,7 @@ if ! command -v docker-compose >/dev/null; then
   sudo chmod +x /usr/local/bin/docker-compose
 fi
 
-if command -v jq >/dev/null 2>&1; then
-  echo "jq is already installed"
-else
+if ! command -v jq >/dev/null; then
   install_jq "${OS}"
   jq_result=$?
 
