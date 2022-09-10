@@ -2,13 +2,6 @@
   "files": [
     "README.md"
   ],
-  "types": {
-    "app": {
-      "symbol": "📦",
-      "description": "Contributed by adding apps to Tipi.",
-      "link": "[<%= symbol %>](<%= url %> \"<%= description %>\"),"
-    }
-  },
   "imageSize": 100,
   "commit": false,
   "contributors": [
@@ -21,8 +14,7 @@
         "code",
         "infra",
         "test",
-        "doc",
-        "app"
+        "doc"
       ]
     },
     {
