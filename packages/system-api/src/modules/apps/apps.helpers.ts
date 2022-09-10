@@ -164,7 +164,9 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
 export const getUpdateInfo = async (id: string) => {
   const app = await App.findOne({ where: { id } });
 
-  if (!app) {
+  const doesFileExist = fileExists(`/repos/${config.APPS_REPO_ID}/apps/${id}`);
+
+  if (!app || !doesFileExist) {
     return null;
   }
 
