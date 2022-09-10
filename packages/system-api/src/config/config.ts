@@ -14,6 +14,7 @@ interface IConfig {
   ROOT_FOLDER_HOST: string;
   APPS_REPO_ID: string;
   APPS_REPO_URL: string;
+  INTERNAL_IP: string;
 }
 
 if (process.env.NODE_ENV !== 'production') {
@@ -51,6 +52,7 @@ const config: IConfig = {
   ROOT_FOLDER_HOST,
   APPS_REPO_ID,
   APPS_REPO_URL,
+  INTERNAL_IP,
 };
 
 export default config;
