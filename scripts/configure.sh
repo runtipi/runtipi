@@ -12,48 +12,73 @@ echo "=============== TIPI ================="
 echo "======================================"
 echo
 
+OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
+SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
+
 function install_docker() {
   local os="${1}"
   echo "Installing docker for os ${os}" >/dev/tty
 
-  if [[ "${OS}" == "debian" ]]; then
+  if [[ "${os}" == "debian" ]]; then
     sudo apt-get update
-    sudo apt-get upgrade
-    sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
+    sudo apt-get install -y ca-certificates curl gnupg lsb-release
     sudo mkdir -p /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
-  elif [[ "${OS}" == "ubuntu" ]]; then
+  elif [[ "${os}" == "ubuntu" ]]; then
     sudo apt-get update
-    sudo apt-get upgrade
-    sudo apt-get install -y ca-certificates curl gnupg jq lsb-release
+    sudo apt-get install -y ca-certificates curl gnupg lsb-release
     sudo mkdir -p /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
-  elif [[ "${OS}" == "centos" ]]; then
-    sudo yum install -y yum-utils jq
+  elif [[ "${os}" == "centos" ]]; then
     sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     sudo yum install -y --allowerasing docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
     return 0
-  elif [[ "${OS}" == "fedora" ]]; then
-    sudo dnf -y install dnf-plugins-core jq
+  elif [[ "${os}" == "fedora" ]]; then
     sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
     sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
     return 0
-  elif [[ "${OS}" == "arch" ]]; then
-    sudo pacman -Sy --noconfirm docker jq
+  elif [[ "${os}" == "arch" ]]; then
+    sudo pacman -Sy --noconfirm docker
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
+    return 0
+  else
+    return 1
+  fi
+}
+
+function install_dependencies() {
+  local os="${1}"
+  echo "Installing dependencies for os ${os}" >/dev/tty
+
+  if [[ "${os}" == "debian" ]]; then
+    sudo apt-get update
+    sudo apt-get install -y jq
+    return 0
+  elif [[ "${os}" == "ubuntu" ]]; then
+    sudo apt-get update
+    sudo apt-get install -y jq
+    return 0
+  elif [[ "${os}" == "centos" ]]; then
+    sudo yum install -y yum-utils jq
+    return 0
+  elif [[ "${os}" == "fedora" ]]; then
+    sudo dnf -y install dnf-plugins-core jq
+    return 0
+  elif [[ "${os}" == "arch" ]]; then
+    sudo pacman -Sy --noconfirm docker jq
 
     if ! command -v crontab >/dev/null; then
       sudo pacman -Sy --noconfirm cronie
@@ -66,8 +91,23 @@ function install_docker() {
   fi
 }
 
-OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
-SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
+install_dependencies "${OS}"
+dependencies_result=$?
+
+if [[ dependencies_result -eq 0 ]]; then
+  echo "dependencies installed"
+else
+  echo "Your system ${OS} is not supported trying with sub_os ${SUB_OS}"
+  install_dependencies "${SUB_OS}"
+  dependencies_sub_result=$?
+
+  if [[ dependencies_sub_result -eq 0 ]]; then
+    echo "docker installed"
+  else
+    echo "Your system ${SUB_OS} is not supported please install dependencies manually"
+    exit 1
+  fi
+fi
 
 if command -v docker >/dev/null; then
   echo "Docker is already installed"
