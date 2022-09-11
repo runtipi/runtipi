@@ -220,7 +220,6 @@ describe('generateEnvFile', () => {
     const envmap = await getEnvMap(appInfo.id);
 
     expect(envmap.get('APP_EXPOSED')).toBeUndefined();
-    expect(envmap.get('APP_DOMAIN')).toBeUndefined();
   });
 
   it('Should not add APP_EXPOSED if app is not exposed', async () => {
@@ -233,7 +232,7 @@ describe('generateEnvFile', () => {
     const envmap = await getEnvMap(appInfo.id);
 
     expect(envmap.get('APP_EXPOSED')).toBeUndefined();
-    expect(envmap.get('APP_DOMAIN')).toBeUndefined();
+    expect(envmap.get('APP_DOMAIN')).toBe(`192.168.1.10:${appInfo.port}`);
   });
 });
 

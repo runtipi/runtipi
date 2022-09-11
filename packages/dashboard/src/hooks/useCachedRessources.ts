@@ -16,7 +16,7 @@ const fetcher: BareFetcher<any> = (url: string) => {
 };
 
 export default function useCachedResources(): IReturnProps {
-  const { data } = useSWR<{ ip: string; domain: string }>('api/ip', fetcher);
+  const { data } = useSWR<{ ip: string; domain: string; port: string }>('api/ip', fetcher);
   const { baseUrl, setBaseUrl, setInternalIp, setDomain } = useSytemStore();
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
@@ -35,13 +35,17 @@ export default function useCachedResources(): IReturnProps {
   }
 
   useEffect(() => {
-    const { ip, domain } = data || {};
+    const { ip, domain, port } = data || {};
     if (ip && !baseUrl) {
       setInternalIp(ip);
       setDomain(domain);
 
       if (!domain || domain === 'tipi.localhost') {
-        setBaseUrl(`http://${ip}/api`);
+        if (port === '80') {
+          setBaseUrl(`http://${ip}/api`);
+        } else {
+          setBaseUrl(`http://${ip}:${port}/api`);
+        }
       } else {
         setBaseUrl(`https://${domain}/api`);
       }

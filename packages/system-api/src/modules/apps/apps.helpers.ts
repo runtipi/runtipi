@@ -108,6 +108,9 @@ export const generateEnvFile = (app: App) => {
   if (app.exposed && app.domain) {
     envFile += 'APP_EXPOSED=true\n';
     envFile += `APP_DOMAIN=${app.domain}\n`;
+    envFile += 'APP_PROTOCOL=https\n';
+  } else {
+    envFile += `APP_DOMAIN=${config.INTERNAL_IP}:${configFile.port}\n`;
   }
 
   writeFile(`/app-data/${app.id}/app.env`, envFile);
@@ -161,7 +164,9 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
 export const getUpdateInfo = async (id: string) => {
   const app = await App.findOne({ where: { id } });
 
-  if (!app) {
+  const doesFileExist = fileExists(`/repos/${config.APPS_REPO_ID}/apps/${id}`);
+
+  if (!app || !doesFileExist) {
     return null;
   }
 
