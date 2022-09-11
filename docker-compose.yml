@@ -100,6 +100,7 @@ services:
       INTERNAL_IP: ${INTERNAL_IP}
       NODE_ENV: production
       DOMAIN: ${DOMAIN}
+      NGINX_PORT: ${NGINX_PORT-80}
     labels:
       traefik.enable: true
       traefik.http.routers.dashboard-redirect.rule: PathPrefix("/")

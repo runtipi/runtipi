@@ -93,8 +93,9 @@ services:
     networks:
       - tipi_main_network
     environment:
-      - INTERNAL_IP=${INTERNAL_IP}
-      - DOMAIN=${DOMAIN}
+      INTERNAL_IP: ${INTERNAL_IP}
+      DOMAIN: ${DOMAIN}
+      NGINX_PORT: ${NGINX_PORT-80}
     volumes:
       - ${PWD}/packages/dashboard/src:/dashboard/src
       # - /dashboard/node_modules
