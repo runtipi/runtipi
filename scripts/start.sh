@@ -13,6 +13,9 @@ NGINX_PORT_SSL=443
 PROXY_PORT=8080
 DOMAIN=tipi.localhost
 
+NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
+INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
+
 while [ -n "$1" ]; do # while loop starts
   case "$1" in
   --rc) rc="true" ;;
@@ -61,6 +64,17 @@ while [ -n "$1" ]; do # while loop starts
     fi
     shift
     ;;
+  --listen-ip)
+    listen_ip="$2"
+
+    if [[ "${listen_ip}" =~ ^[a-fA-F0-9.:]+$ ]]; then
+      INTERNAL_IP="${listen_ip}"
+    else
+      echo "--listen-ip must be a valid IP address"
+      exit 1
+    fi
+    shift
+    ;;
   --)
     shift # The double dash makes them parameters
     break
@@ -92,8 +106,6 @@ ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 
-NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
-INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
 TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' | sed 's/\//\\\//g' || Europe\/Berlin)"
