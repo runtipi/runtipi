@@ -43,3 +43,5 @@ COPY --from=build /dashboard/.next /dashboard/.next
 COPY ./packages/dashboard /dashboard
 
 WORKDIR /
+
+CMD /bin/sh -c "cd /api && npm run start"
