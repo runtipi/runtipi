@@ -26,7 +26,7 @@ function install_docker() {
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
-  elif [[ "${os}" == "ubuntu" ]]; then
+  elif [[ "${os}" == "ubuntu" || "${os}" == "pop" ]]; then
     sudo apt-get update
     sudo apt-get upgrade
     sudo apt-get install -y ca-certificates curl gnupg lsb-release
@@ -70,7 +70,7 @@ function install_jq() {
   local os="${1}"
   echo "Installing jq for os ${os}" >/dev/tty
 
-  if [[ "${os}" == "debian" || "${os}" == "ubuntu" ]]; then
+  if [[ "${os}" == "debian" || "${os}" == "ubuntu" || "${os}" == "pop" ]]; then
     sudo apt-get update
     sudo apt-get install -y jq
     return 0
