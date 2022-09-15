@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Required Notice: Copyright
+# Umbrel (https://umbrel.com)
+
 set -euo pipefail
 
 # use greadlink instead of readlink on osx

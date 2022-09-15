@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# Required Notice: Copyright
+# Umbrel (https://umbrel.com)
+
 set -e # Exit immediately if a command exits with a non-zero status.
 
 # use greadlink instead of readlink on osx
