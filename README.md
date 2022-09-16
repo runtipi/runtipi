@@ -1,6 +1,6 @@
 # ⛺️ Tipi — A personal homeserver for everyone
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
@@ -145,6 +145,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://rushichaudhari.github.io/"><img src="https://avatars.githubusercontent.com/u/6279035?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Rushi Chaudhari</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=rushic24" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/rblaine95"><img src="https://avatars.githubusercontent.com/u/4052340?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Robert Blaine</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=rblaine95" title="Code">💻</a></td>
       <td align="center"><a href="https://sethforprivacy.com"><img src="https://avatars.githubusercontent.com/u/40500387?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Seth For Privacy</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=sethforprivacy" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/hqwuzhaoyi"><img src="https://avatars.githubusercontent.com/u/44605072?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Prajna</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=hqwuzhaoyi" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
