@@ -145,7 +145,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://rushichaudhari.github.io/"><img src="https://avatars.githubusercontent.com/u/6279035?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Rushi Chaudhari</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=rushic24" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/rblaine95"><img src="https://avatars.githubusercontent.com/u/4052340?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Robert Blaine</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=rblaine95" title="Code">💻</a></td>
       <td align="center"><a href="https://sethforprivacy.com"><img src="https://avatars.githubusercontent.com/u/40500387?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Seth For Privacy</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=sethforprivacy" title="Code">💻</a></td>
-      <td align="center"><a href="https://github.com/justincmoy"><img src="https://avatars.githubusercontent.com/u/14875982?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Justin Moy</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=justincmoy" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/justincmoy"><img src="https://avatars.githubusercontent.com/u/14875982?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Justin Moy</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=justincmoy" title="Code">💻</a> <a href="#ideas-justincmoy" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
