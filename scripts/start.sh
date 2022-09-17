@@ -175,6 +175,23 @@ JWT_SECRET=$(derive_entropy "jwt")
 POSTGRES_PASSWORD=$(derive_entropy "postgres")
 TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 
+echo "Creating .env file with the following values:"
+echo "  DOMAIN=${DOMAIN}"
+echo "  INTERNAL_IP=${INTERNAL_IP}"
+echo "  NGINX_PORT=${NGINX_PORT}"
+echo "  NGINX_PORT_SSL=${NGINX_PORT_SSL}"
+echo "  PROXY_PORT=${PROXY_PORT}"
+echo "  DNS_IP=${DNS_IP}"
+echo "  ARCHITECTURE=${ARCHITECTURE}"
+echo "  TZ=${TZ}"
+echo "  APPS_REPOSITORY=${APPS_REPOSITORY}"
+echo "  REPO_ID=${REPO_ID}"
+echo "  JWT_SECRET=<redacted>"
+echo "  POSTGRES_PASSWORD=<redacted>"
+echo "  TIPI_VERSION=${TIPI_VERSION}"
+echo "  ROOT_FOLDER=${SED_ROOT_FOLDER}"
+echo "  APPS_REPOSITORY=${APPS_REPOSITORY_ESCAPED}"
+
 for template in ${ENV_FILE}; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
   sed -i "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"
