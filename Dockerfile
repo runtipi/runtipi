@@ -44,4 +44,4 @@ COPY ./packages/dashboard /dashboard
 
 WORKDIR /
 
-CMD /bin/sh -c "cd /api && npm run start"
+CMD '/bin/sh -c "cd /api && npm run start"' & '/bin/sh -c "cd /dashboard && npm run start"'
