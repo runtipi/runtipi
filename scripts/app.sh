@@ -132,7 +132,7 @@ compose() {
   # Docker Compose does not support multiple env files
   # --env-file "${env_file}" \
 
-  docker-compose \
+  docker compose \
     --env-file "${ROOT_FOLDER}/app-data/${app}/app.env" \
     --project-name "${app}" \
     --file "${app_compose_file}" \
