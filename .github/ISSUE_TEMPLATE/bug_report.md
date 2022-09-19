@@ -7,6 +7,12 @@ assignees: meienberger
 
 ---
 
+### Checklist
+Before opening your issue be sure to have completed all those tasks.
+- [ ] I have searched for an already existing issue with similar context and errors. My issue has not yet been reported.
+- [ ] I have included a clear description and steps to reproduce.
+- [ ] I have included my OS information
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -36,3 +42,4 @@ If applicable, add screenshots to help explain your problem.
 
 **Additional context**
 Add any other context about the problem here.
+
