@@ -28,7 +28,7 @@ Commands:
     uninstall                  Removes images and destroys all data for an app
     stop                       Stops an installed app
     start                      Starts an installed app
-    compose                    Passes all arguments to docker-compose
+    compose                    Passes all arguments to Docker Compose
     ls-installed               Lists installed apps
 EOF
 }
@@ -129,7 +129,7 @@ compose() {
   export ROOT_FOLDER_HOST="${root_folder_host}"
   export ROOT_FOLDER="${ROOT_FOLDER}"
 
-  # Docker-compose does not support multiple env files
+  # Docker Compose does not support multiple env files
   # --env-file "${env_file}" \
 
   docker-compose \
@@ -209,7 +209,7 @@ if [[ "$command" = "start" ]]; then
   exit
 fi
 
-# Passes all arguments to docker-compose
+# Passes all arguments to Docker Compose
 if [[ "$command" = "compose" ]]; then
   compose "${app}" ${args}
   exit

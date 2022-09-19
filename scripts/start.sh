@@ -237,16 +237,16 @@ bash "${ROOT_FOLDER}/scripts/system-info.sh"
 if [[ ! $ci == "true" ]]; then
 
   if [[ $rc == "true" ]]; then
-    docker-compose -f docker-compose.rc.yml --env-file "${ROOT_FOLDER}/.env" pull
-    # Run docker-compose
-    docker-compose -f docker-compose.rc.yml --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
+    docker compose -f docker-compose.rc.yml --env-file "${ROOT_FOLDER}/.env" pull
+    # Run docker compose
+    docker compose -f docker-compose.rc.yml --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
       echo "Failed to start containers"
       exit 1
     }
   else
-    docker-compose --env-file "${ROOT_FOLDER}/.env" pull
-    # Run docker-compose
-    docker-compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
+    docker compose --env-file "${ROOT_FOLDER}/.env" pull
+    # Run docker compose
+    docker compose --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {
       echo "Failed to start containers"
       exit 1
     }
