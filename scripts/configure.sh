@@ -51,7 +51,7 @@ function install_docker() {
     sudo systemctl enable docker
     return 0
   elif [[ "${os}" == "arch" ]]; then
-    sudo pacman -Sy --noconfirm docker
+    sudo pacman -Sy --noconfirm docker docker-compose
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
 
