@@ -37,4 +37,4 @@ done
 
 echo "Stopping Docker services..."
 echo
-docker-compose down --remove-orphans --rmi local
+docker compose down --remove-orphans --rmi local
