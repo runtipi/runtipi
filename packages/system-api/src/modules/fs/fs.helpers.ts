@@ -5,13 +5,17 @@ import config from '../../config';
 export const getAbsolutePath = (path: string) => `${config.ROOT_FOLDER}${path}`;
 
 export const readJsonFile = (path: string): any => {
-  const rawFile = fs.readFileSync(getAbsolutePath(path))?.toString();
+  try {
+    const rawFile = fs.readFileSync(getAbsolutePath(path))?.toString();
 
-  if (!rawFile) {
+    if (!rawFile) {
+      return null;
+    }
+
+    return JSON.parse(rawFile);
+  } catch (e) {
     return null;
   }
-
-  return JSON.parse(rawFile);
 };
 
 export const readFile = (path: string): string => {

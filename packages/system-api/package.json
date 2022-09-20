@@ -56,7 +56,8 @@
     "type-graphql": "^1.1.1",
     "typeorm": "^0.3.6",
     "validator": "^13.7.0",
-    "winston": "^3.7.2"
+    "winston": "^3.7.2",
+    "zod": "^3.19.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.3.0",

@@ -193,6 +193,7 @@ importers:
       typescript: 4.6.4
       validator: ^13.7.0
       winston: ^3.7.2
+      zod: ^3.19.1
     dependencies:
       apollo-server-core: 3.10.0_graphql@15.8.0
       apollo-server-express: 3.9.0_jfj6k5cqxqbusbdzwqjdzioxzm
@@ -226,6 +227,7 @@ importers:
       typeorm: 0.3.6_pg@8.7.3+ts-node@10.8.2
       validator: 13.7.0
       winston: 3.7.2
+      zod: 3.19.1
     devDependencies:
       '@faker-js/faker': 7.3.0
       '@swc/cli': 0.1.57_@swc+core@1.2.210
@@ -12918,6 +12920,10 @@ packages:
 
   /zen-observable/0.8.15:
     resolution: {integrity: sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==}
+    dev: false
+
+  /zod/3.19.1:
+    resolution: {integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==}
     dev: false
 
   /zustand/3.7.2_react@18.1.0:

@@ -57,7 +57,7 @@ export const checkEnvFile = (appName: string) => {
 
 export const runAppScript = async (params: string[]): Promise<void> => {
   return new Promise((resolve, reject) => {
-    runScript('/scripts/app.sh', [...params, config.ROOT_FOLDER_HOST, config.APPS_REPO_ID], (err: string) => {
+    runScript('/scripts/app.sh', [...params], (err: string) => {
       if (err) {
         logger.error(err);
         reject(err);

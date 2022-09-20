@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import express from 'express';
 import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from 'apollo-server-core';
-import config from './config';
 import { ApolloServer } from 'apollo-server-express';
 import { createSchema } from './schema';
 import { ApolloLogs } from './config/logger/apollo.logger';
@@ -17,6 +16,9 @@ import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
 import { cloneRepo, updateRepo } from './helpers/repo-helpers';
 import startJobs from './core/jobs/jobs';
+import { getConfig } from './core/config/TipiConfig';
+
+const { clientUrls, rootFolder, appsRepoId, appsRepoUrl } = getConfig();
 
 let corsOptions = {
   credentials: true,
@@ -27,7 +29,7 @@ let corsOptions = {
     // disallow requests with no origin
     if (!origin) return callback(new Error('Not allowed by CORS'), false);
 
-    if (config.CLIENT_URLS.includes(origin)) {
+    if (clientUrls.includes(origin)) {
       return callback(null, true);
     }
 
@@ -41,7 +43,7 @@ const main = async () => {
     const app = express();
     const port = 3001;
 
-    app.use(express.static(`${config.ROOT_FOLDER}/repos/${config.APPS_REPO_ID}`));
+    app.use(express.static(`${rootFolder}/repos/${appsRepoId}`));
     app.use(cors(corsOptions));
     app.use(getSessionMiddleware());
 
@@ -75,8 +77,8 @@ const main = async () => {
     await runUpdates();
 
     httpServer.listen(port, async () => {
-      await cloneRepo(config.APPS_REPO_URL);
-      await updateRepo(config.APPS_REPO_URL);
+      await cloneRepo(appsRepoUrl);
+      await updateRepo(appsRepoId);
       startJobs();
       // Start apps
       appsService.startAllApps();
