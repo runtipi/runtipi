@@ -75,7 +75,7 @@ while [ -n "$1" ]; do # while loop starts
 done
 
 # Ensure BASH_SOURCE is ./scripts/start.sh
-if [[ "${BASH_SOURCE[0]}" != "./scripts/start.sh" ]]; then
+if [[ $(basename $(pwd)) != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
   echo "Please make sure this script is executed from runtipi/"
   exit 1
 fi
