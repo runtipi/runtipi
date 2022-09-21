@@ -26,10 +26,8 @@ fi
 
 # Update Tipi
 if [[ "$command" = "update" ]]; then
-
     scripts/stop.sh
     git pull origin master
     scripts/start.sh
-
     exit
 fi

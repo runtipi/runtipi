@@ -5,17 +5,16 @@
 
 set -e # Exit immediately if a command exits with a non-zero status.
 
-# use greadlink instead of readlink on osx
-if [[ "$(uname)" == "Darwin" ]]; then
-  readlink=greadlink
-else
-  readlink=readlink
-fi
-
 NGINX_PORT=80
 NGINX_PORT_SSL=443
 PROXY_PORT=8080
 DOMAIN=tipi.localhost
+
+# Check we are on linux
+if [[ "$(uname)" != "Linux" ]]; then
+  echo "Tipi only works on Linux"
+  exit 1
+fi
 
 NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
 INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
@@ -91,12 +90,6 @@ done
 # Ensure BASH_SOURCE is ./scripts/start.sh
 if [[ $(basename $(pwd)) != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
   echo "Please make sure this script is executed from runtipi/"
-  exit 1
-fi
-
-# Check we are on linux
-if [[ "$(uname)" != "Linux" ]]; then
-  echo "Tipi only works on Linux"
   exit 1
 fi
 
