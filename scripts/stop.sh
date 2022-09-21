@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# use greadlink instead of readlink on osx
-if [[ "$(uname)" == "Darwin" ]]; then
-  readlink=greadlink
-else
-  readlink=readlink
-fi
-
 if [[ $UID != 0 ]]; then
   echo "Tipi must be stopped as root"
   echo "Please re-run this script as"
@@ -15,10 +8,13 @@ if [[ $UID != 0 ]]; then
   exit 1
 fi
 
-ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
-STATE_FOLDER="${ROOT_FOLDER}/state"
+# Ensure PWD ends with /runtipi
+if [[ $(basename $(pwd)) != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
+  echo "Please run this script from the runtipi directory"
+  exit 1
+fi
 
-cd "$ROOT_FOLDER"
+ROOT_FOLDER="${PWD}"
 
 export DOCKER_CLIENT_TIMEOUT=240
 export COMPOSE_HTTP_TIMEOUT=240

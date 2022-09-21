@@ -4,46 +4,28 @@
 
 set -euo pipefail
 
-# use greadlink instead of readlink on osx
-if [[ "$(uname)" == "Darwin" ]]; then
-  rdlk=greadlink
-else
-  rdlk=readlink
+cd /runtipi || echo ""
+# Ensure PWD ends with /runtipi
+if [[ "${PWD##*/}" != "runtipi" ]]; then
+  echo "Please run this script from the runtipi directory"
+  exit 1
 fi
 
-ROOT_FOLDER="$($rdlk -f $(dirname "${BASH_SOURCE[0]}")/..)"
-REPO_ID="$(echo -n "https://github.com/meienberger/runtipi-appstore" | sha256sum | awk '{print $1}')"
-STATE_FOLDER="${ROOT_FOLDER}/state"
+# Root folder in container is /runtipi
+ROOT_FOLDER="${PWD}"
 
-show_help() {
-  cat <<EOF
-app 0.0.1
+ENV_FILE="${ROOT_FOLDER}/.env"
 
-CLI for managing Tipi apps
-
-Usage: app <command> <app> [<arguments>]
-
-Commands:
-    install                    Pulls down images for an app and starts it
-    uninstall                  Removes images and destroys all data for an app
-    stop                       Stops an installed app
-    start                      Starts an installed app
-    compose                    Passes all arguments to Docker Compose
-    ls-installed               Lists installed apps
-EOF
-}
+# Root folder in host system
+ROOT_FOLDER_HOST=$(grep -v '^#' "${ENV_FILE}" | xargs -n 1 | grep ROOT_FOLDER_HOST | cut -d '=' -f2)
+REPO_ID=$(grep -v '^#' "${ENV_FILE}" | xargs -n 1 | grep APPS_REPO_ID | cut -d '=' -f2)
 
 # Get field from json file
 function get_json_field() {
   local json_file="$1"
   local field="$2"
 
-  echo $(jq -r ".${field}" "${json_file}")
-}
-
-list_installed_apps() {
-  str=$(get_json_field ${STATE_FOLDER}/apps.json installed)
-  echo $str
+  jq -r ".${field}" "${json_file}"
 }
 
 if [ -z ${1+x} ]; then
@@ -52,31 +34,11 @@ else
   command="$1"
 fi
 
-# Lists installed apps
-if [[ "$command" = "ls-installed" ]]; then
-  list_installed_apps
-
-  exit
-fi
-
 if [ -z ${2+x} ]; then
   show_help
   exit 1
 else
-
   app="$2"
-  root_folder_host="${3:-$ROOT_FOLDER}"
-  repo_id="${4:-$REPO_ID}"
-
-  if [[ -z "${repo_id}" ]]; then
-    echo "Error: Repo id not provided"
-    exit 1
-  fi
-
-  if [[ -z "${root_folder_host}" ]]; then
-    echo "Error: Root folder not provided"
-    exit 1
-  fi
 
   app_dir="${ROOT_FOLDER}/apps/${app}"
 
@@ -84,7 +46,7 @@ else
     # copy from repo
     echo "Copying app from repo"
     mkdir -p "${app_dir}"
-    cp -r "${ROOT_FOLDER}/repos/${repo_id}/apps/${app}"/* "${app_dir}"
+    cp -r "${ROOT_FOLDER}/repos/${REPO_ID}/apps/${app}"/* "${app_dir}"
   fi
 
   app_data_dir="${ROOT_FOLDER}/app-data/${app}"
@@ -113,7 +75,6 @@ compose() {
   fi
 
   # App data folder
-  local env_file="${ROOT_FOLDER}/.env"
   local app_compose_file="${app_dir}/docker-compose.yml"
 
   # Pick arm architecture if running on arm and if the app has a docker-compose.arm.yml file
@@ -121,19 +82,14 @@ compose() {
     app_compose_file="${app_dir}/docker-compose.arm.yml"
   fi
 
-  local common_compose_file="${ROOT_FOLDER}/repos/${repo_id}/apps/docker-compose.common.yml"
+  local common_compose_file="${ROOT_FOLDER}/repos/${REPO_ID}/apps/docker-compose.common.yml"
 
   # Vars to use in compose file
-  export APP_DATA_DIR="${root_folder_host}/app-data/${app}"
-  export APP_DIR="${app_dir}"
-  export ROOT_FOLDER_HOST="${root_folder_host}"
-  export ROOT_FOLDER="${ROOT_FOLDER}"
-
-  # Docker Compose does not support multiple env files
-  # --env-file "${env_file}" \
+  export APP_DATA_DIR="${ROOT_FOLDER_HOST}/app-data/${app}"
+  export ROOT_FOLDER_HOST="${ROOT_FOLDER_HOST}"
 
   docker compose \
-    --env-file "${ROOT_FOLDER}/app-data/${app}/app.env" \
+    --env-file "${app_data_dir}/app.env" \
     --project-name "${app}" \
     --file "${app_compose_file}" \
     --file "${common_compose_file}" \
@@ -189,7 +145,7 @@ if [[ "$command" = "update" ]]; then
   fi
 
   # Copy app from repo
-  cp -r "${ROOT_FOLDER}/repos/${repo_id}/apps/${app}" "${app_dir}"
+  cp -r "${ROOT_FOLDER}/repos/${REPO_ID}/apps/${app}" "${app_dir}"
 
   compose "${app}" pull
   exit
@@ -215,7 +171,4 @@ if [[ "$command" = "compose" ]]; then
   exit
 fi
 
-# If we get here it means no valid command was supplied
-# Show help and exit
-show_help
 exit 1

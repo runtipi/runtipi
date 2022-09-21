@@ -106,7 +106,7 @@ if [[ "${NGINX_PORT}" != "80" ]] && [[ "${DOMAIN}" != "tipi.localhost" ]]; then
   exit 1
 fi
 
-ROOT_FOLDER="$($readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
+ROOT_FOLDER="${PWD}"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 
@@ -186,6 +186,31 @@ ENV_FILE=$(mktemp)
 JWT_SECRET=$(derive_entropy "jwt")
 POSTGRES_PASSWORD=$(derive_entropy "postgres")
 TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
+
+# Override vars with values from settings.json
+if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
+
+  # If dnsIp is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" dnsIp)" != "null" ]]; then
+    DNS_IP=$(get_json_field "${STATE_FOLDER}/settings.json" dnsIp)
+  fi
+
+  # If domain is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" domain)" != "null" ]]; then
+    DOMAIN=$(get_json_field "${STATE_FOLDER}/settings.json" domain)
+  fi
+
+  # If appsRepoUrl is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoUrl)" != "null" ]]; then
+    APPS_REPOSITORY_ESCAPED="$(echo ${APPS_REPOSITORY} | sed 's/\//\\\//g')"
+  fi
+
+  # If appsRepoId is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoId)" != "null" ]]; then
+    REPO_ID=$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoId)
+  fi
+
+fi
 
 echo "Creating .env file with the following values:"
 echo "  DOMAIN=${DOMAIN}"

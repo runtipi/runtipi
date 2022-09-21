@@ -1,16 +1,4 @@
 #!/usr/bin/env bash
-ROOT_FOLDER="$(readlink -f "$(dirname "${BASH_SOURCE[0]}")"/..)"
-
-echo
-echo "======================================"
-if [[ -f "${ROOT_FOLDER}/state/configured" ]]; then
-  echo "=========== RECONFIGURING ============"
-else
-  echo "============ CONFIGURING ============="
-fi
-echo "=============== TIPI ================="
-echo "======================================"
-echo
 
 function install_docker() {
   local os="${1}"

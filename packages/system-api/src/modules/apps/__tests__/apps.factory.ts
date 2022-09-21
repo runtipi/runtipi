@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { AppCategoriesEnum, AppInfo, AppStatusEnum, FieldTypes } from '../apps.types';
-import config from '../../../config';
 import App from '../app.entity';
+import { getConfig } from '../../../core/config/TipiConfig';
 
 interface IProps {
   installed?: boolean;
@@ -55,11 +55,11 @@ const createApp = async (props: IProps) => {
   }
 
   let MockFiles: any = {};
-  MockFiles[`${config.ROOT_FOLDER}/.env`] = 'TEST=test';
-  MockFiles[`${config.ROOT_FOLDER}/repos/repo-id`] = '';
-  MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
-  MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
-  MockFiles[`${config.ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+  MockFiles[`${getConfig().rootFolder}/.env`] = 'TEST=test';
+  MockFiles[`${getConfig().rootFolder}/repos/repo-id`] = '';
+  MockFiles[`${getConfig().rootFolder}/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+  MockFiles[`${getConfig().rootFolder}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  MockFiles[`${getConfig().rootFolder}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   let appEntity = new App();
   if (installed) {
@@ -71,10 +71,10 @@ const createApp = async (props: IProps) => {
       domain,
     }).save();
 
-    MockFiles[`${config.ROOT_FOLDER}/app-data/${appInfo.id}`] = '';
-    MockFiles[`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
-    MockFiles[`${config.ROOT_FOLDER}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
-    MockFiles[`${config.ROOT_FOLDER}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+    MockFiles[`${getConfig().rootFolder}/app-data/${appInfo.id}`] = '';
+    MockFiles[`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
   }
 
   return { appInfo, MockFiles, appEntity };

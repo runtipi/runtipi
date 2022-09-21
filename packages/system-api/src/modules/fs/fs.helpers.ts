@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import childProcess from 'child_process';
-import config from '../../config';
+import { getConfig } from '../../core/config/TipiConfig';
 
-export const getAbsolutePath = (path: string) => `${config.ROOT_FOLDER}${path}`;
+export const getAbsolutePath = (path: string) => `${getConfig().rootFolder}${path}`;
 
 export const readJsonFile = (path: string): any => {
   try {
@@ -54,6 +54,6 @@ export const ensureAppFolder = (appName: string, cleanup = false) => {
   if (!fileExists(`/apps/${appName}/docker-compose.yml`)) {
     if (fileExists(`/apps/${appName}`)) deleteFolder(`/apps/${appName}`);
     // Copy from apps repo
-    fs.copySync(getAbsolutePath(`/repos/${config.APPS_REPO_ID}/apps/${appName}`), getAbsolutePath(`/apps/${appName}`));
+    fs.copySync(getAbsolutePath(`/repos/${getConfig().appsRepoId}/apps/${appName}`), getAbsolutePath(`/apps/${appName}`));
   }
 };

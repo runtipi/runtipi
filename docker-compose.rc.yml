@@ -46,7 +46,7 @@ services:
     volumes:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}:/tipi
+      - ${PWD}:/runtipi
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       TIPI_VERSION: ${TIPI_VERSION}

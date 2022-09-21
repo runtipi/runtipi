@@ -1,6 +1,5 @@
 import AppsService from '../apps.service';
 import fs from 'fs-extra';
-import config from '../../../config';
 import childProcess from 'child_process';
 import { AppInfo, AppStatusEnum } from '../apps.types';
 import App from '../app.entity';
@@ -8,6 +7,7 @@ import { createApp } from './apps.factory';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import { DataSource } from 'typeorm';
 import { getEnvMap } from '../apps.helpers';
+import { getConfig } from '../../../core/config/TipiConfig';
 
 jest.mock('fs-extra');
 jest.mock('child_process');
@@ -43,7 +43,7 @@ describe('Install app', () => {
 
   it('Should correctly generate env file for app', async () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`).toString();
+    const envFile = fs.readFileSync(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`).toString();
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=192.168.1.10:${app1.port}`);
   });
@@ -63,7 +63,7 @@ describe('Install app', () => {
     const spy = jest.spyOn(childProcess, 'execFile');
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['install', app1.id], {}, expect.any(Function)]);
     spy.mockRestore();
   });
 
@@ -74,8 +74,8 @@ describe('Install app', () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id], {}, expect.any(Function)]);
-    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.calls[0]).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['install', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.calls[1]).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['start', app1.id], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -112,7 +112,7 @@ describe('Install app', () => {
 
   it('Should correctly copy app from repos to apps folder', async () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    const appFolder = fs.readdirSync(`${config.ROOT_FOLDER}/apps/${app1.id}`);
+    const appFolder = fs.readdirSync(`${getConfig().rootFolder}/apps/${app1.id}`);
 
     expect(appFolder).toBeDefined();
     expect(appFolder.indexOf('docker-compose.yml')).toBeGreaterThanOrEqual(0);
@@ -121,19 +121,19 @@ describe('Install app', () => {
   it('Should cleanup any app folder existing before install', async () => {
     const { MockFiles, appInfo } = await createApp({});
     app1 = appInfo;
-    MockFiles[`/tipi/apps/${appInfo.id}/docker-compose.yml`] = 'test';
-    MockFiles[`/tipi/apps/${appInfo.id}/test.yml`] = 'test';
-    MockFiles[`/tipi/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
+    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}/docker-compose.yml`] = 'test';
+    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}/test.yml`] = 'test';
+    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
 
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/test.yml`)).toBe(true);
+    expect(fs.existsSync(`${getConfig().rootFolder}/apps/${app1.id}/test.yml`)).toBe(true);
 
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
-    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/test.yml`)).toBe(false);
-    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/docker-compose.yml`)).toBe(true);
+    expect(fs.existsSync(`${getConfig().rootFolder}/apps/${app1.id}/test.yml`)).toBe(false);
+    expect(fs.existsSync(`${getConfig().rootFolder}/apps/${app1.id}/docker-compose.yml`)).toBe(true);
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
@@ -194,7 +194,7 @@ describe('Uninstall app', () => {
 
     await AppsService.uninstallApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['uninstall', app1.id], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -205,8 +205,8 @@ describe('Uninstall app', () => {
     await AppsService.uninstallApp(app1.id);
 
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id], {}, expect.any(Function)]);
-    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.calls[0]).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['stop', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.calls[1]).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['uninstall', app1.id], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -245,7 +245,7 @@ describe('Start app', () => {
 
     await AppsService.startApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['start', app1.id], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -266,11 +266,11 @@ describe('Start app', () => {
   });
 
   it('Regenerate env file', async () => {
-    fs.writeFile(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`, 'TEST=test\nAPP_PORT=3000', () => {});
+    fs.writeFile(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`, 'TEST=test\nAPP_PORT=3000', () => {});
 
     await AppsService.startApp(app1.id);
 
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`).toString();
+    const envFile = fs.readFileSync(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`).toString();
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=192.168.1.10:${app1.port}`);
   });
@@ -302,7 +302,7 @@ describe('Stop app', () => {
 
     await AppsService.stopApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['stop', app1.id], {}, expect.any(Function)]);
   });
 
   it('Should throw if app is not installed', async () => {
@@ -334,7 +334,7 @@ describe('Update app config', () => {
   it('Should correctly update app config', async () => {
     await AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' });
 
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`).toString();
+    const envFile = fs.readFileSync(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`).toString();
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=192.168.1.10:${app1.port}`);
   });
@@ -352,8 +352,8 @@ describe('Update app config', () => {
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`).toString();
-    fs.writeFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`, `${envFile}\nRANDOM_FIELD=test`);
+    const envFile = fs.readFileSync(`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`).toString();
+    fs.writeFileSync(`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`, `${envFile}\nRANDOM_FIELD=test`);
 
     await AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' });
 
@@ -470,8 +470,8 @@ describe('Start all apps', () => {
 
     expect(spy.mock.calls.length).toBe(2);
     expect(spy.mock.calls).toEqual([
-      [`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id], {}, expect.any(Function)],
-      [`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app2.id], {}, expect.any(Function)],
+      [`${getConfig().rootFolder}/scripts/app.sh`, ['start', app1.id], {}, expect.any(Function)],
+      [`${getConfig().rootFolder}/scripts/app.sh`, ['start', app2.id], {}, expect.any(Function)],
     ]);
   });
 

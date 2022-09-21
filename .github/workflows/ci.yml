@@ -3,7 +3,7 @@ on:
   push:
 
 env:
-  ROOT_FOLDER: /test
+  ROOT_FOLDER: /runtipi
   JWT_SECRET: "secret"
   ROOT_FOLDER_HOST: /tipi
   APPS_REPO_ID: repo-id

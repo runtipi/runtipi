@@ -1,10 +1,10 @@
-import config from '../../config';
 import logger from '../../config/logger/logger';
 import App from '../../modules/apps/app.entity';
 import { AppInfo, AppStatusEnum } from '../../modules/apps/apps.types';
 import User from '../../modules/auth/user.entity';
 import { deleteFolder, fileExists, readFile, readJsonFile } from '../../modules/fs/fs.helpers';
 import Update, { UpdateStatusEnum } from '../../modules/system/update.entity';
+import { getConfig } from '../config/TipiConfig';
 
 type AppsState = { installed: string };
 
@@ -39,7 +39,7 @@ export const updateV040 = async (): Promise<void> => {
 
           const form: Record<string, string> = {};
 
-          const configFile: AppInfo | null = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appId}/config.json`);
+          const configFile: AppInfo | null = readJsonFile(`/repos/${getConfig().appsRepoId}/apps/${appId}/config.json`);
           configFile?.form_fields?.forEach((field) => {
             const envVar = field.env_variable;
             const envVarValue = envVarsMap.get(envVar);

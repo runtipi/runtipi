@@ -53,7 +53,7 @@ services:
     volumes:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}:/tipi
+      - ${PWD}:/runtipi
       - ${PWD}/packages/system-api/src:/api/src
       # - /api/node_modules
     environment:

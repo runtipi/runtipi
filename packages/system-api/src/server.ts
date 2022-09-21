@@ -16,9 +16,8 @@ import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
 import { cloneRepo, updateRepo } from './helpers/repo-helpers';
 import startJobs from './core/jobs/jobs';
-import { getConfig } from './core/config/TipiConfig';
-
-const { clientUrls, rootFolder, appsRepoId, appsRepoUrl } = getConfig();
+import { applyJsonConfig, getConfig } from './core/config/TipiConfig';
+import { ZodError } from 'zod';
 
 let corsOptions = {
   credentials: true,
@@ -29,7 +28,7 @@ let corsOptions = {
     // disallow requests with no origin
     if (!origin) return callback(new Error('Not allowed by CORS'), false);
 
-    if (clientUrls.includes(origin)) {
+    if (getConfig().clientUrls.includes(origin)) {
       return callback(null, true);
     }
 
@@ -38,12 +37,27 @@ let corsOptions = {
   },
 };
 
+const applyCustomConfig = () => {
+  try {
+    applyJsonConfig();
+  } catch (e) {
+    logger.error('Error applying settings.json config');
+    if (e instanceof ZodError) {
+      Object.keys(e.flatten().fieldErrors).forEach((key) => {
+        logger.error(`Error in field ${key}`);
+      });
+    }
+  }
+};
+
 const main = async () => {
   try {
+    applyCustomConfig();
+
     const app = express();
     const port = 3001;
 
-    app.use(express.static(`${rootFolder}/repos/${appsRepoId}`));
+    app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
     app.use(cors(corsOptions));
     app.use(getSessionMiddleware());
 
@@ -77,15 +91,15 @@ const main = async () => {
     await runUpdates();
 
     httpServer.listen(port, async () => {
-      await cloneRepo(appsRepoUrl);
-      await updateRepo(appsRepoId);
+      await cloneRepo(getConfig().appsRepoUrl);
+      await updateRepo(getConfig().appsRepoUrl);
       startJobs();
       // Start apps
       appsService.startAllApps();
       console.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     logger.error(error);
   }
 };

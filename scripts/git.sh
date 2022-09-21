@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
+# Don't break if command fails
 
-# use greadlink instead of readlink on osx
-if [[ "$(uname)" == "Darwin" ]]; then
-    rdlk=greadlink
-else
-    rdlk=readlink
+cd /runtipi || echo ""
+# Ensure PWD ends with /runtipi
+if [[ "${PWD##*/}" != "runtipi" ]]; then
+    echo ${PWD}
+    echo "Please run this script from the runtipi directory"
+    exit 1
 fi
 
-ROOT_FOLDER="$($rdlk -f $(dirname "${BASH_SOURCE[0]}")/..)"
+ROOT_FOLDER="${PWD}"
 
 show_help() {
     cat <<EOF

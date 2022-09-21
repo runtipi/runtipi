@@ -2,15 +2,17 @@ import portUsed from 'tcp-port-used';
 import { fileExists, getSeed, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
 import crypto from 'crypto';
-import config from '../../config';
 import { AppInfo, AppStatusEnum } from './apps.types';
 import logger from '../../config/logger/logger';
 import App from './app.entity';
+import { getConfig } from '../../core/config/TipiConfig';
+
+const { appsRepoId, internalIp } = getConfig();
 
 export const checkAppRequirements = async (appName: string) => {
   let valid = true;
 
-  const configFile: AppInfo | null = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${appName}/config.json`);
+  const configFile: AppInfo | null = readJsonFile(`/repos/${appsRepoId}/apps/${appName}/config.json`);
 
   if (!configFile) {
     throw new Error(`App ${appName} not found`);
@@ -110,7 +112,7 @@ export const generateEnvFile = (app: App) => {
     envFile += `APP_DOMAIN=${app.domain}\n`;
     envFile += 'APP_PROTOCOL=https\n';
   } else {
-    envFile += `APP_DOMAIN=${config.INTERNAL_IP}:${configFile.port}\n`;
+    envFile += `APP_DOMAIN=${internalIp}:${configFile.port}\n`;
   }
 
   writeFile(`/app-data/${app.id}/app.env`, envFile);
@@ -119,11 +121,11 @@ export const generateEnvFile = (app: App) => {
 export const getAvailableApps = async (): Promise<string[]> => {
   const apps: string[] = [];
 
-  const appsDir = readdirSync(`/repos/${config.APPS_REPO_ID}/apps`);
+  const appsDir = readdirSync(`/repos/${appsRepoId}/apps`);
 
   appsDir.forEach((app) => {
-    if (fileExists(`/repos/${config.APPS_REPO_ID}/apps/${app}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${app}/config.json`);
+    if (fileExists(`/repos/${appsRepoId}/apps/${app}/config.json`)) {
+      const configFile: AppInfo = readJsonFile(`/repos/${appsRepoId}/apps/${app}/config.json`);
 
       if (configFile.available) {
         apps.push(app);
@@ -136,8 +138,6 @@ export const getAvailableApps = async (): Promise<string[]> => {
 
 export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null => {
   try {
-    const repoId = config.APPS_REPO_ID;
-
     // Check if app is installed
     const installed = typeof status !== 'undefined' && status !== AppStatusEnum.MISSING;
 
@@ -145,9 +145,9 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
       const configFile: AppInfo = readJsonFile(`/apps/${id}/config.json`);
       configFile.description = readFile(`/apps/${id}/metadata/description.md`).toString();
       return configFile;
-    } else if (fileExists(`/repos/${repoId}/apps/${id}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/repos/${repoId}/apps/${id}/config.json`);
-      configFile.description = readFile(`/repos/${repoId}/apps/${id}/metadata/description.md`);
+    } else if (fileExists(`/repos/${appsRepoId}/apps/${id}/config.json`)) {
+      const configFile: AppInfo = readJsonFile(`/repos/${appsRepoId}/apps/${id}/config.json`);
+      configFile.description = readFile(`/repos/${appsRepoId}/apps/${id}/metadata/description.md`);
 
       if (configFile.available) {
         return configFile;
@@ -164,13 +164,13 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
 export const getUpdateInfo = async (id: string) => {
   const app = await App.findOne({ where: { id } });
 
-  const doesFileExist = fileExists(`/repos/${config.APPS_REPO_ID}/apps/${id}`);
+  const doesFileExist = fileExists(`/repos/${appsRepoId}/apps/${id}`);
 
   if (!app || !doesFileExist) {
     return null;
   }
 
-  const repoConfig: AppInfo = readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${id}/config.json`);
+  const repoConfig: AppInfo = readJsonFile(`/repos/${appsRepoId}/apps/${id}/config.json`);
 
   return {
     current: app.version,
