@@ -11,7 +11,7 @@ fi
 if [[ $UID != 0 ]]; then
   echo "Tipi must be stopped as root"
   echo "Please re-run this script as"
-  echo "  sudo ./scripts/stop"
+  echo "  sudo ./scripts/stop.sh"
   exit 1
 fi
 
