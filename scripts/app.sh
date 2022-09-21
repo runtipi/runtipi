@@ -6,7 +6,7 @@ set -euo pipefail
 
 cd /runtipi || echo ""
 # Ensure PWD ends with /runtipi
-if [[ "${PWD##*/}" != "runtipi" ]]; then
+if [[ $(basename "$(pwd)") != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
   echo "Please run this script from the runtipi directory"
   exit 1
 fi
@@ -61,14 +61,15 @@ fi
 if [ -z ${3+x} ]; then
   args=""
 else
-  args="${@:3}"
+  args="${*:3}"
 fi
 
 compose() {
   local app="${1}"
   shift
 
-  local architecture="$(uname -m)"
+  arch=$(uname -m)
+  local architecture="${arch}"
 
   if [[ "$architecture" == "aarch64" ]]; then
     architecture="arm64"
@@ -167,7 +168,7 @@ fi
 
 # Passes all arguments to Docker Compose
 if [[ "$command" = "compose" ]]; then
-  compose "${app}" ${args}
+  compose "${app}" "${args}"
   exit
 fi
 

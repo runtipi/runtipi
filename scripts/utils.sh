@@ -3,8 +3,8 @@
 cd /runtipi || echo ""
 
 # Ensure PWD ends with /runtipi
-if [[ "${PWD##*/}" != "runtipi" ]]; then
-    echo "Please run this script from the runtipi directory"
+if [[ $(basename "$(pwd)") != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
+    echo "Please make sure this script is executed from runtipi/"
     exit 1
 fi
 
