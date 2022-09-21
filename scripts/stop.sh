@@ -25,7 +25,7 @@ export COMPOSE_HTTP_TIMEOUT=240
 
 # Stop all installed apps if there are any
 apps_folder="${ROOT_FOLDER}/apps"
-if [ "$(find ${apps_folder} -maxdepth 1 -type d | wc -l)" -ge 1 ]; then
+if [ "$(find ${apps_folder} -maxdepth 1 -type d | wc -l)" -gt 1 ]; then
   apps_names=($(ls -d ${apps_folder}/*/ | xargs -n 1 basename | sed 's/\///g'))
 
   for app_name in "${apps_names[@]}"; do
