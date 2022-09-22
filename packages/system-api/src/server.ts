@@ -96,10 +96,9 @@ const main = async () => {
       startJobs();
       // Start apps
       appsService.startAllApps();
-      console.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
+      logger.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
     });
   } catch (error) {
-    console.error(error);
     logger.error(error);
   }
 };

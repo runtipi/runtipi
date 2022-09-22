@@ -1,13 +1,15 @@
+import Logger from '../config/logger/logger';
 import { runScript } from '../modules/fs/fs.helpers';
 
 export const updateRepo = (repo: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     runScript('/scripts/git.sh', ['update', repo], (err: string, stdout: string) => {
       if (err) {
+        Logger.error(`Error updating repo: ${err}`);
         reject(err);
       }
 
-      console.info('Update result', stdout);
+      Logger.info(`Update resul: ${stdout}`);
 
       resolve();
     });
@@ -18,10 +20,11 @@ export const cloneRepo = (repo: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     runScript('/scripts/git.sh', ['clone', repo], (err: string, stdout: string) => {
       if (err) {
+        Logger.error(`Error cloning repo: ${err}`);
         reject(err);
       }
 
-      console.info('Clone result', stdout);
+      Logger.info(`Clone result ${stdout}`);
 
       resolve();
     });

@@ -157,6 +157,9 @@ if [[ -f "/etc/resolv.conf" ]]; then
   TEMP=$(grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' /etc/resolv.conf | head -n 1)
 fi
 
+# Clean logs folder
+rm -rf "${ROOT_FOLDER}/logs/*"
+
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
   echo "Generating seed..."

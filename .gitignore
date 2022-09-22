@@ -1,6 +1,7 @@
 *.swo
 *.swp
 
+logs
 .pnpm-debug.log
 .env*
 github.secrets

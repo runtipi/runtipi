@@ -70,7 +70,6 @@ export const updateV040 = async (): Promise<void> => {
     await Update.create({ name: UPDATE_NAME, status: UpdateStatusEnum.SUCCESS }).save();
   } catch (error) {
     logger.error(error);
-    console.error(error);
     await Update.create({ name: UPDATE_NAME, status: UpdateStatusEnum.FAILED }).save();
   }
 };

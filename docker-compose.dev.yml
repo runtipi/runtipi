@@ -55,6 +55,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}:/runtipi
       - ${PWD}/packages/system-api/src:/api/src
+      - ${PWD}/logs:/api/logs
       # - /api/node_modules
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
