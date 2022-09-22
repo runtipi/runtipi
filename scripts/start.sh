@@ -97,6 +97,25 @@ STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo $ROOT_FOLDER | sed 's/\//\\\//g')"
 
 NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
+NETWORK_INTERFACE_COUNT=$(echo "$NETWORK_INTERFACE" | wc -l)
+
+if [[ "$NETWORK_INTERFACE_COUNT" -eq 0 ]]; then
+  echo "No network interface found!"
+  exit 1
+elif [[ "$NETWORK_INTERFACE_COUNT" -gt 1 ]]; then
+  echo "Found multiple network interfaces. Please select one of the following interfaces:"
+  echo "$NETWORK_INTERFACE"
+  while true; do
+    read -rp "> " USER_NETWORK_INTERFACE
+    if echo "$NETWORK_INTERFACE" | grep -x "$USER_NETWORK_INTERFACE"; then
+      NETWORK_INTERFACE="$USER_NETWORK_INTERFACE"
+      break
+    else
+      echo "Please select one of the interfaces above. (CTRL+C to abort)"
+    fi
+  done
+fi
+
 INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
