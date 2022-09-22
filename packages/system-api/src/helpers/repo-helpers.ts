@@ -9,7 +9,7 @@ export const updateRepo = (repo: string): Promise<void> => {
         reject(err);
       }
 
-      Logger.info(`Update resul: ${stdout}`);
+      Logger.info(`Update result: ${stdout}`);
 
       resolve();
     });
