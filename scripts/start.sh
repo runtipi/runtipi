@@ -106,7 +106,7 @@ elif [[ "$NETWORK_INTERFACE_COUNT" -gt 1 ]]; then
   echo "Found multiple network interfaces. Please select one of the following interfaces:"
   echo "$NETWORK_INTERFACE"
   while true; do
-    read -p "> " USER_NETWORK_INTERFACE
+    read -rp "> " USER_NETWORK_INTERFACE
     if echo "$NETWORK_INTERFACE" | grep -x "$USER_NETWORK_INTERFACE"; then
       NETWORK_INTERFACE="$USER_NETWORK_INTERFACE"
       break
