@@ -14,27 +14,6 @@ repos/*
 apps/*
 !apps/.gitkeep
 traefik/shared
-
-scripts/pacapt
-
 state/*
 !state/.gitkeep
-
 media
-# media/data/movies/*
-# media/data/tv/*
-# media/data/books/spoken/*
-# media/data/books/ebooks/*
-# !media/data/movies/.gitkeep
-# !media/data/tv/.gitkeep
-# !media/data/books/metadata.db
-# !media/data/books/ebooks/.gitkeep
-# !media/data/books/spoken/.gitkeep
-
-# media/torrents/complete/*
-# !media/torrents/complete/.gitkeep
-# media/torrents/incomplete/*
-# !media/torrents/incomplete/.gitkeep
-# media/torrents/watch/*
-# !media/torrents/watch/.gitkeep
-# packages/dashboard/package-lock.json
