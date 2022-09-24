@@ -28,6 +28,7 @@ describe('Test: updateRepo', () => {
 
     expect(spy).toHaveBeenCalledWith(`${getConfig().rootFolder}/scripts/git.sh`, ['update', url], {}, expect.any(Function));
     expect(log).toHaveBeenCalledWith(`Update result: ${stdout}`);
+    spy.mockRestore();
   });
 
   it('Should throw and log error if script failed', async () => {
@@ -50,6 +51,7 @@ describe('Test: updateRepo', () => {
       expect(e).toBe(randomWord);
       expect(log).toHaveBeenCalledWith(`Error updating repo: ${randomWord}`);
     }
+    spy.mockRestore();
   });
 });
 
@@ -70,6 +72,7 @@ describe('Test: cloneRepo', () => {
 
     expect(spy).toHaveBeenCalledWith(`${getConfig().rootFolder}/scripts/git.sh`, ['clone', url], {}, expect.any(Function));
     expect(log).toHaveBeenCalledWith(`Clone result ${stdout}`);
+    spy.mockRestore();
   });
 
   it('Should throw and log error if script failed', async () => {
@@ -92,5 +95,6 @@ describe('Test: cloneRepo', () => {
       expect(e).toBe(randomWord);
       expect(log).toHaveBeenCalledWith(`Error cloning repo: ${randomWord}`);
     }
+    spy.mockRestore();
   });
 });

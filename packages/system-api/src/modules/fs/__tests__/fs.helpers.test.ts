@@ -2,6 +2,7 @@ import childProcess from 'child_process';
 import { getAbsolutePath, readJsonFile, readFile, readdirSync, fileExists, writeFile, createFolder, deleteFolder, runScript, getSeed, ensureAppFolder } from '../fs.helpers';
 import fs from 'fs-extra';
 import { getConfig } from '../../../core/config/TipiConfig';
+import { faker } from '@faker-js/faker';
 
 jest.mock('fs-extra');
 
@@ -35,6 +36,22 @@ describe('Test: readJsonFile', () => {
 
   it('should return null if the file does not exist', () => {
     expect(readJsonFile('/test')).toBeNull();
+  });
+
+  it('Should return null if fs.readFile throws an error', () => {
+    // Arrange
+    // @ts-ignore
+    const spy = jest.spyOn(fs, 'readFileSync');
+    spy.mockImplementation(() => {
+      throw new Error('Error');
+    });
+
+    // Act
+    const file = readJsonFile('/test');
+
+    // Assert
+    expect(file).toBeNull();
+    spy.mockRestore();
   });
 });
 
@@ -196,5 +213,24 @@ describe('Test: ensureAppFolder', () => {
     // Assert
     const files = fs.readdirSync(`${getConfig().rootFolder}/apps/test`);
     expect(files).toEqual(['test.yml']);
+  });
+
+  it('Should delete folder if it exists but has no docker-compose.yml file', () => {
+    // Arrange
+    const randomFileName = `${faker.random.word()}.yml`;
+    const mockFiles = {
+      [`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/apps/test`]: [randomFileName],
+      [`${getConfig().rootFolder}/apps/test`]: ['test.yml'],
+    };
+
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+
+    // Act
+    ensureAppFolder('test');
+
+    // Assert
+    const files = fs.readdirSync(`${getConfig().rootFolder}/apps/test`);
+    expect(files).toEqual([randomFileName]);
   });
 });

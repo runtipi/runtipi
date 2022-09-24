@@ -12,4 +12,10 @@ module.exports = {
   transform: {
     '^.+\\.graphql$': 'graphql-import-node/jest',
   },
+  globals: {
+    // NODE_ENV: 'test',
+    'ts-jest': {
+      isolatedModules: true,
+    },
+  },
 };

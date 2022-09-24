@@ -7,7 +7,7 @@ const startJobs = () => {
   logger.info('Starting cron jobs...');
 
   cron.schedule('0 * * * *', () => {
-    logger.info('Cloning apps repo...');
+    logger.info('Updating apps repo...');
     updateRepo(getConfig().appsRepoUrl);
   });
 };

@@ -84,7 +84,7 @@ const main = async () => {
       await datasource.runMigrations();
     } catch (e) {
       logger.error(e);
-      await recover();
+      await recover(datasource);
     }
 
     // Run migrations
