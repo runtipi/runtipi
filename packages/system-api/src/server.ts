@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import express from 'express';
 import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from 'apollo-server-core';
-import config from './config';
 import { ApolloServer } from 'apollo-server-express';
 import { createSchema } from './schema';
 import { ApolloLogs } from './config/logger/apollo.logger';
@@ -17,6 +16,8 @@ import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
 import { cloneRepo, updateRepo } from './helpers/repo-helpers';
 import startJobs from './core/jobs/jobs';
+import { applyJsonConfig, getConfig } from './core/config/TipiConfig';
+import { ZodError } from 'zod';
 
 let corsOptions = {
   credentials: true,
@@ -27,7 +28,7 @@ let corsOptions = {
     // disallow requests with no origin
     if (!origin) return callback(new Error('Not allowed by CORS'), false);
 
-    if (config.CLIENT_URLS.includes(origin)) {
+    if (getConfig().clientUrls.includes(origin)) {
       return callback(null, true);
     }
 
@@ -36,12 +37,27 @@ let corsOptions = {
   },
 };
 
+const applyCustomConfig = () => {
+  try {
+    applyJsonConfig();
+  } catch (e) {
+    logger.error('Error applying settings.json config');
+    if (e instanceof ZodError) {
+      Object.keys(e.flatten().fieldErrors).forEach((key) => {
+        logger.error(`Error in field ${key}`);
+      });
+    }
+  }
+};
+
 const main = async () => {
   try {
+    applyCustomConfig();
+
     const app = express();
     const port = 3001;
 
-    app.use(express.static(`${config.ROOT_FOLDER}/repos/${config.APPS_REPO_ID}`));
+    app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
     app.use(cors(corsOptions));
     app.use(getSessionMiddleware());
 
@@ -68,22 +84,21 @@ const main = async () => {
       await datasource.runMigrations();
     } catch (e) {
       logger.error(e);
-      await recover();
+      await recover(datasource);
     }
 
     // Run migrations
     await runUpdates();
 
     httpServer.listen(port, async () => {
-      await cloneRepo(config.APPS_REPO_URL);
-      await updateRepo(config.APPS_REPO_URL);
+      await cloneRepo(getConfig().appsRepoUrl);
+      await updateRepo(getConfig().appsRepoUrl);
       startJobs();
       // Start apps
       appsService.startAllApps();
-      console.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
+      logger.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
     });
   } catch (error) {
-    console.log(error);
     logger.error(error);
   }
 };

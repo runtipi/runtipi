@@ -46,12 +46,12 @@ services:
     volumes:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}:/tipi
+      - ${PWD}:/runtipi
+      - ${PWD}/logs:/api/logs
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       TIPI_VERSION: ${TIPI_VERSION}
       JWT_SECRET: ${JWT_SECRET}
-      ROOT_FOLDER_HOST: ${ROOT_FOLDER_HOST}
       NGINX_PORT: ${NGINX_PORT}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USERNAME: tipi

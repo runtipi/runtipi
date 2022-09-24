@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
+# Don't break if command fails
 
-# use greadlink instead of readlink on osx
-if [[ "$(uname)" == "Darwin" ]]; then
-    rdlk=greadlink
-else
-    rdlk=readlink
+cd /runtipi || echo ""
+
+# Ensure PWD ends with /runtipi
+if [[ $(basename "$(pwd)") != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
+    echo "Please make sure this script is executed from runtipi/"
+    exit 1
 fi
 
-ROOT_FOLDER="$($rdlk -f $(dirname "${BASH_SOURCE[0]}")/..)"
+ROOT_FOLDER="${PWD}"
 
 show_help() {
     cat <<EOF
@@ -27,7 +29,7 @@ EOF
 # Get a static hash based on the repo url
 function get_hash() {
     url="${1}"
-    echo $(echo -n "${url}" | sha256sum | awk '{print $1}')
+    echo -n "${url}" | sha256sum | awk '{print $1}'
 }
 
 if [ -z ${1+x} ]; then
@@ -65,7 +67,7 @@ if [[ "$command" = "update" ]]; then
     fi
 
     echo "Updating ${repo} in ${repo_hash}"
-    cd "${repo_dir}"
+    cd "${repo_dir}" || exit
     git pull origin master
     echo "Done"
     exit
@@ -73,6 +75,6 @@ fi
 
 if [[ "$command" = "get_hash" ]]; then
     repo="$2"
-    echo $(get_hash "${repo}")
+    get_hash "${repo}"
     exit
 fi

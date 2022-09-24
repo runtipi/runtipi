@@ -1,10 +1,10 @@
-import datasource from '../../config/datasource';
+import { DataSource } from 'typeorm';
 import logger from '../../config/logger/logger';
 import App from '../../modules/apps/app.entity';
 import User from '../../modules/auth/user.entity';
 import Update from '../../modules/system/update.entity';
 
-const recover = async () => {
+const recover = async (datasource: DataSource) => {
   logger.info('Recovering broken database');
 
   const queryRunner = datasource.createQueryRunner();
@@ -33,9 +33,10 @@ const recover = async () => {
     await Update.create(update).save();
   }
 
-  logger.info('Users recovered', users.length);
-  logger.info('Apps recovered', apps.length);
-  logger.info('Database recovered');
+  logger.info(`Users recovered ${users.length}`);
+  logger.info(`Apps recovered ${apps.length}`);
+  logger.info(`Updates recovered ${updates.length}`);
+  logger.info('Database fully recovered');
 };
 
 export default recover;

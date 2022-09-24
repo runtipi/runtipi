@@ -1,7 +1,8 @@
 import childProcess from 'child_process';
-import config from '../../../config';
 import { getAbsolutePath, readJsonFile, readFile, readdirSync, fileExists, writeFile, createFolder, deleteFolder, runScript, getSeed, ensureAppFolder } from '../fs.helpers';
 import fs from 'fs-extra';
+import { getConfig } from '../../../core/config/TipiConfig';
+import { faker } from '@faker-js/faker';
 
 jest.mock('fs-extra');
 
@@ -12,7 +13,7 @@ beforeEach(() => {
 
 describe('Test: getAbsolutePath', () => {
   it('should return the absolute path', () => {
-    expect(getAbsolutePath('/test')).toBe(`${config.ROOT_FOLDER}/test`);
+    expect(getAbsolutePath('/test')).toBe(`${getConfig().rootFolder}/test`);
   });
 });
 
@@ -21,7 +22,7 @@ describe('Test: readJsonFile', () => {
     // Arrange
     const rawFile = '{"test": "test"}';
     const mockFiles = {
-      [`${config.ROOT_FOLDER}/test-file.json`]: rawFile,
+      [`${getConfig().rootFolder}/test-file.json`]: rawFile,
     };
     // @ts-ignore
     fs.__createMockFiles(mockFiles);
@@ -36,13 +37,29 @@ describe('Test: readJsonFile', () => {
   it('should return null if the file does not exist', () => {
     expect(readJsonFile('/test')).toBeNull();
   });
+
+  it('Should return null if fs.readFile throws an error', () => {
+    // Arrange
+    // @ts-ignore
+    const spy = jest.spyOn(fs, 'readFileSync');
+    spy.mockImplementation(() => {
+      throw new Error('Error');
+    });
+
+    // Act
+    const file = readJsonFile('/test');
+
+    // Assert
+    expect(file).toBeNull();
+    spy.mockRestore();
+  });
 });
 
 describe('Test: readFile', () => {
   it('should return the file', () => {
     const rawFile = 'test';
     const mockFiles = {
-      [`${config.ROOT_FOLDER}/test-file.txt`]: rawFile,
+      [`${getConfig().rootFolder}/test-file.txt`]: rawFile,
     };
 
     // @ts-ignore
@@ -59,7 +76,7 @@ describe('Test: readFile', () => {
 describe('Test: readdirSync', () => {
   it('should return the files', () => {
     const mockFiles = {
-      [`${config.ROOT_FOLDER}/test/test-file.txt`]: 'test',
+      [`${getConfig().rootFolder}/test/test-file.txt`]: 'test',
     };
 
     // @ts-ignore
@@ -76,7 +93,7 @@ describe('Test: readdirSync', () => {
 describe('Test: fileExists', () => {
   it('should return true if the file exists', () => {
     const mockFiles = {
-      [`${config.ROOT_FOLDER}/test-file.txt`]: 'test',
+      [`${getConfig().rootFolder}/test-file.txt`]: 'test',
     };
 
     // @ts-ignore
@@ -96,7 +113,7 @@ describe('Test: writeFile', () => {
 
     writeFile('/test-file.txt', 'test');
 
-    expect(spy).toHaveBeenCalledWith(`${config.ROOT_FOLDER}/test-file.txt`, 'test');
+    expect(spy).toHaveBeenCalledWith(`${getConfig().rootFolder}/test-file.txt`, 'test');
   });
 });
 
@@ -106,7 +123,7 @@ describe('Test: createFolder', () => {
 
     createFolder('/test');
 
-    expect(spy).toHaveBeenCalledWith(`${config.ROOT_FOLDER}/test`);
+    expect(spy).toHaveBeenCalledWith(`${getConfig().rootFolder}/test`);
   });
 });
 
@@ -116,7 +133,7 @@ describe('Test: deleteFolder', () => {
 
     deleteFolder('/test');
 
-    expect(spy).toHaveBeenCalledWith(`${config.ROOT_FOLDER}/test`, { recursive: true });
+    expect(spy).toHaveBeenCalledWith(`${getConfig().rootFolder}/test`, { recursive: true });
   });
 });
 
@@ -127,14 +144,14 @@ describe('Test: runScript', () => {
 
     runScript('/test', [], callback);
 
-    expect(spy).toHaveBeenCalledWith(`${config.ROOT_FOLDER}/test`, [], {}, callback);
+    expect(spy).toHaveBeenCalledWith(`${getConfig().rootFolder}/test`, [], {}, callback);
   });
 });
 
 describe('Test: getSeed', () => {
   it('should return the seed', () => {
     const mockFiles = {
-      [`${config.ROOT_FOLDER}/state/seed`]: 'test',
+      [`${getConfig().rootFolder}/state/seed`]: 'test',
     };
 
     // @ts-ignore
@@ -147,7 +164,7 @@ describe('Test: getSeed', () => {
 describe('Test: ensureAppFolder', () => {
   beforeEach(() => {
     const mockFiles = {
-      [`${config.ROOT_FOLDER}/repos/${config.APPS_REPO_ID}/apps/test`]: ['test.yml'],
+      [`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/apps/test`]: ['test.yml'],
     };
     // @ts-ignore
     fs.__createMockFiles(mockFiles);
@@ -158,15 +175,15 @@ describe('Test: ensureAppFolder', () => {
     ensureAppFolder('test');
 
     // Assert
-    const files = fs.readdirSync(`${config.ROOT_FOLDER}/apps/test`);
+    const files = fs.readdirSync(`${getConfig().rootFolder}/apps/test`);
     expect(files).toEqual(['test.yml']);
   });
 
   it('should not copy the folder if it already exists', () => {
     const mockFiles = {
-      [`${config.ROOT_FOLDER}/repos/${config.APPS_REPO_ID}/apps/test`]: ['test.yml'],
-      [`${config.ROOT_FOLDER}/apps/test`]: ['docker-compose.yml'],
-      [`${config.ROOT_FOLDER}/apps/test/docker-compose.yml`]: 'test',
+      [`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/apps/test`]: ['test.yml'],
+      [`${getConfig().rootFolder}/apps/test`]: ['docker-compose.yml'],
+      [`${getConfig().rootFolder}/apps/test/docker-compose.yml`]: 'test',
     };
 
     // @ts-ignore
@@ -176,15 +193,15 @@ describe('Test: ensureAppFolder', () => {
     ensureAppFolder('test');
 
     // Assert
-    const files = fs.readdirSync(`${config.ROOT_FOLDER}/apps/test`);
+    const files = fs.readdirSync(`${getConfig().rootFolder}/apps/test`);
     expect(files).toEqual(['docker-compose.yml']);
   });
 
   it('Should overwrite the folder if clean up is true', () => {
     const mockFiles = {
-      [`${config.ROOT_FOLDER}/repos/${config.APPS_REPO_ID}/apps/test`]: ['test.yml'],
-      [`${config.ROOT_FOLDER}/apps/test`]: ['docker-compose.yml'],
-      [`${config.ROOT_FOLDER}/apps/test/docker-compose.yml`]: 'test',
+      [`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/apps/test`]: ['test.yml'],
+      [`${getConfig().rootFolder}/apps/test`]: ['docker-compose.yml'],
+      [`${getConfig().rootFolder}/apps/test/docker-compose.yml`]: 'test',
     };
 
     // @ts-ignore
@@ -194,7 +211,26 @@ describe('Test: ensureAppFolder', () => {
     ensureAppFolder('test', true);
 
     // Assert
-    const files = fs.readdirSync(`${config.ROOT_FOLDER}/apps/test`);
+    const files = fs.readdirSync(`${getConfig().rootFolder}/apps/test`);
     expect(files).toEqual(['test.yml']);
+  });
+
+  it('Should delete folder if it exists but has no docker-compose.yml file', () => {
+    // Arrange
+    const randomFileName = `${faker.random.word()}.yml`;
+    const mockFiles = {
+      [`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/apps/test`]: [randomFileName],
+      [`${getConfig().rootFolder}/apps/test`]: ['test.yml'],
+    };
+
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+
+    // Act
+    ensureAppFolder('test');
+
+    // Assert
+    const files = fs.readdirSync(`${getConfig().rootFolder}/apps/test`);
+    expect(files).toEqual([randomFileName]);
   });
 });

@@ -1,13 +1,15 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
-import config from '..';
+import { getConfig } from '../../core/config/TipiConfig';
+
+const { logs, NODE_ENV } = getConfig();
 
 const { align, printf, timestamp, combine, colorize } = format;
 
 // Create the logs directory if it does not exist
-if (!fs.existsSync(config.logs.LOGS_FOLDER)) {
-  fs.mkdirSync(config.logs.LOGS_FOLDER);
+if (!fs.existsSync(logs.LOGS_FOLDER)) {
+  fs.mkdirSync(logs.LOGS_FOLDER);
 }
 
 /**
@@ -36,14 +38,14 @@ const Logger = createLogger({
     // - Write all logs error (and below) to `error.log`.
     //
     new transports.File({
-      filename: path.join(config.logs.LOGS_FOLDER, config.logs.LOGS_ERROR),
+      filename: path.join(logs.LOGS_FOLDER, logs.LOGS_ERROR),
       level: 'error',
     }),
     new transports.File({
-      filename: path.join(config.logs.LOGS_FOLDER, config.logs.LOGS_APP),
+      filename: path.join(logs.LOGS_FOLDER, logs.LOGS_APP),
     }),
   ],
-  exceptionHandlers: [new transports.File({ filename: path.join(config.logs.LOGS_FOLDER, config.logs.LOGS_ERROR) })],
+  exceptionHandlers: [new transports.File({ filename: path.join(logs.LOGS_FOLDER, logs.LOGS_ERROR) })],
 });
 
 //
@@ -59,4 +61,4 @@ const LoggerDev = createLogger({
   ],
 });
 
-export default config.NODE_ENV === 'production' ? Logger : LoggerDev;
+export default NODE_ENV === 'production' ? Logger : LoggerDev;

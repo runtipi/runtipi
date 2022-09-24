@@ -3,13 +3,13 @@
 
 # Prompt to confirm
 echo "This will reset your system to factory defaults. Are you sure you want to do this? (y/n)"
-read confirm
+read -r confirm
 if [ "$confirm" != "y" ]; then
     echo "Aborting."
     exit 1
 fi
 
-ROOT_FOLDER="$(readlink -f $(dirname "${BASH_SOURCE[0]}")/..)"
+ROOT_FOLDER="$(readlink -f "$(dirname "${BASH_SOURCE[0]}")"/..)"
 
 # Stop Tipi
 "${ROOT_FOLDER}/scripts/stop.sh"
@@ -25,5 +25,5 @@ rm -rf "${ROOT_FOLDER}/app-data"
 rm -rf "${ROOT_FOLDER}/data/postgres"
 mkdir -p "${ROOT_FOLDER}/app-data"
 
-cd "$ROOT_FOLDER"
+cd "$ROOT_FOLDER" || echo ""
 "${ROOT_FOLDER}/scripts/start.sh"

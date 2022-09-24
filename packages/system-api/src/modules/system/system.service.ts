@@ -1,6 +1,6 @@
 import axios from 'axios';
-import config from '../../config';
 import TipiCache from '../../config/TipiCache';
+import { getConfig } from '../../core/config/TipiConfig';
 import { readJsonFile } from '../fs/fs.helpers';
 
 type SystemInfo = {
@@ -38,9 +38,9 @@ const getVersion = async (): Promise<{ current: string; latest?: string }> => {
 
     TipiCache.set('latestVersion', version?.replace('v', ''));
 
-    return { current: config.VERSION, latest: version?.replace('v', '') };
+    return { current: getConfig().version, latest: version?.replace('v', '') };
   } catch (e) {
-    return { current: config.VERSION, latest: undefined };
+    return { current: getConfig().version, latest: undefined };
   }
 };
 

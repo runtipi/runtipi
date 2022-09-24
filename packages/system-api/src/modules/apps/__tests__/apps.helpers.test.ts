@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
 import { DataSource } from 'typeorm';
-import config from '../../../config';
+import { getConfig } from '../../../core/config/TipiConfig';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import App from '../app.entity';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo, runAppScript } from '../apps.helpers';
@@ -95,7 +95,7 @@ describe('checkEnvFile', () => {
 
   it('Should throw if a required field is missing', () => {
     const newAppEnv = 'APP_PORT=test\n';
-    fs.writeFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`, newAppEnv);
+    fs.writeFileSync(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`, newAppEnv);
 
     try {
       checkEnvFile(app1.id);
@@ -167,7 +167,7 @@ describe('generateEnvFile', () => {
 
     const randomField = faker.random.alphaNumeric(32);
 
-    fs.writeFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`, `RANDOM_FIELD=${randomField}`);
+    fs.writeFileSync(`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`, `RANDOM_FIELD=${randomField}`);
 
     generateEnvFile(appEntity);
 
@@ -271,7 +271,7 @@ describe('getAppInfo', () => {
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    fs.writeFileSync(`${config.ROOT_FOLDER}/repos/repo-id/apps/${app1.id}/config.json`, '{}');
+    fs.writeFileSync(`${getConfig().rootFolder}/repos/repo-id/apps/${app1.id}/config.json`, '{}');
 
     const app = await getAppInfo(appInfo.id);
 

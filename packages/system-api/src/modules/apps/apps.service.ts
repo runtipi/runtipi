@@ -4,8 +4,8 @@ import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, 
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 import logger from '../../config/logger/logger';
-import config from '../../config';
 import { Not } from 'typeorm';
+import { getConfig } from '../../core/config/TipiConfig';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
 
@@ -124,7 +124,7 @@ const listApps = async (): Promise<ListAppsResonse> => {
   const apps: AppInfo[] = folders
     .map((app) => {
       try {
-        return readJsonFile(`/repos/${config.APPS_REPO_ID}/apps/${app}/config.json`);
+        return readJsonFile(`/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
       } catch (e) {
         return null;
       }
@@ -132,7 +132,7 @@ const listApps = async (): Promise<ListAppsResonse> => {
     .filter(Boolean);
 
   apps.forEach((app) => {
-    app.description = readFile(`/repos/${config.APPS_REPO_ID}/apps/${app.id}/metadata/description.md`);
+    app.description = readFile(`/repos/${getConfig().appsRepoId}/apps/${app.id}/metadata/description.md`);
   });
 
   return { apps: apps.sort(sortApps), total: apps.length };
