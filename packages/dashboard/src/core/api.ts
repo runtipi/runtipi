@@ -1,5 +1,5 @@
 import axios, { Method } from 'axios';
-import { useSytemStore } from '../state/systemStore';
+import { useSystemStore } from '../state/systemStore';
 
 interface IFetchParams {
   endpoint: string;
@@ -11,7 +11,7 @@ interface IFetchParams {
 const api = async <T = unknown>(fetchParams: IFetchParams): Promise<T> => {
   const { endpoint, method = 'GET', params, data } = fetchParams;
 
-  const { getState } = useSytemStore;
+  const { getState } = useSystemStore;
   const BASE_URL = getState().baseUrl;
 
   const response = await axios.request<T & { error?: string }>({

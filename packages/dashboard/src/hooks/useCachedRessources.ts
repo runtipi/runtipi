@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ApolloClient } from '@apollo/client';
 import { createApolloClient } from '../core/apollo/client';
-import { useSytemStore } from '../state/systemStore';
+import { useSystemStore } from '../state/systemStore';
 
 interface IReturnProps {
   client?: ApolloClient<unknown>;
@@ -13,7 +13,7 @@ export default function useCachedResources(): IReturnProps {
   const domain = process.env.NEXT_PUBLIC_DOMAIN;
   const port = process.env.NEXT_PUBLIC_PORT;
 
-  const { baseUrl, setBaseUrl, setInternalIp, setDomain } = useSytemStore();
+  const { baseUrl, setBaseUrl, setInternalIp, setDomain } = useSystemStore();
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
 

@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
+import { readJsonFile } from '../../../modules/fs/fs.helpers';
 import { applyJsonConfig, getConfig, setConfig } from '../TipiConfig';
 
 jest.mock('fs-extra');
@@ -35,7 +36,22 @@ describe('Test: setConfig', () => {
   });
 
   it('Should not be able to set invalid NODE_ENV', () => {
+    // @ts-ignore
     expect(() => setConfig('NODE_ENV', 'invalid')).toThrow();
+  });
+
+  it('Should write config to json file', () => {
+    const randomWord = faker.random.word();
+    setConfig('appsRepoUrl', randomWord, true);
+    const config = getConfig();
+
+    expect(config).toBeDefined();
+    expect(config.appsRepoUrl).toBe(randomWord);
+
+    const settingsJson = readJsonFile('/state/settings.json');
+
+    expect(settingsJson).toBeDefined();
+    expect(settingsJson.appsRepoUrl).toBe(randomWord);
   });
 });
 

@@ -90,6 +90,9 @@ services:
     container_name: dashboard
     networks:
       - tipi_main_network
+    depends_on:
+      api:
+        condition: service_started
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       NODE_ENV: production
