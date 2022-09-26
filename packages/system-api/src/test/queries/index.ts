@@ -7,9 +7,13 @@ import * as getApp from './getApp.graphql';
 import * as InstalledApps from './installedApps.graphql';
 import * as Me from './me.graphql';
 import * as isConfigured from './isConfigured.graphql';
+import * as systemInfo from './systemInfo.graphql';
+import * as version from './version.graphql';
 
 export const listAppInfosQuery = print(listAppInfos);
 export const getAppQuery = print(getApp);
 export const InstalledAppsQuery = print(InstalledApps);
 export const MeQuery = print(Me);
 export const isConfiguredQuery = print(isConfigured);
+export const systemInfoQuery = print(systemInfo);
+export const versionQuery = print(version);

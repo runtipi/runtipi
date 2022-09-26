@@ -8,17 +8,17 @@ import { readJsonFile, runScript } from '../fs/fs.helpers';
 
 const systemInfoSchema = z.object({
   cpu: z.object({
-    load: z.number(),
+    load: z.number().default(0),
   }),
   disk: z.object({
-    total: z.number(),
-    used: z.number(),
-    available: z.number(),
+    total: z.number().default(0),
+    used: z.number().default(0),
+    available: z.number().default(0),
   }),
   memory: z.object({
-    total: z.number(),
-    available: z.number(),
-    used: z.number(),
+    total: z.number().default(0),
+    available: z.number().default(0),
+    used: z.number().default(0),
   }),
 });
 
@@ -96,6 +96,8 @@ const update = async (): Promise<boolean> => {
       logger.error(`Error updating: ${err}`);
     }
   });
+
+  setConfig('status', 'RUNNING');
 
   return true;
 };
