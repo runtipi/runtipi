@@ -1,10 +1,12 @@
 import fs from 'fs-extra';
 import semver from 'semver';
+import childProcess from 'child_process';
 import axios from 'axios';
 import SystemService from '../system.service';
 import { faker } from '@faker-js/faker';
 import TipiCache from '../../../config/TipiCache';
 import { setConfig } from '../../../core/config/TipiConfig';
+import logger from '../../../config/logger/logger';
 
 jest.mock('fs-extra');
 jest.mock('child_process');
@@ -110,6 +112,22 @@ describe('Test: restart', () => {
 
     expect(restart).toBeTruthy();
   });
+
+  it('Should log error if fails', async () => {
+    // @ts-ignore
+    const spy = jest.spyOn(childProcess, 'execFile').mockImplementation((_path, _args, _, cb) => {
+      // @ts-ignore
+      if (cb) cb('error', null, null);
+    });
+    const log = jest.spyOn(logger, 'error');
+
+    const restart = await SystemService.restart();
+
+    expect(restart).toBeTruthy();
+    expect(log).toHaveBeenCalledWith('Error restarting: error');
+
+    spy.mockRestore();
+  });
 });
 
 describe('Test: update', () => {
@@ -120,5 +138,58 @@ describe('Test: update', () => {
     const update = await SystemService.update();
 
     expect(update).toBeTruthy();
+  });
+
+  it('Should throw an error if latest version is not set', async () => {
+    TipiCache.del('latestVersion');
+    const spy = jest.spyOn(axios, 'get').mockResolvedValue({
+      data: { name: null },
+    });
+
+    setConfig('version', '0.0.1');
+
+    await expect(SystemService.update()).rejects.toThrow('Could not get latest version');
+
+    spy.mockRestore();
+  });
+
+  it('Should throw if current version is higher than latest', async () => {
+    setConfig('version', '0.0.2');
+    TipiCache.set('latestVersion', '0.0.1');
+
+    await expect(SystemService.update()).rejects.toThrow('Current version is newer than latest version');
+  });
+
+  it('Should throw if current version is equal to latest', async () => {
+    setConfig('version', '0.0.1');
+    TipiCache.set('latestVersion', '0.0.1');
+
+    await expect(SystemService.update()).rejects.toThrow('Current version is already up to date');
+  });
+
+  it('Should throw an error if there is a major version difference', async () => {
+    setConfig('version', '0.0.1');
+    TipiCache.set('latestVersion', '1.0.0');
+
+    await expect(SystemService.update()).rejects.toThrow('The major version has changed. Please update manually');
+  });
+
+  it('Should log error if fails', async () => {
+    // @ts-ignore
+    const spy = jest.spyOn(childProcess, 'execFile').mockImplementation((_path, _args, _, cb) => {
+      // @ts-ignore
+      if (cb) cb('error', null, null);
+    });
+    const log = jest.spyOn(logger, 'error');
+
+    setConfig('version', '0.0.1');
+    TipiCache.set('latestVersion', '0.0.2');
+
+    const update = await SystemService.update();
+
+    expect(update).toBeTruthy();
+    expect(log).toHaveBeenCalledWith('Error updating: error');
+
+    spy.mockRestore();
   });
 });

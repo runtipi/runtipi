@@ -22,8 +22,6 @@ const systemInfoSchema = z.object({
   }),
 });
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const systemInfo = (): z.infer<typeof systemInfoSchema> => {
   const info = systemInfoSchema.safeParse(readJsonFile('/state/system-info.json'));
 
@@ -59,8 +57,6 @@ const getVersion = async (): Promise<{ current: string; latest?: string }> => {
 const restart = async (): Promise<boolean> => {
   setConfig('status', 'RESTARTING');
 
-  await wait(2000);
-
   runScript('/scripts/system.sh', ['restart'], (err: string) => {
     setConfig('status', 'RUNNING');
     if (err) {
@@ -68,14 +64,13 @@ const restart = async (): Promise<boolean> => {
     }
   });
 
+  setConfig('status', 'RUNNING');
+
   return true;
 };
 
 const update = async (): Promise<boolean> => {
   const { current, latest } = await getVersion();
-
-  console.log(current, latest);
-  await wait(2000);
 
   if (!latest) {
     throw new Error('Could not get latest version');
