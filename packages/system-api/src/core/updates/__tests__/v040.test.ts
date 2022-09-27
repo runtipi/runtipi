@@ -80,7 +80,7 @@ describe('State/apps.json exists with no installed app', () => {
 
   it('Should delete state file after update', async () => {
     await updateV040();
-    expect(fs.existsSync(`${getConfig().rootFolder}/state/apps.json`)).toBe(false);
+    expect(fs.existsSync('/runtipi/state/apps.json')).toBe(false);
   });
 });
 
@@ -89,9 +89,9 @@ describe('State/apps.json exists with one installed app', () => {
   beforeEach(async () => {
     const { MockFiles, appInfo } = await createApp({});
     app1 = appInfo;
-    MockFiles[`${getConfig().rootFolder}/state/apps.json`] = createState([appInfo.id]);
-    MockFiles[`${getConfig().rootFolder}/app-data/${appInfo.id}`] = '';
-    MockFiles[`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    MockFiles['/runtipi/state/apps.json'] = createState([appInfo.id]);
+    MockFiles[`/app/storage/app-data/${appInfo.id}`] = '';
+    MockFiles[`/app/storage/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
   });
@@ -118,9 +118,9 @@ describe('State/apps.json exists with one installed app', () => {
   it('Should not try to migrate app if it already exists', async () => {
     const { MockFiles, appInfo } = await createApp({ installed: true });
     app1 = appInfo;
-    MockFiles[`${getConfig().rootFolder}/state/apps.json`] = createState([appInfo.id]);
-    MockFiles[`${getConfig().rootFolder}/app-data/${appInfo.id}`] = '';
-    MockFiles[`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    MockFiles['/runtipi/state/apps.json'] = createState([appInfo.id]);
+    MockFiles[`/app/storage/app-data/${appInfo.id}`] = '';
+    MockFiles[`/app/storage/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 

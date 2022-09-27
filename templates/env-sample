@@ -14,3 +14,4 @@ NGINX_PORT=<nginx_port>
 NGINX_PORT_SSL=<nginx_port_ssl>
 POSTGRES_PASSWORD=<postgres_password>
 DOMAIN=<domain>
+STORAGE_PATH=<storage_path>

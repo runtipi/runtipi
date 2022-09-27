@@ -43,7 +43,7 @@ describe('Install app', () => {
 
   it('Should correctly generate env file for app', async () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    const envFile = fs.readFileSync(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`).toString();
+    const envFile = fs.readFileSync(`/app/storage/app-data/${app1.id}/app.env`).toString();
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=192.168.1.10:${app1.port}`);
   });
@@ -74,8 +74,8 @@ describe('Install app', () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['install', app1.id], {}, expect.any(Function)]);
-    expect(spy.mock.calls[1]).toEqual([`${getConfig().rootFolder}/scripts/app.sh`, ['start', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.calls[0]).toEqual(['/runtipi/scripts/app.sh', ['install', app1.id], {}, expect.any(Function)]);
+    expect(spy.mock.calls[1]).toEqual(['/runtipi/scripts/app.sh', ['start', app1.id], {}, expect.any(Function)]);
 
     spy.mockRestore();
   });
@@ -112,7 +112,7 @@ describe('Install app', () => {
 
   it('Should correctly copy app from repos to apps folder', async () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    const appFolder = fs.readdirSync(`${getConfig().rootFolder}/apps/${app1.id}`);
+    const appFolder = fs.readdirSync(`/app/storage/apps/${app1.id}`);
 
     expect(appFolder).toBeDefined();
     expect(appFolder.indexOf('docker-compose.yml')).toBeGreaterThanOrEqual(0);
@@ -121,19 +121,19 @@ describe('Install app', () => {
   it('Should cleanup any app folder existing before install', async () => {
     const { MockFiles, appInfo } = await createApp({});
     app1 = appInfo;
-    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}/docker-compose.yml`] = 'test';
-    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}/test.yml`] = 'test';
-    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
+    MockFiles[`/app/storage/apps/${appInfo.id}/docker-compose.yml`] = 'test';
+    MockFiles[`/app/storage/apps/${appInfo.id}/test.yml`] = 'test';
+    MockFiles[`/app/storage/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
 
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    expect(fs.existsSync(`${getConfig().rootFolder}/apps/${app1.id}/test.yml`)).toBe(true);
+    expect(fs.existsSync(`/app/storage/apps/${app1.id}/test.yml`)).toBe(true);
 
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
-    expect(fs.existsSync(`${getConfig().rootFolder}/apps/${app1.id}/test.yml`)).toBe(false);
-    expect(fs.existsSync(`${getConfig().rootFolder}/apps/${app1.id}/docker-compose.yml`)).toBe(true);
+    expect(fs.existsSync(`/app/storage/apps/${app1.id}/test.yml`)).toBe(false);
+    expect(fs.existsSync(`/app/storage/apps/${app1.id}/docker-compose.yml`)).toBe(true);
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
@@ -266,11 +266,11 @@ describe('Start app', () => {
   });
 
   it('Regenerate env file', async () => {
-    fs.writeFile(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`, 'TEST=test\nAPP_PORT=3000', () => {});
+    fs.writeFile(`/app/storage/app-data/${app1.id}/app.env`, 'TEST=test\nAPP_PORT=3000', () => {});
 
     await AppsService.startApp(app1.id);
 
-    const envFile = fs.readFileSync(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`).toString();
+    const envFile = fs.readFileSync(`/app/storage/app-data/${app1.id}/app.env`).toString();
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=192.168.1.10:${app1.port}`);
   });
@@ -334,7 +334,7 @@ describe('Update app config', () => {
   it('Should correctly update app config', async () => {
     await AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' });
 
-    const envFile = fs.readFileSync(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`).toString();
+    const envFile = fs.readFileSync(`/app/storage/app-data/${app1.id}/app.env`).toString();
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=192.168.1.10:${app1.port}`);
   });
@@ -352,8 +352,8 @@ describe('Update app config', () => {
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    const envFile = fs.readFileSync(`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`).toString();
-    fs.writeFileSync(`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`, `${envFile}\nRANDOM_FIELD=test`);
+    const envFile = fs.readFileSync(`/app/storage/app-data/${appInfo.id}/app.env`).toString();
+    fs.writeFileSync(`/app/storage/app-data/${appInfo.id}/app.env`, `${envFile}\nRANDOM_FIELD=test`);
 
     await AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' });
 

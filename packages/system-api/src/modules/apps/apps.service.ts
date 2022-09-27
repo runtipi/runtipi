@@ -83,9 +83,9 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
     }
 
     // Create app folder
-    createFolder(`/app-data/${id}`);
+    createFolder(`/app/storage/app-data/${id}`);
 
-    const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
+    const appInfo: AppInfo | null = await readJsonFile(`/app/storage/apps/${id}/config.json`);
 
     if (!appInfo?.exposable && exposed) {
       throw new Error(`App ${id} is not exposable`);
@@ -124,7 +124,7 @@ const listApps = async (): Promise<ListAppsResonse> => {
   const apps: AppInfo[] = folders
     .map((app) => {
       try {
-        return readJsonFile(`/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
+        return readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
       } catch (e) {
         return null;
       }
@@ -132,7 +132,7 @@ const listApps = async (): Promise<ListAppsResonse> => {
     .filter(Boolean);
 
   apps.forEach((app) => {
-    app.description = readFile(`/repos/${getConfig().appsRepoId}/apps/${app.id}/metadata/description.md`);
+    app.description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app.id}/metadata/description.md`);
   });
 
   return { apps: apps.sort(sortApps), total: apps.length };
@@ -147,7 +147,7 @@ const updateAppConfig = async (id: string, form: Record<string, string>, exposed
     throw new Error(`Domain ${domain} is not valid`);
   }
 
-  const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
+  const appInfo: AppInfo | null = await readJsonFile(`/app/storage/apps/${id}/config.json`);
 
   if (!appInfo?.exposable && exposed) {
     throw new Error(`App ${id} is not exposable`);
@@ -250,7 +250,7 @@ const updateApp = async (id: string) => {
   // Run script
   try {
     await runAppScript(['update', id]);
-    const appInfo: AppInfo | null = await readJsonFile(`/apps/${id}/config.json`);
+    const appInfo: AppInfo | null = await readJsonFile(`/app/storage/apps/${id}/config.json`);
     await App.update({ id }, { status: AppStatusEnum.RUNNING, version: Number(appInfo?.tipi_version) });
   } catch (e) {
     logger.error(e);

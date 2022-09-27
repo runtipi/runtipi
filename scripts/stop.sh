@@ -1,18 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $UID != 0 ]]; then
-  echo "Tipi must be stopped as root"
-  echo "Please re-run this script as"
-  echo "  sudo ./scripts/stop.sh"
-  exit 1
-fi
+source "${BASH_SOURCE%/*}/common.sh"
 
-# Ensure PWD ends with /runtipi
-if [[ $(basename "$(pwd)") != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
-  echo "Please run this script from the runtipi directory"
-  exit 1
-fi
+ensure_root
+ensure_pwd
 
 ROOT_FOLDER="${PWD}"
 

@@ -95,7 +95,7 @@ describe('checkEnvFile', () => {
 
   it('Should throw if a required field is missing', () => {
     const newAppEnv = 'APP_PORT=test\n';
-    fs.writeFileSync(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`, newAppEnv);
+    fs.writeFileSync(`/app/storage/app-data/${app1.id}/app.env`, newAppEnv);
 
     try {
       checkEnvFile(app1.id);
@@ -167,7 +167,7 @@ describe('generateEnvFile', () => {
 
     const randomField = faker.random.alphaNumeric(32);
 
-    fs.writeFileSync(`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`, `RANDOM_FIELD=${randomField}`);
+    fs.writeFileSync(`/app/storage/app-data/${appInfo.id}/app.env`, `RANDOM_FIELD=${randomField}`);
 
     generateEnvFile(appEntity);
 

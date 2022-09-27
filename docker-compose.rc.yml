@@ -47,7 +47,8 @@ services:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}:/runtipi
-      - ${PWD}/logs:/api/logs
+      - ${PWD}/logs:/app/logs
+      - ${STORAGE_PATH}:/app/storage
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       TIPI_VERSION: ${TIPI_VERSION}

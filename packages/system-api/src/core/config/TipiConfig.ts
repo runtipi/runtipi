@@ -20,6 +20,7 @@ const {
   APPS_REPO_ID = '',
   APPS_REPO_URL = '',
   DOMAIN = '',
+  STORAGE_PATH = '/runtipi',
 } = process.env;
 
 const configSchema = z.object({
@@ -39,6 +40,7 @@ const configSchema = z.object({
   appsRepoId: z.string(),
   appsRepoUrl: z.string(),
   domain: z.string(),
+  storagePath: z.string(),
 });
 
 class Config {
@@ -64,6 +66,7 @@ class Config {
       domain: DOMAIN,
       dnsIp: '9.9.9.9',
       status: 'RUNNING',
+      storagePath: STORAGE_PATH,
     };
 
     const parsed = configSchema.parse({
@@ -85,7 +88,7 @@ class Config {
   }
 
   public applyJsonConfig() {
-    const fileConfig = readJsonFile('/state/settings.json') || {};
+    const fileConfig = readJsonFile('/runtipi/state/settings.json') || {};
 
     const parsed = configSchema.parse({
       ...this.config,
@@ -102,12 +105,12 @@ class Config {
     this.config = configSchema.parse(newConf);
 
     if (writeFile) {
-      const currentJsonConf = readJsonFile('/state/settings.json') || {};
+      const currentJsonConf = readJsonFile('/runtipi/state/settings.json') || {};
       currentJsonConf[key] = value;
       const partialConfig = configSchema.partial();
       const parsed = partialConfig.parse(currentJsonConf);
 
-      fs.writeFileSync(`${this.config.rootFolder}/state/settings.json`, JSON.stringify(parsed));
+      fs.writeFileSync('/runtipi/state/settings.json', JSON.stringify(parsed));
     }
   }
 }

@@ -5,3 +5,4 @@ dist/
 coverage/
 logs/
 sessions/
+.vscode

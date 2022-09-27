@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import childProcess from 'child_process';
 import logger from '../../config/logger/logger';
-import { getConfig } from '../../core/config/TipiConfig';
 import { cloneRepo, updateRepo } from '../repo-helpers';
 
 jest.mock('child_process');
@@ -26,7 +25,7 @@ describe('Test: updateRepo', () => {
 
     await updateRepo(url);
 
-    expect(spy).toHaveBeenCalledWith(`${getConfig().rootFolder}/scripts/git.sh`, ['update', url], {}, expect.any(Function));
+    expect(spy).toHaveBeenCalledWith('/runtipi/scripts/git.sh', ['update', url], {}, expect.any(Function));
     expect(log).toHaveBeenCalledWith(`Update result: ${stdout}`);
     spy.mockRestore();
   });
@@ -70,7 +69,7 @@ describe('Test: cloneRepo', () => {
 
     await cloneRepo(url);
 
-    expect(spy).toHaveBeenCalledWith(`${getConfig().rootFolder}/scripts/git.sh`, ['clone', url], {}, expect.any(Function));
+    expect(spy).toHaveBeenCalledWith('/runtipi/scripts/git.sh', ['clone', url], {}, expect.any(Function));
     expect(log).toHaveBeenCalledWith(`Clone result ${stdout}`);
     spy.mockRestore();
   });
