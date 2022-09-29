@@ -62,8 +62,6 @@ services:
       APPS_REPO_ID: ${APPS_REPO_ID}
       APPS_REPO_URL: ${APPS_REPO_URL}
       DOMAIN: ${DOMAIN}
-    dns:
-      - ${DNS_IP}
     networks:
       - tipi_main_network
     labels:
