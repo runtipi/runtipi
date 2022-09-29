@@ -2,31 +2,32 @@
 # Required Notice: Copyright
 # Umbrel (https://umbrel.com)
 
+echo "Starting app script"
+
+source "${BASH_SOURCE%/*}/common.sh"
+
 set -euo pipefail
 
-cd /runtipi || echo ""
-# Ensure PWD ends with /runtipi
-if [[ $(basename "$(pwd)") != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
-  echo "Please run this script from the runtipi directory"
-  exit 1
-fi
+ensure_pwd
 
-# Root folder in container is /runtipi
 ROOT_FOLDER="${PWD}"
-
+STATE_FOLDER="${ROOT_FOLDER}/state"
 ENV_FILE="${ROOT_FOLDER}/.env"
 
 # Root folder in host system
 ROOT_FOLDER_HOST=$(grep -v '^#' "${ENV_FILE}" | xargs -n 1 | grep ROOT_FOLDER_HOST | cut -d '=' -f2)
 REPO_ID=$(grep -v '^#' "${ENV_FILE}" | xargs -n 1 | grep APPS_REPO_ID | cut -d '=' -f2)
+STORAGE_PATH=$(grep -v '^#' "${ENV_FILE}" | xargs -n 1 | grep STORAGE_PATH | cut -d '=' -f2)
 
-# Get field from json file
-function get_json_field() {
-  local json_file="$1"
-  local field="$2"
+# Override vars with values from settings.json
+if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
+  # If storagePath is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" storagePath)" != "null" ]]; then
+    STORAGE_PATH="$(get_json_field "${STATE_FOLDER}/settings.json" storagePath)"
+  fi
+fi
 
-  jq -r ".${field}" "${json_file}"
-}
+write_log "Running app script: ROOT_FOLDER=${ROOT_FOLDER}, ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}, REPO_ID=${REPO_ID}, STORAGE_PATH=${STORAGE_PATH}"
 
 if [ -z ${1+x} ]; then
   command=""
@@ -35,7 +36,6 @@ else
 fi
 
 if [ -z ${2+x} ]; then
-  show_help
   exit 1
 else
   app="$2"
@@ -49,13 +49,12 @@ else
     cp -r "${ROOT_FOLDER}/repos/${REPO_ID}/apps/${app}"/* "${app_dir}"
   fi
 
-  app_data_dir="${ROOT_FOLDER}/app-data/${app}"
+  app_data_dir="/app/storage/app-data/${app}"
 
   if [[ -z "${app}" ]] || [[ ! -d "${app_dir}" ]]; then
     echo "Error: \"${app}\" is not a valid app"
     exit 1
   fi
-
 fi
 
 if [ -z ${3+x} ]; then
@@ -83,11 +82,20 @@ compose() {
     app_compose_file="${app_dir}/docker-compose.arm.yml"
   fi
 
+  # Pick arm architecture if running on arm and if the app has a docker-compose.arm64.yml file
+  if [[ "$architecture" == "arm64" ]] && [[ -f "${app_dir}/docker-compose.arm64.yml" ]]; then
+    app_compose_file="${app_dir}/docker-compose.arm64.yml"
+  fi
+
   local common_compose_file="${ROOT_FOLDER}/repos/${REPO_ID}/apps/docker-compose.common.yml"
 
   # Vars to use in compose file
-  export APP_DATA_DIR="${ROOT_FOLDER_HOST}/app-data/${app}"
+  export APP_DATA_DIR="${STORAGE_PATH}/app-data/${app}"
   export ROOT_FOLDER_HOST="${ROOT_FOLDER_HOST}"
+
+  write_log "Running docker compose -f ${app_compose_file} -f ${common_compose_file} ${*}"
+  write_log "APP_DATA_DIR=${APP_DATA_DIR}"
+  write_log "ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}"
 
   docker compose \
     --env-file "${app_data_dir}/app.env" \
@@ -99,6 +107,9 @@ compose() {
 
 # Install new app
 if [[ "$command" = "install" ]]; then
+  # Write to file script.log
+  write_log "Installing app ${app}..."
+
   compose "${app}" pull
 
   # Copy default data dir to app data dir if it exists

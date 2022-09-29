@@ -1,7 +1,8 @@
 import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
+import childProcess from 'child_process';
 import { DataSource } from 'typeorm';
-import { getConfig } from '../../../core/config/TipiConfig';
+import logger from '../../../config/logger/logger';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import App from '../app.entity';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo, runAppScript } from '../apps.helpers';
@@ -95,7 +96,7 @@ describe('checkEnvFile', () => {
 
   it('Should throw if a required field is missing', () => {
     const newAppEnv = 'APP_PORT=test\n';
-    fs.writeFileSync(`${getConfig().rootFolder}/app-data/${app1.id}/app.env`, newAppEnv);
+    fs.writeFileSync(`/app/storage/app-data/${app1.id}/app.env`, newAppEnv);
 
     try {
       checkEnvFile(app1.id);
@@ -107,7 +108,7 @@ describe('checkEnvFile', () => {
   });
 });
 
-describe('runAppScript', () => {
+describe('Test: runAppScript', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
@@ -124,9 +125,32 @@ describe('runAppScript', () => {
 
     await runAppScript(['install', app1.id]);
   });
+
+  it('Should log the error if the script fails', async () => {
+    const log = jest.spyOn(logger, 'error');
+    const spy = jest.spyOn(childProcess, 'execFile');
+    const randomWord = faker.random.word();
+
+    // @ts-ignore
+    spy.mockImplementation((_path, _args, _, cb) => {
+      // @ts-ignore
+      if (cb) cb(randomWord, null, null);
+    });
+
+    try {
+      await runAppScript(['install', app1.id]);
+      expect(true).toBe(false);
+    } catch (e: any) {
+      expect(e).toBe(randomWord);
+      expect(log).toHaveBeenCalledWith(`Error running app script: ${randomWord}`);
+    }
+
+    log.mockRestore();
+    spy.mockRestore();
+  });
 });
 
-describe('generateEnvFile', () => {
+describe('Test: generateEnvFile', () => {
   let app1: AppInfo;
   let appEntity1: App;
   beforeEach(async () => {
@@ -167,7 +191,7 @@ describe('generateEnvFile', () => {
 
     const randomField = faker.random.alphaNumeric(32);
 
-    fs.writeFileSync(`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`, `RANDOM_FIELD=${randomField}`);
+    fs.writeFileSync(`/app/storage/app-data/${appInfo.id}/app.env`, `RANDOM_FIELD=${randomField}`);
 
     generateEnvFile(appEntity);
 
@@ -234,6 +258,18 @@ describe('generateEnvFile', () => {
     expect(envmap.get('APP_EXPOSED')).toBeUndefined();
     expect(envmap.get('APP_DOMAIN')).toBe(`192.168.1.10:${appInfo.port}`);
   });
+
+  it('Should create app folder if it does not exist', async () => {
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    fs.rmSync(`/app/storage/app-data/${appInfo.id}`, { recursive: true });
+
+    generateEnvFile(appEntity);
+
+    expect(fs.existsSync(`/app/storage/app-data/${appInfo.id}`)).toBe(true);
+  });
 });
 
 describe('getAvailableApps', () => {
@@ -251,7 +287,7 @@ describe('getAvailableApps', () => {
   });
 });
 
-describe('getAppInfo', () => {
+describe('Test: getAppInfo', () => {
   let app1: AppInfo;
   beforeEach(async () => {
     const app1create = await createApp({ installed: false });
@@ -267,15 +303,82 @@ describe('getAppInfo', () => {
   });
 
   it('Should take config.json locally if app is installed', async () => {
-    const { appInfo, MockFiles } = await createApp({ installed: true });
+    const { appInfo, MockFiles, appEntity } = await createApp({ installed: true });
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    fs.writeFileSync(`${getConfig().rootFolder}/repos/repo-id/apps/${app1.id}/config.json`, '{}');
+    const newConfig = {
+      id: faker.random.alphaNumeric(32),
+    };
 
-    const app = await getAppInfo(appInfo.id);
+    fs.writeFileSync(`/app/storage/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
 
-    expect(app?.id).toEqual(appInfo.id);
+    const app = await getAppInfo(appInfo.id, appEntity.status);
+
+    expect(app?.id).toEqual(newConfig.id);
+  });
+
+  it('Should take config.json from repo if app is not installed', async () => {
+    const { appInfo, MockFiles, appEntity } = await createApp({ installed: false });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    const newConfig = {
+      id: faker.random.alphaNumeric(32),
+      available: true,
+    };
+
+    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
+
+    const app = await getAppInfo(appInfo.id, appEntity.status);
+
+    expect(app?.id).toEqual(newConfig.id);
+  });
+
+  it('Should return null if app is not available', async () => {
+    const { appInfo, MockFiles, appEntity } = await createApp({ installed: false });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    const newConfig = {
+      id: faker.random.alphaNumeric(32),
+      available: false,
+    };
+
+    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
+
+    const app = await getAppInfo(appInfo.id, appEntity.status);
+
+    expect(app).toBeNull();
+  });
+
+  it('Should throw if something goes wrong', async () => {
+    const log = jest.spyOn(logger, 'error');
+    const spy = jest.spyOn(fs, 'existsSync').mockImplementation(() => {
+      throw new Error('Something went wrong');
+    });
+
+    const { appInfo, MockFiles, appEntity } = await createApp({ installed: false });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    const newConfig = {
+      id: faker.random.alphaNumeric(32),
+      available: false,
+    };
+
+    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
+
+    try {
+      await getAppInfo(appInfo.id, appEntity.status);
+      expect(true).toBe(false);
+    } catch (e: any) {
+      expect(e.message).toBe(`Error loading app: ${appInfo.id}`);
+      expect(log).toBeCalledWith(`Error loading app: ${appInfo.id}`);
+    }
+
+    spy.mockRestore();
+    log.mockRestore();
   });
 
   it('Should return null if app does not exist', async () => {

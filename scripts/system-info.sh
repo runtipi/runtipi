@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 set -e # Exit immediately if a command exits with a non-zero status.
 
-cd /runtipi || echo ""
+source "${BASH_SOURCE%/*}/common.sh"
 
-if [[ $(basename "$(pwd)") != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
-    echo "Please make sure this script is executed from runtipi/"
-    exit 1
-fi
+ensure_pwd
 
 ROOT_FOLDER="$(pwd)"
 STATE_FOLDER="${ROOT_FOLDER}/state"

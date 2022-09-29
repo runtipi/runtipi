@@ -2,11 +2,9 @@ import fs from 'fs-extra';
 import childProcess from 'child_process';
 import { getConfig } from '../../core/config/TipiConfig';
 
-export const getAbsolutePath = (path: string) => `${getConfig().rootFolder}${path}`;
-
 export const readJsonFile = (path: string): any => {
   try {
-    const rawFile = fs.readFileSync(getAbsolutePath(path))?.toString();
+    const rawFile = fs.readFileSync(path)?.toString();
 
     if (!rawFile) {
       return null;
@@ -20,40 +18,40 @@ export const readJsonFile = (path: string): any => {
 
 export const readFile = (path: string): string => {
   try {
-    return fs.readFileSync(getAbsolutePath(path)).toString();
+    return fs.readFileSync(path).toString();
   } catch {
     return '';
   }
 };
 
-export const readdirSync = (path: string): string[] => fs.readdirSync(getAbsolutePath(path));
+export const readdirSync = (path: string): string[] => fs.readdirSync(path);
 
-export const fileExists = (path: string): boolean => fs.existsSync(getAbsolutePath(path));
+export const fileExists = (path: string): boolean => fs.existsSync(path);
 
-export const writeFile = (path: string, data: any) => fs.writeFileSync(getAbsolutePath(path), data);
+export const writeFile = (path: string, data: any) => fs.writeFileSync(path, data);
 
 export const createFolder = (path: string) => {
   if (!fileExists(path)) {
-    fs.mkdirSync(getAbsolutePath(path));
+    fs.mkdirSync(path, { recursive: true });
   }
 };
-export const deleteFolder = (path: string) => fs.rmSync(getAbsolutePath(path), { recursive: true });
+export const deleteFolder = (path: string) => fs.rmSync(path, { recursive: true });
 
-export const runScript = (path: string, args: string[], callback?: any) => childProcess.execFile(getAbsolutePath(path), args, {}, callback);
+export const runScript = (path: string, args: string[], callback?: any) => childProcess.execFile(path, args, {}, callback);
 
 export const getSeed = () => {
-  const seed = readFile('/state/seed');
+  const seed = readFile('/runtipi/state/seed');
   return seed.toString();
 };
 
 export const ensureAppFolder = (appName: string, cleanup = false) => {
-  if (cleanup && fileExists(`/apps/${appName}`)) {
-    deleteFolder(`/apps/${appName}`);
+  if (cleanup && fileExists(`/app/storage/apps/${appName}`)) {
+    deleteFolder(`/app/storage/apps/${appName}`);
   }
 
-  if (!fileExists(`/apps/${appName}/docker-compose.yml`)) {
-    if (fileExists(`/apps/${appName}`)) deleteFolder(`/apps/${appName}`);
+  if (!fileExists(`/app/storage/apps/${appName}/docker-compose.yml`)) {
+    if (fileExists(`/app/storage/apps/${appName}`)) deleteFolder(`/app/storage/apps/${appName}`);
     // Copy from apps repo
-    fs.copySync(getAbsolutePath(`/repos/${getConfig().appsRepoId}/apps/${appName}`), getAbsolutePath(`/apps/${appName}`));
+    fs.copySync(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appName}`, `/app/storage/apps/${appName}`);
   }
 };

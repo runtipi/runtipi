@@ -55,11 +55,11 @@ const createApp = async (props: IProps) => {
   }
 
   let MockFiles: any = {};
-  MockFiles[`${getConfig().rootFolder}/.env`] = 'TEST=test';
-  MockFiles[`${getConfig().rootFolder}/repos/repo-id`] = '';
-  MockFiles[`${getConfig().rootFolder}/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
-  MockFiles[`${getConfig().rootFolder}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
-  MockFiles[`${getConfig().rootFolder}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+  MockFiles['/runtipi/.env'] = 'TEST=test';
+  MockFiles['/runtipi/repos/repo-id'] = '';
+  MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+  MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   let appEntity = new App();
   if (installed) {
@@ -71,10 +71,10 @@ const createApp = async (props: IProps) => {
       domain,
     }).save();
 
-    MockFiles[`${getConfig().rootFolder}/app-data/${appInfo.id}`] = '';
-    MockFiles[`${getConfig().rootFolder}/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
-    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
-    MockFiles[`${getConfig().rootFolder}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+    MockFiles[`/app/storage/app-data/${appInfo.id}`] = '';
+    MockFiles[`/app/storage/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    MockFiles[`/app/storage/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+    MockFiles[`/app/storage/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
   }
 
   return { appInfo, MockFiles, appEntity };

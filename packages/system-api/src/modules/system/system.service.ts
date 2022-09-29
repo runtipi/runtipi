@@ -23,7 +23,7 @@ const systemInfoSchema = z.object({
 });
 
 const systemInfo = (): z.infer<typeof systemInfoSchema> => {
-  const info = systemInfoSchema.safeParse(readJsonFile('/state/system-info.json'));
+  const info = systemInfoSchema.safeParse(readJsonFile('/runtipi/state/system-info.json'));
 
   if (!info.success) {
     logger.error('Error parsing system info');
@@ -57,7 +57,7 @@ const getVersion = async (): Promise<{ current: string; latest?: string }> => {
 const restart = async (): Promise<boolean> => {
   setConfig('status', 'RESTARTING');
 
-  runScript('/scripts/system.sh', ['restart'], (err: string) => {
+  runScript('/runtipi/scripts/system.sh', ['restart'], (err: string) => {
     setConfig('status', 'RUNNING');
     if (err) {
       logger.error(`Error restarting: ${err}`);
@@ -90,7 +90,7 @@ const update = async (): Promise<boolean> => {
 
   setConfig('status', 'UPDATING');
 
-  runScript('/scripts/system.sh', ['update'], (err: string) => {
+  runScript('/runtipi/scripts/system.sh', ['update'], (err: string) => {
     setConfig('status', 'RUNNING');
     if (err) {
       logger.error(`Error updating: ${err}`);

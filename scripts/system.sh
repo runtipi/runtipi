@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 
-cd /runtipi || echo ""
+source "${BASH_SOURCE%/*}/common.sh"
 
-# Ensure PWD ends with /runtipi
-if [[ $(basename "$(pwd)") != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
-    echo "Please make sure this script is executed from runtipi/"
-    exit 1
-fi
+ensure_pwd
 
 if [ -z ${1+x} ]; then
     command=""

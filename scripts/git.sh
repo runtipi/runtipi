@@ -11,21 +11,6 @@ fi
 
 ROOT_FOLDER="${PWD}"
 
-show_help() {
-    cat <<EOF
-app 0.0.1
-
-CLI for managing Tipi apps
-
-Usage: git <command> <repo> [<arguments>]
-
-Commands:
-    clone                      Clones a repo in the repo folder
-    update                     Updates the repo folder
-    get_hash                   Gets the local hash of the repo
-EOF
-}
-
 # Get a static hash based on the repo url
 function get_hash() {
     url="${1}"
