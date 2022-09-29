@@ -60,7 +60,7 @@ export const runAppScript = async (params: string[]): Promise<void> => {
   return new Promise((resolve, reject) => {
     runScript('/runtipi/scripts/app.sh', [...params], (err: string) => {
       if (err) {
-        logger.error(err);
+        logger.error(`Error running app script: ${err}`);
         reject(err);
       }
 
@@ -160,8 +160,8 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
 
     return null;
   } catch (e) {
-    console.error(e);
-    throw new Error(`Error loading app ${id}`);
+    logger.error(`Error loading app: ${id}`);
+    throw new Error(`Error loading app: ${id}`);
   }
 };
 
