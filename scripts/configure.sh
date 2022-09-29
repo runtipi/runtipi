@@ -108,6 +108,28 @@ function install_jq() {
   fi
 }
 
+function install_openssl() {
+  local os="${1}"
+  echo "Installing openssl for os ${os}" >/dev/tty
+
+  if [[ "${os}" == "debian" || "${os}" == "ubuntu" || "${os}" == "pop" ]]; then
+    sudo apt-get update
+    sudo apt-get install -y openssl
+    return 0
+  elif [[ "${os}" == "centos" ]]; then
+    sudo yum install -y openssl
+    return 0
+  elif [[ "${os}" == "fedora" ]]; then
+    sudo dnf -y install openssl
+    return 0
+  elif [[ "${os}" == "arch" ]]; then
+    sudo pacman -Sy --noconfirm openssl
+    return 0
+  else
+    return 1
+  fi
+}
+
 OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 
@@ -166,6 +188,26 @@ if ! command -v jq >/dev/null; then
       echo "jq installed"
     else
       echo "Your system ${SUB_OS} is not supported please install jq manually"
+      exit 1
+    fi
+  fi
+fi
+
+if ! command -v openssl >/dev/null; then
+  install_openssl "${OS}"
+  openssl_result=$?
+
+  if [[ openssl_result -eq 0 ]]; then
+    echo "openssl installed"
+  else
+    echo "Your system ${OS} is not supported trying with sub_os ${SUB_OS}"
+    install_openssl "${SUB_OS}"
+    openssl_sub_result=$?
+
+    if [[ openssl_sub_result -eq 0 ]]; then
+      echo "openssl installed"
+    else
+      echo "Your system ${SUB_OS} is not supported please install openssl manually"
       exit 1
     fi
   fi
