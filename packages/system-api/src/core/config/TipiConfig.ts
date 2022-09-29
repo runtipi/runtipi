@@ -24,6 +24,7 @@ const {
 
 const configSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
+  status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
   logs: z.object({
     LOGS_FOLDER: z.string(),
     LOGS_APP: z.string(),
@@ -62,6 +63,7 @@ class Config {
       appsRepoUrl: APPS_REPO_URL,
       domain: DOMAIN,
       dnsIp: '9.9.9.9',
+      status: 'RUNNING',
     };
 
     const parsed = configSchema.parse({
@@ -83,7 +85,7 @@ class Config {
   }
 
   public applyJsonConfig() {
-    const fileConfig = readJsonFile('/state/settings.json');
+    const fileConfig = readJsonFile('/state/settings.json') || {};
 
     const parsed = configSchema.parse({
       ...this.config,
@@ -93,18 +95,25 @@ class Config {
     this.config = parsed;
   }
 
-  public setConfig(key: keyof typeof configSchema.shape, value: any) {
-    const newConf = { ...this.getConfig() };
+  public setConfig<T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile: boolean = false) {
+    const newConf: z.infer<typeof configSchema> = { ...this.getConfig() };
     newConf[key] = value;
 
     this.config = configSchema.parse(newConf);
 
-    fs.writeFileSync(`${this.config.rootFolder}/state/settings.json`, JSON.stringify(newConf));
+    if (writeFile) {
+      const currentJsonConf = readJsonFile('/state/settings.json') || {};
+      currentJsonConf[key] = value;
+      const partialConfig = configSchema.partial();
+      const parsed = partialConfig.parse(currentJsonConf);
+
+      fs.writeFileSync(`${this.config.rootFolder}/state/settings.json`, JSON.stringify(parsed));
+    }
   }
 }
 
-export const setConfig = (key: keyof typeof configSchema.shape, value: any) => {
-  Config.getInstance().setConfig(key, value);
+export const setConfig = <T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile: boolean = false) => {
+  Config.getInstance().setConfig(key, value, writeFile);
 };
 
 export const getConfig = () => Config.getInstance().getConfig();

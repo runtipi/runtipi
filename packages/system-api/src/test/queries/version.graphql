@@ -1,0 +1,6 @@
+query {
+  version {
+    current
+    latest
+  }
+}

@@ -1,0 +1,17 @@
+query {
+  systemInfo {
+    cpu {
+      load
+    }
+    memory {
+      total
+      available
+      used
+    }
+    disk {
+      total
+      available
+      used
+    }
+  }
+}

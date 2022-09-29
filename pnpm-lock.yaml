@@ -142,6 +142,7 @@ importers:
       '@types/node': 17.0.31
       '@types/node-cron': ^3.0.2
       '@types/pg': ^8.6.5
+      '@types/semver': ^7.3.12
       '@types/session-file-store': ^1.2.2
       '@types/tcp-port-used': ^1.0.1
       '@types/validator': ^13.7.2
@@ -183,6 +184,7 @@ importers:
       public-ip: ^5.0.0
       reflect-metadata: ^0.1.13
       rimraf: ^3.0.2
+      semver: ^7.3.7
       session-file-store: ^1.5.0
       systeminformation: ^5.11.9
       tcp-port-used: ^1.0.2
@@ -220,6 +222,7 @@ importers:
       pg: 8.7.3
       public-ip: 5.0.0
       reflect-metadata: 0.1.13
+      semver: 7.3.7
       session-file-store: 1.5.0
       systeminformation: 5.11.14
       tcp-port-used: 1.0.2
@@ -244,6 +247,7 @@ importers:
       '@types/node': 17.0.31
       '@types/node-cron': 3.0.2
       '@types/pg': 8.6.5
+      '@types/semver': 7.3.12
       '@types/session-file-store': 1.2.2
       '@types/tcp-port-used': 1.0.1
       '@types/validator': 13.7.2
@@ -3957,9 +3961,8 @@ packages:
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
 
-  /@types/semver/7.3.10:
-    resolution: {integrity: sha512-zsv3fsC7S84NN6nPK06u79oWgrPVd0NvOyqgghV1haPaFcVxIrP4DLomRwGAXk0ui4HZA7mOcSFL98sMVW9viw==}
-    dev: false
+  /@types/semver/7.3.12:
+    resolution: {integrity: sha512-WwA1MW0++RfXmCr12xeYOOC5baSC9mSb0ZqCquFzKhcoF4TvHu5MKOuXsncgZcpVFhB1pXd5hZmM0ryAoCp12A==}
 
   /@types/serve-static/1.13.10:
     resolution: {integrity: sha512-nCkHGI4w7ZgAdNkrEu0bv+4xNV/XDqW+DydknebMOQwkpDGx8G+HTlj7R7ABI8i8nKxVw0wtKPi1D+lPOkh4YQ==}
@@ -12209,7 +12212,7 @@ packages:
     dependencies:
       '@types/glob': 7.2.0
       '@types/node': 17.0.31
-      '@types/semver': 7.3.10
+      '@types/semver': 7.3.12
       class-validator: 0.13.2
       glob: 7.2.0
       graphql: 15.8.0

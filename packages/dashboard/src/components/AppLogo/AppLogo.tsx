@@ -1,8 +1,8 @@
 import React from 'react';
-import { useSytemStore } from '../../state/systemStore';
+import { useSystemStore } from '../../state/systemStore';
 
 const AppLogo: React.FC<{ id: string; size?: number; className?: string; alt?: string }> = ({ id, size = 80, className = '', alt = '' }) => {
-  const { baseUrl } = useSytemStore();
+  const { baseUrl } = useSystemStore();
   const logoUrl = `${baseUrl}/apps/${id}/metadata/logo.jpg`;
 
   return (

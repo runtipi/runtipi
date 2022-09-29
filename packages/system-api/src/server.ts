@@ -16,8 +16,9 @@ import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
 import { cloneRepo, updateRepo } from './helpers/repo-helpers';
 import startJobs from './core/jobs/jobs';
-import { applyJsonConfig, getConfig } from './core/config/TipiConfig';
+import { applyJsonConfig, getConfig, setConfig } from './core/config/TipiConfig';
 import { ZodError } from 'zod';
+import systemController from './modules/system/system.controller';
 
 let corsOptions = {
   credentials: true,
@@ -60,6 +61,7 @@ const main = async () => {
     app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
     app.use(cors(corsOptions));
     app.use(getSessionMiddleware());
+    app.use('/status', systemController.status);
 
     await datasource.initialize();
 
@@ -94,6 +96,8 @@ const main = async () => {
       await cloneRepo(getConfig().appsRepoUrl);
       await updateRepo(getConfig().appsRepoUrl);
       startJobs();
+      setConfig('status', 'RUNNING');
+
       // Start apps
       appsService.startAllApps();
       logger.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);

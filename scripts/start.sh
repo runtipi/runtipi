@@ -7,7 +7,6 @@ set -e # Exit immediately if a command exits with a non-zero status.
 
 NGINX_PORT=80
 NGINX_PORT_SSL=443
-PROXY_PORT=8080
 DOMAIN=tipi.localhost
 
 # Check we are on linux
@@ -47,17 +46,6 @@ while [ -n "$1" ]; do # while loop starts
       NGINX_PORT_SSL="${ssl_port}"
     else
       echo "--ssl-port must be a number"
-      exit 1
-    fi
-    shift
-    ;;
-  --proxy-port)
-    proxy_port="$2"
-
-    if [[ "${proxy_port}" =~ ^[0-9]+$ ]]; then
-      PROXY_PORT="${proxy_port}"
-    else
-      echo "--proxy-port must be a number"
       exit 1
     fi
     shift
@@ -206,6 +194,20 @@ if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
     REPO_ID=$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoId)
   fi
 
+  # If port is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" port)" != "null" ]]; then
+    NGINX_PORT=$(get_json_field "${STATE_FOLDER}/settings.json" port)
+  fi
+
+  # If sslPort is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" sslPort)" != "null" ]]; then
+    NGINX_PORT_SSL=$(get_json_field "${STATE_FOLDER}/settings.json" sslPort)
+  fi
+
+  # If listenIp is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" listenIp)" != "null" ]]; then
+    INTERNAL_IP=$(get_json_field "${STATE_FOLDER}/settings.json" listenIp)
+  fi
 fi
 
 echo "Creating .env file with the following values:"
@@ -213,7 +215,6 @@ echo "  DOMAIN=${DOMAIN}"
 echo "  INTERNAL_IP=${INTERNAL_IP}"
 echo "  NGINX_PORT=${NGINX_PORT}"
 echo "  NGINX_PORT_SSL=${NGINX_PORT_SSL}"
-echo "  PROXY_PORT=${PROXY_PORT}"
 echo "  DNS_IP=${DNS_IP}"
 echo "  ARCHITECTURE=${ARCHITECTURE}"
 echo "  TZ=${TZ}"
@@ -235,7 +236,6 @@ for template in ${ENV_FILE}; do
   sed -i "s/<architecture>/${ARCHITECTURE}/g" "${template}"
   sed -i "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
   sed -i "s/<nginx_port_ssl>/${NGINX_PORT_SSL}/g" "${template}"
-  sed -i "s/<proxy_port>/${PROXY_PORT}/g" "${template}"
   sed -i "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
   sed -i "s/<apps_repo_id>/${REPO_ID}/g" "${template}"
   sed -i "s/<apps_repo_url>/${APPS_REPOSITORY_ESCAPED}/g" "${template}"

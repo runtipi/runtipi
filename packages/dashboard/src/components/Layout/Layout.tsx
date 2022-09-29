@@ -6,7 +6,6 @@ import { FiChevronRight } from 'react-icons/fi';
 import Header from './Header';
 import Menu from './SideMenu';
 import MenuDrawer from './MenuDrawer';
-// import UpdateBanner from './UpdateBanner';
 
 interface IProps {
   loading?: boolean;

@@ -88,6 +88,9 @@ services:
       dockerfile: Dockerfile.dev
     command: /bin/sh -c "cd /dashboard && npm run dev"
     container_name: dashboard
+    depends_on:
+      api:
+        condition: service_started
     ports:
       - 3000:3000
     networks:
