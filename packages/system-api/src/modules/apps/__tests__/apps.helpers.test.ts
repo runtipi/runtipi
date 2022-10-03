@@ -311,7 +311,7 @@ describe('Test: getAppInfo', () => {
       id: faker.random.alphaNumeric(32),
     };
 
-    fs.writeFileSync(`/app/storage/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
+    fs.writeFileSync(`/runtipi/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
 
     const app = await getAppInfo(appInfo.id, appEntity.status);
 

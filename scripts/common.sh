@@ -10,7 +10,7 @@ function get_json_field() {
 
 function write_log() {
     local message="$1"
-    local log_file="/app/logs/script.log"
+    local log_file="${PWD}/logs/script.log"
 
     echo "$(date) - ${message}" >>"${log_file}"
 }
@@ -29,9 +29,6 @@ function derive_entropy() {
 }
 
 function ensure_pwd() {
-    # # Ensure PWD ends with /runtipi
-    cd /runtipi || echo ""
-
     if [[ $(basename "$(pwd)") != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
         echo "Please run this script from the runtipi directory"
         exit 1
@@ -67,5 +64,20 @@ function clean_logs() {
             echo "Removing ${file}"
             rm -rf "${ROOT_FOLDER}/logs/${file}"
         done
+    fi
+}
+
+function kill_watcher() {
+    watcher_pid=$(pgrep -f "runtipi/state/events")
+    # kill it if it's running
+    if [[ -n $watcher_pid ]]; then
+        # If multiline kill each pid
+        if [[ $watcher_pid == *" "* ]]; then
+            for pid in $watcher_pid; do
+                kill -9 $pid
+            done
+        else
+            kill -9 $watcher_pid
+        fi
     fi
 }

@@ -53,10 +53,13 @@ services:
     volumes:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}:/runtipi
+      - ${PWD}/apps:/runtipi/apps:ro
+      - ${PWD}/repos:/runtipi/repos:ro
+      - ${PWD}/state:/runtipi/state:ro
       - ${PWD}/packages/system-api/src:/api/src
       - ${PWD}/logs:/app/logs
       - ${STORAGE_PATH}:/app/storage
+      - ${PWD}/.env.dev:/runtipi/.env
       # - /api/node_modules
     environment:
       INTERNAL_IP: ${INTERNAL_IP}

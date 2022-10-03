@@ -112,7 +112,7 @@ describe('Install app', () => {
 
   it('Should correctly copy app from repos to apps folder', async () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    const appFolder = fs.readdirSync(`/app/storage/apps/${app1.id}`);
+    const appFolder = fs.readdirSync(`/runtipi/apps/${app1.id}`);
 
     expect(appFolder).toBeDefined();
     expect(appFolder.indexOf('docker-compose.yml')).toBeGreaterThanOrEqual(0);
@@ -121,19 +121,19 @@ describe('Install app', () => {
   it('Should cleanup any app folder existing before install', async () => {
     const { MockFiles, appInfo } = await createApp({});
     app1 = appInfo;
-    MockFiles[`/app/storage/apps/${appInfo.id}/docker-compose.yml`] = 'test';
-    MockFiles[`/app/storage/apps/${appInfo.id}/test.yml`] = 'test';
-    MockFiles[`/app/storage/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
+    MockFiles[`/runtipi/apps/${appInfo.id}/docker-compose.yml`] = 'test';
+    MockFiles[`/runtipi/apps/${appInfo.id}/test.yml`] = 'test';
+    MockFiles[`/runtipi/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
 
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    expect(fs.existsSync(`/app/storage/apps/${app1.id}/test.yml`)).toBe(true);
+    expect(fs.existsSync(`/runtipi/apps/${app1.id}/test.yml`)).toBe(true);
 
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
-    expect(fs.existsSync(`/app/storage/apps/${app1.id}/test.yml`)).toBe(false);
-    expect(fs.existsSync(`/app/storage/apps/${app1.id}/docker-compose.yml`)).toBe(true);
+    expect(fs.existsSync(`/runtipi/apps/${app1.id}/test.yml`)).toBe(false);
+    expect(fs.existsSync(`/runtipi/apps/${app1.id}/docker-compose.yml`)).toBe(true);
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {

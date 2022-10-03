@@ -4,7 +4,7 @@ import { getConfig } from '../../core/config/TipiConfig';
 
 export const readJsonFile = (path: string): any => {
   try {
-    const rawFile = fs.readFileSync(path)?.toString();
+    const rawFile = fs.readFileSync(path).toString();
 
     if (!rawFile) {
       return null;
@@ -37,21 +37,21 @@ export const createFolder = (path: string) => {
 };
 export const deleteFolder = (path: string) => fs.rmSync(path, { recursive: true });
 
-export const runScript = (path: string, args: string[], callback?: any) => childProcess.execFile(path, args, {}, callback);
-
 export const getSeed = () => {
   const seed = readFile('/runtipi/state/seed');
   return seed.toString();
 };
 
 export const ensureAppFolder = (appName: string, cleanup = false) => {
-  if (cleanup && fileExists(`/app/storage/apps/${appName}`)) {
-    deleteFolder(`/app/storage/apps/${appName}`);
+  if (cleanup && fileExists(`/runtipi/apps/${appName}`)) {
+    deleteFolder(`/runtipi/apps/${appName}`);
   }
 
-  if (!fileExists(`/app/storage/apps/${appName}/docker-compose.yml`)) {
-    if (fileExists(`/app/storage/apps/${appName}`)) deleteFolder(`/app/storage/apps/${appName}`);
+  if (!fileExists(`/runtipi/apps/${appName}/docker-compose.yml`)) {
+    if (fileExists(`/runtipi/apps/${appName}`)) {
+      deleteFolder(`/runtipi/apps/${appName}`);
+    }
     // Copy from apps repo
-    fs.copySync(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appName}`, `/app/storage/apps/${appName}`);
+    fs.copySync(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appName}`, `/runtipi/apps/${appName}`);
   }
 };

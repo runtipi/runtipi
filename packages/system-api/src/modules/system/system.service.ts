@@ -4,7 +4,8 @@ import semver from 'semver';
 import logger from '../../config/logger/logger';
 import TipiCache from '../../config/TipiCache';
 import { getConfig, setConfig } from '../../core/config/TipiConfig';
-import { readJsonFile, runScript } from '../fs/fs.helpers';
+import { readJsonFile } from '../fs/fs.helpers';
+import EventDispatcher, { EventTypes } from '../../core/config/EventDispatcher';
 
 const systemInfoSchema = z.object({
   cpu: z.object({
@@ -57,12 +58,12 @@ const getVersion = async (): Promise<{ current: string; latest?: string }> => {
 const restart = async (): Promise<boolean> => {
   setConfig('status', 'RESTARTING');
 
-  runScript('/runtipi/scripts/system.sh', ['restart'], (err: string) => {
-    setConfig('status', 'RUNNING');
-    if (err) {
-      logger.error(`Error restarting: ${err}`);
-    }
-  });
+  const { success } = await EventDispatcher.dispatchEventAsync(EventTypes.RESTART);
+
+  if (!success) {
+    logger.error('Error restarting system');
+    return false;
+  }
 
   setConfig('status', 'RUNNING');
 
@@ -90,12 +91,12 @@ const update = async (): Promise<boolean> => {
 
   setConfig('status', 'UPDATING');
 
-  runScript('/runtipi/scripts/system.sh', ['update'], (err: string) => {
-    setConfig('status', 'RUNNING');
-    if (err) {
-      logger.error(`Error updating: ${err}`);
-    }
-  });
+  const { success } = await EventDispatcher.dispatchEventAsync(EventTypes.UPDATE);
+
+  if (!success) {
+    logger.error('Error updating system');
+    return false;
+  }
 
   setConfig('status', 'RUNNING');
 

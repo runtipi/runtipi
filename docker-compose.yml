@@ -46,7 +46,9 @@ services:
     volumes:
       ## Docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}:/runtipi
+      - ${PWD}/apps:/runtipi/apps:ro
+      - ${PWD}/repos:/runtipi/repos:ro
+      - ${PWD}/state:/runtipi/state:ro
       - ${PWD}/logs:/app/logs
       - ${STORAGE_PATH}:/app/storage
     environment:

@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
-# Don't break if command fails
 
-cd /runtipi || echo ""
+source "${BASH_SOURCE%/*}/common.sh"
 
-# Ensure PWD ends with /runtipi
-if [[ $(basename "$(pwd)") != "runtipi" ]] || [[ ! -f "${BASH_SOURCE[0]}" ]]; then
-    echo "Please make sure this script is executed from runtipi/"
-    exit 1
-fi
+ensure_pwd
 
 ROOT_FOLDER="${PWD}"
 
@@ -28,17 +23,22 @@ if [[ "$command" = "clone" ]]; then
     repo="$2"
     repo_hash=$(get_hash "${repo}")
 
-    echo "Cloning ${repo} to ${ROOT_FOLDER}/repos/${repo_hash}"
+    write_log "Cloning ${repo} to ${ROOT_FOLDER}/repos/${repo_hash}"
     repo_dir="${ROOT_FOLDER}/repos/${repo_hash}"
     if [ -d "${repo_dir}" ]; then
-        echo "Repo already exists"
+        write_log "Repo already exists"
         exit 0
     fi
 
-    echo "Cloning ${repo} to ${repo_dir}"
-    git clone "${repo}" "${repo_dir}"
-    echo "Done"
-    exit
+    write_log "Cloning ${repo} to ${repo_dir}"
+
+    if ! git clone "${repo}" "${repo_dir}"; then
+        write_log "Failed to clone repo"
+        exit 1
+    fi
+
+    write_log "Done"
+    exit 0
 fi
 
 # Update a repo
@@ -47,15 +47,21 @@ if [[ "$command" = "update" ]]; then
     repo_hash=$(get_hash "${repo}")
     repo_dir="${ROOT_FOLDER}/repos/${repo_hash}"
     if [ ! -d "${repo_dir}" ]; then
-        echo "Repo does not exist"
-        exit 0
+        write_log "Repo does not exist"
+        exit 1
     fi
 
-    echo "Updating ${repo} in ${repo_hash}"
+    write_log "Updating ${repo} in ${repo_hash}"
     cd "${repo_dir}" || exit
-    git pull origin master
-    echo "Done"
-    exit
+
+    if ! git pull origin master; then
+        write_log "Failed to update repo"
+        exit 1
+    fi
+
+    cd "${ROOT_FOLDER}" || exit
+    write_log "Done"
+    exit 0
 fi
 
 if [[ "$command" = "get_hash" ]]; then

@@ -4,8 +4,6 @@ set -e # Exit immediately if a command exits with a non-zero status.
 
 source "${BASH_SOURCE%/*}/common.sh"
 
-write_log "Starting Tipi..."
-
 ROOT_FOLDER="${PWD}"
 
 # Cleanup and ensure environment
@@ -105,6 +103,9 @@ fi
 # Configure Tipi
 "${ROOT_FOLDER}/scripts/configure.sh"
 
+kill_watcher
+"${ROOT_FOLDER}/scripts/watcher.sh" &
+
 # Copy the config sample if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
   cp "${ROOT_FOLDER}/templates/config-sample.json" "${STATE_FOLDER}/config.json"
@@ -200,12 +201,6 @@ mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 # Run system-info.sh
 echo "Running system-info.sh..."
 bash "${ROOT_FOLDER}/scripts/system-info.sh"
-
-# Add crontab to run system-info.sh every minute
-! (crontab -l | grep -q "${ROOT_FOLDER}/scripts/system-info.sh") && (
-  crontab -l
-  echo "* * * * * ${ROOT_FOLDER}/scripts/system-info.sh"
-) | crontab -
 
 ## Don't run if config-only
 if [[ ! $ci == "true" ]]; then

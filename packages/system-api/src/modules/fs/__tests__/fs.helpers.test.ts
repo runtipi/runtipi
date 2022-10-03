@@ -1,5 +1,4 @@
-import childProcess from 'child_process';
-import { readJsonFile, readFile, readdirSync, fileExists, writeFile, createFolder, deleteFolder, runScript, getSeed, ensureAppFolder } from '../fs.helpers';
+import { readJsonFile, readFile, readdirSync, fileExists, writeFile, createFolder, deleteFolder, getSeed, ensureAppFolder } from '../fs.helpers';
 import fs from 'fs-extra';
 import { getConfig } from '../../../core/config/TipiConfig';
 import { faker } from '@faker-js/faker';
@@ -131,17 +130,6 @@ describe('Test: deleteFolder', () => {
   });
 });
 
-describe('Test: runScript', () => {
-  it('should run the script', () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
-    const callback = jest.fn();
-
-    runScript('/test', [], callback);
-
-    expect(spy).toHaveBeenCalledWith('/test', [], {}, callback);
-  });
-});
-
 describe('Test: getSeed', () => {
   it('should return the seed', () => {
     const mockFiles = {
@@ -169,15 +157,15 @@ describe('Test: ensureAppFolder', () => {
     ensureAppFolder('test');
 
     // Assert
-    const files = fs.readdirSync('/app/storage/apps/test');
+    const files = fs.readdirSync('/runtipi/apps/test');
     expect(files).toEqual(['test.yml']);
   });
 
   it('should not copy the folder if it already exists', () => {
     const mockFiles = {
       [`/runtipi/repos/${getConfig().appsRepoId}/apps/test`]: ['test.yml'],
-      ['/app/storage/apps/test']: ['docker-compose.yml'],
-      ['/app/storage/apps/test/docker-compose.yml']: 'test',
+      ['/runtipi/apps/test']: ['docker-compose.yml'],
+      ['/runtipi/apps/test/docker-compose.yml']: 'test',
     };
 
     // @ts-ignore
@@ -187,15 +175,15 @@ describe('Test: ensureAppFolder', () => {
     ensureAppFolder('test');
 
     // Assert
-    const files = fs.readdirSync('/app/storage/apps/test');
+    const files = fs.readdirSync('/runtipi/apps/test');
     expect(files).toEqual(['docker-compose.yml']);
   });
 
   it('Should overwrite the folder if clean up is true', () => {
     const mockFiles = {
       [`/runtipi/repos/${getConfig().appsRepoId}/apps/test`]: ['test.yml'],
-      ['/app/storage/apps/test']: ['docker-compose.yml'],
-      ['/app/storage/apps/test/docker-compose.yml']: 'test',
+      ['/runtipi/apps/test']: ['docker-compose.yml'],
+      ['/runtipi/apps/test/docker-compose.yml']: 'test',
     };
 
     // @ts-ignore
@@ -205,7 +193,7 @@ describe('Test: ensureAppFolder', () => {
     ensureAppFolder('test', true);
 
     // Assert
-    const files = fs.readdirSync('/app/storage/apps/test');
+    const files = fs.readdirSync('/runtipi/apps/test');
     expect(files).toEqual(['test.yml']);
   });
 
@@ -214,7 +202,7 @@ describe('Test: ensureAppFolder', () => {
     const randomFileName = `${faker.random.word()}.yml`;
     const mockFiles = {
       [`/runtipi/repos/${getConfig().appsRepoId}/apps/test`]: [randomFileName],
-      ['/app/storage/apps/test']: ['test.yml'],
+      ['/runtipi/apps/test']: ['test.yml'],
     };
 
     // @ts-ignore
@@ -224,7 +212,7 @@ describe('Test: ensureAppFolder', () => {
     ensureAppFolder('test');
 
     // Assert
-    const files = fs.readdirSync('/app/storage/apps/test');
+    const files = fs.readdirSync('/runtipi/apps/test');
     expect(files).toEqual([randomFileName]);
   });
 });
