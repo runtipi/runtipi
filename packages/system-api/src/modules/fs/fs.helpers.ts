@@ -1,14 +1,9 @@
 import fs from 'fs-extra';
-import childProcess from 'child_process';
 import { getConfig } from '../../core/config/TipiConfig';
 
 export const readJsonFile = (path: string): any => {
   try {
     const rawFile = fs.readFileSync(path).toString();
-
-    if (!rawFile) {
-      return null;
-    }
 
     return JSON.parse(rawFile);
   } catch (e) {

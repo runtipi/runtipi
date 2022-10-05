@@ -33,6 +33,8 @@ class EventDispatcher {
 
   private interval: NodeJS.Timer;
 
+  private intervals: NodeJS.Timer[] = [];
+
   constructor() {
     const timer = this.pollQueue();
     this.interval = timer;
@@ -67,7 +69,6 @@ class EventDispatcher {
       return;
     }
 
-    console.log('Status: ', status, 'clearing');
     this.clearEvent(this.lock.id);
     this.lock = null;
   }
@@ -77,10 +78,17 @@ class EventDispatcher {
    */
   private pollQueue() {
     logger.info('EventDispatcher: Polling queue...');
-    return setInterval(() => {
-      this.runEvent();
-      this.collectLockStatusAndClean();
-    }, 1000);
+
+    if (!this.interval) {
+      const id = setInterval(() => {
+        this.runEvent();
+        this.collectLockStatusAndClean();
+      }, 1000);
+      this.intervals.push(id);
+      return id;
+    }
+
+    return this.interval;
   }
 
   /**
@@ -122,7 +130,7 @@ class EventDispatcher {
     }
 
     const file = fs.readFileSync(WATCH_FILE, 'utf8');
-    const lines = file.split('\n') || [];
+    const lines = file?.split('\n') || [];
     const line = lines.find((l) => l.startsWith(`${event.type} ${event.id}`));
 
     if (!line) {
@@ -130,10 +138,6 @@ class EventDispatcher {
     }
 
     const status = line.split(' ')[2] as EventStatusTypes;
-
-    if (status === 'error') {
-      console.error(lines);
-    }
 
     return status;
   }
@@ -180,6 +184,7 @@ class EventDispatcher {
 
     return new Promise((resolve) => {
       const interval = setInterval(() => {
+        this.intervals.push(interval);
         const status = this.getEventStatus(event.id);
 
         let log = '';
@@ -198,10 +203,14 @@ class EventDispatcher {
     });
   }
 
+  public clearInterval() {
+    clearInterval(this.interval);
+    this.intervals.forEach((i) => clearInterval(i));
+  }
+
   public clear() {
     this.queue = [];
     this.lock = null;
-    clearInterval(this.interval);
     EventDispatcher.instance = null;
     fs.writeFileSync(WATCH_FILE, '');
   }

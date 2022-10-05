@@ -83,6 +83,16 @@ function select_command() {
         return 0
     fi
 
+    if [ "$command" = "update" ]; then
+        run_command "${ROOT_FOLDER}/scripts/system.sh" "$id" "update"
+        return 0
+    fi
+
+    if [ "$command" = "restart" ]; then
+        run_command "${ROOT_FOLDER}/scripts/system.sh" "$id" "restart"
+        return 0
+    fi
+
     echo "Unknown command ${command}"
     return 0
 }

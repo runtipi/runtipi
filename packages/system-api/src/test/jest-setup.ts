@@ -7,5 +7,5 @@ jest.mock('../config/logger/logger', () => ({
 }));
 
 afterAll(() => {
-  eventDispatcher.clear();
+  eventDispatcher.clearInterval();
 });
