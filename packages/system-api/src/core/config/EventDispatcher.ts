@@ -25,12 +25,24 @@ const WATCH_FILE = '/runtipi/state/events';
 // File state example:
 // restart 1631231231231 running "arg1 arg2"
 class EventDispatcher {
+  private static instance: EventDispatcher | null;
+
   private queue: SystemEvent[] = [];
 
   private lock: SystemEvent | null = null;
 
+  private interval: NodeJS.Timer;
+
   constructor() {
-    this.pollQueue();
+    const timer = this.pollQueue();
+    this.interval = timer;
+  }
+
+  public static getInstance(): EventDispatcher {
+    if (!EventDispatcher.instance) {
+      EventDispatcher.instance = new EventDispatcher();
+    }
+    return EventDispatcher.instance;
   }
 
   /**
@@ -38,7 +50,7 @@ class EventDispatcher {
    * @returns - Random id
    */
   private generateId() {
-    return Math.random().toString(36).substr(2, 9);
+    return Math.random().toString(36).substring(2, 9);
   }
 
   /**
@@ -65,7 +77,7 @@ class EventDispatcher {
    */
   private pollQueue() {
     logger.info('EventDispatcher: Polling queue...');
-    setInterval(() => {
+    return setInterval(() => {
       this.runEvent();
       this.collectLockStatusAndClean();
     }, 1000);
@@ -89,7 +101,6 @@ class EventDispatcher {
     // Write event to state file
     const args = event.args.join(' ');
     const line = `${event.type} ${event.id} waiting ${args}`;
-    console.log('Writing line: ', line);
     fs.writeFileSync(WATCH_FILE, `${line}`);
   }
 
@@ -190,8 +201,12 @@ class EventDispatcher {
   public clear() {
     this.queue = [];
     this.lock = null;
+    clearInterval(this.interval);
+    EventDispatcher.instance = null;
     fs.writeFileSync(WATCH_FILE, '');
   }
 }
 
-export default new EventDispatcher();
+export const eventDispatcher = EventDispatcher.getInstance();
+
+export default EventDispatcher;

@@ -18,7 +18,7 @@ import startJobs from './core/jobs/jobs';
 import { applyJsonConfig, getConfig, setConfig } from './core/config/TipiConfig';
 import { ZodError } from 'zod';
 import systemController from './modules/system/system.controller';
-import EventDispatcher, { EventTypes } from './core/config/EventDispatcher';
+import { eventDispatcher, EventTypes } from './core/config/EventDispatcher';
 
 let corsOptions = {
   credentials: true,
@@ -53,7 +53,7 @@ const applyCustomConfig = () => {
 
 const main = async () => {
   try {
-    EventDispatcher.clear();
+    eventDispatcher.clear();
     applyCustomConfig();
 
     const app = express();
@@ -94,8 +94,8 @@ const main = async () => {
     await runUpdates();
 
     httpServer.listen(port, async () => {
-      await EventDispatcher.dispatchEventAsync(EventTypes.CLONE_REPO, [getConfig().appsRepoUrl]);
-      await EventDispatcher.dispatchEventAsync(EventTypes.UPDATE_REPO, [getConfig().appsRepoUrl]);
+      await eventDispatcher.dispatchEventAsync(EventTypes.CLONE_REPO, [getConfig().appsRepoUrl]);
+      await eventDispatcher.dispatchEventAsync(EventTypes.UPDATE_REPO, [getConfig().appsRepoUrl]);
 
       startJobs();
       setConfig('status', 'RUNNING');

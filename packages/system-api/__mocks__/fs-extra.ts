@@ -11,6 +11,7 @@ const fs: {
   copyFileSync: typeof copyFileSync;
   copySync: typeof copyFileSync;
   createFileSync: typeof createFileSync;
+  unlinkSync: typeof unlinkSync;
 } = jest.genMockFromModule('fs-extra');
 
 let mockFiles = Object.create(null);
@@ -97,6 +98,16 @@ const resetAllMocks = () => {
   mockFiles = Object.create(null);
 };
 
+const unlinkSync = (p: string) => {
+  if (mockFiles[p] instanceof Array) {
+    mockFiles[p].forEach((file: string) => {
+      delete mockFiles[path.join(p, file)];
+    });
+  }
+  delete mockFiles[p];
+};
+
+fs.unlinkSync = unlinkSync;
 fs.readdirSync = readdirSync;
 fs.existsSync = existsSync;
 fs.readFileSync = readFileSync;

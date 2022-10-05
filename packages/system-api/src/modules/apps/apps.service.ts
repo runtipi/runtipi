@@ -6,7 +6,7 @@ import App from './app.entity';
 import logger from '../../config/logger/logger';
 import { Not } from 'typeorm';
 import { getConfig } from '../../core/config/TipiConfig';
-import EventDispatcher, { EventTypes } from '../../core/config/EventDispatcher';
+import { eventDispatcher, EventTypes } from '../../core/config/EventDispatcher';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
 
@@ -26,9 +26,13 @@ const startAllApps = async (): Promise<void> => {
 
         await App.update({ id: app.id }, { status: AppStatusEnum.STARTING });
 
-        EventDispatcher.dispatchEvent(EventTypes.APP, ['start', app.id]);
-
-        await App.update({ id: app.id }, { status: AppStatusEnum.RUNNING });
+        eventDispatcher.dispatchEventAsync(EventTypes.APP, ['start', app.id]).then(({ success }) => {
+          if (success) {
+            App.update({ id: app.id }, { status: AppStatusEnum.RUNNING });
+          } else {
+            App.update({ id: app.id }, { status: AppStatusEnum.STOPPED });
+          }
+        });
       } catch (e) {
         await App.update({ id: app.id }, { status: AppStatusEnum.STOPPED });
         logger.error(e);
@@ -55,7 +59,7 @@ const startApp = async (appName: string): Promise<App> => {
   checkEnvFile(appName);
 
   await App.update({ id: appName }, { status: AppStatusEnum.STARTING });
-  const { success, stdout } = await EventDispatcher.dispatchEventAsync(EventTypes.APP, ['start', app.id]);
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['start', app.id]);
 
   if (success) {
     await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
@@ -120,7 +124,7 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
     generateEnvFile(app);
 
     // Run script
-    const { success, stdout } = await EventDispatcher.dispatchEventAsync(EventTypes.APP, ['install', id]);
+    const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['install', id]);
 
     if (!success) {
       await App.delete({ id });
@@ -221,7 +225,7 @@ const stopApp = async (id: string): Promise<App> => {
   // Run script
   await App.update({ id }, { status: AppStatusEnum.STOPPING });
 
-  const { success, stdout } = await EventDispatcher.dispatchEventAsync(EventTypes.APP, ['stop', id]);
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['stop', id]);
 
   if (success) {
     await App.update({ id }, { status: AppStatusEnum.STOPPED });
@@ -255,7 +259,7 @@ const uninstallApp = async (id: string): Promise<App> => {
 
   await App.update({ id }, { status: AppStatusEnum.UNINSTALLING });
 
-  const { success, stdout } = await EventDispatcher.dispatchEventAsync(EventTypes.APP, ['uninstall', id]);
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['uninstall', id]);
 
   if (!success) {
     await App.update({ id }, { status: AppStatusEnum.STOPPED });
@@ -299,12 +303,13 @@ const updateApp = async (id: string) => {
 
   await App.update({ id }, { status: AppStatusEnum.UPDATING });
 
-  const { success, stdout } = await EventDispatcher.dispatchEventAsync(EventTypes.APP, ['update', id]);
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['update', id]);
 
   if (success) {
     const appInfo: AppInfo | null = await readJsonFile(`/runtipi/apps/${id}/config.json`);
     await App.update({ id }, { status: AppStatusEnum.RUNNING, version: Number(appInfo?.tipi_version) });
   } else {
+    await App.update({ id }, { status: AppStatusEnum.STOPPED });
     throw new Error(`App ${id} failed to update\nstdout: ${stdout}`);
   }
 

@@ -1,7 +1,7 @@
 import cron from 'node-cron';
-import * as repoHelpers from '../../../helpers/repo-helpers';
 import { getConfig } from '../../config/TipiConfig';
 import startJobs from '../jobs';
+import { eventDispatcher, EventTypes } from '../../../core/config/EventDispatcher';
 
 jest.mock('node-cron');
 jest.mock('child_process');
@@ -17,16 +17,21 @@ describe('Test: startJobs', () => {
 
     startJobs();
     expect(spy).toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledWith('0 * * * *', expect.any(Function));
+    expect(spy).toHaveBeenCalledWith('*/30 * * * *', expect.any(Function));
     spy.mockRestore();
   });
 
   it('Should update apps repo on cron trigger', () => {
-    const spy = jest.spyOn(repoHelpers, 'updateRepo');
+    const spy = jest.spyOn(eventDispatcher, 'dispatchEvent');
 
+    // Act
     startJobs();
 
-    expect(spy).toHaveBeenCalledWith(getConfig().appsRepoUrl);
+    // Assert
+    expect(spy.mock.calls.length).toBe(2);
+    expect(spy.mock.calls[0]).toEqual([EventTypes.UPDATE_REPO, [getConfig().appsRepoUrl]]);
+    expect(spy.mock.calls[1]).toEqual([EventTypes.SYSTEM_INFO, []]);
+
     spy.mockRestore();
   });
 });

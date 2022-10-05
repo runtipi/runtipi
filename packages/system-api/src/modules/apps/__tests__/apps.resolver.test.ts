@@ -10,6 +10,7 @@ import { createUser } from '../../auth/__tests__/user.factory';
 import User from '../../auth/user.entity';
 import { installAppMutation, startAppMutation, stopAppMutation, uninstallAppMutation, updateAppConfigMutation, updateAppMutation } from '../../../test/mutations';
 import { faker } from '@faker-js/faker';
+import EventDispatcher from '../../../core/config/EventDispatcher';
 
 jest.mock('fs');
 jest.mock('child_process');
@@ -36,6 +37,7 @@ beforeEach(async () => {
   jest.resetModules();
   jest.resetAllMocks();
   jest.restoreAllMocks();
+  EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
   await App.clear();
   await User.clear();
 });

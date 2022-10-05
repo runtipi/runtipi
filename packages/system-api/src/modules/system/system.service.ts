@@ -5,7 +5,7 @@ import logger from '../../config/logger/logger';
 import TipiCache from '../../config/TipiCache';
 import { getConfig, setConfig } from '../../core/config/TipiConfig';
 import { readJsonFile } from '../fs/fs.helpers';
-import EventDispatcher, { EventTypes } from '../../core/config/EventDispatcher';
+import { eventDispatcher, EventTypes } from '../../core/config/EventDispatcher';
 
 const systemInfoSchema = z.object({
   cpu: z.object({
@@ -58,10 +58,10 @@ const getVersion = async (): Promise<{ current: string; latest?: string }> => {
 const restart = async (): Promise<boolean> => {
   setConfig('status', 'RESTARTING');
 
-  const { success } = await EventDispatcher.dispatchEventAsync(EventTypes.RESTART);
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.RESTART);
 
   if (!success) {
-    logger.error('Error restarting system');
+    logger.error(`Error restarting system: ${stdout}`);
     return false;
   }
 
@@ -91,10 +91,10 @@ const update = async (): Promise<boolean> => {
 
   setConfig('status', 'UPDATING');
 
-  const { success } = await EventDispatcher.dispatchEventAsync(EventTypes.UPDATE);
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.UPDATE);
 
   if (!success) {
-    logger.error('Error updating system');
+    logger.error(`Error updating system: ${stdout}`);
     return false;
   }
 
