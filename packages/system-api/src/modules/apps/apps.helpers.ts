@@ -1,5 +1,5 @@
 import portUsed from 'tcp-port-used';
-import { fileExists, getSeed, readdirSync, readFile, readJsonFile, runScript, writeFile } from '../fs/fs.helpers';
+import { fileExists, getSeed, readdirSync, readFile, readJsonFile, writeFile } from '../fs/fs.helpers';
 import InternalIp from 'internal-ip';
 import crypto from 'crypto';
 import { AppInfo, AppStatusEnum } from './apps.types';
@@ -43,7 +43,7 @@ export const getEnvMap = (appName: string): Map<string, string> => {
 };
 
 export const checkEnvFile = (appName: string) => {
-  const configFile: AppInfo | null = readJsonFile(`/app/storage/apps/${appName}/config.json`);
+  const configFile: AppInfo | null = readJsonFile(`/runtipi/apps/${appName}/config.json`);
   const envMap = getEnvMap(appName);
 
   configFile?.form_fields?.forEach((field) => {
@@ -56,19 +56,6 @@ export const checkEnvFile = (appName: string) => {
   });
 };
 
-export const runAppScript = async (params: string[]): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    runScript('/runtipi/scripts/app.sh', [...params], (err: string) => {
-      if (err) {
-        logger.error(`Error running app script: ${err}`);
-        reject(err);
-      }
-
-      resolve();
-    });
-  });
-};
-
 const getEntropy = (name: string, length: number) => {
   const hash = crypto.createHash('sha256');
   hash.update(name + getSeed());
@@ -76,7 +63,7 @@ const getEntropy = (name: string, length: number) => {
 };
 
 export const generateEnvFile = (app: App) => {
-  const configFile: AppInfo | null = readJsonFile(`/app/storage/apps/${app.id}/config.json`);
+  const configFile: AppInfo | null = readJsonFile(`/runtipi/apps/${app.id}/config.json`);
 
   if (!configFile) {
     throw new Error(`App ${app.id} not found`);
@@ -145,9 +132,9 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
     // Check if app is installed
     const installed = typeof status !== 'undefined' && status !== AppStatusEnum.MISSING;
 
-    if (installed && fileExists(`/app/storage/apps/${id}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/app/storage/apps/${id}/config.json`);
-      configFile.description = readFile(`/app/storage/apps/${id}/metadata/description.md`).toString();
+    if (installed && fileExists(`/runtipi/apps/${id}/config.json`)) {
+      const configFile: AppInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
+      configFile.description = readFile(`/runtipi/apps/${id}/metadata/description.md`).toString();
       return configFile;
     } else if (fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`)) {
       const configFile: AppInfo = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);

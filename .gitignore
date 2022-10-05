@@ -1,6 +1,8 @@
 *.swo
 *.swp
 
+.DS_Store
+
 logs
 .pnpm-debug.log
 .env*

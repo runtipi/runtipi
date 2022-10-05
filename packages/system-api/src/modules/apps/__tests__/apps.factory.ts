@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { AppCategoriesEnum, AppInfo, AppStatusEnum, FieldTypes } from '../apps.types';
 import App from '../app.entity';
-import { getConfig } from '../../../core/config/TipiConfig';
 
 interface IProps {
   installed?: boolean;
@@ -73,8 +72,8 @@ const createApp = async (props: IProps) => {
 
     MockFiles[`/app/storage/app-data/${appInfo.id}`] = '';
     MockFiles[`/app/storage/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
-    MockFiles[`/app/storage/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
-    MockFiles[`/app/storage/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+    MockFiles[`/runtipi/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+    MockFiles[`/runtipi/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
   }
 
   return { appInfo, MockFiles, appEntity };

@@ -1,14 +1,18 @@
 import validator from 'validator';
 import { createFolder, ensureAppFolder, readFile, readJsonFile } from '../fs/fs.helpers';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, runAppScript } from './apps.helpers';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 import logger from '../../config/logger/logger';
 import { Not } from 'typeorm';
 import { getConfig } from '../../core/config/TipiConfig';
+import { eventDispatcher, EventTypes } from '../../core/config/EventDispatcher';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
 
+/**
+ * Start all apps which had the status RUNNING in the database
+ */
 const startAllApps = async (): Promise<void> => {
   const apps = await App.find({ where: { status: AppStatusEnum.RUNNING } });
 
@@ -22,8 +26,13 @@ const startAllApps = async (): Promise<void> => {
 
         await App.update({ id: app.id }, { status: AppStatusEnum.STARTING });
 
-        await runAppScript(['start', app.id]);
-        await App.update({ id: app.id }, { status: AppStatusEnum.RUNNING });
+        eventDispatcher.dispatchEventAsync(EventTypes.APP, ['start', app.id]).then(({ success }) => {
+          if (success) {
+            App.update({ id: app.id }, { status: AppStatusEnum.RUNNING });
+          } else {
+            App.update({ id: app.id }, { status: AppStatusEnum.STOPPED });
+          }
+        });
       } catch (e) {
         await App.update({ id: app.id }, { status: AppStatusEnum.STOPPED });
         logger.error(e);
@@ -32,6 +41,11 @@ const startAllApps = async (): Promise<void> => {
   );
 };
 
+/**
+ * Start an app
+ * @param appName - id of the app to start
+ * @returns - the app entity
+ */
 const startApp = async (appName: string): Promise<App> => {
   let app = await App.findOne({ where: { id: appName } });
 
@@ -40,20 +54,18 @@ const startApp = async (appName: string): Promise<App> => {
   }
 
   ensureAppFolder(appName);
-
   // Regenerate env file
   generateEnvFile(app);
-
   checkEnvFile(appName);
 
   await App.update({ id: appName }, { status: AppStatusEnum.STARTING });
-  // Run script
-  try {
-    await runAppScript(['start', appName]);
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['start', app.id]);
+
+  if (success) {
     await App.update({ id: appName }, { status: AppStatusEnum.RUNNING });
-  } catch (e) {
+  } else {
     await App.update({ id: appName }, { status: AppStatusEnum.STOPPED });
-    throw e;
+    throw new Error(`App ${appName} failed to start\nstdout: ${stdout}`);
   }
 
   app = (await App.findOne({ where: { id: appName } })) as App;
@@ -61,6 +73,14 @@ const startApp = async (appName: string): Promise<App> => {
   return app;
 };
 
+/**
+ * Given parameters, create a new app and start it
+ * @param id - id of the app to stop
+ * @param form - form data
+ * @param exposed - if the app should be exposed
+ * @param domain - domain to expose the app on
+ * @returns - the app entity
+ */
 const installApp = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
@@ -85,7 +105,7 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
     // Create app folder
     createFolder(`/app/storage/app-data/${id}`);
 
-    const appInfo: AppInfo | null = await readJsonFile(`/app/storage/apps/${id}/config.json`);
+    const appInfo: AppInfo | null = await readJsonFile(`/runtipi/apps/${id}/config.json`);
 
     if (!appInfo?.exposable && exposed) {
       throw new Error(`App ${id} is not exposable`);
@@ -104,11 +124,11 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
     generateEnvFile(app);
 
     // Run script
-    try {
-      await runAppScript(['install', id]);
-    } catch (e) {
+    const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['install', id]);
+
+    if (!success) {
       await App.delete({ id });
-      throw e;
+      throw new Error(`App ${id} failed to install\nstdout: ${stdout}`);
     }
   }
 
@@ -118,6 +138,10 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
   return app;
 };
 
+/**
+ * List all apps available for installation
+ * @returns - list of all apps available
+ */
 const listApps = async (): Promise<ListAppsResonse> => {
   const folders: string[] = await getAvailableApps();
 
@@ -138,6 +162,14 @@ const listApps = async (): Promise<ListAppsResonse> => {
   return { apps: apps.sort(sortApps), total: apps.length };
 };
 
+/**
+ * Given parameters, updates an app config and regenerates the env file
+ * @param id - id of the app to stop
+ * @param form - form data
+ * @param exposed - if the app should be exposed
+ * @param domain - domain to expose the app on
+ * @returns - the app entity
+ */
 const updateAppConfig = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string): Promise<App> => {
   if (exposed && !domain) {
     throw new Error('Domain is required if app is exposed');
@@ -147,7 +179,7 @@ const updateAppConfig = async (id: string, form: Record<string, string>, exposed
     throw new Error(`Domain ${domain} is not valid`);
   }
 
-  const appInfo: AppInfo | null = await readJsonFile(`/app/storage/apps/${id}/config.json`);
+  const appInfo: AppInfo | null = await readJsonFile(`/runtipi/apps/${id}/config.json`);
 
   if (!appInfo?.exposable && exposed) {
     throw new Error(`App ${id} is not exposable`);
@@ -175,6 +207,11 @@ const updateAppConfig = async (id: string, form: Record<string, string>, exposed
   return app;
 };
 
+/**
+ * Stops an app
+ * @param id - id of the app to stop
+ * @returns - the app entity
+ */
 const stopApp = async (id: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
@@ -183,16 +220,18 @@ const stopApp = async (id: string): Promise<App> => {
   }
 
   ensureAppFolder(id);
+  generateEnvFile(app);
 
   // Run script
   await App.update({ id }, { status: AppStatusEnum.STOPPING });
 
-  try {
-    await runAppScript(['stop', id]);
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['stop', id]);
+
+  if (success) {
     await App.update({ id }, { status: AppStatusEnum.STOPPED });
-  } catch (e) {
+  } else {
     await App.update({ id }, { status: AppStatusEnum.RUNNING });
-    throw e;
+    throw new Error(`App ${id} failed to stop\nstdout: ${stdout}`);
   }
 
   app = (await App.findOne({ where: { id } })) as App;
@@ -200,6 +239,11 @@ const stopApp = async (id: string): Promise<App> => {
   return app;
 };
 
+/**
+ * Uninstalls an app
+ * @param id - id of the app to uninstall
+ * @returns - the app entity
+ */
 const uninstallApp = async (id: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
@@ -211,14 +255,15 @@ const uninstallApp = async (id: string): Promise<App> => {
   }
 
   ensureAppFolder(id);
+  generateEnvFile(app);
 
   await App.update({ id }, { status: AppStatusEnum.UNINSTALLING });
-  // Run script
-  try {
-    await runAppScript(['uninstall', id]);
-  } catch (e) {
+
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['uninstall', id]);
+
+  if (!success) {
     await App.update({ id }, { status: AppStatusEnum.STOPPED });
-    throw e;
+    throw new Error(`App ${id} failed to uninstall\nstdout: ${stdout}`);
   }
 
   await App.delete({ id });
@@ -226,6 +271,11 @@ const uninstallApp = async (id: string): Promise<App> => {
   return { id, status: AppStatusEnum.MISSING, config: {} } as App;
 };
 
+/**
+ * Get an app entity
+ * @param id - id of the app
+ * @returns - the app entity
+ */
 const getApp = async (id: string): Promise<App> => {
   let app = await App.findOne({ where: { id } });
 
@@ -236,6 +286,11 @@ const getApp = async (id: string): Promise<App> => {
   return app;
 };
 
+/**
+ * Updates an app to the latest version from repository
+ * @param id - id of the app
+ * @returns - the app entity
+ */
 const updateApp = async (id: string) => {
   let app = await App.findOne({ where: { id } });
 
@@ -244,21 +299,21 @@ const updateApp = async (id: string) => {
   }
 
   ensureAppFolder(id);
+  generateEnvFile(app);
 
   await App.update({ id }, { status: AppStatusEnum.UPDATING });
 
-  // Run script
-  try {
-    await runAppScript(['update', id]);
-    const appInfo: AppInfo | null = await readJsonFile(`/app/storage/apps/${id}/config.json`);
+  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['update', id]);
+
+  if (success) {
+    const appInfo: AppInfo | null = await readJsonFile(`/runtipi/apps/${id}/config.json`);
     await App.update({ id }, { status: AppStatusEnum.RUNNING, version: Number(appInfo?.tipi_version) });
-  } catch (e) {
-    logger.error(e);
-    throw e;
-  } finally {
+  } else {
     await App.update({ id }, { status: AppStatusEnum.STOPPED });
+    throw new Error(`App ${id} failed to update\nstdout: ${stdout}`);
   }
 
+  await App.update({ id }, { status: AppStatusEnum.STOPPED });
   app = (await App.findOne({ where: { id } })) as App;
 
   return app;

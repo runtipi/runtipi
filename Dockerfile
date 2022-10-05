@@ -1,4 +1,4 @@
-FROM node:18 AS build
+FROM node:18-alpine3.16 AS build
 
 RUN npm install node-gyp -g
 
@@ -19,7 +19,7 @@ COPY ./packages/dashboard /dashboard
 RUN npm run build
 
 
-FROM ubuntu:22.04 as app
+FROM node:18-alpine3.16 as app
 
 WORKDIR /
 
@@ -37,8 +37,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 
 # Install dependencies
-RUN apt-get install -y bash g++ make git 
-
 RUN npm install node-gyp -g
 
 WORKDIR /api

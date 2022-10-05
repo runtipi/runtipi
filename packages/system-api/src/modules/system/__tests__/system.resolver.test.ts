@@ -12,6 +12,7 @@ import { systemInfoQuery, versionQuery } from '../../../test/queries';
 import User from '../../auth/user.entity';
 import { createUser } from '../../auth/__tests__/user.factory';
 import { SystemInfoResponse } from '../system.types';
+import EventDispatcher from '../../../core/config/EventDispatcher';
 
 jest.mock('fs-extra');
 jest.mock('axios');
@@ -133,38 +134,50 @@ describe('Test: restart', () => {
   });
 
   it('Should return true', async () => {
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: true });
+
+    // Act
     const user = await createUser();
     const { data } = await gcall<{ restart: boolean }>({ source: restartMutation, userId: user.id });
 
+    // Assert
     expect(data?.restart).toBeDefined();
     expect(data?.restart).toBe(true);
   });
 
   it("Should return an error if user doesn't exist", async () => {
+    // Arrange
     const { data, errors } = await gcall<{ restart: boolean }>({
       source: restartMutation,
       userId: 1,
     });
 
+    // Assert
     expect(errors?.[0].message).toBe('Access denied! You need to be authorized to perform this action!');
     expect(data?.restart).toBeUndefined();
   });
 
   it('Should throw an error if no userId is not provided', async () => {
+    // Arrange
     const { data, errors } = await gcall<{ restart: boolean }>({ source: restartMutation });
 
+    // Assert
     expect(errors?.[0].message).toBe('Access denied! You need to be authorized to perform this action!');
     expect(data?.restart).toBeUndefined();
   });
 
   it('Should set app status to restarting', async () => {
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: true });
     const spy = jest.spyOn(TipiConfig, 'setConfig');
-
     const user = await createUser();
+
+    // Act
     await gcall<{ restart: boolean }>({ source: restartMutation, userId: user.id });
 
+    // Assert
     expect(spy).toHaveBeenCalledTimes(2);
-
     expect(spy).toHaveBeenNthCalledWith(1, 'status', 'RESTARTING');
     expect(spy).toHaveBeenNthCalledWith(2, 'status', 'RUNNING');
 
@@ -180,35 +193,47 @@ describe('Test: update', () => {
   });
 
   it('Should return true', async () => {
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: true });
     const user = await createUser();
+
+    // Act
     const { data } = await gcall<{ update: boolean }>({ source: updateMutation, userId: user.id });
 
+    // Assert
     expect(data?.update).toBeDefined();
     expect(data?.update).toBe(true);
   });
 
   it("Should return an error if user doesn't exist", async () => {
+    // Act
     const { data, errors } = await gcall<{ update: boolean }>({ source: updateMutation, userId: 1 });
 
+    // Assert
     expect(errors?.[0].message).toBe('Access denied! You need to be authorized to perform this action!');
     expect(data?.update).toBeUndefined();
   });
 
   it('Should throw an error if no userId is not provided', async () => {
+    // Act
     const { data, errors } = await gcall<{ update: boolean }>({ source: updateMutation });
 
+    // Assert
     expect(errors?.[0].message).toBe('Access denied! You need to be authorized to perform this action!');
     expect(data?.update).toBeUndefined();
   });
 
   it('Should set app status to updating', async () => {
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: true });
     const spy = jest.spyOn(TipiConfig, 'setConfig');
-
     const user = await createUser();
+
+    // Act
     await gcall<{ update: boolean }>({ source: updateMutation, userId: user.id });
 
+    // Assert
     expect(spy).toHaveBeenCalledTimes(2);
-
     expect(spy).toHaveBeenNthCalledWith(1, 'status', 'UPDATING');
     expect(spy).toHaveBeenNthCalledWith(2, 'status', 'RUNNING');
 

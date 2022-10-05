@@ -14,11 +14,11 @@ import datasource from './config/datasource';
 import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
-import { cloneRepo, updateRepo } from './helpers/repo-helpers';
 import startJobs from './core/jobs/jobs';
 import { applyJsonConfig, getConfig, setConfig } from './core/config/TipiConfig';
 import { ZodError } from 'zod';
 import systemController from './modules/system/system.controller';
+import { eventDispatcher, EventTypes } from './core/config/EventDispatcher';
 
 let corsOptions = {
   credentials: true,
@@ -53,6 +53,7 @@ const applyCustomConfig = () => {
 
 const main = async () => {
   try {
+    eventDispatcher.clear();
     applyCustomConfig();
 
     const app = express();
@@ -93,8 +94,9 @@ const main = async () => {
     await runUpdates();
 
     httpServer.listen(port, async () => {
-      await cloneRepo(getConfig().appsRepoUrl);
-      await updateRepo(getConfig().appsRepoUrl);
+      await eventDispatcher.dispatchEventAsync(EventTypes.CLONE_REPO, [getConfig().appsRepoUrl]);
+      await eventDispatcher.dispatchEventAsync(EventTypes.UPDATE_REPO, [getConfig().appsRepoUrl]);
+
       startJobs();
       setConfig('status', 'RUNNING');
 

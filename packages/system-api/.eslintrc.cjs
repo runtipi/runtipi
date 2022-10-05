@@ -19,4 +19,7 @@ module.exports = {
     'no-unused-vars': [1, { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-unused-vars': [1, { argsIgnorePattern: '^_' }],
   },
+  globals: {
+    NodeJS: true,
+  },
 };

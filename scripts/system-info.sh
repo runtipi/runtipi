@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -e # Exit immediately if a command exits with a non-zero status.
 
-source "${BASH_SOURCE%/*}/common.sh"
-
-ensure_pwd
+# if not on linux exit
+if [[ "$(uname)" != "Linux" ]]; then
+    exit 0
+fi
 
 ROOT_FOLDER="$(pwd)"
 STATE_FOLDER="${ROOT_FOLDER}/state"

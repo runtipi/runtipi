@@ -1,11 +1,10 @@
 import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
-import childProcess from 'child_process';
 import { DataSource } from 'typeorm';
 import logger from '../../../config/logger/logger';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import App from '../app.entity';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo, runAppScript } from '../apps.helpers';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from '../apps.helpers';
 import { AppInfo } from '../apps.types';
 import { createApp } from './apps.factory';
 
@@ -105,48 +104,6 @@ describe('checkEnvFile', () => {
       expect(e).toBeDefined();
       expect(e.message).toBe('New info needed. App config needs to be updated');
     }
-  });
-});
-
-describe('Test: runAppScript', () => {
-  let app1: AppInfo;
-
-  beforeEach(async () => {
-    const app1create = await createApp({ installed: true });
-    app1 = app1create.appInfo;
-    // @ts-ignore
-    fs.__createMockFiles(app1create.MockFiles);
-  });
-
-  it('Should run the app script', async () => {
-    const { MockFiles } = await createApp({ installed: true });
-    // @ts-ignore
-    fs.__createMockFiles(MockFiles);
-
-    await runAppScript(['install', app1.id]);
-  });
-
-  it('Should log the error if the script fails', async () => {
-    const log = jest.spyOn(logger, 'error');
-    const spy = jest.spyOn(childProcess, 'execFile');
-    const randomWord = faker.random.word();
-
-    // @ts-ignore
-    spy.mockImplementation((_path, _args, _, cb) => {
-      // @ts-ignore
-      if (cb) cb(randomWord, null, null);
-    });
-
-    try {
-      await runAppScript(['install', app1.id]);
-      expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e).toBe(randomWord);
-      expect(log).toHaveBeenCalledWith(`Error running app script: ${randomWord}`);
-    }
-
-    log.mockRestore();
-    spy.mockRestore();
   });
 });
 
@@ -311,7 +268,7 @@ describe('Test: getAppInfo', () => {
       id: faker.random.alphaNumeric(32),
     };
 
-    fs.writeFileSync(`/app/storage/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
+    fs.writeFileSync(`/runtipi/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
 
     const app = await getAppInfo(appInfo.id, appEntity.status);
 

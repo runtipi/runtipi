@@ -49,7 +49,7 @@ else
     cp -r "${ROOT_FOLDER}/repos/${REPO_ID}/apps/${app}"/* "${app_dir}"
   fi
 
-  app_data_dir="/app/storage/app-data/${app}"
+  app_data_dir="${STORAGE_PATH}/app-data/${app}"
 
   if [[ -z "${app}" ]] || [[ ! -d "${app_dir}" ]]; then
     echo "Error: \"${app}\" is not a valid app"
@@ -110,7 +110,10 @@ if [[ "$command" = "install" ]]; then
   # Write to file script.log
   write_log "Installing app ${app}..."
 
-  compose "${app}" pull
+  if ! compose "${app}" pull; then
+    write_log "Failed to pull app ${app}"
+    exit 1
+  fi
 
   # Copy default data dir to app data dir if it exists
   if [[ -d "${app_dir}/data" ]]; then
@@ -120,20 +123,30 @@ if [[ "$command" = "install" ]]; then
   # Remove all .gitkeep files from app data dir
   find "${app_data_dir}" -name ".gitkeep" -exec rm -f {} \;
 
-  chown -R "1000:1000" "${app_data_dir}"
+  chmod -R a+rwx "${app_data_dir}"
 
-  compose "${app}" up -d
-  exit
+  if ! compose "${app}" up -d; then
+    write_log "Failed to start app ${app}"
+    exit 1
+  fi
+
+  exit 0
 fi
 
 # Removes images and destroys all data for an app
 if [[ "$command" = "uninstall" ]]; then
-  echo "Removing images for app ${app}..."
+  write_log "Removing images for app ${app}..."
 
-  compose "${app}" up --detach
-  compose "${app}" down --rmi all --remove-orphans
+  if ! compose "${app}" up --detach; then
+    write_log "Failed to uninstall app ${app}"
+    exit 1
+  fi
+  if ! compose "${app}" down --rmi all --remove-orphans; then
+    write_log "Failed to uninstall app ${app}"
+    exit 1
+  fi
 
-  echo "Deleting app data for app ${app}..."
+  write_log "Deleting app data for app ${app}..."
   if [[ -d "${app_data_dir}" ]]; then
     rm -rf "${app_data_dir}"
   fi
@@ -142,14 +155,21 @@ if [[ "$command" = "uninstall" ]]; then
     rm -rf "${app_dir}"
   fi
 
-  echo "Successfully uninstalled app ${app}"
+  write_log "Successfully uninstalled app ${app}"
   exit
 fi
 
 # Update an app
 if [[ "$command" = "update" ]]; then
-  compose "${app}" up --detach
-  compose "${app}" down --rmi all --remove-orphans
+  if ! compose "${app}" up --detach; then
+    write_log "Failed to update app ${app}"
+    exit 1
+  fi
+
+  if ! compose "${app}" down --rmi all --remove-orphans; then
+    write_log "Failed to update app ${app}"
+    exit 1
+  fi
 
   # Remove app
   if [[ -d "${app_dir}" ]]; then
@@ -160,27 +180,38 @@ if [[ "$command" = "update" ]]; then
   cp -r "${ROOT_FOLDER}/repos/${REPO_ID}/apps/${app}" "${app_dir}"
 
   compose "${app}" pull
-  exit
+  exit 0
 fi
 
 # Stops an installed app
 if [[ "$command" = "stop" ]]; then
-  echo "Stopping app ${app}..."
-  compose "${app}" rm --force --stop
-  exit
+  write_log "Stopping app ${app}..."
+
+  if ! compose "${app}" rm --force --stop; then
+    write_log "Failed to stop app ${app}"
+    exit 1
+  fi
+
+  exit 0
 fi
 
 # Starts an installed app
 if [[ "$command" = "start" ]]; then
-  echo "Starting app ${app}..."
-  compose "${app}" up --detach
-  exit
+  write_log "Starting app ${app}..."
+  if ! compose "${app}" up --detach; then
+    write_log "Failed to start app ${app}"
+    exit 1
+  fi
+  exit 0
 fi
 
 # Passes all arguments to Docker Compose
 if [[ "$command" = "compose" ]]; then
-  compose "${app}" "${args}"
-  exit
+  if ! compose "${app}" "${args}"; then
+    write_log "Failed to run compose command for app ${app}"
+    exit 1
+  fi
+  exit 0
 fi
 
 exit 1
