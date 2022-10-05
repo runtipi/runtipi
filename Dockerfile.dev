@@ -2,7 +2,7 @@ FROM node:18-alpine3.16
 
 WORKDIR /
 
-RUN apk --no-cache add g++
+RUN apk --no-cache add g++ make
 RUN npm install node-gyp -g
 
 WORKDIR /api
