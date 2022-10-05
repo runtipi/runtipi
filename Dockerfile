@@ -23,6 +23,7 @@ FROM node:18-alpine3.16 as app
 
 WORKDIR /
 
+RUN apk --no-cache add g++
 # Install dependencies
 RUN npm install node-gyp -g
 
