@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 set -e # Exit immediately if a command exits with a non-zero status.
 
+ROOT_FOLDER="${PWD}"
+STATE_FOLDER="${ROOT_FOLDER}/state"
+
 # if not on linux exit
 if [[ "$(uname)" != "Linux" ]]; then
+    echo '{"cpu": { "load": 0 },"memory": { "available": 0, "total": 0, "used": 0 },"disk": { "available": 0, "total": 0, "used": 0 }}' >"${STATE_FOLDER}/system-info.json"
     exit 0
 fi
 

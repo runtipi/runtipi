@@ -154,10 +154,11 @@ describe('EventDispatcher - getEventStatus', () => {
 
 describe('EventDispatcher - clearEvent', () => {
   it('Should clear event', async () => {
+    const event = { id: '123', type: EventTypes.APP, args: [], creationDate: new Date() };
     // @ts-ignore
-    eventDispatcher.queue = [{ id: '123', type: EventTypes.APP, args: [], creationDate: new Date() }];
+    eventDispatcher.queue = [event];
     // @ts-ignore
-    eventDispatcher.clearEvent('123');
+    eventDispatcher.clearEvent(event);
 
     // @ts-ignore
     const queue = eventDispatcher.queue;

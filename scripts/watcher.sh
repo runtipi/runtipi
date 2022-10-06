@@ -97,7 +97,6 @@ function select_command() {
     return 0
 }
 
-check_running
 write_log "Listening for events in ${WATCH_FILE}..."
 clean_events
 # Listen in for changes in the WATCH_FILE
