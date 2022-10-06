@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { IconType } from 'react-icons';
 import { useLogoutMutation, useVersionQuery } from '../../generated/graphql';
 import { getUrl } from '../../core/helpers/url-helpers';
+import { BsHeart } from 'react-icons/bs';
 
 const SideMenu: React.FC = () => {
   const router = useRouter();
@@ -57,6 +58,12 @@ const SideMenu: React.FC = () => {
       <Flex flex="1" />
       <List>
         <div className="mx-3">
+          <a href="https://github.com/meienberger/runtipi?sponsor=1" target="_blank" rel="noreferrer">
+            <ListItem className="cursor-pointer hover:font-bold flex items-center mb-4">
+              <BsHeart size={20} className="mr-3" />
+              <p className="flex-1 mb-1 text-md">Donate</p>
+            </ListItem>
+          </a>
           <ListItem onClick={() => logout()} className="cursor-pointer hover:font-bold flex items-center mb-5">
             <FiLogOut size={20} className="mr-3" />
             <p className="flex-1">Log out</p>
@@ -68,6 +75,7 @@ const SideMenu: React.FC = () => {
           </ListItem>
         </div>
       </List>
+
       <div className="pb-1 text-center text-sm text-gray-400 mt-5">Tipi version {Package.version}</div>
       {!isLatest && (
         <Badge className="self-center mt-1" colorScheme="green">
