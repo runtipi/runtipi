@@ -19,14 +19,19 @@ COPY ./packages/dashboard /dashboard
 RUN npm run build
 
 
-FROM node:18-alpine3.16 as app
+FROM alpine:3.16.0 as app
 
 WORKDIR /
 
-# Install dependencies
-RUN apk --no-cache add python3
+RUN apk --no-cache add nodejs npm
+RUN apk --no-cache add g++
 RUN apk --no-cache add make
-RUN apk --no-cache add build-base
+RUN apk --no-cache add python3
+
+# # Install dependencies
+# RUN apk --no-cache add python3
+# RUN apk --no-cache add make
+# RUN apk --no-cache add build-base
 
 RUN npm install node-gyp -g
 
