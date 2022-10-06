@@ -46,6 +46,7 @@ if [[ "$command" = "update" ]]; then
     repo="$2"
     repo_hash=$(get_hash "${repo}")
     repo_dir="${ROOT_FOLDER}/repos/${repo_hash}"
+    git config --global --add safe.directory "${repo_dir}"
     if [ ! -d "${repo_dir}" ]; then
         write_log "Repo does not exist"
         exit 1
@@ -55,6 +56,7 @@ if [[ "$command" = "update" ]]; then
     cd "${repo_dir}" || exit
 
     if ! git pull origin master; then
+        cd "${ROOT_FOLDER}" || exit
         write_log "Failed to update repo"
         exit 1
     fi

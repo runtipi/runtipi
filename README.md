@@ -94,12 +94,29 @@ To stop Tipi, run the stop script.
 sudo ./scripts/stop.sh
 ```
 
+### Custom settings
+You can change the default settings by creating a `settings.json` file. The file should be located in the `state` directory. This file will make your changes persist across restarts. Example file:
+
+```json
+{
+  "dnsIp": "9.9.9.9", // DNS IP address
+  "domain": "mydomain.com", // Domain name to link to the dashboard
+  "port": 7000, // Change default http port 80
+  "sslPort": 7001, // Change default ssl port 443
+  "listenIp": "192.168.1.1", // Change default listen ip (advanced)
+  "storagePath": "/mnt/usb", // Change default storage path of app data
+}
+
+```
+
 ## Linking a domain to your dashboard
 If you want to link a domain to your dashboard, you can do so by providing the `--domain` option in the start script.
 
 ```bash
 sudo ./scripts/start.sh --domain mydomain.com
 ```
+
+You can also specify it in the `settings.json` file as shown in the previous section.
 
 A Let's Encrypt certificate will be generated and installed automatically. Make sure to have ports 80 and 443 open on your firewall and that your domain has an **A** record pointing to your server IP.
 

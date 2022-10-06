@@ -69,7 +69,7 @@ class EventDispatcher {
       return;
     }
 
-    this.clearEvent(this.lock.id);
+    this.clearEvent(this.lock, status);
     this.lock = null;
   }
 
@@ -165,10 +165,16 @@ class EventDispatcher {
    * Clear event from queue
    * @param id - Event id
    */
-  private clearEvent(id: string) {
-    this.queue = this.queue.filter((e) => e.id !== id);
-    if (fs.existsSync(`/app/logs/${id}.log`)) {
-      fs.unlinkSync(`/app/logs/${id}.log`);
+  private clearEvent(event: SystemEvent, status: EventStatusTypes = 'success') {
+    this.queue = this.queue.filter((e) => e.id !== event.id);
+    if (fs.existsSync(`/app/logs/${event.id}.log`)) {
+      const log = fs.readFileSync(`/app/logs/${event.id}.log`, 'utf8');
+      if (log && status === 'error') {
+        logger.error(`EventDispatcher: ${event.type} ${event.id} failed with error: ${log}`);
+      } else if (log) {
+        logger.info(`EventDispatcher: ${event.type} ${event.id} finished with message: ${log}`);
+      }
+      fs.unlinkSync(`/app/logs/${event.id}.log`);
     }
     fs.writeFileSync(WATCH_FILE, '');
   }

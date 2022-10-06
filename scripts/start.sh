@@ -201,6 +201,9 @@ mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 # Run system-info.sh
 echo "Running system-info.sh..."
 bash "${ROOT_FOLDER}/scripts/system-info.sh"
+echo "Fixing permissions for events file"
+chmod -R a+rwx "${ROOT_FOLDER}/state/events"
+chmod -R a+rwx "${ROOT_FOLDER}/state/system-info.json"
 
 ## Don't run if config-only
 if [[ ! $ci == "true" ]]; then
