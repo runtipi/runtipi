@@ -9,12 +9,13 @@ import { ApolloProvider } from '@apollo/client';
 import useCachedResources from '../hooks/useCachedRessources';
 import Head from 'next/head';
 import StatusWrapper from '../components/StatusScreens/StatusWrapper';
+import LoadingScreen from '../components/LoadingScreen';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { client } = useCachedResources();
 
   if (!client) {
-    return null;
+    return <LoadingScreen />;
   }
 
   return (

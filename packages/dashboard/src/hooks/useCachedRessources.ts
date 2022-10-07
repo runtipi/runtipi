@@ -2,17 +2,20 @@ import { useEffect, useState } from 'react';
 import { ApolloClient } from '@apollo/client';
 import { createApolloClient } from '../core/apollo/client';
 import { useSystemStore } from '../state/systemStore';
+import useSWR, { BareFetcher } from 'swr';
+import { getUrl } from '../core/helpers/url-helpers';
 
 interface IReturnProps {
   client?: ApolloClient<unknown>;
   isLoadingComplete?: boolean;
 }
 
-export default function useCachedResources(): IReturnProps {
-  const ip = process.env.NEXT_PUBLIC_INTERNAL_IP;
-  const domain = process.env.NEXT_PUBLIC_DOMAIN;
-  const port = process.env.NEXT_PUBLIC_PORT;
+const fetcher: BareFetcher<any> = (url: string) => {
+  return fetch(getUrl(url)).then((res) => res.json());
+};
 
+export default function useCachedResources(): IReturnProps {
+  const { data } = useSWR<{ ip: string; domain: string; port: string }>('api/getenv', fetcher);
   const { baseUrl, setBaseUrl, setInternalIp, setDomain } = useSystemStore();
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
@@ -31,6 +34,7 @@ export default function useCachedResources(): IReturnProps {
   }
 
   useEffect(() => {
+    const { ip, domain, port } = data || {};
     if (ip && !baseUrl) {
       setInternalIp(ip);
       setDomain(domain);
@@ -45,7 +49,7 @@ export default function useCachedResources(): IReturnProps {
         setBaseUrl(`https://${domain}/api`);
       }
     }
-  }, [baseUrl, setBaseUrl, setInternalIp, setDomain, ip, domain, port]);
+  }, [baseUrl, setBaseUrl, setInternalIp, setDomain, data]);
 
   useEffect(() => {
     if (baseUrl) {

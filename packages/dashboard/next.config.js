@@ -10,11 +10,6 @@ const nextConfig = {
     return config;
   },
   reactStrictMode: true,
-  env: {
-    NEXT_PUBLIC_INTERNAL_IP: INTERNAL_IP,
-    NEXT_PUBLIC_DOMAIN: DOMAIN,
-    NEXT_PUBLIC_PORT: NGINX_PORT,
-  },
   basePath: '/dashboard',
 };
 
