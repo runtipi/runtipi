@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: '.env' });
 }
 const {
-  LOGS_FOLDER = 'logs',
+  LOGS_FOLDER = '/app/logs',
   LOGS_APP = 'app.log',
   LOGS_ERROR = 'error.log',
   NODE_ENV = 'development',

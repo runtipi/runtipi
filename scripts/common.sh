@@ -68,7 +68,8 @@ function clean_logs() {
 }
 
 function kill_watcher() {
-    watcher_pid=$(pgrep -f "runtipi/state/events")
+    watcher_pid="$(ps aux | grep "scripts/watcher" | grep -v grep | awk '{print $2}')"
+
     # kill it if it's running
     if [[ -n $watcher_pid ]]; then
         # If multiline kill each pid

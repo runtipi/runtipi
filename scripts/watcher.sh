@@ -17,7 +17,7 @@ function set_status() {
     write_log "Setting status for ${id} to ${status}"
 
     # Update the status of the event
-    sed -i '' "s/${id} [a-z]*/${id} ${status}/g" "${WATCH_FILE}"
+    sed -i "s/${id}.*$/$(echo "${id} ${status}" | sed 's/\//\\\//g')/" "$WATCH_FILE"
 }
 
 function run_command() {

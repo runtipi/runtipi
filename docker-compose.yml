@@ -44,8 +44,6 @@ services:
       tipi-db:
         condition: service_healthy
     volumes:
-      ## Docker sock
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${PWD}/apps:/runtipi/apps:ro
       - ${PWD}/repos:/runtipi/repos:ro
       - ${PWD}/state:/runtipi/state
