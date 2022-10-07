@@ -51,11 +51,12 @@ services:
     ports:
       - 3001:3001
     volumes:
-      - ${PWD}/apps:/runtipi/apps:ro
       - ${PWD}/repos:/runtipi/repos:ro
+      - ${PWD}/apps:/runtipi/apps
       - ${PWD}/state:/runtipi/state
       - ${PWD}/packages/system-api/src:/api/src
       - ${STORAGE_PATH}:/app/storage
+      - ${PWD}/logs:/app/logs
       - ${PWD}/.env.dev:/runtipi/.env
       # - /api/node_modules
     environment:

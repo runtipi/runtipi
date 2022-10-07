@@ -52,7 +52,6 @@ export default function useCachedResources(): IReturnProps {
 
   useEffect(() => {
     if (baseUrl) {
-      console.log('loadResourcesAndDataAsync', baseUrl);
       loadResourcesAndDataAsync(baseUrl);
     }
   }, [baseUrl]);

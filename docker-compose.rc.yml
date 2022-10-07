@@ -44,8 +44,8 @@ services:
       tipi-db:
         condition: service_healthy
     volumes:
-      - ${PWD}/apps:/runtipi/apps:ro
       - ${PWD}/repos:/runtipi/repos:ro
+      - ${PWD}/apps:/runtipi/apps
       - ${PWD}/state:/runtipi/state
       - ${PWD}/logs:/app/logs
       - ${STORAGE_PATH}:/app/storage

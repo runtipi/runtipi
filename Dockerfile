@@ -40,6 +40,8 @@ COPY ./packages/dashboard/package*.json /dashboard/
 RUN npm install --omit=dev
 
 COPY --from=build /api/dist /api/dist
+
 COPY --from=build /dashboard/.next /dashboard/.next
+COPY ./packages/dashboard /dashboard
 
 WORKDIR /

@@ -13,7 +13,7 @@ fi
 
 # Restart Tipi
 if [[ "$command" = "restart" ]]; then
-    echo "Restarting Tipi..."
+    write_log "Restarting Tipi..."
 
     scripts/stop.sh
     scripts/start.sh
@@ -23,6 +23,8 @@ fi
 
 # Update Tipi
 if [[ "$command" = "update" ]]; then
+    write_log "Updating Tipi..."
+
     scripts/stop.sh
     git config --global --add safe.directory "${ROOT_FOLDER}"
     git pull origin master

@@ -4,9 +4,6 @@ import Layout from '../components/Layout';
 import { useLogoutMutation, useRestartMutation, useUpdateMutation, useVersionQuery } from '../generated/graphql';
 import { useRef, useState } from 'react';
 
-// Necessary to avoid flickering when initiating an update or restart
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const Settings: NextPage = () => {
   const toast = useToast();
   const restartDisclosure = useDisclosure();
@@ -55,7 +52,6 @@ const Settings: NextPage = () => {
     setLoading(true);
     try {
       restart();
-      await wait(2000);
       logout();
     } catch (error) {
       handleError(error);
@@ -68,7 +64,6 @@ const Settings: NextPage = () => {
     setLoading(true);
     try {
       update();
-      await wait(2000);
       logout();
     } catch (error) {
       handleError(error);

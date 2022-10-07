@@ -60,9 +60,9 @@ const main = async () => {
     const port = 3001;
 
     app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
+    app.use('/status', systemController.status);
     app.use(cors(corsOptions));
     app.use(getSessionMiddleware());
-    app.use('/status', systemController.status);
 
     await datasource.initialize();
 
