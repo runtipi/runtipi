@@ -12,6 +12,7 @@ repos/*
 apps/*
 !apps/.gitkeep
 traefik/shared
+media
 
 scripts/pacapt
 
