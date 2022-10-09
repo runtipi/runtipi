@@ -103,7 +103,6 @@ fi
 kill_watcher
 # Configure Tipi
 "${ROOT_FOLDER}/scripts/configure.sh"
-chmod -R a+rwx "${ROOT_FOLDER}/state/events"
 chmod -R a+rwx "${ROOT_FOLDER}/state/system-info.json"
 "${ROOT_FOLDER}/scripts/watcher.sh" &
 

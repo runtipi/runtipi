@@ -55,6 +55,12 @@ function ensure_linux() {
 function clean_logs() {
     # Clean logs folder
     logs_folder="${ROOT_FOLDER}/logs"
+
+    # Create the folder if it doesn't exist
+    if [[ ! -d "${logs_folder}" ]]; then
+        mkdir "${logs_folder}"
+    fi
+
     if [ "$(find "${logs_folder}" -maxdepth 1 -type f | wc -l)" -gt 0 ]; then
         echo "Cleaning logs folder..."
 

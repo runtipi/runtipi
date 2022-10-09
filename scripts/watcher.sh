@@ -7,7 +7,15 @@ WATCH_FILE="${ROOT_FOLDER}/state/events"
 
 function clean_events() {
     echo "Cleaning events..."
+
+    # Create the file if it doesn't exist
+    if [[ ! -f "${WATCH_FILE}" ]]; then
+        touch "${WATCH_FILE}"
+    fi
+
     echo "" >"$WATCH_FILE"
+
+    chmod -R a+rwx "${ROOT_FOLDER}/state/events"
 }
 
 function set_status() {
