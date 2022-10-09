@@ -16,6 +16,8 @@ repos/*
 apps/*
 !apps/.gitkeep
 traefik/shared
+media
+
 state/*
 !state/.gitkeep
 media
