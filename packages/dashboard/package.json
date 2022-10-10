@@ -1,6 +1,6 @@
 {
   "name": "dashboard",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "test": "jest --colors",
@@ -17,14 +17,11 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fontsource/open-sans": "^4.5.8",
-    "axios": "^0.26.1",
     "clsx": "^1.1.1",
     "final-form": "^4.20.6",
     "framer-motion": "^6",
     "graphql": "^15.8.0",
     "graphql-tag": "^2.12.6",
-    "immer": "^9.0.12",
-    "js-cookie": "^3.0.1",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0",
@@ -36,7 +33,6 @@
     "remark-gfm": "^3.0.1",
     "remark-mdx": "^2.1.1",
     "swr": "^1.3.0",
-    "systeminformation": "^5.11.9",
     "tslib": "^2.4.0",
     "validator": "^13.7.0",
     "zustand": "^3.7.2"

@@ -23,21 +23,23 @@ FROM alpine:3.16.0 as app
 
 WORKDIR /
 
-# Install dependencies
-RUN apk --no-cache add docker-compose nodejs npm bash g++ make git
+# # Install dependencies
+RUN apk --no-cache add nodejs npm
+RUN apk --no-cache add g++
+RUN apk --no-cache add make
+RUN apk --no-cache add python3
 
 RUN npm install node-gyp -g
 
 WORKDIR /api
 COPY ./packages/system-api/package*.json /api/
-RUN npm install --production
+RUN npm install --omit=dev
 
 WORKDIR /dashboard
 COPY ./packages/dashboard/package*.json /dashboard/
-RUN npm install --production
+RUN npm install --omit=dev
 
 COPY --from=build /api/dist /api/dist
-COPY ./packages/system-api /api
 
 COPY --from=build /dashboard/.next /dashboard/.next
 COPY ./packages/dashboard /dashboard

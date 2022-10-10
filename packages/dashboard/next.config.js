@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const { INTERNAL_IP, DOMAIN } = process.env;
+const { INTERNAL_IP, DOMAIN, NGINX_PORT } = process.env;
 
 const nextConfig = {
   webpackDevMiddleware: (config) => {
@@ -10,10 +10,6 @@ const nextConfig = {
     return config;
   },
   reactStrictMode: true,
-  env: {
-    INTERNAL_IP: INTERNAL_IP,
-    NEXT_PUBLIC_DOMAIN: DOMAIN,
-  },
   basePath: '/dashboard',
 };
 

@@ -44,14 +44,16 @@ services:
       tipi-db:
         condition: service_healthy
     volumes:
-      ## Docker sock
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}:/tipi
+      - ${PWD}/repos:/runtipi/repos:ro
+      - ${PWD}/apps:/runtipi/apps
+      - ${PWD}/state:/runtipi/state
+      - ${PWD}/logs:/app/logs
+      - ${STORAGE_PATH}:/app/storage
+      - ${PWD}/.env:/runtipi/.env:ro
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       TIPI_VERSION: ${TIPI_VERSION}
       JWT_SECRET: ${JWT_SECRET}
-      ROOT_FOLDER_HOST: ${ROOT_FOLDER_HOST}
       NGINX_PORT: ${NGINX_PORT}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USERNAME: tipi
@@ -61,8 +63,6 @@ services:
       APPS_REPO_ID: ${APPS_REPO_ID}
       APPS_REPO_URL: ${APPS_REPO_URL}
       DOMAIN: ${DOMAIN}
-    dns:
-      - ${DNS_IP}
     networks:
       - tipi_main_network
     labels:
@@ -89,6 +89,9 @@ services:
     container_name: dashboard
     networks:
       - tipi_main_network
+    depends_on:
+      api:
+        condition: service_started
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       NODE_ENV: production

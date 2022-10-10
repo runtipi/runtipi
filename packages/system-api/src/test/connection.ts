@@ -38,7 +38,8 @@ export const setupConnection = async (testsuite: string): Promise<DataSource> =>
     entities: [App, User, Update],
   });
 
-  return AppDataSource.initialize();
+  await AppDataSource.initialize();
+  return AppDataSource;
 };
 
 export const teardownConnection = async (testsuite: string): Promise<void> => {

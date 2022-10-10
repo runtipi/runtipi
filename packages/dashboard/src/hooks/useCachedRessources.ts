@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ApolloClient } from '@apollo/client';
-import axios from 'axios';
-import useSWR, { BareFetcher } from 'swr';
 import { createApolloClient } from '../core/apollo/client';
-import { useSytemStore } from '../state/systemStore';
+import { useSystemStore } from '../state/systemStore';
+import useSWR, { Fetcher } from 'swr';
 import { getUrl } from '../core/helpers/url-helpers';
 
 interface IReturnProps {
@@ -11,13 +10,11 @@ interface IReturnProps {
   isLoadingComplete?: boolean;
 }
 
-const fetcher: BareFetcher<any> = (url: string) => {
-  return axios.get(getUrl(url)).then((res) => res.data);
-};
+const fetcher: Fetcher<{ ip: string; domain: string; port: string }, string> = (...args) => fetch(...args).then((res) => res.json());
 
 export default function useCachedResources(): IReturnProps {
-  const { data } = useSWR<{ ip: string; domain: string; port: string }>('api/ip', fetcher);
-  const { baseUrl, setBaseUrl, setInternalIp, setDomain } = useSytemStore();
+  const { data } = useSWR(getUrl('api/getenv'), fetcher);
+  const { baseUrl, setBaseUrl, setInternalIp, setDomain } = useSystemStore();
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
 
@@ -28,7 +25,7 @@ export default function useCachedResources(): IReturnProps {
       setClient(restoredClient);
     } catch (error) {
       // We might want to provide this error information to an error reporting service
-      console.warn(error);
+      console.error(error);
     } finally {
       setLoadingComplete(true);
     }
@@ -36,6 +33,7 @@ export default function useCachedResources(): IReturnProps {
 
   useEffect(() => {
     const { ip, domain, port } = data || {};
+
     if (ip && !baseUrl) {
       setInternalIp(ip);
       setDomain(domain);
@@ -50,7 +48,7 @@ export default function useCachedResources(): IReturnProps {
         setBaseUrl(`https://${domain}/api`);
       }
     }
-  }, [baseUrl, setBaseUrl, data, setInternalIp, setDomain]);
+  }, [baseUrl, setBaseUrl, setInternalIp, setDomain, data]);
 
   useEffect(() => {
     if (baseUrl) {

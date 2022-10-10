@@ -1,4 +1,4 @@
-export default function ip(_: any, res: any) {
+export default function getEnv(_: any, res: any) {
   const { INTERNAL_IP } = process.env;
   const { NGINX_PORT } = process.env;
   const { DOMAIN } = process.env;

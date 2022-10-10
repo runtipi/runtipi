@@ -1,13 +1,12 @@
 import AppsService from '../apps.service';
 import fs from 'fs-extra';
-import config from '../../../config';
-import childProcess from 'child_process';
 import { AppInfo, AppStatusEnum } from '../apps.types';
 import App from '../app.entity';
 import { createApp } from './apps.factory';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import { DataSource } from 'typeorm';
 import { getEnvMap } from '../apps.helpers';
+import EventDispatcher, { eventDispatcher, EventTypes } from '../../../core/config/EventDispatcher';
 
 jest.mock('fs-extra');
 jest.mock('child_process');
@@ -23,6 +22,7 @@ beforeEach(async () => {
   jest.resetModules();
   jest.resetAllMocks();
   jest.restoreAllMocks();
+  EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
   await App.clear();
 });
 
@@ -42,8 +42,9 @@ describe('Install app', () => {
   });
 
   it('Should correctly generate env file for app', async () => {
+    // EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: true });
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`).toString();
+    const envFile = fs.readFileSync(`/app/storage/app-data/${app1.id}/app.env`).toString();
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=192.168.1.10:${app1.port}`);
   });
@@ -59,39 +60,28 @@ describe('Install app', () => {
     expect(app!.status).toBe(AppStatusEnum.RUNNING);
   });
 
-  it('Should correctly run app script', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
-    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
-    spy.mockRestore();
-  });
-
   it('Should start app if already installed', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
+    const spy = jest.spyOn(eventDispatcher, 'dispatchEventAsync');
 
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['install', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
-    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[0]).toEqual([EventTypes.APP, ['install', app1.id]]);
+    expect(spy.mock.calls[1]).toEqual([EventTypes.APP, ['start', app1.id]]);
 
     spy.mockRestore();
   });
 
   it('Should delete app if install script fails', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
-    spy.mockImplementation(() => {
-      throw new Error('Test error');
-    });
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
-    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' })).rejects.toThrow('Test error');
+    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' })).rejects.toThrow(`App ${app1.id} failed to install\nstdout: error`);
 
     const app = await App.findOne({ where: { id: app1.id } });
 
     expect(app).toBeNull();
-    spy.mockRestore();
   });
 
   it('Should throw if required form fields are missing', async () => {
@@ -112,7 +102,7 @@ describe('Install app', () => {
 
   it('Should correctly copy app from repos to apps folder', async () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    const appFolder = fs.readdirSync(`${config.ROOT_FOLDER}/apps/${app1.id}`);
+    const appFolder = fs.readdirSync(`/runtipi/apps/${app1.id}`);
 
     expect(appFolder).toBeDefined();
     expect(appFolder.indexOf('docker-compose.yml')).toBeGreaterThanOrEqual(0);
@@ -121,19 +111,19 @@ describe('Install app', () => {
   it('Should cleanup any app folder existing before install', async () => {
     const { MockFiles, appInfo } = await createApp({});
     app1 = appInfo;
-    MockFiles[`/tipi/apps/${appInfo.id}/docker-compose.yml`] = 'test';
-    MockFiles[`/tipi/apps/${appInfo.id}/test.yml`] = 'test';
-    MockFiles[`/tipi/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
+    MockFiles[`/runtipi/apps/${appInfo.id}/docker-compose.yml`] = 'test';
+    MockFiles[`/runtipi/apps/${appInfo.id}/test.yml`] = 'test';
+    MockFiles[`/runtipi/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
 
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/test.yml`)).toBe(true);
+    expect(fs.existsSync(`/runtipi/apps/${app1.id}/test.yml`)).toBe(true);
 
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
-    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/test.yml`)).toBe(false);
-    expect(fs.existsSync(`${config.ROOT_FOLDER}/apps/${app1.id}/docker-compose.yml`)).toBe(true);
+    expect(fs.existsSync(`/runtipi/apps/${app1.id}/test.yml`)).toBe(false);
+    expect(fs.existsSync(`/runtipi/apps/${app1.id}/docker-compose.yml`)).toBe(true);
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
@@ -175,56 +165,51 @@ describe('Uninstall app', () => {
   });
 
   it('App should be installed by default', async () => {
+    // Act
     const app = await App.findOne({ where: { id: app1.id } });
+
+    // Assert
     expect(app).toBeDefined();
     expect(app!.id).toBe(app1.id);
     expect(app!.status).toBe(AppStatusEnum.RUNNING);
   });
 
   it('Should correctly remove app from database', async () => {
+    // Act
     await AppsService.uninstallApp(app1.id);
-
     const app = await App.findOne({ where: { id: app1.id } });
 
+    // Assert
     expect(app).toBeNull();
   });
 
-  it('Should correctly run app script', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
-
-    await AppsService.uninstallApp(app1.id);
-
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
-
-    spy.mockRestore();
-  });
-
   it('Should stop app if it is running', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
+    // Arrange
+    const spy = jest.spyOn(eventDispatcher, 'dispatchEventAsync');
 
+    // Act
     await AppsService.uninstallApp(app1.id);
 
+    // Assert
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
-    expect(spy.mock.calls[1]).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['uninstall', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
+    expect(spy.mock.calls[0]).toEqual([EventTypes.APP, ['stop', app1.id]]);
+    expect(spy.mock.calls[1]).toEqual([EventTypes.APP, ['uninstall', app1.id]]);
 
     spy.mockRestore();
   });
 
   it('Should throw if app is not installed', async () => {
+    // Act & Assert
     await expect(AppsService.uninstallApp('any')).rejects.toThrowError('App any not found');
   });
 
   it('Should throw if uninstall script fails', async () => {
-    // Update app
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
     await App.update({ id: app1.id }, { status: AppStatusEnum.UPDATING });
 
-    const spy = jest.spyOn(childProcess, 'execFile');
-    spy.mockImplementation(() => {
-      throw new Error('Test error');
-    });
-
-    await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow('Test error');
+    // Act & Assert
+    await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to uninstall\nstdout: test`);
     const app = await App.findOne({ where: { id: app1.id } });
     expect(app!.status).toBe(AppStatusEnum.STOPPED);
   });
@@ -240,12 +225,12 @@ describe('Start app', () => {
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
   });
 
-  it('Should correctly run app script', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
+  it('Should correctly dispatch event', async () => {
+    const spy = jest.spyOn(eventDispatcher, 'dispatchEventAsync');
 
     await AppsService.startApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([EventTypes.APP, ['start', app1.id]]);
 
     spy.mockRestore();
   });
@@ -255,7 +240,7 @@ describe('Start app', () => {
   });
 
   it('Should restart if app is already running', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
+    const spy = jest.spyOn(eventDispatcher, 'dispatchEventAsync');
 
     await AppsService.startApp(app1.id);
     expect(spy.mock.calls.length).toBe(1);
@@ -266,22 +251,21 @@ describe('Start app', () => {
   });
 
   it('Regenerate env file', async () => {
-    fs.writeFile(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`, 'TEST=test\nAPP_PORT=3000', () => {});
+    fs.writeFile(`/app/storage/app-data/${app1.id}/app.env`, 'TEST=test\nAPP_PORT=3000', () => {});
 
     await AppsService.startApp(app1.id);
 
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`).toString();
+    const envFile = fs.readFileSync(`/app/storage/app-data/${app1.id}/app.env`).toString();
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=192.168.1.10:${app1.port}`);
   });
 
   it('Should throw if start script fails', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
-    spy.mockImplementation(() => {
-      throw new Error('Test error');
-    });
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
 
-    await expect(AppsService.startApp(app1.id)).rejects.toThrow('Test error');
+    // Act & Assert
+    await expect(AppsService.startApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to start\nstdout: test`);
     const app = await App.findOne({ where: { id: app1.id } });
     expect(app!.status).toBe(AppStatusEnum.STOPPED);
   });
@@ -297,12 +281,12 @@ describe('Stop app', () => {
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
   });
 
-  it('Should correctly run app script', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
+  it('Should correctly dispatch stop event', async () => {
+    const spy = jest.spyOn(eventDispatcher, 'dispatchEventAsync');
 
     await AppsService.stopApp(app1.id);
 
-    expect(spy.mock.lastCall).toEqual([`${config.ROOT_FOLDER}/scripts/app.sh`, ['stop', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)]);
+    expect(spy.mock.lastCall).toEqual([EventTypes.APP, ['stop', app1.id]]);
   });
 
   it('Should throw if app is not installed', async () => {
@@ -310,12 +294,11 @@ describe('Stop app', () => {
   });
 
   it('Should throw if stop script fails', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
-    spy.mockImplementation(() => {
-      throw new Error('Test error');
-    });
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
 
-    await expect(AppsService.stopApp(app1.id)).rejects.toThrow('Test error');
+    // Act & Assert
+    await expect(AppsService.stopApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to stop\nstdout: test`);
     const app = await App.findOne({ where: { id: app1.id } });
     expect(app!.status).toBe(AppStatusEnum.RUNNING);
   });
@@ -334,7 +317,7 @@ describe('Update app config', () => {
   it('Should correctly update app config', async () => {
     await AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' });
 
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${app1.id}/app.env`).toString();
+    const envFile = fs.readFileSync(`/app/storage/app-data/${app1.id}/app.env`).toString();
 
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=192.168.1.10:${app1.port}`);
   });
@@ -352,8 +335,8 @@ describe('Update app config', () => {
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    const envFile = fs.readFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`).toString();
-    fs.writeFileSync(`${config.ROOT_FOLDER}/app-data/${appInfo.id}/app.env`, `${envFile}\nRANDOM_FIELD=test`);
+    const envFile = fs.readFileSync(`/app/storage/app-data/${appInfo.id}/app.env`).toString();
+    fs.writeFileSync(`/app/storage/app-data/${appInfo.id}/app.env`, `${envFile}\nRANDOM_FIELD=test`);
 
     await AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' });
 
@@ -464,19 +447,19 @@ describe('Start all apps', () => {
   });
 
   it('Should correctly start all apps', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
+    const spy = jest.spyOn(eventDispatcher, 'dispatchEventAsync');
 
     await AppsService.startAllApps();
 
     expect(spy.mock.calls.length).toBe(2);
     expect(spy.mock.calls).toEqual([
-      [`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app1.id, '/tipi', 'repo-id'], {}, expect.any(Function)],
-      [`${config.ROOT_FOLDER}/scripts/app.sh`, ['start', app2.id, '/tipi', 'repo-id'], {}, expect.any(Function)],
+      [EventTypes.APP, ['start', app1.id]],
+      [EventTypes.APP, ['start', app2.id]],
     ]);
   });
 
   it('Should not start app which has not status RUNNING', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
+    const spy = jest.spyOn(eventDispatcher, 'dispatchEventAsync');
     await createApp({ installed: true, status: AppStatusEnum.STOPPED });
 
     await AppsService.startAllApps();
@@ -487,16 +470,14 @@ describe('Start all apps', () => {
   });
 
   it('Should put app status to STOPPED if start script fails', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
-    spy.mockImplementation(() => {
-      throw new Error('Test error');
-    });
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
+    // Act
     await AppsService.startAllApps();
-
     const apps = await App.find();
 
-    expect(spy.mock.calls.length).toBe(2);
+    // Assert
     expect(apps.length).toBe(2);
     expect(apps[0].status).toBe(AppStatusEnum.STOPPED);
     expect(apps[1].status).toBe(AppStatusEnum.STOPPED);
@@ -529,12 +510,10 @@ describe('Update app', () => {
   });
 
   it('Should throw if update script fails', async () => {
-    const spy = jest.spyOn(childProcess, 'execFile');
-    spy.mockImplementation(() => {
-      throw new Error('Test error');
-    });
+    // Arrange
+    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
-    await expect(AppsService.updateApp(app1.id)).rejects.toThrow('Test error');
+    await expect(AppsService.updateApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to update\nstdout: error`);
     const app = await App.findOne({ where: { id: app1.id } });
     expect(app!.status).toBe(AppStatusEnum.STOPPED);
   });

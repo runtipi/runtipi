@@ -1,14 +1,19 @@
 import cron from 'node-cron';
-import config from '../../config';
 import logger from '../../config/logger/logger';
-import { updateRepo } from '../../helpers/repo-helpers';
+import { getConfig } from '../../core/config/TipiConfig';
+import { eventDispatcher, EventTypes } from '../config/EventDispatcher';
 
 const startJobs = () => {
   logger.info('Starting cron jobs...');
 
-  cron.schedule('0 * * * *', () => {
-    logger.info('Cloning apps repo...');
-    updateRepo(config.APPS_REPO_URL);
+  // Every 30 minutes
+  cron.schedule('*/30 * * * *', async () => {
+    eventDispatcher.dispatchEvent(EventTypes.UPDATE_REPO, [getConfig().appsRepoUrl]);
+  });
+
+  // every minute
+  cron.schedule('* * * * *', () => {
+    eventDispatcher.dispatchEvent(EventTypes.SYSTEM_INFO, []);
   });
 };
 

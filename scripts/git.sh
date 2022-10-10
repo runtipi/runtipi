@@ -1,33 +1,15 @@
 #!/usr/bin/env bash
 
-# use greadlink instead of readlink on osx
-if [[ "$(uname)" == "Darwin" ]]; then
-    rdlk=greadlink
-else
-    rdlk=readlink
-fi
+source "${BASH_SOURCE%/*}/common.sh"
 
-ROOT_FOLDER="$($rdlk -f $(dirname "${BASH_SOURCE[0]}")/..)"
+ensure_pwd
 
-show_help() {
-    cat <<EOF
-app 0.0.1
-
-CLI for managing Tipi apps
-
-Usage: git <command> <repo> [<arguments>]
-
-Commands:
-    clone                      Clones a repo in the repo folder
-    update                     Updates the repo folder
-    get_hash                   Gets the local hash of the repo
-EOF
-}
+ROOT_FOLDER="${PWD}"
 
 # Get a static hash based on the repo url
 function get_hash() {
     url="${1}"
-    echo $(echo -n "${url}" | sha256sum | awk '{print $1}')
+    echo -n "${url}" | sha256sum | awk '{print $1}'
 }
 
 if [ -z ${1+x} ]; then
@@ -41,17 +23,22 @@ if [[ "$command" = "clone" ]]; then
     repo="$2"
     repo_hash=$(get_hash "${repo}")
 
-    echo "Cloning ${repo} to ${ROOT_FOLDER}/repos/${repo_hash}"
+    write_log "Cloning ${repo} to ${ROOT_FOLDER}/repos/${repo_hash}"
     repo_dir="${ROOT_FOLDER}/repos/${repo_hash}"
     if [ -d "${repo_dir}" ]; then
-        echo "Repo already exists"
+        write_log "Repo already exists"
         exit 0
     fi
 
-    echo "Cloning ${repo} to ${repo_dir}"
-    git clone "${repo}" "${repo_dir}"
-    echo "Done"
-    exit
+    write_log "Cloning ${repo} to ${repo_dir}"
+
+    if ! git clone "${repo}" "${repo_dir}"; then
+        write_log "Failed to clone repo"
+        exit 1
+    fi
+
+    write_log "Done"
+    exit 0
 fi
 
 # Update a repo
@@ -59,20 +46,28 @@ if [[ "$command" = "update" ]]; then
     repo="$2"
     repo_hash=$(get_hash "${repo}")
     repo_dir="${ROOT_FOLDER}/repos/${repo_hash}"
+    git config --global --add safe.directory "${repo_dir}"
     if [ ! -d "${repo_dir}" ]; then
-        echo "Repo does not exist"
-        exit 0
+        write_log "Repo does not exist"
+        exit 1
     fi
 
-    echo "Updating ${repo} in ${repo_hash}"
-    cd "${repo_dir}"
-    git pull origin master
-    echo "Done"
-    exit
+    write_log "Updating ${repo} in ${repo_hash}"
+    cd "${repo_dir}" || exit
+
+    if ! git pull origin master; then
+        cd "${ROOT_FOLDER}" || exit
+        write_log "Failed to update repo"
+        exit 1
+    fi
+
+    cd "${ROOT_FOLDER}" || exit
+    write_log "Done"
+    exit 0
 fi
 
 if [[ "$command" = "get_hash" ]]; then
     repo="$2"
-    echo $(get_hash "${repo}")
+    get_hash "${repo}"
     exit
 fi

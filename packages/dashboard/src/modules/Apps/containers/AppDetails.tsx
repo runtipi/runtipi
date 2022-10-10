@@ -1,7 +1,7 @@
 import { SlideFade, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { FiExternalLink } from 'react-icons/fi';
-import { useSytemStore } from '../../../state/systemStore';
+import { useSystemStore } from '../../../state/systemStore';
 import AppActions from '../components/AppActions';
 import InstallModal from '../components/InstallModal';
 import StopModal from '../components/StopModal';
@@ -48,7 +48,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
 
   const updateAvailable = Number(app?.updateInfo?.current || 0) < Number(app?.updateInfo?.latest);
 
-  const { internalIp } = useSytemStore();
+  const { internalIp } = useSystemStore();
 
   const handleError = (error: unknown) => {
     if (error instanceof Error) {
@@ -207,7 +207,7 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
           app={info}
           config={app?.config}
           exposed={app?.exposed}
-          domain={app?.domain}
+          domain={app?.domain || ''}
         />
         <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose} app={info} newVersion={newVersion} />
       </div>

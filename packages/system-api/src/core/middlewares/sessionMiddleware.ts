@@ -1,7 +1,7 @@
 import session from 'express-session';
-import config from '../../config';
 import SessionFileStore from 'session-file-store';
 import { COOKIE_MAX_AGE, __prod__ } from '../../config/constants/constants';
+import { getConfig } from '../config/TipiConfig';
 
 const getSessionMiddleware = () => {
   const FileStore = SessionFileStore(session);
@@ -12,7 +12,7 @@ const getSessionMiddleware = () => {
     name: 'qid',
     store: new FileStore(),
     cookie: { maxAge: COOKIE_MAX_AGE, secure: false, sameSite, httpOnly: true },
-    secret: config.JWT_SECRET,
+    secret: getConfig().jwtSecret,
     resave: false,
     saveUninitialized: false,
   });

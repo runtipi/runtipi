@@ -51,16 +51,18 @@ services:
     ports:
       - 3001:3001
     volumes:
-      ## Docker sock
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}:/tipi
+      - ${PWD}/repos:/runtipi/repos:ro
+      - ${PWD}/apps:/runtipi/apps
+      - ${PWD}/state:/runtipi/state
       - ${PWD}/packages/system-api/src:/api/src
+      - ${STORAGE_PATH}:/app/storage
+      - ${PWD}/logs:/app/logs
+      - ${PWD}/.env.dev:/runtipi/.env
       # - /api/node_modules
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       TIPI_VERSION: ${TIPI_VERSION}
       JWT_SECRET: ${JWT_SECRET}
-      ROOT_FOLDER_HOST: ${ROOT_FOLDER_HOST}
       NGINX_PORT: ${NGINX_PORT}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USERNAME: tipi
@@ -88,6 +90,9 @@ services:
       dockerfile: Dockerfile.dev
     command: /bin/sh -c "cd /dashboard && npm run dev"
     container_name: dashboard
+    depends_on:
+      api:
+        condition: service_started
     ports:
       - 3000:3000
     networks:
