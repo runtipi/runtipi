@@ -95,7 +95,7 @@ sudo ./scripts/stop.sh
 ```
 
 ### Custom settings
-You can change the default settings by creating a `settings.json` file. The file should be located in the `state` directory. This file will make your changes persist across restarts. Example file:
+You can change the default settings by creating a `settings.json` file. The file should be located in the `state` directory. This file will make your changes persist across restarts. Example file with all possible values:
 
 ```json
 {
@@ -131,8 +131,7 @@ If you want to add a new app or feature, you can follow the [Contribution guide]
 
 Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may copy, distribute and modify the software as long as you track changes/dates in source files. Any modifications to or software including (via compiler) GPL-licensed code must also be made available under the GPL along with build & install instructions.
 
-The bash scripts contained in the `scripts` folder contain a lot of snippets from [Umbrel](https://github.com/getumbrel/umbrel)'s code. Therefore they contain code licensed under the PolyForm Noncommercial License 1.0.0 license. You can for now consider all scripts under this license. We are actively working on re-writing those parts in order to make them available under the GPL license like the rest of our code. 
-
+The bash scripts `app.sh` contained in the `scripts` folder contains some snippets from [Umbrel](https://github.com/getumbrel/umbrel)'s code. Therefore some parts of the code are licensed under the PolyForm Noncommercial License 1.0.0 license. You can for now consider the whole file under this license. We are actively working on re-writing those parts in order to make them available under the GPL license like the rest of our code. 
 
 ## 🗣 Community
 - [Matrix](https://matrix.to/#/#runtipi:matrix.org)<br />
