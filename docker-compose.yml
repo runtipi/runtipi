@@ -49,6 +49,7 @@ services:
       - ${PWD}/state:/runtipi/state
       - ${PWD}/logs:/app/logs
       - ${STORAGE_PATH}:/app/storage
+      - ${PWD}/.env:/runtipi/.env:ro
     environment:
       INTERNAL_IP: ${INTERNAL_IP}
       TIPI_VERSION: ${TIPI_VERSION}
