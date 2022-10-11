@@ -16,8 +16,24 @@ repos/*
 apps/*
 !apps/.gitkeep
 traefik/shared
-media
 
+# media folder
+media/*
+!media/.gitkeep
+!media/data/.gitkeep
+!media/data/books/.gitkeep
+!media/data/books/ebooks/.gitkeep
+!media/data/books/spoken/.gitkeep
+!media/data/movies/.gitkeep
+!media/data/music/.gitkeep
+!media/data/podcasts/.gitkeep
+!media/data/tv/.gitkeep
+!media/data/images/.gitkeep
+!media/torrents/.gitkeep
+!media/torrents/complete/.gitkeep
+!media/torrents/incomplete/.gitkeep
+!media/torrents/watch/.gitkeep
+
+# state folder
 state/*
 !state/.gitkeep
-media
