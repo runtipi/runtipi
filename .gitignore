@@ -18,7 +18,7 @@ apps/*
 traefik/shared
 
 # media folder
-media/*
+media
 !media/.gitkeep
 !media/data/.gitkeep
 !media/data/books/.gitkeep
