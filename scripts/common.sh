@@ -21,7 +21,7 @@ function derive_entropy() {
     tipi_seed=$(cat "${SEED_FILE}") || true
 
     if [[ -z "$tipi_seed" ]] || [[ -z "$identifier" ]]; then
-        echo >&2 "Missing derivation parameter, this is unsafe, exiting."
+        echo >&2 "Seed file not found. exiting..."
         exit 1
     fi
 

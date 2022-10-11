@@ -12,11 +12,20 @@ ensure_pwd
 ensure_root
 clean_logs
 
+# Configure Tipi
+"${ROOT_FOLDER}/scripts/configure.sh"
+
+STATE_FOLDER="${ROOT_FOLDER}/state"
+# Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
+if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
+  echo "Generating seed..."
+  tr </dev/urandom -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 >"${STATE_FOLDER}/seed"
+fi
+
 # Default variables
 NGINX_PORT=80
 NGINX_PORT_SSL=443
 DOMAIN=tipi.localhost
-STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo "$ROOT_FOLDER" | sed 's/\//\\\//g')"
 DNS_IP=9.9.9.9 # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
@@ -119,20 +128,12 @@ if [[ "${NGINX_PORT}" != "80" ]] && [[ "${DOMAIN}" != "tipi.localhost" ]]; then
 fi
 
 kill_watcher
-# Configure Tipi
-"${ROOT_FOLDER}/scripts/configure.sh"
 chmod -R a+rwx "${ROOT_FOLDER}/state/system-info.json"
 "${ROOT_FOLDER}/scripts/watcher.sh" &
 
 # Copy the config sample if it isn't here
 if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
   cp "${ROOT_FOLDER}/templates/config-sample.json" "${STATE_FOLDER}/config.json"
-fi
-
-# Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
-if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
-  echo "Generating seed..."
-  tr </dev/urandom -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 >"${STATE_FOLDER}/seed"
 fi
 
 export DOCKER_CLIENT_TIMEOUT=240
