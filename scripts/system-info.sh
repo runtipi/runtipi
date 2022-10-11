@@ -32,3 +32,4 @@ echo '{ "cpu": { "load": '"${CPU_LOAD_PERCENTAGE}"' }, "memory": { "total": '"${
 
 # Write to state file
 cat "${TEMP_JSON_FILE}" >"${STATE_FOLDER}/system-info.json"
+chmod -R a+rwx "${ROOT_FOLDER}/state/system-info.json"

@@ -127,8 +127,11 @@ if [[ "${NGINX_PORT}" != "80" ]] && [[ "${DOMAIN}" != "tipi.localhost" ]]; then
   exit 1
 fi
 
+# Run system-info.sh
+echo "Running system-info.sh..."
+"${ROOT_FOLDER}/scripts/system-info.sh"
+
 kill_watcher
-chmod -R a+rwx "${ROOT_FOLDER}/state/system-info.json"
 "${ROOT_FOLDER}/scripts/watcher.sh" &
 
 # Copy the config sample if it isn't here
@@ -216,10 +219,6 @@ for template in ${ENV_FILE}; do
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
-
-# Run system-info.sh
-echo "Running system-info.sh..."
-bash "${ROOT_FOLDER}/scripts/system-info.sh"
 
 ## Don't run if config-only
 if [[ ! $ci == "true" ]]; then
