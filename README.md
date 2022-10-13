@@ -30,6 +30,7 @@ Check our demo instance : **[demo.runtipi.com](https://demo.runtipi.com)** / use
 - [Freshrss](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
 - [Gitea](https://github.com/go-gitea/gitea) - Gitea - A painless self-hosted Git service
 - [Ghost](https://github.com/TryGhost/Ghost) - Ghost - Turn your audience into a business
+- [Haven](https://github.com/havenweb/haven) - Haven is a self-hosted private blog and feedreader you can use instead of Facebook
 - [Homarr](https://github.com/ajnart/homarr) - A homepage for your server
 - [Home Assistant](https://github.com/home-assistant/core) - Open source home automation that puts local control and privacy first
 - [Invidious](https://github.com/iv-org/invidious) - An alternative front-end to YouTube
