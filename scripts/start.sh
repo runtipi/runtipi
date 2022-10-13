@@ -63,7 +63,9 @@ if [[ "$ARCHITECTURE" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
 fi
 
-# Parse arguments
+### --------------------------------
+### CLI arguments
+### --------------------------------
 while [ -n "$1" ]; do
   case "$1" in
   --rc) rc="true" ;;
@@ -143,15 +145,6 @@ export DOCKER_CLIENT_TIMEOUT=240
 export COMPOSE_HTTP_TIMEOUT=240
 
 echo "Generating config files..."
-# Remove current .env file
-[[ -f "${ROOT_FOLDER}/.env" ]] && rm -f "${ROOT_FOLDER}/.env"
-
-# Store paths to intermediary config files
-ENV_FILE=$(mktemp)
-
-# Copy template configs to intermediary configs
-[[ -f "$ROOT_FOLDER/templates/env-sample" ]] && cp "$ROOT_FOLDER/templates/env-sample" "$ENV_FILE"
-
 # Override vars with values from settings.json
 if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
 
@@ -167,12 +160,9 @@ if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
 
   # If appsRepoUrl is set in settings.json, use it
   if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoUrl)" != "null" ]]; then
-    APPS_REPOSITORY_ESCAPED="$(echo ${apps_repository} | sed 's/\//\\\//g')"
-  fi
-
-  # If appsRepoId is set in settings.json, use it
-  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoId)" != "null" ]]; then
-    REPO_ID=$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoId)
+    apps_repository=$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoUrl)
+    APPS_REPOSITORY_ESCAPED="$(echo "${apps_repository}" | sed 's/\//\\\//g')"
+    REPO_ID="$("${ROOT_FOLDER}"/scripts/git.sh get_hash "${apps_repository}")"
   fi
 
   # If port is set in settings.json, use it
@@ -197,9 +187,15 @@ if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
   fi
 fi
 
-# Set array with all new values
 new_values="DOMAIN=${DOMAIN}\nDNS_IP=${DNS_IP}\nAPPS_REPOSITORY=${APPS_REPOSITORY_ESCAPED}\nREPO_ID=${REPO_ID}\nNGINX_PORT=${NGINX_PORT}\nNGINX_PORT_SSL=${NGINX_PORT_SSL}\nINTERNAL_IP=${INTERNAL_IP}\nSTORAGE_PATH=${STORAGE_PATH_ESCAPED}\nTZ=${TZ}\nJWT_SECRET=${JWT_SECRET}\nROOT_FOLDER=${SED_ROOT_FOLDER}\nTIPI_VERSION=${TIPI_VERSION}\nARCHITECTURE=${ARCHITECTURE}"
 write_log "Final values: \n${new_values}"
+
+### --------------------------------
+### env file generation
+### --------------------------------
+ENV_FILE=$(mktemp)
+[[ -f "${ROOT_FOLDER}/.env" ]] && rm -f "${ROOT_FOLDER}/.env"
+[[ -f "$ROOT_FOLDER/templates/env-sample" ]] && cp "$ROOT_FOLDER/templates/env-sample" "$ENV_FILE"
 
 for template in ${ENV_FILE}; do
   sed -i "s/<dns_ip>/${DNS_IP}/g" "${template}"
