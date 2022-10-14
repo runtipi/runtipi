@@ -1,6 +1,6 @@
 # ⛺️ Tipi — A personal homeserver for everyone
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
@@ -185,6 +185,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://github.com/justincmoy"><img src="https://avatars.githubusercontent.com/u/14875982?v=4?s=100" width="100px;" alt="Justin Moy"/><br /><sub><b>Justin Moy</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=justincmoy" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/dextreem"><img src="https://avatars.githubusercontent.com/u/11060652?v=4?s=100" width="100px;" alt="dextreem"/><br /><sub><b>dextreem</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=dextreem" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/iBicha"><img src="https://avatars.githubusercontent.com/u/17722782?v=4?s=100" width="100px;" alt="Brahim Hadriche"/><br /><sub><b>Brahim Hadriche</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=iBicha" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://andrewbrereton.com"><img src="https://avatars.githubusercontent.com/u/682893?v=4?s=100" width="100px;" alt="Andrew Brereton"/><br /><sub><b>Andrew Brereton</b></sub></a><br /><a href="#content-andrewbrereton" title="Content">🖋</a></td>
     </tr>
   </tbody>
 </table>
