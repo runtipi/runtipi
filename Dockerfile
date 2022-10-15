@@ -1,4 +1,4 @@
-FROM node:18 AS build
+FROM node:18 AS builder
 
 RUN npm install node-gyp -g
 
@@ -35,13 +35,13 @@ WORKDIR /api
 COPY ./packages/system-api/package*.json /api/
 RUN npm install --omit=dev
 
+COPY --from=builder /api/dist /api/dist
+
 WORKDIR /dashboard
-COPY ./packages/dashboard/package*.json /dashboard/
-RUN npm install --omit=dev
-
-COPY --from=build /api/dist /api/dist
-
-COPY --from=build /dashboard/.next /dashboard/.next
-COPY ./packages/dashboard /dashboard
+COPY --from=builder /dashboard/next.config.js ./
+COPY --from=builder /dashboard/public ./public
+COPY --from=builder /dashboard/package.json ./package.json
+COPY --from=builder --chown=node:node /dashboard/.next/standalone ./
+COPY --from=builder --chown=node:node /dashboard/.next/static ./.next/static
 
 WORKDIR /
