@@ -1,6 +1,6 @@
 {
   "name": "runtipi",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "A homeserver for everyone",
   "scripts": {
     "prepare": "husky install",
