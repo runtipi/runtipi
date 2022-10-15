@@ -27,7 +27,7 @@ if [[ "$command" = "update" ]]; then
 
     scripts/stop.sh
     git config --global --add safe.directory "${ROOT_FOLDER}"
-    git pull origin master
+    git pull origin "$(git rev-parse --abbrev-ref HEAD)"
     scripts/start.sh
     exit
 fi
