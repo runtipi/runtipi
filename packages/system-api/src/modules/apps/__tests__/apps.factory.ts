@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { AppCategoriesEnum, AppInfo, AppStatusEnum, FieldTypes } from '../apps.types';
+import { AppCategoriesEnum, AppInfo, AppStatusEnum, AppSupportedArchitecturesEnum, FieldTypes } from '../apps.types';
 import App from '../app.entity';
 
 interface IProps {
@@ -10,10 +10,11 @@ interface IProps {
   exposed?: boolean;
   domain?: string;
   exposable?: boolean;
+  supportedArchitectures?: AppSupportedArchitecturesEnum[];
 }
 
 const createApp = async (props: IProps) => {
-  const { installed = false, status = AppStatusEnum.RUNNING, requiredPort, randomField = false, exposed = false, domain = '', exposable = false } = props;
+  const { installed = false, status = AppStatusEnum.RUNNING, requiredPort, randomField = false, exposed = false, domain = '', exposable = false, supportedArchitectures } = props;
 
   const categories = Object.values(AppCategoriesEnum);
 
@@ -29,6 +30,7 @@ const createApp = async (props: IProps) => {
         env_variable: 'TEST_FIELD',
       },
     ],
+
     name: faker.random.word(),
     description: faker.random.words(),
     tipi_version: faker.datatype.number({ min: 1, max: 10 }),
@@ -37,6 +39,7 @@ const createApp = async (props: IProps) => {
     source: faker.internet.url(),
     categories: [categories[faker.datatype.number({ min: 0, max: categories.length - 1 })]],
     exposable,
+    supported_architectures: supportedArchitectures,
   };
 
   if (randomField) {
