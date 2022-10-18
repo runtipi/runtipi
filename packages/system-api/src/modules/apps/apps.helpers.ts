@@ -26,6 +26,10 @@ export const checkAppRequirements = async (appName: string) => {
     }
   }
 
+  if (configFile?.supported_architectures && !configFile.supported_architectures.includes(getConfig().architecture)) {
+    throw new Error(`App ${appName} is not supported on this architecture`);
+  }
+
   return valid;
 };
 

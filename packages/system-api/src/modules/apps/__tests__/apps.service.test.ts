@@ -1,12 +1,13 @@
 import AppsService from '../apps.service';
 import fs from 'fs-extra';
-import { AppInfo, AppStatusEnum } from '../apps.types';
+import { AppInfo, AppStatusEnum, AppSupportedArchitecturesEnum } from '../apps.types';
 import App from '../app.entity';
 import { createApp } from './apps.factory';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import { DataSource } from 'typeorm';
 import { getEnvMap } from '../apps.helpers';
 import EventDispatcher, { eventDispatcher, EventTypes } from '../../../core/config/EventDispatcher';
+import { setConfig } from '../../../core/config/TipiConfig';
 
 jest.mock('fs-extra');
 jest.mock('child_process');
@@ -151,6 +152,38 @@ describe('Install app', () => {
     await AppsService.installApp(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
 
     await expect(AppsService.installApp(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`Domain test.com already in use by app ${app2.appInfo.id}`);
+  });
+
+  it('Should throw if architecure is not supported', async () => {
+    const { MockFiles, appInfo } = await createApp({ supportedArchitectures: [AppSupportedArchitecturesEnum.ARM] });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} is not supported on this architecture`);
+  });
+
+  it('Can install if architecture is supported', async () => {
+    setConfig('architecture', AppSupportedArchitecturesEnum.ARM);
+    const { MockFiles, appInfo } = await createApp({ supportedArchitectures: [AppSupportedArchitecturesEnum.ARM, AppSupportedArchitecturesEnum.ARM64] });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    await AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' });
+    const app = await App.findOne({ where: { id: appInfo.id } });
+
+    expect(app).toBeDefined();
+  });
+
+  it('Can install if no architecture is specified', async () => {
+    setConfig('architecture', AppSupportedArchitecturesEnum.ARM);
+    const { MockFiles, appInfo } = await createApp({ supportedArchitectures: undefined });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    await AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' });
+    const app = await App.findOne({ where: { id: appInfo.id } });
+
+    expect(app).toBeDefined();
   });
 });
 
@@ -430,6 +463,50 @@ describe('List apps', () => {
     expect(apps[0].id).toBe(sortedApps[0].id);
     expect(apps[1].id).toBe(sortedApps[1].id);
     expect(apps[0].description).toBe('md desc');
+  });
+
+  it('Should not list apps that have supportedArchitectures and are not supported', async () => {
+    // Arrange
+    setConfig('architecture', AppSupportedArchitecturesEnum.ARM64);
+    const app3 = await createApp({ supportedArchitectures: [AppSupportedArchitecturesEnum.ARM] });
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app3.MockFiles));
+
+    // Act
+    const { apps } = await AppsService.listApps();
+
+    // Assert
+    expect(apps).toBeDefined();
+    expect(apps.length).toBe(0);
+  });
+
+  it('Should list apps that have supportedArchitectures and are supported', async () => {
+    // Arrange
+    setConfig('architecture', AppSupportedArchitecturesEnum.ARM);
+    const app3 = await createApp({ supportedArchitectures: [AppSupportedArchitecturesEnum.ARM] });
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app3.MockFiles));
+    // Act
+    const { apps } = await AppsService.listApps();
+
+    // Assert
+    expect(apps).toBeDefined();
+    expect(apps.length).toBe(1);
+  });
+
+  it('Should list apps that have no supportedArchitectures specified', async () => {
+    // Arrange
+    setConfig('architecture', AppSupportedArchitecturesEnum.ARM);
+    const app3 = await createApp({});
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(app3.MockFiles));
+
+    // Act
+    const { apps } = await AppsService.listApps();
+
+    // Assert
+    expect(apps).toBeDefined();
+    expect(apps.length).toBe(1);
   });
 });
 
