@@ -21,6 +21,18 @@ TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 INTERNAL_IP=localhost
 storage_path="${ROOT_FOLDER}"
 STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
+if [[ "$ARCHITECTURE" == "aarch64" ]]; then
+    ARCHITECTURE="arm64"
+elif [[ "$ARCHITECTURE" == "armv7l" ]]; then
+    ARCHITECTURE="arm"
+elif [[ "$ARCHITECTURE" == "x86_64" ]]; then
+    ARCHITECTURE="amd64"
+fi
+# If none of the above conditions are met, the architecture is not supported
+if [[ "$ARCHITECTURE" != "arm64" ]] && [[ "$ARCHITECTURE" != "arm" ]] && [[ "$ARCHITECTURE" != "amd64" ]]; then
+    echo "Architecture not supported!"
+    exit 1
+fi
 
 ### --------------------------------
 ### Apps repository configuration
