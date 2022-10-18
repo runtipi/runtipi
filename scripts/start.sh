@@ -146,14 +146,6 @@ echo "Running system-info.sh..."
 kill_watcher
 "${ROOT_FOLDER}/scripts/watcher.sh" &
 
-# Copy the config sample if it isn't here
-if [[ ! -f "${STATE_FOLDER}/apps.json" ]]; then
-  cp "${ROOT_FOLDER}/templates/config-sample.json" "${STATE_FOLDER}/config.json"
-fi
-
-export DOCKER_CLIENT_TIMEOUT=240
-export COMPOSE_HTTP_TIMEOUT=240
-
 echo "Generating config files..."
 # Override vars with values from settings.json
 if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
