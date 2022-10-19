@@ -12,7 +12,9 @@ ensure_pwd
 ensure_root
 clean_logs
 
-# Configure Tipi
+### --------------------------------
+### Pre-configuration
+### --------------------------------
 "${ROOT_FOLDER}/scripts/configure.sh"
 
 STATE_FOLDER="${ROOT_FOLDER}/state"
@@ -22,12 +24,14 @@ if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
   tr </dev/urandom -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 >"${STATE_FOLDER}/seed"
 fi
 
-# Default variables
+### --------------------------------
+### General variables
+### --------------------------------
 NGINX_PORT=80
 NGINX_PORT_SSL=443
 DOMAIN=tipi.localhost
 SED_ROOT_FOLDER="$(echo "$ROOT_FOLDER" | sed 's/\//\\\//g')"
-DNS_IP=9.9.9.9 # Default to Quad9 DNS
+DNS_IP="9.9.9.9" # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
 TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' | sed 's/\//\\\//g' || Europe\/Berlin)"
 apps_repository="https://github.com/meienberger/runtipi-appstore"
@@ -61,7 +65,7 @@ INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print 
 
 if [[ "$ARCHITECTURE" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
-elif [[ "$ARCHITECTURE" == "armv7l" ]]; then
+elif [[ "$ARCHITECTURE" == "armv7"* || "$ARCHITECTURE" == "armv8"* ]]; then
   ARCHITECTURE="arm"
 elif [[ "$ARCHITECTURE" == "x86_64" ]]; then
   ARCHITECTURE="amd64"
@@ -69,7 +73,7 @@ fi
 
 # If none of the above conditions are met, the architecture is not supported
 if [[ "$ARCHITECTURE" != "arm64" ]] && [[ "$ARCHITECTURE" != "arm" ]] && [[ "$ARCHITECTURE" != "amd64" ]]; then
-  echo "Architecture not supported!"
+  echo "Architecture ${ARCHITECTURE} not supported!"
   exit 1
 fi
 
@@ -139,13 +143,18 @@ if [[ "${NGINX_PORT}" != "80" ]] && [[ "${DOMAIN}" != "tipi.localhost" ]]; then
   exit 1
 fi
 
-# Run system-info.sh
+### --------------------------------
+### Watcher and system-info
+### --------------------------------
 echo "Running system-info.sh..."
 "${ROOT_FOLDER}/scripts/system-info.sh"
 
 kill_watcher
 "${ROOT_FOLDER}/scripts/watcher.sh" &
 
+### --------------------------------
+### settings.json overrides
+### --------------------------------
 echo "Generating config files..."
 # Override vars with values from settings.json
 if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
@@ -218,7 +227,9 @@ done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 
-## Don't run if config-only
+### --------------------------------
+### Start the project
+### --------------------------------
 if [[ ! $ci == "true" ]]; then
 
   if [[ $rc == "true" ]]; then
