@@ -141,9 +141,13 @@ if [[ "$command" = "uninstall" ]]; then
     write_log "Failed to uninstall app ${app}"
     exit 1
   fi
+
   if ! compose "${app}" down --rmi all --remove-orphans; then
-    write_log "Failed to uninstall app ${app}"
-    exit 1
+    # just stop it if we can't remove the images
+    if ! compose "${app}" rm --force --stop; then
+      write_log "Failed to uninstall app ${app}"
+      exit 1
+    fi
   fi
 
   write_log "Deleting app data for app ${app}..."
@@ -167,8 +171,11 @@ if [[ "$command" = "update" ]]; then
   fi
 
   if ! compose "${app}" down --rmi all --remove-orphans; then
-    write_log "Failed to update app ${app}"
-    exit 1
+    # just stop it if we can't remove the images
+    if ! compose "${app}" rm --force --stop; then
+      write_log "Failed to uninstall app ${app}"
+      exit 1
+    fi
   fi
 
   # Remove app
@@ -211,6 +218,14 @@ if [[ "$command" = "compose" ]]; then
     write_log "Failed to run compose command for app ${app}"
     exit 1
   fi
+  exit 0
+fi
+
+if [[ "$command" = "clean" ]]; then
+  # Remove all stopped containers and unused images
+  write_log "Cleaning up..."
+  docker system prune --all --force
+
   exit 0
 fi
 

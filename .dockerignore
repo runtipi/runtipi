@@ -5,5 +5,8 @@
 node_modules
 .next
 dist/
-**/dist/
-**/next/
+
+# all docker-compose files
+docker-compose*.yml
+Dockerfile*
+.dockerignore

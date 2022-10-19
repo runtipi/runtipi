@@ -41,12 +41,22 @@ export enum AppStatusEnum {
   UPDATING = 'updating',
 }
 
+export enum AppSupportedArchitecturesEnum {
+  ARM = 'arm',
+  ARM64 = 'arm64',
+  AMD64 = 'amd64',
+}
+
 registerEnumType(AppCategoriesEnum, {
   name: 'AppCategoriesEnum',
 });
 
 registerEnumType(FieldTypes, {
   name: 'FieldTypesEnum',
+});
+
+registerEnumType(AppSupportedArchitecturesEnum, {
+  name: 'AppSupportedArchitecturesEnum',
 });
 
 @ObjectType()
@@ -128,6 +138,9 @@ class AppInfo {
 
   @Field(() => Boolean, { nullable: true })
   exposable?: boolean;
+
+  @Field(() => [AppSupportedArchitecturesEnum], { nullable: true })
+  supported_architectures?: AppSupportedArchitecturesEnum[];
 }
 
 @ObjectType()

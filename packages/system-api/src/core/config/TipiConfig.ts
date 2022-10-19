@@ -2,6 +2,7 @@ import { z } from 'zod';
 import * as dotenv from 'dotenv';
 import fs from 'fs-extra';
 import { readJsonFile } from '../../modules/fs/fs.helpers';
+import { AppSupportedArchitecturesEnum } from '../../modules/apps/apps.types';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: '.env.dev' });
@@ -21,11 +22,13 @@ const {
   APPS_REPO_URL = '',
   DOMAIN = '',
   STORAGE_PATH = '/runtipi',
+  ARCHITECTURE = 'amd64',
 } = process.env;
 
 const configSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
   status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
+  architecture: z.nativeEnum(AppSupportedArchitecturesEnum),
   logs: z.object({
     LOGS_FOLDER: z.string(),
     LOGS_APP: z.string(),
@@ -56,6 +59,7 @@ class Config {
         LOGS_ERROR,
       },
       NODE_ENV: NODE_ENV as z.infer<typeof configSchema>['NODE_ENV'],
+      architecture: ARCHITECTURE as z.infer<typeof configSchema>['architecture'],
       rootFolder: '/runtipi',
       internalIp: INTERNAL_IP,
       version: TIPI_VERSION,

@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
-const { INTERNAL_IP, DOMAIN, NGINX_PORT } = process.env;
-
 const nextConfig = {
+  output: 'standalone',
   webpackDevMiddleware: (config) => {
     config.watchOptions = {
       poll: 1000,

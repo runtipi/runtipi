@@ -27,12 +27,16 @@ let corsOptions = {
       return callback(null, true);
     }
     // disallow requests with no origin
-    if (!origin) return callback(new Error('Not allowed by CORS'), false);
+    if (!origin) {
+      logger.error('No origin');
+      return callback(new Error('Not allowed by CORS'), false);
+    }
 
     if (getConfig().clientUrls.includes(origin)) {
       return callback(null, true);
     }
 
+    logger.error(`Origin ${origin} not allowed by CORS`);
     const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
     return callback(new Error(message), false);
   },
@@ -103,6 +107,7 @@ const main = async () => {
       // Start apps
       appsService.startAllApps();
       logger.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
+      logger.info(`Config: ${JSON.stringify(getConfig(), null, 2)}`);
     });
   } catch (error) {
     logger.error(error);
