@@ -1,6 +1,6 @@
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { MyContext } from '../../types';
-import { UsernamePasswordInput, UserResponse } from './auth.types';
+import { TokenResponse, UsernamePasswordInput } from './auth.types';
 
 import AuthService from './auth.service';
 import User from './user.entity';
@@ -9,34 +9,28 @@ import User from './user.entity';
 export default class AuthResolver {
   @Query(() => User, { nullable: true })
   async me(@Ctx() ctx: MyContext): Promise<User | null> {
-    return AuthService.me(ctx.req.session.userId);
+    return AuthService.me(ctx.req?.session?.userId);
   }
 
-  @Mutation(() => UserResponse)
-  async register(@Arg('input', () => UsernamePasswordInput) input: UsernamePasswordInput, @Ctx() { req }: MyContext): Promise<UserResponse> {
-    const { user } = await AuthService.register(input);
+  @Mutation(() => TokenResponse)
+  async register(@Arg('input', () => UsernamePasswordInput) input: UsernamePasswordInput): Promise<TokenResponse> {
+    const { token } = await AuthService.register(input);
 
-    if (user) {
-      req.session.userId = user.id;
-    }
-
-    return { user };
+    return { token };
   }
 
-  @Mutation(() => UserResponse)
-  async login(@Arg('input', () => UsernamePasswordInput) input: UsernamePasswordInput, @Ctx() { req }: MyContext): Promise<UserResponse> {
-    const { user } = await AuthService.login(input);
+  @Mutation(() => TokenResponse)
+  async login(@Arg('input', () => UsernamePasswordInput) input: UsernamePasswordInput): Promise<TokenResponse> {
+    const { token } = await AuthService.login(input);
 
-    if (user) {
-      req.session.userId = user.id;
-    }
-
-    return { user };
+    return { token };
   }
 
   @Mutation(() => Boolean)
-  logout(@Ctx() { req }: MyContext): boolean {
+  async logout(@Ctx() { req }: MyContext): Promise<boolean> {
+    await AuthService.logout(req.session?.id);
     req.session.userId = undefined;
+    req.session.id = undefined;
 
     return true;
   }
@@ -46,5 +40,12 @@ export default class AuthResolver {
     const users = await User.find();
 
     return users.length > 0;
+  }
+
+  @Query(() => TokenResponse, { nullable: true })
+  async refreshToken(@Ctx() { req }: MyContext): Promise<TokenResponse | null> {
+    const res = await AuthService.refreshToken(req.session?.id);
+
+    return res;
   }
 }

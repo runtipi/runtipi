@@ -9,7 +9,6 @@ import logger from './config/logger/logger';
 import getSessionMiddleware from './core/middlewares/sessionMiddleware';
 import { MyContext } from './types';
 import { __prod__ } from './config/constants/constants';
-import cors from 'cors';
 import datasource from './config/datasource';
 import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
@@ -19,24 +18,7 @@ import { applyJsonConfig, getConfig, setConfig } from './core/config/TipiConfig'
 import { ZodError } from 'zod';
 import systemController from './modules/system/system.controller';
 import { eventDispatcher, EventTypes } from './core/config/EventDispatcher';
-
-let corsOptions = {
-  credentials: true,
-  origin: function (origin: any, callback: any) {
-    if (!__prod__) {
-      return callback(null, true);
-    }
-    // disallow requests with no origin
-    if (!origin) return callback(new Error('Not allowed by CORS'), false);
-
-    if (getConfig().clientUrls.includes(origin)) {
-      return callback(null, true);
-    }
-
-    const message = "The CORS policy for this origin doesn't allow access from the particular origin.";
-    return callback(new Error(message), false);
-  },
-};
+import cors from 'cors';
 
 const applyCustomConfig = () => {
   try {
@@ -60,9 +42,9 @@ const main = async () => {
     const port = 3001;
 
     app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
+    app.use(cors());
     app.use('/status', systemController.status);
-    app.use(cors(corsOptions));
-    app.use(getSessionMiddleware());
+    app.use(getSessionMiddleware);
 
     await datasource.initialize();
 
@@ -71,7 +53,7 @@ const main = async () => {
     const plugins = [ApolloLogs];
 
     if (!__prod__) {
-      plugins.push(Playground({ settings: { 'request.credentials': 'include' } }));
+      plugins.push(Playground());
     }
 
     const apolloServer = new ApolloServer({
@@ -81,7 +63,7 @@ const main = async () => {
     });
 
     await apolloServer.start();
-    apolloServer.applyMiddleware({ app, cors: corsOptions });
+    apolloServer.applyMiddleware({ app });
 
     try {
       await datasource.runMigrations();

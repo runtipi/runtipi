@@ -10,6 +10,7 @@ import EventDispatcher from '../../../core/config/EventDispatcher';
 
 jest.mock('fs-extra');
 jest.mock('axios');
+jest.mock('redis');
 
 beforeEach(async () => {
   jest.resetModules();

@@ -1,15 +1,18 @@
 import * as argon2 from 'argon2';
+import jwt from 'jsonwebtoken';
 import AuthService from '../auth.service';
 import { createUser } from './user.factory';
 import User from '../user.entity';
 import { faker } from '@faker-js/faker';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import { DataSource } from 'typeorm';
+import { setConfig } from '../../../core/config/TipiConfig';
 
 let db: DataSource | null = null;
 const TEST_SUITE = 'authservice';
 
 beforeAll(async () => {
+  setConfig('jwtSecret', 'test');
   db = await setupConnection(TEST_SUITE);
 });
 
@@ -23,14 +26,24 @@ afterAll(async () => {
 });
 
 describe('Login', () => {
-  it('Should return user after login', async () => {
+  it('Should return a valid jsonwebtoken containing a user id', async () => {
+    // Arrange
     const email = faker.internet.email();
-    await createUser(email);
+    const user = await createUser(email);
 
-    const { user } = await AuthService.login({ username: email, password: 'password' });
+    // Act
+    const { token } = await AuthService.login({ username: email, password: 'password' });
+    const decoded = jwt.verify(token, 'test') as jwt.JwtPayload;
 
-    expect(user).toBeDefined();
-    expect(user?.id).toBe(1);
+    // Assert
+    expect(decoded).toBeDefined();
+    expect(decoded).toBeDefined();
+    expect(decoded).not.toBeNull();
+    expect(decoded).toHaveProperty('id');
+    expect(decoded.id).toBe(user.id);
+    expect(decoded).toHaveProperty('iat');
+    expect(decoded).toHaveProperty('exp');
+    expect(decoded).toHaveProperty('session');
   });
 
   it('Should throw if user does not exist', async () => {
@@ -45,26 +58,41 @@ describe('Login', () => {
 });
 
 describe('Register', () => {
-  it('Should return new user after register', async () => {
+  it('Should return valid jsonwebtoken after register', async () => {
+    // Arrange
     const email = faker.internet.email();
-    const { user } = await AuthService.register({ username: email, password: 'test' });
 
-    expect(user).toBeDefined();
+    // Act
+    const { token } = await AuthService.register({ username: email, password: 'password' });
+    const decoded = jwt.verify(token, 'test') as jwt.JwtPayload;
+
+    // Assert
+    expect(decoded).toBeDefined();
+    expect(decoded).not.toBeNull();
+    expect(decoded).toHaveProperty('id');
+    expect(decoded).toHaveProperty('iat');
+    expect(decoded).toHaveProperty('exp');
+    expect(decoded).toHaveProperty('session');
   });
 
   it('Should correctly trim and lowercase email', async () => {
+    // Arrange
     const email = faker.internet.email();
-    await AuthService.register({ username: email, password: 'test' });
 
+    // Act
+    await AuthService.register({ username: email, password: 'test' });
     const user = await User.findOne({ where: { username: email.toLowerCase().trim() } });
 
+    // Assert
     expect(user).toBeDefined();
     expect(user?.username).toBe(email.toLowerCase().trim());
   });
 
   it('Should throw if user already exists', async () => {
+    // Arrange
     const email = faker.internet.email();
 
+    // Act & Assert
     await createUser(email);
     await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('User already exists');
   });
@@ -78,11 +106,15 @@ describe('Register', () => {
   });
 
   it('Password is correctly hashed', async () => {
-    const email = faker.internet.email();
-    const { user } = await AuthService.register({ username: email, password: 'test' });
+    // Arrange
+    const email = faker.internet.email().toLowerCase().trim();
 
+    // Act
+    await AuthService.register({ username: email, password: 'test' });
+    const user = await User.findOne({ where: { username: email } });
     const isPasswordValid = await argon2.verify(user?.password || '', 'test');
 
+    // Assert
     expect(isPasswordValid).toBe(true);
   });
 });

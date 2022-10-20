@@ -1,11 +1,12 @@
 import { Flex, useDisclosure, Spinner, Breadcrumb, BreadcrumbItem, useColorModeValue, Box } from '@chakra-ui/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
 import Header from './Header';
 import Menu from './SideMenu';
 import MenuDrawer from './MenuDrawer';
+import { useRefreshTokenQuery } from '../../generated/graphql';
 
 interface IProps {
   loading?: boolean;
@@ -15,6 +16,13 @@ interface IProps {
 
 const Layout: React.FC<IProps> = ({ children, loading, breadcrumbs }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const { data } = useRefreshTokenQuery({ fetchPolicy: 'network-only' });
+
+  useEffect(() => {
+    if (data?.refreshToken?.token) {
+      localStorage.setItem('token', data.refreshToken.token);
+    }
+  }, [data]);
 
   const menubg = useColorModeValue('#F1F3F4', '#202736');
   const bg = useColorModeValue('white', '#1a202c');

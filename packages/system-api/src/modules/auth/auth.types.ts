@@ -11,9 +11,9 @@ class UsernamePasswordInput {
 }
 
 @ObjectType()
-class UserResponse {
-  @Field(() => User, { nullable: true })
-  user?: User;
+class TokenResponse {
+  @Field(() => String, { nullable: false })
+  token!: string;
 }
 
-export { UsernamePasswordInput, UserResponse };
+export { UsernamePasswordInput, TokenResponse };
