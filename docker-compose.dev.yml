@@ -125,6 +125,8 @@ services:
       # Middlewares
       traefik.http.middlewares.redirect-middleware.redirectregex.regex: .*
       traefik.http.middlewares.redirect-middleware.redirectregex.replacement: /dashboard
+  
+  
 
 networks:
   tipi_main_network:
