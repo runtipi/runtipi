@@ -7,8 +7,8 @@ import { setupConnection, teardownConnection } from '../../../test/connection';
 import { gcall } from '../../../test/gcall';
 import { loginMutation, registerMutation } from '../../../test/mutations';
 import { isConfiguredQuery, MeQuery, refreshTokenQuery } from '../../../test/queries';
-import User from '../user.entity';
 import { TokenResponse } from '../auth.types';
+import User from '../user.entity';
 import { createUser } from './user.factory';
 
 jest.mock('redis');
