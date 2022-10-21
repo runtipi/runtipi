@@ -28,7 +28,10 @@ export default class AuthResolver {
 
   @Mutation(() => Boolean)
   async logout(@Ctx() { req }: MyContext): Promise<boolean> {
-    await AuthService.logout(req.session?.id);
+    if (req.session.id) {
+      await AuthService.logout(req.session?.id);
+    }
+
     req.session.userId = undefined;
     req.session.id = undefined;
 

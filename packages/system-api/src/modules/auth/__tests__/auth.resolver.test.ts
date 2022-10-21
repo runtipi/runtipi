@@ -1,11 +1,12 @@
 import { faker } from '@faker-js/faker';
 import jwt from 'jsonwebtoken';
 import { DataSource } from 'typeorm';
+import TipiCache from '../../../config/TipiCache';
 import { getConfig } from '../../../core/config/TipiConfig';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import { gcall } from '../../../test/gcall';
 import { loginMutation, registerMutation } from '../../../test/mutations';
-import { isConfiguredQuery, MeQuery } from '../../../test/queries';
+import { isConfiguredQuery, MeQuery, refreshTokenQuery } from '../../../test/queries';
 import User from '../../auth/user.entity';
 import { TokenResponse } from '../auth.types';
 import { createUser } from './user.factory';
@@ -192,5 +193,41 @@ describe('Test: isConfigured', () => {
     });
 
     expect(data?.isConfigured).toBeTruthy();
+  });
+});
+
+describe('Test: refreshToken', () => {
+  const email = faker.internet.email();
+  let user1: User;
+
+  beforeEach(async () => {
+    user1 = await createUser(email);
+  });
+
+  it('should return a new token', async () => {
+    // Arrange
+    const session = faker.datatype.uuid();
+    await TipiCache.set(session, user1.id.toString());
+
+    // Act
+    const { data } = await gcall<{ refreshToken: TokenResponse }>({
+      source: refreshTokenQuery,
+      userId: user1.id,
+      session: session,
+    });
+    const decoded = jwt.verify(data?.refreshToken?.token || '', getConfig().jwtSecret) as jwt.JwtPayload;
+
+    // Assert
+    expect(data?.refreshToken).toBeDefined();
+    expect(data?.refreshToken?.token).toBeDefined();
+    expect(decoded).toBeDefined();
+    expect(decoded).not.toBeNull();
+    expect(decoded).toHaveProperty('id');
+    expect(decoded).toHaveProperty('iat');
+    expect(decoded).toHaveProperty('exp');
+    expect(decoded).toHaveProperty('session');
+
+    expect(decoded.id).toEqual(user1.id.toString());
+    expect(decoded.session).not.toEqual(session);
   });
 });

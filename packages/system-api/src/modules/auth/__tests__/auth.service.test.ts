@@ -7,9 +7,12 @@ import { faker } from '@faker-js/faker';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import { DataSource } from 'typeorm';
 import { setConfig } from '../../../core/config/TipiConfig';
+import TipiCache from '../../../config/TipiCache';
 
 let db: DataSource | null = null;
 const TEST_SUITE = 'authservice';
+
+jest.mock('redis');
 
 beforeAll(async () => {
   setConfig('jwtSecret', 'test');
@@ -116,5 +119,114 @@ describe('Register', () => {
 
     // Assert
     expect(isPasswordValid).toBe(true);
+  });
+
+  it('Should throw if email is invalid', async () => {
+    await expect(AuthService.register({ username: 'test', password: 'test' })).rejects.toThrowError('Invalid username');
+  });
+});
+
+describe('Test: logout', () => {
+  it('Should return true if there is no session to delete', async () => {
+    // Act
+    const result = await AuthService.logout();
+
+    // Assert
+    expect(result).toBe(true);
+  });
+
+  it('Should delete session from cache', async () => {
+    // Arrange
+    const session = faker.random.alphaNumeric(32);
+    await TipiCache.set(session, 'test');
+    expect(await TipiCache.get(session)).toBe('test');
+
+    // Act
+    const result = await AuthService.logout(session);
+
+    // Assert
+    expect(result).toBe(true);
+    expect(await TipiCache.get('session')).toBeUndefined();
+  });
+});
+
+describe('Test: refreshToken', () => {
+  it('Should return null if session is not provided', async () => {
+    // Act
+    const result = await AuthService.refreshToken();
+
+    // Assert
+    expect(result).toBeNull();
+  });
+
+  it('Should return null if session is not found in cache', async () => {
+    // Act
+    const result = await AuthService.refreshToken('test');
+
+    // Assert
+    expect(result).toBeNull();
+  });
+
+  it('Should return a new token if session is found in cache', async () => {
+    // Arrange
+    const session = faker.random.alphaNumeric(32);
+    await TipiCache.set(session, 'test');
+
+    // Act
+    const result = await AuthService.refreshToken(session);
+
+    // Assert
+    expect(result).not.toBeNull();
+    expect(result).toHaveProperty('token');
+    expect(result?.token).not.toBe(session);
+  });
+
+  it('Should delete old session from cache', async () => {
+    // Arrange
+    const session = faker.random.alphaNumeric(32);
+    await TipiCache.set(session, '1');
+
+    // Act
+    const result = await AuthService.refreshToken(session);
+
+    // Assert
+    expect(result).not.toBeNull();
+    expect(result).toHaveProperty('token');
+    expect(result?.token).not.toBe(session);
+    expect(await TipiCache.get(session)).toBeUndefined();
+  });
+});
+
+describe('Test: me', () => {
+  it('Should return null if userId is not provided', async () => {
+    // Act
+    const result = await AuthService.me();
+
+    // Assert
+    expect(result).toBeNull();
+  });
+
+  it('Should return null if user does not exist', async () => {
+    // Act
+    const result = await AuthService.me(1);
+
+    // Assert
+    expect(result).toBeNull();
+  });
+
+  it('Should return user if user exists', async () => {
+    // Arrange
+    const email = faker.internet.email();
+    const user = await createUser(email);
+
+    // Act
+    const result = await AuthService.me(user.id);
+
+    // Assert
+    expect(result).not.toBeNull();
+    expect(result).toHaveProperty('id');
+    expect(result).toHaveProperty('username');
+    expect(result).toHaveProperty('createdAt');
+    expect(result).toHaveProperty('updatedAt');
   });
 });

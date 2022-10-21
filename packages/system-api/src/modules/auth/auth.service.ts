@@ -69,9 +69,7 @@ const me = async (userId?: number): Promise<User | null> => {
   return user;
 };
 
-const logout = async (session?: string): Promise<boolean> => {
-  if (!session) return false;
-
+const logout = async (session: string): Promise<boolean> => {
   await TipiCache.del(session);
 
   return true;

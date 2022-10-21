@@ -32,7 +32,7 @@ const Login: React.FC = () => {
       const { data } = await login({ variables: { input: { username: values.email, password: values.password } } });
 
       if (data?.login?.token) {
-        await localStorage.setItem('token', data.login.token);
+        localStorage.setItem('token', data.login.token);
       }
 
       await client.refetchQueries({ include: ['Me'] });
