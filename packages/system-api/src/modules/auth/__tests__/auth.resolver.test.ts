@@ -170,6 +170,7 @@ describe('Test: logout', () => {
     const { data } = await gcall<{ logout: boolean }>({
       source: 'mutation { logout }',
       userId: user1.id,
+      session: 'session',
     });
 
     expect(data?.logout).toBeTruthy();

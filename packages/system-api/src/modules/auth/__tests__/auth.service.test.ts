@@ -129,6 +129,7 @@ describe('Register', () => {
 describe('Test: logout', () => {
   it('Should return true if there is no session to delete', async () => {
     // Act
+    // @ts-ignore
     const result = await AuthService.logout();
 
     // Assert
