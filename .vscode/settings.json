@@ -1,5 +1,0 @@
-{
-  "yaml.schemas": {
-    "https://raw.githubusercontent.com/ansible-community/schemas/main/f/ansible-playbook.json": "file:///Users/nicolas/Projects/runtipi/ansible/playbooks/install-dependencies.yml"
-  }
-}

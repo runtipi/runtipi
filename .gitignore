@@ -2,6 +2,7 @@
 *.swp
 
 .DS_Store
+.vscode
 
 logs
 .pnpm-debug.log
