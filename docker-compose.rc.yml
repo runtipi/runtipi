@@ -36,6 +36,15 @@ services:
     networks:
       - tipi_main_network
 
+  tipi-redis:
+    container_name: tipi-redis
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - tipi_main_network
+
   api:
     image: meienberger/runtipi:rc-${TIPI_VERSION}
     command: /bin/sh -c "cd /api && npm run start"

@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client';
 import { useToast } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useLoginMutation } from '../../../generated/graphql';
@@ -7,11 +8,13 @@ import LoginForm from '../components/LoginForm';
 type FormValues = { email: string; password: string };
 
 const Login: React.FC = () => {
-  const [login] = useLoginMutation({ refetchQueries: ['Me'] });
+  const client = useApolloClient();
+  const [login] = useLoginMutation({});
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const handleError = (error: unknown) => {
+    localStorage.removeItem('token');
     if (error instanceof Error) {
       toast({
         title: 'Error',
@@ -26,7 +29,13 @@ const Login: React.FC = () => {
   const handleLogin = async (values: FormValues) => {
     try {
       setLoading(true);
-      await login({ variables: { input: { username: values.email, password: values.password } } });
+      const { data } = await login({ variables: { input: { username: values.email, password: values.password } } });
+
+      if (data?.login?.token) {
+        localStorage.setItem('token', data.login.token);
+      }
+
+      await client.refetchQueries({ include: ['Me'] });
     } catch (error) {
       handleError(error);
     } finally {

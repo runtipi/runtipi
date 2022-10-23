@@ -37,16 +37,15 @@ const systemInfo = (): z.infer<typeof systemInfoSchema> => {
 
 const getVersion = async (): Promise<{ current: string; latest?: string }> => {
   try {
-    let version = TipiCache.get<string>('latestVersion');
+    let version = await TipiCache.get('latestVersion');
 
     if (!version) {
       const { data } = await axios.get('https://api.github.com/repos/meienberger/runtipi/releases/latest');
 
-      TipiCache.set('latestVersion', data.name);
       version = data.name.replace('v', '');
     }
 
-    TipiCache.set('latestVersion', version?.replace('v', ''));
+    await TipiCache.set('latestVersion', version?.replace('v', '') || '');
 
     return { current: getConfig().version, latest: version?.replace('v', '') };
   } catch (e) {

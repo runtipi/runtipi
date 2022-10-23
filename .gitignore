@@ -10,6 +10,7 @@ github.secrets
 node_modules/
 app-data/*
 data/postgres
+data/redis
 !app-data/.gitkeep
 repos/*
 !repos/.gitkeep

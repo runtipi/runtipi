@@ -39,6 +39,15 @@ services:
     networks:
       - tipi_main_network
 
+  tipi-redis:
+    container_name: tipi-redis
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - tipi_main_network
+
   api:
     build:
       context: .
@@ -121,6 +130,8 @@ services:
       # Middlewares
       traefik.http.middlewares.redirect-middleware.redirectregex.regex: .*
       traefik.http.middlewares.redirect-middleware.redirectregex.replacement: /dashboard
+  
+  
 
 networks:
   tipi_main_network:
