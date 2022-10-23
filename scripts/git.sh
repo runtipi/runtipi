@@ -55,7 +55,7 @@ if [[ "$command" = "update" ]]; then
     write_log "Updating ${repo} in ${repo_hash}"
     cd "${repo_dir}" || exit
 
-    if ! git pull origin master; then
+    if ! git pull origin "$(git rev-parse --abbrev-ref HEAD)"; then
         cd "${ROOT_FOLDER}" || exit
         write_log "Failed to update repo"
         exit 1

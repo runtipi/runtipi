@@ -85,6 +85,7 @@ const main = async () => {
       // Start apps
       appsService.startAllApps();
       logger.info(`Server running on port ${port} 🚀 Production => ${__prod__}`);
+      logger.info(`Config: ${JSON.stringify(getConfig(), null, 2)}`);
     });
   } catch (error) {
     logger.error(error);

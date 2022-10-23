@@ -9,6 +9,18 @@ import { getConfig } from '../../core/config/TipiConfig';
 import { eventDispatcher, EventTypes } from '../../core/config/EventDispatcher';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
+const filterApp = (app: AppInfo): boolean => {
+  if (!app.supported_architectures) {
+    return true;
+  }
+
+  const arch = getConfig().architecture;
+  return app.supported_architectures.includes(arch);
+};
+
+const filterApps = (apps: AppInfo[]): AppInfo[] => {
+  return apps.sort(sortApps).filter(filterApp);
+};
 
 /**
  * Start all apps which had the status RUNNING in the database
@@ -159,7 +171,7 @@ const listApps = async (): Promise<ListAppsResonse> => {
     app.description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app.id}/metadata/description.md`);
   });
 
-  return { apps: apps.sort(sortApps), total: apps.length };
+  return { apps: filterApps(apps), total: apps.length };
 };
 
 /**
