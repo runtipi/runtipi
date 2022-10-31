@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-set -e # Exit immediately if a command exits with a non-zero status.
-
+set -o errexit
+set -o nounset
+set -o pipefail
+if [[ "${TRACE-0}" == "1" ]]; then
+  set -o xtrace
+fi
 source "${BASH_SOURCE%/*}/common.sh"
 
 ROOT_FOLDER="${PWD}"

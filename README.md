@@ -1,7 +1,11 @@
-# ⛺️ Tipi — A personal homeserver for everyone
+# Tipi — A personal homeserver for everyone
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
 ![Issues](https://img.shields.io/github/issues/meienberger/runtipi)
@@ -9,11 +13,14 @@
 [![Docker Image Size](https://badgen.net/docker/size/meienberger/runtipi?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/runtipi/)
 ![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
 [![codecov](https://codecov.io/gh/meienberger/runtipi/branch/master/graph/badge.svg?token=FZGO7ZOPSF)](https://codecov.io/gh/meienberger/runtipi)
+
 #### Join the discussion
+
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 [![Matrix](https://img.shields.io/matrix/runtipi:matrix.org?label=matrix&logo=matrix)](https://matrix.to/#/#runtipi:matrix.org)
 
 ![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/appstore.png)
+
 > ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
 
 Tipi is a personal homeserver orchestrator. It is running docker containers under the hood and provides a simple web interface to manage them. Every service comes with an opinionated configuration in order to remove the need for manual configuration and network setup.
@@ -21,13 +28,14 @@ Tipi is a personal homeserver orchestrator. It is running docker containers unde
 Check our demo instance : **[demo.runtipi.com](https://demo.runtipi.com)** / username: **user@runtipi.com** / password: **runtipi**
 
 ## Apps available
+
 - [Adguard Home](https://github.com/AdguardTeam/AdGuardHome) - Adguard Home DNS adblocker
 - [Booksonic](https://github.com/popeen) - A server for streaming your audiobooks
 - [BookStack](https://www.bookstackapp.com/) - BookStack is a self-hosted platform for organising and storing information.
 - [Calibre-Web](https://github.com/janeczku/calibre-web) - Web Ebook Reader
-- [Code-Server](https://github.com/coder/code-server) - Web VS Code 
+- [Code-Server](https://github.com/coder/code-server) - Web VS Code
 - [Filebrowser](https://github.com/filebrowser/filebrowser) - Web File Browser
-- [Firefly III](https://github.com/firefly-iii/firefly-iii) - A personal finances manager 
+- [Firefly III](https://github.com/firefly-iii/firefly-iii) - A personal finances manager
 - [FreshRSS](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable RSS aggregator
 - [Ghost](https://github.com/TryGhost/Ghost) - Ghost - Turn your audience into a business
 - [Gitea](https://github.com/go-gitea/gitea) - Gitea - A painless self-hosted Git service
@@ -84,9 +92,11 @@ You can find and submit new apps inside of the [RunTipi Appstore](https://github
 ## 🛠 Installation
 
 ### Installation Requirements
+
 Ubuntu 18.04 LTS or higher is recommended. However other major Linux distribution are supported but may lead to installation issues. Please file an issue if you encounter one.
 
 ### Step 1. Download Tipi
+
 Run this in an empty directory where you want to install Tipi.
 
 ```bash
@@ -94,6 +104,7 @@ git clone https://github.com/meienberger/runtipi.git
 ```
 
 ### Step 2. Run Tipi
+
 cd into the downloaded directory and run the start script.
 
 ```bash
@@ -115,30 +126,50 @@ sudo ./scripts/stop.sh
 ```
 
 ### Custom settings
-You can change the default settings by creating a `settings.json` file. The file should be located in the `state` directory. This file will make your changes persist across restarts. Example file with all possible values:
+
+You can change the default settings by creating a `settings.json` file. The file should be located in the `state` directory. This file will make your changes persist across restarts. Example file:
 
 ```json
 {
-  "dnsIp": "9.9.9.9", // DNS IP address
-  "domain": "mydomain.com", // Domain name to link to the dashboard
-  "port": 7000, // Change default http port 80
-  "sslPort": 7001, // Change default ssl port 443
-  "listenIp": "192.168.1.1", // Change default listen ip (advanced)
-  "storagePath": "/mnt/usb", // Change default storage path of app data
+  "dnsIp": "9.9.9.9",
+  "domain": "mydomain.com"
 }
-
 ```
 
+Available settings:
+
+- `dnsIp` - The IP address of the DNS server to use. Default: `9.9.9.9`
+- `domain` - The domain name to use for the dashboard. Default: `localhost`
+- `port` - The port to use for the dashboard. Default: `80`
+- `sslPort` - The port to use for the dashboard with SSL. Default: `443`
+- `listenIp` - The IP address to listen on. Default: `automatically detected`
+- `storagePath` - The path to use for storing data. Default: `runtipi/app-data`
+
 ## Linking a domain to your dashboard
+
 If you want to link a domain to your dashboard, you can do so by providing the `--domain` option in the start script.
 
 ```bash
 sudo ./scripts/start.sh --domain mydomain.com
 ```
 
-You can also specify it in the `settings.json` file as shown in the previous section.
+You can also specify it in the `settings.json` file as shown in the previous section to keep the setting saved across restarts.
 
 A Let's Encrypt certificate will be generated and installed automatically. Make sure to have ports 80 and 443 open on your firewall and that your domain has an **A** record pointing to your server IP.
+
+Please note that this setting will only expose the dashboard. If you want to expose other apps, you need to configure them individually. You cannot use the `--domain` option to expose apps.
+
+This option will only work if you keep the default port 80 and 443 for the dashboard.
+
+### Uninstalling Tipi
+
+Make sure Tipi is completely stopped and then remove the `runtipi` directory.
+
+```bash
+sudo ./scripts/stop.sh
+cd ..
+sudo rm -rf runtipi
+```
 
 ## ❤️ Contributing
 
@@ -146,14 +177,18 @@ Tipi is made to be very easy to plug in new apps. We welcome and appreciate new 
 
 If you want to add a new app or feature, you can follow the [Contribution guide](https://github.com/meienberger/runtipi/wiki/Adding-your-own-app) for instructions on how to do so.
 
+We are looking for contributions of all kinds. If you know design, development, or have ideas for new features, please get in touch.
+
 ## 📜 License
+
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
 
 Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may copy, distribute and modify the software as long as you track changes/dates in source files. Any modifications to or software including (via compiler) GPL-licensed code must also be made available under the GPL along with build & install instructions.
 
-The bash scripts `app.sh` contained in the `scripts` folder contains some snippets from [Umbrel](https://github.com/getumbrel/umbrel)'s code. Therefore some parts of the code are licensed under the PolyForm Noncommercial License 1.0.0 license. You can for now consider the whole file under this license. We are actively working on re-writing those parts in order to make them available under the GPL license like the rest of our code. 
+The bash script `app.sh` located in the `scripts` folder contains some snippets from [Umbrel](https://github.com/getumbrel/umbrel)'s code. Therefore some parts of the code are licensed under the PolyForm Noncommercial License 1.0.0 license. You can for now consider the whole file under this license. We are actively working on re-writing those parts in order to make them available under the GPL license like the rest of our code.
 
 ## 🗣 Community
+
 - [Matrix](https://matrix.to/#/#runtipi:matrix.org)<br />
 - [Twitter](https://twitter.com/runtipi)
 - [Telegram](https://t.me/+72-y10MnLBw2ZGI0)

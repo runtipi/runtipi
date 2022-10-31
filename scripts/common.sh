@@ -81,10 +81,10 @@ function kill_watcher() {
         # If multiline kill each pid
         if [[ $watcher_pid == *" "* ]]; then
             for pid in $watcher_pid; do
-                kill -9 $pid
+                kill -9 "$pid"
             done
         else
-            kill -9 $watcher_pid
+            kill -9 "$watcher_pid"
         fi
     fi
 }
