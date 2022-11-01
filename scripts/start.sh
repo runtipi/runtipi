@@ -84,12 +84,12 @@ fi
 ### --------------------------------
 ### CLI arguments
 ### --------------------------------
-while [ -n "$1" ]; do
+while [ -n "${1-}" ]; do
   case "$1" in
   --rc) rc="true" ;;
   --ci) ci="true" ;;
   --port)
-    port="$2"
+    port="${2-}"
 
     if [[ "${port}" =~ ^[0-9]+$ ]]; then
       NGINX_PORT="${port}"
@@ -100,7 +100,7 @@ while [ -n "$1" ]; do
     shift
     ;;
   --ssl-port)
-    ssl_port="$2"
+    ssl_port="${2-}"
 
     if [[ "${ssl_port}" =~ ^[0-9]+$ ]]; then
       NGINX_PORT_SSL="${ssl_port}"
@@ -111,7 +111,7 @@ while [ -n "$1" ]; do
     shift
     ;;
   --domain)
-    domain="$2"
+    domain="${2-}"
 
     if [[ "${domain}" =~ ^[a-zA-Z0-9.-]+$ ]]; then
       DOMAIN="${domain}"
@@ -122,7 +122,7 @@ while [ -n "$1" ]; do
     shift
     ;;
   --listen-ip)
-    listen_ip="$2"
+    listen_ip="${2-}"
 
     if [[ "${listen_ip}" =~ ^[a-fA-F0-9.:]+$ ]]; then
       INTERNAL_IP="${listen_ip}"
@@ -234,9 +234,9 @@ mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
 ### --------------------------------
 ### Start the project
 ### --------------------------------
-if [[ ! $ci == "true" ]]; then
+if [[ ! "${ci-false}" == "true" ]]; then
 
-  if [[ $rc == "true" ]]; then
+  if [[ "${rc-false}" == "true" ]]; then
     docker compose -f docker-compose.rc.yml --env-file "${ROOT_FOLDER}/.env" pull
     # Run docker compose
     docker compose -f docker-compose.rc.yml --env-file "${ROOT_FOLDER}/.env" up --detach --remove-orphans --build || {

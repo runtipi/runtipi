@@ -145,7 +145,7 @@ Available settings:
 - `listenIp` - The IP address to listen on. Default: `automatically detected`
 - `storagePath` - The path to use for storing data. Default: `runtipi/app-data`
 
-## Linking a domain to your dashboard
+### Linking a domain to your dashboard
 
 If you want to link a domain to your dashboard, you can do so by providing the `--domain` option in the start script.
 
@@ -170,6 +170,10 @@ sudo ./scripts/stop.sh
 cd ..
 sudo rm -rf runtipi
 ```
+
+## 📚 Documentation
+
+You can find more documentation and tutorials / FAQ in the [Wiki](https://github.com/meienberger/runtipi/wiki).
 
 ## ❤️ Contributing
 

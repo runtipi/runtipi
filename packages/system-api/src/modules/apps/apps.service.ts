@@ -159,19 +159,16 @@ const listApps = async (): Promise<ListAppsResonse> => {
 
   const apps: AppInfo[] = folders
     .map((app) => {
-      try {
-        return readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
-      } catch (e) {
-        return null;
-      }
+      return readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
     })
     .filter(Boolean);
 
-  apps.forEach((app) => {
-    app.description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app.id}/metadata/description.md`);
+  const filteredApps = filterApps(apps).map((app) => {
+    const description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app.id}/metadata/description.md`);
+    return { ...app, description };
   });
 
-  return { apps: filterApps(apps), total: apps.length };
+  return { apps: filteredApps, total: apps.length };
 };
 
 /**
