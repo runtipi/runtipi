@@ -81,10 +81,12 @@ function kill_watcher() {
         # If multiline kill each pid
         if [[ $watcher_pid == *" "* ]]; then
             for pid in $watcher_pid; do
-                kill -9 "$pid"
+                # shellcheck disable=SC2086
+                kill -9 $pid
             done
         else
-            kill -9 "$watcher_pid"
+            # shellcheck disable=SC2086
+            kill -9 $watcher_pid
         fi
     fi
 }
