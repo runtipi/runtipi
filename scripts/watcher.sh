@@ -6,8 +6,6 @@ ROOT_FOLDER="${PWD}"
 WATCH_FILE="${ROOT_FOLDER}/state/events"
 
 function clean_events() {
-    echo "Cleaning events..."
-
     # Create the file if it doesn't exist
     if [[ ! -f "${WATCH_FILE}" ]]; then
         touch "${WATCH_FILE}"
@@ -42,8 +40,6 @@ function run_command() {
     $command_path "$@" >>"${ROOT_FOLDER}/logs/${id}.log" 2>&1
 
     local result=$?
-
-    echo "Command ${command_path} exited with code ${result}"
 
     if [[ $result -eq 0 ]]; then
         set_status "$id" "success"
@@ -105,7 +101,6 @@ function select_command() {
         return 0
     fi
 
-    echo "Unknown command ${command}"
     return 0
 }
 

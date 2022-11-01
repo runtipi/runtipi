@@ -54,7 +54,7 @@ function ensure_linux() {
 
 function clean_logs() {
     # Clean logs folder
-    logs_folder="${ROOT_FOLDER}/logs"
+    local logs_folder="${ROOT_FOLDER}/logs"
 
     # Create the folder if it doesn't exist
     if [[ ! -d "${logs_folder}" ]]; then
@@ -64,7 +64,7 @@ function clean_logs() {
     if [ "$(find "${logs_folder}" -maxdepth 1 -type f | wc -l)" -gt 0 ]; then
         echo "Cleaning logs folder..."
 
-        files=($(ls -d "${logs_folder}"/* | xargs -n 1 basename | sed 's/\///g'))
+        local files=($(ls -d "${logs_folder}"/* | xargs -n 1 basename | sed 's/\///g'))
 
         for file in "${files[@]}"; do
             echo "Removing ${file}"
@@ -74,7 +74,7 @@ function clean_logs() {
 }
 
 function kill_watcher() {
-    watcher_pid="$(ps aux | grep "scripts/watcher" | grep -v grep | awk '{print $2}')"
+    local watcher_pid="$(ps aux | grep "scripts/watcher" | grep -v grep | awk '{print $2}')"
 
     # kill it if it's running
     if [[ -n $watcher_pid ]]; then
