@@ -51,6 +51,11 @@ class TipiCache {
   public async close() {
     return this.client.quit();
   }
+
+  public async ttl(key: string) {
+    const client = await this.getClient();
+    return client.ttl(key);
+  }
 }
 
 export default TipiCache.getInstance();
