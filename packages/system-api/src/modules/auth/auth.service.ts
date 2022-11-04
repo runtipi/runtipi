@@ -81,7 +81,8 @@ const refreshToken = async (session?: string): Promise<TokenResponse | null> => 
   const userId = await TipiCache.get(session);
   if (!userId) return null;
 
-  await TipiCache.del(session);
+  // Expire token in 6 seconds
+  await TipiCache.set(session, userId, 6);
 
   const newSession = v4();
   const token = jwt.sign({ id: userId, session: newSession }, getConfig().jwtSecret, { expiresIn: '1d' });

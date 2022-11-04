@@ -182,19 +182,20 @@ describe('Test: refreshToken', () => {
     expect(result?.token).not.toBe(session);
   });
 
-  it('Should delete old session from cache', async () => {
+  it('Should put expiration in 6 seconds for old session', async () => {
     // Arrange
     const session = faker.random.alphaNumeric(32);
     await TipiCache.set(session, '1');
 
     // Act
     const result = await AuthService.refreshToken(session);
+    const expiration = await TipiCache.ttl(session);
 
     // Assert
     expect(result).not.toBeNull();
     expect(result).toHaveProperty('token');
     expect(result?.token).not.toBe(session);
-    expect(await TipiCache.get(session)).toBeUndefined();
+    expect(expiration).toMatchObject({ EX: 6 });
   });
 });
 
