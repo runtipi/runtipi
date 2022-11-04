@@ -22,11 +22,13 @@ const {
   APPS_REPO_URL = '',
   DOMAIN = '',
   STORAGE_PATH = '/runtipi',
+  REDIS_HOST = 'tipi-redis',
   ARCHITECTURE = 'amd64',
 } = process.env;
 
 const configSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
+  REDIS_HOST: z.string(),
   status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
   architecture: z.nativeEnum(AppSupportedArchitecturesEnum),
   logs: z.object({
@@ -58,6 +60,7 @@ class Config {
         LOGS_APP,
         LOGS_ERROR,
       },
+      REDIS_HOST,
       NODE_ENV: NODE_ENV as z.infer<typeof configSchema>['NODE_ENV'],
       architecture: ARCHITECTURE as z.infer<typeof configSchema>['architecture'],
       rootFolder: '/runtipi',

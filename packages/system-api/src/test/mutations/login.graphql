@@ -1,9 +1,6 @@
 # Write your query or mutation here
 mutation Login($input: UsernamePasswordInput!) {
   login(input: $input) {
-    user {
-      id
-      username
-    }
+    token
   }
 }

@@ -9,6 +9,7 @@ import * as Me from './me.graphql';
 import * as isConfigured from './isConfigured.graphql';
 import * as systemInfo from './systemInfo.graphql';
 import * as version from './version.graphql';
+import * as refreshToken from './refreshToken.graphql';
 
 export const listAppInfosQuery = print(listAppInfos);
 export const getAppQuery = print(getApp);
@@ -17,3 +18,4 @@ export const MeQuery = print(Me);
 export const isConfiguredQuery = print(isConfigured);
 export const systemInfoQuery = print(systemInfo);
 export const versionQuery = print(version);
+export const refreshTokenQuery = print(refreshToken);

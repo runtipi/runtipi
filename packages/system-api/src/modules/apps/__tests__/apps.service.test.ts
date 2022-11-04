@@ -497,7 +497,7 @@ describe('List apps', () => {
   it('Should list apps that have no supportedArchitectures specified', async () => {
     // Arrange
     setConfig('architecture', AppSupportedArchitecturesEnum.ARM);
-    const app3 = await createApp({});
+    const app3 = await createApp({ supportedArchitectures: undefined });
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app3.MockFiles));
 

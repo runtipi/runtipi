@@ -1,9 +1,13 @@
 import * as argon2 from 'argon2';
+import { v4 } from 'uuid';
+import jwt from 'jsonwebtoken';
 import validator from 'validator';
-import { UsernamePasswordInput, UserResponse } from './auth.types';
+import { getConfig } from '../../core/config/TipiConfig';
+import { TokenResponse, UsernamePasswordInput } from './auth.types';
 import User from './user.entity';
+import TipiCache from '../../config/TipiCache';
 
-const login = async (input: UsernamePasswordInput): Promise<UserResponse> => {
+const login = async (input: UsernamePasswordInput): Promise<TokenResponse> => {
   const { password, username } = input;
 
   const user = await User.findOne({ where: { username: username.trim().toLowerCase() } });
@@ -18,10 +22,15 @@ const login = async (input: UsernamePasswordInput): Promise<UserResponse> => {
     throw new Error('Wrong password');
   }
 
-  return { user };
+  const session = v4();
+  const token = jwt.sign({ id: user.id, session }, getConfig().jwtSecret, { expiresIn: '7d' });
+
+  await TipiCache.set(session, user.id.toString());
+
+  return { token };
 };
 
-const register = async (input: UsernamePasswordInput): Promise<UserResponse> => {
+const register = async (input: UsernamePasswordInput): Promise<TokenResponse> => {
   const { password, username } = input;
   const email = username.trim().toLowerCase();
 
@@ -42,7 +51,12 @@ const register = async (input: UsernamePasswordInput): Promise<UserResponse> => 
   const hash = await argon2.hash(password);
   const newUser = await User.create({ username: email, password: hash }).save();
 
-  return { user: newUser };
+  const session = v4();
+  const token = jwt.sign({ id: newUser.id, session }, getConfig().jwtSecret, { expiresIn: '1d' });
+
+  await TipiCache.set(session, newUser.id.toString());
+
+  return { token };
 };
 
 const me = async (userId?: number): Promise<User | null> => {
@@ -55,10 +69,34 @@ const me = async (userId?: number): Promise<User | null> => {
   return user;
 };
 
+const logout = async (session: string): Promise<boolean> => {
+  await TipiCache.del(session);
+
+  return true;
+};
+
+const refreshToken = async (session?: string): Promise<TokenResponse | null> => {
+  if (!session) return null;
+
+  const userId = await TipiCache.get(session);
+  if (!userId) return null;
+
+  // Expire token in 6 seconds
+  await TipiCache.set(session, userId, 6);
+
+  const newSession = v4();
+  const token = jwt.sign({ id: userId, session: newSession }, getConfig().jwtSecret, { expiresIn: '1d' });
+  await TipiCache.set(newSession, userId);
+
+  return { token };
+};
+
 const AuthService = {
   login,
   register,
   me,
+  logout,
+  refreshToken,
 };
 
 export default AuthService;

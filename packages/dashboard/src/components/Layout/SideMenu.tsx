@@ -45,6 +45,11 @@ const SideMenu: React.FC = () => {
     setColorMode(checked ? 'dark' : 'light');
   };
 
+  const handleLogout = async () => {
+    localStorage.removeItem('token');
+    logout();
+  };
+
   return (
     <Box className="flex-1 flex flex-col p-0 md:p-4">
       <img className="self-center mb-5 logo mt-0 md:mt-5" src={getUrl('tipi.png')} width={512} height={512} />
@@ -64,7 +69,7 @@ const SideMenu: React.FC = () => {
               <p className="flex-1 mb-1 text-md">Donate</p>
             </ListItem>
           </a>
-          <ListItem onClick={() => logout()} className="cursor-pointer hover:font-bold flex items-center mb-5">
+          <ListItem onClick={handleLogout} className="cursor-pointer hover:font-bold flex items-center mb-5">
             <FiLogOut size={20} className="mr-3" />
             <p className="flex-1">Log out</p>
           </ListItem>

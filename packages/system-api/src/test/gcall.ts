@@ -8,11 +8,12 @@ interface Options {
     [key: string]: any;
   }>;
   userId?: number;
+  session?: string;
 }
 
 let schema: GraphQLSchema | null = null;
 
-export const gcall = async <T>({ source, variableValues, userId }: Options): Promise<ExecutionResult<T, { [key: string]: any }>> => {
+export const gcall = async <T>({ source, variableValues, userId, session }: Options): Promise<ExecutionResult<T, { [key: string]: any }>> => {
   if (!schema) {
     schema = await createSchema();
   }
@@ -21,6 +22,6 @@ export const gcall = async <T>({ source, variableValues, userId }: Options): Pro
     schema,
     source,
     variableValues,
-    contextValue: { req: { session: { userId } } },
+    contextValue: { req: { session: { userId, id: session } } },
   }) as any;
 };

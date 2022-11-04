@@ -134,9 +134,9 @@ export type ListAppsResonse = {
 export type Mutation = {
   __typename?: 'Mutation';
   installApp: App;
-  login: UserResponse;
+  login: TokenResponse;
   logout: Scalars['Boolean'];
-  register: UserResponse;
+  register: TokenResponse;
   restart: Scalars['Boolean'];
   startApp: App;
   stopApp: App;
@@ -185,6 +185,7 @@ export type Query = {
   isConfigured: Scalars['Boolean'];
   listAppsInfo: ListAppsResonse;
   me?: Maybe<User>;
+  refreshToken?: Maybe<TokenResponse>;
   systemInfo?: Maybe<SystemInfoResponse>;
   version: VersionResponse;
 };
@@ -200,6 +201,11 @@ export type SystemInfoResponse = {
   memory: DiskMemory;
 };
 
+export type TokenResponse = {
+  __typename?: 'TokenResponse';
+  token: Scalars['String'];
+};
+
 export type UpdateInfo = {
   __typename?: 'UpdateInfo';
   current: Scalars['Float'];
@@ -213,11 +219,6 @@ export type User = {
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
   username: Scalars['String'];
-};
-
-export type UserResponse = {
-  __typename?: 'UserResponse';
-  user?: Maybe<User>;
 };
 
 export type UsernamePasswordInput = {
@@ -241,7 +242,7 @@ export type LoginMutationVariables = Exact<{
   input: UsernamePasswordInput;
 }>;
 
-export type LoginMutation = { __typename?: 'Mutation'; login: { __typename?: 'UserResponse'; user?: { __typename?: 'User'; id: string } | null } };
+export type LoginMutation = { __typename?: 'Mutation'; login: { __typename?: 'TokenResponse'; token: string } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never }>;
 
@@ -251,7 +252,7 @@ export type RegisterMutationVariables = Exact<{
   input: UsernamePasswordInput;
 }>;
 
-export type RegisterMutation = { __typename?: 'Mutation'; register: { __typename?: 'UserResponse'; user?: { __typename?: 'User'; id: string } | null } };
+export type RegisterMutation = { __typename?: 'Mutation'; register: { __typename?: 'TokenResponse'; token: string } };
 
 export type RestartMutationVariables = Exact<{ [key: string]: never }>;
 
@@ -382,6 +383,10 @@ export type MeQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MeQuery = { __typename?: 'Query'; me?: { __typename?: 'User'; id: string } | null };
 
+export type RefreshTokenQueryVariables = Exact<{ [key: string]: never }>;
+
+export type RefreshTokenQuery = { __typename?: 'Query'; refreshToken?: { __typename?: 'TokenResponse'; token: string } | null };
+
 export type SystemInfoQueryVariables = Exact<{ [key: string]: never }>;
 
 export type SystemInfoQuery = {
@@ -436,9 +441,7 @@ export type InstallAppMutationOptions = Apollo.BaseMutationOptions<InstallAppMut
 export const LoginDocument = gql`
   mutation Login($input: UsernamePasswordInput!) {
     login(input: $input) {
-      user {
-        id
-      }
+      token
     }
   }
 `;
@@ -501,9 +504,7 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const RegisterDocument = gql`
   mutation Register($input: UsernamePasswordInput!) {
     register(input: $input) {
-      user {
-        id
-      }
+      token
     }
   }
 `;
@@ -1000,6 +1001,40 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const RefreshTokenDocument = gql`
+  query RefreshToken {
+    refreshToken {
+      token
+    }
+  }
+`;
+
+/**
+ * __useRefreshTokenQuery__
+ *
+ * To run a query within a React component, call `useRefreshTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRefreshTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRefreshTokenQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRefreshTokenQuery(baseOptions?: Apollo.QueryHookOptions<RefreshTokenQuery, RefreshTokenQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<RefreshTokenQuery, RefreshTokenQueryVariables>(RefreshTokenDocument, options);
+}
+export function useRefreshTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RefreshTokenQuery, RefreshTokenQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<RefreshTokenQuery, RefreshTokenQueryVariables>(RefreshTokenDocument, options);
+}
+export type RefreshTokenQueryHookResult = ReturnType<typeof useRefreshTokenQuery>;
+export type RefreshTokenLazyQueryHookResult = ReturnType<typeof useRefreshTokenLazyQuery>;
+export type RefreshTokenQueryResult = Apollo.QueryResult<RefreshTokenQuery, RefreshTokenQueryVariables>;
 export const SystemInfoDocument = gql`
   query SystemInfo {
     systemInfo {
