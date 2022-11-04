@@ -22,7 +22,7 @@ const UpdateBanner = () => {
           <AlertDescription>
             There is a new version of Tipi available ({data?.version.latest}). Visit{' '}
             <a className="text-blue-600" target="_blank" rel="noreferrer" href={'https://github.com/meienberger/runtipi/releases/latest'}>
-              Github
+              GitHub
             </a>{' '}
             for update instructions.
           </AlertDescription>
