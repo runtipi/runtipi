@@ -10,16 +10,6 @@ import { createApp } from './apps.factory';
 
 jest.mock('fs-extra');
 jest.mock('child_process');
-jest.mock('internal-ip');
-
-jest.mock('tcp-port-used', () => ({
-  check: (port: number) => {
-    if (port === 53) {
-      return true;
-    }
-    return false;
-  },
-}));
 
 let db: DataSource | null = null;
 const TEST_SUITE = 'appshelpers';
@@ -50,15 +40,6 @@ describe('checkAppRequirements', () => {
 
   it('Should throw an error if app does not exist', async () => {
     await expect(checkAppRequirements('not-existing-app')).rejects.toThrow('App not-existing-app not found');
-  });
-
-  it('Should return false if a required port is in use', async () => {
-    const { appInfo, MockFiles } = await createApp({ requiredPort: 53 });
-    // @ts-ignore
-    fs.__createMockFiles(MockFiles);
-
-    const ivValid = await checkAppRequirements(appInfo.id);
-    expect(ivValid).toBe(false);
   });
 });
 

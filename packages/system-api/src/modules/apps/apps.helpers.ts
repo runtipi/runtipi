@@ -1,6 +1,4 @@
-import portUsed from 'tcp-port-used';
 import { fileExists, getSeed, readdirSync, readFile, readJsonFile, writeFile } from '../fs/fs.helpers';
-import InternalIp from 'internal-ip';
 import crypto from 'crypto';
 import { AppInfo, AppStatusEnum } from './apps.types';
 import logger from '../../config/logger/logger';
@@ -15,15 +13,6 @@ export const checkAppRequirements = async (appName: string) => {
 
   if (!configFile) {
     throw new Error(`App ${appName} not found`);
-  }
-
-  if (configFile?.requirements?.ports) {
-    for (const port of configFile.requirements.ports) {
-      const ip = await InternalIp.v4();
-      const used = await portUsed.check(port, ip);
-
-      if (used) valid = false;
-    }
   }
 
   if (configFile?.supported_architectures && !configFile.supported_architectures.includes(getConfig().architecture)) {
