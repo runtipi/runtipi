@@ -14,8 +14,6 @@ import EventDispatcher from '../../../core/config/EventDispatcher';
 
 jest.mock('fs');
 jest.mock('child_process');
-jest.mock('internal-ip');
-jest.mock('tcp-port-used');
 
 type TApp = App & {
   info: AppInfo;
@@ -218,23 +216,6 @@ describe('InstallApp', () => {
     });
 
     expect(errors?.[0].message).toBe(`Variable ${app1.form_fields?.[0].env_variable} is required`);
-    expect(data?.installApp).toBeUndefined();
-  });
-
-  it('Should throw an error if the requirements are not met', async () => {
-    const { appInfo, MockFiles } = await createApp({ requiredPort: 400 });
-    // @ts-ignore
-    fs.__createMockFiles(MockFiles);
-
-    const user = await createUser();
-
-    const { data, errors } = await gcall<{ installApp: TApp }>({
-      source: installAppMutation,
-      userId: user.id,
-      variableValues: { input: { id: appInfo.id, form: { TEST_FIELD: 'hello' }, exposed: false, domain: '' } },
-    });
-
-    expect(errors?.[0].message).toBe(`App ${appInfo.id} requirements not met`);
     expect(data?.installApp).toBeUndefined();
   });
 });

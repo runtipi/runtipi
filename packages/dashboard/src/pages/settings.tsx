@@ -3,6 +3,7 @@ import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, Al
 import Layout from '../components/Layout';
 import { useLogoutMutation, useRestartMutation, useUpdateMutation, useVersionQuery } from '../generated/graphql';
 import { useRef, useState } from 'react';
+import semver from 'semver';
 
 const Settings: NextPage = () => {
   const toast = useToast();
@@ -15,7 +16,9 @@ const Settings: NextPage = () => {
   const [restart] = useRestartMutation();
   const [update] = useUpdateMutation();
   const [logout] = useLogoutMutation({ refetchQueries: ['Me'] });
-  const isLatest = data?.version.latest === data?.version.current;
+
+  const defaultVersion = '0.0.0';
+  const isLatest = semver.gte(data?.version.latest || defaultVersion, data?.version.current || defaultVersion);
 
   const handleError = (error: unknown) => {
     if (error instanceof Error) {

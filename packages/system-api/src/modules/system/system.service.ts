@@ -45,7 +45,7 @@ const getVersion = async (): Promise<{ current: string; latest?: string }> => {
       version = data.name.replace('v', '');
     }
 
-    await TipiCache.set('latestVersion', version?.replace('v', '') || '');
+    await TipiCache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
 
     return { current: getConfig().version, latest: version?.replace('v', '') };
   } catch (e) {
