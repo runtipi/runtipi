@@ -41,8 +41,8 @@ const main = async () => {
     const app = express();
     const port = 3001;
 
-    app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
     app.use(cors());
+    app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
     app.use('/status', systemController.status);
     app.use(getSessionMiddleware);
 

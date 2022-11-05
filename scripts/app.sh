@@ -57,12 +57,6 @@ else
   fi
 fi
 
-if [ -z ${3+x} ]; then
-  args=""
-else
-  args="${*:3}"
-fi
-
 compose() {
   local app="${1}"
   shift
@@ -105,8 +99,38 @@ compose() {
     "${@}"
 }
 
-# Install new app
-if [[ "$command" = "install" ]]; then
+function ensure_permissions() {
+  local app="${1}"
+
+  # if app_data_dir/data does not exist, create it
+  if [[ ! -d "${app_data_dir}/data" ]]; then
+    mkdir -p "${app_data_dir}/data"
+  fi
+
+  # Check if app requires special uid and gid
+  if [[ -f "${app_dir}/config.json" ]]; then
+    uid=$(get_json_field "${app_dir}/config.json" uid)
+    gid=$(get_json_field "${app_dir}/config.json" gid)
+
+    write_log "App requires uid=${uid} and gid=${gid}"
+
+    if [[ "$uid" != "null" ]] && [[ "$gid" != "null" ]]; then
+      write_log "Setting uid and gid to ${uid}:${gid}"
+      if ! chown -R "${uid}:${gid}" "${app_data_dir}/data"; then
+        write_log "Failed to set uid and gid to ${uid}:${gid}"
+      fi
+    fi
+  fi
+
+  # Remove all .gitkeep files from app data dir
+  find "${app_data_dir}" -name ".gitkeep" -exec rm -f {} \;
+
+  chmod -R a+rwx "${app_data_dir}"
+}
+
+function install_app() {
+  local app="${1}"
+
   # Write to file script.log
   write_log "Installing app ${app}..."
 
@@ -120,10 +144,7 @@ if [[ "$command" = "install" ]]; then
     cp -r "${app_dir}/data" "${app_data_dir}/data"
   fi
 
-  # Remove all .gitkeep files from app data dir
-  find "${app_data_dir}" -name ".gitkeep" -exec rm -f {} \;
-
-  chmod -R a+rwx "${app_data_dir}"
+  ensure_permissions "${app}"
 
   if ! compose "${app}" up -d; then
     write_log "Failed to start app ${app}"
@@ -131,10 +152,25 @@ if [[ "$command" = "install" ]]; then
   fi
 
   exit 0
-fi
+}
 
-# Removes images and destroys all data for an app
-if [[ "$command" = "uninstall" ]]; then
+function start_app() {
+  local app="${1}"
+
+  write_log "Starting app ${app}..."
+
+  ensure_permissions "${app}"
+
+  if ! compose "${app}" up --detach; then
+    write_log "Failed to start app ${app}"
+    exit 1
+  fi
+  exit 0
+}
+
+function uninstall_app() {
+  local app="${1}"
+
   write_log "Removing images for app ${app}..."
 
   if ! compose "${app}" up --detach; then
@@ -161,10 +197,11 @@ if [[ "$command" = "uninstall" ]]; then
 
   write_log "Successfully uninstalled app ${app}"
   exit
-fi
+}
 
-# Update an app
-if [[ "$command" = "update" ]]; then
+function update_app() {
+  local app="${1}"
+
   if ! compose "${app}" up --detach; then
     write_log "Failed to update app ${app}"
     exit 1
@@ -186,12 +223,15 @@ if [[ "$command" = "update" ]]; then
   # Copy app from repo
   cp -r "${ROOT_FOLDER}/repos/${REPO_ID}/apps/${app}" "${app_dir}"
 
+  ensure_permissions "${app}"
+
   compose "${app}" pull
   exit 0
-fi
+}
 
-# Stops an installed app
-if [[ "$command" = "stop" ]]; then
+function stop_app() {
+  local app="${1}"
+
   write_log "Stopping app ${app}..."
 
   if ! compose "${app}" rm --force --stop; then
@@ -200,25 +240,31 @@ if [[ "$command" = "stop" ]]; then
   fi
 
   exit 0
+}
+
+# Install new app
+if [[ "$command" = "install" ]]; then
+  install_app "${app}"
+fi
+
+# Removes images and destroys all data for an app
+if [[ "$command" = "uninstall" ]]; then
+  uninstall_app "${app}"
+fi
+
+# Update an app
+if [[ "$command" = "update" ]]; then
+  update_app "${app}"
+fi
+
+# Stops an installed app
+if [[ "$command" = "stop" ]]; then
+  stop_app "${app}"
 fi
 
 # Starts an installed app
 if [[ "$command" = "start" ]]; then
-  write_log "Starting app ${app}..."
-  if ! compose "${app}" up --detach; then
-    write_log "Failed to start app ${app}"
-    exit 1
-  fi
-  exit 0
-fi
-
-# Passes all arguments to Docker Compose
-if [[ "$command" = "compose" ]]; then
-  if ! compose "${app}" "${args}"; then
-    write_log "Failed to run compose command for app ${app}"
-    exit 1
-  fi
-  exit 0
+  start_app "${app}"
 fi
 
 if [[ "$command" = "clean" ]]; then

@@ -144,10 +144,10 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
   }
 };
 
-export const getUpdateInfo = async (id: string, version: number) => {
+export const getUpdateInfo = async (id: string, version?: number) => {
   const doesFileExist = fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}`);
 
-  if (!doesFileExist) {
+  if (!doesFileExist || !version) {
     return null;
   }
 
