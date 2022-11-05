@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import { getConfig } from '../../config/TipiConfig';
 import startJobs from '../jobs';
-import { eventDispatcher, EventTypes } from '../../../core/config/EventDispatcher';
+import { eventDispatcher, EventTypes } from '../../config/EventDispatcher';
 
 jest.mock('node-cron');
 jest.mock('child_process');

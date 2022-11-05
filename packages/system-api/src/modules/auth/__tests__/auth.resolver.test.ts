@@ -7,7 +7,7 @@ import { setupConnection, teardownConnection } from '../../../test/connection';
 import { gcall } from '../../../test/gcall';
 import { loginMutation, registerMutation } from '../../../test/mutations';
 import { isConfiguredQuery, MeQuery, refreshTokenQuery } from '../../../test/queries';
-import User from '../../auth/user.entity';
+import User from '../user.entity';
 import { TokenResponse } from '../auth.types';
 import { createUser } from './user.factory';
 
@@ -214,7 +214,7 @@ describe('Test: refreshToken', () => {
     const { data } = await gcall<{ refreshToken: TokenResponse }>({
       source: refreshTokenQuery,
       userId: user1.id,
-      session: session,
+      session,
     });
     const decoded = jwt.verify(data?.refreshToken?.token || '', getConfig().jwtSecret) as jwt.JwtPayload;
 

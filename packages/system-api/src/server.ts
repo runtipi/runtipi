@@ -2,9 +2,11 @@ import 'reflect-metadata';
 import express from 'express';
 import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
+import { createServer } from 'http';
+import { ZodError } from 'zod';
+import cors from 'cors';
 import { createSchema } from './schema';
 import { ApolloLogs } from './config/logger/apollo.logger';
-import { createServer } from 'http';
 import logger from './config/logger/logger';
 import getSessionMiddleware from './core/middlewares/sessionMiddleware';
 import { MyContext } from './types';
@@ -15,10 +17,8 @@ import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
 import startJobs from './core/jobs/jobs';
 import { applyJsonConfig, getConfig, setConfig } from './core/config/TipiConfig';
-import { ZodError } from 'zod';
 import systemController from './modules/system/system.controller';
 import { eventDispatcher, EventTypes } from './core/config/EventDispatcher';
-import cors from 'cors';
 
 const applyCustomConfig = () => {
   try {

@@ -1,10 +1,10 @@
 import validator from 'validator';
-import { createFolder, ensureAppFolder, readFile, readJsonFile } from '../fs/fs.helpers';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps } from './apps.helpers';
+import { Not } from 'typeorm';
+import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 import logger from '../../config/logger/logger';
-import { Not } from 'typeorm';
 import { getConfig } from '../../core/config/TipiConfig';
 import { eventDispatcher, EventTypes } from '../../core/config/EventDispatcher';
 
@@ -18,9 +18,7 @@ const filterApp = (app: AppInfo): boolean => {
   return app.supported_architectures.includes(arch);
 };
 
-const filterApps = (apps: AppInfo[]): AppInfo[] => {
-  return apps.sort(sortApps).filter(filterApp);
-};
+const filterApps = (apps: AppInfo[]): AppInfo[] => apps.sort(sortApps).filter(filterApp);
 
 /**
  * Start all apps which had the status RUNNING in the database
@@ -157,11 +155,7 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
 const listApps = async (): Promise<ListAppsResonse> => {
   const folders: string[] = await getAvailableApps();
 
-  const apps: AppInfo[] = folders
-    .map((app) => {
-      return readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
-    })
-    .filter(Boolean);
+  const apps: AppInfo[] = folders.map((app) => readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`)).filter(Boolean);
 
   const filteredApps = filterApps(apps).map((app) => {
     const description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app.id}/metadata/description.md`);
@@ -254,7 +248,7 @@ const stopApp = async (id: string): Promise<App> => {
  * @returns - the app entity
  */
 const uninstallApp = async (id: string): Promise<App> => {
-  let app = await App.findOne({ where: { id } });
+  const app = await App.findOne({ where: { id } });
 
   if (!app) {
     throw new Error(`App ${id} not found`);

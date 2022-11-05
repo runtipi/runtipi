@@ -1,5 +1,4 @@
 import { Field, InputType, ObjectType } from 'type-graphql';
-import User from './user.entity';
 
 @InputType()
 class UsernamePasswordInput {

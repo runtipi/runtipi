@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import semver from 'semver';
 import axios from 'axios';
-import SystemService from '../system.service';
 import { faker } from '@faker-js/faker';
+import SystemService from '../system.service';
 import TipiCache from '../../../config/TipiCache';
 import { setConfig } from '../../../core/config/TipiConfig';
 import logger from '../../../config/logger/logger';

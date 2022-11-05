@@ -22,5 +22,5 @@ export default new DataSource({
   logging: !__prod__,
   synchronize: false,
   entities: [App, User, Update],
-  migrations: [process.cwd() + '/dist/config/migrations/*.js'],
+  migrations: [`${process.cwd()}/dist/config/migrations/*.js`],
 });

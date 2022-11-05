@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
-import { setupConnection, teardownConnection } from '../../../test/connection';
 import fs from 'fs-extra';
+import { faker } from '@faker-js/faker';
+import { setupConnection, teardownConnection } from '../../../test/connection';
 import { gcall } from '../../../test/gcall';
 import App from '../app.entity';
 import { getAppQuery, InstalledAppsQuery, listAppInfosQuery } from '../../../test/queries';
@@ -9,7 +10,6 @@ import { AppInfo, AppStatusEnum, ListAppsResonse } from '../apps.types';
 import { createUser } from '../../auth/__tests__/user.factory';
 import User from '../../auth/user.entity';
 import { installAppMutation, startAppMutation, stopAppMutation, uninstallAppMutation, updateAppConfigMutation, updateAppMutation } from '../../../test/mutations';
-import { faker } from '@faker-js/faker';
 import EventDispatcher from '../../../core/config/EventDispatcher';
 
 jest.mock('fs');

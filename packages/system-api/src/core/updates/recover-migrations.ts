@@ -1,8 +1,20 @@
-import { DataSource } from 'typeorm';
+import { BaseEntity, DataSource, DeepPartial } from 'typeorm';
 import logger from '../../config/logger/logger';
 import App from '../../modules/apps/app.entity';
 import User from '../../modules/auth/user.entity';
 import Update from '../../modules/system/update.entity';
+
+const createUser = async (user: DeepPartial<BaseEntity>): Promise<void> => {
+  await User.create(user).save();
+};
+
+const createApp = async (app: DeepPartial<BaseEntity>): Promise<void> => {
+  await App.create(app).save();
+};
+
+const createUpdate = async (update: DeepPartial<BaseEntity>): Promise<void> => {
+  await Update.create(update).save();
+};
 
 const recover = async (datasource: DataSource) => {
   logger.info('Recovering broken database');
@@ -18,20 +30,14 @@ const recover = async (datasource: DataSource) => {
   logger.info('running migrations');
   await datasource.runMigrations();
 
-  // create users
-  for (const user of users) {
-    await User.create(user).save();
-  }
+  // recreate users
+  await Promise.all(users.map(createUser));
 
   // create apps
-  for (const app of apps) {
-    await App.create(app).save();
-  }
+  await Promise.all(apps.map(createApp));
 
   // create updates
-  for (const update of updates) {
-    await Update.create(update).save();
-  }
+  await Promise.all(updates.map(createUpdate));
 
   logger.info(`Users recovered ${users.length}`);
   logger.info(`Apps recovered ${apps.length}`);
