@@ -56,7 +56,7 @@ const createApp = async (props: IProps) => {
     };
   }
 
-  let MockFiles: any = {};
+  const MockFiles: any = {};
   MockFiles['/runtipi/.env'] = 'TEST=test';
   MockFiles['/runtipi/repos/repo-id'] = '';
   MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
@@ -71,6 +71,7 @@ const createApp = async (props: IProps) => {
       status,
       exposed,
       domain,
+      version: 1,
     }).save();
 
     MockFiles[`/app/storage/app-data/${appInfo.id}`] = '';

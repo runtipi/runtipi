@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 import logger from '../../../config/logger/logger';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import App from '../app.entity';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from '../apps.helpers';
+import { checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from '../apps.helpers';
 import { AppInfo } from '../apps.types';
 import { createApp } from './apps.factory';
 
@@ -336,15 +336,89 @@ describe('getUpdateInfo', () => {
   });
 
   it('Should return update info', async () => {
-    const updateInfo = await getUpdateInfo(app1.id);
+    const updateInfo = await getUpdateInfo(app1.id, 1);
 
     expect(updateInfo?.latest).toBe(app1.tipi_version);
     expect(updateInfo?.current).toBe(1);
   });
 
   it('Should return null if app is not installed', async () => {
-    const updateInfo = await getUpdateInfo(faker.random.word());
+    const updateInfo = await getUpdateInfo(faker.random.word(), 1);
 
     expect(updateInfo).toBeNull();
+  });
+});
+
+describe('Test: ensureAppFolder', () => {
+  beforeEach(() => {
+    const mockFiles = {
+      [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
+    };
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+  });
+
+  it('should copy the folder from repo', () => {
+    // Act
+    ensureAppFolder('test');
+
+    // Assert
+    const files = fs.readdirSync('/runtipi/apps/test');
+    expect(files).toEqual(['test.yml']);
+  });
+
+  it('should not copy the folder if it already exists', () => {
+    const mockFiles = {
+      [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
+      '/runtipi/apps/test': ['docker-compose.yml'],
+      '/runtipi/apps/test/docker-compose.yml': 'test',
+    };
+
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+
+    // Act
+    ensureAppFolder('test');
+
+    // Assert
+    const files = fs.readdirSync('/runtipi/apps/test');
+    expect(files).toEqual(['docker-compose.yml']);
+  });
+
+  it('Should overwrite the folder if clean up is true', () => {
+    const mockFiles = {
+      [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
+      '/runtipi/apps/test': ['docker-compose.yml'],
+      '/runtipi/apps/test/docker-compose.yml': 'test',
+    };
+
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+
+    // Act
+    ensureAppFolder('test', true);
+
+    // Assert
+    const files = fs.readdirSync('/runtipi/apps/test');
+    expect(files).toEqual(['test.yml']);
+  });
+
+  it('Should delete folder if it exists but has no docker-compose.yml file', () => {
+    // Arrange
+    const randomFileName = `${faker.random.word()}.yml`;
+    const mockFiles = {
+      [`/runtipi/repos/repo-id/apps/test`]: [randomFileName],
+      '/runtipi/apps/test': ['test.yml'],
+    };
+
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+
+    // Act
+    ensureAppFolder('test');
+
+    // Assert
+    const files = fs.readdirSync('/runtipi/apps/test');
+    expect(files).toEqual([randomFileName]);
   });
 });

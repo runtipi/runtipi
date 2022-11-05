@@ -30,9 +30,7 @@ afterAll(async () => {
   await teardownConnection(TEST_SUITE);
 });
 
-const createState = (apps: string[]) => {
-  return JSON.stringify({ installed: apps.join(' ') });
-};
+const createState = (apps: string[]) => JSON.stringify({ installed: apps.join(' ') });
 
 describe('No state/apps.json', () => {
   it('Should do nothing and create the update with status SUCCES', async () => {

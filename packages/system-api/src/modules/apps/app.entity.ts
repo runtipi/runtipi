@@ -70,7 +70,7 @@ class App extends BaseEntity {
 
   @Field(() => UpdateInfo, { nullable: true })
   updateInfo(): Promise<UpdateInfo | null> {
-    return getUpdateInfo(this.id);
+    return getUpdateInfo(this.id, this.version);
   }
 }
 

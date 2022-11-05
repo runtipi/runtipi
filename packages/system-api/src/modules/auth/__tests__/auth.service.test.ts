@@ -1,11 +1,11 @@
 import * as argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
+import { faker } from '@faker-js/faker';
+import { DataSource } from 'typeorm';
 import AuthService from '../auth.service';
 import { createUser } from './user.factory';
 import User from '../user.entity';
-import { faker } from '@faker-js/faker';
 import { setupConnection, teardownConnection } from '../../../test/connection';
-import { DataSource } from 'typeorm';
 import { setConfig } from '../../../core/config/TipiConfig';
 import TipiCache from '../../../config/TipiCache';
 

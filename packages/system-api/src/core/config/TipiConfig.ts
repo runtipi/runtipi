@@ -105,7 +105,7 @@ class Config {
     this.config = parsed;
   }
 
-  public setConfig<T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile: boolean = false) {
+  public setConfig<T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile = false) {
     const newConf: z.infer<typeof configSchema> = { ...this.getConfig() };
     newConf[key] = value;
 
@@ -122,7 +122,7 @@ class Config {
   }
 }
 
-export const setConfig = <T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile: boolean = false) => {
+export const setConfig = <T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile = false) => {
   Config.getInstance().setConfig(key, value, writeFile);
 };
 
