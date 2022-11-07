@@ -51,7 +51,6 @@ const main = async () => {
 
     app.use(cors(corsOptions));
     app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
-    app.use(cors());
     app.use('/status', systemController.status);
     app.use(getSessionMiddleware);
 
