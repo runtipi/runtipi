@@ -160,12 +160,12 @@ export const getUpdateInfo = async (id: string, version: number) => {
 
   const repoConfig = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
 
-  if (!repoConfig?.tipi_version || !repoConfig?.version) {
+  if (!repoConfig?.tipi_version) {
     return null;
   }
 
   return {
-    current: version,
+    current: version || 0,
     latest: repoConfig?.tipi_version,
     dockerVersion: repoConfig?.version,
   };

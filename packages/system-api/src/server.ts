@@ -4,7 +4,7 @@ import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from 'ap
 import { ApolloServer } from 'apollo-server-express';
 import { createServer } from 'http';
 import { ZodError } from 'zod';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import { createSchema } from './schema';
 import { ApolloLogs } from './config/logger/apollo.logger';
 import logger from './config/logger/logger';
@@ -33,6 +33,13 @@ const applyCustomConfig = () => {
   }
 };
 
+const corsOptions: CorsOptions = {
+  credentials: false,
+  origin: (_, callback) => {
+    callback(null, true);
+  },
+};
+
 const main = async () => {
   try {
     eventDispatcher.clear();
@@ -41,8 +48,8 @@ const main = async () => {
     const app = express();
     const port = 3001;
 
+    app.use(cors(corsOptions));
     app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
-    app.use(cors());
     app.use('/status', systemController.status);
     app.use(getSessionMiddleware);
 
