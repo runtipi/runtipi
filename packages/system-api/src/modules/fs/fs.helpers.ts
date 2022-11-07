@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 
-export const readJsonFile = (path: string): any => {
+export const readJsonFile = <T>(path: string): T | null => {
   try {
     const rawFile = fs.readFileSync(path).toString();
 
@@ -22,7 +22,7 @@ export const readdirSync = (path: string): string[] => fs.readdirSync(path);
 
 export const fileExists = (path: string): boolean => fs.existsSync(path);
 
-export const writeFile = (path: string, data: any) => fs.writeFileSync(path, data);
+export const writeFile = (path: string, data: string) => fs.writeFileSync(path, data);
 
 export const createFolder = (path: string) => {
   if (!fileExists(path)) {

@@ -112,7 +112,7 @@ class Config {
     this.config = configSchema.parse(newConf);
 
     if (writeFile) {
-      const currentJsonConf = readJsonFile('/runtipi/state/settings.json') || {};
+      const currentJsonConf = readJsonFile<Partial<z.infer<typeof configSchema>>>('/runtipi/state/settings.json') || {};
       currentJsonConf[key] = value;
       const partialConfig = configSchema.partial();
       const parsed = partialConfig.parse(currentJsonConf);

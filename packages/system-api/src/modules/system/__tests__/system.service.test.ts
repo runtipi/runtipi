@@ -21,9 +21,13 @@ describe('Test: systemInfo', () => {
   it('Should throw if system-info.json does not exist', () => {
     try {
       SystemService.systemInfo();
-    } catch (e: any) {
-      expect(e).toBeDefined();
-      expect(e.message).toBe('Error parsing system info');
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e).toBeDefined();
+        expect(e.message).toBe('Error parsing system info');
+      } else {
+        fail('Should throw an error');
+      }
     }
   });
 

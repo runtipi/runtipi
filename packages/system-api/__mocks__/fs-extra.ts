@@ -37,7 +37,7 @@ const readFileSync = (p: string) => mockFiles[p];
 
 const existsSync = (p: string) => mockFiles[p] !== undefined;
 
-const writeFileSync = (p: string, data: any) => {
+const writeFileSync = (p: string, data: string | string[]) => {
   mockFiles[p] = data;
 };
 

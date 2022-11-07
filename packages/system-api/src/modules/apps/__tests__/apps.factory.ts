@@ -56,7 +56,7 @@ const createApp = async (props: IProps) => {
     };
   }
 
-  const MockFiles: any = {};
+  const MockFiles: Record<string, string | string[]> = {};
   MockFiles['/runtipi/.env'] = 'TEST=test';
   MockFiles['/runtipi/repos/repo-id'] = '';
   MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
