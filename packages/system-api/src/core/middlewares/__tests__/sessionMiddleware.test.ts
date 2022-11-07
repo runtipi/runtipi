@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import jwt from 'jsonwebtoken';
+import { Request, Response } from 'express';
 import TipiCache from '../../../config/TipiCache';
 import { getConfig } from '../../config/TipiConfig';
 import getSessionMiddleware from '../sessionMiddleware';
@@ -15,9 +16,9 @@ describe('SessionMiddleware', () => {
       headers: {
         authorization: `Bearer ${token}`,
       },
-    } as any;
+    } as Request;
     const next = jest.fn();
-    const res = {} as any;
+    const res = {} as Response;
 
     // Act
     await getSessionMiddleware(req, res, next);
@@ -41,9 +42,9 @@ describe('SessionMiddleware', () => {
       headers: {
         authorization: `Bearer ${token}`,
       },
-    } as any;
+    } as Request;
     const next = jest.fn();
-    const res = {} as any;
+    const res = {} as Response;
 
     // Act
     await getSessionMiddleware(req, res, next);
@@ -59,9 +60,9 @@ describe('SessionMiddleware', () => {
     // Arrange
     const req = {
       headers: {},
-    } as any;
+    } as Request;
     const next = jest.fn();
-    const res = {} as any;
+    const res = {} as Response;
 
     // Act
     await getSessionMiddleware(req, res, next);

@@ -588,6 +588,6 @@ describe('Update app', () => {
 
     await expect(AppsService.updateApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to update\nstdout: error`);
     const app = await App.findOne({ where: { id: app1.id } });
-    expect(app!.status).toBe(AppStatusEnum.STOPPED);
+    expect(app?.status).toBe(AppStatusEnum.STOPPED);
   });
 });

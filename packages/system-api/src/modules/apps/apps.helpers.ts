@@ -107,9 +107,9 @@ export const getAvailableApps = async (): Promise<string[]> => {
 
   appsDir.forEach((app) => {
     if (fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
+      const configFile = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
 
-      if (configFile.available) {
+      if (configFile?.available) {
         apps.push(app);
       }
     }
@@ -124,15 +124,22 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
     const installed = typeof status !== 'undefined' && status !== AppStatusEnum.MISSING;
 
     if (installed && fileExists(`/runtipi/apps/${id}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
-      configFile.description = readFile(`/runtipi/apps/${id}/metadata/description.md`).toString();
+      const configFile = readJsonFile<AppInfo>(`/runtipi/apps/${id}/config.json`);
+
+      if (configFile) {
+        configFile.description = readFile(`/runtipi/apps/${id}/metadata/description.md`).toString();
+      }
+
       return configFile;
     }
     if (fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
-      configFile.description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/metadata/description.md`);
+      const configFile = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
 
-      if (configFile.available) {
+      if (configFile) {
+        configFile.description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/metadata/description.md`);
+      }
+
+      if (configFile?.available) {
         return configFile;
       }
     }
@@ -151,12 +158,16 @@ export const getUpdateInfo = async (id: string, version: number) => {
     return null;
   }
 
-  const repoConfig: AppInfo = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+  const repoConfig = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+
+  if (!repoConfig?.tipi_version || !repoConfig?.version) {
+    return null;
+  }
 
   return {
     current: version,
-    latest: repoConfig.tipi_version,
-    dockerVersion: repoConfig.version,
+    latest: repoConfig?.tipi_version,
+    dockerVersion: repoConfig?.version,
   };
 };
 

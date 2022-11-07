@@ -81,9 +81,13 @@ describe('checkEnvFile', () => {
     try {
       checkEnvFile(app1.id);
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e).toBeDefined();
-      expect(e.message).toBe('New info needed. App config needs to be updated');
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e).toBeDefined();
+        expect(e.message).toBe('New info needed. App config needs to be updated');
+      } else {
+        fail('Should throw an error');
+      }
     }
   });
 });
@@ -142,9 +146,13 @@ describe('Test: generateEnvFile', () => {
     try {
       generateEnvFile(Object.assign(appEntity1, { config: { TEST_FIELD: undefined } }));
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e).toBeDefined();
-      expect(e.message).toBe('Variable TEST_FIELD is required');
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e).toBeDefined();
+        expect(e.message).toBe('Variable TEST_FIELD is required');
+      } else {
+        fail('Should throw an error');
+      }
     }
   });
 
@@ -152,9 +160,13 @@ describe('Test: generateEnvFile', () => {
     try {
       generateEnvFile(Object.assign(appEntity1, { id: 'not-existing-app' }));
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e).toBeDefined();
-      expect(e.message).toBe('App not-existing-app not found');
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e).toBeDefined();
+        expect(e.message).toBe('App not-existing-app not found');
+      } else {
+        fail('Should throw an error');
+      }
     }
   });
 
@@ -310,9 +322,13 @@ describe('Test: getAppInfo', () => {
     try {
       await getAppInfo(appInfo.id, appEntity.status);
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e.message).toBe(`Error loading app: ${appInfo.id}`);
-      expect(log).toBeCalledWith(`Error loading app: ${appInfo.id}`);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e.message).toBe(`Error loading app: ${appInfo.id}`);
+        expect(log).toBeCalledWith(`Error loading app: ${appInfo.id}`);
+      } else {
+        expect(true).toBe(false);
+      }
     }
 
     spy.mockRestore();
