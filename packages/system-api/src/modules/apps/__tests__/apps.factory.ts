@@ -30,7 +30,6 @@ const createApp = async (props: IProps) => {
         env_variable: 'TEST_FIELD',
       },
     ],
-
     name: faker.random.word(),
     description: faker.random.words(),
     tipi_version: faker.datatype.number({ min: 1, max: 10 }),
