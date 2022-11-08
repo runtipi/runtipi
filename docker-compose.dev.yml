@@ -57,8 +57,6 @@ services:
       tipi-db:
         condition: service_healthy
     container_name: api
-    ports:
-      - 3001:3001
     volumes:
       - ${PWD}/repos:/runtipi/repos:ro
       - ${PWD}/apps:/runtipi/apps
@@ -103,14 +101,8 @@ services:
     depends_on:
       api:
         condition: service_started
-    ports:
-      - 3000:3000
     networks:
       - tipi_main_network
-    environment:
-      INTERNAL_IP: ${INTERNAL_IP}
-      DOMAIN: ${DOMAIN}
-      NGINX_PORT: ${NGINX_PORT-80}
     volumes:
       - ${PWD}/packages/dashboard/src:/dashboard/src
       # - /dashboard/node_modules
