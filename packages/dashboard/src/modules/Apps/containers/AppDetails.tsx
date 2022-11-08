@@ -1,7 +1,6 @@
 import { SlideFade, Flex, Divider, useDisclosure, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { FiExternalLink } from 'react-icons/fi';
-import { useSystemStore } from '../../../state/systemStore';
 import AppActions from '../components/AppActions';
 import InstallModal from '../components/InstallModal';
 import StopModal from '../components/StopModal';
@@ -47,8 +46,6 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
   const [updateConfig] = useUpdateAppConfigMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
 
   const updateAvailable = Number(app?.updateInfo?.current || 0) < Number(app?.updateInfo?.latest);
-
-  const { internalIp } = useSystemStore();
 
   const handleError = (error: unknown) => {
     if (error instanceof Error) {
@@ -139,7 +136,9 @@ const AppDetails: React.FC<IProps> = ({ app, info }) => {
     const protocol = https ? 'https' : 'http';
 
     if (typeof window !== 'undefined') {
-      window.open(`${protocol}://${internalIp}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
+      // Current domain
+      const domain = window.location.hostname;
+      window.open(`${protocol}://${domain}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
     }
   };
 

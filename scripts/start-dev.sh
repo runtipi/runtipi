@@ -14,7 +14,7 @@ source "${BASH_SOURCE%/*}/common.sh"
 ROOT_FOLDER="${PWD}"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 SED_ROOT_FOLDER="$(echo "$ROOT_FOLDER" | sed 's/\//\\\//g')"
-NGINX_PORT=80
+NGINX_PORT=3000
 NGINX_PORT_SSL=443
 DOMAIN=tipi.localhost
 DNS_IP="9.9.9.9" # Default to Quad9 DNS

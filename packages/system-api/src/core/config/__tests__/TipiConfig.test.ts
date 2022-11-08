@@ -48,7 +48,7 @@ describe('Test: setConfig', () => {
     expect(config).toBeDefined();
     expect(config.appsRepoUrl).toBe(randomWord);
 
-    const settingsJson = readJsonFile('/runtipi/state/settings.json');
+    const settingsJson = readJsonFile<any>('/runtipi/state/settings.json');
 
     expect(settingsJson).toBeDefined();
     expect(settingsJson.appsRepoUrl).toBe(randomWord);
