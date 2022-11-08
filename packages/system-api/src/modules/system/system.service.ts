@@ -43,9 +43,8 @@ const getVersion = async (): Promise<{ current: string; latest?: string }> => {
       const { data } = await axios.get('https://api.github.com/repos/meienberger/runtipi/releases/latest');
 
       version = data.name.replace('v', '');
+      await TipiCache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
     }
-
-    await TipiCache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
 
     return { current: getConfig().version, latest: version?.replace('v', '') };
   } catch (e) {
