@@ -1,10 +1,10 @@
-import AppsService from '../apps.service';
 import fs from 'fs-extra';
+import { DataSource } from 'typeorm';
+import AppsService from '../apps.service';
 import { AppInfo, AppStatusEnum, AppSupportedArchitecturesEnum } from '../apps.types';
 import App from '../app.entity';
 import { createApp } from './apps.factory';
 import { setupConnection, teardownConnection } from '../../../test/connection';
-import { DataSource } from 'typeorm';
 import { getEnvMap } from '../apps.helpers';
 import EventDispatcher, { eventDispatcher, EventTypes } from '../../../core/config/EventDispatcher';
 import { setConfig } from '../../../core/config/TipiConfig';
@@ -56,9 +56,9 @@ describe('Install app', () => {
     const app = await App.findOne({ where: { id: app1.id } });
 
     expect(app).toBeDefined();
-    expect(app!.id).toBe(app1.id);
-    expect(app!.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(app!.status).toBe(AppStatusEnum.RUNNING);
+    expect(app?.id).toBe(app1.id);
+    expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
+    expect(app?.status).toBe(AppStatusEnum.RUNNING);
   });
 
   it('Should start app if already installed', async () => {
@@ -147,7 +147,7 @@ describe('Install app', () => {
     const app2 = await createApp({ exposable: true });
     const app3 = await createApp({ exposable: true });
     // @ts-ignore
-    fs.__createMockFiles(Object.assign({}, app2.MockFiles, app3.MockFiles));
+    fs.__createMockFiles({ ...app2.MockFiles, ...app3.MockFiles });
 
     await AppsService.installApp(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
 
@@ -203,8 +203,8 @@ describe('Uninstall app', () => {
 
     // Assert
     expect(app).toBeDefined();
-    expect(app!.id).toBe(app1.id);
-    expect(app!.status).toBe(AppStatusEnum.RUNNING);
+    expect(app?.id).toBe(app1.id);
+    expect(app?.status).toBe(AppStatusEnum.RUNNING);
   });
 
   it('Should correctly remove app from database', async () => {
@@ -244,7 +244,7 @@ describe('Uninstall app', () => {
     // Act & Assert
     await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to uninstall\nstdout: test`);
     const app = await App.findOne({ where: { id: app1.id } });
-    expect(app!.status).toBe(AppStatusEnum.STOPPED);
+    expect(app?.status).toBe(AppStatusEnum.STOPPED);
   });
 });
 
@@ -300,7 +300,7 @@ describe('Start app', () => {
     // Act & Assert
     await expect(AppsService.startApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to start\nstdout: test`);
     const app = await App.findOne({ where: { id: app1.id } });
-    expect(app!.status).toBe(AppStatusEnum.STOPPED);
+    expect(app?.status).toBe(AppStatusEnum.STOPPED);
   });
 });
 
@@ -333,7 +333,7 @@ describe('Stop app', () => {
     // Act & Assert
     await expect(AppsService.stopApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to stop\nstdout: test`);
     const app = await App.findOne({ where: { id: app1.id } });
-    expect(app!.status).toBe(AppStatusEnum.RUNNING);
+    expect(app?.status).toBe(AppStatusEnum.RUNNING);
   });
 });
 
@@ -378,17 +378,13 @@ describe('Update app config', () => {
     expect(envMap.get('RANDOM_FIELD')).toBe('test');
   });
 
-  it('Should throw if app is exposed and domain is not provided', () => {
-    return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('Domain is required');
-  });
+  it('Should throw if app is exposed and domain is not provided', () => expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('Domain is required'));
 
-  it('Should throw if app is exposed and domain is not valid', () => {
-    return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('Domain test is not valid');
-  });
+  it('Should throw if app is exposed and domain is not valid', () =>
+    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('Domain test is not valid'));
 
-  it('Should throw if app is exposed and config does not allow it', () => {
-    return expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`App ${app1.id} is not exposable`);
-  });
+  it('Should throw if app is exposed and config does not allow it', () =>
+    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`App ${app1.id} is not exposable`));
 
   it('Should throw if app is exposed and domain is already used', async () => {
     const app2 = await createApp({ exposable: true, installed: true });
@@ -592,6 +588,6 @@ describe('Update app', () => {
 
     await expect(AppsService.updateApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to update\nstdout: error`);
     const app = await App.findOne({ where: { id: app1.id } });
-    expect(app!.status).toBe(AppStatusEnum.STOPPED);
+    expect(app?.status).toBe(AppStatusEnum.STOPPED);
   });
 });

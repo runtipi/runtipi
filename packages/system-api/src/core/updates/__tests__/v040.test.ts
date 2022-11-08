@@ -30,9 +30,7 @@ afterAll(async () => {
   await teardownConnection(TEST_SUITE);
 });
 
-const createState = (apps: string[]) => {
-  return JSON.stringify({ installed: apps.join(' ') });
-};
+const createState = (apps: string[]) => JSON.stringify({ installed: apps.join(' ') });
 
 describe('No state/apps.json', () => {
   it('Should do nothing and create the update with status SUCCES', async () => {
@@ -41,7 +39,7 @@ describe('No state/apps.json', () => {
     const update = await Update.findOne({ where: { name: 'v040' } });
 
     expect(update).toBeDefined();
-    expect(update!.status).toBe(UpdateStatusEnum.SUCCESS);
+    expect(update?.status).toBe(UpdateStatusEnum.SUCCESS);
 
     const apps = await App.find();
 

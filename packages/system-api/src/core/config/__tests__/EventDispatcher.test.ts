@@ -5,6 +5,7 @@ const WATCH_FILE = '/runtipi/state/events';
 
 jest.mock('fs-extra');
 
+// eslint-disable-next-line no-promise-executor-return
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 beforeEach(() => {
@@ -29,7 +30,7 @@ describe('EventDispatcher - dispatchEvent', () => {
     eventDispatcher.dispatchEvent(EventTypes.APP, ['--help']);
 
     // @ts-ignore
-    const queue = eventDispatcher.queue;
+    const { queue } = eventDispatcher;
 
     expect(queue.length).toBe(2);
   });
@@ -39,12 +40,12 @@ describe('EventDispatcher - dispatchEvent', () => {
     eventDispatcher.dispatchEvent(EventTypes.UPDATE, ['--help']);
 
     // @ts-ignore
-    const queue = eventDispatcher.queue;
+    const { queue } = eventDispatcher;
 
     await wait(1050);
 
     // @ts-ignore
-    const lock = eventDispatcher.lock;
+    const { lock } = eventDispatcher;
 
     expect(queue.length).toBe(2);
     expect(lock).toBeDefined();
@@ -59,7 +60,7 @@ describe('EventDispatcher - dispatchEvent', () => {
     await wait(1050);
 
     // @ts-ignore
-    const queue = eventDispatcher.queue;
+    const { queue } = eventDispatcher;
 
     expect(queue.length).toBe(0);
   });
@@ -72,7 +73,7 @@ describe('EventDispatcher - dispatchEvent', () => {
     await wait(1050);
 
     // @ts-ignore
-    const queue = eventDispatcher.queue;
+    const { queue } = eventDispatcher;
 
     expect(queue.length).toBe(0);
   });
@@ -161,7 +162,7 @@ describe('EventDispatcher - clearEvent', () => {
     eventDispatcher.clearEvent(event);
 
     // @ts-ignore
-    const queue = eventDispatcher.queue;
+    const { queue } = eventDispatcher;
 
     expect(queue.length).toBe(0);
   });
@@ -174,7 +175,7 @@ describe('EventDispatcher - pollQueue', () => {
     // @ts-ignore
     const id = eventDispatcher.pollQueue();
     // @ts-ignore
-    const interval = eventDispatcher.interval;
+    const { interval } = eventDispatcher;
 
     expect(interval).toBe(123);
     expect(id).toBe(123);
@@ -192,7 +193,7 @@ describe('EventDispatcher - collectLockStatusAndClean', () => {
     eventDispatcher.collectLockStatusAndClean();
 
     // @ts-ignore
-    const lock = eventDispatcher.lock;
+    const { lock } = eventDispatcher;
 
     expect(lock).toBeNull();
   });

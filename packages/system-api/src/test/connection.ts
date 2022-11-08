@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
+import pg from 'pg';
 import App from '../modules/apps/app.entity';
 import User from '../modules/auth/user.entity';
-import pg from 'pg';
 import Update from '../modules/system/update.entity';
 
 const HOST = 'localhost';

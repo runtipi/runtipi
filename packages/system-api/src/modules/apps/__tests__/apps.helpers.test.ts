@@ -4,22 +4,12 @@ import { DataSource } from 'typeorm';
 import logger from '../../../config/logger/logger';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import App from '../app.entity';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from '../apps.helpers';
+import { checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from '../apps.helpers';
 import { AppInfo } from '../apps.types';
 import { createApp } from './apps.factory';
 
 jest.mock('fs-extra');
 jest.mock('child_process');
-jest.mock('internal-ip');
-
-jest.mock('tcp-port-used', () => ({
-  check: (port: number) => {
-    if (port === 53) {
-      return true;
-    }
-    return false;
-  },
-}));
 
 let db: DataSource | null = null;
 const TEST_SUITE = 'appshelpers';
@@ -50,15 +40,6 @@ describe('checkAppRequirements', () => {
 
   it('Should throw an error if app does not exist', async () => {
     await expect(checkAppRequirements('not-existing-app')).rejects.toThrow('App not-existing-app not found');
-  });
-
-  it('Should return false if a required port is in use', async () => {
-    const { appInfo, MockFiles } = await createApp({ requiredPort: 53 });
-    // @ts-ignore
-    fs.__createMockFiles(MockFiles);
-
-    const ivValid = await checkAppRequirements(appInfo.id);
-    expect(ivValid).toBe(false);
   });
 });
 
@@ -100,9 +81,13 @@ describe('checkEnvFile', () => {
     try {
       checkEnvFile(app1.id);
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e).toBeDefined();
-      expect(e.message).toBe('New info needed. App config needs to be updated');
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e).toBeDefined();
+        expect(e.message).toBe('New info needed. App config needs to be updated');
+      } else {
+        fail('Should throw an error');
+      }
     }
   });
 });
@@ -161,9 +146,13 @@ describe('Test: generateEnvFile', () => {
     try {
       generateEnvFile(Object.assign(appEntity1, { config: { TEST_FIELD: undefined } }));
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e).toBeDefined();
-      expect(e.message).toBe('Variable TEST_FIELD is required');
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e).toBeDefined();
+        expect(e.message).toBe('Variable TEST_FIELD is required');
+      } else {
+        fail('Should throw an error');
+      }
     }
   });
 
@@ -171,9 +160,13 @@ describe('Test: generateEnvFile', () => {
     try {
       generateEnvFile(Object.assign(appEntity1, { id: 'not-existing-app' }));
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e).toBeDefined();
-      expect(e.message).toBe('App not-existing-app not found');
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e).toBeDefined();
+        expect(e.message).toBe('App not-existing-app not found');
+      } else {
+        fail('Should throw an error');
+      }
     }
   });
 
@@ -329,9 +322,13 @@ describe('Test: getAppInfo', () => {
     try {
       await getAppInfo(appInfo.id, appEntity.status);
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e.message).toBe(`Error loading app: ${appInfo.id}`);
-      expect(log).toBeCalledWith(`Error loading app: ${appInfo.id}`);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e.message).toBe(`Error loading app: ${appInfo.id}`);
+        expect(log).toBeCalledWith(`Error loading app: ${appInfo.id}`);
+      } else {
+        expect(true).toBe(false);
+      }
     }
 
     spy.mockRestore();
@@ -355,15 +352,89 @@ describe('getUpdateInfo', () => {
   });
 
   it('Should return update info', async () => {
-    const updateInfo = await getUpdateInfo(app1.id);
+    const updateInfo = await getUpdateInfo(app1.id, 1);
 
     expect(updateInfo?.latest).toBe(app1.tipi_version);
     expect(updateInfo?.current).toBe(1);
   });
 
   it('Should return null if app is not installed', async () => {
-    const updateInfo = await getUpdateInfo(faker.random.word());
+    const updateInfo = await getUpdateInfo(faker.random.word(), 1);
 
     expect(updateInfo).toBeNull();
+  });
+});
+
+describe('Test: ensureAppFolder', () => {
+  beforeEach(() => {
+    const mockFiles = {
+      [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
+    };
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+  });
+
+  it('should copy the folder from repo', () => {
+    // Act
+    ensureAppFolder('test');
+
+    // Assert
+    const files = fs.readdirSync('/runtipi/apps/test');
+    expect(files).toEqual(['test.yml']);
+  });
+
+  it('should not copy the folder if it already exists', () => {
+    const mockFiles = {
+      [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
+      '/runtipi/apps/test': ['docker-compose.yml'],
+      '/runtipi/apps/test/docker-compose.yml': 'test',
+    };
+
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+
+    // Act
+    ensureAppFolder('test');
+
+    // Assert
+    const files = fs.readdirSync('/runtipi/apps/test');
+    expect(files).toEqual(['docker-compose.yml']);
+  });
+
+  it('Should overwrite the folder if clean up is true', () => {
+    const mockFiles = {
+      [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
+      '/runtipi/apps/test': ['docker-compose.yml'],
+      '/runtipi/apps/test/docker-compose.yml': 'test',
+    };
+
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+
+    // Act
+    ensureAppFolder('test', true);
+
+    // Assert
+    const files = fs.readdirSync('/runtipi/apps/test');
+    expect(files).toEqual(['test.yml']);
+  });
+
+  it('Should delete folder if it exists but has no docker-compose.yml file', () => {
+    // Arrange
+    const randomFileName = `${faker.random.word()}.yml`;
+    const mockFiles = {
+      [`/runtipi/repos/repo-id/apps/test`]: [randomFileName],
+      '/runtipi/apps/test': ['test.yml'],
+    };
+
+    // @ts-ignore
+    fs.__createMockFiles(mockFiles);
+
+    // Act
+    ensureAppFolder('test');
+
+    // Assert
+    const files = fs.readdirSync('/runtipi/apps/test');
+    expect(files).toEqual([randomFileName]);
   });
 });

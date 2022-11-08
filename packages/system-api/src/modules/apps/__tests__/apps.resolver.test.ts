@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
-import { setupConnection, teardownConnection } from '../../../test/connection';
 import fs from 'fs-extra';
+import { faker } from '@faker-js/faker';
+import { setupConnection, teardownConnection } from '../../../test/connection';
 import { gcall } from '../../../test/gcall';
 import App from '../app.entity';
 import { getAppQuery, InstalledAppsQuery, listAppInfosQuery } from '../../../test/queries';
@@ -9,13 +10,10 @@ import { AppInfo, AppStatusEnum, ListAppsResonse } from '../apps.types';
 import { createUser } from '../../auth/__tests__/user.factory';
 import User from '../../auth/user.entity';
 import { installAppMutation, startAppMutation, stopAppMutation, uninstallAppMutation, updateAppConfigMutation, updateAppMutation } from '../../../test/mutations';
-import { faker } from '@faker-js/faker';
 import EventDispatcher from '../../../core/config/EventDispatcher';
 
 jest.mock('fs');
 jest.mock('child_process');
-jest.mock('internal-ip');
-jest.mock('tcp-port-used');
 
 type TApp = App & {
   info: AppInfo;
@@ -218,23 +216,6 @@ describe('InstallApp', () => {
     });
 
     expect(errors?.[0].message).toBe(`Variable ${app1.form_fields?.[0].env_variable} is required`);
-    expect(data?.installApp).toBeUndefined();
-  });
-
-  it('Should throw an error if the requirements are not met', async () => {
-    const { appInfo, MockFiles } = await createApp({ requiredPort: 400 });
-    // @ts-ignore
-    fs.__createMockFiles(MockFiles);
-
-    const user = await createUser();
-
-    const { data, errors } = await gcall<{ installApp: TApp }>({
-      source: installAppMutation,
-      userId: user.id,
-      variableValues: { input: { id: appInfo.id, form: { TEST_FIELD: 'hello' }, exposed: false, domain: '' } },
-    });
-
-    expect(errors?.[0].message).toBe(`App ${appInfo.id} requirements not met`);
     expect(data?.installApp).toBeUndefined();
   });
 });

@@ -30,7 +30,6 @@ const createApp = async (props: IProps) => {
         env_variable: 'TEST_FIELD',
       },
     ],
-
     name: faker.random.word(),
     description: faker.random.words(),
     tipi_version: faker.datatype.number({ min: 1, max: 10 }),
@@ -56,7 +55,7 @@ const createApp = async (props: IProps) => {
     };
   }
 
-  let MockFiles: any = {};
+  const MockFiles: Record<string, string | string[]> = {};
   MockFiles['/runtipi/.env'] = 'TEST=test';
   MockFiles['/runtipi/repos/repo-id'] = '';
   MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
@@ -71,6 +70,7 @@ const createApp = async (props: IProps) => {
       status,
       exposed,
       domain,
+      version: 1,
     }).save();
 
     MockFiles[`/app/storage/app-data/${appInfo.id}`] = '';

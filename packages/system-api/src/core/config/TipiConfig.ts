@@ -105,14 +105,14 @@ class Config {
     this.config = parsed;
   }
 
-  public setConfig<T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile: boolean = false) {
+  public setConfig<T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile = false) {
     const newConf: z.infer<typeof configSchema> = { ...this.getConfig() };
     newConf[key] = value;
 
     this.config = configSchema.parse(newConf);
 
     if (writeFile) {
-      const currentJsonConf = readJsonFile('/runtipi/state/settings.json') || {};
+      const currentJsonConf = readJsonFile<Partial<z.infer<typeof configSchema>>>('/runtipi/state/settings.json') || {};
       currentJsonConf[key] = value;
       const partialConfig = configSchema.partial();
       const parsed = partialConfig.parse(currentJsonConf);
@@ -122,7 +122,7 @@ class Config {
   }
 }
 
-export const setConfig = <T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile: boolean = false) => {
+export const setConfig = <T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile = false) => {
   Config.getInstance().setConfig(key, value, writeFile);
 };
 

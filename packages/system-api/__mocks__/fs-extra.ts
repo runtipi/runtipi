@@ -1,4 +1,5 @@
 import path from 'path';
+
 const fs: {
   __createMockFiles: typeof createMockFiles;
   __resetAllMocks: typeof resetAllMocks;
@@ -20,7 +21,7 @@ const createMockFiles = (newMockFiles: Record<string, string>) => {
   mockFiles = Object.create(null);
 
   // Create folder tree
-  for (const file in newMockFiles) {
+  Object.keys(newMockFiles).forEach((file) => {
     const dir = path.dirname(file);
 
     if (!mockFiles[dir]) {
@@ -29,18 +30,14 @@ const createMockFiles = (newMockFiles: Record<string, string>) => {
 
     mockFiles[dir].push(path.basename(file));
     mockFiles[file] = newMockFiles[file];
-  }
+  });
 };
 
-const readFileSync = (p: string) => {
-  return mockFiles[p];
-};
+const readFileSync = (p: string) => mockFiles[p];
 
-const existsSync = (p: string) => {
-  return mockFiles[p] !== undefined;
-};
+const existsSync = (p: string) => mockFiles[p] !== undefined;
 
-const writeFileSync = (p: string, data: any) => {
+const writeFileSync = (p: string, data: string | string[]) => {
   mockFiles[p] = data;
 };
 
@@ -85,7 +82,7 @@ const copySync = (source: string, destination: string) => {
 
   if (mockFiles[source] instanceof Array) {
     mockFiles[source].forEach((file: string) => {
-      mockFiles[destination + '/' + file] = mockFiles[source + '/' + file];
+      mockFiles[`${destination}/${file}`] = mockFiles[`${source}/${file}`];
     });
   }
 };
@@ -120,4 +117,5 @@ fs.createFileSync = createFileSync;
 fs.__createMockFiles = createMockFiles;
 fs.__resetAllMocks = resetAllMocks;
 
-module.exports = fs;
+export default fs;
+// module.exports = fs;

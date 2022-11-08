@@ -1,6 +1,6 @@
 module.exports = {
-  env: { node: true, jest: true },
-  extends: ['airbnb-typescript', 'eslint:recommended', 'plugin:import/typescript'],
+  plugins: ['@typescript-eslint', 'import', 'react'],
+  extends: ['airbnb-base', 'airbnb-typescript/base', 'eslint:recommended', 'plugin:import/typescript', 'plugin:@typescript-eslint/recommended', 'prettier'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json',
@@ -8,18 +8,19 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'import', 'react'],
   rules: {
-    'arrow-body-style': 0,
-    'no-restricted-exports': 0,
     'max-len': [1, { code: 200 }],
     'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never', ts: 'never', tsx: 'never' }],
-    indent: 'off',
-    '@typescript-eslint/indent': 0,
     'no-unused-vars': [1, { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-unused-vars': [1, { argsIgnorePattern: '^_' }],
+    'max-classes-per-file': 0,
+    'class-methods-use-this': 0,
+    'import/prefer-default-export': 0,
+    'no-underscore-dangle': 0,
+    '@typescript-eslint/ban-ts-comment': 0,
   },
   globals: {
     NodeJS: true,
   },
+  env: { node: true, jest: true },
 };

@@ -1,36 +1,23 @@
-import portUsed from 'tcp-port-used';
-import { fileExists, getSeed, readdirSync, readFile, readJsonFile, writeFile } from '../fs/fs.helpers';
-import InternalIp from 'internal-ip';
 import crypto from 'crypto';
+import fs from 'fs-extra';
+import { deleteFolder, fileExists, getSeed, readdirSync, readFile, readJsonFile, writeFile } from '../fs/fs.helpers';
 import { AppInfo, AppStatusEnum } from './apps.types';
 import logger from '../../config/logger/logger';
-import App from './app.entity';
 import { getConfig } from '../../core/config/TipiConfig';
-import fs from 'fs-extra';
+import { AppEntityType } from './app.types';
 
 export const checkAppRequirements = async (appName: string) => {
-  let valid = true;
-
   const configFile: AppInfo | null = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appName}/config.json`);
 
   if (!configFile) {
     throw new Error(`App ${appName} not found`);
   }
 
-  if (configFile?.requirements?.ports) {
-    for (const port of configFile.requirements.ports) {
-      const ip = await InternalIp.v4();
-      const used = await portUsed.check(port, ip);
-
-      if (used) valid = false;
-    }
-  }
-
   if (configFile?.supported_architectures && !configFile.supported_architectures.includes(getConfig().architecture)) {
     throw new Error(`App ${appName} is not supported on this architecture`);
   }
 
-  return valid;
+  return true;
 };
 
 export const getEnvMap = (appName: string): Map<string, string> => {
@@ -66,7 +53,7 @@ const getEntropy = (name: string, length: number) => {
   return hash.digest('hex').substring(0, length);
 };
 
-export const generateEnvFile = (app: App) => {
+export const generateEnvFile = (app: AppEntityType) => {
   const configFile: AppInfo | null = readJsonFile(`/runtipi/apps/${app.id}/config.json`);
 
   if (!configFile) {
@@ -120,9 +107,9 @@ export const getAvailableApps = async (): Promise<string[]> => {
 
   appsDir.forEach((app) => {
     if (fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
+      const configFile = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
 
-      if (configFile.available) {
+      if (configFile?.available) {
         apps.push(app);
       }
     }
@@ -137,14 +124,22 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
     const installed = typeof status !== 'undefined' && status !== AppStatusEnum.MISSING;
 
     if (installed && fileExists(`/runtipi/apps/${id}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
-      configFile.description = readFile(`/runtipi/apps/${id}/metadata/description.md`).toString();
-      return configFile;
-    } else if (fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`)) {
-      const configFile: AppInfo = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
-      configFile.description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/metadata/description.md`);
+      const configFile = readJsonFile<AppInfo>(`/runtipi/apps/${id}/config.json`);
 
-      if (configFile.available) {
+      if (configFile) {
+        configFile.description = readFile(`/runtipi/apps/${id}/metadata/description.md`).toString();
+      }
+
+      return configFile;
+    }
+    if (fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`)) {
+      const configFile = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+
+      if (configFile) {
+        configFile.description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/metadata/description.md`);
+      }
+
+      if (configFile?.available) {
         return configFile;
       }
     }
@@ -156,20 +151,36 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
   }
 };
 
-export const getUpdateInfo = async (id: string) => {
-  const app = await App.findOne({ where: { id } });
-
+export const getUpdateInfo = async (id: string, version: number) => {
   const doesFileExist = fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}`);
 
-  if (!app || !doesFileExist) {
+  if (!doesFileExist) {
     return null;
   }
 
-  const repoConfig: AppInfo = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+  const repoConfig = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+
+  if (!repoConfig?.tipi_version) {
+    return null;
+  }
 
   return {
-    current: app.version,
-    latest: repoConfig.tipi_version,
-    dockerVersion: repoConfig.version,
+    current: version || 0,
+    latest: repoConfig?.tipi_version,
+    dockerVersion: repoConfig?.version,
   };
+};
+
+export const ensureAppFolder = (appName: string, cleanup = false) => {
+  if (cleanup && fileExists(`/runtipi/apps/${appName}`)) {
+    deleteFolder(`/runtipi/apps/${appName}`);
+  }
+
+  if (!fileExists(`/runtipi/apps/${appName}/docker-compose.yml`)) {
+    if (fileExists(`/runtipi/apps/${appName}`)) {
+      deleteFolder(`/runtipi/apps/${appName}`);
+    }
+    // Copy from apps repo
+    fs.copySync(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appName}`, `/runtipi/apps/${appName}`);
+  }
 };

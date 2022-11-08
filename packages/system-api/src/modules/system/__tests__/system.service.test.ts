@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import semver from 'semver';
 import axios from 'axios';
-import SystemService from '../system.service';
 import { faker } from '@faker-js/faker';
+import SystemService from '../system.service';
 import TipiCache from '../../../config/TipiCache';
 import { setConfig } from '../../../core/config/TipiConfig';
 import logger from '../../../config/logger/logger';
@@ -21,9 +21,13 @@ describe('Test: systemInfo', () => {
   it('Should throw if system-info.json does not exist', () => {
     try {
       SystemService.systemInfo();
-    } catch (e: any) {
-      expect(e).toBeDefined();
-      expect(e.message).toBe('Error parsing system info');
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e).toBeDefined();
+        expect(e.message).toBe('Error parsing system info');
+      } else {
+        fail('Should throw an error');
+      }
     }
   });
 

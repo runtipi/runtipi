@@ -4,6 +4,6 @@ declare namespace Express {
       userId?: number;
       id?: string;
     };
-    [key: string]: any;
+    [key: string]: unknown;
   }
 }

@@ -1,6 +1,6 @@
-import User from '../user.entity';
 import * as argon2 from 'argon2';
 import { faker } from '@faker-js/faker';
+import User from '../user.entity';
 
 const createUser = async (email?: string) => {
   const hash = await argon2.hash('password');
