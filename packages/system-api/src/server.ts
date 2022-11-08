@@ -19,6 +19,7 @@ import startJobs from './core/jobs/jobs';
 import { applyJsonConfig, getConfig, setConfig } from './core/config/TipiConfig';
 import systemController from './modules/system/system.controller';
 import { eventDispatcher, EventTypes } from './core/config/EventDispatcher';
+import TipiCache from './config/TipiCache';
 
 const applyCustomConfig = () => {
   try {

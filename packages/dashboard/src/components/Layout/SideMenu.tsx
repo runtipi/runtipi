@@ -11,6 +11,7 @@ import { IconType } from 'react-icons';
 import { useLogoutMutation, useVersionQuery } from '../../generated/graphql';
 import { getUrl } from '../../core/helpers/url-helpers';
 import { BsHeart } from 'react-icons/bs';
+import semver from 'semver';
 
 const SideMenu: React.FC = () => {
   const router = useRouter();
@@ -19,7 +20,8 @@ const SideMenu: React.FC = () => {
   const versionQuery = useVersionQuery();
   const path = router.pathname.split('/')[1];
 
-  const isLatest = versionQuery.data?.version.latest === versionQuery.data?.version.current;
+  const defaultVersion = '0.0.0';
+  const isLatest = semver.gte(versionQuery.data?.version.current || defaultVersion, versionQuery.data?.version.latest || defaultVersion);
 
   const renderMenuItem = (title: string, name: string, Icon: IconType) => {
     const selected = path === name;
