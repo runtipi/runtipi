@@ -29,11 +29,12 @@ export default function useCachedResources(): IReturnProps {
   useEffect(() => {
     const hostname = window.location.hostname;
     const port = window.location.port;
+    const protocol = window.location.protocol;
 
     if (!port) {
-      setBaseUrl(`http://${hostname}/api`);
+      setBaseUrl(`${protocol}://${hostname}/api`);
     } else {
-      setBaseUrl(`http://${hostname}:${port}/api`);
+      setBaseUrl(`${protocol}//${hostname}:${port}/api`);
     }
   }, [setBaseUrl]);
 
