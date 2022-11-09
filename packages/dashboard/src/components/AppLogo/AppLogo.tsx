@@ -1,9 +1,7 @@
 import React from 'react';
-import { useSystemStore } from '../../state/systemStore';
 
 const AppLogo: React.FC<{ id: string; size?: number; className?: string; alt?: string }> = ({ id, size = 80, className = '', alt = '' }) => {
-  const { baseUrl } = useSystemStore();
-  const logoUrl = `${baseUrl}/apps/${id}/metadata/logo.jpg`;
+  const logoUrl = `/api/apps/${id}/metadata/logo.jpg`;
 
   return (
     <div aria-label={alt} className={`drop-shadow ${className}`} style={{ width: size, height: size }}>
