@@ -18,7 +18,7 @@ const Settings: NextPage = () => {
   const [logout] = useLogoutMutation({ refetchQueries: ['Me'] });
 
   const defaultVersion = '0.0.0';
-  const isLatest = semver.gte(data?.version.latest || defaultVersion, data?.version.current || defaultVersion);
+  const isLatest = semver.gte(data?.version.current || defaultVersion, data?.version.latest || defaultVersion);
 
   const handleError = (error: unknown) => {
     if (error instanceof Error) {

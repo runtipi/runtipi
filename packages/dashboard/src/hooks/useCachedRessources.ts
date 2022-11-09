@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ApolloClient } from '@apollo/client';
 import { createApolloClient } from '../core/apollo/client';
-import { useSystemStore } from '../state/systemStore';
 
 interface IReturnProps {
   client?: ApolloClient<unknown>;
@@ -9,13 +8,12 @@ interface IReturnProps {
 }
 
 export default function useCachedResources(): IReturnProps {
-  const { baseUrl, setBaseUrl } = useSystemStore();
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
 
-  async function loadResourcesAndDataAsync(url: string) {
+  async function loadResourcesAndDataAsync() {
     try {
-      const restoredClient = await createApolloClient(url);
+      const restoredClient = await createApolloClient();
 
       setClient(restoredClient);
     } catch (error) {
@@ -27,21 +25,8 @@ export default function useCachedResources(): IReturnProps {
   }
 
   useEffect(() => {
-    const hostname = window.location.hostname;
-    const port = window.location.port;
-
-    if (!port) {
-      setBaseUrl(`http://${hostname}/api`);
-    } else {
-      setBaseUrl(`http://${hostname}:${port}/api`);
-    }
-  }, [setBaseUrl]);
-
-  useEffect(() => {
-    if (baseUrl) {
-      loadResourcesAndDataAsync(baseUrl);
-    }
-  }, [baseUrl]);
+    loadResourcesAndDataAsync();
+  }, []);
 
   return { client, isLoadingComplete };
 }

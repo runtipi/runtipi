@@ -173,6 +173,8 @@ sudo rm -rf runtipi
 
 ## 📚 Documentation
 
+For a detailed guide on how to install Tipi. This amazing article by @kycfree1 [Running a Home Server with Tipi](https://kyc3.life/running-a-home-server-with-tipi/)
+
 You can find more documentation and tutorials / FAQ in the [Wiki](https://github.com/meienberger/runtipi/wiki).
 
 ## ❤️ Contributing
