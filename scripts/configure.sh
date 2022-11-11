@@ -146,7 +146,7 @@ fi
 function check_dependency_and_install() {
   local dependency="${1}"
 
-  if ! command -v fswatch >/dev/null; then
+  if ! command -v "${dependency}" >/dev/null; then
     echo "Installing ${dependency}"
     install_generic "${dependency}" "${OS}"
     install_result=$?
