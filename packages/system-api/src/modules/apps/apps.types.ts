@@ -76,6 +76,9 @@ class FormField {
   @Field(() => String, { nullable: true })
   hint?: string;
 
+  @Field(() => String, { nullable: true })
+  placeholder?: string;
+
   @Field(() => Boolean, { nullable: true })
   required?: boolean;
 
