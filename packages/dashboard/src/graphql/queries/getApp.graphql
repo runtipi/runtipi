@@ -33,6 +33,7 @@ query GetApp($appId: String!) {
         max
         min
         hint
+        placeholder
         required
         env_variable
       }

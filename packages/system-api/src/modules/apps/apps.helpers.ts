@@ -10,6 +10,7 @@ import { AppEntityType } from './app.types';
 const formFieldSchema = z.object({
   type: z.nativeEnum(FieldTypes),
   label: z.string(),
+  placeholder: z.string().optional(),
   max: z.number().optional(),
   min: z.number().optional(),
   hint: z.string().optional(),
