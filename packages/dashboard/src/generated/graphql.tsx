@@ -129,6 +129,7 @@ export type FormField = {
   label: Scalars['String'];
   max?: Maybe<Scalars['Float']>;
   min?: Maybe<Scalars['Float']>;
+  placeholder?: Maybe<Scalars['String']>;
   required?: Maybe<Scalars['Boolean']>;
   type: FieldTypesEnum;
 };
@@ -339,6 +340,7 @@ export type GetAppQuery = {
         max?: number | null;
         min?: number | null;
         hint?: string | null;
+        placeholder?: string | null;
         required?: boolean | null;
         env_variable: string;
       }>;
@@ -814,6 +816,7 @@ export const GetAppDocument = gql`
           max
           min
           hint
+          placeholder
           required
           env_variable
         }

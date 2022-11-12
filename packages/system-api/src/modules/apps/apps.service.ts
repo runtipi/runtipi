@@ -116,7 +116,7 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
     // Create app folder
     createFolder(`/app/storage/app-data/${id}`);
 
-    const appInfo = await readJsonFile(`/runtipi/apps/${id}/config.json`);
+    const appInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
     const parsedAppInfo = appInfoSchema.safeParse(appInfo);
 
     if (!parsedAppInfo.success) {
@@ -205,7 +205,7 @@ const updateAppConfig = async (id: string, form: Record<string, string>, exposed
     throw new Error(`App ${id} not found`);
   }
 
-  const appInfo = await readJsonFile(`/runtipi/apps/${id}/config.json`);
+  const appInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
   const parsedAppInfo = appInfoSchema.safeParse(appInfo);
 
   if (!parsedAppInfo.success) {
@@ -331,7 +331,7 @@ const updateApp = async (id: string) => {
   const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['update', id]);
 
   if (success) {
-    const appInfo = await readJsonFile(`/runtipi/apps/${id}/config.json`);
+    const appInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
     const parsedAppInfo = appInfoSchema.parse(appInfo);
 
     await App.update({ id }, { status: AppStatusEnum.RUNNING, version: parsedAppInfo.tipi_version });

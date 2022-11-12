@@ -63,7 +63,7 @@ export const updateV040 = async (): Promise<void> => {
 
     // Migrate apps
     if (fileExists('/runtipi/state/apps.json')) {
-      const state = await readJsonFile('/runtipi/state/apps.json');
+      const state = readJsonFile('/runtipi/state/apps.json');
       const parsedState = appStateSchema.safeParse(state);
 
       if (parsedState.success) {
@@ -75,7 +75,7 @@ export const updateV040 = async (): Promise<void> => {
 
     // Migrate users
     if (fileExists('/state/users.json')) {
-      const state = await readJsonFile('/runtipi/state/users.json');
+      const state = readJsonFile('/runtipi/state/users.json');
       const parsedState = userStateSchema.safeParse(state);
 
       if (parsedState.success) {
