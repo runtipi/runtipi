@@ -5,8 +5,8 @@ import logger from '../../../config/logger/logger';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import App from '../app.entity';
 import { checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from '../apps.helpers';
-import { AppInfo } from '../apps.types';
-import { createApp } from './apps.factory';
+import { AppCategoriesEnum, AppInfo } from '../apps.types';
+import { createApp, createAppConfig } from './apps.factory';
 
 jest.mock('fs-extra');
 jest.mock('child_process');
@@ -39,7 +39,7 @@ describe('checkAppRequirements', () => {
   });
 
   it('Should throw an error if app does not exist', async () => {
-    await expect(checkAppRequirements('not-existing-app')).rejects.toThrow('App not-existing-app not found');
+    await expect(checkAppRequirements('not-existing-app')).rejects.toThrow('App not-existing-app has invalid config.json file');
   });
 });
 
@@ -163,7 +163,7 @@ describe('Test: generateEnvFile', () => {
     } catch (e: unknown) {
       if (e instanceof Error) {
         expect(e).toBeDefined();
-        expect(e.message).toBe('App not-existing-app not found');
+        expect(e.message).toBe('App not-existing-app has invalid config.json file');
       } else {
         fail('Should throw an error');
       }
@@ -257,9 +257,7 @@ describe('Test: getAppInfo', () => {
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    const newConfig = {
-      id: faker.random.alphaNumeric(32),
-    };
+    const newConfig = createAppConfig();
 
     fs.writeFileSync(`/runtipi/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
 
@@ -273,10 +271,7 @@ describe('Test: getAppInfo', () => {
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
 
-    const newConfig = {
-      id: faker.random.alphaNumeric(32),
-      available: true,
-    };
+    const newConfig = createAppConfig();
 
     fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
 

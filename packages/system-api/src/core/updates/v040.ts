@@ -1,12 +1,15 @@
+import { z } from 'zod';
 import logger from '../../config/logger/logger';
 import App from '../../modules/apps/app.entity';
-import { AppInfo, AppStatusEnum } from '../../modules/apps/apps.types';
+import { appInfoSchema } from '../../modules/apps/apps.helpers';
+import { AppStatusEnum } from '../../modules/apps/apps.types';
 import User from '../../modules/auth/user.entity';
 import { deleteFolder, fileExists, readFile, readJsonFile } from '../../modules/fs/fs.helpers';
 import Update, { UpdateStatusEnum } from '../../modules/system/update.entity';
 import { getConfig } from '../config/TipiConfig';
 
-type AppsState = { installed: string };
+const appStateSchema = z.object({ installed: z.string().optional().default('') });
+const userStateSchema = z.object({ email: z.string(), password: z.string() }).array();
 
 const UPDATE_NAME = 'v040';
 
@@ -25,17 +28,21 @@ const migrateApp = async (appId: string): Promise<void> => {
 
     const form: Record<string, string> = {};
 
-    const configFile: AppInfo | null = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appId}/config.json`);
-    configFile?.form_fields?.forEach((field) => {
-      const envVar = field.env_variable;
-      const envVarValue = envVarsMap.get(envVar);
+    const configFile = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appId}/config.json`);
+    const parsedConfig = appInfoSchema.safeParse(configFile);
 
-      if (envVarValue) {
-        form[field.env_variable] = envVarValue;
-      }
-    });
+    if (parsedConfig.success) {
+      parsedConfig.data.form_fields.forEach((field) => {
+        const envVar = field.env_variable;
+        const envVarValue = envVarsMap.get(envVar);
 
-    await App.create({ id: appId, status: AppStatusEnum.STOPPED, config: form }).save();
+        if (envVarValue) {
+          form[field.env_variable] = envVarValue;
+        }
+      });
+
+      await App.create({ id: appId, status: AppStatusEnum.STOPPED, config: form }).save();
+    }
   } else {
     logger.info('App already migrated');
   }
@@ -56,19 +63,25 @@ export const updateV040 = async (): Promise<void> => {
 
     // Migrate apps
     if (fileExists('/runtipi/state/apps.json')) {
-      const state: AppsState = await readJsonFile('/runtipi/state/apps.json');
-      const installed: string[] = state.installed.split(' ').filter(Boolean);
+      const state = await readJsonFile('/runtipi/state/apps.json');
+      const parsedState = appStateSchema.safeParse(state);
 
-      await Promise.all(installed.map((appId) => migrateApp(appId)));
-      deleteFolder('/runtipi/state/apps.json');
+      if (parsedState.success) {
+        const installed: string[] = parsedState.data.installed.split(' ').filter(Boolean);
+        await Promise.all(installed.map((appId) => migrateApp(appId)));
+        deleteFolder('/runtipi/state/apps.json');
+      }
     }
 
     // Migrate users
     if (fileExists('/state/users.json')) {
-      const state: { email: string; password: string }[] = await readJsonFile('/runtipi/state/users.json');
+      const state = await readJsonFile('/runtipi/state/users.json');
+      const parsedState = userStateSchema.safeParse(state);
 
-      await Promise.all(state.map((user) => migrateUser(user)));
-      deleteFolder('/runtipi/state/users.json');
+      if (parsedState.success) {
+        await Promise.all(parsedState.data.map((user) => migrateUser(user)));
+        deleteFolder('/runtipi/state/users.json');
+      }
     }
 
     await Update.create({ name: UPDATE_NAME, status: UpdateStatusEnum.SUCCESS }).save();
