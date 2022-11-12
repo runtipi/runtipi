@@ -26,6 +26,7 @@ query GetApp($appId: String!) {
       url_suffix
       https
       exposable
+      no_gui
       form_fields {
         type
         label

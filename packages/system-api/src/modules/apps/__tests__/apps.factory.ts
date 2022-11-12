@@ -13,6 +13,23 @@ interface IProps {
   supportedArchitectures?: AppSupportedArchitecturesEnum[];
 }
 
+type CreateConfigParams = {
+  id?: string;
+};
+
+const createAppConfig = (props?: CreateConfigParams): AppInfo => ({
+  id: props?.id || faker.random.alphaNumeric(32),
+  available: true,
+  port: faker.datatype.number(),
+  name: faker.random.alphaNumeric(32),
+  description: faker.random.alphaNumeric(32),
+  tipi_version: 1,
+  short_desc: faker.random.alphaNumeric(32),
+  author: faker.random.alphaNumeric(32),
+  source: faker.internet.url(),
+  categories: [AppCategoriesEnum.AUTOMATION],
+});
+
 const createApp = async (props: IProps) => {
   const { installed = false, status = AppStatusEnum.RUNNING, requiredPort, randomField = false, exposed = false, domain = '', exposable = false, supportedArchitectures } = props;
 
@@ -82,4 +99,4 @@ const createApp = async (props: IProps) => {
   return { appInfo, MockFiles, appEntity };
 };
 
-export { createApp };
+export { createApp, createAppConfig };
