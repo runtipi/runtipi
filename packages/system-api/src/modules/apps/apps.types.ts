@@ -139,6 +139,9 @@ class AppInfo {
   @Field(() => Boolean, { nullable: true })
   exposable?: boolean;
 
+  @Field(() => Boolean, { nullable: true })
+  no_gui?: boolean;
+
   @Field(() => [AppSupportedArchitecturesEnum], { nullable: true })
   supported_architectures?: AppSupportedArchitecturesEnum[];
 }

@@ -76,7 +76,10 @@ const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onS
       }
       break;
     case AppStatusEnum.Running:
-      buttons.push(StopButton, OpenButton);
+      buttons.push(StopButton);
+      if (!app.no_gui) {
+        buttons.push(OpenButton);
+      }
       if (hasSettings) {
         buttons.push(SettingsButton);
       }
