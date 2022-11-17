@@ -16,6 +16,11 @@ const StatusWrapper: React.FC<IProps> = ({ children }) => {
   const { data } = useSWR('/api/status', fetcher, { refreshInterval: 1000 });
 
   useEffect(() => {
+    // If previous was not running and current is running, we need to refresh the page
+    if (data?.status === SystemStatus.RUNNING && s !== SystemStatus.RUNNING) {
+      window.location.reload();
+    }
+
     if (data?.status === SystemStatus.RUNNING) {
       setS(SystemStatus.RUNNING);
     }
@@ -25,7 +30,7 @@ const StatusWrapper: React.FC<IProps> = ({ children }) => {
     if (data?.status === SystemStatus.UPDATING) {
       setS(SystemStatus.UPDATING);
     }
-  }, [data?.status]);
+  }, [data?.status, s]);
 
   if (s === SystemStatus.RESTARTING) {
     return (
