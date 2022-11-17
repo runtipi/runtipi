@@ -31,13 +31,17 @@ fi
 ### --------------------------------
 ### General variables
 ### --------------------------------
+DEFAULT_TZ="Etc\/UTC"
+TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' | sed 's/\//\\\//g')"
+if [[ -z "$TZ" ]]; then
+  TZ="$DEFAULT_TZ"
+fi
 NGINX_PORT=80
 NGINX_PORT_SSL=443
 DOMAIN=tipi.localhost
 SED_ROOT_FOLDER="$(echo "$ROOT_FOLDER" | sed 's/\//\\\//g')"
 DNS_IP="9.9.9.9" # Default to Quad9 DNS
 ARCHITECTURE="$(uname -m)"
-TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' | sed 's/\//\\\//g' || Europe\/Berlin)"
 apps_repository="https://github.com/meienberger/runtipi-appstore"
 REPO_ID="$("${ROOT_FOLDER}"/scripts/git.sh get_hash ${apps_repository})"
 APPS_REPOSITORY_ESCAPED="$(echo ${apps_repository} | sed 's/\//\\\//g')"
