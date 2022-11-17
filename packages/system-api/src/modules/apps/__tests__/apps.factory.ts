@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { AppCategoriesEnum, AppInfo, AppStatusEnum, AppSupportedArchitecturesEnum, FieldTypes } from '../apps.types';
 import App from '../app.entity';
+import { appInfoSchema } from '../apps.helpers';
 
 interface IProps {
   installed?: boolean;
@@ -17,21 +18,22 @@ type CreateConfigParams = {
   id?: string;
 };
 
-const createAppConfig = (props?: CreateConfigParams): AppInfo => ({
-  id: props?.id || faker.random.alphaNumeric(32),
-  available: true,
-  port: faker.datatype.number(),
-  name: faker.random.alphaNumeric(32),
-  description: faker.random.alphaNumeric(32),
-  tipi_version: 1,
-  short_desc: faker.random.alphaNumeric(32),
-  author: faker.random.alphaNumeric(32),
-  source: faker.internet.url(),
-  categories: [AppCategoriesEnum.AUTOMATION],
-});
+const createAppConfig = (props?: CreateConfigParams): AppInfo =>
+  appInfoSchema.parse({
+    id: props?.id || faker.random.alphaNumeric(32),
+    available: true,
+    port: faker.datatype.number({ min: 30, max: 65535 }),
+    name: faker.random.alphaNumeric(32),
+    description: faker.random.alphaNumeric(32),
+    tipi_version: 1,
+    short_desc: faker.random.alphaNumeric(32),
+    author: faker.random.alphaNumeric(32),
+    source: faker.internet.url(),
+    categories: [AppCategoriesEnum.AUTOMATION],
+  });
 
 const createApp = async (props: IProps) => {
-  const { installed = false, status = AppStatusEnum.RUNNING, requiredPort, randomField = false, exposed = false, domain = '', exposable = false, supportedArchitectures } = props;
+  const { installed = false, status = AppStatusEnum.RUNNING, randomField = false, exposed = false, domain = '', exposable = false, supportedArchitectures } = props;
 
   const categories = Object.values(AppCategoriesEnum);
 
@@ -66,16 +68,10 @@ const createApp = async (props: IProps) => {
     });
   }
 
-  if (requiredPort) {
-    appInfo.requirements = {
-      ports: [requiredPort],
-    };
-  }
-
   const MockFiles: Record<string, string | string[]> = {};
   MockFiles['/runtipi/.env'] = 'TEST=test';
   MockFiles['/runtipi/repos/repo-id'] = '';
-  MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+  MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
   MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
   MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 

@@ -2,10 +2,11 @@ import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
 import { DataSource } from 'typeorm';
 import logger from '../../../config/logger/logger';
+import { setConfig } from '../../../core/config/TipiConfig';
 import { setupConnection, teardownConnection } from '../../../test/connection';
 import App from '../app.entity';
 import { checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from '../apps.helpers';
-import { AppCategoriesEnum, AppInfo } from '../apps.types';
+import { AppInfo, AppSupportedArchitecturesEnum } from '../apps.types';
 import { createApp, createAppConfig } from './apps.factory';
 
 jest.mock('fs-extra');
@@ -23,6 +24,13 @@ afterAll(async () => {
   await teardownConnection(TEST_SUITE);
 });
 
+beforeEach(async () => {
+  jest.resetModules();
+  jest.resetAllMocks();
+  jest.restoreAllMocks();
+  await App.clear();
+});
+
 describe('checkAppRequirements', () => {
   let app1: AppInfo;
 
@@ -33,13 +41,34 @@ describe('checkAppRequirements', () => {
     fs.__createMockFiles(app1create.MockFiles);
   });
 
-  it('should return true if there are no particular requirement', async () => {
-    const ivValid = await checkAppRequirements(app1.id);
-    expect(ivValid).toBe(true);
+  it('should return appInfo if there are no particular requirement', async () => {
+    const result = checkAppRequirements(app1.id);
+    expect(result.id).toEqual(app1.id);
   });
 
   it('Should throw an error if app does not exist', async () => {
-    await expect(checkAppRequirements('not-existing-app')).rejects.toThrow('App not-existing-app has invalid config.json file');
+    try {
+      checkAppRequirements('notexisting');
+      expect(true).toBe(false);
+    } catch (e) {
+      // @ts-ignore
+      expect(e.message).toEqual('App notexisting has invalid config.json file');
+    }
+  });
+
+  it('Should throw if architecture is not supported', async () => {
+    setConfig('architecture', AppSupportedArchitecturesEnum.ARM64);
+    const { MockFiles, appInfo } = await createApp({ supportedArchitectures: [AppSupportedArchitecturesEnum.ARM] });
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    try {
+      checkAppRequirements(appInfo.id);
+      expect(true).toBe(false);
+    } catch (e) {
+      // @ts-ignore
+      expect(e.message).toEqual(`App ${appInfo.id} is not supported on this architecture`);
+    }
   });
 });
 
@@ -60,7 +89,7 @@ describe('getEnvMap', () => {
   });
 });
 
-describe('checkEnvFile', () => {
+describe('Test: checkEnvFile', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
@@ -85,6 +114,25 @@ describe('checkEnvFile', () => {
       if (e instanceof Error) {
         expect(e).toBeDefined();
         expect(e.message).toBe('New info needed. App config needs to be updated');
+      } else {
+        fail('Should throw an error');
+      }
+    }
+  });
+
+  it('Should throw if config.json is incorrect', async () => {
+    // arrange
+    fs.writeFileSync(`/app/storage/app-data/${app1.id}/config.json`, 'invalid json');
+    const { appInfo } = await createApp({});
+
+    // act
+    try {
+      await checkEnvFile(appInfo.id);
+      expect(true).toBe(false);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        expect(e).toBeDefined();
+        expect(e.message).toBe(`App ${appInfo.id} has invalid config.json file`);
       } else {
         fail('Should throw an error');
       }
@@ -235,6 +283,18 @@ describe('getAvailableApps', () => {
 
     expect(availableApps.length).toBe(2);
   });
+
+  it('Should not return apps with invalid config.json', async () => {
+    const { appInfo: app1, MockFiles: MockFiles1 } = await createApp({ installed: true });
+    const { MockFiles: MockFiles2 } = await createApp({});
+    MockFiles1[`/runtipi/repos/repo-id/apps/${app1.id}/config.json`] = 'invalid json';
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(MockFiles1, MockFiles2));
+
+    const availableApps = await getAvailableApps();
+
+    expect(availableApps.length).toBe(1);
+  });
 });
 
 describe('Test: getAppInfo', () => {
@@ -357,6 +417,25 @@ describe('getUpdateInfo', () => {
     const updateInfo = await getUpdateInfo(faker.random.word(), 1);
 
     expect(updateInfo).toBeNull();
+  });
+
+  it('Should return null if config.json is invalid', async () => {
+    const { appInfo, MockFiles } = await createApp({ installed: true });
+    MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = 'invalid json';
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    const updateInfo = await getUpdateInfo(appInfo.id, 1);
+
+    expect(updateInfo).toBeNull();
+  });
+
+  it('should return version 0 if version is not provided', async () => {
+    // @ts-ignore
+    const updateInfo = await getUpdateInfo(app1.id);
+
+    expect(updateInfo?.latest).toBe(app1.tipi_version);
+    expect(updateInfo?.current).toBe(0);
   });
 });
 
