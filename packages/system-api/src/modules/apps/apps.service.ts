@@ -1,13 +1,12 @@
 import validator from 'validator';
 import { Not } from 'typeorm';
-import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
+import { createFolder, readJsonFile } from '../fs/fs.helpers';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, appInfoSchema } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 import logger from '../../config/logger/logger';
 import { getConfig } from '../../core/config/TipiConfig';
 import { eventDispatcher, EventTypes } from '../../core/config/EventDispatcher';
-import { notEmpty } from '../../helpers/helpers';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
 const filterApp = (app: AppInfo): boolean => {
@@ -107,11 +106,7 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
     }
 
     ensureAppFolder(id, true);
-    const appIsValid = await checkAppRequirements(id);
-
-    if (!appIsValid) {
-      throw new Error(`App ${id} requirements not met`);
-    }
+    checkAppRequirements(id);
 
     // Create app folder
     createFolder(`/app/storage/app-data/${id}`);
@@ -120,7 +115,7 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
     const parsedAppInfo = appInfoSchema.safeParse(appInfo);
 
     if (!parsedAppInfo.success) {
-      throw new Error(`App ${id} config.json is not valid`);
+      throw new Error(`App ${id} has invalid config.json file`);
     }
 
     if (!parsedAppInfo.data.exposable && exposed) {
@@ -159,25 +154,9 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
  * @returns - list of all apps available
  */
 const listApps = async (): Promise<ListAppsResonse> => {
-  const folders: string[] = await getAvailableApps();
+  const apps = await getAvailableApps();
 
-  const apps = folders.map((app) => readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`)).filter(Boolean);
-
-  const parsedApps = apps
-    .map((app) => {
-      const result = appInfoSchema.safeParse(app);
-
-      if (!result.success) {
-        logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
-        return null;
-      }
-
-      const description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${result.data.id}/metadata/description.md`);
-      return { ...result.data, description };
-    })
-    .filter(notEmpty);
-
-  const filteredApps = filterApps(parsedApps);
+  const filteredApps = filterApps(apps);
 
   return { apps: filteredApps, total: apps.length };
 };

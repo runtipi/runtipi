@@ -21,7 +21,6 @@ mutation StartApp($id: String!) {
         required
         env_variable
       }
-      requirements
     }
     updateInfo {
       current

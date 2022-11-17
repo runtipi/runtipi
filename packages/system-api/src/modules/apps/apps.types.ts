@@ -87,12 +87,6 @@ class FormField {
 }
 
 @ObjectType()
-class Requirements {
-  @Field(() => [Number], { nullable: true })
-  ports?: number[];
-}
-
-@ObjectType()
 class AppInfo {
   @Field(() => String)
   id!: string;
@@ -132,9 +126,6 @@ class AppInfo {
 
   @Field(() => [FormField])
   form_fields?: FormField[];
-
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  requirements?: Requirements;
 
   @Field(() => Boolean, { nullable: true })
   https?: boolean;
