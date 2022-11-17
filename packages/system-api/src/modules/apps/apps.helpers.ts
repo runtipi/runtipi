@@ -6,6 +6,7 @@ import { AppCategoriesEnum, AppInfo, AppStatusEnum, AppSupportedArchitecturesEnu
 import logger from '../../config/logger/logger';
 import { getConfig } from '../../core/config/TipiConfig';
 import { AppEntityType } from './app.types';
+import { notEmpty } from '../../helpers/helpers';
 
 const formFieldSchema = z.object({
   type: z.nativeEnum(FieldTypes),
@@ -39,7 +40,7 @@ export const appInfoSchema = z.object({
   supported_architectures: z.nativeEnum(AppSupportedArchitecturesEnum).array().optional(),
 });
 
-export const checkAppRequirements = async (appName: string) => {
+export const checkAppRequirements = (appName: string) => {
   const configFile = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appName}/config.json`);
   const parsedConfig = appInfoSchema.safeParse(configFile);
 
@@ -51,7 +52,7 @@ export const checkAppRequirements = async (appName: string) => {
     throw new Error(`App ${appName} is not supported on this architecture`);
   }
 
-  return true;
+  return parsedConfig.data;
 };
 
 export const getEnvMap = (appName: string): Map<string, string> => {
@@ -77,7 +78,7 @@ export const checkEnvFile = (appName: string) => {
 
   const envMap = getEnvMap(appName);
 
-  parsedConfig.data.form_fields?.forEach((field) => {
+  parsedConfig.data.form_fields.forEach((field) => {
     const envVar = field.env_variable;
     const envVarValue = envMap.get(envVar);
 
@@ -141,21 +142,28 @@ export const generateEnvFile = (app: AppEntityType) => {
   writeFile(`/app/storage/app-data/${app.id}/app.env`, envFile);
 };
 
-export const getAvailableApps = async (): Promise<string[]> => {
-  const apps: string[] = [];
-
+export const getAvailableApps = async (): Promise<AppInfo[]> => {
   const appsDir = readdirSync(`/runtipi/repos/${getConfig().appsRepoId}/apps`);
 
-  appsDir.forEach((app) => {
-    if (fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`)) {
+  const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json'];
+
+  const apps = appsDir
+    .map((app) => {
+      if (skippedFiles.includes(app)) return null;
+
       const configFile = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
-      if (parsedConfig.success && parsedConfig.data.available) {
-        apps.push(app);
+      if (!parsedConfig.success) {
+        logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
+      } else if (parsedConfig.data.available) {
+        const description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${parsedConfig.data.id}/metadata/description.md`);
+        return { ...parsedConfig.data, description };
       }
-    }
-  });
+
+      return null;
+    })
+    .filter(notEmpty);
 
   return apps;
 };

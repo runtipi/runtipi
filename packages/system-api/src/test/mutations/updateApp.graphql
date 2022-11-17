@@ -20,7 +20,6 @@ mutation UpdateApp($id: String!) {
         required
         env_variable
       }
-      requirements
     }
     updateInfo {
       current

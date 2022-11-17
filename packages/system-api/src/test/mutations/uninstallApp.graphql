@@ -20,7 +20,6 @@ mutation UninstallApp($id: String!) {
         required
         env_variable
       }
-      requirements
     }
     updateInfo {
       current

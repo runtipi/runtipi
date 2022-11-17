@@ -155,6 +155,8 @@ describe('Install app', () => {
   });
 
   it('Should throw if architecure is not supported', async () => {
+    // arrange
+    setConfig('architecture', AppSupportedArchitecturesEnum.AMD64);
     const { MockFiles, appInfo } = await createApp({ supportedArchitectures: [AppSupportedArchitecturesEnum.ARM] });
     // @ts-ignore
     fs.__createMockFiles(MockFiles);
@@ -184,6 +186,29 @@ describe('Install app', () => {
     const app = await App.findOne({ where: { id: appInfo.id } });
 
     expect(app).toBeDefined();
+  });
+
+  it('Should throw if config.json is not valid', async () => {
+    // arrange
+    const { MockFiles, appInfo } = await createApp({});
+    MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = 'test';
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    // act & assert
+    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json file`);
+  });
+
+  it('Should throw if config.json is not valid after folder copy', async () => {
+    // arrange
+    jest.spyOn(fs, 'copySync').mockImplementationOnce(() => {});
+    const { MockFiles, appInfo } = await createApp({});
+    MockFiles[`/runtipi/apps/${appInfo.id}/config.json`] = 'test';
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
+
+    // act & assert
+    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json file`);
   });
 });
 
@@ -404,6 +429,17 @@ describe('Update app config', () => {
     await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
     await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
   });
+
+  it('Should throw if app has invalid config.json', async () => {
+    const { appInfo, MockFiles } = await createApp({ installed: true });
+    MockFiles[`/runtipi/apps/${appInfo.id}/config.json`] = 'invalid json';
+
+    // @ts-ignore
+    fs.__createMockFiles(Object.assign(MockFiles));
+    fs.writeFileSync(`/app/storage/app-data/${appInfo.id}/config.json`, 'test');
+
+    await expect(AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json`);
+  });
 });
 
 describe('Get app config', () => {
@@ -496,6 +532,23 @@ describe('List apps', () => {
     const app3 = await createApp({ supportedArchitectures: undefined });
     // @ts-ignore
     fs.__createMockFiles(Object.assign(app3.MockFiles));
+
+    // Act
+    const { apps } = await AppsService.listApps();
+
+    // Assert
+    expect(apps).toBeDefined();
+    expect(apps.length).toBe(1);
+  });
+
+  it('Should not list app with invalid config.json', async () => {
+    // Arrange
+    const { MockFiles: mockApp1, appInfo } = await createApp({});
+    const { MockFiles: mockApp2 } = await createApp({});
+    const MockFiles = Object.assign(mockApp1, mockApp2);
+    MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = 'invalid json';
+    // @ts-ignore
+    fs.__createMockFiles(MockFiles);
 
     // Act
     const { apps } = await AppsService.listApps();

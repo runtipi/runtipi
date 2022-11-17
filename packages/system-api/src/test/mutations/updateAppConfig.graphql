@@ -20,7 +20,6 @@ mutation UpdateAppConfig($input: AppInputType!) {
         required
         env_variable
       }
-      requirements
     }
     updateInfo {
       current

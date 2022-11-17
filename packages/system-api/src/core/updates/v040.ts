@@ -74,7 +74,7 @@ export const updateV040 = async (): Promise<void> => {
     }
 
     // Migrate users
-    if (fileExists('/state/users.json')) {
+    if (fileExists('/runtipi/state/users.json')) {
       const state = readJsonFile('/runtipi/state/users.json');
       const parsedState = userStateSchema.safeParse(state);
 
