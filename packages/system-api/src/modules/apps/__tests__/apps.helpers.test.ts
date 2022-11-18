@@ -430,12 +430,11 @@ describe('getUpdateInfo', () => {
     expect(updateInfo).toBeNull();
   });
 
-  it('should return version 0 if version is not provided', async () => {
+  it('should return null if version is not provided', async () => {
     // @ts-ignore
     const updateInfo = await getUpdateInfo(app1.id);
 
-    expect(updateInfo?.latest).toBe(app1.tipi_version);
-    expect(updateInfo?.current).toBe(0);
+    expect(updateInfo).toBe(null);
   });
 });
 
