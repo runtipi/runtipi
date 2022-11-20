@@ -1,6 +1,6 @@
 {
   "name": "system-api",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "",
   "exports": "./dist/server.js",
   "type": "module",
