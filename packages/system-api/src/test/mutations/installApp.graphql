@@ -20,7 +20,6 @@ mutation InstallApp($input: AppInputType!) {
         required
         env_variable
       }
-      requirements
     }
   }
 }

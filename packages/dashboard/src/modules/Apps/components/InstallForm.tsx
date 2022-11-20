@@ -28,7 +28,17 @@ const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues, exp
       <Field
         key={field.env_variable}
         name={field.env_variable}
-        render={({ input, meta }) => <FormInput className="mb-3" error={meta.error} isInvalid={meta.invalid && (meta.submitError || meta.submitFailed)} label={field.label} {...input} />}
+        render={({ input, meta }) => (
+          <FormInput
+            hint={field.hint || ''}
+            placeholder={field.placeholder || ''}
+            className="mb-3"
+            error={meta.error}
+            isInvalid={meta.invalid && (meta.submitError || meta.submitFailed)}
+            label={field.label}
+            {...input}
+          />
+        )}
       />
     );
   };

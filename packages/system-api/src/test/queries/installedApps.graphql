@@ -24,7 +24,6 @@ query {
         required
         env_variable
       }
-      requirements
     }
   }
 }

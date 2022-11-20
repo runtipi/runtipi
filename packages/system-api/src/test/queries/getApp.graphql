@@ -19,7 +19,6 @@ query GetApp($id: String!) {
         required
         env_variable
       }
-      requirements
     }
     updateInfo {
       current

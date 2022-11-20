@@ -1,6 +1,6 @@
 {
   "name": "system-api",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "",
   "exports": "./dist/server.js",
   "type": "module",
@@ -25,6 +25,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apollo/utils.keyvadapter": "^1.1.2",
+    "@keyv/redis": "^2.5.3",
     "apollo-server-core": "^3.10.0",
     "apollo-server-express": "^3.9.0",
     "argon2": "^0.29.1",
@@ -38,6 +40,7 @@
     "graphql-type-json": "^0.3.2",
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
+    "keyv": "^4.5.2",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.1",
     "pg": "^8.7.3",

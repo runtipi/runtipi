@@ -62,7 +62,7 @@ const validateField = (field: FormField, value: string | undefined | boolean): s
 
 const validateDomain = (domain?: string): string | undefined => {
   if (!validator.isFQDN(domain || '')) {
-    return `${domain} must be a valid domain`;
+    return 'Must be a valid domain';
   }
 };
 

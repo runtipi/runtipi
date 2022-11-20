@@ -182,7 +182,7 @@ describe('InstallApp', () => {
       variableValues: { input: { id: 'not-existing', form: { TEST_FIELD: 'hello' }, exposed: false, domain: '' } },
     });
 
-    expect(errors?.[0].message).toBe('App not-existing not found');
+    expect(errors?.[0].message).toBe('App not-existing has invalid config.json file');
     expect(data?.installApp).toBeUndefined();
   });
 

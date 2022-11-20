@@ -76,17 +76,14 @@ class FormField {
   @Field(() => String, { nullable: true })
   hint?: string;
 
+  @Field(() => String, { nullable: true })
+  placeholder?: string;
+
   @Field(() => Boolean, { nullable: true })
   required?: boolean;
 
   @Field(() => String)
   env_variable!: string;
-}
-
-@ObjectType()
-class Requirements {
-  @Field(() => [Number], { nullable: true })
-  ports?: number[];
 }
 
 @ObjectType()
@@ -130,14 +127,14 @@ class AppInfo {
   @Field(() => [FormField])
   form_fields?: FormField[];
 
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  requirements?: Requirements;
-
   @Field(() => Boolean, { nullable: true })
   https?: boolean;
 
   @Field(() => Boolean, { nullable: true })
   exposable?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  no_gui?: boolean;
 
   @Field(() => [AppSupportedArchitecturesEnum], { nullable: true })
   supported_architectures?: AppSupportedArchitecturesEnum[];

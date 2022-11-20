@@ -1,7 +1,7 @@
 import validator from 'validator';
 import { Not } from 'typeorm';
-import { createFolder, readFile, readJsonFile } from '../fs/fs.helpers';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder } from './apps.helpers';
+import { createFolder, readJsonFile } from '../fs/fs.helpers';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, appInfoSchema } from './apps.helpers';
 import { AppInfo, AppStatusEnum, ListAppsResonse } from './apps.types';
 import App from './app.entity';
 import logger from '../../config/logger/logger';
@@ -106,18 +106,19 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
     }
 
     ensureAppFolder(id, true);
-    const appIsValid = await checkAppRequirements(id);
-
-    if (!appIsValid) {
-      throw new Error(`App ${id} requirements not met`);
-    }
+    checkAppRequirements(id);
 
     // Create app folder
     createFolder(`/app/storage/app-data/${id}`);
 
-    const appInfo: AppInfo | null = await readJsonFile(`/runtipi/apps/${id}/config.json`);
+    const appInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
+    const parsedAppInfo = appInfoSchema.safeParse(appInfo);
 
-    if (!appInfo?.exposable && exposed) {
+    if (!parsedAppInfo.success) {
+      throw new Error(`App ${id} has invalid config.json file`);
+    }
+
+    if (!parsedAppInfo.data.exposable && exposed) {
       throw new Error(`App ${id} is not exposable`);
     }
 
@@ -128,7 +129,7 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
       }
     }
 
-    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form, version: Number(appInfo?.tipi_version || 0), exposed: exposed || false, domain }).save();
+    app = await App.create({ id, status: AppStatusEnum.INSTALLING, config: form, version: parsedAppInfo.data.tipi_version, exposed: exposed || false, domain }).save();
 
     // Create env file
     generateEnvFile(app);
@@ -153,14 +154,9 @@ const installApp = async (id: string, form: Record<string, string>, exposed?: bo
  * @returns - list of all apps available
  */
 const listApps = async (): Promise<ListAppsResonse> => {
-  const folders: string[] = await getAvailableApps();
+  const apps = await getAvailableApps();
 
-  const apps: AppInfo[] = folders.map((app) => readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`)).filter(Boolean);
-
-  const filteredApps = filterApps(apps).map((app) => {
-    const description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app.id}/metadata/description.md`);
-    return { ...app, description };
-  });
+  const filteredApps = filterApps(apps);
 
   return { apps: filteredApps, total: apps.length };
 };
@@ -182,9 +178,20 @@ const updateAppConfig = async (id: string, form: Record<string, string>, exposed
     throw new Error(`Domain ${domain} is not valid`);
   }
 
-  const appInfo: AppInfo | null = await readJsonFile(`/runtipi/apps/${id}/config.json`);
+  let app = await App.findOne({ where: { id } });
 
-  if (!appInfo?.exposable && exposed) {
+  if (!app) {
+    throw new Error(`App ${id} not found`);
+  }
+
+  const appInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
+  const parsedAppInfo = appInfoSchema.safeParse(appInfo);
+
+  if (!parsedAppInfo.success) {
+    throw new Error(`App ${id} has invalid config.json`);
+  }
+
+  if (!parsedAppInfo.data.exposable && exposed) {
     throw new Error(`App ${id} is not exposable`);
   }
 
@@ -193,12 +200,6 @@ const updateAppConfig = async (id: string, form: Record<string, string>, exposed
     if (appsWithSameDomain.length > 0) {
       throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0].id}`);
     }
-  }
-
-  let app = await App.findOne({ where: { id } });
-
-  if (!app) {
-    throw new Error(`App ${id} not found`);
   }
 
   await App.update({ id }, { config: form, exposed: exposed || false, domain });
@@ -309,8 +310,10 @@ const updateApp = async (id: string) => {
   const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.APP, ['update', id]);
 
   if (success) {
-    const appInfo: AppInfo | null = await readJsonFile(`/runtipi/apps/${id}/config.json`);
-    await App.update({ id }, { status: AppStatusEnum.RUNNING, version: Number(appInfo?.tipi_version) });
+    const appInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
+    const parsedAppInfo = appInfoSchema.parse(appInfo);
+
+    await App.update({ id }, { status: AppStatusEnum.RUNNING, version: parsedAppInfo.tipi_version });
   } else {
     await App.update({ id }, { status: AppStatusEnum.STOPPED });
     throw new Error(`App ${id} failed to update\nstdout: ${stdout}`);

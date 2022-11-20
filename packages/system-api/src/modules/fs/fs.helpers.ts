@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 
-export const readJsonFile = <T>(path: string): T | null => {
+export const readJsonFile = (path: string): unknown | null => {
   try {
     const rawFile = fs.readFileSync(path).toString();
 

@@ -1,9 +1,11 @@
 import type { NextPage } from 'next';
 import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, Text, useDisclosure, useToast } from '@chakra-ui/react';
 import Layout from '../components/Layout';
-import { useLogoutMutation, useRestartMutation, useUpdateMutation, useVersionQuery } from '../generated/graphql';
+import { useRestartMutation, useUpdateMutation, useVersionQuery } from '../generated/graphql';
 import { useRef, useState } from 'react';
 import semver from 'semver';
+
+const wait = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
 
 const Settings: NextPage = () => {
   const toast = useToast();
@@ -15,7 +17,6 @@ const Settings: NextPage = () => {
 
   const [restart] = useRestartMutation();
   const [update] = useUpdateMutation();
-  const [logout] = useLogoutMutation({ refetchQueries: ['Me'] });
 
   const defaultVersion = '0.0.0';
   const isLatest = semver.gte(data?.version.current || defaultVersion, data?.version.latest || defaultVersion);
@@ -55,7 +56,8 @@ const Settings: NextPage = () => {
     setLoading(true);
     try {
       restart();
-      logout();
+      await wait(1000);
+      localStorage.removeItem('token');
     } catch (error) {
       handleError(error);
     } finally {
@@ -67,7 +69,8 @@ const Settings: NextPage = () => {
     setLoading(true);
     try {
       update();
-      logout();
+      await wait(1000);
+      localStorage.removeItem('token');
     } catch (error) {
       handleError(error);
     } finally {

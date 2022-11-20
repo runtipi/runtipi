@@ -26,12 +26,14 @@ query GetApp($appId: String!) {
       url_suffix
       https
       exposable
+      no_gui
       form_fields {
         type
         label
         max
         min
         hint
+        placeholder
         required
         env_variable
       }

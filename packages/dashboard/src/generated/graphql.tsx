@@ -63,8 +63,8 @@ export type AppInfo = {
   https?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
   name: Scalars['String'];
+  no_gui?: Maybe<Scalars['Boolean']>;
   port: Scalars['Float'];
-  requirements?: Maybe<Scalars['JSONObject']>;
   short_desc: Scalars['String'];
   source: Scalars['String'];
   supported_architectures?: Maybe<Array<AppSupportedArchitecturesEnum>>;
@@ -128,6 +128,7 @@ export type FormField = {
   label: Scalars['String'];
   max?: Maybe<Scalars['Float']>;
   min?: Maybe<Scalars['Float']>;
+  placeholder?: Maybe<Scalars['String']>;
   required?: Maybe<Scalars['Boolean']>;
   type: FieldTypesEnum;
 };
@@ -324,7 +325,7 @@ export type GetAppQueryVariables = Exact<{
 }>;
 
 
-export type GetAppQuery = { __typename?: 'Query', getApp: { __typename?: 'App', id: string, status: AppStatusEnum, config: any, version?: number | null, exposed: boolean, domain?: string | null, updateInfo?: { __typename?: 'UpdateInfo', current: number, latest: number, dockerVersion?: string | null } | null, info?: { __typename?: 'AppInfo', id: string, port: number, name: string, description: string, available: boolean, version?: string | null, tipi_version: number, short_desc: string, author: string, source: string, categories: Array<AppCategoriesEnum>, url_suffix?: string | null, https?: boolean | null, exposable?: boolean | null, form_fields: Array<{ __typename?: 'FormField', type: FieldTypesEnum, label: string, max?: number | null, min?: number | null, hint?: string | null, required?: boolean | null, env_variable: string }> } | null } };
+export type GetAppQuery = { __typename?: 'Query', getApp: { __typename?: 'App', id: string, status: AppStatusEnum, config: any, version?: number | null, exposed: boolean, domain?: string | null, updateInfo?: { __typename?: 'UpdateInfo', current: number, latest: number, dockerVersion?: string | null } | null, info?: { __typename?: 'AppInfo', id: string, port: number, name: string, description: string, available: boolean, version?: string | null, tipi_version: number, short_desc: string, author: string, source: string, categories: Array<AppCategoriesEnum>, url_suffix?: string | null, https?: boolean | null, exposable?: boolean | null, no_gui?: boolean | null, form_fields: Array<{ __typename?: 'FormField', type: FieldTypesEnum, label: string, max?: number | null, min?: number | null, hint?: string | null, placeholder?: string | null, required?: boolean | null, env_variable: string }> } | null } };
 
 export type InstalledAppsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -757,12 +758,14 @@ export const GetAppDocument = gql`
       url_suffix
       https
       exposable
+      no_gui
       form_fields {
         type
         label
         max
         min
         hint
+        placeholder
         required
         env_variable
       }

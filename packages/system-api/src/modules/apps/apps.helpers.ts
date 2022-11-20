@@ -1,23 +1,58 @@
 import crypto from 'crypto';
 import fs from 'fs-extra';
+import { z } from 'zod';
 import { deleteFolder, fileExists, getSeed, readdirSync, readFile, readJsonFile, writeFile } from '../fs/fs.helpers';
-import { AppInfo, AppStatusEnum } from './apps.types';
+import { AppCategoriesEnum, AppInfo, AppStatusEnum, AppSupportedArchitecturesEnum, FieldTypes } from './apps.types';
 import logger from '../../config/logger/logger';
 import { getConfig } from '../../core/config/TipiConfig';
 import { AppEntityType } from './app.types';
+import { notEmpty } from '../../helpers/helpers';
 
-export const checkAppRequirements = async (appName: string) => {
-  const configFile: AppInfo | null = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appName}/config.json`);
+const formFieldSchema = z.object({
+  type: z.nativeEnum(FieldTypes),
+  label: z.string(),
+  placeholder: z.string().optional(),
+  max: z.number().optional(),
+  min: z.number().optional(),
+  hint: z.string().optional(),
+  required: z.boolean().optional().default(false),
+  env_variable: z.string(),
+});
 
-  if (!configFile) {
-    throw new Error(`App ${appName} not found`);
+export const appInfoSchema = z.object({
+  id: z.string(),
+  available: z.boolean(),
+  port: z.number().min(1).max(65535),
+  name: z.string(),
+  description: z.string().optional().default(''),
+  version: z.string().optional().default('latest'),
+  tipi_version: z.number(),
+  short_desc: z.string(),
+  author: z.string(),
+  source: z.string(),
+  website: z.string().optional(),
+  categories: z.nativeEnum(AppCategoriesEnum).array(),
+  url_suffix: z.string().optional(),
+  form_fields: z.array(formFieldSchema).optional().default([]),
+  https: z.boolean().optional().default(false),
+  exposable: z.boolean().optional().default(false),
+  no_gui: z.boolean().optional().default(false),
+  supported_architectures: z.nativeEnum(AppSupportedArchitecturesEnum).array().optional(),
+});
+
+export const checkAppRequirements = (appName: string) => {
+  const configFile = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appName}/config.json`);
+  const parsedConfig = appInfoSchema.safeParse(configFile);
+
+  if (!parsedConfig.success) {
+    throw new Error(`App ${appName} has invalid config.json file`);
   }
 
-  if (configFile?.supported_architectures && !configFile.supported_architectures.includes(getConfig().architecture)) {
+  if (parsedConfig.data.supported_architectures && !parsedConfig.data.supported_architectures.includes(getConfig().architecture)) {
     throw new Error(`App ${appName} is not supported on this architecture`);
   }
 
-  return true;
+  return parsedConfig.data;
 };
 
 export const getEnvMap = (appName: string): Map<string, string> => {
@@ -34,10 +69,16 @@ export const getEnvMap = (appName: string): Map<string, string> => {
 };
 
 export const checkEnvFile = (appName: string) => {
-  const configFile: AppInfo | null = readJsonFile(`/runtipi/apps/${appName}/config.json`);
+  const configFile = readJsonFile(`/runtipi/apps/${appName}/config.json`);
+  const parsedConfig = appInfoSchema.safeParse(configFile);
+
+  if (!parsedConfig.success) {
+    throw new Error(`App ${appName} has invalid config.json file`);
+  }
+
   const envMap = getEnvMap(appName);
 
-  configFile?.form_fields?.forEach((field) => {
+  parsedConfig.data.form_fields.forEach((field) => {
     const envVar = field.env_variable;
     const envVarValue = envMap.get(envVar);
 
@@ -54,17 +95,18 @@ const getEntropy = (name: string, length: number) => {
 };
 
 export const generateEnvFile = (app: AppEntityType) => {
-  const configFile: AppInfo | null = readJsonFile(`/runtipi/apps/${app.id}/config.json`);
+  const configFile = readJsonFile(`/runtipi/apps/${app.id}/config.json`);
+  const parsedConfig = appInfoSchema.safeParse(configFile);
 
-  if (!configFile) {
-    throw new Error(`App ${app.id} not found`);
+  if (!parsedConfig.success) {
+    throw new Error(`App ${app.id} has invalid config.json file`);
   }
 
   const baseEnvFile = readFile('/runtipi/.env').toString();
-  let envFile = `${baseEnvFile}\nAPP_PORT=${configFile.port}\n`;
+  let envFile = `${baseEnvFile}\nAPP_PORT=${parsedConfig.data.port}\n`;
   const envMap = getEnvMap(app.id);
 
-  configFile.form_fields?.forEach((field) => {
+  parsedConfig.data.form_fields.forEach((field) => {
     const formValue = app.config[field.env_variable];
     const envVar = field.env_variable;
 
@@ -89,7 +131,7 @@ export const generateEnvFile = (app: AppEntityType) => {
     envFile += `APP_DOMAIN=${app.domain}\n`;
     envFile += 'APP_PROTOCOL=https\n';
   } else {
-    envFile += `APP_DOMAIN=${getConfig().internalIp}:${configFile.port}\n`;
+    envFile += `APP_DOMAIN=${getConfig().internalIp}:${parsedConfig.data.port}\n`;
   }
 
   // Create app-data folder if it doesn't exist
@@ -100,20 +142,28 @@ export const generateEnvFile = (app: AppEntityType) => {
   writeFile(`/app/storage/app-data/${app.id}/app.env`, envFile);
 };
 
-export const getAvailableApps = async (): Promise<string[]> => {
-  const apps: string[] = [];
-
+export const getAvailableApps = async (): Promise<AppInfo[]> => {
   const appsDir = readdirSync(`/runtipi/repos/${getConfig().appsRepoId}/apps`);
 
-  appsDir.forEach((app) => {
-    if (fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`)) {
-      const configFile = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
+  const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json'];
 
-      if (configFile?.available) {
-        apps.push(app);
+  const apps = appsDir
+    .map((app) => {
+      if (skippedFiles.includes(app)) return null;
+
+      const configFile = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${app}/config.json`);
+      const parsedConfig = appInfoSchema.safeParse(configFile);
+
+      if (!parsedConfig.success) {
+        logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
+      } else if (parsedConfig.data.available) {
+        const description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${parsedConfig.data.id}/metadata/description.md`);
+        return { ...parsedConfig.data, description };
       }
-    }
-  });
+
+      return null;
+    })
+    .filter(notEmpty);
 
   return apps;
 };
@@ -124,23 +174,22 @@ export const getAppInfo = (id: string, status?: AppStatusEnum): AppInfo | null =
     const installed = typeof status !== 'undefined' && status !== AppStatusEnum.MISSING;
 
     if (installed && fileExists(`/runtipi/apps/${id}/config.json`)) {
-      const configFile = readJsonFile<AppInfo>(`/runtipi/apps/${id}/config.json`);
+      const configFile = readJsonFile(`/runtipi/apps/${id}/config.json`);
+      const parsedConfig = appInfoSchema.safeParse(configFile);
 
-      if (configFile) {
-        configFile.description = readFile(`/runtipi/apps/${id}/metadata/description.md`).toString();
+      if (parsedConfig.success && parsedConfig.data.available) {
+        const description = readFile(`/runtipi/apps/${id}/metadata/description.md`);
+        return { ...parsedConfig.data, description };
       }
-
-      return configFile;
     }
+
     if (fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`)) {
-      const configFile = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+      const configFile = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+      const parsedConfig = appInfoSchema.safeParse(configFile);
 
-      if (configFile) {
-        configFile.description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/metadata/description.md`);
-      }
-
-      if (configFile?.available) {
-        return configFile;
+      if (parsedConfig.success && parsedConfig.data.available) {
+        const description = readFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/metadata/description.md`);
+        return { ...parsedConfig.data, description };
       }
     }
 
@@ -158,17 +207,18 @@ export const getUpdateInfo = async (id: string, version?: number) => {
     return null;
   }
 
-  const repoConfig = readJsonFile<AppInfo>(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+  const repoConfig = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+  const parsedConfig = appInfoSchema.safeParse(repoConfig);
 
-  if (!repoConfig?.tipi_version) {
-    return null;
+  if (parsedConfig.success) {
+    return {
+      current: version || 0,
+      latest: parsedConfig.data.tipi_version,
+      dockerVersion: parsedConfig.data.version,
+    };
   }
 
-  return {
-    current: version || 0,
-    latest: repoConfig?.tipi_version,
-    dockerVersion: repoConfig?.version,
-  };
+  return null;
 };
 
 export const ensureAppFolder = (appName: string, cleanup = false) => {
