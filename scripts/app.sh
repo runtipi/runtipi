@@ -173,11 +173,6 @@ function uninstall_app() {
 
   write_log "Removing images for app ${app}..."
 
-  if ! compose "${app}" up --detach; then
-    write_log "Failed to uninstall app ${app}"
-    exit 1
-  fi
-
   if ! compose "${app}" down --rmi all --remove-orphans; then
     # just stop it if we can't remove the images
     if ! compose "${app}" rm --force --stop; then
