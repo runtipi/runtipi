@@ -46,6 +46,6 @@ export const Toast: React.FC<IProps> = ({ status, onClose, title, message, id })
         {message && <div className="text-white">{message}</div>}
       </div>
     </div>
-    <button onClick={onClose} className="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="close" />
+    <button onClick={onClose} data-testid="toast-close-button" className="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="close" />
   </div>
 );

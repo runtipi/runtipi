@@ -11,6 +11,11 @@ import { StatusProvider } from '../components/hoc/StatusProvider';
 import { AuthProvider } from '../components/hoc/AuthProvider';
 import { StatusScreen } from '../components/StatusScreen';
 
+if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+  // eslint-disable-next-line global-require
+  require('../mocks');
+}
+
 function MyApp({ Component, pageProps }: AppProps) {
   const { setDarkMode } = useUIStore();
 

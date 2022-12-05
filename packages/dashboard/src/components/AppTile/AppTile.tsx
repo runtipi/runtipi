@@ -10,7 +10,7 @@ import styles from './AppTile.module.scss';
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc'>;
 
 export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; updateAvailable: boolean }> = ({ app, status, updateAvailable }) => (
-  <div className="col-sm-6 col-lg-4">
+  <div data-testid={`app-tile-${app.id}`} className="col-sm-6 col-lg-4">
     <div className="card card-sm card-link">
       <Link href={`/apps/${app.id}`} className="nav-link" passHref>
         <div className="card-body">

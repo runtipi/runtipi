@@ -1,10 +1,9 @@
 module.exports = {
-  plugins: ['@typescript-eslint', 'import', 'react'],
+  plugins: ['@typescript-eslint', 'import', 'react', 'jest'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'next/core-web-vitals',
     'next',
-    // 'plugin:react-hooks/recommended',
     'airbnb',
     'airbnb-typescript',
     'eslint:recommended',
@@ -20,22 +19,21 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   rules: {
-    // 'arrow-body-style': 0,
     'no-restricted-exports': 0,
-    // 'max-len': [1, { code: 200 }],
-    // 'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never', ts: 'never', tsx: 'never' }],
     'react/display-name': 0,
     'react/prop-types': 0,
     'react/function-component-definition': 0,
     'react/require-default-props': 0,
     'import/prefer-default-export': 0,
     'react/jsx-props-no-spreading': 0,
-    // '@typescript-eslint/no-misused-promises': 0,
-    // '@typescript-eslint/no-unsafe-assignment': 0,
     'react/no-unused-prop-types': 0,
     'react/button-has-type': 0,
+    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/mocks/**', 'tests/**'] }],
   },
   globals: {
     JSX: true,
+  },
+  env: {
+    'jest/globals': true,
   },
 };

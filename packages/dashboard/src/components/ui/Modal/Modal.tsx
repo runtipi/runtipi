@@ -35,12 +35,28 @@ export const Modal: React.FC<IProps> = ({ children, isOpen, onClose, size = 'lg'
     return () => document.removeEventListener('click', handleClickOutside, true);
   }, [handleClickOutside]);
 
+  // Close on escape
+  const handleEscape = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    },
+    [onClose],
+  );
+
+  // Close on escape
+  useEffect(() => {
+    document.addEventListener('keydown', handleEscape, true);
+    return () => document.removeEventListener('keydown', handleEscape, true);
+  }, [handleEscape]);
+
   return (
-    <div className={clsx('modal modal-sm', styles.dimmedBackground)} tabIndex={-1} style={style}>
+    <div data-testid="modal" className={clsx('modal modal-sm', styles.dimmedBackground)} tabIndex={-1} style={style} role="dialog">
       <div ref={setModal} className={clsx(`modal-dialog modal-dialog-centered modal-${size}`, styles.zoomIn)} role="document">
         <div className="shadow modal-content">
-          <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={onClose} />
-          <div className={clsx('modal-status', { [`bg-${type}`]: Boolean(type), 'd-none': !type })} />
+          <button data-testid="modal-close-button" type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={onClose} />
+          <div data-testid="modal-status" className={clsx('modal-status', { [`bg-${type}`]: Boolean(type), 'd-none': !type })} />
           {children}
         </div>
       </div>

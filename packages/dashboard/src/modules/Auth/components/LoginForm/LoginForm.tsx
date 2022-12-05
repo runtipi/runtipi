@@ -22,16 +22,22 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit }) => {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
+
+  const watchEmail = watch('email');
+  const watchPassword = watch('password');
+
+  const isDisabled = !watchEmail || !watchPassword;
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
       <h2 className="h2 text-center mb-3">Login to your account</h2>
       <Input {...register('email')} label="Email address" error={errors.email?.message} disabled={loading} type="email" className="mb-3" placeholder="you@example.com" />
       <Input {...register('password')} label="Password" error={errors.password?.message} disabled={loading} type="password" className="mb-3" placeholder="Your password" />
-      <Button loading={loading} type="submit" className="btn btn-primary w-100">
+      <Button disabled={isDisabled} loading={loading} type="submit" className="btn btn-primary w-100">
         Login
       </Button>
     </form>

@@ -13,6 +13,7 @@ type Store = {
   toasts: IToast[];
   addToast: (toast: Omit<IToast, 'id'>) => void;
   removeToast: (id: string) => void;
+  clearToasts: () => void;
 };
 
 export const useToastStore = create<Store>((set) => ({
@@ -31,4 +32,5 @@ export const useToastStore = create<Store>((set) => ({
     }, 5000);
   },
   removeToast: (id: string) => set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
+  clearToasts: () => set({ toasts: [] }),
 }));

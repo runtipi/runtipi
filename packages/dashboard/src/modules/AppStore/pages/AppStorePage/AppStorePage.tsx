@@ -10,9 +10,11 @@ import { sortTable } from '../../helpers/table.helpers';
 import { Layout } from '../../../../components/Layout';
 import { EmptyPage } from '../../../../components/ui/EmptyPage';
 import AppStoreContainer from '../../containers/AppStoreContainer';
+import { ErrorPage } from '../../../../components/ui/ErrorPage';
 
 export const AppStorePage: NextPage = () => {
-  const { loading, data } = useListAppsQuery();
+  const { loading, data, error } = useListAppsQuery();
+
   const { setCategory, setSearch, category, search, sort, sortDirection } = useAppStoreState();
 
   const actions = (
@@ -31,6 +33,7 @@ export const AppStorePage: NextPage = () => {
     <Layout loading={loading && !data} title="App Store" actions={actions}>
       {(tableData.length > 0 || loading) && <AppStoreContainer loading={loading} apps={tableData} />}
       {tableData.length === 0 && <EmptyPage title="No app found" subtitle="Try to refine your search" />}
+      {error && <ErrorPage error={error.message} />}
     </Layout>
   );
 };

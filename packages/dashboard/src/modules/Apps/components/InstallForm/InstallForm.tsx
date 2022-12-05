@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { AppInfo, FormField } from '../../../generated/graphql';
-import { Button } from '../../../components/ui/Button';
-import { Switch } from '../../../components/ui/Switch';
-import { Input } from '../../../components/ui/Input';
-import { validateAppConfig } from '../utils/validators';
+import { AppInfo, FormField } from '../../../../generated/graphql';
+import { Button } from '../../../../components/ui/Button';
+import { Switch } from '../../../../components/ui/Switch';
+import { Input } from '../../../../components/ui/Input';
+import { validateAppConfig } from '../../utils/validators';
 
 interface IProps {
   formFields: AppInfo['form_fields'];
@@ -44,7 +44,15 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
   }, [initalValues, setValue]);
 
   const renderField = (field: FormField) => (
-    <Input {...register(field.env_variable)} label={field.label} error={errors[field.env_variable]?.message} disabled={loading} className="mb-3" placeholder={field.hint || field.label} />
+    <Input
+      key={field.env_variable}
+      {...register(field.env_variable)}
+      label={field.label}
+      error={errors[field.env_variable]?.message}
+      disabled={loading}
+      className="mb-3"
+      placeholder={field.hint || field.label}
+    />
   );
 
   const renderExposeForm = () => (
@@ -75,8 +83,10 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
     }
   };
 
+  const name = initalValues ? 'update' : 'install';
+
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
+    <form data-testid={`${name}-form`} className="flex flex-col" onSubmit={handleSubmit(validate)}>
       {formFields.filter(typeFilter).map(renderField)}
       {exposable && renderExposeForm()}
       <Button type="submit" className="btn-success">

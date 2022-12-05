@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ApolloClient } from '@apollo/client';
 import { createApolloClient } from '../core/apollo/client';
+import { initMocks } from '../mocks';
 
 interface IReturnProps {
   client?: ApolloClient<unknown>;
@@ -11,7 +12,11 @@ export default function useCachedResources(): IReturnProps {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
 
-  function loadResourcesAndDataAsync() {
+  async function loadResourcesAndDataAsync() {
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      await initMocks();
+    }
+
     try {
       const restoredClient = createApolloClient();
 

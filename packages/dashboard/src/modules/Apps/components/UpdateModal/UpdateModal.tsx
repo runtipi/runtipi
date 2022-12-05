@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from '../../../components/ui/Modal';
+import { Button } from '../../../../components/ui/Button';
+import { Modal, ModalBody, ModalFooter, ModalHeader } from '../../../../components/ui/Modal';
 
-import { AppInfo } from '../../../generated/graphql';
+import { AppInfo } from '../../../../generated/graphql';
 
 interface IProps {
   newVersion: string;
-  app: AppInfo;
+  app: Pick<AppInfo, 'name'>;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;

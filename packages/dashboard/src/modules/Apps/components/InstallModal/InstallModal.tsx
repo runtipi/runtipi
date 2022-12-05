@@ -1,10 +1,10 @@
 import React from 'react';
-import { InstallForm } from './InstallForm';
-import { AppInfo } from '../../../generated/graphql';
-import { Modal, ModalBody, ModalHeader } from '../../../components/ui/Modal';
+import { InstallForm } from '../InstallForm';
+import { AppInfo } from '../../../../generated/graphql';
+import { Modal, ModalBody, ModalHeader } from '../../../../components/ui/Modal';
 
 interface IProps {
-  app: AppInfo;
+  app: Pick<AppInfo, 'name' | 'form_fields' | 'exposable'>;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (values: Record<string, any>) => void;

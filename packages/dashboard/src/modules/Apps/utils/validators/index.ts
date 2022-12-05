@@ -1,0 +1,1 @@
+export { validateAppConfig } from './validators';

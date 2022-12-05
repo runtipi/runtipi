@@ -15,7 +15,7 @@ interface IProps {
   value?: string;
 }
 
-export const Input = React.forwardRef<HTMLInputElement, IProps>(({ onChange, onBlur, name, label, placeholder, error, type = 'text', className, value }, ref) => (
+export const Input = React.forwardRef<HTMLInputElement, IProps>(({ onChange, onBlur, name, label, placeholder, error, type = 'text', className, value, isInvalid, disabled }, ref) => (
   <div className={clsx(className)}>
     {label && (
       <label htmlFor={name} className="form-label">
@@ -23,6 +23,7 @@ export const Input = React.forwardRef<HTMLInputElement, IProps>(({ onChange, onB
       </label>
     )}
     <input
+      disabled={disabled}
       name={name}
       id={name}
       onBlur={onBlur}
@@ -30,7 +31,7 @@ export const Input = React.forwardRef<HTMLInputElement, IProps>(({ onChange, onB
       value={value}
       type={type}
       ref={ref}
-      className={clsx('form-control', { 'is-invalid is-invalid-lite': error })}
+      className={clsx('form-control', { 'is-invalid is-invalid-lite': error || isInvalid })}
       placeholder={placeholder}
     />
     {error && <div className="invalid-feedback">{error}</div>}

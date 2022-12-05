@@ -18,12 +18,12 @@ import {
 } from '../../../../generated/graphql';
 import { AppActions } from '../../components/AppActions';
 import { AppDetailsTabs } from '../../components/AppDetailsTabs';
-import { FormValues } from '../../components/InstallForm';
 import { InstallModal } from '../../components/InstallModal';
 import { StopModal } from '../../components/StopModal';
 import { UninstallModal } from '../../components/UninstallModal';
 import { UpdateModal } from '../../components/UpdateModal';
 import { UpdateSettingsModal } from '../../components/UpdateSettingsModal';
+import { FormValues } from '../../components/InstallForm/InstallForm';
 
 interface IProps {
   app: Pick<App, 'id' | 'updateInfo' | 'config' | 'exposed' | 'domain' | 'status'>;
@@ -147,7 +147,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, info }) => {
   const newVersion = [app?.updateInfo?.dockerVersion ? `${app?.updateInfo?.dockerVersion}` : '', `(${String(app?.updateInfo?.latest)})`].join(' ');
 
   return (
-    <div className="card">
+    <div className="card" data-testid="app-details">
       <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} app={info} />
       <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} app={info} />
       <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} app={info} />
