@@ -10,7 +10,16 @@ export const AuthFormLayout: React.FC<IProps> = ({ children }) => (
   <div className="page page-center">
     <div className="container container-tight py-4">
       <div className="text-center mb-4">
-        <Image alt="Tipi logo" layout="intrinsic" src={getUrl('tipi.png')} height={50} width={50} />
+        <Image
+          alt="Tipi logo"
+          src={getUrl('tipi.png')}
+          height={50}
+          width={50}
+          style={{
+            maxWidth: '100%',
+            height: 'auto',
+          }}
+        />
       </div>
       <div className="card card-md">
         <div className="card-body">{children}</div>

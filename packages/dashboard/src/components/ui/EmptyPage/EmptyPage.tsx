@@ -12,13 +12,23 @@ interface IProps {
 }
 
 export const EmptyPage: React.FC<IProps> = ({ title, subtitle, onAction, actionLabel }) => (
-  <div className="card empty">
-    <Image src={getUrl('empty.svg')} alt="Empty box" height="80" width="80" className={styles.emptyImage} />
+  <div data-testid="empty-page" className="card empty">
+    <Image
+      src={getUrl('empty.svg')}
+      alt="Empty box"
+      height="80"
+      width="80"
+      className={styles.emptyImage}
+      style={{
+        maxWidth: '100%',
+        height: 'auto',
+      }}
+    />
     <p className="empty-title">{title}</p>
     <p className="empty-subtitle text-muted">{subtitle}</p>
     <div className="empty-action">
       {onAction && (
-        <Button onClick={onAction} className="btn-primary">
+        <Button data-testid="empty-page-action" onClick={onAction} className="btn-primary">
           {actionLabel}
         </Button>
       )}

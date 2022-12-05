@@ -4,4 +4,8 @@ interface IProps {
   children: React.ReactNode;
 }
 
-export const ModalHeader: React.FC<IProps> = ({ children }) => <div className="modal-header">{children}</div>;
+export const ModalHeader: React.FC<IProps> = ({ children }) => (
+  <div data-testid="modal-header" className="modal-header">
+    {children}
+  </div>
+);

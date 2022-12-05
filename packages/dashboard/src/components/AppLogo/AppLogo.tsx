@@ -4,7 +4,11 @@ import { getUrl } from '../../core/helpers/url-helpers';
 import styles from './AppLogo.module.scss';
 
 export const AppLogo: React.FC<{ id?: string; size?: number; className?: string; alt?: string }> = ({ id, size = 80, className = '', alt = '' }) => {
-  const logoUrl = id ? `/api/apps/${id}/metadata/logo.jpg` : getUrl('placeholder.png');
+  let logoUrl = id ? `/api/apps/${id}/metadata/logo.jpg` : getUrl('placeholder.png');
+
+  if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+    logoUrl = getUrl('placeholder.png');
+  }
 
   return (
     <div aria-label={alt} className={clsx(styles.dropShadow, className)} style={{ width: size, height: size }}>

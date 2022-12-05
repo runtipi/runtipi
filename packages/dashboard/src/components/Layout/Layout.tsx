@@ -3,7 +3,8 @@ import Link from 'next/link';
 import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import ReactTooltip from 'react-tooltip';
-import { useRefreshTokenQuery } from '../../generated/graphql';
+import semver from 'semver';
+import { useRefreshTokenQuery, useVersionQuery } from '../../generated/graphql';
 import { Header } from '../ui/Header';
 import styles from './Layout.module.scss';
 
@@ -17,6 +18,9 @@ interface IProps {
 
 export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions }) => {
   const { data } = useRefreshTokenQuery({ fetchPolicy: 'network-only' });
+  const { data: dataVersion } = useVersionQuery({ nextFetchPolicy: 'network-only' });
+  const defaultVersion = '0.0.0';
+  const isLatest = semver.gte(dataVersion?.version.current || defaultVersion, dataVersion?.version.latest || defaultVersion);
 
   useEffect(() => {
     if (data?.refreshToken?.token) {
@@ -32,8 +36,10 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
     return (
       <ol className="breadcrumb" aria-label="breadcrumbs">
         {breadcrumbs.map((breadcrumb) => (
-          <li key={breadcrumb.name} className={clsx('breadcrumb-item', { active: breadcrumb.current })}>
-            <Link href={breadcrumb.href}>{breadcrumb.name}</Link>
+          <li key={breadcrumb.name} data-testid="breadcrumb-item" className={clsx('breadcrumb-item', { active: breadcrumb.current })}>
+            <Link data-testid="breadcrumb-link" href={breadcrumb.href}>
+              {breadcrumb.name}
+            </Link>
           </li>
         ))}
       </ol>
@@ -41,12 +47,12 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
   };
 
   return (
-    <div className="page">
+    <div data-testid={`${title?.toLowerCase().split(' ').join('-')}-layout`} className="page">
       <Head>
         <title>{title} - Tipi</title>
       </Head>
       <ReactTooltip offset={{ right: 3 }} effect="solid" place="bottom" />
-      <Header />
+      <Header isUpdateAvailable={!isLatest} />
       <div className="page-wrapper">
         <div className="page-header d-print-none">
           <div className="container-xl">

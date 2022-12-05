@@ -16,7 +16,7 @@ const AppStoreTable: React.FC<IProps> = ({ data, loading }) => {
   }
 
   return (
-    <div className="row row-cards">
+    <div data-testid="app-store-table" className="row row-cards">
       {data.map((app) => (
         <AppStoreTile key={app.id} app={app} />
       ))}

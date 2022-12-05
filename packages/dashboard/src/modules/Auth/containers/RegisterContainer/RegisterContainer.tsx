@@ -1,3 +1,4 @@
+import router from 'next/router';
 import React, { useState } from 'react';
 import { useRegisterMutation } from '../../../../generated/graphql';
 import { useToastStore } from '../../../../state/toastStore';
@@ -28,7 +29,7 @@ export const RegisterContainer: React.FC = () => {
 
       if (data?.register?.token) {
         localStorage.setItem('token', data.register.token);
-        window.location.reload();
+        router.reload();
       }
     } catch (error) {
       handleError(error);

@@ -1,7 +1,7 @@
 import validator from 'validator';
-import { FieldTypesEnum, FormField } from '../../../generated/graphql';
+import { FieldTypesEnum, FormField } from '../../../../generated/graphql';
 
-const validateField = (field: FormField, value: string | undefined | boolean): string | undefined => {
+export const validateField = (field: FormField, value: string | undefined | boolean): string | undefined => {
   if (field.required && !value) {
     return `${field.label} is required`;
   }

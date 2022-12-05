@@ -6,4 +6,8 @@ interface IProps {
   className?: string;
 }
 
-export const ModalBody: React.FC<IProps> = ({ children, className }) => <div className={clsx('modal-body', className)}>{children}</div>;
+export const ModalBody: React.FC<IProps> = ({ children, className }) => (
+  <div data-testid="modal-body" className={clsx('modal-body', className)}>
+    {children}
+  </div>
+);

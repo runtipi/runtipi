@@ -3,22 +3,21 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import semver from 'semver';
-import { useVersionQuery } from '../../../generated/graphql';
 
-export const NavBar: React.FC = () => {
-  const { data } = useVersionQuery();
+interface IProps {
+  isUpdateAvailable?: boolean;
+}
+
+export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
   const router = useRouter();
   const path = router.pathname.split('/')[1];
-  const defaultVersion = '0.0.0';
-  const isLatest = semver.gte(data?.version.current || defaultVersion, data?.version.latest || defaultVersion);
 
   const renderItem = (title: string, name: string, Icon: TablerIcon) => {
     const isActive = path === name;
     const itemClass = clsx('nav-item', { active: isActive, 'border-primary': isActive, 'border-bottom-wide': isActive });
 
     return (
-      <li className={itemClass}>
+      <li data-testid={`nav-item-${name}`} className={itemClass}>
         <Link href={`/${name}`} className="nav-link" passHref>
           <span className="nav-link-icon d-md-none d-lg-inline-block">
             <Icon size={24} />
@@ -38,7 +37,7 @@ export const NavBar: React.FC = () => {
           {renderItem('App Store', 'app-store', IconBrandAppstore)}
           {renderItem('Settings', 'settings', IconSettings)}
         </ul>
-        {!isLatest && <span className="ms-2 badge bg-green d-none d-lg-block">Update available</span>}
+        {Boolean(isUpdateAvailable) && <span className="ms-2 badge bg-green d-none d-lg-block">Update available</span>}
       </div>
     </div>
   );

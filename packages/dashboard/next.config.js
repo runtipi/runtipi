@@ -2,7 +2,7 @@
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
-  basePath: '/dashboard',
+  swcMinify: true,
 };
 
 module.exports = nextConfig;
