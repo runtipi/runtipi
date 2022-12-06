@@ -56,14 +56,7 @@ const getVersion = async (): Promise<{ current: string; latest?: string }> => {
 const restart = async (): Promise<boolean> => {
   setConfig('status', 'RESTARTING');
 
-  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.RESTART);
-
-  if (!success) {
-    logger.error(`Error restarting system: ${stdout}`);
-    return false;
-  }
-
-  setConfig('status', 'RUNNING');
+  eventDispatcher.dispatchEventAsync(EventTypes.RESTART);
 
   return true;
 };
@@ -89,14 +82,7 @@ const update = async (): Promise<boolean> => {
 
   setConfig('status', 'UPDATING');
 
-  const { success, stdout } = await eventDispatcher.dispatchEventAsync(EventTypes.UPDATE);
-
-  if (!success) {
-    logger.error(`Error updating system: ${stdout}`);
-    return false;
-  }
-
-  setConfig('status', 'RUNNING');
+  eventDispatcher.dispatchEventAsync(EventTypes.UPDATE);
 
   return true;
 };

@@ -1,1 +1,1 @@
-export * from './AppLogo';
+export { AppLogo } from './AppLogo';

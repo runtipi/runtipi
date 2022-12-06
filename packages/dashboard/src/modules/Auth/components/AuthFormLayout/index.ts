@@ -1,0 +1,1 @@
+export { AuthFormLayout } from './AuthFormLayout';

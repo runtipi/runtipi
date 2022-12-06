@@ -1,81 +1,68 @@
-import { Flex, useDisclosure, Spinner, Breadcrumb, BreadcrumbItem, useColorModeValue, Box } from '@chakra-ui/react';
 import Head from 'next/head';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
-import { FiChevronRight } from 'react-icons/fi';
-import Header from './Header';
-import Menu from './SideMenu';
-import MenuDrawer from './MenuDrawer';
+import clsx from 'clsx';
+import ReactTooltip from 'react-tooltip';
 import { useRefreshTokenQuery } from '../../generated/graphql';
+import { Header } from '../ui/Header';
+import styles from './Layout.module.scss';
 
 interface IProps {
   loading?: boolean;
   breadcrumbs?: { name: string; href: string; current?: boolean }[];
   children: React.ReactNode;
+  title?: string;
+  actions?: React.ReactNode;
 }
 
-const Layout: React.FC<IProps> = ({ children, loading, breadcrumbs }) => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions }) => {
   const { data } = useRefreshTokenQuery({ fetchPolicy: 'network-only' });
 
   useEffect(() => {
     if (data?.refreshToken?.token) {
       localStorage.setItem('token', data.refreshToken.token);
     }
-  }, [data]);
-
-  const menubg = useColorModeValue('#F1F3F4', '#202736');
-  const bg = useColorModeValue('white', '#1a202c');
-
-  const renderContent = () => {
-    if (loading) {
-      return (
-        <Flex className="justify-center flex-1">
-          <Spinner />
-        </Flex>
-      );
-    }
-
-    return children;
-  };
+  }, [data?.refreshToken?.token]);
 
   const renderBreadcrumbs = () => {
+    if (!breadcrumbs) {
+      return null;
+    }
+
     return (
-      <Breadcrumb spacing="8px" separator={<FiChevronRight color="gray.500" />}>
-        {breadcrumbs?.map((breadcrumb, index) => {
-          return (
-            <BreadcrumbItem className="hover:underline" isCurrentPage={breadcrumb.current} key={index}>
-              <Link href={breadcrumb.href}>{breadcrumb.name}</Link>
-            </BreadcrumbItem>
-          );
-        })}
-      </Breadcrumb>
+      <ol className="breadcrumb" aria-label="breadcrumbs">
+        {breadcrumbs.map((breadcrumb) => (
+          <li key={breadcrumb.name} className={clsx('breadcrumb-item', { active: breadcrumb.current })}>
+            <Link href={breadcrumb.href}>{breadcrumb.name}</Link>
+          </li>
+        ))}
+      </ol>
     );
   };
 
   return (
-    <>
+    <div className="page">
       <Head>
-        <title>Tipi</title>
+        <title>{title} - Tipi</title>
       </Head>
-      <Flex height="100vh" direction="column">
-        <MenuDrawer isOpen={isOpen} onClose={onClose}>
-          <Menu />
-        </MenuDrawer>
-        <Header onClickMenu={onOpen} />
-        <Flex flex={1}>
-          <Flex height="100vh" bg={menubg} className="sticky top-0 invisible md:visible w-0 md:w-64">
-            <Menu />
-          </Flex>
-          <Box bg={bg} className="flex-1 px-4 py-4 md:px-10 md:py-8">
-            {/* <UpdateBanner /> */}
-            {renderBreadcrumbs()}
-            {renderContent()}
-          </Box>
-        </Flex>
-      </Flex>
-    </>
+      <ReactTooltip offset={{ right: 3 }} effect="solid" place="bottom" />
+      <Header />
+      <div className="page-wrapper">
+        <div className="page-header d-print-none">
+          <div className="container-xl">
+            <div className={clsx('align-items-stretch align-items-md-center d-flex flex-column flex-md-row ', styles.topActions)}>
+              <div className="me-3 text-white">
+                <div className="page-pretitle">{renderBreadcrumbs()}</div>
+                <h2 className="page-title">{title}</h2>
+              </div>
+              <div className="flex-fill">{actions}</div>
+            </div>
+          </div>
+        </div>
+        <div className="page-body">
+          <div className="container-xl">{children}</div>
+        </div>
+      </div>
+    </div>
   );
 };
-
-export default Layout;
