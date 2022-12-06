@@ -161,6 +161,11 @@ function start_app() {
 
   ensure_permissions "${app}"
 
+  # Pull images
+  if ! compose "${app}" pull; then
+    write_log "Failed to pull app ${app}"
+  fi
+
   if ! compose "${app}" up --detach; then
     write_log "Failed to start app ${app}"
     exit 1
