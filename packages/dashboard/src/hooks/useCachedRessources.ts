@@ -11,9 +11,9 @@ export default function useCachedResources(): IReturnProps {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
 
-  async function loadResourcesAndDataAsync() {
+  function loadResourcesAndDataAsync() {
     try {
-      const restoredClient = await createApolloClient();
+      const restoredClient = createApolloClient();
 
       setClient(restoredClient);
     } catch (error) {

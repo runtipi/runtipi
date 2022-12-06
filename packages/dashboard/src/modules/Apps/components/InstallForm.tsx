@@ -1,19 +1,21 @@
-import { Button } from '@chakra-ui/react';
-import React from 'react';
-import { Form, Field } from 'react-final-form';
-import FormInput from '../../../components/Form/FormInput';
-import FormSwitch from '../../../components/Form/FormSwitch';
-import { validateAppConfig } from '../../../components/Form/validators';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+
 import { AppInfo, FormField } from '../../../generated/graphql';
+import { Button } from '../../../components/ui/Button';
+import { Switch } from '../../../components/ui/Switch';
+import { Input } from '../../../components/ui/Input';
+import { validateAppConfig } from '../utils/validators';
 
 interface IProps {
   formFields: AppInfo['form_fields'];
   onSubmit: (values: Record<string, unknown>) => void;
-  initalValues?: Record<string, string>;
+  initalValues?: { exposed?: boolean; domain?: string } & { [key: string]: string };
+  loading?: boolean;
   exposable?: boolean | null;
 }
 
-export type IFormValues = {
+export type FormValues = {
   exposed?: boolean;
   domain?: string;
   [key: string]: string | boolean | undefined;
@@ -22,65 +24,65 @@ export type IFormValues = {
 const hiddenTypes = ['random'];
 const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 
-const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues, exposable }) => {
-  const renderField = (field: FormField) => {
-    return (
-      <Field
-        key={field.env_variable}
-        name={field.env_variable}
-        render={({ input, meta }) => (
-          <FormInput
-            hint={field.hint || ''}
-            placeholder={field.placeholder || ''}
-            className="mb-3"
-            error={meta.error}
-            isInvalid={meta.invalid && (meta.submitError || meta.submitFailed)}
-            label={field.label}
-            {...input}
-          />
-        )}
-      />
-    );
-  };
+const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues, exposable, loading }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+    setError,
+  } = useForm<FormValues>({});
+  const watchExposed = watch('exposed', false);
 
-  const renderExposeForm = (isExposedChecked?: boolean) => {
-    return (
-      <>
-        <Field key="exposed" name="exposed" type="checkbox" render={({ input }) => <FormSwitch className="mb-3" label="Expose app ?" {...input} />} />
-        {isExposedChecked && (
-          <>
-            <Field
-              key="domain"
-              name="domain"
-              render={({ input, meta }) => <FormInput className="mb-3" error={meta.error} isInvalid={meta.invalid && (meta.submitError || meta.submitFailed)} label="Domain name" {...input} />}
-            />
-            <span className="text-sm">
-              Make sure this exact domain contains an <strong>A</strong> record pointing to your IP.
-            </span>
-          </>
-        )}
-      </>
-    );
+  useEffect(() => {
+    if (initalValues) {
+      Object.entries(initalValues).forEach(([key, value]) => {
+        setValue(key, value);
+      });
+    }
+  }, [initalValues, setValue]);
+
+  const renderField = (field: FormField) => (
+    <Input {...register(field.env_variable)} label={field.label} error={errors[field.env_variable]?.message} disabled={loading} className="mb-3" placeholder={field.hint || field.label} />
+  );
+
+  const renderExposeForm = () => (
+    <>
+      <Switch className="mb-3" {...register('exposed')} label="Expose app" />
+      {watchExposed && (
+        <div className="mb-3">
+          <Input {...register('domain')} label="Domain name" error={errors.domain?.message} disabled={loading} placeholder="Domain name" />
+          <span className="text-muted">
+            Make sure this exact domain contains an <strong>A</strong> record pointing to your IP.
+          </span>
+        </div>
+      )}
+    </>
+  );
+
+  const validate = (values: FormValues) => {
+    const validationErrors = validateAppConfig(values, formFields);
+
+    Object.entries(validationErrors).forEach(([key, value]) => {
+      if (value) {
+        setError(key, { message: value });
+      }
+    });
+
+    if (Object.keys(validationErrors).length === 0) {
+      onSubmit(values);
+    }
   };
 
   return (
-    <Form<IFormValues>
-      initialValues={initalValues}
-      onSubmit={onSubmit}
-      validateOnBlur={true}
-      validate={(values) => validateAppConfig(values, formFields)}
-      render={({ handleSubmit, validating, submitting, values }) => (
-        <form className="flex flex-col" onSubmit={handleSubmit}>
-          <>
-            {formFields.filter(typeFilter).map(renderField)}
-            {exposable && renderExposeForm(values.exposed)}
-            <Button isLoading={validating || submitting} className="self-end mb-2" colorScheme="green" type="submit">
-              {initalValues ? 'Update' : 'Install'}
-            </Button>
-          </>
-        </form>
-      )}
-    />
+    <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
+      {formFields.filter(typeFilter).map(renderField)}
+      {exposable && renderExposeForm()}
+      <Button type="submit" className="btn-success">
+        {initalValues ? 'Update' : 'Install'}
+      </Button>
+    </form>
   );
 };
 

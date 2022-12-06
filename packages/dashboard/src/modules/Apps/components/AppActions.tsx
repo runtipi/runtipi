@@ -1,9 +1,8 @@
-import { Button, Tooltip } from '@chakra-ui/react';
+import { IconDownload, IconExternalLink, IconPlayerPause, IconPlayerPlay, IconSettings, IconTrash, IconX, TablerIcon } from '@tabler/icons';
+import clsx from 'clsx';
 import React from 'react';
-import { IconType } from 'react-icons';
-import { FiExternalLink, FiPause, FiPlay, FiSettings, FiTrash2 } from 'react-icons/fi';
-import { MdSystemUpdateAlt } from 'react-icons/md';
-import { TiCancel } from 'react-icons/ti';
+
+import { Button } from '../../../components/ui/Button';
 import { AppInfo, AppStatusEnum } from '../../../generated/graphql';
 
 interface IProps {
@@ -21,7 +20,7 @@ interface IProps {
 }
 
 interface BtnProps {
-  Icon?: IconType;
+  Icon?: TablerIcon;
   onClick: () => void;
   width?: number | null;
   title?: string;
@@ -30,12 +29,12 @@ interface BtnProps {
 }
 
 const ActionButton: React.FC<BtnProps> = (props) => {
-  const { Icon, onClick, title, loading, width = 150, color = 'gray' } = props;
+  const { Icon, onClick, title, loading, color, width = 140 } = props;
 
   return (
-    <Button isLoading={loading} onClick={onClick} width={width || undefined} colorScheme={color} className="mt-3 mr-2">
+    <Button loading={loading} onClick={onClick} width={width} className={clsx('me-2 px-4 mt-2', [`btn-${color}`])}>
       {title}
-      {Icon && <Icon className="ml-1" />}
+      {Icon && <Icon className="ms-1" size={14} />}
     </Button>
   );
 };
@@ -45,25 +44,15 @@ const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onS
 
   const buttons: JSX.Element[] = [];
 
-  const renderStatus = () => {
-    if (status === AppStatusEnum.Installing || status === AppStatusEnum.Uninstalling || status === AppStatusEnum.Starting || status === AppStatusEnum.Stopping || status === AppStatusEnum.Updating) {
-      return <span className="text-gray-500 text-sm ml-2 mt-3 self-center text-center sm:text-left">{`App is ${status.toLowerCase()} please wait...`}</span>;
-    }
-  };
-
-  const StartButton = <ActionButton Icon={FiPlay} onClick={onStart} title="Start" color="green" />;
-  const RemoveButton = <ActionButton Icon={FiTrash2} onClick={onUninstall} title="Remove" />;
-  const SettingsButton = <ActionButton Icon={FiSettings} width={null} onClick={onUpdateSettings} />;
-  const StopButton = <ActionButton Icon={FiPause} onClick={onStop} title="Stop" color="red" />;
-  const OpenButton = <ActionButton Icon={FiExternalLink} onClick={onOpen} title="Open" />;
-  const LoadingButtion = <ActionButton loading onClick={() => null} color="green" />;
-  const CancelButton = <ActionButton Icon={TiCancel} onClick={onCancel} title="Cancel" />;
-  const InstallButton = <ActionButton onClick={onInstall} title="Install" color="green" />;
-  const UpdateButton = (
-    <Tooltip label="Download update">
-      <ActionButton Icon={MdSystemUpdateAlt} onClick={onUpdate} width={null} />
-    </Tooltip>
-  );
+  const StartButton = <ActionButton Icon={IconPlayerPlay} onClick={onStart} title="Start" color="success" />;
+  const RemoveButton = <ActionButton Icon={IconTrash} onClick={onUninstall} title="Remove" color="danger" />;
+  const SettingsButton = <ActionButton Icon={IconSettings} onClick={onUpdateSettings} title="Settings" />;
+  const StopButton = <ActionButton Icon={IconPlayerPause} onClick={onStop} title="Stop" color="danger" />;
+  const OpenButton = <ActionButton Icon={IconExternalLink} onClick={onOpen} title="Open" />;
+  const LoadingButtion = <ActionButton loading onClick={() => null} color="success" />;
+  const CancelButton = <ActionButton Icon={IconX} onClick={onCancel} title="Cancel" />;
+  const InstallButton = <ActionButton onClick={onInstall} title="Install" color="success" />;
+  const UpdateButton = <ActionButton Icon={IconDownload} onClick={onUpdate} width={null} title="Update" color="success" />;
 
   switch (status) {
     case AppStatusEnum.Stopped:
@@ -104,16 +93,7 @@ const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onS
       break;
   }
 
-  return (
-    <div className="flex flex-1 flex-col justify-start">
-      <div className="flex flex-1 justify-center md:justify-start flex-wrap">
-        {buttons.map((button) => {
-          return button;
-        })}
-      </div>
-      <div className="mt-1 flex justify-center md:justify-start">{renderStatus()}</div>
-    </div>
-  );
+  return <div className="d-flex justify-content-center flex-wrap">{buttons.map((button) => button)}</div>;
 };
 
 export default AppActions;

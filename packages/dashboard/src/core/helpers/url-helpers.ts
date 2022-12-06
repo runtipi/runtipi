@@ -1,5 +1,5 @@
 export const getUrl = (url: string) => {
-  let prefix = 'dashboard';
+  const prefix = 'dashboard';
 
   return `/${prefix}/${url}`;
 };

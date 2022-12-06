@@ -1,36 +1,53 @@
-import '@fontsource/open-sans/700.css';
-import '@fontsource/open-sans/400.css';
-import '../styles/globals.css';
-import { ChakraProvider } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
 import type { AppProps } from 'next/app';
-import { theme } from '../styles/theme';
-import AuthWrapper from '../modules/Auth/containers/AuthWrapper';
 import { ApolloProvider } from '@apollo/client';
-import useCachedResources from '../hooks/useCachedRessources';
 import Head from 'next/head';
-import StatusWrapper from '../components/StatusScreens/StatusWrapper';
-import LoadingScreen from '../components/LoadingScreen';
+import useCachedResources from '../hooks/useCachedRessources';
+import '../styles/global.css';
+import '../styles/global.scss';
+import { useUIStore } from '../state/uiStore';
+import { ToastProvider } from '../components/hoc/ToastProvider';
+import { StatusProvider } from '../components/hoc/StatusProvider';
+import { AuthProvider } from '../components/hoc/AuthProvider';
+import { StatusScreen } from '../components/StatusScreen';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { client } = useCachedResources();
+  const { setDarkMode } = useUIStore();
 
+  // check theme on component mount
+  useEffect(() => {
+    const themeCheck = () => {
+      if (localStorage.darkMode === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('theme-dark');
+        setDarkMode(true);
+      } else {
+        document.body.classList.remove('theme-light');
+        setDarkMode(false);
+      }
+    };
+    themeCheck();
+  }, [setDarkMode]);
+
+  const { client } = useCachedResources();
   if (!client) {
-    return <LoadingScreen />;
+    return <StatusScreen title="" subtitle="" />;
   }
 
   return (
-    <ApolloProvider client={client}>
-      <ChakraProvider theme={theme}>
+    <main className="h-100">
+      <ApolloProvider client={client}>
         <Head>
           <title>Tipi</title>
         </Head>
-        <StatusWrapper>
-          <AuthWrapper>
-            <Component {...pageProps} />
-          </AuthWrapper>
-        </StatusWrapper>
-      </ChakraProvider>
-    </ApolloProvider>
+        <ToastProvider>
+          <StatusProvider>
+            <AuthProvider>
+              <Component {...pageProps} />
+            </AuthProvider>
+          </StatusProvider>
+        </ToastProvider>
+      </ApolloProvider>
+    </main>
   );
 }
 
