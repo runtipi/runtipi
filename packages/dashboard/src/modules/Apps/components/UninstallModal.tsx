@@ -12,7 +12,7 @@ interface IProps {
   onConfirm: () => void;
 }
 
-const UninstallModal: React.FC<IProps> = ({ app, isOpen, onClose, onConfirm }) => (
+export const UninstallModal: React.FC<IProps> = ({ app, isOpen, onClose, onConfirm }) => (
   <Modal size="sm" type="danger" onClose={onClose} isOpen={isOpen}>
     <ModalHeader>
       <h5 className="modal-title">Uninstall {app.name} ?</h5>
@@ -29,5 +29,3 @@ const UninstallModal: React.FC<IProps> = ({ app, isOpen, onClose, onConfirm }) =
     </ModalFooter>
   </Modal>
 );
-
-export default UninstallModal;
