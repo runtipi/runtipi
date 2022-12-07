@@ -17,7 +17,7 @@ export const AppStorePage: NextPage = () => {
 
   const actions = (
     <div className="d-flex align-items-stretch align-items-md-center flex-column flex-md-row justify-content-end">
-      <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="search" className={clsx('flex-fill mt-2 mt-md-0 me-md-2', styles.selector)} />
+      <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" className={clsx('flex-fill mt-2 mt-md-0 me-md-2', styles.selector)} />
       <CategorySelector initialValue={category} className={clsx('flex-fill mt-2 mt-md-0', styles.selector)} onSelect={setCategory} />
     </div>
   );

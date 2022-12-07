@@ -24,7 +24,7 @@ export type FormValues = {
 const hiddenTypes = ['random'];
 const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 
-const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues, exposable, loading }) => {
+export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues, exposable, loading }) => {
   const {
     register,
     handleSubmit,
@@ -85,5 +85,3 @@ const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues, exp
     </form>
   );
 };
-
-export default InstallForm;

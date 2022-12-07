@@ -10,7 +10,7 @@ interface IProps {
   onConfirm: () => void;
 }
 
-const StopModal: React.FC<IProps> = ({ app, isOpen, onClose, onConfirm }) => (
+export const StopModal: React.FC<IProps> = ({ app, isOpen, onClose, onConfirm }) => (
   <Modal size="sm" onClose={onClose} isOpen={isOpen}>
     <ModalHeader>
       <h5 className="modal-title">Stop {app.name} ?</h5>
@@ -25,5 +25,3 @@ const StopModal: React.FC<IProps> = ({ app, isOpen, onClose, onConfirm }) => (
     </ModalFooter>
   </Modal>
 );
-
-export default StopModal;

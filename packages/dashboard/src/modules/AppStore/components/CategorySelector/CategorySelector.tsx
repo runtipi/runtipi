@@ -55,13 +55,19 @@ const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue 
         singleValue: (provided: any) => ({
           ...provided,
           color,
+          fontSize: '0.8rem',
+        }),
+        placeholder: (provided: any) => ({
+          ...provided,
+          color: '#a5a9b1',
+          fontSize: '0.8rem',
         }),
       }}
       onChange={handleChange}
       defaultValue={[]}
       name="categories"
       options={options as any}
-      placeholder="Category..."
+      placeholder="Category"
     />
   );
 };

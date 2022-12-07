@@ -12,7 +12,7 @@ interface IProps {
   onConfirm: () => void;
 }
 
-const UpdateModal: React.FC<IProps> = ({ app, newVersion, isOpen, onClose, onConfirm }) => (
+export const UpdateModal: React.FC<IProps> = ({ app, newVersion, isOpen, onClose, onConfirm }) => (
   <Modal size="sm" onClose={onClose} isOpen={isOpen}>
     <ModalHeader>
       <h5 className="modal-title">Update {app.name} ?</h5>
@@ -30,5 +30,3 @@ const UpdateModal: React.FC<IProps> = ({ app, newVersion, isOpen, onClose, onCon
     </ModalFooter>
   </Modal>
 );
-
-export default UpdateModal;

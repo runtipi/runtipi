@@ -38,7 +38,7 @@ export const NavBar: React.FC = () => {
           {renderItem('App Store', 'app-store', IconBrandAppstore)}
           {renderItem('Settings', 'settings', IconSettings)}
         </ul>
-        {isLatest && <span className="ms-2 badge bg-green d-none d-lg-block">Update available</span>}
+        {!isLatest && <span className="ms-2 badge bg-green d-none d-lg-block">Update available</span>}
       </div>
     </div>
   );

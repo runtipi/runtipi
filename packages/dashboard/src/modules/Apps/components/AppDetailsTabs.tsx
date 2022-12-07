@@ -8,7 +8,7 @@ interface IProps {
   info: AppInfo;
 }
 
-const AppDetailsTabs: React.FC<IProps> = ({ info }) => (
+export const AppDetailsTabs: React.FC<IProps> = ({ info }) => (
   <div className="card">
     <div style={{ marginTop: -1, marginBottom: -3 }} className="card-header">
       <ul className="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
@@ -54,5 +54,3 @@ const AppDetailsTabs: React.FC<IProps> = ({ info }) => (
     </div>
   </div>
 );
-
-export default AppDetailsTabs;

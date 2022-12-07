@@ -16,21 +16,21 @@ import {
   useUpdateAppConfigMutation,
   useUpdateAppMutation,
 } from '../../../../generated/graphql';
-import AppActions from '../../components/AppActions';
-import AppDetailsTabs from '../../components/AppDetailsTabs';
+import { AppActions } from '../../components/AppActions';
+import { AppDetailsTabs } from '../../components/AppDetailsTabs';
 import { FormValues } from '../../components/InstallForm';
-import InstallModal from '../../components/InstallModal';
-import StopModal from '../../components/StopModal';
-import UninstallModal from '../../components/UninstallModal';
-import UpdateModal from '../../components/UpdateModal';
-import UpdateSettingsModal from '../../components/UpdateSettingsModal';
+import { InstallModal } from '../../components/InstallModal';
+import { StopModal } from '../../components/StopModal';
+import { UninstallModal } from '../../components/UninstallModal';
+import { UpdateModal } from '../../components/UpdateModal';
+import { UpdateSettingsModal } from '../../components/UpdateSettingsModal';
 
 interface IProps {
   app: Pick<App, 'id' | 'updateInfo' | 'config' | 'exposed' | 'domain' | 'status'>;
   info: AppInfo;
 }
 
-const AppDetailsContainer: React.FC<IProps> = ({ app, info }) => {
+export const AppDetailsContainer: React.FC<IProps> = ({ app, info }) => {
   const { addToast } = useToastStore();
   const installDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
@@ -189,5 +189,3 @@ const AppDetailsContainer: React.FC<IProps> = ({ app, info }) => {
     </div>
   );
 };
-
-export default AppDetailsContainer;

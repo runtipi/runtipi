@@ -39,7 +39,7 @@ const ActionButton: React.FC<BtnProps> = (props) => {
   );
 };
 
-const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate, onCancel, updateAvailable, onUpdateSettings }) => {
+export const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate, onCancel, updateAvailable, onUpdateSettings }) => {
   const hasSettings = Object.keys(app.form_fields).length > 0 || app.exposable;
 
   const buttons: JSX.Element[] = [];
@@ -95,5 +95,3 @@ const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onS
 
   return <div className="d-flex justify-content-center flex-wrap">{buttons.map((button) => button)}</div>;
 };
-
-export default AppActions;
