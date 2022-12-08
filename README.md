@@ -38,24 +38,25 @@ You can try out a demo of Tipi at [demo.runtipi.com](demo.runtipi.com) using the
 
 Ubuntu 18.04 LTS or higher is recommended. However other major Linux distribution are supported but may lead to installation issues. Please file an issue if you encounter one.
 
-### Step 1. Download Tipi
+### Download and install Tipi
 
-Download the latest version of Tipi from GitHub:
+Download the latest version of Tipi:
 
 ```bash
-git clone https://github.com/meienberger/runtipi.git
+curl -L https://setup.runtipi.com | bash
 ```
 
-### Step 2. Run Tipi
+The script will prompt you the ip address of the dashboard once configured.
 
-Navigate to the downloaded directory and run the `start.sh` script to start Tipi:
+### Commands
+
+If you already installed Tipi, you can start it manually by running the `start.sh` script in the `runtipi` folder.
 
 ```bash
 cd runtipi
 sudo ./scripts/start.sh
 ```
 
-The script will prompt you the ip address of the dashboard once configured.
 Tipi will run by default on port 80. To select another port you can run the start script with the `--port` argument
 
 ```bash
@@ -68,9 +69,17 @@ To stop Tipi, run the stop script.
 sudo ./scripts/stop.sh
 ```
 
+### Update Tipi
+
+To update Tipi to the latest version, run the update script.
+
+```bash
+sudo ./scripts/system.sh update
+```
+
 ### Custom settings
 
-You can change the default settings by creating a `settings.json` file. The file should be located in the `state` directory. This file will make your changes persist across restarts. Example file:
+You can change the default settings by creating a `settings.json` file. The file should be located in the `runtipi/state` directory. This file will make your changes persist across restarts. Example file:
 
 ```json
 {
