@@ -25,7 +25,9 @@ STATE_FOLDER="${ROOT_FOLDER}/state"
 # Create seed file with cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
   echo "Generating seed..."
-  tr </dev/urandom -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 >"${STATE_FOLDER}/seed"
+  if ! tr </dev/urandom -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 >"${STATE_FOLDER}/seed"; then
+    echo "Created seed file..."
+  fi
 fi
 
 ### --------------------------------
