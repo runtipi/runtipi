@@ -99,7 +99,7 @@ class Config {
 
     const parsed = configSchema.parse({
       ...this.config,
-      ...fileConfig,
+      ...(fileConfig as object),
     });
 
     this.config = parsed;
