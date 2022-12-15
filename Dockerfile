@@ -31,7 +31,7 @@ WORKDIR /
 
 WORKDIR /api
 COPY ./packages/system-api/package.json /api/
-COPY --from=builder --chown=node:node /api/dist /api/dist
+COPY --from=builder /api/dist /api/dist
 
 WORKDIR /dashboard
 COPY --from=builder /dashboard/next.config.js ./
@@ -39,9 +39,5 @@ COPY --from=builder /dashboard/public ./public
 COPY --from=builder /dashboard/package.json ./package.json
 COPY --from=builder --chown=node:node /dashboard/.next/standalone ./
 COPY --from=builder --chown=node:node /dashboard/.next/static ./.next/static
-
-RUN mkdir -p /app/logs
-
-USER node
 
 WORKDIR /
