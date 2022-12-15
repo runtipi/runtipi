@@ -18,6 +18,7 @@ module.exports = {
     'import/prefer-default-export': 0,
     'no-underscore-dangle': 0,
     '@typescript-eslint/ban-ts-comment': 0,
+    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.ts', '**/*.spec.ts', '**/*.factory.ts', 'esbuild.js'] }],
   },
   globals: {
     NodeJS: true,

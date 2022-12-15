@@ -5,7 +5,6 @@ import { faker } from '@faker-js/faker';
 import SystemService from '../system.service';
 import TipiCache from '../../../config/TipiCache';
 import { setConfig } from '../../../core/config/TipiConfig';
-import logger from '../../../config/logger/logger';
 import EventDispatcher from '../../../core/config/EventDispatcher';
 
 jest.mock('fs-extra');
