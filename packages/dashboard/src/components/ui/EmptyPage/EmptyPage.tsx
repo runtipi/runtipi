@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import Image from 'next/image';
 import React from 'react';
 import { getUrl } from '../../../core/helpers/url-helpers';
@@ -18,7 +19,7 @@ export const EmptyPage: React.FC<IProps> = ({ title, subtitle, onAction, actionL
       alt="Empty box"
       height="80"
       width="80"
-      className={styles.emptyImage}
+      className={clsx(styles.emptyImage, 'mb-3')}
       style={{
         maxWidth: '100%',
         height: 'auto',

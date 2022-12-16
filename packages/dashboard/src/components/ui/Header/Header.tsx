@@ -3,6 +3,7 @@ import { IconBrandGithub, IconHeart, IconLogout, IconMoon, IconSun } from '@tabl
 import Image from 'next/image';
 import clsx from 'clsx';
 import router from 'next/router';
+import Link from 'next/link';
 import { getUrl } from '../../../core/helpers/url-helpers';
 import { useUIStore } from '../../../state/uiStore';
 import { NavBar } from '../NavBar';
@@ -28,22 +29,24 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
           <span className="navbar-toggler-icon" />
         </button>
-        <a href="/">
+        <Link href="/" passHref>
           <h1 className="navbar-brand d-none-navbar-horizontal pe-0 pe-md-3">
             <Image
+              priority
               alt="Tipi logo"
               className={clsx('navbar-brand-image me-3')}
               width={100}
               height={100}
               src={getUrl('tipi.png')}
               style={{
+                width: '30px',
                 maxWidth: '30px',
                 height: 'auto',
               }}
             />
             Tipi
           </h1>
-        </a>
+        </Link>
         <div className="navbar-nav flex-row order-md-last">
           <div className="nav-item d-none d-lg-flex me-3">
             <div className="btn-list">

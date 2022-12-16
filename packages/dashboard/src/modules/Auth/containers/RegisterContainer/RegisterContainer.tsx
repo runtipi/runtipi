@@ -30,11 +30,13 @@ export const RegisterContainer: React.FC = () => {
       if (data?.register?.token) {
         localStorage.setItem('token', data.register.token);
         router.reload();
+      } else {
+        setLoading(false);
+        handleError(new Error('Something went wrong'));
       }
     } catch (error) {
-      handleError(error);
-    } finally {
       setLoading(false);
+      handleError(error);
     }
   };
 

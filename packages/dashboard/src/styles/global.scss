@@ -1,2 +1,8 @@
 // import tabler scss
 @import '../../node_modules/@tabler/core/dist/css/tabler.min.css';
+
+@supports (font: -apple-system-body) and (-webkit-appearance: none) {
+  img[loading='lazy'] {
+    clip-path: inset(0.6px);
+  }
+}
