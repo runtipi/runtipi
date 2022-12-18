@@ -1,7 +1,17 @@
 import { AppCategoriesEnum, AppInfo } from '../../../generated/graphql';
 import { AppTableData } from './table.types';
 
-export const sortTable = (data: AppTableData, col: keyof Pick<AppInfo, 'name'>, direction: 'asc' | 'desc', categories: AppCategoriesEnum[], search: string) => {
+type SortParams = {
+  data: AppTableData;
+  col: keyof Pick<AppInfo, 'name'>;
+  direction: 'asc' | 'desc';
+  category?: AppCategoriesEnum;
+  search: string;
+};
+
+export const sortTable = (params: SortParams) => {
+  const { data, col, direction, category, search } = params;
+
   const sortedData = [...data].sort((a, b) => {
     const aVal = a[col];
     const bVal = b[col];
@@ -14,30 +24,27 @@ export const sortTable = (data: AppTableData, col: keyof Pick<AppInfo, 'name'>, 
     return 0;
   });
 
-  if (categories.length > 0) {
-    return sortedData.filter((app) => app.categories.some((c) => categories.includes(c))).filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
-  } else {
-    return sortedData.filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
+  if (category) {
+    return sortedData.filter((app) => app.categories.some((c) => c === category)).filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
   }
+  return sortedData.filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
 };
 
-export const limitText = (text: string, limit: number) => {
-  return text.length > limit ? `${text.substring(0, limit)}...` : text;
-};
+export const limitText = (text: string, limit: number) => (text.length > limit ? `${text.substring(0, limit)}...` : text);
 
 export const colorSchemeForCategory: Record<AppCategoriesEnum, string> = {
   [AppCategoriesEnum.Network]: 'blue',
-  [AppCategoriesEnum.Media]: 'green',
-  [AppCategoriesEnum.Automation]: 'orange',
-  [AppCategoriesEnum.Development]: 'purple',
-  [AppCategoriesEnum.Utilities]: 'gray',
-  [AppCategoriesEnum.Photography]: 'red',
-  [AppCategoriesEnum.Security]: 'yellow',
-  [AppCategoriesEnum.Social]: 'teal',
-  [AppCategoriesEnum.Featured]: 'pink',
-  [AppCategoriesEnum.Data]: 'red',
-  [AppCategoriesEnum.Books]: 'blue',
-  [AppCategoriesEnum.Music]: 'green',
-  [AppCategoriesEnum.Finance]: 'orange',
-  [AppCategoriesEnum.Gaming]: 'purple',
+  [AppCategoriesEnum.Media]: 'azure',
+  [AppCategoriesEnum.Automation]: 'indigo',
+  [AppCategoriesEnum.Development]: 'red',
+  [AppCategoriesEnum.Utilities]: 'muted',
+  [AppCategoriesEnum.Photography]: 'purple',
+  [AppCategoriesEnum.Security]: 'organge',
+  [AppCategoriesEnum.Social]: 'yellow',
+  [AppCategoriesEnum.Featured]: 'lime',
+  [AppCategoriesEnum.Data]: 'green',
+  [AppCategoriesEnum.Books]: 'teal',
+  [AppCategoriesEnum.Music]: 'cyan',
+  [AppCategoriesEnum.Finance]: 'dark',
+  [AppCategoriesEnum.Gaming]: 'pink',
 };

@@ -161,6 +161,11 @@ function start_app() {
 
   ensure_permissions "${app}"
 
+  # Pull images
+  if ! compose "${app}" pull; then
+    write_log "Failed to pull app ${app}"
+  fi
+
   if ! compose "${app}" up --detach; then
     write_log "Failed to start app ${app}"
     exit 1
@@ -172,11 +177,6 @@ function uninstall_app() {
   local app="${1}"
 
   write_log "Removing images for app ${app}..."
-
-  if ! compose "${app}" up --detach; then
-    write_log "Failed to uninstall app ${app}"
-    exit 1
-  fi
 
   if ! compose "${app}" down --rmi all --remove-orphans; then
     # just stop it if we can't remove the images

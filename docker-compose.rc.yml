@@ -106,33 +106,17 @@ services:
       NODE_ENV: production
     labels:
       traefik.enable: true
-      traefik.http.routers.dashboard-redirect.rule: PathPrefix("/")
-      traefik.http.routers.dashboard-redirect.entrypoints: web
-      traefik.http.routers.dashboard-redirect.middlewares: redirect-middleware
-      traefik.http.routers.dashboard-redirect.service: dashboard
-      traefik.http.services.dashboard-redirect.loadbalancer.server.port: 3000
-
-      traefik.http.routers.dashboard-redirect-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/`)
-      traefik.http.routers.dashboard-redirect-secure.entrypoints: websecure
-      traefik.http.routers.dashboard-redirect-secure.middlewares: redirect-middleware
-      traefik.http.routers.dashboard-redirect-secure.service: dashboard
-      traefik.http.routers.dashboard-redirect-secure.tls.certresolver: myresolver
-      traefik.http.services.dashboard-redirect-secure.loadbalancer.server.port: 3000
-
       # Web
-      traefik.http.routers.dashboard.rule: PathPrefix("/dashboard")
+      traefik.http.routers.dashboard.rule: PathPrefix("/")
       traefik.http.routers.dashboard.service: dashboard
       traefik.http.routers.dashboard.entrypoints: web
       traefik.http.services.dashboard.loadbalancer.server.port: 3000
       # Websecure
-      traefik.http.routers.dashboard-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/dashboard`)
+      traefik.http.routers.dashboard-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/`)
       traefik.http.routers.dashboard-secure.service: dashboard-secure
       traefik.http.routers.dashboard-secure.entrypoints: websecure
       traefik.http.routers.dashboard-secure.tls.certresolver: myresolver
       traefik.http.services.dashboard-secure.loadbalancer.server.port: 3000
-      # Middlewares
-      traefik.http.middlewares.redirect-middleware.redirectregex.regex: .*
-      traefik.http.middlewares.redirect-middleware.redirectregex.replacement: /dashboard
 
 networks:
   tipi_main_network:

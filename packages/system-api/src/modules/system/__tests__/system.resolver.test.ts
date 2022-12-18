@@ -176,9 +176,8 @@ describe('Test: restart', () => {
     await gcall<{ restart: boolean }>({ source: restartMutation, userId: user.id });
 
     // Assert
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenNthCalledWith(1, 'status', 'RESTARTING');
-    expect(spy).toHaveBeenNthCalledWith(2, 'status', 'RUNNING');
 
     spy.mockRestore();
   });
@@ -232,9 +231,8 @@ describe('Test: update', () => {
     await gcall<{ update: boolean }>({ source: updateMutation, userId: user.id });
 
     // Assert
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenNthCalledWith(1, 'status', 'UPDATING');
-    expect(spy).toHaveBeenNthCalledWith(2, 'status', 'RUNNING');
 
     spy.mockRestore();
   });

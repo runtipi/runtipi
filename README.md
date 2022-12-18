@@ -23,13 +23,14 @@
 
 > ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
 
-Tipi is a personal homeserver orchestrator. It is running docker containers under the hood and provides a simple web interface to manage them. Every service comes with an opinionated configuration in order to remove the need for manual configuration and network setup.
+Tipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Tipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Tipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/meienberger/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
 
-Check our demo instance : **[demo.runtipi.com](https://demo.runtipi.com)** / username: **user@runtipi.com** / password: **runtipi**
+## Demo
 
-## Apps available
+You can try out a demo of Tipi at [demo.runtipi.com](demo.runtipi.com) using the following credentials:
 
-See the list of apps available and submit your requests in the [App Store repo](https://github.com/meienberger/runtipi-appstore)
+    username: user@runtipi.com
+    password: runtipi
 
 ## 🛠 Installation
 
@@ -37,24 +38,25 @@ See the list of apps available and submit your requests in the [App Store repo](
 
 Ubuntu 18.04 LTS or higher is recommended. However other major Linux distribution are supported but may lead to installation issues. Please file an issue if you encounter one.
 
-### Step 1. Download Tipi
+### Download and install Tipi
 
-Run this in an empty directory where you want to install Tipi.
+Download the latest version of Tipi:
 
 ```bash
-git clone https://github.com/meienberger/runtipi.git
+curl -L https://setup.runtipi.com | bash
 ```
 
-### Step 2. Run Tipi
+The script will prompt you the ip address of the dashboard once configured.
 
-cd into the downloaded directory and run the start script.
+### Commands
+
+If you already installed Tipi, you can start it manually by running the `start.sh` script in the `runtipi` folder.
 
 ```bash
 cd runtipi
 sudo ./scripts/start.sh
 ```
 
-The script will prompt you the ip address of the dashboard once configured.
 Tipi will run by default on port 80. To select another port you can run the start script with the `--port` argument
 
 ```bash
@@ -67,9 +69,17 @@ To stop Tipi, run the stop script.
 sudo ./scripts/stop.sh
 ```
 
+### Update Tipi
+
+To update Tipi to the latest version, run the update script.
+
+```bash
+sudo ./scripts/system.sh update
+```
+
 ### Custom settings
 
-You can change the default settings by creating a `settings.json` file. The file should be located in the `state` directory. This file will make your changes persist across restarts. Example file:
+You can change the default settings by creating a `settings.json` file. The file should be located in the `runtipi/state` directory. This file will make your changes persist across restarts. Example file:
 
 ```json
 {
@@ -115,7 +125,7 @@ sudo rm -rf runtipi
 
 ## 📚 Documentation
 
-For a detailed guide on how to install Tipi. This amazing article by @kycfree1 [Running a Home Server with Tipi](https://kyc3.life/running-a-home-server-with-tipi/)
+For a detailed guide on how to install Tipi. This amazing article by @kycfree [Running a Home Server with Tipi](https://kyc3.life/running-a-home-server-with-tipi/)
 
 You can find more documentation and tutorials / FAQ in the [Wiki](https://github.com/meienberger/runtipi/wiki).
 

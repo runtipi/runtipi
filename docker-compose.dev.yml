@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 1m
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
     environment:
@@ -111,22 +111,11 @@ services:
       # - /dashboard/.next
     labels:
       traefik.enable: true
-      traefik.http.routers.dashboard-redirect.rule: PathPrefix("/")
-      traefik.http.routers.dashboard-redirect.entrypoints: web
-      traefik.http.routers.dashboard-redirect.middlewares: redirect-middleware
-      traefik.http.routers.dashboard-redirect.service: dashboard
-      traefik.http.services.dashboard-redirect.loadbalancer.server.port: 3000
-
       # Web
-      traefik.http.routers.dashboard.rule: PathPrefix("/dashboard")
+      traefik.http.routers.dashboard.rule: PathPrefix("/")
       traefik.http.routers.dashboard.service: dashboard
       traefik.http.routers.dashboard.entrypoints: web
       traefik.http.services.dashboard.loadbalancer.server.port: 3000
-      # Middlewares
-      traefik.http.middlewares.redirect-middleware.redirectregex.regex: .*
-      traefik.http.middlewares.redirect-middleware.redirectregex.replacement: /dashboard
-  
-  
 
 networks:
   tipi_main_network:
@@ -135,3 +124,6 @@ networks:
       driver: default
       config:
         - subnet: 10.21.21.0/24
+
+volumes:
+  pgdata:

@@ -103,27 +103,7 @@ function update_docker() {
   fi
 }
 
-if command -v docker >/dev/null; then
-  echo "Docker is already installed, ensuring Docker is fully up to date"
-
-  update_docker "${OS}"
-  docker_result=$?
-
-  if [[ docker_result -eq 0 ]]; then
-    echo "Docker is fully up to date"
-  else
-    echo "Your system ${OS} is not supported trying with sub_os ${SUB_OS}"
-    install_docker "${SUB_OS}"
-    docker_sub_result=$?
-
-    if [[ docker_sub_result -eq 0 ]]; then
-      echo "Docker is fully up to date"
-    else
-      echo "Your system ${SUB_OS} is not supported please update Docker manually"
-      exit 1
-    fi
-  fi
-else
+if ! command -v docker >/dev/null; then
   install_docker "${OS}"
   docker_result=$?
 

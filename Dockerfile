@@ -1,5 +1,12 @@
-FROM node:18 AS builder
+FROM node:18-alpine3.16 AS builder
 
+# Required for argon2
+RUN apk --no-cache add g++
+RUN apk --no-cache add make
+RUN apk --no-cache add python3
+
+# Required for sharp
+RUN apk --no-cache add vips-dev=8.12.2-r5
 RUN npm install node-gyp -g
 
 WORKDIR /api
@@ -18,23 +25,12 @@ WORKDIR /dashboard
 COPY ./packages/dashboard /dashboard
 RUN npm run build
 
-
-FROM alpine:3.16.0 as app
+FROM node:18-alpine3.16 as app
 
 WORKDIR /
 
-# # Install dependencies
-RUN apk --no-cache add nodejs npm
-RUN apk --no-cache add g++
-RUN apk --no-cache add make
-RUN apk --no-cache add python3
-
-RUN npm install node-gyp -g
-
 WORKDIR /api
-COPY ./packages/system-api/package*.json /api/
-RUN npm install --omit=dev
-
+COPY ./packages/system-api/package.json /api/
 COPY --from=builder /api/dist /api/dist
 
 WORKDIR /dashboard

@@ -5,7 +5,6 @@ import { faker } from '@faker-js/faker';
 import SystemService from '../system.service';
 import TipiCache from '../../../config/TipiCache';
 import { setConfig } from '../../../core/config/TipiConfig';
-import logger from '../../../config/logger/logger';
 import EventDispatcher from '../../../core/config/EventDispatcher';
 
 jest.mock('fs-extra');
@@ -130,20 +129,6 @@ describe('Test: restart', () => {
     // Assert
     expect(restart).toBeTruthy();
   });
-
-  it('Should log error if fails', async () => {
-    // Arrange
-    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'fake' });
-    const log = jest.spyOn(logger, 'error');
-
-    // Act
-    const restart = await SystemService.restart();
-
-    // Assert
-    expect(restart).toBeFalsy();
-    expect(log).toHaveBeenCalledWith('Error restarting system: fake');
-    log.mockRestore();
-  });
 });
 
 describe('Test: update', () => {
@@ -198,21 +183,5 @@ describe('Test: update', () => {
 
     // Act & Assert
     await expect(SystemService.update()).rejects.toThrow('The major version has changed. Please update manually');
-  });
-
-  it('Should log error if fails', async () => {
-    // Arrange
-    EventDispatcher.prototype.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'fake2' });
-    const log = jest.spyOn(logger, 'error');
-
-    // Act
-    setConfig('version', '0.0.1');
-    TipiCache.set('latestVersion', '0.0.2');
-    const update = await SystemService.update();
-
-    // Assert
-    expect(update).toBeFalsy();
-    expect(log).toHaveBeenCalledWith('Error updating system: fake2');
-    log.mockRestore();
   });
 });

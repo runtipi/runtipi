@@ -5,8 +5,6 @@ import { ApolloServer } from 'apollo-server-express';
 import { createServer } from 'http';
 import { ZodError } from 'zod';
 import cors, { CorsOptions } from 'cors';
-import Keyv from 'keyv';
-import { KeyvAdapter } from '@apollo/utils.keyvadapter';
 import { createSchema } from './schema';
 import { ApolloLogs } from './config/logger/apollo.logger';
 import logger from './config/logger/logger';
@@ -21,7 +19,6 @@ import startJobs from './core/jobs/jobs';
 import { applyJsonConfig, getConfig, setConfig } from './core/config/TipiConfig';
 import systemController from './modules/system/system.controller';
 import { eventDispatcher, EventTypes } from './core/config/EventDispatcher';
-import TipiCache from './config/TipiCache';
 
 const applyCustomConfig = () => {
   try {
@@ -70,7 +67,7 @@ const main = async () => {
       schema,
       context: ({ req, res }): MyContext => ({ req, res }),
       plugins,
-      cache: new KeyvAdapter(new Keyv(`redis://${getConfig().REDIS_HOST}:6379`)),
+      cache: 'bounded',
     });
 
     await apolloServer.start();
