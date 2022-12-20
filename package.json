@@ -3,7 +3,6 @@
   "version": "0.8.0",
   "description": "A homeserver for everyone",
   "scripts": {
-    "prepare": "husky install",
     "commit": "git-cz",
     "act:test-install": "act --container-architecture linux/amd64 -j test-install",
     "act:docker": "act --container-architecture linux/amd64 --secret-file github.secrets -j build-images",
@@ -20,7 +19,6 @@
     "@commitlint/config-conventional": "^17.0.3",
     "@commitlint/cz-commitlint": "^17.0.3",
     "commitizen": "^4.2.4",
-    "husky": "^8.0.1",
     "inquirer": "8.2.4"
   },
   "repository": {
