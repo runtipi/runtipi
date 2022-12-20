@@ -66,6 +66,19 @@ fi
 cp -r runtipi-"${LATEST_VERSION}"/package.json .
 
 mkdir -p state
+mkdir -p media/torrents
+mkdir -p media/torrents/watch
+mkdir -p media/torrents/completed
+mkdir -p media/torrents/incomplete
+
+mkdir -p media/data
+mkdir -p media/data/books
+mkdir -p media/data/movies
+mkdir -p media/data/music
+mkdir -p media/data/tv
+mkdir -p media/data/podcasts
+mkdir -p media/data/images
+
 ## remove downloaded folder
 rm -rf runtipi-"${LATEST_VERSION}"
 
