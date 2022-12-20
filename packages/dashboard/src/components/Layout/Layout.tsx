@@ -51,7 +51,7 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
       <Head>
         <title>{title} - Tipi</title>
       </Head>
-      <ReactTooltip offset={{ right: 3 }} effect="solid" place="bottom" />
+      <ReactTooltip offset={{ right: 1 }} effect="solid" place="bottom" />
       <Header isUpdateAvailable={!isLatest} />
       <div className="page-wrapper">
         <div className="page-header d-print-none">

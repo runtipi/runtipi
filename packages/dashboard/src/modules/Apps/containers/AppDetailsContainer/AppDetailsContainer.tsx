@@ -164,12 +164,17 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, info }) => {
       <div className="card-header d-flex flex-column flex-md-row">
         <AppLogo id={info.id} size={130} alt={info.name} />
         <div className="w-100 d-flex flex-column ms-md-3 align-items-center align-items-md-start">
-          <div className="">
+          <div>
             <span className="mt-1 me-1">Version: </span>
             <span className="badge bg-gray mt-2">{info?.version}</span>
           </div>
-          <span className="mt-2 text-muted text-center mb-2">{info.short_desc}</span>
-          {app && app?.status !== AppStatusEnum.Missing && <AppStatus status={app.status} />}
+          {app.domain && (
+            <a target="_blank" rel="noreferrer" className="mt-1" href={`https://${app.domain}`}>
+              https://{app.domain}
+            </a>
+          )}
+          <span className="mt-1 text-muted text-center mb-2">{info.short_desc}</span>
+          <div className="mb-1">{app && app?.status !== AppStatusEnum.Missing && <AppStatus status={app.status} />}</div>
           <AppActions
             updateAvailable={updateAvailable}
             onUpdate={updateDisclosure.open}
