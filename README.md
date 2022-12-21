@@ -27,7 +27,7 @@ Tipi is a personal homeserver orchestrator that makes it easy to manage and run 
 
 ## Demo
 
-You can try out a demo of Tipi at [demo.runtipi.com](demo.runtipi.com) using the following credentials:
+You can try out a demo of Tipi at [demo.runtipi.com](https://demo.runtipi.com) using the following credentials:
 
     username: user@runtipi.com
     password: runtipi
