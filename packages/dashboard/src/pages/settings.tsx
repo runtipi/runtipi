@@ -1,1 +1,1 @@
-export { SettingsPage as default } from '../modules/Settings/pages/SettingsPage';
+export { SettingsPage as default } from '../client/modules/Settings/pages/SettingsPage';

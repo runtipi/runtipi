@@ -1,7 +1,7 @@
 import React from 'react';
 import { Html, Head, Main, NextScript } from 'next/document';
 
-import { getUrl } from '../core/helpers/url-helpers';
+import { getUrl } from '../client/core/helpers/url-helpers';
 
 export default function MyDocument() {
   return (
