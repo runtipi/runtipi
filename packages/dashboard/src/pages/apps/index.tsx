@@ -1,1 +1,1 @@
-export { AppsPage as default } from '../../modules/Apps/pages/AppsPage';
+export { AppsPage as default } from '../../client/modules/Apps/pages/AppsPage';

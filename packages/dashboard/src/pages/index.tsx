@@ -1,1 +1,1 @@
-export { DashboardPage as default } from '../modules/Dashboard/pages/DashboardPage';
+export { DashboardPage as default } from '../client/modules/Dashboard/pages/DashboardPage';

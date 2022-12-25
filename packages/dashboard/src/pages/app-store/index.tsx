@@ -1,1 +1,1 @@
-export { AppStorePage as default } from '../../modules/AppStore/pages/AppStorePage';
+export { AppStorePage as default } from '../../client/modules/AppStore/pages/AppStorePage';

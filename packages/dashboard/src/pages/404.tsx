@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { StatusScreen } from '../components/StatusScreen';
+import { StatusScreen } from '../client/components/StatusScreen';
 
 const ErrorPage: React.FC = () => {
   const router = useRouter();

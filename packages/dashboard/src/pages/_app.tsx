@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import { ApolloProvider } from '@apollo/client';
 import Head from 'next/head';
-import useCachedResources from '../hooks/useCachedRessources';
-import '../styles/global.css';
-import '../styles/global.scss';
-import { useUIStore } from '../state/uiStore';
-import { ToastProvider } from '../components/hoc/ToastProvider';
-import { StatusProvider } from '../components/hoc/StatusProvider';
-import { AuthProvider } from '../components/hoc/AuthProvider';
-import { StatusScreen } from '../components/StatusScreen';
+import useCachedResources from '../client/hooks/useCachedRessources';
+import '../client/styles/global.css';
+import '../client/styles/global.scss';
+import { useUIStore } from '../client/state/uiStore';
+import { ToastProvider } from '../client/components/hoc/ToastProvider';
+import { StatusProvider } from '../client/components/hoc/StatusProvider';
+import { AuthProvider } from '../client/components/hoc/AuthProvider';
+import { StatusScreen } from '../client/components/StatusScreen';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { setDarkMode } = useUIStore();
