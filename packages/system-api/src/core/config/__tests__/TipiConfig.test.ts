@@ -21,7 +21,7 @@ describe('Test: getConfig', () => {
     expect(config.logs.LOGS_ERROR).toBe('error.log');
     expect(config.dnsIp).toBe('9.9.9.9');
     expect(config.rootFolder).toBe('/runtipi');
-    expect(config.internalIp).toBe('192.168.1.10');
+    expect(config.internalIp).toBe('localhost');
   });
 });
 

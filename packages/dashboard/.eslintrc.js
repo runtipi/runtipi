@@ -29,9 +29,11 @@ module.exports = {
     'react/no-unused-prop-types': 0,
     'react/button-has-type': 0,
     'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/mocks/**', 'tests/**'] }],
+    'no-underscore-dangle': 0,
   },
   globals: {
     JSX: true,
+    NodeJS: true,
   },
   env: {
     'jest/globals': true,

@@ -3,6 +3,7 @@ import { render, RenderOptions, renderHook } from '@testing-library/react';
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
 import fetch from 'isomorphic-fetch';
 import { SWRConfig } from 'swr';
+import { TRPCTestClientProvider } from './TRPCTestClientProvider';
 
 const link = new HttpLink({
   uri: 'http://localhost:3000/graphql',
@@ -18,9 +19,11 @@ export const mockApolloClient = new ApolloClient({
 });
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => (
-  <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
-    <ApolloProvider client={mockApolloClient}>{children}</ApolloProvider>
-  </SWRConfig>
+  <TRPCTestClientProvider>
+    <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
+      <ApolloProvider client={mockApolloClient}>{children}</ApolloProvider>
+    </SWRConfig>
+  </TRPCTestClientProvider>
 );
 
 const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) => render(ui, { wrapper: AllTheProviders, ...options });
