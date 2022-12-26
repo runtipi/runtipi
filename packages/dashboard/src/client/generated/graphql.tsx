@@ -98,18 +98,6 @@ export enum AppSupportedArchitecturesEnum {
   Arm64 = 'ARM64',
 }
 
-export type Cpu = {
-  __typename?: 'Cpu';
-  load: Scalars['Float'];
-};
-
-export type DiskMemory = {
-  __typename?: 'DiskMemory';
-  available: Scalars['Float'];
-  total: Scalars['Float'];
-  used: Scalars['Float'];
-};
-
 export enum FieldTypesEnum {
   Email = 'email',
   Fqdn = 'fqdn',
@@ -146,11 +134,9 @@ export type Mutation = {
   login: TokenResponse;
   logout: Scalars['Boolean'];
   register: TokenResponse;
-  restart: Scalars['Boolean'];
   startApp: App;
   stopApp: App;
   uninstallApp: App;
-  update: Scalars['Boolean'];
   updateApp: App;
   updateAppConfig: App;
 };
@@ -195,19 +181,10 @@ export type Query = {
   listAppsInfo: ListAppsResonse;
   me?: Maybe<User>;
   refreshToken?: Maybe<TokenResponse>;
-  systemInfo?: Maybe<SystemInfoResponse>;
-  version: VersionResponse;
 };
 
 export type QueryGetAppArgs = {
   id: Scalars['String'];
-};
-
-export type SystemInfoResponse = {
-  __typename?: 'SystemInfoResponse';
-  cpu: Cpu;
-  disk: DiskMemory;
-  memory: DiskMemory;
 };
 
 export type TokenResponse = {
@@ -235,12 +212,6 @@ export type UsernamePasswordInput = {
   username: Scalars['String'];
 };
 
-export type VersionResponse = {
-  __typename?: 'VersionResponse';
-  current: Scalars['String'];
-  latest?: Maybe<Scalars['String']>;
-};
-
 export type InstallAppMutationVariables = Exact<{
   input: AppInputType;
 }>;
@@ -263,10 +234,6 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation'; register: { __typename?: 'TokenResponse'; token: string } };
 
-export type RestartMutationVariables = Exact<{ [key: string]: never }>;
-
-export type RestartMutation = { __typename?: 'Mutation'; restart: boolean };
-
 export type StartAppMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -284,10 +251,6 @@ export type UninstallAppMutationVariables = Exact<{
 }>;
 
 export type UninstallAppMutation = { __typename?: 'Mutation'; uninstallApp: { __typename: 'App'; id: string; status: AppStatusEnum } };
-
-export type UpdateMutationVariables = Exact<{ [key: string]: never }>;
-
-export type UpdateMutation = { __typename?: 'Mutation'; update: boolean };
 
 export type UpdateAppMutationVariables = Exact<{
   id: Scalars['String'];
@@ -397,22 +360,6 @@ export type MeQuery = { __typename?: 'Query'; me?: { __typename?: 'User'; id: st
 export type RefreshTokenQueryVariables = Exact<{ [key: string]: never }>;
 
 export type RefreshTokenQuery = { __typename?: 'Query'; refreshToken?: { __typename?: 'TokenResponse'; token: string } | null };
-
-export type SystemInfoQueryVariables = Exact<{ [key: string]: never }>;
-
-export type SystemInfoQuery = {
-  __typename?: 'Query';
-  systemInfo?: {
-    __typename?: 'SystemInfoResponse';
-    cpu: { __typename?: 'Cpu'; load: number };
-    disk: { __typename?: 'DiskMemory'; available: number; used: number; total: number };
-    memory: { __typename?: 'DiskMemory'; available: number; used: number; total: number };
-  } | null;
-};
-
-export type VersionQueryVariables = Exact<{ [key: string]: never }>;
-
-export type VersionQuery = { __typename?: 'Query'; version: { __typename?: 'VersionResponse'; current: string; latest?: string | null } };
 
 export const InstallAppDocument = gql`
   mutation InstallApp($input: AppInputType!) {
@@ -545,36 +492,6 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export const RestartDocument = gql`
-  mutation Restart {
-    restart
-  }
-`;
-export type RestartMutationFn = Apollo.MutationFunction<RestartMutation, RestartMutationVariables>;
-
-/**
- * __useRestartMutation__
- *
- * To run a mutation, you first call `useRestartMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRestartMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [restartMutation, { data, loading, error }] = useRestartMutation({
- *   variables: {
- *   },
- * });
- */
-export function useRestartMutation(baseOptions?: Apollo.MutationHookOptions<RestartMutation, RestartMutationVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<RestartMutation, RestartMutationVariables>(RestartDocument, options);
-}
-export type RestartMutationHookResult = ReturnType<typeof useRestartMutation>;
-export type RestartMutationResult = Apollo.MutationResult<RestartMutation>;
-export type RestartMutationOptions = Apollo.BaseMutationOptions<RestartMutation, RestartMutationVariables>;
 export const StartAppDocument = gql`
   mutation StartApp($id: String!) {
     startApp(id: $id) {
@@ -680,36 +597,6 @@ export function useUninstallAppMutation(baseOptions?: Apollo.MutationHookOptions
 export type UninstallAppMutationHookResult = ReturnType<typeof useUninstallAppMutation>;
 export type UninstallAppMutationResult = Apollo.MutationResult<UninstallAppMutation>;
 export type UninstallAppMutationOptions = Apollo.BaseMutationOptions<UninstallAppMutation, UninstallAppMutationVariables>;
-export const UpdateDocument = gql`
-  mutation Update {
-    update
-  }
-`;
-export type UpdateMutationFn = Apollo.MutationFunction<UpdateMutation, UpdateMutationVariables>;
-
-/**
- * __useUpdateMutation__
- *
- * To run a mutation, you first call `useUpdateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateMutation, { data, loading, error }] = useUpdateMutation({
- *   variables: {
- *   },
- * });
- */
-export function useUpdateMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMutation, UpdateMutationVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<UpdateMutation, UpdateMutationVariables>(UpdateDocument, options);
-}
-export type UpdateMutationHookResult = ReturnType<typeof useUpdateMutation>;
-export type UpdateMutationResult = Apollo.MutationResult<UpdateMutation>;
-export type UpdateMutationOptions = Apollo.BaseMutationOptions<UpdateMutation, UpdateMutationVariables>;
 export const UpdateAppDocument = gql`
   mutation UpdateApp($id: String!) {
     updateApp(id: $id) {
@@ -1048,84 +935,3 @@ export function useRefreshTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type RefreshTokenQueryHookResult = ReturnType<typeof useRefreshTokenQuery>;
 export type RefreshTokenLazyQueryHookResult = ReturnType<typeof useRefreshTokenLazyQuery>;
 export type RefreshTokenQueryResult = Apollo.QueryResult<RefreshTokenQuery, RefreshTokenQueryVariables>;
-export const SystemInfoDocument = gql`
-  query SystemInfo {
-    systemInfo {
-      cpu {
-        load
-      }
-      disk {
-        available
-        used
-        total
-      }
-      memory {
-        available
-        used
-        total
-      }
-    }
-  }
-`;
-
-/**
- * __useSystemInfoQuery__
- *
- * To run a query within a React component, call `useSystemInfoQuery` and pass it any options that fit your needs.
- * When your component renders, `useSystemInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSystemInfoQuery({
- *   variables: {
- *   },
- * });
- */
-export function useSystemInfoQuery(baseOptions?: Apollo.QueryHookOptions<SystemInfoQuery, SystemInfoQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SystemInfoQuery, SystemInfoQueryVariables>(SystemInfoDocument, options);
-}
-export function useSystemInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SystemInfoQuery, SystemInfoQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SystemInfoQuery, SystemInfoQueryVariables>(SystemInfoDocument, options);
-}
-export type SystemInfoQueryHookResult = ReturnType<typeof useSystemInfoQuery>;
-export type SystemInfoLazyQueryHookResult = ReturnType<typeof useSystemInfoLazyQuery>;
-export type SystemInfoQueryResult = Apollo.QueryResult<SystemInfoQuery, SystemInfoQueryVariables>;
-export const VersionDocument = gql`
-  query Version {
-    version {
-      current
-      latest
-    }
-  }
-`;
-
-/**
- * __useVersionQuery__
- *
- * To run a query within a React component, call `useVersionQuery` and pass it any options that fit your needs.
- * When your component renders, `useVersionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useVersionQuery({
- *   variables: {
- *   },
- * });
- */
-export function useVersionQuery(baseOptions?: Apollo.QueryHookOptions<VersionQuery, VersionQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<VersionQuery, VersionQueryVariables>(VersionDocument, options);
-}
-export function useVersionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VersionQuery, VersionQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<VersionQuery, VersionQueryVariables>(VersionDocument, options);
-}
-export type VersionQueryHookResult = ReturnType<typeof useVersionQuery>;
-export type VersionLazyQueryHookResult = ReturnType<typeof useVersionLazyQuery>;
-export type VersionQueryResult = Apollo.QueryResult<VersionQuery, VersionQueryVariables>;
