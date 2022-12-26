@@ -1,48 +1,32 @@
-import router from 'next/router';
-import React, { useState } from 'react';
-import { useRegisterMutation } from '../../../../generated/graphql';
+import React from 'react';
 import { useToastStore } from '../../../../state/toastStore';
+import { trpc } from '../../../../utils/trpc';
 import { AuthFormLayout } from '../../components/AuthFormLayout';
 import { RegisterForm } from '../../components/RegisterForm';
 
+type FormValues = { email: string; password: string };
+
 export const RegisterContainer: React.FC = () => {
   const { addToast } = useToastStore();
-  const [register] = useRegisterMutation({ refetchQueries: ['Me'] });
-  const [loading, setLoading] = useState(false);
+  const utils = trpc.useContext();
+  const register = trpc.auth.register.useMutation({
+    onError: (e) => {
+      localStorage.removeItem('token');
+      addToast({ title: 'Register error', description: e.message, status: 'error' });
+    },
+    onSuccess: (data) => {
+      localStorage.setItem('token', data.token);
+      utils.auth.me.invalidate();
+    },
+  });
 
-  const handleError = (error: unknown) => {
-    if (error instanceof Error) {
-      addToast({
-        title: 'Error',
-        description: error.message,
-        status: 'error',
-        position: 'top',
-        isClosable: true,
-      });
-    }
-  };
-
-  const handleRegister = async (values: { email: string; password: string }) => {
-    try {
-      setLoading(true);
-      const { data } = await register({ variables: { input: { username: values.email, password: values.password } } });
-
-      if (data?.register?.token) {
-        localStorage.setItem('token', data.register.token);
-        router.reload();
-      } else {
-        setLoading(false);
-        handleError(new Error('Something went wrong'));
-      }
-    } catch (error) {
-      setLoading(false);
-      handleError(error);
-    }
+  const handlerSubmit = (value: FormValues) => {
+    register.mutate({ username: value.email, password: value.password });
   };
 
   return (
     <AuthFormLayout>
-      <RegisterForm onSubmit={handleRegister} loading={loading} />
+      <RegisterForm onSubmit={handlerSubmit} loading={register.isLoading} />
     </AuthFormLayout>
   );
 };

@@ -1,8 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { graphql } from 'msw';
 import React from 'react';
 import { fireEvent, render, renderHook, screen, waitFor } from '../../../../../../tests/test-utils';
-import { useMeQuery } from '../../../../generated/graphql';
+import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
 import { useToastStore } from '../../../../state/toastStore';
 import { RegisterContainer } from './RegisterContainer';
@@ -14,20 +13,13 @@ describe('Test: RegisterContainer', () => {
     expect(screen.getByText('Register')).toBeInTheDocument();
   });
 
-  it('should call register mutation on submit', async () => {
+  it('should add token in localStorage on submit', async () => {
     // Arrange
     const email = faker.internet.email();
     const password = faker.internet.password();
     const token = faker.datatype.uuid();
 
-    renderHook(() => useMeQuery());
-    const registerFn = jest.fn();
-    const fakeRegisterHandler = graphql.mutation('Register', (req, res, ctx) => {
-      registerFn(req.variables.input);
-      sessionStorage.setItem('is-authenticated', email);
-      return res(ctx.data({ register: { token } }));
-    });
-    server.use(fakeRegisterHandler);
+    server.use(getTRPCMock({ path: ['auth', 'register'], type: 'mutation', response: { token }, delay: 100 }));
     render(<RegisterContainer />);
 
     // Act
@@ -42,8 +34,7 @@ describe('Test: RegisterContainer', () => {
     fireEvent.click(registerButton);
 
     // Assert
-    await waitFor(() => expect(registerFn).toHaveBeenCalledWith({ username: email, password }));
-    expect(localStorage.getItem('token')).toEqual(token);
+    await waitFor(() => expect(localStorage.getItem('token')).toEqual(token));
   });
 
   it('should show toast if register mutation fails', async () => {
@@ -51,10 +42,8 @@ describe('Test: RegisterContainer', () => {
     const email = faker.internet.email();
     const password = faker.internet.password();
 
-    renderHook(() => useMeQuery());
     const { result } = renderHook(() => useToastStore());
-    const fakeRegisterHandler = graphql.mutation('Register', (req, res, ctx) => res(ctx.errors([{ message: 'my big error' }])));
-    server.use(fakeRegisterHandler);
+    server.use(getTRPCMockError({ path: ['auth', 'register'], type: 'mutation', status: 500, message: 'my big error' }));
     render(<RegisterContainer />);
 
     // Act

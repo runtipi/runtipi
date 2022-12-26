@@ -1,7 +1,7 @@
 import React from 'react';
-import { useConfiguredQuery, useMeQuery } from '../../../generated/graphql';
 import { LoginContainer } from '../../../modules/Auth/containers/LoginContainer';
 import { RegisterContainer } from '../../../modules/Auth/containers/RegisterContainer';
+import { trpc } from '../../../utils/trpc';
 import { StatusScreen } from '../../StatusScreen';
 
 interface IProps {
@@ -9,19 +9,19 @@ interface IProps {
 }
 
 export const AuthProvider: React.FC<IProps> = ({ children }) => {
-  const user = useMeQuery();
-  const isConfigured = useConfiguredQuery();
-  const loading = user.loading || isConfigured.loading;
+  const me = trpc.auth.me.useQuery();
+  const isConfigured = trpc.auth.isConfigured.useQuery();
+  const loading = me.isLoading || isConfigured.isLoading;
 
-  if (loading && !user.data?.me) {
+  if (loading) {
     return <StatusScreen title="" subtitle="" />;
   }
 
-  if (user.data?.me) {
+  if (me.data) {
     return children;
   }
 
-  if (!isConfigured?.data?.isConfigured) {
+  if (!isConfigured?.data) {
     return <RegisterContainer />;
   }
 
