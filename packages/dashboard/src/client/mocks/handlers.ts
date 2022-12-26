@@ -1,29 +1,8 @@
-import { graphql, rest } from 'msw';
-import {
-  ConfiguredQuery,
-  LoginMutation,
-  LogoutMutationResult,
-  MeQuery,
-  RefreshTokenQuery,
-  RegisterMutation,
-  RegisterMutationVariables,
-  UsernamePasswordInput,
-  VersionQuery,
-  SystemInfoQuery,
-} from '../generated/graphql';
+import { graphql } from 'msw';
+import { ConfiguredQuery, LoginMutation, LogoutMutationResult, MeQuery, RefreshTokenQuery, RegisterMutation, RegisterMutationVariables, UsernamePasswordInput } from '../generated/graphql';
+import { getTRPCMock } from './getTrpcMock';
 import appHandlers from './handlers/appHandlers';
 
-const restHandlers = [
-  rest.get('/api/status', (req, res, ctx) =>
-    res(
-      ctx.delay(200),
-      ctx.status(200),
-      ctx.json({
-        status: 'RUNNING',
-      }),
-    ),
-  ),
-];
 const graphqlHandlers = [
   // Handles a "Login" mutation
   graphql.mutation('Login', (req, res, ctx) => {
@@ -36,9 +15,8 @@ const graphqlHandlers = [
 
     return res(ctx.delay(), ctx.data(result));
   }),
-
   // Handles a "Logout" mutation
-  graphql.mutation('Logout', (req, res, ctx) => {
+  graphql.mutation('Logout', (_req, res, ctx) => {
     sessionStorage.removeItem('is-authenticated');
 
     const result: LogoutMutationResult['data'] = {
@@ -47,9 +25,8 @@ const graphqlHandlers = [
 
     return res(ctx.delay(), ctx.data(result));
   }),
-
   // Handles me query
-  graphql.query('Me', (req, res, ctx) => {
+  graphql.query('Me', (_req, res, ctx) => {
     const isAuthenticated = sessionStorage.getItem('is-authenticated');
     if (!isAuthenticated) {
       return res(ctx.errors([{ message: 'Not authenticated' }]));
@@ -57,18 +34,15 @@ const graphqlHandlers = [
     const result: MeQuery = {
       me: { id: '1' },
     };
-
     return res(ctx.delay(), ctx.data(result));
   }),
-
-  graphql.query('RefreshToken', (req, res, ctx) => {
+  graphql.query('RefreshToken', (_req, res, ctx) => {
     const result: RefreshTokenQuery = {
       refreshToken: { token: 'token' },
     };
 
     return res(ctx.delay(), ctx.data(result));
   }),
-
   graphql.mutation('Register', (req, res, ctx) => {
     const {
       input: { username },
@@ -88,46 +62,37 @@ const graphqlHandlers = [
   appHandlers.getApp,
   appHandlers.installedApps,
   appHandlers.installApp,
-  graphql.query('Version', (req, res, ctx) => {
-    const result: VersionQuery = {
-      version: {
-        current: '1.0.0',
-        latest: '1.0.0',
-      },
-    };
-
-    return res(ctx.data(result));
-  }),
-
-  graphql.query('Configured', (req, res, ctx) => {
+  graphql.query('Configured', (_req, res, ctx) => {
     const result: ConfiguredQuery = {
       isConfigured: true,
     };
 
     return res(ctx.data(result));
   }),
-
-  graphql.query('SystemInfo', (req, res, ctx) => {
-    const result: SystemInfoQuery = {
-      systemInfo: {
-        cpu: {
-          load: 50,
-        },
-        disk: {
-          available: 1000000000,
-          total: 2000000000,
-          used: 1000000000,
-        },
-        memory: {
-          available: 1000000000,
-          total: 2000000000,
-          used: 1000000000,
-        },
-      },
-    };
-
-    return res(ctx.data(result));
-  }),
 ];
 
-export const handlers = [...graphqlHandlers, ...restHandlers];
+export const handlers = [
+  getTRPCMock({
+    path: ['system', 'getVersion'],
+    type: 'query',
+    response: { current: '1.0.0', latest: '1.0.0' },
+  }),
+  getTRPCMock({
+    path: ['system', 'update'],
+    type: 'mutation',
+    response: true,
+    delay: 100,
+  }),
+  getTRPCMock({
+    path: ['system', 'restart'],
+    type: 'mutation',
+    response: true,
+    delay: 100,
+  }),
+  getTRPCMock({
+    path: ['system', 'systemInfo'],
+    type: 'query',
+    response: { cpu: { load: 0.1 }, disk: { available: 1, total: 2, used: 1 }, memory: { available: 1, total: 2, used: 1 } },
+  }),
+  ...graphqlHandlers,
+];

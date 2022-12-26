@@ -1,45 +1,57 @@
-import React, { useState } from 'react';
+import React from 'react';
 import semver from 'semver';
 import { Button } from '../../../../components/ui/Button';
-import { useRestartMutation, useUpdateMutation } from '../../../../generated/graphql';
 import { useDisclosure } from '../../../../hooks/useDisclosure';
+import { SystemRouterOutput } from '../../../../../server/routers/system/system.router';
 import { useToastStore } from '../../../../state/toastStore';
 import { RestartModal } from '../../components/RestartModal';
 import { UpdateModal } from '../../components/UpdateModal/UpdateModal';
+import { Layout } from '../../../../components/Layout/LayoutV2';
+import { ContainerProps } from '../../../../types/layout-helpers';
+import { trpc } from '../../../../utils/trpc';
 
-// eslint-disable-next-line no-promise-executor-return
-const wait = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
+type IProps = { data?: SystemRouterOutput['getVersion'] };
 
-interface IProps {
-  currentVersion: string;
-  latestVersion?: string | null;
-}
-
-export const SettingsContainer: React.FC<IProps> = ({ currentVersion, latestVersion }) => {
+const SettingsContainerWithData: React.FC<Required<IProps>> = ({ data }) => {
+  const [loading, setLoading] = React.useState(false);
+  const { current, latest } = data;
   const { addToast } = useToastStore();
   const restartDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
-  const [loading, setLoading] = useState(false);
-
-  const [restart] = useRestartMutation();
-  const [update] = useUpdateMutation();
 
   const defaultVersion = '0.0.0';
-  const isLatest = semver.gte(currentVersion, latestVersion || defaultVersion);
+  const isLatest = semver.gte(current, latest || defaultVersion);
 
-  const handleError = (error: unknown) => {
-    restartDisclosure.close();
-    updateDisclosure.close();
-    if (error instanceof Error) {
-      addToast({
-        title: 'Error',
-        description: error.message,
-        status: 'error',
-        position: 'top',
-        isClosable: true,
-      });
-    }
-  };
+  const update = trpc.system.update.useMutation({
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSuccess: async () => {
+      setLoading(false);
+      localStorage.removeItem('token');
+    },
+    onError: (error) => {
+      setLoading(false);
+      updateDisclosure.close();
+      addToast({ title: 'Error', description: error.message, status: 'error' });
+    },
+  });
+
+  const restart = trpc.system.restart.useMutation({
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSuccess: async () => {
+      setLoading(false);
+
+      localStorage.removeItem('token');
+    },
+    onError: (error) => {
+      setLoading(false);
+      restartDisclosure.close();
+      addToast({ title: 'Error', description: error.message, status: 'error' });
+    },
+  });
 
   const renderUpdate = () => {
     if (isLatest) {
@@ -49,36 +61,10 @@ export const SettingsContainer: React.FC<IProps> = ({ currentVersion, latestVers
     return (
       <div>
         <Button onClick={updateDisclosure.open} className="mr-2 btn-success">
-          Update to {latestVersion}
+          Update to {latest}
         </Button>
       </div>
     );
-  };
-
-  const handleRestart = async () => {
-    setLoading(true);
-    try {
-      await restart();
-      await wait(1000);
-      localStorage.removeItem('token');
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdate = async () => {
-    setLoading(true);
-    try {
-      await update();
-      await wait(1000);
-      localStorage.removeItem('token');
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -105,9 +91,15 @@ export const SettingsContainer: React.FC<IProps> = ({ currentVersion, latestVers
             </div>
           </div>
         </div>
-        <RestartModal isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} onConfirm={handleRestart} loading={loading} />
-        <UpdateModal isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} onConfirm={handleUpdate} loading={loading} />
+        <RestartModal isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} onConfirm={() => restart.mutate()} loading={loading} />
+        <UpdateModal isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} onConfirm={() => update.mutate()} loading={loading} />
       </div>
     </div>
   );
 };
+
+export const SettingsContainer: React.FC<ContainerProps<IProps>> = ({ data, loading, error }) => (
+  <Layout title="Settings" data={data} loading={loading} error={error}>
+    <SettingsContainerWithData data={data!} />
+  </Layout>
+);

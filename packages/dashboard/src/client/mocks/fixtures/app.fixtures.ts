@@ -4,7 +4,7 @@ import { App, AppCategoriesEnum, AppInfo, AppStatusEnum } from '../../generated/
 const randomCategory = (): AppCategoriesEnum[] => {
   const categories = Object.values(AppCategoriesEnum);
   const randomIndex = faker.datatype.number({ min: 0, max: categories.length - 1 });
-  return [categories[randomIndex]];
+  return [categories[randomIndex] as AppCategoriesEnum];
 };
 
 export const createApp = (overrides?: Partial<AppInfo>): AppInfo => {

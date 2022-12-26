@@ -1,7 +1,6 @@
-import { rest } from 'msw';
 import React from 'react';
-import { render, screen, waitFor } from '../../../../../tests/test-utils';
-import { server } from '../../../mocks/server';
+import { act, render, renderHook, screen, waitFor } from '../../../../../tests/test-utils';
+import { useSystemStore } from '../../../state/systemStore';
 import { StatusProvider } from './StatusProvider';
 
 const reloadFn = jest.fn();
@@ -29,7 +28,10 @@ describe('Test: StatusProvider', () => {
   });
 
   it('should render StatusScreen when system is RESTARTING', async () => {
-    server.use(rest.get('/api/status', (req, res, ctx) => res(ctx.delay(200), ctx.status(200), ctx.json({ status: 'RESTARTING' }))));
+    const { result } = renderHook(() => useSystemStore());
+    act(() => {
+      result.current.setStatus('RESTARTING');
+    });
     render(
       <StatusProvider>
         <div>system running</div>
@@ -42,7 +44,11 @@ describe('Test: StatusProvider', () => {
   });
 
   it('should render StatusScreen when system is UPDATING', async () => {
-    server.use(rest.get('/api/status', (req, res, ctx) => res(ctx.delay(200), ctx.status(200), ctx.json({ status: 'UPDATING' }))));
+    const { result } = renderHook(() => useSystemStore());
+    act(() => {
+      result.current.setStatus('UPDATING');
+    });
+
     render(
       <StatusProvider>
         <div>system running</div>
@@ -55,7 +61,11 @@ describe('Test: StatusProvider', () => {
   });
 
   it('should reload the page when system is RUNNING after being something else than RUNNING', async () => {
-    server.use(rest.get('/api/status', (req, res, ctx) => res(ctx.delay(200), ctx.status(200), ctx.json({ status: 'UPDATING' }))));
+    const { result } = renderHook(() => useSystemStore());
+    act(() => {
+      result.current.setStatus('UPDATING');
+    });
+
     render(
       <StatusProvider>
         <div>system running</div>
@@ -66,7 +76,9 @@ describe('Test: StatusProvider', () => {
       expect(screen.getByText('Your system is updating...')).toBeInTheDocument();
     });
 
-    server.use(rest.get('/api/status', (req, res, ctx) => res(ctx.delay(200), ctx.status(200), ctx.json({ status: 'RUNNING' }))));
+    act(() => {
+      result.current.setStatus('RUNNING');
+    });
     await waitFor(() => {
       expect(reloadFn).toHaveBeenCalled();
     });

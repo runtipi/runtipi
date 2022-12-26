@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker';
 import React from 'react';
 import { render } from '../../../../../tests/test-utils';
-import { SystemInfoResponse } from '../../../generated/graphql';
-import Dashboard from './Dashboard';
+import { SystemRouterOutput } from '../../../../server/routers/system/system.router';
+import { DashboardContainer } from './DashboardContainer';
 
 describe('Test: Dashboard', () => {
   it('should render', () => {
-    const data: SystemInfoResponse = {
+    const data: SystemRouterOutput['systemInfo'] = {
       disk: {
         available: faker.datatype.number(),
         total: faker.datatype.number(),
@@ -22,6 +22,6 @@ describe('Test: Dashboard', () => {
       },
     };
 
-    render(<Dashboard data={data} />);
+    render(<DashboardContainer data={data} loading={false} />);
   });
 });
