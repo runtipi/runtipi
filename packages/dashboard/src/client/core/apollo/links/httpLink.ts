@@ -1,7 +1,7 @@
 import { HttpLink } from '@apollo/client';
 
 const httpLink = new HttpLink({
-  uri: '/api/graphql',
+  uri: '/api-legacy/graphql',
 });
 
 export default httpLink;
