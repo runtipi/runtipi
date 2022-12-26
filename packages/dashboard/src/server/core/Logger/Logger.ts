@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
-import { getConfig } from '../TipiConfig';
 
 const { align, printf, timestamp, combine, colorize } = format;
 
@@ -23,8 +22,9 @@ const combinedLogFormatDev = combine(
 );
 
 const productionLogger = () => {
-  if (!fs.existsSync(getConfig().logs.LOGS_FOLDER)) {
-    fs.mkdirSync(getConfig().logs.LOGS_FOLDER);
+  const logsFolder = '/app/logs';
+  if (!fs.existsSync(logsFolder)) {
+    fs.mkdirSync(logsFolder);
   }
   return createLogger({
     level: 'info',
@@ -35,14 +35,14 @@ const productionLogger = () => {
       // - Write all logs error (and below) to `error.log`.
       //
       new transports.File({
-        filename: path.join(getConfig().logs.LOGS_FOLDER, getConfig().logs.LOGS_ERROR),
+        filename: path.join(logsFolder, 'error.log'),
         level: 'error',
       }),
       new transports.File({
-        filename: path.join(getConfig().logs.LOGS_FOLDER, getConfig().logs.LOGS_APP),
+        filename: path.join(logsFolder, 'app.log'),
       }),
     ],
-    exceptionHandlers: [new transports.File({ filename: path.join(getConfig().logs.LOGS_FOLDER, getConfig().logs.LOGS_ERROR) })],
+    exceptionHandlers: [new transports.File({ filename: path.join(logsFolder, 'error.log') })],
   });
 };
 

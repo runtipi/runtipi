@@ -24,7 +24,8 @@
     "types": [
       "jest",
       "@testing-library/jest-dom"
-    ]
+    ],
+    "experimentalDecorators": true,
   },
   "include": [
     "next-env.d.ts",

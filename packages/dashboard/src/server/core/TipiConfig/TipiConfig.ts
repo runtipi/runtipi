@@ -12,9 +12,6 @@ enum AppSupportedArchitecturesEnum {
 
 const { serverRuntimeConfig } = nextConfig();
 const {
-  LOGS_FOLDER = '/app/logs',
-  LOGS_APP = 'app.log',
-  LOGS_ERROR = 'error.log',
   NODE_ENV,
   JWT_SECRET,
   INTERNAL_IP,
@@ -25,6 +22,11 @@ const {
   REDIS_HOST,
   STORAGE_PATH = '/runtipi',
   ARCHITECTURE = 'amd64',
+  POSTGRES_HOST,
+  POSTGRES_DBNAME,
+  POSTGRES_USERNAME,
+  POSTGRES_PASSWORD,
+  POSTGRES_PORT = 5432,
 } = serverRuntimeConfig;
 
 const configSchema = z.object({
@@ -32,11 +34,6 @@ const configSchema = z.object({
   REDIS_HOST: z.string(),
   status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
   architecture: z.nativeEnum(AppSupportedArchitecturesEnum),
-  logs: z.object({
-    LOGS_FOLDER: z.string(),
-    LOGS_APP: z.string(),
-    LOGS_ERROR: z.string(),
-  }),
   dnsIp: z.string(),
   rootFolder: z.string(),
   internalIp: z.string(),
@@ -46,14 +43,16 @@ const configSchema = z.object({
   appsRepoUrl: z.string(),
   domain: z.string(),
   storagePath: z.string(),
+  postgresHost: z.string(),
+  postgresDatabase: z.string(),
+  postgresUsername: z.string(),
+  postgresPassword: z.string(),
+  postgresPort: z.number(),
 });
 
-export const formatErrors = (errors: z.ZodFormattedError<Map<string, string>, string>) =>
-  Object.entries(errors)
-    .map(([name, value]) => {
-      if (value && '_errors' in value) return `${name}: ${value._errors.join(', ')}\n`;
-      return null;
-    })
+export const formatErrors = (errors: { fieldErrors: Record<string, string[]> }) =>
+  Object.entries(errors.fieldErrors)
+    .map(([name, value]) => `${name}: ${value[0]}`)
     .filter(Boolean)
     .join('\n');
 
@@ -64,11 +63,11 @@ export class TipiConfig {
 
   constructor() {
     const envConfig: z.infer<typeof configSchema> = {
-      logs: {
-        LOGS_FOLDER,
-        LOGS_APP,
-        LOGS_ERROR,
-      },
+      postgresHost: POSTGRES_HOST,
+      postgresDatabase: POSTGRES_DBNAME,
+      postgresUsername: POSTGRES_USERNAME,
+      postgresPassword: POSTGRES_PASSWORD,
+      postgresPort: Number(POSTGRES_PORT),
       REDIS_HOST,
       NODE_ENV,
       architecture: ARCHITECTURE as z.infer<typeof configSchema>['architecture'],
@@ -92,11 +91,15 @@ export class TipiConfig {
       if (parsedConfig.success) {
         this.config = parsedConfig.data;
       } else {
-        Logger.error(`❌ Invalid env config\n${formatErrors(parsedConfig.error.format())}`);
+        const errors = formatErrors(parsedConfig.error.flatten());
+        console.error(`❌ Invalid env config\n${errors}`);
+        Logger.error(`❌ Invalid env config\n\n${errors}`);
         throw new Error('Invalid env config');
       }
     } else {
-      Logger.error(`❌ Invalid settings.json file:\n${formatErrors(parsedFileConfig.error.format())}`);
+      const errors = formatErrors(parsedFileConfig.error.flatten());
+      console.error(`❌ Invalid settings.json file:\n${errors}`);
+      Logger.error(`❌ Invalid settings.json file:\n${errors}`);
       throw new Error('Invalid settings.json file');
     }
   }
