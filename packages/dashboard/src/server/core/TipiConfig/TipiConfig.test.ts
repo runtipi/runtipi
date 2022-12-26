@@ -18,9 +18,6 @@ describe('Test: getConfig', () => {
 
     expect(config).toBeDefined();
     expect(config.NODE_ENV).toBe('test');
-    expect(config.logs.LOGS_FOLDER).toBe('/app/logs');
-    expect(config.logs.LOGS_APP).toBe('app.log');
-    expect(config.logs.LOGS_ERROR).toBe('error.log');
     expect(config.dnsIp).toBe('9.9.9.9');
     expect(config.rootFolder).toBe('/runtipi');
     expect(config.internalIp).toBe('localhost');

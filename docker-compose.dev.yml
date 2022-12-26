@@ -101,6 +101,8 @@ services:
     command: /bin/sh -c "cd /dashboard && npm run dev"
     container_name: dashboard
     depends_on:
+      tipi-db:
+        condition: service_healthy
       api:
         condition: service_started
     environment:
@@ -109,9 +111,9 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       NGINX_PORT: ${NGINX_PORT}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USERNAME: tipi
-      POSTGRES_DBNAME: tipi
-      POSTGRES_HOST: tipi-db
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_DBNAME: ${POSTGRES_DBNAME}
+      POSTGRES_HOST: ${POSTGRES_HOST}
       APPS_REPO_ID: ${APPS_REPO_ID}
       APPS_REPO_URL: ${APPS_REPO_URL}
       DOMAIN: ${DOMAIN}

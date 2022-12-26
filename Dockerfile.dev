@@ -1,16 +1,21 @@
-FROM node:18-alpine3.16
+ARG NODE_VERSION="18.12.1"
+ARG ALPINE_VERSION="3.16"
 
+FROM node:${NODE_VERSION}-buster-slim 
 WORKDIR /
 
-RUN apk --no-cache add g++ make
-RUN npm install node-gyp -g
+RUN apt update
+RUN apt install -y openssl
 
-WORKDIR /api
-COPY ./packages/system-api/package*.json /api/
-RUN npm install
+RUN npm install node-gyp -g
 
 WORKDIR /dashboard
 COPY ./packages/dashboard/package*.json /dashboard/
+COPY ./packages/dashboard/prisma/schema.prisma /dashboard/prisma/
+RUN npm install
+
+WORKDIR /api
+COPY ./packages/system-api/package*.json /api/
 RUN npm install
 
 COPY ./packages/system-api /api
