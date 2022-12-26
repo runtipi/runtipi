@@ -12,7 +12,8 @@
     "start:pg": "docker run --name test-db -p 5433:5432 -d --rm -e POSTGRES_PASSWORD=postgres postgres",
     "version": "echo $npm_package_version",
     "release:rc": "./scripts/deploy/release-rc.sh",
-    "test:build": "docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t meienberger/runtipi:test ."
+    "test:build": "docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t meienberger/runtipi:test .",
+    "test:build:arm64": "docker buildx build --platform linux/arm64 -t meienberger/runtipi:test ."
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",

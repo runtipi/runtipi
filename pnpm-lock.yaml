@@ -51,6 +51,7 @@ importers:
       '@types/validator': ^13.7.2
       '@typescript-eslint/eslint-plugin': ^5.47.1
       '@typescript-eslint/parser': ^5.47.1
+      argon2: ^0.29.1
       clsx: ^1.1.1
       dotenv-cli: ^6.0.0
       eslint: 8.30.0
@@ -91,6 +92,7 @@ importers:
       ts-node: ^10.9.1
       tslib: ^2.4.0
       typescript: 4.9.4
+      uuid: ^9.0.0
       validator: ^13.7.0
       whatwg-fetch: ^3.6.2
       winston: ^3.7.2
@@ -107,6 +109,7 @@ importers:
       '@trpc/next': 10.7.0_gmaturtqmtlrknaw65ek5pmv2i
       '@trpc/react-query': 10.7.0_x4ie6nhblo2vtx2aafrgzlfqy4
       '@trpc/server': 10.7.0
+      argon2: 0.29.1
       clsx: 1.1.1
       fs-extra: 10.1.0
       graphql: 15.8.0
