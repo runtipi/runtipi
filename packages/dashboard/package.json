@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "test": "jest --colors",
+    "test:client": "jest --colors --config=jest.config.client.js",
+    "test:server": "jest --colors --config=jest.config.server.js",
     "dev": "next dev",
-    "dev:msw": "NEXT_PUBLIC_API_MOCKING=enabled next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

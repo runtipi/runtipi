@@ -1,122 +1,135 @@
 import { faker } from '@faker-js/faker';
-import { graphql } from 'msw';
 import React from 'react';
-import { act, fireEvent, render, renderHook, screen, waitFor } from '../../../../../../tests/test-utils';
+import { render, screen, waitFor, act, fireEvent, renderHook } from '../../../../../../tests/test-utils';
+import { getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
 import { useToastStore } from '../../../../state/toastStore';
 import { SettingsContainer } from './SettingsContainer';
 
+beforeEach(() => {
+  localStorage.removeItem('token');
+});
+
 describe('Test: SettingsContainer', () => {
-  it('renders without crashing', () => {
-    const currentVersion = faker.system.semver();
-    render(<SettingsContainer currentVersion={currentVersion} latestVersion={currentVersion} />);
+  describe('UI', () => {
+    it('renders without crashing', () => {
+      const current = faker.system.semver();
+      render(<SettingsContainer data={{ current }} />);
 
-    expect(screen.getByText('Tipi settings')).toBeInTheDocument();
-    expect(screen.getByText('Already up to date')).toBeInTheDocument();
+      expect(screen.getByText('Tipi settings')).toBeInTheDocument();
+      expect(screen.getByText('Already up to date')).toBeInTheDocument();
+    });
+
+    it('should make update button disable if current version is equal to latest version', () => {
+      const current = faker.system.semver();
+      render(<SettingsContainer data={{ current, latest: current }} />);
+
+      expect(screen.getByText('Already up to date')).toBeDisabled();
+    });
+
+    it('should make update button disabled if current version is greater than latest version', () => {
+      const current = '1.0.0';
+      const latest = '0.0.1';
+      render(<SettingsContainer data={{ current, latest }} />);
+
+      expect(screen.getByText('Already up to date')).toBeDisabled();
+    });
+
+    it('should display update button if current version is less than latest version', () => {
+      const current = '0.0.1';
+      const latest = '1.0.0';
+
+      render(<SettingsContainer data={{ current, latest }} />);
+      expect(screen.getByText(`Update to ${latest}`)).toBeInTheDocument();
+      expect(screen.getByText(`Update to ${latest}`)).not.toBeDisabled();
+    });
+
+    it('should display error page if error is present', () => {
+      const current = faker.system.semver();
+      const error = faker.lorem.sentence();
+
+      render(<SettingsContainer data={{ current }} error={error} />);
+
+      expect(screen.getByText(error)).toBeInTheDocument();
+    });
   });
 
-  it('should make update button disable if current version is equal to latest version', () => {
-    const currentVersion = faker.system.semver();
-    render(<SettingsContainer currentVersion={currentVersion} latestVersion={currentVersion} />);
+  describe('Update', () => {
+    it('should remove token from local storage on success', async () => {
+      const current = '0.0.1';
+      const latest = faker.system.semver();
+      localStorage.setItem('token', 'token');
 
-    expect(screen.getByText('Already up to date')).toBeDisabled();
+      render(<SettingsContainer data={{ current, latest }} />);
+
+      const updateButton = screen.getByText('Update');
+      act(() => {
+        fireEvent.click(updateButton);
+      });
+
+      // wait 500 ms because localStore cannot be awaited in tests
+      // eslint-disable-next-line no-promise-executor-return
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      expect(localStorage.getItem('token')).toBeNull();
+    });
+
+    it('should display error toast on error', async () => {
+      const { result, unmount } = renderHook(() => useToastStore());
+      const current = '0.0.1';
+      const latest = faker.system.semver();
+      const error = faker.lorem.sentence();
+      server.use(getTRPCMockError({ path: ['system', 'update'], type: 'mutation', message: error }));
+      render(<SettingsContainer data={{ current, latest }} />);
+
+      const updateButton = screen.getByText('Update');
+      act(() => {
+        fireEvent.click(updateButton);
+      });
+
+      await waitFor(() => {
+        expect(result.current.toasts[0].description).toBe(error);
+      });
+
+      unmount();
+    });
   });
 
-  it('should make update button disabled if current version is greater than latest version', () => {
-    const currentVersion = '1.0.0';
-    const latestVersion = '0.0.1';
-    render(<SettingsContainer currentVersion={currentVersion} latestVersion={latestVersion} />);
+  describe('Restart', () => {
+    it('should remove token from local storage on success', async () => {
+      const current = faker.system.semver();
+      localStorage.setItem('token', 'token');
 
-    expect(screen.getByText('Already up to date')).toBeDisabled();
-  });
+      render(<SettingsContainer data={{ current }} />);
+      const restartButton = screen.getByTestId('settings-modal-restart-button');
+      act(() => {
+        fireEvent.click(restartButton);
+      });
 
-  it('should display update button if current version is less than latest version', () => {
-    const currentVersion = '0.0.1';
-    const latestVersion = '1.0.0';
+      // wait 500 ms because localStore cannot be awaited in tests
+      // eslint-disable-next-line no-promise-executor-return
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    render(<SettingsContainer currentVersion={currentVersion} latestVersion={latestVersion} />);
-    expect(screen.getByText(`Update to ${latestVersion}`)).toBeInTheDocument();
-    expect(screen.getByText(`Update to ${latestVersion}`)).not.toBeDisabled();
-  });
+      expect(localStorage.getItem('token')).toBeNull();
+    });
 
-  it('should call update mutation when update button is clicked', async () => {
-    // Arrange
+    it('should display error toast on error', async () => {
+      const { result, unmount } = renderHook(() => useToastStore());
+      const current = faker.system.semver();
+      const error = faker.lorem.sentence();
+      server.use(getTRPCMockError({ path: ['system', 'restart'], type: 'mutation', message: error }));
+      render(<SettingsContainer data={{ current }} />);
 
-    localStorage.setItem('token', 'token');
-    const currentVersion = '0.0.1';
-    const latestVersion = '1.0.0';
-    const updateFn = jest.fn();
-    server.use(
-      graphql.mutation('Update', async (req, res, ctx) => {
-        updateFn();
-        return res(ctx.data({ update: true }));
-      }),
-    );
-    render(<SettingsContainer currentVersion={currentVersion} latestVersion={latestVersion} />);
+      const restartButton = screen.getByTestId('settings-modal-restart-button');
+      act(() => {
+        fireEvent.click(restartButton);
+      });
 
-    // Act
-    act(() => screen.getByText(`Update to ${latestVersion}`).click());
+      await waitFor(() => {
+        expect(result.current.toasts[0].description).toBe(error);
+      });
 
-    fireEvent.click(screen.getByText('Update'));
-    waitFor(() => expect(updateFn).toHaveBeenCalled());
-    // eslint-disable-next-line no-promise-executor-return
-    await act(() => new Promise((resolve) => setTimeout(resolve, 1500)));
-
-    // Assert
-    const token = localStorage.getItem('token');
-    expect(token).toBe(null);
-  });
-
-  it('should display error toast if update mutation fails', async () => {
-    // Arrange
-    const { result, unmount } = renderHook(() => useToastStore());
-    const currentVersion = '0.0.1';
-    const latestVersion = '1.0.0';
-    const errorMessage = 'My error';
-    server.use(graphql.mutation('Update', async (req, res, ctx) => res(ctx.errors([{ message: errorMessage }]))));
-    render(<SettingsContainer currentVersion={currentVersion} latestVersion={latestVersion} />);
-
-    // Act
-    act(() => screen.getByText(`Update to ${latestVersion}`).click());
-    fireEvent.click(screen.getByText('Update'));
-
-    // Assert
-    await waitFor(() => expect(result.current.toasts[0].description).toBe(errorMessage));
-    unmount();
-  });
-
-  it('should call restart mutation when restart button is clicked', async () => {
-    // Arrange
-    const restartFn = jest.fn();
-    server.use(
-      graphql.mutation('Restart', async (req, res, ctx) => {
-        restartFn();
-        return res(ctx.data({ restart: true }));
-      }),
-    );
-    render(<SettingsContainer currentVersion="1.0.0" latestVersion="1.0.0" />);
-
-    // Act
-    fireEvent.click(screen.getByTestId('settings-modal-restart-button'));
-    waitFor(() => expect(restartFn).toHaveBeenCalled());
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Assert
-    const token = localStorage.getItem('token');
-    expect(token).toBe(null);
-  });
-
-  it('should display error toast if restart mutation fails', async () => {
-    // Arrange
-    const { result } = renderHook(() => useToastStore());
-    const errorMessage = 'Update error';
-    server.use(graphql.mutation('Restart', async (req, res, ctx) => res(ctx.errors([{ message: errorMessage }]))));
-    render(<SettingsContainer currentVersion="1.0.0" latestVersion="1.0.0" />);
-    // Act
-    fireEvent.click(screen.getByTestId('settings-modal-restart-button'));
-
-    // Assert
-    await waitFor(() => expect(result.current.toasts[0].description).toBe(errorMessage));
+      unmount();
+    });
   });
 });

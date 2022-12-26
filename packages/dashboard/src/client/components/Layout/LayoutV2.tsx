@@ -7,27 +7,32 @@ import semver from 'semver';
 import { useRefreshTokenQuery } from '../../generated/graphql';
 import { Header } from '../ui/Header';
 import styles from './Layout.module.scss';
-import { useSystemStore } from '../../state/systemStore';
+import { ErrorPage } from '../ui/ErrorPage';
+import { trpc } from '../../utils/trpc';
 
 interface IProps {
   loading?: boolean;
+  loadingComponent?: React.ReactNode;
+  error?: string;
   breadcrumbs?: { name: string; href: string; current?: boolean }[];
   children: React.ReactNode;
   title?: string;
   actions?: React.ReactNode;
+  data: unknown;
 }
 
-export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions }) => {
-  const { data } = useRefreshTokenQuery({ fetchPolicy: 'network-only' });
-  const { version } = useSystemStore();
+export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions, loading, error, loadingComponent, data }) => {
+  const { data: dataRefreshToken } = useRefreshTokenQuery({ fetchPolicy: 'network-only' });
+  const { data: dataVersion } = trpc.system.getVersion.useQuery(undefined, { networkMode: 'online' });
+
   const defaultVersion = '0.0.0';
-  const isLatest = semver.gte(version?.current || defaultVersion, version?.latest || defaultVersion);
+  const isLatest = semver.gte(dataVersion?.current || defaultVersion, dataVersion?.latest || defaultVersion);
 
   useEffect(() => {
-    if (data?.refreshToken?.token) {
-      localStorage.setItem('token', data.refreshToken.token);
+    if (dataRefreshToken?.refreshToken?.token) {
+      localStorage.setItem('token', dataRefreshToken.refreshToken.token);
     }
-  }, [data?.refreshToken?.token]);
+  }, [dataRefreshToken?.refreshToken?.token]);
 
   const renderBreadcrumbs = () => {
     if (!breadcrumbs) {
@@ -45,6 +50,22 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
         ))}
       </ol>
     );
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return loadingComponent;
+    }
+
+    if (error) {
+      return <ErrorPage error={error} />;
+    }
+
+    if (data) {
+      return children;
+    }
+
+    return null;
   };
 
   return (
@@ -67,7 +88,7 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
           </div>
         </div>
         <div className="page-body">
-          <div className="container-xl">{children}</div>
+          <div className="container-xl">{renderContent()}</div>
         </div>
       </div>
     </div>

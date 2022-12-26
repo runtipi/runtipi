@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createTRPCReact, httpBatchLink, loggerLink } from '@trpc/react-query';
+import { createTRPCReact, httpLink, loggerLink } from '@trpc/react-query';
 import SuperJSON from 'superjson';
 import React from 'react';
 import fetch from 'isomorphic-fetch';
@@ -23,7 +23,7 @@ const trpcClient = trpc.createClient({
     loggerLink({
       enabled: () => false,
     }),
-    httpBatchLink({
+    httpLink({
       url: 'http://localhost:3000/api/trpc',
       headers() {
         return {};
@@ -36,7 +36,6 @@ const trpcClient = trpc.createClient({
   ],
   transformer: SuperJSON,
 });
-
 
 export function TRPCTestClientProvider(props: { children: React.ReactNode }) {
   const { children } = props;

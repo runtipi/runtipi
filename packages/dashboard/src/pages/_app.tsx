@@ -10,9 +10,25 @@ import { ToastProvider } from '../client/components/hoc/ToastProvider';
 import { StatusProvider } from '../client/components/hoc/StatusProvider';
 import { AuthProvider } from '../client/components/hoc/AuthProvider';
 import { StatusScreen } from '../client/components/StatusScreen';
+import { trpc } from '../client/utils/trpc';
+import { SystemStatus, useSystemStore } from '../client/state/systemStore';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { setDarkMode } = useUIStore();
+  const status = trpc.system.status.useQuery(undefined, { refetchInterval: 5000 });
+  const version = trpc.system.getVersion.useQuery(undefined, { networkMode: 'online' });
+
+  const { setStatus, setVersion } = useSystemStore();
+
+  useEffect(() => {
+    setStatus(status.data?.status || SystemStatus.RUNNING);
+  }, [status.data?.status, setStatus]);
+
+  useEffect(() => {
+    if (version.data) {
+      setVersion(version.data);
+    }
+  }, [setVersion, version.data]);
 
   // check theme on component mount
   useEffect(() => {
@@ -28,8 +44,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     themeCheck();
   }, [setDarkMode]);
 
-  const { client } = useCachedResources();
-  if (!client) {
+  const { client, isLoadingComplete } = useCachedResources();
+  if (!client || !isLoadingComplete) {
     return <StatusScreen title="" subtitle="" />;
   }
 
@@ -51,4 +67,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp;
+export default trpc.withTRPC(MyApp);

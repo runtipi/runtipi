@@ -1,17 +1,10 @@
 import React from 'react';
 import type { NextPage } from 'next';
-import { useVersionQuery } from '../../../../generated/graphql';
-import { Layout } from '../../../../components/Layout';
 import { SettingsContainer } from '../../containers/SettingsContainer/SettingsContainer';
-import { ErrorPage } from '../../../../components/ui/ErrorPage';
+import { trpc } from '../../../../utils/trpc';
 
 export const SettingsPage: NextPage = () => {
-  const { data, loading, error } = useVersionQuery();
+  const { data, isLoading, error } = trpc.system.getVersion.useQuery(undefined, { staleTime: 0 });
 
-  return (
-    <Layout title="Settings" loading={!data?.version && loading}>
-      {data?.version && <SettingsContainer currentVersion={data.version.current} latestVersion={data.version.latest} />}
-      {error && <ErrorPage error={error.message} />}
-    </Layout>
-  );
+  return <SettingsContainer data={data} loading={isLoading} error={error?.message} />;
 };

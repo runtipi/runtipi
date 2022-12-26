@@ -12,7 +12,7 @@ interface IProps {
 }
 
 export const StatusScreen: React.FC<IProps> = ({ title, subtitle, onAction, actionTitle, loading = true }) => (
-  <div className="page page-center">
+  <div data-testid="status-screen" className="page page-center">
     <div className="container container-tight py-4 d-flex align-items-center flex-column">
       <Image
         alt="Tipi log"

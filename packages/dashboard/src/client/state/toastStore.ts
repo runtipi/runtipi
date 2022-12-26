@@ -5,8 +5,8 @@ export type IToast = {
   title: string;
   description?: string;
   status: 'error' | 'success' | 'warning' | 'info';
-  position: 'top';
-  isClosable: true;
+  position?: 'top';
+  isClosable?: true;
 };
 
 type Store = {
@@ -19,10 +19,20 @@ type Store = {
 export const useToastStore = create<Store>((set) => ({
   toasts: [],
   addToast: (toast: Omit<IToast, 'id'>) => {
+    const { title, description, status, position = 'top', isClosable = true } = toast;
     const id = Math.random().toString(36).substring(2, 9);
 
+    const toastToAdd = {
+      id,
+      title,
+      description,
+      status,
+      position,
+      isClosable,
+    };
+
     set((state) => ({
-      toasts: [...state.toasts, { ...toast, id }],
+      toasts: [...state.toasts, { ...toastToAdd, id }],
     }));
 
     setTimeout(() => {

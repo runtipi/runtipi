@@ -78,13 +78,13 @@ services:
     labels:
       traefik.enable: true
       # Web
-      traefik.http.routers.api.rule: PathPrefix(`/api`)
+      traefik.http.routers.api.rule: PathPrefix(`/api-legacy`)
       traefik.http.routers.api.service: api
       traefik.http.routers.api.entrypoints: web
       traefik.http.routers.api.middlewares: api-stripprefix
       traefik.http.services.api.loadbalancer.server.port: 3001
       # Websecure
-      traefik.http.routers.api-secure.rule: (Host(`${DOMAIN}`) && PathPrefix(`/api`))
+      traefik.http.routers.api-secure.rule: (Host(`${DOMAIN}`) && PathPrefix(`/api-legacy`))
       traefik.http.routers.api-secure.entrypoints: websecure
       traefik.http.routers.api-secure.service: api-secure
       traefik.http.routers.api-secure.tls.certresolver: myresolver
@@ -104,6 +104,18 @@ services:
         condition: service_started
     environment:
       NODE_ENV: production
+      INTERNAL_IP: ${INTERNAL_IP}
+      TIPI_VERSION: ${TIPI_VERSION}
+      JWT_SECRET: ${JWT_SECRET}
+      NGINX_PORT: ${NGINX_PORT}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USERNAME: tipi
+      POSTGRES_DBNAME: tipi
+      POSTGRES_HOST: tipi-db
+      APPS_REPO_ID: ${APPS_REPO_ID}
+      APPS_REPO_URL: ${APPS_REPO_URL}
+      DOMAIN: ${DOMAIN}
+      ARCHITECTURE: ${ARCHITECTURE}
     labels:
       traefik.enable: true
       # Web
