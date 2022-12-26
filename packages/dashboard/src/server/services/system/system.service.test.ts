@@ -1,6 +1,5 @@
 import fs from 'fs-extra';
 import semver from 'semver';
-import axios from 'axios';
 import { faker } from '@faker-js/faker';
 import { SystemService } from '.';
 import { EventDispatcher } from '../../core/EventDispatcher';
@@ -66,9 +65,8 @@ describe('Test: getVersion', () => {
 
   it('It should return version', async () => {
     // Arrange
-    const spy = jest.spyOn(axios, 'get').mockResolvedValue({
-      data: { name: `v${faker.random.numeric(1)}.${faker.random.numeric(1)}.${faker.random.numeric()}` },
-    });
+    // @ts-expect-error Mocking fetch
+    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.random.numeric(1)}.${faker.random.numeric(1)}.${faker.random.numeric()}` }) }));
 
     // Act
     const version = await SystemService.getVersion();
@@ -77,14 +75,11 @@ describe('Test: getVersion', () => {
     expect(version).toBeDefined();
     expect(version.current).toBeDefined();
     expect(semver.valid(version.latest)).toBeTruthy();
-
-    spy.mockRestore();
   });
 
   it('Should return undefined for latest if request fails', async () => {
-    jest.spyOn(axios, 'get').mockImplementation(() => {
-      throw new Error('Error');
-    });
+    // @ts-expect-error Mocking fetch
+    fetch.mockImplementationOnce(() => Promise.reject(new Error('API is down')));
 
     const version = await SystemService.getVersion();
 
@@ -95,9 +90,8 @@ describe('Test: getVersion', () => {
 
   it('Should return cached version', async () => {
     // Arrange
-    const spy = jest.spyOn(axios, 'get').mockResolvedValue({
-      data: { name: `v${faker.random.numeric(1)}.${faker.random.numeric(1)}.${faker.random.numeric()}` },
-    });
+    // @ts-expect-error Mocking fetch
+    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.random.numeric(1)}.${faker.random.numeric(1)}.${faker.random.numeric()}` }) }));
 
     // Act
     const version = await SystemService.getVersion();
@@ -111,10 +105,6 @@ describe('Test: getVersion', () => {
     expect(version2.latest).toBe(version.latest);
     expect(version2.current).toBeDefined();
     expect(semver.valid(version2.latest)).toBeTruthy();
-
-    expect(spy).toHaveBeenCalledTimes(1);
-
-    spy.mockRestore();
   });
 });
 
@@ -148,14 +138,12 @@ describe('Test: update', () => {
   it('Should throw an error if latest version is not set', async () => {
     // Arrange
     TipiCache.del('latestVersion');
-    const spy = jest.spyOn(axios, 'get').mockResolvedValue({
-      data: { name: null },
-    });
+    // @ts-expect-error Mocking fetch
+    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: null }) }));
     setConfig('version', '0.0.1');
 
     // Act & Assert
     await expect(SystemService.update()).rejects.toThrow('Could not get latest version');
-    spy.mockRestore();
   });
 
   it('Should throw if current version is higher than latest', async () => {

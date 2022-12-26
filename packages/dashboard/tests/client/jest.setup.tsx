@@ -1,9 +1,9 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import 'whatwg-fetch';
-import { server } from '../src/client/mocks/server';
-import { mockApolloClient } from './test-utils';
-import { useToastStore } from '../src/client/state/toastStore';
+import { server } from '../../src/client/mocks/server';
+import { mockApolloClient } from '../test-utils';
+import { useToastStore } from '../../src/client/state/toastStore';
 
 // Mock next/router
 // eslint-disable-next-line global-require

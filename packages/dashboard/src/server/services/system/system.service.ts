@@ -1,4 +1,3 @@
-import axios from 'axios';
 import semver from 'semver';
 import { z } from 'zod';
 import { readJsonFile } from '../../common/fs.helpers';
@@ -6,7 +5,6 @@ import { EventDispatcher, EventTypes } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
 import TipiCache from '../../core/TipiCache';
 import { getConfig, setConfig } from '../../core/TipiConfig';
-import { env } from '../../../env/server.mjs';
 import { SystemStatus } from '../../../client/state/systemStore';
 
 const systemInfoSchema = z.object({
@@ -38,9 +36,10 @@ const getVersion = async (): Promise<{ current: string; latest?: string }> => {
     let version = await TipiCache.get('latestVersion');
 
     if (!version) {
-      const { data } = await axios.get('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+      const data = await fetch('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+      const release = await data.json();
 
-      version = data.name.replace('v', '');
+      version = release.name.replace('v', '');
       await TipiCache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
     }
 
@@ -62,7 +61,7 @@ const systemInfo = (): z.infer<typeof systemInfoSchema> => {
 };
 
 const restart = async (): Promise<boolean> => {
-  if (env.NODE_ENV === 'development') {
+  if (getConfig().NODE_ENV === 'development') {
     throw new Error('Cannot restart in development mode');
   }
 
@@ -75,7 +74,7 @@ const restart = async (): Promise<boolean> => {
 const update = async (): Promise<boolean> => {
   const { current, latest } = await getVersion();
 
-  if (env.NODE_ENV === 'development') {
+  if (getConfig().NODE_ENV === 'development') {
     throw new Error('Cannot update in development mode');
   }
 

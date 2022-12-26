@@ -7,6 +7,8 @@
 logs
 .pnpm-debug.log
 .env*
+!.env.example
+!.env.test
 github.secrets
 node_modules/
 app-data/*

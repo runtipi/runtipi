@@ -254,7 +254,7 @@ describe('Test: generateEnvFile', () => {
     const envmap = await getEnvMap(appInfo.id);
 
     expect(envmap.get('APP_EXPOSED')).toBeUndefined();
-    expect(envmap.get('APP_DOMAIN')).toBe(`192.168.1.10:${appInfo.port}`);
+    expect(envmap.get('APP_DOMAIN')).toBe(`localhost:${appInfo.port}`);
   });
 
   it('Should create app folder if it does not exist', async () => {
