@@ -4,10 +4,10 @@ import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import ReactTooltip from 'react-tooltip';
 import semver from 'semver';
-import { useRefreshTokenQuery } from '../../generated/graphql';
 import { Header } from '../ui/Header';
 import styles from './Layout.module.scss';
 import { useSystemStore } from '../../state/systemStore';
+import { trpc } from '../../utils/trpc';
 
 interface IProps {
   loading?: boolean;
@@ -18,16 +18,19 @@ interface IProps {
 }
 
 export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions }) => {
-  const { data } = useRefreshTokenQuery({ fetchPolicy: 'network-only' });
+  const refreshToken = trpc.auth.refreshToken.useMutation({
+    onSuccess: (data) => {
+      if (data?.token) localStorage.setItem('token', data.token);
+    },
+  });
+
+  useEffect(() => {
+    refreshToken.mutate();
+  }, []);
+
   const { version } = useSystemStore();
   const defaultVersion = '0.0.0';
   const isLatest = semver.gte(version?.current || defaultVersion, version?.latest || defaultVersion);
-
-  useEffect(() => {
-    if (data?.refreshToken?.token) {
-      localStorage.setItem('token', data.refreshToken.token);
-    }
-  }, [data?.refreshToken?.token]);
 
   const renderBreadcrumbs = () => {
     if (!breadcrumbs) {

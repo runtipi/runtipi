@@ -15,14 +15,9 @@ import { SystemStatus, useSystemStore } from '../client/state/systemStore';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { setDarkMode } = useUIStore();
-  const status = trpc.system.status.useQuery(undefined, { refetchInterval: 5000 });
-  const version = trpc.system.getVersion.useQuery(undefined, { networkMode: 'online' });
-
   const { setStatus, setVersion } = useSystemStore();
-
-  useEffect(() => {
-    setStatus(status.data?.status || SystemStatus.RUNNING);
-  }, [status.data?.status, setStatus]);
+  trpc.system.status.useQuery(undefined, { refetchInterval: 50000, networkMode: 'online', onSuccess: (d) => setStatus(d.status || SystemStatus.RUNNING) });
+  const version = trpc.system.getVersion.useQuery(undefined, { networkMode: 'online' });
 
   useEffect(() => {
     if (version.data) {

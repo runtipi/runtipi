@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import ReactTooltip from 'react-tooltip';
 import semver from 'semver';
-import { useRefreshTokenQuery } from '../../generated/graphql';
 import { Header } from '../ui/Header';
 import styles from './Layout.module.scss';
 import { ErrorPage } from '../ui/ErrorPage';
@@ -22,17 +21,20 @@ interface IProps {
 }
 
 export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions, loading, error, loadingComponent, data }) => {
-  const { data: dataRefreshToken } = useRefreshTokenQuery({ fetchPolicy: 'network-only' });
+  const refreshToken = trpc.auth.refreshToken.useMutation({
+    onSuccess: (d) => {
+      if (d?.token) localStorage.setItem('token', d.token);
+    },
+  });
+
+  useEffect(() => {
+    refreshToken.mutate();
+  }, []);
+
   const { data: dataVersion } = trpc.system.getVersion.useQuery(undefined, { networkMode: 'online' });
 
   const defaultVersion = '0.0.0';
   const isLatest = semver.gte(dataVersion?.current || defaultVersion, dataVersion?.latest || defaultVersion);
-
-  useEffect(() => {
-    if (dataRefreshToken?.refreshToken?.token) {
-      localStorage.setItem('token', dataRefreshToken.refreshToken.token);
-    }
-  }, [dataRefreshToken?.refreshToken?.token]);
 
   const renderBreadcrumbs = () => {
     if (!breadcrumbs) {

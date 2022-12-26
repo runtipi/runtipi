@@ -1,23 +1,7 @@
 import React from 'react';
-import { fireEvent, render, renderHook, screen } from '../../../../../tests/test-utils';
+import { fireEvent, render, renderHook, screen, waitFor } from '../../../../../tests/test-utils';
 import { useUIStore } from '../../../state/uiStore';
 import { Header } from './Header';
-
-const logoutFn = jest.fn();
-const reloadFn = jest.fn();
-
-jest.mock('../../../generated/graphql', () => ({
-  useLogoutMutation: () => [logoutFn],
-}));
-
-jest.mock('next/router', () => {
-  const actualRouter = jest.requireActual('next-router-mock');
-
-  return {
-    ...actualRouter,
-    reload: () => reloadFn(),
-  };
-});
 
 describe('Header', () => {
   it('renders without crashing', () => {
@@ -63,19 +47,14 @@ describe('Header', () => {
     expect(result.current.darkMode).toBe(false);
   });
 
-  it('Should call the logout mutation on logout', () => {
+  it('Should remove the token from local storage on logout', async () => {
+    localStorage.setItem('token', 'token');
     const { container } = render(<Header />);
     const logoutButton = container.querySelector('[data-tip="Log out"]');
     fireEvent.click(logoutButton as Element);
 
-    expect(logoutFn).toHaveBeenCalled();
-  });
-
-  it('Should reload the page with next/router on logout', () => {
-    const { container } = render(<Header />);
-    const logoutButton = container.querySelector('[data-tip="Log out"]');
-    fireEvent.click(logoutButton as Element);
-
-    expect(reloadFn).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(localStorage.getItem('token')).toBeNull();
+    });
   });
 });

@@ -1,8 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { graphql } from 'msw';
 import React from 'react';
 import { fireEvent, render, renderHook, screen, waitFor } from '../../../../../../tests/test-utils';
-import { useMeQuery } from '../../../../generated/graphql';
+import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
 import { useToastStore } from '../../../../state/toastStore';
 import { LoginContainer } from './LoginContainer';
@@ -40,21 +39,12 @@ describe('Test: LoginContainer', () => {
     expect(loginButton).toBeEnabled();
   });
 
-  it('should call login mutation on submit', async () => {
+  it('should add token in localStorage on submit', async () => {
     // Arrange
     const email = faker.internet.email();
     const password = faker.internet.password();
     const token = faker.datatype.uuid();
-
-    renderHook(() => useMeQuery());
-    const loginFn = jest.fn();
-    const fakeInstallHandler = graphql.mutation('Login', (req, res, ctx) => {
-      loginFn(req.variables.input);
-      sessionStorage.setItem('is-authenticated', email);
-      return res(ctx.data({ login: { token } }));
-    });
-
-    server.use(fakeInstallHandler);
+    server.use(getTRPCMock({ path: ['auth', 'login'], type: 'mutation', response: { token } }));
     render(<LoginContainer />);
 
     // Act
@@ -67,16 +57,15 @@ describe('Test: LoginContainer', () => {
     fireEvent.click(loginButton);
 
     // Assert
-    await waitFor(() => expect(loginFn).toHaveBeenCalledWith({ username: email, password }));
-    expect(localStorage.getItem('token')).toEqual(token);
+    await waitFor(() => {
+      expect(localStorage.getItem('token')).toEqual(token);
+    });
   });
 
   it('should show error message if login fails', async () => {
     // Arrange
-    renderHook(() => useMeQuery());
     const { result } = renderHook(() => useToastStore());
-    const fakeInstallHandler = graphql.mutation('Login', (req, res, ctx) => res(ctx.errors([{ message: 'my big error' }])));
-    server.use(fakeInstallHandler);
+    server.use(getTRPCMockError({ path: ['auth', 'login'], type: 'mutation', status: 500, message: 'my big error' }));
     render(<LoginContainer />);
 
     // Act
