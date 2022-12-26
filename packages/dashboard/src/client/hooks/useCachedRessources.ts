@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ApolloClient } from '@apollo/client';
 import { createApolloClient } from '../core/apollo/client';
 
@@ -11,7 +11,7 @@ export default function useCachedResources(): IReturnProps {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [client, setClient] = useState<ApolloClient<unknown>>();
 
-  async function loadResourcesAndDataAsync() {
+  const loadResourcesAndDataAsync = useCallback(() => {
     try {
       const restoredClient = createApolloClient();
 
@@ -19,14 +19,18 @@ export default function useCachedResources(): IReturnProps {
     } catch (error) {
       // We might want to provide this error information to an error reporting service
       console.error(error);
-    } finally {
-      setLoadingComplete(true);
     }
-  }
+  }, []);
 
   useEffect(() => {
     loadResourcesAndDataAsync();
-  }, []);
+  }, [loadResourcesAndDataAsync]);
+
+  useEffect(() => {
+    if (client) {
+      setLoadingComplete(true);
+    }
+  }, [client]);
 
   return { client, isLoadingComplete };
 }

@@ -17,7 +17,6 @@ import { runUpdates } from './core/updates/run';
 import recover from './core/updates/recover-migrations';
 import startJobs from './core/jobs/jobs';
 import { applyJsonConfig, getConfig, setConfig } from './core/config/TipiConfig';
-import systemController from './modules/system/system.controller';
 import { eventDispatcher, EventTypes } from './core/config/EventDispatcher';
 
 const applyCustomConfig = () => {
@@ -50,7 +49,6 @@ const main = async () => {
 
     app.use(cors(corsOptions));
     app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
-    app.use('/status', systemController.status);
     app.use(getSessionMiddleware);
 
     await datasource.initialize();
