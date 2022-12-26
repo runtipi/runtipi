@@ -47,6 +47,7 @@ importers:
       '@types/react-dom': 18.0.3
       '@types/semver': ^7.3.12
       '@types/testing-library__jest-dom': ^5.14.5
+      '@types/uuid': ^8.3.4
       '@types/validator': ^13.7.2
       '@typescript-eslint/eslint-plugin': ^5.47.1
       '@typescript-eslint/parser': ^5.47.1
@@ -128,6 +129,7 @@ importers:
       sharp: 0.30.7
       superjson: 1.12.0
       tslib: 2.4.0
+      uuid: 9.0.0
       validator: 13.7.0
       winston: 3.7.2
       zod: 3.19.1
@@ -152,6 +154,7 @@ importers:
       '@types/react-dom': 18.0.3
       '@types/semver': 7.3.12
       '@types/testing-library__jest-dom': 5.14.5
+      '@types/uuid': 8.3.4
       '@types/validator': 13.7.2
       '@typescript-eslint/eslint-plugin': 5.47.1_txmweb6yn7coi7nfrp22gpyqmy
       '@typescript-eslint/parser': 5.47.1_lzzuuodtsqwxnvqeq4g4likcqa
@@ -2817,7 +2820,7 @@ packages:
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
-      semver: 7.3.7
+      semver: 7.3.8
       tar: 6.1.11
     transitivePeerDependencies:
       - encoding
