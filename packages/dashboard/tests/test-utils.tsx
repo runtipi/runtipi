@@ -2,7 +2,6 @@ import React, { FC, ReactElement } from 'react';
 import { render, RenderOptions, renderHook } from '@testing-library/react';
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
 import fetch from 'isomorphic-fetch';
-import { SWRConfig } from 'swr';
 import { TRPCTestClientProvider } from './TRPCTestClientProvider';
 
 const link = new HttpLink({
@@ -20,9 +19,7 @@ export const mockApolloClient = new ApolloClient({
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => (
   <TRPCTestClientProvider>
-    <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
-      <ApolloProvider client={mockApolloClient}>{children}</ApolloProvider>
-    </SWRConfig>
+    <ApolloProvider client={mockApolloClient}>{children}</ApolloProvider>
   </TRPCTestClientProvider>
 );
 
