@@ -95,7 +95,7 @@ services:
 
   dashboard:
     image: meienberger/runtipi:${TIPI_VERSION}
-    command: /bin/sh -c "cd /dashboard && node server.js"
+    command: /bin/sh -c "cd /dashboard && npm run start"
     restart: unless-stopped
     container_name: dashboard
     networks:

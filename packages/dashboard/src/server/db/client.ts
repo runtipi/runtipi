@@ -11,11 +11,10 @@ declare global {
 export const prisma =
   global.prisma ||
   new PrismaClient({
-    log: getConfig().NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    log: getConfig().NODE_ENV === 'development' ? ['query', 'warn', 'error'] : ['error'],
     datasources: {
       db: {
-        url: `postgresql://${getConfig().postgresUsername}:${getConfig().postgresPassword}@${getConfig().postgresHost}:${getConfig().postgresPort}/${getConfig().postgresDatabase}`,
-        // url: `postgresql://${getConfig().postgresUsername}:${getConfig().postgresPassword}@${getConfig().postgresHost}:${getConfig().postgresPort}/${getConfig().postgresDatabase}`,
+        url: `postgresql://${getConfig().postgresUsername}:${getConfig().postgresPassword}@${getConfig().postgresHost}:${getConfig().postgresPort}/${getConfig().postgresDatabase}?connect_timeout=300`,
       },
     },
   });
