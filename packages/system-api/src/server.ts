@@ -14,7 +14,6 @@ import { __prod__ } from './config/constants/constants';
 import datasource from './config/datasource';
 import appsService from './modules/apps/apps.service';
 import { runUpdates } from './core/updates/run';
-import recover from './core/updates/recover-migrations';
 import startJobs from './core/jobs/jobs';
 import { applyJsonConfig, getConfig, setConfig } from './core/config/TipiConfig';
 import { eventDispatcher, EventTypes } from './core/config/EventDispatcher';
@@ -71,14 +70,6 @@ const main = async () => {
     await apolloServer.start();
     apolloServer.applyMiddleware({ app });
 
-    try {
-      await datasource.runMigrations();
-    } catch (e) {
-      logger.error(e);
-      await recover(datasource);
-    }
-
-    // Run migrations
     await runUpdates();
 
     httpServer.listen(port, async () => {
