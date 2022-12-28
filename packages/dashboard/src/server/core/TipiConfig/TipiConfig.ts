@@ -10,7 +10,6 @@ enum AppSupportedArchitecturesEnum {
   AMD64 = 'amd64',
 }
 
-const { serverRuntimeConfig } = nextConfig();
 const {
   NODE_ENV,
   JWT_SECRET,
@@ -27,7 +26,8 @@ const {
   POSTGRES_USERNAME,
   POSTGRES_PASSWORD,
   POSTGRES_PORT = 5432,
-} = serverRuntimeConfig;
+} = nextConfig()?.serverRuntimeConfig || process.env;
+// Use process.env if nextConfig is not available (e.g. in in server-preload.ts)
 
 const configSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
