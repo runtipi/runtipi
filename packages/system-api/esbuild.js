@@ -68,18 +68,3 @@ esbuild.build({
 });
 
 const glob = require('glob');
-
-/* Migrations */
-const migrationFiles = glob.sync('./src/config/migrations/*.ts');
-
-esbuild.buildSync({
-  entryPoints: migrationFiles,
-  platform: 'node',
-  target: 'node18',
-  minify: false,
-  outdir: 'dist/config/migrations',
-  logLevel: 'info',
-  format: 'cjs',
-  minifySyntax: true,
-  minifyWhitespace: true,
-});
