@@ -54,6 +54,7 @@ storage_path="${ROOT_FOLDER}"
 STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
 NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
 NETWORK_INTERFACE_COUNT=$(echo "$NETWORK_INTERFACE" | wc -l)
+REDIS_HOST=tipi-redis
 
 if [[ "$NETWORK_INTERFACE_COUNT" -eq 0 ]]; then
   echo "No network interface found!"
@@ -233,6 +234,7 @@ for template in ${ENV_FILE}; do
   sed -i "s/<apps_repo_url>/${APPS_REPOSITORY_ESCAPED}/g" "${template}"
   sed -i "s/<domain>/${DOMAIN}/g" "${template}"
   sed -i "s/<storage_path>/${STORAGE_PATH_ESCAPED}/g" "${template}"
+  sed -i "s/<redis_host>/${REDIS_HOST}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"

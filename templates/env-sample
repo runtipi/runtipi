@@ -19,3 +19,4 @@ POSTGRES_DBNAME=<postgres_dbname>
 POSTGRES_USERNAME=<postgres_username>
 POSTGRES_PASSWORD=<postgres_password>
 POSTGRES_PORT=<postgres_port>
+REDIS_HOST=<redis_host>

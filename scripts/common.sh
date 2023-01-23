@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+ROOT_FOLDER="${PWD}"
 # Get field from json file
 function get_json_field() {
     local json_file="$1"
