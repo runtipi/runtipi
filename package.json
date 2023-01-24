@@ -7,6 +7,7 @@
     "act:test-install": "act --container-architecture linux/amd64 -j test-install",
     "act:docker": "act --container-architecture linux/amd64 --secret-file github.secrets -j build-images",
     "start:dev": "./scripts/start-dev.sh",
+    "start:dev-container": "./.devcontainer/filewatcher.sh && npm run start:dev",
     "start:rc": "docker-compose -f docker-compose.rc.yml --env-file .env up --build",
     "start:prod": "docker-compose -f docker-compose.test.yml --env-file .env up --build",
     "start:pg": "docker run --name test-db -p 5433:5432 -d --rm -e POSTGRES_PASSWORD=postgres postgres",
