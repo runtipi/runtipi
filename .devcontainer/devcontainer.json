@@ -1,0 +1,15 @@
+{
+  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker": {
+      "version": "latest",
+      "moby": true
+    }
+  },
+  "extensions": [
+    "ms-azuretools.vscode-docker",
+    "ms-vscode.vscode-typescript-next",
+    "waderyan.gitblame"
+  ],
+  "postCreateCommand": "./.devcontainer/postCreateCommand.sh"
+}
