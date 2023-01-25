@@ -2,10 +2,9 @@ import * as argon2 from 'argon2';
 import { v4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
-import { User } from '@prisma/client';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
-import { Context } from '../../context';
+import { prisma } from '../../db/client';
 
 type UsernamePasswordInput = {
   username: string;
@@ -16,10 +15,16 @@ type TokenResponse = {
   token: string;
 };
 
-const login = async (input: UsernamePasswordInput, ctx: Context): Promise<TokenResponse> => {
+/**
+ * Authenticate user with given username and password
+ *
+ * @param {UsernamePasswordInput} input - An object containing the user's username and password
+ * @return {Promise<{token:string}>} - A promise that resolves to an object containing the JWT token
+ */
+const login = async (input: UsernamePasswordInput) => {
   const { password, username } = input;
 
-  const user = await ctx.prisma.user.findUnique({ where: { username: username.trim().toLowerCase() } });
+  const user = await prisma.user.findUnique({ where: { username: username.trim().toLowerCase() } });
 
   if (!user) {
     throw new Error('User not found');
@@ -39,7 +44,14 @@ const login = async (input: UsernamePasswordInput, ctx: Context): Promise<TokenR
   return { token };
 };
 
-const register = async (input: UsernamePasswordInput, ctx: Context): Promise<TokenResponse> => {
+/**
+ * Creates a new user with the provided email and password and returns a session token
+ *
+ * @param {UsernamePasswordInput} input - An object containing the email and password fields
+ * @returns {Promise<{token: string}>} - An object containing the session token
+ * @throws {Error} - If the email or password is missing, the email is invalid or the user already exists
+ */
+const register = async (input: UsernamePasswordInput) => {
   const { password, username } = input;
   const email = username.trim().toLowerCase();
 
@@ -51,14 +63,14 @@ const register = async (input: UsernamePasswordInput, ctx: Context): Promise<Tok
     throw new Error('Invalid username');
   }
 
-  const user = await ctx.prisma.user.findUnique({ where: { username: email } });
+  const user = await prisma.user.findUnique({ where: { username: email } });
 
   if (user) {
     throw new Error('User already exists');
   }
 
   const hash = await argon2.hash(password);
-  const newUser = await ctx.prisma.user.create({ data: { username: email, password: hash } });
+  const newUser = await prisma.user.create({ data: { username: email, password: hash } });
 
   const session = v4();
   const token = jwt.sign({ id: newUser.id, session }, getConfig().jwtSecret, { expiresIn: '1d' });
@@ -68,16 +80,28 @@ const register = async (input: UsernamePasswordInput, ctx: Context): Promise<Tok
   return { token };
 };
 
-const me = async (ctx: Context): Promise<Pick<User, 'id' | 'username'> | null> => {
-  if (!ctx.session?.userId) return null;
+/**
+ * Retrieves the user with the provided ID
+ *
+ * @param {number|undefined} userId - The user ID to retrieve
+ * @returns {Promise<{id: number, username: string} | null>} - An object containing the user's id and email, or null if the user is not found
+ */
+const me = async (userId: number | undefined) => {
+  if (!userId) return null;
 
-  const user = await ctx.prisma.user.findUnique({ where: { id: Number(ctx.session?.userId) }, select: { id: true, username: true } });
+  const user = await prisma.user.findUnique({ where: { id: Number(userId) }, select: { id: true, username: true } });
 
   if (!user) return null;
 
   return user;
 };
 
+/**
+ * Logs out the current user by removing the session token
+ *
+ * @param {string} [session] - The session token to log out
+ * @returns {Promise<boolean>} - Returns true if the session token is removed successfully
+ */
 const logout = async (session?: string): Promise<boolean> => {
   if (session) {
     await TipiCache.del(session);
@@ -86,6 +110,12 @@ const logout = async (session?: string): Promise<boolean> => {
   return true;
 };
 
+/**
+ * Refreshes a user's session token
+ *
+ * @param {string} [session] - The current session token
+ * @returns {Promise<{token: string} | null>} - An object containing the new session token, or null if the session is invalid
+ */
 const refreshToken = async (session?: string): Promise<TokenResponse | null> => {
   if (!session) return null;
 
@@ -102,8 +132,13 @@ const refreshToken = async (session?: string): Promise<TokenResponse | null> => 
   return { token };
 };
 
-const isConfigured = async (ctx: Context): Promise<boolean> => {
-  const count = await ctx.prisma.user.count();
+/**
+ * Check if the system is configured and has at least one user
+ *
+ * @returns {Promise<boolean>} - A boolean indicating if the system is configured or not
+ */
+const isConfigured = async (): Promise<boolean> => {
+  const count = await prisma.user.count();
 
   return count > 0;
 };

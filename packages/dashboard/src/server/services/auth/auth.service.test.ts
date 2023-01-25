@@ -5,7 +5,6 @@ import { setConfig } from '../../core/TipiConfig';
 import { createUser } from '../../tests/user.factory';
 import AuthService from './auth.service';
 import { prisma } from '../../db/client';
-import { Context } from '../../context';
 import TipiCache from '../../core/TipiCache';
 
 jest.mock('redis');
@@ -23,8 +22,6 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-const ctx = { prisma } as Context;
-
 describe('Login', () => {
   it('Should return a valid jsonwebtoken containing a user id', async () => {
     // Arrange
@@ -32,7 +29,7 @@ describe('Login', () => {
     const user = await createUser(email);
 
     // Act
-    const { token } = await AuthService.login({ username: email, password: 'password' }, ctx);
+    const { token } = await AuthService.login({ username: email, password: 'password' });
     const decoded = jwt.verify(token, 'test') as jwt.JwtPayload;
 
     // Assert
@@ -47,13 +44,13 @@ describe('Login', () => {
   });
 
   it('Should throw if user does not exist', async () => {
-    await expect(AuthService.login({ username: 'test', password: 'test' }, ctx)).rejects.toThrowError('User not found');
+    await expect(AuthService.login({ username: 'test', password: 'test' })).rejects.toThrowError('User not found');
   });
 
   it('Should throw if password is incorrect', async () => {
     const email = faker.internet.email();
     await createUser(email);
-    await expect(AuthService.login({ username: email, password: 'wrong' }, ctx)).rejects.toThrowError('Wrong password');
+    await expect(AuthService.login({ username: email, password: 'wrong' })).rejects.toThrowError('Wrong password');
   });
 });
 
@@ -63,7 +60,7 @@ describe('Register', () => {
     const email = faker.internet.email();
 
     // Act
-    const { token } = await AuthService.register({ username: email, password: 'password' }, ctx);
+    const { token } = await AuthService.register({ username: email, password: 'password' });
     const decoded = jwt.verify(token, 'test') as jwt.JwtPayload;
 
     // Assert
@@ -80,7 +77,7 @@ describe('Register', () => {
     const email = faker.internet.email();
 
     // Act
-    await AuthService.register({ username: email, password: 'test' }, ctx);
+    await AuthService.register({ username: email, password: 'test' });
     const user = await prisma.user.findFirst({ where: { username: email.toLowerCase().trim() } });
 
     // Assert
@@ -94,15 +91,15 @@ describe('Register', () => {
 
     // Act & Assert
     await createUser(email);
-    await expect(AuthService.register({ username: email, password: 'test' }, ctx)).rejects.toThrowError('User already exists');
+    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('User already exists');
   });
 
   it('Should throw if email is not provided', async () => {
-    await expect(AuthService.register({ username: '', password: 'test' }, ctx)).rejects.toThrowError('Missing email or password');
+    await expect(AuthService.register({ username: '', password: 'test' })).rejects.toThrowError('Missing email or password');
   });
 
   it('Should throw if password is not provided', async () => {
-    await expect(AuthService.register({ username: faker.internet.email(), password: '' }, ctx)).rejects.toThrowError('Missing email or password');
+    await expect(AuthService.register({ username: faker.internet.email(), password: '' })).rejects.toThrowError('Missing email or password');
   });
 
   it('Password is correctly hashed', async () => {
@@ -110,7 +107,7 @@ describe('Register', () => {
     const email = faker.internet.email().toLowerCase().trim();
 
     // Act
-    await AuthService.register({ username: email, password: 'test' }, ctx);
+    await AuthService.register({ username: email, password: 'test' });
     const user = await prisma.user.findUnique({ where: { username: email } });
     const isPasswordValid = await argon2.verify(user?.password || '', 'test');
 
@@ -119,7 +116,7 @@ describe('Register', () => {
   });
 
   it('Should throw if email is invalid', async () => {
-    await expect(AuthService.register({ username: 'test', password: 'test' }, ctx)).rejects.toThrowError('Invalid username');
+    await expect(AuthService.register({ username: 'test', password: 'test' })).rejects.toThrowError('Invalid username');
   });
 });
 
@@ -198,7 +195,8 @@ describe('Test: refreshToken', () => {
 describe('Test: me', () => {
   it('Should return null if userId is not provided', async () => {
     // Act
-    const result = await AuthService.me(ctx);
+    // @ts-expect-error - ctx is missing session
+    const result = await AuthService.me();
 
     // Assert
     expect(result).toBeNull();
@@ -206,7 +204,7 @@ describe('Test: me', () => {
 
   it('Should return null if user does not exist', async () => {
     // Act
-    const result = await AuthService.me({ ...ctx, session: { userId: 1 } });
+    const result = await AuthService.me(1);
 
     // Assert
     expect(result).toBeNull();
@@ -218,7 +216,7 @@ describe('Test: me', () => {
     const user = await createUser(email);
 
     // Act
-    const result = await AuthService.me({ ...ctx, session: { userId: user.id } });
+    const result = await AuthService.me(user.id);
 
     // Assert
     expect(result).not.toBeNull();
