@@ -10,7 +10,6 @@ export type RpcSuccessResponse<Data> = {
 };
 
 export type RpcErrorResponse = {
-  id: null;
   error: {
     json: {
       message: string;
@@ -35,7 +34,6 @@ const jsonRpcSuccessResponse = (data: unknown): RpcSuccessResponse<any> => {
 };
 
 const jsonRpcErrorResponse = (path: string, status: number, message: string): RpcErrorResponse => ({
-  id: null,
   error: {
     json: {
       message,
@@ -49,31 +47,7 @@ const jsonRpcErrorResponse = (path: string, status: number, message: string): Rp
     },
   },
 });
-/**
- * Mocks a TRPC endpoint and returns a msw handler for Storybook.
- * Only supports routes with two levels.
- * The path and response is fully typed and infers the type from your routes file.
- * @todo make it accept multiple endpoints
- * @param endpoint.path - path to the endpoint ex. ["post", "create"]
- * @param endpoint.response - response to return ex. {id: 1}
- * @param endpoint.type - specific type of the endpoint ex. "query" or "mutation" (defaults to "query")
- * @returns - msw endpoint
- * @example
- * Page.parameters = {
-    msw: {
-      handlers: [
-        getTRPCMock({
-          path: ["post", "getMany"],
-          type: "query",
-          response: [
-            { id: 0, title: "test" },
-            { id: 1, title: "test" },
-          ],
-        }),
-      ],
-    },
-  };
- */
+
 export const getTRPCMock = <
   K1 extends keyof RouterInput,
   K2 extends keyof RouterInput[K1], // object itself
@@ -88,7 +62,7 @@ export const getTRPCMock = <
 
   const route = `http://localhost:3000/api/trpc/${endpoint.path[0]}.${endpoint.path[1] as string}`;
 
-  return fn(route, (req, res, ctx) => res(ctx.delay(endpoint.delay), ctx.json(jsonRpcSuccessResponse(endpoint.response))));
+  return fn(route, (_, res, ctx) => res(ctx.delay(endpoint.delay), ctx.json(jsonRpcSuccessResponse(endpoint.response))));
 };
 
 export const getTRPCMockError = <
@@ -104,7 +78,7 @@ export const getTRPCMockError = <
 
   const route = `http://localhost:3000/api/trpc/${endpoint.path[0]}.${endpoint.path[1] as string}`;
 
-  return fn(route, (req, res, ctx) =>
+  return fn(route, (_, res, ctx) =>
     res(ctx.delay(), ctx.json(jsonRpcErrorResponse(`${endpoint.path[0]}.${endpoint.path[1] as string}`, endpoint.status ?? 500, endpoint.message ?? 'Internal Server Error'))),
   );
 };

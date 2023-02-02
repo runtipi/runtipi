@@ -1,10 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { App, AppCategoriesEnum, AppInfo, AppStatusEnum } from '../../generated/graphql';
+import { AppStatus, APP_CATEGORIES } from '../../../server/services/apps/apps.types';
+import { App, AppCategory, AppInfo, AppWithInfo } from '../../core/types';
 
-const randomCategory = (): AppCategoriesEnum[] => {
-  const categories = Object.values(AppCategoriesEnum);
+const randomCategory = (): AppCategory[] => {
+  const categories = Object.values(APP_CATEGORIES);
   const randomIndex = faker.datatype.number({ min: 0, max: categories.length - 1 });
-  return [categories[randomIndex] as AppCategoriesEnum];
+  return [categories[randomIndex]!];
 };
 
 export const createApp = (overrides?: Partial<AppInfo>): AppInfo => {
@@ -33,11 +34,11 @@ export const createApp = (overrides?: Partial<AppInfo>): AppInfo => {
 type CreateAppEntityParams = {
   overrides?: Omit<Partial<App>, 'info'>;
   overridesInfo?: Partial<AppInfo>;
-  status?: AppStatusEnum;
+  status?: AppStatus;
 };
 
-export const createAppEntity = (params: CreateAppEntityParams) => {
-  const { overrides, overridesInfo, status = AppStatusEnum.Running } = params;
+export const createAppEntity = (params: CreateAppEntityParams): AppWithInfo => {
+  const { overrides, overridesInfo, status = 'running' } = params;
 
   const id = faker.random.word().toLowerCase();
   const app = createApp({ id, ...overridesInfo });
@@ -47,9 +48,12 @@ export const createAppEntity = (params: CreateAppEntityParams) => {
     info: app,
     config: {},
     exposed: false,
-    updateInfo: null,
     domain: null,
     version: 1,
+    lastOpened: faker.date.past(),
+    numOpened: 0,
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.past(),
     ...overrides,
   };
 };

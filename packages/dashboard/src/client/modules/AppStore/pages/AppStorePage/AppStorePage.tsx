@@ -2,7 +2,6 @@ import React from 'react';
 import type { NextPage } from 'next';
 import clsx from 'clsx';
 import styles from './AppStorePage.module.scss';
-import { useListAppsQuery } from '../../../../generated/graphql';
 import { useAppStoreState } from '../../state/appStoreState';
 import { Input } from '../../../../components/ui/Input';
 import CategorySelector from '../../components/CategorySelector';
@@ -11,10 +10,10 @@ import { Layout } from '../../../../components/Layout';
 import { EmptyPage } from '../../../../components/ui/EmptyPage';
 import AppStoreContainer from '../../containers/AppStoreContainer';
 import { ErrorPage } from '../../../../components/ui/ErrorPage';
+import { trpc } from '../../../../utils/trpc';
 
 export const AppStorePage: NextPage = () => {
-  const { loading, data, error } = useListAppsQuery();
-
+  const { data, isLoading, error } = trpc.app.listApps.useQuery();
   const { setCategory, setSearch, category, search, sort, sortDirection } = useAppStoreState();
 
   const actions = (
@@ -24,15 +23,12 @@ export const AppStorePage: NextPage = () => {
     </div>
   );
 
-  const tableData = React.useMemo(
-    () => sortTable({ data: data?.listAppsInfo.apps || [], col: sort, direction: sortDirection, category, search }),
-    [data?.listAppsInfo.apps, sort, sortDirection, category, search],
-  );
+  const tableData = React.useMemo(() => sortTable({ data: data?.apps || [], col: sort, direction: sortDirection, category, search }), [data?.apps, sort, sortDirection, category, search]);
 
   return (
-    <Layout loading={loading && !data} title="App Store" actions={actions}>
-      {(tableData.length > 0 || loading) && <AppStoreContainer loading={loading} apps={tableData} />}
-      {tableData.length === 0 && <EmptyPage title="No app found" subtitle="Try to refine your search" />}
+    <Layout title="App Store" actions={actions}>
+      {(tableData.length > 0 || isLoading) && <AppStoreContainer loading={isLoading} apps={tableData} />}
+      {tableData.length === 0 && !error && <EmptyPage title="No app found" subtitle="Try to refine your search" />}
       {error && <ErrorPage error={error.message} />}
     </Layout>
   );

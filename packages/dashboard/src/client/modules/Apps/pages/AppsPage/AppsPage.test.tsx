@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
-import appHandlers, { mockInstalledAppIds } from '../../../../mocks/handlers/appHandlers';
+import { createAppEntity } from '../../../../mocks/fixtures/app.fixtures';
+import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
 import { AppsPage } from './AppsPage';
 
@@ -20,6 +21,8 @@ jest.mock('next/router', () => {
 describe('AppsPage', () => {
   it('should render', async () => {
     // Arrange
+    const app = createAppEntity({});
+    server.use(getTRPCMock({ path: ['app', 'installedApps'], response: [app] }));
     render(<AppsPage />);
 
     // Assert
@@ -30,32 +33,36 @@ describe('AppsPage', () => {
 
   it('should render all installed apps', async () => {
     // Arrange
+    const app1 = createAppEntity({});
+    const app2 = createAppEntity({});
+    server.use(getTRPCMock({ path: ['app', 'installedApps'], response: [app1, app2] }));
     render(<AppsPage />);
+
+    // Assert
     await waitFor(() => {
       expect(screen.getByTestId('apps-list')).toBeInTheDocument();
     });
-
-    // Assert
     const displayedAppIds = screen.getAllByTestId(/app-tile-/);
-    expect(displayedAppIds).toHaveLength(mockInstalledAppIds.length);
+    expect(displayedAppIds).toHaveLength(2);
   });
 
-  it('Should not render app tile if app info is not available', async () => {
+  it('Should not render app tile if app is not available', async () => {
     // Arrange
-    server.use(appHandlers.installedAppsNoInfo);
+    const app = createAppEntity({ overridesInfo: { available: false } });
+    server.use(getTRPCMock({ path: ['app', 'installedApps'], response: [app] }));
     render(<AppsPage />);
+
+    // Assert
     await waitFor(() => {
       expect(screen.getByTestId('apps-list')).toBeInTheDocument();
     });
-
-    // Assert
     expect(screen.queryByTestId(/app-tile-/)).not.toBeInTheDocument();
   });
 });
 
 describe('AppsPage - Empty', () => {
   beforeEach(() => {
-    server.use(appHandlers.installedAppsEmpty);
+    server.use(getTRPCMock({ path: ['app', 'installedApps'], response: [] }));
   });
 
   it('should render empty page if no app is installed', async () => {
@@ -78,7 +85,7 @@ describe('AppsPage - Empty', () => {
 
     // Act
     const actionButton = screen.getByTestId('empty-page-action');
-    await fireEvent.click(actionButton);
+    fireEvent.click(actionButton);
 
     // Assert
     expect(actionButton).toHaveTextContent('Go to app store');
@@ -87,17 +94,15 @@ describe('AppsPage - Empty', () => {
 });
 
 describe('AppsPage - Error', () => {
-  beforeEach(() => {
-    server.use(appHandlers.installedAppsError);
-  });
-
   it('should render error page if an error occurs', async () => {
+    // Arrange
+    server.use(getTRPCMockError({ path: ['app', 'installedApps'], type: 'query', message: 'test-error' }));
     render(<AppsPage />);
 
+    // Assert
     await waitFor(() => {
       expect(screen.getByTestId('error-page')).toBeInTheDocument();
     });
-
     expect(screen.getByText('test-error')).toHaveTextContent('test-error');
     expect(screen.queryByTestId('apps-list')).not.toBeInTheDocument();
   });

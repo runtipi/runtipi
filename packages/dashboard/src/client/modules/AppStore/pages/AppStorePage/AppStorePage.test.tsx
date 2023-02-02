@@ -1,18 +1,19 @@
 import React from 'react';
 import { render, screen, waitFor } from '../../../../../../tests/test-utils';
-import appHandlers from '../../../../mocks/handlers/appHandlers';
+import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
 import { AppStorePage } from './AppStorePage';
 
 describe('Test: AppStorePage', () => {
   it('should render error state when error occurs', async () => {
     // Arrange
-    server.use(appHandlers.listAppsError);
+    server.use(getTRPCMockError({ path: ['app', 'listApps'], message: 'test error' }));
     render(<AppStorePage />);
 
     // Assert
     await waitFor(() => {
       expect(screen.getByText('An error occured')).toBeInTheDocument();
+      expect(screen.getByText('test error')).toBeInTheDocument();
     });
   });
 
@@ -46,7 +47,8 @@ describe('Test: AppStorePage', () => {
 
   it('should render empty state when no apps are available', async () => {
     // Arrange
-    server.use(appHandlers.listAppsEmpty);
+    server.use(getTRPCMock({ path: ['app', 'listApps'], response: { apps: [], total: 0 } }));
+
     render(<AppStorePage />);
 
     // Assert

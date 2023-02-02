@@ -3,19 +3,6 @@ import { useDisclosure } from '../../../../hooks/useDisclosure';
 import { useToastStore } from '../../../../state/toastStore';
 import { AppLogo } from '../../../../components/AppLogo/AppLogo';
 import { AppStatus } from '../../../../components/AppStatus';
-import {
-  App,
-  AppInfo,
-  AppStatusEnum,
-  GetAppDocument,
-  InstalledAppsDocument,
-  useInstallAppMutation,
-  useStartAppMutation,
-  useStopAppMutation,
-  useUninstallAppMutation,
-  useUpdateAppConfigMutation,
-  useUpdateAppMutation,
-} from '../../../../generated/graphql';
 import { AppActions } from '../../components/AppActions';
 import { AppDetailsTabs } from '../../components/AppDetailsTabs';
 import { InstallModal } from '../../components/InstallModal';
@@ -24,13 +11,15 @@ import { UninstallModal } from '../../components/UninstallModal';
 import { UpdateModal } from '../../components/UpdateModal';
 import { UpdateSettingsModal } from '../../components/UpdateSettingsModal';
 import { FormValues } from '../../components/InstallForm/InstallForm';
+import { trpc } from '../../../../utils/trpc';
+import { AppRouterOutput } from '../../../../../server/routers/app/app.router';
+import { castAppConfig } from '../../helpers/castAppConfig';
 
 interface IProps {
-  app: Pick<App, 'id' | 'updateInfo' | 'config' | 'exposed' | 'domain' | 'status'>;
-  info: AppInfo;
+  app: AppRouterOutput['getApp'];
 }
 
-export const AppDetailsContainer: React.FC<IProps> = ({ app, info }) => {
+export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
   const { addToast } = useToastStore();
   const installDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
@@ -38,143 +27,154 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, info }) => {
   const updateDisclosure = useDisclosure();
   const updateSettingsDisclosure = useDisclosure();
 
-  // Mutations
-  const [install] = useInstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }, { query: InstalledAppsDocument }] });
-  const [update] = useUpdateAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
-  const [uninstall] = useUninstallAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }, { query: InstalledAppsDocument }] });
-  const [stop] = useStopAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
-  const [start] = useStartAppMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
-  const [updateConfig] = useUpdateAppConfigMutation({ refetchQueries: [{ query: GetAppDocument, variables: { appId: info.id } }] });
+  const utils = trpc.useContext();
 
-  const updateAvailable = Number(app?.updateInfo?.current || 0) < Number(app?.updateInfo?.latest);
-
-  const handleError = (error: unknown) => {
-    if (error instanceof Error) {
-      addToast({
-        title: 'Error',
-        description: error.message,
-        status: 'error',
-        position: 'top',
-        isClosable: true,
-      });
-    }
+  const invalidate = () => {
+    utils.app.installedApps.invalidate();
+    utils.app.getApp.invalidate({ id: app.id });
   };
+
+  const install = trpc.app.installApp.useMutation({
+    onMutate: () => {
+      utils.app.getApp.setData({ id: app.id }, { ...app, status: 'installing' });
+      installDisclosure.close();
+    },
+    onSuccess: () => {
+      invalidate();
+      addToast({ title: 'App installed successfully', status: 'success' });
+    },
+    onError: (e) => {
+      invalidate();
+      addToast({ title: 'Install error', description: e.message, status: 'error' });
+    },
+  });
+
+  const uninstall = trpc.app.uninstallApp.useMutation({
+    onMutate: () => {
+      utils.app.getApp.setData({ id: app.id }, { ...app, status: 'uninstalling' });
+      uninstallDisclosure.close();
+    },
+    onSuccess: () => {
+      invalidate();
+      addToast({ title: 'App uninstalled successfully', status: 'success' });
+    },
+    onError: (e) => addToast({ title: 'Uninstall error', description: e.message, status: 'error' }),
+  });
+
+  const stop = trpc.app.stopApp.useMutation({
+    onMutate: () => {
+      utils.app.getApp.setData({ id: app.id }, { ...app, status: 'stopping' });
+      stopDisclosure.close();
+    },
+    onSuccess: () => {
+      invalidate();
+      addToast({ title: 'App stopped successfully', status: 'success' });
+    },
+    onError: (e) => addToast({ title: 'Stop error', description: e.message, status: 'error' }),
+  });
+
+  const update = trpc.app.updateApp.useMutation({
+    onMutate: () => {
+      utils.app.getApp.setData({ id: app.id }, { ...app, status: 'updating' });
+      updateDisclosure.close();
+    },
+    onSuccess: () => {
+      invalidate();
+      addToast({ title: 'App updated successfully', status: 'success' });
+    },
+    onError: (e) => addToast({ title: 'Update error', description: e.message, status: 'error' }),
+  });
+
+  const start = trpc.app.startApp.useMutation({
+    onMutate: () => {
+      utils.app.getApp.setData({ id: app.id }, { ...app, status: 'starting' });
+    },
+    onSuccess: () => {
+      invalidate();
+      addToast({ title: 'App started successfully', status: 'success' });
+    },
+    onError: (e) => addToast({ title: 'Start error', description: e.message, status: 'error' }),
+  });
+
+  const updateConfig = trpc.app.updateAppConfig.useMutation({
+    onMutate: () => updateSettingsDisclosure.close(),
+    onSuccess: () => {
+      invalidate();
+      addToast({ title: 'App config updated successfully. Restart the app to apply the changes', status: 'success' });
+    },
+    onError: (e) => addToast({ title: 'Update error', description: e.message, status: 'error' }),
+  });
+
+  const updateAvailable = Number(app?.version || 0) < Number(app?.info.tipi_version);
 
   const handleInstallSubmit = async (values: FormValues) => {
-    installDisclosure.close();
     const { exposed, domain, ...form } = values;
-
-    try {
-      await install({
-        variables: { input: { form, id: info.id, exposed: exposed || false, domain: domain || '' } },
-        optimisticResponse: { installApp: { id: info.id, status: AppStatusEnum.Installing, __typename: 'App' } },
-      });
-    } catch (error) {
-      handleError(error);
-    }
+    install.mutate({ id: app.id, form, exposed, domain });
   };
 
-  const handleUnistallSubmit = async () => {
-    uninstallDisclosure.close();
-    try {
-      await uninstall({ variables: { id: info.id }, optimisticResponse: { uninstallApp: { id: info.id, status: AppStatusEnum.Uninstalling, __typename: 'App' } } });
-    } catch (error) {
-      handleError(error);
-    }
+  const handleUnistallSubmit = () => {
+    uninstall.mutate({ id: app.id });
   };
 
-  const handleStopSubmit = async () => {
-    stopDisclosure.close();
-    try {
-      await stop({ variables: { id: info.id }, optimisticResponse: { stopApp: { id: info.id, status: AppStatusEnum.Stopping, __typename: 'App' } } });
-    } catch (error) {
-      handleError(error);
-    }
+  const handleStopSubmit = () => {
+    stop.mutate({ id: app.id });
   };
 
   const handleStartSubmit = async () => {
-    try {
-      await start({ variables: { id: info.id }, optimisticResponse: { startApp: { id: info.id, status: AppStatusEnum.Starting, __typename: 'App' } } });
-    } catch (e: unknown) {
-      handleError(e);
-    }
+    start.mutate({ id: app.id });
   };
 
   const handleUpdateSettingsSubmit = async (values: FormValues) => {
-    try {
-      const { exposed, domain, ...form } = values;
-      await updateConfig({ variables: { input: { form, id: info.id, exposed: exposed || false, domain: domain || '' } } });
-      addToast({
-        title: 'Success',
-        description: 'App config updated successfully. Restart the app to apply the changes.',
-        position: 'top',
-        status: 'success',
-        isClosable: true,
-      });
-      updateSettingsDisclosure.close();
-    } catch (error) {
-      handleError(error);
-    }
+    const { exposed, domain, ...form } = values;
+    updateConfig.mutate({ id: app.id, form, exposed, domain });
   };
 
   const handleUpdateSubmit = async () => {
-    updateDisclosure.close();
-    try {
-      await update({ variables: { id: info.id }, optimisticResponse: { updateApp: { id: info.id, status: AppStatusEnum.Updating, __typename: 'App' } } });
-      addToast({
-        title: 'Success',
-        description: 'App updated successfully',
-        position: 'top',
-        status: 'success',
-        isClosable: true,
-      });
-    } catch (error) {
-      handleError(error);
-    }
+    update.mutate({ id: app.id });
   };
 
   const handleOpen = () => {
-    const { https } = info;
+    const { https } = app.info;
     const protocol = https ? 'https' : 'http';
 
     if (typeof window !== 'undefined') {
       // Current domain
       const domain = window.location.hostname;
-      window.open(`${protocol}://${domain}:${info.port}${info.url_suffix || ''}`, '_blank', 'noreferrer');
+      window.open(`${protocol}://${domain}:${app.info.port}${app.info.url_suffix || ''}`, '_blank', 'noreferrer');
     }
   };
 
-  const newVersion = [app?.updateInfo?.dockerVersion ? `${app?.updateInfo?.dockerVersion}` : '', `(${String(app?.updateInfo?.latest)})`].join(' ');
+  const newVersion = [app?.info.version ? `${app?.info.version}` : '', `(${String(app?.info.tipi_version)})`].join(' ');
 
   return (
     <div className="card" data-testid="app-details">
-      <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} app={info} />
-      <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} app={info} />
-      <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} app={info} />
-      <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} app={info} newVersion={newVersion} />
+      <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={app.info} />
+      <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={app.info} />
+      <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={app.info} />
+      <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={app.info} newVersion={newVersion} />
       <UpdateSettingsModal
         onSubmit={handleUpdateSettingsSubmit}
         isOpen={updateSettingsDisclosure.isOpen}
         onClose={updateSettingsDisclosure.close}
-        app={info}
-        config={app?.config}
+        info={app.info}
+        config={castAppConfig(app?.config)}
         exposed={app?.exposed}
         domain={app?.domain || ''}
       />
       <div className="card-header d-flex flex-column flex-md-row">
-        <AppLogo id={info.id} size={130} alt={info.name} />
+        <AppLogo id={app.id} size={130} alt={app.info.name} />
         <div className="w-100 d-flex flex-column ms-md-3 align-items-center align-items-md-start">
           <div>
             <span className="mt-1 me-1">Version: </span>
-            <span className="badge bg-gray mt-2">{info?.version}</span>
+            <span className="badge bg-gray mt-2">{app.info.version}</span>
           </div>
           {app.domain && (
             <a target="_blank" rel="noreferrer" className="mt-1" href={`https://${app.domain}`}>
               https://{app.domain}
             </a>
           )}
-          <span className="mt-1 text-muted text-center mb-2">{info.short_desc}</span>
-          <div className="mb-1">{app && app?.status !== AppStatusEnum.Missing && <AppStatus status={app.status} />}</div>
+          <span className="mt-1 text-muted text-center mb-2">{app.info.short_desc}</span>
+          <div className="mb-1">{app.status !== 'missing' && <AppStatus status={app.status} />}</div>
           <AppActions
             updateAvailable={updateAvailable}
             onUpdate={updateDisclosure.open}
@@ -185,12 +185,12 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, info }) => {
             onInstall={installDisclosure.open}
             onOpen={handleOpen}
             onStart={handleStartSubmit}
-            app={info}
-            status={app?.status}
+            info={app.info}
+            status={app.status}
           />
         </div>
       </div>
-      <AppDetailsTabs info={info} />
+      <AppDetailsTabs info={app.info} />
     </div>
   );
 };
