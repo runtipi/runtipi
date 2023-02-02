@@ -2,14 +2,14 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import React from 'react';
 import { AppLogo } from '../../../../components/AppLogo/AppLogo';
-import { AppCategoriesEnum } from '../../../../generated/graphql';
+import { AppCategory } from '../../../../core/types';
 import { colorSchemeForCategory, limitText } from '../../helpers/table.helpers';
 import styles from './AppStoreTile.module.scss';
 
 type App = {
   id: string;
   name: string;
-  categories: string[];
+  categories: AppCategory[];
   short_desc: string;
 };
 
@@ -21,7 +21,7 @@ const AppStoreTile: React.FC<{ app: App }> = ({ app }) => (
         <h3 className="text-bold h-3 mb-2">{limitText(app.name, 20)}</h3>
         <p className="text-muted text-nowrap mb-2">{limitText(app.short_desc, 30)}</p>
         {app.categories?.map((category) => (
-          <div className={`badge me-1 bg-${colorSchemeForCategory[category as AppCategoriesEnum]}`} key={`${app.id}-${category}`}>
+          <div className={`badge me-1 bg-${colorSchemeForCategory[category]}`} key={`${app.id}-${category}`}>
             {category.toLocaleLowerCase()}
           </div>
         ))}

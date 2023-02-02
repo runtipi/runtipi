@@ -8,7 +8,7 @@ describe('UpdateModal', () => {
 
   it('renders with the correct title and version number', () => {
     // Arrange
-    render(<UpdateModal app={app} newVersion={newVersion} isOpen onClose={jest.fn()} onConfirm={jest.fn()} />);
+    render(<UpdateModal info={app} newVersion={newVersion} isOpen onClose={jest.fn()} onConfirm={jest.fn()} />);
 
     // Assert
     expect(screen.getByText(`Update ${app.name} ?`)).toBeInTheDocument();
@@ -17,7 +17,7 @@ describe('UpdateModal', () => {
 
   it('should not render when isOpen is false', () => {
     // Arrange
-    render(<UpdateModal app={app} newVersion={newVersion} isOpen={false} onClose={jest.fn()} onConfirm={jest.fn()} />);
+    render(<UpdateModal info={app} newVersion={newVersion} isOpen={false} onClose={jest.fn()} onConfirm={jest.fn()} />);
     const modal = screen.queryByTestId('modal');
 
     // Assert (modal should have style display: none)
@@ -27,7 +27,7 @@ describe('UpdateModal', () => {
   it('calls onClose when the close button is clicked', () => {
     // Arrange
     const onClose = jest.fn();
-    render(<UpdateModal app={app} newVersion={newVersion} isOpen onClose={onClose} onConfirm={jest.fn()} />);
+    render(<UpdateModal info={app} newVersion={newVersion} isOpen onClose={onClose} onConfirm={jest.fn()} />);
 
     // Act
     const closeButton = screen.getByTestId('modal-close-button');
@@ -38,7 +38,7 @@ describe('UpdateModal', () => {
   it('calls onConfirm when the update button is clicked', () => {
     // Arrange
     const onConfirm = jest.fn();
-    render(<UpdateModal app={app} newVersion={newVersion} isOpen onClose={jest.fn()} onConfirm={onConfirm} />);
+    render(<UpdateModal info={app} newVersion={newVersion} isOpen onClose={jest.fn()} onConfirm={onConfirm} />);
 
     // Act
     const updateButton = screen.getByText('Update');

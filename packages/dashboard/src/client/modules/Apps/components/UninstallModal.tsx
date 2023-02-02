@@ -2,20 +2,19 @@ import { IconAlertTriangle } from '@tabler/icons';
 import React from 'react';
 import { Button } from '../../../components/ui/Button';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '../../../components/ui/Modal';
-
-import { AppInfo } from '../../../generated/graphql';
+import { AppInfo } from '../../../core/types';
 
 interface IProps {
-  app: AppInfo;
+  info: AppInfo;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export const UninstallModal: React.FC<IProps> = ({ app, isOpen, onClose, onConfirm }) => (
+export const UninstallModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfirm }) => (
   <Modal size="sm" type="danger" onClose={onClose} isOpen={isOpen}>
     <ModalHeader>
-      <h5 className="modal-title">Uninstall {app.name} ?</h5>
+      <h5 className="modal-title">Uninstall {info.name} ?</h5>
     </ModalHeader>
     <ModalBody className="text-center py-4">
       <IconAlertTriangle className="icon mb-2 text-danger icon-lg" />

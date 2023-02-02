@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { AppInfo, FormField } from '../../../../generated/graphql';
 import { Button } from '../../../../components/ui/Button';
 import { Switch } from '../../../../components/ui/Switch';
 import { Input } from '../../../../components/ui/Input';
 import { validateAppConfig } from '../../utils/validators';
+import { FormField } from '../../../../core/types';
 
 interface IProps {
-  formFields: AppInfo['form_fields'];
-  onSubmit: (values: Record<string, unknown>) => void;
-  initalValues?: { exposed?: boolean; domain?: string } & { [key: string]: string };
+  formFields: FormField[];
+  onSubmit: (values: FormValues) => void;
+  initalValues?: { exposed?: boolean; domain?: string } & { [key: string]: string | boolean | undefined };
   loading?: boolean;
   exposable?: boolean | null;
 }

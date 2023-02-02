@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
 import { AppActions } from './AppActions';
-import { AppInfo, AppStatusEnum } from '../../../../generated/graphql';
 import { cleanup, fireEvent, render, screen } from '../../../../../../tests/test-utils';
+import { AppInfo } from '../../../../core/types';
 
 afterEach(cleanup);
 
@@ -19,7 +18,7 @@ describe('Test: AppActions', () => {
     const onStart = jest.fn();
     const onRemove = jest.fn();
     // @ts-expect-error
-    const { getByText } = render(<AppActions status={AppStatusEnum.Stopped} app={app} onStart={onStart} onUninstall={onRemove} />);
+    const { getByText } = render(<AppActions status="stopped" info={app} onStart={onStart} onUninstall={onRemove} />);
 
     // Act
     fireEvent.click(getByText('Start'));
@@ -34,7 +33,7 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is running', () => {
     // @ts-expect-error
-    const { getByText } = render(<AppActions status={AppStatusEnum.Running} app={app} />);
+    const { getByText } = render(<AppActions status="running" info={app} />);
     expect(getByText('Stop')).toBeInTheDocument();
     expect(getByText('Open')).toBeInTheDocument();
     expect(getByText('Settings')).toBeInTheDocument();
@@ -42,42 +41,42 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is starting', () => {
     // @ts-expect-error
-    render(<AppActions status={AppStatusEnum.Starting} app={app} />);
+    render(<AppActions status="starting" info={app} />);
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is stopping', () => {
     // @ts-expect-error
-    render(<AppActions status={AppStatusEnum.Stopping} app={app} />);
+    render(<AppActions status="stopping" info={app} />);
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is removing', () => {
     // @ts-expect-error
-    render(<AppActions status={AppStatusEnum.Uninstalling} app={app} />);
+    render(<AppActions status="uninstalling" info={app} />);
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is installing', () => {
     // @ts-ignore
-    render(<AppActions status={AppStatusEnum.Installing} app={app} />);
+    render(<AppActions status="installing" info={app} />);
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is updating', () => {
     // @ts-expect-error
-    render(<AppActions status={AppStatusEnum.Updating} app={app} />);
+    render(<AppActions status="updating" info={app} />);
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is missing', () => {
     // @ts-expect-error
-    render(<AppActions status={AppStatusEnum.Missing} app={app} />);
+    render(<AppActions status="missing" info={app} />);
     expect(screen.getByText('Install')).toBeInTheDocument();
   });
 });
