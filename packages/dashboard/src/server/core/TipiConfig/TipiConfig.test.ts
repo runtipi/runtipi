@@ -3,13 +3,12 @@ import fs from 'fs-extra';
 import { getConfig, setConfig, TipiConfig } from '.';
 import { readJsonFile } from '../../common/fs.helpers';
 
-jest.mock('fs-extra');
-
 beforeEach(async () => {
   jest.resetModules();
   jest.resetAllMocks();
   // @ts-expect-error - We are mocking fs
   fs.__resetAllMocks();
+  jest.mock('fs-extra');
 });
 
 describe('Test: getConfig', () => {

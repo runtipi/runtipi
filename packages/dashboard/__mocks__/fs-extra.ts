@@ -1,120 +1,107 @@
 import path from 'path';
 
-const fs: {
-  __createMockFiles: typeof createMockFiles;
-  __resetAllMocks: typeof resetAllMocks;
-  readFileSync: typeof readFileSync;
-  existsSync: typeof existsSync;
-  writeFileSync: typeof writeFileSync;
-  mkdirSync: typeof mkdirSync;
-  rmSync: typeof rmSync;
-  readdirSync: typeof readdirSync;
-  copyFileSync: typeof copyFileSync;
-  copySync: typeof copyFileSync;
-  createFileSync: typeof createFileSync;
-  unlinkSync: typeof unlinkSync;
-} = jest.genMockFromModule('fs-extra');
+class FsMock {
+  private static instance: FsMock;
 
-let mockFiles = Object.create(null);
+  private mockFiles = Object.create(null);
 
-const createMockFiles = (newMockFiles: Record<string, string>) => {
-  mockFiles = Object.create(null);
+  // private constructor() {}
 
-  // Create folder tree
-  Object.keys(newMockFiles).forEach((file) => {
-    const dir = path.dirname(file);
-
-    if (!mockFiles[dir]) {
-      mockFiles[dir] = [];
+  static getInstance(): FsMock {
+    if (!FsMock.instance) {
+      FsMock.instance = new FsMock();
     }
-
-    mockFiles[dir].push(path.basename(file));
-    mockFiles[file] = newMockFiles[file];
-  });
-};
-
-const readFileSync = (p: string) => mockFiles[p];
-
-const existsSync = (p: string) => mockFiles[p] !== undefined;
-
-const writeFileSync = (p: string, data: string | string[]) => {
-  mockFiles[p] = data;
-};
-
-const mkdirSync = (p: string) => {
-  mockFiles[p] = Object.create(null);
-};
-
-const rmSync = (p: string) => {
-  if (mockFiles[p] instanceof Array) {
-    mockFiles[p].forEach((file: string) => {
-      delete mockFiles[path.join(p, file)];
-    });
+    return FsMock.instance;
   }
 
-  delete mockFiles[p];
-};
+  __createMockFiles = (newMockFiles: Record<string, string>) => {
+    this.mockFiles = Object.create(null);
 
-const readdirSync = (p: string) => {
-  const files: string[] = [];
+    // Create folder tree
+    Object.keys(newMockFiles).forEach((file) => {
+      const dir = path.dirname(file);
 
-  const depth = p.split('/').length;
-
-  Object.keys(mockFiles).forEach((file) => {
-    if (file.startsWith(p)) {
-      const fileDepth = file.split('/').length;
-
-      if (fileDepth === depth + 1) {
-        files.push(file.split('/').pop() || '');
+      if (!this.mockFiles[dir]) {
+        this.mockFiles[dir] = [];
       }
+
+      this.mockFiles[dir].push(path.basename(file));
+      this.mockFiles[file] = newMockFiles[file];
+    });
+  };
+
+  __resetAllMocks = () => {
+    this.mockFiles = Object.create(null);
+  };
+
+  readFileSync = (p: string) => this.mockFiles[p];
+
+  existsSync = (p: string) => this.mockFiles[p] !== undefined;
+
+  writeFileSync = (p: string, data: string | string[]) => {
+    this.mockFiles[p] = data;
+  };
+
+  mkdirSync = (p: string) => {
+    this.mockFiles[p] = Object.create(null);
+  };
+
+  rmSync = (p: string) => {
+    if (this.mockFiles[p] instanceof Array) {
+      this.mockFiles[p].forEach((file: string) => {
+        delete this.mockFiles[path.join(p, file)];
+      });
     }
-  });
 
-  return files;
-};
+    delete this.mockFiles[p];
+  };
 
-const copyFileSync = (source: string, destination: string) => {
-  mockFiles[destination] = mockFiles[source];
-};
+  readdirSync = (p: string) => {
+    const files: string[] = [];
 
-const copySync = (source: string, destination: string) => {
-  mockFiles[destination] = mockFiles[source];
+    const depth = p.split('/').length;
 
-  if (mockFiles[source] instanceof Array) {
-    mockFiles[source].forEach((file: string) => {
-      mockFiles[`${destination}/${file}`] = mockFiles[`${source}/${file}`];
+    Object.keys(this.mockFiles).forEach((file) => {
+      if (file.startsWith(p)) {
+        const fileDepth = file.split('/').length;
+
+        if (fileDepth === depth + 1) {
+          files.push(file.split('/').pop() || '');
+        }
+      }
     });
-  }
-};
 
-const createFileSync = (p: string) => {
-  mockFiles[p] = '';
-};
+    return files;
+  };
 
-const resetAllMocks = () => {
-  mockFiles = Object.create(null);
-};
+  copyFileSync = (source: string, destination: string) => {
+    this.mockFiles[destination] = this.mockFiles[source];
+  };
 
-const unlinkSync = (p: string) => {
-  if (mockFiles[p] instanceof Array) {
-    mockFiles[p].forEach((file: string) => {
-      delete mockFiles[path.join(p, file)];
-    });
-  }
-  delete mockFiles[p];
-};
+  copySync = (source: string, destination: string) => {
+    this.mockFiles[destination] = this.mockFiles[source];
 
-fs.unlinkSync = unlinkSync;
-fs.readdirSync = readdirSync;
-fs.existsSync = existsSync;
-fs.readFileSync = readFileSync;
-fs.writeFileSync = writeFileSync;
-fs.mkdirSync = mkdirSync;
-fs.rmSync = rmSync;
-fs.copyFileSync = copyFileSync;
-fs.copySync = copySync;
-fs.createFileSync = createFileSync;
-fs.__createMockFiles = createMockFiles;
-fs.__resetAllMocks = resetAllMocks;
+    if (this.mockFiles[source] instanceof Array) {
+      this.mockFiles[source].forEach((file: string) => {
+        this.mockFiles[`${destination}/${file}`] = this.mockFiles[`${source}/${file}`];
+      });
+    }
+  };
 
-export default fs;
+  createFileSync = (p: string) => {
+    this.mockFiles[p] = '';
+  };
+
+  unlinkSync = (p: string) => {
+    if (this.mockFiles[p] instanceof Array) {
+      this.mockFiles[p].forEach((file: string) => {
+        delete this.mockFiles[path.join(p, file)];
+      });
+    }
+    delete this.mockFiles[p];
+  };
+
+  getMockFiles = () => this.mockFiles;
+}
+
+export default FsMock.getInstance();

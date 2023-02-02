@@ -6,10 +6,6 @@ import { server } from '../../../../mocks/server';
 import { useToastStore } from '../../../../state/toastStore';
 import { SettingsContainer } from './SettingsContainer';
 
-beforeEach(() => {
-  localStorage.removeItem('token');
-});
-
 describe('Test: SettingsContainer', () => {
   describe('UI', () => {
     it('renders without crashing', () => {
@@ -58,8 +54,7 @@ describe('Test: SettingsContainer', () => {
     it('should remove token from local storage on success', async () => {
       const current = '0.0.1';
       const latest = faker.system.semver();
-      localStorage.setItem('token', 'token');
-
+      const removeItem = jest.spyOn(localStorage, 'removeItem');
       render(<SettingsContainer data={{ current, latest }} />);
 
       const updateButton = screen.getByText('Update');
@@ -67,11 +62,9 @@ describe('Test: SettingsContainer', () => {
         fireEvent.click(updateButton);
       });
 
-      // wait 500 ms because localStore cannot be awaited in tests
-      // eslint-disable-next-line no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      expect(localStorage.getItem('token')).toBeNull();
+      await waitFor(() => {
+        expect(removeItem).toBeCalledWith('token');
+      });
     });
 
     it('should display error toast on error', async () => {
@@ -98,7 +91,7 @@ describe('Test: SettingsContainer', () => {
   describe('Restart', () => {
     it('should remove token from local storage on success', async () => {
       const current = faker.system.semver();
-      localStorage.setItem('token', 'token');
+      const removeItem = jest.spyOn(localStorage, 'removeItem');
 
       render(<SettingsContainer data={{ current }} />);
       const restartButton = screen.getByTestId('settings-modal-restart-button');
@@ -106,11 +99,9 @@ describe('Test: SettingsContainer', () => {
         fireEvent.click(restartButton);
       });
 
-      // wait 500 ms because localStore cannot be awaited in tests
-      // eslint-disable-next-line no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      expect(localStorage.getItem('token')).toBeNull();
+      await waitFor(() => {
+        expect(removeItem).toBeCalledWith('token');
+      });
     });
 
     it('should display error toast on error', async () => {

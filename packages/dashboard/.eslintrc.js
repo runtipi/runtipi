@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['@typescript-eslint', 'import', 'react', 'jest'],
+  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsdoc'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'next/core-web-vitals',
@@ -10,6 +10,7 @@ module.exports = {
     'plugin:import/typescript',
     'prettier',
     'plugin:react/recommended',
+    'plugin:jsdoc/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -28,7 +29,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 0,
     'react/no-unused-prop-types': 0,
     'react/button-has-type': 0,
-    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/mocks/**', 'tests/**'] }],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/*.factory.{ts,tsx}', '**/mocks/**', 'tests/**'] }],
     'no-underscore-dangle': 0,
   },
   globals: {

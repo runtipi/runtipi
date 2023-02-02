@@ -1,8 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
-import 'whatwg-fetch';
 import { server } from '../../src/client/mocks/server';
-import { mockApolloClient } from '../test-utils';
 import { useToastStore } from '../../src/client/state/toastStore';
 
 // Mock next/router
@@ -18,6 +16,27 @@ jest.mock('remark-mdx', () => () => ({}));
 
 console.error = jest.fn();
 
+// Mock localStorage
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem(key: string) {
+      return store[key] || null;
+    },
+    setItem(key: string, value: string) {
+      store[key] = value.toString();
+    },
+    removeItem(key: string) {
+      delete store[key];
+    },
+    clear() {
+      store = {};
+    },
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+
 beforeAll(() => {
   // Enable the mocking in tests.
   server.listen();
@@ -25,10 +44,6 @@ beforeAll(() => {
 
 beforeEach(async () => {
   useToastStore.getState().clearToasts();
-  // Ensure Apollo cache is cleared between tests.
-  // https://www.apollographql.com/docs/react/api/core/ApolloClient/#ApolloClient.clearStore
-  await mockApolloClient.clearStore();
-  await mockApolloClient.cache.reset();
 });
 
 afterEach(() => {

@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import fs from 'fs-extra';
-import { EventDispatcher, EventTypes } from '.';
+import { EventDispatcher } from '.';
 
 const WATCH_FILE = '/runtipi/state/events';
 
@@ -19,18 +19,18 @@ beforeEach(() => {
 
 describe('EventDispatcher - dispatchEvent', () => {
   it('should dispatch an event', () => {
-    const event = EventDispatcher.dispatchEvent(EventTypes.APP);
+    const event = EventDispatcher.dispatchEvent('app');
     expect(event.id).toBeDefined();
   });
 
   it('should dispatch an event with args', () => {
-    const event = EventDispatcher.dispatchEvent(EventTypes.APP, ['--help']);
+    const event = EventDispatcher.dispatchEvent('app', ['--help']);
     expect(event.id).toBeDefined();
   });
 
   it('Should put events into queue', async () => {
-    EventDispatcher.dispatchEvent(EventTypes.APP, ['--help']);
-    EventDispatcher.dispatchEvent(EventTypes.APP, ['--help']);
+    EventDispatcher.dispatchEvent('app', ['--help']);
+    EventDispatcher.dispatchEvent('app', ['--help']);
 
     // @ts-expect-error - private method
     const { queue } = EventDispatcher;
@@ -39,8 +39,8 @@ describe('EventDispatcher - dispatchEvent', () => {
   });
 
   it('Should put first event into lock after 1 sec', async () => {
-    EventDispatcher.dispatchEvent(EventTypes.APP, ['--help']);
-    EventDispatcher.dispatchEvent(EventTypes.UPDATE, ['--help']);
+    EventDispatcher.dispatchEvent('app', ['--help']);
+    EventDispatcher.dispatchEvent('update', ['--help']);
 
     // @ts-expect-error - private method
     const { queue } = EventDispatcher;
@@ -52,13 +52,13 @@ describe('EventDispatcher - dispatchEvent', () => {
 
     expect(queue.length).toBe(2);
     expect(lock).toBeDefined();
-    expect(lock?.type).toBe(EventTypes.APP);
+    expect(lock?.type).toBe('app');
   });
 
   it('Should clear event once its status is success', async () => {
     // @ts-expect-error - private method
     jest.spyOn(EventDispatcher, 'getEventStatus').mockReturnValueOnce('success');
-    EventDispatcher.dispatchEvent(EventTypes.APP, ['--help']);
+    EventDispatcher.dispatchEvent('app', ['--help']);
 
     await wait(1050);
 
@@ -71,7 +71,7 @@ describe('EventDispatcher - dispatchEvent', () => {
   it('Should clear event once its status is error', async () => {
     // @ts-expect-error - private method
     jest.spyOn(EventDispatcher, 'getEventStatus').mockReturnValueOnce('error');
-    EventDispatcher.dispatchEvent(EventTypes.APP, ['--help']);
+    EventDispatcher.dispatchEvent('app', ['--help']);
 
     await wait(1050);
 
@@ -86,7 +86,7 @@ describe('EventDispatcher - dispatchEventAsync', () => {
   it('Should dispatch an event and wait for it to finish', async () => {
     // @ts-expect-error - private method
     jest.spyOn(EventDispatcher, 'getEventStatus').mockReturnValueOnce('success');
-    const { success } = await EventDispatcher.dispatchEventAsync(EventTypes.APP, ['--help']);
+    const { success } = await EventDispatcher.dispatchEventAsync('app', ['--help']);
 
     expect(success).toBe(true);
   });
@@ -95,7 +95,7 @@ describe('EventDispatcher - dispatchEventAsync', () => {
     // @ts-expect-error - private method
     jest.spyOn(EventDispatcher, 'getEventStatus').mockReturnValueOnce('error');
 
-    const { success } = await EventDispatcher.dispatchEventAsync(EventTypes.APP, ['--help']);
+    const { success } = await EventDispatcher.dispatchEventAsync('app', ['--help']);
 
     expect(success).toBe(false);
   });
@@ -104,7 +104,7 @@ describe('EventDispatcher - dispatchEventAsync', () => {
 describe('EventDispatcher - runEvent', () => {
   it('Should do nothing if there is a lock', async () => {
     // @ts-expect-error - private method
-    EventDispatcher.lock = { id: '123', type: EventTypes.APP, args: [] };
+    EventDispatcher.lock = { id: '123', type: 'app', args: [] };
     // @ts-expect-error - private method
     await EventDispatcher.runEvent();
 
@@ -136,7 +136,7 @@ describe('EventDispatcher - getEventStatus', () => {
   it('Should return error if event is expired', async () => {
     const dateFiveMinutesAgo = new Date(new Date().getTime() - 5 * 60 * 10000);
     // @ts-expect-error - private method
-    EventDispatcher.queue = [{ id: '123', type: EventTypes.APP, args: [], creationDate: dateFiveMinutesAgo }];
+    EventDispatcher.queue = [{ id: '123', type: 'app', args: [], creationDate: dateFiveMinutesAgo }];
     // @ts-expect-error - private method
     const status = EventDispatcher.getEventStatus('123');
 
@@ -145,7 +145,7 @@ describe('EventDispatcher - getEventStatus', () => {
 
   it('Should be waiting if line is not found in the file', async () => {
     // @ts-expect-error - private method
-    EventDispatcher.queue = [{ id: '123', type: EventTypes.APP, args: [], creationDate: new Date() }];
+    EventDispatcher.queue = [{ id: '123', type: 'app', args: [], creationDate: new Date() }];
     // @ts-expect-error - private method
     const status = EventDispatcher.getEventStatus('123');
 
@@ -155,7 +155,7 @@ describe('EventDispatcher - getEventStatus', () => {
 
 describe('EventDispatcher - clearEvent', () => {
   it('Should clear event', async () => {
-    const event = { id: '123', type: EventTypes.APP, args: [], creationDate: new Date() };
+    const event = { id: '123', type: 'app', args: [], creationDate: new Date() };
     // @ts-expect-error - private method
     EventDispatcher.queue = [event];
     // @ts-expect-error - private method
