@@ -1,12 +1,12 @@
 import create from 'zustand';
-import { AppCategoriesEnum } from '../../../generated/graphql';
+import { AppCategory } from '../../../core/types';
 import { SortableColumns } from '../helpers/table.types';
 
 type Store = {
   search: string;
   setSearch: (textSearch: string) => void;
-  category?: AppCategoriesEnum;
-  setCategory: (selectedCategories?: AppCategoriesEnum) => void;
+  category?: AppCategory;
+  setCategory: (selectedCategories?: AppCategory) => void;
   sort: SortableColumns;
   setSort: (sort: SortableColumns) => void;
   sortDirection: 'asc' | 'desc';

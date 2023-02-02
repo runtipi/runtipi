@@ -1,13 +1,14 @@
 import { IconDownload, IconExternalLink, IconPlayerPause, IconPlayerPlay, IconSettings, IconTrash, IconX, TablerIcon } from '@tabler/icons';
 import clsx from 'clsx';
 import React from 'react';
+import type { AppStatus } from '../../../../../server/services/apps/apps.types';
 
 import { Button } from '../../../../components/ui/Button';
-import { AppInfo, AppStatusEnum } from '../../../../generated/graphql';
+import { AppInfo } from '../../../../core/types';
 
 interface IProps {
-  app: AppInfo;
-  status?: AppStatusEnum;
+  info: AppInfo;
+  status?: AppStatus;
   updateAvailable: boolean;
   onInstall: () => void;
   onUninstall: () => void;
@@ -39,8 +40,8 @@ const ActionButton: React.FC<BtnProps> = (props) => {
   );
 };
 
-export const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate, onCancel, updateAvailable, onUpdateSettings }) => {
-  const hasSettings = Object.keys(app.form_fields).length > 0 || app.exposable;
+export const AppActions: React.FC<IProps> = ({ info, status, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate, onCancel, updateAvailable, onUpdateSettings }) => {
+  const hasSettings = Object.keys(info.form_fields).length > 0 || info.exposable;
 
   const buttons: JSX.Element[] = [];
 
@@ -55,7 +56,7 @@ export const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninsta
   const UpdateButton = <ActionButton key="update" Icon={IconDownload} onClick={onUpdate} width={null} title="Update" color="success" />;
 
   switch (status) {
-    case AppStatusEnum.Stopped:
+    case 'stopped':
       buttons.push(StartButton, RemoveButton);
       if (hasSettings) {
         buttons.push(SettingsButton);
@@ -64,9 +65,9 @@ export const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninsta
         buttons.push(UpdateButton);
       }
       break;
-    case AppStatusEnum.Running:
+    case 'running':
       buttons.push(StopButton);
-      if (!app.no_gui) {
+      if (!info.no_gui) {
         buttons.push(OpenButton);
       }
       if (hasSettings) {
@@ -76,14 +77,14 @@ export const AppActions: React.FC<IProps> = ({ app, status, onInstall, onUninsta
         buttons.push(UpdateButton);
       }
       break;
-    case AppStatusEnum.Installing:
-    case AppStatusEnum.Uninstalling:
-    case AppStatusEnum.Starting:
-    case AppStatusEnum.Stopping:
-    case AppStatusEnum.Updating:
+    case 'installing':
+    case 'uninstalling':
+    case 'starting':
+    case 'stopping':
+    case 'updating':
       buttons.push(LoadingButtion, CancelButton);
       break;
-    case AppStatusEnum.Missing:
+    case 'missing':
       buttons.push(InstallButton);
       break;
     default:

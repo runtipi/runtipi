@@ -1,16 +1,16 @@
 import React from 'react';
 import Select, { SingleValue } from 'react-select';
 import { APP_CATEGORIES } from '../../../../core/constants';
-import { AppCategoriesEnum } from '../../../../generated/graphql';
+import { AppCategory } from '../../../../core/types';
 import { useUIStore } from '../../../../state/uiStore';
 
 interface IProps {
-  onSelect: (value?: AppCategoriesEnum) => void;
+  onSelect: (value?: AppCategory) => void;
   className?: string;
-  initialValue?: AppCategoriesEnum;
+  initialValue?: AppCategory;
 }
 
-type OptionsType = { value: AppCategoriesEnum; label: string };
+type OptionsType = { value: AppCategory; label: string };
 
 const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue }) => {
   const { darkMode } = useUIStore();

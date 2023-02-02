@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { FieldTypesEnum, FormField } from '../../../../generated/graphql';
+import type { FormField } from '../../../../core/types';
 
 export const validateField = (field: FormField, value: string | undefined | boolean): string | undefined => {
   if (field.required && !value) {
@@ -11,7 +11,7 @@ export const validateField = (field: FormField, value: string | undefined | bool
   }
 
   switch (field.type) {
-    case FieldTypesEnum.Text:
+    case 'text':
       if (field.max && value.length > field.max) {
         return `${field.label} must be less than ${field.max} characters`;
       }
@@ -19,37 +19,37 @@ export const validateField = (field: FormField, value: string | undefined | bool
         return `${field.label} must be at least ${field.min} characters`;
       }
       break;
-    case FieldTypesEnum.Password:
+    case 'password':
       if (!validator.isLength(value, { min: field.min || 0, max: field.max || 100 })) {
         return `${field.label} must be between ${String(field.min)} and ${String(field.max)} characters`;
       }
       break;
-    case FieldTypesEnum.Email:
+    case 'email':
       if (!validator.isEmail(value)) {
         return `${field.label} must be a valid email address`;
       }
       break;
-    case FieldTypesEnum.Number:
+    case 'number':
       if (!validator.isNumeric(value)) {
         return `${field.label} must be a number`;
       }
       break;
-    case FieldTypesEnum.Fqdn:
+    case 'fqdn':
       if (!validator.isFQDN(value)) {
         return `${field.label} must be a valid domain`;
       }
       break;
-    case FieldTypesEnum.Ip:
+    case 'ip':
       if (!validator.isIP(value)) {
         return `${field.label} must be a valid IP address`;
       }
       break;
-    case FieldTypesEnum.Fqdnip:
+    case 'fqdnip':
       if (!validator.isFQDN(value || '') && !validator.isIP(value)) {
         return `${field.label} must be a valid domain or IP address`;
       }
       break;
-    case FieldTypesEnum.Url:
+    case 'url':
       if (!validator.isURL(value)) {
         return `${field.label} must be a valid URL`;
       }

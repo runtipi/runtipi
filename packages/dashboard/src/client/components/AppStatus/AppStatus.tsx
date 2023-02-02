@@ -1,14 +1,14 @@
 import clsx from 'clsx';
 import React from 'react';
+import * as AppTypes from '../../core/types';
 import styles from './AppStatus.module.scss';
-import { AppStatusEnum } from '../../generated/graphql';
 
-export const AppStatus: React.FC<{ status: AppStatusEnum; lite?: boolean }> = ({ status, lite }) => {
+export const AppStatus: React.FC<{ status: AppTypes.AppStatus; lite?: boolean }> = ({ status, lite }) => {
   const formattedStatus = `${status[0]}${status.substring(1, status.length).toLowerCase()}`;
 
   const classes = clsx('status-dot status-gray', {
-    'status-dot-animated status-green': status === AppStatusEnum.Running,
-    'status-red': status === AppStatusEnum.Stopped,
+    'status-dot-animated status-green': status === 'running',
+    'status-red': status === 'stopped',
   });
 
   return (

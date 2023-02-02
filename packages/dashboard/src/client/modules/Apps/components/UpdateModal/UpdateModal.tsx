@@ -1,21 +1,20 @@
 import React from 'react';
 import { Button } from '../../../../components/ui/Button';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '../../../../components/ui/Modal';
-
-import { AppInfo } from '../../../../generated/graphql';
+import { AppInfo } from '../../../../core/types';
 
 interface IProps {
   newVersion: string;
-  app: Pick<AppInfo, 'name'>;
+  info: Pick<AppInfo, 'name'>;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export const UpdateModal: React.FC<IProps> = ({ app, newVersion, isOpen, onClose, onConfirm }) => (
+export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClose, onConfirm }) => (
   <Modal size="sm" onClose={onClose} isOpen={isOpen}>
     <ModalHeader>
-      <h5 className="modal-title">Update {app.name} ?</h5>
+      <h5 className="modal-title">Update {info.name} ?</h5>
     </ModalHeader>
     <ModalBody>
       <div className="text-muted">
@@ -24,7 +23,7 @@ export const UpdateModal: React.FC<IProps> = ({ app, newVersion, isOpen, onClose
       </div>
     </ModalBody>
     <ModalFooter>
-      <Button onClick={onConfirm} className="btn-success">
+      <Button data-testid="modal-update-button" onClick={onConfirm} className="btn-success">
         Update
       </Button>
     </ModalFooter>

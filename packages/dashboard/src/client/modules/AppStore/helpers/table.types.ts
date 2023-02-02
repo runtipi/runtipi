@@ -1,4 +1,4 @@
-import { AppInfo } from '../../../generated/graphql';
+import { AppInfo } from '../../../core/types';
 
 export type SortableColumns = keyof Pick<AppInfo, 'name'>;
 export type SortDirection = 'asc' | 'desc';

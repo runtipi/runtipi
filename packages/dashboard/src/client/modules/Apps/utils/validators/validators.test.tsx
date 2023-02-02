@@ -1,4 +1,4 @@
-import { FieldTypesEnum, FormField } from '../../../../generated/graphql';
+import { FormField } from '../../../../core/types';
 import { validateAppConfig, validateField } from './validators';
 
 describe('Test: validateField', () => {
@@ -7,7 +7,7 @@ describe('Test: validateField', () => {
       label: 'Username',
       required: true,
       env_variable: 'test',
-      type: FieldTypesEnum.Text,
+      type: 'text',
     };
     const value: string | undefined | boolean = undefined;
     const result = validateField(field, value);
@@ -17,9 +17,10 @@ describe('Test: validateField', () => {
   it('should return "field label must be less than field.max characters" if the field type is text and the value is longer than the max value', () => {
     const field: FormField = {
       label: 'Description',
-      type: FieldTypesEnum.Text,
+      type: 'text',
       max: 10,
       env_variable: 'test',
+      required: false,
     };
     const value: string | undefined | boolean = 'This value is too long';
     const result = validateField(field, value);
@@ -29,9 +30,10 @@ describe('Test: validateField', () => {
   it('should return "field label must be at least field.min characters" if the field type is text and the value is shorter than the min value', () => {
     const field: FormField = {
       label: 'Description',
-      type: FieldTypesEnum.Text,
+      type: 'text',
       min: 20,
       env_variable: 'test',
+      required: false,
     };
     const value: string | undefined | boolean = 'This is too short';
     const result = validateField(field, value);
@@ -42,10 +44,11 @@ describe('Test: validateField', () => {
   it('should return "field label must be between field.min and field.max characters" if the field type is password and the value is not between the min and max values', () => {
     const field: FormField = {
       label: 'Password',
-      type: FieldTypesEnum.Password,
+      type: 'password',
       min: 6,
       max: 10,
       env_variable: 'test',
+      required: false,
     };
     const value: string | undefined | boolean = 'pass';
     const result = validateField(field, value);
@@ -55,8 +58,9 @@ describe('Test: validateField', () => {
   it('should return "field label must be a valid email address" if the field type is email and the value is not a valid email', () => {
     const field: FormField = {
       label: 'Email',
-      type: FieldTypesEnum.Email,
+      type: 'email',
       env_variable: 'test',
+      required: false,
     };
     const value: string | undefined | boolean = 'invalid-email';
     const result = validateField(field, value);
@@ -66,8 +70,9 @@ describe('Test: validateField', () => {
   it('should return "field label must be a number" if the field type is number and the value is not a number', () => {
     const field: FormField = {
       label: 'Age',
-      type: FieldTypesEnum.Number,
+      type: 'number',
       env_variable: 'test',
+      required: false,
     };
     const value: string | undefined | boolean = 'not a number';
     const result = validateField(field, value);
@@ -77,8 +82,9 @@ describe('Test: validateField', () => {
   it('should return "field label must be a valid domain" if the field type is fqdn and the value is not a valid domain', () => {
     const field: FormField = {
       label: 'Domain',
-      type: FieldTypesEnum.Fqdn,
+      type: 'fqdn',
       env_variable: 'test',
+      required: false,
     };
     const value: string | undefined | boolean = 'not.a.valid.c';
     const result = validateField(field, value);
@@ -88,8 +94,9 @@ describe('Test: validateField', () => {
   it('should return "field label must be a valid IP address" if the field type is ip and the value is not a valid IP address', () => {
     const field: FormField = {
       label: 'IP Address',
-      type: FieldTypesEnum.Ip,
+      type: 'ip',
       env_variable: 'test',
+      required: false,
     };
     const value: string | undefined | boolean = 'not a valid IP';
     const result = validateField(field, value);
@@ -99,8 +106,9 @@ describe('Test: validateField', () => {
   it('should return "field label must be a valid domain or IP address" if the field type is fqdnip and the value is not a valid domain or IP address', () => {
     const field: FormField = {
       label: 'Domain or IP',
-      type: FieldTypesEnum.Fqdnip,
+      type: 'fqdnip',
       env_variable: 'test',
+      required: false,
     };
     const value: string | undefined | boolean = 'not a valid domain or IP';
     const result = validateField(field, value);
@@ -110,8 +118,9 @@ describe('Test: validateField', () => {
   it('should return "field label must be a valid URL" if the field type is url and the value is not a valid URL', () => {
     const field: FormField = {
       label: 'Website',
-      type: FieldTypesEnum.Url,
+      type: 'url',
       env_variable: 'test',
+      required: false,
     };
     const value: string | undefined | boolean = 'not a valid URL';
     const result = validateField(field, value);
@@ -123,7 +132,7 @@ describe('Test: validateField', () => {
       label: 'Username',
       required: false,
       env_variable: 'test',
-      type: FieldTypesEnum.Text,
+      type: 'text',
     };
     const value: string | undefined | boolean = undefined;
     const result = validateField(field, value);
@@ -135,7 +144,7 @@ describe('Test: validateField', () => {
       label: 'Username',
       required: true,
       env_variable: 'test',
-      type: FieldTypesEnum.Text,
+      type: 'text',
     };
     const value: string | undefined | boolean = true;
     const result = validateField(field, value);
@@ -155,13 +164,13 @@ describe('Test: validateAppConfig', () => {
     const fields: FormField[] = [
       {
         label: 'Username',
-        type: FieldTypesEnum.Text,
+        type: 'text',
         required: true,
         env_variable: 'username',
       },
       {
         label: 'Password',
-        type: FieldTypesEnum.Password,
+        type: 'password',
         required: true,
         min: 6,
         max: 10,
@@ -169,7 +178,7 @@ describe('Test: validateAppConfig', () => {
       },
       {
         label: 'Email',
-        type: FieldTypesEnum.Email,
+        type: 'email',
         required: true,
         env_variable: 'email',
       },
@@ -194,13 +203,13 @@ describe('Test: validateAppConfig', () => {
     const fields: FormField[] = [
       {
         label: 'Username',
-        type: FieldTypesEnum.Text,
+        type: 'text',
         required: true,
         env_variable: 'username',
       },
       {
         label: 'Password',
-        type: FieldTypesEnum.Password,
+        type: 'password',
         required: true,
         min: 6,
         max: 10,
@@ -208,7 +217,7 @@ describe('Test: validateAppConfig', () => {
       },
       {
         label: 'Email',
-        type: FieldTypesEnum.Email,
+        type: 'email',
         required: true,
         env_variable: 'email',
       },
@@ -226,7 +235,7 @@ describe('Test: validateAppConfig', () => {
     const fields: FormField[] = [
       {
         label: 'Username',
-        type: FieldTypesEnum.Text,
+        type: 'text',
         required: false,
         env_variable: 'username',
       },
@@ -245,7 +254,7 @@ describe('Test: validateAppConfig', () => {
     const fields: FormField[] = [
       {
         label: 'Username',
-        type: FieldTypesEnum.Text,
+        type: 'text',
         required: true,
         env_variable: 'username',
       },

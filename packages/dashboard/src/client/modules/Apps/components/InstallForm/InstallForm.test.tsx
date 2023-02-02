@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
-import { FieldTypesEnum, FormField } from '../../../../generated/graphql';
+import { FormField } from '../../../../core/types';
 import { InstallForm } from './InstallForm';
 
 describe('Test: InstallForm', () => {
@@ -12,11 +12,11 @@ describe('Test: InstallForm', () => {
 
   it('should render fields with correct types', () => {
     const formFields: FormField[] = [
-      { env_variable: 'test', label: 'test', type: FieldTypesEnum.Text },
-      { env_variable: 'test2', label: 'test2', type: FieldTypesEnum.Password },
-      { env_variable: 'test3', label: 'test3', type: FieldTypesEnum.Email },
-      { env_variable: 'test4', label: 'test4', type: FieldTypesEnum.Url },
-      { env_variable: 'test5', label: 'test5', type: FieldTypesEnum.Number },
+      { env_variable: 'test', label: 'test', type: 'text', required: false },
+      { env_variable: 'test2', label: 'test2', type: 'password', required: false },
+      { env_variable: 'test3', label: 'test3', type: 'email', required: false },
+      { env_variable: 'test4', label: 'test4', type: 'url', required: false },
+      { env_variable: 'test5', label: 'test5', type: 'number', required: false },
     ];
 
     render(<InstallForm formFields={formFields} onSubmit={jest.fn} />);
@@ -29,7 +29,7 @@ describe('Test: InstallForm', () => {
   });
 
   it('should call submit function with correct values', async () => {
-    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: FieldTypesEnum.Text }];
+    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: 'text', required: false }];
 
     const onSubmit = jest.fn();
 
@@ -46,7 +46,7 @@ describe('Test: InstallForm', () => {
   });
 
   it('should show validation error when required field is empty', async () => {
-    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: FieldTypesEnum.Text, required: true }];
+    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: 'text', required: true }];
 
     const onSubmit = jest.fn();
 
@@ -60,7 +60,7 @@ describe('Test: InstallForm', () => {
   });
 
   it('should pre-fill fields if initialValues are provided', () => {
-    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: FieldTypesEnum.Text, required: true }];
+    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: 'text', required: true }];
 
     const onSubmit = jest.fn();
 
@@ -70,7 +70,7 @@ describe('Test: InstallForm', () => {
   });
 
   it('should render expose switch when app is exposable', () => {
-    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: FieldTypesEnum.Text, required: true }];
+    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: 'text', required: true }];
 
     const onSubmit = jest.fn();
 

@@ -4,8 +4,8 @@ import { IconDownload } from '@tabler/icons';
 import { AppStatus } from '../AppStatus';
 import { AppLogo } from '../AppLogo/AppLogo';
 import { limitText } from '../../modules/AppStore/helpers/table.helpers';
-import { AppInfo, AppStatusEnum } from '../../generated/graphql';
 import styles from './AppTile.module.scss';
+import { AppInfo, AppStatus as AppStatusEnum } from '../../core/types';
 
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc'>;
 

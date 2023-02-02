@@ -2,7 +2,7 @@ import { IconExternalLink } from '@tabler/icons';
 import React from 'react';
 import { DataGrid, DataGridItem } from '../../../components/ui/DataGrid';
 import Markdown from '../../../components/Markdown/Markdown';
-import { AppInfo } from '../../../generated/graphql';
+import { AppInfo } from '../../../core/types';
 
 interface IProps {
   info: AppInfo;
