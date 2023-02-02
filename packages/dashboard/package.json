@@ -8,13 +8,12 @@
     "test:client": "jest --colors --selectProjects client --",
     "test:server": "jest --colors --selectProjects server --",
     "postinstall": "prisma generate",
-    "dev": "node --require ./server-preload.js ./node_modules/.bin/next dev",
+    "dev": "nodemon",
     "build": "next build",
-    "start": "NODE_ENV=production node --require ./server-preload.js server.js",
+    "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "gen": "graphql-codegen --config codegen.yml",
-    "bundle:preload": "node esbuild.js"
+    "gen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@apollo/client": "^3.6.8",
@@ -98,6 +97,7 @@
     "jest-environment-jsdom": "^29.3.1",
     "msw": "^0.49.2",
     "next-router-mock": "^0.8.0",
+    "nodemon": "^2.0.15",
     "prisma": "^4.8.0",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",

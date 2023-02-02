@@ -21,7 +21,4 @@ RUN npm install
 COPY ./packages/system-api /api
 COPY ./packages/dashboard /dashboard
 
-WORKDIR /dashboard
-RUN npm run bundle:preload
-
 WORKDIR /
