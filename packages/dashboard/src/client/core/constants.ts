@@ -1,18 +1,24 @@
-import { AppCategoriesEnum } from '../generated/graphql';
+import { AppCategory } from './types';
 
-export const APP_CATEGORIES = [
-  { name: 'Network', id: AppCategoriesEnum.Network, icon: 'FaNetworkWired' },
-  { name: 'Media', id: AppCategoriesEnum.Media, icon: 'FaVideo' },
-  { name: 'Development', id: AppCategoriesEnum.Development, icon: 'FaCode' },
-  { name: 'Automation', id: AppCategoriesEnum.Automation, icon: 'FaRobot' },
-  { name: 'Social', id: AppCategoriesEnum.Social, icon: 'FaUserFriends' },
-  { name: 'Utilities', id: AppCategoriesEnum.Utilities, icon: 'FaWrench' },
-  { name: 'Photography', id: AppCategoriesEnum.Photography, icon: 'FaCamera' },
-  { name: 'Security', id: AppCategoriesEnum.Security, icon: 'FaShieldAlt' },
-  { name: 'Featured', id: AppCategoriesEnum.Featured, icon: 'FaStar' },
-  { name: 'Books', id: AppCategoriesEnum.Books, icon: 'FaBook' },
-  { name: 'Data', id: AppCategoriesEnum.Data, icon: 'FaDatabase' },
-  { name: 'Music', id: AppCategoriesEnum.Music, icon: 'FaMusic' },
-  { name: 'Finance', id: AppCategoriesEnum.Finance, icon: 'FaMoneyBillAlt' },
-  { name: 'Gaming', id: AppCategoriesEnum.Gaming, icon: 'FaGamepad' },
+type AppCategoryEntry = {
+  name: string;
+  id: AppCategory;
+  icon: string;
+};
+
+export const APP_CATEGORIES: AppCategoryEntry[] = [
+  { name: 'Network', id: 'network', icon: 'FaNetworkWired' },
+  { name: 'Media', id: 'media', icon: 'FaVideo' },
+  { name: 'Development', id: 'development', icon: 'FaCode' },
+  { name: 'Automation', id: 'automation', icon: 'FaRobot' },
+  { name: 'Social', id: 'social', icon: 'FaUserFriends' },
+  { name: 'Utilities', id: 'utilities', icon: 'FaWrench' },
+  { name: 'Photography', id: 'photography', icon: 'FaCamera' },
+  { name: 'Security', id: 'security', icon: 'FaShieldAlt' },
+  { name: 'Featured', id: 'featured', icon: 'FaStar' },
+  { name: 'Books', id: 'books', icon: 'FaBook' },
+  { name: 'Data', id: 'data', icon: 'FaDatabase' },
+  { name: 'Music', id: 'music', icon: 'FaMusic' },
+  { name: 'Finance', id: 'finance', icon: 'FaMoneyBillAlt' },
+  { name: 'Gaming', id: 'gaming', icon: 'FaGamepad' },
 ];

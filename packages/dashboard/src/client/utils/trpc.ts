@@ -17,9 +17,6 @@ let token: string | null = '';
 export const trpc = createTRPCNext<AppRouter>({
   config() {
     return {
-      /**
-       * @link https://trpc.io/docs/data-transformers
-       */
       transformer: superjson,
       links: [
         loggerLink({
@@ -40,8 +37,5 @@ export const trpc = createTRPCNext<AppRouter>({
       ],
     };
   },
-  /**
-   * @link https://trpc.io/docs/ssr
-   * */
   ssr: false,
 });

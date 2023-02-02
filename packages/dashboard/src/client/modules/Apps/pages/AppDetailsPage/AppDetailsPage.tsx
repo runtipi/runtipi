@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import React from 'react';
 import { Layout } from '../../../../components/Layout';
 import { ErrorPage } from '../../../../components/ui/ErrorPage';
-import { useGetAppQuery } from '../../../../generated/graphql';
+import { trpc } from '../../../../utils/trpc';
 import { AppDetailsContainer } from '../../containers/AppDetailsContainer/AppDetailsContainer';
 
 interface IProps {
@@ -10,16 +10,17 @@ interface IProps {
 }
 
 export const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
-  const { data, loading, error } = useGetAppQuery({ variables: { appId }, pollInterval: 3000 });
+  const { data, error } = trpc.app.getApp.useQuery({ id: appId }, { refetchInterval: 3000 });
 
   const breadcrumb = [
     { name: 'Apps', href: '/apps' },
-    { name: data?.getApp.info?.name || '', href: `/apps/${appId}`, current: true },
+    { name: data?.info?.name || '', href: `/apps/${data?.id}`, current: true },
   ];
 
+  // TODO: add loading state
   return (
-    <Layout breadcrumbs={breadcrumb} loading={!data?.getApp && loading} title={data?.getApp.info?.name}>
-      {data?.getApp.info && <AppDetailsContainer app={data?.getApp} info={data.getApp.info} />}
+    <Layout title={data?.info.name} breadcrumbs={breadcrumb}>
+      {data?.info && <AppDetailsContainer app={data} />}
       {error && <ErrorPage error={error.message} />}
     </Layout>
   );

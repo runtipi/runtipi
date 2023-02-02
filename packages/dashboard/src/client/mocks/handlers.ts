@@ -1,8 +1,7 @@
 import { faker } from '@faker-js/faker';
+import { createAppEntity } from './fixtures/app.fixtures';
 import { getTRPCMock } from './getTrpcMock';
-import appHandlers from './handlers/appHandlers';
-
-const graphqlHandlers = [appHandlers.listApps, appHandlers.getApp, appHandlers.installedApps, appHandlers.installApp];
+import { createAppConfig } from '../../server/tests/apps.factory';
 
 export const handlers = [
   getTRPCMock({
@@ -60,5 +59,20 @@ export const handlers = [
     type: 'query',
     response: true,
   }),
-  ...graphqlHandlers,
+  // App
+  getTRPCMock({
+    path: ['app', 'getApp'],
+    type: 'query',
+    response: createAppEntity({ status: 'running' }),
+  }),
+  getTRPCMock({
+    path: ['app', 'installedApps'],
+    type: 'query',
+    response: [createAppEntity({ status: 'running' }), createAppEntity({ status: 'stopped' })],
+  }),
+  getTRPCMock({
+    path: ['app', 'listApps'],
+    type: 'query',
+    response: { apps: [createAppConfig({}), createAppConfig({})], total: 2 },
+  }),
 ];
