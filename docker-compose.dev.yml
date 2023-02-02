@@ -124,10 +124,14 @@ services:
       - tipi_main_network
     volumes:
       - ${PWD}/packages/dashboard/src:/dashboard/src
+      - ${PWD}/packages/dashboard/server.ts:/dashboard/server.ts
       # - /dashboard/node_modules
       # - /dashboard/.next
       - ${PWD}/state:/runtipi/state
+      - ${PWD}/repos:/runtipi/repos:ro
+      - ${PWD}/apps:/runtipi/apps
       - ${PWD}/logs:/app/logs
+      - ${STORAGE_PATH}:/app/storage
     labels:
       traefik.enable: true
       # Web
