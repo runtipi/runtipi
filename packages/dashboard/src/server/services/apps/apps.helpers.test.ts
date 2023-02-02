@@ -1,43 +1,39 @@
-import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
-import { DataSource } from 'typeorm';
-import logger from '../../../config/logger/logger';
-import { setConfig } from '../../../core/config/TipiConfig';
-import { setupConnection, teardownConnection } from '../../../test/connection';
-import App from '../app.entity';
-import { checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from '../apps.helpers';
-import { AppInfo, AppSupportedArchitecturesEnum } from '../apps.types';
-import { createApp, createAppConfig } from './apps.factory';
+import { App, PrismaClient } from '@prisma/client';
+import { faker } from '@faker-js/faker';
+import { setConfig } from '../../core/TipiConfig';
+import { AppInfo, checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from './apps.helpers';
+import { createApp, createAppConfig } from '../../tests/apps.factory';
+import { Logger } from '../../core/Logger';
+import { getTestDbClient } from '../../../../tests/server/db-connection';
 
-jest.mock('fs-extra');
-jest.mock('child_process');
-
-let db: DataSource | null = null;
-const TEST_SUITE = 'appshelperslegacy';
+let db: PrismaClient;
+const TEST_SUITE = 'appshelpers';
 
 beforeAll(async () => {
-  db = await setupConnection(TEST_SUITE);
-});
-
-afterAll(async () => {
-  await db?.destroy();
-  await teardownConnection(TEST_SUITE);
+  db = await getTestDbClient(TEST_SUITE);
 });
 
 beforeEach(async () => {
-  jest.resetModules();
-  jest.resetAllMocks();
-  jest.restoreAllMocks();
-  await App.clear();
+  jest.mock('fs-extra');
+});
+
+afterEach(async () => {
+  await db.app.deleteMany();
+});
+
+afterAll(async () => {
+  await db.app.deleteMany();
+  await db.$disconnect();
 });
 
 describe('checkAppRequirements', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp({});
+    const app1create = await createApp({}, db);
     app1 = app1create.appInfo;
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(app1create.MockFiles);
   });
 
@@ -51,22 +47,22 @@ describe('checkAppRequirements', () => {
       checkAppRequirements('notexisting');
       expect(true).toBe(false);
     } catch (e) {
-      // @ts-ignore
+      // @ts-expect-error - Mocking fs
       expect(e.message).toEqual('App notexisting has invalid config.json file');
     }
   });
 
   it('Should throw if architecture is not supported', async () => {
-    setConfig('architecture', AppSupportedArchitecturesEnum.ARM64);
-    const { MockFiles, appInfo } = await createApp({ supportedArchitectures: [AppSupportedArchitecturesEnum.ARM] });
-    // @ts-ignore
+    setConfig('architecture', 'arm64');
+    const { MockFiles, appInfo } = await createApp({ supportedArchitectures: ['arm'] }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     try {
       checkAppRequirements(appInfo.id);
       expect(true).toBe(false);
     } catch (e) {
-      // @ts-ignore
+      // @ts-expect-error - Test file
       expect(e.message).toEqual(`App ${appInfo.id} is not supported on this architecture`);
     }
   });
@@ -76,14 +72,14 @@ describe('getEnvMap', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp({ installed: true });
+    const app1create = await createApp({ installed: true }, db);
     app1 = app1create.appInfo;
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(app1create.MockFiles);
   });
 
   it('should return a map of env vars', async () => {
-    const envMap = await getEnvMap(app1.id);
+    const envMap = getEnvMap(app1.id);
 
     expect(envMap.get('TEST_FIELD')).toBe('test');
   });
@@ -93,14 +89,14 @@ describe('Test: checkEnvFile', () => {
   let app1: AppInfo;
 
   beforeEach(async () => {
-    const app1create = await createApp({ installed: true });
+    const app1create = await createApp({ installed: true }, db);
     app1 = app1create.appInfo;
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(app1create.MockFiles);
   });
 
   it('Should not throw if all required fields are present', async () => {
-    await checkEnvFile(app1.id);
+    checkEnvFile(app1.id);
   });
 
   it('Should throw if a required field is missing', () => {
@@ -115,7 +111,7 @@ describe('Test: checkEnvFile', () => {
         expect(e).toBeDefined();
         expect(e.message).toBe('New info needed. App config needs to be updated');
       } else {
-        fail('Should throw an error');
+        expect(true).toBe(false);
       }
     }
   });
@@ -123,18 +119,18 @@ describe('Test: checkEnvFile', () => {
   it('Should throw if config.json is incorrect', async () => {
     // arrange
     fs.writeFileSync(`/app/storage/app-data/${app1.id}/config.json`, 'invalid json');
-    const { appInfo } = await createApp({});
+    const { appInfo } = await createApp({}, db);
 
     // act
     try {
-      await checkEnvFile(appInfo.id);
+      checkEnvFile(appInfo.id);
       expect(true).toBe(false);
     } catch (e: unknown) {
       if (e instanceof Error) {
         expect(e).toBeDefined();
         expect(e.message).toBe(`App ${appInfo.id} has invalid config.json file`);
       } else {
-        fail('Should throw an error');
+        expect(true).toBe(false);
       }
     }
   });
@@ -144,10 +140,10 @@ describe('Test: generateEnvFile', () => {
   let app1: AppInfo;
   let appEntity1: App;
   beforeEach(async () => {
-    const app1create = await createApp({ installed: true });
+    const app1create = await createApp({ installed: true }, db);
     app1 = app1create.appInfo;
     appEntity1 = app1create.appEntity;
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(app1create.MockFiles);
   });
 
@@ -156,27 +152,27 @@ describe('Test: generateEnvFile', () => {
 
     generateEnvFile(Object.assign(appEntity1, { config: { TEST_FIELD: fakevalue } }));
 
-    const envmap = await getEnvMap(app1.id);
+    const envmap = getEnvMap(app1.id);
 
     expect(envmap.get('TEST_FIELD')).toBe(fakevalue);
   });
 
   it('Should automatically generate value for random field', async () => {
-    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, randomField: true });
-    // @ts-ignore
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, randomField: true }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     generateEnvFile(appEntity);
 
-    const envmap = await getEnvMap(appInfo.id);
+    const envmap = getEnvMap(appInfo.id);
 
     expect(envmap.get('RANDOM_FIELD')).toBeDefined();
     expect(envmap.get('RANDOM_FIELD')).toHaveLength(32);
   });
 
   it('Should not re-generate random field if it already exists', async () => {
-    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, randomField: true });
-    // @ts-ignore
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, randomField: true }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     const randomField = faker.random.alphaNumeric(32);
@@ -185,7 +181,7 @@ describe('Test: generateEnvFile', () => {
 
     generateEnvFile(appEntity);
 
-    const envmap = await getEnvMap(appInfo.id);
+    const envmap = getEnvMap(appInfo.id);
 
     expect(envmap.get('RANDOM_FIELD')).toBe(randomField);
   });
@@ -199,7 +195,7 @@ describe('Test: generateEnvFile', () => {
         expect(e).toBeDefined();
         expect(e.message).toBe('Variable TEST_FIELD is required');
       } else {
-        fail('Should throw an error');
+        expect(true).toBe(false);
       }
     }
   });
@@ -213,53 +209,53 @@ describe('Test: generateEnvFile', () => {
         expect(e).toBeDefined();
         expect(e.message).toBe('App not-existing-app has invalid config.json file');
       } else {
-        fail('Should throw an error');
+        expect(true).toBe(false);
       }
     }
   });
 
   it('Should add APP_EXPOSED to env file', async () => {
     const domain = faker.internet.domainName();
-    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, exposed: true, domain });
-    // @ts-ignore
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, exposed: true, domain }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     generateEnvFile(appEntity);
 
-    const envmap = await getEnvMap(appInfo.id);
+    const envmap = getEnvMap(appInfo.id);
 
     expect(envmap.get('APP_EXPOSED')).toBe('true');
     expect(envmap.get('APP_DOMAIN')).toBe(domain);
   });
 
   it('Should not add APP_EXPOSED if domain is not provided', async () => {
-    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, exposed: true });
-    // @ts-ignore
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, exposed: true }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     generateEnvFile(appEntity);
 
-    const envmap = await getEnvMap(appInfo.id);
+    const envmap = getEnvMap(appInfo.id);
 
     expect(envmap.get('APP_EXPOSED')).toBeUndefined();
   });
 
   it('Should not add APP_EXPOSED if app is not exposed', async () => {
-    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, domain: faker.internet.domainName() });
-    // @ts-ignore
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true, domain: faker.internet.domainName() }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     generateEnvFile(appEntity);
 
-    const envmap = await getEnvMap(appInfo.id);
+    const envmap = getEnvMap(appInfo.id);
 
     expect(envmap.get('APP_EXPOSED')).toBeUndefined();
     expect(envmap.get('APP_DOMAIN')).toBe(`localhost:${appInfo.port}`);
   });
 
   it('Should create app folder if it does not exist', async () => {
-    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true });
-    // @ts-ignore
+    const { appEntity, appInfo, MockFiles } = await createApp({ installed: true }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     fs.rmSync(`/app/storage/app-data/${appInfo.id}`, { recursive: true });
@@ -272,9 +268,9 @@ describe('Test: generateEnvFile', () => {
 
 describe('getAvailableApps', () => {
   beforeEach(async () => {
-    const app1create = await createApp({ installed: true });
-    const app2create = await createApp({});
-    // @ts-ignore
+    const app1create = await createApp({ installed: true }, db);
+    const app2create = await createApp({}, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(Object.assign(app1create.MockFiles, app2create.MockFiles));
   });
 
@@ -285,10 +281,10 @@ describe('getAvailableApps', () => {
   });
 
   it('Should not return apps with invalid config.json', async () => {
-    const { appInfo: app1, MockFiles: MockFiles1 } = await createApp({ installed: true });
-    const { MockFiles: MockFiles2 } = await createApp({});
+    const { appInfo: app1, MockFiles: MockFiles1 } = await createApp({ installed: true }, db);
+    const { MockFiles: MockFiles2 } = await createApp({}, db);
     MockFiles1[`/runtipi/repos/repo-id/apps/${app1.id}/config.json`] = 'invalid json';
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(Object.assign(MockFiles1, MockFiles2));
 
     const availableApps = await getAvailableApps();
@@ -300,49 +296,49 @@ describe('getAvailableApps', () => {
 describe('Test: getAppInfo', () => {
   let app1: AppInfo;
   beforeEach(async () => {
-    const app1create = await createApp({ installed: false });
+    const app1create = await createApp({ installed: false }, db);
     app1 = app1create.appInfo;
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(app1create.MockFiles);
   });
 
   it('Should return app info', async () => {
-    const appInfo = await getAppInfo(app1.id);
+    const appInfo = getAppInfo(app1.id);
 
     expect(appInfo?.id).toBe(app1.id);
   });
 
   it('Should take config.json locally if app is installed', async () => {
-    const { appInfo, MockFiles, appEntity } = await createApp({ installed: true });
-    // @ts-ignore
+    const { appInfo, MockFiles, appEntity } = await createApp({ installed: true }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     const newConfig = createAppConfig();
 
     fs.writeFileSync(`/runtipi/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
 
-    const app = await getAppInfo(appInfo.id, appEntity.status);
+    const app = getAppInfo(appInfo.id, appEntity.status);
 
     expect(app?.id).toEqual(newConfig.id);
   });
 
   it('Should take config.json from repo if app is not installed', async () => {
-    const { appInfo, MockFiles, appEntity } = await createApp({ installed: false });
-    // @ts-ignore
+    const { appInfo, MockFiles, appEntity } = await createApp({ installed: false }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     const newConfig = createAppConfig();
 
     fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
 
-    const app = await getAppInfo(appInfo.id, appEntity.status);
+    const app = getAppInfo(appInfo.id, appEntity.status);
 
     expect(app?.id).toEqual(newConfig.id);
   });
 
   it('Should return null if app is not available', async () => {
-    const { appInfo, MockFiles, appEntity } = await createApp({ installed: false });
-    // @ts-ignore
+    const { appInfo, MockFiles, appEntity } = await createApp({ installed: false }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     const newConfig = {
@@ -352,19 +348,19 @@ describe('Test: getAppInfo', () => {
 
     fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
 
-    const app = await getAppInfo(appInfo.id, appEntity.status);
+    const app = getAppInfo(appInfo.id, appEntity.status);
 
     expect(app).toBeNull();
   });
 
   it('Should throw if something goes wrong', async () => {
-    const log = jest.spyOn(logger, 'error');
+    const log = jest.spyOn(Logger, 'error');
     const spy = jest.spyOn(fs, 'existsSync').mockImplementation(() => {
       throw new Error('Something went wrong');
     });
 
-    const { appInfo, MockFiles, appEntity } = await createApp({ installed: false });
-    // @ts-ignore
+    const { appInfo, MockFiles, appEntity } = await createApp({ installed: false }, db);
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     const newConfig = {
@@ -375,7 +371,7 @@ describe('Test: getAppInfo', () => {
     fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, JSON.stringify(newConfig));
 
     try {
-      await getAppInfo(appInfo.id, appEntity.status);
+      getAppInfo(appInfo.id, appEntity.status);
       expect(true).toBe(false);
     } catch (e: unknown) {
       if (e instanceof Error) {
@@ -391,7 +387,7 @@ describe('Test: getAppInfo', () => {
   });
 
   it('Should return null if app does not exist', async () => {
-    const app = await getAppInfo(faker.random.word());
+    const app = getAppInfo(faker.random.word());
 
     expect(app).toBeNull();
   });
@@ -400,9 +396,9 @@ describe('Test: getAppInfo', () => {
 describe('getUpdateInfo', () => {
   let app1: AppInfo;
   beforeEach(async () => {
-    const app1create = await createApp({ installed: true });
+    const app1create = await createApp({ installed: true }, db);
     app1 = app1create.appInfo;
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(app1create.MockFiles);
   });
 
@@ -420,9 +416,9 @@ describe('getUpdateInfo', () => {
   });
 
   it('Should return null if config.json is invalid', async () => {
-    const { appInfo, MockFiles } = await createApp({ installed: true });
+    const { appInfo, MockFiles } = await createApp({ installed: true }, db);
     MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = 'invalid json';
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
     const updateInfo = await getUpdateInfo(appInfo.id, 1);
@@ -431,7 +427,6 @@ describe('getUpdateInfo', () => {
   });
 
   it('should return null if version is not provided', async () => {
-    // @ts-ignore
     const updateInfo = await getUpdateInfo(app1.id);
 
     expect(updateInfo).toBe(null);
@@ -443,7 +438,7 @@ describe('Test: ensureAppFolder', () => {
     const mockFiles = {
       [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
     };
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(mockFiles);
   });
 
@@ -463,7 +458,7 @@ describe('Test: ensureAppFolder', () => {
       '/runtipi/apps/test/docker-compose.yml': 'test',
     };
 
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(mockFiles);
 
     // Act
@@ -481,7 +476,7 @@ describe('Test: ensureAppFolder', () => {
       '/runtipi/apps/test/docker-compose.yml': 'test',
     };
 
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(mockFiles);
 
     // Act
@@ -500,7 +495,7 @@ describe('Test: ensureAppFolder', () => {
       '/runtipi/apps/test': ['test.yml'],
     };
 
-    // @ts-ignore
+    // @ts-expect-error - Mocking fs
     fs.__createMockFiles(mockFiles);
 
     // Act

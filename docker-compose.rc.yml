@@ -121,7 +121,10 @@ services:
       REDIS_HOST: ${REDIS_HOST}
     volumes:
       - ${PWD}/state:/runtipi/state
+      - ${PWD}/repos:/runtipi/repos:ro
+      - ${PWD}/apps:/runtipi/apps
       - ${PWD}/logs:/app/logs
+      - ${STORAGE_PATH}:/app/storage
     labels:
       traefik.enable: true
       # Web
