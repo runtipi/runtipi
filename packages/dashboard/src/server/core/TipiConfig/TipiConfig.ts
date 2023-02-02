@@ -4,11 +4,12 @@ import nextConfig from 'next/config';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../Logger';
 
-enum AppSupportedArchitecturesEnum {
-  ARM = 'arm',
-  ARM64 = 'arm64',
-  AMD64 = 'amd64',
-}
+export const ARCHITECTURES = {
+  ARM: 'arm',
+  ARM64: 'arm64',
+  AMD64: 'amd64',
+} as const;
+export type Architecture = typeof ARCHITECTURES[keyof typeof ARCHITECTURES];
 
 const {
   NODE_ENV,
@@ -27,13 +28,13 @@ const {
   POSTGRES_PASSWORD,
   POSTGRES_PORT = 5432,
 } = nextConfig()?.serverRuntimeConfig || process.env;
-// Use process.env if nextConfig is not available (e.g. in in server-preload.ts)
+// Use process.env if nextConfig is not available
 
 const configSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
   REDIS_HOST: z.string(),
   status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
-  architecture: z.nativeEnum(AppSupportedArchitecturesEnum),
+  architecture: z.nativeEnum(ARCHITECTURES),
   dnsIp: z.string(),
   rootFolder: z.string(),
   internalIp: z.string(),

@@ -6,11 +6,11 @@ import { EventDispatcher } from '../../core/EventDispatcher';
 import { setConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 
-jest.mock('fs-extra');
 jest.mock('axios');
 jest.mock('redis');
 
 beforeEach(async () => {
+  jest.mock('fs-extra');
   jest.resetModules();
   jest.resetAllMocks();
 });

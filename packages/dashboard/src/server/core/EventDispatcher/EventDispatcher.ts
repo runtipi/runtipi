@@ -1,19 +1,28 @@
+/* eslint-disable vars-on-top */
 import fs from 'fs-extra';
 import { Logger } from '../Logger';
+import { getConfig } from '../TipiConfig';
 
-export enum EventTypes {
-  // System events
-  RESTART = 'restart',
-  UPDATE = 'update',
-  CLONE_REPO = 'clone_repo',
-  UPDATE_REPO = 'update_repo',
-  APP = 'app',
-  SYSTEM_INFO = 'system_info',
+declare global {
+  // eslint-disable-next-line no-var
+  var EventDispatcher: EventDispatcher | undefined;
 }
+
+export const EVENT_TYPES = {
+  // System events
+  RESTART: 'restart',
+  UPDATE: 'update',
+  CLONE_REPO: 'clone_repo',
+  UPDATE_REPO: 'update_repo',
+  APP: 'app',
+  SYSTEM_INFO: 'system_info',
+} as const;
+
+export type EventType = typeof EVENT_TYPES[keyof typeof EVENT_TYPES];
 
 type SystemEvent = {
   id: string;
-  type: EventTypes;
+  type: EventType;
   args: string[];
   creationDate: Date;
 };
@@ -26,6 +35,8 @@ const WATCH_FILE = '/runtipi/state/events';
 // restart 1631231231231 running "arg1 arg2"
 class EventDispatcher {
   private static instance: EventDispatcher | null;
+
+  private dispatcherId = EventDispatcher.generateId();
 
   private queue: SystemEvent[] = [];
 
@@ -77,7 +88,7 @@ class EventDispatcher {
    * Poll queue and run events
    */
   private pollQueue() {
-    Logger.info('EventDispatcher: Polling queue...');
+    Logger.info(`EventDispatcher(${this.dispatcherId}): Polling queue...`);
 
     if (!this.interval) {
       const id = setInterval(() => {
@@ -148,7 +159,7 @@ class EventDispatcher {
    * @param args - Event arguments
    * @returns - Event object
    */
-  public dispatchEvent(type: EventTypes, args?: string[]): SystemEvent {
+  public dispatchEvent(type: EventType, args?: string[]): SystemEvent {
     const event: SystemEvent = {
       id: EventDispatcher.generateId(),
       type,
@@ -185,7 +196,7 @@ class EventDispatcher {
    * @param args - Event arguments
    * @returns - Promise that resolves when the event is done
    */
-  public async dispatchEventAsync(type: EventTypes, args?: string[]): Promise<{ success: boolean; stdout?: string }> {
+  public async dispatchEventAsync(type: EventType, args?: string[]): Promise<{ success: boolean; stdout?: string }> {
     const event = this.dispatchEvent(type, args);
 
     return new Promise((resolve) => {
@@ -222,4 +233,8 @@ class EventDispatcher {
   }
 }
 
-export const EventDispatcherInstance = EventDispatcher.getInstance();
+export const EventDispatcherInstance = global.EventDispatcher || EventDispatcher.getInstance();
+
+if (getConfig().NODE_ENV !== 'production') {
+  global.EventDispatcher = EventDispatcherInstance;
+}

@@ -1,7 +1,7 @@
 import semver from 'semver';
 import { z } from 'zod';
 import { readJsonFile } from '../../common/fs.helpers';
-import { EventDispatcher, EventTypes } from '../../core/EventDispatcher';
+import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
 import TipiCache from '../../core/TipiCache';
 import { getConfig, setConfig } from '../../core/TipiConfig';
@@ -66,7 +66,7 @@ const restart = async (): Promise<boolean> => {
   }
 
   setConfig('status', 'RESTARTING');
-  EventDispatcher.dispatchEventAsync(EventTypes.RESTART);
+  EventDispatcher.dispatchEventAsync('restart');
 
   return true;
 };
@@ -91,12 +91,12 @@ const update = async (): Promise<boolean> => {
   }
 
   if (semver.major(current) !== semver.major(latest)) {
-    throw new Error('The major version has changed. Please update manually');
+    throw new Error('The major version has changed. Please update manually (instructions on GitHub)');
   }
 
   setConfig('status', 'UPDATING');
 
-  EventDispatcher.dispatchEventAsync(EventTypes.UPDATE);
+  EventDispatcher.dispatchEventAsync('update');
 
   return true;
 };
