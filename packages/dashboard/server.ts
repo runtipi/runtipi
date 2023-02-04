@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-import { createServer } from 'http';
+import express from 'express';
 import { parse } from 'url';
 import next from 'next';
 import { EventDispatcher } from './src/server/core/EventDispatcher';
@@ -15,25 +15,32 @@ const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
 nextApp.prepare().then(async () => {
-  createServer(async (req, res) => {
+  const app = express();
+  app.disable('x-powered-by');
+
+  app.use('/static', express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/`));
+
+  app.all('*', (req, res) => {
     const parsedUrl = parse(req.url!, true);
 
     handle(req, res, parsedUrl);
-  }).listen(port);
+  });
 
-  const appService = new AppServiceClass(prisma);
-  EventDispatcher.clear();
+  app.listen(port, async () => {
+    const appService = new AppServiceClass(prisma);
+    EventDispatcher.clear();
 
-  // Run database migrations
-  await runPostgresMigrations();
+    // Run database migrations
+    await runPostgresMigrations();
 
-  // startJobs();
-  setConfig('status', 'RUNNING');
+    // startJobs();
+    setConfig('status', 'RUNNING');
 
-  await EventDispatcher.dispatchEventAsync('clone_repo', [getConfig().appsRepoUrl]);
-  await EventDispatcher.dispatchEventAsync('update_repo', [getConfig().appsRepoUrl]);
+    await EventDispatcher.dispatchEventAsync('clone_repo', [getConfig().appsRepoUrl]);
+    await EventDispatcher.dispatchEventAsync('update_repo', [getConfig().appsRepoUrl]);
 
-  appService.startAllApps();
+    appService.startAllApps();
 
-  Logger.info(`> Server listening at http://localhost:${port} as ${dev ? 'development' : process.env.NODE_ENV}`);
+    Logger.info(`> Server listening at http://localhost:${port} as ${dev ? 'development' : process.env.NODE_ENV}`);
+  });
 });

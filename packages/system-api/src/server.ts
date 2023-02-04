@@ -27,7 +27,6 @@ const main = async () => {
     const port = 3001;
 
     app.use(cors(corsOptions));
-    app.use(express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}`));
     app.use(getSessionMiddleware);
 
     const httpServer = createServer(app);
