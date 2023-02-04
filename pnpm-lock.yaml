@@ -34,6 +34,7 @@ importers:
       '@trpc/next': ^10.9.1
       '@trpc/react-query': ^10.9.1
       '@trpc/server': ^10.9.1
+      '@types/express': ^4.17.13
       '@types/fs-extra': ^9.0.13
       '@types/isomorphic-fetch': ^0.0.36
       '@types/jest': ^29.2.4
@@ -63,6 +64,7 @@ importers:
       eslint-plugin-jsx-a11y: ^6.6.1
       eslint-plugin-react: ^7.31.10
       eslint-plugin-react-hooks: ^4.6.0
+      express: ^4.17.3
       fs-extra: ^10.1.0
       graphql: ^15.8.0
       graphql-tag: ^2.12.6
@@ -114,6 +116,7 @@ importers:
       '@trpc/server': 10.9.1
       argon2: 0.29.1
       clsx: 1.1.1
+      express: 4.18.1
       fs-extra: 10.1.0
       graphql: 15.8.0
       graphql-tag: 2.12.6_graphql@15.8.0
@@ -149,6 +152,7 @@ importers:
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
       '@testing-library/user-event': 14.4.3_aaq3sbffpfe3jnxzm2zngsddei
+      '@types/express': 4.17.13
       '@types/fs-extra': 9.0.13
       '@types/isomorphic-fetch': 0.0.36
       '@types/jest': 29.2.4
