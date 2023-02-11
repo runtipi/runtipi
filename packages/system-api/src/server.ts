@@ -1,15 +1,12 @@
 import 'reflect-metadata';
 import express from 'express';
-import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from 'apollo-server-core';
 import { createServer } from 'http';
-import { ZodError } from 'zod';
 import cors, { CorsOptions } from 'cors';
-import { ApolloLogs } from './config/logger/apollo.logger';
 import logger from './config/logger/logger';
 import getSessionMiddleware from './core/middlewares/sessionMiddleware';
 import { __prod__ } from './config/constants/constants';
 import startJobs from './core/jobs/jobs';
-import { applyJsonConfig, getConfig } from './core/config/TipiConfig';
+import { getConfig } from './core/config/TipiConfig';
 import { eventDispatcher } from './core/config/EventDispatcher';
 
 const corsOptions: CorsOptions = {

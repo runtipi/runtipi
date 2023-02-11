@@ -12,11 +12,9 @@
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
-    "lint:fix": "next lint --fix",
-    "gen": "graphql-codegen --config codegen.yml"
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
-    "@apollo/client": "^3.6.8",
     "@hookform/resolvers": "^2.9.10",
     "@prisma/client": "^4.8.0",
     "@runtipi/postgres-migrations": "^5.3.0",
@@ -35,6 +33,7 @@
     "isomorphic-fetch": "^3.0.0",
     "jsonwebtoken": "^9.0.0",
     "next": "13.1.1",
+    "node-cron": "^3.0.1",
     "pg": "^8.7.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -60,10 +59,6 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@faker-js/faker": "^7.6.0",
-    "@graphql-codegen/cli": "^2.6.2",
-    "@graphql-codegen/typescript": "^2.5.1",
-    "@graphql-codegen/typescript-operations": "^2.4.2",
-    "@graphql-codegen/typescript-react-apollo": "^3.2.16",
     "@testing-library/dom": "^8.19.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -73,6 +68,7 @@
     "@types/jest": "^29.2.4",
     "@types/jsonwebtoken": "^9.0.0",
     "@types/node": "18.11.18",
+    "@types/node-cron": "^3.0.2",
     "@types/pg": "^8.6.5",
     "@types/react": "18.0.8",
     "@types/react-dom": "18.0.3",

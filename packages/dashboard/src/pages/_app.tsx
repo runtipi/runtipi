@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import type { AppProps } from 'next/app';
-import { ApolloProvider } from '@apollo/client';
 import Head from 'next/head';
 import useCachedResources from '../client/hooks/useCachedRessources';
 import '../client/styles/global.css';
@@ -17,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { setDarkMode } = useUIStore();
   const { setStatus, setVersion } = useSystemStore();
 
-  trpc.system.status.useQuery(undefined, { refetchInterval: 1000, networkMode: 'online', onSuccess: (d) => setStatus(d.status || SystemStatus.RUNNING) });
+  trpc.system.status.useQuery(undefined, { networkMode: 'online', onSuccess: (d) => setStatus(d.status || SystemStatus.RUNNING) });
   const version = trpc.system.getVersion.useQuery(undefined, { networkMode: 'online' });
 
   useEffect(() => {
@@ -40,25 +39,23 @@ function MyApp({ Component, pageProps }: AppProps) {
     themeCheck();
   }, [setDarkMode]);
 
-  const { client, isLoadingComplete } = useCachedResources();
-  if (!client || !isLoadingComplete) {
+  const { isLoadingComplete } = useCachedResources();
+  if (!isLoadingComplete) {
     return <StatusScreen title="" subtitle="" />;
   }
 
   return (
     <main className="h-100">
-      <ApolloProvider client={client}>
-        <Head>
-          <title>Tipi</title>
-        </Head>
-        <ToastProvider>
-          <StatusProvider>
-            <AuthProvider>
-              <Component {...pageProps} />
-            </AuthProvider>
-          </StatusProvider>
-        </ToastProvider>
-      </ApolloProvider>
+      <Head>
+        <title>Tipi</title>
+      </Head>
+      <ToastProvider>
+        <StatusProvider>
+          <AuthProvider>
+            <Component {...pageProps} />
+          </AuthProvider>
+        </StatusProvider>
+      </ToastProvider>
     </main>
   );
 }
