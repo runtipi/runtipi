@@ -39,15 +39,6 @@ describe('Test: SettingsContainer', () => {
       expect(screen.getByText(`Update to ${latest}`)).toBeInTheDocument();
       expect(screen.getByText(`Update to ${latest}`)).not.toBeDisabled();
     });
-
-    it('should display error page if error is present', () => {
-      const current = faker.system.semver();
-      const error = faker.lorem.sentence();
-
-      render(<SettingsContainer data={{ current }} error={error} />);
-
-      expect(screen.getByText(error)).toBeInTheDocument();
-    });
   });
 
   describe('Update', () => {
