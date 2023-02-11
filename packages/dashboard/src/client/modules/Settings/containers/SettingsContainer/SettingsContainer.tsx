@@ -6,13 +6,11 @@ import { SystemRouterOutput } from '../../../../../server/routers/system/system.
 import { useToastStore } from '../../../../state/toastStore';
 import { RestartModal } from '../../components/RestartModal';
 import { UpdateModal } from '../../components/UpdateModal/UpdateModal';
-import { Layout } from '../../../../components/Layout/LayoutV2';
-import { ContainerProps } from '../../../../types/layout-helpers';
 import { trpc } from '../../../../utils/trpc';
 
-type IProps = { data?: SystemRouterOutput['getVersion'] };
+type IProps = { data: SystemRouterOutput['getVersion'] };
 
-const SettingsContainerWithData: React.FC<Required<IProps>> = ({ data }) => {
+export const SettingsContainer: React.FC<IProps> = ({ data }) => {
   const [loading, setLoading] = React.useState(false);
   const { current, latest } = data;
   const { addToast } = useToastStore();
@@ -81,7 +79,7 @@ const SettingsContainerWithData: React.FC<Required<IProps>> = ({ data }) => {
         <div className="col d-flex flex-column">
           <div className="card-body">
             <h2 className="mb-4">Actions</h2>
-            <h3 className="card-title mt-4">Version</h3>
+            <h3 className="card-title mt-4">Version {current}</h3>
             <p className="card-subtitle">Stay up to date with the latest version of Tipi</p>
             {renderUpdate()}
             <h3 className="card-title mt-4">Maintenance</h3>
@@ -97,9 +95,3 @@ const SettingsContainerWithData: React.FC<Required<IProps>> = ({ data }) => {
     </div>
   );
 };
-
-export const SettingsContainer: React.FC<ContainerProps<IProps>> = ({ data, loading, error }) => (
-  <Layout title="Settings" data={data} loading={loading} error={error}>
-    <SettingsContainerWithData data={data!} />
-  </Layout>
-);

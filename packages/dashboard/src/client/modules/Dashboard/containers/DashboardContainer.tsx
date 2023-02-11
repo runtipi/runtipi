@@ -1,13 +1,11 @@
 import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons';
 import React from 'react';
-import { Layout } from '../../../components/Layout/LayoutV2';
 import { SystemRouterOutput } from '../../../../server/routers/system/system.router';
 import SystemStat from '../components/SystemStat';
-import { ContainerProps } from '../../../types/layout-helpers';
 
-type IProps = { data?: SystemRouterOutput['systemInfo'] };
+type IProps = { data: SystemRouterOutput['systemInfo'] };
 
-const DashboardWithData: React.FC<Required<IProps>> = ({ data }) => {
+export const DashboardContainer: React.FC<IProps> = ({ data }) => {
   const { disk, memory, cpu } = data;
   // Convert bytes to GB
   const diskFree = Math.round(disk.available / 1024 / 1024 / 1024);
@@ -27,9 +25,3 @@ const DashboardWithData: React.FC<Required<IProps>> = ({ data }) => {
     </div>
   );
 };
-
-export const DashboardContainer: React.FC<ContainerProps<IProps>> = ({ data, loading, error }) => (
-  <Layout data={data} loading={loading} error={error} title="Dashboard">
-    <DashboardWithData data={data!} />
-  </Layout>
-);
