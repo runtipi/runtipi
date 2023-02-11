@@ -1,13 +1,15 @@
 import fs from 'fs-extra';
 import semver from 'semver';
 import { faker } from '@faker-js/faker';
-import { SystemService } from '.';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { setConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
+import { SystemServiceClass } from '.';
 
 jest.mock('axios');
 jest.mock('redis');
+
+const SystemService = new SystemServiceClass();
 
 beforeEach(async () => {
   jest.mock('fs-extra');
@@ -18,7 +20,7 @@ beforeEach(async () => {
 describe('Test: systemInfo', () => {
   it('Should throw if system-info.json does not exist', () => {
     try {
-      SystemService.systemInfo();
+      SystemServiceClass.systemInfo();
     } catch (e: unknown) {
       if (e instanceof Error) {
         expect(e).toBeDefined();
@@ -45,7 +47,7 @@ describe('Test: systemInfo', () => {
     fs.__createMockFiles(MockFiles);
 
     // Act
-    const systemInfo = SystemService.systemInfo();
+    const systemInfo = SystemServiceClass.systemInfo();
 
     // Assert
     expect(systemInfo).toBeDefined();

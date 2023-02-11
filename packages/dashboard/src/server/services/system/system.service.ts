@@ -23,88 +23,91 @@ const systemInfoSchema = z.object({
   }),
 });
 
-const status = async (): Promise<{ status: SystemStatus }> => ({
-  status: getConfig().status as SystemStatus,
-});
+export class SystemServiceClass {
+  private cache;
 
-/**
- * Get the current and latest version of Tipi
- * @returns {Promise<{ current: string; latest: string }>}
- */
-const getVersion = async (): Promise<{ current: string; latest?: string }> => {
-  try {
-    let version = await TipiCache.get('latestVersion');
+  private dispatcher;
 
-    if (!version) {
-      const data = await fetch('https://api.github.com/repos/meienberger/runtipi/releases/latest');
-      const release = await data.json();
+  constructor() {
+    this.cache = TipiCache;
+    this.dispatcher = EventDispatcher;
+  }
 
-      version = release.name.replace('v', '');
-      await TipiCache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
+  /**
+   * Get the current and latest version of Tipi
+   * @returns {Promise<{ current: string; latest: string }>}
+   */
+  public getVersion = async (): Promise<{ current: string; latest?: string }> => {
+    try {
+      let version = await this.cache.get('latestVersion');
+
+      if (!version) {
+        const data = await fetch('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+        const release = await data.json();
+
+        version = release.name.replace('v', '');
+        await this.cache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
+      }
+
+      return { current: getConfig().version, latest: version?.replace('v', '') };
+    } catch (e) {
+      Logger.error(e);
+      return { current: getConfig().version, latest: undefined };
+    }
+  };
+
+  public static systemInfo = (): z.infer<typeof systemInfoSchema> => {
+    const info = systemInfoSchema.safeParse(readJsonFile('/runtipi/state/system-info.json'));
+
+    if (!info.success) {
+      throw new Error('Error parsing system info');
+    } else {
+      return info.data;
+    }
+  };
+
+  public update = async (): Promise<boolean> => {
+    const { current, latest } = await this.getVersion();
+
+    if (getConfig().NODE_ENV === 'development') {
+      throw new Error('Cannot update in development mode');
     }
 
-    return { current: getConfig().version, latest: version?.replace('v', '') };
-  } catch (e) {
-    Logger.error(e);
-    return { current: getConfig().version, latest: undefined };
-  }
-};
+    if (!latest) {
+      throw new Error('Could not get latest version');
+    }
 
-const systemInfo = (): z.infer<typeof systemInfoSchema> => {
-  const info = systemInfoSchema.safeParse(readJsonFile('/runtipi/state/system-info.json'));
+    if (semver.gt(current, latest)) {
+      throw new Error('Current version is newer than latest version');
+    }
 
-  if (!info.success) {
-    throw new Error('Error parsing system info');
-  } else {
-    return info.data;
-  }
-};
+    if (semver.eq(current, latest)) {
+      throw new Error('Current version is already up to date');
+    }
 
-const restart = async (): Promise<boolean> => {
-  if (getConfig().NODE_ENV === 'development') {
-    throw new Error('Cannot restart in development mode');
-  }
+    if (semver.major(current) !== semver.major(latest)) {
+      throw new Error('The major version has changed. Please update manually (instructions on GitHub)');
+    }
 
-  setConfig('status', 'RESTARTING');
-  EventDispatcher.dispatchEventAsync('restart');
+    setConfig('status', 'UPDATING');
 
-  return true;
-};
+    this.dispatcher.dispatchEventAsync('update');
 
-const update = async (): Promise<boolean> => {
-  const { current, latest } = await getVersion();
+    return true;
+  };
 
-  if (getConfig().NODE_ENV === 'development') {
-    throw new Error('Cannot update in development mode');
-  }
+  public restart = async (): Promise<boolean> => {
+    if (getConfig().NODE_ENV === 'development') {
+      throw new Error('Cannot restart in development mode');
+    }
 
-  if (!latest) {
-    throw new Error('Could not get latest version');
-  }
+    setConfig('status', 'RESTARTING');
+    this.dispatcher.dispatchEventAsync('restart');
 
-  if (semver.gt(current, latest)) {
-    throw new Error('Current version is newer than latest version');
-  }
+    return true;
+  };
 
-  if (semver.eq(current, latest)) {
-    throw new Error('Current version is already up to date');
-  }
-
-  if (semver.major(current) !== semver.major(latest)) {
-    throw new Error('The major version has changed. Please update manually (instructions on GitHub)');
-  }
-
-  setConfig('status', 'UPDATING');
-
-  EventDispatcher.dispatchEventAsync('update');
-
-  return true;
-};
-
-export const SystemService = {
-  getVersion,
-  systemInfo,
-  restart,
-  update,
-  status,
-};
+  public static status = async (): Promise<{ status: SystemStatus }> => ({
+    status: getConfig().status as SystemStatus,
+  });
+}

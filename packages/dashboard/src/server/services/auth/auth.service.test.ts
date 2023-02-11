@@ -1,32 +1,38 @@
+import { PrismaClient } from '@prisma/client';
 import * as argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import { faker } from '@faker-js/faker';
 import { setConfig } from '../../core/TipiConfig';
 import { createUser } from '../../tests/user.factory';
-import AuthService from './auth.service';
-import { prisma } from '../../db/client';
+import { AuthServiceClass } from './auth.service';
 import TipiCache from '../../core/TipiCache';
+import { getTestDbClient } from '../../../../tests/server/db-connection';
 
-jest.mock('redis');
+let db: PrismaClient;
+let AuthService: AuthServiceClass;
+const TEST_SUITE = 'authservice';
 
 beforeAll(async () => {
   setConfig('jwtSecret', 'test');
+  db = await getTestDbClient(TEST_SUITE);
+  AuthService = new AuthServiceClass(db);
 });
 
 beforeEach(async () => {
-  await prisma.user.deleteMany();
+  jest.mock('redis');
+  await db.user.deleteMany();
 });
 
 afterAll(async () => {
-  await prisma.user.deleteMany();
-  await prisma.$disconnect();
+  await db.user.deleteMany();
+  await db.$disconnect();
 });
 
 describe('Login', () => {
   it('Should return a valid jsonwebtoken containing a user id', async () => {
     // Arrange
     const email = faker.internet.email();
-    const user = await createUser(email);
+    const user = await createUser(email, db);
 
     // Act
     const { token } = await AuthService.login({ username: email, password: 'password' });
@@ -49,7 +55,7 @@ describe('Login', () => {
 
   it('Should throw if password is incorrect', async () => {
     const email = faker.internet.email();
-    await createUser(email);
+    await createUser(email, db);
     await expect(AuthService.login({ username: email, password: 'wrong' })).rejects.toThrowError('Wrong password');
   });
 });
@@ -78,7 +84,7 @@ describe('Register', () => {
 
     // Act
     await AuthService.register({ username: email, password: 'test' });
-    const user = await prisma.user.findFirst({ where: { username: email.toLowerCase().trim() } });
+    const user = await db.user.findFirst({ where: { username: email.toLowerCase().trim() } });
 
     // Assert
     expect(user).toBeDefined();
@@ -90,7 +96,7 @@ describe('Register', () => {
     const email = faker.internet.email();
 
     // Act & Assert
-    await createUser(email);
+    await createUser(email, db);
     await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('User already exists');
   });
 
@@ -108,7 +114,7 @@ describe('Register', () => {
 
     // Act
     await AuthService.register({ username: email, password: 'test' });
-    const user = await prisma.user.findUnique({ where: { username: email } });
+    const user = await db.user.findUnique({ where: { username: email } });
     const isPasswordValid = await argon2.verify(user?.password || '', 'test');
 
     // Assert
@@ -123,7 +129,7 @@ describe('Register', () => {
 describe('Test: logout', () => {
   it('Should return true if there is no session to delete', async () => {
     // Act
-    const result = await AuthService.logout();
+    const result = await AuthServiceClass.logout();
 
     // Assert
     expect(result).toBe(true);
@@ -136,7 +142,7 @@ describe('Test: logout', () => {
     expect(await TipiCache.get(session)).toBe('test');
 
     // Act
-    const result = await AuthService.logout(session);
+    const result = await AuthServiceClass.logout(session);
 
     // Assert
     expect(result).toBe(true);
@@ -147,7 +153,7 @@ describe('Test: logout', () => {
 describe('Test: refreshToken', () => {
   it('Should return null if session is not provided', async () => {
     // Act
-    const result = await AuthService.refreshToken();
+    const result = await AuthServiceClass.refreshToken();
 
     // Assert
     expect(result).toBeNull();
@@ -155,7 +161,7 @@ describe('Test: refreshToken', () => {
 
   it('Should return null if session is not found in cache', async () => {
     // Act
-    const result = await AuthService.refreshToken('test');
+    const result = await AuthServiceClass.refreshToken('test');
 
     // Assert
     expect(result).toBeNull();
@@ -167,7 +173,7 @@ describe('Test: refreshToken', () => {
     await TipiCache.set(session, 'test');
 
     // Act
-    const result = await AuthService.refreshToken(session);
+    const result = await AuthServiceClass.refreshToken(session);
 
     // Assert
     expect(result).not.toBeNull();
@@ -181,7 +187,7 @@ describe('Test: refreshToken', () => {
     await TipiCache.set(session, '1');
 
     // Act
-    const result = await AuthService.refreshToken(session);
+    const result = await AuthServiceClass.refreshToken(session);
     const expiration = await TipiCache.ttl(session);
 
     // Assert
@@ -213,7 +219,7 @@ describe('Test: me', () => {
   it('Should return user if user exists', async () => {
     // Arrange
     const email = faker.internet.email();
-    const user = await createUser(email);
+    const user = await createUser(email, db);
 
     // Act
     const result = await AuthService.me(user.id);
@@ -222,5 +228,27 @@ describe('Test: me', () => {
     expect(result).not.toBeNull();
     expect(result).toHaveProperty('id');
     expect(result).toHaveProperty('username');
+  });
+});
+
+describe('Test: isConfigured', () => {
+  it('Should return false if no user exists', async () => {
+    // Act
+    const result = await AuthService.isConfigured();
+
+    // Assert
+    expect(result).toBe(false);
+  });
+
+  it('Should return true if user exists', async () => {
+    // Arrange
+    const email = faker.internet.email();
+    await createUser(email, db);
+
+    // Act
+    const result = await AuthService.isConfigured();
+
+    // Assert
+    expect(result).toBe(true);
   });
 });

@@ -1,1 +1,1 @@
-export { SystemService } from './system.service';
+export { SystemServiceClass } from './system.service';
