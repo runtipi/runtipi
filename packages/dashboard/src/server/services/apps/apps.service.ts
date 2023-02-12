@@ -1,10 +1,11 @@
 import validator from 'validator';
 import { App, PrismaClient } from '@prisma/client';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, appInfoSchema, AppInfo, getAppInfo } from './apps.helpers';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
-import { createFolder, readJsonFile } from '../../common/fs.helpers';
+import { createFolder } from '../../common/fs.helpers';
+import { notEmpty } from '../../common/typescript.helpers';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
 const filterApp = (app: AppInfo): boolean => {
@@ -125,14 +126,13 @@ export class AppServiceClass {
       // Create app folder
       createFolder(`/app/storage/app-data/${id}`);
 
-      const appInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
-      const parsedAppInfo = appInfoSchema.safeParse(appInfo);
+      const appInfo = getAppInfo(id);
 
-      if (!parsedAppInfo.success) {
+      if (!appInfo) {
         throw new Error(`App ${id} has invalid config.json file`);
       }
 
-      if (!parsedAppInfo.data.exposable && exposed) {
+      if (!appInfo.exposable && exposed) {
         throw new Error(`App ${id} is not exposable`);
       }
 
@@ -143,7 +143,7 @@ export class AppServiceClass {
         }
       }
 
-      app = await this.prisma.app.create({ data: { id, status: 'installing', config: form, version: parsedAppInfo.data.tipi_version, exposed: exposed || false, domain } });
+      app = await this.prisma.app.create({ data: { id, status: 'installing', config: form, version: appInfo.tipi_version, exposed: exposed || false, domain } });
 
       if (app) {
         // Create env file
@@ -200,14 +200,13 @@ export class AppServiceClass {
       throw new Error(`App ${id} not found`);
     }
 
-    const appInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
-    const parsedAppInfo = appInfoSchema.safeParse(appInfo);
+    const appInfo = getAppInfo(app.id, app.status);
 
-    if (!parsedAppInfo.success) {
+    if (!appInfo) {
       throw new Error(`App ${id} has invalid config.json`);
     }
 
-    if (!parsedAppInfo.data.exposable && exposed) {
+    if (!appInfo.exposable && exposed) {
       throw new Error(`App ${id} is not exposable`);
     }
 
@@ -302,14 +301,14 @@ export class AppServiceClass {
   public getApp = async (id: string) => {
     let app = await this.prisma.app.findUnique({ where: { id } });
     const info = getAppInfo(id, app?.status);
-    const parsedInfo = appInfoSchema.safeParse(info);
+    const updateInfo = getUpdateInfo(id);
 
-    if (parsedInfo.success) {
+    if (info) {
       if (!app) {
         app = { id, status: 'missing', config: {}, exposed: false, domain: '' } as App;
       }
 
-      return { ...app, info: { ...parsedInfo.data } };
+      return { ...app, ...updateInfo, info };
     }
 
     throw new Error(`App ${id} has invalid config.json`);
@@ -337,10 +336,9 @@ export class AppServiceClass {
     const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['update', id]);
 
     if (success) {
-      const appInfo = readJsonFile(`/runtipi/apps/${id}/config.json`);
-      const parsedAppInfo = appInfoSchema.parse(appInfo);
+      const appInfo = getAppInfo(app.id, app.status);
 
-      await this.prisma.app.update({ where: { id }, data: { status: 'running', version: parsedAppInfo.tipi_version } });
+      await this.prisma.app.update({ where: { id }, data: { status: 'running', version: appInfo?.tipi_version } });
     } else {
       await this.prisma.app.update({ where: { id }, data: { status: 'stopped' } });
       throw new Error(`App ${id} failed to update\nstdout: ${stdout}`);
@@ -354,20 +352,19 @@ export class AppServiceClass {
    * Returns a list of all installed apps
    *
    * @returns {Promise<App[]>} - An array of app objects
-   * @throws {Error} - If the app is not found or if the update process fails.
    */
   public installedApps = async () => {
     const apps = await this.prisma.app.findMany();
 
-    return apps.map((app) => {
-      const info = readJsonFile(`/runtipi/apps/${app.id}/config.json`);
-      const parsedInfo = appInfoSchema.safeParse(info);
-
-      if (parsedInfo.success) {
-        return { ...app, info: { ...parsedInfo.data } };
-      }
-
-      throw new Error(`App ${app.id} has invalid config.json`);
-    });
+    return apps
+      .map((app) => {
+        const info = getAppInfo(app.id, app.status);
+        const updateInfo = getUpdateInfo(app.id);
+        if (info) {
+          return { ...app, ...updateInfo, info };
+        }
+        return null;
+      })
+      .filter(notEmpty);
   };
 }

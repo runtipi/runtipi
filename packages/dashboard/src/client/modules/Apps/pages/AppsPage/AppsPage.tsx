@@ -12,7 +12,7 @@ export const AppsPage: NextPage = () => {
   const { data, isLoading, error } = trpc.app.installedApps.useQuery();
 
   const renderApp = (app: AppRouterOutput['installedApps'][number]) => {
-    const updateAvailable = Number(app.version) < Number(app.info.tipi_version);
+    const updateAvailable = Number(app.version) < Number(app.latestVersion);
 
     if (app.info?.available) return <AppTile key={app.id} app={app.info} status={app.status} updateAvailable={updateAvailable} />;
 

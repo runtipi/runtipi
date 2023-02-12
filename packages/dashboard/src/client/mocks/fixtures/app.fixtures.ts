@@ -54,6 +54,8 @@ export const createAppEntity = (params: CreateAppEntityParams): AppWithInfo => {
     numOpened: 0,
     createdAt: faker.date.past(),
     updatedAt: faker.date.past(),
+    latestVersion: 1,
+    latestDockerVersion: '1.0.0',
     ...overrides,
   };
 };

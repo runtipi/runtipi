@@ -242,6 +242,30 @@ export const getAvailableApps = async () => {
 };
 
 /**
+ *  This function returns an object containing information about the updates available for the app with the provided id.
+ *  It checks if the app is installed or not and looks for the config.json file in the appropriate directory.
+ *  If the config.json file is invalid, it returns null.
+ *  If the app is not found, it returns null.
+ *
+ *  @param {string} id - The app id.
+ *  @param {number} [version] - The current version of the app.
+ *  @returns {Promise<{current: number, latest: number, dockerVersion: string} | null>} - Returns an object containing information about the updates available for the app or null if the app is not found or has an invalid config.json file.
+ */
+export const getUpdateInfo = (id: string) => {
+  const repoConfig = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
+  const parsedConfig = appInfoSchema.safeParse(repoConfig);
+
+  if (parsedConfig.success) {
+    return {
+      latestVersion: parsedConfig.data.tipi_version,
+      latestDockerVersion: parsedConfig.data.version,
+    };
+  }
+
+  return { latestVersion: 0, latestDockerVersion: '0.0.0' };
+};
+
+/**
  *  This function reads the config.json and metadata/description.md files for the app with the provided id,
  *  parses the config file and returns an object with app information.
  *  It checks if the app is installed or not and looks for the config.json file in the appropriate directory.
@@ -282,37 +306,6 @@ export const getAppInfo = (id: string, status?: App['status']) => {
     Logger.error(`Error loading app: ${id}`);
     throw new Error(`Error loading app: ${id}`);
   }
-};
-
-/**
- *  This function returns an object containing information about the updates available for the app with the provided id.
- *  It checks if the app is installed or not and looks for the config.json file in the appropriate directory.
- *  If the config.json file is invalid, it returns null.
- *  If the app is not found, it returns null.
- *
- *  @param {string} id - The app id.
- *  @param {number} [version] - The current version of the app.
- *  @returns {Promise<{current: number, latest: number, dockerVersion: string} | null>} - Returns an object containing information about the updates available for the app or null if the app is not found or has an invalid config.json file.
- */
-export const getUpdateInfo = async (id: string, version?: number) => {
-  const doesFileExist = fileExists(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}`);
-
-  if (!doesFileExist || !version) {
-    return null;
-  }
-
-  const repoConfig = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
-  const parsedConfig = appInfoSchema.safeParse(repoConfig);
-
-  if (parsedConfig.success) {
-    return {
-      current: version || 0,
-      latest: parsedConfig.data.tipi_version,
-      dockerVersion: parsedConfig.data.version,
-    };
-  }
-
-  return null;
 };
 
 /**
