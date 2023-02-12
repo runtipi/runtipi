@@ -32,12 +32,15 @@ nextApp.prepare().then(async () => {
 
     // Run database migrations
     await runPostgresMigrations();
-
-    // startJobs();
     setConfig('status', 'RUNNING');
 
+    // Clone and update apps repo
     await EventDispatcher.dispatchEventAsync('clone_repo', [getConfig().appsRepoUrl]);
     await EventDispatcher.dispatchEventAsync('update_repo', [getConfig().appsRepoUrl]);
+
+    // Scheduled events
+    EventDispatcher.scheduleEvent({ type: 'update_repo', args: [getConfig().appsRepoUrl], cronExpression: '*/30 * * * *' });
+    EventDispatcher.scheduleEvent({ type: 'system_info', args: [], cronExpression: '* * * * *' });
 
     appService.startAllApps();
 
