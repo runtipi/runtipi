@@ -40,6 +40,8 @@ export function TRPCTestClientProvider(props: { children: React.ReactNode }) {
         httpLink({
           url: 'http://localhost:3000/api/trpc',
           fetch: async (input, init?) =>
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore - isomorphic-fetch is missing the `signal` option
             fetch(input, {
               ...init,
             }),

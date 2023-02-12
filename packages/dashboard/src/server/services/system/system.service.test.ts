@@ -6,7 +6,6 @@ import { setConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { SystemServiceClass } from '.';
 
-jest.mock('axios');
 jest.mock('redis');
 
 const SystemService = new SystemServiceClass();

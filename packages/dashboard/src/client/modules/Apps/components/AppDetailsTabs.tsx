@@ -38,7 +38,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => (
               </a>
             </DataGridItem>
             <DataGridItem title="Author">{info.author}</DataGridItem>
-            <DataGridItem title="Port">{info.port}</DataGridItem>
+            <DataGridItem title="Port"><b>{info.port}</b></DataGridItem>
             <DataGridItem title="Categories">
               {info.categories.map((c) => (
                 <div key={c} className="badge bg-green me-1">
@@ -47,7 +47,13 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => (
               ))}
             </DataGridItem>
             <DataGridItem title="Version">{info.version}</DataGridItem>
-            {info.supported_architectures && <DataGridItem title="Supported architectures">{info.supported_architectures}</DataGridItem>}
+            {info.supported_architectures && <DataGridItem title="Supported architectures">{info.supported_architectures.map(
+              (a) => (
+                <div key={a} className="badge bg-red me-1">
+                  {a.toLowerCase()}
+                </div>
+              ),
+            )}</DataGridItem>}
           </DataGrid>
         </div>
       </div>
