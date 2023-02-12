@@ -14,11 +14,6 @@ COPY ./packages/dashboard/package*.json /dashboard/
 COPY ./packages/dashboard/prisma/schema.prisma /dashboard/prisma/
 RUN npm install
 
-WORKDIR /api
-COPY ./packages/system-api/package*.json /api/
-RUN npm install
-
-COPY ./packages/system-api /api
 COPY ./packages/dashboard /dashboard
 
-WORKDIR /
+CMD ["npm", "run", "dev"]
