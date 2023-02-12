@@ -1,4 +1,5 @@
 /* eslint-disable vars-on-top */
+import cron from 'node-cron';
 import fs from 'fs-extra';
 import { Logger } from '../Logger';
 import { getConfig } from '../TipiConfig';
@@ -27,7 +28,14 @@ type SystemEvent = {
   creationDate: Date;
 };
 
-type EventStatusTypes = 'running' | 'success' | 'error' | 'waiting';
+const EVENT_STATUS = {
+  RUNNING: 'running',
+  SUCCESS: 'success',
+  ERROR: 'error',
+  WAITING: 'waiting',
+} as const;
+
+type EventStatus = typeof EVENT_STATUS[keyof typeof EVENT_STATUS]; // 'running' | 'success' | 'error' | 'waiting';
 
 const WATCH_FILE = '/runtipi/state/events';
 
@@ -60,7 +68,8 @@ class EventDispatcher {
 
   /**
    * Generate a random task id
-   * @returns - Random id
+   *
+   * @returns {string} id - Randomly generated id
    */
   static generateId() {
     return Math.random().toString(36).substring(2, 9);
@@ -125,10 +134,11 @@ class EventDispatcher {
 
   /**
    * Check event status
-   * @param id - Event id
-   * @returns - Event status
+   *
+   * @param {string} id - Event id
+   * @returns {EventStatus} - Event status
    */
-  private getEventStatus(id: string): EventStatusTypes {
+  private getEventStatus(id: string): EventStatus {
     const event = this.queue.find((e) => e.id === id);
 
     if (!event) {
@@ -148,16 +158,17 @@ class EventDispatcher {
       return 'waiting';
     }
 
-    const status = line.split(' ')[2] as EventStatusTypes;
+    const status = line.split(' ')[2] as EventStatus;
 
     return status;
   }
 
   /**
    * Dispatch an event to the queue
-   * @param type - Event type
-   * @param args - Event arguments
-   * @returns - Event object
+   *
+   * @param {EventType} type - Event type
+   * @param {[string]} args - Event arguments
+   * @returns {SystemEvent} event - Event object
    */
   public dispatchEvent(type: EventType, args?: string[]): SystemEvent {
     const event: SystemEvent = {
@@ -173,10 +184,12 @@ class EventDispatcher {
   }
 
   /**
-   * Clear event from queue
-   * @param id - Event id
+   * Clears an event from the queue
+   *
+   * @param {SystemEvent} event - The event to clear
+   * @param {EventStatus} status - The status to consider the event to
    */
-  private clearEvent(event: SystemEvent, status: EventStatusTypes = 'success') {
+  private clearEvent(event: SystemEvent, status: EventStatus = 'success') {
     this.queue = this.queue.filter((e) => e.id !== event.id);
     if (fs.existsSync(`/app/logs/${event.id}.log`)) {
       const log = fs.readFileSync(`/app/logs/${event.id}.log`, 'utf8');
@@ -192,8 +205,9 @@ class EventDispatcher {
 
   /**
    * Dispatch an event to the queue and wait for it to finish
-   * @param type - Event type
-   * @param args - Event arguments
+   *
+   * @param {EventType} type - Event type
+   * @param {[string[]]} args - Event arguments
    * @returns - Promise that resolves when the event is done
    */
   public async dispatchEventAsync(type: EventType, args?: string[]): Promise<{ success: boolean; stdout?: string }> {
@@ -230,6 +244,14 @@ class EventDispatcher {
     this.lock = null;
     EventDispatcher.instance = null;
     fs.writeFileSync(WATCH_FILE, '');
+  }
+
+  public scheduleEvent(params: { type: EventType; args?: string[]; cronExpression: string }) {
+    const { type, args, cronExpression } = params;
+
+    cron.schedule(cronExpression, async () => {
+      this.dispatchEvent(type, args);
+    });
   }
 }
 

@@ -2,20 +2,21 @@ import path from 'path';
 import pg from 'pg';
 import { migrate } from '@runtipi/postgres-migrations';
 import { Logger } from './src/server/core/Logger';
+import { getConfig } from './src/server/core/TipiConfig';
 
 export const runPostgresMigrations = async (dbName?: string) => {
   Logger.info('Starting database migration');
 
-  const { POSTGRES_HOST, POSTGRES_DBNAME, POSTGRES_USERNAME, POSTGRES_PASSWORD, POSTGRES_PORT = 5432 } = process.env;
+  const { postgresHost, postgresDatabase, postgresUsername, postgresPassword, postgresPort } = getConfig();
 
-  Logger.info('Connecting to database', POSTGRES_DBNAME, 'on', POSTGRES_HOST, 'as', POSTGRES_USERNAME, 'on port', POSTGRES_PORT);
+  Logger.info(`Connecting to database ${postgresDatabase} on ${postgresHost} as ${postgresUsername} on port ${postgresPort}`);
 
   const client = new pg.Client({
-    user: POSTGRES_USERNAME,
-    host: POSTGRES_HOST,
-    database: dbName || POSTGRES_DBNAME,
-    password: POSTGRES_PASSWORD,
-    port: Number(POSTGRES_PORT),
+    user: postgresUsername,
+    host: postgresHost,
+    database: dbName || postgresDatabase,
+    password: postgresPassword,
+    port: Number(postgresPort),
   });
   await client.connect();
 
@@ -44,5 +45,3 @@ export const runPostgresMigrations = async (dbName?: string) => {
   Logger.info('Migration complete');
   await client.end();
 };
-
-runPostgresMigrations();
