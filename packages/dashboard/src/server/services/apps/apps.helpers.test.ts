@@ -403,33 +403,26 @@ describe('getUpdateInfo', () => {
   });
 
   it('Should return update info', async () => {
-    const updateInfo = await getUpdateInfo(app1.id, 1);
+    const updateInfo = getUpdateInfo(app1.id);
 
-    expect(updateInfo?.latest).toBe(app1.tipi_version);
-    expect(updateInfo?.current).toBe(1);
+    expect(updateInfo?.latestVersion).toBe(app1.tipi_version);
   });
 
-  it('Should return null if app is not installed', async () => {
-    const updateInfo = await getUpdateInfo(faker.random.word(), 1);
+  it('Should return default values if app is not installed', async () => {
+    const updateInfo = getUpdateInfo(faker.random.word());
 
-    expect(updateInfo).toBeNull();
+    expect(updateInfo).toEqual({ latestVersion: 0, latestDockerVersion: '0.0.0' });
   });
 
-  it('Should return null if config.json is invalid', async () => {
+  it('Should return default values if config.json is invalid', async () => {
     const { appInfo, MockFiles } = await createApp({ installed: true }, db);
     MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = 'invalid json';
     // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
-    const updateInfo = await getUpdateInfo(appInfo.id, 1);
+    const updateInfo = getUpdateInfo(appInfo.id);
 
-    expect(updateInfo).toBeNull();
-  });
-
-  it('should return null if version is not provided', async () => {
-    const updateInfo = await getUpdateInfo(app1.id);
-
-    expect(updateInfo).toBe(null);
+    expect(updateInfo).toEqual({ latestVersion: 0, latestDockerVersion: '0.0.0' });
   });
 });
 

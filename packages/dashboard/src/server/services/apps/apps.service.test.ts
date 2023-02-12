@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import waitForExpect from 'wait-for-expect';
 import { PrismaClient } from '@prisma/client';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher, EVENT_TYPES } from '../../core/EventDispatcher';
@@ -557,61 +558,6 @@ describe('List apps', () => {
   });
 });
 
-describe.skip('Start all apps', () => {
-  it('Should correctly start all apps', async () => {
-    // arrange
-    const app1create = await createApp({ installed: true }, db);
-    const app2create = await createApp({ installed: true }, db);
-    const app1 = app1create.appInfo;
-    const app2 = app2create.appInfo;
-    const apps = [app1, app2].sort((a, b) => a.id.localeCompare(b.id));
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1create.MockFiles, app2create.MockFiles));
-
-    await AppsService.startAllApps();
-
-    expect(spy.mock.calls.length).toBe(2);
-
-    const expectedCalls = apps.map((app) => [EVENT_TYPES.APP, ['start', app.id]]);
-
-    expect(spy.mock.calls).toEqual(expect.arrayContaining(expectedCalls));
-  });
-
-  it('Should not start apps which have not status RUNNING', async () => {
-    // arrange
-    const app1 = await createApp({ installed: true, status: 'running' }, db);
-    const app2 = await createApp({ installed: true, status: 'running' }, db);
-    const app3 = await createApp({ installed: true, status: 'stopped' }, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1.MockFiles, app2.MockFiles, app3.MockFiles));
-
-    await AppsService.startAllApps();
-    const apps = await db.app.findMany();
-
-    expect(spy.mock.calls.length).toBe(2);
-    expect(apps.length).toBe(3);
-  });
-
-  it('Should put app status to STOPPED if start script fails', async () => {
-    // Arrange
-    await createApp({ installed: true }, db);
-    await createApp({ installed: true }, db);
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
-
-    // Act
-    await AppsService.startAllApps();
-
-    const apps = await db.app.findMany();
-
-    // Assert
-    expect(apps.length).toBe(2);
-    expect(apps[0]?.status).toBe(APP_STATUS.STOPPED);
-    expect(apps[1]?.status).toBe(APP_STATUS.STOPPED);
-  });
-});
-
 describe('Update app', () => {
   it('Should correctly update app', async () => {
     const app1create = await createApp({ installed: true }, db);
@@ -644,5 +590,75 @@ describe('Update app', () => {
     await expect(AppsService.updateApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to update\nstdout: error`);
     const app = await db.app.findUnique({ where: { id: app1.id } });
     expect(app?.status).toBe(APP_STATUS.STOPPED);
+  });
+});
+
+describe('installedApps', () => {
+  it('Should list installed apps', async () => {
+    // Arrange
+    const app1 = await createApp({ installed: true }, db);
+    const app2 = await createApp({ installed: true }, db);
+    const app3 = await createApp({ installed: true }, db);
+    const app4 = await createApp({ installed: false }, db);
+    // @ts-expect-error - Mocking fs
+    fs.__createMockFiles(Object.assign(app1.MockFiles, app2.MockFiles, app3.MockFiles, app4.MockFiles));
+
+    // Act
+    const apps = await AppsService.installedApps();
+
+    // Assert
+    expect(apps.length).toBe(3);
+  });
+
+  it('Should not list app with invalid config', async () => {
+    // Arrange
+    const app1 = await createApp({ installed: true }, db);
+    const app2 = await createApp({ installed: true }, db);
+    const app3 = await createApp({ installed: true }, db);
+    const app4 = await createApp({ installed: false }, db);
+    // @ts-expect-error - Mocking fs
+    fs.__createMockFiles(Object.assign(app2.MockFiles, app3.MockFiles, app4.MockFiles, { [`/runtipi/repos/repo-id/apps/${app1.appInfo.id}/config.json`]: 'invalid json' }));
+
+    // Act
+    const apps = await AppsService.installedApps();
+
+    // Assert
+    expect(apps.length).toBe(2);
+  });
+});
+
+describe('startAllApps', () => {
+  it('should start all apps with status RUNNING', async () => {
+    // Arrange
+    const app1 = await createApp({ installed: true, status: 'running' }, db);
+    const app2 = await createApp({ installed: true, status: 'running' }, db);
+    const app3 = await createApp({ installed: true, status: 'stopped' }, db);
+    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    // @ts-expect-error - Mocking fs
+    fs.__createMockFiles(Object.assign(app1.MockFiles, app2.MockFiles, app3.MockFiles));
+
+    // Act
+    await AppsService.startAllApps();
+
+    // Assert
+    expect(spy.mock.calls.length).toBe(2);
+  });
+
+  it('should put status to STOPPED if start script fails', async () => {
+    // Arrange
+    const app1 = await createApp({ installed: true, status: 'running' }, db);
+    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    // @ts-expect-error - Mocking fs
+    fs.__createMockFiles(Object.assign(app1.MockFiles));
+    spy.mockResolvedValueOnce({ success: false, stdout: 'error' });
+
+    // Act
+    await AppsService.startAllApps();
+
+    // Assert
+    await waitForExpect(async () => {
+      const apps = await db.app.findMany();
+      expect(apps[0]?.status).toBe(APP_STATUS.STOPPED);
+    });
   });
 });

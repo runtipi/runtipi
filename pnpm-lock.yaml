@@ -99,6 +99,7 @@ importers:
       typescript: 4.9.4
       uuid: ^9.0.0
       validator: ^13.7.0
+      wait-for-expect: ^3.0.2
       whatwg-fetch: ^3.6.2
       winston: ^3.7.2
       zod: ^3.19.1
@@ -189,6 +190,7 @@ importers:
       ts-jest: 29.0.3_iyz3vhhlowkpp2xbqliblzwv3y
       ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq
       typescript: 4.9.4
+      wait-for-expect: 3.0.2
       whatwg-fetch: 3.6.2
 
   packages/system-api:
@@ -11304,6 +11306,10 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       xml-name-validator: 4.0.0
+    dev: true
+
+  /wait-for-expect/3.0.2:
+    resolution: {integrity: sha512-cfS1+DZxuav1aBYbaO/kE06EOS8yRw7qOFoD3XtjTkYvCvh3zUvNST8DXK/nPaeqIzIv3P3kL3lRJn8iwOiSag==}
     dev: true
 
   /walker/1.0.8:

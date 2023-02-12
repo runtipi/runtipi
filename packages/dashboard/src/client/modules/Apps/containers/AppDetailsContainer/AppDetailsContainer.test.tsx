@@ -19,7 +19,7 @@ describe('Test: AppDetailsContainer', () => {
 
     it('should display update button when update is available', async () => {
       // Arrange
-      const app = createAppEntity({ overrides: { version: 2 }, overridesInfo: { tipi_version: 3 } });
+      const app = createAppEntity({ overrides: { version: 2, latestVersion: 3 } });
       render(<AppDetailsContainer app={app} />);
 
       // Assert
@@ -173,7 +173,7 @@ describe('Test: AppDetailsContainer', () => {
   describe('Test: Update app', () => {
     it('should display toast success when update success', async () => {
       // Arrange
-      const app = createAppEntity({ overrides: { version: 2 }, overridesInfo: { tipi_version: 3 } });
+      const app = createAppEntity({ overrides: { version: 2, latestVersion: 3 } });
       server.use(getTRPCMock({ path: ['app', 'updateApp'], type: 'mutation', response: app }));
       const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
@@ -195,7 +195,7 @@ describe('Test: AppDetailsContainer', () => {
       // Arrange
       const { result } = renderHook(() => useToastStore());
       server.use(getTRPCMockError({ path: ['app', 'updateApp'], type: 'mutation', message: 'my big error' }));
-      const app = createAppEntity({ overrides: { version: 2 }, overridesInfo: { tipi_version: 3 } });
+      const app = createAppEntity({ overrides: { version: 2, latestVersion: 3 }, overridesInfo: { tipi_version: 3 } });
       render(<AppDetailsContainer app={app} />);
 
       // Act

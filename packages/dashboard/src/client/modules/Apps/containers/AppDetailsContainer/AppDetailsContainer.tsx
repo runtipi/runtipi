@@ -105,7 +105,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     onError: (e) => addToast({ title: 'Update error', description: e.message, status: 'error' }),
   });
 
-  const updateAvailable = Number(app?.version || 0) < Number(app?.info.tipi_version);
+  const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
 
   const handleInstallSubmit = async (values: FormValues) => {
     const { exposed, domain, ...form } = values;
@@ -144,7 +144,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     }
   };
 
-  const newVersion = [app?.info.version ? `${app?.info.version}` : '', `(${String(app?.info.tipi_version)})`].join(' ');
+  const newVersion = [app?.latestDockerVersion ? `${app?.latestDockerVersion}` : '', `(${String(app?.latestVersion)})`].join(' ');
 
   return (
     <div className="card" data-testid="app-details">
