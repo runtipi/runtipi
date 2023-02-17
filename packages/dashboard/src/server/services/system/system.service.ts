@@ -1,6 +1,6 @@
 import semver from 'semver';
 import { z } from 'zod';
-import fetch from 'node-fetch';
+import fetch from 'node-fetch-commonjs';
 import { readJsonFile } from '../../common/fs.helpers';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
