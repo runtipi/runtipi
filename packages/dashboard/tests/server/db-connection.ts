@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import pg from 'pg';
-import { runPostgresMigrations } from '../../run-migration';
+import { runPostgresMigrations } from '../../src/server/run-migration';
 import { getConfig } from '../../src/server/core/TipiConfig';
 
 export const getTestDbClient = async (testsuite: string) => {
