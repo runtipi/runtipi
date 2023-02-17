@@ -78,7 +78,6 @@ services:
       - ${STORAGE_PATH}:/app/storage
     labels:
       traefik.enable: true
-
       # Web
       traefik.http.routers.dashboard.rule: PathPrefix("/")
       traefik.http.routers.dashboard.service: dashboard

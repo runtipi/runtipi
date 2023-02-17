@@ -29,7 +29,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 0,
     'react/no-unused-prop-types': 0,
     'react/button-has-type': 0,
-    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/*.factory.{ts,tsx}', '**/mocks/**', 'tests/**'] }],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: ['esbuild.js', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/*.factory.{ts,tsx}', '**/mocks/**', 'tests/**'] }],
     'no-underscore-dangle': 0,
   },
   globals: {

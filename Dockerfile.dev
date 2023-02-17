@@ -2,18 +2,22 @@ ARG NODE_VERSION="18.12.1"
 ARG ALPINE_VERSION="3.16"
 
 FROM node:${NODE_VERSION}-buster-slim 
-WORKDIR /
 
 RUN apt update
 RUN apt install -y openssl
 
+RUN npm install pnpm -g
 RUN npm install node-gyp -g
 
-WORKDIR /dashboard
-COPY ./packages/dashboard/package*.json /dashboard/
-COPY ./packages/dashboard/prisma/schema.prisma /dashboard/prisma/
-RUN npm install
+WORKDIR /app
 
-COPY ./packages/dashboard /dashboard
+COPY ./packages/dashboard/pnpm-lock.yaml ./
+RUN pnpm fetch
+
+COPY ./packages/dashboard/package*.json ./
+COPY ./packages/dashboard/prisma/schema.prisma ./prisma/
+
+RUN pnpm install -r --prefer-offline 
+COPY ./packages/dashboard ./
 
 CMD ["npm", "run", "dev"]

@@ -1,17 +1,31 @@
-/* eslint-disable consistent-return */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable global-require */
 import express from 'express';
 import { parse } from 'url';
-import next from 'next';
-import { EventDispatcher } from './src/server/core/EventDispatcher';
-import { getConfig, setConfig } from './src/server/core/TipiConfig';
-import { Logger } from './src/server/core/Logger';
+import type { NextServer } from 'next/dist/server/next';
+import { EventDispatcher } from './core/EventDispatcher';
+import { getConfig, setConfig } from './core/TipiConfig';
+import { Logger } from './core/Logger';
 import { runPostgresMigrations } from './run-migration';
-import { AppServiceClass } from './src/server/services/apps/apps.service';
-import { prisma } from './src/server/db/client';
+import { AppServiceClass } from './services/apps/apps.service';
+import { prisma } from './db/client';
+
+let conf = {};
+let nextApp: NextServer;
 
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({ dev });
+
+if (!dev) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const NextServer = require('next/dist/server/next-server').default;
+  conf = require('./.next/required-server-files.json').config;
+  nextApp = new NextServer({ hostname: 'localhost', dev, port, customServer: true, conf });
+} else {
+  const next = require('next').default;
+  nextApp = next({ dev });
+}
+
 const handle = nextApp.getRequestHandler();
 
 nextApp.prepare().then(async () => {
