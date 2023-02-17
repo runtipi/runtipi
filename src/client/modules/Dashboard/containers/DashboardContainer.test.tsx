@@ -22,6 +22,6 @@ describe('Test: Dashboard', () => {
       },
     };
 
-    render(<DashboardContainer data={data} loading={false} />);
+    render(<DashboardContainer data={data} />);
   });
 });

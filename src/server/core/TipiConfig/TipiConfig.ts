@@ -9,8 +9,9 @@ export const ARCHITECTURES = {
   ARM64: 'arm64',
   AMD64: 'amd64',
 } as const;
-export type Architecture = typeof ARCHITECTURES[keyof typeof ARCHITECTURES];
+export type Architecture = (typeof ARCHITECTURES)[keyof typeof ARCHITECTURES];
 
+const conf = { ...process.env, ...nextConfig()?.serverRuntimeConfig };
 const {
   NODE_ENV,
   JWT_SECRET,
@@ -27,8 +28,7 @@ const {
   POSTGRES_USERNAME,
   POSTGRES_PASSWORD,
   POSTGRES_PORT = 5432,
-} = nextConfig()?.serverRuntimeConfig || process.env;
-// Use process.env if nextConfig is not available
+} = conf;
 
 const configSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),

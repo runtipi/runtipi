@@ -15,14 +15,18 @@ FROM builder_base AS builder
 
 WORKDIR /app
 
-COPY ./packages/dashboard/pnpm-lock.yaml ./
+COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch
 
-COPY ./packages/dashboard/package*.json ./
-COPY ./packages/dashboard/prisma/schema.prisma ./prisma/
+COPY ./package*.json ./
+COPY ./prisma/schema.prisma ./prisma/
 
 RUN pnpm install -r --prefer-offline 
-COPY ./packages/dashboard ./
+COPY ./src ./src
+COPY ./esbuild.js ./esbuild.js
+COPY ./tsconfig.json ./tsconfig.json
+COPY ./next.config.mjs ./next.config.mjs
+COPY ./public ./public
 
 RUN npm run build
 
