@@ -1,11 +1,14 @@
 import semver from 'semver';
 import { z } from 'zod';
+import fetch from 'node-fetch';
 import { readJsonFile } from '../../common/fs.helpers';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
 import TipiCache from '../../core/TipiCache';
 import { getConfig, setConfig } from '../../core/TipiConfig';
-import { SystemStatus } from '../../../client/state/systemStore';
+
+const SYSTEM_STATUS = ['UPDATING', 'RESTARTING', 'RUNNING'] as const;
+type SystemStatus = (typeof SYSTEM_STATUS)[keyof typeof SYSTEM_STATUS];
 
 const systemInfoSchema = z.object({
   cpu: z.object({
@@ -43,7 +46,7 @@ export class SystemServiceClass {
 
       if (!version) {
         const data = await fetch('https://api.github.com/repos/meienberger/runtipi/releases/latest');
-        const release = await data.json();
+        const release = (await data.json()) as { name: string };
 
         version = release.name.replace('v', '');
         await this.cache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);

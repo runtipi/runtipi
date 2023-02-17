@@ -19,7 +19,7 @@ export const EVENT_TYPES = {
   SYSTEM_INFO: 'system_info',
 } as const;
 
-export type EventType = typeof EVENT_TYPES[keyof typeof EVENT_TYPES];
+export type EventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
 
 type SystemEvent = {
   id: string;
@@ -35,7 +35,7 @@ const EVENT_STATUS = {
   WAITING: 'waiting',
 } as const;
 
-type EventStatus = typeof EVENT_STATUS[keyof typeof EVENT_STATUS]; // 'running' | 'success' | 'error' | 'waiting';
+type EventStatus = (typeof EVENT_STATUS)[keyof typeof EVENT_STATUS];
 
 const WATCH_FILE = '/runtipi/state/events';
 
