@@ -1,11 +1,12 @@
 import create from 'zustand';
 
-export enum SystemStatus {
-  RUNNING = 'RUNNING',
-  RESTARTING = 'RESTARTING',
-  UPDATING = 'UPDATING',
-  LOADING = 'LOADING',
-}
+const SYSTEM_STATUS = {
+  RUNNING: 'RUNNING',
+  RESTARTING: 'RESTARTING',
+  UPDATING: 'UPDATING',
+  LOADING: 'LOADING',
+} as const;
+export type SystemStatus = (typeof SYSTEM_STATUS)[keyof typeof SYSTEM_STATUS];
 
 type Store = {
   status: SystemStatus;
@@ -15,7 +16,7 @@ type Store = {
 };
 
 export const useSystemStore = create<Store>((set) => ({
-  status: SystemStatus.RUNNING,
+  status: 'RUNNING',
   version: { current: '0.0.0', latest: '0.0.0' },
   setStatus: (status: SystemStatus) => set((state) => ({ ...state, status })),
   setVersion: (version: { current: string; latest?: string }) => set((state) => ({ ...state, version })),

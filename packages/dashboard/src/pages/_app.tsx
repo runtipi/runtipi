@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { setDarkMode } = useUIStore();
   const { setStatus, setVersion } = useSystemStore();
 
-  trpc.system.status.useQuery(undefined, { networkMode: 'online', onSuccess: (d) => setStatus(d.status || SystemStatus.RUNNING) });
+  trpc.system.status.useQuery(undefined, { networkMode: 'online', onSuccess: (d) => setStatus((d.status as SystemStatus) || 'RUNNING') });
   const version = trpc.system.getVersion.useQuery(undefined, { networkMode: 'online' });
 
   useEffect(() => {

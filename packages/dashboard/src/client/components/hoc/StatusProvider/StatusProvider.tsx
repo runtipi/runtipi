@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useRef } from 'react';
 import router from 'next/router';
-import { SystemStatus, useSystemStore } from '../../../state/systemStore';
+import {  useSystemStore } from '../../../state/systemStore';
 import { StatusScreen } from '../../StatusScreen';
 
 interface IProps {
@@ -13,29 +13,29 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
 
   useEffect(() => {
     // If previous was not running and current is running, we need to refresh the page
-    if (status === SystemStatus.RUNNING && s.current !== SystemStatus.RUNNING) {
+    if (status === 'RUNNING' && s.current !== 'RUNNING') {
       router.reload();
     }
-    if (status === SystemStatus.RUNNING) {
-      s.current = SystemStatus.RUNNING;
+    if (status === 'RUNNING') {
+      s.current = 'RUNNING';
     }
-    if (status === SystemStatus.RESTARTING) {
-      s.current = SystemStatus.RESTARTING;
+    if (status === 'RESTARTING') {
+      s.current = 'RESTARTING';
     }
-    if (status === SystemStatus.UPDATING) {
-      s.current = SystemStatus.UPDATING;
+    if (status === 'UPDATING') {
+      s.current = 'UPDATING';
     }
   }, [status, s]);
 
-  if (s.current === SystemStatus.LOADING) {
+  if (s.current === 'LOADING') {
     return <StatusScreen title="" subtitle="" />;
   }
 
-  if (s.current === SystemStatus.RESTARTING) {
+  if (s.current === 'RESTARTING') {
     return <StatusScreen title="Your system is restarting..." subtitle="Please do not refresh this page" />;
   }
 
-  if (s.current === SystemStatus.UPDATING) {
+  if (s.current === 'UPDATING') {
     return <StatusScreen title="Your system is updating..." subtitle="Please do not refresh this page" />;
   }
 

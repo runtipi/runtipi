@@ -3,7 +3,7 @@
   "version": "0.8.1",
   "private": true,
   "scripts": {
-    "copy:migrations": "cp -r src/server/migrations dist/migrations",
+    "copy:migrations": "mkdir -p dist/migrations && cp -r src/server/migrations dist/migrations",
     "prisma:pull": "prisma db pull",
     "test": "dotenv -e .env.test -- jest --colors",
     "test:client": "jest --colors --selectProjects client --",
