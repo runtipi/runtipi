@@ -1,8 +1,8 @@
 import path from 'path';
 import pg from 'pg';
 import { migrate } from '@runtipi/postgres-migrations';
-import { Logger } from './src/server/core/Logger';
-import { getConfig } from './src/server/core/TipiConfig';
+import { Logger } from './core/Logger';
+import { getConfig } from './core/TipiConfig';
 
 export const runPostgresMigrations = async (dbName?: string) => {
   Logger.info('Starting database migration');
