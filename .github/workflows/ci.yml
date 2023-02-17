@@ -59,16 +59,16 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: cd packages/dashboard && pnpm install
+        run: pnpm install
 
       - name: Build client
-        run: cd packages/dashboard && pnpm build:next
+        run: pnpm build:next
 
       - name: Run linter
-        run: cd packages/dashboard && pnpm lint
+        run: pnpm lint
 
       - name: Run tests
-        run: cd packages/dashboard && pnpm test
+        run: pnpm test
 
       - uses: codecov/codecov-action@v3
         with:

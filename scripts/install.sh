@@ -65,7 +65,11 @@ if [ -f "package.json" ]; then
 fi
 cp -r runtipi-"${LATEST_VERSION}"/package.json .
 
+mkdir -p apps
+mkdir -p app-data
 mkdir -p state
+mkdir -p repos
+
 mkdir -p media/torrents
 mkdir -p media/torrents/watch
 mkdir -p media/torrents/completed
