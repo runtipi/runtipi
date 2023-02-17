@@ -1,12 +1,14 @@
 import fs from 'fs-extra';
 import semver from 'semver';
 import { faker } from '@faker-js/faker';
+import fetch from 'node-fetch-commonjs';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { setConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { SystemServiceClass } from '.';
 
 jest.mock('redis');
+jest.mock('node-fetch-commonjs');
 
 const SystemService = new SystemServiceClass();
 

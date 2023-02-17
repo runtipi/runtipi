@@ -14,7 +14,7 @@ const onRebuild = () => {
     if (server) server.kill('SIGINT');
     server = spawn('node', ['dist/index.js'], { stdio: [0, 1, 2] });
   } else {
-    spawn('yarn', ['next', 'build'], { stdio: [0, 1, 2] });
+    spawn('pnpm', ['next', 'build'], { stdio: [0, 1, 2] });
   }
 };
 

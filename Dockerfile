@@ -29,6 +29,8 @@ RUN npm run build
 # APP
 FROM node_base AS app
 
+USER node
+
 WORKDIR /app
 
 COPY --from=builder /app/dist ./
