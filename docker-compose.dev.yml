@@ -76,8 +76,7 @@ services:
     networks:
       - tipi_main_network
     volumes:
-      - ${PWD}/packages/dashboard/src:/dashboard/src
-      - ${PWD}/packages/dashboard/server.ts:/dashboard/server.ts
+      - ${PWD}/packages/dashboard/src:/app/src
       # - /dashboard/node_modules
       # - /dashboard/.next
       - ${PWD}/state:/runtipi/state
