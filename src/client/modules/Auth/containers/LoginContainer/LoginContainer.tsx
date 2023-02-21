@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 import { useToastStore } from '../../../../state/toastStore';
 import { trpc } from '../../../../utils/trpc';
@@ -7,6 +8,7 @@ import { LoginForm } from '../../components/LoginForm';
 type FormValues = { email: string; password: string };
 
 export const LoginContainer: React.FC = () => {
+  const router = useRouter();
   const { addToast } = useToastStore();
   const utils = trpc.useContext();
   const login = trpc.auth.login.useMutation({
@@ -17,6 +19,7 @@ export const LoginContainer: React.FC = () => {
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);
       utils.auth.me.invalidate();
+      router.push('/');
     },
   });
 

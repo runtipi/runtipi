@@ -3,6 +3,7 @@ import { IconBrandGithub, IconHeart, IconLogout, IconMoon, IconSun } from '@tabl
 import Image from 'next/image';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { getUrl } from '../../../core/helpers/url-helpers';
 import { useUIStore } from '../../../state/uiStore';
 import { NavBar } from '../NavBar';
@@ -13,12 +14,14 @@ interface IProps {
 }
 
 export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
+  const router = useRouter();
   const { setDarkMode } = useUIStore();
   const utils = trpc.useContext();
   const logout = trpc.auth.logout.useMutation({
     onSuccess: () => {
       localStorage.removeItem('token');
       utils.auth.me.invalidate();
+      router.push('/login');
     },
   });
 

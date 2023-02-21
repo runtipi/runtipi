@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import ReactTooltip from 'react-tooltip';
 import semver from 'semver';
+import { useRouter } from 'next/router';
 import { Header } from '../ui/Header';
 import styles from './Layout.module.scss';
 import { useSystemStore } from '../../state/systemStore';
@@ -18,9 +19,14 @@ interface IProps {
 }
 
 export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions }) => {
+  const router = useRouter();
   const refreshToken = trpc.auth.refreshToken.useMutation({
     onSuccess: (data) => {
       if (data?.token) localStorage.setItem('token', data.token);
+    },
+    onError: () => {
+      localStorage.removeItem('token');
+      router.push('/login');
     },
   });
 
@@ -52,10 +58,8 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
 
   return (
     <div data-testid={`${title?.toLowerCase().split(' ').join('-')}-layout`} className="page">
-      <Head>
-        <title>{title} - Tipi</title>
-      </Head>
-      <ReactTooltip offset={{ right: 1 }} effect="solid" place="bottom" />
+      <Head>{/* <title>{title} - Tipi</title> */}</Head>
+      {/* <ReactTooltip offset={{ right: 1 }} effect="solid" place="bottom" /> */}
       <Header isUpdateAvailable={!isLatest} />
       <div className="page-wrapper">
         <div className="page-header d-print-none">
