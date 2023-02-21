@@ -8,7 +8,8 @@ UPDATE
 SET
     "version" = '1'
 WHERE
-    "version" IS NULL;
+    "version" IS NULL
+    OR "version" = '0';
 
 -- Set version field to not null
 ALTER TABLE "app"

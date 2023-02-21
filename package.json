@@ -3,7 +3,7 @@
   "version": "0.8.1",
   "description": "A homeserver for everyone",
   "scripts": {
-    "copy:migrations": "mkdir -p dist/migrations && cp -r ./src/server/migrations dist/migrations",
+    "copy:migrations": "mkdir -p dist/migrations && cp -r ./src/server/migrations dist",
     "prisma:pull": "prisma db pull",
     "test": "dotenv -e .env.test -- jest --colors",
     "test:client": "jest --colors --selectProjects client --",
