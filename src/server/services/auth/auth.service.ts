@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
+import { fileExists, unlinkFile } from '../../common/fs.helpers';
 
 type UsernamePasswordInput = {
   username: string;
@@ -59,6 +60,12 @@ export class AuthServiceClass {
    * @throws {Error} - If the email or password is missing, the email is invalid or the user already exists
    */
   public register = async (input: UsernamePasswordInput) => {
+    const registeredUser = await this.prisma.user.findFirst({ where: { operator: true } });
+
+    if (registeredUser) {
+      throw new Error('There is already an admin user. Please login to create a new user from the admin panel.');
+    }
+
     const { password, username } = input;
     const email = username.trim().toLowerCase();
 
@@ -77,7 +84,7 @@ export class AuthServiceClass {
     }
 
     const hash = await argon2.hash(password);
-    const newUser = await this.prisma.user.create({ data: { username: email, password: hash } });
+    const newUser = await this.prisma.user.create({ data: { username: email, password: hash, operator: true } });
 
     const session = v4();
     const token = jwt.sign({ id: newUser.id, session }, getConfig().jwtSecret, { expiresIn: '1d' });
@@ -145,8 +152,65 @@ export class AuthServiceClass {
    * @returns {Promise<boolean>} - A boolean indicating if the system is configured or not
    */
   public isConfigured = async (): Promise<boolean> => {
-    const count = await this.prisma.user.count();
+    const count = await this.prisma.user.count({ where: { operator: true } });
 
     return count > 0;
+  };
+
+  /**
+   * Change the password of the operator user
+   *
+   * @param {object} params - An object containing the new password
+   * @param {string} params.newPassword - The new password
+   * @returns {Promise<string>} - The username of the operator user
+   * @throws {Error} - If the operator user is not found or if there is no password change request
+   */
+  public changePassword = async (params: { newPassword: string }) => {
+    if (!AuthServiceClass.checkPasswordChangeRequest()) {
+      throw new Error('No password change request found');
+    }
+
+    const { newPassword } = params;
+    const user = await this.prisma.user.findFirst({ where: { operator: true } });
+
+    if (!user) {
+      throw new Error('Operator user not found');
+    }
+
+    const hash = await argon2.hash(newPassword);
+    await this.prisma.user.update({ where: { id: user.id }, data: { password: hash } });
+
+    await unlinkFile(`/runtipi/state/password-change-request`);
+
+    return { email: user.username };
+  };
+
+  /*
+   * Check if there is a pending password change request for the given email
+   * Returns true if there is a file in the password change requests folder with the given email
+   *
+   * @returns {boolean} - A boolean indicating if there is a password change request or not
+   */
+  public static checkPasswordChangeRequest = () => {
+    if (fileExists(`/runtipi/state/password-change-request`)) {
+      return true;
+    }
+
+    return false;
+  };
+
+  /*
+   * If there is a pending password change request, remove it
+   * Returns true if the file is removed successfully
+   *
+   * @returns {boolean} - A boolean indicating if the file is removed successfully or not
+   * @throws {Error} - If the file cannot be removed
+   */
+  public static cancelPasswordChangeRequest = async () => {
+    if (fileExists(`/runtipi/state/password-change-request`)) {
+      await unlinkFile(`/runtipi/state/password-change-request`);
+    }
+
+    return true;
   };
 }

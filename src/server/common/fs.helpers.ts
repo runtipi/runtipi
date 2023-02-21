@@ -35,3 +35,5 @@ export const getSeed = () => {
   const seed = readFile('/runtipi/state/seed');
   return seed.toString();
 };
+
+export const unlinkFile = (path: string) => fs.promises.unlink(path);

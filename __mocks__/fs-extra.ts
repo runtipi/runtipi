@@ -102,6 +102,17 @@ class FsMock {
   };
 
   getMockFiles = () => this.mockFiles;
+
+  promises = {
+    unlink: (p: string) => {
+      if (this.mockFiles[p] instanceof Array) {
+        this.mockFiles[p].forEach((file: string) => {
+          delete this.mockFiles[path.join(p, file)];
+        });
+      }
+      delete this.mockFiles[p];
+    },
+  };
 }
 
 export default FsMock.getInstance();
