@@ -31,6 +31,7 @@ module.exports = {
     'react/button-has-type': 0,
     'import/no-extraneous-dependencies': ['error', { devDependencies: ['esbuild.js', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/*.factory.{ts,tsx}', '**/mocks/**', 'tests/**'] }],
     'no-underscore-dangle': 0,
+    'arrow-body-style': 0,
   },
   globals: {
     JSX: true,

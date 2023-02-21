@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 import { useToastStore } from '../../../../state/toastStore';
 import { trpc } from '../../../../utils/trpc';
@@ -8,6 +9,7 @@ type FormValues = { email: string; password: string };
 
 export const RegisterContainer: React.FC = () => {
   const { addToast } = useToastStore();
+  const router = useRouter();
   const utils = trpc.useContext();
   const register = trpc.auth.register.useMutation({
     onError: (e) => {
@@ -17,6 +19,7 @@ export const RegisterContainer: React.FC = () => {
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);
       utils.auth.me.invalidate();
+      router.push('/');
     },
   });
 
