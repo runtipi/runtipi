@@ -31,66 +31,12 @@ if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
 fi
 
 ### --------------------------------
-### General variables
-### --------------------------------
-DEFAULT_TZ="Etc\/UTC"
-TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' | sed 's/\//\\\//g')"
-if [[ -z "$TZ" ]]; then
-  TZ="$DEFAULT_TZ"
-fi
-NGINX_PORT=80
-NGINX_PORT_SSL=443
-DOMAIN=tipi.localhost
-SED_ROOT_FOLDER="$(echo "$ROOT_FOLDER" | sed 's/\//\\\//g')"
-DNS_IP="9.9.9.9" # Default to Quad9 DNS
-ARCHITECTURE="$(uname -m)"
-apps_repository="https://github.com/meienberger/runtipi-appstore"
-REPO_ID="$("${ROOT_FOLDER}"/scripts/git.sh get_hash ${apps_repository})"
-APPS_REPOSITORY_ESCAPED="$(echo ${apps_repository} | sed 's/\//\\\//g')"
-JWT_SECRET=$(derive_entropy "jwt")
-POSTGRES_PASSWORD=$(derive_entropy "postgres")
-TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
-storage_path="${ROOT_FOLDER}"
-STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
-NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
-NETWORK_INTERFACE_COUNT=$(echo "$NETWORK_INTERFACE" | wc -l)
-REDIS_HOST=tipi-redis
-
-if [[ "$NETWORK_INTERFACE_COUNT" -eq 0 ]]; then
-  echo "No network interface found!"
-  exit 1
-elif [[ "$NETWORK_INTERFACE_COUNT" -gt 1 ]]; then
-  echo "Found multiple network interfaces. Please select one of the following interfaces:"
-  echo "$NETWORK_INTERFACE"
-  while true; do
-    read -rp "> " USER_NETWORK_INTERFACE
-    if echo "$NETWORK_INTERFACE" | grep -x "$USER_NETWORK_INTERFACE"; then
-      NETWORK_INTERFACE="$USER_NETWORK_INTERFACE"
-      break
-    else
-      echo "Please select one of the interfaces above. (CTRL+C to abort)"
-    fi
-  done
-fi
-INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
-
-if [[ "$ARCHITECTURE" == "aarch64" ]]; then
-  ARCHITECTURE="arm64"
-elif [[ "$ARCHITECTURE" == "armv7"* || "$ARCHITECTURE" == "armv8"* ]]; then
-  ARCHITECTURE="arm"
-elif [[ "$ARCHITECTURE" == "x86_64" ]]; then
-  ARCHITECTURE="amd64"
-fi
-
-# If none of the above conditions are met, the architecture is not supported
-if [[ "$ARCHITECTURE" != "arm64" ]] && [[ "$ARCHITECTURE" != "arm" ]] && [[ "$ARCHITECTURE" != "amd64" ]]; then
-  echo "Architecture ${ARCHITECTURE} not supported!"
-  exit 1
-fi
-
-### --------------------------------
 ### CLI arguments
 ### --------------------------------
+NGINX_PORT=
+NGINX_PORT_SSL=
+DOMAIN=
+INTERNAL_IP=
 while [ -n "${1-}" ]; do
   case "$1" in
   --rc) rc="true" ;;
@@ -147,6 +93,73 @@ while [ -n "${1-}" ]; do
   esac
   shift
 done
+
+### --------------------------------
+### General variables
+### --------------------------------
+DEFAULT_TZ="Etc\/UTC"
+TZ="$(timedatectl | grep "Time zone" | awk '{print $3}' | sed 's/\//\\\//g')"
+if [[ -z "$TZ" ]]; then
+  TZ="$DEFAULT_TZ"
+fi
+if [[ -z "$NGINX_PORT" ]]; then
+  NGINX_PORT=80
+fi
+if [[ -z "$NGINX_PORT_SSL" ]]; then
+  NGINX_PORT_SSL=443
+fi
+if [[ -z "$DOMAIN" ]]; then
+  DOMAIN=tipi.localhost
+fi
+SED_ROOT_FOLDER="$(echo "$ROOT_FOLDER" | sed 's/\//\\\//g')"
+DNS_IP="9.9.9.9" # Default to Quad9 DNS
+ARCHITECTURE="$(uname -m)"
+apps_repository="https://github.com/meienberger/runtipi-appstore"
+REPO_ID="$("${ROOT_FOLDER}"/scripts/git.sh get_hash ${apps_repository})"
+APPS_REPOSITORY_ESCAPED="$(echo ${apps_repository} | sed 's/\//\\\//g')"
+JWT_SECRET=$(derive_entropy "jwt")
+POSTGRES_PASSWORD=$(derive_entropy "postgres")
+TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
+storage_path="${ROOT_FOLDER}"
+STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
+REDIS_HOST=tipi-redis
+
+if [[ -z "$INTERNAL_IP" ]]; then
+  NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
+  NETWORK_INTERFACE_COUNT=$(echo "$NETWORK_INTERFACE" | wc -l)
+
+  if [[ "$NETWORK_INTERFACE_COUNT" -eq 0 ]]; then
+  echo "No network interface found!"
+  exit 1
+  elif [[ "$NETWORK_INTERFACE_COUNT" -gt 1 ]]; then
+  echo "Found multiple network interfaces. Please select one of the following interfaces:"
+  echo "$NETWORK_INTERFACE"
+  while true; do
+    read -rp "> " USER_NETWORK_INTERFACE
+    if echo "$NETWORK_INTERFACE" | grep -x "$USER_NETWORK_INTERFACE"; then
+    NETWORK_INTERFACE="$USER_NETWORK_INTERFACE"
+    break
+    else
+    echo "Please select one of the interfaces above. (CTRL+C to abort)"
+    fi
+  done
+  fi
+  INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
+fi
+
+if [[ "$ARCHITECTURE" == "aarch64" ]]; then
+  ARCHITECTURE="arm64"
+elif [[ "$ARCHITECTURE" == "armv7"* || "$ARCHITECTURE" == "armv8"* ]]; then
+  ARCHITECTURE="arm"
+elif [[ "$ARCHITECTURE" == "x86_64" ]]; then
+  ARCHITECTURE="amd64"
+fi
+
+# If none of the above conditions are met, the architecture is not supported
+if [[ "$ARCHITECTURE" != "arm64" ]] && [[ "$ARCHITECTURE" != "arm" ]] && [[ "$ARCHITECTURE" != "amd64" ]]; then
+  echo "Architecture ${ARCHITECTURE} not supported!"
+  exit 1
+fi
 
 # If port is not 80 and domain is not tipi.localhost, we exit
 if [[ "${NGINX_PORT}" != "80" ]] && [[ "${DOMAIN}" != "tipi.localhost" ]]; then
@@ -266,24 +279,24 @@ echo ""
 cat <<"EOF"
        _,.
      ,` -.)
-    '( _/'-\\-.               
-   /,|`--._,-^|            ,     
-   \_| |`-._/||          ,'|       
-     |  `-, / |         /  /      
-     |     || |        /  /       
-      `r-._||/   __   /  /  
+    '( _/'-\\-.
+   /,|`--._,-^|            ,
+   \_| |`-._/||          ,'|
+     |  `-, / |         /  /
+     |     || |        /  /
+      `r-._||/   __   /  /
   __,-<_     )`-/  `./  /
- '  \   `---'   \   /  / 
-     |           |./  /  
-     /           //  /     
- \_/' \         |/  /         
-  |    |   _,^-'/  /              
-  |    , ``  (\/  /_        
-   \,.->._    \X-=/^         
-   (  /   `-._//^`  
-    `Y-.____(__}              
-     |     {__)           
-           ()`     
+ '  \   `---'   \   /  /
+     |           |./  /
+     /           //  /
+ \_/' \         |/  /
+  |    |   _,^-'/  /
+  |    , ``  (\/  /_
+   \,.->._    \X-=/^
+   (  /   `-._//^`
+    `Y-.____(__}
+     |     {__)
+           ()`
 EOF
 
 port_display=""
