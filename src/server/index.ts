@@ -13,6 +13,7 @@ import { prisma } from './db/client';
 let conf = {};
 let nextApp: NextServer;
 
+const hostname = 'localhost';
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -23,7 +24,7 @@ if (!dev) {
   nextApp = new NextServer({ hostname: 'localhost', dev, port, customServer: true, conf });
 } else {
   const next = require('next').default;
-  nextApp = next({ dev });
+  nextApp = next({ dev, hostname, port });
 }
 
 const handle = nextApp.getRequestHandler();

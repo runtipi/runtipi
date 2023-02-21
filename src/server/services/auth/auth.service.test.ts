@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import fs from 'fs-extra';
 import * as argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import { faker } from '@faker-js/faker';
@@ -19,6 +20,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  jest.mock('fs-extra');
   jest.mock('redis');
   await db.user.deleteMany();
 });
@@ -32,7 +34,7 @@ describe('Login', () => {
   it('Should return a valid jsonwebtoken containing a user id', async () => {
     // Arrange
     const email = faker.internet.email();
-    const user = await createUser(email, db);
+    const user = await createUser({ email }, db);
 
     // Act
     const { token } = await AuthService.login({ username: email, password: 'password' });
@@ -55,7 +57,7 @@ describe('Login', () => {
 
   it('Should throw if password is incorrect', async () => {
     const email = faker.internet.email();
-    await createUser(email, db);
+    await createUser({ email }, db);
     await expect(AuthService.login({ username: email, password: 'wrong' })).rejects.toThrowError('Wrong password');
   });
 });
@@ -91,12 +93,21 @@ describe('Register', () => {
     expect(user?.username).toBe(email.toLowerCase().trim());
   });
 
+  it('should throw if there is already an operator', async () => {
+    // Arrange
+    const email = faker.internet.email();
+
+    // Act & Assert
+    await createUser({ email, operator: true }, db);
+    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('There is already an admin user. Please login to create a new user from the admin panel.');
+  });
+
   it('Should throw if user already exists', async () => {
     // Arrange
     const email = faker.internet.email();
 
     // Act & Assert
-    await createUser(email, db);
+    await createUser({ email, operator: false }, db);
     await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('User already exists');
   });
 
@@ -219,7 +230,7 @@ describe('Test: me', () => {
   it('Should return user if user exists', async () => {
     // Arrange
     const email = faker.internet.email();
-    const user = await createUser(email, db);
+    const user = await createUser({ email }, db);
 
     // Act
     const result = await AuthService.me(user.id);
@@ -243,12 +254,95 @@ describe('Test: isConfigured', () => {
   it('Should return true if user exists', async () => {
     // Arrange
     const email = faker.internet.email();
-    await createUser(email, db);
+    await createUser({ email }, db);
 
     // Act
     const result = await AuthService.isConfigured();
 
     // Assert
     expect(result).toBe(true);
+  });
+});
+
+describe('Test: changePassword', () => {
+  it('should change the password of the operator user', async () => {
+    // Arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+    const newPassword = faker.internet.password();
+    // @ts-expect-error - mocking fs
+    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+
+    // Act
+    const result = await AuthService.changePassword({ newPassword });
+
+    // Assert
+    expect(result.email).toBe(email.toLowerCase());
+    const updatedUser = await db.user.findUnique({ where: { id: user.id } });
+    expect(updatedUser?.password).not.toBe(user.password);
+  });
+
+  it('should throw if the password change request file does not exist', async () => {
+    // Arrange
+    const email = faker.internet.email();
+    await createUser({ email }, db);
+    const newPassword = faker.internet.password();
+    // @ts-expect-error - mocking fs
+    fs.__createMockFiles({});
+
+    // Act & Assert
+    await expect(AuthService.changePassword({ newPassword })).rejects.toThrowError('No password change request found');
+  });
+
+  it('should throw if there is no operator user', async () => {
+    // Arrange
+    const email = faker.internet.email();
+    await createUser({ email, operator: false }, db);
+    const newPassword = faker.internet.password();
+    // @ts-expect-error - mocking fs
+    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+
+    // Act & Assert
+    await expect(AuthService.changePassword({ newPassword })).rejects.toThrowError('Operator user not found');
+  });
+});
+
+describe('Test: checkPasswordChangeRequest', () => {
+  it('should return true if the password change request file exists', async () => {
+    // Arrange
+    // @ts-expect-error - mocking fs
+    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+
+    // Act
+    const result = await AuthServiceClass.checkPasswordChangeRequest();
+
+    // Assert
+    expect(result).toBe(true);
+  });
+
+  it('should return false if the password change request file does not exist', async () => {
+    // Arrange
+    // @ts-expect-error - mocking fs
+    fs.__createMockFiles({});
+
+    // Act
+    const result = await AuthServiceClass.checkPasswordChangeRequest();
+
+    // Assert
+    expect(result).toBe(false);
+  });
+});
+
+describe('Test: cancelPasswordChangeRequest', () => {
+  it('should delete the password change request file', async () => {
+    // Arrange
+    // @ts-expect-error - mocking fs
+    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+
+    // Act
+    await AuthServiceClass.cancelPasswordChangeRequest();
+
+    // Assert
+    expect(fs.existsSync('/runtipi/state/password-change-request')).toBe(false);
   });
 });
