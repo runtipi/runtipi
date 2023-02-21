@@ -58,8 +58,10 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
 
   return (
     <div data-testid={`${title?.toLowerCase().split(' ').join('-')}-layout`} className="page">
-      <Head>{/* <title>{title} - Tipi</title> */}</Head>
-      {/* <ReactTooltip offset={{ right: 1 }} effect="solid" place="bottom" /> */}
+      <Head>
+        <title>{`${title} - Tipi`}</title>
+      </Head>
+      <ReactTooltip offset={{ right: 1 }} effect="solid" place="bottom" />
       <Header isUpdateAvailable={!isLatest} />
       <div className="page-wrapper">
         <div className="page-header d-print-none">
