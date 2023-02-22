@@ -28,7 +28,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     setValue,
     watch,
     setError,
@@ -36,12 +36,12 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
   const watchExposed = watch('exposed', false);
 
   useEffect(() => {
-    if (initalValues) {
+    if (initalValues && !isDirty) {
       Object.entries(initalValues).forEach(([key, value]) => {
         setValue(key, value);
       });
     }
-  }, [initalValues, setValue]);
+  }, [initalValues, isDirty, setValue]);
 
   const renderField = (field: FormField) => (
     <Input
