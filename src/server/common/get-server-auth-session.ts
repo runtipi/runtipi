@@ -2,6 +2,7 @@ import { type GetServerSidePropsContext } from 'next';
 import jwt from 'jsonwebtoken';
 import { getConfig } from '../core/TipiConfig';
 import TipiCache from '../core/TipiCache';
+import { Logger } from '../core/Logger';
 
 export const getServerAuthSession = async (ctx: { req: GetServerSidePropsContext['req']; res: GetServerSidePropsContext['res'] }) => {
   const { req } = ctx;
@@ -19,7 +20,7 @@ export const getServerAuthSession = async (ctx: { req: GetServerSidePropsContext
         };
       }
     } catch (err) {
-      console.error(err);
+      Logger.info(err);
     }
   }
 

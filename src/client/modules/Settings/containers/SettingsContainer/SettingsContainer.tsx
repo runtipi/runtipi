@@ -7,6 +7,7 @@ import { useToastStore } from '../../../../state/toastStore';
 import { RestartModal } from '../../components/RestartModal';
 import { UpdateModal } from '../../components/UpdateModal/UpdateModal';
 import { trpc } from '../../../../utils/trpc';
+import { useSystemStore } from '../../../../state/systemStore';
 
 type IProps = { data: SystemRouterOutput['getVersion'] };
 
@@ -14,6 +15,7 @@ export const SettingsContainer: React.FC<IProps> = ({ data }) => {
   const [loading, setLoading] = React.useState(false);
   const { current, latest } = data;
   const { addToast } = useToastStore();
+  const { setPollStatus } = useSystemStore();
   const restartDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
 
@@ -26,6 +28,7 @@ export const SettingsContainer: React.FC<IProps> = ({ data }) => {
     },
     onSuccess: async () => {
       setLoading(false);
+      setPollStatus(true);
       localStorage.removeItem('token');
     },
     onError: (error) => {
@@ -41,7 +44,7 @@ export const SettingsContainer: React.FC<IProps> = ({ data }) => {
     },
     onSuccess: async () => {
       setLoading(false);
-
+      setPollStatus(true);
       localStorage.removeItem('token');
     },
     onError: (error) => {

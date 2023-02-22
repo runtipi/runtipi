@@ -14,9 +14,9 @@ import { SystemStatus, useSystemStore } from '../client/state/systemStore';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { setDarkMode } = useUIStore();
-  const { setStatus, setVersion } = useSystemStore();
+  const { setStatus, setVersion, pollStatus } = useSystemStore();
 
-  trpc.system.status.useQuery(undefined, { networkMode: 'online', refetchInterval: 5000, onSuccess: (d) => setStatus((d.status as SystemStatus) || 'RUNNING') });
+  trpc.system.status.useQuery(undefined, { networkMode: 'online', refetchInterval: 2000, onSuccess: (d) => setStatus((d.status as SystemStatus) || 'RUNNING'), enabled: pollStatus });
   const version = trpc.system.getVersion.useQuery(undefined, { networkMode: 'online' });
 
   useEffect(() => {

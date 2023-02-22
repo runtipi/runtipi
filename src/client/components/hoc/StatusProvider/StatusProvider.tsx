@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useRef } from 'react';
 import router from 'next/router';
-import {  useSystemStore } from '../../../state/systemStore';
+import { useSystemStore } from '../../../state/systemStore';
 import { StatusScreen } from '../../StatusScreen';
 
 interface IProps {
@@ -8,12 +8,13 @@ interface IProps {
 }
 
 export const StatusProvider: React.FC<IProps> = ({ children }) => {
-  const { status } = useSystemStore();
+  const { status, setPollStatus } = useSystemStore();
   const s = useRef(status);
 
   useEffect(() => {
     // If previous was not running and current is running, we need to refresh the page
     if (status === 'RUNNING' && s.current !== 'RUNNING') {
+      setPollStatus(false);
       router.reload();
     }
     if (status === 'RUNNING') {
@@ -25,7 +26,7 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
     if (status === 'UPDATING') {
       s.current = 'UPDATING';
     }
-  }, [status, s]);
+  }, [status, s, setPollStatus]);
 
   if (s.current === 'LOADING') {
     return <StatusScreen title="" subtitle="" />;

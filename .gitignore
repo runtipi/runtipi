@@ -49,14 +49,13 @@ logs
 !.env.test
 github.secrets
 node_modules/
-app-data
-data
-data
-repos
-apps
+/app-data/
+/data/
+/repos/
+/apps/
 traefik/shared
 
 # media folder
 media
 
-state
+/state/
