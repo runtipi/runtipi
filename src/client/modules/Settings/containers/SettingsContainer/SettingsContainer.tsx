@@ -27,14 +27,15 @@ export const SettingsContainer: React.FC<IProps> = ({ data }) => {
       setLoading(true);
     },
     onSuccess: async () => {
-      setLoading(false);
       setPollStatus(true);
       localStorage.removeItem('token');
     },
     onError: (error) => {
-      setLoading(false);
       updateDisclosure.close();
       addToast({ title: 'Error', description: error.message, status: 'error' });
+    },
+    onSettled: () => {
+      setLoading(false);
     },
   });
 
@@ -43,14 +44,15 @@ export const SettingsContainer: React.FC<IProps> = ({ data }) => {
       setLoading(true);
     },
     onSuccess: async () => {
-      setLoading(false);
       setPollStatus(true);
       localStorage.removeItem('token');
     },
     onError: (error) => {
-      setLoading(false);
       restartDisclosure.close();
       addToast({ title: 'Error', description: error.message, status: 'error' });
+    },
+    onSettled: () => {
+      setLoading(false);
     },
   });
 
