@@ -52,27 +52,8 @@ POSTGRES_PASSWORD=$(derive_entropy "postgres")
 TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 storage_path="${ROOT_FOLDER}"
 STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
-NETWORK_INTERFACE="$(ip route | grep default | awk '{print $5}' | uniq)"
-NETWORK_INTERFACE_COUNT=$(echo "$NETWORK_INTERFACE" | wc -l)
 REDIS_HOST=tipi-redis
-
-if [[ "$NETWORK_INTERFACE_COUNT" -eq 0 ]]; then
-  echo "No network interface found!"
-  exit 1
-elif [[ "$NETWORK_INTERFACE_COUNT" -gt 1 ]]; then
-  echo "Found multiple network interfaces. Please select one of the following interfaces:"
-  echo "$NETWORK_INTERFACE"
-  while true; do
-    read -rp "> " USER_NETWORK_INTERFACE
-    if echo "$NETWORK_INTERFACE" | grep -x "$USER_NETWORK_INTERFACE"; then
-      NETWORK_INTERFACE="$USER_NETWORK_INTERFACE"
-      break
-    else
-      echo "Please select one of the interfaces above. (CTRL+C to abort)"
-    fi
-  done
-fi
-INTERNAL_IP="$(ip addr show "${NETWORK_INTERFACE}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
+INTERNAL_IP=
 
 if [[ "$ARCHITECTURE" == "aarch64" ]]; then
   ARCHITECTURE="arm64"
@@ -147,6 +128,48 @@ while [ -n "${1-}" ]; do
   esac
   shift
 done
+
+if [[ -z "${INTERNAL_IP:-}" ]]; then
+  network_interface="$(ip route | grep default | awk '{print $5}' | uniq)"
+  network_interface_count=$(echo "$network_interface" | wc -l)
+
+  if [[ "$network_interface_count" -eq 0 ]]; then
+    echo "No network interface found!"
+    exit 1
+  elif [[ "$network_interface_count" -gt 1 ]]; then
+    echo "Found multiple network interfaces. Please select one of the following interfaces:"
+    echo "$network_interface"
+    while true; do
+      read -rp "> " USER_NETWORK_INTERFACE
+      if echo "$network_interface" | grep -x "$USER_NETWORK_INTERFACE"; then
+        network_interface="$USER_NETWORK_INTERFACE"
+        break
+      else
+        echo "Please select one of the interfaces above. (CTRL+C to abort)"
+      fi
+    done
+  fi
+
+  INTERNAL_IP="$(ip addr show "${network_interface}" | grep "inet " | awk '{print $2}' | cut -d/ -f1)"
+  internal_ip_count=$(echo "$INTERNAL_IP" | wc -l)
+
+  if [[ "$internal_ip_count" -eq 0 ]]; then
+    echo "No IP address found for network interface ${network_interface}! Set the IP address manually with --listen-ip or with the listenIp field in settings.json."
+    exit 1
+  elif [[ "$internal_ip_count" -gt 1 ]]; then
+    echo "Found multiple IP addresses for network interface ${network_interface}. Please select one of the following IP addresses:"
+    echo "$INTERNAL_IP"
+    while true; do
+      read -rp "> " USER_INTERNAL_IP
+      if echo "$INTERNAL_IP" | grep -x "$USER_INTERNAL_IP"; then
+        INTERNAL_IP="$USER_INTERNAL_IP"
+        break
+      else
+        echo "Please select one of the IP addresses above. (CTRL+C to abort)"
+      fi
+    done
+  fi
+fi
 
 # If port is not 80 and domain is not tipi.localhost, we exit
 if [[ "${NGINX_PORT}" != "80" ]] && [[ "${DOMAIN}" != "tipi.localhost" ]]; then
