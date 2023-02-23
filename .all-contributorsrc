@@ -146,6 +146,15 @@
       "contributions": [
         "content"
       ]
+    },
+    {
+      "login": "fsackur",
+      "name": "Freddie Sackur",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3678789?v=4",
+      "profile": "https://fsackur.github.io/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
