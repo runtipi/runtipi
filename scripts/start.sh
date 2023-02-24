@@ -49,6 +49,10 @@ REPO_ID="$("${ROOT_FOLDER}"/scripts/git.sh get_hash ${apps_repository})"
 APPS_REPOSITORY_ESCAPED="$(echo ${apps_repository} | sed 's/\//\\\//g')"
 JWT_SECRET=$(derive_entropy "jwt")
 POSTGRES_PASSWORD=$(derive_entropy "postgres")
+POSTGRES_USERNAME=tipi
+POSTGRES_DBNAME=tipi
+POSTGRES_PORT=5432
+POSTGRES_HOST=tipi-db
 TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 storage_path="${ROOT_FOLDER}"
 STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
@@ -253,6 +257,10 @@ for template in ${ENV_FILE}; do
   sed -i "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
   sed -i "s/<nginx_port_ssl>/${NGINX_PORT_SSL}/g" "${template}"
   sed -i "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
+  sed -i "s/<postgres_username>/${POSTGRES_USERNAME}/g" "${template}"
+  sed -i "s/<postgres_dbname>/${POSTGRES_DBNAME}/g" "${template}"
+  sed -i "s/<postgres_port>/${POSTGRES_PORT}/g" "${template}"
+  sed -i "s/<postgres_host>/${POSTGRES_HOST}/g" "${template}"
   sed -i "s/<apps_repo_id>/${REPO_ID}/g" "${template}"
   sed -i "s/<apps_repo_url>/${APPS_REPOSITORY_ESCAPED}/g" "${template}"
   sed -i "s/<domain>/${DOMAIN}/g" "${template}"
