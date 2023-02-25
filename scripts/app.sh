@@ -83,6 +83,18 @@ compose() {
 
   local common_compose_file="${ROOT_FOLDER}/repos/${REPO_ID}/apps/docker-compose.common.yml"
 
+  local user_compose_file="${ROOT_FOLDER}/user-config/${app}/docker-compose.yml"
+  local user_compose_args=
+  if [[ -f ${user_compose_file} ]]; then
+    user_compose_args="--file ${user_compose_file}"
+  fi
+
+  local user_env_file="${ROOT_FOLDER}/user-config/${app}/app.env"
+  local user_env_args=
+  if [[ -f ${user_env_file} ]]; then
+    user_env_args="--env-file ${user_env_file}"
+  fi
+
   # Vars to use in compose file
   export APP_DATA_DIR="${STORAGE_PATH}/app-data/${app}"
   export ROOT_FOLDER_HOST="${ROOT_FOLDER_HOST}"
@@ -93,9 +105,11 @@ compose() {
 
   docker compose \
     --env-file "${app_data_dir}/app.env" \
+    ${user_env_args} \
     --project-name "${app}" \
     --file "${app_compose_file}" \
     --file "${common_compose_file}" \
+    ${user_compose_args} \
     "${@}"
 }
 
