@@ -1,8 +1,6 @@
 name: Publish release
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
 
 jobs:
   release:
@@ -43,19 +41,22 @@ jobs:
 
       - name: Create Tag
         id: create_tag
-        uses: jaywcjlove/create-tag-action@v1.1.5
+        uses: butlerlogic/action-autotag@stable
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          package-path: ./package.json
+          tag_prefix: 'v'
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
-        if: steps.create_tag.outputs.successful
+        if: steps.create_tag.outputs.tagcreated == 'yes'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.create_tag.outputs.version }}
-          release_name: ${{ steps.create_tag.outputs.version }}
+          tag_name: ${{ steps.create_tag.outputs.tagname }}
+          release_name: ${{ steps.create_tag.outputs.tagname }}
           draft: false
           prerelease: false
+
+

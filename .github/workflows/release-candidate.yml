@@ -1,6 +1,7 @@
 name: Release candidate
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - release/*

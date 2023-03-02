@@ -43,29 +43,31 @@ NGINX_PORT_SSL=443
 DOMAIN=tipi.localhost
 SED_ROOT_FOLDER="$(echo "$ROOT_FOLDER" | sed 's/\//\\\//g')"
 DNS_IP="9.9.9.9" # Default to Quad9 DNS
-ARCHITECTURE="$(uname -m)"
+ARCHITECTURE="$(uname -m | tr '[:upper:]' '[:lower:]')"
 apps_repository="https://github.com/meienberger/runtipi-appstore"
 REPO_ID="$("${ROOT_FOLDER}"/scripts/git.sh get_hash ${apps_repository})"
 APPS_REPOSITORY_ESCAPED="$(echo ${apps_repository} | sed 's/\//\\\//g')"
 JWT_SECRET=$(derive_entropy "jwt")
 POSTGRES_PASSWORD=$(derive_entropy "postgres")
+POSTGRES_USERNAME=tipi
+POSTGRES_DBNAME=tipi
+POSTGRES_PORT=5432
+POSTGRES_HOST=tipi-db
 TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 storage_path="${ROOT_FOLDER}"
 STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
 REDIS_HOST=tipi-redis
 INTERNAL_IP=
 
-if [[ "$ARCHITECTURE" == "aarch64" ]]; then
+if [[ "$ARCHITECTURE" == "aarch64" ]] || [[ "$ARCHITECTURE" == "armv8"* ]]; then
   ARCHITECTURE="arm64"
-elif [[ "$ARCHITECTURE" == "armv7"* || "$ARCHITECTURE" == "armv8"* ]]; then
-  ARCHITECTURE="arm"
 elif [[ "$ARCHITECTURE" == "x86_64" ]]; then
   ARCHITECTURE="amd64"
 fi
 
 # If none of the above conditions are met, the architecture is not supported
-if [[ "$ARCHITECTURE" != "arm64" ]] && [[ "$ARCHITECTURE" != "arm" ]] && [[ "$ARCHITECTURE" != "amd64" ]]; then
-  echo "Architecture ${ARCHITECTURE} not supported!"
+if [[ "$ARCHITECTURE" != "arm64" ]] && [[ "$ARCHITECTURE" != "amd64" ]]; then
+  echo "Architecture ${ARCHITECTURE} not supported if you think this is a mistake, please open an issue on GitHub."
   exit 1
 fi
 
@@ -253,6 +255,10 @@ for template in ${ENV_FILE}; do
   sed -i "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
   sed -i "s/<nginx_port_ssl>/${NGINX_PORT_SSL}/g" "${template}"
   sed -i "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
+  sed -i "s/<postgres_username>/${POSTGRES_USERNAME}/g" "${template}"
+  sed -i "s/<postgres_dbname>/${POSTGRES_DBNAME}/g" "${template}"
+  sed -i "s/<postgres_port>/${POSTGRES_PORT}/g" "${template}"
+  sed -i "s/<postgres_host>/${POSTGRES_HOST}/g" "${template}"
   sed -i "s/<apps_repo_id>/${REPO_ID}/g" "${template}"
   sed -i "s/<apps_repo_url>/${APPS_REPOSITORY_ESCAPED}/g" "${template}"
   sed -i "s/<domain>/${DOMAIN}/g" "${template}"
