@@ -44,15 +44,18 @@ jobs:
         uses: butlerlogic/action-autotag@stable
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        with:
+          tag_prefix: 'v'
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
-        if: steps.create_tag.outputs.successful
+        if: steps.create_tag.outputs.successful == 'yes'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.create_tag.outputs.version }}
-          release_name: ${{ steps.create_tag.outputs.version }}
+          tag_name: ${{ steps.create_tag.outputs.tagname }}
+          release_name: ${{ steps.create_tag.outputs.tagname }}
           draft: false
           prerelease: false
+
