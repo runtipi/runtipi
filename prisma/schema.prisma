@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model App {
+  id         String          @id(map: "PK_9478629fc093d229df09e560aea") @unique(map: "UQ_9478629fc093d229df09e560aea") @db.VarChar
+  status     app_status_enum @default(stopped)
+  lastOpened DateTime?       @default(now()) @db.Timestamptz(6)
+  numOpened  Int             @default(0)
+  config     Json
+  createdAt  DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime        @default(now()) @db.Timestamp(6)
+  version    Int             @default(1)
+  exposed    Boolean         @default(false)
+  domain     String?         @db.VarChar
+
+  @@map("app")
+}
+
+model Migrations {
+  id          Int       @id
+  name        String    @unique @db.VarChar(100)
+  hash        String    @db.VarChar(40)
+  executed_at DateTime? @default(now()) @db.Timestamp(6)
+
+  @@map("migrations")
+}
+
+model Update {
+  id        Int                @id(map: "PK_575f77a0576d6293bc1cb752847") @default(autoincrement())
+  name      String             @unique(map: "UQ_6e7d7ecccdc972caa0ad33cb014") @db.VarChar
+  status    update_status_enum
+  createdAt DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt DateTime           @default(now()) @db.Timestamp(6)
+
+  @@map("update")
+}
+
+model User {
+  id        Int      @id(map: "PK_cace4a159ff9f2512dd42373760") @default(autoincrement())
+  username  String   @unique(map: "UQ_78a916df40e02a9deb1c4b75edb") @db.VarChar
+  password  String   @db.VarChar
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  operator  Boolean  @default(false)
+
+  @@map("user")
+}
+
+enum app_status_enum {
+  running
+  stopped
+  installing
+  uninstalling
+  stopping
+  starting
+  missing
+  updating
+}
+
+enum update_status_enum {
+  FAILED
+  SUCCESS
+}

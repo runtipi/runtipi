@@ -1,43 +1,49 @@
-FROM node:18-alpine3.16 AS builder
+ARG NODE_VERSION="18.12.1"
+ARG ALPINE_VERSION="3.16"
 
-# Required for argon2
-RUN apk --no-cache add g++
-RUN apk --no-cache add make
-RUN apk --no-cache add python3
+FROM node:${NODE_VERSION}-buster-slim AS node_base
+RUN apt update
+RUN apt install -y openssl
 
-# Required for sharp
-RUN apk --no-cache add vips-dev=8.12.2-r5
+FROM node_base AS builder_base
+
 RUN npm install node-gyp -g
+RUN npm install pnpm -g
 
-WORKDIR /api
-COPY ./packages/system-api/package.json /api/package.json
-RUN npm i
-# ---
-WORKDIR /dashboard
-COPY ./packages/dashboard/package.json /dashboard/package.json
-RUN npm i
+# BUILDER
+FROM builder_base AS builder
 
-WORKDIR /api
-COPY ./packages/system-api /api
+WORKDIR /app
+
+COPY ./pnpm-lock.yaml ./
+RUN pnpm fetch
+
+COPY ./package*.json ./
+COPY ./prisma/schema.prisma ./prisma/
+
+RUN pnpm install -r --prefer-offline 
+COPY ./src ./src
+COPY ./esbuild.js ./esbuild.js
+COPY ./tsconfig.json ./tsconfig.json
+COPY ./next.config.mjs ./next.config.mjs
+COPY ./public ./public
+
 RUN npm run build
-# ---
-WORKDIR /dashboard
-COPY ./packages/dashboard /dashboard
-RUN npm run build
 
-FROM node:18-alpine3.16 as app
+# APP
+FROM node_base AS app
 
-WORKDIR /
+# USER node
 
-WORKDIR /api
-COPY ./packages/system-api/package.json /api/
-COPY --from=builder /api/dist /api/dist
+WORKDIR /app
 
-WORKDIR /dashboard
-COPY --from=builder /dashboard/next.config.js ./
-COPY --from=builder /dashboard/public ./public
-COPY --from=builder /dashboard/package.json ./package.json
-COPY --from=builder --chown=node:node /dashboard/.next/standalone ./
-COPY --from=builder --chown=node:node /dashboard/.next/static ./.next/static
+COPY --from=builder /app/dist ./
+COPY --from=builder /app/next.config.mjs ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
-WORKDIR /
+EXPOSE 3000
+
+CMD ["npm", "run", "start"]

@@ -10,3 +10,18 @@ dist/
 docker-compose*.yml
 Dockerfile*
 .dockerignore
+
+# Tipi folder
+logs/
+tests/
+state/
+templates/
+scripts/
+screenshots/
+repos/
+media/
+data/
+apps/
+app-data/
+.github/
+__mocks__/

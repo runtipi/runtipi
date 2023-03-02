@@ -7,8 +7,12 @@ env:
   JWT_SECRET: "secret"
   ROOT_FOLDER_HOST: /tipi
   APPS_REPO_ID: repo-id
-  INTERNAL_IP: 192.168.1.10
-    
+  INTERNAL_IP: localhost
+  REDIS_HOST: redis
+  APPS_REPO_URL: https://repo.github.com/
+  DOMAIN: localhost
+  TIPI_VERSION: 0.0.1
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -57,14 +61,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build packages
-        run: pnpm -r build
+      - name: Build client
+        run: pnpm build:next
 
       - name: Run linter
-        run: pnpm -r lint
-      
+        run: pnpm lint
+
       - name: Run tests
-        run: pnpm -r test
+        run: pnpm test
 
       - uses: codecov/codecov-action@v3
         with:

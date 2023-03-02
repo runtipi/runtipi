@@ -1,7 +1,0 @@
-mutation UpdateApp($id: String!) {
-  updateApp(id: $id) {
-    id
-    status
-    __typename
-  }
-}

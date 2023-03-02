@@ -1,6 +1,0 @@
-# Write your query or mutation here
-mutation Register($input: UsernamePasswordInput!) {
-  register(input: $input) {
-    token
-  }
-}

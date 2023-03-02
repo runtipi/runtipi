@@ -1,7 +1,0 @@
-mutation StopApp($id: String!) {
-  stopApp(id: $id) {
-    id
-    status
-    __typename
-  }
-}

@@ -1,6 +1,0 @@
-query Version {
-  version {
-    current
-    latest
-  }
-}

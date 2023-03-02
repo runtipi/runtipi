@@ -4,6 +4,15 @@ set -o nounset
 set -o pipefail
 
 echo "Installing runtipi..."
+
+ARCHITECTURE="$(uname -m)"
+# Not supported on 32 bits systems
+if [[ "$ARCHITECTURE" == "armv7"* ]] || [[ "$ARCHITECTURE" == "i686" ]] || [[ "$ARCHITECTURE" == "i386" ]]; then
+    echo "runtipi is not supported on 32 bits systems"
+    exit 1
+fi
+
+
 LATEST_VERSION=$(curl -s https://api.github.com/repos/meienberger/runtipi/releases/latest | grep tag_name | cut -d '"' -f4)
 
 ### --------------------------------
@@ -65,7 +74,11 @@ if [ -f "package.json" ]; then
 fi
 cp -r runtipi-"${LATEST_VERSION}"/package.json .
 
+mkdir -p apps
+mkdir -p app-data
 mkdir -p state
+mkdir -p repos
+
 mkdir -p media/torrents
 mkdir -p media/torrents/watch
 mkdir -p media/torrents/completed

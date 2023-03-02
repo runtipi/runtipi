@@ -8,6 +8,8 @@ fi
 
 source "${BASH_SOURCE%/*}/common.sh"
 
+clean_logs
+
 ### --------------------------------
 ### General variables
 ### --------------------------------
@@ -22,6 +24,11 @@ ARCHITECTURE="$(uname -m)"
 TZ="UTC"
 JWT_SECRET=secret
 POSTGRES_PASSWORD=postgres
+POSTGRES_USERNAME=tipi
+POSTGRES_DBNAME=tipi
+POSTGRES_PORT=5432
+POSTGRES_HOST=tipi-db
+REDIS_HOST=tipi-redis
 TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 INTERNAL_IP=localhost
 storage_path="${ROOT_FOLDER}"
@@ -96,11 +103,16 @@ for template in ${ENV_FILE}; do
     sed "${sed_args[@]}" "s/<architecture>/${ARCHITECTURE}/g" "${template}"
     sed "${sed_args[@]}" "s/<nginx_port>/${NGINX_PORT}/g" "${template}"
     sed "${sed_args[@]}" "s/<nginx_port_ssl>/${NGINX_PORT_SSL}/g" "${template}"
-    sed "${sed_args[@]}" "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
     sed "${sed_args[@]}" "s/<apps_repo_id>/${REPO_ID}/g" "${template}"
     sed "${sed_args[@]}" "s/<apps_repo_url>/${APPS_REPOSITORY_ESCAPED}/g" "${template}"
     sed "${sed_args[@]}" "s/<domain>/${DOMAIN}/g" "${template}"
     sed "${sed_args[@]}" "s/<storage_path>/${STORAGE_PATH_ESCAPED}/g" "${template}"
+    sed "${sed_args[@]}" "s/<postgres_password>/${POSTGRES_PASSWORD}/g" "${template}"
+    sed "${sed_args[@]}" "s/<postgres_username>/${POSTGRES_USERNAME}/g" "${template}"
+    sed "${sed_args[@]}" "s/<postgres_dbname>/${POSTGRES_DBNAME}/g" "${template}"
+    sed "${sed_args[@]}" "s/<postgres_port>/${POSTGRES_PORT}/g" "${template}"
+    sed "${sed_args[@]}" "s/<postgres_host>/${POSTGRES_HOST}/g" "${template}"
+    sed "${sed_args[@]}" "s/<redis_host>/${REDIS_HOST}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env.dev"

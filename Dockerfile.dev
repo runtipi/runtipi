@@ -1,19 +1,28 @@
-FROM node:18-alpine3.16
+ARG NODE_VERSION="18.12.1"
+ARG ALPINE_VERSION="3.16"
 
-WORKDIR /
+FROM node:${NODE_VERSION}-buster-slim 
 
-RUN apk --no-cache add g++ make
+RUN apt update
+RUN apt install -y openssl
+
+RUN npm install pnpm -g
 RUN npm install node-gyp -g
 
-WORKDIR /api
-COPY ./packages/system-api/package*.json /api/
-RUN npm install
+WORKDIR /app
 
-WORKDIR /dashboard
-COPY ./packages/dashboard/package*.json /dashboard/
-RUN npm install
+COPY ./pnpm-lock.yaml ./
+RUN pnpm fetch
 
-COPY ./packages/system-api /api
-COPY ./packages/dashboard /dashboard
+COPY ./package*.json ./
+COPY ./prisma/schema.prisma ./prisma/
 
-WORKDIR /
+RUN pnpm install -r --prefer-offline 
+
+COPY ./src ./src
+COPY ./esbuild.js ./esbuild.js
+COPY ./tsconfig.json ./tsconfig.json
+COPY ./next.config.mjs ./next.config.mjs
+COPY ./public ./public
+
+CMD ["npm", "run", "dev"]
