@@ -50,7 +50,7 @@ jobs:
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
-        if: steps.create_tag.outputs.successful == 'yes'
+        if: steps.create_tag.outputs.tagcreated == 'yes'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -58,4 +58,5 @@ jobs:
           release_name: ${{ steps.create_tag.outputs.tagname }}
           draft: false
           prerelease: false
+
 
