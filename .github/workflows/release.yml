@@ -41,10 +41,9 @@ jobs:
 
       - name: Create Tag
         id: create_tag
-        uses: jaywcjlove/create-tag-action@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          package-path: ./package.json
+        uses: butlerlogic/action-autotag@stable
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
 
       - name: Create Release
         id: create_release
