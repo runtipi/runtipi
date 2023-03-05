@@ -1,6 +1,6 @@
 {
   "name": "runtipi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A homeserver for everyone",
   "scripts": {
     "copy:migrations": "mkdir -p dist/migrations && cp -r ./src/server/migrations dist",
@@ -40,7 +40,6 @@
     "@trpc/react-query": "^10.11.1",
     "@trpc/server": "^10.11.1",
     "argon2": "^0.29.1",
-    "chokidar": "^3.5.3",
     "clsx": "^1.1.1",
     "express": "^4.17.3",
     "fs-extra": "^10.1.0",
