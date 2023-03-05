@@ -9,6 +9,7 @@ import { Logger } from './core/Logger';
 import { runPostgresMigrations } from './run-migration';
 import { AppServiceClass } from './services/apps/apps.service';
 import { prisma } from './db/client';
+import { EventDispatcherClass } from './core/EventDispatcher/EventDispatcher';
 
 let conf = {};
 let nextApp: NextServer;
@@ -43,7 +44,7 @@ nextApp.prepare().then(async () => {
 
   app.listen(port, async () => {
     const appService = new AppServiceClass(prisma);
-    EventDispatcher.clear();
+    EventDispatcherClass.clear();
 
     // Run database migrations
     await runPostgresMigrations();
@@ -55,7 +56,10 @@ nextApp.prepare().then(async () => {
 
     // Scheduled events
     EventDispatcher.scheduleEvent({ type: 'update_repo', args: [getConfig().appsRepoUrl], cronExpression: '*/30 * * * *' });
-    EventDispatcher.scheduleEvent({ type: 'system_info', args: [], cronExpression: '* * * * *' });
+    EventDispatcher.scheduleEvent({ type: 'system_info', args: [], cronExpression: '*/5 * * * * *' });
+
+    // Every 5 sec
+    // EventDispatcher.scheduleEvent({ type: 'system_info', args: [], cronExpression: '*/5 * * * * *' });
 
     appService.startAllApps();
 

@@ -4,6 +4,7 @@ source "${BASH_SOURCE%/*}/common.sh"
 
 ROOT_FOLDER="${PWD}"
 WATCH_FILE="${ROOT_FOLDER}/state/events"
+WATCH_FOLDER="${ROOT_FOLDER}/state/test-events"
 
 function clean_events() {
     # Create the file if it doesn't exist
@@ -24,9 +25,9 @@ function set_status() {
 
     # Update the status of the event
     if [[ "$(uname)" != "Linux" ]]; then
-        sed -i '' "s/${id} [a-z]*/${id} ${status}/g" "${WATCH_FILE}"
+        sed -i '' "s/${id} [a-z]*/${id} ${status}/g" "${WATCH_FOLDER}/${id}"
     else
-        sed -i "s/${id}.*$/$(echo "${id} ${status}" | sed 's/\//\\\//g')/" "$WATCH_FILE"
+        sed -i "s/${id}.*$/$(echo "${id} ${status}" | sed 's/\//\\\//g')/" "${WATCH_FOLDER}/${id}"
     fi
 }
 
@@ -107,14 +108,31 @@ function select_command() {
 write_log "Listening for events in ${WATCH_FILE}..."
 clean_events
 # Listen in for changes in the WATCH_FILE
-fswatch -0 "${WATCH_FILE}" | while read -d ""; do
-    # Read the command from the last line of the file
-    command=$(tail -n 1 "${WATCH_FILE}")
+# fswatch -0 "${WATCH_FILE}" | while read -d ""; do
+#     # Read the command from the last line of the file
+#     command=$(tail -n 1 "${WATCH_FILE}")
+#     status=$(echo "$command" | cut -d ' ' -f 3)
+
+#     if [ -z "$command" ] || [ "$status" != "waiting" ]; then
+#         continue
+#     else
+#         select_command "$command"
+#     fi
+# done
+
+
+# Listen for new files in the folder
+fswatch -0 "${WATCH_FOLDER}" | while read -d ""; do
+    # print the path
+    path="$REPLY"
+
+    command=$(tail -n 1 "${path}")
     status=$(echo "$command" | cut -d ' ' -f 3)
 
     if [ -z "$command" ] || [ "$status" != "waiting" ]; then
         continue
     else
-        select_command "$command"
+        select_command "$command" 
     fi
 done
+

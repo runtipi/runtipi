@@ -52,6 +52,16 @@ model User {
   @@map("user")
 }
 
+model event {
+  id        Int               @id @default(autoincrement())
+  status    event_status_enum
+  message   String            @db.VarChar
+  type      String            @db.VarChar
+  args      String[]          @db.VarChar
+  createdAt DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt DateTime          @default(now()) @db.Timestamp(6)
+}
+
 enum app_status_enum {
   running
   stopped
@@ -66,4 +76,11 @@ enum app_status_enum {
 enum update_status_enum {
   FAILED
   SUCCESS
+}
+
+enum event_status_enum {
+  running
+  success
+  error
+  waiting
 }
