@@ -12,14 +12,14 @@ RUN npm install node-gyp -g
 WORKDIR /app
 
 COPY ./pnpm-lock.yaml ./
-RUN pnpm fetch
+RUN pnpm fetch --ignore-scripts
 
 COPY ./package*.json ./
 COPY ./prisma/schema.prisma ./prisma/
 
 RUN pnpm install -r --prefer-offline 
 
-COPY ./src ./src
+COPY ./nodemon.json ./nodemon.json
 COPY ./esbuild.js ./esbuild.js
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs

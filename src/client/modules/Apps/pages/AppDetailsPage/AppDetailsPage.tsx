@@ -10,7 +10,7 @@ interface IProps {
 }
 
 export const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
-  const { data, error } = trpc.app.getApp.useQuery({ id: appId }, { refetchInterval: 3000 });
+  const { data, error } = trpc.app.getApp.useQuery({ id: appId });
 
   const breadcrumb = [
     { name: 'Apps', href: '/apps' },

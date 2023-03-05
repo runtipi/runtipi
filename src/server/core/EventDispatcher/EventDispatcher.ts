@@ -2,7 +2,6 @@
 import cron from 'node-cron';
 import fs from 'fs-extra';
 import { Logger } from '../Logger';
-import { getConfig } from '../TipiConfig';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -257,6 +256,4 @@ class EventDispatcher {
 
 export const EventDispatcherInstance = global.EventDispatcher || EventDispatcher.getInstance();
 
-if (getConfig().NODE_ENV !== 'production') {
-  global.EventDispatcher = EventDispatcherInstance;
-}
+global.EventDispatcher = EventDispatcherInstance;
