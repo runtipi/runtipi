@@ -257,6 +257,4 @@ class EventDispatcher {
 
 export const EventDispatcherInstance = global.EventDispatcher || EventDispatcher.getInstance();
 
-if (getConfig().NODE_ENV !== 'production') {
-  global.EventDispatcher = EventDispatcherInstance;
-}
+global.EventDispatcher = EventDispatcherInstance;
