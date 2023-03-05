@@ -34,7 +34,6 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.47.1
   '@typescript-eslint/parser': ^5.47.1
   argon2: ^0.29.1
-  chokidar: ^3.5.3
   clsx: ^1.1.1
   dotenv-cli: ^6.0.0
   esbuild: ^0.16.17
@@ -103,7 +102,6 @@ dependencies:
   '@trpc/react-query': 10.11.1_2pugaexxlcekgcbbhj75jqmiqi
   '@trpc/server': 10.11.1
   argon2: 0.29.1
-  chokidar: 3.5.3
   clsx: 1.2.1
   express: 4.18.2
   fs-extra: 10.1.0

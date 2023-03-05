@@ -2,7 +2,6 @@
 import cron from 'node-cron';
 import fs from 'fs-extra';
 import { Logger } from '../Logger';
-import { getConfig } from '../TipiConfig';
 
 declare global {
   // eslint-disable-next-line no-var
