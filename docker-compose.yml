@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   reverse-proxy:
@@ -28,7 +28,7 @@ services:
       POSTGRES_USER: tipi
       POSTGRES_DB: tipi
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d tipi -U tipi"]
+      test: ['CMD-SHELL', 'pg_isready -d tipi -U tipi']
       interval: 5s
       timeout: 10s
       retries: 120
@@ -69,6 +69,7 @@ services:
       ARCHITECTURE: ${ARCHITECTURE}
       REDIS_HOST: ${REDIS_HOST}
     volumes:
+      - ${PWD}/.env:/runtipi/.env
       - ${PWD}/state:/runtipi/state
       - ${PWD}/repos:/runtipi/repos:ro
       - ${PWD}/apps:/runtipi/apps

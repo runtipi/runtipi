@@ -78,6 +78,7 @@ services:
     volumes:
       # - /dashboard/node_modules
       # - /dashboard/.next
+      - ${PWD}/.env:/runtipi/.env
       - ${PWD}/src:/app/src
       - ${PWD}/state:/runtipi/state
       - ${PWD}/repos:/runtipi/repos:ro
