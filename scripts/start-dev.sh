@@ -93,6 +93,9 @@ if [[ "$OS" == "Darwin" ]]; then
     sed_args=(-i '')
 fi
 
+# Function below is modified from Umbrel
+# Required Notice: Copyright
+# Umbrel (https://umbrel.com)
 for template in ${ENV_FILE}; do
     sed "${sed_args[@]}" "s/<dns_ip>/${DNS_IP}/g" "${template}"
     sed "${sed_args[@]}" "s/<internal_ip>/${INTERNAL_IP}/g" "${template}"

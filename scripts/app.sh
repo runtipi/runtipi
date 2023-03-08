@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Required Notice: Copyright
-# Umbrel (https://umbrel.com)
-
 echo "Starting app script"
 
 source "${BASH_SOURCE%/*}/common.sh"
@@ -57,6 +54,10 @@ else
   fi
 fi
 
+
+# Function below has been modified from Umbrel
+# Required Notice: Copyright
+# Umbrel (https://umbrel.com)
 compose() {
   local app="${1}"
   shift

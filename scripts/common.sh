@@ -16,6 +16,9 @@ function write_log() {
     echo "$(date) - ${message}" >>"${log_file}"
 }
 
+# Function below is taken from Umbrel
+# Required Notice: Copyright
+# Umbrel (https://umbrel.com)
 function derive_entropy() {
     SEED_FILE="${STATE_FOLDER}/seed"
     identifier="${1}"
