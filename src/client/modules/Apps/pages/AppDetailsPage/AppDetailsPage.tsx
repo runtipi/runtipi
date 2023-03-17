@@ -7,14 +7,16 @@ import { AppDetailsContainer } from '../../containers/AppDetailsContainer/AppDet
 
 interface IProps {
   appId: string;
+  refSlug: string;
+  refTitle: string;
 }
 
-export const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
+export const AppDetailsPage: NextPage<IProps> = ({ appId, refSlug, refTitle }) => {
   const { data, error } = trpc.app.getApp.useQuery({ id: appId });
 
   const breadcrumb = [
-    { name: 'Apps', href: '/apps' },
-    { name: data?.info?.name || '', href: `/apps/${data?.id}`, current: true },
+    { name: refTitle, href: `/${refSlug}` },
+    { name: data?.info?.name || '', href: `/${refSlug}/${data?.id}`, current: true },
   ];
 
   // TODO: add loading state
@@ -24,12 +26,4 @@ export const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
       {error && <ErrorPage error={error.message} />}
     </Layout>
   );
-};
-
-AppDetailsPage.getInitialProps = (ctx) => {
-  const { query } = ctx;
-
-  const appId = String(query.id);
-
-  return { appId };
 };
