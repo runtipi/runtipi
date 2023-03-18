@@ -18,10 +18,8 @@ export const sortTable = (params: SortParams) => {
     if (aVal < bVal) {
       return direction === 'asc' ? -1 : 1;
     }
-    if (aVal > bVal) {
-      return direction === 'asc' ? 1 : -1;
-    }
-    return 0;
+
+    return direction === 'asc' ? 1 : -1;
   });
 
   if (category) {
