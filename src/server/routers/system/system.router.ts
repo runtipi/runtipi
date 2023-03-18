@@ -1,14 +1,17 @@
 import { inferRouterOutputs } from '@trpc/server';
-import { router, protectedProcedure, publicProcedure } from '../../trpc';
+import { router, protectedProcedure, publicProcedure, permissionProcedure } from '../../trpc';
 import { SystemServiceClass } from '../../services/system';
 
 export type SystemRouterOutput = inferRouterOutputs<typeof systemRouter>;
 const SystemService = new SystemServiceClass();
 
 export const systemRouter = router({
+  // Public
   status: publicProcedure.query(SystemServiceClass.status),
-  systemInfo: protectedProcedure.query(SystemServiceClass.systemInfo),
   getVersion: publicProcedure.query(SystemService.getVersion),
-  restart: protectedProcedure.mutation(SystemService.restart),
-  update: protectedProcedure.mutation(SystemService.update),
+  // Protected
+  systemInfo: protectedProcedure.query(SystemServiceClass.systemInfo),
+  // Permission
+  restart: permissionProcedure('ADMINISTRATE_SYSTEM').mutation(SystemService.restart),
+  update: permissionProcedure('ADMINISTRATE_SYSTEM').mutation(SystemService.update),
 });

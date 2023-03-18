@@ -16,7 +16,7 @@ FROM builder_base AS builder
 WORKDIR /app
 
 COPY ./pnpm-lock.yaml ./
-RUN pnpm fetch
+RUN pnpm fetch --ingore-scripts
 
 COPY ./package*.json ./
 COPY ./prisma/schema.prisma ./prisma/

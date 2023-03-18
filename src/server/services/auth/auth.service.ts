@@ -6,6 +6,7 @@ import validator from 'validator';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
+import { UserPermission } from '../../common/user-permissions';
 
 type UsernamePasswordInput = {
   username: string;
@@ -92,6 +93,36 @@ export class AuthServiceClass {
     await TipiCache.set(session, newUser.id.toString());
 
     return { token };
+  };
+
+  /*
+   * Creates a new user with the provided email password and permissions.
+   *
+   * @param {UsernamePasswordInput} input - An object containing the email and password fields
+   * @returns {Promise<User>} - A promise that resolves to the newly created user
+   */
+  public createUser = async (input: UsernamePasswordInput & { permissions: UserPermission[] }) => {
+    const { password, username, permissions } = input;
+    const email = username.trim().toLowerCase();
+
+    if (!username || !password) {
+      throw new Error('Missing email or password');
+    }
+
+    if (username.length < 3 || !validator.isEmail(email)) {
+      throw new Error('Invalid username');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { username: email } });
+
+    if (user) {
+      throw new Error('User already exists');
+    }
+
+    const hash = await argon2.hash(password);
+    const newUser = await this.prisma.user.create({ data: { username: email, password: hash, permissions } });
+
+    return newUser;
   };
 
   /**
