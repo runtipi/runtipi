@@ -91,6 +91,7 @@ mkdir -p media/data/music
 mkdir -p media/data/tv
 mkdir -p media/data/podcasts
 mkdir -p media/data/images
+mkdir -p media/data/roms
 
 ## remove downloaded folder
 rm -rf runtipi-"${LATEST_VERSION}"
