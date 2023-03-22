@@ -25,103 +25,16 @@
 
 Tipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Tipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Tipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/meienberger/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
 
+## Getting started
+
+Visit our website [runtipi.io](https://www.runtipi.io/) for installation instructions, documentation and guides.
+
 ## Demo
 
 You can try out a demo of Tipi at [demo.runtipi.com](https://demo.runtipi.com) using the following credentials:
 
     username: user@runtipi.com
     password: runtipi
-
-## 🛠 Installation
-
-### Installation Requirements
-
-Ubuntu 18.04 LTS or higher is recommended. However other major Linux distribution are supported but may lead to installation issues. Please file an issue if you encounter one.
-
-### Download and install Tipi
-
-Download the latest version of Tipi:
-
-```bash
-curl -L https://setup.runtipi.com | bash
-```
-
-The script will prompt you the ip address of the dashboard once configured.
-
-### Commands
-
-If you already installed Tipi, you can start it manually by running the `start.sh` script in the `runtipi` folder.
-
-```bash
-cd runtipi
-sudo ./scripts/start.sh
-```
-
-Tipi will run by default on port 80. To select another port you can run the start script with the `--port` argument
-
-```bash
-sudo ./scripts/start.sh --port 7000
-```
-
-To stop Tipi, run the stop script.
-
-```bash
-sudo ./scripts/stop.sh
-```
-
-### Update Tipi
-
-To update Tipi to the latest version, run the update script.
-
-```bash
-sudo ./scripts/system.sh update
-```
-
-### Custom settings
-
-You can change the default settings by creating a `settings.json` file. The file should be located in the `runtipi/state` directory. This file will make your changes persist across restarts. Example file:
-
-```json
-{
-  "dnsIp": "9.9.9.9",
-  "domain": "mydomain.com"
-}
-```
-
-Available settings:
-
-- `dnsIp` - The IP address of the DNS server to use. Default: `9.9.9.9`
-- `domain` - The domain name to use for the dashboard. Default: `localhost`
-- `port` - The port to use for the dashboard. Default: `80`
-- `sslPort` - The port to use for the dashboard with SSL. Default: `443`
-- `listenIp` - The IP address to listen on. Default: `automatically detected`
-- `storagePath` - The path to use for storing data. Default: `runtipi/app-data`
-
-### Linking a domain to your dashboard
-
-If you want to link a domain to your dashboard, you can do so by providing the `--domain` option in the start script.
-
-```bash
-sudo ./scripts/start.sh --domain mydomain.com
-```
-
-You can also specify it in the `settings.json` file as shown in the previous section to keep the setting saved across restarts.
-
-A Let's Encrypt certificate will be generated and installed automatically. Make sure to have ports 80 and 443 open on your firewall and that your domain has an **A** record pointing to your server IP.
-
-Please note that this setting will only expose the dashboard. If you want to expose other apps, you need to configure them individually. You cannot use the `--domain` option to expose apps.
-
-This option will only work if you keep the default port 80 and 443 for the dashboard.
-
-### Uninstalling Tipi
-
-Make sure Tipi is completely stopped and then remove the `runtipi` directory.
-
-```bash
-sudo ./scripts/stop.sh
-cd ..
-sudo rm -rf runtipi
-```
 
 ## 📚 Documentation
 
