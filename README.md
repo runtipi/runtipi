@@ -27,7 +27,7 @@ Tipi is a personal homeserver orchestrator that makes it easy to manage and run 
 
 ## Getting started
 
-Visit our website [runtipi.io](https://www.runtipi.io/) for installation instructions, documentation and guides.
+Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation) for installation instructions, documentation and guides.
 
 ## Demo
 
@@ -40,13 +40,13 @@ You can try out a demo of Tipi at [demo.runtipi.com](https://demo.runtipi.com) u
 
 For a detailed guide on how to install Tipi. This amazing article by @kycfree [Running a Home Server with Tipi](https://kyc3.life/running-a-home-server-with-tipi/)
 
-You can find more documentation and tutorials / FAQ in the [Wiki](https://github.com/meienberger/runtipi/wiki).
+You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.runtipi.io/docs/introduction)
 
 ## ❤️ Contributing
 
 Tipi is made to be very easy to plug in new apps. We welcome and appreciate new contributions.
 
-If you want to add a new app or feature, you can follow the [Contribution guide](https://github.com/meienberger/runtipi/wiki/Adding-your-own-app) for instructions on how to do so.
+If you want to add a new app or feature, you can follow the [Contribution guide](https://www.runtipi.io/docs/contributing/adding-a-new-app) for instructions on how to do so.
 
 We are looking for contributions of all kinds. If you know design, development, or have ideas for new features, please get in touch.
 
