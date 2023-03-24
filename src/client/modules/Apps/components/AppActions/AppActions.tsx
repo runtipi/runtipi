@@ -1,4 +1,4 @@
-import { IconDownload, IconExternalLink, IconPlayerPause, IconPlayerPlay, IconSettings, IconTrash, IconX, TablerIcon } from '@tabler/icons';
+import { Icon, IconDownload, IconExternalLink, IconPlayerPause, IconPlayerPlay, IconSettings, IconTrash, IconX } from '@tabler/icons-react';
 import clsx from 'clsx';
 import React from 'react';
 import type { AppStatus } from '../../../../../server/services/apps/apps.types';
@@ -21,7 +21,7 @@ interface IProps {
 }
 
 interface BtnProps {
-  Icon?: TablerIcon;
+  IconComponent?: Icon;
   onClick: () => void;
   width?: number | null;
   title?: string;
@@ -30,12 +30,12 @@ interface BtnProps {
 }
 
 const ActionButton: React.FC<BtnProps> = (props) => {
-  const { Icon, onClick, title, loading, color, width = 140 } = props;
+  const { IconComponent, onClick, title, loading, color, width = 140 } = props;
 
   return (
     <Button loading={loading} data-testid={`action-button-${title?.toLowerCase()}`} onClick={onClick} width={width} className={clsx('me-2 px-4 mt-2', [`btn-${color}`])}>
       {title}
-      {Icon && <Icon className="ms-1" size={14} />}
+      {IconComponent && <IconComponent className="ms-1" size={14} />}
     </Button>
   );
 };
@@ -45,15 +45,15 @@ export const AppActions: React.FC<IProps> = ({ info, status, onInstall, onUninst
 
   const buttons: JSX.Element[] = [];
 
-  const StartButton = <ActionButton key="start" Icon={IconPlayerPlay} onClick={onStart} title="Start" color="success" />;
-  const RemoveButton = <ActionButton key="remove" Icon={IconTrash} onClick={onUninstall} title="Remove" color="danger" />;
-  const SettingsButton = <ActionButton key="settings" Icon={IconSettings} onClick={onUpdateSettings} title="Settings" />;
-  const StopButton = <ActionButton key="stop" Icon={IconPlayerPause} onClick={onStop} title="Stop" color="danger" />;
-  const OpenButton = <ActionButton key="open" Icon={IconExternalLink} onClick={onOpen} title="Open" />;
+  const StartButton = <ActionButton key="start" IconComponent={IconPlayerPlay} onClick={onStart} title="Start" color="success" />;
+  const RemoveButton = <ActionButton key="remove" IconComponent={IconTrash} onClick={onUninstall} title="Remove" color="danger" />;
+  const SettingsButton = <ActionButton key="settings" IconComponent={IconSettings} onClick={onUpdateSettings} title="Settings" />;
+  const StopButton = <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={onStop} title="Stop" color="danger" />;
+  const OpenButton = <ActionButton key="open" IconComponent={IconExternalLink} onClick={onOpen} title="Open" />;
   const LoadingButtion = <ActionButton key="loading" loading onClick={() => null} color="success" title="Loading" />;
-  const CancelButton = <ActionButton key="cancel" Icon={IconX} onClick={onCancel} title="Cancel" />;
+  const CancelButton = <ActionButton key="cancel" IconComponent={IconX} onClick={onCancel} title="Cancel" />;
   const InstallButton = <ActionButton key="install" onClick={onInstall} title="Install" color="success" />;
-  const UpdateButton = <ActionButton key="update" Icon={IconDownload} onClick={onUpdate} width={null} title="Update" color="success" />;
+  const UpdateButton = <ActionButton key="update" IconComponent={IconDownload} onClick={onUpdate} width={null} title="Update" color="success" />;
 
   switch (status) {
     case 'stopped':

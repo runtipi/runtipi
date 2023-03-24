@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconBrandGithub, IconHeart, IconLogout, IconMoon, IconSun } from '@tabler/icons';
+import { IconBrandGithub, IconHeart, IconLogout, IconMoon, IconSun } from '@tabler/icons-react';
 import Image from 'next/image';
 import clsx from 'clsx';
 import Link from 'next/link';

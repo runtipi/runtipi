@@ -1,4 +1,4 @@
-import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons';
+import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons-react';
 import React from 'react';
 import { SystemRouterOutput } from '../../../../server/routers/system/system.router';
 import SystemStat from '../components/SystemStat';
