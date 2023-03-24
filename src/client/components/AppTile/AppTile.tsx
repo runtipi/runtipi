@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
-import { IconDownload } from '@tabler/icons';
+import { IconDownload } from '@tabler/icons-react';
 import { AppStatus } from '../AppStatus';
 import { AppLogo } from '../AppLogo/AppLogo';
 import { limitText } from '../../modules/AppStore/helpers/table.helpers';

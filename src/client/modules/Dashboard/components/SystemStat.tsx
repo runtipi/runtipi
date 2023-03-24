@@ -1,21 +1,21 @@
-import { TablerIcon } from '@tabler/icons';
+import { Icon } from '@tabler/icons-react';
 import React from 'react';
 
 interface IProps {
-  icon: TablerIcon;
+  icon: Icon;
   progress: number;
   title: string;
   subtitle: string;
   metric: string;
 }
 
-const SystemStat: React.FC<IProps> = ({ icon: Icon, progress, title, subtitle, metric }) => (
+const SystemStat: React.FC<IProps> = ({ icon: IconComponent, progress, title, subtitle, metric }) => (
   <div className="col-sm-6 col-lg-4">
     <div className="card">
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-start">
           <div className="h2 mb-3 font-weight-bold">{title}</div>
-          <Icon />
+          <IconComponent />
         </div>
         <div className="h2">{metric}</div>
         <div className="mb-3 text-muted">{subtitle}</div>
