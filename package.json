@@ -35,6 +35,7 @@
     "@tabler/core": "1.0.0-beta17",
     "@tabler/icons-react": "^2.11.0",
     "@tanstack/react-query": "^4.27.0",
+    "@tanstack/react-query-devtools": "^4.27.0",
     "@trpc/client": "^10.16.0",
     "@trpc/next": "^10.16.0",
     "@trpc/react-query": "^10.16.0",

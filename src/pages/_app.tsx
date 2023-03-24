@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import '../client/styles/global.css';
@@ -46,6 +47,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </StatusProvider>
       </ToastProvider>
+      <ReactQueryDevtools />
     </main>
   );
 }
