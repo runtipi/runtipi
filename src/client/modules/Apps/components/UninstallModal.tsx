@@ -1,4 +1,4 @@
-import { IconAlertTriangle } from '@tabler/icons';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import React from 'react';
 import { Button } from '../../../components/ui/Button';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '../../../components/ui/Modal';

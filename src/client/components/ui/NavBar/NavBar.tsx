@@ -1,4 +1,4 @@
-import { IconApps, IconBrandAppstore, IconHome, IconSettings, TablerIcon } from '@tabler/icons';
+import { IconApps, IconBrandAppstore, IconHome, IconSettings, Icon } from '@tabler/icons-react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -12,7 +12,7 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
   const router = useRouter();
   const path = router.pathname.split('/')[1];
 
-  const renderItem = (title: string, name: string, Icon: TablerIcon) => {
+  const renderItem = (title: string, name: string, IconComponent: Icon) => {
     const isActive = path === name;
     const itemClass = clsx('nav-item', { active: isActive, 'border-primary': isActive, 'border-bottom-wide': isActive });
 
@@ -20,7 +20,7 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
       <li data-testid={`nav-item-${name}`} className={itemClass}>
         <Link href={`/${name}`} className="nav-link" passHref>
           <span className="nav-link-icon d-md-none d-lg-inline-block">
-            <Icon size={24} />
+            <IconComponent size={24} />
           </span>
           <span className="nav-link-title">{title}</span>
         </Link>
