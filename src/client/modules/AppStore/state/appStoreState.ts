@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { AppCategory } from '../../../core/types';
 import { SortableColumns } from '../helpers/table.types';
 
