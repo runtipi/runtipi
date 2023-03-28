@@ -24,7 +24,7 @@ describe('Test: getConfig', () => {
 
   it('It should overrides config from settings.json file', () => {
     const settingsJson = {
-      appsRepoUrl: faker.random.word(),
+      appsRepoUrl: faker.internet.url(),
       appsRepoId: faker.random.word(),
       domain: faker.random.word(),
     };
@@ -65,7 +65,7 @@ describe('Test: getConfig', () => {
 
 describe('Test: setConfig', () => {
   it('It should be able set config', () => {
-    const randomWord = faker.random.word();
+    const randomWord = faker.internet.url();
     setConfig('appsRepoUrl', randomWord);
     const config = getConfig();
 
@@ -73,13 +73,24 @@ describe('Test: setConfig', () => {
     expect(config.appsRepoUrl).toBe(randomWord);
   });
 
-  it('Should not be able to set invalid NODE_ENV', () => {
-    // @ts-expect-error - We are testing invalid NODE_ENV
-    expect(() => setConfig('NODE_ENV', 'invalid')).toThrow();
+  it('Should not be able to set invalid NODE_ENV', async () => {
+    // arrange
+    let error;
+
+    // act
+    try {
+      // @ts-expect-error - We are testing invalid NODE_ENV
+      await setConfig('NODE_ENV', 'invalid');
+    } catch (e) {
+      error = e;
+    }
+
+    // assert
+    expect(error).toBeDefined();
   });
 
   it('Should write config to json file', () => {
-    const randomWord = faker.random.word();
+    const randomWord = faker.internet.url();
     setConfig('appsRepoUrl', randomWord, true);
     const config = getConfig();
 
@@ -90,5 +101,72 @@ describe('Test: setConfig', () => {
 
     expect(settingsJson).toBeDefined();
     expect(settingsJson.appsRepoUrl).toBe(randomWord);
+  });
+});
+
+describe('Test: getSettings', () => {
+  it('It should return settings from settings.json', () => {
+    // arrange
+    const fakeSettings = {
+      appsRepoUrl: faker.internet.url(),
+    };
+    const MockFiles = { '/runtipi/state/settings.json': JSON.stringify(fakeSettings) };
+    // @ts-expect-error - We are mocking fs
+    fs.__createMockFiles(MockFiles);
+
+    // act
+    const settings = new TipiConfig().getSettings();
+
+    // assert
+    expect(settings).toBeDefined();
+    expect(settings.appsRepoUrl).toBe(fakeSettings.appsRepoUrl);
+  });
+
+  it('It should return current config if settings.json has any invalid value', () => {
+    // arrange
+    const tipiConf = new TipiConfig();
+    const MockFiles = { '/runtipi/state/settings.json': JSON.stringify({ appsRepoUrl: 10 }) };
+    // @ts-expect-error - We are mocking fs
+    fs.__createMockFiles(MockFiles);
+
+    // act
+    const settings = tipiConf.getSettings();
+
+    // assert
+    expect(settings).toBeDefined();
+    expect(settings.appsRepoUrl).not.toBe(10);
+    expect(settings.appsRepoUrl).toBe(tipiConf.getConfig().appsRepoUrl);
+  });
+});
+
+describe('Test: setSettings', () => {
+  it('should write settings to json file', () => {
+    // arrange
+    const fakeSettings = {
+      appsRepoUrl: faker.internet.url(),
+    };
+
+    // act
+    new TipiConfig().setSettings(fakeSettings);
+
+    // assert
+    const settingsJson = readJsonFile('/runtipi/state/settings.json') as { [key: string]: string };
+
+    expect(settingsJson).toBeDefined();
+    expect(settingsJson.appsRepoUrl).toBe(fakeSettings.appsRepoUrl);
+  });
+
+  it('should not write settings to json file if there are invalid values', () => {
+    // arrange
+    const fakeSettings = { appsRepoUrl: 10 };
+
+    // act
+    new TipiConfig().setSettings(fakeSettings as object);
+
+    // assert
+    const settingsJson = (readJsonFile('/runtipi/state/settings.json') || {}) as { [key: string]: string };
+
+    expect(settingsJson).toBeDefined();
+    expect(settingsJson.appsRepoUrl).not.toBe(fakeSettings.appsRepoUrl);
   });
 });

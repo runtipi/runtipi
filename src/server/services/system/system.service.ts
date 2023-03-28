@@ -5,7 +5,7 @@ import { readJsonFile } from '../../common/fs.helpers';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
 import TipiCache from '../../core/TipiCache';
-import { getConfig, setConfig } from '../../core/TipiConfig';
+import * as TipiConfig from '../../core/TipiConfig';
 
 const SYSTEM_STATUS = ['UPDATING', 'RESTARTING', 'RUNNING'] as const;
 type SystemStatus = (typeof SYSTEM_STATUS)[keyof typeof SYSTEM_STATUS];
@@ -38,6 +38,7 @@ export class SystemServiceClass {
 
   /**
    * Get the current and latest version of Tipi
+   *
    * @returns {Promise<{ current: string; latest: string }>}
    */
   public getVersion = async (): Promise<{ current: string; latest?: string }> => {
@@ -52,10 +53,10 @@ export class SystemServiceClass {
         await this.cache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
       }
 
-      return { current: getConfig().version, latest: version?.replace('v', '') };
+      return { current: TipiConfig.getConfig().version, latest: version?.replace('v', '') };
     } catch (e) {
       Logger.error(e);
-      return { current: getConfig().version, latest: undefined };
+      return { current: TipiConfig.getConfig().version, latest: undefined };
     }
   };
 
@@ -72,7 +73,7 @@ export class SystemServiceClass {
   public update = async (): Promise<boolean> => {
     const { current, latest } = await this.getVersion();
 
-    if (getConfig().NODE_ENV === 'development') {
+    if (TipiConfig.getConfig().NODE_ENV === 'development') {
       throw new Error('Cannot update in development mode');
     }
 
@@ -92,7 +93,7 @@ export class SystemServiceClass {
       throw new Error('The major version has changed. Please update manually (instructions on GitHub)');
     }
 
-    setConfig('status', 'UPDATING');
+    TipiConfig.setConfig('status', 'UPDATING');
 
     this.dispatcher.dispatchEventAsync('update');
 
@@ -100,17 +101,17 @@ export class SystemServiceClass {
   };
 
   public restart = async (): Promise<boolean> => {
-    if (getConfig().NODE_ENV === 'development') {
+    if (TipiConfig.getConfig().NODE_ENV === 'development') {
       throw new Error('Cannot restart in development mode');
     }
 
-    setConfig('status', 'RESTARTING');
+    TipiConfig.setConfig('status', 'RESTARTING');
     this.dispatcher.dispatchEventAsync('restart');
 
     return true;
   };
 
   public static status = async (): Promise<{ status: SystemStatus }> => ({
-    status: getConfig().status as SystemStatus,
+    status: TipiConfig.getConfig().status,
   });
 }
