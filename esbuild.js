@@ -35,6 +35,6 @@ esbuild
     bundle: true,
     minify: isDev,
     sourcemap: isDev,
-    watch: isDev,
+    watch: false,
   })
   .finally(onRebuild);
