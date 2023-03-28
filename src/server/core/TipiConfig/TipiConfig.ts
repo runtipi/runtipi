@@ -21,7 +21,7 @@ const {
   APPS_REPO_URL,
   DOMAIN,
   REDIS_HOST,
-  STORAGE_PATH = '/runtipi',
+  STORAGE_PATH,
   ARCHITECTURE = 'amd64',
   POSTGRES_HOST,
   POSTGRES_DBNAME,
@@ -30,26 +30,29 @@ const {
   POSTGRES_PORT = 5432,
 } = conf;
 
-const configSchema = z.object({
+export const configSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
   REDIS_HOST: z.string(),
   status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
   architecture: z.nativeEnum(ARCHITECTURES),
-  dnsIp: z.string(),
+  dnsIp: z.string().ip(),
   rootFolder: z.string(),
   internalIp: z.string(),
   version: z.string(),
   jwtSecret: z.string(),
   appsRepoId: z.string(),
-  appsRepoUrl: z.string(),
+  appsRepoUrl: z.string().url(),
   domain: z.string(),
-  storagePath: z.string(),
+  storagePath: z.string().optional(),
   postgresHost: z.string(),
   postgresDatabase: z.string(),
   postgresUsername: z.string(),
   postgresPassword: z.string(),
   postgresPort: z.number(),
 });
+
+export const settingsSchema = configSchema.partial().pick({ dnsIp: true, internalIp: true, appsRepoUrl: true, domain: true, storagePath: true });
+export type TipiSettingsType = z.infer<typeof settingsSchema>;
 
 export const formatErrors = (errors: { fieldErrors: Record<string, string[]> }) =>
   Object.entries(errors.fieldErrors)
@@ -116,7 +119,19 @@ export class TipiConfig {
     return this.config;
   }
 
-  public setConfig<T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile = false) {
+  public getSettings() {
+    const fileConfig = readJsonFile('/runtipi/state/settings.json') || {};
+    const parsedSettings = settingsSchema.safeParse({ ...this.config, ...fileConfig });
+
+    if (parsedSettings.success) {
+      return parsedSettings.data;
+    }
+
+    Logger.error('❌ Invalid settings.json file');
+    return this.config;
+  }
+
+  public async setConfig<T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile = false) {
     const newConf: z.infer<typeof configSchema> = { ...this.getConfig() };
     newConf[key] = value;
 
@@ -129,13 +144,29 @@ export class TipiConfig {
       parsedConf[key] = value;
       const parsed = configSchema.partial().parse(parsedConf);
 
-      fs.writeFileSync('/runtipi/state/settings.json', JSON.stringify(parsed));
+      await fs.promises.writeFile('/runtipi/state/settings.json', JSON.stringify(parsed));
     }
+  }
+
+  public async setSettings(settings: TipiSettingsType) {
+    const newConf: z.infer<typeof configSchema> = { ...this.getConfig() };
+    const parsed = settingsSchema.safeParse(settings);
+
+    if (!parsed.success) {
+      Logger.error('❌ Invalid settings.json file');
+      return;
+    }
+
+    await fs.promises.writeFile('/runtipi/state/settings.json', JSON.stringify(parsed.data));
+
+    this.config = configSchema.parse({ ...newConf, ...parsed.data });
   }
 }
 
 export const setConfig = <T extends keyof typeof configSchema.shape>(key: T, value: z.infer<typeof configSchema>[T], writeFile = false) => {
-  TipiConfig.getInstance().setConfig(key, value, writeFile);
+  return TipiConfig.getInstance().setConfig(key, value, writeFile);
 };
 
 export const getConfig = () => TipiConfig.getInstance().getConfig();
+export const getSettings = () => TipiConfig.getInstance().getSettings();
+export const setSettings = (settings: TipiSettingsType) => TipiConfig.getInstance().setSettings(settings);

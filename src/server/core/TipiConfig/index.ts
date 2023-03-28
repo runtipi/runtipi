@@ -1,1 +1,1 @@
-export { getConfig, setConfig, TipiConfig } from './TipiConfig';
+export { getConfig, setConfig, getSettings, setSettings, TipiConfig } from './TipiConfig';
