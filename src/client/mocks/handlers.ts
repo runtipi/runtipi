@@ -27,6 +27,17 @@ export const handlers = [
     response: { cpu: { load: 0.1 }, disk: { available: 1, total: 2, used: 1 }, memory: { available: 1, total: 2, used: 1 } },
   }),
   getTRPCMock({
+    path: ['system', 'getSettings'],
+    type: 'query',
+    response: { internalIp: 'localhost', dnsIp: '1.1.1.1', appsRepoUrl: 'https://test.com/test', domain: 'tipi.localhost' },
+  }),
+  getTRPCMock({
+    path: ['system', 'updateSettings'],
+    type: 'mutation',
+    response: undefined,
+  }),
+  // Auth
+  getTRPCMock({
     path: ['auth', 'login'],
     type: 'mutation',
     response: { token: 'token' },
