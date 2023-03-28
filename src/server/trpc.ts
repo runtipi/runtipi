@@ -1,11 +1,33 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
+import { typeToFlattenedError, ZodError } from 'zod';
 import { type Context } from './context';
 
+/**
+ *
+ * @param errors
+ */
+export function zodErrorsToRecord(errors: typeToFlattenedError<string>) {
+  const record: Record<string, string> = {};
+  Object.entries(errors.fieldErrors).forEach(([key, value]) => {
+    const error = value?.[0];
+    if (error) {
+      record[key] = error;
+    }
+  });
+
+  return record;
+}
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
-  errorFormatter({ shape }) {
-    return shape;
+  errorFormatter({ shape, error }) {
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError: error.code === 'BAD_REQUEST' && error.cause instanceof ZodError ? zodErrorsToRecord(error.cause.flatten()) : null,
+      },
+    };
   },
 });
 // Base router and procedure helpers
@@ -13,7 +35,7 @@ export const { router } = t;
 
 /**
  * Unprotected procedure
- * */
+ */
 export const publicProcedure = t.procedure;
 
 /**
@@ -33,5 +55,5 @@ const isAuthed = t.middleware(({ ctx, next }) => {
 
 /**
  * Protected procedure
- * */
+ */
 export const protectedProcedure = t.procedure.use(isAuthed);
