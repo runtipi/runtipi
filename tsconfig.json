@@ -1,6 +1,18 @@
 {
   "compilerOptions": {
     "target": "es2017",
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": [
+        "./src/client/components/*"
+      ],
+      "@/utils/*": [
+        "./src/client/utils/*"
+      ],
+      "@/client/*": [
+        "./src/client/*"
+      ],
+    },
     "lib": [
       "dom",
       "dom.iterable",
