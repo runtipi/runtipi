@@ -1,18 +1,27 @@
 import React from 'react';
 import type { NextPage } from 'next';
-import { SettingsContainer } from '../../containers/SettingsContainer/SettingsContainer';
-import { trpc } from '../../../../utils/trpc';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Layout } from '../../../../components/Layout';
-import { ErrorPage } from '../../../../components/ui/ErrorPage';
+import { GeneralActions } from '../../containers/GeneralActions';
+import { SettingsContainer } from '../../containers/SettingsContainer';
 
 export const SettingsPage: NextPage = () => {
-  const { data, error } = trpc.system.getVersion.useQuery(undefined, { staleTime: 0 });
-
-  // TODO: add loading state
   return (
     <Layout title="Settings">
-      {data && <SettingsContainer data={data} />}
-      {error && <ErrorPage error={error.message} />}
+      <div className="card d-flex">
+        <Tabs defaultValue="actions">
+          <TabsList>
+            <TabsTrigger value="actions">Actions</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
+          </TabsList>
+          <TabsContent value="actions">
+            <GeneralActions />
+          </TabsContent>
+          <TabsContent value="settings">
+            <SettingsContainer />
+          </TabsContent>
+        </Tabs>
+      </div>
     </Layout>
   );
 };
