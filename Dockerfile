@@ -1,13 +1,10 @@
 ARG NODE_VERSION="18.12.1"
 ARG ALPINE_VERSION="3.16"
 
-FROM node:${NODE_VERSION}-buster-slim AS node_base
-RUN apt update
-RUN apt install -y openssl
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
 FROM node_base AS builder_base
 
-RUN npm install node-gyp -g
 RUN npm install pnpm -g
 
 # BUILDER
@@ -16,7 +13,7 @@ FROM builder_base AS builder
 WORKDIR /app
 
 COPY ./pnpm-lock.yaml ./
-RUN pnpm fetch
+RUN pnpm fetch --no-scripts
 
 COPY ./package*.json ./
 COPY ./prisma/schema.prisma ./prisma/
