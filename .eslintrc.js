@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsdoc'],
+  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsdoc', 'import'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'next/core-web-vitals',
@@ -29,9 +29,10 @@ module.exports = {
     'react/jsx-props-no-spreading': 0,
     'react/no-unused-prop-types': 0,
     'react/button-has-type': 0,
-    'import/no-extraneous-dependencies': ['error', { devDependencies: ['esbuild.js', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/*.factory.{ts,tsx}', '**/mocks/**', 'tests/**'] }],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: ['esbuild.js', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/*.factory.{ts,tsx}', '**/mocks/**', 'tests/**', '**/*.d.ts'] }],
     'no-underscore-dangle': 0,
     'arrow-body-style': 0,
+    'class-methods-use-this': 0,
   },
   globals: {
     JSX: true,
