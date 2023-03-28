@@ -89,7 +89,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
     <form data-testid={`${name}-form`} className="flex flex-col" onSubmit={handleSubmit(validate)}>
       {formFields.filter(typeFilter).map(renderField)}
       {exposable && renderExposeForm()}
-      <Button type="submit" className="btn-success">
+      <Button loading={loading} type="submit" className="btn-success">
         {initalValues ? 'Update' : 'Install'}
       </Button>
     </form>

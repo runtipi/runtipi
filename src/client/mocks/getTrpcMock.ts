@@ -19,6 +19,7 @@ export type RpcErrorResponse = {
         httpStatus: number;
         stack: string;
         path: string; // TQuery
+        zodError?: Record<string, string>;
       };
     };
   };
@@ -33,7 +34,7 @@ const jsonRpcSuccessResponse = (data: unknown): RpcSuccessResponse<any> => {
   };
 };
 
-const jsonRpcErrorResponse = (path: string, status: number, message: string): RpcErrorResponse => ({
+const jsonRpcErrorResponse = (path: string, status: number, message: string, zodError?: Record<string, string>): RpcErrorResponse => ({
   error: {
     json: {
       message,
@@ -43,6 +44,7 @@ const jsonRpcErrorResponse = (path: string, status: number, message: string): Rp
         httpStatus: status,
         stack: 'Error: Internal Server Error',
         path,
+        zodError,
       },
     },
   },
@@ -73,12 +75,13 @@ export const getTRPCMockError = <
   type?: 'query' | 'mutation';
   status?: number;
   message?: string;
+  zodError?: Record<string, string>;
 }) => {
   const fn = endpoint.type === 'mutation' ? rest.post : rest.get;
 
   const route = `http://localhost:3000/api/trpc/${endpoint.path[0]}.${endpoint.path[1] as string}`;
 
   return fn(route, (_, res, ctx) =>
-    res(ctx.delay(), ctx.json(jsonRpcErrorResponse(`${endpoint.path[0]}.${endpoint.path[1] as string}`, endpoint.status ?? 500, endpoint.message ?? 'Internal Server Error'))),
+    res(ctx.delay(), ctx.json(jsonRpcErrorResponse(`${endpoint.path[0]}.${endpoint.path[1] as string}`, endpoint.status ?? 500, endpoint.message ?? 'Internal Server Error', endpoint.zodError))),
   );
 };
