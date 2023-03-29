@@ -31,7 +31,7 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
         </div>
         {updateAvailable && (
           <div data-tip="Update available" className="ribbon bg-green ribbon-top">
-            <IconDownload />
+            <IconDownload size={20} />
           </div>
         )}
       </Link>
