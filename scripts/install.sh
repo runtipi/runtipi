@@ -84,6 +84,11 @@ mkdir -p media/torrents/watch
 mkdir -p media/torrents/completed
 mkdir -p media/torrents/incomplete
 
+mkdir -p media/usenet
+mkdir -p media/usenet/watch
+mkdir -p media/usenet/completed
+mkdir -p media/usenet/incomplete
+
 mkdir -p media/data
 mkdir -p media/data/books
 mkdir -p media/data/movies
