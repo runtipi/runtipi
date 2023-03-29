@@ -1,5 +1,6 @@
 import { NextPage } from 'next';
 import React from 'react';
+import { useRouter } from 'next/router';
 import { Layout } from '../../../../components/Layout';
 import { ErrorPage } from '../../../../components/ui/ErrorPage';
 import { trpc } from '../../../../utils/trpc';
@@ -7,11 +8,20 @@ import { AppDetailsContainer } from '../../containers/AppDetailsContainer/AppDet
 
 interface IProps {
   appId: string;
-  refSlug: string;
-  refTitle: string;
 }
 
-export const AppDetailsPage: NextPage<IProps> = ({ appId, refSlug, refTitle }) => {
+type Path = { refSlug: string; refTitle: string };
+const paths: Record<string, Path> = {
+  'app-store': { refSlug: 'app-store', refTitle: 'App Store' },
+  apps: { refSlug: 'apps', refTitle: 'Apps' },
+};
+
+export const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
+  const router = useRouter();
+
+  const basePath = router.pathname.split('/').slice(1)[0];
+  const { refSlug, refTitle } = paths[basePath || 'apps'] || { refSlug: 'apps', refTitle: 'Apps' };
+
   const { data, error } = trpc.app.getApp.useQuery({ id: appId });
 
   const breadcrumb = [
@@ -26,4 +36,12 @@ export const AppDetailsPage: NextPage<IProps> = ({ appId, refSlug, refTitle }) =
       {error && <ErrorPage error={error.message} />}
     </Layout>
   );
+};
+
+AppDetailsPage.getInitialProps = (ctx) => {
+  const { query } = ctx;
+
+  const appId = String(query.id);
+
+  return { appId };
 };
