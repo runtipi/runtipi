@@ -354,7 +354,7 @@ export class AppServiceClass {
    * @returns {Promise<App[]>} - An array of app objects
    */
   public installedApps = async () => {
-    const apps = await this.prisma.app.findMany();
+    const apps = await this.prisma.app.findMany({ orderBy: { id: 'asc' } });
 
     return apps
       .map((app) => {
