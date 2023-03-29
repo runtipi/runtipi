@@ -37,6 +37,9 @@ export class AppServiceClass {
   public async startAllApps() {
     const apps = await this.prisma.app.findMany({ where: { status: 'running' }, orderBy: { id: 'asc' } });
 
+    // Update all apps with status different than running or stopped to stopped
+    await this.prisma.app.updateMany({ where: { status: { notIn: ['running', 'stopped', 'missing'] } }, data: { status: 'stopped' } });
+
     await Promise.all(
       apps.map(async (app) => {
         // Regenerate env file
