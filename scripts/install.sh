@@ -84,6 +84,11 @@ mkdir -p media/torrents/watch
 mkdir -p media/torrents/completed
 mkdir -p media/torrents/incomplete
 
+mkdir -p media/usenet
+mkdir -p media/usenet/watch
+mkdir -p media/usenet/completed
+mkdir -p media/usenet/incomplete
+
 mkdir -p media/data
 mkdir -p media/data/books
 mkdir -p media/data/movies
@@ -91,6 +96,7 @@ mkdir -p media/data/music
 mkdir -p media/data/tv
 mkdir -p media/data/podcasts
 mkdir -p media/data/images
+mkdir -p media/data/roms
 
 ## remove downloaded folder
 rm -rf runtipi-"${LATEST_VERSION}"

@@ -10,9 +10,6 @@ ROOT_FOLDER="${PWD}"
 ENV_FILE="${ROOT_FOLDER}/.env"
 STORAGE_PATH=$(grep -v '^#' "${ENV_FILE}" | xargs -n 1 | grep STORAGE_PATH | cut -d '=' -f2)
 
-export DOCKER_CLIENT_TIMEOUT=240
-export COMPOSE_HTTP_TIMEOUT=240
-
 # Stop all installed apps if there are any
 apps_folder="${ROOT_FOLDER}/apps"
 if [ "$(find "${apps_folder}" -maxdepth 1 -type d | wc -l)" -gt 1 ]; then
@@ -30,6 +27,6 @@ else
 fi
 
 kill_watcher
-echo "Stopping Docker services..."
+echo "Stopping tipi..."
 echo
 docker compose down --remove-orphans --rmi local
