@@ -64,13 +64,13 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
           </div>
           <div className="d-flex">
             <div onClick={() => setDarkMode(true)} role="button" aria-hidden="true" className="nav-link px-0 hide-theme-dark cursor-pointer" data-tip="Dark mode">
-              <IconMoon data-testid="icon-moon" size={24} />
+              <IconMoon data-testid="icon-moon" size={20} />
             </div>
             <div onClick={() => setDarkMode(false)} aria-hidden="true" className="nav-link px-0 hide-theme-light cursor-pointer" data-tip="Light mode">
-              <IconSun data-testid="icon-sun" size={24} />
+              <IconSun data-testid="icon-sun" size={20} />
             </div>
             <div onClick={() => logout.mutate()} tabIndex={0} onKeyPress={() => logout.mutate()} role="button" className="nav-link px-0 cursor-pointer" data-tip="Log out">
-              <IconLogout size={24} />
+              <IconLogout size={20} />
             </div>
           </div>
         </div>
