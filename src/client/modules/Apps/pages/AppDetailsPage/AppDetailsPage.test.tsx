@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import React from 'react';
 import { render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { AppWithInfo } from '../../../../core/types';
@@ -10,7 +9,7 @@ import { AppDetailsPage } from './AppDetailsPage';
 describe('AppDetailsPage', () => {
   it('should render', async () => {
     // Arrange
-    render(<AppDetailsPage appId="nothing" refTitle="" refSlug="" />);
+    render(<AppDetailsPage appId="nothing" />);
 
     // Assert
     await waitFor(() => {
@@ -28,10 +27,19 @@ describe('AppDetailsPage', () => {
       }),
     );
 
-    const testSlug = faker.lorem.slug();
-    const testTitle = faker.lorem.sentence();
+    jest.mock('next/router', () => {
+      const actualRouter = jest.requireActual('next-router-mock');
 
-    render(<AppDetailsPage appId={app.id} refSlug={testSlug} refTitle={testTitle} />);
+      return {
+        ...actualRouter,
+        useRouter: () => ({
+          ...actualRouter.useRouter(),
+          pathname: `/apps/${app.id}`,
+        }),
+      };
+    });
+
+    render(<AppDetailsPage appId={app.id} />);
     await waitFor(() => {
       expect(screen.getByTestId('app-details')).toBeInTheDocument();
     });
@@ -41,10 +49,10 @@ describe('AppDetailsPage', () => {
     const breadcrumbsLinks = await screen.findAllByTestId('breadcrumb-link');
 
     // Assert
-    expect(breadcrumbs[0]).toHaveTextContent(testTitle);
-    expect(breadcrumbsLinks[0]).toHaveAttribute('href', `/${testSlug}`);
+    expect(breadcrumbs[0]).toHaveTextContent('Apps');
+    expect(breadcrumbsLinks[0]).toHaveAttribute('href', '/apps');
 
     expect(breadcrumbs[1]).toHaveTextContent(app.info.name);
-    expect(breadcrumbsLinks[1]).toHaveAttribute('href', `/${testSlug}/${app.id}`);
+    expect(breadcrumbsLinks[1]).toHaveAttribute('href', `/apps/${app.id}`);
   });
 });
