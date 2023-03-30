@@ -31,6 +31,7 @@ POSTGRES_HOST=tipi-db
 REDIS_HOST=tipi-redis
 TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 INTERNAL_IP=localhost
+DEMO_MODE=false
 storage_path="${ROOT_FOLDER}"
 STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
 if [[ "$ARCHITECTURE" == "aarch64" ]]; then
@@ -157,6 +158,7 @@ for template in ${ENV_FILE}; do
     sed "${sed_args[@]}" "s/<postgres_port>/${POSTGRES_PORT}/g" "${template}"
     sed "${sed_args[@]}" "s/<postgres_host>/${POSTGRES_HOST}/g" "${template}"
     sed "${sed_args[@]}" "s/<redis_host>/${REDIS_HOST}/g" "${template}"
+    sed "${sed_args[@]}" "s/<demo_mode>/${DEMO_MODE}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env.dev"

@@ -57,6 +57,7 @@ TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 storage_path="${ROOT_FOLDER}"
 STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
 REDIS_HOST=tipi-redis
+DEMO_MODE=false
 INTERNAL_IP=
 
 if [[ "$ARCHITECTURE" == "aarch64" ]] || [[ "$ARCHITECTURE" == "armv8"* ]]; then
@@ -78,6 +79,7 @@ while [ -n "${1-}" ]; do
   case "$1" in
   --rc) rc="true" ;;
   --ci) ci="true" ;;
+  --demo) DEMO_MODE=true ;;
   --port)
     port="${2-}"
 
@@ -269,6 +271,7 @@ for template in ${ENV_FILE}; do
   sed -i "s/<domain>/${DOMAIN}/g" "${template}"
   sed -i "s/<storage_path>/${STORAGE_PATH_ESCAPED}/g" "${template}"
   sed -i "s/<redis_host>/${REDIS_HOST}/g" "${template}"
+  sed -i "s/<demo_mode>/${DEMO_MODE}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env"
