@@ -228,8 +228,9 @@ if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
   fi
 
   # If storagePath is set in settings.json, use it
-  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" storagePath)" != "null" ]]; then
-    storage_path="$(get_json_field "${STATE_FOLDER}/settings.json" storagePath)"
+  storage_path_settings=$(get_json_field "${STATE_FOLDER}/settings.json" storagePath)
+  if [[ "${storage_path_settings}" != "null" && "${storage_path_settings}" != "" ]]; then
+    storage_path="${storage_path_settings}"
     STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
   fi
 fi
