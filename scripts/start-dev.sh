@@ -31,6 +31,7 @@ POSTGRES_HOST=tipi-db
 REDIS_HOST=tipi-redis
 TIPI_VERSION=$(get_json_field "${ROOT_FOLDER}/package.json" version)
 INTERNAL_IP=localhost
+DEMO_MODE=false
 storage_path="${ROOT_FOLDER}"
 STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
 if [[ "$ARCHITECTURE" == "aarch64" ]]; then
@@ -93,6 +94,47 @@ if [[ "$OS" == "Darwin" ]]; then
     sed_args=(-i '')
 fi
 
+if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
+  # If dnsIp is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" dnsIp)" != "null" ]]; then
+    DNS_IP=$(get_json_field "${STATE_FOLDER}/settings.json" dnsIp)
+  fi
+
+  # If domain is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" domain)" != "null" ]]; then
+    DOMAIN=$(get_json_field "${STATE_FOLDER}/settings.json" domain)
+  fi
+
+  # If appsRepoUrl is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoUrl)" != "null" ]]; then
+    apps_repository=$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoUrl)
+    APPS_REPOSITORY_ESCAPED="$(echo "${apps_repository}" | sed 's/\//\\\//g')"
+    REPO_ID="$("${ROOT_FOLDER}"/scripts/git.sh get_hash "${apps_repository}")"
+  fi
+
+  # If port is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" port)" != "null" ]]; then
+    NGINX_PORT=$(get_json_field "${STATE_FOLDER}/settings.json" port)
+  fi
+
+  # If sslPort is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" sslPort)" != "null" ]]; then
+    NGINX_PORT_SSL=$(get_json_field "${STATE_FOLDER}/settings.json" sslPort)
+  fi
+
+  # If listenIp is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" listenIp)" != "null" ]]; then
+    INTERNAL_IP=$(get_json_field "${STATE_FOLDER}/settings.json" listenIp)
+  fi
+
+  # If storagePath is set in settings.json, use it
+  storage_path_settings=$(get_json_field "${STATE_FOLDER}/settings.json" storagePath)
+  if [[ "${storage_path_settings}" != "null" && "${storage_path_settings}" != "" ]]; then
+    storage_path="${storage_path_settings}"
+    STORAGE_PATH_ESCAPED="$(echo "${storage_path}" | sed 's/\//\\\//g')"
+  fi
+fi
+
 # Function below is modified from Umbrel
 # Required Notice: Copyright
 # Umbrel (https://umbrel.com)
@@ -116,6 +158,7 @@ for template in ${ENV_FILE}; do
     sed "${sed_args[@]}" "s/<postgres_port>/${POSTGRES_PORT}/g" "${template}"
     sed "${sed_args[@]}" "s/<postgres_host>/${POSTGRES_HOST}/g" "${template}"
     sed "${sed_args[@]}" "s/<redis_host>/${REDIS_HOST}/g" "${template}"
+    sed "${sed_args[@]}" "s/<demo_mode>/${DEMO_MODE}/g" "${template}"
 done
 
 mv -f "$ENV_FILE" "$ROOT_FOLDER/.env.dev"

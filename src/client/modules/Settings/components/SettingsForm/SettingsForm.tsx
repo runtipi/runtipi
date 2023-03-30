@@ -97,7 +97,7 @@ export const SettingsForm = (props: IProps) => {
       </div>
       <div className="mb-3">
         <Input {...register('internalIp')} label="Internal IP" error={errors.internalIp?.message} placeholder="192.168.1.100" />
-        <span className="text-muted">IP address your server is listening on. Keep localhost for default</span>
+        <span className="text-muted">IP address your server is listening on.</span>
       </div>
       <div className="mb-3">
         <Input {...register('appsRepoUrl')} label="Apps repo URL" error={errors.appsRepoUrl?.message} placeholder="https://github.com/meienberger/runtipi-appstore" />
@@ -105,7 +105,7 @@ export const SettingsForm = (props: IProps) => {
       </div>
       <div className="mb-3">
         <Input {...register('storagePath')} label="Storage path" error={errors.storagePath?.message} placeholder="Storage path" />
-        <span className="text-muted">Path to the storage directory. Keep empty for default</span>
+        <span className="text-muted">Path to the storage directory. Keep empty for default (runtipi/app-data). Make sure it is an absolute path and that it exists</span>
       </div>
       <Button loading={loading} type="submit" className="btn-success">
         Save
