@@ -105,6 +105,10 @@ export class SystemServiceClass {
       throw new Error('Cannot restart in development mode');
     }
 
+    if (TipiConfig.getConfig().demoMode) {
+      throw new Error('Cannot restart in demo mode');
+    }
+
     TipiConfig.setConfig('status', 'RESTARTING');
     this.dispatcher.dispatchEventAsync('restart');
 
