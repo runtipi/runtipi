@@ -35,15 +35,22 @@ export const configSchema = z.object({
   REDIS_HOST: z.string(),
   status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
   architecture: z.nativeEnum(ARCHITECTURES),
-  dnsIp: z.string().ip(),
+  dnsIp: z.string().ip().trim(),
   rootFolder: z.string(),
   internalIp: z.string(),
   version: z.string(),
   jwtSecret: z.string(),
   appsRepoId: z.string(),
-  appsRepoUrl: z.string().url(),
-  domain: z.string(),
-  storagePath: z.string().optional(),
+  appsRepoUrl: z.string().url().trim(),
+  domain: z.string().trim(),
+  storagePath: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => {
+      if (!value) return undefined;
+      return value?.replace(/\s/g, '');
+    }),
   postgresHost: z.string(),
   postgresDatabase: z.string(),
   postgresUsername: z.string(),
