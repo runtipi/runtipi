@@ -16,14 +16,6 @@ ROOT_FOLDER_HOST=$(grep -v '^#' "${ENV_FILE}" | xargs -n 1 | grep ROOT_FOLDER_HO
 REPO_ID=$(grep -v '^#' "${ENV_FILE}" | xargs -n 1 | grep APPS_REPO_ID | cut -d '=' -f2)
 STORAGE_PATH=$(grep -v '^#' "${ENV_FILE}" | xargs -n 1 | grep STORAGE_PATH | cut -d '=' -f2)
 
-# Override vars with values from settings.json
-if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
-  # If storagePath is set in settings.json, use it
-  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" storagePath)" != "null" ]]; then
-    STORAGE_PATH="$(get_json_field "${STATE_FOLDER}/settings.json" storagePath)"
-  fi
-fi
-
 write_log "Running app script: ROOT_FOLDER=${ROOT_FOLDER}, ROOT_FOLDER_HOST=${ROOT_FOLDER_HOST}, REPO_ID=${REPO_ID}, STORAGE_PATH=${STORAGE_PATH}"
 
 if [ -z ${1+x} ]; then

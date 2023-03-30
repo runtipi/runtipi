@@ -11,50 +11,47 @@ export const ARCHITECTURES = {
 } as const;
 export type Architecture = (typeof ARCHITECTURES)[keyof typeof ARCHITECTURES];
 
-const conf = { ...process.env, ...nextConfig()?.serverRuntimeConfig };
-const {
-  NODE_ENV,
-  JWT_SECRET,
-  INTERNAL_IP,
-  TIPI_VERSION,
-  APPS_REPO_ID,
-  APPS_REPO_URL,
-  DOMAIN,
-  REDIS_HOST,
-  STORAGE_PATH,
-  ARCHITECTURE = 'amd64',
-  POSTGRES_HOST,
-  POSTGRES_DBNAME,
-  POSTGRES_USERNAME,
-  POSTGRES_PASSWORD,
-  POSTGRES_PORT = 5432,
-} = conf;
-
-export const configSchema = z.object({
+const configSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
   REDIS_HOST: z.string(),
   status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
   architecture: z.nativeEnum(ARCHITECTURES),
-  dnsIp: z.string().ip(),
+  dnsIp: z.string().ip().trim(),
   rootFolder: z.string(),
   internalIp: z.string(),
   version: z.string(),
   jwtSecret: z.string(),
   appsRepoId: z.string(),
-  appsRepoUrl: z.string().url(),
-  domain: z.string(),
-  storagePath: z.string().optional(),
+  appsRepoUrl: z.string().url().trim(),
+  domain: z.string().trim(),
+  storagePath: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => {
+      if (!value) return undefined;
+      return value?.replace(/\s/g, '');
+    }),
   postgresHost: z.string(),
   postgresDatabase: z.string(),
   postgresUsername: z.string(),
   postgresPassword: z.string(),
   postgresPort: z.number(),
+  demoMode: z
+    .string()
+    .or(z.boolean())
+    .optional()
+    .transform((value) => {
+      if (typeof value === 'boolean') return value;
+      return value === 'true';
+    }),
 });
 
 export const settingsSchema = configSchema.partial().pick({ dnsIp: true, internalIp: true, appsRepoUrl: true, domain: true, storagePath: true });
+
 export type TipiSettingsType = z.infer<typeof settingsSchema>;
 
-export const formatErrors = (errors: { fieldErrors: Record<string, string[]> }) =>
+const formatErrors = (errors: { fieldErrors: Record<string, string[]> }) =>
   Object.entries(errors.fieldErrors)
     .map(([name, value]) => `${name}: ${value[0]}`)
     .filter(Boolean)
@@ -66,25 +63,27 @@ export class TipiConfig {
   private config: z.infer<typeof configSchema>;
 
   constructor() {
+    const conf = { ...process.env, ...nextConfig()?.serverRuntimeConfig };
     const envConfig: z.infer<typeof configSchema> = {
-      postgresHost: POSTGRES_HOST,
-      postgresDatabase: POSTGRES_DBNAME,
-      postgresUsername: POSTGRES_USERNAME,
-      postgresPassword: POSTGRES_PASSWORD,
-      postgresPort: Number(POSTGRES_PORT),
-      REDIS_HOST,
-      NODE_ENV,
-      architecture: ARCHITECTURE as z.infer<typeof configSchema>['architecture'],
+      postgresHost: conf.POSTGRES_HOST,
+      postgresDatabase: conf.POSTGRES_DBNAME,
+      postgresUsername: conf.POSTGRES_USERNAME,
+      postgresPassword: conf.POSTGRES_PASSWORD,
+      postgresPort: Number(conf.POSTGRES_PORT || 5432),
+      REDIS_HOST: conf.REDIS_HOST,
+      NODE_ENV: conf.NODE_ENV,
+      architecture: conf.ARCHITECTURE || 'amd64',
       rootFolder: '/runtipi',
-      internalIp: INTERNAL_IP,
-      version: TIPI_VERSION,
-      jwtSecret: JWT_SECRET,
-      appsRepoId: APPS_REPO_ID,
-      appsRepoUrl: APPS_REPO_URL,
-      domain: DOMAIN,
-      dnsIp: '9.9.9.9',
+      internalIp: conf.INTERNAL_IP,
+      version: conf.TIPI_VERSION,
+      jwtSecret: conf.JWT_SECRET,
+      appsRepoId: conf.APPS_REPO_ID,
+      appsRepoUrl: conf.APPS_REPO_URL,
+      domain: conf.DOMAIN,
+      dnsIp: conf.DNS_IP || '9.9.9.9',
       status: 'RUNNING',
-      storagePath: STORAGE_PATH,
+      storagePath: conf.STORAGE_PATH,
+      demoMode: conf.DEMO_MODE,
     };
 
     const fileConfig = readJsonFile('/runtipi/state/settings.json') || {};
@@ -149,6 +148,10 @@ export class TipiConfig {
   }
 
   public async setSettings(settings: TipiSettingsType) {
+    if (this.config.demoMode) {
+      throw new Error('Cannot update settings in demo mode');
+    }
+
     const newConf: z.infer<typeof configSchema> = { ...this.getConfig() };
     const parsed = settingsSchema.safeParse(settings);
 

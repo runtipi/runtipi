@@ -122,6 +122,14 @@ describe('Test: restart', () => {
     // Assert
     expect(restart).toBeTruthy();
   });
+
+  it('should throw an error in demo mode', async () => {
+    // Arrange
+    await setConfig('demoMode', true);
+
+    // Act & Assert
+    await expect(SystemService.restart()).rejects.toThrow('Cannot restart in demo mode');
+  });
 });
 
 describe('Test: update', () => {
