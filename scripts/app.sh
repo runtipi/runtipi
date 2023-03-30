@@ -181,7 +181,7 @@ function start_app() {
     write_log "Failed to pull app ${app}"
   fi
 
-  if ! compose "${app}" up --detach; then
+  if ! compose "${app}" up --detach --force-recreate --remove-orphans; then
     write_log "Failed to start app ${app}"
     exit 1
   fi
@@ -217,15 +217,14 @@ function uninstall_app() {
 function update_app() {
   local app="${1}"
 
-  if ! compose "${app}" up --detach; then
+  if ! compose "${app}" up --detach --force-recreate --remove-orphans; then
     write_log "Failed to update app ${app}"
-    exit 1
   fi
 
   if ! compose "${app}" down --rmi all --remove-orphans; then
     # just stop it if we can't remove the images
     if ! compose "${app}" rm --force --stop; then
-      write_log "Failed to uninstall app ${app}"
+      write_log "Failed to update app ${app}"
       exit 1
     fi
   fi
