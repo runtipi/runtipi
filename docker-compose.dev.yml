@@ -56,6 +56,7 @@ services:
       DOMAIN: ${DOMAIN}
       ARCHITECTURE: ${ARCHITECTURE}
       REDIS_HOST: ${REDIS_HOST}
+      DEMO_MODE: ${DEMO_MODE}
     networks:
       - tipi_main_network
     ports:
