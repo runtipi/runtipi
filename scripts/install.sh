@@ -89,8 +89,14 @@ mkdir -p media/usenet/watch
 mkdir -p media/usenet/completed
 mkdir -p media/usenet/incomplete
 
+mkdir -p media/downloads
+mkdir -p media/downloads/watch
+mkdir -p media/downloads/completed
+mkdir -p media/downloads/incomplete
+
 mkdir -p media/data
 mkdir -p media/data/books
+mkdir -p media/data/comics
 mkdir -p media/data/movies
 mkdir -p media/data/music
 mkdir -p media/data/tv
