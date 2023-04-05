@@ -12,6 +12,9 @@
       "@/client/*": [
         "./src/client/*"
       ],
+      "@/server/*": [
+        "./src/server/*"
+      ],
     },
     "lib": [
       "dom",
