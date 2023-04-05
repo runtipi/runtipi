@@ -42,12 +42,15 @@ model Update {
 }
 
 model User {
-  id        Int      @id(map: "PK_cace4a159ff9f2512dd42373760") @default(autoincrement())
-  username  String   @unique(map: "UQ_78a916df40e02a9deb1c4b75edb") @db.VarChar
-  password  String   @db.VarChar
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @db.Timestamp(6)
-  operator  Boolean  @default(false)
+  id           Int      @id(map: "PK_cace4a159ff9f2512dd42373760") @default(autoincrement())
+  username     String   @unique(map: "UQ_78a916df40e02a9deb1c4b75edb") @db.VarChar
+  password     String   @db.VarChar
+  createdAt    DateTime @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime @default(now()) @db.Timestamp(6)
+  operator     Boolean  @default(false)
+  totp_secret  String?
+  totp_enabled Boolean  @default(false)
+  salt         String?
 
   @@map("user")
 }
