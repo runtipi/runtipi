@@ -3,6 +3,9 @@ import fs from 'fs-extra';
 import * as argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import { faker } from '@faker-js/faker';
+import { v4 } from 'uuid';
+import { TotpAuthenticator } from '@/server/utils/totp';
+import { encrypt } from '../../utils/encryption';
 import { setConfig } from '../../core/TipiConfig';
 import { createUser } from '../../tests/user.factory';
 import { AuthServiceClass } from './auth.service';
@@ -38,7 +41,7 @@ describe('Login', () => {
 
     // Act
     const { token } = await AuthService.login({ username: email, password: 'password' });
-    const decoded = jwt.verify(token, 'test') as jwt.JwtPayload;
+    const decoded = jwt.verify(token as string, 'test') as jwt.JwtPayload;
 
     // Assert
     expect(decoded).toBeDefined();
@@ -59,6 +62,278 @@ describe('Login', () => {
     const email = faker.internet.email();
     await createUser({ email }, db);
     await expect(AuthService.login({ username: email, password: 'wrong' })).rejects.toThrowError('Wrong password');
+  });
+
+  // TOTP
+  it('should return a totp session id the user totp_enabled is true', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const totpSecret = TotpAuthenticator.generateSecret();
+    await createUser({ email, totp_enabled: true, totp_secret: totpSecret }, db);
+
+    // act
+    const { totpSessionId, token } = await AuthService.login({ username: email, password: 'password' });
+
+    // assert
+    expect(totpSessionId).toBeDefined();
+    expect(totpSessionId).not.toBeNull();
+    expect(token).toBeUndefined();
+  });
+});
+
+describe('Test: verifyTotp', () => {
+  it('should return a valid jsonwebtoken if the totp is correct', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const salt = faker.random.word();
+    const totpSecret = TotpAuthenticator.generateSecret();
+
+    const encryptedTotpSecret = encrypt(totpSecret, salt);
+    const user = await createUser({ email, totp_enabled: true, totp_secret: encryptedTotpSecret, salt }, db);
+    const totpSessionId = v4();
+    const otp = TotpAuthenticator.generate(totpSecret);
+
+    await TipiCache.set(totpSessionId, user.id.toString());
+
+    // act
+    const { token } = await AuthService.verifyTotp({ totpSessionId, totpCode: otp });
+
+    // assert
+    expect(token).toBeDefined();
+    expect(token).not.toBeNull();
+  });
+
+  it('should throw if the totp is incorrect', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const salt = faker.random.word();
+    const totpSecret = TotpAuthenticator.generateSecret();
+    const encryptedTotpSecret = encrypt(totpSecret, salt);
+    const user = await createUser({ email, totp_enabled: true, totp_secret: encryptedTotpSecret, salt }, db);
+    const totpSessionId = v4();
+    await TipiCache.set(totpSessionId, user.id.toString());
+
+    // act & assert
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' })).rejects.toThrowError('Invalid TOTP');
+  });
+
+  it('should throw if the totpSessionId is invalid', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const salt = faker.random.word();
+    const totpSecret = TotpAuthenticator.generateSecret();
+    const encryptedTotpSecret = encrypt(totpSecret, salt);
+    const user = await createUser({ email, totp_enabled: true, totp_secret: encryptedTotpSecret, salt }, db);
+    const totpSessionId = v4();
+    const otp = TotpAuthenticator.generate(totpSecret);
+
+    await TipiCache.set(totpSessionId, user.id.toString());
+
+    // act & assert
+    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp })).rejects.toThrowError('TOTP session not found');
+  });
+
+  it('should throw if the user does not exist', async () => {
+    // arrange
+    const totpSessionId = v4();
+    await TipiCache.set(totpSessionId, '1234');
+
+    // act & assert
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' })).rejects.toThrowError('User not found');
+  });
+
+  it('should throw if the user totp_enabled is false', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const salt = faker.random.word();
+    const totpSecret = TotpAuthenticator.generateSecret();
+    const encryptedTotpSecret = encrypt(totpSecret, salt);
+    const user = await createUser({ email, totp_enabled: false, totp_secret: encryptedTotpSecret, salt }, db);
+    const totpSessionId = v4();
+    const otp = TotpAuthenticator.generate(totpSecret);
+
+    await TipiCache.set(totpSessionId, user.id.toString());
+
+    // act & assert
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp })).rejects.toThrowError('TOTP is not enabled for this user');
+  });
+});
+
+describe('Test: getTotpUri', () => {
+  it('should return a valid totp uri', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+
+    // act
+    const { uri, key } = await AuthService.getTotpUri({ userId: user.id, password: 'password' });
+
+    // assert
+    expect(uri).toBeDefined();
+    expect(uri).not.toBeNull();
+    expect(key).toBeDefined();
+    expect(key).not.toBeNull();
+    expect(uri).toContain(key);
+  });
+
+  it('should create a new totp secret if the user does not have one', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+
+    // act
+    await AuthService.getTotpUri({ userId: user.id, password: 'password' });
+    const userFromDb = await db.user.findUnique({ where: { id: user.id } });
+
+    // assert
+    expect(userFromDb).toBeDefined();
+    expect(userFromDb).not.toBeNull();
+    expect(userFromDb).toHaveProperty('totp_secret');
+    expect(userFromDb).toHaveProperty('salt');
+  });
+
+  it('should regenerate a new totp secret if the user already has one', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const salt = faker.random.word();
+    const totpSecret = TotpAuthenticator.generateSecret();
+    const encryptedTotpSecret = encrypt(totpSecret, salt);
+    const user = await createUser({ email, totp_secret: encryptedTotpSecret, salt }, db);
+
+    // act
+    await AuthService.getTotpUri({ userId: user.id, password: 'password' });
+    const userFromDb = await db.user.findUnique({ where: { id: user.id } });
+
+    // assert
+    expect(userFromDb).toBeDefined();
+    expect(userFromDb).not.toBeNull();
+    expect(userFromDb).toHaveProperty('totp_secret');
+    expect(userFromDb).toHaveProperty('salt');
+    expect(userFromDb?.totp_secret).not.toEqual(encryptedTotpSecret);
+    expect(userFromDb?.salt).toEqual(salt);
+  });
+
+  it('should thorw an error if user has already configured totp', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email, totp_enabled: true }, db);
+
+    // act & assert
+    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError('TOTP is already enabled for this user');
+  });
+
+  it('should throw an error if the user password is incorrect', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+
+    // act & assert
+    await expect(AuthService.getTotpUri({ userId: user.id, password: 'wrong' })).rejects.toThrowError('Invalid password');
+  });
+
+  it('should throw an error if the user does not exist', async () => {
+    // arrange
+    const userId = 11;
+
+    // act & assert
+    await expect(AuthService.getTotpUri({ userId, password: 'password' })).rejects.toThrowError('User not found');
+  });
+});
+
+describe('Test: setupTotp', () => {
+  it('should enable totp for the user', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const totpSecret = TotpAuthenticator.generateSecret();
+    const salt = faker.random.word();
+    const encryptedTotpSecret = encrypt(totpSecret, salt);
+
+    const user = await createUser({ email, totp_secret: encryptedTotpSecret, salt }, db);
+    const otp = TotpAuthenticator.generate(totpSecret);
+
+    // act
+    await AuthService.setupTotp({ userId: user.id, totpCode: otp });
+    const userFromDb = await db.user.findUnique({ where: { id: user.id } });
+
+    // assert
+    expect(userFromDb).toBeDefined();
+    expect(userFromDb).not.toBeNull();
+    expect(userFromDb).toHaveProperty('totp_enabled');
+    expect(userFromDb?.totp_enabled).toBeTruthy();
+  });
+
+  it('should throw if the user has already enabled totp', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email, totp_enabled: true }, db);
+
+    // act & assert
+    await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('TOTP is already enabled for this user');
+  });
+
+  it('should throw if the user does not exist', async () => {
+    // arrange
+    const userId = 11;
+
+    // act & assert
+    await expect(AuthService.setupTotp({ userId, totpCode: '1234' })).rejects.toThrowError('User not found');
+  });
+
+  it('should throw if the otp is invalid', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const totpSecret = TotpAuthenticator.generateSecret();
+    const salt = faker.random.word();
+    const encryptedTotpSecret = encrypt(totpSecret, salt);
+
+    const user = await createUser({ email, totp_secret: encryptedTotpSecret, salt }, db);
+
+    // act & assert
+    await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('Invalid TOTP code');
+  });
+});
+
+describe('Test: disableTotp', () => {
+  it('should disable totp for the user', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email, totp_enabled: true }, db);
+
+    // act
+    await AuthService.disableTotp({ userId: user.id, password: 'password' });
+    const userFromDb = await db.user.findUnique({ where: { id: user.id } });
+
+    // assert
+    expect(userFromDb).toBeDefined();
+    expect(userFromDb).not.toBeNull();
+    expect(userFromDb).toHaveProperty('totp_enabled');
+    expect(userFromDb?.totp_enabled).toBeFalsy();
+  });
+
+  it('should throw if the user has already disabled totp', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email, totp_enabled: false }, db);
+
+    // act & assert
+    await expect(AuthService.disableTotp({ userId: user.id, password: 'password' })).rejects.toThrowError('TOTP is not enabled for this user');
+  });
+
+  it('should throw if the user does not exist', async () => {
+    // arrange
+    const userId = 11;
+
+    // act & assert
+    await expect(AuthService.disableTotp({ userId, password: 'password' })).rejects.toThrowError('User not found');
+  });
+
+  it('should throw if the password is invalid', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email, totp_enabled: true }, db);
+
+    // act & assert
+    await expect(AuthService.disableTotp({ userId: user.id, password: 'wrong' })).rejects.toThrowError('Invalid password');
   });
 });
 
@@ -264,7 +539,7 @@ describe('Test: isConfigured', () => {
   });
 });
 
-describe('Test: changePassword', () => {
+describe('Test: changeOperatorPassword', () => {
   it('should change the password of the operator user', async () => {
     // Arrange
     const email = faker.internet.email();
@@ -274,7 +549,7 @@ describe('Test: changePassword', () => {
     fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
 
     // Act
-    const result = await AuthService.changePassword({ newPassword });
+    const result = await AuthService.changeOperatorPassword({ newPassword });
 
     // Assert
     expect(result.email).toBe(email.toLowerCase());
@@ -291,7 +566,7 @@ describe('Test: changePassword', () => {
     fs.__createMockFiles({});
 
     // Act & Assert
-    await expect(AuthService.changePassword({ newPassword })).rejects.toThrowError('No password change request found');
+    await expect(AuthService.changeOperatorPassword({ newPassword })).rejects.toThrowError('No password change request found');
   });
 
   it('should throw if there is no operator user', async () => {
@@ -303,7 +578,26 @@ describe('Test: changePassword', () => {
     fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
 
     // Act & Assert
-    await expect(AuthService.changePassword({ newPassword })).rejects.toThrowError('Operator user not found');
+    await expect(AuthService.changeOperatorPassword({ newPassword })).rejects.toThrowError('Operator user not found');
+  });
+
+  it('should reset totp_secret and totp_enabled if totp is enabled', async () => {
+    // Arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email, totp_enabled: true }, db);
+    const newPassword = faker.internet.password();
+    // @ts-expect-error - mocking fs
+    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+
+    // Act
+    const result = await AuthService.changeOperatorPassword({ newPassword });
+
+    // Assert
+    expect(result.email).toBe(email.toLowerCase());
+    const updatedUser = await db.user.findUnique({ where: { id: user.id } });
+    expect(updatedUser?.password).not.toBe(user.password);
+    expect(updatedUser?.totp_enabled).toBe(false);
+    expect(updatedUser?.totp_secret).toBeNull();
   });
 });
 
@@ -314,7 +608,7 @@ describe('Test: checkPasswordChangeRequest', () => {
     fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
 
     // Act
-    const result = await AuthServiceClass.checkPasswordChangeRequest();
+    const result = AuthServiceClass.checkPasswordChangeRequest();
 
     // Assert
     expect(result).toBe(true);
@@ -326,7 +620,7 @@ describe('Test: checkPasswordChangeRequest', () => {
     fs.__createMockFiles({});
 
     // Act
-    const result = await AuthServiceClass.checkPasswordChangeRequest();
+    const result = AuthServiceClass.checkPasswordChangeRequest();
 
     // Assert
     expect(result).toBe(false);
