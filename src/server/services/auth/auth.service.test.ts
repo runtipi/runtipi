@@ -3,8 +3,8 @@ import fs from 'fs-extra';
 import * as argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import { faker } from '@faker-js/faker';
-import { v4 } from 'uuid';
 import { TotpAuthenticator } from '@/server/utils/totp';
+import { generateSessionId } from '@/server/common/get-server-auth-session';
 import { encrypt } from '../../utils/encryption';
 import { setConfig } from '../../core/TipiConfig';
 import { createUser } from '../../tests/user.factory';
@@ -90,7 +90,7 @@ describe('Test: verifyTotp', () => {
 
     const encryptedTotpSecret = encrypt(totpSecret, salt);
     const user = await createUser({ email, totp_enabled: true, totp_secret: encryptedTotpSecret, salt }, db);
-    const totpSessionId = v4();
+    const totpSessionId = generateSessionId('otp');
     const otp = TotpAuthenticator.generate(totpSecret);
 
     await TipiCache.set(totpSessionId, user.id.toString());
@@ -110,7 +110,7 @@ describe('Test: verifyTotp', () => {
     const totpSecret = TotpAuthenticator.generateSecret();
     const encryptedTotpSecret = encrypt(totpSecret, salt);
     const user = await createUser({ email, totp_enabled: true, totp_secret: encryptedTotpSecret, salt }, db);
-    const totpSessionId = v4();
+    const totpSessionId = generateSessionId('otp');
     await TipiCache.set(totpSessionId, user.id.toString());
 
     // act & assert
@@ -124,7 +124,7 @@ describe('Test: verifyTotp', () => {
     const totpSecret = TotpAuthenticator.generateSecret();
     const encryptedTotpSecret = encrypt(totpSecret, salt);
     const user = await createUser({ email, totp_enabled: true, totp_secret: encryptedTotpSecret, salt }, db);
-    const totpSessionId = v4();
+    const totpSessionId = generateSessionId('otp');
     const otp = TotpAuthenticator.generate(totpSecret);
 
     await TipiCache.set(totpSessionId, user.id.toString());
@@ -135,7 +135,7 @@ describe('Test: verifyTotp', () => {
 
   it('should throw if the user does not exist', async () => {
     // arrange
-    const totpSessionId = v4();
+    const totpSessionId = generateSessionId('otp');
     await TipiCache.set(totpSessionId, '1234');
 
     // act & assert
@@ -149,7 +149,7 @@ describe('Test: verifyTotp', () => {
     const totpSecret = TotpAuthenticator.generateSecret();
     const encryptedTotpSecret = encrypt(totpSecret, salt);
     const user = await createUser({ email, totp_enabled: false, totp_secret: encryptedTotpSecret, salt }, db);
-    const totpSessionId = v4();
+    const totpSessionId = generateSessionId('otp');
     const otp = TotpAuthenticator.generate(totpSecret);
 
     await TipiCache.set(totpSessionId, user.id.toString());
