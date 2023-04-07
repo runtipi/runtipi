@@ -23,7 +23,7 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Assert
-      expect(screen.getByTestId('action-button-update')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument();
     });
 
     it('should display install button when app is not installed', async () => {
@@ -33,7 +33,7 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Assert
-      expect(screen.getByTestId('action-button-install')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Install' })).toBeInTheDocument();
     });
 
     it('should display uninstall and start button when app is stopped', async () => {
@@ -43,8 +43,8 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Assert
-      expect(screen.getByTestId('action-button-remove')).toBeInTheDocument();
-      expect(screen.getByTestId('action-button-start')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Remove' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
     });
 
     it('should display stop, open and settings buttons when app is running', async () => {
@@ -53,9 +53,9 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Assert
-      expect(screen.getByTestId('action-button-stop')).toBeInTheDocument();
-      expect(screen.getByTestId('action-button-open')).toBeInTheDocument();
-      expect(screen.getByTestId('action-button-settings')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Stop' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Open' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument();
     });
 
     it('should not display update button when update is not available', async () => {
@@ -64,7 +64,7 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Assert
-      expect(screen.queryByTestId('action-button-update')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Update' })).not.toBeInTheDocument();
     });
 
     it('should not display open button when app has no_gui set to true', async () => {
@@ -73,7 +73,7 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Assert
-      expect(screen.queryByTestId('action-button-open')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Open' })).not.toBeInTheDocument();
     });
   });
 
@@ -85,7 +85,7 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Act
-      const openButton = screen.getByTestId('action-button-open');
+      const openButton = screen.getByRole('button', { name: 'Open' });
       openButton.click();
 
       // Assert
@@ -99,7 +99,7 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Act
-      const openButton = screen.getByTestId('action-button-open');
+      const openButton = screen.getByRole('button', { name: 'Open' });
       openButton.click();
 
       // Assert
@@ -114,10 +114,12 @@ describe('Test: AppDetailsContainer', () => {
       server.use(getTRPCMock({ path: ['app', 'installApp'], type: 'mutation', response: app }));
       const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Install' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const installForm = screen.getByTestId('install-form');
-      fireEvent.submit(installForm);
+      const installButton = screen.getByRole('button', { name: 'Install' });
+      fireEvent.click(installButton);
 
       await waitFor(() => {
         expect(result.current.toasts).toHaveLength(1);
@@ -139,33 +141,17 @@ describe('Test: AppDetailsContainer', () => {
 
       const app = createAppEntity({ overrides: { status: 'missing' } });
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Install' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const installForm = screen.getByTestId('install-form');
-      fireEvent.submit(installForm);
+      const installButton = screen.getByRole('button', { name: 'Install' });
+      fireEvent.click(installButton);
 
       await waitFor(() => {
         expect(result.current.toasts).toHaveLength(1);
         expect(result.current.toasts[0].description).toEqual('my big error');
         expect(result.current.toasts[0].status).toEqual('error');
-      });
-    });
-
-    // Skipping because trpc.useContext is not working in tests
-    it.skip('should put the app in installing state when install mutation is called', async () => {
-      // Arrange
-      const { result } = renderHook(() => useToastStore());
-      const app = createAppEntity({ overrides: { status: 'missing' } });
-      server.use(getTRPCMock({ path: ['app', 'installApp'], type: 'mutation', response: app, delay: 100 }));
-      render(<AppDetailsContainer app={app} />);
-
-      // Act
-      const installForm = screen.getByTestId('install-form');
-      fireEvent.submit(installForm);
-
-      await waitFor(() => {
-        expect(screen.getByText('installing')).toBeInTheDocument();
-        expect(result.current.toasts).toHaveLength(1);
       });
     });
   });
@@ -177,11 +163,11 @@ describe('Test: AppDetailsContainer', () => {
       server.use(getTRPCMock({ path: ['app', 'updateApp'], type: 'mutation', response: app }));
       const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Update' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const updateButton = screen.getByTestId('action-button-update');
-      updateButton.click();
-      const modalUpdateButton = screen.getByTestId('modal-update-button');
+      const modalUpdateButton = screen.getByRole('button', { name: 'Update' });
       modalUpdateButton.click();
 
       await waitFor(() => {
@@ -197,11 +183,11 @@ describe('Test: AppDetailsContainer', () => {
       server.use(getTRPCMockError({ path: ['app', 'updateApp'], type: 'mutation', message: 'my big error' }));
       const app = createAppEntity({ overrides: { version: 2, latestVersion: 3 }, overridesInfo: { tipi_version: 3 } });
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Update' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const updateButton = screen.getByTestId('action-button-update');
-      updateButton.click();
-      const modalUpdateButton = screen.getByTestId('modal-update-button');
+      const modalUpdateButton = screen.getByRole('button', { name: 'Update' });
       modalUpdateButton.click();
 
       // Assert
@@ -209,26 +195,6 @@ describe('Test: AppDetailsContainer', () => {
         expect(result.current.toasts).toHaveLength(1);
         expect(result.current.toasts[0].description).toEqual('my big error');
         expect(result.current.toasts[0].status).toEqual('error');
-      });
-    });
-
-    // Skipping because trpc.useContext is not working in tests
-    it.skip('should put the app in updating state when update mutation is called', async () => {
-      // Arrange
-      const { result } = renderHook(() => useToastStore());
-      const app = createAppEntity({ overrides: { version: 2 }, overridesInfo: { tipi_version: 3 } });
-      server.use(getTRPCMock({ path: ['app', 'updateApp'], type: 'mutation', response: app, delay: 100 }));
-      render(<AppDetailsContainer app={app} />);
-
-      // Act
-      const updateButton = screen.getByTestId('action-button-update');
-      updateButton.click();
-      const modalUpdateButton = screen.getByTestId('modal-update-button');
-      modalUpdateButton.click();
-
-      await waitFor(() => {
-        expect(screen.getByText('updating')).toBeInTheDocument();
-        expect(result.current.toasts).toHaveLength(1);
       });
     });
   });
@@ -240,11 +206,11 @@ describe('Test: AppDetailsContainer', () => {
       server.use(getTRPCMock({ path: ['app', 'uninstallApp'], type: 'mutation', response: { id: app.id, config: {}, status: 'missing' } }));
       const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Remove' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const uninstallButton = screen.getByTestId('action-button-remove');
-      uninstallButton.click();
-      const modalUninstallButton = screen.getByText('Uninstall');
+      const modalUninstallButton = screen.getByRole('button', { name: 'Uninstall' });
       modalUninstallButton.click();
 
       // Assert
@@ -261,11 +227,11 @@ describe('Test: AppDetailsContainer', () => {
       server.use(getTRPCMockError({ path: ['app', 'uninstallApp'], type: 'mutation', message: 'my big error' }));
       const app = createAppEntity({ status: 'stopped' });
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Remove' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const uninstallButton = screen.getByTestId('action-button-remove');
-      uninstallButton.click();
-      const modalUninstallButton = screen.getByText('Uninstall');
+      const modalUninstallButton = screen.getByRole('button', { name: 'Uninstall' });
       modalUninstallButton.click();
 
       // Assert
@@ -273,27 +239,6 @@ describe('Test: AppDetailsContainer', () => {
         expect(result.current.toasts).toHaveLength(1);
         expect(result.current.toasts[0].description).toEqual('my big error');
         expect(result.current.toasts[0].status).toEqual('error');
-      });
-    });
-
-    // Skipping because trpc.useContext is not working in tests
-    it.skip('should put the app in uninstalling state when uninstall mutation is called', async () => {
-      // Arrange
-      const { result } = renderHook(() => useToastStore());
-      const app = createAppEntity({ status: 'stopped' });
-      server.use(getTRPCMock({ path: ['app', 'uninstallApp'], type: 'mutation', response: { id: app.id, config: {}, status: 'missing' }, delay: 100 }));
-      render(<AppDetailsContainer app={app} />);
-
-      // Act
-      const uninstallButton = screen.getByTestId('action-button-remove');
-      uninstallButton.click();
-      const modalUninstallButton = screen.getByText('Uninstall');
-      modalUninstallButton.click();
-
-      await waitFor(() => {
-        expect(screen.getByText('uninstalling')).toBeInTheDocument();
-        expect(screen.queryByText('installing')).not.toBeInTheDocument();
-        expect(result.current.toasts).toHaveLength(1);
       });
     });
   });
@@ -307,7 +252,7 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Act
-      const startButton = screen.getByTestId('action-button-start');
+      const startButton = screen.getByRole('button', { name: 'Start' });
       startButton.click();
 
       // Assert
@@ -326,7 +271,7 @@ describe('Test: AppDetailsContainer', () => {
       render(<AppDetailsContainer app={app} />);
 
       // Act
-      const startButton = screen.getByTestId('action-button-start');
+      const startButton = screen.getByRole('button', { name: 'Start' });
       startButton.click();
 
       // Assert
@@ -334,24 +279,6 @@ describe('Test: AppDetailsContainer', () => {
         expect(result.current.toasts).toHaveLength(1);
         expect(result.current.toasts[0].description).toEqual('my big error');
         expect(result.current.toasts[0].status).toEqual('error');
-      });
-    });
-
-    // Skipping because trpc.useContext is not working in tests
-    it.skip('should put the app in starting state when start mutation is called', async () => {
-      // Arrange
-      const { result } = renderHook(() => useToastStore());
-      const app = createAppEntity({ status: 'stopped' });
-      server.use(getTRPCMock({ path: ['app', 'startApp'], type: 'mutation', response: app, delay: 100 }));
-      render(<AppDetailsContainer app={app} />);
-
-      // Act
-      const startButton = screen.getByTestId('action-button-start');
-      startButton.click();
-
-      await waitFor(() => {
-        expect(screen.getByText('starting')).toBeInTheDocument();
-        expect(result.current.toasts).toHaveLength(1);
       });
     });
   });
@@ -363,11 +290,11 @@ describe('Test: AppDetailsContainer', () => {
       server.use(getTRPCMock({ path: ['app', 'stopApp'], type: 'mutation', response: app }));
       const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Stop' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const stopButton = screen.getByTestId('action-button-stop');
-      stopButton.click();
-      const modalStopButton = screen.getByTestId('modal-stop-button');
+      const modalStopButton = screen.getByRole('button', { name: 'Stop' });
       modalStopButton.click();
 
       // Assert
@@ -384,11 +311,11 @@ describe('Test: AppDetailsContainer', () => {
       server.use(getTRPCMockError({ path: ['app', 'stopApp'], type: 'mutation', message: 'my big error' }));
       const app = createAppEntity({ status: 'running' });
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Stop' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const stopButton = screen.getByTestId('action-button-stop');
-      stopButton.click();
-      const modalStopButton = screen.getByTestId('modal-stop-button');
+      const modalStopButton = screen.getByRole('button', { name: 'Stop' });
       modalStopButton.click();
 
       // Assert
@@ -396,26 +323,6 @@ describe('Test: AppDetailsContainer', () => {
         expect(result.current.toasts).toHaveLength(1);
         expect(result.current.toasts[0].description).toEqual('my big error');
         expect(result.current.toasts[0].status).toEqual('error');
-      });
-    });
-
-    // Skipping because trpc.useContext is not working in tests
-    it.skip('should put the app in stopping state when stop mutation is called', async () => {
-      // Arrange
-      const { result } = renderHook(() => useToastStore());
-      const app = createAppEntity({ status: 'running' });
-      server.use(getTRPCMock({ path: ['app', 'stopApp'], type: 'mutation', response: app }));
-      render(<AppDetailsContainer app={app} />);
-
-      // Act
-      const stopButton = screen.getByTestId('action-button-stop');
-      stopButton.click();
-      const modalStopButton = screen.getByTestId('modal-stop-button');
-      modalStopButton.click();
-
-      await waitFor(() => {
-        expect(screen.getByText('stopping')).toBeInTheDocument();
-        expect(result.current.toasts).toHaveLength(1);
       });
     });
   });
@@ -427,12 +334,12 @@ describe('Test: AppDetailsContainer', () => {
       server.use(getTRPCMock({ path: ['app', 'updateAppConfig'], type: 'mutation', response: app }));
       const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Settings' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const configButton = screen.getByTestId('action-button-settings');
+      const configButton = screen.getByRole('button', { name: 'Update' });
       configButton.click();
-      const modalConfigButton = screen.getAllByText('Update');
-      modalConfigButton[1]?.click();
 
       // Assert
       await waitFor(() => {
@@ -448,12 +355,12 @@ describe('Test: AppDetailsContainer', () => {
       server.use(getTRPCMockError({ path: ['app', 'updateAppConfig'], type: 'mutation', message: 'my big error' }));
       const app = createAppEntity({ status: 'running', overridesInfo: { exposable: true } });
       render(<AppDetailsContainer app={app} />);
+      const openModalButton = screen.getByRole('button', { name: 'Settings' });
+      fireEvent.click(openModalButton);
 
       // Act
-      const configButton = screen.getByTestId('action-button-settings');
+      const configButton = screen.getByRole('button', { name: 'Update' });
       configButton.click();
-      const modalConfigButton = screen.getAllByText('Update');
-      modalConfigButton[1]?.click();
 
       // Assert
       await waitFor(() => {

@@ -83,7 +83,7 @@ export const SettingsForm = (props: IProps) => {
   };
 
   return (
-    <form data-testid="settings-form" className="flex flex-col" onSubmit={handleSubmit(validate)}>
+    <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
       <h2 className="text-2xl font-bold">General settings</h2>
       <p className="mb-4">This will update your settings.json file. Make sure you know what you are doing before updating these values.</p>
       <div className="mb-3">

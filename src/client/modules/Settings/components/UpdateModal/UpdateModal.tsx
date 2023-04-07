@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../../../../components/ui/Button';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from '../../../../components/ui/Modal';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '../../../../components/ui/Dialog';
 
 interface IProps {
   isOpen: boolean;
@@ -10,17 +10,19 @@ interface IProps {
 }
 
 export const UpdateModal: React.FC<IProps> = ({ isOpen, onClose, onConfirm, loading }) => (
-  <Modal size="sm" onClose={onClose} isOpen={isOpen}>
-    <ModalHeader>
-      <h5 className="modal-title">Update Tipi</h5>
-    </ModalHeader>
-    <ModalBody>
-      <div className="text-muted">Would you like to update Tipi to the latest version?</div>
-    </ModalBody>
-    <ModalFooter>
-      <Button onClick={onConfirm} className="btn-success" loading={loading}>
-        Update
-      </Button>
-    </ModalFooter>
-  </Modal>
+  <Dialog open={isOpen} onOpenChange={onClose}>
+    <DialogContent size="sm">
+      <DialogHeader>
+        <h5 className="modal-title">Update Tipi</h5>
+      </DialogHeader>
+      <DialogDescription>
+        <div className="text-muted">Would you like to update Tipi to the latest version?</div>
+      </DialogDescription>
+      <DialogFooter>
+        <Button onClick={onConfirm} className="btn-success" loading={loading}>
+          Update
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 );
