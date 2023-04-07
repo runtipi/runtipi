@@ -174,6 +174,8 @@ export class AuthServiceClass {
         totp_enabled: true,
       },
     });
+
+    return true;
   };
 
   public disableTotp = async (params: { userId: number; password: string }) => {
