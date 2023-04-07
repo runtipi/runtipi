@@ -15,6 +15,12 @@ jest.mock('remark-gfm', () => () => ({}));
 
 console.error = jest.fn();
 
+class ResizeObserver {
+  observe() {}
+
+  unobserve() {}
+}
+
 // Mock localStorage
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
@@ -35,6 +41,7 @@ const localStorageMock = (() => {
 })();
 
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, 'ResizeObserver', { value: ResizeObserver });
 
 beforeAll(() => {
   // Enable the mocking in tests.

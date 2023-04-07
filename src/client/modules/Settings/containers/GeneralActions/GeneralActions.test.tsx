@@ -9,7 +9,7 @@ describe('Test: GeneralActions', () => {
   it('should render without error', () => {
     render(<GeneralActions />);
 
-    expect(screen.getByText('Update')).toBeInTheDocument();
+    expect(screen.getByText('Actions')).toBeInTheDocument();
   });
 
   it('should show toast if update mutation fails', async () => {
@@ -21,10 +21,12 @@ describe('Test: GeneralActions', () => {
     await waitFor(() => {
       expect(screen.getByText('Update to 2.0.0')).toBeInTheDocument();
     });
-    const updateButton = screen.getByText('Update');
+    const updateButton = screen.getByRole('button', { name: /Update/i });
+    fireEvent.click(updateButton);
 
     // act
-    fireEvent.click(updateButton);
+    const updateButtonModal = screen.getByRole('button', { name: /Update/i });
+    fireEvent.click(updateButtonModal);
 
     // assert
     await waitFor(() => {
@@ -42,12 +44,14 @@ describe('Test: GeneralActions', () => {
     server.use(getTRPCMock({ path: ['system', 'update'], response: true }));
     render(<GeneralActions />);
     await waitFor(() => {
-      expect(screen.getByText('Update to 2.0.0')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Update to 2.0.0' })).toBeInTheDocument();
     });
-    const updateButton = screen.getByText('Update');
+    const updateButton = screen.getByRole('button', { name: /Update to 2.0.0/i });
+    fireEvent.click(updateButton);
 
     // act
-    fireEvent.click(updateButton);
+    const updateButtonModal = screen.getByRole('button', { name: /Update/i });
+    fireEvent.click(updateButtonModal);
 
     // assert
     await waitFor(() => {
@@ -60,12 +64,12 @@ describe('Test: GeneralActions', () => {
     const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMockError({ path: ['system', 'restart'], type: 'mutation', status: 500, message: 'Something went wrong' }));
     render(<GeneralActions />);
-
-    // Find button near the top of the page
-    const restartButton = screen.getByTestId('settings-modal-restart-button');
+    const restartButton = screen.getByRole('button', { name: /Restart/i });
 
     // act
     fireEvent.click(restartButton);
+    const restartButtonModal = screen.getByRole('button', { name: /Restart/i });
+    fireEvent.click(restartButtonModal);
 
     // assert
     await waitFor(() => {
@@ -83,10 +87,12 @@ describe('Test: GeneralActions', () => {
     render(<GeneralActions />);
 
     // Find button near the top of the page
-    const restartButton = screen.getByTestId('settings-modal-restart-button');
+    const restartButton = screen.getByRole('button', { name: /Restart/i });
 
     // act
     fireEvent.click(restartButton);
+    const restartButtonModal = screen.getByRole('button', { name: /Restart/i });
+    fireEvent.click(restartButtonModal);
 
     // assert
     await waitFor(() => {

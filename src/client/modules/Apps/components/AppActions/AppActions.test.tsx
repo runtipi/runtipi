@@ -13,70 +13,91 @@ describe('Test: AppActions', () => {
     exposable: [],
   } as unknown as AppInfo;
 
-  it('should render the correct buttons when app status is stopped', () => {
-    // Arrange
+  it('should call the callbacks when buttons are clicked', () => {
+    // arrange
     const onStart = jest.fn();
     const onRemove = jest.fn();
     // @ts-expect-error
-    const { getByText } = render(<AppActions status="stopped" info={app} onStart={onStart} onUninstall={onRemove} />);
+    render(<AppActions status="stopped" info={app} onStart={onStart} onUninstall={onRemove} />);
 
-    // Act
-    fireEvent.click(getByText('Start'));
-    fireEvent.click(getByText('Remove'));
+    // act
+    const startButton = screen.getByRole('button', { name: 'Start' });
+    fireEvent.click(startButton);
+    const removeButton = screen.getByText('Remove');
+    fireEvent.click(removeButton);
 
-    // Assert
-    expect(getByText('Start')).toBeInTheDocument();
-    expect(getByText('Remove')).toBeInTheDocument();
+    // assert
     expect(onStart).toHaveBeenCalled();
     expect(onRemove).toHaveBeenCalled();
   });
 
   it('should render the correct buttons when app status is running', () => {
+    // arrange
     // @ts-expect-error
-    const { getByText } = render(<AppActions status="running" info={app} />);
-    expect(getByText('Stop')).toBeInTheDocument();
-    expect(getByText('Open')).toBeInTheDocument();
-    expect(getByText('Settings')).toBeInTheDocument();
+    render(<AppActions status="running" info={app} />);
+
+    // assert
+    expect(screen.getByRole('button', { name: 'Stop' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Open' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is starting', () => {
+    // arrange
     // @ts-expect-error
     render(<AppActions status="starting" info={app} />);
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
+
+    // assert
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is stopping', () => {
+    // arrange
     // @ts-expect-error
     render(<AppActions status="stopping" info={app} />);
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
+
+    // assert
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is removing', () => {
+    // arrange
     // @ts-expect-error
     render(<AppActions status="uninstalling" info={app} />);
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
+
+    // assert
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is installing', () => {
+    // arrange
     // @ts-ignore
     render(<AppActions status="installing" info={app} />);
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
+
+    // assert
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is updating', () => {
+    // arrange
     // @ts-expect-error
     render(<AppActions status="updating" info={app} />);
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
+
+    // assert
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
     expect(screen.getByTestId('action-button-loading')).toBeInTheDocument();
   });
 
   it('should render the correct buttons when app status is missing', () => {
+    // arrange
     // @ts-expect-error
     render(<AppActions status="missing" info={app} />);
-    expect(screen.getByText('Install')).toBeInTheDocument();
+
+    // assert
+    expect(screen.getByRole('button', { name: 'Install' })).toBeInTheDocument();
   });
 });

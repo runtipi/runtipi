@@ -68,7 +68,7 @@ export const GeneralActions = () => {
     );
   };
   return (
-    <div className="col d-flex flex-column">
+    <>
       <div className="card-body">
         <h2 className="mb-4">Actions</h2>
         <h3 className="card-title mt-4">Version {versionQuery.data?.current}</h3>
@@ -82,6 +82,6 @@ export const GeneralActions = () => {
       </div>
       <RestartModal isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} onConfirm={() => restart.mutate()} loading={loading} />
       <UpdateModal isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} onConfirm={() => update.mutate()} loading={loading} />
-    </div>
+    </>
   );
 };
