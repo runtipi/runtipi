@@ -389,7 +389,9 @@ export class AuthServiceClass {
     }
 
     const hash = await argon2.hash(newPassword);
-    await this.prisma.user.update({ where: { id: user.id }, data: { password: hash, totp_enabled: false, totp_secret: null } });
+    await this.prisma.user.update({ where: { id: user.id }, data: { password: hash } });
+
+    await TipiCache.delByValue(userId.toString(), 'auth');
 
     return true;
   };
