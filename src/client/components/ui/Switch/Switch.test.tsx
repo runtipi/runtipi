@@ -1,9 +1,7 @@
 import React from 'react';
 
-import '@testing-library/jest-dom/extend-expect';
-
 import { Switch } from './Switch';
-import { fireEvent, render } from '../../../../../tests/test-utils';
+import { fireEvent, render, screen } from '../../../../../tests/test-utils';
 
 describe('Switch', () => {
   it('renders the label', () => {
@@ -22,16 +20,16 @@ describe('Switch', () => {
   });
 
   it('renders the checked state', () => {
-    const { container } = render(<Switch checked onChange={jest.fn} />);
-    const checkbox = container.querySelector('input[type="checkbox"]');
+    render(<Switch checked onChange={jest.fn} />);
+    const checkbox = screen.getByRole('switch');
 
     expect(checkbox).toBeChecked();
   });
 
   it('triggers onChange event when clicked', () => {
     const onChange = jest.fn();
-    const { container } = render(<Switch onChange={onChange} />);
-    const checkbox = container.querySelector('input[type="checkbox"]') as Element;
+    render(<Switch onCheckedChange={onChange} />);
+    const checkbox = screen.getByRole('switch');
 
     fireEvent.click(checkbox);
 
@@ -40,8 +38,8 @@ describe('Switch', () => {
 
   it('triggers onBlur event when blurred', () => {
     const onBlur = jest.fn();
-    const { container } = render(<Switch onBlur={onBlur} />);
-    const checkbox = container.querySelector('input[type="checkbox"]') as Element;
+    render(<Switch onBlur={onBlur} />);
+    const checkbox = screen.getByRole('switch');
 
     fireEvent.blur(checkbox);
 
@@ -49,8 +47,8 @@ describe('Switch', () => {
   });
 
   it('should change the checked state when clicked', () => {
-    const { container } = render(<Switch onChange={jest.fn} />);
-    const checkbox = container.querySelector('input[type="checkbox"]') as Element;
+    render(<Switch onChange={jest.fn} />);
+    const checkbox = screen.getByRole('switch');
 
     fireEvent.click(checkbox);
 
