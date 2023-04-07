@@ -36,11 +36,11 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit }) => {
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
       <h2 className="h2 text-center mb-3">Login to your account</h2>
-      <Input {...register('email')} label="Email address" error={errors.email?.message} disabled={loading} type="email" className="mb-3" placeholder="you@example.com" />
+      <Input {...register('email')} name="email" label="Email address" error={errors.email?.message} disabled={loading} type="email" className="mb-3" placeholder="you@example.com" />
       <span className="form-label-description">
         <Link href="/reset-password">Forgot password?</Link>
       </span>
-      <Input {...register('password')} label="Password" error={errors.password?.message} disabled={loading} type="password" className="mb-3" placeholder="Your password" />
+      <Input {...register('password')} name="password" label="Password" error={errors.password?.message} disabled={loading} type="password" className="mb-3" placeholder="Your password" />
       <Button disabled={isDisabled} loading={loading} type="submit" className="btn btn-primary w-100">
         Login
       </Button>
