@@ -1,7 +1,6 @@
 import React from 'react';
 import { trpc } from '@/utils/trpc';
 import { Switch } from '@/components/ui/Switch';
-import { IconLock } from '@tabler/icons-react';
 import { useToastStore } from '@/client/state/toastStore';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
@@ -99,15 +98,6 @@ export const OtpForm = () => {
 
   return (
     <>
-      <div className="d-flex">
-        <IconLock className="me-2" />
-        <h2>Two-Factor Authentication</h2>
-      </div>
-      <p className="text-muted">
-        Two-factor authentication (2FA) adds an additional layer of security to your account.
-        <br />
-        When enabled, you will be prompted to enter a code from your authenticator app when you log in.
-      </p>
       {!key && <Switch disabled={!me.isSuccess} onCheckedChange={handleTotp} checked={me.data?.totp_enabled} label="Enable two-factor authentication" />}
       {getTotpUri.isLoading && (
         <div className="progress w-50">
