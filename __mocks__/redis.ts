@@ -12,5 +12,15 @@ export const createClient = jest.fn(() => {
     quit: jest.fn(),
     del: (key: string) => values.delete(key),
     ttl: (key: string) => expirations.get(key),
+    keys: (key: string) => {
+      const keys = [];
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [k] of values) {
+        if (k.startsWith(key)) {
+          keys.push(k);
+        }
+      }
+      return keys;
+    },
   };
 });

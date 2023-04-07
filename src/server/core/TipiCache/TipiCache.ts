@@ -48,6 +48,20 @@ class TipiCache {
     return client.del(key);
   }
 
+  public async delByValue(value: string, prefix = '') {
+    const client = await this.getClient();
+    const keys = await client.keys(`${prefix}*`);
+
+    const promises = keys.map(async (key) => {
+      const val = await client.get(key);
+      if (val === value) {
+        await client.del(key);
+      }
+    });
+
+    return Promise.all(promises);
+  }
+
   public async close() {
     return this.client.quit();
   }

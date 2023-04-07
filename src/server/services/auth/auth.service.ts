@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import * as argon2 from 'argon2';
-import { v4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { TotpAuthenticator } from '@/server/utils/totp';
+import { generateSessionId } from '@/server/common/get-server-auth-session';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
@@ -46,10 +46,10 @@ export class AuthServiceClass {
       throw new Error('Wrong password');
     }
 
-    const session = v4();
+    const session = generateSessionId('auth');
 
     if (user.totp_enabled) {
-      const totpSessionId = v4();
+      const totpSessionId = generateSessionId('otp');
       await TipiCache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
@@ -94,7 +94,7 @@ export class AuthServiceClass {
       throw new Error('Invalid TOTP code');
     }
 
-    const session = v4();
+    const session = generateSessionId('otp');
     const token = jwt.sign({ id: user.id, session }, getConfig().jwtSecret, { expiresIn: '7d' });
 
     await TipiCache.set(session, user.id.toString());
@@ -131,7 +131,7 @@ export class AuthServiceClass {
     const newTotpSecret = TotpAuthenticator.generateSecret();
 
     if (!salt) {
-      salt = v4();
+      salt = generateSessionId('');
     }
 
     const encryptedTotpSecret = encrypt(newTotpSecret, salt);
@@ -241,7 +241,7 @@ export class AuthServiceClass {
     const hash = await argon2.hash(password);
     const newUser = await this.prisma.user.create({ data: { username: email, password: hash, operator: true } });
 
-    const session = v4();
+    const session = generateSessionId('auth');
     const token = jwt.sign({ id: newUser.id, session }, getConfig().jwtSecret, { expiresIn: '1d' });
 
     await TipiCache.set(session, newUser.id.toString());
@@ -294,7 +294,7 @@ export class AuthServiceClass {
     // Expire token in 6 seconds
     await TipiCache.set(session, userId, 6);
 
-    const newSession = v4();
+    const newSession = generateSessionId('auth');
     const token = jwt.sign({ id: userId, session: newSession }, getConfig().jwtSecret, { expiresIn: '1d' });
     await TipiCache.set(newSession, userId);
 
