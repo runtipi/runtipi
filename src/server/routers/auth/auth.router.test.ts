@@ -142,3 +142,71 @@ describe('Test: disableTotp', () => {
     expect(error?.code).not.toBe('UNAUTHORIZED');
   });
 });
+
+describe('Test: changeOperatorPassword', () => {
+  it('should be accessible without an account', async () => {
+    // arrange
+    const caller = authRouter.createCaller({ session: null });
+    let error;
+
+    // act
+    try {
+      await caller.changeOperatorPassword({ newPassword: '222' });
+    } catch (e) {
+      error = e as { code: string };
+    }
+
+    // assert
+    expect(error?.code).not.toBe('UNAUTHORIZED');
+  });
+
+  it('should be accessible with an account', async () => {
+    // arrange
+    const caller = authRouter.createCaller({ session: { userId: 122 } });
+    let error;
+
+    // act
+    try {
+      await caller.changeOperatorPassword({ newPassword: '222' });
+    } catch (e) {
+      error = e as { code: string };
+    }
+
+    // assert
+    expect(error?.code).not.toBe('UNAUTHORIZED');
+  });
+});
+
+describe('Test: resetPassword', () => {
+  it('should not be accessible without an account', async () => {
+    // arrange
+    const caller = authRouter.createCaller({ session: null });
+    let error;
+
+    // act
+    try {
+      await caller.changePassword({ currentPassword: '111', newPassword: '222' });
+    } catch (e) {
+      error = e as { code: string };
+    }
+
+    // assert
+    expect(error?.code).toBe('UNAUTHORIZED');
+  });
+
+  it('should be accessible with an account', async () => {
+    // arrange
+    const caller = authRouter.createCaller({ session: { userId: 122 } });
+    let error;
+
+    // act
+    try {
+      await caller.changePassword({ currentPassword: '111', newPassword: '222' });
+    } catch (e) {
+      error = e as { code: string };
+    }
+
+    // assert
+    expect(error?.code).not.toBe('UNAUTHORIZED');
+  });
+});
