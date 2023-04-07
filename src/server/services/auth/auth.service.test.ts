@@ -640,3 +640,47 @@ describe('Test: cancelPasswordChangeRequest', () => {
     expect(fs.existsSync('/runtipi/state/password-change-request')).toBe(false);
   });
 });
+
+describe('Test: changePassword', () => {
+  it('should change the password of the user', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+    const newPassword = faker.internet.password();
+
+    // act
+    await AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' });
+
+    // assert
+    const updatedUser = await db.user.findUnique({ where: { id: user.id } });
+    expect(updatedUser?.password).not.toBe(user.password);
+  });
+
+  it('should throw if the user does not exist', async () => {
+    // arrange
+    const newPassword = faker.internet.password();
+
+    // act & assert
+    await expect(AuthService.changePassword({ userId: 1, newPassword, currentPassword: 'password' })).rejects.toThrowError('User not found');
+  });
+
+  it('should throw if the password is incorrect', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+    const newPassword = faker.internet.password();
+
+    // act & assert
+    await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'wrongpassword' })).rejects.toThrowError('Current password is invalid');
+  });
+
+  it('should throw if password is less than 8 characters', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+    const newPassword = faker.internet.password(7);
+
+    // act & assert
+    await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError('Password must be at least 8 characters');
+  });
+});

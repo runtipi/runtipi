@@ -368,4 +368,29 @@ export class AuthServiceClass {
 
     return true;
   };
+
+  public changePassword = async (params: { currentPassword: string; newPassword: string; userId: number }) => {
+    const { currentPassword, newPassword, userId } = params;
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const valid = await argon2.verify(user.password, currentPassword);
+
+    if (!valid) {
+      throw new Error('Current password is invalid');
+    }
+
+    if (newPassword.length < 8) {
+      throw new Error('Password must be at least 8 characters long');
+    }
+
+    const hash = await argon2.hash(newPassword);
+    await this.prisma.user.update({ where: { id: user.id }, data: { password: hash, totp_enabled: false, totp_secret: null } });
+
+    return true;
+  };
 }

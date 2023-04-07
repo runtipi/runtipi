@@ -14,8 +14,11 @@ export const authRouter = router({
   isConfigured: publicProcedure.query(async () => AuthService.isConfigured()),
   // Password
   checkPasswordChangeRequest: publicProcedure.query(AuthServiceClass.checkPasswordChangeRequest),
-  resetPassword: publicProcedure.input(z.object({ newPassword: z.string() })).mutation(({ input }) => AuthService.changeOperatorPassword({ newPassword: input.newPassword })),
+  changeOperatorPassword: publicProcedure.input(z.object({ newPassword: z.string() })).mutation(({ input }) => AuthService.changeOperatorPassword({ newPassword: input.newPassword })),
   cancelPasswordChangeRequest: publicProcedure.mutation(AuthServiceClass.cancelPasswordChangeRequest),
+  changePassword: protectedProcedure
+    .input(z.object({ currentPassword: z.string(), newPassword: z.string() }))
+    .mutation(({ input, ctx }) => AuthService.changePassword({ userId: Number(ctx.session.userId), ...input })),
   // Totp
   verifyTotp: publicProcedure.input(z.object({ totpSessionId: z.string(), totpCode: z.string() })).mutation(({ input }) => AuthService.verifyTotp(input)),
   getTotpUri: protectedProcedure.input(z.object({ password: z.string() })).mutation(({ input, ctx }) => AuthService.getTotpUri({ userId: Number(ctx.session.userId), password: input.password })),
