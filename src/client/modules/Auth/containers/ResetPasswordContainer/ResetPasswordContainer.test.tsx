@@ -35,7 +35,7 @@ describe('ResetPasswordContainer', () => {
 
     const newPassword = 'new_password';
     const response = { email };
-    server.use(getTRPCMock({ path: ['auth', 'resetPassword'], type: 'mutation', response, delay: 100 }));
+    server.use(getTRPCMock({ path: ['auth', 'changeOperatorPassword'], type: 'mutation', response, delay: 100 }));
 
     const passwordInput = screen.getByLabelText('Password');
     const confirmPasswordInput = screen.getByLabelText('Confirm password');
@@ -62,7 +62,7 @@ describe('ResetPasswordContainer', () => {
 
     const newPassword = 'new_password';
     const error = { message: 'Something went wrong' };
-    server.use(getTRPCMockError({ path: ['auth', 'resetPassword'], type: 'mutation', message: error.message }));
+    server.use(getTRPCMockError({ path: ['auth', 'changeOperatorPassword'], type: 'mutation', message: error.message }));
 
     const passwordInput = screen.getByLabelText('Password');
     const confirmPasswordInput = screen.getByLabelText('Confirm password');
@@ -102,7 +102,7 @@ describe('ResetPasswordContainer', () => {
   it('should redirect to login page when Back to login button is clicked', async () => {
     // Arrange
     render(<ResetPasswordContainer isRequested />);
-    server.use(getTRPCMock({ path: ['auth', 'resetPassword'], type: 'mutation', response: { email: 'goofy@test.com' } }));
+    server.use(getTRPCMock({ path: ['auth', 'changeOperatorPassword'], type: 'mutation', response: { email: 'goofy@test.com' } }));
     const resetPasswordForm = screen.getByRole('button', { name: 'Reset password' });
     const passwordInput = screen.getByLabelText('Password');
     const confirmPasswordInput = screen.getByLabelText('Confirm password');

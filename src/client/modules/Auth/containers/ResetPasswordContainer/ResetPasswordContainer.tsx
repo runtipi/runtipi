@@ -16,7 +16,7 @@ export const ResetPasswordContainer: React.FC<Props> = ({ isRequested }) => {
   const { addToast } = useToastStore();
   const router = useRouter();
   const utils = trpc.useContext();
-  const resetPassword = trpc.auth.resetPassword.useMutation({
+  const resetPassword = trpc.auth.changeOperatorPassword.useMutation({
     onSuccess: () => {
       utils.auth.checkPasswordChangeRequest.invalidate();
     },
