@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 import { Button } from '../../../../components/ui/Button';
 import { Switch } from '../../../../components/ui/Switch';
@@ -32,6 +32,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
     setValue,
     watch,
     setError,
+    control,
   } = useForm<FormValues>({});
   const watchExposed = watch('exposed', false);
 
@@ -57,7 +58,12 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
 
   const renderExposeForm = () => (
     <>
-      <Switch className="mb-3" {...register('exposed')} label="Expose app" />
+      <Controller
+        control={control}
+        name="exposed"
+        defaultValue={false}
+        render={({ field: { onChange, value, ref, ...props } }) => <Switch className="mb-3" ref={ref} checked={value} onCheckedChange={onChange} {...props} label="Expose app" />}
+      />
       {watchExposed && (
         <div className="mb-3">
           <Input {...register('domain')} label="Domain name" error={errors.domain?.message} disabled={loading} placeholder="Domain name" />
