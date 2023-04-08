@@ -39,7 +39,7 @@ export class SystemServiceClass {
   /**
    * Get the current and latest version of Tipi
    *
-   * @returns {Promise<{ current: string; latest: string }>}
+   * @returns {Promise<{ current: string; latest: string }>} The current and latest version
    */
   public getVersion = async (): Promise<{ current: string; latest?: string }> => {
     try {

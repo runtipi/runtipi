@@ -36,28 +36,28 @@ const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue 
       className={className}
       value={value}
       styles={{
-        menu: (provided: any) => ({
+        menu: (provided: object) => ({
           ...provided,
           backgroundColor: bgColor,
           color,
         }),
-        control: (provided: any) => ({
+        control: (provided: object) => ({
           ...provided,
           backgroundColor: bgColor,
           color,
           borderColor,
         }),
-        option: (provided: any, state: any) => ({
+        option: (provided: object, state: { isFocused: boolean }) => ({
           ...provided,
           backgroundColor: state.isFocused ? '#243049' : bgColor,
           color: state.isFocused ? '#fff' : color,
         }),
-        singleValue: (provided: any) => ({
+        singleValue: (provided: object) => ({
           ...provided,
           color,
           fontSize: '0.8rem',
         }),
-        placeholder: (provided: any) => ({
+        placeholder: (provided: object) => ({
           ...provided,
           color: '#a5a9b1',
           fontSize: '0.8rem',
@@ -66,7 +66,7 @@ const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue 
       onChange={handleChange}
       defaultValue={[]}
       name="categories"
-      options={options as any}
+      options={options}
       placeholder="Category"
     />
   );

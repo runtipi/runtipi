@@ -3,6 +3,11 @@ import { createTRPCNext } from '@trpc/next';
 import superjson from 'superjson';
 import type { AppRouter } from '../../server/routers/_app';
 
+/**
+ * Get base url for the current environment
+ *
+ * @returns {string} base url
+ */
 function getBaseUrl() {
   if (typeof window !== 'undefined') {
     // browser should use relative path

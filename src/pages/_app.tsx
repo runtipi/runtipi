@@ -11,6 +11,12 @@ import { StatusProvider } from '../client/components/hoc/StatusProvider';
 import { trpc } from '../client/utils/trpc';
 import { SystemStatus, useSystemStore } from '../client/state/systemStore';
 
+/**
+ * Next.js App component
+ *
+ * @param {AppProps} props - props passed to the app
+ * @returns {JSX.Element} - JSX element
+ */
 function MyApp({ Component, pageProps }: AppProps) {
   const { setDarkMode } = useUIStore();
   const { setStatus, setVersion, pollStatus } = useSystemStore();

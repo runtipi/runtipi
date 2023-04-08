@@ -95,13 +95,11 @@ export class TipiConfig {
         this.config = parsedConfig.data;
       } else {
         const errors = formatErrors(parsedConfig.error.flatten());
-        console.error(`❌ Invalid env config\n${errors}`);
         Logger.error(`❌ Invalid env config\n\n${errors}`);
         throw new Error('Invalid env config');
       }
     } else {
       const errors = formatErrors(parsedFileConfig.error.flatten());
-      console.error(`❌ Invalid settings.json file:\n${errors}`);
       Logger.error(`❌ Invalid settings.json file:\n${errors}`);
       throw new Error('Invalid settings.json file');
     }

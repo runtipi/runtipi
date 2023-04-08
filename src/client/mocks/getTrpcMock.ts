@@ -25,7 +25,7 @@ export type RpcErrorResponse = {
   };
 };
 
-const jsonRpcSuccessResponse = (data: unknown): RpcSuccessResponse<any> => {
+const jsonRpcSuccessResponse = (data: unknown): RpcSuccessResponse<unknown> => {
   const response = SuperJSON.serialize(data);
 
   return {

@@ -1,3 +1,6 @@
+/**
+ * This file is the entry point for the mock service worker.
+ */
 async function initMocks() {
   if (typeof window === 'undefined') {
     const { server } = await import('./server');

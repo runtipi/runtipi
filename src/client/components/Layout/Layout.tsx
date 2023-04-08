@@ -19,7 +19,7 @@ interface IProps {
 
 export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions }) => {
   const router = useRouter();
-  const refreshToken = trpc.auth.refreshToken.useMutation({
+  const { mutate } = trpc.auth.refreshToken.useMutation({
     onSuccess: (data) => {
       if (data?.token) localStorage.setItem('token', data.token);
     },
@@ -30,8 +30,8 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
   });
 
   useEffect(() => {
-    refreshToken.mutate();
-  }, []);
+    mutate();
+  }, [mutate]);
 
   const { version } = useSystemStore();
   const defaultVersion = '0.0.0';
