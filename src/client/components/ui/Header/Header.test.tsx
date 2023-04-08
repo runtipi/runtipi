@@ -5,8 +5,7 @@ import { Header } from './Header';
 
 describe('Header', () => {
   it('renders without crashing', () => {
-    const { container } = render(<Header />);
-    expect(container).toBeInTheDocument();
+    render(<Header />);
   });
 
   it('renders the brand logo', () => {
@@ -16,22 +15,22 @@ describe('Header', () => {
   });
 
   it('renders the dark mode toggle', () => {
-    const { container } = render(<Header />);
-    const darkModeToggle = container.querySelector('[data-tip="Dark mode"]');
+    render(<Header />);
+    const darkModeToggle = screen.getByTestId('dark-mode-toggle');
     expect(darkModeToggle).toContainElement(screen.getByTestId('icon-moon'));
   });
 
   it('renders the light mode toggle', () => {
-    const { container } = render(<Header />);
-    const lightModeToggle = container.querySelector('[data-tip="Light mode"]');
+    render(<Header />);
+    const lightModeToggle = screen.getByTestId('light-mode-toggle');
     expect(lightModeToggle).toContainElement(screen.getByTestId('icon-sun'));
   });
 
   it('Should toggle the dark mode on click of the dark mode toggle', () => {
     const { result } = renderHook(() => useUIStore());
 
-    const { container } = render(<Header />);
-    const darkModeToggle = container.querySelector('[data-tip="Dark mode"]');
+    render(<Header />);
+    const darkModeToggle = screen.getByTestId('dark-mode-toggle');
     fireEvent.click(darkModeToggle as Element);
 
     expect(result.current.darkMode).toBe(true);
@@ -40,8 +39,8 @@ describe('Header', () => {
   it('Should toggle the dark mode on click of the light mode toggle', () => {
     const { result } = renderHook(() => useUIStore());
 
-    const { container } = render(<Header />);
-    const lightModeToggle = container.querySelector('[data-tip="Light mode"]');
+    render(<Header />);
+    const lightModeToggle = screen.getByTestId('light-mode-toggle');
     fireEvent.click(lightModeToggle as Element);
 
     expect(result.current.darkMode).toBe(false);
@@ -49,8 +48,8 @@ describe('Header', () => {
 
   it('Should remove the token from local storage on logout', async () => {
     localStorage.setItem('token', 'token');
-    const { container } = render(<Header />);
-    const logoutButton = container.querySelector('[data-tip="Log out"]');
+    render(<Header />);
+    const logoutButton = screen.getByTestId('logout-button');
     fireEvent.click(logoutButton as Element);
 
     await waitFor(() => {

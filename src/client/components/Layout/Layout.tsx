@@ -2,7 +2,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import clsx from 'clsx';
-import ReactTooltip from 'react-tooltip';
 import semver from 'semver';
 import { useRouter } from 'next/router';
 import { Header } from '../ui/Header';
@@ -61,7 +60,6 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
       <Head>
         <title>{`${title} - Tipi`}</title>
       </Head>
-      <ReactTooltip offset={{ right: 1 }} effect="solid" place="bottom" />
       <Header isUpdateAvailable={!isLatest} />
       <div className="page-wrapper">
         <div className="page-header d-print-none">

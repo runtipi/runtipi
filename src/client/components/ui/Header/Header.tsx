@@ -4,6 +4,7 @@ import Image from 'next/image';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { Tooltip } from 'react-tooltip';
 import { getUrl } from '../../../core/helpers/url-helpers';
 import { useUIStore } from '../../../state/uiStore';
 import { NavBar } from '../NavBar';
@@ -62,14 +63,17 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
               </a>
             </div>
           </div>
-          <div className="d-flex">
-            <div onClick={() => setDarkMode(true)} role="button" aria-hidden="true" className="nav-link px-0 hide-theme-dark cursor-pointer" data-tip="Dark mode">
+          <div style={{ zIndex: 1 }} className="d-flex">
+            <Tooltip anchorSelect=".darkMode">Dark mode</Tooltip>
+            <div onClick={() => setDarkMode(true)} role="button" aria-hidden="true" className="darkMode nav-link px-0 hide-theme-dark cursor-pointer" data-testid="dark-mode-toggle">
               <IconMoon data-testid="icon-moon" size={20} />
             </div>
-            <div onClick={() => setDarkMode(false)} aria-hidden="true" className="nav-link px-0 hide-theme-light cursor-pointer" data-tip="Light mode">
+            <Tooltip anchorSelect=".lightMode">Light mode</Tooltip>
+            <div onClick={() => setDarkMode(false)} aria-hidden="true" className="lightMode nav-link px-0 hide-theme-light cursor-pointer" data-testid="light-mode-toggle">
               <IconSun data-testid="icon-sun" size={20} />
             </div>
-            <div onClick={() => logout.mutate()} tabIndex={0} onKeyPress={() => logout.mutate()} role="button" className="nav-link px-0 cursor-pointer" data-tip="Log out">
+            <Tooltip anchorSelect=".logOut">Log out</Tooltip>
+            <div onClick={() => logout.mutate()} tabIndex={0} onKeyPress={() => logout.mutate()} role="button" className="logOut nav-link px-0 cursor-pointer" data-testid="logout-button">
               <IconLogout size={20} />
             </div>
           </div>

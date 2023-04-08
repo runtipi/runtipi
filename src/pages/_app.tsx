@@ -4,6 +4,7 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import '../client/styles/global.css';
 import '../client/styles/global.scss';
+import 'react-tooltip/dist/react-tooltip.css';
 import { useUIStore } from '../client/state/uiStore';
 import { ToastProvider } from '../client/components/hoc/ToastProvider';
 import { StatusProvider } from '../client/components/hoc/StatusProvider';
