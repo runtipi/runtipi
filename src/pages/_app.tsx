@@ -7,7 +7,6 @@ import '../client/styles/global.scss';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Toaster } from 'react-hot-toast';
 import { useUIStore } from '../client/state/uiStore';
-import { ToastProvider } from '../client/components/hoc/ToastProvider';
 import { StatusProvider } from '../client/components/hoc/StatusProvider';
 import { trpc } from '../client/utils/trpc';
 import { SystemStatus, useSystemStore } from '../client/state/systemStore';
@@ -50,11 +49,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Tipi</title>
       </Head>
-      <ToastProvider>
-        <StatusProvider>
-          <Component {...pageProps} />
-        </StatusProvider>
-      </ToastProvider>
+      <StatusProvider>
+        <Component {...pageProps} />
+      </StatusProvider>
       <Toaster />
       <ReactQueryDevtools />
     </main>
