@@ -1,15 +1,14 @@
 import React from 'react';
 import { trpc } from '@/utils/trpc';
 import { Switch } from '@/components/ui/Switch';
-import { useToastStore } from '@/client/state/toastStore';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
 import { QRCodeSVG } from 'qrcode.react';
 import { OtpInput } from '@/components/ui/OtpInput';
+import { toast } from 'react-hot-toast';
 
 export const OtpForm = () => {
-  const { addToast } = useToastStore();
   const [password, setPassword] = React.useState('');
   const [key, setKey] = React.useState('');
   const [uri, setUri] = React.useState('');
@@ -28,7 +27,7 @@ export const OtpForm = () => {
     },
     onError: (e) => {
       setPassword('');
-      addToast({ title: 'Error', description: e.message, status: 'error' });
+      toast.error(`Error getting TOTP URI: ${e.message}`);
     },
     onSuccess: (data) => {
       setKey(data.key);
@@ -40,13 +39,13 @@ export const OtpForm = () => {
     onMutate: () => {},
     onError: (e) => {
       setTotpCode('');
-      addToast({ title: 'Error', description: e.message, status: 'error' });
+      toast.error(`Error setting up TOTP: ${e.message}`);
     },
     onSuccess: () => {
       setTotpCode('');
       setKey('');
       setUri('');
-      addToast({ title: 'Success', description: 'Two-factor authentication enabled', status: 'success' });
+      toast.success('Two-factor authentication enabled');
       ctx.auth.me.invalidate();
     },
   });
@@ -57,10 +56,10 @@ export const OtpForm = () => {
     },
     onError: (e) => {
       setPassword('');
-      addToast({ title: 'Error', description: e.message, status: 'error' });
+      toast.error(`Error disabling TOTP: ${e.message}`);
     },
     onSuccess: () => {
-      addToast({ title: 'Success', description: 'Two-factor authentication disabled', status: 'success' });
+      toast.success('Two-factor authentication disabled');
       ctx.auth.me.invalidate();
     },
   });

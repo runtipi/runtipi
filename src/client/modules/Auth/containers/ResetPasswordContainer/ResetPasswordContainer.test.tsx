@@ -1,8 +1,7 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor, renderHook } from '../../../../../../tests/test-utils';
+import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
-import { useToastStore } from '../../../../state/toastStore';
 import { ResetPasswordContainer } from './ResetPasswordContainer';
 
 const pushFn = jest.fn();
@@ -55,7 +54,6 @@ describe('ResetPasswordContainer', () => {
 
   it('should show error toast if reset password mutation fails', async () => {
     // Arrange
-    const { result, unmount } = renderHook(() => useToastStore());
     render(<ResetPasswordContainer isRequested />);
     const resetPasswordForm = screen.getByRole('button', { name: 'Reset password' });
     fireEvent.click(resetPasswordForm);
@@ -74,15 +72,12 @@ describe('ResetPasswordContainer', () => {
 
     // Assert
     await waitFor(() => {
-      expect(result.current.toasts[0].description).toBe(error.message);
+      expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
     });
-
-    unmount();
   });
 
   it('should call the cancel request mutation when cancel button is clicked', async () => {
     // Arrange
-    const { result, unmount } = renderHook(() => useToastStore());
     render(<ResetPasswordContainer isRequested />);
     server.use(getTRPCMock({ path: ['auth', 'cancelPasswordChangeRequest'], type: 'mutation', response: true }));
 
@@ -93,10 +88,8 @@ describe('ResetPasswordContainer', () => {
 
     // Assert
     await waitFor(() => {
-      expect(result.current.toasts[0].title).toBe('Password change request cancelled');
+      expect(screen.getByText('Password change request cancelled')).toBeInTheDocument();
     });
-
-    unmount();
   });
 
   it('should redirect to login page when Back to login button is clicked', async () => {

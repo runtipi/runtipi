@@ -1,9 +1,8 @@
 import React from 'react';
-import { useToastStore } from '@/client/state/toastStore';
 import { getTRPCMock, getTRPCMockError } from '@/client/mocks/getTrpcMock';
 import { server } from '@/client/mocks/server';
 import { GeneralActions } from './GeneralActions';
-import { fireEvent, render, renderHook, screen, waitFor } from '../../../../../../tests/test-utils';
+import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 
 describe('Test: GeneralActions', () => {
   it('should render without error', () => {
@@ -14,7 +13,6 @@ describe('Test: GeneralActions', () => {
 
   it('should show toast if update mutation fails', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMock({ path: ['system', 'getVersion'], response: { current: '1.0.0', latest: '2.0.0' } }));
     server.use(getTRPCMockError({ path: ['system', 'update'], type: 'mutation', status: 500, message: 'Something went wrong' }));
     render(<GeneralActions />);
@@ -30,10 +28,7 @@ describe('Test: GeneralActions', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0].status).toEqual('error');
-      expect(result.current.toasts[0].title).toEqual('Error');
-      expect(result.current.toasts[0].description).toEqual('Something went wrong');
+      expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
     });
   });
 
@@ -61,7 +56,6 @@ describe('Test: GeneralActions', () => {
 
   it('should show toast if restart mutation fails', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMockError({ path: ['system', 'restart'], type: 'mutation', status: 500, message: 'Something went wrong' }));
     render(<GeneralActions />);
     const restartButton = screen.getByRole('button', { name: /Restart/i });
@@ -73,10 +67,7 @@ describe('Test: GeneralActions', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0].status).toEqual('error');
-      expect(result.current.toasts[0].title).toEqual('Error');
-      expect(result.current.toasts[0].description).toEqual('Something went wrong');
+      expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
     });
   });
 
