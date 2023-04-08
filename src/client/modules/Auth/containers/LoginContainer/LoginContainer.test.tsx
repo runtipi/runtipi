@@ -1,9 +1,8 @@
 import { faker } from '@faker-js/faker';
 import React from 'react';
-import { fireEvent, render, renderHook, screen, waitFor } from '../../../../../../tests/test-utils';
+import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
-import { useToastStore } from '../../../../state/toastStore';
 import { LoginContainer } from './LoginContainer';
 
 describe('Test: LoginContainer', () => {
@@ -64,7 +63,6 @@ describe('Test: LoginContainer', () => {
 
   it('should show error message if login fails', async () => {
     // Arrange
-    const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMockError({ path: ['auth', 'login'], type: 'mutation', status: 500, message: 'my big error' }));
     render(<LoginContainer />);
 
@@ -79,9 +77,7 @@ describe('Test: LoginContainer', () => {
 
     // Assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0].description).toEqual('my big error');
-      expect(result.current.toasts[0].status).toEqual('error');
+      expect(screen.getByText(/my big error/)).toBeInTheDocument();
     });
     const token = localStorage.getItem('token');
     expect(token).toBeNull();
@@ -118,7 +114,6 @@ describe('Test: LoginContainer', () => {
 
   it('should show error message if totp code is invalid', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     const email = faker.internet.email();
     const password = faker.internet.password();
     const totpSessionId = faker.datatype.uuid();
@@ -150,9 +145,7 @@ describe('Test: LoginContainer', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0].description).toEqual('Invalid totp code');
-      expect(result.current.toasts[0].status).toEqual('error');
+      expect(screen.getByText(/Invalid totp code/)).toBeInTheDocument();
     });
   });
 

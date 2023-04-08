@@ -1,8 +1,6 @@
 import React from 'react';
 import { server } from '@/client/mocks/server';
 import { getTRPCMock, getTRPCMockError } from '@/client/mocks/getTrpcMock';
-import { useToastStore } from '@/client/state/toastStore';
-import { renderHook } from '@testing-library/react';
 import { render, screen, waitFor, fireEvent } from '../../../../../../tests/test-utils';
 import { OtpForm } from './OtpForm';
 
@@ -48,7 +46,6 @@ describe('<OtpForm />', () => {
 
   it('should show show error toast if password is incorrect while enabling 2FA', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMock({ path: ['auth', 'me'], response: { totp_enabled: false, id: 12, username: 'test' } }));
     server.use(getTRPCMockError({ path: ['auth', 'getTotpUri'], type: 'mutation', message: 'Invalid password' }));
     render(<OtpForm />);
@@ -71,16 +68,12 @@ describe('<OtpForm />', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0]?.status).toEqual('error');
-      expect(result.current.toasts[0]?.title).toEqual('Error');
-      expect(result.current.toasts[0]?.description).toEqual('Invalid password');
+      expect(screen.getByText(/Invalid password/)).toBeInTheDocument();
     });
   });
 
   it('should show show error toast if password is incorrect while disabling 2FA', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMock({ path: ['auth', 'me'], response: { totp_enabled: true, id: 12, username: 'test' } }));
     server.use(getTRPCMockError({ path: ['auth', 'disableTotp'], type: 'mutation', message: 'Invalid password' }));
     render(<OtpForm />);
@@ -104,16 +97,12 @@ describe('<OtpForm />', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0]?.status).toEqual('error');
-      expect(result.current.toasts[0]?.title).toEqual('Error');
-      expect(result.current.toasts[0]?.description).toEqual('Invalid password');
+      expect(screen.getByText(/Invalid password/)).toBeInTheDocument();
     });
   });
 
   it('should show success toast if password is correct while disabling 2FA', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMock({ path: ['auth', 'me'], response: { totp_enabled: true, id: 12, username: 'test' } }));
     server.use(getTRPCMock({ path: ['auth', 'disableTotp'], type: 'mutation', response: true }));
 
@@ -138,10 +127,7 @@ describe('<OtpForm />', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0]?.status).toEqual('success');
-      expect(result.current.toasts[0]?.title).toEqual('Success');
-      expect(result.current.toasts[0]?.description).toEqual('Two-factor authentication disabled');
+      expect(screen.getByText('Two-factor authentication disabled')).toBeInTheDocument();
     });
   });
 
@@ -174,7 +160,6 @@ describe('<OtpForm />', () => {
 
   it('should show error toast if submitted totp code is invalid', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMock({ path: ['auth', 'getTotpUri'], type: 'mutation', response: { key: 'test', uri: 'test' } }));
     server.use(getTRPCMockError({ path: ['auth', 'setupTotp'], type: 'mutation', message: 'Invalid code' }));
 
@@ -210,16 +195,12 @@ describe('<OtpForm />', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0]?.status).toEqual('error');
-      expect(result.current.toasts[0]?.title).toEqual('Error');
-      expect(result.current.toasts[0]?.description).toEqual('Invalid code');
+      expect(screen.getByText(/Invalid code/)).toBeInTheDocument();
     });
   });
 
   it('should show success toast if submitted totp code is valid', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMock({ path: ['auth', 'getTotpUri'], type: 'mutation', response: { key: 'test', uri: 'test' } }));
     server.use(getTRPCMock({ path: ['auth', 'setupTotp'], type: 'mutation', response: true }));
     render(<OtpForm />);
@@ -253,10 +234,7 @@ describe('<OtpForm />', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0]?.status).toEqual('success');
-      expect(result.current.toasts[0]?.title).toEqual('Success');
-      expect(result.current.toasts[0]?.description).toEqual('Two-factor authentication enabled');
+      expect(screen.getByText('Two-factor authentication enabled')).toBeInTheDocument();
     });
   });
 

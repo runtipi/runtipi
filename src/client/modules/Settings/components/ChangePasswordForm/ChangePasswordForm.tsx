@@ -2,11 +2,11 @@ import React from 'react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { trpc } from '@/utils/trpc';
-import { useToastStore } from '@/client/state/toastStore';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
 
 const schema = z
   .object({
@@ -28,13 +28,12 @@ type FormValues = z.infer<typeof schema>;
 
 export const ChangePasswordForm = () => {
   const router = useRouter();
-  const { addToast } = useToastStore();
   const changePassword = trpc.auth.changePassword.useMutation({
     onError: (e) => {
-      addToast({ title: 'Error', description: e.message, status: 'error' });
+      toast.error(`Error changing password: ${e.message}`);
     },
     onSuccess: () => {
-      addToast({ title: 'Success', description: 'Password successfully changed', status: 'success' });
+      toast.success('Password successfully changed');
       router.push('/');
     },
   });

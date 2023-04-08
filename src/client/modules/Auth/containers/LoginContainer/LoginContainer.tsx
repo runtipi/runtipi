@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { useToastStore } from '../../../../state/toastStore';
+import { toast } from 'react-hot-toast';
 import { trpc } from '../../../../utils/trpc';
 import { AuthFormLayout } from '../../components/AuthFormLayout';
 import { LoginForm } from '../../components/LoginForm';
@@ -11,12 +11,11 @@ type FormValues = { email: string; password: string };
 export const LoginContainer: React.FC = () => {
   const [totpSessionId, setTotpSessionId] = useState<string | null>(null);
   const router = useRouter();
-  const { addToast } = useToastStore();
   const utils = trpc.useContext();
   const login = trpc.auth.login.useMutation({
     onError: (e) => {
       localStorage.removeItem('token');
-      addToast({ title: 'Login error', description: e.message, status: 'error' });
+      toast.error(`Login failed: ${e.message}`);
     },
     onSuccess: (data) => {
       if (data.totpSessionId) {
@@ -31,7 +30,7 @@ export const LoginContainer: React.FC = () => {
 
   const verifyTotp = trpc.auth.verifyTotp.useMutation({
     onError: (e) => {
-      addToast({ title: 'Error', description: e.message, status: 'error' });
+      toast.error(`Verification failed: ${e.message}`);
     },
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);

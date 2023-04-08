@@ -1,9 +1,8 @@
 import React from 'react';
-import { fireEvent, render, renderHook, screen, waitFor } from '../../../../../../tests/test-utils';
+import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { createAppEntity } from '../../../../mocks/fixtures/app.fixtures';
 import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
-import { useToastStore } from '../../../../state/toastStore';
 import { AppDetailsContainer } from './AppDetailsContainer';
 
 describe('Test: AppDetailsContainer', () => {
@@ -112,7 +111,6 @@ describe('Test: AppDetailsContainer', () => {
       // Arrange
       const app = createAppEntity({ overrides: { status: 'missing' } });
       server.use(getTRPCMock({ path: ['app', 'installApp'], type: 'mutation', response: app }));
-      const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
       const openModalButton = screen.getByRole('button', { name: 'Install' });
       fireEvent.click(openModalButton);
@@ -122,15 +120,12 @@ describe('Test: AppDetailsContainer', () => {
       fireEvent.click(installButton);
 
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].status).toEqual('success');
-        expect(result.current.toasts[0].title).toEqual('App installed successfully');
+        expect(screen.getByText('App installed successfully')).toBeInTheDocument();
       });
     });
 
     it('should display a toast error when install mutation fails', async () => {
       // Arrange
-      const { result } = renderHook(() => useToastStore());
       server.use(
         getTRPCMockError({
           path: ['app', 'installApp'],
@@ -149,9 +144,7 @@ describe('Test: AppDetailsContainer', () => {
       fireEvent.click(installButton);
 
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].description).toEqual('my big error');
-        expect(result.current.toasts[0].status).toEqual('error');
+        expect(screen.getByText('Failed to install app: my big error')).toBeInTheDocument();
       });
     });
   });
@@ -161,7 +154,6 @@ describe('Test: AppDetailsContainer', () => {
       // Arrange
       const app = createAppEntity({ overrides: { version: 2, latestVersion: 3 } });
       server.use(getTRPCMock({ path: ['app', 'updateApp'], type: 'mutation', response: app }));
-      const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
       const openModalButton = screen.getByRole('button', { name: 'Update' });
       fireEvent.click(openModalButton);
@@ -171,15 +163,12 @@ describe('Test: AppDetailsContainer', () => {
       modalUpdateButton.click();
 
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].status).toEqual('success');
-        expect(result.current.toasts[0].title).toEqual('App updated successfully');
+        expect(screen.getByText('App updated successfully')).toBeInTheDocument();
       });
     });
 
     it('should display a toast error when update mutation fails', async () => {
       // Arrange
-      const { result } = renderHook(() => useToastStore());
       server.use(getTRPCMockError({ path: ['app', 'updateApp'], type: 'mutation', message: 'my big error' }));
       const app = createAppEntity({ overrides: { version: 2, latestVersion: 3 }, overridesInfo: { tipi_version: 3 } });
       render(<AppDetailsContainer app={app} />);
@@ -192,9 +181,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].description).toEqual('my big error');
-        expect(result.current.toasts[0].status).toEqual('error');
+        expect(screen.getByText('Failed to update app: my big error')).toBeInTheDocument();
       });
     });
   });
@@ -204,7 +191,6 @@ describe('Test: AppDetailsContainer', () => {
       // Arrange
       const app = createAppEntity({ status: 'stopped' });
       server.use(getTRPCMock({ path: ['app', 'uninstallApp'], type: 'mutation', response: { id: app.id, config: {}, status: 'missing' } }));
-      const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
       const openModalButton = screen.getByRole('button', { name: 'Remove' });
       fireEvent.click(openModalButton);
@@ -215,15 +201,12 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].status).toEqual('success');
-        expect(result.current.toasts[0].title).toEqual('App uninstalled successfully');
+        expect(screen.getByText('App uninstalled successfully')).toBeInTheDocument();
       });
     });
 
     it('should display a toast error when uninstall mutation fails', async () => {
       // Arrange
-      const { result } = renderHook(() => useToastStore());
       server.use(getTRPCMockError({ path: ['app', 'uninstallApp'], type: 'mutation', message: 'my big error' }));
       const app = createAppEntity({ status: 'stopped' });
       render(<AppDetailsContainer app={app} />);
@@ -236,9 +219,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].description).toEqual('my big error');
-        expect(result.current.toasts[0].status).toEqual('error');
+        expect(screen.getByText('Failed to uninstall app: my big error')).toBeInTheDocument();
       });
     });
   });
@@ -248,7 +229,6 @@ describe('Test: AppDetailsContainer', () => {
       // Arrange
       const app = createAppEntity({ status: 'stopped' });
       server.use(getTRPCMock({ path: ['app', 'startApp'], type: 'mutation', response: app }));
-      const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
 
       // Act
@@ -257,15 +237,12 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].status).toEqual('success');
-        expect(result.current.toasts[0].title).toEqual('App started successfully');
+        expect(screen.getByText('App started successfully')).toBeInTheDocument();
       });
     });
 
     it('should display a toast error when start mutation fails', async () => {
       // Arrange
-      const { result } = renderHook(() => useToastStore());
       server.use(getTRPCMockError({ path: ['app', 'startApp'], type: 'mutation', message: 'my big error' }));
       const app = createAppEntity({ status: 'stopped' });
       render(<AppDetailsContainer app={app} />);
@@ -276,9 +253,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].description).toEqual('my big error');
-        expect(result.current.toasts[0].status).toEqual('error');
+        expect(screen.getByText('Failed to start app: my big error')).toBeInTheDocument();
       });
     });
   });
@@ -288,7 +263,6 @@ describe('Test: AppDetailsContainer', () => {
       // Arrange
       const app = createAppEntity({ status: 'running' });
       server.use(getTRPCMock({ path: ['app', 'stopApp'], type: 'mutation', response: app }));
-      const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
       const openModalButton = screen.getByRole('button', { name: 'Stop' });
       fireEvent.click(openModalButton);
@@ -299,15 +273,12 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].status).toEqual('success');
-        expect(result.current.toasts[0].title).toEqual('App stopped successfully');
+        expect(screen.getByText('App stopped successfully')).toBeInTheDocument();
       });
     });
 
     it('should display a toast error when stop mutation fails', async () => {
       // Arrange
-      const { result } = renderHook(() => useToastStore());
       server.use(getTRPCMockError({ path: ['app', 'stopApp'], type: 'mutation', message: 'my big error' }));
       const app = createAppEntity({ status: 'running' });
       render(<AppDetailsContainer app={app} />);
@@ -320,9 +291,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].description).toEqual('my big error');
-        expect(result.current.toasts[0].status).toEqual('error');
+        expect(screen.getByText('Failed to stop app: my big error')).toBeInTheDocument();
       });
     });
   });
@@ -332,7 +301,6 @@ describe('Test: AppDetailsContainer', () => {
       // Arrange
       const app = createAppEntity({ status: 'running', overridesInfo: { exposable: true } });
       server.use(getTRPCMock({ path: ['app', 'updateAppConfig'], type: 'mutation', response: app }));
-      const { result } = renderHook(() => useToastStore());
       render(<AppDetailsContainer app={app} />);
       const openModalButton = screen.getByRole('button', { name: 'Settings' });
       fireEvent.click(openModalButton);
@@ -343,15 +311,12 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].status).toEqual('success');
-        expect(result.current.toasts[0].title).toEqual('App config updated successfully. Restart the app to apply the changes');
+        expect(screen.getByText('App config updated successfully. Restart the app to apply the changes')).toBeInTheDocument();
       });
     });
 
     it('should display a toast error when update config mutation fails', async () => {
       // Arrange
-      const { result } = renderHook(() => useToastStore());
       server.use(getTRPCMockError({ path: ['app', 'updateAppConfig'], type: 'mutation', message: 'my big error' }));
       const app = createAppEntity({ status: 'running', overridesInfo: { exposable: true } });
       render(<AppDetailsContainer app={app} />);
@@ -364,9 +329,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(result.current.toasts).toHaveLength(1);
-        expect(result.current.toasts[0].description).toEqual('my big error');
-        expect(result.current.toasts[0].status).toEqual('error');
+        expect(screen.getByText('Failed to update app config: my big error')).toBeInTheDocument();
       });
     });
   });

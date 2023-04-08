@@ -1,8 +1,8 @@
 import React from 'react';
 import semver from 'semver';
+import { toast } from 'react-hot-toast';
 import { Button } from '../../../../components/ui/Button';
 import { useDisclosure } from '../../../../hooks/useDisclosure';
-import { useToastStore } from '../../../../state/toastStore';
 import { RestartModal } from '../../components/RestartModal';
 import { UpdateModal } from '../../components/UpdateModal/UpdateModal';
 import { trpc } from '../../../../utils/trpc';
@@ -12,7 +12,6 @@ export const GeneralActions = () => {
   const versionQuery = trpc.system.getVersion.useQuery(undefined, { staleTime: 0 });
 
   const [loading, setLoading] = React.useState(false);
-  const { addToast } = useToastStore();
   const { setPollStatus } = useSystemStore();
   const restartDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
@@ -30,7 +29,7 @@ export const GeneralActions = () => {
     },
     onError: (error) => {
       updateDisclosure.close();
-      addToast({ title: 'Error', description: error.message, status: 'error' });
+      toast.error(`Error updating instance: ${error.message}`);
     },
     onSettled: () => {
       setLoading(false);
@@ -47,7 +46,7 @@ export const GeneralActions = () => {
     },
     onError: (error) => {
       restartDisclosure.close();
-      addToast({ title: 'Error', description: error.message, status: 'error' });
+      toast.error(`Error restarting instance: ${error.message}`);
     },
     onSettled: () => {
       setLoading(false);

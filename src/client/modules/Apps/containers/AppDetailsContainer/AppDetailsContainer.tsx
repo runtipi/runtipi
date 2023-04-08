@@ -1,6 +1,6 @@
 import React from 'react';
+import { toast } from 'react-hot-toast';
 import { useDisclosure } from '../../../../hooks/useDisclosure';
-import { useToastStore } from '../../../../state/toastStore';
 import { AppLogo } from '../../../../components/AppLogo/AppLogo';
 import { AppStatus } from '../../../../components/AppStatus';
 import { AppActions } from '../../components/AppActions';
@@ -20,7 +20,6 @@ interface IProps {
 }
 
 export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
-  const { addToast } = useToastStore();
   const installDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
@@ -41,11 +40,11 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      addToast({ title: 'App installed successfully', status: 'success' });
+      toast.success('App installed successfully');
     },
     onError: (e) => {
       invalidate();
-      addToast({ title: 'Install error', description: e.message, status: 'error' });
+      toast.error(`Failed to install app: ${e.message}`);
     },
   });
 
@@ -56,9 +55,9 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      addToast({ title: 'App uninstalled successfully', status: 'success' });
+      toast.success('App uninstalled successfully');
     },
-    onError: (e) => addToast({ title: 'Uninstall error', description: e.message, status: 'error' }),
+    onError: (e) => toast.error(`Failed to uninstall app: ${e.message}`),
   });
 
   const stop = trpc.app.stopApp.useMutation({
@@ -68,9 +67,9 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      addToast({ title: 'App stopped successfully', status: 'success' });
+      toast.success('App stopped successfully');
     },
-    onError: (e) => addToast({ title: 'Stop error', description: e.message, status: 'error' }),
+    onError: (e) => toast.error(`Failed to stop app: ${e.message}`),
   });
 
   const update = trpc.app.updateApp.useMutation({
@@ -80,9 +79,9 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      addToast({ title: 'App updated successfully', status: 'success' });
+      toast.success('App updated successfully');
     },
-    onError: (e) => addToast({ title: 'Update error', description: e.message, status: 'error' }),
+    onError: (e) => toast.error(`Failed to update app: ${e.message}`),
   });
 
   const start = trpc.app.startApp.useMutation({
@@ -91,18 +90,18 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      addToast({ title: 'App started successfully', status: 'success' });
+      toast.success('App started successfully');
     },
-    onError: (e) => addToast({ title: 'Start error', description: e.message, status: 'error' }),
+    onError: (e) => toast.error(`Failed to start app: ${e.message}`),
   });
 
   const updateConfig = trpc.app.updateAppConfig.useMutation({
     onMutate: () => updateSettingsDisclosure.close(),
     onSuccess: () => {
       invalidate();
-      addToast({ title: 'App config updated successfully. Restart the app to apply the changes', status: 'success' });
+      toast.success('App config updated successfully. Restart the app to apply the changes');
     },
-    onError: (e) => addToast({ title: 'Update error', description: e.message, status: 'error' }),
+    onError: (e) => toast.error(`Failed to update app config: ${e.message}`),
   });
 
   const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);

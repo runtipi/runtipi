@@ -1,9 +1,8 @@
 import React from 'react';
 import { server } from '@/client/mocks/server';
 import { getTRPCMockError } from '@/client/mocks/getTrpcMock';
-import { useToastStore } from '../../../../state/toastStore';
 import { SettingsContainer } from './SettingsContainer';
-import { fireEvent, render, renderHook, screen, waitFor } from '../../../../../../tests/test-utils';
+import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 
 describe('Test: SettingsContainer', () => {
   it('should render without error', () => {
@@ -14,7 +13,6 @@ describe('Test: SettingsContainer', () => {
 
   it('should show toast if updateSettings mutation fails', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     server.use(getTRPCMockError({ path: ['system', 'updateSettings'], type: 'mutation', status: 500, message: 'Something went wrong' }));
     render(<SettingsContainer />);
     const submitButton = screen.getByRole('button', { name: 'Save' });
@@ -28,9 +26,7 @@ describe('Test: SettingsContainer', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0].status).toEqual('error');
-      expect(result.current.toasts[0].title).toEqual('Error saving settings');
+      expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
     });
   });
 
@@ -50,7 +46,6 @@ describe('Test: SettingsContainer', () => {
 
   it('should show toast if updateSettings mutation succeeds', async () => {
     // arrange
-    const { result } = renderHook(() => useToastStore());
     render(<SettingsContainer />);
     const submitButton = screen.getByRole('button', { name: 'Save' });
 
@@ -59,8 +54,7 @@ describe('Test: SettingsContainer', () => {
 
     // assert
     await waitFor(() => {
-      expect(result.current.toasts).toHaveLength(1);
-      expect(result.current.toasts[0].status).toEqual('success');
+      expect(screen.getByText(/Settings updated. Restart your instance to apply new settings./)).toBeInTheDocument();
     });
   });
 });
