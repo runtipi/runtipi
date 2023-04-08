@@ -5,6 +5,7 @@ import Head from 'next/head';
 import '../client/styles/global.css';
 import '../client/styles/global.scss';
 import 'react-tooltip/dist/react-tooltip.css';
+import { Toaster } from 'react-hot-toast';
 import { useUIStore } from '../client/state/uiStore';
 import { ToastProvider } from '../client/components/hoc/ToastProvider';
 import { StatusProvider } from '../client/components/hoc/StatusProvider';
@@ -54,6 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </StatusProvider>
       </ToastProvider>
+      <Toaster />
       <ReactQueryDevtools />
     </main>
   );
