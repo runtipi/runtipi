@@ -66,10 +66,11 @@ describe('Test: getVersion', () => {
     jest.restoreAllMocks();
   });
 
-  it('It should return version', async () => {
+  it('It should return version with body', async () => {
     // Arrange
+    const body = faker.random.words(10);
     // @ts-expect-error Mocking fetch
-    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.random.numeric(1)}.${faker.random.numeric(1)}.${faker.random.numeric()}` }) }));
+    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.random.numeric(1)}.${faker.random.numeric(1)}.${faker.random.numeric()}`, body }) }));
 
     // Act
     const version = await SystemService.getVersion();
@@ -78,6 +79,7 @@ describe('Test: getVersion', () => {
     expect(version).toBeDefined();
     expect(version.current).toBeDefined();
     expect(semver.valid(version.latest)).toBeTruthy();
+    expect(version.body).toBeDefined();
   });
 
   it('Should return undefined for latest if request fails', async () => {
