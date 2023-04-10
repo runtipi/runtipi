@@ -13,7 +13,7 @@ describe('Test: GeneralActions', () => {
 
   it('should show toast if update mutation fails', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['system', 'getVersion'], response: { current: '1.0.0', latest: '2.0.0' } }));
+    server.use(getTRPCMock({ path: ['system', 'getVersion'], response: { current: '1.0.0', latest: '2.0.0', body: '' } }));
     server.use(getTRPCMockError({ path: ['system', 'update'], type: 'mutation', status: 500, message: 'Something went wrong' }));
     render(<GeneralActions />);
     await waitFor(() => {
@@ -35,7 +35,7 @@ describe('Test: GeneralActions', () => {
   it('should log user out if update is successful', async () => {
     // arrange
     localStorage.setItem('token', '123');
-    server.use(getTRPCMock({ path: ['system', 'getVersion'], response: { current: '1.0.0', latest: '2.0.0' } }));
+    server.use(getTRPCMock({ path: ['system', 'getVersion'], response: { current: '1.0.0', latest: '2.0.0', body: '' } }));
     server.use(getTRPCMock({ path: ['system', 'update'], response: true }));
     render(<GeneralActions />);
     await waitFor(() => {
