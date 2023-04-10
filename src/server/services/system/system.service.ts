@@ -41,19 +41,23 @@ export class SystemServiceClass {
    *
    * @returns {Promise<{ current: string; latest: string }>} The current and latest version
    */
-  public getVersion = async (): Promise<{ current: string; latest?: string }> => {
+  public getVersion = async () => {
     try {
       let version = await this.cache.get('latestVersion');
+      let body = await this.cache.get('latestVersionBody');
 
       if (!version) {
         const data = await fetch('https://api.github.com/repos/meienberger/runtipi/releases/latest');
-        const release = (await data.json()) as { name: string };
+        const release = (await data.json()) as { name: string; body: string };
 
         version = release.name.replace('v', '');
+        body = release.body;
+
         await this.cache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
+        await this.cache.set('latestVersionBody', body || '', 60 * 60);
       }
 
-      return { current: TipiConfig.getConfig().version, latest: version?.replace('v', '') };
+      return { current: TipiConfig.getConfig().version, latest: version?.replace('v', ''), body };
     } catch (e) {
       Logger.error(e);
       return { current: TipiConfig.getConfig().version, latest: undefined };
