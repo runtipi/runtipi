@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import clsx from 'clsx';
-import classes from './OptInput.module.scss';
+import classes from './OtpInput.module.scss';
 
 type Props = {
   value: string;

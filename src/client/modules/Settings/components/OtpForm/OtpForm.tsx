@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { QRCodeSVG } from 'qrcode.react';
 import { OtpInput } from '@/components/ui/OtpInput';
 import { toast } from 'react-hot-toast';
+import { useDisclosure } from '@/client/hooks/useDisclosure';
 
 export const OtpForm = () => {
   const [password, setPassword] = React.useState('');
@@ -15,15 +16,15 @@ export const OtpForm = () => {
   const [totpCode, setTotpCode] = React.useState('');
 
   // Dialog statuses
-  const [isSetupTotpOpen, setIsSetupTotpOpen] = React.useState(false);
-  const [isDisableTotpOpen, setIsDisableTotpOpen] = React.useState(false);
+  const setupOtpDisclosure = useDisclosure();
+  const disableOtpDisclosure = useDisclosure();
 
   const ctx = trpc.useContext();
   const me = trpc.auth.me.useQuery();
 
   const getTotpUri = trpc.auth.getTotpUri.useMutation({
     onMutate: () => {
-      setIsSetupTotpOpen(false);
+      setupOtpDisclosure.close();
     },
     onError: (e) => {
       setPassword('');
@@ -52,7 +53,7 @@ export const OtpForm = () => {
 
   const disableTotp = trpc.auth.disableTotp.useMutation({
     onMutate: () => {
-      setIsDisableTotpOpen(false);
+      disableOtpDisclosure.close();
     },
     onError: (e) => {
       setPassword('');
@@ -89,9 +90,10 @@ export const OtpForm = () => {
   };
 
   const handleTotp = (enabled: boolean) => {
-    if (enabled) setIsSetupTotpOpen(true);
-    else {
-      setIsDisableTotpOpen(true);
+    if (enabled) {
+      setupOtpDisclosure.open();
+    } else {
+      disableOtpDisclosure.open();
     }
   };
 
@@ -104,7 +106,7 @@ export const OtpForm = () => {
         </div>
       )}
       {renderSetupQr()}
-      <Dialog open={isSetupTotpOpen} onOpenChange={(o) => setIsSetupTotpOpen(o)}>
+      <Dialog open={setupOtpDisclosure.isOpen} onOpenChange={(o: boolean) => setupOtpDisclosure.toggle(o)}>
         <DialogContent size="sm">
           <DialogHeader>
             <DialogTitle>Password needed</DialogTitle>
@@ -125,7 +127,7 @@ export const OtpForm = () => {
           </DialogDescription>
         </DialogContent>
       </Dialog>
-      <Dialog open={isDisableTotpOpen} onOpenChange={(o) => setIsDisableTotpOpen(o)}>
+      <Dialog open={disableOtpDisclosure.isOpen} onOpenChange={(o: boolean) => disableOtpDisclosure.toggle(o)}>
         <DialogContent size="sm">
           <DialogHeader>
             <DialogTitle>Password needed</DialogTitle>
