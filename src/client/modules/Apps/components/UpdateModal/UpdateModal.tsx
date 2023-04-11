@@ -1,6 +1,6 @@
 import React from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
 import { Button } from '../../../../components/ui/Button';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from '../../../../components/ui/Modal';
 import { AppInfo } from '../../../../core/types';
 
 interface IProps {
@@ -12,20 +12,22 @@ interface IProps {
 }
 
 export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClose, onConfirm }) => (
-  <Modal size="sm" onClose={onClose} isOpen={isOpen}>
-    <ModalHeader>
-      <h5 className="modal-title">Update {info.name} ?</h5>
-    </ModalHeader>
-    <ModalBody>
-      <div className="text-muted">
-        Update app to latest verion : <b>{newVersion}</b> ?<br />
-        This will reset your custom configuration (e.g. changes in docker-compose.yml)
-      </div>
-    </ModalBody>
-    <ModalFooter>
-      <Button data-testid="modal-update-button" onClick={onConfirm} className="btn-success">
-        Update
-      </Button>
-    </ModalFooter>
-  </Modal>
+  <Dialog open={isOpen} onOpenChange={onClose}>
+    <DialogContent size="sm">
+      <DialogHeader>
+        <h5 className="modal-title">Update {info.name} ?</h5>
+      </DialogHeader>
+      <DialogDescription>
+        <div className="text-muted">
+          Update app to latest verion : <b>{newVersion}</b> ?<br />
+          This will reset your custom configuration (e.g. changes in docker-compose.yml)
+        </div>
+      </DialogDescription>
+      <DialogFooter>
+        <Button onClick={onConfirm} className="btn-success">
+          Update
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 );

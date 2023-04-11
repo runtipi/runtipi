@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import { trpc } from '@/utils/trpc';
-import { useToastStore } from '../../../../state/toastStore';
+import { toast } from 'react-hot-toast';
 import { SettingsForm, SettingsFormValues } from '../../components/SettingsForm';
 
 export const SettingsContainer = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { addToast } = useToastStore();
   const getSettings = trpc.system.getSettings.useQuery();
   const updateSettings = trpc.system.updateSettings.useMutation({
     onSuccess: () => {
-      addToast({ title: 'Settings updated', description: 'Restart your instance for settings to take effect', status: 'success' });
+      toast.success('Settings updated. Restart your instance to apply new settings.');
     },
     onError: (e) => {
       if (e.shape?.data.zodError) {
         setErrors(e.shape.data.zodError);
       }
 
-      addToast({ title: 'Error saving settings', description: e.message, status: 'error' });
+      toast.error(`Error saving settings: ${e.message}`);
     },
   });
 

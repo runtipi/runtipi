@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React from 'react';
+import { toast } from 'react-hot-toast';
 import { Button } from '../../../../components/ui/Button';
-import { useToastStore } from '../../../../state/toastStore';
 import { trpc } from '../../../../utils/trpc';
 import { AuthFormLayout } from '../../components/AuthFormLayout';
 import { ResetPasswordForm } from '../../components/ResetPasswordForm';
@@ -13,21 +13,20 @@ type Props = {
 type FormValues = { password: string };
 
 export const ResetPasswordContainer: React.FC<Props> = ({ isRequested }) => {
-  const { addToast } = useToastStore();
   const router = useRouter();
   const utils = trpc.useContext();
-  const resetPassword = trpc.auth.resetPassword.useMutation({
+  const resetPassword = trpc.auth.changeOperatorPassword.useMutation({
     onSuccess: () => {
       utils.auth.checkPasswordChangeRequest.invalidate();
     },
     onError: (error) => {
-      addToast({ title: 'Reset password error', description: error.message, status: 'error' });
+      toast.error(`Failed to reset password ${error.message}`);
     },
   });
   const cancelRequest = trpc.auth.cancelPasswordChangeRequest.useMutation({
     onSuccess: () => {
       utils.auth.checkPasswordChangeRequest.invalidate();
-      addToast({ title: 'Password change request cancelled', status: 'success' });
+      toast.success('Password change request cancelled');
     },
   });
 

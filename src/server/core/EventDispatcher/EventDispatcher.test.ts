@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs-extra';
 import { EventDispatcher } from '.';
 

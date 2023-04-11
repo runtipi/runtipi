@@ -212,9 +212,9 @@ export const generateEnvFile = (app: App) => {
   This function reads the apps directory and skips certain system files, then reads the config.json and metadata/description.md files for each app,
   parses the config file, filters out any apps that are not available and returns an array of app information.
   If the config.json file is invalid, it logs an error message.
-
+ 
   @returns {Promise<AppInfo[]>} - Returns a promise that resolves with an array of available apps' information.
-*/
+ */
 export const getAvailableApps = async () => {
   const appsDir = readdirSync(`/runtipi/repos/${getConfig().appsRepoId}/apps`);
 
@@ -248,7 +248,6 @@ export const getAvailableApps = async () => {
  *  If the app is not found, it returns null.
  *
  *  @param {string} id - The app id.
- *  @param {number} [version] - The current version of the app.
  *  @returns {Promise<{current: number, latest: number, dockerVersion: string} | null>} - Returns an object containing information about the updates available for the app or null if the app is not found or has an invalid config.json file.
  */
 export const getUpdateInfo = (id: string) => {
@@ -273,7 +272,7 @@ export const getUpdateInfo = (id: string) => {
  *  If an error occurs during the process, it logs the error message and throws an error.
  *
  *  @param {string} id - The app id.
- *  @param {AppStatus} [status] - The app status.
+ *  @param {App['status']} [status] - The app status.
  *  @returns {AppInfo | null} - Returns an object with app information or null if the app is not found.
  */
 export const getAppInfo = (id: string, status?: App['status']) => {

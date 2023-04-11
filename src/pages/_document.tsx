@@ -3,6 +3,11 @@ import { Html, Head, Main, NextScript } from 'next/document';
 
 import { getUrl } from '../client/core/helpers/url-helpers';
 
+/**
+ * Next.js Document component
+ *
+ * @returns {JSX.Element} - JSX element
+ */
 export default function MyDocument() {
   return (
     <Html lang="en">

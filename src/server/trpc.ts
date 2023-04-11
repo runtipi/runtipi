@@ -4,8 +4,10 @@ import { typeToFlattenedError, ZodError } from 'zod';
 import { type Context } from './context';
 
 /**
+ * Convert ZodError to a record
  *
- * @param errors
+ * @param {typeToFlattenedError<string>} errors - errors
+ * @returns {Record<string, string>} record
  */
 export function zodErrorsToRecord(errors: typeToFlattenedError<string>) {
   const record: Record<string, string> = {};

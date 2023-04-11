@@ -13,16 +13,20 @@ interface IProps {
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   value?: string;
+  readOnly?: boolean;
 }
 
-export const Input = React.forwardRef<HTMLInputElement, IProps>(({ onChange, onBlur, name, label, placeholder, error, type = 'text', className, value, isInvalid, disabled }, ref) => (
+export const Input = React.forwardRef<HTMLInputElement, IProps>(({ onChange, onBlur, name, label, placeholder, error, type = 'text', className, value, isInvalid, disabled, readOnly }, ref) => (
   <div className={clsx(className)}>
     {label && (
       <label htmlFor={name} className="form-label">
         {label}
       </label>
     )}
+    {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
     <input
+      aria-label={name}
+      role="textbox"
       disabled={disabled}
       name={name}
       id={name}
@@ -33,6 +37,7 @@ export const Input = React.forwardRef<HTMLInputElement, IProps>(({ onChange, onB
       ref={ref}
       className={clsx('form-control', { 'is-invalid is-invalid-lite': error || isInvalid })}
       placeholder={placeholder}
+      readOnly={readOnly}
     />
     {error && <div className="invalid-feedback">{error}</div>}
   </div>

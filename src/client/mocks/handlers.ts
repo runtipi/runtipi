@@ -7,7 +7,7 @@ export const handlers = [
   getTRPCMock({
     path: ['system', 'getVersion'],
     type: 'query',
-    response: { current: '1.0.0', latest: '1.0.0' },
+    response: { current: '1.0.0', latest: '1.0.0', body: 'hello' },
   }),
   getTRPCMock({
     path: ['system', 'update'],
@@ -61,6 +61,7 @@ export const handlers = [
     path: ['auth', 'me'],
     type: 'query',
     response: {
+      totp_enabled: false,
       id: faker.datatype.number(),
       username: faker.internet.userName(),
     },

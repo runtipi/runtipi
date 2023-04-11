@@ -5,7 +5,7 @@ import { App, AppCategory, AppInfo, AppWithInfo } from '../../core/types';
 const randomCategory = (): AppCategory[] => {
   const categories = Object.values(APP_CATEGORIES);
   const randomIndex = faker.datatype.number({ min: 0, max: categories.length - 1 });
-  return [categories[randomIndex]!];
+  return [categories[randomIndex] as AppCategory];
 };
 
 export const createApp = (overrides?: Partial<AppInfo>): AppInfo => {

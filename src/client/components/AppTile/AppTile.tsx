@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import { IconDownload } from '@tabler/icons-react';
+import { Tooltip } from 'react-tooltip';
 import { AppStatus } from '../AppStatus';
 import { AppLogo } from '../AppLogo/AppLogo';
 import { limitText } from '../../modules/AppStore/helpers/table.helpers';
@@ -30,9 +31,12 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
           </div>
         </div>
         {updateAvailable && (
-          <div data-tip="Update available" className="ribbon bg-green ribbon-top">
-            <IconDownload size={20} />
-          </div>
+          <>
+            <Tooltip anchorSelect=".updateAvailable">Update available</Tooltip>
+            <div className="updateAvailable ribbon bg-green ribbon-top">
+              <IconDownload size={20} />
+            </div>
+          </>
         )}
       </Link>
     </div>

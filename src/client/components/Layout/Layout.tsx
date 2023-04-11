@@ -2,7 +2,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import clsx from 'clsx';
-import ReactTooltip from 'react-tooltip';
 import semver from 'semver';
 import { useRouter } from 'next/router';
 import { Header } from '../ui/Header';
@@ -20,7 +19,7 @@ interface IProps {
 
 export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions }) => {
   const router = useRouter();
-  const refreshToken = trpc.auth.refreshToken.useMutation({
+  const { mutate } = trpc.auth.refreshToken.useMutation({
     onSuccess: (data) => {
       if (data?.token) localStorage.setItem('token', data.token);
     },
@@ -31,8 +30,8 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
   });
 
   useEffect(() => {
-    refreshToken.mutate();
-  }, []);
+    mutate();
+  }, [mutate]);
 
   const { version } = useSystemStore();
   const defaultVersion = '0.0.0';
@@ -61,7 +60,6 @@ export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions
       <Head>
         <title>{`${title} - Tipi`}</title>
       </Head>
-      <ReactTooltip offset={{ right: 1 }} effect="solid" place="bottom" />
       <Header isUpdateAvailable={!isLatest} />
       <div className="page-wrapper">
         <div className="page-header d-print-none">

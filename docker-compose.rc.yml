@@ -68,6 +68,7 @@ services:
       DOMAIN: ${DOMAIN}
       ARCHITECTURE: ${ARCHITECTURE}
       REDIS_HOST: ${REDIS_HOST}
+      DEMO_MODE: ${DEMO_MODE}
     volumes:
       - ${PWD}/.env:/runtipi/.env
       - ${PWD}/state:/runtipi/state

@@ -1,6 +1,6 @@
 import React from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
 import { InstallForm } from '../InstallForm';
-import { Modal, ModalBody, ModalHeader } from '../../../../components/ui/Modal';
 import { AppInfo } from '../../../../core/types';
 import { FormValues } from '../InstallForm/InstallForm';
 
@@ -12,12 +12,14 @@ interface IProps {
 }
 
 export const InstallModal: React.FC<IProps> = ({ info, isOpen, onClose, onSubmit }) => (
-  <Modal onClose={onClose} isOpen={isOpen}>
-    <ModalHeader>
-      <h5 className="modal-title">Install {info.name}</h5>
-    </ModalHeader>
-    <ModalBody>
-      <InstallForm onSubmit={onSubmit} formFields={info.form_fields} exposable={info.exposable} />
-    </ModalBody>
-  </Modal>
+  <Dialog open={isOpen} onOpenChange={onClose}>
+    <DialogContent>
+      <DialogHeader>
+        <h5 className="modal-title">Install {info.name}</h5>
+      </DialogHeader>
+      <DialogDescription>
+        <InstallForm onSubmit={onSubmit} formFields={info.form_fields} exposable={info.exposable} />
+      </DialogDescription>
+    </DialogContent>
+  </Dialog>
 );

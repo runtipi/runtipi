@@ -1,7 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { server } from '../../src/client/mocks/server';
-import { useToastStore } from '../../src/client/state/toastStore';
 
 // Mock next/router
 // eslint-disable-next-line global-require
@@ -14,6 +13,12 @@ jest.mock('remark-breaks', () => () => ({}));
 jest.mock('remark-gfm', () => () => ({}));
 
 console.error = jest.fn();
+
+class ResizeObserver {
+  observe() {}
+
+  unobserve() {}
+}
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -35,15 +40,23 @@ const localStorageMock = (() => {
 })();
 
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, 'ResizeObserver', { value: ResizeObserver });
+Object.defineProperty(window, 'matchMedia', {
+  value: () => {
+    return {
+      matches: false,
+      addListener: () => {},
+      removeListener: () => {},
+    };
+  },
+});
 
 beforeAll(() => {
   // Enable the mocking in tests.
   server.listen();
 });
 
-beforeEach(async () => {
-  useToastStore.getState().clearToasts();
-});
+beforeEach(async () => {});
 
 afterEach(() => {
   // Reset any runtime handlers tests may use.

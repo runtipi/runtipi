@@ -1,8 +1,7 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor, renderHook } from '../../../../../../tests/test-utils';
+import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
-import { useToastStore } from '../../../../state/toastStore';
 import { ResetPasswordContainer } from './ResetPasswordContainer';
 
 const pushFn = jest.fn();
@@ -35,7 +34,7 @@ describe('ResetPasswordContainer', () => {
 
     const newPassword = 'new_password';
     const response = { email };
-    server.use(getTRPCMock({ path: ['auth', 'resetPassword'], type: 'mutation', response, delay: 100 }));
+    server.use(getTRPCMock({ path: ['auth', 'changeOperatorPassword'], type: 'mutation', response, delay: 100 }));
 
     const passwordInput = screen.getByLabelText('Password');
     const confirmPasswordInput = screen.getByLabelText('Confirm password');
@@ -55,14 +54,13 @@ describe('ResetPasswordContainer', () => {
 
   it('should show error toast if reset password mutation fails', async () => {
     // Arrange
-    const { result, unmount } = renderHook(() => useToastStore());
     render(<ResetPasswordContainer isRequested />);
     const resetPasswordForm = screen.getByRole('button', { name: 'Reset password' });
     fireEvent.click(resetPasswordForm);
 
     const newPassword = 'new_password';
     const error = { message: 'Something went wrong' };
-    server.use(getTRPCMockError({ path: ['auth', 'resetPassword'], type: 'mutation', message: error.message }));
+    server.use(getTRPCMockError({ path: ['auth', 'changeOperatorPassword'], type: 'mutation', message: error.message }));
 
     const passwordInput = screen.getByLabelText('Password');
     const confirmPasswordInput = screen.getByLabelText('Confirm password');
@@ -74,15 +72,12 @@ describe('ResetPasswordContainer', () => {
 
     // Assert
     await waitFor(() => {
-      expect(result.current.toasts[0].description).toBe(error.message);
+      expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
     });
-
-    unmount();
   });
 
   it('should call the cancel request mutation when cancel button is clicked', async () => {
     // Arrange
-    const { result, unmount } = renderHook(() => useToastStore());
     render(<ResetPasswordContainer isRequested />);
     server.use(getTRPCMock({ path: ['auth', 'cancelPasswordChangeRequest'], type: 'mutation', response: true }));
 
@@ -93,16 +88,14 @@ describe('ResetPasswordContainer', () => {
 
     // Assert
     await waitFor(() => {
-      expect(result.current.toasts[0].title).toBe('Password change request cancelled');
+      expect(screen.getByText('Password change request cancelled')).toBeInTheDocument();
     });
-
-    unmount();
   });
 
   it('should redirect to login page when Back to login button is clicked', async () => {
     // Arrange
     render(<ResetPasswordContainer isRequested />);
-    server.use(getTRPCMock({ path: ['auth', 'resetPassword'], type: 'mutation', response: { email: 'goofy@test.com' } }));
+    server.use(getTRPCMock({ path: ['auth', 'changeOperatorPassword'], type: 'mutation', response: { email: 'goofy@test.com' } }));
     const resetPasswordForm = screen.getByRole('button', { name: 'Reset password' });
     const passwordInput = screen.getByLabelText('Password');
     const confirmPasswordInput = screen.getByLabelText('Confirm password');

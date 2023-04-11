@@ -94,6 +94,8 @@ class EventDispatcher {
 
   /**
    * Poll queue and run events
+   *
+   * @returns {NodeJS.Timer} - Interval timer
    */
   private pollQueue() {
     Logger.info(`EventDispatcher(${this.dispatcherId}): Polling queue...`);
@@ -207,7 +209,7 @@ class EventDispatcher {
    *
    * @param {EventType} type - Event type
    * @param {[string[]]} args - Event arguments
-   * @returns - Promise that resolves when the event is done
+   * @returns {Promise<{ success: boolean; stdout?: string }>} - Promise that resolves when the event is done
    */
   public async dispatchEventAsync(type: EventType, args?: string[]): Promise<{ success: boolean; stdout?: string }> {
     const event = this.dispatchEvent(type, args);

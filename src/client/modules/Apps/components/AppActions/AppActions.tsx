@@ -32,8 +32,10 @@ interface BtnProps {
 const ActionButton: React.FC<BtnProps> = (props) => {
   const { IconComponent, onClick, title, loading, color, width = 140 } = props;
 
+  const testId = loading ? 'action-button-loading' : undefined;
+
   return (
-    <Button loading={loading} data-testid={`action-button-${title?.toLowerCase()}`} onClick={onClick} width={width} className={clsx('me-2 px-4 mt-2', [`btn-${color}`])}>
+    <Button loading={loading} data-testid={testId} onClick={onClick} width={width} className={clsx('me-2 px-4 mt-2', [`btn-${color}`])}>
       {title}
       {IconComponent && <IconComponent className="ms-1" size={14} />}
     </Button>

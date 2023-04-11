@@ -1,8 +1,13 @@
 import { type GetServerSidePropsContext } from 'next';
 import jwt from 'jsonwebtoken';
+import { v4 } from 'uuid';
 import { getConfig } from '../core/TipiConfig';
 import TipiCache from '../core/TipiCache';
 import { Logger } from '../core/Logger';
+
+export const generateSessionId = (prefix: string) => {
+  return `${prefix}-${v4()}`;
+};
 
 export const getServerAuthSession = async (ctx: { req: GetServerSidePropsContext['req']; res: GetServerSidePropsContext['res'] }) => {
   const { req } = ctx;

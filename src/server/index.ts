@@ -36,7 +36,7 @@ nextApp.prepare().then(async () => {
   app.use('/static', express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/`));
 
   app.all('*', (req, res) => {
-    const parsedUrl = parse(req.url!, true);
+    const parsedUrl = parse(req.url, true);
 
     handle(req, res, parsedUrl);
   });

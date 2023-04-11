@@ -1,19 +1,22 @@
-import React from 'react';
+'use client';
 
-interface IProps {
-  label?: string;
-  className?: string;
-  checked?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  name?: string;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-}
+import * as React from 'react';
+import * as SwitchPrimitives from '@radix-ui/react-switch';
+import clsx from 'clsx';
+import classes from './Switch.module.scss';
 
-export const Switch = React.forwardRef<HTMLInputElement, IProps>(({ onChange, onBlur, name, label, checked, className }, ref) => (
-  <div className={className}>
-    <label htmlFor={name} aria-labelledby={name} className="form-check form-switch">
-      <input id={name} name={name} ref={ref} onChange={onChange} onBlur={onBlur} className="form-check-input" type="checkbox" checked={checked} />
-      <span className="form-check-label">{label}</span>
-    </label>
-  </div>
+type RootProps = typeof SwitchPrimitives.Root;
+
+const Switch = React.forwardRef<React.ElementRef<RootProps>, React.ComponentPropsWithoutRef<RootProps> & { label?: string }>(({ className, ...props }, ref) => (
+  <label htmlFor={props.name} aria-labelledby={props.name} className={clsx('form-check form-switch form-check-sigle', className)}>
+    <SwitchPrimitives.Root name={props.name} className={clsx('form-check-input', classes.root)} {...props} ref={ref}>
+      <SwitchPrimitives.Thumb />
+    </SwitchPrimitives.Root>
+    <span id={props.name} className="form-check-label text-muted">
+      {props.label}
+    </span>
+  </label>
 ));
+Switch.displayName = SwitchPrimitives.Root.displayName;
+
+export { Switch };
