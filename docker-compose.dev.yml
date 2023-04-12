@@ -30,6 +30,11 @@ services:
       - 6379:6379
     volumes:
       - ./data/redis:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 10s
+      retries: 120
     networks:
       - tipi_main_network
 
@@ -40,6 +45,8 @@ services:
     container_name: dashboard
     depends_on:
       tipi-db:
+        condition: service_healthy
+      tipi-redis:
         condition: service_healthy
     environment:
       NODE_ENV: development
