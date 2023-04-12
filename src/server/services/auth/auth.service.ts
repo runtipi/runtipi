@@ -111,6 +111,10 @@ export class AuthServiceClass {
    * @returns {Promise<{uri: string, key: string}>} - A promise that resolves to an object containing the TOTP URI and the secret key
    */
   public getTotpUri = async (params: { userId: number; password: string }) => {
+    if (getConfig().demoMode) {
+      throw new Error('2FA is not available in demo mode');
+    }
+
     const { userId, password } = params;
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
@@ -150,6 +154,10 @@ export class AuthServiceClass {
   };
 
   public setupTotp = async (params: { userId: number; totpCode: string }) => {
+    if (getConfig().demoMode) {
+      throw new Error('2FA is not available in demo mode');
+    }
+
     const { userId, totpCode } = params;
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
@@ -370,6 +378,10 @@ export class AuthServiceClass {
   };
 
   public changePassword = async (params: { currentPassword: string; newPassword: string; userId: number }) => {
+    if (getConfig().demoMode) {
+      throw new Error('Changing password is not allowed in demo mode');
+    }
+
     const { currentPassword, newPassword, userId } = params;
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
