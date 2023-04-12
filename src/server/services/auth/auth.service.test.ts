@@ -25,6 +25,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   jest.mock('fs-extra');
   jest.mock('redis');
+  await setConfig('demoMode', false);
   await db.user.deleteMany();
 });
 
@@ -238,6 +239,16 @@ describe('Test: getTotpUri', () => {
     // act & assert
     await expect(AuthService.getTotpUri({ userId, password: 'password' })).rejects.toThrowError('User not found');
   });
+
+  it('should throw an error if app is in demo mode', async () => {
+    // arrange
+    await setConfig('demoMode', true);
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+
+    // act & assert
+    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError('2FA is not available in demo mode');
+  });
 });
 
 describe('Test: setupTotp', () => {
@@ -290,6 +301,16 @@ describe('Test: setupTotp', () => {
 
     // act & assert
     await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('Invalid TOTP code');
+  });
+
+  it('should throw an error if app is in demo mode', async () => {
+    // arrange
+    await setConfig('demoMode', true);
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+
+    // act & assert
+    await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('2FA is not available in demo mode');
   });
 });
 
@@ -682,5 +703,16 @@ describe('Test: changePassword', () => {
 
     // act & assert
     await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError('Password must be at least 8 characters');
+  });
+
+  it('should throw if instance is in demo mode', async () => {
+    // arrange
+    await setConfig('demoMode', true);
+    const email = faker.internet.email();
+    const user = await createUser({ email }, db);
+    const newPassword = faker.internet.password();
+
+    // act & assert
+    await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError('Changing password is not allowed in demo mode');
   });
 });
