@@ -229,6 +229,11 @@ if [[ -f "${STATE_FOLDER}/settings.json" ]]; then
     INTERNAL_IP=$(get_json_field "${STATE_FOLDER}/settings.json" listenIp)
   fi
 
+  # If demoMode is set in settings.json, use it
+  if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" demoMode)" == "true" ]]; then
+    DEMO_MODE="true"
+  fi
+
   # If storagePath is set in settings.json, use it
   storage_path_settings=$(get_json_field "${STATE_FOLDER}/settings.json" storagePath)
   if [[ "${storage_path_settings}" != "null" && "${storage_path_settings}" != "" ]]; then
