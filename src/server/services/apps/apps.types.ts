@@ -9,7 +9,7 @@ export const APP_STATUS = {
   UPDATING: 'updating',
 } as const;
 
-export type AppStatus = typeof APP_STATUS[keyof typeof APP_STATUS];
+export type AppStatus = (typeof APP_STATUS)[keyof typeof APP_STATUS];
 
 export const APP_CATEGORIES = {
   NETWORK: 'network',
@@ -26,9 +26,10 @@ export const APP_CATEGORIES = {
   MUSIC: 'music',
   FINANCE: 'finance',
   GAMING: 'gaming',
+  AI: 'ai',
 } as const;
 
-export type AppCategory = typeof APP_CATEGORIES[keyof typeof APP_CATEGORIES];
+export type AppCategory = (typeof APP_CATEGORIES)[keyof typeof APP_CATEGORIES];
 
 export const FIELD_TYPES = {
   TEXT: 'text',
@@ -42,4 +43,4 @@ export const FIELD_TYPES = {
   RANDOM: 'random',
 } as const;
 
-export type FieldType = typeof FIELD_TYPES[keyof typeof FIELD_TYPES];
+export type FieldType = (typeof FIELD_TYPES)[keyof typeof FIELD_TYPES];
