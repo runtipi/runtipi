@@ -12,6 +12,7 @@ export const createClient = jest.fn(() => {
     quit: jest.fn(),
     del: (key: string) => values.delete(key),
     ttl: (key: string) => expirations.get(key),
+    on: jest.fn(),
     keys: (key: string) => {
       const keys = [];
       // eslint-disable-next-line no-restricted-syntax
