@@ -31,10 +31,10 @@ Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/insta
 
 ## Demo
 
-You can try out a demo of Tipi at [demo.runtipi.com](https://demo.runtipi.com) using the following credentials:
+You can try out a demo of Tipi at [demo.runtipi.io](https://demo.runtipi.io) using the following credentials:
 
-    username: user@runtipi.com
-    password: runtipi
+    username: user@runtipi.io
+    password: password
 
 ## 📚 Documentation
 
