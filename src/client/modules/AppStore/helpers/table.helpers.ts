@@ -45,4 +45,5 @@ export const colorSchemeForCategory: Record<AppCategory, string> = {
   music: 'cyan',
   finance: 'dark',
   gaming: 'pink',
+  ai: 'gray',
 };
