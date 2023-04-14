@@ -7,7 +7,7 @@ import classes from './Switch.module.scss';
 
 type RootProps = typeof SwitchPrimitives.Root;
 
-const Switch = React.forwardRef<React.ElementRef<RootProps>, React.ComponentPropsWithoutRef<RootProps> & { label?: string }>(({ className, ...props }, ref) => (
+const Switch = React.forwardRef<React.ElementRef<RootProps>, React.ComponentPropsWithoutRef<RootProps> & { label?: string | React.ReactNode }>(({ className, ...props }, ref) => (
   <label htmlFor={props.name} aria-labelledby={props.name} className={clsx('form-check form-switch form-check-sigle', className)}>
     <SwitchPrimitives.Root name={props.name} className={clsx('form-check-input', classes.root)} {...props} ref={ref}>
       <SwitchPrimitives.Thumb />

@@ -21,9 +21,6 @@ const DialogPortal = ({ className, children, ...props }: DialogPrimitive.DialogP
     <div className={clsx('modal modal-sm d-block', styles.dimmedBackground)}>
       <div className={clsx(`modal-dialog modal-dialog-centered modal-${props.size || 'lg'}`, styles.zoomIn)}>
         <div className="shadow modal-content">
-          <DialogPrimitive.Close className="btn-close mt-1">
-            <button data-testid="modal-close-button" type="button" className="btn-close" aria-label="Close" />
-          </DialogPrimitive.Close>
           <div data-testid="modal-status" className={clsx('modal-status', { [`bg-${props.type}`]: Boolean(props.type), 'd-none': !props.type })} />
           {children}
         </div>
@@ -41,8 +38,12 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 const DialogContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & ModalProps>(
   ({ className, children, ...props }, ref) => (
     <DialogPortal type={props.type} size={props.size}>
+      <DialogOverlay />
       <DialogPrimitive.Content ref={ref} className={clsx('modal-content mt-1', className)} {...props}>
         {children}
+        <DialogPrimitive.Close className="btn-close">
+          <button data-testid="modal-close-button" type="button" className="btn-close" aria-label="Close" />
+        </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPortal>
   ),
