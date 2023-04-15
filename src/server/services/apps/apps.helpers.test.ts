@@ -1,8 +1,9 @@
 import fs from 'fs-extra';
+import { fromAny } from '@total-typescript/shoehorn';
 import { App, PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import { setConfig } from '../../core/TipiConfig';
-import { AppInfo, checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from './apps.helpers';
+import { AppInfo, appInfoSchema, checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from './apps.helpers';
 import { createApp, createAppConfig } from '../../tests/apps.factory';
 import { Logger } from '../../core/Logger';
 import { getTestDbClient } from '../../../../tests/server/db-connection';
@@ -136,6 +137,41 @@ describe('Test: checkEnvFile', () => {
   });
 });
 
+describe('Test: appInfoSchema', () => {
+  it('should default form_field type to text if it is wrong', async () => {
+    // arrange
+    const config = createAppConfig(fromAny({ form_fields: [{ env_variable: 'test', type: 'wrong', label: 'yo', required: true }] }));
+    fs.writeFileSync(`/app/storage/app-data/${config.id}/config.json`, JSON.stringify(config));
+
+    // act
+    const appInfo = appInfoSchema.safeParse(config);
+
+    // assert
+    expect(appInfo.success).toBe(true);
+    if (appInfo.success) {
+      expect(appInfo.data.form_fields[0]?.type).toBe('text');
+    } else {
+      expect(true).toBe(false);
+    }
+  });
+
+  it('should default categories to ["utilities"] if it is wrong', async () => {
+    // arrange
+    const config = createAppConfig(fromAny({ categories: 'wrong' }));
+    fs.writeFileSync(`/app/storage/app-data/${config.id}/config.json`, JSON.stringify(config));
+
+    // act
+    const appInfo = appInfoSchema.safeParse(config);
+
+    // assert
+    expect(appInfo.success).toBe(true);
+    if (appInfo.success) {
+      expect(appInfo.data.categories).toStrictEqual(['utilities']);
+    } else {
+      expect(true).toBe(false);
+    }
+  });
+});
 describe('Test: generateEnvFile', () => {
   let app1: AppInfo;
   let appEntity1: App;

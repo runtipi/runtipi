@@ -8,6 +8,7 @@ jest.mock('../../src/server/core/Logger', () => ({
   Logger: {
     info: jest.fn(),
     error: jest.fn(),
+    warn: jest.fn(),
   },
 }));
 
