@@ -10,6 +10,10 @@ export const validateField = (field: FormField, value: string | undefined | bool
     return undefined;
   }
 
+  if (field.regex && !validator.matches(value, field.regex)) {
+    return field.pattern_error || `${field.label} must match the pattern ${field.regex}`;
+  }
+
   switch (field.type) {
     case 'text':
       if (field.max && value.length > field.max) {
