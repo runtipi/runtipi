@@ -1,4 +1,5 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { FormField } from '../../../../core/types';
 import { InstallForm } from './InstallForm';
@@ -46,7 +47,19 @@ describe('Test: InstallForm', () => {
   });
 
   it('should show validation error when required field is empty', async () => {
-    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: 'text', required: true }];
+    const formFields: FormField[] = [
+      { env_variable: 'test-env', label: 'test-field', type: 'text', required: true },
+      {
+        env_variable: 'test-select',
+        label: 'test-select',
+        type: 'text',
+        required: true,
+        options: [
+          { label: '1', value: '1' },
+          { label: '2', value: '2' },
+        ],
+      },
+    ];
 
     const onSubmit = jest.fn();
 
@@ -56,17 +69,36 @@ describe('Test: InstallForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText('test-field is required')).toBeInTheDocument();
+      expect(screen.getByText('test-select is required')).toBeInTheDocument();
     });
   });
 
   it('should pre-fill fields if initialValues are provided', () => {
-    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: 'text', required: true }];
+    const selectValue = faker.random.word();
+    const booleanValue = faker.datatype.boolean();
+
+    const formFields: FormField[] = [
+      { env_variable: 'test-env', label: 'test-field', type: 'text', required: true },
+      {
+        env_variable: 'test-select',
+        label: 'test-select',
+        type: 'text',
+        required: false,
+        options: [
+          { label: '1', value: '1' },
+          { label: 'Should appear', value: selectValue },
+        ],
+      },
+      { env_variable: 'test-boolean', label: 'test-boolean', type: 'boolean', required: true },
+    ];
 
     const onSubmit = jest.fn();
 
-    render(<InstallForm formFields={formFields} onSubmit={onSubmit} initalValues={{ 'test-env': 'test' }} />);
+    render(<InstallForm formFields={formFields} onSubmit={onSubmit} initalValues={{ 'test-env': 'test', 'test-select': selectValue, 'test-boolean': booleanValue }} />);
 
-    expect(screen.getByLabelText('test-field')).toHaveValue('test');
+    expect(screen.getByRole('textbox', { name: 'test-env' })).toHaveValue('test');
+    expect(screen.getByRole('combobox', { name: 'test-select' })).toHaveTextContent('Should appear');
+    expect(screen.getByRole('switch', { name: 'test-boolean' })).toHaveAttribute('aria-checked', booleanValue.toString());
   });
 
   it('should render expose switch when app is exposable', () => {

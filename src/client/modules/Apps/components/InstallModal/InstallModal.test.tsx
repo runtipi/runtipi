@@ -22,8 +22,8 @@ describe('InstallModal', () => {
   it('renders the InstallForm with the correct props', () => {
     render(<InstallModal info={app} isOpen onClose={jest.fn()} onSubmit={jest.fn()} />);
 
-    expect(screen.getByLabelText(app.form_fields[0]?.label || '')).toBeInTheDocument();
-    expect(screen.getByLabelText(app.form_fields[1]?.label || '')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: app.form_fields[0]?.env_variable })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: app.form_fields[1]?.env_variable })).toBeInTheDocument();
   });
 
   it('calls onClose when the close button is clicked', () => {
@@ -38,8 +38,8 @@ describe('InstallModal', () => {
     const onSubmit = jest.fn();
     render(<InstallModal info={app} isOpen onClose={jest.fn()} onSubmit={onSubmit} />);
 
-    const hostnameInput = screen.getByLabelText(app.form_fields[0]?.label || '');
-    const passwordInput = screen.getByLabelText(app.form_fields[1]?.label || '');
+    const hostnameInput = screen.getByRole('textbox', { name: app.form_fields[0]?.env_variable });
+    const passwordInput = screen.getByRole('textbox', { name: app.form_fields[1]?.env_variable });
 
     fireEvent.change(hostnameInput, { target: { value: 'test-hostname' } });
     expect(hostnameInput).toHaveValue('test-hostname');
