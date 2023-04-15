@@ -3,7 +3,12 @@ import pg from 'pg';
 import { runPostgresMigrations } from '../../src/server/run-migration';
 import { getConfig } from '../../src/server/core/TipiConfig';
 
-export const getTestDbClient = async (testsuite: string) => {
+/**
+ * Given a test suite name, create a new database and return a client to it.
+ *
+ * @param {string} testsuite - name of the test suite
+ */
+async function getTestDbClient(testsuite: string) {
   const pgClient = new pg.Client({
     user: getConfig().postgresUsername,
     host: getConfig().postgresHost,
@@ -27,4 +32,6 @@ export const getTestDbClient = async (testsuite: string) => {
       },
     },
   });
-};
+}
+
+export { getTestDbClient };

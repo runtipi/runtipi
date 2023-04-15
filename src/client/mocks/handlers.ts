@@ -61,7 +61,7 @@ export const handlers = [
     path: ['auth', 'me'],
     type: 'query',
     response: {
-      totp_enabled: false,
+      totpEnabled: false,
       id: faker.datatype.number(),
       username: faker.internet.userName(),
     },

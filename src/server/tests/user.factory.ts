@@ -1,17 +1,41 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { faker } from '@faker-js/faker';
 import * as argon2 from 'argon2';
-import { User } from '@prisma/client';
-import { prisma } from '../db/client';
+import { eq } from 'drizzle-orm';
+import { userTable, User } from '../db/schema';
+import { TestDatabase } from './test-utils';
 
-const createUser = async (params: Partial<User & { email?: string }>, db = prisma) => {
+/**
+ *
+ * @param {User} params - user params
+ * @param {TestDatabase} database - database client
+ */
+async function createUser(params: Partial<User & { email?: string }>, database: TestDatabase) {
   const { email, operator = true, ...rest } = params;
   const hash = await argon2.hash('password');
 
   const username = email?.toLowerCase().trim() || faker.internet.email().toLowerCase().trim();
-  const user = await db.user.create({ data: { username, password: hash, operator, ...rest } });
 
-  return user;
+  const users = await database.db
+    .insert(userTable)
+    .values({ username, password: hash, operator, ...rest })
+    .returning();
+  const user = users[0];
+
+  return user as User;
+}
+
+const getUserById = async (id: number, database: TestDatabase) => {
+  const usersFromDb = await database.db.select().from(userTable).where(eq(userTable.id, id));
+  const userFromDb = usersFromDb[0];
+
+  return userFromDb as User;
 };
 
-export { createUser };
+const getUserByEmail = async (email: string, database: TestDatabase) => {
+  const usersFromDb = await database.db.select().from(userTable).where(eq(userTable.username, email));
+  const userFromDb = usersFromDb[0];
+
+  return userFromDb as User;
+};
+
+export { createUser, getUserById, getUserByEmail };
