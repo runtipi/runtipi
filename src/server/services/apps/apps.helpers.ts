@@ -10,13 +10,17 @@ import { notEmpty } from '../../common/typescript.helpers';
 import { ARCHITECTURES } from '../../core/TipiConfig/TipiConfig';
 
 const formFieldSchema = z.object({
-  type: z.nativeEnum(FIELD_TYPES),
+  type: z.nativeEnum(FIELD_TYPES).catch(() => FIELD_TYPES.TEXT),
   label: z.string(),
   placeholder: z.string().optional(),
   max: z.number().optional(),
   min: z.number().optional(),
   hint: z.string().optional(),
+  options: z.object({ label: z.string(), value: z.string() }).array().optional(),
   required: z.boolean().optional().default(false),
+  default: z.union([z.boolean(), z.string()]).optional(),
+  regex: z.string().optional(),
+  pattern_error: z.string().optional(),
   env_variable: z.string(),
 });
 
@@ -32,7 +36,13 @@ export const appInfoSchema = z.object({
   author: z.string(),
   source: z.string(),
   website: z.string().optional(),
-  categories: z.nativeEnum(APP_CATEGORIES).array(),
+  categories: z
+    .nativeEnum(APP_CATEGORIES)
+    .array()
+    .catch((ctx) => {
+      Logger.warn(`Invalid categories "${JSON.stringify(ctx.input)}" defaulting to utilities`);
+      return [APP_CATEGORIES.UTILITIES];
+    }),
   url_suffix: z.string().optional(),
   form_fields: z.array(formFieldSchema).optional().default([]),
   https: z.boolean().optional().default(false),

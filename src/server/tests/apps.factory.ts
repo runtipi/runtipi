@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { App, PrismaClient } from '@prisma/client';
 import { Architecture } from '../core/TipiConfig/TipiConfig';
 import { AppInfo, appInfoSchema } from '../services/apps/apps.helpers';
-import { AppCategory, APP_CATEGORIES } from '../services/apps/apps.types';
+import { APP_CATEGORIES } from '../services/apps/apps.types';
 
 interface IProps {
   installed?: boolean;
@@ -15,24 +15,19 @@ interface IProps {
   supportedArchitectures?: Architecture[];
 }
 
-type CreateConfigParams = {
-  id?: string;
-  name?: string;
-  categories?: AppCategory[];
-};
-
-const createAppConfig = (props?: CreateConfigParams) =>
+const createAppConfig = (props?: Partial<AppInfo>) =>
   appInfoSchema.parse({
-    id: props?.id || faker.random.alphaNumeric(32),
+    id: faker.random.alphaNumeric(32),
     available: true,
     port: faker.datatype.number({ min: 30, max: 65535 }),
-    name: props?.name || faker.random.alphaNumeric(32),
+    name: faker.random.alphaNumeric(32),
     description: faker.random.alphaNumeric(32),
     tipi_version: 1,
     short_desc: faker.random.alphaNumeric(32),
     author: faker.random.alphaNumeric(32),
     source: faker.internet.url(),
-    categories: props?.categories || [APP_CATEGORIES.AUTOMATION],
+    categories: [APP_CATEGORIES.AUTOMATION],
+    ...props,
   });
 
 const createApp = async (props: IProps, db?: PrismaClient) => {
