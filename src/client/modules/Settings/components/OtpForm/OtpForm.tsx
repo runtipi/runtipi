@@ -66,7 +66,7 @@ export const OtpForm = () => {
   });
 
   const renderSetupQr = () => {
-    if (!uri || me.data?.totp_enabled) return null;
+    if (!uri || me.data?.totpEnabled) return null;
 
     return (
       <div className="mt-4">
@@ -99,7 +99,7 @@ export const OtpForm = () => {
 
   return (
     <>
-      {!key && <Switch disabled={!me.isSuccess} onCheckedChange={handleTotp} checked={me.data?.totp_enabled} label="Enable two-factor authentication" />}
+      {!key && <Switch disabled={!me.isSuccess} onCheckedChange={handleTotp} checked={me.data?.totpEnabled} label="Enable two-factor authentication" />}
       {getTotpUri.isLoading && (
         <div className="progress w-50">
           <div className="progress-bar progress-bar-indeterminate bg-green" />

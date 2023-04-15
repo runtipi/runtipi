@@ -24,6 +24,7 @@ module.exports = {
   },
   rules: {
     'no-restricted-exports': 0,
+    'no-redeclare': 0, // already handled by @typescript-eslint/no-redeclare
     'react/display-name': 0,
     'react/prop-types': 0,
     'react/function-component-definition': 0,
