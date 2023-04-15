@@ -47,9 +47,9 @@ describe('ResetPasswordContainer', () => {
     // Assert
     await waitFor(() => {
       expect(screen.getByText('Password reset')).toBeInTheDocument();
-      expect(screen.getByText(`Your password has been reset. You can now login with your new password. And your email ${email}`)).toBeInTheDocument();
-      expect(screen.getByText('Back to login')).toBeInTheDocument();
     });
+    expect(screen.getByText(`Your password has been reset. You can now login with your new password. And your email ${email}`)).toBeInTheDocument();
+    expect(screen.getByText('Back to login')).toBeInTheDocument();
   });
 
   it('should show error toast if reset password mutation fails', async () => {

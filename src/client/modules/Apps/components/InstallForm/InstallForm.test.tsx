@@ -69,13 +69,12 @@ describe('Test: InstallForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText('test-field is required')).toBeInTheDocument();
-      expect(screen.getByText('test-select is required')).toBeInTheDocument();
     });
+    expect(screen.getByText('test-select is required')).toBeInTheDocument();
   });
 
   it('should pre-fill fields if initialValues are provided', () => {
     const selectValue = faker.random.word();
-    const booleanValue = faker.datatype.boolean();
 
     const formFields: FormField[] = [
       { env_variable: 'test-env', label: 'test-field', type: 'text', required: true },
@@ -94,11 +93,11 @@ describe('Test: InstallForm', () => {
 
     const onSubmit = jest.fn();
 
-    render(<InstallForm formFields={formFields} onSubmit={onSubmit} initalValues={{ 'test-env': 'test', 'test-select': selectValue, 'test-boolean': booleanValue }} />);
+    render(<InstallForm formFields={formFields} onSubmit={onSubmit} initalValues={{ 'test-env': 'test', 'test-select': selectValue, 'test-boolean': true }} />);
 
     expect(screen.getByRole('textbox', { name: 'test-env' })).toHaveValue('test');
     expect(screen.getByRole('combobox', { name: 'test-select' })).toHaveTextContent('Should appear');
-    expect(screen.getByRole('switch', { name: 'test-boolean' })).toHaveAttribute('aria-checked', booleanValue.toString());
+    expect(screen.getByRole('switch', { name: 'test-boolean' })).toBeChecked();
   });
 
   it('should render expose switch when app is exposable', () => {

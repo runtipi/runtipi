@@ -153,9 +153,9 @@ describe('<OtpForm />', () => {
     // assert
     await waitFor(() => {
       expect(screen.getByText('Scan this QR code with your authenticator app.')).toBeInTheDocument();
-      expect(screen.getByRole('textbox', { name: 'secret key' })).toHaveValue('test');
-      expect(screen.getByRole('button', { name: 'Enable 2FA' })).toBeDisabled();
     });
+    expect(screen.getByRole('textbox', { name: 'secret key' })).toHaveValue('test');
+    expect(screen.getByRole('button', { name: 'Enable 2FA' })).toBeDisabled();
   });
 
   it('should show error toast if submitted totp code is invalid', async () => {

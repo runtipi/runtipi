@@ -1,33 +1,32 @@
 import React from 'react';
-import { render } from '../../../../../tests/test-utils';
+import { render, screen } from '../../../../../tests/test-utils';
 import { DataGrid } from './DataGrid';
 import { DataGridItem } from './DataGridItem';
 
 describe('DataGrid', () => {
-  it('renders its children', () => {
-    const { getByText } = render(
-      <DataGrid>
-        <p>Test child</p>
-      </DataGrid>,
-    );
+  it('should renders its children', () => {
+    // arrange
+    render(<DataGrid>Test child</DataGrid>);
 
-    expect(getByText('Test child')).toBeInTheDocument();
+    // assert
+    expect(screen.getByText('Test child')).toBeInTheDocument();
   });
 });
 
 describe('DataGridItem', () => {
   it('renders its children', () => {
-    const { getByText } = render(
-      <DataGridItem title="">
-        <p>Test child</p>
-      </DataGridItem>,
-    );
+    // arrange
+    render(<DataGridItem title="">Test child</DataGridItem>);
 
-    expect(getByText('Test child')).toBeInTheDocument();
+    // assert
+    expect(screen.getByText('Test child')).toBeInTheDocument();
   });
 
   it('renders the correct title', () => {
-    const { getByText } = render(<DataGridItem title="Test Title">Hello</DataGridItem>);
-    expect(getByText('Test Title')).toBeInTheDocument();
+    // arrange
+    render(<DataGridItem title="Test Title">Hello</DataGridItem>);
+
+    // assert
+    expect(screen.getByText('Test Title')).toBeInTheDocument();
   });
 });
