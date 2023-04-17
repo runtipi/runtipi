@@ -8,14 +8,14 @@ import { Button } from '../../../../components/ui/Button';
 import { Switch } from '../../../../components/ui/Switch';
 import { Input } from '../../../../components/ui/Input';
 import { validateAppConfig } from '../../utils/validators';
-import { type FormField } from '../../../../core/types';
+import { type FormField, type AppInfo } from '../../../../core/types';
 
 interface IProps {
   formFields: FormField[];
   onSubmit: (values: FormValues) => void;
   initalValues?: { exposed?: boolean; domain?: string } & { [key: string]: string | boolean | undefined };
+  info: AppInfo;
   loading?: boolean;
-  exposable?: boolean | null;
 }
 
 export type FormValues = {
@@ -27,7 +27,7 @@ export type FormValues = {
 const hiddenTypes = ['random'];
 const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 
-export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValues, exposable, loading }) => {
+export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, initalValues, loading }) => {
   const {
     register,
     handleSubmit,
@@ -38,6 +38,12 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
     control,
   } = useForm<FormValues>({});
   const watchExposed = watch('exposed', false);
+
+  useEffect(() => {
+    if (info.force_expose) {
+      setValue('exposed', true);
+    }
+  }, [info.force_expose, setValue]);
 
   useEffect(() => {
     if (initalValues && !isDirty) {
@@ -105,7 +111,9 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
         control={control}
         name="exposed"
         defaultValue={false}
-        render={({ field: { onChange, value, ref, ...props } }) => <Switch className="mb-3" ref={ref} checked={value} onCheckedChange={onChange} {...props} label="Expose app" />}
+        render={({ field: { onChange, value, ref, ...props } }) => (
+          <Switch className="mb-3" disabled={info.force_expose} ref={ref} checked={value} onCheckedChange={onChange} {...props} label="Expose app" />
+        )}
       />
       {watchExposed && (
         <div className="mb-3">
@@ -135,7 +143,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, onSubmit, initalValu
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
       {formFields.filter(typeFilter).map(renderField)}
-      {exposable && renderExposeForm()}
+      {info.exposable && renderExposeForm()}
       <Button loading={loading} type="submit" className="btn-success">
         {initalValues ? 'Update' : 'Install'}
       </Button>

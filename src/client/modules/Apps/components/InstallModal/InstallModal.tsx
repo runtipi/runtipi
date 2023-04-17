@@ -18,7 +18,7 @@ export const InstallModal: React.FC<IProps> = ({ info, isOpen, onClose, onSubmit
         <h5 className="modal-title">Install {info.name}</h5>
       </DialogHeader>
       <DialogDescription>
-        <InstallForm onSubmit={onSubmit} formFields={info.form_fields} exposable={info.exposable} />
+        <InstallForm onSubmit={onSubmit} formFields={info.form_fields} info={info} />
       </DialogDescription>
     </DialogContent>
   </Dialog>
