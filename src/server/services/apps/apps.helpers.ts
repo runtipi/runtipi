@@ -36,6 +36,7 @@ export const appInfoSchema = z.object({
   author: z.string(),
   source: z.string(),
   website: z.string().optional(),
+  force_expose: z.boolean().optional().default(false),
   categories: z
     .nativeEnum(APP_CATEGORIES)
     .array()

@@ -12,6 +12,7 @@ interface IProps {
   exposed?: boolean;
   domain?: string;
   exposable?: boolean;
+  forceExpose?: boolean;
   supportedArchitectures?: Architecture[];
 }
 
@@ -31,7 +32,7 @@ const createAppConfig = (props?: Partial<AppInfo>) =>
   });
 
 const createApp = async (props: IProps, db?: PrismaClient) => {
-  const { installed = false, status = 'running', randomField = false, exposed = false, domain = '', exposable = false, supportedArchitectures } = props;
+  const { installed = false, status = 'running', randomField = false, exposed = false, domain = '', exposable = false, supportedArchitectures, forceExpose = false } = props;
 
   const categories = Object.values(APP_CATEGORIES);
 
@@ -57,6 +58,7 @@ const createApp = async (props: IProps, db?: PrismaClient) => {
     source: faker.internet.url(),
     categories: [categories[faker.datatype.number({ min: 0, max: categories.length - 1 })]] as AppInfo['categories'],
     exposable,
+    force_expose: forceExpose,
     supported_architectures: supportedArchitectures,
     version: String(faker.datatype.number({ min: 1, max: 10 })),
     https: false,

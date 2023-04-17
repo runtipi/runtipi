@@ -139,6 +139,10 @@ export class AppServiceClass {
         throw new Error(`App ${id} is not exposable`);
       }
 
+      if ((appInfo.force_expose && !exposed) || (appInfo.force_expose && !domain)) {
+        throw new Error(`App ${id} works only with exposed domain`);
+      }
+
       if (exposed) {
         const appsWithSameDomain = await this.prisma.app.findMany({ where: { domain, exposed: true } });
         if (appsWithSameDomain.length > 0) {
@@ -211,6 +215,10 @@ export class AppServiceClass {
 
     if (!appInfo.exposable && exposed) {
       throw new Error(`App ${id} is not exposable`);
+    }
+
+    if ((appInfo.force_expose && !exposed) || (appInfo.force_expose && !domain)) {
+      throw new Error(`App ${id} works only with exposed domain`);
     }
 
     if (exposed) {

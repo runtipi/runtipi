@@ -206,6 +206,16 @@ describe('Install app', () => {
     // act & assert
     await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json file`);
   });
+
+  it('should throw if app is not exposed and config has force_expose set to true', async () => {
+    // arrange
+    const { MockFiles, appInfo } = await createApp({ forceExpose: true }, db);
+    // @ts-expect-error - Mocking fs
+    fs.__createMockFiles(MockFiles);
+
+    // act & assert
+    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} works only with exposed domain`);
+  });
 });
 
 describe('Uninstall app', () => {
@@ -435,6 +445,16 @@ describe('Update app config', () => {
     fs.writeFileSync(`/app/storage/app-data/${appInfo.id}/config.json`, 'test');
 
     await expect(AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json`);
+  });
+
+  it('should throw if app is not exposed and config has force_expose set to true', async () => {
+    // arrange
+    const { MockFiles, appInfo } = await createApp({ forceExpose: true, installed: true }, db);
+    // @ts-expect-error - Mocking fs
+    fs.__createMockFiles(MockFiles);
+
+    // act & assert
+    await expect(AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} works only with exposed domain`);
   });
 });
 
