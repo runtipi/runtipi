@@ -21,7 +21,7 @@ export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, on
         <h5 className="modal-title">Update {info.name} config</h5>
       </DialogHeader>
       <DialogDescription>
-        <InstallForm onSubmit={onSubmit} formFields={info.form_fields} exposable={info.exposable} initalValues={{ ...config, exposed, domain }} />
+        <InstallForm onSubmit={onSubmit} formFields={info.form_fields} info={info} initalValues={{ ...config, exposed, domain }} />
       </DialogDescription>
     </DialogContent>
   </Dialog>

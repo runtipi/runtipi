@@ -1,12 +1,13 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
+import { fromPartial } from '@total-typescript/shoehorn';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { FormField } from '../../../../core/types';
 import { InstallForm } from './InstallForm';
 
 describe('Test: InstallForm', () => {
   it('should render the form', () => {
-    render(<InstallForm formFields={[]} onSubmit={jest.fn} />);
+    render(<InstallForm formFields={[]} onSubmit={jest.fn} info={fromPartial({})} />);
 
     expect(screen.getByText('Install')).toBeInTheDocument();
   });
@@ -20,7 +21,7 @@ describe('Test: InstallForm', () => {
       { env_variable: 'test5', label: 'test5', type: 'number', required: false },
     ];
 
-    render(<InstallForm formFields={formFields} onSubmit={jest.fn} />);
+    render(<InstallForm info={fromPartial({})} formFields={formFields} onSubmit={jest.fn} />);
 
     expect(screen.getByLabelText('test')).toBeInTheDocument();
     expect(screen.getByLabelText('test2')).toBeInTheDocument();
@@ -34,7 +35,7 @@ describe('Test: InstallForm', () => {
 
     const onSubmit = jest.fn();
 
-    render(<InstallForm formFields={formFields} onSubmit={onSubmit} />);
+    render(<InstallForm info={fromPartial({})} formFields={formFields} onSubmit={onSubmit} />);
 
     fireEvent.change(screen.getByLabelText('test-field'), { target: { value: 'test' } });
     screen.getByText('Install').click();
@@ -63,7 +64,7 @@ describe('Test: InstallForm', () => {
 
     const onSubmit = jest.fn();
 
-    render(<InstallForm formFields={formFields} onSubmit={onSubmit} />);
+    render(<InstallForm info={fromPartial({})} formFields={formFields} onSubmit={onSubmit} />);
 
     screen.getByText('Install').click();
 
@@ -93,7 +94,7 @@ describe('Test: InstallForm', () => {
 
     const onSubmit = jest.fn();
 
-    render(<InstallForm formFields={formFields} onSubmit={onSubmit} initalValues={{ 'test-env': 'test', 'test-select': selectValue, 'test-boolean': true }} />);
+    render(<InstallForm info={fromPartial({})} formFields={formFields} onSubmit={onSubmit} initalValues={{ 'test-env': 'test', 'test-select': selectValue, 'test-boolean': true }} />);
 
     expect(screen.getByRole('textbox', { name: 'test-env' })).toHaveValue('test');
     expect(screen.getByRole('combobox', { name: 'test-select' })).toHaveTextContent('Should appear');
@@ -105,8 +106,20 @@ describe('Test: InstallForm', () => {
 
     const onSubmit = jest.fn();
 
-    render(<InstallForm formFields={formFields} onSubmit={onSubmit} exposable />);
+    render(<InstallForm formFields={formFields} onSubmit={onSubmit} info={fromPartial({ exposable: true })} />);
 
     expect(screen.getByLabelText('Expose app')).toBeInTheDocument();
+  });
+
+  it('should render the domain form and disable the expose switch when info has force_expose set to true', () => {
+    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: 'text', required: true }];
+
+    const onSubmit = jest.fn();
+
+    render(<InstallForm formFields={formFields} onSubmit={onSubmit} info={fromPartial({ force_expose: true, exposable: true })} />);
+
+    expect(screen.getByRole('switch')).toBeDisabled();
+    expect(screen.getByRole('switch')).toBeChecked();
+    expect(screen.getByRole('textbox', { name: 'domain' })).toBeInTheDocument();
   });
 });
