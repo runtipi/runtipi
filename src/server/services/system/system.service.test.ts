@@ -19,17 +19,22 @@ beforeEach(async () => {
 });
 
 describe('Test: systemInfo', () => {
-  it('Should throw if system-info.json does not exist', () => {
-    try {
-      SystemServiceClass.systemInfo();
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        expect(e).toBeDefined();
-        expect(e.message).toBe('Error parsing system info');
-      } else {
-        expect(true).toBe(false);
-      }
-    }
+  it('should return default values when system-info.json is not present', () => {
+    // arrange
+    const systemInfo = SystemServiceClass.systemInfo();
+
+    // assert
+    expect(systemInfo).toBeDefined();
+    expect(systemInfo.cpu).toBeDefined();
+    expect(systemInfo.memory).toBeDefined();
+    expect(systemInfo.disk).toBeDefined();
+    expect(systemInfo.cpu.load).toBe(0);
+    expect(systemInfo.memory.total).toBe(0);
+    expect(systemInfo.memory.used).toBe(0);
+    expect(systemInfo.memory.available).toBe(0);
+    expect(systemInfo.disk.total).toBe(0);
+    expect(systemInfo.disk.used).toBe(0);
+    expect(systemInfo.disk.available).toBe(0);
   });
 
   it('It should return system info', async () => {
