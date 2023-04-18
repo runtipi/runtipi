@@ -5,7 +5,6 @@ import { AppServiceClass } from './apps.service';
 import { EventDispatcher, EVENT_TYPES } from '../../core/EventDispatcher';
 import { AppInfo, getEnvMap } from './apps.helpers';
 import { createApp, getAllApps, getAppById, updateApp } from '../../tests/apps.factory';
-import { APP_STATUS } from './apps.types';
 import { setConfig } from '../../core/TipiConfig';
 
 let db: TestDatabase;
@@ -52,7 +51,7 @@ describe('Install app', () => {
     expect(app).toBeDefined();
     expect(app?.id).toBe(app1.id);
     expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(app?.status).toBe(APP_STATUS.RUNNING);
+    expect(app?.status).toBe('running');
   });
 
   it('Should start app if already installed', async () => {
@@ -233,7 +232,7 @@ describe('Uninstall app', () => {
     // Assert
     expect(app).toBeDefined();
     expect(app?.id).toBe(app1.id);
-    expect(app?.status).toBe(APP_STATUS.RUNNING);
+    expect(app?.status).toBe('running');
   });
 
   it('Should correctly remove app from database', async () => {
@@ -273,7 +272,7 @@ describe('Uninstall app', () => {
     // Act & Assert
     await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to uninstall\nstdout: test`);
     const app = await getAppById(app1.id, db);
-    expect(app?.status).toBe(APP_STATUS.STOPPED);
+    expect(app?.status).toBe('stopped');
   });
 });
 
@@ -329,7 +328,7 @@ describe('Start app', () => {
     // Act & Assert
     await expect(AppsService.startApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to start\nstdout: test`);
     const app = await getAppById(app1.id, db);
-    expect(app?.status).toBe(APP_STATUS.STOPPED);
+    expect(app?.status).toBe('stopped');
   });
 });
 
@@ -362,7 +361,7 @@ describe('Stop app', () => {
     // Act & Assert
     await expect(AppsService.stopApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to stop\nstdout: test`);
     const app = await getAppById(app1.id, db);
-    expect(app?.status).toBe(APP_STATUS.RUNNING);
+    expect(app?.status).toBe('running');
   });
 });
 
@@ -472,7 +471,7 @@ describe('Get app config', () => {
     expect(app).toBeDefined();
     expect(app.config).toStrictEqual({ TEST_FIELD: 'test' });
     expect(app.id).toBe(app1.id);
-    expect(app.status).toBe(APP_STATUS.RUNNING);
+    expect(app.status).toBe('running');
   });
 
   it('Should return default values if app is not installed', async () => {
@@ -484,7 +483,7 @@ describe('Get app config', () => {
     expect(appconfig).toBeDefined();
     expect(appconfig.id).toBe(appInfo.id);
     expect(appconfig.config).toStrictEqual({});
-    expect(appconfig.status).toBe(APP_STATUS.MISSING);
+    expect(appconfig.status).toBe('missing');
   });
 });
 
@@ -590,7 +589,7 @@ describe('Update app', () => {
     expect(app).toBeDefined();
     expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
     expect(app?.version).toBe(app1.tipi_version);
-    expect(app?.status).toBe(APP_STATUS.STOPPED);
+    expect(app?.status).toBe('stopped');
   });
 
   it("Should throw if app doesn't exist", async () => {
@@ -607,7 +606,7 @@ describe('Update app', () => {
 
     await expect(AppsService.updateApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to update\nstdout: error`);
     const app = await getAppById(app1.id, db);
-    expect(app?.status).toBe(APP_STATUS.STOPPED);
+    expect(app?.status).toBe('stopped');
   });
 });
 
@@ -676,7 +675,7 @@ describe('startAllApps', () => {
     // Assert
     await waitForExpect(async () => {
       const apps = await getAllApps(db);
-      expect(apps[0]?.status).toBe(APP_STATUS.STOPPED);
+      expect(apps[0]?.status).toBe('stopped');
     });
   });
 });
