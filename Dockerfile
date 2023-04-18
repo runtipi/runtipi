@@ -16,7 +16,6 @@ COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch --no-scripts
 
 COPY ./package*.json ./
-COPY ./prisma/schema.prisma ./prisma/
 
 RUN pnpm install -r --prefer-offline 
 COPY ./src ./src

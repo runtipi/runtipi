@@ -1,7 +1,7 @@
 import { Icon, IconDownload, IconExternalLink, IconPlayerPause, IconPlayerPlay, IconSettings, IconTrash, IconX } from '@tabler/icons-react';
 import clsx from 'clsx';
 import React from 'react';
-import type { AppStatus } from '../../../../../server/services/apps/apps.types';
+import type { AppStatus } from '@/server/db/schema';
 
 import { Button } from '../../../../components/ui/Button';
 import { AppInfo } from '../../../../core/types';

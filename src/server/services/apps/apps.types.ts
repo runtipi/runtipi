@@ -1,16 +1,3 @@
-export const APP_STATUS = {
-  INSTALLING: 'installing',
-  MISSING: 'missing',
-  RUNNING: 'running',
-  STARTING: 'starting',
-  STOPPED: 'stopped',
-  STOPPING: 'stopping',
-  UNINSTALLING: 'uninstalling',
-  UPDATING: 'updating',
-} as const;
-
-export type AppStatus = (typeof APP_STATUS)[keyof typeof APP_STATUS];
-
 export const APP_CATEGORIES = {
   NETWORK: 'network',
   MEDIA: 'media',
