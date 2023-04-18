@@ -1,5 +1,7 @@
 import validator from 'validator';
-import { App, PrismaClient } from '@prisma/client';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { appTable, App } from '@/server/db/schema';
+import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { EventDispatcher } from '../../core/EventDispatcher';
@@ -20,10 +22,10 @@ const filterApp = (app: AppInfo): boolean => {
 const filterApps = (apps: AppInfo[]): AppInfo[] => apps.sort(sortApps).filter(filterApp);
 
 export class AppServiceClass {
-  private prisma;
+  private db;
 
-  constructor(p: PrismaClient) {
-    this.prisma = p;
+  constructor(p: NodePgDatabase) {
+    this.db = p;
   }
 
   /**
@@ -35,10 +37,13 @@ export class AppServiceClass {
    *  @returns {Promise<void>} - A promise that resolves when all apps are started.
    */
   public async startAllApps() {
-    const apps = await this.prisma.app.findMany({ where: { status: 'running' }, orderBy: { id: 'asc' } });
+    const apps = await this.db.select().from(appTable).where(eq(appTable.status, 'running')).orderBy(asc(appTable.id));
 
     // Update all apps with status different than running or stopped to stopped
-    await this.prisma.app.updateMany({ where: { status: { notIn: ['running', 'stopped', 'missing'] } }, data: { status: 'stopped' } });
+    await this.db
+      .update(appTable)
+      .set({ status: 'stopped' })
+      .where(notInArray(appTable.status, ['running', 'stopped']));
 
     await Promise.all(
       apps.map(async (app) => {
@@ -48,17 +53,17 @@ export class AppServiceClass {
           generateEnvFile(app);
           checkEnvFile(app.id);
 
-          await this.prisma.app.update({ where: { id: app.id }, data: { status: 'starting' } });
+          await this.db.update(appTable).set({ status: 'starting' }).where(eq(appTable.id, app.id));
 
           EventDispatcher.dispatchEventAsync('app', ['start', app.id]).then(({ success }) => {
             if (success) {
-              this.prisma.app.update({ where: { id: app.id }, data: { status: 'running' } }).then(() => {});
+              this.db.update(appTable).set({ status: 'running' }).where(eq(appTable.id, app.id)).execute();
             } else {
-              this.prisma.app.update({ where: { id: app.id }, data: { status: 'stopped' } }).then(() => {});
+              this.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, app.id)).execute();
             }
           });
         } catch (e) {
-          await this.prisma.app.update({ where: { id: app.id }, data: { status: 'stopped' } });
+          await this.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, app.id));
           Logger.error(e);
         }
       }),
@@ -74,7 +79,8 @@ export class AppServiceClass {
    * @throws {Error} - If the app is not found or the start process fails.
    */
   public startApp = async (appName: string) => {
-    let app = await this.prisma.app.findUnique({ where: { id: appName } });
+    const apps = await this.db.select().from(appTable).where(eq(appTable.id, appName));
+    const app = apps[0];
 
     if (!app) {
       throw new Error(`App ${appName} not found`);
@@ -85,19 +91,18 @@ export class AppServiceClass {
     generateEnvFile(app);
     checkEnvFile(appName);
 
-    await this.prisma.app.update({ where: { id: appName }, data: { status: 'starting' } });
+    await this.db.update(appTable).set({ status: 'starting' }).where(eq(appTable.id, appName));
     const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['start', app.id]);
 
     if (success) {
-      await this.prisma.app.update({ where: { id: appName }, data: { status: 'running' } });
+      await this.db.update(appTable).set({ status: 'running' }).where(eq(appTable.id, appName));
     } else {
-      await this.prisma.app.update({ where: { id: appName }, data: { status: 'stopped' } });
+      await this.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, appName));
       throw new Error(`App ${appName} failed to start\nstdout: ${stdout}`);
     }
 
-    app = await this.prisma.app.findUnique({ where: { id: appName } });
-
-    return app;
+    const updateApps = await this.db.select().from(appTable).where(eq(appTable.id, appName));
+    return updateApps[0];
   };
 
   /**
@@ -110,7 +115,8 @@ export class AppServiceClass {
    * @returns {Promise<App | null>} Returns a promise that resolves to the installed app object
    */
   public installApp = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string) => {
-    let app = await this.prisma.app.findUnique({ where: { id } });
+    const apps = await this.db.select().from(appTable).where(eq(appTable.id, id));
+    const app = apps[0];
 
     if (app) {
       await this.startApp(id);
@@ -143,32 +149,39 @@ export class AppServiceClass {
         throw new Error(`App ${id} works only with exposed domain`);
       }
 
-      if (exposed) {
-        const appsWithSameDomain = await this.prisma.app.findMany({ where: { domain, exposed: true } });
+      if (exposed && domain) {
+        const appsWithSameDomain = await this.db
+          .select()
+          .from(appTable)
+          .where(and(eq(appTable.domain, domain), eq(appTable.exposed, true)));
+
         if (appsWithSameDomain.length > 0) {
           throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0]?.id}`);
         }
       }
 
-      app = await this.prisma.app.create({ data: { id, status: 'installing', config: form, version: appInfo.tipi_version, exposed: exposed || false, domain } });
+      const newApps = await this.db
+        .insert(appTable)
+        .values({ id, status: 'installing', config: form, version: appInfo.tipi_version, exposed: exposed || false, domain: domain || null })
+        .returning();
+      const newApp = newApps[0];
 
-      if (app) {
+      if (newApp) {
         // Create env file
-        generateEnvFile(app);
+        generateEnvFile(newApp);
       }
 
       // Run script
       const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['install', id]);
 
       if (!success) {
-        await this.prisma.app.delete({ where: { id } });
+        await this.db.delete(appTable).where(eq(appTable.id, id));
         throw new Error(`App ${id} failed to install\nstdout: ${stdout}`);
       }
     }
 
-    app = await this.prisma.app.update({ where: { id }, data: { status: 'running' } });
-
-    return app;
+    const updatedApp = await this.db.update(appTable).set({ status: 'running' }).where(eq(appTable.id, id)).returning();
+    return updatedApp[0];
   };
 
   /**
@@ -201,7 +214,8 @@ export class AppServiceClass {
       throw new Error(`Domain ${domain} is not valid`);
     }
 
-    let app = await this.prisma.app.findUnique({ where: { id } });
+    const apps = await this.db.select().from(appTable).where(eq(appTable.id, id));
+    const app = apps[0];
 
     if (!app) {
       throw new Error(`App ${id} not found`);
@@ -221,18 +235,30 @@ export class AppServiceClass {
       throw new Error(`App ${id} works only with exposed domain`);
     }
 
-    if (exposed) {
-      const appsWithSameDomain = await this.prisma.app.findMany({ where: { domain, exposed: true, id: { not: id } } });
+    if (exposed && domain) {
+      const appsWithSameDomain = await this.db
+        .select()
+        .from(appTable)
+        .where(and(eq(appTable.domain, domain), eq(appTable.exposed, true), ne(appTable.id, id)));
+
       if (appsWithSameDomain.length > 0) {
         throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0]?.id}`);
       }
     }
 
-    app = await this.prisma.app.update({ where: { id }, data: { config: form, exposed: exposed || false, domain } });
+    const updateApps = await this.db
+      .update(appTable)
+      .set({ exposed: exposed || false, domain: domain || null, config: form })
+      .where(eq(appTable.id, id))
+      .returning();
 
-    generateEnvFile(app);
+    const updatedApp = updateApps[0];
 
-    return app;
+    if (updatedApp) {
+      generateEnvFile(updatedApp);
+    }
+
+    return updatedApp;
   };
 
   /**
@@ -243,7 +269,8 @@ export class AppServiceClass {
    * @throws {Error} - If the app cannot be found or if stopping the app failed
    */
   public stopApp = async (id: string) => {
-    let app = await this.prisma.app.findUnique({ where: { id } });
+    const apps = await this.db.select().from(appTable).where(eq(appTable.id, id));
+    const app = apps[0];
 
     if (!app) {
       throw new Error(`App ${id} not found`);
@@ -253,20 +280,19 @@ export class AppServiceClass {
     generateEnvFile(app);
 
     // Run script
-    await this.prisma.app.update({ where: { id }, data: { status: 'stopping' } });
+    await this.db.update(appTable).set({ status: 'stopping' }).where(eq(appTable.id, id));
 
     const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['stop', id]);
 
     if (success) {
-      await this.prisma.app.update({ where: { id }, data: { status: 'stopped' } });
+      await this.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, id));
     } else {
-      await this.prisma.app.update({ where: { id }, data: { status: 'running' } });
+      await this.db.update(appTable).set({ status: 'running' }).where(eq(appTable.id, id));
       throw new Error(`App ${id} failed to stop\nstdout: ${stdout}`);
     }
 
-    app = await this.prisma.app.findUnique({ where: { id } });
-
-    return app;
+    const updatedApps = await this.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, id)).returning();
+    return updatedApps[0];
   };
 
   /**
@@ -277,7 +303,8 @@ export class AppServiceClass {
    * @throws {Error} - If the app is not found or if the app's `uninstall` script fails
    */
   public uninstallApp = async (id: string) => {
-    const app = await this.prisma.app.findUnique({ where: { id } });
+    const apps = await this.db.select().from(appTable).where(eq(appTable.id, id));
+    const app = apps[0];
 
     if (!app) {
       throw new Error(`App ${id} not found`);
@@ -289,16 +316,16 @@ export class AppServiceClass {
     ensureAppFolder(id);
     generateEnvFile(app);
 
-    await this.prisma.app.update({ where: { id }, data: { status: 'uninstalling' } });
+    await this.db.update(appTable).set({ status: 'uninstalling' }).where(eq(appTable.id, id));
 
     const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['uninstall', id]);
 
     if (!success) {
-      await this.prisma.app.update({ where: { id }, data: { status: 'stopped' } });
+      await this.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, id));
       throw new Error(`App ${id} failed to uninstall\nstdout: ${stdout}`);
     }
 
-    await this.prisma.app.delete({ where: { id } });
+    await this.db.delete(appTable).where(eq(appTable.id, id));
 
     return { id, status: 'missing', config: {} };
   };
@@ -310,7 +337,8 @@ export class AppServiceClass {
    * @returns {Promise<App>} - The app object
    */
   public getApp = async (id: string) => {
-    let app = await this.prisma.app.findUnique({ where: { id } });
+    const apps = await this.db.select().from(appTable).where(eq(appTable.id, id));
+    let app = apps[0];
     const info = getAppInfo(id, app?.status);
     const updateInfo = getUpdateInfo(id);
 
@@ -333,7 +361,8 @@ export class AppServiceClass {
    * @throws {Error} - If the app is not found or if the update process fails.
    */
   public updateApp = async (id: string) => {
-    let app = await this.prisma.app.findUnique({ where: { id } });
+    const apps = await this.db.select().from(appTable).where(eq(appTable.id, id));
+    const app = apps[0];
 
     if (!app) {
       throw new Error(`App ${id} not found`);
@@ -342,21 +371,21 @@ export class AppServiceClass {
     ensureAppFolder(id);
     generateEnvFile(app);
 
-    await this.prisma.app.update({ where: { id }, data: { status: 'updating' } });
+    await this.db.update(appTable).set({ status: 'updating' }).where(eq(appTable.id, id));
 
     const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['update', id]);
 
     if (success) {
       const appInfo = getAppInfo(app.id, app.status);
 
-      await this.prisma.app.update({ where: { id }, data: { status: 'running', version: appInfo?.tipi_version } });
+      await this.db.update(appTable).set({ status: 'running', version: appInfo?.tipi_version }).where(eq(appTable.id, id));
     } else {
-      await this.prisma.app.update({ where: { id }, data: { status: 'stopped' } });
+      await this.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, id));
       throw new Error(`App ${id} failed to update\nstdout: ${stdout}`);
     }
 
-    app = await this.prisma.app.update({ where: { id }, data: { status: 'stopped' } });
-    return app;
+    const updatedApps = await this.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, id)).returning();
+    return updatedApps[0];
   };
 
   /**
@@ -365,7 +394,7 @@ export class AppServiceClass {
    * @returns {Promise<App[]>} - An array of app objects
    */
   public installedApps = async () => {
-    const apps = await this.prisma.app.findMany({ orderBy: { id: 'asc' } });
+    const apps = await this.db.select().from(appTable).orderBy(asc(appTable.id));
 
     return apps
       .map((app) => {

@@ -1,31 +1,27 @@
 import fs from 'fs-extra';
 import { fromAny } from '@total-typescript/shoehorn';
-import { App, PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { App } from '@/server/db/schema';
 import { setConfig } from '../../core/TipiConfig';
 import { AppInfo, appInfoSchema, checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from './apps.helpers';
 import { createApp, createAppConfig } from '../../tests/apps.factory';
 import { Logger } from '../../core/Logger';
-import { getTestDbClient } from '../../../../tests/server/db-connection';
 
-let db: PrismaClient;
+let db: TestDatabase;
 const TEST_SUITE = 'appshelpers';
 
 beforeAll(async () => {
-  db = await getTestDbClient(TEST_SUITE);
+  db = await createDatabase(TEST_SUITE);
 });
 
 beforeEach(async () => {
   jest.mock('fs-extra');
-});
-
-afterEach(async () => {
-  await db.app.deleteMany();
+  await clearDatabase(db);
 });
 
 afterAll(async () => {
-  await db.app.deleteMany();
-  await db.$disconnect();
+  await closeDatabase(db);
 });
 
 describe('checkAppRequirements', () => {
