@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import fs from 'fs-extra';
 import { z } from 'zod';
-import { App } from '@prisma/client';
+import { App } from '@/server/db/schema';
 import { deleteFolder, fileExists, getSeed, readdirSync, readFile, readJsonFile, writeFile } from '../../common/fs.helpers';
 import { APP_CATEGORIES, FIELD_TYPES } from './apps.types';
 import { getConfig } from '../../core/TipiConfig';

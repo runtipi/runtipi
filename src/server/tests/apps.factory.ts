@@ -1,12 +1,14 @@
 import { faker } from '@faker-js/faker';
-import { App, PrismaClient } from '@prisma/client';
+import { eq } from 'drizzle-orm';
 import { Architecture } from '../core/TipiConfig/TipiConfig';
 import { AppInfo, appInfoSchema } from '../services/apps/apps.helpers';
 import { APP_CATEGORIES } from '../services/apps/apps.types';
+import { TestDatabase } from './test-utils';
+import { appTable, AppStatus, App } from '../db/schema';
 
 interface IProps {
   installed?: boolean;
-  status?: App['status'];
+  status?: AppStatus;
   requiredPort?: number;
   randomField?: boolean;
   exposed?: boolean;
@@ -31,8 +33,8 @@ const createAppConfig = (props?: Partial<AppInfo>) =>
     ...props,
   });
 
-const createApp = async (props: IProps, db?: PrismaClient) => {
-  const { installed = false, status = 'running', randomField = false, exposed = false, domain = '', exposable = false, supportedArchitectures, forceExpose = false } = props;
+const createApp = async (props: IProps, database: TestDatabase) => {
+  const { installed = false, status = 'running', randomField = false, exposed = false, domain = null, exposable = false, supportedArchitectures, forceExpose = false } = props;
 
   const categories = Object.values(APP_CATEGORIES);
 
@@ -82,17 +84,21 @@ const createApp = async (props: IProps, db?: PrismaClient) => {
   MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   let appEntity: App = {} as App;
-  if (installed && db) {
-    appEntity = await db.app.create({
-      data: {
+  if (installed) {
+    const insertedApp = await database.db
+      .insert(appTable)
+      .values({
         id: appInfo.id,
         config: { TEST_FIELD: 'test' },
         status,
         exposed,
         domain,
         version: 1,
-      },
-    });
+      })
+      .returning();
+
+    // eslint-disable-next-line prefer-destructuring
+    appEntity = insertedApp[0] as App;
 
     MockFiles[`/app/storage/app-data/${appInfo.id}`] = '';
     MockFiles[`/app/storage/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
@@ -103,4 +109,18 @@ const createApp = async (props: IProps, db?: PrismaClient) => {
   return { appInfo, MockFiles, appEntity };
 };
 
-export { createApp, createAppConfig };
+const getAppById = async (id: string, database: TestDatabase) => {
+  const apps = await database.db.select().from(appTable).where(eq(appTable.id, id));
+  return apps[0] || null;
+};
+
+const updateApp = async (id: string, props: Partial<App>, database: TestDatabase) => {
+  await database.db.update(appTable).set(props).where(eq(appTable.id, id));
+};
+
+const getAllApps = async (database: TestDatabase) => {
+  const apps = await database.db.select().from(appTable);
+  return apps;
+};
+
+export { createApp, getAppById, updateApp, getAllApps, createAppConfig };

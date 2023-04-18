@@ -8,7 +8,7 @@ import { getConfig, setConfig } from './core/TipiConfig';
 import { Logger } from './core/Logger';
 import { runPostgresMigrations } from './run-migration';
 import { AppServiceClass } from './services/apps/apps.service';
-import { prisma } from './db/client';
+import { db } from './db';
 
 let conf = {};
 let nextApp: NextServer;
@@ -42,7 +42,7 @@ nextApp.prepare().then(async () => {
   });
 
   app.listen(port, async () => {
-    const appService = new AppServiceClass(prisma);
+    const appService = new AppServiceClass(db);
     EventDispatcher.clear();
 
     // Run database migrations
