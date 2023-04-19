@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { AppStatus } from '@/server/db/schema';
+import type { AppStatus } from '@/server/db/schema';
 import { APP_CATEGORIES } from '../../../server/services/apps/apps.types';
 import { App, AppCategory, AppInfo, AppWithInfo } from '../../core/types';
 

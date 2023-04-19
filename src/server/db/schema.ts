@@ -26,6 +26,7 @@ export const userTable = pgTable('user', {
   salt: text('salt'),
 });
 export type User = InferModel<typeof userTable>;
+export type NewUser = InferModel<typeof userTable, 'insert'>;
 
 export const update = pgTable('update', {
   id: serial('id').notNull(),

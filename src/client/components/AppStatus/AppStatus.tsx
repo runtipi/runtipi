@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 import { Tooltip } from 'react-tooltip';
-import { type AppStatus as AppStatusEnum } from '@/server/db/schema';
+import type { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import styles from './AppStatus.module.scss';
 
 export const AppStatus: React.FC<{ status: AppStatusEnum; lite?: boolean }> = ({ status, lite }) => {
