@@ -3,9 +3,8 @@ import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { generateSessionId } from '@/server/common/get-server-auth-session';
-import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { userTable } from '@/server/db/schema';
+import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
@@ -21,10 +20,10 @@ type TokenResponse = {
 };
 
 export class AuthServiceClass {
-  private db;
+  private queries;
 
   constructor(p: NodePgDatabase) {
-    this.db = p;
+    this.queries = new AuthQueries(p);
   }
 
   /**
@@ -35,9 +34,7 @@ export class AuthServiceClass {
    */
   public login = async (input: UsernamePasswordInput) => {
     const { password, username } = input;
-
-    const users = await this.db.select().from(userTable).where(eq(userTable.username, username.trim().toLowerCase()));
-    const user = users[0];
+    const user = await this.queries.getUserByUsername(username);
 
     if (!user) {
       throw new Error('User not found');
@@ -80,11 +77,7 @@ export class AuthServiceClass {
       throw new Error('TOTP session not found');
     }
 
-    const users = await this.db
-      .select()
-      .from(userTable)
-      .where(eq(userTable.id, Number(userId)));
-    const user = users[0];
+    const user = await this.queries.getUserById(Number(userId));
 
     if (!user) {
       throw new Error('User not found');
@@ -124,8 +117,7 @@ export class AuthServiceClass {
 
     const { userId, password } = params;
 
-    const users = await this.db.select().from(userTable).where(eq(userTable.id, userId));
-    const user = users[0];
+    const user = await this.queries.getUserById(userId);
 
     if (!user) {
       throw new Error('User not found');
@@ -149,7 +141,7 @@ export class AuthServiceClass {
 
     const encryptedTotpSecret = encrypt(newTotpSecret, salt);
 
-    await this.db.update(userTable).set({ totpSecret: encryptedTotpSecret, salt }).where(eq(userTable.id, userId));
+    await this.queries.updateUser(userId, { totpSecret: encryptedTotpSecret, salt });
 
     const uri = TotpAuthenticator.keyuri(user.username, 'Runtipi', newTotpSecret);
 
@@ -162,8 +154,7 @@ export class AuthServiceClass {
     }
 
     const { userId, totpCode } = params;
-    const users = await this.db.select().from(userTable).where(eq(userTable.id, userId));
-    const user = users[0];
+    const user = await this.queries.getUserById(userId);
 
     if (!user) {
       throw new Error('User not found');
@@ -180,7 +171,7 @@ export class AuthServiceClass {
       throw new Error('Invalid TOTP code');
     }
 
-    await this.db.update(userTable).set({ totpEnabled: true }).where(eq(userTable.id, userId));
+    await this.queries.updateUser(userId, { totpEnabled: true });
 
     return true;
   };
@@ -188,8 +179,7 @@ export class AuthServiceClass {
   public disableTotp = async (params: { userId: number; password: string }) => {
     const { userId, password } = params;
 
-    const users = await this.db.select().from(userTable).where(eq(userTable.id, userId));
-    const user = users[0];
+    const user = await this.queries.getUserById(userId);
 
     if (!user) {
       throw new Error('User not found');
@@ -204,7 +194,7 @@ export class AuthServiceClass {
       throw new Error('Invalid password');
     }
 
-    await this.db.update(userTable).set({ totpEnabled: false, totpSecret: null }).where(eq(userTable.id, userId));
+    await this.queries.updateUser(userId, { totpEnabled: false, totpSecret: null });
 
     return true;
   };
@@ -217,9 +207,9 @@ export class AuthServiceClass {
    * @throws {Error} - If the email or password is missing, the email is invalid or the user already exists
    */
   public register = async (input: UsernamePasswordInput) => {
-    const operator = await this.db.select().from(userTable).where(eq(userTable.operator, true));
+    const operators = await this.queries.getOperators();
 
-    if (operator.length > 0) {
+    if (operators.length > 0) {
       throw new Error('There is already an admin user. Please login to create a new user from the admin panel.');
     }
 
@@ -234,8 +224,7 @@ export class AuthServiceClass {
       throw new Error('Invalid username');
     }
 
-    const users = await this.db.select().from(userTable).where(eq(userTable.username, email));
-    const user = users[0];
+    const user = await this.queries.getUserByUsername(email);
 
     if (user) {
       throw new Error('User already exists');
@@ -243,8 +232,7 @@ export class AuthServiceClass {
 
     const hash = await argon2.hash(password);
 
-    const newUsers = await this.db.insert(userTable).values({ username: email, password: hash, operator: true }).returning();
-    const newUser = newUsers[0];
+    const newUser = await this.queries.createUser({ username: email, password: hash, operator: true });
 
     if (!newUser) {
       throw new Error('Error creating user');
@@ -267,8 +255,7 @@ export class AuthServiceClass {
   public me = async (userId: number | undefined) => {
     if (!userId) return null;
 
-    const users = await this.db.select({ id: userTable.id, username: userTable.username, totpEnabled: userTable.totpEnabled }).from(userTable).where(eq(userTable.id, userId));
-    const user = users[0];
+    const user = await this.queries.getUserDtoById(userId);
 
     if (!user) return null;
 
@@ -317,7 +304,7 @@ export class AuthServiceClass {
    * @returns {Promise<boolean>} - A boolean indicating if the system is configured or not
    */
   public isConfigured = async (): Promise<boolean> => {
-    const operators = await this.db.select().from(userTable).where(eq(userTable.operator, true));
+    const operators = await this.queries.getOperators();
 
     return operators.length > 0;
   };
@@ -337,15 +324,15 @@ export class AuthServiceClass {
 
     const { newPassword } = params;
 
-    const users = await this.db.select().from(userTable).where(eq(userTable.operator, true));
-    const user = users[0];
+    const user = await this.queries.getFirstOperator();
 
     if (!user) {
       throw new Error('Operator user not found');
     }
 
     const hash = await argon2.hash(newPassword);
-    await this.db.update(userTable).set({ password: hash, totpEnabled: false, totpSecret: null }).where(eq(userTable.id, user.id));
+
+    await this.queries.updateUser(user.id, { password: hash, totpEnabled: false, totpSecret: null });
 
     await unlinkFile(`/runtipi/state/password-change-request`);
 
@@ -388,8 +375,7 @@ export class AuthServiceClass {
 
     const { currentPassword, newPassword, userId } = params;
 
-    const users = await this.db.select().from(userTable).where(eq(userTable.id, userId));
-    const user = users[0];
+    const user = await this.queries.getUserById(userId);
 
     if (!user) {
       throw new Error('User not found');
@@ -406,7 +392,7 @@ export class AuthServiceClass {
     }
 
     const hash = await argon2.hash(newPassword);
-    await this.db.update(userTable).set({ password: hash }).where(eq(userTable.id, user.id));
+    await this.queries.updateUser(user.id, { password: hash });
 
     await TipiCache.delByValue(userId.toString(), 'auth');
 

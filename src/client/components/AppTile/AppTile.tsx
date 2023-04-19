@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 import { IconDownload } from '@tabler/icons-react';
 import { Tooltip } from 'react-tooltip';
-import { AppStatus as AppStatusEnum } from '@/server/db/schema';
+import type { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { AppStatus } from '../AppStatus';
 import { AppLogo } from '../AppLogo/AppLogo';
 import { limitText } from '../../modules/AppStore/helpers/table.helpers';
