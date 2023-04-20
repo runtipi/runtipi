@@ -31,10 +31,8 @@ export const GeneralActions = () => {
     },
     onError: (error) => {
       updateDisclosure.close();
-      toast.error(`Error updating instance: ${error.message}`);
-    },
-    onSettled: () => {
       setLoading(false);
+      toast.error(`Error updating instance: ${error.message}`);
     },
   });
 
@@ -48,10 +46,8 @@ export const GeneralActions = () => {
     },
     onError: (error) => {
       restartDisclosure.close();
-      toast.error(`Error restarting instance: ${error.message}`);
-    },
-    onSettled: () => {
       setLoading(false);
+      toast.error(`Error restarting instance: ${error.message}`);
     },
   });
 
