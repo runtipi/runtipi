@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import fs from 'fs-extra';
 import { z } from 'zod';
 import { App } from '@/server/db/schema';
+import { generateVapidKeys } from '@/server/utils/env-generation';
 import { deleteFolder, fileExists, getSeed, readdirSync, readFile, readJsonFile, writeFile } from '../../common/fs.helpers';
 import { APP_CATEGORIES, FIELD_TYPES } from './apps.types';
 import { getConfig } from '../../core/TipiConfig';
@@ -37,6 +38,7 @@ export const appInfoSchema = z.object({
   source: z.string(),
   website: z.string().optional(),
   force_expose: z.boolean().optional().default(false),
+  generate_vapid_keys: z.boolean().optional().default(false),
   categories: z
     .nativeEnum(APP_CATEGORIES)
     .array()
@@ -64,7 +66,6 @@ export type FormField = z.infer<typeof formFieldSchema>;
  *
  *  @param {string} appName - The name of the app.
  *  @throws Will throw an error if the app has an invalid config.json file or if the current system architecture is not supported by the app.
- *  @returns {AppInfo} - parsed app config data
  */
 export const checkAppRequirements = (appName: string) => {
   const configFile = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${appName}/config.json`);
@@ -86,7 +87,6 @@ export const checkAppRequirements = (appName: string) => {
  *  It reads the file, splits it into individual environment variables, and stores them in a Map, with the environment variable name as the key and its value as the value.
  *
  *  @param {string} appName - The name of the app.
- *  @returns {Map<string, string>} - A Map containing the key-value pairs of the environment variables.
  */
 export const getEnvMap = (appName: string) => {
   const envFile = readFile(`/app/storage/app-data/${appName}/app.env`).toString();
@@ -138,7 +138,6 @@ export const checkEnvFile = (appName: string) => {
  *
  *  @param {string} name - A name used as input for the hash algorithm.
  *  @param {number} length - The desired length of the random string.
- *  @returns {string} - A random string of the provided length.
  */
 const getEntropy = (name: string, length: number) => {
   const hash = crypto.createHash('sha256');
@@ -183,6 +182,17 @@ export const generateEnvFile = (app: App) => {
   let envFile = `${baseEnvFile}\nAPP_PORT=${parsedConfig.data.port}\n`;
   const envMap = getEnvMap(app.id);
 
+  if (parsedConfig.data.generate_vapid_keys) {
+    if (envMap.has('VAPID_PUBLIC_KEY') && envMap.has('VAPID_PRIVATE_KEY')) {
+      envFile += `VAPID_PUBLIC_KEY=${envMap.get('VAPID_PUBLIC_KEY')}\n`;
+      envFile += `VAPID_PRIVATE_KEY=${envMap.get('VAPID_PRIVATE_KEY')}\n`;
+    } else {
+      const vapidKeys = generateVapidKeys();
+      envFile += `VAPID_PUBLIC_KEY=${vapidKeys.publicKey}\n`;
+      envFile += `VAPID_PRIVATE_KEY=${vapidKeys.privateKey}\n`;
+    }
+  }
+
   parsedConfig.data.form_fields.forEach((field) => {
     const formValue = castAppConfig(app.config)[field.env_variable];
     const envVar = field.env_variable;
@@ -223,8 +233,6 @@ export const generateEnvFile = (app: App) => {
   This function reads the apps directory and skips certain system files, then reads the config.json and metadata/description.md files for each app,
   parses the config file, filters out any apps that are not available and returns an array of app information.
   If the config.json file is invalid, it logs an error message.
- 
-  @returns {Promise<AppInfo[]>} - Returns a promise that resolves with an array of available apps' information.
  */
 export const getAvailableApps = async () => {
   const appsDir = readdirSync(`/runtipi/repos/${getConfig().appsRepoId}/apps`);
@@ -259,7 +267,6 @@ export const getAvailableApps = async () => {
  *  If the app is not found, it returns null.
  *
  *  @param {string} id - The app id.
- *  @returns {Promise<{current: number, latest: number, dockerVersion: string} | null>} - Returns an object containing information about the updates available for the app or null if the app is not found or has an invalid config.json file.
  */
 export const getUpdateInfo = (id: string) => {
   const repoConfig = readJsonFile(`/runtipi/repos/${getConfig().appsRepoId}/apps/${id}/config.json`);
@@ -284,7 +291,6 @@ export const getUpdateInfo = (id: string) => {
  *
  *  @param {string} id - The app id.
  *  @param {App['status']} [status] - The app status.
- *  @returns {AppInfo | null} - Returns an object with app information or null if the app is not found.
  */
 export const getAppInfo = (id: string, status?: App['status']) => {
   try {
@@ -327,7 +333,7 @@ export const getAppInfo = (id: string, status?: App['status']) => {
  *  @param {boolean} [cleanup=false] - A flag indicating whether to cleanup the app folder before ensuring its existence.
  *  @throws Will throw an error if the app folder cannot be copied from the repository
  */
-export const ensureAppFolder = (appName: string, cleanup = false) => {
+export const ensureAppFolder = (appName: string, cleanup = false): void => {
   if (cleanup && fileExists(`/runtipi/apps/${appName}`)) {
     deleteFolder(`/runtipi/apps/${appName}`);
   }

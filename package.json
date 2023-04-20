@@ -73,6 +73,7 @@
     "tslib": "^2.4.0",
     "uuid": "^9.0.0",
     "validator": "^13.7.0",
+    "web-push": "^3.5.0",
     "winston": "^3.7.2",
     "zod": "^3.21.4",
     "zustand": "^4.3.6"
@@ -100,6 +101,7 @@
     "@types/testing-library__jest-dom": "^5.14.5",
     "@types/uuid": "^9.0.1",
     "@types/validator": "^13.7.14",
+    "@types/web-push": "^3.3.2",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.55.0",
     "dotenv-cli": "^7.1.0",

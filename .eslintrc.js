@@ -37,6 +37,7 @@ module.exports = {
     'no-underscore-dangle': 0,
     'arrow-body-style': 0,
     'class-methods-use-this': 0,
+    'jsdoc/require-returns': 0,
   },
   globals: {
     JSX: true,
