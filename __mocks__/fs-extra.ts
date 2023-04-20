@@ -14,6 +14,20 @@ class FsMock {
     return FsMock.instance;
   }
 
+  __applyMockFiles = (newMockFiles: Record<string, string>) => {
+    // Create folder tree
+    Object.keys(newMockFiles).forEach((file) => {
+      const dir = path.dirname(file);
+
+      if (!this.mockFiles[dir]) {
+        this.mockFiles[dir] = [];
+      }
+
+      this.mockFiles[dir].push(path.basename(file));
+      this.mockFiles[file] = newMockFiles[file];
+    });
+  };
+
   __createMockFiles = (newMockFiles: Record<string, string>) => {
     this.mockFiles = Object.create(null);
 
