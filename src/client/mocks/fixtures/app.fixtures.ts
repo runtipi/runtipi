@@ -29,6 +29,7 @@ export const createApp = (overrides?: Partial<AppInfo>): AppInfo => {
     exposable: true,
     url_suffix: '',
     force_expose: false,
+    generate_vapid_keys: false,
     ...overrides,
   };
 };

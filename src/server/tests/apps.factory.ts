@@ -1,10 +1,11 @@
 import { faker } from '@faker-js/faker';
 import { eq } from 'drizzle-orm';
+import fs from 'fs-extra';
 import { Architecture } from '../core/TipiConfig/TipiConfig';
 import { AppInfo, appInfoSchema } from '../services/apps/apps.helpers';
 import { APP_CATEGORIES } from '../services/apps/apps.types';
 import { TestDatabase } from './test-utils';
-import { appTable, AppStatus, App } from '../db/schema';
+import { appTable, AppStatus, App, NewApp } from '../db/schema';
 
 interface IProps {
   installed?: boolean;
@@ -19,8 +20,10 @@ interface IProps {
   supportedArchitectures?: Architecture[];
 }
 
-const createAppConfig = (props?: Partial<AppInfo>) =>
-  appInfoSchema.parse({
+const createAppConfig = (props?: Partial<AppInfo>) => {
+  const mockFiles: Record<string, string | string[]> = {};
+
+  const appInfo = appInfoSchema.parse({
     id: faker.random.alphaNumeric(32),
     available: true,
     port: faker.datatype.number({ min: 30, max: 65535 }),
@@ -33,6 +36,18 @@ const createAppConfig = (props?: Partial<AppInfo>) =>
     categories: [APP_CATEGORIES.AUTOMATION],
     ...props,
   });
+
+  mockFiles['/runtipi/.env'] = 'TEST=test';
+  mockFiles['/runtipi/repos/repo-id'] = '';
+  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
+  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+
+  // @ts-expect-error - fs-extra mock is not typed
+  fs.__applyMockFiles(mockFiles);
+
+  return appInfo;
+};
 
 const createApp = async (props: IProps, database: TestDatabase) => {
   const {
@@ -121,6 +136,32 @@ const createApp = async (props: IProps, database: TestDatabase) => {
   return { appInfo, MockFiles, appEntity };
 };
 
+const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: TestDatabase) => {
+  const values: NewApp = {
+    id: appInfo.id,
+    config: { TEST_FIELD: 'test' },
+    status: 'running',
+    exposed: false,
+    domain: null,
+    version: 1,
+    ...data,
+  };
+
+  const mockFiles: Record<string, string | string[]> = {};
+  if (data.status !== 'missing') {
+    mockFiles[`/app/storage/app-data/${values.id}`] = '';
+    mockFiles[`/app/storage/app-data/${values.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    mockFiles[`/runtipi/apps/${values.id}/config.json`] = JSON.stringify(appInfo);
+    mockFiles[`/runtipi/apps/${values.id}/metadata/description.md`] = 'md desc';
+  }
+
+  // @ts-expect-error - fs-extra mock is not typed
+  fs.__applyMockFiles(mockFiles);
+
+  const insertedApp = await database.db.insert(appTable).values(values).returning();
+  return insertedApp[0] as App;
+};
+
 const getAppById = async (id: string, database: TestDatabase) => {
   const apps = await database.db.select().from(appTable).where(eq(appTable.id, id));
   return apps[0] || null;
@@ -135,4 +176,4 @@ const getAllApps = async (database: TestDatabase) => {
   return apps;
 };
 
-export { createApp, getAppById, updateApp, getAllApps, createAppConfig };
+export { createApp, getAppById, updateApp, getAllApps, createAppConfig, insertApp };
