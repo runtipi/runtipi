@@ -15,6 +15,7 @@ interface IProps {
   domain?: string;
   exposable?: boolean;
   forceExpose?: boolean;
+  generateVapidKeys?: boolean;
   supportedArchitectures?: Architecture[];
 }
 
@@ -34,7 +35,17 @@ const createAppConfig = (props?: Partial<AppInfo>) =>
   });
 
 const createApp = async (props: IProps, database: TestDatabase) => {
-  const { installed = false, status = 'running', randomField = false, exposed = false, domain = null, exposable = false, supportedArchitectures, forceExpose = false } = props;
+  const {
+    installed = false,
+    status = 'running',
+    randomField = false,
+    exposed = false,
+    domain = null,
+    exposable = false,
+    supportedArchitectures,
+    forceExpose = false,
+    generateVapidKeys = false,
+  } = props;
 
   const categories = Object.values(APP_CATEGORIES);
 
@@ -65,6 +76,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
     version: String(faker.datatype.number({ min: 1, max: 10 })),
     https: false,
     no_gui: false,
+    generate_vapid_keys: generateVapidKeys,
   };
 
   if (randomField) {
