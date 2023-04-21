@@ -105,3 +105,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+<p align="center">
+  <a rel="noopener noreferrer" target="_blank" href="https://vercel.com/?utm_source=runtipi&utm_campaign=oss">
+    <img height="34px" src="https://images.ctfassets.net/e5382hct74si/78Olo8EZRdUlcDUFQvnzG7/fa4cdb6dc04c40fceac194134788a0e2/1618983297-powered-by-vercel.svg" alt="Powered by vercel">
+  </a>
+</p>
