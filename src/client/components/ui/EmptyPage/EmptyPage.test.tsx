@@ -1,28 +1,34 @@
 import React from 'react';
-import { fireEvent, render } from '../../../../../tests/test-utils';
+import { fireEvent, screen, render } from '../../../../../tests/test-utils';
 import { EmptyPage } from './EmptyPage';
 
 describe('<EmptyPage />', () => {
   it('should render the title and subtitle', () => {
-    const { getByText } = render(<EmptyPage title="Title" subtitle="Subtitle" />);
+    // arrange
+    render(<EmptyPage title="Title" subtitle="Subtitle" />);
 
-    expect(getByText('Title')).toBeInTheDocument();
-    expect(getByText('Subtitle')).toBeInTheDocument();
+    // assert
+    expect(screen.getByText('Title')).toBeInTheDocument();
+    expect(screen.getByText('Subtitle')).toBeInTheDocument();
   });
 
   it('should render the action button and trigger the onAction callback', () => {
+    // arrange
     const onAction = jest.fn();
-    const { getByText } = render(<EmptyPage title="Title" onAction={onAction} actionLabel="Action" />);
+    render(<EmptyPage title="Title" onAction={onAction} actionLabel="Action" />);
 
-    expect(getByText('Action')).toBeInTheDocument();
+    // act
+    fireEvent.click(screen.getByText('Action'));
 
-    fireEvent.click(getByText('Action'));
+    // assert
     expect(onAction).toHaveBeenCalled();
   });
 
   it('should not render the action button if onAction is not provided', () => {
-    const { queryByText } = render(<EmptyPage title="Title" actionLabel="Action" />);
+    // arrange
+    render(<EmptyPage title="Title" actionLabel="Action" />);
 
-    expect(queryByText('Action')).not.toBeInTheDocument();
+    // assert
+    expect(screen.queryByText('Action')).not.toBeInTheDocument();
   });
 });

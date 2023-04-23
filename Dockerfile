@@ -1,4 +1,4 @@
-ARG NODE_VERSION="18.12.1"
+ARG NODE_VERSION="18.15"
 ARG ALPINE_VERSION="3.16"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
@@ -16,7 +16,6 @@ COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch --no-scripts
 
 COPY ./package*.json ./
-COPY ./prisma/schema.prisma ./prisma/
 
 RUN pnpm install -r --prefer-offline 
 COPY ./src ./src

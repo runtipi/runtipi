@@ -1,32 +1,29 @@
 import fs from 'fs-extra';
 import waitForExpect from 'wait-for-expect';
-import { PrismaClient } from '@prisma/client';
+import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher, EVENT_TYPES } from '../../core/EventDispatcher';
 import { AppInfo, getEnvMap } from './apps.helpers';
-import { createApp } from '../../tests/apps.factory';
-import { APP_STATUS } from './apps.types';
+import { createApp, getAllApps, getAppById, updateApp } from '../../tests/apps.factory';
 import { setConfig } from '../../core/TipiConfig';
-import { getTestDbClient } from '../../../../tests/server/db-connection';
 
-let db: PrismaClient;
+let db: TestDatabase;
 let AppsService: AppServiceClass;
 const TEST_SUITE = 'appsservice';
 
 beforeAll(async () => {
-  db = await getTestDbClient(TEST_SUITE);
-  AppsService = new AppServiceClass(db);
+  db = await createDatabase(TEST_SUITE);
+  AppsService = new AppServiceClass(db.db);
 });
 
 beforeEach(async () => {
   jest.mock('fs-extra');
-  await db.app.deleteMany();
+  await clearDatabase(db);
   EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
 });
 
 afterAll(async () => {
-  await db.app.deleteMany();
-  await db.$disconnect();
+  await closeDatabase(db);
 });
 
 describe('Install app', () => {
@@ -49,12 +46,12 @@ describe('Install app', () => {
   it('Should add app in database', async () => {
     await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
 
-    const app = await db.app.findUnique({ where: { id: app1.id } });
+    const app = await getAppById(app1.id, db);
 
     expect(app).toBeDefined();
     expect(app?.id).toBe(app1.id);
     expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(app?.status).toBe(APP_STATUS.RUNNING);
+    expect(app?.status).toBe('running');
   });
 
   it('Should start app if already installed', async () => {
@@ -76,7 +73,7 @@ describe('Install app', () => {
 
     await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' })).rejects.toThrow(`App ${app1.id} failed to install\nstdout: error`);
 
-    const app = await db?.app.findUnique({ where: { id: app1.id } });
+    const app = await getAppById(app1.id, db);
 
     expect(app).toBeNull();
   });
@@ -167,7 +164,7 @@ describe('Install app', () => {
     fs.__createMockFiles(MockFiles);
 
     await AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' });
-    const app = await db.app.findUnique({ where: { id: appInfo.id } });
+    const app = await getAppById(appInfo.id, db);
 
     expect(app).toBeDefined();
   });
@@ -179,7 +176,7 @@ describe('Install app', () => {
     fs.__createMockFiles(MockFiles);
 
     await AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' });
-    const app = await db.app.findUnique({ where: { id: appInfo.id } });
+    const app = await getAppById(appInfo.id, db);
 
     expect(app).toBeDefined();
   });
@@ -206,6 +203,16 @@ describe('Install app', () => {
     // act & assert
     await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json file`);
   });
+
+  it('should throw if app is not exposed and config has force_expose set to true', async () => {
+    // arrange
+    const { MockFiles, appInfo } = await createApp({ forceExpose: true }, db);
+    // @ts-expect-error - Mocking fs
+    fs.__createMockFiles(MockFiles);
+
+    // act & assert
+    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} works only with exposed domain`);
+  });
 });
 
 describe('Uninstall app', () => {
@@ -220,18 +227,18 @@ describe('Uninstall app', () => {
 
   it('App should be installed by default', async () => {
     // Act
-    const app = await db.app.findUnique({ where: { id: app1.id } });
+    const app = await getAppById(app1.id, db);
 
     // Assert
     expect(app).toBeDefined();
     expect(app?.id).toBe(app1.id);
-    expect(app?.status).toBe(APP_STATUS.RUNNING);
+    expect(app?.status).toBe('running');
   });
 
   it('Should correctly remove app from database', async () => {
     // Act
     await AppsService.uninstallApp(app1.id);
-    const app = await db.app.findUnique({ where: { id: app1.id } });
+    const app = await getAppById(app1.id, db);
 
     // Assert
     expect(app).toBeNull();
@@ -260,12 +267,12 @@ describe('Uninstall app', () => {
   it('Should throw if uninstall script fails', async () => {
     // Arrange
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
-    await db.app.update({ where: { id: app1.id }, data: { status: 'updating' } });
+    await updateApp(app1.id, { status: 'updating' }, db);
 
     // Act & Assert
     await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to uninstall\nstdout: test`);
-    const app = await db.app.findUnique({ where: { id: app1.id } });
-    expect(app?.status).toBe(APP_STATUS.STOPPED);
+    const app = await getAppById(app1.id, db);
+    expect(app?.status).toBe('stopped');
   });
 });
 
@@ -320,8 +327,8 @@ describe('Start app', () => {
 
     // Act & Assert
     await expect(AppsService.startApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to start\nstdout: test`);
-    const app = await db.app.findUnique({ where: { id: app1.id } });
-    expect(app?.status).toBe(APP_STATUS.STOPPED);
+    const app = await getAppById(app1.id, db);
+    expect(app?.status).toBe('stopped');
   });
 });
 
@@ -353,8 +360,8 @@ describe('Stop app', () => {
 
     // Act & Assert
     await expect(AppsService.stopApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to stop\nstdout: test`);
-    const app = await db.app.findUnique({ where: { id: app1.id } });
-    expect(app?.status).toBe(APP_STATUS.RUNNING);
+    const app = await getAppById(app1.id, db);
+    expect(app?.status).toBe('running');
   });
 });
 
@@ -436,6 +443,16 @@ describe('Update app config', () => {
 
     await expect(AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json`);
   });
+
+  it('should throw if app is not exposed and config has force_expose set to true', async () => {
+    // arrange
+    const { MockFiles, appInfo } = await createApp({ forceExpose: true, installed: true }, db);
+    // @ts-expect-error - Mocking fs
+    fs.__createMockFiles(MockFiles);
+
+    // act & assert
+    await expect(AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} works only with exposed domain`);
+  });
 });
 
 describe('Get app config', () => {
@@ -454,7 +471,7 @@ describe('Get app config', () => {
     expect(app).toBeDefined();
     expect(app.config).toStrictEqual({ TEST_FIELD: 'test' });
     expect(app.id).toBe(app1.id);
-    expect(app.status).toBe(APP_STATUS.RUNNING);
+    expect(app.status).toBe('running');
   });
 
   it('Should return default values if app is not installed', async () => {
@@ -466,7 +483,7 @@ describe('Get app config', () => {
     expect(appconfig).toBeDefined();
     expect(appconfig.id).toBe(appInfo.id);
     expect(appconfig.config).toStrictEqual({});
-    expect(appconfig.status).toBe(APP_STATUS.MISSING);
+    expect(appconfig.status).toBe('missing');
   });
 });
 
@@ -565,14 +582,14 @@ describe('Update app', () => {
     // @ts-expect-error - Mocking fs
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
 
-    await db.app.update({ where: { id: app1.id }, data: { version: 0 } });
+    await updateApp(app1.id, { version: 0 }, db);
 
     const app = await AppsService.updateApp(app1.id);
 
     expect(app).toBeDefined();
-    expect(app.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(app.version).toBe(app1.tipi_version);
-    expect(app.status).toBe(APP_STATUS.STOPPED);
+    expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
+    expect(app?.version).toBe(app1.tipi_version);
+    expect(app?.status).toBe('stopped');
   });
 
   it("Should throw if app doesn't exist", async () => {
@@ -588,8 +605,8 @@ describe('Update app', () => {
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
     await expect(AppsService.updateApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to update\nstdout: error`);
-    const app = await db.app.findUnique({ where: { id: app1.id } });
-    expect(app?.status).toBe(APP_STATUS.STOPPED);
+    const app = await getAppById(app1.id, db);
+    expect(app?.status).toBe('stopped');
   });
 });
 
@@ -657,8 +674,8 @@ describe('startAllApps', () => {
 
     // Assert
     await waitForExpect(async () => {
-      const apps = await db.app.findMany();
-      expect(apps[0]?.status).toBe(APP_STATUS.STOPPED);
+      const apps = await getAllApps(db);
+      expect(apps[0]?.status).toBe('stopped');
     });
   });
 });

@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { inferRouterOutputs } from '@trpc/server';
+import { db } from '@/server/db';
 import { AppServiceClass } from '../../services/apps/apps.service';
 import { router, protectedProcedure } from '../../trpc';
-import { prisma } from '../../db/client';
 
 export type AppRouterOutput = inferRouterOutputs<typeof appRouter>;
-const AppService = new AppServiceClass(prisma);
+const AppService = new AppServiceClass(db);
 
 const formSchema = z.object({}).catchall(z.any());
 

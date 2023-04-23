@@ -17,7 +17,7 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
     const itemClass = clsx('nav-item', { active: isActive, 'border-primary': isActive, 'border-bottom-wide': isActive });
 
     return (
-      <li data-testid={`nav-item-${name}`} className={itemClass}>
+      <li aria-label={title} data-testid={`nav-item-${name}`} className={itemClass}>
         <Link href={`/${name}`} className="nav-link" passHref>
           <span className="nav-link-icon d-md-none d-lg-inline-block">
             <IconComponent size={24} />

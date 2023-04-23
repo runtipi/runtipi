@@ -1,42 +1,66 @@
 import { faker } from '@faker-js/faker';
-import { App, PrismaClient } from '@prisma/client';
+import { eq } from 'drizzle-orm';
+import fs from 'fs-extra';
 import { Architecture } from '../core/TipiConfig/TipiConfig';
 import { AppInfo, appInfoSchema } from '../services/apps/apps.helpers';
-import { AppCategory, APP_CATEGORIES } from '../services/apps/apps.types';
+import { APP_CATEGORIES } from '../services/apps/apps.types';
+import { TestDatabase } from './test-utils';
+import { appTable, AppStatus, App, NewApp } from '../db/schema';
 
 interface IProps {
   installed?: boolean;
-  status?: App['status'];
+  status?: AppStatus;
   requiredPort?: number;
   randomField?: boolean;
   exposed?: boolean;
   domain?: string;
   exposable?: boolean;
+  forceExpose?: boolean;
+  generateVapidKeys?: boolean;
   supportedArchitectures?: Architecture[];
 }
 
-type CreateConfigParams = {
-  id?: string;
-  name?: string;
-  categories?: AppCategory[];
-};
+const createAppConfig = (props?: Partial<AppInfo>) => {
+  const mockFiles: Record<string, string | string[]> = {};
 
-const createAppConfig = (props?: CreateConfigParams) =>
-  appInfoSchema.parse({
-    id: props?.id || faker.random.alphaNumeric(32),
+  const appInfo = appInfoSchema.parse({
+    id: faker.random.alphaNumeric(32),
     available: true,
     port: faker.datatype.number({ min: 30, max: 65535 }),
-    name: props?.name || faker.random.alphaNumeric(32),
+    name: faker.random.alphaNumeric(32),
     description: faker.random.alphaNumeric(32),
     tipi_version: 1,
     short_desc: faker.random.alphaNumeric(32),
     author: faker.random.alphaNumeric(32),
     source: faker.internet.url(),
-    categories: props?.categories || [APP_CATEGORIES.AUTOMATION],
+    categories: [APP_CATEGORIES.AUTOMATION],
+    ...props,
   });
 
-const createApp = async (props: IProps, db?: PrismaClient) => {
-  const { installed = false, status = 'running', randomField = false, exposed = false, domain = '', exposable = false, supportedArchitectures } = props;
+  mockFiles['/runtipi/.env'] = 'TEST=test';
+  mockFiles['/runtipi/repos/repo-id'] = '';
+  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
+  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+
+  // @ts-expect-error - fs-extra mock is not typed
+  fs.__applyMockFiles(mockFiles);
+
+  return appInfo;
+};
+
+const createApp = async (props: IProps, database: TestDatabase) => {
+  const {
+    installed = false,
+    status = 'running',
+    randomField = false,
+    exposed = false,
+    domain = null,
+    exposable = false,
+    supportedArchitectures,
+    forceExpose = false,
+    generateVapidKeys = false,
+  } = props;
 
   const categories = Object.values(APP_CATEGORIES);
 
@@ -62,10 +86,12 @@ const createApp = async (props: IProps, db?: PrismaClient) => {
     source: faker.internet.url(),
     categories: [categories[faker.datatype.number({ min: 0, max: categories.length - 1 })]] as AppInfo['categories'],
     exposable,
+    force_expose: forceExpose,
     supported_architectures: supportedArchitectures,
     version: String(faker.datatype.number({ min: 1, max: 10 })),
     https: false,
     no_gui: false,
+    generate_vapid_keys: generateVapidKeys,
   };
 
   if (randomField) {
@@ -85,17 +111,21 @@ const createApp = async (props: IProps, db?: PrismaClient) => {
   MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   let appEntity: App = {} as App;
-  if (installed && db) {
-    appEntity = await db.app.create({
-      data: {
+  if (installed) {
+    const insertedApp = await database.db
+      .insert(appTable)
+      .values({
         id: appInfo.id,
         config: { TEST_FIELD: 'test' },
         status,
         exposed,
         domain,
         version: 1,
-      },
-    });
+      })
+      .returning();
+
+    // eslint-disable-next-line prefer-destructuring
+    appEntity = insertedApp[0] as App;
 
     MockFiles[`/app/storage/app-data/${appInfo.id}`] = '';
     MockFiles[`/app/storage/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
@@ -106,4 +136,44 @@ const createApp = async (props: IProps, db?: PrismaClient) => {
   return { appInfo, MockFiles, appEntity };
 };
 
-export { createApp, createAppConfig };
+const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: TestDatabase) => {
+  const values: NewApp = {
+    id: appInfo.id,
+    config: { TEST_FIELD: 'test' },
+    status: 'running',
+    exposed: false,
+    domain: null,
+    version: 1,
+    ...data,
+  };
+
+  const mockFiles: Record<string, string | string[]> = {};
+  if (data.status !== 'missing') {
+    mockFiles[`/app/storage/app-data/${values.id}`] = '';
+    mockFiles[`/app/storage/app-data/${values.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    mockFiles[`/runtipi/apps/${values.id}/config.json`] = JSON.stringify(appInfo);
+    mockFiles[`/runtipi/apps/${values.id}/metadata/description.md`] = 'md desc';
+  }
+
+  // @ts-expect-error - fs-extra mock is not typed
+  fs.__applyMockFiles(mockFiles);
+
+  const insertedApp = await database.db.insert(appTable).values(values).returning();
+  return insertedApp[0] as App;
+};
+
+const getAppById = async (id: string, database: TestDatabase) => {
+  const apps = await database.db.select().from(appTable).where(eq(appTable.id, id));
+  return apps[0] || null;
+};
+
+const updateApp = async (id: string, props: Partial<App>, database: TestDatabase) => {
+  await database.db.update(appTable).set(props).where(eq(appTable.id, id));
+};
+
+const getAllApps = async (database: TestDatabase) => {
+  const apps = await database.db.select().from(appTable);
+  return apps;
+};
+
+export { createApp, getAppById, updateApp, getAllApps, createAppConfig, insertApp };

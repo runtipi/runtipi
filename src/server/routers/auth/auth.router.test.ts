@@ -1,24 +1,4 @@
-import { PrismaClient } from '@prisma/client';
 import { authRouter } from './auth.router';
-import { getTestDbClient } from '../../../../tests/server/db-connection';
-
-let db: PrismaClient;
-const TEST_SUITE = 'authrouter';
-
-beforeAll(async () => {
-  db = await getTestDbClient(TEST_SUITE);
-  jest.spyOn(console, 'log').mockImplementation(() => {});
-});
-
-beforeEach(async () => {
-  await db.user.deleteMany();
-  // Mute console.log
-});
-
-afterAll(async () => {
-  await db.user.deleteMany();
-  await db.$disconnect();
-});
 
 describe('Test: verifyTotp', () => {
   it('should be accessible without an account', async () => {

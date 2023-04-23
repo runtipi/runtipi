@@ -13,8 +13,8 @@ describe('Test: AppStorePage', () => {
     // Assert
     await waitFor(() => {
       expect(screen.getByText('An error occured')).toBeInTheDocument();
-      expect(screen.getByText('test error')).toBeInTheDocument();
     });
+    expect(screen.getByText('test error')).toBeInTheDocument();
   });
 
   it('should render', async () => {

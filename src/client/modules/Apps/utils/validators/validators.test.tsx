@@ -262,4 +262,34 @@ describe('Test: validateAppConfig', () => {
     const result = validateAppConfig(values, fields);
     expect(result).toEqual({});
   });
+
+  it('should validate field against the provided regex', () => {
+    // arrange
+    const valuesCorrect = {
+      version: '1.20.0',
+    };
+
+    const valuesIncorrect = {
+      version: 'abs',
+    };
+
+    const fields: FormField[] = [
+      {
+        label: 'Version',
+        type: 'text',
+        required: true,
+        regex: '^[0-9]+.[0-9]+.[0-9]+$', // only numbers and dots
+        pattern_error: 'Version must be in the format x.y.z',
+        env_variable: 'version',
+      },
+    ];
+
+    // act
+    const resultCorrect = validateAppConfig(valuesCorrect, fields);
+    const resultIncorrect = validateAppConfig(valuesIncorrect, fields);
+
+    // assert
+    expect(resultCorrect).toEqual({});
+    expect(resultIncorrect).toEqual({ version: 'Version must be in the format x.y.z' });
+  });
 });

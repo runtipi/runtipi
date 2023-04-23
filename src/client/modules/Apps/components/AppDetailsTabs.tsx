@@ -47,6 +47,14 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => (
             ))}
           </DataGridItem>
         )}
+        {info.website && (
+          <DataGridItem title="Website">
+            <a target="_blank" rel="noreferrer" className="text-blue-500 text-xs" href={info.website}>
+              {info.website}
+              <IconExternalLink size={15} className="ms-1 mb-1" />
+            </a>
+          </DataGridItem>
+        )}
       </DataGrid>
     </TabsContent>
   </Tabs>

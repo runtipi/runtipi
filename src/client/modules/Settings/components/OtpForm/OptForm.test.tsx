@@ -28,7 +28,7 @@ describe('<OtpForm />', () => {
 
   it('should prompt for password when disabling 2FA', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totp_enabled: true, id: 12, username: 'test' } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totpEnabled: true, id: 12, username: 'test' } }));
     render(<OtpForm />);
     const twoFactorAuthButton = screen.getByRole('switch', { name: /Enable two-factor authentication/i });
     await waitFor(() => {
@@ -46,7 +46,7 @@ describe('<OtpForm />', () => {
 
   it('should show show error toast if password is incorrect while enabling 2FA', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totp_enabled: false, id: 12, username: 'test' } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totpEnabled: false, id: 12, username: 'test' } }));
     server.use(getTRPCMockError({ path: ['auth', 'getTotpUri'], type: 'mutation', message: 'Invalid password' }));
     render(<OtpForm />);
     const twoFactorAuthButton = screen.getByRole('switch', { name: /Enable two-factor authentication/i });
@@ -74,7 +74,7 @@ describe('<OtpForm />', () => {
 
   it('should show show error toast if password is incorrect while disabling 2FA', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totp_enabled: true, id: 12, username: 'test' } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totpEnabled: true, id: 12, username: 'test' } }));
     server.use(getTRPCMockError({ path: ['auth', 'disableTotp'], type: 'mutation', message: 'Invalid password' }));
     render(<OtpForm />);
 
@@ -103,7 +103,7 @@ describe('<OtpForm />', () => {
 
   it('should show success toast if password is correct while disabling 2FA', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totp_enabled: true, id: 12, username: 'test' } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totpEnabled: true, id: 12, username: 'test' } }));
     server.use(getTRPCMock({ path: ['auth', 'disableTotp'], type: 'mutation', response: true }));
 
     render(<OtpForm />);
@@ -153,9 +153,9 @@ describe('<OtpForm />', () => {
     // assert
     await waitFor(() => {
       expect(screen.getByText('Scan this QR code with your authenticator app.')).toBeInTheDocument();
-      expect(screen.getByRole('textbox', { name: 'secret key' })).toHaveValue('test');
-      expect(screen.getByRole('button', { name: 'Enable 2FA' })).toBeDisabled();
     });
+    expect(screen.getByRole('textbox', { name: 'secret key' })).toHaveValue('test');
+    expect(screen.getByRole('button', { name: 'Enable 2FA' })).toBeDisabled();
   });
 
   it('should show error toast if submitted totp code is invalid', async () => {
@@ -262,7 +262,7 @@ describe('<OtpForm />', () => {
 
   it('can close the disable modal by clicking on the esc key', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totp_enabled: true, username: '', id: 1 } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totpEnabled: true, username: '', id: 1 } }));
     render(<OtpForm />);
     const twoFactorAuthButton = screen.getByRole('switch', { name: /Enable two-factor authentication/i });
     await waitFor(() => {

@@ -1,9 +1,10 @@
-import { PrismaClient } from '@prisma/client';
 import * as argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { generateSessionId } from '@/server/common/get-server-auth-session';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
@@ -19,10 +20,10 @@ type TokenResponse = {
 };
 
 export class AuthServiceClass {
-  private prisma;
+  private queries;
 
-  constructor(p: PrismaClient) {
-    this.prisma = p;
+  constructor(p: NodePgDatabase) {
+    this.queries = new AuthQueries(p);
   }
 
   /**
@@ -33,8 +34,7 @@ export class AuthServiceClass {
    */
   public login = async (input: UsernamePasswordInput) => {
     const { password, username } = input;
-
-    const user = await this.prisma.user.findUnique({ where: { username: username.trim().toLowerCase() } });
+    const user = await this.queries.getUserByUsername(username);
 
     if (!user) {
       throw new Error('User not found');
@@ -48,7 +48,7 @@ export class AuthServiceClass {
 
     const session = generateSessionId('auth');
 
-    if (user.totp_enabled) {
+    if (user.totpEnabled) {
       const totpSessionId = generateSessionId('otp');
       await TipiCache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
@@ -77,17 +77,17 @@ export class AuthServiceClass {
       throw new Error('TOTP session not found');
     }
 
-    const user = await this.prisma.user.findUnique({ where: { id: Number(userId) } });
+    const user = await this.queries.getUserById(Number(userId));
 
     if (!user) {
       throw new Error('User not found');
     }
 
-    if (!user.totp_enabled || !user.totp_secret || !user.salt) {
+    if (!user.totpEnabled || !user.totpSecret || !user.salt) {
       throw new Error('TOTP is not enabled for this user');
     }
 
-    const totpSecret = decrypt(user.totp_secret, user.salt);
+    const totpSecret = decrypt(user.totpSecret, user.salt);
     const isValid = TotpAuthenticator.check(totpCode, totpSecret);
 
     if (!isValid) {
@@ -116,7 +116,8 @@ export class AuthServiceClass {
     }
 
     const { userId, password } = params;
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    const user = await this.queries.getUserById(userId);
 
     if (!user) {
       throw new Error('User not found');
@@ -127,7 +128,7 @@ export class AuthServiceClass {
       throw new Error('Invalid password');
     }
 
-    if (user.totp_enabled) {
+    if (user.totpEnabled) {
       throw new Error('TOTP is already enabled for this user');
     }
 
@@ -140,13 +141,7 @@ export class AuthServiceClass {
 
     const encryptedTotpSecret = encrypt(newTotpSecret, salt);
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        totp_secret: encryptedTotpSecret,
-        salt,
-      },
-    });
+    await this.queries.updateUser(userId, { totpSecret: encryptedTotpSecret, salt });
 
     const uri = TotpAuthenticator.keyuri(user.username, 'Runtipi', newTotpSecret);
 
@@ -159,29 +154,24 @@ export class AuthServiceClass {
     }
 
     const { userId, totpCode } = params;
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.queries.getUserById(userId);
 
     if (!user) {
       throw new Error('User not found');
     }
 
-    if (user.totp_enabled || !user.totp_secret || !user.salt) {
+    if (user.totpEnabled || !user.totpSecret || !user.salt) {
       throw new Error('TOTP is already enabled for this user');
     }
 
-    const totpSecret = decrypt(user.totp_secret, user.salt);
+    const totpSecret = decrypt(user.totpSecret, user.salt);
     const isValid = TotpAuthenticator.check(totpCode, totpSecret);
 
     if (!isValid) {
       throw new Error('Invalid TOTP code');
     }
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        totp_enabled: true,
-      },
-    });
+    await this.queries.updateUser(userId, { totpEnabled: true });
 
     return true;
   };
@@ -189,13 +179,13 @@ export class AuthServiceClass {
   public disableTotp = async (params: { userId: number; password: string }) => {
     const { userId, password } = params;
 
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.queries.getUserById(userId);
 
     if (!user) {
       throw new Error('User not found');
     }
 
-    if (!user.totp_enabled) {
+    if (!user.totpEnabled) {
       throw new Error('TOTP is not enabled for this user');
     }
 
@@ -204,13 +194,7 @@ export class AuthServiceClass {
       throw new Error('Invalid password');
     }
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        totp_enabled: false,
-        totp_secret: null,
-      },
-    });
+    await this.queries.updateUser(userId, { totpEnabled: false, totpSecret: null });
 
     return true;
   };
@@ -223,9 +207,9 @@ export class AuthServiceClass {
    * @throws {Error} - If the email or password is missing, the email is invalid or the user already exists
    */
   public register = async (input: UsernamePasswordInput) => {
-    const registeredUser = await this.prisma.user.findFirst({ where: { operator: true } });
+    const operators = await this.queries.getOperators();
 
-    if (registeredUser) {
+    if (operators.length > 0) {
       throw new Error('There is already an admin user. Please login to create a new user from the admin panel.');
     }
 
@@ -240,14 +224,19 @@ export class AuthServiceClass {
       throw new Error('Invalid username');
     }
 
-    const user = await this.prisma.user.findUnique({ where: { username: email } });
+    const user = await this.queries.getUserByUsername(email);
 
     if (user) {
       throw new Error('User already exists');
     }
 
     const hash = await argon2.hash(password);
-    const newUser = await this.prisma.user.create({ data: { username: email, password: hash, operator: true } });
+
+    const newUser = await this.queries.createUser({ username: email, password: hash, operator: true });
+
+    if (!newUser) {
+      throw new Error('Error creating user');
+    }
 
     const session = generateSessionId('auth');
     const token = jwt.sign({ id: newUser.id, session }, getConfig().jwtSecret, { expiresIn: '1d' });
@@ -266,7 +255,7 @@ export class AuthServiceClass {
   public me = async (userId: number | undefined) => {
     if (!userId) return null;
 
-    const user = await this.prisma.user.findUnique({ where: { id: Number(userId) }, select: { id: true, username: true, totp_enabled: true } });
+    const user = await this.queries.getUserDtoById(userId);
 
     if (!user) return null;
 
@@ -315,9 +304,9 @@ export class AuthServiceClass {
    * @returns {Promise<boolean>} - A boolean indicating if the system is configured or not
    */
   public isConfigured = async (): Promise<boolean> => {
-    const count = await this.prisma.user.count({ where: { operator: true } });
+    const operators = await this.queries.getOperators();
 
-    return count > 0;
+    return operators.length > 0;
   };
 
   /**
@@ -334,14 +323,16 @@ export class AuthServiceClass {
     }
 
     const { newPassword } = params;
-    const user = await this.prisma.user.findFirst({ where: { operator: true } });
+
+    const user = await this.queries.getFirstOperator();
 
     if (!user) {
       throw new Error('Operator user not found');
     }
 
     const hash = await argon2.hash(newPassword);
-    await this.prisma.user.update({ where: { id: user.id }, data: { password: hash, totp_enabled: false, totp_secret: null } });
+
+    await this.queries.updateUser(user.id, { password: hash, totpEnabled: false, totpSecret: null });
 
     await unlinkFile(`/runtipi/state/password-change-request`);
 
@@ -384,7 +375,7 @@ export class AuthServiceClass {
 
     const { currentPassword, newPassword, userId } = params;
 
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.queries.getUserById(userId);
 
     if (!user) {
       throw new Error('User not found');
@@ -401,7 +392,7 @@ export class AuthServiceClass {
     }
 
     const hash = await argon2.hash(newPassword);
-    await this.prisma.user.update({ where: { id: user.id }, data: { password: hash } });
+    await this.queries.updateUser(user.id, { password: hash });
 
     await TipiCache.delByValue(userId.toString(), 'auth');
 

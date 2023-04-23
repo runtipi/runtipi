@@ -1,4 +1,5 @@
 import { createClient, RedisClientType } from 'redis';
+import { Logger } from '../Logger';
 import { getConfig } from '../TipiConfig';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
@@ -11,6 +12,10 @@ class TipiCache {
   constructor() {
     const client = createClient({
       url: `redis://${getConfig().REDIS_HOST}:6379`,
+    });
+
+    client.on('error', (err) => {
+      Logger.error(`Redis error: ${err}`);
     });
 
     this.client = client as RedisClientType;

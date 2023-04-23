@@ -4,7 +4,7 @@ import clsx from 'clsx';
 interface IProps {
   placeholder?: string;
   error?: string;
-  label?: string;
+  label?: string | React.ReactNode;
   className?: string;
   isInvalid?: boolean;
   type?: HTMLInputElement['type'];

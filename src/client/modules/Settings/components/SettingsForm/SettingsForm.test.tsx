@@ -24,11 +24,11 @@ describe('Test: SettingsForm', () => {
     // assert
     await waitFor(() => {
       expect(screen.getByDisplayValue(initialValues.dnsIp)).toBeInTheDocument();
-      expect(screen.getByDisplayValue(initialValues.domain)).toBeInTheDocument();
-      expect(screen.getByDisplayValue(initialValues.internalIp)).toBeInTheDocument();
-      expect(screen.getByDisplayValue(initialValues.appsRepoUrl)).toBeInTheDocument();
-      expect(screen.getByDisplayValue(initialValues.storagePath)).toBeInTheDocument();
     });
+    expect(screen.getByDisplayValue(initialValues.domain)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(initialValues.internalIp)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(initialValues.appsRepoUrl)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(initialValues.storagePath)).toBeInTheDocument();
   });
 
   it('should put submit errors in the fields', async () => {
@@ -45,11 +45,11 @@ describe('Test: SettingsForm', () => {
     // assert
     await waitFor(() => {
       expect(screen.getByText(submitErrors.dnsIp)).toBeInTheDocument();
-      expect(screen.getByText(submitErrors.domain)).toBeInTheDocument();
-      expect(screen.getByText(submitErrors.internalIp)).toBeInTheDocument();
-      expect(screen.getByText(submitErrors.appsRepoUrl)).toBeInTheDocument();
-      expect(screen.getByText(submitErrors.storagePath)).toBeInTheDocument();
     });
+    expect(screen.getByText(submitErrors.domain)).toBeInTheDocument();
+    expect(screen.getByText(submitErrors.internalIp)).toBeInTheDocument();
+    expect(screen.getByText(submitErrors.appsRepoUrl)).toBeInTheDocument();
+    expect(screen.getByText(submitErrors.storagePath)).toBeInTheDocument();
   });
 
   it('should correctly validate the form', async () => {
@@ -71,9 +71,9 @@ describe('Test: SettingsForm', () => {
     // assert
     await waitFor(() => {
       expect(screen.getAllByText('Invalid IP address')).toHaveLength(2);
-      expect(screen.getByText('Invalid domain')).toBeInTheDocument();
-      expect(screen.getByText('Invalid URL')).toBeInTheDocument();
     });
+    expect(screen.getByText('Invalid domain')).toBeInTheDocument();
+    expect(screen.getByText('Invalid URL')).toBeInTheDocument();
   });
 
   it('should call onSubmit when the form is submitted', async () => {

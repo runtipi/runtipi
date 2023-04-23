@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsdoc', 'jsx-a11y'],
+  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsdoc', 'jsx-a11y', 'testing-library', 'jest-dom'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'next/core-web-vitals',
@@ -12,6 +12,8 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:jsdoc/recommended',
     'plugin:jsx-a11y/recommended',
+    'plugin:testing-library/react',
+    'plugin:jest-dom/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -22,6 +24,7 @@ module.exports = {
   },
   rules: {
     'no-restricted-exports': 0,
+    'no-redeclare': 0, // already handled by @typescript-eslint/no-redeclare
     'react/display-name': 0,
     'react/prop-types': 0,
     'react/function-component-definition': 0,
@@ -34,6 +37,7 @@ module.exports = {
     'no-underscore-dangle': 0,
     'arrow-body-style': 0,
     'class-methods-use-this': 0,
+    'jsdoc/require-returns': 0,
   },
   globals: {
     JSX: true,

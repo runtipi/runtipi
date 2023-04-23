@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { AppStatus, APP_CATEGORIES } from '../../../server/services/apps/apps.types';
+import type { AppStatus } from '@/server/db/schema';
+import { APP_CATEGORIES } from '../../../server/services/apps/apps.types';
 import { App, AppCategory, AppInfo, AppWithInfo } from '../../core/types';
 
 const randomCategory = (): AppCategory[] => {
@@ -27,6 +28,8 @@ export const createApp = (overrides?: Partial<AppInfo>): AppInfo => {
     no_gui: false,
     exposable: true,
     url_suffix: '',
+    force_expose: false,
+    generate_vapid_keys: false,
     ...overrides,
   };
 };
@@ -50,10 +53,10 @@ export const createAppEntity = (params: CreateAppEntityParams): AppWithInfo => {
     exposed: false,
     domain: null,
     version: 1,
-    lastOpened: faker.date.past(),
+    lastOpened: faker.date.past().toISOString(),
     numOpened: 0,
-    createdAt: faker.date.past(),
-    updatedAt: faker.date.past(),
+    createdAt: faker.date.past().toISOString(),
+    updatedAt: faker.date.past().toISOString(),
     latestVersion: 1,
     latestDockerVersion: '1.0.0',
     ...overrides,

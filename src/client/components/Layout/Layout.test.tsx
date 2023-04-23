@@ -44,7 +44,7 @@ describe('Test: Layout', () => {
     // Act
     await waitFor(() => {
       expect(removeItemSpy).toBeCalledWith('token');
-      expect(pushFn).toBeCalledWith('/login');
     });
+    expect(pushFn).toBeCalledWith('/login');
   });
 });

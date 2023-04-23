@@ -19,7 +19,7 @@ describe('ResetPasswordForm', () => {
     fireEvent.click(screen.getByText('Reset password'));
 
     // Assert
-    await waitFor(() => expect(screen.getByText('Password must be at least 8 characters')).toBeInTheDocument());
+    await screen.findByText('Password must be at least 8 characters');
   });
 
   it('should display an error if the passwords do not match', async () => {
@@ -32,7 +32,7 @@ describe('ResetPasswordForm', () => {
     fireEvent.click(screen.getByText('Reset password'));
 
     // Assert
-    await waitFor(() => expect(screen.getByText('Passwords do not match')).toBeInTheDocument());
+    await screen.findByText('Passwords do not match');
   });
 
   it('should call the onSubmit function when the form is submitted', async () => {

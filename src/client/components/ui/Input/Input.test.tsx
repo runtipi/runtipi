@@ -1,105 +1,149 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { Input } from './Input';
-import { fireEvent, render, waitFor } from '../../../../../tests/test-utils';
+import { fireEvent, render, waitFor, screen } from '../../../../../tests/test-utils';
 
 describe('Input', () => {
   it('should render without errors', () => {
+    // arrange
     const { container } = render(<Input name="test-input" />);
+
+    // assert
     expect(container).toBeTruthy();
   });
 
   it('should render the label if provided', () => {
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" />);
-    const input = getByLabelText('Test Label');
-    expect(input).toBeTruthy();
+    // arrange
+    render(<Input name="test-input" label="Test Label" />);
+    const input = screen.getByLabelText('Test Label');
+
+    // assert
+    expect(input).toBeInTheDocument();
   });
 
   it('should render the placeholder if provided', () => {
-    const { getByPlaceholderText } = render(<Input name="test-input" placeholder="Test Placeholder" />);
-    const input = getByPlaceholderText('Test Placeholder');
-    expect(input).toBeTruthy();
+    // arrange
+    render(<Input name="test-input" placeholder="Test Placeholder" />);
+
+    // assert
+    const input = screen.getByPlaceholderText('Test Placeholder');
+    expect(input).toBeInTheDocument();
   });
 
   it('should render the error message if provided', () => {
-    const { getByText } = render(<Input name="test-input" error="Test Error" />);
-    const error = getByText('Test Error');
-    expect(error).toBeTruthy();
+    // arrange
+    render(<Input name="test-input" error="Test Error" />);
+
+    // assert
+    const error = screen.getByText('Test Error');
+    expect(error).toBeInTheDocument();
   });
 
   it('should call onChange when the input value is changed', async () => {
+    // arrange
     const onChange = jest.fn();
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" onChange={onChange} />);
-    const input = getByLabelText('Test Label');
+    render(<Input name="test-input" label="Test Label" onChange={onChange} />);
+    const input = screen.getByLabelText('Test Label');
+
+    // act
     fireEvent.change(input, { target: { value: 'changed' } });
+
+    // assert
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
   });
 
   it('should call onBlur when the input is blurred', async () => {
+    // arrange
     const onBlur = jest.fn();
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" onBlur={onBlur} />);
-    const input = getByLabelText('Test Label');
+    render(<Input name="test-input" label="Test Label" onBlur={onBlur} />);
+    const input = screen.getByLabelText('Test Label');
+
+    // act
     fireEvent.blur(input);
+
+    // assert
     await waitFor(() => expect(onBlur).toHaveBeenCalledTimes(1));
   });
 
   it('should set the input type if provided', () => {
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" type="password" />);
-    const input = getByLabelText('Test Label') as HTMLInputElement;
+    // arrange
+    render(<Input name="test-input" label="Test Label" type="password" />);
+    const input = screen.getByLabelText('Test Label') as HTMLInputElement;
+
+    // assert
     expect(input.type).toBe('password');
   });
 
   it('should set the input value if provided', () => {
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" value="Test Value" onChange={jest.fn} />);
-    const input = getByLabelText('Test Label') as HTMLInputElement;
+    // arrange
+    render(<Input name="test-input" label="Test Label" value="Test Value" onChange={jest.fn} />);
+    const input = screen.getByLabelText('Test Label') as HTMLInputElement;
+
+    // assert
     expect(input.value).toBe('Test Value');
   });
 
-  it('should apply the className prop to the container div', () => {
-    const { container } = render(<Input name="test-input" className="test-class" />);
-    expect(container.firstChild).toHaveClass('test-class');
-  });
-
   it('should apply the isInvalid prop to the input element', () => {
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" isInvalid />);
-    const input = getByLabelText('Test Label');
+    // arrange
+    render(<Input name="test-input" label="Test Label" isInvalid />);
+    const input = screen.getByLabelText('Test Label');
+
+    // assert
     expect(input).toHaveClass('is-invalid', 'is-invalid-lite');
   });
 
   it('should apply the disabled prop to the input element', () => {
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" disabled />);
-    const input = getByLabelText('Test Label');
+    // arrange
+    render(<Input name="test-input" label="Test Label" disabled />);
+
+    // assert
+    const input = screen.getByLabelText('Test Label');
     expect(input).toBeDisabled();
   });
 
   it('should set the input name attribute if provided', () => {
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" />);
-    const input = getByLabelText('Test Label');
+    // arrange
+    render(<Input name="test-input" label="Test Label" />);
+    const input = screen.getByLabelText('Test Label');
+
+    // assert
     expect(input).toHaveAttribute('name', 'test-input');
   });
 
   it('should set the input id attribute if provided', () => {
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" />);
-    const input = getByLabelText('Test Label');
+    // arrange
+    render(<Input name="test-input" label="Test Label" />);
+    const input = screen.getByLabelText('Test Label');
+
+    // assert
     expect(input).toHaveAttribute('id', 'test-input');
   });
 
   it('should set the input ref if provided', () => {
+    // arrange
     const ref = React.createRef<HTMLInputElement>();
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" ref={ref} />);
-    const input = getByLabelText('Test Label');
+    render(<Input name="test-input" label="Test Label" ref={ref} />);
+    const input = screen.getByLabelText('Test Label');
+
+    // assert
     expect(input).toEqual(ref.current);
   });
 
   it('should set the input type attribute to "text" if not provided or if an invalid value is provided', () => {
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" />);
-    const input1 = getByLabelText('Test Label') as HTMLInputElement;
-    expect(input1.type).toBe('text');
+    // arrange
+    render(<Input name="test-input" label="Test Label" />);
+    const input = screen.getByLabelText('Test Label') as HTMLInputElement;
+
+    // assert
+    expect(input.type).toBe('text');
   });
 
   it('should set the input placeholder attribute if provided', () => {
-    const { getByLabelText } = render(<Input name="test-input" label="Test Label" placeholder="Test Placeholder" />);
-    const input = getByLabelText('Test Label');
+    // arrange
+    render(<Input name="test-input" label="Test Label" placeholder="Test Placeholder" />);
+    const input = screen.getByLabelText('Test Label');
+
+    // assert
     expect(input).toHaveAttribute('placeholder', 'Test Placeholder');
   });
 });

@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { AuthServiceClass } from '../../services/auth/auth.service';
 import { router, publicProcedure, protectedProcedure } from '../../trpc';
-import { prisma } from '../../db/client';
+import { db } from '../../db';
 
-const AuthService = new AuthServiceClass(prisma);
+const AuthService = new AuthServiceClass(db);
 
 export const authRouter = router({
   login: publicProcedure.input(z.object({ username: z.string(), password: z.string() })).mutation(async ({ input }) => AuthService.login({ ...input })),

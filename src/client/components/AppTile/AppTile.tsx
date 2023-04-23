@@ -2,11 +2,12 @@ import Link from 'next/link';
 import React from 'react';
 import { IconDownload } from '@tabler/icons-react';
 import { Tooltip } from 'react-tooltip';
+import type { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { AppStatus } from '../AppStatus';
 import { AppLogo } from '../AppLogo/AppLogo';
 import { limitText } from '../../modules/AppStore/helpers/table.helpers';
 import styles from './AppTile.module.scss';
-import { AppInfo, AppStatus as AppStatusEnum } from '../../core/types';
+import { AppInfo } from '../../core/types';
 
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc'>;
 
