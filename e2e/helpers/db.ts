@@ -4,7 +4,7 @@ import { getConfig } from '../../src/server/core/TipiConfig';
 export const clearDatabase = async () => {
   const pgClient = new pg.Client({
     user: getConfig().postgresUsername,
-    host: 'localhost',
+    host: '127.0.0.1',
     database: getConfig().postgresDatabase,
     password: getConfig().postgresPassword,
     port: getConfig().postgresPort,

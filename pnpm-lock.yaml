@@ -171,8 +171,11 @@ devDependencies:
   '@faker-js/faker':
     specifier: ^8.0.1
     version: 8.0.1
+  '@playwright/test':
+    specifier: ^1.32.3
+    version: 1.32.3
   '@testing-library/dom':
-    specifier: ^9.3.0
+    specifier: ^9.0.1
     version: 9.3.0
   '@testing-library/jest-dom':
     specifier: ^5.16.5
@@ -349,13 +352,6 @@ packages:
     dependencies:
       '@jridgewell/gen-mapping': 0.1.1
       '@jridgewell/trace-mapping': 0.3.17
-
-  /@babel/code-frame@7.18.6:
-    resolution: {integrity: sha512-TDCmlK5eOvH+eH7cdAFlNXeVJqWIQ7gW9tY1GJIpUtFb6CmjVyq2VM3u71bOyR8CRihcCgMUYoDNyLXao3+70Q==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/highlight': 7.18.6
-    dev: true
 
   /@babel/code-frame@7.21.4:
     resolution: {integrity: sha512-LYvhNKfwWSPpocw8GI7gpK2nq3HSDuEPC/uSYaALSJu9xjsalaaYFOq0Pwt5KmVqwEbZlDu81aLXwBOmD/Fv9g==}
@@ -1617,6 +1613,17 @@ packages:
       tslib: 2.5.2
     dev: true
 
+  /@playwright/test@1.32.3:
+    resolution: {integrity: sha512-BvWNvK0RfBriindxhLVabi8BRe3X0J9EVjKlcmhxjg4giWBD/xleLcg2dz7Tx0agu28rczjNIPQWznwzDwVsZQ==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dependencies:
+      '@types/node': 20.2.1
+      playwright-core: 1.32.3
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
   /@popperjs/core@2.11.7:
     resolution: {integrity: sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==}
     dev: false
@@ -2228,7 +2235,7 @@ packages:
     resolution: {integrity: sha512-Dffe68pGwI6WlLRYR2I0piIkyole9cSBH5jGQKCGMRpHW5RHCqAUaqc2Kv0tUyd4dU4DLPKhJIjyKOnjv4tuUw==}
     engines: {node: '>=14'}
     dependencies:
-      '@babel/code-frame': 7.18.6
+      '@babel/code-frame': 7.21.4
       '@babel/runtime': 7.20.13
       '@types/aria-query': 5.0.1
       aria-query: 5.1.3

@@ -71,4 +71,4 @@ generate_env_file "${env_variables_json}"
 ### --------------------------------
 ### Start the project
 ### --------------------------------
-docker compose -f docker-compose.dev.yml up --build
+docker compose -f docker-compose.test.yml up --build
