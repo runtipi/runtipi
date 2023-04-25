@@ -1,0 +1,101 @@
+version: '3.7'
+
+services:
+  reverse-proxy:
+    container_name: reverse-proxy
+    image: traefik:v2.8
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+      - ${NGINX_PORT-80}:80
+    command: --providers.docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/traefik:/root/.config
+      - ${PWD}/traefik/shared:/shared
+    networks:
+      - tipi_main_network
+
+  tipi-db:
+    container_name: tipi-db
+    image: postgres:14
+    restart: unless-stopped
+    stop_grace_period: 1m
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_DB: ${POSTGRES_DBNAME}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d tipi -U tipi']
+      interval: 5s
+      timeout: 10s
+      retries: 120
+    networks:
+      - tipi_main_network
+
+  tipi-redis:
+    container_name: tipi-redis
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 10s
+      retries: 120
+    networks:
+      - tipi_main_network
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: dashboard
+    networks:
+      - tipi_main_network
+    depends_on:
+      tipi-db:
+        condition: service_healthy
+      tipi-redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      INTERNAL_IP: ${INTERNAL_IP}
+      TIPI_VERSION: ${TIPI_VERSION}
+      JWT_SECRET: ${JWT_SECRET}
+      NGINX_PORT: ${NGINX_PORT}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_DBNAME: ${POSTGRES_DBNAME}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      APPS_REPO_ID: ${APPS_REPO_ID}
+      APPS_REPO_URL: ${APPS_REPO_URL}
+      DOMAIN: ${DOMAIN}
+      ARCHITECTURE: ${ARCHITECTURE}
+      REDIS_HOST: ${REDIS_HOST}
+      DEMO_MODE: ${DEMO_MODE}
+    volumes:
+      - ${PWD}/state:/runtipi/state
+      - ${PWD}/repos:/runtipi/repos:ro
+      - ${PWD}/apps:/runtipi/apps
+      - ${PWD}/logs:/app/logs
+      - ${PWD}:/app/storage
+    labels:
+      traefik.enable: true
+      # Web
+      traefik.http.routers.dashboard.rule: PathPrefix("/")
+      traefik.http.routers.dashboard.service: dashboard
+      traefik.http.routers.dashboard.entrypoints: web
+      traefik.http.services.dashboard.loadbalancer.server.port: 3000
+
+networks:
+  tipi_main_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.21.21.0/24
