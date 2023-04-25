@@ -42,7 +42,7 @@ test('user can install and uninstall app', async ({ page, context }) => {
 
   // Uninstall app
   await page.getByRole('button', { name: 'Remove' }).click();
-  await expect(page.getByText('Uninstall Hello World ?')).toBeVisible();
+  await expect(page.getByText('Uninstall Hello World?')).toBeVisible();
 
   await page.getByRole('button', { name: 'Uninstall' }).click();
 
