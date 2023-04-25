@@ -5,6 +5,8 @@
   "scripts": {
     "copy:migrations": "mkdir -p dist/migrations && cp -r ./src/server/migrations dist",
     "test": "dotenv -e .env.test -- jest --colors",
+    "test:e2e": "NODE_ENV=test dotenv -e .env.e2e -- playwright test",
+    "test:e2e:ui": "NODE_ENV=test dotenv -e .env.e2e -- playwright test --ui",
     "test:client": "jest --colors --selectProjects client --",
     "test:server": "jest --colors --selectProjects server --",
     "dev": "npm run copy:migrations && nodemon",
@@ -18,6 +20,7 @@
     "start:dev-container": "./.devcontainer/filewatcher.sh && npm run start:dev",
     "start:rc": "docker-compose -f docker-compose.rc.yml --env-file .env up --build",
     "start:prod": "docker-compose -f docker-compose.test.yml --env-file .env up --build",
+    "start:e2e": "./scripts/start-e2e.sh",
     "start:pg": "docker run --name test-db -p 5433:5432 -d --rm -e POSTGRES_PASSWORD=postgres postgres:14",
     "version": "echo $npm_package_version",
     "release:rc": "./scripts/deploy/release-rc.sh",
