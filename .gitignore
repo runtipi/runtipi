@@ -59,3 +59,6 @@ traefik/shared
 media
 
 /state/
+/test-results/
+/playwright-report/
+/playwright/.cache/
