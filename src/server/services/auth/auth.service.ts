@@ -282,11 +282,19 @@ export class AuthServiceClass {
    * @param {string} [session] - The current session token
    * @returns {Promise<{token: string} | null>} - An object containing the new session token, or null if the session is invalid
    */
-  public static refreshToken = async (session?: string): Promise<TokenResponse | null> => {
+  public refreshToken = async (session?: string): Promise<TokenResponse | null> => {
     if (!session) return null;
 
     const userId = await TipiCache.get(session);
+
     if (!userId) return null;
+
+    const user = await this.queries.getUserById(Number(userId));
+
+    if (!user) {
+      await TipiCache.delByValue(userId.toString(), 'auth');
+      return null;
+    }
 
     // Expire token in 6 seconds
     await TipiCache.set(session, userId, 6);
