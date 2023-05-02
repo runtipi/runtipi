@@ -1,53 +1,53 @@
 {
-  "hello": "world",
+  "hello": "le monde",
   "Auth": {
     "login": {
-      "title": "Login to your account",
-      "submit": "Login"
+      "title": "Connectez-vous à votre compte",
+      "submit": "Connexion"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "Créez votre compte",
+      "submit": "S'inscrire"
     },
     "form": {
-      "email": "Email address",
-      "emailPlaceholder": "you@example.com",
-      "password": "Password",
-      "passwordPlaceholder": "Enter your password",
-      "passwordConfirmation": "Confirm password",
-      "passwordConfirmationPlaceholder": "Confirm your password",
-      "forgot": "Forgot password?",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "vous@exemple.fr",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "passwordConfirmation": "Confirmez le mot de passe",
+      "passwordConfirmationPlaceholder": "Confirmez le mot de passe",
+      "forgot": "Mot de passe oublié ?",
       "errors": {
         "email": {
-          "required": "Email address is required",
-          "email": "Email address is invalid",
-          "invalid": "Email address is invalid"
+          "required": "L'adresse email est requise",
+          "email": "Adresse e-mail invalide",
+          "invalid": "Adresse e-mail invalide"
         },
         "password": {
-          "required": "Password is required",
-          "minlength": "Password must be at least 6 characters"
+          "required": "Mot de passe requis",
+          "minlength": "Le mot de passe doit comporter au moins 6 caractères"
         },
         "passwordConfirmation": {
-          "required": "Password confirmation is required",
-          "minlength": "Password confirmation must be at least 6 characters",
-          "match": "Passwords do not match"
+          "required": "La confirmation du mot de passe est requise",
+          "minlength": "Le mot de passe doit contenir 6 caractères minimum",
+          "match": "Les mots de passe ne correspondent pas"
         }
       }
     }
   },
   "Dashboard": {
-    "title": "Dashboard",
+    "title": "Tableau de bord",
     "cards": {
       "disk": {
-        "title": "Disk Space",
-        "subtitle": "Used out of {total} GB"
+        "title": "Espace disque",
+        "subtitle": "Utilisé sur {total} Go"
       },
       "memory": {
-        "title": "Memory Used"
+        "title": "Mémoire utilisée"
       },
       "cpu": {
-        "title": "CPU Load",
-        "subtitle": "Uninstall apps to reduce load"
+        "title": "Charge CPU",
+        "subtitle": "Désinstallez des applications pour réduire la charge"
       }
     }
   }
