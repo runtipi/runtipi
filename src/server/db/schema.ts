@@ -24,6 +24,7 @@ export const userTable = pgTable('user', {
   totpSecret: text('totp_secret'),
   totpEnabled: boolean('totp_enabled').default(false).notNull(),
   salt: text('salt'),
+  locale: varchar('locale').default('en').notNull(),
 });
 export type User = InferModel<typeof userTable>;
 export type NewUser = InferModel<typeof userTable, 'insert'>;
