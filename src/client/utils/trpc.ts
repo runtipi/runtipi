@@ -17,8 +17,6 @@ function getBaseUrl() {
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
 
-let token: string | null = '';
-
 export const trpc = createTRPCNext<AppRouter>({
   config() {
     return {
@@ -29,14 +27,11 @@ export const trpc = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
-          headers() {
-            if (typeof window !== 'undefined') {
-              token = localStorage.getItem('token');
-            }
-
-            return {
-              authorization: token ? `Bearer ${token}` : '',
-            };
+          fetch(url, options) {
+            return fetch(url, {
+              ...options,
+              credentials: 'include',
+            });
           },
         }),
       ],
