@@ -470,7 +470,7 @@ describe('Test: logout', () => {
 describe('Test: refreshToken', () => {
   it('Should return null if session is not provided', async () => {
     // Act
-    const result = await AuthServiceClass.refreshToken();
+    const result = await AuthService.refreshToken();
 
     // Assert
     expect(result).toBeNull();
@@ -478,19 +478,22 @@ describe('Test: refreshToken', () => {
 
   it('Should return null if session is not found in cache', async () => {
     // Act
-    const result = await AuthServiceClass.refreshToken('test');
+    const result = await AuthService.refreshToken('test');
 
     // Assert
     expect(result).toBeNull();
   });
 
-  it('Should return a new token if session is found in cache', async () => {
+  it('Should return a new token if session is found in cache and user exists', async () => {
     // Arrange
     const session = faker.random.alphaNumeric(32);
-    await TipiCache.set(session, 'test');
+    const fakeId = faker.datatype.number();
+    await createUser({ id: fakeId }, database);
+
+    await TipiCache.set(session, fakeId.toString());
 
     // Act
-    const result = await AuthServiceClass.refreshToken(session);
+    const result = await AuthService.refreshToken(session);
 
     // Assert
     expect(result).not.toBeNull();
@@ -498,13 +501,26 @@ describe('Test: refreshToken', () => {
     expect(result?.token).not.toBe(session);
   });
 
-  it('Should put expiration in 6 seconds for old session', async () => {
+  it('Should return null if user does not exist', async () => {
     // Arrange
     const session = faker.random.alphaNumeric(32);
     await TipiCache.set(session, '1');
 
     // Act
-    const result = await AuthServiceClass.refreshToken(session);
+    const result = await AuthService.refreshToken(session);
+
+    // Assert
+    expect(result).toBeNull();
+  });
+
+  it('Should put expiration in 6 seconds for old session', async () => {
+    // Arrange
+    const session = faker.random.alphaNumeric(32);
+    await createUser({ id: 1 }, database);
+    await TipiCache.set(session, '1');
+
+    // Act
+    const result = await AuthService.refreshToken(session);
     const expiration = await TipiCache.ttl(session);
 
     // Assert
