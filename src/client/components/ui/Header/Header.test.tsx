@@ -3,6 +3,19 @@ import { fireEvent, render, renderHook, screen, waitFor } from '../../../../../t
 import { useUIStore } from '../../../state/uiStore';
 import { Header } from './Header';
 
+const pushFn = jest.fn();
+jest.mock('next/router', () => {
+  const actualRouter = jest.requireActual('next-router-mock');
+
+  return {
+    ...actualRouter,
+    useRouter: () => ({
+      ...actualRouter.useRouter(),
+      push: pushFn,
+    }),
+  };
+});
+
 describe('Header', () => {
   it('renders without crashing', () => {
     render(<Header />);
@@ -46,14 +59,13 @@ describe('Header', () => {
     expect(result.current.darkMode).toBe(false);
   });
 
-  it('Should remove the token from local storage on logout', async () => {
-    localStorage.setItem('token', 'token');
+  it('Should redirect to /login after successful logout', async () => {
     render(<Header />);
     const logoutButton = screen.getByTestId('logout-button');
     fireEvent.click(logoutButton as Element);
 
     await waitFor(() => {
-      expect(localStorage.getItem('token')).toBeNull();
+      expect(pushFn).toHaveBeenCalledWith('/login');
     });
   });
 });

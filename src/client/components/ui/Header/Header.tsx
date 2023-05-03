@@ -20,7 +20,6 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
   const utils = trpc.useContext();
   const logout = trpc.auth.logout.useMutation({
     onSuccess: () => {
-      localStorage.removeItem('token');
       utils.auth.me.invalidate();
       router.push('/login');
     },

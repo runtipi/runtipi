@@ -27,7 +27,6 @@ export const GeneralActions = () => {
     },
     onSuccess: async () => {
       setPollStatus(true);
-      localStorage.removeItem('token');
     },
     onError: (error) => {
       updateDisclosure.close();
@@ -42,7 +41,6 @@ export const GeneralActions = () => {
     },
     onSuccess: async () => {
       setPollStatus(true);
-      localStorage.removeItem('token');
     },
     onError: (error) => {
       restartDisclosure.close();

@@ -37,11 +37,3 @@ export const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
     </Layout>
   );
 };
-
-AppDetailsPage.getInitialProps = (ctx) => {
-  const { query } = ctx;
-
-  const appId = String(query.id);
-
-  return { appId };
-};
