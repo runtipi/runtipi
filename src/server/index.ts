@@ -2,6 +2,7 @@
 /* eslint-disable global-require */
 import express from 'express';
 import { parse } from 'url';
+
 import type { NextServer } from 'next/dist/server/next';
 import { EventDispatcher } from './core/EventDispatcher';
 import { getConfig, setConfig } from './core/TipiConfig';
@@ -9,6 +10,7 @@ import { Logger } from './core/Logger';
 import { runPostgresMigrations } from './run-migration';
 import { AppServiceClass } from './services/apps/apps.service';
 import { db } from './db';
+import { sessionMiddleware } from './middlewares/session.middleware';
 
 let conf = {};
 let nextApp: NextServer;
@@ -32,6 +34,8 @@ const handle = nextApp.getRequestHandler();
 nextApp.prepare().then(async () => {
   const app = express();
   app.disable('x-powered-by');
+
+  app.use(sessionMiddleware);
 
   app.use('/static', express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/`));
 

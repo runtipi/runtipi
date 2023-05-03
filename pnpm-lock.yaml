@@ -58,12 +58,18 @@ dependencies:
   clsx:
     specifier: ^1.1.1
     version: 1.2.1
+  connect-redis:
+    specifier: ^7.0.1
+    version: 7.0.1(express-session@1.17.3)
   drizzle-orm:
     specifier: ^0.24.1
     version: 0.24.1(@types/pg@8.6.6)(pg@8.10.0)
   express:
     specifier: ^4.17.3
     version: 4.18.2
+  express-session:
+    specifier: ^1.17.3
+    version: 1.17.3
   fs-extra:
     specifier: ^11.1.0
     version: 11.1.0
@@ -180,6 +186,9 @@ devDependencies:
   '@types/express':
     specifier: ^4.17.13
     version: 4.17.17
+  '@types/express-session':
+    specifier: ^1.17.7
+    version: 1.17.7
   '@types/fs-extra':
     specifier: ^11.0.1
     version: 11.0.1
@@ -2388,6 +2397,12 @@ packages:
       '@types/range-parser': 1.2.4
     dev: true
 
+  /@types/express-session@1.17.7:
+    resolution: {integrity: sha512-L25080PBYoRLu472HY/HNCxaXY8AaGgqGC8/p/8+BYMhG0RDOLQ1wpXOpAzr4Gi5TGozTKyJv5BVODM5UNyVMw==}
+    dependencies:
+      '@types/express': 4.17.17
+    dev: true
+
   /@types/express@4.17.17:
     resolution: {integrity: sha512-Q4FmmuLGBG58btUnfS1c1r/NQdlp3DMfGDGig8WhfpA2YRUtEkxAjkZb0yvplJGYdF1fsQ81iMDcH24sSCNC/Q==}
     dependencies:
@@ -3567,6 +3582,15 @@ packages:
     resolution: {integrity: sha512-JsPKdmh8ZkmnHxDk55FZ1TqVLvEQTvoByJZRN9jzI0UjxK/QgAmsphz7PGtqgPieQZ/CQcHWXCR7ATDNhGe+YA==}
     dev: true
 
+  /connect-redis@7.0.1(express-session@1.17.3):
+    resolution: {integrity: sha512-xxyhus0nfPw96s0jI5fvRwGGYwJYISgVuJv40OSFV8N4l4ystNHZdoq0w90XhOGbsZTQJGc9Nwr6RnYsVZZv8w==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      express-session: '>=1'
+    dependencies:
+      express-session: 1.17.3
+    dev: false
+
   /console-control-strings@1.1.0:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
     dev: false
@@ -3597,7 +3621,6 @@ packages:
   /cookie@0.4.2:
     resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
     engines: {node: '>= 0.6'}
-    dev: true
 
   /cookie@0.5.0:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
@@ -4947,6 +4970,22 @@ packages:
       jest-message-util: 29.5.0
       jest-util: 29.5.0
     dev: true
+
+  /express-session@1.17.3:
+    resolution: {integrity: sha512-4+otWXlShYlG1Ma+2Jnn+xgKUZTMJ5QD3YvfilX3AcocOAbIkVylSWEklzALe/+Pu4qV6TYBj5GwOBFfdKqLBw==}
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      cookie: 0.4.2
+      cookie-signature: 1.0.6
+      debug: 2.6.9
+      depd: 2.0.0
+      on-headers: 1.0.2
+      parseurl: 1.3.3
+      safe-buffer: 5.2.1
+      uid-safe: 2.1.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /express@4.18.2:
     resolution: {integrity: sha512-5/PsL6iGPdfQ/lKM1UuielYgv3BUoJfz1aUwU9vHZ+J7gyvwdQXFEBIEIaxeGf0GIcreATNyBExtalisDbuMqQ==}
@@ -7530,6 +7569,11 @@ packages:
       ee-first: 1.1.1
     dev: false
 
+  /on-headers@1.0.2:
+    resolution: {integrity: sha512-pZAE+FJLoyITytdqK0U5s+FIpjN0JP3OzFi/u8Rx+EV5/W+JTWGXG8xFzevE7AjBfDqHv/8vL8qQsIhHnqRkrA==}
+    engines: {node: '>= 0.8'}
+    dev: false
+
   /once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
     dependencies:
@@ -7930,6 +7974,11 @@ packages:
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
+
+  /random-bytes@1.0.0:
+    resolution: {integrity: sha512-iv7LhNVO047HzYR3InF6pUcUsPQiHTM1Qal51DcGSuZFBil1aBBWG5eHPNek7bvILMaYJ/8RU1e8w1AMdHmLQQ==}
+    engines: {node: '>= 0.8'}
+    dev: false
 
   /range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
@@ -9050,6 +9099,13 @@ packages:
     engines: {node: '>=12.20'}
     hasBin: true
     dev: true
+
+  /uid-safe@2.1.5:
+    resolution: {integrity: sha512-KPHm4VL5dDXKz01UuEd88Df+KzynaohSL9fBh096KWAxSKZQDI2uBrVqtvRM4rwrIrRRKsdLNML/lnaaVSRioA==}
+    engines: {node: '>= 0.8'}
+    dependencies:
+      random-bytes: 1.0.0
+    dev: false
 
   /unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}

@@ -1,10 +1,9 @@
 import fs from 'fs-extra';
 import * as argon2 from 'argon2';
-import jwt from 'jsonwebtoken';
 import { faker } from '@faker-js/faker';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { generateSessionId } from '@/server/common/get-server-auth-session';
-import { fromAny } from '@total-typescript/shoehorn';
+import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { mockInsert, mockSelect } from '@/server/tests/drizzle-helpers';
 import { createDatabase, clearDatabase, closeDatabase, TestDatabase } from '@/server/tests/test-utils';
 import { encrypt } from '../../utils/encryption';
@@ -35,56 +34,49 @@ afterAll(async () => {
 });
 
 describe('Login', () => {
-  it('Should return a valid jsonwebtoken containing a user id', async () => {
-    // Arrange
+  it('Should correclty set session on request object', async () => {
+    // arrange
+    const req = { session: { userId: undefined } };
     const email = faker.internet.email();
     const user = await createUser({ email }, database);
 
-    // Act
-    const { token } = await AuthService.login({ username: email, password: 'password' });
-    const decoded = jwt.verify(token as string, 'test') as jwt.JwtPayload;
+    // act
+    await AuthService.login({ username: email, password: 'password' }, fromPartial(req));
 
-    // Assert
-    expect(decoded).toBeDefined();
-    expect(decoded).toBeDefined();
-    expect(decoded).not.toBeNull();
-    expect(decoded).toHaveProperty('id');
-    expect(decoded.id).toBe(user.id);
-    expect(decoded).toHaveProperty('iat');
-    expect(decoded).toHaveProperty('exp');
-    expect(decoded).toHaveProperty('session');
+    // assert
+    expect(req.session.userId).toBe(user.id);
   });
 
   it('Should throw if user does not exist', async () => {
-    await expect(AuthService.login({ username: 'test', password: 'test' })).rejects.toThrowError('User not found');
+    await expect(AuthService.login({ username: 'test', password: 'test' }, fromPartial({}))).rejects.toThrowError('User not found');
   });
 
   it('Should throw if password is incorrect', async () => {
     const email = faker.internet.email();
     await createUser({ email }, database);
-    await expect(AuthService.login({ username: email, password: 'wrong' })).rejects.toThrowError('Wrong password');
+    await expect(AuthService.login({ username: email, password: 'wrong' }, fromPartial({}))).rejects.toThrowError('Wrong password');
   });
 
   // TOTP
-  it('should return a totp session id the user totpEnabled is true', async () => {
+  it('should return a totp session if the user totpEnabled is true', async () => {
     // arrange
     const email = faker.internet.email();
     const totpSecret = TotpAuthenticator.generateSecret();
     await createUser({ email, totpEnabled: true, totpSecret }, database);
 
     // act
-    const { totpSessionId, token } = await AuthService.login({ username: email, password: 'password' });
+    const { totpSessionId } = await AuthService.login({ username: email, password: 'password' }, fromPartial({}));
 
     // assert
     expect(totpSessionId).toBeDefined();
     expect(totpSessionId).not.toBeNull();
-    expect(token).toBeUndefined();
   });
 });
 
 describe('Test: verifyTotp', () => {
   it('should return a valid jsonwebtoken if the totp is correct', async () => {
     // arrange
+    const req = { session: { userId: undefined } };
     const email = faker.internet.email();
     const salt = faker.random.word();
     const totpSecret = TotpAuthenticator.generateSecret();
@@ -97,11 +89,14 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, user.id.toString());
 
     // act
-    const { token } = await AuthService.verifyTotp({ totpSessionId, totpCode: otp });
+    const result = await AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial(req));
 
     // assert
-    expect(token).toBeDefined();
-    expect(token).not.toBeNull();
+    expect(result).toBeTruthy();
+    expect(result).not.toBeNull();
+    expect(req.session.userId).toBeDefined();
+    expect(req.session.userId).not.toBeNull();
+    expect(req.session.userId).toBe(user.id);
   });
 
   it('should throw if the totp is incorrect', async () => {
@@ -115,7 +110,7 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' })).rejects.toThrowError('Invalid TOTP');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' }, fromPartial({}))).rejects.toThrowError('Invalid TOTP');
   });
 
   it('should throw if the totpSessionId is invalid', async () => {
@@ -131,7 +126,7 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp })).rejects.toThrowError('TOTP session not found');
+    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp }, fromPartial({}))).rejects.toThrowError('TOTP session not found');
   });
 
   it('should throw if the user does not exist', async () => {
@@ -140,7 +135,7 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, '1234');
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' })).rejects.toThrowError('User not found');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' }, fromPartial({}))).rejects.toThrowError('User not found');
   });
 
   it('should throw if the user totpEnabled is false', async () => {
@@ -156,7 +151,7 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp })).rejects.toThrowError('TOTP is not enabled for this user');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial({}))).rejects.toThrowError('TOTP is not enabled for this user');
   });
 });
 
@@ -359,32 +354,29 @@ describe('Test: disableTotp', () => {
 });
 
 describe('Register', () => {
-  it('Should return valid jsonwebtoken after register', async () => {
-    // Arrange
+  it('Should correctly set session on request object', async () => {
+    // arrange
+    const req = { session: { userId: undefined } };
     const email = faker.internet.email();
 
-    // Act
-    const { token } = await AuthService.register({ username: email, password: 'password' });
-    const decoded = jwt.verify(token, 'test') as jwt.JwtPayload;
+    // act
+    const result = await AuthService.register({ username: email, password: 'password' }, fromPartial(req));
 
-    // Assert
-    expect(decoded).toBeDefined();
-    expect(decoded).not.toBeNull();
-    expect(decoded).toHaveProperty('id');
-    expect(decoded).toHaveProperty('iat');
-    expect(decoded).toHaveProperty('exp');
-    expect(decoded).toHaveProperty('session');
+    // assert
+    expect(result).toBeTruthy();
+    expect(result).not.toBeNull();
+    expect(req.session.userId).toBeDefined();
   });
 
   it('Should correctly trim and lowercase email', async () => {
-    // Arrange
+    // arrange
     const email = faker.internet.email();
 
-    // Act
-    await AuthService.register({ username: email, password: 'test' });
+    // act
+    await AuthService.register({ username: email, password: 'test' }, fromPartial({ session: {} }));
     const user = await getUserByEmail(email.toLowerCase().trim(), database);
 
-    // Assert
+    // assert
     expect(user).toBeDefined();
     expect(user?.username).toBe(email.toLowerCase().trim());
   });
@@ -395,7 +387,9 @@ describe('Register', () => {
 
     // Act & Assert
     await createUser({ email, operator: true }, database);
-    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('There is already an admin user. Please login to create a new user from the admin panel.');
+    await expect(AuthService.register({ username: email, password: 'test' }, fromPartial({}))).rejects.toThrowError(
+      'There is already an admin user. Please login to create a new user from the admin panel.',
+    );
   });
 
   it('Should throw if user already exists', async () => {
@@ -404,130 +398,67 @@ describe('Register', () => {
 
     // Act & Assert
     await createUser({ email, operator: false }, database);
-    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('User already exists');
+    await expect(AuthService.register({ username: email, password: 'test' }, fromPartial({}))).rejects.toThrowError('User already exists');
   });
 
   it('Should throw if email is not provided', async () => {
-    await expect(AuthService.register({ username: '', password: 'test' })).rejects.toThrowError('Missing email or password');
+    await expect(AuthService.register({ username: '', password: 'test' }, fromPartial({}))).rejects.toThrowError('Missing email or password');
   });
 
   it('Should throw if password is not provided', async () => {
-    await expect(AuthService.register({ username: faker.internet.email(), password: '' })).rejects.toThrowError('Missing email or password');
+    await expect(AuthService.register({ username: faker.internet.email(), password: '' }, fromPartial({}))).rejects.toThrowError('Missing email or password');
   });
 
   it('Password is correctly hashed', async () => {
-    // Arrange
+    // arrange
     const email = faker.internet.email().toLowerCase().trim();
 
-    // Act
-    await AuthService.register({ username: email, password: 'test' });
+    // act
+    await AuthService.register({ username: email, password: 'test' }, fromPartial({ session: {} }));
     const user = await getUserByEmail(email, database);
     const isPasswordValid = await argon2.verify(user?.password || '', 'test');
 
-    // Assert
+    // assert
     expect(isPasswordValid).toBe(true);
   });
 
   it('Should throw if email is invalid', async () => {
-    await expect(AuthService.register({ username: 'test', password: 'test' })).rejects.toThrowError('Invalid username');
+    await expect(AuthService.register({ username: 'test', password: 'test' }, fromPartial({}))).rejects.toThrowError('Invalid username');
   });
 
   it('should throw if db fails to insert user', async () => {
     // Arrange
+    const req = {};
     const email = faker.internet.email();
     const mockDatabase = { select: mockSelect([]), insert: mockInsert([]) };
     const newAuthService = new AuthServiceClass(fromAny(mockDatabase));
 
     // Act & Assert
-    await expect(newAuthService.register({ username: email, password: 'test' })).rejects.toThrowError('Error creating user');
+    await expect(newAuthService.register({ username: email, password: 'test' }, fromPartial(req))).rejects.toThrowError('Error creating user');
   });
 });
 
 describe('Test: logout', () => {
   it('Should return true if there is no session to delete', async () => {
-    // Act
-    const result = await AuthServiceClass.logout();
+    // act
+    const req = {};
+    const result = await AuthServiceClass.logout(fromPartial(req));
 
-    // Assert
+    // assert
     expect(result).toBe(true);
   });
 
-  it('Should delete session from cache', async () => {
-    // Arrange
-    const session = faker.random.alphaNumeric(32);
-    await TipiCache.set(session, 'test');
-    expect(await TipiCache.get(session)).toBe('test');
+  it('Should destroy session upon logount', async () => {
+    // arrange
+    const destroy = jest.fn();
+    const req = { session: { userId: 1, destroy } };
 
-    // Act
-    const result = await AuthServiceClass.logout(session);
+    // act
+    const result = await AuthServiceClass.logout(fromPartial(req));
 
-    // Assert
+    // assert
     expect(result).toBe(true);
-    expect(await TipiCache.get('session')).toBeUndefined();
-  });
-});
-
-describe('Test: refreshToken', () => {
-  it('Should return null if session is not provided', async () => {
-    // Act
-    const result = await AuthService.refreshToken();
-
-    // Assert
-    expect(result).toBeNull();
-  });
-
-  it('Should return null if session is not found in cache', async () => {
-    // Act
-    const result = await AuthService.refreshToken('test');
-
-    // Assert
-    expect(result).toBeNull();
-  });
-
-  it('Should return a new token if session is found in cache and user exists', async () => {
-    // Arrange
-    const session = faker.random.alphaNumeric(32);
-    const fakeId = faker.datatype.number();
-    await createUser({ id: fakeId }, database);
-
-    await TipiCache.set(session, fakeId.toString());
-
-    // Act
-    const result = await AuthService.refreshToken(session);
-
-    // Assert
-    expect(result).not.toBeNull();
-    expect(result).toHaveProperty('token');
-    expect(result?.token).not.toBe(session);
-  });
-
-  it('Should return null if user does not exist', async () => {
-    // Arrange
-    const session = faker.random.alphaNumeric(32);
-    await TipiCache.set(session, '1');
-
-    // Act
-    const result = await AuthService.refreshToken(session);
-
-    // Assert
-    expect(result).toBeNull();
-  });
-
-  it('Should put expiration in 6 seconds for old session', async () => {
-    // Arrange
-    const session = faker.random.alphaNumeric(32);
-    await createUser({ id: 1 }, database);
-    await TipiCache.set(session, '1');
-
-    // Act
-    const result = await AuthService.refreshToken(session);
-    const expiration = await TipiCache.ttl(session);
-
-    // Assert
-    expect(result).not.toBeNull();
-    expect(result).toHaveProperty('token');
-    expect(result?.token).not.toBe(session);
-    expect(expiration).toMatchObject({ EX: 6 });
+    expect(destroy).toHaveBeenCalled();
   });
 });
 

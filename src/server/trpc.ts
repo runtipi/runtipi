@@ -2,6 +2,10 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { typeToFlattenedError, ZodError } from 'zod';
 import { type Context } from './context';
+import { AuthQueries } from './queries/auth/auth.queries';
+import { db } from './db';
+
+const authQueries = new AuthQueries(db);
 
 /**
  * Convert ZodError to a record
@@ -44,15 +48,20 @@ export const publicProcedure = t.procedure;
  * Reusable middleware to ensure
  * users are logged in
  */
-const isAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.userId) {
+const isAuthed = t.middleware(async ({ ctx, next }) => {
+  const userId = ctx.req.session?.userId;
+  if (!userId) {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You need to be logged in to perform this action' });
   }
-  return next({
-    ctx: {
-      session: { ...ctx.session, user: ctx.session.userId },
-    },
-  });
+
+  const user = await authQueries.getUserById(userId);
+
+  if (!user) {
+    ctx.req.session.destroy(() => {});
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You need to be logged in to perform this action' });
+  }
+
+  return next({ ctx });
 });
 
 /**
