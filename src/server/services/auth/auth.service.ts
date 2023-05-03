@@ -1,10 +1,12 @@
 import * as argon2 from 'argon2';
-import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { generateSessionId } from '@/server/common/get-server-auth-session';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { AuthQueries } from '@/server/queries/auth/auth.queries';
+import { Context } from '@/server/context';
+import { NextApiRequest } from 'next/types';
+import { Logger } from '@/server/core/Logger';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
@@ -13,10 +15,6 @@ import { decrypt, encrypt } from '../../utils/encryption';
 type UsernamePasswordInput = {
   username: string;
   password: string;
-};
-
-type TokenResponse = {
-  token: string;
 };
 
 export class AuthServiceClass {
@@ -30,9 +28,10 @@ export class AuthServiceClass {
    * Authenticate user with given username and password
    *
    * @param {UsernamePasswordInput} input - An object containing the user's username and password
+   * @param {NextApiRequest} req - The Next.js request object
    * @returns {Promise<{token:string}>} - A promise that resolves to an object containing the JWT token
    */
-  public login = async (input: UsernamePasswordInput) => {
+  public login = async (input: UsernamePasswordInput, req: Context['req']) => {
     const { password, username } = input;
     const user = await this.queries.getUserByUsername(username);
 
@@ -46,19 +45,15 @@ export class AuthServiceClass {
       throw new Error('Wrong password');
     }
 
-    const session = generateSessionId('auth');
-
     if (user.totpEnabled) {
       const totpSessionId = generateSessionId('otp');
       await TipiCache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
 
-    const token = jwt.sign({ id: user.id, session }, getConfig().jwtSecret, { expiresIn: '7d' });
+    req.session.userId = user.id;
 
-    await TipiCache.set(session, user.id.toString());
-
-    return { token };
+    return {};
   };
 
   /**
@@ -67,9 +62,10 @@ export class AuthServiceClass {
    * @param {object} params - An object containing the TOTP session ID and the TOTP code
    * @param {string} params.totpSessionId - The TOTP session ID
    * @param {string} params.totpCode - The TOTP code
+   * @param {NextApiRequest} req - The Next.js request object
    * @returns {Promise<{token:string}>} - A promise that resolves to an object containing the JWT token
    */
-  public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
+  public verifyTotp = async (params: { totpSessionId: string; totpCode: string }, req: Context['req']) => {
     const { totpSessionId, totpCode } = params;
     const userId = await TipiCache.get(totpSessionId);
 
@@ -94,12 +90,9 @@ export class AuthServiceClass {
       throw new Error('Invalid TOTP code');
     }
 
-    const session = generateSessionId('otp');
-    const token = jwt.sign({ id: user.id, session }, getConfig().jwtSecret, { expiresIn: '7d' });
+    req.session.userId = user.id;
 
-    await TipiCache.set(session, user.id.toString());
-
-    return { token };
+    return true;
   };
 
   /**
@@ -203,10 +196,11 @@ export class AuthServiceClass {
    * Creates a new user with the provided email and password and returns a session token
    *
    * @param {UsernamePasswordInput} input - An object containing the email and password fields
+   * @param {NextApiRequest} req - The Next.js request object
    * @returns {Promise<{token: string}>} - An object containing the session token
    * @throws {Error} - If the email or password is missing, the email is invalid or the user already exists
    */
-  public register = async (input: UsernamePasswordInput) => {
+  public register = async (input: UsernamePasswordInput, req: Context['req']) => {
     const operators = await this.queries.getOperators();
 
     if (operators.length > 0) {
@@ -238,12 +232,9 @@ export class AuthServiceClass {
       throw new Error('Error creating user');
     }
 
-    const session = generateSessionId('auth');
-    const token = jwt.sign({ id: newUser.id, session }, getConfig().jwtSecret, { expiresIn: '1d' });
+    req.session.userId = newUser.id;
 
-    await TipiCache.set(session, newUser.id.toString());
-
-    return { token };
+    return true;
   };
 
   /**
@@ -265,45 +256,21 @@ export class AuthServiceClass {
   /**
    * Logs out the current user by removing the session token
    *
-   * @param {string} [session] - The session token to log out
+   * @param  {NextApiRequest} req - The Next.js request object
    * @returns {Promise<boolean>} - Returns true if the session token is removed successfully
    */
-  public static logout = async (session?: string): Promise<boolean> => {
-    if (session) {
-      await TipiCache.del(session);
+  public static logout = async (req: Context['req']): Promise<boolean> => {
+    if (!req.session) {
+      return true;
     }
+
+    req.session.destroy((err) => {
+      if (err) {
+        Logger.error(err);
+      }
+    });
 
     return true;
-  };
-
-  /**
-   * Refreshes a user's session token
-   *
-   * @param {string} [session] - The current session token
-   * @returns {Promise<{token: string} | null>} - An object containing the new session token, or null if the session is invalid
-   */
-  public refreshToken = async (session?: string): Promise<TokenResponse | null> => {
-    if (!session) return null;
-
-    const userId = await TipiCache.get(session);
-
-    if (!userId) return null;
-
-    const user = await this.queries.getUserById(Number(userId));
-
-    if (!user) {
-      await TipiCache.delByValue(userId.toString(), 'auth');
-      return null;
-    }
-
-    // Expire token in 6 seconds
-    await TipiCache.set(session, userId, 6);
-
-    const newSession = generateSessionId('auth');
-    const token = jwt.sign({ id: userId, session: newSession }, getConfig().jwtSecret, { expiresIn: '1d' });
-    await TipiCache.set(newSession, userId);
-
-    return { token };
   };
 
   /**

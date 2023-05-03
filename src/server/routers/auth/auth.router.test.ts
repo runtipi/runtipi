@@ -1,9 +1,10 @@
+import { fromPartial } from '@total-typescript/shoehorn';
 import { authRouter } from './auth.router';
 
 describe('Test: verifyTotp', () => {
   it('should be accessible without an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: null });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: {} } }));
     let error;
 
     // act
@@ -23,7 +24,7 @@ describe('Test: verifyTotp', () => {
 describe('Test: getTotpUri', () => {
   it('should not be accessible without an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: null });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: {} } }));
     let error;
 
     // act
@@ -39,7 +40,7 @@ describe('Test: getTotpUri', () => {
 
   it('should be accessible with an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: { userId: 123456 } });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: { userId: 123456 } } }));
     let error;
 
     // act
@@ -57,7 +58,7 @@ describe('Test: getTotpUri', () => {
 describe('Test: setupTotp', () => {
   it('should not be accessible without an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: null });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: {} } }));
     let error;
 
     // act
@@ -73,7 +74,7 @@ describe('Test: setupTotp', () => {
 
   it('should be accessible with an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: { userId: 123456 } });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: { userId: 123456 } } }));
     let error;
 
     // act
@@ -91,7 +92,7 @@ describe('Test: setupTotp', () => {
 describe('Test: disableTotp', () => {
   it('should not be accessible without an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: null });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: {} } }));
     let error;
 
     // act
@@ -107,7 +108,7 @@ describe('Test: disableTotp', () => {
 
   it('should be accessible with an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: { userId: 122 } });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: { userId: 123456 } } }));
     let error;
 
     // act
@@ -126,7 +127,7 @@ describe('Test: disableTotp', () => {
 describe('Test: changeOperatorPassword', () => {
   it('should be accessible without an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: null });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: {} } }));
     let error;
 
     // act
@@ -142,7 +143,7 @@ describe('Test: changeOperatorPassword', () => {
 
   it('should be accessible with an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: { userId: 122 } });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: { userId: 122 } } }));
     let error;
 
     // act
@@ -160,7 +161,7 @@ describe('Test: changeOperatorPassword', () => {
 describe('Test: resetPassword', () => {
   it('should not be accessible without an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: null });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: {} } }));
     let error;
 
     // act
@@ -176,7 +177,7 @@ describe('Test: resetPassword', () => {
 
   it('should be accessible with an account', async () => {
     // arrange
-    const caller = authRouter.createCaller({ session: { userId: 122 } });
+    const caller = authRouter.createCaller(fromPartial({ req: { session: { userId: 122 } } }));
     let error;
 
     // act

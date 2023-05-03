@@ -1,14 +1,15 @@
 import { inferAsyncReturnType } from '@trpc/server';
 import { CreateNextContextOptions } from '@trpc/server/adapters/next';
-import { getServerAuthSession } from './common/get-server-auth-session';
 
 type Session = {
   userId?: number;
-  id?: string;
 };
 
 type CreateContextOptions = {
-  session: Session | null;
+  req: CreateNextContextOptions['req'] & {
+    session?: Session;
+  };
+  res: CreateNextContextOptions['res'];
 };
 
 /**
@@ -20,7 +21,7 @@ type CreateContextOptions = {
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
 export const createContextInner = async (opts: CreateContextOptions) => ({
-  session: opts.session,
+  ...opts,
 });
 
 /**
@@ -31,11 +32,9 @@ export const createContextInner = async (opts: CreateContextOptions) => ({
 export const createContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
-  // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await getServerAuthSession({ req, res });
-
   return createContextInner({
-    session,
+    req,
+    res,
   });
 };
 
