@@ -16,6 +16,7 @@ jest.mock('next/router', () => {
     }),
   };
 });
+
 describe('Test: LoginPage', () => {
   it('should render correctly', async () => {
     render(<LoginPage />);

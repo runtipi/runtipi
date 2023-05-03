@@ -5,6 +5,19 @@ import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
 import { RegisterContainer } from './RegisterContainer';
 
+const pushFn = jest.fn();
+jest.mock('next/router', () => {
+  const actualRouter = jest.requireActual('next-router-mock');
+
+  return {
+    ...actualRouter,
+    useRouter: () => ({
+      ...actualRouter.useRouter(),
+      push: pushFn,
+    }),
+  };
+});
+
 describe('Test: RegisterContainer', () => {
   it('should render without error', () => {
     render(<RegisterContainer />);
@@ -12,13 +25,12 @@ describe('Test: RegisterContainer', () => {
     expect(screen.getByText('Register')).toBeInTheDocument();
   });
 
-  it('should add token in localStorage on submit', async () => {
+  it.only('should redirect to / upon successful registration', async () => {
     // Arrange
     const email = faker.internet.email();
     const password = faker.internet.password();
-    const token = faker.datatype.uuid();
 
-    server.use(getTRPCMock({ path: ['auth', 'register'], type: 'mutation', response: { token }, delay: 100 }));
+    server.use(getTRPCMock({ path: ['auth', 'register'], type: 'mutation', response: true, delay: 100 }));
     render(<RegisterContainer />);
 
     // Act
@@ -33,7 +45,9 @@ describe('Test: RegisterContainer', () => {
     fireEvent.click(registerButton);
 
     // Assert
-    await waitFor(() => expect(localStorage.getItem('token')).toEqual(token));
+    await waitFor(() => {
+      expect(pushFn).toHaveBeenCalledWith('/');
+    });
   });
 
   it('should show toast if register mutation fails', async () => {

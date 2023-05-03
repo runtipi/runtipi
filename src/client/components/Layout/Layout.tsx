@@ -1,16 +1,13 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import React, { useEffect } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import semver from 'semver';
-import { useRouter } from 'next/router';
 import { Header } from '../ui/Header';
 import styles from './Layout.module.scss';
 import { useSystemStore } from '../../state/systemStore';
-import { trpc } from '../../utils/trpc';
 
 interface IProps {
-  loading?: boolean;
   breadcrumbs?: { name: string; href: string; current?: boolean }[];
   children: React.ReactNode;
   title?: string;
@@ -18,21 +15,6 @@ interface IProps {
 }
 
 export const Layout: React.FC<IProps> = ({ children, breadcrumbs, title, actions }) => {
-  const router = useRouter();
-  const { mutate } = trpc.auth.refreshToken.useMutation({
-    onSuccess: (data) => {
-      if (data?.token) localStorage.setItem('token', data.token);
-    },
-    onError: () => {
-      localStorage.removeItem('token');
-      router.push('/login');
-    },
-  });
-
-  useEffect(() => {
-    mutate();
-  }, [mutate]);
-
   const { version } = useSystemStore();
   const defaultVersion = '0.0.0';
   const isLatest = semver.gte(version?.current || defaultVersion, version?.latest || defaultVersion);

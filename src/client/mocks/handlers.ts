@@ -40,7 +40,7 @@ export const handlers = [
   getTRPCMock({
     path: ['auth', 'login'],
     type: 'mutation',
-    response: { token: 'token' },
+    response: {},
   }),
   getTRPCMock({
     path: ['auth', 'logout'],
@@ -48,14 +48,9 @@ export const handlers = [
     response: true,
   }),
   getTRPCMock({
-    path: ['auth', 'refreshToken'],
-    type: 'mutation',
-    response: { token: 'token' },
-  }),
-  getTRPCMock({
     path: ['auth', 'register'],
     type: 'mutation',
-    response: { token: 'token' },
+    response: true,
   }),
   getTRPCMock({
     path: ['auth', 'me'],
