@@ -5,6 +5,19 @@ import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
 import { server } from '../../../../mocks/server';
 import { LoginContainer } from './LoginContainer';
 
+const pushFn = jest.fn();
+jest.mock('next/router', () => {
+  const actualRouter = jest.requireActual('next-router-mock');
+
+  return {
+    ...actualRouter,
+    useRouter: () => ({
+      ...actualRouter.useRouter(),
+      push: pushFn,
+    }),
+  };
+});
+
 describe('Test: LoginContainer', () => {
   it('should render without error', () => {
     // Arrange
@@ -38,12 +51,11 @@ describe('Test: LoginContainer', () => {
     expect(loginButton).toBeEnabled();
   });
 
-  it('should add token in localStorage on submit', async () => {
+  it('should redirect to / upon successful login', async () => {
     // Arrange
     const email = faker.internet.email();
     const password = faker.internet.password();
-    const token = faker.datatype.uuid();
-    server.use(getTRPCMock({ path: ['auth', 'login'], type: 'mutation', response: { token } }));
+    server.use(getTRPCMock({ path: ['auth', 'login'], type: 'mutation', response: {} }));
     render(<LoginContainer />);
 
     // Act
@@ -57,7 +69,7 @@ describe('Test: LoginContainer', () => {
 
     // Assert
     await waitFor(() => {
-      expect(localStorage.getItem('token')).toEqual(token);
+      expect(pushFn).toHaveBeenCalledWith('/');
     });
   });
 
@@ -79,8 +91,6 @@ describe('Test: LoginContainer', () => {
     await waitFor(() => {
       expect(screen.getByText(/my big error/)).toBeInTheDocument();
     });
-    const token = localStorage.getItem('token');
-    expect(token).toBeNull();
   });
 
   it('should show totp form if totpSessionId is returned', async () => {
@@ -149,14 +159,13 @@ describe('Test: LoginContainer', () => {
     });
   });
 
-  it('should add token in localStorage if totp code is valid', async () => {
+  it('should redirect to / if totp is valid', async () => {
     // arrange
     const email = faker.internet.email();
     const password = faker.internet.password();
     const totpSessionId = faker.datatype.uuid();
-    const token = faker.datatype.uuid();
     server.use(getTRPCMock({ path: ['auth', 'login'], type: 'mutation', response: { totpSessionId } }));
-    server.use(getTRPCMock({ path: ['auth', 'verifyTotp'], type: 'mutation', response: { token } }));
+    server.use(getTRPCMock({ path: ['auth', 'verifyTotp'], type: 'mutation', response: true }));
     render(<LoginContainer />);
 
     // act
@@ -183,7 +192,7 @@ describe('Test: LoginContainer', () => {
 
     // assert
     await waitFor(() => {
-      expect(localStorage.getItem('token')).toEqual(token);
+      expect(pushFn).toHaveBeenCalledWith('/');
     });
   });
 });

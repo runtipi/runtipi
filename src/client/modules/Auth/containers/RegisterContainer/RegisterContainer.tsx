@@ -12,11 +12,9 @@ export const RegisterContainer: React.FC = () => {
   const utils = trpc.useContext();
   const register = trpc.auth.register.useMutation({
     onError: (e) => {
-      localStorage.removeItem('token');
       toast.error(`Registration failed: ${e.message}`);
     },
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
+    onSuccess: () => {
       utils.auth.me.invalidate();
       router.push('/');
     },

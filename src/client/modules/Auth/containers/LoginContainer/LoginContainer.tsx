@@ -1,6 +1,6 @@
-import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/router';
 import { trpc } from '../../../../utils/trpc';
 import { AuthFormLayout } from '../../components/AuthFormLayout';
 import { LoginForm } from '../../components/LoginForm';
@@ -14,14 +14,12 @@ export const LoginContainer: React.FC = () => {
   const utils = trpc.useContext();
   const login = trpc.auth.login.useMutation({
     onError: (e) => {
-      localStorage.removeItem('token');
       toast.error(`Login failed: ${e.message}`);
     },
     onSuccess: (data) => {
       if (data.totpSessionId) {
         setTotpSessionId(data.totpSessionId);
-      } else if (data.token) {
-        localStorage.setItem('token', data.token);
+      } else {
         utils.auth.me.invalidate();
         router.push('/');
       }
@@ -32,8 +30,7 @@ export const LoginContainer: React.FC = () => {
     onError: (e) => {
       toast.error(`Verification failed: ${e.message}`);
     },
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
+    onSuccess: () => {
       utils.auth.me.invalidate();
       router.push('/');
     },
