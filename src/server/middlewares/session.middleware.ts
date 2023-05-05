@@ -20,7 +20,7 @@ export const sessionMiddleware = session({
   name: 'tipi.sid',
   cookie: { maxAge: COOKIE_MAX_AGE, httpOnly: true, secure: false, sameSite: false },
   store: redisStore,
-  resave: false, // required: force lightweight session keep alive (touch)
-  saveUninitialized: false, // recommended: only save session when data exists
+  resave: false,
+  saveUninitialized: false,
   secret: getConfig().jwtSecret,
 });
