@@ -672,4 +672,20 @@ describe('Test: changePassword', () => {
     // act & assert
     await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError('Changing password is not allowed in demo mode');
   });
+
+  it('should delete all sessions for the user', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, database);
+    const newPassword = faker.internet.password();
+    await TipiCache.set(`session:${user.id}:${faker.random.word()}`, 'test');
+
+    // act
+    await AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' });
+
+    // assert
+    // eslint-disable-next-line testing-library/no-await-sync-query
+    const sessions = await TipiCache.getByPrefix(`session:${user.id}:`);
+    expect(sessions).toHaveLength(0);
+  });
 });

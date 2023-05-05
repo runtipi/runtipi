@@ -24,3 +24,5 @@ export const authRouter = router({
   setupTotp: protectedProcedure.input(z.object({ totpCode: z.string() })).mutation(({ input, ctx }) => AuthService.setupTotp({ userId: Number(ctx.req.session.userId), totpCode: input.totpCode })),
   disableTotp: protectedProcedure.input(z.object({ password: z.string() })).mutation(({ input, ctx }) => AuthService.disableTotp({ userId: Number(ctx.req.session.userId), password: input.password })),
 });
+
+export type AuthRouter = typeof authRouter;
