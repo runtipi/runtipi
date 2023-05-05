@@ -7,7 +7,6 @@ import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { Context } from '@/server/context';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
-import { Logger } from '../../core/Logger';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
 
@@ -346,12 +345,14 @@ export class AuthServiceClass {
    * @param {number} userId - The user ID
    */
   private destroyAllSessionsByUserId = async (userId: number) => {
-    await TipiCache.getByPrefix(`session:${userId}:`).then((sessions) => {
-      sessions.forEach((session) => {
-        TipiCache.del(session.key).then(() => Logger.info('Session deleted'));
-        TipiCache.del(`tipi:${session.val}`).then(() => Logger.info('Session key deleted'));
-      });
-    });
+    const sessions = await TipiCache.getByPrefix(`session:${userId}:`);
+
+    await Promise.all(
+      sessions.map(async (session) => {
+        await TipiCache.del(session.key);
+        await TipiCache.del(`tipi:${session.val}`);
+      }),
+    );
   };
 
   public changePassword = async (params: { currentPassword: string; newPassword: string; userId: number }) => {
