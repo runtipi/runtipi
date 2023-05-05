@@ -18,7 +18,7 @@ export const useAppStoreState = create<Store>((set) => ({
   search: '',
   setSearch: (search) => set({ search }),
   setCategory: (category) => set({ category }),
-  sort: 'name',
+  sort: 'id',
   setSort: (sort) => set({ sort }),
   sortDirection: 'asc',
   setSortDirection: (sortDirection) => set({ sortDirection }),

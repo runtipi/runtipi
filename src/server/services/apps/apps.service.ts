@@ -10,7 +10,7 @@ import { Logger } from '../../core/Logger';
 import { createFolder } from '../../common/fs.helpers';
 import { notEmpty } from '../../common/typescript.helpers';
 
-const sortApps = (a: AppInfo, b: AppInfo) => a.name.localeCompare(b.name);
+const sortApps = (a: AppInfo, b: AppInfo) => a.id.localeCompare(b.id);
 const filterApp = (app: AppInfo): boolean => {
   if (!app.supported_architectures) {
     return true;
