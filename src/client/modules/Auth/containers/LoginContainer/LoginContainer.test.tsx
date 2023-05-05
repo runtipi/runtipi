@@ -18,6 +18,10 @@ jest.mock('next/router', () => {
   };
 });
 
+beforeEach(() => {
+  pushFn.mockClear();
+});
+
 describe('Test: LoginContainer', () => {
   it('should render without error', () => {
     // Arrange

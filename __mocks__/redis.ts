@@ -14,10 +14,11 @@ export const createClient = jest.fn(() => {
     ttl: (key: string) => expirations.get(key),
     on: jest.fn(),
     keys: (key: string) => {
+      const keyprefix = key.substring(0, key.length - 1);
       const keys = [];
       // eslint-disable-next-line no-restricted-syntax
       for (const [k] of values) {
-        if (k.startsWith(key)) {
+        if (k.startsWith(keyprefix)) {
           keys.push(k);
         }
       }
