@@ -12,8 +12,6 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:jsdoc/recommended',
     'plugin:jsx-a11y/recommended',
-    'plugin:testing-library/react',
-    'plugin:jest-dom/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -39,6 +37,12 @@ module.exports = {
     'class-methods-use-this': 0,
     'jsdoc/require-returns': 0,
   },
+  overrides: [
+    {
+      files: ['*.test.ts', '*.test.tsx'],
+      extends: ['plugin:jest-dom/recommended', 'plugin:testing-library/react'],
+    },
+  ],
   globals: {
     JSX: true,
     NodeJS: true,

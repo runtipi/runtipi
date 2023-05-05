@@ -18,6 +18,10 @@ jest.mock('next/router', () => {
   };
 });
 
+beforeEach(() => {
+  pushFn.mockClear();
+});
+
 describe('Test: RegisterContainer', () => {
   it('should render without error', () => {
     render(<RegisterContainer />);
@@ -25,7 +29,7 @@ describe('Test: RegisterContainer', () => {
     expect(screen.getByText('Register')).toBeInTheDocument();
   });
 
-  it.only('should redirect to / upon successful registration', async () => {
+  it('should redirect to / upon successful registration', async () => {
     // Arrange
     const email = faker.internet.email();
     const password = faker.internet.password();
