@@ -5,8 +5,6 @@ import { generateSessionId } from '@/server/common/get-server-auth-session';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { Context } from '@/server/context';
-import { NextApiRequest } from 'next/types';
-import { Logger } from '@/server/core/Logger';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
@@ -28,7 +26,7 @@ export class AuthServiceClass {
    * Authenticate user with given username and password
    *
    * @param {UsernamePasswordInput} input - An object containing the user's username and password
-   * @param {NextApiRequest} req - The Next.js request object
+   * @param {Request} req - The Next.js request object
    * @returns {Promise<{token:string}>} - A promise that resolves to an object containing the JWT token
    */
   public login = async (input: UsernamePasswordInput, req: Context['req']) => {
@@ -52,6 +50,7 @@ export class AuthServiceClass {
     }
 
     req.session.userId = user.id;
+    await TipiCache.set(`session:${user.id}:${req.session.id}`, req.session.id);
 
     return {};
   };
@@ -62,7 +61,7 @@ export class AuthServiceClass {
    * @param {object} params - An object containing the TOTP session ID and the TOTP code
    * @param {string} params.totpSessionId - The TOTP session ID
    * @param {string} params.totpCode - The TOTP code
-   * @param {NextApiRequest} req - The Next.js request object
+   * @param {Request} req - The Next.js request object
    * @returns {Promise<{token:string}>} - A promise that resolves to an object containing the JWT token
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }, req: Context['req']) => {
@@ -196,7 +195,7 @@ export class AuthServiceClass {
    * Creates a new user with the provided email and password and returns a session token
    *
    * @param {UsernamePasswordInput} input - An object containing the email and password fields
-   * @param {NextApiRequest} req - The Next.js request object
+   * @param {Request} req - The Next.js request object
    * @returns {Promise<{token: string}>} - An object containing the session token
    * @throws {Error} - If the email or password is missing, the email is invalid or the user already exists
    */
@@ -233,6 +232,7 @@ export class AuthServiceClass {
     }
 
     req.session.userId = newUser.id;
+    await TipiCache.set(`session:${newUser.id}:${req.session.id}`, req.session.id);
 
     return true;
   };
@@ -256,7 +256,7 @@ export class AuthServiceClass {
   /**
    * Logs out the current user by removing the session token
    *
-   * @param  {NextApiRequest} req - The Next.js request object
+   * @param  {Request} req - The Next.js request object
    * @returns {Promise<boolean>} - Returns true if the session token is removed successfully
    */
   public static logout = async (req: Context['req']): Promise<boolean> => {
@@ -264,11 +264,7 @@ export class AuthServiceClass {
       return true;
     }
 
-    req.session.destroy((err) => {
-      if (err) {
-        Logger.error(err);
-      }
-    });
+    req.session.destroy(() => {});
 
     return true;
   };
@@ -343,6 +339,18 @@ export class AuthServiceClass {
     return true;
   };
 
+  /**
+   * Given a user ID, destroy all sessions for that user
+   *
+   * @param {number} userId - The user ID
+   */
+  private destroyAllSessionsByUserId = async (userId: number) => {
+    const sessions = await TipiCache.getByPrefix(`session:${userId}:`);
+    for (const session of sessions) {
+      await TipiCache.del(session.key);
+    }
+  };
+
   public changePassword = async (params: { currentPassword: string; newPassword: string; userId: number }) => {
     if (getConfig().demoMode) {
       throw new Error('Changing password is not allowed in demo mode');
@@ -368,8 +376,7 @@ export class AuthServiceClass {
 
     const hash = await argon2.hash(newPassword);
     await this.queries.updateUser(user.id, { password: hash });
-
-    await TipiCache.delByValue(userId.toString(), 'auth');
+    await this.destroyAllSessionsByUserId(user.id);
 
     return true;
   };
