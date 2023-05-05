@@ -3,7 +3,7 @@ import { AppTableData } from './table.types';
 
 type SortParams = {
   data: AppTableData;
-  col: keyof Pick<AppInfo, 'name'>;
+  col: keyof Pick<AppInfo, 'id'>;
   direction: 'asc' | 'desc';
   category?: AppCategory;
   search: string;

@@ -502,10 +502,10 @@ describe('List apps', () => {
     fs.__createMockFiles(Object.assign(app1create.MockFiles, app2create.MockFiles));
   });
 
-  it('Should correctly list apps sorted by name', async () => {
+  it('Should correctly list apps sorted by id', async () => {
     const { apps } = await AppServiceClass.listApps();
 
-    const sortedApps = [app1, app2].sort((a, b) => a.name.localeCompare(b.name));
+    const sortedApps = [app1, app2].sort((a, b) => a.id.localeCompare(b.name));
 
     expect(apps).toBeDefined();
     expect(apps.length).toBe(2);
