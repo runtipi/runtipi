@@ -8,12 +8,12 @@ type SessionContent = {
   userId?: number;
 };
 
-interface ExtendedGetServerSidePropsContext<Params, Preview> extends GetServerSidePropsContext<Params, Preview> {
-  req: IncomingMessage & { session: Session & SessionContent };
-}
-
 declare module 'express-session' {
   export type SessionData = SessionContent;
+}
+
+interface ExtendedGetServerSidePropsContext<Params, Preview> extends GetServerSidePropsContext<Params, Preview> {
+  req: IncomingMessage & { session: Session & SessionContent };
 }
 
 declare module 'next' {
