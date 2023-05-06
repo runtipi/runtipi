@@ -1,5 +1,6 @@
 import nookies from 'nookies';
 import { GetServerSideProps } from 'next';
+import merge from 'lodash.merge';
 import { getLocaleFromString } from '@/shared/internationalization/locales';
 
 export const getAuthedPageProps: GetServerSideProps = async (ctx) => {
@@ -25,11 +26,22 @@ export const getMessagesPageProps: GetServerSideProps = async (ctx) => {
   const { locale: cookieLocale } = cookies;
   const browserLocale = ctx.req.headers['accept-language']?.split(',')[0];
 
-  const locale = sessionLocale || cookieLocale || browserLocale || 'en';
+  const locale = getLocaleFromString(sessionLocale || cookieLocale || browserLocale || 'en');
+
+  const englishMessages = (await import(`../messages/en.json`)).default;
+  if (locale === 'en') {
+    return {
+      props: {
+        messages: englishMessages,
+      },
+    };
+  }
+
+  const messages = (await import(`../messages/${locale}.json`)).default;
 
   return {
     props: {
-      messages: (await import(`../messages/${getLocaleFromString(locale)}.json`)).default,
+      messages: merge(englishMessages, messages),
     },
   };
 };

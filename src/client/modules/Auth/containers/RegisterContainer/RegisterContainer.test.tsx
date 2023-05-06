@@ -75,7 +75,7 @@ describe('Test: RegisterContainer', () => {
 
     // Assert
     await waitFor(() => {
-      expect(screen.getByText('Registration failed: my big error')).toBeInTheDocument();
+      expect(screen.getByText('my big error')).toBeInTheDocument();
     });
   });
 });
