@@ -1,8 +1,10 @@
 import { inferAsyncReturnType } from '@trpc/server';
 import { CreateNextContextOptions } from '@trpc/server/adapters/next';
+import { Locale } from '@/shared/internationalization/locales';
 
 type Session = {
   userId?: number;
+  locale?: Locale;
 };
 
 type CreateContextOptions = {
