@@ -40,7 +40,7 @@ export class AuthQueries {
    */
   public async getUserDtoById(id: number) {
     const users = await this.db
-      .select({ id: userTable.id, username: userTable.username, totpEnabled: userTable.totpEnabled })
+      .select({ id: userTable.id, username: userTable.username, totpEnabled: userTable.totpEnabled, locale: userTable.locale })
       .from(userTable)
       .where(eq(userTable.id, Number(id)));
 
