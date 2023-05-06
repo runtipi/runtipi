@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
+import { useTranslations } from 'next-intl';
 import { trpc } from '../../../../utils/trpc';
 import { AuthFormLayout } from '../../components/AuthFormLayout';
 import { LoginForm } from '../../components/LoginForm';
@@ -9,12 +10,17 @@ import { TotpForm } from '../../components/TotpForm';
 type FormValues = { email: string; password: string };
 
 export const LoginContainer: React.FC = () => {
+  const t = useTranslations();
   const [totpSessionId, setTotpSessionId] = useState<string | null>(null);
   const router = useRouter();
   const utils = trpc.useContext();
   const login = trpc.auth.login.useMutation({
     onError: (e) => {
-      toast.error(`Login failed: ${e.message}`);
+      let toastMessage = e.message;
+      if (e.data?.translatedError) {
+        toastMessage = t(e.data.translatedError);
+      }
+      toast.error(toastMessage);
     },
     onSuccess: (data) => {
       if (data.totpSessionId) {
@@ -28,7 +34,11 @@ export const LoginContainer: React.FC = () => {
 
   const verifyTotp = trpc.auth.verifyTotp.useMutation({
     onError: (e) => {
-      toast.error(`Verification failed: ${e.message}`);
+      let toastMessage = e.message;
+      if (e.data?.translatedError) {
+        toastMessage = t(e.data.translatedError);
+      }
+      toast.error(toastMessage);
     },
     onSuccess: () => {
       utils.auth.me.invalidate();

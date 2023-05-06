@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 import { toast } from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 import { Button } from '../../../../components/ui/Button';
 import { trpc } from '../../../../utils/trpc';
 import { AuthFormLayout } from '../../components/AuthFormLayout';
@@ -13,14 +14,19 @@ type Props = {
 type FormValues = { password: string };
 
 export const ResetPasswordContainer: React.FC<Props> = ({ isRequested }) => {
+  const t = useTranslations();
   const router = useRouter();
   const utils = trpc.useContext();
   const resetPassword = trpc.auth.changeOperatorPassword.useMutation({
     onSuccess: () => {
       utils.auth.checkPasswordChangeRequest.invalidate();
     },
-    onError: (error) => {
-      toast.error(`Failed to reset password ${error.message}`);
+    onError: (e) => {
+      let toastMessage = e.message;
+      if (e.data?.translatedError) {
+        toastMessage = t(e.data.translatedError);
+      }
+      toast.error(toastMessage);
     },
   });
   const cancelRequest = trpc.auth.cancelPasswordChangeRequest.useMutation({
@@ -38,10 +44,10 @@ export const ResetPasswordContainer: React.FC<Props> = ({ isRequested }) => {
     if (resetPassword.isSuccess) {
       return (
         <>
-          <h2 className="h2 text-center mb-3">Password reset</h2>
-          <p>Your password has been reset. You can now login with your new password. And your email {resetPassword.data.email}</p>
+          <h2 className="h2 text-center mb-3">{t('auth.reset-password.success-title')}</h2>
+          <p>{t('auth.reset-password.success', { email: resetPassword.data.email })}</p>
           <Button onClick={() => router.push('/login')} type="button" className="btn btn-primary w-100">
-            Back to login
+            {t('auth.reset-password.back-to-login')}
           </Button>
         </>
       );
@@ -53,8 +59,8 @@ export const ResetPasswordContainer: React.FC<Props> = ({ isRequested }) => {
 
     return (
       <>
-        <h2 className="h2 text-center mb-3">Reset your password</h2>
-        <p>Run this command on your server and then refresh this page</p>
+        <h2 className="h2 text-center mb-3">{t('auth.reset-password.title')}</h2>
+        <p>{t('auth.reset-password.instructions')}</p>
         <pre>
           <code>./scripts/reset-password.sh</code>
         </pre>

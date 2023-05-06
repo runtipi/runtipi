@@ -59,6 +59,7 @@ export const handlers = [
       totpEnabled: false,
       id: faker.datatype.number(),
       username: faker.internet.userName(),
+      locale: 'en',
     },
   }),
   getTRPCMock({
