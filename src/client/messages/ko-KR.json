@@ -1,0 +1,54 @@
+{
+  "hello": "world",
+  "Auth": {
+    "login": {
+      "title": "Login to your account",
+      "submit": "Login"
+    },
+    "register": {
+      "title": "Register your account",
+      "submit": "Register"
+    },
+    "form": {
+      "email": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "passwordConfirmation": "Confirm password",
+      "passwordConfirmationPlaceholder": "Confirm your password",
+      "forgot": "Forgot password?",
+      "errors": {
+        "email": {
+          "required": "Email address is required",
+          "email": "Email address is invalid",
+          "invalid": "Email address is invalid"
+        },
+        "password": {
+          "required": "Password is required",
+          "minlength": "Password must be at least 6 characters"
+        },
+        "passwordConfirmation": {
+          "required": "Password confirmation is required",
+          "minlength": "Password confirmation must be at least 6 characters",
+          "match": "Passwords do not match"
+        }
+      }
+    }
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "cards": {
+      "disk": {
+        "title": "Disk Space",
+        "subtitle": "Used out of {total} GB"
+      },
+      "memory": {
+        "title": "Memory Used"
+      },
+      "cpu": {
+        "title": "CPU Load",
+        "subtitle": "Uninstall apps to reduce load"
+      }
+    }
+  }
+}
