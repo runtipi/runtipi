@@ -9,10 +9,12 @@ import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
+import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
 
 type UsernamePasswordInput = {
   username: string;
   password: string;
+  locale?: string;
 };
 
 export class AuthServiceClass {
@@ -225,7 +227,7 @@ export class AuthServiceClass {
 
     const hash = await argon2.hash(password);
 
-    const newUser = await this.queries.createUser({ username: email, password: hash, operator: true });
+    const newUser = await this.queries.createUser({ username: email, password: hash, operator: true, locale: getLocaleFromString(input.locale) });
 
     if (!newUser) {
       throw new Error('Error creating user');
@@ -381,6 +383,33 @@ export class AuthServiceClass {
     const hash = await argon2.hash(newPassword);
     await this.queries.updateUser(user.id, { password: hash });
     await this.destroyAllSessionsByUserId(user.id);
+
+    return true;
+  };
+
+  /**
+   * Given a userId and a locale, change the user's locale
+   *
+   * @param {object} params - An object containing the user ID and the new locale
+   * @param {string} params.locale - The new locale
+   * @param {number} params.userId - The user ID
+   */
+  public changeLocale = async (params: { locale: string; userId: number }) => {
+    const { locale, userId } = params;
+
+    const isLocaleValid = Locales.includes(locale);
+
+    if (!isLocaleValid) {
+      throw new Error('Invalid locale');
+    }
+
+    const user = await this.queries.getUserById(userId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    await this.queries.updateUser(user.id, { locale });
 
     return true;
   };

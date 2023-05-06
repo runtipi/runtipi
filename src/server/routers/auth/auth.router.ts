@@ -8,9 +8,12 @@ const AuthService = new AuthServiceClass(db);
 export const authRouter = router({
   login: publicProcedure.input(z.object({ username: z.string(), password: z.string() })).mutation(async ({ input, ctx }) => AuthService.login({ ...input }, ctx.req)),
   logout: protectedProcedure.mutation(async ({ ctx }) => AuthServiceClass.logout(ctx.req)),
-  register: publicProcedure.input(z.object({ username: z.string(), password: z.string() })).mutation(async ({ input, ctx }) => AuthService.register({ ...input }, ctx.req)),
+  register: publicProcedure.input(z.object({ username: z.string(), password: z.string(), locale: z.string() })).mutation(async ({ input, ctx }) => AuthService.register({ ...input }, ctx.req)),
   me: publicProcedure.query(async ({ ctx }) => AuthService.me(ctx.req.session?.userId)),
   isConfigured: publicProcedure.query(async () => AuthService.isConfigured()),
+  changeLocale: protectedProcedure
+    .input(z.object({ locale: z.string() }))
+    .mutation(async ({ input, ctx }) => AuthService.changeLocale({ userId: Number(ctx.req.session.userId), locale: input.locale })),
   // Password
   checkPasswordChangeRequest: publicProcedure.query(AuthServiceClass.checkPasswordChangeRequest),
   changeOperatorPassword: publicProcedure.input(z.object({ newPassword: z.string() })).mutation(({ input }) => AuthService.changeOperatorPassword({ newPassword: input.newPassword })),

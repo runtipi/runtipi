@@ -4,6 +4,7 @@ import { typeToFlattenedError, ZodError } from 'zod';
 import { type Context } from './context';
 import { AuthQueries } from './queries/auth/auth.queries';
 import { db } from './db';
+import { Locale } from '@/shared/internationalization/locales';
 
 const authQueries = new AuthQueries(db);
 
@@ -55,6 +56,10 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
   }
 
   const user = await authQueries.getUserById(userId);
+
+  if (user?.locale) {
+    ctx.req.session.locale = user.locale as Locale;
+  }
 
   if (!user) {
     ctx.req.session.destroy(() => {});
