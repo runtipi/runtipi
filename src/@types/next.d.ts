@@ -3,9 +3,11 @@ import { IncomingMessage } from 'http';
 import { Session } from 'express-session';
 import { GetServerSidePropsContext, GetServerSidePropsResult, PreviewData } from 'next';
 import { ParsedUrlQuery } from 'querystring';
+import { Locale } from '@/shared/internationalization/locales';
 
 type SessionContent = {
   userId?: number;
+  locale?: Locale;
 };
 
 declare module 'express-session' {
