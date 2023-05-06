@@ -1,10 +1,11 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { typeToFlattenedError, ZodError } from 'zod';
+import { Locale } from '@/shared/internationalization/locales';
 import { type Context } from './context';
 import { AuthQueries } from './queries/auth/auth.queries';
 import { db } from './db';
-import { Locale } from '@/shared/internationalization/locales';
+import { MessageKey, TranslatedError } from './utils/errors';
 
 const authQueries = new AuthQueries(db);
 
@@ -25,6 +26,7 @@ export function zodErrorsToRecord(errors: typeToFlattenedError<string>) {
 
   return record;
 }
+
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
@@ -33,6 +35,7 @@ const t = initTRPC.context<Context>().create({
       data: {
         ...shape.data,
         zodError: error.code === 'BAD_REQUEST' && error.cause instanceof ZodError ? zodErrorsToRecord(error.cause.flatten()) : null,
+        translatedError: error.cause instanceof TranslatedError ? (error.cause.message as MessageKey) : null,
       },
     };
   },

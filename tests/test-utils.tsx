@@ -1,13 +1,17 @@
 import React, { FC, ReactElement } from 'react';
 import { render, RenderOptions, renderHook } from '@testing-library/react';
 import { Toaster } from 'react-hot-toast';
+import { NextIntlProvider } from 'next-intl';
 import { TRPCTestClientProvider } from './TRPCTestClientProvider';
+import messages from '../src/client/messages/en.json';
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => (
-  <TRPCTestClientProvider>
-    {children}
-    <Toaster />
-  </TRPCTestClientProvider>
+  <NextIntlProvider locale="en" messages={messages}>
+    <TRPCTestClientProvider>
+      {children}
+      <Toaster />
+    </TRPCTestClientProvider>
+  </NextIntlProvider>
 );
 
 const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) => render(ui, { wrapper: AllTheProviders, ...options });

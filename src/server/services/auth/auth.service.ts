@@ -5,11 +5,12 @@ import { generateSessionId } from '@/server/common/get-server-auth-session';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { Context } from '@/server/context';
+import { TranslatedError } from '@/server/utils/errors';
+import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
-import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
 
 type UsernamePasswordInput = {
   username: string;
@@ -29,20 +30,19 @@ export class AuthServiceClass {
    *
    * @param {UsernamePasswordInput} input - An object containing the user's username and password
    * @param {Request} req - The Next.js request object
-   * @returns {Promise<{token:string}>} - A promise that resolves to an object containing the JWT token
    */
   public login = async (input: UsernamePasswordInput, req: Context['req']) => {
     const { password, username } = input;
     const user = await this.queries.getUserByUsername(username);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new TranslatedError('server-messages.errors.user-not-found');
     }
 
     const isPasswordValid = await argon2.verify(user.password, password);
 
     if (!isPasswordValid) {
-      throw new Error('Wrong password');
+      throw new TranslatedError('server-messages.errors.invalid-credentials');
     }
 
     if (user.totpEnabled) {
@@ -64,31 +64,30 @@ export class AuthServiceClass {
    * @param {string} params.totpSessionId - The TOTP session ID
    * @param {string} params.totpCode - The TOTP code
    * @param {Request} req - The Next.js request object
-   * @returns {Promise<{token:string}>} - A promise that resolves to an object containing the JWT token
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }, req: Context['req']) => {
     const { totpSessionId, totpCode } = params;
     const userId = await TipiCache.get(totpSessionId);
 
     if (!userId) {
-      throw new Error('TOTP session not found');
+      throw new TranslatedError('server-messages.errors.totp-session-not-found');
     }
 
     const user = await this.queries.getUserById(Number(userId));
 
     if (!user) {
-      throw new Error('User not found');
+      throw new TranslatedError('server-messages.errors.user-not-found');
     }
 
     if (!user.totpEnabled || !user.totpSecret || !user.salt) {
-      throw new Error('TOTP is not enabled for this user');
+      throw new TranslatedError('server-messages.errors.totp-not-enabled');
     }
 
     const totpSecret = decrypt(user.totpSecret, user.salt);
     const isValid = TotpAuthenticator.check(totpCode, totpSecret);
 
     if (!isValid) {
-      throw new Error('Invalid TOTP code');
+      throw new TranslatedError('server-messages.errors.totp-invalid-code');
     }
 
     req.session.userId = user.id;
@@ -102,11 +101,10 @@ export class AuthServiceClass {
    * @param {object} params - An object containing the userId and the user's password
    * @param {number} params.userId - The user's ID
    * @param {string} params.password - The user's password
-   * @returns {Promise<{uri: string, key: string}>} - A promise that resolves to an object containing the TOTP URI and the secret key
    */
   public getTotpUri = async (params: { userId: number; password: string }) => {
     if (getConfig().demoMode) {
-      throw new Error('2FA is not available in demo mode');
+      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
     }
 
     const { userId, password } = params;
@@ -114,16 +112,16 @@ export class AuthServiceClass {
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new TranslatedError('server-messages.errors.user-not-found');
     }
 
     const isPasswordValid = await argon2.verify(user.password, password);
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new TranslatedError('server-messages.errors.invalid-password');
     }
 
     if (user.totpEnabled) {
-      throw new Error('TOTP is already enabled for this user');
+      throw new TranslatedError('server-messages.errors.totp-already-enabled');
     }
 
     let { salt } = user;
@@ -144,25 +142,25 @@ export class AuthServiceClass {
 
   public setupTotp = async (params: { userId: number; totpCode: string }) => {
     if (getConfig().demoMode) {
-      throw new Error('2FA is not available in demo mode');
+      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
     }
 
     const { userId, totpCode } = params;
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new TranslatedError('server-messages.errors.user-not-found');
     }
 
     if (user.totpEnabled || !user.totpSecret || !user.salt) {
-      throw new Error('TOTP is already enabled for this user');
+      throw new TranslatedError('server-messages.errors.totp-already-enabled');
     }
 
     const totpSecret = decrypt(user.totpSecret, user.salt);
     const isValid = TotpAuthenticator.check(totpCode, totpSecret);
 
     if (!isValid) {
-      throw new Error('Invalid TOTP code');
+      throw new TranslatedError('server-messages.errors.totp-invalid-code');
     }
 
     await this.queries.updateUser(userId, { totpEnabled: true });
@@ -176,16 +174,16 @@ export class AuthServiceClass {
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new TranslatedError('server-messages.errors.user-not-found');
     }
 
     if (!user.totpEnabled) {
-      throw new Error('TOTP is not enabled for this user');
+      throw new TranslatedError('server-messages.errors.totp-not-enabled');
     }
 
     const isPasswordValid = await argon2.verify(user.password, password);
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new TranslatedError('server-messages.errors.invalid-password');
     }
 
     await this.queries.updateUser(userId, { totpEnabled: false, totpSecret: null });
@@ -198,31 +196,29 @@ export class AuthServiceClass {
    *
    * @param {UsernamePasswordInput} input - An object containing the email and password fields
    * @param {Request} req - The Next.js request object
-   * @returns {Promise<{token: string}>} - An object containing the session token
-   * @throws {Error} - If the email or password is missing, the email is invalid or the user already exists
    */
   public register = async (input: UsernamePasswordInput, req: Context['req']) => {
     const operators = await this.queries.getOperators();
 
     if (operators.length > 0) {
-      throw new Error('There is already an admin user. Please login to create a new user from the admin panel.');
+      throw new TranslatedError('server-messages.errors.admin-already-exists');
     }
 
     const { password, username } = input;
     const email = username.trim().toLowerCase();
 
     if (!username || !password) {
-      throw new Error('Missing email or password');
+      throw new TranslatedError('server-messages.errors.missing-email-or-password');
     }
 
     if (username.length < 3 || !validator.isEmail(email)) {
-      throw new Error('Invalid username');
+      throw new TranslatedError('server-messages.errors.invalid-username');
     }
 
     const user = await this.queries.getUserByUsername(email);
 
     if (user) {
-      throw new Error('User already exists');
+      throw new TranslatedError('server-messages.errors.user-already-exists');
     }
 
     const hash = await argon2.hash(password);
@@ -230,7 +226,7 @@ export class AuthServiceClass {
     const newUser = await this.queries.createUser({ username: email, password: hash, operator: true, locale: getLocaleFromString(input.locale) });
 
     if (!newUser) {
-      throw new Error('Error creating user');
+      throw new TranslatedError('server-messages.errors.error-creating-user');
     }
 
     req.session.userId = newUser.id;
@@ -243,7 +239,6 @@ export class AuthServiceClass {
    * Retrieves the user with the provided ID
    *
    * @param {number|undefined} userId - The user ID to retrieve
-   * @returns {Promise<{id: number, username: string} | null>} - An object containing the user's id and email, or null if the user is not found
    */
   public me = async (userId: number | undefined) => {
     if (!userId) return null;
@@ -287,12 +282,10 @@ export class AuthServiceClass {
    *
    * @param {object} params - An object containing the new password
    * @param {string} params.newPassword - The new password
-   * @returns {Promise<string>} - The username of the operator user
-   * @throws {Error} - If the operator user is not found or if there is no password change request
    */
   public changeOperatorPassword = async (params: { newPassword: string }) => {
     if (!AuthServiceClass.checkPasswordChangeRequest()) {
-      throw new Error('No password change request found');
+      throw new TranslatedError('server-messages.errors.no-change-password-request');
     }
 
     const { newPassword } = params;
@@ -300,7 +293,7 @@ export class AuthServiceClass {
     const user = await this.queries.getFirstOperator();
 
     if (!user) {
-      throw new Error('Operator user not found');
+      throw new TranslatedError('server-messages.errors.operator-not-found');
     }
 
     const hash = await argon2.hash(newPassword);
@@ -359,7 +352,7 @@ export class AuthServiceClass {
 
   public changePassword = async (params: { currentPassword: string; newPassword: string; userId: number }) => {
     if (getConfig().demoMode) {
-      throw new Error('Changing password is not allowed in demo mode');
+      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
     }
 
     const { currentPassword, newPassword, userId } = params;
@@ -367,17 +360,17 @@ export class AuthServiceClass {
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new TranslatedError('server-messages.errors.user-not-found');
     }
 
     const valid = await argon2.verify(user.password, currentPassword);
 
     if (!valid) {
-      throw new Error('Current password is invalid');
+      throw new TranslatedError('server-messages.errors.invalid-password');
     }
 
     if (newPassword.length < 8) {
-      throw new Error('Password must be at least 8 characters long');
+      throw new TranslatedError('server-messages.errors.invalid-password-length');
     }
 
     const hash = await argon2.hash(newPassword);
@@ -400,13 +393,13 @@ export class AuthServiceClass {
     const isLocaleValid = Locales.includes(locale);
 
     if (!isLocaleValid) {
-      throw new Error('Invalid locale');
+      throw new TranslatedError('server-messages.errors.invalid-locale');
     }
 
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new TranslatedError('server-messages.errors.user-not-found');
     }
 
     await this.queries.updateUser(user.id, { locale });
