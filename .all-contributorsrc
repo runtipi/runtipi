@@ -156,6 +156,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "innocentius",
+      "name": "Innocentius",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5344432?v=4",
+      "profile": "http://innocentius.github.io",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
