@@ -1,90 +1,90 @@
 {
   "server-messages": {
     "errors": {
-      "invalid-credentials": "Invalid credentials",
-      "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
-      "missing-email-or-password": "Missing email or password",
-      "invalid-username": "Invalid username",
-      "user-already-exists": "User already exists",
-      "error-creating-user": "Error creating user",
-      "no-change-password-request": "No change password request found",
-      "operator-not-found": "Operator user not found",
-      "user-not-found": "User not found",
-      "not-allowed-in-demo": "Not allowed in demo mode",
-      "invalid-password": "Invalid password",
-      "invalid-password-length": "Password must be at least 8 characters long",
-      "invalid-locale": "Invalid locale",
-      "totp-session-not-found": "2FA session not found",
-      "totp-not-enabled": "2FA is not enabled for this user",
-      "totp-invalid-code": "Invalid 2FA code",
-      "totp-already-enabled": "2FA is already enabled for this user"
+      "invalid-credentials": "無効なログイン情報",
+      "admin-already-exists": "すでに管理者ユーザーがいます。管理者パネルから新しいユーザーを作成するにはログインしてください。",
+      "missing-email-or-password": "Eメールアドレスもしくはパスワードが入力されていません",
+      "invalid-username": "無効なユーザー名",
+      "user-already-exists": "ユーザーは既に存在します",
+      "error-creating-user": "利用者登録時のエラー",
+      "no-change-password-request": "パスワード変更要求が見つかりませんでした",
+      "operator-not-found": "オペレーターユーザーが見つかりません",
+      "user-not-found": "ユーザーが見つかりません",
+      "not-allowed-in-demo": "デモモードでは使用できません",
+      "invalid-password": "無効なパスワード",
+      "invalid-password-length": "パスワードは8文字以上必要です",
+      "invalid-locale": "無効なロケールです",
+      "totp-session-not-found": "2段階認証セッションが見つかりません",
+      "totp-not-enabled": "このユーザーは二段階認証が有効ではありません",
+      "totp-invalid-code": "無効な2段階認証コードです",
+      "totp-already-enabled": "このユーザーはすでに二段階認証を有効にしています"
     },
     "success": {}
   },
   "auth": {
     "login": {
-      "title": "Login to your account",
-      "submit": "Login"
+      "title": "アカウントにログインしてください",
+      "submit": "ログイン"
     },
     "totp": {
-      "title": "Two-factor authentication",
-      "instructions": "Enter the code from your authenticator app",
-      "submit": "Confirm"
+      "title": "2 段階認証",
+      "instructions": "認証アプリからコードを入力してください",
+      "submit": "確認"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "アカウントを作成",
+      "submit": "サインアップ"
     },
     "reset-password": {
-      "title": "Reset your password",
-      "submit": "Reset password",
-      "cancel": "Cancel password change request",
-      "instructions": "Run this command on your server and then refresh this page",
-      "success-title": "Password reset",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
-      "back-to-login": "Back to login"
+      "title": "パスワードをリセット",
+      "submit": "パスワードをリセット",
+      "cancel": "パスワード変更リクエストをキャンセルする",
+      "instructions": "サーバーでこのコマンドを実行してから、このページを更新してください",
+      "success-title": "パスワードをリセットする",
+      "success": "パスワードがリセットされました。新しいパスワードでログインできるようになりました。そして、メールアドレス {email}",
+      "back-to-login": "ログインページへ戻る"
     },
     "form": {
-      "email": "Email address",
+      "email": "メールアドレス",
       "email-placeholder": "you@example.com",
-      "password": "Password",
-      "password-placeholder": "Enter your password",
-      "password-confirmation": "Confirm password",
-      "password-confirmation-placeholder": "Confirm your password",
-      "forgot": "Forgot password?",
-      "new-password-placeholder": "Your new password",
-      "new-password-confirmation-placeholder": "Confirm your new password",
+      "password": "パスワード",
+      "password-placeholder": "パスワードを入力して下さい。",
+      "password-confirmation": "パスワードを再確認",
+      "password-confirmation-placeholder": "パスワードを確認",
+      "forgot": "パスワードをお忘れですか?",
+      "new-password-placeholder": "新しいパスワード",
+      "new-password-confirmation-placeholder": "新しいパスワードを確認する",
       "errors": {
         "email": {
-          "required": "Email address is required",
-          "email": "Email address is invalid",
-          "invalid": "Email address is invalid"
+          "required": "メールアドレスは必須項目です",
+          "email": "メールアドレスが無効です",
+          "invalid": "メールアドレスが無効です"
         },
         "password": {
-          "required": "Password is required",
-          "minlength": "Password must be at least 8 characters"
+          "required": "パスワードは必須です",
+          "minlength": "パスワードは8文字以上でなければなりません"
         },
         "password-confirmation": {
-          "required": "Password confirmation is required",
-          "minlength": "Password confirmation must be at least 8 characters",
-          "match": "Passwords do not match"
+          "required": "新しいパスワードの確認が必要です",
+          "minlength": "パスワードは8文字以上でなければなりません",
+          "match": "パスワードが一致しません"
         }
       }
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "ダッシュボード",
     "cards": {
       "disk": {
-        "title": "Disk Space",
-        "subtitle": "Used out of {total} GB"
+        "title": "ディスク領域",
+        "subtitle": "使用済み、{total} GB のうち"
       },
       "memory": {
-        "title": "Memory Used"
+        "title": "使用済みメモリ"
       },
       "cpu": {
-        "title": "CPU Load",
-        "subtitle": "Uninstall apps to reduce load"
+        "title": "CPU負荷",
+        "subtitle": "アプリをアンインストールして負荷を軽減する"
       }
     }
   }
