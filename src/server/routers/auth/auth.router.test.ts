@@ -84,7 +84,7 @@ describe('Test: register', () => {
 
     // act
     try {
-      await caller.register({ username: 'test@test.com', password: '123' });
+      await caller.register({ username: 'test@test.com', password: '123', locale: 'en' });
     } catch (e) {
       error = e as { code: string };
     }
@@ -319,6 +319,41 @@ describe('Test: resetPassword', () => {
     // act
     try {
       await caller.changePassword({ currentPassword: '111', newPassword: '222' });
+    } catch (e) {
+      error = e as { code: string };
+    }
+
+    // assert
+    expect(error?.code).not.toBe('UNAUTHORIZED');
+  });
+});
+
+describe('Test: changeLocale', () => {
+  it('should not be accessible without an account', async () => {
+    // arrange
+    const caller = authRouter.createCaller(fromPartial({ req: { session: {} } }));
+    let error;
+
+    // act
+    try {
+      await caller.changeLocale({ locale: 'en' });
+    } catch (e) {
+      error = e as { code: string };
+    }
+
+    // assert
+    expect(error?.code).toBe('UNAUTHORIZED');
+  });
+
+  it('should be accessible with an account', async () => {
+    // arrange
+    await createUser({ id: 122, locale: 'en' }, db);
+    const caller = authRouter.createCaller(fromPartial({ req: { session: { userId: 122 } } }));
+    let error;
+
+    // act
+    try {
+      await caller.changeLocale({ locale: 'fr-FR' });
     } catch (e) {
       error = e as { code: string };
     }

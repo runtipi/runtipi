@@ -687,3 +687,37 @@ describe('Test: changePassword', () => {
     expect(sessions).toHaveLength(0);
   });
 });
+
+describe('test: changeLocale()', () => {
+  it('should change the locale of the user', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, database);
+    const locale = 'fr-FR';
+
+    // act
+    await AuthService.changeLocale({ userId: user.id, locale });
+
+    // assert
+    const updatedUser = await getUserById(user.id, database);
+    expect(updatedUser?.locale).toBe(locale);
+  });
+
+  it('should throw if the user does not exist', async () => {
+    // arrange
+    const locale = 'fr-FR';
+
+    // act & assert
+    await expect(AuthService.changeLocale({ userId: 1, locale })).rejects.toThrowError('server-messages.errors.user-not-found');
+  });
+
+  it('should throw if the locale is invalid', async () => {
+    // arrange
+    const email = faker.internet.email();
+    const user = await createUser({ email }, database);
+    const locale = 'invalid';
+
+    // act & assert
+    await expect(AuthService.changeLocale({ userId: user.id, locale })).rejects.toThrowError('server-messages.errors.invalid-locale');
+  });
+});
