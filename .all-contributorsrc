@@ -165,6 +165,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "TetrisIQ",
+      "name": "Alex",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24246993?v=4",
+      "profile": "https://github.com/TetrisIQ",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
