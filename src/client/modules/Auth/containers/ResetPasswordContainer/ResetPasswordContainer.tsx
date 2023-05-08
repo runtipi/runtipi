@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import type { MessageKey } from '@/server/utils/errors';
 import { Button } from '../../../../components/ui/Button';
 import { trpc } from '../../../../utils/trpc';
 import { AuthFormLayout } from '../../components/AuthFormLayout';
@@ -22,10 +23,7 @@ export const ResetPasswordContainer: React.FC<Props> = ({ isRequested }) => {
       utils.auth.checkPasswordChangeRequest.invalidate();
     },
     onError: (e) => {
-      let toastMessage = e.message;
-      if (e.data?.translatedError) {
-        toastMessage = t(e.data.translatedError);
-      }
+      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
       toast.error(toastMessage);
     },
   });
