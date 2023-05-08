@@ -1,90 +1,90 @@
 {
   "server-messages": {
     "errors": {
-      "invalid-credentials": "Invalid credentials",
-      "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
-      "missing-email-or-password": "Missing email or password",
-      "invalid-username": "Invalid username",
-      "user-already-exists": "User already exists",
-      "error-creating-user": "Error creating user",
-      "no-change-password-request": "No change password request found",
-      "operator-not-found": "Operator user not found",
-      "user-not-found": "User not found",
-      "not-allowed-in-demo": "Not allowed in demo mode",
-      "invalid-password": "Invalid password",
-      "invalid-password-length": "Password must be at least 8 characters long",
-      "invalid-locale": "Invalid locale",
-      "totp-session-not-found": "2FA session not found",
-      "totp-not-enabled": "2FA is not enabled for this user",
-      "totp-invalid-code": "Invalid 2FA code",
-      "totp-already-enabled": "2FA is already enabled for this user"
+      "invalid-credentials": "Identifiants invalides",
+      "admin-already-exists": "Il y a déjà un utilisateur administrateur. Veuillez vous connecter pour créer un nouvel utilisateur.",
+      "missing-email-or-password": "E-mail ou mot de passe manquant",
+      "invalid-username": "Nom d'utilisateur invalide",
+      "user-already-exists": "Nom d’utilisateur déjà existant",
+      "error-creating-user": "Erreur lors de la création de l'utilisateur",
+      "no-change-password-request": "Aucune demande de changement de mot de passe trouvée",
+      "operator-not-found": "Opérateur introuvable",
+      "user-not-found": "Utilisateur introuvable",
+      "not-allowed-in-demo": "Non autorisé en mode démo",
+      "invalid-password": "Mot de passe invalide",
+      "invalid-password-length": "Le mot de passe doit contenir au moins 8 caractères",
+      "invalid-locale": "Langue invalide",
+      "totp-session-not-found": "Session 2FA introuvable",
+      "totp-not-enabled": "L'authentification 2FA n'est pas activée pour cet utilisateur",
+      "totp-invalid-code": "Code 2FA invalide",
+      "totp-already-enabled": "L'authentification à deux facteurs est déjà activée pour cet utilisateur"
     },
     "success": {}
   },
   "auth": {
     "login": {
-      "title": "Login to your account",
-      "submit": "Login"
+      "title": "Connectez-vous à votre compte",
+      "submit": "Connexion"
     },
     "totp": {
-      "title": "Two-factor authentication",
-      "instructions": "Enter the code from your authenticator app",
-      "submit": "Confirm"
+      "title": "Authentification à deux facteurs",
+      "instructions": "Entrez le code de votre application d'authentification",
+      "submit": "Confirmer"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "Créez votre compte",
+      "submit": "S'inscrire"
     },
     "reset-password": {
-      "title": "Reset your password",
-      "submit": "Reset password",
-      "cancel": "Cancel password change request",
-      "instructions": "Run this command on your server and then refresh this page",
-      "success-title": "Password reset",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
-      "back-to-login": "Back to login"
+      "title": "Réinitialiser votre mot de passe",
+      "submit": "Réinitialiser",
+      "cancel": "Annuler la demande de changement de mot de passe",
+      "instructions": "Exécutez cette commande sur votre serveur, puis rafraîchissez cette page",
+      "success-title": "Mot de passe réinitialisé",
+      "success": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe. Et votre e-mail {email}",
+      "back-to-login": "Retour au login"
     },
     "form": {
-      "email": "Email address",
-      "email-placeholder": "you@example.com",
-      "password": "Password",
-      "password-placeholder": "Enter your password",
-      "password-confirmation": "Confirm password",
-      "password-confirmation-placeholder": "Confirm your password",
-      "forgot": "Forgot password?",
-      "new-password-placeholder": "Your new password",
-      "new-password-confirmation-placeholder": "Confirm your new password",
+      "email": "Adresse e-mail",
+      "email-placeholder": "vous@exemple.fr",
+      "password": "Mot de passe",
+      "password-placeholder": "Entrez votre mot de passe",
+      "password-confirmation": "Confirmez le mot de passe",
+      "password-confirmation-placeholder": "Confirmez le mot de passe",
+      "forgot": "Mot de passe oublié ?",
+      "new-password-placeholder": "Votre nouveau mot de passe",
+      "new-password-confirmation-placeholder": "Confirmez votre nouveau mot de passe",
       "errors": {
         "email": {
-          "required": "Email address is required",
-          "email": "Email address is invalid",
-          "invalid": "Email address is invalid"
+          "required": "L'adresse email est requise",
+          "email": "Adresse e-mail invalide",
+          "invalid": "Adresse e-mail invalide"
         },
         "password": {
-          "required": "Password is required",
-          "minlength": "Password must be at least 8 characters"
+          "required": "Mot de passe requis",
+          "minlength": "Le mot de passe doit comporter au moins 8 caractères"
         },
         "password-confirmation": {
-          "required": "Password confirmation is required",
-          "minlength": "Password confirmation must be at least 8 characters",
-          "match": "Passwords do not match"
+          "required": "La confirmation du mot de passe est requise",
+          "minlength": "Le mot de passe doit comporter au moins 8 caractères",
+          "match": "Les mots de passe ne correspondent pas"
         }
       }
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Tableau de bord",
     "cards": {
       "disk": {
-        "title": "Disk Space",
-        "subtitle": "Used out of {total} GB"
+        "title": "Espace disque",
+        "subtitle": "Utilisé sur {total} Go"
       },
       "memory": {
-        "title": "Memory Used"
+        "title": "Mémoire utilisée"
       },
       "cpu": {
-        "title": "CPU Load",
-        "subtitle": "Uninstall apps to reduce load"
+        "title": "Charge CPU",
+        "subtitle": "Désinstallez des applications pour réduire la charge"
       }
     }
   }
