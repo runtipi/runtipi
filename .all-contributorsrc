@@ -196,6 +196,15 @@
       "contributions": [
         "content"
       ]
+    },
+    {
+      "login": "demizeu",
+      "name": "iepure",
+      "avatar_url": "https://avatars.githubusercontent.com/u/121183951?v=4",
+      "profile": "https://github.com/demizeu",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
