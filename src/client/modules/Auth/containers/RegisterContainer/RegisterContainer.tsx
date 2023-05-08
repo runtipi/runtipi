@@ -3,6 +3,7 @@ import React from 'react';
 import { toast } from 'react-hot-toast';
 import { useLocale } from '@/client/hooks/useLocale';
 import { useTranslations } from 'next-intl';
+import type { MessageKey } from '@/server/utils/errors';
 import { trpc } from '../../../../utils/trpc';
 import { AuthFormLayout } from '../../components/AuthFormLayout';
 import { RegisterForm } from '../../components/RegisterForm';
@@ -16,10 +17,7 @@ export const RegisterContainer: React.FC = () => {
   const utils = trpc.useContext();
   const register = trpc.auth.register.useMutation({
     onError: (e) => {
-      let toastMessage = e.message;
-      if (e.data?.translatedError) {
-        toastMessage = t(e.data.translatedError);
-      }
+      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
       toast.error(toastMessage);
     },
     onSuccess: () => {
