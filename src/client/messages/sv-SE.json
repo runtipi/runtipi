@@ -1,0 +1,91 @@
+{
+  "server-messages": {
+    "errors": {
+      "invalid-credentials": "Invalid credentials",
+      "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
+      "missing-email-or-password": "Missing email or password",
+      "invalid-username": "Invalid username",
+      "user-already-exists": "User already exists",
+      "error-creating-user": "Error creating user",
+      "no-change-password-request": "No change password request found",
+      "operator-not-found": "Operator user not found",
+      "user-not-found": "User not found",
+      "not-allowed-in-demo": "Not allowed in demo mode",
+      "invalid-password": "Invalid password",
+      "invalid-password-length": "Password must be at least 8 characters long",
+      "invalid-locale": "Invalid locale",
+      "totp-session-not-found": "2FA session not found",
+      "totp-not-enabled": "2FA is not enabled for this user",
+      "totp-invalid-code": "Invalid 2FA code",
+      "totp-already-enabled": "2FA is already enabled for this user"
+    },
+    "success": {}
+  },
+  "auth": {
+    "login": {
+      "title": "Login to your account",
+      "submit": "Login"
+    },
+    "totp": {
+      "title": "Two-factor authentication",
+      "instructions": "Enter the code from your authenticator app",
+      "submit": "Confirm"
+    },
+    "register": {
+      "title": "Register your account",
+      "submit": "Register"
+    },
+    "reset-password": {
+      "title": "Reset your password",
+      "submit": "Reset password",
+      "cancel": "Cancel password change request",
+      "instructions": "Run this command on your server and then refresh this page",
+      "success-title": "Password reset",
+      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
+      "back-to-login": "Back to login"
+    },
+    "form": {
+      "email": "Email address",
+      "email-placeholder": "you@example.com",
+      "password": "Password",
+      "password-placeholder": "Enter your password",
+      "password-confirmation": "Confirm password",
+      "password-confirmation-placeholder": "Confirm your password",
+      "forgot": "Forgot password?",
+      "new-password-placeholder": "Your new password",
+      "new-password-confirmation-placeholder": "Confirm your new password",
+      "errors": {
+        "email": {
+          "required": "Email address is required",
+          "email": "Email address is invalid",
+          "invalid": "Email address is invalid"
+        },
+        "password": {
+          "required": "Password is required",
+          "minlength": "Password must be at least 8 characters"
+        },
+        "password-confirmation": {
+          "required": "Password confirmation is required",
+          "minlength": "Password confirmation must be at least 8 characters",
+          "match": "Passwords do not match"
+        }
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "cards": {
+      "disk": {
+        "title": "Disk Space",
+        "subtitle": "Used out of {total} GB"
+      },
+      "memory": {
+        "title": "Memory Used"
+      },
+      "cpu": {
+        "title": "CPU Load",
+        "subtitle": "Uninstall apps to reduce load"
+      }
+    }
+  }
+}
