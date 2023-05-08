@@ -1,90 +1,90 @@
 {
   "server-messages": {
     "errors": {
-      "invalid-credentials": "Invalid credentials",
-      "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
-      "missing-email-or-password": "Missing email or password",
-      "invalid-username": "Invalid username",
-      "user-already-exists": "User already exists",
-      "error-creating-user": "Error creating user",
-      "no-change-password-request": "No change password request found",
-      "operator-not-found": "Operator user not found",
-      "user-not-found": "User not found",
-      "not-allowed-in-demo": "Not allowed in demo mode",
-      "invalid-password": "Invalid password",
-      "invalid-password-length": "Password must be at least 8 characters long",
-      "invalid-locale": "Invalid locale",
-      "totp-session-not-found": "2FA session not found",
-      "totp-not-enabled": "2FA is not enabled for this user",
-      "totp-invalid-code": "Invalid 2FA code",
-      "totp-already-enabled": "2FA is already enabled for this user"
+      "invalid-credentials": "無效的登入憑證",
+      "admin-already-exists": "已經有一個管理員用戶。 請登錄以從管理面板創建新用戶。",
+      "missing-email-or-password": "缺少電子郵箱或密碼。",
+      "invalid-username": "無效的使用者名稱",
+      "user-already-exists": "使用者已經存在",
+      "error-creating-user": "建立用戶時發生錯誤",
+      "no-change-password-request": "未找到更改密碼請求",
+      "operator-not-found": "未找到操作員用戶",
+      "user-not-found": "未找到用戶",
+      "not-allowed-in-demo": "演示模式不允許",
+      "invalid-password": "無效的密碼",
+      "invalid-password-length": "密碼長度必須至少為8個字元",
+      "invalid-locale": "語言環境無效",
+      "totp-session-not-found": "找不到 2FA 會話",
+      "totp-not-enabled": "此用戶未啟用2FA。",
+      "totp-invalid-code": "無效的2FA驗證碼",
+      "totp-already-enabled": "該用戶已啟用2FA"
     },
     "success": {}
   },
   "auth": {
     "login": {
-      "title": "Login to your account",
-      "submit": "Login"
+      "title": "登入您的帳號",
+      "submit": "登录"
     },
     "totp": {
-      "title": "Two-factor authentication",
-      "instructions": "Enter the code from your authenticator app",
-      "submit": "Confirm"
+      "title": "兩步驟驗證",
+      "instructions": "輸入驗證應用程式中的驗證代碼",
+      "submit": "確認"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "註冊您的帳戶",
+      "submit": "註冊帳號"
     },
     "reset-password": {
-      "title": "Reset your password",
-      "submit": "Reset password",
-      "cancel": "Cancel password change request",
-      "instructions": "Run this command on your server and then refresh this page",
-      "success-title": "Password reset",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
-      "back-to-login": "Back to login"
+      "title": "重置您的密碼",
+      "submit": "密碼重置",
+      "cancel": "取消密碼更改請求",
+      "instructions": "在您的服務器上運行此命令，然後刷新此頁面",
+      "success-title": "重置密碼",
+      "success": "您的密碼已重置。 您現在可以使用新密碼登錄。 還有你的電子郵件 {email}",
+      "back-to-login": "返回登入"
     },
     "form": {
-      "email": "Email address",
+      "email": "電子郵件地址",
       "email-placeholder": "you@example.com",
-      "password": "Password",
-      "password-placeholder": "Enter your password",
-      "password-confirmation": "Confirm password",
-      "password-confirmation-placeholder": "Confirm your password",
-      "forgot": "Forgot password?",
-      "new-password-placeholder": "Your new password",
-      "new-password-confirmation-placeholder": "Confirm your new password",
+      "password": "密碼",
+      "password-placeholder": "輸入你的密碼",
+      "password-confirmation": "確認密碼",
+      "password-confirmation-placeholder": "确认您的密码",
+      "forgot": "忘記密碼?",
+      "new-password-placeholder": "您的新密碼",
+      "new-password-confirmation-placeholder": "確認您的新密碼",
       "errors": {
         "email": {
-          "required": "Email address is required",
-          "email": "Email address is invalid",
-          "invalid": "Email address is invalid"
+          "required": "電子郵件位址為必填",
+          "email": "電子郵件地址無效",
+          "invalid": "電子郵件地址無效"
         },
         "password": {
-          "required": "Password is required",
-          "minlength": "Password must be at least 8 characters"
+          "required": "密碼為必填",
+          "minlength": "密碼必須至少8個字元"
         },
         "password-confirmation": {
-          "required": "Password confirmation is required",
-          "minlength": "Password confirmation must be at least 8 characters",
-          "match": "Passwords do not match"
+          "required": "需要確認密碼",
+          "minlength": "密碼必須至少8個字元",
+          "match": "密碼不匹配"
         }
       }
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "儀表板",
     "cards": {
       "disk": {
-        "title": "Disk Space",
-        "subtitle": "Used out of {total} GB"
+        "title": "硬碟空間",
+        "subtitle": "总计{total} GB中已使用"
       },
       "memory": {
-        "title": "Memory Used"
+        "title": "已使用記憶體"
       },
       "cpu": {
-        "title": "CPU Load",
-        "subtitle": "Uninstall apps to reduce load"
+        "title": "CPU 負載",
+        "subtitle": "卸載應用程序以減少負載"
       }
     }
   }
