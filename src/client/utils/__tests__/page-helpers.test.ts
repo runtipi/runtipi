@@ -1,6 +1,10 @@
-import { getAuthedPageProps } from '../page-helpers';
+import nookies from 'nookies';
+import merge from 'lodash.merge';
+import { getAuthedPageProps, getMessagesPageProps } from '../page-helpers';
+import englishMessages from '../../messages/en.json';
+import frenchMessages from '../../messages/fr-FR.json';
 
-describe('getAuthedPageProps', () => {
+describe('test: getAuthedPageProps()', () => {
   it('should redirect to /login if there is no user id in session', async () => {
     // arrange
     const ctx = { req: { session: {} } };
@@ -24,5 +28,60 @@ describe('getAuthedPageProps', () => {
 
     // assert
     expect(props).toEqual({});
+  });
+});
+
+describe('test: getMessagesPageProps()', () => {
+  beforeEach(() => {
+    nookies.destroy(null, 'locale');
+  });
+
+  it('should return correct messages if the locale is in the session', async () => {
+    // arrange
+    const ctx = { req: { session: { locale: 'fr' }, headers: {} } };
+
+    // act
+    // @ts-expect-error - we're passing in a partial context
+    const { props } = await getMessagesPageProps(ctx);
+
+    // assert
+    expect(props.messages).toEqual(merge(frenchMessages, englishMessages));
+  });
+
+  it('should return correct messages if the locale in the cookie', async () => {
+    // arrange
+    const ctx = { req: { session: {}, headers: {} } };
+    nookies.set(null, 'locale', 'fr-FR');
+
+    // act
+    // @ts-expect-error - we're passing in a partial context
+    const { props } = await getMessagesPageProps(ctx);
+
+    // assert
+    expect(props.messages).toEqual(merge(frenchMessages, englishMessages));
+  });
+
+  it('should return correct messages if the locale is detected from the browser', async () => {
+    // arrange
+    const ctx = { req: { session: {}, headers: { 'accept-language': 'fr-FR' } } };
+
+    // act
+    // @ts-expect-error - we're passing in a partial context
+    const { props } = await getMessagesPageProps(ctx);
+
+    // assert
+    expect(props.messages).toEqual(merge(frenchMessages, englishMessages));
+  });
+
+  it('should default to english messages if the locale is not found', async () => {
+    // arrange
+    const ctx = { req: { session: {}, headers: {} } };
+
+    // act
+    // @ts-expect-error - we're passing in a partial context
+    const { props } = await getMessagesPageProps(ctx);
+
+    // assert
+    expect(props.messages).toEqual(englishMessages);
   });
 });

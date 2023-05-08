@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useTranslations } from 'next-intl';
+import type { MessageKey } from '@/server/utils/errors';
 import { trpc } from '../../../../utils/trpc';
 import { AuthFormLayout } from '../../components/AuthFormLayout';
 import { LoginForm } from '../../components/LoginForm';
@@ -16,10 +17,7 @@ export const LoginContainer: React.FC = () => {
   const utils = trpc.useContext();
   const login = trpc.auth.login.useMutation({
     onError: (e) => {
-      let toastMessage = e.message;
-      if (e.data?.translatedError) {
-        toastMessage = t(e.data.translatedError);
-      }
+      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
       toast.error(toastMessage);
     },
     onSuccess: (data) => {
@@ -34,10 +32,7 @@ export const LoginContainer: React.FC = () => {
 
   const verifyTotp = trpc.auth.verifyTotp.useMutation({
     onError: (e) => {
-      let toastMessage = e.message;
-      if (e.data?.translatedError) {
-        toastMessage = t(e.data.translatedError);
-      }
+      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
       toast.error(toastMessage);
     },
     onSuccess: () => {
