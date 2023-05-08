@@ -1,0 +1,7 @@
+codecov:
+  ignore:
+    - 'public'
+    - 'scripts'
+    - 'templates'
+    - 'screenshots'
+    - '**/*.json'
