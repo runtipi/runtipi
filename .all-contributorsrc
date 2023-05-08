@@ -183,6 +183,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "simonandr",
+      "name": "simonandr",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48092304?v=4",
+      "profile": "https://github.com/simonandr",
+      "contributions": [
+        "content"
+      ]
     }
   ],
   "contributorsPerLine": 7,
