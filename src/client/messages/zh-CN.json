@@ -1,90 +1,90 @@
 {
   "server-messages": {
     "errors": {
-      "invalid-credentials": "Invalid credentials",
-      "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
-      "missing-email-or-password": "Missing email or password",
-      "invalid-username": "Invalid username",
-      "user-already-exists": "User already exists",
-      "error-creating-user": "Error creating user",
-      "no-change-password-request": "No change password request found",
-      "operator-not-found": "Operator user not found",
-      "user-not-found": "User not found",
-      "not-allowed-in-demo": "Not allowed in demo mode",
-      "invalid-password": "Invalid password",
-      "invalid-password-length": "Password must be at least 8 characters long",
-      "invalid-locale": "Invalid locale",
-      "totp-session-not-found": "2FA session not found",
-      "totp-not-enabled": "2FA is not enabled for this user",
-      "totp-invalid-code": "Invalid 2FA code",
-      "totp-already-enabled": "2FA is already enabled for this user"
+      "invalid-credentials": "凭证无效",
+      "admin-already-exists": "已经有一个管理员用户。请登录并从管理面板创建一个新用户。",
+      "missing-email-or-password": "缺少邮箱或密码",
+      "invalid-username": "无效的用户名",
+      "user-already-exists": "该用户已存在",
+      "error-creating-user": "创建新用户错误",
+      "no-change-password-request": "找不到更改密码的请求",
+      "operator-not-found": "未找到操作员",
+      "user-not-found": "找不到用户",
+      "not-allowed-in-demo": "在演示模式下不允许",
+      "invalid-password": "无效密码",
+      "invalid-password-length": "密码不得少于 8 个字符",
+      "invalid-locale": "无效的区域设置",
+      "totp-session-not-found": "找不到 2FA 会话",
+      "totp-not-enabled": "此用户未启用2FA",
+      "totp-invalid-code": "无效的2FA验证码",
+      "totp-already-enabled": "这个用户已启用两步验证"
     },
     "success": {}
   },
   "auth": {
     "login": {
-      "title": "Login to your account",
-      "submit": "Login"
+      "title": "登录到您的帐户",
+      "submit": "登录"
     },
     "totp": {
-      "title": "Two-factor authentication",
-      "instructions": "Enter the code from your authenticator app",
-      "submit": "Confirm"
+      "title": "两步验证",
+      "instructions": "请输入您的双重验证应用中显示的验证码",
+      "submit": "确认"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "注册您的账户",
+      "submit": "注册"
     },
     "reset-password": {
-      "title": "Reset your password",
-      "submit": "Reset password",
-      "cancel": "Cancel password change request",
-      "instructions": "Run this command on your server and then refresh this page",
-      "success-title": "Password reset",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
-      "back-to-login": "Back to login"
+      "title": "重置您的密码",
+      "submit": "重置密码",
+      "cancel": "取消密码更改请求",
+      "instructions": "在您的服务器上运行此命令，然后刷新此页",
+      "success-title": "密码重置",
+      "success": "您的密码已重置。您现在可以使用您的新密码登录。您的电子邮件 {email}",
+      "back-to-login": "返回登录界面"
     },
     "form": {
-      "email": "Email address",
+      "email": "电子邮件地址",
       "email-placeholder": "you@example.com",
-      "password": "Password",
-      "password-placeholder": "Enter your password",
-      "password-confirmation": "Confirm password",
-      "password-confirmation-placeholder": "Confirm your password",
-      "forgot": "Forgot password?",
-      "new-password-placeholder": "Your new password",
-      "new-password-confirmation-placeholder": "Confirm your new password",
+      "password": "密码",
+      "password-placeholder": "输入您的密码",
+      "password-confirmation": "确认密码",
+      "password-confirmation-placeholder": "确认您的密码",
+      "forgot": "忘记密码?",
+      "new-password-placeholder": "设置你的新密码:",
+      "new-password-confirmation-placeholder": "确认您的新密码",
       "errors": {
         "email": {
-          "required": "Email address is required",
-          "email": "Email address is invalid",
-          "invalid": "Email address is invalid"
+          "required": "需要提供电子邮件地址",
+          "email": "电子邮件地址无效",
+          "invalid": "电子邮件地址无效"
         },
         "password": {
-          "required": "Password is required",
-          "minlength": "Password must be at least 8 characters"
+          "required": "密码必填",
+          "minlength": "密码必须至少8个字符"
         },
         "password-confirmation": {
-          "required": "Password confirmation is required",
-          "minlength": "Password confirmation must be at least 8 characters",
-          "match": "Passwords do not match"
+          "required": "需要确认密码",
+          "minlength": "密码必须至少8个字符",
+          "match": "密码不匹配"
         }
       }
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "控制面板",
     "cards": {
       "disk": {
-        "title": "Disk Space",
-        "subtitle": "Used out of {total} GB"
+        "title": "磁盘空间",
+        "subtitle": "已使用 {total} GB"
       },
       "memory": {
-        "title": "Memory Used"
+        "title": "内存占用"
       },
       "cpu": {
-        "title": "CPU Load",
-        "subtitle": "Uninstall apps to reduce load"
+        "title": "CPU 负载",
+        "subtitle": "卸载应用以减少负载"
       }
     }
   }
