@@ -1,90 +1,90 @@
 {
   "server-messages": {
     "errors": {
-      "invalid-credentials": "Invalid credentials",
-      "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
-      "missing-email-or-password": "Missing email or password",
-      "invalid-username": "Invalid username",
-      "user-already-exists": "User already exists",
-      "error-creating-user": "Error creating user",
-      "no-change-password-request": "No change password request found",
-      "operator-not-found": "Operator user not found",
-      "user-not-found": "User not found",
-      "not-allowed-in-demo": "Not allowed in demo mode",
-      "invalid-password": "Invalid password",
-      "invalid-password-length": "Password must be at least 8 characters long",
-      "invalid-locale": "Invalid locale",
-      "totp-session-not-found": "2FA session not found",
-      "totp-not-enabled": "2FA is not enabled for this user",
-      "totp-invalid-code": "Invalid 2FA code",
-      "totp-already-enabled": "2FA is already enabled for this user"
+      "invalid-credentials": "Неверные учетные данные",
+      "admin-already-exists": "Администратор уже существует. Пожалуйста, войдите в систему для создания нового пользователя из панели администратора.",
+      "missing-email-or-password": "Пропущен e-mail или пароль",
+      "invalid-username": "Неверный логин",
+      "user-already-exists": "Пользователь уже существует",
+      "error-creating-user": "Ошибка создания пользователя",
+      "no-change-password-request": "Не найден запрос на смену пароля",
+      "operator-not-found": "Оператор не найден",
+      "user-not-found": "Пользователь не найден",
+      "not-allowed-in-demo": "Не допускается в демо-режиме",
+      "invalid-password": "Неверный пароль",
+      "invalid-password-length": "Пароль должен содержать не менее 8 символов",
+      "invalid-locale": "Недопустимый язык",
+      "totp-session-not-found": "2FA сессия не найдена",
+      "totp-not-enabled": "2FA не включена для этого пользователя",
+      "totp-invalid-code": "Неверный 2FA код",
+      "totp-already-enabled": "2FA уже включена для этого пользователя"
     },
     "success": {}
   },
   "auth": {
     "login": {
-      "title": "Login to your account",
-      "submit": "Login"
+      "title": "Войдите в свой аккаунт",
+      "submit": "Войти"
     },
     "totp": {
-      "title": "Two-factor authentication",
-      "instructions": "Enter the code from your authenticator app",
-      "submit": "Confirm"
+      "title": "Двухфакторная аутентификация",
+      "instructions": "Введите код из приложения для аутентификации",
+      "submit": "Подтвердить"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "Зарегистрируйте аккаунт",
+      "submit": "Зарегистрироваться"
     },
     "reset-password": {
-      "title": "Reset your password",
-      "submit": "Reset password",
-      "cancel": "Cancel password change request",
-      "instructions": "Run this command on your server and then refresh this page",
-      "success-title": "Password reset",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
-      "back-to-login": "Back to login"
+      "title": "Сбросить пароль",
+      "submit": "Сбросить пароль",
+      "cancel": "Отменить запрос на смену пароля",
+      "instructions": "Выполните эту команду на вашем сервере, затем обновите эту страницу",
+      "success-title": "Восстановление пароля",
+      "success": "Ваш пароль был сброшен. Теперь вы можете войти с новым паролем. Ваш адрес электронной почты {email}",
+      "back-to-login": "Вернуться на страницу входа"
     },
     "form": {
-      "email": "Email address",
+      "email": "Адрес электронной почты",
       "email-placeholder": "you@example.com",
-      "password": "Password",
-      "password-placeholder": "Enter your password",
-      "password-confirmation": "Confirm password",
-      "password-confirmation-placeholder": "Confirm your password",
-      "forgot": "Forgot password?",
-      "new-password-placeholder": "Your new password",
-      "new-password-confirmation-placeholder": "Confirm your new password",
+      "password": "Пароль",
+      "password-placeholder": "Введите пароль",
+      "password-confirmation": "Подтвердите пароль",
+      "password-confirmation-placeholder": "Подтвердите пароль",
+      "forgot": "Забыли пароль?",
+      "new-password-placeholder": "Новый пароль",
+      "new-password-confirmation-placeholder": "Подтвердите новый пароль",
       "errors": {
         "email": {
-          "required": "Email address is required",
-          "email": "Email address is invalid",
-          "invalid": "Email address is invalid"
+          "required": "Необходимо указать e-mail",
+          "email": "Неверный e-mail",
+          "invalid": "Недопустимый e-mail"
         },
         "password": {
-          "required": "Password is required",
-          "minlength": "Password must be at least 8 characters"
+          "required": "Необходимо указать пароль",
+          "minlength": "Пароль должен содержать не менее 8 символов"
         },
         "password-confirmation": {
-          "required": "Password confirmation is required",
-          "minlength": "Password confirmation must be at least 8 characters",
-          "match": "Passwords do not match"
+          "required": "Необходимо подтвердить пароль",
+          "minlength": "Подтверждение пароля должно содержать не менее 8 символов",
+          "match": "Пароли не совпадают"
         }
       }
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Обзор",
     "cards": {
       "disk": {
-        "title": "Disk Space",
-        "subtitle": "Used out of {total} GB"
+        "title": "Место на диске",
+        "subtitle": "Используется из {total} ГБ"
       },
       "memory": {
-        "title": "Memory Used"
+        "title": "Использовано памяти"
       },
       "cpu": {
-        "title": "CPU Load",
-        "subtitle": "Uninstall apps to reduce load"
+        "title": "Загрузка ЦП",
+        "subtitle": "Удалите приложения для уменьшения нагрузки"
       }
     }
   }
