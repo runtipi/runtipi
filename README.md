@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-18-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
@@ -95,6 +95,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://fsackur.github.io/"><img src="https://avatars.githubusercontent.com/u/3678789?v=4?s=100" width="100px;" alt="Freddie Sackur"/><br /><sub><b>Freddie Sackur</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=fsackur" title="Code">💻</a> <a href="https://github.com/meienberger/runtipi/commits?author=fsackur" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://innocentius.github.io"><img src="https://avatars.githubusercontent.com/u/5344432?v=4?s=100" width="100px;" alt="Innocentius"/><br /><sub><b>Innocentius</b></sub></a><br /><a href="#translation-innocentius" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/TetrisIQ"><img src="https://avatars.githubusercontent.com/u/24246993?v=4?s=100" width="100px;" alt="Alex"/><br /><sub><b>Alex</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=TetrisIQ" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://ryanc.cc"><img src="https://avatars.githubusercontent.com/u/21301288?v=4?s=100" width="100px;" alt="Ryan Wang"/><br /><sub><b>Ryan Wang</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=ruibaby" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
