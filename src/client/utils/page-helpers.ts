@@ -2,6 +2,8 @@ import nookies from 'nookies';
 import { GetServerSideProps } from 'next';
 import merge from 'lodash.merge';
 import { getLocaleFromString } from '@/shared/internationalization/locales';
+import { createTranslator } from 'next-intl';
+import { useUIStore } from '../state/uiStore';
 
 export const getAuthedPageProps: GetServerSideProps = async (ctx) => {
   const { userId } = ctx.req.session;
@@ -38,10 +40,14 @@ export const getMessagesPageProps: GetServerSideProps = async (ctx) => {
   }
 
   const messages = (await import(`../messages/${locale}.json`)).default;
+  const mergedMessages = merge(englishMessages, messages);
+
+  const translator = createTranslator({ locale, messages: mergedMessages });
+  useUIStore.setState({ translator });
 
   return {
     props: {
-      messages: merge(englishMessages, messages),
+      messages: mergedMessages,
     },
   };
 };

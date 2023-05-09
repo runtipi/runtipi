@@ -1,4 +1,5 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { createAppEntity } from '../../../../mocks/fixtures/app.fixtures';
 import { getTRPCMock, getTRPCMockError } from '../../../../mocks/getTrpcMock';
@@ -126,11 +127,12 @@ describe('Test: AppDetailsContainer', () => {
 
     it('should display a toast error when install mutation fails', async () => {
       // Arrange
+      const error = faker.lorem.sentence();
       server.use(
         getTRPCMockError({
           path: ['app', 'installApp'],
           type: 'mutation',
-          message: 'my big error',
+          message: error,
         }),
       );
 
@@ -144,7 +146,7 @@ describe('Test: AppDetailsContainer', () => {
       fireEvent.click(installButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Failed to install app: my big error')).toBeInTheDocument();
+        expect(screen.getByText(error)).toBeInTheDocument();
       });
     });
   });
@@ -169,7 +171,8 @@ describe('Test: AppDetailsContainer', () => {
 
     it('should display a toast error when update mutation fails', async () => {
       // Arrange
-      server.use(getTRPCMockError({ path: ['app', 'updateApp'], type: 'mutation', message: 'my big error' }));
+      const error = faker.lorem.sentence();
+      server.use(getTRPCMockError({ path: ['app', 'updateApp'], type: 'mutation', message: error }));
       const app = createAppEntity({ overrides: { version: 2, latestVersion: 3 }, overridesInfo: { tipi_version: 3 } });
       render(<AppDetailsContainer app={app} />);
       const openModalButton = screen.getByRole('button', { name: 'Update' });
@@ -181,7 +184,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('Failed to update app: my big error')).toBeInTheDocument();
+        expect(screen.getByText(error)).toBeInTheDocument();
       });
     });
   });
@@ -207,7 +210,8 @@ describe('Test: AppDetailsContainer', () => {
 
     it('should display a toast error when uninstall mutation fails', async () => {
       // Arrange
-      server.use(getTRPCMockError({ path: ['app', 'uninstallApp'], type: 'mutation', message: 'my big error' }));
+      const error = faker.lorem.sentence();
+      server.use(getTRPCMockError({ path: ['app', 'uninstallApp'], type: 'mutation', message: error }));
       const app = createAppEntity({ status: 'stopped' });
       render(<AppDetailsContainer app={app} />);
       const openModalButton = screen.getByRole('button', { name: 'Remove' });
@@ -219,7 +223,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('Failed to uninstall app: my big error')).toBeInTheDocument();
+        expect(screen.getByText(error)).toBeInTheDocument();
       });
     });
   });
@@ -243,7 +247,8 @@ describe('Test: AppDetailsContainer', () => {
 
     it('should display a toast error when start mutation fails', async () => {
       // Arrange
-      server.use(getTRPCMockError({ path: ['app', 'startApp'], type: 'mutation', message: 'my big error' }));
+      const error = faker.lorem.sentence();
+      server.use(getTRPCMockError({ path: ['app', 'startApp'], type: 'mutation', message: error }));
       const app = createAppEntity({ status: 'stopped' });
       render(<AppDetailsContainer app={app} />);
 
@@ -253,7 +258,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('Failed to start app: my big error')).toBeInTheDocument();
+        expect(screen.getByText(error)).toBeInTheDocument();
       });
     });
   });
@@ -279,7 +284,8 @@ describe('Test: AppDetailsContainer', () => {
 
     it('should display a toast error when stop mutation fails', async () => {
       // Arrange
-      server.use(getTRPCMockError({ path: ['app', 'stopApp'], type: 'mutation', message: 'my big error' }));
+      const error = faker.lorem.sentence();
+      server.use(getTRPCMockError({ path: ['app', 'stopApp'], type: 'mutation', message: error }));
       const app = createAppEntity({ status: 'running' });
       render(<AppDetailsContainer app={app} />);
       const openModalButton = screen.getByRole('button', { name: 'Stop' });
@@ -291,7 +297,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('Failed to stop app: my big error')).toBeInTheDocument();
+        expect(screen.getByText(error)).toBeInTheDocument();
       });
     });
   });
@@ -317,7 +323,8 @@ describe('Test: AppDetailsContainer', () => {
 
     it('should display a toast error when update config mutation fails', async () => {
       // Arrange
-      server.use(getTRPCMockError({ path: ['app', 'updateAppConfig'], type: 'mutation', message: 'my big error' }));
+      const error = faker.lorem.sentence();
+      server.use(getTRPCMockError({ path: ['app', 'updateAppConfig'], type: 'mutation', message: error }));
       const app = createAppEntity({ status: 'running', overridesInfo: { exposable: true } });
       render(<AppDetailsContainer app={app} />);
       const openModalButton = screen.getByRole('button', { name: 'Settings' });
@@ -329,7 +336,7 @@ describe('Test: AppDetailsContainer', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('Failed to update app config: my big error')).toBeInTheDocument();
+        expect(screen.getByText(error)).toBeInTheDocument();
       });
     });
   });

@@ -1,5 +1,7 @@
 import React from 'react';
 import { toast } from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
+import type { MessageKey } from '@/server/utils/errors';
 import { useDisclosure } from '../../../../hooks/useDisclosure';
 import { AppLogo } from '../../../../components/AppLogo/AppLogo';
 import { AppStatus } from '../../../../components/AppStatus';
@@ -20,6 +22,7 @@ interface IProps {
 }
 
 export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
+  const t = useTranslations();
   const installDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
@@ -40,11 +43,12 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      toast.success('App installed successfully');
+      toast.success(t('apps.app-details.install-success'));
     },
     onError: (e) => {
       invalidate();
-      toast.error(`Failed to install app: ${e.message}`);
+      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
+      toast.error(toastMessage);
     },
   });
 
@@ -55,9 +59,9 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      toast.success('App uninstalled successfully');
+      toast.success(t('apps.app-details.uninstall-success'));
     },
-    onError: (e) => toast.error(`Failed to uninstall app: ${e.message}`),
+    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
   });
 
   const stop = trpc.app.stopApp.useMutation({
@@ -67,9 +71,9 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      toast.success('App stopped successfully');
+      toast.success(t('apps.app-details.stop-success'));
     },
-    onError: (e) => toast.error(`Failed to stop app: ${e.message}`),
+    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
   });
 
   const update = trpc.app.updateApp.useMutation({
@@ -79,9 +83,9 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      toast.success('App updated successfully');
+      toast.success(t('apps.app-details.update-success'));
     },
-    onError: (e) => toast.error(`Failed to update app: ${e.message}`),
+    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
   });
 
   const start = trpc.app.startApp.useMutation({
@@ -90,18 +94,18 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onSuccess: () => {
       invalidate();
-      toast.success('App started successfully');
+      toast.success(t('apps.app-details.start-success'));
     },
-    onError: (e) => toast.error(`Failed to start app: ${e.message}`),
+    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
   });
 
   const updateConfig = trpc.app.updateAppConfig.useMutation({
     onMutate: () => updateSettingsDisclosure.close(),
     onSuccess: () => {
       invalidate();
-      toast.success('App config updated successfully. Restart the app to apply the changes');
+      toast.success(t('apps.app-details.update-config-success'));
     },
-    onError: (e) => toast.error(`Failed to update app config: ${e.message}`),
+    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
   });
 
   const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
@@ -164,7 +168,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
         <AppLogo id={app.id} size={130} alt={app.info.name} />
         <div className="w-100 d-flex flex-column ms-md-3 align-items-center align-items-md-start">
           <div>
-            <span className="mt-1 me-1">Version: </span>
+            <span className="mt-1 me-1">{t('apps.app-details.version')}: </span>
             <span className="badge bg-gray mt-2">{app.info.version}</span>
           </div>
           {app.domain && (
