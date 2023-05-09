@@ -87,17 +87,5 @@
         "subtitle": "Uninstall apps to reduce load"
       }
     }
-  },
-  "header": {
-    "dashboard": "Dashboard",
-    "my-apps": "My Apps",
-    "app-store": "App Store",
-    "settings": "Settings",
-    "logout": "Logout",
-    "dark-mode": "Dark Mode",
-    "light-mode": "Light Mode",
-    "sponsor": "Sponsor",
-    "source-code": "Source code",
-    "update-available": "Update available"
   }
 }
