@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
@@ -99,6 +99,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://ryanc.cc"><img src="https://avatars.githubusercontent.com/u/21301288?v=4?s=100" width="100px;" alt="Ryan Wang"/><br /><sub><b>Ryan Wang</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=ruibaby" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/simonandr"><img src="https://avatars.githubusercontent.com/u/48092304?v=4?s=100" width="100px;" alt="simonandr"/><br /><sub><b>simonandr</b></sub></a><br /><a href="#content-simonandr" title="Content">🖋</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/demizeu"><img src="https://avatars.githubusercontent.com/u/121183951?v=4?s=100" width="100px;" alt="iepure"/><br /><sub><b>iepure</b></sub></a><br /><a href="#translation-demizeu" title="Translation">🌍</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/SergeyKodolov"><img src="https://avatars.githubusercontent.com/u/35339452?v=4?s=100" width="100px;" alt="Sergey Kodolov"/><br /><sub><b>Sergey Kodolov</b></sub></a><br /><a href="#translation-SergeyKodolov" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
