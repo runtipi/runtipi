@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Tooltip } from 'react-tooltip';
+import { useTranslations } from 'next-intl';
 import { getUrl } from '../../../core/helpers/url-helpers';
 import { useUIStore } from '../../../state/uiStore';
 import { NavBar } from '../NavBar';
@@ -24,6 +25,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
       router.push('/login');
     },
   });
+  const t = useTranslations('header');
 
   return (
     <header className="navbar navbar-expand-md navbar-dark navbar-overlap d-print-none">
@@ -54,24 +56,24 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
             <div className="btn-list">
               <a href="https://github.com/meienberger/runtipi" target="_blank" rel="noreferrer" className="btn btn-dark">
                 <IconBrandGithub data-testid="icon-github" className="me-1 icon" size={24} />
-                Source code
+                {t('source-code')}
               </a>
               <a href="https://github.com/meienberger/runtipi?sponsor=1" target="_blank" rel="noreferrer" className="btn btn-dark">
                 <IconHeart className="me-1 icon text-pink" size={24} />
-                Sponsor
+                {t('sponsor')}
               </a>
             </div>
           </div>
           <div style={{ zIndex: 1 }} className="d-flex">
-            <Tooltip anchorSelect=".darkMode">Dark mode</Tooltip>
+            <Tooltip anchorSelect=".darkMode">{t('dark-mode')}</Tooltip>
             <div onClick={() => setDarkMode(true)} role="button" aria-hidden="true" className="darkMode nav-link px-0 hide-theme-dark cursor-pointer" data-testid="dark-mode-toggle">
               <IconMoon data-testid="icon-moon" size={20} />
             </div>
-            <Tooltip anchorSelect=".lightMode">Light mode</Tooltip>
+            <Tooltip anchorSelect=".lightMode">{t('light-mode')}</Tooltip>
             <div onClick={() => setDarkMode(false)} aria-hidden="true" className="lightMode nav-link px-0 hide-theme-light cursor-pointer" data-testid="light-mode-toggle">
               <IconSun data-testid="icon-sun" size={20} />
             </div>
-            <Tooltip anchorSelect=".logOut">Log out</Tooltip>
+            <Tooltip anchorSelect=".logOut">{t('logout')}</Tooltip>
             <div onClick={() => logout.mutate()} tabIndex={0} onKeyPress={() => logout.mutate()} role="button" className="logOut nav-link px-0 cursor-pointer" data-testid="logout-button">
               <IconLogout size={20} />
             </div>

@@ -1,5 +1,6 @@
 import { IconApps, IconBrandAppstore, IconHome, IconSettings, Icon } from '@tabler/icons-react';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -9,6 +10,7 @@ interface IProps {
 }
 
 export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
+  const t = useTranslations('header');
   const router = useRouter();
   const path = router.pathname.split('/')[1];
 
@@ -32,12 +34,12 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
     <div id="navbar-menu" className="collapse navbar-collapse" style={{}}>
       <div className="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
         <ul className="navbar-nav">
-          {renderItem('Dashboard', '', IconHome)}
-          {renderItem('My Apps', 'apps', IconApps)}
-          {renderItem('App Store', 'app-store', IconBrandAppstore)}
-          {renderItem('Settings', 'settings', IconSettings)}
+          {renderItem(t('dashboard'), '', IconHome)}
+          {renderItem(t('my-apps'), 'apps', IconApps)}
+          {renderItem(t('app-store'), 'app-store', IconBrandAppstore)}
+          {renderItem(t('settings'), 'settings', IconSettings)}
         </ul>
-        {Boolean(isUpdateAvailable) && <span className="ms-2 badge bg-green d-none d-lg-block">Update available</span>}
+        {Boolean(isUpdateAvailable) && <span className="ms-2 badge bg-green d-none d-lg-block">{t('update-available')}</span>}
       </div>
     </div>
   );
