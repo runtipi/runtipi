@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-23-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
@@ -102,6 +102,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SergeyKodolov"><img src="https://avatars.githubusercontent.com/u/35339452?v=4?s=100" width="100px;" alt="Sergey Kodolov"/><br /><sub><b>Sergey Kodolov</b></sub></a><br /><a href="#translation-SergeyKodolov" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sclaren"><img src="https://avatars.githubusercontent.com/u/915292?v=4?s=100" width="100px;" alt="sclaren"/><br /><sub><b>sclaren</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=sclaren" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
