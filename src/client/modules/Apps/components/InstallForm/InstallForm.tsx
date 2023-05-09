@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Tooltip } from 'react-tooltip';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import { Button } from '../../../../components/ui/Button';
 import { Switch } from '../../../../components/ui/Switch';
 import { Input } from '../../../../components/ui/Input';
@@ -28,6 +29,7 @@ const hiddenTypes = ['random'];
 const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 
 export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, initalValues, loading }) => {
+  const t = useTranslations('apps.app-details.install-form');
   const {
     register,
     handleSubmit,
@@ -87,7 +89,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
           render={({ field: { onChange, value, ref, ...props } }) => (
             <Select value={value as string} defaultValue={field.default as string} onValueChange={onChange} {...props}>
               <SelectTrigger className="mb-3" error={errors[field.env_variable]?.message} label={label}>
-                <SelectValue placeholder="Choose an option..." />
+                <SelectValue placeholder={t('choose-option')} />
               </SelectTrigger>
               <SelectContent>
                 {field.options?.map((option) => (
@@ -122,15 +124,13 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         name="exposed"
         defaultValue={false}
         render={({ field: { onChange, value, ref, ...props } }) => (
-          <Switch className="mb-3" disabled={info.force_expose} ref={ref} checked={value} onCheckedChange={onChange} {...props} label="Expose app" />
+          <Switch className="mb-3" disabled={info.force_expose} ref={ref} checked={value} onCheckedChange={onChange} {...props} label={t('expose-app')} />
         )}
       />
       {watchExposed && (
         <div className="mb-3">
-          <Input {...register('domain')} label="Domain name" error={errors.domain?.message} disabled={loading} placeholder="Domain name" />
-          <span className="text-muted">
-            Make sure this exact domain contains an <strong>A</strong> record pointing to your IP.
-          </span>
+          <Input {...register('domain')} label={t('domain-name')} error={errors.domain?.message} disabled={loading} placeholder={t('domain-name')} />
+          <span className="text-muted">{t('domain-name-hint')}</span>
         </div>
       )}
     </>
@@ -155,7 +155,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
       {formFields.filter(typeFilter).map(renderField)}
       {info.exposable && renderExposeForm()}
       <Button loading={loading} type="submit" className="btn-success">
-        {initalValues ? 'Update' : 'Install'}
+        {initalValues ? t('submit-update') : t('sumbit-install')}
       </Button>
     </form>
   );
