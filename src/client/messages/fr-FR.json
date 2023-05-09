@@ -89,82 +89,82 @@
     }
   },
   "apps": {
-    "status-running": "Running",
-    "status-stopped": "Stopped",
-    "status-starting": "Starting",
-    "status-stopping": "Stopping",
-    "status-updating": "Updating",
-    "status-missing": "Missing",
-    "status-installing": "Installing",
-    "status-uninstalling": "Uninstalling",
-    "update-available": "Update available",
+    "status-running": "En cours d'exécution",
+    "status-stopped": "Arrêté",
+    "status-starting": "Démarrage en cours",
+    "status-stopping": "Arrêt en cours",
+    "status-updating": "Mise à jour en cours",
+    "status-missing": "Manquant",
+    "status-installing": "Installation en cours",
+    "status-uninstalling": "Désinstallation en cours",
+    "update-available": "Mise à jour disponible",
     "my-apps": {
-      "title": "My Apps",
-      "empty-title": "No app installed",
-      "empty-subtitle": "Install an app from the app store to get started",
-      "empty-action": "Go to app store"
+      "title": "Mes applications",
+      "empty-title": "Aucune application installée",
+      "empty-subtitle": "Installez une application depuis l'app store pour commencer",
+      "empty-action": "Accéder à l'App Store"
     },
     "app-store": {},
     "app-details": {
-      "install-success": "App installed successfully",
-      "uninstall-success": "App uninstalled successfully",
-      "stop-success": "App stopped successfully",
-      "update-success": "App updated successfully",
-      "start-success": "App started successfully",
-      "update-config-success": "App config updated successfully. Restart the app to apply the changes",
+      "install-success": "Application installée avec succès",
+      "uninstall-success": "Application désinstallée avec succès",
+      "stop-success": "Application arrêtée avec succès",
+      "update-success": "Application mise à jour avec succès",
+      "start-success": "Application démarrée avec succès",
+      "update-config-success": "Configuration de l'application mise à jour avec succès. Redémarrez l'application pour appliquer les modifications",
       "version": "Version",
       "actions": {
-        "start": "Start",
-        "remove": "Remove",
-        "settings": "Settings",
-        "stop": "Stop",
-        "open": "Open",
-        "loading": "Loading",
-        "cancel": "Cancel",
-        "install": "Install",
-        "update": "Update"
+        "start": "Démarrer",
+        "remove": "Supprimer",
+        "settings": "Paramètres",
+        "stop": "Arrêter",
+        "open": "Ouvrir",
+        "loading": "Chargement",
+        "cancel": "Annuler",
+        "install": "Installer",
+        "update": "Mettre à jour"
       },
       "install-form": {
-        "title": "Install {name}",
-        "expose-app": "Expose app",
-        "domain-name": "Domain name",
-        "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-        "choose-option": "Choose an option...",
-        "sumbit-install": "Install",
-        "submit-update": "Update",
+        "title": "Installer {name}",
+        "expose-app": "Exposer l'application",
+        "domain-name": "Nom de domaine",
+        "domain-name-hint": "Assurez-vous que ce domaine exact contient un enregistrement A pointant vers votre IP.",
+        "choose-option": "Choisissez une option...",
+        "sumbit-install": "Installer",
+        "submit-update": "Mettre à jour",
         "errors": {
-          "required": "{label} is required",
-          "regex": "{label} must match the pattern {pattern}",
-          "max-length": "{label} must be less than {max} characters",
-          "min-length": "{label} must be at least {min} characters",
-          "between-length": "{label} must be between {min} and {max} characters",
-          "invalid-email": "{label} must be a valid email address",
-          "number": "{label} must be a number",
-          "fqdn": "{label} must be a valid domain",
-          "ip": "{label} must be a valid IP address",
-          "fqdnip": "{label} must be a valid domain or IP address",
-          "url": "{label} must be a valid URL"
+          "required": "{label} est obligatoire",
+          "regex": "{label} doit correspondre à la règle {pattern}",
+          "max-length": "{label} doit contenir moins de {max} caractères",
+          "min-length": "{label} doit contenir au moins {min} caractères",
+          "between-length": "{label} doit contenir entre {min} et {max} caractères",
+          "invalid-email": "{label} doit être une adresse e-mail valide",
+          "number": "{label} doit être un nombre",
+          "fqdn": "{label} doit être un domaine valide",
+          "ip": "{label} doit être une adresse IP valide",
+          "fqdnip": "{label} doit être un domaine ou une adresse IP valide",
+          "url": "{label} doit être une URL valide"
         }
       },
       "stop-form": {
-        "title": "Stop {name} ?",
-        "subtitle": "All data will be retained",
-        "submit": "Stop"
+        "title": "Arrêter {name}?",
+        "subtitle": "Toutes les données seront conservées",
+        "submit": "Arrêter"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Uninstall"
+        "title": "Désinstaller {name}?",
+        "subtitle": "Toutes les données de cette application seront perdues.",
+        "warning": "Êtes-vous sûr ? Cette action ne peut pas être annulée.",
+        "submit": "Désinstaller"
       },
       "update-form": {
-        "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
-        "submit": "Update"
+        "title": "Mettre à jour {name}?",
+        "subtitle1": "Mettre à jour l'application vers la dernière version :",
+        "subtitle2": "Cela réinitialisera votre configuration personnalisée (par exemple les changements dans docker-compose.yml)",
+        "submit": "Mettre à jour"
       },
       "update-settings-form": {
-        "title": "Update {name} config"
+        "title": "Mettre à jour la configuration de {name}"
       }
     }
   },
