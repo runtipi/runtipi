@@ -89,15 +89,15 @@
     }
   },
   "header": {
-    "dashboard": "Dashboard",
-    "my-apps": "My Apps",
-    "app-store": "App Store",
-    "settings": "Settings",
-    "logout": "Logout",
-    "dark-mode": "Dark Mode",
-    "light-mode": "Light Mode",
-    "sponsor": "Sponsor",
-    "source-code": "Source code",
-    "update-available": "Update available"
+    "dashboard": "控制面板",
+    "my-apps": "我的应用",
+    "app-store": "应用市场",
+    "settings": "设置",
+    "logout": "登出",
+    "dark-mode": "暗色模式",
+    "light-mode": "明亮模式",
+    "sponsor": "赞助",
+    "source-code": "源代码",
+    "update-available": "有可用更新"
   }
 }
