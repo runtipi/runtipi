@@ -1,6 +1,8 @@
 import { NextPage } from 'next';
 import React from 'react';
 import { useRouter } from 'next/router';
+import type { MessageKey } from '@/server/utils/errors';
+import { useTranslations } from 'next-intl';
 import { Layout } from '../../../../components/Layout';
 import { ErrorPage } from '../../../../components/ui/ErrorPage';
 import { trpc } from '../../../../utils/trpc';
@@ -18,6 +20,7 @@ const paths: Record<string, Path> = {
 
 export const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
   const router = useRouter();
+  const t = useTranslations();
 
   const basePath = router.pathname.split('/').slice(1)[0];
   const { refSlug, refTitle } = paths[basePath || 'apps'] || { refSlug: 'apps', refTitle: 'Apps' };
@@ -31,9 +34,9 @@ export const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
 
   // TODO: add loading state
   return (
-    <Layout title={data?.info.name} breadcrumbs={breadcrumb}>
+    <Layout title={data?.info.name || ''} breadcrumbs={breadcrumb}>
       {data?.info && <AppDetailsContainer app={data} />}
-      {error && <ErrorPage error={error.message} />}
+      {error && <ErrorPage error={t(error.data?.translatedError || (error.message as MessageKey))} />}
     </Layout>
   );
 };

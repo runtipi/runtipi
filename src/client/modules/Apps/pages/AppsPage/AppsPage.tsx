@@ -1,6 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
+import { useTranslations } from 'next-intl';
+import { MessageKey } from '@/server/utils/errors';
 import { AppTile } from '../../../../components/AppTile';
 import { Layout } from '../../../../components/Layout';
 import { EmptyPage } from '../../../../components/ui/EmptyPage';
@@ -9,6 +11,7 @@ import { trpc } from '../../../../utils/trpc';
 import { AppRouterOutput } from '../../../../../server/routers/app/app.router';
 
 export const AppsPage: NextPage = () => {
+  const t = useTranslations();
   const { data, isLoading, error } = trpc.app.installedApps.useQuery();
 
   const renderApp = (app: AppRouterOutput['installedApps'][number]) => {
@@ -22,7 +25,7 @@ export const AppsPage: NextPage = () => {
   const router = useRouter();
 
   return (
-    <Layout title="My Apps">
+    <Layout title={t('apps.my-apps.title')}>
       <div>
         {Boolean(data?.length) && (
           <div className="row row-cards" data-testid="apps-list">
@@ -30,9 +33,9 @@ export const AppsPage: NextPage = () => {
           </div>
         )}
         {!isLoading && data?.length === 0 && (
-          <EmptyPage title="No app installed" subtitle="Install an app from the app store to get started" onAction={() => router.push('/app-store')} actionLabel="Go to app store" />
+          <EmptyPage title={t('apps.my-apps.empty-title')} subtitle={t('apps.my-apps.empty-subtitle')} onAction={() => router.push('/app-store')} actionLabel={t('apps.my-apps.empty-action')} />
         )}
-        {error && <ErrorPage error={error.message} />}
+        {error && <ErrorPage error={t(error.data?.translatedError || (error.message as MessageKey))} />}
       </div>
     </Layout>
   );

@@ -1,9 +1,12 @@
 import validator from 'validator';
+import { useUIStore } from '@/client/state/uiStore';
 import type { FormField } from '../../../../core/types';
 
 export const validateField = (field: FormField, value: string | undefined | boolean): string | undefined => {
+  const { translator } = useUIStore.getState();
+
   if (field.required && !value) {
-    return `${field.label} is required`;
+    return translator('apps.app-details.install-form.errors.required', { label: field.label });
   }
 
   if (!value || typeof value !== 'string') {
@@ -11,51 +14,51 @@ export const validateField = (field: FormField, value: string | undefined | bool
   }
 
   if (field.regex && !validator.matches(value, field.regex)) {
-    return field.pattern_error || `${field.label} must match the pattern ${field.regex}`;
+    return field.pattern_error || translator('apps.app-details.install-form.errors.regex', { label: field.label, pattern: field.regex });
   }
 
   switch (field.type) {
     case 'text':
       if (field.max && value.length > field.max) {
-        return `${field.label} must be less than ${field.max} characters`;
+        return translator('apps.app-details.install-form.errors.max-length', { label: field.label, max: field.max });
       }
       if (field.min && value.length < field.min) {
-        return `${field.label} must be at least ${field.min} characters`;
+        return translator('apps.app-details.install-form.errors.min-length', { label: field.label, min: field.min });
       }
       break;
     case 'password':
       if (!validator.isLength(value, { min: field.min || 0, max: field.max || 100 })) {
-        return `${field.label} must be between ${String(field.min)} and ${String(field.max)} characters`;
+        return translator('apps.app-details.install-form.errors.between-length', { label: field.label, min: field.min, max: field.max });
       }
       break;
     case 'email':
       if (!validator.isEmail(value)) {
-        return `${field.label} must be a valid email address`;
+        return translator('apps.app-details.install-form.errors.invalid-email', { label: field.label });
       }
       break;
     case 'number':
       if (!validator.isNumeric(value)) {
-        return `${field.label} must be a number`;
+        return translator('apps.app-details.install-form.errors.number', { label: field.label });
       }
       break;
     case 'fqdn':
       if (!validator.isFQDN(value)) {
-        return `${field.label} must be a valid domain`;
+        return translator('apps.app-details.install-form.errors.fqdn', { label: field.label });
       }
       break;
     case 'ip':
       if (!validator.isIP(value)) {
-        return `${field.label} must be a valid IP address`;
+        return translator('apps.app-details.install-form.errors.ip', { label: field.label });
       }
       break;
     case 'fqdnip':
       if (!validator.isFQDN(value || '') && !validator.isIP(value)) {
-        return `${field.label} must be a valid domain or IP address`;
+        return translator('apps.app-details.install-form.errors.fqdnip', { label: field.label });
       }
       break;
     case 'url':
       if (!validator.isURL(value)) {
-        return `${field.label} must be a valid URL`;
+        return translator('apps.app-details.install-form.errors.url', { label: field.label });
       }
       break;
     default:
@@ -67,7 +70,8 @@ export const validateField = (field: FormField, value: string | undefined | bool
 
 const validateDomain = (domain?: string | boolean): string | undefined => {
   if (typeof domain !== 'string' || !validator.isFQDN(domain || '')) {
-    return `${String(domain)} must be a valid domain`;
+    const { translator } = useUIStore.getState();
+    return translator('apps.app-details.install-form.errors.fqdn', { label: String(domain) });
   }
 
   return undefined;
