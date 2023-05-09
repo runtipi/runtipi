@@ -89,15 +89,15 @@
     }
   },
   "header": {
-    "dashboard": "Dashboard",
-    "my-apps": "My Apps",
+    "dashboard": "Tableau de bord",
+    "my-apps": "Mes applications",
     "app-store": "App Store",
-    "settings": "Settings",
-    "logout": "Logout",
-    "dark-mode": "Dark Mode",
-    "light-mode": "Light Mode",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "dark-mode": "Mode sombre",
+    "light-mode": "Mode clair",
     "sponsor": "Sponsor",
-    "source-code": "Source code",
-    "update-available": "Update available"
+    "source-code": "Code source",
+    "update-available": "Mise à jour disponible"
   }
 }
