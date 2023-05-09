@@ -89,15 +89,15 @@
     }
   },
   "header": {
-    "dashboard": "Dashboard",
-    "my-apps": "My Apps",
-    "app-store": "App Store",
-    "settings": "Settings",
-    "logout": "Logout",
-    "dark-mode": "Dark Mode",
-    "light-mode": "Light Mode",
+    "dashboard": "Panou de bord",
+    "my-apps": "Aplicaţiile mele",
+    "app-store": "Magazin Aplicații",
+    "settings": "Setări",
+    "logout": "Deconectare",
+    "dark-mode": "Mod întunecat",
+    "light-mode": "Mod luminos",
     "sponsor": "Sponsor",
-    "source-code": "Source code",
-    "update-available": "Update available"
+    "source-code": "Cod sursă",
+    "update-available": "Actualizare disponibilă"
   }
 }
