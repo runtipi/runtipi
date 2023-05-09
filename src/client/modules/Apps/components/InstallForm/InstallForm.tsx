@@ -102,7 +102,17 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
       );
     }
 
-    return <Input key={field.env_variable} {...register(field.env_variable)} label={label} error={errors[field.env_variable]?.message} disabled={loading} className="mb-3" placeholder={field.label} />;
+    return (
+      <Input
+        key={field.env_variable}
+        {...register(field.env_variable)}
+        label={label}
+        error={errors[field.env_variable]?.message}
+        disabled={loading}
+        className="mb-3"
+        placeholder={field.placeholder || field.label}
+      />
+    );
   };
 
   const renderExposeForm = () => (
