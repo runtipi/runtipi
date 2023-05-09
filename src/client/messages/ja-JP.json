@@ -89,15 +89,15 @@
     }
   },
   "header": {
-    "dashboard": "Dashboard",
-    "my-apps": "My Apps",
-    "app-store": "App Store",
-    "settings": "Settings",
-    "logout": "Logout",
-    "dark-mode": "Dark Mode",
-    "light-mode": "Light Mode",
-    "sponsor": "Sponsor",
-    "source-code": "Source code",
-    "update-available": "Update available"
+    "dashboard": "ダッシュボード",
+    "my-apps": "マイアプリ",
+    "app-store": "アプリストア",
+    "settings": "設定",
+    "logout": "ログアウト",
+    "dark-mode": "ダークモード",
+    "light-mode": "ライトモード",
+    "sponsor": "スポンサー",
+    "source-code": "ソース コード",
+    "update-available": "アップデートがあります"
   }
 }
