@@ -89,15 +89,15 @@
     }
   },
   "header": {
-    "dashboard": "Dashboard",
-    "my-apps": "My Apps",
-    "app-store": "App Store",
-    "settings": "Settings",
-    "logout": "Logout",
-    "dark-mode": "Dark Mode",
-    "light-mode": "Light Mode",
-    "sponsor": "Sponsor",
-    "source-code": "Source code",
-    "update-available": "Update available"
+    "dashboard": "Обзор",
+    "my-apps": "Мои приложения",
+    "app-store": "Магазин приложений",
+    "settings": "Настройки",
+    "logout": "Выйти",
+    "dark-mode": "Темный режим",
+    "light-mode": "Светлый режим",
+    "sponsor": "Спонсор",
+    "source-code": "Исходный код",
+    "update-available": "Доступно обновление"
   }
 }
