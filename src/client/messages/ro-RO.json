@@ -109,62 +109,62 @@
       "install-success": "Aplicație instalată cu succes",
       "uninstall-success": "Aplicație dezinstalată cu succes",
       "stop-success": "Aplicație oprită cu succes",
-      "update-success": "App updated successfully",
-      "start-success": "App started successfully",
-      "update-config-success": "App config updated successfully. Restart the app to apply the changes",
-      "version": "Version",
+      "update-success": "Aplicație actualizată cu succes",
+      "start-success": "Aplicație pornită cu succes",
+      "update-config-success": "Configurarea aplicației a fost actualizată. Reporniți aplicația pentru a aplica modificările",
+      "version": "Versiune",
       "actions": {
-        "start": "Start",
-        "remove": "Remove",
-        "settings": "Settings",
-        "stop": "Stop",
-        "open": "Open",
-        "loading": "Loading",
-        "cancel": "Cancel",
-        "install": "Install",
-        "update": "Update"
+        "start": "Pornire",
+        "remove": "Eliminare",
+        "settings": "Setări",
+        "stop": "Oprire",
+        "open": "Deschideți",
+        "loading": "Se încarcă",
+        "cancel": "Anulare",
+        "install": "Instalare",
+        "update": "Actualizare"
       },
       "install-form": {
-        "title": "Install {name}",
-        "expose-app": "Expose app",
-        "domain-name": "Domain name",
-        "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-        "choose-option": "Choose an option...",
-        "sumbit-install": "Install",
-        "submit-update": "Update",
+        "title": "Instalează {name}",
+        "expose-app": "Expune aplicația",
+        "domain-name": "Nume domeniu",
+        "domain-name-hint": "Asigurați-vă că acest domeniu exact conține o înregistrare A care indică IP-ul dvs.",
+        "choose-option": "Alege o opţiune...",
+        "sumbit-install": "Instalare",
+        "submit-update": "Actualizare",
         "errors": {
-          "required": "{label} is required",
-          "regex": "{label} must match the pattern {pattern}",
-          "max-length": "{label} must be less than {max} characters",
-          "min-length": "{label} must be at least {min} characters",
-          "between-length": "{label} must be between {min} and {max} characters",
-          "invalid-email": "{label} must be a valid email address",
-          "number": "{label} must be a number",
-          "fqdn": "{label} must be a valid domain",
-          "ip": "{label} must be a valid IP address",
-          "fqdnip": "{label} must be a valid domain or IP address",
-          "url": "{label} must be a valid URL"
+          "required": "{label} este necesar",
+          "regex": "{label} trebuie să corespundă modelului {pattern}",
+          "max-length": "{label} trebuie să aibă mai puțin de {max} caractere",
+          "min-length": "{label} trebuie să aibă cel puțin {min} caractere",
+          "between-length": "{label} trebuie să fie între {min} și {max} caractere",
+          "invalid-email": "{label} trebuie să fie o adresă de e-mail validă",
+          "number": "{label} trebuie să fie un număr",
+          "fqdn": "{label} trebuie să fie un domeniu valid",
+          "ip": "{label} trebuie să fie o adresă IP validă",
+          "fqdnip": "{label} trebuie să fie un domeniu sau o adresă IP validă",
+          "url": "{label} trebuie să fie un URL valid"
         }
       },
       "stop-form": {
-        "title": "Stop {name} ?",
-        "subtitle": "All data will be retained",
-        "submit": "Stop"
+        "title": "Opriți {name}?",
+        "subtitle": "Toate datele vor fi păstrate",
+        "submit": "Oprire"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Uninstall"
+        "title": "Dezinstalați {name}?",
+        "subtitle": "Toate datele pentru această aplicație vor fi pierdute.",
+        "warning": "Sunteți sigur? Această acțiune nu poate fi anulată.",
+        "submit": "Dezinstalare"
       },
       "update-form": {
-        "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
-        "submit": "Update"
+        "title": "Actualizați {name}?",
+        "subtitle1": "Actualizează aplicația la cea mai recentă versiune:",
+        "subtitle2": "Aceasta va reseta configuraţia personalizată (de ex. modificări în docker-compose.yml)",
+        "submit": "Actualizare"
       },
       "update-settings-form": {
-        "title": "Update {name} config"
+        "title": "Actualizare configurație {name}"
       }
     }
   },
