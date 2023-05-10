@@ -5,7 +5,7 @@ import { Locale } from '@/shared/internationalization/locales';
 import { type Context } from './context';
 import { AuthQueries } from './queries/auth/auth.queries';
 import { db } from './db';
-import { MessageKey, TranslatedError } from './utils/errors';
+import { type MessageKey, TranslatedError } from './utils/errors';
 
 const authQueries = new AuthQueries(db);
 
@@ -35,7 +35,8 @@ const t = initTRPC.context<Context>().create({
       data: {
         ...shape.data,
         zodError: error.code === 'BAD_REQUEST' && error.cause instanceof ZodError ? zodErrorsToRecord(error.cause.flatten()) : null,
-        translatedError: error.cause instanceof TranslatedError ? (error.cause.message as MessageKey) : null,
+        tError:
+          error.cause instanceof TranslatedError ? { message: error.cause.message as MessageKey, variables: error.cause.variableValues } : { message: error.message as MessageKey, variables: {} },
       },
     };
   },

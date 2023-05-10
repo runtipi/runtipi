@@ -47,8 +47,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     },
     onError: (e) => {
       invalidate();
-      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
-      toast.error(toastMessage);
+      toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables }));
     },
   });
 
@@ -61,7 +60,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
       invalidate();
       toast.success(t('apps.app-details.uninstall-success'));
     },
-    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
+    onError: (e) => toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables })),
   });
 
   const stop = trpc.app.stopApp.useMutation({
@@ -73,7 +72,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
       invalidate();
       toast.success(t('apps.app-details.stop-success'));
     },
-    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
+    onError: (e) => toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables })),
   });
 
   const update = trpc.app.updateApp.useMutation({
@@ -85,7 +84,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
       invalidate();
       toast.success(t('apps.app-details.update-success'));
     },
-    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
+    onError: (e) => toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables })),
   });
 
   const start = trpc.app.startApp.useMutation({
@@ -96,7 +95,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
       invalidate();
       toast.success(t('apps.app-details.start-success'));
     },
-    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
+    onError: (e) => toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables })),
   });
 
   const updateConfig = trpc.app.updateAppConfig.useMutation({
@@ -105,7 +104,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
       invalidate();
       toast.success(t('apps.app-details.update-config-success'));
     },
-    onError: (e) => toast.error(t(e.data?.translatedError || (e.message as MessageKey))),
+    onError: (e) => toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables })),
   });
 
   const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
