@@ -20,6 +20,9 @@ export type RpcErrorResponse = {
         stack: string;
         path: string; // TQuery
         zodError?: Record<string, string>;
+        tError: {
+          message: string;
+        };
       };
     };
   };
@@ -45,6 +48,9 @@ const jsonRpcErrorResponse = (path: string, status: number, message: string, zod
         stack: 'Error: Internal Server Error',
         path,
         zodError,
+        tError: {
+          message,
+        },
       },
     },
   },

@@ -14,7 +14,7 @@ export const DashboardPage: NextPage = () => {
   return (
     <Layout title={t('dashboard.title')}>
       {data && <DashboardContainer data={data} />}
-      {error && <ErrorPage error={t(error.data?.translatedError || (error.message as MessageKey))} />}
+      {error && <ErrorPage error={t(error.data?.tError.message as MessageKey, { ...error.data?.tError.variables })} />}
     </Layout>
   );
 };

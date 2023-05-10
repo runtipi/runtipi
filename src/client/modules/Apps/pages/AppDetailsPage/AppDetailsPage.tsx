@@ -1,8 +1,8 @@
 import { NextPage } from 'next';
 import React from 'react';
 import { useRouter } from 'next/router';
-import type { MessageKey } from '@/server/utils/errors';
 import { useTranslations } from 'next-intl';
+import type { MessageKey } from '@/server/utils/errors';
 import { Layout } from '../../../../components/Layout';
 import { ErrorPage } from '../../../../components/ui/ErrorPage';
 import { trpc } from '../../../../utils/trpc';
@@ -36,7 +36,7 @@ export const AppDetailsPage: NextPage<IProps> = ({ appId }) => {
   return (
     <Layout title={data?.info.name || ''} breadcrumbs={breadcrumb}>
       {data?.info && <AppDetailsContainer app={data} />}
-      {error && <ErrorPage error={t(error.data?.translatedError || (error.message as MessageKey))} />}
+      {error && <ErrorPage error={t(error.data?.tError.message as MessageKey, { ...error.data?.tError.variables })} />}
     </Layout>
   );
 };
