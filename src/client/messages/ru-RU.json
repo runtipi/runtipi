@@ -152,19 +152,19 @@
         "submit": "Остановить"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Uninstall"
+        "title": "Удалить {name}?",
+        "subtitle": "Все данные этого приложения будут потеряны.",
+        "warning": "Вы уверены? Это действие нельзя отменить.",
+        "submit": "Удалить"
       },
       "update-form": {
-        "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
-        "submit": "Update"
+        "title": "Обновить {name}?",
+        "subtitle1": "Обновить приложение до последней версии:",
+        "subtitle2": "Это сбросит ваши настройки (например, изменения в docker-compose.yml)",
+        "submit": "Обновить"
       },
       "update-settings-form": {
-        "title": "Update {name} config"
+        "title": "Обновить настройки {name}"
       }
     }
   },
