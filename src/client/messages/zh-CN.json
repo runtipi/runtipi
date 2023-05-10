@@ -89,82 +89,82 @@
     }
   },
   "apps": {
-    "status-running": "Running",
-    "status-stopped": "Stopped",
-    "status-starting": "Starting",
-    "status-stopping": "Stopping",
-    "status-updating": "Updating",
-    "status-missing": "Missing",
-    "status-installing": "Installing",
-    "status-uninstalling": "Uninstalling",
-    "update-available": "Update available",
+    "status-running": "运行中",
+    "status-stopped": "已停止",
+    "status-starting": "正在启动",
+    "status-stopping": "正在停止",
+    "status-updating": "正在更新",
+    "status-missing": "缺失",
+    "status-installing": "正在安装",
+    "status-uninstalling": "正在卸载",
+    "update-available": "有可用更新",
     "my-apps": {
-      "title": "My Apps",
-      "empty-title": "No app installed",
-      "empty-subtitle": "Install an app from the app store to get started",
-      "empty-action": "Go to app store"
+      "title": "我的应用",
+      "empty-title": "尚未安装任何应用",
+      "empty-subtitle": "从应用商店安装一个应用程序以开始",
+      "empty-action": "打开App Store"
     },
     "app-store": {},
     "app-details": {
-      "install-success": "App installed successfully",
-      "uninstall-success": "App uninstalled successfully",
-      "stop-success": "App stopped successfully",
-      "update-success": "App updated successfully",
-      "start-success": "App started successfully",
-      "update-config-success": "App config updated successfully. Restart the app to apply the changes",
-      "version": "Version",
+      "install-success": "应用安装成功！",
+      "uninstall-success": "卸载成功！",
+      "stop-success": "应用停止成功",
+      "update-success": "应用已成功更新",
+      "start-success": "应用启动成功",
+      "update-config-success": "应用程序配置更新成功。重启应用以应用更改",
+      "version": "版本",
       "actions": {
-        "start": "Start",
-        "remove": "Remove",
-        "settings": "Settings",
-        "stop": "Stop",
-        "open": "Open",
-        "loading": "Loading",
-        "cancel": "Cancel",
-        "install": "Install",
-        "update": "Update"
+        "start": "开始",
+        "remove": "删除",
+        "settings": "设置",
+        "stop": "停止",
+        "open": "打开",
+        "loading": "正在加载",
+        "cancel": "取消",
+        "install": "安装",
+        "update": "更新"
       },
       "install-form": {
-        "title": "Install {name}",
-        "expose-app": "Expose app",
-        "domain-name": "Domain name",
-        "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-        "choose-option": "Choose an option...",
-        "sumbit-install": "Install",
-        "submit-update": "Update",
+        "title": "安装 {name}",
+        "expose-app": "公开应用程序",
+        "domain-name": "域名",
+        "domain-name-hint": "请确保此域名包含一个指向您的 IP 的记录。",
+        "choose-option": "选择一个选项...",
+        "sumbit-install": "安装",
+        "submit-update": "更新",
         "errors": {
-          "required": "{label} is required",
-          "regex": "{label} must match the pattern {pattern}",
-          "max-length": "{label} must be less than {max} characters",
-          "min-length": "{label} must be at least {min} characters",
-          "between-length": "{label} must be between {min} and {max} characters",
-          "invalid-email": "{label} must be a valid email address",
-          "number": "{label} must be a number",
-          "fqdn": "{label} must be a valid domain",
-          "ip": "{label} must be a valid IP address",
-          "fqdnip": "{label} must be a valid domain or IP address",
-          "url": "{label} must be a valid URL"
+          "required": "{label} 是必须的",
+          "regex": "{label} 必须匹配模式 {pattern}",
+          "max-length": "{label} 必须小于 {max} 个字符",
+          "min-length": "{label} 必须至少 {min} 个字符",
+          "between-length": "{label} 必须在 {min} 和 {max} 字符之间",
+          "invalid-email": "{label} 必须是一个有效的电子邮件地址",
+          "number": "{label} 必须是一个数字",
+          "fqdn": "{label} 必须是一个有效的域",
+          "ip": "{label} 必须是一个有效的 IP 地址",
+          "fqdnip": "{label} 必须是一个有效的域或IP地址",
+          "url": "{label} 必须是一个有效的 URL"
         }
       },
       "stop-form": {
-        "title": "Stop {name} ?",
-        "subtitle": "All data will be retained",
-        "submit": "Stop"
+        "title": "停止 {name}？",
+        "subtitle": "所有数据将被保留",
+        "submit": "停止"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Uninstall"
+        "title": "卸载 {name} 吗？",
+        "subtitle": "此应用的所有数据将丢失。",
+        "warning": "您确定吗？这个操作无法撤销。",
+        "submit": "卸载"
       },
       "update-form": {
-        "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
-        "submit": "Update"
+        "title": "更新 {name}？",
+        "subtitle1": "更新应用到最新版本：",
+        "subtitle2": "这将重置您的自定义配置(如：docker-compose.yml中的更改)",
+        "submit": "更新"
       },
       "update-settings-form": {
-        "title": "Update {name} config"
+        "title": "更新 {name} 配置"
       }
     }
   },
