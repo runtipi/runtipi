@@ -134,11 +134,11 @@
         "submit-update": "Update",
         "errors": {
           "required": "{label} is required",
-          "regex": "{label} must match the pattern {pattern}",
+          "regex": "{label} does not match the pattern {pattern}",
           "max-length": "{label} must be less than {max} characters",
           "min-length": "{label} must be at least {min} characters",
           "between-length": "{label} must be between {min} and {max} characters",
-          "invalid-email": "{label} must be a valid email address",
+          "invalid-email": "{label} must be a valid e-mail address",
           "number": "{label} must be a number",
           "fqdn": "{label} must be a valid domain",
           "ip": "{label} must be a valid IP address",
@@ -152,14 +152,14 @@
         "submit": "Stop"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
+        "title": "Uninstall {name}?",
         "subtitle": "All data for this app will be lost.",
         "warning": "Are you sure? This action cannot be undone.",
         "submit": "Uninstall"
       },
       "update-form": {
-        "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
+        "title": "Update {name}?",
+        "subtitle1": "Update app to latest version :",
         "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
         "submit": "Update"
       },
