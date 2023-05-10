@@ -160,7 +160,7 @@
       "update-form": {
         "title": "更新{name}？",
         "subtitle1": "更新到最新版本：",
-        "subtitle2": "這將重置您的自定義配置（例如 docker-compose.yml 中的更改）",
+        "subtitle2": "這將重置您的自定義配置 (例如 docker-compose.yml 中的更改)",
         "submit": "更新"
       },
       "update-settings-form": {
