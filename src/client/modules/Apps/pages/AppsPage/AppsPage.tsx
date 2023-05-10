@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import { useTranslations } from 'next-intl';
-import { MessageKey } from '@/server/utils/errors';
+import type { MessageKey } from '@/server/utils/errors';
 import { AppTile } from '../../../../components/AppTile';
 import { Layout } from '../../../../components/Layout';
 import { EmptyPage } from '../../../../components/ui/EmptyPage';
@@ -35,7 +35,7 @@ export const AppsPage: NextPage = () => {
         {!isLoading && data?.length === 0 && (
           <EmptyPage title={t('apps.my-apps.empty-title')} subtitle={t('apps.my-apps.empty-subtitle')} onAction={() => router.push('/app-store')} actionLabel={t('apps.my-apps.empty-action')} />
         )}
-        {error && <ErrorPage error={t(error.data?.translatedError || (error.message as MessageKey))} />}
+        {error && <ErrorPage error={t(error.data?.tError.message as MessageKey, { ...error.data?.tError?.variables })} />}
       </div>
     </Layout>
   );

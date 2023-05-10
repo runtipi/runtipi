@@ -22,10 +22,7 @@ export const ResetPasswordContainer: React.FC<Props> = ({ isRequested }) => {
     onSuccess: () => {
       utils.auth.checkPasswordChangeRequest.invalidate();
     },
-    onError: (e) => {
-      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
-      toast.error(toastMessage);
-    },
+    onError: (e) => toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables })),
   });
   const cancelRequest = trpc.auth.cancelPasswordChangeRequest.useMutation({
     onSuccess: () => {

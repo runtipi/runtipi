@@ -16,10 +16,7 @@ export const LoginContainer: React.FC = () => {
   const router = useRouter();
   const utils = trpc.useContext();
   const login = trpc.auth.login.useMutation({
-    onError: (e) => {
-      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
-      toast.error(toastMessage);
-    },
+    onError: (e) => toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables })),
     onSuccess: (data) => {
       if (data.totpSessionId) {
         setTotpSessionId(data.totpSessionId);
@@ -31,10 +28,7 @@ export const LoginContainer: React.FC = () => {
   });
 
   const verifyTotp = trpc.auth.verifyTotp.useMutation({
-    onError: (e) => {
-      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
-      toast.error(toastMessage);
-    },
+    onError: (e) => toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables })),
     onSuccess: () => {
       utils.auth.me.invalidate();
       router.push('/');

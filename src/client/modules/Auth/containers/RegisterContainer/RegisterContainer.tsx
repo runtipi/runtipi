@@ -16,10 +16,7 @@ export const RegisterContainer: React.FC = () => {
   const router = useRouter();
   const utils = trpc.useContext();
   const register = trpc.auth.register.useMutation({
-    onError: (e) => {
-      const toastMessage = t(e.data?.translatedError || (e.message as MessageKey));
-      toast.error(toastMessage);
-    },
+    onError: (e) => toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables })),
     onSuccess: () => {
       utils.auth.me.invalidate();
       router.push('/');
