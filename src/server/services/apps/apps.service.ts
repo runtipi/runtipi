@@ -2,6 +2,7 @@ import validator from 'validator';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
+import { TranslatedError } from '@/server/utils/errors';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { EventDispatcher } from '../../core/EventDispatcher';
@@ -75,7 +76,7 @@ export class AppServiceClass {
   public startApp = async (appName: string) => {
     const app = await this.queries.getApp(appName);
     if (!app) {
-      throw new Error(`App ${appName} not found`);
+      throw new TranslatedError('server-messages.errors.app-not-found', { id: appName });
     }
 
     ensureAppFolder(appName);
@@ -90,7 +91,8 @@ export class AppServiceClass {
       await this.queries.updateApp(appName, { status: 'running' });
     } else {
       await this.queries.updateApp(appName, { status: 'stopped' });
-      throw new Error(`App ${appName} failed to start\nstdout: ${stdout}`);
+      Logger.error(`Failed to start app ${appName}: ${stdout}`);
+      throw new TranslatedError('server-messages.errors.app-failed-to-start', { id: appName });
     }
 
     const updatedApp = await this.queries.getApp(appName);
@@ -112,11 +114,11 @@ export class AppServiceClass {
       await this.startApp(id);
     } else {
       if (exposed && !domain) {
-        throw new Error('Domain is required if app is exposed');
+        throw new TranslatedError('server-messages.errors.domain-required-if-expose-app');
       }
 
       if (domain && !validator.isFQDN(domain)) {
-        throw new Error(`Domain ${domain} is not valid`);
+        throw new TranslatedError('server-messages.errors.domain-not-valid', { domain });
       }
 
       ensureAppFolder(id, true);
@@ -128,22 +130,22 @@ export class AppServiceClass {
       const appInfo = getAppInfo(id);
 
       if (!appInfo) {
-        throw new Error(`App ${id} has invalid config.json file`);
+        throw new TranslatedError('server-messages.errors.invalid-config', { id });
       }
 
       if (!appInfo.exposable && exposed) {
-        throw new Error(`App ${id} is not exposable`);
+        throw new TranslatedError('server-messages.errors.app-not-exposable', { id });
       }
 
       if ((appInfo.force_expose && !exposed) || (appInfo.force_expose && !domain)) {
-        throw new Error(`App ${id} works only with exposed domain`);
+        throw new TranslatedError('server-messages.errors.app-force-exposed', { id });
       }
 
       if (exposed && domain) {
         const appsWithSameDomain = await this.queries.getAppsByDomain(domain, id);
 
         if (appsWithSameDomain.length > 0) {
-          throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0]?.id}`);
+          throw new TranslatedError('server-messages.errors.domain-already-in-use', { domain, id: appsWithSameDomain[0]?.id });
         }
       }
 
@@ -159,7 +161,8 @@ export class AppServiceClass {
 
       if (!success) {
         await this.queries.deleteApp(id);
-        throw new Error(`App ${id} failed to install\nstdout: ${stdout}`);
+        Logger.error(`Failed to install app ${id}: ${stdout}`);
+        throw new TranslatedError('server-messages.errors.app-failed-to-install', { id });
       }
     }
 
@@ -187,38 +190,38 @@ export class AppServiceClass {
    */
   public updateAppConfig = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string) => {
     if (exposed && !domain) {
-      throw new Error('Domain is required if app is exposed');
+      throw new TranslatedError('server-messages.errors.domain-required-if-expose-app');
     }
 
     if (domain && !validator.isFQDN(domain)) {
-      throw new Error(`Domain ${domain} is not valid`);
+      throw new TranslatedError('server-messages.errors.domain-not-valid');
     }
 
     const app = await this.queries.getApp(id);
 
     if (!app) {
-      throw new Error(`App ${id} not found`);
+      throw new TranslatedError('server-messages.errors.app-not-found', { id });
     }
 
     const appInfo = getAppInfo(app.id, app.status);
 
     if (!appInfo) {
-      throw new Error(`App ${id} has invalid config.json`);
+      throw new TranslatedError('server-messages.errors.invalid-config', { id });
     }
 
     if (!appInfo.exposable && exposed) {
-      throw new Error(`App ${id} is not exposable`);
+      throw new TranslatedError('server-messages.errors.app-not-exposable', { id });
     }
 
     if ((appInfo.force_expose && !exposed) || (appInfo.force_expose && !domain)) {
-      throw new Error(`App ${id} works only with exposed domain`);
+      throw new TranslatedError('server-messages.errors.app-force-exposed', { id });
     }
 
     if (exposed && domain) {
       const appsWithSameDomain = await this.queries.getAppsByDomain(domain, id);
 
       if (appsWithSameDomain.length > 0) {
-        throw new Error(`Domain ${domain} already in use by app ${appsWithSameDomain[0]?.id}`);
+        throw new TranslatedError('server-messages.errors.domain-already-in-use', { domain, id: appsWithSameDomain[0]?.id });
       }
     }
 
@@ -241,7 +244,7 @@ export class AppServiceClass {
     const app = await this.queries.getApp(id);
 
     if (!app) {
-      throw new Error(`App ${id} not found`);
+      throw new TranslatedError('server-messages.errors.app-not-found', { id });
     }
 
     ensureAppFolder(id);
@@ -256,7 +259,8 @@ export class AppServiceClass {
       await this.queries.updateApp(id, { status: 'stopped' });
     } else {
       await this.queries.updateApp(id, { status: 'running' });
-      throw new Error(`App ${id} failed to stop\nstdout: ${stdout}`);
+      Logger.error(`Failed to stop app ${id}: ${stdout}`);
+      throw new TranslatedError('server-messages.errors.app-failed-to-stop', { id });
     }
 
     const updatedApp = await this.queries.getApp(id);
@@ -273,7 +277,7 @@ export class AppServiceClass {
     const app = await this.queries.getApp(id);
 
     if (!app) {
-      throw new Error(`App ${id} not found`);
+      throw new TranslatedError('server-messages.errors.app-not-found', { id });
     }
     if (app.status === 'running') {
       await this.stopApp(id);
@@ -288,7 +292,8 @@ export class AppServiceClass {
 
     if (!success) {
       await this.queries.updateApp(id, { status: 'stopped' });
-      throw new Error(`App ${id} failed to uninstall\nstdout: ${stdout}`);
+      Logger.error(`Failed to uninstall app ${id}: ${stdout}`);
+      throw new TranslatedError('server-messages.errors.app-failed-to-uninstall', { id });
     }
 
     await this.queries.deleteApp(id);
@@ -314,7 +319,7 @@ export class AppServiceClass {
       return { ...app, ...updateInfo, info };
     }
 
-    throw new Error(`App ${id} has invalid config.json`);
+    throw new TranslatedError('server-messages.errors.invalid-config', { id });
   };
 
   /**
@@ -327,7 +332,7 @@ export class AppServiceClass {
     const app = await this.queries.getApp(id);
 
     if (!app) {
-      throw new Error(`App ${id} not found`);
+      throw new TranslatedError('server-messages.errors.app-not-found', { id });
     }
 
     ensureAppFolder(id);
@@ -343,7 +348,8 @@ export class AppServiceClass {
       await this.queries.updateApp(id, { status: 'running', version: appInfo?.tipi_version });
     } else {
       await this.queries.updateApp(id, { status: 'stopped' });
-      throw new Error(`App ${id} failed to update\nstdout: ${stdout}`);
+      Logger.error(`Failed to update app ${id}: ${stdout}`);
+      throw new TranslatedError('server-messages.errors.app-failed-to-update', { id });
     }
 
     const updatedApp = await this.queries.updateApp(id, { status: 'stopped' });

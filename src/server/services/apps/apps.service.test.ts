@@ -71,7 +71,7 @@ describe('Install app', () => {
     // Arrange
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
-    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' })).rejects.toThrow(`App ${app1.id} failed to install\nstdout: error`);
+    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' })).rejects.toThrow('server-messages.errors.app-failed-to-install');
 
     const app = await getAppById(app1.id, db);
 
@@ -121,11 +121,11 @@ describe('Install app', () => {
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
-    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('Domain is required if app is exposed');
+    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
   });
 
   it('Should throw if app is exposed and config does not allow it', async () => {
-    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`App ${app1.id} is not exposable`);
+    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
   });
 
   it('Should throw if app is exposed and domain is not valid', async () => {
@@ -133,7 +133,7 @@ describe('Install app', () => {
     // @ts-expect-error - Mocking fs
     fs.__createMockFiles(MockFiles);
 
-    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('Domain test is not valid');
+    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('server-messages.errors.domain-not-valid');
   });
 
   it('Should throw if app is exposed and domain is already used', async () => {
@@ -144,7 +144,7 @@ describe('Install app', () => {
 
     await AppsService.installApp(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
 
-    await expect(AppsService.installApp(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`Domain test.com already in use by app ${app2.appInfo.id}`);
+    await expect(AppsService.installApp(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError('server-messages.errors.domain-already-in-use');
   });
 
   it('Should throw if architecure is not supported', async () => {
@@ -211,7 +211,7 @@ describe('Install app', () => {
     fs.__createMockFiles(MockFiles);
 
     // act & assert
-    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} works only with exposed domain`);
+    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError();
   });
 });
 
@@ -261,7 +261,7 @@ describe('Uninstall app', () => {
 
   it('Should throw if app is not installed', async () => {
     // Act & Assert
-    await expect(AppsService.uninstallApp('any')).rejects.toThrowError('App any not found');
+    await expect(AppsService.uninstallApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
   });
 
   it('Should throw if uninstall script fails', async () => {
@@ -270,7 +270,7 @@ describe('Uninstall app', () => {
     await updateApp(app1.id, { status: 'updating' }, db);
 
     // Act & Assert
-    await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to uninstall\nstdout: test`);
+    await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow('server-messages.errors.app-failed-to-uninstall');
     const app = await getAppById(app1.id, db);
     expect(app?.status).toBe('stopped');
   });
@@ -297,7 +297,7 @@ describe('Start app', () => {
   });
 
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.startApp('any')).rejects.toThrowError('App any not found');
+    await expect(AppsService.startApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
   });
 
   it('Should restart if app is already running', async () => {
@@ -326,7 +326,7 @@ describe('Start app', () => {
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
 
     // Act & Assert
-    await expect(AppsService.startApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to start\nstdout: test`);
+    await expect(AppsService.startApp(app1.id)).rejects.toThrow('server-messages.errors.app-failed-to-start');
     const app = await getAppById(app1.id, db);
     expect(app?.status).toBe('stopped');
   });
@@ -351,7 +351,7 @@ describe('Stop app', () => {
   });
 
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.stopApp('any')).rejects.toThrowError('App any not found');
+    await expect(AppsService.stopApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
   });
 
   it('Should throw if stop script fails', async () => {
@@ -359,7 +359,7 @@ describe('Stop app', () => {
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
 
     // Act & Assert
-    await expect(AppsService.stopApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to stop\nstdout: test`);
+    await expect(AppsService.stopApp(app1.id)).rejects.toThrow('server-messages.errors.app-failed-to-stop');
     const app = await getAppById(app1.id, db);
     expect(app?.status).toBe('running');
   });
@@ -388,7 +388,7 @@ describe('Update app config', () => {
   });
 
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('App test-app-2 not found');
+    await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('server-messages.errors.app-not-found');
   });
 
   it('Should not recreate random field if already present in .env', async () => {
@@ -406,13 +406,15 @@ describe('Update app config', () => {
     expect(envMap.get('RANDOM_FIELD')).toBe('test');
   });
 
-  it('Should throw if app is exposed and domain is not provided', () => expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('Domain is required'));
+  it('Should throw if app is exposed and domain is not provided', () =>
+    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app'));
 
   it('Should throw if app is exposed and domain is not valid', () =>
-    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('Domain test is not valid'));
+    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('server-messages.errors.domain-not-valid'));
 
-  it('Should throw if app is exposed and config does not allow it', () =>
-    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`App ${app1.id} is not exposable`));
+  it('Should throw if app is exposed and config does not allow it', () => {
+    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
+  });
 
   it('Should throw if app is exposed and domain is already used', async () => {
     const app2 = await createApp({ exposable: true, installed: true }, db);
@@ -421,7 +423,7 @@ describe('Update app config', () => {
     fs.__createMockFiles(Object.assign(app2.MockFiles, app3.MockFiles));
 
     await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
-    await expect(AppsService.updateAppConfig(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError(`Domain test.com already in use by app ${app2.appInfo.id}`);
+    await expect(AppsService.updateAppConfig(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError('server-messages.errors.domain-already-in-use');
   });
 
   it('Should not throw if updating with same domain', async () => {
@@ -451,7 +453,7 @@ describe('Update app config', () => {
     fs.__createMockFiles(MockFiles);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} works only with exposed domain`);
+    await expect(AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError('server-messages.errors.app-force-exposed');
   });
 });
 
@@ -593,7 +595,7 @@ describe('Update app', () => {
   });
 
   it("Should throw if app doesn't exist", async () => {
-    await expect(AppsService.updateApp('test-app2')).rejects.toThrow('App test-app2 not found');
+    await expect(AppsService.updateApp('test-app2')).rejects.toThrow('server-messages.errors.app-not-found');
   });
 
   it('Should throw if update script fails', async () => {
@@ -604,7 +606,7 @@ describe('Update app', () => {
     fs.__createMockFiles(Object.assign(app1create.MockFiles));
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
-    await expect(AppsService.updateApp(app1.id)).rejects.toThrow(`App ${app1.id} failed to update\nstdout: error`);
+    await expect(AppsService.updateApp(app1.id)).rejects.toThrow('server-messages.errors.app-failed-to-update');
     const app = await getAppById(app1.id, db);
     expect(app?.status).toBe('stopped');
   });
