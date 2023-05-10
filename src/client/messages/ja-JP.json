@@ -128,43 +128,43 @@
         "title": "{name} をインストール",
         "expose-app": "アプリを公開する",
         "domain-name": "ドメイン名",
-        "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-        "choose-option": "Choose an option...",
-        "sumbit-install": "Install",
-        "submit-update": "Update",
+        "domain-name-hint": "このドメインのDNSには、正確にIPを指すAレコードが含まれていることを確認してください。",
+        "choose-option": "オプションを選択...",
+        "sumbit-install": "インストール",
+        "submit-update": "更新",
         "errors": {
-          "required": "{label} is required",
-          "regex": "{label} must match the pattern {pattern}",
-          "max-length": "{label} must be less than {max} characters",
-          "min-length": "{label} must be at least {min} characters",
-          "between-length": "{label} must be between {min} and {max} characters",
-          "invalid-email": "{label} must be a valid email address",
-          "number": "{label} must be a number",
-          "fqdn": "{label} must be a valid domain",
-          "ip": "{label} must be a valid IP address",
-          "fqdnip": "{label} must be a valid domain or IP address",
-          "url": "{label} must be a valid URL"
+          "required": "{label} が必要です",
+          "regex": "{label} はパターン {pattern} に一致する必要があります",
+          "max-length": "{label} は {max} より小さくなければなりません",
+          "min-length": "{label} は少なくとも {min} 文字必要です",
+          "between-length": "{label} は {min} 文字以上 {max} 文字以下で入力してください",
+          "invalid-email": "{label} は有効なメールアドレスでなければなりません",
+          "number": "{label} は数字でなければなりません",
+          "fqdn": "{label} は有効なドメインでなければなりません",
+          "ip": "{label} は有効な IP アドレスでなければなりません",
+          "fqdnip": "{label} は有効なドメインまたは IP アドレスでなければなりません",
+          "url": "{label} は有効な URL でなければなりません"
         }
       },
       "stop-form": {
-        "title": "Stop {name} ?",
-        "subtitle": "All data will be retained",
-        "submit": "Stop"
+        "title": "{name} を停止しますか？",
+        "subtitle": "すべてのデータが保持されます",
+        "submit": "停止"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Uninstall"
+        "title": "{name} をアンインストール?",
+        "subtitle": "このアプリのすべてのデータが失われます。",
+        "warning": "本当に実行しますか？この作業は元に戻せません。",
+        "submit": "アンインストール"
       },
       "update-form": {
-        "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
-        "submit": "Update"
+        "title": "{name} を更新しますか？",
+        "subtitle1": "アプリを最新のバージョンに更新:",
+        "subtitle2": "カスタム構成をリセットします (例: docker-compose.yml の変更)",
+        "submit": "更新"
       },
       "update-settings-form": {
-        "title": "Update {name} config"
+        "title": "{name} 設定を更新"
       }
     }
   },
