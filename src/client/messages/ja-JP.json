@@ -17,7 +17,19 @@
       "totp-session-not-found": "2段階認証セッションが見つかりません",
       "totp-not-enabled": "このユーザーは二段階認証が有効ではありません",
       "totp-invalid-code": "無効な2段階認証コードです",
-      "totp-already-enabled": "このユーザーはすでに二段階認証を有効にしています"
+      "totp-already-enabled": "このユーザーはすでに二段階認証を有効にしています",
+      "app-not-found": "App {id} not found",
+      "app-failed-to-start": "Failed to start app {id}, see logs for more details",
+      "app-failed-to-install": "Failed to install app {id}, see logs for more details",
+      "app-failed-to-stop": "Failed to stop app {id}, see logs for more details",
+      "app-failed-to-uninstall": "Failed to uninstall app {id}, see logs for more details",
+      "app-failed-to-update": "Failed to update app {id}, see logs for more details",
+      "domain-required-if-expose-app": "Domain is required if app is exposed",
+      "domain-not-valid": "Domain {domain} is not a valid domain",
+      "invalid-config": "App {id} has an invalid config.json file",
+      "app-not-exposable": "App {id} is not exposable",
+      "app-force-exposed": "App {id} works only with exposed domain",
+      "domain-already-in-use": "Domain {domain} is already in use by app {id}"
     },
     "success": {}
   },
