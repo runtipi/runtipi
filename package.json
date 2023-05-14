@@ -46,7 +46,7 @@
     "@trpc/server": "^10.16.0",
     "argon2": "^0.30.3",
     "clsx": "^1.1.1",
-    "drizzle-orm": "^0.24.1",
+    "drizzle-orm": "^0.25.1",
     "express": "^4.17.3",
     "fs-extra": "^11.1.0",
     "isomorphic-fetch": "^3.0.0",
