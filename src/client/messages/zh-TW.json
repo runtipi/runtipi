@@ -11,6 +11,7 @@
       "operator-not-found": "未找到操作員用戶",
       "user-not-found": "未找到用戶",
       "not-allowed-in-demo": "演示模式不允許",
+      "not-allowed-in-dev": "Not allowed in dev mode",
       "invalid-password": "無效的密碼",
       "invalid-password-length": "密碼長度必須至少為8個字元",
       "invalid-locale": "語言環境無效",
@@ -29,7 +30,10 @@
       "invalid-config": "App {id} has an invalid config.json file",
       "app-not-exposable": "App {id} is not exposable",
       "app-force-exposed": "App {id} works only with exposed domain",
-      "domain-already-in-use": "Domain {domain} is already in use by app {id}"
+      "domain-already-in-use": "Domain {domain} is already in use by app {id}",
+      "could-not-get-latest-version": "Could not get latest version",
+      "current-version-is-latest": "Current version is already up to date",
+      "major-version-update": "The major version has changed. Please update manually (instructions on GitHub)"
     },
     "success": {}
   },
@@ -116,7 +120,10 @@
       "empty-subtitle": "應用商店安裝應用以開始使用",
       "empty-action": "前往App Store"
     },
-    "app-store": {},
+    "app-store": {
+      "search-placeholder": "Search apps",
+      "category-placeholder": "Select a category"
+    },
     "app-details": {
       "install-success": "成功安裝應用程式！",
       "uninstall-success": "應用程式移除成功",
@@ -125,6 +132,32 @@
       "start-success": "應用程式啟動成功",
       "update-config-success": "應用配置更新成功。 重新啟動應用程序以應用更改",
       "version": "版本",
+      "description": "Description",
+      "base-info": "Base info",
+      "source-code": "Source code",
+      "author": "Author",
+      "port": "Port",
+      "categories-title": "Categories",
+      "link": "Link",
+      "website": "Website",
+      "supported-arch": "Supported architectures",
+      "categories": {
+        "data": "Data",
+        "network": "Network",
+        "media": "Media",
+        "development": "Development",
+        "automation": "Automation",
+        "social": "Social",
+        "utilities": "Utilities",
+        "security": "Security",
+        "photography": "Photography",
+        "featured": "Featured",
+        "books": "Books",
+        "music": "Music",
+        "finance": "Finance",
+        "gaming": "Gaming",
+        "ai": "AI"
+      },
       "actions": {
         "start": "开始",
         "remove": "刪除",
@@ -177,6 +210,67 @@
       },
       "update-settings-form": {
         "title": "更新 {name} 配置"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "actions": {
+      "tab-title": "Actions",
+      "title": "Actions",
+      "current-version": "Current version: {version}",
+      "stay-up-to-date": "Stay up to date with the latest version of Tipi",
+      "new-version": "A new version ({version}) of Tipi is available",
+      "maintenance-title": "Maintenance",
+      "maintenance-subtitle": "Common actions to perform on your instance",
+      "restart": "Restart",
+      "update": "Update to {version}",
+      "already-latest": "Already up to date"
+    },
+    "settings": {
+      "tab-title": "Settings",
+      "title": "General settings",
+      "subtitle": "This will update your settings.json file. Make sure you know what you are doing before updating these values.",
+      "settings-updated": "Settings updated. Restart your instance to apply new settings.",
+      "invalid-ip": "Invalid IP address",
+      "invalid-url": "Invalid URL",
+      "invalid-domain": "Invalid domain",
+      "domain-name": "Domain name",
+      "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
+      "dns-ip": "DNS IP",
+      "internal-ip": "Internal IP",
+      "internal-ip-hint": "IP address your server is listening on.",
+      "apps-repo": "Apps repo URL",
+      "apps-repo-hint": "URL to the apps repository.",
+      "storage-path": "Storage path",
+      "storage-path-hint": "Path to the storage directory. Keep empty for default (runtipi/app-data). Make sure it is an absolute path and that it exists",
+      "submit": "Save"
+    },
+    "security": {
+      "tab-title": "Security",
+      "change-password-title": "Change password",
+      "change-password-subtitle": "Changing your password will log you out of all devices.",
+      "password-change-success": "Password changed successfully",
+      "2fa-title": "Two-factor authentication",
+      "2fa-subtitle": "Two-factor authentication (2FA) adds an additional layer of security to your account.",
+      "2fa-subtitle-2": "When enabled, you will be prompted to enter a code from your authenticator app when you log in.",
+      "2fa-enable-success": "Two-factor authentication enabled",
+      "2fa-disable-success": "Two-factor authentication disabled",
+      "scan-qr-code": "Scan this QR code with your authenticator app.",
+      "enter-key-manually": "Or enter this key manually.",
+      "enter-2fa-code": "Enter the 6-digit code from your authenticator app",
+      "enable-2fa": "Enable two-factor authentication",
+      "disable-2fa": "Disable two-factor authentication",
+      "password-needed": "Password needed",
+      "password-needed-hint": "Your password is required to change two-factor authentication settings.",
+      "form": {
+        "password-length": "Password must be at least 8 characters",
+        "password-match": "Passwords do not match",
+        "current-password": "Current password",
+        "new-password": "New password",
+        "confirm-password": "Confirm new password",
+        "change-password": "Change password",
+        "password": "Password"
       }
     }
   },
