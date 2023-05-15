@@ -1,5 +1,7 @@
+import { LanguageSelector } from '@/components/LanguageSelector';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { IconAdjustmentsAlt, IconUser } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -85,31 +87,41 @@ export const SettingsForm = (props: IProps) => {
   };
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
-      <h2 className="text-2xl font-bold">{t('title')}</h2>
-      <p className="mb-4">{t('subtitle')}</p>
-      <div className="mb-3">
-        <Input {...register('domain')} label={t('domain-name')} error={errors.domain?.message} placeholder="tipi.localhost" />
-        <span className="text-muted">{t('domain-name-hint')}</span>
+    <>
+      <div className="d-flex">
+        <IconUser className="me-2" />
+        <h2 className="text-2xl font-bold">{t('user-settings-title')}</h2>
       </div>
-      <div className="mb-3">
-        <Input {...register('dnsIp')} label={t('dns-ip')} error={errors.dnsIp?.message} placeholder="9.9.9.9" />
-      </div>
-      <div className="mb-3">
-        <Input {...register('internalIp')} label={t('internal-ip')} error={errors.internalIp?.message} placeholder="192.168.1.100" />
-        <span className="text-muted">{t('internal-ip-hint')}</span>
-      </div>
-      <div className="mb-3">
-        <Input {...register('appsRepoUrl')} label={t('apps-repo')} error={errors.appsRepoUrl?.message} placeholder="https://github.com/meienberger/runtipi-appstore" />
-        <span className="text-muted">{t('apps-repo-hint')}</span>
-      </div>
-      <div className="mb-3">
-        <Input {...register('storagePath')} label={t('storage-path')} error={errors.storagePath?.message} placeholder="Storage path" />
-        <span className="text-muted">{t('storage-path-hint')}</span>
-      </div>
-      <Button loading={loading} type="submit" className="btn-success">
-        {t('submit')}
-      </Button>
-    </form>
+      <LanguageSelector />
+      <form className="flex flex-col mt-2" onSubmit={handleSubmit(validate)}>
+        <div className="d-flex">
+          <IconAdjustmentsAlt className="me-2" />
+          <h2 className="text-2xl font-bold">{t('title')}</h2>
+        </div>
+        <p className="mb-4">{t('subtitle')}</p>
+        <div className="mb-3">
+          <Input {...register('domain')} label={t('domain-name')} error={errors.domain?.message} placeholder="tipi.localhost" />
+          <span className="text-muted">{t('domain-name-hint')}</span>
+        </div>
+        <div className="mb-3">
+          <Input {...register('dnsIp')} label={t('dns-ip')} error={errors.dnsIp?.message} placeholder="9.9.9.9" />
+        </div>
+        <div className="mb-3">
+          <Input {...register('internalIp')} label={t('internal-ip')} error={errors.internalIp?.message} placeholder="192.168.1.100" />
+          <span className="text-muted">{t('internal-ip-hint')}</span>
+        </div>
+        <div className="mb-3">
+          <Input {...register('appsRepoUrl')} label={t('apps-repo')} error={errors.appsRepoUrl?.message} placeholder="https://github.com/meienberger/runtipi-appstore" />
+          <span className="text-muted">{t('apps-repo-hint')}</span>
+        </div>
+        <div className="mb-3">
+          <Input {...register('storagePath')} label={t('storage-path')} error={errors.storagePath?.message} placeholder="Storage path" />
+          <span className="text-muted">{t('storage-path-hint')}</span>
+        </div>
+        <Button loading={loading} type="submit" className="btn-success">
+          {t('submit')}
+        </Button>
+      </form>
+    </>
   );
 };

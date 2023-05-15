@@ -66,7 +66,7 @@ describe('test: useLocale()', () => {
 
       // assert
       await waitFor(() => {
-        expect(result.current.locale).toEqual('en');
+        expect(result.current.locale).toEqual('en-US');
       });
     });
   });

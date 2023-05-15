@@ -11,10 +11,12 @@ export const useLocale = () => {
   const browserLocale = typeof window !== 'undefined' ? window.navigator.language : undefined;
 
   const locale = me.data?.locale || cookies.locale || browserLocale || 'en';
+  const ctx = trpc.useContext();
 
   const changeLocale = async (l: Locale) => {
     if (me.data) {
       await changeUserLocale.mutateAsync({ locale: l });
+      await ctx.invalidate();
     }
 
     setCookie(null, 'locale', l, {
