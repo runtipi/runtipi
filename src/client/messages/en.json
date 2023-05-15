@@ -229,7 +229,7 @@
     },
     "settings": {
       "tab-title": "Settings",
-      "title": "General Settings",
+      "title": "General settings",
       "subtitle": "This will update your settings.json file. Make sure you know what you are doing before updating these values.",
       "settings-updated": "Settings updated. Restart your instance to apply new settings.",
       "invalid-ip": "Invalid IP address",
