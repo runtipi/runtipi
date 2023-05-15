@@ -244,7 +244,8 @@
       "apps-repo-hint": "应用程序仓库的 URL",
       "storage-path": "保存路径",
       "storage-path-hint": "存储目录的路径。留空为默认 (Runtipi/app-data)。请确保它是一个绝对路径并存在",
-      "submit": "保存"
+      "submit": "保存",
+      "user-settings-title": "User settings"
     },
     "security": {
       "tab-title": "安全",
