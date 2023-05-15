@@ -135,7 +135,7 @@ describe('Test: restart', () => {
     await setConfig('demoMode', true);
 
     // Act & Assert
-    await expect(SystemService.restart()).rejects.toThrow('Cannot restart in demo mode');
+    await expect(SystemService.restart()).rejects.toThrow('server-messages.errors.not-allowed-in-demo');
   });
 });
 
@@ -161,7 +161,7 @@ describe('Test: update', () => {
     setConfig('version', '0.0.1');
 
     // Act & Assert
-    await expect(SystemService.update()).rejects.toThrow('Could not get latest version');
+    await expect(SystemService.update()).rejects.toThrow('server-messages.errors.could-not-get-latest-version');
   });
 
   it('Should throw if current version is higher than latest', async () => {
@@ -170,7 +170,7 @@ describe('Test: update', () => {
     TipiCache.set('latestVersion', '0.0.1');
 
     // Act & Assert
-    await expect(SystemService.update()).rejects.toThrow('Current version is newer than latest version');
+    await expect(SystemService.update()).rejects.toThrow('server-messages.errors.current-version-is-latest');
   });
 
   it('Should throw if current version is equal to latest', async () => {
@@ -179,7 +179,7 @@ describe('Test: update', () => {
     TipiCache.set('latestVersion', '0.0.1');
 
     // Act & Assert
-    await expect(SystemService.update()).rejects.toThrow('Current version is already up to date');
+    await expect(SystemService.update()).rejects.toThrow('server-messages.errors.current-version-is-latest');
   });
 
   it('Should throw an error if there is a major version difference', async () => {
@@ -188,6 +188,6 @@ describe('Test: update', () => {
     TipiCache.set('latestVersion', '1.0.0');
 
     // Act & Assert
-    await expect(SystemService.update()).rejects.toThrow('The major version has changed. Please update manually');
+    await expect(SystemService.update()).rejects.toThrow('server-messages.errors.major-version-update');
   });
 });

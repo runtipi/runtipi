@@ -24,7 +24,7 @@ describe('<ChangePasswordForm />', () => {
 
     // assert
     await waitFor(() => {
-      expect(screen.getByText('Password successfully changed')).toBeInTheDocument();
+      expect(screen.getByText('Password changed successfully')).toBeInTheDocument();
     });
   });
 
