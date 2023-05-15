@@ -11,7 +11,7 @@
       "operator-not-found": "Оператор не найден",
       "user-not-found": "Пользователь не найден",
       "not-allowed-in-demo": "Не допускается в демо-режиме",
-      "not-allowed-in-dev": "Not allowed in dev mode",
+      "not-allowed-in-dev": "Не разрешено в режиме разработки",
       "invalid-password": "Неверный пароль",
       "invalid-password-length": "Пароль должен содержать не менее 8 символов",
       "invalid-locale": "Недопустимый язык",
@@ -31,8 +31,8 @@
       "app-not-exposable": "К приложению {id} невозможно получить доступ по доменному имени",
       "app-force-exposed": "Доступ к приложению {id} возможен только по доменному имени",
       "domain-already-in-use": "Домен {domain} уже используется приложением {id}",
-      "could-not-get-latest-version": "Could not get latest version",
-      "current-version-is-latest": "Current version is already up to date",
+      "could-not-get-latest-version": "Не удалось получить последнюю версию",
+      "current-version-is-latest": "Текущая версия уже актуальна",
       "major-version-update": "The major version has changed. Please update manually (instructions on GitHub)"
     },
     "success": {}
