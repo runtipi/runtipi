@@ -1,6 +1,7 @@
 import React from 'react';
 import Select, { SingleValue, OptionProps, ControlProps, components } from 'react-select';
 import { Icon } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { APP_CATEGORIES } from '../../../../core/constants';
 import { AppCategory } from '../../../../core/types';
 import { useUIStore } from '../../../../state/uiStore';
@@ -47,10 +48,11 @@ const ControlComponent = (props: ControlProps<OptionsType>) => {
 };
 
 const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue }) => {
+  const t = useTranslations('apps');
   const { darkMode } = useUIStore();
   const options: OptionsType[] = APP_CATEGORIES.map((category) => ({
     value: category.id,
-    label: category.name,
+    label: t(`app-details.categories.${category.id}`),
     icon: category.icon,
   }));
 
@@ -106,7 +108,7 @@ const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue 
       defaultValue={[]}
       name="categories"
       options={options}
-      placeholder="Category"
+      placeholder={t('app-store.category-placeholder')}
     />
   );
 };

@@ -19,25 +19,24 @@ import {
 import { AppCategory } from './types';
 
 type AppCategoryEntry = {
-  name: string;
   id: AppCategory;
   icon: Icon;
 };
 
 export const APP_CATEGORIES: AppCategoryEntry[] = [
-  { name: 'Network', id: 'network', icon: IconBroadcast },
-  { name: 'Media', id: 'media', icon: IconMovie },
-  { name: 'Development', id: 'development', icon: IconCode },
-  { name: 'Automation', id: 'automation', icon: IconRobot },
-  { name: 'Social', id: 'social', icon: IconUsers },
-  { name: 'Utilities', id: 'utilities', icon: IconTool },
-  { name: 'Photography', id: 'photography', icon: IconCamera },
-  { name: 'Security', id: 'security', icon: IconShieldLock },
-  { name: 'Featured', id: 'featured', icon: IconStar },
-  { name: 'Books', id: 'books', icon: IconBook },
-  { name: 'Data', id: 'data', icon: IconDatabase },
-  { name: 'Music', id: 'music', icon: IconMusic },
-  { name: 'Finance', id: 'finance', icon: IconPigMoney },
-  { name: 'Gaming', id: 'gaming', icon: IconDeviceGamepad2 },
-  { name: 'AI', id: 'ai', icon: IconBrain },
+  { id: 'network', icon: IconBroadcast },
+  { id: 'media', icon: IconMovie },
+  { id: 'development', icon: IconCode },
+  { id: 'automation', icon: IconRobot },
+  { id: 'social', icon: IconUsers },
+  { id: 'utilities', icon: IconTool },
+  { id: 'photography', icon: IconCamera },
+  { id: 'security', icon: IconShieldLock },
+  { id: 'featured', icon: IconStar },
+  { id: 'books', icon: IconBook },
+  { id: 'data', icon: IconDatabase },
+  { id: 'music', icon: IconMusic },
+  { id: 'finance', icon: IconPigMoney },
+  { id: 'gaming', icon: IconDeviceGamepad2 },
+  { id: 'ai', icon: IconBrain },
 ];

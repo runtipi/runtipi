@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { AppLogo } from '../../../../components/AppLogo/AppLogo';
 import { AppCategory } from '../../../../core/types';
 import { colorSchemeForCategory, limitText } from '../../helpers/table.helpers';
@@ -13,21 +14,25 @@ type App = {
   short_desc: string;
 };
 
-const AppStoreTile: React.FC<{ app: App }> = ({ app }) => (
-  <Link className={clsx('cursor-pointer col-sm-6 col-lg-4 p-2 mt-4', styles.appTile)} href={`/app-store/${app.id}`} passHref>
-    <div key={app.id} className="d-flex overflow-hidden align-items-center py-2 ps-2">
-      <AppLogo className={styles.logo} id={app.id} />
-      <div className="card-body">
-        <h3 className="text-bold h-3 mb-2">{limitText(app.name, 20)}</h3>
-        <p className="text-muted text-nowrap mb-2">{limitText(app.short_desc, 30)}</p>
-        {app.categories?.map((category) => (
-          <div className={`badge me-1 bg-${colorSchemeForCategory[category]}`} key={`${app.id}-${category}`}>
-            {category.toLocaleLowerCase()}
-          </div>
-        ))}
+const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
+  const t = useTranslations('apps.app-details');
+
+  return (
+    <Link className={clsx('cursor-pointer col-sm-6 col-lg-4 p-2 mt-4', styles.appTile)} href={`/app-store/${app.id}`} passHref>
+      <div key={app.id} className="d-flex overflow-hidden align-items-center py-2 ps-2">
+        <AppLogo className={styles.logo} id={app.id} />
+        <div className="card-body">
+          <h3 className="text-bold h-3 mb-2">{limitText(app.name, 20)}</h3>
+          <p className="text-muted text-nowrap mb-2">{limitText(app.short_desc, 30)}</p>
+          {app.categories?.map((category) => (
+            <div className={`badge me-1 bg-${colorSchemeForCategory[category]}`} key={`${app.id}-${category}`}>
+              {t(`categories.${category}`)}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  </Link>
-);
+    </Link>
+  );
+};
 
 export default AppStoreTile;
