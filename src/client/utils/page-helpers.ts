@@ -29,14 +29,6 @@ export const getMessagesPageProps: GetServerSideProps = async (ctx) => {
   const locale = getLocaleFromString(sessionLocale || cookieLocale || browserLocale || 'en');
 
   const englishMessages = (await import(`../messages/en.json`)).default;
-  if (locale === 'en') {
-    return {
-      props: {
-        messages: englishMessages,
-      },
-    };
-  }
-
   const messages = (await import(`../messages/${locale}.json`)).default;
   const mergedMessages = merge(englishMessages, messages);
 

@@ -1,5 +1,5 @@
 export const APP_LOCALES = {
-  en: 'English',
+  'en-US': 'English',
   'fr-FR': 'Français',
   'ja-JP': '日本語',
   'ro-RO': 'Română',
@@ -10,7 +10,7 @@ export const APP_LOCALES = {
 
 const FALLBACK_LOCALES = [
   { from: 'fr', to: 'fr-FR' },
-  { from: 'en', to: 'en' },
+  { from: 'en', to: 'en-US' },
   { from: 'ja', to: 'ja-JP' },
   { from: 'ro', to: 'ro-RO' },
   { from: 'ru', to: 'ru-RU' },
@@ -24,7 +24,7 @@ export const LOCALE_OPTIONS = Object.entries(APP_LOCALES).map(([value, label]) =
 
 export const getLocaleFromString = (locale?: string): Locale => {
   if (!locale) {
-    return 'en';
+    return 'en-US';
   }
 
   if (Locales.includes(locale)) {
@@ -36,5 +36,5 @@ export const getLocaleFromString = (locale?: string): Locale => {
     return fallback.to as Locale;
   }
 
-  return 'en';
+  return 'en-US';
 };
