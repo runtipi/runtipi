@@ -1,6 +1,7 @@
 import semver from 'semver';
 import { z } from 'zod';
 import fetch from 'node-fetch-commonjs';
+import { TranslatedError } from '@/server/utils/errors';
 import { readJsonFile } from '../../common/fs.helpers';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
@@ -80,23 +81,23 @@ export class SystemServiceClass {
     const { current, latest } = await this.getVersion();
 
     if (TipiConfig.getConfig().NODE_ENV === 'development') {
-      throw new Error('Cannot update in development mode');
+      throw new TranslatedError('server-messages.errors.not-allowed-in-dev');
     }
 
     if (!latest) {
-      throw new Error('Could not get latest version');
+      throw new TranslatedError('server-messages.errors.could-not-get-latest-version');
     }
 
     if (semver.gt(current, latest)) {
-      throw new Error('Current version is newer than latest version');
+      throw new TranslatedError('server-messages.errors.current-version-is-latest');
     }
 
     if (semver.eq(current, latest)) {
-      throw new Error('Current version is already up to date');
+      throw new TranslatedError('server-messages.errors.current-version-is-latest');
     }
 
     if (semver.major(current) !== semver.major(latest)) {
-      throw new Error('The major version has changed. Please update manually (instructions on GitHub)');
+      throw new TranslatedError('server-messages.errors.major-version-update');
     }
 
     TipiConfig.setConfig('status', 'UPDATING');
@@ -108,11 +109,11 @@ export class SystemServiceClass {
 
   public restart = async (): Promise<boolean> => {
     if (TipiConfig.getConfig().NODE_ENV === 'development') {
-      throw new Error('Cannot restart in development mode');
+      throw new TranslatedError('server-messages.errors.not-allowed-in-dev');
     }
 
     if (TipiConfig.getConfig().demoMode) {
-      throw new Error('Cannot restart in demo mode');
+      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
     }
 
     TipiConfig.setConfig('status', 'RESTARTING');

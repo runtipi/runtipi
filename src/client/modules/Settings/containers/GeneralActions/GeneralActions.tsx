@@ -3,6 +3,8 @@ import semver from 'semver';
 import { toast } from 'react-hot-toast';
 import Markdown from '@/components/Markdown/Markdown';
 import { IconStar } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
+import { MessageKey } from '@/server/utils/errors';
 import { Button } from '../../../../components/ui/Button';
 import { useDisclosure } from '../../../../hooks/useDisclosure';
 import { RestartModal } from '../../components/RestartModal';
@@ -11,6 +13,7 @@ import { trpc } from '../../../../utils/trpc';
 import { useSystemStore } from '../../../../state/systemStore';
 
 export const GeneralActions = () => {
+  const t = useTranslations();
   const versionQuery = trpc.system.getVersion.useQuery(undefined, { staleTime: 0 });
 
   const [loading, setLoading] = React.useState(false);
@@ -28,10 +31,10 @@ export const GeneralActions = () => {
     onSuccess: async () => {
       setPollStatus(true);
     },
-    onError: (error) => {
+    onError: (e) => {
       updateDisclosure.close();
       setLoading(false);
-      toast.error(`Error updating instance: ${error.message}`);
+      toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables }));
     },
   });
 
@@ -42,16 +45,16 @@ export const GeneralActions = () => {
     onSuccess: async () => {
       setPollStatus(true);
     },
-    onError: (error) => {
+    onError: (e) => {
       restartDisclosure.close();
       setLoading(false);
-      toast.error(`Error restarting instance: ${error.message}`);
+      toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables }));
     },
   });
 
   const renderUpdate = () => {
     if (isLatest) {
-      return <Button disabled>Already up to date</Button>;
+      return <Button disabled>{t('settings.actions.already-latest')}</Button>;
     }
 
     return (
@@ -69,7 +72,7 @@ export const GeneralActions = () => {
           </div>
         )}
         <Button onClick={updateDisclosure.open} className="mt-3 mr-2 btn-success">
-          Update to {versionQuery.data?.latest}
+          {t('settings.actions.update', { version: versionQuery.data?.latest })}
         </Button>
       </div>
     );
@@ -78,14 +81,14 @@ export const GeneralActions = () => {
   return (
     <>
       <div className="card-body">
-        <h2 className="mb-4">Actions</h2>
-        <h3 className="card-title mt-4">Current version: {versionQuery.data?.current}</h3>
-        <p className="card-subtitle">{isLatest ? 'Stay up to date with the latest version of Tipi' : `A new version (${versionQuery.data?.latest}) of Tipi is available`}</p>
+        <h2 className="mb-4">{t('settings.actions.title')}</h2>
+        <h3 className="card-title mt-4">{t('settings.actions.current-version', { version: versionQuery.data?.current })}</h3>
+        <p className="card-subtitle">{isLatest ? t('settings.actions.stay-up-to-date') : t('settings.actions.new-version', { version: versionQuery.data?.latest })}</p>
         {renderUpdate()}
-        <h3 className="card-title mt-4">Maintenance</h3>
-        <p className="card-subtitle">Common actions to perform on your instance</p>
+        <h3 className="card-title mt-4">{t('settings.actions.maintenance-title')}</h3>
+        <p className="card-subtitle">{t('settings.actions.maintenance-subtitle')}</p>
         <div>
-          <Button onClick={restartDisclosure.open}>Restart</Button>
+          <Button onClick={restartDisclosure.open}>{t('settings.actions.restart')}</Button>
         </div>
       </div>
       <RestartModal isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} onConfirm={() => restart.mutate()} loading={loading} />

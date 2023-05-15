@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { NextIntlProvider } from 'next-intl';
+import { NextIntlProvider, createTranslator } from 'next-intl';
 import '../client/styles/global.css';
 import '../client/styles/global.scss';
 import 'react-tooltip/dist/react-tooltip.css';
@@ -20,7 +20,7 @@ import { SystemStatus, useSystemStore } from '../client/state/systemStore';
  * @returns {JSX.Element} - JSX element
  */
 function MyApp({ Component, pageProps }: AppProps) {
-  const { setDarkMode } = useUIStore();
+  const { setDarkMode, setTranslator } = useUIStore();
   const { setStatus, setVersion, pollStatus } = useSystemStore();
   const { locale } = useLocale();
 
@@ -46,6 +46,14 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
     themeCheck();
   }, [setDarkMode]);
+
+  useEffect(() => {
+    const translator = createTranslator({
+      messages: pageProps.messages,
+      locale,
+    });
+    setTranslator(translator);
+  }, [pageProps.messages, locale, setTranslator]);
 
   return (
     <main className="h-100">

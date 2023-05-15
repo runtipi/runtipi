@@ -8,8 +8,12 @@ import { QRCodeSVG } from 'qrcode.react';
 import { OtpInput } from '@/components/ui/OtpInput';
 import { toast } from 'react-hot-toast';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
+import { useTranslations } from 'next-intl';
+import type { MessageKey } from '@/server/utils/errors';
 
 export const OtpForm = () => {
+  const globalT = useTranslations();
+  const t = useTranslations('settings.security');
   const [password, setPassword] = React.useState('');
   const [key, setKey] = React.useState('');
   const [uri, setUri] = React.useState('');
@@ -28,7 +32,7 @@ export const OtpForm = () => {
     },
     onError: (e) => {
       setPassword('');
-      toast.error(`Error getting TOTP URI: ${e.message}`);
+      toast.error(globalT(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables }));
     },
     onSuccess: (data) => {
       setKey(data.key);
@@ -40,13 +44,13 @@ export const OtpForm = () => {
     onMutate: () => {},
     onError: (e) => {
       setTotpCode('');
-      toast.error(`Error setting up TOTP: ${e.message}`);
+      toast.error(globalT(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables }));
     },
     onSuccess: () => {
       setTotpCode('');
       setKey('');
       setUri('');
-      toast.success('Two-factor authentication enabled');
+      toast.success(t('2fa-enable-success'));
       ctx.auth.me.invalidate();
     },
   });
@@ -57,10 +61,10 @@ export const OtpForm = () => {
     },
     onError: (e) => {
       setPassword('');
-      toast.error(`Error disabling TOTP: ${e.message}`);
+      toast.error(globalT(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables }));
     },
     onSuccess: () => {
-      toast.success('Two-factor authentication disabled');
+      toast.success(t('2fa-disable-success'));
       ctx.auth.me.invalidate();
     },
   });
@@ -71,18 +75,18 @@ export const OtpForm = () => {
     return (
       <div className="mt-4">
         <div className="mb-4">
-          <p className="text-muted">Scan this QR code with your authenticator app.</p>
+          <p className="text-muted">{t('scan-qr-code')}</p>
           <QRCodeSVG value={uri} />
         </div>
         <div className="mb-4">
-          <p className="text-muted">Or enter this key manually.</p>
+          <p className="text-muted">{t('enter-key-manually')}</p>
           <Input name="secret key" value={key} readOnly />
         </div>
         <div className="mb-4">
-          <p className="text-muted">Enter the code from your authenticator app.</p>
+          <p className="text-muted">{t('enter-2fa-code')}</p>
           <OtpInput value={totpCode} valueLength={6} onChange={(e) => setTotpCode(e)} />
           <Button disabled={totpCode.trim().length < 6} onClick={() => setupTotp.mutate({ totpCode })} className="mt-3 btn-success">
-            Enable 2FA
+            {t('enable-2fa')}
           </Button>
         </div>
       </div>
@@ -99,7 +103,7 @@ export const OtpForm = () => {
 
   return (
     <>
-      {!key && <Switch disabled={!me.isSuccess} onCheckedChange={handleTotp} checked={me.data?.totpEnabled} label="Enable two-factor authentication" />}
+      {!key && <Switch disabled={!me.isSuccess} onCheckedChange={handleTotp} checked={me.data?.totpEnabled} label={t('enable-2fa')} />}
       {getTotpUri.isLoading && (
         <div className="progress w-50">
           <div className="progress-bar progress-bar-indeterminate bg-green" />
@@ -109,7 +113,7 @@ export const OtpForm = () => {
       <Dialog open={setupOtpDisclosure.isOpen} onOpenChange={(o: boolean) => setupOtpDisclosure.toggle(o)}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>Password needed</DialogTitle>
+            <DialogTitle>{t('password-needed')}</DialogTitle>
           </DialogHeader>
           <DialogDescription className="d-flex flex-column">
             <form
@@ -118,10 +122,10 @@ export const OtpForm = () => {
                 getTotpUri.mutate({ password });
               }}
             >
-              <p className="text-muted">Your password is required to setup two-factor authentication.</p>
-              <Input name="password" type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+              <p className="text-muted">{t('password-needed-hint')}</p>
+              <Input name="password" type="password" onChange={(e) => setPassword(e.target.value)} placeholder={t('form.password')} />
               <Button loading={getTotpUri.isLoading} type="submit" className="btn-success mt-3">
-                Enable 2FA
+                {t('enable-2fa')}
               </Button>
             </form>
           </DialogDescription>
@@ -130,7 +134,7 @@ export const OtpForm = () => {
       <Dialog open={disableOtpDisclosure.isOpen} onOpenChange={(o: boolean) => disableOtpDisclosure.toggle(o)}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>Password needed</DialogTitle>
+            <DialogTitle>{t('password-needed')}</DialogTitle>
           </DialogHeader>
           <DialogDescription className="d-flex flex-column">
             <form
@@ -139,10 +143,10 @@ export const OtpForm = () => {
                 disableTotp.mutate({ password });
               }}
             >
-              <p className="text-muted">Your password is required to disable two-factor authentication.</p>
-              <Input name="password" type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+              <p className="text-muted">{t('password-needed-hint')}</p>
+              <Input name="password" type="password" onChange={(e) => setPassword(e.target.value)} placeholder={t('form.password')} />
               <Button loading={disableTotp.isLoading} type="submit" className="btn-danger mt-3">
-                Disable 2FA
+                {t('disable-2fa')}
               </Button>
             </form>
           </DialogDescription>

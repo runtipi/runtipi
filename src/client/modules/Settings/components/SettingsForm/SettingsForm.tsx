@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { useTranslations } from 'next-intl';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import validator from 'validator';
@@ -19,30 +20,31 @@ interface IProps {
   submitErrors?: Record<string, string>;
 }
 
-const validateFields = (values: SettingsFormValues) => {
-  const errors: { [K in keyof SettingsFormValues]?: string } = {};
-
-  if (values.dnsIp && !validator.isIP(values.dnsIp)) {
-    errors.dnsIp = 'Invalid IP address';
-  }
-
-  if (values.internalIp && values.internalIp !== 'localhost' && !validator.isIP(values.internalIp)) {
-    errors.internalIp = 'Invalid IP address';
-  }
-
-  if (values.appsRepoUrl && !validator.isURL(values.appsRepoUrl)) {
-    errors.appsRepoUrl = 'Invalid URL';
-  }
-
-  if (values.domain && !validator.isFQDN(values.domain)) {
-    errors.domain = 'Invalid domain';
-  }
-
-  return errors;
-};
-
 export const SettingsForm = (props: IProps) => {
   const { onSubmit, initalValues, loading, submitErrors } = props;
+  const t = useTranslations('settings.settings');
+
+  const validateFields = (values: SettingsFormValues) => {
+    const errors: { [K in keyof SettingsFormValues]?: string } = {};
+
+    if (values.dnsIp && !validator.isIP(values.dnsIp)) {
+      errors.dnsIp = t('invalid-ip');
+    }
+
+    if (values.internalIp && values.internalIp !== 'localhost' && !validator.isIP(values.internalIp)) {
+      errors.internalIp = t('invalid-ip');
+    }
+
+    if (values.appsRepoUrl && !validator.isURL(values.appsRepoUrl)) {
+      errors.appsRepoUrl = t('invalid-url');
+    }
+
+    if (values.domain && !validator.isFQDN(values.domain)) {
+      errors.domain = t('invalid-domain');
+    }
+
+    return errors;
+  };
 
   const {
     register,
@@ -84,31 +86,29 @@ export const SettingsForm = (props: IProps) => {
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
-      <h2 className="text-2xl font-bold">General settings</h2>
-      <p className="mb-4">This will update your settings.json file. Make sure you know what you are doing before updating these values.</p>
+      <h2 className="text-2xl font-bold">{t('title')}</h2>
+      <p className="mb-4">{t('subtitle')}</p>
       <div className="mb-3">
-        <Input {...register('domain')} label="Domain name" error={errors.domain?.message} placeholder="tipi.localhost" />
-        <span className="text-muted">
-          Make sure this domain contains a <strong>A</strong> record pointing to your IP.
-        </span>
+        <Input {...register('domain')} label={t('domain-name')} error={errors.domain?.message} placeholder="tipi.localhost" />
+        <span className="text-muted">{t('domain-name-hint')}</span>
       </div>
       <div className="mb-3">
-        <Input {...register('dnsIp')} label="DNS IP" error={errors.dnsIp?.message} placeholder="9.9.9.9" />
+        <Input {...register('dnsIp')} label={t('dns-ip')} error={errors.dnsIp?.message} placeholder="9.9.9.9" />
       </div>
       <div className="mb-3">
-        <Input {...register('internalIp')} label="Internal IP" error={errors.internalIp?.message} placeholder="192.168.1.100" />
-        <span className="text-muted">IP address your server is listening on.</span>
+        <Input {...register('internalIp')} label={t('internal-ip')} error={errors.internalIp?.message} placeholder="192.168.1.100" />
+        <span className="text-muted">{t('internal-ip-hint')}</span>
       </div>
       <div className="mb-3">
-        <Input {...register('appsRepoUrl')} label="Apps repo URL" error={errors.appsRepoUrl?.message} placeholder="https://github.com/meienberger/runtipi-appstore" />
-        <span className="text-muted">URL to the apps repository.</span>
+        <Input {...register('appsRepoUrl')} label={t('apps-repo')} error={errors.appsRepoUrl?.message} placeholder="https://github.com/meienberger/runtipi-appstore" />
+        <span className="text-muted">{t('apps-repo-hint')}</span>
       </div>
       <div className="mb-3">
-        <Input {...register('storagePath')} label="Storage path" error={errors.storagePath?.message} placeholder="Storage path" />
-        <span className="text-muted">Path to the storage directory. Keep empty for default (runtipi/app-data). Make sure it is an absolute path and that it exists</span>
+        <Input {...register('storagePath')} label={t('storage-path')} error={errors.storagePath?.message} placeholder="Storage path" />
+        <span className="text-muted">{t('storage-path-hint')}</span>
       </div>
       <Button loading={loading} type="submit" className="btn-success">
-        Save
+        {t('submit')}
       </Button>
     </form>
   );
