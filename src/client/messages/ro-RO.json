@@ -244,7 +244,8 @@
       "apps-repo-hint": "URL către repo-ul aplicațiilor.",
       "storage-path": "Calea de stocare",
       "storage-path-hint": "Calea către directorul de stocare. Păstrați gol pentru dosarul implicit (runtipi/app-data). Asigurați-vă că este o cale absolută și că există",
-      "submit": "Salvează"
+      "submit": "Salvează",
+      "user-settings-title": "User settings"
     },
     "security": {
       "tab-title": "Securitate",
