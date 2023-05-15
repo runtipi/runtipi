@@ -224,6 +224,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mcmeel",
+      "name": "mcmeel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13773536?v=4",
+      "profile": "https://github.com/mcmeel",
+      "contributions": [
+        "question",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
