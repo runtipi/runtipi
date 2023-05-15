@@ -10,12 +10,16 @@ type UIStore = {
   translator: typeof defaultTranslator;
   setMenuItem: (menuItem: string) => void;
   setDarkMode: (darkMode: boolean) => void;
+  setTranslator: (translator: typeof defaultTranslator) => void;
 };
 
 export const useUIStore = create<UIStore>((set) => ({
   menuItem: 'dashboard',
   darkMode: false,
   translator: defaultTranslator,
+  setTranslator: (translator: typeof defaultTranslator) => {
+    set({ translator });
+  },
   setDarkMode: (darkMode: boolean) => {
     if (darkMode) {
       localStorage.setItem('darkMode', darkMode.toString());
