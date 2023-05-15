@@ -244,7 +244,8 @@
       "apps-repo-hint": "URL vers le repo des applications.",
       "storage-path": "Répertoire de stockage",
       "storage-path-hint": "Chemin d'accès au répertoire de stockage. Laisser vide pour les valeurs par défaut (runtipi/app-data). Assurez-vous qu'il s'agit d'un chemin absolu et qu'il existe",
-      "submit": "Sauvegarder"
+      "submit": "Sauvegarder",
+      "user-settings-title": "User settings"
     },
     "security": {
       "tab-title": "Sécurité",
