@@ -1,6 +1,7 @@
 import React from 'react';
 import type { NextPage } from 'next';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import styles from './AppStorePage.module.scss';
 import { useAppStoreState } from '../../state/appStoreState';
 import { Input } from '../../../../components/ui/Input';
@@ -13,12 +14,13 @@ import { ErrorPage } from '../../../../components/ui/ErrorPage';
 import { trpc } from '../../../../utils/trpc';
 
 export const AppStorePage: NextPage = () => {
+  const t = useTranslations('apps.app-store');
   const { data, isLoading, error } = trpc.app.listApps.useQuery();
   const { setCategory, setSearch, category, search, sort, sortDirection } = useAppStoreState();
 
   const actions = (
     <div className="d-flex align-items-stretch align-items-md-center flex-column flex-md-row justify-content-end">
-      <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" className={clsx('flex-fill mt-2 mt-md-0 me-md-2', styles.selector)} />
+      <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('search-placeholder')} className={clsx('flex-fill mt-2 mt-md-0 me-md-2', styles.selector)} />
       <CategorySelector initialValue={category} className={clsx('flex-fill mt-2 mt-md-0', styles.selector)} onSelect={setCategory} />
     </div>
   );
