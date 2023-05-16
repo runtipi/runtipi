@@ -245,7 +245,7 @@
       "storage-path": "Calea de stocare",
       "storage-path-hint": "Calea către directorul de stocare. Păstrați gol pentru dosarul implicit (runtipi/app-data). Asigurați-vă că este o cale absolută și că există",
       "submit": "Salvează",
-      "user-settings-title": "User settings"
+      "user-settings-title": "Setările utilizatorului"
     },
     "security": {
       "tab-title": "Securitate",
