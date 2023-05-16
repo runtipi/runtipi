@@ -1,185 +1,185 @@
 {
   "server-messages": {
     "errors": {
-      "invalid-credentials": "Invalid credentials",
-      "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
-      "missing-email-or-password": "Missing email or password",
-      "invalid-username": "Invalid username",
-      "user-already-exists": "User already exists",
-      "error-creating-user": "Error creating user",
-      "no-change-password-request": "No change password request found",
-      "operator-not-found": "Operator user not found",
-      "user-not-found": "User not found",
-      "not-allowed-in-demo": "Not allowed in demo mode",
-      "not-allowed-in-dev": "Not allowed in dev mode",
-      "invalid-password": "Invalid password",
-      "invalid-password-length": "Password must be at least 8 characters long",
-      "invalid-locale": "Invalid locale",
-      "totp-session-not-found": "2FA session not found",
-      "totp-not-enabled": "2FA is not enabled for this user",
-      "totp-invalid-code": "Invalid 2FA code",
-      "totp-already-enabled": "2FA is already enabled for this user",
-      "app-not-found": "App {id} not found",
-      "app-failed-to-start": "Failed to start app {id}, see logs for more details",
-      "app-failed-to-install": "Failed to install app {id}, see logs for more details",
-      "app-failed-to-stop": "Failed to stop app {id}, see logs for more details",
-      "app-failed-to-uninstall": "Failed to uninstall app {id}, see logs for more details",
-      "app-failed-to-update": "Failed to update app {id}, see logs for more details",
-      "domain-required-if-expose-app": "Domain is required if app is exposed",
-      "domain-not-valid": "Domain {domain} is not a valid domain",
-      "invalid-config": "App {id} has an invalid config.json file",
-      "app-not-exposable": "App {id} is not exposable",
-      "app-force-exposed": "App {id} works only with exposed domain",
-      "domain-already-in-use": "Domain {domain} is already in use by app {id}",
-      "could-not-get-latest-version": "Could not get latest version",
-      "current-version-is-latest": "Current version is already up to date",
-      "major-version-update": "The major version has changed. Please update manually (instructions on GitHub)"
+      "invalid-credentials": "Nieprawidłowe dane logowania",
+      "admin-already-exists": "Istnieje już użytkownik administratora. Zaloguj się, aby stworzyć nowego użytkownika z panelu administratora.",
+      "missing-email-or-password": "Brakujący adres email lub hasło",
+      "invalid-username": "Nieprawidłowa nazwa użytkownika",
+      "user-already-exists": "Użytkownik już istnieje",
+      "error-creating-user": "Błąd podczas tworzenia użytkownika",
+      "no-change-password-request": "Nie znaleziono prośby o zmianę hasła",
+      "operator-not-found": "Użytkownik operatora nie znaleziony",
+      "user-not-found": "Nie znaleziono użytkownika",
+      "not-allowed-in-demo": "Niedozwolone w trybie demo",
+      "not-allowed-in-dev": "Niedozwolone w trybie dev",
+      "invalid-password": "Nieprawidłowe hasło",
+      "invalid-password-length": "Hasło musi się składać co najmniej z 8 znaków",
+      "invalid-locale": "Niepoprawne ustawienia regionalne",
+      "totp-session-not-found": "Sesja 2FA nie została znaleziona",
+      "totp-not-enabled": "2FA nie jest włączone dla tego użytkownika",
+      "totp-invalid-code": "Niepoprawny Kod 2FA",
+      "totp-already-enabled": "2FA jest już włączone dla tego użytkownika",
+      "app-not-found": "Aplikacja {id} nie została znaleziona",
+      "app-failed-to-start": "Nie udało się uruchomić aplikacji {id}, zobacz logi po więcej informacji",
+      "app-failed-to-install": "Nie udało się zainstalować aplikacji {id}, zobacz logi po więcej informacji",
+      "app-failed-to-stop": "Nie udało się zatrzymać aplikacji {id}, zobacz logi po więcej informacji",
+      "app-failed-to-uninstall": "Nie udało się odinstalować aplikacji {id}, zobacz logi po więcej informacji",
+      "app-failed-to-update": "Nie udało się zaktualizować aplikacji {id}, zobacz logi po więcej informacji",
+      "domain-required-if-expose-app": "Domena jest wymagana, jeśli aplikacja jest udostępniona",
+      "domain-not-valid": "Domena {domain} nie jest poprawną domeną",
+      "invalid-config": "Aplikacja {id} ma nieprawidłowy plik config.json",
+      "app-not-exposable": "Aplikacji {id} nie można udostępnić",
+      "app-force-exposed": "Aplikacja {id} działa tylko z udostępnioną domeną",
+      "domain-already-in-use": "Domena {domain} jest już w użyciu przez aplikację {id}",
+      "could-not-get-latest-version": "Nie udało się pobrać najnowszej wersji",
+      "current-version-is-latest": "Bieżąca wersja jest już aktualna",
+      "major-version-update": "Główna wersja uległa zmianie. Proszę zaktualizować ręcznie (instrukcje na GitHub)"
     },
     "success": {}
   },
   "auth": {
     "login": {
-      "title": "Login to your account",
-      "submit": "Login"
+      "title": "Zaloguj się na swoje konto",
+      "submit": "Zaloguj się"
     },
     "totp": {
-      "title": "Two-factor authentication",
-      "instructions": "Enter the code from your authenticator app",
-      "submit": "Confirm"
+      "title": "Weryfikacja dwuetapowa",
+      "instructions": "Wprowadź kod z aplikacji uwierzytelniającej",
+      "submit": "Potwierdź"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "Zarejestruj konto",
+      "submit": "Zarejestruj się"
     },
     "reset-password": {
-      "title": "Reset your password",
-      "submit": "Reset password",
-      "cancel": "Cancel password change request",
-      "instructions": "Run this command on your server and then refresh this page",
-      "success-title": "Password reset",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
-      "back-to-login": "Back to login"
+      "title": "Zresetuj swoje hasło",
+      "submit": "Zresetuj hasło",
+      "cancel": "Anuluj prośbę o zmianę hasła",
+      "instructions": "Uruchom to polecenie na swoim serwerze, a następnie odśwież tę stronę",
+      "success-title": "Resetowanie hasła",
+      "success": "Twoje hasło zostało zresetowane. Możesz teraz zalogować się przy użyciu nowego hasła. I e-mail {email}",
+      "back-to-login": "Wróć do logowania"
     },
     "form": {
-      "email": "Email address",
-      "email-placeholder": "you@example.com",
-      "password": "Password",
-      "password-placeholder": "Enter your password",
-      "password-confirmation": "Confirm password",
-      "password-confirmation-placeholder": "Confirm your password",
-      "forgot": "Forgot password?",
-      "new-password-placeholder": "Your new password",
-      "new-password-confirmation-placeholder": "Confirm your new password",
+      "email": "Adres e-mail",
+      "email-placeholder": "twojmail@przyklad.com",
+      "password": "Hasło",
+      "password-placeholder": "Wprowadź swoje hasło",
+      "password-confirmation": "Potwierdź hasło",
+      "password-confirmation-placeholder": "Potwierdź swoje hasło",
+      "forgot": "Zapomniałeś hasła?",
+      "new-password-placeholder": "Twoje nowe hasło",
+      "new-password-confirmation-placeholder": "Potwierdź swoje nowe hasło",
       "errors": {
         "email": {
-          "required": "Email address is required",
-          "email": "Email address is invalid",
-          "invalid": "Email address is invalid"
+          "required": "Adres e-mail jest wymagany",
+          "email": "Adres e-mail jest nieprawidłowy",
+          "invalid": "Adres e-mail jest nieprawidłowy"
         },
         "password": {
-          "required": "Password is required",
-          "minlength": "Password must be at least 8 characters"
+          "required": "Hasło jest wymagane",
+          "minlength": "Hasło musi zawierać co najmniej 8 znaków"
         },
         "password-confirmation": {
-          "required": "Password confirmation is required",
-          "minlength": "Password confirmation must be at least 8 characters",
-          "match": "Passwords do not match"
+          "required": "Wymagane jest potwierdzenie hasła",
+          "minlength": "Potwierdzenie hasła musi mieć co najmniej 8 znaków",
+          "match": "Hasła nie są identyczne"
         }
       }
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Panel nawigacyjny",
     "cards": {
       "disk": {
-        "title": "Disk Space",
-        "subtitle": "Used out of {total} GB"
+        "title": "Miejsce na dysku",
+        "subtitle": "Użyto z {total} GB"
       },
       "memory": {
-        "title": "Memory Used"
+        "title": "Użyta pamięć"
       },
       "cpu": {
-        "title": "CPU Load",
-        "subtitle": "Uninstall apps to reduce load"
+        "title": "Obciążenie CPU",
+        "subtitle": "Odinstaluj aplikacje aby zmniejszyć obciążenie"
       }
     }
   },
   "apps": {
-    "status-running": "Running",
-    "status-stopped": "Stopped",
-    "status-starting": "Starting",
-    "status-stopping": "Stopping",
-    "status-updating": "Updating",
-    "status-missing": "Missing",
-    "status-installing": "Installing",
-    "status-uninstalling": "Uninstalling",
-    "update-available": "Update available",
+    "status-running": "Uruchomione",
+    "status-stopped": "Zatrzymane",
+    "status-starting": "Rozpoczynanie",
+    "status-stopping": "Zatrzymywanie",
+    "status-updating": "Aktualizowanie",
+    "status-missing": "Brakujące",
+    "status-installing": "Instalowanie",
+    "status-uninstalling": "Odinstalowywanie",
+    "update-available": "Dostępna aktualizacja",
     "my-apps": {
-      "title": "My Apps",
-      "empty-title": "No app installed",
-      "empty-subtitle": "Install an app from the app store to get started",
-      "empty-action": "Go to app store"
+      "title": "Moje aplikacje",
+      "empty-title": "Brak zainstalowanych aplikacji",
+      "empty-subtitle": "Aby rozpocząć, zainstaluj aplikację ze sklepu",
+      "empty-action": "Przejdź do sklepu z aplikacjami"
     },
     "app-store": {
-      "search-placeholder": "Search apps",
-      "category-placeholder": "Select a category"
+      "search-placeholder": "Szukaj aplikacji",
+      "category-placeholder": "Wybierz kategorię"
     },
     "app-details": {
-      "install-success": "App installed successfully",
-      "uninstall-success": "App uninstalled successfully",
-      "stop-success": "App stopped successfully",
-      "update-success": "App updated successfully",
-      "start-success": "App started successfully",
-      "update-config-success": "App config updated successfully. Restart the app to apply the changes",
-      "version": "Version",
-      "description": "Description",
-      "base-info": "Base info",
-      "source-code": "Source code",
-      "author": "Author",
+      "install-success": "Aplikacja zainstalowana pomyślnie",
+      "uninstall-success": "Aplikacja odinstalowana pomyślnie",
+      "stop-success": "Aplikacja zatrzymana pomyślnie",
+      "update-success": "Aplikacja zaktualizowana pomyślnie",
+      "start-success": "Aplikacja uruchomiona pomyślnie",
+      "update-config-success": "Konfiguracja aplikacji została zaktualizowana. Uruchom aplikację ponownie, aby zastosować zmiany",
+      "version": "Wersja",
+      "description": "Opis",
+      "base-info": "Podstawowe informacje",
+      "source-code": "Kod źródłowy",
+      "author": "Autor",
       "port": "Port",
-      "categories-title": "Categories",
+      "categories-title": "Kategorie",
       "link": "Link",
-      "website": "Website",
-      "supported-arch": "Supported architectures",
+      "website": "Strona",
+      "supported-arch": "Wspierane struktury",
       "categories": {
-        "data": "Data",
-        "network": "Network",
+        "data": "Dane",
+        "network": "Sieć",
         "media": "Media",
-        "development": "Development",
-        "automation": "Automation",
-        "social": "Social",
-        "utilities": "Utilities",
-        "security": "Security",
-        "photography": "Photography",
-        "featured": "Featured",
-        "books": "Books",
-        "music": "Music",
-        "finance": "Finance",
-        "gaming": "Gaming",
-        "ai": "AI"
+        "development": "Rozwój",
+        "automation": "Automatyzacja",
+        "social": "Społeczność",
+        "utilities": "Narzędzia",
+        "security": "Bezpieczeństwo",
+        "photography": "Fotografia",
+        "featured": "Wyróżnione",
+        "books": "Książki",
+        "music": "Muzyka",
+        "finance": "Finanse",
+        "gaming": "Rozgrywka",
+        "ai": "SI"
       },
       "actions": {
         "start": "Start",
-        "remove": "Remove",
-        "settings": "Settings",
+        "remove": "Usuń",
+        "settings": "Ustawienia",
         "stop": "Stop",
-        "open": "Open",
-        "loading": "Loading",
-        "cancel": "Cancel",
-        "install": "Install",
-        "update": "Update"
+        "open": "Otwórz",
+        "loading": "Ładowanie",
+        "cancel": "Anuluj",
+        "install": "Zainstaluj",
+        "update": "Zaktualizuj"
       },
       "install-form": {
-        "title": "Install {name}",
-        "expose-app": "Expose app",
-        "domain-name": "Domain name",
-        "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-        "choose-option": "Choose an option...",
-        "sumbit-install": "Install",
-        "submit-update": "Update",
+        "title": "Zainstaluj {name}",
+        "expose-app": "Udostępnij aplikację",
+        "domain-name": "Nazwa domeny",
+        "domain-name-hint": "Upewnij się, że dokładnie ta domena zawiera rekord A wskazujący na twój adres IP.",
+        "choose-option": "Wybierz opcję...",
+        "sumbit-install": "Zainstaluj",
+        "submit-update": "Zaktualizuj",
         "errors": {
-          "required": "{label} is required",
-          "regex": "{label} must match the pattern {pattern}",
+          "required": "{label} jest wymagane",
+          "regex": "{label} musi być zgodny ze wzorem {pattern}",
           "max-length": "{label} must be less than {max} characters",
           "min-length": "{label} must be at least {min} characters",
           "between-length": "{label} must be between {min} and {max} characters",
