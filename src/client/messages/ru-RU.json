@@ -245,7 +245,7 @@
       "storage-path": "Путь к хранилищу",
       "storage-path-hint": "Путь к каталогу хранения. Оставьте пустым для пути по умолчанию (runtipi/app-data). Убедитесь, что путь является абсолютным и существует",
       "submit": "Сохранить",
-      "user-settings-title": "User settings"
+      "user-settings-title": "Настройки пользователя"
     },
     "security": {
       "tab-title": "Безопасность",
