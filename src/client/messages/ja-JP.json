@@ -245,7 +245,9 @@
       "storage-path": "ストレージの場所",
       "storage-path-hint": "ストレージディレクトリへのパスです。デフォルトなら空のままにしてください（runtipi/app-data）。絶対パスであり、存在することを確認してください",
       "submit": "保存",
-      "user-settings-title": "ユーザー設定"
+      "user-settings-title": "ユーザー設定",
+      "language": "Language",
+      "help-translate": "Help translate Tipi"
     },
     "security": {
       "tab-title": "セキュリティ",
