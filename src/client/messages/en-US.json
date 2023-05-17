@@ -245,7 +245,9 @@
       "storage-path": "Storage path",
       "storage-path-hint": "Path to the storage directory. Keep empty for default (runtipi/app-data). Make sure it is an absolute path and that it exists",
       "submit": "Save",
-      "user-settings-title": "User settings"
+      "user-settings-title": "User settings",
+      "language": "Language",
+      "help-translate": "Help translate Tipi"
     },
     "security": {
       "tab-title": "Security",
