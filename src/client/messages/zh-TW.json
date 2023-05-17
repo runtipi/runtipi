@@ -121,8 +121,11 @@
       "empty-action": "前往App Store"
     },
     "app-store": {
+      "title": "App Store",
       "search-placeholder": "搜尋應用程式",
-      "category-placeholder": "選擇一個類別"
+      "category-placeholder": "選擇一個類別",
+      "no-results": "No app found",
+      "no-results-subtitle": "Try to refine your search"
     },
     "app-details": {
       "install-success": "成功安裝應用程式！",
