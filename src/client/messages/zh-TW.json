@@ -245,7 +245,9 @@
       "storage-path": "儲存路徑",
       "storage-path-hint": "存儲目錄的路徑。留空时為默認 (runtipi/app-data)。 確保它是絕對路徑並且它存在",
       "submit": "儲存",
-      "user-settings-title": "使用者設定"
+      "user-settings-title": "使用者設定",
+      "language": "Language",
+      "help-translate": "Help translate Tipi"
     },
     "security": {
       "tab-title": "安全性",
