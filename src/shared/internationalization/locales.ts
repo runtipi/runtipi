@@ -1,4 +1,4 @@
-export const APP_LOCALES = {
+const APP_LOCALES = {
   'en-US': 'English',
   'fr-FR': 'Français',
   'ja-JP': '日本語',

@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import * as argon2 from 'argon2';
 import { faker } from '@faker-js/faker';
 import { TotpAuthenticator } from '@/server/utils/totp';
-import { generateSessionId } from '@/server/common/get-server-auth-session';
+import { generateSessionId } from '@/server/common/session.helpers';
 import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { mockInsert, mockSelect } from '@/server/tests/drizzle-helpers';
 import { createDatabase, clearDatabase, closeDatabase, TestDatabase } from '@/server/tests/test-utils';
@@ -74,7 +74,7 @@ describe('Login', () => {
 });
 
 describe('Test: verifyTotp', () => {
-  it('should return a valid jsonwebtoken if the totp is correct', async () => {
+  it('should correctly log in user after totp is verified', async () => {
     // arrange
     const req = { session: { userId: undefined } };
     const email = faker.internet.email();

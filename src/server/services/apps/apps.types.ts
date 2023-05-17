@@ -30,5 +30,3 @@ export const FIELD_TYPES = {
   RANDOM: 'random',
   BOOLEAN: 'boolean',
 } as const;
-
-export type FieldType = (typeof FIELD_TYPES)[keyof typeof FIELD_TYPES];
