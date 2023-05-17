@@ -92,7 +92,7 @@ export const SettingsForm = (props: IProps) => {
         <IconUser className="me-2" />
         <h2 className="text-2xl font-bold">{t('user-settings-title')}</h2>
       </div>
-      <LanguageSelector />
+      <LanguageSelector showLabel />
       <form className="flex flex-col mt-2" onSubmit={handleSubmit(validate)}>
         <div className="d-flex">
           <IconAdjustmentsAlt className="me-2" />

@@ -2,6 +2,7 @@ export const APP_LOCALES = {
   'en-US': 'English',
   'fr-FR': 'Français',
   'ja-JP': '日本語',
+  'pl-PL': 'Polski',
   'ro-RO': 'Română',
   'ru-RU': 'Русский',
   'zh-CN': '简体中文',
@@ -15,11 +16,12 @@ const FALLBACK_LOCALES = [
   { from: 'ro', to: 'ro-RO' },
   { from: 'ru', to: 'ru-RU' },
   { from: 'zh', to: 'zh-CN' },
+  { from: 'pl', to: 'pl-PL' },
 ];
 
 export type Locale = keyof typeof APP_LOCALES;
 
-export const Locales = Object.keys(APP_LOCALES) as Locale[];
+export const Locales = Object.keys(APP_LOCALES);
 export const LOCALE_OPTIONS = Object.entries(APP_LOCALES).map(([value, label]) => ({ value, label }));
 
 export const getLocaleFromString = (locale?: string): Locale => {
