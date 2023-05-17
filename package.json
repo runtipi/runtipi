@@ -1,6 +1,6 @@
 {
   "name": "runtipi",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A homeserver for everyone",
   "scripts": {
     "copy:migrations": "mkdir -p dist/migrations && cp -r ./src/server/migrations dist",
