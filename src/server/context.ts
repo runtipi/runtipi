@@ -22,7 +22,7 @@ type CreateContextOptions = {
  * @param {CreateContextOptions} opts - options
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-export const createContextInner = async (opts: CreateContextOptions) => ({
+const createContextInner = async (opts: CreateContextOptions) => ({
   ...opts,
 });
 

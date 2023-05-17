@@ -49,7 +49,7 @@ const configSchema = z.object({
 
 export const settingsSchema = configSchema.partial().pick({ dnsIp: true, internalIp: true, appsRepoUrl: true, domain: true, storagePath: true });
 
-export type TipiSettingsType = z.infer<typeof settingsSchema>;
+type TipiSettingsType = z.infer<typeof settingsSchema>;
 
 const formatErrors = (errors: { fieldErrors: Record<string, string[]> }) =>
   Object.entries(errors.fieldErrors)

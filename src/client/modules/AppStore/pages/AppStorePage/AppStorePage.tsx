@@ -28,9 +28,9 @@ export const AppStorePage: NextPage = () => {
   const tableData = React.useMemo(() => sortTable({ data: data?.apps || [], col: sort, direction: sortDirection, category, search }), [data?.apps, sort, sortDirection, category, search]);
 
   return (
-    <Layout title="App Store" actions={actions}>
+    <Layout title={t('title')} actions={actions}>
       {(tableData.length > 0 || isLoading) && <AppStoreContainer loading={isLoading} apps={tableData} />}
-      {tableData.length === 0 && !error && <EmptyPage title="No app found" subtitle="Try to refine your search" />}
+      {tableData.length === 0 && !error && <EmptyPage title={t('no-results')} subtitle={t('no-results-subtitle')} />}
       {error && <ErrorPage error={error.message} />}
     </Layout>
   );

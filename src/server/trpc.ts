@@ -13,9 +13,8 @@ const authQueries = new AuthQueries(db);
  * Convert ZodError to a record
  *
  * @param {typeToFlattenedError<string>} errors - errors
- * @returns {Record<string, string>} record
  */
-export function zodErrorsToRecord(errors: typeToFlattenedError<string>) {
+function zodErrorsToRecord(errors: typeToFlattenedError<string>) {
   const record: Record<string, string> = {};
   Object.entries(errors.fieldErrors).forEach(([key, value]) => {
     const error = value?.[0];

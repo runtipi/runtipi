@@ -115,7 +115,7 @@ export const SettingsForm = (props: IProps) => {
           <span className="text-muted">{t('apps-repo-hint')}</span>
         </div>
         <div className="mb-3">
-          <Input {...register('storagePath')} label={t('storage-path')} error={errors.storagePath?.message} placeholder="Storage path" />
+          <Input {...register('storagePath')} label={t('storage-path')} error={errors.storagePath?.message} placeholder={t('storage-path')} />
           <span className="text-muted">{t('storage-path-hint')}</span>
         </div>
         <Button loading={loading} type="submit" className="btn-success">
