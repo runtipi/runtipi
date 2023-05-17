@@ -245,7 +245,9 @@
       "storage-path": "Répertoire de stockage",
       "storage-path-hint": "Chemin d'accès au répertoire de stockage. Laisser vide pour les valeurs par défaut (runtipi/app-data). Assurez-vous qu'il s'agit d'un chemin absolu et qu'il existe",
       "submit": "Sauvegarder",
-      "user-settings-title": "Paramètres utilisateur"
+      "user-settings-title": "Paramètres utilisateur",
+      "language": "Language",
+      "help-translate": "Help translate Tipi"
     },
     "security": {
       "tab-title": "Sécurité",
