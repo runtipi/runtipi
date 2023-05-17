@@ -1,12 +1,6 @@
-/* eslint-disable vars-on-top */
 import cron from 'node-cron';
 import fs from 'fs-extra';
 import { Logger } from '../Logger';
-
-declare global {
-  // eslint-disable-next-line no-var
-  var EventDispatcher: EventDispatcher | undefined;
-}
 
 export const EVENT_TYPES = {
   // System events
@@ -256,6 +250,4 @@ class EventDispatcher {
   }
 }
 
-export const EventDispatcherInstance = global.EventDispatcher || EventDispatcher.getInstance();
-
-global.EventDispatcher = EventDispatcherInstance;
+export const EventDispatcherInstance = EventDispatcher.getInstance();

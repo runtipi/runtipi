@@ -18,7 +18,7 @@ const onRebuild = () => {
   }
 };
 
-const included = ['express', 'pg', '@runtipi/postgres-migrations'];
+const included = ['express', 'pg', '@runtipi/postgres-migrations', 'connect-redis', 'express-session'];
 const excluded = ['pg-native', '*required-server-files.json'];
 const external = Object.keys(pkg.dependencies || {}).filter((dep) => !included.includes(dep));
 external.push(...excluded);
