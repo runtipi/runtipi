@@ -245,7 +245,9 @@
       "storage-path": "Ścieżka przechowywania",
       "storage-path-hint": "Ścieżka do katalogu pamięci. Pozostaw domyślnie puste (runtipi/app-data). Upewnij się, że jest to ścieżka bezwzględna i że istnieje",
       "submit": "Zapisz",
-      "user-settings-title": "Ustawienia użytkownika"
+      "user-settings-title": "Ustawienia użytkownika",
+      "language": "Language",
+      "help-translate": "Help translate Tipi"
     },
     "security": {
       "tab-title": "Bezpieczeństwo",
