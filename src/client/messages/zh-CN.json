@@ -121,8 +121,11 @@
       "empty-action": "打开App Store"
     },
     "app-store": {
+      "title": "App Store",
       "search-placeholder": "搜索应用",
-      "category-placeholder": "选择类别"
+      "category-placeholder": "选择类别",
+      "no-results": "No app found",
+      "no-results-subtitle": "Try to refine your search"
     },
     "app-details": {
       "install-success": "应用安装成功！",
