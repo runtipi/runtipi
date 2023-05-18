@@ -121,11 +121,11 @@
       "empty-action": "Перейти в магазин приложений"
     },
     "app-store": {
-      "title": "App Store",
+      "title": "Магазин приложений",
       "search-placeholder": "Поиск приложений",
       "category-placeholder": "Выбрать категорию",
-      "no-results": "No app found",
-      "no-results-subtitle": "Try to refine your search"
+      "no-results": "Приложение не найдено",
+      "no-results-subtitle": "Попробуйте уточнить поиск"
     },
     "app-details": {
       "install-success": "Приложение успешно установлено",
