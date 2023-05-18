@@ -121,11 +121,11 @@
       "empty-action": "前往App Store"
     },
     "app-store": {
-      "title": "App Store",
+      "title": "應用程式商店",
       "search-placeholder": "搜尋應用程式",
       "category-placeholder": "選擇一個類別",
-      "no-results": "No app found",
-      "no-results-subtitle": "Try to refine your search"
+      "no-results": "未找到应用",
+      "no-results-subtitle": "嘗試優化您的搜索"
     },
     "app-details": {
       "install-success": "成功安裝應用程式！",
@@ -249,8 +249,8 @@
       "storage-path-hint": "存儲目錄的路徑。留空时為默認 (runtipi/app-data)。 確保它是絕對路徑並且它存在",
       "submit": "儲存",
       "user-settings-title": "使用者設定",
-      "language": "Language",
-      "help-translate": "Help translate Tipi"
+      "language": "語言設定",
+      "help-translate": "協助翻譯"
     },
     "security": {
       "tab-title": "安全性",
