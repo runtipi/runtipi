@@ -121,11 +121,11 @@
       "empty-action": "打开App Store"
     },
     "app-store": {
-      "title": "App Store",
+      "title": "应用商店",
       "search-placeholder": "搜索应用",
       "category-placeholder": "选择类别",
-      "no-results": "No app found",
-      "no-results-subtitle": "Try to refine your search"
+      "no-results": "未找到应用",
+      "no-results-subtitle": "尝试完善您的搜索"
     },
     "app-details": {
       "install-success": "应用安装成功！",
@@ -249,8 +249,8 @@
       "storage-path-hint": "存储目录的路径。留空为默认 (Runtipi/app-data)。请确保它是一个绝对路径并存在",
       "submit": "保存",
       "user-settings-title": "用户设置",
-      "language": "Language",
-      "help-translate": "Help translate Tipi"
+      "language": "语言设置",
+      "help-translate": "参与翻译"
     },
     "security": {
       "tab-title": "安全",
