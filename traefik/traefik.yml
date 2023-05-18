@@ -7,6 +7,9 @@ providers:
     endpoint: "unix:///var/run/docker.sock"
     watch: true
     exposedByDefault: false
+  file:
+    directory: /root/.config/dynamic
+    watch: true
 
 entryPoints:
   web:
