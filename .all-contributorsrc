@@ -232,7 +232,9 @@
       "profile": "https://github.com/mcmeel",
       "contributions": [
         "question",
-        "ideas"
+        "ideas",
+        "code",
+        "doc"
       ]
     }
   ],
