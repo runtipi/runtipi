@@ -121,8 +121,11 @@
       "empty-action": "Mergeți la magazinul de aplicații"
     },
     "app-store": {
+      "title": "Magazin Aplicații",
       "search-placeholder": "Căutare aplicații",
-      "category-placeholder": "Selectează o categorie"
+      "category-placeholder": "Selectează o categorie",
+      "no-results": "Nicio aplicație găsită",
+      "no-results-subtitle": "Încercați să perfecționați căutarea"
     },
     "app-details": {
       "install-success": "Aplicație instalată cu succes",

@@ -121,8 +121,11 @@
       "empty-action": "Accéder à l'App Store"
     },
     "app-store": {
+      "title": "App Store",
       "search-placeholder": "Chercher des applications",
-      "category-placeholder": "Sélectionnez une catégorie"
+      "category-placeholder": "Sélectionnez une catégorie",
+      "no-results": "No app found",
+      "no-results-subtitle": "Try to refine your search"
     },
     "app-details": {
       "install-success": "Application installée avec succès",
