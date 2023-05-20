@@ -121,8 +121,11 @@
       "empty-action": "App Storeへ移動"
     },
     "app-store": {
+      "title": "アプリストア",
       "search-placeholder": "アプリを検索",
-      "category-placeholder": "カテゴリーを選択する"
+      "category-placeholder": "カテゴリーを選択する",
+      "no-results": "アプリが見つかりません",
+      "no-results-subtitle": "検索条件を絞り込んでください"
     },
     "app-details": {
       "install-success": "アプリのインストールに成功しました",
@@ -246,8 +249,8 @@
       "storage-path-hint": "ストレージディレクトリへのパスです。デフォルトなら空のままにしてください（runtipi/app-data）。絶対パスであり、存在することを確認してください",
       "submit": "保存",
       "user-settings-title": "ユーザー設定",
-      "language": "Language",
-      "help-translate": "Help translate Tipi"
+      "language": "言語設定",
+      "help-translate": "翻訳に協力"
     },
     "security": {
       "tab-title": "セキュリティ",

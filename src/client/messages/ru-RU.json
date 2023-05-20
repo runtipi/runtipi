@@ -121,8 +121,11 @@
       "empty-action": "Перейти в магазин приложений"
     },
     "app-store": {
+      "title": "Магазин приложений",
       "search-placeholder": "Поиск приложений",
-      "category-placeholder": "Выбрать категорию"
+      "category-placeholder": "Выбрать категорию",
+      "no-results": "Приложение не найдено",
+      "no-results-subtitle": "Попробуйте уточнить поиск"
     },
     "app-details": {
       "install-success": "Приложение успешно установлено",
@@ -246,8 +249,8 @@
       "storage-path-hint": "Путь к каталогу хранения. Оставьте пустым для пути по умолчанию (runtipi/app-data). Убедитесь, что путь является абсолютным и существует",
       "submit": "Сохранить",
       "user-settings-title": "Настройки пользователя",
-      "language": "Language",
-      "help-translate": "Help translate Tipi"
+      "language": "Язык",
+      "help-translate": "Помочь с переводом Tipi"
     },
     "security": {
       "tab-title": "Безопасность",
