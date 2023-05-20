@@ -1,10 +1,11 @@
 import fs from 'fs-extra';
 import waitForExpect from 'wait-for-expect';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { faker } from '@faker-js/faker';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher, EVENT_TYPES } from '../../core/EventDispatcher';
-import { AppInfo, getEnvMap } from './apps.helpers';
-import { createApp, getAllApps, getAppById, updateApp } from '../../tests/apps.factory';
+import { getEnvMap } from './apps.helpers';
+import { getAllApps, getAppById, updateApp, createAppConfig, insertApp } from '../../tests/apps.factory';
 import { setConfig } from '../../core/TipiConfig';
 
 let db: TestDatabase;
@@ -19,6 +20,9 @@ beforeAll(async () => {
 beforeEach(async () => {
   jest.mock('fs-extra');
   await clearDatabase(db);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore - we are mocking fs
+  fs.__resetAllMocks();
   EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
 });
 
@@ -27,272 +31,277 @@ afterAll(async () => {
 });
 
 describe('Install app', () => {
-  let app1: AppInfo;
-
-  beforeEach(async () => {
-    const { MockFiles, appInfo } = await createApp({}, db);
-    app1 = appInfo;
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
-  });
-
   it('Should correctly generate env file for app', async () => {
-    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    const envFile = fs.readFileSync(`/app/storage/app-data/${app1.id}/app.env`).toString();
+    // arrange
+    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', env_variable: 'TEST_FIELD', required: true }] });
 
-    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${app1.port}`);
+    // act
+    await AppsService.installApp(appConfig.id, { TEST_FIELD: 'test' });
+    const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
+
+    // assert
+    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${appConfig.port}`);
   });
 
   it('Should add app in database', async () => {
-    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
+    // arrange
+    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', env_variable: 'TEST_FIELD', required: true }] });
+    await AppsService.installApp(appConfig.id, { TEST_FIELD: 'test' });
 
-    const app = await getAppById(app1.id, db);
+    // act
+    const dbApp = await getAppById(appConfig.id, db);
 
-    expect(app).toBeDefined();
-    expect(app?.id).toBe(app1.id);
-    expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(app?.status).toBe('running');
+    // assert
+    expect(dbApp).toBeDefined();
+    expect(dbApp?.id).toBe(appConfig.id);
+    expect(dbApp?.config).toStrictEqual({ TEST_FIELD: 'test' });
+    expect(dbApp?.status).toBe('running');
   });
 
   it('Should start app if already installed', async () => {
+    // arrange
+    const appConfig = createAppConfig();
     const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
 
-    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
+    // act
+    await AppsService.installApp(appConfig.id, {});
+    await AppsService.installApp(appConfig.id, {});
 
+    // assert
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([EVENT_TYPES.APP, ['install', app1.id]]);
-    expect(spy.mock.calls[1]).toEqual([EVENT_TYPES.APP, ['start', app1.id]]);
+    expect(spy.mock.calls[0]).toEqual([EVENT_TYPES.APP, ['install', appConfig.id]]);
+    expect(spy.mock.calls[1]).toEqual([EVENT_TYPES.APP, ['start', appConfig.id]]);
 
     spy.mockRestore();
   });
 
   it('Should delete app if install script fails', async () => {
-    // Arrange
+    // arrange
+    const appConfig = createAppConfig();
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
-    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' })).rejects.toThrow('server-messages.errors.app-failed-to-install');
+    // act
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrow('server-messages.errors.app-failed-to-install');
+    const app = await getAppById(appConfig.id, db);
 
-    const app = await getAppById(app1.id, db);
-
+    // assert
     expect(app).toBeNull();
   });
 
   it('Should throw if required form fields are missing', async () => {
-    await expect(AppsService.installApp(app1.id, {})).rejects.toThrowError('Variable TEST_FIELD is required');
+    // arrange
+    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', env_variable: 'TEST_FIELD', required: true }] });
+
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError('Variable TEST_FIELD is required');
   });
 
   it('Correctly generates a random value if the field has a "random" type', async () => {
-    const { appInfo, MockFiles } = await createApp({ randomField: true }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    // arrange
+    const appConfig = createAppConfig({ form_fields: [{ type: 'random', label: '', env_variable: 'RANDOM_FIELD', required: true }] });
 
-    await AppsService.installApp(appInfo.id, { TEST_FIELD: 'yolo' });
-    const envMap = getEnvMap(appInfo.id);
+    // act
+    await AppsService.installApp(appConfig.id, {});
+    const envMap = getEnvMap(appConfig.id);
 
+    // assert
     expect(envMap.get('RANDOM_FIELD')).toBeDefined();
     expect(envMap.get('RANDOM_FIELD')).toHaveLength(32);
   });
 
   it('Should correctly copy app from repos to apps folder', async () => {
-    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-    const appFolder = fs.readdirSync(`/runtipi/apps/${app1.id}`);
+    // arrange
+    const appConfig = createAppConfig({});
 
+    // act
+    await AppsService.installApp(appConfig.id, {});
+    const appFolder = fs.readdirSync(`/runtipi/apps/${appConfig.id}`);
+
+    // assert
     expect(appFolder).toBeDefined();
     expect(appFolder.indexOf('docker-compose.yml')).toBeGreaterThanOrEqual(0);
   });
 
   it('Should cleanup any app folder existing before install', async () => {
-    const { MockFiles, appInfo } = await createApp({}, db);
-    app1 = appInfo;
-    MockFiles[`/runtipi/apps/${appInfo.id}/docker-compose.yml`] = 'test';
-    MockFiles[`/runtipi/apps/${appInfo.id}/test.yml`] = 'test';
-    MockFiles[`/runtipi/apps/${appInfo.id}`] = ['test.yml', 'docker-compose.yml'];
-
+    // arrange
+    const appConfig = createAppConfig();
+    const MockFiles: Record<string, unknown> = {};
+    MockFiles[`/runtipi/apps/${appConfig.id}/docker-compose.yml`] = 'test';
+    MockFiles[`/runtipi/apps/${appConfig.id}/test.yml`] = 'test';
+    MockFiles[`/runtipi/apps/${appConfig.id}`] = ['test.yml', 'docker-compose.yml'];
     // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    fs.__applyMockFiles(MockFiles);
 
-    expect(fs.existsSync(`/runtipi/apps/${app1.id}/test.yml`)).toBe(true);
+    // act
+    expect(fs.existsSync(`/runtipi/apps/${appConfig.id}/test.yml`)).toBe(true);
+    await AppsService.installApp(appConfig.id, {});
 
-    await AppsService.installApp(app1.id, { TEST_FIELD: 'test' });
-
-    expect(fs.existsSync(`/runtipi/apps/${app1.id}/test.yml`)).toBe(false);
-    expect(fs.existsSync(`/runtipi/apps/${app1.id}/docker-compose.yml`)).toBe(true);
+    // assert
+    expect(fs.existsSync(`/runtipi/apps/${appConfig.id}/test.yml`)).toBe(false);
+    expect(fs.existsSync(`/runtipi/apps/${appConfig.id}/docker-compose.yml`)).toBe(true);
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
-    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
+    // arrange
+    const appConfig = createAppConfig({ exposable: true });
+
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {}, true)).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
   });
 
   it('Should throw if app is exposed and config does not allow it', async () => {
-    await expect(AppsService.installApp(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
+    // arrange
+    const appConfig = createAppConfig({ exposable: false });
+
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {}, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
   });
 
   it('Should throw if app is exposed and domain is not valid', async () => {
-    const { MockFiles, appInfo } = await createApp({ exposable: true }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    // arrange
+    const appConfig = createAppConfig({ exposable: true });
 
-    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('server-messages.errors.domain-not-valid');
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {}, true, 'test')).rejects.toThrowError('server-messages.errors.domain-not-valid');
   });
 
-  it('Should throw if app is exposed and domain is already used', async () => {
-    const app2 = await createApp({ exposable: true }, db);
-    const app3 = await createApp({ exposable: true }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles({ ...app2.MockFiles, ...app3.MockFiles });
+  it('Should throw if app is exposed and domain is already used by another exposed app', async () => {
+    // arrange
+    const domain = faker.internet.domainName();
+    const appConfig = createAppConfig({ exposable: true });
+    const appConfig2 = createAppConfig({ exposable: true });
+    await insertApp({ domain, exposed: true }, appConfig2, db);
 
-    await AppsService.installApp(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
-
-    await expect(AppsService.installApp(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError('server-messages.errors.domain-already-in-use');
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {}, true, domain)).rejects.toThrowError('server-messages.errors.domain-already-in-use');
   });
 
   it('Should throw if architecure is not supported', async () => {
     // arrange
     setConfig('architecture', 'amd64');
-    const { MockFiles, appInfo } = await createApp({ supportedArchitectures: ['arm'] }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    const appConfig = createAppConfig({ supported_architectures: ['arm64'] });
 
-    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} is not supported on this architecture`);
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} is not supported on this architecture`);
   });
 
   it('Can install if architecture is supported', async () => {
+    // arrange
     setConfig('architecture', 'arm');
-    const { MockFiles, appInfo } = await createApp({ supportedArchitectures: ['arm', 'amd64'] }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    const appConfig = createAppConfig({ supported_architectures: ['arm'] });
 
-    await AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' });
-    const app = await getAppById(appInfo.id, db);
+    // act
+    await AppsService.installApp(appConfig.id, {});
+    const app = await getAppById(appConfig.id, db);
 
     expect(app).toBeDefined();
   });
 
   it('Can install if no architecture is specified', async () => {
+    // arrange
     setConfig('architecture', 'arm');
-    const { MockFiles, appInfo } = await createApp({ supportedArchitectures: undefined }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    const appConfig = createAppConfig({ supported_architectures: undefined });
 
-    await AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' });
-    const app = await getAppById(appInfo.id, db);
+    // act
+    await AppsService.installApp(appConfig.id, {});
+    const app = await getAppById(appConfig.id, db);
 
+    // assert
     expect(app).toBeDefined();
   });
 
   it('Should throw if config.json is not valid', async () => {
     // arrange
-    const { MockFiles, appInfo } = await createApp({}, db);
-    MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = 'test';
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    const appConfig = createAppConfig({});
+    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appConfig.id}/config.json`, 'test');
 
     // act & assert
-    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json file`);
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
   });
 
   it('Should throw if config.json is not valid after folder copy', async () => {
     // arrange
     jest.spyOn(fs, 'copySync').mockImplementationOnce(() => {});
-    const { MockFiles, appInfo } = await createApp({}, db);
-    MockFiles[`/runtipi/apps/${appInfo.id}/config.json`] = 'test';
+    const appConfig = createAppConfig({});
+    const MockFiles: Record<string, unknown> = {};
+    MockFiles[`/runtipi/apps/${appConfig.id}/config.json`] = 'test';
     // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    fs.__applyMockFiles(MockFiles);
 
     // act & assert
-    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json file`);
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
   });
 
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
     // arrange
-    const { MockFiles, appInfo } = await createApp({ forceExpose: true }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    const appConfig = createAppConfig({ force_expose: true });
 
     // act & assert
-    await expect(AppsService.installApp(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError();
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError();
   });
 });
 
 describe('Uninstall app', () => {
-  let app1: AppInfo;
-
-  beforeEach(async () => {
-    const app1create = await createApp({ installed: true }, db);
-    app1 = app1create.appInfo;
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1create.MockFiles));
-  });
-
-  it('App should be installed by default', async () => {
-    // Act
-    const app = await getAppById(app1.id, db);
-
-    // Assert
-    expect(app).toBeDefined();
-    expect(app?.id).toBe(app1.id);
-    expect(app?.status).toBe('running');
-  });
-
   it('Should correctly remove app from database', async () => {
-    // Act
-    await AppsService.uninstallApp(app1.id);
-    const app = await getAppById(app1.id, db);
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({}, appConfig, db);
 
-    // Assert
+    // act
+    await AppsService.uninstallApp(appConfig.id);
+    const app = await getAppById(appConfig.id, db);
+
+    // assert
     expect(app).toBeNull();
   });
 
   it('Should stop app if it is running', async () => {
-    // Arrange
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'running' }, appConfig, db);
     const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
 
-    // Act
-    await AppsService.uninstallApp(app1.id);
+    // act
+    await AppsService.uninstallApp(appConfig.id);
 
-    // Assert
+    // assert
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([EVENT_TYPES.APP, ['stop', app1.id]]);
-    expect(spy.mock.calls[1]).toEqual([EVENT_TYPES.APP, ['uninstall', app1.id]]);
-
+    expect(spy.mock.calls[0]).toEqual([EVENT_TYPES.APP, ['stop', appConfig.id]]);
+    expect(spy.mock.calls[1]).toEqual([EVENT_TYPES.APP, ['uninstall', appConfig.id]]);
     spy.mockRestore();
   });
 
   it('Should throw if app is not installed', async () => {
-    // Act & Assert
+    // act & assert
     await expect(AppsService.uninstallApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
   });
 
   it('Should throw if uninstall script fails', async () => {
-    // Arrange
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'running' }, appConfig, db);
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
-    await updateApp(app1.id, { status: 'updating' }, db);
+    await updateApp(appConfig.id, { status: 'updating' }, db);
 
-    // Act & Assert
-    await expect(AppsService.uninstallApp(app1.id)).rejects.toThrow('server-messages.errors.app-failed-to-uninstall');
-    const app = await getAppById(app1.id, db);
+    // act & assert
+    await expect(AppsService.uninstallApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-uninstall');
+    const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('stopped');
   });
 });
 
 describe('Start app', () => {
-  let app1: AppInfo;
-
-  beforeEach(async () => {
-    const app1create = await createApp({ installed: true }, db);
-    app1 = app1create.appInfo;
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1create.MockFiles));
-  });
-
   it('Should correctly dispatch event', async () => {
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({}, appConfig, db);
     const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
 
-    await AppsService.startApp(app1.id);
+    // act
+    await AppsService.startApp(appConfig.id);
 
-    expect(spy.mock.lastCall).toEqual([EVENT_TYPES.APP, ['start', app1.id]]);
-
+    // assert
+    expect(spy.mock.lastCall).toEqual([EVENT_TYPES.APP, ['start', appConfig.id]]);
     spy.mockRestore();
   });
 
@@ -301,53 +310,60 @@ describe('Start app', () => {
   });
 
   it('Should restart if app is already running', async () => {
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'running' }, appConfig, db);
     const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
 
-    await AppsService.startApp(app1.id);
+    // act
+    await AppsService.startApp(appConfig.id);
     expect(spy.mock.calls.length).toBe(1);
-    await AppsService.startApp(app1.id);
-    expect(spy.mock.calls.length).toBe(2);
+    await AppsService.startApp(appConfig.id);
 
+    // assert
+    expect(spy.mock.calls.length).toBe(2);
     spy.mockRestore();
   });
 
-  it('Regenerate env file', async () => {
-    fs.writeFileSync(`/app/storage/app-data/${app1.id}/app.env`, 'TEST=test\nAPP_PORT=3000');
+  it('should regenerate env file', async () => {
+    // arrange
+    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', required: true, env_variable: 'TEST_FIELD' }] });
+    await insertApp({ config: { TEST_FIELD: 'test' } }, appConfig, db);
+    fs.writeFileSync(`/app/storage/app-data/${appConfig.id}/app.env`, 'TEST=test\nAPP_PORT=3000');
 
-    await AppsService.startApp(app1.id);
+    // act
+    await AppsService.startApp(appConfig.id);
+    const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
 
-    const envFile = fs.readFileSync(`/app/storage/app-data/${app1.id}/app.env`).toString();
-
-    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${app1.port}`);
+    // assert
+    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${appConfig.port}`);
   });
 
   it('Should throw if start script fails', async () => {
-    // Arrange
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'stopped' }, appConfig, db);
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
 
-    // Act & Assert
-    await expect(AppsService.startApp(app1.id)).rejects.toThrow('server-messages.errors.app-failed-to-start');
-    const app = await getAppById(app1.id, db);
+    // act & assert
+    await expect(AppsService.startApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-start');
+    const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('stopped');
   });
 });
 
 describe('Stop app', () => {
-  let app1: AppInfo;
-
-  beforeEach(async () => {
-    const app1create = await createApp({ installed: true }, db);
-    app1 = app1create.appInfo;
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1create.MockFiles));
-  });
-
   it('Should correctly dispatch stop event', async () => {
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'running' }, appConfig, db);
     const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
 
-    await AppsService.stopApp(app1.id);
+    // act
+    await AppsService.stopApp(appConfig.id);
 
-    expect(spy.mock.lastCall).toEqual([EVENT_TYPES.APP, ['stop', app1.id]]);
+    // assert
+    expect(spy.mock.lastCall).toEqual([EVENT_TYPES.APP, ['stop', appConfig.id]]);
   });
 
   it('Should throw if app is not installed', async () => {
@@ -355,36 +371,40 @@ describe('Stop app', () => {
   });
 
   it('Should throw if stop script fails', async () => {
-    // Arrange
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'running' }, appConfig, db);
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
 
-    // Act & Assert
-    await expect(AppsService.stopApp(app1.id)).rejects.toThrow('server-messages.errors.app-failed-to-stop');
-    const app = await getAppById(app1.id, db);
+    // act & assert
+    await expect(AppsService.stopApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-stop');
+    const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('running');
   });
 });
 
 describe('Update app config', () => {
-  let app1: AppInfo;
-
-  beforeEach(async () => {
-    const app1create = await createApp({ installed: true }, db);
-    app1 = app1create.appInfo;
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1create.MockFiles));
-  });
-
   it('Should correctly update app config', async () => {
-    await AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' });
+    // arrange
+    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', required: true, env_variable: 'TEST_FIELD' }] });
+    await insertApp({}, appConfig, db);
+    const word = faker.random.word();
 
-    const envFile = fs.readFileSync(`/app/storage/app-data/${app1.id}/app.env`).toString();
+    // act
+    await AppsService.updateAppConfig(appConfig.id, { TEST_FIELD: word });
+    const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
 
-    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${app1.port}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${app1.port}`);
+    // assert
+    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nTEST_FIELD=${word}\nAPP_DOMAIN=localhost:${appConfig.port}`);
   });
 
   it('Should throw if required field is missing', async () => {
-    await expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: '' })).rejects.toThrowError('Variable TEST_FIELD is required');
+    // arrange
+    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', required: true, env_variable: 'TEST_FIELD' }] });
+    await insertApp({}, appConfig, db);
+
+    // act & assert
+    await expect(AppsService.updateAppConfig(appConfig.id, { TEST_FIELD: '' })).rejects.toThrowError('Variable TEST_FIELD is required');
   });
 
   it('Should throw if app is not installed', async () => {
@@ -392,154 +412,157 @@ describe('Update app config', () => {
   });
 
   it('Should not recreate random field if already present in .env', async () => {
-    const { appInfo, MockFiles } = await createApp({ randomField: true, installed: true }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    // arrange
+    const field = faker.random.word();
+    const appConfig = createAppConfig({ form_fields: [{ type: 'random', label: '', required: false, env_variable: field }] });
+    await insertApp({}, appConfig, db);
 
-    const envFile = fs.readFileSync(`/app/storage/app-data/${appInfo.id}/app.env`).toString();
-    fs.writeFileSync(`/app/storage/app-data/${appInfo.id}/app.env`, `${envFile}\nRANDOM_FIELD=test`);
+    const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
+    fs.writeFileSync(`/app/storage/app-data/${appConfig.id}/app.env`, `${envFile}\n${field}=test`);
 
-    await AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' });
+    // act
+    await AppsService.updateAppConfig(appConfig.id, { TEST_FIELD: 'test' });
+    const envMap = getEnvMap(appConfig.id);
 
-    const envMap = getEnvMap(appInfo.id);
-
-    expect(envMap.get('RANDOM_FIELD')).toBe('test');
+    // assert
+    expect(envMap.get(field)).toBe('test');
   });
 
-  it('Should throw if app is exposed and domain is not provided', () =>
-    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true)).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app'));
+  it('Should throw if app is exposed and domain is not provided', async () => {
+    // arrange
+    const appConfig = createAppConfig({ exposable: true });
+    await insertApp({}, appConfig, db);
 
-  it('Should throw if app is exposed and domain is not valid', () =>
-    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test')).rejects.toThrowError('server-messages.errors.domain-not-valid'));
+    // act & assert
+    expect(AppsService.updateAppConfig(appConfig.id, {}, true)).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
+  });
 
-  it('Should throw if app is exposed and config does not allow it', () => {
-    expect(AppsService.updateAppConfig(app1.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
+  it('Should throw if app is exposed and domain is not valid', async () => {
+    // arrange
+    const appConfig = createAppConfig({ exposable: true });
+    await insertApp({}, appConfig, db);
+
+    // act & assert
+    expect(AppsService.updateAppConfig(appConfig.id, {}, true, 'test')).rejects.toThrowError('server-messages.errors.domain-not-valid');
+  });
+
+  it('Should throw if app is exposed and config does not allow it', async () => {
+    // arrange
+    const appConfig = createAppConfig({ exposable: false });
+    await insertApp({}, appConfig, db);
+
+    // act & assert
+    expect(AppsService.updateAppConfig(appConfig.id, {}, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
   });
 
   it('Should throw if app is exposed and domain is already used', async () => {
-    const app2 = await createApp({ exposable: true, installed: true }, db);
-    const app3 = await createApp({ exposable: true, installed: true }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app2.MockFiles, app3.MockFiles));
+    // arrange
+    const domain = faker.internet.domainName();
+    const appConfig = createAppConfig({ exposable: true });
+    const appConfig2 = createAppConfig({ exposable: true });
+    await insertApp({ domain, exposed: true }, appConfig, db);
+    await insertApp({}, appConfig2, db);
 
-    await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
-    await expect(AppsService.updateAppConfig(app3.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com')).rejects.toThrowError('server-messages.errors.domain-already-in-use');
-  });
-
-  it('Should not throw if updating with same domain', async () => {
-    const app2 = await createApp({ exposable: true, installed: true }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app2.MockFiles));
-
-    await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
-    await AppsService.updateAppConfig(app2.appInfo.id, { TEST_FIELD: 'test' }, true, 'test.com');
+    // act & assert
+    await expect(AppsService.updateAppConfig(appConfig2.id, {}, true, domain)).rejects.toThrowError('server-messages.errors.domain-already-in-use');
   });
 
   it('Should throw if app has invalid config.json', async () => {
-    const { appInfo, MockFiles } = await createApp({ installed: true }, db);
-    MockFiles[`/runtipi/apps/${appInfo.id}/config.json`] = 'invalid json';
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({}, appConfig, db);
+    fs.writeFileSync(`/runtipi/apps/${appConfig.id}/config.json`, 'test');
+    fs.writeFileSync(`/app/storage/app-data/${appConfig.id}/config.json`, 'test');
 
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(MockFiles));
-    fs.writeFileSync(`/app/storage/app-data/${appInfo.id}/config.json`, 'test');
-
-    await expect(AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError(`App ${appInfo.id} has invalid config.json`);
+    // act & assert
+    await expect(AppsService.updateAppConfig(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json`);
   });
 
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
     // arrange
-    const { MockFiles, appInfo } = await createApp({ forceExpose: true, installed: true }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    const appConfig = createAppConfig({ force_expose: true });
+    await insertApp({ exposed: true }, appConfig, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appInfo.id, { TEST_FIELD: 'test' })).rejects.toThrowError('server-messages.errors.app-force-exposed');
+    await expect(AppsService.updateAppConfig(appConfig.id, {})).rejects.toThrowError('server-messages.errors.app-force-exposed');
   });
 });
 
 describe('Get app config', () => {
-  let app1: AppInfo;
-
-  beforeEach(async () => {
-    const app1create = await createApp({ installed: true }, db);
-    app1 = app1create.appInfo;
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1create.MockFiles));
-  });
-
   it('Should correctly get app config', async () => {
-    const app = await AppsService.getApp(app1.id);
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ config: { TEST_FIELD: 'test' } }, appConfig, db);
 
+    // act
+    const app = await AppsService.getApp(appConfig.id);
+
+    // assert
     expect(app).toBeDefined();
     expect(app.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(app.id).toBe(app1.id);
+    expect(app.id).toBe(appConfig.id);
     expect(app.status).toBe('running');
   });
 
   it('Should return default values if app is not installed', async () => {
-    const { appInfo, MockFiles } = await createApp({ installed: false }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(MockFiles));
-    const appconfig = await AppsService.getApp(appInfo.id);
+    // arrange
+    const appConfig = createAppConfig({});
 
-    expect(appconfig).toBeDefined();
-    expect(appconfig.id).toBe(appInfo.id);
-    expect(appconfig.config).toStrictEqual({});
-    expect(appconfig.status).toBe('missing');
+    // act
+    const app = await AppsService.getApp(appConfig.id);
+
+    // assert
+    expect(app).toBeDefined();
+    expect(app.id).toBe(appConfig.id);
+    expect(app.config).toStrictEqual({});
+    expect(app.status).toBe('missing');
   });
 });
 
 describe('List apps', () => {
-  let app1: AppInfo;
-  let app2: AppInfo;
-
-  beforeEach(async () => {
-    const app1create = await createApp({ installed: true }, db);
-    const app2create = await createApp({}, db);
-    app1 = app1create.appInfo;
-    app2 = app2create.appInfo;
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1create.MockFiles, app2create.MockFiles));
-  });
-
   it('Should correctly list apps sorted by id', async () => {
+    // arrange
+    const randomName1 = faker.random.word();
+    const randomName2 = faker.random.word();
+    const sortedNames = [randomName1, randomName2].sort((a, b) => a.localeCompare(b));
+
+    const appConfig = createAppConfig({ id: randomName1.toLowerCase(), name: randomName1 });
+    const appConfig2 = createAppConfig({ id: randomName2.toLowerCase(), name: randomName2 });
+    await insertApp({}, appConfig, db);
+    await insertApp({}, appConfig2, db);
+
+    // act
     const { apps } = await AppServiceClass.listApps();
 
-    const sortedApps = [app1, app2].sort((a, b) => a.id.localeCompare(b.name));
-
+    // assert
     expect(apps).toBeDefined();
     expect(apps.length).toBe(2);
-    expect(apps.length).toBe(2);
-    expect(apps[0]?.id).toBe(sortedApps[0]?.id);
-    expect(apps[1]?.id).toBe(sortedApps[1]?.id);
-    expect(apps[0]?.description).toBe('md desc');
+    expect(apps[0]?.name).toBe(sortedNames[0]);
+    expect(apps[1]?.name).toBe(sortedNames[1]);
   });
 
   it('Should not list apps that have supportedArchitectures and are not supported', async () => {
-    // Arrange
+    // arrange
     setConfig('architecture', 'arm64');
-    const app3 = await createApp({ supportedArchitectures: ['arm'] }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app3.MockFiles));
+    createAppConfig({ supported_architectures: ['amd64'] });
 
-    // Act
+    // act
     const { apps } = await AppServiceClass.listApps();
 
-    // Assert
+    // assert
     expect(apps).toBeDefined();
     expect(apps.length).toBe(0);
   });
 
   it('Should list apps that have supportedArchitectures and are supported', async () => {
-    // Arrange
+    // arrange
     setConfig('architecture', 'arm');
-    const app3 = await createApp({ supportedArchitectures: ['arm'] }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app3.MockFiles));
-    // Act
+    createAppConfig({ supported_architectures: ['arm'] });
+
+    // act
     const { apps } = await AppServiceClass.listApps();
 
-    // Assert
+    // assert
     expect(apps).toBeDefined();
     expect(apps.length).toBe(1);
   });
@@ -547,31 +570,26 @@ describe('List apps', () => {
   it('Should list apps that have no supportedArchitectures specified', async () => {
     // Arrange
     setConfig('architecture', 'arm');
-    const app3 = await createApp({ supportedArchitectures: undefined }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app3.MockFiles));
+    createAppConfig({ supported_architectures: undefined });
 
-    // Act
+    // act
     const { apps } = await AppServiceClass.listApps();
 
-    // Assert
+    // assert
     expect(apps).toBeDefined();
     expect(apps.length).toBe(1);
   });
 
   it('Should not list app with invalid config.json', async () => {
-    // Arrange
-    const { MockFiles: mockApp1, appInfo } = await createApp({}, db);
-    const { MockFiles: mockApp2 } = await createApp({}, db);
-    const MockFiles = Object.assign(mockApp1, mockApp2);
-    MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = 'invalid json';
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(MockFiles);
+    // arrange
+    const appInfo = createAppConfig({});
+    createAppConfig({});
+    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, 'invalid json');
 
-    // Act
+    // act
     const { apps } = await AppServiceClass.listApps();
 
-    // Assert
+    // assert
     expect(apps).toBeDefined();
     expect(apps.length).toBe(1);
   });
@@ -579,18 +597,18 @@ describe('List apps', () => {
 
 describe('Update app', () => {
   it('Should correctly update app', async () => {
-    const app1create = await createApp({ installed: true }, db);
-    const app1 = app1create.appInfo;
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1create.MockFiles));
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ version: 12, config: { TEST_FIELD: 'test' } }, appConfig, db);
 
-    await updateApp(app1.id, { version: 0 }, db);
+    // act
+    await updateApp(appConfig.id, { version: 0 }, db);
+    const app = await AppsService.updateApp(appConfig.id);
 
-    const app = await AppsService.updateApp(app1.id);
-
+    // assert
     expect(app).toBeDefined();
     expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(app?.version).toBe(app1.tipi_version);
+    expect(app?.version).toBe(appConfig.tipi_version);
     expect(app?.status).toBe('stopped');
   });
 
@@ -599,82 +617,87 @@ describe('Update app', () => {
   });
 
   it('Should throw if update script fails', async () => {
-    // Arrange
-    const app1create = await createApp({ installed: true }, db);
-    const app1 = app1create.appInfo;
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1create.MockFiles));
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({}, appConfig, db);
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
-    await expect(AppsService.updateApp(app1.id)).rejects.toThrow('server-messages.errors.app-failed-to-update');
-    const app = await getAppById(app1.id, db);
+    // act & assert
+    await expect(AppsService.updateApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-update');
+    const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('stopped');
   });
 });
 
 describe('installedApps', () => {
   it('Should list installed apps', async () => {
-    // Arrange
-    const app1 = await createApp({ installed: true }, db);
-    const app2 = await createApp({ installed: true }, db);
-    const app3 = await createApp({ installed: true }, db);
-    const app4 = await createApp({ installed: false }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1.MockFiles, app2.MockFiles, app3.MockFiles, app4.MockFiles));
+    // arrange
+    const appConfig = createAppConfig({});
+    const appConfig2 = createAppConfig({});
+    const appConfig3 = createAppConfig({});
+    createAppConfig({});
+    await insertApp({}, appConfig, db);
+    await insertApp({}, appConfig2, db);
+    await insertApp({}, appConfig3, db);
 
-    // Act
+    // act
     const apps = await AppsService.installedApps();
 
-    // Assert
+    // assert
     expect(apps.length).toBe(3);
   });
 
   it('Should not list app with invalid config', async () => {
-    // Arrange
-    const app1 = await createApp({ installed: true }, db);
-    const app2 = await createApp({ installed: true }, db);
-    const app3 = await createApp({ installed: true }, db);
-    const app4 = await createApp({ installed: false }, db);
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app2.MockFiles, app3.MockFiles, app4.MockFiles, { [`/runtipi/repos/repo-id/apps/${app1.appInfo.id}/config.json`]: 'invalid json' }));
+    // arrange
+    const appConfig = createAppConfig({ id: '1' });
+    const appConfig2 = createAppConfig({ id: '2' });
+    const appConfig3 = createAppConfig({ id: '3' });
+    createAppConfig({ id: '4' });
+    await insertApp({}, appConfig, db);
+    await insertApp({}, appConfig2, db);
+    await insertApp({}, appConfig3, db);
 
-    // Act
+    fs.writeFileSync(`/runtipi/apps/${appConfig3.id}/config.json`, 'invalid json');
+    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appConfig3.id}/config.json`, 'invalid json');
+
+    // act
     const apps = await AppsService.installedApps();
 
-    // Assert
+    // assert
     expect(apps.length).toBe(2);
   });
 });
 
 describe('startAllApps', () => {
   it('should start all apps with status RUNNING', async () => {
-    // Arrange
-    const app1 = await createApp({ installed: true, status: 'running' }, db);
-    const app2 = await createApp({ installed: true, status: 'running' }, db);
-    const app3 = await createApp({ installed: true, status: 'stopped' }, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1.MockFiles, app2.MockFiles, app3.MockFiles));
+    // arrange
+    const appConfig = createAppConfig({});
+    const appConfig2 = createAppConfig({});
+    const appConfig3 = createAppConfig({});
+    await insertApp({ status: 'running' }, appConfig, db);
+    await insertApp({ status: 'running' }, appConfig2, db);
+    await insertApp({ status: 'stopped' }, appConfig3, db);
 
-    // Act
+    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+
+    // act
     await AppsService.startAllApps();
 
-    // Assert
+    // assert
     expect(spy.mock.calls.length).toBe(2);
   });
 
   it('should put status to STOPPED if start script fails', async () => {
-    // Arrange
-    const app1 = await createApp({ installed: true, status: 'running' }, db);
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'stopped' }, appConfig, db);
     const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(Object.assign(app1.MockFiles));
     spy.mockResolvedValueOnce({ success: false, stdout: 'error' });
 
-    // Act
+    // act
     await AppsService.startAllApps();
 
-    // Assert
+    // assert
     await waitForExpect(async () => {
       const apps = await getAllApps(db);
       expect(apps[0]?.status).toBe('stopped');

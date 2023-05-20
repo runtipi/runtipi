@@ -139,7 +139,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: TestDatabase) => {
   const values: NewApp = {
     id: appInfo.id,
-    config: { TEST_FIELD: 'test' },
+    config: {},
     status: 'running',
     exposed: false,
     domain: null,
@@ -150,7 +150,9 @@ const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: Test
   const mockFiles: Record<string, string | string[]> = {};
   if (data.status !== 'missing') {
     mockFiles[`/app/storage/app-data/${values.id}`] = '';
-    mockFiles[`/app/storage/app-data/${values.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    mockFiles[`/app/storage/app-data/${values.id}/app.env`] = `TEST=test\nAPP_PORT=3000\n${Object.entries(data.config || {})
+      .map(([key, value]) => `${key}=${value}`)
+      .join('\n')}`;
     mockFiles[`/runtipi/apps/${values.id}/config.json`] = JSON.stringify(appInfo);
     mockFiles[`/runtipi/apps/${values.id}/metadata/description.md`] = 'md desc';
   }

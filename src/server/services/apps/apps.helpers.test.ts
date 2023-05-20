@@ -53,11 +53,11 @@ describe('Test: checkAppRequirements()', () => {
 describe('Test: getEnvMap()', () => {
   it('should return a map of env vars', async () => {
     // arrange
-    const appConfig = createAppConfig();
-    const app = await insertApp({}, appConfig, db);
+    const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST_FIELD', type: 'text', label: 'test', required: true }] });
+    insertApp({ config: { TEST_FIELD: 'test' } }, appConfig, db);
 
     // act
-    const envMap = getEnvMap(app.id);
+    const envMap = getEnvMap(appConfig.id);
 
     // assert
     expect(envMap.get('TEST_FIELD')).toBe('test');
