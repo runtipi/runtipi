@@ -56,8 +56,8 @@ describe('Test: getConfig', () => {
     // arrange
     const settingsJson = {
       appsRepoUrl: faker.internet.url(),
-      appsRepoId: faker.random.word(),
-      domain: faker.random.word(),
+      appsRepoId: faker.lorem.word(),
+      domain: faker.lorem.word(),
     };
     const MockFiles = {
       '/runtipi/state/settings.json': JSON.stringify(settingsJson),
@@ -78,8 +78,8 @@ describe('Test: getConfig', () => {
   it('Should not be able to apply an invalid value from json config', () => {
     // arrange
     const settingsJson = {
-      appsRepoUrl: faker.random.word(),
-      appsRepoId: faker.random.word(),
+      appsRepoUrl: faker.lorem.word(),
+      appsRepoId: faker.lorem.word(),
       domain: 10,
     };
     const MockFiles = {

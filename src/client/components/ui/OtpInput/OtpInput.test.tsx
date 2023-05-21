@@ -6,7 +6,7 @@ import { fireEvent, render, screen } from '../../../../../tests/test-utils';
 describe('<OtpInput />', () => {
   it('should accept value & valueLength props', () => {
     // arrange
-    const value = faker.datatype.number({ min: 0, max: 999999 }).toString();
+    const value = faker.number.int({ min: 0, max: 999999 }).toString();
     const valueArray = value.split('');
     const valueLength = value.length;
     render(<OtpInput value={value} valueLength={valueLength} onChange={() => {}} />);
@@ -22,7 +22,7 @@ describe('<OtpInput />', () => {
 
   it('should allow typing of digits', () => {
     // arrange
-    const valueLength = faker.datatype.number({ min: 2, max: 6 }); // random number from 2-6 (minimum 2 so it can focus on the next input)
+    const valueLength = faker.number.int({ min: 2, max: 6 }); // random number from 2-6 (minimum 2 so it can focus on the next input)
     const onChange = jest.fn();
     render(<OtpInput valueLength={valueLength} onChange={onChange} value="" />);
 
@@ -31,7 +31,7 @@ describe('<OtpInput />', () => {
     // assert
     expect(inputEls).toHaveLength(valueLength);
     inputEls.forEach((inputEl, idx) => {
-      const digit = faker.datatype.number({ min: 0, max: 9 }).toString(); // random number from 0-9, typing of digits is 1 by 1
+      const digit = faker.number.int({ min: 0, max: 9 }).toString(); // random number from 0-9, typing of digits is 1 by 1
 
       // trigger a change event
       fireEvent.change(inputEl, {
@@ -50,7 +50,7 @@ describe('<OtpInput />', () => {
 
   it('should NOT allow typing of non-digits', () => {
     // arrange
-    const valueLength = faker.datatype.number({ min: 2, max: 6 });
+    const valueLength = faker.number.int({ min: 2, max: 6 });
     const onChange = jest.fn();
     render(<OtpInput valueLength={valueLength} onChange={onChange} value="" />);
 
@@ -60,7 +60,7 @@ describe('<OtpInput />', () => {
     expect(inputEls).toHaveLength(valueLength);
 
     inputEls.forEach((inputEl) => {
-      const nonDigit = faker.random.alpha(1);
+      const nonDigit = faker.number.float(1);
 
       fireEvent.change(inputEl, {
         target: { value: nonDigit },
@@ -73,7 +73,7 @@ describe('<OtpInput />', () => {
   });
 
   it('should allow deleting of digits (focus on previous element)', () => {
-    const value = faker.datatype.number({ min: 10, max: 999999 }).toString(); // minimum 2-digit so it can focus on the previous input
+    const value = faker.number.int({ min: 10, max: 999999 }).toString(); // minimum 2-digit so it can focus on the previous input
     const valueLength = value.length;
     const lastIdx = valueLength - 1;
     const onChange = jest.fn();
@@ -117,7 +117,7 @@ describe('<OtpInput />', () => {
   });
 
   it('should allow deleting of digits (do NOT focus on previous element)', () => {
-    const value = faker.datatype.number({ min: 10, max: 999999 }).toString();
+    const value = faker.number.int({ min: 10, max: 999999 }).toString();
     const valueArray = value.split('');
     const valueLength = value.length;
     const lastIdx = valueLength - 1;
@@ -147,7 +147,7 @@ describe('<OtpInput />', () => {
   });
 
   it('should NOT allow deleting of digits in the middle', () => {
-    const value = faker.datatype.number({ min: 100000, max: 999999 }).toString();
+    const value = faker.number.int({ min: 100000, max: 999999 }).toString();
     const valueLength = value.length;
     const onChange = jest.fn();
 
@@ -167,7 +167,7 @@ describe('<OtpInput />', () => {
   });
 
   it('should allow pasting of digits (same length as valueLength)', () => {
-    const value = faker.datatype.number({ min: 10, max: 999999 }).toString(); // minimum 2-digit so it is considered as a paste event
+    const value = faker.number.int({ min: 10, max: 999999 }).toString(); // minimum 2-digit so it is considered as a paste event
     const valueLength = value.length;
     const onChange = jest.fn();
 
@@ -176,7 +176,7 @@ describe('<OtpInput />', () => {
     const inputEls = screen.queryAllByRole('textbox');
 
     // get a random input element from the input elements to paste the digits on
-    const randomIdx = faker.datatype.number({ min: 0, max: valueLength - 1 });
+    const randomIdx = faker.number.int({ min: 0, max: valueLength - 1 });
     const randomInputEl = inputEls[randomIdx] as HTMLInputElement;
 
     fireEvent.change(randomInputEl, { target: { value } });
@@ -188,14 +188,14 @@ describe('<OtpInput />', () => {
   });
 
   it('should NOT allow pasting of digits (less than valueLength)', () => {
-    const value = faker.datatype.number({ min: 10, max: 99999 }).toString(); // random 2-5 digit code (less than "valueLength")
-    const valueLength = faker.datatype.number({ min: 6, max: 10 }); // random number from 6-10
+    const value = faker.number.int({ min: 10, max: 99999 }).toString(); // random 2-5 digit code (less than "valueLength")
+    const valueLength = faker.number.int({ min: 6, max: 10 }); // random number from 6-10
     const onChange = jest.fn();
 
     render(<OtpInput valueLength={valueLength} onChange={onChange} value="" />);
 
     const inputEls = screen.queryAllByRole('textbox');
-    const randomIdx = faker.datatype.number({ min: 0, max: valueLength - 1 });
+    const randomIdx = faker.number.int({ min: 0, max: valueLength - 1 });
     const randomInputEl = inputEls[randomIdx] as HTMLInputElement;
 
     fireEvent.change(randomInputEl, { target: { value } });

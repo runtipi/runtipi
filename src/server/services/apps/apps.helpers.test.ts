@@ -43,7 +43,7 @@ describe('Test: checkAppRequirements()', () => {
   it('Should throw if architecture is not supported', async () => {
     // arrange
     setConfig('architecture', 'arm64');
-    const appConfig = await createAppConfig({ supported_architectures: ['arm'] });
+    const appConfig = createAppConfig({ supported_architectures: ['arm'] });
 
     // assert
     expect(() => checkAppRequirements(appConfig.id)).toThrowError(`App ${appConfig.id} is not supported on this architecture`);
@@ -76,7 +76,7 @@ describe('Test: checkEnvFile()', () => {
 
   it('Should throw if a required field is missing', async () => {
     // arrange
-    const fieldName = faker.random.word().toUpperCase();
+    const fieldName = faker.lorem.word().toUpperCase();
     const appConfig = createAppConfig({ form_fields: [{ env_variable: fieldName, type: 'text', label: 'test', required: true }] });
     const app = await insertApp({}, appConfig, db);
     const newAppEnv = 'APP_PORT=test\n';
@@ -138,7 +138,7 @@ describe('Test: generateEnvFile()', () => {
     // arrange
     const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST_FIELD', type: 'text', label: 'test', required: true }] });
     const app = await insertApp({}, appConfig, db);
-    const fakevalue = faker.random.alphaNumeric(10);
+    const fakevalue = faker.string.alphanumeric(10);
 
     // act
     generateEnvFile(Object.assign(app, { config: { TEST_FIELD: fakevalue } }));
@@ -166,7 +166,7 @@ describe('Test: generateEnvFile()', () => {
     // arrange
     const appConfig = createAppConfig({ form_fields: [{ env_variable: 'RANDOM_FIELD', type: 'random', label: 'test', min: 32, max: 32, required: true }] });
     const app = await insertApp({}, appConfig, db);
-    const randomField = faker.random.alphaNumeric(32);
+    const randomField = faker.string.alphanumeric(32);
     fs.writeFileSync(`/app/storage/app-data/${app.id}/app.env`, `RANDOM_FIELD=${randomField}`);
 
     // act
@@ -279,8 +279,8 @@ describe('Test: generateEnvFile()', () => {
     const appConfig = createAppConfig({ generate_vapid_keys: true });
     const app = await insertApp({}, appConfig, db);
 
-    const vapidPrivateKey = faker.random.alphaNumeric(32);
-    const vapidPublicKey = faker.random.alphaNumeric(32);
+    const vapidPrivateKey = faker.string.alphanumeric(32);
+    const vapidPublicKey = faker.string.alphanumeric(32);
 
     // act
     fs.writeFileSync(`/app/storage/app-data/${app.id}/app.env`, `VAPID_PRIVATE_KEY=${vapidPrivateKey}\nVAPID_PUBLIC_KEY=${vapidPublicKey}`);
@@ -386,7 +386,7 @@ describe('Test: getAppInfo()', () => {
 
   it('Should return null if app does not exist', async () => {
     // arrange
-    const app = getAppInfo(faker.random.word());
+    const app = getAppInfo(faker.lorem.word());
 
     // assert
     expect(app).toBeNull();
@@ -408,7 +408,7 @@ describe('Test: getUpdateInfo()', () => {
 
   it('Should return default values if app is not installed', async () => {
     // arrange
-    const updateInfo = getUpdateInfo(faker.random.word());
+    const updateInfo = getUpdateInfo(faker.lorem.word());
 
     // assert
     expect(updateInfo).toEqual({ latestVersion: 0, latestDockerVersion: '0.0.0' });
@@ -483,7 +483,7 @@ describe('Test: ensureAppFolder()', () => {
 
   it('Should delete folder if it exists but has no docker-compose.yml file', () => {
     // arrange
-    const randomFileName = `${faker.random.word()}.yml`;
+    const randomFileName = `${faker.lorem.word()}.yml`;
     const mockFiles = {
       [`/runtipi/repos/repo-id/apps/test`]: [randomFileName],
       '/runtipi/apps/test': ['test.yml'],

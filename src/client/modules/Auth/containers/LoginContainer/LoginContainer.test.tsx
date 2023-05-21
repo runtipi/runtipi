@@ -101,7 +101,7 @@ describe('Test: LoginContainer', () => {
     // arrange
     const email = faker.internet.email();
     const password = faker.internet.password();
-    const totpSessionId = faker.datatype.uuid();
+    const totpSessionId = faker.string.uuid();
     server.use(
       getTRPCMock({
         path: ['auth', 'login'],
@@ -130,7 +130,7 @@ describe('Test: LoginContainer', () => {
     // arrange
     const email = faker.internet.email();
     const password = faker.internet.password();
-    const totpSessionId = faker.datatype.uuid();
+    const totpSessionId = faker.string.uuid();
     server.use(getTRPCMock({ path: ['auth', 'login'], type: 'mutation', response: { totpSessionId } }));
     server.use(getTRPCMockError({ path: ['auth', 'verifyTotp'], type: 'mutation', status: 500, message: 'Invalid totp code' }));
     render(<LoginContainer />);
@@ -167,7 +167,7 @@ describe('Test: LoginContainer', () => {
     // arrange
     const email = faker.internet.email();
     const password = faker.internet.password();
-    const totpSessionId = faker.datatype.uuid();
+    const totpSessionId = faker.string.uuid();
     server.use(getTRPCMock({ path: ['auth', 'login'], type: 'mutation', response: { totpSessionId } }));
     server.use(getTRPCMock({ path: ['auth', 'verifyTotp'], type: 'mutation', response: true }));
     render(<LoginContainer />);
