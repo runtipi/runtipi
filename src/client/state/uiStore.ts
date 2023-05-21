@@ -23,11 +23,11 @@ export const useUIStore = create<UIStore>((set) => ({
   setDarkMode: (darkMode: boolean) => {
     if (darkMode) {
       localStorage.setItem('darkMode', darkMode.toString());
-      document.body.classList.add('theme-dark');
+      document.body.dataset.bsTheme = 'dark';
     }
     if (!darkMode) {
       localStorage.setItem('darkMode', darkMode.toString());
-      document.body.classList.remove('theme-dark');
+      document.body.dataset.bsTheme = 'light';
     }
     set({ darkMode });
   },

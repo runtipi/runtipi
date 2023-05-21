@@ -37,10 +37,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const themeCheck = () => {
       if (localStorage.darkMode === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.body.classList.add('theme-dark');
+        document.body.dataset.bsTheme = 'dark';
         setDarkMode(true);
       } else {
-        document.body.classList.remove('theme-light');
+        document.body.dataset.bsTheme = 'light';
         setDarkMode(false);
       }
     };

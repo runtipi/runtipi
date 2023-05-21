@@ -57,11 +57,11 @@ const SelectContent = React.forwardRef<React.ElementRef<typeof SelectPrimitive.C
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectItem = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Item>, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>>(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Item ref={ref} className={clsx('ps-8 position-relative d-flex align-items-center dropdown-item', className)} {...props}>
+  <SelectPrimitive.Item ref={ref} className={clsx('position-relative d-flex align-items-center dropdown-item', className)} {...props}>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-    <span style={{ right: 8 }} className="position-absolute d-flex align-items-center justify-content-center">
+    <span style={{ right: 8 }} className="ms-2">
       <SelectPrimitive.ItemIndicator>
-        <IconCheck size={20} style={{ marginBottom: 3 }} />
+        <IconCheck size={20} />
       </SelectPrimitive.ItemIndicator>
     </span>
   </SelectPrimitive.Item>
