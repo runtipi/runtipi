@@ -1,8 +1,8 @@
 import validator from 'validator';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
+import { Database } from '@/server/db';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { EventDispatcher } from '../../core/EventDispatcher';
@@ -25,7 +25,7 @@ const filterApps = (apps: AppInfo[]): AppInfo[] => apps.sort(sortApps).filter(fi
 export class AppServiceClass {
   private queries;
 
-  constructor(p: NodePgDatabase) {
+  constructor(p: Database) {
     this.queries = new AppQueries(p);
   }
 

@@ -1,12 +1,12 @@
 import * as argon2 from 'argon2';
 import validator from 'validator';
 import { TotpAuthenticator } from '@/server/utils/totp';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { Context } from '@/server/context';
 import { TranslatedError } from '@/server/utils/errors';
 import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
 import { generateSessionId } from '@/server/common/session.helpers';
+import { Database } from '@/server/db';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
@@ -21,7 +21,7 @@ type UsernamePasswordInput = {
 export class AuthServiceClass {
   private queries;
 
-  constructor(p: NodePgDatabase) {
+  constructor(p: Database) {
     this.queries = new AuthQueries(p);
   }
 
