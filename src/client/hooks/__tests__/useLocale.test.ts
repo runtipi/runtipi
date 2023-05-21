@@ -1,11 +1,11 @@
-import nookies from 'nookies';
 import { getTRPCMock } from '@/client/mocks/getTrpcMock';
 import { server } from '@/client/mocks/server';
+import Cookies from 'js-cookie';
 import { renderHook, waitFor } from '../../../../tests/test-utils';
 import { useLocale } from '../useLocale';
 
 beforeEach(() => {
-  nookies.destroy(null, 'locale');
+  Cookies.remove('locale');
 });
 
 describe('test: useLocale()', () => {
@@ -28,7 +28,7 @@ describe('test: useLocale()', () => {
     it('should return cookie locale if not logged in', async () => {
       // arrange
       const locale = 'fr-FR';
-      nookies.set(null, 'locale', locale);
+      Cookies.set('locale', locale);
       server.use(getTRPCMock({ path: ['auth', 'me'], response: null }));
 
       // act
@@ -82,7 +82,7 @@ describe('test: useLocale()', () => {
 
       // assert
       await waitFor(() => {
-        expect(nookies.get(null)).toEqual({ locale: 'fr-FR' });
+        expect(Cookies.get('locale')).toEqual('fr-FR');
       });
     });
 
@@ -102,7 +102,7 @@ describe('test: useLocale()', () => {
 
       // assert
       await waitFor(() => {
-        expect(nookies.get(null)).toEqual({ locale });
+        expect(Cookies.get('locale')).toEqual(locale);
       });
     });
   });

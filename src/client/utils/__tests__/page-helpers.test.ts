@@ -1,5 +1,5 @@
-import nookies from 'nookies';
 import merge from 'lodash.merge';
+import Cookies from 'js-cookie';
 import { getAuthedPageProps, getMessagesPageProps } from '../page-helpers';
 import englishMessages from '../../messages/en.json';
 import frenchMessages from '../../messages/fr-FR.json';
@@ -33,7 +33,7 @@ describe('test: getAuthedPageProps()', () => {
 
 describe('test: getMessagesPageProps()', () => {
   beforeEach(() => {
-    nookies.destroy(null, 'locale');
+    Cookies.remove('locale');
   });
 
   it('should return correct messages if the locale is in the session', async () => {
@@ -51,7 +51,7 @@ describe('test: getMessagesPageProps()', () => {
   it('should return correct messages if the locale in the cookie', async () => {
     // arrange
     const ctx = { req: { session: {}, headers: {} } };
-    nookies.set(null, 'locale', 'fr-FR');
+    Cookies.set('locale', 'fr-FR');
 
     // act
     // @ts-expect-error - we're passing in a partial context

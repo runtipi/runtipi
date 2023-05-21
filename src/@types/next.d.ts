@@ -15,7 +15,7 @@ declare module 'express-session' {
 }
 
 interface ExtendedGetServerSidePropsContext<Params, Preview> extends GetServerSidePropsContext<Params, Preview> {
-  req: IncomingMessage & { session: Session & SessionContent };
+  req: IncomingMessage & { session: Session & SessionContent } & { cookies?: { locale?: string } };
 }
 
 declare module 'next' {
