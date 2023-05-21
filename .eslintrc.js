@@ -36,6 +36,7 @@ module.exports = {
     'arrow-body-style': 0,
     'class-methods-use-this': 0,
     'jsdoc/require-returns': 0,
+    'jsdoc/tag-lines': 0,
     'import/extensions': [
       'error',
       'ignorePackages',
