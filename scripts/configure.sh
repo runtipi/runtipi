@@ -148,7 +148,6 @@ function check_dependency_and_install() {
   fi
 }
 
-check_dependency_and_install "git-all"
 check_dependency_and_install "jq"
 check_dependency_and_install "fswatch"
 check_dependency_and_install "openssl"
