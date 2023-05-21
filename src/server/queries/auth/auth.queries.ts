@@ -1,11 +1,11 @@
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { asc, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
+import { Database } from '@/server/db';
 import { userTable, NewUser } from '../../db/schema';
 
 export class AuthQueries {
   private db;
 
-  constructor(p: NodePgDatabase) {
+  constructor(p: Database) {
     this.db = p;
   }
 
@@ -15,8 +15,7 @@ export class AuthQueries {
    * @param {string} username - The username of the user to return
    */
   public async getUserByUsername(username: string) {
-    const users = await this.db.select().from(userTable).where(eq(userTable.username, username.trim().toLowerCase()));
-    return users[0];
+    return this.db.query.userTable.findFirst({ where: eq(userTable.username, username.trim().toLowerCase()) });
   }
 
   /**
@@ -25,12 +24,7 @@ export class AuthQueries {
    * @param {number} id - The id of the user to return
    */
   public async getUserById(id: number) {
-    const users = await this.db
-      .select()
-      .from(userTable)
-      .where(eq(userTable.id, Number(id)));
-
-    return users[0];
+    return this.db.query.userTable.findFirst({ where: eq(userTable.id, Number(id)) });
   }
 
   /**
@@ -39,12 +33,7 @@ export class AuthQueries {
    * @param {number} id - The id of the user to return
    */
   public async getUserDtoById(id: number) {
-    const users = await this.db
-      .select({ id: userTable.id, username: userTable.username, totpEnabled: userTable.totpEnabled, locale: userTable.locale })
-      .from(userTable)
-      .where(eq(userTable.id, Number(id)));
-
-    return users[0];
+    return this.db.query.userTable.findFirst({ where: eq(userTable.id, Number(id)), columns: { id: true, username: true, totpEnabled: true, locale: true } });
   }
 
   /**
@@ -74,8 +63,7 @@ export class AuthQueries {
    * Returns the first operator found in the system
    */
   public async getFirstOperator() {
-    const users = await this.db.select().from(userTable).where(eq(userTable.operator, true)).orderBy(asc(userTable.id)).limit(1);
-    return users[0];
+    return this.db.query.userTable.findFirst({ where: eq(userTable.operator, true) });
   }
 
   /**

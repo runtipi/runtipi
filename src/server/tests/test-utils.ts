@@ -1,13 +1,14 @@
 /* eslint-disable no-restricted-syntax */
 import pg, { Pool } from 'pg';
-import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { runPostgresMigrations } from '../run-migration';
 import { getConfig } from '../core/TipiConfig';
-import { appTable, userTable } from '../db/schema';
+import * as schema from '../db/schema';
+import { Database } from '../db';
 
 export type TestDatabase = {
   client: Pool;
-  db: NodePgDatabase;
+  db: Database;
 };
 
 /**
@@ -36,7 +37,7 @@ const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
     connectionString: `postgresql://${getConfig().postgresUsername}:${getConfig().postgresPassword}@${getConfig().postgresHost}:${getConfig().postgresPort}/${testsuite}?connect_timeout=300`,
   });
 
-  return { client, db: drizzle(client) };
+  return { client, db: drizzle(client, { schema }) };
 };
 
 /**
@@ -45,8 +46,8 @@ const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
  * @param {TestDatabase} database - database to clear
  */
 const clearDatabase = async (database: TestDatabase) => {
-  await database.db.delete(userTable);
-  await database.db.delete(appTable);
+  await database.db.delete(schema.userTable);
+  await database.db.delete(schema.appTable);
 };
 
 const closeDatabase = async (database: TestDatabase) => {

@@ -1,11 +1,11 @@
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
+import { Database } from '@/server/db';
 import { appTable, NewApp, AppStatus } from '../../db/schema';
 
 export class AppQueries {
   private db;
 
-  constructor(p: NodePgDatabase) {
+  constructor(p: Database) {
     this.db = p;
   }
 
@@ -15,8 +15,7 @@ export class AppQueries {
    * @param {string} appId - The id of the app to return
    */
   public async getApp(appId: string) {
-    const apps = await this.db.select().from(appTable).where(eq(appTable.id, appId));
-    return apps[0];
+    return this.db.query.appTable.findFirst({ where: eq(appTable.id, appId) });
   }
 
   /**
@@ -55,14 +54,14 @@ export class AppQueries {
    * @param {AppStatus} status - The status of the apps to return
    */
   public async getAppsByStatus(status: AppStatus) {
-    return this.db.select().from(appTable).where(eq(appTable.status, status)).orderBy(asc(appTable.id));
+    return this.db.query.appTable.findMany({ where: eq(appTable.status, status), orderBy: asc(appTable.id) });
   }
 
   /**
    * Returns all apps installed sorted by id ascending
    */
   public async getApps() {
-    return this.db.select().from(appTable).orderBy(asc(appTable.id));
+    return this.db.query.appTable.findMany({ orderBy: asc(appTable.id) });
   }
 
   /**
@@ -72,10 +71,7 @@ export class AppQueries {
    * @param {string} id - The id of the app to exclude
    */
   public async getAppsByDomain(domain: string, id: string) {
-    return this.db
-      .select()
-      .from(appTable)
-      .where(and(eq(appTable.domain, domain), eq(appTable.exposed, true), ne(appTable.id, id)));
+    return this.db.query.appTable.findMany({ where: and(eq(appTable.domain, domain), eq(appTable.exposed, true), ne(appTable.id, id)) });
   }
 
   /**

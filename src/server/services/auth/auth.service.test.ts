@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { generateSessionId } from '@/server/common/session.helpers';
 import { fromAny, fromPartial } from '@total-typescript/shoehorn';
-import { mockInsert, mockSelect } from '@/server/tests/drizzle-helpers';
+import { mockInsert, mockQuery, mockSelect } from '@/server/tests/drizzle-helpers';
 import { createDatabase, clearDatabase, closeDatabase, TestDatabase } from '@/server/tests/test-utils';
 import { encrypt } from '../../utils/encryption';
 import { setConfig } from '../../core/TipiConfig';
@@ -428,7 +428,7 @@ describe('Register', () => {
     // Arrange
     const req = {};
     const email = faker.internet.email();
-    const mockDatabase = { select: mockSelect([]), insert: mockInsert([]) };
+    const mockDatabase = { select: mockSelect([]), insert: mockInsert([]), query: mockQuery(undefined) };
     const newAuthService = new AuthServiceClass(fromAny(mockDatabase));
 
     // Act & Assert
