@@ -28,7 +28,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
   const t = useTranslations('header');
 
   return (
-    <header className="navbar navbar-expand-md navbar-dark navbar-overlap d-print-none">
+    <header className="text-white navbar navbar-expand-md navbar-dark navbar-overlap d-print-none" data-bs-theme="dark">
       <div className="container-xl">
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
           <span className="navbar-toggler-icon" />

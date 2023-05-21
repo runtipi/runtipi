@@ -29,8 +29,8 @@ dependencies:
     specifier: ^5.3.0
     version: 5.3.0
   '@tabler/core':
-    specifier: 1.0.0-beta17
-    version: 1.0.0-beta17
+    specifier: 1.0.0-beta18
+    version: 1.0.0-beta18
   '@tabler/icons-react':
     specifier: ^2.19.0
     version: 2.19.0(react@18.2.0)
@@ -2094,24 +2094,24 @@ packages:
     dependencies:
       tslib: 2.5.2
 
-  /@tabler/core@1.0.0-beta17:
-    resolution: {integrity: sha512-tQpzw8oi7vjLJTyCWLHHXKyGTd0JA4bsgN3w7lifl6HhyNOQSsxIx9EpkE/ZT842MlFwy+2tXkxi5fghegHQBw==}
-    engines: {node: '>=16'}
+  /@tabler/core@1.0.0-beta18:
+    resolution: {integrity: sha512-yuE3lE/9yWVobPuRsD6U6o2BSKDWnarBDZMKW7DHk2BRgjYPaGrJRsoFkB0M1RIodckIfuUaupz0E7vv845D4A==}
+    engines: {node: '>=18'}
     peerDependencies:
-      apexcharts: ^3.36.3
-      autosize: ^5.0.2
+      apexcharts: ^3.40.0
+      autosize: ^6.0.1
       choices.js: ^10.2.0
-      countup.js: ^2.3.2
+      countup.js: ^2.6.2
       dropzone: ^6.0.0-beta.2
       flatpickr: ^4.6.13
-      fslightbox: ^3.3.1
-      imask: ^6.4.3
-      jsvectormap: ^1.5.1
+      fslightbox: ^3.4.1
+      imask: ^6.6.1
+      jsvectormap: ^1.5.3
       list.js: ^2.3.1
       litepicker: ^2.0.12
-      nouislider: ^15.6.1
-      plyr: ^3.7.3
-      tinymce: ^6.3.1
+      nouislider: ^15.7.0
+      plyr: ^3.7.8
+      tinymce: ^6.4.2
       tom-select: ^2.2.2
     peerDependenciesMeta:
       apexcharts:
@@ -2146,7 +2146,7 @@ packages:
         optional: true
     dependencies:
       '@popperjs/core': 2.11.7
-      bootstrap: 5.3.0-alpha1(@popperjs/core@2.11.7)
+      bootstrap: 5.3.0-alpha3(@popperjs/core@2.11.7)
     dev: false
 
   /@tabler/icons-react@2.19.0(react@18.2.0):
@@ -2482,6 +2482,7 @@ packages:
   /@types/js-cookie@3.0.3:
     resolution: {integrity: sha512-Xe7IImK09HP1sv2M/aI+48a20VX+TdRJucfq4vfRVy6nWN8PYPOEnlMRSgxJAgYQIXJVL8dZ4/ilAM7dWNaOww==}
     dev: true
+
   /@types/js-levenshtein@1.1.1:
     resolution: {integrity: sha512-qC4bCqYGy1y/NP7dDVr7KJarn+PbX1nSpwA7JXdu0HxT3QYjO8MJ+cntENtHFVy2dRAyBV23OZ6MxsW1AM1L8g==}
     dev: true
@@ -3233,10 +3234,10 @@ packages:
       - supports-color
     dev: false
 
-  /bootstrap@5.3.0-alpha1(@popperjs/core@2.11.7):
-    resolution: {integrity: sha512-ABZpKK4ObS3kKlIqH+ZVDqoy5t/bhFG0oHTAzByUdon7YIom0lpCeTqRniDzJmbtcWkNe800VVPBiJgxSYTYew==}
+  /bootstrap@5.3.0-alpha3(@popperjs/core@2.11.7):
+    resolution: {integrity: sha512-FBhOWMxkCFr74hesJdchLXhqagPTXS+kRNU3gE0FR5Ki/AdPSz32Ik96Z28+yBluCnE/pc9st7l1yPwKgbtfSA==}
     peerDependencies:
-      '@popperjs/core': ^2.11.6
+      '@popperjs/core': ^2.11.7
     dependencies:
       '@popperjs/core': 2.11.7
     dev: false
