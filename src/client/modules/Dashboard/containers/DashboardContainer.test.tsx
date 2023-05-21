@@ -8,17 +8,17 @@ describe('Test: Dashboard', () => {
   it('should render', () => {
     const data: SystemRouterOutput['systemInfo'] = {
       disk: {
-        available: faker.datatype.number(),
-        total: faker.datatype.number(),
-        used: faker.datatype.number(),
+        available: faker.number.int(),
+        total: faker.number.int(),
+        used: faker.number.int(),
       },
       memory: {
-        available: faker.datatype.number(),
-        total: faker.datatype.number(),
-        used: faker.datatype.number(),
+        available: faker.number.int(),
+        total: faker.number.int(),
+        used: faker.number.int(),
       },
       cpu: {
-        load: faker.datatype.number(),
+        load: faker.number.int(),
       },
     };
 

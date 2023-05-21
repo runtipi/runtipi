@@ -388,7 +388,7 @@ describe('Update app config', () => {
     // arrange
     const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', required: true, env_variable: 'TEST_FIELD' }] });
     await insertApp({}, appConfig, db);
-    const word = faker.random.word();
+    const word = faker.lorem.word();
 
     // act
     await AppsService.updateAppConfig(appConfig.id, { TEST_FIELD: word });
@@ -413,7 +413,7 @@ describe('Update app config', () => {
 
   it('Should not recreate random field if already present in .env', async () => {
     // arrange
-    const field = faker.random.word();
+    const field = faker.lorem.word();
     const appConfig = createAppConfig({ form_fields: [{ type: 'random', label: '', required: false, env_variable: field }] });
     await insertApp({}, appConfig, db);
 
@@ -522,8 +522,8 @@ describe('Get app config', () => {
 describe('List apps', () => {
   it('Should correctly list apps sorted by id', async () => {
     // arrange
-    const randomName1 = faker.random.word();
-    const randomName2 = faker.random.word();
+    const randomName1 = faker.lorem.word();
+    const randomName2 = faker.lorem.word();
     const sortedNames = [randomName1, randomName2].sort((a, b) => a.localeCompare(b));
 
     const appConfig = createAppConfig({ id: randomName1.toLowerCase(), name: randomName1 });

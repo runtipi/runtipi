@@ -57,7 +57,7 @@ export const handlers = [
     type: 'query',
     response: {
       totpEnabled: false,
-      id: faker.datatype.number(),
+      id: faker.number.int(),
       username: faker.internet.userName(),
       locale: 'en',
     },

@@ -5,9 +5,9 @@ import { encrypt, decrypt } from '../encryption';
 describe('Test: encrypt', () => {
   it('should encrypt the provided data', () => {
     // arrange
-    setConfig('jwtSecret', faker.random.word());
-    const data = faker.random.word();
-    const salt = faker.random.word();
+    setConfig('jwtSecret', faker.lorem.word());
+    const data = faker.lorem.word();
+    const salt = faker.lorem.word();
 
     // act
     const encryptedData = encrypt(data, salt);
@@ -18,9 +18,9 @@ describe('Test: encrypt', () => {
 
   it('should decrypt the provided data', () => {
     // arrange
-    setConfig('jwtSecret', faker.random.word());
-    const data = faker.random.word();
-    const salt = faker.random.word();
+    setConfig('jwtSecret', faker.lorem.word());
+    const data = faker.lorem.word();
+    const salt = faker.lorem.word();
 
     // act
     const encryptedData = encrypt(data, salt);

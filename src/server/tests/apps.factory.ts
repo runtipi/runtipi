@@ -24,14 +24,14 @@ const createAppConfig = (props?: Partial<AppInfo>) => {
   const mockFiles: Record<string, string | string[]> = {};
 
   const appInfo = appInfoSchema.parse({
-    id: faker.random.alphaNumeric(32),
+    id: faker.string.alphanumeric(32),
     available: true,
-    port: faker.datatype.number({ min: 30, max: 65535 }),
-    name: faker.random.alphaNumeric(32),
-    description: faker.random.alphaNumeric(32),
+    port: faker.number.int({ min: 30, max: 65535 }),
+    name: faker.string.alphanumeric(32),
+    description: faker.string.alphanumeric(32),
     tipi_version: 1,
-    short_desc: faker.random.alphaNumeric(32),
-    author: faker.random.alphaNumeric(32),
+    short_desc: faker.string.alphanumeric(32),
+    author: faker.string.alphanumeric(32),
     source: faker.internet.url(),
     categories: [APP_CATEGORIES.AUTOMATION],
     ...props,
@@ -64,31 +64,31 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
   const categories = Object.values(APP_CATEGORIES);
 
-  const randomId = faker.random.alphaNumeric(32);
+  const randomId = faker.string.alphanumeric(32);
 
   const appInfo: AppInfo = {
     id: randomId,
-    port: faker.datatype.number({ min: 3000, max: 5000 }),
+    port: faker.number.int({ min: 3000, max: 5000 }),
     available: true,
     form_fields: [
       {
         type: 'text',
-        label: faker.random.word(),
+        label: faker.lorem.word(),
         required: true,
         env_variable: 'TEST_FIELD',
       },
     ],
-    name: faker.random.word(),
-    description: faker.random.words(),
-    tipi_version: faker.datatype.number({ min: 1, max: 10 }),
-    short_desc: faker.random.words(),
+    name: faker.lorem.word(),
+    description: faker.lorem.words(),
+    tipi_version: faker.number.int({ min: 1, max: 10 }),
+    short_desc: faker.lorem.words(),
     author: faker.name.firstName(),
     source: faker.internet.url(),
-    categories: [categories[faker.datatype.number({ min: 0, max: categories.length - 1 })]] as AppInfo['categories'],
+    categories: [categories[faker.number.int({ min: 0, max: categories.length - 1 })]] as AppInfo['categories'],
     exposable,
     force_expose: forceExpose,
     supported_architectures: supportedArchitectures,
-    version: String(faker.datatype.number({ min: 1, max: 10 })),
+    version: String(faker.number.int({ min: 1, max: 10 })),
     https: false,
     no_gui: false,
     generate_vapid_keys: generateVapidKeys,
@@ -98,7 +98,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
     appInfo.form_fields?.push({
       required: false,
       type: 'random',
-      label: faker.random.word(),
+      label: faker.lorem.word(),
       env_variable: 'RANDOM_FIELD',
     });
   }

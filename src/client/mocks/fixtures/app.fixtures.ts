@@ -5,22 +5,22 @@ import { App, AppCategory, AppInfo, AppWithInfo } from '../../core/types';
 
 const randomCategory = (): AppCategory[] => {
   const categories = Object.values(APP_CATEGORIES);
-  const randomIndex = faker.datatype.number({ min: 0, max: categories.length - 1 });
+  const randomIndex = faker.number.int({ min: 0, max: categories.length - 1 });
   return [categories[randomIndex] as AppCategory];
 };
 
 export const createApp = (overrides?: Partial<AppInfo>): AppInfo => {
-  const name = faker.random.word();
+  const name = faker.lorem.word();
   return {
     id: name.toLowerCase(),
     name,
-    description: faker.random.words(),
-    author: faker.random.word(),
+    description: faker.lorem.words(),
+    author: faker.lorem.word(),
     available: true,
     categories: randomCategory(),
     form_fields: [],
-    port: faker.datatype.number({ min: 1000, max: 9999 }),
-    short_desc: faker.random.words(),
+    port: faker.number.int({ min: 1000, max: 9999 }),
+    short_desc: faker.lorem.words(),
     tipi_version: 1,
     version: faker.system.semver(),
     source: faker.internet.url(),
@@ -43,7 +43,7 @@ type CreateAppEntityParams = {
 export const createAppEntity = (params: CreateAppEntityParams): AppWithInfo => {
   const { overrides, overridesInfo, status = 'running' } = params;
 
-  const id = faker.random.word().toLowerCase();
+  const id = faker.lorem.word().toLowerCase();
   const app = createApp({ id, ...overridesInfo });
   return {
     id,

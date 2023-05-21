@@ -13,7 +13,7 @@ describe('<ChangePasswordForm />', () => {
     const currentPasswordInput = screen.getByRole('textbox', { name: 'currentPassword' });
     const newPasswordInput = screen.getByRole('textbox', { name: 'newPassword' });
     const confirmPasswordInput = screen.getByRole('textbox', { name: 'newPasswordConfirm' });
-    const newPassword = faker.random.alphaNumeric(8);
+    const newPassword = faker.string.alphanumeric(8);
 
     // act
     fireEvent.change(currentPasswordInput, { target: { value: 'test' } });
@@ -35,10 +35,10 @@ describe('<ChangePasswordForm />', () => {
     const currentPasswordInput = screen.getByRole('textbox', { name: 'currentPassword' });
     const newPasswordInput = screen.getByRole('textbox', { name: 'newPassword' });
     const confirmPasswordInput = screen.getByRole('textbox', { name: 'newPasswordConfirm' });
-    const newPassword = faker.random.alphaNumeric(8);
+    const newPassword = faker.string.alphanumeric(8);
 
     // act
-    fireEvent.change(currentPasswordInput, { target: { value: faker.random.alphaNumeric(8) } });
+    fireEvent.change(currentPasswordInput, { target: { value: faker.string.alphanumeric(8) } });
     fireEvent.change(newPasswordInput, { target: { value: newPassword } });
     fireEvent.change(confirmPasswordInput, { target: { value: newPassword } });
     const submitButton = screen.getByRole('button', { name: /Change password/i });
@@ -59,8 +59,8 @@ describe('<ChangePasswordForm />', () => {
 
     // act
     fireEvent.change(currentPasswordInput, { target: { value: 'test' } });
-    fireEvent.change(newPasswordInput, { target: { value: faker.random.alphaNumeric(8) } });
-    fireEvent.change(confirmPasswordInput, { target: { value: faker.random.alphaNumeric(8) } });
+    fireEvent.change(newPasswordInput, { target: { value: faker.string.alphanumeric(8) } });
+    fireEvent.change(confirmPasswordInput, { target: { value: faker.string.alphanumeric(8) } });
     const submitButton = screen.getByRole('button', { name: /Change password/i });
     submitButton.click();
 

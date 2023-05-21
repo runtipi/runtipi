@@ -73,9 +73,9 @@ describe('Test: getVersion', () => {
 
   it('It should return version with body', async () => {
     // Arrange
-    const body = faker.random.words(10);
+    const body = faker.lorem.words(10);
     // @ts-expect-error Mocking fetch
-    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.random.numeric(1)}.${faker.random.numeric(1)}.${faker.random.numeric()}`, body }) }));
+    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}`, body }) }));
 
     // Act
     const version = await SystemService.getVersion();
@@ -101,7 +101,7 @@ describe('Test: getVersion', () => {
   it('Should return cached version', async () => {
     // Arrange
     // @ts-expect-error Mocking fetch
-    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.random.numeric(1)}.${faker.random.numeric(1)}.${faker.random.numeric()}` }) }));
+    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` }) }));
 
     // Act
     const version = await SystemService.getVersion();

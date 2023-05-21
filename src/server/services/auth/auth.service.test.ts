@@ -78,7 +78,7 @@ describe('Test: verifyTotp', () => {
     // arrange
     const req = { session: { userId: undefined } };
     const email = faker.internet.email();
-    const salt = faker.random.word();
+    const salt = faker.lorem.word();
     const totpSecret = TotpAuthenticator.generateSecret();
 
     const encryptedTotpSecret = encrypt(totpSecret, salt);
@@ -102,7 +102,7 @@ describe('Test: verifyTotp', () => {
   it('should throw if the totp is incorrect', async () => {
     // arrange
     const email = faker.internet.email();
-    const salt = faker.random.word();
+    const salt = faker.lorem.word();
     const totpSecret = TotpAuthenticator.generateSecret();
     const encryptedTotpSecret = encrypt(totpSecret, salt);
     const user = await createUser({ email, totpEnabled: true, totpSecret: encryptedTotpSecret, salt }, database);
@@ -116,7 +116,7 @@ describe('Test: verifyTotp', () => {
   it('should throw if the totpSessionId is invalid', async () => {
     // arrange
     const email = faker.internet.email();
-    const salt = faker.random.word();
+    const salt = faker.lorem.word();
     const totpSecret = TotpAuthenticator.generateSecret();
     const encryptedTotpSecret = encrypt(totpSecret, salt);
     const user = await createUser({ email, totpEnabled: true, totpSecret: encryptedTotpSecret, salt }, database);
@@ -141,7 +141,7 @@ describe('Test: verifyTotp', () => {
   it('should throw if the user totpEnabled is false', async () => {
     // arrange
     const email = faker.internet.email();
-    const salt = faker.random.word();
+    const salt = faker.lorem.word();
     const totpSecret = TotpAuthenticator.generateSecret();
     const encryptedTotpSecret = encrypt(totpSecret, salt);
     const user = await createUser({ email, totpEnabled: false, totpSecret: encryptedTotpSecret, salt }, database);
@@ -191,7 +191,7 @@ describe('Test: getTotpUri', () => {
   it('should regenerate a new totp secret if the user already has one', async () => {
     // arrange
     const email = faker.internet.email();
-    const salt = faker.random.word();
+    const salt = faker.lorem.word();
     const totpSecret = TotpAuthenticator.generateSecret();
     const encryptedTotpSecret = encrypt(totpSecret, salt);
     const user = await createUser({ email, totpSecret: encryptedTotpSecret, salt }, database);
@@ -251,7 +251,7 @@ describe('Test: setupTotp', () => {
     // arrange
     const email = faker.internet.email();
     const totpSecret = TotpAuthenticator.generateSecret();
-    const salt = faker.random.word();
+    const salt = faker.lorem.word();
     const encryptedTotpSecret = encrypt(totpSecret, salt);
 
     const user = await createUser({ email, totpSecret: encryptedTotpSecret, salt }, database);
@@ -289,7 +289,7 @@ describe('Test: setupTotp', () => {
     // arrange
     const email = faker.internet.email();
     const totpSecret = TotpAuthenticator.generateSecret();
-    const salt = faker.random.word();
+    const salt = faker.lorem.word();
     const encryptedTotpSecret = encrypt(totpSecret, salt);
 
     const user = await createUser({ email, totpSecret: encryptedTotpSecret, salt }, database);
@@ -676,7 +676,7 @@ describe('Test: changePassword', () => {
     const email = faker.internet.email();
     const user = await createUser({ email }, database);
     const newPassword = faker.internet.password();
-    await TipiCache.set(`session:${user.id}:${faker.random.word()}`, 'test');
+    await TipiCache.set(`session:${user.id}:${faker.lorem.word()}`, 'test');
 
     // act
     await AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' });

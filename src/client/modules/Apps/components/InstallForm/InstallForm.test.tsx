@@ -75,7 +75,7 @@ describe('Test: InstallForm', () => {
   });
 
   it('should pre-fill fields if initialValues are provided', () => {
-    const selectValue = faker.random.word();
+    const selectValue = faker.lorem.word();
 
     const formFields: FormField[] = [
       { env_variable: 'test-env', label: 'test-field', type: 'text', required: true },
