@@ -25,7 +25,7 @@ if (!dev) {
   conf = require('./.next/required-server-files.json').config;
   nextApp = new NextServer({ hostname: 'localhost', dev, port, customServer: true, conf });
 } else {
-  const next = require('next').default;
+  const next = require('next');
   nextApp = next({ dev, hostname, port });
 }
 

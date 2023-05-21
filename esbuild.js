@@ -29,11 +29,11 @@ esbuild
     external,
     define: { 'process.env.NODE_ENV': `"${process.env.NODE_ENV}"` },
     platform: 'node',
-    target: 'node14',
+    target: 'node18',
     outfile: 'dist/index.js',
     tsconfig: 'tsconfig.json',
     bundle: true,
-    minify: isDev,
+    minify: true,
     sourcemap: isDev,
     watch: false,
   })
