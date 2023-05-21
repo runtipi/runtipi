@@ -3,13 +3,13 @@
     "errors": {
       "invalid-credentials": "Invalid credentials",
       "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
-      "missing-email-or-password": "Missing email or password",
+      "missing-email-or-password": "E-postadress eller lösenord saknas",
       "invalid-username": "Invalid username",
       "user-already-exists": "User already exists",
       "error-creating-user": "Error creating user",
       "no-change-password-request": "No change password request found",
       "operator-not-found": "Operator user not found",
-      "user-not-found": "User not found",
+      "user-not-found": "Användaren kunde inte hittas",
       "not-allowed-in-demo": "Not allowed in demo mode",
       "not-allowed-in-dev": "Not allowed in dev mode",
       "invalid-password": "Invalid password",
@@ -40,30 +40,30 @@
   "auth": {
     "login": {
       "title": "Login to your account",
-      "submit": "Login"
+      "submit": "Logga in"
     },
     "totp": {
       "title": "Two-factor authentication",
       "instructions": "Enter the code from your authenticator app",
-      "submit": "Confirm"
+      "submit": "Bekräfta"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "Registrera ditt konto",
+      "submit": "Registrera"
     },
     "reset-password": {
-      "title": "Reset your password",
-      "submit": "Reset password",
+      "title": "Återställ ditt lösenord",
+      "submit": "Återställ lösenord",
       "cancel": "Cancel password change request",
       "instructions": "Run this command on your server and then refresh this page",
-      "success-title": "Password reset",
+      "success-title": "Återställ lösenord",
       "success": "Your password has been reset. You can now login with your new password. And your email {email}",
       "back-to-login": "Back to login"
     },
     "form": {
-      "email": "Email address",
+      "email": "E-postadress",
       "email-placeholder": "you@example.com",
-      "password": "Password",
+      "password": "Lösenord",
       "password-placeholder": "Enter your password",
       "password-confirmation": "Confirm password",
       "password-confirmation-placeholder": "Confirm your password",
@@ -123,7 +123,7 @@
     "app-store": {
       "title": "App Store",
       "search-placeholder": "Search apps",
-      "category-placeholder": "Select a category",
+      "category-placeholder": "Välj en kategori",
       "no-results": "No app found",
       "no-results-subtitle": "Try to refine your search"
     },
@@ -140,18 +140,18 @@
       "source-code": "Source code",
       "author": "Author",
       "port": "Port",
-      "categories-title": "Categories",
+      "categories-title": "Kategorier",
       "link": "Link",
-      "website": "Website",
-      "supported-arch": "Supported architectures",
+      "website": "Webbsida",
+      "supported-arch": "Arkitekturer som stöds",
       "categories": {
         "data": "Data",
-        "network": "Network",
+        "network": "Nätverk",
         "media": "Media",
         "development": "Development",
         "automation": "Automation",
         "social": "Social",
-        "utilities": "Utilities",
+        "utilities": "Verktyg",
         "security": "Security",
         "photography": "Photography",
         "featured": "Featured",
@@ -163,25 +163,25 @@
       },
       "actions": {
         "start": "Start",
-        "remove": "Remove",
-        "settings": "Settings",
-        "stop": "Stop",
-        "open": "Open",
-        "loading": "Loading",
-        "cancel": "Cancel",
-        "install": "Install",
-        "update": "Update"
+        "remove": "Radera",
+        "settings": "Inställningar",
+        "stop": "Stoppa",
+        "open": "Öppna",
+        "loading": "Laddar",
+        "cancel": "Avbryt",
+        "install": "Installera",
+        "update": "Uppdatera"
       },
       "install-form": {
-        "title": "Install {name}",
-        "expose-app": "Expose app",
-        "domain-name": "Domain name",
-        "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-        "choose-option": "Choose an option...",
-        "sumbit-install": "Install",
-        "submit-update": "Update",
+        "title": "Installera {name}",
+        "expose-app": "Exponera app",
+        "domain-name": "Domännamn",
+        "domain-name-hint": "Se till att denna exakta domän innehåller en A-rekord som pekar mot din IP.",
+        "choose-option": "Välj ett alternativ...",
+        "sumbit-install": "Installera",
+        "submit-update": "Uppdatera",
         "errors": {
-          "required": "{label} is required",
+          "required": "{label} krävs",
           "regex": "{label} must match the pattern {pattern}",
           "max-length": "{label} must be less than {max} characters",
           "min-length": "{label} must be at least {min} characters",
@@ -195,101 +195,101 @@
         }
       },
       "stop-form": {
-        "title": "Stop {name} ?",
-        "subtitle": "All data will be retained",
-        "submit": "Stop"
+        "title": "Stoppa {name}?",
+        "subtitle": "All data sparas",
+        "submit": "Stoppa"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
-        "subtitle": "All data for this app will be lost.",
+        "title": "Avinstallera {name}?",
+        "subtitle": "Alla data för denna app kommer att försvinna.",
         "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Uninstall"
+        "submit": "Avinstallera"
       },
       "update-form": {
-        "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
-        "submit": "Update"
+        "title": "Uppdatera {name}?",
+        "subtitle1": "Uppdatera appen till senaste version :",
+        "subtitle2": "Detta kommer att återställa din anpassade konfiguration (t.ex. ändringar i docker-compose.yml)",
+        "submit": "Uppdatera"
       },
       "update-settings-form": {
-        "title": "Update {name} config"
+        "title": "Uppdatera {name} konfiguration"
       }
     }
   },
   "settings": {
-    "title": "Settings",
+    "title": "Inställningar",
     "actions": {
-      "tab-title": "Actions",
-      "title": "Actions",
-      "current-version": "Current version: {version}",
-      "stay-up-to-date": "Stay up to date with the latest version of Tipi",
-      "new-version": "A new version ({version}) of Tipi is available",
-      "maintenance-title": "Maintenance",
+      "tab-title": "Handlingar",
+      "title": "Handlingar",
+      "current-version": "Nuvarande version: {version}",
+      "stay-up-to-date": "Håll dig uppdaterad med den senaste versionen av Tipi",
+      "new-version": "En ny version ({version}) av Tipi är tillgänglig",
+      "maintenance-title": "Underhåll",
       "maintenance-subtitle": "Common actions to perform on your instance",
-      "restart": "Restart",
-      "update": "Update to {version}",
-      "already-latest": "Already up to date"
+      "restart": "Starta om",
+      "update": "Uppdatera till {version}",
+      "already-latest": "Redan uppdaterad"
     },
     "settings": {
-      "tab-title": "Settings",
-      "title": "General settings",
+      "tab-title": "Inställningar",
+      "title": "Allmänna inställningar",
       "subtitle": "This will update your settings.json file. Make sure you know what you are doing before updating these values.",
       "settings-updated": "Settings updated. Restart your instance to apply new settings.",
-      "invalid-ip": "Invalid IP address",
-      "invalid-url": "Invalid URL",
-      "invalid-domain": "Invalid domain",
-      "domain-name": "Domain name",
-      "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
+      "invalid-ip": "Ogiltig IP-adress",
+      "invalid-url": "Ogiltig URL",
+      "invalid-domain": "Ogiltig domän",
+      "domain-name": "Domännamn",
+      "domain-name-hint": "Se till att denna exakta domän innehåller en A-rekord som pekar mot din IP.",
       "dns-ip": "DNS IP",
-      "internal-ip": "Internal IP",
-      "internal-ip-hint": "IP address your server is listening on.",
-      "apps-repo": "Apps repo URL",
-      "apps-repo-hint": "URL to the apps repository.",
-      "storage-path": "Storage path",
+      "internal-ip": "Intern IP",
+      "internal-ip-hint": "IP-adressen som din server lyssnar på.",
+      "apps-repo": "Appar repo URL",
+      "apps-repo-hint": "URL till app-arkivet.",
+      "storage-path": "Lagring sökväg",
       "storage-path-hint": "Path to the storage directory. Keep empty for default (runtipi/app-data). Make sure it is an absolute path and that it exists",
-      "submit": "Save",
-      "user-settings-title": "User settings",
-      "language": "Language",
-      "help-translate": "Help translate Tipi"
+      "submit": "Spara",
+      "user-settings-title": "Användarinställningar",
+      "language": "Språk",
+      "help-translate": "Hjälp till att översätta Tipi"
     },
     "security": {
-      "tab-title": "Security",
-      "change-password-title": "Change password",
+      "tab-title": "Säkerhet",
+      "change-password-title": "Ändra lösenord",
       "change-password-subtitle": "Changing your password will log you out of all devices.",
-      "password-change-success": "Password changed successfully",
-      "2fa-title": "Two-factor authentication",
+      "password-change-success": "Lösenordet har ändrats",
+      "2fa-title": "Tvåfaktorsautentisering",
       "2fa-subtitle": "Two-factor authentication (2FA) adds an additional layer of security to your account.",
       "2fa-subtitle-2": "When enabled, you will be prompted to enter a code from your authenticator app when you log in.",
-      "2fa-enable-success": "Two-factor authentication enabled",
-      "2fa-disable-success": "Two-factor authentication disabled",
-      "scan-qr-code": "Scan this QR code with your authenticator app.",
-      "enter-key-manually": "Or enter this key manually.",
-      "enter-2fa-code": "Enter the 6-digit code from your authenticator app",
-      "enable-2fa": "Enable two-factor authentication",
-      "disable-2fa": "Disable two-factor authentication",
-      "password-needed": "Password needed",
-      "password-needed-hint": "Your password is required to change two-factor authentication settings.",
+      "2fa-enable-success": "Tvåfaktorsautentisering aktiverad",
+      "2fa-disable-success": "Tvåfaktorsautentisering inaktiverad",
+      "scan-qr-code": "Skanna den här QR-koden med din autentiseringsapp.",
+      "enter-key-manually": "Eller ange denna nyckel manuellt.",
+      "enter-2fa-code": "Ange den 6-siffriga koden från din autentiseringsapp",
+      "enable-2fa": "Aktivera tvåfaktorsautentisering",
+      "disable-2fa": "Inaktivera tvåfaktorsautentisering",
+      "password-needed": "Lösenord krävs",
+      "password-needed-hint": "Ditt lösenord krävs för att ändra tvåfaktorsautentiseringsinställningar.",
       "form": {
-        "password-length": "Password must be at least 8 characters",
-        "password-match": "Passwords do not match",
-        "current-password": "Current password",
-        "new-password": "New password",
-        "confirm-password": "Confirm new password",
-        "change-password": "Change password",
-        "password": "Password"
+        "password-length": "Lösenordet måste vara minst 8 tecken",
+        "password-match": "Lösenorden matchar inte",
+        "current-password": "Nuvarande lösenord",
+        "new-password": "Nytt lösenord",
+        "confirm-password": "Bekräfta nytt lösenord",
+        "change-password": "Byt lösenord",
+        "password": "Lösenord"
       }
     }
   },
   "header": {
-    "dashboard": "Dashboard",
-    "my-apps": "My Apps",
+    "dashboard": "Kontrollpanel",
+    "my-apps": "Mina appar",
     "app-store": "App Store",
-    "settings": "Settings",
-    "logout": "Logout",
-    "dark-mode": "Dark Mode",
-    "light-mode": "Light Mode",
+    "settings": "Inställningar",
+    "logout": "Logga ut",
+    "dark-mode": "Mörkt läge",
+    "light-mode": "Ljusläge",
     "sponsor": "Sponsor",
-    "source-code": "Source code",
-    "update-available": "Update available"
+    "source-code": "Källkod",
+    "update-available": "Ny version tillgänglig"
   }
 }
