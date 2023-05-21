@@ -36,7 +36,7 @@
     "@radix-ui/react-switch": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.3",
     "@runtipi/postgres-migrations": "^5.3.0",
-    "@tabler/core": "1.0.0-beta18",
+    "@tabler/core": "1.0.0-beta19",
     "@tabler/icons-react": "^2.19.0",
     "@tanstack/react-query": "^4.29.7",
     "@tanstack/react-query-devtools": "^4.29.7",

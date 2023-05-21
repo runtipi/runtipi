@@ -29,8 +29,8 @@ dependencies:
     specifier: ^5.3.0
     version: 5.3.0
   '@tabler/core':
-    specifier: 1.0.0-beta18
-    version: 1.0.0-beta18
+    specifier: 1.0.0-beta19
+    version: 1.0.0-beta19
   '@tabler/icons-react':
     specifier: ^2.19.0
     version: 2.19.0(react@18.2.0)
@@ -2094,8 +2094,8 @@ packages:
     dependencies:
       tslib: 2.5.2
 
-  /@tabler/core@1.0.0-beta18:
-    resolution: {integrity: sha512-yuE3lE/9yWVobPuRsD6U6o2BSKDWnarBDZMKW7DHk2BRgjYPaGrJRsoFkB0M1RIodckIfuUaupz0E7vv845D4A==}
+  /@tabler/core@1.0.0-beta19:
+    resolution: {integrity: sha512-iJWAuAWeekCxb7eGeM34Qwz32nlqykp0IeRn5W1z1hTCuU0arQknHphDs36ODxAiYwEXnY3yfKHOUvpW+Lr5Vg==}
     engines: {node: '>=18'}
     peerDependencies:
       apexcharts: ^3.40.0
@@ -2111,6 +2111,7 @@ packages:
       litepicker: ^2.0.12
       nouislider: ^15.7.0
       plyr: ^3.7.8
+      star-rating.js: ^4.3.0
       tinymce: ^6.4.2
       tom-select: ^2.2.2
     peerDependenciesMeta:
@@ -2139,6 +2140,8 @@ packages:
       nouislider:
         optional: true
       plyr:
+        optional: true
+      star-rating.js:
         optional: true
       tinymce:
         optional: true
