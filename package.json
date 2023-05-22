@@ -98,7 +98,7 @@
     "@types/jest": "^29.5.1",
     "@types/js-cookie": "^3.0.3",
     "@types/lodash.merge": "^4.6.7",
-    "@types/node": "20.2.1",
+    "@types/node": "20.2.3",
     "@types/node-cron": "^3.0.2",
     "@types/pg": "^8.6.6",
     "@types/react": "18.2.6",
