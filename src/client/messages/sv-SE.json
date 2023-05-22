@@ -1,22 +1,22 @@
 {
   "server-messages": {
     "errors": {
-      "invalid-credentials": "Invalid credentials",
-      "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
+      "invalid-credentials": "Ogiltiga inloggningsuppgifter",
+      "admin-already-exists": "Det finns redan en administratörsanvändare. Logga in för att skapa en ny användare från adminpanelen.",
       "missing-email-or-password": "E-postadress eller lösenord saknas",
       "invalid-username": "Ogiltigt användarnamn",
       "user-already-exists": "Användaren finns redan",
       "error-creating-user": "Fel vid skapande av användare",
-      "no-change-password-request": "No change password request found",
+      "no-change-password-request": "Ingen begäran om ändring av lösenord hittades",
       "operator-not-found": "Operatörsanvändare hittades inte",
       "user-not-found": "Användaren kunde inte hittas",
-      "not-allowed-in-demo": "Not allowed in demo mode",
-      "not-allowed-in-dev": "Not allowed in dev mode",
+      "not-allowed-in-demo": "Inte tillåtet i demoläge",
+      "not-allowed-in-dev": "Ej tillåtet i dev-läge",
       "invalid-password": "Ogiltigt lösenord",
       "invalid-password-length": "Lösenordet måste vara minst 8 tecken långt",
-      "invalid-locale": "Invalid locale",
-      "totp-session-not-found": "2FA session not found",
-      "totp-not-enabled": "2FA is not enabled for this user",
+      "invalid-locale": "Ogiltig språk",
+      "totp-session-not-found": "2FA session hittades inte",
+      "totp-not-enabled": "2FA är inte aktiverat för denna användare",
       "totp-invalid-code": "Ogiltig 2FA kod",
       "totp-already-enabled": "2FA is already enabled for this user",
       "app-not-found": "App {id} not found",
@@ -31,15 +31,15 @@
       "app-not-exposable": "App {id} is not exposable",
       "app-force-exposed": "App {id} works only with exposed domain",
       "domain-already-in-use": "Domain {domain} is already in use by app {id}",
-      "could-not-get-latest-version": "Could not get latest version",
-      "current-version-is-latest": "Current version is already up to date",
+      "could-not-get-latest-version": "Kunde inte hämta senaste versionen",
+      "current-version-is-latest": "Den nuvarande versionen är redan uppdaterad",
       "major-version-update": "The major version has changed. Please update manually (instructions on GitHub)"
     },
     "success": {}
   },
   "auth": {
     "login": {
-      "title": "Login to your account",
+      "title": "Logga in till ditt konto",
       "submit": "Logga in"
     },
     "totp": {
@@ -54,10 +54,10 @@
     "reset-password": {
       "title": "Återställ ditt lösenord",
       "submit": "Återställ lösenord",
-      "cancel": "Cancel password change request",
-      "instructions": "Run this command on your server and then refresh this page",
+      "cancel": "Avbryta begäran om ändring av lösenord",
+      "instructions": "Kör detta kommando på din server och uppdatera sedan den här sidan",
       "success-title": "Återställ lösenord",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
+      "success": "Ditt lösenord har återställts. Du kan nu logga in med ditt nya lösenord. Och din e-postadress {email}",
       "back-to-login": "Tillbaka till inloggningen"
     },
     "form": {
@@ -133,7 +133,7 @@
       "stop-success": "Appen stoppades",
       "update-success": "Appen uppdaterades",
       "start-success": "Appen startades",
-      "update-config-success": "App config updated successfully. Restart the app to apply the changes",
+      "update-config-success": "Appkonfiguration har uppdaterats. Starta om appen för att tillämpa ändringarna",
       "version": "Version",
       "description": "Beskrivning",
       "base-info": "Bas info",
@@ -186,10 +186,10 @@
           "max-length": "{label} must be less than {max} characters",
           "min-length": "{label} must be at least {min} characters",
           "between-length": "{label} must be between {min} and {max} characters",
-          "invalid-email": "{label} must be a valid email address",
+          "invalid-email": "{label} måste vara en giltig e-postadress",
           "number": "{label} måste vara ett nummer",
-          "fqdn": "{label} must be a valid domain",
-          "ip": "{label} must be a valid IP address",
+          "fqdn": "{label} måste vara en giltig domän",
+          "ip": "{label} måste vara en giltig IP-adress",
           "fqdnip": "{label} must be a valid domain or IP address",
           "url": "{label} måste vara en giltig URL"
         }
@@ -234,7 +234,7 @@
       "tab-title": "Inställningar",
       "title": "Allmänna inställningar",
       "subtitle": "This will update your settings.json file. Make sure you know what you are doing before updating these values.",
-      "settings-updated": "Settings updated. Restart your instance to apply new settings.",
+      "settings-updated": "Inställningar uppdaterade. Starta om din instans för att tillämpa nya inställningar.",
       "invalid-ip": "Ogiltig IP-adress",
       "invalid-url": "Ogiltig URL",
       "invalid-domain": "Ogiltig domän",
@@ -258,8 +258,8 @@
       "change-password-subtitle": "Om du ändrar ditt lösenord loggar du ut från alla enheter.",
       "password-change-success": "Lösenordet har ändrats",
       "2fa-title": "Tvåfaktorsautentisering",
-      "2fa-subtitle": "Two-factor authentication (2FA) adds an additional layer of security to your account.",
-      "2fa-subtitle-2": "When enabled, you will be prompted to enter a code from your authenticator app when you log in.",
+      "2fa-subtitle": "Tvåfaktorsautentisering (2FA) lägger till ytterligare ett säkerhetslager till ditt konto.",
+      "2fa-subtitle-2": "När den är aktiverad kommer du att uppmanas att ange en kod från din autentiseringsapp när du loggar in.",
       "2fa-enable-success": "Tvåfaktorsautentisering aktiverad",
       "2fa-disable-success": "Tvåfaktorsautentisering inaktiverad",
       "scan-qr-code": "Skanna den här QR-koden med din autentiseringsapp.",
