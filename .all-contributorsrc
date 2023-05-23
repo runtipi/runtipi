@@ -236,6 +236,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "NoisyFridge",
+      "name": "NoisyFridge",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73795785?v=4",
+      "profile": "https://github.com/NoisyFridge",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
