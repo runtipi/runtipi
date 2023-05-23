@@ -124,8 +124,8 @@
       "title": "App Store",
       "search-placeholder": "Chercher des applications",
       "category-placeholder": "Sélectionnez une catégorie",
-      "no-results": "No app found",
-      "no-results-subtitle": "Try to refine your search"
+      "no-results": "Aucune application trouvée",
+      "no-results-subtitle": "Essayez d'affiner votre recherche"
     },
     "app-details": {
       "install-success": "Application installée avec succès",
@@ -249,8 +249,8 @@
       "storage-path-hint": "Chemin d'accès au répertoire de stockage. Laisser vide pour les valeurs par défaut (runtipi/app-data). Assurez-vous qu'il s'agit d'un chemin absolu et qu'il existe",
       "submit": "Sauvegarder",
       "user-settings-title": "Paramètres utilisateur",
-      "language": "Language",
-      "help-translate": "Help translate Tipi"
+      "language": "Langue",
+      "help-translate": "Aidez à traduire Tipi"
     },
     "security": {
       "tab-title": "Sécurité",
