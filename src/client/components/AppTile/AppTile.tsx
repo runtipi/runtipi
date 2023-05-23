@@ -22,11 +22,11 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
           <div className="card-body">
             <div className="d-flex align-items-center">
               <span className="me-3">
-                <AppLogo alt={`${app.name} logo`} className="mr-3 group-hover:scale-105 transition-all" id={app.id} size={60} />
+                <AppLogo alt={`${app.name} logo`} id={app.id} size={60} />
               </span>
               <div>
                 <div className="d-flex h-3 align-items-center">
-                  <span className="h4 me-2 mt-1 fw-bolder">{app.name}</span>
+                  <span className="h4 me-2 mb-1 fw-bolder">{app.name}</span>
                   <div className={styles.statusContainer}>
                     <AppStatus lite status={status} />
                   </div>
