@@ -5,7 +5,7 @@ import type { FormField } from '../../../../core/types';
 export const validateField = (field: FormField, value: string | undefined | boolean): string | undefined => {
   const { translator } = useUIStore.getState();
 
-  if (field.required && !value) {
+  if (field.required && !value && typeof value !== 'boolean') {
     return translator('apps.app-details.install-form.errors.required', { label: field.label });
   }
 
