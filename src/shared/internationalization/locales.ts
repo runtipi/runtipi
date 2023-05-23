@@ -3,6 +3,7 @@ const APP_LOCALES = {
   'fr-FR': 'Français',
   'ja-JP': '日本語',
   'pl-PL': 'Polski',
+  'sv-SE': 'Svenska',
   'ro-RO': 'Română',
   'ru-RU': 'Русский',
   'zh-CN': '简体中文',
@@ -17,6 +18,7 @@ const FALLBACK_LOCALES = [
   { from: 'ru', to: 'ru-RU' },
   { from: 'zh', to: 'zh-CN' },
   { from: 'pl', to: 'pl-PL' },
+  { from: 'sv', to: 'sv-SE' },
 ];
 
 export type Locale = keyof typeof APP_LOCALES;
