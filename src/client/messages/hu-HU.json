@@ -14,85 +14,85 @@
       "not-allowed-in-dev": "Dev módban nem megengedett",
       "invalid-password": "Érvénytelen jelszó",
       "invalid-password-length": "A jelszónak legalább 8 karakter hosszúnak kell lennie",
-      "invalid-locale": "Invalid locale",
-      "totp-session-not-found": "2FA session not found",
-      "totp-not-enabled": "2FA is not enabled for this user",
-      "totp-invalid-code": "Invalid 2FA code",
-      "totp-already-enabled": "2FA is already enabled for this user",
-      "app-not-found": "App {id} not found",
-      "app-failed-to-start": "Failed to start app {id}, see logs for more details",
-      "app-failed-to-install": "Failed to install app {id}, see logs for more details",
-      "app-failed-to-stop": "Failed to stop app {id}, see logs for more details",
-      "app-failed-to-uninstall": "Failed to uninstall app {id}, see logs for more details",
-      "app-failed-to-update": "Failed to update app {id}, see logs for more details",
-      "domain-required-if-expose-app": "Domain is required if app is exposed",
-      "domain-not-valid": "Domain {domain} is not a valid domain",
-      "invalid-config": "App {id} has an invalid config.json file",
-      "app-not-exposable": "App {id} is not exposable",
-      "app-force-exposed": "App {id} works only with exposed domain",
-      "domain-already-in-use": "Domain {domain} is already in use by app {id}",
-      "could-not-get-latest-version": "Could not get latest version",
-      "current-version-is-latest": "Current version is already up to date",
-      "major-version-update": "The major version has changed. Please update manually (instructions on GitHub)"
+      "invalid-locale": "Érvénytelen nyelvi beállítás",
+      "totp-session-not-found": "2FA munkamenet nem található",
+      "totp-not-enabled": "A 2FA nincs engedélyezve ennél a felhasználónál",
+      "totp-invalid-code": "Érvénytelen 2FA kód",
+      "totp-already-enabled": "A 2FA már engedélyezve van ennél a felhasználónál",
+      "app-not-found": "A(z) {id} alkalmazás nem található",
+      "app-failed-to-start": "Nem sikerült elindítani az {id} alkalmazást. További részletekért tekintse meg a naplókat",
+      "app-failed-to-install": "Nem sikerült telepíteni az {id} alkalmazást. További részletekért tekintse meg a naplókat",
+      "app-failed-to-stop": "Nem sikerült leállítani az {id} alkalmazást. További részletekért tekintse meg a naplókat",
+      "app-failed-to-uninstall": "Nem sikerült eltávolítani az {id} alkalmazást. További részletekért tekintse meg a naplókat",
+      "app-failed-to-update": "Nem sikerült frissíteni az {id} alkalmazást. További részletekért tekintse meg a naplókat",
+      "domain-required-if-expose-app": "Domain szükséges, ha az alkalmazás exponálva van",
+      "domain-not-valid": "A(z) {domain} domain nem érvényes domain",
+      "invalid-config": "A(z) {id} alkalmazás érvénytelen config.json fájlt tartalmaz",
+      "app-not-exposable": "Az {id} alkalmazás nem hozzáférhető",
+      "app-force-exposed": "Az {id} alkalmazás csak nyilvános domainnel működik",
+      "domain-already-in-use": "A(z) {domain} domaint már használja a(z) {id} alkalmazás",
+      "could-not-get-latest-version": "Nem sikerült letölteni a legújabb verziót",
+      "current-version-is-latest": "A jelenlegi verzió már naprakész",
+      "major-version-update": "A fő verzió megváltozott. Kérjük, frissítse manuálisan (utasítások a GitHubon)"
     },
     "success": {}
   },
   "auth": {
     "login": {
-      "title": "Login to your account",
-      "submit": "Login"
+      "title": "Jelentkezz be a fiókodba",
+      "submit": "Belépés"
     },
     "totp": {
-      "title": "Two-factor authentication",
-      "instructions": "Enter the code from your authenticator app",
-      "submit": "Confirm"
+      "title": "Két-tényezős hitelesítés",
+      "instructions": "Írja be a kódot a hitelesítő alkalmazásból",
+      "submit": "Megerősít"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "Fiók regisztráció",
+      "submit": "Regisztráció"
     },
     "reset-password": {
-      "title": "Reset your password",
-      "submit": "Reset password",
-      "cancel": "Cancel password change request",
-      "instructions": "Run this command on your server and then refresh this page",
-      "success-title": "Password reset",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
-      "back-to-login": "Back to login"
+      "title": "Jelszó visszaállítása",
+      "submit": "Jelszó visszaállítása",
+      "cancel": "Jelszómódosítási kérés visszavonása",
+      "instructions": "Futtassa ezt a parancsot a szerverén, majd frissítse ezt az oldalt",
+      "success-title": "Jelszó visszaállítása",
+      "success": "A jelszavad vissza lett állítva. Most már bejelentkezhetsz új jelszavaddal. És az e-mail címed {email}",
+      "back-to-login": "Vissza a belépéshez"
     },
     "form": {
-      "email": "Email address",
-      "email-placeholder": "you@example.com",
-      "password": "Password",
-      "password-placeholder": "Enter your password",
-      "password-confirmation": "Confirm password",
-      "password-confirmation-placeholder": "Confirm your password",
-      "forgot": "Forgot password?",
-      "new-password-placeholder": "Your new password",
-      "new-password-confirmation-placeholder": "Confirm your new password",
+      "email": "E-mail cím",
+      "email-placeholder": "nev@pelda.com",
+      "password": "Jelszó",
+      "password-placeholder": "Jelszó megadása",
+      "password-confirmation": "Jelszó megerősítése",
+      "password-confirmation-placeholder": "Jelszó megerősítése",
+      "forgot": "Elfelejtette jelszavát?",
+      "new-password-placeholder": "Az új jelszavad",
+      "new-password-confirmation-placeholder": "Erősítse meg az új jelszavát",
       "errors": {
         "email": {
-          "required": "Email address is required",
-          "email": "Email address is invalid",
-          "invalid": "Email address is invalid"
+          "required": "Email cím megadása kötelező",
+          "email": "E-mail cím érvénytelen",
+          "invalid": "Az e-mail cím érvénytelen"
         },
         "password": {
-          "required": "Password is required",
-          "minlength": "Password must be at least 8 characters"
+          "required": "Jelszó megadása szükséges",
+          "minlength": "A jelszónak minimum 8 karakternek kell lennie"
         },
         "password-confirmation": {
-          "required": "Password confirmation is required",
-          "minlength": "Password confirmation must be at least 8 characters",
-          "match": "Passwords do not match"
+          "required": "Jelszó megerősítés szükséges",
+          "minlength": "A jelszónak legalább 8 karakterből kell állnia",
+          "match": "A jelszavak nem egyeznek"
         }
       }
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Irányítópult",
     "cards": {
       "disk": {
-        "title": "Disk Space",
+        "title": "Lemezterület",
         "subtitle": "Used out of {total} GB"
       },
       "memory": {
@@ -135,42 +135,42 @@
       "start-success": "App started successfully",
       "update-config-success": "App config updated successfully. Restart the app to apply the changes",
       "version": "Version",
-      "description": "Description",
-      "base-info": "Base info",
-      "source-code": "Source code",
-      "author": "Author",
+      "description": "Leírás",
+      "base-info": "Alapinformáció",
+      "source-code": "Forráskód",
+      "author": "Szerző",
       "port": "Port",
-      "categories-title": "Categories",
-      "link": "Link",
-      "website": "Website",
-      "supported-arch": "Supported architectures",
+      "categories-title": "Kategóriák",
+      "link": "Hivatkozás",
+      "website": "Weboldal",
+      "supported-arch": "Támogatott architektúrák",
       "categories": {
-        "data": "Data",
-        "network": "Network",
-        "media": "Media",
-        "development": "Development",
-        "automation": "Automation",
-        "social": "Social",
-        "utilities": "Utilities",
-        "security": "Security",
-        "photography": "Photography",
-        "featured": "Featured",
-        "books": "Books",
-        "music": "Music",
-        "finance": "Finance",
-        "gaming": "Gaming",
+        "data": "Adat",
+        "network": "Hálózat",
+        "media": "Média",
+        "development": "Fejlesztés",
+        "automation": "Automatizálás",
+        "social": "Közösségi",
+        "utilities": "Segédprogramok",
+        "security": "Biztonság",
+        "photography": "Fényképészet",
+        "featured": "Ajánlott",
+        "books": "Könyvek",
+        "music": "Zene",
+        "finance": "Pénzügyek",
+        "gaming": "Játék",
         "ai": "AI"
       },
       "actions": {
-        "start": "Start",
-        "remove": "Remove",
-        "settings": "Settings",
-        "stop": "Stop",
-        "open": "Open",
-        "loading": "Loading",
-        "cancel": "Cancel",
-        "install": "Install",
-        "update": "Update"
+        "start": "Indít",
+        "remove": "Eltávolít",
+        "settings": "Beállítások",
+        "stop": "Megállít",
+        "open": "Megnyitás",
+        "loading": "Betöltés",
+        "cancel": "Mégsem",
+        "install": "Telepítés",
+        "update": "Frissítés"
       },
       "install-form": {
         "title": "Install {name}",
@@ -203,13 +203,13 @@
         "title": "Uninstall {name} ?",
         "subtitle": "All data for this app will be lost.",
         "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Uninstall"
+        "submit": "Eltávolit"
       },
       "update-form": {
         "title": "Update {name} ?",
         "subtitle1": "Update app to latest verion :",
         "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
-        "submit": "Update"
+        "submit": "Frissítés"
       },
       "update-settings-form": {
         "title": "Update {name} config"
@@ -217,22 +217,22 @@
     }
   },
   "settings": {
-    "title": "Settings",
+    "title": "Beállítások",
     "actions": {
-      "tab-title": "Actions",
-      "title": "Actions",
-      "current-version": "Current version: {version}",
+      "tab-title": "Műveletek",
+      "title": "Műveletek",
+      "current-version": "Jelenlegi verzió: {version}",
       "stay-up-to-date": "Stay up to date with the latest version of Tipi",
       "new-version": "A new version ({version}) of Tipi is available",
       "maintenance-title": "Maintenance",
       "maintenance-subtitle": "Common actions to perform on your instance",
-      "restart": "Restart",
+      "restart": "Újraindítás",
       "update": "Update to {version}",
       "already-latest": "Already up to date"
     },
     "settings": {
       "tab-title": "Settings",
-      "title": "General settings",
+      "title": "Általános beállítások",
       "subtitle": "This will update your settings.json file. Make sure you know what you are doing before updating these values.",
       "settings-updated": "Settings updated. Restart your instance to apply new settings.",
       "invalid-ip": "Invalid IP address",
@@ -247,14 +247,14 @@
       "apps-repo-hint": "URL to the apps repository.",
       "storage-path": "Storage path",
       "storage-path-hint": "Path to the storage directory. Keep empty for default (runtipi/app-data). Make sure it is an absolute path and that it exists",
-      "submit": "Save",
-      "user-settings-title": "User settings",
-      "language": "Language",
-      "help-translate": "Help translate Tipi"
+      "submit": "Mentés",
+      "user-settings-title": "Felhasználói beállítások",
+      "language": "Nyelv",
+      "help-translate": "Segíts a Tipi fordításában"
     },
     "security": {
-      "tab-title": "Security",
-      "change-password-title": "Change password",
+      "tab-title": "Biztonság",
+      "change-password-title": "Jelszó módosítása",
       "change-password-subtitle": "Changing your password will log you out of all devices.",
       "password-change-success": "Password changed successfully",
       "2fa-title": "Two-factor authentication",
@@ -282,14 +282,14 @@
   },
   "header": {
     "dashboard": "Dashboard",
-    "my-apps": "My Apps",
-    "app-store": "App Store",
-    "settings": "Settings",
-    "logout": "Logout",
-    "dark-mode": "Dark Mode",
-    "light-mode": "Light Mode",
-    "sponsor": "Sponsor",
-    "source-code": "Source code",
-    "update-available": "Update available"
+    "my-apps": "Alkalmazásaim",
+    "app-store": "Alkalmazásbolt",
+    "settings": "Beállítások",
+    "logout": "Kijelentkezés",
+    "dark-mode": "Sötét mód",
+    "light-mode": "Világos mód",
+    "sponsor": "Szponzor",
+    "source-code": "Forráskód",
+    "update-available": "Frissítés érhető el"
   }
 }
