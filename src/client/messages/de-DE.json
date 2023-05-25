@@ -1,8 +1,8 @@
 {
   "server-messages": {
     "errors": {
-      "invalid-credentials": "Invalid credentials",
-      "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
+      "invalid-credentials": "Ungültige Zugangsdaten",
+      "admin-already-exists": "Es existiert bereits ein Admin-Benutzer. Bitte melde dich an, um einen neuen Benutzer im Admin-Panel zu erzeugen.",
       "missing-email-or-password": "Missing email or password",
       "invalid-username": "Invalid username",
       "user-already-exists": "User already exists",
