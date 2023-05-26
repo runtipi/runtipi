@@ -196,17 +196,17 @@
       },
       "stop-form": {
         "title": "{name} anhalten?",
-        "subtitle": "All data will be retained",
-        "submit": "Stop"
+        "subtitle": "Alle Daten werden aufbewahrt",
+        "submit": "Anhalten"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Uninstall"
+        "title": "{name} deinstallieren?",
+        "subtitle": "Alle Daten für diese Anwendung werden gelöscht.",
+        "warning": "Sind Sie sicher? Dieser Schritt kann nicht rückgängig gemacht werden.",
+        "submit": "Deinstallieren"
       },
       "update-form": {
-        "title": "Update {name} ?",
+        "title": "Aktualisieren {name}?",
         "subtitle1": "Update app to latest verion :",
         "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
         "submit": "Update"
