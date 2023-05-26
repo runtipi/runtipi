@@ -207,42 +207,42 @@
       },
       "update-form": {
         "title": "Aktualisieren {name}?",
-        "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
-        "submit": "Update"
+        "subtitle1": "App auf die neueste Version aktualisieren:",
+        "subtitle2": "Dies wird Ihre benutzerdefinierte Konfiguration zurücksetzen (z.B. Änderungen in docker-compose.yml)",
+        "submit": "Aktualisieren"
       },
       "update-settings-form": {
-        "title": "Update {name} config"
+        "title": "Aktualisieren {name} Konfiguration"
       }
     }
   },
   "settings": {
-    "title": "Settings",
+    "title": "Einstellungen",
     "actions": {
-      "tab-title": "Actions",
-      "title": "Actions",
-      "current-version": "Current version: {version}",
-      "stay-up-to-date": "Stay up to date with the latest version of Tipi",
-      "new-version": "A new version ({version}) of Tipi is available",
-      "maintenance-title": "Maintenance",
-      "maintenance-subtitle": "Common actions to perform on your instance",
-      "restart": "Restart",
-      "update": "Update to {version}",
-      "already-latest": "Already up to date"
+      "tab-title": "Aktionen",
+      "title": "Aktionen",
+      "current-version": "Aktuelle Version: {version}",
+      "stay-up-to-date": "Bleiben Sie auf dem Laufenden mit der neuesten Version von Tipi",
+      "new-version": "Eine neue Version ({version}) von Tipi ist verfügbar",
+      "maintenance-title": "Wartung",
+      "maintenance-subtitle": "Beliebte Aktionen, die Sie auf Ihrer Instanz durchführen können",
+      "restart": "Neustart",
+      "update": "Aktualisieren zu {version}",
+      "already-latest": "Bereits auf dem neuesten Stand"
     },
     "settings": {
-      "tab-title": "Settings",
-      "title": "General settings",
-      "subtitle": "This will update your settings.json file. Make sure you know what you are doing before updating these values.",
-      "settings-updated": "Settings updated. Restart your instance to apply new settings.",
-      "invalid-ip": "Invalid IP address",
-      "invalid-url": "Invalid URL",
-      "invalid-domain": "Invalid domain",
-      "domain-name": "Domain name",
-      "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
+      "tab-title": "Einstellungen",
+      "title": "Allgemeine Einstellungen",
+      "subtitle": "Dadurch wird Ihre Datei settings.json aktualisiert. Stellen Sie sicher, dass Sie wissen, was Sie tun, bevor Sie diese Werte aktualisieren.",
+      "settings-updated": "Einstellungen aktualisiert. Starten Sie Ihre Instanz neu, um die Einstellungen zu übernehmen.",
+      "invalid-ip": "Ungültige IP-Adresse",
+      "invalid-url": "Ungültige URL",
+      "invalid-domain": "Ungültige Domain",
+      "domain-name": "Domänenname",
+      "domain-name-hint": "Stellen Sie sicher, dass genau diese Domain einen A-Eintrag enthält, der auf Ihre IP verweist.",
       "dns-ip": "DNS IP",
-      "internal-ip": "Internal IP",
-      "internal-ip-hint": "IP address your server is listening on.",
+      "internal-ip": "Interne IP",
+      "internal-ip-hint": "IP-Adresse, die Ihr Server abhört.",
       "apps-repo": "App-Repo-URL",
       "apps-repo-hint": "URL zum App-Repository.",
       "storage-path": "Speicherpfad",
