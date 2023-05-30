@@ -43,7 +43,7 @@
       "submit": "Belépés"
     },
     "totp": {
-      "title": "Két-tényezős hitelesítés",
+      "title": "Kétlépcsős hitelesítés",
       "instructions": "Írja be a kódot a hitelesítő alkalmazásból",
       "submit": "Megerősít"
     },
@@ -57,7 +57,7 @@
       "cancel": "Jelszómódosítási kérés visszavonása",
       "instructions": "Futtassa ezt a parancsot a szerverén, majd frissítse ezt az oldalt",
       "success-title": "Jelszó visszaállítása",
-      "success": "A jelszavad vissza lett állítva. Most már bejelentkezhetsz új jelszavaddal. És az e-mail címed {email}",
+      "success": "A jelszava vissza lett állítva. Most már bejelentkezhet az új jelszavával. Ez az e-mail címe {email}",
       "back-to-login": "Vissza a belépéshez"
     },
     "form": {
@@ -68,11 +68,11 @@
       "password-confirmation": "Jelszó megerősítése",
       "password-confirmation-placeholder": "Jelszó megerősítése",
       "forgot": "Elfelejtette jelszavát?",
-      "new-password-placeholder": "Az új jelszavad",
+      "new-password-placeholder": "Az új jelszava",
       "new-password-confirmation-placeholder": "Erősítse meg az új jelszavát",
       "errors": {
         "email": {
-          "required": "Email cím megadása kötelező",
+          "required": "E-mail cím megadása kötelező",
           "email": "E-mail cím érvénytelen",
           "invalid": "Az e-mail cím érvénytelen"
         },
@@ -117,24 +117,24 @@
     "my-apps": {
       "title": "Alkalmazásaim",
       "empty-title": "Nincsenek alkalmazások telepítve",
-      "empty-subtitle": "Telepítsen egy alkalmazást az App Store-ból az induláshoz",
-      "empty-action": "Ugrás az App Store-ba"
+      "empty-subtitle": "Telepítsen egy alkalmazást az Alkalmazásboltból az induláshoz",
+      "empty-action": "Ugrás az Alkalmazásboltba"
     },
     "app-store": {
       "title": "Alkalmazásbolt",
-      "search-placeholder": "Search apps",
-      "category-placeholder": "Select a category",
-      "no-results": "No app found",
-      "no-results-subtitle": "Try to refine your search"
+      "search-placeholder": "Alkalmazások keresése",
+      "category-placeholder": "Kategória választása",
+      "no-results": "Nem található alkalmazás",
+      "no-results-subtitle": "Próbálja meg finomítani a keresést"
     },
     "app-details": {
-      "install-success": "App installed successfully",
-      "uninstall-success": "App uninstalled successfully",
-      "stop-success": "App stopped successfully",
-      "update-success": "App updated successfully",
-      "start-success": "App started successfully",
-      "update-config-success": "App config updated successfully. Restart the app to apply the changes",
-      "version": "Version",
+      "install-success": "Az alkalmazás sikeresen telepítve",
+      "uninstall-success": "Az alkalmazás sikeresen eltávolítva",
+      "stop-success": "Az alkalmazás sikeresen leállítva",
+      "update-success": "Az alkalmazás sikeresen frissítve",
+      "start-success": "Az alkalmazás sikeresen elindítva",
+      "update-config-success": "Az alkalmazás konfigurációja sikeresen frissült. Indítsa újra az alkalmazást a módosítások alkalmazásához",
+      "version": "Verzió",
       "description": "Leírás",
       "base-info": "Alapinformáció",
       "source-code": "Forráskód",
@@ -173,46 +173,46 @@
         "update": "Frissítés"
       },
       "install-form": {
-        "title": "Install {name}",
-        "expose-app": "Expose app",
-        "domain-name": "Domain name",
-        "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-        "choose-option": "Choose an option...",
-        "sumbit-install": "Install",
-        "submit-update": "Update",
+        "title": "{name} telepítése",
+        "expose-app": "Tegye ki az alkalmazást",
+        "domain-name": "Domain név",
+        "domain-name-hint": "Győződjön meg arról, hogy ez a domain tartalmaz egy A rekordot, amely az Ön IP-jére mutat.",
+        "choose-option": "Válasszon egy lehetőséget...",
+        "sumbit-install": "Telepítés",
+        "submit-update": "Frissítés",
         "errors": {
-          "required": "{label} is required",
-          "regex": "{label} must match the pattern {pattern}",
-          "max-length": "{label} must be less than {max} characters",
-          "min-length": "{label} must be at least {min} characters",
-          "between-length": "{label} must be between {min} and {max} characters",
-          "invalid-email": "{label} must be a valid email address",
-          "number": "{label} must be a number",
-          "fqdn": "{label} must be a valid domain",
-          "ip": "{label} must be a valid IP address",
-          "fqdnip": "{label} must be a valid domain or IP address",
-          "url": "{label} must be a valid URL"
+          "required": "{label} megadása kötelező",
+          "regex": "{label} meg kell egyeznie a mintával {pattern}",
+          "max-length": "A {label} karakternek kevesebbnek kell lennie, mint a {max} karakter(ek)",
+          "min-length": "{label} legalább {min} karakter hosszú legyen",
+          "between-length": "A {label} {min} és {max} karakterek között kell lennie",
+          "invalid-email": "{label} érvényes e-mail címnek kell lennie",
+          "number": "{label} számnak kell lennie",
+          "fqdn": "A {label} érvényes domainnek kell lennie",
+          "ip": "{label} érvényes IP-címnek kell lennie",
+          "fqdnip": "{label} érvényes domain vagy IP-cím lehet",
+          "url": "{label} érvényes URL címnek kell lennie"
         }
       },
       "stop-form": {
-        "title": "Stop {name} ?",
-        "subtitle": "All data will be retained",
-        "submit": "Stop"
+        "title": "Megállít {name} ?",
+        "subtitle": "Minden adat megmarad",
+        "submit": "Megállít"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
+        "title": "Távolítsa el a {name} ?",
+        "subtitle": "Az alkalmazás összes adata elveszik.",
+        "warning": "Biztos benne? Ezt a műveletet nem lehet visszavonni.",
         "submit": "Eltávolit"
       },
       "update-form": {
-        "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
+        "title": "Frissíti {name} ?",
+        "subtitle1": "Frissítse az alkalmazást a legújabb verzióra:",
+        "subtitle2": "Ez visszaállítja az egyéni konfigurációt (pl. változások a docker-compose.yml-ben)",
         "submit": "Frissítés"
       },
       "update-settings-form": {
-        "title": "Update {name} config"
+        "title": "Frissítse a {name} konfigurációt"
       }
     }
   },
@@ -222,31 +222,31 @@
       "tab-title": "Műveletek",
       "title": "Műveletek",
       "current-version": "Jelenlegi verzió: {version}",
-      "stay-up-to-date": "Stay up to date with the latest version of Tipi",
-      "new-version": "A new version ({version}) of Tipi is available",
-      "maintenance-title": "Maintenance",
-      "maintenance-subtitle": "Common actions to perform on your instance",
+      "stay-up-to-date": "Legyen naprakész a Tipi legújabb verziójával",
+      "new-version": "A Tipi új verziója ({version}) elérhető",
+      "maintenance-title": "Karbantartás",
+      "maintenance-subtitle": "Általános műveletek ezen a példányon",
       "restart": "Újraindítás",
-      "update": "Update to {version}",
-      "already-latest": "Already up to date"
+      "update": "Frissítés erre {version}",
+      "already-latest": "Már naprakész"
     },
     "settings": {
-      "tab-title": "Settings",
+      "tab-title": "Beállítások",
       "title": "Általános beállítások",
-      "subtitle": "This will update your settings.json file. Make sure you know what you are doing before updating these values.",
-      "settings-updated": "Settings updated. Restart your instance to apply new settings.",
-      "invalid-ip": "Invalid IP address",
-      "invalid-url": "Invalid URL",
-      "invalid-domain": "Invalid domain",
-      "domain-name": "Domain name",
-      "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-      "dns-ip": "DNS IP",
-      "internal-ip": "Internal IP",
-      "internal-ip-hint": "IP address your server is listening on.",
-      "apps-repo": "Apps repo URL",
-      "apps-repo-hint": "URL to the apps repository.",
-      "storage-path": "Storage path",
-      "storage-path-hint": "Path to the storage directory. Keep empty for default (runtipi/app-data). Make sure it is an absolute path and that it exists",
+      "subtitle": "Ez frissíti a settings.json fájlt. Mielőtt frissítené ezeket az értékeket, győződjön meg arról, hogy tudja, mit csinál.",
+      "settings-updated": "A beállítások frissítve. Indítsa újra a példányt az új beállítások alkalmazásához.",
+      "invalid-ip": "Érvénytelen IP-cím",
+      "invalid-url": "Érvénytelen URL",
+      "invalid-domain": "Érvénytelen domain név",
+      "domain-name": "Domain név",
+      "domain-name-hint": "Győződjön meg arról, hogy ez a domain tartalmaz egy A rekordot, amely az Ön IP-jére mutat.",
+      "dns-ip": "DNS IP címe",
+      "internal-ip": "Belső IP cím",
+      "internal-ip-hint": "A szerver által hallgatott IP-cím.",
+      "apps-repo": "Alkalmazás-tárház URL címe",
+      "apps-repo-hint": "Az alkalmazás-tárház URL-je.",
+      "storage-path": "A tárhely elérési útja",
+      "storage-path-hint": "Út a tárolókönyvtárhoz. Alapértelmezés szerint maradjon üres (runtipi / app-data). Ügyeljen arra, hogy abszolút út legyen, és hogy létezik",
       "submit": "Mentés",
       "user-settings-title": "Felhasználói beállítások",
       "language": "Nyelv",
@@ -255,33 +255,33 @@
     "security": {
       "tab-title": "Biztonság",
       "change-password-title": "Jelszó módosítása",
-      "change-password-subtitle": "Changing your password will log you out of all devices.",
-      "password-change-success": "Password changed successfully",
-      "2fa-title": "Two-factor authentication",
-      "2fa-subtitle": "Two-factor authentication (2FA) adds an additional layer of security to your account.",
-      "2fa-subtitle-2": "When enabled, you will be prompted to enter a code from your authenticator app when you log in.",
-      "2fa-enable-success": "Two-factor authentication enabled",
-      "2fa-disable-success": "Two-factor authentication disabled",
-      "scan-qr-code": "Scan this QR code with your authenticator app.",
-      "enter-key-manually": "Or enter this key manually.",
-      "enter-2fa-code": "Enter the 6-digit code from your authenticator app",
-      "enable-2fa": "Enable two-factor authentication",
-      "disable-2fa": "Disable two-factor authentication",
-      "password-needed": "Password needed",
-      "password-needed-hint": "Your password is required to change two-factor authentication settings.",
+      "change-password-subtitle": "A jelszó megváltoztatása után minden eszközből kijelentkezik.",
+      "password-change-success": "A jelszó sikeresen megváltozott",
+      "2fa-title": "Kétlépcsős hitelesítés",
+      "2fa-subtitle": "Kétlépcsős azonosítás (2FA) használatával a fiók biztonsága tovább növelhető.",
+      "2fa-subtitle-2": "Ha engedélyezve van, akkor a rendszer kéri, hogy írjon be egy kódot a hitelesítő alkalmazásból, amikor bejelentkezik.",
+      "2fa-enable-success": "Kétlépcsős azonosítás engedélyezve",
+      "2fa-disable-success": "Kétlépcsős azonosítás kikapcsolva",
+      "scan-qr-code": "Ezt a QR kódot kell beolvasni a hitelesítő alkalmazással.",
+      "enter-key-manually": "Vagy adja meg a kulcsot manuálisan.",
+      "enter-2fa-code": "Írja be a 6 számjegyű kódot a hitelesítő alkalmazásból",
+      "enable-2fa": "Kétlépcsős azonosítás engedélyezése",
+      "disable-2fa": "Kétlépcsős azonosítás letiltása",
+      "password-needed": "Jelszó szükséges",
+      "password-needed-hint": "A kétlépcsős hitelesítési beállítások megváltoztatásához szükséges a jelszavad.",
       "form": {
-        "password-length": "Password must be at least 8 characters",
-        "password-match": "Passwords do not match",
-        "current-password": "Current password",
-        "new-password": "New password",
-        "confirm-password": "Confirm new password",
-        "change-password": "Change password",
-        "password": "Password"
+        "password-length": "A jelszónak minimum 8 karakter hosszúnak kell lennie",
+        "password-match": "A jelszavak nem egyeznek",
+        "current-password": "Jelenlegi jelszó",
+        "new-password": "Új jelszó",
+        "confirm-password": "Új jelszó megerősítése",
+        "change-password": "Jelszó módosítása",
+        "password": "Jelszó"
       }
     }
   },
   "header": {
-    "dashboard": "Dashboard",
+    "dashboard": "Irányítópult",
     "my-apps": "Alkalmazásaim",
     "app-store": "Alkalmazásbolt",
     "settings": "Beállítások",
