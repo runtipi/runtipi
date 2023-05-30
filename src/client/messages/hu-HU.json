@@ -93,35 +93,35 @@
     "cards": {
       "disk": {
         "title": "Lemezterület",
-        "subtitle": "Used out of {total} GB"
+        "subtitle": "A {total} GB-ból használható"
       },
       "memory": {
-        "title": "Memory Used"
+        "title": "Memória használat"
       },
       "cpu": {
-        "title": "CPU Load",
-        "subtitle": "Uninstall apps to reduce load"
+        "title": "CPU kihasználtság",
+        "subtitle": "Távolítson el alkalmazásokat a terhelés csökkentése érdekében"
       }
     }
   },
   "apps": {
-    "status-running": "Running",
-    "status-stopped": "Stopped",
-    "status-starting": "Starting",
-    "status-stopping": "Stopping",
-    "status-updating": "Updating",
-    "status-missing": "Missing",
-    "status-installing": "Installing",
-    "status-uninstalling": "Uninstalling",
-    "update-available": "Update available",
+    "status-running": "Fut",
+    "status-stopped": "Megállítva",
+    "status-starting": "Indítás",
+    "status-stopping": "Leállítás",
+    "status-updating": "Frissítés",
+    "status-missing": "Hiányzó",
+    "status-installing": "Telepítés folyamatban",
+    "status-uninstalling": "Eltávolítás",
+    "update-available": "Frissítés elérhető",
     "my-apps": {
-      "title": "My Apps",
-      "empty-title": "No app installed",
-      "empty-subtitle": "Install an app from the app store to get started",
-      "empty-action": "Go to app store"
+      "title": "Alkalmazásaim",
+      "empty-title": "Nincsenek alkalmazások telepítve",
+      "empty-subtitle": "Telepítsen egy alkalmazást az App Store-ból az induláshoz",
+      "empty-action": "Ugrás az App Store-ba"
     },
     "app-store": {
-      "title": "App Store",
+      "title": "Alkalmazásbolt",
       "search-placeholder": "Search apps",
       "category-placeholder": "Select a category",
       "no-results": "No app found",
