@@ -1,6 +1,8 @@
 const APP_LOCALES = {
+  'de-DE': 'Deutsch',
   'en-US': 'English',
   'fr-FR': 'Français',
+  'hu-HU': 'Magyar',
   'ja-JP': '日本語',
   'pl-PL': 'Polski',
   'sv-SE': 'Svenska',
@@ -10,15 +12,18 @@ const APP_LOCALES = {
   'zh-TW': '繁體中文',
 } as const;
 
-const FALLBACK_LOCALES = [
-  { from: 'fr', to: 'fr-FR' },
+type BaseLang<T extends string> = T extends `${infer U}-${string}` ? U : T; // 'en-US' -> 'en'
+
+const FALLBACK_LOCALES: { from: BaseLang<keyof typeof APP_LOCALES>; to: keyof typeof APP_LOCALES }[] = [
+  { from: 'de', to: 'de-DE' },
   { from: 'en', to: 'en-US' },
+  { from: 'fr', to: 'fr-FR' },
   { from: 'ja', to: 'ja-JP' },
+  { from: 'pl', to: 'pl-PL' },
+  { from: 'sv', to: 'sv-SE' },
   { from: 'ro', to: 'ro-RO' },
   { from: 'ru', to: 'ru-RU' },
   { from: 'zh', to: 'zh-CN' },
-  { from: 'pl', to: 'pl-PL' },
-  { from: 'sv', to: 'sv-SE' },
 ];
 
 export type Locale = keyof typeof APP_LOCALES;
