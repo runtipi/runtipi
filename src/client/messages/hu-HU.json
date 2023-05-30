@@ -246,7 +246,7 @@
       "apps-repo": "Alkalmazás-tárház URL címe",
       "apps-repo-hint": "Az alkalmazás-tárház URL-je.",
       "storage-path": "A tárhely elérési útja",
-      "storage-path-hint": "Út a tárolókönyvtárhoz. Alapértelmezés szerint maradjon üres (runtipi / app-data). Ügyeljen arra, hogy abszolút út legyen, és hogy létezik",
+      "storage-path-hint": "Út a tárolókönyvtárhoz. Alapértelmezés szerint maradjon üres (runtipi/app-data). Ügyeljen arra, hogy abszolút út legyen, és hogy létezik",
       "submit": "Mentés",
       "user-settings-title": "Felhasználói beállítások",
       "language": "Nyelv",
