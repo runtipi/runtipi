@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-27-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-28-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
@@ -107,6 +107,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/NoisyFridge"><img src="https://avatars.githubusercontent.com/u/73795785?v=4?s=100" width="100px;" alt="NoisyFridge"/><br /><sub><b>NoisyFridge</b></sub></a><br /><a href="#translation-NoisyFridge" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Bvoxl"><img src="https://avatars.githubusercontent.com/u/67489519?v=4?s=100" width="100px;" alt="Bvoxl"/><br /><sub><b>Bvoxl</b></sub></a><br /><a href="#translation-Bvoxl" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/m-lab-0"><img src="https://avatars.githubusercontent.com/u/116570617?v=4?s=100" width="100px;" alt="m-lab-0"/><br /><sub><b>m-lab-0</b></sub></a><br /><a href="#translation-m-lab-0" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/dannkunt"><img src="https://avatars.githubusercontent.com/u/32395839?v=4?s=100" width="100px;" alt="dannkunt"/><br /><sub><b>dannkunt</b></sub></a><br /><a href="#translation-dannkunt" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
