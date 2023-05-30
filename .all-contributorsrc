@@ -254,6 +254,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "m-lab-0",
+      "name": "m-lab-0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/116570617?v=4",
+      "profile": "https://github.com/m-lab-0",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
