@@ -286,8 +286,8 @@ devDependencies:
     specifier: ^4.0.3
     version: 4.0.3(eslint@8.41.0)
   eslint-plugin-jsdoc:
-    specifier: ^44.2.4
-    version: 44.2.4(eslint@8.41.0)
+    specifier: ^46.0.0
+    version: 46.0.0(eslint@8.41.0)
   eslint-plugin-jsx-a11y:
     specifier: ^6.6.1
     version: 6.7.1(eslint@8.41.0)
@@ -4700,8 +4700,8 @@ packages:
       - typescript
     dev: true
 
-  /eslint-plugin-jsdoc@44.2.4(eslint@8.41.0):
-    resolution: {integrity: sha512-/EMMxCyRh1SywhCb66gAqoGX4Yv6Xzc4bsSkF1AiY2o2+bQmGMQ05QZ5+JjHbdFTPDZY9pfn+DsSNP0a5yQpIg==}
+  /eslint-plugin-jsdoc@46.0.0(eslint@8.41.0):
+    resolution: {integrity: sha512-xmB5WleBcPCFYlrFfdjrcfSKOJBLwyGmKa+i+fVqlIHp8g5aAoeQpBGugUzToFtQgd4hNZYlfIcP7QSxC9NYWQ==}
     engines: {node: '>=16'}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0
