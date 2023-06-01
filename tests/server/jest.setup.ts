@@ -1,6 +1,12 @@
+import { fromPartial } from '@total-typescript/shoehorn';
 import { EventDispatcher } from '../../src/server/core/EventDispatcher';
 
 global.fetch = jest.fn();
+// Mock global location
+global.location = fromPartial({
+  hostname: 'localhost',
+});
+
 console.error = jest.fn();
 
 // Mock Logger

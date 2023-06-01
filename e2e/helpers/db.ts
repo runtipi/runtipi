@@ -1,13 +1,12 @@
 import pg from 'pg';
-import { getConfig } from '../../src/server/core/TipiConfig';
 
 export const clearDatabase = async () => {
   const pgClient = new pg.Client({
-    user: getConfig().postgresUsername,
-    host: '127.0.0.1',
-    database: getConfig().postgresDatabase,
-    password: getConfig().postgresPassword,
-    port: getConfig().postgresPort,
+    user: 'tipi',
+    host: process.env.SERVER_IP,
+    database: 'tipi',
+    password: 'postgres',
+    port: 5432,
   });
 
   await pgClient.connect();

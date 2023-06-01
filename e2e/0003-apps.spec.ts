@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { loginUser } from './fixtures/fixtures';
+import { registerUser } from './fixtures/fixtures';
+import { clearDatabase } from './helpers/db';
 
 test.beforeEach(async ({ page, isMobile }) => {
-  await loginUser(page);
+  await clearDatabase();
+  await registerUser(page);
 
   // Go to hello world app
   if (isMobile) {

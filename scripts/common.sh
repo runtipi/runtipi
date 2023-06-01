@@ -95,6 +95,7 @@ function kill_watcher() {
             kill -9 $watcher_pid
         fi
     fi
+    # pkill -f "watcher.sh"
 }
 
 
@@ -140,6 +141,7 @@ function generate_env_file() {
   local postgres_port=$(get_json_field "$json_file" postgres_port)
   local redis_host=$(get_json_field "$json_file" redis_host)
   local demo_mode=$(get_json_field "$json_file" demo_mode)
+  local docker_tag=$(get_json_field "$json_file" docker_tag)
   local root_folder=$(get_json_field "$json_file" root_folder | sed 's/\//\\\//g')
   local apps_repository=$(get_json_field "$json_file" apps_repository | sed 's/\//\\\//g')
   local storage_path=$(get_json_field "$json_file" storage_path | sed 's/\//\\\//g')
@@ -164,7 +166,7 @@ function generate_env_file() {
     if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoUrl)" != "null" ]]; then
       apps_repository_temp=$(get_json_field "${STATE_FOLDER}/settings.json" appsRepoUrl)
       apps_repository="$(echo "${apps_repository_temp}" | sed 's/\//\\\//g')"
-      repo_id="$("${ROOT_FOLDER}"/scripts/git.sh get_hash "${apps_repository}")"
+      repo_id="$("${ROOT_FOLDER}"/scripts/git.sh get_hash "${apps_repository_temp}")"
     fi
 
     # If port is set in settings.json, use it
@@ -233,6 +235,7 @@ function generate_env_file() {
       sed "${sed_args[@]}" "s/<postgres_host>/${postgres_host}/g" "${template}"
       sed "${sed_args[@]}" "s/<redis_host>/${redis_host}/g" "${template}"
       sed "${sed_args[@]}" "s/<demo_mode>/${demo_mode}/g" "${template}"
+      sed "${sed_args[@]}" "s/<docker_tag>/${docker_tag}/g" "${template}"
   done
 
   mv -f "$env_file" "$ROOT_FOLDER/.env"

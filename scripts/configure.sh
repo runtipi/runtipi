@@ -8,12 +8,10 @@ function install_generic() {
   local os="${2}"
 
   if [[ "${os}" == "debian" ]]; then
-    sudo apt-get update
-    sudo apt-get install -y "${dependency}"
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "${dependency}"
     return 0
   elif [[ "${os}" == "ubuntu" || "${os}" == "pop" ]]; then
-    sudo apt-get update
-    sudo apt-get install -y "${dependency}"
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "${dependency}"
     return 0
   elif [[ "${os}" == "centos" ]]; then
     sudo yum install -y --allowerasing "${dependency}"
@@ -31,27 +29,23 @@ function install_generic() {
 
 function install_docker() {
   local os="${1}"
-  echo "Installing docker for os ${os}" >/dev/tty
+  echo "Installing docker for os ${os}"
 
   if [[ "${os}" == "debian" ]]; then
-    sudo apt-get update
-    sudo apt-get upgrade
-    sudo apt-get install -y ca-certificates curl gnupg lsb-release
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gnupg lsb-release
     sudo mkdir -p /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
-    sudo apt-get update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
   elif [[ "${os}" == "ubuntu" || "${os}" == "pop" ]]; then
-    sudo apt-get update
-    sudo apt-get upgrade
-    sudo apt-get install -y ca-certificates curl gnupg lsb-release
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gnupg lsb-release
     sudo mkdir -p /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
-    sudo apt-get update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
   elif [[ "${os}" == "centos" ]]; then
     sudo yum install -y yum-utils
@@ -82,12 +76,10 @@ function update_docker() {
   echo "Updating Docker for os ${os}" >/dev/tty
 
   if [[ "${os}" == "debian" ]]; then
-    sudo apt-get update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
   elif [[ "${os}" == "ubuntu" || "${os}" == "pop" ]]; then
-    sudo apt-get update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
   elif [[ "${os}" == "centos" ]]; then
     sudo yum install -y --allowerasing docker-ce docker-ce-cli containerd.io docker-compose-plugin
@@ -103,7 +95,13 @@ function update_docker() {
   fi
 }
 
+echo "Updating system"
+sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+echo "Upgrading system"
+sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+
 if ! command -v docker >/dev/null; then
+  echo "Installing docker"
   install_docker "${OS}"
   docker_result=$?
 
