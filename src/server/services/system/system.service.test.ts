@@ -1,16 +1,18 @@
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 import fs from 'fs-extra';
 import semver from 'semver';
 import { faker } from '@faker-js/faker';
-import fetch from 'node-fetch-commonjs';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { setConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { SystemServiceClass } from '.';
 
 jest.mock('redis');
-jest.mock('node-fetch-commonjs');
 
 const SystemService = new SystemServiceClass();
+
+const server = setupServer();
 
 beforeEach(async () => {
   jest.mock('fs-extra');
@@ -63,19 +65,28 @@ describe('Test: systemInfo', () => {
 });
 
 describe('Test: getVersion', () => {
+  beforeAll(() => {
+    server.listen();
+  });
+
   beforeEach(() => {
+    server.resetHandlers();
     TipiCache.del('latestVersion');
   });
 
   afterAll(() => {
+    server.close();
     jest.restoreAllMocks();
   });
 
   it('It should return version with body', async () => {
     // Arrange
     const body = faker.lorem.words(10);
-    // @ts-expect-error Mocking fetch
-    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}`, body }) }));
+    server.use(
+      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
+        return res(ctx.json({ name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}`, body }));
+      }),
+    );
 
     // Act
     const version = await SystemService.getVersion();
@@ -88,8 +99,11 @@ describe('Test: getVersion', () => {
   });
 
   it('Should return undefined for latest if request fails', async () => {
-    // @ts-expect-error Mocking fetch
-    fetch.mockImplementationOnce(() => Promise.reject(new Error('API is down')));
+    server.use(
+      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
+        return res(ctx.status(500));
+      }),
+    );
 
     const version = await SystemService.getVersion();
 
@@ -100,8 +114,11 @@ describe('Test: getVersion', () => {
 
   it('Should return cached version', async () => {
     // Arrange
-    // @ts-expect-error Mocking fetch
-    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` }) }));
+    server.use(
+      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
+        return res(ctx.json({ name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` }));
+      }),
+    );
 
     // Act
     const version = await SystemService.getVersion();
@@ -156,8 +173,11 @@ describe('Test: update', () => {
   it('Should throw an error if latest version is not set', async () => {
     // Arrange
     TipiCache.del('latestVersion');
-    // @ts-expect-error Mocking fetch
-    fetch.mockImplementationOnce(() => Promise.resolve({ json: () => Promise.resolve({ name: null }) }));
+    server.use(
+      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
+        return res(ctx.json({ name: null }));
+      }),
+    );
     setConfig('version', '0.0.1');
 
     // Act & Assert

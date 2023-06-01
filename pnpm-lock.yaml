@@ -91,9 +91,6 @@ dependencies:
   node-cron:
     specifier: ^3.0.1
     version: 3.0.2
-  node-fetch-commonjs:
-    specifier: ^3.2.4
-    version: 3.2.4
   pg:
     specifier: ^8.11.0
     version: 8.11.0
@@ -121,6 +118,9 @@ dependencies:
   react-tooltip:
     specifier: ^5.13.1
     version: 5.13.1(react-dom@18.2.0)(react@18.2.0)
+  redaxios:
+    specifier: ^0.5.1
+    version: 0.5.1
   redis:
     specifier: ^4.6.6
     version: 4.6.6
@@ -175,7 +175,7 @@ devDependencies:
     specifier: ^1.32.3
     version: 1.32.3
   '@testing-library/dom':
-    specifier: ^9.0.1
+    specifier: ^9.3.0
     version: 9.3.0
   '@testing-library/jest-dom':
     specifier: ^5.16.5
@@ -1618,7 +1618,7 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
-      '@types/node': 20.2.1
+      '@types/node': 20.2.5
       playwright-core: 1.32.3
     optionalDependencies:
       fsevents: 2.3.2
@@ -5100,14 +5100,6 @@ packages:
     resolution: {integrity: sha512-OP2IUU6HeYKJi3i0z4A19kHMQoLVs4Hc+DPqqxI2h/DPZHTm/vjsfC6P0b4jCMy14XizLBqvndQ+UilD7707Jw==}
     dev: false
 
-  /fetch-blob@3.2.0:
-    resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
-    engines: {node: ^12.20 || >= 14.13}
-    dependencies:
-      node-domexception: 1.0.0
-      web-streams-polyfill: 3.2.1
-    dev: false
-
   /figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
     engines: {node: '>=8'}
@@ -5193,13 +5185,6 @@ packages:
       combined-stream: 1.0.8
       mime-types: 2.1.35
     dev: true
-
-  /formdata-polyfill@4.0.10:
-    resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
-    engines: {node: '>=12.20.0'}
-    dependencies:
-      fetch-blob: 3.2.0
-    dev: false
 
   /formidable@2.1.2:
     resolution: {integrity: sha512-CM3GuJ57US06mlpQ47YcunuUZ9jpm8Vx+P2CGt2j7HpgkKZO/DJYQ0Bobim8G6PFQmK5lOqOOdUXboU+h73A4g==}
@@ -7415,19 +7400,6 @@ packages:
       uuid: 8.3.2
     dev: false
 
-  /node-domexception@1.0.0:
-    resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
-    engines: {node: '>=10.5.0'}
-    dev: false
-
-  /node-fetch-commonjs@3.2.4:
-    resolution: {integrity: sha512-bZW7+ldcuuMPLTJk8DufhT6qHDRdljYD0jqBjmrYfcInaYcReX5kK42SQsu/jvtit/tER28yYjnk63PEEmNPtg==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-    dependencies:
-      formdata-polyfill: 4.0.10
-      web-streams-polyfill: 3.2.1
-    dev: false
-
   /node-fetch@2.6.9:
     resolution: {integrity: sha512-DJm/CJkZkRjKKj4Zi4BsKVZh3ValV5IR5s7LVZnW+6YMh0W1BfNA8XSs6DLMGYlId5F3KnA70uu2qepcR08Qqg==}
     engines: {node: 4.x || >=6.0.0}
@@ -8208,6 +8180,10 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: 2.3.1
+
+  /redaxios@0.5.1:
+    resolution: {integrity: sha512-FSD2AmfdbkYwl7KDExYQlVvIrFz6Yd83pGfaGjBzM9F6rpq8g652Q4Yq5QD4c+nf4g2AgeElv1y+8ajUPiOYMg==}
+    dev: false
 
   /redent@3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
@@ -9434,11 +9410,6 @@ packages:
       urlsafe-base64: 1.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /web-streams-polyfill@3.2.1:
-    resolution: {integrity: sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==}
-    engines: {node: '>= 8'}
     dev: false
 
   /webidl-conversions@3.0.1:

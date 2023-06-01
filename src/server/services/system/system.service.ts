@@ -1,6 +1,6 @@
 import semver from 'semver';
 import { z } from 'zod';
-import fetch from 'node-fetch-commonjs';
+import axios from 'redaxios';
 import { TranslatedError } from '@/server/utils/errors';
 import { readJsonFile } from '../../common/fs.helpers';
 import { EventDispatcher } from '../../core/EventDispatcher';
@@ -48,11 +48,10 @@ export class SystemServiceClass {
       let body = await this.cache.get('latestVersionBody');
 
       if (!version) {
-        const data = await fetch('https://api.github.com/repos/meienberger/runtipi/releases/latest');
-        const release = (await data.json()) as { name: string; body: string };
+        const { data } = await axios.get<{ name: string; body: string }>('https://api.github.com/repos/meienberger/runtipi/releases/latest');
 
-        version = release.name.replace('v', '');
-        body = release.body;
+        version = data.name.replace('v', '');
+        body = data.body;
 
         await this.cache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
         await this.cache.set('latestVersionBody', body || '', 60 * 60);

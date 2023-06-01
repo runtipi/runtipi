@@ -50,9 +50,7 @@ services:
       - tipi_main_network
 
   dashboard:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: meienberger/runtipi:${DOCKER_TAG}
     restart: unless-stopped
     container_name: dashboard
     networks:

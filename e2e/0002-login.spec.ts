@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { loginUser } from './fixtures/fixtures';
+import { registerUser } from './fixtures/fixtures';
 import { testUser } from './helpers/constants';
+import { clearDatabase } from './helpers/db';
+
+test.beforeEach(async ({ page }) => {
+  await clearDatabase();
+  await registerUser(page);
+});
 
 test('user can login and is redirected to the dashboard', async ({ page }) => {
   await page.goto('/login');
@@ -13,7 +19,6 @@ test('user can login and is redirected to the dashboard', async ({ page }) => {
 });
 
 test('user can logout', async ({ page }) => {
-  await loginUser(page);
   await page.getByTestId('logout-button').click();
 
   await expect(page.getByText('Login to your account')).toBeVisible();
