@@ -8,7 +8,7 @@ test.beforeEach(async ({ page, isMobile }) => {
 
   // Go to hello world app
   if (isMobile) {
-    await page.getByRole('button', { name: 'menu' }).click();
+    await page.getByTestId('navbar-menu').click();
   }
   await page.getByRole('link', { name: 'App store' }).click();
   await page.getByPlaceholder('Search').fill('hello');
