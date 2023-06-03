@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { registerUser } from './fixtures/fixtures';
+import { loginUser, createTestUser } from './fixtures/fixtures';
 import { testUser } from './helpers/constants';
 import { clearDatabase } from './helpers/db';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async () => {
   await clearDatabase();
-  await registerUser(page);
 });
 
 test('user can login and is redirected to the dashboard', async ({ page }) => {
+  await createTestUser();
   await page.goto('/login');
 
   await page.getByPlaceholder('you@example.com').fill(testUser.email);
@@ -19,6 +19,7 @@ test('user can login and is redirected to the dashboard', async ({ page }) => {
 });
 
 test('user can logout', async ({ page }) => {
+  await loginUser(page);
   await page.getByTestId('logout-button').click();
 
   await expect(page.getByText('Login to your account')).toBeVisible();
