@@ -1,7 +1,11 @@
 name: E2E Tests
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'src/**'
+      - 'e2e/**'
 
 jobs:
   build:
@@ -31,8 +35,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: meienberger/runtipi:e2e
-          cache-from: type=registry,ref=meienberger/runtipi:buildcache
-          cache-to: type=registry,ref=meienberger/runtipi:buildcache,mode=max
+          cache-from: type=registry,ref=meienberger/runtipi:buildcache-e2e
+          cache-to: type=registry,ref=meienberger/runtipi:buildcache-e2e,mode=max
 
   deploy:
     timeout-minutes: 15
@@ -154,7 +158,51 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 30
+          retention-days: 7
+
+  report-deployment:
+    runs-on: ubuntu-latest
+    needs: [e2e]
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+      pull-requests: write # to comment on the PR
+      issues: write # to comment on the PR
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    if: always()
+    steps:
+      - name: Download report artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: playwright-report/
+
+      - name: Deploy to GitHub Pages
+        id: report-deployment
+        uses: actions/deploy-pages@v2
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Playwright report: ${{ steps.report-deployment.outputs.page_url }}`
+            })
 
   teardown:
     runs-on: ubuntu-latest
