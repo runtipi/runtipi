@@ -19,7 +19,7 @@ const SelectValue = SelectPrimitive.Value;
 // Button
 const SelectTrigger = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Trigger>, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & TriggerProps>(
   ({ className, error, label, children, ...props }, ref) => (
-    <label htmlFor={props.name} aria-labelledby={props.name} className={clsx('w-100', className)}>
+    <label htmlFor={props.name} className={clsx('w-100', className)}>
       {Boolean(label) && (
         <span id={props.name} className="form-label">
           {label}
@@ -27,8 +27,7 @@ const SelectTrigger = React.forwardRef<React.ElementRef<typeof SelectPrimitive.T
       )}
       <SelectPrimitive.Trigger
         id={props.name}
-        aria-label={props.name}
-        name={props.name}
+        aria-labelledby={props.name}
         ref={ref}
         className={clsx('d-flex w-100 align-items-center justify-content-between form-select', { 'is-invalid is-invalid-lite': error })}
         {...props}
