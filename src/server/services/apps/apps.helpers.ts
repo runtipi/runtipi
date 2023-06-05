@@ -197,8 +197,8 @@ export const generateEnvFile = (app: App) => {
     const formValue = castAppConfig(app.config)[field.env_variable];
     const envVar = field.env_variable;
 
-    if (formValue) {
-      envFile += `${envVar}=${formValue}\n`;
+    if (formValue || typeof formValue === 'boolean') {
+      envFile += `${envVar}=${String(formValue)}\n`;
     } else if (field.type === 'random') {
       if (envMap.has(envVar)) {
         envFile += `${envVar}=${envMap.get(envVar)}\n`;
@@ -209,7 +209,7 @@ export const generateEnvFile = (app: App) => {
         envFile += `${envVar}=${randomString}\n`;
       }
     } else if (field.required) {
-      throw new Error(`Variable ${field.env_variable} is required`);
+      throw new Error(`Variable ${field.label || field.env_variable} is required`);
     }
   });
 
