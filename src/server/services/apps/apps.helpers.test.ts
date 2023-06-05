@@ -183,7 +183,7 @@ describe('Test: generateEnvFile()', () => {
     const app = await insertApp({}, appConfig, db);
 
     // act & assert
-    expect(() => generateEnvFile(Object.assign(app, { config: { TEST_FIELD: undefined } }))).toThrowError('Variable TEST_FIELD is required');
+    expect(() => generateEnvFile(Object.assign(app, { config: { TEST_FIELD: undefined } }))).toThrowError('Variable test is required');
   });
 
   it('Should throw an error if app does not exist', async () => {
