@@ -230,6 +230,74 @@ export const generateEnvFile = (app: App) => {
 };
 
 /**
+ * Given a template and a map of variables, this function replaces all instances of the variables in the template with their values.
+ *
+ * @param {string} template - The template to be rendered.
+ * @param {Map<string, string>} envMap - The map of variables and their values.
+ */
+const renderTemplate = (template: string, envMap: Map<string, string>) => {
+  let renderedTemplate = template;
+
+  envMap.forEach((value, key) => {
+    renderedTemplate = renderedTemplate.replace(new RegExp(`{{${key}}}`, 'g'), value);
+  });
+
+  return renderedTemplate;
+};
+
+/**
+ * Given an app, this function copies the app's data directory to the app-data folder.
+ * If a file with an extension of .template is found, it will be copied as a file without the .template extension and the template variables will be replaced
+ * by the values in the app's env file.
+ *
+ * @param {string} id - The id of the app.
+ */
+export const copyDataDir = async (id: string) => {
+  const envMap = getEnvMap(id);
+
+  const dataDir = await fs.promises.readdir(`/runtipi/apps/${id}/data`);
+
+  const processFile = async (file: string) => {
+    if (file.endsWith('.template')) {
+      const template = await fs.promises.readFile(`/runtipi/apps/${id}/data/${file}`, 'utf-8');
+      const renderedTemplate = renderTemplate(template, envMap);
+
+      await fs.promises.writeFile(`/app/storage/app-data/${id}/data/${file.replace('.template', '')}`, renderedTemplate);
+    } else {
+      await fs.promises.copyFile(`/runtipi/apps/${id}/data/${file}`, `/app/storage/app-data/${id}/data/${file}`);
+    }
+  };
+
+  const processDir = async (path: string) => {
+    const files = await fs.promises.readdir(`/runtipi/apps/${id}/data/${path}`);
+
+    await Promise.all(
+      files.map(async (file) => {
+        const fullPath = `/runtipi/apps/${id}/data/${path}/${file}`;
+
+        if ((await fs.promises.lstat(fullPath)).isDirectory()) {
+          await processDir(`${path}/${file}`);
+        } else {
+          await processFile(`${path}/${file}`);
+        }
+      }),
+    );
+  };
+
+  await Promise.all(
+    dataDir.map(async (file) => {
+      const fullPath = `/runtipi/apps/${id}/data/${file}`;
+
+      if ((await fs.promises.lstat(fullPath)).isDirectory()) {
+        await processDir(file);
+      } else {
+        await processFile(file);
+      }
+    }),
+  );
+};
+
+/**
   This function reads the apps directory and skips certain system files, then reads the config.json and metadata/description.md files for each app,
   parses the config file, filters out any apps that are not available and returns an array of app information.
   If the config.json file is invalid, it logs an error message.
