@@ -100,9 +100,10 @@ env_variables_json=$(cat <<EOF
   "postgres_port": 5432,
   "postgres_host": "tipi-db",
   "redis_host": "tipi-redis",
+  "local_domain": "tipi.lan",
   "repo_id": "$("${ROOT_FOLDER}"/scripts/git.sh get_hash "${apps_repository}")",
   "apps_repository": "${apps_repository}",
-  "domain": "tipi.localhost",
+  "domain": "tipi.lan",
   "storage_path": "${ROOT_FOLDER}",
   "demo_mode": false,
 }

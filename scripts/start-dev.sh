@@ -24,7 +24,7 @@ apps_repository="https://github.com/meienberger/runtipi-appstore"
 env_variables_json=$(cat <<EOF
 {
   "dns_ip": "9.9.9.9",
-  "domain": "tipi.localhost",
+  "domain": "example.com",
   "root_folder": "${ROOT_FOLDER}",
   "nginx_port": 3000,
   "nginx_port_ssl": 443,
@@ -38,6 +38,7 @@ env_variables_json=$(cat <<EOF
   "tipi_version": "$(get_json_field "${ROOT_FOLDER}/package.json" version)",
   "internal_ip": "localhost",
   "demo_mode": false,
+  "local_domain": "tipi.lan",
   "apps_repository": "${apps_repository}",
   "storage_path": "${ROOT_FOLDER}",
   "repo_id": "$("${ROOT_FOLDER}"/scripts/git.sh get_hash ${apps_repository})"

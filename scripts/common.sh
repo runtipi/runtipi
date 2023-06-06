@@ -98,6 +98,27 @@ function kill_watcher() {
     # pkill -f "watcher.sh"
 }
 
+function generateTLSCert() {
+    local domain="$1"
+
+    # If the certificate already exists for this domain, don't generate it again
+    if [[ -f "traefik/tls/$domain.txt" ]] && [[ -f "traefik/tls/cert.pem" ]] && [[ -f "traefik/tls/key.pem" ]]; then
+        return
+    fi
+
+    rm -rf "traefik/tls/$domain.txt"
+    rm -rf "traefik/tls/cert.pem"
+    rm -rf "traefik/tls/key.pem"
+
+    echo "Generating TLS certificate..."
+
+    if ! openssl req -x509 -newkey rsa:4096 -keyout traefik/tls/key.pem -out traefik/tls/cert.pem -days 365 -subj "/O=runtipi.io/OU=IT/CN=*.${domain}/emailAddress=webmaster@${domain}" -addext "subjectAltName = DNS:*.${domain},DNS:${domain}" -nodes; then
+        echo "Failed to generate TLS certificate"
+    fi
+    # Create a file to indicate that the certificate has been generated for this domain
+    touch "traefik/tls/$domain.txt"
+}
+
 
 function generate_env_file() {
   echo "Generating .env file..."
@@ -142,6 +163,7 @@ function generate_env_file() {
   local redis_host=$(get_json_field "$json_file" redis_host)
   local demo_mode=$(get_json_field "$json_file" demo_mode)
   local docker_tag=$(get_json_field "$json_file" docker_tag)
+  local local_domain=$(get_json_field "$json_file" local_domain)
   local root_folder=$(get_json_field "$json_file" root_folder | sed 's/\//\\\//g')
   local apps_repository=$(get_json_field "$json_file" apps_repository | sed 's/\//\\\//g')
   local storage_path=$(get_json_field "$json_file" storage_path | sed 's/\//\\\//g')
@@ -195,10 +217,15 @@ function generate_env_file() {
       storage_path_temp="${storage_path_settings}"
       storage_path="$(echo "${storage_path_temp}" | sed 's/\//\\\//g')"
     fi
+
+    if [[ "$(get_json_field "${STATE_FOLDER}/settings.json" localDomain)" != "null" ]]; then
+      local_domain=$(get_json_field "${STATE_FOLDER}/settings.json" localDomain)
+    fi
   fi
 
-  # If port is not 80 and domain is not tipi.localhost, we exit
-  if [[ "${nginx_port}" != "80" ]] && [[ "${domain}" != "tipi.localhost" ]]; then
+  echo "Using domain ${domain} and port ${nginx_port}"
+  # If port is not 80 and domain is not example.com or tipi.localhost, we exit
+  if [[ "${nginx_port}" != "80" ]] && [[ "${domain}" != "example.com" ]] && [[ "${domain}" != "tipi.localhost" ]]; then
     echo "Using a custom domain with a custom port is not supported"
     exit 1
   fi
@@ -236,7 +263,10 @@ function generate_env_file() {
       sed "${sed_args[@]}" "s/<redis_host>/${redis_host}/g" "${template}"
       sed "${sed_args[@]}" "s/<demo_mode>/${demo_mode}/g" "${template}"
       sed "${sed_args[@]}" "s/<docker_tag>/${docker_tag}/g" "${template}"
+      sed "${sed_args[@]}" "s/<local_domain>/${local_domain}/g" "${template}"
   done
+
+  generateTLSCert "$local_domain"
 
   mv -f "$env_file" "$ROOT_FOLDER/.env"
   chmod a+rwx "$ROOT_FOLDER/.env"

@@ -21,4 +21,5 @@ POSTGRES_PASSWORD=<postgres_password>
 POSTGRES_PORT=<postgres_port>
 REDIS_HOST=<redis_host>
 DEMO_MODE=<demo_mode>
+LOCAL_DOMAIN=<local_domain>
 DOCKER_TAG=<docker_tag>
