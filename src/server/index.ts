@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable global-require */
-import express from 'express';
+import express, { Request } from 'express';
 import { parse } from 'url';
 
 import type { NextServer } from 'next/dist/server/next';
@@ -11,6 +11,7 @@ import { runPostgresMigrations } from './run-migration';
 import { AppServiceClass } from './services/apps/apps.service';
 import { db } from './db';
 import { sessionMiddleware } from './middlewares/session.middleware';
+import { AuthQueries } from './queries/auth/auth.queries';
 
 let conf = {};
 let nextApp: NextServer;
@@ -33,11 +34,25 @@ const handle = nextApp.getRequestHandler();
 
 nextApp.prepare().then(async () => {
   const app = express();
+  const authService = new AuthQueries(db);
+
   app.disable('x-powered-by');
 
   app.use(sessionMiddleware);
 
   app.use('/static', express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/`));
+
+  app.use('/certificate', async (req, res) => {
+    const userId = req.session?.userId;
+    const user = await authService.getUserById(userId);
+
+    if (user?.operator) {
+      res.setHeader('Content-Dispositon', 'attachment; filename=cert.pem');
+      return res.sendFile(`${getConfig().rootFolder}/traefik/tls/cert.pem`);
+    }
+
+    return res.status(403).send('Forbidden');
+  });
 
   app.all('*', (req, res) => {
     const parsedUrl = parse(req.url, true);
@@ -50,7 +65,7 @@ nextApp.prepare().then(async () => {
     EventDispatcher.clear();
 
     // Run database migrations
-    if (getConfig().NODE_ENV !== 'development') {
+    if (getConfig().NODE_ENV === 'development') {
       await runPostgresMigrations();
     }
     setConfig('status', 'RUNNING');

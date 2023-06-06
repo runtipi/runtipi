@@ -24,6 +24,7 @@ const configSchema = z.object({
   appsRepoId: z.string(),
   appsRepoUrl: z.string().url().trim(),
   domain: z.string().trim(),
+  localDomain: z.string().trim(),
   storagePath: z
     .string()
     .trim()
@@ -47,7 +48,7 @@ const configSchema = z.object({
     }),
 });
 
-export const settingsSchema = configSchema.partial().pick({ dnsIp: true, internalIp: true, appsRepoUrl: true, domain: true, storagePath: true });
+export const settingsSchema = configSchema.partial().pick({ dnsIp: true, internalIp: true, appsRepoUrl: true, domain: true, storagePath: true, localDomain: true });
 
 type TipiSettingsType = z.infer<typeof settingsSchema>;
 
@@ -80,6 +81,7 @@ export class TipiConfig {
       appsRepoId: conf.APPS_REPO_ID,
       appsRepoUrl: conf.APPS_REPO_URL,
       domain: conf.DOMAIN,
+      localDomain: conf.LOCAL_DOMAIN,
       dnsIp: conf.DNS_IP || '9.9.9.9',
       status: 'RUNNING',
       storagePath: conf.STORAGE_PATH,

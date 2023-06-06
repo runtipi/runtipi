@@ -247,6 +247,8 @@
       "apps-repo-hint": "URL to the apps repository.",
       "storage-path": "Storage path",
       "storage-path-hint": "Path to the storage directory. Keep empty for default (runtipi/app-data). Make sure it is an absolute path and that it exists",
+      "local-domain": "Local domain",
+      "local-domain-hint": "Domain name used for accessing apps in your local network. Your apps will be accessible at app-name.local-domain.",
       "submit": "Save",
       "user-settings-title": "User settings",
       "language": "Language",
