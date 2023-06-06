@@ -76,11 +76,13 @@ services:
       ARCHITECTURE: ${ARCHITECTURE}
       REDIS_HOST: ${REDIS_HOST}
       DEMO_MODE: ${DEMO_MODE}
+      LOCAL_DOMAIN: ${LOCAL_DOMAIN}
     volumes:
       - ${PWD}/state:/runtipi/state
       - ${PWD}/repos:/runtipi/repos:ro
       - ${PWD}/apps:/runtipi/apps
       - ${PWD}/logs:/app/logs
+      - ${PWD}/traefik:/runtipi/traefik
       - ${PWD}:/app/storage
     labels:
       # Main

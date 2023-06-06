@@ -80,6 +80,7 @@ services:
       ARCHITECTURE: ${ARCHITECTURE}
       REDIS_HOST: ${REDIS_HOST}
       DEMO_MODE: ${DEMO_MODE}
+      LOCAL_DOMAIN: ${LOCAL_DOMAIN}
     networks:
       - tipi_main_network
     ports:
@@ -93,6 +94,7 @@ services:
       - ${PWD}/repos:/runtipi/repos:ro
       - ${PWD}/apps:/runtipi/apps
       - ${PWD}/logs:/app/logs
+      - ${PWD}/traefik:/runtipi/traefik
       - ${STORAGE_PATH}:/app/storage
     labels:
       traefik.enable: true
