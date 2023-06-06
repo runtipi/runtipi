@@ -100,7 +100,7 @@ export const SettingsForm = (props: IProps) => {
         </div>
         <p className="mb-4">{t('subtitle')}</p>
         <div className="mb-3">
-          <Input {...register('domain')} label={t('domain-name')} error={errors.domain?.message} placeholder="tipi.localhost" />
+          <Input {...register('domain')} label={t('domain-name')} error={errors.domain?.message} placeholder="example.com" />
           <span className="text-muted">{t('domain-name-hint')}</span>
         </div>
         <div className="mb-3">

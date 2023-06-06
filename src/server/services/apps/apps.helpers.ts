@@ -179,7 +179,7 @@ export const generateEnvFile = (app: App) => {
   }
 
   const baseEnvFile = readFile('/runtipi/.env').toString();
-  let envFile = `${baseEnvFile}\nAPP_PORT=${parsedConfig.data.port}\n`;
+  let envFile = `${baseEnvFile}\nAPP_PORT=${parsedConfig.data.port}\nAPP_ID=${app.id}\n`;
   const envMap = getEnvMap(app.id);
 
   if (parsedConfig.data.generate_vapid_keys) {
@@ -330,7 +330,7 @@ export const getAppInfo = (id: string, status?: App['status']) => {
  *  If the app folder does not exist, it copies the app folder from the apps repository.
  *
  *  @param {string} appName - The name of the app.
- *  @param {boolean} [cleanup=false] - A flag indicating whether to cleanup the app folder before ensuring its existence.
+ *  @param {boolean} [cleanup] - A flag indicating whether to cleanup the app folder before ensuring its existence.
  *  @throws Will throw an error if the app folder cannot be copied from the repository
  */
 export const ensureAppFolder = (appName: string, cleanup = false): void => {
