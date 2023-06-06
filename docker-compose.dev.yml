@@ -96,19 +96,18 @@ services:
       - ${STORAGE_PATH}:/app/storage
     labels:
       traefik.enable: true
+      traefik.http.services.dashboard.loadbalancer.server.port: 3000
+      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
       # Local domain
       traefik.http.routers.dashboard-local-insecure.rule: Host(`${LOCAL_DOMAIN}`)
       traefik.http.routers.dashboard-local-insecure.entrypoints: web
-      traefik.http.routers.dashboard-local-insecure.service: dashboard-local-insecure
-      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
-      traefik.http.services.dashboard-local-insecure.loadbalancer.server.port: 3000
+      traefik.http.routers.dashboard-local-insecure.service: dashboard
       traefik.http.routers.dashboard-local-insecure.middlewares: redirect-to-https
       # secure
       traefik.http.routers.dashboard-local.rule: Host(`${LOCAL_DOMAIN}`)
       traefik.http.routers.dashboard-local.entrypoints: websecure
       traefik.http.routers.dashboard-local.tls: true
-      traefik.http.routers.dashboard-local.service: dashboard-local
-      traefik.http.services.dashboard-local.loadbalancer.server.port: 3000
+      traefik.http.routers.dashboard-local.service: dashboard
 
 networks:
   tipi_main_network:
