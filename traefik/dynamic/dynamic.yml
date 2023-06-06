@@ -2,3 +2,13 @@ http:
   serversTransports:
     insecuretransport:
       insecureSkipVerify: true
+
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /root/.config/tls/cert.pem
+        keyFile: /root/.config/tls/key.pem
+  certificates:
+    - certFile: /root/.config/tls/cert.pem
+      keyFile: /root/.config/tls/key.pem

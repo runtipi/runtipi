@@ -54,6 +54,7 @@ node_modules/
 /repos/
 /apps/
 traefik/shared
+traefik/tls
 
 # media folder
 media
