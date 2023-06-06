@@ -129,6 +129,23 @@ class FsMock {
     writeFile: async (p: string, data: string | string[]) => {
       this.mockFiles[p] = data;
     },
+    readdir: async (p: string) => {
+      const files: string[] = [];
+
+      const depth = p.split('/').length;
+
+      Object.keys(this.mockFiles).forEach((file) => {
+        if (file.startsWith(p)) {
+          const fileDepth = file.split('/').length;
+
+          if (fileDepth === depth + 1) {
+            files.push(file.split('/').pop() || '');
+          }
+        }
+      });
+
+      return files;
+    },
   };
 }
 

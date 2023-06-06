@@ -3,7 +3,7 @@ import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import { Database } from '@/server/db';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo } from './apps.helpers';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo, copyDataDir } from './apps.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
@@ -125,7 +125,7 @@ export class AppServiceClass {
       checkAppRequirements(id);
 
       // Create app folder
-      createFolder(`/app/storage/app-data/${id}`);
+      createFolder(`/app/storage/app-data/${id}/data`);
 
       const appInfo = getAppInfo(id);
 
@@ -154,6 +154,7 @@ export class AppServiceClass {
       if (newApp) {
         // Create env file
         generateEnvFile(newApp);
+        await copyDataDir(id);
       }
 
       // Run script

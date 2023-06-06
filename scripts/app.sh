@@ -146,11 +146,6 @@ function install_app() {
     exit 1
   fi
 
-  # Copy default data dir to app data dir if it exists
-  if [[ -d "${app_dir}/data" ]]; then
-    cp -r "${app_dir}/data" "${app_data_dir}/data"
-  fi
-
   ensure_permissions "${app}"
 
   if ! compose "${app}" up -d; then
