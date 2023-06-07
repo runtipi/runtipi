@@ -253,7 +253,8 @@
       "submit": "Save",
       "user-settings-title": "User settings",
       "language": "Language",
-      "help-translate": "Help translate Tipi"
+      "help-translate": "Help translate Tipi",
+      "download-certificate": "Download certificate"
     },
     "security": {
       "tab-title": "Security",

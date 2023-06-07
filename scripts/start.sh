@@ -103,7 +103,7 @@ env_variables_json=$(cat <<EOF
   "local_domain": "tipi.lan",
   "repo_id": "$("${ROOT_FOLDER}"/scripts/git.sh get_hash "${apps_repository}")",
   "apps_repository": "${apps_repository}",
-  "domain": "tipi.lan",
+  "domain": "example.com",
   "storage_path": "${ROOT_FOLDER}",
   "demo_mode": false,
 }

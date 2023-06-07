@@ -29,7 +29,7 @@ export const handlers = [
   getTRPCMock({
     path: ['system', 'getSettings'],
     type: 'query',
-    response: { internalIp: 'localhost', dnsIp: '1.1.1.1', appsRepoUrl: 'https://test.com/test', domain: 'tipi.localhost' },
+    response: { internalIp: 'localhost', dnsIp: '1.1.1.1', appsRepoUrl: 'https://test.com/test', domain: 'tipi.localhost', localDomain: 'tipi.lan' },
   }),
   getTRPCMock({
     path: ['system', 'updateSettings'],
