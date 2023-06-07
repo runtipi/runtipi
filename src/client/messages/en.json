@@ -144,6 +144,7 @@
       "link": "Link",
       "website": "Website",
       "supported-arch": "Supported architectures",
+      "choose-open-method": "Choose open method",
       "categories": {
         "data": "Data",
         "network": "Network",

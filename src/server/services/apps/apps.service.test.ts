@@ -40,7 +40,7 @@ describe('Install app', () => {
     const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
 
     // assert
-    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${appConfig.port}`);
+    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nAPP_ID=${appConfig.id}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${appConfig.port}`);
   });
 
   it('Should add app in database', async () => {
@@ -336,7 +336,7 @@ describe('Start app', () => {
     const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
 
     // assert
-    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${appConfig.port}`);
+    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nAPP_ID=${appConfig.id}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${appConfig.port}`);
   });
 
   it('Should throw if start script fails', async () => {
@@ -395,7 +395,7 @@ describe('Update app config', () => {
     const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
 
     // assert
-    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nTEST_FIELD=${word}\nAPP_DOMAIN=localhost:${appConfig.port}`);
+    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nAPP_ID=${appConfig.id}\nTEST_FIELD=${word}\nAPP_DOMAIN=localhost:${appConfig.port}`);
   });
 
   it('Should throw if required field is missing', async () => {

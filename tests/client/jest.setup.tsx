@@ -18,6 +18,8 @@ class ResizeObserver {
   observe() {}
 
   unobserve() {}
+
+  disconnect() {}
 }
 
 // Mock localStorage
@@ -41,6 +43,8 @@ const localStorageMock = (() => {
 
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 Object.defineProperty(window, 'ResizeObserver', { value: ResizeObserver });
+Object.defineProperty(window, 'MutationObserver', { value: ResizeObserver });
+
 Object.defineProperty(window, 'matchMedia', {
   value: () => {
     return {

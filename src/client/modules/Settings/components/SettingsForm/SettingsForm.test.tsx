@@ -56,10 +56,10 @@ describe('Test: SettingsForm', () => {
     // arrange
     render(<SettingsForm onSubmit={jest.fn()} />);
     const submitButton = screen.getByRole('button', { name: 'Save' });
-    const dnsIpInput = screen.getByLabelText('DNS IP');
-    const domainInput = screen.getByLabelText('Domain name');
-    const internalIpInput = screen.getByLabelText('Internal IP');
-    const appsRepoUrlInput = screen.getByLabelText('Apps repo URL');
+    const dnsIpInput = screen.getByRole('textbox', { name: 'dnsIp' });
+    const domainInput = screen.getByRole('textbox', { name: 'domain' });
+    const internalIpInput = screen.getByRole('textbox', { name: 'internalIp' });
+    const appsRepoUrlInput = screen.getByRole('textbox', { name: 'appsRepoUrl' });
 
     // act
     fireEvent.change(dnsIpInput, { target: { value: 'invalid ip' } });
