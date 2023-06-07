@@ -114,9 +114,11 @@ function generateTLSCert() {
 
     if ! openssl req -x509 -newkey rsa:4096 -keyout traefik/tls/key.pem -out traefik/tls/cert.pem -days 365 -subj "/O=runtipi.io/OU=IT/CN=*.${domain}/emailAddress=webmaster@${domain}" -addext "subjectAltName = DNS:*.${domain},DNS:${domain}" -nodes; then
         echo "Failed to generate TLS certificate"
+    else
+        echo "TLS certificate generated"
+        # Create a file to indicate that the certificate has been generated for this domain
+        touch "traefik/tls/$domain.txt"
     fi
-    # Create a file to indicate that the certificate has been generated for this domain
-    touch "traefik/tls/$domain.txt"
 }
 
 

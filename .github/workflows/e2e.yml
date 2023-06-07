@@ -104,7 +104,7 @@ jobs:
             cd runtipi
             echo 'Checking out branch ${{ github.head_ref }}'
             git checkout ${{ github.head_ref }}
-            sudo ./scripts/start-e2e.sh latest
+            sudo ./scripts/start-e2e.sh e2e
             echo 'App deployed'
           host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
           user: root

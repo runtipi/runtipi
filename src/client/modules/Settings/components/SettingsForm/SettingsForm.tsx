@@ -183,9 +183,8 @@ export const SettingsForm = (props: IProps) => {
             error={errors.localDomain?.message}
             placeholder="tipi.lan"
           />
-
           <Button className="mt-2" onClick={downloadCertificate}>
-            Download certificate
+            {t('download-certificate')}
           </Button>
         </div>
         <Button loading={loading} type="submit" className="btn-success">

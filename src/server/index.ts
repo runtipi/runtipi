@@ -65,7 +65,7 @@ nextApp.prepare().then(async () => {
     EventDispatcher.clear();
 
     // Run database migrations
-    if (getConfig().NODE_ENV === 'development') {
+    if (getConfig().NODE_ENV !== 'development') {
       await runPostgresMigrations();
     }
     setConfig('status', 'RUNNING');

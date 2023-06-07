@@ -124,6 +124,54 @@ describe('Test: AppDetailsContainer', () => {
       });
       spy.mockRestore();
     });
+
+    it('should open with domain when domain is clicked', async () => {
+      // Arrange
+      const app = createAppEntity({ overrides: { domain: 'test.com', exposed: true } });
+      const spy = jest.spyOn(window, 'open').mockImplementation(() => null);
+      render(<AppDetailsContainer app={app} />);
+
+      // Act
+      const openButton = screen.getByRole('button', { name: 'Open' });
+      userEvent.type(openButton, '{arrowdown}');
+
+      await waitFor(() => {
+        expect(screen.getByText(/test.com/)).toBeInTheDocument();
+      });
+
+      const openButtonItem = screen.getByText(/test.com/);
+      userEvent.click(openButtonItem);
+
+      // Assert
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalledWith(`https://test.com`, '_blank', 'noreferrer');
+      });
+      spy.mockRestore();
+    });
+
+    it('should open with local domain when local domain is clicked', async () => {
+      // Arrange
+      const app = createAppEntity({});
+      const spy = jest.spyOn(window, 'open').mockImplementation(() => null);
+      render(<AppDetailsContainer app={app} />);
+
+      // Act
+      const openButton = screen.getByRole('button', { name: 'Open' });
+      userEvent.type(openButton, '{arrowdown}');
+
+      await waitFor(() => {
+        expect(screen.getByText(/.tipi.lan/)).toBeInTheDocument();
+      });
+
+      const openButtonItem = screen.getByText(/.tipi.lan/);
+      userEvent.click(openButtonItem);
+
+      // Assert
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalledWith(`https://${app.id}.tipi.lan`, '_blank', 'noreferrer');
+      });
+      spy.mockRestore();
+    });
   });
 
   describe('Test: Install app', () => {
