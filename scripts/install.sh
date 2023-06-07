@@ -79,19 +79,22 @@ mkdir -p app-data
 mkdir -p state
 mkdir -p repos
 
+mkdir -p traefik/shared
+mkdir -p traefik/tls
+
 mkdir -p media/torrents
 mkdir -p media/torrents/watch
-mkdir -p media/torrents/completed
+mkdir -p media/torrents/complete
 mkdir -p media/torrents/incomplete
 
 mkdir -p media/usenet
 mkdir -p media/usenet/watch
-mkdir -p media/usenet/completed
+mkdir -p media/usenet/complete
 mkdir -p media/usenet/incomplete
 
 mkdir -p media/downloads
 mkdir -p media/downloads/watch
-mkdir -p media/downloads/completed
+mkdir -p media/downloads/complete
 mkdir -p media/downloads/incomplete
 
 mkdir -p media/data

@@ -28,6 +28,10 @@ sudo "${ROOT_FOLDER}/scripts/configure.sh"
 mkdir -p "${ROOT_FOLDER}/state"
 STATE_FOLDER="${ROOT_FOLDER}/state"
 
+mkdir -p traefik
+mkdir -p traefik/shared
+mkdir -p traefik/tls
+
 if [[ ! -f "${STATE_FOLDER}/seed" ]]; then
   echo "Generating seed..."
   mkdir -p "${STATE_FOLDER}"
