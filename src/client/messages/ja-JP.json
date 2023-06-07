@@ -144,6 +144,7 @@
       "link": "リンク",
       "website": "ウェブサイト",
       "supported-arch": "サポートされるアーキテクチャ",
+      "choose-open-method": "Choose open method",
       "categories": {
         "data": "データ",
         "network": "ネットワーク",
@@ -247,10 +248,13 @@
       "apps-repo-hint": "アプリリポジトリの URL です。",
       "storage-path": "ストレージの場所",
       "storage-path-hint": "ストレージディレクトリへのパスです。デフォルトなら空のままにしてください（runtipi/app-data）。絶対パスであり、存在することを確認してください",
+      "local-domain": "Local domain",
+      "local-domain-hint": "Domain name used for accessing apps in your local network. Your apps will be accessible at app-name.local-domain.",
       "submit": "保存",
       "user-settings-title": "ユーザー設定",
       "language": "言語設定",
-      "help-translate": "翻訳に協力"
+      "help-translate": "翻訳に協力",
+      "download-certificate": "Download certificate"
     },
     "security": {
       "tab-title": "セキュリティ",
