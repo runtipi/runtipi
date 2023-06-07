@@ -11,6 +11,7 @@ env:
   REDIS_HOST: redis
   APPS_REPO_URL: https://repo.github.com/
   DOMAIN: localhost
+  LOCAL_DOMAIN: tipi.lan
   TIPI_VERSION: 0.0.1
 
 jobs:
