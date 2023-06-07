@@ -30,7 +30,8 @@ test('user can install and uninstall app', async ({ page, context }) => {
   await expect(page.getByText('Running')).toBeVisible({ timeout: 60000 });
   await expect(page.getByText('App installed successfully')).toBeVisible();
 
-  const [newPage] = await Promise.all([context.waitForEvent('page'), await page.getByTestId('app-details').getByRole('button', { name: 'Open' }).click()]);
+  await page.getByTestId('app-details').getByRole('button', { name: 'Open' }).click();
+  const [newPage] = await Promise.all([context.waitForEvent('page'), await page.getByRole('menuitem', { name: 'localhost:8000' }).click()]);
 
   await newPage.waitForLoadState();
   await expect(newPage.getByText('Hello World')).toBeVisible();

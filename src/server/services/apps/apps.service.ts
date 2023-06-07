@@ -185,7 +185,7 @@ export class AppServiceClass {
    *
    * @param {string} id - The ID of the app to update.
    * @param {object} form - The new configuration of the app.
-   * @param {boolean} [exposed=false] - If the app should be exposed or not.
+   * @param {boolean} [exposed] - If the app should be exposed or not.
    * @param {string} [domain] - The domain for the app if exposed is true.
    */
   public updateAppConfig = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string) => {

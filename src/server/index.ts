@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable global-require */
-import express, { Request } from 'express';
+import express from 'express';
 import { parse } from 'url';
 
 import type { NextServer } from 'next/dist/server/next';
@@ -44,7 +44,7 @@ nextApp.prepare().then(async () => {
 
   app.use('/certificate', async (req, res) => {
     const userId = req.session?.userId;
-    const user = await authService.getUserById(userId);
+    const user = await authService.getUserById(userId as number);
 
     if (user?.operator) {
       res.setHeader('Content-Dispositon', 'attachment; filename=cert.pem');
