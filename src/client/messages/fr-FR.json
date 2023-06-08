@@ -144,7 +144,7 @@
       "link": "Lien",
       "website": "Site Web",
       "supported-arch": "Architectures supportées",
-      "choose-open-method": "Choose open method",
+      "choose-open-method": "Mode d'ouverture",
       "categories": {
         "data": "Données",
         "network": "Réseau",
@@ -248,13 +248,13 @@
       "apps-repo-hint": "URL vers le repo des applications.",
       "storage-path": "Répertoire de stockage",
       "storage-path-hint": "Chemin d'accès au répertoire de stockage. Laisser vide pour les valeurs par défaut (runtipi/app-data). Assurez-vous qu'il s'agit d'un chemin absolu et qu'il existe",
-      "local-domain": "Local domain",
-      "local-domain-hint": "Domain name used for accessing apps in your local network. Your apps will be accessible at app-name.local-domain.",
+      "local-domain": "Domaine local",
+      "local-domain-hint": "Nom de domaine utilisé pour accéder aux applications dans votre réseau local. Vos applications seront accessibles sur app-name.local-domain.",
       "submit": "Sauvegarder",
       "user-settings-title": "Paramètres utilisateur",
       "language": "Langue",
       "help-translate": "Aidez à traduire Tipi",
-      "download-certificate": "Download certificate"
+      "download-certificate": "Télécharger le certificat"
     },
     "security": {
       "tab-title": "Sécurité",
