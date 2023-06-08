@@ -3,6 +3,7 @@ name: E2E Tests
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened]
     branches:
       - release/*
 
