@@ -269,6 +269,7 @@ export const copyDataDir = async (id: string) => {
   };
 
   const processDir = async (path: string) => {
+    await fs.promises.mkdir(`/app/storage/app-data/${id}/data/${path}`, { recursive: true });
     const files = await fs.promises.readdir(`/runtipi/apps/${id}/data/${path}`);
 
     await Promise.all(

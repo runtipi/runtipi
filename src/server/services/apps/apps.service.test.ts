@@ -239,6 +239,37 @@ describe('Install app', () => {
     // act & assert
     await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError();
   });
+
+  it('should replace env variables in .templates files in data folder', async () => {
+    // arrange
+    const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST', type: 'text', label: 'test', required: true }] });
+    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/data/test.txt.template`, 'test {{TEST}}');
+    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/data/test2.txt`, 'test {{TEST}}');
+
+    // act
+    await AppsService.installApp(appConfig.id, { TEST: 'test' });
+
+    // assert
+    const file = await fs.promises.readFile(`/app/storage/app-data/${appConfig.id}/data/test.txt`);
+    const file2 = await fs.promises.readFile(`/app/storage/app-data/${appConfig.id}/data/test2.txt`);
+    expect(file.toString()).toBe('test test');
+    expect(file2.toString()).toBe('test {{TEST}}');
+  });
+
+  it('should copy and replace env variables in deeply nested .templates files in data folder', async () => {
+    // arrange
+    const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST', type: 'text', label: 'test', required: true }] });
+    await fs.promises.mkdir(`/runtipi/apps/${appConfig.id}/data/test`);
+    await fs.promises.mkdir(`/runtipi/apps/${appConfig.id}/data/test/test`);
+    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/data/test/test/test.txt.template`, 'test {{TEST}}');
+
+    // act
+    await AppsService.installApp(appConfig.id, { TEST: 'test' });
+
+    // assert
+    const file = await fs.promises.readFile(`/app/storage/app-data/${appConfig.id}/data/test/test/test.txt`);
+    expect(file.toString()).toBe('test test');
+  });
 });
 
 describe('Uninstall app', () => {
