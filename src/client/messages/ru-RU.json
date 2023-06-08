@@ -144,7 +144,7 @@
       "link": "Ссылка",
       "website": "Сайт",
       "supported-arch": "Поддерживаемые архитектуры",
-      "choose-open-method": "Choose open method",
+      "choose-open-method": "Выберите метод открытия",
       "categories": {
         "data": "Данные",
         "network": "Сеть",
@@ -248,13 +248,13 @@
       "apps-repo-hint": "URL-адрес репозитория приложений.",
       "storage-path": "Путь хранилища",
       "storage-path-hint": "Путь к каталогу хранения. Оставьте пустым для пути по умолчанию (runtipi/app-data). Убедитесь, что путь является абсолютным и существует",
-      "local-domain": "Local domain",
-      "local-domain-hint": "Domain name used for accessing apps in your local network. Your apps will be accessible at app-name.local-domain.",
+      "local-domain": "Локальный домен",
+      "local-domain-hint": "Доменное имя, используемое для доступа к приложениям в вашей локальной сети. Приложения будут доступны как app-name.local-domain.",
       "submit": "Сохранить",
       "user-settings-title": "Настройки пользователя",
       "language": "Язык",
       "help-translate": "Помочь с переводом Tipi",
-      "download-certificate": "Download certificate"
+      "download-certificate": "Скачать сертификат"
     },
     "security": {
       "tab-title": "Безопасность",
