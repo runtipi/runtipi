@@ -1,11 +1,10 @@
 name: E2E Tests
+
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    paths:
-      - 'src/**'
-      - 'e2e/**'
+    branches:
+      - release/*
 
 jobs:
   build:
