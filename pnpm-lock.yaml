@@ -209,7 +209,7 @@ devDependencies:
     version: 0.0.36
   '@types/jest':
     specifier: ^29.5.1
-    version: 29.5.1
+    version: 29.5.2
   '@types/js-cookie':
     specifier: ^3.0.3
     version: 3.0.3
@@ -2973,8 +2973,8 @@ packages:
       '@types/istanbul-lib-report': 3.0.0
     dev: true
 
-  /@types/jest@29.5.1:
-    resolution: {integrity: sha512-tEuVcHrpaixS36w7hpsfLBLpjtMRJUE09/MHXn923LOVojDwyC14cWcfc0rDs0VEfUyYmt/+iX1kxxp+gZMcaQ==}
+  /@types/jest@29.5.2:
+    resolution: {integrity: sha512-mSoZVJF5YzGVCk+FsDxzDuH7s+SCkzrgKZzf0Z0T2WudhBUPoF6ktoTPC4R0ZoCPCV5xUvuU6ias5NvxcBcMMg==}
     dependencies:
       expect: 29.5.0
       pretty-format: 29.5.0
@@ -3124,7 +3124,7 @@ packages:
   /@types/testing-library__jest-dom@5.14.5:
     resolution: {integrity: sha512-SBwbxYoyPIvxHbeHxTZX2Pe/74F/tX2/D3mMvzabdeJ25bBojfW0TyB8BHrbq/9zaaKICJZjLP+8r6AeZMFCuQ==}
     dependencies:
-      '@types/jest': 29.5.1
+      '@types/jest': 29.5.2
     dev: true
 
   /@types/tough-cookie@4.0.2:
