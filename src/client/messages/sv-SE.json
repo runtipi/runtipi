@@ -144,6 +144,7 @@
       "link": "Länk",
       "website": "Webbsida",
       "supported-arch": "Arkitekturer som stöds",
+      "choose-open-method": "Välj öppna metod",
       "categories": {
         "data": "Data",
         "network": "Nätverk",
@@ -247,10 +248,13 @@
       "apps-repo-hint": "URL till app-arkivet.",
       "storage-path": "Lagring sökväg",
       "storage-path-hint": "Sökväg till lagringskatalogen. Behåll tomt för standard (runtipi/app-data). Kontrollera att den är en absolut sökväg och att den finns",
+      "local-domain": "Lokal domän",
+      "local-domain-hint": "Domännamn som används för att komma åt appar i ditt lokala nätverk. Apparna kommer att vara tillgängliga på app-name.local-domain.",
       "submit": "Spara",
       "user-settings-title": "Användarinställningar",
       "language": "Språk",
-      "help-translate": "Hjälp till att översätta Tipi"
+      "help-translate": "Hjälp till att översätta Tipi",
+      "download-certificate": "Ladda ner certifikat"
     },
     "security": {
       "tab-title": "Säkerhet",
