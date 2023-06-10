@@ -93,16 +93,22 @@ jobs:
       - name: Wait 1 minute for Droplet to be ready
         run: sleep 60
 
+      - name: Extract branch name from ref
+        id: extract-branch-name
+        run: |
+          branch_name=$(echo ${{ github.ref }} | sed 's/refs\/heads\///')
+          echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
+
       - name: Deploy app to Droplet
         uses: fifsky/ssh-action@master
         with:
           command: |
             echo 'Cloning repo on branch ${{ github.head_ref }}'
-            git clone --single-branch --branch ${{ github.head_ref }} https://github.com/${{ github.repository }}
+            git clone --single-branch --branch ${{ steps.extract-branch-name.outputs.branch_name }} https://github.com/${{ github.repository }}
             echo 'Waiting for dpkg lock to be released'
             cd runtipi
-            echo 'Checking out branch ${{ github.head_ref }}'
-            git checkout ${{ github.head_ref }}
+            echo 'Checking out branch ${{ steps.extract-branch-name.outputs.branch_name }}'
+            git checkout ${{ steps.extract-branch-name.outputs.branch_name }}
             sudo ./scripts/start-e2e.sh e2e
             echo 'App deployed'
           host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
