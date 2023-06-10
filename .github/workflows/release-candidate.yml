@@ -31,10 +31,10 @@ jobs:
         run: |
           VERSION=$(npm run version --silent)
           TAG=${VERSION}
-          echo "::set-output name=tag::${TAG}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
       - name: Build and push images
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           platforms: linux/amd64,linux/arm64

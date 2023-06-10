@@ -1,6 +1,22 @@
 version: '3.7'
 
 services:
+  reverse-proxy:
+    container_name: reverse-proxy
+    image: traefik:v2.8
+    restart: on-failure
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    command: --providers.docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/traefik:/root/.config
+      - ${PWD}/traefik/shared:/shared
+    networks:
+      - tipi_main_network
+
   tipi-db:
     container_name: tipi-db
     image: postgres:14
@@ -64,6 +80,7 @@ services:
       ARCHITECTURE: ${ARCHITECTURE}
       REDIS_HOST: ${REDIS_HOST}
       DEMO_MODE: ${DEMO_MODE}
+      LOCAL_DOMAIN: ${LOCAL_DOMAIN}
     networks:
       - tipi_main_network
     ports:
@@ -77,7 +94,22 @@ services:
       - ${PWD}/repos:/runtipi/repos:ro
       - ${PWD}/apps:/runtipi/apps
       - ${PWD}/logs:/app/logs
+      - ${PWD}/traefik:/runtipi/traefik
       - ${STORAGE_PATH}:/app/storage
+    labels:
+      traefik.enable: true
+      traefik.http.services.dashboard.loadbalancer.server.port: 3000
+      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
+      # Local domain
+      traefik.http.routers.dashboard-local-insecure.rule: Host(`${LOCAL_DOMAIN}`)
+      traefik.http.routers.dashboard-local-insecure.entrypoints: web
+      traefik.http.routers.dashboard-local-insecure.service: dashboard
+      traefik.http.routers.dashboard-local-insecure.middlewares: redirect-to-https
+      # secure
+      traefik.http.routers.dashboard-local.rule: Host(`${LOCAL_DOMAIN}`)
+      traefik.http.routers.dashboard-local.entrypoints: websecure
+      traefik.http.routers.dashboard-local.tls: true
+      traefik.http.routers.dashboard-local.service: dashboard
 
 networks:
   tipi_main_network:

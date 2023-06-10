@@ -2,9 +2,11 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { IconAdjustmentsAlt, IconUser } from '@tabler/icons-react';
+import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { Tooltip } from 'react-tooltip';
 import validator from 'validator';
 
 export type SettingsFormValues = {
@@ -13,6 +15,7 @@ export type SettingsFormValues = {
   appsRepoUrl?: string;
   domain?: string;
   storagePath?: string;
+  localDomain?: string;
 };
 
 interface IProps {
@@ -28,6 +31,10 @@ export const SettingsForm = (props: IProps) => {
 
   const validateFields = (values: SettingsFormValues) => {
     const errors: { [K in keyof SettingsFormValues]?: string } = {};
+
+    if (values.localDomain && !validator.isFQDN(values.localDomain)) {
+      errors.localDomain = t('invalid-domain');
+    }
 
     if (values.dnsIp && !validator.isIP(values.dnsIp)) {
       errors.dnsIp = t('invalid-ip');
@@ -86,6 +93,11 @@ export const SettingsForm = (props: IProps) => {
     }
   };
 
+  const downloadCertificate = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    window.open('/certificate');
+  };
+
   return (
     <>
       <div className="d-flex">
@@ -100,23 +112,80 @@ export const SettingsForm = (props: IProps) => {
         </div>
         <p className="mb-4">{t('subtitle')}</p>
         <div className="mb-3">
-          <Input {...register('domain')} label={t('domain-name')} error={errors.domain?.message} placeholder="tipi.localhost" />
-          <span className="text-muted">{t('domain-name-hint')}</span>
+          <Input
+            {...register('domain')}
+            label={
+              <>
+                {t('domain-name')}
+                <Tooltip anchorSelect=".domain-name-hint">{t('domain-name-hint')}</Tooltip>
+                <span className={clsx('ms-1 form-help domain-name-hint')}>?</span>
+              </>
+            }
+            error={errors.domain?.message}
+            placeholder="example.com"
+          />
         </div>
         <div className="mb-3">
           <Input {...register('dnsIp')} label={t('dns-ip')} error={errors.dnsIp?.message} placeholder="9.9.9.9" />
         </div>
         <div className="mb-3">
-          <Input {...register('internalIp')} label={t('internal-ip')} error={errors.internalIp?.message} placeholder="192.168.1.100" />
-          <span className="text-muted">{t('internal-ip-hint')}</span>
+          <Input
+            {...register('internalIp')}
+            label={
+              <>
+                {t('internal-ip')}
+                <Tooltip anchorSelect=".internal-ip-hint">{t('internal-ip-hint')}</Tooltip>
+                <span className={clsx('ms-1 form-help internal-ip-hint')}>?</span>
+              </>
+            }
+            error={errors.internalIp?.message}
+            placeholder="192.168.1.100"
+          />
         </div>
         <div className="mb-3">
-          <Input {...register('appsRepoUrl')} label={t('apps-repo')} error={errors.appsRepoUrl?.message} placeholder="https://github.com/meienberger/runtipi-appstore" />
-          <span className="text-muted">{t('apps-repo-hint')}</span>
+          <Input
+            {...register('appsRepoUrl')}
+            label={
+              <>
+                {t('apps-repo')}
+                <Tooltip anchorSelect=".apps-repo-hint">{t('apps-repo-hint')}</Tooltip>
+                <span className={clsx('ms-1 form-help apps-repo-hint')}>?</span>
+              </>
+            }
+            error={errors.appsRepoUrl?.message}
+            placeholder="https://github.com/meienberger/runtipi-appstore"
+          />
         </div>
         <div className="mb-3">
-          <Input {...register('storagePath')} label={t('storage-path')} error={errors.storagePath?.message} placeholder={t('storage-path')} />
-          <span className="text-muted">{t('storage-path-hint')}</span>
+          <Input
+            {...register('storagePath')}
+            label={
+              <>
+                {t('storage-path')}
+                <Tooltip anchorSelect=".storage-path-hint">{t('storage-path-hint')}</Tooltip>
+                <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
+              </>
+            }
+            error={errors.storagePath?.message}
+            placeholder={t('storage-path')}
+          />
+        </div>
+        <div className="mb-3">
+          <Input
+            {...register('localDomain')}
+            label={
+              <>
+                {t('local-domain')}
+                <Tooltip anchorSelect=".local-domain-hint">{t('local-domain-hint')}</Tooltip>
+                <span className={clsx('ms-1 form-help local-domain-hint')}>?</span>
+              </>
+            }
+            error={errors.localDomain?.message}
+            placeholder="tipi.lan"
+          />
+          <Button className="mt-2" onClick={downloadCertificate}>
+            {t('download-certificate')}
+          </Button>
         </div>
         <Button loading={loading} type="submit" className="btn-success">
           {t('submit')}

@@ -22,6 +22,7 @@ export const LanguageSelector = (props: IProps) => {
     <Select value={locale} defaultValue={locale} onValueChange={onChange}>
       <SelectTrigger
         className="mb-3"
+        name="language"
         label={
           showLabel && (
             <span>
@@ -34,7 +35,7 @@ export const LanguageSelector = (props: IProps) => {
           )
         }
       >
-        <SelectValue placeholder="test" />
+        <SelectValue placeholder="Language" />
       </SelectTrigger>
       <SelectContent>
         {LOCALE_OPTIONS.map((option) => (

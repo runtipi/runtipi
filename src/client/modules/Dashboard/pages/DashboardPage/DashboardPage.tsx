@@ -9,11 +9,11 @@ import { ErrorPage } from '../../../../components/ui/ErrorPage';
 
 export const DashboardPage: NextPage = () => {
   const t = useTranslations();
-  const { data, error } = trpc.system.systemInfo.useQuery();
+  const { data, error, isLoading } = trpc.system.systemInfo.useQuery();
 
   return (
     <Layout title={t('dashboard.title')}>
-      {data && <DashboardContainer data={data} />}
+      <DashboardContainer data={data} isLoading={isLoading} />
       {error && <ErrorPage error={t(error.data?.tError.message as MessageKey, { ...error.data?.tError.variables })} />}
     </Layout>
   );

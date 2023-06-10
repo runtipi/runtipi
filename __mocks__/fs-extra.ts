@@ -57,7 +57,9 @@ class FsMock {
   };
 
   mkdirSync = (p: string) => {
-    this.mockFiles[p] = Object.create(null);
+    if (!this.mockFiles[p]) {
+      this.mockFiles[p] = [];
+    }
   };
 
   rmSync = (p: string) => {
@@ -128,6 +130,48 @@ class FsMock {
     },
     writeFile: async (p: string, data: string | string[]) => {
       this.mockFiles[p] = data;
+
+      const dir = path.dirname(p);
+      if (!this.mockFiles[dir]) {
+        this.mockFiles[dir] = [];
+      }
+
+      this.mockFiles[dir].push(path.basename(p));
+    },
+    mkdir: async (p: string) => {
+      if (!this.mockFiles[p]) {
+        this.mockFiles[p] = [];
+      }
+    },
+    readdir: async (p: string) => {
+      const files: string[] = [];
+
+      const depth = p.split('/').length;
+
+      Object.keys(this.mockFiles).forEach((file) => {
+        if (file.startsWith(p)) {
+          const fileDepth = file.split('/').length;
+
+          if (fileDepth === depth + 1) {
+            files.push(file.split('/').pop() || '');
+          }
+        }
+      });
+
+      return files;
+    },
+    lstat: async (p: string) => {
+      return {
+        isDirectory: () => {
+          return this.mockFiles[p] instanceof Array;
+        },
+      };
+    },
+    readFile: async (p: string) => {
+      return this.mockFiles[p];
+    },
+    copyFile: async (source: string, destination: string) => {
+      this.mockFiles[destination] = this.mockFiles[source];
     },
   };
 }

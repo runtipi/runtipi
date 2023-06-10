@@ -54,8 +54,12 @@ node_modules/
 /repos/
 /apps/
 traefik/shared
+traefik/tls
 
 # media folder
 media
 
 /state/
+/test-results/
+/playwright-report/
+/playwright/.cache/

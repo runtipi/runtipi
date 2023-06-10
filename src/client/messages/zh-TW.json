@@ -144,6 +144,7 @@
       "link": "連結",
       "website": "網址",
       "supported-arch": "支持的架構",
+      "choose-open-method": "Choose open method",
       "categories": {
         "data": "數據",
         "network": "網路",
@@ -247,10 +248,13 @@
       "apps-repo-hint": "應用存儲庫的 URL",
       "storage-path": "儲存路徑",
       "storage-path-hint": "存儲目錄的路徑。留空时為默認 (runtipi/app-data)。 確保它是絕對路徑並且它存在",
+      "local-domain": "Local domain",
+      "local-domain-hint": "Domain name used for accessing apps in your local network. Your apps will be accessible at app-name.local-domain.",
       "submit": "儲存",
       "user-settings-title": "使用者設定",
       "language": "語言設定",
-      "help-translate": "協助翻譯"
+      "help-translate": "協助翻譯",
+      "download-certificate": "Download certificate"
     },
     "security": {
       "tab-title": "安全性",

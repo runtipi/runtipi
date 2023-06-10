@@ -20,6 +20,7 @@ import { castAppConfig } from '../../helpers/castAppConfig';
 interface IProps {
   app: AppRouterOutput['getApp'];
 }
+type OpenType = 'local' | 'domain' | 'local_domain';
 
 export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
   const t = useTranslations();
@@ -28,6 +29,8 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
   const stopDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
   const updateSettingsDisclosure = useDisclosure();
+
+  const getSettings = trpc.system.getSettings.useQuery();
 
   const utils = trpc.useContext();
 
@@ -135,15 +138,26 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
     update.mutate({ id: app.id });
   };
 
-  const handleOpen = () => {
+  const handleOpen = (type: OpenType) => {
+    let url = '';
     const { https } = app.info;
     const protocol = https ? 'https' : 'http';
 
     if (typeof window !== 'undefined') {
       // Current domain
       const domain = window.location.hostname;
-      window.open(`${protocol}://${domain}:${app.info.port}${app.info.url_suffix || ''}`, '_blank', 'noreferrer');
+      url = `${protocol}://${domain}:${app.info.port}${app.info.url_suffix || ''}`;
     }
+
+    if (type === 'domain' && app.domain) {
+      url = `https://${app.domain}${app.info.url_suffix || ''}`;
+    }
+
+    if (type === 'local_domain') {
+      url = `https://${app.id}.${getSettings.data?.localDomain}`;
+    }
+
+    window.open(url, '_blank', 'noreferrer');
   };
 
   const newVersion = [app?.latestDockerVersion ? `${app?.latestDockerVersion}` : '', `(${String(app?.latestVersion)})`].join(' ');
@@ -170,14 +184,10 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
             <span className="mt-1 me-1">{t('apps.app-details.version')}: </span>
             <span className="badge bg-gray mt-2">{app.info.version}</span>
           </div>
-          {app.domain && (
-            <a target="_blank" rel="noreferrer" className="mt-1" href={`https://${app.domain}`}>
-              https://{app.domain}
-            </a>
-          )}
           <span className="mt-1 text-muted text-center mb-2">{app.info.short_desc}</span>
           <div className="mb-1">{app.status !== 'missing' && <AppStatus status={app.status} />}</div>
           <AppActions
+            localDomain={getSettings.data?.localDomain}
             updateAvailable={updateAvailable}
             onUpdate={updateDisclosure.open}
             onUpdateSettings={updateSettingsDisclosure.open}
@@ -187,7 +197,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
             onInstall={installDisclosure.open}
             onOpen={handleOpen}
             onStart={handleStartSubmit}
-            info={app.info}
+            app={app}
             status={app.status}
           />
         </div>

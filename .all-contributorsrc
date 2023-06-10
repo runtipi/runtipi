@@ -236,6 +236,51 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "NoisyFridge",
+      "name": "NoisyFridge",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73795785?v=4",
+      "profile": "https://github.com/NoisyFridge",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "Bvoxl",
+      "name": "Bvoxl",
+      "avatar_url": "https://avatars.githubusercontent.com/u/67489519?v=4",
+      "profile": "https://github.com/Bvoxl",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "m-lab-0",
+      "name": "m-lab-0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/116570617?v=4",
+      "profile": "https://github.com/m-lab-0",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "dannkunt",
+      "name": "dannkunt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32395839?v=4",
+      "profile": "https://github.com/dannkunt",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "Schmanko",
+      "name": "Schmanko",
+      "avatar_url": "https://avatars.githubusercontent.com/u/94195393?v=4",
+      "profile": "https://github.com/Schmanko",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -244,5 +289,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,
-  "commitConvention": "angular"
+  "commitConvention": "angular",
+  "commitType": "docs"
 }

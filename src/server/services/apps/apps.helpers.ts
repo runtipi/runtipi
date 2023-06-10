@@ -179,7 +179,7 @@ export const generateEnvFile = (app: App) => {
   }
 
   const baseEnvFile = readFile('/runtipi/.env').toString();
-  let envFile = `${baseEnvFile}\nAPP_PORT=${parsedConfig.data.port}\n`;
+  let envFile = `${baseEnvFile}\nAPP_PORT=${parsedConfig.data.port}\nAPP_ID=${app.id}\n`;
   const envMap = getEnvMap(app.id);
 
   if (parsedConfig.data.generate_vapid_keys) {
@@ -197,8 +197,8 @@ export const generateEnvFile = (app: App) => {
     const formValue = castAppConfig(app.config)[field.env_variable];
     const envVar = field.env_variable;
 
-    if (formValue) {
-      envFile += `${envVar}=${formValue}\n`;
+    if (formValue || typeof formValue === 'boolean') {
+      envFile += `${envVar}=${String(formValue)}\n`;
     } else if (field.type === 'random') {
       if (envMap.has(envVar)) {
         envFile += `${envVar}=${envMap.get(envVar)}\n`;
@@ -209,7 +209,7 @@ export const generateEnvFile = (app: App) => {
         envFile += `${envVar}=${randomString}\n`;
       }
     } else if (field.required) {
-      throw new Error(`Variable ${field.env_variable} is required`);
+      throw new Error(`Variable ${field.label || field.env_variable} is required`);
     }
   });
 
@@ -227,6 +227,80 @@ export const generateEnvFile = (app: App) => {
   }
 
   writeFile(`/app/storage/app-data/${app.id}/app.env`, envFile);
+};
+
+/**
+ * Given a template and a map of variables, this function replaces all instances of the variables in the template with their values.
+ *
+ * @param {string} template - The template to be rendered.
+ * @param {Map<string, string>} envMap - The map of variables and their values.
+ */
+const renderTemplate = (template: string, envMap: Map<string, string>) => {
+  let renderedTemplate = template;
+
+  envMap.forEach((value, key) => {
+    renderedTemplate = renderedTemplate.replace(new RegExp(`{{${key}}}`, 'g'), value);
+  });
+
+  return renderedTemplate;
+};
+
+/**
+ * Given an app, this function copies the app's data directory to the app-data folder.
+ * If a file with an extension of .template is found, it will be copied as a file without the .template extension and the template variables will be replaced
+ * by the values in the app's env file.
+ *
+ * @param {string} id - The id of the app.
+ */
+export const copyDataDir = async (id: string) => {
+  const envMap = getEnvMap(id);
+
+  const appDataDirExists = (await fs.promises.lstat(`/runtipi/apps/${id}/data`).catch(() => false)) as fs.Stats;
+  if (!appDataDirExists || !appDataDirExists.isDirectory()) {
+    return;
+  }
+
+  const dataDir = await fs.promises.readdir(`/runtipi/apps/${id}/data`);
+
+  const processFile = async (file: string) => {
+    if (file.endsWith('.template')) {
+      const template = await fs.promises.readFile(`/runtipi/apps/${id}/data/${file}`, 'utf-8');
+      const renderedTemplate = renderTemplate(template, envMap);
+
+      await fs.promises.writeFile(`/app/storage/app-data/${id}/data/${file.replace('.template', '')}`, renderedTemplate);
+    } else {
+      await fs.promises.copyFile(`/runtipi/apps/${id}/data/${file}`, `/app/storage/app-data/${id}/data/${file}`);
+    }
+  };
+
+  const processDir = async (path: string) => {
+    await fs.promises.mkdir(`/app/storage/app-data/${id}/data/${path}`, { recursive: true });
+    const files = await fs.promises.readdir(`/runtipi/apps/${id}/data/${path}`);
+
+    await Promise.all(
+      files.map(async (file) => {
+        const fullPath = `/runtipi/apps/${id}/data/${path}/${file}`;
+
+        if ((await fs.promises.lstat(fullPath)).isDirectory()) {
+          await processDir(`${path}/${file}`);
+        } else {
+          await processFile(`${path}/${file}`);
+        }
+      }),
+    );
+  };
+
+  await Promise.all(
+    dataDir.map(async (file) => {
+      const fullPath = `/runtipi/apps/${id}/data/${file}`;
+
+      if ((await fs.promises.lstat(fullPath)).isDirectory()) {
+        await processDir(file);
+      } else {
+        await processFile(file);
+      }
+    }),
+  );
 };
 
 /**
@@ -330,7 +404,7 @@ export const getAppInfo = (id: string, status?: App['status']) => {
  *  If the app folder does not exist, it copies the app folder from the apps repository.
  *
  *  @param {string} appName - The name of the app.
- *  @param {boolean} [cleanup=false] - A flag indicating whether to cleanup the app folder before ensuring its existence.
+ *  @param {boolean} [cleanup] - A flag indicating whether to cleanup the app folder before ensuring its existence.
  *  @throws Will throw an error if the app folder cannot be copied from the repository
  */
 export const ensureAppFolder = (appName: string, cleanup = false): void => {

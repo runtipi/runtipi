@@ -11,7 +11,9 @@ type SessionContent = {
 };
 
 declare module 'express-session' {
-  export type SessionData = SessionContent;
+  interface SessionData extends SessionContent {
+    userId?: number;
+  }
 }
 
 interface ExtendedGetServerSidePropsContext<Params, Preview> extends GetServerSidePropsContext<Params, Preview> {

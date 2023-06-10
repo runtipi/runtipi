@@ -1,0 +1,238 @@
+name: E2E Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release/*
+
+jobs:
+  build:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push images
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: meienberger/runtipi:e2e
+          cache-from: type=registry,ref=meienberger/runtipi:buildcache-e2e
+          cache-to: type=registry,ref=meienberger/runtipi:buildcache-e2e,mode=max
+
+  deploy:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    needs: [build]
+    outputs:
+      droplet_id: ${{ steps.create-droplet.outputs.droplet_id }}
+      droplet_ip: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: unnecessary
+          name: id_rsa
+
+      - name: Get sha of last commit
+        id: get-sha
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Create new Droplet
+        id: create-droplet
+        run: |
+          droplet_id=$(doctl compute droplet create runtipi-${{ steps.get-sha.outputs.sha }} \
+          --image ubuntu-20-04-x64 \
+          --size s-1vcpu-1gb \
+          --format ID \
+          --no-header \
+          --ssh-keys ${{ secrets.SSH_KEY_FINGERPRINT }})
+          echo "droplet_id=$droplet_id" >> $GITHUB_OUTPUT
+
+      - name: Wait for Droplet to become active
+        run: |
+          while ! doctl compute droplet get ${{ steps.create-droplet.outputs.droplet_id }} --format Status --no-header | grep -q "active"; do sleep 5; done
+
+      - name: Get Droplet IP address
+        id: get-droplet-ip
+        run: |
+          droplet_ip=$(doctl compute droplet get ${{ steps.create-droplet.outputs.droplet_id }} --format PublicIPv4 --no-header)
+          echo "droplet_ip=$droplet_ip" >> $GITHUB_OUTPUT
+
+      - name: Wait for SSH to be ready on Droplet
+        run: |
+          while ! ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${{ steps.get-droplet-ip.outputs.droplet_ip }} "echo 'SSH is ready'"; do sleep 5; done
+
+      - name: Wait 1 minute for Droplet to be ready
+        run: sleep 60
+
+      - name: Extract branch name from ref
+        id: extract-branch-name
+        run: |
+          branch_name=$(echo ${{ github.ref }} | sed 's/refs\/heads\///')
+          echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
+
+      - name: Deploy app to Droplet
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            echo 'Cloning repo on branch ${{ github.head_ref }}'
+            git clone --single-branch --branch ${{ steps.extract-branch-name.outputs.branch_name }} https://github.com/${{ github.repository }}
+            echo 'Waiting for dpkg lock to be released'
+            cd runtipi
+            echo 'Checking out branch ${{ steps.extract-branch-name.outputs.branch_name }}'
+            git checkout ${{ steps.extract-branch-name.outputs.branch_name }}
+            sudo ./scripts/start-e2e.sh e2e
+            echo 'App deployed'
+          host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
+          user: root
+          key: ${{ secrets.SSH_KEY }}
+
+  e2e:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2.2.4
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Create .env.e2e file with Droplet IP
+        run: echo "SERVER_IP=${{ needs.deploy.outputs.droplet_ip }}" > .env.e2e
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  report-deployment:
+    runs-on: ubuntu-latest
+    needs: [e2e]
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+      pull-requests: write # to comment on the PR
+      issues: write # to comment on the PR
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    if: always()
+    steps:
+      - name: Download report artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: playwright-report/
+
+      - name: Deploy to GitHub Pages
+        id: report-deployment
+        uses: actions/deploy-pages@v2
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comments = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const comment = comments.data.find(comment => comment.body.includes('Playwright report:'));
+
+            if (comment) {
+              await github.rest.issues.deleteComment({
+                comment_id: comment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo
+              });
+            }
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Playwright report: ${{ steps.report-deployment.outputs.page_url }}`
+            })
+
+  teardown:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [e2e, deploy]
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Delete Droplet
+        run: doctl compute droplet delete ${{ needs.deploy.outputs.droplet_id }} --force

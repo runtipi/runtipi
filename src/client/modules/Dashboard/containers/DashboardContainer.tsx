@@ -4,9 +4,15 @@ import { useTranslations } from 'next-intl';
 import { SystemRouterOutput } from '../../../../server/routers/system/system.router';
 import SystemStat from '../components/SystemStat';
 
-type IProps = { data: SystemRouterOutput['systemInfo'] };
+type IProps = { data?: SystemRouterOutput['systemInfo']; isLoading: boolean };
 
-export const DashboardContainer: React.FC<IProps> = ({ data }) => {
+const defaultData: SystemRouterOutput['systemInfo'] = {
+  cpu: { load: 0 },
+  disk: { available: 0, total: 0, used: 0 },
+  memory: { available: 0, total: 0, used: 0 },
+};
+
+export const DashboardContainer: React.FC<IProps> = ({ data = defaultData, isLoading }) => {
   const { disk, memory, cpu } = data;
   const t = useTranslations('dashboard');
   // Convert bytes to GB
@@ -21,9 +27,9 @@ export const DashboardContainer: React.FC<IProps> = ({ data }) => {
 
   return (
     <div className="row row-deck row-cards">
-      <SystemStat title={t('cards.disk.title')} metric={`${diskUsed} GB`} subtitle={t('cards.disk.subtitle', { total: diskSize })} icon={IconDatabase} progress={percentUsed} />
-      <SystemStat title={t('cards.cpu.title')} metric={`${cpu.load.toFixed(2)}%`} subtitle={t('cards.cpu.subtitle')} icon={IconCpu} progress={cpu.load} />
-      <SystemStat title={t('cards.memory.title')} metric={`${percentUsedMemory || 0}%`} subtitle={`${memoryTotal} GB`} icon={IconCircuitResistor} progress={percentUsedMemory} />
+      <SystemStat isLoading={isLoading} title={t('cards.disk.title')} metric={`${diskUsed} GB`} subtitle={t('cards.disk.subtitle', { total: diskSize })} icon={IconDatabase} progress={percentUsed} />
+      <SystemStat isLoading={isLoading} title={t('cards.cpu.title')} metric={`${cpu.load.toFixed(2)}%`} subtitle={t('cards.cpu.subtitle')} icon={IconCpu} progress={cpu.load} />
+      <SystemStat isLoading={isLoading} title={t('cards.memory.title')} metric={`${percentUsedMemory || 0}%`} subtitle={`${memoryTotal} GB`} icon={IconCircuitResistor} progress={percentUsedMemory} />
     </div>
   );
 };

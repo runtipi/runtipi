@@ -21,6 +21,8 @@ services:
     image: postgres:14
     restart: unless-stopped
     stop_grace_period: 1m
+    ports:
+      - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
     environment:

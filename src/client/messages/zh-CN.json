@@ -144,6 +144,7 @@
       "link": "链接",
       "website": "网址",
       "supported-arch": "支持的架构",
+      "choose-open-method": "Choose open method",
       "categories": {
         "data": "数据",
         "network": "网络",
@@ -247,10 +248,13 @@
       "apps-repo-hint": "应用程序仓库的 URL",
       "storage-path": "保存路径",
       "storage-path-hint": "存储目录的路径。留空为默认 (Runtipi/app-data)。请确保它是一个绝对路径并存在",
+      "local-domain": "Local domain",
+      "local-domain-hint": "Domain name used for accessing apps in your local network. Your apps will be accessible at app-name.local-domain.",
       "submit": "保存",
       "user-settings-title": "用户设置",
       "language": "语言设置",
-      "help-translate": "参与翻译"
+      "help-translate": "参与翻译",
+      "download-certificate": "Download certificate"
     },
     "security": {
       "tab-title": "安全",

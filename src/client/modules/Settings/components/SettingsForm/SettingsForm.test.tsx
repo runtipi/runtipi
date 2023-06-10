@@ -39,6 +39,7 @@ describe('Test: SettingsForm', () => {
       internalIp: 'invalid internal ip',
       appsRepoUrl: 'invalid url',
       storagePath: 'invalid path',
+      localDomain: 'invalid local domain',
     };
     render(<SettingsForm onSubmit={jest.fn()} submitErrors={submitErrors} />);
 
@@ -50,29 +51,32 @@ describe('Test: SettingsForm', () => {
     expect(screen.getByText(submitErrors.internalIp)).toBeInTheDocument();
     expect(screen.getByText(submitErrors.appsRepoUrl)).toBeInTheDocument();
     expect(screen.getByText(submitErrors.storagePath)).toBeInTheDocument();
+    expect(screen.getByText(submitErrors.localDomain)).toBeInTheDocument();
   });
 
   it('should correctly validate the form', async () => {
     // arrange
     render(<SettingsForm onSubmit={jest.fn()} />);
     const submitButton = screen.getByRole('button', { name: 'Save' });
-    const dnsIpInput = screen.getByLabelText('DNS IP');
-    const domainInput = screen.getByLabelText('Domain name');
-    const internalIpInput = screen.getByLabelText('Internal IP');
-    const appsRepoUrlInput = screen.getByLabelText('Apps repo URL');
+    const dnsIpInput = screen.getByRole('textbox', { name: 'dnsIp' });
+    const domainInput = screen.getByRole('textbox', { name: 'domain' });
+    const internalIpInput = screen.getByRole('textbox', { name: 'internalIp' });
+    const appsRepoUrlInput = screen.getByRole('textbox', { name: 'appsRepoUrl' });
+    const localDomainInput = screen.getByRole('textbox', { name: 'localDomain' });
 
     // act
     fireEvent.change(dnsIpInput, { target: { value: 'invalid ip' } });
     fireEvent.change(domainInput, { target: { value: 'invalid domain' } });
     fireEvent.change(internalIpInput, { target: { value: 'invalid internal ip' } });
     fireEvent.change(appsRepoUrlInput, { target: { value: 'invalid url' } });
+    fireEvent.change(localDomainInput, { target: { value: 'invalid local domain' } });
     fireEvent.click(submitButton);
 
     // assert
     await waitFor(() => {
       expect(screen.getAllByText('Invalid IP address')).toHaveLength(2);
     });
-    expect(screen.getByText('Invalid domain')).toBeInTheDocument();
+    expect(screen.getAllByText('Invalid domain')).toHaveLength(2);
     expect(screen.getByText('Invalid URL')).toBeInTheDocument();
   });
 
@@ -88,6 +92,21 @@ describe('Test: SettingsForm', () => {
     // assert
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('should download the certificate when the download button is clicked', async () => {
+    // arrange
+    const spy = jest.spyOn(window, 'open').mockImplementation();
+    render(<SettingsForm onSubmit={jest.fn} />);
+    const downloadButton = screen.getByRole('button', { name: 'Download certificate' });
+
+    // act
+    fireEvent.click(downloadButton);
+
+    // assert
+    await waitFor(() => {
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

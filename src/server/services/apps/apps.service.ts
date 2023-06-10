@@ -3,7 +3,7 @@ import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import { Database } from '@/server/db';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo } from './apps.helpers';
+import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo, copyDataDir } from './apps.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
@@ -125,7 +125,7 @@ export class AppServiceClass {
       checkAppRequirements(id);
 
       // Create app folder
-      createFolder(`/app/storage/app-data/${id}`);
+      createFolder(`/app/storage/app-data/${id}/data`);
 
       const appInfo = getAppInfo(id);
 
@@ -154,6 +154,7 @@ export class AppServiceClass {
       if (newApp) {
         // Create env file
         generateEnvFile(newApp);
+        await copyDataDir(id);
       }
 
       // Run script
@@ -185,7 +186,7 @@ export class AppServiceClass {
    *
    * @param {string} id - The ID of the app to update.
    * @param {object} form - The new configuration of the app.
-   * @param {boolean} [exposed=false] - If the app should be exposed or not.
+   * @param {boolean} [exposed] - If the app should be exposed or not.
    * @param {string} [domain] - The domain for the app if exposed is true.
    */
   public updateAppConfig = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string) => {

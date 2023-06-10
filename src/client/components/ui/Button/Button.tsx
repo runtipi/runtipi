@@ -6,7 +6,7 @@ interface IProps {
   type?: 'submit' | 'reset' | 'button';
   disabled?: boolean;
   loading?: boolean;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   children: React.ReactNode;
   width?: number | null;
 }
