@@ -22,7 +22,7 @@ export const EmptyPage: React.FC<IProps> = ({ title, subtitle, onAction, actionL
       className={clsx(styles.emptyImage, 'mb-3')}
       style={{
         maxWidth: '100%',
-        height: 'auto',
+        height: '80px',
       }}
     />
     <p className="empty-title">{title}</p>
