@@ -144,7 +144,7 @@
       "link": "Hivatkozás",
       "website": "Weboldal",
       "supported-arch": "Támogatott architektúrák",
-      "choose-open-method": "Choose open method",
+      "choose-open-method": "Válassza a nyitott módszert",
       "categories": {
         "data": "Adat",
         "network": "Hálózat",
@@ -248,7 +248,7 @@
       "apps-repo-hint": "Az alkalmazás-tárház URL-je.",
       "storage-path": "A tárhely elérési útja",
       "storage-path-hint": "Út a tárolókönyvtárhoz. Alapértelmezés szerint maradjon üres (runtipi/app-data). Ügyeljen arra, hogy abszolút út legyen, és hogy létezik",
-      "local-domain": "Local domain",
+      "local-domain": "Helyi domain",
       "local-domain-hint": "Domain name used for accessing apps in your local network. Your apps will be accessible at app-name.local-domain.",
       "submit": "Mentés",
       "user-settings-title": "Felhasználói beállítások",
