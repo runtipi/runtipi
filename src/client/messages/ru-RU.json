@@ -6,7 +6,7 @@
       "missing-email-or-password": "Пропущен e-mail или пароль",
       "invalid-username": "Неверный логин",
       "user-already-exists": "Пользователь уже существует",
-      "error-creating-user": "Ошибка создания пользователя",
+      "error-creating-user": "Ошибка при создании пользователя",
       "no-change-password-request": "Не найден запрос на смену пароля",
       "operator-not-found": "Оператор не найден",
       "user-not-found": "Пользователь не найден",
