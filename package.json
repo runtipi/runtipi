@@ -9,7 +9,8 @@
     "test:e2e:ui": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test --ui",
     "test:client": "jest --colors --selectProjects client --",
     "test:server": "jest --colors --selectProjects server --",
-    "dev": "npm run copy:migrations && nodemon",
+    "dev": "npm run copy:migrations && npm run db:migrate && nodemon",
+    "db:migrate": "NODE_ENV=development dotenv -e .env -- tsx ./src/server/run-migrations-dev.ts",
     "start": "NODE_ENV=production node index.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -140,6 +141,7 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
+    "tsx": "^3.12.7",
     "typescript": "5.1.3",
     "wait-for-expect": "^3.0.2",
     "whatwg-fetch": "^3.6.2"
