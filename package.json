@@ -106,7 +106,7 @@
     "@types/node-cron": "^3.0.2",
     "@types/pg": "^8.6.6",
     "@types/react": "18.2.10",
-    "@types/react-dom": "18.2.4",
+    "@types/react-dom": "18.2.5",
     "@types/semver": "^7.5.0",
     "@types/supertest": "^2.0.12",
     "@types/testing-library__jest-dom": "^5.14.6",
