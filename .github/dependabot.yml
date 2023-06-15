@@ -17,4 +17,4 @@ updates:
     schedule:
       interval: 'daily'
     rebase-strategy: 'auto'
-    versioning-strategy: 'increase'
+    versioning-strategy: increase
