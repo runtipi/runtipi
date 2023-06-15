@@ -87,7 +87,7 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.8",
+    "@babel/core": "^7.22.5",
     "@faker-js/faker": "^8.0.1",
     "@playwright/test": "^1.35.1",
     "@testing-library/dom": "^9.3.0",
