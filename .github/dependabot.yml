@@ -7,11 +7,11 @@ version: 2
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
+    versioning-strategy: increase
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
     rebase-strategy: 'auto'
-    versioning-strategy: increase
     
   - package-ecosystem: 'github-actions'
     directory: '/'
