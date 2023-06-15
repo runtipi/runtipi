@@ -255,6 +255,11 @@ const renderTemplate = (template: string, envMap: Map<string, string>) => {
 export const copyDataDir = async (id: string) => {
   const envMap = getEnvMap(id);
 
+  const appDataDirExists = (await fs.promises.lstat(`/runtipi/apps/${id}/data`).catch(() => false)) as fs.Stats;
+  if (!appDataDirExists || !appDataDirExists.isDirectory()) {
+    return;
+  }
+
   const dataDir = await fs.promises.readdir(`/runtipi/apps/${id}/data`);
 
   const processFile = async (file: string) => {

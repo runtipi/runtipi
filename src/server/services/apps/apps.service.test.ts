@@ -259,6 +259,7 @@ describe('Install app', () => {
   it('should copy and replace env variables in deeply nested .templates files in data folder', async () => {
     // arrange
     const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST', type: 'text', label: 'test', required: true }] });
+    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/data/test.txt.template`, 'test {{TEST}}');
     await fs.promises.mkdir(`/runtipi/apps/${appConfig.id}/data/test`);
     await fs.promises.mkdir(`/runtipi/apps/${appConfig.id}/data/test/test`);
     await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/data/test/test/test.txt.template`, 'test {{TEST}}');
