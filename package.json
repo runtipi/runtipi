@@ -113,7 +113,7 @@
     "@types/uuid": "^9.0.2",
     "@types/validator": "^13.7.17",
     "@types/web-push": "^3.3.2",
-    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.6",
     "dotenv-cli": "^7.2.1",
     "drizzle-kit": "^0.18.0",
