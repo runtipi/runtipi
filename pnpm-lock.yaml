@@ -2,8 +2,8 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@hookform/resolvers':
-    specifier: ^3.1.0
-    version: 3.1.0(react-hook-form@7.44.3)
+    specifier: ^3.1.1
+    version: 3.1.1(react-hook-form@7.44.3)
   '@otplib/core':
     specifier: ^12.0.1
     version: 12.0.1
@@ -24,7 +24,7 @@ dependencies:
     version: 1.2.1(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
   '@radix-ui/react-switch':
     specifier: ^1.0.3
-    version: 1.0.3(@types/react-dom@18.2.5)(@types/react@18.2.10)(react-dom@18.2.0)(react@18.2.0)
+    version: 1.0.3(@types/react-dom@18.2.5)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
   '@radix-ui/react-tabs':
     specifier: ^1.0.4
     version: 1.0.4(@types/react-dom@18.2.5)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
@@ -1371,8 +1371,8 @@ packages:
       tslib: 2.5.3
     dev: false
 
-  /@hookform/resolvers@3.1.0(react-hook-form@7.44.3):
-    resolution: {integrity: sha512-z0A8K+Nxq+f83Whm/ajlwE6VtQlp/yPHZnXw7XWVPIGm1Vx0QV8KThU3BpbBRfAZ7/dYqCKKBNnQh85BkmBKkA==}
+  /@hookform/resolvers@3.1.1(react-hook-form@7.44.3):
+    resolution: {integrity: sha512-tS16bAUkqjITNSvbJuO1x7MXbn7Oe8ZziDTJdA9mMvsoYthnOOiznOTGBYwbdlYBgU+tgpI/BtTU3paRbCuSlg==}
     peerDependencies:
       react-hook-form: ^7.0.0
     dependencies:
@@ -2477,7 +2477,7 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@radix-ui/react-switch@1.0.3(@types/react-dom@18.2.5)(@types/react@18.2.10)(react-dom@18.2.0)(react@18.2.0):
+  /@radix-ui/react-switch@1.0.3(@types/react-dom@18.2.5)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-mxm87F88HyHztsI7N+ZUmEoARGkC22YVW5CaC+Byc+HRpuvCrOBPTAnXgf+tZ/7i0Sg/eOePGdMhUKhPaQEqow==}
     peerDependencies:
       '@types/react': '*'
@@ -2492,13 +2492,13 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@radix-ui/primitive': 1.0.1
-      '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.10)(react@18.2.0)
-      '@radix-ui/react-context': 1.0.1(@types/react@18.2.10)(react@18.2.0)
-      '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.5)(@types/react@18.2.10)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-use-controllable-state': 1.0.1(@types/react@18.2.10)(react@18.2.0)
-      '@radix-ui/react-use-previous': 1.0.1(@types/react@18.2.10)(react@18.2.0)
-      '@radix-ui/react-use-size': 1.0.1(@types/react@18.2.10)(react@18.2.0)
-      '@types/react': 18.2.10
+      '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.12)(react@18.2.0)
+      '@radix-ui/react-context': 1.0.1(@types/react@18.2.12)(react@18.2.0)
+      '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.5)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
+      '@radix-ui/react-use-controllable-state': 1.0.1(@types/react@18.2.12)(react@18.2.0)
+      '@radix-ui/react-use-previous': 1.0.1(@types/react@18.2.12)(react@18.2.0)
+      '@radix-ui/react-use-size': 1.0.1(@types/react@18.2.12)(react@18.2.0)
+      '@types/react': 18.2.12
       '@types/react-dom': 18.2.5
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -2637,7 +2637,7 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@radix-ui/react-use-previous@1.0.1(@types/react@18.2.10)(react@18.2.0):
+  /@radix-ui/react-use-previous@1.0.1(@types/react@18.2.12)(react@18.2.0):
     resolution: {integrity: sha512-cV5La9DPwiQ7S0gf/0qiD6YgNqM5Fk97Kdrlc5yBcrF3jyEZQwm7vYFqMo4IfeHgJXsRaMvLABFtd0OVEmZhDw==}
     peerDependencies:
       '@types/react': '*'
@@ -2647,7 +2647,7 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.20.13
-      '@types/react': 18.2.10
+      '@types/react': 18.2.12
       react: 18.2.0
     dev: false
 
