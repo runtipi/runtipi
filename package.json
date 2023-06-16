@@ -38,7 +38,7 @@
     "@radix-ui/react-dropdown-menu": "^2.0.5",
     "@radix-ui/react-select": "^1.2.1",
     "@radix-ui/react-switch": "^1.0.2",
-    "@radix-ui/react-tabs": "^1.0.3",
+    "@radix-ui/react-tabs": "^1.0.4",
     "@runtipi/postgres-migrations": "^5.3.0",
     "@tabler/core": "1.0.0-beta19",
     "@tabler/icons-react": "^2.19.0",
