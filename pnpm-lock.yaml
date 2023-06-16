@@ -65,8 +65,8 @@ dependencies:
     specifier: ^7.1.0
     version: 7.1.0(express-session@1.17.3)
   cookies-next:
-    specifier: ^2.1.1
-    version: 2.1.1
+    specifier: ^2.1.2
+    version: 2.1.2
   drizzle-orm:
     specifier: ^0.26.5
     version: 0.26.5(@types/pg@8.10.2)(pg@8.11.0)
@@ -4146,8 +4146,8 @@ packages:
     resolution: {integrity: sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw==}
     dev: true
 
-  /cookies-next@2.1.1:
-    resolution: {integrity: sha512-AZGZPdL1hU3jCjN2UMJTGhLOYzNUN9Gm+v8BdptYIHUdwz397Et1p+sZRfvAl8pKnnmMdX2Pk9xDRKCGBum6GA==}
+  /cookies-next@2.1.2:
+    resolution: {integrity: sha512-czxcfqVaQlo0Q/3xMgp/2jpspsuLJrIm6D37wlmibP3DAcYT315c8UxQmDMohhAT/GRWpaHzpDEFANBjzTFQGg==}
     dependencies:
       '@types/cookie': 0.4.1
       '@types/node': 16.18.35
