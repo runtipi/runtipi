@@ -289,8 +289,8 @@ devDependencies:
     specifier: ^5.0.1
     version: 5.0.1(@testing-library/dom@9.3.0)(eslint@8.42.0)
   eslint-plugin-jsdoc:
-    specifier: ^46.0.0
-    version: 46.0.0(eslint@8.42.0)
+    specifier: ^46.2.6
+    version: 46.2.6(eslint@8.42.0)
   eslint-plugin-jsx-a11y:
     specifier: ^6.6.1
     version: 6.7.1(eslint@8.42.0)
@@ -4068,6 +4068,11 @@ packages:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
+  /builtin-modules@3.3.0:
+    resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
+    engines: {node: '>=6'}
+    dev: true
+
   /busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
     engines: {node: '>=10.16.0'}
@@ -5505,8 +5510,8 @@ packages:
       - typescript
     dev: true
 
-  /eslint-plugin-jsdoc@46.0.0(eslint@8.42.0):
-    resolution: {integrity: sha512-xmB5WleBcPCFYlrFfdjrcfSKOJBLwyGmKa+i+fVqlIHp8g5aAoeQpBGugUzToFtQgd4hNZYlfIcP7QSxC9NYWQ==}
+  /eslint-plugin-jsdoc@46.2.6(eslint@8.42.0):
+    resolution: {integrity: sha512-zIaK3zbSrKuH12bP+SPybPgcHSM6MFzh3HFeaODzmsF1N8C1l8dzJ22cW1aq4g0+nayU1VMjmNf7hg0dpShLrA==}
     engines: {node: '>=16'}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0
@@ -5518,6 +5523,7 @@ packages:
       escape-string-regexp: 4.0.0
       eslint: 8.42.0
       esquery: 1.5.0
+      is-builtin-module: 3.2.1
       semver: 7.5.1
       spdx-expression-parse: 3.0.1
     transitivePeerDependencies:
@@ -6533,6 +6539,13 @@ packages:
     resolution: {integrity: sha512-i2R6zNFDwgEHJyQUtJEk0XFi1i0dPFn/oqjK3/vPCcDeJvW5NQ83V8QbicfF1SupOaB0h8ntgBC2YiE7dfyctQ==}
     engines: {node: '>=4'}
     dev: false
+
+  /is-builtin-module@3.2.1:
+    resolution: {integrity: sha512-BSLE3HnV2syZ0FK0iMA/yUGplUeMmNz4AW5fnTunbCIqZi4vG3WjJT9FHMy5D69xmAYBHXQhJdALdpwVxV501A==}
+    engines: {node: '>=6'}
+    dependencies:
+      builtin-modules: 3.3.0
+    dev: true
 
   /is-callable@1.2.7:
     resolution: {integrity: sha512-1BC0BVFhS/p0qtw6enp8e+8OD0UrK0oFLztSjNzhcKA3WDuJxxAPXzPuPtKkjEY9UUoEWlX/8fgKeu2S8i9JTA==}
