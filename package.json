@@ -75,7 +75,7 @@
     "remark-breaks": "^3.0.3",
     "remark-gfm": "^3.0.1",
     "sass": "^1.62.1",
-    "semver": "^7.5.1",
+    "semver": "^7.5.2",
     "sharp": "0.32.1",
     "superjson": "^1.12.3",
     "tslib": "^2.5.3",
