@@ -26,7 +26,7 @@ Tipi is a personal homeserver orchestrator that makes it easy to manage and run 
 
 ## Getting started
 
-Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation) for installation instructions, documentation and guides.
+Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation?utm_source=github&utm_medium=README&utm_campaign=getting-started) for installation instructions, documentation and guides.
 
 ## Demo
 
@@ -39,7 +39,7 @@ You can try out a demo of Tipi at [demo.runtipi.io](https://demo.runtipi.io) usi
 
 For a detailed guide on how to install Tipi. This amazing article by @kycfree [Running a Home Server with Tipi](https://kyc3.life/running-a-home-server-with-tipi/)
 
-You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.runtipi.io/docs/introduction)
+You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.runtipi.io/docs/introduction?utm_source=github&utm_medium=README&utm_campaign=main-repo-docs)
 
 ## ❤️ Contributing
 
@@ -121,9 +121,3 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
-<p align="center">
-  <a rel="noopener noreferrer" target="_blank" href="https://vercel.com/?utm_source=runtipi&utm_campaign=oss">
-    <img height="34px" src="https://images.ctfassets.net/e5382hct74si/78Olo8EZRdUlcDUFQvnzG7/fa4cdb6dc04c40fceac194134788a0e2/1618983297-powered-by-vercel.svg" alt="Powered by vercel">
-  </a>
-</p>
