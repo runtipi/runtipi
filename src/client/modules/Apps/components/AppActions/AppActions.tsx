@@ -84,10 +84,12 @@ export const AppActions: React.FC<IProps> = ({ app, status, localDomain, onInsta
             <IconLock className="text-muted me-2" size={16} />
             {app.id}.{localDomain}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onOpen('local')}>
-            <IconLockOff className="text-muted me-2" size={16} />
-            {window.location.hostname}:{app.info.port}
-          </DropdownMenuItem>
+          {!app.info.force_expose && (
+            <DropdownMenuItem onClick={() => onOpen('local')}>
+              <IconLockOff className="text-muted me-2" size={16} />
+              {window.location.hostname}:{app.info.port}
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
