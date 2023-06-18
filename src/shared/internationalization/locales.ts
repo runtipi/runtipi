@@ -8,6 +8,7 @@ const APP_LOCALES = {
   'sv-SE': 'Svenska',
   'ro-RO': 'Română',
   'ru-RU': 'Русский',
+  'vi-VN': 'Tiếng Việt',
   'zh-CN': '简体中文',
   'zh-TW': '繁體中文',
 } as const;
@@ -23,6 +24,7 @@ const FALLBACK_LOCALES: { from: BaseLang<keyof typeof APP_LOCALES>; to: keyof ty
   { from: 'sv', to: 'sv-SE' },
   { from: 'ro', to: 'ro-RO' },
   { from: 'ru', to: 'ru-RU' },
+  { from: 'vi', to: 'vi-VN' },
   { from: 'zh', to: 'zh-CN' },
 ];
 
