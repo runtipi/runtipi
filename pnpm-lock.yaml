@@ -190,8 +190,8 @@ devDependencies:
     specifier: ^14.4.3
     version: 14.4.3(@testing-library/dom@9.3.1)
   '@total-typescript/shoehorn':
-    specifier: ^0.1.0
-    version: 0.1.0
+    specifier: ^0.1.1
+    version: 0.1.1
   '@total-typescript/ts-reset':
     specifier: ^0.4.2
     version: 0.4.2
@@ -2714,8 +2714,8 @@ packages:
     engines: {node: '>= 10'}
     dev: true
 
-  /@total-typescript/shoehorn@0.1.0:
-    resolution: {integrity: sha512-XKig6hXxWnUh0fsW3LR2vxpxwLlPFokfOSR0riHKA9uXvdHDfwOOPdAOi4U/YNKLmgYUu/plUfnF3yiAAz1+Zg==}
+  /@total-typescript/shoehorn@0.1.1:
+    resolution: {integrity: sha512-XSPcazQsC2Cr7eCiAI+M2bTmMziBvFWYTYMgUDKLbU6i+7m3I2BF5gXF5vKDO8577fONs9CvmTvVa7+nMHMfxg==}
     dev: true
 
   /@total-typescript/ts-reset@0.4.2:
