@@ -68,8 +68,8 @@ dependencies:
     specifier: ^2.1.2
     version: 2.1.2
   drizzle-orm:
-    specifier: ^0.26.5
-    version: 0.26.5(@types/pg@8.10.2)(pg@8.11.0)
+    specifier: ^0.27.0
+    version: 0.27.0(@types/pg@8.10.2)(pg@8.11.0)
   express:
     specifier: ^4.17.3
     version: 4.18.2
@@ -4487,8 +4487,8 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.26.5(@types/pg@8.10.2)(pg@8.11.0):
-    resolution: {integrity: sha512-ajjbOIoXqldWoWBn0RbVQCCT732R4Ad+gUjUrlmMpzWYwgnbG/qqPy84NhHntQ/MR//z3xfvT1Z2fD8uCAPX3g==}
+  /drizzle-orm@0.27.0(@types/pg@8.10.2)(pg@8.11.0):
+    resolution: {integrity: sha512-LGiJ0icB+wQwgbSCOvAjONY8Ec6G/EDzQQP5PmUaQYeI9OqgpVKHC2T1fFIbvk5dabWsbokJ5NOciVAxriStig==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
