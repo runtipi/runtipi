@@ -118,7 +118,7 @@
     "dotenv-cli": "^7.2.1",
     "drizzle-kit": "^0.18.1",
     "esbuild": "^0.16.17",
-    "eslint": "8.42.0",
+    "eslint": "8.43.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-next": "13.4.6",
