@@ -20,7 +20,14 @@ function install_generic() {
     sudo dnf -y install "${dependency}"
     return 0
   elif [[ "${os}" == "arch" ]]; then
-    sudo pacman -Sy --noconfirm "${dependency}"
+    if ! sudo pacman -Sy --noconfirm "${dependency}" ; then
+      if command -v yay > /dev/null 2>&1 ; then
+        sudo -u $SUDO_USER yay -Sy --noconfirm "${dependency}"
+      else
+        echo "Could not install \"${dependency}\", either using pacman or the yay AUR helper. Please try installing it manually."
+        return 1
+      fi
+    fi
     return 0
   else
     return 1
