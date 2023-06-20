@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-30-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-31-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
@@ -112,6 +112,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Schmanko"><img src="https://avatars.githubusercontent.com/u/94195393?v=4?s=100" width="100px;" alt="Schmanko"/><br /><sub><b>Schmanko</b></sub></a><br /><a href="#translation-Schmanko" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://micro.nghialele.com"><img src="https://avatars.githubusercontent.com/u/129353223?v=4?s=100" width="100px;" alt="Nghia Lele"/><br /><sub><b>Nghia Lele</b></sub></a><br /><a href="#translation-nghialele" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/amusingimpala75"><img src="https://avatars.githubusercontent.com/u/69653100?v=4?s=100" width="100px;" alt="amusingimpala75"/><br /><sub><b>amusingimpala75</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=amusingimpala75" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
