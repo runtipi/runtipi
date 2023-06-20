@@ -69,7 +69,7 @@
     "react-hot-toast": "^2.4.1",
     "react-markdown": "^8.0.7",
     "react-select": "^5.7.3",
-    "react-tooltip": "^5.13.1",
+    "react-tooltip": "^5.14.0",
     "redaxios": "^0.5.1",
     "redis": "^4.6.7",
     "remark-breaks": "^3.0.3",

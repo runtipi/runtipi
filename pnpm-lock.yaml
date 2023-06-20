@@ -119,8 +119,8 @@ dependencies:
     specifier: ^5.7.3
     version: 5.7.3(@types/react@18.2.13)(react-dom@18.2.0)(react@18.2.0)
   react-tooltip:
-    specifier: ^5.13.1
-    version: 5.13.1(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^5.14.0
+    version: 5.14.0(react-dom@18.2.0)(react@18.2.0)
   redaxios:
     specifier: ^0.5.1
     version: 0.5.1
@@ -8476,13 +8476,13 @@ packages:
       tslib: 2.5.3
     dev: false
 
-  /react-tooltip@5.13.1(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-9NstDFdjyy6cIH9zjeT70zXTHlW/TIGCOWQmhkAyqLFeQioLg1FXvb9ec7AxSpn0zyFUkFSLdFYxZRuewti3Aw==}
+  /react-tooltip@5.14.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-fvHgZKSdDC/Zv7G7IL6kPJi99Fqty6zkQsYQZGSkhMmmDQhVnsBLAmY8s14Nh8bshgPmR5EvbjUDZg0yMsp1hg==}
     peerDependencies:
       react: '>=16.14.0'
       react-dom: '>=16.14.0'
     dependencies:
-      '@floating-ui/dom': 1.2.1
+      '@floating-ui/dom': 1.2.9
       classnames: 2.3.2
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
