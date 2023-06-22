@@ -155,8 +155,8 @@ dependencies:
     specifier: ^13.7.0
     version: 13.9.0
   web-push:
-    specifier: ^3.6.2
-    version: 3.6.2
+    specifier: ^3.6.3
+    version: 3.6.3
   winston:
     specifier: ^3.9.0
     version: 3.9.0
@@ -3609,6 +3609,15 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /agent-base@7.1.0:
+    resolution: {integrity: sha512-o/zjMZRhJxny7OyEF+Op8X+efiELC7k7yOjMzgfzVqOzXqkBkWI79YoTdOtsuWd5BWhAGAuOY/Xa6xpiaWXiNg==}
+    engines: {node: '>= 14'}
+    dependencies:
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
     dependencies:
@@ -6102,6 +6111,16 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+
+  /https-proxy-agent@7.0.0:
+    resolution: {integrity: sha512-0euwPCRyAPSgGdzD1IVN9nJYHtBhJwb6XPfbpQcYbPCwrBidX6GzxmchnaF4sfF/jPb74Ojx5g4yTg3sixlyPw==}
+    engines: {node: '>= 14'}
+    dependencies:
+      agent-base: 7.1.0
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
@@ -10006,14 +10025,14 @@ packages:
       '@zxing/text-encoding': 0.9.0
     dev: true
 
-  /web-push@3.6.2:
-    resolution: {integrity: sha512-mqDSr+YAiee6URZwcJ2Qx2RPD7fo9hC/Ryj4rWN1TsvSDt29AEFuZ5/h5JjH+AgG4qk47t6JkRtfh8Dx4Kok/Q==}
-    engines: {node: '>= 6'}
+  /web-push@3.6.3:
+    resolution: {integrity: sha512-3RlA0lRmLcwlHCRR94Tz+Fw6wPtm0lFm8oyukQunlEIarANxE84Ox9XBgF4+jNlXgO40DIwblOiC43oR46helA==}
+    engines: {node: '>= 16'}
     hasBin: true
     dependencies:
       asn1.js: 5.4.1
       http_ece: 1.1.0
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 7.0.0
       jws: 4.0.0
       minimist: 1.2.8
     transitivePeerDependencies:
