@@ -33,7 +33,7 @@ module.exports = {
     'react/button-has-type': 0,
     'import/no-extraneous-dependencies': [
       'error',
-      { devDependencies: ['esbuild.js', 'e2e/**', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/*.factory.{ts,tsx}', '**/mocks/**', 'tests/**', '**/*.d.ts'] },
+      { devDependencies: ['esbuild.js', 'e2e/**', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/*.factory.{ts,tsx}', '**/mocks/**', 'tests/**', '**/*.d.ts', '**/*.workspace.ts'] },
     ],
     'no-underscore-dangle': 0,
     'arrow-body-style': 0,
