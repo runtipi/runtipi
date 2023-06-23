@@ -18,6 +18,9 @@
       "@/shared/*": [
         "./src/shared/*"
       ],
+      "@/tests/*": [
+        "./tests/*"
+      ],
     },
     "lib": [
       "dom",
