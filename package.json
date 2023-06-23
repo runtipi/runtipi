@@ -9,6 +9,7 @@
     "test:e2e:ui": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test --ui",
     "test:client": "jest --colors --selectProjects client --",
     "test:server": "jest --colors --selectProjects server --",
+    "test:vite": "dotenv -e .env.test -- vitest run --coverage",
     "dev": "npm run copy:migrations && npm run db:migrate && nodemon",
     "db:migrate": "NODE_ENV=development dotenv -e .env -- tsx ./src/server/run-migrations-dev.ts",
     "start": "NODE_ENV=production node index.js",
@@ -143,6 +144,8 @@
     "ts-node": "^10.9.1",
     "tsx": "^3.12.7",
     "typescript": "5.1.3",
+    "vite-tsconfig-paths": "^4.2.0",
+    "vitest": "^0.32.2",
     "wait-for-expect": "^3.0.2",
     "whatwg-fetch": "^3.6.2"
   },
