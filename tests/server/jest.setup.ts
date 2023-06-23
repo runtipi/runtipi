@@ -7,6 +7,11 @@ global.location = fromPartial({
   hostname: 'localhost',
 });
 
+// Temporary hack to still run all jest tests and get correct coverage
+jest.mock('vitest', () => ({
+  vi: jest,
+}));
+
 console.error = jest.fn();
 
 // Mock Logger
