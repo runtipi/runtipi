@@ -1,10 +1,11 @@
 import fs from 'fs-extra';
+import { vi } from 'vitest';
 import * as argon2 from 'argon2';
 import { faker } from '@faker-js/faker';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { generateSessionId } from '@/server/common/session.helpers';
 import { fromAny, fromPartial } from '@total-typescript/shoehorn';
-import { mockInsert, mockQuery, mockSelect } from '@/server/tests/drizzle-helpers';
+import { mockInsert, mockQuery, mockSelect } from '@/tests/mocks/drizzle';
 import { createDatabase, clearDatabase, closeDatabase, TestDatabase } from '@/server/tests/test-utils';
 import { encrypt } from '../../utils/encryption';
 import { setConfig } from '../../core/TipiConfig';
@@ -23,8 +24,6 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  jest.mock('fs-extra');
-  jest.mock('redis');
   await setConfig('demoMode', false);
   await clearDatabase(database);
 });
@@ -448,7 +447,7 @@ describe('Test: logout', () => {
 
   it('Should destroy session upon logount', async () => {
     // arrange
-    const destroy = jest.fn();
+    const destroy = vi.fn();
     const req = { session: { userId: 1, destroy } };
 
     // act
