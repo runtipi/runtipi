@@ -4,7 +4,6 @@ const main = async () => {
   await runPostgresMigrations();
 };
 
-main().catch((e) => {
-  console.error(e);
+main().catch(() => {
   process.exit(1);
 });

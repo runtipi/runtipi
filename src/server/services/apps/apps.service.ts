@@ -123,6 +123,7 @@ export class AppServiceClass {
 
       ensureAppFolder(id, true);
       checkAppRequirements(id);
+      console.log('YOYOYO');
 
       // Create app folder
       createFolder(`/app/storage/app-data/${id}/data`);

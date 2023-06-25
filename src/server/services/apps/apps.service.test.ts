@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import waitForExpect from 'wait-for-expect';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { faker } from '@faker-js/faker';
+import { vi } from 'vitest';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher, EVENT_TYPES } from '../../core/EventDispatcher';
 import { getEnvMap } from './apps.helpers';
@@ -18,12 +19,11 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  jest.mock('fs-extra');
   await clearDatabase(db);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore - we are mocking fs
-  fs.__resetAllMocks();
-  EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
+  // fs.__resetAllMocks();
+  EventDispatcher.dispatchEventAsync = vi.fn().mockResolvedValue({ success: true });
 });
 
 afterAll(async () => {
@@ -31,13 +31,15 @@ afterAll(async () => {
 });
 
 describe('Install app', () => {
-  it('Should correctly generate env file for app', async () => {
+  it.only('Should correctly generate env file for app', async () => {
     // arrange
     const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', env_variable: 'TEST_FIELD', required: true }] });
 
     // act
     await AppsService.installApp(appConfig.id, { TEST_FIELD: 'test' });
     const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
+
+    console.log(envFile);
 
     // assert
     expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nAPP_ID=${appConfig.id}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${appConfig.port}`);
@@ -61,7 +63,7 @@ describe('Install app', () => {
   it('Should start app if already installed', async () => {
     // arrange
     const appConfig = createAppConfig();
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    const spy = vi.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
     await AppsService.installApp(appConfig.id, {});
@@ -78,7 +80,7 @@ describe('Install app', () => {
   it('Should delete app if install script fails', async () => {
     // arrange
     const appConfig = createAppConfig();
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
+    EventDispatcher.dispatchEventAsync = vi.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
     // act
     await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrow('server-messages.errors.app-failed-to-install');
@@ -221,7 +223,7 @@ describe('Install app', () => {
 
   it('Should throw if config.json is not valid after folder copy', async () => {
     // arrange
-    jest.spyOn(fs, 'copySync').mockImplementationOnce(() => {});
+    vi.spyOn(fs, 'copySync').mockImplementationOnce(() => {});
     const appConfig = createAppConfig({});
     const MockFiles: Record<string, unknown> = {};
     MockFiles[`/runtipi/apps/${appConfig.id}/config.json`] = 'test';
@@ -291,7 +293,7 @@ describe('Uninstall app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    const spy = vi.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
     await AppsService.uninstallApp(appConfig.id);
@@ -312,7 +314,7 @@ describe('Uninstall app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
+    EventDispatcher.dispatchEventAsync = vi.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
     await updateApp(appConfig.id, { status: 'updating' }, db);
 
     // act & assert
@@ -327,7 +329,7 @@ describe('Start app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({}, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    const spy = vi.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
     await AppsService.startApp(appConfig.id);
@@ -345,7 +347,7 @@ describe('Start app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    const spy = vi.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
     await AppsService.startApp(appConfig.id);
@@ -375,7 +377,7 @@ describe('Start app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'stopped' }, appConfig, db);
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
+    EventDispatcher.dispatchEventAsync = vi.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
 
     // act & assert
     await expect(AppsService.startApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-start');
@@ -389,7 +391,7 @@ describe('Stop app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    const spy = vi.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
     await AppsService.stopApp(appConfig.id);
@@ -406,7 +408,7 @@ describe('Stop app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
+    EventDispatcher.dispatchEventAsync = vi.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
 
     // act & assert
     await expect(AppsService.stopApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-stop');
@@ -652,7 +654,7 @@ describe('Update app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({}, appConfig, db);
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
+    EventDispatcher.dispatchEventAsync = vi.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
     // act & assert
     await expect(AppsService.updateApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-update');
@@ -710,7 +712,7 @@ describe('startAllApps', () => {
     await insertApp({ status: 'running' }, appConfig2, db);
     await insertApp({ status: 'stopped' }, appConfig3, db);
 
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    const spy = vi.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
     await AppsService.startAllApps();
@@ -723,7 +725,7 @@ describe('startAllApps', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'stopped' }, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    const spy = vi.spyOn(EventDispatcher, 'dispatchEventAsync');
     spy.mockResolvedValueOnce({ success: false, stdout: 'error' });
 
     // act

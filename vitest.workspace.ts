@@ -9,7 +9,7 @@ export default defineWorkspace([
       name: 'server',
       root: './src/server',
       environment: 'node',
-      include: ['./services/auth/auth.service.test.ts'],
+      include: ['./services/auth/auth.service.test.ts', './services/apps/apps.service.test.ts'],
       setupFiles: ['./tests/vite.setup.ts'],
     },
   },
