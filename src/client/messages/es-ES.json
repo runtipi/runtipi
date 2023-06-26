@@ -6,12 +6,12 @@
       "missing-email-or-password": "Falta el correo electrónico o la contraseña",
       "invalid-username": "Nombre de usuario inválido",
       "user-already-exists": "El usuario ya existe",
-      "error-creating-user": "Error al crear usuario",
+      "error-creating-user": "Error al crear el usuario",
       "no-change-password-request": "No se ha encontrado ninguna solicitud de cambio de contraseña",
       "operator-not-found": "Usuario operador no encontrado",
       "user-not-found": "Usuario no encontrado",
       "not-allowed-in-demo": "No se permite en modo demo",
-      "not-allowed-in-dev": "No está permitido en modo dev",
+      "not-allowed-in-dev": "No está permitido en el modo desarrollo",
       "invalid-password": "Contraseña invalida",
       "invalid-password-length": "La contraseña debe tener al menos 8 caracteres",
       "invalid-locale": "Local inválido",
@@ -28,62 +28,62 @@
       "domain-required-if-expose-app": "Necesitas un dominio si la aplicación está expuesta",
       "domain-not-valid": "El dominio {domain} no es un dominio válido",
       "invalid-config": "La aplicación {id} tiene un archivo config.json inválido",
-      "app-not-exposable": "App {id} is not exposable",
-      "app-force-exposed": "App {id} works only with exposed domain",
-      "domain-already-in-use": "Domain {domain} is already in use by app {id}",
-      "could-not-get-latest-version": "Could not get latest version",
-      "current-version-is-latest": "Current version is already up to date",
-      "major-version-update": "The major version has changed. Please update manually (instructions on GitHub)"
+      "app-not-exposable": "La aplicación {id} no se puede exponer",
+      "app-force-exposed": "La aplicación {id} solo funciona con un dominio expuesto",
+      "domain-already-in-use": "El dominio {domain} ya está en uso por la aplicación {id}",
+      "could-not-get-latest-version": "No se pudo obtener la última versión",
+      "current-version-is-latest": "La versión ya está actualizada",
+      "major-version-update": "La versión principal ha cambiado. Por favor, actualice manualmente (instrucciones en GitHub)"
     },
     "success": {}
   },
   "auth": {
     "login": {
-      "title": "Login to your account",
-      "submit": "Login"
+      "title": "Inicia sesión en tu cuenta",
+      "submit": "Iniciar Sesión"
     },
     "totp": {
-      "title": "Two-factor authentication",
-      "instructions": "Enter the code from your authenticator app",
-      "submit": "Confirm"
+      "title": "Autenticación de doble factor",
+      "instructions": "Introduce el código de tu aplicación de autenticación",
+      "submit": "Confirmar"
     },
     "register": {
-      "title": "Register your account",
-      "submit": "Register"
+      "title": "Registre su cuenta",
+      "submit": "Registrar"
     },
     "reset-password": {
-      "title": "Reset your password",
-      "submit": "Reset password",
-      "cancel": "Cancel password change request",
-      "instructions": "Run this command on your server and then refresh this page",
-      "success-title": "Password reset",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
-      "back-to-login": "Back to login"
+      "title": "Restablecer tu contraseña",
+      "submit": "Reestablecer la contraseña",
+      "cancel": "Cancelar cambio de contraseña",
+      "instructions": "Ejecute este comando en su servidor y luego actualice esta página",
+      "success-title": "Contraseña restablecida",
+      "success": "Su contraseña ha sido restablecida. Ya puedes iniciar sesión con tu nueva contraseña. Y tu correo electrónico {email}",
+      "back-to-login": "Volver al inicio de sesión"
     },
     "form": {
-      "email": "Email address",
-      "email-placeholder": "you@example.com",
-      "password": "Password",
-      "password-placeholder": "Enter your password",
-      "password-confirmation": "Confirm password",
-      "password-confirmation-placeholder": "Confirm your password",
-      "forgot": "Forgot password?",
-      "new-password-placeholder": "Your new password",
-      "new-password-confirmation-placeholder": "Confirm your new password",
+      "email": "Correo electrónico",
+      "email-placeholder": "tu@ejemplo.com",
+      "password": "Contraseña",
+      "password-placeholder": "Introduce tu contraseña",
+      "password-confirmation": "Confirmar la contraseña",
+      "password-confirmation-placeholder": "Confirma tu contraseña",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "new-password-placeholder": "Tu nueva contraseña",
+      "new-password-confirmation-placeholder": "Confirma tu nueva contraseña",
       "errors": {
         "email": {
-          "required": "Email address is required",
-          "email": "Email address is invalid",
-          "invalid": "Email address is invalid"
+          "required": "Se requiere una dirección de correo electrónico",
+          "email": "La dirección de correo electrónico es inválida",
+          "invalid": "La dirección de correo electrónico es inválida"
         },
         "password": {
-          "required": "Password is required",
-          "minlength": "Password must be at least 8 characters"
+          "required": "La contraseña es necesaria",
+          "minlength": "La contraseña debe tener al menos 8 caracteres"
         },
         "password-confirmation": {
-          "required": "Password confirmation is required",
-          "minlength": "Password confirmation must be at least 8 characters",
-          "match": "Passwords do not match"
+          "required": "Se requiere confirmación de contraseña",
+          "minlength": "La contraseña debe tener al menos 8 caracteres",
+          "match": "Las contraseñas no coinciden"
         }
       }
     }
@@ -92,208 +92,208 @@
     "title": "Dashboard",
     "cards": {
       "disk": {
-        "title": "Disk Space",
-        "subtitle": "Used out of {total} GB"
+        "title": "Espacio en disco",
+        "subtitle": "Utilizado de {total} GB"
       },
       "memory": {
-        "title": "Memory Used"
+        "title": "Memoria utilizada"
       },
       "cpu": {
-        "title": "CPU Load",
-        "subtitle": "Uninstall apps to reduce load"
+        "title": "Carga de CPU",
+        "subtitle": "Desinstala aplicaciones para reducir carga"
       }
     }
   },
   "apps": {
-    "status-running": "Running",
-    "status-stopped": "Stopped",
-    "status-starting": "Starting",
-    "status-stopping": "Stopping",
-    "status-updating": "Updating",
-    "status-missing": "Missing",
-    "status-installing": "Installing",
-    "status-uninstalling": "Uninstalling",
-    "update-available": "Update available",
+    "status-running": "En ejecución",
+    "status-stopped": "Detenido",
+    "status-starting": "Iniciando",
+    "status-stopping": "Deteniendo",
+    "status-updating": "Actualizando",
+    "status-missing": "Falta",
+    "status-installing": "Instalando",
+    "status-uninstalling": "Desinstalando",
+    "update-available": "Actualización disponible",
     "my-apps": {
-      "title": "My Apps",
-      "empty-title": "No app installed",
-      "empty-subtitle": "Install an app from the app store to get started",
-      "empty-action": "Go to app store"
+      "title": "Mis aplicaciones",
+      "empty-title": "No hay aplicaciones instaladas",
+      "empty-subtitle": "Instala una aplicación desde la tienda de aplicaciones para empezar",
+      "empty-action": "Ir a la tienda de aplicaciones"
     },
     "app-store": {
-      "title": "App Store",
-      "search-placeholder": "Search apps",
-      "category-placeholder": "Select a category",
-      "no-results": "No app found",
-      "no-results-subtitle": "Try to refine your search"
+      "title": "Tienda de aplicaciones",
+      "search-placeholder": "Buscar aplicaciones",
+      "category-placeholder": "Selecciona una categoría",
+      "no-results": "No se encontraron aplicaciones",
+      "no-results-subtitle": "Intenta refinar tu búsqueda"
     },
     "app-details": {
-      "install-success": "App installed successfully",
-      "uninstall-success": "App uninstalled successfully",
-      "stop-success": "App stopped successfully",
-      "update-success": "App updated successfully",
-      "start-success": "App started successfully",
-      "update-config-success": "App config updated successfully. Restart the app to apply the changes",
-      "version": "Version",
-      "description": "Description",
-      "base-info": "Base info",
-      "source-code": "Source code",
-      "author": "Author",
-      "port": "Port",
-      "categories-title": "Categories",
-      "link": "Link",
-      "website": "Website",
-      "supported-arch": "Supported architectures",
-      "choose-open-method": "Choose open method",
+      "install-success": "Aplicación instalada correctamente",
+      "uninstall-success": "Aplicación desinstalada correctamente",
+      "stop-success": "Aplicación detenida correctamente",
+      "update-success": "Aplicación actualizada correctamente",
+      "start-success": "Aplicación iniciada correctamente",
+      "update-config-success": "La configuración de la aplicación se ha actualizado correctamente. Reinicie la aplicación para aplicar los cambios",
+      "version": "Versión",
+      "description": "Descripción",
+      "base-info": "Info básica",
+      "source-code": "Código fuente",
+      "author": "Autor",
+      "port": "Puerto",
+      "categories-title": "Categorías",
+      "link": "Enlace",
+      "website": "Página web",
+      "supported-arch": "Arquitecturas soportadas",
+      "choose-open-method": "Elija el método abierto",
       "categories": {
-        "data": "Data",
-        "network": "Network",
-        "media": "Media",
-        "development": "Development",
-        "automation": "Automation",
+        "data": "Datos",
+        "network": "Red",
+        "media": "Multimedia",
+        "development": "Desarrollo",
+        "automation": "Automatización",
         "social": "Social",
-        "utilities": "Utilities",
-        "security": "Security",
-        "photography": "Photography",
-        "featured": "Featured",
-        "books": "Books",
-        "music": "Music",
-        "finance": "Finance",
+        "utilities": "Utilidades",
+        "security": "Seguridad",
+        "photography": "Fotografía",
+        "featured": "Destacados",
+        "books": "Libros",
+        "music": "Música",
+        "finance": "Finanzas",
         "gaming": "Gaming",
-        "ai": "AI"
+        "ai": "IA"
       },
       "actions": {
-        "start": "Start",
-        "remove": "Remove",
-        "settings": "Settings",
-        "stop": "Stop",
-        "open": "Open",
-        "loading": "Loading",
-        "cancel": "Cancel",
-        "install": "Install",
-        "update": "Update"
+        "start": "Comenzar",
+        "remove": "Borrar",
+        "settings": "Configuración",
+        "stop": "Detener",
+        "open": "Abrir",
+        "loading": "Cargando",
+        "cancel": "Cancelar",
+        "install": "Instalar",
+        "update": "Actualizar"
       },
       "install-form": {
-        "title": "Install {name}",
-        "expose-app": "Expose app",
-        "domain-name": "Domain name",
-        "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-        "choose-option": "Choose an option...",
-        "sumbit-install": "Install",
-        "submit-update": "Update",
+        "title": "Instalar {name}",
+        "expose-app": "Exponer aplicación",
+        "domain-name": "Nombre de dominio",
+        "domain-name-hint": "Asegúrese de que este dominio exacto contiene un registro apuntando a su IP.",
+        "choose-option": "Elige una opción…",
+        "sumbit-install": "Instalar",
+        "submit-update": "Actualizar",
         "errors": {
-          "required": "{label} is required",
-          "regex": "{label} must match the pattern {pattern}",
-          "max-length": "{label} must be less than {max} characters",
-          "min-length": "{label} must be at least {min} characters",
-          "between-length": "{label} must be between {min} and {max} characters",
-          "invalid-email": "{label} must be a valid email address",
-          "number": "{label} must be a number",
-          "fqdn": "{label} must be a valid domain",
-          "ip": "{label} must be a valid IP address",
-          "fqdnip": "{label} must be a valid domain or IP address",
-          "url": "{label} must be a valid URL"
+          "required": "{label} es obligatorio",
+          "regex": "{label} debe coincidir con el patrón {pattern}",
+          "max-length": "{label} debe tener menos de {max} caracteres",
+          "min-length": "{label} debe tener al menos {min} caracteres",
+          "between-length": "{label} debe tener entre {min} y {max} caracteres",
+          "invalid-email": "{label} debe ser una dirección de correo electrónico válida",
+          "number": "{label} debe ser un número",
+          "fqdn": "{label} debe ser un dominio válido",
+          "ip": "{label} debe ser una dirección IP válida",
+          "fqdnip": "{label} debe ser un dominio o IP válida",
+          "url": "{label} tiene que ser una URL válida"
         }
       },
       "stop-form": {
-        "title": "Stop {name} ?",
-        "subtitle": "All data will be retained",
-        "submit": "Stop"
+        "title": "Detener {name}?",
+        "subtitle": "Todos los datos serán conservados",
+        "submit": "Detener"
       },
       "uninstall-form": {
-        "title": "Uninstall {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Uninstall"
+        "title": "Desinstalar {name}?",
+        "subtitle": "Todos los datos de esta aplicación se perderán.",
+        "warning": "Estás seguro? Esta acción no se puede deshacer.",
+        "submit": "Desinstalar"
       },
       "update-form": {
-        "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
-        "submit": "Update"
+        "title": "Actualizar {name}?",
+        "subtitle1": "Actualizar la aplicación a la última versión:",
+        "subtitle2": "Esto restablecerá su configuración personalizada (por ejemplo, los cambios en docker-compose.yml)",
+        "submit": "Actualizar"
       },
       "update-settings-form": {
-        "title": "Update {name} config"
+        "title": "Actualizar la configuración de {name}"
       }
     }
   },
   "settings": {
-    "title": "Settings",
+    "title": "Configuración",
     "actions": {
-      "tab-title": "Actions",
-      "title": "Actions",
-      "current-version": "Current version: {version}",
-      "stay-up-to-date": "Stay up to date with the latest version of Tipi",
-      "new-version": "A new version ({version}) of Tipi is available",
-      "maintenance-title": "Maintenance",
-      "maintenance-subtitle": "Common actions to perform on your instance",
-      "restart": "Restart",
-      "update": "Update to {version}",
-      "already-latest": "Already up to date"
+      "tab-title": "Acciones",
+      "title": "Acciones",
+      "current-version": "Versión actual: {version}",
+      "stay-up-to-date": "Mantente al día con la última versión de Tipi",
+      "new-version": "Una nueva versión ({version}) de Tipi está disponible",
+      "maintenance-title": "Mantenimiento",
+      "maintenance-subtitle": "Acciones comunes a realizar en tu instancia",
+      "restart": "Reiniciar",
+      "update": "Actualizar a {version}",
+      "already-latest": "Ya está actualizado"
     },
     "settings": {
-      "tab-title": "Settings",
-      "title": "General settings",
-      "subtitle": "This will update your settings.json file. Make sure you know what you are doing before updating these values.",
-      "settings-updated": "Settings updated. Restart your instance to apply new settings.",
-      "invalid-ip": "Invalid IP address",
-      "invalid-url": "Invalid URL",
-      "invalid-domain": "Invalid domain",
-      "domain-name": "Domain name",
-      "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
-      "dns-ip": "DNS IP",
-      "internal-ip": "Internal IP",
-      "internal-ip-hint": "IP address your server is listening on.",
-      "apps-repo": "Apps repo URL",
-      "apps-repo-hint": "URL to the apps repository.",
-      "storage-path": "Storage path",
-      "storage-path-hint": "Path to the storage directory. Keep empty for default (runtipi/app-data). Make sure it is an absolute path and that it exists",
-      "local-domain": "Local domain",
-      "local-domain-hint": "Domain name used for accessing apps in your local network. Your apps will be accessible at app-name.local-domain.",
-      "submit": "Save",
-      "user-settings-title": "User settings",
-      "language": "Language",
-      "help-translate": "Help translate Tipi",
-      "download-certificate": "Download certificate"
+      "tab-title": "Configuración",
+      "title": "Ajustes generales",
+      "subtitle": "Esto actualizará el archivo settings.json. Asegúrate de que sabes lo que estás haciendo antes de actualizar estos valores.",
+      "settings-updated": "Ajustes actualizados. Reinicia tu instancia para aplicar los nuevos ajustes.",
+      "invalid-ip": "Dirección IP no válida",
+      "invalid-url": "URL no válida",
+      "invalid-domain": "Dominio no válido",
+      "domain-name": "Nombre de dominio",
+      "domain-name-hint": "Asegúrate de que este dominio exacto contiene un registro A apuntando a tu IP.",
+      "dns-ip": "IP de DNS",
+      "internal-ip": "IP interna",
+      "internal-ip-hint": "Dirección IP en la que escucha tu servidor.",
+      "apps-repo": "URL del repositorio de aplicaciones",
+      "apps-repo-hint": "URL para el repositorio de aplicaciones.",
+      "storage-path": "Ruta de almacenamiento",
+      "storage-path-hint": "Ruta al directorio de almacenamiento. Si la mantienes vacía por defecto será runtipi/app-data. Asegúrate que es una ruta absoluta y que existe",
+      "local-domain": "Nombre de dominio local",
+      "local-domain-hint": "Nombre de dominio utilizado para acceder a las aplicaciones en tu red local. Tus aplicaciones estarán accesibles en nombre-aplicación.dominio-local.",
+      "submit": "Guardar",
+      "user-settings-title": "Ajustes de usuario",
+      "language": "Idioma",
+      "help-translate": "Ayúdanos a traducir Tipi",
+      "download-certificate": "Descargar certificado"
     },
     "security": {
-      "tab-title": "Security",
-      "change-password-title": "Change password",
-      "change-password-subtitle": "Changing your password will log you out of all devices.",
-      "password-change-success": "Password changed successfully",
-      "2fa-title": "Two-factor authentication",
-      "2fa-subtitle": "Two-factor authentication (2FA) adds an additional layer of security to your account.",
-      "2fa-subtitle-2": "When enabled, you will be prompted to enter a code from your authenticator app when you log in.",
-      "2fa-enable-success": "Two-factor authentication enabled",
-      "2fa-disable-success": "Two-factor authentication disabled",
-      "scan-qr-code": "Scan this QR code with your authenticator app.",
-      "enter-key-manually": "Or enter this key manually.",
-      "enter-2fa-code": "Enter the 6-digit code from your authenticator app",
-      "enable-2fa": "Enable two-factor authentication",
-      "disable-2fa": "Disable two-factor authentication",
-      "password-needed": "Password needed",
-      "password-needed-hint": "Your password is required to change two-factor authentication settings.",
+      "tab-title": "Seguridad",
+      "change-password-title": "Cambiar contraseña",
+      "change-password-subtitle": "Cambiar tu contraseña cerrará tu sesión de todos tus dispositivos.",
+      "password-change-success": "La contraseña ha sido cambiada correctamente",
+      "2fa-title": "Autenticación de doble factor",
+      "2fa-subtitle": "La autenticación de doble factor (2FA) añade una capa adicional de seguridad a su cuenta.",
+      "2fa-subtitle-2": "Cuando esté activado, se le pedirá que introduzca un código desde su aplicación de autenticación cuando inicie sesión.",
+      "2fa-enable-success": "Autenticación de doble factor activada",
+      "2fa-disable-success": "Autenticación de doble factor desactivada",
+      "scan-qr-code": "Escanea este código QR con tu aplicación de autenticación.",
+      "enter-key-manually": "O ingresa este código manualmente.",
+      "enter-2fa-code": "Introduce el código de seis dígitos de tu aplicación de autenticación",
+      "enable-2fa": "Habilitar la autenticación de dos factores",
+      "disable-2fa": "Desactivar la autenticación de doble factor",
+      "password-needed": "Contraseña necesaria",
+      "password-needed-hint": "Tu contraseña es necesaria para cambiar la configuración de autenticación de dos factores.",
       "form": {
-        "password-length": "Password must be at least 8 characters",
-        "password-match": "Passwords do not match",
-        "current-password": "Current password",
-        "new-password": "New password",
-        "confirm-password": "Confirm new password",
-        "change-password": "Change password",
-        "password": "Password"
+        "password-length": "La contraseña debe tener al menos 8 caracteres",
+        "password-match": "Las contraseñas no coinciden",
+        "current-password": "Contraseña actual",
+        "new-password": "Nueva contraseña",
+        "confirm-password": "Confirma tu nueva contraseña",
+        "change-password": "Cambiar contraseña",
+        "password": "Contraseña"
       }
     }
   },
   "header": {
     "dashboard": "Dashboard",
-    "my-apps": "My Apps",
-    "app-store": "App Store",
-    "settings": "Settings",
-    "logout": "Logout",
-    "dark-mode": "Dark Mode",
-    "light-mode": "Light Mode",
-    "sponsor": "Sponsor",
-    "source-code": "Source code",
-    "update-available": "Update available"
+    "my-apps": "Mis aplicaciones",
+    "app-store": "Tienda de aplicaciones",
+    "settings": "Configuración",
+    "logout": "Cerrar sesión",
+    "dark-mode": "Modo oscuro",
+    "light-mode": "Modo Claro",
+    "sponsor": "Patrocinador",
+    "source-code": "Código fuente",
+    "update-available": "Actualización disponible"
   }
 }
