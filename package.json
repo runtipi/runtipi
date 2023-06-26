@@ -41,7 +41,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@runtipi/postgres-migrations": "^5.3.0",
     "@tabler/core": "1.0.0-beta19",
-    "@tabler/icons-react": "^2.22.0",
+    "@tabler/icons-react": "^2.23.0",
     "@tanstack/react-query": "^4.29.7",
     "@tanstack/react-query-devtools": "^4.29.7",
     "@trpc/client": "^10.27.1",

@@ -39,8 +39,8 @@ dependencies:
     specifier: 1.0.0-beta19
     version: 1.0.0-beta19
   '@tabler/icons-react':
-    specifier: ^2.22.0
-    version: 2.22.0(react@18.2.0)
+    specifier: ^2.23.0
+    version: 2.23.0(react@18.2.0)
   '@tanstack/react-query':
     specifier: ^4.29.7
     version: 4.29.7(react-dom@18.2.0)(react@18.2.0)
@@ -2801,18 +2801,18 @@ packages:
       bootstrap: 5.3.0-alpha3(@popperjs/core@2.11.7)
     dev: false
 
-  /@tabler/icons-react@2.22.0(react@18.2.0):
-    resolution: {integrity: sha512-9udRxrbsbWzUETur4jmbZQIZkH7jVA2GU7YnKYS7ZCUjdOHZZEhmsfJ/Gdbzz0gSRC3mU7SDMsKejun/IBjvpQ==}
+  /@tabler/icons-react@2.23.0(react@18.2.0):
+    resolution: {integrity: sha512-+H4mC1EZVCzCRhnPwZEVTI0veVCJuAKlopeCnRlfsYcmzgJm6Ye234c4A2qrLPQoi1Y29uN9+kqCyuYW007jPg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@tabler/icons': 2.22.0
+      '@tabler/icons': 2.23.0
       prop-types: 15.8.1
       react: 18.2.0
     dev: false
 
-  /@tabler/icons@2.22.0:
-    resolution: {integrity: sha512-lOsGHqRPIKNARMWHHFkUUJH78C8ptQmUcDnumFBUI4YLRKFouKa7uAZL3ZfuH0HjDpOhsnWqUYZ7FhMCLcGpAQ==}
+  /@tabler/icons@2.23.0:
+    resolution: {integrity: sha512-dU54aBwaxG0H+jQ4BdrqtYFN5L7PZevvlnzyL6XeOZgfDS3+sVNCtuG3JmpTEqQSwGLYC1IEwogPGA/Iit2bOA==}
     dev: false
 
   /@tanstack/match-sorter-utils@8.7.6:
