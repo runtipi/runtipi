@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@hookform/resolvers':
     specifier: ^3.1.1
@@ -119,8 +123,8 @@ dependencies:
     specifier: ^5.7.3
     version: 5.7.3(@types/react@18.2.13)(react-dom@18.2.0)(react@18.2.0)
   react-tooltip:
-    specifier: ^5.14.0
-    version: 5.14.0(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^5.16.1
+    version: 5.16.1(react-dom@18.2.0)(react@18.2.0)
   redaxios:
     specifier: ^0.5.1
     version: 0.5.1
@@ -8738,8 +8742,8 @@ packages:
       tslib: 2.5.3
     dev: false
 
-  /react-tooltip@5.14.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-fvHgZKSdDC/Zv7G7IL6kPJi99Fqty6zkQsYQZGSkhMmmDQhVnsBLAmY8s14Nh8bshgPmR5EvbjUDZg0yMsp1hg==}
+  /react-tooltip@5.16.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-z3IKJppX4llW8wQLQB3o5qUutVul79HVXI+Ncjf/5FMHbniCYPnxS1oCLpOhOEG9lV2QZRrQe9+l/pLEPOrrXA==}
     peerDependencies:
       react: '>=16.14.0'
       react-dom: '>=16.14.0'
