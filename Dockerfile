@@ -23,6 +23,7 @@ COPY ./esbuild.js ./esbuild.js
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
 COPY ./public ./public
+COPY ./tests ./tests
 
 RUN npm run build
 

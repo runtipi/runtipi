@@ -13,7 +13,6 @@ Dockerfile*
 
 # Tipi folder
 logs/
-tests/
 state/
 templates/
 scripts/
