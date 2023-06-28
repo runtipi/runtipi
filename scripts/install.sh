@@ -62,7 +62,7 @@ fi
 mkdir traefik
 cp -r runtipi-"${LATEST_VERSION}"/traefik/* ./traefik
 
-if [ -d "traefik_old" && -d "traefik_old/tls" ]; then
+if [ -d "traefik_old" ] && [ -d "traefik_old/tls" ]; then
   ## move old traefik TLS config to new traefik config
   cp -r traefik_old/tls traefik
   rm -rf traefik_old
