@@ -1,5 +1,5 @@
-import { redisMock } from '@/tests/mocks/redis';
 import { vi } from 'vitest';
+import { redisMock } from '../../../tests/mocks/redis';
 
 vi.mock('../core/Logger', () => ({
   Logger: {
