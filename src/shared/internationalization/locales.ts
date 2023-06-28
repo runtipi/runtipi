@@ -1,6 +1,7 @@
 const APP_LOCALES = {
   'de-DE': 'Deutsch',
   'en-US': 'English',
+  'es-ES': 'Español',
   'fr-FR': 'Français',
   'hu-HU': 'Magyar',
   'ja-JP': '日本語',
@@ -18,6 +19,7 @@ type BaseLang<T extends string> = T extends `${infer U}-${string}` ? U : T; // '
 const FALLBACK_LOCALES: { from: BaseLang<keyof typeof APP_LOCALES>; to: keyof typeof APP_LOCALES }[] = [
   { from: 'de', to: 'de-DE' },
   { from: 'en', to: 'en-US' },
+  { from: 'es', to: 'es-ES' },
   { from: 'fr', to: 'fr-FR' },
   { from: 'ja', to: 'ja-JP' },
   { from: 'pl', to: 'pl-PL' },
