@@ -48,7 +48,10 @@ const configSchema = z.object({
     }),
 });
 
-export const settingsSchema = configSchema.partial().pick({ dnsIp: true, internalIp: true, appsRepoUrl: true, domain: true, storagePath: true, localDomain: true });
+export const settingsSchema = configSchema
+  .partial()
+  .pick({ dnsIp: true, internalIp: true, appsRepoUrl: true, domain: true, storagePath: true, localDomain: true })
+  .and(z.object({ port: z.number(), sslPort: z.number(), listenIp: z.string().ip().trim() }).partial());
 
 type TipiSettingsType = z.infer<typeof settingsSchema>;
 
