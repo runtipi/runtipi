@@ -106,7 +106,7 @@
     "@types/node": "20.3.2",
     "@types/node-cron": "^3.0.8",
     "@types/pg": "^8.10.2",
-    "@types/react": "18.2.13",
+    "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "@types/semver": "^7.5.0",
     "@types/supertest": "^2.0.12",
