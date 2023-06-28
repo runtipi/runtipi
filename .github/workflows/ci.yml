@@ -107,10 +107,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: node_modules
-
       - name: Build client
         run: npm run build:next
 
