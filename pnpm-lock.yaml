@@ -147,8 +147,8 @@ dependencies:
     specifier: 0.32.1
     version: 0.32.1
   superjson:
-    specifier: ^1.12.3
-    version: 1.12.3
+    specifier: ^1.12.4
+    version: 1.12.4
   tslib:
     specifier: ^2.5.3
     version: 2.5.3
@@ -2877,7 +2877,7 @@ packages:
       '@tanstack/react-query': 4.29.7(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      superjson: 1.12.3
+      superjson: 1.12.4
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
@@ -9676,8 +9676,8 @@ packages:
       - supports-color
     dev: true
 
-  /superjson@1.12.3:
-    resolution: {integrity: sha512-0j+U70KUtP8+roVPbwfqkyQI7lBt7ETnuA7KXbTDX3mCKiD/4fXs2ldKSMdt0MCfpTwiMxo20yFU3vu6ewETpQ==}
+  /superjson@1.12.4:
+    resolution: {integrity: sha512-vkpPQAxdCg9SLfPv5GPC5fnGrui/WryktoN9O5+Zif/14QIMjw+RITf/5LbBh+9QpBFb3KNvJth+puz2H8o6GQ==}
     engines: {node: '>=10'}
     dependencies:
       copy-anything: 3.0.3
