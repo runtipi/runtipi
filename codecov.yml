@@ -4,3 +4,4 @@ ignore:
   - 'templates'
   - 'screenshots'
   - '**/*.json'
+  - '**/tests/**'
