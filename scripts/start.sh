@@ -94,7 +94,7 @@ env_variables_json=$(cat <<EOF
   "tipi_version": "$(get_json_field "${ROOT_FOLDER}/package.json" version)",
   "nginx_port": 80,
   "nginx_port_ssl": 443,
-  "postgres_password": "$(derive_entropy "postgres")
+  "postgres_password": "$(derive_entropy "postgres")",
   "postgres_username": "tipi",
   "postgres_dbname": "tipi",
   "postgres_port": 5432,
@@ -105,7 +105,7 @@ env_variables_json=$(cat <<EOF
   "apps_repository": "${apps_repository}",
   "domain": "example.com",
   "storage_path": "${ROOT_FOLDER}",
-  "demo_mode": false,
+  "demo_mode": false
 }
 EOF
 )
