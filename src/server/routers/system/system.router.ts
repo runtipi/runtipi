@@ -13,6 +13,6 @@ export const systemRouter = router({
   getVersion: publicProcedure.query(SystemService.getVersion),
   restart: protectedProcedure.mutation(SystemService.restart),
   update: protectedProcedure.mutation(SystemService.update),
-  updateSettings: protectedProcedure.input(settingsSchema.partial()).mutation(({ input }) => TipiConfig.setSettings(input)),
+  updateSettings: protectedProcedure.input(settingsSchema).mutation(({ input }) => TipiConfig.setSettings(input)),
   getSettings: protectedProcedure.query(TipiConfig.getSettings),
 });
