@@ -178,7 +178,7 @@
         "expose-app": "Exponer aplicación",
         "domain-name": "Nombre de dominio",
         "domain-name-hint": "Asegúrese de que este dominio exacto contiene un registro apuntando a su IP.",
-        "choose-option": "Elige una opción…",
+        "choose-option": "Elige una opción...",
         "sumbit-install": "Instalar",
         "submit-update": "Actualizar",
         "errors": {
@@ -247,7 +247,7 @@
       "apps-repo": "URL del repositorio de aplicaciones",
       "apps-repo-hint": "URL para el repositorio de aplicaciones.",
       "storage-path": "Ruta de almacenamiento",
-      "storage-path-hint": "Ruta al directorio de almacenamiento. Si la mantienes vacía por defecto será runtipi/app-data. Asegúrate que es una ruta absoluta y que existe",
+      "storage-path-hint": "Ruta al directorio de almacenamiento. Manténgase vacío por defecto (runtipi/app-data). Asegúrese de que es una ruta absoluta y que existe",
       "local-domain": "Nombre de dominio local",
       "local-domain-hint": "Nombre de dominio utilizado para acceder a las aplicaciones en tu red local. Tus aplicaciones estarán accesibles en nombre-aplicación.dominio-local.",
       "submit": "Guardar",
