@@ -299,6 +299,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "M1n-4d316e",
+      "name": "David",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54779580?v=4",
+      "profile": "http://m1n.omg.lol",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
