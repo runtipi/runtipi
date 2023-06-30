@@ -142,7 +142,7 @@
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
     "supertest": "^6.3.3",
-    "ts-jest": "^29.1.0",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "tsx": "^3.12.7",
     "typescript": "5.1.5",
