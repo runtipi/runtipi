@@ -16,6 +16,11 @@ jest.mock('next/router', () => {
 
 describe('Test: StatusProvider', () => {
   it("should render it's children when system is RUNNING", async () => {
+    const { result, unmount } = renderHook(() => useSystemStore());
+    act(() => {
+      result.current.setStatus('RUNNING');
+    });
+
     render(
       <StatusProvider>
         <div>system running</div>
@@ -25,10 +30,12 @@ describe('Test: StatusProvider', () => {
     await waitFor(() => {
       expect(screen.getByText('system running')).toBeInTheDocument();
     });
+
+    unmount();
   });
 
   it('should render StatusScreen when system is RESTARTING', async () => {
-    const { result } = renderHook(() => useSystemStore());
+    const { result, unmount } = renderHook(() => useSystemStore());
     act(() => {
       result.current.setStatus('RESTARTING');
     });
@@ -41,10 +48,12 @@ describe('Test: StatusProvider', () => {
     await waitFor(() => {
       expect(screen.getByText('Your system is restarting...')).toBeInTheDocument();
     });
+
+    unmount();
   });
 
   it('should render StatusScreen when system is UPDATING', async () => {
-    const { result } = renderHook(() => useSystemStore());
+    const { result, unmount } = renderHook(() => useSystemStore());
     act(() => {
       result.current.setStatus('UPDATING');
     });
@@ -58,10 +67,12 @@ describe('Test: StatusProvider', () => {
     await waitFor(() => {
       expect(screen.getByText('Your system is updating...')).toBeInTheDocument();
     });
+
+    unmount();
   });
 
   it('should reload the page when system is RUNNING after being something else than RUNNING', async () => {
-    const { result } = renderHook(() => useSystemStore());
+    const { result, unmount } = renderHook(() => useSystemStore());
     act(() => {
       result.current.setStatus('UPDATING');
     });
@@ -82,5 +93,6 @@ describe('Test: StatusProvider', () => {
     await waitFor(() => {
       expect(reloadFn).toHaveBeenCalled();
     });
+    unmount();
   });
 });

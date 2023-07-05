@@ -3,11 +3,7 @@ import fs from 'fs-extra';
 import { getConfig, setConfig, getSettings, setSettings, TipiConfig } from '.';
 import { readJsonFile } from '../../common/fs.helpers';
 
-beforeEach(async () => {
-  // @ts-expect-error - We are mocking fs
-  fs.__resetAllMocks();
-  jest.mock('fs-extra');
-});
+jest.mock('fs-extra');
 
 jest.mock('next/config', () =>
   jest.fn(() => ({
@@ -124,9 +120,9 @@ describe('Test: setConfig', () => {
     expect(error).toBeDefined();
   });
 
-  it('Should write config to json file', () => {
+  it('Should write config to json file', async () => {
     const randomWord = faker.internet.url();
-    setConfig('appsRepoUrl', randomWord, true);
+    await setConfig('appsRepoUrl', randomWord, true);
     const config = getConfig();
 
     expect(config).toBeDefined();
@@ -175,14 +171,14 @@ describe('Test: getSettings', () => {
 });
 
 describe('Test: setSettings', () => {
-  it('should write settings to json file', () => {
+  it('should write settings to json file', async () => {
     // arrange
     const fakeSettings = {
       appsRepoUrl: faker.internet.url(),
     };
 
     // act
-    setSettings(fakeSettings);
+    await setSettings(fakeSettings);
     const settingsJson = readJsonFile('/runtipi/state/settings.json') as { [key: string]: string };
 
     // assert

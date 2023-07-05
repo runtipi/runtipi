@@ -2,9 +2,9 @@ import fs from 'fs-extra';
 import waitForExpect from 'wait-for-expect';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { faker } from '@faker-js/faker';
+import { getAppEnvMap } from '@/server/utils/env-generation';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher, EVENT_TYPES } from '../../core/EventDispatcher';
-import { getEnvMap } from './apps.helpers';
 import { getAllApps, getAppById, updateApp, createAppConfig, insertApp } from '../../tests/apps.factory';
 import { setConfig } from '../../core/TipiConfig';
 
@@ -18,11 +18,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  jest.mock('fs-extra');
   await clearDatabase(db);
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore - we are mocking fs
-  fs.__resetAllMocks();
   EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
 });
 
@@ -37,10 +33,13 @@ describe('Install app', () => {
 
     // act
     await AppsService.installApp(appConfig.id, { TEST_FIELD: 'test' });
-    const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
+    const envMap = await getAppEnvMap(appConfig.id);
 
     // assert
-    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nAPP_ID=${appConfig.id}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${appConfig.port}`);
+    expect(envMap.get('TEST_FIELD')).toBe('test');
+    expect(envMap.get('APP_PORT')).toBe(appConfig.port.toString());
+    expect(envMap.get('APP_ID')).toBe(appConfig.id);
+    expect(envMap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
   });
 
   it('Should add app in database', async () => {
@@ -102,7 +101,7 @@ describe('Install app', () => {
 
     // act
     await AppsService.installApp(appConfig.id, {});
-    const envMap = getEnvMap(appConfig.id);
+    const envMap = await getAppEnvMap(appConfig.id);
 
     // assert
     expect(envMap.get('RANDOM_FIELD')).toBeDefined();
@@ -243,8 +242,9 @@ describe('Install app', () => {
   it('should replace env variables in .templates files in data folder', async () => {
     // arrange
     const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST', type: 'text', label: 'test', required: true }] });
-    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/data/test.txt.template`, 'test {{TEST}}');
-    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/data/test2.txt`, 'test {{TEST}}');
+    await fs.promises.mkdir(`/runtipi/repos/repo-id/apps/${appConfig.id}/data`, { recursive: true });
+    await fs.promises.writeFile(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test.txt.template`, 'test {{TEST}}');
+    await fs.promises.writeFile(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test2.txt`, 'test {{TEST}}');
 
     // act
     await AppsService.installApp(appConfig.id, { TEST: 'test' });
@@ -259,10 +259,10 @@ describe('Install app', () => {
   it('should copy and replace env variables in deeply nested .templates files in data folder', async () => {
     // arrange
     const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST', type: 'text', label: 'test', required: true }] });
-    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/data/test.txt.template`, 'test {{TEST}}');
-    await fs.promises.mkdir(`/runtipi/apps/${appConfig.id}/data/test`);
-    await fs.promises.mkdir(`/runtipi/apps/${appConfig.id}/data/test/test`);
-    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/data/test/test/test.txt.template`, 'test {{TEST}}');
+    await fs.promises.mkdir(`/runtipi/repos/repo-id/apps/${appConfig.id}/data`, { recursive: true });
+    await fs.promises.writeFile(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test.txt.template`, 'test {{TEST}}');
+    await fs.promises.mkdir(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test/test`, { recursive: true });
+    await fs.promises.writeFile(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test/test/test.txt.template`, 'test {{TEST}}');
 
     // act
     await AppsService.installApp(appConfig.id, { TEST: 'test' });
@@ -365,10 +365,14 @@ describe('Start app', () => {
 
     // act
     await AppsService.startApp(appConfig.id);
-    const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
+    const envMap = await getAppEnvMap(appConfig.id);
 
     // assert
-    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nAPP_ID=${appConfig.id}\nTEST_FIELD=test\nAPP_DOMAIN=localhost:${appConfig.port}`);
+    expect(envMap.get('TEST_FIELD')).toBe('test');
+    expect(envMap.get('APP_PORT')).toBe(appConfig.port.toString());
+    expect(envMap.get('APP_ID')).toBe(appConfig.id);
+    expect(envMap.get('TEST')).toBe('test');
+    expect(envMap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
   });
 
   it('Should throw if start script fails', async () => {
@@ -379,6 +383,18 @@ describe('Start app', () => {
 
     // act & assert
     await expect(AppsService.startApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-start');
+    const app = await getAppById(appConfig.id, db);
+    expect(app?.status).toBe('stopped');
+  });
+
+  it('Should throw if app has invalid config.json', async () => {
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'stopped' }, appConfig, db);
+    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/config.json`, 'test');
+
+    // act & assert
+    await expect(AppsService.startApp(appConfig.id)).rejects.toThrow(`App ${appConfig.id} has invalid config.json`);
     const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('stopped');
   });
@@ -424,10 +440,13 @@ describe('Update app config', () => {
 
     // act
     await AppsService.updateAppConfig(appConfig.id, { TEST_FIELD: word });
-    const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
+    const envMap = await getAppEnvMap(appConfig.id);
 
     // assert
-    expect(envFile.trim()).toBe(`TEST=test\nAPP_PORT=${appConfig.port}\nAPP_ID=${appConfig.id}\nTEST_FIELD=${word}\nAPP_DOMAIN=localhost:${appConfig.port}`);
+    expect(envMap.get('TEST_FIELD')).toBe(word);
+    expect(envMap.get('APP_PORT')).toBe(appConfig.port.toString());
+    expect(envMap.get('APP_ID')).toBe(appConfig.id);
+    expect(envMap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
   });
 
   it('Should throw if required field is missing', async () => {
@@ -454,7 +473,7 @@ describe('Update app config', () => {
 
     // act
     await AppsService.updateAppConfig(appConfig.id, { TEST_FIELD: 'test' });
-    const envMap = getEnvMap(appConfig.id);
+    const envMap = await getAppEnvMap(appConfig.id);
 
     // assert
     expect(envMap.get(field)).toBe('test');
@@ -476,15 +495,6 @@ describe('Update app config', () => {
 
     // act & assert
     expect(AppsService.updateAppConfig(appConfig.id, {}, true, 'test')).rejects.toThrowError('server-messages.errors.domain-not-valid');
-  });
-
-  it('Should throw if app is exposed and config does not allow it', async () => {
-    // arrange
-    const appConfig = createAppConfig({ exposable: false });
-    await insertApp({}, appConfig, db);
-
-    // act & assert
-    expect(AppsService.updateAppConfig(appConfig.id, {}, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
   });
 
   it('Should throw if app is exposed and domain is already used', async () => {
@@ -517,6 +527,15 @@ describe('Update app config', () => {
 
     // act & assert
     await expect(AppsService.updateAppConfig(appConfig.id, {})).rejects.toThrowError('server-messages.errors.app-force-exposed');
+  });
+
+  it('Should throw if app is exposed and config does not allow it', async () => {
+    // arrange
+    const appConfig = createAppConfig({ exposable: false });
+    await insertApp({}, appConfig, db);
+
+    // act & assert
+    await expect(AppsService.updateAppConfig(appConfig.id, {}, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
   });
 });
 

@@ -8,10 +8,13 @@ jest.mock('fs-extra');
 // eslint-disable-next-line no-promise-executor-return
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-beforeEach(() => {
+beforeEach(async () => {
+  await fs.promises.mkdir('/runtipi/state', { recursive: true });
+  await fs.promises.mkdir('/app/logs', { recursive: true });
+  await fs.promises.writeFile(WATCH_FILE, '');
+  await fs.promises.writeFile('/app/logs/123.log', 'test');
+
   EventDispatcher.clear();
-  fs.writeFileSync(WATCH_FILE, '');
-  fs.writeFileSync('/app/logs/123.log', 'test');
 });
 
 describe('EventDispatcher - dispatchEvent', () => {
