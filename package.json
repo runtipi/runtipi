@@ -146,7 +146,7 @@
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "tsx": "^3.12.7",
-    "typescript": "5.1.5",
+    "typescript": "5.1.6",
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^0.32.2",
     "wait-for-expect": "^3.0.2",
