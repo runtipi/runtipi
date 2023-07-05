@@ -15,6 +15,8 @@ const SystemService = new SystemServiceClass();
 const server = setupServer();
 
 beforeEach(async () => {
+  await setConfig('demoMode', false);
+
   jest.mock('fs-extra');
   jest.resetModules();
   jest.resetAllMocks();

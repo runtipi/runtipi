@@ -2,21 +2,20 @@ import fs from 'fs-extra';
 import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { faker } from '@faker-js/faker';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { getAppEnvMap } from '@/server/utils/env-generation';
 import { setConfig } from '../../core/TipiConfig';
-import { appInfoSchema, checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getEnvMap, getUpdateInfo } from './apps.helpers';
+import { appInfoSchema, checkAppRequirements, checkEnvFile, ensureAppFolder, generateEnvFile, getAppInfo, getAvailableApps, getUpdateInfo } from './apps.helpers';
 import { createAppConfig, insertApp } from '../../tests/apps.factory';
 
 let db: TestDatabase;
 const TEST_SUITE = 'appshelpers';
+jest.mock('fs-extra');
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
 });
 
 beforeEach(async () => {
-  jest.mock('fs-extra');
-  // @ts-expect-error - fs-extra mock is not typed
-  fs.__resetAllMocks();
   await clearDatabase(db);
 });
 
@@ -50,20 +49,6 @@ describe('Test: checkAppRequirements()', () => {
   });
 });
 
-describe('Test: getEnvMap()', () => {
-  it('should return a map of env vars', async () => {
-    // arrange
-    const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST_FIELD', type: 'text', label: 'test', required: true }] });
-    insertApp({ config: { TEST_FIELD: 'test' } }, appConfig, db);
-
-    // act
-    const envMap = getEnvMap(appConfig.id);
-
-    // assert
-    expect(envMap.get('TEST_FIELD')).toBe('test');
-  });
-});
-
 describe('Test: checkEnvFile()', () => {
   it('Should not throw if all required fields are present', async () => {
     // arrange
@@ -71,7 +56,7 @@ describe('Test: checkEnvFile()', () => {
     const app = await insertApp({}, appConfig, db);
 
     // act
-    checkEnvFile(app.id);
+    await checkEnvFile(app.id);
   });
 
   it('Should throw if a required field is missing', async () => {
@@ -83,7 +68,7 @@ describe('Test: checkEnvFile()', () => {
     fs.writeFileSync(`/app/storage/app-data/${app.id}/app.env`, newAppEnv);
 
     // act & assert
-    expect(() => checkEnvFile(app.id)).toThrowError('New info needed. App config needs to be updated');
+    await expect(checkEnvFile(app.id)).rejects.toThrowError('New info needed. App config needs to be updated');
   });
 
   it('Should throw if config.json is incorrect', async () => {
@@ -93,7 +78,7 @@ describe('Test: checkEnvFile()', () => {
     fs.writeFileSync(`/runtipi/apps/${app.id}/config.json`, 'invalid json');
 
     // act & assert
-    expect(() => checkEnvFile(app.id)).toThrowError(`App ${app.id} has invalid config.json file`);
+    await expect(checkEnvFile(app.id)).rejects.toThrowError(`App ${app.id} has invalid config.json file`);
   });
 });
 
@@ -101,7 +86,8 @@ describe('Test: appInfoSchema', () => {
   it('should default form_field type to text if it is wrong', async () => {
     // arrange
     const appConfig = createAppConfig(fromAny({ form_fields: [{ env_variable: 'test', type: 'wrong', label: 'yo', required: true }] }));
-    fs.writeFileSync(`/app/storage/app-data/${appConfig.id}/config.json`, JSON.stringify(appConfig));
+    await fs.promises.mkdir(`/app/storage/app-data/${appConfig.id}`, { recursive: true });
+    await fs.promises.writeFile(`/app/storage/app-data/${appConfig.id}/config.json`, JSON.stringify(appConfig));
 
     // act
     const appInfo = appInfoSchema.safeParse(appConfig);
@@ -118,7 +104,8 @@ describe('Test: appInfoSchema', () => {
   it('should default categories to ["utilities"] if it is wrong', async () => {
     // arrange
     const appConfig = createAppConfig(fromAny({ categories: 'wrong' }));
-    fs.writeFileSync(`/app/storage/app-data/${appConfig.id}/config.json`, JSON.stringify(appConfig));
+    await fs.promises.mkdir(`/app/storage/app-data/${appConfig.id}`, { recursive: true });
+    await fs.promises.writeFile(`/app/storage/app-data/${appConfig.id}/config.json`, JSON.stringify(appConfig));
 
     // act
     const appInfo = appInfoSchema.safeParse(appConfig);
@@ -141,8 +128,8 @@ describe('Test: generateEnvFile()', () => {
     const fakevalue = faker.string.alphanumeric(10);
 
     // act
-    generateEnvFile(Object.assign(app, { config: { TEST_FIELD: fakevalue } }));
-    const envmap = getEnvMap(app.id);
+    await generateEnvFile(Object.assign(app, { config: { TEST_FIELD: fakevalue } }));
+    const envmap = await getAppEnvMap(app.id);
 
     // assert
     expect(envmap.get('TEST_FIELD')).toBe(fakevalue);
@@ -154,8 +141,8 @@ describe('Test: generateEnvFile()', () => {
     const app = await insertApp({}, appConfig, db);
 
     // act
-    generateEnvFile(app);
-    const envmap = getEnvMap(app.id);
+    await generateEnvFile(app);
+    const envmap = await getAppEnvMap(app.id);
 
     // assert
     expect(envmap.get('RANDOM_FIELD')).toBeDefined();
@@ -170,8 +157,8 @@ describe('Test: generateEnvFile()', () => {
     fs.writeFileSync(`/app/storage/app-data/${app.id}/app.env`, `RANDOM_FIELD=${randomField}`);
 
     // act
-    generateEnvFile(app);
-    const envmap = getEnvMap(app.id);
+    await generateEnvFile(app);
+    const envmap = await getAppEnvMap(app.id);
 
     // assert
     expect(envmap.get('RANDOM_FIELD')).toBe(randomField);
@@ -183,12 +170,12 @@ describe('Test: generateEnvFile()', () => {
     const app = await insertApp({}, appConfig, db);
 
     // act & assert
-    expect(() => generateEnvFile(Object.assign(app, { config: { TEST_FIELD: undefined } }))).toThrowError('Variable test is required');
+    await expect(generateEnvFile(Object.assign(app, { config: { TEST_FIELD: undefined } }))).rejects.toThrowError('Variable test is required');
   });
 
   it('Should throw an error if app does not exist', async () => {
     // act & assert
-    expect(() => generateEnvFile(fromPartial({ id: 'not-existing-app' }))).toThrowError('App not-existing-app has invalid config.json file');
+    await expect(generateEnvFile(fromPartial({ id: 'not-existing-app' }))).rejects.toThrowError('App not-existing-app has invalid config.json file');
   });
 
   it('Should add APP_EXPOSED to env file if domain is provided and app is exposed', async () => {
@@ -198,8 +185,8 @@ describe('Test: generateEnvFile()', () => {
     const app = await insertApp({ domain, exposed: true }, appConfig, db);
 
     // act
-    generateEnvFile(app);
-    const envmap = getEnvMap(app.id);
+    await generateEnvFile(app);
+    const envmap = await getAppEnvMap(app.id);
 
     // assert
     expect(envmap.get('APP_EXPOSED')).toBe('true');
@@ -212,8 +199,8 @@ describe('Test: generateEnvFile()', () => {
     const app = await insertApp({ exposed: true }, appConfig, db);
 
     // act
-    generateEnvFile(app);
-    const envmap = getEnvMap(app.id);
+    await generateEnvFile(app);
+    const envmap = await getAppEnvMap(app.id);
 
     // assert
     expect(envmap.get('APP_EXPOSED')).toBeUndefined();
@@ -225,8 +212,8 @@ describe('Test: generateEnvFile()', () => {
     const app = await insertApp({ exposed: false, domain: faker.internet.domainName() }, appConfig, db);
 
     // act
-    generateEnvFile(app);
-    const envmap = getEnvMap(app.id);
+    await generateEnvFile(app);
+    const envmap = await getAppEnvMap(app.id);
 
     // assert
     expect(envmap.get('APP_EXPOSED')).toBeUndefined();
@@ -240,7 +227,7 @@ describe('Test: generateEnvFile()', () => {
     fs.rmSync(`/app/storage/app-data/${app.id}`, { recursive: true });
 
     // act
-    generateEnvFile(app);
+    await generateEnvFile(app);
 
     // assert
     expect(fs.existsSync(`/app/storage/app-data/${app.id}`)).toBe(true);
@@ -252,8 +239,8 @@ describe('Test: generateEnvFile()', () => {
     const app = await insertApp({}, appConfig, db);
 
     // act
-    generateEnvFile(app);
-    const envmap = getEnvMap(app.id);
+    await generateEnvFile(app);
+    const envmap = await getAppEnvMap(app.id);
 
     // assert
     expect(envmap.get('VAPID_PRIVATE_KEY')).toBeDefined();
@@ -266,8 +253,8 @@ describe('Test: generateEnvFile()', () => {
     const app = await insertApp({}, appConfig, db);
 
     // act
-    generateEnvFile(app);
-    const envmap = getEnvMap(app.id);
+    await generateEnvFile(app);
+    const envmap = await getAppEnvMap(app.id);
 
     // assert
     expect(envmap.get('VAPID_PRIVATE_KEY')).toBeUndefined();
@@ -284,8 +271,8 @@ describe('Test: generateEnvFile()', () => {
 
     // act
     fs.writeFileSync(`/app/storage/app-data/${app.id}/app.env`, `VAPID_PRIVATE_KEY=${vapidPrivateKey}\nVAPID_PUBLIC_KEY=${vapidPublicKey}`);
-    generateEnvFile(app);
-    const envmap = getEnvMap(app.id);
+    await generateEnvFile(app);
+    const envmap = await getAppEnvMap(app.id);
 
     // assert
     expect(envmap.get('VAPID_PRIVATE_KEY')).toBe(vapidPrivateKey);
@@ -428,15 +415,10 @@ describe('Test: getUpdateInfo()', () => {
 });
 
 describe('Test: ensureAppFolder()', () => {
-  beforeEach(() => {
-    const mockFiles = {
-      [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
-    };
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(mockFiles);
-  });
-
-  it('should copy the folder from repo', () => {
+  it('should copy the folder from repo', async () => {
+    // arrange
+    await fs.promises.mkdir('/runtipi/repos/repo-id/apps/test', { recursive: true });
+    await fs.promises.writeFile('/runtipi/repos/repo-id/apps/test/test.yml', 'test');
     // act
     ensureAppFolder('test');
 
@@ -445,15 +427,12 @@ describe('Test: ensureAppFolder()', () => {
     expect(files).toEqual(['test.yml']);
   });
 
-  it('should not copy the folder if it already exists', () => {
+  it('should not copy the folder if it already exists', async () => {
     // arrange
-    const mockFiles = {
-      [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
-      '/runtipi/apps/test': ['docker-compose.yml'],
-      '/runtipi/apps/test/docker-compose.yml': 'test',
-    };
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(mockFiles);
+    await fs.promises.mkdir('/runtipi/repos/repo-id/apps/test', { recursive: true });
+    await fs.promises.writeFile('/runtipi/repos/repo-id/apps/test/test.yml', 'test');
+    await fs.promises.mkdir('/runtipi/apps/test', { recursive: true });
+    await fs.promises.writeFile('/runtipi/apps/test/docker-compose.yml', 'test');
 
     // act
     ensureAppFolder('test');
@@ -463,15 +442,12 @@ describe('Test: ensureAppFolder()', () => {
     expect(files).toEqual(['docker-compose.yml']);
   });
 
-  it('Should overwrite the folder if clean up is true', () => {
+  it('Should overwrite the folder if clean up is true', async () => {
     // arrange
-    const mockFiles = {
-      [`/runtipi/repos/repo-id/apps/test`]: ['test.yml'],
-      '/runtipi/apps/test': ['docker-compose.yml'],
-      '/runtipi/apps/test/docker-compose.yml': 'test',
-    };
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(mockFiles);
+    await fs.promises.mkdir('/runtipi/repos/repo-id/apps/test', { recursive: true });
+    await fs.promises.writeFile('/runtipi/repos/repo-id/apps/test/test.yml', 'test');
+    await fs.promises.mkdir('/runtipi/apps/test', { recursive: true });
+    await fs.promises.writeFile('/runtipi/apps/test/docker-compose.yml', 'test');
 
     // act
     ensureAppFolder('test', true);
@@ -481,15 +457,13 @@ describe('Test: ensureAppFolder()', () => {
     expect(files).toEqual(['test.yml']);
   });
 
-  it('Should delete folder if it exists but has no docker-compose.yml file', () => {
+  it('Should delete folder if it exists but has no docker-compose.yml file', async () => {
     // arrange
     const randomFileName = `${faker.lorem.word()}.yml`;
-    const mockFiles = {
-      [`/runtipi/repos/repo-id/apps/test`]: [randomFileName],
-      '/runtipi/apps/test': ['test.yml'],
-    };
-    // @ts-expect-error - Mocking fs
-    fs.__createMockFiles(mockFiles);
+    await fs.promises.mkdir('/runtipi/repos/repo-id/apps/test', { recursive: true });
+    await fs.promises.writeFile(`/runtipi/repos/repo-id/apps/test/${randomFileName}`, 'test');
+    await fs.promises.mkdir('/runtipi/apps/test', { recursive: true });
+    await fs.promises.writeFile('/runtipi/apps/test/test.yml', 'test');
 
     // act
     ensureAppFolder('test');

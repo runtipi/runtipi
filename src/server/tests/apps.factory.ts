@@ -1,6 +1,6 @@
+import fs from 'fs-extra';
 import { faker } from '@faker-js/faker';
 import { eq } from 'drizzle-orm';
-import fs from 'fs-extra';
 import { Architecture } from '../core/TipiConfig/TipiConfig';
 import { AppInfo, appInfoSchema } from '../services/apps/apps.helpers';
 import { APP_CATEGORIES } from '../services/apps/apps.types';
@@ -21,8 +21,6 @@ interface IProps {
 }
 
 const createAppConfig = (props?: Partial<AppInfo>) => {
-  const mockFiles: Record<string, string | string[]> = {};
-
   const appInfo = appInfoSchema.parse({
     id: faker.string.alphanumeric(32),
     available: true,
@@ -37,13 +35,13 @@ const createAppConfig = (props?: Partial<AppInfo>) => {
     ...props,
   });
 
+  const mockFiles: Record<string, string | string[]> = {};
   mockFiles['/runtipi/.env'] = 'TEST=test';
-  mockFiles['/runtipi/repos/repo-id'] = '';
   mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
   mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
   mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
-  // @ts-expect-error - fs-extra mock is not typed
+  // @ts-expect-error - custom mock method
   fs.__applyMockFiles(mockFiles);
 
   return appInfo;
@@ -103,12 +101,11 @@ const createApp = async (props: IProps, database: TestDatabase) => {
     });
   }
 
-  const MockFiles: Record<string, string | string[]> = {};
-  MockFiles['/runtipi/.env'] = 'TEST=test';
-  MockFiles['/runtipi/repos/repo-id'] = '';
-  MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
-  MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
-  MockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+  const mockFiles: Record<string, string | string[]> = {};
+  mockFiles['/runtipi/.env'] = 'TEST=test';
+  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
+  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   let appEntity: App = {} as App;
   if (installed) {
@@ -126,14 +123,15 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
     // eslint-disable-next-line prefer-destructuring
     appEntity = insertedApp[0] as App;
-
-    MockFiles[`/app/storage/app-data/${appInfo.id}`] = '';
-    MockFiles[`/app/storage/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
-    MockFiles[`/runtipi/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
-    MockFiles[`/runtipi/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+    mockFiles[`/app/storage/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    mockFiles[`/runtipi/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+    mockFiles[`/runtipi/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
   }
 
-  return { appInfo, MockFiles, appEntity };
+  // @ts-expect-error - custom mock method
+  fs.__applyMockFiles(mockFiles);
+
+  return { appInfo, MockFiles: mockFiles, appEntity };
 };
 
 const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: TestDatabase) => {
@@ -149,15 +147,15 @@ const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: Test
 
   const mockFiles: Record<string, string | string[]> = {};
   if (data.status !== 'missing') {
-    mockFiles[`/app/storage/app-data/${values.id}`] = '';
     mockFiles[`/app/storage/app-data/${values.id}/app.env`] = `TEST=test\nAPP_PORT=3000\n${Object.entries(data.config || {})
       .map(([key, value]) => `${key}=${value}`)
       .join('\n')}`;
     mockFiles[`/runtipi/apps/${values.id}/config.json`] = JSON.stringify(appInfo);
     mockFiles[`/runtipi/apps/${values.id}/metadata/description.md`] = 'md desc';
+    mockFiles[`/runtipi/apps/${values.id}/docker-compose.yml`] = 'compose';
   }
 
-  // @ts-expect-error - fs-extra mock is not typed
+  // @ts-expect-error - custom mock method
   fs.__applyMockFiles(mockFiles);
 
   const insertedApp = await database.db.insert(appTable).values(values).returning();

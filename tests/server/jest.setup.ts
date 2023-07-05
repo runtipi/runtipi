@@ -1,3 +1,4 @@
+import fs from 'fs-extra';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { EventDispatcher } from '../../src/server/core/EventDispatcher';
 
@@ -13,6 +14,14 @@ jest.mock('vitest', () => ({
 }));
 
 console.error = jest.fn();
+
+beforeEach(async () => {
+  // @ts-expect-error - custom mock method
+  fs.__resetAllMocks();
+  await fs.promises.mkdir('/runtipi/state', { recursive: true });
+  await fs.promises.writeFile('/runtipi/state/settings.json', '{}');
+  await fs.promises.mkdir('/app/logs', { recursive: true });
+});
 
 // Mock Logger
 jest.mock('../../src/server/core/Logger', () => ({

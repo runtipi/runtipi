@@ -29,6 +29,12 @@ export class AppServiceClass {
     this.queries = new AppQueries(p);
   }
 
+  async regenerateEnvFile(app: App) {
+    ensureAppFolder(app.id);
+    await generateEnvFile(app);
+    await checkEnvFile(app.id);
+  }
+
   /**
    *  This function starts all apps that are in the 'running' status.
    *  It finds all the running apps and starts them by regenerating the env file, checking the env file and dispatching the start event.
@@ -43,11 +49,9 @@ export class AppServiceClass {
 
     await Promise.all(
       apps.map(async (app) => {
-        // Regenerate env file
         try {
-          ensureAppFolder(app.id);
-          generateEnvFile(app);
-          checkEnvFile(app.id);
+          // Regenerate env file
+          await this.regenerateEnvFile(app);
 
           await this.queries.updateApp(app.id, { status: 'starting' });
 
@@ -79,10 +83,8 @@ export class AppServiceClass {
       throw new TranslatedError('server-messages.errors.app-not-found', { id: appName });
     }
 
-    ensureAppFolder(appName);
     // Regenerate env file
-    generateEnvFile(app);
-    checkEnvFile(appName);
+    await this.regenerateEnvFile(app);
 
     await this.queries.updateApp(appName, { status: 'starting' });
     const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['start', app.id]);
@@ -153,7 +155,7 @@ export class AppServiceClass {
 
       if (newApp) {
         // Create env file
-        generateEnvFile(newApp);
+        await generateEnvFile(newApp);
         await copyDataDir(id);
       }
 
@@ -229,7 +231,7 @@ export class AppServiceClass {
     const updatedApp = await this.queries.updateApp(id, { exposed: exposed || false, domain: domain || null, config: form });
 
     if (updatedApp) {
-      generateEnvFile(updatedApp);
+      await generateEnvFile(updatedApp);
     }
 
     return updatedApp;
@@ -248,8 +250,7 @@ export class AppServiceClass {
       throw new TranslatedError('server-messages.errors.app-not-found', { id });
     }
 
-    ensureAppFolder(id);
-    generateEnvFile(app);
+    await this.regenerateEnvFile(app);
 
     // Run script
     await this.queries.updateApp(id, { status: 'stopping' });
@@ -284,8 +285,7 @@ export class AppServiceClass {
       await this.stopApp(id);
     }
 
-    ensureAppFolder(id);
-    generateEnvFile(app);
+    await this.regenerateEnvFile(app);
 
     await this.queries.updateApp(id, { status: 'uninstalling' });
 
@@ -336,8 +336,7 @@ export class AppServiceClass {
       throw new TranslatedError('server-messages.errors.app-not-found', { id });
     }
 
-    ensureAppFolder(id);
-    generateEnvFile(app);
+    await this.regenerateEnvFile(app);
 
     await this.queries.updateApp(id, { status: 'updating' });
 

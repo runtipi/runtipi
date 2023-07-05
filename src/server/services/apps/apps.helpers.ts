@@ -2,8 +2,8 @@ import crypto from 'crypto';
 import fs from 'fs-extra';
 import { z } from 'zod';
 import { App } from '@/server/db/schema';
-import { generateVapidKeys } from '@/server/utils/env-generation';
-import { deleteFolder, fileExists, getSeed, readdirSync, readFile, readJsonFile, writeFile } from '../../common/fs.helpers';
+import { envMapToString, envStringToMap, generateVapidKeys, getAppEnvMap } from '@/server/utils/env-generation';
+import { deleteFolder, fileExists, getSeed, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
 import { APP_CATEGORIES, FIELD_TYPES } from './apps.types';
 import { getConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
@@ -83,25 +83,6 @@ export const checkAppRequirements = (appName: string) => {
 };
 
 /**
- *  This function reads the env file for the app with the provided name and returns a Map containing the key-value pairs of the environment variables.
- *  It reads the file, splits it into individual environment variables, and stores them in a Map, with the environment variable name as the key and its value as the value.
- *
- *  @param {string} appName - The name of the app.
- */
-export const getEnvMap = (appName: string) => {
-  const envFile = readFile(`/app/storage/app-data/${appName}/app.env`).toString();
-  const envVars = envFile.split('\n');
-  const envVarsMap = new Map<string, string>();
-
-  envVars.forEach((envVar) => {
-    const [key, value] = envVar.split('=');
-    if (key && value) envVarsMap.set(key, value);
-  });
-
-  return envVarsMap;
-};
-
-/**
  *  This function checks if the env file for the app with the provided name is valid.
  *  It reads the config.json file for the app, parses it,
  *  and uses the app's form fields to check if all required fields are present in the env file.
@@ -111,15 +92,23 @@ export const getEnvMap = (appName: string) => {
  *  @param {string} appName - The name of the app.
  *  @throws Will throw an error if the app has an invalid config.json file or if a required variable is missing in the env file.
  */
-export const checkEnvFile = (appName: string) => {
-  const configFile = readJsonFile(`/runtipi/apps/${appName}/config.json`);
-  const parsedConfig = appInfoSchema.safeParse(configFile);
+export const checkEnvFile = async (appName: string) => {
+  const configFile = await fs.promises.readFile(`/runtipi/apps/${appName}/config.json`);
+
+  let jsonConfig: unknown;
+  try {
+    jsonConfig = JSON.parse(configFile.toString());
+  } catch (e) {
+    throw new Error(`App ${appName} has invalid config.json file`);
+  }
+
+  const parsedConfig = appInfoSchema.safeParse(jsonConfig);
 
   if (!parsedConfig.success) {
     throw new Error(`App ${appName} has invalid config.json file`);
   }
 
-  const envMap = getEnvMap(appName);
+  const envMap = await getAppEnvMap(appName);
 
   parsedConfig.data.form_fields.forEach((field) => {
     const envVar = field.env_variable;
@@ -170,7 +159,7 @@ const castAppConfig = (json: unknown): Record<string, unknown> => {
  * @param {App} app - The app for which the env file is generated.
  * @throws Will throw an error if the app has an invalid config.json file or if a required variable is missing.
  */
-export const generateEnvFile = (app: App) => {
+export const generateEnvFile = async (app: App) => {
   const configFile = readJsonFile(`/runtipi/apps/${app.id}/config.json`);
   const parsedConfig = appInfoSchema.safeParse(configFile);
 
@@ -179,17 +168,22 @@ export const generateEnvFile = (app: App) => {
   }
 
   const baseEnvFile = readFile('/runtipi/.env').toString();
-  let envFile = `${baseEnvFile}\nAPP_PORT=${parsedConfig.data.port}\nAPP_ID=${app.id}\n`;
-  const envMap = getEnvMap(app.id);
+  const envMap = envStringToMap(baseEnvFile);
+
+  // Default always present env variables
+  envMap.set('APP_PORT', String(parsedConfig.data.port));
+  envMap.set('APP_ID', app.id);
+
+  const existingEnvMap = await getAppEnvMap(app.id);
 
   if (parsedConfig.data.generate_vapid_keys) {
-    if (envMap.has('VAPID_PUBLIC_KEY') && envMap.has('VAPID_PRIVATE_KEY')) {
-      envFile += `VAPID_PUBLIC_KEY=${envMap.get('VAPID_PUBLIC_KEY')}\n`;
-      envFile += `VAPID_PRIVATE_KEY=${envMap.get('VAPID_PRIVATE_KEY')}\n`;
+    if (existingEnvMap.has('VAPID_PUBLIC_KEY') && existingEnvMap.has('VAPID_PRIVATE_KEY')) {
+      envMap.set('VAPID_PUBLIC_KEY', existingEnvMap.get('VAPID_PUBLIC_KEY') as string);
+      envMap.set('VAPID_PRIVATE_KEY', existingEnvMap.get('VAPID_PRIVATE_KEY') as string);
     } else {
       const vapidKeys = generateVapidKeys();
-      envFile += `VAPID_PUBLIC_KEY=${vapidKeys.publicKey}\n`;
-      envFile += `VAPID_PRIVATE_KEY=${vapidKeys.privateKey}\n`;
+      envMap.set('VAPID_PUBLIC_KEY', vapidKeys.publicKey);
+      envMap.set('VAPID_PRIVATE_KEY', vapidKeys.privateKey);
     }
   }
 
@@ -198,15 +192,15 @@ export const generateEnvFile = (app: App) => {
     const envVar = field.env_variable;
 
     if (formValue || typeof formValue === 'boolean') {
-      envFile += `${envVar}=${String(formValue)}\n`;
+      envMap.set(envVar, String(formValue));
     } else if (field.type === 'random') {
-      if (envMap.has(envVar)) {
-        envFile += `${envVar}=${envMap.get(envVar)}\n`;
+      if (existingEnvMap.has(envVar)) {
+        envMap.set(envVar, existingEnvMap.get(envVar) as string);
       } else {
         const length = field.min || 32;
         const randomString = getEntropy(field.env_variable, length);
 
-        envFile += `${envVar}=${randomString}\n`;
+        envMap.set(envVar, randomString);
       }
     } else if (field.required) {
       throw new Error(`Variable ${field.label || field.env_variable} is required`);
@@ -214,19 +208,22 @@ export const generateEnvFile = (app: App) => {
   });
 
   if (app.exposed && app.domain) {
-    envFile += 'APP_EXPOSED=true\n';
-    envFile += `APP_DOMAIN=${app.domain}\n`;
-    envFile += 'APP_PROTOCOL=https\n';
+    envMap.set('APP_EXPOSED', 'true');
+    envMap.set('APP_DOMAIN', app.domain);
+    envMap.set('APP_PROTOCOL', 'https');
+    envMap.set('APP_HOST', app.domain);
   } else {
-    envFile += `APP_DOMAIN=${getConfig().internalIp}:${parsedConfig.data.port}\n`;
+    envMap.set('APP_DOMAIN', `${getConfig().internalIp}:${parsedConfig.data.port}`);
+    envMap.set('APP_HOST', getConfig().internalIp);
   }
 
   // Create app-data folder if it doesn't exist
-  if (!fs.existsSync(`/app/storage/app-data/${app.id}`)) {
-    fs.mkdirSync(`/app/storage/app-data/${app.id}`, { recursive: true });
+  const appDataDirectoryExists = await fs.promises.stat(`/app/storage/app-data/${app.id}`).catch(() => false);
+  if (!appDataDirectoryExists) {
+    await fs.promises.mkdir(`/app/storage/app-data/${app.id}`, { recursive: true });
   }
 
-  writeFile(`/app/storage/app-data/${app.id}/app.env`, envFile);
+  await fs.promises.writeFile(`/app/storage/app-data/${app.id}/app.env`, envMapToString(envMap));
 };
 
 /**
@@ -253,7 +250,7 @@ const renderTemplate = (template: string, envMap: Map<string, string>) => {
  * @param {string} id - The id of the app.
  */
 export const copyDataDir = async (id: string) => {
-  const envMap = getEnvMap(id);
+  const envMap = await getAppEnvMap(id);
 
   const appDataDirExists = (await fs.promises.lstat(`/runtipi/apps/${id}/data`).catch(() => false)) as fs.Stats;
   if (!appDataDirExists || !appDataDirExists.isDirectory()) {
