@@ -22,6 +22,7 @@ export default async () => {
   const serverConfig = await createJestConfig(customServerConfig)();
 
   return {
+    randomize: true,
     verbose: true,
     collectCoverage: true,
     collectCoverageFrom: ['src/server/**/*.{ts,tsx}', 'src/client/**/*.{ts,tsx}', '!src/**/mocks/**/*.{ts,tsx}', '!**/*.{spec,test}.{ts,tsx}', '!**/index.{ts,tsx}'],
