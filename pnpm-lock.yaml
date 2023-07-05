@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@hookform/resolvers':
     specifier: ^3.1.1
@@ -146,8 +150,8 @@ dependencies:
     specifier: ^1.12.3
     version: 1.12.3
   tslib:
-    specifier: ^2.5.3
-    version: 2.5.3
+    specifier: ^2.6.0
+    version: 2.6.0
   uuid:
     specifier: ^9.0.0
     version: 9.0.0
@@ -317,7 +321,7 @@ devDependencies:
     version: 29.5.0
   memfs:
     specifier: ^4.2.0
-    version: 4.2.0(quill-delta@5.1.0)(rxjs@7.8.0)(tslib@2.5.3)
+    version: 4.2.0(quill-delta@5.1.0)(rxjs@7.8.0)(tslib@2.6.0)
   msw:
     specifier: ^1.2.2
     version: 1.2.2(typescript@5.1.5)
@@ -1523,20 +1527,20 @@ packages:
     resolution: {integrity: sha512-EBikYFp2JCdIfGEb5G9dyCkTGDmC57KSHhRQOC3aYxoPWVZvfWCDjZwkGYHN7Lis/fmuWl906bnNTJifDQ3sXw==}
     dependencies:
       '@formatjs/intl-localematcher': 0.2.25
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /@formatjs/ecma402-abstract@1.15.0:
     resolution: {integrity: sha512-7bAYAv0w4AIao9DNg0avfOLTCPE9woAgs6SpXuMq11IN3A+l+cq8ghczwqSZBM11myvPSJA7vLn72q0rJ0QK6Q==}
     dependencies:
       '@formatjs/intl-localematcher': 0.2.32
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /@formatjs/fast-memoize@1.2.1:
     resolution: {integrity: sha512-Rg0e76nomkz3vF9IPlKeV+Qynok0r7YZjL6syLz4/urSg0IbjPZCB/iYUMNsYA643gh4mgrX3T7KEIFIxJBQeg==}
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /@formatjs/icu-messageformat-parser@2.1.0:
@@ -1544,26 +1548,26 @@ packages:
     dependencies:
       '@formatjs/ecma402-abstract': 1.11.4
       '@formatjs/icu-skeleton-parser': 1.3.6
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /@formatjs/icu-skeleton-parser@1.3.6:
     resolution: {integrity: sha512-I96mOxvml/YLrwU2Txnd4klA7V8fRhb6JG/4hm3VMNmeJo1F03IpV2L3wWt7EweqNLES59SZ4d6hVOPCSf80Bg==}
     dependencies:
       '@formatjs/ecma402-abstract': 1.11.4
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /@formatjs/intl-localematcher@0.2.25:
     resolution: {integrity: sha512-YmLcX70BxoSopLFdLr1Ds99NdlTI2oWoLbaUW2M406lxOIPzE1KQhRz2fPUkq34xVZQaihCoU29h0KK7An3bhA==}
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /@formatjs/intl-localematcher@0.2.32:
     resolution: {integrity: sha512-k/MEBstff4sttohyEpXxCmC3MqbUn9VvHGlZ8fauLzkbwXmVrEeyzS+4uhrvAk9DWU9/7otYWxyDox4nT/KVLQ==}
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /@hookform/resolvers@3.1.1(react-hook-form@7.45.1):
@@ -2060,7 +2064,7 @@ packages:
       open: 8.4.1
       picocolors: 1.0.0
       tiny-glob: 0.2.9
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: true
 
   /@playwright/test@1.35.1:
@@ -2803,7 +2807,7 @@ packages:
   /@swc/helpers@0.5.1:
     resolution: {integrity: sha512-sJ902EfIzn1Fa+qYmjdQqh8tPsoxyBz+8yBKC2HKUxyezKJFwPGOn7pv4WY6QuQW//ySQi5lJjA/ZT9sNWWNTg==}
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
 
   /@tabler/core@1.0.0-beta19:
     resolution: {integrity: sha512-iJWAuAWeekCxb7eGeM34Qwz32nlqykp0IeRn5W1z1hTCuU0arQknHphDs36ODxAiYwEXnY3yfKHOUvpW+Lr5Vg==}
@@ -3866,7 +3870,7 @@ packages:
     resolution: {integrity: sha512-xcLxITLe2HYa1cnYnwCjkOO1PqUHQpozB8x9AR0OgWN2woOBi5kSDVxKfd0b7sb1hw5qFeJhXm9H1nu3xSfLeQ==}
     engines: {node: '>=10'}
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /aria-query@5.1.3:
@@ -6460,7 +6464,7 @@ packages:
       '@formatjs/ecma402-abstract': 1.11.4
       '@formatjs/fast-memoize': 1.2.1
       '@formatjs/icu-messageformat-parser': 2.1.0
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /invariant@2.2.4:
@@ -7290,7 +7294,7 @@ packages:
       dreamopt: 0.8.0
     dev: true
 
-  /json-joy@9.3.0(quill-delta@5.1.0)(rxjs@7.8.0)(tslib@2.5.3):
+  /json-joy@9.3.0(quill-delta@5.1.0)(rxjs@7.8.0)(tslib@2.6.0):
     resolution: {integrity: sha512-ZQiyMcbcfqki5Bsk0kWfne/Ixl4Q6cLBzCd3VE/TSp7jhns/WDBrIMTuyzDfwmLxuFtQdojiLSLX8MxTyK23QA==}
     engines: {node: '>=10.0'}
     hasBin: true
@@ -7303,7 +7307,7 @@ packages:
       hyperdyperid: 1.2.0
       quill-delta: 5.1.0
       rxjs: 7.8.0
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: true
 
   /json-parse-even-better-errors@2.3.1:
@@ -7688,15 +7692,15 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
-  /memfs@4.2.0(quill-delta@5.1.0)(rxjs@7.8.0)(tslib@2.5.3):
+  /memfs@4.2.0(quill-delta@5.1.0)(rxjs@7.8.0)(tslib@2.6.0):
     resolution: {integrity: sha512-V5/xE+zl6+soWxlBjiVTQSkfXybTwhEBj2I8sK9LaS5lcZsTuhRftakrcRpDY7Ycac2NTK/VzEtpKMp+gpymrQ==}
     engines: {node: '>= 4.0.0'}
     peerDependencies:
       tslib: '2'
     dependencies:
-      json-joy: 9.3.0(quill-delta@5.1.0)(rxjs@7.8.0)(tslib@2.5.3)
-      thingies: 1.12.0(tslib@2.5.3)
-      tslib: 2.5.3
+      json-joy: 9.3.0(quill-delta@5.1.0)(rxjs@7.8.0)(tslib@2.6.0)
+      thingies: 1.12.0(tslib@2.6.0)
+      tslib: 2.6.0
     transitivePeerDependencies:
       - quill-delta
       - rxjs
@@ -9038,7 +9042,7 @@ packages:
       '@types/react': 18.2.14
       react: 18.2.0
       react-style-singleton: 2.2.1(@types/react@18.2.14)(react@18.2.0)
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /react-remove-scroll@2.5.5(@types/react@18.2.14)(react@18.2.0):
@@ -9055,7 +9059,7 @@ packages:
       react: 18.2.0
       react-remove-scroll-bar: 2.3.4(@types/react@18.2.14)(react@18.2.0)
       react-style-singleton: 2.2.1(@types/react@18.2.14)(react@18.2.0)
-      tslib: 2.5.3
+      tslib: 2.6.0
       use-callback-ref: 1.3.0(@types/react@18.2.14)(react@18.2.0)
       use-sidecar: 1.1.2(@types/react@18.2.14)(react@18.2.0)
     dev: false
@@ -9103,7 +9107,7 @@ packages:
       get-nonce: 1.0.1
       invariant: 2.2.4
       react: 18.2.0
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /react-tooltip@5.16.1(react-dom@18.2.0)(react@18.2.0):
@@ -9322,7 +9326,7 @@ packages:
   /rxjs@7.8.0:
     resolution: {integrity: sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==}
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: true
 
   /sade@1.8.1:
@@ -9813,7 +9817,7 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     dependencies:
       '@pkgr/utils': 2.3.1
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: true
 
   /tapable@2.2.1:
@@ -9870,13 +9874,13 @@ packages:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
     dev: true
 
-  /thingies@1.12.0(tslib@2.5.3):
+  /thingies@1.12.0(tslib@2.6.0):
     resolution: {integrity: sha512-AiGqfYC1jLmJagbzQGuoZRM48JPsr9yB734a7K6wzr34NMhjUPrWSQrkF7ZBybf3yCerCL2Gcr02kMv4NmaZfA==}
     engines: {node: '>=10.18'}
     peerDependencies:
       tslib: ^2
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: true
 
   /thirty-two@1.0.2:
@@ -10078,8 +10082,8 @@ packages:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
 
-  /tslib@2.5.3:
-    resolution: {integrity: sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==}
+  /tslib@2.6.0:
+    resolution: {integrity: sha512-7At1WUettjcSRHXCyYtTselblcHl9PJFFVKiCAy/bY97+BPZXSQ2wbq0P9s8tK2G7dFQfNnlJnPAiArVBVBsfA==}
 
   /tsutils@3.21.0(typescript@5.1.5):
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}
@@ -10297,7 +10301,7 @@ packages:
     dependencies:
       '@types/react': 18.2.14
       react: 18.2.0
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /use-intl@2.15.1(react@18.2.0):
@@ -10337,7 +10341,7 @@ packages:
       '@types/react': 18.2.14
       detect-node-es: 1.1.0
       react: 18.2.0
-      tslib: 2.5.3
+      tslib: 2.6.0
     dev: false
 
   /use-sync-external-store@1.2.0(react@18.2.0):
@@ -10864,7 +10868,3 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
