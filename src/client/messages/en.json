@@ -208,6 +208,7 @@
       },
       "update-form": {
         "title": "Update {name} ?",
+        "warning": "You are about to update {name} from version {current} to {latest}. Make sure you have a backup of your data before proceeding. If you are skipping any major version, follow any migration instructions from the app developers and read the release notes for each version in between.",
         "subtitle1": "Update app to latest verion :",
         "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
         "submit": "Update"
