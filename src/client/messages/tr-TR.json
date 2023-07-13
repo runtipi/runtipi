@@ -63,9 +63,9 @@
     "form": {
       "email": "Email address",
       "email-placeholder": "you@example.com",
-      "password": "Password",
+      "password": "Şifre",
       "password-placeholder": "Enter your password",
-      "password-confirmation": "Confirm password",
+      "password-confirmation": "Parolanızı tekrar yazınız",
       "password-confirmation-placeholder": "Confirm your password",
       "forgot": "Forgot password?",
       "new-password-placeholder": "Your new password",
