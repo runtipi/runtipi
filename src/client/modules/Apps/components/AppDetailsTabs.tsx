@@ -5,12 +5,14 @@ import { useTranslations } from 'next-intl';
 import { DataGrid, DataGridItem } from '../../../components/ui/DataGrid';
 import Markdown from '../../../components/Markdown/Markdown';
 import { AppInfo } from '../../../core/types';
+import { BackupsList } from './BackupsList';
 
 interface IProps {
   info: AppInfo;
+  installed?: boolean;
 }
 
-export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
+export const AppDetailsTabs: React.FC<IProps> = ({ info, installed }) => {
   const t = useTranslations('apps.app-details');
 
   return (
@@ -18,6 +20,9 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
       <TabsList>
         <TabsTrigger value="description">{t('description')}</TabsTrigger>
         <TabsTrigger value="info">{t('base-info')}</TabsTrigger>
+        <TabsTrigger disabled={!installed} value="backups">
+          {t('backups')}
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="description">
         <Markdown className="markdown">{info.description}</Markdown>
@@ -60,6 +65,9 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
             </DataGridItem>
           )}
         </DataGrid>
+      </TabsContent>
+      <TabsContent value="backups">
+        <BackupsList id={info.id} />
       </TabsContent>
     </Tabs>
   );

@@ -137,6 +137,7 @@
       "version": "Version",
       "description": "Description",
       "base-info": "Base info",
+      "backups": "Backups",
       "source-code": "Source code",
       "author": "Author",
       "port": "Port",

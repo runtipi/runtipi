@@ -24,4 +24,6 @@ export const appRouter = router({
   updateApp: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ input }) => AppService.updateApp(input.id)),
   installedApps: protectedProcedure.query(AppService.installedApps),
   listApps: protectedProcedure.query(() => AppServiceClass.listApps()),
+  backupApp: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ input }) => AppService.backupApp(input.id)),
+  listBackups: protectedProcedure.input(z.object({ id: z.string(), pageIndex: z.number(), pageSize: z.number() })).query(({ input }) => AppService.listBackups(input)),
 });

@@ -1,6 +1,6 @@
-import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
+import { and, asc, eq, ne, notInArray, sql } from 'drizzle-orm';
 import { Database } from '@/server/db';
-import { appTable, NewApp, AppStatus } from '../../db/schema';
+import { appTable, NewApp, AppStatus, NewBackup, backupTable } from '../../db/schema';
 
 export class AppQueries {
   private db;
@@ -82,5 +82,43 @@ export class AppQueries {
    */
   public async updateAppsByStatusNotIn(statuses: AppStatus[], data: Partial<NewApp>) {
     return this.db.update(appTable).set(data).where(notInArray(appTable.status, statuses)).returning();
+  }
+
+  /**
+   * Given Backup data, creates a new Backup
+   *
+   * @param {NewBackup} data - The data to create the Backup with
+   */
+  public async createAppBackup(data: NewBackup) {
+    const newBackups = await this.db.insert(backupTable).values(data).returning();
+    return newBackups[0];
+  }
+
+  /**
+   * Given an app id and pagination data, return all backups for the app
+   *
+   * @param {string} appId - The id of the app to return backups for
+   * @param {number} page - The page of backups to return
+   * @param {number} limit - The number of backups to return per page
+   */
+  public async getAppBackups(appId: string, page: number, limit: number) {
+    const result = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(backupTable)
+      .where(eq(backupTable.appId, appId));
+    const total = result[0]?.count || 0;
+
+    const backups = await this.db
+      .select()
+      .from(backupTable)
+      .where(eq(backupTable.appId, appId))
+      .limit(limit)
+      .offset(page * limit);
+
+    return {
+      total,
+      pageCount: Math.ceil(total / limit) || 0,
+      data: backups,
+    };
   }
 }

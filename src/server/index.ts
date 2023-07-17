@@ -4,6 +4,7 @@ import express from 'express';
 import { parse } from 'url';
 
 import type { NextServer } from 'next/dist/server/next';
+import { z } from 'zod';
 import { EventDispatcher } from './core/EventDispatcher';
 import { getConfig, setConfig } from './core/TipiConfig';
 import { Logger } from './core/Logger';
@@ -42,12 +43,36 @@ nextApp.prepare().then(async () => {
 
   app.use('/static', express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/`));
 
-  app.use('/certificate', async (req, res) => {
+  app.get('/backup/app/:id', async (req, res) => {
     const userId = req.session?.userId;
     const user = await authService.getUserById(userId as number);
 
     if (user?.operator) {
-      res.setHeader('Content-Dispositon', 'attachment; filename=cert.pem');
+      const appId = z.string().parse(req.params.id);
+      const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['backup', appId]);
+
+      if (success) {
+        res.setHeader('Content-Disposition', `attachment; filename=${appId}.zip`);
+        return res.sendFile(`${getConfig().rootFolder}/backups/apps/${appId}.zip`);
+      }
+
+      Logger.error(`Error while backing up app ${appId}: ${stdout}`);
+      return res.status(500).send(stdout);
+    }
+
+    return res.status(403).send('Forbidden');
+  });
+
+  app.post('/backup/app/:id', async (req, res) => {
+    // Multer file upload
+  });
+
+  app.get('/certificate', async (req, res) => {
+    const userId = req.session?.userId;
+    const user = await authService.getUserById(userId as number);
+
+    if (user?.operator) {
+      res.setHeader('Content-Disposition', 'attachment; filename=cert.pem');
       return res.sendFile(`${getConfig().rootFolder}/traefik/tls/cert.pem`);
     }
 

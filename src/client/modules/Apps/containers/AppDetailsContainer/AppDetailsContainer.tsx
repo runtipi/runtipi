@@ -202,7 +202,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
           />
         </div>
       </div>
-      <AppDetailsTabs info={app.info} />
+      <AppDetailsTabs info={app.info} installed={app.status !== 'missing'} />
     </div>
   );
 };

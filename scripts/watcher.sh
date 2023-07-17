@@ -37,9 +37,13 @@ function run_command() {
 
     set_status "$id" "running"
 
+    write_log "Running command ${command_path} with args $@"
+
     $command_path "$@" >>"${ROOT_FOLDER}/logs/${id}.log" 2>&1
 
     local result=$?
+
+    write_log "Command ${command_path} finished with result ${result}"
 
     if [[ $result -eq 0 ]]; then
         set_status "$id" "success"
@@ -61,7 +65,7 @@ function select_command() {
         return 0
     fi
 
-    write_log "Executing command ${command}"
+    write_log "Executing command ${command} for ${id} with args ${args}"
 
     if [ -z "$command" ]; then
         return 0

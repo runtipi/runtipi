@@ -10,10 +10,11 @@ interface IProps {
   info: Pick<AppInfo, 'name' | 'version'>;
   isOpen: boolean;
   onClose: () => void;
+  onDownloadBackup: () => void;
   onConfirm: () => void;
 }
 
-export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClose, onConfirm }) => {
+export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClose, onConfirm, onDownloadBackup }) => {
   const t = useTranslations('apps.app-details.update-form');
 
   return (
@@ -31,6 +32,7 @@ export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClos
           </div>
         </DialogDescription>
         <DialogFooter>
+          <Button onClick={onDownloadBackup}>Download backup</Button>
           <Button onClick={onConfirm} className="btn-danger">
             {t('submit')}
           </Button>

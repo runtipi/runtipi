@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-echo "Starting app script"
 
 source "${BASH_SOURCE%/*}/common.sh"
 
@@ -33,7 +32,7 @@ else
 
   if [[ ! -d "${app_dir}" ]]; then
     # copy from repo
-    echo "Copying app from repo"
+    write_log "Copying app from repo"
     mkdir -p "${app_dir}"
     cp -r "${ROOT_FOLDER}/repos/${REPO_ID}/apps/${app}"/* "${app_dir}"
   fi
@@ -41,7 +40,7 @@ else
   app_data_dir="${STORAGE_PATH}/app-data/${app}"
 
   if [[ -z "${app}" ]] || [[ ! -d "${app_dir}" ]]; then
-    echo "Error: \"${app}\" is not a valid app"
+    write_log "Error: \"${app}\" is not a valid app"
     exit 1
   fi
 fi
@@ -243,6 +242,34 @@ function stop_app() {
   exit 0
 }
 
+function backup_app() {
+  local app="${1}"
+
+  write_log "Backing up app ${app}..."
+
+  local file_name="${app}-$(date +%Y-%m-%d-%H-%M-%S).tar.gz"
+  local backup_file="${STORAGE_PATH}/backups/apps/${app}/${file_name}"
+
+  if [[ ! -d "${ROOT_FOLDER_HOST}/backups/apps/${app}" ]]; then
+    mkdir -p "${ROOT_FOLDER_HOST}/backups/apps/${app}"
+  fi
+
+  # Create a temp folder
+  local temp_dir=$(mktemp -d)
+
+  # Copy app data to temp folder
+  cp -a "${app_data_dir}" "${temp_dir}/app-data"
+  cp -a "${ROOT_FOLDER_HOST}/apps/${app}" "${temp_dir}/app"
+
+  if ! tar -czf "${backup_file}" -C "${temp_dir}" .; then
+    write_log "Failed to backup app ${app}"
+    exit 1
+  fi
+
+  echo "${file_name}"
+  exit 0
+}
+
 # Install new app
 if [[ "$command" = "install" ]]; then
   install_app "${app}"
@@ -266,6 +293,11 @@ fi
 # Starts an installed app
 if [[ "$command" = "start" ]]; then
   start_app "${app}"
+fi
+
+# Backups an installed app
+if [[ "$command" = "backup" ]]; then
+  backup_app "${app}"
 fi
 
 if [[ "$command" = "clean" ]]; then

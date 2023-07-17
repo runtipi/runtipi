@@ -1,8 +1,11 @@
 import validator from 'validator';
+import path from 'path';
 import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import { Database } from '@/server/db';
+import fs from 'fs-extra';
+import { z } from 'zod';
 import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo, copyDataDir } from './apps.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { EventDispatcher } from '../../core/EventDispatcher';
@@ -372,5 +375,60 @@ export class AppServiceClass {
         return null;
       })
       .filter(notEmpty);
+  };
+
+  public backupApp = async (id: string) => {
+    const app = await this.queries.getApp(id);
+
+    if (!app) {
+      throw new TranslatedError('server-messages.errors.app-not-found', { id });
+    }
+
+    const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['backup', id]);
+
+    if (!success) {
+      Logger.error(`Failed to backup app ${id}: ${stdout}`);
+      throw new Error('Yo'); // TODO: Translate error
+    }
+
+    const appInfo = getAppInfo(app.id, app.status);
+
+    const filename = z
+      .string()
+      .trim()
+      .startsWith(app.id)
+      .regex(/^([a-zA-Z0-9-]+)-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}\.tar\.gz$/)
+      .parse(stdout);
+
+    // wait for the file to be written to disk
+
+    const fileStat = await fs.promises.stat(path.join('/app', 'storage', 'backups', 'apps', id, filename), { bigint: true }).then((stat) => stat);
+
+    console.log(path.join('/app', 'storage', 'backups', 'apps', id, filename), fileStat);
+
+    const backup = await this.queries.createAppBackup({ appId: id, filename, version: `${appInfo?.version} (${app.version})`, size: fileStat.size });
+
+    return backup;
+  };
+
+  /**
+   * Given an app id, returns a list of all available backups for that app
+   *
+   * @param {object} params - The parameters for the request
+   * @param {string} params.id - The id of the app to list backups for
+   * @param {number} params.pageIndex - The index of the page to return
+   * @param {number} params.pageSize - The size of the page to return
+   */
+  public listBackups = async (params: { id: string; pageIndex: number; pageSize: number }) => {
+    const { id, pageIndex, pageSize } = params;
+
+    const app = await this.queries.getApp(id);
+
+    if (!app) {
+      throw new TranslatedError('server-messages.errors.app-not-found', { id });
+    }
+
+    const backups = await this.queries.getAppBackups(id, pageIndex, pageSize);
+    return backups;
   };
 }
