@@ -16,6 +16,9 @@ entryPoints:
     address: ":80"
   websecure:
     address: ":443"
+    http:
+      tls:
+        certResolver: myresolver
 
 certificatesResolvers:
   myresolver:
