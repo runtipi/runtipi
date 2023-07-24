@@ -59,7 +59,7 @@
     "fs-extra": "^11.1.1",
     "isomorphic-fetch": "^3.0.0",
     "lodash.merge": "^4.6.2",
-    "next": "13.4.7",
+    "next": "13.4.8",
     "next-intl": "^2.15.1",
     "node-cron": "^3.0.1",
     "pg": "^8.11.1",
