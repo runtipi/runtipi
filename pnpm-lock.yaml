@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@hookform/resolvers':
     specifier: ^3.1.1
@@ -295,8 +299,8 @@ devDependencies:
     specifier: ^5.0.1
     version: 5.0.1(@testing-library/dom@9.3.1)(eslint@8.43.0)
   eslint-plugin-jsdoc:
-    specifier: ^46.3.0
-    version: 46.3.0(eslint@8.43.0)
+    specifier: ^46.4.5
+    version: 46.4.5(eslint@8.43.0)
   eslint-plugin-jsx-a11y:
     specifier: ^6.6.1
     version: 6.7.1(eslint@8.43.0)
@@ -5481,8 +5485,8 @@ packages:
       - typescript
     dev: true
 
-  /eslint-plugin-jsdoc@46.3.0(eslint@8.43.0):
-    resolution: {integrity: sha512-nfSvsR8YJRZyKrWwcXPSQyQC8jllfdEjcRhTXFr7RxfB5Wyl7AxrfjCUz72WwalkXMF4u+R6F/oDoW46ah69HQ==}
+  /eslint-plugin-jsdoc@46.4.5(eslint@8.43.0):
+    resolution: {integrity: sha512-HjTuxqDYplAQFu29F3MHFCDDBgeqOxPXI6TyBhL0u2rr4XntJ0z3C9PmJvpjFscKdHwkZDN/0l1QCG0QwyRi4g==}
     engines: {node: '>=16'}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0
@@ -5495,7 +5499,7 @@ packages:
       eslint: 8.43.0
       esquery: 1.5.0
       is-builtin-module: 3.2.1
-      semver: 7.5.3
+      semver: 7.5.4
       spdx-expression-parse: 3.0.1
     transitivePeerDependencies:
       - supports-color
@@ -9393,6 +9397,14 @@ packages:
     dependencies:
       lru-cache: 6.0.0
 
+  /semver@7.5.4:
+    resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
+    dev: true
+
   /send@0.18.0:
     resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
     engines: {node: '>= 0.8.0'}
@@ -10864,7 +10876,3 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
