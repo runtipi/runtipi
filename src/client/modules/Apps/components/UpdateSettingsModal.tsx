@@ -1,8 +1,8 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
 import { useTranslations } from 'next-intl';
+import { AppInfo } from '@runtipi/shared';
 import { InstallForm } from './InstallForm';
-import { AppInfo } from '../../../core/types';
 import { FormValues } from './InstallForm/InstallForm';
 
 interface IProps {

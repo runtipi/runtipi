@@ -1,9 +1,7 @@
 import fs from 'fs-extra';
 import { faker } from '@faker-js/faker';
 import { eq } from 'drizzle-orm';
-import { Architecture } from '../core/TipiConfig/TipiConfig';
-import { AppInfo, appInfoSchema } from '../services/apps/apps.helpers';
-import { APP_CATEGORIES } from '../services/apps/apps.types';
+import { AppInfo, Architecture, appInfoSchema, APP_CATEGORIES } from '@runtipi/shared';
 import { TestDatabase } from './test-utils';
 import { appTable, AppStatus, App, NewApp } from '../db/schema';
 

@@ -11,6 +11,7 @@ COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch --ignore-scripts
 
 COPY ./package*.json ./
+COPY ./packages ./packages
 
 RUN pnpm install -r --prefer-offline 
 

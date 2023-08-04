@@ -46,23 +46,17 @@ env_variables_json=$(cat <<EOF
 EOF
 )
 
-### --------------------------------
-### Watcher and system-info
-### --------------------------------
 mkdir -p "${ROOT_FOLDER}/state"
-
-if [[ ! -f "${ROOT_FOLDER}/state/events" ]]; then
-    touch "${ROOT_FOLDER}/state/events"
-fi
 
 if [[ ! -f "${ROOT_FOLDER}/state/system-info.json" ]]; then
     echo "{}" >"${ROOT_FOLDER}/state/system-info.json"
 fi
 
-chmod -R a+rwx "${ROOT_FOLDER}/state/events"
 chmod -R a+rwx "${ROOT_FOLDER}/state/system-info.json"
-kill_watcher
-"${ROOT_FOLDER}/scripts/watcher.sh" &
+
+### TODO: start built watcher
+
+
 
 ### --------------------------------
 ### env file generation

@@ -1,7 +1,7 @@
 import React from 'react';
+import { AppInfo } from '@runtipi/shared';
 import { InstallModal } from './InstallModal';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
-import { AppInfo } from '../../../../core/types';
 
 describe('InstallModal', () => {
   const app = {

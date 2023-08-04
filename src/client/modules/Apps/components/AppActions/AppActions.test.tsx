@@ -1,7 +1,7 @@
 import React from 'react';
+import { AppInfo } from '@runtipi/shared';
 import { AppActions } from './AppActions';
 import { cleanup, fireEvent, render, screen, waitFor, userEvent } from '../../../../../../tests/test-utils';
-import { AppInfo } from '../../../../core/types';
 
 afterEach(cleanup);
 

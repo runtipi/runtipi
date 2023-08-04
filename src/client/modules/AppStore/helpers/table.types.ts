@@ -1,4 +1,4 @@
-import { AppInfo } from '../../../core/types';
+import { AppInfo } from '@runtipi/shared';
 
 export type SortableColumns = keyof Pick<AppInfo, 'id'>;
 export type SortDirection = 'asc' | 'desc';
