@@ -113,8 +113,8 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
   const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
 
   const handleInstallSubmit = async (values: FormValues) => {
-    const { exposed, domain, ...form } = values;
-    install.mutate({ id: app.id, form, exposed, domain });
+    const { exposed, domain } = values;
+    install.mutate({ id: app.id, form: values, exposed, domain });
   };
 
   const handleUnistallSubmit = () => {
@@ -130,8 +130,8 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app }) => {
   };
 
   const handleUpdateSettingsSubmit = async (values: FormValues) => {
-    const { exposed, domain, ...form } = values;
-    updateConfig.mutate({ id: app.id, form, exposed, domain });
+    const { exposed, domain } = values;
+    updateConfig.mutate({ id: app.id, form: values, exposed, domain });
   };
 
   const handleUpdateSubmit = async () => {

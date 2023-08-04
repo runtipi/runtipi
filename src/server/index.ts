@@ -2,8 +2,11 @@
 /* eslint-disable global-require */
 import express from 'express';
 import { parse } from 'url';
+import { BullMQAdapter } from '@bull-monitor/root/dist/bullmq-adapter';
 
+import { Queue } from 'bullmq';
 import type { NextServer } from 'next/dist/server/next';
+import { BullMonitorExpress } from '@bull-monitor/express';
 import { EventDispatcher } from './core/EventDispatcher';
 import { getConfig, setConfig } from './core/TipiConfig';
 import { Logger } from './core/Logger';
@@ -33,12 +36,17 @@ if (!dev) {
 const handle = nextApp.getRequestHandler();
 
 nextApp.prepare().then(async () => {
-  const app = express();
   const authService = new AuthQueries(db);
+  const app = express();
 
   app.disable('x-powered-by');
 
   app.use(sessionMiddleware);
+
+  // Init BullMQ Monitor
+  const monitor = new BullMonitorExpress({ queues: [new BullMQAdapter(new Queue('events', { connection: { host: getConfig().REDIS_HOST, port: 6379 } }))] });
+  await monitor.init();
+  app.use('/bull', monitor.router);
 
   app.use('/static', express.static(`${getConfig().rootFolder}/repos/${getConfig().appsRepoId}/`));
 
@@ -61,8 +69,8 @@ nextApp.prepare().then(async () => {
   });
 
   app.listen(port, async () => {
+    await EventDispatcher.clear();
     const appService = new AppServiceClass(db);
-    EventDispatcher.clear();
 
     // Run database migrations
     if (getConfig().NODE_ENV !== 'development') {
@@ -71,12 +79,12 @@ nextApp.prepare().then(async () => {
     setConfig('status', 'RUNNING');
 
     // Clone and update apps repo
-    await EventDispatcher.dispatchEventAsync('clone_repo', [getConfig().appsRepoUrl]);
-    await EventDispatcher.dispatchEventAsync('update_repo', [getConfig().appsRepoUrl]);
+    await EventDispatcher.dispatchEventAsync({ type: 'repo', command: 'clone', url: getConfig().appsRepoUrl });
+    await EventDispatcher.dispatchEventAsync({ type: 'repo', command: 'update', url: getConfig().appsRepoUrl });
 
     // Scheduled events
-    EventDispatcher.scheduleEvent({ type: 'update_repo', args: [getConfig().appsRepoUrl], cronExpression: '*/30 * * * *' });
-    EventDispatcher.scheduleEvent({ type: 'system_info', args: [], cronExpression: '* * * * *' });
+    EventDispatcher.scheduleEvent({ type: 'repo', command: 'update', url: getConfig().appsRepoUrl }, '*/30 * * * *');
+    EventDispatcher.scheduleEvent({ type: 'system', command: 'system_info' }, '* * * * *');
 
     appService.startAllApps();
 

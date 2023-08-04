@@ -1,4 +1,4 @@
-import { AppCategory, AppInfo } from '../../../core/types';
+import { AppCategory, AppInfo } from '@runtipi/shared';
 import { AppTableData } from './table.types';
 
 type SortParams = {

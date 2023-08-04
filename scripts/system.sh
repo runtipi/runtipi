@@ -46,20 +46,6 @@ function update() {
     exit 0
 }
 
-function restart() {
-    write_log "Restarting Tipi..."
-
-    scripts/stop.sh
-    scripts/start.sh
-
-    exit
-}
-
-# Restart Tipi
-if [[ "$command" = "restart" ]]; then
-    restart
-fi
-
 # Update Tipi
 if [[ "$command" = "update" ]]; then
     update
