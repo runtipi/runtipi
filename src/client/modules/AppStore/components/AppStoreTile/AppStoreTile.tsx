@@ -2,8 +2,8 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import React from 'react';
 import { useTranslations } from 'next-intl';
+import { AppCategory } from '@runtipi/shared';
 import { AppLogo } from '../../../../components/AppLogo/AppLogo';
-import { AppCategory } from '../../../../core/types';
 import { colorSchemeForCategory, limitText } from '../../helpers/table.helpers';
 import styles from './AppStoreTile.module.scss';
 

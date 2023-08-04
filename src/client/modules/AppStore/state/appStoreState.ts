@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AppCategory } from '../../../core/types';
+import { AppCategory } from '@runtipi/shared';
 import { SortableColumns } from '../helpers/table.types';
 
 type Store = {

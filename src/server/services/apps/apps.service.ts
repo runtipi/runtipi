@@ -3,11 +3,12 @@ import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import { Database } from '@/server/db';
-import { checkAppRequirements, checkEnvFile, generateEnvFile, getAvailableApps, ensureAppFolder, AppInfo, getAppInfo, getUpdateInfo, copyDataDir } from './apps.helpers';
+import { castAppConfig } from '@/client/modules/Apps/helpers/castAppConfig';
+import { AppInfo } from '@runtipi/shared';
+import { checkAppRequirements, getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
-import { createFolder } from '../../common/fs.helpers';
 import { notEmpty } from '../../common/typescript.helpers';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.id.localeCompare(b.id);
@@ -29,12 +30,6 @@ export class AppServiceClass {
     this.queries = new AppQueries(p);
   }
 
-  async regenerateEnvFile(app: App) {
-    ensureAppFolder(app.id);
-    await generateEnvFile(app);
-    await checkEnvFile(app.id);
-  }
-
   /**
    *  This function starts all apps that are in the 'running' status.
    *  It finds all the running apps and starts them by regenerating the env file, checking the env file and dispatching the start event.
@@ -50,12 +45,9 @@ export class AppServiceClass {
     await Promise.all(
       apps.map(async (app) => {
         try {
-          // Regenerate env file
-          await this.regenerateEnvFile(app);
-
           await this.queries.updateApp(app.id, { status: 'starting' });
 
-          EventDispatcher.dispatchEventAsync('app', ['start', app.id]).then(({ success }) => {
+          EventDispatcher.dispatchEventAsync({ type: 'app', command: 'start', appid: app.id, form: castAppConfig(app.config) }).then(({ success }) => {
             if (success) {
               this.queries.updateApp(app.id, { status: 'running' });
             } else {
@@ -83,11 +75,8 @@ export class AppServiceClass {
       throw new TranslatedError('server-messages.errors.app-not-found', { id: appName });
     }
 
-    // Regenerate env file
-    await this.regenerateEnvFile(app);
-
     await this.queries.updateApp(appName, { status: 'starting' });
-    const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['start', app.id]);
+    const { success, stdout } = await EventDispatcher.dispatchEventAsync({ type: 'app', command: 'start', appid: appName, form: castAppConfig(app.config) });
 
     if (success) {
       await this.queries.updateApp(appName, { status: 'running' });
@@ -123,11 +112,7 @@ export class AppServiceClass {
         throw new TranslatedError('server-messages.errors.domain-not-valid', { domain });
       }
 
-      ensureAppFolder(id, true);
       checkAppRequirements(id);
-
-      // Create app folder
-      createFolder(`/app/storage/app-data/${id}/data`);
 
       const appInfo = getAppInfo(id);
 
@@ -151,16 +136,10 @@ export class AppServiceClass {
         }
       }
 
-      const newApp = await this.queries.createApp({ id, status: 'installing', config: form, version: appInfo.tipi_version, exposed: exposed || false, domain: domain || null });
-
-      if (newApp) {
-        // Create env file
-        await generateEnvFile(newApp);
-        await copyDataDir(id);
-      }
+      await this.queries.createApp({ id, status: 'installing', config: form, version: appInfo.tipi_version, exposed: exposed || false, domain: domain || null });
 
       // Run script
-      const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['install', id]);
+      const { success, stdout } = await EventDispatcher.dispatchEventAsync({ type: 'app', command: 'install', appid: id, form });
 
       if (!success) {
         await this.queries.deleteApp(id);
@@ -228,13 +207,14 @@ export class AppServiceClass {
       }
     }
 
-    const updatedApp = await this.queries.updateApp(id, { exposed: exposed || false, domain: domain || null, config: form });
+    const { success } = await EventDispatcher.dispatchEventAsync({ type: 'app', command: 'generate_env', appid: id, form });
 
-    if (updatedApp) {
-      await generateEnvFile(updatedApp);
+    if (success) {
+      const updatedApp = await this.queries.updateApp(id, { exposed: exposed || false, domain: domain || null, config: form });
+      return updatedApp;
     }
 
-    return updatedApp;
+    throw new TranslatedError('server-messages.errors.app-failed-to-update', { id });
   };
 
   /**
@@ -250,12 +230,10 @@ export class AppServiceClass {
       throw new TranslatedError('server-messages.errors.app-not-found', { id });
     }
 
-    await this.regenerateEnvFile(app);
-
     // Run script
     await this.queries.updateApp(id, { status: 'stopping' });
 
-    const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['stop', id]);
+    const { success, stdout } = await EventDispatcher.dispatchEventAsync({ type: 'app', command: 'stop', appid: id, form: castAppConfig(app.config) });
 
     if (success) {
       await this.queries.updateApp(id, { status: 'stopped' });
@@ -285,11 +263,9 @@ export class AppServiceClass {
       await this.stopApp(id);
     }
 
-    await this.regenerateEnvFile(app);
-
     await this.queries.updateApp(id, { status: 'uninstalling' });
 
-    const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['uninstall', id]);
+    const { success, stdout } = await EventDispatcher.dispatchEventAsync({ type: 'app', command: 'uninstall', appid: id, form: castAppConfig(app.config) });
 
     if (!success) {
       await this.queries.updateApp(id, { status: 'stopped' });
@@ -336,11 +312,9 @@ export class AppServiceClass {
       throw new TranslatedError('server-messages.errors.app-not-found', { id });
     }
 
-    await this.regenerateEnvFile(app);
-
     await this.queries.updateApp(id, { status: 'updating' });
 
-    const { success, stdout } = await EventDispatcher.dispatchEventAsync('app', ['update', id]);
+    const { success, stdout } = await EventDispatcher.dispatchEventAsync({ type: 'app', command: 'update', appid: id, form: castAppConfig(app.config) });
 
     if (success) {
       const appInfo = getAppInfo(app.id, app.status);

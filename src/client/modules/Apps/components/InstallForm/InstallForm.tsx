@@ -5,11 +5,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip } from 'react-tooltip';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
+import { type FormField, type AppInfo } from '@runtipi/shared';
 import { Button } from '../../../../components/ui/Button';
 import { Switch } from '../../../../components/ui/Switch';
 import { Input } from '../../../../components/ui/Input';
 import { validateAppConfig } from '../../utils/validators';
-import { type FormField, type AppInfo } from '../../../../core/types';
 
 interface IProps {
   formFields: FormField[];

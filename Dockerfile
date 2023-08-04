@@ -13,9 +13,11 @@ FROM builder_base AS builder
 WORKDIR /app
 
 COPY ./pnpm-lock.yaml ./
+COPY ./pnpm-workspace.yaml ./
 RUN pnpm fetch --no-scripts
 
 COPY ./package*.json ./
+COPY ./packages ./packages
 
 RUN pnpm install -r --prefer-offline 
 COPY ./src ./src
