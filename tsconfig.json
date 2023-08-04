@@ -38,7 +38,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
+    "incremental": false,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
@@ -54,9 +54,11 @@
     "**/*.tsx",
     "**/*.mjs",
     "**/*.js",
-    "**/*.jsx"
+    "**/*.jsx",
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "packages",
+    "repos",
   ]
 }

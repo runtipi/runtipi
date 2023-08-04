@@ -39,5 +39,5 @@ jest.mock('next/config', () => () => ({
 }));
 
 afterAll(() => {
-  EventDispatcher.clearInterval();
+  EventDispatcher.clear();
 });
