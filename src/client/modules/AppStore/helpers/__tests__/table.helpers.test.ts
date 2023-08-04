@@ -3,33 +3,33 @@ import { limitText, sortTable } from '../table.helpers';
 import { AppTableData } from '../table.types';
 
 describe('sortTable function', () => {
-  const app = createAppConfig({ name: 'a', categories: ['social'] });
-  const app2 = createAppConfig({ name: 'b', categories: ['network', 'automation'] });
-  const app3 = createAppConfig({ name: 'c', categories: ['network'] });
+  const app = createAppConfig({ id: 'a', name: 'a', categories: ['social'] });
+  const app2 = createAppConfig({ id: 'b', name: 'B', categories: ['network', 'automation'] });
+  const app3 = createAppConfig({ id: 'c', name: 'c', categories: ['network'] });
 
   // Randomize the order of the apps
   const data: AppTableData = [app3, app, app2];
 
   it('should sort by name in ascending order', () => {
-    const sortedData = sortTable({ data, direction: 'asc', col: 'name', search: '' });
+    const sortedData = sortTable({ data, direction: 'asc', col: 'id', search: '' });
 
     expect(sortedData).toEqual([app, app2, app3]);
   });
 
   it('should sort by name in descending order', () => {
-    const sortedData = sortTable({ data, direction: 'desc', col: 'name', search: '' });
+    const sortedData = sortTable({ data, direction: 'desc', col: 'id', search: '' });
 
     expect(sortedData).toEqual([app3, app2, app]);
   });
 
   it('should filter by search term', () => {
-    const sortedData = sortTable({ data, direction: 'asc', col: 'name', search: 'b' });
+    const sortedData = sortTable({ data, direction: 'asc', col: 'id', search: 'b' });
 
     expect(sortedData).toEqual([app2]);
   });
 
   it('should filter by category', () => {
-    const sortedData = sortTable({ data, direction: 'asc', col: 'name', search: '', category: 'automation' });
+    const sortedData = sortTable({ data, direction: 'asc', col: 'id', search: '', category: 'automation' });
 
     expect(sortedData).toEqual([app2]);
   });

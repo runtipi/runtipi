@@ -1,7 +1,7 @@
 import { inferRouterOutputs } from '@trpc/server';
+import { settingsSchema } from '@runtipi/shared';
 import { router, protectedProcedure, publicProcedure } from '../../trpc';
 import { SystemServiceClass } from '../../services/system';
-import { settingsSchema } from '../../core/TipiConfig/TipiConfig';
 import * as TipiConfig from '../../core/TipiConfig';
 
 export type SystemRouterOutput = inferRouterOutputs<typeof systemRouter>;
