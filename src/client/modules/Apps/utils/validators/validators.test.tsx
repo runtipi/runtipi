@@ -1,4 +1,4 @@
-import { FormField } from '../../../../core/types';
+import { FormField } from '@runtipi/shared';
 import { validateAppConfig, validateField } from './validators';
 
 describe('Test: validateField', () => {

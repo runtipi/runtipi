@@ -16,7 +16,7 @@ import {
   IconTool,
   IconUsers,
 } from '@tabler/icons-react';
-import { AppCategory } from './types';
+import { AppCategory } from '@runtipi/shared';
 
 type AppCategoryEntry = {
   id: AppCategory;

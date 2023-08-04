@@ -5,37 +5,6 @@ import { readJsonFile } from '../../common/fs.helpers';
 
 jest.mock('fs-extra');
 
-jest.mock('next/config', () =>
-  jest.fn(() => ({
-    serverRuntimeConfig: {
-      DNS_IP: '1.1.1.1',
-    },
-  })),
-);
-
-// eslint-disable-next-line
-import nextConfig from 'next/config';
-
-describe('Test: process.env', () => {
-  it('should return config from .env', () => {
-    const config = new TipiConfig().getConfig();
-
-    expect(config).toBeDefined();
-    expect(config.dnsIp).toBe('1.1.1.1');
-  });
-
-  it('should throw an error if there are invalid values', () => {
-    // @ts-expect-error - We are mocking next/config
-    nextConfig.mockImplementationOnce(() => ({
-      serverRuntimeConfig: {
-        DNS_IP: 'invalid',
-      },
-    }));
-
-    expect(() => new TipiConfig().getConfig()).toThrow();
-  });
-});
-
 describe('Test: getConfig', () => {
   it('It should return config from .env', () => {
     // arrange
