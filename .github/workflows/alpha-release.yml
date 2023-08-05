@@ -1,0 +1,131 @@
+name: Alpha Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Alpha version tag (1, 2, 3, ...)'
+        required: true
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.create_tag.outputs.tagname }}
+
+    steps:
+      - name: Create Tag
+        id: create_tag
+        uses: butlerlogic/action-autotag@stable
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        with:
+          tag_prefix: 'v'
+          tag_suffix: '-alpha.${{ github.event.inputs.tag }}'
+
+  build-images:
+    runs-on: ubuntu-latest
+    needs: create-tag
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build and push images
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: meienberger/runtipi:latest,meienberger/runtipi:${{ steps.create_tag.outputs.tagname }}
+          cache-from: type=registry,ref=meienberger/runtipi:buildcache
+          cache-to: type=registry,ref=meienberger/runtipi:buildcache,mode=max
+
+  build-cli:
+    runs-on: ubuntu-latest
+    needs: create-tag
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v2.2.4
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Set version
+        run: pnpm -r --filter cli set-version ${{ steps.create_tag.outputs.tagname }}
+
+      - name: Build CLI
+        run: pnpm -r --filter cli package
+
+      - name: Upload CLI
+        uses: actions/upload-artifact@v2
+        with:
+          name: cli
+          path: packages/cli/dist
+
+  publish-release:
+    runs-on: ubuntu-latest
+    needs: [build-images, build-cli]
+
+    steps:
+      - name: Download CLI
+        uses: actions/download-artifact@v2
+        with:
+          name: cli
+
+      - name: Create alpha release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.create_tag.outputs.tagname }}
+          release_name: Alpha Release ${{ steps.create_tag.outputs.tagname }}
+          draft: false
+          prerelease: true
+
+      - name: Upload X64 Linux CLI binary to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: packages/cli/dist/bin/cli-linux-x64
+          asset_name: runtipi-cli-linux-x64
+          asset_content_type: application/octet-stream
+
+      - name: Upload ARM64 Linux CLI binary to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: packages/cli/dist/bin/cli-linux-arm64
+          asset_name: runtipi-cli-linux-arm64
+          asset_content_type: application/octet-stream
