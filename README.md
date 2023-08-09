@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-35-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
@@ -116,6 +116,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="http://m1n.omg.lol"><img src="https://avatars.githubusercontent.com/u/54779580?v=4?s=100" width="100px;" alt="David"/><br /><sub><b>David</b></sub></a><br /><a href="#translation-M1n-4d316e" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/steveiliop56"><img src="https://avatars.githubusercontent.com/u/106091011?v=4?s=100" width="100px;" alt="Stavros Iliopoulos"/><br /><sub><b>Stavros Iliopoulos</b></sub></a><br /><a href="#translation-steveiliop56" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/loxiry"><img src="https://avatars.githubusercontent.com/u/86959495?v=4?s=100" width="100px;" alt="loxiry"/><br /><sub><b>loxiry</b></sub></a><br /><a href="#translation-loxiry" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JigSawFr"><img src="https://avatars.githubusercontent.com/u/5781907?v=4?s=100" width="100px;" alt="JigSaw"/><br /><sub><b>JigSaw</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=JigSawFr" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
