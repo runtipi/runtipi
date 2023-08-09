@@ -326,6 +326,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "JigSawFr",
+      "name": "JigSaw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5781907?v=4",
+      "profile": "https://github.com/JigSawFr",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
