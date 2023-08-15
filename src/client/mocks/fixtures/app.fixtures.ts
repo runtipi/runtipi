@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import type { AppStatus } from '@/server/db/schema';
-import { APP_CATEGORIES } from '../../../server/services/apps/apps.types';
-import { App, AppCategory, AppInfo, AppWithInfo } from '../../core/types';
+import { AppInfo, AppCategory, APP_CATEGORIES } from '@runtipi/shared';
+import { App, AppWithInfo } from '../../core/types';
 
 const randomCategory = (): AppCategory[] => {
   const categories = Object.values(APP_CATEGORIES);

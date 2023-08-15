@@ -3,6 +3,7 @@ const nextConfig = {
   swcMinify: true,
   output: 'standalone',
   reactStrictMode: true,
+  transpilePackages: ['@runtipi/shared'],
   serverRuntimeConfig: {
     INTERNAL_IP: process.env.INTERNAL_IP,
     TIPI_VERSION: process.env.TIPI_VERSION,

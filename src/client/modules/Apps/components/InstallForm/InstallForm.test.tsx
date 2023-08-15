@@ -1,8 +1,8 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
 import { fromPartial } from '@total-typescript/shoehorn';
+import { FormField } from '@runtipi/shared';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
-import { FormField } from '../../../../core/types';
 import { InstallForm } from './InstallForm';
 
 describe('Test: InstallForm', () => {
