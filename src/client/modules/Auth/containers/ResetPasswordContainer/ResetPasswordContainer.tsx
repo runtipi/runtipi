@@ -57,7 +57,7 @@ export const ResetPasswordContainer: React.FC<Props> = ({ isRequested }) => {
         <h2 className="h2 text-center mb-3">{t('auth.reset-password.title')}</h2>
         <p>{t('auth.reset-password.instructions')}</p>
         <pre>
-          <code>./scripts/reset-password.sh</code>
+          <code>./runtipi-cli reset-password</code>
         </pre>
       </>
     );

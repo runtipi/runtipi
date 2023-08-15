@@ -1,8 +1,8 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
 import { useTranslations } from 'next-intl';
+import { AppInfo } from '@runtipi/shared';
 import { Button } from '../../../../components/ui/Button';
-import { AppInfo } from '../../../../core/types';
 
 interface IProps {
   newVersion: string;
