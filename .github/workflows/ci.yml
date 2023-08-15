@@ -72,6 +72,18 @@ jobs:
       - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: app
+
+      - name: Run packages tests
+        run: pnpm -r test
+
+      - name: Upload CLI coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./packages/cli/coverage/lcov.info
+          flags: cli
 
   build:
     runs-on: ubuntu-latest
