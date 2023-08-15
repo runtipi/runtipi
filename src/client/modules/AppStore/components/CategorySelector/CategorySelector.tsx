@@ -2,8 +2,8 @@ import React from 'react';
 import Select, { SingleValue, OptionProps, ControlProps, components } from 'react-select';
 import { Icon } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
+import { AppCategory } from '@runtipi/shared';
 import { APP_CATEGORIES } from '../../../../core/constants';
-import { AppCategory } from '../../../../core/types';
 import { useUIStore } from '../../../../state/uiStore';
 
 const { Option, Control } = components;
