@@ -24,11 +24,13 @@ class EventDispatcher {
   public async cleanRepeatableJobs() {
     const repeatableJobs = await this.queue.getRepeatableJobs();
 
-    await Promise.all(
-      repeatableJobs.map(async (job) => {
-        await this.queue.removeRepeatableByKey(job.key);
-      }),
-    );
+    if (repeatableJobs) {
+      await Promise.all(
+        repeatableJobs.map(async (job) => {
+          await this.queue.removeRepeatableByKey(job.key);
+        }),
+      );
+    }
   }
 
   public static getInstance(): EventDispatcher {
