@@ -26,4 +26,4 @@ rm -rf "${ROOT_FOLDER}/data/postgres"
 mkdir -p "${ROOT_FOLDER}/app-data"
 
 cd "$ROOT_FOLDER" || echo ""
-"${ROOT_FOLDER}/scripts/start.sh"
+sudo ./runtipi-cli start
