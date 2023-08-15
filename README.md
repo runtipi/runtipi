@@ -55,8 +55,6 @@ We are looking for contributions of all kinds. If you know design, development, 
 
 Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may copy, distribute and modify the software as long as you track changes/dates in source files. Any modifications to or software including (via compiler) GPL-licensed code must also be made available under the GPL along with build & install instructions.
 
-Some of the bash scripts located in the `scripts` folder contain some snippets from [Umbrel](https://github.com/getumbrel/umbrel)'s code. Therefore some parts of the code are licensed under the PolyForm Noncommercial License 1.0.0 license. These parts have been marked with a comment above to clearly identify it. If you were to use this code in your own project, you have to keep the copyright notice and follow the license guidelines. We are actively working on re-writing those parts in order to make them available under the GPL license like the rest of our code.
-
 ## 🗣 Community
 
 - [Matrix](https://matrix.to/#/#runtipi:matrix.org)<br />
