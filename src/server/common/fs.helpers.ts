@@ -22,18 +22,4 @@ export const readdirSync = (path: string): string[] => fs.readdirSync(path);
 
 export const fileExists = (path: string): boolean => fs.existsSync(path);
 
-export const writeFile = (path: string, data: string) => fs.writeFileSync(path, data);
-
-export const createFolder = (path: string) => {
-  if (!fileExists(path)) {
-    fs.mkdirSync(path, { recursive: true });
-  }
-};
-export const deleteFolder = (path: string) => fs.rmSync(path, { recursive: true });
-
-export const getSeed = () => {
-  const seed = readFile('/runtipi/state/seed');
-  return seed.toString();
-};
-
 export const unlinkFile = (path: string) => fs.promises.unlink(path);

@@ -101,7 +101,7 @@ export class SystemServiceClass {
 
     TipiConfig.setConfig('status', 'UPDATING');
 
-    this.dispatcher.dispatchEventAsync('update');
+    this.dispatcher.dispatchEvent({ type: 'system', command: 'update' });
 
     return true;
   };
@@ -116,7 +116,7 @@ export class SystemServiceClass {
     }
 
     TipiConfig.setConfig('status', 'RESTARTING');
-    this.dispatcher.dispatchEventAsync('restart');
+    this.dispatcher.dispatchEvent({ type: 'system', command: 'restart' });
 
     return true;
   };
