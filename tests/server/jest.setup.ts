@@ -13,6 +13,18 @@ jest.mock('vitest', () => ({
   vi: jest,
 }));
 
+jest.mock('bullmq', () => ({
+  Queue: jest.fn().mockImplementation(() => ({
+    add: jest.fn(),
+    getRepeatableJobs: jest.fn().mockResolvedValue([]),
+    removeRepeatableByKey: jest.fn(),
+    obliterate: jest.fn(),
+  })),
+  QueueEvents: jest.fn().mockImplementation(() => ({
+    on: jest.fn(),
+  })),
+}));
+
 console.error = jest.fn();
 
 beforeEach(async () => {

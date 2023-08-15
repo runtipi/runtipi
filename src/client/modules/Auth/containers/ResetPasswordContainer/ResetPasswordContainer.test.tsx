@@ -22,7 +22,7 @@ describe('ResetPasswordContainer', () => {
     render(<ResetPasswordContainer isRequested={false} />);
     expect(screen.getByText('Reset your password')).toBeInTheDocument();
     expect(screen.getByText('Run this command on your server and then refresh this page')).toBeInTheDocument();
-    expect(screen.getByText('./scripts/reset-password.sh')).toBeInTheDocument();
+    expect(screen.getByText('./runtipi-cli reset-password')).toBeInTheDocument();
   });
 
   it('should render the password reset success message', async () => {
