@@ -2,21 +2,13 @@
   "compilerOptions": {
     "target": "es2017",
     "baseUrl": ".",
+    "outDir": "./dist",
     "paths": {
-      "@/components/*": [
-        "./src/client/components/*"
-      ],
       "@/utils/*": [
-        "./src/client/utils/*"
+        "./src/utils/*"
       ],
-      "@/client/*": [
-        "./src/client/*"
-      ],
-      "@/server/*": [
-        "./src/server/*"
-      ],
-      "@/shared/*": [
-        "./src/shared/*"
+      "@/executors": [
+        "./src/executors"
       ],
       "@/tests/*": [
         "./tests/*"
@@ -38,27 +30,23 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": false,
+    "incremental": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
     "types": [
-      "jest",
-      "@testing-library/jest-dom"
+      "node"
     ],
     "experimentalDecorators": true
   },
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.mjs",
     "**/*.js",
-    "**/*.jsx",
+    "**/*.jsx"
   ],
   "exclude": [
-    "node_modules",
-    "packages",
-    "repos",
+    "node_modules"
   ]
 }
