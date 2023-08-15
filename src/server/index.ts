@@ -33,8 +33,8 @@ if (!dev) {
 const handle = nextApp.getRequestHandler();
 
 nextApp.prepare().then(async () => {
-  const app = express();
   const authService = new AuthQueries(db);
+  const app = express();
 
   app.disable('x-powered-by');
 
@@ -61,8 +61,8 @@ nextApp.prepare().then(async () => {
   });
 
   app.listen(port, async () => {
+    await EventDispatcher.clear();
     const appService = new AppServiceClass(db);
-    EventDispatcher.clear();
 
     // Run database migrations
     if (getConfig().NODE_ENV !== 'development') {
@@ -71,12 +71,12 @@ nextApp.prepare().then(async () => {
     setConfig('status', 'RUNNING');
 
     // Clone and update apps repo
-    await EventDispatcher.dispatchEventAsync('clone_repo', [getConfig().appsRepoUrl]);
-    await EventDispatcher.dispatchEventAsync('update_repo', [getConfig().appsRepoUrl]);
+    await EventDispatcher.dispatchEventAsync({ type: 'repo', command: 'clone', url: getConfig().appsRepoUrl });
+    await EventDispatcher.dispatchEventAsync({ type: 'repo', command: 'update', url: getConfig().appsRepoUrl });
 
     // Scheduled events
-    EventDispatcher.scheduleEvent({ type: 'update_repo', args: [getConfig().appsRepoUrl], cronExpression: '*/30 * * * *' });
-    EventDispatcher.scheduleEvent({ type: 'system_info', args: [], cronExpression: '* * * * *' });
+    EventDispatcher.scheduleEvent({ type: 'repo', command: 'update', url: getConfig().appsRepoUrl }, '*/30 * * * *');
+    EventDispatcher.scheduleEvent({ type: 'system', command: 'system_info' }, '* * * * *');
 
     appService.startAllApps();
 

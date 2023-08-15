@@ -2,9 +2,9 @@ import fs from 'fs-extra';
 import waitForExpect from 'wait-for-expect';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { faker } from '@faker-js/faker';
-import { getAppEnvMap } from '@/server/utils/env-generation';
+import { castAppConfig } from '@/client/modules/Apps/helpers/castAppConfig';
 import { AppServiceClass } from './apps.service';
-import { EventDispatcher, EVENT_TYPES } from '../../core/EventDispatcher';
+import { EventDispatcher } from '../../core/EventDispatcher';
 import { getAllApps, getAppById, updateApp, createAppConfig, insertApp } from '../../tests/apps.factory';
 import { setConfig } from '../../core/TipiConfig';
 
@@ -27,21 +27,6 @@ afterAll(async () => {
 });
 
 describe('Install app', () => {
-  it('Should correctly generate env file for app', async () => {
-    // arrange
-    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', env_variable: 'TEST_FIELD', required: true }] });
-
-    // act
-    await AppsService.installApp(appConfig.id, { TEST_FIELD: 'test' });
-    const envMap = await getAppEnvMap(appConfig.id);
-
-    // assert
-    expect(envMap.get('TEST_FIELD')).toBe('test');
-    expect(envMap.get('APP_PORT')).toBe(appConfig.port.toString());
-    expect(envMap.get('APP_ID')).toBe(appConfig.id);
-    expect(envMap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
-  });
-
   it('Should add app in database', async () => {
     // arrange
     const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', env_variable: 'TEST_FIELD', required: true }] });
@@ -68,8 +53,8 @@ describe('Install app', () => {
 
     // assert
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([EVENT_TYPES.APP, ['install', appConfig.id]]);
-    expect(spy.mock.calls[1]).toEqual([EVENT_TYPES.APP, ['start', appConfig.id]]);
+    expect(spy.mock.calls[0]).toEqual([{ appid: appConfig.id, command: 'install', form: {}, type: 'app' }]);
+    expect(spy.mock.calls[1]).toEqual([{ appid: appConfig.id, command: 'start', form: {}, type: 'app' }]);
 
     spy.mockRestore();
   });
@@ -85,59 +70,6 @@ describe('Install app', () => {
 
     // assert
     expect(app).toBeNull();
-  });
-
-  it('Should throw if required form fields are missing', async () => {
-    // arrange
-    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', env_variable: 'TEST_FIELD', required: true }] });
-
-    // act & assert
-    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError('Variable TEST_FIELD is required');
-  });
-
-  it('Correctly generates a random value if the field has a "random" type', async () => {
-    // arrange
-    const appConfig = createAppConfig({ form_fields: [{ type: 'random', label: '', env_variable: 'RANDOM_FIELD', required: true }] });
-
-    // act
-    await AppsService.installApp(appConfig.id, {});
-    const envMap = await getAppEnvMap(appConfig.id);
-
-    // assert
-    expect(envMap.get('RANDOM_FIELD')).toBeDefined();
-    expect(envMap.get('RANDOM_FIELD')).toHaveLength(32);
-  });
-
-  it('Should correctly copy app from repos to apps folder', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-
-    // act
-    await AppsService.installApp(appConfig.id, {});
-    const appFolder = fs.readdirSync(`/runtipi/apps/${appConfig.id}`);
-
-    // assert
-    expect(appFolder).toBeDefined();
-    expect(appFolder.indexOf('docker-compose.yml')).toBeGreaterThanOrEqual(0);
-  });
-
-  it('Should cleanup any app folder existing before install', async () => {
-    // arrange
-    const appConfig = createAppConfig();
-    const MockFiles: Record<string, unknown> = {};
-    MockFiles[`/runtipi/apps/${appConfig.id}/docker-compose.yml`] = 'test';
-    MockFiles[`/runtipi/apps/${appConfig.id}/test.yml`] = 'test';
-    MockFiles[`/runtipi/apps/${appConfig.id}`] = ['test.yml', 'docker-compose.yml'];
-    // @ts-expect-error - Mocking fs
-    fs.__applyMockFiles(MockFiles);
-
-    // act
-    expect(fs.existsSync(`/runtipi/apps/${appConfig.id}/test.yml`)).toBe(true);
-    await AppsService.installApp(appConfig.id, {});
-
-    // assert
-    expect(fs.existsSync(`/runtipi/apps/${appConfig.id}/test.yml`)).toBe(false);
-    expect(fs.existsSync(`/runtipi/apps/${appConfig.id}/docker-compose.yml`)).toBe(true);
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
@@ -218,58 +150,12 @@ describe('Install app', () => {
     await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
   });
 
-  it('Should throw if config.json is not valid after folder copy', async () => {
-    // arrange
-    jest.spyOn(fs, 'copySync').mockImplementationOnce(() => {});
-    const appConfig = createAppConfig({});
-    const MockFiles: Record<string, unknown> = {};
-    MockFiles[`/runtipi/apps/${appConfig.id}/config.json`] = 'test';
-    // @ts-expect-error - Mocking fs
-    fs.__applyMockFiles(MockFiles);
-
-    // act & assert
-    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
-  });
-
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
     // arrange
     const appConfig = createAppConfig({ force_expose: true });
 
     // act & assert
     await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError();
-  });
-
-  it('should replace env variables in .templates files in data folder', async () => {
-    // arrange
-    const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST', type: 'text', label: 'test', required: true }] });
-    await fs.promises.mkdir(`/runtipi/repos/repo-id/apps/${appConfig.id}/data`, { recursive: true });
-    await fs.promises.writeFile(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test.txt.template`, 'test {{TEST}}');
-    await fs.promises.writeFile(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test2.txt`, 'test {{TEST}}');
-
-    // act
-    await AppsService.installApp(appConfig.id, { TEST: 'test' });
-
-    // assert
-    const file = await fs.promises.readFile(`/app/storage/app-data/${appConfig.id}/data/test.txt`);
-    const file2 = await fs.promises.readFile(`/app/storage/app-data/${appConfig.id}/data/test2.txt`);
-    expect(file.toString()).toBe('test test');
-    expect(file2.toString()).toBe('test {{TEST}}');
-  });
-
-  it('should copy and replace env variables in deeply nested .templates files in data folder', async () => {
-    // arrange
-    const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST', type: 'text', label: 'test', required: true }] });
-    await fs.promises.mkdir(`/runtipi/repos/repo-id/apps/${appConfig.id}/data`, { recursive: true });
-    await fs.promises.writeFile(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test.txt.template`, 'test {{TEST}}');
-    await fs.promises.mkdir(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test/test`, { recursive: true });
-    await fs.promises.writeFile(`/runtipi/repos/repo-id/apps/${appConfig.id}/data/test/test/test.txt.template`, 'test {{TEST}}');
-
-    // act
-    await AppsService.installApp(appConfig.id, { TEST: 'test' });
-
-    // assert
-    const file = await fs.promises.readFile(`/app/storage/app-data/${appConfig.id}/data/test/test/test.txt`);
-    expect(file.toString()).toBe('test test');
   });
 });
 
@@ -298,8 +184,8 @@ describe('Uninstall app', () => {
 
     // assert
     expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([EVENT_TYPES.APP, ['stop', appConfig.id]]);
-    expect(spy.mock.calls[1]).toEqual([EVENT_TYPES.APP, ['uninstall', appConfig.id]]);
+    expect(spy.mock.calls[0]).toEqual([{ appid: appConfig.id, command: 'stop', form: {}, type: 'app' }]);
+    expect(spy.mock.calls[1]).toEqual([{ appid: appConfig.id, command: 'uninstall', form: {}, type: 'app' }]);
     spy.mockRestore();
   });
 
@@ -323,7 +209,7 @@ describe('Uninstall app', () => {
 });
 
 describe('Start app', () => {
-  it('Should correctly dispatch event', async () => {
+  it('Should correctly dispatch start event', async () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({}, appConfig, db);
@@ -333,7 +219,7 @@ describe('Start app', () => {
     await AppsService.startApp(appConfig.id);
 
     // assert
-    expect(spy.mock.lastCall).toEqual([EVENT_TYPES.APP, ['start', appConfig.id]]);
+    expect(spy.mock.lastCall).toEqual([{ appid: appConfig.id, command: 'start', form: {}, type: 'app' }]);
     spy.mockRestore();
   });
 
@@ -357,24 +243,6 @@ describe('Start app', () => {
     spy.mockRestore();
   });
 
-  it('should regenerate env file', async () => {
-    // arrange
-    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', required: true, env_variable: 'TEST_FIELD' }] });
-    await insertApp({ config: { TEST_FIELD: 'test' } }, appConfig, db);
-    fs.writeFileSync(`/app/storage/app-data/${appConfig.id}/app.env`, 'TEST=test\nAPP_PORT=3000');
-
-    // act
-    await AppsService.startApp(appConfig.id);
-    const envMap = await getAppEnvMap(appConfig.id);
-
-    // assert
-    expect(envMap.get('TEST_FIELD')).toBe('test');
-    expect(envMap.get('APP_PORT')).toBe(appConfig.port.toString());
-    expect(envMap.get('APP_ID')).toBe(appConfig.id);
-    expect(envMap.get('TEST')).toBe('test');
-    expect(envMap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
-  });
-
   it('Should throw if start script fails', async () => {
     // arrange
     const appConfig = createAppConfig({});
@@ -383,18 +251,6 @@ describe('Start app', () => {
 
     // act & assert
     await expect(AppsService.startApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-start');
-    const app = await getAppById(appConfig.id, db);
-    expect(app?.status).toBe('stopped');
-  });
-
-  it('Should throw if app has invalid config.json', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ status: 'stopped' }, appConfig, db);
-    await fs.promises.writeFile(`/runtipi/apps/${appConfig.id}/config.json`, 'test');
-
-    // act & assert
-    await expect(AppsService.startApp(appConfig.id)).rejects.toThrow(`App ${appConfig.id} has invalid config.json`);
     const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('stopped');
   });
@@ -411,7 +267,7 @@ describe('Stop app', () => {
     await AppsService.stopApp(appConfig.id);
 
     // assert
-    expect(spy.mock.lastCall).toEqual([EVENT_TYPES.APP, ['stop', appConfig.id]]);
+    expect(spy.mock.lastCall).toEqual([{ appid: appConfig.id, command: 'stop', form: {}, type: 'app' }]);
   });
 
   it('Should throw if app is not installed', async () => {
@@ -440,43 +296,15 @@ describe('Update app config', () => {
 
     // act
     await AppsService.updateAppConfig(appConfig.id, { TEST_FIELD: word });
-    const envMap = await getAppEnvMap(appConfig.id);
+    const app = await getAppById(appConfig.id, db);
+    const config = castAppConfig(app?.config);
 
     // assert
-    expect(envMap.get('TEST_FIELD')).toBe(word);
-    expect(envMap.get('APP_PORT')).toBe(appConfig.port.toString());
-    expect(envMap.get('APP_ID')).toBe(appConfig.id);
-    expect(envMap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
-  });
-
-  it('Should throw if required field is missing', async () => {
-    // arrange
-    const appConfig = createAppConfig({ form_fields: [{ type: 'text', label: '', required: true, env_variable: 'TEST_FIELD' }] });
-    await insertApp({}, appConfig, db);
-
-    // act & assert
-    await expect(AppsService.updateAppConfig(appConfig.id, { TEST_FIELD: '' })).rejects.toThrowError('Variable TEST_FIELD is required');
+    expect(config.TEST_FIELD).toBe(word);
   });
 
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('server-messages.errors.app-not-found');
-  });
-
-  it('Should not recreate random field if already present in .env', async () => {
-    // arrange
-    const field = faker.lorem.word();
-    const appConfig = createAppConfig({ form_fields: [{ type: 'random', label: '', required: false, env_variable: field }] });
-    await insertApp({}, appConfig, db);
-
-    const envFile = fs.readFileSync(`/app/storage/app-data/${appConfig.id}/app.env`).toString();
-    fs.writeFileSync(`/app/storage/app-data/${appConfig.id}/app.env`, `${envFile}\n${field}=test`);
-
-    // act
-    await AppsService.updateAppConfig(appConfig.id, { TEST_FIELD: 'test' });
-    const envMap = await getAppEnvMap(appConfig.id);
-
-    // assert
-    expect(envMap.get(field)).toBe('test');
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
@@ -507,17 +335,6 @@ describe('Update app config', () => {
 
     // act & assert
     await expect(AppsService.updateAppConfig(appConfig2.id, {}, true, domain)).rejects.toThrowError('server-messages.errors.domain-already-in-use');
-  });
-
-  it('Should throw if app has invalid config.json', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({}, appConfig, db);
-    fs.writeFileSync(`/runtipi/apps/${appConfig.id}/config.json`, 'test');
-    fs.writeFileSync(`/app/storage/app-data/${appConfig.id}/config.json`, 'test');
-
-    // act & assert
-    await expect(AppsService.updateAppConfig(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json`);
   });
 
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
