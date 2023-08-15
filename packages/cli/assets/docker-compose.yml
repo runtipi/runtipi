@@ -39,6 +39,8 @@ services:
     container_name: tipi-redis
     image: redis:alpine
     restart: on-failure
+    ports:
+      - 6379:6379
     volumes:
       - ./data/redis:/data
     healthcheck:
@@ -60,23 +62,10 @@ services:
         condition: service_healthy
       tipi-redis:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
-      NODE_ENV: production
-      INTERNAL_IP: ${INTERNAL_IP}
-      TIPI_VERSION: ${TIPI_VERSION}
-      JWT_SECRET: ${JWT_SECRET}
-      NGINX_PORT: ${NGINX_PORT}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
-      POSTGRES_DBNAME: ${POSTGRES_DBNAME}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      APPS_REPO_ID: ${APPS_REPO_ID}
-      APPS_REPO_URL: ${APPS_REPO_URL}
-      DOMAIN: ${DOMAIN}
-      ARCHITECTURE: ${ARCHITECTURE}
-      REDIS_HOST: ${REDIS_HOST}
-      DEMO_MODE: ${DEMO_MODE}
-      LOCAL_DOMAIN: ${LOCAL_DOMAIN}
+      NODE_ENV: development
     volumes:
       - ${PWD}/.env:/runtipi/.env
       - ${PWD}/state:/runtipi/state
@@ -116,7 +105,4 @@ services:
 networks:
   tipi_main_network:
     driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.21.21.0/24
+    name: runtipi_tipi_main_network

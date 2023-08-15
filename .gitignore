@@ -63,3 +63,6 @@ media
 /test-results/
 /playwright-report/
 /playwright/.cache/
+temp
+
+./traefik/
