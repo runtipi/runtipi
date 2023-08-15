@@ -1,0 +1,61 @@
+{
+  "name": "@runtipi/cli",
+  "version": "1.6.0",
+  "description": "",
+  "main": "index.js",
+  "bin": "dist/index.js",
+  "scripts": {
+    "test": "dotenv -e .env.test vitest -- --coverage --watch=false",
+    "test:watch": "dotenv -e .env.test vitest",
+    "package": "npm run build && pkg package.json && chmod +x dist/bin/cli-x64 && chmod +x dist/bin/cli-arm64",
+    "package:m1": "npm run build && pkg package.json -t node18-darwin-arm64",
+    "set-version": "node -e \"require('fs').writeFileSync('assets/VERSION', process.argv[1])\"",
+    "build": "node build.js",
+    "build:meta": "esbuild ./src/index.ts --bundle --platform=node --target=node18 --outfile=dist/index.js --metafile=meta.json --analyze",
+    "dev": "dotenv -e ../../.env nodemon",
+    "lint": "eslint . --ext .ts"
+  },
+  "pkg": {
+    "assets": "assets/**/*",
+    "targets": [
+      "node18-linux-x64",
+      "node18-linux-arm64"
+    ],
+    "outputPath": "dist/bin"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
+    "@types/cli-progress": "^3.11.0",
+    "@types/inquirer": "^9.0.3",
+    "@types/node": "20.3.2",
+    "dotenv-cli": "^7.2.1",
+    "esbuild": "^0.16.17",
+    "eslint-config-prettier": "^8.8.0",
+    "memfs": "^4.2.0",
+    "nodemon": "^2.0.22",
+    "pkg": "^5.8.1",
+    "vite": "^4.4.7",
+    "vite-tsconfig-paths": "^4.2.0",
+    "vitest": "^0.32.2"
+  },
+  "dependencies": {
+    "@runtipi/shared": "workspace:^",
+    "axios": "^1.4.0",
+    "boxen": "^7.1.1",
+    "bullmq": "^4.5.0",
+    "chalk": "^5.3.0",
+    "cli-progress": "^3.12.0",
+    "cli-spinners": "^2.9.0",
+    "commander": "^11.0.0",
+    "dotenv": "^16.3.1",
+    "inquirer": "^9.2.8",
+    "log-update": "^5.0.1",
+    "semver": "^7.5.3",
+    "systeminformation": "^5.18.7",
+    "web-push": "^3.6.3",
+    "zod": "^3.21.4"
+  }
+}
