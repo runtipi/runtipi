@@ -11,7 +11,7 @@ jobs:
   create-tag:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.create_tag.outputs.tagname }}
+      tagname: ${{ steps.create_tag.outputs.tagname }}
 
     steps:
       - name: Checkout code
@@ -50,9 +50,9 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
-          tags: meienberger/runtipi:latest,meienberger/runtipi:${{ steps.create_tag.outputs.tagname }}
+          tags: meienberger/runtipi:${{ needs.create-tag.outputs.tagname }}
           cache-from: type=registry,ref=meienberger/runtipi:buildcache
           cache-to: type=registry,ref=meienberger/runtipi:buildcache,mode=max
 
@@ -93,7 +93,7 @@ jobs:
         run: pnpm install
 
       - name: Set version
-        run: pnpm -r --filter cli set-version ${{ steps.create_tag.outputs.tagname }}
+        run: pnpm -r --filter cli set-version ${{ needs.create-tag.outputs.tagname }}
 
       - name: Build CLI
         run: pnpm -r --filter cli package
@@ -106,13 +106,18 @@ jobs:
 
   publish-release:
     runs-on: ubuntu-latest
-    needs: [build-images, build-cli]
+    needs: [create-tag, build-images, build-cli]
 
     steps:
       - name: Download CLI
         uses: actions/download-artifact@v2
         with:
           name: cli
+          path: cli
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: cli
 
       - name: Create alpha release
         id: create_release
@@ -120,8 +125,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.create_tag.outputs.tagname }}
-          release_name: Alpha Release ${{ steps.create_tag.outputs.tagname }}
+          tag_name: ${{ needs.create-tag.outputs.tagname }}
+          release_name: ${{ needs.create-tag.outputs.tagname }}
           draft: false
           prerelease: true
 
@@ -131,7 +136,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: packages/cli/dist/bin/cli-linux-x64
+          asset_path: cli/bin/cli-x64
           asset_name: runtipi-cli-linux-x64
           asset_content_type: application/octet-stream
 
@@ -141,6 +146,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: packages/cli/dist/bin/cli-linux-arm64
+          asset_path: cli/bin/cli-arm64
           asset_name: runtipi-cli-linux-arm64
           asset_content_type: application/octet-stream
