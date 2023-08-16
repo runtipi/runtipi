@@ -154,6 +154,9 @@ fi
 
 URL="https://github.com/meienberger/runtipi/releases/download/$LATEST_VERSION/$LATEST_ASSET"
 
-curl --location "$URL" -o runtipi-cli
+mkdir -p ./runtipi
 
-sudo ./runtipi-cli start
+curl --location "$URL" -o ./runtipi/runtipi-cli
+sudo chmod +x ./runtipi/runtipi-cli
+
+sudo ./runtipi/runtipi-cli start

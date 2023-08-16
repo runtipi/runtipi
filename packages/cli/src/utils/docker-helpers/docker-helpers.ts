@@ -1,19 +1,17 @@
 import path from 'path';
 import { promisify } from 'util';
 import { exec } from 'child_process';
-import { createLogger } from '@runtipi/shared';
 import { getEnv } from '../environment/environment';
 import { pathExists } from '../fs-helpers/fs-helpers';
+import { fileLogger } from '../logger/file-logger';
 
 const execAsync = promisify(exec);
-
-const logger = createLogger('docker-helpers', path.join(process.cwd(), 'logs'));
 
 const composeUp = async (args: string[]) => {
   const { stdout, stderr } = await execAsync(`docker compose ${args.join(' ')}`);
 
-  logger.info('stdout', stdout);
-  logger.info('stderr', stderr);
+  fileLogger.info('stdout', stdout);
+  fileLogger.info('stderr', stderr);
 
   return { stdout, stderr };
 };

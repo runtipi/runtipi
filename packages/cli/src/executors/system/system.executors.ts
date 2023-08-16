@@ -7,15 +7,13 @@ import path from 'path';
 import { promisify } from 'util';
 import { exec, spawn } from 'child_process';
 import si from 'systeminformation';
-import { createLogger } from '@runtipi/shared';
 import { Stream } from 'stream';
 import { AppExecutors } from '../app/app.executors';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
 import { pathExists } from '@/utils/fs-helpers';
 import { getEnv } from '@/utils/environment/environment';
-
-const logger = createLogger('system-executors', path.join(process.cwd(), 'logs'));
+import { fileLogger } from '@/utils/logger/file-logger';
 
 const execAsync = promisify(exec);
 
@@ -32,7 +30,7 @@ export class SystemExecutors {
 
   private handleSystemError = (err: unknown) => {
     if (err instanceof Error) {
-      logger.error(`An error occurred: ${err.message}`);
+      fileLogger.error(`An error occurred: ${err.message}`);
       return { success: false, message: err.message };
     }
 
@@ -293,7 +291,7 @@ export class SystemExecutors {
       return { success: true, message: 'Tipi updated' };
     } catch (e) {
       spinner.fail('Tipi update failed, see logs for details');
-      logger.error(e);
+      fileLogger.error(e);
       return this.handleSystemError(e);
     }
   };

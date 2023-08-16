@@ -1,10 +1,10 @@
 import { getEnv } from 'src/utils/environment/environment';
-import { createLogger } from '@runtipi/shared';
 import path from 'path';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 import { pathExists } from '@/utils/fs-helpers';
 import { getRepoHash } from './repo.helpers';
+import { fileLogger } from '@/utils/logger/file-logger';
 
 const execAsync = promisify(exec);
 
@@ -16,7 +16,7 @@ export class RepoExecutors {
   constructor() {
     const { rootFolderHost } = getEnv();
     this.rootFolderHost = rootFolderHost;
-    this.logger = createLogger('repo-executors', path.join(rootFolderHost, 'logs'));
+    this.logger = fileLogger;
   }
 
   /**
