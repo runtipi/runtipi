@@ -66,7 +66,7 @@
     "isomorphic-fetch": "^3.0.0",
     "lodash.merge": "^4.6.2",
     "next": "13.4.7",
-    "next-intl": "^2.15.1",
+    "next-intl": "^2.19.1",
     "pg": "^8.11.1",
     "qrcode.react": "^3.1.0",
     "react": "18.2.0",
