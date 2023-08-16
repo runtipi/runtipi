@@ -30,8 +30,8 @@
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
     "@types/cli-progress": "^3.11.0",
-    "@types/inquirer": "^9.0.3",
     "@types/node": "20.3.2",
+    "@types/web-push": "^3.3.2",
     "dotenv-cli": "^7.2.1",
     "esbuild": "^0.16.17",
     "eslint-config-prettier": "^8.8.0",
@@ -52,7 +52,6 @@
     "cli-spinners": "^2.9.0",
     "commander": "^11.0.0",
     "dotenv": "^16.3.1",
-    "inquirer": "^9.2.8",
     "log-update": "^5.0.1",
     "semver": "^7.5.3",
     "systeminformation": "^5.18.7",

@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { appInfoSchema } from '@runtipi/shared';
 import { setConfig } from '../../core/TipiConfig';
-import { checkAppRequirements, checkEnvFile, getAppInfo, getAvailableApps, getUpdateInfo } from './apps.helpers';
+import { checkAppRequirements, getAppInfo, getAvailableApps, getUpdateInfo } from './apps.helpers';
 import { createAppConfig, insertApp } from '../../tests/apps.factory';
 
 let db: TestDatabase;
@@ -46,39 +46,6 @@ describe('Test: checkAppRequirements()', () => {
 
     // assert
     expect(() => checkAppRequirements(appConfig.id)).toThrowError(`App ${appConfig.id} is not supported on this architecture`);
-  });
-});
-
-describe('Test: checkEnvFile()', () => {
-  it('Should not throw if all required fields are present', async () => {
-    // arrange
-    const appConfig = createAppConfig();
-    const app = await insertApp({}, appConfig, db);
-
-    // act
-    await checkEnvFile(app.id);
-  });
-
-  it('Should throw if a required field is missing', async () => {
-    // arrange
-    const fieldName = faker.lorem.word().toUpperCase();
-    const appConfig = createAppConfig({ form_fields: [{ env_variable: fieldName, type: 'text', label: 'test', required: true }] });
-    const app = await insertApp({}, appConfig, db);
-    const newAppEnv = 'APP_PORT=test\n';
-    fs.writeFileSync(`/app/storage/app-data/${app.id}/app.env`, newAppEnv);
-
-    // act & assert
-    await expect(checkEnvFile(app.id)).rejects.toThrowError('New info needed. App config needs to be updated');
-  });
-
-  it('Should throw if config.json is incorrect', async () => {
-    // arrange
-    const appConfig = createAppConfig();
-    const app = await insertApp({}, appConfig, db);
-    fs.writeFileSync(`/runtipi/apps/${app.id}/config.json`, 'invalid json');
-
-    // act & assert
-    await expect(checkEnvFile(app.id)).rejects.toThrowError(`App ${app.id} has invalid config.json file`);
   });
 });
 
