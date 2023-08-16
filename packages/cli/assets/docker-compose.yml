@@ -11,8 +11,8 @@ services:
     command: --providers.docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}/traefik:/root/.config
-      - ${PWD}/traefik/shared:/shared
+      - ./traefik:/root/.config
+      - ./traefik/shared:/shared
     networks:
       - tipi_main_network
 
@@ -22,7 +22,7 @@ services:
     restart: on-failure
     stop_grace_period: 1m
     volumes:
-      - ${PWD}/data/postgres:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USER: tipi
@@ -65,14 +65,14 @@ services:
     env_file:
       - .env
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
     volumes:
-      - ${PWD}/.env:/runtipi/.env
-      - ${PWD}/state:/runtipi/state
-      - ${PWD}/repos:/runtipi/repos:ro
-      - ${PWD}/apps:/runtipi/apps
-      - ${PWD}/logs:/app/logs
-      - ${PWD}/traefik:/runtipi/traefik
+      - ./.env:/runtipi/.env
+      - ./state:/runtipi/state
+      - ./repos:/runtipi/repos:ro
+      - ./apps:/runtipi/apps
+      - ./logs:/app/logs
+      - ./traefik:/runtipi/traefik
       - ${STORAGE_PATH}:/app/storage
     labels:
       # Main

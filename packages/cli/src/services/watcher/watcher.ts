@@ -9,7 +9,7 @@ const execAsync = promisify(exec);
 const runCommand = async (jobData: unknown) => {
   const { installApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
   const { cloneRepo, pullRepo } = new RepoExecutors();
-  const { systemInfo, restart } = new SystemExecutors();
+  const { systemInfo, restart, update } = new SystemExecutors();
 
   const event = eventSchema.safeParse(jobData);
 
@@ -61,6 +61,10 @@ const runCommand = async (jobData: unknown) => {
 
     if (data.command === 'restart') {
       ({ success, message } = await restart());
+    }
+
+    if (data.command === 'update') {
+      ({ success, message } = await update(data.version));
     }
   }
 

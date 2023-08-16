@@ -1,9 +1,9 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { appInfoSchema } from '@runtipi/shared';
+import { appInfoSchema, envMapToString, envStringToMap } from '@runtipi/shared';
 import { getEnv } from '@/utils/environment/environment';
-import { envMapToString, envStringToMap, generateVapidKeys, getAppEnvMap } from './env.helpers';
+import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 import { pathExists } from '@/utils/fs-helpers';
 
 /**

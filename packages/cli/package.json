@@ -13,7 +13,8 @@
     "build": "node build.js",
     "build:meta": "esbuild ./src/index.ts --bundle --platform=node --target=node18 --outfile=dist/index.js --metafile=meta.json --analyze",
     "dev": "dotenv -e ../../.env nodemon",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "tsc": "tsc --noEmit"
   },
   "pkg": {
     "assets": "assets/**/*",
