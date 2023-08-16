@@ -86,7 +86,7 @@ describe('Test: getVersion', () => {
     const body = faker.lorem.words(10);
     server.use(
       rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
-        return res(ctx.json({ name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}`, body }));
+        return res(ctx.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}`, body }));
       }),
     );
 
@@ -118,7 +118,7 @@ describe('Test: getVersion', () => {
     // Arrange
     server.use(
       rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
-        return res(ctx.json({ name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` }));
+        return res(ctx.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` }));
       }),
     );
 
