@@ -1,4 +1,4 @@
-import { appInfoSchema, createLogger } from '@runtipi/shared';
+import { appInfoSchema } from '@runtipi/shared';
 import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
@@ -7,6 +7,7 @@ import { getEnv } from '@/utils/environment/environment';
 import { pathExists } from '@/utils/fs-helpers';
 import { compose } from '@/utils/docker-helpers';
 import { copyDataDir, generateEnvFile } from './app.helpers';
+import { fileLogger } from '@/utils/logger/file-logger';
 
 const execAsync = promisify(exec);
 
@@ -24,7 +25,7 @@ export class AppExecutors {
     this.rootFolderHost = rootFolderHost;
     this.storagePath = storagePath;
     this.appsRepoId = appsRepoId;
-    this.logger = createLogger('app-executors', path.join(rootFolderHost, 'logs'));
+    this.logger = fileLogger;
   }
 
   private handleAppError = (err: unknown) => {

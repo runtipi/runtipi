@@ -8,6 +8,7 @@ import { promisify } from 'util';
 import chalk from 'chalk';
 import { pathExists } from '@/utils/fs-helpers';
 import { getRepoHash } from '../repo/repo.helpers';
+import { fileLogger } from '@/utils/logger/file-logger';
 
 type EnvKeys =
   | 'APPS_REPO_ID'
@@ -257,6 +258,7 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
     await execAsync(`openssl req -x509 -newkey rsa:4096 -keyout traefik/tls/key.pem -out traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "${subjectAltName}" -nodes`);
     await fs.promises.writeFile(path.join(process.cwd(), 'traefik', 'tls', `${data.domain}.txt`), '');
   } catch (error) {
+    fileLogger.error(error);
     console.error(chalk.red('✗'), 'Failed to generate TLS certificates');
   }
 };
