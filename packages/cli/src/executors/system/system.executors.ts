@@ -68,9 +68,9 @@ export class SystemExecutors {
    * It will stop all the apps and then stop the main containers.
    */
   public stop = async () => {
-    try {
-      const spinner = new TerminalSpinner('Stopping Tipi...');
+    const spinner = new TerminalSpinner('Stopping Tipi...');
 
+    try {
       if (await pathExists(path.join(this.rootFolder, 'apps'))) {
         const apps = await fs.promises.readdir(path.join(this.rootFolder, 'apps'));
         const appExecutor = new AppExecutors();
@@ -87,11 +87,17 @@ export class SystemExecutors {
 
       spinner.setMessage('Stopping containers...');
       spinner.start();
-      await execAsync('docker compose down --remove-orphans --rmi local');
+      const { stderr } = await execAsync('docker compose down --remove-orphans --rmi local');
+
+      if (stderr) {
+        throw new Error(stderr);
+      }
+
       spinner.done('Tipi successfully stopped');
 
       return { success: true, message: 'Tipi stopped' };
     } catch (e) {
+      spinner.fail('Tipi failed to stop. Please check the logs for more details (logs/error.log)');
       return this.handleSystemError(e);
     }
   };
@@ -101,9 +107,8 @@ export class SystemExecutors {
    * It will copy the system files, generate the system env file, pull the images and start the containers.
    */
   public start = async () => {
+    const spinner = new TerminalSpinner('Starting Tipi...');
     try {
-      const spinner = new TerminalSpinner('Starting Tipi...');
-
       spinner.start();
       spinner.setMessage('Copying system files...');
       await copySystemFiles();
@@ -126,13 +131,21 @@ export class SystemExecutors {
       // Pull images
       spinner.setMessage('Pulling images...');
       spinner.start();
-      await execAsync(`docker compose --env-file "${this.envFile}" pull`);
+      const resultPull = await execAsync(`docker compose --env-file "${this.envFile}" pull`);
+      if (resultPull.stderr) {
+        throw new Error(resultPull.stderr);
+      }
+
       spinner.done('Images pulled');
 
       // Start containers
       spinner.setMessage('Starting containers...');
       spinner.start();
-      await execAsync(`docker compose --env-file "${this.envFile}" up --detach --remove-orphans --build`);
+      const resultStart = await execAsync(`docker compose --env-file "${this.envFile}" up --detach --remove-orphans --build`);
+      if (resultStart.stderr) {
+        throw new Error(resultStart.stderr);
+      }
+
       spinner.done('Containers started');
 
       // start watcher cli in the background
@@ -162,6 +175,7 @@ export class SystemExecutors {
 
       return { success: true, message: 'Tipi started' };
     } catch (e) {
+      spinner.fail('Tipi failed to start. Please check the logs for more details (logs/error.log)');
       return this.handleSystemError(e);
     }
   };
@@ -183,8 +197,13 @@ export class SystemExecutors {
    * This method will create a password change request file in the state folder.
    */
   public resetPassword = async () => {
-    const { rootFolderHost } = getEnv();
-    await fs.promises.writeFile(path.join(rootFolderHost, 'state', 'password-change-request'), '');
+    try {
+      const { rootFolderHost } = getEnv();
+      await fs.promises.writeFile(path.join(rootFolderHost, 'state', 'password-change-request'), '');
+      return { success: true, message: '' };
+    } catch (e) {
+      return this.handleSystemError(e);
+    }
   };
 
   /**
@@ -278,6 +297,10 @@ export class SystemExecutors {
       await fs.promises.rename(savePath, path.join(rootFolderHost, 'runtipi-cli'));
       spinner.done('Old cli replaced');
 
+      // Wait for 3 second to make sure the old cli is gone
+      // eslint-disable-next-line no-promise-executor-return
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       const childProcess = spawn('./runtipi-cli', [process.argv[1] as string, 'start']);
 
       childProcess.stdout.on('data', (data) => {
@@ -290,8 +313,7 @@ export class SystemExecutors {
 
       return { success: true, message: 'Tipi updated' };
     } catch (e) {
-      spinner.fail('Tipi update failed, see logs for details');
-      fileLogger.error(e);
+      spinner.fail('Tipi update failed, see logs for more details (logs/error.log)');
       return this.handleSystemError(e);
     }
   };
