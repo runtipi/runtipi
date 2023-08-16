@@ -1,8 +1,8 @@
 import { InferModel } from 'drizzle-orm';
 import { pgTable, pgEnum, integer, varchar, timestamp, serial, boolean, text, jsonb } from 'drizzle-orm/pg-core';
 
-export const updateStatusEnum = pgEnum('update_status_enum', ['SUCCESS', 'FAILED']);
-export const appStatusEnum = pgEnum('app_status_enum', ['running', 'stopped', 'starting', 'stopping', 'updating', 'missing', 'installing', 'uninstalling']);
+const updateStatusEnum = pgEnum('update_status_enum', ['SUCCESS', 'FAILED']);
+const appStatusEnum = pgEnum('app_status_enum', ['running', 'stopped', 'starting', 'stopping', 'updating', 'missing', 'installing', 'uninstalling']);
 
 const APP_STATUS = appStatusEnum.enumValues;
 export type AppStatus = (typeof APP_STATUS)[number];

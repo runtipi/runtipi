@@ -128,5 +128,8 @@ jobs:
       - name: Build client
         run: npm run build:next
 
-      - name: Run linter
-        run: npm run lint
+      - name: Run tsc
+        run: pnpm run tsc
+
+      - name: Run packages tsc
+        run: pnpm -r run tsc

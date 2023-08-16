@@ -30,6 +30,4 @@ const environmentSchema = z
     };
   });
 
-export type Environment = z.infer<typeof environmentSchema>;
-
 export const getEnv = () => environmentSchema.parse(process.env);
