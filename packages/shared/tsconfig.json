@@ -19,7 +19,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,

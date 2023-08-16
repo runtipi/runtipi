@@ -8,7 +8,7 @@ async function bundle() {
     entryPoints: ['./src/index.ts'],
     outfile: './dist/index.js',
     platform: 'node',
-    target: 'node20',
+    target: 'node18',
     bundle: true,
     color: true,
     sourcemap: commandArgs.includes('--sourcemap'),

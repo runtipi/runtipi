@@ -62,6 +62,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Run linter
+        run: pnpm run lint
+
+      - name: Run linter on packages
+        run: pnpm -r run lint
+
       - name: Get number of CPU cores
         id: cpu-cores
         uses: SimenB/github-actions-cpu-cores@v1
