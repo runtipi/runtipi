@@ -1,6 +1,4 @@
-import fs from 'fs-extra';
 import { App } from '@/server/db/schema';
-import { getAppEnvMap } from '@/server/utils/env-generation';
 import { appInfoSchema } from '@runtipi/shared';
 import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
 import { getConfig } from '../../core/TipiConfig';
@@ -30,44 +28,6 @@ export const checkAppRequirements = (appName: string) => {
   }
 
   return parsedConfig.data;
-};
-
-/**
- *  This function checks if the env file for the app with the provided name is valid.
- *  It reads the config.json file for the app, parses it,
- *  and uses the app's form fields to check if all required fields are present in the env file.
- *  If the config.json file is invalid, it throws an error.
- *  If a required variable is missing in the env file, it throws an error.
- *
- *  @param {string} appName - The name of the app.
- *  @throws Will throw an error if the app has an invalid config.json file or if a required variable is missing in the env file.
- */
-export const checkEnvFile = async (appName: string) => {
-  const configFile = await fs.promises.readFile(`/runtipi/apps/${appName}/config.json`);
-
-  let jsonConfig: unknown;
-  try {
-    jsonConfig = JSON.parse(configFile.toString());
-  } catch (e) {
-    throw new Error(`App ${appName} has invalid config.json file`);
-  }
-
-  const parsedConfig = appInfoSchema.safeParse(jsonConfig);
-
-  if (!parsedConfig.success) {
-    throw new Error(`App ${appName} has invalid config.json file`);
-  }
-
-  const envMap = await getAppEnvMap(appName);
-
-  parsedConfig.data.form_fields.forEach((field) => {
-    const envVar = field.env_variable;
-    const envVarValue = envMap.get(envVar);
-
-    if (!envVarValue && field.required) {
-      throw new Error('New info needed. App config needs to be updated');
-    }
-  });
 };
 
 /**

@@ -48,16 +48,16 @@ export class SystemServiceClass {
       let body = await this.cache.get('latestVersionBody');
 
       if (!version) {
-        const { data } = await axios.get<{ name: string; body: string }>('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+        const { data } = await axios.get<{ tag_name: string; body: string }>('https://api.github.com/repos/meienberger/runtipi/releases/latest');
 
-        version = data.name.replace('v', '');
+        version = data.tag_name;
         body = data.body;
 
-        await this.cache.set('latestVersion', version?.replace('v', '') || '', 60 * 60);
+        await this.cache.set('latestVersion', version || '', 60 * 60);
         await this.cache.set('latestVersionBody', body || '', 60 * 60);
       }
 
-      return { current: TipiConfig.getConfig().version, latest: version?.replace('v', ''), body };
+      return { current: TipiConfig.getConfig().version, latest: version, body };
     } catch (e) {
       Logger.error(e);
       return { current: TipiConfig.getConfig().version, latest: undefined };
@@ -101,7 +101,7 @@ export class SystemServiceClass {
 
     TipiConfig.setConfig('status', 'UPDATING');
 
-    this.dispatcher.dispatchEvent({ type: 'system', command: 'update' });
+    this.dispatcher.dispatchEvent({ type: 'system', command: 'update', version: latest });
 
     return true;
   };
