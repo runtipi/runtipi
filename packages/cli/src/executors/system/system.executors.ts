@@ -4,10 +4,10 @@ import semver from 'semver';
 import axios from 'axios';
 import boxen from 'boxen';
 import path from 'path';
-import { promisify } from 'util';
 import { exec, spawn } from 'child_process';
 import si from 'systeminformation';
 import { Stream } from 'stream';
+import { promisify } from 'util';
 import { AppExecutors } from '../app/app.executors';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
@@ -87,11 +87,7 @@ export class SystemExecutors {
 
       spinner.setMessage('Stopping containers...');
       spinner.start();
-      const { stderr } = await execAsync('docker compose down --remove-orphans --rmi local');
-
-      if (stderr) {
-        throw new Error(stderr);
-      }
+      await execAsync('docker compose down --remove-orphans --rmi local');
 
       spinner.done('Tipi successfully stopped');
 
@@ -131,20 +127,14 @@ export class SystemExecutors {
       // Pull images
       spinner.setMessage('Pulling images...');
       spinner.start();
-      const resultPull = await execAsync(`docker compose --env-file "${this.envFile}" pull`);
-      if (resultPull.stderr) {
-        throw new Error(resultPull.stderr);
-      }
+      await execAsync(`docker compose --env-file "${this.envFile}" pull`);
 
       spinner.done('Images pulled');
 
       // Start containers
       spinner.setMessage('Starting containers...');
       spinner.start();
-      const resultStart = await execAsync(`docker compose --env-file "${this.envFile}" up --detach --remove-orphans --build`);
-      if (resultStart.stderr) {
-        throw new Error(resultStart.stderr);
-      }
+      await execAsync(`docker compose --env-file "${this.envFile}" up --detach --remove-orphans --build`);
 
       spinner.done('Containers started');
 
