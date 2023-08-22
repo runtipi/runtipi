@@ -8,6 +8,7 @@ import { exec, spawn } from 'child_process';
 import si from 'systeminformation';
 import { Stream } from 'stream';
 import { promisify } from 'util';
+import dotenv from 'dotenv';
 import { AppExecutors } from '../app/app.executors';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
@@ -60,6 +61,7 @@ export class SystemExecutors {
       path.join(rootFolderHost, 'state'),
       path.join(rootFolderHost, '.env'),
       path.join(rootFolderHost, 'docker-compose.yml'),
+      path.join(rootFolderHost, 'VERSION'),
     ];
 
     // Give permission to read and write to all files and folders for the current user
@@ -138,12 +140,18 @@ export class SystemExecutors {
       spinner.start();
       spinner.setMessage('Copying system files...');
       await copySystemFiles();
+
       spinner.done('System files copied');
+
+      await this.ensureFilePermissions(this.rootFolder);
 
       spinner.setMessage('Generating system env file...');
       spinner.start();
       const envMap = await generateSystemEnvFile();
       spinner.done('System env file generated');
+
+      // Reload env variables after generating the env file
+      dotenv.config({ path: this.envFile, override: true });
 
       // Stop and Remove container tipi if exists
       spinner.setMessage('Stopping and removing containers...');
