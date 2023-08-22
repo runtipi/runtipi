@@ -255,7 +255,7 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
   const subjectAltName = `DNS:*.${data.domain},DNS:${data.domain}`;
 
   try {
-    await execAsync(`openssl req -x509 -newkey rsa:4096 -keyout traefik/tls/key.pem -out traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "${subjectAltName}" -nodes`);
+    await execAsync(`openssl req -x509 -newkey rsa:4096 -keyout traefik/tls/key.pem -out traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "subjectAltName = ${subjectAltName}" -nodes`);
     await fs.promises.writeFile(path.join(process.cwd(), 'traefik', 'tls', `${data.domain}.txt`), '');
   } catch (error) {
     fileLogger.error(error);
