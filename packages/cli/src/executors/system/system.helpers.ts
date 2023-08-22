@@ -180,6 +180,29 @@ export const generateSystemEnvFile = async () => {
 };
 
 /**
+ * Sets the value of an environment variable in the .env file
+ *
+ * @param {string} key - The key of the environment variable
+ * @param {string} value - The value of the environment variable
+ */
+export const setEnvVariable = async (key: EnvKeys, value: string) => {
+  const rootFolder = process.cwd();
+
+  const envFilePath = path.join(rootFolder, '.env');
+
+  if (!(await pathExists(envFilePath))) {
+    await fs.promises.writeFile(envFilePath, '');
+  }
+
+  const envFile = await fs.promises.readFile(envFilePath, 'utf-8');
+  const envMap: Map<EnvKeys, string> = envStringToMap(envFile);
+
+  envMap.set(key, value);
+
+  await fs.promises.writeFile(envFilePath, envMapToString(envMap));
+};
+
+/**
  * Copies the system files from the assets folder to the current working directory
  */
 export const copySystemFiles = async () => {

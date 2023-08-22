@@ -177,12 +177,12 @@ if [[ "${UPDATE}" == "false" ]]; then
 fi
 
 curl --location "$URL" -o ./runtipi-cli
-sudo chmod +x ./runtipi-cli
+chmod +x ./runtipi-cli
 
 # Check if user is in docker group
 if ! groups | grep -q docker; then
-  echo "User is not in docker group. Please make sure your user is in the docker group and restart the script."
-  echo "You can add your user to the docker group by running: 'sudo usermod -aG docker $USER' and then exit the shell and restart the script."
+  echo "User is not in docker group. Please make sure your user is allowed to run docker commands and restart the script."
+  echo "See https://docs.docker.com/engine/install/linux-postinstall/ for more information."
   exit 1
 fi
 
