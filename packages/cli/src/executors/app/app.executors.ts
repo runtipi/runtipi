@@ -7,19 +7,9 @@ import { copyDataDir, generateEnvFile } from './app.helpers';
 import { fileLogger } from '@/utils/logger/file-logger';
 
 export class AppExecutors {
-  private readonly rootFolderHost: string;
-
-  private readonly storagePath: string;
-
-  private readonly appsRepoId: string;
-
   private readonly logger;
 
   constructor() {
-    const { rootFolderHost, storagePath, appsRepoId } = getEnv();
-    this.rootFolderHost = rootFolderHost;
-    this.storagePath = storagePath;
-    this.appsRepoId = appsRepoId;
     this.logger = fileLogger;
   }
 
@@ -33,10 +23,12 @@ export class AppExecutors {
   };
 
   private getAppPaths = (appId: string) => {
-    const appDataDirPath = path.join(this.storagePath, 'app-data', appId);
-    const appDirPath = path.join(this.rootFolderHost, 'apps', appId);
+    const { rootFolderHost, storagePath, appsRepoId } = getEnv();
+
+    const appDataDirPath = path.join(storagePath, 'app-data', appId);
+    const appDirPath = path.join(rootFolderHost, 'apps', appId);
     const configJsonPath = path.join(appDirPath, 'config.json');
-    const repoPath = path.join(this.rootFolderHost, 'repos', this.appsRepoId, 'apps', appId);
+    const repoPath = path.join(rootFolderHost, 'repos', appsRepoId, 'apps', appId);
 
     return { appDataDirPath, appDirPath, configJsonPath, repoPath };
   };
@@ -69,8 +61,10 @@ export class AppExecutors {
    * @param {string} appId - App id
    */
   private ensureAppDir = async (appId: string) => {
+    const { rootFolderHost } = getEnv();
+
     const { appDirPath, repoPath } = this.getAppPaths(appId);
-    const dockerFilePath = path.join(this.rootFolderHost, 'apps', appId, 'docker-compose.yml');
+    const dockerFilePath = path.join(rootFolderHost, 'apps', appId, 'docker-compose.yml');
 
     if (!(await pathExists(dockerFilePath))) {
       // delete eventual app folder if exists
@@ -90,15 +84,17 @@ export class AppExecutors {
    */
   public installApp = async (appId: string, config: Record<string, unknown>) => {
     try {
+      const { rootFolderHost, appsRepoId } = getEnv();
+
       const { appDirPath, repoPath, appDataDirPath } = this.getAppPaths(appId);
       this.logger.info(`Installing app ${appId}`);
 
       // Check if app exists in repo
-      const apps = await fs.promises.readdir(path.join(this.rootFolderHost, 'repos', this.appsRepoId, 'apps'));
+      const apps = await fs.promises.readdir(path.join(rootFolderHost, 'repos', appsRepoId, 'apps'));
 
       if (!apps.includes(appId)) {
-        this.logger.error(`App ${appId} not found in repo ${this.appsRepoId}`);
-        return { success: false, message: `App ${appId} not found in repo ${this.appsRepoId}` };
+        this.logger.error(`App ${appId} not found in repo ${appsRepoId}`);
+        return { success: false, message: `App ${appId} not found in repo ${appsRepoId}` };
       }
 
       // Delete app folder if exists
