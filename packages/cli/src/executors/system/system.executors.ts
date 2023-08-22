@@ -147,7 +147,7 @@ export class SystemExecutors {
       const out = fs.openSync('./logs/watcher.log', 'a');
       const err = fs.openSync('./logs/watcher.log', 'a');
 
-      const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
+      const subprocess = spawn('sudo ./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
       subprocess.unref();
 
       spinner.done('Watcher started');
