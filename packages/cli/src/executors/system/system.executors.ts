@@ -50,9 +50,7 @@ export class SystemExecutors {
     };
   };
 
-  private ensureFilePermissions = async () => {
-    const { rootFolderHost } = getEnv();
-
+  private ensureFilePermissions = async (rootFolderHost: string) => {
     console.log('Tipi is asking for your password to ensure file permissions are correct (performed only in runtipi folder)');
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
@@ -135,7 +133,7 @@ export class SystemExecutors {
   public start = async () => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
-      await this.ensureFilePermissions();
+      await this.ensureFilePermissions(this.rootFolder);
 
       spinner.start();
       spinner.setMessage('Copying system files...');
