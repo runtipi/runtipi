@@ -1,15 +1,10 @@
-import { appInfoSchema } from '@runtipi/shared';
 import fs from 'fs';
 import path from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
 import { getEnv } from '@/utils/environment/environment';
 import { pathExists } from '@/utils/fs-helpers';
 import { compose } from '@/utils/docker-helpers';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { fileLogger } from '@/utils/logger/file-logger';
-
-const execAsync = promisify(exec);
 
 export class AppExecutors {
   private readonly rootFolderHost: string;
