@@ -33,6 +33,7 @@ export class SystemExecutors {
       fileLogger.error(`An error occurred: ${err.message}`);
       return { success: false, message: err.message };
     }
+    fileLogger.error(`An error occurred: ${err}`);
 
     return { success: false, message: `An error occurred: ${err}` };
   };
@@ -47,6 +48,35 @@ export class SystemExecutors {
       memory: { total: mem.total, used: mem.used, available: mem.available },
       disk: { total: disk0?.size, used: disk0?.used, available: disk0?.available },
     };
+  };
+
+  private ensureFilePermissions = async () => {
+    const { rootFolderHost } = getEnv();
+
+    console.log('Tipi is asking for your password to ensure file permissions are correct (performed only in runtipi folder)');
+    const filesAndFolders = [
+      path.join(rootFolderHost, 'apps'),
+      path.join(rootFolderHost, 'logs'),
+      path.join(rootFolderHost, 'media'),
+      path.join(rootFolderHost, 'repos'),
+      path.join(rootFolderHost, 'state'),
+      path.join(rootFolderHost, '.env'),
+      path.join(rootFolderHost, 'docker-compose.yml'),
+    ];
+
+    // Give permission to read and write to all files and folders for the current user
+
+    await Promise.all(
+      filesAndFolders.map(async (fileOrFolder) => {
+        if (await pathExists(fileOrFolder)) {
+          if (process.getgid && process.getuid) {
+            await execAsync(`sudo chown -R ${process.getuid()}:${process.getgid()} ${fileOrFolder}`);
+          }
+
+          await execAsync(`sudo chmod -R 750 ${fileOrFolder}`);
+        }
+      }),
+    );
   };
 
   public systemInfo = async () => {
@@ -105,6 +135,8 @@ export class SystemExecutors {
   public start = async () => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
+      await this.ensureFilePermissions();
+
       spinner.start();
       spinner.setMessage('Copying system files...');
       await copySystemFiles();

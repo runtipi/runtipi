@@ -46,28 +46,27 @@ export class AppExecutors {
     return { appDataDirPath, appDirPath, configJsonPath, repoPath };
   };
 
-  private ensurePermissions = async (appId: string) => {
-    const { appDataDirPath, configJsonPath } = this.getAppPaths(appId);
-    if (!(await pathExists(appDataDirPath))) {
-      this.logger.info(`Creating app ${appId} data dir`);
-      await fs.promises.mkdir(appDataDirPath, { recursive: true });
-    }
+  // private ensurePermissions = async (appId: string) => {
+  //   const { appDataDirPath, configJsonPath } = this.getAppPaths(appId);
+  //   if (!(await pathExists(appDataDirPath))) {
+  //     this.logger.info(`Creating app ${appId} data dir`);
+  //     await fs.promises.mkdir(appDataDirPath, { recursive: true });
+  //   }
 
-    // Check if app requires special uid and gid
-    if (await pathExists(configJsonPath)) {
-      const config = appInfoSchema.parse(JSON.parse(await fs.promises.readFile(configJsonPath, 'utf-8')));
-      const { uid, gid } = config;
+  //   // Check if app requires special uid and gid
+  //   if (await pathExists(configJsonPath)) {
+  //     const config = appInfoSchema.parse(JSON.parse(await fs.promises.readFile(configJsonPath, 'utf-8')));
+  //     const { uid, gid } = config;
 
-      if (uid && gid) {
-        this.logger.info(`Setting uid and gid to ${uid}:${gid}`);
-        await execAsync(`chown -R' ${uid}:${gid} ${path.join(appDataDirPath, 'data')}`);
-      }
-    }
+  //     if (uid && gid) {
+  //       this.logger.info(`Setting uid and gid to ${uid}:${gid}`);
+  //       await execAsync(`chown -R ${uid}:${gid} ${path.join(appDataDirPath, 'data')}`);
+  //     }
+  //   }
 
-    // Remove all .gitkeep files from app data dir
-    await execAsync(`find ${appDataDirPath} -name '.gitkeep' -exec rm -f {} \\;`);
-    await execAsync(`chmod -R a+rwx ${appDataDirPath}`);
-  };
+  //   // Remove all .gitkeep files from app data dir
+  //   await execAsync(`find ${appDataDirPath} -name '.gitkeep' -exec rm -f {} \\;`);
+  // };
 
   /**
    * Given an app id, ensures that the app folder exists in the apps folder
@@ -132,6 +131,8 @@ export class AppExecutors {
       if (!(await pathExists(`${appDataDirPath}/data`))) {
         await copyDataDir(appId);
       }
+
+      // await this.ensurePermissions(appId);
 
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
@@ -223,7 +224,7 @@ export class AppExecutors {
       this.logger.info(`Copying folder ${repoPath} to ${appDirPath}`);
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
 
-      await this.ensurePermissions(appId);
+      // await this.ensurePermissions(appId);
 
       await compose(appId, 'pull');
 
