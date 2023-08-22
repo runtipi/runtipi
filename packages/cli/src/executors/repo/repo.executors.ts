@@ -49,15 +49,10 @@ export class RepoExecutors {
 
       this.logger.info(`Cloning repo ${repoUrl} to ${repoPath}`);
 
-      const { stdout, stderr } = await execAsync(`git clone ${repoUrl} ${repoPath}`);
-
-      if (stderr) {
-        this.logger.error(`Error cloning repo ${repoUrl}: ${stderr}`);
-        return { success: false, message: stderr };
-      }
+      await execAsync(`git clone ${repoUrl} ${repoPath}`);
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
-      return { success: true, message: stdout };
+      return { success: true, message: '' };
     } catch (err) {
       return this.handleRepoError(err);
     }
