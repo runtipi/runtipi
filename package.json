@@ -84,7 +84,7 @@
     "semver": "^7.5.3",
     "sharp": "0.32.1",
     "superjson": "^1.12.3",
-    "tslib": "^2.5.3",
+    "tslib": "^2.6.2",
     "uuid": "^9.0.0",
     "validator": "^13.7.0",
     "winston": "^3.9.0",
