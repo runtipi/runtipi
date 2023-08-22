@@ -9,13 +9,9 @@ import { fileLogger } from '@/utils/logger/file-logger';
 const execAsync = promisify(exec);
 
 export class RepoExecutors {
-  private readonly rootFolderHost: string;
-
   private readonly logger;
 
   constructor() {
-    const { rootFolderHost } = getEnv();
-    this.rootFolderHost = rootFolderHost;
     this.logger = fileLogger;
   }
 
@@ -39,8 +35,10 @@ export class RepoExecutors {
    */
   public cloneRepo = async (repoUrl: string) => {
     try {
+      const { rootFolderHost } = getEnv();
+
       const repoHash = getRepoHash(repoUrl);
-      const repoPath = path.join(this.rootFolderHost, 'repos', repoHash);
+      const repoPath = path.join(rootFolderHost, 'repos', repoHash);
 
       if (await pathExists(repoPath)) {
         this.logger.info(`Repo ${repoUrl} already exists`);
@@ -65,8 +63,10 @@ export class RepoExecutors {
    */
   public pullRepo = async (repoUrl: string) => {
     try {
+      const { rootFolderHost } = getEnv();
+
       const repoHash = getRepoHash(repoUrl);
-      const repoPath = path.join(this.rootFolderHost, 'repos', repoHash);
+      const repoPath = path.join(rootFolderHost, 'repos', repoHash);
 
       if (!(await pathExists(repoPath))) {
         this.logger.info(`Repo ${repoUrl} does not exist`);

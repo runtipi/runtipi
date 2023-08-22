@@ -1,11 +1,13 @@
 import { z } from 'zod';
 import dotenv from 'dotenv';
 
-if (process.env.NODE_ENV === 'development') {
-  dotenv.config({ path: '.env.dev' });
-} else {
-  dotenv.config();
-}
+const loadEnv = () => {
+  if (process.env.NODE_ENV === 'development') {
+    dotenv.config({ path: '.env.dev' });
+  } else {
+    dotenv.config();
+  }
+};
 
 const environmentSchema = z
   .object({
@@ -30,4 +32,7 @@ const environmentSchema = z
     };
   });
 
-export const getEnv = () => environmentSchema.parse(process.env);
+export const getEnv = () => {
+  loadEnv();
+  return environmentSchema.parse(process.env);
+};

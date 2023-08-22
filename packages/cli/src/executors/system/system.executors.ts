@@ -60,6 +60,7 @@ export class SystemExecutors {
       path.join(rootFolderHost, 'state'),
       path.join(rootFolderHost, '.env'),
       path.join(rootFolderHost, 'docker-compose.yml'),
+      path.join(rootFolderHost, 'VERSION'),
     ];
 
     // Give permission to read and write to all files and folders for the current user
@@ -139,6 +140,8 @@ export class SystemExecutors {
       spinner.setMessage('Copying system files...');
       await copySystemFiles();
       spinner.done('System files copied');
+
+      await this.ensureFilePermissions(this.rootFolder);
 
       spinner.setMessage('Generating system env file...');
       spinner.start();
