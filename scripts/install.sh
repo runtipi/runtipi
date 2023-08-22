@@ -12,6 +12,22 @@ if [[ "$ARCHITECTURE" == "armv7"* ]] || [[ "$ARCHITECTURE" == "i686" ]] || [[ "$
     exit 1
 fi
 
+### --------------------------------
+### CLI arguments
+### --------------------------------
+UPDATE="false"
+while [ -n "${1-}" ]; do
+    case "$1" in
+    --update) UPDATE="true" ;;
+    --)
+        shift # The double dash makes them parameters
+        break
+        ;;
+    *) echo "Option $1 not recognized" && exit 1 ;;
+    esac
+    shift
+done
+
 
 OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
@@ -145,6 +161,7 @@ function check_dependency_and_install() {
 # Example
 # check_dependency_and_install "openssl"
 
+
 LATEST_VERSION=$(curl -s https://api.github.com/repos/meienberger/runtipi/releases/latest | grep tag_name | cut -d '"' -f4)
 
 LATEST_ASSET="runtipi-cli-linux-x64"
@@ -154,9 +171,19 @@ fi
 
 URL="https://github.com/meienberger/runtipi/releases/download/$LATEST_VERSION/$LATEST_ASSET"
 
-mkdir -p ./runtipi
+if [[ "${UPDATE}" == "false" ]]; then
+    mkdir -p runtipi
+    cd runtipi || exit
+fi
 
-curl --location "$URL" -o ./runtipi/runtipi-cli
-sudo chmod +x ./runtipi/runtipi-cli
+curl --location "$URL" -o ./runtipi-cli
+sudo chmod +x ./runtipi-cli
 
-sudo ./runtipi/runtipi-cli start
+# Check if user is in docker group
+if ! groups | grep -q docker; then
+  echo "User is not in docker group. Please make sure your user is in the docker group and restart the script."
+  echo "You can add your user to the docker group by running: 'sudo usermod -aG docker $USER' and then exit the shell and restart the script."
+  exit 1
+fi
+
+./runtipi-cli start

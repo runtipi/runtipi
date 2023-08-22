@@ -7,6 +7,18 @@ import { startWorker } from './services/watcher/watcher';
 import { SystemExecutors } from './executors';
 
 const main = async () => {
+  // Ensure the user is running as root
+  if (process.env.NODE_ENV === 'production' && (!process.getuid || process.getuid() !== 0 || !process.getgid || process.getgid() !== 0)) {
+    // console.error(chalk.red('✗'), 'Tipi CLI must be run as root');
+    // process.exit(1);
+  }
+
+  // Ensure the OS is linux
+  if (process.env.NODE_ENV === 'production' && process.platform !== 'linux') {
+    // console.error(chalk.red('✗'), 'Tipi CLI can only be run on Linux');
+    // process.exit(1);
+  }
+
   program.description(description).version(version);
 
   program
