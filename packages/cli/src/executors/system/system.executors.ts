@@ -51,8 +51,10 @@ export class SystemExecutors {
     };
   };
 
-  private ensureFilePermissions = async (rootFolderHost: string) => {
-    console.log('Tipi is asking for your password to ensure file permissions are correct (performed only in runtipi folder)');
+  private ensureFilePermissions = async (rootFolderHost: string, logSudoRequest = true) => {
+    if (logSudoRequest) {
+      console.log('\nTipi is asking for your password\nin order to ensure permissions\non copied files and folders\n');
+    }
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
       path.join(rootFolderHost, 'logs'),
@@ -65,7 +67,6 @@ export class SystemExecutors {
     ];
 
     // Give permission to read and write to all files and folders for the current user
-
     await Promise.all(
       filesAndFolders.map(async (fileOrFolder) => {
         if (await pathExists(fileOrFolder)) {
@@ -143,7 +144,7 @@ export class SystemExecutors {
 
       spinner.done('System files copied');
 
-      await this.ensureFilePermissions(this.rootFolder);
+      await this.ensureFilePermissions(this.rootFolder, false);
 
       spinner.setMessage('Generating system env file...');
       spinner.start();
