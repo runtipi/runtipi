@@ -6,7 +6,7 @@ on:
       tag:
         type: string
         description: 'Version to test (e.g. v1.6.0-beta.1)'
-  workflow_run:
+  workflow_dispatch:
     inputs:
       tag:
         type: string
@@ -16,7 +16,6 @@ jobs:
   deploy:
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    needs: [build]
     outputs:
       droplet_id: ${{ steps.create-droplet.outputs.droplet_id }}
       droplet_ip: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
