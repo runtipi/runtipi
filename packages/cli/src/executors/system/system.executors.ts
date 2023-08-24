@@ -159,8 +159,8 @@ export class SystemExecutors {
       spinner.start();
       await execAsync('docker rm -f tipi-db');
       await execAsync('docker rm -f tipi-redis');
-      await execAsync('docker rm -f dashboard');
-      await execAsync('docker rm -f reverse-proxy');
+      await execAsync('docker rm -f tipi-dashboard');
+      await execAsync('docker rm -f tipi-reverse-proxy');
       spinner.done('Containers stopped and removed');
 
       // Pull images

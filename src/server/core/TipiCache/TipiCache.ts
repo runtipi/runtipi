@@ -12,6 +12,7 @@ class TipiCache {
   constructor() {
     const client = createClient({
       url: `redis://${getConfig().REDIS_HOST}:6379`,
+      password: getConfig().redisPassword,
     });
 
     client.on('error', (err) => {

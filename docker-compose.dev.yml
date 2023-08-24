@@ -1,8 +1,8 @@
 version: '3.7'
 
 services:
-  reverse-proxy:
-    container_name: reverse-proxy
+  tipi-reverse-proxy:
+    container_name: tipi-reverse-proxy
     image: traefik:v2.8
     restart: on-failure
     ports:
@@ -42,6 +42,7 @@ services:
     container_name: tipi-redis
     image: redis:alpine
     restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     ports:
       - 6379:6379
     volumes:
@@ -54,11 +55,11 @@ services:
     networks:
       - tipi_main_network
 
-  dashboard:
+  tipi-dashboard:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: dashboard
+    container_name: tipi-dashboard
     depends_on:
       tipi-db:
         condition: service_healthy

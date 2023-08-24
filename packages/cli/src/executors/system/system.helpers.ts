@@ -30,6 +30,7 @@ type EnvKeys =
   | 'POSTGRES_PASSWORD'
   | 'POSTGRES_USERNAME'
   | 'REDIS_HOST'
+  | 'REDIS_PASSWORD'
   | 'LOCAL_DOMAIN'
   | 'DEMO_MODE'
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -148,6 +149,7 @@ export const generateSystemEnvFile = async () => {
   const jwtSecret = envMap.get('JWT_SECRET') || (await deriveEntropy('jwt_secret'));
   const repoId = getRepoHash(data.appsRepoUrl || DEFAULT_REPO_URL);
   const postgresPassword = envMap.get('POSTGRES_PASSWORD') || (await deriveEntropy('postgres_password'));
+  const redisPassword = envMap.get('REDIS_PASSWORD') || (await deriveEntropy('redis_password'));
 
   const version = await fs.promises.readFile(path.join(rootFolder, 'VERSION'), 'utf-8');
 
@@ -170,6 +172,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('POSTGRES_PASSWORD', postgresPassword);
   envMap.set('POSTGRES_PORT', String(5432));
   envMap.set('REDIS_HOST', 'tipi-redis');
+  envMap.set('REDIS_PASSWORD', redisPassword);
   envMap.set('DEMO_MODE', String(data.demoMode || 'false'));
   envMap.set('LOCAL_DOMAIN', data.localDomain || 'tipi.lan');
   envMap.set('NODE_ENV', 'production');
