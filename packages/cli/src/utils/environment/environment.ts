@@ -15,9 +15,10 @@ const environmentSchema = z
     ARCHITECTURE: z.enum(['arm64', 'amd64']),
     INTERNAL_IP: z.string().ip().or(z.literal('localhost')),
     TIPI_VERSION: z.string(),
+    REDIS_PASSWORD: z.string(),
   })
   .transform((env) => {
-    const { STORAGE_PATH, ARCHITECTURE, ROOT_FOLDER_HOST, APPS_REPO_ID, INTERNAL_IP, TIPI_VERSION, ...rest } = env;
+    const { STORAGE_PATH, ARCHITECTURE, ROOT_FOLDER_HOST, APPS_REPO_ID, INTERNAL_IP, TIPI_VERSION, REDIS_PASSWORD, ...rest } = env;
 
     return {
       storagePath: STORAGE_PATH,
@@ -26,6 +27,7 @@ const environmentSchema = z
       arch: ARCHITECTURE,
       tipiVersion: TIPI_VERSION,
       internalIp: INTERNAL_IP,
+      redisPassword: REDIS_PASSWORD,
       ...rest,
     };
   });

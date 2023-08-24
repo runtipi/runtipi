@@ -17,8 +17,8 @@ class EventDispatcher {
   private queueEvents;
 
   constructor() {
-    this.queue = new Queue('events', { connection: { host: getConfig().REDIS_HOST, port: 6379 } });
-    this.queueEvents = new QueueEvents('events', { connection: { host: getConfig().REDIS_HOST, port: 6379 } });
+    this.queue = new Queue('events', { connection: { host: getConfig().REDIS_HOST, port: 6379, password: getConfig().redisPassword } });
+    this.queueEvents = new QueueEvents('events', { connection: { host: getConfig().REDIS_HOST, port: 6379, password: getConfig().redisPassword } });
   }
 
   public async cleanRepeatableJobs() {

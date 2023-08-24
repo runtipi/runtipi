@@ -6,6 +6,7 @@ import { getConfig } from '../core/TipiConfig';
 // Initialize client.
 const redisClient = createClient({
   url: `redis://${getConfig().REDIS_HOST}:6379`,
+  password: getConfig().redisPassword,
 });
 redisClient.connect();
 

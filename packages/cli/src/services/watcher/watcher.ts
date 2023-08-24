@@ -3,6 +3,7 @@ import { Worker } from 'bullmq';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { AppExecutors, RepoExecutors, SystemExecutors } from '@/executors';
+import { getEnv } from '@/utils/environment/environment';
 
 const execAsync = promisify(exec);
 
@@ -101,7 +102,7 @@ export const startWorker = async () => {
 
       return { success, stdout: message };
     },
-    { connection: { host: '127.0.0.1', port: 6379 } },
+    { connection: { host: '127.0.0.1', port: 6379, password: getEnv().redisPassword } },
   );
 
   worker.on('ready', () => {

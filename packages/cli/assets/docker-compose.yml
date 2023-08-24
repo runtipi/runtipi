@@ -1,8 +1,8 @@
 version: '3.7'
 
 services:
-  reverse-proxy:
-    container_name: reverse-proxy
+  tipi-reverse-proxy:
+    container_name: tipi-reverse-proxy
     image: traefik:v2.8
     restart: on-failure
     ports:
@@ -21,6 +21,8 @@ services:
     image: postgres:14
     restart: on-failure
     stop_grace_period: 1m
+    ports:
+      - 5432:5432
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     environment:
@@ -37,8 +39,9 @@ services:
 
   tipi-redis:
     container_name: tipi-redis
-    image: redis:alpine
+    image: redis:7.2.0-alpine
     restart: on-failure
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     ports:
       - 6379:6379
     volumes:
@@ -51,10 +54,10 @@ services:
     networks:
       - tipi_main_network
 
-  dashboard:
+  tipi-dashboard:
     image: meienberger/runtipi:${TIPI_VERSION}
     restart: on-failure
-    container_name: dashboard
+    container_name: tipi-dashboard
     networks:
       - tipi_main_network
     depends_on:
