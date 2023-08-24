@@ -16,9 +16,17 @@ fi
 ### CLI arguments
 ### --------------------------------
 UPDATE="false"
+VERSION="latest"
 while [ -n "${1-}" ]; do
     case "$1" in
     --update) UPDATE="true" ;;
+    --version)
+        shift # Move to the next parameter
+        VERSION="$1" # Assign the value to VERSION
+        if [ -z "$VERSION" ]; then
+            echo "Option --version requires a value" && exit 1
+        fi
+        ;;
     --)
         shift # The double dash makes them parameters
         break
@@ -161,15 +169,18 @@ function check_dependency_and_install() {
 # Example
 # check_dependency_and_install "openssl"
 
-
-LATEST_VERSION=$(curl -s https://api.github.com/repos/meienberger/runtipi/releases/latest | grep tag_name | cut -d '"' -f4)
-
-LATEST_ASSET="runtipi-cli-linux-x64"
-if [ "$ARCHITECTURE" == "arm64" ] || [ "$ARCHITECTURE" == "aarch64" ]; then
-  LATEST_ASSET="runtipi-cli-linux-arm64"
+# If version was not given it will install the latest version
+if [[ "${VERSION}" == "latest" ]]; then
+  LATEST_VERSION=$(curl -s https://api.github.com/repos/meienberger/runtipi/releases/latest | grep tag_name | cut -d '"' -f4)
+  VERSION="${LATEST_VERSION}"
 fi
 
-URL="https://github.com/meienberger/runtipi/releases/download/$LATEST_VERSION/$LATEST_ASSET"
+ASSET="runtipi-cli-linux-x64"
+if [ "$ARCHITECTURE" == "arm64" ] || [ "$ARCHITECTURE" == "aarch64" ]; then
+  ASSET="runtipi-cli-linux-arm64"
+fi
+
+URL="https://github.com/meienberger/runtipi/releases/download/$VERSION/$ASSET"
 
 if [[ "${UPDATE}" == "false" ]]; then
     mkdir -p runtipi

@@ -1,10 +1,10 @@
-name: Alpha Release
+name: Beta Release
 
 on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Alpha version tag (1, 2, 3, ...)'
+        description: 'Beta version tag (1, 2, 3, ...)'
         required: true
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         with:
           tag_prefix: 'v'
-          tag_suffix: '-alpha.${{ github.event.inputs.tag }}'
+          tag_suffix: '-beta.${{ github.event.inputs.tag }}'
 
   build-images:
     runs-on: ubuntu-latest
@@ -115,7 +115,7 @@ jobs:
           name: cli
           path: cli
 
-      - name: Create alpha release
+      - name: Create beta release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -145,3 +145,10 @@ jobs:
           asset_path: cli/bin/cli-arm64
           asset_name: runtipi-cli-linux-arm64
           asset_content_type: application/octet-stream
+
+  e2e-tests:
+    needs: [create-tag, build-images, build-cli, publish-release]
+    uses: './.github/workflows/e2e.yml'
+    secrets: inherit
+    with:
+      tag: ${{ needs.create-tag.outputs.tagname }}

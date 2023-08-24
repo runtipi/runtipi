@@ -2,9 +2,6 @@ name: Release candidate
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - release/*
 
 jobs:
   # Build images and publish RCs to DockerHub
