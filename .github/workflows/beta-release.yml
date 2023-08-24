@@ -151,4 +151,4 @@ jobs:
     uses: './.github/workflows/e2e.yml'
     secrets: inherit
     with:
-      tag: ${{ needs.create-tag.outputs.tagname }}
+      version: ${{ needs.create-tag.outputs.tagname }}
