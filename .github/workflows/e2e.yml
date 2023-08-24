@@ -3,12 +3,14 @@ name: E2E Tests
 on:
   workflow_call:
     inputs:
-      tag:
+      version:
+        required: true
         type: string
         description: 'Version to test (e.g. v1.6.0-beta.1)'
   workflow_dispatch:
     inputs:
-      tag:
+      version:
+        required: true
         type: string
         description: 'Version to test (e.g. v1.6.0-beta.1)'
 
@@ -68,18 +70,28 @@ jobs:
       - name: Wait 1 minute for Droplet to be ready
         run: sleep 60
 
+      - name: Create docker group on Droplet
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            groupadd docker
+            usermod -aG docker root
+          host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
+          user: root
+          key: ${{ secrets.SSH_KEY }}
+
       - name: Deploy app to Droplet
         uses: fifsky/ssh-action@master
         with:
           command: |
             echo 'Downloading install script from GitHub'
-            curl -s https://raw.githubusercontent.com/meienberger/runtipi/${{ github.event.inputs.tag }}/scripts/install.sh > install.sh
+            curl -s https://raw.githubusercontent.com/meienberger/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
             chmod +x install.sh
             echo 'Running install script'
-            ./install.sh --version ${{ github.event.inputs.tag }}
+            ./install.sh --version ${{ inputs.version }}
             echo 'App deployed'
           host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
-          user: root
+          user: root # TODO: use non-root user
           key: ${{ secrets.SSH_KEY }}
 
   e2e:
