@@ -1,42 +1,18 @@
 name: E2E Tests
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - release/*
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        description: 'Version to test (e.g. v1.6.0-beta.1)'
+  workflow_run:
+    inputs:
+      tag:
+        type: string
+        description: 'Version to test (e.g. v1.6.0-beta.1)'
 
 jobs:
-  build:
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push images
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          platforms: linux/amd64
-          push: true
-          tags: meienberger/runtipi:e2e
-          cache-from: type=registry,ref=meienberger/runtipi:buildcache-e2e
-          cache-to: type=registry,ref=meienberger/runtipi:buildcache-e2e,mode=max
-
   deploy:
     timeout-minutes: 15
     runs-on: ubuntu-latest
@@ -93,23 +69,15 @@ jobs:
       - name: Wait 1 minute for Droplet to be ready
         run: sleep 60
 
-      - name: Extract branch name from ref
-        id: extract-branch-name
-        run: |
-          branch_name=$(echo ${{ github.ref }} | sed 's/refs\/heads\///')
-          echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
-
       - name: Deploy app to Droplet
         uses: fifsky/ssh-action@master
         with:
           command: |
-            echo 'Cloning repo on branch ${{ github.head_ref }}'
-            git clone --single-branch --branch ${{ steps.extract-branch-name.outputs.branch_name }} https://github.com/${{ github.repository }}
-            echo 'Waiting for dpkg lock to be released'
-            cd runtipi
-            echo 'Checking out branch ${{ steps.extract-branch-name.outputs.branch_name }}'
-            git checkout ${{ steps.extract-branch-name.outputs.branch_name }}
-            sudo ./scripts/start-e2e.sh e2e
+            echo 'Downloading install script from GitHub'
+            curl -s https://raw.githubusercontent.com/meienberger/runtipi/${{ github.event.inputs.tag }}/scripts/install.sh > install.sh
+            chmod +x install.sh
+            echo 'Running install script'
+            ./install.sh --version ${{ github.event.inputs.tag }}
             echo 'App deployed'
           host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
           user: root
@@ -171,8 +139,6 @@ jobs:
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source
-      pull-requests: write # to comment on the PR
-      issues: write # to comment on the PR
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -193,36 +159,8 @@ jobs:
           path: playwright-report/
 
       - name: Deploy to GitHub Pages
-        id: report-deployment
+        id: deployment
         uses: actions/deploy-pages@v2
-
-      - name: Comment on PR
-        uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const comments = await github.rest.issues.listComments({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            });
-
-            const comment = comments.data.find(comment => comment.body.includes('Playwright report:'));
-
-            if (comment) {
-              await github.rest.issues.deleteComment({
-                comment_id: comment.id,
-                owner: context.repo.owner,
-                repo: context.repo.repo
-              });
-            }
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `Playwright report: ${{ steps.report-deployment.outputs.page_url }}`
-            })
 
   teardown:
     runs-on: ubuntu-latest
