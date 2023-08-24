@@ -3,12 +3,14 @@ name: E2E Tests
 on:
   workflow_call:
     inputs:
-      tag:
+      version:
+        required: true
         type: string
         description: 'Version to test (e.g. v1.6.0-beta.1)'
   workflow_dispatch:
     inputs:
-      tag:
+      version:
+        required: true
         type: string
         description: 'Version to test (e.g. v1.6.0-beta.1)'
 
@@ -73,10 +75,10 @@ jobs:
         with:
           command: |
             echo 'Downloading install script from GitHub'
-            curl -s https://raw.githubusercontent.com/meienberger/runtipi/${{ github.event.inputs.tag }}/scripts/install.sh > install.sh
+            curl -s https://raw.githubusercontent.com/meienberger/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
             chmod +x install.sh
             echo 'Running install script'
-            ./install.sh --version ${{ github.event.inputs.tag }}
+            ./install.sh --version ${{ inputs.version }}
             echo 'App deployed'
           host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
           user: root
