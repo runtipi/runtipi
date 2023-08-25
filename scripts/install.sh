@@ -115,11 +115,6 @@ function install_docker() {
   fi
 }
 
-echo "Updating system"
-sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
-echo "Upgrading system"
-sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-
 if ! command -v docker >/dev/null; then
   echo "Installing docker"
   install_docker "${OS}"
