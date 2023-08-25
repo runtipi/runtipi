@@ -61,6 +61,7 @@ export class SystemExecutors {
       path.join(rootFolderHost, 'media'),
       path.join(rootFolderHost, 'repos'),
       path.join(rootFolderHost, 'state'),
+      path.join(rootFolderHost, 'traefik'),
       path.join(rootFolderHost, '.env'),
       path.join(rootFolderHost, 'docker-compose.yml'),
       path.join(rootFolderHost, 'VERSION'),
