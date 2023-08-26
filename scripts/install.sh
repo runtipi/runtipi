@@ -36,9 +36,9 @@ while [ -n "${1-}" ]; do
     shift
 done
 
-
-OS="$(find /etc -maxdepth 1 -type f,l -name '[A-Za-z]*[_-][rv]e[lr]*' | xargs cat | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
-SUB_OS="$(find /etc -maxdepth 1 -type f,l -name '[A-Za-z]*[_-][rv]e[lr]*' | xargs cat | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"' || echo 'unknown')"
+OS_CONFIG="$(find /etc -maxdepth 1 -type f,l -name '[A-Za-z]*[_-][rv]e[lr]*' | xargs cat)"
+OS="$(echo $OS_CONFIG | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
+SUB_OS="$(echo $OS_CONFIG | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"' || echo 'unknown')"
 
 function install_generic() {
   local dependency="${1}"
