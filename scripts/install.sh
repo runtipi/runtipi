@@ -37,8 +37,8 @@ while [ -n "${1-}" ]; do
 done
 
 
-OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
-SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"' || echo 'unknown')"
+OS="$(find /etc -maxdepth 1 -type f,l -name '[A-Za-z]*[_-][rv]e[lr]*' | xargs cat | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
+SUB_OS="$(find /etc -maxdepth 1 -type f,l -name '[A-Za-z]*[_-][rv]e[lr]*' | xargs cat | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"' || echo 'unknown')"
 
 function install_generic() {
   local dependency="${1}"
