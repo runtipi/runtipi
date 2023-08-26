@@ -98,7 +98,7 @@ jobs:
         run: pnpm -r --filter cli package
 
       - name: Upload CLI
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: cli
           path: packages/cli/dist
