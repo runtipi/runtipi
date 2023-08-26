@@ -54,7 +54,7 @@
     "@trpc/next": "^10.27.1",
     "@trpc/react-query": "^10.27.1",
     "@trpc/server": "^10.27.1",
-    "argon2": "^0.30.3",
+    "argon2": "^0.31.0",
     "bullmq": "^4.5.0",
     "clsx": "^1.1.1",
     "connect-redis": "^7.1.0",
