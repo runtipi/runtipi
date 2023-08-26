@@ -196,4 +196,10 @@ if [ "$(id -u)" -ne 0 ]; then
   fi
 fi
 
+# Check if git is installed
+if ! command -v git >/dev/null; then
+  echo "Git is not installed. Please install git and restart the script."
+  exit 1
+fi
+
 ./runtipi-cli start
