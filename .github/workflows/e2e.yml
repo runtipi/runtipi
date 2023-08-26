@@ -7,6 +7,10 @@ on:
         required: true
         type: string
         description: 'Version to test (e.g. v1.6.0-beta.1)'
+    outputs:
+      page_url:
+        description: 'URL of the deployed report'
+        value: ${{ jobs.report-deployment.outputs.page_url }}
   workflow_dispatch:
     inputs:
       version:
@@ -144,6 +148,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
+        id: run-e2e
         run: npm run test:e2e
 
       - uses: actions/upload-artifact@v3
@@ -156,6 +161,8 @@ jobs:
   report-deployment:
     runs-on: ubuntu-latest
     needs: [e2e]
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source
