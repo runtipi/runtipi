@@ -52,4 +52,10 @@ export class TerminalSpinner {
 
     logUpdate.done();
   }
+
+  log(message: string) {
+    logUpdate(message);
+
+    logUpdate.done();
+  }
 }
