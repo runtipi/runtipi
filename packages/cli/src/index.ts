@@ -20,9 +20,10 @@ const main = async () => {
   program
     .command('start')
     .description('Start tipi')
-    .action(async () => {
+    .option('--no-permissions', 'Skip permissions check')
+    .action(async (options) => {
       const systemExecutors = new SystemExecutors();
-      await systemExecutors.start();
+      await systemExecutors.start(options.permissions);
     });
 
   program

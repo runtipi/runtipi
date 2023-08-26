@@ -52,9 +52,16 @@ export class SystemExecutors {
   };
 
   private ensureFilePermissions = async (rootFolderHost: string, logSudoRequest = true) => {
-    if (logSudoRequest) {
-      console.log('\nTipi is asking for your password\nin order to ensure permissions\non copied files and folders\n');
+    // if we are running as root, we don't need to change permissions
+    if (process.getuid && process.getuid() === 0) {
+      return;
     }
+
+    if (logSudoRequest) {
+      const logger = new TerminalSpinner('');
+      logger.log('Tipi needs to change permissions on some files and folders and will ask for your password.');
+    }
+
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
       path.join(rootFolderHost, 'logs'),
@@ -134,10 +141,12 @@ export class SystemExecutors {
    * This method will start Tipi.
    * It will copy the system files, generate the system env file, pull the images and start the containers.
    */
-  public start = async () => {
+  public start = async (permissions = true) => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
-      await this.ensureFilePermissions(this.rootFolder);
+      if (permissions) {
+        await this.ensureFilePermissions(this.rootFolder);
+      }
 
       spinner.start();
       spinner.setMessage('Copying system files...');
@@ -145,7 +154,9 @@ export class SystemExecutors {
 
       spinner.done('System files copied');
 
-      await this.ensureFilePermissions(this.rootFolder, false);
+      if (permissions) {
+        await this.ensureFilePermissions(this.rootFolder, false);
+      }
 
       spinner.setMessage('Generating system env file...');
       spinner.start();
@@ -331,7 +342,7 @@ export class SystemExecutors {
       // eslint-disable-next-line no-promise-executor-return
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const childProcess = spawn('./runtipi-cli', [process.argv[1] as string, 'start']);
+      const childProcess = spawn('./runtipi-cli', [process.argv[1] as string, 'start', '--no-permissions']);
 
       childProcess.stdout.on('data', (data) => {
         process.stdout.write(data);
