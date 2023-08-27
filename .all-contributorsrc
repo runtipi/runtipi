@@ -344,6 +344,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "FabioCingottini",
+      "name": "Fabio Cingottini",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32102735?v=4",
+      "profile": "https://github.com/FabioCingottini",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
