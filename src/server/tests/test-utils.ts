@@ -1,10 +1,10 @@
 /* eslint-disable no-restricted-syntax */
 import pg, { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { runPostgresMigrations } from '../run-migration';
 import { getConfig } from '../core/TipiConfig';
 import * as schema from '../db/schema';
 import { Database } from '../db';
+import { runPostgresMigrations } from '../run-migrations-dev';
 
 export type TestDatabase = {
   client: Pool;
