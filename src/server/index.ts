@@ -4,10 +4,8 @@ import express from 'express';
 import { parse } from 'url';
 
 import type { NextServer } from 'next/dist/server/next';
-import { EventDispatcher } from './core/EventDispatcher';
 import { getConfig, setConfig } from './core/TipiConfig';
 import { Logger } from './core/Logger';
-import { runPostgresMigrations } from './run-migration';
 import { AppServiceClass } from './services/apps/apps.service';
 import { db } from './db';
 import { sessionMiddleware } from './middlewares/session.middleware';
@@ -61,22 +59,9 @@ nextApp.prepare().then(async () => {
   });
 
   app.listen(port, async () => {
-    await EventDispatcher.clear();
     const appService = new AppServiceClass(db);
 
-    // Run database migrations
-    if (getConfig().NODE_ENV !== 'development') {
-      await runPostgresMigrations();
-    }
     setConfig('status', 'RUNNING');
-
-    // Clone and update apps repo
-    await EventDispatcher.dispatchEventAsync({ type: 'repo', command: 'clone', url: getConfig().appsRepoUrl });
-    await EventDispatcher.dispatchEventAsync({ type: 'repo', command: 'update', url: getConfig().appsRepoUrl });
-
-    // Scheduled events
-    EventDispatcher.scheduleEvent({ type: 'repo', command: 'update', url: getConfig().appsRepoUrl }, '*/30 * * * *');
-    EventDispatcher.scheduleEvent({ type: 'system', command: 'system_info' }, '* * * * *');
 
     appService.startAllApps();
 

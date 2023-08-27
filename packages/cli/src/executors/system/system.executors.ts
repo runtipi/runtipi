@@ -1,3 +1,4 @@
+import { Queue } from 'bullmq';
 import fs from 'fs';
 import cliProgress from 'cli-progress';
 import semver from 'semver';
@@ -9,12 +10,14 @@ import si from 'systeminformation';
 import { Stream } from 'stream';
 import { promisify } from 'util';
 import dotenv from 'dotenv';
+import { SystemEvent } from '@runtipi/shared';
 import { AppExecutors } from '../app/app.executors';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
 import { pathExists } from '@/utils/fs-helpers';
 import { getEnv } from '@/utils/environment/environment';
 import { fileLogger } from '@/utils/logger/file-logger';
+import { runPostgresMigrations } from '@/utils/migrations/run-migration';
 
 const execAsync = promisify(exec);
 
@@ -202,6 +205,32 @@ export class SystemExecutors {
       subprocess.unref();
 
       spinner.done('Watcher started');
+
+      const queue = new Queue('events', { connection: { host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD') } });
+      await queue.obliterate({ force: true });
+
+      // Initial jobs
+      await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent);
+      await queue.add(`${Math.random().toString()}_repo_clone`, { type: 'repo', command: 'clone', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
+
+      // Scheduled jobs
+      await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
+      await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { pattern: '* * * * *' } });
+
+      await queue.close();
+
+      spinner.setMessage('Running database migrations...');
+      spinner.start();
+
+      await runPostgresMigrations({
+        postgresHost: '127.0.0.1',
+        postgresDatabase: envMap.get('POSTGRES_DBNAME') as string,
+        postgresUsername: envMap.get('POSTGRES_USERNAME') as string,
+        postgresPassword: envMap.get('POSTGRES_PASSWORD') as string,
+        postgresPort: envMap.get('POSTGRES_PORT') as string,
+      });
+
+      spinner.done('Database migrations complete');
 
       console.log(
         boxen(`Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get('NGINX_PORT')} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io`, {
