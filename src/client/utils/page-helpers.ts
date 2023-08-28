@@ -2,9 +2,11 @@ import { GetServerSideProps } from 'next';
 import merge from 'lodash.merge';
 import { getLocaleFromString } from '@/shared/internationalization/locales';
 import { getCookie } from 'cookies-next';
+import TipiCache from '@/server/core/TipiCache/TipiCache';
 
 export const getAuthedPageProps: GetServerSideProps = async (ctx) => {
-  const { userId } = ctx.req.session;
+  const sessionId = ctx.req.headers['x-session-id'];
+  const userId = await TipiCache.get(`session:${sessionId}`);
 
   if (!userId) {
     return {
@@ -21,11 +23,10 @@ export const getAuthedPageProps: GetServerSideProps = async (ctx) => {
 };
 
 export const getMessagesPageProps: GetServerSideProps = async (ctx) => {
-  const { locale: sessionLocale } = ctx.req.session;
   const cookieLocale = getCookie('tipi-locale', { req: ctx.req });
   const browserLocale = ctx.req.headers['accept-language']?.split(',')[0];
 
-  const locale = getLocaleFromString(String(sessionLocale || cookieLocale || browserLocale || 'en'));
+  const locale = getLocaleFromString(String(cookieLocale || browserLocale || 'en'));
 
   const englishMessages = (await import(`../messages/en.json`)).default;
   const messages = (await import(`../messages/${locale}.json`)).default;

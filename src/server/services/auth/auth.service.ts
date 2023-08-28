@@ -1,12 +1,13 @@
+import { v4 as uuidv4 } from 'uuid';
 import * as argon2 from 'argon2';
 import validator from 'validator';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { AuthQueries } from '@/server/queries/auth/auth.queries';
-import { Context } from '@/server/context';
 import { TranslatedError } from '@/server/utils/errors';
 import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
-import { generateSessionId } from '@/server/common/session.helpers';
+import { generateSessionId, setSession } from '@/server/common/session.helpers';
 import { Database } from '@/server/db';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { getConfig } from '../../core/TipiConfig';
 import TipiCache from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
@@ -29,9 +30,10 @@ export class AuthServiceClass {
    * Authenticate user with given username and password
    *
    * @param {UsernamePasswordInput} input - An object containing the user's username and password
-   * @param {Request} req - The Next.js request object
+   * @param {NextApiRequest} req - The Next.js request object
+   * @param {NextApiResponse} res - The Next.js response object
    */
-  public login = async (input: UsernamePasswordInput, req: Context['req']) => {
+  public login = async (input: UsernamePasswordInput, req: NextApiRequest, res: NextApiResponse) => {
     const { password, username } = input;
     const user = await this.queries.getUserByUsername(username);
 
@@ -51,8 +53,8 @@ export class AuthServiceClass {
       return { totpSessionId };
     }
 
-    req.session.userId = user.id;
-    await TipiCache.set(`session:${user.id}:${req.session.id}`, req.session.id);
+    const sessionId = uuidv4();
+    await setSession(sessionId, user.id.toString(), req, res);
 
     return {};
   };
@@ -63,9 +65,10 @@ export class AuthServiceClass {
    * @param {object} params - An object containing the TOTP session ID and the TOTP code
    * @param {string} params.totpSessionId - The TOTP session ID
    * @param {string} params.totpCode - The TOTP code
-   * @param {Request} req - The Next.js request object
+   * @param {NextApiRequest} req - The Next.js request object
+   * @param {NextApiResponse} res - The Next.js response object
    */
-  public verifyTotp = async (params: { totpSessionId: string; totpCode: string }, req: Context['req']) => {
+  public verifyTotp = async (params: { totpSessionId: string; totpCode: string }, req: NextApiRequest, res: NextApiResponse) => {
     const { totpSessionId, totpCode } = params;
     const userId = await TipiCache.get(totpSessionId);
 
@@ -90,7 +93,8 @@ export class AuthServiceClass {
       throw new TranslatedError('server-messages.errors.totp-invalid-code');
     }
 
-    req.session.userId = user.id;
+    const sessionId = uuidv4();
+    await setSession(sessionId, user.id.toString(), req, res);
 
     return true;
   };
@@ -195,9 +199,10 @@ export class AuthServiceClass {
    * Creates a new user with the provided email and password and returns a session token
    *
    * @param {UsernamePasswordInput} input - An object containing the email and password fields
-   * @param {Request} req - The Next.js request object
+   * @param {NextApiRequest} req - The Next.js request object
+   * @param {NextApiResponse} res - The Next.js response object
    */
-  public register = async (input: UsernamePasswordInput, req: Context['req']) => {
+  public register = async (input: UsernamePasswordInput, req: NextApiRequest, res: NextApiResponse) => {
     const operators = await this.queries.getOperators();
 
     if (operators.length > 0) {
@@ -229,8 +234,8 @@ export class AuthServiceClass {
       throw new TranslatedError('server-messages.errors.error-creating-user');
     }
 
-    req.session.userId = newUser.id;
-    await TipiCache.set(`session:${newUser.id}:${req.session.id}`, req.session.id);
+    const sessionId = uuidv4();
+    await setSession(sessionId, newUser.id.toString(), req, res);
 
     return true;
   };
@@ -253,15 +258,11 @@ export class AuthServiceClass {
   /**
    * Logs out the current user by removing the session token
    *
-   * @param  {Request} req - The Next.js request object
+   * @param {string} sessionId - The session token to remove
    * @returns {Promise<boolean>} - Returns true if the session token is removed successfully
    */
-  public static logout = async (req: Context['req']): Promise<boolean> => {
-    if (!req.session) {
-      return true;
-    }
-
-    req.session.destroy(() => {});
+  public static logout = async (sessionId: string): Promise<boolean> => {
+    await TipiCache.del(`session:${sessionId}`);
 
     return true;
   };
@@ -345,7 +346,7 @@ export class AuthServiceClass {
     await Promise.all(
       sessions.map(async (session) => {
         await TipiCache.del(session.key);
-        await TipiCache.del(`tipi:${session.val}`);
+        if (session.val) await TipiCache.del(session.val);
       }),
     );
   };

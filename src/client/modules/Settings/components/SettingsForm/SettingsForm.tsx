@@ -95,7 +95,7 @@ export const SettingsForm = (props: IProps) => {
 
   const downloadCertificate = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    window.open('/certificate');
+    window.open('/api/certificate');
   };
 
   return (

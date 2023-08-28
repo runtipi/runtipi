@@ -1,17 +1,12 @@
 import { inferAsyncReturnType } from '@trpc/server';
 import { CreateNextContextOptions } from '@trpc/server/adapters/next';
-import { Locale } from '@/shared/internationalization/locales';
-
-type Session = {
-  userId?: number;
-  locale?: Locale;
-};
+import TipiCache from './core/TipiCache/TipiCache';
 
 type CreateContextOptions = {
-  req: CreateNextContextOptions['req'] & {
-    session?: Session;
-  };
+  req: CreateNextContextOptions['req'];
   res: CreateNextContextOptions['res'];
+  sessionId: string;
+  userId?: number;
 };
 
 /**
@@ -34,9 +29,15 @@ const createContextInner = async (opts: CreateContextOptions) => ({
 export const createContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
+  const sessionId = req.headers['x-session-id'] as string;
+
+  const userId = await TipiCache.get(`session:${sessionId}`);
+
   return createContextInner({
     req,
     res,
+    sessionId,
+    userId: Number(userId) || undefined,
   });
 };
 

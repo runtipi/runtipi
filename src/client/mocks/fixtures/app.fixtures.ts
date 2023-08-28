@@ -9,7 +9,7 @@ const randomCategory = (): AppCategory[] => {
   return [categories[randomIndex] as AppCategory];
 };
 
-export const createApp = (overrides?: Partial<AppInfo>): AppInfo => {
+const createApp = (overrides?: Partial<AppInfo>): AppInfo => {
   const name = faker.lorem.word();
   return {
     id: name.toLowerCase(),
@@ -62,5 +62,3 @@ export const createAppEntity = (params: CreateAppEntityParams): AppWithInfo => {
     ...overrides,
   };
 };
-
-export const createAppsRandomly = (count: number): AppInfo[] => Array.from({ length: count }).map(() => createApp());
