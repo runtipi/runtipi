@@ -13,7 +13,7 @@ export const generateSessionId = (prefix: string) => {
 export const setSession = async (sessionId: string, userId: string, req: NextApiRequest, res: NextApiResponse) => {
   const cache = new TipiCache();
 
-  setCookie(COOKIE_NAME, sessionId, { req, res, maxAge: COOKIE_MAX_AGE, httpOnly: true, secure: true, sameSite: false });
+  setCookie(COOKIE_NAME, sessionId, { req, res, maxAge: COOKIE_MAX_AGE, httpOnly: true, secure: false, sameSite: false });
 
   const sessionKey = `session:${sessionId}`;
 
