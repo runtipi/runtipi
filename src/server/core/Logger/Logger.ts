@@ -23,27 +23,35 @@ const combinedLogFormatDev = combine(
 
 const productionLogger = () => {
   const logsFolder = '/app/logs';
-  if (!fs.existsSync(logsFolder)) {
-    fs.mkdirSync(logsFolder);
+  try {
+    if (!fs.existsSync(logsFolder)) {
+      fs.mkdirSync(logsFolder);
+    }
+    return createLogger({
+      level: 'info',
+      format: combinedLogFormat,
+      transports: [
+        //
+        // - Write to all logs with level `info` and below to `app.log`
+        // - Write all logs error (and below) to `error.log`.
+        //
+        new transports.File({
+          filename: path.join(logsFolder, 'error.log'),
+          level: 'error',
+        }),
+        new transports.File({
+          filename: path.join(logsFolder, 'app.log'),
+        }),
+      ],
+      exceptionHandlers: [new transports.File({ filename: path.join(logsFolder, 'error.log') })],
+    });
+  } catch (e) {
+    return createLogger({
+      level: 'info',
+      format: combinedLogFormat,
+      transports: [],
+    });
   }
-  return createLogger({
-    level: 'info',
-    format: combinedLogFormat,
-    transports: [
-      //
-      // - Write to all logs with level `info` and below to `app.log`
-      // - Write all logs error (and below) to `error.log`.
-      //
-      new transports.File({
-        filename: path.join(logsFolder, 'error.log'),
-        level: 'error',
-      }),
-      new transports.File({
-        filename: path.join(logsFolder, 'app.log'),
-      }),
-    ],
-    exceptionHandlers: [new transports.File({ filename: path.join(logsFolder, 'error.log') })],
-  });
 };
 
 //

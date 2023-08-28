@@ -1,5 +1,4 @@
 import fs from 'fs-extra';
-import { vi } from 'vitest';
 import * as argon2 from 'argon2';
 import { faker } from '@faker-js/faker';
 import { TotpAuthenticator } from '@/server/utils/totp';
@@ -7,6 +6,7 @@ import { generateSessionId } from '@/server/common/session.helpers';
 import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { mockInsert, mockQuery, mockSelect } from '@/tests/mocks/drizzle';
 import { createDatabase, clearDatabase, closeDatabase, TestDatabase } from '@/server/tests/test-utils';
+import { v4 } from 'uuid';
 import { encrypt } from '../../utils/encryption';
 import { setConfig } from '../../core/TipiConfig';
 import { createUser, getUserByEmail, getUserById } from '../../tests/user.factory';
@@ -35,25 +35,38 @@ afterAll(async () => {
 describe('Login', () => {
   it('Should correclty set session on request object', async () => {
     // arrange
-    const req = { session: { userId: undefined } };
+    let session = '';
+    const res = {
+      getHeader: () => {},
+      setHeader: (_: unknown, o: string[]) => {
+        // eslint-disable-next-line prefer-destructuring
+        session = o[0] as string;
+      },
+    };
     const email = faker.internet.email();
     const user = await createUser({ email }, database);
 
     // act
-    await AuthService.login({ username: email, password: 'password' }, fromPartial(req));
+    await AuthService.login({ username: email, password: 'password' }, fromPartial({}), fromPartial(res));
+
+    const sessionId = session.split(';')[0]?.split('=')[1];
+    const sessionKey = `session:${sessionId}`;
+    const userId = await TipiCache.get(sessionKey);
 
     // assert
-    expect(req.session.userId).toBe(user.id);
+    expect(userId).toBeDefined();
+    expect(userId).not.toBeNull();
+    expect(userId).toBe(user.id.toString());
   });
 
   it('Should throw if user does not exist', async () => {
-    await expect(AuthService.login({ username: 'test', password: 'test' }, fromPartial({}))).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.login({ username: 'test', password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.user-not-found');
   });
 
   it('Should throw if password is incorrect', async () => {
     const email = faker.internet.email();
     await createUser({ email }, database);
-    await expect(AuthService.login({ username: email, password: 'wrong' }, fromPartial({}))).rejects.toThrowError('server-messages.errors.invalid-credentials');
+    await expect(AuthService.login({ username: email, password: 'wrong' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.invalid-credentials');
   });
 
   // TOTP
@@ -64,7 +77,7 @@ describe('Login', () => {
     await createUser({ email, totpEnabled: true, totpSecret }, database);
 
     // act
-    const { totpSessionId } = await AuthService.login({ username: email, password: 'password' }, fromPartial({}));
+    const { totpSessionId } = await AuthService.login({ username: email, password: 'password' }, fromPartial({}), fromPartial({}));
 
     // assert
     expect(totpSessionId).toBeDefined();
@@ -75,7 +88,14 @@ describe('Login', () => {
 describe('Test: verifyTotp', () => {
   it('should correctly log in user after totp is verified', async () => {
     // arrange
-    const req = { session: { userId: undefined } };
+    let session = '';
+    const res = {
+      getHeader: () => {},
+      setHeader: (_: unknown, o: string[]) => {
+        // eslint-disable-next-line prefer-destructuring
+        session = o[0] as string;
+      },
+    };
     const email = faker.internet.email();
     const salt = faker.lorem.word();
     const totpSecret = TotpAuthenticator.generateSecret();
@@ -88,14 +108,16 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, user.id.toString());
 
     // act
-    const result = await AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial(req));
+    const result = await AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial({}), fromPartial(res));
+    const sessionId = session.split(';')[0]?.split('=')[1];
+    const userId = await TipiCache.get(`session:${sessionId}`);
 
     // assert
     expect(result).toBeTruthy();
     expect(result).not.toBeNull();
-    expect(req.session.userId).toBeDefined();
-    expect(req.session.userId).not.toBeNull();
-    expect(req.session.userId).toBe(user.id);
+    expect(sessionId).toBeDefined();
+    expect(sessionId).not.toBeNull();
+    expect(userId).toBe(user.id.toString());
   });
 
   it('should throw if the totp is incorrect', async () => {
@@ -109,7 +131,7 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' }, fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-invalid-code');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-invalid-code');
   });
 
   it('should throw if the totpSessionId is invalid', async () => {
@@ -125,7 +147,7 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp }, fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-session-not-found');
+    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-session-not-found');
   });
 
   it('should throw if the user does not exist', async () => {
@@ -134,7 +156,7 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, '1234');
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' }, fromPartial({}))).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.user-not-found');
   });
 
   it('should throw if the user totpEnabled is false', async () => {
@@ -150,7 +172,7 @@ describe('Test: verifyTotp', () => {
     await TipiCache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-not-enabled');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-not-enabled');
   });
 });
 
@@ -353,26 +375,39 @@ describe('Test: disableTotp', () => {
 });
 
 describe('Register', () => {
-  it('Should correctly set session on request object', async () => {
+  it('Should correctly set session on response object', async () => {
     // arrange
-    const req = { session: { userId: undefined } };
+    let session = '';
+    const res = {
+      getHeader: () => {},
+      setHeader: (_: unknown, o: string[]) => {
+        // eslint-disable-next-line prefer-destructuring
+        session = o[0] as string;
+      },
+    };
     const email = faker.internet.email();
 
     // act
-    const result = await AuthService.register({ username: email, password: 'password' }, fromPartial(req));
+    const result = await AuthService.register({ username: email, password: 'password' }, fromPartial({}), fromPartial(res));
+    const sessionId = session.split(';')[0]?.split('=')[1];
 
     // assert
     expect(result).toBeTruthy();
     expect(result).not.toBeNull();
-    expect(req.session.userId).toBeDefined();
+    expect(sessionId).toBeDefined();
+    expect(sessionId).not.toBeNull();
   });
 
   it('Should correctly trim and lowercase email', async () => {
     // arrange
     const email = faker.internet.email();
+    const res = {
+      getHeader: () => {},
+      setHeader: () => {},
+    };
 
     // act
-    await AuthService.register({ username: email, password: 'test' }, fromPartial({ session: {} }));
+    await AuthService.register({ username: email, password: 'test' }, fromPartial({}), fromPartial(res));
     const user = await getUserByEmail(email.toLowerCase().trim(), database);
 
     // assert
@@ -386,7 +421,7 @@ describe('Register', () => {
 
     // Act & Assert
     await createUser({ email, operator: true }, database);
-    await expect(AuthService.register({ username: email, password: 'test' }, fromPartial({}))).rejects.toThrowError('server-messages.errors.admin-already-exists');
+    await expect(AuthService.register({ username: email, password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.admin-already-exists');
   });
 
   it('Should throw if user already exists', async () => {
@@ -395,23 +430,27 @@ describe('Register', () => {
 
     // Act & Assert
     await createUser({ email, operator: false }, database);
-    await expect(AuthService.register({ username: email, password: 'test' }, fromPartial({}))).rejects.toThrowError('server-messages.errors.user-already-exists');
+    await expect(AuthService.register({ username: email, password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.user-already-exists');
   });
 
   it('Should throw if email is not provided', async () => {
-    await expect(AuthService.register({ username: '', password: 'test' }, fromPartial({}))).rejects.toThrowError('server-messages.errors.missing-email-or-password');
+    await expect(AuthService.register({ username: '', password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.missing-email-or-password');
   });
 
   it('Should throw if password is not provided', async () => {
-    await expect(AuthService.register({ username: faker.internet.email(), password: '' }, fromPartial({}))).rejects.toThrowError('server-messages.errors.missing-email-or-password');
+    await expect(AuthService.register({ username: faker.internet.email(), password: '' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.missing-email-or-password');
   });
 
   it('Password is correctly hashed', async () => {
     // arrange
     const email = faker.internet.email().toLowerCase().trim();
+    const res = {
+      getHeader: () => {},
+      setHeader: () => {},
+    };
 
     // act
-    await AuthService.register({ username: email, password: 'test' }, fromPartial({ session: {} }));
+    await AuthService.register({ username: email, password: 'test' }, fromPartial({}), fromPartial(res));
     const user = await getUserByEmail(email, database);
     const isPasswordValid = await argon2.verify(user?.password || '', 'test');
 
@@ -420,7 +459,7 @@ describe('Register', () => {
   });
 
   it('Should throw if email is invalid', async () => {
-    await expect(AuthService.register({ username: 'test', password: 'test' }, fromPartial({}))).rejects.toThrowError('server-messages.errors.invalid-username');
+    await expect(AuthService.register({ username: 'test', password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.invalid-username');
   });
 
   it('should throw if db fails to insert user', async () => {
@@ -431,15 +470,14 @@ describe('Register', () => {
     const newAuthService = new AuthServiceClass(fromAny(mockDatabase));
 
     // Act & Assert
-    await expect(newAuthService.register({ username: email, password: 'test' }, fromPartial(req))).rejects.toThrowError('server-messages.errors.error-creating-user');
+    await expect(newAuthService.register({ username: email, password: 'test' }, fromPartial(req), fromPartial({}))).rejects.toThrowError('server-messages.errors.error-creating-user');
   });
 });
 
 describe('Test: logout', () => {
   it('Should return true if there is no session to delete', async () => {
     // act
-    const req = {};
-    const result = await AuthServiceClass.logout(fromPartial(req));
+    const result = await AuthServiceClass.logout('session');
 
     // assert
     expect(result).toBe(true);
@@ -447,15 +485,17 @@ describe('Test: logout', () => {
 
   it('Should destroy session upon logount', async () => {
     // arrange
-    const destroy = vi.fn();
-    const req = { session: { userId: 1, destroy } };
+    const sessionId = v4();
+
+    await TipiCache.set(`session:${sessionId}`, '1');
 
     // act
-    const result = await AuthServiceClass.logout(fromPartial(req));
+    const result = await AuthServiceClass.logout(sessionId);
+    const session = await TipiCache.get(`session:${sessionId}`);
 
     // assert
     expect(result).toBe(true);
-    expect(destroy).toHaveBeenCalled();
+    expect(session).toBeUndefined();
   });
 });
 
