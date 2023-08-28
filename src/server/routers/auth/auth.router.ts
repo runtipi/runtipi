@@ -7,7 +7,7 @@ const AuthService = new AuthServiceClass(db);
 
 export const authRouter = router({
   login: publicProcedure.input(z.object({ username: z.string(), password: z.string() })).mutation(async ({ input, ctx }) => AuthService.login({ ...input }, ctx.req, ctx.res)),
-  logout: protectedProcedure.mutation(async ({ ctx }) => AuthServiceClass.logout(ctx.sessionId)),
+  logout: protectedProcedure.mutation(async ({ ctx }) => AuthService.logout(ctx.sessionId)),
   register: publicProcedure
     .input(z.object({ username: z.string(), password: z.string(), locale: z.string() }))
     .mutation(async ({ input, ctx }) => AuthService.register({ ...input }, ctx.req, ctx.res)),

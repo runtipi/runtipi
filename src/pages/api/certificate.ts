@@ -1,5 +1,5 @@
 import { getConfig } from '@/server/core/TipiConfig/TipiConfig';
-import TipiCache from '@/server/core/TipiCache/TipiCache';
+import { TipiCache } from '@/server/core/TipiCache/TipiCache';
 import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { db } from '@/server/db';
 
@@ -13,11 +13,15 @@ import fs from 'fs-extra';
  * @param {NextApiResponse} res - The response
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const cache = new TipiCache();
+
   const authService = new AuthQueries(db);
 
   const sessionId = req.headers['x-session-id'];
-  const userId = await TipiCache.get(`session:${sessionId}`);
+  const userId = await cache.get(`session:${sessionId}`);
   const user = await authService.getUserById(Number(userId));
+
+  await cache.close();
 
   if (user?.operator) {
     const filePath = `${getConfig().rootFolder}/traefik/tls/cert.pem`;

@@ -11,11 +11,13 @@ import { encrypt } from '../../utils/encryption';
 import { setConfig } from '../../core/TipiConfig';
 import { createUser, getUserByEmail, getUserById } from '../../tests/user.factory';
 import { AuthServiceClass } from './auth.service';
-import TipiCache from '../../core/TipiCache';
+import { TipiCache } from '../../core/TipiCache';
 
 let AuthService: AuthServiceClass;
 let database: TestDatabase;
 const TEST_SUITE = 'authservice';
+
+const cache = new TipiCache();
 
 beforeAll(async () => {
   setConfig('jwtSecret', 'test');
@@ -30,6 +32,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   await closeDatabase(database);
+  await cache.close();
 });
 
 describe('Login', () => {
@@ -51,7 +54,7 @@ describe('Login', () => {
 
     const sessionId = session.split(';')[0]?.split('=')[1];
     const sessionKey = `session:${sessionId}`;
-    const userId = await TipiCache.get(sessionKey);
+    const userId = await cache.get(sessionKey);
 
     // assert
     expect(userId).toBeDefined();
@@ -105,12 +108,12 @@ describe('Test: verifyTotp', () => {
     const totpSessionId = generateSessionId('otp');
     const otp = TotpAuthenticator.generate(totpSecret);
 
-    await TipiCache.set(totpSessionId, user.id.toString());
+    await cache.set(totpSessionId, user.id.toString());
 
     // act
     const result = await AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial({}), fromPartial(res));
     const sessionId = session.split(';')[0]?.split('=')[1];
-    const userId = await TipiCache.get(`session:${sessionId}`);
+    const userId = await cache.get(`session:${sessionId}`);
 
     // assert
     expect(result).toBeTruthy();
@@ -128,7 +131,7 @@ describe('Test: verifyTotp', () => {
     const encryptedTotpSecret = encrypt(totpSecret, salt);
     const user = await createUser({ email, totpEnabled: true, totpSecret: encryptedTotpSecret, salt }, database);
     const totpSessionId = generateSessionId('otp');
-    await TipiCache.set(totpSessionId, user.id.toString());
+    await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
     await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-invalid-code');
@@ -144,7 +147,7 @@ describe('Test: verifyTotp', () => {
     const totpSessionId = generateSessionId('otp');
     const otp = TotpAuthenticator.generate(totpSecret);
 
-    await TipiCache.set(totpSessionId, user.id.toString());
+    await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
     await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-session-not-found');
@@ -153,7 +156,7 @@ describe('Test: verifyTotp', () => {
   it('should throw if the user does not exist', async () => {
     // arrange
     const totpSessionId = generateSessionId('otp');
-    await TipiCache.set(totpSessionId, '1234');
+    await cache.set(totpSessionId, '1234');
 
     // act & assert
     await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.user-not-found');
@@ -169,7 +172,7 @@ describe('Test: verifyTotp', () => {
     const totpSessionId = generateSessionId('otp');
     const otp = TotpAuthenticator.generate(totpSecret);
 
-    await TipiCache.set(totpSessionId, user.id.toString());
+    await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
     await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-not-enabled');
@@ -477,7 +480,7 @@ describe('Register', () => {
 describe('Test: logout', () => {
   it('Should return true if there is no session to delete', async () => {
     // act
-    const result = await AuthServiceClass.logout('session');
+    const result = await AuthService.logout('session');
 
     // assert
     expect(result).toBe(true);
@@ -487,11 +490,11 @@ describe('Test: logout', () => {
     // arrange
     const sessionId = v4();
 
-    await TipiCache.set(`session:${sessionId}`, '1');
+    await cache.set(`session:${sessionId}`, '1');
 
     // act
-    const result = await AuthServiceClass.logout(sessionId);
-    const session = await TipiCache.get(`session:${sessionId}`);
+    const result = await AuthService.logout(sessionId);
+    const session = await cache.get(`session:${sessionId}`);
 
     // assert
     expect(result).toBe(true);
@@ -715,14 +718,14 @@ describe('Test: changePassword', () => {
     const email = faker.internet.email();
     const user = await createUser({ email }, database);
     const newPassword = faker.internet.password();
-    await TipiCache.set(`session:${user.id}:${faker.lorem.word()}`, 'test');
+    await cache.set(`session:${user.id}:${faker.lorem.word()}`, 'test');
 
     // act
     await AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' });
 
     // assert
     // eslint-disable-next-line testing-library/no-await-sync-query
-    const sessions = await TipiCache.getByPrefix(`session:${user.id}:`);
+    const sessions = await cache.getByPrefix(`session:${user.id}:`);
     expect(sessions).toHaveLength(0);
   });
 });

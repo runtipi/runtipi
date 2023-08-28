@@ -1,10 +1,16 @@
 import merge from 'lodash.merge';
 import { deleteCookie, setCookie } from 'cookies-next';
 import { fromPartial } from '@total-typescript/shoehorn';
-import TipiCache from '@/server/core/TipiCache/TipiCache';
+import { TipiCache } from '@/server/core/TipiCache';
 import { getAuthedPageProps, getMessagesPageProps } from '../page-helpers';
 import englishMessages from '../../messages/en.json';
 import frenchMessages from '../../messages/fr-FR.json';
+
+const cache = new TipiCache();
+
+afterAll(async () => {
+  await cache.close();
+});
 
 describe('test: getAuthedPageProps()', () => {
   it('should redirect to /login if there is no user id in session', async () => {
@@ -23,7 +29,7 @@ describe('test: getAuthedPageProps()', () => {
   it('should return props if there is a user id in session', async () => {
     // arrange
     const ctx = { req: { headers: { 'x-session-id': '123' } } };
-    await TipiCache.set('session:123', '456');
+    await cache.set('session:123', '456');
 
     // act
     // @ts-expect-error - we're passing in a partial context

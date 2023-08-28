@@ -9,7 +9,7 @@ import { generateSessionId, setSession } from '@/server/common/session.helpers';
 import { Database } from '@/server/db';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getConfig } from '../../core/TipiConfig';
-import TipiCache from '../../core/TipiCache';
+import { TipiCache } from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
 
@@ -22,8 +22,11 @@ type UsernamePasswordInput = {
 export class AuthServiceClass {
   private queries;
 
+  private cache;
+
   constructor(p: Database) {
     this.queries = new AuthQueries(p);
+    this.cache = new TipiCache();
   }
 
   /**
@@ -49,7 +52,7 @@ export class AuthServiceClass {
 
     if (user.totpEnabled) {
       const totpSessionId = generateSessionId('otp');
-      await TipiCache.set(totpSessionId, user.id.toString());
+      await this.cache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
 
@@ -70,7 +73,7 @@ export class AuthServiceClass {
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }, req: NextApiRequest, res: NextApiResponse) => {
     const { totpSessionId, totpCode } = params;
-    const userId = await TipiCache.get(totpSessionId);
+    const userId = await this.cache.get(totpSessionId);
 
     if (!userId) {
       throw new TranslatedError('server-messages.errors.totp-session-not-found');
@@ -261,8 +264,8 @@ export class AuthServiceClass {
    * @param {string} sessionId - The session token to remove
    * @returns {Promise<boolean>} - Returns true if the session token is removed successfully
    */
-  public static logout = async (sessionId: string): Promise<boolean> => {
-    await TipiCache.del(`session:${sessionId}`);
+  public logout = async (sessionId: string): Promise<boolean> => {
+    await this.cache.del(`session:${sessionId}`);
 
     return true;
   };
@@ -341,12 +344,12 @@ export class AuthServiceClass {
    * @param {number} userId - The user ID
    */
   private destroyAllSessionsByUserId = async (userId: number) => {
-    const sessions = await TipiCache.getByPrefix(`session:${userId}:`);
+    const sessions = await this.cache.getByPrefix(`session:${userId}:`);
 
     await Promise.all(
       sessions.map(async (session) => {
-        await TipiCache.del(session.key);
-        if (session.val) await TipiCache.del(session.val);
+        await this.cache.del(session.key);
+        if (session.val) await this.cache.del(session.val);
       }),
     );
   };

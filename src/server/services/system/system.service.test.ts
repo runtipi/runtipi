@@ -5,7 +5,7 @@ import semver from 'semver';
 import { faker } from '@faker-js/faker';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { setConfig } from '../../core/TipiConfig';
-import TipiCache from '../../core/TipiCache';
+import { TipiCache } from '../../core/TipiCache';
 import { SystemServiceClass } from '.';
 
 jest.mock('redis');
@@ -13,6 +13,8 @@ jest.mock('redis');
 const SystemService = new SystemServiceClass();
 
 const server = setupServer();
+
+const cache = new TipiCache();
 
 beforeEach(async () => {
   await setConfig('demoMode', false);
@@ -71,14 +73,15 @@ describe('Test: getVersion', () => {
     server.listen();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     server.resetHandlers();
-    TipiCache.del('latestVersion');
+    await cache.del('latestVersion');
   });
 
-  afterAll(() => {
+  afterAll(async () => {
     server.close();
     jest.restoreAllMocks();
+    await cache.close();
   });
 
   it('It should return version with body', async () => {
@@ -163,7 +166,7 @@ describe('Test: update', () => {
     // Arrange
     EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: true });
     setConfig('version', '0.0.1');
-    TipiCache.set('latestVersion', '0.0.2');
+    await cache.set('latestVersion', '0.0.2');
 
     // Act
     const update = await SystemService.update();
@@ -174,7 +177,7 @@ describe('Test: update', () => {
 
   it('Should throw an error if latest version is not set', async () => {
     // Arrange
-    TipiCache.del('latestVersion');
+    await cache.del('latestVersion');
     server.use(
       rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
         return res(ctx.json({ name: null }));
@@ -189,7 +192,7 @@ describe('Test: update', () => {
   it('Should throw if current version is higher than latest', async () => {
     // Arrange
     setConfig('version', '0.0.2');
-    TipiCache.set('latestVersion', '0.0.1');
+    await cache.set('latestVersion', '0.0.1');
 
     // Act & Assert
     await expect(SystemService.update()).rejects.toThrow('server-messages.errors.current-version-is-latest');
@@ -198,7 +201,7 @@ describe('Test: update', () => {
   it('Should throw if current version is equal to latest', async () => {
     // Arrange
     setConfig('version', '0.0.1');
-    TipiCache.set('latestVersion', '0.0.1');
+    await cache.set('latestVersion', '0.0.1');
 
     // Act & Assert
     await expect(SystemService.update()).rejects.toThrow('server-messages.errors.current-version-is-latest');
@@ -207,7 +210,7 @@ describe('Test: update', () => {
   it('Should throw an error if there is a major version difference', async () => {
     // Arrange
     setConfig('version', '0.0.1');
-    TipiCache.set('latestVersion', '1.0.0');
+    await cache.set('latestVersion', '1.0.0');
 
     // Act & Assert
     await expect(SystemService.update()).rejects.toThrow('server-messages.errors.major-version-update');
