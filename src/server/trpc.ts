@@ -1,7 +1,6 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { typeToFlattenedError, ZodError } from 'zod';
-import { Locale } from '@/shared/internationalization/locales';
 import { type Context } from './context';
 import { AuthQueries } from './queries/auth/auth.queries';
 import { db } from './db';
@@ -53,19 +52,14 @@ export const publicProcedure = t.procedure;
  * users are logged in
  */
 const isAuthed = t.middleware(async ({ ctx, next }) => {
-  const userId = ctx.req.session?.userId;
+  const { userId } = ctx;
   if (!userId) {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You need to be logged in to perform this action' });
   }
 
   const user = await authQueries.getUserById(userId);
 
-  if (user?.locale) {
-    ctx.req.session.locale = user.locale as Locale;
-  }
-
   if (!user) {
-    ctx.req.session.destroy(() => {});
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You need to be logged in to perform this action' });
   }
 
