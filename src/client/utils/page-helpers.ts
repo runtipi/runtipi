@@ -2,11 +2,13 @@ import { GetServerSideProps } from 'next';
 import merge from 'lodash.merge';
 import { getLocaleFromString } from '@/shared/internationalization/locales';
 import { getCookie } from 'cookies-next';
-import TipiCache from '@/server/core/TipiCache/TipiCache';
+import { TipiCache } from '@/server/core/TipiCache';
 
 export const getAuthedPageProps: GetServerSideProps = async (ctx) => {
+  const cache = new TipiCache();
   const sessionId = ctx.req.headers['x-session-id'];
-  const userId = await TipiCache.get(`session:${sessionId}`);
+  const userId = await cache.get(`session:${sessionId}`);
+  await cache.close();
 
   if (!userId) {
     return {

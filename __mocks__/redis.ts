@@ -1,6 +1,7 @@
+const values = new Map();
+const expirations = new Map();
+
 export const createClient = jest.fn(() => {
-  const values = new Map();
-  const expirations = new Map();
   return {
     isOpen: true,
     connect: jest.fn(),
