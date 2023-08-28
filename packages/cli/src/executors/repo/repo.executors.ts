@@ -76,6 +76,7 @@ export class RepoExecutors {
       this.logger.info(`Pulling repo ${repoUrl} to ${repoPath}`);
 
       await execAsync(`git config --global --add safe.directory ${repoPath}`);
+      await execAsync(`git -C ${repoPath} reset --hard`);
       const { stdout, stderr } = await execAsync(`git -C ${repoPath} pull`);
 
       if (stderr) {

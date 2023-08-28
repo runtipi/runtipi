@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { Queue } from 'bullmq';
 import fs from 'fs';
 import cliProgress from 'cli-progress';
@@ -116,6 +117,14 @@ export class SystemExecutors {
       if (await pathExists(path.join(this.rootFolder, 'apps'))) {
         const apps = await fs.promises.readdir(path.join(this.rootFolder, 'apps'));
         const appExecutor = new AppExecutors();
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const app of apps) {
+          spinner.setMessage(`Stopping ${app}...`);
+          spinner.start();
+          await appExecutor.stopApp(app, {}, true);
+          spinner.done(`${app} stopped`);
+        }
 
         await Promise.all(
           apps.map(async (app) => {
