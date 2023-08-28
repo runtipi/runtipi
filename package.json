@@ -59,8 +59,6 @@
     "connect-redis": "^7.1.0",
     "cookies-next": "^2.1.2",
     "drizzle-orm": "^0.27.0",
-    "express": "^4.17.3",
-    "express-session": "^1.17.3",
     "fs-extra": "^11.1.1",
     "isomorphic-fetch": "^3.0.0",
     "lodash.merge": "^4.6.2",
