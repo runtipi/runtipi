@@ -127,7 +127,7 @@ jobs:
         run: pnpm install
 
       - name: Build client
-        run: npm run build:next
+        run: npm run build
 
       - name: Run tsc
         run: pnpm run tsc
