@@ -14,6 +14,11 @@ env:
   DOMAIN: localhost
   LOCAL_DOMAIN: tipi.lan
   TIPI_VERSION: 0.0.1
+  POSTGRES_HOST: localhost
+  POSTGRES_DBNAME: postgres
+  POSTGRES_USERNAME: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_PORT: 5433
 
 jobs:
   tests:
