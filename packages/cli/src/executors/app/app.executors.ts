@@ -62,10 +62,15 @@ export class AppExecutors {
    */
   public installApp = async (appId: string, config: Record<string, unknown>) => {
     try {
+      if (process.getuid && process.getgid) {
+        this.logger.info(`Installing app ${appId} as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`);
+      } else {
+        this.logger.info(`Installing app ${appId}. No User ID or Group ID found.`);
+      }
+
       const { rootFolderHost, appsRepoId } = getEnv();
 
       const { appDirPath, repoPath, appDataDirPath } = this.getAppPaths(appId);
-      this.logger.info(`Installing app ${appId}`);
 
       // Check if app exists in repo
       const apps = await fs.promises.readdir(path.join(rootFolderHost, 'repos', appsRepoId, 'apps'));
