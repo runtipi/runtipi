@@ -17,11 +17,10 @@ COPY ./pnpm-workspace.yaml ./
 RUN pnpm fetch --no-scripts
 
 COPY ./package*.json ./
-COPY ./packages ./packages
+COPY ./packages/shared ./packages/shared
 
 RUN pnpm install -r --prefer-offline 
 COPY ./src ./src
-COPY ./esbuild.js ./esbuild.js
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
 COPY ./public ./public
@@ -32,11 +31,11 @@ RUN npm run build
 # APP
 FROM node_base AS app
 
+ENV NODE_ENV production
 # USER node
 
 WORKDIR /app
 
-COPY --from=builder /app/dist ./
 COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json

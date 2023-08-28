@@ -1,5 +1,0 @@
-{
-  "watch": ["src/server", "packages/shared"],
-  "exec": "node ./esbuild.js dev",
-  "ext": "js ts"
-}
