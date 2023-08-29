@@ -168,10 +168,14 @@ export class AppExecutors {
       await compose(appId, 'down --remove-orphans --volumes --rmi all');
 
       this.logger.info(`Deleting folder ${appDirPath}`);
-      await fs.promises.rm(appDirPath, { recursive: true, force: true });
+      await fs.promises.rm(appDirPath, { recursive: true, force: true }).catch((err) => {
+        this.logger.error(`Error deleting folder ${appDirPath}: ${err.message}`);
+      });
 
       this.logger.info(`Deleting folder ${appDataDirPath}`);
-      await fs.promises.rm(appDataDirPath, { recursive: true, force: true });
+      await fs.promises.rm(appDataDirPath, { recursive: true, force: true }).catch((err) => {
+        this.logger.error(`Error deleting folder ${appDataDirPath}: ${err.message}`);
+      });
 
       this.logger.info(`App ${appId} uninstalled`);
       return { success: true, message: `App ${appId} uninstalled successfully` };
