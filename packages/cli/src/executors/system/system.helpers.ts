@@ -33,6 +33,8 @@ type EnvKeys =
   | 'REDIS_PASSWORD'
   | 'LOCAL_DOMAIN'
   | 'DEMO_MODE'
+  | 'TIPI_GID'
+  | 'TIPI_UID'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
@@ -176,6 +178,13 @@ export const generateSystemEnvFile = async () => {
   envMap.set('DEMO_MODE', String(data.demoMode || 'false'));
   envMap.set('LOCAL_DOMAIN', data.localDomain || 'tipi.lan');
   envMap.set('NODE_ENV', 'production');
+
+  const currentUserGroup = process.getgid ? String(process.getgid()) : '1000';
+  const currentUserId = process.getuid ? String(process.getuid()) : '1000';
+  const { stdout: tipiGroupId } = await execAsync('getent group tipi | cut -d: -f3');
+
+  envMap.set('TIPI_GID', tipiGroupId.trim() || currentUserGroup);
+  envMap.set('TIPI_UID', currentUserId);
 
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 

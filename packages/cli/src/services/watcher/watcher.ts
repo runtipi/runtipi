@@ -84,7 +84,11 @@ const killOtherWorkers = async () => {
     }
 
     console.log(`Killing worker with pid ${pid}`);
-    process.kill(Number(pid));
+    try {
+      process.kill(Number(pid));
+    } catch (e) {
+      console.error(`Error killing worker with pid ${pid}: ${e}`);
+    }
   });
 };
 

@@ -56,18 +56,43 @@ export class SystemExecutors {
   };
 
   private ensureFilePermissions = async (rootFolderHost: string, logSudoRequest = true) => {
+    const logger = new TerminalSpinner('');
     // if we are running as root, we don't need to change permissions
     if (process.getuid && process.getuid() === 0) {
       return;
     }
 
     if (logSudoRequest) {
-      const logger = new TerminalSpinner('');
       logger.log('Tipi needs to change permissions on some files and folders and will ask for your password.');
+    }
+
+    // Create group tipi if it does not exist
+    try {
+      await execAsync('getent group tipi');
+    } catch (e) {
+      try {
+        await execAsync('sudo groupadd tipi');
+        logger.done('Created group tipi');
+      } catch (e2) {
+        logger.fail('Failed to create group tipi');
+        fileLogger.error(e2);
+      }
+    }
+
+    // Add current user to group tipi
+    if (!(await execAsync(`groups ${process.env.USER}`)).stdout.includes('tipi')) {
+      try {
+        await execAsync(`sudo usermod -aG tipi ${process.env.USER}`);
+        // Reload permissions
+        await execAsync('newgrp tipi');
+      } catch (e) {
+        logger.fail('Failed to add current user to group tipi');
+      }
     }
 
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
+      // path.join(rootFolderHost, 'app-data'),
       path.join(rootFolderHost, 'logs'),
       path.join(rootFolderHost, 'media'),
       path.join(rootFolderHost, 'repos'),
@@ -82,11 +107,12 @@ export class SystemExecutors {
     await Promise.all(
       filesAndFolders.map(async (fileOrFolder) => {
         if (await pathExists(fileOrFolder)) {
-          if (process.getgid && process.getuid) {
-            await execAsync(`sudo chown -R ${process.getuid()}:${process.getgid()} ${fileOrFolder}`);
-          }
-
-          await execAsync(`sudo chmod -R 750 ${fileOrFolder}`);
+          await execAsync(`sudo chown -R :tipi ${fileOrFolder}`).catch((e) => {
+            fileLogger.error(e);
+          });
+          await execAsync(`sudo chmod -R 770 ${fileOrFolder}`).catch((e) => {
+            fileLogger.error(e);
+          });
         }
       }),
     );
@@ -389,6 +415,8 @@ export class SystemExecutors {
       childProcess.stderr.on('data', (data) => {
         process.stderr.write(data);
       });
+
+      spinner.done(`Tipi ${targetVersion} successfully updated. Please run './runtipi-cli start' to start Tipi again.`);
 
       return { success: true, message: 'Tipi updated' };
     } catch (e) {

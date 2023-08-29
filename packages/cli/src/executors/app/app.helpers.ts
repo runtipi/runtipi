@@ -192,5 +192,7 @@ export const copyDataDir = async (id: string) => {
   );
 
   // Remove any .gitkeep files from the app-data folder at any level
-  await execAsync(`find ${storagePath}/app-data/${id}/data -name .gitkeep -delete`);
+  if (await pathExists(`${storagePath}/app-data/${id}/data`)) {
+    await execAsync(`find ${storagePath}/app-data/${id}/data -name .gitkeep -delete`).catch(() => {});
+  }
 };
