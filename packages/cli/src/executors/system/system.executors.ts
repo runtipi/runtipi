@@ -267,6 +267,9 @@ export class SystemExecutors {
 
       spinner.done('Database migrations complete');
 
+      // Call 127.0.0.1/api/start-all-apps to start all apps
+      await execAsync(`curl -s -X GET http://127.0.0.1/api/start-all-apps`).catch(() => {});
+
       console.log(
         boxen(`Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get('NGINX_PORT')} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io`, {
           title: 'Tipi successfully started 🎉',
