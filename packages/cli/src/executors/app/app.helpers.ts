@@ -2,9 +2,13 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { appInfoSchema, envMapToString, envStringToMap } from '@runtipi/shared';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { getEnv } from '@/utils/environment/environment';
 import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 import { pathExists } from '@/utils/fs-helpers';
+
+const execAsync = promisify(exec);
 
 /**
  *  This function generates a random string of the provided length by using the SHA-256 hash algorithm.
@@ -186,4 +190,7 @@ export const copyDataDir = async (id: string) => {
       }
     }),
   );
+
+  // Remove any .gitkeep files from the app-data folder at any level
+  await execAsync(`find ${storagePath}/app-data/${id}/data -name .gitkeep -delete`);
 };
