@@ -158,7 +158,10 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} started`);
 
-      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {});
+      this.logger.info(`Setting permissions for app ${appId}`);
+      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {
+        this.logger.error(`Error setting permissions for app ${appId}`);
+      });
 
       return { success: true, message: `App ${appId} started successfully` };
     } catch (err) {

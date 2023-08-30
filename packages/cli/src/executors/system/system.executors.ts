@@ -19,6 +19,7 @@ import { pathExists } from '@/utils/fs-helpers';
 import { getEnv } from '@/utils/environment/environment';
 import { fileLogger } from '@/utils/logger/file-logger';
 import { runPostgresMigrations } from '@/utils/migrations/run-migration';
+import { getUserIds } from '@/utils/environment/user';
 
 const execAsync = promisify(exec);
 
@@ -103,16 +104,15 @@ export class SystemExecutors {
       path.join(rootFolderHost, 'VERSION'),
     ];
 
+    const { uid, gid } = getUserIds();
+
     // Give permission to read and write to all files and folders for the current user
     await Promise.all(
       filesAndFolders.map(async (fileOrFolder) => {
         if (await pathExists(fileOrFolder)) {
-          await execAsync(`sudo chown -R :tipi ${fileOrFolder}`).catch((e) => {
-            fileLogger.error(e);
-          });
-          await execAsync(`sudo chmod -R 770 ${fileOrFolder}`).catch((e) => {
-            fileLogger.error(e);
-          });
+          await execAsync(`sudo chown -R ${uid}:${gid} ${fileOrFolder}`);
+
+          await execAsync(`sudo chmod -R 750 ${fileOrFolder}`);
         }
       }),
     );
@@ -181,11 +181,22 @@ export class SystemExecutors {
    * This method will start Tipi.
    * It will copy the system files, generate the system env file, pull the images and start the containers.
    */
-  public start = async (permissions = true) => {
+  public start = async (sudo = true) => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
-      if (permissions) {
+      if (sudo) {
         await this.ensureFilePermissions(this.rootFolder);
+      } else {
+        console.log(
+          boxen("You are running in sudoless mode. While tipi should work as expected, you'll probably face folder permission issues with the apps you install and you'll need to manually fix them.", {
+            title: '⛔️ Sudoless mode',
+            titleAlignment: 'center',
+            padding: 1,
+            borderStyle: 'double',
+            borderColor: 'red',
+            margin: { top: 1 },
+          }),
+        );
       }
 
       spinner.start();
@@ -194,7 +205,7 @@ export class SystemExecutors {
 
       spinner.done('System files copied');
 
-      if (permissions) {
+      if (sudo) {
         await this.ensureFilePermissions(this.rootFolder, false);
       }
 
@@ -238,8 +249,16 @@ export class SystemExecutors {
       const out = fs.openSync('./logs/watcher.log', 'a');
       const err = fs.openSync('./logs/watcher.log', 'a');
 
-      const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
-      subprocess.unref();
+      if (sudo) {
+        // Dummy sudo call to ask for password
+        await execAsync('sudo echo "Dummy sudo call"');
+        const subprocess = spawn('sudo', ['./runtipi-cli', 'watch'], { cwd: this.rootFolder, stdio: ['inherit', out, err] });
+
+        subprocess.unref();
+      } else {
+        const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
+        subprocess.unref();
+      }
 
       spinner.done('Watcher started');
 
@@ -318,7 +337,7 @@ export class SystemExecutors {
    * runtipi-cli binary with the new one.
    * @param {string} target
    */
-  public update = async (target: string) => {
+  public update = async (target: string, sudo = true) => {
     const spinner = new TerminalSpinner('Evaluating target version...');
     try {
       spinner.start();
@@ -408,7 +427,15 @@ export class SystemExecutors {
       // eslint-disable-next-line no-promise-executor-return
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const childProcess = spawn('./runtipi-cli', [process.argv[1] as string, 'start', '--no-permissions']);
+      const args = [process.argv[1] as string, 'start'];
+
+      const { isSudo } = getUserIds();
+
+      if (!sudo && !isSudo) {
+        args.push('--no-sudo');
+      }
+
+      const childProcess = spawn('./runtipi-cli', args);
 
       childProcess.stdout.on('data', (data) => {
         process.stdout.write(data);
