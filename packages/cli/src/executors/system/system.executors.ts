@@ -9,6 +9,7 @@ import si from 'systeminformation';
 import { Stream } from 'stream';
 import { promisify } from 'util';
 import dotenv from 'dotenv';
+import { killOtherWorkers } from 'src/services/watcher/watcher';
 import { AppExecutors } from '../app/app.executors';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
@@ -212,6 +213,8 @@ export class SystemExecutors {
       const out = fs.openSync('./logs/watcher.log', 'a');
       const err = fs.openSync('./logs/watcher.log', 'a');
 
+      await killOtherWorkers();
+
       if (sudo) {
         // Dummy sudo call to ask for password
         await execAsync('sudo echo "Dummy sudo call"');
@@ -360,17 +363,17 @@ export class SystemExecutors {
       await fs.promises.rename(savePath, path.join(rootFolderHost, 'runtipi-cli'));
       spinner.done('Old cli replaced');
 
-      // Wait for 3 second to make sure the old cli is gone
-      // eslint-disable-next-line no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      const { isSudo } = getUserIds();
 
       const args = [process.argv[1] as string, 'start'];
 
-      const { isSudo } = getUserIds();
-
-      if (!sudo && !isSudo) {
+      if (!isSudo && !sudo) {
         args.push('--no-sudo');
       }
+
+      // Wait for 3 second to make sure the old cli is gone
+      // eslint-disable-next-line no-promise-executor-return
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       const childProcess = spawn('./runtipi-cli', args);
 
