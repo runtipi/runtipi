@@ -22,9 +22,9 @@ const main = async () => {
     .description('Start tipi')
     .option('--no-permissions', 'Skip permissions check')
     .option('--no-sudo', 'Skip sudo usage')
-    .action(async (options) => {
+    .action(async () => {
       const systemExecutors = new SystemExecutors();
-      await systemExecutors.start(options.sudo);
+      await systemExecutors.start();
     });
 
   program
