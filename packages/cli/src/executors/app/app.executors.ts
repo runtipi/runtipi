@@ -1,10 +1,14 @@
 import fs from 'fs';
 import path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { getEnv } from '@/utils/environment/environment';
 import { pathExists } from '@/utils/fs-helpers';
 import { compose } from '@/utils/docker-helpers';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { fileLogger } from '@/utils/logger/file-logger';
+
+const execAsync = promisify(exec);
 
 export class AppExecutors {
   private readonly logger;
@@ -138,6 +142,8 @@ export class AppExecutors {
 
   public startApp = async (appId: string, config: Record<string, unknown>) => {
     try {
+      const { appDataDirPath } = this.getAppPaths(appId);
+
       this.logger.info(`Starting app ${appId}`);
 
       this.logger.info(`Regenerating app.env file for app ${appId}`);
@@ -146,6 +152,9 @@ export class AppExecutors {
       await compose(appId, 'up --detach --force-recreate --remove-orphans');
 
       this.logger.info(`App ${appId} started`);
+
+      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {});
+
       return { success: true, message: `App ${appId} started successfully` };
     } catch (err) {
       return this.handleAppError(err);
