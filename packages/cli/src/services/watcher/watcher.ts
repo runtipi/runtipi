@@ -9,7 +9,7 @@ import { getUserIds } from '@/utils/environment/user';
 const execAsync = promisify(exec);
 
 const runCommand = async (jobData: unknown) => {
-  const { gid, uid, isSudo } = getUserIds();
+  const { gid, uid } = getUserIds();
   console.log(`Running command with uid ${uid} and gid ${gid}`);
 
   const { installApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
@@ -69,28 +69,21 @@ const runCommand = async (jobData: unknown) => {
     }
 
     if (data.command === 'update') {
-      if (!isSudo) {
-        ({ success, message } = await update(data.version, false));
-      } else {
-        ({ success, message } = await update(data.version, true));
-      }
+      ({ success, message } = await update(data.version));
     }
   }
 
   return { success, message };
 };
 
-const killOtherWorkers = async () => {
+export const killOtherWorkers = async () => {
   const { stdout } = await execAsync('ps aux | grep "index.js watch" | grep -v grep | awk \'{print $2}\'');
+  const { stdout: stdoutInherit } = await execAsync('ps aux | grep "runtipi-cli watch" | grep -v grep | awk \'{print $2}\'');
 
   const pids = stdout.split('\n').filter((pid: string) => pid !== '');
+  const pidsInherit = stdoutInherit.split('\n').filter((pid: string) => pid !== '');
 
-  pids.forEach((pid) => {
-    if (pid === process.pid.toString()) {
-      console.log('Skipping killing current worker');
-      return;
-    }
-
+  pids.concat(pidsInherit).forEach((pid) => {
     console.log(`Killing worker with pid ${pid}`);
     try {
       process.kill(Number(pid));
@@ -104,8 +97,6 @@ const killOtherWorkers = async () => {
  * Start the worker for the events queue
  */
 export const startWorker = async () => {
-  await killOtherWorkers();
-
   const worker = new Worker(
     'events',
     async (job) => {

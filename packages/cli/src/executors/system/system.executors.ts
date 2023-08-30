@@ -12,6 +12,8 @@ import { Stream } from 'stream';
 import { promisify } from 'util';
 import dotenv from 'dotenv';
 import { SystemEvent } from '@runtipi/shared';
+import { killOtherWorkers } from 'src/services/watcher/watcher';
+import chalk from 'chalk';
 import { AppExecutors } from '../app/app.executors';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
@@ -93,7 +95,7 @@ export class SystemExecutors {
 
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
-      // path.join(rootFolderHost, 'app-data'),
+      path.join(rootFolderHost, 'app-data'),
       path.join(rootFolderHost, 'logs'),
       path.join(rootFolderHost, 'media'),
       path.join(rootFolderHost, 'repos'),
@@ -104,20 +106,14 @@ export class SystemExecutors {
       path.join(rootFolderHost, 'VERSION'),
     ];
 
-    const { uid, gid } = getUserIds();
-
     // Give permission to read and write to all files and folders for the current user
     await Promise.all(
       filesAndFolders.map(async (fileOrFolder) => {
         if (await pathExists(fileOrFolder)) {
-          await execAsync(`sudo chown -R ${uid}:${gid} ${fileOrFolder}`);
-
-          await execAsync(`sudo chmod -R 750 ${fileOrFolder}`);
+          await execAsync(`sudo chmod -R a+rwx ${fileOrFolder}`);
         }
       }),
     );
-
-    await execAsync(`sudo chmod -R a+rwx ${path.join(rootFolderHost, 'app-data')}`);
   };
 
   public systemInfo = async () => {
@@ -181,23 +177,17 @@ export class SystemExecutors {
    * This method will start Tipi.
    * It will copy the system files, generate the system env file, pull the images and start the containers.
    */
-  public start = async (sudo = true) => {
+  public start = async () => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
-      if (sudo) {
-        await this.ensureFilePermissions(this.rootFolder);
-      } else {
-        console.log(
-          boxen("You are running in sudoless mode. While tipi should work as expected, you'll probably face folder permission issues with the apps you install and you'll need to manually fix them.", {
-            title: '⛔️ Sudoless mode',
-            titleAlignment: 'center',
-            padding: 1,
-            borderStyle: 'double',
-            borderColor: 'red',
-            margin: { top: 1 },
-          }),
-        );
+      const { isSudo } = getUserIds();
+
+      if (!isSudo) {
+        console.log(chalk.red('Tipi needs to run as root to start. Use sudo ./runtipi-cli start'));
+        throw new Error('Tipi needs to run as root to start. Use sudo ./runtipi-cli start');
       }
+
+      await this.ensureFilePermissions(this.rootFolder);
 
       spinner.start();
       spinner.setMessage('Copying system files...');
@@ -205,9 +195,7 @@ export class SystemExecutors {
 
       spinner.done('System files copied');
 
-      if (sudo) {
-        await this.ensureFilePermissions(this.rootFolder, false);
-      }
+      await this.ensureFilePermissions(this.rootFolder, false);
 
       spinner.setMessage('Generating system env file...');
       spinner.start();
@@ -249,16 +237,10 @@ export class SystemExecutors {
       const out = fs.openSync('./logs/watcher.log', 'a');
       const err = fs.openSync('./logs/watcher.log', 'a');
 
-      if (sudo) {
-        // Dummy sudo call to ask for password
-        await execAsync('sudo echo "Dummy sudo call"');
-        const subprocess = spawn('sudo', ['./runtipi-cli', 'watch'], { cwd: this.rootFolder, stdio: ['inherit', out, err] });
+      await killOtherWorkers();
 
-        subprocess.unref();
-      } else {
-        const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
-        subprocess.unref();
-      }
+      const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
+      subprocess.unref();
 
       spinner.done('Watcher started');
 
@@ -337,7 +319,7 @@ export class SystemExecutors {
    * runtipi-cli binary with the new one.
    * @param {string} target
    */
-  public update = async (target: string, sudo = true) => {
+  public update = async (target: string) => {
     const spinner = new TerminalSpinner('Evaluating target version...');
     try {
       spinner.start();
@@ -427,15 +409,7 @@ export class SystemExecutors {
       // eslint-disable-next-line no-promise-executor-return
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const args = [process.argv[1] as string, 'start'];
-
-      const { isSudo } = getUserIds();
-
-      if (!sudo && !isSudo) {
-        args.push('--no-sudo');
-      }
-
-      const childProcess = spawn('./runtipi-cli', args);
+      const childProcess = spawn('./runtipi-cli', [process.argv[1] as string, 'start']);
 
       childProcess.stdout.on('data', (data) => {
         process.stdout.write(data);
