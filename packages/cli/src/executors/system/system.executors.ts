@@ -116,6 +116,8 @@ export class SystemExecutors {
         }
       }),
     );
+
+    await execAsync(`sudo chmod -R a+rwx ${path.join(rootFolderHost, 'app-data')}`);
   };
 
   public systemInfo = async () => {
