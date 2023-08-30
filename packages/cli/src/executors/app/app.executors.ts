@@ -105,11 +105,16 @@ export class AppExecutors {
         await copyDataDir(appId);
       }
 
+      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {
+        this.logger.error(`Error setting permissions for app ${appId}`);
+      });
+
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up -d');
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
+
       return { success: true, message: `App ${appId} installed successfully` };
     } catch (err) {
       return this.handleAppError(err);

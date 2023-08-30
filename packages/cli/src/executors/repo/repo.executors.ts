@@ -75,7 +75,20 @@ export class RepoExecutors {
 
       this.logger.info(`Pulling repo ${repoUrl} to ${repoPath}`);
 
-      const { stdout, stderr } = await execAsync(`git -C ${repoPath} pull`);
+      await execAsync(`git config --global --add safe.directory ${repoPath}`).then(({ stdout, stderr }) => {
+        this.logger.info('------------------ git config --global --add safe.directory ------------------');
+        this.logger.error(`stderr: ${stderr}`);
+        this.logger.info(`stdout: ${stdout}`);
+      });
+
+      // reset hard
+      await execAsync(`git -C ${repoPath} reset --hard`).then(({ stdout, stderr }) => {
+        this.logger.info(`------------------ git -C ${repoPath} reset --hard ------------------`);
+        this.logger.error(`stderr: ${stderr}`);
+        this.logger.info(`stdout: ${stdout}`);
+      });
+
+      const { stderr, stdout } = await execAsync(`git -C ${repoPath} pull`);
 
       if (stderr) {
         this.logger.error(`Error pulling repo ${repoUrl}: ${stderr}`);
