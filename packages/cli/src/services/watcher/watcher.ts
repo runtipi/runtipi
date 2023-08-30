@@ -4,10 +4,14 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { AppExecutors, RepoExecutors, SystemExecutors } from '@/executors';
 import { getEnv } from '@/utils/environment/environment';
+import { getUserIds } from '@/utils/environment/user';
 
 const execAsync = promisify(exec);
 
 const runCommand = async (jobData: unknown) => {
+  const { gid, uid, isSudo } = getUserIds();
+  console.log(`Running command with uid ${uid} and gid ${gid}`);
+
   const { installApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
   const { cloneRepo, pullRepo } = new RepoExecutors();
   const { systemInfo, restart, update } = new SystemExecutors();
@@ -65,7 +69,11 @@ const runCommand = async (jobData: unknown) => {
     }
 
     if (data.command === 'update') {
-      ({ success, message } = await update(data.version));
+      if (!isSudo) {
+        ({ success, message } = await update(data.version, false));
+      } else {
+        ({ success, message } = await update(data.version, true));
+      }
     }
   }
 
