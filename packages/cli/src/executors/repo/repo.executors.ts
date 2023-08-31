@@ -88,8 +88,12 @@ export class RepoExecutors {
         this.logger.info(`stdout: ${stdout}`);
       });
 
+      const currentBranch = await execAsync(`git -C ${repoPath} rev-parse --abbrev-ref HEAD`).then(({ stdout }) => {
+        return stdout.trim();
+      });
+
       // reset hard
-      await execAsync(`git -C ${repoPath} reset --hard`).then(({ stdout, stderr }) => {
+      await execAsync(`git fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`).then(({ stdout, stderr }) => {
         this.logger.info(`------------------ git -C ${repoPath} reset --hard ------------------`);
         this.logger.error(`stderr: ${stderr}`);
         this.logger.info(`stdout: ${stdout}`);
