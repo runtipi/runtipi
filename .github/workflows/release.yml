@@ -105,6 +105,9 @@ jobs:
     outputs:
       tagname: ${{ steps.create_tag.outputs.tagname }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Create Tag
         id: create_tag
         uses: butlerlogic/action-autotag@stable
@@ -125,7 +128,7 @@ jobs:
           name: cli
           path: cli
 
-      - name: Create beta release
+      - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:

@@ -8,8 +8,8 @@ echo "Installing runtipi..."
 ARCHITECTURE="$(uname -m)"
 # Not supported on 32 bits systems
 if [[ "$ARCHITECTURE" == "armv7"* ]] || [[ "$ARCHITECTURE" == "i686" ]] || [[ "$ARCHITECTURE" == "i386" ]]; then
-    echo "runtipi is not supported on 32 bits systems"
-    exit 1
+  echo "runtipi is not supported on 32 bits systems"
+  exit 1
 fi
 
 ### --------------------------------
@@ -178,8 +178,8 @@ fi
 URL="https://github.com/meienberger/runtipi/releases/download/$VERSION/$ASSET"
 
 if [[ "${UPDATE}" == "false" ]]; then
-    mkdir -p runtipi
-    cd runtipi || exit
+  mkdir -p runtipi
+  cd runtipi || exit
 fi
 
 curl --location "$URL" -o ./runtipi-cli
