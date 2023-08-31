@@ -48,7 +48,7 @@
       "submit": "Onayla"
     },
     "register": {
-      "title": "Hesabınızı kaydedin",
+      "title": "Yeni hesabınızı kaydedin",
       "submit": "Kayıt Ol"
     },
     "reset-password": {
@@ -63,7 +63,7 @@
     "form": {
       "email": "E-posta adresi",
       "email-placeholder": "siz@ornek.com",
-      "password": "Şifre",
+      "password": "Parola",
       "password-placeholder": "Parolanızı girin",
       "password-confirmation": "Parolanızı tekrar yazınız",
       "password-confirmation-placeholder": "Parolanızı onaylayın",
@@ -96,10 +96,10 @@
         "subtitle": "{total} GB'tan kullanıldı"
       },
       "memory": {
-        "title": "Bellek Kullanımı"
+        "title": "Bellek kullanımı"
       },
       "cpu": {
-        "title": "CPU Yükü",
+        "title": "CPU kullanımı",
         "subtitle": "Yükü azaltmak için uygulamaları kaldırın"
       }
     }

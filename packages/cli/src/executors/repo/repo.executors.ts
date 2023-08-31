@@ -81,6 +81,13 @@ export class RepoExecutors {
         this.logger.info(`stdout: ${stdout}`);
       });
 
+      // git config pull.rebase false
+      await execAsync(`git -C ${repoPath} config pull.rebase false`).then(({ stdout, stderr }) => {
+        this.logger.info(`------------------ git -C ${repoPath} config pull.rebase false ------------------`);
+        this.logger.error(`stderr: ${stderr}`);
+        this.logger.info(`stdout: ${stdout}`);
+      });
+
       // reset hard
       await execAsync(`git -C ${repoPath} reset --hard`).then(({ stdout, stderr }) => {
         this.logger.info(`------------------ git -C ${repoPath} reset --hard ------------------`);
