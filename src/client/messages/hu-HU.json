@@ -33,7 +33,8 @@
       "domain-already-in-use": "A(z) {domain} domaint már használja a(z) {id} alkalmazás",
       "could-not-get-latest-version": "Nem sikerült letölteni a legújabb verziót",
       "current-version-is-latest": "A jelenlegi verzió már naprakész",
-      "major-version-update": "A fő verzió megváltozott. Kérjük, frissítse manuálisan (utasítások a GitHubon)"
+      "major-version-update": "A fő verzió megváltozott. Kérjük, frissítse manuálisan (utasítások a GitHubon)",
+      "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
   },
