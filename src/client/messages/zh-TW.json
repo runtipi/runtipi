@@ -33,7 +33,8 @@
       "domain-already-in-use": "域名 {domain} 已被應用程序 {id} 使用",
       "could-not-get-latest-version": "無法檢查最新版本",
       "current-version-is-latest": "當前版本已經是最新的",
-      "major-version-update": "主要版本已更改。 請手動更新（参照GitHub 上的說明）"
+      "major-version-update": "主要版本已更改。 請手動更新（参照GitHub 上的說明）",
+      "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
   },
