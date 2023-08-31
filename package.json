@@ -103,7 +103,7 @@
     "@types/isomorphic-fetch": "^0.0.36",
     "@types/jest": "^29.5.2",
     "@types/lodash.merge": "^4.6.7",
-    "@types/node": "20.3.2",
+    "@types/node": "20.5.7",
     "@types/pg": "^8.10.2",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
