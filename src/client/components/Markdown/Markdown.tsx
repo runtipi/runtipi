@@ -3,6 +3,8 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import { PluggableList } from 'react-markdown/lib/react-markdown';
 
 const MarkdownImg = (props: Pick<React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, 'key' | keyof React.ImgHTMLAttributes<HTMLImageElement>>) => (
   <div className="d-flex justify-content-center">
@@ -24,6 +26,7 @@ const Markdown: React.FC<{ children: string; className: string }> = ({ children,
       // div: (props) => <div {...props} className="mb-4" />,
     }}
     remarkPlugins={[remarkBreaks, remarkGfm]}
+    rehypePlugins={[rehypeRaw] as PluggableList}
   >
     {children}
   </ReactMarkdown>
