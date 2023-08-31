@@ -33,7 +33,8 @@
       "domain-already-in-use": "{domain} alan adı zaten {id} uygulaması tarafından kullanılıyor",
       "could-not-get-latest-version": "En son sürüm alınamadı",
       "current-version-is-latest": "Son versiyon zaten yüklü",
-      "major-version-update": "Ana sürüm değişti. Lütfen manuel olarak güncelleyin (GitHub'daki talimatlar)"
+      "major-version-update": "Ana sürüm değişti. Lütfen manuel olarak güncelleyin (GitHub'daki talimatlar)",
+      "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
   },
