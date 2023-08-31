@@ -93,7 +93,7 @@ export class RepoExecutors {
       });
 
       // reset hard
-      await execAsync(`git fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`).then(({ stdout, stderr }) => {
+      await execAsync(`git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`).then(({ stdout, stderr }) => {
         this.logger.info(`------------------ git -C ${repoPath} reset --hard ------------------`);
         this.logger.error(`stderr: ${stderr}`);
         this.logger.info(`stdout: ${stdout}`);
