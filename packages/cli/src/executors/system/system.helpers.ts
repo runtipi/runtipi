@@ -181,9 +181,8 @@ export const generateSystemEnvFile = async () => {
 
   const currentUserGroup = process.getgid ? String(process.getgid()) : '1000';
   const currentUserId = process.getuid ? String(process.getuid()) : '1000';
-  const { stdout: tipiGroupId } = await execAsync('getent group tipi | cut -d: -f3');
 
-  envMap.set('TIPI_GID', tipiGroupId.trim() || currentUserGroup);
+  envMap.set('TIPI_GID', currentUserGroup);
   envMap.set('TIPI_UID', currentUserId);
 
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));

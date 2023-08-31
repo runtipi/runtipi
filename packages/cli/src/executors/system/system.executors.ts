@@ -61,30 +61,6 @@ export class SystemExecutors {
   private ensureFilePermissions = async (rootFolderHost: string) => {
     const logger = new TerminalSpinner('');
 
-    // Create group tipi if it does not exist
-    try {
-      await execAsync('getent group tipi');
-    } catch (e) {
-      try {
-        await execAsync('sudo groupadd tipi');
-        logger.done('Created group tipi');
-      } catch (e2) {
-        logger.fail('Failed to create group tipi');
-        fileLogger.error(e2);
-      }
-    }
-
-    // Add current user to group tipi
-    if (!(await execAsync(`groups ${process.env.USER}`)).stdout.includes('tipi')) {
-      try {
-        await execAsync(`sudo usermod -aG tipi ${process.env.USER}`);
-        // Reload permissions
-        await execAsync('newgrp tipi');
-      } catch (e) {
-        logger.fail('Failed to add current user to group tipi');
-      }
-    }
-
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
       path.join(rootFolderHost, 'app-data'),
