@@ -74,7 +74,7 @@ export class SystemExecutors {
       path.join(rootFolderHost, 'VERSION'),
     ];
 
-    const files600 = [path.join(rootFolderHost, 'traefik', 'acme.json')];
+    const files600 = [path.join(rootFolderHost, 'traefik', 'shared', 'acme.json')];
 
     // Give permission to read and write to all files and folders for the current user
     await Promise.all(
