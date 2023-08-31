@@ -8,8 +8,8 @@ echo "Installing runtipi..."
 ARCHITECTURE="$(uname -m)"
 # Not supported on 32 bits systems
 if [[ "$ARCHITECTURE" == "armv7"* ]] || [[ "$ARCHITECTURE" == "i686" ]] || [[ "$ARCHITECTURE" == "i386" ]]; then
-    echo "runtipi is not supported on 32 bits systems"
-    exit 1
+  echo "runtipi is not supported on 32 bits systems"
+  exit 1
 fi
 
 ### --------------------------------
@@ -178,8 +178,8 @@ fi
 URL="https://github.com/meienberger/runtipi/releases/download/$VERSION/$ASSET"
 
 if [[ "${UPDATE}" == "false" ]]; then
-    mkdir -p runtipi
-    cd runtipi || exit
+  mkdir -p runtipi
+  cd runtipi || exit
 fi
 
 curl --location "$URL" -o ./runtipi-cli
@@ -188,11 +188,8 @@ chmod +x ./runtipi-cli
 # Check if user is in docker group
 if [ "$(id -u)" -ne 0 ]; then
   if ! groups | grep -q docker; then
-    echo ""
-    echo "User is not in docker group. Please make sure your user is allowed to run docker commands and restart the script."
-    echo "See https://docs.docker.com/engine/install/linux-postinstall/ for more information."
-    echo ""
-    exit 1
+    sudo usermod -aG docker "$USER"
+    newgrp docker
   fi
 fi
 

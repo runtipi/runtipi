@@ -104,6 +104,12 @@ export class AppServiceClass {
     if (app) {
       await this.startApp(id);
     } else {
+      const apps = await this.queries.getApps();
+
+      if (apps.length >= 6 && getConfig().demoMode) {
+        throw new TranslatedError('server-messages.errors.demo-mode-limit');
+      }
+
       if (exposed && !domain) {
         throw new TranslatedError('server-messages.errors.domain-required-if-expose-app');
       }

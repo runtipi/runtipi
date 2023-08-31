@@ -60,7 +60,7 @@ export const GeneralActions = () => {
     return (
       <div>
         {versionQuery.data?.body && (
-          <div className="mt-3 card col-4">
+          <div className="mt-3 card col-12 col-md-8">
             <div className="card-stamp">
               <div className="card-stamp-icon bg-yellow">
                 <IconStar size={80} />

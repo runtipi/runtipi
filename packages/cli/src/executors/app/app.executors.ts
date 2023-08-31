@@ -1,14 +1,34 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import fs from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import pg from 'pg';
 import { getEnv } from '@/utils/environment/environment';
 import { pathExists } from '@/utils/fs-helpers';
 import { compose } from '@/utils/docker-helpers';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { fileLogger } from '@/utils/logger/file-logger';
+import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
 
 const execAsync = promisify(exec);
+
+const getDbClient = async () => {
+  const { postgresDatabase, postgresUsername, postgresPassword, postgresPort } = getEnv();
+
+  const client = new pg.Client({
+    host: '127.0.0.1',
+    database: postgresDatabase,
+    user: postgresUsername,
+    password: postgresPassword,
+    port: Number(postgresPort),
+  });
+
+  await client.connect();
+
+  return client;
+};
 
 export class AppExecutors {
   private readonly logger;
@@ -66,10 +86,15 @@ export class AppExecutors {
    */
   public installApp = async (appId: string, config: Record<string, unknown>) => {
     try {
+      if (process.getuid && process.getgid) {
+        this.logger.info(`Installing app ${appId} as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`);
+      } else {
+        this.logger.info(`Installing app ${appId}. No User ID or Group ID found.`);
+      }
+
       const { rootFolderHost, appsRepoId } = getEnv();
 
       const { appDirPath, repoPath, appDataDirPath } = this.getAppPaths(appId);
-      this.logger.info(`Installing app ${appId}`);
 
       // Check if app exists in repo
       const apps = await fs.promises.readdir(path.join(rootFolderHost, 'repos', appsRepoId, 'apps'));
@@ -180,10 +205,14 @@ export class AppExecutors {
       await compose(appId, 'down --remove-orphans --volumes --rmi all');
 
       this.logger.info(`Deleting folder ${appDirPath}`);
-      await fs.promises.rm(appDirPath, { recursive: true, force: true });
+      await fs.promises.rm(appDirPath, { recursive: true, force: true }).catch((err) => {
+        this.logger.error(`Error deleting folder ${appDirPath}: ${err.message}`);
+      });
 
       this.logger.info(`Deleting folder ${appDataDirPath}`);
-      await fs.promises.rm(appDataDirPath, { recursive: true, force: true });
+      await fs.promises.rm(appDataDirPath, { recursive: true, force: true }).catch((err) => {
+        this.logger.error(`Error deleting folder ${appDataDirPath}: ${err.message}`);
+      });
 
       this.logger.info(`App ${appId} uninstalled`);
       return { success: true, message: `App ${appId} uninstalled successfully` };
@@ -224,6 +253,45 @@ export class AppExecutors {
       return { success: true, message: `App ${appId} env file regenerated successfully` };
     } catch (err) {
       return this.handleAppError(err);
+    }
+  };
+
+  /**
+   * Start all apps with status running
+   */
+  public startAllApps = async () => {
+    const spinner = new TerminalSpinner('Starting apps...');
+    const client = await getDbClient();
+
+    try {
+      // Get all apps with status running
+      const { rows } = await client.query(`SELECT * FROM app WHERE status = 'running'`);
+
+      // Update all apps with status different than running or stopped to stopped
+      await client.query(`UPDATE app SET status = 'stopped' WHERE status != 'stopped' AND status != 'running' AND status != 'missing'`);
+
+      // Start all apps
+      for (const row of rows) {
+        spinner.setMessage(`Starting app ${row.id}`);
+        spinner.start();
+        const { id, config } = row;
+
+        const { success } = await this.startApp(id, config);
+
+        if (!success) {
+          this.logger.error(`Error starting app ${id}`);
+          await client.query(`UPDATE app SET status = 'stopped' WHERE id = '${id}'`);
+          spinner.fail(`Error starting app ${id}`);
+        } else {
+          await client.query(`UPDATE app SET status = 'running' WHERE id = '${id}'`);
+          spinner.done(`App ${id} started`);
+        }
+      }
+    } catch (err) {
+      this.logger.error(`Error starting apps: ${err}`);
+      spinner.fail(`Error starting apps see logs for details (logs/error.log)`);
+    } finally {
+      await client.end();
     }
   };
 }

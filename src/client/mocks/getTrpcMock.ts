@@ -2,14 +2,12 @@ import { rest } from 'msw';
 import SuperJSON from 'superjson';
 import type { RouterInput, RouterOutput } from '../../server/routers/_app';
 
-export type RpcResponse<Data> = RpcSuccessResponse<Data> | RpcErrorResponse;
-
-export type RpcSuccessResponse<Data> = {
+type RpcSuccessResponse<Data> = {
   id: null;
   result: { type: 'data'; data: Data };
 };
 
-export type RpcErrorResponse = {
+type RpcErrorResponse = {
   error: {
     json: {
       message: string;

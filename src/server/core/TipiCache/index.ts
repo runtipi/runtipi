@@ -1,1 +1,1 @@
-export { default } from './TipiCache';
+export { TipiCache } from './TipiCache';

@@ -5,7 +5,7 @@ import { TranslatedError } from '@/server/utils/errors';
 import { readJsonFile } from '../../common/fs.helpers';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
-import TipiCache from '../../core/TipiCache';
+import { TipiCache } from '../../core/TipiCache';
 import * as TipiConfig from '../../core/TipiConfig';
 
 const SYSTEM_STATUS = ['UPDATING', 'RESTARTING', 'RUNNING'] as const;
@@ -33,7 +33,7 @@ export class SystemServiceClass {
   private dispatcher;
 
   constructor() {
-    this.cache = TipiCache;
+    this.cache = new TipiCache();
     this.dispatcher = EventDispatcher;
   }
 

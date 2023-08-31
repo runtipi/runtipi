@@ -4,7 +4,7 @@ import { getConfig } from '../TipiConfig';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
-class TipiCache {
+export class TipiCache {
   private static instance: TipiCache;
 
   private client: RedisClientType;
@@ -78,5 +78,3 @@ class TipiCache {
     return client.ttl(key);
   }
 }
-
-export default TipiCache.getInstance();

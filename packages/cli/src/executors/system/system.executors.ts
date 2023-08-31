@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+import { Queue } from 'bullmq';
 import fs from 'fs';
 import cliProgress from 'cli-progress';
 import semver from 'semver';
@@ -9,6 +11,7 @@ import si from 'systeminformation';
 import { Stream } from 'stream';
 import { promisify } from 'util';
 import dotenv from 'dotenv';
+import { SystemEvent } from '@runtipi/shared';
 import { killOtherWorkers } from 'src/services/watcher/watcher';
 import chalk from 'chalk';
 import { AppExecutors } from '../app/app.executors';
@@ -17,6 +20,7 @@ import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
 import { pathExists } from '@/utils/fs-helpers';
 import { getEnv } from '@/utils/environment/environment';
 import { fileLogger } from '@/utils/logger/file-logger';
+import { runPostgresMigrations } from '@/utils/migrations/run-migration';
 import { getUserIds } from '@/utils/environment/user';
 
 const execAsync = promisify(exec);
@@ -54,16 +58,8 @@ export class SystemExecutors {
     };
   };
 
-  private ensureFilePermissions = async (rootFolderHost: string, logSudoRequest = true) => {
-    // if we are running as root, we don't need to change permissions
-    if (process.getuid && process.getuid() === 0) {
-      return;
-    }
-
-    if (logSudoRequest) {
-      const logger = new TerminalSpinner('');
-      logger.log('Tipi needs to change permissions on some files and folders and will ask for your password.');
-    }
+  private ensureFilePermissions = async (rootFolderHost: string) => {
+    const logger = new TerminalSpinner('');
 
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
@@ -78,11 +74,25 @@ export class SystemExecutors {
       path.join(rootFolderHost, 'VERSION'),
     ];
 
+    const files600 = [path.join(rootFolderHost, 'traefik', 'acme.json')];
+
     // Give permission to read and write to all files and folders for the current user
     await Promise.all(
       filesAndFolders.map(async (fileOrFolder) => {
         if (await pathExists(fileOrFolder)) {
-          await execAsync(`sudo chmod -R a+rwx ${fileOrFolder}`);
+          await execAsync(`sudo chmod -R a+rwx ${fileOrFolder}`).catch(() => {
+            logger.fail(`Failed to set permissions on ${fileOrFolder}`);
+          });
+        }
+      }),
+    );
+
+    await Promise.all(
+      files600.map(async (fileOrFolder) => {
+        if (await pathExists(fileOrFolder)) {
+          await execAsync(`sudo chmod 600 ${fileOrFolder}`).catch(() => {
+            logger.fail(`Failed to set permissions on ${fileOrFolder}`);
+          });
         }
       }),
     );
@@ -114,14 +124,13 @@ export class SystemExecutors {
         const apps = await fs.promises.readdir(path.join(this.rootFolder, 'apps'));
         const appExecutor = new AppExecutors();
 
-        await Promise.all(
-          apps.map(async (app) => {
-            const appSpinner = new TerminalSpinner(`Stopping ${app}...`);
-            appSpinner.start();
-            await appExecutor.stopApp(app, {}, true);
-            appSpinner.done(`${app} stopped`);
-          }),
-        );
+        // eslint-disable-next-line no-restricted-syntax
+        for (const app of apps) {
+          spinner.setMessage(`Stopping ${app}...`);
+          spinner.start();
+          await appExecutor.stopApp(app, {}, true);
+          spinner.done(`${app} stopped`);
+        }
       }
 
       spinner.setMessage('Stopping containers...');
@@ -141,17 +150,37 @@ export class SystemExecutors {
    * This method will start Tipi.
    * It will copy the system files, generate the system env file, pull the images and start the containers.
    */
-  public start = async () => {
+  public start = async (sudo = true) => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
       const { isSudo } = getUserIds();
 
-      if (!isSudo) {
+      if (!sudo) {
+        console.log(
+          boxen(
+            "You are running in sudoless mode. While Tipi should work as expected, you'll probably run into permission issues and will have to manually fix them. We recommend running Tipi with sudo for beginners.",
+            {
+              title: '⛔️Sudoless mode',
+              titleAlignment: 'center',
+              textAlignment: 'center',
+              padding: 1,
+              borderStyle: 'double',
+              borderColor: 'red',
+              margin: { top: 1, bottom: 1 },
+              width: 80,
+            },
+          ),
+        );
+      }
+
+      if (!isSudo && sudo) {
         console.log(chalk.red('Tipi needs to run as root to start. Use sudo ./runtipi-cli start'));
         throw new Error('Tipi needs to run as root to start. Use sudo ./runtipi-cli start');
       }
 
-      await this.ensureFilePermissions(this.rootFolder);
+      if (sudo) {
+        await this.ensureFilePermissions(this.rootFolder);
+      }
 
       spinner.start();
       spinner.setMessage('Copying system files...');
@@ -159,7 +188,9 @@ export class SystemExecutors {
 
       spinner.done('System files copied');
 
-      await this.ensureFilePermissions(this.rootFolder, false);
+      if (sudo) {
+        await this.ensureFilePermissions(this.rootFolder);
+      }
 
       spinner.setMessage('Generating system env file...');
       spinner.start();
@@ -208,13 +239,45 @@ export class SystemExecutors {
 
       spinner.done('Watcher started');
 
+      const queue = new Queue('events', { connection: { host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD') } });
+      await queue.obliterate({ force: true });
+
+      // Initial jobs
+      await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent);
+      await queue.add(`${Math.random().toString()}_repo_clone`, { type: 'repo', command: 'clone', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
+
+      // Scheduled jobs
+      await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
+      await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { pattern: '* * * * *' } });
+
+      await queue.close();
+
+      spinner.setMessage('Running database migrations...');
+      spinner.start();
+
+      await runPostgresMigrations({
+        postgresHost: '127.0.0.1',
+        postgresDatabase: envMap.get('POSTGRES_DBNAME') as string,
+        postgresUsername: envMap.get('POSTGRES_USERNAME') as string,
+        postgresPassword: envMap.get('POSTGRES_PASSWORD') as string,
+        postgresPort: envMap.get('POSTGRES_PORT') as string,
+      });
+
+      spinner.done('Database migrations complete');
+
+      // Start all apps
+      const appExecutor = new AppExecutors();
+      await appExecutor.startAllApps();
+
       console.log(
         boxen(`Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get('NGINX_PORT')} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io`, {
           title: 'Tipi successfully started 🎉',
           titleAlignment: 'center',
+          textAlignment: 'center',
           padding: 1,
           borderStyle: 'double',
           borderColor: 'green',
+          width: 80,
           margin: { top: 1 },
         }),
       );
@@ -265,7 +328,7 @@ export class SystemExecutors {
 
       if (!targetVersion || targetVersion === 'latest') {
         spinner.setMessage('Fetching latest version...');
-        const { data } = await axios.get<{ tag_name: string }>('https://api.github.com/repos/meienberger/runtipi/releases');
+        const { data } = await axios.get<{ tag_name: string }>('https://api.github.com/repos/meienberger/runtipi/releases/latest');
         targetVersion = data.tag_name;
       }
 
@@ -356,6 +419,8 @@ export class SystemExecutors {
       childProcess.stderr.on('data', (data) => {
         process.stderr.write(data);
       });
+
+      spinner.done(`Tipi ${targetVersion} successfully updated. Please run './runtipi-cli start' to start Tipi again.`);
 
       return { success: true, message: 'Tipi updated' };
     } catch (e) {
