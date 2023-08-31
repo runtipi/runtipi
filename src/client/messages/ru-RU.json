@@ -34,7 +34,7 @@
       "could-not-get-latest-version": "Не удалось получить последнюю версию",
       "current-version-is-latest": "Текущая версия уже актуальна",
       "major-version-update": "Мажорная версия изменилась. Пожалуйста, обновите вручную (инструкции на GitHub)",
-      "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
+      "demo-mode-limit": "Только 6 приложений могут быть установлены в демо режиме. Пожалуйста, удалите другое приложение, чтобы установить новое."
     },
     "success": {}
   },
