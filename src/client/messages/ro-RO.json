@@ -33,7 +33,8 @@
       "domain-already-in-use": "Domeniul {domain} este deja utilizat de către aplicația {id}",
       "could-not-get-latest-version": "Nu s-a putut obține cea mai recentă versiune",
       "current-version-is-latest": "Versiunea curentă este deja actualizată",
-      "major-version-update": "Versiunea majoră s-a schimbat. Vă rugăm să actualizați manual (instrucțiuni pe GitHub)"
+      "major-version-update": "Versiunea majoră s-a schimbat. Vă rugăm să actualizați manual (instrucțiuni pe GitHub)",
+      "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
   },
