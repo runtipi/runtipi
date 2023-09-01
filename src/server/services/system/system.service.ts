@@ -59,7 +59,7 @@ export class SystemServiceClass {
       return { current: TipiConfig.getConfig().version, latest: version, body };
     } catch (e) {
       Logger.error(e);
-      return { current: TipiConfig.getConfig().version, latest: undefined };
+      return { current: TipiConfig.getConfig().version, latest: TipiConfig.getConfig().version, body: '' };
     } finally {
       await cache.close();
     }
