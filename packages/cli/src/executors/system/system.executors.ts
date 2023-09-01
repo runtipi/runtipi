@@ -13,6 +13,7 @@ import { promisify } from 'util';
 import dotenv from 'dotenv';
 import { SystemEvent } from '@runtipi/shared';
 import chalk from 'chalk';
+import { killOtherWorkers } from 'src/services/watcher/watcher';
 import { AppExecutors } from '../app/app.executors';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
@@ -21,7 +22,6 @@ import { getEnv } from '@/utils/environment/environment';
 import { fileLogger } from '@/utils/logger/file-logger';
 import { runPostgresMigrations } from '@/utils/migrations/run-migration';
 import { getUserIds } from '@/utils/environment/user';
-import { killOtherWorkers } from 'src/services/watcher/watcher';
 
 const execAsync = promisify(exec);
 
@@ -72,7 +72,6 @@ export class SystemExecutors {
       path.join(rootFolderHost, 'state'),
       path.join(rootFolderHost, 'traefik'),
       path.join(rootFolderHost, '.env'),
-      path.join(rootFolderHost, 'docker-compose.yml'),
       path.join(rootFolderHost, 'VERSION'),
     ];
 
@@ -84,9 +83,10 @@ export class SystemExecutors {
       filesAndFolders.map(async (fileOrFolder) => {
         if (await pathExists(fileOrFolder)) {
           this.logger.info(`Setting permissions on ${fileOrFolder}`);
-          await execAsync(`sudo chmod -R a+rwx ${fileOrFolder}`).catch(() => {
+          await execAsync(`chmod -R a+rwx ${fileOrFolder}`).catch(() => {
             logger.fail(`Failed to set permissions on ${fileOrFolder}`);
           });
+          this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
         }
       }),
     );
@@ -97,7 +97,7 @@ export class SystemExecutors {
       files600.map(async (fileOrFolder) => {
         if (await pathExists(fileOrFolder)) {
           this.logger.info(`Setting permissions on ${fileOrFolder}`);
-          await execAsync(`sudo chmod 600 ${fileOrFolder}`).catch(() => {
+          await execAsync(`chmod 600 ${fileOrFolder}`).catch(() => {
             logger.fail(`Failed to set permissions on ${fileOrFolder}`);
           });
         }
@@ -174,7 +174,7 @@ export class SystemExecutors {
    * This method will start Tipi.
    * It will copy the system files, generate the system env file, pull the images and start the containers.
    */
-  public start = async (sudo = true) => {
+  public start = async (sudo = true, killWatchers = true) => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
       const { isSudo } = getUserIds();
@@ -198,7 +198,10 @@ export class SystemExecutors {
       }
 
       this.logger.info('Killing other workers...');
-      await killOtherWorkers();
+
+      if (killWatchers) {
+        await killOtherWorkers();
+      }
 
       if (!isSudo && sudo) {
         console.log(chalk.red('Tipi needs to run as root to start. Use sudo ./runtipi-cli start'));
@@ -267,13 +270,15 @@ export class SystemExecutors {
       this.logger.info('Generating TLS certificates...');
       await generateTlsCertificates({ domain: envMap.get('LOCAL_DOMAIN') });
 
-      this.logger.info('Opening log files for watcher...');
-      const out = fs.openSync('./logs/watcher.log', 'a');
-      const err = fs.openSync('./logs/watcher.log', 'a');
+      if (killWatchers) {
+        this.logger.info('Opening log files for watcher...');
+        const out = fs.openSync('./logs/watcher.log', 'a');
+        const err = fs.openSync('./logs/watcher.log', 'a');
 
-      this.logger.info('Starting watcher...');
-      const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
-      subprocess.unref();
+        this.logger.info('Starting watcher...');
+        const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
+        subprocess.unref();
+      }
 
       spinner.done('Watcher started');
 
@@ -340,7 +345,7 @@ export class SystemExecutors {
   public restart = async () => {
     try {
       await this.stop();
-      await this.start();
+      await this.start(true, false);
       return { success: true, message: '' };
     } catch (e) {
       return this.handleSystemError(e);
