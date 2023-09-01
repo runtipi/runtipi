@@ -1,6 +1,7 @@
 import { eventSchema } from '@runtipi/shared';
 import { Worker } from 'bullmq';
 import { exec } from 'child_process';
+import IORedis from 'ioredis';
 import { promisify } from 'util';
 import { AppExecutors, RepoExecutors, SystemExecutors } from '@/executors';
 import { getEnv } from '@/utils/environment/environment';
@@ -97,6 +98,9 @@ export const killOtherWorkers = async () => {
  * Start the worker for the events queue
  */
 export const startWorker = async () => {
+  console.info('Killing other workers...');
+  await killOtherWorkers();
+
   const worker = new Worker(
     'events',
     async (job) => {
@@ -105,7 +109,7 @@ export const startWorker = async () => {
 
       return { success, stdout: message };
     },
-    { connection: { host: '127.0.0.1', port: 6379, password: getEnv().redisPassword } },
+    { connection: { host: '127.0.0.1', port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 } },
   );
 
   worker.on('ready', () => {
