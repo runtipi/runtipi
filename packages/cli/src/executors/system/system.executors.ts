@@ -73,6 +73,7 @@ export class SystemExecutors {
       path.join(rootFolderHost, 'traefik'),
       path.join(rootFolderHost, '.env'),
       path.join(rootFolderHost, 'VERSION'),
+      path.join(rootFolderHost, 'docker-compose.yml'),
     ];
 
     const files600 = [path.join(rootFolderHost, 'traefik', 'shared', 'acme.json')];
@@ -206,10 +207,6 @@ export class SystemExecutors {
       if (!isSudo && sudo) {
         console.log(chalk.red('Tipi needs to run as root to start. Use sudo ./runtipi-cli start'));
         throw new Error('Tipi needs to run as root to start. Use sudo ./runtipi-cli start');
-      }
-
-      if (sudo) {
-        await this.ensureFilePermissions(this.rootFolder);
       }
 
       spinner.start();
