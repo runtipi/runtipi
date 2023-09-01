@@ -75,39 +75,35 @@ export class RepoExecutors {
 
       this.logger.info(`Pulling repo ${repoUrl} to ${repoPath}`);
 
-      await execAsync(`git config --global --add safe.directory ${repoPath}`).then(({ stdout, stderr }) => {
-        this.logger.info('------------------ git config --global --add safe.directory ------------------');
-        this.logger.error(`stderr: ${stderr}`);
-        this.logger.info(`stdout: ${stdout}`);
+      this.logger.info(`Executing: git config --global --add safe.directory ${repoPath}`);
+      await execAsync(`git config --global --add safe.directory ${repoPath}`).then(({ stderr }) => {
+        if (stderr) {
+          this.logger.error(`stderr: ${stderr}`);
+        }
       });
 
       // git config pull.rebase false
-      await execAsync(`git -C ${repoPath} config pull.rebase false`).then(({ stdout, stderr }) => {
-        this.logger.info(`------------------ git -C ${repoPath} config pull.rebase false ------------------`);
-        this.logger.error(`stderr: ${stderr}`);
-        this.logger.info(`stdout: ${stdout}`);
+      this.logger.info(`Executing: git -C ${repoPath} config pull.rebase false`);
+      await execAsync(`git -C ${repoPath} config pull.rebase false`).then(({ stderr }) => {
+        if (stderr) {
+          this.logger.error(`stderr: ${stderr}`);
+        }
       });
 
+      this.logger.info(`Executing: git -C ${repoPath} rev-parse --abbrev-ref HEAD`);
       const currentBranch = await execAsync(`git -C ${repoPath} rev-parse --abbrev-ref HEAD`).then(({ stdout }) => {
         return stdout.trim();
       });
 
-      // reset hard
-      await execAsync(`git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`).then(({ stdout, stderr }) => {
-        this.logger.info(`------------------ git -C ${repoPath} reset --hard ------------------`);
-        this.logger.error(`stderr: ${stderr}`);
-        this.logger.info(`stdout: ${stdout}`);
+      this.logger.info(`Executing: git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
+      await execAsync(`git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`).then(({ stderr }) => {
+        if (stderr) {
+          this.logger.error(`stderr: ${stderr}`);
+        }
       });
 
-      const { stderr, stdout } = await execAsync(`git -C ${repoPath} pull`);
-
-      if (stderr) {
-        this.logger.error(`Error pulling repo ${repoUrl}: ${stderr}`);
-        return { success: false, message: stderr };
-      }
-
       this.logger.info(`Pulled repo ${repoUrl} to ${repoPath}`);
-      return { success: true, message: stdout };
+      return { success: true, message: '' };
     } catch (err) {
       return this.handleRepoError(err);
     }

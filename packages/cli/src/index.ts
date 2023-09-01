@@ -61,6 +61,14 @@ const main = async () => {
       console.log(chalk.green('✓'), 'Password reset request created. Head back to the dashboard to set a new password.');
     });
 
+  program
+    .command('clean-logs')
+    .description('Clean logs')
+    .action(async () => {
+      const systemExecutors = new SystemExecutors();
+      await systemExecutors.cleanLogs();
+    });
+
   program.parse(process.argv);
 };
 
