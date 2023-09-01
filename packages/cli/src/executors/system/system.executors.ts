@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { Queue } from 'bullmq';
 import fs from 'fs';
@@ -80,30 +81,27 @@ export class SystemExecutors {
 
     this.logger.info('Setting file permissions a+rwx on required files');
     // Give permission to read and write to all files and folders for the current user
-    await Promise.all(
-      filesAndFolders.map(async (fileOrFolder) => {
-        if (await pathExists(fileOrFolder)) {
-          this.logger.info(`Setting permissions on ${fileOrFolder}`);
-          await execAsync(`chmod -R a+rwx ${fileOrFolder}`).catch(() => {
-            logger.fail(`Failed to set permissions on ${fileOrFolder}`);
-          });
-          this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
-        }
-      }),
-    );
+    for (const fileOrFolder of filesAndFolders) {
+      if (await pathExists(fileOrFolder)) {
+        this.logger.info(`Setting permissions on ${fileOrFolder}`);
+        await execAsync(`chmod -R a+rwx ${fileOrFolder}`).catch(() => {
+          logger.fail(`Failed to set permissions on ${fileOrFolder}`);
+        });
+        this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
+      }
+    }
 
     this.logger.info('Setting file permissions 600 on required files');
 
-    await Promise.all(
-      files600.map(async (fileOrFolder) => {
-        if (await pathExists(fileOrFolder)) {
-          this.logger.info(`Setting permissions on ${fileOrFolder}`);
-          await execAsync(`chmod 600 ${fileOrFolder}`).catch(() => {
-            logger.fail(`Failed to set permissions on ${fileOrFolder}`);
-          });
-        }
-      }),
-    );
+    for (const fileOrFolder of files600) {
+      if (await pathExists(fileOrFolder)) {
+        this.logger.info(`Setting permissions on ${fileOrFolder}`);
+        await execAsync(`chmod 600 ${fileOrFolder}`).catch(() => {
+          logger.fail(`Failed to set permissions on ${fileOrFolder}`);
+        });
+        this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
+      }
+    }
   };
 
   public cleanLogs = async () => {
@@ -231,23 +229,10 @@ export class SystemExecutors {
       this.logger.info('Reloading env variables...');
       dotenv.config({ path: this.envFile, override: true });
 
-      // Stop and Remove container tipi if exists
-      spinner.setMessage('Stopping and removing containers...');
-      spinner.start();
-      this.logger.info('Stopping and removing tipi-db...');
-      await execAsync('docker rm -f tipi-db');
-      this.logger.info('Stopping and removing tipi-redis...');
-      await execAsync('docker rm -f tipi-redis');
-      this.logger.info('Stopping and removing tipi-dashboard...');
-      await execAsync('docker rm -f tipi-dashboard');
-      this.logger.info('Stopping and removing tipi-reverse-proxy...');
-      await execAsync('docker rm -f tipi-reverse-proxy');
-      spinner.done('Containers stopped and removed');
-
       // Pull images
       spinner.setMessage('Pulling images...');
       spinner.start();
-      this.logger.info('Pulling images new images...');
+      this.logger.info('Pulling new images...');
       await execAsync(`docker compose --env-file "${this.envFile}" pull`);
 
       spinner.done('Images pulled');
@@ -268,12 +253,8 @@ export class SystemExecutors {
       await generateTlsCertificates({ domain: envMap.get('LOCAL_DOMAIN') });
 
       if (killWatchers) {
-        this.logger.info('Opening log files for watcher...');
-        const out = fs.openSync('./logs/watcher.log', 'a');
-        const err = fs.openSync('./logs/watcher.log', 'a');
-
         this.logger.info('Starting watcher...');
-        const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
+        const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', 'ignore', 'ignore'] });
         subprocess.unref();
       }
 
