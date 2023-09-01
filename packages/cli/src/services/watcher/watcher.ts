@@ -11,7 +11,7 @@ const execAsync = promisify(exec);
 
 const runCommand = async (jobData: unknown) => {
   const { gid, uid } = getUserIds();
-  console.log(`Running command with uid ${uid} and gid ${gid}`);
+  fileLogger.info(`Running command with uid ${uid} and gid ${gid}`);
 
   const { installApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
   const { cloneRepo, pullRepo } = new RepoExecutors();
@@ -103,7 +103,7 @@ export const startWorker = async () => {
   const worker = new Worker(
     'events',
     async (job) => {
-      console.log(`Processing job ${job.id} with data ${JSON.stringify(job.data)}`);
+      fileLogger.info(`Processing job ${job.id} with data ${JSON.stringify(job.data)}`);
       const { message, success } = await runCommand(job.data);
 
       return { success, stdout: message };
@@ -112,18 +112,18 @@ export const startWorker = async () => {
   );
 
   worker.on('ready', () => {
-    console.log('Worker is ready');
+    fileLogger.info('Worker is ready');
   });
 
   worker.on('completed', (job) => {
-    console.log(`Job ${job.id} completed with result: ${JSON.stringify(job.returnvalue)}`);
+    fileLogger.info(`Job ${job.id} completed with result: ${JSON.stringify(job.returnvalue)}`);
   });
 
   worker.on('failed', (job) => {
-    console.error(`Job ${job?.id} failed with reason ${job?.failedReason}`);
+    fileLogger.error(`Job ${job?.id} failed with reason ${job?.failedReason}`);
   });
 
   worker.on('error', async (e) => {
-    console.error('An error occurred:', e);
+    fileLogger.error(`Worker error: ${e}`);
   });
 };
