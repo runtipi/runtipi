@@ -43,6 +43,14 @@ export const envSchema = z.object({
       if (typeof value === 'boolean') return value;
       return value === 'true';
     }),
+  seePreReleaseVersions: z
+    .string()
+    .or(z.boolean())
+    .optional()
+    .transform((value) => {
+      if (typeof value === 'boolean') return value;
+      return value === 'true';
+    }),
 });
 
 export const settingsSchema = envSchema

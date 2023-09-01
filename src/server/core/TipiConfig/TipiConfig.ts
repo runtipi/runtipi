@@ -42,6 +42,7 @@ export class TipiConfig {
       status: 'RUNNING',
       storagePath: conf.STORAGE_PATH,
       demoMode: conf.DEMO_MODE,
+      seePreReleaseVersions: false,
     };
 
     const fileConfig = readJsonFile('/runtipi/state/settings.json') || {};

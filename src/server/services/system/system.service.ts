@@ -44,6 +44,14 @@ export class SystemServiceClass {
    */
   public getVersion = async () => {
     try {
+      const { seePreReleaseVersions } = TipiConfig.getConfig();
+
+      if (seePreReleaseVersions) {
+        const { data } = await axios.get<{ tag_name: string; body: string }[]>('https://api.github.com/repos/meienberger/runtipi/releases');
+
+        return { current: TipiConfig.getConfig().version, latest: data[0]?.tag_name, body: data[0]?.body };
+      }
+
       let version = await this.cache.get('latestVersion');
       let body = await this.cache.get('latestVersionBody');
 
