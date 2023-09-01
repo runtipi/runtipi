@@ -34,7 +34,7 @@
       "could-not-get-latest-version": "Αδυναμία λήψης της τελευταίας έκδοσης",
       "current-version-is-latest": "Η τρέχουσα έκδοση είναι ενημερωμένη",
       "major-version-update": "Η κύρια έκδοση έχει αλλάξει. Παρακαλούμε ενημερώστε χειροκίνητα (οδηγίες στο GitHub)",
-      "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
+      "demo-mode-limit": "Μόνο 6 εφαρμογές μπορούν να εγκατασταθούν στη λειτουργία επίδειξης. Παρακαλώ απεγκαταστήστε μια άλλη εφαρμογή για να εγκαταστήσετε μια νέα."
     },
     "success": {}
   },
