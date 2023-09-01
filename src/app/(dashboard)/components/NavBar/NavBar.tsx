@@ -1,8 +1,9 @@
+// "use client"
 import { IconApps, IconBrandAppstore, IconHome, IconSettings, Icon } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import React from 'react';
 
 interface IProps {
@@ -11,8 +12,7 @@ interface IProps {
 
 export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
   const t = useTranslations('header');
-  const router = useRouter();
-  const path = router.pathname.split('/')[1];
+  const path = usePathname()?.split('/')[1];
 
   const renderItem = (title: string, name: string, IconComponent: Icon) => {
     const isActive = path === name;

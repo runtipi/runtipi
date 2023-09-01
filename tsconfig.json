@@ -20,7 +20,7 @@
       ],
       "@/tests/*": [
         "./tests/*"
-      ],
+      ]
     },
     "lib": [
       "dom",
@@ -46,7 +46,12 @@
       "jest",
       "@testing-library/jest-dom"
     ],
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -55,10 +60,11 @@
     "**/*.mjs",
     "**/*.js",
     "**/*.jsx",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "packages",
-    "repos",
+    "repos"
   ]
 }

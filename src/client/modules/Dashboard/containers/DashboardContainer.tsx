@@ -1,3 +1,5 @@
+'use client';
+
 import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons-react';
 import React from 'react';
 import { useTranslations } from 'next-intl';

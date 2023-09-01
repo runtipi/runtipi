@@ -4,6 +4,9 @@ const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   transpilePackages: ['@runtipi/shared'],
+  experimental: {
+    serverComponentsExternalPackages: ['bullmq'],
+  },
   serverRuntimeConfig: {
     INTERNAL_IP: process.env.INTERNAL_IP,
     TIPI_VERSION: process.env.TIPI_VERSION,
