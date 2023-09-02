@@ -1,4 +1,3 @@
-import semver from 'semver';
 import { z } from 'zod';
 import axios from 'redaxios';
 import { TranslatedError } from '@/server/utils/errors';
@@ -82,36 +81,6 @@ export class SystemServiceClass {
     }
 
     return info.data;
-  };
-
-  public update = async (): Promise<boolean> => {
-    const { current, latest } = await this.getVersion();
-
-    if (TipiConfig.getConfig().NODE_ENV === 'development') {
-      throw new TranslatedError('server-messages.errors.not-allowed-in-dev');
-    }
-
-    if (!latest) {
-      throw new TranslatedError('server-messages.errors.could-not-get-latest-version');
-    }
-
-    if (semver.gt(current, latest)) {
-      throw new TranslatedError('server-messages.errors.current-version-is-latest');
-    }
-
-    if (semver.eq(current, latest)) {
-      throw new TranslatedError('server-messages.errors.current-version-is-latest');
-    }
-
-    if (semver.major(current) !== semver.major(latest)) {
-      throw new TranslatedError('server-messages.errors.major-version-update');
-    }
-
-    TipiConfig.setConfig('status', 'UPDATING');
-
-    this.dispatcher.dispatchEvent({ type: 'system', command: 'update', version: latest });
-
-    return true;
   };
 
   public restart = async (): Promise<boolean> => {

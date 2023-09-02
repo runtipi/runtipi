@@ -23,9 +23,6 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
     if (status === 'RESTARTING') {
       s.current = 'RESTARTING';
     }
-    if (status === 'UPDATING') {
-      s.current = 'UPDATING';
-    }
   }, [status, s, setPollStatus]);
 
   if (s.current === 'LOADING') {
@@ -34,10 +31,6 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
 
   if (s.current === 'RESTARTING') {
     return <StatusScreen title="Your system is restarting..." subtitle="Please do not refresh this page" />;
-  }
-
-  if (s.current === 'UPDATING') {
-    return <StatusScreen title="Your system is updating..." subtitle="Please do not refresh this page" />;
   }
 
   return children;
