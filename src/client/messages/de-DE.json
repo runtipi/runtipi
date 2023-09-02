@@ -33,7 +33,7 @@
       "domain-already-in-use": "Die Domain {domain} ist bereits in Verwendung von der App {id}",
       "could-not-get-latest-version": "Konnte aktuellste Version nicht abfragen",
       "current-version-is-latest": "Die aktuelle Version ist bereits auf dem neuesten Stand",
-      "major-version-update": "Die Hauptversion hat sich geändert. Bitte aktualisieren Sie manuell. (Anleitung auf GitHub)",
+      "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
       "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
@@ -229,7 +229,6 @@
       "maintenance-title": "Wartung",
       "maintenance-subtitle": "Beliebte Aktionen, die Sie auf Ihrer Instanz durchführen können",
       "restart": "Neustart",
-      "update": "Aktualisieren zu {version}",
       "already-latest": "Bereits auf dem neuesten Stand"
     },
     "settings": {
