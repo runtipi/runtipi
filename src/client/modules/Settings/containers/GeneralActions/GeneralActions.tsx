@@ -8,7 +8,6 @@ import { MessageKey } from '@/server/utils/errors';
 import { Button } from '../../../../components/ui/Button';
 import { useDisclosure } from '../../../../hooks/useDisclosure';
 import { RestartModal } from '../../components/RestartModal';
-import { UpdateModal } from '../../components/UpdateModal/UpdateModal';
 import { trpc } from '../../../../utils/trpc';
 import { useSystemStore } from '../../../../state/systemStore';
 
@@ -19,24 +18,9 @@ export const GeneralActions = () => {
   const [loading, setLoading] = React.useState(false);
   const { setPollStatus } = useSystemStore();
   const restartDisclosure = useDisclosure();
-  const updateDisclosure = useDisclosure();
 
   const defaultVersion = '0.0.0';
   const isLatest = semver.gte(versionQuery.data?.current || defaultVersion, versionQuery.data?.latest || defaultVersion);
-
-  const update = trpc.system.update.useMutation({
-    onMutate: () => {
-      setLoading(true);
-    },
-    onSuccess: async () => {
-      setPollStatus(true);
-    },
-    onError: (e) => {
-      updateDisclosure.close();
-      setLoading(false);
-      toast.error(t(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables }));
-    },
-  });
 
   const restart = trpc.system.restart.useMutation({
     onMutate: () => {
@@ -71,9 +55,6 @@ export const GeneralActions = () => {
             </div>
           </div>
         )}
-        <Button onClick={updateDisclosure.open} className="mt-3 mr-2 btn-success">
-          {t('settings.actions.update', { version: versionQuery.data?.latest })}
-        </Button>
       </div>
     );
   };
@@ -92,7 +73,6 @@ export const GeneralActions = () => {
         </div>
       </div>
       <RestartModal isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} onConfirm={() => restart.mutate()} loading={loading} />
-      <UpdateModal isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} onConfirm={() => update.mutate()} loading={loading} />
     </>
   );
 };

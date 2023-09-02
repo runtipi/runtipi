@@ -52,29 +52,10 @@ describe('Test: StatusProvider', () => {
     unmount();
   });
 
-  it('should render StatusScreen when system is UPDATING', async () => {
-    const { result, unmount } = renderHook(() => useSystemStore());
-    act(() => {
-      result.current.setStatus('UPDATING');
-    });
-
-    render(
-      <StatusProvider>
-        <div>system running</div>
-      </StatusProvider>,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Your system is updating...')).toBeInTheDocument();
-    });
-
-    unmount();
-  });
-
   it('should reload the page when system is RUNNING after being something else than RUNNING', async () => {
     const { result, unmount } = renderHook(() => useSystemStore());
     act(() => {
-      result.current.setStatus('UPDATING');
+      result.current.setStatus('RESTARTING');
     });
 
     render(
@@ -84,7 +65,7 @@ describe('Test: StatusProvider', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Your system is updating...')).toBeInTheDocument();
+      expect(screen.getByText('Your system is restarting...')).toBeInTheDocument();
     });
 
     act(() => {
