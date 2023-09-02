@@ -33,7 +33,7 @@
       "domain-already-in-use": "Домен {domain} уже используется приложением {id}",
       "could-not-get-latest-version": "Не удалось получить последнюю версию",
       "current-version-is-latest": "Текущая версия уже актуальна",
-      "major-version-update": "Мажорная версия изменилась. Пожалуйста, обновите вручную (инструкции на GitHub)",
+      "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
       "demo-mode-limit": "Только 6 приложений могут быть установлены в демо режиме. Пожалуйста, удалите другое приложение, чтобы установить новое."
     },
     "success": {}
@@ -229,7 +229,6 @@
       "maintenance-title": "Обслуживание",
       "maintenance-subtitle": "Общие действия для выполнения на вашем экземпляре",
       "restart": "Перезапустить",
-      "update": "Обновить до {version}",
       "already-latest": "Уже обновлено"
     },
     "settings": {
