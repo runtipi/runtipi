@@ -33,7 +33,7 @@
       "domain-already-in-use": "ドメイン {domain} はすでにアプリ {id} によって使用されています",
       "could-not-get-latest-version": "最新バージョンを取得できませんでした",
       "current-version-is-latest": "現在のバージョンは既に最新です",
-      "major-version-update": "メジャーバージョンが変更されました。GitHubの手順に従って、手動で更新してください。",
+      "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
       "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
@@ -229,7 +229,6 @@
       "maintenance-title": "メンテナンス",
       "maintenance-subtitle": "あなたのインスタンスで実行する一般的なアクション",
       "restart": "再起動",
-      "update": "{version} に更新",
       "already-latest": "既に最新です"
     },
     "settings": {
