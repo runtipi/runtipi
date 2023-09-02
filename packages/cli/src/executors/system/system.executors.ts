@@ -23,6 +23,7 @@ import { getEnv } from '@/utils/environment/environment';
 import { fileLogger } from '@/utils/logger/file-logger';
 import { runPostgresMigrations } from '@/utils/migrations/run-migration';
 import { getUserIds } from '@/utils/environment/user';
+import { runComposeCommand } from '@/utils/docker-helpers';
 
 const execAsync = promisify(exec);
 
@@ -233,10 +234,7 @@ export class SystemExecutors {
       spinner.setMessage('Pulling images...');
       spinner.start();
       this.logger.info('Pulling new images...');
-      // await execAsync(`docker compose --env-file "${this.envFile}" pull`).catch((e) => {
-      //   this.logger.error(`Failed to pull images: ${e}`);
-      //   throw e;
-      // });
+      await runComposeCommand(['--env-file', `${this.envFile}`, 'pull']);
 
       spinner.done('Images pulled');
 
@@ -244,8 +242,8 @@ export class SystemExecutors {
       spinner.setMessage('Starting containers...');
       spinner.start();
       this.logger.info('Starting containers...');
-      await execAsync(`docker compose --env-file "${this.envFile}" up --detach --remove-orphans --build`);
 
+      await runComposeCommand(['--env-file', `${this.envFile}`, 'up', '--detach', '--remove-orphans', '--build']);
       spinner.done('Containers started');
 
       // start watcher cli in the background

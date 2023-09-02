@@ -121,6 +121,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          body: |
+            **${{ needs.create-tag.outputs.tagname }}**
           tag_name: ${{ needs.create-tag.outputs.tagname }}
           release_name: ${{ needs.create-tag.outputs.tagname }}
           draft: false
