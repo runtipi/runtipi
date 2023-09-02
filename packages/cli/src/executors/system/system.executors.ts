@@ -407,16 +407,13 @@ export class SystemExecutors {
             bar.stop();
             this.logger.error(`Failed to download Tipi: ${err}`);
             spinner.fail(`\nFailed to download Tipi ${targetVersion}`);
-            writer.close();
             reject(err);
           });
 
           writer.on('finish', () => {
             this.logger.info('Download complete');
             bar.stop();
-            writer.close(() => {
-              resolve('');
-            });
+            resolve('');
           });
         });
       }).catch((e) => {
