@@ -33,7 +33,7 @@
       "domain-already-in-use": "Domän {domain} används redan av appen {id}",
       "could-not-get-latest-version": "Kunde inte hämta senaste versionen",
       "current-version-is-latest": "Den nuvarande versionen är redan uppdaterad",
-      "major-version-update": "Huvudversionen har ändrats. Vänligen uppdatera manuellt (instruktioner på GitHub)",
+      "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
       "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
@@ -229,7 +229,6 @@
       "maintenance-title": "Underhåll",
       "maintenance-subtitle": "Vanliga åtgärder att utföra på din instans",
       "restart": "Starta om",
-      "update": "Uppdatera till {version}",
       "already-latest": "Redan uppdaterad"
     },
     "settings": {
