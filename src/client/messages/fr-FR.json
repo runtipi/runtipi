@@ -33,7 +33,7 @@
       "domain-already-in-use": "Le domaine {domain} est déjà utilisé par l'application {id}",
       "could-not-get-latest-version": "Impossible d'obtenir la dernière version",
       "current-version-is-latest": "La version actuelle est déjà à jour",
-      "major-version-update": "La version majeure a changé. Veuillez mettre à jour manuellement (instructions sur GitHub)",
+      "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
       "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
@@ -229,7 +229,6 @@
       "maintenance-title": "Maintenance",
       "maintenance-subtitle": "Actions courantes à effectuer sur votre instance",
       "restart": "Redémarrer",
-      "update": "Mettre à jour vers {version}",
       "already-latest": "Déjà à jour"
     },
     "settings": {
