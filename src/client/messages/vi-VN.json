@@ -33,7 +33,7 @@
       "domain-already-in-use": "Tên miền {domain} đã được sử dụng bởi ứng dụng {id}",
       "could-not-get-latest-version": "Không thể kiểm tra phiên bản mới nhất",
       "current-version-is-latest": "Phiên bản hiện tại đã được cập nhật",
-      "major-version-update": "Ứng dụng được cập nhật phiên bản lớn. Vui lòng cập nhật thủ công (hướng dẫn được tim thấy ở GitHub)",
+      "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
       "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
@@ -229,7 +229,6 @@
       "maintenance-title": "Bảo trì",
       "maintenance-subtitle": "Những thao tác thường sử dụng trên máy chủ của bạn",
       "restart": "Khởi động lại",
-      "update": "Cập nhật lên phiên bản {version}",
       "already-latest": "Đã cập nhật"
     },
     "settings": {
