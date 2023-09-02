@@ -10,8 +10,9 @@ const execAsync = promisify(exec);
 const composeUp = async (args: string[]) => {
   const { stdout, stderr } = await execAsync(`docker compose ${args.join(' ')}`);
 
-  fileLogger.info('stdout', stdout);
-  fileLogger.info('stderr', stderr);
+  if (stderr) {
+    fileLogger.error(stderr);
+  }
 
   return { stdout, stderr };
 };

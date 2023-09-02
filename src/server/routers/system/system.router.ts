@@ -12,7 +12,6 @@ export const systemRouter = router({
   systemInfo: protectedProcedure.query(SystemServiceClass.systemInfo),
   getVersion: publicProcedure.query(SystemService.getVersion),
   restart: protectedProcedure.mutation(SystemService.restart),
-  update: protectedProcedure.mutation(SystemService.update),
   updateSettings: protectedProcedure.input(settingsSchema).mutation(({ input }) => TipiConfig.setSettings(input)),
   getSettings: protectedProcedure.query(TipiConfig.getSettings),
 });

@@ -10,12 +10,6 @@ export const handlers = [
     response: { current: '1.0.0', latest: '1.0.0', body: 'hello' },
   }),
   getTRPCMock({
-    path: ['system', 'update'],
-    type: 'mutation',
-    response: true,
-    delay: 100,
-  }),
-  getTRPCMock({
     path: ['system', 'restart'],
     type: 'mutation',
     response: true,

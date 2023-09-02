@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { Queue } from 'bullmq';
 import fs from 'fs';
@@ -12,8 +13,8 @@ import { Stream } from 'stream';
 import { promisify } from 'util';
 import dotenv from 'dotenv';
 import { SystemEvent } from '@runtipi/shared';
-import { killOtherWorkers } from 'src/services/watcher/watcher';
 import chalk from 'chalk';
+import { killOtherWorkers } from 'src/services/watcher/watcher';
 import { AppExecutors } from '../app/app.executors';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
@@ -30,18 +31,21 @@ export class SystemExecutors {
 
   private readonly envFile: string;
 
+  private readonly logger;
+
   constructor() {
     this.rootFolder = process.cwd();
+    this.logger = fileLogger;
 
     this.envFile = path.join(this.rootFolder, '.env');
   }
 
   private handleSystemError = (err: unknown) => {
     if (err instanceof Error) {
-      fileLogger.error(`An error occurred: ${err.message}`);
+      this.logger.error(`An error occurred: ${err.message}`);
       return { success: false, message: err.message };
     }
-    fileLogger.error(`An error occurred: ${err}`);
+    this.logger.error(`An error occurred: ${err}`);
 
     return { success: false, message: `An error occurred: ${err}` };
   };
@@ -63,39 +67,56 @@ export class SystemExecutors {
 
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
-      path.join(rootFolderHost, 'app-data'),
       path.join(rootFolderHost, 'logs'),
       path.join(rootFolderHost, 'media'),
       path.join(rootFolderHost, 'repos'),
       path.join(rootFolderHost, 'state'),
       path.join(rootFolderHost, 'traefik'),
       path.join(rootFolderHost, '.env'),
-      path.join(rootFolderHost, 'docker-compose.yml'),
       path.join(rootFolderHost, 'VERSION'),
+      path.join(rootFolderHost, 'docker-compose.yml'),
     ];
 
     const files600 = [path.join(rootFolderHost, 'traefik', 'shared', 'acme.json')];
 
+    this.logger.info('Setting file permissions a+rwx on required files');
     // Give permission to read and write to all files and folders for the current user
-    await Promise.all(
-      filesAndFolders.map(async (fileOrFolder) => {
-        if (await pathExists(fileOrFolder)) {
-          await execAsync(`sudo chmod -R a+rwx ${fileOrFolder}`).catch(() => {
-            logger.fail(`Failed to set permissions on ${fileOrFolder}`);
-          });
-        }
-      }),
-    );
+    for (const fileOrFolder of filesAndFolders) {
+      if (await pathExists(fileOrFolder)) {
+        this.logger.info(`Setting permissions on ${fileOrFolder}`);
+        await execAsync(`chmod -R a+rwx ${fileOrFolder}`).catch(() => {
+          logger.fail(`Failed to set permissions on ${fileOrFolder}`);
+        });
+        this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
+      }
+    }
 
-    await Promise.all(
-      files600.map(async (fileOrFolder) => {
-        if (await pathExists(fileOrFolder)) {
-          await execAsync(`sudo chmod 600 ${fileOrFolder}`).catch(() => {
-            logger.fail(`Failed to set permissions on ${fileOrFolder}`);
-          });
-        }
-      }),
-    );
+    this.logger.info('Setting file permissions 600 on required files');
+
+    for (const fileOrFolder of files600) {
+      if (await pathExists(fileOrFolder)) {
+        this.logger.info(`Setting permissions on ${fileOrFolder}`);
+        await execAsync(`chmod 600 ${fileOrFolder}`).catch(() => {
+          logger.fail(`Failed to set permissions on ${fileOrFolder}`);
+        });
+        this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
+      }
+    }
+  };
+
+  public cleanLogs = async () => {
+    try {
+      const { rootFolderHost } = getEnv();
+
+      await fs.promises.rm(path.join(rootFolderHost, 'logs'), { recursive: true, force: true });
+      await fs.promises.mkdir(path.join(rootFolderHost, 'logs'));
+
+      this.logger.info('Logs cleaned successfully');
+
+      return { success: true, message: '' };
+    } catch (e) {
+      return this.handleSystemError(e);
+    }
   };
 
   public systemInfo = async () => {
@@ -135,6 +156,8 @@ export class SystemExecutors {
 
       spinner.setMessage('Stopping containers...');
       spinner.start();
+
+      this.logger.info('Stopping main containers...');
       await execAsync('docker compose down --remove-orphans --rmi local');
 
       spinner.done('Tipi successfully stopped');
@@ -150,7 +173,7 @@ export class SystemExecutors {
    * This method will start Tipi.
    * It will copy the system files, generate the system env file, pull the images and start the containers.
    */
-  public start = async (sudo = true) => {
+  public start = async (sudo = true, killWatchers = true) => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
       const { isSudo } = getUserIds();
@@ -173,17 +196,21 @@ export class SystemExecutors {
         );
       }
 
+      this.logger.info('Killing other workers...');
+
+      if (killWatchers) {
+        await killOtherWorkers();
+      }
+
       if (!isSudo && sudo) {
         console.log(chalk.red('Tipi needs to run as root to start. Use sudo ./runtipi-cli start'));
         throw new Error('Tipi needs to run as root to start. Use sudo ./runtipi-cli start');
       }
 
-      if (sudo) {
-        await this.ensureFilePermissions(this.rootFolder);
-      }
-
       spinner.start();
       spinner.setMessage('Copying system files...');
+
+      this.logger.info('Copying system files...');
       await copySystemFiles();
 
       spinner.done('System files copied');
@@ -194,67 +221,67 @@ export class SystemExecutors {
 
       spinner.setMessage('Generating system env file...');
       spinner.start();
+      this.logger.info('Generating system env file...');
       const envMap = await generateSystemEnvFile();
       spinner.done('System env file generated');
 
       // Reload env variables after generating the env file
+      this.logger.info('Reloading env variables...');
       dotenv.config({ path: this.envFile, override: true });
-
-      // Stop and Remove container tipi if exists
-      spinner.setMessage('Stopping and removing containers...');
-      spinner.start();
-      await execAsync('docker rm -f tipi-db');
-      await execAsync('docker rm -f tipi-redis');
-      await execAsync('docker rm -f tipi-dashboard');
-      await execAsync('docker rm -f tipi-reverse-proxy');
-      spinner.done('Containers stopped and removed');
 
       // Pull images
       spinner.setMessage('Pulling images...');
       spinner.start();
-      await execAsync(`docker compose --env-file "${this.envFile}" pull`);
+      this.logger.info('Pulling new images...');
+      await execAsync(`docker compose --env-file ${this.envFile} pull`);
 
       spinner.done('Images pulled');
 
       // Start containers
       spinner.setMessage('Starting containers...');
       spinner.start();
-      await execAsync(`docker compose --env-file "${this.envFile}" up --detach --remove-orphans --build`);
+      this.logger.info('Starting containers...');
 
+      await execAsync(`docker compose --env-file ${this.envFile} up --detach --remove-orphans --build`);
       spinner.done('Containers started');
 
       // start watcher cli in the background
       spinner.setMessage('Starting watcher...');
       spinner.start();
 
+      this.logger.info('Generating TLS certificates...');
       await generateTlsCertificates({ domain: envMap.get('LOCAL_DOMAIN') });
 
-      const out = fs.openSync('./logs/watcher.log', 'a');
-      const err = fs.openSync('./logs/watcher.log', 'a');
-
-      await killOtherWorkers();
-
-      const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', out, err] });
-      subprocess.unref();
+      if (killWatchers) {
+        this.logger.info('Starting watcher...');
+        const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', 'ignore', 'ignore'] });
+        subprocess.unref();
+      }
 
       spinner.done('Watcher started');
 
+      this.logger.info('Starting queue...');
       const queue = new Queue('events', { connection: { host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD') } });
+      this.logger.info('Obliterating queue...');
       await queue.obliterate({ force: true });
 
       // Initial jobs
+      this.logger.info('Adding initial jobs to queue...');
       await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent);
       await queue.add(`${Math.random().toString()}_repo_clone`, { type: 'repo', command: 'clone', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
 
       // Scheduled jobs
+      this.logger.info('Adding scheduled jobs to queue...');
       await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
       await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { pattern: '* * * * *' } });
 
+      this.logger.info('Closing queue...');
       await queue.close();
 
       spinner.setMessage('Running database migrations...');
       spinner.start();
 
+      this.logger.info('Running database migrations...');
       await runPostgresMigrations({
         postgresHost: '127.0.0.1',
         postgresDatabase: envMap.get('POSTGRES_DBNAME') as string,
@@ -267,6 +294,7 @@ export class SystemExecutors {
 
       // Start all apps
       const appExecutor = new AppExecutors();
+      this.logger.info('Starting all apps...');
       await appExecutor.startAllApps();
 
       console.log(
@@ -295,7 +323,7 @@ export class SystemExecutors {
   public restart = async () => {
     try {
       await this.stop();
-      await this.start();
+      await this.start(true, false);
       return { success: true, message: '' };
     } catch (e) {
       return this.handleSystemError(e);
@@ -325,14 +353,17 @@ export class SystemExecutors {
     try {
       spinner.start();
       let targetVersion = target;
+      this.logger.info(`Updating Tipi to version ${targetVersion}`);
 
       if (!targetVersion || targetVersion === 'latest') {
         spinner.setMessage('Fetching latest version...');
         const { data } = await axios.get<{ tag_name: string }>('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+        this.logger.info(`Getting latest version from GitHub: ${data.tag_name}`);
         targetVersion = data.tag_name;
       }
 
       if (!semver.valid(targetVersion)) {
+        this.logger.error(`Invalid version: ${targetVersion}`);
         spinner.fail(`Invalid version: ${targetVersion}`);
         throw new Error(`Invalid version: ${targetVersion}`);
       }
@@ -347,13 +378,14 @@ export class SystemExecutors {
       const fileName = `runtipi-cli-${targetVersion}`;
       const savePath = path.join(rootFolderHost, fileName);
       const fileUrl = `https://github.com/meienberger/runtipi/releases/download/${targetVersion}/${assetName}`;
+      this.logger.info(`Downloading Tipi ${targetVersion} from ${fileUrl}`);
 
       spinner.done(`Target version: ${targetVersion}`);
       spinner.done(`Download url: ${fileUrl}`);
 
       await this.stop();
 
-      console.log(`Downloading Tipi ${targetVersion}...`);
+      this.logger.info(`Downloading Tipi ${targetVersion}...`);
 
       const bar = new cliProgress.SingleBar({}, cliProgress.Presets.rect);
       bar.start(100, 0);
@@ -364,6 +396,7 @@ export class SystemExecutors {
           url: fileUrl,
           responseType: 'stream',
           onDownloadProgress: (progress) => {
+            this.logger.info(`Download progress: ${Math.round((progress.loaded / (progress.total || 0)) * 100)}%`);
             bar.update(Math.round((progress.loaded / (progress.total || 0)) * 100));
           },
         }).then((response) => {
@@ -372,21 +405,25 @@ export class SystemExecutors {
 
           writer.on('error', (err) => {
             bar.stop();
+            this.logger.error(`Failed to download Tipi: ${err}`);
             spinner.fail(`\nFailed to download Tipi ${targetVersion}`);
             reject(err);
           });
 
           writer.on('finish', () => {
+            this.logger.info('Download complete');
             bar.stop();
             resolve('');
           });
         });
       }).catch((e) => {
+        this.logger.error(`Failed to download Tipi: ${e}`);
         spinner.fail(`\nFailed to download Tipi ${targetVersion}. Please make sure this version exists on GitHub.`);
         throw e;
       });
 
       spinner.done(`Tipi ${targetVersion} downloaded`);
+      this.logger.info(`Changing permissions on ${savePath}`);
       await fs.promises.chmod(savePath, 0o755);
 
       spinner.setMessage('Replacing old cli...');
@@ -394,15 +431,18 @@ export class SystemExecutors {
 
       // Delete old cli
       if (await pathExists(path.join(rootFolderHost, 'runtipi-cli'))) {
+        this.logger.info('Deleting old cli...');
         await fs.promises.unlink(path.join(rootFolderHost, 'runtipi-cli'));
       }
 
       // Delete VERSION file
       if (await pathExists(path.join(rootFolderHost, 'VERSION'))) {
+        this.logger.info('Deleting VERSION file...');
         await fs.promises.unlink(path.join(rootFolderHost, 'VERSION'));
       }
 
       // Rename downloaded cli to runtipi-cli
+      this.logger.info('Renaming new cli to runtipi-cli...');
       await fs.promises.rename(savePath, path.join(rootFolderHost, 'runtipi-cli'));
       spinner.done('Old cli replaced');
 
@@ -410,6 +450,7 @@ export class SystemExecutors {
       // eslint-disable-next-line no-promise-executor-return
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
+      this.logger.info('Starting new cli...');
       const childProcess = spawn('./runtipi-cli', [process.argv[1] as string, 'start']);
 
       childProcess.stdout.on('data', (data) => {
@@ -420,7 +461,7 @@ export class SystemExecutors {
         process.stderr.write(data);
       });
 
-      spinner.done(`Tipi ${targetVersion} successfully updated. Please run './runtipi-cli start' to start Tipi again.`);
+      spinner.done(`Tipi ${targetVersion} successfully updated. Tipi is now starting, wait for this process to finish...`);
 
       return { success: true, message: 'Tipi updated' };
     } catch (e) {

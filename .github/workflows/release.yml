@@ -54,6 +54,7 @@ jobs:
 
   build-cli:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: get-tag
     steps:
       - name: Checkout code
