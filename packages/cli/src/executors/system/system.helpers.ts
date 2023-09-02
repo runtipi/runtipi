@@ -217,6 +217,12 @@ export const setEnvVariable = async (key: EnvKeys, value: string) => {
  * Copies the system files from the assets folder to the current working directory
  */
 export const copySystemFiles = async () => {
+  // Remove old unused files
+  if (await pathExists(path.join(process.cwd(), 'scripts'))) {
+    fileLogger.info('Removing old scripts folder');
+    await fs.promises.rmdir(path.join(process.cwd(), 'scripts'), { recursive: true });
+  }
+
   const assetsFolder = path.join('/snapshot', 'runtipi', 'packages', 'cli', 'assets');
 
   // Copy docker-compose.yml file
