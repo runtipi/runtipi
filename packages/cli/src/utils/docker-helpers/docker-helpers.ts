@@ -1,28 +1,11 @@
 import path from 'path';
 import { promisify } from 'util';
-import { exec, spawn } from 'child_process';
+import { exec } from 'child_process';
 import { getEnv } from '../environment/environment';
 import { pathExists } from '../fs-helpers/fs-helpers';
 import { fileLogger } from '../logger/file-logger';
 
 const execAsync = promisify(exec);
-
-export const runComposeCommand = async (args: string[]) => {
-  return new Promise((resolve, reject) => {
-    const dockerCompose = spawn('docker', ['compose', ...args]);
-
-    dockerCompose.on('close', (code) => {
-      if (code !== 0) {
-        reject(new Error(`docker-compose exited with code ${code}`));
-      }
-      resolve('');
-    });
-
-    dockerCompose.on('error', (error) => {
-      reject(error);
-    });
-  });
-};
 
 const composeUp = async (args: string[]) => {
   const { stdout, stderr } = await execAsync(`docker compose ${args.join(' ')}`);
