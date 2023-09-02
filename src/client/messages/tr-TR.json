@@ -33,7 +33,7 @@
       "domain-already-in-use": "{domain} alan adı zaten {id} uygulaması tarafından kullanılıyor",
       "could-not-get-latest-version": "En son sürüm alınamadı",
       "current-version-is-latest": "Son versiyon zaten yüklü",
-      "major-version-update": "Ana sürüm değişti. Lütfen manuel olarak güncelleyin (GitHub'daki talimatlar)",
+      "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
       "demo-mode-limit": "Demo modunda yalnızca 6 uygulama yüklenebilir. Yeni bir uygulama yüklemek için lütfen başka bir uygulamayı kaldırın."
     },
     "success": {}
@@ -229,7 +229,6 @@
       "maintenance-title": "Bakım",
       "maintenance-subtitle": "Sunucunuz üzerinde gerçekleştirilecek ana işlemler",
       "restart": "Yeniden Başlat",
-      "update": "{version} Sürümüne güncelle",
       "already-latest": "Zaten güncel"
     },
     "settings": {
