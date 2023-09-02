@@ -23,7 +23,6 @@ import { getEnv } from '@/utils/environment/environment';
 import { fileLogger } from '@/utils/logger/file-logger';
 import { runPostgresMigrations } from '@/utils/migrations/run-migration';
 import { getUserIds } from '@/utils/environment/user';
-import { runComposeCommand } from '@/utils/docker-helpers';
 
 const execAsync = promisify(exec);
 
@@ -234,7 +233,7 @@ export class SystemExecutors {
       spinner.setMessage('Pulling images...');
       spinner.start();
       this.logger.info('Pulling new images...');
-      await runComposeCommand(['--env-file', `${this.envFile}`, 'pull']);
+      await execAsync(`docker compose --env-file ${this.envFile} pull`);
 
       spinner.done('Images pulled');
 
@@ -243,7 +242,7 @@ export class SystemExecutors {
       spinner.start();
       this.logger.info('Starting containers...');
 
-      await runComposeCommand(['--env-file', `${this.envFile}`, 'up', '--detach', '--remove-orphans', '--build']);
+      await execAsync(`docker compose --env-file ${this.envFile} up --detach --remove-orphans --build`);
       spinner.done('Containers started');
 
       // start watcher cli in the background
@@ -384,9 +383,9 @@ export class SystemExecutors {
       spinner.done(`Target version: ${targetVersion}`);
       spinner.done(`Download url: ${fileUrl}`);
 
-      // await this.stop();
+      await this.stop();
 
-      console.log(`Downloading Tipi ${targetVersion}...`);
+      this.logger.info(`Downloading Tipi ${targetVersion}...`);
 
       const bar = new cliProgress.SingleBar({}, cliProgress.Presets.rect);
       bar.start(100, 0);
@@ -408,13 +407,16 @@ export class SystemExecutors {
             bar.stop();
             this.logger.error(`Failed to download Tipi: ${err}`);
             spinner.fail(`\nFailed to download Tipi ${targetVersion}`);
+            writer.close();
             reject(err);
           });
 
           writer.on('finish', () => {
             this.logger.info('Download complete');
             bar.stop();
-            resolve('');
+            writer.close(() => {
+              resolve('');
+            });
           });
         });
       }).catch((e) => {
@@ -452,7 +454,15 @@ export class SystemExecutors {
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
       this.logger.info('Starting new cli...');
-      spawn('./runtipi-cli', [process.argv[1] as string, 'start']);
+      const childProcess = spawn('./runtipi-cli', [process.argv[1] as string, 'start']);
+
+      childProcess.stdout.on('data', (data) => {
+        process.stdout.write(data);
+      });
+
+      childProcess.stderr.on('data', (data) => {
+        process.stderr.write(data);
+      });
 
       spinner.done(`Tipi ${targetVersion} successfully updated. Tipi is now starting, wait for this process to finish...`);
 
