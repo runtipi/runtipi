@@ -3,25 +3,29 @@ import { setupServer } from 'msw/node';
 import fs from 'fs-extra';
 import semver from 'semver';
 import { faker } from '@faker-js/faker';
-import { EventDispatcher } from '../../core/EventDispatcher';
 import { setConfig } from '../../core/TipiConfig';
 import { TipiCache } from '../../core/TipiCache';
 import { SystemServiceClass } from '.';
-
-jest.mock('redis');
 
 const SystemService = new SystemServiceClass();
 
 const server = setupServer();
 
-const cache = new TipiCache();
+const cache = new TipiCache('system.service.test');
+
+afterAll(async () => {
+  server.close();
+  await cache.close();
+});
+
+beforeAll(() => {
+  server.listen();
+});
 
 beforeEach(async () => {
   await setConfig('demoMode', false);
-
-  jest.mock('fs-extra');
-  jest.resetModules();
-  jest.resetAllMocks();
+  await cache.del('latestVersion');
+  server.resetHandlers();
 });
 
 describe('Test: systemInfo', () => {
@@ -69,21 +73,6 @@ describe('Test: systemInfo', () => {
 });
 
 describe('Test: getVersion', () => {
-  beforeAll(() => {
-    server.listen();
-  });
-
-  beforeEach(async () => {
-    server.resetHandlers();
-    await cache.del('latestVersion');
-  });
-
-  afterAll(async () => {
-    server.close();
-    jest.restoreAllMocks();
-    await cache.close();
-  });
-
   it('It should return version with body', async () => {
     // Arrange
     const body = faker.lorem.words(10);
@@ -142,9 +131,6 @@ describe('Test: getVersion', () => {
 
 describe('Test: restart', () => {
   it('Should return true', async () => {
-    // Arrange
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: true });
-
     // Act
     const restart = await SystemService.restart();
 

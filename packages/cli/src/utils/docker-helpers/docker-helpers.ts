@@ -8,11 +8,8 @@ import { fileLogger } from '../logger/file-logger';
 const execAsync = promisify(exec);
 
 const composeUp = async (args: string[]) => {
+  fileLogger.info(`Running docker compose with args ${args.join(' ')}`);
   const { stdout, stderr } = await execAsync(`docker compose ${args.join(' ')}`);
-
-  if (stderr) {
-    fileLogger.error(stderr);
-  }
 
   return { stdout, stderr };
 };

@@ -5,7 +5,7 @@ import { getCookie } from 'cookies-next';
 import { TipiCache } from '@/server/core/TipiCache';
 
 export const getAuthedPageProps: GetServerSideProps = async (ctx) => {
-  const cache = new TipiCache();
+  const cache = new TipiCache('getAuthedPageProps');
   const sessionId = ctx.req.headers['x-session-id'];
   const userId = await cache.get(`session:${sessionId}`);
   await cache.close();
