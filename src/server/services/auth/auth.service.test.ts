@@ -17,7 +17,7 @@ let AuthService: AuthServiceClass;
 let database: TestDatabase;
 const TEST_SUITE = 'authservice';
 
-const cache = new TipiCache();
+const cache = new TipiCache('auth.service.test.ts');
 
 beforeAll(async () => {
   setConfig('jwtSecret', 'test');

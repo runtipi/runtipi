@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import { fromPartial } from '@total-typescript/shoehorn';
-import { EventDispatcher } from '../../src/server/core/EventDispatcher';
+import { Job } from 'bullmq';
 
 global.fetch = jest.fn();
 // Mock global location
@@ -13,15 +13,24 @@ jest.mock('vitest', () => ({
   vi: jest,
 }));
 
+export const waitUntilFinishedMock = jest.fn().mockResolvedValue({ success: true, stdout: '' });
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
-    add: jest.fn(),
+    add: jest.fn(() => {
+      const job: Job = fromPartial({
+        waitUntilFinished: waitUntilFinishedMock,
+      });
+
+      return Promise.resolve(job);
+    }),
     getRepeatableJobs: jest.fn().mockResolvedValue([]),
     removeRepeatableByKey: jest.fn(),
     obliterate: jest.fn(),
+    close: jest.fn(),
   })),
   QueueEvents: jest.fn().mockImplementation(() => ({
     on: jest.fn(),
+    close: jest.fn(),
   })),
 }));
 
@@ -41,6 +50,7 @@ jest.mock('../../src/server/core/Logger', () => ({
     info: jest.fn(),
     error: jest.fn(),
     warn: jest.fn(),
+    debug: jest.fn(),
   },
 }));
 
@@ -49,7 +59,3 @@ jest.mock('next/config', () => () => ({
     ...process.env,
   },
 }));
-
-afterAll(() => {
-  EventDispatcher.clear();
-});

@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import axios from 'redaxios';
 import { TranslatedError } from '@/server/utils/errors';
+import { EventDispatcher } from '@/server/core/EventDispatcher';
+import { TipiCache } from '@/server/core/TipiCache';
 import { readJsonFile } from '../../common/fs.helpers';
-import { EventDispatcher } from '../../core/EventDispatcher';
 import { Logger } from '../../core/Logger';
-import { TipiCache } from '../../core/TipiCache';
 import * as TipiConfig from '../../core/TipiConfig';
 
 const SYSTEM_STATUS = ['UPDATING', 'RESTARTING', 'RUNNING'] as const;
@@ -27,21 +27,13 @@ const systemInfoSchema = z.object({
 });
 
 export class SystemServiceClass {
-  private cache;
-
-  private dispatcher;
-
-  constructor() {
-    this.cache = new TipiCache();
-    this.dispatcher = EventDispatcher;
-  }
-
   /**
    * Get the current and latest version of Tipi
    *
    * @returns {Promise<{ current: string; latest: string }>} The current and latest version
    */
   public getVersion = async () => {
+    const cache = new TipiCache('getVersion');
     try {
       const { seePreReleaseVersions } = TipiConfig.getConfig();
 
@@ -51,8 +43,8 @@ export class SystemServiceClass {
         return { current: TipiConfig.getConfig().version, latest: data[0]?.tag_name, body: data[0]?.body };
       }
 
-      let version = await this.cache.get('latestVersion');
-      let body = await this.cache.get('latestVersionBody');
+      let version = await cache.get('latestVersion');
+      let body = await cache.get('latestVersionBody');
 
       if (!version) {
         const { data } = await axios.get<{ tag_name: string; body: string }>('https://api.github.com/repos/meienberger/runtipi/releases/latest');
@@ -60,14 +52,16 @@ export class SystemServiceClass {
         version = data.tag_name;
         body = data.body;
 
-        await this.cache.set('latestVersion', version || '', 60 * 60);
-        await this.cache.set('latestVersionBody', body || '', 60 * 60);
+        await cache.set('latestVersion', version || '', 60 * 60);
+        await cache.set('latestVersionBody', body || '', 60 * 60);
       }
 
       return { current: TipiConfig.getConfig().version, latest: version, body };
     } catch (e) {
       Logger.error(e);
       return { current: TipiConfig.getConfig().version, latest: undefined };
+    } finally {
+      await cache.close();
     }
   };
 
@@ -93,7 +87,9 @@ export class SystemServiceClass {
     }
 
     TipiConfig.setConfig('status', 'RESTARTING');
-    this.dispatcher.dispatchEvent({ type: 'system', command: 'restart' });
+    const dispatcher = new EventDispatcher('restart');
+    dispatcher.dispatchEvent({ type: 'system', command: 'restart' });
+    await dispatcher.close();
 
     return true;
   };

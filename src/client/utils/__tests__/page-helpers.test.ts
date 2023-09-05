@@ -6,7 +6,7 @@ import { getAuthedPageProps, getMessagesPageProps } from '../page-helpers';
 import englishMessages from '../../messages/en.json';
 import frenchMessages from '../../messages/fr-FR.json';
 
-const cache = new TipiCache();
+const cache = new TipiCache('page-helpers.test.ts');
 
 afterAll(async () => {
   await cache.close();

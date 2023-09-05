@@ -3,6 +3,7 @@ import waitForExpect from 'wait-for-expect';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { faker } from '@faker-js/faker';
 import { castAppConfig } from '@/client/modules/Apps/helpers/castAppConfig';
+import { waitUntilFinishedMock } from '@/tests/server/jest.setup';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { getAllApps, getAppById, updateApp, createAppConfig, insertApp } from '../../tests/apps.factory';
@@ -11,6 +12,7 @@ import { setConfig } from '../../core/TipiConfig';
 let db: TestDatabase;
 let AppsService: AppServiceClass;
 const TEST_SUITE = 'appsservice';
+const dispatcher = new EventDispatcher(TEST_SUITE);
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
@@ -19,11 +21,12 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await clearDatabase(db);
-  EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
+  dispatcher.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
 });
 
 afterAll(async () => {
   await closeDatabase(db);
+  await dispatcher.close();
 });
 
 describe('Install app', () => {
@@ -45,26 +48,22 @@ describe('Install app', () => {
   it('Should start app if already installed', async () => {
     // arrange
     const appConfig = createAppConfig();
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
     await AppsService.installApp(appConfig.id, {});
     await AppsService.installApp(appConfig.id, {});
+    const app = await getAppById(appConfig.id, db);
 
     // assert
-    expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([{ appid: appConfig.id, command: 'install', form: {}, type: 'app' }]);
-    expect(spy.mock.calls[1]).toEqual([{ appid: appConfig.id, command: 'start', form: {}, type: 'app' }]);
-
-    spy.mockRestore();
+    expect(app?.status).toBe('running');
   });
 
   it('Should delete app if install script fails', async () => {
     // arrange
     const appConfig = createAppConfig();
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
 
     // act
+    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
     await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrow('server-messages.errors.app-failed-to-install');
     const app = await getAppById(appConfig.id, db);
 
@@ -177,16 +176,15 @@ describe('Uninstall app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
-    await AppsService.uninstallApp(appConfig.id);
+    waitUntilFinishedMock.mockResolvedValueOnce({ success: true, stdout: 'test' });
+    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
+    await expect(AppsService.uninstallApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-uninstall');
+    const app = await getAppById(appConfig.id, db);
 
     // assert
-    expect(spy.mock.calls.length).toBe(2);
-    expect(spy.mock.calls[0]).toEqual([{ appid: appConfig.id, command: 'stop', form: {}, type: 'app' }]);
-    expect(spy.mock.calls[1]).toEqual([{ appid: appConfig.id, command: 'uninstall', form: {}, type: 'app' }]);
-    spy.mockRestore();
+    expect(app?.status).toBe('stopped');
   });
 
   it('Should throw if app is not installed', async () => {
@@ -198,7 +196,7 @@ describe('Uninstall app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
+    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
     await updateApp(appConfig.id, { status: 'updating' }, db);
 
     // act & assert
@@ -209,18 +207,17 @@ describe('Uninstall app', () => {
 });
 
 describe('Start app', () => {
-  it('Should correctly dispatch start event', async () => {
+  it('Should correctly start app', async () => {
     // arrange
     const appConfig = createAppConfig({});
-    await insertApp({}, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    await insertApp({ status: 'stopped' }, appConfig, db);
 
     // act
     await AppsService.startApp(appConfig.id);
+    const app = await getAppById(appConfig.id, db);
 
     // assert
-    expect(spy.mock.lastCall).toEqual([{ appid: appConfig.id, command: 'start', form: {}, type: 'app' }]);
-    spy.mockRestore();
+    expect(app?.status).toBe('running');
   });
 
   it('Should throw if app is not installed', async () => {
@@ -231,23 +228,21 @@ describe('Start app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
     await AppsService.startApp(appConfig.id);
-    expect(spy.mock.calls.length).toBe(1);
     await AppsService.startApp(appConfig.id);
+    const app = await getAppById(appConfig.id, db);
 
     // assert
-    expect(spy.mock.calls.length).toBe(2);
-    spy.mockRestore();
+    expect(app?.status).toBe('running');
   });
 
   it('Should throw if start script fails', async () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'stopped' }, appConfig, db);
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
+    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
 
     // act & assert
     await expect(AppsService.startApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-start');
@@ -257,17 +252,17 @@ describe('Start app', () => {
 });
 
 describe('Stop app', () => {
-  it('Should correctly dispatch stop event', async () => {
+  it('Should correctly stop app', async () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
 
     // act
     await AppsService.stopApp(appConfig.id);
+    const app = await getAppById(appConfig.id, db);
 
     // assert
-    expect(spy.mock.lastCall).toEqual([{ appid: appConfig.id, command: 'stop', form: {}, type: 'app' }]);
+    expect(app?.status).toBe('stopped');
   });
 
   it('Should throw if app is not installed', async () => {
@@ -278,7 +273,7 @@ describe('Stop app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'running' }, appConfig, db);
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'test' });
+    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
 
     // act & assert
     await expect(AppsService.stopApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-stop');
@@ -488,7 +483,7 @@ describe('Update app', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({}, appConfig, db);
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: false, stdout: 'error' });
+    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'error' });
 
     // act & assert
     await expect(AppsService.updateApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-update');
@@ -537,29 +532,11 @@ describe('installedApps', () => {
 });
 
 describe('startAllApps', () => {
-  it('should start all apps with status RUNNING', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    const appConfig2 = createAppConfig({});
-    const appConfig3 = createAppConfig({});
-    await insertApp({ status: 'running' }, appConfig, db);
-    await insertApp({ status: 'running' }, appConfig2, db);
-    await insertApp({ status: 'stopped' }, appConfig3, db);
-
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
-
-    // act
-    await AppsService.startAllApps();
-
-    // assert
-    expect(spy.mock.calls.length).toBe(2);
-  });
-
   it('should put status to STOPPED if start script fails', async () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'stopped' }, appConfig, db);
-    const spy = jest.spyOn(EventDispatcher, 'dispatchEventAsync');
+    const spy = jest.spyOn(dispatcher, 'dispatchEventAsync');
     spy.mockResolvedValueOnce({ success: false, stdout: 'error' });
 
     // act

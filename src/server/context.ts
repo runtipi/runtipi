@@ -27,13 +27,12 @@ const createContextInner = async (opts: CreateContextOptions) => ({
  * @param {CreateNextContextOptions} opts - options
  */
 export const createContext = async (opts: CreateNextContextOptions) => {
-  const cache = new TipiCache();
   const { req, res } = opts;
 
   const sessionId = req.headers['x-session-id'] as string;
 
+  const cache = new TipiCache('createContext');
   const userId = await cache.get(`session:${sessionId}`);
-
   await cache.close();
 
   return createContextInner({
