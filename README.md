@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-37-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-38-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
@@ -119,6 +119,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/DireMunchkin"><img src="https://avatars.githubusercontent.com/u/1665676?v=4?s=100" width="100px;" alt="DireMunchkin"/><br /><sub><b>DireMunchkin</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=DireMunchkin" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/FabioCingottini"><img src="https://avatars.githubusercontent.com/u/32102735?v=4?s=100" width="100px;" alt="Fabio Cingottini"/><br /><sub><b>Fabio Cingottini</b></sub></a><br /><a href="#translation-FabioCingottini" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/itsrllyhim"><img src="https://avatars.githubusercontent.com/u/143047010?v=4?s=100" width="100px;" alt="him"/><br /><sub><b>him</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=itsrllyhim" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
