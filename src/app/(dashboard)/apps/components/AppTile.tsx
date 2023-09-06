@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import React from 'react';
 import { IconDownload } from '@tabler/icons-react';
@@ -5,9 +7,9 @@ import { Tooltip } from 'react-tooltip';
 import type { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { useTranslations } from 'next-intl';
 import type { AppInfo } from '@runtipi/shared';
-import { AppStatus } from '../AppStatus';
-import { AppLogo } from '../AppLogo/AppLogo';
-import { limitText } from '../../modules/AppStore/helpers/table.helpers';
+import { AppLogo } from '@/components/AppLogo';
+import { AppStatus } from '@/components/AppStatus';
+import { limitText } from '@/client/modules/AppStore/helpers/table.helpers';
 import styles from './AppTile.module.scss';
 
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc'>;

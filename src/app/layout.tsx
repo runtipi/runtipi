@@ -5,11 +5,10 @@ import { Inter } from 'next/font/google';
 import { cookies, headers } from 'next/headers';
 import { getLocaleFromString } from '@/shared/internationalization/locales';
 import merge from 'lodash.merge';
-import { NextIntlClientProvider, createTranslator } from 'next-intl';
+import { NextIntlClientProvider } from 'next-intl';
 
 import './global.css';
 import clsx from 'clsx';
-import { useUIStore } from '@/client/state/uiStore';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -34,15 +33,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = (await import(`../client/messages/${locale}.json`)).default;
   const mergedMessages = merge(englishMessages, messages);
 
-  const translator = createTranslator({
-    messages: mergedMessages,
-    locale,
-  });
-  useUIStore.getState().setTranslator(translator);
-
   return (
     <html lang={locale} className={clsx(inter.className, 'border-top-wide border-primary')}>
-      <NextIntlClientProvider locale="en" messages={mergedMessages}>
+      <NextIntlClientProvider locale={locale} messages={mergedMessages}>
         <body>{children}</body>
       </NextIntlClientProvider>
     </html>
