@@ -20,8 +20,8 @@ export const setSession = async (sessionId: string, userId: string, req: NextApi
 
   const sessionKey = `session:${sessionId}`;
 
-  await cache.set(sessionKey, userId);
-  await cache.set(`session:${userId}:${sessionId}`, sessionKey);
+  await cache.set(sessionKey, userId, COOKIE_MAX_AGE * 7);
+  await cache.set(`session:${userId}:${sessionId}`, sessionKey, COOKIE_MAX_AGE * 7);
 
   await cache.close();
 };

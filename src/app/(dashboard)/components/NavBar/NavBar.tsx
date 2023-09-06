@@ -1,4 +1,3 @@
-// "use client"
 import { IconApps, IconBrandAppstore, IconHome, IconSettings, Icon } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
