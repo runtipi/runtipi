@@ -286,6 +286,7 @@
   },
   "header": {
     "dashboard": "控制面板",
+    "apps": "My Apps",
     "my-apps": "我的应用",
     "app-store": "应用市场",
     "settings": "设置",
