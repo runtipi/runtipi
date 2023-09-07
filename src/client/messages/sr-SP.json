@@ -286,6 +286,7 @@
   },
   "header": {
     "dashboard": "Dashboard",
+    "apps": "My Apps",
     "my-apps": "My Apps",
     "app-store": "App Store",
     "settings": "Settings",
