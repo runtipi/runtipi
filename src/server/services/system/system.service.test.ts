@@ -92,7 +92,7 @@ describe('Test: getVersion', () => {
     expect(version.body).toBeDefined();
   });
 
-  it('Should return undefined for latest if request fails', async () => {
+  it('Should return current version for latest if request fails', async () => {
     server.use(
       rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
         return res(ctx.status(500));
@@ -103,7 +103,7 @@ describe('Test: getVersion', () => {
 
     expect(version).toBeDefined();
     expect(version.current).toBeDefined();
-    expect(version.latest).toBeUndefined();
+    expect(version.latest).toBe(version.current);
   });
 
   it('Should return cached version', async () => {
