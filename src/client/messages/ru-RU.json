@@ -286,6 +286,7 @@
   },
   "header": {
     "dashboard": "Обзор",
+    "apps": "My Apps",
     "my-apps": "Мои приложения",
     "app-store": "Магазин приложений",
     "settings": "Настройки",
