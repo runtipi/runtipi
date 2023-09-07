@@ -286,6 +286,7 @@
   },
   "header": {
     "dashboard": "Tableau de bord",
+    "apps": "My Apps",
     "my-apps": "Mes applications",
     "app-store": "App Store",
     "settings": "Paramètres",
