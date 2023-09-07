@@ -286,6 +286,7 @@
   },
   "header": {
     "dashboard": "Panel nawigacyjny",
+    "apps": "My Apps",
     "my-apps": "Moje aplikacje",
     "app-store": "Sklep z aplikacjami",
     "settings": "Ustawienia",
