@@ -34,7 +34,7 @@ export const handlers = [
   getTRPCMock({
     path: ['auth', 'login'],
     type: 'mutation',
-    response: {},
+    response: { sessionId: faker.datatype.uuid() },
   }),
   getTRPCMock({
     path: ['auth', 'logout'],

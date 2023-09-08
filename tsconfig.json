@@ -18,6 +18,12 @@
       "@/shared/*": [
         "./src/shared/*"
       ],
+      "@/lib/*": [
+        "./src/lib/*"
+      ],
+      "@/actions/*": [
+        "./src/app/actions/*"
+      ],
       "@/tests/*": [
         "./tests/*"
       ]
