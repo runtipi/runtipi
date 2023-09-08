@@ -4,8 +4,8 @@ import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Button } from '../../../../components/ui/Button';
-import { Input } from '../../../../components/ui/Input';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 type FormValues = { email: string; password: string };
 

@@ -6,6 +6,7 @@ const nextConfig = {
   transpilePackages: ['@runtipi/shared'],
   experimental: {
     serverComponentsExternalPackages: ['bullmq'],
+    serverActions: true,
   },
   serverRuntimeConfig: {
     INTERNAL_IP: process.env.INTERNAL_IP,

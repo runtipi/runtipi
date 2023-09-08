@@ -1,5 +1,3 @@
-import { setCookie } from 'cookies-next';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 } from 'uuid';
 import { cookies } from 'next/headers';
 import { TipiCache } from '../core/TipiCache/TipiCache';
@@ -13,10 +11,11 @@ export const generateSessionId = (prefix: string) => {
   return `${prefix}-${v4()}`;
 };
 
-export const setSession = async (sessionId: string, userId: string, req: NextApiRequest, res: NextApiResponse) => {
+export const setSession = async (sessionId: string, userId: string) => {
   const cache = new TipiCache('setSession');
 
-  setCookie(COOKIE_NAME, sessionId, { req, res, maxAge: COOKIE_MAX_AGE, httpOnly: true, secure: false, sameSite: false });
+  const cookieStore = cookies();
+  cookieStore.set(COOKIE_NAME, sessionId, { maxAge: COOKIE_MAX_AGE, httpOnly: true, secure: false, sameSite: false });
 
   const sessionKey = `session:${sessionId}`;
 

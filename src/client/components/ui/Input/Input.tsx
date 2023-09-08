@@ -25,6 +25,7 @@ export const Input = React.forwardRef<HTMLInputElement, IProps>(({ onChange, onB
     )}
     {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
     <input
+      suppressHydrationWarning
       aria-label={name}
       role="textbox"
       disabled={disabled}
