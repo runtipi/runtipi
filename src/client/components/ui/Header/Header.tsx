@@ -3,28 +3,18 @@ import { IconBrandGithub, IconHeart, IconLogout, IconMoon, IconSun } from '@tabl
 import Image from 'next/image';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { Tooltip } from 'react-tooltip';
 import { useTranslations } from 'next-intl';
 import { getUrl } from '../../../core/helpers/url-helpers';
 import { useUIStore } from '../../../state/uiStore';
 import { NavBar } from '../NavBar';
-import { trpc } from '../../../utils/trpc';
 
 interface IProps {
   isUpdateAvailable?: boolean;
 }
 
 export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
-  const router = useRouter();
   const { setDarkMode } = useUIStore();
-  const utils = trpc.useContext();
-  const logout = trpc.auth.logout.useMutation({
-    onSuccess: () => {
-      utils.auth.me.invalidate();
-      router.push('/login');
-    },
-  });
   const t = useTranslations('header');
 
   return (
@@ -74,7 +64,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
               <IconSun data-testid="icon-sun" size={20} />
             </div>
             <Tooltip anchorSelect=".logOut">{t('logout')}</Tooltip>
-            <div onClick={() => logout.mutate()} tabIndex={0} onKeyPress={() => logout.mutate()} role="button" className="logOut nav-link px-0 cursor-pointer" data-testid="logout-button">
+            <div tabIndex={0} role="button" className="logOut nav-link px-0 cursor-pointer" data-testid="logout-button">
               <IconLogout size={20} />
             </div>
           </div>

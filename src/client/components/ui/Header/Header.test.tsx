@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, renderHook, screen, waitFor } from '../../../../../tests/test-utils';
+import { fireEvent, render, renderHook, screen } from '../../../../../tests/test-utils';
 import { useUIStore } from '../../../state/uiStore';
 import { Header } from './Header';
 
@@ -57,15 +57,5 @@ describe('Header', () => {
     fireEvent.click(lightModeToggle as Element);
 
     expect(result.current.darkMode).toBe(false);
-  });
-
-  it('Should redirect to /login after successful logout', async () => {
-    render(<Header />);
-    const logoutButton = screen.getByTestId('logout-button');
-    fireEvent.click(logoutButton as Element);
-
-    await waitFor(() => {
-      expect(pushFn).toHaveBeenCalledWith('/login');
-    });
   });
 });
