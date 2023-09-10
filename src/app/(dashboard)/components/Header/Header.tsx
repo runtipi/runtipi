@@ -9,6 +9,9 @@ import Link from 'next/link';
 import { Tooltip } from 'react-tooltip';
 import { useTranslations } from 'next-intl';
 import { useUIStore } from '@/client/state/uiStore';
+import { useAction } from 'next-safe-action/hook';
+import { logoutAction } from '@/actions/logout/logout-action';
+import Script from 'next/script';
 import { NavBar } from '../NavBar';
 
 interface IProps {
@@ -19,10 +22,11 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
   const { setDarkMode } = useUIStore();
   const t = useTranslations('header');
 
-  const onLogout = async () => {};
+  const logoutMutation = useAction(logoutAction);
 
   return (
     <header className="text-white navbar navbar-expand-md navbar-dark navbar-overlap d-print-none" data-bs-theme="dark">
+      <Script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js" async />
       <div className="container-xl">
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
           <span className="navbar-toggler-icon" />
@@ -68,7 +72,14 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
               <IconSun data-testid="icon-sun" size={20} />
             </div>
             <Tooltip anchorSelect=".logOut">{t('logout')}</Tooltip>
-            <div onClick={() => onLogout} tabIndex={0} onKeyPress={() => onLogout()} role="button" className="logOut nav-link px-0 cursor-pointer" data-testid="logout-button">
+            <div
+              onClick={() => logoutMutation.execute({})}
+              tabIndex={0}
+              onKeyPress={() => logoutMutation.execute({})}
+              role="button"
+              className="logOut nav-link px-0 cursor-pointer"
+              data-testid="logout-button"
+            >
               <IconLogout size={20} />
             </div>
           </div>
