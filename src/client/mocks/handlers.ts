@@ -16,11 +16,6 @@ export const handlers = [
     delay: 100,
   }),
   getTRPCMock({
-    path: ['system', 'systemInfo'],
-    type: 'query',
-    response: { cpu: { load: 0.1 }, disk: { available: 1, total: 2, used: 1 }, memory: { available: 1, total: 2, used: 1 } },
-  }),
-  getTRPCMock({
     path: ['system', 'getSettings'],
     type: 'query',
     response: { internalIp: 'localhost', dnsIp: '1.1.1.1', appsRepoUrl: 'https://test.com/test', domain: 'tipi.localhost', localDomain: 'tipi.lan' },

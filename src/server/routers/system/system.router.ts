@@ -9,7 +9,6 @@ const SystemService = new SystemServiceClass();
 
 export const systemRouter = router({
   status: publicProcedure.query(SystemServiceClass.status),
-  systemInfo: protectedProcedure.query(SystemServiceClass.systemInfo),
   getVersion: publicProcedure.query(SystemService.getVersion),
   restart: protectedProcedure.mutation(SystemService.restart),
   updateSettings: protectedProcedure.input(settingsSchema).mutation(({ input }) => TipiConfig.setSettings(input)),
