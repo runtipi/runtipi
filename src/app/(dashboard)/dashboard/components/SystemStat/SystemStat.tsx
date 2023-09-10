@@ -11,7 +11,7 @@ interface IProps {
   isLoading?: boolean;
 }
 
-const SystemStat: React.FC<IProps> = ({ icon: IconComponent, progress, title, subtitle, metric, isLoading }) => (
+export const SystemStat: React.FC<IProps> = ({ icon: IconComponent, progress, title, subtitle, metric, isLoading }) => (
   <div className="col-sm-6 col-lg-4">
     <div className="card">
       <div className="card-body">
@@ -38,5 +38,3 @@ const SystemStat: React.FC<IProps> = ({ icon: IconComponent, progress, title, su
     </div>
   </div>
 );
-
-export default SystemStat;
