@@ -32,11 +32,6 @@ export const handlers = [
   }),
   // Auth
   getTRPCMock({
-    path: ['auth', 'register'],
-    type: 'mutation',
-    response: true,
-  }),
-  getTRPCMock({
     path: ['auth', 'me'],
     type: 'query',
     response: {
@@ -45,11 +40,6 @@ export const handlers = [
       username: faker.internet.userName(),
       locale: 'en',
     },
-  }),
-  getTRPCMock({
-    path: ['auth', 'isConfigured'],
-    type: 'query',
-    response: true,
   }),
   // App
   getTRPCMock({
