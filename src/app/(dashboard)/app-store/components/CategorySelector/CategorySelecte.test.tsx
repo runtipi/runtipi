@@ -1,5 +1,5 @@
 import React from 'react';
-import CategorySelector from './CategorySelector';
+import { CategorySelector } from './CategorySelector';
 import { fireEvent, render, screen } from '../../../../../../tests/test-utils';
 
 describe('Test: CategorySelector', () => {

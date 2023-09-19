@@ -1,11 +1,13 @@
+'use client';
+
 import clsx from 'clsx';
 import Link from 'next/link';
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { AppCategory } from '@runtipi/shared';
-import { AppLogo } from '../../../../components/AppLogo/AppLogo';
-import { colorSchemeForCategory, limitText } from '../../helpers/table.helpers';
+import { AppLogo } from '@/components/AppLogo';
 import styles from './AppStoreTile.module.scss';
+import { colorSchemeForCategory, limitText } from '../../helpers/table.helpers';
 
 type App = {
   id: string;
@@ -14,7 +16,7 @@ type App = {
   short_desc: string;
 };
 
-const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
+export const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
   const t = useTranslations('apps.app-details');
 
   return (
@@ -34,5 +36,3 @@ const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
     </Link>
   );
 };
-
-export default AppStoreTile;

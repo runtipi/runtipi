@@ -1,0 +1,1 @@
+export { AppStoreTable } from './AppStoreTable';

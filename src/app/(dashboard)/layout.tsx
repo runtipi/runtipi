@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { Header } from './components/Header';
 import { PageTitle } from './components/PageTitle';
 import styles from './layout.module.scss';
+import { LayoutActions } from './components/LayoutActions/LayoutActions';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getUserFromCookie();
@@ -29,7 +30,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <div className="me-3 text-white">
                 <PageTitle />
               </div>
-              <div className="flex-fill">{}</div>
+              <div className="flex-fill">
+                <LayoutActions />
+              </div>
             </div>
           </div>
         </div>
