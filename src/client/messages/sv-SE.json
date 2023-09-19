@@ -34,7 +34,7 @@
       "could-not-get-latest-version": "Kunde inte hämta senaste versionen",
       "current-version-is-latest": "Den nuvarande versionen är redan uppdaterad",
       "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
-      "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
+      "demo-mode-limit": "Endast 6 appar kan installeras i demoläget. Avinstallera en annan app för att installera en ny."
     },
     "success": {}
   },
