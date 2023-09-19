@@ -1,10 +1,10 @@
+import { Icon } from '@tabler/icons-react';
 import React from 'react';
 import Select, { SingleValue, OptionProps, ControlProps, components } from 'react-select';
-import { Icon } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { AppCategory } from '@runtipi/shared';
-import { APP_CATEGORIES } from '../../../../core/constants';
-import { useUIStore } from '../../../../state/uiStore';
+import { useUIStore } from '@/client/state/uiStore';
+import { iconForCategory } from '../../helpers/table.helpers';
 
 const { Option, Control } = components;
 
@@ -47,10 +47,10 @@ const ControlComponent = (props: ControlProps<OptionsType>) => {
   return <Control {...rest}> {children}</Control>;
 };
 
-const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue }) => {
+export const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue }) => {
   const t = useTranslations('apps');
   const { darkMode } = useUIStore();
-  const options: OptionsType[] = APP_CATEGORIES.map((category) => ({
+  const options: OptionsType[] = iconForCategory.map((category) => ({
     value: category.id,
     label: t(`app-details.categories.${category.id}`),
     icon: category.icon,
@@ -112,5 +112,3 @@ const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue 
     />
   );
 };
-
-export default CategorySelector;

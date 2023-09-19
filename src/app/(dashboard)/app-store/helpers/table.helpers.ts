@@ -1,4 +1,22 @@
 import { AppCategory, AppInfo } from '@runtipi/shared';
+import {
+  Icon,
+  IconBook,
+  IconBrain,
+  IconBroadcast,
+  IconCamera,
+  IconCode,
+  IconDatabase,
+  IconDeviceGamepad2,
+  IconMovie,
+  IconMusic,
+  IconPigMoney,
+  IconRobot,
+  IconShieldLock,
+  IconStar,
+  IconTool,
+  IconUsers,
+} from '@tabler/icons-react';
 import { AppTableData } from './table.types';
 
 type SortParams = {
@@ -47,3 +65,26 @@ export const colorSchemeForCategory: Record<AppCategory, string> = {
   gaming: 'pink',
   ai: 'gray',
 };
+
+type AppCategoryEntry = {
+  id: AppCategory;
+  icon: Icon;
+};
+
+export const iconForCategory: AppCategoryEntry[] = [
+  { id: 'network', icon: IconBroadcast },
+  { id: 'media', icon: IconMovie },
+  { id: 'development', icon: IconCode },
+  { id: 'automation', icon: IconRobot },
+  { id: 'social', icon: IconUsers },
+  { id: 'utilities', icon: IconTool },
+  { id: 'photography', icon: IconCamera },
+  { id: 'security', icon: IconShieldLock },
+  { id: 'featured', icon: IconStar },
+  { id: 'books', icon: IconBook },
+  { id: 'data', icon: IconDatabase },
+  { id: 'music', icon: IconMusic },
+  { id: 'finance', icon: IconPigMoney },
+  { id: 'gaming', icon: IconDeviceGamepad2 },
+  { id: 'ai', icon: IconBrain },
+];

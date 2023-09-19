@@ -9,8 +9,8 @@ import { useTranslations } from 'next-intl';
 import type { AppInfo } from '@runtipi/shared';
 import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
-import { limitText } from '@/client/modules/AppStore/helpers/table.helpers';
 import styles from './AppTile.module.scss';
+import { limitText } from '../../app-store/helpers/table.helpers';
 
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc'>;
 

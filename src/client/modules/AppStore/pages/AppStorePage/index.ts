@@ -1,1 +1,0 @@
-export { AppStorePage } from './AppStorePage';
