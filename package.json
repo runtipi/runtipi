@@ -116,7 +116,7 @@
     "@vitejs/plugin-react": "^4.0.1",
     "@vitest/coverage-v8": "^0.32.2",
     "dotenv-cli": "^7.2.1",
-    "eslint": "8.43.0",
+    "eslint": "8.50.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-next": "13.4.7",
