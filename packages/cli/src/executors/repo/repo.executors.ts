@@ -1,12 +1,9 @@
 import { getEnv } from 'src/utils/environment/environment';
 import path from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
 import { pathExists } from '@/utils/fs-helpers';
 import { getRepoHash } from './repo.helpers';
 import { fileLogger } from '@/utils/logger/file-logger';
-
-const execAsync = promisify(exec);
+import { execAsync } from '@/utils/exec-async/execAsync';
 
 export class RepoExecutors {
   private readonly logger;
