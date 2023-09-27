@@ -3,12 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { envMapToString, envStringToMap, settingsSchema } from '@runtipi/shared';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import chalk from 'chalk';
 import { pathExists } from '@/utils/fs-helpers';
 import { getRepoHash } from '../repo/repo.helpers';
 import { fileLogger } from '@/utils/logger/file-logger';
+import { execAsync } from '@/utils/exec-async/execAsync';
 
 type EnvKeys =
   | 'APPS_REPO_ID'
@@ -37,8 +36,6 @@ type EnvKeys =
   | 'TIPI_UID'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
-
-const execAsync = promisify(exec);
 
 const DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
 

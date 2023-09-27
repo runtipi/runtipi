@@ -7,10 +7,9 @@ import semver from 'semver';
 import axios from 'axios';
 import boxen from 'boxen';
 import path from 'path';
-import { exec, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import si from 'systeminformation';
 import { Stream } from 'stream';
-import { promisify } from 'util';
 import dotenv from 'dotenv';
 import { SystemEvent } from '@runtipi/shared';
 import chalk from 'chalk';
@@ -23,8 +22,7 @@ import { getEnv } from '@/utils/environment/environment';
 import { fileLogger } from '@/utils/logger/file-logger';
 import { runPostgresMigrations } from '@/utils/migrations/run-migration';
 import { getUserIds } from '@/utils/environment/user';
-
-const execAsync = promisify(exec);
+import { execAsync } from '@/utils/exec-async/execAsync';
 
 export class SystemExecutors {
   private readonly rootFolder: string;
