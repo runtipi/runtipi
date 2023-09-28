@@ -34,6 +34,7 @@ export const handlers = [
       id: faker.number.int(),
       username: faker.internet.userName(),
       locale: 'en',
+      operator: true,
     },
   }),
   // App
