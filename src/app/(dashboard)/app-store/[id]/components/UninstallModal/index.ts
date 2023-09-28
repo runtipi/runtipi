@@ -1,0 +1,1 @@
+export { UninstallModal } from './UninstallModal';

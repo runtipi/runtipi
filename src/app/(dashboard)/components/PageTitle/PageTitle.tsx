@@ -26,7 +26,8 @@ export const PageTitle = () => {
     );
   };
 
-  const title = t(`header.${pathArray[pathArray.length - 1]}` as MessageKey);
+  const appTitle = apps.find((app) => app.id === pathArray[1])?.name;
+  const title = appTitle ?? t(`header.${pathArray[pathArray.length - 1]}` as MessageKey);
 
   return (
     <>

@@ -28,7 +28,7 @@ describe('<OtpForm />', () => {
 
   it('should prompt for password when disabling 2FA', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totpEnabled: true, id: 12, username: 'test', locale: 'en' } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totpEnabled: true, id: 12, username: 'test', locale: 'en', operator: true } }));
     render(<OtpForm />);
     const twoFactorAuthButton = screen.getByRole('switch', { name: /Enable two-factor authentication/i });
     await waitFor(() => {
@@ -46,7 +46,7 @@ describe('<OtpForm />', () => {
 
   it('should show show error toast if password is incorrect while enabling 2FA', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totpEnabled: false, id: 12, username: 'test', locale: 'en' } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { totpEnabled: false, id: 12, username: 'test', locale: 'en', operator: true } }));
     server.use(getTRPCMockError({ path: ['auth', 'getTotpUri'], type: 'mutation', message: 'Invalid password' }));
     render(<OtpForm />);
     const twoFactorAuthButton = screen.getByRole('switch', { name: /Enable two-factor authentication/i });
@@ -74,7 +74,7 @@ describe('<OtpForm />', () => {
 
   it('should show show error toast if password is incorrect while disabling 2FA', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { locale: 'en', totpEnabled: true, id: 12, username: 'test' } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { locale: 'en', totpEnabled: true, id: 12, username: 'test', operator: true } }));
     server.use(getTRPCMockError({ path: ['auth', 'disableTotp'], type: 'mutation', message: 'Invalid password' }));
     render(<OtpForm />);
 
@@ -103,7 +103,7 @@ describe('<OtpForm />', () => {
 
   it('should show success toast if password is correct while disabling 2FA', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { locale: 'en', totpEnabled: true, id: 12, username: 'test' } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { locale: 'en', totpEnabled: true, id: 12, username: 'test', operator: true } }));
     server.use(getTRPCMock({ path: ['auth', 'disableTotp'], type: 'mutation', response: true }));
 
     render(<OtpForm />);
@@ -262,7 +262,7 @@ describe('<OtpForm />', () => {
 
   it('can close the disable modal by clicking on the esc key', async () => {
     // arrange
-    server.use(getTRPCMock({ path: ['auth', 'me'], response: { locale: 'en', totpEnabled: true, username: '', id: 1 } }));
+    server.use(getTRPCMock({ path: ['auth', 'me'], response: { locale: 'en', totpEnabled: true, username: '', id: 1, operator: true } }));
     render(<OtpForm />);
     const twoFactorAuthButton = screen.getByRole('switch', { name: /Enable two-factor authentication/i });
     await waitFor(() => {
