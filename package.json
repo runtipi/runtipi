@@ -60,7 +60,7 @@
     "fs-extra": "^11.1.1",
     "isomorphic-fetch": "^3.0.0",
     "lodash.merge": "^4.6.2",
-    "next": "13.4.19",
+    "next": "13.5.3",
     "next-intl": "^2.20.0",
     "next-safe-action": "^3.0.1",
     "pg": "^8.11.1",
