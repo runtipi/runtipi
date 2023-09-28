@@ -1,11 +1,8 @@
 import path from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
 import { getEnv } from '../environment/environment';
 import { pathExists } from '../fs-helpers/fs-helpers';
 import { fileLogger } from '../logger/file-logger';
-
-const execAsync = promisify(exec);
+import { execAsync } from '../exec-async/execAsync';
 
 const composeUp = async (args: string[]) => {
   fileLogger.info(`Running docker compose with args ${args.join(' ')}`);

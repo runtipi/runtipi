@@ -1,13 +1,10 @@
 import { eventSchema } from '@runtipi/shared';
 import { Worker } from 'bullmq';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import { AppExecutors, RepoExecutors, SystemExecutors } from '@/executors';
 import { getEnv } from '@/utils/environment/environment';
 import { getUserIds } from '@/utils/environment/user';
 import { fileLogger } from '@/utils/logger/file-logger';
-
-const execAsync = promisify(exec);
+import { execAsync } from '@/utils/exec-async/execAsync';
 
 const runCommand = async (jobData: unknown) => {
   const { gid, uid } = getUserIds();

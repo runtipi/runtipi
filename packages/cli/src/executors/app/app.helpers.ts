@@ -2,13 +2,10 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { appInfoSchema, envMapToString, envStringToMap } from '@runtipi/shared';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import { getEnv } from '@/utils/environment/environment';
 import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 import { pathExists } from '@/utils/fs-helpers';
-
-const execAsync = promisify(exec);
+import { execAsync } from '@/utils/exec-async/execAsync';
 
 /**
  *  This function generates a random string of the provided length by using the SHA-256 hash algorithm.
