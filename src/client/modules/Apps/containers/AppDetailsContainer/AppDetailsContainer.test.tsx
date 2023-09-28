@@ -86,13 +86,13 @@ describe('Test: AppDetailsContainer', () => {
 
       // Act
       const openButton = screen.getByRole('button', { name: 'Open' });
-      userEvent.type(openButton, '{arrowdown}');
+      await userEvent.type(openButton, '{arrowdown}');
       await waitFor(() => {
         expect(screen.getByText(/localhost:/)).toBeInTheDocument();
       });
 
       const openButtonItem = screen.getByText(/localhost:/);
-      userEvent.click(openButtonItem);
+      await userEvent.click(openButtonItem);
 
       // Assert
       await waitFor(() => {
@@ -109,14 +109,14 @@ describe('Test: AppDetailsContainer', () => {
 
       // Act
       const openButton = screen.getByRole('button', { name: 'Open' });
-      userEvent.type(openButton, '{arrowdown}');
+      await userEvent.type(openButton, '{arrowdown}');
 
       await waitFor(() => {
         expect(screen.getByText(/localhost:/)).toBeInTheDocument();
       });
 
       const openButtonItem = screen.getByText(/localhost:/);
-      userEvent.click(openButtonItem);
+      await userEvent.click(openButtonItem);
 
       // Assert
       await waitFor(() => {
@@ -133,14 +133,14 @@ describe('Test: AppDetailsContainer', () => {
 
       // Act
       const openButton = screen.getByRole('button', { name: 'Open' });
-      userEvent.type(openButton, '{arrowdown}');
+      await userEvent.type(openButton, '{arrowdown}');
 
       await waitFor(() => {
         expect(screen.getByText(/test.com/)).toBeInTheDocument();
       });
 
       const openButtonItem = screen.getByText(/test.com/);
-      userEvent.click(openButtonItem);
+      await userEvent.click(openButtonItem);
 
       // Assert
       await waitFor(() => {
@@ -157,14 +157,14 @@ describe('Test: AppDetailsContainer', () => {
 
       // Act
       const openButton = screen.getByRole('button', { name: 'Open' });
-      userEvent.type(openButton, '{arrowdown}');
+      await userEvent.type(openButton, '{arrowdown}');
 
       await waitFor(() => {
         expect(screen.getByText(/.tipi.lan/)).toBeInTheDocument();
       });
 
       const openButtonItem = screen.getByText(/.tipi.lan/);
-      userEvent.click(openButtonItem);
+      await userEvent.click(openButtonItem);
 
       // Assert
       await waitFor(() => {

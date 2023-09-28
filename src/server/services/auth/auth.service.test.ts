@@ -699,7 +699,7 @@ describe('Test: changePassword', () => {
     await AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' });
 
     // assert
-    // eslint-disable-next-line testing-library/no-await-sync-query
+    // eslint-disable-next-line testing-library/no-await-sync-queries
     const sessions = await cache.getByPrefix(`session:${user.id}:`);
     expect(sessions).toHaveLength(0);
   });

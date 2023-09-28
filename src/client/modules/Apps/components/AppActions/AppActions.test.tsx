@@ -136,14 +136,14 @@ describe('Test: AppActions', () => {
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });
-    userEvent.type(openButton, '{arrowdown}');
+    await userEvent.type(openButton, '{arrowdown}');
     await waitFor(() => {
       expect(screen.getByText(/myapp.example.com/)).toBeInTheDocument();
     });
     const domainButton = screen.getByText(/myapp.example.com/);
 
     // assert
-    userEvent.click(domainButton);
+    await userEvent.click(domainButton);
     await waitFor(() => {
       expect(openFn).toHaveBeenCalledWith('domain');
     });
@@ -157,14 +157,14 @@ describe('Test: AppActions', () => {
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });
-    userEvent.type(openButton, '{arrowdown}');
+    await userEvent.type(openButton, '{arrowdown}');
     await waitFor(() => {
       expect(screen.getByText(/test.tipi.lan/)).toBeInTheDocument();
     });
     const localButton = screen.getByText(/test.tipi.lan/);
 
     // assert
-    userEvent.click(localButton);
+    await userEvent.click(localButton);
     await waitFor(() => {
       expect(openFn).toHaveBeenCalledWith('local_domain');
     });
@@ -178,14 +178,14 @@ describe('Test: AppActions', () => {
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });
-    userEvent.type(openButton, '{arrowdown}');
+    await userEvent.type(openButton, '{arrowdown}');
     await waitFor(() => {
       expect(screen.getByText(/localhost:3000/)).toBeInTheDocument();
     });
     const localButton = screen.getByText(/localhost:3000/);
 
     // assert
-    userEvent.click(localButton);
+    await userEvent.click(localButton);
     await waitFor(() => {
       expect(openFn).toHaveBeenCalledWith('local');
     });
