@@ -5,14 +5,18 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+import React, { useMemo } from 'react';
 
-export const PageTitle = () => {
+type Props = {
+  apps: { id: string; name: string }[];
+};
+
+export const PageTitle = ({ apps }: Props) => {
   const t = useTranslations();
 
   const path = usePathname();
 
-  const pathArray = path?.substring(1).split('/') || [];
+  const pathArray = useMemo(() => path?.substring(1).split('/') || [], [path]);
 
   const renderBreadcrumbs = () => {
     return (
