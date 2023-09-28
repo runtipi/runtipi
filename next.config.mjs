@@ -23,6 +23,14 @@ const nextConfig = {
     NODE_ENV: process.env.NODE_ENV,
     REDIS_HOST: process.env.REDIS_HOST,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/apps/:id',
+        destination: '/app-store/:id',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

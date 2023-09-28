@@ -33,7 +33,7 @@ export class AuthQueries {
    * @param {number} id - The id of the user to return
    */
   public async getUserDtoById(id: number) {
-    return this.db.query.userTable.findFirst({ where: eq(userTable.id, Number(id)), columns: { id: true, username: true, totpEnabled: true, locale: true } });
+    return this.db.query.userTable.findFirst({ where: eq(userTable.id, Number(id)), columns: { id: true, username: true, totpEnabled: true, locale: true, operator: true } });
   }
 
   /**
