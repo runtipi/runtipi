@@ -80,7 +80,7 @@
     "sass": "^1.63.6",
     "semver": "^7.5.3",
     "sharp": "0.32.1",
-    "superjson": "^1.12.3",
+    "superjson": "^1.13.3",
     "tslib": "^2.5.3",
     "uuid": "^9.0.0",
     "validator": "^13.7.0",
