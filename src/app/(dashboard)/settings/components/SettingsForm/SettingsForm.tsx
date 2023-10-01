@@ -1,4 +1,3 @@
-import { LanguageSelector } from '@/components/LanguageSelector';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { IconAdjustmentsAlt, IconUser } from '@tabler/icons-react';
@@ -8,6 +7,8 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import validator from 'validator';
+import { Locale } from '@/shared/internationalization/locales';
+import { LanguageSelector } from '../../../../components/LanguageSelector';
 
 export type SettingsFormValues = {
   dnsIp?: string;
@@ -19,6 +20,7 @@ export type SettingsFormValues = {
 };
 
 interface IProps {
+  currentLocale?: Locale;
   onSubmit: (values: SettingsFormValues) => void;
   initalValues?: Partial<SettingsFormValues>;
   loading?: boolean;
@@ -26,7 +28,7 @@ interface IProps {
 }
 
 export const SettingsForm = (props: IProps) => {
-  const { onSubmit, initalValues, loading, submitErrors } = props;
+  const { onSubmit, initalValues, loading, currentLocale = 'en-US', submitErrors } = props;
   const t = useTranslations('settings.settings');
 
   const validateFields = (values: SettingsFormValues) => {
@@ -104,7 +106,7 @@ export const SettingsForm = (props: IProps) => {
         <IconUser className="me-2" />
         <h2 className="text-2xl font-bold">{t('user-settings-title')}</h2>
       </div>
-      <LanguageSelector showLabel />
+      <LanguageSelector showLabel locale={currentLocale} />
       <form className="flex flex-col mt-2" onSubmit={handleSubmit(validate)}>
         <div className="d-flex">
           <IconAdjustmentsAlt className="me-2" />
