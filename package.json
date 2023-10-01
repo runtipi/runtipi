@@ -156,5 +156,10 @@
   "bugs": {
     "url": "https://github.com/meienberger/runtipi/issues"
   },
-  "homepage": "https://github.com/meienberger/runtipi#readme"
+  "homepage": "https://github.com/meienberger/runtipi#readme",
+  "pnpm": {
+    "patchedDependencies": {
+      "next-safe-action@3.0.1": "patches/next-safe-action@3.0.1.patch"
+    }
+  }
 }

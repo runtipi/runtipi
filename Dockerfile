@@ -14,6 +14,7 @@ WORKDIR /app
 
 COPY ./pnpm-lock.yaml ./
 COPY ./pnpm-workspace.yaml ./
+COPY ./patches ./patches
 RUN pnpm fetch --no-scripts
 
 COPY ./package*.json ./
