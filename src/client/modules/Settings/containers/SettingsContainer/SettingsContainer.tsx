@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { trpc } from '@/utils/trpc';
 import { toast } from 'react-hot-toast';
