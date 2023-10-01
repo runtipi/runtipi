@@ -1,11 +1,15 @@
+'use client';
+
 import React from 'react';
 import { IconLock, IconKey } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import { OtpForm } from '../../components/OtpForm';
-import { ChangePasswordForm } from '../../components/ChangePasswordForm';
+import { OtpForm } from '../OtpForm';
+import { ChangePasswordForm } from '../ChangePasswordForm';
 
-export const SecurityContainer = () => {
+export const SecurityContainer = (props: { totpEnabled: boolean }) => {
+  const { totpEnabled } = props;
   const t = useTranslations('settings.security');
+
   return (
     <div className="card-body">
       <div className="d-flex">
@@ -23,7 +27,7 @@ export const SecurityContainer = () => {
         <br />
         {t('2fa-subtitle-2')}
       </p>
-      <OtpForm />
+      <OtpForm totpEnabled={totpEnabled} />
     </div>
   );
 };

@@ -1,17 +1,16 @@
 import React from 'react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { trpc } from '@/utils/trpc';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
-import type { MessageKey } from '@/server/utils/errors';
+import { useAction } from 'next-safe-action/hook';
+import { changePasswordAction } from '@/actions/settings/change-password';
 
 export const ChangePasswordForm = () => {
-  const globalT = useTranslations();
   const t = useTranslations('settings.security');
 
   const schema = z
@@ -29,16 +28,19 @@ export const ChangePasswordForm = () => {
         });
       }
     });
+
   type FormValues = z.infer<typeof schema>;
 
   const router = useRouter();
-  const changePassword = trpc.auth.changePassword.useMutation({
-    onError: (e) => {
-      toast.error(globalT(e.data?.tError.message as MessageKey, { ...e.data?.tError?.variables }));
-    },
-    onSuccess: () => {
-      toast.success(t('password-change-success'));
-      router.push('/');
+
+  const changePasswordMutation = useAction(changePasswordAction, {
+    onSuccess: (data) => {
+      if (!data.success) {
+        toast.error(data.failure.reason);
+      } else {
+        toast.success(t('password-change-success'));
+        router.push('/');
+      }
     },
   });
 
@@ -51,22 +53,22 @@ export const ChangePasswordForm = () => {
   });
 
   const onSubmit = (values: FormValues) => {
-    changePassword.mutate(values);
+    changePasswordMutation.execute(values);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mb-4 w-100 ">
-      <Input disabled={changePassword.isLoading} {...register('currentPassword')} error={errors.currentPassword?.message} type="password" placeholder={t('form.current-password')} />
-      <Input disabled={changePassword.isLoading} {...register('newPassword')} error={errors.newPassword?.message} className="mt-2" type="password" placeholder={t('form.new-password')} />
+      <Input disabled={changePasswordMutation.isExecuting} {...register('currentPassword')} error={errors.currentPassword?.message} type="password" placeholder={t('form.current-password')} />
+      <Input disabled={changePasswordMutation.isExecuting} {...register('newPassword')} error={errors.newPassword?.message} className="mt-2" type="password" placeholder={t('form.new-password')} />
       <Input
-        disabled={changePassword.isLoading}
+        disabled={changePasswordMutation.isExecuting}
         {...register('newPasswordConfirm')}
         error={errors.newPasswordConfirm?.message}
         className="mt-2"
         type="password"
         placeholder={t('form.confirm-password')}
       />
-      <Button disabled={changePassword.isLoading} className="mt-3" type="submit">
+      <Button disabled={changePasswordMutation.isExecuting} className="mt-3" type="submit">
         {t('form.change-password')}
       </Button>
     </form>
