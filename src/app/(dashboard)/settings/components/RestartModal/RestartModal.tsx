@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
-import { Button } from '../../../../components/ui/Button';
+import { Button } from '@/components/ui/Button';
 
 interface IProps {
   isOpen: boolean;
