@@ -62,7 +62,7 @@
     "lodash.merge": "^4.6.2",
     "next": "13.5.3",
     "next-intl": "^2.20.0",
-    "next-safe-action": "^3.0.1",
+    "next-safe-action": "^3.4.0",
     "pg": "^8.11.1",
     "qrcode.react": "^3.1.0",
     "react": "18.2.0",
@@ -158,8 +158,6 @@
   },
   "homepage": "https://github.com/meienberger/runtipi#readme",
   "pnpm": {
-    "patchedDependencies": {
-      "next-safe-action@3.0.1": "patches/next-safe-action@3.0.1.patch"
-    }
+    "patchedDependencies": {}
   }
 }

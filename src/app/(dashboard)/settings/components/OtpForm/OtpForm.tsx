@@ -50,7 +50,6 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
         setKey('');
         setUri('');
         toast.success(t('2fa-enable-success'));
-        // ctx.auth.me.invalidate();
       }
     },
   });
@@ -65,7 +64,6 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
         toast.error(data.failure.reason);
       } else {
         toast.success(t('2fa-disable-success'));
-        //ctx.auth.me.invalidate();
       }
     },
   });

@@ -4,6 +4,6 @@ import { SecurityContainer } from './SecurityContainer';
 
 describe('<SecurityContainer />', () => {
   it('should render', () => {
-    render(<SecurityContainer />);
+    render(<SecurityContainer totpEnabled={false} />);
   });
 });
