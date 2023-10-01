@@ -5,7 +5,7 @@ import nextConfig from 'next/config';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../Logger';
 
-type TipiSettingsType = z.infer<typeof settingsSchema>;
+type TipiSettingsType = z.input<typeof settingsSchema>;
 
 const formatErrors = (errors: { fieldErrors: Record<string, string[]> }) =>
   Object.entries(errors.fieldErrors)

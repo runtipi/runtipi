@@ -1,6 +1,5 @@
 'use server';
 
-import { z } from 'zod';
 import { action } from '@/lib/safe-action';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import { settingsSchema } from '@runtipi/shared';
@@ -10,7 +9,7 @@ import { handleActionError } from '../utils/handle-action-error';
 /**
  * Given a settings object, update the settings.json file
  */
-export const updateSettingsAction = action(settingsSchema, async () => {
+export const updateSettingsAction = action(settingsSchema, async (settings) => {
   try {
     const user = await getUserFromCookie();
 
@@ -18,7 +17,7 @@ export const updateSettingsAction = action(settingsSchema, async () => {
       throw new Error('Not authorized');
     }
 
-    await setSettings(settingsSchema as z.infer<typeof settingsSchema>);
+    await setSettings(settings);
 
     return { success: true };
   } catch (e) {

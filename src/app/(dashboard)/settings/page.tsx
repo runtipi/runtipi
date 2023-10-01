@@ -8,6 +8,8 @@ import { getCurrentLocale } from 'src/utils/getCurrentLocale';
 import { SettingsTabTriggers } from './components/SettingsTabTriggers';
 import { GeneralActions } from './components/GeneralActions';
 import { SettingsContainer } from './components/SettingsContainer';
+import { SecurityContainer } from './components/SecurityContainer';
+import { getUserFromCookie } from '@/server/common/session.helpers';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
@@ -23,6 +25,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
   const version = await systemService.getVersion();
   const settings = getSettings();
   const locale = getCurrentLocale();
+  const user = await getUserFromCookie();
 
   return (
     <div className="card d-flex">
@@ -34,7 +37,9 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
         <TabsContent value="settings">
           <SettingsContainer initialValues={settings} currentLocale={locale} />
         </TabsContent>
-        <TabsContent value="security">{/* <SecurityContainer /> */}</TabsContent>
+        <TabsContent value="security">
+          <SecurityContainer totpEnabled={Boolean(user?.totpEnabled)} />
+        </TabsContent>
       </Tabs>
     </div>
   );
