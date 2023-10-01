@@ -1,10 +1,5 @@
 lockfileVersion: '6.0'
 
-patchedDependencies:
-  next-safe-action@3.0.1:
-    hash: i3wdronoj5npuplkzavpvyaj6e
-    path: patches/next-safe-action@3.0.1.patch
-
 importers:
 
   .:
@@ -100,8 +95,8 @@ importers:
         specifier: ^2.20.0
         version: 2.20.0(next@13.5.3)(react@18.2.0)
       next-safe-action:
-        specifier: ^3.0.1
-        version: 3.0.1(patch_hash=i3wdronoj5npuplkzavpvyaj6e)(next@13.5.3)(react@18.2.0)(zod@3.21.4)
+        specifier: ^3.4.0
+        version: 3.4.0(next@13.5.3)(react@18.2.0)(zod@3.21.4)
       pg:
         specifier: ^8.11.1
         version: 8.11.1
@@ -525,7 +520,7 @@ packages:
       '@babel/helper-validator-option': 7.22.5
       browserslist: 4.21.5
       lru-cache: 5.1.1
-      semver: 6.3.0
+      semver: 6.3.1
 
   /@babel/helper-environment-visitor@7.22.5:
     resolution: {integrity: sha512-XGmhECfVA/5sAt+H+xpSg0mfrHq6FzNr9Oxh7PSEBBRUb/mL7Kz3NICXb194rCqAEdxkhPT1a88teizAFyvk8Q==}
@@ -2055,7 +2050,7 @@ packages:
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
-      semver: 7.5.3
+      semver: 7.5.4
       tar: 6.1.13
     transitivePeerDependencies:
       - encoding
@@ -3781,7 +3776,7 @@ packages:
       '@typescript-eslint/typescript-estree': 5.59.11(typescript@5.2.2)
       eslint: 8.50.0
       eslint-scope: 5.1.1
-      semver: 7.5.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -5086,6 +5081,7 @@ packages:
 
   /defaults@1.0.4:
     resolution: {integrity: sha512-eFuaLoy/Rxalv2kr+lqMlUnrDWV+3j4pljOIJgLIhI058IQfWJ7vXhyEIHu+HtC738klGALYxOKDO0bQP3tg8A==}
+    requiresBuild: true
     dependencies:
       clone: 1.0.4
     dev: true
@@ -5644,7 +5640,7 @@ packages:
       eslint-plugin-import: 2.27.5(@typescript-eslint/parser@6.7.3)(eslint-import-resolver-typescript@3.5.5)(eslint@8.50.0)
       object.assign: 4.1.4
       object.entries: 1.1.6
-      semver: 6.3.0
+      semver: 6.3.1
     dev: true
 
   /eslint-config-airbnb-typescript@17.0.0(@typescript-eslint/eslint-plugin@6.7.3)(@typescript-eslint/parser@6.7.3)(eslint-plugin-import@2.27.5)(eslint@8.50.0):
@@ -6049,7 +6045,7 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     hasBin: true
     dependencies:
-      '@eslint-community/eslint-utils': 4.3.0(eslint@8.50.0)
+      '@eslint-community/eslint-utils': 4.4.0(eslint@8.50.0)
       '@eslint-community/regexpp': 4.9.0
       '@eslint/eslintrc': 2.1.2
       '@eslint/js': 8.50.0
@@ -8918,8 +8914,8 @@ packages:
       react: 18.2.0
     dev: true
 
-  /next-safe-action@3.0.1(patch_hash=i3wdronoj5npuplkzavpvyaj6e)(next@13.5.3)(react@18.2.0)(zod@3.21.4):
-    resolution: {integrity: sha512-qQOHz4Z1vnW9fKAl3+nmSoONtX8kvqJBJJ4PkRlkSF8AfFJnYp7PZ5qvtdIBTzxNoQLtM/CyVqlAM/6dCHJ62w==}
+  /next-safe-action@3.4.0(next@13.5.3)(react@18.2.0)(zod@3.21.4):
+    resolution: {integrity: sha512-EUmcChSlfIjdHu2n6L4w3EQnb1Np9C2OEWObPSKggdK/IhihDDatsunZKGcuimxFO3JbBdpFiUYcMe2slbovUg==}
     engines: {node: '>=16'}
     peerDependencies:
       next: '>= 13.4.2'
@@ -8930,7 +8926,6 @@ packages:
       react: 18.2.0
       zod: 3.21.4
     dev: false
-    patched: true
 
   /next@13.5.3(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)(sass@1.63.6):
     resolution: {integrity: sha512-4Nt4HRLYDW/yRpJ/QR2t1v63UOMS55A38dnWv3UDOWGezuY0ZyFO1ABNbD7mulVzs9qVhgy2+ppjdsANpKP1mg==}
@@ -10689,7 +10684,7 @@ packages:
       methods: 1.1.2
       mime: 2.6.0
       qs: 6.11.0
-      semver: 7.5.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
     dev: true

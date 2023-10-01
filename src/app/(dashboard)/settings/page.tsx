@@ -5,11 +5,11 @@ import React from 'react';
 import { SystemServiceClass } from '@/server/services/system';
 import { getSettings } from '@/server/core/TipiConfig';
 import { getCurrentLocale } from 'src/utils/getCurrentLocale';
+import { getUserFromCookie } from '@/server/common/session.helpers';
 import { SettingsTabTriggers } from './components/SettingsTabTriggers';
 import { GeneralActions } from './components/GeneralActions';
 import { SettingsContainer } from './components/SettingsContainer';
 import { SecurityContainer } from './components/SecurityContainer';
-import { getUserFromCookie } from '@/server/common/session.helpers';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
@@ -29,7 +29,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
 
   return (
     <div className="card d-flex">
-      <Tabs defaultValue={(tab as string) || 'actions'}>
+      <Tabs defaultValue={tab || 'actions'}>
         <SettingsTabTriggers />
         <TabsContent value="actions">
           <GeneralActions version={version} />
