@@ -1,5 +1,10 @@
 lockfileVersion: '6.0'
 
+patchedDependencies:
+  next-safe-action@3.0.1:
+    hash: i3wdronoj5npuplkzavpvyaj6e
+    path: patches/next-safe-action@3.0.1.patch
+
 importers:
 
   .:
@@ -96,7 +101,7 @@ importers:
         version: 2.20.0(next@13.5.3)(react@18.2.0)
       next-safe-action:
         specifier: ^3.0.1
-        version: 3.0.1(next@13.5.3)(react@18.2.0)(zod@3.21.4)
+        version: 3.0.1(patch_hash=i3wdronoj5npuplkzavpvyaj6e)(next@13.5.3)(react@18.2.0)(zod@3.21.4)
       pg:
         specifier: ^8.11.1
         version: 8.11.1
@@ -3713,7 +3718,7 @@ packages:
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.5.3
+      semver: 7.5.4
       tsutils: 3.21.0(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
@@ -7284,7 +7289,7 @@ packages:
       '@babel/parser': 7.22.5
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.0
-      semver: 6.3.0
+      semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8164,7 +8169,7 @@ packages:
     resolution: {integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==}
     engines: {node: '>=8'}
     dependencies:
-      semver: 6.3.0
+      semver: 6.3.1
     dev: false
 
   /make-dir@4.0.0:
@@ -8913,7 +8918,7 @@ packages:
       react: 18.2.0
     dev: true
 
-  /next-safe-action@3.0.1(next@13.5.3)(react@18.2.0)(zod@3.21.4):
+  /next-safe-action@3.0.1(patch_hash=i3wdronoj5npuplkzavpvyaj6e)(next@13.5.3)(react@18.2.0)(zod@3.21.4):
     resolution: {integrity: sha512-qQOHz4Z1vnW9fKAl3+nmSoONtX8kvqJBJJ4PkRlkSF8AfFJnYp7PZ5qvtdIBTzxNoQLtM/CyVqlAM/6dCHJ62w==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -8925,6 +8930,7 @@ packages:
       react: 18.2.0
       zod: 3.21.4
     dev: false
+    patched: true
 
   /next@13.5.3(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)(sass@1.63.6):
     resolution: {integrity: sha512-4Nt4HRLYDW/yRpJ/QR2t1v63UOMS55A38dnWv3UDOWGezuY0ZyFO1ABNbD7mulVzs9qVhgy2+ppjdsANpKP1mg==}
@@ -8970,7 +8976,7 @@ packages:
     resolution: {integrity: sha512-7GGVawqyHF4pfd0YFybhv/eM9JwTtPqx0mAanQ146O3FlSh3pA24zf9IRQTOsfTSqXTNzPSP5iagAJ94jjuVog==}
     engines: {node: '>=10'}
     dependencies:
-      semver: 7.5.3
+      semver: 7.5.4
 
   /node-addon-api@5.1.0:
     resolution: {integrity: sha512-eh0GgfEkpnoWDq+VY8OyvYhFEzBk6jIYbRKdIlyTiAXIVJ8PyBaKb0rp7oDtoddbdoHWhq8wwr+XZ81F1rpNdA==}
@@ -9464,7 +9470,7 @@ packages:
       https-proxy-agent: 5.0.1
       node-fetch: 2.6.9
       progress: 2.0.3
-      semver: 7.5.3
+      semver: 7.5.4
       tar-fs: 2.1.1
       yargs: 16.2.0
     transitivePeerDependencies:
@@ -10263,7 +10269,6 @@ packages:
   /semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
-    dev: true
 
   /semver@7.0.0:
     resolution: {integrity: sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==}
@@ -10283,7 +10288,6 @@ packages:
     hasBin: true
     dependencies:
       lru-cache: 6.0.0
-    dev: true
 
   /set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
