@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@hookform/resolvers':
         specifier: ^3.1.1
-        version: 3.1.1(react-hook-form@7.45.1)
+        version: 3.1.1(react-hook-form@7.47.0)
       '@otplib/core':
         specifier: ^12.0.1
         version: 12.0.1
@@ -114,8 +114,8 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
       react-hook-form:
-        specifier: ^7.45.1
-        version: 7.45.1(react@18.2.0)
+        specifier: ^7.47.0
+        version: 7.47.0(react@18.2.0)
       react-hot-toast:
         specifier: ^2.4.1
         version: 2.4.1(csstype@3.1.1)(react-dom@18.2.0)(react@18.2.0)
@@ -1708,12 +1708,12 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@hookform/resolvers@3.1.1(react-hook-form@7.45.1):
+  /@hookform/resolvers@3.1.1(react-hook-form@7.47.0):
     resolution: {integrity: sha512-tS16bAUkqjITNSvbJuO1x7MXbn7Oe8ZziDTJdA9mMvsoYthnOOiznOTGBYwbdlYBgU+tgpI/BtTU3paRbCuSlg==}
     peerDependencies:
       react-hook-form: ^7.0.0
     dependencies:
-      react-hook-form: 7.45.1(react@18.2.0)
+      react-hook-form: 7.47.0(react@18.2.0)
     dev: false
 
   /@humanwhocodes/config-array@0.11.11:
@@ -9697,8 +9697,8 @@ packages:
       react: 18.2.0
       scheduler: 0.23.0
 
-  /react-hook-form@7.45.1(react@18.2.0):
-    resolution: {integrity: sha512-6dWoFJwycbuFfw/iKMcl+RdAOAOHDiF11KWYhNDRN/OkUt+Di5qsZHwA0OwsVnu9y135gkHpTw9DJA+WzCeR9w==}
+  /react-hook-form@7.47.0(react@18.2.0):
+    resolution: {integrity: sha512-F/TroLjTICipmHeFlMrLtNLceO2xr1jU3CyiNla5zdwsGUGu2UOxxR4UyJgLlhMwLW/Wzp4cpJ7CPfgJIeKdSg==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
