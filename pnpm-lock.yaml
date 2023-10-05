@@ -379,8 +379,8 @@ importers:
         specifier: ^7.5.3
         version: 7.5.3
       systeminformation:
-        specifier: ^5.18.7
-        version: 5.18.7
+        specifier: ^5.21.11
+        version: 5.21.11
       web-push:
         specifier: ^3.6.3
         version: 3.6.3
@@ -10661,8 +10661,8 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /systeminformation@5.18.7:
-    resolution: {integrity: sha512-ROxysxhjjnhWxQDkDPxCCQdeOt9IUKIGgfM0A++kqqNC+V/hAHQRshyG+5421R//DsOfXFc11pUFGpzA8YqRNQ==}
+  /systeminformation@5.21.11:
+    resolution: {integrity: sha512-dIJEGoP5W7k4JJGje/b+inJrOL5hV9LPsUi5ndBvJydI80CVEcu2DZYgt6prdRErDi2SA4SqYd/WMR4b+u34mA==}
     engines: {node: '>=8.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
@@ -11430,7 +11430,7 @@ packages:
       debug: 4.3.4
       globrex: 0.1.2
       tsconfck: 2.1.1(typescript@5.2.2)
-      vite: 4.4.7(@types/node@20.7.1)(sass@1.63.6)
+      vite: 4.4.7(@types/node@20.3.2)(sass@1.63.6)
     transitivePeerDependencies:
       - supports-color
       - typescript
