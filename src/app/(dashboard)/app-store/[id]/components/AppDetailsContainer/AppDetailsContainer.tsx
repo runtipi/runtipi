@@ -3,7 +3,6 @@
 import React from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
-import { AppRouterOutput } from '@/server/routers/app/app.router';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { useAction } from 'next-safe-action/hook';
 import { installAppAction } from '@/actions/app-actions/install-app-action';
@@ -16,6 +15,7 @@ import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
 import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
+import { AppService } from '@/server/services/apps/apps.service';
 import { InstallModal } from '../InstallModal';
 import { StopModal } from '../StopModal';
 import { UninstallModal } from '../UninstallModal';
@@ -26,7 +26,7 @@ import { AppDetailsTabs } from '../AppDetailsTabs';
 import { FormValues } from '../InstallForm';
 
 interface IProps {
-  app: AppRouterOutput['getApp'];
+  app: Awaited<ReturnType<AppService['getApp']>>;
   localDomain?: string;
 }
 type OpenType = 'local' | 'domain' | 'local_domain';
