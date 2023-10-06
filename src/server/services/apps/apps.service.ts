@@ -370,3 +370,5 @@ export class AppServiceClass {
       .filter(notEmpty);
   };
 }
+
+export type AppService = InstanceType<typeof AppServiceClass>;

@@ -5,11 +5,11 @@ import type { AppStatus } from '@/server/db/schema';
 
 import { useTranslations } from 'next-intl';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
-import { AppWithInfo } from '@/client/core/types';
 import { Button } from '@/components/ui/Button';
+import type { AppService } from '@/server/services/apps/apps.service';
 
 interface IProps {
-  app: AppWithInfo;
+  app: Awaited<ReturnType<AppService['getApp']>>;
   status?: AppStatus;
   updateAvailable: boolean;
   localDomain?: string;
