@@ -76,7 +76,7 @@
     "uuid": "^9.0.0",
     "validator": "^13.7.0",
     "winston": "^3.9.0",
-    "zod": "^3.21.4",
+    "zod": "^3.22.3",
     "zustand": "^4.3.8"
   },
   "devDependencies": {
