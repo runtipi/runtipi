@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import React from 'react';
-import { getUrl } from '../../../core/helpers/url-helpers';
 import { Button } from '../Button';
 import styles from './EmptyPage.module.scss';
 
@@ -15,7 +14,7 @@ interface IProps {
 export const EmptyPage: React.FC<IProps> = ({ title, subtitle, onAction, actionLabel }) => (
   <div data-testid="empty-page" className="card empty">
     <Image
-      src={getUrl('empty.svg')}
+      src="/empty.svg"
       alt="Empty box"
       height="80"
       width="80"
