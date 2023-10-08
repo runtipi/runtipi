@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { Tooltip } from 'react-tooltip';
 import { useTranslations } from 'next-intl';
-import { getUrl } from '../../../core/helpers/url-helpers';
 import { useUIStore } from '../../../state/uiStore';
 import { NavBar } from '../NavBar';
 
@@ -31,7 +30,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
               className={clsx('navbar-brand-image me-3')}
               width={100}
               height={100}
-              src={getUrl('tipi.png')}
+              src="/tipi.png"
               style={{
                 width: '30px',
                 maxWidth: '30px',

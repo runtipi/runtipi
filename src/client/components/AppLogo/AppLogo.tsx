@@ -1,10 +1,9 @@
 import clsx from 'clsx';
 import React from 'react';
-import { getUrl } from '../../core/helpers/url-helpers';
 import styles from './AppLogo.module.scss';
 
 export const AppLogo: React.FC<{ id?: string; size?: number; className?: string; alt?: string }> = ({ id, size = 80, className = '', alt = '' }) => {
-  const logoUrl = id ? `/api/app-image?id=${id}` : getUrl('placeholder.png');
+  const logoUrl = id ? `/api/app-image?id=${id}` : '/placeholder.png';
 
   return (
     <div aria-label={alt} className={clsx(styles.dropShadow, className)} style={{ width: size, height: size }}>
