@@ -71,6 +71,9 @@ importers:
       next:
         specifier: 13.5.3
         version: 13.5.3(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)(sass@1.63.6)
+      next-client-cookies:
+        specifier: ^1.0.5
+        version: 1.0.5(next@13.5.3)(react@18.2.0)
       next-intl:
         specifier: ^2.20.0
         version: 2.20.0(next@13.5.3)(react@18.2.0)
@@ -8806,6 +8809,11 @@ packages:
     hasBin: true
     dev: true
 
+  /js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
+    dev: false
+
   /js-levenshtein@1.1.6:
     resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
     engines: {node: '>=0.10.0'}
@@ -10029,6 +10037,17 @@ packages:
   /negotiator@0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
+    dev: false
+
+  /next-client-cookies@1.0.5(next@13.5.3)(react@18.2.0):
+    resolution: {integrity: sha512-PqmJyJCZotR/Vg8meaqHKT2RjHoNuDkaew6JBj0gA1tlY7+6aK0Zb00KLnZSQnbGYg9OEQquk5UyWp1QACvXjQ==}
+    peerDependencies:
+      next: ^13.0.0
+      react: '>= 16.8.0'
+    dependencies:
+      js-cookie: 3.0.5
+      next: 13.5.3(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)(sass@1.63.6)
+      react: 18.2.0
     dev: false
 
   /next-intl@2.20.0(next@13.5.3)(react@18.2.0):
