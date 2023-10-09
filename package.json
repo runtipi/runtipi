@@ -99,7 +99,7 @@
     "@types/semver": "^7.5.0",
     "@types/uuid": "^9.0.2",
     "@types/validator": "^13.7.17",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.3",
     "@vitejs/plugin-react": "^4.0.1",
     "@vitest/coverage-v8": "^0.34.5",
