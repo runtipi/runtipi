@@ -93,7 +93,7 @@
     "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.5.2",
     "@types/lodash.merge": "^4.6.7",
-    "@types/node": "20.7.1",
+    "@types/node": "20.8.4",
     "@types/pg": "^8.10.2",
     "@types/react": "18.2.23",
     "@types/react-dom": "18.2.8",
