@@ -36,7 +36,7 @@
     "esbuild": "^0.16.17",
     "eslint-config-prettier": "^8.8.0",
     "memfs": "^4.2.0",
-    "nodemon": "^2.0.22",
+    "nodemon": "^3.0.1",
     "pkg": "^5.8.1",
     "vite": "^4.4.7",
     "vite-tsconfig-paths": "^4.2.0",
