@@ -32,7 +32,7 @@
     "@types/cli-progress": "^3.11.0",
     "@types/node": "20.3.2",
     "@types/web-push": "^3.3.2",
-    "dotenv-cli": "^7.2.1",
+    "dotenv-cli": "^7.3.0",
     "esbuild": "^0.16.17",
     "eslint-config-prettier": "^8.8.0",
     "memfs": "^4.2.0",

@@ -104,7 +104,7 @@
     "@typescript-eslint/parser": "^6.7.3",
     "@vitejs/plugin-react": "^4.0.1",
     "@vitest/coverage-v8": "^0.34.5",
-    "dotenv-cli": "^7.2.1",
+    "dotenv-cli": "^7.3.0",
     "eslint": "8.50.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.1.0",
