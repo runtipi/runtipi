@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -235,7 +239,7 @@ importers:
         version: 9.0.0(eslint@8.50.0)
       eslint-import-resolver-typescript:
         specifier: ^3.5.5
-        version: 3.5.5(@typescript-eslint/parser@6.7.3)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.28.1)(eslint@8.50.0)
+        version: 3.5.5(@typescript-eslint/parser@6.7.3)(eslint-plugin-import@2.27.5)(eslint@8.50.0)
       eslint-plugin-import:
         specifier: ^2.27.5
         version: 2.27.5(@typescript-eslint/parser@6.7.3)(eslint-import-resolver-typescript@3.5.5)(eslint@8.50.0)
@@ -273,8 +277,8 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2(typescript@5.2.2)
       next-router-mock:
-        specifier: ^0.9.7
-        version: 0.9.7(next@13.5.3)(react@18.2.0)
+        specifier: ^0.9.10
+        version: 0.9.10(next@13.5.3)(react@18.2.0)
       prettier:
         specifier: ^3.0.3
         version: 3.0.3
@@ -5524,6 +5528,30 @@ packages:
       - supports-color
     dev: true
 
+  /eslint-import-resolver-typescript@3.5.5(@typescript-eslint/parser@6.7.3)(eslint-plugin-import@2.27.5)(eslint@8.50.0):
+    resolution: {integrity: sha512-TdJqPHs2lW5J9Zpe17DZNQuDnox4xo2o+0tE7Pggain9Rbc19ik8kFtXdxZ250FVx2kF4vlt2RSf4qlUpG7bhw==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      eslint: '*'
+      eslint-plugin-import: '*'
+    dependencies:
+      debug: 4.3.4
+      enhanced-resolve: 5.12.0
+      eslint: 8.50.0
+      eslint-module-utils: 2.7.4(@typescript-eslint/parser@6.7.3)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.50.0)
+      eslint-plugin-import: 2.27.5(@typescript-eslint/parser@6.7.3)(eslint-import-resolver-typescript@3.5.5)(eslint@8.50.0)
+      get-tsconfig: 4.5.0
+      globby: 13.1.3
+      is-core-module: 2.11.0
+      is-glob: 4.0.3
+      synckit: 0.8.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - eslint-import-resolver-node
+      - eslint-import-resolver-webpack
+      - supports-color
+    dev: true
+
   /eslint-module-utils@2.7.4(@typescript-eslint/parser@6.7.3)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.50.0):
     resolution: {integrity: sha512-j4GT+rqzCoRKHwURX7pddtIPGySnX9Si/cgMI5ztrcqOPtk5dDEeZ34CQVPphnqkJytlc97Vuk05Um2mJ3gEQA==}
     engines: {node: '>=4'}
@@ -5549,7 +5577,7 @@ packages:
       debug: 3.2.7(supports-color@5.5.0)
       eslint: 8.50.0
       eslint-import-resolver-node: 0.3.7
-      eslint-import-resolver-typescript: 3.5.5(@typescript-eslint/parser@6.7.3)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.28.1)(eslint@8.50.0)
+      eslint-import-resolver-typescript: 3.5.5(@typescript-eslint/parser@6.7.3)(eslint-plugin-import@2.27.5)(eslint@8.50.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8609,8 +8637,8 @@ packages:
       use-intl: 2.20.0(react@18.2.0)
     dev: false
 
-  /next-router-mock@0.9.7(next@13.5.3)(react@18.2.0):
-    resolution: {integrity: sha512-y5ioLCIsdkJKwcoPnrUyocNEJT22RK4wKSg6LO0Q2XkBBvkYprEWy5FiCZt+CA8+qpfxpBlNca76F+glEohbRA==}
+  /next-router-mock@0.9.10(next@13.5.3)(react@18.2.0):
+    resolution: {integrity: sha512-bK6sRb/xGNFgHVUZuvuApn6KJBAKTPiP36A7a9mO77U4xQO5ukJx9WHlU67Tv8AuySd09pk0+Hu8qMVIAmLO6A==}
     peerDependencies:
       next: '>=10.0.0'
       react: '>=17.0.0'
@@ -11137,7 +11165,7 @@ packages:
       debug: 4.3.4
       globrex: 0.1.2
       tsconfck: 2.1.1(typescript@5.2.2)
-      vite: 4.4.7(@types/node@20.3.2)(sass@1.63.6)
+      vite: 4.4.7(@types/node@20.7.1)(sass@1.63.6)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -11722,7 +11750,3 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
