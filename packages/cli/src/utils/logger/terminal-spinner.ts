@@ -7,7 +7,7 @@ export class TerminalSpinner {
 
   frame = 0;
 
-  interval: NodeJS.Timer | null = null;
+  interval: NodeJS.Timeout | null = null;
 
   start() {
     this.interval = setInterval(() => {
