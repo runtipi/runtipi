@@ -16,8 +16,8 @@ type ModalProps = {
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
 
-const DialogPortal = ({ className, children, ...props }: DialogPrimitive.DialogPortalProps & ModalProps) => (
-  <DialogPrimitive.Portal className={clsx(className)} {...props}>
+const DialogPortal = ({ children, ...props }: DialogPrimitive.DialogPortalProps & ModalProps) => (
+  <DialogPrimitive.Portal {...props}>
     <div className={clsx('modal modal-sm d-block', styles.dimmedBackground)}>
       <div className={clsx(`modal-dialog modal-dialog-centered modal-${props.size || 'lg'}`, styles.zoomIn)}>
         <div className="shadow modal-content">

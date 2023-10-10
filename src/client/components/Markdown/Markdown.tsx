@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import { PluggableList } from 'react-markdown/lib/react-markdown';
+import { PluggableList } from 'react-markdown/lib';
 
 const MarkdownImg = (props: Pick<React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, 'key' | keyof React.ImgHTMLAttributes<HTMLImageElement>>) => (
   <div className="d-flex justify-content-center">
