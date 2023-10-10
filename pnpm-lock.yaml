@@ -11137,7 +11137,7 @@ packages:
       debug: 4.3.4
       globrex: 0.1.2
       tsconfck: 2.1.1(typescript@5.2.2)
-      vite: 4.4.7(@types/node@20.7.1)(sass@1.63.6)
+      vite: 4.4.7(@types/node@20.3.2)(sass@1.63.6)
     transitivePeerDependencies:
       - supports-color
       - typescript
