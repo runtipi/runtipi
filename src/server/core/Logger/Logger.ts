@@ -49,7 +49,11 @@ const productionLogger = () => {
     return createLogger({
       level: 'info',
       format: combinedLogFormat,
-      transports: [],
+      transports: [
+        new transports.Console({
+          level: 'info',
+        }),
+      ],
     });
   }
 };
