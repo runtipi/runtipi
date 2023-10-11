@@ -10,6 +10,7 @@ import './global.css';
 import clsx from 'clsx';
 import { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
+import { StatusProvider } from '@/components/hoc/StatusProvider';
 import { getCurrentLocale } from '../utils/getCurrentLocale';
 import { ClientProviders } from './components/ClientProviders';
 
@@ -46,7 +47,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <NextIntlClientProvider locale={locale} messages={mergedMessages}>
         <ClientProviders initialTheme={theme?.value} cookies={cookies().getAll()}>
           <body data-bs-theme={theme?.value}>
-            {children}
+            <StatusProvider>{children}</StatusProvider>
             <Toaster />
           </body>
         </ClientProviders>

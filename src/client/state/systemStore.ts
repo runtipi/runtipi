@@ -3,7 +3,7 @@ import { create } from 'zustand';
 const SYSTEM_STATUS = {
   RUNNING: 'RUNNING',
   RESTARTING: 'RESTARTING',
-  LOADING: 'LOADING',
+  LOADING: 'UPDATING',
 } as const;
 export type SystemStatus = (typeof SYSTEM_STATUS)[keyof typeof SYSTEM_STATUS];
 

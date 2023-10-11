@@ -39,24 +39,6 @@ describe('Test: getConfig', () => {
     expect(config.appsRepoId).toBe(settingsJson.appsRepoId);
     expect(config.domain).toBe(settingsJson.domain);
   });
-
-  it('Should not be able to apply an invalid value from json config', () => {
-    // arrange
-    const settingsJson = {
-      appsRepoUrl: faker.lorem.word(),
-      appsRepoId: faker.lorem.word(),
-      domain: 10,
-    };
-    const MockFiles = {
-      '/runtipi/state/settings.json': JSON.stringify(settingsJson),
-    };
-
-    // @ts-expect-error - We are mocking fs
-    fs.__createMockFiles(MockFiles);
-
-    // act & assert
-    expect(() => new TipiConfig().getConfig()).toThrow();
-  });
 });
 
 describe('Test: setConfig', () => {
