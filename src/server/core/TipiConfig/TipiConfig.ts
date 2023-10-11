@@ -16,7 +16,7 @@ const formatErrors = (errors: { fieldErrors: Record<string, string[]> }) =>
 export class TipiConfig {
   private static instance: TipiConfig;
 
-  private config: z.infer<typeof envSchema>;
+  private config: z.infer<typeof envSchema> = {} as z.infer<typeof envSchema>;
 
   constructor() {
     const conf = { ...process.env, ...nextConfig()?.serverRuntimeConfig };
@@ -55,12 +55,10 @@ export class TipiConfig {
       } else {
         const errors = formatErrors(parsedConfig.error.flatten());
         Logger.error(`❌ Invalid env config ${JSON.stringify(errors)}`);
-        throw new Error(`Invalid env config ${JSON.stringify(errors)}`);
       }
     } else {
       const errors = formatErrors(parsedFileConfig.error.flatten());
       Logger.error(`❌ Invalid settings.json file: ${JSON.stringify(errors)}`);
-      throw new Error('Invalid settings.json file');
     }
   }
 
