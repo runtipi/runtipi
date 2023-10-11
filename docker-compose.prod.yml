@@ -85,6 +85,10 @@ services:
       traefik.enable: true
       traefik.http.services.dashboard.loadbalancer.server.port: 3000
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
+      # Local ip
+      traefik.http.routers.dashboard.rule: PathPrefix("/")
+      traefik.http.routers.dashboard.service: dashboard
+      traefik.http.routers.dashboard.entrypoints: web
       # Local domain
       traefik.http.routers.dashboard-local-insecure.rule: Host(`${LOCAL_DOMAIN}`)
       traefik.http.routers.dashboard-local-insecure.entrypoints: web

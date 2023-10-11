@@ -26,7 +26,6 @@ COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
 COPY ./public ./public
 COPY ./tests ./tests
-COPY ./.env.example ./.env
 
 RUN npm run build
 
