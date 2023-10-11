@@ -58,7 +58,7 @@ services:
   tipi-dashboard:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: tipi-dashboard
     depends_on:
       tipi-db:
@@ -74,11 +74,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      # - /dashboard/node_modules
-      # - /dashboard/.next
       - ${PWD}/.env:/runtipi/.env
-      - ${PWD}/src:/app/src
-      - ${PWD}/packages:/app/packages
       - ${PWD}/state:/runtipi/state
       - ${PWD}/repos:/runtipi/repos:ro
       - ${PWD}/apps:/runtipi/apps
