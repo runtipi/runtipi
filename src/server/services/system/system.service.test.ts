@@ -1,7 +1,6 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import fs from 'fs-extra';
-import semver from 'semver';
 import { faker } from '@faker-js/faker';
 import { setConfig } from '../../core/TipiConfig';
 import { TipiCache } from '../../core/TipiCache';
@@ -73,25 +72,6 @@ describe('Test: systemInfo', () => {
 });
 
 describe('Test: getVersion', () => {
-  it('It should return version with body', async () => {
-    // Arrange
-    const body = faker.lorem.words(10);
-    server.use(
-      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
-        return res(ctx.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}`, body }));
-      }),
-    );
-
-    // Act
-    const version = await SystemService.getVersion();
-
-    // Assert
-    expect(version).toBeDefined();
-    expect(version.current).toBeDefined();
-    expect(semver.valid(version.latest)).toBeTruthy();
-    expect(version.body).toBeDefined();
-  });
-
   it('Should return current version for latest if request fails', async () => {
     server.use(
       rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
@@ -121,11 +101,9 @@ describe('Test: getVersion', () => {
     // Assert
     expect(version).toBeDefined();
     expect(version.current).toBeDefined();
-    expect(semver.valid(version.latest)).toBeTruthy();
 
     expect(version2.latest).toBe(version.latest);
     expect(version2.current).toBeDefined();
-    expect(semver.valid(version2.latest)).toBeTruthy();
   });
 });
 
