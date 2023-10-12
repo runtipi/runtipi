@@ -148,6 +148,8 @@
   },
   "homepage": "https://github.com/runtipi/runtipi#readme",
   "pnpm": {
-    "patchedDependencies": {}
+    "patchedDependencies": {
+      "next-safe-action@3.4.0": "patches/next-safe-action@3.4.0.patch"
+    }
   }
 }
