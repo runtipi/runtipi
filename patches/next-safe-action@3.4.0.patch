@@ -1,5 +1,5 @@
 diff --git a/dist/hook.mjs b/dist/hook.mjs
-index 4f2ea0f6818194b906590f2467f788e66d3524d9..b949dd0576477b08958cbf7be91c8c47c57dbe56 100644
+index 4f2ea0f6818194b906590f2467f788e66d3524d9..fcec224f19be119a922734e8a6fb7d1916921d8a 100644
 --- a/dist/hook.mjs
 +++ b/dist/hook.mjs
 @@ -7,7 +7,7 @@ import {
@@ -19,9 +19,10 @@ index 4f2ea0f6818194b906590f2467f788e66d3524d9..b949dd0576477b08958cbf7be91c8c47
 -  const hasErrored = typeof res.validationError !== "undefined" || typeof res.serverError !== "undefined" || typeof res.fetchError !== "undefined";
 +  const hasSucceded = typeof res?.data !== "undefined";
 +  const hasErrored =
-+    typeof res?.validationError !== "undefined" ||
-+    typeof res?.serverError !== "undefined" ||
-+    typeof res?.fetchError !== "undefined";
++    typeof res === "undefined" ||
++    typeof res.validationError !== "undefined" ||
++    typeof res.serverError !== "undefined" ||
++    typeof res.fetchError !== "undefined";
    const hasExecuted = hasSucceded || hasErrored;
    return { hasExecuted, hasSucceded, hasErrored };
  };

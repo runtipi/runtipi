@@ -2,7 +2,7 @@ lockfileVersion: '6.0'
 
 patchedDependencies:
   next-safe-action@3.4.0:
-    hash: 5iyuucgttzwgjzgtlixn36fwhe
+    hash: qgf42rjgttuw3cdkp2gsi7r344
     path: patches/next-safe-action@3.4.0.patch
 
 importers:
@@ -80,7 +80,7 @@ importers:
         version: 2.20.2(next@13.5.4)(react@18.2.0)
       next-safe-action:
         specifier: ^3.4.0
-        version: 3.4.0(patch_hash=5iyuucgttzwgjzgtlixn36fwhe)(next@13.5.4)(react@18.2.0)(zod@3.21.4)
+        version: 3.4.0(patch_hash=qgf42rjgttuw3cdkp2gsi7r344)(next@13.5.4)(react@18.2.0)(zod@3.21.4)
       pg:
         specifier: ^8.11.3
         version: 8.11.3
@@ -8400,7 +8400,7 @@ packages:
       react: 18.2.0
     dev: true
 
-  /next-safe-action@3.4.0(patch_hash=5iyuucgttzwgjzgtlixn36fwhe)(next@13.5.4)(react@18.2.0)(zod@3.21.4):
+  /next-safe-action@3.4.0(patch_hash=qgf42rjgttuw3cdkp2gsi7r344)(next@13.5.4)(react@18.2.0)(zod@3.21.4):
     resolution: {integrity: sha512-EUmcChSlfIjdHu2n6L4w3EQnb1Np9C2OEWObPSKggdK/IhihDDatsunZKGcuimxFO3JbBdpFiUYcMe2slbovUg==}
     engines: {node: '>=16'}
     peerDependencies:
