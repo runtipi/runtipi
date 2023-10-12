@@ -66,7 +66,6 @@ export class SystemExecutors {
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
       path.join(rootFolderHost, 'logs'),
-      path.join(rootFolderHost, 'media'),
       path.join(rootFolderHost, 'repos'),
       path.join(rootFolderHost, 'state'),
       path.join(rootFolderHost, 'traefik'),
