@@ -166,7 +166,7 @@ function check_dependency_and_install() {
 
 # If version was not given it will install the latest version
 if [[ "${VERSION}" == "latest" ]]; then
-  LATEST_VERSION=$(curl -s https://api.github.com/repos/meienberger/runtipi/releases/latest | grep tag_name | cut -d '"' -f4)
+  LATEST_VERSION=$(curl -s https://api.github.com/repos/runtipi/runtipi/releases/latest | grep tag_name | cut -d '"' -f4)
   VERSION="${LATEST_VERSION}"
 fi
 
@@ -175,7 +175,7 @@ if [ "$ARCHITECTURE" == "arm64" ] || [ "$ARCHITECTURE" == "aarch64" ]; then
   ASSET="runtipi-cli-linux-arm64"
 fi
 
-URL="https://github.com/meienberger/runtipi/releases/download/$VERSION/$ASSET"
+URL="https://github.com/runtipi/runtipi/releases/download/$VERSION/$ASSET"
 
 if [[ "${UPDATE}" == "false" ]]; then
   mkdir -p runtipi

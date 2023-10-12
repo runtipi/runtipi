@@ -39,7 +39,7 @@ export class SystemServiceClass {
       const currentVersion = TipiConfig.getConfig().version;
 
       if (seePreReleaseVersions) {
-        const { data } = await axios.get<{ tag_name: string; body: string }[]>('https://api.github.com/repos/meienberger/runtipi/releases');
+        const { data } = await axios.get<{ tag_name: string; body: string }[]>('https://api.github.com/repos/runtipi/runtipi/releases');
 
         return { current: currentVersion, latest: data[0]?.tag_name ?? currentVersion, body: data[0]?.body };
       }
@@ -48,7 +48,7 @@ export class SystemServiceClass {
       let body = await cache.get('latestVersionBody');
 
       if (!version) {
-        const { data } = await axios.get<{ tag_name: string; body: string }>('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+        const { data } = await axios.get<{ tag_name: string; body: string }>('https://api.github.com/repos/runtipi/runtipi/releases/latest');
 
         version = data.tag_name;
         body = data.body;

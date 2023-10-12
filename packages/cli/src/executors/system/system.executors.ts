@@ -354,7 +354,7 @@ export class SystemExecutors {
 
       if (!targetVersion || targetVersion === 'latest') {
         spinner.setMessage('Fetching latest version...');
-        const { data } = await axios.get<{ tag_name: string }>('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+        const { data } = await axios.get<{ tag_name: string }>('https://api.github.com/repos/runtipi/runtipi/releases/latest');
         this.logger.info(`Getting latest version from GitHub: ${data.tag_name}`);
         targetVersion = data.tag_name;
       }
@@ -374,7 +374,7 @@ export class SystemExecutors {
 
       const fileName = `runtipi-cli-${targetVersion}`;
       const savePath = path.join(rootFolderHost, fileName);
-      const fileUrl = `https://github.com/meienberger/runtipi/releases/download/${targetVersion}/${assetName}`;
+      const fileUrl = `https://github.com/runtipi/runtipi/releases/download/${targetVersion}/${assetName}`;
       this.logger.info(`Downloading Tipi ${targetVersion} from ${fileUrl}`);
 
       spinner.done(`Target version: ${targetVersion}`);

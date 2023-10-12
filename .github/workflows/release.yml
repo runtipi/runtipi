@@ -23,7 +23,7 @@ jobs:
           echo "tag=v${VERSION}" >> $GITHUB_OUTPUT
 
   build-images:
-    if: github.repository == 'meienberger/runtipi'
+    if: github.repository == 'runtipi/runtipi'
     needs: get-tag
     runs-on: ubuntu-latest
     steps:

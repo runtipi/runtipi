@@ -37,7 +37,8 @@ type EnvKeys =
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
-const DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
+const OLD_DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
+const DEFAULT_REPO_URL = 'https://github.com/runtipi/runtipi-appstore';
 
 /**
  * Reads and returns the generated seed
@@ -144,6 +145,10 @@ export const generateSystemEnvFile = async () => {
   await generateSeed(rootFolder);
 
   const { data } = settings;
+
+  if (data.appsRepoUrl === OLD_DEFAULT_REPO_URL) {
+    data.appsRepoUrl = DEFAULT_REPO_URL;
+  }
 
   const jwtSecret = envMap.get('JWT_SECRET') || (await deriveEntropy('jwt_secret'));
   const repoId = getRepoHash(data.appsRepoUrl || DEFAULT_REPO_URL);

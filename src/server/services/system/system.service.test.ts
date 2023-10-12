@@ -74,7 +74,7 @@ describe('Test: systemInfo', () => {
 describe('Test: getVersion', () => {
   it('Should return current version for latest if request fails', async () => {
     server.use(
-      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
+      rest.get('https://api.github.com/repos/runtipi/runtipi/releases/latest', (_, res, ctx) => {
         return res(ctx.status(500));
       }),
     );
@@ -89,7 +89,7 @@ describe('Test: getVersion', () => {
   it('Should return cached version', async () => {
     // Arrange
     server.use(
-      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
+      rest.get('https://api.github.com/repos/runtipi/runtipi/releases/latest', (_, res, ctx) => {
         return res(ctx.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` }));
       }),
     );

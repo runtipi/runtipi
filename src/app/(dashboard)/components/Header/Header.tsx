@@ -52,11 +52,11 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable }) => {
         <div className="navbar-nav flex-row order-md-last">
           <div className="nav-item d-none d-xl-flex me-3">
             <div className="btn-list">
-              <a href="https://github.com/meienberger/runtipi" target="_blank" rel="noreferrer" className="btn btn-dark">
+              <a href="https://github.com/runtipi/runtipi" target="_blank" rel="noreferrer" className="btn btn-dark">
                 <IconBrandGithub data-testid="icon-github" className="me-1 icon" size={24} />
                 {t('source-code')}
               </a>
-              <a href="https://github.com/meienberger/runtipi?sponsor=1" target="_blank" rel="noreferrer" className="btn btn-dark">
+              <a href="https://github.com/runtipi/runtipi?sponsor=1" target="_blank" rel="noreferrer" className="btn btn-dark">
                 <IconHeart className="me-1 icon text-pink" size={24} />
                 {t('sponsor')}
               </a>

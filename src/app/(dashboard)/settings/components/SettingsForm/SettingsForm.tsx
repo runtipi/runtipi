@@ -155,7 +155,7 @@ export const SettingsForm = (props: IProps) => {
               </>
             }
             error={errors.appsRepoUrl?.message}
-            placeholder="https://github.com/meienberger/runtipi-appstore"
+            placeholder="https://github.com/runtipi/runtipi-appstore"
           />
         </div>
         <div className="mb-3">

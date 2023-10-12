@@ -1,16 +1,17 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-38-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-[![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
-[![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
-![Issues](https://img.shields.io/github/issues/meienberger/runtipi)
+[![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
+[![Version](https://img.shields.io/github/v/release/runtipi/runtipi?color=%235351FB&label=version)](https://github.com/runtipi/runtipi/releases)
+![Issues](https://img.shields.io/github/issues/runtipi/runtipi)
 [![Docker Pulls](https://badgen.net/docker/pulls/meienberger/runtipi?icon=docker&label=pulls)](https://hub.docker.com/r/meienberger/runtipi/)
 [![Docker Image Size](https://badgen.net/docker/size/meienberger/runtipi?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/runtipi/)
-![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
-[![codecov](https://codecov.io/gh/meienberger/runtipi/branch/master/graph/badge.svg?token=FZGO7ZOPSF)](https://codecov.io/gh/meienberger/runtipi)
+![Build](https://github.com/runtipi/runtipi/workflows/Tipi%20CI/badge.svg)
 [![Crowdin](https://badges.crowdin.net/runtipi/localized.svg)](https://crowdin.com/project/runtipi)
 
 #### Join the discussion
@@ -18,11 +19,11 @@
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 [![Matrix](https://img.shields.io/matrix/runtipi:matrix.org?label=matrix&logo=matrix)](https://matrix.to/#/#runtipi:matrix.org)
 
-![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/appstore.png)
+![Preview](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png)
 
 > ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
 
-Tipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Tipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Tipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/meienberger/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
+Tipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Tipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Tipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/runtipi/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
 
 ## Getting started
 
@@ -51,7 +52,7 @@ We are looking for contributions of all kinds. If you know design, development, 
 
 ## 📜 License
 
-[![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
 
 Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may copy, distribute and modify the software as long as you track changes/dates in source files. Any modifications to or software including (via compiler) GPL-licensed code must also be made available under the GPL along with build & install instructions.
 

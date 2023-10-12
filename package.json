@@ -139,14 +139,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/meienberger/runtipi.git"
+    "url": "git+https://github.com/runtipi/runtipi.git"
   },
   "author": "",
   "license": "GNU General Public License v3.0",
   "bugs": {
-    "url": "https://github.com/meienberger/runtipi/issues"
+    "url": "https://github.com/runtipi/runtipi/issues"
   },
-  "homepage": "https://github.com/meienberger/runtipi#readme",
+  "homepage": "https://github.com/runtipi/runtipi#readme",
   "pnpm": {
     "patchedDependencies": {}
   }
