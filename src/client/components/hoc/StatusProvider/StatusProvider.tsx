@@ -20,7 +20,7 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
 
   const getStatusMutation = useAction(getStatusAction, {
     onSuccess: (data) => {
-      if (data.success) {
+      if (data?.success) {
         setStatus(data.status);
       }
     },

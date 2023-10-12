@@ -5,6 +5,7 @@ import { action } from '@/lib/safe-action';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
 import { db } from '@/server/db';
+import { revalidatePath } from 'next/cache';
 import { handleActionError } from '../utils/handle-action-error';
 
 const input = z.object({ password: z.string() });
@@ -22,6 +23,8 @@ export const disableTotpAction = action(input, async ({ password }) => {
 
     const authService = new AuthServiceClass(db);
     await authService.disableTotp({ userId: user.id, password });
+
+    revalidatePath('/settings');
 
     return { success: true };
   } catch (e) {
