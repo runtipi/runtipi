@@ -10,7 +10,7 @@ interface IProps {
   children: React.ReactNode;
 }
 
-const fetcher: Fetcher<{ status: SystemStatus }> = () => fetch('/api/get-status').then((res) => res.json() as Promise<{ status: SystemStatus }>);
+const fetcher: Fetcher<{ status?: SystemStatus }> = () => fetch('/api/get-status').then((res) => res.json() as Promise<{ status: SystemStatus }>);
 
 export const StatusProvider: React.FC<IProps> = ({ children }) => {
   const { status, setStatus, pollStatus, setPollStatus } = useSystemStore();
@@ -22,7 +22,9 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
     refreshInterval: pollStatus ? 2000 : 0,
     isPaused: () => !pollStatus,
     onSuccess: (res) => {
-      setStatus(res.status);
+      if (res.status) {
+        setStatus(res.status);
+      }
     },
   });
 

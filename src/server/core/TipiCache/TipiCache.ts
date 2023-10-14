@@ -15,10 +15,6 @@ export class TipiCache {
       password: getConfig().redisPassword,
     });
 
-    client.on('error', (err) => {
-      Logger.error(`Redis error: ${err}`);
-    });
-
     this.client = client as RedisClientType;
 
     this.timeout = setTimeout(() => {
