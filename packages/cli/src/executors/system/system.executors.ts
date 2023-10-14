@@ -297,7 +297,7 @@ export class SystemExecutors {
 
       // Flush redis cache
       this.logger.info('Flushing redis cache...');
-      const cache = new Redis({ host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD') });
+      const cache = new Redis({ host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD'), lazyConnect: true });
       await cache.connect();
       await cache.flushdb();
       await cache.quit();
