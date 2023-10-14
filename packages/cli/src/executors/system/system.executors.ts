@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { Queue } from 'bullmq';
+import { Redis } from 'ioredis';
 import fs from 'fs';
 import cliProgress from 'cli-progress';
 import semver from 'semver';
@@ -294,17 +295,29 @@ export class SystemExecutors {
       this.logger.info('Starting all apps...');
       await appExecutor.startAllApps();
 
+      // Flush redis cache
+      this.logger.info('Flushing redis cache...');
+      const cache = new Redis({ host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD') });
+      await cache.connect();
+      await cache.flushdb();
+      await cache.quit();
+
       console.log(
-        boxen(`Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get('NGINX_PORT')} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io`, {
-          title: 'Tipi successfully started 🎉',
-          titleAlignment: 'center',
-          textAlignment: 'center',
-          padding: 1,
-          borderStyle: 'double',
-          borderColor: 'green',
-          width: 80,
-          margin: { top: 1 },
-        }),
+        boxen(
+          `Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get(
+            'NGINX_PORT',
+          )} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io\n\nTipi is entierly written in Typescript and we are looking for contributors!`,
+          {
+            title: 'Tipi successfully started 🎉',
+            titleAlignment: 'center',
+            textAlignment: 'center',
+            padding: 1,
+            borderStyle: 'double',
+            borderColor: 'green',
+            width: 80,
+            margin: { top: 1 },
+          },
+        ),
       );
 
       return { success: true, message: 'Tipi started' };
