@@ -5,7 +5,7 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { TipiCache } from '@/server/core/TipiCache';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
-import * as TipiConfig from '../../core/TipiConfig';
+import { getConfig } from '../../core/TipiConfig';
 
 const SYSTEM_STATUS = ['UPDATING', 'RESTARTING', 'RUNNING'] as const;
 type SystemStatus = (typeof SYSTEM_STATUS)[keyof typeof SYSTEM_STATUS];
@@ -35,8 +35,7 @@ export class SystemServiceClass {
   public getVersion = async () => {
     const cache = new TipiCache('getVersion');
     try {
-      const { seePreReleaseVersions } = TipiConfig.getConfig();
-      const currentVersion = TipiConfig.getConfig().version;
+      const { seePreReleaseVersions, version: currentVersion } = getConfig();
 
       if (seePreReleaseVersions) {
         const { data } = await axios.get<{ tag_name: string; body: string }[]>('https://api.github.com/repos/runtipi/runtipi/releases');
@@ -57,10 +56,10 @@ export class SystemServiceClass {
         await cache.set('latestVersionBody', body || '', 60 * 60);
       }
 
-      return { current: TipiConfig.getConfig().version, latest: version, body };
+      return { current: getConfig().version, latest: version, body };
     } catch (e) {
       Logger.error(e);
-      return { current: TipiConfig.getConfig().version, latest: TipiConfig.getConfig().version, body: '' };
+      return { current: getConfig().version, latest: getConfig().version, body: '' };
     } finally {
       await cache.close();
     }
@@ -79,15 +78,18 @@ export class SystemServiceClass {
   };
 
   public restart = async (): Promise<boolean> => {
-    if (TipiConfig.getConfig().NODE_ENV === 'development') {
+    if (getConfig().NODE_ENV === 'development') {
       throw new TranslatedError('server-messages.errors.not-allowed-in-dev');
     }
 
-    if (TipiConfig.getConfig().demoMode) {
+    if (getConfig().demoMode) {
       throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
     }
 
-    TipiConfig.setConfig('status', 'RESTARTING');
+    const cache = new TipiCache('restart');
+    await cache.set('status', 'RESTARTING', 360);
+    await cache.close();
+
     const dispatcher = new EventDispatcher('restart');
     dispatcher.dispatchEvent({ type: 'system', command: 'restart' });
     await dispatcher.close();
@@ -95,7 +97,7 @@ export class SystemServiceClass {
     return true;
   };
 
-  public static status = async (): Promise<{ status: SystemStatus }> => ({
-    status: TipiConfig.getConfig().status,
+  public static status = (): { status: SystemStatus } => ({
+    status: getConfig().status,
   });
 }

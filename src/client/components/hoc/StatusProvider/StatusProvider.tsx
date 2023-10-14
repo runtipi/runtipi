@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { useAction } from 'next-safe-action/hook';
-import { useInterval } from 'usehooks-ts';
-import { getStatusAction } from '@/actions/settings/get-status';
-import { useSystemStore } from '@/client/state/systemStore';
+import { SystemStatus, useSystemStore } from '@/client/state/systemStore';
 import { useRouter } from 'next/navigation';
+import useSWR, { Fetcher } from 'swr';
 import { StatusScreen } from '../../StatusScreen';
 
 interface IProps {
   children: React.ReactNode;
 }
+
+const fetcher: Fetcher<{ status: SystemStatus }> = () => fetch('/api/get-status').then((res) => res.json() as Promise<{ status: SystemStatus }>);
 
 export const StatusProvider: React.FC<IProps> = ({ children }) => {
   const { status, setStatus, pollStatus, setPollStatus } = useSystemStore();
@@ -18,21 +18,13 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
 
   const router = useRouter();
 
-  const getStatusMutation = useAction(getStatusAction, {
-    onSuccess: (data) => {
-      if (data?.success) {
-        setStatus(data.status);
-      }
+  useSWR('/api/get-status', fetcher, {
+    refreshInterval: pollStatus ? 2000 : 0,
+    isPaused: () => !pollStatus,
+    onSuccess: (res) => {
+      setStatus(res.status);
     },
   });
-
-  // Poll status every 5 seconds
-  useInterval(
-    () => {
-      getStatusMutation.execute({ currentStatus: status });
-    },
-    pollStatus ? 2000 : null,
-  );
 
   useEffect(() => {
     // If previous was not running and current is running, we need to refresh the page

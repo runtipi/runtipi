@@ -20,7 +20,7 @@ export const GeneralActions = (props: Props) => {
   const { version } = props;
 
   const [loading, setLoading] = React.useState(false);
-  const { setPollStatus } = useSystemStore();
+  const { setPollStatus, setStatus } = useSystemStore();
   const restartDisclosure = useDisclosure();
 
   const defaultVersion = '0.0.0';
@@ -30,6 +30,7 @@ export const GeneralActions = (props: Props) => {
     onSuccess: (data) => {
       if (data.success) {
         setPollStatus(true);
+        setStatus('RESTARTING');
       } else {
         restartDisclosure.close();
         setLoading(false);
