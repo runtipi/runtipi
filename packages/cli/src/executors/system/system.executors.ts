@@ -258,6 +258,13 @@ export class SystemExecutors {
 
       spinner.done('Watcher started');
 
+      // Flush redis cache
+      this.logger.info('Flushing redis cache...');
+      const cache = new Redis({ host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD'), lazyConnect: true });
+      await cache.connect();
+      await cache.flushdb();
+      await cache.quit();
+
       this.logger.info('Starting queue...');
       const queue = new Queue('events', { connection: { host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD') } });
       this.logger.info('Obliterating queue...');
@@ -294,13 +301,6 @@ export class SystemExecutors {
       const appExecutor = new AppExecutors();
       this.logger.info('Starting all apps...');
       await appExecutor.startAllApps();
-
-      // Flush redis cache
-      this.logger.info('Flushing redis cache...');
-      const cache = new Redis({ host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD'), lazyConnect: true });
-      await cache.connect();
-      await cache.flushdb();
-      await cache.quit();
 
       console.log(
         boxen(

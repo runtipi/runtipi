@@ -69,8 +69,6 @@ export class SystemServiceClass {
     const info = systemInfoSchema.safeParse(readJsonFile('/runtipi/state/system-info.json'));
 
     if (!info.success) {
-      Logger.error('Error parsing system info', info.error);
-
       return { cpu: { load: 0 }, disk: { total: 0, used: 0, available: 0 }, memory: { total: 0, available: 0, used: 0 } };
     }
 
