@@ -8,6 +8,6 @@ export async function GET() {
 
     return Response.json({ success: true, status: status || 'RUNNING' });
   } catch (error) {
-    return Response.json({ success: false, status: 'RUNNING' });
+    return Response.json({ success: false, status: 'ERROR', error });
   }
 }

@@ -32,6 +32,7 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
     // If previous was not running and current is running, we need to refresh the page
     if (status === 'RUNNING' && s.current !== 'RUNNING') {
       setPollStatus(false);
+      router.push('/');
       router.refresh();
     }
     if (status === 'RUNNING') {
