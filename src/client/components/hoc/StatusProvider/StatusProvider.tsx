@@ -10,7 +10,8 @@ interface IProps {
   children: React.ReactNode;
 }
 
-const fetcher: Fetcher<{ status?: SystemStatus }> = () => fetch('/api/get-status').then((res) => res.json() as Promise<{ status: SystemStatus }>);
+const fetcher: Fetcher<{ status?: SystemStatus; success?: boolean }> = () =>
+  fetch('/api/get-status', { cache: 'no-store', next: { revalidate: 0 } }).then((res) => res.json() as Promise<{ status: SystemStatus }>);
 
 export const StatusProvider: React.FC<IProps> = ({ children }) => {
   const { status, setStatus, pollStatus, setPollStatus } = useSystemStore();
@@ -22,7 +23,7 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
     refreshInterval: pollStatus ? 2000 : 0,
     isPaused: () => !pollStatus,
     onSuccess: (res) => {
-      if (res.status) {
+      if (res.success && res.status) {
         setStatus(res.status);
       }
     },
@@ -32,6 +33,7 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
     // If previous was not running and current is running, we need to refresh the page
     if (status === 'RUNNING' && s.current !== 'RUNNING') {
       setPollStatus(false);
+      router.push('/');
       router.refresh();
     }
     if (status === 'RUNNING') {
