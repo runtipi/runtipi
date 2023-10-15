@@ -1,5 +1,7 @@
 import { TipiCache } from '@/server/core/TipiCache';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const cache = new TipiCache('getStatus');
@@ -8,6 +10,6 @@ export async function GET() {
 
     return Response.json({ success: true, status: status || 'RUNNING' });
   } catch (error) {
-    return Response.json({ success: false, status: 'RUNNING' });
+    return Response.json({ success: false, status: 'ERROR', error });
   }
 }
