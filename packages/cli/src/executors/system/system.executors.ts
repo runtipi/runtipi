@@ -306,7 +306,7 @@ export class SystemExecutors {
         boxen(
           `Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get(
             'NGINX_PORT',
-          )} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io\n\nTipi is entierly written in Typescript and we are looking for contributors!`,
+          )} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io\n\nTipi is entierly written in TypeScript and we are looking for contributors!`,
           {
             title: 'Tipi successfully started 🎉',
             titleAlignment: 'center',
