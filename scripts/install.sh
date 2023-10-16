@@ -166,7 +166,7 @@ function check_dependency_and_install() {
 
 # If version was not given it will install the latest version
 if [[ "${VERSION}" == "latest" ]]; then
-  LATEST_VERSION=$(curl -s https://api.github.com/repos/runtipi/runtipi/releases/latest | grep tag_name | cut -d '"' -f4)
+  LATEST_VERSION=$(curl -sL https://api.github.com/repos/runtipi/runtipi/releases/latest | grep tag_name | cut -d '"' -f4)
   VERSION="${LATEST_VERSION}"
 fi
 
