@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { Queue } from 'bullmq';
+import { Redis } from 'ioredis';
 import fs from 'fs';
 import cliProgress from 'cli-progress';
 import semver from 'semver';
@@ -66,7 +67,6 @@ export class SystemExecutors {
     const filesAndFolders = [
       path.join(rootFolderHost, 'apps'),
       path.join(rootFolderHost, 'logs'),
-      path.join(rootFolderHost, 'media'),
       path.join(rootFolderHost, 'repos'),
       path.join(rootFolderHost, 'state'),
       path.join(rootFolderHost, 'traefik'),
@@ -258,6 +258,13 @@ export class SystemExecutors {
 
       spinner.done('Watcher started');
 
+      // Flush redis cache
+      this.logger.info('Flushing redis cache...');
+      const cache = new Redis({ host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD'), lazyConnect: true });
+      await cache.connect();
+      await cache.flushdb();
+      await cache.quit();
+
       this.logger.info('Starting queue...');
       const queue = new Queue('events', { connection: { host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD') } });
       this.logger.info('Obliterating queue...');
@@ -296,16 +303,21 @@ export class SystemExecutors {
       await appExecutor.startAllApps();
 
       console.log(
-        boxen(`Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get('NGINX_PORT')} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io`, {
-          title: 'Tipi successfully started 🎉',
-          titleAlignment: 'center',
-          textAlignment: 'center',
-          padding: 1,
-          borderStyle: 'double',
-          borderColor: 'green',
-          width: 80,
-          margin: { top: 1 },
-        }),
+        boxen(
+          `Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get(
+            'NGINX_PORT',
+          )} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io\n\nTipi is entierly written in TypeScript and we are looking for contributors!`,
+          {
+            title: 'Tipi successfully started 🎉',
+            titleAlignment: 'center',
+            textAlignment: 'center',
+            padding: 1,
+            borderStyle: 'double',
+            borderColor: 'green',
+            width: 80,
+            margin: { top: 1 },
+          },
+        ),
       );
 
       return { success: true, message: 'Tipi started' };
@@ -355,7 +367,7 @@ export class SystemExecutors {
 
       if (!targetVersion || targetVersion === 'latest') {
         spinner.setMessage('Fetching latest version...');
-        const { data } = await axios.get<{ tag_name: string }>('https://api.github.com/repos/meienberger/runtipi/releases/latest');
+        const { data } = await axios.get<{ tag_name: string }>('https://api.github.com/repos/runtipi/runtipi/releases/latest');
         this.logger.info(`Getting latest version from GitHub: ${data.tag_name}`);
         targetVersion = data.tag_name;
       }
@@ -375,7 +387,7 @@ export class SystemExecutors {
 
       const fileName = `runtipi-cli-${targetVersion}`;
       const savePath = path.join(rootFolderHost, fileName);
-      const fileUrl = `https://github.com/meienberger/runtipi/releases/download/${targetVersion}/${assetName}`;
+      const fileUrl = `https://github.com/runtipi/runtipi/releases/download/${targetVersion}/${assetName}`;
       this.logger.info(`Downloading Tipi ${targetVersion} from ${fileUrl}`);
 
       spinner.done(`Target version: ${targetVersion}`);

@@ -1,9 +1,6 @@
 import React from 'react';
-import { render, fireEvent, cleanup, screen } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { Button } from './Button';
-
-afterEach(cleanup);
 
 describe('Button component', () => {
   it('should render without crashing', () => {

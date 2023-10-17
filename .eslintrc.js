@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsdoc', 'jsx-a11y', 'testing-library', 'jest-dom'],
+  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsx-a11y', 'testing-library', 'jest-dom'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'next/core-web-vitals',
@@ -10,7 +10,6 @@ module.exports = {
     'plugin:import/typescript',
     'prettier',
     'plugin:react/recommended',
-    'plugin:jsdoc/recommended',
     'plugin:jsx-a11y/recommended',
   ],
   parser: '@typescript-eslint/parser',
@@ -53,8 +52,6 @@ module.exports = {
     'no-underscore-dangle': 0,
     'arrow-body-style': 0,
     'class-methods-use-this': 0,
-    'jsdoc/require-returns': 0,
-    'jsdoc/tag-lines': 0,
     'import/extensions': [
       'error',
       'ignorePackages',

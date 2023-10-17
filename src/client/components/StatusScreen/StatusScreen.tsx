@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import React from 'react';
-import { getUrl } from '../../core/helpers/url-helpers';
 import { Button } from '../ui/Button';
 
 interface IProps {
@@ -17,7 +16,7 @@ export const StatusScreen: React.FC<IProps> = ({ title, subtitle, onAction, acti
       <Image
         alt="Tipi log"
         className="mb-3"
-        src={getUrl('tipi.png')}
+        src="/tipi.png"
         height={50}
         width={50}
         style={{

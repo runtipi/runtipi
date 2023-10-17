@@ -105,7 +105,7 @@ export const startWorker = async () => {
 
       return { success, stdout: message };
     },
-    { connection: { host: '127.0.0.1', port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 } },
+    { connection: { host: '127.0.0.1', port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 } },
   );
 
   worker.on('ready', () => {
@@ -121,6 +121,6 @@ export const startWorker = async () => {
   });
 
   worker.on('error', async (e) => {
-    fileLogger.error(`Worker error: ${e}`);
+    fileLogger.debug(`Worker error: ${e}`);
   });
 };

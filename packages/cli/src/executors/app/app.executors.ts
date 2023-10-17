@@ -176,7 +176,7 @@ export class AppExecutors {
       this.logger.info(`Regenerating app.env file for app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
-      await compose(appId, 'up --detach --force-recreate --remove-orphans');
+      await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
 
       this.logger.info(`App ${appId} started`);
 

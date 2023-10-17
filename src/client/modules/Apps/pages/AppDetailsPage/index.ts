@@ -1,1 +1,0 @@
-export { AppDetailsPage } from './AppDetailsPage';

@@ -1,21 +1,40 @@
-import React, { ReactElement, useEffect, useRef } from 'react';
-import router from 'next/router';
-import { useSystemStore } from '../../../state/systemStore';
+'use client';
+
+import React, { useRef, useEffect } from 'react';
+import { SystemStatus, useSystemStore } from '@/client/state/systemStore';
+import { useRouter } from 'next/navigation';
+import useSWR, { Fetcher } from 'swr';
 import { StatusScreen } from '../../StatusScreen';
 
 interface IProps {
-  children: ReactElement;
+  children: React.ReactNode;
 }
 
+const fetcher: Fetcher<{ status?: SystemStatus; success?: boolean }> = () =>
+  fetch('/api/get-status', { cache: 'no-store', next: { revalidate: 0 } }).then((res) => res.json() as Promise<{ status: SystemStatus }>);
+
 export const StatusProvider: React.FC<IProps> = ({ children }) => {
-  const { status, setPollStatus } = useSystemStore();
+  const { status, setStatus, pollStatus, setPollStatus } = useSystemStore();
   const s = useRef(status);
+
+  const router = useRouter();
+
+  useSWR('/api/get-status', fetcher, {
+    refreshInterval: pollStatus ? 2000 : 0,
+    isPaused: () => !pollStatus,
+    onSuccess: (res) => {
+      if (res.success && res.status) {
+        setStatus(res.status);
+      }
+    },
+  });
 
   useEffect(() => {
     // If previous was not running and current is running, we need to refresh the page
     if (status === 'RUNNING' && s.current !== 'RUNNING') {
       setPollStatus(false);
-      router.reload();
+      router.push('/');
+      router.refresh();
     }
     if (status === 'RUNNING') {
       s.current = 'RUNNING';
@@ -23,13 +42,9 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
     if (status === 'RESTARTING') {
       s.current = 'RESTARTING';
     }
-  }, [status, s, setPollStatus]);
+  }, [status, s, router, setPollStatus]);
 
-  if (s.current === 'LOADING') {
-    return <StatusScreen title="" subtitle="" />;
-  }
-
-  if (s.current === 'RESTARTING') {
+  if (status === 'RESTARTING') {
     return <StatusScreen title="Your system is restarting..." subtitle="Please do not refresh this page" />;
   }
 

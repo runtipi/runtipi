@@ -42,6 +42,9 @@ const productionLogger = () => {
         new transports.File({
           filename: path.join(logsFolder, 'app.log'),
         }),
+        new transports.Console({
+          level: 'info',
+        }),
       ],
       exceptionHandlers: [new transports.File({ filename: path.join(logsFolder, 'error.log') })],
     });
@@ -49,7 +52,11 @@ const productionLogger = () => {
     return createLogger({
       level: 'info',
       format: combinedLogFormat,
-      transports: [],
+      transports: [
+        new transports.Console({
+          level: 'info',
+        }),
+      ],
     });
   }
 };

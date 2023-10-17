@@ -5,29 +5,21 @@ import { getConfig } from '../TipiConfig';
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
 export class TipiCache {
-  private static instance: TipiCache;
-
   private client: RedisClientType;
 
-  constructor() {
+  private timeout: NodeJS.Timeout;
+
+  constructor(reference: string) {
     const client = createClient({
       url: `redis://${getConfig().REDIS_HOST}:6379`,
       password: getConfig().redisPassword,
     });
 
-    client.on('error', (err) => {
-      Logger.error(`Redis error: ${err}`);
-    });
-
     this.client = client as RedisClientType;
-  }
 
-  public static getInstance(): TipiCache {
-    if (!TipiCache.instance) {
-      TipiCache.instance = new TipiCache();
-    }
-
-    return TipiCache.instance;
+    this.timeout = setTimeout(() => {
+      Logger.debug(`Redis connection is running for more than 30 seconds. Consider closing it. reference: ${reference}`);
+    }, 30000);
   }
 
   private async getClient(): Promise<RedisClientType> {
@@ -70,6 +62,7 @@ export class TipiCache {
   }
 
   public async close() {
+    clearTimeout(this.timeout);
     return this.client.quit();
   }
 

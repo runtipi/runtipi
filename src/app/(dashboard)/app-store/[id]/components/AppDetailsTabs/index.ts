@@ -1,0 +1,1 @@
+export { AppDetailsTabs } from './AppDetailsTabs';

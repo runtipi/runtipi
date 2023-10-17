@@ -3,7 +3,7 @@ import * as argon2 from 'argon2';
 import { faker } from '@faker-js/faker';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { generateSessionId } from '@/server/common/session.helpers';
-import { fromAny, fromPartial } from '@total-typescript/shoehorn';
+import { fromAny } from '@total-typescript/shoehorn';
 import { mockInsert, mockQuery, mockSelect } from '@/tests/mocks/drizzle';
 import { createDatabase, clearDatabase, closeDatabase, TestDatabase } from '@/server/tests/test-utils';
 import { v4 } from 'uuid';
@@ -17,7 +17,19 @@ let AuthService: AuthServiceClass;
 let database: TestDatabase;
 const TEST_SUITE = 'authservice';
 
-const cache = new TipiCache();
+const cache = new TipiCache('auth.service.test.ts');
+
+let cookieStore: Record<string, string> = {};
+jest.mock('next/headers', () => ({
+  cookies: jest.fn(() => ({
+    set: (name: string, value: string) => {
+      cookieStore[name] = value;
+    },
+    get: (name: string) => {
+      return cookieStore[name];
+    },
+  })),
+}));
 
 beforeAll(async () => {
   setConfig('jwtSecret', 'test');
@@ -28,6 +40,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await setConfig('demoMode', false);
   await clearDatabase(database);
+  cookieStore = {};
 });
 
 afterAll(async () => {
@@ -36,40 +49,33 @@ afterAll(async () => {
 });
 
 describe('Login', () => {
-  it('Should correclty set session on request object', async () => {
+  it('Should correclty set session cookie', async () => {
     // arrange
-    let session = '';
-    const res = {
-      getHeader: () => {},
-      setHeader: (_: unknown, o: string[]) => {
-        // eslint-disable-next-line prefer-destructuring
-        session = o[0] as string;
-      },
-    };
     const email = faker.internet.email();
     const user = await createUser({ email }, database);
 
     // act
-    await AuthService.login({ username: email, password: 'password' }, fromPartial({}), fromPartial(res));
+    const { sessionId } = await AuthService.login({ username: email, password: 'password' });
 
-    const sessionId = session.split(';')[0]?.split('=')[1];
     const sessionKey = `session:${sessionId}`;
     const userId = await cache.get(sessionKey);
+    const cookie = cookieStore['tipi.sid'];
 
     // assert
     expect(userId).toBeDefined();
     expect(userId).not.toBeNull();
     expect(userId).toBe(user.id.toString());
+    expect(cookie).toBeDefined();
   });
 
   it('Should throw if user does not exist', async () => {
-    await expect(AuthService.login({ username: 'test', password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.login({ username: 'test', password: 'test' })).rejects.toThrowError('server-messages.errors.user-not-found');
   });
 
   it('Should throw if password is incorrect', async () => {
     const email = faker.internet.email();
     await createUser({ email }, database);
-    await expect(AuthService.login({ username: email, password: 'wrong' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.invalid-credentials');
+    await expect(AuthService.login({ username: email, password: 'wrong' })).rejects.toThrowError('server-messages.errors.invalid-credentials');
   });
 
   // TOTP
@@ -80,7 +86,7 @@ describe('Login', () => {
     await createUser({ email, totpEnabled: true, totpSecret }, database);
 
     // act
-    const { totpSessionId } = await AuthService.login({ username: email, password: 'password' }, fromPartial({}), fromPartial({}));
+    const { totpSessionId } = await AuthService.login({ username: email, password: 'password' });
 
     // assert
     expect(totpSessionId).toBeDefined();
@@ -91,14 +97,6 @@ describe('Login', () => {
 describe('Test: verifyTotp', () => {
   it('should correctly log in user after totp is verified', async () => {
     // arrange
-    let session = '';
-    const res = {
-      getHeader: () => {},
-      setHeader: (_: unknown, o: string[]) => {
-        // eslint-disable-next-line prefer-destructuring
-        session = o[0] as string;
-      },
-    };
     const email = faker.internet.email();
     const salt = faker.lorem.word();
     const totpSecret = TotpAuthenticator.generateSecret();
@@ -111,16 +109,12 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, user.id.toString());
 
     // act
-    const result = await AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial({}), fromPartial(res));
-    const sessionId = session.split(';')[0]?.split('=')[1];
-    const userId = await cache.get(`session:${sessionId}`);
+    await AuthService.verifyTotp({ totpSessionId, totpCode: otp });
+    const cookie = cookieStore['tipi.sid'];
 
     // assert
-    expect(result).toBeTruthy();
-    expect(result).not.toBeNull();
-    expect(sessionId).toBeDefined();
-    expect(sessionId).not.toBeNull();
-    expect(userId).toBe(user.id.toString());
+    expect(cookie).toBeDefined();
+    expect(cookie).not.toBeNull();
   });
 
   it('should throw if the totp is incorrect', async () => {
@@ -134,7 +128,7 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-invalid-code');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' })).rejects.toThrowError('server-messages.errors.totp-invalid-code');
   });
 
   it('should throw if the totpSessionId is invalid', async () => {
@@ -150,7 +144,7 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-session-not-found');
+    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp })).rejects.toThrowError('server-messages.errors.totp-session-not-found');
   });
 
   it('should throw if the user does not exist', async () => {
@@ -159,7 +153,7 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, '1234');
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' })).rejects.toThrowError('server-messages.errors.user-not-found');
   });
 
   it('should throw if the user totpEnabled is false', async () => {
@@ -175,7 +169,7 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.totp-not-enabled');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp })).rejects.toThrowError('server-messages.errors.totp-not-enabled');
   });
 });
 
@@ -378,39 +372,25 @@ describe('Test: disableTotp', () => {
 });
 
 describe('Register', () => {
-  it('Should correctly set session on response object', async () => {
+  it('Should correctly set session cookie', async () => {
     // arrange
-    let session = '';
-    const res = {
-      getHeader: () => {},
-      setHeader: (_: unknown, o: string[]) => {
-        // eslint-disable-next-line prefer-destructuring
-        session = o[0] as string;
-      },
-    };
     const email = faker.internet.email();
 
     // act
-    const result = await AuthService.register({ username: email, password: 'password' }, fromPartial({}), fromPartial(res));
-    const sessionId = session.split(';')[0]?.split('=')[1];
+    await AuthService.register({ username: email, password: 'password' });
+    const cookie = cookieStore['tipi.sid'];
 
     // assert
-    expect(result).toBeTruthy();
-    expect(result).not.toBeNull();
-    expect(sessionId).toBeDefined();
-    expect(sessionId).not.toBeNull();
+    expect(cookie).toBeDefined();
+    expect(cookie).not.toBeNull();
   });
 
   it('Should correctly trim and lowercase email', async () => {
     // arrange
     const email = faker.internet.email();
-    const res = {
-      getHeader: () => {},
-      setHeader: () => {},
-    };
 
     // act
-    await AuthService.register({ username: email, password: 'test' }, fromPartial({}), fromPartial(res));
+    await AuthService.register({ username: email, password: 'test' });
     const user = await getUserByEmail(email.toLowerCase().trim(), database);
 
     // assert
@@ -424,7 +404,7 @@ describe('Register', () => {
 
     // Act & Assert
     await createUser({ email, operator: true }, database);
-    await expect(AuthService.register({ username: email, password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.admin-already-exists');
+    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('server-messages.errors.admin-already-exists');
   });
 
   it('Should throw if user already exists', async () => {
@@ -433,27 +413,23 @@ describe('Register', () => {
 
     // Act & Assert
     await createUser({ email, operator: false }, database);
-    await expect(AuthService.register({ username: email, password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.user-already-exists');
+    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('server-messages.errors.user-already-exists');
   });
 
   it('Should throw if email is not provided', async () => {
-    await expect(AuthService.register({ username: '', password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.missing-email-or-password');
+    await expect(AuthService.register({ username: '', password: 'test' })).rejects.toThrowError('server-messages.errors.missing-email-or-password');
   });
 
   it('Should throw if password is not provided', async () => {
-    await expect(AuthService.register({ username: faker.internet.email(), password: '' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.missing-email-or-password');
+    await expect(AuthService.register({ username: faker.internet.email(), password: '' })).rejects.toThrowError('server-messages.errors.missing-email-or-password');
   });
 
   it('Password is correctly hashed', async () => {
     // arrange
     const email = faker.internet.email().toLowerCase().trim();
-    const res = {
-      getHeader: () => {},
-      setHeader: () => {},
-    };
 
     // act
-    await AuthService.register({ username: email, password: 'test' }, fromPartial({}), fromPartial(res));
+    await AuthService.register({ username: email, password: 'test' });
     const user = await getUserByEmail(email, database);
     const isPasswordValid = await argon2.verify(user?.password || '', 'test');
 
@@ -462,18 +438,17 @@ describe('Register', () => {
   });
 
   it('Should throw if email is invalid', async () => {
-    await expect(AuthService.register({ username: 'test', password: 'test' }, fromPartial({}), fromPartial({}))).rejects.toThrowError('server-messages.errors.invalid-username');
+    await expect(AuthService.register({ username: 'test', password: 'test' })).rejects.toThrowError('server-messages.errors.invalid-username');
   });
 
   it('should throw if db fails to insert user', async () => {
     // Arrange
-    const req = {};
     const email = faker.internet.email();
     const mockDatabase = { select: mockSelect([]), insert: mockInsert([]), query: mockQuery(undefined) };
     const newAuthService = new AuthServiceClass(fromAny(mockDatabase));
 
     // Act & Assert
-    await expect(newAuthService.register({ username: email, password: 'test' }, fromPartial(req), fromPartial({}))).rejects.toThrowError('server-messages.errors.error-creating-user');
+    await expect(newAuthService.register({ username: email, password: 'test' })).rejects.toThrowError('server-messages.errors.error-creating-user');
   });
 });
 
@@ -724,7 +699,7 @@ describe('Test: changePassword', () => {
     await AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' });
 
     // assert
-    // eslint-disable-next-line testing-library/no-await-sync-query
+    // eslint-disable-next-line testing-library/no-await-sync-queries
     const sessions = await cache.getByPrefix(`session:${user.id}:`);
     expect(sessions).toHaveLength(0);
   });

@@ -34,7 +34,7 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
     <div id="navbar-menu" className="collapse navbar-collapse" style={{}}>
       <div className="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
         <ul className="navbar-nav">
-          {renderItem(t('dashboard'), '', IconHome)}
+          {renderItem(t('dashboard'), 'dashboard', IconHome)}
           {renderItem(t('my-apps'), 'apps', IconApps)}
           {renderItem(t('app-store'), 'app-store', IconBrandAppstore)}
           {renderItem(t('settings'), 'settings', IconSettings)}

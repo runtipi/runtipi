@@ -1,6 +1,6 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
 import { server } from '../../src/client/mocks/server';
+import '@testing-library/jest-dom';
 
 // Mock next/router
 // eslint-disable-next-line global-require

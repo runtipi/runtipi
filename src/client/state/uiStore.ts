@@ -7,6 +7,7 @@ const defaultTranslator = createTranslator({ locale: 'en', messages: englishMess
 type UIStore = {
   menuItem: string;
   darkMode: boolean;
+  theme?: string;
   translator: typeof defaultTranslator;
   setMenuItem: (menuItem: string) => void;
   setDarkMode: (darkMode: boolean) => void;
@@ -17,17 +18,16 @@ export const useUIStore = create<UIStore>((set) => ({
   menuItem: 'dashboard',
   darkMode: false,
   translator: defaultTranslator,
+  theme: undefined,
   setTranslator: (translator: typeof defaultTranslator) => {
     set({ translator });
   },
   setDarkMode: (darkMode: boolean) => {
     if (darkMode) {
-      localStorage.setItem('darkMode', darkMode.toString());
-      document.body.dataset.bsTheme = 'dark';
+      set({ theme: 'dark' });
     }
     if (!darkMode) {
-      localStorage.setItem('darkMode', darkMode.toString());
-      document.body.dataset.bsTheme = 'light';
+      set({ theme: 'light' });
     }
     set({ darkMode });
   },

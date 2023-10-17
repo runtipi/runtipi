@@ -2,7 +2,6 @@ import { IconRotateClockwise } from '@tabler/icons-react';
 import clsx from 'clsx';
 import Image from 'next/image';
 import React from 'react';
-import { getUrl } from '../../../core/helpers/url-helpers';
 import { Button } from '../Button';
 import styles from './ErrorPage.module.scss';
 
@@ -15,7 +14,7 @@ interface IProps {
 export const ErrorPage: React.FC<IProps> = ({ error, onRetry }) => (
   <div data-testid="error-page" className="card empty">
     <Image
-      src={getUrl('error.png')}
+      src="/error.png"
       alt="Empty box"
       height="100"
       width="100"

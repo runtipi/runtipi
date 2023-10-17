@@ -1,16 +1,17 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-37-orange.svg?style=flat-square)](#contributors-)
+
+[![All Contributors](https://img.shields.io/badge/all_contributors-38-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-[![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
-[![Version](https://img.shields.io/github/v/release/meienberger/runtipi?color=%235351FB&label=version)](https://github.com/meienberger/runtipi/releases)
-![Issues](https://img.shields.io/github/issues/meienberger/runtipi)
+[![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
+[![Version](https://img.shields.io/github/v/release/runtipi/runtipi?color=%235351FB&label=version)](https://github.com/runtipi/runtipi/releases)
+![Issues](https://img.shields.io/github/issues/runtipi/runtipi)
 [![Docker Pulls](https://badgen.net/docker/pulls/meienberger/runtipi?icon=docker&label=pulls)](https://hub.docker.com/r/meienberger/runtipi/)
 [![Docker Image Size](https://badgen.net/docker/size/meienberger/runtipi?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/runtipi/)
-![Build](https://github.com/meienberger/runtipi/workflows/Tipi%20CI/badge.svg)
-[![codecov](https://codecov.io/gh/meienberger/runtipi/branch/master/graph/badge.svg?token=FZGO7ZOPSF)](https://codecov.io/gh/meienberger/runtipi)
+![Build](https://github.com/runtipi/runtipi/workflows/Tipi%20CI/badge.svg)
 [![Crowdin](https://badges.crowdin.net/runtipi/localized.svg)](https://crowdin.com/project/runtipi)
 
 #### Join the discussion
@@ -18,11 +19,11 @@
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 [![Matrix](https://img.shields.io/matrix/runtipi:matrix.org?label=matrix&logo=matrix)](https://matrix.to/#/#runtipi:matrix.org)
 
-![Preview](https://raw.githubusercontent.com/meienberger/runtipi/develop/screenshots/appstore.png)
+![Preview](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png)
 
 > ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
 
-Tipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Tipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Tipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/meienberger/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
+Tipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Tipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Tipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/runtipi/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
 
 ## Getting started
 
@@ -51,7 +52,7 @@ We are looking for contributions of all kinds. If you know design, development, 
 
 ## 📜 License
 
-[![License](https://img.shields.io/github/license/meienberger/runtipi)](https://github.com/meienberger/runtipi/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
 
 Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may copy, distribute and modify the software as long as you track changes/dates in source files. Any modifications to or software including (via compiler) GPL-licensed code must also be made available under the GPL along with build & install instructions.
 
@@ -112,13 +113,14 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://micro.nghialele.com"><img src="https://avatars.githubusercontent.com/u/129353223?v=4?s=100" width="100px;" alt="Nghia Lele"/><br /><sub><b>Nghia Lele</b></sub></a><br /><a href="#translation-nghialele" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/amusingimpala75"><img src="https://avatars.githubusercontent.com/u/69653100?v=4?s=100" width="100px;" alt="amusingimpala75"/><br /><sub><b>amusingimpala75</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=amusingimpala75" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://m1n.omg.lol"><img src="https://avatars.githubusercontent.com/u/54779580?v=4?s=100" width="100px;" alt="David"/><br /><sub><b>David</b></sub></a><br /><a href="#translation-M1n-4d316e" title="Translation">🌍</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/steveiliop56"><img src="https://avatars.githubusercontent.com/u/106091011?v=4?s=100" width="100px;" alt="Stavros Iliopoulos"/><br /><sub><b>Stavros Iliopoulos</b></sub></a><br /><a href="#translation-steveiliop56" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/steveiliop56"><img src="https://avatars.githubusercontent.com/u/106091011?v=4?s=100" width="100px;" alt="Stavros"/><br /><sub><b>Stavros</b></sub></a><br /><a href="#translation-steveiliop56" title="Translation">🌍</a> <a href="https://github.com/meienberger/runtipi/commits?author=steveiliop56" title="Code">💻</a> <a href="https://github.com/meienberger/runtipi/commits?author=steveiliop56" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/loxiry"><img src="https://avatars.githubusercontent.com/u/86959495?v=4?s=100" width="100px;" alt="loxiry"/><br /><sub><b>loxiry</b></sub></a><br /><a href="#translation-loxiry" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JigSawFr"><img src="https://avatars.githubusercontent.com/u/5781907?v=4?s=100" width="100px;" alt="JigSaw"/><br /><sub><b>JigSaw</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=JigSawFr" title="Code">💻</a></td>
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/DireMunchkin"><img src="https://avatars.githubusercontent.com/u/1665676?v=4?s=100" width="100px;" alt="DireMunchkin"/><br /><sub><b>DireMunchkin</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=DireMunchkin" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/FabioCingottini"><img src="https://avatars.githubusercontent.com/u/32102735?v=4?s=100" width="100px;" alt="Fabio Cingottini"/><br /><sub><b>Fabio Cingottini</b></sub></a><br /><a href="#translation-FabioCingottini" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/itsrllyhim"><img src="https://avatars.githubusercontent.com/u/143047010?v=4?s=100" width="100px;" alt="him"/><br /><sub><b>him</b></sub></a><br /><a href="https://github.com/meienberger/runtipi/commits?author=itsrllyhim" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

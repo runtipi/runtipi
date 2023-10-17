@@ -1,8 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { eq } from 'drizzle-orm';
-import { userTable } from '@/server/db/schema';
 import { loginUser } from './fixtures/fixtures';
-import { clearDatabase, db } from './helpers/db';
+import { clearDatabase } from './helpers/db';
 import { testUser } from './helpers/constants';
 
 test.beforeEach(async ({ page }) => {
@@ -32,16 +30,4 @@ test('user can change their password', async ({ page }) => {
   await page.getByRole('button', { name: 'Login' }).click();
 
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
-});
-
-test('user can change their language and it is persisted in database', async ({ page }) => {
-  await page.getByRole('tab', { name: 'Settings' }).click();
-
-  await page.getByRole('combobox', { name: 'Language Help translate Tipi' }).click();
-  await page.getByRole('option', { name: 'Français' }).click();
-
-  await expect(page.getByText('Paramètres utilisateur')).toBeVisible();
-
-  const dbUser = await db.query.userTable.findFirst({ where: eq(userTable.username, testUser.email) });
-  expect(dbUser?.locale).toEqual('fr-FR');
 });

@@ -23,6 +23,7 @@ const FALLBACK_LOCALES: { from: BaseLang<keyof typeof APP_LOCALES>; to: keyof ty
   { from: 'de', to: 'de-DE' },
   { from: 'en', to: 'en-US' },
   { from: 'es', to: 'es-ES' },
+  { from: 'el', to: 'el-GR' },
   { from: 'fr', to: 'fr-FR' },
   { from: 'it', to: 'it-IT' },
   { from: 'ja', to: 'ja-JP' },
@@ -30,6 +31,7 @@ const FALLBACK_LOCALES: { from: BaseLang<keyof typeof APP_LOCALES>; to: keyof ty
   { from: 'sv', to: 'sv-SE' },
   { from: 'ro', to: 'ro-RO' },
   { from: 'ru', to: 'ru-RU' },
+  { from: 'tr', to: 'tr-TR' },
   { from: 'vi', to: 'vi-VN' },
   { from: 'zh', to: 'zh-CN' },
 ];

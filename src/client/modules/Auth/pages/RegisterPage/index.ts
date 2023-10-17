@@ -1,1 +1,0 @@
-export { RegisterPage } from './RegisterPage';

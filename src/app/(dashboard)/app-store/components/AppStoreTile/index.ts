@@ -1,0 +1,1 @@
+export { AppStoreTile } from './AppStoreTile';

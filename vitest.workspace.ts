@@ -1,9 +1,11 @@
-import { defineWorkspace } from 'vitest/config';
+import { defineWorkspace, UserWorkspaceConfig } from 'vitest/config';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+type Plugin = Exclude<UserWorkspaceConfig['plugins'], undefined>[number];
 
 export default defineWorkspace([
   {
-    plugins: [tsconfigPaths()],
+    plugins: [tsconfigPaths() as Plugin],
     test: {
       globals: true,
       name: 'server',

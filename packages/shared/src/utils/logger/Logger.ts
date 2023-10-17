@@ -34,6 +34,10 @@ export const newLogger = (id: string, logsFolder: string) => {
   );
   exceptionHandlers = [new transports.File({ filename: path.join(logsFolder, 'error.log') })];
 
+  if (process.env.NODE_ENV !== 'production') {
+    tr.push(new transports.Console({ level: 'debug' }));
+  }
+
   return createLogger({
     level: 'debug',
     format: combine(

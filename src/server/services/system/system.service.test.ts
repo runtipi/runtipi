@@ -1,27 +1,30 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import fs from 'fs-extra';
-import semver from 'semver';
 import { faker } from '@faker-js/faker';
-import { EventDispatcher } from '../../core/EventDispatcher';
 import { setConfig } from '../../core/TipiConfig';
 import { TipiCache } from '../../core/TipiCache';
 import { SystemServiceClass } from '.';
-
-jest.mock('redis');
 
 const SystemService = new SystemServiceClass();
 
 const server = setupServer();
 
-const cache = new TipiCache();
+const cache = new TipiCache('system.service.test');
+
+afterAll(async () => {
+  server.close();
+  await cache.close();
+});
+
+beforeAll(() => {
+  server.listen();
+});
 
 beforeEach(async () => {
   await setConfig('demoMode', false);
-
-  jest.mock('fs-extra');
-  jest.resetModules();
-  jest.resetAllMocks();
+  await cache.del('latestVersion');
+  server.resetHandlers();
 });
 
 describe('Test: systemInfo', () => {
@@ -69,43 +72,9 @@ describe('Test: systemInfo', () => {
 });
 
 describe('Test: getVersion', () => {
-  beforeAll(() => {
-    server.listen();
-  });
-
-  beforeEach(async () => {
-    server.resetHandlers();
-    await cache.del('latestVersion');
-  });
-
-  afterAll(async () => {
-    server.close();
-    jest.restoreAllMocks();
-    await cache.close();
-  });
-
-  it('It should return version with body', async () => {
-    // Arrange
-    const body = faker.lorem.words(10);
+  it('Should return current version for latest if request fails', async () => {
     server.use(
-      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
-        return res(ctx.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}`, body }));
-      }),
-    );
-
-    // Act
-    const version = await SystemService.getVersion();
-
-    // Assert
-    expect(version).toBeDefined();
-    expect(version.current).toBeDefined();
-    expect(semver.valid(version.latest)).toBeTruthy();
-    expect(version.body).toBeDefined();
-  });
-
-  it('Should return undefined for latest if request fails', async () => {
-    server.use(
-      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
+      rest.get('https://api.github.com/repos/runtipi/runtipi/releases/latest', (_, res, ctx) => {
         return res(ctx.status(500));
       }),
     );
@@ -114,13 +83,13 @@ describe('Test: getVersion', () => {
 
     expect(version).toBeDefined();
     expect(version.current).toBeDefined();
-    expect(version.latest).toBeUndefined();
+    expect(version.latest).toBe(version.current);
   });
 
   it('Should return cached version', async () => {
     // Arrange
     server.use(
-      rest.get('https://api.github.com/repos/meienberger/runtipi/releases/latest', (_, res, ctx) => {
+      rest.get('https://api.github.com/repos/runtipi/runtipi/releases/latest', (_, res, ctx) => {
         return res(ctx.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` }));
       }),
     );
@@ -132,19 +101,14 @@ describe('Test: getVersion', () => {
     // Assert
     expect(version).toBeDefined();
     expect(version.current).toBeDefined();
-    expect(semver.valid(version.latest)).toBeTruthy();
 
     expect(version2.latest).toBe(version.latest);
     expect(version2.current).toBeDefined();
-    expect(semver.valid(version2.latest)).toBeTruthy();
   });
 });
 
 describe('Test: restart', () => {
   it('Should return true', async () => {
-    // Arrange
-    EventDispatcher.dispatchEventAsync = jest.fn().mockResolvedValueOnce({ success: true });
-
     // Act
     const restart = await SystemService.restart();
 

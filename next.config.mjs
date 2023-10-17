@@ -4,6 +4,10 @@ const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   transpilePackages: ['@runtipi/shared'],
+  experimental: {
+    serverComponentsExternalPackages: ['bullmq'],
+    serverActions: true,
+  },
   serverRuntimeConfig: {
     INTERNAL_IP: process.env.INTERNAL_IP,
     TIPI_VERSION: process.env.TIPI_VERSION,
@@ -18,6 +22,14 @@ const nextConfig = {
     ARCHITECTURE: process.env.ARCHITECTURE,
     NODE_ENV: process.env.NODE_ENV,
     REDIS_HOST: process.env.REDIS_HOST,
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/apps/:id',
+        destination: '/app-store/:id',
+      },
+    ];
   },
 };
 

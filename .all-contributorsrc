@@ -315,7 +315,9 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/106091011?v=4",
       "profile": "https://github.com/steveiliop56",
       "contributions": [
-        "translation"
+        "translation",
+        "code",
+        "test"
       ]
     },
     {
@@ -352,6 +354,15 @@
       "profile": "https://github.com/FabioCingottini",
       "contributions": [
         "translation"
+      ]
+    },
+    {
+      "login": "itsrllyhim",
+      "name": "him",
+      "avatar_url": "https://avatars.githubusercontent.com/u/143047010?v=4",
+      "profile": "https://github.com/itsrllyhim",
+      "contributions": [
+        "code"
       ]
     }
   ],
