@@ -9,7 +9,7 @@ jobs:
       tag: ${{ steps.get_tag.outputs.tag }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -58,7 +58,7 @@ jobs:
     needs: get-tag
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -107,7 +107,7 @@ jobs:
       tagname: ${{ steps.create_tag.outputs.tagname }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create Tag
         id: create_tag
