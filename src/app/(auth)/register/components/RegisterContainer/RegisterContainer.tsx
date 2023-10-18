@@ -20,5 +20,5 @@ export const RegisterContainer: React.FC = () => {
     },
   });
 
-  return <RegisterForm onSubmit={({ email, password }) => registerMutation.execute({ username: email, password })} loading={registerMutation.isExecuting} />;
+  return <RegisterForm onSubmit={({ email, password }) => registerMutation.execute({ username: email, password })} loading={registerMutation.status === 'executing'} />;
 };

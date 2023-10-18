@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  next-safe-action@3.4.0:
-    hash: qgf42rjgttuw3cdkp2gsi7r344
-    path: patches/next-safe-action@3.4.0.patch
-
 importers:
 
   .:
@@ -83,8 +78,8 @@ importers:
         specifier: ^2.20.2
         version: 2.20.2(next@13.5.4)(react@18.2.0)
       next-safe-action:
-        specifier: ^3.4.0
-        version: 3.4.0(patch_hash=qgf42rjgttuw3cdkp2gsi7r344)(next@13.5.4)(react@18.2.0)(zod@3.22.4)
+        specifier: ^4.0.1
+        version: 4.0.1(next@13.5.4)(react@18.2.0)(zod@3.22.4)
       pg:
         specifier: ^8.11.3
         version: 8.11.3
@@ -8448,8 +8443,8 @@ packages:
       react: 18.2.0
     dev: true
 
-  /next-safe-action@3.4.0(patch_hash=qgf42rjgttuw3cdkp2gsi7r344)(next@13.5.4)(react@18.2.0)(zod@3.22.4):
-    resolution: {integrity: sha512-EUmcChSlfIjdHu2n6L4w3EQnb1Np9C2OEWObPSKggdK/IhihDDatsunZKGcuimxFO3JbBdpFiUYcMe2slbovUg==}
+  /next-safe-action@4.0.1(next@13.5.4)(react@18.2.0)(zod@3.22.4):
+    resolution: {integrity: sha512-qaZtNJxnkvE9AVQN8sW/OEuYk38gOFMwH4QEYBww/MWM0fVkRMPoHUQK43oSRVdqCDj49wqJrrcyDH9hgv+JrA==}
     engines: {node: '>=16'}
     peerDependencies:
       next: '>= 13.4.2'
@@ -8460,7 +8455,6 @@ packages:
       react: 18.2.0
       zod: 3.22.4
     dev: false
-    patched: true
 
   /next@13.5.4(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.2):
     resolution: {integrity: sha512-+93un5S779gho8y9ASQhb/bTkQF17FNQOtXLKAj3lsNgltEcF0C5PMLLncDmH+8X1EnJH1kbqAERa29nRXqhjA==}

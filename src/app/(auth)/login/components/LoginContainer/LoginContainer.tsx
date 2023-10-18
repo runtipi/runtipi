@@ -36,8 +36,8 @@ export function LoginContainer() {
   });
 
   if (totpSessionId) {
-    return <TotpForm loading={verifyTotpMutation.isExecuting} onSubmit={(totpCode) => verifyTotpMutation.execute({ totpCode, totpSessionId })} />;
+    return <TotpForm loading={verifyTotpMutation.status === 'executing'} onSubmit={(totpCode) => verifyTotpMutation.execute({ totpCode, totpSessionId })} />;
   }
 
-  return <LoginForm loading={loginMutation.isExecuting} onSubmit={({ email, password }) => loginMutation.execute({ username: email, password })} />;
+  return <LoginForm loading={loginMutation.status === 'executing'} onSubmit={({ email, password }) => loginMutation.execute({ username: email, password })} />;
 }

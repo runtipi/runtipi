@@ -103,7 +103,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
   return (
     <>
       {!key && <Switch onCheckedChange={handleTotp} checked={totpEnabled} label={t('enable-2fa')} />}
-      {getTotpUriMutation.isExecuting && (
+      {getTotpUriMutation.status === 'executing' && (
         <div className="progress w-50">
           <div className="progress-bar progress-bar-indeterminate bg-green" />
         </div>
@@ -123,7 +123,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
             >
               <p className="text-muted">{t('password-needed-hint')}</p>
               <Input name="password" type="password" onChange={(e) => setPassword(e.target.value)} placeholder={t('form.password')} />
-              <Button loading={getTotpUriMutation.isExecuting} type="submit" className="btn-success mt-3">
+              <Button loading={getTotpUriMutation.status === 'executing'} type="submit" className="btn-success mt-3">
                 {t('enable-2fa')}
               </Button>
             </form>
@@ -144,7 +144,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
             >
               <p className="text-muted">{t('password-needed-hint')}</p>
               <Input name="password" type="password" onChange={(e) => setPassword(e.target.value)} placeholder={t('form.password')} />
-              <Button loading={disableTotpMutation.isExecuting} type="submit" className="btn-danger mt-3">
+              <Button loading={disableTotpMutation.status === 'executing'} type="submit" className="btn-danger mt-3">
                 {t('disable-2fa')}
               </Button>
             </form>

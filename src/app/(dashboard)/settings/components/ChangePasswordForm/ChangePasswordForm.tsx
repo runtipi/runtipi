@@ -58,17 +58,30 @@ export const ChangePasswordForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mb-4 w-100 ">
-      <Input disabled={changePasswordMutation.isExecuting} {...register('currentPassword')} error={errors.currentPassword?.message} type="password" placeholder={t('form.current-password')} />
-      <Input disabled={changePasswordMutation.isExecuting} {...register('newPassword')} error={errors.newPassword?.message} className="mt-2" type="password" placeholder={t('form.new-password')} />
       <Input
-        disabled={changePasswordMutation.isExecuting}
+        disabled={changePasswordMutation.status === 'executing'}
+        {...register('currentPassword')}
+        error={errors.currentPassword?.message}
+        type="password"
+        placeholder={t('form.current-password')}
+      />
+      <Input
+        disabled={changePasswordMutation.status === 'executing'}
+        {...register('newPassword')}
+        error={errors.newPassword?.message}
+        className="mt-2"
+        type="password"
+        placeholder={t('form.new-password')}
+      />
+      <Input
+        disabled={changePasswordMutation.status === 'executing'}
         {...register('newPasswordConfirm')}
         error={errors.newPasswordConfirm?.message}
         className="mt-2"
         type="password"
         placeholder={t('form.confirm-password')}
       />
-      <Button disabled={changePasswordMutation.isExecuting} className="mt-3" type="submit">
+      <Button disabled={changePasswordMutation.status === 'executing'} className="mt-3" type="submit">
         {t('form.change-password')}
       </Button>
     </form>

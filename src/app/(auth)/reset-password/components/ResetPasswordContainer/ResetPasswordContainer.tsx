@@ -30,11 +30,11 @@ export const ResetPasswordContainer: React.FC = () => {
     },
   });
 
-  if (resetPasswordMutation.res.data?.success && resetPasswordMutation.res.data?.email) {
+  if (resetPasswordMutation.result.data?.success && resetPasswordMutation.result.data?.email) {
     return (
       <>
         <h2 className="h2 text-center mb-3">{t('auth.reset-password.success-title')}</h2>
-        <p>{t('auth.reset-password.success', { email: resetPasswordMutation.res.data.email })}</p>
+        <p>{t('auth.reset-password.success', { email: resetPasswordMutation.result.data.email })}</p>
         <Button onClick={() => router.push('/login')} type="button" className="btn btn-primary w-100">
           {t('auth.reset-password.back-to-login')}
         </Button>
@@ -44,7 +44,7 @@ export const ResetPasswordContainer: React.FC = () => {
 
   return (
     <ResetPasswordForm
-      loading={resetPasswordMutation.isExecuting}
+      loading={resetPasswordMutation.status === 'executing' || cancelRequestMutation.status === 'executing'}
       onCancel={() => cancelRequestMutation.execute()}
       onSubmit={({ password }) => resetPasswordMutation.execute({ newPassword: password })}
     />
