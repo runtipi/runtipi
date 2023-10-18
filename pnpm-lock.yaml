@@ -47,8 +47,8 @@ importers:
         specifier: workspace:^
         version: link:packages/shared
       '@tabler/core':
-        specifier: 1.0.0-beta19
-        version: 1.0.0-beta19
+        specifier: 1.0.0-beta20
+        version: 1.0.0-beta20
       '@tabler/icons-react':
         specifier: ^2.39.0
         version: 2.39.0(react@18.2.0)
@@ -2914,10 +2914,11 @@ packages:
     dependencies:
       tslib: 2.6.2
 
-  /@tabler/core@1.0.0-beta19:
-    resolution: {integrity: sha512-iJWAuAWeekCxb7eGeM34Qwz32nlqykp0IeRn5W1z1hTCuU0arQknHphDs36ODxAiYwEXnY3yfKHOUvpW+Lr5Vg==}
+  /@tabler/core@1.0.0-beta20:
+    resolution: {integrity: sha512-OzKpur+Ug7e+HMbNJrMcSuWZGUsJTvu7HYboBNRE8qyo1RKIWqvwL5YewKBJ+odW5pDOqBPzbsS4je3EBQQxHw==}
     engines: {node: '>=18'}
     peerDependencies:
+      '@melloware/coloris': ^0.19.1
       apexcharts: ^3.40.0
       autosize: ^6.0.1
       choices.js: ^10.2.0
@@ -2935,6 +2936,8 @@ packages:
       tinymce: ^6.4.2
       tom-select: ^2.2.2
     peerDependenciesMeta:
+      '@melloware/coloris':
+        optional: true
       apexcharts:
         optional: true
       autosize:
@@ -2969,7 +2972,8 @@ packages:
         optional: true
     dependencies:
       '@popperjs/core': 2.11.8
-      bootstrap: 5.3.0-alpha3(@popperjs/core@2.11.8)
+      '@tabler/icons': 2.39.0
+      bootstrap: 5.3.1(@popperjs/core@2.11.8)
     dev: false
 
   /@tabler/icons-react@2.39.0(react@18.2.0):
@@ -4082,10 +4086,10 @@ packages:
       individual: 3.0.0
     dev: true
 
-  /bootstrap@5.3.0-alpha3(@popperjs/core@2.11.8):
-    resolution: {integrity: sha512-FBhOWMxkCFr74hesJdchLXhqagPTXS+kRNU3gE0FR5Ki/AdPSz32Ik96Z28+yBluCnE/pc9st7l1yPwKgbtfSA==}
+  /bootstrap@5.3.1(@popperjs/core@2.11.8):
+    resolution: {integrity: sha512-jzwza3Yagduci2x0rr9MeFSORjcHpt0lRZukZPZQJT1Dth5qzV7XcgGqYzi39KGAVYR8QEDVoO0ubFKOxzMG+g==}
     peerDependencies:
-      '@popperjs/core': ^2.11.7
+      '@popperjs/core': ^2.11.8
     dependencies:
       '@popperjs/core': 2.11.8
     dev: false
