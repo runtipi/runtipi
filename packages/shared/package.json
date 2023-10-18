@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "winston": "^3.9.0",
+    "winston": "^3.11.0",
     "zod": "^3.22.4"
   }
 }
