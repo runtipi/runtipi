@@ -15,7 +15,7 @@ export const Button = React.forwardRef<HTMLButtonElement, IProps>(({ type, class
   const styles = { width: width ? `${width}px` : 'auto' };
   return (
     <button style={styles} onClick={onClick} disabled={disabled || loading} ref={ref} className={clsx('btn', className, { disabled: disabled || loading })} type={type} {...rest}>
-      {loading ? <span className="spinner-border spinner-border-sm mb-1 mx-2" role="status" data-testid="loader" aria-hidden="true" /> : children}
+      {loading ? <span className="spinner-border spinner-border-sm mx-2" role="status" data-testid="loader" aria-hidden="true" /> : children}
     </button>
   );
 });

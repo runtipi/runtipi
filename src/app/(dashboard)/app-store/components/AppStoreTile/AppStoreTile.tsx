@@ -27,7 +27,7 @@ export const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
           <h3 className="text-bold h-3 mb-2">{limitText(app.name, 20)}</h3>
           <p className="text-muted text-nowrap mb-2">{limitText(app.short_desc, 30)}</p>
           {app.categories?.map((category) => (
-            <div className={`badge me-1 bg-${colorSchemeForCategory[category]}`} key={`${app.id}-${category}`}>
+            <div className={`text-white badge me-1 bg-${colorSchemeForCategory[category]}`} key={`${app.id}-${category}`}>
               {t(`categories.${category}`)}
             </div>
           ))}
