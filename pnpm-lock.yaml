@@ -262,8 +262,8 @@ importers:
         specifier: ^4.6.0
         version: 4.6.0(eslint@8.51.0)
       eslint-plugin-testing-library:
-        specifier: ^6.0.2
-        version: 6.0.2(eslint@8.51.0)(typescript@5.2.2)
+        specifier: ^6.1.0
+        version: 6.1.0(eslint@8.51.0)(typescript@5.2.2)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.8.4)(ts-node@10.9.1)
@@ -5492,8 +5492,8 @@ packages:
       string.prototype.matchall: 4.0.8
     dev: true
 
-  /eslint-plugin-testing-library@6.0.2(eslint@8.51.0)(typescript@5.2.2):
-    resolution: {integrity: sha512-3BV6FWtLbpKFb4Y1obSdt8PC9xSqz6T+7EHB/6pSCXqVjKPoS67ck903feKMKQphd5VhrX+N51yHuVaPa7elsw==}
+  /eslint-plugin-testing-library@6.1.0(eslint@8.51.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-r7kE+az3tbp8vyRwfyAGZ6V/xw+XvdWFPicIo6jbOPZoossOFDeHizARqPGV6gEkyF8hyCFhhH3mlQOGS3N5Sg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0, npm: '>=6'}
     peerDependencies:
       eslint: ^7.5.0 || ^8.0.0
