@@ -12,14 +12,23 @@ type Props = {
 export const ThemeProvider = (props: Props) => {
   const { children, initialTheme } = props;
   const cookies = useCookies();
-  const { theme } = useUIStore();
+  const { theme, setDarkMode } = useUIStore();
 
   useEffect(() => {
     if (theme) {
       cookies.set('theme', theme || initialTheme || 'light', { path: '/' });
       document.body.dataset.bsTheme = theme;
+    } else if (!cookies.get('theme')) {
+      // Detect system theme
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      setDarkMode(systemTheme === 'dark');
+      cookies.set('theme', systemTheme, { path: '/' });
+      document.body.dataset.bsTheme = systemTheme;
     }
-  }, [cookies, initialTheme, theme]);
+
+    const cookieTheme = cookies.get('theme');
+    setDarkMode(cookieTheme === 'dark');
+  }, [cookies, initialTheme, setDarkMode, theme]);
 
   return children;
 };
