@@ -97,7 +97,7 @@
     "@types/node": "20.8.4",
     "@types/pg": "^8.10.5",
     "@types/react": "18.2.31",
-    "@types/react-dom": "18.2.13",
+    "@types/react-dom": "18.2.14",
     "@types/semver": "^7.5.3",
     "@types/uuid": "^9.0.5",
     "@types/validator": "^13.11.2",
