@@ -29,11 +29,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="page-wrapper">
         <div className="page-header d-print-none">
           <div className="container-xl">
-            <div className={clsx(styles.title, 'align-items-stretch align-items-md-center d-flex flex-column flex-md-row ')}>
-              <div className="me-3 text-white">
+            <div className={clsx(styles.title, 'row g-2 align-items-center')}>
+              <div className="col text-white">
                 <PageTitle apps={apps} />
               </div>
-              <div className="flex-fill">
+              <div className="flex-fill col-auto ms-auto d-print-none">
                 <LayoutActions />
               </div>
             </div>

@@ -33,7 +33,8 @@
       "domain-already-in-use": "Il dominio {domain} è già in uso dall'app {id}",
       "could-not-get-latest-version": "Impossibile ottenere l'ultima versione",
       "current-version-is-latest": "La versione corrente è già la più recente",
-      "major-version-update": "La version major è cambiata. Aggiorna manualmente (istruzioni su GitHub)"
+      "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
+      "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
     },
     "success": {}
   },
@@ -228,7 +229,6 @@
       "maintenance-title": "Manutenzione",
       "maintenance-subtitle": "Azioni comuni da eseguire sulla tua istanza",
       "restart": "Riavvia",
-      "update": "Aggiorna alla {version}",
       "already-latest": "Già aggiornato"
     },
     "settings": {
@@ -286,6 +286,7 @@
   },
   "header": {
     "dashboard": "Dashboard",
+    "apps": "My Apps",
     "my-apps": "Le mie App",
     "app-store": "App Store",
     "settings": "Impostazioni",

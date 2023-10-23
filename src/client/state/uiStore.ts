@@ -25,8 +25,7 @@ export const useUIStore = create<UIStore>((set) => ({
   setDarkMode: (darkMode: boolean) => {
     if (darkMode) {
       set({ theme: 'dark' });
-    }
-    if (!darkMode) {
+    } else {
       set({ theme: 'light' });
     }
     set({ darkMode });

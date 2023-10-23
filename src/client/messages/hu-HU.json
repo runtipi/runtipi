@@ -33,7 +33,8 @@
       "domain-already-in-use": "A(z) {domain} domaint már használja a(z) {id} alkalmazás",
       "could-not-get-latest-version": "Nem sikerült letölteni a legújabb verziót",
       "current-version-is-latest": "A jelenlegi verzió már naprakész",
-      "major-version-update": "A fő verzió megváltozott. Kérjük, frissítse manuálisan (utasítások a GitHubon)"
+      "major-version-update": "A fő verzió megváltozott, kérjük frissítse manuálisan (utasítások a kiadás megjegyzéseiben)",
+      "demo-mode-limit": "A demo verzióban csak 6 applikáció telepíthető. Kérjük töröljön egy applikációt, hogy újat telepíthessen."
     },
     "success": {}
   },
@@ -228,7 +229,6 @@
       "maintenance-title": "Karbantartás",
       "maintenance-subtitle": "Általános műveletek ezen a példányon",
       "restart": "Újraindítás",
-      "update": "Frissítés erre {version}",
       "already-latest": "Már naprakész"
     },
     "settings": {
@@ -286,6 +286,7 @@
   },
   "header": {
     "dashboard": "Irányítópult",
+    "apps": "My Apps",
     "my-apps": "Alkalmazásaim",
     "app-store": "Alkalmazásbolt",
     "settings": "Beállítások",

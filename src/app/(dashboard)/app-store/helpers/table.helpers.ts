@@ -55,7 +55,7 @@ export const colorSchemeForCategory: Record<AppCategory, string> = {
   development: 'red',
   utilities: 'muted',
   photography: 'purple',
-  security: 'organge',
+  security: 'orange',
   social: 'yellow',
   featured: 'lime',
   data: 'green',
@@ -63,7 +63,7 @@ export const colorSchemeForCategory: Record<AppCategory, string> = {
   music: 'cyan',
   finance: 'dark',
   gaming: 'pink',
-  ai: 'gray',
+  ai: 'muted',
 };
 
 type AppCategoryEntry = {

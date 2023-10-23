@@ -33,7 +33,8 @@
       "domain-already-in-use": "域名 {domain} 已被应用程序 {id} 使用",
       "could-not-get-latest-version": "无法获取最新版本",
       "current-version-is-latest": "当前版本已经是最新版本",
-      "major-version-update": "主要版本已更新。请手动更新 (参照GitHub上的指示)"
+      "major-version-update": "主要版本已更新。请手动更新 (参照更新记录上的指示)",
+      "demo-mode-limit": "在演示模式下只能安装6个应用。请卸载其他应用来安装新应用。"
     },
     "success": {}
   },
@@ -228,7 +229,6 @@
       "maintenance-title": "维护",
       "maintenance-subtitle": "在您的实例中执行的常见操作",
       "restart": "重启",
-      "update": "更新到 {version}",
       "already-latest": "已是最新版本"
     },
     "settings": {
@@ -286,6 +286,7 @@
   },
   "header": {
     "dashboard": "控制面板",
+    "apps": "我的应用",
     "my-apps": "我的应用",
     "app-store": "应用市场",
     "settings": "设置",

@@ -36,7 +36,7 @@ export const PageTitle = ({ apps }: Props) => {
   return (
     <>
       <div className="page-pretitle">{renderBreadcrumbs()}</div>
-      <h2 className="page-title">{title}</h2>
+      <h2 className="page-title mt-1">{title}</h2>
     </>
   );
 };

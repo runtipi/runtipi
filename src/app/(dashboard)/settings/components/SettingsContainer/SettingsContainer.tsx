@@ -32,7 +32,7 @@ export const SettingsContainer = ({ initialValues, currentLocale }: Props) => {
 
   return (
     <div className="card-body">
-      <SettingsForm initalValues={initialValues} currentLocale={currentLocale} loading={updateSettingsMutation.isExecuting} onSubmit={onSubmit} />
+      <SettingsForm initalValues={initialValues} currentLocale={currentLocale} loading={updateSettingsMutation.status === 'executing'} onSubmit={onSubmit} />
     </div>
   );
 };

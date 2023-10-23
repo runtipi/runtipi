@@ -33,7 +33,8 @@
       "domain-already-in-use": "ドメイン {domain} はすでにアプリ {id} によって使用されています",
       "could-not-get-latest-version": "最新バージョンを取得できませんでした",
       "current-version-is-latest": "現在のバージョンは既に最新です",
-      "major-version-update": "メジャーバージョンが変更されました。GitHubの手順に従って、手動で更新してください。"
+      "major-version-update": "メジャーバージョンが変更されました。リリースノートの手順に従って、手動で更新してください。",
+      "demo-mode-limit": "デモモードには、6つのアプリのみインストールできます。新しいアプリをインストールするには、他のアプリをアンインストールしてください。"
     },
     "success": {}
   },
@@ -228,7 +229,6 @@
       "maintenance-title": "メンテナンス",
       "maintenance-subtitle": "あなたのインスタンスで実行する一般的なアクション",
       "restart": "再起動",
-      "update": "{version} に更新",
       "already-latest": "既に最新です"
     },
     "settings": {
@@ -286,6 +286,7 @@
   },
   "header": {
     "dashboard": "ダッシュボード",
+    "apps": "マイアプリ",
     "my-apps": "マイアプリ",
     "app-store": "アプリストア",
     "settings": "設定",

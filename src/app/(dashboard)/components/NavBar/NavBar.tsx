@@ -38,7 +38,7 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
           {renderItem(t('app-store'), 'app-store', IconBrandAppstore)}
           {renderItem(t('settings'), 'settings', IconSettings)}
         </ul>
-        {Boolean(isUpdateAvailable) && <span className="ms-2 badge bg-green d-none d-lg-block">{t('update-available')}</span>}
+        {Boolean(isUpdateAvailable) && <span className="ms-2 badge text-white bg-green d-none d-lg-block">{t('update-available')}</span>}
       </div>
     </div>
   );

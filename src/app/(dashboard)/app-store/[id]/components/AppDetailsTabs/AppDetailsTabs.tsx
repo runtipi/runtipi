@@ -36,7 +36,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
           </DataGridItem>
           <DataGridItem title={t('categories-title')}>
             {info.categories.map((c) => (
-              <div key={c} className="badge bg-green me-1">
+              <div key={c} className="badge text-white bg-green me-1">
                 {t(`categories.${c}`)}
               </div>
             ))}
@@ -45,7 +45,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
           {info.supported_architectures && (
             <DataGridItem title={t('supported-arch')}>
               {info.supported_architectures.map((a) => (
-                <div key={a} className="badge bg-red me-1">
+                <div key={a} className="badge text-white bg-red me-1">
                   {a.toLowerCase()}
                 </div>
               ))}

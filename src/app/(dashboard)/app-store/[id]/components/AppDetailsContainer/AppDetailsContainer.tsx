@@ -193,7 +193,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
         <div className="w-100 d-flex flex-column ms-md-3 align-items-center align-items-md-start">
           <div>
             <span className="mt-1 me-1">{t('apps.app-details.version')}: </span>
-            <span className="badge bg-gray mt-2">{app.info.version}</span>
+            <span className="badge bg-muted mt-2 text-white">{app.info.version}</span>
           </div>
           <span className="mt-1 text-muted text-center mb-2">{app.info.short_desc}</span>
           <div className="mb-1">{customStatus !== 'missing' && <AppStatus status={customStatus} />}</div>
