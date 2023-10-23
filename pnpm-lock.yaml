@@ -352,8 +352,8 @@ importers:
         specifier: ^7.5.4
         version: 7.5.4
       systeminformation:
-        specifier: ^5.21.11
-        version: 5.21.11
+        specifier: ^5.21.13
+        version: 5.21.13
       web-push:
         specifier: ^3.6.6
         version: 3.6.6
@@ -10107,8 +10107,8 @@ packages:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
     dev: true
 
-  /systeminformation@5.21.11:
-    resolution: {integrity: sha512-dIJEGoP5W7k4JJGje/b+inJrOL5hV9LPsUi5ndBvJydI80CVEcu2DZYgt6prdRErDi2SA4SqYd/WMR4b+u34mA==}
+  /systeminformation@5.21.13:
+    resolution: {integrity: sha512-sGgMhQxxjKHSIJtv7g5s19IRpfCgLG3tZqGbFcfGFyMm1hJ3BmzTfaq0yyOO2oLHlbkM49mgMjnPPB8g573LMA==}
     engines: {node: '>=8.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
