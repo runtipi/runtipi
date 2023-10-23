@@ -75,8 +75,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5(next@13.5.5)(react@18.2.0)
       next-intl:
-        specifier: ^2.20.2
-        version: 2.20.2(next@13.5.5)(react@18.2.0)
+        specifier: ^2.21.0
+        version: 2.21.0(next@13.5.5)(react@18.2.0)
       next-safe-action:
         specifier: ^4.0.1
         version: 4.0.1(next@13.5.5)(react@18.2.0)(zod@3.22.4)
@@ -8283,8 +8283,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /next-intl@2.20.2(next@13.5.5)(react@18.2.0):
-    resolution: {integrity: sha512-28IarFfRzuOjPo6fjAY2RMWVdeejuvzW7jzwVnBfHU6EB0GYwQPWIq1G5YK4gWb44R6dqnjjVDqphWrLwKE+Vw==}
+  /next-intl@2.21.0(next@13.5.5)(react@18.2.0):
+    resolution: {integrity: sha512-rxyKLsBGGji9gLuNGbbMBe+7jwGYNJZhIXxsDY2esiJ/cpeTfpAq1rLjgeAs663zQE4qHbinUazULdv2QzRngA==}
     engines: {node: '>=10'}
     peerDependencies:
       next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0
@@ -8294,7 +8294,7 @@ packages:
       negotiator: 0.6.3
       next: 13.5.5(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react: 18.2.0
-      use-intl: 2.20.2(react@18.2.0)
+      use-intl: 2.21.0(react@18.2.0)
     dev: false
 
   /next-router-mock@0.9.10(next@13.5.5)(react@18.2.0):
@@ -10648,8 +10648,8 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /use-intl@2.20.2(react@18.2.0):
-    resolution: {integrity: sha512-Mvd16M2nAlXcOqm17jWCK69DmsSgn4h9dgvcZ6UbYAzdJQiuu5TFBVxd1f3xRRs2qXb94/E2j/1AcqzmN9TMtg==}
+  /use-intl@2.21.0(react@18.2.0):
+    resolution: {integrity: sha512-m0gAKo/2OHw1tJtGQV226NIIpUy4Ualf+FKa/whk7hM1W7MXQ2v8c/N54UPrSy+PvJLCrIe7aOQ5xYEmUjnztQ==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
