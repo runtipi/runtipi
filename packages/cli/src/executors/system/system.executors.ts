@@ -104,7 +104,7 @@ export class SystemExecutors {
 
   public cleanLogs = async () => {
     try {
-      this.logger.flush();
+      await this.logger.flush();
       this.logger.info('Logs cleaned successfully');
 
       return { success: true, message: '' };
@@ -170,7 +170,7 @@ export class SystemExecutors {
   public start = async (sudo = true, killWatchers = true) => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
-      this.logger.flush();
+      await this.logger.flush();
 
       const { isSudo } = getUserIds();
 
@@ -203,8 +203,8 @@ export class SystemExecutors {
         throw new Error('Tipi needs to run as root to start. Use sudo ./runtipi-cli start');
       }
 
-      spinner.start();
       spinner.setMessage('Copying system files...');
+      spinner.start();
 
       this.logger.info('Copying system files...');
       await copySystemFiles();
