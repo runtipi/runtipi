@@ -97,6 +97,7 @@ export const generateEnvFile = async (appId: string, config: Record<string, unkn
   } else {
     envMap.set('APP_DOMAIN', `${internalIp}:${parsedConfig.data.port}`);
     envMap.set('APP_HOST', internalIp);
+    envMap.set('APP_PROTOCOL', 'http');
   }
 
   // Create app-data folder if it doesn't exist
