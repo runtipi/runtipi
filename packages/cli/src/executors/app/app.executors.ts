@@ -152,10 +152,10 @@ export class AppExecutors {
     try {
       this.logger.info(`Stopping app ${appId}`);
 
-      this.logger.info(`Regenerating app.env file for app ${appId}`);
       await this.ensureAppDir(appId);
 
       if (!skipEnvGeneration) {
+        this.logger.info(`Regenerating app.env file for app ${appId}`);
         await generateEnvFile(appId, config);
       }
       await compose(appId, 'rm --force --stop');

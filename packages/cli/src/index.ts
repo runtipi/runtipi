@@ -4,7 +4,7 @@ import { program } from 'commander';
 import chalk from 'chalk';
 import { description, version } from '../package.json';
 import { startWorker } from './services/watcher/watcher';
-import { SystemExecutors } from './executors';
+import { AppExecutors, SystemExecutors } from './executors';
 
 const main = async () => {
   program.description(description).version(version);
@@ -67,6 +67,25 @@ const main = async () => {
     .action(async () => {
       const systemExecutors = new SystemExecutors();
       await systemExecutors.cleanLogs();
+    });
+
+  // Start app: ./cli app start <app>
+  // Stop app: ./cli app stop <app>
+  program
+    .command('app [command] <app>')
+    .description('App management')
+    .action(async (command, app) => {
+      const appExecutors = new AppExecutors();
+      switch (command) {
+        case 'start':
+          await appExecutors.startApp(app, {});
+          break;
+        case 'stop':
+          await appExecutors.stopApp(app, {}, true);
+          break;
+        default:
+          console.log(chalk.red('✗'), 'Unknown command');
+      }
     });
 
   program.parse(process.argv);
