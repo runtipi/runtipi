@@ -54,7 +54,7 @@
     "lodash.merge": "^4.6.2",
     "next": "13.5.5",
     "next-client-cookies": "^1.0.5",
-    "next-intl": "^2.20.2",
+    "next-intl": "^2.21.0",
     "next-safe-action": "^4.0.1",
     "pg": "^8.11.3",
     "qrcode.react": "^3.1.0",
