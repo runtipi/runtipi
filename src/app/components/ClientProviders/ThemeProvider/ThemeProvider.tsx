@@ -16,13 +16,13 @@ export const ThemeProvider = (props: Props) => {
 
   useEffect(() => {
     if (theme) {
-      cookies.set('theme', theme || initialTheme || 'light', { path: '/' });
+      cookies.set('theme', theme || initialTheme || 'light', { path: '/', expires: 365 });
       document.body.dataset.bsTheme = theme;
     } else if (!cookies.get('theme')) {
       // Detect system theme
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       setDarkMode(systemTheme === 'dark');
-      cookies.set('theme', systemTheme, { path: '/' });
+      cookies.set('theme', systemTheme, { path: '/', expires: 365 });
       document.body.dataset.bsTheme = systemTheme;
     }
 
