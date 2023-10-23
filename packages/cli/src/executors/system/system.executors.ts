@@ -274,6 +274,7 @@ export class SystemExecutors {
       this.logger.info('Adding initial jobs to queue...');
       await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent);
       await queue.add(`${Math.random().toString()}_repo_clone`, { type: 'repo', command: 'clone', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
+      await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
 
       // Scheduled jobs
       this.logger.info('Adding scheduled jobs to queue...');
