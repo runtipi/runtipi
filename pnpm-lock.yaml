@@ -61,7 +61,7 @@ importers:
         version: 7.1.0(express-session@1.17.3)
       drizzle-orm:
         specifier: ^0.28.6
-        version: 0.28.6(@types/pg@8.10.5)(pg@8.11.3)
+        version: 0.28.6(@types/pg@8.10.7)(pg@8.11.3)
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -193,8 +193,8 @@ importers:
         specifier: 20.8.4
         version: 20.8.4
       '@types/pg':
-        specifier: ^8.10.5
-        version: 8.10.5
+        specifier: ^8.10.7
+        version: 8.10.7
       '@types/react':
         specifier: 18.2.31
         version: 18.2.31
@@ -3176,7 +3176,7 @@ packages:
   /@types/jsonfile@6.1.1:
     resolution: {integrity: sha512-GSgiRCVeapDN+3pqA35IkQwasaCh/0YFH5dEF6S88iDvEn901DjOeH3/QPY+XYP1DFzDZPvIvfeEgk+7br5png==}
     dependencies:
-      '@types/node': 18.18.4
+      '@types/node': 20.8.4
     dev: true
 
   /@types/lodash.merge@4.6.8:
@@ -3198,10 +3198,6 @@ packages:
   /@types/ms@0.7.31:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
 
-  /@types/node@18.18.4:
-    resolution: {integrity: sha512-t3rNFBgJRugIhackit2mVcLfF6IRc0JE4oeizPQL8Zrm8n2WY/0wOdpOPhdtG0V9Q2TlW/axbF1MJ6z+Yj/kKQ==}
-    dev: true
-
   /@types/node@20.8.4:
     resolution: {integrity: sha512-ZVPnqU58giiCjSxjVUESDtdPk4QR5WQhhINbc9UBrKLU68MX5BF6kbQzTrkwbolyr0X8ChBpXfavr5mZFKZQ5A==}
     dependencies:
@@ -3211,8 +3207,8 @@ packages:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
     dev: false
 
-  /@types/pg@8.10.5:
-    resolution: {integrity: sha512-GS3ebGcSJQqKSnq4/WnSH1XQvx0vTDLEmqLENk7onKvTnry9BWPsZiZeUMJlEPw+5bCQDzfxZFhxlUztpNCKgQ==}
+  /@types/pg@8.10.7:
+    resolution: {integrity: sha512-ksJqHipwYaSEHz9e1fr6H6erjoEdNNaOxwyJgPx9bNeaqOW3iWBQgVHfpwiSAoqGzchfc+ZyRLwEfeCcyYD3uQ==}
     dependencies:
       '@types/node': 20.8.4
       pg-protocol: 1.6.0
@@ -4825,7 +4821,7 @@ packages:
     resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
     engines: {node: '>=12'}
 
-  /drizzle-orm@0.28.6(@types/pg@8.10.5)(pg@8.11.3):
+  /drizzle-orm@0.28.6(@types/pg@8.10.7)(pg@8.11.3):
     resolution: {integrity: sha512-yBe+F9htrlYER7uXgDJUQsTHFoIrI5yMm5A0bg0GiZ/kY5jNXTWoEy4KQtg35cE27sw1VbgzoMWHAgCckUUUww==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -4887,7 +4883,7 @@ packages:
       sqlite3:
         optional: true
     dependencies:
-      '@types/pg': 8.10.5
+      '@types/pg': 8.10.7
       pg: 8.11.3
     dev: false
 
