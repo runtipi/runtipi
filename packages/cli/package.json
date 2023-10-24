@@ -28,7 +28,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@faker-js/faker": "^8.1.0",
+    "@faker-js/faker": "^8.2.0",
     "@types/cli-progress": "^3.11.3",
     "@types/node": "20.8.4",
     "@types/web-push": "^3.6.1",
