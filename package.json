@@ -79,7 +79,7 @@
     "validator": "^13.11.0",
     "winston": "^3.11.0",
     "zod": "^3.22.4",
-    "zustand": "^4.4.3"
+    "zustand": "^4.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
