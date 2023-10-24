@@ -45,7 +45,7 @@ export const newLogger = (id: string, logsFolder: string) => {
       colorize(),
       timestamp(),
       align(),
-      printf((info) => `${info.timestamp} - ${info.level} > ${info.message}`),
+      printf((info) => `${id}: ${info.timestamp} - ${info.level} > ${info.message}`),
     ),
     transports: tr,
     exceptionHandlers,

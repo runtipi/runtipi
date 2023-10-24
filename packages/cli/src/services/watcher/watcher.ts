@@ -113,7 +113,7 @@ export const startWorker = async () => {
   });
 
   worker.on('completed', (job) => {
-    fileLogger.info(`Job ${job.id} completed with result: ${JSON.stringify(job.returnvalue)}`);
+    fileLogger.info(`Job ${job.id} completed with result:`, JSON.stringify(job.returnvalue));
   });
 
   worker.on('failed', (job) => {
