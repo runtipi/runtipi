@@ -101,7 +101,7 @@
     "@types/semver": "^7.5.3",
     "@types/uuid": "^9.0.6",
     "@types/validator": "^13.11.2",
-    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.8.0",
     "@vitejs/plugin-react": "^4.1.0",
     "@vitest/coverage-v8": "^0.34.6",
