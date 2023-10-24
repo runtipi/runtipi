@@ -174,6 +174,8 @@ export class SystemExecutors {
   public start = async (sudo = true, killWatchers = true) => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
+      this.logger.flush();
+
       const { isSudo } = getUserIds();
 
       if (!sudo) {
