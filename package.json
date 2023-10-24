@@ -52,7 +52,7 @@
     "drizzle-orm": "^0.28.6",
     "fs-extra": "^11.1.1",
     "lodash.merge": "^4.6.2",
-    "next": "13.5.5",
+    "next": "13.5.6",
     "next-client-cookies": "^1.0.5",
     "next-intl": "^2.21.0",
     "next-safe-action": "^4.0.1",
