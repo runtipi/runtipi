@@ -15,9 +15,5 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AppStorePage() {
   const { apps } = await AppServiceClass.listApps();
 
-  return (
-    <div className="card px-3 pb-3">
-      <AppStoreTable data={apps} />
-    </div>
-  );
+  return <AppStoreTable data={apps} />;
 }
