@@ -51,8 +51,8 @@ importers:
         specifier: ^0.31.1
         version: 0.31.1
       bullmq:
-        specifier: ^4.12.3
-        version: 4.12.3
+        specifier: ^4.12.5
+        version: 4.12.5
       clsx:
         specifier: ^2.0.0
         version: 2.0.0
@@ -322,8 +322,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1
       bullmq:
-        specifier: ^4.12.3
-        version: 4.12.3
+        specifier: ^4.12.5
+        version: 4.12.5
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
@@ -4141,8 +4141,8 @@ packages:
       semver: 7.5.4
     dev: true
 
-  /bullmq@4.12.3:
-    resolution: {integrity: sha512-4uPp4NQTALFF+eFK7g8VJM+rt0aiduQdzBomgiEO1OK4OE+TdgC6cjGXooKI/asuB8iDhSZ+pSnGYy5Xyr6qRA==}
+  /bullmq@4.12.5:
+    resolution: {integrity: sha512-llBh5ejISbtdvSgQOqwgoXOdagBTLFbgy8FoYc03nKVV+H1OqlUOsTVmlUh3Q1GapMVzRilMHBMHBPKaaE5Bjg==}
     dependencies:
       cron-parser: 4.8.1
       glob: 8.1.0
