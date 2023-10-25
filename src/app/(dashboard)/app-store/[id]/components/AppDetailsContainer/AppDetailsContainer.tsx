@@ -195,7 +195,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
             <span className="mt-1 me-1">{t('apps.app-details.version')}: </span>
             <span className="badge bg-muted mt-2 text-white">{app.info.version}</span>
           </div>
-          <span className="mt-1 text-muted text-center mb-2">{app.info.short_desc}</span>
+          <span className="mt-1 text-muted text-center text-md-start mb-2">{app.info.short_desc}</span>
           <div className="mb-1">{customStatus !== 'missing' && <AppStatus status={customStatus} />}</div>
           <AppActions
             localDomain={localDomain}
