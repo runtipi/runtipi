@@ -78,8 +78,8 @@ importers:
         specifier: ^2.21.0
         version: 2.21.0(next@13.5.6)(react@18.2.0)
       next-safe-action:
-        specifier: ^4.0.1
-        version: 4.0.1(next@13.5.6)(react@18.2.0)(zod@3.22.4)
+        specifier: ^4.0.4
+        version: 4.0.4(next@13.5.6)(react@18.2.0)(zod@3.22.4)
       pg:
         specifier: ^8.11.3
         version: 8.11.3
@@ -8320,8 +8320,8 @@ packages:
       react: 18.2.0
     dev: true
 
-  /next-safe-action@4.0.1(next@13.5.6)(react@18.2.0)(zod@3.22.4):
-    resolution: {integrity: sha512-qaZtNJxnkvE9AVQN8sW/OEuYk38gOFMwH4QEYBww/MWM0fVkRMPoHUQK43oSRVdqCDj49wqJrrcyDH9hgv+JrA==}
+  /next-safe-action@4.0.4(next@13.5.6)(react@18.2.0)(zod@3.22.4):
+    resolution: {integrity: sha512-F2Wyqg9DUZ5p1ZlEeTv2rWkMuAwhYc223YSxJ5QucNO+zy99Yde49TKiE9FouOqL+4eAlMnY6R0tj4xtLnh9vw==}
     engines: {node: '>=16'}
     peerDependencies:
       next: '>= 13.4.2'
