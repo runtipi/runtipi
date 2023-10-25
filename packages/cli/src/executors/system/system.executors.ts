@@ -104,11 +104,7 @@ export class SystemExecutors {
 
   public cleanLogs = async () => {
     try {
-      const { rootFolderHost } = getEnv();
-
-      await fs.promises.rm(path.join(rootFolderHost, 'logs'), { recursive: true, force: true });
-      await fs.promises.mkdir(path.join(rootFolderHost, 'logs'));
-
+      this.logger.flush();
       this.logger.info('Logs cleaned successfully');
 
       return { success: true, message: '' };
