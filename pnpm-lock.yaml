@@ -371,8 +371,8 @@ importers:
         specifier: 20.8.4
         version: 20.8.4
       '@types/web-push':
-        specifier: ^3.6.1
-        version: 3.6.1
+        specifier: ^3.6.2
+        version: 3.6.2
       dotenv-cli:
         specifier: ^7.3.0
         version: 7.3.0
@@ -3265,8 +3265,8 @@ packages:
     resolution: {integrity: sha512-nIKVVQKT6kGKysnNt+xLobr+pFJNssJRi2s034wgWeFBUx01fI8BeHTW2TcRp7VcFu9QCYG8IlChTuovcm0oKQ==}
     dev: true
 
-  /@types/web-push@3.6.1:
-    resolution: {integrity: sha512-Zu6Iju7c4IlE8I8eEeFLYRb7XFqvHFmWWAYr1cmug9EX3c6CDarxIXWN/GO0sxjbJLkHPwozUzp6cLdXsrq7Ew==}
+  /@types/web-push@3.6.2:
+    resolution: {integrity: sha512-v6Wdk1eIVbAJQjEAa1ZxuG3cfOYTd6nSv55BVJMtLQUvQ07v80MPt2Voq/z71WKhy4CORu4L3aH+8SXKX4BD5g==}
     dependencies:
       '@types/node': 20.8.4
     dev: true
