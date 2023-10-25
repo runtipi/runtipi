@@ -1,8 +1,10 @@
-import { useRouter } from 'next/router';
-import React from 'react';
-import { StatusScreen } from '../client/components/StatusScreen';
+'use client';
 
-const ErrorPage: React.FC = () => {
+import React from 'react';
+import { StatusScreen } from '@/components/StatusScreen';
+import { useRouter } from 'next/navigation';
+
+export default function NotFound() {
   const router = useRouter();
 
   const handleHome = () => {
@@ -10,6 +12,4 @@ const ErrorPage: React.FC = () => {
   };
 
   return <StatusScreen loading={false} title="404" subtitle="Page not found" actionTitle="Home page" onAction={handleHome} />;
-};
-
-export default ErrorPage;
+}
