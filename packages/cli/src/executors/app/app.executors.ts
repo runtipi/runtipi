@@ -149,7 +149,10 @@ export class AppExecutors {
    * @param {Record<string, unknown>} config - The config of the app
    */
   public stopApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
+    const spinner = new TerminalSpinner(`Stopping app ${appId}`);
+
     try {
+      spinner.start();
       this.logger.info(`Stopping app ${appId}`);
 
       await this.ensureAppDir(appId);
@@ -161,14 +164,18 @@ export class AppExecutors {
       await compose(appId, 'rm --force --stop');
 
       this.logger.info(`App ${appId} stopped`);
+      spinner.done(`App ${appId} stopped`);
       return { success: true, message: `App ${appId} stopped successfully` };
     } catch (err) {
+      spinner.fail(`Failed to stop app ${appId} see logs for more details (logs/error.log)`);
       return this.handleAppError(err);
     }
   };
 
   public startApp = async (appId: string, config: Record<string, unknown>) => {
+    const spinner = new TerminalSpinner(`Starting app ${appId}`);
     try {
+      spinner.start();
       const { appDataDirPath } = this.getAppPaths(appId);
 
       this.logger.info(`Starting app ${appId}`);
@@ -176,6 +183,7 @@ export class AppExecutors {
       this.logger.info(`Regenerating app.env file for app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
+
       await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
 
       this.logger.info(`App ${appId} started`);
@@ -185,8 +193,10 @@ export class AppExecutors {
         this.logger.error(`Error setting permissions for app ${appId}`);
       });
 
+      spinner.done(`App ${appId} started`);
       return { success: true, message: `App ${appId} started successfully` };
     } catch (err) {
+      spinner.fail(`Failed to start app ${appId} see logs for more details (logs/error.log)`);
       return this.handleAppError(err);
     }
   };
