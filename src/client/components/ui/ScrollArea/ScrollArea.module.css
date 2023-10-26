@@ -1,0 +1,26 @@
+.viewport {
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+}
+
+.scrollbar {
+  display: flex;
+  touch-action: none;
+  user-select: none;
+  transition: color 0.3s ease;
+}
+
+.scrollbarVertical {
+  height: 100%;
+  width: 0.625rem;
+  border-left: 1px solid transparent;
+  padding: 0 1px;
+}
+
+.scrollbarHorizontal {
+  flex-direction: column;
+  height: 0.625rem;
+  border-top: 1px solid transparent;
+  padding: 0 1px;
+}
