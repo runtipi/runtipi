@@ -30,7 +30,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.2.0",
     "@types/cli-progress": "^3.11.4",
-    "@types/node": "20.8.4",
+    "@types/node": "20.8.9",
     "@types/web-push": "^3.6.2",
     "dotenv-cli": "^7.3.0",
     "esbuild": "^0.19.4",
