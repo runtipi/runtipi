@@ -45,7 +45,7 @@
     "@runtipi/postgres-migrations": "^5.3.0",
     "@runtipi/shared": "workspace:^",
     "@tabler/core": "1.0.0-beta20",
-    "@tabler/icons-react": "^2.39.0",
+    "@tabler/icons-react": "^2.40.0",
     "argon2": "^0.31.1",
     "bullmq": "^4.12.6",
     "clsx": "^2.0.0",
