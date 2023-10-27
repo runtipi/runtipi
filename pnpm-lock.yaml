@@ -250,8 +250,8 @@ importers:
         specifier: ^2.29.0
         version: 2.29.0(@typescript-eslint/parser@6.9.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.52.0)
       eslint-plugin-jest:
-        specifier: ^27.5.0
-        version: 27.5.0(@typescript-eslint/eslint-plugin@6.9.0)(eslint@8.52.0)(jest@29.7.0)(typescript@5.2.2)
+        specifier: ^27.6.0
+        version: 27.6.0(@typescript-eslint/eslint-plugin@6.9.0)(eslint@8.52.0)(jest@29.7.0)(typescript@5.2.2)
       eslint-plugin-jest-dom:
         specifier: ^5.1.0
         version: 5.1.0(@testing-library/dom@9.3.3)(eslint@8.52.0)
@@ -5387,8 +5387,8 @@ packages:
       requireindex: 1.2.0
     dev: true
 
-  /eslint-plugin-jest@27.5.0(@typescript-eslint/eslint-plugin@6.9.0)(eslint@8.52.0)(jest@29.7.0)(typescript@5.2.2):
-    resolution: {integrity: sha512-ed+254pKIJa0vHUxzHODwwrdrxnRxkViFq1FaRR7A4PTn1hMFRrk+IEe08UzkqzO6jhXUxsWIsClR1bBNtsc5w==}
+  /eslint-plugin-jest@27.6.0(@typescript-eslint/eslint-plugin@6.9.0)(eslint@8.52.0)(jest@29.7.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-MTlusnnDMChbElsszJvrwD1dN3x6nZl//s4JD23BxB6MgR66TZlL064su24xEIS3VACfAoHV1vgyMgPw8nkdng==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^5.0.0 || ^6.0.0
