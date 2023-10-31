@@ -54,7 +54,7 @@
     "commander": "^11.1.0",
     "dotenv": "^16.3.1",
     "ioredis": "^5.3.2",
-    "log-update": "^5.0.1",
+    "log-update": "^6.0.0",
     "pg": "^8.11.3",
     "semver": "^7.5.4",
     "systeminformation": "^5.21.15",
