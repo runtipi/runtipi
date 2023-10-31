@@ -75,8 +75,8 @@ importers:
         specifier: 13.5.6
         version: 13.5.6(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
       next-client-cookies:
-        specifier: ^1.0.5
-        version: 1.0.5(next@13.5.6)(react@18.2.0)
+        specifier: ^1.0.6
+        version: 1.0.6(next@13.5.6)(react@18.2.0)
       next-intl:
         specifier: ^2.21.0
         version: 2.21.0(next@13.5.6)(react@18.2.0)
@@ -8311,10 +8311,10 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
-  /next-client-cookies@1.0.5(next@13.5.6)(react@18.2.0):
-    resolution: {integrity: sha512-PqmJyJCZotR/Vg8meaqHKT2RjHoNuDkaew6JBj0gA1tlY7+6aK0Zb00KLnZSQnbGYg9OEQquk5UyWp1QACvXjQ==}
+  /next-client-cookies@1.0.6(next@13.5.6)(react@18.2.0):
+    resolution: {integrity: sha512-fa3oeQT4WAvW8NcgbjoqeV9ZIOF62WREXL0Ikq2nARJC8yqWyDgtyOIF5t16YkYvw6pUUwO2wTcpwJMKcCYGhw==}
     peerDependencies:
-      next: ^13.0.0
+      next: '>= 13.0.0'
       react: '>= 16.8.0'
     dependencies:
       js-cookie: 3.0.5
