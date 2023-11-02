@@ -32,6 +32,7 @@ type EnvKeys =
   | 'REDIS_PASSWORD'
   | 'LOCAL_DOMAIN'
   | 'DEMO_MODE'
+  | 'GUEST_DASHBOARD'
   | 'TIPI_GID'
   | 'TIPI_UID'
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -178,6 +179,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('REDIS_HOST', 'tipi-redis');
   envMap.set('REDIS_PASSWORD', redisPassword);
   envMap.set('DEMO_MODE', String(data.demoMode || 'false'));
+  envMap.set('GUEST_DASHBOARD', String(data.guestDashboard || 'false'));
   envMap.set('LOCAL_DOMAIN', data.localDomain || 'tipi.lan');
   envMap.set('NODE_ENV', 'production');
 
