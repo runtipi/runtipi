@@ -177,6 +177,7 @@
       "install-form": {
         "title": "Install {name}",
         "expose-app": "Expose app",
+        "display-on-guest-dashboard": "Display on guest dashboard",
         "domain-name": "Domain name",
         "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
         "choose-option": "Choose an option...",
@@ -239,6 +240,8 @@
       "invalid-ip": "Invalid IP address",
       "invalid-url": "Invalid URL",
       "invalid-domain": "Invalid domain",
+      "guest-dashboard": "Enable guest dashboard",
+      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
       "domain-name": "Domain name",
       "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
       "dns-ip": "DNS IP",
@@ -291,10 +294,15 @@
     "app-store": "App Store",
     "settings": "Settings",
     "logout": "Logout",
+    "login": "Login",
     "dark-mode": "Dark Mode",
     "light-mode": "Light Mode",
     "sponsor": "Sponsor",
     "source-code": "Source code",
     "update-available": "Update available"
-  }
+  },
+  "runtipi": "Runtipi",
+  "guest-dashboard": "Guest dashboard",
+  "guest-dashboard-no-apps": "No apps to display",
+  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
 }

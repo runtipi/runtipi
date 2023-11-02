@@ -46,8 +46,6 @@ export const sortTable = (params: SortParams) => {
   return sortedData.filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
 };
 
-export const limitText = (text: string, limit: number) => (text.length > limit ? `${text.substring(0, limit)}...` : text);
-
 export const colorSchemeForCategory: Record<AppCategory, string> = {
   network: 'blue',
   media: 'azure',

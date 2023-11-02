@@ -12,18 +12,16 @@ const formSchema = z.object({}).catchall(z.any());
 const input = z.object({
   id: z.string(),
   form: formSchema,
-  exposed: z.boolean().optional(),
-  domain: z.string().optional(),
 });
 
 /**
  * Given an app id, installs the app.
  */
-export const installAppAction = action(input, async ({ id, form, domain, exposed }) => {
+export const installAppAction = action(input, async ({ id, form }) => {
   try {
     const appsService = new AppServiceClass(db);
 
-    await appsService.installApp(id, form, exposed, domain);
+    await appsService.installApp(id, form);
 
     revalidatePath('/apps');
     revalidatePath(`/app/${id}`);

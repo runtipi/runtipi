@@ -48,6 +48,7 @@ export const appTable = pgTable('app', {
   version: integer('version').default(1).notNull(),
   exposed: boolean('exposed').notNull(),
   domain: varchar('domain'),
+  isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
 });
 export type App = InferModel<typeof appTable>;
 export type NewApp = InferModel<typeof appTable, 'insert'>;

@@ -116,8 +116,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   const handleInstallSubmit = async (values: FormValues) => {
     setCustomStatus('installing');
     installDisclosure.close();
-    const { exposed, domain } = values;
-    installMutation.execute({ id: app.id, form: values, exposed, domain });
+    installMutation.execute({ id: app.id, form: values });
   };
 
   const handleUnistallSubmit = () => {
@@ -139,8 +138,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
 
   const handleUpdateSettingsSubmit = async (values: FormValues) => {
     updateSettingsDisclosure.close();
-    const { exposed, domain } = values;
-    updateConfigMutation.execute({ id: app.id, form: values, exposed, domain });
+    updateConfigMutation.execute({ id: app.id, form: values });
   };
 
   const handleUpdateSubmit = async () => {
@@ -185,8 +183,6 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
         onClose={updateSettingsDisclosure.close}
         info={app.info}
         config={castAppConfig(app?.config)}
-        exposed={app?.exposed}
-        domain={app?.domain || ''}
       />
       <div className="card-header d-flex flex-column flex-md-row">
         <AppLogo id={app.id} size={130} alt={app.info.name} />
