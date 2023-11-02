@@ -3,7 +3,7 @@
 import React from 'react';
 import semver from 'semver';
 import { toast } from 'react-hot-toast';
-import Markdown from '@/components/Markdown/Markdown';
+import { Markdown } from '@/components/Markdown';
 import { IconStar } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
