@@ -387,7 +387,6 @@ export class AppServiceClass {
   public getGuestDashboardApps = async () => {
     const apps = await this.queries.getGuestDashboardApps();
 
-    console.log(apps);
     return apps
       .map((app) => {
         const info = getAppInfo(app.id, app.status);

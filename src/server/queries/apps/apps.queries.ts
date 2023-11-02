@@ -65,6 +65,13 @@ export class AppQueries {
   }
 
   /**
+   * Returns all apps that are running and visible on guest dashboard sorted by id ascending
+   */
+  public async getGuestDashboardApps() {
+    return this.db.query.appTable.findMany({ where: and(eq(appTable.status, 'running'), eq(appTable.isVisibleOnGuestDashboard, true)), orderBy: asc(appTable.id) });
+  }
+
+  /**
    * Given a domain, return all apps that have this domain, are exposed and not the given id
    *
    * @param {string} domain - The domain to search for

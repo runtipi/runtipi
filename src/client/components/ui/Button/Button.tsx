@@ -12,7 +12,7 @@ interface IProps {
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, IProps>(({ type, className, children, loading, disabled, onClick, width, ...rest }, ref) => {
-  const styles = { width: width ? `${width}px` : 'auto' };
+  const styles = { width: width ? `${width}px` : 'auto', height: '36px' };
   return (
     <button style={styles} onClick={onClick} disabled={disabled || loading} ref={ref} className={clsx('btn', className, { disabled: disabled || loading })} type={type} {...rest}>
       {loading ? <span className="spinner-border spinner-border-sm mx-2" role="status" data-testid="loader" aria-hidden="true" /> : children}

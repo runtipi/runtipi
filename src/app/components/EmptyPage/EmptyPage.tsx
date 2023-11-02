@@ -24,6 +24,7 @@ export const EmptyPage: React.FC<IProps> = ({ title, subtitle, redirectPath, act
     <div className="card empty">
       <Image
         src="/empty.svg"
+        priority
         alt="Empty box"
         height="80"
         width="80"
