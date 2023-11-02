@@ -42,24 +42,30 @@ export class TipiConfig {
       status: 'RUNNING',
       storagePath: conf.STORAGE_PATH,
       demoMode: conf.DEMO_MODE,
+      guestDashboard: conf.GUEST_DASHBOARD,
       seePreReleaseVersions: false,
     };
 
+    const parsedConfig = envSchema.safeParse({ ...envConfig, ...this.getFileConfig() });
+    if (parsedConfig.success) {
+      this.config = parsedConfig.data;
+    } else {
+      const errors = formatErrors(parsedConfig.error.flatten());
+      Logger.error(`❌ Invalid env config ${JSON.stringify(errors)}`);
+    }
+  }
+
+  private getFileConfig() {
     const fileConfig = readJsonFile('/runtipi/state/settings.json') || {};
     const parsedFileConfig = envSchema.partial().safeParse(fileConfig);
 
     if (parsedFileConfig.success) {
-      const parsedConfig = envSchema.safeParse({ ...envConfig, ...parsedFileConfig.data });
-      if (parsedConfig.success) {
-        this.config = parsedConfig.data;
-      } else {
-        const errors = formatErrors(parsedConfig.error.flatten());
-        Logger.error(`❌ Invalid env config ${JSON.stringify(errors)}`);
-      }
-    } else {
-      const errors = formatErrors(parsedFileConfig.error.flatten());
-      Logger.error(`❌ Invalid settings.json file: ${JSON.stringify(errors)}`);
+      return parsedFileConfig.data;
     }
+
+    Logger.error(`❌ Invalid settings.json file: ${JSON.stringify(parsedFileConfig.error.flatten())}`);
+
+    return {};
   }
 
   public static getInstance(): TipiConfig {
@@ -70,7 +76,7 @@ export class TipiConfig {
   }
 
   public getConfig() {
-    return this.config;
+    return { ...this.config, ...this.getFileConfig() };
   }
 
   public getSettings() {
