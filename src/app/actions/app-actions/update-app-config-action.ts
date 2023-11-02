@@ -19,11 +19,11 @@ const input = z.object({
 /**
  * Given an app id and form, updates the app config
  */
-export const updateAppConfigAction = action(input, async ({ id, form, domain, exposed }) => {
+export const updateAppConfigAction = action(input, async ({ id, form }) => {
   try {
     const appsService = new AppServiceClass(db);
 
-    await appsService.updateAppConfig(id, form, exposed, domain);
+    await appsService.updateAppConfig(id, form);
 
     revalidatePath('/apps');
     revalidatePath(`/app/${id}`);

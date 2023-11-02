@@ -76,7 +76,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: true });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, {}, true)).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true })).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
   });
 
   it('Should throw if app is exposed and config does not allow it', async () => {
@@ -84,7 +84,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: false });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, {}, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError('server-messages.errors.app-not-exposable');
   });
 
   it('Should throw if app is exposed and domain is not valid', async () => {
@@ -92,7 +92,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: true });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, {}, true, 'test')).rejects.toThrowError('server-messages.errors.domain-not-valid');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError('server-messages.errors.domain-not-valid');
   });
 
   it('Should throw if app is exposed and domain is already used by another exposed app', async () => {
@@ -103,7 +103,7 @@ describe('Install app', () => {
     await insertApp({ domain, exposed: true }, appConfig2, db);
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, {}, true, domain)).rejects.toThrowError('server-messages.errors.domain-already-in-use');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain })).rejects.toThrowError('server-messages.errors.domain-already-in-use');
   });
 
   it('Should throw if architecure is not supported', async () => {
@@ -308,7 +308,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    expect(AppsService.updateAppConfig(appConfig.id, {}, true)).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
+    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true })).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
   });
 
   it('Should throw if app is exposed and domain is not valid', async () => {
@@ -317,7 +317,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    expect(AppsService.updateAppConfig(appConfig.id, {}, true, 'test')).rejects.toThrowError('server-messages.errors.domain-not-valid');
+    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError('server-messages.errors.domain-not-valid');
   });
 
   it('Should throw if app is exposed and domain is already used', async () => {
@@ -329,7 +329,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig2, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appConfig2.id, {}, true, domain)).rejects.toThrowError('server-messages.errors.domain-already-in-use');
+    await expect(AppsService.updateAppConfig(appConfig2.id, { exposed: true, domain })).rejects.toThrowError('server-messages.errors.domain-already-in-use');
   });
 
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
@@ -347,7 +347,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appConfig.id, {}, true, 'test.com')).rejects.toThrowError('server-messages.errors.app-not-exposable');
+    await expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError('server-messages.errors.app-not-exposable');
   });
 });
 
