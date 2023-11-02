@@ -108,8 +108,8 @@ importers:
         specifier: ^5.7.7
         version: 5.7.7(@types/react@18.2.33)(react-dom@18.2.0)(react@18.2.0)
       react-tooltip:
-        specifier: ^5.21.6
-        version: 5.21.6(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^5.22.0
+        version: 5.22.0(react-dom@18.2.0)(react@18.2.0)
       redaxios:
         specifier: ^0.5.1
         version: 0.5.1
@@ -9358,8 +9358,8 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /react-tooltip@5.21.6(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-WbND5ee8Kr5HaSuDDiAmSyRp5jH77PSk8M0CUzmVfD+1WST8XOm1StJndK/wOQIP5GPvDVPy96ylLxY/V+VpqA==}
+  /react-tooltip@5.22.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-xbJBRY1LyHYd7j00UeBOqZR9SH/1S47Pe+m8vM1a+ZXglkeSNnBt5YYoPttU/amjC/VZJAPQ8+2B9x8Fl8U1qA==}
     peerDependencies:
       react: '>=16.14.0'
       react-dom: '>=16.14.0'
