@@ -4,10 +4,11 @@ import { IconAdjustmentsAlt, IconUser } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import validator from 'validator';
 import { Locale } from '@/shared/internationalization/locales';
+import { Switch } from '@/components/ui/Switch';
 import { LanguageSelector } from '../../../../components/LanguageSelector';
 
 export type SettingsFormValues = {
@@ -17,6 +18,7 @@ export type SettingsFormValues = {
   domain?: string;
   storagePath?: string;
   localDomain?: string;
+  guestDashboard?: boolean;
 };
 
 interface IProps {
@@ -62,6 +64,7 @@ export const SettingsForm = (props: IProps) => {
     handleSubmit,
     setValue,
     setError,
+    control,
     formState: { errors, isDirty },
   } = useForm<SettingsFormValues>();
 
@@ -113,6 +116,29 @@ export const SettingsForm = (props: IProps) => {
           <h2 className="text-2xl font-bold">{t('title')}</h2>
         </div>
         <p className="mb-4">{t('subtitle')}</p>
+        <div className="mb-3">
+          <Controller
+            control={control}
+            name="guestDashboard"
+            defaultValue={false}
+            render={({ field: { onChange, value, ref, ...rest } }) => (
+              <Switch
+                className="mb-3"
+                ref={ref}
+                checked={value}
+                onCheckedChange={onChange}
+                {...rest}
+                label={
+                  <>
+                    {t('guest-dashboard')}
+                    <Tooltip anchorSelect=".guest-dashboard-hint">{t('guest-dashboard-hint')}</Tooltip>
+                    <span className={clsx('ms-1 form-help guest-dashboard-hint')}>?</span>
+                  </>
+                }
+              />
+            )}
+          />
+        </div>
         <div className="mb-3">
           <Input
             {...register('domain')}
