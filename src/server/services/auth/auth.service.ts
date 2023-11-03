@@ -382,6 +382,45 @@ export class AuthServiceClass {
     return true;
   };
 
+  public changeUsername = async (params: { newUsername: string; password: string; userId: number }) => {
+    if (getConfig().demoMode) {
+      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
+    }
+
+    const { newUsername, password, userId } = params;
+
+    const user = await this.queries.getUserById(userId);
+
+    if (!user) {
+      throw new TranslatedError('server-messages.errors.user-not-found');
+    }
+
+    const valid = await argon2.verify(user.password, password);
+
+    if (!valid) {
+      throw new TranslatedError('server-messages.errors.invalid-password');
+    }
+
+    const email = newUsername.trim().toLowerCase();
+
+    if (!validator.isEmail(email)) {
+      throw new TranslatedError('server-messages.errors.invalid-username');
+    }
+
+    const existingUser = await this.queries.getUserByUsername(email);
+
+    if (existingUser) {
+      throw new TranslatedError('server-messages.errors.user-already-exists');
+    }
+
+    await this.queries.updateUser(user.id, { username: email });
+    const cache = new TipiCache('changeUsername');
+    await this.destroyAllSessionsByUserId(user.id, cache);
+    await cache.close();
+
+    return true;
+  };
+
   /**
    * Given a userId and a locale, change the user's locale
    *
