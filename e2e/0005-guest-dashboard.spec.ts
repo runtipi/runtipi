@@ -21,11 +21,13 @@ test('user can activate the guest dashboard and see it when logged out', async (
   await expect(page.getByText('No apps to display')).toBeVisible();
 });
 
-test('logged out users can see the apps on the guest dashboard', async ({ page, context }) => {
+test('logged out users can see the apps on the guest dashboard', async ({ browser }) => {
   await setSettings({ guestDashboard: true });
   await db.insert(appTable).values({ config: {}, isVisibleOnGuestDashboard: true, id: 'hello-world', exposed: true, domain: 'duckduckgo.com', status: 'running' });
   await db.insert(appTable).values({ config: {}, isVisibleOnGuestDashboard: false, id: 'actual-budget', exposed: false, status: 'running' });
 
+  const context = await browser.newContext();
+  const page = await context.newPage();
   await page.goto('/');
   await expect(page.getByText(/Hello World web server/)).toBeVisible();
   const locator = page.locator('text=Actual Budget');
@@ -36,6 +38,8 @@ test('logged out users can see the apps on the guest dashboard', async ({ page, 
   await newPage.waitForLoadState();
   expect(newPage.url()).toBe('https://duckduckgo.com/');
   await newPage.close();
+
+  await context.close();
 });
 
 test('user can deactivate the guest dashboard and not see it when logged out', async ({ page }) => {
