@@ -78,8 +78,8 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(next@14.0.1)(react@18.2.0)
       next-intl:
-        specifier: ^2.21.0
-        version: 2.21.0(next@14.0.1)(react@18.2.0)
+        specifier: ^2.22.1
+        version: 2.22.1(next@14.0.1)(react@18.2.0)
       next-safe-action:
         specifier: ^5.0.2
         version: 5.0.2(next@14.0.1)(react@18.2.0)(zod@3.22.4)
@@ -8322,18 +8322,18 @@ packages:
       react: 18.2.0
     dev: false
 
-  /next-intl@2.21.0(next@14.0.1)(react@18.2.0):
-    resolution: {integrity: sha512-rxyKLsBGGji9gLuNGbbMBe+7jwGYNJZhIXxsDY2esiJ/cpeTfpAq1rLjgeAs663zQE4qHbinUazULdv2QzRngA==}
+  /next-intl@2.22.1(next@14.0.1)(react@18.2.0):
+    resolution: {integrity: sha512-mg3CXfQRtG0lTS2zyRyTsYIl6ujQi2mAN0Xdmprce9ecUVKNOmHaMMsXOIPgFv1l+O80CavWo7m9rUfj7Zbr8w==}
     engines: {node: '>=10'}
     peerDependencies:
-      next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0
+      next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@formatjs/intl-localematcher': 0.2.32
       negotiator: 0.6.3
       next: 14.0.1(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
       react: 18.2.0
-      use-intl: 2.21.0(react@18.2.0)
+      use-intl: 2.22.1(react@18.2.0)
     dev: false
 
   /next-router-mock@0.9.10(next@14.0.1)(react@18.2.0):
@@ -10705,8 +10705,8 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /use-intl@2.21.0(react@18.2.0):
-    resolution: {integrity: sha512-m0gAKo/2OHw1tJtGQV226NIIpUy4Ualf+FKa/whk7hM1W7MXQ2v8c/N54UPrSy+PvJLCrIe7aOQ5xYEmUjnztQ==}
+  /use-intl@2.22.1(react@18.2.0):
+    resolution: {integrity: sha512-vTMJZrqVjErn421Ry4mxS2GuVUTWkY5zyIwu+3XvrAXH3PsPDAfWBMvVhip3kx914/IRs/4QnZ2ZaOehiZSXng==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
