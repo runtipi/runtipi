@@ -55,7 +55,7 @@ services:
       - tipi_main_network
 
   tipi-dashboard:
-    image: meienberger/runtipi:${TIPI_VERSION}
+    image: ghcr.io/runtipi/runtipi:${TIPI_VERSION}
     restart: on-failure
     container_name: tipi-dashboard
     networks:
