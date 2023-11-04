@@ -49,7 +49,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.get-tag.outputs.tag }}
+          tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.get-tag.outputs.tag }},ghcr.io/${{ github.repository_owner }}/runtipi:latest
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache
           cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache,mode=max
 
