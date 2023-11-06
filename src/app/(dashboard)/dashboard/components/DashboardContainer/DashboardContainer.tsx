@@ -1,7 +1,7 @@
 'use client';
 
 import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { SystemStat } from '../SystemStat';
 
@@ -17,6 +17,15 @@ type IProps = {
 export const DashboardContainer: React.FC<IProps> = (props) => {
   const { diskUsed, diskSize, percentUsed, cpuLoad, memoryTotal, percentUsedMemory } = props;
   const t = useTranslations('dashboard');
+
+  useEffect(() => {
+    const authorize = async () => {
+      const res = await fetch('/api/auth/authorize');
+      console.log(res);
+    };
+
+    authorize();
+  }, []);
 
   return (
     <div className="row row-deck row-cards">
