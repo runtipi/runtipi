@@ -184,8 +184,8 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1
       '@types/fs-extra':
-        specifier: ^11.0.3
-        version: 11.0.3
+        specifier: ^11.0.4
+        version: 11.0.4
       '@types/jest':
         specifier: ^29.5.7
         version: 29.5.7
@@ -3152,8 +3152,8 @@ packages:
     dependencies:
       '@types/ms': 0.7.31
 
-  /@types/fs-extra@11.0.3:
-    resolution: {integrity: sha512-sF59BlXtUdzEAL1u0MSvuzWd7PdZvZEtnaVkzX5mjpdWTJ8brG0jUqve3jPCzSzvAKKMHTG8F8o/WMQLtleZdQ==}
+  /@types/fs-extra@11.0.4:
+    resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
     dependencies:
       '@types/jsonfile': 6.1.1
       '@types/node': 20.8.10
