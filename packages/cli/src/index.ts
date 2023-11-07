@@ -9,6 +9,8 @@ import { AppExecutors, SystemExecutors } from './executors';
 const main = async () => {
   program.description(description).version(version);
 
+  program.name('./runtipi-cli').usage('<command> [options]');
+
   program
     .command('watch')
     .description('Watcher script for events queue')
@@ -20,7 +22,7 @@ const main = async () => {
   program
     .command('start')
     .description('Start tipi')
-    .option('--no-permissions', 'Skip permissions check')
+    .addHelpText('after', '\nExample call: sudo ./runtipi-cli start')
     .option('--no-sudo', 'Skip sudo usage')
     .action(async (options) => {
       const systemExecutors = new SystemExecutors();
@@ -73,6 +75,7 @@ const main = async () => {
   // Stop app: ./cli app stop <app>
   program
     .command('app [command] <app>')
+    .addHelpText('after', '\nExample call: sudo ./runtipi-cli app start <app>')
     .description('App management')
     .action(async (command, app) => {
       const appExecutors = new AppExecutors();

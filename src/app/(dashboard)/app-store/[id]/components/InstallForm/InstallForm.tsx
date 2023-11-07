@@ -14,7 +14,7 @@ import { validateAppConfig } from '../../utils/validators';
 interface IProps {
   formFields: FormField[];
   onSubmit: (values: FormValues) => void;
-  initalValues?: { exposed?: boolean; domain?: string } & { [key: string]: string | boolean | undefined };
+  initalValues?: { [key: string]: unknown };
   info: AppInfo;
   loading?: boolean;
 }
@@ -22,6 +22,7 @@ interface IProps {
 export type FormValues = {
   exposed?: boolean;
   domain?: string;
+  isVisibleOnGuestDashboard?: boolean;
   [key: string]: string | boolean | undefined;
 };
 
@@ -50,7 +51,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
   useEffect(() => {
     if (initalValues && !isDirty) {
       Object.entries(initalValues).forEach(([key, value]) => {
-        setValue(key, value);
+        setValue(key, value as string);
       });
     }
   }, [initalValues, isDirty, setValue]);
@@ -153,6 +154,14 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
       {formFields.filter(typeFilter).map(renderField)}
+      <Controller
+        control={control}
+        name="isVisibleOnGuestDashboard"
+        defaultValue={false}
+        render={({ field: { onChange, value, ref, ...props } }) => (
+          <Switch className="mb-3" disabled={info.force_expose} ref={ref} checked={value} onCheckedChange={onChange} {...props} label={t('display-on-guest-dashboard')} />
+        )}
+      />
       {info.exposable && renderExposeForm()}
       <Button loading={loading} type="submit" className="btn-success">
         {initalValues ? t('submit-update') : t('sumbit-install')}

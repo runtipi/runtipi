@@ -6,8 +6,9 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { AppCategory } from '@runtipi/shared';
 import { AppLogo } from '@/components/AppLogo';
+import { limitText } from '@/lib/helpers/text-helpers';
 import styles from './AppStoreTile.module.scss';
-import { colorSchemeForCategory, limitText } from '../../helpers/table.helpers';
+import { colorSchemeForCategory } from '../../helpers/table.helpers';
 
 type App = {
   id: string;

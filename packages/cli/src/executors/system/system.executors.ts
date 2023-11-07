@@ -104,11 +104,7 @@ export class SystemExecutors {
 
   public cleanLogs = async () => {
     try {
-      const { rootFolderHost } = getEnv();
-
-      await fs.promises.rm(path.join(rootFolderHost, 'logs'), { recursive: true, force: true });
-      await fs.promises.mkdir(path.join(rootFolderHost, 'logs'));
-
+      await this.logger.flush();
       this.logger.info('Logs cleaned successfully');
 
       return { success: true, message: '' };
@@ -174,6 +170,8 @@ export class SystemExecutors {
   public start = async (sudo = true, killWatchers = true) => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
+      await this.logger.flush();
+
       const { isSudo } = getUserIds();
 
       if (!sudo) {
@@ -205,8 +203,8 @@ export class SystemExecutors {
         throw new Error('Tipi needs to run as root to start. Use sudo ./runtipi-cli start');
       }
 
-      spinner.start();
       spinner.setMessage('Copying system files...');
+      spinner.start();
 
       this.logger.info('Copying system files...');
       await copySystemFiles();
@@ -274,6 +272,7 @@ export class SystemExecutors {
       this.logger.info('Adding initial jobs to queue...');
       await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent);
       await queue.add(`${Math.random().toString()}_repo_clone`, { type: 'repo', command: 'clone', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
+      await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
 
       // Scheduled jobs
       this.logger.info('Adding scheduled jobs to queue...');

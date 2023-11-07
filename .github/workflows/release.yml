@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
@@ -36,11 +36,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push images
         uses: docker/build-push-action@v5
@@ -48,9 +49,9 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: meienberger/runtipi:latest,meienberger/runtipi:${{ needs.get-tag.outputs.tag }}
-          cache-from: type=registry,ref=meienberger/runtipi:buildcache
-          cache-to: type=registry,ref=meienberger/runtipi:buildcache,mode=max
+          tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.get-tag.outputs.tag }},ghcr.io/${{ github.repository_owner }}/runtipi:latest
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache,mode=max
 
   build-cli:
     runs-on: ubuntu-latest
@@ -61,7 +62,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 

@@ -14,6 +14,8 @@
 ![Build](https://github.com/runtipi/runtipi/workflows/Tipi%20CI/badge.svg)
 [![Crowdin](https://badges.crowdin.net/runtipi/localized.svg)](https://crowdin.com/project/runtipi)
 
+> 💡 Tipi is built with TypeScript, Next.js app router and Drizzle ORM! If you want to collaborate on a cool project, join the discussion on Discord! 
+
 #### Join the discussion
 
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)

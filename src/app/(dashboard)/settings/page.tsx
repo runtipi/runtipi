@@ -38,7 +38,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
           <SettingsContainer initialValues={settings} currentLocale={locale} />
         </TabsContent>
         <TabsContent value="security">
-          <SecurityContainer totpEnabled={Boolean(user?.totpEnabled)} />
+          <SecurityContainer totpEnabled={Boolean(user?.totpEnabled)} username={user?.username} />
         </TabsContent>
       </Tabs>
     </div>

@@ -11,6 +11,12 @@ import { getConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
 
+type AlwaysFields = {
+  isVisibleOnGuestDashboard?: boolean;
+  domain?: string;
+  exposed?: boolean;
+};
+
 const sortApps = (a: AppInfo, b: AppInfo) => a.id.localeCompare(b.id);
 const filterApp = (app: AppInfo): boolean => {
   if (!app.supported_architectures) {
@@ -101,11 +107,11 @@ export class AppServiceClass {
    *
    * @param {string} id - The id of the app to be installed
    * @param {Record<string, string>} form - The form data submitted by the user
-   * @param {boolean} [exposed] - A flag indicating if the app will be exposed to the internet
-   * @param {string} [domain] - The domain name to expose the app to the internet, required if exposed is true
    */
-  public installApp = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string) => {
+  public installApp = async (id: string, form: Record<string, unknown> & AlwaysFields) => {
     const app = await this.queries.getApp(id);
+
+    const { exposed, domain, isVisibleOnGuestDashboard } = form;
 
     if (app) {
       await this.startApp(id);
@@ -148,7 +154,15 @@ export class AppServiceClass {
         }
       }
 
-      await this.queries.createApp({ id, status: 'installing', config: form, version: appInfo.tipi_version, exposed: exposed || false, domain: domain || null });
+      await this.queries.createApp({
+        id,
+        status: 'installing',
+        config: form,
+        version: appInfo.tipi_version,
+        exposed: exposed || false,
+        domain: domain || null,
+        isVisibleOnGuestDashboard,
+      });
 
       // Run script
       const eventDispatcher = new EventDispatcher('installApp');
@@ -181,10 +195,10 @@ export class AppServiceClass {
    *
    * @param {string} id - The ID of the app to update.
    * @param {object} form - The new configuration of the app.
-   * @param {boolean} [exposed] - If the app should be exposed or not.
-   * @param {string} [domain] - The domain for the app if exposed is true.
    */
-  public updateAppConfig = async (id: string, form: Record<string, string>, exposed?: boolean, domain?: string) => {
+  public updateAppConfig = async (id: string, form: Record<string, unknown> & AlwaysFields) => {
+    const { exposed, domain } = form;
+
     if (exposed && !domain) {
       throw new TranslatedError('server-messages.errors.domain-required-if-expose-app');
     }
@@ -226,7 +240,7 @@ export class AppServiceClass {
     await eventDispatcher.close();
 
     if (success) {
-      const updatedApp = await this.queries.updateApp(id, { exposed: exposed || false, domain: domain || null, config: form });
+      const updatedApp = await this.queries.updateApp(id, { exposed: exposed || false, domain: domain || null, config: form, isVisibleOnGuestDashboard: form.isVisibleOnGuestDashboard });
       return updatedApp;
     }
 
@@ -364,6 +378,20 @@ export class AppServiceClass {
         const updateInfo = getUpdateInfo(app.id);
         if (info) {
           return { ...app, ...updateInfo, info };
+        }
+        return null;
+      })
+      .filter(notEmpty);
+  };
+
+  public getGuestDashboardApps = async () => {
+    const apps = await this.queries.getGuestDashboardApps();
+
+    return apps
+      .map((app) => {
+        const info = getAppInfo(app.id, app.status);
+        if (info) {
+          return { ...app, info };
         }
         return null;
       })

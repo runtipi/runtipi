@@ -1,5 +1,6 @@
+import { limitText } from '@/lib/helpers/text-helpers';
 import { createAppConfig } from '../../../../../server/tests/apps.factory';
-import { limitText, sortTable } from '../table.helpers';
+import { sortTable } from '../table.helpers';
 import { AppTableData } from '../table.types';
 
 describe('sortTable function', () => {
