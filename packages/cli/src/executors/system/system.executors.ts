@@ -141,10 +141,7 @@ export class SystemExecutors {
 
         // eslint-disable-next-line no-restricted-syntax
         for (const app of apps) {
-          spinner.setMessage(`Stopping ${app}...`);
-          spinner.start();
           await appExecutor.stopApp(app, {}, true);
-          spinner.done(`${app} stopped`);
         }
       }
 
