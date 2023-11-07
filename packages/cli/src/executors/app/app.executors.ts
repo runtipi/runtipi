@@ -279,8 +279,6 @@ export class AppExecutors {
 
       // Start all apps
       for (const row of rows) {
-        spinner.setMessage(`Starting app ${row.id}`);
-        spinner.start();
         const { id, config } = row;
 
         const { success } = await this.startApp(id, config);
@@ -288,10 +286,8 @@ export class AppExecutors {
         if (!success) {
           this.logger.error(`Error starting app ${id}`);
           await client.query(`UPDATE app SET status = 'stopped' WHERE id = '${id}'`);
-          spinner.fail(`Error starting app ${id}`);
         } else {
           await client.query(`UPDATE app SET status = 'running' WHERE id = '${id}'`);
-          spinner.done(`App ${id} started`);
         }
       }
     } catch (err) {
