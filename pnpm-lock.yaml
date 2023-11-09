@@ -274,8 +274,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       knip:
-        specifier: ^2.39.0
-        version: 2.39.0
+        specifier: ^2.40.1
+        version: 2.40.1
       memfs:
         specifier: ^4.6.0
         version: 4.6.0(quill-delta@5.1.0)(rxjs@7.8.1)(tslib@2.6.2)
@@ -7487,8 +7487,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /knip@2.39.0:
-    resolution: {integrity: sha512-2piCiCtazV+EfshVmblfaVRTsWI+mZ/ipmBJw2V6BorN0nX+t0BcmMX7s3ozrjpS/ZWANUHOcfWyzA5dbjMM/w==}
+  /knip@2.40.1:
+    resolution: {integrity: sha512-X+WsMvMxsCb9bY0kMVhMJJgypmjOgVKrArnwf3JsQxW19e+ELaoHRwll7AOKeYBNa91WyTNVWcJeUCpGLJv35w==}
     engines: {node: '>=16.17.0 <17 || >=18.6.0'}
     hasBin: true
     dependencies:
