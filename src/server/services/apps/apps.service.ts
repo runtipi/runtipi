@@ -6,6 +6,7 @@ import { Database } from '@/server/db';
 import { AppInfo } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
+import { revalidatePath } from 'next/cache';
 import { checkAppRequirements, getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
@@ -32,7 +33,7 @@ const filterApps = (apps: AppInfo[]): AppInfo[] => apps.sort(sortApps).filter(fi
 export class AppServiceClass {
   private queries;
 
-  constructor(p: Database) {
+  constructor(p?: Database) {
     this.queries = new AppQueries(p);
   }
 
@@ -76,29 +77,34 @@ export class AppServiceClass {
    * This function starts an app specified by its appName, regenerates its environment file and checks for missing requirements.
    * It updates the app's status in the database to 'starting' and 'running' if the start process is successful, otherwise it updates the status to 'stopped'.
    *
-   * @param {string} appName - The name of the app to start
+   * @param {string} id - The name of the app to start
    * @throws {Error} - If the app is not found or the start process fails.
    */
-  public startApp = async (appName: string) => {
-    const app = await this.queries.getApp(appName);
+  public startApp = async (id: string) => {
+    const app = await this.queries.getApp(id);
     if (!app) {
-      throw new TranslatedError('server-messages.errors.app-not-found', { id: appName });
+      throw new TranslatedError('server-messages.errors.app-not-found', { id });
     }
 
-    await this.queries.updateApp(appName, { status: 'starting' });
+    await this.queries.updateApp(id, { status: 'starting' });
+
+    revalidatePath('/apps');
+    revalidatePath(`/app/${id}`);
+    revalidatePath(`/app-store/${id}`);
+
     const eventDispatcher = new EventDispatcher('startApp');
-    const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'start', appid: appName, form: castAppConfig(app.config) });
+    const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'start', appid: id, form: castAppConfig(app.config) });
     await eventDispatcher.close();
 
     if (success) {
-      await this.queries.updateApp(appName, { status: 'running' });
+      await this.queries.updateApp(id, { status: 'running' });
     } else {
-      await this.queries.updateApp(appName, { status: 'stopped' });
-      Logger.error(`Failed to start app ${appName}: ${stdout}`);
-      throw new TranslatedError('server-messages.errors.app-failed-to-start', { id: appName });
+      await this.queries.updateApp(id, { status: 'stopped' });
+      Logger.error(`Failed to start app ${id}: ${stdout}`);
+      throw new TranslatedError('server-messages.errors.app-failed-to-start', { id });
     }
 
-    const updatedApp = await this.queries.getApp(appName);
+    const updatedApp = await this.queries.getApp(id);
     return updatedApp;
   };
 
@@ -163,6 +169,10 @@ export class AppServiceClass {
         domain: domain || null,
         isVisibleOnGuestDashboard,
       });
+
+      revalidatePath('/apps');
+      revalidatePath(`/app/${id}`);
+      revalidatePath(`/app-store/${id}`);
 
       // Run script
       const eventDispatcher = new EventDispatcher('installApp');
@@ -263,6 +273,10 @@ export class AppServiceClass {
     // Run script
     await this.queries.updateApp(id, { status: 'stopping' });
 
+    revalidatePath('/apps');
+    revalidatePath(`/app/${id}`);
+    revalidatePath(`/app-store/${id}`);
+
     const eventDispatcher = new EventDispatcher('stopApp');
     const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'stop', appid: id, form: castAppConfig(app.config) });
     await eventDispatcher.close();
@@ -296,6 +310,10 @@ export class AppServiceClass {
     }
 
     await this.queries.updateApp(id, { status: 'uninstalling' });
+
+    revalidatePath('/apps');
+    revalidatePath(`/app/${id}`);
+    revalidatePath(`/app-store/${id}`);
 
     const eventDispatcher = new EventDispatcher('uninstallApp');
     const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'uninstall', appid: id, form: castAppConfig(app.config) });
@@ -347,6 +365,10 @@ export class AppServiceClass {
     }
 
     await this.queries.updateApp(id, { status: 'updating' });
+
+    revalidatePath('/apps');
+    revalidatePath(`/app/${id}`);
+    revalidatePath(`/app-store/${id}`);
 
     const eventDispatcher = new EventDispatcher('updateApp');
     const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'update', appid: id, form: castAppConfig(app.config) });

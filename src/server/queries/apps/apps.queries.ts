@@ -1,11 +1,11 @@
 import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
-import { Database } from '@/server/db';
+import { Database, db } from '@/server/db';
 import { appTable, NewApp, AppStatus } from '../../db/schema';
 
 export class AppQueries {
   private db;
 
-  constructor(p: Database) {
+  constructor(p: Database = db) {
     this.db = p;
   }
 
