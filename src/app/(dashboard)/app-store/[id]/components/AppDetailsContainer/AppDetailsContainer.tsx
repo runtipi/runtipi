@@ -23,7 +23,6 @@ import { UpdateModal } from '../UpdateModal';
 import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal';
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
-import { FormValues } from '../InstallForm';
 
 interface IProps {
   app: Awaited<ReturnType<AppService['getApp']>>;
@@ -42,6 +41,10 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   const updateSettingsDisclosure = useDisclosure();
 
   const installMutation = useAction(installAppAction, {
+    onExecute: () => {
+      setCustomStatus('installing');
+      installDisclosure.close();
+    },
     onSuccess: (data) => {
       if (!data.success) {
         setCustomStatus(app.status);
@@ -54,6 +57,10 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   });
 
   const uninstallMutation = useAction(uninstallAppAction, {
+    onExecute: () => {
+      setCustomStatus('uninstalling');
+      uninstallDisclosure.close();
+    },
     onSuccess: (data) => {
       if (!data.success) {
         setCustomStatus(app.status);
@@ -66,6 +73,10 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   });
 
   const stopMutation = useAction(stopAppAction, {
+    onExecute: () => {
+      setCustomStatus('stopping');
+      stopDisclosure.close();
+    },
     onSuccess: (data) => {
       if (!data.success) {
         setCustomStatus(app.status);
@@ -78,6 +89,9 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   });
 
   const startMutation = useAction(startAppAction, {
+    onExecute: () => {
+      setCustomStatus('starting');
+    },
     onSuccess: (data) => {
       if (!data.success) {
         setCustomStatus(app.status);
@@ -90,6 +104,10 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   });
 
   const updateMutation = useAction(updateAppAction, {
+    onExecute: () => {
+      setCustomStatus('updating');
+      updateDisclosure.close();
+    },
     onSuccess: (data) => {
       if (!data.success) {
         setCustomStatus(app.status);
@@ -102,6 +120,9 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   });
 
   const updateConfigMutation = useAction(updateAppConfigAction, {
+    onExecute: () => {
+      updateSettingsDisclosure.close();
+    },
     onSuccess: (data) => {
       if (!data.success) {
         toast.error(data.failure.reason);
@@ -112,40 +133,6 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   });
 
   const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
-
-  const handleInstallSubmit = async (values: FormValues) => {
-    setCustomStatus('installing');
-    installDisclosure.close();
-    installMutation.execute({ id: app.id, form: values });
-  };
-
-  const handleUnistallSubmit = () => {
-    setCustomStatus('uninstalling');
-    uninstallDisclosure.close();
-    uninstallMutation.execute({ id: app.id });
-  };
-
-  const handleStopSubmit = () => {
-    setCustomStatus('stopping');
-    stopDisclosure.close();
-    stopMutation.execute({ id: app.id });
-  };
-
-  const handleStartSubmit = async () => {
-    setCustomStatus('starting');
-    startMutation.execute({ id: app.id });
-  };
-
-  const handleUpdateSettingsSubmit = async (values: FormValues) => {
-    updateSettingsDisclosure.close();
-    updateConfigMutation.execute({ id: app.id, form: values });
-  };
-
-  const handleUpdateSubmit = async () => {
-    setCustomStatus('updating');
-    updateDisclosure.close();
-    updateMutation.execute({ id: app.id });
-  };
 
   const handleOpen = (type: OpenType) => {
     let url = '';
@@ -173,12 +160,12 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
 
   return (
     <div className="card" data-testid="app-details">
-      <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={app.info} />
-      <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={app.info} />
-      <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={app.info} />
-      <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={app.info} newVersion={newVersion} />
+      <InstallModal onSubmit={(form) => installMutation.execute({ id: app.id, form })} isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={app.info} />
+      <StopModal onConfirm={() => stopMutation.execute({ id: app.id })} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={app.info} />
+      <UninstallModal onConfirm={() => uninstallMutation.execute({ id: app.id })} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={app.info} />
+      <UpdateModal onConfirm={() => updateMutation.execute({ id: app.id })} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={app.info} newVersion={newVersion} />
       <UpdateSettingsModal
-        onSubmit={handleUpdateSettingsSubmit}
+        onSubmit={(form) => updateConfigMutation.execute({ id: app.id, form })}
         isOpen={updateSettingsDisclosure.isOpen}
         onClose={updateSettingsDisclosure.close}
         info={app.info}
@@ -203,7 +190,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
             onUninstall={uninstallDisclosure.open}
             onInstall={installDisclosure.open}
             onOpen={handleOpen}
-            onStart={handleStartSubmit}
+            onStart={() => startMutation.execute({ id: app.id })}
             app={app}
             status={customStatus}
           />
