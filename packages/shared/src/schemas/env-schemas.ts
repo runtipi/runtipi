@@ -64,4 +64,4 @@ export const envSchema = z.object({
 export const settingsSchema = envSchema
   .partial()
   .pick({ dnsIp: true, internalIp: true, appsRepoUrl: true, domain: true, storagePath: true, localDomain: true, demoMode: true, guestDashboard: true })
-  .and(z.object({ port: z.number(), sslPort: z.number(), listenIp: z.string().ip().trim() }).partial());
+  .and(z.object({ port: z.number(), sslPort: z.number(), postgresPort: z.number(), listenIp: z.string().ip().trim() }).partial());
