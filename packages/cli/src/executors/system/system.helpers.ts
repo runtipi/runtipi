@@ -175,7 +175,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
   envMap.set('POSTGRES_PASSWORD', postgresPassword);
-  envMap.set('POSTGRES_PORT', String(data.posgresPort || 5432));
+  envMap.set('POSTGRES_PORT', String(data.postgresPort || 5432));
   envMap.set('REDIS_HOST', 'tipi-redis');
   envMap.set('REDIS_PASSWORD', redisPassword);
   envMap.set('DEMO_MODE', String(data.demoMode || 'false'));
