@@ -1,0 +1,26 @@
+ARG NODE_VERSION="18.16"
+ARG ALPINE_VERSION="3.18"
+
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
+
+# Install docker
+RUN apk upgrade --update-cache --available && \
+  apk add openssl git docker docker-cli-compose curl unzip && \
+  rm -rf /var/cache/apk/*
+
+RUN npm install pnpm -g
+
+WORKDIR /app
+
+COPY ./pnpm-lock.yaml ./
+COPY ./pnpm-workspace.yaml ./
+COPY ./patches ./patches
+RUN pnpm fetch --no-scripts
+
+COPY ./packages/worker/assets ./assets
+COPY ./packages ./packages
+
+RUN pnpm install -r --prefer-offline 
+
+CMD ["pnpm", "--filter", "@runtipi/worker", "-r", "dev"]
+
