@@ -1,6 +1,5 @@
 name: Tipi CI
 on:
-  push:
   pull_request:
 
 env:

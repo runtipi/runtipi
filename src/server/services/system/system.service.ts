@@ -1,14 +1,9 @@
 import { z } from 'zod';
 import axios from 'redaxios';
-import { TranslatedError } from '@/server/utils/errors';
-import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { TipiCache } from '@/server/core/TipiCache';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { getConfig } from '../../core/TipiConfig';
-
-const SYSTEM_STATUS = ['UPDATING', 'RESTARTING', 'RUNNING'] as const;
-type SystemStatus = (typeof SYSTEM_STATUS)[keyof typeof SYSTEM_STATUS];
 
 const systemInfoSchema = z.object({
   cpu: z.object({
@@ -74,26 +69,4 @@ export class SystemServiceClass {
 
     return info.data;
   };
-
-  public restart = async (): Promise<boolean> => {
-    if (getConfig().NODE_ENV === 'development') {
-      throw new TranslatedError('server-messages.errors.not-allowed-in-dev');
-    }
-
-    if (getConfig().demoMode) {
-      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
-    }
-
-    const cache = new TipiCache('restart');
-    await cache.set('status', 'RESTARTING', 360);
-    await cache.close();
-
-    const dispatcher = new EventDispatcher('restart');
-    await dispatcher.close();
-    throw new Error('Implement restart');
-  };
-
-  public static status = (): { status: SystemStatus } => ({
-    status: getConfig().status,
-  });
 }
