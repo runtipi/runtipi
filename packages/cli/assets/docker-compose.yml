@@ -56,7 +56,7 @@ services:
 
   tipi-worker:
     container_name: tipi-worker
-    image: ghcr.io/runtipi/runtipi-worker:${TIPI_VERSION}
+    image: ghcr.io/runtipi/worker:${TIPI_VERSION}
     user: root
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
