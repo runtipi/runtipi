@@ -57,6 +57,7 @@ services:
   tipi-worker:
     container_name: tipi-worker
     image: ghcr.io/runtipi/runtipi-worker:${TIPI_VERSION}
+    user: root
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
       interval: 5s
@@ -83,6 +84,7 @@ services:
       - ${STORAGE_PATH:-$PWD}/app-data:/storage/app-data
       - ${PWD}/logs:/app/logs
       - ${PWD}/traefik:/app/traefik
+      - ${PWD}/user-config:/app/user-config
     networks:
       - tipi_main_network
 

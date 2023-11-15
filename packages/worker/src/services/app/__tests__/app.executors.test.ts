@@ -2,13 +2,14 @@ import fs from 'fs';
 import { describe, it, expect, vi } from 'vitest';
 import path from 'path';
 import { faker } from '@faker-js/faker';
+import { pathExists } from '@runtipi/shared';
 import { AppExecutors } from '../app.executors';
 import { createAppConfig } from '@/tests/apps.factory';
-import * as dockerHelpers from '@/utils/docker-helpers';
-import { getEnv } from '@/utils/environment/environment';
-import { pathExists } from '@/utils/fs-helpers';
+import * as dockerHelpers from '@/lib/docker';
+import { getEnv } from '@/lib/environment';
+import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
 
-const { storagePath, rootFolderHost, appsRepoId } = getEnv();
+const { appsRepoId } = getEnv();
 
 describe('test: app executors', () => {
   const appExecutors = new AppExecutors();
@@ -23,7 +24,7 @@ describe('test: app executors', () => {
       const { message, success } = await appExecutors.installApp(config.id, config);
 
       // assert
-      const envExists = await pathExists(path.join(storagePath, 'app-data', config.id, 'app.env'));
+      const envExists = await pathExists(path.join(STORAGE_FOLDER, 'app-data', config.id, 'app.env'));
 
       expect(success).toBe(true);
       expect(message).toBe(`App ${config.id} installed successfully`);
@@ -32,17 +33,32 @@ describe('test: app executors', () => {
       spy.mockRestore();
     });
 
+    it('should return error if compose script fails', async () => {
+      // arrange
+      const randomError = faker.system.fileName();
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: '', stderr: randomError }));
+      const config = createAppConfig({}, false);
+
+      // act
+      const { message, success } = await appExecutors.installApp(config.id, config);
+
+      // assert
+      expect(success).toBe(false);
+      expect(message).toContain(randomError);
+      spy.mockRestore();
+    });
+
     it('should delete existing app folder', async () => {
       // arrange
       const config = createAppConfig();
-      await fs.promises.mkdir(path.join(rootFolderHost, 'apps', config.id), { recursive: true });
-      await fs.promises.writeFile(path.join(rootFolderHost, 'apps', config.id, 'test.txt'), 'test');
+      await fs.promises.mkdir(path.join(ROOT_FOLDER, 'apps', config.id), { recursive: true });
+      await fs.promises.writeFile(path.join(ROOT_FOLDER, 'apps', config.id, 'test.txt'), 'test');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
-      const exists = await pathExists(path.join(storagePath, 'apps', config.id, 'test.txt'));
+      const exists = await pathExists(path.join(STORAGE_FOLDER, 'apps', config.id, 'test.txt'));
 
       expect(exists).toBe(false);
     });
@@ -51,13 +67,13 @@ describe('test: app executors', () => {
       // arrange
       const config = createAppConfig();
       const filename = faker.system.fileName();
-      await fs.promises.writeFile(path.join(storagePath, 'app-data', config.id, filename), 'test');
+      await fs.promises.writeFile(path.join(STORAGE_FOLDER, 'app-data', config.id, filename), 'test');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
-      const exists = await pathExists(path.join(storagePath, 'app-data', config.id, filename));
+      const exists = await pathExists(path.join(STORAGE_FOLDER, 'app-data', config.id, filename));
 
       expect(exists).toBe(true);
     });
@@ -66,15 +82,15 @@ describe('test: app executors', () => {
       // arrange
       const config = createAppConfig({}, false);
       const filename = faker.system.fileName();
-      await fs.promises.mkdir(path.join(rootFolderHost, 'repos', appsRepoId, 'apps', config.id, 'data'), { recursive: true });
-      await fs.promises.writeFile(path.join(rootFolderHost, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'test');
+      await fs.promises.mkdir(path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', config.id, 'data'), { recursive: true });
+      await fs.promises.writeFile(path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'test');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
-      const exists = await pathExists(path.join(storagePath, 'app-data', config.id, 'data', filename));
-      const data = await fs.promises.readFile(path.join(storagePath, 'app-data', config.id, 'data', filename), 'utf-8');
+      const exists = await pathExists(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename));
+      const data = await fs.promises.readFile(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename), 'utf-8');
 
       expect(exists).toBe(true);
       expect(data).toBe('test');
@@ -84,16 +100,16 @@ describe('test: app executors', () => {
       // arrange
       const config = createAppConfig();
       const filename = faker.system.fileName();
-      await fs.promises.writeFile(path.join(storagePath, 'app-data', config.id, 'data', filename), 'test');
-      await fs.promises.mkdir(path.join(rootFolderHost, 'repos', appsRepoId, 'apps', config.id, 'data'), { recursive: true });
-      await fs.promises.writeFile(path.join(rootFolderHost, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'yeah');
+      await fs.promises.writeFile(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename), 'test');
+      await fs.promises.mkdir(path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', config.id, 'data'), { recursive: true });
+      await fs.promises.writeFile(path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'yeah');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
-      const exists = await pathExists(path.join(storagePath, 'app-data', config.id, 'data', filename));
-      const data = await fs.promises.readFile(path.join(storagePath, 'app-data', config.id, 'data', filename), 'utf-8');
+      const exists = await pathExists(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename));
+      const data = await fs.promises.readFile(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename), 'utf-8');
 
       expect(exists).toBe(true);
       expect(data).toBe('test');

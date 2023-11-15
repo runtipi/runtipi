@@ -36,11 +36,11 @@ export const runPostgresMigrations = async (dbName?: string) => {
 
   Logger.info('Running migrations');
   try {
-    await migrate({ client }, path.join(__dirname, '../../packages/cli/assets/migrations'), { skipCreateMigrationTable: true });
+    await migrate({ client }, path.join(__dirname, '../../packages/worker/assets/migrations'), { skipCreateMigrationTable: true });
   } catch (e) {
     Logger.error('Error running migrations. Dropping table migrations and trying again');
     await client.query('DROP TABLE migrations');
-    await migrate({ client }, path.join(__dirname, '../../packages/cli/assets/migrations'), { skipCreateMigrationTable: true });
+    await migrate({ client }, path.join(__dirname, '../../packages/worker/assets/migrations'), { skipCreateMigrationTable: true });
   }
 
   Logger.info('Migration complete');

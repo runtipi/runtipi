@@ -89,10 +89,8 @@ export class SystemServiceClass {
     await cache.close();
 
     const dispatcher = new EventDispatcher('restart');
-    dispatcher.dispatchEvent({ type: 'system', command: 'restart' });
     await dispatcher.close();
-
-    return true;
+    throw new Error('Implement restart');
   };
 
   public static status = (): { status: SystemStatus } => ({

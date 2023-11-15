@@ -130,7 +130,12 @@ export class AppExecutors {
 
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
-      await compose(appId, 'up -d');
+      const { stderr } = await compose(appId, 'up -d');
+
+      if (stderr) {
+        this.logger.error(`Error running docker-compose up for app ${appId}: ${stderr}`);
+        return { success: false, message: `Error running docker-compose up for app ${appId}: ${stderr}` };
+      }
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
 
@@ -164,15 +169,18 @@ export class AppExecutors {
     }
   };
 
-  public startApp = async (appId: string, config: Record<string, unknown>) => {
+  public startApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
     try {
       const { appDataDirPath } = this.getAppPaths(appId);
 
       this.logger.info(`Starting app ${appId}`);
 
-      this.logger.info(`Regenerating app.env file for app ${appId}`);
       await this.ensureAppDir(appId);
-      await generateEnvFile(appId, config);
+
+      if (!skipEnvGeneration) {
+        this.logger.info(`Regenerating app.env file for app ${appId}`);
+        await generateEnvFile(appId, config);
+      }
 
       await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
 

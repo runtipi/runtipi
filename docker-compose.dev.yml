@@ -55,6 +55,45 @@ services:
     networks:
       - tipi_main_network
 
+  tipi-worker:
+    build:
+      context: .
+      dockerfile: ./packages/worker/Dockerfile.dev
+    container_name: tipi-worker
+    user: root
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
+      interval: 5s
+      timeout: 10s
+      retries: 120
+      start_period: 5s
+    depends_on:
+      tipi-db:
+        condition: service_healthy
+      tipi-redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+    volumes:
+      # Dev mode
+      - ${PWD}/packages/worker/src:/app/packages/worker/src
+      # Production mode
+      - /:/mnt/host:ro
+      - /proc:/host/proc:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}/.env:/app/.env
+      - ${PWD}/state:/app/state
+      - ${PWD}/repos:/app/repos
+      - ${PWD}/apps:/app/apps
+      - ${STORAGE_PATH:-$PWD}/app-data:/storage/app-data
+      - ${PWD}/logs:/app/logs
+      - ${PWD}/traefik:/app/traefik
+      - ${PWD}/user-config:/app/user-config
+    networks:
+      - tipi_main_network
+
   tipi-dashboard:
     build:
       context: .
@@ -64,6 +103,8 @@ services:
       tipi-db:
         condition: service_healthy
       tipi-redis:
+        condition: service_healthy
+      tipi-worker:
         condition: service_healthy
     env_file:
       - .env
@@ -84,7 +125,7 @@ services:
       - ${PWD}/apps:/runtipi/apps
       - ${PWD}/logs:/app/logs
       - ${PWD}/traefik:/runtipi/traefik
-      - ${STORAGE_PATH}:/app/storage
+      - ${STORAGE_PATH:-$PWD}:/app/storage
     labels:
       traefik.enable: true
       traefik.http.services.dashboard.loadbalancer.server.port: 3000

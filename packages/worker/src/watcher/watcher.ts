@@ -26,11 +26,11 @@ const runCommand = async (jobData: unknown) => {
     }
 
     if (data.command === 'stop') {
-      ({ success, message } = await stopApp(data.appid, data.form));
+      ({ success, message } = await stopApp(data.appid, data.form, data.skipEnv));
     }
 
     if (data.command === 'start') {
-      ({ success, message } = await startApp(data.appid, data.form));
+      ({ success, message } = await startApp(data.appid, data.form, data.skipEnv));
     }
 
     if (data.command === 'uninstall') {

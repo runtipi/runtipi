@@ -33,7 +33,7 @@ export class AppExecutors {
 
     const jobid = this.generateJobId({ appId, action: 'stop' });
 
-    const event = { type: 'app', command: 'stop', appid: appId, form: {} } satisfies SystemEvent;
+    const event = { type: 'app', command: 'stop', appid: appId, form: {}, skipEnv: true } satisfies SystemEvent;
     const job = await this.queue.add(jobid, eventSchema.parse(event));
     const result = await job.waitUntilFinished(this.queueEvents, 1000 * 60 * 5);
 
@@ -51,7 +51,7 @@ export class AppExecutors {
 
     const jobid = this.generateJobId({ appId, action: 'start' });
 
-    const event = { type: 'app', command: 'start', appid: appId, form: {} } satisfies SystemEvent;
+    const event = { type: 'app', command: 'start', appid: appId, form: {}, skipEnv: true } satisfies SystemEvent;
     const job = await this.queue.add(jobid, eventSchema.parse(event));
     const result = await job.waitUntilFinished(this.queueEvents, 1000 * 60 * 5);
 
