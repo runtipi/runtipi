@@ -130,12 +130,7 @@ export class AppExecutors {
 
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
-      const { stderr } = await compose(appId, 'up -d');
-
-      if (stderr) {
-        this.logger.error(`Error running docker-compose up for app ${appId}: ${stderr}`);
-        return { success: false, message: `Error running docker-compose up for app ${appId}: ${stderr}` };
-      }
+      await compose(appId, 'up -d');
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
 

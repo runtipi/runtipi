@@ -87,11 +87,7 @@ export class RepoExecutors {
       });
 
       this.logger.info(`Executing: git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
-      await execAsync(`git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`).then(({ stderr }) => {
-        if (stderr) {
-          this.logger.error(`stderr: ${stderr}`);
-        }
-      });
+      await execAsync(`git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
 
       this.logger.info(`Pulled repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
