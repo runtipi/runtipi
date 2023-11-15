@@ -1,7 +1,5 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-import { Queue } from 'bullmq';
-import { Redis } from 'ioredis';
 import fs from 'fs';
 import cliProgress from 'cli-progress';
 import semver from 'semver';
@@ -9,20 +7,14 @@ import axios from 'axios';
 import boxen from 'boxen';
 import path from 'path';
 import { spawn } from 'child_process';
-import si from 'systeminformation';
 import { Stream } from 'stream';
 import dotenv from 'dotenv';
-import { SystemEvent } from '@runtipi/shared';
-import chalk from 'chalk';
-import { killOtherWorkers } from 'src/services/watcher/watcher';
+import { pathExists } from '@runtipi/shared';
 import { AppExecutors } from '../app/app.executors';
-import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from './system.helpers';
+import { copySystemFiles, generateSystemEnvFile } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
-import { pathExists } from '@/utils/fs-helpers';
 import { getEnv } from '@/utils/environment/environment';
-import { fileLogger } from '@/utils/logger/file-logger';
-import { runPostgresMigrations } from '@/utils/migrations/run-migration';
-import { getUserIds } from '@/utils/environment/user';
+import { logger } from '@/utils/logger/logger';
 import { execAsync } from '@/utils/exec-async/execAsync';
 
 export class SystemExecutors {
@@ -34,7 +26,7 @@ export class SystemExecutors {
 
   constructor() {
     this.rootFolder = process.cwd();
-    this.logger = fileLogger;
+    this.logger = logger;
 
     this.envFile = path.join(this.rootFolder, '.env');
   }
@@ -49,77 +41,51 @@ export class SystemExecutors {
     return { success: false, message: `An error occurred: ${err}` };
   };
 
-  private getSystemLoad = async () => {
-    const { currentLoad } = await si.currentLoad();
-    const mem = await si.mem();
-    const [disk0] = await si.fsSize();
+  // private ensureFilePermissions = async (rootFolderHost: string) => {
+  //   const logger = new TerminalSpinner('');
 
-    return {
-      cpu: { load: currentLoad },
-      memory: { total: mem.total, used: mem.used, available: mem.available },
-      disk: { total: disk0?.size, used: disk0?.used, available: disk0?.available },
-    };
-  };
+  //   const filesAndFolders = [
+  //     path.join(rootFolderHost, 'apps'),
+  //     path.join(rootFolderHost, 'logs'),
+  //     path.join(rootFolderHost, 'repos'),
+  //     path.join(rootFolderHost, 'state'),
+  //     path.join(rootFolderHost, 'traefik'),
+  //     path.join(rootFolderHost, '.env'),
+  //     path.join(rootFolderHost, 'VERSION'),
+  //     path.join(rootFolderHost, 'docker-compose.yml'),
+  //   ];
 
-  private ensureFilePermissions = async (rootFolderHost: string) => {
-    const logger = new TerminalSpinner('');
+  //   const files600 = [path.join(rootFolderHost, 'traefik', 'shared', 'acme.json')];
 
-    const filesAndFolders = [
-      path.join(rootFolderHost, 'apps'),
-      path.join(rootFolderHost, 'logs'),
-      path.join(rootFolderHost, 'repos'),
-      path.join(rootFolderHost, 'state'),
-      path.join(rootFolderHost, 'traefik'),
-      path.join(rootFolderHost, '.env'),
-      path.join(rootFolderHost, 'VERSION'),
-      path.join(rootFolderHost, 'docker-compose.yml'),
-    ];
+  //   this.logger.info('Setting file permissions a+rwx on required files');
+  //   // Give permission to read and write to all files and folders for the current user
+  //   for (const fileOrFolder of filesAndFolders) {
+  //     if (await pathExists(fileOrFolder)) {
+  //       this.logger.info(`Setting permissions on ${fileOrFolder}`);
+  //       await execAsync(`chmod -R a+rwx ${fileOrFolder}`).catch(() => {
+  //         logger.fail(`Failed to set permissions on ${fileOrFolder}`);
+  //       });
+  //       this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
+  //     }
+  //   }
 
-    const files600 = [path.join(rootFolderHost, 'traefik', 'shared', 'acme.json')];
+  //   this.logger.info('Setting file permissions 600 on required files');
 
-    this.logger.info('Setting file permissions a+rwx on required files');
-    // Give permission to read and write to all files and folders for the current user
-    for (const fileOrFolder of filesAndFolders) {
-      if (await pathExists(fileOrFolder)) {
-        this.logger.info(`Setting permissions on ${fileOrFolder}`);
-        await execAsync(`chmod -R a+rwx ${fileOrFolder}`).catch(() => {
-          logger.fail(`Failed to set permissions on ${fileOrFolder}`);
-        });
-        this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
-      }
-    }
-
-    this.logger.info('Setting file permissions 600 on required files');
-
-    for (const fileOrFolder of files600) {
-      if (await pathExists(fileOrFolder)) {
-        this.logger.info(`Setting permissions on ${fileOrFolder}`);
-        await execAsync(`chmod 600 ${fileOrFolder}`).catch(() => {
-          logger.fail(`Failed to set permissions on ${fileOrFolder}`);
-        });
-        this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
-      }
-    }
-  };
+  //   for (const fileOrFolder of files600) {
+  //     if (await pathExists(fileOrFolder)) {
+  //       this.logger.info(`Setting permissions on ${fileOrFolder}`);
+  //       await execAsync(`chmod 600 ${fileOrFolder}`).catch(() => {
+  //         logger.fail(`Failed to set permissions on ${fileOrFolder}`);
+  //       });
+  //       this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
+  //     }
+  //   }
+  // };
 
   public cleanLogs = async () => {
     try {
       await this.logger.flush();
       this.logger.info('Logs cleaned successfully');
-
-      return { success: true, message: '' };
-    } catch (e) {
-      return this.handleSystemError(e);
-    }
-  };
-
-  public systemInfo = async () => {
-    try {
-      const { rootFolderHost } = getEnv();
-      const systemLoad = await this.getSystemLoad();
-
-      await fs.promises.writeFile(path.join(rootFolderHost, 'state', 'system-info.json'), JSON.stringify(systemLoad, null, 2));
-      await fs.promises.chmod(path.join(rootFolderHost, 'state', 'system-info.json'), 0o777);
 
       return { success: true, message: '' };
     } catch (e) {
@@ -141,7 +107,10 @@ export class SystemExecutors {
 
         // eslint-disable-next-line no-restricted-syntax
         for (const app of apps) {
-          await appExecutor.stopApp(app, {}, true);
+          spinner.setMessage(`Stopping ${app}...`);
+          spinner.start();
+          await appExecutor.stopApp(app);
+          spinner.done(`${app} stopped`);
         }
       }
 
@@ -164,41 +133,10 @@ export class SystemExecutors {
    * This method will start Tipi.
    * It will copy the system files, generate the system env file, pull the images and start the containers.
    */
-  public start = async (sudo = true, killWatchers = true) => {
+  public start = async () => {
     const spinner = new TerminalSpinner('Starting Tipi...');
     try {
       await this.logger.flush();
-
-      const { isSudo } = getUserIds();
-
-      if (!sudo) {
-        console.log(
-          boxen(
-            "You are running in sudoless mode. While Tipi should work as expected, you'll probably run into permission issues and will have to manually fix them. We recommend running Tipi with sudo for beginners.",
-            {
-              title: '⛔️Sudoless mode',
-              titleAlignment: 'center',
-              textAlignment: 'center',
-              padding: 1,
-              borderStyle: 'double',
-              borderColor: 'red',
-              margin: { top: 1, bottom: 1 },
-              width: 80,
-            },
-          ),
-        );
-      }
-
-      this.logger.info('Killing other workers...');
-
-      if (killWatchers) {
-        await killOtherWorkers();
-      }
-
-      if (!isSudo && sudo) {
-        console.log(chalk.red('Tipi needs to run as root to start. Use sudo ./runtipi-cli start'));
-        throw new Error('Tipi needs to run as root to start. Use sudo ./runtipi-cli start');
-      }
 
       spinner.setMessage('Copying system files...');
       spinner.start();
@@ -207,10 +145,6 @@ export class SystemExecutors {
       await copySystemFiles();
 
       spinner.done('System files copied');
-
-      if (sudo) {
-        await this.ensureFilePermissions(this.rootFolder);
-      }
 
       spinner.setMessage('Generating system env file...');
       spinner.start();
@@ -237,66 +171,6 @@ export class SystemExecutors {
 
       await execAsync(`docker compose --env-file ${this.envFile} up --detach --remove-orphans --build`);
       spinner.done('Containers started');
-
-      // start watcher cli in the background
-      spinner.setMessage('Starting watcher...');
-      spinner.start();
-
-      this.logger.info('Generating TLS certificates...');
-      await generateTlsCertificates({ domain: envMap.get('LOCAL_DOMAIN') });
-
-      if (killWatchers) {
-        this.logger.info('Starting watcher...');
-        const subprocess = spawn('./runtipi-cli', [process.argv[1] as string, 'watch'], { cwd: this.rootFolder, detached: true, stdio: ['ignore', 'ignore', 'ignore'] });
-        subprocess.unref();
-      }
-
-      spinner.done('Watcher started');
-
-      // Flush redis cache
-      this.logger.info('Flushing redis cache...');
-      const cache = new Redis({ host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD'), lazyConnect: true });
-      await cache.connect();
-      await cache.flushdb();
-      await cache.quit();
-
-      this.logger.info('Starting queue...');
-      const queue = new Queue('events', { connection: { host: '127.0.0.1', port: 6379, password: envMap.get('REDIS_PASSWORD') } });
-      this.logger.info('Obliterating queue...');
-      await queue.obliterate({ force: true });
-
-      // Initial jobs
-      this.logger.info('Adding initial jobs to queue...');
-      await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent);
-      await queue.add(`${Math.random().toString()}_repo_clone`, { type: 'repo', command: 'clone', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
-      await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
-
-      // Scheduled jobs
-      this.logger.info('Adding scheduled jobs to queue...');
-      await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
-      await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { pattern: '* * * * *' } });
-
-      this.logger.info('Closing queue...');
-      await queue.close();
-
-      spinner.setMessage('Running database migrations...');
-      spinner.start();
-
-      this.logger.info('Running database migrations...');
-      await runPostgresMigrations({
-        postgresHost: '127.0.0.1',
-        postgresDatabase: envMap.get('POSTGRES_DBNAME') as string,
-        postgresUsername: envMap.get('POSTGRES_USERNAME') as string,
-        postgresPassword: envMap.get('POSTGRES_PASSWORD') as string,
-        postgresPort: envMap.get('POSTGRES_PORT') as string,
-      });
-
-      spinner.done('Database migrations complete');
-
-      // Start all apps
-      const appExecutor = new AppExecutors();
-      this.logger.info('Starting all apps...');
-      await appExecutor.startAllApps();
 
       console.log(
         boxen(
@@ -329,7 +203,7 @@ export class SystemExecutors {
   public restart = async () => {
     try {
       await this.stop();
-      await this.start(true, false);
+      await this.start();
       return { success: true, message: '' };
     } catch (e) {
       return this.handleSystemError(e);

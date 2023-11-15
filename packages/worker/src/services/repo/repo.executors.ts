@@ -1,15 +1,13 @@
-import { getEnv } from 'src/utils/environment/environment';
 import path from 'path';
-import { pathExists } from '@/utils/fs-helpers';
+import { execAsync, pathExists } from '@runtipi/shared';
 import { getRepoHash } from './repo.helpers';
-import { fileLogger } from '@/utils/logger/file-logger';
-import { execAsync } from '@/utils/exec-async/execAsync';
+import { logger } from '@/lib/logger';
 
 export class RepoExecutors {
   private readonly logger;
 
   constructor() {
-    this.logger = fileLogger;
+    this.logger = logger;
   }
 
   /**
@@ -32,10 +30,8 @@ export class RepoExecutors {
    */
   public cloneRepo = async (repoUrl: string) => {
     try {
-      const { rootFolderHost } = getEnv();
-
       const repoHash = getRepoHash(repoUrl);
-      const repoPath = path.join(rootFolderHost, 'repos', repoHash);
+      const repoPath = path.join('/app', 'repos', repoHash);
 
       if (await pathExists(repoPath)) {
         this.logger.info(`Repo ${repoUrl} already exists`);
@@ -60,10 +56,8 @@ export class RepoExecutors {
    */
   public pullRepo = async (repoUrl: string) => {
     try {
-      const { rootFolderHost } = getEnv();
-
       const repoHash = getRepoHash(repoUrl);
-      const repoPath = path.join(rootFolderHost, 'repos', repoHash);
+      const repoPath = path.join('/app', 'repos', repoHash);
 
       if (!(await pathExists(repoPath))) {
         this.logger.info(`Repo ${repoUrl} does not exist`);

@@ -1,11 +1,11 @@
 import path from 'path';
-import { getEnv } from '../environment/environment';
-import { pathExists } from '../fs-helpers/fs-helpers';
-import { fileLogger } from '../logger/file-logger';
-import { execAsync } from '../exec-async/execAsync';
+import { execAsync, pathExists } from '@runtipi/shared';
+import { logger } from '@/lib/logger';
+import { getEnv } from '@/lib/environment';
+import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
 
 const composeUp = async (args: string[]) => {
-  fileLogger.info(`Running docker compose with args ${args.join(' ')}`);
+  logger.info(`Running docker compose with args ${args.join(' ')}`);
   const { stdout, stderr } = await execAsync(`docker compose ${args.join(' ')}`);
 
   return { stdout, stderr };
@@ -17,14 +17,14 @@ const composeUp = async (args: string[]) => {
  * @param {string} command - Command to execute
  */
 export const compose = async (appId: string, command: string) => {
-  const { arch, rootFolderHost, appsRepoId, storagePath } = getEnv();
-  const appDataDirPath = path.join(storagePath, 'app-data', appId);
-  const appDirPath = path.join(rootFolderHost, 'apps', appId);
+  const { arch, appsRepoId } = getEnv();
+  const appDataDirPath = path.join(STORAGE_FOLDER, 'app-data', appId);
+  const appDirPath = path.join(ROOT_FOLDER, 'apps', appId);
 
   const args: string[] = [`--env-file ${path.join(appDataDirPath, 'app.env')}`];
 
   // User custom env file
-  const userEnvFile = path.join(rootFolderHost, 'user-config', appId, 'app.env');
+  const userEnvFile = path.join(ROOT_FOLDER, 'user-config', appId, 'app.env');
   if (await pathExists(userEnvFile)) {
     args.push(`--env-file ${userEnvFile}`);
   }
@@ -37,11 +37,11 @@ export const compose = async (appId: string, command: string) => {
   }
   args.push(`-f ${composeFile}`);
 
-  const commonComposeFile = path.join(rootFolderHost, 'repos', appsRepoId, 'apps', 'docker-compose.common.yml');
+  const commonComposeFile = path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', 'docker-compose.common.yml');
   args.push(`-f ${commonComposeFile}`);
 
   // User defined overrides
-  const userComposeFile = path.join(rootFolderHost, 'user-config', appId, 'docker-compose.yml');
+  const userComposeFile = path.join(ROOT_FOLDER, 'user-config', appId, 'docker-compose.yml');
   if (await pathExists(userComposeFile)) {
     args.push(`--file ${userComposeFile}`);
   }

@@ -4,7 +4,7 @@ api:
 
 providers:
   docker:
-    endpoint: "unix:///var/run/docker.sock"
+    endpoint: 'unix:///var/run/docker.sock'
     watch: true
     exposedByDefault: false
   file:
@@ -13,9 +13,9 @@ providers:
 
 entryPoints:
   web:
-    address: ":80"
+    address: ':80'
   websecure:
-    address: ":443"
+    address: ':443'
     http:
       tls:
         certResolver: myresolver
@@ -23,7 +23,7 @@ entryPoints:
 certificatesResolvers:
   myresolver:
     acme:
-      email: acme@thisprops.com 
+      email: acme@thisprops.com
       storage: /shared/acme.json
       httpChallenge:
         entryPoint: web
