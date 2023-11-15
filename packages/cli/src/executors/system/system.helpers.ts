@@ -157,6 +157,8 @@ export const generateSystemEnvFile = async () => {
   envMap.set('REDIS_HOST', 'tipi-redis');
   envMap.set('REDIS_PASSWORD', redisPassword);
   envMap.set('NODE_ENV', 'production');
+  envMap.set('DOMAIN', data.domain || 'example.com');
+  envMap.set('LOCAL_DOMAIN', data.localDomain || 'tipi.lan');
 
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 

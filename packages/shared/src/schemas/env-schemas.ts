@@ -11,7 +11,6 @@ export const envSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
   REDIS_HOST: z.string(),
   redisPassword: z.string(),
-  status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
   architecture: z.nativeEnum(ARCHITECTURES),
   dnsIp: z.string().ip().trim(),
   rootFolder: z.string(),

@@ -83,7 +83,8 @@ const main = async () => {
       startWorker();
     });
   } catch (e) {
-    console.log('YO', e);
+    logger.error(e);
+    process.exit(1);
   }
 };
 
