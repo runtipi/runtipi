@@ -36,7 +36,9 @@ describe('test: app executors', () => {
     it('should return error if compose script fails', async () => {
       // arrange
       const randomError = faker.system.fileName();
-      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: '', stderr: randomError }));
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => {
+        throw new Error(randomError);
+      });
       const config = createAppConfig({}, false);
 
       // act
