@@ -41,47 +41,6 @@ export class SystemExecutors {
     return { success: false, message: `An error occurred: ${err}` };
   };
 
-  // private ensureFilePermissions = async (rootFolderHost: string) => {
-  //   const logger = new TerminalSpinner('');
-
-  //   const filesAndFolders = [
-  //     path.join(rootFolderHost, 'apps'),
-  //     path.join(rootFolderHost, 'logs'),
-  //     path.join(rootFolderHost, 'repos'),
-  //     path.join(rootFolderHost, 'state'),
-  //     path.join(rootFolderHost, 'traefik'),
-  //     path.join(rootFolderHost, '.env'),
-  //     path.join(rootFolderHost, 'VERSION'),
-  //     path.join(rootFolderHost, 'docker-compose.yml'),
-  //   ];
-
-  //   const files600 = [path.join(rootFolderHost, 'traefik', 'shared', 'acme.json')];
-
-  //   this.logger.info('Setting file permissions a+rwx on required files');
-  //   // Give permission to read and write to all files and folders for the current user
-  //   for (const fileOrFolder of filesAndFolders) {
-  //     if (await pathExists(fileOrFolder)) {
-  //       this.logger.info(`Setting permissions on ${fileOrFolder}`);
-  //       await execAsync(`chmod -R a+rwx ${fileOrFolder}`).catch(() => {
-  //         logger.fail(`Failed to set permissions on ${fileOrFolder}`);
-  //       });
-  //       this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
-  //     }
-  //   }
-
-  //   this.logger.info('Setting file permissions 600 on required files');
-
-  //   for (const fileOrFolder of files600) {
-  //     if (await pathExists(fileOrFolder)) {
-  //       this.logger.info(`Setting permissions on ${fileOrFolder}`);
-  //       await execAsync(`chmod 600 ${fileOrFolder}`).catch(() => {
-  //         logger.fail(`Failed to set permissions on ${fileOrFolder}`);
-  //       });
-  //       this.logger.info(`Successfully set permissions on ${fileOrFolder}`);
-  //     }
-  //   }
-  // };
-
   public cleanLogs = async () => {
     try {
       await this.logger.flush();

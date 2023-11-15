@@ -9,7 +9,8 @@
     "build": "node build.js",
     "tsc": "tsc",
     "dev": "dotenv -e ../../.env nodemon",
-    "knip": "knip"
+    "knip": "knip",
+    "lint": "eslint . --ext .ts"
   },
   "keywords": [],
   "author": "",
