@@ -13,6 +13,9 @@
       "@/config/*": [
         "./src/config/*"
       ],
+      "@/tests/*": [
+        "./tests/*"
+      ],
     },
     "lib": [
       "dom",

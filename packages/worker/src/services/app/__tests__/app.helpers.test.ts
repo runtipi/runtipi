@@ -1,20 +1,18 @@
 import fs from 'fs';
 import { describe, it, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
+import { pathExists } from '@runtipi/shared';
 import { copyDataDir, generateEnvFile } from '../app.helpers';
 import { createAppConfig } from '@/tests/apps.factory';
 import { getAppEnvMap } from '../env.helpers';
-import { getEnv } from '@/utils/environment/environment';
-import { pathExists } from '@/utils/fs-helpers';
-
-const { rootFolderHost, storagePath } = getEnv();
+import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
 
 describe('app helpers', () => {
   describe('Test: generateEnvFile()', () => {
     it('should throw an error if the app has an invalid config.json file', async () => {
       // arrange
       const appConfig = createAppConfig();
-      await fs.promises.writeFile(`${rootFolderHost}/apps/${appConfig.id}/config.json`, '{}');
+      await fs.promises.writeFile(`${ROOT_FOLDER}/apps/${appConfig.id}/config.json`, '{}');
 
       // act & assert
       expect(generateEnvFile(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
@@ -50,8 +48,8 @@ describe('app helpers', () => {
       // arrange
       const appConfig = createAppConfig({ form_fields: [{ env_variable: 'RANDOM_FIELD', type: 'random', label: 'test', min: 32, max: 32, required: true }] });
       const randomField = faker.string.alphanumeric(32);
-      await fs.promises.mkdir(`${rootFolderHost}/app-data/${appConfig.id}`, { recursive: true });
-      await fs.promises.writeFile(`${rootFolderHost}/app-data/${appConfig.id}/app.env`, `RANDOM_FIELD=${randomField}`);
+      await fs.promises.mkdir(`${STORAGE_FOLDER}/app-data/${appConfig.id}`, { recursive: true });
+      await fs.promises.writeFile(`${STORAGE_FOLDER}/app-data/${appConfig.id}/app.env`, `RANDOM_FIELD=${randomField}`);
 
       // act
       await generateEnvFile(appConfig.id, {});
@@ -117,7 +115,7 @@ describe('app helpers', () => {
     it('Should not re-create app-data folder if it already exists', async () => {
       // arrange
       const appConfig = createAppConfig({});
-      await fs.promises.mkdir(`${rootFolderHost}/app-data/${appConfig.id}`, { recursive: true });
+      await fs.promises.mkdir(`${ROOT_FOLDER}/app-data/${appConfig.id}`, { recursive: true });
 
       // act
       await generateEnvFile(appConfig.id, {});
@@ -161,8 +159,8 @@ describe('app helpers', () => {
       const vapidPublicKey = faker.string.alphanumeric(32);
 
       // act
-      await fs.promises.mkdir(`${rootFolderHost}/app-data/${appConfig.id}`, { recursive: true });
-      await fs.promises.writeFile(`${rootFolderHost}/app-data/${appConfig.id}/app.env`, `VAPID_PRIVATE_KEY=${vapidPrivateKey}\nVAPID_PUBLIC_KEY=${vapidPublicKey}`);
+      await fs.promises.mkdir(`${STORAGE_FOLDER}/app-data/${appConfig.id}`, { recursive: true });
+      await fs.promises.writeFile(`${STORAGE_FOLDER}/app-data/${appConfig.id}/app.env`, `VAPID_PRIVATE_KEY=${vapidPrivateKey}\nVAPID_PUBLIC_KEY=${vapidPublicKey}`);
       await generateEnvFile(appConfig.id, {});
       const envmap = await getAppEnvMap(appConfig.id);
 
@@ -181,13 +179,13 @@ describe('app helpers', () => {
       await copyDataDir(appConfig.id);
 
       // assert
-      expect(await pathExists(`${rootFolderHost}/apps/${appConfig.id}/data`)).toBe(false);
+      expect(await pathExists(`${ROOT_FOLDER}/apps/${appConfig.id}/data`)).toBe(false);
     });
 
     it('should copy data dir to app-data folder', async () => {
       // arrange
       const appConfig = createAppConfig({});
-      const dataDir = `${rootFolderHost}/apps/${appConfig.id}/data`;
+      const dataDir = `${ROOT_FOLDER}/apps/${appConfig.id}/data`;
 
       await fs.promises.mkdir(dataDir, { recursive: true });
       await fs.promises.writeFile(`${dataDir}/test.txt`, 'test');
@@ -196,14 +194,14 @@ describe('app helpers', () => {
       await copyDataDir(appConfig.id);
 
       // assert
-      const appDataDir = `${storagePath}/app-data/${appConfig.id}`;
+      const appDataDir = `${STORAGE_FOLDER}/app-data/${appConfig.id}`;
       expect(await fs.promises.readFile(`${appDataDir}/data/test.txt`, 'utf8')).toBe('test');
     });
 
     it('should copy folders recursively', async () => {
       // arrange
       const appConfig = createAppConfig({});
-      const dataDir = `${rootFolderHost}/apps/${appConfig.id}/data`;
+      const dataDir = `${ROOT_FOLDER}/apps/${appConfig.id}/data`;
 
       await fs.promises.mkdir(dataDir, { recursive: true });
 
@@ -217,7 +215,7 @@ describe('app helpers', () => {
       await copyDataDir(appConfig.id);
 
       // assert
-      const appDataDir = `${storagePath}/app-data/${appConfig.id}`;
+      const appDataDir = `${STORAGE_FOLDER}/app-data/${appConfig.id}`;
       expect(await fs.promises.readFile(`${appDataDir}/data/subdir/subsubdir/test.txt`, 'utf8')).toBe('test');
       expect(await fs.promises.readFile(`${appDataDir}/data/test.txt`, 'utf8')).toBe('test');
     });
@@ -225,8 +223,8 @@ describe('app helpers', () => {
     it('should replace the content of .template files with the content of the app.env file', async () => {
       // arrange
       const appConfig = createAppConfig({});
-      const dataDir = `${rootFolderHost}/apps/${appConfig.id}/data`;
-      const appDataDir = `${storagePath}/app-data/${appConfig.id}`;
+      const dataDir = `${ROOT_FOLDER}/apps/${appConfig.id}/data`;
+      const appDataDir = `${STORAGE_FOLDER}/app-data/${appConfig.id}`;
 
       await fs.promises.mkdir(dataDir, { recursive: true });
       await fs.promises.mkdir(appDataDir, { recursive: true });

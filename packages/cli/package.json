@@ -5,7 +5,7 @@
   "main": "index.js",
   "bin": "dist/index.js",
   "scripts": {
-    "test": "dotenv -e .env.test vitest -- --coverage --watch=false",
+    "test": "dotenv -e .env.test vitest -- --coverage --watch=false --passWithNoTests",
     "test:watch": "dotenv -e .env.test vitest",
     "package": "npm run build && pkg package.json && chmod +x dist/bin/cli-x64 && chmod +x dist/bin/cli-arm64",
     "package:m1": "npm run build && pkg package.json -t node18-darwin-arm64",
