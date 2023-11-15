@@ -12,7 +12,7 @@ type Transports = transports.ConsoleTransportInstance | transports.FileTransport
  * @param {string} id - The id of the logger, used to identify the logger in the logs
  * @param {string} logsFolder - The folder where the logs will be stored
  */
-export const newLogger = (id: string, logsFolder: string) => {
+export const newLogger = (id: string, logsFolder: string, console?: boolean) => {
   if (!fs.existsSync(logsFolder)) {
     fs.mkdirSync(logsFolder, { recursive: true });
   }
@@ -36,6 +36,8 @@ export const newLogger = (id: string, logsFolder: string) => {
 
   if (process.env.NODE_ENV === 'development') {
     tr.push(new transports.Console({ level: 'debug' }));
+  } else if (console) {
+    tr.push(new transports.Console({ level: 'info' }));
   }
 
   return createLogger({

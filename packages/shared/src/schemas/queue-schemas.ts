@@ -23,16 +23,10 @@ const repoCommandSchema = z.object({
 
 const systemCommandSchema = z.object({
   type: z.literal(EVENT_TYPES.SYSTEM),
-  command: z.union([z.literal('restart'), z.literal('system_info')]),
+  command: z.literal('system_info'),
 });
 
-const updateSchema = z.object({
-  type: z.literal(EVENT_TYPES.SYSTEM),
-  command: z.literal('update'),
-  version: z.string(),
-});
-
-export const eventSchema = appCommandSchema.or(repoCommandSchema).or(systemCommandSchema).or(updateSchema);
+export const eventSchema = appCommandSchema.or(repoCommandSchema).or(systemCommandSchema);
 
 export const eventResultSchema = z.object({
   success: z.boolean(),
