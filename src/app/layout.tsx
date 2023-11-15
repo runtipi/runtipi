@@ -9,7 +9,6 @@ import { NextIntlClientProvider } from 'next-intl';
 import './global.css';
 import clsx from 'clsx';
 import { Toaster } from 'react-hot-toast';
-import { StatusProvider } from '@/components/hoc/StatusProvider';
 import { getCurrentLocale } from '../utils/getCurrentLocale';
 import { ClientProviders } from './components/ClientProviders';
 
@@ -37,7 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <NextIntlClientProvider locale={locale} messages={mergedMessages}>
         <ClientProviders initialTheme={theme?.value} cookies={cookies().getAll()}>
           <body data-bs-theme={theme?.value}>
-            <StatusProvider>{children}</StatusProvider>
+            {children}
             <Toaster />
           </body>
         </ClientProviders>

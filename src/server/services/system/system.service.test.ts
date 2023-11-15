@@ -106,21 +106,3 @@ describe('Test: getVersion', () => {
     expect(version2.current).toBeDefined();
   });
 });
-
-describe('Test: restart', () => {
-  it('Should return true', async () => {
-    // Act
-    const restart = await SystemService.restart();
-
-    // Assert
-    expect(restart).toBeTruthy();
-  });
-
-  it('should throw an error in demo mode', async () => {
-    // Arrange
-    await setConfig('demoMode', true);
-
-    // Act & Assert
-    await expect(SystemService.restart()).rejects.toThrow('server-messages.errors.not-allowed-in-demo');
-  });
-});
