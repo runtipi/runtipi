@@ -1,0 +1,1 @@
+export { getEnv } from './environment';

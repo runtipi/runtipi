@@ -1,7 +1,7 @@
 import webpush from 'web-push';
 import fs from 'fs';
 import path from 'path';
-import { getEnv } from '@/utils/environment/environment';
+import { STORAGE_FOLDER } from '@/config/constants';
 
 /**
  * This function reads the env file for the app with the provided id and returns a Map containing the key-value pairs of the environment variables.
@@ -11,7 +11,7 @@ import { getEnv } from '@/utils/environment/environment';
  */
 export const getAppEnvMap = async (appId: string) => {
   try {
-    const envFile = await fs.promises.readFile(path.join(getEnv().storagePath, 'app-data', appId, 'app.env'));
+    const envFile = await fs.promises.readFile(path.join(STORAGE_FOLDER, 'app-data', appId, 'app.env'));
     const envVars = envFile.toString().split('\n');
     const envVarsMap = new Map<string, string>();
 

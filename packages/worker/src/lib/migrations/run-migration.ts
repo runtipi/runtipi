@@ -1,7 +1,8 @@
 import path from 'path';
 import pg from 'pg';
 import { migrate } from '@runtipi/postgres-migrations';
-import { fileLogger } from '../logger/file-logger';
+import { logger } from '@/lib/logger';
+import { ROOT_FOLDER } from '@/config/constants';
 
 type MigrationParams = {
   postgresHost: string;
@@ -12,13 +13,13 @@ type MigrationParams = {
 };
 
 export const runPostgresMigrations = async (params: MigrationParams) => {
-  const assetsFolder = path.join('/snapshot', 'runtipi', 'packages', 'cli', 'assets');
+  const assetsFolder = path.join(ROOT_FOLDER, 'assets');
 
   const { postgresHost, postgresDatabase, postgresUsername, postgresPassword, postgresPort } = params;
 
-  fileLogger.info('Starting database migration');
+  logger.info('Starting database migration');
 
-  fileLogger.info(`Connecting to database ${postgresDatabase} on ${postgresHost} as ${postgresUsername} on port ${postgresPort}`);
+  logger.info(`Connecting to database ${postgresDatabase} on ${postgresHost} as ${postgresUsername} on port ${postgresPort}`);
 
   const client = new pg.Client({
     user: postgresUsername,
@@ -29,28 +30,28 @@ export const runPostgresMigrations = async (params: MigrationParams) => {
   });
   await client.connect();
 
-  fileLogger.info('Client connected');
+  logger.info('Client connected');
 
   try {
     const { rows } = await client.query('SELECT * FROM migrations');
     // if rows contains a migration with name 'Initial1657299198975' (legacy typeorm) delete table migrations. As all migrations are idempotent we can safely delete the table and start over.
     if (rows.find((row) => row.name === 'Initial1657299198975')) {
-      fileLogger.info('Found legacy migration. Deleting table migrations');
+      logger.info('Found legacy migration. Deleting table migrations');
       await client.query('DROP TABLE migrations');
     }
   } catch (e) {
-    fileLogger.info('Migrations table not found, creating it');
+    logger.info('Migrations table not found, creating it');
   }
 
-  fileLogger.info('Running migrations');
+  logger.info('Running migrations');
   try {
     await migrate({ client }, path.join(assetsFolder, 'migrations'), { skipCreateMigrationTable: true });
   } catch (e) {
-    fileLogger.error('Error running migrations. Dropping table migrations and trying again');
+    logger.error('Error running migrations. Dropping table migrations and trying again');
     await client.query('DROP TABLE migrations');
     await migrate({ client }, path.join(assetsFolder, 'migrations'), { skipCreateMigrationTable: true });
   }
 
-  fileLogger.info('Migration complete');
+  logger.info('Migration complete');
   await client.end();
 };
