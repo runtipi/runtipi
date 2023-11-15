@@ -200,7 +200,15 @@ export class AppExecutors {
       this.logger.info(`Regenerating app.env file for app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
-      await compose(appId, 'down --remove-orphans --volumes --rmi all');
+      try {
+        await compose(appId, 'down --remove-orphans --volumes --rmi all');
+      } catch (err) {
+        if (err instanceof Error && err.message.includes('conflict')) {
+          this.logger.warn(`Could not fully uninstall app ${appId}. Some images are in use by other apps. Consider cleaning unused images docker system prune -a`);
+        } else {
+          throw err;
+        }
+      }
 
       this.logger.info(`Deleting folder ${appDirPath}`);
       await fs.promises.rm(appDirPath, { recursive: true, force: true }).catch((err) => {

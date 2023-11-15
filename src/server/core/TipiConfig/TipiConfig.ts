@@ -39,7 +39,6 @@ export class TipiConfig {
       domain: conf.DOMAIN,
       localDomain: conf.LOCAL_DOMAIN,
       dnsIp: conf.DNS_IP || '9.9.9.9',
-      status: 'RUNNING',
       storagePath: conf.STORAGE_PATH,
       demoMode: conf.DEMO_MODE,
       guestDashboard: conf.GUEST_DASHBOARD,
