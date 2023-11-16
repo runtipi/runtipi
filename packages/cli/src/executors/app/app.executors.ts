@@ -7,16 +7,17 @@ import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
 export class AppExecutors {
   private readonly logger;
 
-  private queue: Queue;
-
-  private queueEvents: QueueEvents;
-
   constructor() {
-    const { redisPassword } = getEnv();
     this.logger = logger;
-    this.queue = new Queue('events', { connection: { host: '127.0.0.1', port: 6379, password: redisPassword } });
-    this.queueEvents = new QueueEvents('events', { connection: { host: '127.0.0.1', port: 6379, password: redisPassword } });
   }
+
+  private getQueue = () => {
+    const { redisPassword } = getEnv();
+    const queue = new Queue('events', { connection: { host: '127.0.0.1', port: 6379, password: redisPassword } });
+    const queueEvents = new QueueEvents('events', { connection: { host: '127.0.0.1', port: 6379, password: redisPassword } });
+
+    return { queue, queueEvents };
+  };
 
   private generateJobId = (event: Record<string, unknown>) => {
     const { appId, action } = event;
@@ -33,9 +34,13 @@ export class AppExecutors {
 
     const jobid = this.generateJobId({ appId, action: 'stop' });
 
+    const { queue, queueEvents } = this.getQueue();
     const event = { type: 'app', command: 'stop', appid: appId, form: {}, skipEnv: true } satisfies SystemEvent;
-    const job = await this.queue.add(jobid, eventSchema.parse(event));
-    const result = await job.waitUntilFinished(this.queueEvents, 1000 * 60 * 5);
+    const job = await queue.add(jobid, eventSchema.parse(event));
+    const result = await job.waitUntilFinished(queueEvents, 1000 * 60 * 5);
+
+    await queueEvents.close();
+    await queue.close();
 
     if (!result?.success) {
       this.logger.error(result?.message);
@@ -51,9 +56,13 @@ export class AppExecutors {
 
     const jobid = this.generateJobId({ appId, action: 'start' });
 
+    const { queue, queueEvents } = this.getQueue();
     const event = { type: 'app', command: 'start', appid: appId, form: {}, skipEnv: true } satisfies SystemEvent;
-    const job = await this.queue.add(jobid, eventSchema.parse(event));
-    const result = await job.waitUntilFinished(this.queueEvents, 1000 * 60 * 5);
+    const job = await queue.add(jobid, eventSchema.parse(event));
+    const result = await job.waitUntilFinished(queueEvents, 1000 * 60 * 5);
+
+    await queueEvents.close();
+    await queue.close();
 
     if (!result.success) {
       spinner.fail(`Failed to start app ${appId} see logs for more details (logs/error.log)`);

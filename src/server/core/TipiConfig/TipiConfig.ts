@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import dotenv from 'dotenv';
 import { envSchema, settingsSchema } from '@runtipi/shared';
 import fs from 'fs-extra';
 import nextConfig from 'next/config';
@@ -19,6 +20,9 @@ export class TipiConfig {
   private config: z.infer<typeof envSchema> = {} as z.infer<typeof envSchema>;
 
   constructor() {
+    // Reload env variables
+    dotenv.config();
+
     const conf = { ...process.env, ...nextConfig()?.serverRuntimeConfig };
     const envConfig: z.infer<typeof envSchema> = {
       postgresHost: conf.POSTGRES_HOST,

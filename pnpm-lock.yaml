@@ -62,6 +62,9 @@ importers:
       connect-redis:
         specifier: ^7.1.0
         version: 7.1.0(express-session@1.17.3)
+      dotenv:
+        specifier: ^16.3.1
+        version: 16.3.1
       drizzle-orm:
         specifier: ^0.28.6
         version: 0.28.6(@types/pg@8.10.7)(pg@8.11.3)
