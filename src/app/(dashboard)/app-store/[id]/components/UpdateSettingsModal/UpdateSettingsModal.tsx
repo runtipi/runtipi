@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/compon
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { AppStatus } from '@/server/db/schema';
 import { InstallForm, type FormValues } from '../InstallForm';
 
 interface IProps {
@@ -11,9 +12,11 @@ interface IProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (values: FormValues) => void;
+  onReset: () => void;
+  status?: AppStatus;
 }
 
-export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, onClose, onSubmit }) => {
+export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, onClose, onSubmit, onReset, status }) => {
   const t = useTranslations('apps.app-details.update-settings-form');
 
   return (
@@ -24,7 +27,7 @@ export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, on
         </DialogHeader>
         <ScrollArea maxHeight={500}>
           <DialogDescription>
-            <InstallForm onSubmit={onSubmit} formFields={info.form_fields} info={info} initalValues={{ ...config }} />
+            <InstallForm onSubmit={onSubmit} formFields={info.form_fields} info={info} initalValues={{ ...config }} onReset={onReset} status={status} />
           </DialogDescription>
         </ScrollArea>
       </DialogContent>
