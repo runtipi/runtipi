@@ -97,6 +97,17 @@ export class SystemExecutors {
     try {
       await this.logger.flush();
 
+      // Check if user is in docker group
+      spinner.setMessage('Checking docker permissions...');
+      spinner.start();
+      const { stdout: dockerVersion } = await execAsync('docker --version');
+
+      if (!dockerVersion) {
+        spinner.fail('Your user is not allowed to run docker commands. Please add your user to the docker group or run Tipi as root.');
+        return { success: false, message: 'You need to be in the docker group to run Tipi' };
+      }
+      spinner.done('User allowed to run docker commands');
+
       spinner.setMessage('Copying system files...');
       spinner.start();
 
