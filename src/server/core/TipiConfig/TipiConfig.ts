@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import dotenv from 'dotenv';
-import { envSchema, settingsSchema } from '@runtipi/shared';
+import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
 import fs from 'fs-extra';
 import nextConfig from 'next/config';
 import { readJsonFile } from '../../common/fs.helpers';
@@ -20,10 +20,27 @@ export class TipiConfig {
   private config: z.infer<typeof envSchema> = {} as z.infer<typeof envSchema>;
 
   constructor() {
+    Logger.debug('🔧 Loading config');
+    Logger.debug(JSON.stringify(process.env, null, 2));
     // Reload env variables
     dotenv.config();
 
-    const conf = { ...process.env, ...nextConfig()?.serverRuntimeConfig };
+    Logger.debug('🔧 Config after dotenv');
+    Logger.debug(JSON.stringify(process.env, null, 2));
+
+    // Const read .env file directly
+    let envFile = '';
+    try {
+      envFile = fs.readFileSync('/runtipi/.env').toString();
+    } catch (e) {
+      Logger.error('❌ .env file not found');
+    }
+
+    const envMap = envStringToMap(envFile.toString());
+    Logger.debug('Conent of .env file');
+    Logger.debug(envFile);
+
+    const conf = { ...process.env, ...Object.fromEntries(envMap), ...nextConfig().serverRuntimeConfig };
     const envConfig: z.infer<typeof envSchema> = {
       postgresHost: conf.POSTGRES_HOST,
       postgresDatabase: conf.POSTGRES_DBNAME,

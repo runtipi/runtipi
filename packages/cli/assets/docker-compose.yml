@@ -80,6 +80,7 @@ services:
       - /:/host/root:ro
       - /proc:/host/proc
       - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
       # App
       - ./.env:/app/.env
       - ./state:/app/state
