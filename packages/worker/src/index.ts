@@ -67,7 +67,7 @@ const main = async () => {
     // Start all apps
     const appExecutor = new AppExecutors();
     logger.info('Starting all apps...');
-    await appExecutor.startAllApps();
+    appExecutor.startAllApps();
 
     const server = http.createServer((req, res) => {
       if (req.url === '/healthcheck') {

@@ -74,6 +74,7 @@ function install_generic() {
 function install_docker() {
   local os="${1}"
   echo "Installing docker for os ${os}"
+  echo "Your sudo password might be asked to install docker"
 
   if [[ "${os}" == "debian" ]]; then
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gnupg lsb-release
@@ -134,6 +135,14 @@ if ! command -v docker >/dev/null; then
       exit 1
     fi
   fi
+
+  # Make sure user is in docker group
+  if ! groups | grep -q '\bdocker\b'; then
+    sudo usermod -aG docker "$USER"
+  fi
+
+  # Reload user groups
+  newgrp docker
 fi
 
 function check_dependency_and_install() {
@@ -185,10 +194,4 @@ fi
 curl --location "$URL" -o ./runtipi-cli
 chmod +x ./runtipi-cli
 
-# Check if git is installed
-if ! command -v git >/dev/null; then
-  echo "Git is not installed. Please install git and restart the script."
-  exit 1
-fi
-
-sudo ./runtipi-cli start
+./runtipi-cli start
