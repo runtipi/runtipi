@@ -20,8 +20,18 @@ export class TipiConfig {
   private config: z.infer<typeof envSchema> = {} as z.infer<typeof envSchema>;
 
   constructor() {
+    Logger.debug('🔧 Loading config');
+    Logger.debug(JSON.stringify(process.env, null, 2));
     // Reload env variables
     dotenv.config();
+
+    Logger.debug('🔧 Config after dotenv');
+    Logger.debug(JSON.stringify(process.env, null, 2));
+
+    // Const read .env file directly
+    const envFile = readJsonFile('/runtipi/.env');
+    Logger.debug('Conent of .env file');
+    Logger.debug(envFile);
 
     const conf = { ...process.env, ...nextConfig()?.serverRuntimeConfig };
     const envConfig: z.infer<typeof envSchema> = {

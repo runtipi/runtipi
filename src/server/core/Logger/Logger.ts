@@ -28,7 +28,7 @@ const productionLogger = () => {
       fs.mkdirSync(logsFolder);
     }
     return createLogger({
-      level: 'info',
+      level: 'debug',
       format: combinedLogFormat,
       transports: [
         //
@@ -43,7 +43,7 @@ const productionLogger = () => {
           filename: path.join(logsFolder, 'app.log'),
         }),
         new transports.Console({
-          level: 'info',
+          level: 'debug',
         }),
       ],
       exceptionHandlers: [new transports.File({ filename: path.join(logsFolder, 'error.log') })],
