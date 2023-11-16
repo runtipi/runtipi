@@ -1,7 +1,6 @@
-ARG NODE_VERSION="18.16"
-ARG ALPINE_VERSION="3.18"
+ARG NODE_VERSION="18.18"
 
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
+FROM node:${NODE_VERSION}-slim AS node_base
 
 FROM node_base AS builder_base
 
@@ -9,10 +8,11 @@ RUN npm install pnpm -g
 
 FROM node_base AS runner_base
 
-# Install docker
-RUN apk upgrade --update-cache --available && \
-  apk add openssl git curl && \
-  rm -rf /var/cache/apk/*
+RUN apt-get update && apt-get install -y \
+  openssl \
+  git \
+  curl \
+  && rm -rf /var/lib/apt/lists/*
 
 FROM builder_base AS builder
 
