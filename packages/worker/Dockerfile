@@ -11,7 +11,7 @@ FROM node_base AS runner_base
 
 # Install docker
 RUN apk upgrade --update-cache --available && \
-  apk add openssl git docker docker-cli-compose curl && \
+  apk add openssl git curl && \
   rm -rf /var/cache/apk/*
 
 FROM builder_base AS builder

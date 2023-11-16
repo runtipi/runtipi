@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import dotenv from 'dotenv';
-import { envSchema, settingsSchema } from '@runtipi/shared';
+import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
 import fs from 'fs-extra';
 import nextConfig from 'next/config';
 import { readJsonFile } from '../../common/fs.helpers';
@@ -20,10 +19,16 @@ export class TipiConfig {
   private config: z.infer<typeof envSchema> = {} as z.infer<typeof envSchema>;
 
   constructor() {
-    // Reload env variables
-    dotenv.config();
+    let envFile = '';
+    try {
+      envFile = fs.readFileSync('/runtipi/.env').toString();
+    } catch (e) {
+      Logger.error('❌ .env file not found');
+    }
 
-    const conf = { ...process.env, ...nextConfig()?.serverRuntimeConfig };
+    const envMap = envStringToMap(envFile.toString());
+
+    const conf = { ...process.env, ...Object.fromEntries(envMap), ...nextConfig().serverRuntimeConfig };
     const envConfig: z.infer<typeof envSchema> = {
       postgresHost: conf.POSTGRES_HOST,
       postgresDatabase: conf.POSTGRES_DBNAME,
