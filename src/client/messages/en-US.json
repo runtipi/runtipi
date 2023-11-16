@@ -107,6 +107,7 @@
   },
   "apps": {
     "status-running": "Running",
+    "status-reseting": "Resetting",
     "status-stopped": "Stopped",
     "status-starting": "Starting",
     "status-stopping": "Stopping",
@@ -135,6 +136,7 @@
       "update-success": "App updated successfully",
       "start-success": "App started successfully",
       "update-config-success": "App config updated successfully. Restart the app to apply the changes",
+      "app-reset-success": "App reset successfully",
       "version": "Version",
       "description": "Description",
       "base-info": "Base info",
@@ -182,6 +184,7 @@
         "choose-option": "Choose an option...",
         "sumbit-install": "Install",
         "submit-update": "Update",
+        "reset": "Reset app",
         "errors": {
           "required": "{label} is required",
           "regex": "{label} does not match the pattern {pattern}",

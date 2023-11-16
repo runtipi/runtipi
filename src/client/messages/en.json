@@ -108,6 +108,7 @@
   "apps": {
     "status-running": "Running",
     "status-stopped": "Stopped",
+    "status-resetting": "Resetting",
     "status-starting": "Starting",
     "status-stopping": "Stopping",
     "status-updating": "Updating",
@@ -136,6 +137,7 @@
       "start-success": "App started successfully",
       "update-config-success": "App config updated successfully. Restart the app to apply the changes",
       "version": "Version",
+      "app-reset-success": "App reset successfully",
       "description": "Description",
       "base-info": "Base info",
       "source-code": "Source code",
@@ -183,6 +185,7 @@
         "choose-option": "Choose an option...",
         "sumbit-install": "Install",
         "submit-update": "Update",
+        "reset": "Reset app",
         "errors": {
           "required": "{label} is required",
           "regex": "{label} must match the pattern {pattern}",
@@ -207,6 +210,12 @@
         "subtitle": "All data for this app will be lost.",
         "warning": "Are you sure? This action cannot be undone.",
         "submit": "Uninstall"
+      },
+      "reset-app-form": {
+        "title": "Reset {name} app ?",
+        "subtitle": "All data for this app will be lost.",
+        "warning": "Are you sure? This action cannot be undone.",
+        "submit": "Reset"
       },
       "update-form": {
         "title": "Update {name} ?",
