@@ -3,6 +3,7 @@
 import { useUIStore } from '@/client/state/uiStore';
 import React, { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
+import { LetItGo } from 'let-it-go';
 
 type Props = {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ export const ThemeProvider = (props: Props) => {
   const { children, initialTheme } = props;
   const cookies = useCookies();
   const { theme, setDarkMode } = useUIStore();
+  const snow = new LetItGo({ number: 50 });
 
   useEffect(() => {
     if (theme) {

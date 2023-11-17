@@ -68,6 +68,9 @@ importers:
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
+      let-it-go:
+        specifier: ^1.0.0
+        version: 1.0.0
       lodash.merge:
         specifier: ^4.6.2
         version: 4.6.2
@@ -7626,6 +7629,10 @@ packages:
     dependencies:
       language-subtag-registry: 0.3.22
     dev: true
+
+  /let-it-go@1.0.0:
+    resolution: {integrity: sha512-yzn7EFjddUpsSzhCsJSh8aWGNcTelVaPOUfOvHuR/4VZjpRQNZFznkiTT5dw4txP0aUQ4/B4lLsY37PwBHw0kA==}
+    dev: false
 
   /leven@3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
