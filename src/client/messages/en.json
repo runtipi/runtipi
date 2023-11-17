@@ -212,7 +212,7 @@
         "submit": "Uninstall"
       },
       "reset-app-form": {
-        "title": "Reset {name} app ?",
+        "title": "Reset {name} ?",
         "subtitle": "All data for this app will be lost.",
         "warning": "Are you sure? This action cannot be undone.",
         "submit": "Reset"
