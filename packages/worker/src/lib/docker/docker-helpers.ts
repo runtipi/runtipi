@@ -6,7 +6,7 @@ import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
 
 const composeUp = async (args: string[]) => {
   logger.info(`Running docker compose with args ${args.join(' ')}`);
-  const { stdout, stderr } = await execAsync(`docker compose ${args.join(' ')}`);
+  const { stdout, stderr } = await execAsync(`docker-compose ${args.join(' ')}`);
 
   if (stderr && stderr.includes('Command failed:')) {
     throw new Error(stderr);
