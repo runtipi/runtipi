@@ -5,8 +5,23 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
 # Install docker
 RUN apk upgrade --update-cache --available && \
-  apk add openssl git docker docker-cli-compose curl unzip && \
+  apk add openssl git docker docker-cli-compose curl && \
   rm -rf /var/cache/apk/*
+
+ARG TARGETARCH
+ENV TARGETARCH=${TARGETARCH}
+
+RUN echo "Building for ${TARGETARCH}"
+
+RUN if [ "${TARGETARCH}" = "arm64" ]; then \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-linux-aarch64"; \
+  elif [ "${TARGETARCH}" = "amd64" ]; then \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-linux-x86_64"; \
+  fi
+
+RUN chmod +x docker-binary
+
+RUN mv docker-binary /usr/local/bin/docker-compose
 
 RUN npm install pnpm -g
 
