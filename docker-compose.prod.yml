@@ -60,7 +60,6 @@ services:
       context: .
       dockerfile: ./packages/worker/Dockerfile
     container_name: tipi-worker
-    user: root
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
       interval: 5s
