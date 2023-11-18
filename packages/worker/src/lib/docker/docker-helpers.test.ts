@@ -34,7 +34,7 @@ describe('docker helpers', async () => {
 
     // assert
     const expected = [
-      'docker compose',
+      'docker-compose',
       `--env-file /storage/app-data/${appId}/app.env`,
       `--project-name ${appId}`,
       `-f /app/apps/${appId}/docker-compose.yml`,
@@ -58,7 +58,7 @@ describe('docker helpers', async () => {
 
     // assert
     const expected = [
-      'docker compose',
+      'docker-compose',
       `--env-file /storage/app-data/${appId}/app.env`,
       `--env-file ${userEnvFile}`,
       `--project-name ${appId}`,
@@ -83,7 +83,7 @@ describe('docker helpers', async () => {
 
     // assert
     const expected = [
-      'docker compose',
+      'docker-compose',
       `--env-file /storage/app-data/${appId}/app.env`,
       `--project-name ${appId}`,
       `-f /app/apps/${appId}/docker-compose.yml`,
@@ -112,7 +112,7 @@ describe('docker helpers', async () => {
 
     // assert
     const expected = [
-      'docker compose',
+      'docker-compose',
       `--env-file /storage/app-data/${appId}/app.env`,
       `--project-name ${appId}`,
       `-f ${arm64ComposeFile}`,
