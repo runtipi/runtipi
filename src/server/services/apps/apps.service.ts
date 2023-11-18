@@ -367,6 +367,20 @@ export class AppServiceClass {
   };
 
   /**
+   * Reset App with the specified ID
+   *
+   * @param {string} id - ID of the app to reset
+   * @throws {Error} - If the app is not found or if the update process fails.
+   */
+  public resetApp = async (id: string) => {
+    const appInfo = await this.getApp(id);
+
+    await this.stopApp(id);
+    await this.uninstallApp(id);
+    await this.installApp(id, castAppConfig(appInfo.config));
+  };
+
+  /**
    * Returns a list of all installed apps
    */
   public installedApps = async () => {

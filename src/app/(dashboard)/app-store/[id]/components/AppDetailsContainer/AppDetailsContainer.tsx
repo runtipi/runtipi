@@ -16,6 +16,7 @@ import { AppStatus } from '@/components/AppStatus';
 import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { AppService } from '@/server/services/apps/apps.service';
+import { resetAppAction } from '@/actions/app-actions/reset-app-action';
 import { InstallModal } from '../InstallModal';
 import { StopModal } from '../StopModal';
 import { UninstallModal } from '../UninstallModal';
@@ -24,6 +25,7 @@ import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal'
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
 import { FormValues } from '../InstallForm';
+import { ResetAppModal } from '../ResetAppModal.tsx';
 
 interface IProps {
   app: Awaited<ReturnType<AppService['getApp']>>;
@@ -40,6 +42,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   const stopDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
   const updateSettingsDisclosure = useDisclosure();
+  const resetAppDisclosure = useDisclosure();
 
   const installMutation = useAction(installAppAction, {
     onSuccess: (data) => {
@@ -111,6 +114,19 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
     },
   });
 
+  const resetMutation = useAction(resetAppAction, {
+    onSuccess: (data) => {
+      if (!data.success) {
+        toast.error(data.failure.reason);
+        resetAppDisclosure.close();
+      } else {
+        resetAppDisclosure.close();
+        toast.success(t('apps.app-details.app-reset-success'));
+        setCustomStatus('running');
+      }
+    },
+  });
+
   const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
 
   const handleInstallSubmit = async (values: FormValues) => {
@@ -147,6 +163,17 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
     updateMutation.execute({ id: app.id });
   };
 
+  const handleResetSubmit = () => {
+    setCustomStatus('stopping');
+    resetMutation.execute({ id: app.id });
+    resetAppDisclosure.open();
+  };
+
+  const openResetAppModal = () => {
+    updateSettingsDisclosure.close();
+    resetAppDisclosure.open();
+  };
+
   const handleOpen = (type: OpenType) => {
     let url = '';
     const { https } = app.info;
@@ -177,12 +204,15 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
       <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={app.info} />
       <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={app.info} />
       <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={app.info} newVersion={newVersion} />
+      <ResetAppModal onConfirm={handleResetSubmit} isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={app.info} isLoading={resetMutation.status === 'executing'} />
       <UpdateSettingsModal
         onSubmit={handleUpdateSettingsSubmit}
         isOpen={updateSettingsDisclosure.isOpen}
         onClose={updateSettingsDisclosure.close}
         info={app.info}
         config={castAppConfig(app?.config)}
+        onReset={openResetAppModal}
+        status={customStatus}
       />
       <div className="card-header d-flex flex-column flex-md-row">
         <AppLogo id={app.id} size={130} alt={app.info.name} />

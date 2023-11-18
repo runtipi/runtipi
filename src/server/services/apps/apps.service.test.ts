@@ -351,6 +351,21 @@ describe('Update app config', () => {
   });
 });
 
+describe('Reset app', () => {
+  it('Should correctly reset app', async () => {
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'running' }, appConfig, db);
+
+    // act
+    await AppsService.resetApp(appConfig.id);
+    const app = await getAppById(appConfig.id, db);
+
+    // assert
+    expect(app?.status).toBe('running');
+  });
+});
+
 describe('Get app config', () => {
   it('Should correctly get app config', async () => {
     // arrange
