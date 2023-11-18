@@ -364,11 +364,20 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "cchalop1",
+      "name": "CHALOPIN Clément",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28163855?v=4",
+      "profile": "http://cchalop1.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "projectName": "runtipi",
-  "projectOwner": "meienberger",
+  "projectOwner": "runtipi",
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,
