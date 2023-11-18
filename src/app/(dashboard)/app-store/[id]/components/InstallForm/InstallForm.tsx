@@ -18,7 +18,7 @@ interface IProps {
   initalValues?: { [key: string]: unknown };
   info: AppInfo;
   loading?: boolean;
-  onReset: () => void;
+  onReset?: () => void;
   status?: AppStatus;
 }
 
@@ -61,7 +61,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
 
   const onClickReset = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    onReset();
+    if (onReset) onReset();
   };
 
   const renderField = (field: FormField) => {
@@ -174,7 +174,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
       <Button loading={loading} type="submit" className="btn-success">
         {initalValues ? t('submit-update') : t('sumbit-install')}
       </Button>
-      {initalValues && (
+      {initalValues && onReset && (
         <Button loading={status === 'resetting'} onClick={onClickReset} className="btn-danger ms-2">
           {t('reset')}
         </Button>

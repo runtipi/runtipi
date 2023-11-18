@@ -377,7 +377,7 @@ export class AppServiceClass {
 
     await this.stopApp(id);
     await this.uninstallApp(id);
-    await this.installApp(id, appInfo.config);
+    await this.installApp(id, castAppConfig(appInfo.config));
   };
 
   /**

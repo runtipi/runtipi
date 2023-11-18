@@ -118,6 +118,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
     onSuccess: (data) => {
       if (!data.success) {
         toast.error(data.failure.reason);
+        resetAppDisclosure.close();
       } else {
         resetAppDisclosure.close();
         toast.success(t('apps.app-details.app-reset-success'));
@@ -163,7 +164,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   };
 
   const handleResetSubmit = () => {
-    setCustomStatus('resetting');
+    setCustomStatus('stopping');
     resetMutation.execute({ id: app.id });
     resetAppDisclosure.open();
   };
@@ -203,7 +204,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
       <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={app.info} />
       <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={app.info} />
       <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={app.info} newVersion={newVersion} />
-      <ResetAppModal onConfirm={handleResetSubmit} isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={app.info} isLoading={customStatus === 'resetting'} />
+      <ResetAppModal onConfirm={handleResetSubmit} isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={app.info} isLoading={resetMutation.status === 'executing'} />
       <UpdateSettingsModal
         onSubmit={handleUpdateSettingsSubmit}
         isOpen={updateSettingsDisclosure.isOpen}
