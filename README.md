@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-39-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-40-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -122,6 +122,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/FabioCingottini"><img src="https://avatars.githubusercontent.com/u/32102735?v=4?s=100" width="100px;" alt="Fabio Cingottini"/><br /><sub><b>Fabio Cingottini</b></sub></a><br /><a href="#translation-FabioCingottini" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/itsrllyhim"><img src="https://avatars.githubusercontent.com/u/143047010?v=4?s=100" width="100px;" alt="him"/><br /><sub><b>him</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=itsrllyhim" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://cchalop1.com"><img src="https://avatars.githubusercontent.com/u/28163855?v=4?s=100" width="100px;" alt="CHALOPIN Clément"/><br /><sub><b>CHALOPIN Clément</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=cchalop1" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/geetansh"><img src="https://avatars.githubusercontent.com/u/9976198?v=4?s=100" width="100px;" alt="Geetansh Jindal"/><br /><sub><b>Geetansh Jindal</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=geetansh" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
