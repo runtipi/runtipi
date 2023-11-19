@@ -29,12 +29,12 @@ export class TipiConfig {
     const envMap = envStringToMap(envFile.toString());
 
     const conf = { ...process.env, ...Object.fromEntries(envMap), ...nextConfig().serverRuntimeConfig };
-    const envConfig: z.infer<typeof envSchema> = {
+    const envConfig: z.input<typeof envSchema> = {
       postgresHost: conf.POSTGRES_HOST,
       postgresDatabase: conf.POSTGRES_DBNAME,
       postgresUsername: conf.POSTGRES_USERNAME,
       postgresPassword: conf.POSTGRES_PASSWORD,
-      postgresPort: Number(conf.POSTGRES_PORT || 5432),
+      postgresPort: Number(conf.POSTGRES_PORT),
       REDIS_HOST: conf.REDIS_HOST,
       redisPassword: conf.REDIS_PASSWORD,
       NODE_ENV: conf.NODE_ENV,
@@ -84,7 +84,14 @@ export class TipiConfig {
   }
 
   public getConfig() {
-    return { ...this.config, ...this.getFileConfig() };
+    let conf = { ...this.config, ...this.getFileConfig() };
+
+    // If we are not in test mode, we need to set the postgres port to 5432 (internal port)
+    if (conf.NODE_ENV !== 'test') {
+      conf = { ...conf, postgresPort: 5432 };
+    }
+
+    return conf;
   }
 
   public getSettings() {

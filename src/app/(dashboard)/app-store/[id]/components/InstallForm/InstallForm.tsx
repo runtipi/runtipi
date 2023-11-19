@@ -175,7 +175,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         {initalValues ? t('submit-update') : t('sumbit-install')}
       </Button>
       {initalValues && onReset && (
-        <Button loading={status === 'resetting'} onClick={onClickReset} className="btn-danger ms-2">
+        <Button loading={status === 'stopping'} onClick={onClickReset} className="btn-danger ms-2">
           {t('reset')}
         </Button>
       )}

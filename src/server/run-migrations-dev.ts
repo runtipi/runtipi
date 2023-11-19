@@ -17,7 +17,7 @@ export const runPostgresMigrations = async (dbName?: string) => {
     host: postgresHost,
     database: dbName || postgresDatabase,
     password: postgresPassword,
-    port: Number(postgresPort),
+    port: Number(process.env.POSTGRES_PORT),
   });
   await client.connect();
 
