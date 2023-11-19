@@ -25,7 +25,7 @@ import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal'
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
 import { FormValues } from '../InstallForm';
-import { ResetAppModal } from '../ResetAppModal.tsx';
+import { ResetAppModal } from '../ResetAppModal';
 
 interface IProps {
   app: Awaited<ReturnType<AppService['getApp']>>;
