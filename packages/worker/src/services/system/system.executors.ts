@@ -37,7 +37,7 @@ export class SystemExecutors {
     }
 
     const disks = await si.fsSize();
-    const disk0 = disks.find((disk) => disk.mount.startsWith('/mnt/host') && disk.type === 'fakeowner');
+    const disk0 = disks.find((disk) => disk.mount.startsWith('/mnt/host'));
 
     return {
       cpu: { load: currentLoad },

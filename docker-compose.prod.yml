@@ -76,7 +76,7 @@ services:
     environment:
       NODE_ENV: production
     volumes:
-      - /:/host/root:ro
+      - /:/mnt/host:ro
       - /proc:/host/proc
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PWD}/.env:/app/.env
