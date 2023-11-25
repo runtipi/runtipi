@@ -132,6 +132,24 @@ jobs:
           name: cli
           path: packages/cli/dist
 
+  create-tag:
+    needs: [build-images, build-cli]
+    runs-on: ubuntu-latest
+    outputs:
+      tagname: ${{ steps.create_tag.outputs.tagname }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Tag
+        id: create_tag
+        uses: Klemensas/action-autotag@stable
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag_prefix: 'v'
+          tag_suffix: '-beta.${{ github.event.inputs.tag }}'
+
   publish-release:
     runs-on: ubuntu-latest
     needs: [create-tag, build-images, build-cli, build-worker]
