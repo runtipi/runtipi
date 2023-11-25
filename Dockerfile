@@ -33,7 +33,8 @@ RUN npm run build
 FROM node_base AS app
 
 ENV NODE_ENV production
-# USER node
+
+USER node
 
 WORKDIR /app
 
