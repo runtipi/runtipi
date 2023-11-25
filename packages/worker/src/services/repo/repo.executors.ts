@@ -1,6 +1,6 @@
 import path from 'path';
 import { execAsync, pathExists } from '@runtipi/shared';
-import { getRepoHash } from './repo.helpers';
+import { getRepoHash, getRepoBaseUrlAndBranch } from './repo.helpers';
 import { logger } from '@/lib/logger';
 
 export class RepoExecutors {
@@ -26,21 +26,32 @@ export class RepoExecutors {
   /**
    * Given a repo url, clone it to the repos folder if it doesn't exist
    *
-   * @param {string} repoUrl
+   * @param {string} url
    */
-  public cloneRepo = async (repoUrl: string) => {
+  public cloneRepo = async (url: string) => {
     try {
-      const repoHash = getRepoHash(repoUrl);
+      // We may have a potential branch computed in the hash (see getRepoBaseUrlAndBranch)
+      // so we do it here before splitting the url into repoUrl and branch
+      const repoHash = getRepoHash(url);
       const repoPath = path.join('/app', 'repos', repoHash);
 
       if (await pathExists(repoPath)) {
-        this.logger.info(`Repo ${repoUrl} already exists`);
+        this.logger.info(`Repo ${url} already exists`);
         return { success: true, message: '' };
       }
 
-      this.logger.info(`Cloning repo ${repoUrl} to ${repoPath}`);
+      const [repoUrl, branch] = getRepoBaseUrlAndBranch(url);
 
-      await execAsync(`git clone ${repoUrl} ${repoPath}`);
+      let cloneCommand;
+      if (branch) {
+        this.logger.info(`Cloning repo ${repoUrl} on branch ${branch} to ${repoPath}`);
+        cloneCommand = `git clone -b ${branch} ${repoUrl} ${repoPath}`;
+      } else {
+        this.logger.info(`Cloning repo ${repoUrl} to ${repoPath}`);
+        cloneCommand = `git clone ${repoUrl} ${repoPath}`;
+      }
+
+      await execAsync(cloneCommand);
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
