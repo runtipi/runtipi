@@ -341,6 +341,7 @@ export class AppServiceClass {
    */
   public updateApp = async (id: string) => {
     const app = await this.queries.getApp(id);
+    const appStatusBeforeUpdate = app?.status;
 
     if (!app) {
       throw new TranslatedError('server-messages.errors.app-not-found', { id });
@@ -355,14 +356,19 @@ export class AppServiceClass {
     if (success) {
       const appInfo = getAppInfo(app.id, app.status);
 
-      await this.queries.updateApp(id, { status: 'running', version: appInfo?.tipi_version });
+      await this.queries.updateApp(id, { version: appInfo?.tipi_version });
+      if (appStatusBeforeUpdate === 'running') {
+        await this.startApp(id);
+      } else {
+        await this.queries.updateApp(id, { status: appStatusBeforeUpdate });
+      }
     } else {
       await this.queries.updateApp(id, { status: 'stopped' });
       Logger.error(`Failed to update app ${id}: ${stdout}`);
       throw new TranslatedError('server-messages.errors.app-failed-to-update', { id });
     }
 
-    const updatedApp = await this.queries.updateApp(id, { status: 'stopped' });
+    const updatedApp = await this.getApp(id);
     return updatedApp;
   };
 

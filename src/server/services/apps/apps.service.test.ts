@@ -505,6 +505,16 @@ describe('Update app', () => {
     const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('stopped');
   });
+  it('Should comme back to the previous status before the update of the app', async () => {
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'stopped' }, appConfig, db);
+
+    // act & assert
+    await updateApp(appConfig.id, { version: 0 }, db);
+    const app = await getAppById(appConfig.id, db);
+    expect(app?.status).toBe('stopped');
+  });
 });
 
 describe('installedApps', () => {
