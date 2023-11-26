@@ -477,7 +477,7 @@ describe('Update app', () => {
   it('Should correctly update app', async () => {
     // arrange
     const appConfig = createAppConfig({});
-    await insertApp({ version: 12, config: { TEST_FIELD: 'test' } }, appConfig, db);
+    await insertApp({ version: 12, status: 'running', config: { TEST_FIELD: 'test' } }, appConfig, db);
 
     // act
     await updateApp(appConfig.id, { version: 0 }, db);
@@ -487,7 +487,7 @@ describe('Update app', () => {
     expect(app).toBeDefined();
     expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
     expect(app?.version).toBe(appConfig.tipi_version);
-    expect(app?.status).toBe('stopped');
+    expect(app?.status).toBe('running');
   });
 
   it("Should throw if app doesn't exist", async () => {
