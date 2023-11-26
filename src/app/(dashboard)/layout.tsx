@@ -5,6 +5,7 @@ import { SystemServiceClass } from '@/server/services/system';
 import semver from 'semver';
 import clsx from 'clsx';
 import { AppServiceClass } from '@/server/services/apps/apps.service';
+import { getConfig } from '@/server/core/TipiConfig';
 import { Header } from './components/Header';
 import { PageTitle } from './components/PageTitle';
 import styles from './layout.module.scss';
@@ -12,6 +13,7 @@ import { LayoutActions } from './components/LayoutActions/LayoutActions';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getUserFromCookie();
+  const { allowAutoThemes } = getConfig();
 
   const { apps } = await AppServiceClass.listApps();
 
@@ -25,7 +27,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="page">
-      <Header isUpdateAvailable={!isLatest} />
+      <Header isUpdateAvailable={!isLatest} autoTheme={allowAutoThemes} />
       <div className="page-wrapper">
         <div className="page-header d-print-none">
           <div className="container-xl">

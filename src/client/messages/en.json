@@ -251,6 +251,8 @@
       "invalid-domain": "Invalid domain",
       "guest-dashboard": "Enable guest dashboard",
       "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-auto-themes": "Allow auto themes",
+      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "Domain name",
       "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
       "dns-ip": "DNS IP",

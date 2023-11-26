@@ -58,9 +58,17 @@ export const envSchema = z.object({
       if (typeof value === 'boolean') return value;
       return value === 'true';
     }),
+  allowAutoThemes: z
+    .string()
+    .or(z.boolean())
+    .optional()
+    .transform((value) => {
+      if (typeof value === 'boolean') return value;
+      return value === 'true';
+    }),
 });
 
 export const settingsSchema = envSchema
   .partial()
-  .pick({ dnsIp: true, internalIp: true, postgresPort: true, appsRepoUrl: true, domain: true, storagePath: true, localDomain: true, demoMode: true, guestDashboard: true })
+  .pick({ dnsIp: true, internalIp: true, postgresPort: true, appsRepoUrl: true, domain: true, storagePath: true, localDomain: true, demoMode: true, guestDashboard: true, allowAutoThemes: true })
   .and(z.object({ port: z.number(), sslPort: z.number(), listenIp: z.string().ip().trim() }).partial());

@@ -19,6 +19,7 @@ export type SettingsFormValues = {
   storagePath?: string;
   localDomain?: string;
   guestDashboard?: boolean;
+  allowAutoThemes?: boolean;
 };
 
 interface IProps {
@@ -133,6 +134,29 @@ export const SettingsForm = (props: IProps) => {
                     {t('guest-dashboard')}
                     <Tooltip anchorSelect=".guest-dashboard-hint">{t('guest-dashboard-hint')}</Tooltip>
                     <span className={clsx('ms-1 form-help guest-dashboard-hint')}>?</span>
+                  </>
+                }
+              />
+            )}
+          />
+        </div>
+        <div className="mb-3">
+          <Controller
+            control={control}
+            name="allowAutoThemes"
+            defaultValue={false}
+            render={({ field: { onChange, value, ref, ...rest } }) => (
+              <Switch
+                className="mb-3"
+                ref={ref}
+                checked={value}
+                onCheckedChange={onChange}
+                {...rest}
+                label={
+                  <>
+                    {t('allow-auto-themes')}
+                    <Tooltip anchorSelect=".allow-auto-themes-hint">{t('allow-auto-themes-hint')}</Tooltip>
+                    <span className={clsx('ms-1 form-help allow-auto-themes-hint')}>?</span>
                   </>
                 }
               />

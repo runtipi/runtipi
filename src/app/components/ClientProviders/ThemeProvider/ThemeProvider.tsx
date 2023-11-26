@@ -3,14 +3,22 @@
 import { useUIStore } from '@/client/state/uiStore';
 import React, { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
+import { getAutoTheme } from '@/lib/themes';
 
 type Props = {
   children: React.ReactNode;
+  allowAutoThemes: boolean;
   initialTheme?: string;
 };
 
+const loadChristmasTheme = async () => {
+  const { default: LetItGo } = await import('let-it-go');
+  const snow = new LetItGo({ number: 50 });
+  snow.letItGoAgain();
+};
+
 export const ThemeProvider = (props: Props) => {
-  const { children, initialTheme } = props;
+  const { children, initialTheme, allowAutoThemes } = props;
   const cookies = useCookies();
   const { theme, setDarkMode } = useUIStore();
 
@@ -29,6 +37,13 @@ export const ThemeProvider = (props: Props) => {
     const cookieTheme = cookies.get('theme');
     setDarkMode(cookieTheme === 'dark');
   }, [cookies, initialTheme, setDarkMode, theme]);
+
+  useEffect(() => {
+    const autoTheme = getAutoTheme();
+    if (autoTheme === 'christmas' && allowAutoThemes && typeof window !== 'undefined') {
+      loadChristmasTheme();
+    }
+  }, [allowAutoThemes]);
 
   return children;
 };

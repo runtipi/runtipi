@@ -13,14 +13,16 @@ import { useAction } from 'next-safe-action/hook';
 import { logoutAction } from '@/actions/logout/logout-action';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
+import { getLogo } from '@/lib/themes';
 import { NavBar } from '../NavBar';
 
 interface IProps {
   isUpdateAvailable?: boolean;
   authenticated?: boolean;
+  autoTheme: boolean;
 }
 
-export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = true }) => {
+export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = true, autoTheme }) => {
   const { setDarkMode } = useUIStore();
   const t = useTranslations('header');
 
@@ -55,7 +57,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
               className={clsx('navbar-brand-image me-3')}
               width={100}
               height={100}
-              src="/tipi.png"
+              src={getLogo(autoTheme)}
               style={{
                 width: '30px',
                 maxWidth: '30px',
