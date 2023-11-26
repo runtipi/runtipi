@@ -78,6 +78,7 @@ services:
       NODE_ENV: production
     volumes:
       # Core
+      - /:/host/root:ro
       - /proc:/host/proc
       - /var/run/docker.sock:/var/run/docker.sock
       # App
