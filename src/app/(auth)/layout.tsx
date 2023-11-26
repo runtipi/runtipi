@@ -1,10 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
 import { getCurrentLocale } from 'src/utils/getCurrentLocale';
+import { getLogo } from '@/lib/themes';
+import { getConfig } from '@/server/core/TipiConfig';
 import { LanguageSelector } from '../components/LanguageSelector';
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const locale = getCurrentLocale();
+  const { allowAutoThemes } = getConfig();
 
   return (
     <div className="page page-center">
@@ -15,7 +18,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         <div className="text-center mb-4">
           <Image
             alt="Tipi logo"
-            src="/tipi.png"
+            src={getLogo(allowAutoThemes)}
             height={50}
             width={50}
             style={{
