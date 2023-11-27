@@ -382,6 +382,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "0livier",
+      "name": "Olivier Garcia",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10607?v=4",
+      "profile": "https://github.com/0livier",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
