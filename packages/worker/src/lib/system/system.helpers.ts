@@ -259,16 +259,7 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
 };
 
 export const ensureFilePermissions = async () => {
-  const filesAndFolders = [
-    path.join(ROOT_FOLDER, 'apps'),
-    path.join(ROOT_FOLDER, 'logs'),
-    path.join(ROOT_FOLDER, 'repos'),
-    path.join(ROOT_FOLDER, 'state'),
-    path.join(ROOT_FOLDER, 'traefik'),
-    path.join(ROOT_FOLDER, '.env'),
-    path.join(ROOT_FOLDER, 'VERSION'),
-    path.join(ROOT_FOLDER, 'docker-compose.yml'),
-  ];
+  const filesAndFolders = [path.join(ROOT_FOLDER, 'state'), path.join(ROOT_FOLDER, 'traefik')];
 
   const files600 = [path.join(ROOT_FOLDER, 'traefik', 'shared', 'acme.json')];
 

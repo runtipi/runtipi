@@ -4,7 +4,7 @@ import path from 'node:path';
 import Redis from 'ioredis';
 import dotenv from 'dotenv';
 import { Queue } from 'bullmq';
-import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
+import { copySystemFiles, ensureFilePermissions, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
 import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
@@ -29,6 +29,9 @@ const main = async () => {
 
     logger.info('Generating TLS certificates...');
     await generateTlsCertificates({ domain: envMap.get('LOCAL_DOMAIN') });
+
+    logger.info('Ensuring file permissions...');
+    await ensureFilePermissions();
 
     logger.info('Starting queue...');
     const queue = new Queue('events', { connection: { host: envMap.get('REDIS_HOST'), port: 6379, password: envMap.get('REDIS_PASSWORD') } });
