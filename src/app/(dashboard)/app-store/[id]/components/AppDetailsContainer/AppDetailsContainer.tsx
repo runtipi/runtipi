@@ -94,11 +94,11 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
 
   const updateMutation = useAction(updateAppAction, {
     onSuccess: (data) => {
+      setCustomStatus(app.status);
+
       if (!data.success) {
-        setCustomStatus(app.status);
         toast.error(data.failure.reason);
       } else {
-        setCustomStatus('stopped');
         toast.success(t('apps.app-details.update-success'));
       }
     },
