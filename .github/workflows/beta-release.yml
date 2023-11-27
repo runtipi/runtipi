@@ -49,7 +49,7 @@ jobs:
         with:
           context: .
           file: ./packages/worker/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/worker:${{ needs.create-tag.outputs.tagname }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/worker:buildcache
@@ -79,7 +79,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.create-tag.outputs.tagname }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache
