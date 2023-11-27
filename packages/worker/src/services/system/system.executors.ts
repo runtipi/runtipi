@@ -36,7 +36,8 @@ export class SystemExecutors {
       this.logger.error(`Unable to read /host/proc/meminfo: ${e}`);
     }
 
-    const [disk0] = await si.fsSize();
+    const disks = await si.fsSize();
+    const disk0 = disks.find((disk) => disk.mount.startsWith('/host/root'));
 
     return {
       cpu: { load: currentLoad },
