@@ -72,9 +72,6 @@ jobs:
         run: |
           while ! ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${{ steps.get-droplet-ip.outputs.droplet_ip }} "echo 'SSH is ready'"; do sleep 5; done
 
-      - name: Wait 1 minute for Droplet to be ready
-        run: sleep 60
-
       - name: Create docker group on Droplet
         uses: fifsky/ssh-action@master
         with:
@@ -84,6 +81,10 @@ jobs:
           host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
           user: root
           key: ${{ secrets.SSH_KEY }}
+
+      - name: Wait for dpkg lock to be released
+        run: |
+          while ! ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${{ steps.get-droplet-ip.outputs.droplet_ip }} "dpkg --configure -a"; do sleep 5; done
 
       - name: Deploy app to Droplet
         uses: fifsky/ssh-action@master

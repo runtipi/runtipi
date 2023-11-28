@@ -11,19 +11,20 @@ jobs:
   create-tag:
     runs-on: ubuntu-latest
     outputs:
-      tagname: ${{ steps.create_tag.outputs.tagname }}
-
+      tagname: ${{ steps.get_tag.outputs.tagname }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create Tag
-        id: create_tag
-        uses: Klemensas/action-autotag@stable
+      - name: Get tag from package.json
+        id: get_tag
+        run: |
+          VERSION=$(npm run version --silent)
+          echo "tagname=v${VERSION}-alpha.${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+
+      - uses: rickstaa/action-create-tag@v1
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag_prefix: 'v'
-          tag_suffix: '-alpha.${{ github.event.inputs.tag }}'
+          tag: ${{ steps.get_tag.outputs.tagname }}
 
   build-worker:
     runs-on: ubuntu-latest
@@ -144,25 +145,21 @@ jobs:
           name: cli
           path: cli
 
+      - name: Rename CLI
+        run: |
+          mv cli/bin/cli-x64 ./runtipi-cli-linux-x64
+
       - name: Create alpha release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           body: |
             **${{ needs.create-tag.outputs.tagname }}**
           tag_name: ${{ needs.create-tag.outputs.tagname }}
-          release_name: ${{ needs.create-tag.outputs.tagname }}
+          name: ${{ needs.create-tag.outputs.tagname }}
           draft: false
           prerelease: true
-
-      - name: Upload X64 Linux CLI binary to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: cli/bin/cli-x64
-          asset_name: runtipi-cli-linux-x64
-          asset_content_type: application/octet-stream
+          files: |
+            runtipi-cli-linux-x64
