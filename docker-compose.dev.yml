@@ -60,7 +60,6 @@ services:
       context: .
       dockerfile: ./packages/worker/Dockerfile.dev
     container_name: tipi-worker
-    user: root
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
       interval: 5s
@@ -80,7 +79,6 @@ services:
       # Dev mode
       - ${PWD}/packages/worker/src:/app/packages/worker/src
       # Production mode
-      - /:/host/root:ro
       - /proc:/host/proc:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PWD}/.env:/app/.env
