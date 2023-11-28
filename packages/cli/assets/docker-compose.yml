@@ -4,10 +4,12 @@ services:
   tipi-reverse-proxy:
     container_name: tipi-reverse-proxy
     image: traefik:v2.8
-    restart: on-failure
+    restart: unless-stopped
+    depends_on:
+      - tipi-dashboard
     ports:
-      - ${NGINX_PORT-80}:80
-      - ${NGINX_PORT_SSL-443}:443
+      - ${NGINX_PORT:-80}:80
+      - ${NGINX_PORT_SSL:-443}:443
     command: --providers.docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -22,7 +24,7 @@ services:
     restart: on-failure
     stop_grace_period: 1m
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT:-5432}:5432
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     environment:
@@ -40,7 +42,7 @@ services:
   tipi-redis:
     container_name: tipi-redis
     image: redis:7.2.0
-    restart: on-failure
+    restart: unless-stopped
     command: redis-server --requirepass ${REDIS_PASSWORD}
     ports:
       - 6379:6379
@@ -54,12 +56,16 @@ services:
     networks:
       - tipi_main_network
 
-  tipi-dashboard:
-    image: ghcr.io/runtipi/runtipi:${TIPI_VERSION}
-    restart: on-failure
-    container_name: tipi-dashboard
-    networks:
-      - tipi_main_network
+  tipi-worker:
+    container_name: tipi-worker
+    image: ghcr.io/runtipi/worker:${TIPI_VERSION}
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
+      interval: 5s
+      timeout: 10s
+      retries: 120
+      start_period: 5s
     depends_on:
       tipi-db:
         condition: service_healthy
@@ -70,13 +76,46 @@ services:
     environment:
       NODE_ENV: production
     volumes:
-      - ./.env:/runtipi/.env
+      # Core
+      - /proc:/host/proc
+      - /var/run/docker.sock:/var/run/docker.sock
+      # App
+      - ./.env:/app/.env
+      - ./state:/app/state
+      - ./repos:/app/repos
+      - ./apps:/app/apps
+      - ./logs:/app/logs
+      - ./traefik:/app/traefik
+      - ./user-config:/app/user-config
+      - ./media:/app/media
+      - ${STORAGE_PATH:-.}:/storage
+    networks:
+      - tipi_main_network
+
+  tipi-dashboard:
+    image: ghcr.io/runtipi/runtipi:${TIPI_VERSION}
+    restart: unless-stopped
+    container_name: tipi-dashboard
+    networks:
+      - tipi_main_network
+    depends_on:
+      tipi-db:
+        condition: service_healthy
+      tipi-redis:
+        condition: service_healthy
+      tipi-worker:
+        condition: service_healthy
+    volumes:
+      - ./.env:/runtipi/.env:ro
       - ./state:/runtipi/state
       - ./repos:/runtipi/repos:ro
       - ./apps:/runtipi/apps
       - ./logs:/app/logs
-      - ./traefik:/runtipi/traefik
-      - ${STORAGE_PATH}:/app/storage
+      - ${STORAGE_PATH:-.}:/app/storage
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
     labels:
       # Main
       traefik.enable: true

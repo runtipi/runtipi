@@ -5,11 +5,11 @@ import { cookies } from 'next/headers';
 import { Inter } from 'next/font/google';
 import merge from 'lodash.merge';
 import { NextIntlClientProvider } from 'next-intl';
+import { getConfig } from '@/server/core/TipiConfig';
 
 import './global.css';
 import clsx from 'clsx';
 import { Toaster } from 'react-hot-toast';
-import { StatusProvider } from '@/components/hoc/StatusProvider';
 import { getCurrentLocale } from '../utils/getCurrentLocale';
 import { ClientProviders } from './components/ClientProviders';
 
@@ -32,12 +32,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   const theme = cookies().get('theme');
 
+  const { allowAutoThemes } = getConfig();
+
   return (
     <html lang={locale} className={clsx(inter.className, 'border-top-wide border-primary')}>
       <NextIntlClientProvider locale={locale} messages={mergedMessages}>
-        <ClientProviders initialTheme={theme?.value} cookies={cookies().getAll()}>
+        <ClientProviders initialTheme={theme?.value} cookies={cookies().getAll()} allowAutoThemes={allowAutoThemes}>
           <body data-bs-theme={theme?.value}>
-            <StatusProvider>{children}</StatusProvider>
+            {children}
             <Toaster />
           </body>
         </ClientProviders>

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { envSchema, settingsSchema } from '@runtipi/shared';
+import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
 import fs from 'fs-extra';
 import nextConfig from 'next/config';
 import { readJsonFile } from '../../common/fs.helpers';
@@ -19,13 +19,22 @@ export class TipiConfig {
   private config: z.infer<typeof envSchema> = {} as z.infer<typeof envSchema>;
 
   constructor() {
-    const conf = { ...process.env, ...nextConfig()?.serverRuntimeConfig };
-    const envConfig: z.infer<typeof envSchema> = {
+    let envFile = '';
+    try {
+      envFile = fs.readFileSync('/runtipi/.env').toString();
+    } catch (e) {
+      Logger.error('❌ .env file not found');
+    }
+
+    const envMap = envStringToMap(envFile.toString());
+
+    const conf = { ...process.env, ...Object.fromEntries(envMap), ...nextConfig().serverRuntimeConfig };
+    const envConfig: z.input<typeof envSchema> = {
       postgresHost: conf.POSTGRES_HOST,
       postgresDatabase: conf.POSTGRES_DBNAME,
       postgresUsername: conf.POSTGRES_USERNAME,
       postgresPassword: conf.POSTGRES_PASSWORD,
-      postgresPort: Number(conf.POSTGRES_PORT || 5432),
+      postgresPort: Number(conf.POSTGRES_PORT),
       REDIS_HOST: conf.REDIS_HOST,
       redisPassword: conf.REDIS_PASSWORD,
       NODE_ENV: conf.NODE_ENV,
@@ -39,11 +48,11 @@ export class TipiConfig {
       domain: conf.DOMAIN,
       localDomain: conf.LOCAL_DOMAIN,
       dnsIp: conf.DNS_IP || '9.9.9.9',
-      status: 'RUNNING',
       storagePath: conf.STORAGE_PATH,
       demoMode: conf.DEMO_MODE,
       guestDashboard: conf.GUEST_DASHBOARD,
       seePreReleaseVersions: false,
+      allowAutoThemes: true,
     };
 
     const parsedConfig = envSchema.safeParse({ ...envConfig, ...this.getFileConfig() });
@@ -76,7 +85,14 @@ export class TipiConfig {
   }
 
   public getConfig() {
-    return { ...this.config, ...this.getFileConfig() };
+    let conf = { ...this.config, ...this.getFileConfig() };
+
+    // If we are not in test mode, we need to set the postgres port to 5432 (internal port)
+    if (conf.NODE_ENV !== 'test') {
+      conf = { ...conf, postgresPort: 5432 };
+    }
+
+    return conf;
   }
 
   public getSettings() {

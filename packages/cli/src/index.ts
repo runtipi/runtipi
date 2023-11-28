@@ -3,7 +3,6 @@ import { program } from 'commander';
 
 import chalk from 'chalk';
 import { description, version } from '../package.json';
-import { startWorker } from './services/watcher/watcher';
 import { AppExecutors, SystemExecutors } from './executors';
 
 const main = async () => {
@@ -12,21 +11,12 @@ const main = async () => {
   program.name('./runtipi-cli').usage('<command> [options]');
 
   program
-    .command('watch')
-    .description('Watcher script for events queue')
-    .action(async () => {
-      console.log('Starting watcher');
-      startWorker();
-    });
-
-  program
     .command('start')
     .description('Start tipi')
     .addHelpText('after', '\nExample call: sudo ./runtipi-cli start')
-    .option('--no-sudo', 'Skip sudo usage')
-    .action(async (options) => {
+    .action(async () => {
       const systemExecutors = new SystemExecutors();
-      await systemExecutors.start(options.sudo);
+      await systemExecutors.start();
     });
 
   program
@@ -81,10 +71,10 @@ const main = async () => {
       const appExecutors = new AppExecutors();
       switch (command) {
         case 'start':
-          await appExecutors.startApp(app, {});
+          await appExecutors.startApp(app);
           break;
         case 'stop':
-          await appExecutors.stopApp(app, {}, true);
+          await appExecutors.stopApp(app);
           break;
         default:
           console.log(chalk.red('✗'), 'Unknown command');

@@ -8,12 +8,15 @@ type Props = {
   children: React.ReactNode;
   cookies: ComponentProps<typeof CookiesProvider>['value'];
   initialTheme?: string;
+  allowAutoThemes: boolean;
 };
 
-export const ClientProviders = ({ children, initialTheme, cookies }: Props) => {
+export const ClientProviders = ({ children, initialTheme, cookies, allowAutoThemes }: Props) => {
   return (
     <CookiesProvider value={cookies}>
-      <ThemeProvider initialTheme={initialTheme}>{children}</ThemeProvider>
+      <ThemeProvider allowAutoThemes={allowAutoThemes} initialTheme={initialTheme}>
+        {children}
+      </ThemeProvider>
     </CookiesProvider>
   );
 };

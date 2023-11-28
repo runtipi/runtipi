@@ -1,6 +1,6 @@
 name: Tipi CI
 on:
-  push:
+  pull_request:
 
 env:
   ROOT_FOLDER: /runtipi

@@ -108,6 +108,7 @@
   "apps": {
     "status-running": "Running",
     "status-stopped": "Stopped",
+    "status-resetting": "Resetting",
     "status-starting": "Starting",
     "status-stopping": "Stopping",
     "status-updating": "Updating",
@@ -136,6 +137,7 @@
       "start-success": "App started successfully",
       "update-config-success": "App config updated successfully. Restart the app to apply the changes",
       "version": "Version",
+      "app-reset-success": "App reset successfully",
       "description": "Description",
       "base-info": "Base info",
       "source-code": "Source code",
@@ -183,6 +185,7 @@
         "choose-option": "Choose an option...",
         "sumbit-install": "Install",
         "submit-update": "Update",
+        "reset": "Reset app",
         "errors": {
           "required": "{label} is required",
           "regex": "{label} must match the pattern {pattern}",
@@ -208,10 +211,16 @@
         "warning": "Are you sure? This action cannot be undone.",
         "submit": "Uninstall"
       },
+      "reset-app-form": {
+        "title": "Reset {name} ?",
+        "subtitle": "All data for this app will be lost.",
+        "warning": "Are you sure? This action cannot be undone.",
+        "submit": "Reset"
+      },
       "update-form": {
         "title": "Update {name} ?",
         "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
+        "subtitle2": "Make sure you've read the release notes of the app and you've backed up your app data.",
         "submit": "Update"
       },
       "update-settings-form": {
@@ -242,6 +251,8 @@
       "invalid-domain": "Invalid domain",
       "guest-dashboard": "Enable guest dashboard",
       "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-auto-themes": "Allow auto themes",
+      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "Domain name",
       "domain-name-hint": "Make sure this exact domain contains an A record pointing to your IP.",
       "dns-ip": "DNS IP",

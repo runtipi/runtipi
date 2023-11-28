@@ -11,7 +11,6 @@ export const envSchema = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
   REDIS_HOST: z.string(),
   redisPassword: z.string(),
-  status: z.union([z.literal('RUNNING'), z.literal('UPDATING'), z.literal('RESTARTING')]),
   architecture: z.nativeEnum(ARCHITECTURES),
   dnsIp: z.string().ip().trim(),
   rootFolder: z.string(),
@@ -59,9 +58,17 @@ export const envSchema = z.object({
       if (typeof value === 'boolean') return value;
       return value === 'true';
     }),
+  allowAutoThemes: z
+    .string()
+    .or(z.boolean())
+    .optional()
+    .transform((value) => {
+      if (typeof value === 'boolean') return value;
+      return value === 'true';
+    }),
 });
 
 export const settingsSchema = envSchema
   .partial()
-  .pick({ dnsIp: true, internalIp: true, appsRepoUrl: true, domain: true, storagePath: true, localDomain: true, demoMode: true, guestDashboard: true })
+  .pick({ dnsIp: true, internalIp: true, postgresPort: true, appsRepoUrl: true, domain: true, storagePath: true, localDomain: true, demoMode: true, guestDashboard: true, allowAutoThemes: true })
   .and(z.object({ port: z.number(), sslPort: z.number(), listenIp: z.string().ip().trim() }).partial());

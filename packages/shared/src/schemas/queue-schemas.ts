@@ -12,6 +12,7 @@ const appCommandSchema = z.object({
   type: z.literal(EVENT_TYPES.APP),
   command: z.union([z.literal('start'), z.literal('stop'), z.literal('install'), z.literal('uninstall'), z.literal('update'), z.literal('generate_env')]),
   appid: z.string(),
+  skipEnv: z.boolean().optional().default(false),
   form: z.object({}).catchall(z.any()),
 });
 
@@ -23,20 +24,14 @@ const repoCommandSchema = z.object({
 
 const systemCommandSchema = z.object({
   type: z.literal(EVENT_TYPES.SYSTEM),
-  command: z.union([z.literal('restart'), z.literal('system_info')]),
+  command: z.literal('system_info'),
 });
 
-const updateSchema = z.object({
-  type: z.literal(EVENT_TYPES.SYSTEM),
-  command: z.literal('update'),
-  version: z.string(),
-});
-
-export const eventSchema = appCommandSchema.or(repoCommandSchema).or(systemCommandSchema).or(updateSchema);
+export const eventSchema = appCommandSchema.or(repoCommandSchema).or(systemCommandSchema);
 
 export const eventResultSchema = z.object({
   success: z.boolean(),
   stdout: z.string(),
 });
 
-export type SystemEvent = z.infer<typeof eventSchema>;
+export type SystemEvent = z.input<typeof eventSchema>;

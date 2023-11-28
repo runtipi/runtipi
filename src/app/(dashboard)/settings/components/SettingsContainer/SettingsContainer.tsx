@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hook';
 import { updateSettingsAction } from '@/actions/settings/update-settings';
 import { Locale } from '@/shared/internationalization/locales';
+import { useRouter } from 'next/navigation';
 import { SettingsForm, SettingsFormValues } from '../SettingsForm';
 
 type Props = {
@@ -16,12 +17,15 @@ type Props = {
 export const SettingsContainer = ({ initialValues, currentLocale }: Props) => {
   const t = useTranslations();
 
+  const router = useRouter();
+
   const updateSettingsMutation = useAction(updateSettingsAction, {
     onSuccess: (data) => {
       if (!data.success) {
         toast.error(data.failure.reason);
       } else {
         toast.success(t('settings.settings.settings-updated'));
+        router.refresh();
       }
     },
   });

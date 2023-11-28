@@ -9,6 +9,7 @@ import { type FormField, type AppInfo } from '@runtipi/shared';
 import { Switch } from '@/components/ui/Switch';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { AppStatus } from '@/server/db/schema';
 import { validateAppConfig } from '../../utils/validators';
 
 interface IProps {
@@ -17,6 +18,8 @@ interface IProps {
   initalValues?: { [key: string]: unknown };
   info: AppInfo;
   loading?: boolean;
+  onReset?: () => void;
+  status?: AppStatus;
 }
 
 export type FormValues = {
@@ -29,7 +32,7 @@ export type FormValues = {
 const hiddenTypes = ['random'];
 const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 
-export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, initalValues, loading }) => {
+export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, initalValues, loading, onReset, status }) => {
   const t = useTranslations('apps.app-details.install-form');
   const {
     register,
@@ -55,6 +58,11 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
       });
     }
   }, [initalValues, isDirty, setValue]);
+
+  const onClickReset = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    if (onReset) onReset();
+  };
 
   const renderField = (field: FormField) => {
     const label = (
@@ -166,6 +174,11 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
       <Button loading={loading} type="submit" className="btn-success">
         {initalValues ? t('submit-update') : t('sumbit-install')}
       </Button>
+      {initalValues && onReset && (
+        <Button loading={status === 'stopping'} onClick={onClickReset} className="btn-danger ms-2">
+          {t('reset')}
+        </Button>
+      )}
     </form>
   );
 };

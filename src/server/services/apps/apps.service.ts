@@ -341,6 +341,7 @@ export class AppServiceClass {
    */
   public updateApp = async (id: string) => {
     const app = await this.queries.getApp(id);
+    const appStatusBeforeUpdate = app?.status;
 
     if (!app) {
       throw new TranslatedError('server-messages.errors.app-not-found', { id });
@@ -355,15 +356,34 @@ export class AppServiceClass {
     if (success) {
       const appInfo = getAppInfo(app.id, app.status);
 
-      await this.queries.updateApp(id, { status: 'running', version: appInfo?.tipi_version });
+      await this.queries.updateApp(id, { version: appInfo?.tipi_version });
+      if (appStatusBeforeUpdate === 'running') {
+        await this.startApp(id);
+      } else {
+        await this.queries.updateApp(id, { status: appStatusBeforeUpdate });
+      }
     } else {
       await this.queries.updateApp(id, { status: 'stopped' });
       Logger.error(`Failed to update app ${id}: ${stdout}`);
       throw new TranslatedError('server-messages.errors.app-failed-to-update', { id });
     }
 
-    const updatedApp = await this.queries.updateApp(id, { status: 'stopped' });
+    const updatedApp = await this.getApp(id);
     return updatedApp;
+  };
+
+  /**
+   * Reset App with the specified ID
+   *
+   * @param {string} id - ID of the app to reset
+   * @throws {Error} - If the app is not found or if the update process fails.
+   */
+  public resetApp = async (id: string) => {
+    const appInfo = await this.getApp(id);
+
+    await this.stopApp(id);
+    await this.uninstallApp(id);
+    await this.installApp(id, castAppConfig(appInfo.config));
   };
 
   /**

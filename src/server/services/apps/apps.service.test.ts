@@ -351,6 +351,21 @@ describe('Update app config', () => {
   });
 });
 
+describe('Reset app', () => {
+  it('Should correctly reset app', async () => {
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'running' }, appConfig, db);
+
+    // act
+    await AppsService.resetApp(appConfig.id);
+    const app = await getAppById(appConfig.id, db);
+
+    // assert
+    expect(app?.status).toBe('running');
+  });
+});
+
 describe('Get app config', () => {
   it('Should correctly get app config', async () => {
     // arrange
@@ -462,7 +477,7 @@ describe('Update app', () => {
   it('Should correctly update app', async () => {
     // arrange
     const appConfig = createAppConfig({});
-    await insertApp({ version: 12, config: { TEST_FIELD: 'test' } }, appConfig, db);
+    await insertApp({ version: 12, status: 'running', config: { TEST_FIELD: 'test' } }, appConfig, db);
 
     // act
     await updateApp(appConfig.id, { version: 0 }, db);
@@ -472,7 +487,7 @@ describe('Update app', () => {
     expect(app).toBeDefined();
     expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
     expect(app?.version).toBe(appConfig.tipi_version);
-    expect(app?.status).toBe('stopped');
+    expect(app?.status).toBe('running');
   });
 
   it("Should throw if app doesn't exist", async () => {
@@ -487,6 +502,16 @@ describe('Update app', () => {
 
     // act & assert
     await expect(AppsService.updateApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-update');
+    const app = await getAppById(appConfig.id, db);
+    expect(app?.status).toBe('stopped');
+  });
+  it('Should comme back to the previous status before the update of the app', async () => {
+    // arrange
+    const appConfig = createAppConfig({});
+    await insertApp({ status: 'stopped' }, appConfig, db);
+
+    // act & assert
+    await updateApp(appConfig.id, { version: 0 }, db);
     const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('stopped');
   });
