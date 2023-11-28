@@ -82,9 +82,8 @@ jobs:
           user: root
           key: ${{ secrets.SSH_KEY }}
 
-      - name: Wait for dpkg lock to be released
-        run: |
-          while ! ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${{ steps.get-droplet-ip.outputs.droplet_ip }} "dpkg --configure -a"; do sleep 5; done
+      - name: Wait 90 seconds for Docker to be ready on Droplet
+        run: sleep 90
 
       - name: Deploy app to Droplet
         uses: fifsky/ssh-action@master
