@@ -37,7 +37,7 @@ export class SystemExecutors {
     }
 
     const disks = await si.fsSize();
-    const disk0 = disks.find((disk) => disk.mount.startsWith('/host/root'));
+    const disk0 = disks.find((disk) => disk.mount.startsWith('/host/root')) || disks[0];
 
     return {
       cpu: { load: currentLoad },
