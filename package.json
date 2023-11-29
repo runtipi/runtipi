@@ -94,7 +94,7 @@
     "@total-typescript/shoehorn": "^0.1.1",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
-    "@types/jest": "^29.5.7",
+    "@types/jest": "^29.5.10",
     "@types/lodash.merge": "^4.6.8",
     "@types/node": "20.8.10",
     "@types/pg": "^8.10.7",
