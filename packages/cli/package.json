@@ -53,7 +53,7 @@
     "cli-spinners": "^2.9.1",
     "commander": "^11.1.0",
     "dotenv": "^16.3.1",
-    "log-update": "^5.0.1",
+    "log-update": "^6.0.0",
     "semver": "^7.5.4",
     "zod": "^3.22.4"
   }
