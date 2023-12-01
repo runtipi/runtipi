@@ -2,15 +2,13 @@ import { AppServiceClass } from '@/server/services/apps/apps.service';
 import React from 'react';
 import { Metadata } from 'next';
 import { db } from '@/server/db';
-import { getTranslatorFromCookie } from '@/lib/get-translator';
 import { getSettings } from '@/server/core/TipiConfig';
 import { AppDetailsContainer } from './components/AppDetailsContainer/AppDetailsContainer';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const translator = await getTranslatorFromCookie();
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
 
   return {
-    title: `${translator('apps.app-store.title')} - Tipi`,
+    title: `${params.id} - Tipi`,
   };
 }
 
