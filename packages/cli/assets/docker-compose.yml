@@ -21,7 +21,7 @@ services:
   tipi-db:
     container_name: tipi-db
     image: postgres:14
-    restart: on-failure
+    restart: unless-stopped
     stop_grace_period: 1m
     ports:
       - ${POSTGRES_PORT:-5432}:5432
