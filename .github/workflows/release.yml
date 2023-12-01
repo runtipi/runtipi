@@ -134,7 +134,7 @@ jobs:
 
   publish-release:
     runs-on: ubuntu-latest
-    needs: [create-tag]
+    needs: [create-tag, build-images, build-worker, build-cli]
     outputs:
       id: ${{ steps.create_release.outputs.id }}
     steps:

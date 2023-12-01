@@ -21,7 +21,7 @@ services:
   tipi-db:
     container_name: tipi-db
     image: postgres:14
-    restart: on-failure
+    restart: unless-stopped
     stop_grace_period: 1m
     ports:
       - ${POSTGRES_PORT:-5432}:5432
@@ -60,7 +60,6 @@ services:
     container_name: tipi-worker
     image: ghcr.io/runtipi/worker:${TIPI_VERSION}
     restart: unless-stopped
-    user: root
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
       interval: 5s
@@ -78,7 +77,6 @@ services:
       NODE_ENV: production
     volumes:
       # Core
-      - /:/host/root:ro
       - /proc:/host/proc
       - /var/run/docker.sock:/var/run/docker.sock
       # App
