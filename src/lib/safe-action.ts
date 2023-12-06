@@ -6,7 +6,7 @@ export const action = createSafeActionClient({
     console.error('Error from server', e);
 
     return {
-      serverError: e.message,
+      serverError: e.message || 'An unexpected error occurred',
     };
   },
 });

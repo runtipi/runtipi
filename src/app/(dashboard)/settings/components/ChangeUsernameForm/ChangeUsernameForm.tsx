@@ -27,13 +27,12 @@ export const ChangeUsernameForm = ({ username }: Props) => {
   type FormValues = z.infer<typeof schema>;
 
   const changeUsernameMutation = useAction(changeUsernameAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        toast.error(data.failure.reason);
-      } else {
-        toast.success(t('change-username.success'));
-        router.push('/');
-      }
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onSuccess: () => {
+      toast.success(t('change-username.success'));
+      router.push('/');
     },
   });
 

@@ -1,5 +1,4 @@
 import { SystemEvent } from '@runtipi/shared';
-import { Server } from 'socket.io';
 
 import http from 'node:http';
 import path from 'node:path';
@@ -86,17 +85,8 @@ const main = async () => {
     });
 
     server.listen(3000, () => {
+      SocketManager.init();
       startWorker();
-    });
-
-    const io = new Server(3001, { cors: { origin: '*' } });
-
-    io.on('connection', (socket) => {
-      SocketManager.addSocket(socket);
-
-      socket.on('disconnect', () => {
-        SocketManager.removeSocket();
-      });
     });
   } catch (e) {
     logger.error(e);

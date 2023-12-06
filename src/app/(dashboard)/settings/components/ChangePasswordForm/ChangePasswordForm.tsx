@@ -34,13 +34,12 @@ export const ChangePasswordForm = () => {
   const router = useRouter();
 
   const changePasswordMutation = useAction(changePasswordAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        toast.error(data.failure.reason);
-      } else {
-        toast.success(t('password-change-success'));
-        router.push('/');
-      }
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onSuccess: () => {
+      toast.success(t('password-change-success'));
+      router.push('/');
     },
   });
 

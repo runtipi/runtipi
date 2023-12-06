@@ -29,28 +29,26 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
     onExecute: () => {
       setupOtpDisclosure.close();
     },
+    onError: (e) => {
+      setPassword('');
+      if (e.serverError) toast.error(e.serverError);
+    },
     onSuccess: (data) => {
-      if (!data.success) {
-        setPassword('');
-        toast.error(data.failure.reason);
-      } else {
-        setKey(data.key);
-        setUri(data.uri);
-      }
+      setKey(data.key);
+      setUri(data.uri);
     },
   });
 
   const setupTotpMutation = useAction(setupTotpAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        setTotpCode('');
-        toast.error(data.failure.reason);
-      } else {
-        setTotpCode('');
-        setKey('');
-        setUri('');
-        toast.success(t('2fa-enable-success'));
-      }
+    onError: (e) => {
+      setTotpCode('');
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onSuccess: () => {
+      setTotpCode('');
+      setKey('');
+      setUri('');
+      toast.success(t('2fa-enable-success'));
     },
   });
 
@@ -58,13 +56,12 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
     onExecute: () => {
       disableOtpDisclosure.close();
     },
-    onSuccess: (data) => {
-      if (!data.success) {
-        setPassword('');
-        toast.error(data.failure.reason);
-      } else {
-        toast.success(t('2fa-disable-success'));
-      }
+    onError: (e) => {
+      setPassword('');
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onSuccess: () => {
+      toast.success(t('2fa-disable-success'));
     },
   });
 

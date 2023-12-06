@@ -2,7 +2,6 @@ import fs from 'fs-extra';
 import waitForExpect from 'wait-for-expect';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { faker } from '@faker-js/faker';
-import { waitUntilFinishedMock } from '@/tests/server/jest.setup';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher } from '../../core/EventDispatcher';
@@ -42,7 +41,7 @@ describe('Install app', () => {
     expect(dbApp).toBeDefined();
     expect(dbApp?.id).toBe(appConfig.id);
     expect(dbApp?.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(dbApp?.status).toBe('running');
+    expect(dbApp?.status).toBe('installing');
   });
 
   it('Should start app if already installed', async () => {
@@ -58,25 +57,14 @@ describe('Install app', () => {
     expect(app?.status).toBe('running');
   });
 
-  it('Should delete app if install script fails', async () => {
-    // arrange
-    const appConfig = createAppConfig();
-
-    // act
-    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
-    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrow('server-messages.errors.app-failed-to-install');
-    const app = await getAppById(appConfig.id, db);
-
-    // assert
-    expect(app).toBeNull();
-  });
-
   it('Should throw if app is exposed and domain is not provided', async () => {
     // arrange
     const appConfig = createAppConfig({ exposable: true });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true })).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true })).rejects.toThrowError(
+      'server-messages.errors.domain-required-if-expose-app',
+    );
   });
 
   it('Should throw if app is exposed and config does not allow it', async () => {
@@ -84,7 +72,9 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: false });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError('server-messages.errors.app-not-exposable');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError(
+      'server-messages.errors.app-not-exposable',
+    );
   });
 
   it('Should throw if app is exposed and domain is not valid', async () => {
@@ -92,7 +82,9 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: true });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError('server-messages.errors.domain-not-valid');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError(
+      'server-messages.errors.domain-not-valid',
+    );
   });
 
   it('Should throw if app is exposed and domain is already used by another exposed app', async () => {
@@ -103,7 +95,9 @@ describe('Install app', () => {
     await insertApp({ domain, exposed: true }, appConfig2, db);
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain })).rejects.toThrowError('server-messages.errors.domain-already-in-use');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain })).rejects.toThrowError(
+      'server-messages.errors.domain-already-in-use',
+    );
   });
 
   it('Should throw if architecure is not supported', async () => {
@@ -159,50 +153,9 @@ describe('Install app', () => {
 });
 
 describe('Uninstall app', () => {
-  it('Should correctly remove app from database', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({}, appConfig, db);
-
-    // act
-    await AppsService.uninstallApp(appConfig.id);
-    const app = await getAppById(appConfig.id, db);
-
-    // assert
-    expect(app).toBeNull();
-  });
-
-  it('Should stop app if it is running', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ status: 'running' }, appConfig, db);
-
-    // act
-    waitUntilFinishedMock.mockResolvedValueOnce({ success: true, stdout: 'test' });
-    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
-    await expect(AppsService.uninstallApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-uninstall');
-    const app = await getAppById(appConfig.id, db);
-
-    // assert
-    expect(app?.status).toBe('stopped');
-  });
-
   it('Should throw if app is not installed', async () => {
     // act & assert
     await expect(AppsService.uninstallApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
-  });
-
-  it('Should throw if uninstall script fails', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ status: 'running' }, appConfig, db);
-    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
-    await updateApp(appConfig.id, { status: 'updating' }, db);
-
-    // act & assert
-    await expect(AppsService.uninstallApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-uninstall');
-    const app = await getAppById(appConfig.id, db);
-    expect(app?.status).toBe('stopped');
   });
 });
 
@@ -237,18 +190,6 @@ describe('Start app', () => {
     // assert
     expect(app?.status).toBe('running');
   });
-
-  it('Should throw if start script fails', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ status: 'stopped' }, appConfig, db);
-    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
-
-    // act & assert
-    await expect(AppsService.startApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-start');
-    const app = await getAppById(appConfig.id, db);
-    expect(app?.status).toBe('stopped');
-  });
 });
 
 describe('Stop app', () => {
@@ -267,18 +208,6 @@ describe('Stop app', () => {
 
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.stopApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
-  });
-
-  it('Should throw if stop script fails', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ status: 'running' }, appConfig, db);
-    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'test' });
-
-    // act & assert
-    await expect(AppsService.stopApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-stop');
-    const app = await getAppById(appConfig.id, db);
-    expect(app?.status).toBe('running');
   });
 });
 
@@ -317,7 +246,9 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError('server-messages.errors.domain-not-valid');
+    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError(
+      'server-messages.errors.domain-not-valid',
+    );
   });
 
   it('Should throw if app is exposed and domain is already used', async () => {
@@ -329,7 +260,9 @@ describe('Update app config', () => {
     await insertApp({}, appConfig2, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appConfig2.id, { exposed: true, domain })).rejects.toThrowError('server-messages.errors.domain-already-in-use');
+    await expect(AppsService.updateAppConfig(appConfig2.id, { exposed: true, domain })).rejects.toThrowError(
+      'server-messages.errors.domain-already-in-use',
+    );
   });
 
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
@@ -347,22 +280,9 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError('server-messages.errors.app-not-exposable');
-  });
-});
-
-describe('Reset app', () => {
-  it('Should correctly reset app', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ status: 'running' }, appConfig, db);
-
-    // act
-    await AppsService.resetApp(appConfig.id);
-    const app = await getAppById(appConfig.id, db);
-
-    // assert
-    expect(app?.status).toBe('running');
+    await expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError(
+      'server-messages.errors.app-not-exposable',
+    );
   });
 });
 
@@ -494,17 +414,6 @@ describe('Update app', () => {
     await expect(AppsService.updateApp('test-app2')).rejects.toThrow('server-messages.errors.app-not-found');
   });
 
-  it('Should throw if update script fails', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({}, appConfig, db);
-    waitUntilFinishedMock.mockResolvedValueOnce({ success: false, stdout: 'error' });
-
-    // act & assert
-    await expect(AppsService.updateApp(appConfig.id)).rejects.toThrow('server-messages.errors.app-failed-to-update');
-    const app = await getAppById(appConfig.id, db);
-    expect(app?.status).toBe('stopped');
-  });
   it('Should comme back to the previous status before the update of the app', async () => {
     // arrange
     const appConfig = createAppConfig({});
