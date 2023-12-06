@@ -475,8 +475,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /@adobe/css-tools@4.3.1:
-    resolution: {integrity: sha512-/62yikz7NLScCGAAST5SHdnjaDJQBDq0M2muyRTpf2VQhw6StBg2ALiu73zSJQ4fMVLA+0uBhBHAle7Wg+2kSg==}
+  /@adobe/css-tools@4.3.2:
+    resolution: {integrity: sha512-DA5a1C0gD/pLOvhv33YMrbf2FK3oUzwNl9oOJqE4XVjuEtt6XIakRcsd7eLiOSPkp1kTRQGICTA8cKra/vFbjw==}
     dev: true
 
   /@ampproject/remapping@2.2.1:
@@ -3074,7 +3074,7 @@ packages:
       vitest:
         optional: true
     dependencies:
-      '@adobe/css-tools': 4.3.1
+      '@adobe/css-tools': 4.3.2
       '@babel/runtime': 7.22.6
       '@types/jest': 29.5.11
       aria-query: 5.1.3
