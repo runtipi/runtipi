@@ -1,3 +1,12 @@
 import { createSafeActionClient } from 'next-safe-action';
 
-export const action = createSafeActionClient();
+export const action = createSafeActionClient({
+  handleReturnedServerError: (e) => {
+    // eslint-disable-next-line no-console
+    console.error('Error from server', e);
+
+    return {
+      serverError: e.message,
+    };
+  },
+});
