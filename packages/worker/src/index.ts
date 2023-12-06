@@ -1,4 +1,6 @@
 import { SystemEvent } from '@runtipi/shared';
+import { Server } from 'socket.io';
+
 import http from 'node:http';
 import path from 'node:path';
 import Redis from 'ioredis';
@@ -9,6 +11,7 @@ import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
 import { AppExecutors } from './services';
+import { SocketManager } from './lib/socket/SocketManager';
 
 const rootFolder = '/app';
 const envFile = path.join(rootFolder, '.env');
@@ -84,6 +87,16 @@ const main = async () => {
 
     server.listen(3000, () => {
       startWorker();
+    });
+
+    const io = new Server(3001, { cors: { origin: '*' } });
+
+    io.on('connection', (socket) => {
+      SocketManager.addSocket(socket);
+
+      socket.on('disconnect', () => {
+        SocketManager.removeSocket();
+      });
     });
   } catch (e) {
     logger.error(e);
