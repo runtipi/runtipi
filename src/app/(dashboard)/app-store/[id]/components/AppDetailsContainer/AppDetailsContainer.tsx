@@ -45,7 +45,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
 
   const installMutation = useAction(installAppAction, {
     onError: (e) => {
-      toast.error(e.serverError!);
+      if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
       setOptimisticStatus('installing');
@@ -55,7 +55,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
 
   const uninstallMutation = useAction(uninstallAppAction, {
     onError: (e) => {
-      toast.error(e.serverError!);
+      if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
       uninstallDisclosure.close();
@@ -65,7 +65,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
 
   const stopMutation = useAction(stopAppAction, {
     onError: (e) => {
-      toast.error(e.serverError!);
+      if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
       stopDisclosure.close();
@@ -75,7 +75,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
 
   const startMutation = useAction(startAppAction, {
     onError: (e) => {
-      toast.error(e.serverError!);
+      if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
       setOptimisticStatus('starting');
@@ -84,7 +84,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
 
   const updateMutation = useAction(updateAppAction, {
     onError: (e) => {
-      toast.error(e.serverError!);
+      if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
       updateDisclosure.close();
@@ -94,7 +94,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
 
   const updateConfigMutation = useAction(updateAppConfigAction, {
     onError: (e) => {
-      toast.error(e.serverError!);
+      if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
       updateSettingsDisclosure.close();
@@ -106,7 +106,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
 
   const resetMutation = useAction(resetAppAction, {
     onError: (e) => {
-      toast.error(e.serverError!);
+      if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
       resetAppDisclosure.open();

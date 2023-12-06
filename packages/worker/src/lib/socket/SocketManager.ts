@@ -1,27 +1,32 @@
-import { SocketEvent } from '@runtipi/shared';
-import { Socket } from 'socket.io';
+import { SocketEvent } from '@runtipi/shared/src/schemas/socket';
+import { Server } from 'socket.io';
 import { logger } from '../logger';
 
 class SocketManager {
-  private socket: Socket | null = null;
+  private io: Server | null = null;
 
-  addSocket(socket: Socket) {
-    if (!this.socket) {
-      this.socket = socket;
-    }
+  init() {
+    const io = new Server(3001, { cors: { origin: '*' } });
+
+    io.on('connection', (socket) => {
+      socket.on('disconnect', () => {});
+    });
+
+    this.io = io;
   }
 
-  removeSocket() {
-    this.socket = null;
-  }
-
-  emit(event: SocketEvent) {
-    if (!this.socket) {
-      logger.warn('Socket is not connected');
+  async emit(event: SocketEvent) {
+    if (!this.io) {
+      logger.error('SocketManager is not initialized');
       return;
     }
 
-    this.socket.emit(event.type, event);
+    const sockets = await this.io.fetchSockets();
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const socket of sockets) {
+      socket.emit(event.type, event);
+    }
   }
 }
 

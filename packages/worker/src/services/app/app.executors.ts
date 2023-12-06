@@ -3,7 +3,8 @@
 import fs from 'fs';
 import path from 'path';
 import pg from 'pg';
-import { execAsync, pathExists, SocketEvent } from '@runtipi/shared';
+import { execAsync, pathExists } from '@runtipi/shared';
+import { SocketEvent } from '@runtipi/shared/src/schemas/socket';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
@@ -34,7 +35,7 @@ export class AppExecutors {
     this.logger = logger;
   }
 
-  private handleAppError = (err: unknown, appId: string, event: SocketEvent['event']) => {
+  private handleAppError = (err: unknown, appId: string, event: Extract<SocketEvent, { type: 'app' }>['event']) => {
     if (err instanceof Error) {
       SocketManager.emit({ type: 'app', event, data: { appId, error: err.message } });
       this.logger.error(`An error occurred: ${err.message}`);

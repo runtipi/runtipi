@@ -20,13 +20,12 @@ export const SettingsContainer = ({ initialValues, currentLocale }: Props) => {
   const router = useRouter();
 
   const updateSettingsMutation = useAction(updateSettingsAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        toast.error(data.failure.reason);
-      } else {
-        toast.success(t('settings.settings.settings-updated'));
-        router.refresh();
-      }
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onSuccess: () => {
+      toast.success(t('settings.settings.settings-updated'));
+      router.refresh();
     },
   });
 
@@ -36,7 +35,12 @@ export const SettingsContainer = ({ initialValues, currentLocale }: Props) => {
 
   return (
     <div className="card-body">
-      <SettingsForm initalValues={initialValues} currentLocale={currentLocale} loading={updateSettingsMutation.status === 'executing'} onSubmit={onSubmit} />
+      <SettingsForm
+        initalValues={initialValues}
+        currentLocale={currentLocale}
+        loading={updateSettingsMutation.status === 'executing'}
+        onSubmit={onSubmit}
+      />
     </div>
   );
 };
