@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 
 import { cookies } from 'next/headers';
-import { Inter } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
 import merge from 'lodash.merge';
 import { NextIntlClientProvider } from 'next-intl';
 import { getConfig } from '@/server/core/TipiConfig';
@@ -12,11 +12,6 @@ import clsx from 'clsx';
 import { Toaster } from 'react-hot-toast';
 import { getCurrentLocale } from '../utils/getCurrentLocale';
 import { ClientProviders } from './components/ClientProviders';
-
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: 'Tipi',
@@ -35,7 +30,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { allowAutoThemes } = getConfig();
 
   return (
-    <html lang={locale} className={clsx(inter.className, 'border-top-wide border-primary')}>
+    <html lang={locale} className={clsx(GeistSans.className, 'border-top-wide border-primary')}>
       <NextIntlClientProvider locale={locale} messages={mergedMessages}>
         <ClientProviders initialTheme={theme?.value} cookies={cookies().getAll()} allowAutoThemes={allowAutoThemes}>
           <body data-bs-theme={theme?.value}>
