@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import { db } from '@/server/db';
 import { getTranslatorFromCookie } from '@/lib/get-translator';
 import { getSettings } from '@/server/core/TipiConfig';
-import { AppDetailsContainer } from './components/AppDetailsContainer/AppDetailsContainer';
+import { AppDetailsWrapper } from './components/AppDetailsContainer';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
@@ -19,5 +19,5 @@ export default async function AppDetailsPage({ params }: { params: { id: string 
   const app = await appsService.getApp(params.id);
   const settings = getSettings();
 
-  return <AppDetailsContainer app={app} localDomain={settings.localDomain} />;
+  return <AppDetailsWrapper app={app} localDomain={settings.localDomain} />;
 }

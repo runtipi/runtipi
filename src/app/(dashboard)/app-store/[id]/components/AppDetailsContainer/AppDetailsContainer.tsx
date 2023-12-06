@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
@@ -13,10 +11,10 @@ import { updateAppAction } from '@/actions/app-actions/update-app-action';
 import { updateAppConfigAction } from '@/actions/app-actions/update-app-config-action';
 import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
-import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { AppService } from '@/server/services/apps/apps.service';
 import { resetAppAction } from '@/actions/app-actions/reset-app-action';
+import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { InstallModal } from '../InstallModal';
 import { StopModal } from '../StopModal';
 import { UninstallModal } from '../UninstallModal';
@@ -24,19 +22,20 @@ import { UpdateModal } from '../UpdateModal';
 import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal';
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
-import { FormValues } from '../InstallForm';
 import { ResetAppModal } from '../ResetAppModal';
 
-interface IProps {
-  app: Awaited<ReturnType<AppService['getApp']>>;
-  localDomain?: string;
-}
 type OpenType = 'local' | 'domain' | 'local_domain';
 
-export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
-  const [customStatus, setCustomStatus] = React.useState<AppStatusEnum>(app.status);
+type AppDetailsContainerProps = {
+  app: Awaited<ReturnType<AppService['getApp']>>;
+  localDomain?: string;
+  optimisticStatus: AppStatusEnum;
+  setOptimisticStatus: (status: AppStatusEnum) => void;
+};
 
+export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, localDomain, optimisticStatus, setOptimisticStatus }) => {
   const t = useTranslations();
+
   const installDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
@@ -45,129 +44,77 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
   const resetAppDisclosure = useDisclosure();
 
   const installMutation = useAction(installAppAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        setCustomStatus(app.status);
-        toast.error(data.failure.reason);
-      } else {
-        setCustomStatus('running');
-        toast.success(t('apps.app-details.install-success'));
-      }
+    onError: (e) => {
+      toast.error(e.serverError!);
+    },
+    onExecute: () => {
+      setOptimisticStatus('installing');
+      installDisclosure.close();
     },
   });
 
   const uninstallMutation = useAction(uninstallAppAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        setCustomStatus(app.status);
-        toast.error(data.failure.reason);
-      } else {
-        setCustomStatus('missing');
-        toast.success(t('apps.app-details.uninstall-success'));
-      }
+    onError: (e) => {
+      toast.error(e.serverError!);
+    },
+    onExecute: () => {
+      uninstallDisclosure.close();
+      setOptimisticStatus('uninstalling');
     },
   });
 
   const stopMutation = useAction(stopAppAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        setCustomStatus(app.status);
-        toast.error(data.failure.reason);
-      } else {
-        setCustomStatus('stopped');
-        toast.success(t('apps.app-details.stop-success'));
-      }
+    onError: (e) => {
+      toast.error(e.serverError!);
+    },
+    onExecute: () => {
+      stopDisclosure.close();
+      setOptimisticStatus('stopping');
     },
   });
 
   const startMutation = useAction(startAppAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        setCustomStatus(app.status);
-        toast.error(data.failure.reason);
-      } else {
-        setCustomStatus('running');
-        toast.success(t('apps.app-details.start-success'));
-      }
+    onError: (e) => {
+      toast.error(e.serverError!);
+    },
+    onExecute: () => {
+      setOptimisticStatus('starting');
     },
   });
 
   const updateMutation = useAction(updateAppAction, {
-    onSuccess: (data) => {
-      setCustomStatus(app.status);
-
-      if (!data.success) {
-        toast.error(data.failure.reason);
-      } else {
-        toast.success(t('apps.app-details.update-success'));
-      }
+    onError: (e) => {
+      toast.error(e.serverError!);
+    },
+    onExecute: () => {
+      updateDisclosure.close();
+      setOptimisticStatus('updating');
     },
   });
 
   const updateConfigMutation = useAction(updateAppConfigAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        toast.error(data.failure.reason);
-      } else {
-        toast.success(t('apps.app-details.update-config-success'));
-      }
+    onError: (e) => {
+      toast.error(e.serverError!);
+    },
+    onExecute: () => {
+      updateSettingsDisclosure.close();
+    },
+    onSuccess: () => {
+      toast.success(t('apps.app-details.update-config-success'));
     },
   });
 
   const resetMutation = useAction(resetAppAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        toast.error(data.failure.reason);
-        resetAppDisclosure.close();
-      } else {
-        resetAppDisclosure.close();
-        toast.success(t('apps.app-details.app-reset-success'));
-        setCustomStatus('running');
-      }
+    onError: (e) => {
+      toast.error(e.serverError!);
+    },
+    onExecute: () => {
+      resetAppDisclosure.open();
+      setOptimisticStatus('stopping');
     },
   });
 
   const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
-
-  const handleInstallSubmit = async (values: FormValues) => {
-    setCustomStatus('installing');
-    installDisclosure.close();
-    installMutation.execute({ id: app.id, form: values });
-  };
-
-  const handleUnistallSubmit = () => {
-    setCustomStatus('uninstalling');
-    uninstallDisclosure.close();
-    uninstallMutation.execute({ id: app.id });
-  };
-
-  const handleStopSubmit = () => {
-    setCustomStatus('stopping');
-    stopDisclosure.close();
-    stopMutation.execute({ id: app.id });
-  };
-
-  const handleStartSubmit = async () => {
-    setCustomStatus('starting');
-    startMutation.execute({ id: app.id });
-  };
-
-  const handleUpdateSettingsSubmit = async (values: FormValues) => {
-    updateSettingsDisclosure.close();
-    updateConfigMutation.execute({ id: app.id, form: values });
-  };
-
-  const handleUpdateSubmit = async () => {
-    setCustomStatus('updating');
-    updateDisclosure.close();
-    updateMutation.execute({ id: app.id });
-  };
-
-  const handleResetSubmit = () => {
-    setCustomStatus('stopping');
-    resetMutation.execute({ id: app.id });
-    resetAppDisclosure.open();
-  };
 
   const openResetAppModal = () => {
     updateSettingsDisclosure.close();
@@ -200,19 +147,46 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
 
   return (
     <div className="card" data-testid="app-details">
-      <InstallModal onSubmit={handleInstallSubmit} isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={app.info} />
-      <StopModal onConfirm={handleStopSubmit} isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={app.info} />
-      <UninstallModal onConfirm={handleUnistallSubmit} isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={app.info} />
-      <UpdateModal onConfirm={handleUpdateSubmit} isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={app.info} newVersion={newVersion} />
-      <ResetAppModal onConfirm={handleResetSubmit} isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={app.info} isLoading={resetMutation.status === 'executing'} />
+      <InstallModal
+        onSubmit={(values) => installMutation.execute({ id: app.id, form: values })}
+        isOpen={installDisclosure.isOpen}
+        onClose={installDisclosure.close}
+        info={app.info}
+      />
+      <StopModal
+        onConfirm={() => stopMutation.execute({ id: app.id })}
+        isOpen={stopDisclosure.isOpen}
+        onClose={stopDisclosure.close}
+        info={app.info}
+      />
+      <UninstallModal
+        onConfirm={() => uninstallMutation.execute({ id: app.id })}
+        isOpen={uninstallDisclosure.isOpen}
+        onClose={uninstallDisclosure.close}
+        info={app.info}
+      />
+      <UpdateModal
+        onConfirm={() => updateMutation.execute({ id: app.id })}
+        isOpen={updateDisclosure.isOpen}
+        onClose={updateDisclosure.close}
+        info={app.info}
+        newVersion={newVersion}
+      />
+      <ResetAppModal
+        onConfirm={() => resetMutation.execute({ id: app.id })}
+        isOpen={resetAppDisclosure.isOpen}
+        onClose={resetAppDisclosure.close}
+        info={app.info}
+        isLoading={resetMutation.status === 'executing'}
+      />
       <UpdateSettingsModal
-        onSubmit={handleUpdateSettingsSubmit}
+        onSubmit={(values) => updateConfigMutation.execute({ id: app.id, form: values })}
         isOpen={updateSettingsDisclosure.isOpen}
         onClose={updateSettingsDisclosure.close}
         info={app.info}
         config={castAppConfig(app?.config)}
         onReset={openResetAppModal}
-        status={customStatus}
+        status={optimisticStatus}
       />
       <div className="card-header d-flex flex-column flex-md-row">
         <AppLogo id={app.id} size={130} alt={app.info.name} />
@@ -222,7 +196,7 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
             <span className="badge bg-muted mt-2 text-white">{app.info.version}</span>
           </div>
           <span className="mt-1 text-muted text-center text-md-start mb-2">{app.info.short_desc}</span>
-          <div className="mb-1">{customStatus !== 'missing' && <AppStatus status={customStatus} />}</div>
+          <div className="mb-1">{optimisticStatus !== 'missing' && <AppStatus status={optimisticStatus} />}</div>
           <AppActions
             localDomain={localDomain}
             updateAvailable={updateAvailable}
@@ -233,9 +207,9 @@ export const AppDetailsContainer: React.FC<IProps> = ({ app, localDomain }) => {
             onUninstall={uninstallDisclosure.open}
             onInstall={installDisclosure.open}
             onOpen={handleOpen}
-            onStart={handleStartSubmit}
+            onStart={() => startMutation.execute({ id: app.id })}
             app={app}
-            status={customStatus}
+            status={optimisticStatus}
           />
         </div>
       </div>

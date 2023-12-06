@@ -44,7 +44,7 @@ export class AppQueries {
    * @param {NewApp} data - The data to create the app with
    */
   public async createApp(data: NewApp) {
-    const newApps = await this.db.insert(appTable).values(data).returning();
+    const newApps = await this.db.insert(appTable).values(data).returning().execute();
     return newApps[0];
   }
 
