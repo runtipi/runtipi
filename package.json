@@ -98,7 +98,7 @@
     "@types/jest": "^29.5.11",
     "@types/lodash.merge": "^4.6.8",
     "@types/node": "20.8.10",
-    "@types/pg": "^8.10.7",
+    "@types/pg": "^8.10.9",
     "@types/react": "18.2.39",
     "@types/react-dom": "18.2.14",
     "@types/semver": "^7.5.4",
