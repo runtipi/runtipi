@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-42-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-43-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -125,6 +125,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/geetansh"><img src="https://avatars.githubusercontent.com/u/9976198?v=4?s=100" width="100px;" alt="Geetansh Jindal"/><br /><sub><b>Geetansh Jindal</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=geetansh" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/0livier"><img src="https://avatars.githubusercontent.com/u/10607?v=4?s=100" width="100px;" alt="Olivier Garcia"/><br /><sub><b>Olivier Garcia</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=0livier" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/qcoudeyr"><img src="https://avatars.githubusercontent.com/u/124463277?v=4?s=100" width="100px;" alt="qcoudeyr"/><br /><sub><b>qcoudeyr</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=qcoudeyr" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.armandgillot.fr"><img src="https://avatars.githubusercontent.com/u/79774155?v=4?s=100" width="100px;" alt="Armand Gillot"/><br /><sub><b>Armand Gillot</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=armandgillot" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
