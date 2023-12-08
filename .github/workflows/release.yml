@@ -47,6 +47,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.create-tag.outputs.tagname }},ghcr.io/${{ github.repository_owner }}/runtipi:latest
@@ -77,6 +79,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           file: ./packages/worker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
