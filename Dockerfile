@@ -27,6 +27,11 @@ COPY ./next.config.mjs ./next.config.mjs
 COPY ./public ./public
 COPY ./tests ./tests
 
+# Sentry
+COPY ./sentry.client.config.ts ./sentry.client.config.ts
+COPY ./sentry.edge.config.ts ./sentry.edge.config.ts
+COPY ./sentry.server.config.ts ./sentry.server.config.ts
+
 RUN npm run build
 
 # APP

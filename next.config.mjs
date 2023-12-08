@@ -1,3 +1,4 @@
+import { withSentryConfig } from '@sentry/nextjs';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: true,
@@ -32,4 +33,20 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(
+  nextConfig,
+  {
+    // https://github.com/getsentry/sentry-webpack-plugin#options
+    silent: false,
+    org: 'runtipi',
+    project: 'runtipi-nextjs',
+  },
+  {
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+    widenClientFileUpload: true,
+    transpileClientSDK: false,
+    tunnelRoute: '/errors',
+    hideSourceMaps: false,
+    disableLogger: true,
+  },
+);

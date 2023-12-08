@@ -67,3 +67,6 @@ temp
 
 ./traefik/
 /user-config/
+
+# Sentry Config File
+.sentryclirc
