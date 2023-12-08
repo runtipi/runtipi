@@ -32,6 +32,9 @@ COPY ./sentry.client.config.ts ./sentry.client.config.ts
 COPY ./sentry.edge.config.ts ./sentry.edge.config.ts
 COPY ./sentry.server.config.ts ./sentry.server.config.ts
 
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+
 RUN npm run build
 
 # APP
