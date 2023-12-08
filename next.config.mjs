@@ -39,7 +39,7 @@ export default withSentryConfig(
     // https://github.com/getsentry/sentry-webpack-plugin#options
     silent: false,
     org: 'runtipi',
-    project: 'runtipi-nextjs',
+    project: 'runtipi-dashboard',
   },
   {
     // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/

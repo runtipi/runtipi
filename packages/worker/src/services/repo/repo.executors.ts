@@ -1,5 +1,6 @@
 import path from 'path';
 import { execAsync, pathExists } from '@runtipi/shared';
+import * as Sentry from '@sentry/node';
 import { getRepoHash, getRepoBaseUrlAndBranch } from './repo.helpers';
 import { logger } from '@/lib/logger';
 
@@ -15,6 +16,8 @@ export class RepoExecutors {
    * @param {unknown} err
    */
   private handleRepoError = (err: unknown) => {
+    Sentry.captureException(err);
+
     if (err instanceof Error) {
       this.logger.error(`An error occurred: ${err.message}`);
       return { success: false, message: err.message };
