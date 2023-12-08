@@ -6,6 +6,9 @@
       "@/components/*": [
         "./src/client/components/*"
       ],
+      "@/hooks/*": [
+        "./src/app/hooks/*"
+      ],
       "@/utils/*": [
         "./src/client/utils/*"
       ],

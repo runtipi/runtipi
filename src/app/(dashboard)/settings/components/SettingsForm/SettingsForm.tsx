@@ -20,6 +20,7 @@ export type SettingsFormValues = {
   localDomain?: string;
   guestDashboard?: boolean;
   allowAutoThemes?: boolean;
+  allowErrorMonitoring?: boolean;
 };
 
 interface IProps {
@@ -132,8 +133,35 @@ export const SettingsForm = (props: IProps) => {
                 label={
                   <>
                     {t('guest-dashboard')}
-                    <Tooltip anchorSelect=".guest-dashboard-hint">{t('guest-dashboard-hint')}</Tooltip>
+                    <Tooltip className="tooltip" anchorSelect=".guest-dashboard-hint">
+                      {t('guest-dashboard-hint')}
+                    </Tooltip>
                     <span className={clsx('ms-1 form-help guest-dashboard-hint')}>?</span>
+                  </>
+                }
+              />
+            )}
+          />
+        </div>
+        <div className="mb-3">
+          <Controller
+            control={control}
+            name="allowErrorMonitoring"
+            defaultValue={false}
+            render={({ field: { onChange, value, ref, ...rest } }) => (
+              <Switch
+                className="mb-3"
+                ref={ref}
+                checked={value}
+                onCheckedChange={onChange}
+                {...rest}
+                label={
+                  <>
+                    {t('allow-error-monitoring')}
+                    <Tooltip className="tooltip" anchorSelect=".allow-errors-hint">
+                      {t('allow-error-monitoring-hint')}
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help allow-errors-hint')}>?</span>
                   </>
                 }
               />
@@ -155,7 +183,9 @@ export const SettingsForm = (props: IProps) => {
                 label={
                   <>
                     {t('allow-auto-themes')}
-                    <Tooltip anchorSelect=".allow-auto-themes-hint">{t('allow-auto-themes-hint')}</Tooltip>
+                    <Tooltip className="tooltip" anchorSelect=".allow-auto-themes-hint">
+                      {t('allow-auto-themes-hint')}
+                    </Tooltip>
                     <span className={clsx('ms-1 form-help allow-auto-themes-hint')}>?</span>
                   </>
                 }
@@ -169,7 +199,9 @@ export const SettingsForm = (props: IProps) => {
             label={
               <>
                 {t('domain-name')}
-                <Tooltip anchorSelect=".domain-name-hint">{t('domain-name-hint')}</Tooltip>
+                <Tooltip className="tooltip" anchorSelect=".domain-name-hint">
+                  {t('domain-name-hint')}
+                </Tooltip>
                 <span className={clsx('ms-1 form-help domain-name-hint')}>?</span>
               </>
             }
@@ -186,7 +218,9 @@ export const SettingsForm = (props: IProps) => {
             label={
               <>
                 {t('internal-ip')}
-                <Tooltip anchorSelect=".internal-ip-hint">{t('internal-ip-hint')}</Tooltip>
+                <Tooltip className="tooltip" anchorSelect=".internal-ip-hint">
+                  {t('internal-ip-hint')}
+                </Tooltip>
                 <span className={clsx('ms-1 form-help internal-ip-hint')}>?</span>
               </>
             }
@@ -200,7 +234,9 @@ export const SettingsForm = (props: IProps) => {
             label={
               <>
                 {t('apps-repo')}
-                <Tooltip anchorSelect=".apps-repo-hint">{t('apps-repo-hint')}</Tooltip>
+                <Tooltip className="tooltip" anchorSelect=".apps-repo-hint">
+                  {t('apps-repo-hint')}
+                </Tooltip>
                 <span className={clsx('ms-1 form-help apps-repo-hint')}>?</span>
               </>
             }
@@ -214,7 +250,9 @@ export const SettingsForm = (props: IProps) => {
             label={
               <>
                 {t('storage-path')}
-                <Tooltip anchorSelect=".storage-path-hint">{t('storage-path-hint')}</Tooltip>
+                <Tooltip className="tooltip" anchorSelect=".storage-path-hint">
+                  {t('storage-path-hint')}
+                </Tooltip>
                 <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
               </>
             }
@@ -228,7 +266,9 @@ export const SettingsForm = (props: IProps) => {
             label={
               <>
                 {t('local-domain')}
-                <Tooltip anchorSelect=".local-domain-hint">{t('local-domain-hint')}</Tooltip>
+                <Tooltip className="tooltip" anchorSelect=".local-domain-hint">
+                  {t('local-domain-hint')}
+                </Tooltip>
                 <span className={clsx('ms-1 form-help local-domain-hint')}>?</span>
               </>
             }
