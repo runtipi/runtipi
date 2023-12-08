@@ -15,16 +15,17 @@ import Script from 'next/script';
 import { useRouter } from 'next/navigation';
 import { getLogo } from '@/lib/themes';
 import { NavBar } from '../NavBar';
+import { useClientSettings } from '@/hooks/use-client-settings';
 
 interface IProps {
   isUpdateAvailable?: boolean;
   authenticated?: boolean;
-  autoTheme: boolean;
 }
 
-export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = true, autoTheme }) => {
+export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = true }) => {
   const { setDarkMode } = useUIStore();
   const t = useTranslations('header');
+  const { allowAutoThemes = true } = useClientSettings();
 
   const router = useRouter();
 
@@ -57,7 +58,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
               className={clsx('navbar-brand-image me-3')}
               width={100}
               height={100}
-              src={getLogo(autoTheme)}
+              src={getLogo(allowAutoThemes)}
               style={{
                 width: '30px',
                 maxWidth: '30px',
@@ -81,16 +82,40 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
             </div>
           </div>
           <div style={{ zIndex: 1 }} className="d-flex">
-            <Tooltip anchorSelect=".darkMode">{t('dark-mode')}</Tooltip>
-            <div onClick={() => setDarkMode(true)} role="button" aria-hidden="true" className="darkMode nav-link px-0 hide-theme-dark cursor-pointer" data-testid="dark-mode-toggle">
+            <Tooltip className="tooltip" anchorSelect=".darkMode">
+              {t('dark-mode')}
+            </Tooltip>
+            <div
+              onClick={() => setDarkMode(true)}
+              role="button"
+              aria-hidden="true"
+              className="darkMode nav-link px-0 hide-theme-dark cursor-pointer"
+              data-testid="dark-mode-toggle"
+            >
               <IconMoon data-testid="icon-moon" size={20} />
             </div>
-            <Tooltip anchorSelect=".lightMode">{t('light-mode')}</Tooltip>
-            <div onClick={() => setDarkMode(false)} aria-hidden="true" className="lightMode nav-link px-0 hide-theme-light cursor-pointer" data-testid="light-mode-toggle">
+            <Tooltip className="tooltip" anchorSelect=".lightMode">
+              {t('light-mode')}
+            </Tooltip>
+            <div
+              onClick={() => setDarkMode(false)}
+              aria-hidden="true"
+              className="lightMode nav-link px-0 hide-theme-light cursor-pointer"
+              data-testid="light-mode-toggle"
+            >
               <IconSun data-testid="icon-sun" size={20} />
             </div>
-            <Tooltip anchorSelect=".logOut">{authenticated ? t('logout') : t('login')}</Tooltip>
-            <div onClick={() => logHandler()} tabIndex={0} onKeyPress={() => logHandler()} role="button" className="logOut nav-link px-0 cursor-pointer" data-testid="logout-button">
+            <Tooltip className="tooltip" anchorSelect=".logOut">
+              {authenticated ? t('logout') : t('login')}
+            </Tooltip>
+            <div
+              onClick={() => logHandler()}
+              tabIndex={0}
+              onKeyPress={() => logHandler()}
+              role="button"
+              className="logOut nav-link px-0 cursor-pointer"
+              data-testid="logout-button"
+            >
               {authenticated ? <IconLogout size={20} /> : <IconLogin size={20} />}
             </div>
           </div>

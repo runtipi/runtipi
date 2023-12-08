@@ -37,7 +37,9 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
         </div>
         {updateAvailable && (
           <>
-            <Tooltip anchorSelect=".updateAvailable">{t('update-available')}</Tooltip>
+            <Tooltip className="tooltip" anchorSelect=".updateAvailable">
+              {t('update-available')}
+            </Tooltip>
             <div className="updateAvailable ribbon bg-green ribbon-top">
               <IconDownload size={20} />
             </div>

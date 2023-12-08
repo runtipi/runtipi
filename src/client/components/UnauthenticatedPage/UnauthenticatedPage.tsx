@@ -10,16 +10,15 @@ type Props = {
   children: React.ReactNode;
   title: MessageKey;
   subtitle?: MessageKey;
-  autoTheme: boolean;
 };
 
 export const UnauthenticatedPage = (props: Props) => {
-  const { children, title, subtitle, autoTheme } = props;
+  const { children, title, subtitle } = props;
   const t = useTranslations();
 
   return (
     <div className="page">
-      <Header authenticated={false} autoTheme={autoTheme} />
+      <Header authenticated={false} />
       <div className="page-wrapper">
         <div className="page-header d-print-none">
           <div className="container-xl">

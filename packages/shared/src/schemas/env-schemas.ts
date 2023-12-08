@@ -64,11 +64,35 @@ export const envSchema = z.object({
     .optional()
     .transform((value) => {
       if (typeof value === 'boolean') return value;
-      return value === 'true';
+      if (typeof value === 'string') return value === 'true';
+
+      return true;
+    }),
+  allowErrorMonitoring: z
+    .string()
+    .or(z.boolean())
+    .optional()
+    .transform((value) => {
+      if (typeof value === 'boolean') return value;
+      if (typeof value === 'string') return value === 'true';
+
+      return true;
     }),
 });
 
 export const settingsSchema = envSchema
   .partial()
-  .pick({ dnsIp: true, internalIp: true, postgresPort: true, appsRepoUrl: true, domain: true, storagePath: true, localDomain: true, demoMode: true, guestDashboard: true, allowAutoThemes: true })
+  .pick({
+    dnsIp: true,
+    internalIp: true,
+    postgresPort: true,
+    appsRepoUrl: true,
+    domain: true,
+    storagePath: true,
+    localDomain: true,
+    demoMode: true,
+    guestDashboard: true,
+    allowAutoThemes: true,
+    allowErrorMonitoring: true,
+  })
   .and(z.object({ port: z.number(), sslPort: z.number(), listenIp: z.string().ip().trim() }).partial());

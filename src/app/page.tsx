@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function RootPage() {
   const appService = new AppServiceClass(db);
-  const { guestDashboard, allowAutoThemes } = getConfig();
+  const { guestDashboard } = getConfig();
 
   const headersList = headers();
   const host = headersList.get('host');
@@ -24,7 +24,7 @@ export default async function RootPage() {
     const apps = await appService.getGuestDashboardApps();
 
     return (
-      <UnauthenticatedPage autoTheme={allowAutoThemes} title="guest-dashboard" subtitle="runtipi">
+      <UnauthenticatedPage title="guest-dashboard" subtitle="runtipi">
         {apps.length === 0 ? (
           <EmptyPage title="guest-dashboard-no-apps" subtitle="guest-dashboard-no-apps-subtitle" />
         ) : (
