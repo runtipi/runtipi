@@ -50,6 +50,9 @@ COPY ./packages/worker/src ./packages/worker/src
 COPY ./packages/worker/package.json ./packages/worker/package.json
 COPY ./packages/worker/assets ./packages/worker/assets
 
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+
 RUN pnpm -r build --filter @runtipi/worker
 
 # ---- RUNNER ----

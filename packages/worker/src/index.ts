@@ -5,6 +5,7 @@ import path from 'node:path';
 import Redis from 'ioredis';
 import dotenv from 'dotenv';
 import { Queue } from 'bullmq';
+import * as Sentry from '@sentry/node';
 import { copySystemFiles, ensureFilePermissions, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
 import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
@@ -15,6 +16,13 @@ import { SocketManager } from './lib/socket/SocketManager';
 const rootFolder = '/app';
 const envFile = path.join(rootFolder, '.env');
 
+const setupSentry = () => {
+  Sentry.init({
+    environment: process.env.NODE_ENV,
+    dsn: 'https://1cf49526d2efde9f82b6584c9c0f6912@o4504242900238336.ingest.sentry.io/4506360656035840',
+  });
+};
+
 const main = async () => {
   try {
     await logger.flush();
@@ -24,6 +32,11 @@ const main = async () => {
 
     logger.info('Generating system env file...');
     const envMap = await generateSystemEnvFile();
+
+    if (envMap.get('ALLOW_ERROR_MONITORING') === 'true') {
+      logger.info('Anonymous error monitoring is enabled, to disable it add "allowErrorMonitoring": false to your settings.json file');
+      setupSentry();
+    }
 
     // Reload env variables after generating the env file
     logger.info('Reloading env variables...');
@@ -89,8 +102,12 @@ const main = async () => {
       startWorker();
     });
   } catch (e) {
+    Sentry.captureException(e);
     logger.error(e);
-    process.exit(1);
+
+    setTimeout(() => {
+      process.exit(1);
+    }, 2000);
   }
 };
 

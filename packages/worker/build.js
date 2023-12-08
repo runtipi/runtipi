@@ -1,6 +1,5 @@
 const { build } = require('esbuild');
-
-const commandArgs = process.argv.slice(2);
+const { sentryEsbuildPlugin } = require('@sentry/esbuild-plugin');
 
 async function bundle() {
   const start = Date.now();
@@ -11,10 +10,23 @@ async function bundle() {
     target: 'node20',
     bundle: true,
     color: true,
-    sourcemap: commandArgs.includes('--sourcemap'),
+    sourcemap: true,
+    loader: {
+      '.node': 'copy',
+    },
+    minify: true,
+    plugins: [
+      sentryEsbuildPlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        org: 'runtipi',
+        project: 'runtipi-worker',
+      }),
+    ],
   };
 
-  await build({ ...options, minify: true });
+  await build({
+    ...options,
+  });
   console.log(`Build time: ${Date.now() - start}ms`);
 }
 

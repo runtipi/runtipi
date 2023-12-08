@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import pg from 'pg';
+import * as Sentry from '@sentry/node';
 import { execAsync, pathExists } from '@runtipi/shared';
 import { SocketEvent } from '@runtipi/shared/src/schemas/socket';
 import { copyDataDir, generateEnvFile } from './app.helpers';
@@ -36,6 +37,8 @@ export class AppExecutors {
   }
 
   private handleAppError = (err: unknown, appId: string, event: Extract<SocketEvent, { type: 'app' }>['event']) => {
+    Sentry.captureException(err);
+
     if (err instanceof Error) {
       SocketManager.emit({ type: 'app', event, data: { appId, error: err.message } });
       this.logger.error(`An error occurred: ${err.message}`);
