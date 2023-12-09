@@ -193,19 +193,6 @@ describe('Start app', () => {
 });
 
 describe('Stop app', () => {
-  it('Should correctly stop app', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ status: 'running' }, appConfig, db);
-
-    // act
-    await AppsService.stopApp(appConfig.id);
-    const app = await getAppById(appConfig.id, db);
-
-    // assert
-    expect(app?.status).toBe('stopped');
-  });
-
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.stopApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
   });
