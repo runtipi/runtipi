@@ -3,7 +3,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import { db } from '@/server/db';
 import { getSettings } from '@/server/core/TipiConfig';
-import { AppDetailsContainer } from './components/AppDetailsContainer/AppDetailsContainer';
+import { AppDetailsWrapper } from './components/AppDetailsContainer';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
 
@@ -17,5 +17,5 @@ export default async function AppDetailsPage({ params }: { params: { id: string 
   const app = await appsService.getApp(params.id);
   const settings = getSettings();
 
-  return <AppDetailsContainer app={app} localDomain={settings.localDomain} />;
+  return <AppDetailsWrapper app={app} localDomain={settings.localDomain} />;
 }

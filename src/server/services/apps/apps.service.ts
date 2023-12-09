@@ -2,7 +2,7 @@ import validator from 'validator';
 import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
-import { Database } from '@/server/db';
+import { Database, db } from '@/server/db';
 import { AppInfo } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
@@ -32,7 +32,7 @@ const filterApps = (apps: AppInfo[]): AppInfo[] => apps.sort(sortApps).filter(fi
 export class AppServiceClass {
   private queries;
 
-  constructor(p: Database) {
+  constructor(p: Database = db) {
     this.queries = new AppQueries(p);
   }
 
@@ -55,13 +55,15 @@ export class AppServiceClass {
         try {
           await this.queries.updateApp(app.id, { status: 'starting' });
 
-          eventDispatcher.dispatchEventAsync({ type: 'app', command: 'start', appid: app.id, form: castAppConfig(app.config) }).then(({ success }) => {
-            if (success) {
-              this.queries.updateApp(app.id, { status: 'running' });
-            } else {
-              this.queries.updateApp(app.id, { status: 'stopped' });
-            }
-          });
+          eventDispatcher
+            .dispatchEventAsync({ type: 'app', command: 'start', appid: app.id, form: castAppConfig(app.config) })
+            .then(({ success }) => {
+              if (success) {
+                this.queries.updateApp(app.id, { status: 'running' });
+              } else {
+                this.queries.updateApp(app.id, { status: 'stopped' });
+              }
+            });
         } catch (e) {
           await this.queries.updateApp(app.id, { status: 'stopped' });
           Logger.error(e);
@@ -87,7 +89,12 @@ export class AppServiceClass {
 
     await this.queries.updateApp(appName, { status: 'starting' });
     const eventDispatcher = new EventDispatcher('startApp');
-    const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'start', appid: appName, form: castAppConfig(app.config) });
+    const { success, stdout } = await eventDispatcher.dispatchEventAsync({
+      type: 'app',
+      command: 'start',
+      appid: appName,
+      form: castAppConfig(app.config),
+    });
     await eventDispatcher.close();
 
     if (success) {
@@ -166,18 +173,17 @@ export class AppServiceClass {
 
       // Run script
       const eventDispatcher = new EventDispatcher('installApp');
-      const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'install', appid: id, form });
-      await eventDispatcher.close();
+      eventDispatcher.dispatchEventAsync({ type: 'app', command: 'install', appid: id, form }).then(({ success, stdout }) => {
+        if (success) {
+          this.queries.updateApp(id, { status: 'running' });
+        } else {
+          this.queries.deleteApp(id);
+          Logger.error(`Failed to install app ${id}: ${stdout}`);
+        }
 
-      if (!success) {
-        await this.queries.deleteApp(id);
-        Logger.error(`Failed to install app ${id}: ${stdout}`);
-        throw new TranslatedError('server-messages.errors.app-failed-to-install', { id });
-      }
+        eventDispatcher.close();
+      });
     }
-
-    const updatedApp = await this.queries.updateApp(id, { status: 'running' });
-    return updatedApp;
   };
 
   /**
@@ -240,7 +246,12 @@ export class AppServiceClass {
     await eventDispatcher.close();
 
     if (success) {
-      const updatedApp = await this.queries.updateApp(id, { exposed: exposed || false, domain: domain || null, config: form, isVisibleOnGuestDashboard: form.isVisibleOnGuestDashboard });
+      const updatedApp = await this.queries.updateApp(id, {
+        exposed: exposed || false,
+        domain: domain || null,
+        config: form,
+        isVisibleOnGuestDashboard: form.isVisibleOnGuestDashboard,
+      });
       return updatedApp;
     }
 
@@ -264,16 +275,16 @@ export class AppServiceClass {
     await this.queries.updateApp(id, { status: 'stopping' });
 
     const eventDispatcher = new EventDispatcher('stopApp');
-    const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'stop', appid: id, form: castAppConfig(app.config) });
-    await eventDispatcher.close();
+    eventDispatcher.dispatchEventAsync({ type: 'app', command: 'stop', appid: id, form: castAppConfig(app.config) }).then(({ success, stdout }) => {
+      if (success) {
+        this.queries.updateApp(id, { status: 'stopped' });
+      } else {
+        Logger.error(`Failed to stop app ${id}: ${stdout}`);
+        this.queries.updateApp(id, { status: 'running' });
+      }
 
-    if (success) {
-      await this.queries.updateApp(id, { status: 'stopped' });
-    } else {
-      await this.queries.updateApp(id, { status: 'running' });
-      Logger.error(`Failed to stop app ${id}: ${stdout}`);
-      throw new TranslatedError('server-messages.errors.app-failed-to-stop', { id });
-    }
+      eventDispatcher.close();
+    });
 
     const updatedApp = await this.queries.getApp(id);
     return updatedApp;
@@ -298,16 +309,17 @@ export class AppServiceClass {
     await this.queries.updateApp(id, { status: 'uninstalling' });
 
     const eventDispatcher = new EventDispatcher('uninstallApp');
-    const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'uninstall', appid: id, form: castAppConfig(app.config) });
-    await eventDispatcher.close();
-
-    if (!success) {
-      await this.queries.updateApp(id, { status: 'stopped' });
-      Logger.error(`Failed to uninstall app ${id}: ${stdout}`);
-      throw new TranslatedError('server-messages.errors.app-failed-to-uninstall', { id });
-    }
-
-    await this.queries.deleteApp(id);
+    eventDispatcher
+      .dispatchEventAsync({ type: 'app', command: 'uninstall', appid: id, form: castAppConfig(app.config) })
+      .then(({ stdout, success }) => {
+        if (success) {
+          this.queries.deleteApp(id);
+        } else {
+          this.queries.updateApp(id, { status: 'stopped' });
+          Logger.error(`Failed to uninstall app ${id}: ${stdout}`);
+        }
+        eventDispatcher.close();
+      });
 
     return { id, status: 'missing', config: {} };
   };
@@ -350,7 +362,12 @@ export class AppServiceClass {
     await this.queries.updateApp(id, { status: 'updating' });
 
     const eventDispatcher = new EventDispatcher('updateApp');
-    const { success, stdout } = await eventDispatcher.dispatchEventAsync({ type: 'app', command: 'update', appid: id, form: castAppConfig(app.config) });
+    const { success, stdout } = await eventDispatcher.dispatchEventAsync({
+      type: 'app',
+      command: 'update',
+      appid: id,
+      form: castAppConfig(app.config),
+    });
     await eventDispatcher.close();
 
     if (success) {

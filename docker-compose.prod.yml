@@ -60,6 +60,8 @@ services:
       context: .
       dockerfile: ./packages/worker/Dockerfile
     container_name: tipi-worker
+    ports:
+      - 3935:3001
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
       interval: 5s
@@ -76,7 +78,6 @@ services:
     environment:
       NODE_ENV: production
     volumes:
-      - /:/host/root:ro
       - /proc:/host/proc
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PWD}/.env:/app/.env

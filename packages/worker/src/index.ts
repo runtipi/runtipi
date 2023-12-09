@@ -1,4 +1,5 @@
 import { SystemEvent } from '@runtipi/shared';
+
 import http from 'node:http';
 import path from 'node:path';
 import Redis from 'ioredis';
@@ -9,6 +10,7 @@ import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
 import { AppExecutors } from './services';
+import { SocketManager } from './lib/socket/SocketManager';
 
 const rootFolder = '/app';
 const envFile = path.join(rootFolder, '.env');
@@ -83,6 +85,7 @@ const main = async () => {
     });
 
     server.listen(3000, () => {
+      SocketManager.init();
       startWorker();
     });
   } catch (e) {

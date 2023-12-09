@@ -121,16 +121,12 @@ if ! command -v docker >/dev/null; then
   install_docker "${OS}"
   docker_result=$?
 
-  if [[ docker_result -eq 0 ]]; then
-    echo "Docker installed"
-  else
+  if [[ docker_result -ne 0 ]]; then
     echo "Your system ${OS} is not supported trying with sub_os ${SUB_OS}"
     install_docker "${SUB_OS}"
     docker_sub_result=$?
 
-    if [[ docker_sub_result -eq 0 ]]; then
-      echo "Docker installed"
-    else
+    if [[ docker_sub_result -ne 0 ]]; then
       echo "Your system ${SUB_OS} is not supported please install docker manually"
       exit 1
     fi
@@ -138,11 +134,15 @@ if ! command -v docker >/dev/null; then
 
   # Make sure user is in docker group
   if ! groups | grep -q '\bdocker\b'; then
+    echo "Adding user to docker group"
     sudo usermod -aG docker "$USER"
+    echo "✓ Docker installed. Please re-run the installation script to continue with the installation. (curl -L https://setup.runtipi.io | bash)"
   fi
 
   # Reload user groups
   newgrp docker
+
+  exit 0
 fi
 
 function check_dependency_and_install() {

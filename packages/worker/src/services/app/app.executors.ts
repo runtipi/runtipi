@@ -4,11 +4,13 @@ import fs from 'fs';
 import path from 'path';
 import pg from 'pg';
 import { execAsync, pathExists } from '@runtipi/shared';
+import { SocketEvent } from '@runtipi/shared/src/schemas/socket';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
 import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
+import { SocketManager } from '@/lib/socket/SocketManager';
 
 const getDbClient = async () => {
   const { postgresHost, postgresDatabase, postgresUsername, postgresPassword, postgresPort } = getEnv();
@@ -33,12 +35,14 @@ export class AppExecutors {
     this.logger = logger;
   }
 
-  private handleAppError = (err: unknown) => {
+  private handleAppError = (err: unknown, appId: string, event: Extract<SocketEvent, { type: 'app' }>['event']) => {
     if (err instanceof Error) {
+      SocketManager.emit({ type: 'app', event, data: { appId, error: err.message } });
       this.logger.error(`An error occurred: ${err.message}`);
       return { success: false, message: err.message };
     }
 
+    SocketManager.emit({ type: 'app', event, data: { appId, error: String(err) } });
     return { success: false, message: `An error occurred: ${err}` };
   };
 
@@ -73,6 +77,19 @@ export class AppExecutors {
     }
   };
 
+  public regenerateAppEnv = async (appId: string, config: Record<string, unknown>) => {
+    try {
+      this.logger.info(`Regenerating app.env file for app ${appId}`);
+      await this.ensureAppDir(appId);
+      await generateEnvFile(appId, config);
+
+      SocketManager.emit({ type: 'app', event: 'generate_env_success', data: { appId } });
+      return { success: true, message: `App ${appId} env file regenerated successfully` };
+    } catch (err) {
+      return this.handleAppError(err, appId, 'generate_env_error');
+    }
+  };
+
   /**
    * Install an app from the repo
    * @param {string} appId - The id of the app to install
@@ -80,6 +97,8 @@ export class AppExecutors {
    */
   public installApp = async (appId: string, config: Record<string, unknown>) => {
     try {
+      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+
       if (process.getuid && process.getgid) {
         this.logger.info(`Installing app ${appId} as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`);
       } else {
@@ -134,9 +153,11 @@ export class AppExecutors {
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
 
+      SocketManager.emit({ type: 'app', event: 'install_success', data: { appId } });
+
       return { success: true, message: `App ${appId} installed successfully` };
     } catch (err) {
-      return this.handleAppError(err);
+      return this.handleAppError(err, appId, 'install_error');
     }
   };
 
@@ -147,6 +168,7 @@ export class AppExecutors {
    */
   public stopApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
     try {
+      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
       this.logger.info(`Stopping app ${appId}`);
 
       await this.ensureAppDir(appId);
@@ -158,14 +180,19 @@ export class AppExecutors {
       await compose(appId, 'rm --force --stop');
 
       this.logger.info(`App ${appId} stopped`);
+
+      SocketManager.emit({ type: 'app', event: 'stop_success', data: { appId } });
+
       return { success: true, message: `App ${appId} stopped successfully` };
     } catch (err) {
-      return this.handleAppError(err);
+      return this.handleAppError(err, appId, 'stop_error');
     }
   };
 
   public startApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
     try {
+      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+
       const { appDataDirPath } = this.getAppPaths(appId);
 
       this.logger.info(`Starting app ${appId}`);
@@ -186,14 +213,18 @@ export class AppExecutors {
         this.logger.error(`Error setting permissions for app ${appId}`);
       });
 
+      SocketManager.emit({ type: 'app', event: 'start_success', data: { appId } });
+
       return { success: true, message: `App ${appId} started successfully` };
     } catch (err) {
-      return this.handleAppError(err);
+      return this.handleAppError(err, appId, 'start_error');
     }
   };
 
   public uninstallApp = async (appId: string, config: Record<string, unknown>) => {
     try {
+      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+
       const { appDirPath, appDataDirPath } = this.getAppPaths(appId);
       this.logger.info(`Uninstalling app ${appId}`);
 
@@ -221,14 +252,19 @@ export class AppExecutors {
       });
 
       this.logger.info(`App ${appId} uninstalled`);
+
+      SocketManager.emit({ type: 'app', event: 'uninstall_success', data: { appId } });
+
       return { success: true, message: `App ${appId} uninstalled successfully` };
     } catch (err) {
-      return this.handleAppError(err);
+      return this.handleAppError(err, appId, 'uninstall_error');
     }
   };
 
   public updateApp = async (appId: string, config: Record<string, unknown>) => {
     try {
+      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+
       const { appDirPath, repoPath } = this.getAppPaths(appId);
       this.logger.info(`Updating app ${appId}`);
       await this.ensureAppDir(appId);
@@ -245,20 +281,11 @@ export class AppExecutors {
 
       await compose(appId, 'pull');
 
+      SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
+
       return { success: true, message: `App ${appId} updated successfully` };
     } catch (err) {
-      return this.handleAppError(err);
-    }
-  };
-
-  public regenerateAppEnv = async (appId: string, config: Record<string, unknown>) => {
-    try {
-      this.logger.info(`Regenerating app.env file for app ${appId}`);
-      await this.ensureAppDir(appId);
-      await generateEnvFile(appId, config);
-      return { success: true, message: `App ${appId} env file regenerated successfully` };
-    } catch (err) {
-      return this.handleAppError(err);
+      return this.handleAppError(err, appId, 'update_error');
     }
   };
 

@@ -25,7 +25,7 @@ export class AppQueries {
    * @param {Partial<NewApp>} data - The data to update the app with
    */
   public async updateApp(appId: string, data: Partial<NewApp>) {
-    const updatedApps = await this.db.update(appTable).set(data).where(eq(appTable.id, appId)).returning();
+    const updatedApps = await this.db.update(appTable).set(data).where(eq(appTable.id, appId)).returning().execute();
     return updatedApps[0];
   }
 
@@ -35,7 +35,7 @@ export class AppQueries {
    * @param {string} appId - The id of the app to delete
    */
   public async deleteApp(appId: string) {
-    await this.db.delete(appTable).where(eq(appTable.id, appId));
+    await this.db.delete(appTable).where(eq(appTable.id, appId)).execute();
   }
 
   /**
@@ -44,7 +44,7 @@ export class AppQueries {
    * @param {NewApp} data - The data to create the app with
    */
   public async createApp(data: NewApp) {
-    const newApps = await this.db.insert(appTable).values(data).returning();
+    const newApps = await this.db.insert(appTable).values(data).returning().execute();
     return newApps[0];
   }
 
@@ -68,7 +68,10 @@ export class AppQueries {
    * Returns all apps that are running and visible on guest dashboard sorted by id ascending
    */
   public async getGuestDashboardApps() {
-    return this.db.query.appTable.findMany({ where: and(eq(appTable.status, 'running'), eq(appTable.isVisibleOnGuestDashboard, true)), orderBy: asc(appTable.id) });
+    return this.db.query.appTable.findMany({
+      where: and(eq(appTable.status, 'running'), eq(appTable.isVisibleOnGuestDashboard, true)),
+      orderBy: asc(appTable.id),
+    });
   }
 
   /**
@@ -88,6 +91,6 @@ export class AppQueries {
    * @param {Partial<NewApp>} data - The data to update the apps with
    */
   public async updateAppsByStatusNotIn(statuses: AppStatus[], data: Partial<NewApp>) {
-    return this.db.update(appTable).set(data).where(notInArray(appTable.status, statuses)).returning();
+    return this.db.update(appTable).set(data).where(notInArray(appTable.status, statuses)).returning().execute();
   }
 }
