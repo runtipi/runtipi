@@ -16,7 +16,7 @@ interface IProps {
 }
 
 export const AppDetailsWrapper = (props: IProps) => {
-  const { app } = props;
+  const { app, localDomain } = props;
   const t = useTranslations();
   const [optimisticStatus, setOptimisticStatus] = useOptimistic<AppStatus>(app.status);
   const revalidateAppMutation = useAction(revalidateAppAction);
@@ -84,5 +84,5 @@ export const AppDetailsWrapper = (props: IProps) => {
     selector: { type: 'app', data: { property: 'appId', value: app.id } },
   });
 
-  return <AppDetailsContainer app={app} optimisticStatus={optimisticStatus} setOptimisticStatus={setOptimisticStatus} />;
+  return <AppDetailsContainer localDomain={localDomain} app={app} optimisticStatus={optimisticStatus} setOptimisticStatus={setOptimisticStatus} />;
 };
