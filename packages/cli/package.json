@@ -8,10 +8,10 @@
     "test": "dotenv -e .env.test vitest -- --coverage --watch=false --passWithNoTests",
     "test:watch": "dotenv -e .env.test vitest",
     "package": "npm run build && pkg package.json && chmod +x dist/bin/cli-x64 && chmod +x dist/bin/cli-arm64",
-    "package:m1": "npm run build && pkg package.json -t node20-darwin-arm64",
+    "package:m1": "npm run build && pkg package.json -t node18-darwin-arm64",
     "set-version": "node -e \"require('fs').writeFileSync('assets/VERSION', process.argv[1])\"",
     "build": "node build.js",
-    "build:meta": "esbuild ./src/index.ts --bundle --platform=node --target=node20 --outfile=dist/index.js --metafile=meta.json --analyze",
+    "build:meta": "esbuild ./src/index.ts --bundle --platform=node --target=node18 --outfile=dist/index.js --metafile=meta.json --analyze",
     "dev": "dotenv -e ../../.env nodemon",
     "lint": "eslint . --ext .ts",
     "tsc": "tsc --noEmit",
@@ -20,8 +20,8 @@
   "pkg": {
     "assets": "assets/**/*",
     "targets": [
-      "node20-linux-x64",
-      "node20-linux-arm64"
+      "node18-linux-x64",
+      "node18-linux-arm64"
     ],
     "outputPath": "dist/bin"
   },
