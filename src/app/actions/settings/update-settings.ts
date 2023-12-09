@@ -1,20 +1,20 @@
 'use server';
 
 import { action } from '@/lib/safe-action';
-import { getUserFromCookie } from '@/server/common/session.helpers';
 import { settingsSchema } from '@runtipi/shared';
 import { setSettings } from '@/server/core/TipiConfig';
 import { revalidatePath } from 'next/cache';
 import { handleActionError } from '../utils/handle-action-error';
+import { ensureUser } from '../utils/ensure-user';
 
 /**
  * Given a settings object, update the settings.json file
  */
 export const updateSettingsAction = action(settingsSchema, async (settings) => {
   try {
-    const user = await getUserFromCookie();
+    const { operator } = await ensureUser();
 
-    if (!user?.operator) {
+    if (!operator) {
       throw new Error('Not authorized');
     }
 

@@ -2,10 +2,10 @@
 
 import { z } from 'zod';
 import { action } from '@/lib/safe-action';
-import { getUserFromCookie } from '@/server/common/session.helpers';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
 import { db } from '@/server/db';
 import { handleActionError } from '../utils/handle-action-error';
+import { ensureUser } from '../utils/ensure-user';
 
 const input = z.object({ password: z.string() });
 
@@ -14,14 +14,10 @@ const input = z.object({ password: z.string() });
  */
 export const getTotpUriAction = action(input, async ({ password }) => {
   try {
-    const user = await getUserFromCookie();
-
-    if (!user) {
-      throw new Error('User not found');
-    }
+    const { id } = await ensureUser();
 
     const authService = new AuthServiceClass(db);
-    const { key, uri } = await authService.getTotpUri({ userId: user.id, password });
+    const { key, uri } = await authService.getTotpUri({ userId: id, password });
 
     return { success: true, key, uri };
   } catch (e) {
