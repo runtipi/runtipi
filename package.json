@@ -1,6 +1,6 @@
 {
   "name": "runtipi",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "A homeserver for everyone",
   "scripts": {
     "knip": "knip",
