@@ -307,8 +307,8 @@ importers:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@20.8.10)(typescript@5.2.2)
       tsx:
-        specifier: ^3.14.0
-        version: 3.14.0
+        specifier: ^4.6.2
+        version: 4.6.2
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -471,8 +471,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       tsx:
-        specifier: ^3.14.0
-        version: 3.14.0
+        specifier: ^4.6.2
+        version: 4.6.2
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -10543,13 +10543,6 @@ packages:
       source-map: 0.6.1
     dev: true
 
-  /source-map-support@0.5.21:
-    resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
-    dependencies:
-      buffer-from: 1.1.2
-      source-map: 0.6.1
-    dev: true
-
   /source-map@0.5.7:
     resolution: {integrity: sha512-LbrmJOMUSdEVxIKvdcJzQC+nQhe8FUZQTXQy6+I75skNgn3OoQ0DZA8YnFa7gp8tqtL3KPf1kmo0R5DoApeSGQ==}
     engines: {node: '>=0.10.0'}
@@ -11156,13 +11149,13 @@ packages:
       typescript: 5.2.2
     dev: true
 
-  /tsx@3.14.0:
-    resolution: {integrity: sha512-xHtFaKtHxM9LOklMmJdI3BEnQq/D5F73Of2E1GDrITi9sgoVkvIsrQUTY1G8FlmGtA+awCI4EBlTRRYxkL2sRg==}
+  /tsx@4.6.2:
+    resolution: {integrity: sha512-QPpBdJo+ZDtqZgAnq86iY/PD2KYCUPSUGIunHdGwyII99GKH+f3z3FZ8XNFLSGQIA4I365ui8wnQpl8OKLqcsg==}
+    engines: {node: '>=18.0.0'}
     hasBin: true
     dependencies:
       esbuild: 0.18.20
       get-tsconfig: 4.7.2
-      source-map-support: 0.5.21
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
