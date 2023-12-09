@@ -6,6 +6,7 @@ import { AppServiceClass } from '@/server/services/apps/apps.service';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { handleActionError } from '../utils/handle-action-error';
+import { ensureUser } from '../utils/ensure-user';
 
 const input = z.object({
   id: z.string(),
@@ -13,8 +14,9 @@ const input = z.object({
 
 export const resetAppAction = action(input, async ({ id }) => {
   try {
-    const appsService = new AppServiceClass(db);
+    await ensureUser();
 
+    const appsService = new AppServiceClass(db);
     await appsService.resetApp(id);
 
     revalidatePath('/apps');

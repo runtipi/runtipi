@@ -5,6 +5,7 @@ import { db } from '@/server/db';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
 import { action } from '@/lib/safe-action';
 import { handleActionError } from '../utils/handle-action-error';
+import { ensureUser } from '../utils/ensure-user';
 
 const input = z.object({
   newPassword: z.string(),
@@ -15,8 +16,9 @@ const input = z.object({
  */
 export const resetPasswordAction = action(input, async ({ newPassword }) => {
   try {
-    const authService = new AuthServiceClass(db);
+    await ensureUser();
 
+    const authService = new AuthServiceClass(db);
     const { email } = await authService.changeOperatorPassword({ newPassword });
 
     return { success: true, email };

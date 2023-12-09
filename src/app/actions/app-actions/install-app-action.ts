@@ -6,6 +6,7 @@ import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 import { AppServiceClass } from '@/server/services/apps/apps.service';
 import { handleActionError } from '../utils/handle-action-error';
+import { ensureUser } from '../utils/ensure-user';
 
 const formSchema = z.object({}).catchall(z.any());
 
@@ -19,8 +20,9 @@ const input = z.object({
  */
 export const installAppAction = action(input, async ({ id, form }) => {
   try {
-    const appsService = new AppServiceClass(db);
+    await ensureUser();
 
+    const appsService = new AppServiceClass(db);
     await appsService.installApp(id, form);
 
     revalidatePath('/apps');

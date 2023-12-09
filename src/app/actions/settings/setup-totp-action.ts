@@ -2,11 +2,11 @@
 
 import { z } from 'zod';
 import { action } from '@/lib/safe-action';
-import { getUserFromCookie } from '@/server/common/session.helpers';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
 import { db } from '@/server/db';
 import { revalidatePath } from 'next/cache';
 import { handleActionError } from '../utils/handle-action-error';
+import { ensureUser } from '../utils/ensure-user';
 
 const input = z.object({ totpCode: z.string() });
 
@@ -15,14 +15,10 @@ const input = z.object({ totpCode: z.string() });
  */
 export const setupTotpAction = action(input, async ({ totpCode }) => {
   try {
-    const user = await getUserFromCookie();
-
-    if (!user) {
-      throw new Error('User not found');
-    }
+    const { id } = await ensureUser();
 
     const authService = new AuthServiceClass(db);
-    await authService.setupTotp({ userId: user.id, totpCode });
+    await authService.setupTotp({ userId: id, totpCode });
 
     revalidatePath('/settings');
 

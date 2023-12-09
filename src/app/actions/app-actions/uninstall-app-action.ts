@@ -6,6 +6,7 @@ import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 import { AppServiceClass } from '@/server/services/apps/apps.service';
 import { handleActionError } from '../utils/handle-action-error';
+import { ensureUser } from '../utils/ensure-user';
 
 const input = z.object({ id: z.string() });
 
@@ -14,8 +15,9 @@ const input = z.object({ id: z.string() });
  */
 export const uninstallAppAction = action(input, async ({ id }) => {
   try {
-    const appsService = new AppServiceClass(db);
+    await ensureUser();
 
+    const appsService = new AppServiceClass(db);
     await appsService.uninstallApp(id);
 
     revalidatePath('/apps');
