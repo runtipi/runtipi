@@ -40,6 +40,7 @@ export default withSentryConfig(
     silent: false,
     org: 'runtipi',
     project: 'runtipi-dashboard',
+    dryRun: process.env.SENTRY_DISABLE_AUTO_UPLOAD === 'true',
   },
   {
     // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/

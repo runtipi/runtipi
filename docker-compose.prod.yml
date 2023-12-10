@@ -95,6 +95,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - SENTRY_DISABLE_AUTO_UPLOAD=true
     container_name: tipi-dashboard
     depends_on:
       tipi-db:
@@ -106,7 +108,7 @@ services:
     env_file:
       - .env
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
     networks:
       - tipi_main_network
     ports:

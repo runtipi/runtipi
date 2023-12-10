@@ -33,7 +33,10 @@ COPY ./sentry.edge.config.ts ./sentry.edge.config.ts
 COPY ./sentry.server.config.ts ./sentry.server.config.ts
 
 ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_DISABLE_AUTO_UPLOAD
+
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
 
 RUN npm run build
 
