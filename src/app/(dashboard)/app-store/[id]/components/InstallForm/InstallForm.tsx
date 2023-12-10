@@ -138,12 +138,12 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         defaultValue={false}
         render={({ field: { onChange, value, ref, ...props } }) => (
           <Switch
+            {...props}
             className="mb-3"
-            disabled={info.force_expose}
             ref={ref}
             checked={value}
             onCheckedChange={onChange}
-            {...props}
+            disabled={info.force_expose}
             label={t('expose-app')}
           />
         )}

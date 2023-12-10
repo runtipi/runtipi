@@ -273,8 +273,12 @@ export class AppExecutors {
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
 
-      await compose(appId, 'up --detach --force-recreate --remove-orphans');
-      await compose(appId, 'down --rmi all --remove-orphans');
+      try {
+        await compose(appId, 'up --detach --force-recreate --remove-orphans');
+        await compose(appId, 'down --rmi all --remove-orphans');
+      } catch (err) {
+        logger.warn(`App ${appId} has likely a broken docker-compose.yml file. Continuing with update...`);
+      }
 
       this.logger.info(`Deleting folder ${appDirPath}`);
       await fs.promises.rm(appDirPath, { recursive: true, force: true });

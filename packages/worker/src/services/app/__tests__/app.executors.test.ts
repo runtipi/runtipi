@@ -176,4 +176,41 @@ describe('test: app executors', () => {
       spy.mockRestore();
     });
   });
+
+  describe('test: updateApp()', () => {
+    it('should still update even if current compose file is broken', async () => {
+      // arrange
+      const spy = vi.spyOn(dockerHelpers, 'compose');
+      const config = createAppConfig();
+
+      spy.mockRejectedValueOnce(new Error('test'));
+      spy.mockResolvedValueOnce({ stdout: 'done', stderr: '' });
+
+      // act
+      const { message, success } = await appExecutors.updateApp(config.id, config);
+
+      // assert
+      expect(success).toBe(true);
+      expect(message).toBe(`App ${config.id} updated successfully`);
+      spy.mockRestore();
+    });
+
+    it('should replace app directory with new one', async () => {
+      // arrange
+      const config = createAppConfig();
+      const oldFolder = path.join(ROOT_FOLDER, 'apps', config.id);
+
+      await fs.promises.writeFile(path.join(oldFolder, 'docker-compose.yml'), 'test');
+
+      // act
+      await appExecutors.updateApp(config.id, config);
+
+      // assert
+      const exists = await pathExists(oldFolder);
+      const content = await fs.promises.readFile(path.join(oldFolder, 'docker-compose.yml'), 'utf-8');
+
+      expect(exists).toBe(true);
+      expect(content).not.toBe('test');
+    });
+  });
 });
