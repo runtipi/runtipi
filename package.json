@@ -55,7 +55,7 @@
     "geist": "^1.2.0",
     "let-it-go": "^1.0.0",
     "lodash.merge": "^4.6.2",
-    "next": "14.0.1",
+    "next": "14.0.4",
     "next-client-cookies": "^1.0.6",
     "next-intl": "^2.22.1",
     "next-safe-action": "^5.0.2",
