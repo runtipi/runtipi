@@ -15,6 +15,9 @@ const customServerConfig = {
   testEnvironment: 'node',
   testMatch: ['<rootDir>/src/server/**/*.test.ts'],
   setupFilesAfterEnv: ['<rootDir>/tests/server/jest.setup.ts'],
+  globals: {
+    fetch,
+  },
 };
 
 export default async () => {
@@ -25,7 +28,13 @@ export default async () => {
     randomize: true,
     verbose: true,
     collectCoverage: true,
-    collectCoverageFrom: ['src/server/**/*.{ts,tsx}', 'src/client/**/*.{ts,tsx}', '!src/**/mocks/**/*.{ts,tsx}', '!**/*.{spec,test}.{ts,tsx}', '!**/index.{ts,tsx}'],
+    collectCoverageFrom: [
+      'src/server/**/*.{ts,tsx}',
+      'src/client/**/*.{ts,tsx}',
+      '!src/**/mocks/**/*.{ts,tsx}',
+      '!**/*.{spec,test}.{ts,tsx}',
+      '!**/index.{ts,tsx}',
+    ],
     projects: [
       {
         displayName: 'client',
