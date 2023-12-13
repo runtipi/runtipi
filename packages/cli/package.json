@@ -35,7 +35,7 @@
     "dotenv-cli": "^7.3.0",
     "esbuild": "^0.19.4",
     "eslint-config-prettier": "^9.0.0",
-    "knip": "^3.6.1",
+    "knip": "^3.8.0",
     "memfs": "^4.6.0",
     "nodemon": "^3.0.1",
     "pkg": "^5.8.1",
