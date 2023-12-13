@@ -131,18 +131,6 @@ if ! command -v docker >/dev/null; then
       exit 1
     fi
   fi
-
-  # Make sure user is in docker group
-  if ! groups | grep -q '\bdocker\b'; then
-    echo "Adding user to docker group"
-    sudo usermod -aG docker "$USER"
-    echo "✓ Docker installed. Please re-run the installation script to continue with the installation. (curl -L https://setup.runtipi.io | bash)"
-  fi
-
-  # Reload user groups
-  newgrp docker
-
-  exit 0
 fi
 
 function check_dependency_and_install() {
@@ -194,4 +182,4 @@ fi
 curl --location "$URL" -o ./runtipi-cli
 chmod +x ./runtipi-cli
 
-./runtipi-cli start
+sudo ./runtipi-cli start
