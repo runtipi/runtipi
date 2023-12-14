@@ -66,10 +66,7 @@ export class SystemExecutors {
 
         // eslint-disable-next-line no-restricted-syntax
         for (const app of apps) {
-          spinner.setMessage(`Stopping ${app}...`);
-          spinner.start();
-          await appExecutor.stopApp(app);
-          spinner.done(`${app} stopped`);
+          await appExecutor.stopApp(app).catch(() => logger.warn(`Failed to stop app ${app}, continuing...`));
         }
       }
 
@@ -233,7 +230,7 @@ export class SystemExecutors {
       spinner.done(`Target version: ${targetVersion}`);
       spinner.done(`Download url: ${fileUrl}`);
 
-      await this.stop();
+      await this.stop().catch(() => logger.warn('Failed to stop Tipi, trying to update anyway...'));
 
       this.logger.info(`Downloading Tipi ${targetVersion}...`);
 
