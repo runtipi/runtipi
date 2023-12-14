@@ -146,7 +146,7 @@ jobs:
 
     steps:
       - name: Download CLI
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: cli
           path: cli
