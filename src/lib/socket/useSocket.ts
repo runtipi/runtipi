@@ -24,7 +24,8 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
   const { onEvent, onError, selector } = props;
 
   useEffect(() => {
-    const socket = io('http://localhost:3935');
+    const { hostname, protocol } = window.location;
+    const socket = io(`${protocol}//${hostname}:3935`);
 
     const handleEvent = (type: SocketEvent['type'], rawData: unknown) => {
       const parsedEvent = socketEventSchema.safeParse(rawData);
