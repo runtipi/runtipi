@@ -147,6 +147,11 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Create state/settings.json
+        run: |
+          mkdir -p state
+          echo '{}' > state/settings.json
+
       - name: Run Playwright tests
         id: run-e2e
         run: npm run test:e2e

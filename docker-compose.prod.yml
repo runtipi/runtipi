@@ -12,8 +12,8 @@ services:
     command: --providers.docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}/traefik:/root/.config
-      - ${PWD}/traefik/shared:/shared
+      - ./traefik:/root/.config
+      - ./traefik/shared:/shared
     networks:
       - tipi_main_network
 
@@ -82,14 +82,14 @@ services:
     volumes:
       - /proc:/host/proc
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${PWD}/.env:/app/.env
-      - ${PWD}/state:/app/state
-      - ${PWD}/repos:/app/repos
-      - ${PWD}/apps:/app/apps
-      - ${STORAGE_PATH:-$PWD}/app-data:/storage/app-data
-      - ${PWD}/logs:/app/logs
-      - ${PWD}/traefik:/app/traefik
-      - ${PWD}/user-config:/app/user-config
+      - ./.env:/app/.env
+      - ./state:/app/state
+      - ./repos:/app/repos
+      - ./apps:/app/apps
+      - ./logs:/app/logs
+      - ./traefik:/app/traefik
+      - ./user-config:/app/user-config
+      - ${STORAGE_PATH:-.}:/storage
     networks:
       - tipi_main_network
 
@@ -116,13 +116,12 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ${PWD}/.env:/runtipi/.env
-      - ${PWD}/state:/runtipi/state
-      - ${PWD}/repos:/runtipi/repos:ro
-      - ${PWD}/apps:/runtipi/apps
-      - ${PWD}/logs:/app/logs
-      - ${PWD}/traefik:/runtipi/traefik
-      - ${STORAGE_PATH}:/app/storage
+      - ./.env:/runtipi/.env:ro
+      - ./state:/runtipi/state
+      - ./repos:/runtipi/repos:ro
+      - ./apps:/runtipi/apps
+      - ./logs:/app/logs
+      - ${STORAGE_PATH:-.}:/app/storage
     labels:
       traefik.enable: true
       traefik.http.services.dashboard.loadbalancer.server.port: 3000
