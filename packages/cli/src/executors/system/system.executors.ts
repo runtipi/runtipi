@@ -139,22 +139,24 @@ export class SystemExecutors {
       await execAsync(`docker compose --env-file ${this.envFile} up --detach --remove-orphans --build`);
       spinner.done('Containers started');
 
+      const lines = [
+        `Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get('NGINX_PORT')} to access the dashboard`,
+        'Find documentation and guides at: https://runtipi.io',
+        'Tipi is entierly written in TypeScript and we are looking for contributors!',
+        'Tipi now collects anonymous crash reports to help us improve the product. You can opt-out in the settings of the dashboard.',
+      ].join('\n\n');
+
       console.log(
-        boxen(
-          `Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get(
-            'NGINX_PORT',
-          )} to access the dashboard\n\nFind documentation and guides at: https://runtipi.io\n\nTipi is entierly written in TypeScript and we are looking for contributors!`,
-          {
-            title: 'Tipi successfully started 🎉',
-            titleAlignment: 'center',
-            textAlignment: 'center',
-            padding: 1,
-            borderStyle: 'double',
-            borderColor: 'green',
-            width: 80,
-            margin: { top: 1 },
-          },
-        ),
+        boxen(lines, {
+          title: 'Tipi successfully started 🎉',
+          titleAlignment: 'center',
+          textAlignment: 'center',
+          padding: 1,
+          borderStyle: 'double',
+          borderColor: 'green',
+          width: 80,
+          margin: { top: 1 },
+        }),
       );
 
       return { success: true, message: 'Tipi started' };
