@@ -45,7 +45,7 @@
     "@runtipi/shared": "workspace:^",
     "@sentry/nextjs": "^7.89.0",
     "@tabler/core": "1.0.0-beta20",
-    "@tabler/icons-react": "^2.42.0",
+    "@tabler/icons-react": "^2.44.0",
     "argon2": "^0.31.2",
     "bullmq": "^4.13.0",
     "clsx": "^2.0.0",
