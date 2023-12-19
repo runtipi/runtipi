@@ -13,10 +13,9 @@ FROM builder_base AS builder
 WORKDIR /app
 
 COPY ./pnpm-lock.yaml ./
-COPY ./pnpm-workspace.yaml ./
-COPY ./patches ./patches
-RUN pnpm fetch --no-scripts
+RUN pnpm fetch
 
+COPY ./pnpm-workspace.yaml ./
 COPY ./package*.json ./
 COPY ./packages/shared ./packages/shared
 
@@ -38,7 +37,7 @@ ARG SENTRY_DISABLE_AUTO_UPLOAD
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
 
-RUN npm run build
+RUN pnpm build
 
 # APP
 FROM node_base AS app

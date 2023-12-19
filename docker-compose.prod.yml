@@ -59,6 +59,8 @@ services:
     build:
       context: .
       dockerfile: ./packages/worker/Dockerfile
+      args:
+        - SENTRY_DISABLE_AUTO_UPLOAD=true
     container_name: tipi-worker
     ports:
       - 3935:3001

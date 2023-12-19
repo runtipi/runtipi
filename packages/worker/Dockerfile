@@ -37,13 +37,12 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
 RUN chmod +x docker-binary
 
 COPY ./pnpm-lock.yaml ./
-COPY ./pnpm-workspace.yaml ./
-COPY ./patches ./patches
-RUN pnpm fetch --no-scripts
+RUN pnpm fetch --ignore-scripts
 
+COPY ./pnpm-workspace.yaml ./
 COPY ./packages ./packages
 
-RUN pnpm install -r --prefer-offline 
+RUN pnpm install -r --prefer-offline
 
 COPY ./packages/worker/build.js ./packages/worker/build.js
 COPY ./packages/worker/src ./packages/worker/src
@@ -51,7 +50,10 @@ COPY ./packages/worker/package.json ./packages/worker/package.json
 COPY ./packages/worker/assets ./packages/worker/assets
 
 ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_DISABLE_AUTO_UPLOAD
+
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
 
 RUN pnpm -r build --filter @runtipi/worker
 
