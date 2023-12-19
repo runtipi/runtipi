@@ -32,7 +32,7 @@
     "@runtipi/postgres-migrations": "^5.3.0",
     "@runtipi/shared": "workspace:^",
     "@sentry/esbuild-plugin": "^2.10.2",
-    "@sentry/node": "^7.86.0",
+    "@sentry/node": "^7.89.0",
     "bullmq": "^4.13.0",
     "dotenv": "^16.3.1",
     "ioredis": "^5.3.2",
