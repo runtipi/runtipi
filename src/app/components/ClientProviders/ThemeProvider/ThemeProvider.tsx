@@ -21,7 +21,7 @@ export const ThemeProvider = (props: Props) => {
   const { children, initialTheme } = props;
   const cookies = useCookies();
   const { theme, setDarkMode } = useUIStore();
-  const { allowAutoThemes = true } = useClientSettings();
+  const { allowAutoThemes = false } = useClientSettings();
 
   useEffect(() => {
     if (theme) {
