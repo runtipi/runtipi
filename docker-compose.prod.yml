@@ -121,6 +121,7 @@ services:
       - ./repos:/runtipi/repos:ro
       - ./apps:/runtipi/apps
       - ./logs:/app/logs
+      - ./traefik:/runtipi/traefik
       - ${STORAGE_PATH:-.}:/app/storage
     labels:
       traefik.enable: true

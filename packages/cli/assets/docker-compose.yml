@@ -112,6 +112,7 @@ services:
       - ./state:/runtipi/state
       - ./repos:/runtipi/repos:ro
       - ./apps:/runtipi/apps
+      - ./traefik:/runtipi/traefik
       - ./logs:/app/logs
       - ${STORAGE_PATH:-.}:/app/storage
     env_file:
