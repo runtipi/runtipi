@@ -175,7 +175,8 @@ export class AppExecutors {
       this.logger.info(`Stopping app ${appId}`);
 
       const { appDirPath } = this.getAppPaths(appId);
-      const appFolderExists = await pathExists(appDirPath);
+      const configJsonPath = path.join(appDirPath, 'config.json');
+      const appFolderExists = await pathExists(configJsonPath);
 
       if (!appFolderExists) {
         this.logger.error(`App ${appId} folder not found`);
