@@ -1,5 +1,4 @@
 import React from 'react';
-import { server } from '../../src/client/mocks/server';
 import '@testing-library/jest-dom';
 
 // Mock next/router
@@ -54,21 +53,4 @@ Object.defineProperty(window, 'matchMedia', {
       removeListener: () => {},
     };
   },
-});
-
-beforeAll(() => {
-  // Enable the mocking in tests.
-  server.listen();
-});
-
-beforeEach(async () => {});
-
-afterEach(() => {
-  // Reset any runtime handlers tests may use.
-  server.resetHandlers();
-});
-
-afterAll(() => {
-  // Clean up once the tests are done.
-  server.close();
 });

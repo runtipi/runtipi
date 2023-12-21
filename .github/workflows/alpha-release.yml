@@ -50,6 +50,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           file: ./packages/worker/Dockerfile
           platforms: linux/amd64
           push: true
@@ -58,6 +60,8 @@ jobs:
           cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/worker:buildcache,mode=max
 
   build-images:
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
     runs-on: ubuntu-latest
     needs: create-tag
     steps:
@@ -81,6 +85,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           platforms: linux/amd64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.create-tag.outputs.tagname }}
@@ -97,7 +103,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - uses: pnpm/action-setup@v2.4.0
         name: Install pnpm
@@ -129,7 +135,7 @@ jobs:
         run: pnpm -r --filter cli package
 
       - name: Upload CLI
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cli
           path: packages/cli/dist
@@ -140,7 +146,7 @@ jobs:
 
     steps:
       - name: Download CLI
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: cli
           path: cli

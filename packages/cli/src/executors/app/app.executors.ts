@@ -37,7 +37,7 @@ export class AppExecutors {
     const { queue, queueEvents } = this.getQueue();
     const event = { type: 'app', command: 'stop', appid: appId, form: {}, skipEnv: true } satisfies SystemEvent;
     const job = await queue.add(jobid, eventSchema.parse(event));
-    const result = await job.waitUntilFinished(queueEvents, 1000 * 60 * 5);
+    const result = await job.waitUntilFinished(queueEvents, 1000 * 60);
 
     await queueEvents.close();
     await queue.close();

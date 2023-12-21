@@ -14,10 +14,11 @@ export function LoginContainer() {
   const router = useRouter();
 
   const loginMutation = useAction(loginAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
     onSuccess: (data) => {
-      if (!data.success) {
-        toast.error(data.failure.reason);
-      } else if (data.success && data.totpSessionId) {
+      if (data.success && data.totpSessionId) {
         setTotpSessionId(data.totpSessionId);
       } else {
         router.push('/dashboard');
@@ -26,18 +27,27 @@ export function LoginContainer() {
   });
 
   const verifyTotpMutation = useAction(verifyTotpAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        toast.error(data.failure.reason);
-      } else {
-        router.push('/dashboard');
-      }
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onSuccess: () => {
+      router.push('/dashboard');
     },
   });
 
   if (totpSessionId) {
-    return <TotpForm loading={verifyTotpMutation.status === 'executing'} onSubmit={(totpCode) => verifyTotpMutation.execute({ totpCode, totpSessionId })} />;
+    return (
+      <TotpForm
+        loading={verifyTotpMutation.status === 'executing'}
+        onSubmit={(totpCode) => verifyTotpMutation.execute({ totpCode, totpSessionId })}
+      />
+    );
   }
 
-  return <LoginForm loading={loginMutation.status === 'executing'} onSubmit={({ email, password }) => loginMutation.execute({ username: email, password })} />;
+  return (
+    <LoginForm
+      loading={loginMutation.status === 'executing'}
+      onSubmit={({ email, password }) => loginMutation.execute({ username: email, password })}
+    />
+  );
 }

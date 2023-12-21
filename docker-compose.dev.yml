@@ -12,8 +12,8 @@ services:
     command: --providers.docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${PWD}/traefik:/root/.config
-      - ${PWD}/traefik/shared:/shared
+      - ./traefik:/root/.config
+      - ./traefik/shared:/shared
     networks:
       - tipi_main_network
 
@@ -60,6 +60,8 @@ services:
       context: .
       dockerfile: ./packages/worker/Dockerfile.dev
     container_name: tipi-worker
+    ports:
+      - 3935:3001
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
       interval: 5s
@@ -77,18 +79,18 @@ services:
       NODE_ENV: development
     volumes:
       # Dev mode
-      - ${PWD}/packages/worker/src:/app/packages/worker/src
+      - ./packages/worker/src:/app/packages/worker/src
       # Production mode
       - /proc:/host/proc:ro
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${PWD}/.env:/app/.env
-      - ${PWD}/state:/app/state
-      - ${PWD}/repos:/app/repos
-      - ${PWD}/apps:/app/apps
+      - ./.env:/app/.env
+      - ./state:/app/state
+      - ./repos:/app/repos
+      - ./apps:/app/apps
       - ${STORAGE_PATH:-$PWD}/app-data:/storage/app-data
-      - ${PWD}/logs:/app/logs
-      - ${PWD}/traefik:/app/traefik
-      - ${PWD}/user-config:/app/user-config
+      - ./logs:/app/logs
+      - ./traefik:/app/traefik
+      - ./user-config:/app/user-config
     networks:
       - tipi_main_network
 
@@ -115,14 +117,14 @@ services:
     volumes:
       # - /dashboard/node_modules
       # - /dashboard/.next
-      - ${PWD}/.env:/runtipi/.env
-      - ${PWD}/src:/app/src
-      - ${PWD}/packages:/app/packages
-      - ${PWD}/state:/runtipi/state
-      - ${PWD}/repos:/runtipi/repos:ro
-      - ${PWD}/apps:/runtipi/apps
-      - ${PWD}/logs:/app/logs
-      - ${PWD}/traefik:/runtipi/traefik
+      - ./.env:/runtipi/.env
+      - ./src:/app/src
+      - ./packages:/app/packages
+      - ./state:/runtipi/state
+      - ./repos:/runtipi/repos:ro
+      - ./apps:/runtipi/apps
+      - ./logs:/app/logs
+      - ./traefik:/runtipi/traefik
       - ${STORAGE_PATH:-$PWD}:/app/storage
     labels:
       traefik.enable: true

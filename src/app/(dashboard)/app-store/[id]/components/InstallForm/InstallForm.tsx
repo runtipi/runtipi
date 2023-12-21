@@ -71,7 +71,9 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         {field.required && <span className="ms-1 text-danger">*</span>}
         {Boolean(field.hint) && (
           <>
-            <Tooltip anchorSelect={`.${field.env_variable}`}>{field.hint}</Tooltip>
+            <Tooltip className="tooltip" anchorSelect={`.${field.env_variable}`}>
+              {field.hint}
+            </Tooltip>
             <span className={clsx('ms-1 form-help', field.env_variable)}>?</span>
           </>
         )}
@@ -84,7 +86,9 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
           control={control}
           name={field.env_variable}
           defaultValue={field.default}
-          render={({ field: { onChange, value, ref, ...props } }) => <Switch className="mb-3" ref={ref} checked={Boolean(value)} onCheckedChange={onChange} {...props} label={label} />}
+          render={({ field: { onChange, value, ref, ...props } }) => (
+            <Switch className="mb-3" ref={ref} checked={Boolean(value)} onCheckedChange={onChange} {...props} label={label} />
+          )}
         />
       );
     }
@@ -133,7 +137,15 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         name="exposed"
         defaultValue={false}
         render={({ field: { onChange, value, ref, ...props } }) => (
-          <Switch className="mb-3" disabled={info.force_expose} ref={ref} checked={value} onCheckedChange={onChange} {...props} label={t('expose-app')} />
+          <Switch
+            {...props}
+            className="mb-3"
+            ref={ref}
+            checked={value}
+            onCheckedChange={onChange}
+            disabled={info.force_expose}
+            label={t('expose-app')}
+          />
         )}
       />
       {watchExposed && (
@@ -167,7 +179,15 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         name="isVisibleOnGuestDashboard"
         defaultValue={false}
         render={({ field: { onChange, value, ref, ...props } }) => (
-          <Switch className="mb-3" disabled={info.force_expose} ref={ref} checked={value} onCheckedChange={onChange} {...props} label={t('display-on-guest-dashboard')} />
+          <Switch
+            className="mb-3"
+            disabled={info.force_expose}
+            ref={ref}
+            checked={value}
+            onCheckedChange={onChange}
+            {...props}
+            label={t('display-on-guest-dashboard')}
+          />
         )}
       />
       {info.exposable && renderExposeForm()}

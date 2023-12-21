@@ -9,12 +9,7 @@ export const handleActionError = async (e: unknown) => {
   const errorVariables = e instanceof TranslatedError ? e.variableValues : {};
 
   const translator = await getTranslatorFromCookie();
-  const messageTranslated = translator(message as MessageKey, errorVariables);
+  const messageTranslated = e instanceof TranslatedError ? translator(message as MessageKey, errorVariables) : message;
 
-  return {
-    success: false as const,
-    failure: {
-      reason: messageTranslated,
-    },
-  };
+  throw new Error(messageTranslated as string);
 };

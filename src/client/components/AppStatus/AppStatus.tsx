@@ -16,7 +16,7 @@ export const AppStatus: React.FC<{ status: AppStatusEnum; lite?: boolean }> = ({
 
   return (
     <>
-      {lite && <Tooltip id={formattedStatus} anchorSelect=".appStatus" place="top" />}
+      {lite && <Tooltip className="tooltip" id={formattedStatus} anchorSelect=".appStatus" place="top" />}
       <div data-tooltip-content={formattedStatus} data-tooltip-id={formattedStatus} className="appStatus d-flex align-items-center">
         <span className={classes} />
         {!lite && <span className={clsx(styles.text, 'ms-2 text-muted')}>{formattedStatus}</span>}

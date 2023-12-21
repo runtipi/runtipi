@@ -251,6 +251,8 @@
       "invalid-domain": "Invalid domain",
       "guest-dashboard": "Enable guest dashboard",
       "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-error-monitoring": "Allow anonymous error monitoring",
+      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
       "allow-auto-themes": "Allow auto themes",
       "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "Domain name",

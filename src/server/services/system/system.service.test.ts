@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import fs from 'fs-extra';
 import { faker } from '@faker-js/faker';
@@ -74,8 +74,8 @@ describe('Test: systemInfo', () => {
 describe('Test: getVersion', () => {
   it('Should return current version for latest if request fails', async () => {
     server.use(
-      rest.get('https://api.github.com/repos/runtipi/runtipi/releases/latest', (_, res, ctx) => {
-        return res(ctx.status(500));
+      http.get('https://api.github.com/*', () => {
+        return HttpResponse.json('Error', { status: 500 });
       }),
     );
 
@@ -89,8 +89,8 @@ describe('Test: getVersion', () => {
   it('Should return cached version', async () => {
     // Arrange
     server.use(
-      rest.get('https://api.github.com/repos/runtipi/runtipi/releases/latest', (_, res, ctx) => {
-        return res(ctx.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` }));
+      http.get('https://api.github.com/*', () => {
+        return HttpResponse.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` });
       }),
     );
 

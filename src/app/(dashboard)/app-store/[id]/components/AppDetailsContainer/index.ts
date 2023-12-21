@@ -1,0 +1,1 @@
+export { AppDetailsWrapper } from './AppDetailsWrapper';

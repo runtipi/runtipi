@@ -1,4 +1,4 @@
-ARG NODE_VERSION="18.16"
+ARG NODE_VERSION="20.10"
 ARG ALPINE_VERSION="3.18"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
@@ -19,5 +19,10 @@ RUN pnpm install -r --prefer-offline
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
 COPY ./public ./public
+
+# Sentry
+COPY ./sentry.client.config.ts ./sentry.client.config.ts
+COPY ./sentry.edge.config.ts ./sentry.edge.config.ts
+COPY ./sentry.server.config.ts ./sentry.server.config.ts
 
 CMD ["npm", "run", "dev"]

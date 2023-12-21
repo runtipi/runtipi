@@ -11,14 +11,18 @@ export const RegisterContainer: React.FC = () => {
   const router = useRouter();
 
   const registerMutation = useAction(registerAction, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        toast.error(data.failure.reason);
-      } else {
-        router.push('/dashboard');
-      }
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onSuccess: () => {
+      router.push('/dashboard');
     },
   });
 
-  return <RegisterForm onSubmit={({ email, password }) => registerMutation.execute({ username: email, password })} loading={registerMutation.status === 'executing'} />;
+  return (
+    <RegisterForm
+      onSubmit={({ email, password }) => registerMutation.execute({ username: email, password })}
+      loading={registerMutation.status === 'executing'}
+    />
+  );
 };

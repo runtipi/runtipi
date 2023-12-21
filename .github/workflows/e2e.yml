@@ -134,7 +134,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Create .env.e2e file with Droplet IP
         run: |
@@ -147,11 +147,16 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Create state/settings.json
+        run: |
+          mkdir -p state
+          echo '{}' > state/settings.json
+
       - name: Run Playwright tests
         id: run-e2e
         run: npm run test:e2e
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
@@ -172,13 +177,13 @@ jobs:
     if: always()
     steps:
       - name: Download report artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
 
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
@@ -187,7 +192,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3
 
   teardown:
     runs-on: ubuntu-latest

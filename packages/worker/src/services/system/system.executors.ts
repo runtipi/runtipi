@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import si from 'systeminformation';
+import * as Sentry from '@sentry/node';
 import { logger } from '@/lib/logger';
 import { ROOT_FOLDER } from '@/config/constants';
 
@@ -12,6 +13,8 @@ export class SystemExecutors {
   }
 
   private handleSystemError = (err: unknown) => {
+    Sentry.captureException(err);
+
     if (err instanceof Error) {
       this.logger.error(`An error occurred: ${err.message}`);
       return { success: false, message: err.message };

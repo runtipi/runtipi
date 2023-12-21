@@ -1,4 +1,4 @@
-ARG NODE_VERSION="18.16"
+ARG NODE_VERSION="20.10"
 ARG ALPINE_VERSION="3.18"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
@@ -13,10 +13,9 @@ FROM builder_base AS builder
 WORKDIR /app
 
 COPY ./pnpm-lock.yaml ./
-COPY ./pnpm-workspace.yaml ./
-COPY ./patches ./patches
-RUN pnpm fetch --no-scripts
+RUN pnpm fetch
 
+COPY ./pnpm-workspace.yaml ./
 COPY ./package*.json ./
 COPY ./packages/shared ./packages/shared
 
@@ -27,7 +26,18 @@ COPY ./next.config.mjs ./next.config.mjs
 COPY ./public ./public
 COPY ./tests ./tests
 
-RUN npm run build
+# Sentry
+COPY ./sentry.client.config.ts ./sentry.client.config.ts
+COPY ./sentry.edge.config.ts ./sentry.edge.config.ts
+COPY ./sentry.server.config.ts ./sentry.server.config.ts
+
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_DISABLE_AUTO_UPLOAD
+
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
+
+RUN pnpm build
 
 # APP
 FROM node_base AS app

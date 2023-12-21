@@ -4,10 +4,10 @@ import { useUIStore } from '@/client/state/uiStore';
 import React, { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
 import { getAutoTheme } from '@/lib/themes';
+import { useClientSettings } from '@/hooks/use-client-settings';
 
 type Props = {
   children: React.ReactNode;
-  allowAutoThemes: boolean;
   initialTheme?: string;
 };
 
@@ -18,9 +18,10 @@ const loadChristmasTheme = async () => {
 };
 
 export const ThemeProvider = (props: Props) => {
-  const { children, initialTheme, allowAutoThemes } = props;
+  const { children, initialTheme } = props;
   const cookies = useCookies();
   const { theme, setDarkMode } = useUIStore();
+  const { allowAutoThemes = false } = useClientSettings();
 
   useEffect(() => {
     if (theme) {

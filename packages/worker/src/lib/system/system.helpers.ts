@@ -35,6 +35,7 @@ type EnvKeys =
   | 'GUEST_DASHBOARD'
   | 'TIPI_GID'
   | 'TIPI_UID'
+  | 'ALLOW_ERROR_MONITORING'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
@@ -160,6 +161,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('GUEST_DASHBOARD', String(data.guestDashboard || 'false'));
   envMap.set('LOCAL_DOMAIN', data.localDomain || 'tipi.lan');
   envMap.set('NODE_ENV', 'production');
+  envMap.set('ALLOW_ERROR_MONITORING', String(data.allowErrorMonitoring) || 'true');
 
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 

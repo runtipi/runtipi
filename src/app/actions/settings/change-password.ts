@@ -2,10 +2,10 @@
 
 import { z } from 'zod';
 import { action } from '@/lib/safe-action';
-import { getUserFromCookie } from '@/server/common/session.helpers';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
 import { db } from '@/server/db';
 import { handleActionError } from '../utils/handle-action-error';
+import { ensureUser } from '../utils/ensure-user';
 
 const input = z.object({ currentPassword: z.string(), newPassword: z.string() });
 
@@ -14,15 +14,11 @@ const input = z.object({ currentPassword: z.string(), newPassword: z.string() })
  */
 export const changePasswordAction = action(input, async ({ currentPassword, newPassword }) => {
   try {
-    const user = await getUserFromCookie();
-
-    if (!user) {
-      throw new Error('User not found');
-    }
+    const { id } = await ensureUser();
 
     const authService = new AuthServiceClass(db);
 
-    await authService.changePassword({ userId: user.id, currentPassword, newPassword });
+    await authService.changePassword({ userId: id, currentPassword, newPassword });
 
     return { success: true };
   } catch (e) {
