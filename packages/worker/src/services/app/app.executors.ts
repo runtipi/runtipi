@@ -174,6 +174,14 @@ export class AppExecutors {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
       this.logger.info(`Stopping app ${appId}`);
 
+      const { appDirPath } = this.getAppPaths(appId);
+      const appFolderExists = await pathExists(appDirPath);
+
+      if (!appFolderExists) {
+        this.logger.error(`App ${appId} folder not found`);
+        return { success: true, message: `App ${appId} folder not found` };
+      }
+
       await this.ensureAppDir(appId);
 
       if (!skipEnvGeneration) {
