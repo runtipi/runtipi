@@ -171,6 +171,14 @@ export class AppExecutors {
    */
   public stopApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
     try {
+      const { appDirPath } = this.getAppPaths(appId);
+      const configJsonPath = path.join(appDirPath, 'config.json');
+      const isActualApp = await pathExists(configJsonPath);
+
+      if (!isActualApp) {
+        return { success: true, message: `App ${appId} is not an app. Skipping...` };
+      }
+
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
       this.logger.info(`Stopping app ${appId}`);
 

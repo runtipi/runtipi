@@ -21,11 +21,19 @@ class SocketManager {
       return;
     }
 
-    const sockets = await this.io.fetchSockets();
+    try {
+      const sockets = await this.io.fetchSockets();
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const socket of sockets) {
-      socket.emit(event.type, event);
+      // eslint-disable-next-line no-restricted-syntax
+      for (const socket of sockets) {
+        try {
+          socket.emit(event.type, event);
+        } catch (error) {
+          logger.error('Error sending socket event:', error);
+        }
+      }
+    } catch (error) {
+      logger.error('Error emitting socket event:', error);
     }
   }
 }

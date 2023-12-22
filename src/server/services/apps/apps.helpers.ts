@@ -1,5 +1,5 @@
 import { App } from '@/server/db/schema';
-import { appInfoSchema } from '@runtipi/shared';
+import { appInfoSchema, pathExists } from '@runtipi/shared';
 import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
 import { getConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
@@ -36,6 +36,11 @@ export const checkAppRequirements = (appName: string) => {
   If the config.json file is invalid, it logs an error message.
  */
 export const getAvailableApps = async () => {
+  if (!pathExists(`/runtipi/repos/${getConfig().appsRepoId}/apps`)) {
+    Logger.error(`Apps repo ${getConfig().appsRepoId} not found. Make sure your repo is configured correctly.`);
+    return [];
+  }
+
   const appsDir = readdirSync(`/runtipi/repos/${getConfig().appsRepoId}/apps`);
 
   const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];

@@ -5,7 +5,6 @@ import { AuthServiceClass } from '@/server/services/auth/auth.service';
 import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 import { handleActionError } from '../utils/handle-action-error';
-import { ensureUser } from '../utils/ensure-user';
 
 const input = z.void();
 
@@ -14,8 +13,6 @@ const input = z.void();
  */
 export const cancelResetPasswordAction = action(input, async () => {
   try {
-    await ensureUser();
-
     await AuthServiceClass.cancelPasswordChangeRequest();
 
     revalidatePath('/reset-password');
