@@ -11,7 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sentry/types": "^7.90.0",
+    "lodash.clonedeep": "^4.5.0",
+    "validator": "^13.11.0",
     "winston": "^3.11.0",
     "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/lodash.clonedeep": "^4.5.9"
   }
 }
