@@ -22,7 +22,7 @@ const enableTraefikDashboard = () => {
   const dockerCompose = fs.readFileSync('docker-compose.yml', 'utf-8');
   const dockerComposeObject = YAML.parse(dockerCompose);
   dockerComposeObject.services['tipi-reverse-proxy'].ports.push('8080:8080');
-  fs.writeFileSync('docker-compose.yml', YAML.stringify(dockerComposeObject));
+  fs.promises.writeFile('docker-compose.yml', YAML.stringify(dockerComposeObject));
 };
 
 export class SystemExecutors {
