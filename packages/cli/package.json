@@ -41,7 +41,7 @@
     "pkg": "^5.8.1",
     "vite": "^4.5.1",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^0.34.6"
+    "vitest": "^1.1.0"
   },
   "dependencies": {
     "@runtipi/shared": "workspace:^",
