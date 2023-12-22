@@ -13,6 +13,9 @@ import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
 import { AppExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
+import * as fs from 'fs';
+import * as yaml from 'yaml';
+
 
 const rootFolder = '/app';
 const envFile = path.join(rootFolder, '.env');
@@ -24,6 +27,13 @@ const setupSentry = () => {
     beforeSend: cleanseErrorData,
   });
 };
+
+const enableTraefikDash = () => {
+  const dockerCompose = fs.readFileSync("/app/docker-compose.yml", "utf-8");
+  const dockerComposeObject = yaml.parse(dockerCompose);
+  dockerComposeObject.services["tipi-reverse-proxy"].ports.push("8080:8080");
+  fs.writeFileSync("/app/docker-compose.yml", yaml.stringify(dockerComposeObject));
+}
 
 const main = async () => {
   try {
@@ -40,6 +50,11 @@ const main = async () => {
       setupSentry();
     }
 
+    if (envMap.get('ENABLE_TRAEFIK_DASH') === 'true') {
+      logger.info('Traefik dashboard is enabled and exposed on port 8080, to disable it add "enableTraefikDash": false to your settings.json file');
+      enableTraefikDash();
+    }
+    
     // Reload env variables after generating the env file
     logger.info('Reloading env variables...');
     dotenv.config({ path: envFile, override: true });
