@@ -3,21 +3,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
   "name": "Tipi (Dev Environment)",
-  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  //"image": "mcr.microsoft.com/devcontainers/typescript-node",
-  // "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
-  // "runArgs": [
-  //   //"--env-file", ".devcontainer/devcontainer.env",
-  //   "--name", "tipi-dev-env" // Container name
-  // ],
-  // "build": {
-  //   // Path is relative to the devcontainer.json file.
-  //   "dockerfile": "Dockerfile"
-  // },
   "dockerComposeFile": "../docker-compose.devcontainer.yml",
   "service": "tipi-dev-env",
   "workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
-
 
   "hostRequirements": {
     "cpus": 4
@@ -25,11 +13,6 @@
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
-    // "ghcr.io/devcontainers/features/docker-in-docker:2": {
-    //   "version": "latest",
-    //   "moby": false,
-    //   "dockerDashComposeVersion": "v2"
-    // }
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
         "version": "latest",
         "moby": false,
@@ -38,21 +21,8 @@
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [80, 443, 3000, 8080],
-
+	"forwardPorts": [3000, 8080],
   "portsAttributes": {
-    // "80": {
-    //   "label": "HTTP (insecure)",
-    //   "protocol": "http",
-    //   "elevateIfNeeded": true,
-    //   "onAutoForward": "notify"
-    // },
-    // "443": {
-    //   "label": "HTTPS (secure)",
-    //   "protocol": "https",
-    //   "elevateIfNeeded": true,
-    //   "onAutoForward": "notify"
-    // },
     "3000": {
       "label": "Tipi Dashboard",
       "onAutoForward": "notify"
@@ -65,15 +35,6 @@
       "onAutoForward": "notify"
     }
   },
-
-  //"waitFor": "onCreateCommand",
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-  // "postCreateCommand": "sudo chown 1000:1000 /workspace/.env",
-  //"postCreateCommand": "npm run start:dev",
-	//"postCreateCommand": "pnpm i && npm run start:dev",
-  /*"postCreateCommand": "zsh ./.devcontainer/postCreateCommand.sh"*/
-  /*"postCreateCommand": ["/bin/sh", "-c", "/bin/sh ./.devcontainer/postCreateCommand.sh >> 2>&1 /var/logs/garbage.log"],*/
 
   // Configure tool-specific properties.
   "customizations": {
@@ -88,16 +49,8 @@
         "ms-playwright.playwright"
       ]
     }
-    // "codespaces": {
-    //   "openFiles": ["README.md"]
-    // }
   },
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	"remoteUser": "vscode"
-
-  // Environment variables that will be made available to the container. See https://aka.ms/devcontainer.json for more info.
-  // "remoteEnv": {
-  //   "COMPOSE_PROJECT_NAME": "tipi-dev"
-  // }
 }
