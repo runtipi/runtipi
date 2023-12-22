@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import fs from 'fs';
+import YAML from 'yaml';
 import cliProgress from 'cli-progress';
 import semver from 'semver';
 import axios from 'axios';
@@ -16,6 +17,13 @@ import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
 import { getEnv } from '@/utils/environment/environment';
 import { logger } from '@/utils/logger/logger';
 import { execAsync } from '@/utils/exec-async/execAsync';
+
+const enableTraefikDashboard = () => {
+  const dockerCompose = fs.readFileSync('docker-compose.yml', 'utf-8');
+  const dockerComposeObject = YAML.parse(dockerCompose);
+  dockerComposeObject.services['tipi-reverse-proxy'].ports.push('8080:8080');
+  fs.writeFileSync('docker-compose.yml', YAML.stringify(dockerComposeObject));
+};
 
 export class SystemExecutors {
   private readonly rootFolder: string;
@@ -122,6 +130,12 @@ export class SystemExecutors {
       // Reload env variables after generating the env file
       this.logger.info('Reloading env variables...');
       dotenv.config({ path: this.envFile, override: true });
+
+      // Apply any changes from the env file
+      if (envMap.get('ENABLE_TRAEFIK_DASHBOARD') === 'true') {
+        logger.info('Traefik dashboard is enabled and exposed on port 8080, to disable it add "enableTraefikDashboard": false to your settings.json file');
+        enableTraefikDashboard();
+      }
 
       // Pull images
       spinner.setMessage('Pulling images...');

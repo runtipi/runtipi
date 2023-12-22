@@ -78,7 +78,7 @@ export const envSchema = z.object({
 
       return true;
     }),
-  enableTraefikDash: z
+  enableTraefikDashboard: z
     .string()
     .or(z.boolean())
     .optional()
@@ -86,7 +86,7 @@ export const envSchema = z.object({
       if (typeof value === 'boolean') return value;
       if (typeof value === 'string') return value === 'true';
 
-      return true;
+      return false;
     }),
 });
 
@@ -104,6 +104,6 @@ export const settingsSchema = envSchema
     guestDashboard: true,
     allowAutoThemes: true,
     allowErrorMonitoring: true,
-    enableTraefikDash: true,
+    enableTraefikDashboard: true,
   })
   .and(z.object({ port: z.number(), sslPort: z.number(), listenIp: z.string().ip().trim() }).partial());

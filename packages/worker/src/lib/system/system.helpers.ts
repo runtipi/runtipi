@@ -36,7 +36,6 @@ type EnvKeys =
   | 'TIPI_GID'
   | 'TIPI_UID'
   | 'ALLOW_ERROR_MONITORING'
-  | 'ENABLE_TRAEFIK_DASH'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
@@ -163,7 +162,6 @@ export const generateSystemEnvFile = async () => {
   envMap.set('LOCAL_DOMAIN', data.localDomain || 'tipi.lan');
   envMap.set('NODE_ENV', 'production');
   envMap.set('ALLOW_ERROR_MONITORING', String(data.allowErrorMonitoring) || 'true');
-  envMap.set('ENABLE_TRAEFIK_DASH', String(data.enableTraefikDash) || 'false');
 
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 
