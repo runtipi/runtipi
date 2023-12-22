@@ -26,7 +26,6 @@ const enableTraefikDashboard = async () => {
     await fs.promises.writeFile('docker-compose.yml', YAML.stringify(dockerComposeObject));
   } catch (error) {
     logger.error(`Failed to enable Traefik dashboard: ${error}`);
-    throw error; // Rethrow the error to handle it in the calling function
   }
 };
 
