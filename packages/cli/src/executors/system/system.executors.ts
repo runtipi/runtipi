@@ -18,11 +18,16 @@ import { getEnv } from '@/utils/environment/environment';
 import { logger } from '@/utils/logger/logger';
 import { execAsync } from '@/utils/exec-async/execAsync';
 
-const enableTraefikDashboard = () => {
-  const dockerCompose = fs.readFileSync('docker-compose.yml', 'utf-8');
-  const dockerComposeObject = YAML.parse(dockerCompose);
-  dockerComposeObject.services['tipi-reverse-proxy'].ports.push('8080:8080');
-  fs.promises.writeFile('docker-compose.yml', YAML.stringify(dockerComposeObject));
+const enableTraefikDashboard = async () => {
+  try {
+    const dockerCompose = await fs.promises.readFile('docker-compose.yml', 'utf-8');
+    const dockerComposeObject = YAML.parse(dockerCompose);
+    dockerComposeObject.services['tipi-reverse-proxy'].ports.push('8080:8080');
+    await fs.promises.writeFile('docker-compose.yml', YAML.stringify(dockerComposeObject));
+  } catch (error) {
+    logger.error(`Failed to enable Traefik dashboard: ${error}`);
+    throw error; // Rethrow the error to handle it in the calling function
+  }
 };
 
 export class SystemExecutors {
@@ -134,7 +139,7 @@ export class SystemExecutors {
       // Apply any changes from the env file
       if (envMap.get('ENABLE_TRAEFIK_DASHBOARD') === 'true') {
         logger.info('Traefik dashboard is enabled and exposed on port 8080, to disable it add "enableTraefikDashboard": false to your settings.json file');
-        enableTraefikDashboard();
+        await enableTraefikDashboard();
       }
 
       // Pull images
