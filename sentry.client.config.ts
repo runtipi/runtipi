@@ -13,6 +13,7 @@ if (inputElement) {
         environment: process.env.NODE_ENV,
         dsn: 'https://7a73d72f886948478b55621e7b92c3c7@o4504242900238336.ingest.sentry.io/4504826587971584',
         debug: process.env.NODE_ENV === 'development',
+        enableTracing: false,
       });
     }
   } catch (error) {
