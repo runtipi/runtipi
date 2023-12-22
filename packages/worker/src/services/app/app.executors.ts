@@ -171,17 +171,16 @@ export class AppExecutors {
    */
   public stopApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
     try {
-      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
-      this.logger.info(`Stopping app ${appId}`);
-
       const { appDirPath } = this.getAppPaths(appId);
       const configJsonPath = path.join(appDirPath, 'config.json');
-      const appFolderExists = await pathExists(configJsonPath);
+      const isActualApp = await pathExists(configJsonPath);
 
-      if (!appFolderExists) {
-        this.logger.error(`App ${appId} folder not found`);
-        return { success: true, message: `App ${appId} folder not found` };
+      if (!isActualApp) {
+        return { success: true, message: `App ${appId} is not an app. Skipping...` };
       }
+
+      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      this.logger.info(`Stopping app ${appId}`);
 
       await this.ensureAppDir(appId);
 
