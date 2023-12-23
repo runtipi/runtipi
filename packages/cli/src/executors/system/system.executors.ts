@@ -18,18 +18,6 @@ import { getEnv } from '@/utils/environment/environment';
 import { logger } from '@/utils/logger/logger';
 import { execAsync } from '@/utils/exec-async/execAsync';
 
-const enableTraefikDashboard = async () => {
-  try {
-    const dockerComposePath = path.join(this.rootFolder, 'docker-compose.yml');
-    const dockerCompose = await fs.promises.readFile(dockerComposePath, 'utf-8');
-    const dockerComposeObject = YAML.parse(dockerCompose);
-    dockerComposeObject.services['tipi-reverse-proxy'].ports.push('8080:8080');
-    await fs.promises.writeFile('docker-compose.yml', YAML.stringify(dockerComposeObject));
-  } catch (error) {
-    logger.error(`Failed to enable Traefik dashboard: ${error}`);
-  }
-};
-
 export class SystemExecutors {
   private readonly rootFolder: string;
 
@@ -62,6 +50,18 @@ export class SystemExecutors {
       return { success: true, message: '' };
     } catch (e) {
       return this.handleSystemError(e);
+    }
+  };
+
+  private enableTraefikDashboard = async () => {
+    try {
+      const dockerComposePath = path.join(this.rootFolder, 'docker-compose.yml');
+      const dockerCompose = await fs.promises.readFile(dockerComposePath, 'utf-8');
+      const dockerComposeObject = YAML.parse(dockerCompose);
+      dockerComposeObject.services['tipi-reverse-proxy'].ports.push('8080:8080');
+      await fs.promises.writeFile('docker-compose.yml', YAML.stringify(dockerComposeObject));
+    } catch (error) {
+      logger.error(`Failed to enable Traefik dashboard: ${error}`);
     }
   };
 
@@ -139,7 +139,7 @@ export class SystemExecutors {
       // Apply any changes from the env file
       if (envMap.get('ENABLE_TRAEFIK_DASHBOARD') === 'true') {
         logger.info('Traefik dashboard is enabled and exposed on port 8080, to disable it add "enableTraefikDashboard": false to your settings.json file');
-        await enableTraefikDashboard();
+        await this.enableTraefikDashboard();
       }
 
       // Pull images
