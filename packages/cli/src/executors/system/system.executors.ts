@@ -20,7 +20,8 @@ import { execAsync } from '@/utils/exec-async/execAsync';
 
 const enableTraefikDashboard = async () => {
   try {
-    const dockerCompose = await fs.promises.readFile('docker-compose.yml', 'utf-8');
+    const dockerComposePath = path.join(this.rootFolder, 'docker-compose.yml');
+    const dockerCompose = await fs.promises.readFile(dockerComposePath, 'utf-8');
     const dockerComposeObject = YAML.parse(dockerCompose);
     dockerComposeObject.services['tipi-reverse-proxy'].ports.push('8080:8080');
     await fs.promises.writeFile('docker-compose.yml', YAML.stringify(dockerComposeObject));
