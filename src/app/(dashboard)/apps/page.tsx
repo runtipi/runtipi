@@ -6,6 +6,7 @@ import { getTranslatorFromCookie } from '@/lib/get-translator';
 import { AppTile } from '@/components/AppTile';
 import Link from 'next/link';
 import clsx from 'clsx';
+import { UpdateAllButtonWrapper } from 'src/app/(dashboard)/apps/components/UpdateAllButton/UpdateAllButtonWrapper';
 import { EmptyPage } from '../../components/EmptyPage';
 import styles from './page.module.css';
 
@@ -20,6 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Page() {
   const appsService = new AppServiceClass(db);
   const installedApps = await appsService.installedApps();
+  const aviableUpdates = installedApps.filter(app => Number(app.version) < Number(app.latestVersion));
 
   const renderApp = (app: (typeof installedApps)[number]) => {
     const updateAvailable = Number(app.version) < Number(app.latestVersion);
@@ -36,6 +38,8 @@ export default async function Page() {
 
   return (
     <>
+      { aviableUpdates.length >= 0 && <UpdateAllButtonWrapper apps={aviableUpdates} /> }
+        
       {installedApps.length === 0 && <EmptyPage title="apps.my-apps.empty-title" subtitle="apps.my-apps.empty-subtitle" redirectPath="/app-store" actionLabel="apps.my-apps.empty-action" />}
       <div className="row row-cards " data-testid="apps-list">
         {installedApps?.map(renderApp)}

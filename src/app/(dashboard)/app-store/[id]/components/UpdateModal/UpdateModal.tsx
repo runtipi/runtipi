@@ -5,8 +5,8 @@ import { AppInfo } from '@runtipi/shared';
 import { Button } from '@/components/ui/Button';
 
 interface IProps {
-  newVersion: string;
-  info: Pick<AppInfo, 'name'>;
+  newVersion: string | null;
+  info: Pick<AppInfo, 'name'> | null;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -19,11 +19,11 @@ export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClos
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
         <DialogHeader>
-          <h5 className="modal-title">{t('title', { name: info.name })}</h5>
+          <h5 className="modal-title">{t('title', { name: info?.name || 'all apps' })}</h5>
         </DialogHeader>
         <DialogDescription>
           <div className="text-muted">
-            {t('subtitle1')} <b>{newVersion}</b> ?<br />
+            {newVersion && (<>{t('subtitle1')} <b>{newVersion}</b> ?<br /></>)}
             {t('subtitle2')}
           </div>
         </DialogDescription>
