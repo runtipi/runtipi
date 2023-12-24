@@ -34,9 +34,10 @@ export const updateAppAction = action(input, async ({ id }) => {
 export const updateAllAppsAction = action(updateAllInput, async () => {
   const appsService = new AppServiceClass(db);
   const installedApps = await appsService.installedApps();
+  const aviableUpdates = installedApps.filter(app => Number(app.version) < Number(app.latestVersion));
 
   try {
-    installedApps.forEach((app) => {
+    aviableUpdates.forEach((app) => {
       updateAppAction({ id: app.id });
     });
   
