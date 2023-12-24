@@ -5,25 +5,19 @@ import { Button } from '@/components/ui/Button';
 import clsx from 'clsx';
 import { UpdateModal } from 'src/app/(dashboard)/app-store/[id]/components/UpdateModal/';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
-import { AppService } from '@/server/services/apps/apps.service';
 import { useAction } from 'next-safe-action/hook';
-import { updateAppAction } from '@/actions/app-actions/update-app-action';
+import { updateAllAppsAction } from '@/actions/app-actions/update-app-action';
 
-type UpdateAllButtonProps = {
-  apps: Awaited<ReturnType<AppService['getApp']>>[];
-}
-
-export const UpdateAllButton: React.FC<UpdateAllButtonProps> = ({apps}) => {
+export const UpdateAllButton: React.FC = () => {
 
   const updateDisclosure = useDisclosure();
 
-  const updateMutation = useAction(updateAppAction, {
+  const updateAllMutation = useAction(updateAllAppsAction, {
     onError: (e) => {
       if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
       updateDisclosure.close();
-      // setOptimisticStatus('updating');
     },
   });
 
@@ -32,9 +26,7 @@ export const UpdateAllButton: React.FC<UpdateAllButtonProps> = ({apps}) => {
   }
 
   const updateAll = () => {
-    apps.forEach((app) => {
-      updateMutation.execute({ id: app.id });
-    })
+    updateAllMutation.execute();
   }
 
   return (

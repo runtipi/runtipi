@@ -38,7 +38,7 @@ export default async function Page() {
 
   return (
     <>
-      { aviableUpdates.length >= 0 && <UpdateAllButtonWrapper apps={aviableUpdates} /> }
+      { aviableUpdates.length >= 0 && <UpdateAllButtonWrapper /> }
         
       {installedApps.length === 0 && <EmptyPage title="apps.my-apps.empty-title" subtitle="apps.my-apps.empty-subtitle" redirectPath="/app-store" actionLabel="apps.my-apps.empty-action" />}
       <div className="row row-cards " data-testid="apps-list">

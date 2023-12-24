@@ -9,6 +9,7 @@ import { handleActionError } from '../utils/handle-action-error';
 import { ensureUser } from '../utils/ensure-user';
 
 const input = z.object({ id: z.string() });
+const updateAllInput = z.void();
 
 /**
  * Given an app id, updates the app to the latest version
@@ -24,6 +25,21 @@ export const updateAppAction = action(input, async ({ id }) => {
     revalidatePath(`/app/${id}`);
     revalidatePath(`/app-store/${id}`);
 
+    return { success: true };
+  } catch (e) {
+    return handleActionError(e);
+  }
+});
+ 
+export const updateAllAppsAction = action(updateAllInput, async () => {
+  const appsService = new AppServiceClass(db);
+  const installedApps = await appsService.installedApps();
+
+  try {
+    installedApps.forEach((app) => {
+      updateAppAction({ id: app.id });
+    });
+  
     return { success: true };
   } catch (e) {
     return handleActionError(e);
