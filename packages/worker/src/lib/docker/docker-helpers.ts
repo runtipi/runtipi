@@ -47,7 +47,7 @@ export const compose = async (appId: string, command: string) => {
   // User defined overrides
   const userComposeFile = path.join(ROOT_FOLDER, 'user-config', appId, 'docker-compose.yml');
   if (await pathExists(userComposeFile)) {
-    args.push(`-f ${userComposeFile}`);
+    args.push(`--file ${userComposeFile}`);
   }
 
   args.push(command);
