@@ -16,6 +16,7 @@ import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
 import { getEnv } from '@/utils/environment/environment';
 import { logger } from '@/utils/logger/logger';
 import { execAsync } from '@/utils/exec-async/execAsync';
+import { string } from 'zod';
 
 export class SystemExecutors {
   private readonly rootFolder: string;
@@ -131,12 +132,19 @@ export class SystemExecutors {
 
       spinner.done('Images pulled');
 
+      // Check for user overrides
+      var command: string = ` -f ${this.rootFolder + 'docker-compose.yml'} --env-file ${this.envFile} up --detach --remove-orphans --build`;
+      const userComposeFile = path.join(this.rootFolder, 'user-config', 'docker-compose.yml');
+      if (await pathExists(userComposeFile)) {
+        command = ' -f ' + userComposeFile + command;
+      }
+
       // Start containers
       spinner.setMessage('Starting containers...');
       spinner.start();
       this.logger.info('Starting containers...');
 
-      await execAsync(`docker compose --env-file ${this.envFile} up --detach --remove-orphans --build`);
+      await execAsync(`docker compose ${command}`);
       spinner.done('Containers started');
 
       const lines = [
