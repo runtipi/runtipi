@@ -148,7 +148,7 @@ export class SystemExecutors {
 
       // Check for user overrides
       let command: string = `-f ${path.join(this.rootFolder, 'docker-compose.yml')} --env-file ${this.envFile} up --detach --remove-orphans --build`;
-      const userComposeFile = path.join(this.rootFolder, 'user-config', 'docker-compose.yml');
+      const userComposeFile = path.join(this.rootFolder, 'user-config', 'tipi-compose.yml');
       if (await pathExists(userComposeFile)) {
         command = `--file ${userComposeFile} ${command}`;
       }
