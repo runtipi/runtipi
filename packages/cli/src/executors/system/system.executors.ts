@@ -22,8 +22,6 @@ export class SystemExecutors {
 
   private readonly envFile: string;
 
-  private composeCommand: string;
-
   private readonly logger;
 
   constructor() {
@@ -31,7 +29,6 @@ export class SystemExecutors {
     this.logger = logger;
 
     this.envFile = path.join(this.rootFolder, '.env');
-    this.composeCommand = `-f ${this.rootFolder + 'docker-compose.yml'} --env-file ${this.envFile} up --detach --remove-orphans --build`;
   }
 
   private handleSystemError = (err: unknown) => {
@@ -135,9 +132,10 @@ export class SystemExecutors {
       spinner.done('Images pulled');
 
       // Check for user overrides
+      let command: string = `-f ${this.rootFolder + 'docker-compose.yml'} --env-file ${this.envFile} up --detach --remove-orphans --build`;
       const userComposeFile = path.join(this.rootFolder, 'user-config', 'docker-compose.yml');
       if (await pathExists(userComposeFile)) {
-        this.composeCommand = ' -f ' + userComposeFile + this.composeCommand;
+        command = '-f ' + userComposeFile + command;
       }
 
       // Start containers
@@ -145,7 +143,7 @@ export class SystemExecutors {
       spinner.start();
       this.logger.info('Starting containers...');
 
-      await execAsync(`docker compose ${this.composeCommand}`);
+      await execAsync(`docker compose ${command}`);
       spinner.done('Containers started');
 
       const lines = [
