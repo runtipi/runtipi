@@ -17,6 +17,19 @@ import { getEnv } from '@/utils/environment/environment';
 import { logger } from '@/utils/logger/logger';
 import { execAsync } from '@/utils/exec-async/execAsync';
 
+type StartParams = {
+  envFilePath?: string;
+};
+
+type UpdateParams = {
+  target?: string;
+  envFilePath?: string;
+};
+
+type RestartParams = {
+  envFilePath?: string;
+};
+
 export class SystemExecutors {
   private readonly rootFolder: string;
 
@@ -89,8 +102,10 @@ export class SystemExecutors {
    * This method will start Tipi.
    * It will copy the system files, generate the system env file, pull the images and start the containers.
    */
-  public start = async () => {
+  public start = async (params: StartParams = {}) => {
     const spinner = new TerminalSpinner('Starting Tipi...');
+    const { envFilePath } = params;
+
     try {
       await this.logger.flush();
 
@@ -116,7 +131,7 @@ export class SystemExecutors {
       spinner.setMessage('Generating system env file...');
       spinner.start();
       this.logger.info('Generating system env file...');
-      const envMap = await generateSystemEnvFile();
+      const envMap = await generateSystemEnvFile({ customEnvFile: envFilePath });
       spinner.done('System env file generated');
 
       // Reload env variables after generating the env file
@@ -169,10 +184,10 @@ export class SystemExecutors {
   /**
    * This method will stop and start Tipi.
    */
-  public restart = async () => {
+  public restart = async ({ envFilePath }: RestartParams = {}) => {
     try {
       await this.stop();
-      await this.start();
+      await this.start({ envFilePath });
       return { success: true, message: '' };
     } catch (e) {
       return this.handleSystemError(e);
@@ -197,7 +212,7 @@ export class SystemExecutors {
    * runtipi-cli binary with the new one.
    * @param {string} target
    */
-  public update = async (target: string) => {
+  public update = async ({ target, envFilePath }: UpdateParams) => {
     const spinner = new TerminalSpinner('Evaluating target version...');
     try {
       spinner.start();
@@ -300,7 +315,7 @@ export class SystemExecutors {
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
       this.logger.info('Starting new cli...');
-      const childProcess = spawn('./runtipi-cli', [process.argv[1] as string, 'start']);
+      const childProcess = spawn('./runtipi-cli', [process.argv[1] as string, 'start', envFilePath ? `--env-file ${envFilePath}` : '']);
 
       childProcess.stdout.on('data', (data) => {
         process.stdout.write(data);

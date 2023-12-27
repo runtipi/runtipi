@@ -111,7 +111,7 @@ const getArchitecture = () => {
 /**
  * Generates a valid .env file from the settings.json file
  */
-export const generateSystemEnvFile = async () => {
+export const generateSystemEnvFile = async (params: { customEnvFile?: string }) => {
   const rootFolder = process.cwd();
   await fs.promises.mkdir(path.join(rootFolder, 'state'), { recursive: true });
   const settingsFilePath = path.join(rootFolder, 'state', 'settings.json');
@@ -123,6 +123,20 @@ export const generateSystemEnvFile = async () => {
 
   const envFile = await fs.promises.readFile(envFilePath, 'utf-8');
   const envMap: Map<EnvKeys, string> = envStringToMap(envFile);
+
+  const { customEnvFile } = params;
+
+  if (customEnvFile) {
+    const customEnvFilePath = path.join(path.isAbsolute(customEnvFile) ? '' : rootFolder, customEnvFile);
+
+    if (await pathExists(customEnvFilePath)) {
+      const customEnvFileContent = await fs.promises.readFile(customEnvFilePath, 'utf-8');
+      const customEnvMap = envStringToMap(customEnvFileContent);
+      customEnvMap.forEach((value, key) => {
+        envMap.set(key, value);
+      });
+    }
+  }
 
   if (!(await pathExists(settingsFilePath))) {
     await fs.promises.writeFile(settingsFilePath, JSON.stringify({}));
@@ -169,6 +183,10 @@ export const generateSystemEnvFile = async () => {
  * Copies the system files from the assets folder to the current working directory
  */
 export const copySystemFiles = async () => {
+  if (process.env.NODE_ENV === 'development') {
+    logger.info('Skipping copying of system files in development mode');
+    return;
+  }
   // Remove old unused files
   const assetsFolder = path.join('/snapshot', 'runtipi', 'packages', 'cli', 'assets');
 
