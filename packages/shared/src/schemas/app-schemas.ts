@@ -52,6 +52,7 @@ export const formFieldSchema = z.object({
 export const appInfoSchema = z.object({
   id: z.string(),
   available: z.boolean(),
+  deprecated: z.boolean().optional().default(false),
   port: z.number().min(1).max(65535),
   name: z.string(),
   description: z.string().optional().default(''),

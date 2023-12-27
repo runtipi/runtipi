@@ -41,9 +41,11 @@ export const sortTable = (params: SortParams) => {
   });
 
   if (category) {
-    return sortedData.filter((app) => app.categories.some((c) => c === category)).filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
+    return sortedData
+      .filter((app) => app.categories.some((c) => c === category))
+      .filter((app) => app.name.toLowerCase().includes(search.toLowerCase()) && !app.deprecated);
   }
-  return sortedData.filter((app) => app.name.toLowerCase().includes(search.toLowerCase()));
+  return sortedData.filter((app) => app.name.toLowerCase().includes(search.toLowerCase()) && !app.deprecated);
 };
 
 export const colorSchemeForCategory: Record<AppCategory, string> = {
