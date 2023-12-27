@@ -24,15 +24,14 @@ WORKDIR /app
 ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH}
 
-RUN COMPOSE_VERSION=$(curl -sL https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f4)
-
 RUN echo "Building for ${TARGETARCH}"
-RUN echo "Using docker-compose ${COMPOSE_VERSION}"
 
 RUN if [ "${TARGETARCH}" = "arm64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-aarch64"; \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-linux-aarch64"; \
   elif [ "${TARGETARCH}" = "amd64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-x86_64"; \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-linux-x86_64"; \
+  else \
+  echo "Unsupported architecture"; \
   fi
 
 RUN chmod +x docker-binary
