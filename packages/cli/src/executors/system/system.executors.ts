@@ -132,7 +132,7 @@ export class SystemExecutors {
       spinner.done('Images pulled');
 
       // Check for user overrides
-      let command: string = `-f ${path.join(this.rootFolder, 'docker-compose.yml')} --env-file ${this.envFile} up --detach --remove-orphans --build`;
+      let command: string = `--file ${path.join(this.rootFolder, 'docker-compose.yml')} --env-file ${this.envFile} up --detach --remove-orphans --build`;
       const userComposeFile = path.join(this.rootFolder, 'user-config', 'tipi-compose.yml');
       if (await pathExists(userComposeFile)) {
         command = `--file ${userComposeFile} ${command}`;
