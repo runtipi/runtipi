@@ -4,8 +4,6 @@ import React, { startTransition, useOptimistic } from 'react';
 import { useSocket } from '@/lib/socket/useSocket';
 import { AppStatus } from '@/server/db/schema';
 import { AppService } from '@/server/services/apps/apps.service';
-import { useAction } from 'next-safe-action/hook';
-import { revalidateAppAction } from '@/actions/app-actions/revalidate-app';
 import { AppDetailsContainer } from './AppDetailsContainer';
 
 interface IProps {
@@ -16,7 +14,6 @@ interface IProps {
 export const AppDetailsWrapper = (props: IProps) => {
   const { app, localDomain } = props;
   const [optimisticStatus, setOptimisticStatus] = useOptimistic<AppStatus>(app.status);
-  const revalidateAppMutation = useAction(revalidateAppAction);
 
   const changeStatus = (status: AppStatus) => {
     startTransition(() => {
@@ -65,8 +62,6 @@ export const AppDetailsWrapper = (props: IProps) => {
         default:
           break;
       }
-
-      revalidateAppMutation.execute({ id: app.id });
     },
     selector: { type: 'app', data: { property: 'appId', value: app.id } },
   });

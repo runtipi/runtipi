@@ -25,7 +25,7 @@ interface IProps {
 export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = true }) => {
   const { setDarkMode } = useUIStore();
   const t = useTranslations('header');
-  const { allowAutoThemes = true } = useClientSettings();
+  const { allowAutoThemes = false } = useClientSettings();
 
   const router = useRouter();
 

@@ -89,21 +89,23 @@ export class AppServiceClass {
 
     await this.queries.updateApp(appName, { status: 'starting' });
     const eventDispatcher = new EventDispatcher('startApp');
-    const { success, stdout } = await eventDispatcher.dispatchEventAsync({
-      type: 'app',
-      command: 'start',
-      appid: appName,
-      form: castAppConfig(app.config),
-    });
-    await eventDispatcher.close();
+    eventDispatcher
+      .dispatchEventAsync({
+        type: 'app',
+        command: 'start',
+        appid: appName,
+        form: castAppConfig(app.config),
+      })
+      .then(({ success, stdout }) => {
+        if (success) {
+          this.queries.updateApp(appName, { status: 'running' });
+        } else {
+          this.queries.updateApp(appName, { status: 'stopped' });
+          Logger.error(`Failed to start app ${appName}: ${stdout}`);
+        }
 
-    if (success) {
-      await this.queries.updateApp(appName, { status: 'running' });
-    } else {
-      await this.queries.updateApp(appName, { status: 'stopped' });
-      Logger.error(`Failed to start app ${appName}: ${stdout}`);
-      throw new TranslatedError('server-messages.errors.app-failed-to-start', { id: appName });
-    }
+        eventDispatcher.close();
+      });
 
     const updatedApp = await this.queries.getApp(appName);
     return updatedApp;
@@ -362,28 +364,30 @@ export class AppServiceClass {
     await this.queries.updateApp(id, { status: 'updating' });
 
     const eventDispatcher = new EventDispatcher('updateApp');
-    const { success, stdout } = await eventDispatcher.dispatchEventAsync({
-      type: 'app',
-      command: 'update',
-      appid: id,
-      form: castAppConfig(app.config),
-    });
-    await eventDispatcher.close();
+    await eventDispatcher
+      .dispatchEventAsync({
+        type: 'app',
+        command: 'update',
+        appid: id,
+        form: castAppConfig(app.config),
+      })
+      .then(({ success, stdout }) => {
+        if (success) {
+          const appInfo = getAppInfo(app.id, app.status);
 
-    if (success) {
-      const appInfo = getAppInfo(app.id, app.status);
+          this.queries.updateApp(id, { version: appInfo?.tipi_version });
+          if (appStatusBeforeUpdate === 'running') {
+            this.startApp(id);
+          } else {
+            this.queries.updateApp(id, { status: appStatusBeforeUpdate });
+          }
+        } else {
+          this.queries.updateApp(id, { status: 'stopped' });
+          Logger.error(`Failed to update app ${id}: ${stdout}`);
+        }
 
-      await this.queries.updateApp(id, { version: appInfo?.tipi_version });
-      if (appStatusBeforeUpdate === 'running') {
-        await this.startApp(id);
-      } else {
-        await this.queries.updateApp(id, { status: appStatusBeforeUpdate });
-      }
-    } else {
-      await this.queries.updateApp(id, { status: 'stopped' });
-      Logger.error(`Failed to update app ${id}: ${stdout}`);
-      throw new TranslatedError('server-messages.errors.app-failed-to-update', { id });
-    }
+        eventDispatcher.close();
+      });
 
     const updatedApp = await this.getApp(id);
     return updatedApp;

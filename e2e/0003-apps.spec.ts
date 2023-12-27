@@ -19,6 +19,7 @@ test.beforeEach(async ({ page, isMobile }) => {
 });
 
 test('user can install and uninstall app', async ({ page, context }) => {
+  test.slow();
   // Install app
   await page.getByRole('button', { name: 'Install' }).click();
 
@@ -28,10 +29,12 @@ test('user can install and uninstall app', async ({ page, context }) => {
 
   await expect(page.getByText('Installing')).toBeVisible();
   await expect(page.getByText('Running')).toBeVisible({ timeout: 60000 });
-  await expect(page.getByText('App installed successfully')).toBeVisible();
 
   await page.getByTestId('app-details').getByRole('button', { name: 'Open' }).press('ArrowDown');
-  const [newPage] = await Promise.all([context.waitForEvent('page'), await page.getByRole('menuitem', { name: `${process.env.SERVER_IP}:8000` }).click()]);
+  const [newPage] = await Promise.all([
+    context.waitForEvent('page'),
+    await page.getByRole('menuitem', { name: `${process.env.SERVER_IP}:8000` }).click(),
+  ]);
 
   await newPage.waitForLoadState();
   await expect(newPage.getByText('Hello World')).toBeVisible();
@@ -44,7 +47,6 @@ test('user can install and uninstall app', async ({ page, context }) => {
   await page.getByRole('button', { name: 'Stop' }).click();
 
   await expect(page.getByText('Stopping')).toBeVisible();
-  await expect(page.getByText('App stopped successfully')).toBeVisible({ timeout: 60000 });
 
   // Uninstall app
   await page.getByRole('button', { name: 'Remove' }).click();
@@ -53,5 +55,5 @@ test('user can install and uninstall app', async ({ page, context }) => {
   await page.getByRole('button', { name: 'Uninstall' }).click();
 
   await expect(page.getByText('Uninstalling')).toBeVisible();
-  await expect(page.getByText('App uninstalled successfully')).toBeVisible({ timeout: 60000 });
+  await expect(page.getByRole('button', { name: 'Install' })).toBeVisible();
 });

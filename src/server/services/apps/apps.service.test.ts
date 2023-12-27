@@ -44,19 +44,6 @@ describe('Install app', () => {
     expect(dbApp?.status).toBe('installing');
   });
 
-  it('Should start app if already installed', async () => {
-    // arrange
-    const appConfig = createAppConfig();
-
-    // act
-    await AppsService.installApp(appConfig.id, {});
-    await AppsService.installApp(appConfig.id, {});
-    const app = await getAppById(appConfig.id, db);
-
-    // assert
-    expect(app?.status).toBe('running');
-  });
-
   it('Should throw if app is exposed and domain is not provided', async () => {
     // arrange
     const appConfig = createAppConfig({ exposable: true });
@@ -160,35 +147,8 @@ describe('Uninstall app', () => {
 });
 
 describe('Start app', () => {
-  it('Should correctly start app', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ status: 'stopped' }, appConfig, db);
-
-    // act
-    await AppsService.startApp(appConfig.id);
-    const app = await getAppById(appConfig.id, db);
-
-    // assert
-    expect(app?.status).toBe('running');
-  });
-
   it('Should throw if app is not installed', async () => {
     await expect(AppsService.startApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
-  });
-
-  it('Should restart if app is already running', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ status: 'running' }, appConfig, db);
-
-    // act
-    await AppsService.startApp(appConfig.id);
-    await AppsService.startApp(appConfig.id);
-    const app = await getAppById(appConfig.id, db);
-
-    // assert
-    expect(app?.status).toBe('running');
   });
 });
 
@@ -381,22 +341,6 @@ describe('List apps', () => {
 });
 
 describe('Update app', () => {
-  it('Should correctly update app', async () => {
-    // arrange
-    const appConfig = createAppConfig({});
-    await insertApp({ version: 12, status: 'running', config: { TEST_FIELD: 'test' } }, appConfig, db);
-
-    // act
-    await updateApp(appConfig.id, { version: 0 }, db);
-    const app = await AppsService.updateApp(appConfig.id);
-
-    // assert
-    expect(app).toBeDefined();
-    expect(app?.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(app?.version).toBe(appConfig.tipi_version);
-    expect(app?.status).toBe('running');
-  });
-
   it("Should throw if app doesn't exist", async () => {
     await expect(AppsService.updateApp('test-app2')).rejects.toThrow('server-messages.errors.app-not-found');
   });

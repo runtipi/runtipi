@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import fs from 'fs';
 import { loginUser } from './fixtures/fixtures';
 import { clearDatabase } from './helpers/db';
 import { testUser } from './helpers/constants';
@@ -78,4 +79,22 @@ test('user can change their email', async ({ page }) => {
   await page.getByRole('button', { name: 'Login' }).click();
 
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+});
+
+test('user can download the self-signed certificate', async ({ page }) => {
+  await page.getByRole('tab', { name: 'Settings' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download certificate' }).click();
+
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe('cert.pem');
+  await download.saveAs('./cert.pem');
+
+  const file = await fs.promises.readFile('./cert.pem', 'utf8');
+
+  expect(file).toContain('BEGIN CERTIFICATE');
+  expect(file).toContain('END CERTIFICATE');
+
+  await fs.promises.unlink('./cert.pem');
 });
