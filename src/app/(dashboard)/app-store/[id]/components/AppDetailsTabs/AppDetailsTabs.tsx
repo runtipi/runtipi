@@ -1,4 +1,4 @@
-import { IconExternalLink } from '@tabler/icons-react';
+import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
@@ -20,6 +20,19 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
         <TabsTrigger value="info">{t('base-info')}</TabsTrigger>
       </TabsList>
       <TabsContent value="description">
+        {info.deprecated && (
+          <div className="alert alert-danger" role="alert">
+            <div className="d-flex">
+              <div>
+                <IconAlertCircle />
+              </div>
+              <div className="ms-2">
+                <h4 className="alert-title">{t('deprecated-alert-title')}</h4>
+                <div className="text-secondary">{t('deprecated-alert-subtitle')} </div>
+              </div>
+            </div>
+          </div>
+        )}
         <Markdown className="markdown">{info.description}</Markdown>
       </TabsContent>
       <TabsContent value="info">

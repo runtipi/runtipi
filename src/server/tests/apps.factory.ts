@@ -64,6 +64,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
   const appInfo: AppInfo = {
     id: randomId,
+    deprecated: false,
     port: faker.number.int({ min: 3000, max: 5000 }),
     available: true,
     form_fields: [
