@@ -111,7 +111,7 @@ const getArchitecture = () => {
 /**
  * Generates a valid .env file from the settings.json file
  */
-export const generateSystemEnvFile = async () => {
+export const generateSystemEnvFile = async (params: { customEnvFile?: string }) => {
   const rootFolder = process.cwd();
   await fs.promises.mkdir(path.join(rootFolder, 'state'), { recursive: true });
   const settingsFilePath = path.join(rootFolder, 'state', 'settings.json');
@@ -145,30 +145,51 @@ export const generateSystemEnvFile = async () => {
 
   const version = await fs.promises.readFile(path.join(rootFolder, 'VERSION'), 'utf-8');
 
-  envMap.set('INTERNAL_IP', data.listenIp || getInternalIp());
-  envMap.set('ARCHITECTURE', getArchitecture());
-  envMap.set('TIPI_VERSION', version);
-  envMap.set('ROOT_FOLDER_HOST', rootFolder);
-  envMap.set('NGINX_PORT', String(data.port || 80));
-  envMap.set('NGINX_PORT_SSL', String(data.sslPort || 443));
-  envMap.set('STORAGE_PATH', data.storagePath || rootFolder);
-  envMap.set('POSTGRES_PASSWORD', postgresPassword);
-  envMap.set('POSTGRES_PORT', String(data.postgresPort || 5432));
-  envMap.set('REDIS_HOST', 'tipi-redis');
-  envMap.set('REDIS_PASSWORD', redisPassword);
-  envMap.set('NODE_ENV', 'production');
-  envMap.set('DOMAIN', data.domain || 'example.com');
-  envMap.set('LOCAL_DOMAIN', data.localDomain || 'tipi.lan');
+  const newEnvMap = new Map<EnvKeys, string>();
 
-  await fs.promises.writeFile(envFilePath, envMapToString(envMap));
+  newEnvMap.set('INTERNAL_IP', data.listenIp || getInternalIp());
+  newEnvMap.set('ARCHITECTURE', getArchitecture());
+  newEnvMap.set('TIPI_VERSION', version);
+  newEnvMap.set('ROOT_FOLDER_HOST', rootFolder);
+  newEnvMap.set('NGINX_PORT', String(data.port || 80));
+  newEnvMap.set('NGINX_PORT_SSL', String(data.sslPort || 443));
+  newEnvMap.set('STORAGE_PATH', data.storagePath || rootFolder);
+  newEnvMap.set('POSTGRES_PASSWORD', postgresPassword);
+  newEnvMap.set('POSTGRES_PORT', String(data.postgresPort || 5432));
+  newEnvMap.set('REDIS_HOST', 'tipi-redis');
+  newEnvMap.set('REDIS_PASSWORD', redisPassword);
+  newEnvMap.set('NODE_ENV', 'production');
+  newEnvMap.set('DOMAIN', data.domain || 'example.com');
+  newEnvMap.set('LOCAL_DOMAIN', data.localDomain || 'tipi.lan');
 
-  return envMap;
+  const { customEnvFile } = params;
+
+  // Override env variables with custom env file if provided
+  if (customEnvFile) {
+    const customEnvFilePath = path.join(path.isAbsolute(customEnvFile) ? '' : rootFolder, customEnvFile);
+
+    if (await pathExists(customEnvFilePath)) {
+      const customEnvFileContent = await fs.promises.readFile(customEnvFilePath, 'utf-8');
+      const customEnvMap = envStringToMap(customEnvFileContent);
+      customEnvMap.forEach((value, key) => {
+        newEnvMap.set(key, value);
+      });
+    }
+  }
+
+  await fs.promises.writeFile(envFilePath, envMapToString(newEnvMap));
+
+  return newEnvMap;
 };
 
 /**
  * Copies the system files from the assets folder to the current working directory
  */
 export const copySystemFiles = async () => {
+  if (process.env.NODE_ENV === 'development') {
+    logger.info('Skipping copying of system files in development mode');
+    return;
+  }
   // Remove old unused files
   const assetsFolder = path.join('/snapshot', 'runtipi', 'packages', 'cli', 'assets');
 

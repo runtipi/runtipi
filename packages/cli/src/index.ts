@@ -13,10 +13,11 @@ const main = async () => {
   program
     .command('start')
     .description('Start tipi')
+    .option('--env-file <envFile>', 'Specify a custom .env file to load')
     .addHelpText('after', '\nExample call: sudo ./runtipi-cli start')
-    .action(async () => {
+    .action(async (opts: { envFile: string }) => {
       const systemExecutors = new SystemExecutors();
-      await systemExecutors.start();
+      await systemExecutors.start({ envFilePath: opts.envFile });
     });
 
   program
@@ -30,18 +31,20 @@ const main = async () => {
   program
     .command('restart')
     .description('Restart tipi')
-    .action(async () => {
+    .option('--env-file <envFile>', 'Specify a custom .env file to load')
+    .action(async (opts: { envFile: string }) => {
       const systemExecutors = new SystemExecutors();
-      await systemExecutors.restart();
+      await systemExecutors.restart({ envFilePath: opts.envFile });
     });
 
   program
     .command('update')
     .description('Update tipi')
     .argument('<target>', 'Target to update')
-    .action(async (target) => {
+    .option('--env-file <envFile>', 'Specify a custom .env file to load')
+    .action(async (target: string, opts: { envFile: string }) => {
       const systemExecutors = new SystemExecutors();
-      await systemExecutors.update(target);
+      await systemExecutors.update({ target, envFilePath: opts.envFile });
     });
 
   program
