@@ -116,6 +116,7 @@
     "status-installing": "Installing",
     "status-uninstalling": "Uninstalling",
     "update-available": "Update available",
+    "deprecated": "This app is deprecated",
     "my-apps": {
       "title": "My Apps",
       "empty-title": "No app installed",
@@ -148,6 +149,8 @@
       "website": "Website",
       "supported-arch": "Supported architectures",
       "choose-open-method": "Choose open method",
+      "deprecated-alert-title": "This app is deprecated",
+      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
       "categories": {
         "data": "Data",
         "network": "Network",

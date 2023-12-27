@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { IconDownload } from '@tabler/icons-react';
+import { IconAlertCircle, IconDownload } from '@tabler/icons-react';
 import { Tooltip } from 'react-tooltip';
 import type { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { useTranslations } from 'next-intl';
@@ -11,7 +11,7 @@ import { AppStatus } from '@/components/AppStatus';
 import { limitText } from '@/lib/helpers/text-helpers';
 import styles from './AppTile.module.scss';
 
-type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc'>;
+type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc' | 'deprecated'>;
 
 export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; updateAvailable: boolean }> = ({ app, status, updateAvailable }) => {
   const t = useTranslations('apps');
@@ -42,6 +42,16 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
             </Tooltip>
             <div className="updateAvailable ribbon bg-green ribbon-top">
               <IconDownload size={20} />
+            </div>
+          </>
+        )}
+        {app.deprecated && (
+          <>
+            <Tooltip className="tooltip" anchorSelect=".deprecated">
+              {t('deprecated')}
+            </Tooltip>
+            <div className="deprecated ribbon bg-red">
+              <IconAlertCircle />
             </div>
           </>
         )}
