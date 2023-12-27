@@ -16,7 +16,6 @@ import { TerminalSpinner } from '@/utils/logger/terminal-spinner';
 import { getEnv } from '@/utils/environment/environment';
 import { logger } from '@/utils/logger/logger';
 import { execAsync } from '@/utils/exec-async/execAsync';
-import { parseArgs } from 'util';
 
 export class SystemExecutors {
   private readonly rootFolder: string;
