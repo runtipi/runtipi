@@ -25,7 +25,7 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
 
   useEffect(() => {
     const { hostname, protocol } = window.location;
-    const socket = io(`${protocol}//${hostname}:3935`);
+    const socket = io(`${protocol}//${hostname}`, { path: '/worker/socket.io' });
 
     const handleEvent = (type: SocketEvent['type'], rawData: unknown) => {
       const parsedEvent = socketEventSchema.safeParse(rawData);
