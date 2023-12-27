@@ -130,7 +130,7 @@ export const generateSystemEnvFile = async () => {
   }
 
   const jwtSecret = envMap.get('JWT_SECRET') || (await deriveEntropy('jwt_secret'));
-  const repoId = getRepoHash(data.appsRepoUrl || DEFAULT_REPO_URL);
+  const repoId = getRepoHash(data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
 
   const rootFolderHost = envMap.get('ROOT_FOLDER_HOST');
   const internalIp = envMap.get('INTERNAL_IP');
@@ -144,24 +144,24 @@ export const generateSystemEnvFile = async () => {
   }
 
   envMap.set('APPS_REPO_ID', repoId);
-  envMap.set('APPS_REPO_URL', data.appsRepoUrl || DEFAULT_REPO_URL);
-  envMap.set('TZ', Intl.DateTimeFormat().resolvedOptions().timeZone);
+  envMap.set('APPS_REPO_URL', data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
+  envMap.set('TZ', envMap.get('TZ') || Intl.DateTimeFormat().resolvedOptions().timeZone);
   envMap.set('INTERNAL_IP', data.listenIp || internalIp);
-  envMap.set('DNS_IP', data.dnsIp || '9.9.9.9');
+  envMap.set('DNS_IP', data.dnsIp || envMap.get('DNS_IP') || '9.9.9.9');
   envMap.set('ARCHITECTURE', getArchitecture());
   envMap.set('JWT_SECRET', jwtSecret);
-  envMap.set('DOMAIN', data.domain || 'example.com');
+  envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
   envMap.set('STORAGE_PATH', data.storagePath || envMap.get('STORAGE_PATH') || rootFolderHost);
   envMap.set('POSTGRES_HOST', 'tipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
   envMap.set('POSTGRES_PORT', String(5432));
   envMap.set('REDIS_HOST', 'tipi-redis');
-  envMap.set('DEMO_MODE', String(data.demoMode || 'false'));
-  envMap.set('GUEST_DASHBOARD', String(data.guestDashboard || 'false'));
-  envMap.set('LOCAL_DOMAIN', data.localDomain || 'tipi.lan');
+  envMap.set('DEMO_MODE', data.demoMode ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
+  envMap.set('GUEST_DASHBOARD', data.guestDashboard ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
+  envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
   envMap.set('NODE_ENV', 'production');
-  envMap.set('ALLOW_ERROR_MONITORING', String(data.allowErrorMonitoring) || 'true');
+  envMap.set('ALLOW_ERROR_MONITORING', data.allowErrorMonitoring ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'true');
 
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 
