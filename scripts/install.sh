@@ -53,6 +53,9 @@ function install_generic() {
   elif [[ "${os}" == "centos" ]]; then
     sudo yum install -y --allowerasing "${dependency}"
     return 0
+  elif [[ "${os}" == "rocky" ]]; then
+    sudo dnf -y install "${dependency}"
+    return 0
   elif [[ "${os}" == "fedora" ]]; then
     sudo dnf -y install "${dependency}"
     return 0
@@ -66,6 +69,7 @@ function install_generic() {
       fi
     fi
     return 0
+  
   else
     return 1
   fi
@@ -96,6 +100,12 @@ function install_docker() {
     sudo yum install -y yum-utils
     sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     sudo yum install -y --allowerasing docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    sudo systemctl start docker
+    sudo systemctl enable docker
+    return 0
+  elif [[ "${os}" == "rocky" ]]; then
+    sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
     sudo systemctl enable docker
     return 0
