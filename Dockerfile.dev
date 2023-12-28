@@ -8,7 +8,6 @@ RUN npm install pnpm -g
 WORKDIR /app
 
 COPY ./pnpm-lock.yaml ./
-COPY ./patches ./patches
 RUN pnpm fetch --ignore-scripts
 
 COPY ./package*.json ./
