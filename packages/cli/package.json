@@ -40,7 +40,7 @@
     "nodemon": "^3.0.1",
     "pkg": "^5.8.1",
     "vite": "^4.5.1",
-    "vite-tsconfig-paths": "^4.2.1",
+    "vite-tsconfig-paths": "^4.2.3",
     "vitest": "^0.34.6"
   },
   "dependencies": {
