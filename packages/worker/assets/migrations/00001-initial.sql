@@ -67,3 +67,13 @@ CREATE TABLE IF NOT EXISTS "app" (
     CONSTRAINT "UQ_9478629fc093d229df09e560aea" UNIQUE ("id"),
     CONSTRAINT "PK_9478629fc093d229df09e560aea" PRIMARY KEY ("id")
 );
+
+CREATE TABLE IF NOT EXISTS "links" (
+    "id" serial NOT NULL,
+    "title" character varying NOT NULL,
+    "url" character varying NOT NULL,
+    "createdAt" timestamp NOT NULL DEFAULT now(),
+    "updatedAt" timestamp NOT NULL DEFAULT now(),
+    "user_id" integer NOT NULL,
+    CONSTRAINT "PK_links" PRIMARY KEY ("id")
+);

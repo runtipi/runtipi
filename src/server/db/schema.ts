@@ -50,5 +50,16 @@ export const appTable = pgTable('app', {
   domain: varchar('domain'),
   isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
 });
+
+export const linkTable = pgTable('links', {
+  id: serial('id').notNull(),
+  title: varchar('title').notNull(),
+  url: varchar('url').notNull(),
+  createdAt: timestamp('createdAt', { mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt', { mode: 'string' }).defaultNow().notNull(),
+  userId: integer('user_id').notNull().references(() => userTable.id, { onDelete: "cascade" }),
+});
+
 export type App = InferModel<typeof appTable>;
 export type NewApp = InferModel<typeof appTable, 'insert'>;
+export type Link = InferModel<typeof linkTable>;
