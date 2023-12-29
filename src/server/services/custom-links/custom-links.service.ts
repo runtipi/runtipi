@@ -13,4 +13,12 @@ export class CustomLinksServiceClass {
 
     return link;
   }
+
+  public async getLinks(userId: number | undefined) {
+    if (!userId) return [];
+
+    const links = await this.queries.getLinks(userId);
+
+    return links;
+  }
 }

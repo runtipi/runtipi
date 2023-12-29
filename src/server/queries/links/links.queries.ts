@@ -1,5 +1,6 @@
 import { Database } from '@/server/db';
 import { linkTable } from '@/server/db/schema';
+import { eq } from 'drizzle-orm';
 
 export class LinkQueries {
   private db;
@@ -11,5 +12,10 @@ export class LinkQueries {
   public async addLink(title: string, url: string, userId: number) {
     const newLinks = await this.db.insert(linkTable).values({ title, url, userId }).returning().execute();
     return newLinks[0];
+  }
+
+  public async getLinks(userId: number) {
+    const links = await this.db.query.linkTable.findMany({ where: eq(linkTable.userId, userId) });
+    return links;
   }
 }
