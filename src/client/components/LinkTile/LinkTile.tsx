@@ -2,20 +2,22 @@
 
 import React from 'react';
 import { limitText } from '@/lib/helpers/text-helpers';
+import { AppLogo } from '../AppLogo';
 
-type LinktileProps = {
+type LinkTileProps = {
   title: string;
   url: string;
+  iconURL: string | null;
 }
 
-export const LinkTile: React.FC<LinktileProps> = ({title, url}) => {
+export const LinkTile: React.FC<LinkTileProps> = ({ title, url, iconURL }) => {
   return (
     <div data-testid={`link-tile-${title}`}>
       <div className="card card-sm card-link">
         <div className="card-body">
           <div className="d-flex align-items-center">
             <span className="me-3">
-              {/* <AppLogo alt={`${app.name} logo`} id={app.id} size={60} /> */}
+              <AppLogo url={iconURL || ''} size={60} />
             </span>
             <div>
               <div className="d-flex h-3 align-items-center">

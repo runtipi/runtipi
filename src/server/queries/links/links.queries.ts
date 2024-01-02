@@ -1,5 +1,6 @@
 import { Database } from '@/server/db';
 import { linkTable } from '@/server/db/schema';
+import { LinkInfo } from '@runtipi/shared';
 import { eq } from 'drizzle-orm';
 
 export class LinkQueries {
@@ -9,7 +10,8 @@ export class LinkQueries {
     this.db = p;
   }
 
-  public async addLink(title: string, url: string, userId: number) {
+  public async addLink(link: LinkInfo) {
+    const { title, url, userId } = link;
     const newLinks = await this.db.insert(linkTable).values({ title, url, userId }).returning().execute();
     return newLinks[0];
   }

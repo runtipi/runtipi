@@ -29,7 +29,7 @@ export const AddLinkBtn = () => {
       <AddLinkModal 
         isOpen={addLinkDisclosure.isOpen}
         onClose={() => addLinkDisclosure.close()} 
-        onSubmit={({title, url}) => addLinkMutation.execute({title, url})} />
+        onSubmit={({title, url, iconURL}) => addLinkMutation.execute({title, url, iconURL})} />
     </>
   )
 }

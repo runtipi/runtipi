@@ -45,7 +45,7 @@ export default async function Page() {
   const renderLink = (link: CustomLink) => {
     return (
       <Link key={link.id} href={link.url} target="_blank" className={clsx('col-sm-6 col-lg-4', styles.link)} passHref>
-        <LinkTile title={link.title} url={link.url}/>
+        <LinkTile title={link.title} url={link.url} iconURL={link.iconURL} />
       </Link>
     );
   }

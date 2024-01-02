@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS "links" (
     "id" serial NOT NULL,
     "title" character varying NOT NULL,
     "url" character varying NOT NULL,
+    "icon_url" character varying,
     "createdAt" timestamp NOT NULL DEFAULT now(),
     "updatedAt" timestamp NOT NULL DEFAULT now(),
     "user_id" integer NOT NULL,

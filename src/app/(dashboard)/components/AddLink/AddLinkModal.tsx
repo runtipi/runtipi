@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } 
 import { Input } from '@/components/ui/Input';
 import React from "react";
 
-type FormValues = { title: string; url: string };
+type FormValues = { title: string; url: string, iconURL: string };
 
 type AddLinkModalProps = {
   isOpen: boolean;
@@ -19,6 +19,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, onS
     .object({
       title: z.string().min(1),
       url: z.string().url(),
+      iconURL: z.string().url().or(z.literal("")),
     });
 
   const {
@@ -34,7 +35,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, onS
       <DialogContent size="sm">
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <h5>Title</h5>
+            <h5 className="modal-title">Add custom link</h5>
           </DialogHeader>
           <DialogDescription>
 
@@ -46,10 +47,17 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, onS
 
             <Input
               {...register('url')}
-              className='mt-1'
+              className='mt-3'
               label='Link URL'
               placeholder='https://demo.runtipi.io'
               error={errors.url?.message} />
+
+            <Input
+              {...register('iconURL')}
+              className='mt-3'
+              label='Icon URL'
+              placeholder='Upload yours to svgshare.com'
+              error={errors.iconURL?.message} />
 
           </DialogDescription>
           <DialogFooter>
