@@ -28,7 +28,9 @@ test('user can logout', async ({ page }) => {
 
 test('user can reset their password', async ({ page }) => {
   // Create password change request
-  await fs.promises.unlink('./state/password-change-request');
+  if (fs.existsSync('./state/password-change-request')) {
+    await fs.promises.unlink('./state/password-change-request');
+  }
 
   await createTestUser();
   await page.goto('/login');
