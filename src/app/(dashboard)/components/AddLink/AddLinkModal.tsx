@@ -5,35 +5,53 @@ import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
 import React from "react";
+import { useAction } from "next-safe-action/hook";
+import { addLinkAction } from "@/actions/custom-links/add-link-action";
+import toast from "react-hot-toast";
+import { useRouter } from 'next/navigation';
 
 type FormValues = { title: string; url: string, iconURL: string };
 
 type AddLinkModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: FormValues) => void;
 }
 
-export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, onSubmit }) => {
+export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose }) => {
+  const router = useRouter();
+
   const schema = z
-    .object({
-      title: z.string().min(1),
-      url: z.string().url(),
-      iconURL: z.string().url().or(z.literal("")),
-    });
+  .object({
+    title: z.string().min(1),
+    url: z.string().url(),
+    iconURL: z.string().url().or(z.literal("")),
+  });
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
 
+  const addLinkMutation = useAction(addLinkAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      reset();
+      onClose();
+      toast.success('Added succesfully');
+      router.push('/apps');
+    },
+  });
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(({ title, url, iconURL }) => addLinkMutation.execute({ title, url, iconURL }))}>
           <DialogHeader>
             <h5 className="modal-title">Add custom link</h5>
           </DialogHeader>
