@@ -140,6 +140,10 @@ jobs:
         run: |
           echo "SERVER_IP=${{ needs.deploy.outputs.droplet_ip }}" > .env.e2e
           echo "POSTGRES_PASSWORD=${{ needs.deploy.outputs.postgres_password }}" >> .env.e2e
+          echo "REMOTE=true" >> .env.e2e
+          echo "${{ secrets.SSH_KEY }}" > .temp-ssh-key
+          # Base 64 encode SSH key to avoid issues with newlines
+          echo "SSH_PRIVATE_KEY=$(base64 -w 0 .temp-ssh-key)" >> .env.e2e
 
       - name: Install dependencies
         run: pnpm install
