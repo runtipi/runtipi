@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { limitText } from '@/lib/helpers/text-helpers';
 import { AppLogo } from '../AppLogo';
 
 type LinkTileProps = {
@@ -10,7 +9,7 @@ type LinkTileProps = {
   iconURL: string | null;
 }
 
-export const LinkTile: React.FC<LinkTileProps> = ({ title, url, iconURL }) => {
+export const LinkTile: React.FC<LinkTileProps> = ({ title, iconURL }) => {
   return (
     <div data-testid={`link-tile-${title}`}>
       <div className="card card-sm card-link">
@@ -23,7 +22,6 @@ export const LinkTile: React.FC<LinkTileProps> = ({ title, url, iconURL }) => {
               <div className="d-flex h-3 align-items-center">
                 <span className="h4 me-2 mb-1 fw-bolder">{title}</span>
               </div>
-              <div className="text-muted">{limitText(url, 50)}</div>
             </div>
           </div>
         </div>

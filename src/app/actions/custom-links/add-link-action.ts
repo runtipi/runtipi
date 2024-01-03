@@ -9,7 +9,7 @@ import { ensureUser } from '../utils/ensure-user';
 import { handleActionError } from '../utils/handle-action-error';
 
 const input = z.object({
-  title: z.string().min(1),
+  title: z.string().min(1).max(20),
   url: z.string().url(),
   iconURL: z.string().url().or(z.literal("")),
 });

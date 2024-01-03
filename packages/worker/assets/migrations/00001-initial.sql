@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS "app" (
 
 CREATE TABLE IF NOT EXISTS "links" (
     "id" serial NOT NULL,
-    "title" character varying NOT NULL,
+    "title" character varying(20) NOT NULL,
     "url" character varying NOT NULL,
     "icon_url" character varying,
     "createdAt" timestamp NOT NULL DEFAULT now(),
