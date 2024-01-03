@@ -1,8 +1,8 @@
-import fs from 'fs';
 import { test, expect } from '@playwright/test';
 import { loginUser, createTestUser } from './fixtures/fixtures';
 import { testUser } from './helpers/constants';
 import { clearDatabase } from './helpers/db';
+import { setPassowrdChangeRequest, unsetPasswordChangeRequest } from './helpers/settings';
 
 test.beforeEach(async () => {
   await clearDatabase();
@@ -28,9 +28,7 @@ test('user can logout', async ({ page }) => {
 
 test('user can reset their password', async ({ page }) => {
   // Create password change request
-  if (fs.existsSync('./state/password-change-request')) {
-    await fs.promises.unlink('./state/password-change-request');
-  }
+  await unsetPasswordChangeRequest();
 
   await createTestUser();
   await page.goto('/login');
@@ -38,7 +36,7 @@ test('user can reset their password', async ({ page }) => {
   await page.getByRole('link', { name: 'Forgot password?' }).click();
 
   await expect(page.getByText('./runtipi-cli reset-password')).toBeVisible();
-  await fs.promises.writeFile('./state/password-change-request', '');
+  await setPassowrdChangeRequest();
 
   await page.reload();
 
