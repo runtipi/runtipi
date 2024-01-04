@@ -1,6 +1,8 @@
+import { ensureUser } from '@/actions/utils/ensure-user';
 import { Database } from '@/server/db';
 import { linkTable } from '@/server/db/schema';
 import { LinkInfo } from '@runtipi/shared';
+import { handleActionError } from '@/actions/utils/handle-action-error';
 import { eq } from 'drizzle-orm';
 
 export class LinkQueries {
@@ -11,9 +13,15 @@ export class LinkQueries {
   }
 
   public async addLink(link: LinkInfo) {
-    const { title, url, userId } = link;
-    const newLinks = await this.db.insert(linkTable).values({ title, url, userId }).returning().execute();
-    return newLinks[0];
+    try {
+      const user = await ensureUser();
+
+      const { title, url, iconURL } = link;
+      const newLinks = await this.db.insert(linkTable).values({ title, url, iconURL, userId: user.id }).returning().execute();
+      return newLinks[0];
+    } catch (e) {
+      return handleActionError(e);
+    }
   }
 
   public async getLinks(userId: number) {
