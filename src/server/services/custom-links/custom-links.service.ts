@@ -19,6 +19,11 @@ export class CustomLinksServiceClass {
     return linkResponse;
   }
 
+  public delete = async (linkId: number) => {
+    const deletedLink = await this.queries.deleteLink(linkId);
+    return deletedLink;
+  }
+
   public async getLinks(userId: number | undefined) {
     if (!userId) return [];
 

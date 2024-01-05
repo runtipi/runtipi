@@ -34,6 +34,14 @@ export class LinkQueries {
     return updatedLinks[0];
   }
 
+  public async deleteLink(linkId: number) {
+    const user = await ensureUser();
+
+    await this.db.delete(linkTable)
+      .where(and(eq(linkTable.id, linkId), eq(linkTable.userId, user.id)))
+      .returning().execute();
+  }
+
   public async getLinks(userId: number) {
     const links = await this.db.select().from(linkTable)
       .where(eq(linkTable.userId, userId)).orderBy(linkTable.id);

@@ -76,5 +76,6 @@ CREATE TABLE IF NOT EXISTS "links" (
     "createdAt" timestamp NOT NULL DEFAULT now(),
     "updatedAt" timestamp NOT NULL DEFAULT now(),
     "user_id" integer NOT NULL,
-    CONSTRAINT "PK_links" PRIMARY KEY ("id")
+    CONSTRAINT "PK_links" PRIMARY KEY ("id"),
+    CONSTRAINT "FK_links_user_id" FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
 );
