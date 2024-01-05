@@ -11,6 +11,11 @@ export class LinkQueries {
     this.db = p;
   }
 
+  /**
+   * Adds a new link to the database.
+   * @param {LinkInfo} link - The link information to be added.
+   * @returns The newly added link.
+   */
   public async addLink(link: LinkInfo) {
     const user = await ensureUser();
 
@@ -19,6 +24,12 @@ export class LinkQueries {
     return newLinks[0];
   }
 
+  /**
+   * Edits an existing link in the database.
+   * @param {LinkInfo} link - The updated link information.
+   * @returns The updated link.
+   * @throws Error if no id is provided.
+   */
   public async editLink(link: LinkInfo) {
     const user = await ensureUser();
 
@@ -34,6 +45,10 @@ export class LinkQueries {
     return updatedLinks[0];
   }
 
+  /**
+   * Deletes a link from the database.
+   * @param {number} linkId - The id of the link to be deleted.
+   */
   public async deleteLink(linkId: number) {
     const user = await ensureUser();
 
@@ -42,6 +57,11 @@ export class LinkQueries {
       .returning().execute();
   }
 
+  /**
+   * Retrieves all links for a given user from the database.
+   * @param {number} userId - The id of the user.
+   * @returns An array of links belonging to the user.
+   */
   public async getLinks(userId: number) {
     const links = await this.db.select().from(linkTable)
       .where(eq(linkTable.userId, userId)).orderBy(linkTable.id);
