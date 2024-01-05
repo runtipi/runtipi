@@ -1,30 +1,31 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
 import React from "react";
-import { useAction } from "next-safe-action/hook";
-import { addLinkAction } from "@/actions/custom-links/add-link-action";
+import { addLink, editLink } from "@/actions/custom-links/add-link-action";
 import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+import { LinkInfo } from '@runtipi/shared';
 
-type FormValues = { title: string; url: string, iconURL: string };
+type FormValues = { title: string; url: string, iconURL: string | null };
 
 type AddLinkModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  link?: LinkInfo
 }
 
-export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose }) => {
+export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, link }) => {
   const router = useRouter();
 
   const schema = z
-  .object({
-    title: z.string().min(1).max(20),
-    url: z.string().url(),
-    iconURL: z.string().url().or(z.literal("")),
+    .object({
+      title: z.string().min(1).max(20),
+      url: z.string().url(),
+      iconURL: z.string().url().or(z.literal("")),
   });
 
   const {
@@ -34,26 +35,45 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose }) =
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      title: link?.title,
+      url: link?.url,
+      iconURL: link?.iconURL || "",
+    }
   });
 
-  const addLinkMutation = useAction(addLinkAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
-    },
-    onExecute: () => {
-      reset();
-      onClose();
-      toast.success('Added succesfully');
-      router.push('/apps');
-    },
-  });
+  const onSubmit = ({ title, url, iconURL }: FormValues) => {
+    if (link) {
+      editLink({ id: link.id, title, url, iconURL  })
+        .then(() => {
+          router.refresh();
+          reset();
+          onClose();
+          toast.success('Edited succesfully');
+        })
+        .catch((e) => {
+          if (e.serverError) toast.error(e.serverError);
+        })
+    } else {
+      addLink({ title, url, iconURL })
+        .then(() => {
+          router.refresh();
+          reset();
+          onClose();
+          toast.success('Added succesfully');
+        })
+        .catch((e) => {
+          if (e.serverError) toast.error(e.serverError);
+        })
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
-        <form onSubmit={handleSubmit(({ title, url, iconURL }) => addLinkMutation.execute({ title, url, iconURL }))}>
+        <form onSubmit={handleSubmit(({ title, url, iconURL }) => onSubmit({ title, url, iconURL }))}>
           <DialogHeader>
-            <h5 className="modal-title">Add custom link</h5>
+            <h5 className="modal-title">{link ? 'Edit link' : 'Add custom link'}</h5>
           </DialogHeader>
           <DialogDescription>
 
@@ -80,7 +100,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose }) =
           </DialogDescription>
           <DialogFooter>
             <Button type='submit' className="btn-success">
-              Submit
+              {link ? 'Save' : 'Submit'}
             </Button>
           </DialogFooter>
         </form>

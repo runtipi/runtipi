@@ -56,8 +56,8 @@ export const linkTable = pgTable('links', {
   title: varchar('title', { length: 20 }).notNull(),
   url: varchar('url').notNull(),
   iconURL: varchar('icon_url'),
-  createdAt: timestamp('createdAt', { mode: 'string' }).defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt', { mode: 'string' }).defaultNow().notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
   userId: integer('user_id').notNull().references(() => userTable.id, { onDelete: "cascade" }),
 });
 

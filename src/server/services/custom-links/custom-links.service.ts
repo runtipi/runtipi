@@ -13,6 +13,10 @@ export class CustomLinksServiceClass {
     return this.queries.addLink(link);
   }
 
+  public edit(link: LinkInfo) {
+    return this.queries.editLink(link);
+  }
+
   public async getLinks(userId: number | undefined) {
     if (!userId) return [];
 

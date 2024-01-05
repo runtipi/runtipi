@@ -2,8 +2,7 @@ import { ensureUser } from '@/actions/utils/ensure-user';
 import { Database } from '@/server/db';
 import { linkTable } from '@/server/db/schema';
 import { LinkInfo } from '@runtipi/shared';
-import { handleActionError } from '@/actions/utils/handle-action-error';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 export class LinkQueries {
   private db;
@@ -13,19 +12,31 @@ export class LinkQueries {
   }
 
   public async addLink(link: LinkInfo) {
-    try {
-      const user = await ensureUser();
+    const user = await ensureUser();
 
-      const { title, url, iconURL } = link;
-      const newLinks = await this.db.insert(linkTable).values({ title, url, iconURL, userId: user.id }).returning().execute();
-      return newLinks[0];
-    } catch (e) {
-      return handleActionError(e);
-    }
+    const { title, url, iconURL } = link;
+    const newLinks = await this.db.insert(linkTable).values({ title, url, iconURL, userId: user.id }).returning().execute();
+    return newLinks[0];
+  }
+
+  public async editLink(link: LinkInfo) {
+    const user = await ensureUser();
+
+    const { id, title, url, iconURL } = link;
+
+    if (!id) throw new Error('No id provided');
+
+    const updatedLinks = await this.db.update(linkTable)
+      .set({ title, url, iconURL, updatedAt: new Date() })
+      .where(and(eq(linkTable.id, id), eq(linkTable.userId, user.id)))
+      .returning().execute();
+
+    return updatedLinks[0];
   }
 
   public async getLinks(userId: number) {
-    const links = await this.db.query.linkTable.findMany({ where: eq(linkTable.userId, userId) });
+    const links = await this.db.select().from(linkTable)
+      .where(eq(linkTable.userId, userId)).orderBy(linkTable.id);
     return links;
   }
 }
