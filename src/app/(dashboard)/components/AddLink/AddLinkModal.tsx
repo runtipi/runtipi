@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { useAction } from 'next-safe-action/hook';
 import { LinkInfo } from '@runtipi/shared';
+import { useTranslations } from 'next-intl';
 
 type FormValues = { title: string; url: string, iconURL: string | null };
 
@@ -20,6 +21,7 @@ type AddLinkModalProps = {
 }
 
 export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, link }) => {
+  const t = useTranslations('apps.my-apps.links');
   const router = useRouter();
 
   const schema = z
@@ -51,7 +53,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
       router.refresh();
       reset();
       onClose();
-      toast.success('Added succesfully');
+      toast.success(t('add.success'));
     }  
   });
 
@@ -63,7 +65,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
       router.refresh();
       reset();
       onClose();
-      toast.success('Edited succesfully');
+      toast.success(t('edit.success'));
     }  
   })
 
@@ -87,14 +89,14 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
       <DialogContent size="sm">
         <form onSubmit={handleSubmit((values) => onSubmit(values))}>
           <DialogHeader>
-            <h5 className="modal-title">{link ? 'Edit link' : 'Add custom link'}</h5>
+            <h5 className="modal-title">{link ? t('edit.title') : t('add.title')}</h5>
           </DialogHeader>
           <DialogDescription>
 
             <Input
               disabled={mutationStatus() === 'executing'}
               {...register('title')}
-              label='Title'
+              label={t('form.title')}
               placeholder='Runtipi demo'
               error={errors.title?.message} />
 
@@ -102,7 +104,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
               disabled={mutationStatus() === 'executing'}
               {...register('url')}
               className='mt-3'
-              label='Link URL'
+              label={t('form.link-url')}
               placeholder='https://demo.runtipi.io'
               error={errors.url?.message} />
 
@@ -110,14 +112,14 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
             disabled={mutationStatus() === 'executing'}
               {...register('iconURL')}
               className='mt-3'
-              label='Icon URL'
-              placeholder='Upload yours to svgshare.com'
+              label={t('form.icon-url')}
+              placeholder={t('form.icon-placeholder')}
               error={errors.iconURL?.message} />
 
           </DialogDescription>
           <DialogFooter>
             <Button type='submit' className="btn-success" disabled={mutationStatus() === 'executing'}>
-              {link ? 'Save' : 'Submit'}
+              {link ? t('edit.submit') : t('add.submit')}
             </Button>
           </DialogFooter>
         </form>

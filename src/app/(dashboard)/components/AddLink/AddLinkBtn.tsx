@@ -4,11 +4,12 @@ import React from "react"
 import { useDisclosure } from "@/client/hooks/useDisclosure";
 import clsx from "clsx";
 import { IconNewSection } from "@tabler/icons-react";
+import { useTranslations } from 'next-intl';
 import { AddLinkModal } from "./AddLinkModal";
 import styles from "./addLink.module.css";
 
 export const AddLinkBtn = () => {
-
+  const t = useTranslations('apps.my-apps.links');
   const addLinkDisclosure = useDisclosure();
 
   return (
@@ -24,9 +25,9 @@ export const AddLinkBtn = () => {
               </span>
               <div>
                 <div className="d-flex h-3 align-items-center">
-                  <span className="h4 me-2 mb-1 fw-bolder">Add custom link</span>
+                  <span className="h4 me-2 mb-1 fw-bolder">{t('add.title')}</span>
                 </div>
-                <div className="text-muted">Add a custom link to the apps section</div>
+                <div className="text-muted text-start">{t('add.subtitle')}</div>
               </div>
             </div>
           </div>

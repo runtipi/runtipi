@@ -5,9 +5,10 @@ import * as ContextMenu from '@radix-ui/react-context-menu';
 import { IconTrash, IconEdit } from '@tabler/icons-react';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { AddLinkModal } from 'src/app/(dashboard)/components/AddLink/AddLinkModal';
-import { DeleteLinkModal } from 'src/app/(dashboard)/components/AddLink/DeleteLinkModa';
+import { DeleteLinkModal } from 'src/app/(dashboard)/components/AddLink/DeleteLinkModal';
 import { LinkInfo } from '@runtipi/shared';
 import { Link } from '@/server/db/schema';
+import { useTranslations } from 'next-intl';
 import { AppLogo } from '../AppLogo';
 import './LinkTile.css';
 
@@ -16,6 +17,8 @@ type LinkTileProps = {
 };
 
 export const LinkTile: React.FC<LinkTileProps> = ({link: { id, title, url, iconURL }}) => {
+
+  const t = useTranslations('apps.my-apps.links');
 
   const link: LinkInfo  = { id, title, url, iconURL };
   const addLinkDisclosure = useDisclosure();
@@ -55,11 +58,11 @@ export const LinkTile: React.FC<LinkTileProps> = ({link: { id, title, url, iconU
 
           <ContextMenu.Content className='ContextMenuContent'>
             <ContextMenu.Item className='ContextMenuItem' onClick={handleEdit}>
-              <IconEdit size={15} /> Edit
+              <IconEdit size={15} className='me-1'/>{t('edit.context-menu')}
             </ContextMenu.Item>
 
             <ContextMenu.Item className='ContextMenuItem' onClick={handleDelete}>
-              <IconTrash size={15} /> Remove
+              <IconTrash size={15} className='me-1'/>{t('delete.context-menu')}
             </ContextMenu.Item>
           </ContextMenu.Content>
 

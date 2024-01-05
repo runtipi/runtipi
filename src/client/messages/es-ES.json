@@ -119,7 +119,34 @@
       "title": "Mis aplicaciones",
       "empty-title": "No hay aplicaciones instaladas",
       "empty-subtitle": "Instala una aplicación desde la tienda de aplicaciones para empezar",
-      "empty-action": "Ir a la tienda de aplicaciones"
+      "empty-action": "Ir a la tienda de aplicaciones",
+      "links": {
+        "form": {
+          "title": "Titulo",
+          "link-url": "Direccion URL",
+          "icon-url": "URL del icono",
+          "icon-placeholder": "Sube el tuyo a svgshare.com"
+        },
+        "add": {
+          "success": "Añadido correctamente", 
+          "title": "Añadir enlace externo",
+          "subtitle": "Añade un enlace externo a la seccion de aplicaciones",
+          "submit": "Añadir"
+        },
+        "edit": {
+          "success": "Editado correctamente",
+          "title": "Editar enlace",
+          "submit": "Guardar",
+          "context-menu": "Editar"
+        },
+        "delete": {
+          "success": "Eliminado correctamente",
+          "title": "Eliminar enlace externo",
+          "subtitle": "Estas seguro/a que deseas eliminar enlace externo?",
+          "context-menu": "Eliminar",
+          "submit": "Eliminar"
+        }
+      }
     },
     "app-store": {
       "title": "Tienda de aplicaciones",

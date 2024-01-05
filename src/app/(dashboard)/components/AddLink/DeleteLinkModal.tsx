@@ -5,6 +5,7 @@ import { useAction } from 'next-safe-action/hook';
 import { useRouter } from 'next/navigation';
 import { deleteLinkAction } from "@/actions/custom-links/add-link-action";
 import toast from "react-hot-toast";
+import { useTranslations } from 'next-intl';
 
 type DeleteLinkModalProps = {
   isOpen: boolean;
@@ -15,6 +16,7 @@ type DeleteLinkModalProps = {
 
 export const DeleteLinkModal: React.FC<DeleteLinkModalProps> = ({ isOpen, onClose, linkTitle, linkId }) => {
 
+  const t = useTranslations('apps.my-apps.links');
   const router = useRouter();
 
   const deleteLinkMutation = useAction(deleteLinkAction, {
@@ -24,7 +26,7 @@ export const DeleteLinkModal: React.FC<DeleteLinkModalProps> = ({ isOpen, onClos
     onSuccess: () => {
       router.refresh();
       onClose();
-      toast.success('Deleted succesfully');
+      toast.success(t('delete.success'));
     }  
   });
 
@@ -32,16 +34,16 @@ export const DeleteLinkModal: React.FC<DeleteLinkModalProps> = ({ isOpen, onClos
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
         <DialogHeader>
-          <h5 className="modal-title">Delete custom link <code>{linkTitle}</code> ?</h5>
+          <h5 className="modal-title">{t('delete.title')} <code>{linkTitle}</code> ?</h5>
         </DialogHeader>
         <DialogDescription>
           <div className="text-muted">
-            Are you sure you want to delete this custom link?
+            {t('delete.subtitle')}
           </div>
         </DialogDescription>
         <DialogFooter>
           <Button className="btn-danger" onClick={() => deleteLinkMutation.execute(linkId)}>
-            Delete
+            {t('delete.submit')}
           </Button>
         </DialogFooter>
       </DialogContent>

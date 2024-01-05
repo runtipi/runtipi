@@ -121,7 +121,34 @@
       "title": "My Apps",
       "empty-title": "No app installed",
       "empty-subtitle": "Install an app from the app store to get started",
-      "empty-action": "Go to app store"
+      "empty-action": "Go to app store",
+      "links": {
+        "form": {
+          "title": "Title",
+          "link-url": "Link URL",
+          "icon-url": "Icon URL",
+          "icon-placeholder": "Upload yours to svgshare.com"
+        },
+        "add": {
+          "success": "Added succesfully", 
+          "title": "Add external link",
+          "subtitle": "Add a external link to the apps section",
+          "submit": "Submit"
+        },
+        "edit": {
+          "success": "Edited succesfully",
+          "title": "Edit link",
+          "submit": "Save",
+          "context-menu": "Edit"
+        },
+        "delete": {
+          "success": "Deleted succesfully",
+          "title": "Delete external link",
+          "subtitle": "Are you sure you want to delete this external link?",
+          "context-menu": "Delete",
+          "submit": "Delete"
+        }
+      }
     },
     "app-store": {
       "title": "App Store",
@@ -230,6 +257,9 @@
         "title": "Update {name} config"
       }
     }
+  },
+  "context-menu": {
+
   },
   "settings": {
     "title": "Settings",
