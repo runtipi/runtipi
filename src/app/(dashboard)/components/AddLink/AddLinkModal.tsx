@@ -67,6 +67,12 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
     }  
   })
 
+  const mutationStatus = () => {
+    if (addLinkMutation.status === 'executing') return 'executing';
+    if (editLinkMutation.status === 'executing') return 'executing';
+    return null;
+  }
+
   const onSubmit = (data: FormValues) => {
     const { title, url, iconURL } = data;
     if (link) {
@@ -77,7 +83,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={mutationStatus() === 'executing' ? undefined : onClose}>
       <DialogContent size="sm">
         <form onSubmit={handleSubmit((values) => onSubmit(values))}>
           <DialogHeader>
@@ -86,12 +92,14 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
           <DialogDescription>
 
             <Input
+              disabled={mutationStatus() === 'executing'}
               {...register('title')}
               label='Title'
               placeholder='Runtipi demo'
               error={errors.title?.message} />
 
             <Input
+              disabled={mutationStatus() === 'executing'}
               {...register('url')}
               className='mt-3'
               label='Link URL'
@@ -99,6 +107,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
               error={errors.url?.message} />
 
             <Input
+            disabled={mutationStatus() === 'executing'}
               {...register('iconURL')}
               className='mt-3'
               label='Icon URL'
@@ -107,7 +116,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
 
           </DialogDescription>
           <DialogFooter>
-            <Button type='submit' className="btn-success">
+            <Button type='submit' className="btn-success" disabled={mutationStatus() === 'executing'}>
               {link ? 'Save' : 'Submit'}
             </Button>
           </DialogFooter>
