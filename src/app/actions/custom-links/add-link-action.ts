@@ -2,14 +2,29 @@
 
 import { CustomLinksServiceClass } from '@/server/services/custom-links/custom-links.service';
 import { db } from '@/server/db';
-import { LinkInfo } from '@runtipi/shared';
+import { LinkInfo, linkSchema } from '@runtipi/shared';
+import { action } from '@/lib/safe-action';
+import { handleActionError } from '../utils/handle-action-error';
 
-export const addLink = async (link: LinkInfo) => {
-  const linksService = new CustomLinksServiceClass(db);
-  return linksService.add(link);
-}
+export const addLinkAction = action(linkSchema, async (link: LinkInfo) => {
+  try {
+    const linksService = new CustomLinksServiceClass(db);
 
-export const editLink = (link: LinkInfo) => {
-  const linksService = new CustomLinksServiceClass(db);
-  return linksService.edit(link);
-}
+    const linkResponse = await linksService.add(link);
+    return { success: true, link: linkResponse };
+  } catch (e) {
+    return handleActionError(e);
+  }
+});
+
+
+export const editLinkAction = action(linkSchema, async (link: LinkInfo) => {
+  try {
+    const linksService = new CustomLinksServiceClass(db);
+
+    const linkResponse = await linksService.edit(link);
+    return { success: true, link: linkResponse };
+  } catch (e) {
+    return handleActionError(e);
+  }
+});

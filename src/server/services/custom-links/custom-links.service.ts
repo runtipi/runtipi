@@ -9,12 +9,14 @@ export class CustomLinksServiceClass {
     this.queries = new LinkQueries(p);
   }
 
-  public add(link: LinkInfo) {
-    return this.queries.addLink(link);
+  public add = async (link: LinkInfo) => {
+    const linkResponse = await this.queries.addLink(link);
+    return linkResponse;
   }
 
-  public edit(link: LinkInfo) {
-    return this.queries.editLink(link);
+  public edit = async (link: LinkInfo) => {
+    const linkResponse = await this.queries.editLink(link);
+    return linkResponse;
   }
 
   public async getLinks(userId: number | undefined) {

@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
 import React from "react";
-import { addLink, editLink } from "@/actions/custom-links/add-link-action";
+import { addLinkAction, editLinkAction } from "@/actions/custom-links/add-link-action";
 import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
+import { useAction } from 'next-safe-action/hook';
 import { LinkInfo } from '@runtipi/shared';
 
 type FormValues = { title: string; url: string, iconURL: string | null };
@@ -25,7 +26,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
     .object({
       title: z.string().min(1).max(20),
       url: z.string().url(),
-      iconURL: z.string().url().or(z.literal("")),
+      iconURL: z.string().url().or(z.string().max(0)),
   });
 
   const {
@@ -42,36 +43,43 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
     }
   });
 
-  const onSubmit = ({ title, url, iconURL }: FormValues) => {
+  const addLinkMutation = useAction(addLinkAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onSuccess: () => {
+      router.refresh();
+      reset();
+      onClose();
+      toast.success('Added succesfully');
+    }  
+  });
+
+  const editLinkMutation = useAction(editLinkAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onSuccess: () => {
+      router.refresh();
+      reset();
+      onClose();
+      toast.success('Edited succesfully');
+    }  
+  })
+
+  const onSubmit = (data: FormValues) => {
+    const { title, url, iconURL } = data;
     if (link) {
-      editLink({ id: link.id, title, url, iconURL  })
-        .then(() => {
-          router.refresh();
-          reset();
-          onClose();
-          toast.success('Edited succesfully');
-        })
-        .catch((e) => {
-          if (e.serverError) toast.error(e.serverError);
-        })
+      editLinkMutation.execute({ id: link?.id, title, url, iconURL});
     } else {
-      addLink({ title, url, iconURL })
-        .then(() => {
-          router.refresh();
-          reset();
-          onClose();
-          toast.success('Added succesfully');
-        })
-        .catch((e) => {
-          if (e.serverError) toast.error(e.serverError);
-        })
+      addLinkMutation.execute({ title, url, iconURL});
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
-        <form onSubmit={handleSubmit(({ title, url, iconURL }) => onSubmit({ title, url, iconURL }))}>
+        <form onSubmit={handleSubmit((values) => onSubmit(values))}>
           <DialogHeader>
             <h5 className="modal-title">{link ? 'Edit link' : 'Add custom link'}</h5>
           </DialogHeader>
