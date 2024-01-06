@@ -272,6 +272,59 @@ export class AppExecutors {
     }
   };
 
+  public resetApp = async (appId: string, config: Record<string, unknown>) => {
+    try {
+      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+
+      const { appDirPath, appDataDirPath } = this.getAppPaths(appId);
+      this.logger.info(`Resetting app ${appId}`);
+      await this.ensureAppDir(appId);
+      await generateEnvFile(appId, config);
+
+      // Stop app
+      try {
+        await compose(appId, 'down --remove-orphans --volumes');
+      } catch (err) {
+        if (err instanceof Error && err.message.includes('conflict')) {
+          this.logger.warn(`Could not reset app ${appId}. Most likely there have been made changes to the compose file.`);
+        } else {
+          throw err;
+        }
+      }
+
+      // Delete app data directory
+      this.logger.info(`Deleting folder ${appDataDirPath}`);
+      await fs.promises.rm(appDataDirPath, { recursive: true, force: true }).catch((err) => {
+        this.logger.error(`Error deleting folder ${appDataDirPath}: ${err.message}`);
+      });
+
+      // Create app.env file
+      this.logger.info(`Creating app.env file for app ${appId}`);
+      await generateEnvFile(appId, config);
+
+      // Copy data dir
+      this.logger.info(`Copying data dir for app ${appId}`);
+      if (!(await pathExists(`${appDataDirPath}/data`))) {
+        await copyDataDir(appId);
+      }
+
+      // Set permissions
+      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {
+        this.logger.error(`Error setting permissions for app ${appId}`);
+      });
+
+      // run docker-compose up
+      this.logger.info(`Running docker-compose up for app ${appId}`);
+      await compose(appId, 'up -d');
+
+      SocketManager.emit({ type: 'app', event: 'reset_success', data: { appId } });
+
+      return { success: true, message: `App ${appId} reset successfully` };
+    } catch (err) {
+      return this.handleAppError(err, appId, 'reset_error');
+    }
+  };
+
   public updateApp = async (appId: string, config: Record<string, unknown>) => {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });

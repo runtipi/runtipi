@@ -110,7 +110,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
     },
     onExecute: () => {
       resetAppDisclosure.open();
-      setOptimisticStatus('stopping');
+      setOptimisticStatus('resetting');
     },
   });
 
