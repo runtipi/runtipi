@@ -9,6 +9,8 @@ export const socketEventSchema = z.union([
       z.literal('install_error'),
       z.literal('uninstall_success'),
       z.literal('uninstall_error'),
+      z.literal('reset_success'),
+      z.literal('reset_error'),
       z.literal('update_success'),
       z.literal('update_error'),
       z.literal('start_success'),
