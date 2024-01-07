@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-47-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-48-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -132,6 +132,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/MontejoJorge"><img src="https://avatars.githubusercontent.com/u/56157795?v=4?s=100" width="100px;" alt="Jorge Montejo"/><br /><sub><b>Jorge Montejo</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=MontejoJorge" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/CiliaFred"><img src="https://avatars.githubusercontent.com/u/1827520?v=4?s=100" width="100px;" alt="Frédéric Cilia"/><br /><sub><b>Frédéric Cilia</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=CiliaFred" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/asermax"><img src="https://avatars.githubusercontent.com/u/1452164?v=4?s=100" width="100px;" alt="Agustín Carrasco"/><br /><sub><b>Agustín Carrasco</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=asermax" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://thibaultclaude.be"><img src="https://avatars.githubusercontent.com/u/23203061?v=4?s=100" width="100px;" alt="Thibault Claude"/><br /><sub><b>Thibault Claude</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=thclaude" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
