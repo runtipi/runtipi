@@ -276,7 +276,7 @@ export class AppExecutors {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
-      const { appDirPath, appDataDirPath } = this.getAppPaths(appId);
+      const { appDataDirPath } = this.getAppPaths(appId);
       this.logger.info(`Resetting app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
