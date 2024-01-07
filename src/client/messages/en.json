@@ -121,7 +121,14 @@
       "title": "My Apps",
       "empty-title": "No app installed",
       "empty-subtitle": "Install an app from the app store to get started",
-      "empty-action": "Go to app store"
+      "empty-action": "Go to app store",
+      "update-all-form": {
+        "title": "Update all apps",
+        "subtitle1": "Do you want to update all your apps to the latest version?",
+        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
+        "submit": "Update all",
+        "in-progress": "Updating all apps"
+      }
     },
     "app-store": {
       "title": "App Store",

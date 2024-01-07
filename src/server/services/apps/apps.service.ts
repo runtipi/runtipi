@@ -364,7 +364,7 @@ export class AppServiceClass {
     await this.queries.updateApp(id, { status: 'updating' });
 
     const eventDispatcher = new EventDispatcher('updateApp');
-    await eventDispatcher
+    eventDispatcher
       .dispatchEventAsync({
         type: 'app',
         command: 'update',
