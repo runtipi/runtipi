@@ -12,8 +12,11 @@ import { LayoutActions } from './components/LayoutActions/LayoutActions';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getUserFromCookie();
-
+  const appsService = new AppServiceClass();
   const { apps } = await AppServiceClass.listApps();
+
+  const installedApps = await appsService.installedApps();
+  const availableUpdates = installedApps.filter((app) => Number(app.version) < Number(app.latestVersion) && app.status !== 'updating').length;
 
   if (!user) {
     redirect('/login');
@@ -34,7 +37,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <PageTitle apps={apps} />
               </div>
               <div className="flex-fill col-auto ms-auto d-print-none">
-                <LayoutActions />
+                <LayoutActions availableUpdates={availableUpdates} />
               </div>
             </div>
           </div>
