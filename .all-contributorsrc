@@ -455,6 +455,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "DansNewLegs",
+      "name": "Joshua Banks",
+      "avatar_url": "https://avatars.githubusercontent.com/u/152246049?v=4",
+      "profile": "https://github.com/DansNewLegs",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
