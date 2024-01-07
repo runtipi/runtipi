@@ -317,7 +317,8 @@
       "contributions": [
         "translation",
         "code",
-        "test"
+        "test",
+        "doc"
       ]
     },
     {
