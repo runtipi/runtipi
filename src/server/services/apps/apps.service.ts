@@ -10,7 +10,6 @@ import { checkAppRequirements, getAvailableApps, getAppInfo, getUpdateInfo } fro
 import { getConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
-import { throws } from 'assert';
 
 type AlwaysFields = {
   isVisibleOnGuestDashboard?: boolean;
@@ -336,10 +335,12 @@ export class AppServiceClass {
   public resetApp = async (id: string) => {
     const app = await this.getApp(id);
 
+    this.queries.updateApp(id, { status: 'resetting' });
+
     const eventDispatcher = new EventDispatcher('resetApp');
     eventDispatcher.dispatchEventAsync({ type: 'app', command: 'reset', appid: id, form: castAppConfig(app.config) }).then(({ stdout, success }) => {
       if (success) {
-        this.queries.updateApp(id, { status: 'resetting' });
+        this.queries.updateApp(id, { status: 'running' });
       } else {
         this.queries.updateApp(id, { status: 'stopped' });
         Logger.error(`Failed to reset app ${id}: ${stdout}`);

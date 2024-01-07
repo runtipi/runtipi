@@ -5,7 +5,7 @@ import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 
 const runCommand = async (jobData: unknown) => {
-  const { installApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
+  const { installApp, resetApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
   const { cloneRepo, pullRepo } = new RepoExecutors();
   const { systemInfo } = new SystemExecutors();
 
@@ -39,6 +39,10 @@ const runCommand = async (jobData: unknown) => {
 
     if (data.command === 'update') {
       ({ success, message } = await updateApp(data.appid, data.form));
+    }
+
+    if (data.command === 'reset') {
+      ({ success, message } = await resetApp(data.appid, data.form));
     }
 
     if (data.command === 'generate_env') {

@@ -54,6 +54,12 @@ export const ClientProviders = ({ children, initialTheme, cookies }: Props) => {
         case 'update_error':
           toast.error(t('server-messages.errors.app-failed-to-update', { id: data.appId }));
           break;
+        case 'reset_success':
+          toast.success(t('apps.app-details.reset-success'));
+          break;
+        case 'reset_error':
+          toast.error(t('server-messages.errors.app-failed-to-reset', { id: data.appId }));
+          break;
         default:
           break;
       }
