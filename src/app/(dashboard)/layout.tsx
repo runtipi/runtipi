@@ -5,7 +5,7 @@ import { SystemServiceClass } from '@/server/services/system';
 import semver from 'semver';
 import clsx from 'clsx';
 import { AppServiceClass } from '@/server/services/apps/apps.service';
-import { getConfig } from '@/server/core/TipiConfig';
+import { TipiConfig } from '@/server/core/TipiConfig';
 import { Header } from './components/Header';
 import { PageTitle } from './components/PageTitle';
 import styles from './layout.module.scss';
@@ -19,7 +19,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const installedApps = await appsService.installedApps();
   const availableUpdates = installedApps.filter((app) => Number(app.version) < Number(app.latestVersion) && app.status !== 'updating').length;
-  const { allowErrorMonitoring } = getConfig();
+  const { allowErrorMonitoring } = TipiConfig.getConfig();
 
   if (!user) {
     redirect('/login');

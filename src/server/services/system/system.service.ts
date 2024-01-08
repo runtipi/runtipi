@@ -4,7 +4,7 @@ import axios from 'redaxios';
 import { TipiCache } from '@/server/core/TipiCache';
 import { fileExists, readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
-import { getConfig } from '../../core/TipiConfig';
+import { TipiConfig } from '../../core/TipiConfig';
 
 const systemInfoSchema = z.object({
   cpu: z.object({
@@ -31,7 +31,7 @@ export class SystemServiceClass {
   public getVersion = async () => {
     const cache = new TipiCache('getVersion');
     try {
-      const { seePreReleaseVersions, version: currentVersion } = getConfig();
+      const { seePreReleaseVersions, version: currentVersion } = TipiConfig.getConfig();
 
       if (seePreReleaseVersions) {
         const { data } = await axios.get<{ tag_name: string; body: string }[]>('https://api.github.com/repos/runtipi/runtipi/releases');
@@ -52,10 +52,10 @@ export class SystemServiceClass {
         await cache.set('latestVersionBody', body || '', 60 * 60);
       }
 
-      return { current: getConfig().version, latest: version, body };
+      return { current: TipiConfig.getConfig().version, latest: version, body };
     } catch (e) {
       Logger.error(e);
-      return { current: getConfig().version, latest: getConfig().version, body: '' };
+      return { current: TipiConfig.getConfig().version, latest: TipiConfig.getConfig().version, body: '' };
     } finally {
       await cache.close();
     }

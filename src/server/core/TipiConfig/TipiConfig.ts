@@ -13,18 +13,19 @@ const formatErrors = (errors: { fieldErrors: Record<string, string[]> }) =>
     .filter(Boolean)
     .join('\n');
 
-export class TipiConfig {
-  private static instance: TipiConfig;
-
+export class TipiConfigClass {
   private config: z.infer<typeof envSchema> = {} as z.infer<typeof envSchema>;
 
   private fileConfigCache: z.infer<typeof settingsSchema> | null;
 
   private cacheTime: number;
 
-  constructor() {
+  private cacheTimeout: number;
+
+  constructor(cacheTimeout = 5000) {
     this.fileConfigCache = null;
     this.cacheTime = 0;
+    this.cacheTimeout = cacheTimeout;
 
     this.genConfig();
   }
@@ -82,9 +83,10 @@ export class TipiConfig {
     let fileConfig = {};
 
     // Check if the cache is still valid (less than 5 second old)
-    if (this.fileConfigCache && now - this.cacheTime < 5000) {
+    if (this.fileConfigCache && now - this.cacheTime < this.cacheTimeout) {
       fileConfig = this.fileConfigCache;
     } else {
+      Logger.info('⚙️ Reading settings.json file');
       const rawFileConfig = readJsonFile('/runtipi/state/settings.json') || {};
       const parsedFileConfig = settingsSchema.safeParse(rawFileConfig);
 
@@ -100,11 +102,9 @@ export class TipiConfig {
     return fileConfig;
   }
 
-  public static getInstance(): TipiConfig {
-    if (!TipiConfig.instance) {
-      TipiConfig.instance = new TipiConfig();
-    }
-    return TipiConfig.instance;
+  public resetCache() {
+    this.cacheTime = 0;
+    this.fileConfigCache = null;
   }
 
   public getConfig() {
@@ -162,10 +162,4 @@ export class TipiConfig {
   }
 }
 
-export const setConfig = <T extends keyof typeof envSchema.shape>(key: T, value: z.infer<typeof envSchema>[T], writeFile = false) => {
-  return TipiConfig.getInstance().setConfig(key, value, writeFile);
-};
-
-export const getConfig = () => TipiConfig.getInstance().getConfig();
-export const getSettings = () => TipiConfig.getInstance().getSettings();
-export const setSettings = (settings: TipiSettingsType) => TipiConfig.getInstance().setSettings(settings);
+export const TipiConfig = new TipiConfigClass();

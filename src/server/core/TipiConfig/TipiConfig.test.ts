@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
-import { getConfig, setConfig, getSettings, setSettings, TipiConfig } from '.';
+import { TipiConfigClass } from './TipiConfig';
 import { readJsonFile } from '../../common/fs.helpers';
 
 jest.mock('fs-extra');
@@ -8,7 +8,7 @@ jest.mock('fs-extra');
 describe('Test: getConfig', () => {
   it('It should return config from .env', () => {
     // arrange
-    const config = getConfig();
+    const config = new TipiConfigClass().getConfig();
 
     // assert
     expect(config).toBeDefined();
@@ -21,7 +21,6 @@ describe('Test: getConfig', () => {
     // arrange
     const settingsJson = {
       appsRepoUrl: faker.internet.url(),
-      appsRepoId: faker.lorem.word(),
       domain: faker.lorem.word(),
     };
     const MockFiles = {
@@ -31,12 +30,11 @@ describe('Test: getConfig', () => {
     fs.__createMockFiles(MockFiles);
 
     // act
-    const config = new TipiConfig().getConfig();
+    const config = new TipiConfigClass(0).getConfig();
 
     // assert
     expect(config).toBeDefined();
     expect(config.appsRepoUrl).toBe(settingsJson.appsRepoUrl);
-    expect(config.appsRepoId).toBe(settingsJson.appsRepoId);
     expect(config.domain).toBe(settingsJson.domain);
   });
 });
@@ -47,8 +45,9 @@ describe('Test: setConfig', () => {
     const randomWord = faker.internet.url();
 
     // act
-    setConfig('appsRepoUrl', randomWord);
-    const config = getConfig();
+    const tipiConfig = new TipiConfigClass(0);
+    tipiConfig.setConfig('appsRepoUrl', randomWord);
+    const config = tipiConfig.getConfig();
 
     // assert
     expect(config).toBeDefined();
@@ -62,7 +61,7 @@ describe('Test: setConfig', () => {
     // act
     try {
       // @ts-expect-error - We are testing invalid NODE_ENV
-      await setConfig('NODE_ENV', 'invalid');
+      await new TipiConfigClass(0).setConfig('NODE_ENV', 'invalid');
     } catch (e) {
       error = e;
     }
@@ -73,8 +72,8 @@ describe('Test: setConfig', () => {
 
   it('Should write config to json file', async () => {
     const randomWord = faker.internet.url();
-    await setConfig('appsRepoUrl', randomWord, true);
-    const config = getConfig();
+    await new TipiConfigClass(0).setConfig('appsRepoUrl', randomWord, true);
+    const config = new TipiConfigClass(0).getConfig();
 
     expect(config).toBeDefined();
     expect(config.appsRepoUrl).toBe(randomWord);
@@ -97,7 +96,7 @@ describe('Test: getSettings', () => {
     fs.__createMockFiles(MockFiles);
 
     // act
-    const settings = getSettings();
+    const settings = new TipiConfigClass(0).getSettings();
 
     // assert
     expect(settings).toBeDefined();
@@ -106,7 +105,7 @@ describe('Test: getSettings', () => {
 
   it('It should return current config if settings.json has any invalid value', () => {
     // arrange
-    const tipiConf = new TipiConfig();
+    const tipiConf = new TipiConfigClass(0);
     const MockFiles = { '/runtipi/state/settings.json': JSON.stringify({ appsRepoUrl: 10 }) };
     // @ts-expect-error - We are mocking fs
     fs.__createMockFiles(MockFiles);
@@ -129,7 +128,7 @@ describe('Test: setSettings', () => {
     };
 
     // act
-    await setSettings(fakeSettings);
+    await new TipiConfigClass(0).setSettings(fakeSettings);
     const settingsJson = readJsonFile('/runtipi/state/settings.json') as { [key: string]: string };
 
     // assert
@@ -142,7 +141,7 @@ describe('Test: setSettings', () => {
     const fakeSettings = { appsRepoUrl: 10 };
 
     // act
-    setSettings(fakeSettings as object);
+    new TipiConfigClass(0).setSettings(fakeSettings as object);
     const settingsJson = (readJsonFile('/runtipi/state/settings.json') || {}) as { [key: string]: string };
 
     // assert
@@ -154,7 +153,7 @@ describe('Test: setSettings', () => {
     // arrange
     let error;
     const fakeSettings = { appsRepoUrl: faker.internet.url() };
-    const tipiConf = new TipiConfig();
+    const tipiConf = new TipiConfigClass(0);
     tipiConf.setConfig('demoMode', true);
 
     // act
@@ -171,7 +170,7 @@ describe('Test: setSettings', () => {
   it('should replace empty string with undefined if storagePath is empty', async () => {
     // arrange
     const fakeSettings = { storagePath: '' };
-    const tipiConf = new TipiConfig();
+    const tipiConf = new TipiConfigClass(0);
 
     // act
     await tipiConf.setSettings(fakeSettings);
@@ -183,7 +182,7 @@ describe('Test: setSettings', () => {
   it('should trim storagePath if it is not empty', async () => {
     // arrange
     const fakeSettings = { storagePath: ' /tmp ' };
-    const tipiConf = new TipiConfig();
+    const tipiConf = new TipiConfigClass(0);
 
     // act
     await tipiConf.setSettings(fakeSettings);
@@ -195,7 +194,7 @@ describe('Test: setSettings', () => {
   it('should trim storagePath and return undefined if it is empty', async () => {
     // arrange
     const fakeSettings = { storagePath: '   ' };
-    const tipiConf = new TipiConfig();
+    const tipiConf = new TipiConfigClass();
 
     // act
     await tipiConf.setSettings(fakeSettings);
@@ -207,7 +206,7 @@ describe('Test: setSettings', () => {
   it('should remove all whitespaces from storagePath', async () => {
     // arrange
     const fakeSettings = { storagePath: ' /tmp /test ' };
-    const tipiConf = new TipiConfig();
+    const tipiConf = new TipiConfigClass();
 
     // act
     await tipiConf.setSettings(fakeSettings);

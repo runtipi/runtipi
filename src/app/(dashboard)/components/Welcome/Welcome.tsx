@@ -50,8 +50,8 @@ export const Welcome = ({ allowErrorMonitoring }: Props) => {
               .
               <br />
               <br />
-              If you can&apos;t do either of those, please consider enabling the opt-in error reporting feature. This will help us identify and fix
-              bugs faster.
+              If you can&apos;t do either of those, please consider enabling the opt-in anonymous error reporting feature. This will help us identify
+              and fix bugs faster.
             </p>
             <div className="d-flex flex-column align-items-center">
               <Switch checked={errorMonitoring} onCheckedChange={setErrorMonitoring} label="Enable error reporting" />

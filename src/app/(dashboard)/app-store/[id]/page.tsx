@@ -2,7 +2,7 @@ import { AppServiceClass } from '@/server/services/apps/apps.service';
 import React from 'react';
 import { Metadata } from 'next';
 import { db } from '@/server/db';
-import { getSettings } from '@/server/core/TipiConfig';
+import { TipiConfig } from '@/server/core/TipiConfig';
 import { ErrorPage } from '@/components/ui/ErrorPage';
 import { getTranslatorFromCookie } from '@/lib/get-translator';
 import { MessageKey, TranslatedError } from '@/server/utils/errors';
@@ -18,7 +18,7 @@ export default async function AppDetailsPage({ params }: { params: { id: string 
   const appsService = new AppServiceClass(db);
   try {
     const app = await appsService.getApp(params.id);
-    const settings = getSettings();
+    const settings = TipiConfig.getSettings();
 
     return <AppDetailsWrapper app={app} localDomain={settings.localDomain} />;
   } catch (e) {

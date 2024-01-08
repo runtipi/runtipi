@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import pg, { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { getConfig } from '../core/TipiConfig';
+import { TipiConfig } from '../core/TipiConfig';
 import * as schema from '../db/schema';
 import { Database } from '../db';
 import { runPostgresMigrations } from '../run-migrations-dev';
@@ -18,11 +18,11 @@ export type TestDatabase = {
  */
 const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
   const pgClient = new pg.Client({
-    user: getConfig().postgresUsername,
-    host: getConfig().postgresHost,
-    database: getConfig().postgresDatabase,
-    password: getConfig().postgresPassword,
-    port: getConfig().postgresPort,
+    user: TipiConfig.getConfig().postgresUsername,
+    host: TipiConfig.getConfig().postgresHost,
+    database: TipiConfig.getConfig().postgresDatabase,
+    password: TipiConfig.getConfig().postgresPassword,
+    port: TipiConfig.getConfig().postgresPort,
   });
   await pgClient.connect();
 
@@ -34,7 +34,9 @@ const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
   await runPostgresMigrations(testsuite);
 
   const client = new Pool({
-    connectionString: `postgresql://${getConfig().postgresUsername}:${getConfig().postgresPassword}@${getConfig().postgresHost}:${getConfig().postgresPort}/${testsuite}?connect_timeout=300`,
+    connectionString: `postgresql://${TipiConfig.getConfig().postgresUsername}:${TipiConfig.getConfig().postgresPassword}@${
+      TipiConfig.getConfig().postgresHost
+    }:${TipiConfig.getConfig().postgresPort}/${testsuite}?connect_timeout=300`,
   });
 
   return { client, db: drizzle(client, { schema }) };

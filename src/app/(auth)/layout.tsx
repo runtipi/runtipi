@@ -2,12 +2,12 @@ import React from 'react';
 import Image from 'next/image';
 import { getCurrentLocale } from 'src/utils/getCurrentLocale';
 import { getLogo } from '@/lib/themes';
-import { getConfig } from '@/server/core/TipiConfig';
+import { TipiConfig } from '@/server/core/TipiConfig';
 import { LanguageSelector } from '../components/LanguageSelector';
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const locale = getCurrentLocale();
-  const { allowAutoThemes } = getConfig();
+  const { allowAutoThemes } = TipiConfig.getConfig();
 
   return (
     <div className="page page-center">

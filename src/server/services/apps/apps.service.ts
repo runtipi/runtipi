@@ -7,7 +7,7 @@ import { AppInfo } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { checkAppRequirements, getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
-import { getConfig } from '../../core/TipiConfig';
+import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
 
@@ -23,7 +23,7 @@ const filterApp = (app: AppInfo): boolean => {
     return true;
   }
 
-  const arch = getConfig().architecture;
+  const arch = TipiConfig.getConfig().architecture;
   return app.supported_architectures.includes(arch);
 };
 
@@ -127,7 +127,7 @@ export class AppServiceClass {
     } else {
       const apps = await this.queries.getApps();
 
-      if (apps.length >= 6 && getConfig().demoMode) {
+      if (apps.length >= 6 && TipiConfig.getConfig().demoMode) {
         throw new TranslatedError('server-messages.errors.demo-mode-limit');
       }
 

@@ -1,6 +1,6 @@
 import { createClient, RedisClientType } from 'redis';
 import { Logger } from '../Logger';
-import { getConfig } from '../TipiConfig';
+import { TipiConfig } from '../TipiConfig';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
@@ -11,8 +11,8 @@ export class TipiCache {
 
   constructor(reference: string) {
     const client = createClient({
-      url: `redis://${getConfig().REDIS_HOST}:6379`,
-      password: getConfig().redisPassword,
+      url: `redis://${TipiConfig.getConfig().REDIS_HOST}:6379`,
+      password: TipiConfig.getConfig().redisPassword,
     });
 
     this.client = client as RedisClientType;

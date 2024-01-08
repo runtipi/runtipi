@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { GeistSans } from 'geist/font/sans';
 import merge from 'lodash.merge';
 import { NextIntlClientProvider } from 'next-intl';
-import { getSettings } from '@/server/core/TipiConfig';
+import { TipiConfig } from '@/server/core/TipiConfig';
 
 import './global.css';
 import clsx from 'clsx';
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = getCurrentLocale();
 
-  const clientSettings = getSettings();
+  const clientSettings = TipiConfig.getSettings();
 
   const englishMessages = (await import(`../client/messages/en.json`)).default;
   const messages = (await import(`../client/messages/${locale}.json`)).default;
