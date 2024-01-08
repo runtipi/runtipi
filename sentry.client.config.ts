@@ -9,7 +9,7 @@ if (inputElement) {
     // Parse the input value
     const parsedSettings = settingsSchema.parse(JSON.parse(inputElement.value));
 
-    if (parsedSettings.allowErrorMonitoring) {
+    if (parsedSettings.allowErrorMonitoring && process.env.NODE_ENV === 'production') {
       Sentry.init({
         environment: process.env.NODE_ENV,
         dsn: 'https://7a73d72f886948478b55621e7b92c3c7@o4504242900238336.ingest.sentry.io/4504826587971584',
