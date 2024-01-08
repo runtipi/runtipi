@@ -192,7 +192,7 @@ export const copySystemFiles = async () => {
   await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'shared'), { recursive: true });
   await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'tls'), { recursive: true });
 
-  if (Boolean(envMap.get('PERSIST_TRAEFIK_CONFIG')) != true) {
+  if (Boolean(envMap.get('PERSIST_TRAEFIK_CONFIG')) == true) {
     logger.info('Skipping the copy of traefik files');
   } else {
     logger.info('Copying traefik files');
