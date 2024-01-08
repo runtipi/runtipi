@@ -8,6 +8,7 @@ import { envMapToString, envStringToMap, execAsync, pathExists, settingsSchema }
 import { logger } from '../logger/logger';
 import { getRepoHash } from '../../services/repo/repo.helpers';
 import { ROOT_FOLDER } from '@/config/constants';
+import { dataToStr } from 'memfs/lib/volume';
 
 type EnvKeys =
   | 'APPS_REPO_ID'
@@ -36,6 +37,7 @@ type EnvKeys =
   | 'TIPI_GID'
   | 'TIPI_UID'
   | 'ALLOW_ERROR_MONITORING'
+  | 'PERSIST_TRAEFIK_CONFIG'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
@@ -162,7 +164,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
   envMap.set('NODE_ENV', 'production');
   envMap.set('ALLOW_ERROR_MONITORING', data.allowErrorMonitoring ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'true');
-
+  envMap.set('PERSIST_TRAEFIK_CONFIG', data.persistTraefikConfig ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false');
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 
   return envMap;
@@ -178,6 +180,10 @@ export const copySystemFiles = async () => {
     await fs.promises.rmdir(path.join(ROOT_FOLDER, 'scripts'), { recursive: true });
   }
 
+  const envFilePath = path.join(ROOT_FOLDER, '.env');
+  const envFile = await fs.promises.readFile(envFilePath, 'utf-8');
+  const envMap: Map<EnvKeys, string> = envStringToMap(envFile);
+
   const assetsFolder = path.join(ROOT_FOLDER, 'assets');
 
   // Copy traefik folder from assets
@@ -186,9 +192,13 @@ export const copySystemFiles = async () => {
   await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'shared'), { recursive: true });
   await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'tls'), { recursive: true });
 
-  logger.info('Copying traefik files');
-  await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(ROOT_FOLDER, 'traefik', 'traefik.yml'));
-  await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'), path.join(ROOT_FOLDER, 'traefik', 'dynamic', 'dynamic.yml'));
+  if (Boolean(envMap.get('PERSIST_TRAEFIK_CONFIG')) != true) {
+    logger.info('Skipping the copy of traefik files');
+  } else {
+    logger.info('Copying traefik files');
+    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(ROOT_FOLDER, 'traefik', 'traefik.yml'));
+    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'), path.join(ROOT_FOLDER, 'traefik', 'dynamic', 'dynamic.yml'));
+  }
 
   // Create base folders
   logger.info('Creating base folders');
