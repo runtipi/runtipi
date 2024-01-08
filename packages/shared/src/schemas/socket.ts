@@ -2,6 +2,13 @@ import { z } from 'zod';
 
 export const socketEventSchema = z.union([
   z.object({
+    type: z.literal('system_info'),
+    event: z.union([z.literal('status_change'), z.literal('status_change_error')]),
+    data: z.object({
+      info: z.custom(),
+    }),
+  }),
+  z.object({
     type: z.literal('app'),
     event: z.union([
       z.literal('status_change'),

@@ -1,9 +1,8 @@
 import fs from 'fs';
-import path from 'path';
 import si from 'systeminformation';
 import * as Sentry from '@sentry/node';
 import { logger } from '@/lib/logger';
-import { ROOT_FOLDER } from '@/config/constants';
+import { SocketManager } from '@/lib/socket/SocketManager';
 
 export class SystemExecutors {
   private readonly logger;
@@ -27,6 +26,7 @@ export class SystemExecutors {
   private getSystemLoad = async () => {
     const { currentLoad } = await si.currentLoad();
 
+    const info = { cpu: { load: 0 }, disk: { total: 0, used: 0, available: 0 }, memory: { total: 0, used: 0, available: 0 } };
     const memResult = { total: 0, used: 0, available: 0 };
 
     try {
@@ -41,22 +41,27 @@ export class SystemExecutors {
 
     const [disk0] = await si.fsSize();
 
-    return {
-      cpu: { load: currentLoad },
-      memory: memResult,
-      disk: { total: disk0?.size, used: disk0?.used, available: disk0?.available },
-    };
+    info.cpu.load = currentLoad;
+    info.disk.total = disk0?.size || 0;
+    info.disk.used = disk0?.used || 0;
+    info.disk.available = disk0?.available || 0;
+    info.memory = memResult;
+
+    return info;
   };
 
   public systemInfo = async () => {
     try {
-      const systemLoad = await this.getSystemLoad();
+      const info = await this.getSystemLoad();
 
-      await fs.promises.writeFile(path.join(ROOT_FOLDER, 'state', 'system-info.json'), JSON.stringify(systemLoad, null, 2));
-      await fs.promises.chmod(path.join(ROOT_FOLDER, 'state', 'system-info.json'), 0o777);
-
+      SocketManager.emit({ type: 'system_info', event: 'status_change', data: { info } });
       return { success: true, message: '' };
     } catch (e) {
+      SocketManager.emit({
+        type: 'system_info',
+        event: 'status_change_error',
+        data: { info: { cpu: { load: 0 }, disk: { total: 0, used: 0, available: 0 }, memory: { total: 0, used: 0, available: 0 } } },
+      });
       return this.handleSystemError(e);
     }
   };

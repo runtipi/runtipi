@@ -1,25 +1,7 @@
-import { z } from 'zod';
 import axios from 'redaxios';
 import { TipiCache } from '@/server/core/TipiCache';
-import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { getConfig } from '../../core/TipiConfig';
-
-const systemInfoSchema = z.object({
-  cpu: z.object({
-    load: z.number().default(0),
-  }),
-  disk: z.object({
-    total: z.number().default(0),
-    used: z.number().default(0),
-    available: z.number().default(0),
-  }),
-  memory: z.object({
-    total: z.number().default(0),
-    available: z.number().default(0),
-    used: z.number().default(0),
-  }),
-});
 
 export class SystemServiceClass {
   /**
@@ -58,15 +40,5 @@ export class SystemServiceClass {
     } finally {
       await cache.close();
     }
-  };
-
-  public static systemInfo = (): z.infer<typeof systemInfoSchema> => {
-    const info = systemInfoSchema.safeParse(readJsonFile('/runtipi/state/system-info.json'));
-
-    if (!info.success) {
-      return { cpu: { load: 0 }, disk: { total: 0, used: 0, available: 0 }, memory: { total: 0, available: 0, used: 0 } };
-    }
-
-    return info.data;
   };
 }
