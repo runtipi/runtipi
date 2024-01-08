@@ -22,6 +22,7 @@ const nextConfig = {
     ARCHITECTURE: process.env.ARCHITECTURE,
     NODE_ENV: process.env.NODE_ENV,
     REDIS_HOST: process.env.REDIS_HOST,
+    ALLOW_ERROR_MONITORING: process.env.ALLOW_ERROR_MONITORING,
   },
   async rewrites() {
     return [

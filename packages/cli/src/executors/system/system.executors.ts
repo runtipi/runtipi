@@ -167,7 +167,6 @@ export class SystemExecutors {
         `Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get('NGINX_PORT')} to access the dashboard`,
         'Find documentation and guides at: https://runtipi.io',
         'Tipi is entierly written in TypeScript and we are looking for contributors!',
-        'Tipi now collects anonymous crash reports to help us improve the product. You can opt-out in the settings of the dashboard.',
       ].join('\n\n');
 
       console.log(

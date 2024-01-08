@@ -157,11 +157,14 @@ export const generateSystemEnvFile = async () => {
   envMap.set('POSTGRES_USERNAME', 'tipi');
   envMap.set('POSTGRES_PORT', String(5432));
   envMap.set('REDIS_HOST', 'tipi-redis');
-  envMap.set('DEMO_MODE', data.demoMode ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
-  envMap.set('GUEST_DASHBOARD', data.guestDashboard ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
+  envMap.set('DEMO_MODE', typeof data.demoMode === 'boolean' || typeof data.demoMode === 'string' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
+  envMap.set('GUEST_DASHBOARD', typeof data.guestDashboard === 'boolean' || typeof data.guestDashboard === 'string' ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
   envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
-  envMap.set('NODE_ENV', 'production');
-  envMap.set('ALLOW_ERROR_MONITORING', data.allowErrorMonitoring ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'true');
+  envMap.set('NODE_ENV', process.env.NODE_ENV || 'production');
+  envMap.set(
+    'ALLOW_ERROR_MONITORING',
+    typeof data.allowErrorMonitoring === 'boolean' || typeof data.allowErrorMonitoring === 'string' ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
+  );
 
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 
