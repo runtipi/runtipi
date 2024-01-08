@@ -18,7 +18,18 @@ export class TipiConfig {
 
   private config: z.infer<typeof envSchema> = {} as z.infer<typeof envSchema>;
 
+  private fileConfigCache: z.infer<typeof settingsSchema> | null;
+
+  private cacheTime: number;
+
   constructor() {
+    this.fileConfigCache = null;
+    this.cacheTime = 0;
+
+    this.genConfig();
+  }
+
+  private genConfig() {
     let envFile = '';
     try {
       envFile = fs.readFileSync('/runtipi/.env').toString();
@@ -51,6 +62,7 @@ export class TipiConfig {
       storagePath: conf.STORAGE_PATH,
       demoMode: conf.DEMO_MODE,
       guestDashboard: conf.GUEST_DASHBOARD,
+      allowErrorMonitoring: conf.ALLOW_ERROR_MONITORING,
       seePreReleaseVersions: false,
       allowAutoThemes: true,
     };
@@ -65,16 +77,27 @@ export class TipiConfig {
   }
 
   private getFileConfig() {
-    const fileConfig = readJsonFile('/runtipi/state/settings.json') || {};
-    const parsedFileConfig = envSchema.partial().safeParse(fileConfig);
+    const now = Date.now();
 
-    if (parsedFileConfig.success) {
-      return parsedFileConfig.data;
+    let fileConfig = {};
+
+    // Check if the cache is still valid (less than 5 second old)
+    if (this.fileConfigCache && now - this.cacheTime < 5000) {
+      fileConfig = this.fileConfigCache;
+    } else {
+      const rawFileConfig = readJsonFile('/runtipi/state/settings.json') || {};
+      const parsedFileConfig = settingsSchema.safeParse(rawFileConfig);
+
+      if (parsedFileConfig.success) {
+        fileConfig = parsedFileConfig.data;
+        this.fileConfigCache = fileConfig;
+        this.cacheTime = Date.now();
+      } else {
+        Logger.error(`❌ Invalid settings.json file: ${JSON.stringify(parsedFileConfig.error.flatten())}`);
+      }
     }
 
-    Logger.error(`❌ Invalid settings.json file: ${JSON.stringify(parsedFileConfig.error.flatten())}`);
-
-    return {};
+    return fileConfig;
   }
 
   public static getInstance(): TipiConfig {
@@ -96,15 +119,8 @@ export class TipiConfig {
   }
 
   public getSettings() {
-    const fileConfig = readJsonFile('/runtipi/state/settings.json') || {};
-    const parsedSettings = settingsSchema.safeParse({ ...this.config, ...fileConfig });
-
-    if (parsedSettings.success) {
-      return parsedSettings.data;
-    }
-
-    Logger.error('❌ Invalid settings.json file');
-    return this.config;
+    const fileConfig = this.getFileConfig();
+    return { ...this.config, ...fileConfig };
   }
 
   public async setConfig<T extends keyof typeof envSchema.shape>(key: T, value: z.infer<typeof envSchema>[T], writeFile = false) {
@@ -129,7 +145,6 @@ export class TipiConfig {
       throw new Error('Cannot update settings in demo mode');
     }
 
-    const newConf: z.infer<typeof envSchema> = { ...this.getConfig() };
     const parsed = settingsSchema.safeParse(settings);
 
     if (!parsed.success) {
@@ -139,7 +154,11 @@ export class TipiConfig {
 
     await fs.promises.writeFile('/runtipi/state/settings.json', JSON.stringify(parsed.data));
 
-    this.config = envSchema.parse({ ...newConf, ...parsed.data });
+    // Reset cache
+    this.cacheTime = 0;
+    this.fileConfigCache = null;
+
+    this.config = envSchema.parse({ ...this.getConfig(), ...parsed.data });
   }
 }
 
