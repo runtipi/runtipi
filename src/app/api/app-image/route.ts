@@ -1,7 +1,6 @@
 import { getConfig } from '@/server/core/TipiConfig/TipiConfig';
 import { pathExists } from '@runtipi/shared';
 import fs from 'fs-extra';
-import { get } from 'https';
 import path from 'path';
 
 export async function GET(request: Request) {
