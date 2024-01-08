@@ -2,7 +2,7 @@
 
 import { action } from '@/lib/safe-action';
 import { settingsSchema } from '@runtipi/shared';
-import { setSettings } from '@/server/core/TipiConfig';
+import { TipiConfig } from '@/server/core/TipiConfig';
 import { revalidatePath } from 'next/cache';
 import { handleActionError } from '../utils/handle-action-error';
 import { ensureUser } from '../utils/ensure-user';
@@ -18,7 +18,7 @@ export const updateSettingsAction = action(settingsSchema, async (settings) => {
       throw new Error('Not authorized');
     }
 
-    await setSettings(settings);
+    await TipiConfig.setSettings(settings);
 
     revalidatePath('/');
 

@@ -1,6 +1,6 @@
 import { Queue, QueueEvents } from 'bullmq';
 import { eventResultSchema, eventSchema, SystemEvent } from '@runtipi/shared';
-import { getConfig } from '@/server/core/TipiConfig';
+import { TipiConfig } from '@/server/core/TipiConfig';
 import { Logger } from '../Logger';
 
 export class EventDispatcher {
@@ -13,9 +13,13 @@ export class EventDispatcher {
   private timeout: NodeJS.Timeout;
 
   constructor(reference: string) {
-    this.queue = new Queue('events', { connection: { host: getConfig().REDIS_HOST, port: 6379, password: getConfig().redisPassword } });
-    this.queueEvents = new QueueEvents('events', { connection: { host: getConfig().REDIS_HOST, port: 6379, password: getConfig().redisPassword } });
-    this.instanceId = `${getConfig().version}-${Date.now()}`;
+    this.queue = new Queue('events', {
+      connection: { host: TipiConfig.getConfig().REDIS_HOST, port: 6379, password: TipiConfig.getConfig().redisPassword },
+    });
+    this.queueEvents = new QueueEvents('events', {
+      connection: { host: TipiConfig.getConfig().REDIS_HOST, port: 6379, password: TipiConfig.getConfig().redisPassword },
+    });
+    this.instanceId = `${TipiConfig.getConfig().version}-${Date.now()}`;
 
     this.timeout = setTimeout(() => {
       Logger.debug(`Redis connection is running for more than 30 seconds. Consider closing it. reference: ${reference}`);

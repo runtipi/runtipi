@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { setConfig } from '../../core/TipiConfig';
+import { TipiConfig } from '../../core/TipiConfig';
 import { encrypt, decrypt } from '../encryption';
 
 describe('Test: encrypt', () => {
   it('should encrypt the provided data', () => {
     // arrange
-    setConfig('jwtSecret', faker.lorem.word());
+    TipiConfig.setConfig('jwtSecret', faker.lorem.word());
     const data = faker.lorem.word();
     const salt = faker.lorem.word();
 
@@ -18,7 +18,7 @@ describe('Test: encrypt', () => {
 
   it('should decrypt the provided data', () => {
     // arrange
-    setConfig('jwtSecret', faker.lorem.word());
+    TipiConfig.setConfig('jwtSecret', faker.lorem.word());
     const data = faker.lorem.word();
     const salt = faker.lorem.word();
 

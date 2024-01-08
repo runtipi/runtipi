@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 import { SystemServiceClass } from '@/server/services/system';
-import { getSettings, setSettings } from '@/server/core/TipiConfig';
+import { TipiConfig } from '@/server/core/TipiConfig';
 import { handleActionError } from '../utils/handle-action-error';
 
 const input = z.object({
@@ -14,9 +14,9 @@ const input = z.object({
 export const acknowledgeWelcomeAction = action(input, async ({ allowErrorMonitoring }) => {
   try {
     await SystemServiceClass.markSeenWelcome();
-    const settings = getSettings();
+    const settings = TipiConfig.getSettings();
 
-    await setSettings({ ...settings, allowErrorMonitoring });
+    await TipiConfig.setSettings({ ...settings, allowErrorMonitoring });
 
     revalidatePath('/');
 

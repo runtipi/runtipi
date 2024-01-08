@@ -6,7 +6,7 @@ import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { getAllApps, getAppById, updateApp, createAppConfig, insertApp } from '../../tests/apps.factory';
-import { setConfig } from '../../core/TipiConfig';
+import { TipiConfig } from '../../core/TipiConfig';
 
 let db: TestDatabase;
 let AppsService: AppServiceClass;
@@ -89,7 +89,7 @@ describe('Install app', () => {
 
   it('Should throw if architecure is not supported', async () => {
     // arrange
-    setConfig('architecture', 'amd64');
+    TipiConfig.setConfig('architecture', 'amd64');
     const appConfig = createAppConfig({ supported_architectures: ['arm64'] });
 
     // act & assert
@@ -98,7 +98,7 @@ describe('Install app', () => {
 
   it('Can install if architecture is supported', async () => {
     // arrange
-    setConfig('architecture', 'arm');
+    TipiConfig.setConfig('architecture', 'arm');
     const appConfig = createAppConfig({ supported_architectures: ['arm'] });
 
     // act
@@ -110,7 +110,7 @@ describe('Install app', () => {
 
   it('Can install if no architecture is specified', async () => {
     // arrange
-    setConfig('architecture', 'arm');
+    TipiConfig.setConfig('architecture', 'arm');
     const appConfig = createAppConfig({ supported_architectures: undefined });
 
     // act
@@ -288,7 +288,7 @@ describe('List apps', () => {
 
   it('Should not list apps that have supportedArchitectures and are not supported', async () => {
     // arrange
-    setConfig('architecture', 'arm64');
+    TipiConfig.setConfig('architecture', 'arm64');
     createAppConfig({ supported_architectures: ['amd64'] });
 
     // act
@@ -301,7 +301,7 @@ describe('List apps', () => {
 
   it('Should list apps that have supportedArchitectures and are supported', async () => {
     // arrange
-    setConfig('architecture', 'arm');
+    TipiConfig.setConfig('architecture', 'arm');
     createAppConfig({ supported_architectures: ['arm'] });
 
     // act
@@ -314,7 +314,7 @@ describe('List apps', () => {
 
   it('Should list apps that have no supportedArchitectures specified', async () => {
     // Arrange
-    setConfig('architecture', 'arm');
+    TipiConfig.setConfig('architecture', 'arm');
     createAppConfig({ supported_architectures: undefined });
 
     // act

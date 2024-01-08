@@ -3,7 +3,7 @@ import { fromAny } from '@total-typescript/shoehorn';
 import { faker } from '@faker-js/faker';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { appInfoSchema } from '@runtipi/shared';
-import { setConfig } from '../../core/TipiConfig';
+import { TipiConfig } from '../../core/TipiConfig';
 import { checkAppRequirements, getAppInfo, getAvailableApps, getUpdateInfo } from './apps.helpers';
 import { createAppConfig, insertApp } from '../../tests/apps.factory';
 
@@ -41,7 +41,7 @@ describe('Test: checkAppRequirements()', () => {
 
   it('Should throw if architecture is not supported', async () => {
     // arrange
-    setConfig('architecture', 'arm64');
+    TipiConfig.setConfig('architecture', 'arm64');
     const appConfig = createAppConfig({ supported_architectures: ['arm'] });
 
     // assert

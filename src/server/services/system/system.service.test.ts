@@ -2,7 +2,7 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import fs from 'fs-extra';
 import { faker } from '@faker-js/faker';
-import { setConfig } from '../../core/TipiConfig';
+import { TipiConfig } from '../../core/TipiConfig';
 import { TipiCache } from '../../core/TipiCache';
 import { SystemServiceClass } from '.';
 
@@ -22,7 +22,7 @@ beforeAll(() => {
 });
 
 beforeEach(async () => {
-  await setConfig('demoMode', false);
+  await TipiConfig.setConfig('demoMode', false);
   await cache.del('latestVersion');
   server.resetHandlers();
 });

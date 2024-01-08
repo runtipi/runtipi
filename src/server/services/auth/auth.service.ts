@@ -7,7 +7,7 @@ import { TranslatedError } from '@/server/utils/errors';
 import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
 import { generateSessionId, setSession } from '@/server/common/session.helpers';
 import { Database } from '@/server/db';
-import { getConfig } from '../../core/TipiConfig';
+import { TipiConfig } from '../../core/TipiConfig';
 import { TipiCache } from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
@@ -106,7 +106,7 @@ export class AuthServiceClass {
    * @param {string} params.password - The user's password
    */
   public getTotpUri = async (params: { userId: number; password: string }) => {
-    if (getConfig().demoMode) {
+    if (TipiConfig.getConfig().demoMode) {
       throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
     }
 
@@ -144,7 +144,7 @@ export class AuthServiceClass {
   };
 
   public setupTotp = async (params: { userId: number; totpCode: string }) => {
-    if (getConfig().demoMode) {
+    if (TipiConfig.getConfig().demoMode) {
       throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
     }
 
@@ -351,7 +351,7 @@ export class AuthServiceClass {
   };
 
   public changePassword = async (params: { currentPassword: string; newPassword: string; userId: number }) => {
-    if (getConfig().demoMode) {
+    if (TipiConfig.getConfig().demoMode) {
       throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
     }
 
@@ -383,7 +383,7 @@ export class AuthServiceClass {
   };
 
   public changeUsername = async (params: { newUsername: string; password: string; userId: number }) => {
-    if (getConfig().demoMode) {
+    if (TipiConfig.getConfig().demoMode) {
       throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
     }
 

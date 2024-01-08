@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { getConfig } from '../core/TipiConfig';
+import { TipiConfig } from '../core/TipiConfig';
 
 const algorithm = 'aes-256-gcm';
 const keyLength = 32;
@@ -12,7 +12,7 @@ const keyLength = 32;
  * @returns {string} - The encrypted data
  */
 export const encrypt = (data: string, salt: string) => {
-  const key = crypto.pbkdf2Sync(getConfig().jwtSecret, salt, 100000, keyLength, 'sha256');
+  const key = crypto.pbkdf2Sync(TipiConfig.getConfig().jwtSecret, salt, 100000, keyLength, 'sha256');
   const iv = crypto.randomBytes(12);
 
   const cipher = crypto.createCipheriv(algorithm, key, iv);
@@ -30,7 +30,7 @@ export const encrypt = (data: string, salt: string) => {
  * @returns {string} - The decrypted data
  */
 export const decrypt = (encryptedData: string, salt: string) => {
-  const key = crypto.pbkdf2Sync(getConfig().jwtSecret, salt, 100000, keyLength, 'sha256');
+  const key = crypto.pbkdf2Sync(TipiConfig.getConfig().jwtSecret, salt, 100000, keyLength, 'sha256');
   const parts = encryptedData.split(':');
   const iv = Buffer.from(parts.shift() as string, 'hex');
   const encrypted = Buffer.from(parts.shift() as string, 'hex');
