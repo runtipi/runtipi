@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsx-a11y', 'testing-library', 'jest-dom', 'drizzle'],
+  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsx-a11y', 'testing-library', 'jest-dom', 'drizzle', 'jsonc'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'next/core-web-vitals',
@@ -8,10 +8,11 @@ module.exports = {
     'airbnb-typescript',
     'eslint:recommended',
     'plugin:import/typescript',
-    'prettier',
     'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
     'plugin:drizzle/recommended',
+    'plugin:jsonc/recommended-with-jsonc',
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -69,6 +70,10 @@ module.exports = {
     {
       files: ['*.test.ts', '*.test.tsx'],
       extends: ['plugin:jest-dom/recommended', 'plugin:testing-library/react'],
+    },
+    {
+      files: ['*.json', '*.json5', '*.jsonc'],
+      parser: 'jsonc-eslint-parser',
     },
   ],
   globals: {
