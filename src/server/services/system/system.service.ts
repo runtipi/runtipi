@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { promises } from 'fs';
 import axios from 'redaxios';
 import { TipiCache } from '@/server/core/TipiCache';
-import { readJsonFile } from '../../common/fs.helpers';
+import { fileExists, readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { getConfig } from '../../core/TipiConfig';
 
@@ -68,5 +69,15 @@ export class SystemServiceClass {
     }
 
     return info.data;
+  };
+
+  public static hasSeenWelcome = async () => {
+    return fileExists(`/runtipi/state/seen-welcome`);
+  };
+
+  public static markSeenWelcome = async () => {
+    // Create file state/seen-welcome
+    await promises.writeFile(`/runtipi/state/seen-welcome`, '');
+    return true;
   };
 }
