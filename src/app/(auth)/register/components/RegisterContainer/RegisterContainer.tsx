@@ -22,7 +22,7 @@ export const RegisterContainer: React.FC = () => {
   return (
     <RegisterForm
       onSubmit={({ email, password }) => registerMutation.execute({ username: email, password })}
-      loading={registerMutation.status === 'executing'}
+      loading={registerMutation.status === 'executing' || registerMutation.status === 'hasSucceeded'}
     />
   );
 };

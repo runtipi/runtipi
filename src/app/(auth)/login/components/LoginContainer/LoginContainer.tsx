@@ -38,7 +38,7 @@ export function LoginContainer() {
   if (totpSessionId) {
     return (
       <TotpForm
-        loading={verifyTotpMutation.status === 'executing'}
+        loading={verifyTotpMutation.status === 'executing' || verifyTotpMutation.status === 'hasSucceeded'}
         onSubmit={(totpCode) => verifyTotpMutation.execute({ totpCode, totpSessionId })}
       />
     );
@@ -46,7 +46,7 @@ export function LoginContainer() {
 
   return (
     <LoginForm
-      loading={loginMutation.status === 'executing'}
+      loading={loginMutation.status === 'executing' || loginMutation.status === 'hasSucceeded'}
       onSubmit={({ email, password }) => loginMutation.execute({ username: email, password })}
     />
   );
