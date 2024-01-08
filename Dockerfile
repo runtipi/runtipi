@@ -5,6 +5,7 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
 FROM node_base AS builder_base
 
+RUN apk add --no-cache python3 make g++
 RUN npm install pnpm -g
 
 # BUILDER

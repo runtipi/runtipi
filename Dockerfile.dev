@@ -3,6 +3,7 @@ ARG ALPINE_VERSION="3.18"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
+RUN apk add --no-cache python3 make g++
 RUN npm install pnpm -g
 
 WORKDIR /app
