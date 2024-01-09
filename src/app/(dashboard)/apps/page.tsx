@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { LinkTile } from '@/components/LinkTile/LinkTile';
 import { EmptyPage } from '../../components/EmptyPage';
 import styles from './page.module.css';
-import { AddLinkBtn } from '../components/AddLink/AddLinkBtn';
+import { AddLinkBtn } from '../components/AddLink/AddLinkButton';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
