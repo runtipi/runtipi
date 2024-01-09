@@ -85,6 +85,8 @@ export const envSchema = z.object({
     .transform((value) => {
       if (typeof value === 'boolean') return value;
       if (typeof value === 'string') return value === 'true';
+
+      return false;
     }),
 });
 

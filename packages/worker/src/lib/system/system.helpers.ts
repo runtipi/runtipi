@@ -5,7 +5,6 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { envMapToString, envStringToMap, execAsync, pathExists, settingsSchema } from '@runtipi/shared';
-import { dataToStr } from 'memfs/lib/volume';
 import { logger } from '../logger/logger';
 import { getRepoHash } from '../../services/repo/repo.helpers';
 import { ROOT_FOLDER } from '@/config/constants';
@@ -199,8 +198,8 @@ export const copySystemFiles = async () => {
   await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'shared'), { recursive: true });
   await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'tls'), { recursive: true });
 
-  if (Boolean(envMap.get('PERSIST_TRAEFIK_CONFIG')) == true) {
-    logger.info('Skipping the copy of traefik files');
+  if (envMap.get('PERSIST_TRAEFIK_CONFIG') === 'true') {
+    logger.warn('Skipping the copy of traefik files because persistTraefikConfig is set to true');
   } else {
     logger.info('Copying traefik files');
     await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(ROOT_FOLDER, 'traefik', 'traefik.yml'));
