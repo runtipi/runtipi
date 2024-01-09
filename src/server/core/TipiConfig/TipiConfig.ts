@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
 import fs from 'fs-extra';
 import nextConfig from 'next/config';
+import * as Sentry from '@sentry/nextjs';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../Logger';
 
@@ -35,6 +36,7 @@ export class TipiConfigClass {
     try {
       envFile = fs.readFileSync('/runtipi/.env').toString();
     } catch (e) {
+      Sentry.captureException(e);
       Logger.error('❌ .env file not found');
     }
 
@@ -73,6 +75,7 @@ export class TipiConfigClass {
       this.config = parsedConfig.data;
     } else {
       const errors = formatErrors(parsedConfig.error.flatten());
+      Sentry.captureException(new Error(`Invalid env config ${JSON.stringify(parsedConfig.error.flatten())}`));
       Logger.error(`❌ Invalid env config ${JSON.stringify(errors)}`);
     }
   }
@@ -119,8 +122,13 @@ export class TipiConfigClass {
   }
 
   public getSettings() {
-    const fileConfig = this.getFileConfig();
-    return { ...this.config, ...fileConfig };
+    try {
+      const fileConfig = this.getFileConfig();
+      return settingsSchema.parse({ ...this.config, ...fileConfig });
+    } catch (e) {
+      Sentry.captureException(e);
+      return {};
+    }
   }
 
   public async setConfig<T extends keyof typeof envSchema.shape>(key: T, value: z.infer<typeof envSchema>[T], writeFile = false) {

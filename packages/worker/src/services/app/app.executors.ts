@@ -37,7 +37,9 @@ export class AppExecutors {
   }
 
   private handleAppError = (err: unknown, appId: string, event: Extract<SocketEvent, { type: 'app' }>['event']) => {
-    Sentry.captureException(err);
+    Sentry.captureException(err, {
+      tags: { appId, event },
+    });
 
     if (err instanceof Error) {
       SocketManager.emit({ type: 'app', event, data: { appId, error: err.message } });

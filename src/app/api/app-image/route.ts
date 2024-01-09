@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
 import { pathExists } from '@runtipi/shared';
 import fs from 'fs-extra';
@@ -34,6 +35,7 @@ export async function GET(request: Request) {
 
     return new Response(file, { headers: { 'content-type': 'image/jpeg' } });
   } catch (error) {
+    Sentry.captureException(error);
     return new Response('Error', { status: 500 });
   }
 }
