@@ -61,6 +61,7 @@ services:
       dockerfile: ./packages/worker/Dockerfile
       args:
         - SENTRY_DISABLE_AUTO_UPLOAD=true
+        - TIPI_VERSION=0.0.0
     container_name: tipi-worker
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
@@ -77,6 +78,7 @@ services:
       - .env
     environment:
       NODE_ENV: production
+      TIPI_VERSION: 0.0.0
     volumes:
       - /proc:/host/proc
       - /var/run/docker.sock:/var/run/docker.sock
@@ -115,6 +117,7 @@ services:
       dockerfile: Dockerfile
       args:
         - SENTRY_DISABLE_AUTO_UPLOAD=true
+        - TIPI_VERSION=0.0.0
     container_name: tipi-dashboard
     depends_on:
       tipi-db:
@@ -127,6 +130,7 @@ services:
       - .env
     environment:
       NODE_ENV: production
+      TIPI_VERSION: 0.0.0
     networks:
       - tipi_main_network
     ports:

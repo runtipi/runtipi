@@ -75,6 +75,7 @@ services:
       - .env
     environment:
       NODE_ENV: development
+      TIPI_VERSION: 0.0.0
     volumes:
       # Dev mode
       - ./packages/worker/src:/app/packages/worker/src
@@ -127,6 +128,7 @@ services:
       - .env
     environment:
       NODE_ENV: development
+      TIPI_VERSION: 0.0.0
     networks:
       - tipi_main_network
     ports:
