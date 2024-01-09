@@ -69,11 +69,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
     }  
   })
 
-  const mutationStatus = () => {
-    if (addLinkMutation.status === 'executing') return 'executing';
-    if (editLinkMutation.status === 'executing') return 'executing';
-    return null;
-  }
+  const mutationStatus = addLinkMutation.status === 'executing' || editLinkMutation.status === 'executing' ? 'executing' : null
 
   const onSubmit = (data: FormValues) => {
     const { title, url, iconUrl } = data;
