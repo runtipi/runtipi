@@ -18,7 +18,7 @@ const getClientConfig = () => {
   return parsedSettings;
 };
 
-if (getClientConfig().allowErrorMonitoring) {
+if (getClientConfig().allowErrorMonitoring && process.env.NODE_ENV === 'production') {
   Sentry.init({
     environment: process.env.NODE_ENV,
     dsn: 'https://7a73d72f886948478b55621e7b92c3c7@o4504242900238336.ingest.sentry.io/4504826587971584',

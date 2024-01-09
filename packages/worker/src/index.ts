@@ -35,7 +35,7 @@ const main = async () => {
     logger.info('Generating system env file...');
     const envMap = await generateSystemEnvFile();
 
-    if (envMap.get('ALLOW_ERROR_MONITORING') === 'true') {
+    if (envMap.get('ALLOW_ERROR_MONITORING') === 'true' && envMap.get('NODE_ENV') === 'production') {
       logger.info('Anonymous error monitoring is enabled, to disable it add "allowErrorMonitoring": false to your settings.json file');
       setupSentry();
     }
