@@ -66,8 +66,8 @@ importers:
         specifier: ^7.1.0
         version: 7.1.0(express-session@1.17.3)
       drizzle-orm:
-        specifier: ^0.29.1
-        version: 0.29.1(@types/pg@8.10.9)(pg@8.11.3)
+        specifier: ^0.29.3
+        version: 0.29.3(@types/pg@8.10.9)(@types/react@18.2.45)(pg@8.11.3)(react@18.2.0)
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -5817,8 +5817,8 @@ packages:
     resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
     engines: {node: '>=12'}
 
-  /drizzle-orm@0.29.1(@types/pg@8.10.9)(pg@8.11.3):
-    resolution: {integrity: sha512-yItc4unfHnk8XkDD3/bdC63vdboTY7e7I03lCF1OJYABXSIfQYU9BFTQJXMMovVeb3T1/OJWwfW/70T1XPnuUA==}
+  /drizzle-orm@0.29.3(@types/pg@8.10.9)(@types/react@18.2.45)(pg@8.11.3)(react@18.2.0):
+    resolution: {integrity: sha512-uSE027csliGSGYD0pqtM+SAQATMREb3eSM/U8s6r+Y0RFwTKwftnwwSkqx3oS65UBgqDOM0gMTl5UGNpt6lW0A==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -5828,15 +5828,18 @@ packages:
       '@planetscale/database': '>=1'
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
+      '@types/react': '>=18'
       '@types/sql.js': '*'
       '@vercel/postgres': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
+      expo-sqlite: '>=13.2.0'
       knex: '*'
       kysely: '*'
       mysql2: '>=2'
       pg: '>=8'
       postgres: '>=3'
+      react: '>=18'
       sql.js: '>=1'
       sqlite3: '>=5'
     peerDependenciesMeta:
@@ -5856,6 +5859,8 @@ packages:
         optional: true
       '@types/pg':
         optional: true
+      '@types/react':
+        optional: true
       '@types/sql.js':
         optional: true
       '@vercel/postgres':
@@ -5863,6 +5868,8 @@ packages:
       better-sqlite3:
         optional: true
       bun-types:
+        optional: true
+      expo-sqlite:
         optional: true
       knex:
         optional: true
@@ -5874,13 +5881,17 @@ packages:
         optional: true
       postgres:
         optional: true
+      react:
+        optional: true
       sql.js:
         optional: true
       sqlite3:
         optional: true
     dependencies:
       '@types/pg': 8.10.9
+      '@types/react': 18.2.45
       pg: 8.11.3
+      react: 18.2.0
     dev: false
 
   /eastasianwidth@0.2.0:

@@ -50,7 +50,7 @@
     "bullmq": "^4.13.0",
     "clsx": "^2.0.0",
     "connect-redis": "^7.1.0",
-    "drizzle-orm": "^0.29.1",
+    "drizzle-orm": "^0.29.3",
     "fs-extra": "^11.1.1",
     "geist": "^1.2.0",
     "let-it-go": "^1.0.0",
