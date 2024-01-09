@@ -59,6 +59,14 @@ export const cleanseErrorData = (event: ErrorEvent, hint: EventHint) => {
     return null;
   }
 
+  // IF error message starts with 'Command failed: docker-compose' then grab only the 200 last characters
+  if (error.message.startsWith('Command failed: docker-compose')) {
+    // Command failed: docker-compose --env-file /storage/app-data/<app-name>/app.env
+    const appName = error.message.split('/')[3];
+    const message = error.message.slice(-200);
+    result.message = `Error with ${appName}: ${message}`;
+  }
+
   if (result.request && result.request.url) {
     result.request.url = cleanseUrl(result.request.url);
   }

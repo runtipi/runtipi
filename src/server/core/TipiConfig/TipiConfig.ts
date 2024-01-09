@@ -49,7 +49,7 @@ export class TipiConfigClass {
       postgresPort: Number(conf.POSTGRES_PORT),
       REDIS_HOST: conf.REDIS_HOST,
       redisPassword: conf.REDIS_PASSWORD,
-      NODE_ENV: conf.NODE_ENV,
+      NODE_ENV: process.env.NODE_ENV || 'production',
       architecture: conf.ARCHITECTURE || 'amd64',
       rootFolder: '/runtipi',
       internalIp: conf.INTERNAL_IP,

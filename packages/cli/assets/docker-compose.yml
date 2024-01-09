@@ -75,6 +75,7 @@ services:
       - .env
     environment:
       NODE_ENV: production
+      TIPI_VERSION: ${TIPI_VERSION}
     volumes:
       # Core
       - /proc:/host/proc
@@ -144,6 +145,7 @@ services:
       - .env
     environment:
       NODE_ENV: production
+      TIPI_VERSION: ${TIPI_VERSION}
     labels:
       # Main
       traefik.enable: true
