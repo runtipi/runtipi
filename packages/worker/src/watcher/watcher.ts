@@ -72,7 +72,9 @@ export const startWorker = async () => {
   const worker = new Worker(
     'events',
     async (job) => {
-      logger.info(`Processing job ${job.id} with data ${JSON.stringify(job.data)}`);
+      if (!job.id?.startsWith('repeat:')) {
+        logger.info(`Processing job ${job.id} with data ${JSON.stringify(job.data)}`);
+      }
       const { message, success } = await runCommand(job.data);
 
       return { success, stdout: message };
@@ -85,7 +87,9 @@ export const startWorker = async () => {
   });
 
   worker.on('completed', (job) => {
-    logger.info(`Job ${job.id} completed with result:`, JSON.stringify(job.returnvalue));
+    if (!job.id?.startsWith('repeat:')) {
+      logger.info(`Job ${job.id} completed with result:`, JSON.stringify(job.returnvalue));
+    }
   });
 
   worker.on('failed', (job) => {
