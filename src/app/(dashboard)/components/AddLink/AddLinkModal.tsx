@@ -12,7 +12,7 @@ import { useAction } from 'next-safe-action/hook';
 import { LinkInfo } from '@runtipi/shared';
 import { useTranslations } from 'next-intl';
 
-type FormValues = { title: string; url: string, iconURL: string | null };
+type FormValues = { title: string; url: string, iconUrl: string | null };
 
 type AddLinkModalProps = {
   isOpen: boolean;
@@ -28,7 +28,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
     .object({
       title: z.string().min(1).max(20),
       url: z.string().url(),
-      iconURL: z.string().url().or(z.string().max(0)),
+      iconUrl: z.string().url().or(z.string().max(0)),
   });
 
   const {
@@ -41,7 +41,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
     defaultValues: {
       title: link?.title,
       url: link?.url,
-      iconURL: link?.iconURL || "",
+      iconUrl: link?.iconUrl || "",
     }
   });
 
@@ -76,11 +76,11 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
   }
 
   const onSubmit = (data: FormValues) => {
-    const { title, url, iconURL } = data;
+    const { title, url, iconUrl } = data;
     if (link) {
-      editLinkMutation.execute({ id: link?.id, title, url, iconURL});
+      editLinkMutation.execute({ id: link?.id, title, url, iconUrl});
     } else {
-      addLinkMutation.execute({ title, url, iconURL});
+      addLinkMutation.execute({ title, url, iconUrl});
     }
   };
 
@@ -110,11 +110,11 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
 
             <Input
             disabled={mutationStatus() === 'executing'}
-              {...register('iconURL')}
+              {...register('iconUrl')}
               className='mt-3'
               label={t('form.icon-url')}
               placeholder={t('form.icon-placeholder')}
-              error={errors.iconURL?.message} />
+              error={errors.iconUrl?.message} />
 
           </DialogDescription>
           <DialogFooter>

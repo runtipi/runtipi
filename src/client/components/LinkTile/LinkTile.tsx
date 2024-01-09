@@ -16,11 +16,11 @@ type LinkTileProps = {
   link: Link;
 };
 
-export const LinkTile: React.FC<LinkTileProps> = ({link: { id, title, url, iconURL }}) => {
+export const LinkTile: React.FC<LinkTileProps> = ({link: { id, title, url, iconUrl }}) => {
 
   const t = useTranslations('apps.my-apps.links');
 
-  const link: LinkInfo  = { id, title, url, iconURL };
+  const link: LinkInfo  = { id, title, url, iconUrl };
   const addLinkDisclosure = useDisclosure();
   const deleteLinkDisclosure = useDisclosure();
 
@@ -41,7 +41,7 @@ export const LinkTile: React.FC<LinkTileProps> = ({link: { id, title, url, iconU
               <div className="card-body">
                 <div className="d-flex align-items-center">
                   <span className="me-3">
-                    <AppLogo url={iconURL || ''} size={60} />
+                    <AppLogo url={iconUrl || ''} size={60} />
                   </span>
                   <div>
                     <div className="d-flex h-3 align-items-center">
