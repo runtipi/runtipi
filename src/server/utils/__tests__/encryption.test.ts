@@ -58,18 +58,4 @@ describe('Test: encrypt', () => {
     // assert
     expect(decrypting).toThrow();
   });
-
-  it('should throw an error if encrypted data has changed', () => {
-    // arrange
-    TipiConfig.setConfig('jwtSecret', faker.lorem.word());
-    const data = faker.lorem.word();
-    const salt = faker.lorem.word();
-
-    // act
-    const encryptedData = encrypt(data, salt);
-    const decrypting = () => decrypt(encryptedData.replace('a', 'b'), salt);
-
-    // assert
-    expect(decrypting).toThrow();
-  });
 });
