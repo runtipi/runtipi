@@ -4,12 +4,19 @@ import si from 'systeminformation';
 import * as Sentry from '@sentry/node';
 import { logger } from '@/lib/logger';
 import { ROOT_FOLDER } from '@/config/constants';
+import { SocketManager } from '../../lib/socket/SocketManager';
 
 export class SystemExecutors {
   private readonly logger;
 
-  constructor() {
+  private cacheTime: number;
+
+  private cacheTimeout: number;
+
+  constructor(cacheTimeout = 15000) {
     this.logger = logger;
+    this.cacheTime = 0;
+    this.cacheTimeout = cacheTimeout;
   }
 
   private handleSystemError = (err: unknown) => {
@@ -41,19 +48,31 @@ export class SystemExecutors {
 
     const [disk0] = await si.fsSize();
 
-    return {
-      cpu: { load: currentLoad },
-      memory: memResult,
-      disk: { total: disk0?.size, used: disk0?.used, available: disk0?.available },
-    };
+    const disk = disk0 ?? { available: 0, size: 0 };
+    const diskFree = Math.round(disk.available / 1024 / 1024 / 1024);
+    const diskSize = Math.round(disk.size / 1024 / 1024 / 1024);
+    const diskUsed = diskSize - diskFree;
+    const percentUsed = Math.round((diskUsed / diskSize) * 100);
+
+    const memoryTotal = Math.round(Number(memResult.total) / 1024 / 1024 / 1024);
+    const memoryFree = Math.round(Number(memResult.available) / 1024 / 1024 / 1024);
+    const percentUsedMemory = Math.round(((memoryTotal - memoryFree) / memoryTotal) * 100);
+
+    return { diskUsed, diskSize, percentUsed, cpuLoad: currentLoad, memoryTotal, percentUsedMemory };
   };
 
   public systemInfo = async () => {
     try {
+      const now = Date.now();
       const systemLoad = await this.getSystemLoad();
 
-      await fs.promises.writeFile(path.join(ROOT_FOLDER, 'state', 'system-info.json'), JSON.stringify(systemLoad, null, 2));
-      await fs.promises.chmod(path.join(ROOT_FOLDER, 'state', 'system-info.json'), 0o777);
+      SocketManager.emit({ type: 'system_info', event: 'status_change', data: systemLoad });
+
+      if (now - this.cacheTime > this.cacheTimeout) {
+        await fs.promises.writeFile(path.join(ROOT_FOLDER, 'state', 'system-info.json'), JSON.stringify(systemLoad, null, 2));
+        await fs.promises.chmod(path.join(ROOT_FOLDER, 'state', 'system-info.json'), 0o777);
+        this.cacheTime = Date.now();
+      }
 
       return { success: true, message: '' };
     } catch (e) {

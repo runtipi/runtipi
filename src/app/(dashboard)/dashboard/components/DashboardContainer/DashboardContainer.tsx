@@ -1,9 +1,10 @@
 'use client';
 
 import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { SystemStat } from '../SystemStat';
+import { useSocket } from '../../../../../lib/socket/useSocket';
 
 type IProps = {
   diskUsed: number;
@@ -15,14 +16,40 @@ type IProps = {
 };
 
 export const DashboardContainer: React.FC<IProps> = (props) => {
-  const { diskUsed, diskSize, percentUsed, cpuLoad, memoryTotal, percentUsedMemory } = props;
+  const [info, setInfo] = useState(props);
+
+  useSocket({
+    onEvent: (_, data) => {
+      setInfo(data);
+    },
+    selector: { type: 'system_info' },
+  });
+
   const t = useTranslations('dashboard');
 
   return (
     <div className="row row-deck row-cards">
-      <SystemStat title={t('cards.disk.title')} metric={`${diskUsed} GB`} subtitle={t('cards.disk.subtitle', { total: diskSize })} icon={IconDatabase} progress={percentUsed} />
-      <SystemStat title={t('cards.cpu.title')} metric={`${cpuLoad.toFixed(2)}%`} subtitle={t('cards.cpu.subtitle')} icon={IconCpu} progress={cpuLoad} />
-      <SystemStat title={t('cards.memory.title')} metric={`${percentUsedMemory || 0}%`} subtitle={`${memoryTotal} GB`} icon={IconCircuitResistor} progress={percentUsedMemory} />
+      <SystemStat
+        title={t('cards.disk.title')}
+        metric={`${info.diskUsed} GB`}
+        subtitle={t('cards.disk.subtitle', { total: info.diskSize })}
+        icon={IconDatabase}
+        progress={info.percentUsed}
+      />
+      <SystemStat
+        title={t('cards.cpu.title')}
+        metric={`${info.cpuLoad.toFixed(2)}%`}
+        subtitle={t('cards.cpu.subtitle')}
+        icon={IconCpu}
+        progress={info.cpuLoad}
+      />
+      <SystemStat
+        title={t('cards.memory.title')}
+        metric={`${info.percentUsedMemory || 0}%`}
+        subtitle={`${info.memoryTotal} GB`}
+        icon={IconCircuitResistor}
+        progress={info.percentUsedMemory}
+      />
     </div>
   );
 };
