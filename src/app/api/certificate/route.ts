@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
 import fs from 'fs-extra';
@@ -25,6 +26,7 @@ export async function GET() {
 
     return new Response('Forbidden', { status: 403 });
   } catch (error) {
+    Sentry.captureException(error);
     return new Response('Error', { status: 500 });
   }
 }

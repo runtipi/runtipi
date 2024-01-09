@@ -44,6 +44,9 @@ importers:
       '@runtipi/shared':
         specifier: workspace:^
         version: link:packages/shared
+      '@sentry/integrations':
+        specifier: ^7.92.0
+        version: 7.92.0
       '@sentry/nextjs':
         specifier: ^7.92.0
         version: 7.92.0(next@14.0.4)(react@18.2.0)
@@ -440,6 +443,9 @@ importers:
       '@sentry/esbuild-plugin':
         specifier: ^2.10.2
         version: 2.10.2
+      '@sentry/integrations':
+        specifier: ^7.92.0
+        version: 7.92.0
       '@sentry/node':
         specifier: ^7.92.0
         version: 7.92.0
