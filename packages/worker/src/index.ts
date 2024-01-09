@@ -76,7 +76,7 @@ const main = async () => {
     // Scheduled jobs
     logger.info('Adding scheduled jobs to queue...');
     await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
-    await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { pattern: '* * * * *' } });
+    await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { every: 3000 } });
 
     logger.info('Closing queue...');
     await queue.close();

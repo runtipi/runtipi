@@ -4,11 +4,11 @@ import { AppExecutors, RepoExecutors, SystemExecutors } from '@/services';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 
-const runCommand = async (jobData: unknown) => {
-  const { installApp, resetApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
-  const { cloneRepo, pullRepo } = new RepoExecutors();
-  const { systemInfo } = new SystemExecutors();
+const { systemInfo } = new SystemExecutors();
+const { installApp, resetApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
+const { cloneRepo, pullRepo } = new RepoExecutors();
 
+const runCommand = async (jobData: unknown) => {
   const event = eventSchema.safeParse(jobData);
 
   if (!event.success) {
@@ -79,7 +79,7 @@ export const startWorker = async () => {
 
       return { success, stdout: message };
     },
-    { connection: { host: getEnv().redisHost, port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 } },
+    { connection: { host: getEnv().redisHost, port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 }, concurrency: 3 },
   );
 
   worker.on('ready', () => {
