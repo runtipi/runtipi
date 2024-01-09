@@ -77,7 +77,7 @@
     "sass": "^1.69.5",
     "semver": "^7.5.4",
     "sharp": "0.33.1",
-    "socket.io-client": "^4.7.2",
+    "socket.io-client": "^4.7.3",
     "swr": "^2.2.4",
     "tslib": "^2.6.2",
     "uuid": "^9.0.1",
