@@ -36,7 +36,6 @@ type EnvKeys =
   | 'TIPI_GID'
   | 'TIPI_UID'
   | 'ALLOW_ERROR_MONITORING'
-  | 'NODE_ENV'
   | 'PERSIST_TRAEFIK_CONFIG'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});

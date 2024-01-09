@@ -8,14 +8,13 @@ import { TipiConfig } from '@/server/core/TipiConfig';
 import { ExtraErrorData } from '@sentry/integrations';
 import { cleanseErrorData } from '@runtipi/shared/src/helpers/error-helpers';
 
-const { version, allowErrorMonitoring } = TipiConfig.getConfig();
+const { version, allowErrorMonitoring, NODE_ENV } = TipiConfig.getConfig();
 
-if (allowErrorMonitoring && TipiConfig.getConfig().NODE_ENV === 'production') {
+if (allowErrorMonitoring && NODE_ENV === 'production') {
   Sentry.init({
-    release: TipiConfig.getConfig().version,
-    environment: TipiConfig.getConfig().NODE_ENV,
+    release: version,
+    environment: NODE_ENV,
     dsn: 'https://7a73d72f886948478b55621e7b92c3c7@o4504242900238336.ingest.sentry.io/4504826587971584',
-    debug: TipiConfig.getConfig().NODE_ENV === 'development',
     beforeSend: cleanseErrorData,
     integrations: [new ExtraErrorData()],
     initialScope: {
