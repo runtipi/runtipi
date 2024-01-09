@@ -276,14 +276,14 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
 };
 
 export const ensureFilePermissions = async () => {
-  const filesAndFolders = [path.join(ROOT_FOLDER, 'state'), path.join(ROOT_FOLDER, 'traefik')];
+  const filesAndFolders = [path.join(ROOT_FOLDER, 'state'), path.join(ROOT_FOLDER, 'traefik'), path.join(ROOT_FOLDER, 'media'), path.join(ROOT_FOLDER, 'apps')];
 
   const files600 = [path.join(ROOT_FOLDER, 'traefik', 'shared', 'acme.json')];
 
   // Give permission to read and write to all files and folders for the current user
-  for (const fileOrFolder of filesAndFolders) {
-    if (await pathExists(fileOrFolder)) {
-      await execAsync(`chmod -R a+rwx ${fileOrFolder}`).catch(() => {});
+  for (const directory of filesAndFolders) {
+    if (await pathExists(directory)) {
+      await execAsync(`find ${directory} -type d -exec chmod a+rwx {} +`).catch(() => {});
     }
   }
 
