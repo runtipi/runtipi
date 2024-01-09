@@ -115,6 +115,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     container_name: tipi-dashboard
+    restart: unless-stopped
     depends_on:
       tipi-db:
         condition: service_healthy
