@@ -1,6 +1,6 @@
 // const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: '', stderr: randomError }));
 
-import { vi, it, describe, expect } from 'vitest';
+import { vi, it, describe, beforeEach, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
 import fs from 'fs';
 import { compose } from './docker-helpers';
@@ -21,6 +21,10 @@ vi.mock('@runtipi/shared', async (importOriginal) => {
     })),
     execAsync: (cmd: string) => execAsync(cmd),
   };
+});
+
+beforeEach(async () => {
+  vi.resetModules();
 });
 
 describe('docker helpers', async () => {
