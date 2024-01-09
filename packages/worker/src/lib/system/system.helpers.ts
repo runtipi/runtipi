@@ -164,7 +164,10 @@ export const generateSystemEnvFile = async () => {
   envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
   envMap.set('NODE_ENV', 'production');
   envMap.set('ALLOW_ERROR_MONITORING', data.allowErrorMonitoring ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'true');
-  envMap.set('PERSIST_TRAEFIK_CONFIG', data.persistTraefikConfig ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false');
+  envMap.set(
+    'PERSIST_TRAEFIK_CONFIG',
+    typeof data.persistTraefikConfig === 'boolean' || typeof data.persistTraefikConfig === 'string' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
+  );
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 
   return envMap;
