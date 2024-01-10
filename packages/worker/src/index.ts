@@ -41,11 +41,11 @@ const main = async () => {
   try {
     await logger.flush();
 
-    logger.info('Copying system files...');
-    await copySystemFiles();
-
     logger.info('Generating system env file...');
     const envMap = await generateSystemEnvFile();
+
+    logger.info('Copying system files...');
+    await copySystemFiles(envMap);
 
     if (envMap.get('ALLOW_ERROR_MONITORING') === 'true' && process.env.NODE_ENV === 'production') {
       logger.info(`Anonymous error monitoring is enabled, to disable it add "allowErrorMonitoring": false to your settings.json file. Version: ${process.env.TIPI_VERSION}`);

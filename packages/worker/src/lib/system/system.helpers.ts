@@ -177,16 +177,12 @@ export const generateSystemEnvFile = async () => {
 /**
  * Copies the system files from the assets folder to the current working directory
  */
-export const copySystemFiles = async () => {
+export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
   // Remove old unused files
   if (await pathExists(path.join(ROOT_FOLDER, 'scripts'))) {
     logger.info('Removing old scripts folder');
     await fs.promises.rmdir(path.join(ROOT_FOLDER, 'scripts'), { recursive: true });
   }
-
-  const envFilePath = path.join(ROOT_FOLDER, '.env');
-  const envFile = await fs.promises.readFile(envFilePath, 'utf-8');
-  const envMap: Map<EnvKeys, string> = envStringToMap(envFile);
 
   const assetsFolder = path.join(ROOT_FOLDER, 'assets');
 
