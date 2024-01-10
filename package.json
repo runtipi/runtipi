@@ -44,7 +44,7 @@
     "@runtipi/postgres-migrations": "^5.3.0",
     "@runtipi/shared": "workspace:^",
     "@sentry/integrations": "^7.92.0",
-    "@sentry/nextjs": "^7.92.0",
+    "@sentry/nextjs": "^7.93.0",
     "@tabler/core": "1.0.0-beta20",
     "@tabler/icons-react": "^2.45.0",
     "argon2": "^0.31.2",
