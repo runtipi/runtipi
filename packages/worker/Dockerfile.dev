@@ -10,7 +10,9 @@ RUN apk upgrade --update-cache --available && \
   rm -rf /var/cache/apk/*
 
 ARG TARGETARCH
+ARG DOCKER_COMPOSE_VERSION="v2.23.3"
 ENV TARGETARCH=${TARGETARCH}
+ENV DOCKER_COMPOSE_VERSION=${DOCKER_COMPOSE_VERSION}
 
 RUN echo "Building for ${TARGETARCH}"
 
