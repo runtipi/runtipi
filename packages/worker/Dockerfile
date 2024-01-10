@@ -1,5 +1,6 @@
 ARG NODE_VERSION="20.10"
 ARG ALPINE_VERSION="3.18"
+ARG DOCKER_COMPOSE_VERSION="v2.23.3"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
@@ -26,10 +27,11 @@ ENV TARGETARCH=${TARGETARCH}
 
 RUN echo "Building for ${TARGETARCH}"
 
+
 RUN if [ "${TARGETARCH}" = "arm64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-linux-aarch64"; \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-aarch64"; \
   elif [ "${TARGETARCH}" = "amd64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-linux-x86_64"; \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64"; \
   else \
   echo "Unsupported architecture"; \
   fi
