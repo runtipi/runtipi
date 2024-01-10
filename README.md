@@ -1,7 +1,9 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-49-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -12,12 +14,11 @@
 ![Build](https://github.com/runtipi/runtipi/workflows/Tipi%20CI/badge.svg)
 [![Crowdin](https://badges.crowdin.net/runtipi/localized.svg)](https://crowdin.com/project/runtipi)
 
-> 💡 Tipi is built with TypeScript, Next.js app router and Drizzle ORM! If you want to collaborate on a cool project, join the discussion on Discord! 
+> 💡 Tipi is built with TypeScript, Next.js app router and Drizzle ORM! If you want to collaborate on a cool project, join the discussion on Discord!
 
-#### Join the discussion
+#### Join the community
 
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
-[![Matrix](https://img.shields.io/matrix/runtipi:matrix.org?label=matrix&logo=matrix)](https://matrix.to/#/#runtipi:matrix.org)
 
 ![Preview](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png)
 
@@ -58,12 +59,16 @@ Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may co
 
 ## 🗣 Community
 
-- [Matrix](https://matrix.to/#/#runtipi:matrix.org)<br />
 - [Twitter](https://twitter.com/runtipi)
-- [Telegram](https://t.me/+72-y10MnLBw2ZGI0)
 - [Discord](https://discord.gg/Bu9qEPnHsc)
 
-## Contributors ✨
+## 🙏 Acknowledgements
+
+- [Freepik](https://www.flaticon.com/free-icons/tipi) - Thanks for providing a free logo for the project
+- [Sentry](https://sentry.io) - Thanks for providing error tracking for the project
+- [Crowdin](https://crowdin.com) - Thanks for providing localization management for the project
+
+## ✨ Contributors
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
