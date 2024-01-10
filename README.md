@@ -22,7 +22,7 @@
 
 ![Preview](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png)
 
-> ⚠️ Tipi is still at an early stage of development and issues are to be expected. Feel free to open an issue or pull request if you find a bug.
+> ⚠️ Tipi is built and maintained by volunteers. There is no guarantee of support or security when you use Tipi. While the system is considered stable, it is still in active development and may contain bugs.
 
 Tipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Tipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Tipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/runtipi/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
 
