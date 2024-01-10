@@ -226,8 +226,8 @@ importers:
         specifier: ^1.11.18
         version: 1.11.18
       '@types/uuid':
-        specifier: ^9.0.6
-        version: 9.0.6
+        specifier: ^9.0.7
+        version: 9.0.7
       '@types/validator':
         specifier: ^13.11.5
         version: 13.11.5
@@ -4156,8 +4156,8 @@ packages:
     resolution: {integrity: sha512-MFETx3tbTjE7Uk6vvnWINA/1iJ7LuMdO4fcq8UfF0pRbj01aGLduVvQcRyswuACJdpnHgg8E3rQLhaRdNEJS0w==}
     dev: false
 
-  /@types/uuid@9.0.6:
-    resolution: {integrity: sha512-BT2Krtx4xaO6iwzwMFUYvWBWkV2pr37zD68Vmp1CDV196MzczBRxuEpD6Pr395HAgebC/co7hOphs53r8V7jew==}
+  /@types/uuid@9.0.7:
+    resolution: {integrity: sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==}
     dev: true
 
   /@types/validator@13.11.5:
