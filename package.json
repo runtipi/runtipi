@@ -101,7 +101,7 @@
     "@types/lodash.merge": "^4.6.9",
     "@types/node": "20.8.10",
     "@types/pg": "^8.10.9",
-    "@types/react": "18.2.45",
+    "@types/react": "18.2.47",
     "@types/react-dom": "18.2.18",
     "@types/semver": "^7.5.4",
     "@types/ssh2": "^1.11.18",
