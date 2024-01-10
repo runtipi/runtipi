@@ -468,8 +468,8 @@ importers:
         specifier: ^4.7.2
         version: 4.7.2
       systeminformation:
-        specifier: ^5.21.15
-        version: 5.21.15
+        specifier: ^5.21.22
+        version: 5.21.22
       web-push:
         specifier: ^3.6.6
         version: 3.6.6
@@ -11624,8 +11624,8 @@ packages:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
     dev: true
 
-  /systeminformation@5.21.15:
-    resolution: {integrity: sha512-vMLwsGgJZW6GvoBXVWNZuRQG0MPxlfQnIIIY9ZxoogWftUpJ9C33qD+32e1meFlXuWpN0moNApPFLpbsSi4OaQ==}
+  /systeminformation@5.21.22:
+    resolution: {integrity: sha512-gNHloAJSyS+sKWkwvmvozZ1eHrdVTEsynWMTY6lvLGBB70gflkBQFw8drXXr1oEXY84+Vr9tOOrN8xHZLJSycA==}
     engines: {node: '>=8.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
