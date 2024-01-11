@@ -61,7 +61,7 @@ services:
       dockerfile: ./packages/worker/Dockerfile.dev
     container_name: tipi-worker
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/worker/healthcheck']
       interval: 5s
       timeout: 10s
       retries: 120
@@ -94,7 +94,7 @@ services:
       - tipi_main_network
     labels:
       traefik.enable: true
-      traefik.http.services.worker.loadbalancer.server.port: 3001
+      traefik.http.services.worker.loadbalancer.server.port: 3000
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
       # Local ip
       traefik.http.routers.worker.rule: PathPrefix("/worker")

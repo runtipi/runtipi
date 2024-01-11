@@ -61,7 +61,7 @@ services:
     image: ghcr.io/runtipi/worker:${TIPI_VERSION}
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/worker/healthcheck']
       interval: 5s
       timeout: 10s
       retries: 120
@@ -96,7 +96,7 @@ services:
       # Main
       traefik.enable: true
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
-      traefik.http.services.worker.loadbalancer.server.port: 3001
+      traefik.http.services.worker.loadbalancer.server.port: 3000
       # Local ip
       traefik.http.routers.worker.rule: PathPrefix("/worker")
       traefik.http.routers.worker.service: worker
