@@ -23,7 +23,7 @@ export class RepoExecutors {
       return { success: false, message: err.message };
     }
 
-    return { success: false, message: `An error occurred: ${err}` };
+    return { success: false, message: `An error occurred: ${String(err)}` };
   };
 
   /**

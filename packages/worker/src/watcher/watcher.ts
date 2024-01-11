@@ -69,17 +69,28 @@ const runCommand = async (jobData: unknown) => {
  * Start the worker for the events queue
  */
 export const startWorker = async () => {
-  const worker = new Worker(
-    'events',
+  const repeatWorker = new Worker(
+    'repeat',
     async (job) => {
+      const { message, success } = await runCommand(job.data);
       if (!job.id?.startsWith('repeat:')) {
         logger.info(`Processing job ${job.id} with data ${JSON.stringify(job.data)}`);
       }
-      const { message, success } = await runCommand(job.data);
 
       return { success, stdout: message };
     },
     { connection: { host: getEnv().redisHost, port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 }, concurrency: 3 },
+  );
+
+  const worker = new Worker(
+    'events',
+    async (job) => {
+      logger.info(`Processing job ${job.id} with data ${JSON.stringify(job.data)}`);
+      const { message, success } = await runCommand(job.data);
+
+      return { success, stdout: message };
+    },
+    { connection: { host: getEnv().redisHost, port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 }, concurrency: 1 },
   );
 
   worker.on('ready', () => {
@@ -87,6 +98,10 @@ export const startWorker = async () => {
   });
 
   worker.on('completed', (job) => {
+    logger.info(`Job ${job.id} completed with result:`, JSON.stringify(job.returnvalue));
+  });
+
+  repeatWorker.on('completed', (job) => {
     if (!job.id?.startsWith('repeat:')) {
       logger.info(`Job ${job.id} completed with result:`, JSON.stringify(job.returnvalue));
     }

@@ -48,7 +48,7 @@ export class AppExecutors {
     }
 
     SocketManager.emit({ type: 'app', event, data: { appId, error: String(err) } });
-    return { success: false, message: `An error occurred: ${err}` };
+    return { success: false, message: `An error occurred: ${String(err)}` };
   };
 
   private getAppPaths = (appId: string) => {

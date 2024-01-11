@@ -12,7 +12,7 @@ import { copySystemFiles, ensureFilePermissions, generateSystemEnvFile, generate
 import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
-import { AppExecutors } from './services';
+import { AppExecutors, RepoExecutors, SystemExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
 
 const rootFolder = '/app';
@@ -62,24 +62,35 @@ const main = async () => {
     logger.info('Ensuring file permissions...');
     await ensureFilePermissions();
 
+    SocketManager.init();
+
+    const repoExecutors = new RepoExecutors();
+    const systemExecutors = new SystemExecutors();
+    const clone = await repoExecutors.cloneRepo(envMap.get('APPS_REPO_URL') as string);
+    if (!clone.success) {
+      logger.error(`Failed to clone repo ${envMap.get('APPS_REPO_URL') as string}`);
+    }
+    const pull = await repoExecutors.pullRepo(envMap.get('APPS_REPO_URL') as string);
+    if (!pull.success) {
+      logger.error(`Failed to pull repo ${envMap.get('APPS_REPO_URL') as string}`);
+    }
+
     logger.info('Starting queue...');
     const queue = new Queue('events', { connection: { host: envMap.get('REDIS_HOST'), port: 6379, password: envMap.get('REDIS_PASSWORD') } });
+    const repeatQueue = new Queue('repeat', { connection: { host: envMap.get('REDIS_HOST'), port: 6379, password: envMap.get('REDIS_PASSWORD') } });
     logger.info('Obliterating queue...');
     await queue.obliterate({ force: true });
 
-    // Initial jobs
-    logger.info('Adding initial jobs to queue...');
-    await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent);
-    await queue.add(`${Math.random().toString()}_repo_clone`, { type: 'repo', command: 'clone', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
-    await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent);
+    await systemExecutors.systemInfo();
 
     // Scheduled jobs
     logger.info('Adding scheduled jobs to queue...');
-    await queue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
-    await queue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { every: 3000 } });
+    await repeatQueue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
+    await repeatQueue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { every: 3000 } });
 
     logger.info('Closing queue...');
     await queue.close();
+    await repeatQueue.close();
 
     logger.info('Running database migrations...');
     await runPostgresMigrations({
@@ -112,7 +123,6 @@ const main = async () => {
     });
 
     server.listen(3000, () => {
-      SocketManager.init();
       startWorker();
     });
   } catch (e) {
