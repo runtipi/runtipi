@@ -1,7 +1,7 @@
 'use client';
 
 import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons-react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslations } from 'next-intl';
 import { SystemStat } from '../SystemStat';
 import { useSocket } from '../../../../../lib/socket/useSocket';
@@ -16,39 +16,39 @@ type IProps = {
 };
 
 export const DashboardContainer: React.FC<IProps> = (props) => {
-  const [info, setInfo] = useState(props);
-
-  useSocket({
-    onEvent: (_, data) => {
-      setInfo(data);
-    },
+  const { lastData } = useSocket({
+    initialData: props,
     selector: { type: 'system_info' },
   });
 
   const t = useTranslations('dashboard');
 
+  if (!lastData) {
+    return null;
+  }
+
   return (
     <div className="row row-deck row-cards">
       <SystemStat
         title={t('cards.disk.title')}
-        metric={`${info.diskUsed} GB`}
-        subtitle={t('cards.disk.subtitle', { total: info.diskSize })}
+        metric={`${lastData.diskUsed} GB`}
+        subtitle={t('cards.disk.subtitle', { total: lastData.diskSize })}
         icon={IconDatabase}
-        progress={info.percentUsed}
+        progress={lastData.percentUsed}
       />
       <SystemStat
         title={t('cards.cpu.title')}
-        metric={`${info.cpuLoad.toFixed(2)}%`}
+        metric={`${lastData.cpuLoad.toFixed(2)}%`}
         subtitle={t('cards.cpu.subtitle')}
         icon={IconCpu}
-        progress={info.cpuLoad}
+        progress={lastData.cpuLoad}
       />
       <SystemStat
         title={t('cards.memory.title')}
-        metric={`${info.percentUsedMemory || 0}%`}
-        subtitle={`${info.memoryTotal} GB`}
+        metric={`${lastData.percentUsedMemory || 0}%`}
+        subtitle={`${lastData.memoryTotal} GB`}
         icon={IconCircuitResistor}
-        progress={info.percentUsedMemory}
+        progress={lastData.percentUsedMemory}
       />
     </div>
   );

@@ -1,5 +1,5 @@
 import { SocketEvent, socketEventSchema } from '@runtipi/shared/src/schemas/socket';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
 // Data selector is used to select a specific property/value from the data object if it exists
@@ -15,13 +15,15 @@ type Selector<T, U> = {
 };
 
 type Props<T, U> = {
-  onEvent: (event: Extract<Extract<SocketEvent, { type: T }>['event'], U>, data: Extract<SocketEvent, { type: T }>['data']) => void;
+  onEvent?: (event: Extract<Extract<SocketEvent, { type: T }>['event'], U>, data: Extract<SocketEvent, { type: T }>['data']) => void;
   onError?: (error: string) => void;
+  initialData?: Extract<SocketEvent, { type: T }>['data'] | undefined;
   selector: Selector<T, U>;
 };
 
 export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['event']>(props: Props<T, U>) => {
-  const { onEvent, onError, selector } = props;
+  const { onEvent, onError, selector, initialData } = props;
+  const [lastData, setLastData] = useState(initialData as unknown);
 
   useEffect(() => {
     const { hostname, protocol } = window.location;
@@ -53,7 +55,10 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore - This is fine
-      onEvent(event, data);
+      setLastData(data);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore - This is fine
+      if (onEvent) onEvent(event, data);
     };
 
     socket.on(selector.type as string, (data) => {
@@ -69,4 +74,6 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
       socket.disconnect();
     };
   }, [onError, onEvent, selector, selector.type]);
+
+  return { lastData } as { lastData: Extract<SocketEvent, { type: T }>['data'] | undefined };
 };
