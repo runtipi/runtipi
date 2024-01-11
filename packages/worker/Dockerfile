@@ -22,17 +22,16 @@ FROM builder_base AS builder
 WORKDIR /app
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.23.3"
 ENV TARGETARCH=${TARGETARCH}
-ENV DOCKER_COMPOSE_VERSION=${DOCKER_COMPOSE_VERSION}
+ARG DOCKER_COMPOSE_VERSION="v2.23.3"
 
 RUN echo "Building for ${TARGETARCH}"
 
 
 RUN if [ "${TARGETARCH}" = "arm64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-aarch64"; \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
   elif [ "${TARGETARCH}" = "amd64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64"; \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-x86_64"; \
   else \
   echo "Unsupported architecture"; \
   fi
