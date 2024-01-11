@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 
 export const pathExists = async (path: string): Promise<boolean> => {
   return fs.promises
