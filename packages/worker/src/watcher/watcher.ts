@@ -4,11 +4,11 @@ import { AppExecutors, RepoExecutors, SystemExecutors } from '@/services';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 
-const runCommand = async (jobData: unknown) => {
-  const { installApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
-  const { cloneRepo, pullRepo } = new RepoExecutors();
-  const { systemInfo } = new SystemExecutors();
+const { systemInfo } = new SystemExecutors();
+const { installApp, resetApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
+const { cloneRepo, pullRepo } = new RepoExecutors();
 
+const runCommand = async (jobData: unknown) => {
   const event = eventSchema.safeParse(jobData);
 
   if (!event.success) {
@@ -41,6 +41,10 @@ const runCommand = async (jobData: unknown) => {
       ({ success, message } = await updateApp(data.appid, data.form));
     }
 
+    if (data.command === 'reset') {
+      ({ success, message } = await resetApp(data.appid, data.form));
+    }
+
     if (data.command === 'generate_env') {
       ({ success, message } = await regenerateAppEnv(data.appid, data.form));
     }
@@ -65,6 +69,19 @@ const runCommand = async (jobData: unknown) => {
  * Start the worker for the events queue
  */
 export const startWorker = async () => {
+  const repeatWorker = new Worker(
+    'repeat',
+    async (job) => {
+      const { message, success } = await runCommand(job.data);
+      if (!job.id?.startsWith('repeat:')) {
+        logger.info(`Processing job ${job.id} with data ${JSON.stringify(job.data)}`);
+      }
+
+      return { success, stdout: message };
+    },
+    { connection: { host: getEnv().redisHost, port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 }, concurrency: 3 },
+  );
+
   const worker = new Worker(
     'events',
     async (job) => {
@@ -73,7 +90,7 @@ export const startWorker = async () => {
 
       return { success, stdout: message };
     },
-    { connection: { host: getEnv().redisHost, port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 } },
+    { connection: { host: getEnv().redisHost, port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 }, concurrency: 1 },
   );
 
   worker.on('ready', () => {
@@ -82,6 +99,12 @@ export const startWorker = async () => {
 
   worker.on('completed', (job) => {
     logger.info(`Job ${job.id} completed with result:`, JSON.stringify(job.returnvalue));
+  });
+
+  repeatWorker.on('completed', (job) => {
+    if (!job.id?.startsWith('repeat:')) {
+      logger.info(`Job ${job.id} completed with result:`, JSON.stringify(job.returnvalue));
+    }
   });
 
   worker.on('failed', (job) => {

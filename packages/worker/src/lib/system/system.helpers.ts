@@ -36,6 +36,7 @@ type EnvKeys =
   | 'TIPI_GID'
   | 'TIPI_UID'
   | 'ALLOW_ERROR_MONITORING'
+  | 'PERSIST_TRAEFIK_CONFIG'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
@@ -157,12 +158,17 @@ export const generateSystemEnvFile = async () => {
   envMap.set('POSTGRES_USERNAME', 'tipi');
   envMap.set('POSTGRES_PORT', String(5432));
   envMap.set('REDIS_HOST', 'tipi-redis');
-  envMap.set('DEMO_MODE', data.demoMode ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
-  envMap.set('GUEST_DASHBOARD', data.guestDashboard ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
+  envMap.set('DEMO_MODE', typeof data.demoMode === 'boolean' || typeof data.demoMode === 'string' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
+  envMap.set('GUEST_DASHBOARD', typeof data.guestDashboard === 'boolean' || typeof data.guestDashboard === 'string' ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
   envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
-  envMap.set('NODE_ENV', 'production');
-  envMap.set('ALLOW_ERROR_MONITORING', data.allowErrorMonitoring ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'true');
-
+  envMap.set(
+    'ALLOW_ERROR_MONITORING',
+    typeof data.allowErrorMonitoring === 'boolean' || typeof data.allowErrorMonitoring === 'string' ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
+  );
+  envMap.set(
+    'PERSIST_TRAEFIK_CONFIG',
+    typeof data.persistTraefikConfig === 'boolean' || typeof data.persistTraefikConfig === 'string' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
+  );
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 
   return envMap;
@@ -171,7 +177,7 @@ export const generateSystemEnvFile = async () => {
 /**
  * Copies the system files from the assets folder to the current working directory
  */
-export const copySystemFiles = async () => {
+export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
   // Remove old unused files
   if (await pathExists(path.join(ROOT_FOLDER, 'scripts'))) {
     logger.info('Removing old scripts folder');
@@ -186,9 +192,13 @@ export const copySystemFiles = async () => {
   await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'shared'), { recursive: true });
   await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'tls'), { recursive: true });
 
-  logger.info('Copying traefik files');
-  await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(ROOT_FOLDER, 'traefik', 'traefik.yml'));
-  await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'), path.join(ROOT_FOLDER, 'traefik', 'dynamic', 'dynamic.yml'));
+  if (envMap.get('PERSIST_TRAEFIK_CONFIG') === 'true') {
+    logger.warn('Skipping the copy of traefik files because persistTraefikConfig is set to true');
+  } else {
+    logger.info('Copying traefik files');
+    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(ROOT_FOLDER, 'traefik', 'traefik.yml'));
+    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'), path.join(ROOT_FOLDER, 'traefik', 'dynamic', 'dynamic.yml'));
+  }
 
   // Create base folders
   logger.info('Creating base folders');
@@ -261,14 +271,14 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
 };
 
 export const ensureFilePermissions = async () => {
-  const filesAndFolders = [path.join(ROOT_FOLDER, 'state'), path.join(ROOT_FOLDER, 'traefik')];
+  const filesAndFolders = [path.join(ROOT_FOLDER, 'state'), path.join(ROOT_FOLDER, 'traefik'), path.join(ROOT_FOLDER, 'media'), path.join(ROOT_FOLDER, 'apps')];
 
   const files600 = [path.join(ROOT_FOLDER, 'traefik', 'shared', 'acme.json')];
 
   // Give permission to read and write to all files and folders for the current user
-  for (const fileOrFolder of filesAndFolders) {
-    if (await pathExists(fileOrFolder)) {
-      await execAsync(`chmod -R a+rwx ${fileOrFolder}`).catch(() => {});
+  for (const directory of filesAndFolders) {
+    if (await pathExists(directory)) {
+      await execAsync(`find ${directory} -type d -exec chmod a+rwx {} +`).catch(() => {});
     }
   }
 

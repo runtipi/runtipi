@@ -10,7 +10,15 @@ export type EventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
 
 const appCommandSchema = z.object({
   type: z.literal(EVENT_TYPES.APP),
-  command: z.union([z.literal('start'), z.literal('stop'), z.literal('install'), z.literal('uninstall'), z.literal('update'), z.literal('generate_env')]),
+  command: z.union([
+    z.literal('start'),
+    z.literal('stop'),
+    z.literal('install'),
+    z.literal('uninstall'),
+    z.literal('update'),
+    z.literal('reset'),
+    z.literal('generate_env'),
+  ]),
   appid: z.string(),
   skipEnv: z.boolean().optional().default(false),
   form: z.object({}).catchall(z.any()),

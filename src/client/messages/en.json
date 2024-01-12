@@ -25,6 +25,7 @@
       "app-failed-to-stop": "Failed to stop app {id}, see logs for more details",
       "app-failed-to-uninstall": "Failed to uninstall app {id}, see logs for more details",
       "app-failed-to-update": "Failed to update app {id}, see logs for more details",
+      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
       "domain-required-if-expose-app": "Domain is required if app is exposed",
       "domain-not-valid": "Domain {domain} is not a valid domain",
       "invalid-config": "App {id} has an invalid config.json file",
@@ -121,7 +122,14 @@
       "title": "My Apps",
       "empty-title": "No app installed",
       "empty-subtitle": "Install an app from the app store to get started",
-      "empty-action": "Go to app store"
+      "empty-action": "Go to app store",
+      "update-all-form": {
+        "title": "Update all apps",
+        "subtitle1": "Do you want to update all your apps to the latest version?",
+        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
+        "submit": "Update all",
+        "in-progress": "Updating all apps"
+      }
     },
     "app-store": {
       "title": "App Store",
@@ -131,14 +139,14 @@
       "no-results-subtitle": "Try to refine your search"
     },
     "app-details": {
-      "install-success": "App installed successfully",
-      "uninstall-success": "App uninstalled successfully",
-      "stop-success": "App stopped successfully",
-      "update-success": "App updated successfully",
-      "start-success": "App started successfully",
+      "install-success": "App {id} installed successfully",
+      "uninstall-success": "App {id} uninstalled successfully",
+      "stop-success": "App {id} stopped successfully",
+      "update-success": "App {id} updated successfully",
+      "start-success": "App {id} started successfully",
       "update-config-success": "App config updated successfully. Restart the app to apply the changes",
       "version": "Version",
-      "app-reset-success": "App reset successfully",
+      "reset-success": "App {id} reset successfully",
       "description": "Description",
       "base-info": "Base info",
       "source-code": "Source code",

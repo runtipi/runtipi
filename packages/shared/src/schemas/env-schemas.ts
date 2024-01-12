@@ -76,13 +76,24 @@ export const envSchema = z.object({
       if (typeof value === 'boolean') return value;
       if (typeof value === 'string') return value === 'true';
 
-      return true;
+      return false;
+    }),
+  persistTraefikConfig: z
+    .string()
+    .or(z.boolean())
+    .optional()
+    .transform((value) => {
+      if (typeof value === 'boolean') return value;
+      if (typeof value === 'string') return value === 'true';
+
+      return false;
     }),
 });
 
 export const settingsSchema = envSchema
   .partial()
   .pick({
+    version: true,
     dnsIp: true,
     internalIp: true,
     postgresPort: true,
@@ -94,5 +105,6 @@ export const settingsSchema = envSchema
     guestDashboard: true,
     allowAutoThemes: true,
     allowErrorMonitoring: true,
+    persistTraefikConfig: true,
   })
   .and(z.object({ port: z.number(), sslPort: z.number(), listenIp: z.string().ip().trim() }).partial());

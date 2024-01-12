@@ -25,34 +25,40 @@ export const ClientProviders = ({ children, initialTheme, cookies }: Props) => {
 
       switch (event) {
         case 'install_success':
-          toast.success(t('apps.app-details.install-success'));
+          toast.success(t('apps.app-details.install-success', { id: data.appId }));
           break;
         case 'install_error':
           toast.error(t('server-messages.errors.app-failed-to-install', { id: data.appId }));
           break;
         case 'start_success':
-          toast.success(t('apps.app-details.start-success'));
+          toast.success(t('apps.app-details.start-success', { id: data.appId }));
           break;
         case 'start_error':
           toast.error(t('server-messages.errors.app-failed-to-start', { id: data.appId }));
           break;
         case 'stop_success':
-          toast.success(t('apps.app-details.stop-success'));
+          toast.success(t('apps.app-details.stop-success', { id: data.appId }));
           break;
         case 'stop_error':
           toast.error(t('server-messages.errors.app-failed-to-stop', { id: data.appId }));
           break;
         case 'uninstall_success':
-          toast.success(t('apps.app-details.uninstall-success'));
+          toast.success(t('apps.app-details.uninstall-success', { id: data.appId }));
           break;
         case 'uninstall_error':
           toast.error(t('server-messages.errors.app-failed-to-uninstall', { id: data.appId }));
           break;
         case 'update_success':
-          toast.success(t('apps.app-details.update-success'));
+          toast.success(t('apps.app-details.update-success', { id: data.appId }));
           break;
         case 'update_error':
           toast.error(t('server-messages.errors.app-failed-to-update', { id: data.appId }));
+          break;
+        case 'reset_success':
+          toast.success(t('apps.app-details.reset-success', { id: data.appId }));
+          break;
+        case 'reset_error':
+          toast.error(t('server-messages.errors.app-failed-to-reset', { id: data.appId }));
           break;
         default:
           break;

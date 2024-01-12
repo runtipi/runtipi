@@ -23,13 +23,15 @@ WORKDIR /app
 
 ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH}
+ARG DOCKER_COMPOSE_VERSION="v2.23.3"
 
 RUN echo "Building for ${TARGETARCH}"
 
+
 RUN if [ "${TARGETARCH}" = "arm64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-linux-aarch64"; \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
   elif [ "${TARGETARCH}" = "amd64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-linux-x86_64"; \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-x86_64"; \
   else \
   echo "Unsupported architecture"; \
   fi
@@ -51,9 +53,11 @@ COPY ./packages/worker/assets ./packages/worker/assets
 
 ARG SENTRY_AUTH_TOKEN
 ARG SENTRY_DISABLE_AUTO_UPLOAD
+ARG TIPI_VERSION
 
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
+ENV TIPI_VERSION=${TIPI_VERSION}
 
 RUN pnpm -r build --filter @runtipi/worker
 

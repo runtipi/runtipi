@@ -22,6 +22,7 @@ const nextConfig = {
     ARCHITECTURE: process.env.ARCHITECTURE,
     NODE_ENV: process.env.NODE_ENV,
     REDIS_HOST: process.env.REDIS_HOST,
+    ALLOW_ERROR_MONITORING: process.env.ALLOW_ERROR_MONITORING,
   },
   async rewrites() {
     return [
@@ -41,6 +42,7 @@ export default withSentryConfig(
     org: 'runtipi',
     project: 'runtipi-dashboard',
     dryRun: process.env.SENTRY_DISABLE_AUTO_UPLOAD === 'true',
+    release: process.env.TIPI_VERSION,
   },
   {
     // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/

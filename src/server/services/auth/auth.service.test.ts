@@ -8,7 +8,7 @@ import { mockInsert, mockQuery, mockSelect } from '@/tests/mocks/drizzle';
 import { createDatabase, clearDatabase, closeDatabase, TestDatabase } from '@/server/tests/test-utils';
 import { v4 } from 'uuid';
 import { encrypt } from '../../utils/encryption';
-import { setConfig } from '../../core/TipiConfig';
+import { TipiConfig } from '../../core/TipiConfig';
 import { createUser, getUserByEmail, getUserById } from '../../tests/user.factory';
 import { AuthServiceClass } from './auth.service';
 import { TipiCache } from '../../core/TipiCache';
@@ -32,13 +32,13 @@ jest.mock('next/headers', () => ({
 }));
 
 beforeAll(async () => {
-  setConfig('jwtSecret', 'test');
+  await TipiConfig.setConfig('jwtSecret', 'test');
   database = await createDatabase(TEST_SUITE);
   AuthService = new AuthServiceClass(database.db);
 });
 
 beforeEach(async () => {
-  await setConfig('demoMode', false);
+  await TipiConfig.setConfig('demoMode', false);
   await clearDatabase(database);
   cookieStore = {};
 });
@@ -144,7 +144,9 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp })).rejects.toThrowError('server-messages.errors.totp-session-not-found');
+    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp })).rejects.toThrowError(
+      'server-messages.errors.totp-session-not-found',
+    );
   });
 
   it('should throw if the user does not exist', async () => {
@@ -233,7 +235,9 @@ describe('Test: getTotpUri', () => {
     const user = await createUser({ email, totpEnabled: true }, database);
 
     // act & assert
-    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError('server-messages.errors.totp-already-enabled');
+    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError(
+      'server-messages.errors.totp-already-enabled',
+    );
   });
 
   it('should throw an error if the user password is incorrect', async () => {
@@ -255,12 +259,14 @@ describe('Test: getTotpUri', () => {
 
   it('should throw an error if app is in demo mode', async () => {
     // arrange
-    await setConfig('demoMode', true);
+    await TipiConfig.setConfig('demoMode', true);
     const email = faker.internet.email();
     const user = await createUser({ email }, database);
 
     // act & assert
-    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError('server-messages.errors.not-allowed-in-demo');
+    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError(
+      'server-messages.errors.not-allowed-in-demo',
+    );
   });
 });
 
@@ -318,7 +324,7 @@ describe('Test: setupTotp', () => {
 
   it('should throw an error if app is in demo mode', async () => {
     // arrange
-    await setConfig('demoMode', true);
+    await TipiConfig.setConfig('demoMode', true);
     const email = faker.internet.email();
     const user = await createUser({ email }, database);
 
@@ -421,7 +427,9 @@ describe('Register', () => {
   });
 
   it('Should throw if password is not provided', async () => {
-    await expect(AuthService.register({ username: faker.internet.email(), password: '' })).rejects.toThrowError('server-messages.errors.missing-email-or-password');
+    await expect(AuthService.register({ username: faker.internet.email(), password: '' })).rejects.toThrowError(
+      'server-messages.errors.missing-email-or-password',
+    );
   });
 
   it('Password is correctly hashed', async () => {
@@ -654,7 +662,9 @@ describe('Test: changePassword', () => {
     const newPassword = faker.internet.password();
 
     // act & assert
-    await expect(AuthService.changePassword({ userId: 1, newPassword, currentPassword: 'password' })).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.changePassword({ userId: 1, newPassword, currentPassword: 'password' })).rejects.toThrowError(
+      'server-messages.errors.user-not-found',
+    );
   });
 
   it('should throw if the password is incorrect', async () => {
@@ -664,7 +674,9 @@ describe('Test: changePassword', () => {
     const newPassword = faker.internet.password();
 
     // act & assert
-    await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'wrongpassword' })).rejects.toThrowError('server-messages.errors.invalid-password');
+    await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'wrongpassword' })).rejects.toThrowError(
+      'server-messages.errors.invalid-password',
+    );
   });
 
   it('should throw if password is less than 8 characters', async () => {
@@ -674,18 +686,22 @@ describe('Test: changePassword', () => {
     const newPassword = faker.internet.password(7);
 
     // act & assert
-    await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError('server-messages.errors.invalid-password-length');
+    await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError(
+      'server-messages.errors.invalid-password-length',
+    );
   });
 
   it('should throw if instance is in demo mode', async () => {
     // arrange
-    await setConfig('demoMode', true);
+    await TipiConfig.setConfig('demoMode', true);
     const email = faker.internet.email();
     const user = await createUser({ email }, database);
     const newPassword = faker.internet.password();
 
     // act & assert
-    await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError('server-messages.errors.not-allowed-in-demo');
+    await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError(
+      'server-messages.errors.not-allowed-in-demo',
+    );
   });
 
   it('should delete all sessions for the user', async () => {

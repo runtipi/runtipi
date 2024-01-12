@@ -7,7 +7,7 @@ import { AppInfo } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { checkAppRequirements, getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
-import { getConfig } from '../../core/TipiConfig';
+import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
 
@@ -23,7 +23,7 @@ const filterApp = (app: AppInfo): boolean => {
     return true;
   }
 
-  const arch = getConfig().architecture;
+  const arch = TipiConfig.getConfig().architecture;
   return app.supported_architectures.includes(arch);
 };
 
@@ -127,7 +127,7 @@ export class AppServiceClass {
     } else {
       const apps = await this.queries.getApps();
 
-      if (apps.length >= 6 && getConfig().demoMode) {
+      if (apps.length >= 6 && TipiConfig.getConfig().demoMode) {
         throw new TranslatedError('server-messages.errors.demo-mode-limit');
       }
 
@@ -327,6 +327,29 @@ export class AppServiceClass {
   };
 
   /**
+   * Reset App with the specified ID
+   *
+   * @param {string} id - ID of the app to reset
+   * @throws {Error} - If the app is not found or if the update process fails.
+   */
+  public resetApp = async (id: string) => {
+    const app = await this.getApp(id);
+
+    this.queries.updateApp(id, { status: 'resetting' });
+
+    const eventDispatcher = new EventDispatcher('resetApp');
+    eventDispatcher.dispatchEventAsync({ type: 'app', command: 'reset', appid: id, form: castAppConfig(app.config) }).then(({ stdout, success }) => {
+      if (success) {
+        this.queries.updateApp(id, { status: 'running' });
+      } else {
+        this.queries.updateApp(id, { status: 'stopped' });
+        Logger.error(`Failed to reset app ${id}: ${stdout}`);
+      }
+      eventDispatcher.close();
+    });
+  };
+
+  /**
    * Returns the app with the provided id. If the app is not found, it returns a default app object
    *
    * @param {string} id - The id of the app to retrieve
@@ -364,7 +387,7 @@ export class AppServiceClass {
     await this.queries.updateApp(id, { status: 'updating' });
 
     const eventDispatcher = new EventDispatcher('updateApp');
-    await eventDispatcher
+    eventDispatcher
       .dispatchEventAsync({
         type: 'app',
         command: 'update',
@@ -391,20 +414,6 @@ export class AppServiceClass {
 
     const updatedApp = await this.getApp(id);
     return updatedApp;
-  };
-
-  /**
-   * Reset App with the specified ID
-   *
-   * @param {string} id - ID of the app to reset
-   * @throws {Error} - If the app is not found or if the update process fails.
-   */
-  public resetApp = async (id: string) => {
-    const appInfo = await this.getApp(id);
-
-    await this.stopApp(id);
-    await this.uninstallApp(id);
-    await this.installApp(id, castAppConfig(appInfo.config));
   };
 
   /**

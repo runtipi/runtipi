@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsx-a11y', 'testing-library', 'jest-dom'],
+  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsx-a11y', 'testing-library', 'jest-dom', 'drizzle'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'next/core-web-vitals',
@@ -11,6 +11,7 @@ module.exports = {
     'prettier',
     'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
+    'plugin:drizzle/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {

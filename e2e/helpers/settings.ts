@@ -30,3 +30,23 @@ export const unsetPasswordChangeRequest = async () => {
     await promises.unlink('./state/password-change-request');
   }
 };
+
+export const setWelcomeSeen = async (seen: boolean) => {
+  if (seen && process.env.REMOTE === 'true') {
+    return execRemoteCommand('touch ./runtipi/state/seen-welcome');
+  }
+
+  if (!seen && process.env.REMOTE === 'true') {
+    return execRemoteCommand('rm ./runtipi/state/seen-welcome');
+  }
+
+  if (seen && !(await pathExists('./state/seen-welcome'))) {
+    return promises.writeFile('./state/seen-welcome', '');
+  }
+
+  if (!seen && (await pathExists('./state/seen-welcome'))) {
+    return promises.unlink('./state/seen-welcome');
+  }
+
+  return Promise.resolve();
+};

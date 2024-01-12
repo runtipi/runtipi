@@ -317,7 +317,8 @@
       "contributions": [
         "translation",
         "code",
-        "test"
+        "test",
+        "doc"
       ]
     },
     {
@@ -427,6 +428,43 @@
       "profile": "https://github.com/MontejoJorge",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "CiliaFred",
+      "name": "Frédéric Cilia",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1827520?v=4",
+      "profile": "https://github.com/CiliaFred",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "asermax",
+      "name": "Agustín Carrasco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1452164?v=4",
+      "profile": "https://github.com/asermax",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "thclaude",
+      "name": "Thibault Claude",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23203061?v=4",
+      "profile": "https://thibaultclaude.be",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "DansNewLegs",
+      "name": "Joshua Banks",
+      "avatar_url": "https://avatars.githubusercontent.com/u/152246049?v=4",
+      "profile": "https://github.com/DansNewLegs",
+      "contributions": [
+        "code",
+        "doc"
       ]
     }
   ],

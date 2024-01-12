@@ -1,10 +1,28 @@
-import { Icon, IconDownload, IconExternalLink, IconLock, IconLockOff, IconPlayerPause, IconPlayerPlay, IconSettings, IconTrash, IconX } from '@tabler/icons-react';
+import {
+  Icon,
+  IconDownload,
+  IconExternalLink,
+  IconLock,
+  IconLockOff,
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconSettings,
+  IconTrash,
+  IconX,
+} from '@tabler/icons-react';
 import clsx from 'clsx';
 import React from 'react';
 import type { AppStatus } from '@/server/db/schema';
 
 import { useTranslations } from 'next-intl';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { Button } from '@/components/ui/Button';
 import type { AppService } from '@/server/services/apps/apps.service';
 
@@ -47,7 +65,20 @@ const ActionButton: React.FC<BtnProps> = (props) => {
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
-export const AppActions: React.FC<IProps> = ({ app, status, localDomain, onInstall, onUninstall, onStart, onStop, onOpen, onUpdate, onCancel, updateAvailable, onUpdateSettings }) => {
+export const AppActions: React.FC<IProps> = ({
+  app,
+  status,
+  localDomain,
+  onInstall,
+  onUninstall,
+  onStart,
+  onStop,
+  onOpen,
+  onUpdate,
+  onCancel,
+  updateAvailable,
+  onUpdateSettings,
+}) => {
   const { info } = app;
   const t = useTranslations('apps.app-details');
   const hasSettings = Object.keys(info.form_fields).length > 0 || info.exposable;
@@ -63,7 +94,9 @@ export const AppActions: React.FC<IProps> = ({ app, status, localDomain, onInsta
   const LoadingButtion = <ActionButton key="loading" loading color="success" title={t('actions.loading')} />;
   const CancelButton = <ActionButton key="cancel" IconComponent={IconX} onClick={onCancel} title={t('actions.cancel')} />;
   const InstallButton = <ActionButton key="install" onClick={onInstall} title={t('actions.install')} color="success" />;
-  const UpdateButton = <ActionButton key="update" IconComponent={IconDownload} onClick={onUpdate} width={null} title={t('actions.update')} color="success" />;
+  const UpdateButton = (
+    <ActionButton key="update" IconComponent={IconDownload} onClick={onUpdate} width={null} title={t('actions.update')} color="success" />
+  );
 
   const OpenButton = (
     <DropdownMenu>
@@ -124,6 +157,7 @@ export const AppActions: React.FC<IProps> = ({ app, status, localDomain, onInsta
     case 'starting':
     case 'stopping':
     case 'updating':
+    case 'resetting':
       buttons.push(LoadingButtion, CancelButton);
       break;
     case 'missing':

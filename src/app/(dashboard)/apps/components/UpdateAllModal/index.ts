@@ -1,0 +1,1 @@
+export { UpdateAllModal } from './UpdateAllModal';

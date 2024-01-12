@@ -52,7 +52,7 @@ jobs:
         run: |
           droplet_id=$(doctl compute droplet create runtipi-${{ steps.get-sha.outputs.sha }} \
           --image ubuntu-20-04-x64 \
-          --size s-1vcpu-1gb \
+          --size s-2vcpu-2gb \
           --format ID \
           --no-header \
           --ssh-keys ${{ secrets.SSH_KEY_FINGERPRINT }})

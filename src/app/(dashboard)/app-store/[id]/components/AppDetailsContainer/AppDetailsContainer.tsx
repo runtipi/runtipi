@@ -109,8 +109,8 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
       if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
-      resetAppDisclosure.open();
-      setOptimisticStatus('stopping');
+      resetAppDisclosure.close();
+      setOptimisticStatus('resetting');
     },
   });
 

@@ -3,7 +3,7 @@ import { getTranslatorFromCookie } from '@/lib/get-translator';
 import { Metadata } from 'next';
 import React from 'react';
 import { SystemServiceClass } from '@/server/services/system';
-import { getSettings } from '@/server/core/TipiConfig';
+import { TipiConfig } from '@/server/core/TipiConfig';
 import { getCurrentLocale } from 'src/utils/getCurrentLocale';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import { SettingsTabTriggers } from './components/SettingsTabTriggers';
@@ -23,7 +23,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
   const { tab } = searchParams;
   const systemService = new SystemServiceClass();
   const version = await systemService.getVersion();
-  const settings = getSettings();
+  const settings = TipiConfig.getSettings();
   const locale = getCurrentLocale();
   const user = await getUserFromCookie();
 

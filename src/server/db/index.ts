@@ -1,11 +1,11 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { getConfig } from '../core/TipiConfig/TipiConfig';
+import { TipiConfig } from '../core/TipiConfig/TipiConfig';
 import * as schema from './schema';
 
-const connectionString = `postgresql://${getConfig().postgresUsername}:${getConfig().postgresPassword}@${getConfig().postgresHost}:${getConfig().postgresPort}/${
-  getConfig().postgresDatabase
-}?connect_timeout=300`;
+const connectionString = `postgresql://${TipiConfig.getConfig().postgresUsername}:${TipiConfig.getConfig().postgresPassword}@${
+  TipiConfig.getConfig().postgresHost
+}:${TipiConfig.getConfig().postgresPort}/${TipiConfig.getConfig().postgresDatabase}?connect_timeout=300`;
 
 const pool = new Pool({
   connectionString,

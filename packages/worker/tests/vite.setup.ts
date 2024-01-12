@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import { vi, beforeEach } from 'vitest';
-import { getEnv } from '@/lib/environment';
 import { ROOT_FOLDER } from '@/config/constants';
 
 vi.mock('@runtipi/shared', async (importOriginal) => {
@@ -34,9 +33,7 @@ beforeEach(async () => {
   // @ts-expect-error - custom mock method
   fs.__resetAllMocks();
 
-  const { appsRepoId } = getEnv();
-
   await fs.promises.mkdir(path.join(ROOT_FOLDER, 'state'), { recursive: true });
   await fs.promises.writeFile(path.join(ROOT_FOLDER, 'state', 'seed'), 'seed');
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps'), { recursive: true });
+  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'repos', 'repo-id', 'apps'), { recursive: true });
 });

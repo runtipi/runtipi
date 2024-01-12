@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
 import fs from 'fs-extra';
 import nextConfig from 'next/config';
+import * as Sentry from '@sentry/nextjs';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../Logger';
 
@@ -13,16 +14,29 @@ const formatErrors = (errors: { fieldErrors: Record<string, string[]> }) =>
     .filter(Boolean)
     .join('\n');
 
-export class TipiConfig {
-  private static instance: TipiConfig;
-
+export class TipiConfigClass {
   private config: z.infer<typeof envSchema> = {} as z.infer<typeof envSchema>;
 
-  constructor() {
+  private fileConfigCache: z.infer<typeof settingsSchema> | null;
+
+  private cacheTime: number;
+
+  private cacheTimeout: number;
+
+  constructor(cacheTimeout = 5000) {
+    this.fileConfigCache = null;
+    this.cacheTime = 0;
+    this.cacheTimeout = cacheTimeout;
+
+    this.genConfig();
+  }
+
+  private genConfig() {
     let envFile = '';
     try {
       envFile = fs.readFileSync('/runtipi/.env').toString();
     } catch (e) {
+      Sentry.captureException(e);
       Logger.error('❌ .env file not found');
     }
 
@@ -37,7 +51,7 @@ export class TipiConfig {
       postgresPort: Number(conf.POSTGRES_PORT),
       REDIS_HOST: conf.REDIS_HOST,
       redisPassword: conf.REDIS_PASSWORD,
-      NODE_ENV: conf.NODE_ENV,
+      NODE_ENV: process.env.NODE_ENV || 'production',
       architecture: conf.ARCHITECTURE || 'amd64',
       rootFolder: '/runtipi',
       internalIp: conf.INTERNAL_IP,
@@ -51,6 +65,7 @@ export class TipiConfig {
       storagePath: conf.STORAGE_PATH,
       demoMode: conf.DEMO_MODE,
       guestDashboard: conf.GUEST_DASHBOARD,
+      allowErrorMonitoring: conf.ALLOW_ERROR_MONITORING,
       seePreReleaseVersions: false,
       allowAutoThemes: true,
     };
@@ -60,28 +75,39 @@ export class TipiConfig {
       this.config = parsedConfig.data;
     } else {
       const errors = formatErrors(parsedConfig.error.flatten());
+      Sentry.captureException(new Error(`Invalid env config ${JSON.stringify(parsedConfig.error.flatten())}`));
       Logger.error(`❌ Invalid env config ${JSON.stringify(errors)}`);
     }
   }
 
   private getFileConfig() {
-    const fileConfig = readJsonFile('/runtipi/state/settings.json') || {};
-    const parsedFileConfig = envSchema.partial().safeParse(fileConfig);
+    const now = Date.now();
 
-    if (parsedFileConfig.success) {
-      return parsedFileConfig.data;
+    let fileConfig = {};
+
+    // Check if the cache is still valid (less than 5 second old)
+    if (this.fileConfigCache && now - this.cacheTime < this.cacheTimeout) {
+      fileConfig = this.fileConfigCache;
+    } else {
+      Logger.info('⚙️ Reading settings.json file');
+      const rawFileConfig = readJsonFile('/runtipi/state/settings.json') || {};
+      const parsedFileConfig = settingsSchema.safeParse(rawFileConfig);
+
+      if (parsedFileConfig.success) {
+        fileConfig = parsedFileConfig.data;
+        this.fileConfigCache = fileConfig;
+        this.cacheTime = Date.now();
+      } else {
+        Logger.error(`❌ Invalid settings.json file: ${JSON.stringify(parsedFileConfig.error.flatten())}`);
+      }
     }
 
-    Logger.error(`❌ Invalid settings.json file: ${JSON.stringify(parsedFileConfig.error.flatten())}`);
-
-    return {};
+    return fileConfig;
   }
 
-  public static getInstance(): TipiConfig {
-    if (!TipiConfig.instance) {
-      TipiConfig.instance = new TipiConfig();
-    }
-    return TipiConfig.instance;
+  public resetCache() {
+    this.cacheTime = 0;
+    this.fileConfigCache = null;
   }
 
   public getConfig() {
@@ -96,15 +122,13 @@ export class TipiConfig {
   }
 
   public getSettings() {
-    const fileConfig = readJsonFile('/runtipi/state/settings.json') || {};
-    const parsedSettings = settingsSchema.safeParse({ ...this.config, ...fileConfig });
-
-    if (parsedSettings.success) {
-      return parsedSettings.data;
+    try {
+      const fileConfig = this.getFileConfig();
+      return settingsSchema.parse({ ...this.config, ...fileConfig });
+    } catch (e) {
+      Sentry.captureException(e);
+      return {};
     }
-
-    Logger.error('❌ Invalid settings.json file');
-    return this.config;
   }
 
   public async setConfig<T extends keyof typeof envSchema.shape>(key: T, value: z.infer<typeof envSchema>[T], writeFile = false) {
@@ -129,7 +153,6 @@ export class TipiConfig {
       throw new Error('Cannot update settings in demo mode');
     }
 
-    const newConf: z.infer<typeof envSchema> = { ...this.getConfig() };
     const parsed = settingsSchema.safeParse(settings);
 
     if (!parsed.success) {
@@ -139,14 +162,12 @@ export class TipiConfig {
 
     await fs.promises.writeFile('/runtipi/state/settings.json', JSON.stringify(parsed.data));
 
-    this.config = envSchema.parse({ ...newConf, ...parsed.data });
+    // Reset cache
+    this.cacheTime = 0;
+    this.fileConfigCache = null;
+
+    this.config = envSchema.parse({ ...this.getConfig(), ...parsed.data });
   }
 }
 
-export const setConfig = <T extends keyof typeof envSchema.shape>(key: T, value: z.infer<typeof envSchema>[T], writeFile = false) => {
-  return TipiConfig.getInstance().setConfig(key, value, writeFile);
-};
-
-export const getConfig = () => TipiConfig.getInstance().getConfig();
-export const getSettings = () => TipiConfig.getInstance().getSettings();
-export const setSettings = (settings: TipiSettingsType) => TipiConfig.getInstance().setSettings(settings);
+export const TipiConfig = new TipiConfigClass();

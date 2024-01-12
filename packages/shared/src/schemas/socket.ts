@@ -1,6 +1,20 @@
 import { z } from 'zod';
 
+export const systemInfoSchema = z.object({
+  diskUsed: z.number(),
+  diskSize: z.number(),
+  percentUsed: z.number(),
+  cpuLoad: z.number(),
+  memoryTotal: z.number(),
+  percentUsedMemory: z.number(),
+});
+
 export const socketEventSchema = z.union([
+  z.object({
+    type: z.literal('system_info'),
+    event: z.literal('status_change'),
+    data: systemInfoSchema,
+  }),
   z.object({
     type: z.literal('app'),
     event: z.union([
@@ -9,6 +23,8 @@ export const socketEventSchema = z.union([
       z.literal('install_error'),
       z.literal('uninstall_success'),
       z.literal('uninstall_error'),
+      z.literal('reset_success'),
+      z.literal('reset_error'),
       z.literal('update_success'),
       z.literal('update_error'),
       z.literal('start_success'),

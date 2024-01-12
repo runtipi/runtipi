@@ -5,6 +5,7 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
 FROM node_base AS builder_base
 
+RUN apk add --no-cache python3 make g++
 RUN npm install pnpm -g
 
 # BUILDER
@@ -33,9 +34,11 @@ COPY ./sentry.server.config.ts ./sentry.server.config.ts
 
 ARG SENTRY_AUTH_TOKEN
 ARG SENTRY_DISABLE_AUTO_UPLOAD
+ARG TIPI_VERSION
 
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
+ENV TIPI_VERSION=${TIPI_VERSION}
 
 RUN pnpm build
 

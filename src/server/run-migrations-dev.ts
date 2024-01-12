@@ -3,12 +3,12 @@ import pg from 'pg';
 import { migrate } from '@runtipi/postgres-migrations';
 import { createClient } from 'redis';
 import { Logger } from './core/Logger';
-import { getConfig } from './core/TipiConfig';
+import { TipiConfig } from './core/TipiConfig';
 
 export const runPostgresMigrations = async (dbName?: string) => {
   Logger.info('Starting database migration');
 
-  const { postgresHost, postgresDatabase, postgresUsername, postgresPassword, postgresPort } = getConfig();
+  const { postgresHost, postgresDatabase, postgresUsername, postgresPassword, postgresPort } = TipiConfig.getConfig();
 
   Logger.info(`Connecting to database ${postgresDatabase} on ${postgresHost} as ${postgresUsername} on port ${postgresPort}`);
 
@@ -49,8 +49,8 @@ export const runPostgresMigrations = async (dbName?: string) => {
   // Flush redis cache
   try {
     const cache = createClient({
-      url: `redis://${getConfig().REDIS_HOST}:6379`,
-      password: getConfig().redisPassword,
+      url: `redis://${TipiConfig.getConfig().REDIS_HOST}:6379`,
+      password: TipiConfig.getConfig().redisPassword,
     });
     await cache.connect();
     await cache.flushAll();

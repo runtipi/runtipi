@@ -51,6 +51,7 @@ jobs:
         with:
           build-args: |
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            TIPI_VERSION=${{ needs.create-tag.outputs.tagname }}
           context: .
           file: ./packages/worker/Dockerfile
           platforms: linux/amd64,linux/arm64
@@ -84,6 +85,7 @@ jobs:
         with:
           build-args: |
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            TIPI_VERSION=${{ needs.create-tag.outputs.tagname }}
           context: .
           platforms: linux/amd64,linux/arm64
           push: true

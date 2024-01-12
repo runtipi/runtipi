@@ -75,6 +75,7 @@ services:
       - .env
     environment:
       NODE_ENV: development
+      TIPI_VERSION: 0.0.0
     volumes:
       # Dev mode
       - ./packages/worker/src:/app/packages/worker/src
@@ -115,6 +116,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     container_name: tipi-dashboard
+    restart: unless-stopped
     depends_on:
       tipi-db:
         condition: service_healthy
@@ -126,6 +128,7 @@ services:
       - .env
     environment:
       NODE_ENV: development
+      TIPI_VERSION: 0.0.0
     networks:
       - tipi_main_network
     ports:
