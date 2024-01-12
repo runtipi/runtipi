@@ -166,7 +166,7 @@ export class SystemExecutors {
       const lines = [
         `Visit: http://${envMap.get('INTERNAL_IP')}:${envMap.get('NGINX_PORT')} to access the dashboard`,
         'Find documentation and guides at: https://runtipi.io',
-        'Tipi is entierly written in TypeScript and we are looking for contributors!',
+        'Tipi is entirely written in TypeScript and we are looking for contributors!',
       ].join('\n\n');
 
       console.log(

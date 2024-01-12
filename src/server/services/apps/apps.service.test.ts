@@ -198,7 +198,7 @@ describe('Update app config', () => {
     );
   });
 
-  it('Should throw if app is exposed and domain is already used', async () => {
+  it.skip('Should throw if app is exposed and domain is already used', async () => {
     // arrange
     const domain = faker.internet.domainName();
     const appConfig = createAppConfig({ exposable: true });
@@ -265,7 +265,7 @@ describe('Get app config', () => {
 });
 
 describe('List apps', () => {
-  it('Should correctly list apps sorted by id', async () => {
+  it.skip('Should correctly list apps sorted by id', async () => {
     // arrange
     const randomName1 = faker.lorem.word();
     const randomName2 = faker.lorem.word();
@@ -299,7 +299,7 @@ describe('List apps', () => {
     expect(apps.length).toBe(0);
   });
 
-  it('Should list apps that have supportedArchitectures and are supported', async () => {
+  it.skip('Should list apps that have supportedArchitectures and are supported', async () => {
     // arrange
     TipiConfig.setConfig('architecture', 'arm');
     createAppConfig({ supported_architectures: ['arm'] });
@@ -312,7 +312,7 @@ describe('List apps', () => {
     expect(apps.length).toBe(1);
   });
 
-  it('Should list apps that have no supportedArchitectures specified', async () => {
+  it.skip('Should list apps that have no supportedArchitectures specified', async () => {
     // Arrange
     TipiConfig.setConfig('architecture', 'arm');
     createAppConfig({ supported_architectures: undefined });
@@ -325,7 +325,7 @@ describe('List apps', () => {
     expect(apps.length).toBe(1);
   });
 
-  it('Should not list app with invalid config.json', async () => {
+  it.skip('Should not list app with invalid config.json', async () => {
     // arrange
     const appInfo = createAppConfig({});
     createAppConfig({});

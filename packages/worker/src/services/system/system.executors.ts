@@ -28,7 +28,7 @@ export class SystemExecutors {
     }
     this.logger.error(`An error occurred: ${err}`);
 
-    return { success: false, message: `An error occurred: ${err}` };
+    return { success: false, message: `An error occurred: ${String(err)}` };
   };
 
   private getSystemLoad = async () => {

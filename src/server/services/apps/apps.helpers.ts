@@ -36,7 +36,7 @@ export const checkAppRequirements = (appName: string) => {
   If the config.json file is invalid, it logs an error message.
  */
 export const getAvailableApps = async () => {
-  if (!pathExists(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps`)) {
+  if (!(await pathExists(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps`))) {
     Logger.error(`Apps repo ${TipiConfig.getConfig().appsRepoId} not found. Make sure your repo is configured correctly.`);
     return [];
   }

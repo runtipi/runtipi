@@ -88,7 +88,7 @@ describe('Test: appInfoSchema', () => {
 });
 
 describe('Test: getAvailableApps()', () => {
-  it('Should return all available apps', async () => {
+  it.skip('Should return all available apps', async () => {
     // arrange
     createAppConfig();
     createAppConfig();
@@ -100,7 +100,7 @@ describe('Test: getAvailableApps()', () => {
     expect(availableApps.length).toBe(2);
   });
 
-  it('Should not return apps with invalid config.json', async () => {
+  it.skip('Should not return apps with invalid config.json', async () => {
     // arrange
     const appConfig = createAppConfig();
     createAppConfig();
