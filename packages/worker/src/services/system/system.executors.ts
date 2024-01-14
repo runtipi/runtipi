@@ -70,7 +70,6 @@ export class SystemExecutors {
 
       if (now - this.cacheTime > this.cacheTimeout) {
         await fs.promises.writeFile(path.join(ROOT_FOLDER, 'state', 'system-info.json'), JSON.stringify(systemLoad, null, 2));
-        await fs.promises.chmod(path.join(ROOT_FOLDER, 'state', 'system-info.json'), 0o777);
         this.cacheTime = Date.now();
       }
 

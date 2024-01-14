@@ -8,7 +8,7 @@ import { Queue } from 'bullmq';
 import * as Sentry from '@sentry/node';
 import { cleanseErrorData } from '@runtipi/shared/src/helpers/error-helpers';
 import { ExtraErrorData } from '@sentry/integrations';
-import { copySystemFiles, ensureFilePermissions, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
+import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
 import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
@@ -58,9 +58,6 @@ const main = async () => {
 
     logger.info('Generating TLS certificates...');
     await generateTlsCertificates({ domain: envMap.get('LOCAL_DOMAIN') });
-
-    logger.info('Ensuring file permissions...');
-    await ensureFilePermissions();
 
     SocketManager.init();
 
