@@ -64,13 +64,15 @@ RUN pnpm -r build --filter @runtipi/worker
 # ---- RUNNER ----
 FROM runner_base AS app
 
+USER 1000:1000
+
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --from=builder /app/packages/worker/dist .
-COPY --from=builder /app/packages/worker/assets ./assets
-COPY --from=builder /app/docker-binary /usr/local/bin/docker-compose
+COPY --from=builder --chown=1000:1000 /app/packages/worker/dist .
+COPY --from=builder --chown=1000:1000 /app/packages/worker/assets ./assets
+COPY --from=builder --chown=1000:1000 /app/docker-binary /usr/local/bin/docker-compose
 
 CMD ["node", "index.js", "start"]
 
