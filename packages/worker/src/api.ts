@@ -15,7 +15,7 @@ export const setupRoutes = (app: Hono) => {
   app.use('*', prettyJSON());
   app.use('*', secureHeaders());
 
-  app.use('*', jwt({ secret: getEnv().jwtSecret }));
+  app.use('/apps', jwt({ secret: getEnv().jwtSecret }));
 
   app.post('/apps/:id/start', async (c) => {
     const app = c.req.param('id');
