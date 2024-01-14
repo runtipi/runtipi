@@ -47,15 +47,15 @@ FROM node_base AS app
 
 ENV NODE_ENV production
 
-USER node
+USER 1000:1000
 
 WORKDIR /app
 
 COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder --chown=node:node /app/.next/standalone ./
-COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+COPY --from=builder --chown=1000:1000 /app/.next/standalone ./
+COPY --from=builder --chown=1000:1000 /app/.next/static ./.next/static
 
 EXPOSE 3000
 

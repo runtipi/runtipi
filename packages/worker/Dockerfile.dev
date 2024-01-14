@@ -4,6 +4,7 @@ ARG DOCKER_COMPOSE_VERSION="v2.23.3"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
+
 # Install docker
 RUN apk upgrade --update-cache --available && \
   apk add openssl git docker docker-cli-compose curl && \
@@ -38,6 +39,8 @@ COPY ./packages/worker/assets ./assets
 COPY ./packages ./packages
 
 RUN pnpm install -r --prefer-offline 
+
+USER 1000:1000
 
 CMD ["pnpm", "--filter", "@runtipi/worker", "-r", "dev"]
 
