@@ -269,27 +269,3 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
     logger.error(error);
   }
 };
-
-export const ensureFilePermissions = async () => {
-  const directories = [path.join(ROOT_FOLDER, 'state'), path.join(ROOT_FOLDER, 'traefik'), path.join(ROOT_FOLDER, 'media'), path.join(ROOT_FOLDER, 'apps'), path.join(ROOT_FOLDER, 'logs')];
-  const files777 = [path.join(ROOT_FOLDER, 'VERSION')];
-  const files600 = [path.join(ROOT_FOLDER, 'traefik', 'shared', 'acme.json')];
-
-  for (const directory of directories) {
-    if (await pathExists(directory)) {
-      await execAsync(`find ${directory} -type d -exec chmod a+rwx {} +`).catch(() => {});
-    }
-  }
-
-  for (const file of files777) {
-    if (await pathExists(file)) {
-      await execAsync(`chmod 777 ${file}`).catch(() => {});
-    }
-  }
-
-  for (const file of files600) {
-    if (await pathExists(file)) {
-      await execAsync(`chmod 600 ${file}`).catch(() => {});
-    }
-  }
-};

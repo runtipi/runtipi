@@ -54,7 +54,7 @@ jobs:
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
             TIPI_VERSION=${{ needs.create-tag.outputs.tagname }}
           file: ./packages/worker/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/worker:${{ needs.create-tag.outputs.tagname }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/worker:buildcache
@@ -87,7 +87,7 @@ jobs:
           build-args: |
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
             TIPI_VERSION=${{ needs.create-tag.outputs.tagname }}
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.create-tag.outputs.tagname }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache
@@ -154,6 +154,7 @@ jobs:
       - name: Rename CLI
         run: |
           mv cli/bin/cli-x64 ./runtipi-cli-linux-x64
+          mv cli/bin/cli-arm64 ./runtipi-cli-linux-arm64
 
       - name: Create alpha release
         id: create_release
@@ -169,3 +170,4 @@ jobs:
           prerelease: true
           files: |
             runtipi-cli-linux-x64
+            runtipi-cli-linux-arm64
