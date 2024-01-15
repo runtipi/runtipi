@@ -34,7 +34,7 @@
     "@sentry/esbuild-plugin": "^2.10.2",
     "@sentry/integrations": "^7.92.0",
     "@sentry/node": "^7.92.0",
-    "bullmq": "^4.13.0",
+    "bullmq": "^5.1.2",
     "dotenv": "^16.3.1",
     "ioredis": "^5.3.2",
     "pg": "^8.11.3",
