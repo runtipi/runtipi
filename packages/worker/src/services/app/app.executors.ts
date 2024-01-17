@@ -362,12 +362,19 @@ export class AppExecutors {
   /**
    * Start all apps with status running
    */
-  public startAllApps = async () => {
+  public startAllApps = async (forceStartAll = false) => {
     const client = await getDbClient();
 
     try {
-      // Get all apps with status running
-      const { rows } = await client.query(`SELECT * FROM app WHERE status = 'running'`);
+      let rows: any;
+
+      if (forceStartAll != true) {
+        // Get all apps with status running
+        rows = await client.query(`SELECT * FROM app WHERE status = 'running'`);
+      } else {
+        // Get all apps
+        rows = await client.query(`SELECT * FROM app`);
+      }
 
       // Update all apps with status different than running or stopped to stopped
       await client.query(`UPDATE app SET status = 'stopped' WHERE status != 'stopped' AND status != 'running' AND status != 'missing'`);

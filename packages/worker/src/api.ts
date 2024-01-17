@@ -1,11 +1,9 @@
 import { jwt } from 'hono/jwt';
 import { prettyJSON } from 'hono/pretty-json';
 import { secureHeaders } from 'hono/secure-headers';
-import { AppExecutors } from './services';
-
 import { Hono } from 'hono';
 import { getEnv } from './lib/environment';
-import { getDbClient } from './lib/db';
+import { AppExecutors } from './services';
 
 const executor = new AppExecutors();
 
@@ -68,7 +66,7 @@ export const setupRoutes = (app: Hono) => {
   });
 
   app.post('/apps/start-all', async (c) => {
-    await executor.startAllApps();
+    await executor.startAllApps(true);
     return c.json({ ok: true }, 200);
   });
 
