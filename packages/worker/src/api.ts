@@ -16,53 +16,48 @@ export const setupRoutes = (app: Hono) => {
   app.use('/apps', jwt({ secret: getEnv().jwtSecret }));
 
   app.post('/apps/:id/start', async (c) => {
-    const app = c.req.param('id');
-    const { success, message } = await executor.startApp(app, {}, true);
+    const appId = c.req.param('id');
+    const { success, message } = await executor.startApp(appId, {}, true);
     if (success) {
       return c.json({ message, ok: true }, 200);
-    } else {
-      return c.json({ message, ok: false }, 500);
     }
+    return c.json({ message, ok: false }, 500);
   });
 
   app.post('/apps/:id/stop', async (c) => {
-    const app = c.req.param('id');
-    const { success, message } = await executor.stopApp(app, {}, true);
+    const appId = c.req.param('id');
+    const { success, message } = await executor.stopApp(appId, {}, true);
     if (success) {
       return c.json({ message, ok: true }, 200);
-    } else {
-      return c.json({ message, ok: false }, 500);
     }
+    return c.json({ message, ok: false }, 500);
   });
 
   app.post('/apps/:id/reset', async (c) => {
-    const app = c.req.param('id');
-    const { success, message } = await executor.resetApp(app, {});
+    const appId = c.req.param('id');
+    const { success, message } = await executor.resetApp(appId, {});
     if (success) {
       return c.json({ message, ok: true }, 200);
-    } else {
-      return c.json({ message, ok: false }, 500);
     }
+    return c.json({ message, ok: false }, 500);
   });
 
   app.post('/apps/:id/update', async (c) => {
-    const app = c.req.param('id');
-    const { success, message } = await executor.updateApp(app, {});
+    const appId = c.req.param('id');
+    const { success, message } = await executor.updateApp(appId, {});
     if (success) {
       return c.json({ message, ok: true }, 200);
-    } else {
-      return c.json({ message, ok: false }, 500);
     }
+    return c.json({ message, ok: false }, 500);
   });
 
   app.post('/apps/:id/uninstall', async (c) => {
-    const app = c.req.param('id');
-    const { success, message } = await executor.uninstallApp(app, {});
+    const appId = c.req.param('id');
+    const { success, message } = await executor.uninstallApp(appId, {});
     if (success) {
       return c.json({ message, ok: true }, 200);
-    } else {
-      return c.json({ message, ok: false }, 500);
     }
+    return c.json({ message, ok: false }, 500);
   });
 
   app.post('/apps/start-all', async (c) => {
