@@ -368,7 +368,7 @@ export class AppExecutors {
     try {
       let rows: any;
 
-      if (forceStartAll != true) {
+      if (!forceStartAll) {
         // Get all apps with status running
         rows = await client.query(`SELECT * FROM app WHERE status = 'running'`);
       } else {
