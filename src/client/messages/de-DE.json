@@ -25,6 +25,7 @@
       "app-failed-to-stop": "Stoppen der App {id} fehlgeschlagen. Siehe die Logs für weitere Informationen",
       "app-failed-to-uninstall": "Deinstallieren der App {id} fehlgeschlagen. Siehe die Logs für weitere Informationen",
       "app-failed-to-update": "Aktualisieren der App {id} fehlgeschlagen. Siehe die Logs für weitere Informationen",
+      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
       "domain-required-if-expose-app": "Eine Domain ist erforderlich, wenn die App veröffentlicht ist",
       "domain-not-valid": "Die Domain {domain} ist ungültig",
       "invalid-config": "Die App {id} hat eine ungültige config.json Datei",
@@ -108,6 +109,7 @@
   "apps": {
     "status-running": "Aktiv",
     "status-stopped": "Angehalten",
+    "status-resetting": "Resetting",
     "status-starting": "Startet",
     "status-stopping": "Stoppen",
     "status-updating": "Aktualisieren",
@@ -115,11 +117,19 @@
     "status-installing": "Installieren",
     "status-uninstalling": "Deinstallieren",
     "update-available": "Aktualisierung verfügbar",
+    "deprecated": "This app is deprecated",
     "my-apps": {
       "title": "Meine Apps",
       "empty-title": "Keine Apps installiert",
       "empty-subtitle": "Installiere eine App aus dem App Store, um loszulegen",
-      "empty-action": "Zum App Store"
+      "empty-action": "Zum App Store",
+      "update-all-form": {
+        "title": "Update all apps",
+        "subtitle1": "Do you want to update all your apps to the latest version?",
+        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
+        "submit": "Update all",
+        "in-progress": "Updating all apps"
+      }
     },
     "app-store": {
       "title": "App Store",
@@ -136,6 +146,7 @@
       "start-success": "App erfolgreich gestartet",
       "update-config-success": "App-Konfiguration erfolgreich aktualisiert. Starte die App neu, um die Änderungen zu übernehmen",
       "version": "Version",
+      "reset-success": "App {id} reset successfully",
       "description": "Beschreibung",
       "base-info": "Basisinfo",
       "source-code": "Quellcode",
@@ -146,6 +157,8 @@
       "website": "Website",
       "supported-arch": "Unterstütze Architekturen",
       "choose-open-method": "Choose open method",
+      "deprecated-alert-title": "This app is deprecated",
+      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
       "categories": {
         "data": "Daten",
         "network": "Netzwerk",
@@ -177,11 +190,13 @@
       "install-form": {
         "title": "{name} installieren",
         "expose-app": "App veröffentlichen",
+        "display-on-guest-dashboard": "Display on guest dashboard",
         "domain-name": "Domainname",
         "domain-name-hint": "Stellen Sie sicher, dass diese Domain einen A-Eintrag enthält, der auf Ihre IP verweist.",
         "choose-option": "Wählen Sie eine Option...",
         "sumbit-install": "Installieren",
         "submit-update": "Aktualisieren",
+        "reset": "Reset app",
         "errors": {
           "required": "{label} ist erforderlich",
           "regex": "{label} stimmt nicht mit dem Format {pattern} überein",
@@ -206,6 +221,12 @@
         "subtitle": "Alle Daten für diese Anwendung werden gelöscht.",
         "warning": "Sind Sie sicher? Dieser Schritt kann nicht rückgängig gemacht werden.",
         "submit": "Deinstallieren"
+      },
+      "reset-app-form": {
+        "title": "Reset {name} ?",
+        "subtitle": "All data for this app will be lost.",
+        "warning": "Are you sure? This action cannot be undone.",
+        "submit": "Reset"
       },
       "update-form": {
         "title": "Aktualisieren {name}?",
@@ -239,6 +260,12 @@
       "invalid-ip": "Ungültige IP-Adresse",
       "invalid-url": "Ungültige URL",
       "invalid-domain": "Ungültige Domain",
+      "guest-dashboard": "Enable guest dashboard",
+      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-error-monitoring": "Allow anonymous error monitoring",
+      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
+      "allow-auto-themes": "Allow auto themes",
+      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "Domänenname",
       "domain-name-hint": "Stellen Sie sicher, dass genau diese Domain einen A-Eintrag enthält, der auf Ihre IP verweist.",
       "dns-ip": "DNS IP",
@@ -281,6 +308,18 @@
         "confirm-password": "Neues Passwort bestätigen",
         "change-password": "Passwort ändern",
         "password": "Passwort"
+      },
+      "change-username": {
+        "title": "Change username",
+        "subtitle": "Changing your username will log you out of all devices.",
+        "success": "Username changed successfully",
+        "form": {
+          "new-username": "New username",
+          "invalid-username": "Must be a valid email address",
+          "password": "Password",
+          "password-needed-hint": "Your password is required to change your username.",
+          "submit": "Change username"
+        }
       }
     }
   },
@@ -291,10 +330,15 @@
     "app-store": "App Store",
     "settings": "Einstellungen",
     "logout": "Abmelden",
+    "login": "Login",
     "dark-mode": "Dunkler Modus",
     "light-mode": "Heller Modus",
     "sponsor": "Sponsor",
     "source-code": "Quellcode",
     "update-available": "Aktualisierung verfügbar"
-  }
+  },
+  "runtipi": "Runtipi",
+  "guest-dashboard": "Guest dashboard",
+  "guest-dashboard-no-apps": "No apps to display",
+  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
 }
