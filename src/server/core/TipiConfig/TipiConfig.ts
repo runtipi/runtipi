@@ -89,7 +89,6 @@ export class TipiConfigClass {
     if (this.fileConfigCache && now - this.cacheTime < this.cacheTimeout) {
       fileConfig = this.fileConfigCache;
     } else {
-      Logger.info('⚙️ Reading settings.json file');
       const rawFileConfig = readJsonFile('/runtipi/state/settings.json') || {};
       const parsedFileConfig = settingsSchema.safeParse(rawFileConfig);
 

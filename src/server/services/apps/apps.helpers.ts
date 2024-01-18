@@ -54,6 +54,7 @@ export const getAvailableApps = async () => {
 
       if (!parsedConfig.success) {
         Logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
+        Logger.error(JSON.stringify(parsedConfig.error, null, 2));
       } else if (parsedConfig.data.available) {
         const description = readFile(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${parsedConfig.data.id}/metadata/description.md`);
         return { ...parsedConfig.data, description };
