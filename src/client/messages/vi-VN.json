@@ -25,6 +25,7 @@
       "app-failed-to-stop": "Dừng ứng dụng {id} thất bại, vui lòng xem log để biết chi tiết",
       "app-failed-to-uninstall": "Gỡ cài đặt ứng dụng {id} thất bại, vui lòng xem log để biết chi tiết",
       "app-failed-to-update": "Cập nhật ứng dụng {id} thất bại, vui lòng xem log để biết chi tiết",
+      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
       "domain-required-if-expose-app": "Tên miền là bắt buộc nếu ứng dụng được mở công khai",
       "domain-not-valid": "Tên miên {domain} không hợp lệ",
       "invalid-config": "File config.json của ứng dụng {id} không hợp lệ",
@@ -108,6 +109,7 @@
   "apps": {
     "status-running": "Đang hoạt động",
     "status-stopped": "Đã dừng",
+    "status-resetting": "Resetting",
     "status-starting": "Đang khởi động",
     "status-stopping": "Đang dừng",
     "status-updating": "Đang cập nhật",
@@ -115,11 +117,19 @@
     "status-installing": "Đang cài đặt",
     "status-uninstalling": "Đang gỡ cài đặt",
     "update-available": "Đã có bản cập nhật",
+    "deprecated": "This app is deprecated",
     "my-apps": {
       "title": "Ứng dụng của tôi",
       "empty-title": "Không có ứng dụng nào được cài đặt",
       "empty-subtitle": "Cài đặt một ứng dụng từ Cửa hàng Ứng dụng để bắt đầu",
-      "empty-action": "Đi đến Cửa hàng Ứng dụng"
+      "empty-action": "Đi đến Cửa hàng Ứng dụng",
+      "update-all-form": {
+        "title": "Update all apps",
+        "subtitle1": "Do you want to update all your apps to the latest version?",
+        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
+        "submit": "Update all",
+        "in-progress": "Updating all apps"
+      }
     },
     "app-store": {
       "title": "Cửa hàng ứng dụng",
@@ -136,6 +146,7 @@
       "start-success": "Ứng dụng đã được khởi động",
       "update-config-success": "Cài đặt của ứng dụng đã được cập nhật. Khởi động lại ứng dụng để áp dụng thay đổi",
       "version": "Phiên bản",
+      "reset-success": "App {id} reset successfully",
       "description": "Mô tả",
       "base-info": "Thông tin cơ bản",
       "source-code": "Mã nguồn",
@@ -146,6 +157,8 @@
       "website": "Trang web",
       "supported-arch": "Supported architectures",
       "choose-open-method": "Lựa chọn phương thức mở",
+      "deprecated-alert-title": "This app is deprecated",
+      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
       "categories": {
         "data": "Dữ liệu",
         "network": "Mạng",
@@ -177,11 +190,13 @@
       "install-form": {
         "title": "Cài đặt {name}",
         "expose-app": "Expose app",
+        "display-on-guest-dashboard": "Display on guest dashboard",
         "domain-name": "Tên miền",
         "domain-name-hint": "Hãy chắc chắn rằng tên miền này có chứa bản ghi A trỏ đến địa chỉ IP của bạn.",
         "choose-option": "Chọn một tùy chọn...",
         "sumbit-install": "Cài đặt",
         "submit-update": "Cập nhật",
+        "reset": "Reset app",
         "errors": {
           "required": "{label} là bắt buộc",
           "regex": "{label} phải theo mẫu {pattern}",
@@ -206,6 +221,12 @@
         "subtitle": "Tất cả dữ liệu của ứng dụng này sẽ bị mất.",
         "warning": "Bạn chắc chứ? Hành động này không thể hoàn tác.",
         "submit": "Gỡ cài đặt"
+      },
+      "reset-app-form": {
+        "title": "Reset {name} ?",
+        "subtitle": "All data for this app will be lost.",
+        "warning": "Are you sure? This action cannot be undone.",
+        "submit": "Reset"
       },
       "update-form": {
         "title": "Cập nhật {name}?",
@@ -239,6 +260,12 @@
       "invalid-ip": "Địa chỉ IP không hợp lệ",
       "invalid-url": "Đường dẫn không hợp lệ",
       "invalid-domain": "Tên miền không hợp lệ",
+      "guest-dashboard": "Enable guest dashboard",
+      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-error-monitoring": "Allow anonymous error monitoring",
+      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
+      "allow-auto-themes": "Allow auto themes",
+      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "Tên miền",
       "domain-name-hint": "Hãy chắc chắn rằng tên miền này có chứa bản ghi A trỏ đến địa chỉ IP của bạn.",
       "dns-ip": "Địa chỉ IP DNS",
@@ -281,6 +308,18 @@
         "confirm-password": "Xác nhận mật khẩu mới",
         "change-password": "Thay đổi mật khẩu",
         "password": "Mật khẩu"
+      },
+      "change-username": {
+        "title": "Change username",
+        "subtitle": "Changing your username will log you out of all devices.",
+        "success": "Username changed successfully",
+        "form": {
+          "new-username": "New username",
+          "invalid-username": "Must be a valid email address",
+          "password": "Password",
+          "password-needed-hint": "Your password is required to change your username.",
+          "submit": "Change username"
+        }
       }
     }
   },
@@ -291,10 +330,15 @@
     "app-store": "Cửa hàng ứng dụng",
     "settings": "Cài đặt",
     "logout": "Đăng xuất",
+    "login": "Login",
     "dark-mode": "Chế độ Ban đêm",
     "light-mode": "Chế độ ban ngày",
     "sponsor": "Nhà tài trợ",
     "source-code": "Mã nguồn",
     "update-available": "Đã có bản cập nhật"
-  }
+  },
+  "runtipi": "Runtipi",
+  "guest-dashboard": "Guest dashboard",
+  "guest-dashboard-no-apps": "No apps to display",
+  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
 }
