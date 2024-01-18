@@ -10,9 +10,10 @@ module.exports = {
     'plugin:import/typescript',
     'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
-    'plugin:jsonc/recommended-with-jsonc',
-    'prettier',
+    'plugin:jsonc/recommended-with-json',
+    'plugin:jsonc/prettier',
     'plugin:drizzle/recommended',
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -72,8 +73,19 @@ module.exports = {
       extends: ['plugin:jest-dom/recommended', 'plugin:testing-library/react'],
     },
     {
-      files: ['*.json', '*.json5', '*.jsonc'],
+      files: ['**/*.json', '*.json5', '*.jsonc'],
       parser: 'jsonc-eslint-parser',
+      rules: {
+        // Disable all @typescript-eslint rules as they don't apply here
+        '@typescript-eslint/naming-convention': 'off',
+        '@typescript-eslint/dot-notation': 'off',
+        '@typescript-eslint/no-implied-eval': 'off',
+        '@typescript-eslint/no-throw-literal': 'off',
+        '@typescript-eslint/return-await': 'off',
+        // jsonc rules
+        'jsonc/sort-keys': 2,
+        'jsonc/key-name-casing': 0,
+      },
     },
   ],
   globals: {

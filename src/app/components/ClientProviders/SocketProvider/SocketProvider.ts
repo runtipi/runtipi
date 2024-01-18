@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { revalidateAppAction } from '@/actions/app-actions/revalidate-app';
 import { useSocket } from '@/lib/socket/useSocket';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hook';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const revalidateAppMutation = useAction(revalidateAppAction);
   const t = useTranslations();
+  const router = useRouter();
+
+  useEffect(() => {
+    window.addEventListener('focus', () => {
+      router.refresh();
+    });
+
+    return () => window.removeEventListener('focus', () => {});
+  }, [router]);
 
   useSocket({
     onEvent: (event, data) => {
