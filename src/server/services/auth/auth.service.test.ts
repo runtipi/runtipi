@@ -69,13 +69,13 @@ describe('Login', () => {
   });
 
   it('Should throw if user does not exist', async () => {
-    await expect(AuthService.login({ username: 'test', password: 'test' })).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.login({ username: 'test', password: 'test' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
   });
 
   it('Should throw if password is incorrect', async () => {
     const email = faker.internet.email();
     await createUser({ email }, database);
-    await expect(AuthService.login({ username: email, password: 'wrong' })).rejects.toThrowError('server-messages.errors.invalid-credentials');
+    await expect(AuthService.login({ username: email, password: 'wrong' })).rejects.toThrowError('AUTH_ERROR_INVALID_CREDENTIALS');
   });
 
   // TOTP
@@ -128,7 +128,7 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' })).rejects.toThrowError('server-messages.errors.totp-invalid-code');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: 'wrong' })).rejects.toThrowError('AUTH_ERROR_TOTP_INVALID_CODE');
   });
 
   it('should throw if the totpSessionId is invalid', async () => {
@@ -144,9 +144,7 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp })).rejects.toThrowError(
-      'server-messages.errors.totp-session-not-found',
-    );
+    await expect(AuthService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp })).rejects.toThrowError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
   });
 
   it('should throw if the user does not exist', async () => {
@@ -155,7 +153,7 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, '1234');
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' })).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: '1234' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
   });
 
   it('should throw if the user totpEnabled is false', async () => {
@@ -171,7 +169,7 @@ describe('Test: verifyTotp', () => {
     await cache.set(totpSessionId, user.id.toString());
 
     // act & assert
-    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp })).rejects.toThrowError('server-messages.errors.totp-not-enabled');
+    await expect(AuthService.verifyTotp({ totpSessionId, totpCode: otp })).rejects.toThrowError('AUTH_ERROR_TOTP_NOT_ENABLED');
   });
 });
 
@@ -235,9 +233,7 @@ describe('Test: getTotpUri', () => {
     const user = await createUser({ email, totpEnabled: true }, database);
 
     // act & assert
-    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError(
-      'server-messages.errors.totp-already-enabled',
-    );
+    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError('AUTH_ERROR_TOTP_ALREADY_ENABLED');
   });
 
   it('should throw an error if the user password is incorrect', async () => {
@@ -246,7 +242,7 @@ describe('Test: getTotpUri', () => {
     const user = await createUser({ email }, database);
 
     // act & assert
-    await expect(AuthService.getTotpUri({ userId: user.id, password: 'wrong' })).rejects.toThrowError('server-messages.errors.invalid-password');
+    await expect(AuthService.getTotpUri({ userId: user.id, password: 'wrong' })).rejects.toThrowError('AUTH_ERROR_INVALID_PASSWORD');
   });
 
   it('should throw an error if the user does not exist', async () => {
@@ -254,7 +250,7 @@ describe('Test: getTotpUri', () => {
     const userId = 11;
 
     // act & assert
-    await expect(AuthService.getTotpUri({ userId, password: 'password' })).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.getTotpUri({ userId, password: 'password' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
   });
 
   it('should throw an error if app is in demo mode', async () => {
@@ -264,9 +260,7 @@ describe('Test: getTotpUri', () => {
     const user = await createUser({ email }, database);
 
     // act & assert
-    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError(
-      'server-messages.errors.not-allowed-in-demo',
-    );
+    await expect(AuthService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
   });
 });
 
@@ -298,7 +292,7 @@ describe('Test: setupTotp', () => {
     const user = await createUser({ email, totpEnabled: true }, database);
 
     // act & assert
-    await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('server-messages.errors.totp-already-enabled');
+    await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('AUTH_ERROR_TOTP_ALREADY_ENABLED');
   });
 
   it('should throw if the user does not exist', async () => {
@@ -306,7 +300,7 @@ describe('Test: setupTotp', () => {
     const userId = 11;
 
     // act & assert
-    await expect(AuthService.setupTotp({ userId, totpCode: '1234' })).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.setupTotp({ userId, totpCode: '1234' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
   });
 
   it('should throw if the otp is invalid', async () => {
@@ -319,7 +313,7 @@ describe('Test: setupTotp', () => {
     const user = await createUser({ email, totpSecret: encryptedTotpSecret, salt }, database);
 
     // act & assert
-    await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('server-messages.errors.totp-invalid-code');
+    await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('AUTH_ERROR_TOTP_INVALID_CODE');
   });
 
   it('should throw an error if app is in demo mode', async () => {
@@ -329,7 +323,7 @@ describe('Test: setupTotp', () => {
     const user = await createUser({ email }, database);
 
     // act & assert
-    await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('server-messages.errors.not-allowed-in-demo');
+    await expect(AuthService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
   });
 });
 
@@ -356,7 +350,7 @@ describe('Test: disableTotp', () => {
     const user = await createUser({ email, totpEnabled: false }, database);
 
     // act & assert
-    await expect(AuthService.disableTotp({ userId: user.id, password: 'password' })).rejects.toThrowError('server-messages.errors.totp-not-enabled');
+    await expect(AuthService.disableTotp({ userId: user.id, password: 'password' })).rejects.toThrowError('AUTH_ERROR_TOTP_NOT_ENABLED');
   });
 
   it('should throw if the user does not exist', async () => {
@@ -364,7 +358,7 @@ describe('Test: disableTotp', () => {
     const userId = 11;
 
     // act & assert
-    await expect(AuthService.disableTotp({ userId, password: 'password' })).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.disableTotp({ userId, password: 'password' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
   });
 
   it('should throw if the password is invalid', async () => {
@@ -373,7 +367,7 @@ describe('Test: disableTotp', () => {
     const user = await createUser({ email, totpEnabled: true }, database);
 
     // act & assert
-    await expect(AuthService.disableTotp({ userId: user.id, password: 'wrong' })).rejects.toThrowError('server-messages.errors.invalid-password');
+    await expect(AuthService.disableTotp({ userId: user.id, password: 'wrong' })).rejects.toThrowError('AUTH_ERROR_INVALID_PASSWORD');
   });
 });
 
@@ -410,7 +404,7 @@ describe('Register', () => {
 
     // Act & Assert
     await createUser({ email, operator: true }, database);
-    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('server-messages.errors.admin-already-exists');
+    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('AUTH_ERROR_ADMIN_ALREADY_EXISTS');
   });
 
   it('Should throw if user already exists', async () => {
@@ -419,16 +413,16 @@ describe('Register', () => {
 
     // Act & Assert
     await createUser({ email, operator: false }, database);
-    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('server-messages.errors.user-already-exists');
+    await expect(AuthService.register({ username: email, password: 'test' })).rejects.toThrowError('AUTH_ERROR_USER_ALREADY_EXISTS');
   });
 
   it('Should throw if email is not provided', async () => {
-    await expect(AuthService.register({ username: '', password: 'test' })).rejects.toThrowError('server-messages.errors.missing-email-or-password');
+    await expect(AuthService.register({ username: '', password: 'test' })).rejects.toThrowError('AUTH_ERROR_MISSING_EMAIL_OR_PASSWORD');
   });
 
   it('Should throw if password is not provided', async () => {
     await expect(AuthService.register({ username: faker.internet.email(), password: '' })).rejects.toThrowError(
-      'server-messages.errors.missing-email-or-password',
+      'AUTH_ERROR_MISSING_EMAIL_OR_PASSWORD',
     );
   });
 
@@ -446,7 +440,7 @@ describe('Register', () => {
   });
 
   it('Should throw if email is invalid', async () => {
-    await expect(AuthService.register({ username: 'test', password: 'test' })).rejects.toThrowError('server-messages.errors.invalid-username');
+    await expect(AuthService.register({ username: 'test', password: 'test' })).rejects.toThrowError('AUTH_ERROR_INVALID_USERNAME');
   });
 
   it('should throw if db fails to insert user', async () => {
@@ -456,7 +450,7 @@ describe('Register', () => {
     const newAuthService = new AuthServiceClass(fromAny(mockDatabase));
 
     // Act & Assert
-    await expect(newAuthService.register({ username: email, password: 'test' })).rejects.toThrowError('server-messages.errors.error-creating-user');
+    await expect(newAuthService.register({ username: email, password: 'test' })).rejects.toThrowError('AUTH_ERROR_ERROR_CREATING_USER');
   });
 });
 
@@ -567,7 +561,7 @@ describe('Test: changeOperatorPassword', () => {
     fs.__createMockFiles({});
 
     // Act & Assert
-    await expect(AuthService.changeOperatorPassword({ newPassword })).rejects.toThrowError('server-messages.errors.no-change-password-request');
+    await expect(AuthService.changeOperatorPassword({ newPassword })).rejects.toThrowError('AUTH_ERROR_NO_CHANGE_PASSWORD_REQUEST');
   });
 
   it('should throw if there is no operator user', async () => {
@@ -579,7 +573,7 @@ describe('Test: changeOperatorPassword', () => {
     fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
 
     // Act & Assert
-    await expect(AuthService.changeOperatorPassword({ newPassword })).rejects.toThrowError('server-messages.errors.operator-not-found');
+    await expect(AuthService.changeOperatorPassword({ newPassword })).rejects.toThrowError('AUTH_ERROR_OPERATOR_NOT_FOUND');
   });
 
   it('should reset totpSecret and totpEnabled if totp is enabled', async () => {
@@ -663,7 +657,7 @@ describe('Test: changePassword', () => {
 
     // act & assert
     await expect(AuthService.changePassword({ userId: 1, newPassword, currentPassword: 'password' })).rejects.toThrowError(
-      'server-messages.errors.user-not-found',
+      'AUTH_ERROR_USER_NOT_FOUND',
     );
   });
 
@@ -675,7 +669,7 @@ describe('Test: changePassword', () => {
 
     // act & assert
     await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'wrongpassword' })).rejects.toThrowError(
-      'server-messages.errors.invalid-password',
+      'AUTH_ERROR_INVALID_PASSWORD',
     );
   });
 
@@ -687,7 +681,7 @@ describe('Test: changePassword', () => {
 
     // act & assert
     await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError(
-      'server-messages.errors.invalid-password-length',
+      'AUTH_ERROR_INVALID_PASSWORD_LENGTH',
     );
   });
 
@@ -700,7 +694,7 @@ describe('Test: changePassword', () => {
 
     // act & assert
     await expect(AuthService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError(
-      'server-messages.errors.not-allowed-in-demo',
+      'SERVER_ERROR_NOT_ALLOWED_IN_DEMO',
     );
   });
 
@@ -741,7 +735,7 @@ describe('test: changeLocale()', () => {
     const locale = 'fr-FR';
 
     // act & assert
-    await expect(AuthService.changeLocale({ userId: 1, locale })).rejects.toThrowError('server-messages.errors.user-not-found');
+    await expect(AuthService.changeLocale({ userId: 1, locale })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
   });
 
   it('should throw if the locale is invalid', async () => {
@@ -751,6 +745,6 @@ describe('test: changeLocale()', () => {
     const locale = 'invalid';
 
     // act & assert
-    await expect(AuthService.changeLocale({ userId: user.id, locale })).rejects.toThrowError('server-messages.errors.invalid-locale');
+    await expect(AuthService.changeLocale({ userId: user.id, locale })).rejects.toThrowError('SERVER_ERROR_INVALID_LOCALE');
   });
 });
