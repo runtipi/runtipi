@@ -25,6 +25,7 @@
       "app-failed-to-stop": "停止应用程序 {id} 失败，查看日志获取更多详细信息",
       "app-failed-to-uninstall": "卸载应用程序 {id} 失败，查看日志获取更多详细信息",
       "app-failed-to-update": "更新应用程序 {id} 失败，查看日志获取更多详细信息",
+      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
       "domain-required-if-expose-app": "如果应用程序被暴露给公网则需要域名",
       "domain-not-valid": "{domain} 不是有效域名",
       "invalid-config": "App {id} 有无效的 config.json 文件",
@@ -108,6 +109,7 @@
   "apps": {
     "status-running": "运行中",
     "status-stopped": "已停止",
+    "status-resetting": "Resetting",
     "status-starting": "正在启动",
     "status-stopping": "正在停止",
     "status-updating": "正在更新",
@@ -115,11 +117,19 @@
     "status-installing": "正在安装",
     "status-uninstalling": "正在卸载",
     "update-available": "有可用更新",
+    "deprecated": "This app is deprecated",
     "my-apps": {
       "title": "我的应用",
       "empty-title": "尚未安装任何应用",
       "empty-subtitle": "从应用商店安装一个应用程序以开始",
-      "empty-action": "打开App Store"
+      "empty-action": "打开App Store",
+      "update-all-form": {
+        "title": "Update all apps",
+        "subtitle1": "Do you want to update all your apps to the latest version?",
+        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
+        "submit": "Update all",
+        "in-progress": "Updating all apps"
+      }
     },
     "app-store": {
       "title": "应用商店",
@@ -136,6 +146,7 @@
       "start-success": "应用启动成功",
       "update-config-success": "应用程序配置更新成功。重启应用以应用更改",
       "version": "版本",
+      "reset-success": "App {id} reset successfully",
       "description": "描述",
       "base-info": "基本信息",
       "source-code": "源代码",
@@ -146,6 +157,8 @@
       "website": "网址",
       "supported-arch": "支持的架构",
       "choose-open-method": "选择打开方式",
+      "deprecated-alert-title": "This app is deprecated",
+      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
       "categories": {
         "data": "数据",
         "network": "网络",
@@ -177,11 +190,13 @@
       "install-form": {
         "title": "安装 {name}",
         "expose-app": "公开应用程序",
+        "display-on-guest-dashboard": "Display on guest dashboard",
         "domain-name": "域名",
         "domain-name-hint": "请确保此域名包含一个指向您的 IP 的记录。",
         "choose-option": "选择一个选项...",
         "sumbit-install": "安装",
         "submit-update": "更新",
+        "reset": "Reset app",
         "errors": {
           "required": "{label} 是必须的",
           "regex": "{label} 必须匹配模式 {pattern}",
@@ -206,6 +221,12 @@
         "subtitle": "此应用的所有数据将丢失。",
         "warning": "您确定吗？这个操作无法撤销。",
         "submit": "卸载"
+      },
+      "reset-app-form": {
+        "title": "Reset {name} ?",
+        "subtitle": "All data for this app will be lost.",
+        "warning": "Are you sure? This action cannot be undone.",
+        "submit": "Reset"
       },
       "update-form": {
         "title": "更新 {name}？",
@@ -239,6 +260,12 @@
       "invalid-ip": "IP地址无效",
       "invalid-url": "无效的 URL",
       "invalid-domain": "无效的域名",
+      "guest-dashboard": "Enable guest dashboard",
+      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-error-monitoring": "Allow anonymous error monitoring",
+      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
+      "allow-auto-themes": "Allow auto themes",
+      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "域名",
       "domain-name-hint": "请确保此域名包含一个指向您的 IP 的记录。",
       "dns-ip": "DNS IP",
@@ -281,6 +308,18 @@
         "confirm-password": "确认新密码",
         "change-password": "修改密码",
         "password": "密码"
+      },
+      "change-username": {
+        "title": "Change username",
+        "subtitle": "Changing your username will log you out of all devices.",
+        "success": "Username changed successfully",
+        "form": {
+          "new-username": "New username",
+          "invalid-username": "Must be a valid email address",
+          "password": "Password",
+          "password-needed-hint": "Your password is required to change your username.",
+          "submit": "Change username"
+        }
       }
     }
   },
@@ -291,10 +330,15 @@
     "app-store": "应用市场",
     "settings": "设置",
     "logout": "登出",
+    "login": "Login",
     "dark-mode": "暗色模式",
     "light-mode": "明亮模式",
     "sponsor": "赞助",
     "source-code": "源代码",
     "update-available": "有可用更新"
-  }
+  },
+  "runtipi": "Runtipi",
+  "guest-dashboard": "Guest dashboard",
+  "guest-dashboard-no-apps": "No apps to display",
+  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
 }
