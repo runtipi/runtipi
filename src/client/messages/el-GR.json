@@ -25,6 +25,7 @@
       "app-failed-to-stop": "Αποτυχία διακοπής της εφαρμογής {id}, δείτε τα αρχεία καταγραφής για περισσότερες λεπτομέρειες",
       "app-failed-to-uninstall": "Αποτυχία απεγκατάστασης εφαρμογής {id}, δείτε τα αρχεία καταγραφής για περισσότερες λεπτομέρειες",
       "app-failed-to-update": "Αποτυχία ενημέρωσης της εφαρμογής {id}, δείτε το αρχείο καταγραφής για περισσότερες λεπτομέρειες",
+      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
       "domain-required-if-expose-app": "Ο τομέας απαιτείται εάν η εφαρμογή εκτεθεί",
       "domain-not-valid": "Ο τομέας {domain} δεν είναι έγκυρος",
       "invalid-config": "Η εφαρμογή {id} δεν έχει έγκυρο αρχείο config.json",
@@ -108,6 +109,7 @@
   "apps": {
     "status-running": "Εκτελείται",
     "status-stopped": "Σταματημένο",
+    "status-resetting": "Resetting",
     "status-starting": "Εκκίνηση",
     "status-stopping": "Παύση",
     "status-updating": "Ενημέρωση",
@@ -115,11 +117,19 @@
     "status-installing": "Εγκατάσταση",
     "status-uninstalling": "Απεγκατάσταση",
     "update-available": "Διαθέσιμη ενημέρωση",
+    "deprecated": "This app is deprecated",
     "my-apps": {
       "title": "Οι εφαρμογές μου",
       "empty-title": "Δεν υπάρχουν εγκατεστημένες εφαρμογές",
       "empty-subtitle": "Εγκαταστήστε μια εφαρμογή από το κατάστημα εφαρμογών για να ξεκινήσετε",
-      "empty-action": "Μετάβαση στο κατάστημα εφαρμογών"
+      "empty-action": "Μετάβαση στο κατάστημα εφαρμογών",
+      "update-all-form": {
+        "title": "Update all apps",
+        "subtitle1": "Do you want to update all your apps to the latest version?",
+        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
+        "submit": "Update all",
+        "in-progress": "Updating all apps"
+      }
     },
     "app-store": {
       "title": "Κατάστημα εφαρμογών",
@@ -136,6 +146,7 @@
       "start-success": "Η εφαρμογή ξεκίνησε με επιτυχία",
       "update-config-success": "Η ρύθμιση της εφαρμογής ενημερώθηκε με επιτυχία. Επανεκκινήστε την εφαρμογή για να εφαρμόσετε τις αλλαγές",
       "version": "Έκδοση",
+      "reset-success": "App {id} reset successfully",
       "description": "Περιγραφή",
       "base-info": "Βασικές πληροφορίες",
       "source-code": "Πηγαίος κώδικας",
@@ -146,6 +157,8 @@
       "website": "Ιστοσελίδα",
       "supported-arch": "Υποστηριζόμενες αρχιτεκτονικές",
       "choose-open-method": "Επιλογή μεθόδου ανοίγματος",
+      "deprecated-alert-title": "This app is deprecated",
+      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
       "categories": {
         "data": "Δεδομένα",
         "network": "Δίκτυο",
@@ -177,11 +190,13 @@
       "install-form": {
         "title": "Εγκατάσταση {name}",
         "expose-app": "Έκθεση εφαρμογής",
+        "display-on-guest-dashboard": "Display on guest dashboard",
         "domain-name": "Όνομα τομέα",
         "domain-name-hint": "Βεβαιωθείτε ότι αυτός ο ακριβής τομέας περιέχει μια εγγραφή A που δείχνει την IP σας.",
         "choose-option": "Επιλέξτε...",
         "sumbit-install": "Εγκατάσταση",
         "submit-update": "Ενημέρωση",
+        "reset": "Reset app",
         "errors": {
           "required": "Το πεδίο {label} είναι απαραίτητο",
           "regex": "Το {label} πρέπει να ταιριάζει με το μοτίβο {pattern}",
@@ -206,6 +221,12 @@
         "subtitle": "Όλα τα δεδομένα αυτής της εφαρμογής θα χαθούν.",
         "warning": "Είστε βέβαιοι; Αυτό δεν μπορεί να αναιρεθεί.",
         "submit": "Απεγκατάσταση"
+      },
+      "reset-app-form": {
+        "title": "Reset {name} ?",
+        "subtitle": "All data for this app will be lost.",
+        "warning": "Are you sure? This action cannot be undone.",
+        "submit": "Reset"
       },
       "update-form": {
         "title": "Ενημέρωση {name};",
@@ -239,6 +260,12 @@
       "invalid-ip": "Μη έγκυρη διεύθυνση IP",
       "invalid-url": "Μη έγκυρη διεύθυνση URL",
       "invalid-domain": "Μη έγκυρος τομέας",
+      "guest-dashboard": "Enable guest dashboard",
+      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-error-monitoring": "Allow anonymous error monitoring",
+      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
+      "allow-auto-themes": "Allow auto themes",
+      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "Όνομα τομέα",
       "domain-name-hint": "Βεβαιωθείτε ότι αυτός ο ακριβής τομέας περιέχει μια εγγραφή A που δείχνει στην IP σας.",
       "dns-ip": "DNS IP",
@@ -281,6 +308,18 @@
         "confirm-password": "Επιβεβαιώστε τον νέο κωδικό πρόσβασης",
         "change-password": "Αλλαγή κωδικού πρόσβασης",
         "password": "Κωδικόs πρόσβασης"
+      },
+      "change-username": {
+        "title": "Change username",
+        "subtitle": "Changing your username will log you out of all devices.",
+        "success": "Username changed successfully",
+        "form": {
+          "new-username": "New username",
+          "invalid-username": "Must be a valid email address",
+          "password": "Password",
+          "password-needed-hint": "Your password is required to change your username.",
+          "submit": "Change username"
+        }
       }
     }
   },
@@ -291,10 +330,15 @@
     "app-store": "Κατάστημα εφαρμογών",
     "settings": "Ρυθμίσεις",
     "logout": "Αποσύνδεση",
+    "login": "Login",
     "dark-mode": "Σκοτεινή Λειτουργία",
     "light-mode": "Φωτεινή Λειτουργία",
     "sponsor": "Χορηγία",
     "source-code": "Πηγαίος κώδικας",
     "update-available": "Διαθέσιμη ενημέρωση"
-  }
+  },
+  "runtipi": "Runtipi",
+  "guest-dashboard": "Guest dashboard",
+  "guest-dashboard-no-apps": "No apps to display",
+  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
 }
