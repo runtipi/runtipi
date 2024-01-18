@@ -25,6 +25,7 @@
       "app-failed-to-stop": "Nu s-a reușit oprirea aplicației {id}, vezi jurnalele pentru mai multe detalii",
       "app-failed-to-uninstall": "Dezinstalarea aplicației {id} a eșuat, a se vedea jurnalele pentru mai multe detalii",
       "app-failed-to-update": "Nu s-a reușit actualizarea aplicației {id}, vezi jurnalele pentru mai multe detalii",
+      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
       "domain-required-if-expose-app": "Domeniul este necesar în cazul în care aplicația este expusă",
       "domain-not-valid": "Domeniul {domain} nu este un domeniu valid",
       "invalid-config": "Aplicația {id} are un fișier config.json nevalid",
@@ -108,6 +109,7 @@
   "apps": {
     "status-running": "Rulează",
     "status-stopped": "Oprit",
+    "status-resetting": "Resetting",
     "status-starting": "Pornire",
     "status-stopping": "Se oprește",
     "status-updating": "Actualizare",
@@ -115,11 +117,19 @@
     "status-installing": "Se instalează",
     "status-uninstalling": "Se dezinstalează",
     "update-available": "Actualizare disponibilă",
+    "deprecated": "This app is deprecated",
     "my-apps": {
       "title": "Aplicaţiile mele",
       "empty-title": "Nicio aplicație instalată",
       "empty-subtitle": "Instalați o aplicație din magazinul de aplicații pentru a începe",
-      "empty-action": "Mergeți la magazinul de aplicații"
+      "empty-action": "Mergeți la magazinul de aplicații",
+      "update-all-form": {
+        "title": "Update all apps",
+        "subtitle1": "Do you want to update all your apps to the latest version?",
+        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
+        "submit": "Update all",
+        "in-progress": "Updating all apps"
+      }
     },
     "app-store": {
       "title": "Magazin Aplicații",
@@ -136,6 +146,7 @@
       "start-success": "Aplicație pornită cu succes",
       "update-config-success": "Configurarea aplicației a fost actualizată. Reporniți aplicația pentru a aplica modificările",
       "version": "Versiune",
+      "reset-success": "App {id} reset successfully",
       "description": "Descriere",
       "base-info": "Informații de bază",
       "source-code": "Cod sursă",
@@ -146,6 +157,8 @@
       "website": "Site web",
       "supported-arch": "Arhitecturi suportate",
       "choose-open-method": "Choose open method",
+      "deprecated-alert-title": "This app is deprecated",
+      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
       "categories": {
         "data": "Informații",
         "network": "Rețea",
@@ -177,11 +190,13 @@
       "install-form": {
         "title": "Instalează {name}",
         "expose-app": "Expune aplicația",
+        "display-on-guest-dashboard": "Display on guest dashboard",
         "domain-name": "Nume domeniu",
         "domain-name-hint": "Asigurați-vă că acest domeniu exact conține o înregistrare A care indică IP-ul dvs.",
         "choose-option": "Alege o opţiune...",
         "sumbit-install": "Instalare",
         "submit-update": "Actualizare",
+        "reset": "Reset app",
         "errors": {
           "required": "{label} este necesar",
           "regex": "{label} trebuie să corespundă modelului {pattern}",
@@ -206,6 +221,12 @@
         "subtitle": "Toate datele pentru această aplicație vor fi pierdute.",
         "warning": "Sunteți sigur? Această acțiune nu poate fi anulată.",
         "submit": "Dezinstalare"
+      },
+      "reset-app-form": {
+        "title": "Reset {name} ?",
+        "subtitle": "All data for this app will be lost.",
+        "warning": "Are you sure? This action cannot be undone.",
+        "submit": "Reset"
       },
       "update-form": {
         "title": "Actualizați {name}?",
@@ -239,6 +260,12 @@
       "invalid-ip": "Adresă IP nevalidă",
       "invalid-url": "URL invalid",
       "invalid-domain": "Domeniu nevalid",
+      "guest-dashboard": "Enable guest dashboard",
+      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-error-monitoring": "Allow anonymous error monitoring",
+      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
+      "allow-auto-themes": "Allow auto themes",
+      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "Nume domeniu",
       "domain-name-hint": "Asigurați-vă că acest domeniu exact conține un A record care indică IP-ul dvs.",
       "dns-ip": "IP de DNS",
@@ -281,6 +308,18 @@
         "confirm-password": "Confirmă parola nouă",
         "change-password": "Schimbați parola",
         "password": "Parolă"
+      },
+      "change-username": {
+        "title": "Change username",
+        "subtitle": "Changing your username will log you out of all devices.",
+        "success": "Username changed successfully",
+        "form": {
+          "new-username": "New username",
+          "invalid-username": "Must be a valid email address",
+          "password": "Password",
+          "password-needed-hint": "Your password is required to change your username.",
+          "submit": "Change username"
+        }
       }
     }
   },
@@ -291,10 +330,15 @@
     "app-store": "Magazin Aplicații",
     "settings": "Setări",
     "logout": "Deconectare",
+    "login": "Login",
     "dark-mode": "Mod întunecat",
     "light-mode": "Mod luminos",
     "sponsor": "Sponsor",
     "source-code": "Cod sursă",
     "update-available": "Actualizare disponibilă"
-  }
+  },
+  "runtipi": "Runtipi",
+  "guest-dashboard": "Guest dashboard",
+  "guest-dashboard-no-apps": "No apps to display",
+  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
 }
