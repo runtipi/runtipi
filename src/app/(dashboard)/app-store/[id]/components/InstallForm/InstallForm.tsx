@@ -33,7 +33,7 @@ const hiddenTypes = ['random'];
 const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 
 export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, initalValues, loading, onReset, status }) => {
-  const t = useTranslations('apps.app-details.install-form');
+  const t = useTranslations();
   const {
     register,
     handleSubmit,
@@ -102,7 +102,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
           render={({ field: { onChange, value, ref, ...props } }) => (
             <Select value={value as string} defaultValue={field.default as string} onValueChange={onChange} {...props}>
               <SelectTrigger className="mb-3" error={errors[field.env_variable]?.message} label={label}>
-                <SelectValue placeholder={t('choose-option')} />
+                <SelectValue placeholder={t('APP_INSTALL_FORM_CHOOSE_OPTION')} />
               </SelectTrigger>
               <SelectContent>
                 {field.options?.map((option) => (
@@ -144,14 +144,20 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
             checked={value}
             onCheckedChange={onChange}
             disabled={info.force_expose}
-            label={t('expose-app')}
+            label={t('APP_INSTALL_FORM_EXPOSE_APP')}
           />
         )}
       />
       {watchExposed && (
         <div className="mb-3">
-          <Input {...register('domain')} label={t('domain-name')} error={errors.domain?.message} disabled={loading} placeholder={t('domain-name')} />
-          <span className="text-muted">{t('domain-name-hint')}</span>
+          <Input
+            {...register('domain')}
+            label={t('APP_INSTALL_FORM_DOMAIN_NAME')}
+            error={errors.domain?.message}
+            disabled={loading}
+            placeholder={t('APP_INSTALL_FORM_DOMAIN_NAME')}
+          />
+          <span className="text-muted">{t('APP_INSTALL_FORM_DOMAIN_NAME_HINT')}</span>
         </div>
       )}
     </>
@@ -186,17 +192,17 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
             checked={value}
             onCheckedChange={onChange}
             {...props}
-            label={t('display-on-guest-dashboard')}
+            label={t('APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD')}
           />
         )}
       />
       {info.exposable && renderExposeForm()}
       <Button loading={loading} type="submit" className="btn-success">
-        {initalValues ? t('submit-update') : t('sumbit-install')}
+        {initalValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
       </Button>
       {initalValues && onReset && (
         <Button loading={status === 'stopping'} onClick={onClickReset} className="btn-danger ms-2">
-          {t('reset')}
+          {t('APP_INSTALL_FORM_RESET')}
         </Button>
       )}
     </form>

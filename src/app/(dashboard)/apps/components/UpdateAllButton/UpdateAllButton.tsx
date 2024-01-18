@@ -11,11 +11,11 @@ import { UpdateAllModal } from '../UpdateAllModal';
 
 export const UpdateAllButton: React.FC = () => {
   const updateDisclosure = useDisclosure();
-  const t = useTranslations('apps.my-apps.update-all-form');
+  const t = useTranslations();
 
   const updateAllMutation = useAction(updateAllAppsAction, {
     onSuccess: () => {
-      toast.loading(t('in-progress'), { duration: 3000 });
+      toast.loading(t('MY_APPS_UPDATE_ALL_IN_PROGRESS'), { duration: 3000 });
     },
     onError: (e) => {
       if (e.serverError) toast.error(e.serverError);

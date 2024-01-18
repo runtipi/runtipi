@@ -33,29 +33,29 @@ interface IProps {
 
 export const SettingsForm = (props: IProps) => {
   const { onSubmit, initalValues, loading, currentLocale = 'en-US', submitErrors } = props;
-  const t = useTranslations('settings.settings');
+  const t = useTranslations();
 
   const validateFields = (values: SettingsFormValues) => {
     const errors: { [K in keyof SettingsFormValues]?: string } = {};
 
     if (values.localDomain && !validator.isFQDN(values.localDomain)) {
-      errors.localDomain = t('invalid-domain');
+      errors.localDomain = t('SETTINGS_GENERAL_INVALID_DOMAIN');
     }
 
     if (values.dnsIp && !validator.isIP(values.dnsIp)) {
-      errors.dnsIp = t('invalid-ip');
+      errors.dnsIp = t('SETTINGS_GENERAL_INVALID_IP');
     }
 
     if (values.internalIp && values.internalIp !== 'localhost' && !validator.isIP(values.internalIp)) {
-      errors.internalIp = t('invalid-ip');
+      errors.internalIp = t('SETTINGS_GENERAL_INVALID_IP');
     }
 
     if (values.appsRepoUrl && !validator.isURL(values.appsRepoUrl)) {
-      errors.appsRepoUrl = t('invalid-url');
+      errors.appsRepoUrl = t('SETTINGS_GENERAL_INVALID_URL');
     }
 
     if (values.domain && !validator.isFQDN(values.domain)) {
-      errors.domain = t('invalid-domain');
+      errors.domain = t('SETTINGS_GENERAL_INVALID_DOMAIN');
     }
 
     return errors;
@@ -109,15 +109,15 @@ export const SettingsForm = (props: IProps) => {
     <>
       <div className="d-flex">
         <IconUser className="me-2" />
-        <h2 className="text-2xl font-bold">{t('user-settings-title')}</h2>
+        <h2 className="text-2xl font-bold">{t('SETTINGS_GENERAL_USER_SETTINGS')}</h2>
       </div>
       <LanguageSelector showLabel locale={currentLocale} />
       <form className="flex flex-col mt-2" onSubmit={handleSubmit(validate)}>
         <div className="d-flex">
           <IconAdjustmentsAlt className="me-2" />
-          <h2 className="text-2xl font-bold">{t('title')}</h2>
+          <h2 className="text-2xl font-bold">{t('SETTINGS_GENERAL_TITLE')}</h2>
         </div>
-        <p className="mb-4">{t('subtitle')}</p>
+        <p className="mb-4">{t('SETTINGS_GENERAL_SUBTITLE')}</p>
         <div className="mb-3">
           <Controller
             control={control}
@@ -132,9 +132,9 @@ export const SettingsForm = (props: IProps) => {
                 {...rest}
                 label={
                   <>
-                    {t('guest-dashboard')}
+                    {t('SETTINGS_GENERAL_GUEST_DASHBOARD')}
                     <Tooltip className="tooltip" anchorSelect=".guest-dashboard-hint">
-                      {t('guest-dashboard-hint')}
+                      {t('SETTINGS_GENERAL_GUEST_DASHBOARD_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help guest-dashboard-hint')}>?</span>
                   </>
@@ -157,9 +157,9 @@ export const SettingsForm = (props: IProps) => {
                 {...rest}
                 label={
                   <>
-                    {t('allow-error-monitoring')}
+                    {t('SETTINGS_GENERAL_ALLOW_ERROR_MONITORING')}
                     <Tooltip className="tooltip" anchorSelect=".allow-errors-hint">
-                      {t('allow-error-monitoring-hint')}
+                      {t('SETTINGS_GENERAL_ALLOW_ERROR_MONITORING_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help allow-errors-hint')}>?</span>
                   </>
@@ -182,9 +182,9 @@ export const SettingsForm = (props: IProps) => {
                 {...rest}
                 label={
                   <>
-                    {t('allow-auto-themes')}
+                    {t('SETTINGS_GENERAL_ALLOW_AUTO_THEMES')}
                     <Tooltip className="tooltip" anchorSelect=".allow-auto-themes-hint">
-                      {t('allow-auto-themes-hint')}
+                      {t('SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help allow-auto-themes-hint')}>?</span>
                   </>
@@ -198,9 +198,9 @@ export const SettingsForm = (props: IProps) => {
             {...register('domain')}
             label={
               <>
-                {t('domain-name')}
+                {t('SETTINGS_GENERAL_DOMAIN_NAME')}
                 <Tooltip className="tooltip" anchorSelect=".domain-name-hint">
-                  {t('domain-name-hint')}
+                  {t('SETTINGS_GENERAL_DOMAIN_NAME_HINT')}
                 </Tooltip>
                 <span className={clsx('ms-1 form-help domain-name-hint')}>?</span>
               </>
@@ -210,16 +210,16 @@ export const SettingsForm = (props: IProps) => {
           />
         </div>
         <div className="mb-3">
-          <Input {...register('dnsIp')} label={t('dns-ip')} error={errors.dnsIp?.message} placeholder="9.9.9.9" />
+          <Input {...register('dnsIp')} label={t('SETTINGS_GENERAL_DNS_IP')} error={errors.dnsIp?.message} placeholder="9.9.9.9" />
         </div>
         <div className="mb-3">
           <Input
             {...register('internalIp')}
             label={
               <>
-                {t('internal-ip')}
+                {t('SETTINGS_GENERAL_INTERNAL_IP')}
                 <Tooltip className="tooltip" anchorSelect=".internal-ip-hint">
-                  {t('internal-ip-hint')}
+                  {t('SETTINGS_GENERAL_INTERNAL_IP_HINT')}
                 </Tooltip>
                 <span className={clsx('ms-1 form-help internal-ip-hint')}>?</span>
               </>
@@ -233,9 +233,9 @@ export const SettingsForm = (props: IProps) => {
             {...register('appsRepoUrl')}
             label={
               <>
-                {t('apps-repo')}
+                {t('SETTINGS_GENERAL_APPS_REPO')}
                 <Tooltip className="tooltip" anchorSelect=".apps-repo-hint">
-                  {t('apps-repo-hint')}
+                  {t('SETTINGS_GENERAL_APPS_REPO_HINT')}
                 </Tooltip>
                 <span className={clsx('ms-1 form-help apps-repo-hint')}>?</span>
               </>
@@ -249,15 +249,15 @@ export const SettingsForm = (props: IProps) => {
             {...register('storagePath')}
             label={
               <>
-                {t('storage-path')}
+                {t('SETTINGS_GENERAL_STORAGE_PATH')}
                 <Tooltip className="tooltip" anchorSelect=".storage-path-hint">
-                  {t('storage-path-hint')}
+                  {t('SETTINGS_GENERAL_STORAGE_PATH_HINT')}
                 </Tooltip>
                 <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
               </>
             }
             error={errors.storagePath?.message}
-            placeholder={t('storage-path')}
+            placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
           />
         </div>
         <div className="mb-3">
@@ -265,9 +265,9 @@ export const SettingsForm = (props: IProps) => {
             {...register('localDomain')}
             label={
               <>
-                {t('local-domain')}
+                {t('SETTINGS_GENERAL_LOCAL_DOMAIN')}
                 <Tooltip className="tooltip" anchorSelect=".local-domain-hint">
-                  {t('local-domain-hint')}
+                  {t('SETTINGS_GENERAL_LOCAL_DOMAIN_HINT')}
                 </Tooltip>
                 <span className={clsx('ms-1 form-help local-domain-hint')}>?</span>
               </>
@@ -276,11 +276,11 @@ export const SettingsForm = (props: IProps) => {
             placeholder="tipi.lan"
           />
           <Button className="mt-2" onClick={downloadCertificate}>
-            {t('download-certificate')}
+            {t('SETTINGS_GENERAL_DOWNLOAD_CERTIFICATE')}
           </Button>
         </div>
         <Button loading={loading} type="submit" className="btn-success">
-          {t('submit')}
+          {t('SETTINGS_GENERAL_SUBMIT')}
         </Button>
       </form>
     </>

@@ -24,7 +24,7 @@ export const SettingsContainer = ({ initialValues, currentLocale }: Props) => {
       if (e.serverError) toast.error(e.serverError);
     },
     onSuccess: () => {
-      toast.success(t('settings.settings.settings-updated'));
+      toast.success(t('SETTINGS_GENERAL_SETTINGS_UPDATED'));
       router.refresh();
     },
   });

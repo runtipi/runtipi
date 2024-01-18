@@ -17,17 +17,24 @@ interface IProps {
 }
 
 export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, onClose, onSubmit, onReset, status }) => {
-  const t = useTranslations('apps.app-details.update-settings-form');
+  const t = useTranslations();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <h5 className="modal-title">{t('title', { name: info.name })}</h5>
+          <h5 className="modal-title">{t('APP_UPDATE_SETTINGS_FORM_TITLE', { name: info.name })}</h5>
         </DialogHeader>
         <ScrollArea maxHeight={500}>
           <DialogDescription>
-            <InstallForm onSubmit={onSubmit} formFields={info.form_fields} info={info} initalValues={{ ...config }} onReset={onReset} status={status} />
+            <InstallForm
+              onSubmit={onSubmit}
+              formFields={info.form_fields}
+              info={info}
+              initalValues={{ ...config }}
+              onReset={onReset}
+              status={status}
+            />
           </DialogDescription>
         </ScrollArea>
       </DialogContent>

@@ -48,11 +48,11 @@ const ControlComponent = (props: ControlProps<OptionsType>) => {
 };
 
 export const CategorySelector: React.FC<IProps> = ({ onSelect, className, initialValue }) => {
-  const t = useTranslations('apps');
+  const t = useTranslations();
   const { darkMode } = useUIStore();
   const options: OptionsType[] = iconForCategory.map((category) => ({
     value: category.id,
-    label: t(`app-details.categories.${category.id}`),
+    label: t(`APP_CATEGORY_${category.id.toUpperCase() as Uppercase<typeof category.id>}`),
     icon: category.icon,
   }));
 
@@ -108,7 +108,7 @@ export const CategorySelector: React.FC<IProps> = ({ onSelect, className, initia
       defaultValue={[]}
       name="categories"
       options={options}
-      placeholder={t('app-store.category-placeholder')}
+      placeholder={t('APP_STORE_CATEGORY_PLACEHOLDER')}
     />
   );
 };

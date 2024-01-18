@@ -84,7 +84,7 @@ export class AppServiceClass {
   public startApp = async (appName: string) => {
     const app = await this.queries.getApp(appName);
     if (!app) {
-      throw new TranslatedError('server-messages.errors.app-not-found', { id: appName });
+      throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appName });
     }
 
     await this.queries.updateApp(appName, { status: 'starting' });
@@ -128,15 +128,15 @@ export class AppServiceClass {
       const apps = await this.queries.getApps();
 
       if (apps.length >= 6 && TipiConfig.getConfig().demoMode) {
-        throw new TranslatedError('server-messages.errors.demo-mode-limit');
+        throw new TranslatedError('SYSTEM_ERROR_DEMO_MODE_LIMIT');
       }
 
       if (exposed && !domain) {
-        throw new TranslatedError('server-messages.errors.domain-required-if-expose-app');
+        throw new TranslatedError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
       }
 
       if (domain && !validator.isFQDN(domain)) {
-        throw new TranslatedError('server-messages.errors.domain-not-valid', { domain });
+        throw new TranslatedError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
       }
 
       checkAppRequirements(id);
@@ -144,22 +144,22 @@ export class AppServiceClass {
       const appInfo = getAppInfo(id);
 
       if (!appInfo) {
-        throw new TranslatedError('server-messages.errors.invalid-config', { id });
+        throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id });
       }
 
       if (!appInfo.exposable && exposed) {
-        throw new TranslatedError('server-messages.errors.app-not-exposable', { id });
+        throw new TranslatedError('APP_ERROR_APP_NOT_EXPOSABLE', { id });
       }
 
       if ((appInfo.force_expose && !exposed) || (appInfo.force_expose && !domain)) {
-        throw new TranslatedError('server-messages.errors.app-force-exposed', { id });
+        throw new TranslatedError('APP_ERROR_APP_FORCE_EXPOSED', { id });
       }
 
       if (exposed && domain) {
         const appsWithSameDomain = await this.queries.getAppsByDomain(domain, id);
 
         if (appsWithSameDomain.length > 0) {
-          throw new TranslatedError('server-messages.errors.domain-already-in-use', { domain, id: appsWithSameDomain[0]?.id });
+          throw new TranslatedError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.id });
         }
       }
 
@@ -208,38 +208,38 @@ export class AppServiceClass {
     const { exposed, domain } = form;
 
     if (exposed && !domain) {
-      throw new TranslatedError('server-messages.errors.domain-required-if-expose-app');
+      throw new TranslatedError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
     }
 
     if (domain && !validator.isFQDN(domain)) {
-      throw new TranslatedError('server-messages.errors.domain-not-valid');
+      throw new TranslatedError('APP_ERROR_DOMAIN_NOT_VALID');
     }
 
     const app = await this.queries.getApp(id);
 
     if (!app) {
-      throw new TranslatedError('server-messages.errors.app-not-found', { id });
+      throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id });
     }
 
     const appInfo = getAppInfo(app.id, app.status);
 
     if (!appInfo) {
-      throw new TranslatedError('server-messages.errors.invalid-config', { id });
+      throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id });
     }
 
     if (!appInfo.exposable && exposed) {
-      throw new TranslatedError('server-messages.errors.app-not-exposable', { id });
+      throw new TranslatedError('APP_ERROR_APP_NOT_EXPOSABLE', { id });
     }
 
     if ((appInfo.force_expose && !exposed) || (appInfo.force_expose && !domain)) {
-      throw new TranslatedError('server-messages.errors.app-force-exposed', { id });
+      throw new TranslatedError('APP_ERROR_APP_FORCE_EXPOSED', { id });
     }
 
     if (exposed && domain) {
       const appsWithSameDomain = await this.queries.getAppsByDomain(domain, id);
 
       if (appsWithSameDomain.length > 0) {
-        throw new TranslatedError('server-messages.errors.domain-already-in-use', { domain, id: appsWithSameDomain[0]?.id });
+        throw new TranslatedError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.id });
       }
     }
 
@@ -257,7 +257,7 @@ export class AppServiceClass {
       return updatedApp;
     }
 
-    throw new TranslatedError('server-messages.errors.app-failed-to-update', { id });
+    throw new TranslatedError('APP_ERROR_APP_FAILED_TO_UPDATE', { id });
   };
 
   /**
@@ -270,7 +270,7 @@ export class AppServiceClass {
     const app = await this.queries.getApp(id);
 
     if (!app) {
-      throw new TranslatedError('server-messages.errors.app-not-found', { id });
+      throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id });
     }
 
     // Run script
@@ -302,7 +302,7 @@ export class AppServiceClass {
     const app = await this.queries.getApp(id);
 
     if (!app) {
-      throw new TranslatedError('server-messages.errors.app-not-found', { id });
+      throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id });
     }
     if (app.status === 'running') {
       await this.stopApp(id);
@@ -367,7 +367,7 @@ export class AppServiceClass {
       return { ...app, ...updateInfo, info };
     }
 
-    throw new TranslatedError('server-messages.errors.invalid-config', { id });
+    throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id });
   };
 
   /**
@@ -381,7 +381,7 @@ export class AppServiceClass {
     const appStatusBeforeUpdate = app?.status;
 
     if (!app) {
-      throw new TranslatedError('server-messages.errors.app-not-found', { id });
+      throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id });
     }
 
     await this.queries.updateApp(id, { status: 'updating' });

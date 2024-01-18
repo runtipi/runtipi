@@ -16,13 +16,13 @@ export const SettingsTabTriggers = () => {
   return (
     <TabsList>
       <TabsTrigger onClick={() => handleTabChange('actions')} value="actions">
-        {t('settings.actions.tab-title')}
+        {t('SETTINGS_ACTIONS_TAB_TITLE')}
       </TabsTrigger>
       <TabsTrigger onClick={() => handleTabChange('settings')} value="settings">
-        {t('settings.settings.tab-title')}
+        {t('SETTINGS_GENERAL_TAB_TITLE')}
       </TabsTrigger>
       <TabsTrigger onClick={() => handleTabChange('security')} value="security">
-        {t('settings.security.tab-title')}
+        {t('SETTINGS_SECURITY_TAB_TITLE')}
       </TabsTrigger>
     </TabsList>
   );

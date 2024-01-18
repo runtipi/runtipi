@@ -6,7 +6,7 @@ export const validateField = (field: FormField, value: string | undefined | bool
   const { translator } = useUIStore.getState();
 
   if (field.required && !value && typeof value !== 'boolean') {
-    return translator('apps.app-details.install-form.errors.required', { label: field.label });
+    return translator('APP_INSTALL_FORM_ERROR_REQUIRED', { label: field.label });
   }
 
   if (!value || typeof value !== 'string') {
@@ -14,51 +14,51 @@ export const validateField = (field: FormField, value: string | undefined | bool
   }
 
   if (field.regex && !validator.matches(value, field.regex)) {
-    return field.pattern_error || translator('apps.app-details.install-form.errors.regex', { label: field.label, pattern: field.regex });
+    return field.pattern_error || translator('APP_INSTALL_FORM_ERROR_REGEX', { label: field.label, pattern: field.regex });
   }
 
   switch (field.type) {
     case 'text':
       if (field.max && value.length > field.max) {
-        return translator('apps.app-details.install-form.errors.max-length', { label: field.label, max: field.max });
+        return translator('APP_INSTALL_FORM_ERROR_MAX_LENGTH', { label: field.label, max: field.max });
       }
       if (field.min && value.length < field.min) {
-        return translator('apps.app-details.install-form.errors.min-length', { label: field.label, min: field.min });
+        return translator('APP_INSTALL_FORM_ERROR_MIN_LENGTH', { label: field.label, min: field.min });
       }
       break;
     case 'password':
       if (!validator.isLength(value, { min: field.min || 0, max: field.max || 100 })) {
-        return translator('apps.app-details.install-form.errors.between-length', { label: field.label, min: field.min, max: field.max });
+        return translator('APP_INSTALL_FORM_ERROR_BETWEEN_LENGTH', { label: field.label, min: field.min, max: field.max });
       }
       break;
     case 'email':
       if (!validator.isEmail(value)) {
-        return translator('apps.app-details.install-form.errors.invalid-email', { label: field.label });
+        return translator('APP_INSTALL_FORM_ERROR_INVALID_EMAIL', { label: field.label });
       }
       break;
     case 'number':
       if (!validator.isNumeric(value)) {
-        return translator('apps.app-details.install-form.errors.number', { label: field.label });
+        return translator('APP_INSTALL_FORM_ERROR_NUMBER', { label: field.label });
       }
       break;
     case 'fqdn':
       if (!validator.isFQDN(value)) {
-        return translator('apps.app-details.install-form.errors.fqdn', { label: field.label });
+        return translator('APP_INSTALL_FORM_ERROR_FQDN', { label: field.label });
       }
       break;
     case 'ip':
       if (!validator.isIP(value)) {
-        return translator('apps.app-details.install-form.errors.ip', { label: field.label });
+        return translator('APP_INSTALL_FORM_ERROR_IP', { label: field.label });
       }
       break;
     case 'fqdnip':
       if (!validator.isFQDN(value || '') && !validator.isIP(value)) {
-        return translator('apps.app-details.install-form.errors.fqdnip', { label: field.label });
+        return translator('APP_INSTALL_FORM_ERROR_FQDNIP', { label: field.label });
       }
       break;
     case 'url':
       if (!validator.isURL(value)) {
-        return translator('apps.app-details.install-form.errors.url', { label: field.label });
+        return translator('APP_INSTALL_FORM_ERROR_URL', { label: field.label });
       }
       break;
     default:
@@ -71,7 +71,7 @@ export const validateField = (field: FormField, value: string | undefined | bool
 const validateDomain = (domain?: string | boolean): string | undefined => {
   if (typeof domain !== 'string' || !validator.isFQDN(domain || '')) {
     const { translator } = useUIStore.getState();
-    return translator('apps.app-details.install-form.errors.fqdn', { label: String(domain) });
+    return translator('APP_INSTALL_FORM_ERROR_FQDN', { label: String(domain) });
   }
 
   return undefined;

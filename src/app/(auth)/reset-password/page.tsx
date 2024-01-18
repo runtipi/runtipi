@@ -13,8 +13,8 @@ export default async function ResetPasswordPage() {
 
   return (
     <>
-      <h2 className="h2 text-center mb-3">{translator('auth.reset-password.title')}</h2>
-      <p>{translator('auth.reset-password.instructions')}</p>
+      <h2 className="h2 text-center mb-3">{translator('AUTH_RESET_PASSWORD_TITLE')}</h2>
+      <p>{translator('AUTH_RESET_PASSWORD_INSTRUCTIONS')}</p>
       <pre>
         <code>./runtipi-cli reset-password</code>
       </pre>

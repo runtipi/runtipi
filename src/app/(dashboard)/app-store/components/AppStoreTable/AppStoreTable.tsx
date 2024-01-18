@@ -14,10 +14,13 @@ interface IProps {
 export const AppStoreTable: React.FC<IProps> = ({ data }) => {
   const { category, search, sort, sortDirection } = useAppStoreState();
 
-  const tableData = React.useMemo(() => sortTable({ data: data || [], col: sort, direction: sortDirection, category, search }), [data, sort, sortDirection, category, search]);
+  const tableData = React.useMemo(
+    () => sortTable({ data: data || [], col: sort, direction: sortDirection, category, search }),
+    [data, sort, sortDirection, category, search],
+  );
 
   if (!tableData.length) {
-    return <EmptyPage title="apps.app-store.no-results" subtitle="apps.app-store.no-results-subtitle" />;
+    return <EmptyPage title="APP_STORE_NO_RESULTS" subtitle="APP_STORE_NO_RESULTS_SUBTITLE" />;
   }
 
   return (
