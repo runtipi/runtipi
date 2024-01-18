@@ -1,7 +1,7 @@
 {
   "server-messages": {
     "errors": {
-      "invalid-credentials": "Credenciais inválidas",
+      "invalid-credentials": "Invalid credentials",
       "admin-already-exists": "There is already an admin user. Please login to create a new user from the admin panel.",
       "missing-email-or-password": "Missing email or password",
       "invalid-username": "Invalid username",
@@ -139,11 +139,11 @@
       "no-results-subtitle": "Try to refine your search"
     },
     "app-details": {
-      "install-success": "App installed successfully",
-      "uninstall-success": "App uninstalled successfully",
-      "stop-success": "App stopped successfully",
-      "update-success": "App updated successfully",
-      "start-success": "App started successfully",
+      "install-success": "App {id} installed successfully",
+      "uninstall-success": "App {id} uninstalled successfully",
+      "stop-success": "App {id} stopped successfully",
+      "update-success": "App {id} updated successfully",
+      "start-success": "App {id} started successfully",
       "update-config-success": "App config updated successfully. Restart the app to apply the changes",
       "version": "Version",
       "reset-success": "App {id} reset successfully",
@@ -231,7 +231,7 @@
       "update-form": {
         "title": "Update {name} ?",
         "subtitle1": "Update app to latest verion :",
-        "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
+        "subtitle2": "Make sure you've read the release notes of the app and you've backed up your app data.",
         "submit": "Update"
       },
       "update-settings-form": {
