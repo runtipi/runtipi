@@ -25,7 +25,7 @@
       "app-failed-to-stop": "Αποτυχία διακοπής της εφαρμογής {id}, δείτε τα αρχεία καταγραφής για περισσότερες λεπτομέρειες",
       "app-failed-to-uninstall": "Αποτυχία απεγκατάστασης εφαρμογής {id}, δείτε τα αρχεία καταγραφής για περισσότερες λεπτομέρειες",
       "app-failed-to-update": "Αποτυχία ενημέρωσης της εφαρμογής {id}, δείτε το αρχείο καταγραφής για περισσότερες λεπτομέρειες",
-      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
+      "app-failed-to-reset": "Αποτυχία επαναφοράς της εφαρμογής {id}, δείτε τα αρχεία καταγραφής για περισσότερες λεπτομέρειες",
       "domain-required-if-expose-app": "Ο τομέας απαιτείται εάν η εφαρμογή εκτεθεί",
       "domain-not-valid": "Ο τομέας {domain} δεν είναι έγκυρος",
       "invalid-config": "Η εφαρμογή {id} δεν έχει έγκυρο αρχείο config.json",
@@ -109,7 +109,7 @@
   "apps": {
     "status-running": "Εκτελείται",
     "status-stopped": "Σταματημένο",
-    "status-resetting": "Resetting",
+    "status-resetting": "Επαναφορά",
     "status-starting": "Εκκίνηση",
     "status-stopping": "Παύση",
     "status-updating": "Ενημέρωση",
@@ -117,18 +117,18 @@
     "status-installing": "Εγκατάσταση",
     "status-uninstalling": "Απεγκατάσταση",
     "update-available": "Διαθέσιμη ενημέρωση",
-    "deprecated": "This app is deprecated",
+    "deprecated": "Αυτή η εφαρμογή δεν υποστηρίζεται πλέον",
     "my-apps": {
       "title": "Οι εφαρμογές μου",
       "empty-title": "Δεν υπάρχουν εγκατεστημένες εφαρμογές",
       "empty-subtitle": "Εγκαταστήστε μια εφαρμογή από το κατάστημα εφαρμογών για να ξεκινήσετε",
       "empty-action": "Μετάβαση στο κατάστημα εφαρμογών",
       "update-all-form": {
-        "title": "Update all apps",
-        "subtitle1": "Do you want to update all your apps to the latest version?",
-        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
-        "submit": "Update all",
-        "in-progress": "Updating all apps"
+        "title": "Ενημέρωση όλων των εφαρμογών",
+        "subtitle1": "Θέλετε να ενημερώσετε όλες τις εφαρμογές σας στην τελευταία έκδοση;",
+        "subtitle2": "Αυτό θα ενημερώσει όλες τις εφαρμογές σας στην τελευταία έκδοση. Βεβαιωθείτε ότι έχετε διαβάσει τις σημειώσεις έκδοσης των εφαρμογών και ότι έχετε δημιουργήσει αντίγραφα ασφαλείας των δεδομένων εφαρμογών σας.",
+        "submit": "Ενημέρωση όλων",
+        "in-progress": "Ενημέρωση όλων των εφαρμογών"
       }
     },
     "app-store": {
@@ -146,7 +146,7 @@
       "start-success": "Η εφαρμογή ξεκίνησε με επιτυχία",
       "update-config-success": "Η ρύθμιση της εφαρμογής ενημερώθηκε με επιτυχία. Επανεκκινήστε την εφαρμογή για να εφαρμόσετε τις αλλαγές",
       "version": "Έκδοση",
-      "reset-success": "App {id} reset successfully",
+      "reset-success": "Η εφαρμογή {id} επαναφέρθηκε με επιτυχία",
       "description": "Περιγραφή",
       "base-info": "Βασικές πληροφορίες",
       "source-code": "Πηγαίος κώδικας",
@@ -157,8 +157,8 @@
       "website": "Ιστοσελίδα",
       "supported-arch": "Υποστηριζόμενες αρχιτεκτονικές",
       "choose-open-method": "Επιλογή μεθόδου ανοίγματος",
-      "deprecated-alert-title": "This app is deprecated",
-      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
+      "deprecated-alert-title": "Αυτή η εφαρμογή δεν υποστηρίζεται πλέον",
+      "deprecated-alert-subtitle": "Μια αλλαγή σε αυτή την εφαρμογή εμποδίζει την ενημέρωση της. Μπορείτε ακόμα να χρησιμοποιήσετε αυτήν την έκδοση και να την ενημερώσετε χειροκίνητα, αλλά συνιστάται να μεταβείτε σε νεότερη έκδοση και να μεταφέρετε τα δεδομένα σας. Μπορείτε να βρείτε μια ενημερωμένη έκδοση στο κατάστημα εφαρμογών με το ίδιο όνομα.",
       "categories": {
         "data": "Δεδομένα",
         "network": "Δίκτυο",
@@ -190,13 +190,13 @@
       "install-form": {
         "title": "Εγκατάσταση {name}",
         "expose-app": "Έκθεση εφαρμογής",
-        "display-on-guest-dashboard": "Display on guest dashboard",
+        "display-on-guest-dashboard": "Εμφάνιση στον πίνακα επισκεπτών",
         "domain-name": "Όνομα τομέα",
         "domain-name-hint": "Βεβαιωθείτε ότι αυτός ο ακριβής τομέας περιέχει μια εγγραφή A που δείχνει την IP σας.",
         "choose-option": "Επιλέξτε...",
         "sumbit-install": "Εγκατάσταση",
         "submit-update": "Ενημέρωση",
-        "reset": "Reset app",
+        "reset": "Επαναφορά εφαρμογής",
         "errors": {
           "required": "Το πεδίο {label} είναι απαραίτητο",
           "regex": "Το {label} πρέπει να ταιριάζει με το μοτίβο {pattern}",
@@ -223,10 +223,10 @@
         "submit": "Απεγκατάσταση"
       },
       "reset-app-form": {
-        "title": "Reset {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Reset"
+        "title": "Επαναφορά {name};",
+        "subtitle": "Όλα τα δεδομένα αυτής της εφαρμογής θα χαθούν.",
+        "warning": "Είστε βέβαιοι; Αυτό δεν μπορεί να αναιρεθεί.",
+        "submit": "Επαναφορά"
       },
       "update-form": {
         "title": "Ενημέρωση {name};",
@@ -260,12 +260,12 @@
       "invalid-ip": "Μη έγκυρη διεύθυνση IP",
       "invalid-url": "Μη έγκυρη διεύθυνση URL",
       "invalid-domain": "Μη έγκυρος τομέας",
-      "guest-dashboard": "Enable guest dashboard",
-      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
-      "allow-error-monitoring": "Allow anonymous error monitoring",
-      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
-      "allow-auto-themes": "Allow auto themes",
-      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
+      "guest-dashboard": "Ενεργοποίηση πίνακα επισκεπτών",
+      "guest-dashboard-hint": "Αυτό θα επιτρέψει στους μη πιστοποιημένους χρήστες να βλέπουν έναν περιορισμένο πίνακα ελέγχου και να έχουν εύκολη πρόσβαση στις εκτελούμενες εφαρμογές σας.",
+      "allow-error-monitoring": "Να επιτρέπεται η παρακολούθηση ανώνυμων σφαλμάτων",
+      "allow-error-monitoring-hint": "Η παρακολούθηση σφαλμάτων χρησιμοποιείται για την παρακολούθηση σφαλμάτων και τη βελτίωση του Tipi. Κρατήστε αυτήν την επιλογή ενεργοποιημένη για να μας βοηθήσετε να βελτιώσουμε το Tipi.",
+      "allow-auto-themes": "Να επιτρέπονται τα αυτόματα θέματα",
+      "allow-auto-themes-hint": "Εκπλαγείτε από θέματα που αλλάζουν αυτόματα με βάση την εποχή του χρόνου.",
       "domain-name": "Όνομα τομέα",
       "domain-name-hint": "Βεβαιωθείτε ότι αυτός ο ακριβής τομέας περιέχει μια εγγραφή A που δείχνει στην IP σας.",
       "dns-ip": "DNS IP",
@@ -310,15 +310,15 @@
         "password": "Κωδικόs πρόσβασης"
       },
       "change-username": {
-        "title": "Change username",
-        "subtitle": "Changing your username will log you out of all devices.",
-        "success": "Username changed successfully",
+        "title": "Αλλαγή ονόματος χρήστη",
+        "subtitle": "Η αλλαγή του ονόματος χρήστη θα σας αποσυνδέσει από όλες τις συσκευές.",
+        "success": "Ο κωδικός πρόσβασης άλλαξε με επιτυχία",
         "form": {
-          "new-username": "New username",
-          "invalid-username": "Must be a valid email address",
-          "password": "Password",
-          "password-needed-hint": "Your password is required to change your username.",
-          "submit": "Change username"
+          "new-username": "Νέο όνομα χρήστη",
+          "invalid-username": "Πρέπει να είναι μια έγκυρη διεύθυνση email",
+          "password": "Κωδικόs πρόσβασης",
+          "password-needed-hint": "Απαιτείται ο κωδικός πρόσβασης για να αλλάξετε το όνομα χρήστη.",
+          "submit": "Αλλαγή ονόματος χρήστη"
         }
       }
     }
@@ -330,7 +330,7 @@
     "app-store": "Κατάστημα εφαρμογών",
     "settings": "Ρυθμίσεις",
     "logout": "Αποσύνδεση",
-    "login": "Login",
+    "login": "Σύνδεση",
     "dark-mode": "Σκοτεινή Λειτουργία",
     "light-mode": "Φωτεινή Λειτουργία",
     "sponsor": "Χορηγία",
@@ -338,7 +338,7 @@
     "update-available": "Διαθέσιμη ενημέρωση"
   },
   "runtipi": "Runtipi",
-  "guest-dashboard": "Guest dashboard",
-  "guest-dashboard-no-apps": "No apps to display",
-  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
+  "guest-dashboard": "Πίνακας επισκεπτών",
+  "guest-dashboard-no-apps": "Δεν υπάρχουν εφαρμογές για εμφάνιση",
+  "guest-dashboard-no-apps-subtitle": "Ζητήστε από το διαχειριστή σας να προσθέσει εφαρμογές στον πίνακα επισκεπτών ή συνδεθείτε για να δείτε τις εφαρμογές σας."
 }
