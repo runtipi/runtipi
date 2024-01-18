@@ -2,7 +2,7 @@
   "server-messages": {
     "errors": {
       "invalid-credentials": "Identifiants invalides",
-      "admin-already-exists": "Il y a déjà un utilisateur administrateur. Veuillez vous connecter pour créer un nouvel utilisateur.",
+      "admin-already-exists": "Il existe déjà un utilisateur de type administrateur. Veuillez-vous connecter pour créer un nouvel utilisateur à partir du panneau d'administration.",
       "missing-email-or-password": "E-mail ou mot de passe manquant",
       "invalid-username": "Nom d'utilisateur invalide",
       "user-already-exists": "Nom d’utilisateur déjà existant",
@@ -101,7 +101,7 @@
         "title": "Mémoire utilisée"
       },
       "cpu": {
-        "title": "Charge CPU",
+        "title": "Charge du processeur",
         "subtitle": "Désinstallez des applications pour réduire la charge"
       }
     }
