@@ -25,40 +25,40 @@ export const ClientProviders = ({ children, initialTheme, cookies }: Props) => {
 
       switch (event) {
         case 'install_success':
-          toast.success(t('apps.app-details.install-success', { id: data.appId }));
+          toast.success(t('APP_INSTALL_SUCCESS', { id: data.appId }));
           break;
         case 'install_error':
-          toast.error(t('server-messages.errors.app-failed-to-install', { id: data.appId }));
+          toast.error(t('APP_ERROR_APP_FAILED_TO_INSTALL', { id: data.appId }));
           break;
         case 'start_success':
-          toast.success(t('apps.app-details.start-success', { id: data.appId }));
+          toast.success(t('APP_START_SUCCESS', { id: data.appId }));
           break;
         case 'start_error':
-          toast.error(t('server-messages.errors.app-failed-to-start', { id: data.appId }));
+          toast.error(t('APP_ERROR_APP_FAILED_TO_START', { id: data.appId }));
           break;
         case 'stop_success':
-          toast.success(t('apps.app-details.stop-success', { id: data.appId }));
+          toast.success(t('APP_STOP_SUCCESS', { id: data.appId }));
           break;
         case 'stop_error':
-          toast.error(t('server-messages.errors.app-failed-to-stop', { id: data.appId }));
+          toast.error(t('APP_ERROR_APP_FAILED_TO_STOP', { id: data.appId }));
           break;
         case 'uninstall_success':
-          toast.success(t('apps.app-details.uninstall-success', { id: data.appId }));
+          toast.success(t('APP_UNINSTALL_SUCCESS', { id: data.appId }));
           break;
         case 'uninstall_error':
-          toast.error(t('server-messages.errors.app-failed-to-uninstall', { id: data.appId }));
+          toast.error(t('APP_ERROR_APP_FAILED_TO_UNINSTALL', { id: data.appId }));
           break;
         case 'update_success':
-          toast.success(t('apps.app-details.update-success', { id: data.appId }));
+          toast.success(t('APP_UPDATE_SUCCESS', { id: data.appId }));
           break;
         case 'update_error':
-          toast.error(t('server-messages.errors.app-failed-to-update', { id: data.appId }));
+          toast.error(t('APP_ERROR_APP_FAILED_TO_UPDATE', { id: data.appId }));
           break;
         case 'reset_success':
-          toast.success(t('apps.app-details.reset-success', { id: data.appId }));
+          toast.success(t('APP_RESET_SUCCESS', { id: data.appId }));
           break;
         case 'reset_error':
-          toast.error(t('server-messages.errors.app-failed-to-reset', { id: data.appId }));
+          toast.error(t('APP_ERROR_APP_FAILED_TO_RESET', { id: data.appId }));
           break;
         default:
           break;

@@ -18,7 +18,7 @@ type App = {
 };
 
 export const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
-  const t = useTranslations('apps.app-details');
+  const t = useTranslations();
 
   return (
     <Link aria-label={app.name} className={clsx('cursor-pointer col-sm-6 col-lg-4 p-2 mt-4', styles.appTile)} href={`/app-store/${app.id}`} passHref>
@@ -29,7 +29,7 @@ export const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
           <p className="text-muted text-nowrap mb-2">{limitText(app.short_desc, 30)}</p>
           {app.categories?.map((category) => (
             <div className={`text-white badge me-1 bg-${colorSchemeForCategory[category]}`} key={`${app.id}-${category}`}>
-              {t(`categories.${category}`)}
+              {t(`APP_CATEGORY_${category.toUpperCase() as Uppercase<typeof category>}`)}
             </div>
           ))}
         </div>

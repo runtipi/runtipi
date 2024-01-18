@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
 
   return {
-    title: `${translator('apps.app-store.title')} - Tipi`,
+    title: `${translator('APP_STORE_TITLE')} - Tipi`,
   };
 }
 

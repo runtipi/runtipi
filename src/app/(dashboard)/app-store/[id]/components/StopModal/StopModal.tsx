@@ -12,20 +12,20 @@ interface IProps {
 }
 
 export const StopModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfirm }) => {
-  const t = useTranslations('apps.app-details.stop-form');
+  const t = useTranslations();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
         <DialogHeader>
-          <h5 className="modal-title">{t('title', { name: info.name })}</h5>
+          <h5 className="modal-title">{t('APP_STOP_FORM_TITLE', { name: info.name })}</h5>
         </DialogHeader>
         <DialogDescription>
-          <div className="text-muted">{t('subtitle')}</div>
+          <div className="text-muted">{t('APP_STOP_FORM_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>
           <Button onClick={onConfirm} className="btn-danger">
-            {t('submit')}
+            {t('APP_STOP_FORM_SUBMIT')}
           </Button>
         </DialogFooter>
       </DialogContent>

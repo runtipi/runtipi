@@ -6,8 +6,8 @@ import { useTranslations } from 'next-intl';
 import styles from './AppStatus.module.scss';
 
 export const AppStatus: React.FC<{ status: AppStatusEnum; lite?: boolean }> = ({ status, lite }) => {
-  const t = useTranslations('apps');
-  const formattedStatus = t(`status-${status}`);
+  const t = useTranslations();
+  const formattedStatus = t(`APP_STATUS_${status.toUpperCase() as Uppercase<typeof status>}`);
 
   const classes = clsx('status-dot status-gray', {
     'status-dot-animated status-green': status === 'running',

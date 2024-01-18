@@ -21,7 +21,7 @@ export const DashboardContainer: React.FC<IProps> = (props) => {
     selector: { type: 'system_info' },
   });
 
-  const t = useTranslations('dashboard');
+  const t = useTranslations();
 
   if (!lastData) {
     return null;
@@ -30,21 +30,21 @@ export const DashboardContainer: React.FC<IProps> = (props) => {
   return (
     <div className="row row-deck row-cards">
       <SystemStat
-        title={t('cards.disk.title')}
+        title={t('DASHBOARD_DISK_SPACE_TITLE')}
         metric={`${lastData.diskUsed} GB`}
-        subtitle={t('cards.disk.subtitle', { total: lastData.diskSize })}
+        subtitle={t('DASHBOARD_DISK_SPACE_SUBTITLE', { total: lastData.diskSize })}
         icon={IconDatabase}
         progress={lastData.percentUsed}
       />
       <SystemStat
-        title={t('cards.cpu.title')}
+        title={t('DASHBOARD_CPU_TITLE')}
         metric={`${lastData.cpuLoad.toFixed(2)}%`}
-        subtitle={t('cards.cpu.subtitle')}
+        subtitle={t('DASHBOARD_CPU_SUBTITLE')}
         icon={IconCpu}
         progress={lastData.cpuLoad}
       />
       <SystemStat
-        title={t('cards.memory.title')}
+        title={t('DASHBOARD_MEMORY_TITLE')}
         metric={`${lastData.percentUsedMemory || 0}%`}
         subtitle={`${lastData.memoryTotal} GB`}
         icon={IconCircuitResistor}

@@ -24,9 +24,9 @@ export default async function RootPage() {
     const apps = await appService.getGuestDashboardApps();
 
     return (
-      <UnauthenticatedPage title="guest-dashboard" subtitle="runtipi">
+      <UnauthenticatedPage title="GUEST_DASHBOARD" subtitle="RUNTIPI">
         {apps.length === 0 ? (
-          <EmptyPage title="guest-dashboard-no-apps" subtitle="guest-dashboard-no-apps-subtitle" />
+          <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />
         ) : (
           <div className="row row-cards">
             <GuestDashboardApps apps={apps} hostname={hostname} />

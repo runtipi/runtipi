@@ -35,13 +35,13 @@ export class AuthServiceClass {
     const user = await this.queries.getUserByUsername(username);
 
     if (!user) {
-      throw new TranslatedError('server-messages.errors.user-not-found');
+      throw new TranslatedError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
     const isPasswordValid = await argon2.verify(user.password, password);
 
     if (!isPasswordValid) {
-      throw new TranslatedError('server-messages.errors.invalid-credentials');
+      throw new TranslatedError('AUTH_ERROR_INVALID_CREDENTIALS');
     }
 
     if (user.totpEnabled) {
@@ -72,24 +72,24 @@ export class AuthServiceClass {
     await cache.close();
 
     if (!userId) {
-      throw new TranslatedError('server-messages.errors.totp-session-not-found');
+      throw new TranslatedError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
     }
 
     const user = await this.queries.getUserById(Number(userId));
 
     if (!user) {
-      throw new TranslatedError('server-messages.errors.user-not-found');
+      throw new TranslatedError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
     if (!user.totpEnabled || !user.totpSecret || !user.salt) {
-      throw new TranslatedError('server-messages.errors.totp-not-enabled');
+      throw new TranslatedError('AUTH_ERROR_TOTP_NOT_ENABLED');
     }
 
     const totpSecret = decrypt(user.totpSecret, user.salt);
     const isValid = TotpAuthenticator.check(totpCode, totpSecret);
 
     if (!isValid) {
-      throw new TranslatedError('server-messages.errors.totp-invalid-code');
+      throw new TranslatedError('AUTH_ERROR_TOTP_INVALID_CODE');
     }
 
     const sessionId = uuidv4();
@@ -107,7 +107,7 @@ export class AuthServiceClass {
    */
   public getTotpUri = async (params: { userId: number; password: string }) => {
     if (TipiConfig.getConfig().demoMode) {
-      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
+      throw new TranslatedError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
 
     const { userId, password } = params;
@@ -115,16 +115,16 @@ export class AuthServiceClass {
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new TranslatedError('server-messages.errors.user-not-found');
+      throw new TranslatedError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
     const isPasswordValid = await argon2.verify(user.password, password);
     if (!isPasswordValid) {
-      throw new TranslatedError('server-messages.errors.invalid-password');
+      throw new TranslatedError('AUTH_ERROR_INVALID_PASSWORD');
     }
 
     if (user.totpEnabled) {
-      throw new TranslatedError('server-messages.errors.totp-already-enabled');
+      throw new TranslatedError('AUTH_ERROR_TOTP_ALREADY_ENABLED');
     }
 
     let { salt } = user;
@@ -145,25 +145,25 @@ export class AuthServiceClass {
 
   public setupTotp = async (params: { userId: number; totpCode: string }) => {
     if (TipiConfig.getConfig().demoMode) {
-      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
+      throw new TranslatedError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
 
     const { userId, totpCode } = params;
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new TranslatedError('server-messages.errors.user-not-found');
+      throw new TranslatedError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
     if (user.totpEnabled || !user.totpSecret || !user.salt) {
-      throw new TranslatedError('server-messages.errors.totp-already-enabled');
+      throw new TranslatedError('AUTH_ERROR_TOTP_ALREADY_ENABLED');
     }
 
     const totpSecret = decrypt(user.totpSecret, user.salt);
     const isValid = TotpAuthenticator.check(totpCode, totpSecret);
 
     if (!isValid) {
-      throw new TranslatedError('server-messages.errors.totp-invalid-code');
+      throw new TranslatedError('AUTH_ERROR_TOTP_INVALID_CODE');
     }
 
     await this.queries.updateUser(userId, { totpEnabled: true });
@@ -177,16 +177,16 @@ export class AuthServiceClass {
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new TranslatedError('server-messages.errors.user-not-found');
+      throw new TranslatedError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
     if (!user.totpEnabled) {
-      throw new TranslatedError('server-messages.errors.totp-not-enabled');
+      throw new TranslatedError('AUTH_ERROR_TOTP_NOT_ENABLED');
     }
 
     const isPasswordValid = await argon2.verify(user.password, password);
     if (!isPasswordValid) {
-      throw new TranslatedError('server-messages.errors.invalid-password');
+      throw new TranslatedError('AUTH_ERROR_INVALID_PASSWORD');
     }
 
     await this.queries.updateUser(userId, { totpEnabled: false, totpSecret: null });
@@ -203,24 +203,24 @@ export class AuthServiceClass {
     const operators = await this.queries.getOperators();
 
     if (operators.length > 0) {
-      throw new TranslatedError('server-messages.errors.admin-already-exists');
+      throw new TranslatedError('AUTH_ERROR_ADMIN_ALREADY_EXISTS');
     }
 
     const { password, username } = input;
     const email = username.trim().toLowerCase();
 
     if (!username || !password) {
-      throw new TranslatedError('server-messages.errors.missing-email-or-password');
+      throw new TranslatedError('AUTH_ERROR_MISSING_EMAIL_OR_PASSWORD');
     }
 
     if (username.length < 3 || !validator.isEmail(email)) {
-      throw new TranslatedError('server-messages.errors.invalid-username');
+      throw new TranslatedError('AUTH_ERROR_INVALID_USERNAME');
     }
 
     const user = await this.queries.getUserByUsername(email);
 
     if (user) {
-      throw new TranslatedError('server-messages.errors.user-already-exists');
+      throw new TranslatedError('AUTH_ERROR_USER_ALREADY_EXISTS');
     }
 
     const hash = await argon2.hash(password);
@@ -228,7 +228,7 @@ export class AuthServiceClass {
     const newUser = await this.queries.createUser({ username: email, password: hash, operator: true, locale: getLocaleFromString(input.locale) });
 
     if (!newUser) {
-      throw new TranslatedError('server-messages.errors.error-creating-user');
+      throw new TranslatedError('AUTH_ERROR_ERROR_CREATING_USER');
     }
 
     const sessionId = uuidv4();
@@ -285,7 +285,7 @@ export class AuthServiceClass {
    */
   public changeOperatorPassword = async (params: { newPassword: string }) => {
     if (!AuthServiceClass.checkPasswordChangeRequest()) {
-      throw new TranslatedError('server-messages.errors.no-change-password-request');
+      throw new TranslatedError('AUTH_ERROR_NO_CHANGE_PASSWORD_REQUEST');
     }
 
     const { newPassword } = params;
@@ -293,7 +293,7 @@ export class AuthServiceClass {
     const user = await this.queries.getFirstOperator();
 
     if (!user) {
-      throw new TranslatedError('server-messages.errors.operator-not-found');
+      throw new TranslatedError('AUTH_ERROR_OPERATOR_NOT_FOUND');
     }
 
     const hash = await argon2.hash(newPassword);
@@ -352,7 +352,7 @@ export class AuthServiceClass {
 
   public changePassword = async (params: { currentPassword: string; newPassword: string; userId: number }) => {
     if (TipiConfig.getConfig().demoMode) {
-      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
+      throw new TranslatedError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
 
     const { currentPassword, newPassword, userId } = params;
@@ -360,17 +360,17 @@ export class AuthServiceClass {
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new TranslatedError('server-messages.errors.user-not-found');
+      throw new TranslatedError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
     const valid = await argon2.verify(user.password, currentPassword);
 
     if (!valid) {
-      throw new TranslatedError('server-messages.errors.invalid-password');
+      throw new TranslatedError('AUTH_ERROR_INVALID_PASSWORD');
     }
 
     if (newPassword.length < 8) {
-      throw new TranslatedError('server-messages.errors.invalid-password-length');
+      throw new TranslatedError('AUTH_ERROR_INVALID_PASSWORD_LENGTH');
     }
 
     const hash = await argon2.hash(newPassword);
@@ -384,7 +384,7 @@ export class AuthServiceClass {
 
   public changeUsername = async (params: { newUsername: string; password: string; userId: number }) => {
     if (TipiConfig.getConfig().demoMode) {
-      throw new TranslatedError('server-messages.errors.not-allowed-in-demo');
+      throw new TranslatedError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
 
     const { newUsername, password, userId } = params;
@@ -392,25 +392,25 @@ export class AuthServiceClass {
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new TranslatedError('server-messages.errors.user-not-found');
+      throw new TranslatedError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
     const valid = await argon2.verify(user.password, password);
 
     if (!valid) {
-      throw new TranslatedError('server-messages.errors.invalid-password');
+      throw new TranslatedError('AUTH_ERROR_INVALID_PASSWORD');
     }
 
     const email = newUsername.trim().toLowerCase();
 
     if (!validator.isEmail(email)) {
-      throw new TranslatedError('server-messages.errors.invalid-username');
+      throw new TranslatedError('AUTH_ERROR_INVALID_USERNAME');
     }
 
     const existingUser = await this.queries.getUserByUsername(email);
 
     if (existingUser) {
-      throw new TranslatedError('server-messages.errors.user-already-exists');
+      throw new TranslatedError('AUTH_ERROR_USER_ALREADY_EXISTS');
     }
 
     await this.queries.updateUser(user.id, { username: email });
@@ -434,13 +434,13 @@ export class AuthServiceClass {
     const isLocaleValid = Locales.includes(locale);
 
     if (!isLocaleValid) {
-      throw new TranslatedError('server-messages.errors.invalid-locale');
+      throw new TranslatedError('SERVER_ERROR_INVALID_LOCALE');
     }
 
     const user = await this.queries.getUserById(userId);
 
     if (!user) {
-      throw new TranslatedError('server-messages.errors.user-not-found');
+      throw new TranslatedError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
     await this.queries.updateUser(user.id, { locale });

@@ -80,34 +80,34 @@ export const AppActions: React.FC<IProps> = ({
   onUpdateSettings,
 }) => {
   const { info } = app;
-  const t = useTranslations('apps.app-details');
+  const t = useTranslations();
   const hasSettings = Object.keys(info.form_fields).length > 0 || info.exposable;
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
 
   const buttons: JSX.Element[] = [];
 
-  const StartButton = <ActionButton key="start" IconComponent={IconPlayerPlay} onClick={onStart} title={t('actions.start')} color="success" />;
-  const RemoveButton = <ActionButton key="remove" IconComponent={IconTrash} onClick={onUninstall} title={t('actions.remove')} color="danger" />;
-  const SettingsButton = <ActionButton key="settings" IconComponent={IconSettings} onClick={onUpdateSettings} title={t('actions.settings')} />;
-  const StopButton = <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={onStop} title={t('actions.stop')} color="danger" />;
-  const LoadingButtion = <ActionButton key="loading" loading color="success" title={t('actions.loading')} />;
-  const CancelButton = <ActionButton key="cancel" IconComponent={IconX} onClick={onCancel} title={t('actions.cancel')} />;
-  const InstallButton = <ActionButton key="install" onClick={onInstall} title={t('actions.install')} color="success" />;
+  const StartButton = <ActionButton key="start" IconComponent={IconPlayerPlay} onClick={onStart} title={t('APP_ACTION_START')} color="success" />;
+  const RemoveButton = <ActionButton key="remove" IconComponent={IconTrash} onClick={onUninstall} title={t('APP_ACTION_REMOVE')} color="danger" />;
+  const SettingsButton = <ActionButton key="settings" IconComponent={IconSettings} onClick={onUpdateSettings} title={t('APP_ACTION_SETTINGS')} />;
+  const StopButton = <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={onStop} title={t('APP_ACTION_STOP')} color="danger" />;
+  const LoadingButtion = <ActionButton key="loading" loading color="success" title={t('APP_ACTION_LOADING')} />;
+  const CancelButton = <ActionButton key="cancel" IconComponent={IconX} onClick={onCancel} title={t('APP_ACTION_CANCEL')} />;
+  const InstallButton = <ActionButton key="install" onClick={onInstall} title={t('APP_ACTION_INSTALL')} color="success" />;
   const UpdateButton = (
-    <ActionButton key="update" IconComponent={IconDownload} onClick={onUpdate} width={null} title={t('actions.update')} color="success" />
+    <ActionButton key="update" IconComponent={IconDownload} onClick={onUpdate} width={null} title={t('APP_ACTION_UPDATE')} color="success" />
   );
 
   const OpenButton = (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button width={140} className={clsx('me-2 px-4 mt-2')}>
-          {t('actions.open')}
+          {t('APP_ACTION_OPEN')}
           <IconExternalLink className="ms-1" size={14} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>{t('choose-open-method')}</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('APP_DETAILS_CHOOSE_OPEN_METHOD')}</DropdownMenuLabel>
         <DropdownMenuGroup>
           {app.exposed && app.domain && (
             <DropdownMenuItem onClick={() => onOpen('domain')}>

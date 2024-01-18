@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
 
   return {
-    title: `${translator('apps.my-apps.title')} - Tipi`,
+    title: `${translator('MY_APPS_TITLE')} - Tipi`,
   };
 }
 
@@ -36,7 +36,9 @@ export default async function Page() {
 
   return (
     <>
-      {installedApps.length === 0 && <EmptyPage title="apps.my-apps.empty-title" subtitle="apps.my-apps.empty-subtitle" redirectPath="/app-store" actionLabel="apps.my-apps.empty-action" />}
+      {installedApps.length === 0 && (
+        <EmptyPage title="MY_APPS_EMPTY_TITLE" subtitle="MY_APPS_EMPTY_SUBTITLE" redirectPath="/app-store" actionLabel="MY_APPS_EMPTY_ACTION" />
+      )}
       <div className="row row-cards " data-testid="apps-list">
         {installedApps?.map(renderApp)}
       </div>
