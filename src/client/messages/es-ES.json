@@ -25,6 +25,7 @@
       "app-failed-to-stop": "No se pudo detener la aplicación {id}, consulta los registros para obtener más detalles",
       "app-failed-to-uninstall": "No se pudo desinstalar la aplicación {id}, consulta los registros para obtener más detalles",
       "app-failed-to-update": "No se pudo actualizar la aplicación {id}, consulta los registros para obtener más detalles",
+      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
       "domain-required-if-expose-app": "Necesitas un dominio si la aplicación está expuesta",
       "domain-not-valid": "El dominio {domain} no es un dominio válido",
       "invalid-config": "La aplicación {id} tiene un archivo config.json inválido",
@@ -108,6 +109,7 @@
   "apps": {
     "status-running": "En ejecución",
     "status-stopped": "Detenido",
+    "status-resetting": "Resetting",
     "status-starting": "Iniciando",
     "status-stopping": "Deteniendo",
     "status-updating": "Actualizando",
@@ -115,11 +117,19 @@
     "status-installing": "Instalando",
     "status-uninstalling": "Desinstalando",
     "update-available": "Actualización disponible",
+    "deprecated": "This app is deprecated",
     "my-apps": {
       "title": "Mis aplicaciones",
       "empty-title": "No hay aplicaciones instaladas",
       "empty-subtitle": "Instala una aplicación desde la tienda de aplicaciones para empezar",
-      "empty-action": "Ir a la tienda de aplicaciones"
+      "empty-action": "Ir a la tienda de aplicaciones",
+      "update-all-form": {
+        "title": "Update all apps",
+        "subtitle1": "Do you want to update all your apps to the latest version?",
+        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
+        "submit": "Update all",
+        "in-progress": "Updating all apps"
+      }
     },
     "app-store": {
       "title": "Tienda de aplicaciones",
@@ -136,6 +146,7 @@
       "start-success": "Aplicación iniciada correctamente",
       "update-config-success": "La configuración de la aplicación se ha actualizado correctamente. Reinicie la aplicación para aplicar los cambios",
       "version": "Versión",
+      "reset-success": "App {id} reset successfully",
       "description": "Descripción",
       "base-info": "Info básica",
       "source-code": "Código fuente",
@@ -146,6 +157,8 @@
       "website": "Página web",
       "supported-arch": "Arquitecturas soportadas",
       "choose-open-method": "Elija el método abierto",
+      "deprecated-alert-title": "This app is deprecated",
+      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
       "categories": {
         "data": "Datos",
         "network": "Red",
@@ -177,11 +190,13 @@
       "install-form": {
         "title": "Instalar {name}",
         "expose-app": "Exponer aplicación",
+        "display-on-guest-dashboard": "Display on guest dashboard",
         "domain-name": "Nombre de dominio",
         "domain-name-hint": "Asegúrese de que este dominio exacto contiene un registro apuntando a su IP.",
         "choose-option": "Elige una opción...",
         "sumbit-install": "Instalar",
         "submit-update": "Actualizar",
+        "reset": "Reset app",
         "errors": {
           "required": "{label} es obligatorio",
           "regex": "{label} debe coincidir con el patrón {pattern}",
@@ -206,6 +221,12 @@
         "subtitle": "Todos los datos de esta aplicación se perderán.",
         "warning": "Estás seguro? Esta acción no se puede deshacer.",
         "submit": "Desinstalar"
+      },
+      "reset-app-form": {
+        "title": "Reset {name} ?",
+        "subtitle": "All data for this app will be lost.",
+        "warning": "Are you sure? This action cannot be undone.",
+        "submit": "Reset"
       },
       "update-form": {
         "title": "Actualizar {name}?",
@@ -239,6 +260,12 @@
       "invalid-ip": "Dirección IP no válida",
       "invalid-url": "URL no válida",
       "invalid-domain": "Dominio no válido",
+      "guest-dashboard": "Enable guest dashboard",
+      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-error-monitoring": "Allow anonymous error monitoring",
+      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
+      "allow-auto-themes": "Allow auto themes",
+      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "Nombre de dominio",
       "domain-name-hint": "Asegúrate de que este dominio exacto contiene un registro A apuntando a tu IP.",
       "dns-ip": "IP de DNS",
@@ -281,6 +308,18 @@
         "confirm-password": "Confirma tu nueva contraseña",
         "change-password": "Cambiar contraseña",
         "password": "Contraseña"
+      },
+      "change-username": {
+        "title": "Change username",
+        "subtitle": "Changing your username will log you out of all devices.",
+        "success": "Username changed successfully",
+        "form": {
+          "new-username": "New username",
+          "invalid-username": "Must be a valid email address",
+          "password": "Password",
+          "password-needed-hint": "Your password is required to change your username.",
+          "submit": "Change username"
+        }
       }
     }
   },
@@ -291,10 +330,15 @@
     "app-store": "Tienda de aplicaciones",
     "settings": "Configuración",
     "logout": "Cerrar sesión",
+    "login": "Login",
     "dark-mode": "Modo oscuro",
     "light-mode": "Modo Claro",
     "sponsor": "Patrocinador",
     "source-code": "Código fuente",
     "update-available": "Actualización disponible"
-  }
+  },
+  "runtipi": "Runtipi",
+  "guest-dashboard": "Guest dashboard",
+  "guest-dashboard-no-apps": "No apps to display",
+  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
 }
