@@ -25,7 +25,7 @@
       "app-failed-to-stop": "Не удалось остановить приложение {id}. См. подробности в логах",
       "app-failed-to-uninstall": "Не удалось удалить приложение {id}. См. подробности в логах",
       "app-failed-to-update": "Не удалось обновить приложение {id}. См. подробности в логах",
-      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
+      "app-failed-to-reset": "Не удалось сбросить приложение {id}. См. подробности в логах",
       "domain-required-if-expose-app": "Доменное имя обязательно, если указан внешний доступ",
       "domain-not-valid": "Домен {domain} недопустим",
       "invalid-config": "Неправильный файл config.json для приложения {id}",
@@ -109,7 +109,7 @@
   "apps": {
     "status-running": "Выполняется",
     "status-stopped": "Остановлено",
-    "status-resetting": "Resetting",
+    "status-resetting": "Сбрасывается",
     "status-starting": "Запускается",
     "status-stopping": "Останавливается",
     "status-updating": "Обновляется",
@@ -117,18 +117,18 @@
     "status-installing": "Устанавливается",
     "status-uninstalling": "Удаляется",
     "update-available": "Доступно обновление",
-    "deprecated": "This app is deprecated",
+    "deprecated": "Это приложение устарело",
     "my-apps": {
       "title": "Мои приложения",
       "empty-title": "Нет установленных приложений",
       "empty-subtitle": "Установите приложение из магазина приложений для начала работы",
       "empty-action": "Перейти в магазин приложений",
       "update-all-form": {
-        "title": "Update all apps",
-        "subtitle1": "Do you want to update all your apps to the latest version?",
-        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
-        "submit": "Update all",
-        "in-progress": "Updating all apps"
+        "title": "Обновить все приложения",
+        "subtitle1": "Вы хотите обновить все ваши приложения до последней версии?",
+        "subtitle2": "Обновление всех приложений до последней версии. Убедитесь, что вы прочитали заметки о выпуске и сохранили резервную копию данных приложения.",
+        "submit": "Обновить все",
+        "in-progress": "Обновление всех приложений"
       }
     },
     "app-store": {
@@ -146,7 +146,7 @@
       "start-success": "Приложение успешно запущено",
       "update-config-success": "Настройки приложения успешно обновлены. Перезапустите приложение, чтобы применить изменения",
       "version": "Версия",
-      "reset-success": "App {id} reset successfully",
+      "reset-success": "Приложение {id} успешно сброшено",
       "description": "Описание",
       "base-info": "Основная информация",
       "source-code": "Исходный код",
@@ -157,8 +157,8 @@
       "website": "Сайт",
       "supported-arch": "Поддерживаемые архитектуры",
       "choose-open-method": "Выберите способ открытия",
-      "deprecated-alert-title": "This app is deprecated",
-      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
+      "deprecated-alert-title": "Это приложение устарело",
+      "deprecated-alert-subtitle": "Неудачное изменение в этом приложении не позволяет его обновить. Вы все еще можете использовать эту версию и обновлять ее вручную, но рекомендуется переключиться на более новую версию и перенести данные. Обновленная версия находится в магазине приложений под тем же названием.",
       "categories": {
         "data": "Данные",
         "network": "Сеть",
@@ -190,13 +190,13 @@
       "install-form": {
         "title": "Установить {name}",
         "expose-app": "Открыть доступ к приложению по доменному имени",
-        "display-on-guest-dashboard": "Display on guest dashboard",
+        "display-on-guest-dashboard": "Показывать на гостевой панели",
         "domain-name": "Доменное имя",
         "domain-name-hint": "Убедитесь, что этот конкретный домен содержит запись A, указывающую на ваш IP.",
         "choose-option": "Выберите вариант...",
         "sumbit-install": "Установить",
         "submit-update": "Обновить",
-        "reset": "Reset app",
+        "reset": "Сбросить приложение",
         "errors": {
           "required": "Требуется {label}",
           "regex": "Поле {label} должно совпадать с шаблоном {pattern}",
@@ -223,10 +223,10 @@
         "submit": "Удалить"
       },
       "reset-app-form": {
-        "title": "Reset {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Reset"
+        "title": "Сбросить {name}?",
+        "subtitle": "Все данные этого приложения будут потеряны.",
+        "warning": "Вы уверены? Это действие нельзя отменить.",
+        "submit": "Сбросить"
       },
       "update-form": {
         "title": "Обновить {name}?",
@@ -260,12 +260,12 @@
       "invalid-ip": "Недопустимый IP-адрес",
       "invalid-url": "Недопустимый URL",
       "invalid-domain": "Недопустимый домен",
-      "guest-dashboard": "Enable guest dashboard",
-      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
-      "allow-error-monitoring": "Allow anonymous error monitoring",
-      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
-      "allow-auto-themes": "Allow auto themes",
-      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
+      "guest-dashboard": "Включить гостевую панель",
+      "guest-dashboard-hint": "Это позволит неавторизованным пользователям увидеть ограниченную панель управления и легко получить доступ к запущенным приложениям вашего экземпляра.",
+      "allow-error-monitoring": "Разрешить анонимный сбор ошибок",
+      "allow-error-monitoring-hint": "Сбор ошибок используется для отслеживания ошибок и улучшения Tipi. Сохраните эту опцию, чтобы помочь нам улучшить Tipi.",
+      "allow-auto-themes": "Разрешить автоматическую смену тем",
+      "allow-auto-themes-hint": "Будьте удивлены темами, которые меняются автоматически по времени года.",
       "domain-name": "Доменное имя",
       "domain-name-hint": "Убедитесь, что этот конкретный домен содержит запись A, указывающую на ваш IP.",
       "dns-ip": "IP-адрес DNS",
@@ -310,27 +310,27 @@
         "password": "Пароль"
       },
       "change-username": {
-        "title": "Change username",
-        "subtitle": "Changing your username will log you out of all devices.",
-        "success": "Username changed successfully",
+        "title": "Изменить логин",
+        "subtitle": "Изменение логина приведет к выходу из учетной записи на всех устройствах.",
+        "success": "Логин успешно изменен",
         "form": {
-          "new-username": "New username",
-          "invalid-username": "Must be a valid email address",
-          "password": "Password",
-          "password-needed-hint": "Your password is required to change your username.",
-          "submit": "Change username"
+          "new-username": "Новый логин",
+          "invalid-username": "Должен быть действительный email",
+          "password": "Пароль",
+          "password-needed-hint": "Для смены логина требуется пароль.",
+          "submit": "Изменить логин"
         }
       }
     }
   },
   "header": {
     "dashboard": "Обзор",
-    "apps": "My Apps",
+    "apps": "Мои приложения",
     "my-apps": "Мои приложения",
     "app-store": "Магазин приложений",
     "settings": "Настройки",
     "logout": "Выйти",
-    "login": "Login",
+    "login": "Войти",
     "dark-mode": "Темный режим",
     "light-mode": "Светлый режим",
     "sponsor": "Спонсировать",
@@ -338,7 +338,7 @@
     "update-available": "Доступно обновление"
   },
   "runtipi": "Runtipi",
-  "guest-dashboard": "Guest dashboard",
-  "guest-dashboard-no-apps": "No apps to display",
-  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
+  "guest-dashboard": "Гостевая панель",
+  "guest-dashboard-no-apps": "Нет приложений",
+  "guest-dashboard-no-apps-subtitle": "Попросите администратора добавить приложения на гостевую панель или войдите в систему, чтобы увидеть ваши приложения."
 }
