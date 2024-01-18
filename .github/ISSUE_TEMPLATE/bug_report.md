@@ -9,6 +9,7 @@ assignees: meienberger
 
 ### Checklist
 Before opening your issue be sure to have completed all those tasks.
+- [ ] My issue is not related to an app I installed through tipi (If so please open your issue here: https://github.com/runtipi/runtipi-appstore/issues)
 - [ ] I have searched for an already existing issue with similar context and errors. My issue has not yet been reported.
 - [ ] I have included a clear description and steps to reproduce.
 - [ ] I have included logs from the file `runtipi/logs/error.log` if relevant
