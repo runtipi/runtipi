@@ -59,7 +59,7 @@
       "cancel": "Cancel password change request",
       "instructions": "Run this command on your server and then refresh this page",
       "success-title": "Password reset",
-      "success": "Your password has been reset. You can now login with your new password. And your email {email}",
+      "success": "Your password has been reset. You can now log in with your new password. And your email {email}",
       "back-to-login": "Back to login"
     },
     "form": {
