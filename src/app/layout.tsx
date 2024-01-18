@@ -4,7 +4,6 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { GeistSans } from 'geist/font/sans';
 import merge from 'lodash.merge';
-import { NextIntlClientProvider } from 'next-intl';
 import { TipiConfig } from '@/server/core/TipiConfig';
 
 import './global.css';
@@ -31,15 +30,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} className={clsx(GeistSans.className, 'border-top-wide border-primary')}>
-      <NextIntlClientProvider locale={locale} messages={mergedMessages}>
-        <ClientProviders initialTheme={theme?.value} cookies={cookies().getAll()}>
-          <body data-bs-theme={theme?.value}>
-            <input type="hidden" value={JSON.stringify(clientSettings)} id="client-settings" />
-            {children}
-            <Toaster />
-          </body>
-        </ClientProviders>
-      </NextIntlClientProvider>
+      <ClientProviders messages={mergedMessages} locale={locale} initialTheme={theme?.value} cookies={cookies().getAll()}>
+        <body data-bs-theme={theme?.value}>
+          <input type="hidden" value={JSON.stringify(clientSettings)} id="client-settings" />
+          {children}
+          <Toaster />
+        </body>
+      </ClientProviders>
     </html>
   );
 }

@@ -3,6 +3,7 @@
   "version": "2.5.0",
   "description": "A homeserver for everyone",
   "scripts": {
+    "clean-containers": "docker rm -f $(docker ps -a -q)",
     "knip": "knip",
     "test": "dotenv -e .env.test -- jest --colors",
     "test:e2e": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test",
