@@ -25,7 +25,7 @@
       "app-failed-to-stop": "Impossible d'arrêter l'application {id}, voir les logs pour plus de détails",
       "app-failed-to-uninstall": "Impossible de désinstaller l'application {id}, voir les logs pour plus de détails",
       "app-failed-to-update": "Impossible de mettre à jour l'application {id}, voir les logs pour plus de détails",
-      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
+      "app-failed-to-reset": "Impossible de réinitialiser l'application {id}, voir les logs pour plus de détails",
       "domain-required-if-expose-app": "Le domaine est requis si l'application est exposée",
       "domain-not-valid": "Le domaine {domain} n'est pas un domaine valide",
       "invalid-config": "L'application {id} a un fichier config.json invalide",
@@ -109,7 +109,7 @@
   "apps": {
     "status-running": "En cours d'exécution",
     "status-stopped": "Arrêté",
-    "status-resetting": "Resetting",
+    "status-resetting": "Réinitialisation",
     "status-starting": "Démarrage en cours",
     "status-stopping": "Arrêt en cours",
     "status-updating": "Mise à jour en cours",
@@ -117,18 +117,18 @@
     "status-installing": "Installation en cours",
     "status-uninstalling": "Désinstallation en cours",
     "update-available": "Mise à jour disponible",
-    "deprecated": "This app is deprecated",
+    "deprecated": "Cette application est obsolète",
     "my-apps": {
       "title": "Mes applications",
       "empty-title": "Aucune application installée",
       "empty-subtitle": "Installez une application depuis l'app store pour commencer",
       "empty-action": "Accéder à l'App Store",
       "update-all-form": {
-        "title": "Update all apps",
-        "subtitle1": "Do you want to update all your apps to the latest version?",
-        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
-        "submit": "Update all",
-        "in-progress": "Updating all apps"
+        "title": "Mettre à jour toutes les apps",
+        "subtitle1": "Voulez-vous mettre à jour toutes vos applications vers la dernière version ?",
+        "subtitle2": "Ceci mettra à jour toutes vos applications vers la dernière version. Assurez-vous que vous avez lu les notes de version des applications et que vous avez sauvegardé les données de vos applications.",
+        "submit": "Tout mettre à jour",
+        "in-progress": "Mise à jour de toutes les applications"
       }
     },
     "app-store": {
@@ -146,7 +146,7 @@
       "start-success": "Application démarrée avec succès",
       "update-config-success": "Configuration de l'application mise à jour avec succès. Redémarrez l'application pour appliquer les modifications",
       "version": "Version",
-      "reset-success": "App {id} reset successfully",
+      "reset-success": "Application {id} réinitialisée avec succès",
       "description": "Description",
       "base-info": "Informations de base",
       "source-code": "Code source",
@@ -157,8 +157,8 @@
       "website": "Site Web",
       "supported-arch": "Architectures supportées",
       "choose-open-method": "Mode d'ouverture",
-      "deprecated-alert-title": "This app is deprecated",
-      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
+      "deprecated-alert-title": "Cette application est obsolète",
+      "deprecated-alert-subtitle": "Une modification de cette application empêche sa mise à jour automatique. Vous pouvez toujours utiliser cette version et la mettre à jour manuellement, mais il est recommandé de passer à une nouvelle version et de migrer vos données. Vous pouvez trouver une version mise à jour dans l'App Store sous le même nom.",
       "categories": {
         "data": "Données",
         "network": "Réseau",
@@ -190,13 +190,13 @@
       "install-form": {
         "title": "Installer {name}",
         "expose-app": "Exposer l'application",
-        "display-on-guest-dashboard": "Display on guest dashboard",
+        "display-on-guest-dashboard": "Afficher sur le tableau de bord des invités",
         "domain-name": "Nom de domaine",
         "domain-name-hint": "Assurez-vous que ce domaine exact contient un enregistrement A pointant vers votre IP.",
         "choose-option": "Choisissez une option...",
         "sumbit-install": "Installer",
         "submit-update": "Mettre à jour",
-        "reset": "Reset app",
+        "reset": "Réinitialiser l’application",
         "errors": {
           "required": "{label} est obligatoire",
           "regex": "{label} doit correspondre à la règle {pattern}",
@@ -223,10 +223,10 @@
         "submit": "Désinstaller"
       },
       "reset-app-form": {
-        "title": "Reset {name} ?",
-        "subtitle": "All data for this app will be lost.",
-        "warning": "Are you sure? This action cannot be undone.",
-        "submit": "Reset"
+        "title": "Réinitialiser {name} ?",
+        "subtitle": "Toutes les données de cette application seront perdues.",
+        "warning": "Êtes-vous sûr ? Cette action ne peut pas être annulée.",
+        "submit": "Réinitialiser"
       },
       "update-form": {
         "title": "Mettre à jour {name}?",
@@ -260,12 +260,12 @@
       "invalid-ip": "Adresse IP invalide",
       "invalid-url": "URL invalide",
       "invalid-domain": "Domaine non valide",
-      "guest-dashboard": "Enable guest dashboard",
-      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
-      "allow-error-monitoring": "Allow anonymous error monitoring",
-      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
-      "allow-auto-themes": "Allow auto themes",
-      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
+      "guest-dashboard": "Activer le tableau de bord invité",
+      "guest-dashboard-hint": "Cela permettra aux utilisateurs non authentifiés de voir un tableau de bord limité et d'accéder facilement aux applications en cours d'exécution sur votre instance.",
+      "allow-error-monitoring": "Autoriser le suivi anonyme des erreurs",
+      "allow-error-monitoring-hint": "La surveillance des erreurs est utilisée pour suivre les erreurs et améliorer Tipi. Gardez cette option activée pour nous aider à améliorer Tipi.",
+      "allow-auto-themes": "Autoriser les thèmes automatiques",
+      "allow-auto-themes-hint": "Soyez surpris par les thèmes qui changent automatiquement en fonction de la période de l'année.",
       "domain-name": "Nom de domaine",
       "domain-name-hint": "Assurez-vous que ce domaine exact contient un enregistrement A pointant vers votre IP.",
       "dns-ip": "IP DNS",
@@ -310,15 +310,15 @@
         "password": "Mot de passe"
       },
       "change-username": {
-        "title": "Change username",
-        "subtitle": "Changing your username will log you out of all devices.",
-        "success": "Username changed successfully",
+        "title": "Changer de nom d'utilisateur",
+        "subtitle": "Changer votre nom d'utilisateur vous déconnectera de tous les appareils.",
+        "success": "Nom d'utilisateur modifié avec succès",
         "form": {
-          "new-username": "New username",
-          "invalid-username": "Must be a valid email address",
-          "password": "Password",
-          "password-needed-hint": "Your password is required to change your username.",
-          "submit": "Change username"
+          "new-username": "Nouveau nom d'utilisateur",
+          "invalid-username": "Doit être une adresse e-mail valide",
+          "password": "Mot de passe",
+          "password-needed-hint": "Votre mot de passe est requis pour changer votre nom d'utilisateur.",
+          "submit": "Changer de nom d'utilisateur"
         }
       }
     }
@@ -330,7 +330,7 @@
     "app-store": "App Store",
     "settings": "Paramètres",
     "logout": "Déconnexion",
-    "login": "Login",
+    "login": "Connexion",
     "dark-mode": "Mode sombre",
     "light-mode": "Mode clair",
     "sponsor": "Sponsor",
@@ -338,7 +338,7 @@
     "update-available": "Mise à jour disponible"
   },
   "runtipi": "Runtipi",
-  "guest-dashboard": "Guest dashboard",
-  "guest-dashboard-no-apps": "No apps to display",
-  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
+  "guest-dashboard": "Tableau de bord invité",
+  "guest-dashboard-no-apps": "Aucune application à afficher",
+  "guest-dashboard-no-apps-subtitle": "Demandez à votre administrateur d'ajouter des applications au tableau de bord invité ou connectez-vous pour voir vos applications."
 }
