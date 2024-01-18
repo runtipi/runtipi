@@ -25,6 +25,7 @@
       "app-failed-to-stop": "Nem sikerült leállítani az {id} alkalmazást. További részletekért tekintse meg a naplókat",
       "app-failed-to-uninstall": "Nem sikerült eltávolítani az {id} alkalmazást. További részletekért tekintse meg a naplókat",
       "app-failed-to-update": "Nem sikerült frissíteni az {id} alkalmazást. További részletekért tekintse meg a naplókat",
+      "app-failed-to-reset": "Failed to reset app {id}, see logs for more details",
       "domain-required-if-expose-app": "Domain szükséges, ha az alkalmazás exponálva van",
       "domain-not-valid": "A(z) {domain} domain nem érvényes domain",
       "invalid-config": "A(z) {id} alkalmazás érvénytelen config.json fájlt tartalmaz",
@@ -108,6 +109,7 @@
   "apps": {
     "status-running": "Fut",
     "status-stopped": "Megállítva",
+    "status-resetting": "Resetting",
     "status-starting": "Indítás",
     "status-stopping": "Leállítás",
     "status-updating": "Frissítés",
@@ -115,11 +117,19 @@
     "status-installing": "Telepítés folyamatban",
     "status-uninstalling": "Eltávolítás",
     "update-available": "Frissítés elérhető",
+    "deprecated": "This app is deprecated",
     "my-apps": {
       "title": "Alkalmazásaim",
       "empty-title": "Nincsenek alkalmazások telepítve",
       "empty-subtitle": "Telepítsen egy alkalmazást az Alkalmazásboltból az induláshoz",
-      "empty-action": "Ugrás az Alkalmazásboltba"
+      "empty-action": "Ugrás az Alkalmazásboltba",
+      "update-all-form": {
+        "title": "Update all apps",
+        "subtitle1": "Do you want to update all your apps to the latest version?",
+        "subtitle2": "This will update all your apps to the latest version. Make sure you've read the release notes of the apps and you've backed up your app data.",
+        "submit": "Update all",
+        "in-progress": "Updating all apps"
+      }
     },
     "app-store": {
       "title": "Alkalmazásbolt",
@@ -136,6 +146,7 @@
       "start-success": "Az alkalmazás sikeresen elindítva",
       "update-config-success": "Az alkalmazás konfigurációja sikeresen frissült. Indítsa újra az alkalmazást a módosítások alkalmazásához",
       "version": "Verzió",
+      "reset-success": "App {id} reset successfully",
       "description": "Leírás",
       "base-info": "Alapinformáció",
       "source-code": "Forráskód",
@@ -146,6 +157,8 @@
       "website": "Weboldal",
       "supported-arch": "Támogatott architektúrák",
       "choose-open-method": "Válassza a nyitott módszert",
+      "deprecated-alert-title": "This app is deprecated",
+      "deprecated-alert-subtitle": "A breaking change in this app prevents it from being updated automatically. You can still use this version and update it manually, but it is recommended to switch to a newer version and migrate your data. You can find an updated version in the app store under the same name.",
       "categories": {
         "data": "Adat",
         "network": "Hálózat",
@@ -177,11 +190,13 @@
       "install-form": {
         "title": "{name} telepítése",
         "expose-app": "Tegye ki az alkalmazást",
+        "display-on-guest-dashboard": "Display on guest dashboard",
         "domain-name": "Domain név",
         "domain-name-hint": "Győződjön meg arról, hogy ez a domain tartalmaz egy A rekordot, amely az Ön IP-jére mutat.",
         "choose-option": "Válasszon egy lehetőséget...",
         "sumbit-install": "Telepítés",
         "submit-update": "Frissítés",
+        "reset": "Reset app",
         "errors": {
           "required": "{label} megadása kötelező",
           "regex": "{label} meg kell egyeznie a mintával {pattern}",
@@ -206,6 +221,12 @@
         "subtitle": "Az alkalmazás összes adata elveszik.",
         "warning": "Biztos benne? Ezt a műveletet nem lehet visszavonni.",
         "submit": "Eltávolit"
+      },
+      "reset-app-form": {
+        "title": "Reset {name} ?",
+        "subtitle": "All data for this app will be lost.",
+        "warning": "Are you sure? This action cannot be undone.",
+        "submit": "Reset"
       },
       "update-form": {
         "title": "Frissíti {name} ?",
@@ -239,6 +260,12 @@
       "invalid-ip": "Érvénytelen IP-cím",
       "invalid-url": "Érvénytelen URL",
       "invalid-domain": "Érvénytelen domain név",
+      "guest-dashboard": "Enable guest dashboard",
+      "guest-dashboard-hint": "This will allow non-authenticated users to see a limited dashboard and easily access the running apps on your instance.",
+      "allow-error-monitoring": "Allow anonymous error monitoring",
+      "allow-error-monitoring-hint": "Error monitoring is used to track errors and improve Tipi. Keep this option enabled to help us improve Tipi.",
+      "allow-auto-themes": "Allow auto themes",
+      "allow-auto-themes-hint": "Be surprised by themes that change automatically based on the time of the year.",
       "domain-name": "Domain név",
       "domain-name-hint": "Győződjön meg arról, hogy ez a domain tartalmaz egy A rekordot, amely az Ön IP-jére mutat.",
       "dns-ip": "DNS IP címe",
@@ -281,6 +308,18 @@
         "confirm-password": "Új jelszó megerősítése",
         "change-password": "Jelszó módosítása",
         "password": "Jelszó"
+      },
+      "change-username": {
+        "title": "Change username",
+        "subtitle": "Changing your username will log you out of all devices.",
+        "success": "Username changed successfully",
+        "form": {
+          "new-username": "New username",
+          "invalid-username": "Must be a valid email address",
+          "password": "Password",
+          "password-needed-hint": "Your password is required to change your username.",
+          "submit": "Change username"
+        }
       }
     }
   },
@@ -291,10 +330,15 @@
     "app-store": "Alkalmazásbolt",
     "settings": "Beállítások",
     "logout": "Kijelentkezés",
+    "login": "Login",
     "dark-mode": "Sötét mód",
     "light-mode": "Világos mód",
     "sponsor": "Szponzor",
     "source-code": "Forráskód",
     "update-available": "Frissítés érhető el"
-  }
+  },
+  "runtipi": "Runtipi",
+  "guest-dashboard": "Guest dashboard",
+  "guest-dashboard-no-apps": "No apps to display",
+  "guest-dashboard-no-apps-subtitle": "Ask your administrator to add apps to the guest dashboard or login to see your apps."
 }
