@@ -49,9 +49,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: true });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true })).rejects.toThrowError(
-      'server-messages.errors.domain-required-if-expose-app',
-    );
+    await expect(AppsService.installApp(appConfig.id, { exposed: true })).rejects.toThrowError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
   });
 
   it('Should throw if app is exposed and config does not allow it', async () => {
@@ -59,9 +57,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: false });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError(
-      'server-messages.errors.app-not-exposable',
-    );
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError('APP_ERROR_APP_NOT_EXPOSABLE');
   });
 
   it('Should throw if app is exposed and domain is not valid', async () => {
@@ -69,9 +65,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: true });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError(
-      'server-messages.errors.domain-not-valid',
-    );
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError('APP_ERROR_DOMAIN_NOT_VALID');
   });
 
   it('Should throw if app is exposed and domain is already used by another exposed app', async () => {
@@ -82,9 +76,7 @@ describe('Install app', () => {
     await insertApp({ domain, exposed: true }, appConfig2, db);
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain })).rejects.toThrowError(
-      'server-messages.errors.domain-already-in-use',
-    );
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain })).rejects.toThrowError('APP_ERROR_DOMAIN_ALREADY_IN_USE');
   });
 
   it('Should throw if architecure is not supported', async () => {
@@ -142,19 +134,19 @@ describe('Install app', () => {
 describe('Uninstall app', () => {
   it('Should throw if app is not installed', async () => {
     // act & assert
-    await expect(AppsService.uninstallApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
+    await expect(AppsService.uninstallApp('any')).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
   });
 });
 
 describe('Start app', () => {
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.startApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
+    await expect(AppsService.startApp('any')).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
   });
 });
 
 describe('Stop app', () => {
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.stopApp('any')).rejects.toThrowError('server-messages.errors.app-not-found');
+    await expect(AppsService.stopApp('any')).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
   });
 });
 
@@ -175,7 +167,7 @@ describe('Update app config', () => {
   });
 
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('server-messages.errors.app-not-found');
+    await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
@@ -184,7 +176,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true })).rejects.toThrowError('server-messages.errors.domain-required-if-expose-app');
+    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true })).rejects.toThrowError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
   });
 
   it('Should throw if app is exposed and domain is not valid', async () => {
@@ -193,9 +185,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError(
-      'server-messages.errors.domain-not-valid',
-    );
+    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError('APP_ERROR_DOMAIN_NOT_VALID');
   });
 
   it.skip('Should throw if app is exposed and domain is already used', async () => {
@@ -207,9 +197,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig2, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appConfig2.id, { exposed: true, domain })).rejects.toThrowError(
-      'server-messages.errors.domain-already-in-use',
-    );
+    await expect(AppsService.updateAppConfig(appConfig2.id, { exposed: true, domain })).rejects.toThrowError('APP_ERROR_DOMAIN_ALREADY_IN_USE');
   });
 
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
@@ -218,7 +206,7 @@ describe('Update app config', () => {
     await insertApp({ exposed: true }, appConfig, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appConfig.id, {})).rejects.toThrowError('server-messages.errors.app-force-exposed');
+    await expect(AppsService.updateAppConfig(appConfig.id, {})).rejects.toThrowError('APP_ERROR_APP_FORCE_EXPOSED');
   });
 
   it('Should throw if app is exposed and config does not allow it', async () => {
@@ -228,7 +216,7 @@ describe('Update app config', () => {
 
     // act & assert
     await expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError(
-      'server-messages.errors.app-not-exposable',
+      'APP_ERROR_APP_NOT_EXPOSABLE',
     );
   });
 });
@@ -342,7 +330,7 @@ describe('List apps', () => {
 
 describe('Update app', () => {
   it("Should throw if app doesn't exist", async () => {
-    await expect(AppsService.updateApp('test-app2')).rejects.toThrow('server-messages.errors.app-not-found');
+    await expect(AppsService.updateApp('test-app2')).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 
   it('Should comme back to the previous status before the update of the app', async () => {
