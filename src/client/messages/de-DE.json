@@ -34,8 +34,8 @@
       "domain-already-in-use": "Die Domain {domain} ist bereits in Verwendung von der App {id}",
       "could-not-get-latest-version": "Konnte aktuellste Version nicht abfragen",
       "current-version-is-latest": "Die aktuelle Version ist bereits auf dem neuesten Stand",
-      "major-version-update": "The major version has changed. Please update manually (instructions in release notes)",
-      "demo-mode-limit": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one."
+      "major-version-update": "Die Hauptversion hat sich geändert. Bitte aktualisieren Sie manuell. (Anleitung auf GitHub)",
+      "demo-mode-limit": "Im Demo-Modus können nur 6 Apps installiert werden. Bitte deinstallieren Sie eine andere App, um eine neue zu installieren."
     },
     "success": {}
   },
