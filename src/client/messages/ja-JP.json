@@ -255,13 +255,13 @@
   "SETTINGS_SECURITY_PASSWORD_CHANGE_SUCCESS": "パスワードが正常に変更されました",
   "SETTINGS_SECURITY_PASSWORD_NEEDED": "パスワードが必要です",
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "二段階認証の設定を変更するにはパスワードが必要です。",
-  "SETTINGS_SECURITY_SCAN_QR_CODE": "Scan this QR code with your authenticator app.",
-  "SETTINGS_SECURITY_TAB_TITLE": "Security",
-  "SETTINGS_TITLE": "Settings",
-  "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Could not get latest version",
-  "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Current version is already up to date",
-  "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one.",
-  "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "The major version has changed. Please update manually (instructions in release notes)",
+  "SETTINGS_SECURITY_SCAN_QR_CODE": "認証アプリでQRコードをスキャンして下さい。",
+  "SETTINGS_SECURITY_TAB_TITLE": "セキュリティ",
+  "SETTINGS_TITLE": "設定",
+  "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "最新バージョンを取得できませんでした",
+  "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "現在のバージョンは既に最新です",
+  "SYSTEM_ERROR_DEMO_MODE_LIMIT": "デモモードには、6つのアプリのみインストールできます。新しいアプリをインストールするには、他のアプリをアンインストールしてください。",
+  "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "メジャーバージョンが変更されました。リリースノートの手順に従って、手動で更新してください。",
   "apps": {
     "app-details": {
       "actions": {
