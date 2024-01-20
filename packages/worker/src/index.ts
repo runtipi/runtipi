@@ -1,6 +1,5 @@
 import { SystemEvent } from '@runtipi/shared';
 
-import http from 'node:http';
 import path from 'node:path';
 import Redis from 'ioredis';
 import dotenv from 'dotenv';
@@ -8,12 +7,15 @@ import { Queue } from 'bullmq';
 import * as Sentry from '@sentry/node';
 import { cleanseErrorData } from '@runtipi/shared/src/helpers/error-helpers';
 import { ExtraErrorData } from '@sentry/integrations';
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
 import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
 import { AppExecutors, RepoExecutors, SystemExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
+import { setupRoutes } from './api';
 
 const rootFolder = '/app';
 const envFile = path.join(rootFolder, '.env');
@@ -109,18 +111,12 @@ const main = async () => {
     logger.info('Starting all apps...');
     appExecutor.startAllApps();
 
-    const server = http.createServer((req, res) => {
-      if (req.url === '/healthcheck') {
-        res.writeHead(200);
-        res.end('OK');
-      } else {
-        res.writeHead(404);
-        res.end('Not Found');
-      }
-    });
-
-    server.listen(3000, () => {
+    const app = new Hono().basePath('/api');
+    serve(app, (info) => {
       startWorker();
+
+      setupRoutes(app);
+      logger.info(`Listening on http://localhost:${info.port}`);
     });
   } catch (e) {
     Sentry.captureException(e);
