@@ -2,7 +2,6 @@
 /* eslint-disable no-restricted-syntax */
 import fs from 'fs';
 import path from 'path';
-import pg from 'pg';
 import * as Sentry from '@sentry/node';
 import { execAsync, pathExists } from '@runtipi/shared';
 import { SocketEvent } from '@runtipi/shared/src/schemas/socket';
@@ -12,22 +11,7 @@ import { compose } from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
 import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
 import { SocketManager } from '@/lib/socket/SocketManager';
-
-const getDbClient = async () => {
-  const { postgresHost, postgresDatabase, postgresUsername, postgresPassword, postgresPort } = getEnv();
-
-  const client = new pg.Client({
-    host: postgresHost,
-    database: postgresDatabase,
-    user: postgresUsername,
-    password: postgresPassword,
-    port: Number(postgresPort),
-  });
-
-  await client.connect();
-
-  return client;
-};
+import { getDbClient } from '@/lib/db';
 
 export class AppExecutors {
   private readonly logger;
@@ -172,6 +156,7 @@ export class AppExecutors {
    * @param {Record<string, unknown>} config - The config of the app
    */
   public stopApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
+    const client = await getDbClient();
     try {
       const { appDirPath } = this.getAppPaths(appId);
       const configJsonPath = path.join(appDirPath, 'config.json');
@@ -196,13 +181,17 @@ export class AppExecutors {
 
       SocketManager.emit({ type: 'app', event: 'stop_success', data: { appId } });
 
+      await client.query('UPDATE app SET status = $1 WHERE id = $2', ['stopped', appId]);
       return { success: true, message: `App ${appId} stopped successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'stop_error');
+    } finally {
+      await client.end();
     }
   };
 
   public startApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
+    const client = await getDbClient();
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
@@ -228,13 +217,17 @@ export class AppExecutors {
 
       SocketManager.emit({ type: 'app', event: 'start_success', data: { appId } });
 
+      await client.query('UPDATE app SET status = $1 WHERE id = $2', ['running', appId]);
       return { success: true, message: `App ${appId} started successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'start_error');
+    } finally {
+      await client.end();
     }
   };
 
   public uninstallApp = async (appId: string, config: Record<string, unknown>) => {
+    const client = await getDbClient();
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
@@ -268,13 +261,17 @@ export class AppExecutors {
 
       SocketManager.emit({ type: 'app', event: 'uninstall_success', data: { appId } });
 
+      await client.query(`DELETE FROM app WHERE id = $1`, [appId]);
       return { success: true, message: `App ${appId} uninstalled successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'uninstall_error');
+    } finally {
+      await client.end();
     }
   };
 
   public resetApp = async (appId: string, config: Record<string, unknown>) => {
+    const client = await getDbClient();
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
@@ -321,9 +318,12 @@ export class AppExecutors {
 
       SocketManager.emit({ type: 'app', event: 'reset_success', data: { appId } });
 
+      await client.query(`UPDATE app SET status = $1 WHERE id = $2`, ['running', appId]);
       return { success: true, message: `App ${appId} reset successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'reset_error');
+    } finally {
+      await client.end();
     }
   };
 
@@ -362,12 +362,21 @@ export class AppExecutors {
   /**
    * Start all apps with status running
    */
-  public startAllApps = async () => {
+  public startAllApps = async (forceStartAll = false) => {
     const client = await getDbClient();
 
     try {
-      // Get all apps with status running
-      const { rows } = await client.query(`SELECT * FROM app WHERE status = 'running'`);
+      let rows: { id: string; config: Record<string, unknown> }[] = [];
+
+      if (!forceStartAll) {
+        // Get all apps with status running
+        const result = await client.query(`SELECT * FROM app WHERE status = 'running'`);
+        rows = result.rows;
+      } else {
+        // Get all apps
+        const result = await client.query(`SELECT * FROM app`);
+        rows = result.rows;
+      }
 
       // Update all apps with status different than running or stopped to stopped
       await client.query(`UPDATE app SET status = 'stopped' WHERE status != 'stopped' AND status != 'running' AND status != 'missing'`);
@@ -380,9 +389,9 @@ export class AppExecutors {
 
         if (!success) {
           this.logger.error(`Error starting app ${id}`);
-          await client.query(`UPDATE app SET status = 'stopped' WHERE id = '${id}'`);
+          await client.query(`UPDATE app SET status = $1 WHERE id = $2`, ['stopped', id]);
         } else {
-          await client.query(`UPDATE app SET status = 'running' WHERE id = '${id}'`);
+          await client.query(`UPDATE app SET status = $1 WHERE id = $2`, ['running', id]);
         }
       }
     } catch (err) {
