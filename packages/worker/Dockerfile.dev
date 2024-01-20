@@ -40,7 +40,6 @@ COPY ./packages ./packages
 
 RUN pnpm install -r --prefer-offline 
 
-USER 1000:1000
 
 CMD ["pnpm", "--filter", "@runtipi/worker", "-r", "dev"]
 

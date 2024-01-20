@@ -33,7 +33,7 @@ services:
       - ./traefik/shared:/shared
     networks:
       - tipi_main_network
-      - socket_proxy 
+      - socket_proxy
 
   tipi-db:
     container_name: tipi-db
@@ -78,7 +78,7 @@ services:
     image: ghcr.io/runtipi/worker:${TIPI_VERSION}
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/healthcheck']
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/healthcheck']
       interval: 5s
       timeout: 10s
       retries: 120
@@ -117,28 +117,50 @@ services:
       traefik.enable: true
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
       traefik.http.services.worker.loadbalancer.server.port: 3001
+      traefik.http.services.api.loadbalancer.server.port: 3000
       # Local ip
       traefik.http.routers.worker.rule: PathPrefix("/worker")
       traefik.http.routers.worker.service: worker
       traefik.http.routers.worker.entrypoints: web
-      # Websecure
+      traefik.http.routers.api.rule: PathPrefix("/api")
+      traefik.http.routers.api.service: api
+      traefik.http.routers.api.entrypoints: web
+      # Web
       traefik.http.routers.worker-insecure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker`)
       traefik.http.routers.worker-insecure.service: worker
       traefik.http.routers.worker-insecure.entrypoints: web
       traefik.http.routers.worker-insecure.middlewares: redirect-to-https
+      traefik.http.routers.api-insecure.rule: Host(`${DOMAIN}`) && PathPrefix(`/api`)
+      traefik.http.routers.api-insecure.service: api
+      traefik.http.routers.api-insecure.entrypoints: web
+      traefik.http.routers.api-insecure.middlewares: redirect-to-https
+      # Websecure
       traefik.http.routers.worker-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker`)
       traefik.http.routers.worker-secure.service: worker
       traefik.http.routers.worker-secure.entrypoints: websecure
       traefik.http.routers.worker-secure.tls.certresolver: myresolver
+      traefik.http.routers.api-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/api`)
+      traefik.http.routers.api-secure.service: api
+      traefik.http.routers.api-secure.entrypoints: websecure
+      traefik.http.routers.api-secure.tls.certresolver: myresolver
       # Local domain
       traefik.http.routers.worker-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix(`/worker`)
       traefik.http.routers.worker-local-insecure.entrypoints: web
       traefik.http.routers.worker-local-insecure.service: worker
       traefik.http.routers.worker-local-insecure.middlewares: redirect-to-https
+      traefik.http.routers.api-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix(`/api`)
+      traefik.http.routers.api-local-insecure.entrypoints: web
+      traefik.http.routers.api-local-insecure.service: api
+      traefik.http.routers.api-local-insecure.middlewares: redirect-to-https
+      # Local domain secure
       traefik.http.routers.worker-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix(`/worker`)
       traefik.http.routers.worker-local.entrypoints: websecure
       traefik.http.routers.worker-local.tls: true
       traefik.http.routers.worker-local.service: worker
+      traefik.http.routers.api-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix(`/api`)
+      traefik.http.routers.api-local.entrypoints: websecure
+      traefik.http.routers.api-local.tls: true
+      traefik.http.routers.api-local.service: api
 
   tipi-dashboard:
     image: ghcr.io/runtipi/runtipi:${TIPI_VERSION}
@@ -200,4 +222,3 @@ networks:
     name: runtipi_tipi_main_network
   socket_proxy:
     name: runtipi_socket_proxy
-

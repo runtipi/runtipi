@@ -25,6 +25,4 @@ COPY ./sentry.client.config.ts ./sentry.client.config.ts
 COPY ./sentry.edge.config.ts ./sentry.edge.config.ts
 COPY ./sentry.server.config.ts ./sentry.server.config.ts
 
-USER 1000:1000
-
 CMD ["npm", "run", "dev"]
