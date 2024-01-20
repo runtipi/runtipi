@@ -34,7 +34,7 @@
     "@runtipi/shared": "workspace:^",
     "@sentry/esbuild-plugin": "^2.10.2",
     "@sentry/integrations": "^7.92.0",
-    "@sentry/node": "^7.92.0",
+    "@sentry/node": "^7.94.1",
     "bullmq": "^4.13.0",
     "dotenv": "^16.3.1",
     "hono": "^3.12.2",
