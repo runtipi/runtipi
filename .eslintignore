@@ -7,3 +7,4 @@ repos/
 .next/
 app-data/
 apps/
+package.json
