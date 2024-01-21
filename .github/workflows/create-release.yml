@@ -1,0 +1,41 @@
+name: Create release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version to release (v1.0.0, v1.0.1, ...)'
+        required: true
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download CLI form release on runtipi/cli repo
+        run: |
+          REPO="runtipi/cli"
+          VERSION="${{ inputs.version }}"
+
+          ASSETS_URL=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/releases/tags/$VERSION" \
+            | jq -r '.assets[] | select(.name | test("runtipi-cli.+")) | .url') 
+
+          for url in $ASSETS_URL; do
+            curl -L -o "${url##*/}" -H "Accept: application/octet-stream" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$url"
+          done
+
+      - name: Create alpha release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          body: |
+            **${{ inputs.version }}**
+          tag_name: ${{ inputs.version }}
+          name: ${{ inputs.version }}
+          draft: false
+          prerelease: true
+          files: runtipi-cli-*

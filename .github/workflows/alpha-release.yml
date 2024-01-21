@@ -97,64 +97,51 @@ jobs:
     runs-on: ubuntu-latest
     needs: create-tag
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Dispatch an action and get the run ID
+        uses: codex-/return-dispatch@v1
+        id: return_dispatch
         with:
-          node-version: 20
+          token: ${{ secrets.PAT_CLI }}
+          ref: main
+          repo: cli
+          owner: runtipi
+          workflow: build.yml
+          workflow_inputs: '{ "version": "${{ needs.create-tag.outputs.tagname }}" }'
 
-      - uses: pnpm/action-setup@v2.4.0
-        name: Install pnpm
-        id: pnpm-install
+      - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
+        uses: Codex-/await-remote-run@v1.0.0
         with:
-          version: 8
-          run_install: false
+          token: ${{ secrets.PAT_CLI }}
+          repo: cli
+          owner: runtipi
+          run_id: ${{ steps.return_dispatch.outputs.run_id }}
+          run_timeout_seconds: 300
+          poll_interval_ms: 5000
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Set version
-        run: pnpm -r --filter cli set-version ${{ needs.create-tag.outputs.tagname }}
-
-      - name: Build CLI
-        run: pnpm -r --filter cli package
-
-      - name: Upload CLI
-        uses: actions/upload-artifact@v4
-        with:
-          name: cli
-          path: packages/cli/dist
-
-  publish-release:
+  create-release:
     runs-on: ubuntu-latest
-    needs: [create-tag, build-images, build-cli, build-worker]
-
+    needs: [build-worker, build-images, build-cli, create-tag]
     steps:
-      - name: Download CLI
-        uses: actions/download-artifact@v4
-        with:
-          name: cli
-          path: cli
-
-      - name: Rename CLI
+      - name: Download CLI form release on runtipi/cli repo
         run: |
-          mv cli/bin/cli-x64 ./runtipi-cli-linux-x64
-          mv cli/bin/cli-arm64 ./runtipi-cli-linux-arm64
+          REPO="runtipi/cli"
+          VERSION="${{ needs.create-tag.outputs.tagname }}"
+
+          ASSETS_URL=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/releases/tags/$VERSION" \
+            | jq -r '.assets[] | select(.name | test("runtipi-cli.+")) | .browser_download_url')
+
+          echo "Assets URL: $ASSETS_URL"
+
+          for url in $ASSETS_URL; do
+            echo "Downloading from $url"
+            curl -L -o "${url##*/}" -H "Accept: application/octet-stream" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$url"
+          done
+
+      - name: List files
+        run: tree .
 
       - name: Create alpha release
         id: create_release
@@ -168,6 +155,21 @@ jobs:
           name: ${{ needs.create-tag.outputs.tagname }}
           draft: false
           prerelease: true
-          files: |
-            runtipi-cli-linux-x64
-            runtipi-cli-linux-arm64
+          files: runtipi-cli-*
+
+  teardown:
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: [create-tag, build-images, build-worker, build-cli, create-release]
+    steps:
+      - name: Delete tag
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tag = '${{ needs.create-tag.outputs.tagname }}';
+            github.rest.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `tags/${tag}`
+            });
