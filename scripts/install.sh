@@ -59,7 +59,7 @@ function install_generic() {
   elif [[ "${os}" == "fedora" ]]; then
     sudo dnf -y install "${dependency}"
     return 0
-  elif [[ "${os}" == "arch" ]]; then
+  elif [[ "${os}" == "arch" || "${os}" == "manjaro" ]]; then
     if ! sudo pacman -Sy --noconfirm "${dependency}" ; then
       if command -v yay > /dev/null 2>&1 ; then
         sudo -u $SUDO_USER yay -Sy --noconfirm "${dependency}"
@@ -116,7 +116,7 @@ function install_docker() {
     sudo systemctl start docker
     sudo systemctl enable docker
     return 0
-  elif [[ "${os}" == "arch" ]]; then
+  elif [[ "${os}" == "arch" || "${os}" == "manjaro" ]]; then
     sudo pacman -Sy --noconfirm docker docker-compose
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
