@@ -51,7 +51,7 @@
     "argon2": "^0.31.2",
     "bullmq": "^4.13.0",
     "clsx": "^2.1.0",
-    "connect-redis": "^7.1.0",
+    "connect-redis": "^7.1.1",
     "drizzle-orm": "^0.29.3",
     "fs-extra": "^11.1.1",
     "geist": "^1.2.0",
