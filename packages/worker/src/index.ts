@@ -111,7 +111,7 @@ const main = async () => {
     logger.info('Starting all apps...');
     appExecutor.startAllApps();
 
-    const app = new Hono().basePath('/api');
+    const app = new Hono().basePath('/worker-api');
     serve(app, (info) => {
       startWorker();
 

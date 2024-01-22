@@ -80,7 +80,7 @@ services:
       dockerfile: ./packages/worker/Dockerfile.dev
     container_name: tipi-worker
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/healthcheck']
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/worker-api/healthcheck']
       interval: 5s
       timeout: 10s
       retries: 120
@@ -117,32 +117,32 @@ services:
     labels:
       traefik.enable: true
       traefik.http.services.worker.loadbalancer.server.port: 3001
-      traefik.http.services.api.loadbalancer.server.port: 3000
+      traefik.http.services.worker-api.loadbalancer.server.port: 3000
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
       # Local ip
       traefik.http.routers.worker.rule: PathPrefix("/worker")
       traefik.http.routers.worker.service: worker
       traefik.http.routers.worker.entrypoints: web
-      traefik.http.routers.api.rule: PathPrefix("/api")
-      traefik.http.routers.api.service: api
-      traefik.http.routers.api.entrypoints: web
+      traefik.http.routers.worker-api.rule: PathPrefix("/worker-api")
+      traefik.http.routers.worker-api.service: worker-api
+      traefik.http.routers.worker-api.entrypoints: web
       # Local domain
       traefik.http.routers.worker-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker")
       traefik.http.routers.worker-local-insecure.entrypoints: web
       traefik.http.routers.worker-local-insecure.service: worker
       traefik.http.routers.worker-local-insecure.middlewares: redirect-to-https
-      traefik.http.routers.api-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/api")
-      traefik.http.routers.api-local-insecure.entrypoints: web
-      traefik.http.routers.api-local-insecure.service: api
-      traefik.http.routers.api-local-insecure.middlewares: redirect-to-https
+      traefik.http.routers.worker-api-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker-api")
+      traefik.http.routers.worker-api-local-insecure.entrypoints: web
+      traefik.http.routers.worker-api-local-insecure.service: worker-api
+      traefik.http.routers.worker-api-local-insecure.middlewares: redirect-to-https
       # secure
       traefik.http.routers.worker-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker")
       traefik.http.routers.worker-local.entrypoints: websecure
       traefik.http.routers.worker-local.tls: true
       traefik.http.routers.worker-local.service: worker
-      traefik.http.routers.api-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/api")
-      traefik.http.routers.api-local.entrypoints: websecure
-      traefik.http.routers.api-local.tls: true
+      traefik.http.routers.worker-api-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker-api")
+      traefik.http.routers.worker-api-local.entrypoints: websecure
+      traefik.http.routers.worker-api-local.tls: true
 
   tipi-dashboard:
     build:
