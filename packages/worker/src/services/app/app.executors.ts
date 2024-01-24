@@ -74,6 +74,7 @@ export class AppExecutors {
       throw new Error(stderr);
     }
 
+    logger.info(`Script output: ${stdout}`);
     return { stdout, stderr };
   };
 
