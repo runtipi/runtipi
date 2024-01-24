@@ -148,7 +148,7 @@ export class AppExecutors {
       });
 
       // Check if pre-install script exists
-      const preInstall = path.join(appDirPath + 'pre-install.sh');
+      const preInstall = path.join(appDirPath, 'pre-install.sh');
       if (await pathExists(preInstall)) {
         this.logger.info(`Running pre-install script for app ${appId}`);
         await this.runScript(preInstall);
@@ -161,7 +161,7 @@ export class AppExecutors {
       this.logger.info(`Docker-compose up for app ${appId} finished`);
 
       // Check if post-install script exists
-      const postInstall = path.join(appDirPath + 'post-install.sh');
+      const postInstall = path.join(appDirPath, 'post-install.sh');
       if (await pathExists(postInstall)) {
         this.logger.info(`Running post-install script for app ${appId}`);
         await this.runScript(postInstall);
@@ -202,7 +202,7 @@ export class AppExecutors {
       }
 
       // Check if start-stop script exists
-      const startStop = path.join(appDirPath + 'start-stop.sh');
+      const startStop = path.join(appDirPath, 'start-stop.sh');
       if (await pathExists(startStop)) {
         this.logger.info(`Running start-stop script for app ${appId}`);
         await this.runScript(startStop);
@@ -240,7 +240,7 @@ export class AppExecutors {
       }
 
       // Check if start-stop script exists
-      const startStop = path.join(appDirPath + 'start-stop.sh');
+      const startStop = path.join(appDirPath, 'start-stop.sh');
       if (await pathExists(startStop)) {
         this.logger.info(`Running start-stop script for app ${appId}`);
         await this.runScript(startStop);
@@ -279,7 +279,7 @@ export class AppExecutors {
       await generateEnvFile(appId, config);
 
       // Check if pre-uninstall script exists
-      const preUninstall = path.join(appDirPath + 'pre-uninstall.sh');
+      const preUninstall = path.join(appDirPath, 'pre-uninstall.sh');
       if (await pathExists(preUninstall)) {
         this.logger.info(`Running pre-uninstall script for app ${appId}`);
         await this.runScript(preUninstall);
@@ -306,7 +306,7 @@ export class AppExecutors {
       });
 
       // Check if post-uninstall script exists
-      const postUninstall = path.join(appDirPath + 'post-uninstall.sh');
+      const postUninstall = path.join(appDirPath, 'post-uninstall.sh');
       if (await pathExists(postUninstall)) {
         this.logger.info(`Running post-uninstall script for app ${appId}`);
         await this.runScript(postUninstall);
@@ -330,10 +330,17 @@ export class AppExecutors {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
-      const { appDataDirPath } = this.getAppPaths(appId);
+      const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
+      const startStop = path.join(appDirPath, 'start-stop.sh');
       this.logger.info(`Resetting app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
+
+      // Check if start-stop script exists
+      if (await pathExists(startStop)) {
+        this.logger.info(`Running start-stop script for app ${appId}`);
+        await this.runScript(startStop);
+      }
 
       // Stop app
       try {
@@ -367,6 +374,12 @@ export class AppExecutors {
         this.logger.error(`Error setting permissions for app ${appId}`);
       });
 
+      // Check if start-stop script exists
+      if (await pathExists(startStop)) {
+        this.logger.info(`Running start-stop script for app ${appId}`);
+        await this.runScript(startStop);
+      }
+
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up -d');
@@ -390,6 +403,13 @@ export class AppExecutors {
       this.logger.info(`Updating app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
+
+      // Check if start-stop script exists
+      const startStop = path.join(appDirPath, 'start-stop.sh');
+      if (await pathExists(startStop)) {
+        this.logger.info(`Running start-stop script for app ${appId}`);
+        await this.runScript(startStop);
+      }
 
       try {
         await compose(appId, 'up --detach --force-recreate --remove-orphans');
