@@ -262,6 +262,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Son versiyon zaten yüklü",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Demo modunda yalnızca 6 uygulama yüklenebilir. Yeni bir uygulama yüklemek için lütfen başka bir uygulamayı kaldırın.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Ana sürüm değişti. Lütfen manuel olarak güncelleyin (sürüm notlarındaki talimatlar)",
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "apps": {
     "app-details": {
       "actions": {
