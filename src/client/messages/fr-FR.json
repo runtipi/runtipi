@@ -262,6 +262,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "La version actuelle est déjà à jour",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Seulement 6 applications peuvent être installées en mode démo. Veuillez désinstaller une autre application pour en installer une nouvelle.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "La version majeure a changé. Veuillez mettre à jour manuellement (instructions dans les notes de version)",
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "apps": {
     "app-details": {
       "actions": {
