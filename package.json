@@ -75,7 +75,7 @@
     "rehype-raw": "^7.0.0",
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.0",
-    "sass": "^1.69.5",
+    "sass": "^1.70.0",
     "semver": "^7.5.4",
     "sharp": "0.32.6",
     "socket.io-client": "^4.7.3",
