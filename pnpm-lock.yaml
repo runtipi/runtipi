@@ -60,8 +60,8 @@ importers:
         specifier: ^0.31.2
         version: 0.31.2
       bullmq:
-        specifier: ^4.13.0
-        version: 4.13.0
+        specifier: ^5.1.5
+        version: 5.1.5
       clsx:
         specifier: ^2.1.0
         version: 2.1.0
@@ -349,8 +349,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1
       bullmq:
-        specifier: ^4.13.0
-        version: 4.13.0
+        specifier: ^5.1.5
+        version: 5.1.5
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
@@ -456,8 +456,8 @@ importers:
         specifier: ^7.94.1
         version: 7.94.1
       bullmq:
-        specifier: ^4.13.0
-        version: 4.13.0
+        specifier: ^5.1.5
+        version: 5.1.5
       dotenv:
         specifier: ^16.3.1
         version: 16.3.1
@@ -2154,7 +2154,7 @@ packages:
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
       '@npmcli/name-from-folder': 2.0.0
-      glob: 10.3.3
+      glob: 10.3.10
       minimatch: 9.0.3
       read-package-json-fast: 3.0.2
     dev: true
@@ -2169,7 +2169,7 @@ packages:
     engines: {node: ^16.14.0 || >=18.0.0}
     dependencies:
       '@npmcli/git': 5.0.3
-      glob: 10.3.3
+      glob: 10.3.10
       hosted-git-info: 7.0.1
       json-parse-even-better-errors: 3.0.0
       normalize-package-data: 6.0.0
@@ -4933,8 +4933,8 @@ packages:
       semver: 7.5.4
     dev: true
 
-  /bullmq@4.13.0:
-    resolution: {integrity: sha512-aB6j9X/4Z+H2wxHWaHMeMP8jqsgSYMFQxoupRrkrwfrcfIRuSUm3yc1A8zl5RqS2ck5meRgEet/Uf4wc/8YvRQ==}
+  /bullmq@5.1.5:
+    resolution: {integrity: sha512-Rc9QGHrj/wJ8RMENKa839o1pJmdicg7KBTfmVU8YqYuEK2JcMSJaKMg2XrAi7sdYSawgOJgC/kiW9fCGYEj6Yg==}
     dependencies:
       cron-parser: 4.8.1
       glob: 8.1.0
@@ -6927,18 +6927,6 @@ packages:
       path-scurry: 1.10.1
     dev: true
 
-  /glob@10.3.3:
-    resolution: {integrity: sha512-92vPiMb/iqpmEgsOoIDvTjc50wf9CCCvMzsi6W0JLPeUKE8TWP1a73PgqSrqy7iAZxaSD1YdzU7QZR5LF51MJw==}
-    engines: {node: '>=16 || 14 >=14.17'}
-    hasBin: true
-    dependencies:
-      foreground-child: 3.1.1
-      jackspeak: 2.3.0
-      minimatch: 9.0.3
-      minipass: 7.0.3
-      path-scurry: 1.10.1
-    dev: true
-
   /glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
     dependencies:
@@ -7776,15 +7764,6 @@ packages:
       has-symbols: 1.0.3
       reflect.getprototypeof: 1.0.4
       set-function-name: 2.0.1
-    dev: true
-
-  /jackspeak@2.3.0:
-    resolution: {integrity: sha512-uKmsITSsF4rUWQHzqaRUuyAir3fZfW3f202Ee34lz/gZCi970CPZwyQXLGNgWJvvZbvFyzeyGq0+4fcG/mBKZg==}
-    engines: {node: '>=14'}
-    dependencies:
-      '@isaacs/cliui': 8.0.2
-    optionalDependencies:
-      '@pkgjs/parseargs': 0.11.0
     dev: true
 
   /jackspeak@2.3.6:

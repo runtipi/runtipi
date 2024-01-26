@@ -35,7 +35,7 @@
     "@runtipi/shared": "workspace:^",
     "@sentry/integrations": "^7.94.1",
     "@sentry/node": "^7.94.1",
-    "bullmq": "^4.13.0",
+    "bullmq": "^5.1.5",
     "dotenv": "^16.3.1",
     "hono": "^3.12.2",
     "ioredis": "^5.3.2",
