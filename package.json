@@ -53,7 +53,7 @@
     "clsx": "^2.1.0",
     "connect-redis": "^7.1.1",
     "drizzle-orm": "^0.29.3",
-    "fs-extra": "^11.1.1",
+    "fs-extra": "^11.2.0",
     "geist": "^1.2.0",
     "let-it-go": "^1.0.0",
     "lodash.merge": "^4.6.2",
