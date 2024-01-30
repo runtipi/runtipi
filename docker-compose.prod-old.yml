@@ -21,6 +21,7 @@ services:
     container_name: tipi-reverse-proxy
     depends_on:
       - tipi-docker-proxy
+      - tipi-dashboard
     image: traefik:v2.11
     restart: unless-stopped
     ports:
@@ -73,14 +74,14 @@ services:
     networks:
       - tipi_main_network
 
-  runtipi:
+  tipi-worker:
     build:
       context: .
-      dockerfile: Dockerfile.combined
+      dockerfile: ./packages/worker/Dockerfile
       args:
         - SENTRY_DISABLE_AUTO_UPLOAD=true
         - TIPI_VERSION=0.0.0
-    container_name: runtipi
+    container_name: tipi-worker
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/worker-api/healthcheck']
       interval: 5s
@@ -92,7 +93,7 @@ services:
         condition: service_healthy
       tipi-redis:
         condition: service_healthy
-      tipi-reverse-proxy:
+      tipi-docker-proxy:
         condition: service_started
     env_file:
       - .env
@@ -100,11 +101,6 @@ services:
       NODE_ENV: production
       TIPI_VERSION: 0.0.0
       DOCKER_HOST: tcp://tipi-docker-proxy:2375
-    networks:
-      - tipi_main_network
-      - socket_proxy
-    ports:
-      - 3000:3000
     volumes:
       - /proc:/host/proc
       - ./.env:/app/.env
@@ -113,17 +109,17 @@ services:
       - ./apps:/app/apps
       - ./logs:/app/logs
       - ./traefik:/app/traefik
+      - ./user-config:/app/user-config
       - ${STORAGE_PATH:-.}:/storage
+    networks:
+      - tipi_main_network
+      - socket_proxy
     labels:
       traefik.enable: true
-      traefik.http.services.dashboard.loadbalancer.server.port: 3000
-      traefik.http.services.worker.loadbalancer.server.port: 5001
-      traefik.http.services.worker-api.loadbalancer.server.port: 5000
+      traefik.http.services.worker.loadbalancer.server.port: 3001
+      traefik.http.services.worker-api.loadbalancer.server.port: 3000
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
       # Local ip
-      traefik.http.routers.dashboard.rule: PathPrefix("/")
-      traefik.http.routers.dashboard.service: dashboard
-      traefik.http.routers.dashboard.entrypoints: web
       traefik.http.routers.worker.rule: PathPrefix("/worker")
       traefik.http.routers.worker.service: worker
       traefik.http.routers.worker.entrypoints: web
@@ -131,10 +127,6 @@ services:
       traefik.http.routers.worker-api.service: worker-api
       traefik.http.routers.worker-api.entrypoints: web
       # Local domain
-      traefik.http.routers.dashboard-local-insecure.rule: Host(`${LOCAL_DOMAIN}`)
-      traefik.http.routers.dashboard-local-insecure.entrypoints: web
-      traefik.http.routers.dashboard-local-insecure.service: dashboard
-      traefik.http.routers.dashboard-local-insecure.middlewares: redirect-to-https
       traefik.http.routers.worker-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker")
       traefik.http.routers.worker-local-insecure.entrypoints: web
       traefik.http.routers.worker-local-insecure.service: worker
@@ -144,10 +136,6 @@ services:
       traefik.http.routers.worker-api-local-insecure.service: worker-api
       traefik.http.routers.worker-api-local-insecure.middlewares: redirect-to-https
       # secure
-      traefik.http.routers.dashboard-local.rule: Host(`${LOCAL_DOMAIN}`)
-      traefik.http.routers.dashboard-local.entrypoints: websecure
-      traefik.http.routers.dashboard-local.tls: true
-      traefik.http.routers.dashboard-local.service: dashboard
       traefik.http.routers.worker-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker")
       traefik.http.routers.worker-local.entrypoints: websecure
       traefik.http.routers.worker-local.tls: true
@@ -155,6 +143,57 @@ services:
       traefik.http.routers.worker-api-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker-api")
       traefik.http.routers.worker-api-local.entrypoints: websecure
       traefik.http.routers.worker-api-local.tls: true
+
+  tipi-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SENTRY_DISABLE_AUTO_UPLOAD=true
+        - TIPI_VERSION=0.0.0
+    container_name: tipi-dashboard
+    depends_on:
+      tipi-db:
+        condition: service_healthy
+      tipi-redis:
+        condition: service_healthy
+      tipi-worker:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      TIPI_VERSION: 0.0.0
+    networks:
+      - tipi_main_network
+    ports:
+      - 3000:3000
+    volumes:
+      - ./.env:/runtipi/.env:ro
+      - ./state:/runtipi/state
+      - ./repos:/runtipi/repos:ro
+      - ./apps:/runtipi/apps
+      - ./logs:/app/logs
+      - ./traefik:/runtipi/traefik
+      - ${STORAGE_PATH:-.}:/app/storage
+    labels:
+      traefik.enable: true
+      traefik.http.services.dashboard.loadbalancer.server.port: 3000
+      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
+      # Local ip
+      traefik.http.routers.dashboard.rule: PathPrefix("/")
+      traefik.http.routers.dashboard.service: dashboard
+      traefik.http.routers.dashboard.entrypoints: web
+      # Local domain
+      traefik.http.routers.dashboard-local-insecure.rule: Host(`${LOCAL_DOMAIN}`)
+      traefik.http.routers.dashboard-local-insecure.entrypoints: web
+      traefik.http.routers.dashboard-local-insecure.service: dashboard
+      traefik.http.routers.dashboard-local-insecure.middlewares: redirect-to-https
+      # secure
+      traefik.http.routers.dashboard-local.rule: Host(`${LOCAL_DOMAIN}`)
+      traefik.http.routers.dashboard-local.entrypoints: websecure
+      traefik.http.routers.dashboard-local.tls: true
+      traefik.http.routers.dashboard-local.service: dashboard
 
 networks:
   tipi_main_network:

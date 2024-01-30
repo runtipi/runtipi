@@ -46,7 +46,7 @@ export class SystemServiceClass {
   };
 
   public static systemInfo = () => {
-    const info = systemInfoSchema.safeParse(readJsonFile('/runtipi/state/system-info.json'));
+    const info = systemInfoSchema.safeParse(readJsonFile('/app/state/system-info.json'));
 
     if (!info.success) {
       return { diskUsed: 0, diskSize: 0, percentUsed: 0, cpuLoad: 0, memoryTotal: 0, percentUsedMemory: 0 };
@@ -56,12 +56,12 @@ export class SystemServiceClass {
   };
 
   public static hasSeenWelcome = async () => {
-    return fileExists(`/runtipi/state/seen-welcome`);
+    return fileExists(`/app/state/seen-welcome`);
   };
 
   public static markSeenWelcome = async () => {
     // Create file state/seen-welcome
-    await promises.writeFile(`/runtipi/state/seen-welcome`, '');
+    await promises.writeFile(`/app/state/seen-welcome`, '');
     return true;
   };
 }

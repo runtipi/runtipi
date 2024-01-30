@@ -116,8 +116,8 @@ services:
       - socket_proxy
     labels:
       traefik.enable: true
-      traefik.http.services.worker.loadbalancer.server.port: 3001
-      traefik.http.services.worker-api.loadbalancer.server.port: 3000
+      traefik.http.services.worker.loadbalancer.server.port: 5001
+      traefik.http.services.worker-api.loadbalancer.server.port: 5000
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
       # Local ip
       traefik.http.routers.worker.rule: PathPrefix("/worker")
