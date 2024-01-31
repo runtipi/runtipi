@@ -81,7 +81,7 @@ jobs:
       - name: Run tests
         run: pnpm run test --max-workers ${{ steps.cpu-cores.outputs.count }}
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/lcov.info
@@ -91,7 +91,7 @@ jobs:
         run: pnpm -r test
 
       - name: Upload CLI coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./packages/cli/coverage/lcov.info
