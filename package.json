@@ -60,7 +60,7 @@
     "next": "14.0.4",
     "next-client-cookies": "^1.1.0",
     "next-intl": "^3.4.4",
-    "next-safe-action": "^5.0.2",
+    "next-safe-action": "^6.0.2",
     "pg": "^8.11.3",
     "qrcode.react": "^3.1.0",
     "react": "18.2.0",
