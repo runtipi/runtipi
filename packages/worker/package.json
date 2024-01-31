@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@faker-js/faker": "^8.3.1",
+    "@faker-js/faker": "^8.4.0",
     "@sentry/esbuild-plugin": "^2.10.2",
     "@types/web-push": "^3.6.3",
     "dotenv-cli": "^7.3.0",
