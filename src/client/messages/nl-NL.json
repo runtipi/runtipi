@@ -353,7 +353,7 @@
       "update-config-success": "App config updated successfully. Restart the app to apply the changes",
       "update-form": {
         "submit": "Update",
-        "subtitle1": "Update app to latest verion :",
+        "subtitle1": "Update app to latest version :",
         "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
         "title": "Update {name} ?"
       },

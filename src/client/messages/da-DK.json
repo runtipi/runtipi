@@ -102,7 +102,7 @@
   "APP_UNINSTALL_SUCCESS": "App {id} uninstalled successfully",
   "APP_UPDATE_CONFIG_SUCCESS": "App config updated successfully. Restart the app to apply the changes",
   "APP_UPDATE_FORM_SUBMIT": "Update",
-  "APP_UPDATE_FORM_SUBTITLE_1": "Update app to latest verion :",
+  "APP_UPDATE_FORM_SUBTITLE_1": "Update app to latest version :",
   "APP_UPDATE_FORM_SUBTITLE_2": "Make sure you've read the release notes of the app and you've backed up your app data.",
   "APP_UPDATE_FORM_TITLE": "Update {name} ?",
   "APP_UPDATE_SETTINGS_FORM_TITLE": "Update {name} config",
@@ -353,7 +353,7 @@
       "update-config-success": "App config updated successfully. Restart the app to apply the changes",
       "update-form": {
         "submit": "Update",
-        "subtitle1": "Update app to latest verion :",
+        "subtitle1": "Update app to latest version :",
         "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
         "title": "Update {name} ?"
       },

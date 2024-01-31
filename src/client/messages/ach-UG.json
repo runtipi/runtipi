@@ -208,7 +208,7 @@
       },
       "update-form": {
         "title": "Update {name} ?",
-        "subtitle1": "Update app to latest verion :",
+        "subtitle1": "Update app to latest version :",
         "subtitle2": "This will reset your custom configuration (e.g. changes in docker-compose.yml)",
         "submit": "Update"
       },
