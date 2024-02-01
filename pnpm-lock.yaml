@@ -235,8 +235,8 @@ importers:
         specifier: ^7.5.6
         version: 7.5.6
       '@types/ssh2':
-        specifier: ^1.11.18
-        version: 1.11.18
+        specifier: ^1.11.19
+        version: 1.11.19
       '@types/uuid':
         specifier: ^9.0.8
         version: 9.0.8
@@ -3999,8 +3999,8 @@ packages:
     resolution: {integrity: sha512-dn1l8LaMea/IjDoHNd9J52uBbInB796CDffS6VdIxvqYCPSG0V0DzHp76GpaWnlhg88uYyPbXCDIowa86ybd5A==}
     dev: true
 
-  /@types/ssh2@1.11.18:
-    resolution: {integrity: sha512-7eH4ppQMFlzvn//zhwD54MWaITR1aSc1oFBye9vb76GZ2Y9PSFYdwVIwOlxRXWs5+1hifntXyt+8a6SUbOD7Hg==}
+  /@types/ssh2@1.11.19:
+    resolution: {integrity: sha512-ydbQAqEcdNVy2t1w7dMh6eWMr+iOgtEkqM/3K9RMijMaok/ER7L8GW6PwsOypHCN++M+c8S/UR9SgMqNIFstbA==}
     dependencies:
       '@types/node': 18.19.6
     dev: true
