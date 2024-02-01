@@ -3,7 +3,7 @@
 import React from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { updateSettingsAction } from '@/actions/settings/update-settings';
 import { Locale } from '@/shared/internationalization/locales';
 import { useRouter } from 'next/navigation';

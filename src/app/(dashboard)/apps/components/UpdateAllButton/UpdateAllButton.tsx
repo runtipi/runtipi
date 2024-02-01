@@ -4,7 +4,7 @@ import React from 'react';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/Button';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { updateAllAppsAction } from '@/actions/app-actions/update-all-apps-action';
 import { useTranslations } from 'next-intl';
 import { UpdateAllModal } from '../UpdateAllModal';

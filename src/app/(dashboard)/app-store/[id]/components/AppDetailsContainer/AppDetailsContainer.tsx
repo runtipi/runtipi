@@ -2,7 +2,7 @@ import React from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { installAppAction } from '@/actions/app-actions/install-app-action';
 import { uninstallAppAction } from '@/actions/app-actions/uninstall-app-action';
 import { stopAppAction } from '@/actions/app-actions/stop-app-action';

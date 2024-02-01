@@ -6,7 +6,7 @@ import { getLogo } from '@/lib/themes';
 import { Button } from '@/components/ui/Button';
 import { Switch } from '@/components/ui/Switch';
 import { IconBrandDiscord, IconBrandGithub } from '@tabler/icons-react';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { acknowledgeWelcomeAction } from '@/actions/acknowledge-welcome/acknowledge-welcome';
 import { useRouter } from 'next/navigation';
 

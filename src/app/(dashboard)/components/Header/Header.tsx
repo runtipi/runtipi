@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { Tooltip } from 'react-tooltip';
 import { useTranslations } from 'next-intl';
 import { useUIStore } from '@/client/state/uiStore';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { logoutAction } from '@/actions/logout/logout-action';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';

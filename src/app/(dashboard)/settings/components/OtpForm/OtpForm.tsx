@@ -8,7 +8,7 @@ import { OtpInput } from '@/components/ui/OtpInput';
 import { toast } from 'react-hot-toast';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { useTranslations } from 'next-intl';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { getTotpUriAction } from '@/actions/settings/get-totp-uri';
 import { setupTotpAction } from '@/actions/settings/setup-totp-action';
 import { disableTotpAction } from '@/actions/settings/disable-totp';

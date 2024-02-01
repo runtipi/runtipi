@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { LOCALE_OPTIONS, Locale } from '@/shared/internationalization/locales';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { useRouter } from 'next/navigation';
