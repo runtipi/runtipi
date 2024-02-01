@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { LinkTile } from '@/components/LinkTile/LinkTile';
 import { EmptyPage } from '../../components/EmptyPage';
 import styles from './page.module.css';
-import { AddLinkBtn } from '../components/AddLink/AddLinkButton';
+import { AddLinkButton } from '../components/AddLink/AddLinkButton';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
@@ -49,7 +49,7 @@ export default async function Page() {
         <LinkTile key={link.id} link={link} />
       </Link>
     );
-  }
+  };
 
   return (
     <>
@@ -59,7 +59,7 @@ export default async function Page() {
       <div className="row row-cards " data-testid="apps-list">
         {installedApps?.map(renderApp)}
         {customLinks?.map(renderLink)}
-        <AddLinkBtn />
+        {installedApps.length > 0 ? <AddLinkButton /> : null}
       </div>
     </>
   );

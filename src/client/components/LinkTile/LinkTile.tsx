@@ -1,41 +1,39 @@
 'use client';
 
 import React from 'react';
-import * as ContextMenu from '@radix-ui/react-context-menu';
 import { IconTrash, IconEdit } from '@tabler/icons-react';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
+import { ContextMenu, ContextMenuItem, ContextMenuContent, ContextMenuTrigger } from '@/client/components/ui/ContextMenu/ContextMenu';
 import { AddLinkModal } from 'src/app/(dashboard)/components/AddLink/AddLinkModal';
 import { DeleteLinkModal } from 'src/app/(dashboard)/components/AddLink/DeleteLinkModal';
 import { LinkInfo } from '@runtipi/shared';
 import { Link } from '@/server/db/schema';
 import { useTranslations } from 'next-intl';
 import { AppLogo } from '../AppLogo';
-import './LinkTile.css';
 
 type LinkTileProps = {
   link: Link;
 };
 
-export const LinkTile: React.FC<LinkTileProps> = ({link: { id, title, url, iconUrl }}) => {
+export const LinkTile: React.FC<LinkTileProps> = ({ link: { id, title, url, iconUrl } }) => {
+  const t = useTranslations();
 
-  const t = useTranslations('apps.my-apps.links');
-
-  const link: LinkInfo  = { id, title, url, iconUrl };
+  const link: LinkInfo = { id, title, url, iconUrl };
   const addLinkDisclosure = useDisclosure();
   const deleteLinkDisclosure = useDisclosure();
 
   const handleEdit = () => {
     addLinkDisclosure.open();
-  }
+  };
 
   const handleDelete = () => {
     deleteLinkDisclosure.open();
-  }
+  };
 
   return (
     <>
-      <ContextMenu.Root>
-        <ContextMenu.Trigger>
+      <ContextMenu>
+        <ContextMenuTrigger>
           <div data-testid={`link-tile-${title}`}>
             <div className="card card-sm card-link">
               <div className="card-body">
@@ -52,33 +50,20 @@ export const LinkTile: React.FC<LinkTileProps> = ({link: { id, title, url, iconU
               </div>
             </div>
           </div>
-        </ContextMenu.Trigger>
-
-        <ContextMenu.Portal>
-
-          <ContextMenu.Content className='ContextMenuContent'>
-            <ContextMenu.Item className='ContextMenuItem' onClick={handleEdit}>
-              <IconEdit size={15} className='me-1'/>{t('edit.context-menu')}
-            </ContextMenu.Item>
-
-            <ContextMenu.Item className='ContextMenuItem' onClick={handleDelete}>
-              <IconTrash size={15} className='me-1'/>{t('delete.context-menu')}
-            </ContextMenu.Item>
-          </ContextMenu.Content>
-
-        </ContextMenu.Portal>
-      </ContextMenu.Root>
-
-      <AddLinkModal 
-        isOpen={addLinkDisclosure.isOpen} 
-        onClose={addLinkDisclosure.close}
-        link={link} />
-
-      <DeleteLinkModal 
-        isOpen={deleteLinkDisclosure.isOpen} 
-        onClose={deleteLinkDisclosure.close} 
-        linkTitle={title}
-        linkId={id} />
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem onClick={handleEdit}>
+            <IconEdit size={15} className="me-1" />
+            {t('LINKS_EDIT_CONTEXT_MENU')}
+          </ContextMenuItem>
+          <ContextMenuItem onClick={handleDelete}>
+            <IconTrash size={15} className="me-1" />
+            {t('LINKS_DELETE_CONTEXT_MENU')}
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <AddLinkModal isOpen={addLinkDisclosure.isOpen} onClose={addLinkDisclosure.close} link={link} />
+      <DeleteLinkModal isOpen={deleteLinkDisclosure.isOpen} onClose={deleteLinkDisclosure.close} linkTitle={title} linkId={id} />
     </>
   );
 };

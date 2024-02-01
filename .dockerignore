@@ -1,26 +1,17 @@
-**/node_modules
-**/.next
-/node_modules
-/.next
-node_modules
-.next
-dist/
+*
 
-# all docker-compose files
-docker-compose*.yml
-Dockerfile*
-.dockerignore
-
-# Tipi folder
-logs/
-state/
-templates/
-scripts/
-screenshots/
-repos/
-media/
-data/
-apps/
-app-data/
-.github/
-__mocks__/
+### Includes ###
+!pnpm-*.yaml
+!package.json
+!patches/**
+!packages/**/src/**
+!packages/**/assets/**
+!**/package.json
+!**/nodemon.json
+!**/tsconfig.json
+!**/build.js
+!next.config.mjs
+!sentry.*.config.ts
+!public/**
+!src/**
+!tests/**

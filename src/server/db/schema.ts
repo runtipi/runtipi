@@ -61,14 +61,16 @@ export const appTable = pgTable('app', {
   isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
 });
 
-export const linkTable = pgTable('links', {
+export const linkTable = pgTable('link', {
   id: serial('id').notNull(),
   title: varchar('title', { length: 20 }).notNull(),
   url: varchar('url').notNull(),
   iconUrl: varchar('icon_url'),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
-  userId: integer('user_id').notNull().references(() => userTable.id, { onDelete: "cascade" }),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => userTable.id, { onDelete: 'cascade' }),
 });
 
 export type App = InferModel<typeof appTable>;
