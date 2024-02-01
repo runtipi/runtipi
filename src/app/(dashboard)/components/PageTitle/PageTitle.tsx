@@ -31,7 +31,7 @@ export const PageTitle = ({ apps }: Props) => {
   };
 
   const appTitle = apps.find((app) => app.id === pathArray[1])?.name;
-  const title = appTitle ?? t(`header.${pathArray[pathArray.length - 1]}` as MessageKey);
+  const title = appTitle ?? t(`HEADER_${pathArray[pathArray.length - 1]?.toUpperCase().replace('-', '_')}` as MessageKey);
 
   return (
     <>
