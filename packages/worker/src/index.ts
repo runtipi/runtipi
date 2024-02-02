@@ -1,11 +1,10 @@
-import { SystemEvent } from '@runtipi/shared';
+import { SystemEvent, cleanseErrorData } from '@runtipi/shared';
 
 import path from 'node:path';
 import Redis from 'ioredis';
 import dotenv from 'dotenv';
 import { Queue } from 'bullmq';
 import * as Sentry from '@sentry/node';
-import { cleanseErrorData } from '@runtipi/shared/src/helpers/error-helpers';
 import { ExtraErrorData } from '@sentry/integrations';
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
