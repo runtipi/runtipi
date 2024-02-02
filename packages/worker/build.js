@@ -18,6 +18,7 @@ async function bundle() {
     plugins: [
       sentryEsbuildPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN,
+        release: process.env.TIPI_VERSION,
         org: 'runtipi',
         project: 'runtipi-worker',
       }),

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { createLogger } from '../../utils/logger';
+import { newLogger as createLogger } from './Logger';
 
 function streamLogToHistory(logsFolder: string, logFile: string) {
   return new Promise((resolve, reject) => {

@@ -1,6 +1,7 @@
 import { promises } from 'fs';
 import { z } from 'zod';
-import { settingsSchema, pathExists } from '@runtipi/shared';
+import { settingsSchema } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
 import { execRemoteCommand } from './write-remote-file';
 
 export const setSettings = async (settings: z.infer<typeof settingsSchema>) => {

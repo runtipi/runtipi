@@ -1,4 +1,4 @@
-import { SocketEvent, socketEventSchema } from '@runtipi/shared/src/schemas/socket';
+import { SocketEvent, socketEventSchema } from '@runtipi/shared';
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 

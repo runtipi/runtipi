@@ -9,7 +9,7 @@ import path from 'path';
 import { spawn } from 'child_process';
 import { Stream } from 'stream';
 import dotenv from 'dotenv';
-import { pathExists } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
 import { AppExecutors } from '../app/app.executors';
 import { copySystemFiles, generateSystemEnvFile } from './system.helpers';
 import { TerminalSpinner } from '@/utils/logger/terminal-spinner';

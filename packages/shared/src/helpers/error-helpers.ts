@@ -6,6 +6,10 @@ const IgnoreErrors = [
   // Innocuous browser errors
   /ResizeObserver loop limit exceeded/,
   /ResizeObserver loop completed with undelivered notifications/,
+  // Error on user's side
+  /no space left on device/,
+  // Dark reader extension
+  /WeakMap key undefined must be an object or an unregistered symbol/,
 ];
 
 const cleanseUrl = (url: string) => {
@@ -60,7 +64,7 @@ export const cleanseErrorData = (event: ErrorEvent, hint: EventHint) => {
   }
 
   // IF error message starts with 'Command failed: docker-compose' then grab only the 200 last characters
-  if (error.message.startsWith('Command failed: docker-compose')) {
+  if (error.message?.startsWith('Command failed: docker-compose')) {
     // Command failed: docker-compose --env-file /storage/app-data/<app-name>/app.env
     const appName = error.message.split('/')[3];
     const message = error.message.slice(-200);

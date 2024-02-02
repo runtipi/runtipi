@@ -3,7 +3,7 @@ version: '3.7'
 services:
   tipi-docker-proxy:
     container_name: tipi-docker-proxy
-    image: tecnativa/docker-socket-proxy
+    image: zoeyvid/docker-socket-proxy
     restart: unless-stopped
     networks:
       - socket_proxy
@@ -61,7 +61,7 @@ services:
     container_name: tipi-redis
     image: redis:7.2.0
     restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD} --stop-writes-on-bgsave-error no
     ports:
       - 6379:6379
     volumes:

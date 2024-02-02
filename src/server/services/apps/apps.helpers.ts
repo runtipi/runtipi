@@ -1,5 +1,6 @@
 import { App } from '@/server/db/schema';
-import { appInfoSchema, pathExists } from '@runtipi/shared';
+import { appInfoSchema } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
 import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';

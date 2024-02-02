@@ -1,7 +1,8 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { appInfoSchema, envMapToString, envStringToMap, execAsync, pathExists } from '@runtipi/shared';
+import { appInfoSchema, envMapToString, envStringToMap } from '@runtipi/shared';
+import { pathExists, execAsync } from '@runtipi/shared/node';
 import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 import { getEnv } from '@/lib/environment';
 import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';

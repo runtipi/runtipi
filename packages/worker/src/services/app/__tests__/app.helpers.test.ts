@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { describe, it, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { pathExists } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
 import { copyDataDir, generateEnvFile } from '../app.helpers';
 import { createAppConfig } from '@/tests/apps.factory';
 import { getAppEnvMap } from '../env.helpers';

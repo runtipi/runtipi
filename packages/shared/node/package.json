@@ -1,0 +1,6 @@
+{
+  "browser": null,
+  "main": "../src/node/index.ts",
+  "module": "../src/node/index.ts",
+  "types": "../src/node/index.ts"
+}

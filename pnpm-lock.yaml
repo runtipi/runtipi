@@ -441,6 +441,8 @@ importers:
         specifier: ^4.5.9
         version: 4.5.9
 
+  packages/shared/node: {}
+
   packages/worker:
     dependencies:
       '@hono/node-server':

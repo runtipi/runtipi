@@ -1,5 +1,5 @@
 import path from 'path';
-import { execAsync, pathExists } from '@runtipi/shared';
+import { execAsync, pathExists } from '@runtipi/shared/node';
 import * as Sentry from '@sentry/node';
 import { getRepoHash, getRepoBaseUrlAndBranch } from './repo.helpers';
 import { logger } from '@/lib/logger';

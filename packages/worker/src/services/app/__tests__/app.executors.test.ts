@@ -2,7 +2,7 @@ import fs from 'fs';
 import { describe, it, expect, vi } from 'vitest';
 import path from 'path';
 import { faker } from '@faker-js/faker';
-import { pathExists } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
 import { AppExecutors } from '../app.executors';
 import { createAppConfig } from '@/tests/apps.factory';
 import * as dockerHelpers from '@/lib/docker';

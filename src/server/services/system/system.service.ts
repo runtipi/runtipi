@@ -1,7 +1,7 @@
 import { promises } from 'fs';
 import axios from 'redaxios';
 import { TipiCache } from '@/server/core/TipiCache';
-import { systemInfoSchema } from '@runtipi/shared/src/schemas/socket';
+import { systemInfoSchema } from '@runtipi/shared';
 import { fileExists, readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';

@@ -2,7 +2,22 @@
   "name": "@runtipi/shared",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    },
+    "./node": {
+      "browser": null,
+      "import": "./src/node/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "node",
+    "dist"
+  ],
   "scripts": {
     "lint": "eslint --ext .ts src",
     "tsc": "tsc --noEmit"
