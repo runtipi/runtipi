@@ -53,7 +53,7 @@ export default async function Page() {
 
   return (
     <>
-      {installedApps.length === 0 && (
+      {installedApps.length === 0 && customLinks.length === 0 && (
         <EmptyPage title="MY_APPS_EMPTY_TITLE" subtitle="MY_APPS_EMPTY_SUBTITLE" redirectPath="/app-store" actionLabel="MY_APPS_EMPTY_ACTION" />
       )}
       <div className="row row-cards " data-testid="apps-list">
