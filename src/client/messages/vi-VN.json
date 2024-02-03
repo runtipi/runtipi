@@ -173,6 +173,23 @@
   "HEADER_SOURCE_CODE": "Mã nguồn",
   "HEADER_SPONSOR": "Nhà tài trợ",
   "HEADER_UPDATE_AVAILABLE": "Đã có bản cập nhật",
+  "LINKS_ADD_SUBMIT": "Submit",
+  "LINKS_ADD_SUBTITLE": "Add a external link to the apps section",
+  "LINKS_ADD_SUCCESS": "Link added succesfully",
+  "LINKS_ADD_TITLE": "Add external link",
+  "LINKS_DELETE_CONTEXT_MENU": "Delete",
+  "LINKS_DELETE_SUBMIT": "Delete",
+  "LINKS_DELETE_SUBTITLE": "Are you sure you want to delete this external link?",
+  "LINKS_DELETE_SUCCESS": "Link deleted succesfully",
+  "LINKS_DELETE_TITLE": "Delete external link",
+  "LINKS_EDIT_CONTEXT_MENU": "Edit",
+  "LINKS_EDIT_SUBMIT": "Save",
+  "LINKS_EDIT_SUCCESS": "Link edited succesfully",
+  "LINKS_EDIT_TITLE": "Edit link",
+  "LINKS_FORM_ICON_PLACEHOLDER": "Upload yours to svgshare.com",
+  "LINKS_FORM_ICON_URL": "Icon URL",
+  "LINKS_FORM_LINK_TITLE": "Link title",
+  "LINKS_FORM_LINK_URL": "Link URL",
   "MY_APPS_DEPRECATED": "This app is deprecated",
   "MY_APPS_EMPTY_ACTION": "Đi đến Cửa hàng Ứng dụng",
   "MY_APPS_EMPTY_SUBTITLE": "Cài đặt một ứng dụng từ Cửa hàng Ứng dụng để bắt đầu",
@@ -262,8 +279,5 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Phiên bản hiện tại đã được cập nhật",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Ứng dụng được cập nhật phiên bản lớn. Vui lòng cập nhật thủ công (hướng dẫn được tim thấy ở GitHub)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
-  "server-messages": {
-    "success": {}
-  }
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action"
 }

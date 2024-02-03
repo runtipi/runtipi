@@ -173,6 +173,23 @@
   "HEADER_SOURCE_CODE": "Исходный код",
   "HEADER_SPONSOR": "Спонсировать",
   "HEADER_UPDATE_AVAILABLE": "Доступно обновление",
+  "LINKS_ADD_SUBMIT": "Добавить",
+  "LINKS_ADD_SUBTITLE": "Добавить внешнюю ссылку в раздел приложений",
+  "LINKS_ADD_SUCCESS": "Ссылка успешно добавлена",
+  "LINKS_ADD_TITLE": "Добавить внешнюю ссылку",
+  "LINKS_DELETE_CONTEXT_MENU": "Удалить",
+  "LINKS_DELETE_SUBMIT": "Удалить",
+  "LINKS_DELETE_SUBTITLE": "Вы уверены, что хотите удалить эту ссылку?",
+  "LINKS_DELETE_SUCCESS": "Ссылка успешно удалена",
+  "LINKS_DELETE_TITLE": "Удалить внешнюю ссылку",
+  "LINKS_EDIT_CONTEXT_MENU": "Изменить",
+  "LINKS_EDIT_SUBMIT": "Сохранить",
+  "LINKS_EDIT_SUCCESS": "Ссылка успешно изменена",
+  "LINKS_EDIT_TITLE": "Изменить ссылку",
+  "LINKS_FORM_ICON_PLACEHOLDER": "Загрузить на svgshare.com",
+  "LINKS_FORM_ICON_URL": "URL иконки",
+  "LINKS_FORM_LINK_TITLE": "Название ссылки",
+  "LINKS_FORM_LINK_URL": "URL ссылки",
   "MY_APPS_DEPRECATED": "Это приложение устарело",
   "MY_APPS_EMPTY_ACTION": "Перейти в магазин приложений",
   "MY_APPS_EMPTY_SUBTITLE": "Установите приложение из магазина приложений для начала работы",
@@ -262,8 +279,5 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Текущая версия уже актуальна",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Только 6 приложений могут быть установлены в демо режиме. Пожалуйста, удалите другое приложение, чтобы установить новое.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Основная версия была изменена. Пожалуйста, обновите вручную (инструкции в примечаниях к релизу)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Вы должны войти для выполнения этого действия",
-  "server-messages": {
-    "success": {}
-  }
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Вы должны войти для выполнения этого действия"
 }

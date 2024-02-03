@@ -173,6 +173,23 @@
   "HEADER_SOURCE_CODE": "源代码",
   "HEADER_SPONSOR": "贊助者",
   "HEADER_UPDATE_AVAILABLE": "有可用更新",
+  "LINKS_ADD_SUBMIT": "Submit",
+  "LINKS_ADD_SUBTITLE": "Add a external link to the apps section",
+  "LINKS_ADD_SUCCESS": "Link added succesfully",
+  "LINKS_ADD_TITLE": "Add external link",
+  "LINKS_DELETE_CONTEXT_MENU": "Delete",
+  "LINKS_DELETE_SUBMIT": "Delete",
+  "LINKS_DELETE_SUBTITLE": "Are you sure you want to delete this external link?",
+  "LINKS_DELETE_SUCCESS": "Link deleted succesfully",
+  "LINKS_DELETE_TITLE": "Delete external link",
+  "LINKS_EDIT_CONTEXT_MENU": "Edit",
+  "LINKS_EDIT_SUBMIT": "Save",
+  "LINKS_EDIT_SUCCESS": "Link edited succesfully",
+  "LINKS_EDIT_TITLE": "Edit link",
+  "LINKS_FORM_ICON_PLACEHOLDER": "Upload yours to svgshare.com",
+  "LINKS_FORM_ICON_URL": "Icon URL",
+  "LINKS_FORM_LINK_TITLE": "Link title",
+  "LINKS_FORM_LINK_URL": "Link URL",
   "MY_APPS_DEPRECATED": "This app is deprecated",
   "MY_APPS_EMPTY_ACTION": "前往App Store",
   "MY_APPS_EMPTY_SUBTITLE": "應用商店安裝應用以開始使用",
@@ -262,8 +279,5 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "當前版本已經是最新的",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "在演示模式下只能安裝6個應用。請卸載其他應用來安裝新應用。",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "主要版本已更改。 請手動更新（参照更新說明）",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
-  "server-messages": {
-    "success": {}
-  }
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action"
 }
