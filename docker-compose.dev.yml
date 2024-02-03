@@ -162,6 +162,7 @@ services:
     environment:
       NODE_ENV: development
       TIPI_VERSION: 0.0.0
+      NEXT_PUBLIC_TIPI_VERSION: 0.0.0
     networks:
       - tipi_main_network
     ports:
