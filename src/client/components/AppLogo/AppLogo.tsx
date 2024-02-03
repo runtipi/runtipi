@@ -2,8 +2,14 @@ import clsx from 'clsx';
 import React from 'react';
 import styles from './AppLogo.module.scss';
 
-export const AppLogo: React.FC<{ id?: string; url?: string, size?: number; className?: string; alt?: string }> = ({ id, url, size = 80, className = '', alt = '' }) => {
-  const logoUrl = id ? `/api/app-image?id=${id}` : '/placeholder.png';
+export const AppLogo: React.FC<{ id?: string; url?: string; size?: number; className?: string; alt?: string }> = ({
+  id,
+  url,
+  size = 80,
+  className = '',
+  alt = '',
+}) => {
+  const logoUrl = id ? `/api/app-image?id=${id}` : '/app-not-found.jpg';
 
   return (
     <div aria-label={alt} className={clsx(styles.dropShadow, className)} style={{ width: size, height: size }}>
