@@ -3,9 +3,10 @@ import { prettyJSON } from 'hono/pretty-json';
 import { secureHeaders } from 'hono/secure-headers';
 import { Hono } from 'hono';
 import { getEnv } from './lib/environment';
-import { AppExecutors } from './services';
+import { AppExecutors, SystemExecutors } from './services';
 
 const executor = new AppExecutors();
+const system = new SystemExecutors();
 
 export const setupRoutes = (app: Hono) => {
   app.get('/healthcheck', (c) => c.text('OK', 200));
@@ -14,6 +15,14 @@ export const setupRoutes = (app: Hono) => {
   app.use('*', secureHeaders());
 
   app.use('*', jwt({ secret: getEnv().jwtSecret, alg: 'HS256' }));
+
+  app.get('/system-status', async (c) => {
+    const { success, message } = await system.getSystemLoad();
+    if (success) {
+      return c.json({ message, ok: true }, 200);
+    }
+    return c.json({ message, ok: false }, 500);
+  });
 
   app.post('/apps/:id/start', async (c) => {
     const appId = c.req.param('id');
