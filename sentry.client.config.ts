@@ -1,7 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
 import { ExtraErrorData } from '@sentry/integrations';
-import { settingsSchema } from '@runtipi/shared/src/schemas/env-schemas';
-import { cleanseErrorData } from '@runtipi/shared/src/helpers/error-helpers';
+import { settingsSchema, cleanseErrorData } from '@runtipi/shared';
 
 const getClientConfig = () => {
   if (typeof window === 'undefined') {
