@@ -66,6 +66,18 @@ export class AppExecutors {
     }
   };
 
+  private runScript = async (script: string) => {
+    logger.info(`Running script ${script}`);
+    const { stdout, stderr } = await execAsync(script);
+
+    if (stderr) {
+      throw new Error(stderr);
+    }
+
+    logger.info(`Script output: ${stdout}`);
+    return { stdout, stderr };
+  };
+
   public regenerateAppEnv = async (appId: string, config: Record<string, unknown>) => {
     try {
       this.logger.info(`Regenerating app.env file for app ${appId}`);
@@ -136,11 +148,25 @@ export class AppExecutors {
         this.logger.error(`Error setting permissions for app ${appId}`);
       });
 
+      // Check if pre-install script exists
+      const preInstall = path.join(appDirPath, 'pre-install.sh');
+      if (await pathExists(preInstall)) {
+        this.logger.info(`Running pre-install script for app ${appId}`);
+        await this.runScript(preInstall);
+      }
+
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
+
+      // Check if post-install script exists
+      const postInstall = path.join(appDirPath, 'post-install.sh');
+      if (await pathExists(postInstall)) {
+        this.logger.info(`Running post-install script for app ${appId}`);
+        await this.runScript(postInstall);
+      }
 
       SocketManager.emit({ type: 'app', event: 'install_success', data: { appId } });
 
@@ -174,6 +200,14 @@ export class AppExecutors {
         this.logger.info(`Regenerating app.env file for app ${appId}`);
         await generateEnvFile(appId, config);
       }
+
+      // Check if start-stop script exists
+      const startStop = path.join(appDirPath, 'start-stop.sh');
+      if (await pathExists(startStop)) {
+        this.logger.info(`Running start-stop script for app ${appId}`);
+        await this.runScript(startStop);
+      }
+
       await compose(appId, 'rm --force --stop');
 
       this.logger.info(`App ${appId} stopped`);
@@ -192,7 +226,7 @@ export class AppExecutors {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
-      const { appDataDirPath } = this.getAppPaths(appId);
+      const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
 
       this.logger.info(`Starting app ${appId}`);
 
@@ -201,6 +235,13 @@ export class AppExecutors {
       if (!skipEnvGeneration) {
         this.logger.info(`Regenerating app.env file for app ${appId}`);
         await generateEnvFile(appId, config);
+      }
+
+      // Check if start-stop script exists
+      const startStop = path.join(appDirPath, 'start-stop.sh');
+      if (await pathExists(startStop)) {
+        this.logger.info(`Running start-stop script for app ${appId}`);
+        await this.runScript(startStop);
       }
 
       await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
@@ -232,6 +273,14 @@ export class AppExecutors {
       this.logger.info(`Regenerating app.env file for app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
+
+      // Check if pre-uninstall script exists
+      const preUninstall = path.join(appDirPath, 'pre-uninstall.sh');
+      if (await pathExists(preUninstall)) {
+        this.logger.info(`Running pre-uninstall script for app ${appId}`);
+        await this.runScript(preUninstall);
+      }
+
       try {
         await compose(appId, 'down --remove-orphans --volumes --rmi all');
       } catch (err) {
@@ -252,6 +301,13 @@ export class AppExecutors {
         this.logger.error(`Error deleting folder ${appDataDirPath}: ${err.message}`);
       });
 
+      // Check if post-uninstall script exists
+      const postUninstall = path.join(appDirPath, 'post-uninstall.sh');
+      if (await pathExists(postUninstall)) {
+        this.logger.info(`Running post-uninstall script for app ${appId}`);
+        await this.runScript(postUninstall);
+      }
+
       this.logger.info(`App ${appId} uninstalled`);
 
       SocketManager.emit({ type: 'app', event: 'uninstall_success', data: { appId } });
@@ -268,10 +324,17 @@ export class AppExecutors {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
-      const { appDataDirPath } = this.getAppPaths(appId);
+      const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
+      const startStop = path.join(appDirPath, 'start-stop.sh');
       this.logger.info(`Resetting app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
+
+      // Check if start-stop script exists
+      if (await pathExists(startStop)) {
+        this.logger.info(`Running start-stop script for app ${appId}`);
+        await this.runScript(startStop);
+      }
 
       // Stop app
       try {
@@ -305,6 +368,12 @@ export class AppExecutors {
         this.logger.error(`Error setting permissions for app ${appId}`);
       });
 
+      // Check if start-stop script exists
+      if (await pathExists(startStop)) {
+        this.logger.info(`Running start-stop script for app ${appId}`);
+        await this.runScript(startStop);
+      }
+
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up -d');
@@ -327,6 +396,13 @@ export class AppExecutors {
       this.logger.info(`Updating app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
+
+      // Check if start-stop script exists
+      const startStop = path.join(appDirPath, 'start-stop.sh');
+      if (await pathExists(startStop)) {
+        this.logger.info(`Running start-stop script for app ${appId}`);
+        await this.runScript(startStop);
+      }
 
       try {
         await compose(appId, 'up --detach --force-recreate --remove-orphans');
