@@ -101,7 +101,7 @@
     "@total-typescript/shoehorn": "^0.1.1",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
-    "@types/jest": "^29.5.11",
+    "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/lodash.merge": "^4.6.9",
     "@types/node": "20.8.10",
