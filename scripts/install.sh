@@ -201,6 +201,9 @@ fi
 if [[ "$ASSET" == *".tar.gz" ]]; then
   curl --location "$URL" -o ./runtipi-cli.tar.gz
   tar -xzf ./runtipi-cli.tar.gz
+
+  asset_name=$(tar -tzf ./runtipi-cli.tar.gz | head -n 1 | cut -f1 -d"/")
+  mv "./${asset_name}" ./runtipi-cli
   rm ./runtipi-cli.tar.gz
 else
   curl --location "$URL" -o ./runtipi-cli
