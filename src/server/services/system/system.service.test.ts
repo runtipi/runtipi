@@ -1,6 +1,5 @@
 import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
-import fs from 'fs-extra';
 import { faker } from '@faker-js/faker';
 import { TipiConfig } from '../../core/TipiConfig';
 import { TipiCache } from '../../core/TipiCache';
@@ -25,46 +24,6 @@ beforeEach(async () => {
   await TipiConfig.setConfig('demoMode', false);
   await cache.del('latestVersion');
   server.resetHandlers();
-});
-
-describe('Test: systemInfo', () => {
-  it('should return default values when system-info.json is not present', () => {
-    // arrange
-    const systemInfo = SystemServiceClass.systemInfo();
-
-    // assert
-    expect(systemInfo).toBeDefined();
-    expect(systemInfo.cpuLoad).toBeDefined();
-    expect(systemInfo.diskSize).toBeDefined();
-    expect(systemInfo.diskUsed).toBeDefined();
-    expect(systemInfo.memoryTotal).toBeDefined();
-    expect(systemInfo.percentUsed).toBeDefined();
-    expect(systemInfo.percentUsedMemory).toBeDefined();
-  });
-
-  it('It should return system info', async () => {
-    // Arrange
-    const info = {
-      cpu: { load: 0.1 },
-      memory: { available: 1000, total: 2000, used: 1000 },
-      disk: { available: 1000, total: 2000, used: 1000 },
-    };
-
-    const MockFiles = {
-      '/runtipi/state/system-info.json': JSON.stringify(info),
-    };
-
-    // @ts-expect-error Mocking fs
-    fs.__createMockFiles(MockFiles);
-
-    // Act
-    const systemInfo = SystemServiceClass.systemInfo();
-
-    // Assert
-    expect(systemInfo).toBeDefined();
-    expect(systemInfo.cpuLoad).toBeDefined();
-    expect(systemInfo.memoryTotal).toBeDefined();
-  });
 });
 
 describe('Test: getVersion', () => {

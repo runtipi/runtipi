@@ -12,7 +12,7 @@ import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from 
 import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
-import { AppExecutors, RepoExecutors, SystemExecutors } from './services';
+import { AppExecutors, RepoExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
 import { setupRoutes } from './api';
 
@@ -64,7 +64,7 @@ const main = async () => {
     SocketManager.init();
 
     const repoExecutors = new RepoExecutors();
-    const systemExecutors = new SystemExecutors();
+
     const clone = await repoExecutors.cloneRepo(envMap.get('APPS_REPO_URL') as string);
     if (!clone.success) {
       logger.error(`Failed to clone repo ${envMap.get('APPS_REPO_URL') as string}`);
@@ -80,12 +80,9 @@ const main = async () => {
     logger.info('Obliterating queue...');
     await queue.obliterate({ force: true });
 
-    await systemExecutors.systemInfo();
-
     // Scheduled jobs
     logger.info('Adding scheduled jobs to queue...');
     await repeatQueue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
-    await repeatQueue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { every: 3000 } });
 
     logger.info('Closing queue...');
     await queue.close();

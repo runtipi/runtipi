@@ -3,6 +3,7 @@
 import React, { ComponentProps } from 'react';
 import { CookiesProvider } from 'next-client-cookies';
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from './ThemeProvider';
 import { SocketProvider } from './SocketProvider/SocketProvider';
 
@@ -14,15 +15,19 @@ type Props = {
   messages: AbstractIntlMessages;
 };
 
+const queryClient = new QueryClient();
+
 export const ClientProviders = ({ children, initialTheme, cookies, locale, messages }: Props) => {
   return (
-    <NextIntlClientProvider locale={locale} messages={messages} timeZone={Intl.DateTimeFormat().resolvedOptions().timeZone}>
-      <SocketProvider>
-        <CookiesProvider value={cookies}>
-          <ThemeProvider initialTheme={initialTheme}>{children}</ThemeProvider>
-        </CookiesProvider>
-      </SocketProvider>
-    </NextIntlClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <NextIntlClientProvider locale={locale} messages={messages} timeZone={Intl.DateTimeFormat().resolvedOptions().timeZone}>
+        <SocketProvider>
+          <CookiesProvider value={cookies}>
+            <ThemeProvider initialTheme={initialTheme}>{children}</ThemeProvider>
+          </CookiesProvider>
+        </SocketProvider>
+      </NextIntlClientProvider>
+    </QueryClientProvider>
   );
 };
 
