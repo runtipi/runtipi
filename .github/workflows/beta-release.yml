@@ -157,11 +157,6 @@ jobs:
           name: cli
           path: cli
 
-      - name: Rename CLI
-        run: |
-          mv cli/bin/cli-x64 ./runtipi-cli-linux-x64
-          mv cli/bin/cli-arm64 ./runtipi-cli-linux-arm64
-
       - name: Create beta release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -174,9 +169,7 @@ jobs:
           name: ${{ needs.create-tag.outputs.tagname }}
           draft: false
           prerelease: true
-          files: |
-            runtipi-cli-linux-x64
-            runtipi-cli-linux-arm64
+          files: cli/runtipi-cli-*
 
   e2e-tests:
     needs: [create-tag, publish-release]
