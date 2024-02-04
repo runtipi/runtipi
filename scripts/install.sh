@@ -17,7 +17,7 @@ fi
 ### --------------------------------
 UPDATE="false"
 VERSION="latest"
-ASSET="runtipi-cli-linux-x64"
+ASSET="runtipi-cli-linux-x86_64.tar.gz"
 
 while [ -n "${1-}" ]; do
     case "$1" in
@@ -186,11 +186,8 @@ if [[ "${VERSION}" == "latest" ]]; then
   VERSION="${LATEST_VERSION}"
 fi
 
-# Temporary workaround to support current assets before the release of the new version
 if [[ "$ARCHITECTURE" == "arm64" || "$ARCHITECTURE" == "aarch64" ]]; then
-  if [[ "$ASSET" == "runtipi-cli-linux-x64" ]]; then
-    ASSET="runtipi-cli-linux-arm64"
-  fi
+  ASSET="runtipi-cli-linux-aarch64.tar.gz"
 fi
 
 URL="https://github.com/runtipi/runtipi/releases/download/$VERSION/$ASSET"
