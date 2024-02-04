@@ -82,6 +82,11 @@ services:
         - SENTRY_DISABLE_AUTO_UPLOAD=true
         - TIPI_VERSION=0.0.0
     container_name: tipi-worker
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/worker-api/healthcheck']
       interval: 5s
