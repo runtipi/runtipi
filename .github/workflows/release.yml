@@ -52,11 +52,12 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.create-tag.outputs.tagname }},ghcr.io/${{ github.repository_owner }}/runtipi:latest
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   build-worker:
     runs-on: ubuntu-latest
+    if: github.repository == 'runtipi/runtipi'
     needs: create-tag
     steps:
       - name: Checkout code
@@ -86,8 +87,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/worker:${{ needs.create-tag.outputs.tagname }},ghcr.io/${{ github.repository_owner }}/worker:latest
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/worker:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/worker:buildcache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   build-cli:
     runs-on: ubuntu-latest
