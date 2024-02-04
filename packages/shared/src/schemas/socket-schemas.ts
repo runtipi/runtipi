@@ -1,20 +1,6 @@
 import { z } from 'zod';
 
-export const systemInfoSchema = z.object({
-  diskUsed: z.number(),
-  diskSize: z.number(),
-  percentUsed: z.number(),
-  cpuLoad: z.number(),
-  memoryTotal: z.number(),
-  percentUsedMemory: z.number(),
-});
-
 export const socketEventSchema = z.union([
-  z.object({
-    type: z.literal('system_info'),
-    event: z.literal('status_change'),
-    data: systemInfoSchema,
-  }),
   z.object({
     type: z.literal('app'),
     event: z.union([

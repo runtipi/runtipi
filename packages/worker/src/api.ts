@@ -3,9 +3,10 @@ import { prettyJSON } from 'hono/pretty-json';
 import { secureHeaders } from 'hono/secure-headers';
 import { Hono } from 'hono';
 import { getEnv } from './lib/environment';
-import { AppExecutors } from './services';
+import { AppExecutors, SystemExecutors } from './services';
 
-const executor = new AppExecutors();
+const apps = new AppExecutors();
+const system = new SystemExecutors();
 
 export const setupRoutes = (app: Hono) => {
   app.get('/healthcheck', (c) => c.text('OK', 200));
@@ -15,9 +16,17 @@ export const setupRoutes = (app: Hono) => {
 
   app.use('*', jwt({ secret: getEnv().jwtSecret, alg: 'HS256' }));
 
+  app.get('/system-status', async (c) => {
+    const result = await system.getSystemLoad();
+    if (result.success) {
+      return c.json({ data: result.data, ok: true }, 200);
+    }
+    return c.json({ message: result.message, ok: false }, 500);
+  });
+
   app.post('/apps/:id/start', async (c) => {
     const appId = c.req.param('id');
-    const { success, message } = await executor.startApp(appId, {}, true);
+    const { success, message } = await apps.startApp(appId, {}, true);
     if (success) {
       return c.json({ message, ok: true }, 200);
     }
@@ -26,7 +35,7 @@ export const setupRoutes = (app: Hono) => {
 
   app.post('/apps/:id/stop', async (c) => {
     const appId = c.req.param('id');
-    const { success, message } = await executor.stopApp(appId, {}, true);
+    const { success, message } = await apps.stopApp(appId, {}, true);
     if (success) {
       return c.json({ message, ok: true }, 200);
     }
@@ -35,7 +44,7 @@ export const setupRoutes = (app: Hono) => {
 
   app.post('/apps/:id/reset', async (c) => {
     const appId = c.req.param('id');
-    const { success, message } = await executor.resetApp(appId, {});
+    const { success, message } = await apps.resetApp(appId, {});
     if (success) {
       return c.json({ message, ok: true }, 200);
     }
@@ -44,7 +53,7 @@ export const setupRoutes = (app: Hono) => {
 
   app.post('/apps/:id/update', async (c) => {
     const appId = c.req.param('id');
-    const { success, message } = await executor.updateApp(appId, {});
+    const { success, message } = await apps.updateApp(appId, {});
     if (success) {
       return c.json({ message, ok: true }, 200);
     }
@@ -53,7 +62,7 @@ export const setupRoutes = (app: Hono) => {
 
   app.post('/apps/:id/uninstall', async (c) => {
     const appId = c.req.param('id');
-    const { success, message } = await executor.uninstallApp(appId, {});
+    const { success, message } = await apps.uninstallApp(appId, {});
     if (success) {
       return c.json({ message, ok: true }, 200);
     }
@@ -61,7 +70,7 @@ export const setupRoutes = (app: Hono) => {
   });
 
   app.post('/apps/start-all', async (c) => {
-    await executor.startAllApps(true);
+    await apps.startAllApps(true);
     return c.json({ ok: true }, 200);
   });
 

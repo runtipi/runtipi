@@ -3,7 +3,8 @@ export { appInfoSchema, formFieldSchema, FIELD_TYPES, APP_CATEGORIES, type AppIn
 export { envSchema, settingsSchema, ARCHITECTURES, type Architecture } from './schemas/env-schemas';
 export { eventSchema, eventResultSchema, EVENT_TYPES, type EventType, type SystemEvent } from './schemas/queue-schemas';
 export { linkSchema, type LinkInfo, type LinkInfoInput } from './schemas/link-schemas';
-export { systemInfoSchema, socketEventSchema, type SocketEvent } from './schemas/socket-schemas';
+export { socketEventSchema, type SocketEvent } from './schemas/socket-schemas';
+export { systemLoadSchema, type SystemLoad } from './schemas/system-schemas';
 
 // Helpers
 export { envMapToString, envStringToMap } from './helpers/env-helpers';

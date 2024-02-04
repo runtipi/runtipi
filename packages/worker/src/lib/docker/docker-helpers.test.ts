@@ -7,7 +7,7 @@ import { compose } from './docker-helpers';
 
 const execAsync = vi.fn().mockImplementation(() => Promise.resolve({ stdout: '', stderr: '' }));
 
-vi.mock('@runtipi/shared', async (importOriginal) => {
+vi.mock('@runtipi/shared/node', async (importOriginal) => {
   const mod = (await importOriginal()) as object;
 
   return {

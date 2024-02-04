@@ -3,27 +3,29 @@
 import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons-react';
 import React from 'react';
 import { useTranslations } from 'next-intl';
+import { useQuery } from 'react-query';
+import { systemLoadSchema, type SystemLoad } from '@runtipi/shared';
 import { SystemStat } from '../SystemStat';
-import { useSocket } from '../../../../../lib/socket/useSocket';
 
 type IProps = {
-  diskUsed: number;
-  diskSize: number;
-  percentUsed: number;
-  cpuLoad: number;
-  memoryTotal: number;
-  percentUsedMemory: number;
+  initialData: SystemLoad;
 };
 
-export const DashboardContainer: React.FC<IProps> = (props) => {
-  const { lastData } = useSocket({
-    initialData: props,
-    selector: { type: 'system_info' },
-  });
+async function fetchSystemStatus() {
+  const response = await fetch('/api/system-status');
+  if (!response.ok) {
+    throw new Error('Problem fetching data');
+  }
+  const systemLoad = await response.json();
 
+  return systemLoadSchema.parse(systemLoad);
+}
+
+export const DashboardContainer: React.FC<IProps> = ({ initialData }) => {
+  const { data } = useQuery<SystemLoad>('systemLoad', fetchSystemStatus, { initialData, refetchInterval: 3000 });
   const t = useTranslations();
 
-  if (!lastData) {
+  if (!data) {
     return null;
   }
 
@@ -31,24 +33,24 @@ export const DashboardContainer: React.FC<IProps> = (props) => {
     <div className="row row-deck row-cards">
       <SystemStat
         title={t('DASHBOARD_DISK_SPACE_TITLE')}
-        metric={`${lastData.diskUsed} GB`}
-        subtitle={t('DASHBOARD_DISK_SPACE_SUBTITLE', { total: lastData.diskSize })}
+        metric={`${data.diskUsed} GB`}
+        subtitle={t('DASHBOARD_DISK_SPACE_SUBTITLE', { total: data.diskSize })}
         icon={IconDatabase}
-        progress={lastData.percentUsed}
+        progress={data.percentUsed}
       />
       <SystemStat
         title={t('DASHBOARD_CPU_TITLE')}
-        metric={`${lastData.cpuLoad.toFixed(2)}%`}
+        metric={`${data.cpuLoad.toFixed(2)}%`}
         subtitle={t('DASHBOARD_CPU_SUBTITLE')}
         icon={IconCpu}
-        progress={lastData.cpuLoad}
+        progress={data.cpuLoad}
       />
       <SystemStat
         title={t('DASHBOARD_MEMORY_TITLE')}
-        metric={`${lastData.percentUsedMemory || 0}%`}
-        subtitle={`${lastData.memoryTotal} GB`}
+        metric={`${data.percentUsedMemory || 0}%`}
+        subtitle={`${data.memoryTotal} GB`}
         icon={IconCircuitResistor}
-        progress={lastData.percentUsedMemory}
+        progress={data.percentUsedMemory}
       />
     </div>
   );

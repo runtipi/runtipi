@@ -28,7 +28,7 @@ describe('test: app executors', () => {
 
       expect(success).toBe(true);
       expect(message).toBe(`App ${config.id} installed successfully`);
-      expect(spy).toHaveBeenCalledWith(config.id, 'up -d');
+      expect(spy).toHaveBeenCalledWith(config.id, 'up --detach --force-recreate --remove-orphans --pull always');
       expect(envExists).toBe(true);
       spy.mockRestore();
     });
