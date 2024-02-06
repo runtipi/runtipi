@@ -16,8 +16,8 @@ export class LinkQueries {
    * @returns The newly added link.
    */
   public async addLink(link: LinkInfoInput, userId: number) {
-    const { title, url, iconUrl } = link;
-    const newLinks = await this.db.insert(linkTable).values({ title, url, iconUrl, userId }).returning().execute();
+    const { title, description, url, iconUrl } = link;
+    const newLinks = await this.db.insert(linkTable).values({ title, description, url, iconUrl, userId }).returning().execute();
     return newLinks[0];
   }
 
@@ -28,13 +28,13 @@ export class LinkQueries {
    * @throws Error if no id is provided.
    */
   public async editLink(link: LinkInfoInput, userId: number) {
-    const { id, title, url, iconUrl } = link;
+    const { id, title, description, url, iconUrl } = link;
 
     if (!id) throw new Error('No id provided');
 
     const updatedLinks = await this.db
       .update(linkTable)
-      .set({ title, url, iconUrl, updatedAt: new Date() })
+      .set({ title, description, url, iconUrl, updatedAt: new Date() })
       .where(and(eq(linkTable.id, id), eq(linkTable.userId, userId)))
       .returning()
       .execute();

@@ -15,10 +15,10 @@ type LinkTileProps = {
   link: Link;
 };
 
-export const LinkTile: React.FC<LinkTileProps> = ({ link: { id, title, url, iconUrl } }) => {
+export const LinkTile: React.FC<LinkTileProps> = ({ link: { id, title, description, url, iconUrl } }) => {
   const t = useTranslations();
 
-  const link: LinkInfo = { id, title, url, iconUrl };
+  const link: LinkInfo = { id, title, description, url, iconUrl };
   const addLinkDisclosure = useDisclosure();
   const deleteLinkDisclosure = useDisclosure();
 
@@ -45,6 +45,7 @@ export const LinkTile: React.FC<LinkTileProps> = ({ link: { id, title, url, icon
                     <div className="d-flex h-3 align-items-center">
                       <span className="h4 me-2 mb-1 fw-bolder">{title}</span>
                     </div>
+                    {description?.length !== 0 && <div className="text-muted">{description}</div>}
                   </div>
                 </div>
               </div>

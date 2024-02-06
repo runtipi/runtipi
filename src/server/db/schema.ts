@@ -64,6 +64,7 @@ export const appTable = pgTable('app', {
 export const linkTable = pgTable('link', {
   id: serial('id').notNull(),
   title: varchar('title', { length: 20 }).notNull(),
+  description: varchar('description', { length: 50 }),
   url: varchar('url').notNull(),
   iconUrl: varchar('icon_url'),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
