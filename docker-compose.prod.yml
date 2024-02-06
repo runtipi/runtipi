@@ -30,7 +30,7 @@ services:
       - 8080:8080
     command: --providers.docker
     volumes:
-      - ./traefik:/root/.config
+      - ./traefik:/etc/traefik
       - ./traefik/shared:/shared
     networks:
       - tipi_main_network
