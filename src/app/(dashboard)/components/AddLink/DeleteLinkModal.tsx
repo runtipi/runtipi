@@ -34,7 +34,7 @@ export const DeleteLinkModal: React.FC<DeleteLinkModalProps> = ({ isOpen, onClos
       <DialogContent size="sm">
         <DialogHeader>
           <h5 className="modal-title">
-            {t('LINKS_DELETE_TITLE')} <code>{linkTitle}</code> ?
+            {t('LINKS_DELETE_TITLE')} {linkTitle}?
           </h5>
         </DialogHeader>
         <DialogDescription>
