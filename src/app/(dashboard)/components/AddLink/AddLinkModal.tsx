@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { addLinkAction } from '@/actions/custom-links/add-link-action';
 import { editLinkAction } from '@/actions/custom-links/edit-link-action';
 import toast from 'react-hot-toast';
@@ -27,7 +27,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
 
   const schema = z.object({
     title: z.string().min(1).max(20),
-    description: z.string().min(1).max(50),
+    description: z.string().min(0).max(50).nullable(),
     url: z.string().url(),
     iconUrl: z.string().url().or(z.string().max(0)),
   });
@@ -39,13 +39,12 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      title: link?.title,
-      description: link?.description || '',
-      url: link?.url,
-      iconUrl: link?.iconUrl || '',
-    },
+    defaultValues: link,
   });
+
+  useEffect(() => {
+    reset(link);
+  }, [link, reset]);
 
   const addLinkMutation = useAction(addLinkAction, {
     onError: (e) => {
@@ -93,13 +92,17 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
             <Input
               disabled={mutationExecuting}
               {...register('title')}
+              maxLength={20}
               label={t('LINKS_FORM_LINK_TITLE')}
               placeholder="Runtipi demo"
               error={errors.title?.message}
             />
             <Input
               disabled={mutationExecuting}
+              type="text"
               {...register('description')}
+              maxLength={50}
+              className="mt-3"
               label={t('LINKS_FROM_LINK_DESCRIPTION')}
               placeholder="My super app"
               error={errors.description?.message}

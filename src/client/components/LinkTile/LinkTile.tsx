@@ -37,7 +37,7 @@ export const LinkTile: React.FC<LinkTileProps> = ({ link: { id, title, descripti
           <div data-testid={`link-tile-${title}`}>
             <div className="card card-sm card-link">
               <div className="card-body">
-                <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center overflow-hidden">
                   <span className="me-3">
                     <AppLogo url={iconUrl || ''} size={60} />
                   </span>
@@ -45,7 +45,7 @@ export const LinkTile: React.FC<LinkTileProps> = ({ link: { id, title, descripti
                     <div className="d-flex h-3 align-items-center">
                       <span className="h4 me-2 mb-1 fw-bolder">{title}</span>
                     </div>
-                    {description?.length !== 0 && <div className="text-muted">{description}</div>}
+                    {description?.length !== 0 && <div className="text-muted text-break">{description}</div>}
                   </div>
                 </div>
               </div>
