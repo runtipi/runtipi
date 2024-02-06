@@ -13,7 +13,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { LinkInfo } from '@runtipi/shared';
 import { useTranslations } from 'next-intl';
 
-type FormValues = { title: string; url: string; iconUrl: string | null };
+type FormValues = { title: string; url: string; description: string | null; iconUrl: string | null };
 
 type AddLinkModalProps = {
   isOpen: boolean;
@@ -27,6 +27,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
 
   const schema = z.object({
     title: z.string().min(1).max(20),
+    description: z.string().min(1).max(20),
     url: z.string().url(),
     iconUrl: z.string().url().or(z.string().max(0)),
   });
@@ -40,6 +41,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
     resolver: zodResolver(schema),
     defaultValues: {
       title: link?.title,
+      description: link?.description || '',
       url: link?.url,
       iconUrl: link?.iconUrl || '',
     },
@@ -72,11 +74,11 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
   const mutationExecuting = addLinkMutation.status === 'executing' || editLinkMutation.status === 'executing';
 
   const onSubmit = (data: FormValues) => {
-    const { title, url, iconUrl } = data;
+    const { title, url, description, iconUrl } = data;
     if (link) {
-      editLinkMutation.execute({ id: link?.id, title, url, iconUrl });
+      editLinkMutation.execute({ id: link?.id, title, description, url, iconUrl });
     } else {
-      addLinkMutation.execute({ title, url, iconUrl });
+      addLinkMutation.execute({ title, description, url, iconUrl });
     }
   };
 
@@ -94,6 +96,13 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
               label={t('LINKS_FORM_LINK_TITLE')}
               placeholder="Runtipi demo"
               error={errors.title?.message}
+            />
+            <Input
+              disabled={mutationExecuting}
+              {...register('description')}
+              label={t('LINKS_FROM_LINK_DESCRIPTION')}
+              placeholder="My super app"
+              error={errors.description?.message}
             />
             <Input
               disabled={mutationExecuting}
