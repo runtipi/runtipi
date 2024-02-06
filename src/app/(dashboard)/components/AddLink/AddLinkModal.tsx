@@ -27,7 +27,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
 
   const schema = z.object({
     title: z.string().min(1).max(20),
-    description: z.string().min(1).max(20),
+    description: z.string().min(1).max(50),
     url: z.string().url(),
     iconUrl: z.string().url().or(z.string().max(0)),
   });
