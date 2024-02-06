@@ -64,6 +64,7 @@ Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may co
 
 ## 🙏 Acknowledgements
 
+- [GitHub](https://github.com) - Thanks for generously giving us access to your full product suite
 - [Freepik](https://www.flaticon.com/free-icons/tipi) - Thanks for providing a free logo for the project
 - [Sentry](https://sentry.io) - Thanks for providing error tracking for the project
 - [Crowdin](https://crowdin.com) - Thanks for providing localization management for the project
