@@ -49,7 +49,7 @@ export const ResetPasswordForm: React.FC<IProps> = ({ onSubmit, loading, onCance
         disabled={loading}
         type="password"
         className="mb-3"
-        placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
+        placeholder={t('AUTH_FORM_NEW_PASSWORD_PLACEHOLDER')}
       />
       <Input
         {...register('passwordConfirm')}
@@ -58,7 +58,7 @@ export const ResetPasswordForm: React.FC<IProps> = ({ onSubmit, loading, onCance
         disabled={loading}
         type="password"
         className="mb-3"
-        placeholder={t('AUTH_FORM_PASSWORD_CONFIRMATION_PLACEHOLDER')}
+        placeholder={t('AUTH_FORM_NEW_PASSWORD_CONFIRMATION_PLACEHOLDER')}
       />
       <Button loading={loading} type="submit" className="btn btn-primary w-100">
         {t('AUTH_RESET_PASSWORD_SUBMIT')}
