@@ -444,8 +444,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@sentry/types':
-        specifier: ^7.94.1
-        version: 7.94.1
+        specifier: ^7.100.1
+        version: 7.100.1
       '@types/lodash.clonedeep':
         specifier: ^4.5.9
         version: 4.5.9
@@ -3535,6 +3535,11 @@ packages:
       '@sentry/types': 7.94.1
       '@sentry/utils': 7.94.1
     dev: false
+
+  /@sentry/types@7.100.1:
+    resolution: {integrity: sha512-fLM+LedHuKzOd8IhXBqaQuym+AA519MGjeczBa5kGakes/BbAsUMwsNfjsKQedp7Kh44RgYF99jwoRPK2oDrXw==}
+    engines: {node: '>=8'}
+    dev: true
 
   /@sentry/types@7.94.1:
     resolution: {integrity: sha512-A7CdEXFSgGyWv2BT2p9cAvJfb+dypvOtsY8ZvZvdPLUa7kqCV7ndhURUqKjvMBzsL2GParHn3ehDTl2eVc7pvA==}
