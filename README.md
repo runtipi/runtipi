@@ -2,10 +2,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-49-orange.svg?style=flat-square)](#contributors-)
-
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-49-orange.svg)](#contributors-)
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/runtipi/runtipi?color=%235351FB&label=version)](https://github.com/runtipi/runtipi/releases)
 ![Issues](https://img.shields.io/github/issues/runtipi/runtipi)
@@ -13,6 +10,8 @@
 [![Docker Image Size](https://badgen.net/docker/size/meienberger/runtipi?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/runtipi/)
 ![Build](https://github.com/runtipi/runtipi/workflows/Tipi%20CI/badge.svg)
 [![Crowdin](https://badges.crowdin.net/runtipi/localized.svg)](https://crowdin.com/project/runtipi)
+
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 > 💡 Tipi is built with TypeScript, Next.js app router and Drizzle ORM! If you want to collaborate on a cool project, join the discussion on Discord!
 
