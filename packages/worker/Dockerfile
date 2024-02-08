@@ -64,15 +64,18 @@ RUN pnpm -r build --filter @runtipi/worker
 # ---- RUNNER ----
 FROM runner_base AS app
 
-USER 1000:1000
+RUN apk --no-cache add sudo
+RUN echo "appuser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/node
+
+USER node
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --from=builder --chown=1000:1000 /app/packages/worker/dist .
-COPY --from=builder --chown=1000:1000 /app/packages/worker/assets ./assets
-COPY --from=builder --chown=1000:1000 /app/docker-binary /usr/local/bin/docker-compose
+COPY --from=builder --chown=node:node /app/packages/worker/dist .
+COPY --from=builder --chown=node:node /app/packages/worker/assets ./assets
+COPY --from=builder --chown=node:node /app/docker-binary /usr/local/bin/docker-compose
 
 CMD ["node", "index.js", "start"]
 
