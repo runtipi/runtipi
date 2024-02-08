@@ -52,7 +52,7 @@ export class AppExecutors {
    * @param {string} appId - App id
    */
   private ensureAppDir = async (appId: string) => {
-    const { appDirPath, repoPath } = this.getAppPaths(appId);
+    const { appDirPath, appDataDirPath, repoPath } = this.getAppPaths(appId);
     const dockerFilePath = path.join(ROOT_FOLDER, 'apps', appId, 'docker-compose.yml');
 
     if (!(await pathExists(dockerFilePath))) {
@@ -64,6 +64,10 @@ export class AppExecutors {
       this.logger.info(`Copying app ${appId} from repo ${getEnv().appsRepoId}`);
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
     }
+
+    await execAsync(`chmod -R 770 ${path.join(appDataDirPath)}`).catch(() => {
+      this.logger.error(`Error setting permissions for app ${appId}`);
+    });
   };
 
   public regenerateAppEnv = async (appId: string, config: Record<string, unknown>) => {
@@ -132,9 +136,7 @@ export class AppExecutors {
         await copyDataDir(appId);
       }
 
-      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {
-        this.logger.error(`Error setting permissions for app ${appId}`);
-      });
+      await this.ensureAppDir(appId);
 
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
@@ -192,8 +194,6 @@ export class AppExecutors {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
-      const { appDataDirPath } = this.getAppPaths(appId);
-
       this.logger.info(`Starting app ${appId}`);
 
       await this.ensureAppDir(appId);
@@ -206,11 +206,6 @@ export class AppExecutors {
       await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
 
       this.logger.info(`App ${appId} started`);
-
-      this.logger.info(`Setting permissions for app ${appId}`);
-      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {
-        this.logger.error(`Error setting permissions for app ${appId}`);
-      });
 
       SocketManager.emit({ type: 'app', event: 'start_success', data: { appId } });
 
@@ -300,10 +295,7 @@ export class AppExecutors {
         await copyDataDir(appId);
       }
 
-      // Set permissions
-      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {
-        this.logger.error(`Error setting permissions for app ${appId}`);
-      });
+      await this.ensureAppDir(appId);
 
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
@@ -340,6 +332,8 @@ export class AppExecutors {
 
       this.logger.info(`Copying folder ${repoPath} to ${appDirPath}`);
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
+
+      await this.ensureAppDir(appId);
 
       await compose(appId, 'pull');
 
