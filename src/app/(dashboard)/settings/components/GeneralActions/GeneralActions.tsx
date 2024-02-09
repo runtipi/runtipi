@@ -13,8 +13,7 @@ export const GeneralActions = (props: Props) => {
   const t = useTranslations();
   const { version } = props;
 
-  const defaultVersion = '0.0.0';
-  const isLatest = semver.gte(version.current || defaultVersion, version.latest || defaultVersion);
+  const isLatest = semver.valid(version.current) && semver.valid(version.latest) && semver.gte(version.current, version.latest);
 
   const renderUpdate = () => {
     if (isLatest) {
