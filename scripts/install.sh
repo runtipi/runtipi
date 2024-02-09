@@ -17,6 +17,8 @@ fi
 ### --------------------------------
 UPDATE="false"
 VERSION="latest"
+ASSET="runtipi-cli-linux-x86_64.tar.gz"
+
 while [ -n "${1-}" ]; do
     case "$1" in
     --update) UPDATE="true" ;;
@@ -25,6 +27,13 @@ while [ -n "${1-}" ]; do
         VERSION="$1" # Assign the value to VERSION
         if [ -z "$VERSION" ]; then
             echo "Option --version requires a value" && exit 1
+        fi
+        ;;
+    --asset)
+        shift # Move to the next parameter
+        ASSET="$1" # Assign the value to ASSET
+        if [ -z "$ASSET" ]; then
+            echo "Option --asset requires a value" && exit 1
         fi
         ;;
     --)
@@ -177,9 +186,8 @@ if [[ "${VERSION}" == "latest" ]]; then
   VERSION="${LATEST_VERSION}"
 fi
 
-ASSET="runtipi-cli-linux-x64"
-if [ "$ARCHITECTURE" == "arm64" ] || [ "$ARCHITECTURE" == "aarch64" ]; then
-  ASSET="runtipi-cli-linux-arm64"
+if [[ "$ARCHITECTURE" == "arm64" || "$ARCHITECTURE" == "aarch64" ]]; then
+  ASSET="runtipi-cli-linux-aarch64.tar.gz"
 fi
 
 URL="https://github.com/runtipi/runtipi/releases/download/$VERSION/$ASSET"
@@ -189,7 +197,17 @@ if [[ "${UPDATE}" == "false" ]]; then
   cd runtipi || exit
 fi
 
-curl --location "$URL" -o ./runtipi-cli
-chmod +x ./runtipi-cli
+# If the asset has a .tar.gz extension, it will be extracted
+if [[ "$ASSET" == *".tar.gz" ]]; then
+  curl --location "$URL" -o ./runtipi-cli.tar.gz
+  tar -xzf ./runtipi-cli.tar.gz
 
+  asset_name=$(tar -tzf ./runtipi-cli.tar.gz | head -n 1 | cut -f1 -d"/")
+  mv "./${asset_name}" ./runtipi-cli
+  rm ./runtipi-cli.tar.gz
+else
+  curl --location "$URL" -o ./runtipi-cli
+fi
+
+chmod +x ./runtipi-cli
 sudo ./runtipi-cli start

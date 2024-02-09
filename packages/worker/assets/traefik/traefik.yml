@@ -4,12 +4,12 @@ api:
 
 providers:
   docker:
-    endpoint: 'tcp://tipi-docker-proxy:2375'
+    endpoint: 'unix:///var/run/docker.sock'
     network: socket_proxy
     watch: true
     exposedByDefault: false
   file:
-    directory: /root/.config/dynamic
+    directory: /etc/traefik/dynamic
     watch: true
 
 entryPoints:
