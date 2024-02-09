@@ -88,6 +88,7 @@ services:
       TIPI_VERSION: development
     volumes:
       - /proc:/host/proc
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./.env:/app/.env
       - ./state:/app/state
       - ./repos:/app/repos
