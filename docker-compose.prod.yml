@@ -63,7 +63,7 @@ services:
       dockerfile: ./packages/worker/Dockerfile
       args:
         - SENTRY_DISABLE_AUTO_UPLOAD=true
-        - TIPI_VERSION=0.0.0
+        - TIPI_VERSION=development
     container_name: tipi-worker
     deploy:
       resources:
@@ -85,7 +85,7 @@ services:
       - .env
     environment:
       NODE_ENV: production
-      TIPI_VERSION: 0.0.0
+      TIPI_VERSION: development
     volumes:
       - /proc:/host/proc
       - ./.env:/app/.env
