@@ -171,20 +171,3 @@ jobs:
           draft: false
           prerelease: true
           files: cli/runtipi-cli-*
-
-  teardown:
-    runs-on: ubuntu-latest
-    if: failure()
-    needs: [build-images, build-worker, build-cli, create-release]
-    steps:
-      - name: Delete tag
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const tag = '${{ needs.create-tag.outputs.tagname }}';
-            github.rest.git.deleteRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `tags/${tag}`
-            });
