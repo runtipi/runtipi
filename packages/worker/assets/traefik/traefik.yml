@@ -4,7 +4,7 @@ api:
 
 providers:
   docker:
-    endpoint: 'tcp://tipi-docker-proxy:2375'
+    endpoint: 'unix:///var/run/docker.sock'
     network: socket_proxy
     watch: true
     exposedByDefault: false
