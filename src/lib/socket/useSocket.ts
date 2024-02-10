@@ -1,6 +1,6 @@
 import { SocketEvent, socketEventSchema } from '@runtipi/shared';
-import { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import { useEffect, useRef, useState } from 'react';
+import io, { Socket } from 'socket.io-client';
 
 // Data selector is used to select a specific property/value from the data object if it exists
 type DataSelector<T> = {
@@ -24,10 +24,18 @@ type Props<T, U> = {
 export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['event']>(props: Props<T, U>) => {
   const { onEvent, onError, selector, initialData } = props;
   const [lastData, setLastData] = useState(initialData as unknown);
+  const socketRef = useRef<Socket>();
 
   useEffect(() => {
     const { hostname, protocol } = window.location;
-    const socket = io(`${protocol}//${hostname}`, { path: '/worker/socket.io' });
+
+    if (!socketRef.current) {
+      socketRef.current = io(`${protocol}//${hostname}`, { path: '/worker/socket.io' });
+    }
+
+    if (socketRef.current?.disconnected) {
+      socketRef.current.connect();
+    }
 
     const handleEvent = (type: SocketEvent['type'], rawData: unknown) => {
       const parsedEvent = socketEventSchema.safeParse(rawData);
@@ -53,27 +61,26 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
         }
       }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore - This is fine
       setLastData(data);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore - This is fine
       if (onEvent) onEvent(event, data);
     };
 
-    socket.on(selector.type as string, (data) => {
+    socketRef.current?.on(selector.type as string, (data) => {
       handleEvent(selector.type, data);
     });
 
-    socket.on('error', (error: string) => {
+    socketRef.current?.on('error', (error: string) => {
       onError?.(String(error));
     });
 
     return () => {
-      socket?.off(selector.type as string);
-      socket.disconnect();
+      socketRef.current?.off(selector.type as string);
+      socketRef.current?.off('error');
     };
-  }, [onError, onEvent, selector, selector.type]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- This effect should never re-run
+  }, []);
 
   return { lastData } as { lastData: Extract<SocketEvent, { type: T }>['data'] | undefined };
 };
