@@ -14,7 +14,7 @@ import styles from './AppTile.module.scss';
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc' | 'deprecated'>;
 
 export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; updateAvailable: boolean }> = ({ app, status, updateAvailable }) => {
-  const t = useTranslations('apps');
+  const t = useTranslations();
 
   return (
     <div data-testid={`app-tile-${app.id}`}>
@@ -38,7 +38,7 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
         {updateAvailable && (
           <>
             <Tooltip className="tooltip" anchorSelect=".updateAvailable">
-              {t('update-available')}
+              {t('MY_APPS_UPDATE_AVAILABLE')}
             </Tooltip>
             <div className="updateAvailable ribbon bg-green ribbon-top">
               <IconDownload size={20} />
@@ -48,7 +48,7 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
         {app.deprecated && (
           <>
             <Tooltip className="tooltip" anchorSelect=".deprecated">
-              {t('deprecated')}
+              {t('MY_APPS_DEPRECATED')}
             </Tooltip>
             <div className="deprecated ribbon bg-red">
               <IconAlertCircle />

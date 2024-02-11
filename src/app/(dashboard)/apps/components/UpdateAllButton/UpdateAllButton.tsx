@@ -4,18 +4,18 @@ import React from 'react';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/Button';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { updateAllAppsAction } from '@/actions/app-actions/update-all-apps-action';
 import { useTranslations } from 'next-intl';
 import { UpdateAllModal } from '../UpdateAllModal';
 
 export const UpdateAllButton: React.FC = () => {
   const updateDisclosure = useDisclosure();
-  const t = useTranslations('apps.my-apps.update-all-form');
+  const t = useTranslations();
 
   const updateAllMutation = useAction(updateAllAppsAction, {
     onSuccess: () => {
-      toast.loading(t('in-progress'), { duration: 3000 });
+      toast.loading(t('MY_APPS_UPDATE_ALL_IN_PROGRESS'), { duration: 3000 });
     },
     onError: (e) => {
       if (e.serverError) toast.error(e.serverError);
@@ -26,7 +26,7 @@ export const UpdateAllButton: React.FC = () => {
   });
 
   return (
-    <div className="d-flex align-items-stretch align-items-md-center flex-column flex-md-row justify-content-end">
+    <div className="d-flex align-items-end align-items-md-center flex-column flex-md-row justify-content-end">
       <UpdateAllModal isOpen={updateDisclosure.isOpen} onClose={() => updateDisclosure.close()} onConfirm={() => updateAllMutation.execute()} />
       <Button className="btn-success" onClick={updateDisclosure.open}>
         Update all

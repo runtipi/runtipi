@@ -1,5 +1,5 @@
 import path from 'path';
-import { execAsync, pathExists } from '@runtipi/shared';
+import { execAsync, pathExists } from '@runtipi/shared/node';
 import * as Sentry from '@sentry/node';
 import { getRepoHash, getRepoBaseUrlAndBranch } from './repo.helpers';
 import { logger } from '@/lib/logger';
@@ -55,6 +55,10 @@ export class RepoExecutors {
       }
 
       await execAsync(cloneCommand);
+
+      // Chmod the repo folder to 777
+      this.logger.info(`Executing: chmod -R 777 ${repoPath}`);
+      await execAsync(`chmod -R 777 ${repoPath}`);
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };

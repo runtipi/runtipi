@@ -7,23 +7,23 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { changePasswordAction } from '@/actions/settings/change-password';
 
 export const ChangePasswordForm = () => {
-  const t = useTranslations('settings.security');
+  const t = useTranslations();
 
   const schema = z
     .object({
       currentPassword: z.string().min(1),
-      newPassword: z.string().min(8, t('form.password-length')),
-      newPasswordConfirm: z.string().min(8, t('form.password-length')),
+      newPassword: z.string().min(8, t('SETTINGS_SECURITY_FORM_PASSWORD_LENGTH')),
+      newPasswordConfirm: z.string().min(8, t('SETTINGS_SECURITY_FORM_PASSWORD_LENGTH')),
     })
     .superRefine((data, ctx) => {
       if (data.newPassword !== data.newPasswordConfirm) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: t('form.password-match'),
+          message: t('SETTINGS_SECURITY_FORM_PASSWORD_MATCH'),
           path: ['newPasswordConfirm'],
         });
       }
@@ -38,7 +38,7 @@ export const ChangePasswordForm = () => {
       if (e.serverError) toast.error(e.serverError);
     },
     onSuccess: () => {
-      toast.success(t('password-change-success'));
+      toast.success(t('SETTINGS_SECURITY_PASSWORD_CHANGE_SUCCESS'));
       router.push('/');
     },
   });
@@ -62,7 +62,7 @@ export const ChangePasswordForm = () => {
         {...register('currentPassword')}
         error={errors.currentPassword?.message}
         type="password"
-        placeholder={t('form.current-password')}
+        placeholder={t('SETTINGS_SECURITY_FORM_CURRENT_PASSWORD')}
       />
       <Input
         disabled={changePasswordMutation.status === 'executing'}
@@ -70,7 +70,7 @@ export const ChangePasswordForm = () => {
         error={errors.newPassword?.message}
         className="mt-2"
         type="password"
-        placeholder={t('form.new-password')}
+        placeholder={t('SETTINGS_SECURITY_FORM_NEW_PASSWORD')}
       />
       <Input
         disabled={changePasswordMutation.status === 'executing'}
@@ -78,10 +78,10 @@ export const ChangePasswordForm = () => {
         error={errors.newPasswordConfirm?.message}
         className="mt-2"
         type="password"
-        placeholder={t('form.confirm-password')}
+        placeholder={t('SETTINGS_SECURITY_FORM_CONFIRM_PASSWORD')}
       />
       <Button disabled={changePasswordMutation.status === 'executing'} className="mt-3" type="submit">
-        {t('form.change-password')}
+        {t('SETTINGS_SECURITY_FORM_CHANGE_PASSWORD_SUBMIT')}
       </Button>
     </form>
   );

@@ -64,9 +64,11 @@ Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may co
 
 ## 🙏 Acknowledgements
 
+- [GitHub](https://github.com) - Thanks for generously giving us access to your full product suite
 - [Freepik](https://www.flaticon.com/free-icons/tipi) - Thanks for providing a free logo for the project
 - [Sentry](https://sentry.io) - Thanks for providing error tracking for the project
 - [Crowdin](https://crowdin.com) - Thanks for providing localization management for the project
+- [CodeRabbit](https://coderabbit.ai/) - Thanks for providing free AI code reviews in our Pull Requests
 
 ## ✨ Contributors
 
@@ -118,7 +120,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://micro.nghialele.com"><img src="https://avatars.githubusercontent.com/u/129353223?v=4?s=100" width="100px;" alt="Nghia Lele"/><br /><sub><b>Nghia Lele</b></sub></a><br /><a href="#translation-nghialele" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/amusingimpala75"><img src="https://avatars.githubusercontent.com/u/69653100?v=4?s=100" width="100px;" alt="amusingimpala75"/><br /><sub><b>amusingimpala75</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=amusingimpala75" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://m1n.omg.lol"><img src="https://avatars.githubusercontent.com/u/54779580?v=4?s=100" width="100px;" alt="David"/><br /><sub><b>David</b></sub></a><br /><a href="#translation-M1n-4d316e" title="Translation">🌍</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/steveiliop56"><img src="https://avatars.githubusercontent.com/u/106091011?v=4?s=100" width="100px;" alt="Stavros Iliopoulos"/><br /><sub><b>Stavros Iliopoulos</b></sub></a><br /><a href="#translation-steveiliop56" title="Translation">🌍</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Code">💻</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Tests">⚠️</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/steveiliop56"><img src="https://avatars.githubusercontent.com/u/106091011?v=4?s=100" width="100px;" alt="Stavros"/><br /><sub><b>Stavros</b></sub></a><br /><a href="#translation-steveiliop56" title="Translation">🌍</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Code">💻</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Tests">⚠️</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/loxiry"><img src="https://avatars.githubusercontent.com/u/86959495?v=4?s=100" width="100px;" alt="loxiry"/><br /><sub><b>loxiry</b></sub></a><br /><a href="#translation-loxiry" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JigSawFr"><img src="https://avatars.githubusercontent.com/u/5781907?v=4?s=100" width="100px;" alt="JigSaw"/><br /><sub><b>JigSaw</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=JigSawFr" title="Code">💻</a></td>
     </tr>
@@ -148,4 +150,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
+Did you contribute and want to see your name listed in the README? Write a comment [here](https://github.com/runtipi/runtipi/issues/380)
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

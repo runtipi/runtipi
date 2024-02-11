@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { registerAction } from '@/actions/register/register-action';

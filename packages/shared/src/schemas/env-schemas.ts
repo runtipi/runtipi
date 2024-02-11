@@ -93,7 +93,6 @@ export const envSchema = z.object({
 export const settingsSchema = envSchema
   .partial()
   .pick({
-    version: true,
     dnsIp: true,
     internalIp: true,
     postgresPort: true,

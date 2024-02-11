@@ -5,7 +5,7 @@
 import * as Sentry from '@sentry/nextjs';
 import { ExtraErrorData } from '@sentry/integrations';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { cleanseErrorData } from '@runtipi/shared/src/helpers/error-helpers';
+import { cleanseErrorData } from '@runtipi/shared';
 
 const { version, allowErrorMonitoring, NODE_ENV } = TipiConfig.getConfig();
 

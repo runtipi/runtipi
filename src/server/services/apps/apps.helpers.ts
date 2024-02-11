@@ -1,5 +1,6 @@
 import { App } from '@/server/db/schema';
-import { appInfoSchema, pathExists } from '@runtipi/shared';
+import { appInfoSchema } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
 import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
@@ -54,6 +55,7 @@ export const getAvailableApps = async () => {
 
       if (!parsedConfig.success) {
         Logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
+        Logger.error(JSON.stringify(parsedConfig.error, null, 2));
       } else if (parsedConfig.data.available) {
         const description = readFile(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${parsedConfig.data.id}/metadata/description.md`);
         return { ...parsedConfig.data, description };

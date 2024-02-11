@@ -93,7 +93,7 @@ jobs:
             curl -s https://raw.githubusercontent.com/runtipi/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
             chmod +x install.sh
             echo 'Running install script'
-            ./install.sh --version ${{ inputs.version }}
+            ./install.sh --version ${{ inputs.version }} --asset runtipi-cli-linux-x86_64.tar.gz
             echo 'App deployed'
           host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
           user: root # TODO: use non-root user
@@ -124,7 +124,7 @@ jobs:
         run: |
           echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Setup pnpm cache
         with:
           path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}

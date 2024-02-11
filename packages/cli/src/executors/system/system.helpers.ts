@@ -2,7 +2,8 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { envMapToString, envStringToMap, pathExists, settingsSchema } from '@runtipi/shared';
+import { envMapToString, envStringToMap, settingsSchema } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
 import { logger } from '@/utils/logger/logger';
 
 type EnvKeys =

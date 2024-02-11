@@ -3,7 +3,7 @@ import path from 'path';
 import { vi, beforeEach } from 'vitest';
 import { ROOT_FOLDER } from '@/config/constants';
 
-vi.mock('@runtipi/shared', async (importOriginal) => {
+vi.mock('@runtipi/shared/node', async (importOriginal) => {
   const mod = (await importOriginal()) as object;
 
   return {

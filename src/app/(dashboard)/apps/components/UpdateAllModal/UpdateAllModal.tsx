@@ -10,25 +10,25 @@ interface IProps {
 }
 
 export const UpdateAllModal: React.FC<IProps> = ({ isOpen, onClose, onConfirm }) => {
-  const t = useTranslations('apps.my-apps.update-all-form');
+  const t = useTranslations();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
         <DialogHeader>
-          <h5 className="modal-title">{t('title')}</h5>
+          <h5 className="modal-title">{t('MY_APPS_UPDATE_ALL_FORM_TITLE')}</h5>
         </DialogHeader>
         <DialogDescription>
           <div className="text-muted">
-            {t('subtitle1')}
+            {t('MY_APPS_UPDATE_ALL_FORM_SUBTITLE_1')}
             <br />
             <br />
-            {t('subtitle2')}
+            {t('MY_APPS_UPDATE_ALL_FORM_SUBTITLE_2')}
           </div>
         </DialogDescription>
         <DialogFooter>
           <Button onClick={onConfirm} className="btn-success">
-            {t('submit')}
+            {t('MY_APPS_UPDATE_ALL_FORM_SUBMIT')}
           </Button>
         </DialogFooter>
       </DialogContent>

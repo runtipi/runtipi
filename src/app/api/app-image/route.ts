@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
 import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
-import { pathExists } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
 import fs from 'fs-extra';
 import path from 'path';
 

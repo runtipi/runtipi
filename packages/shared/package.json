@@ -2,7 +2,27 @@
   "name": "@runtipi/shared",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./node": {
+      "browser": null,
+      "import": "./src/node/index.ts",
+      "require": "./src/node/index.ts",
+      "default": "./src/node/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "node",
+    "dist"
+  ],
   "scripts": {
     "lint": "eslint --ext .ts src",
     "tsc": "tsc --noEmit"
@@ -17,7 +37,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@sentry/types": "^7.92.0",
+    "@sentry/types": "^7.94.1",
     "@types/lodash.clonedeep": "^4.5.9"
   }
 }

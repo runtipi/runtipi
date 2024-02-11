@@ -90,55 +90,60 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.create-tag.outputs.tagname }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/runtipi:buildcache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   build-cli:
     runs-on: ubuntu-latest
     needs: create-tag
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Dispatch an action and get the run ID
+        uses: codex-/return-dispatch@v1
+        id: return_dispatch
         with:
-          node-version: 20
+          token: ${{ secrets.PAT_CLI }}
+          ref: main
+          repo: cli
+          owner: runtipi
+          workflow: build.yml
+          workflow_inputs: '{ "version": "${{ needs.create-tag.outputs.tagname }}" }'
 
-      - uses: pnpm/action-setup@v2.4.0
-        name: Install pnpm
-        id: pnpm-install
+      - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
+        uses: Codex-/await-remote-run@v1.11.0
         with:
-          version: 8
-          run_install: false
+          token: ${{ secrets.PAT_CLI }}
+          repo: cli
+          owner: runtipi
+          run_id: ${{ steps.return_dispatch.outputs.run_id }}
+          run_timeout_seconds: 300
+          poll_interval_ms: 5000
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
+      - name: Create bin folder
+        run: mkdir -p bin
+
+      - name: Download CLI form release on runtipi/cli repo
         run: |
-          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+          REPO="runtipi/cli"
+          VERSION="${{ needs.create-tag.outputs.tagname }}"
 
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          ASSETS_URL=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/releases/tags/$VERSION" \
+            | jq -r '.assets[] | select(.name | test("runtipi-cli.+")) | .browser_download_url')
 
-      - name: Install dependencies
-        run: pnpm install
+          echo "Assets URL: $ASSETS_URL"
 
-      - name: Set version
-        run: pnpm -r --filter cli set-version ${{ needs.create-tag.outputs.tagname }}
-
-      - name: Build CLI
-        run: pnpm -r --filter cli package
+          for url in $ASSETS_URL; do
+            echo "Downloading from $url"
+            curl -L -o "bin/${url##*/}" -H "Accept: application/octet-stream" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$url"
+          done
 
       - name: Upload CLI
         uses: actions/upload-artifact@v4
         with:
           name: cli
-          path: packages/cli/dist
+          path: bin
 
   publish-release:
     runs-on: ubuntu-latest
@@ -152,11 +157,6 @@ jobs:
           name: cli
           path: cli
 
-      - name: Rename CLI
-        run: |
-          mv cli/bin/cli-x64 ./runtipi-cli-linux-x64
-          mv cli/bin/cli-arm64 ./runtipi-cli-linux-arm64
-
       - name: Create beta release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -169,9 +169,7 @@ jobs:
           name: ${{ needs.create-tag.outputs.tagname }}
           draft: false
           prerelease: true
-          files: |
-            runtipi-cli-linux-x64
-            runtipi-cli-linux-arm64
+          files: cli/runtipi-cli-*
 
   e2e-tests:
     needs: [create-tag, publish-release]

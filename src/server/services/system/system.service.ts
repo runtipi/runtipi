@@ -1,8 +1,7 @@
 import { promises } from 'fs';
 import axios from 'redaxios';
 import { TipiCache } from '@/server/core/TipiCache';
-import { systemInfoSchema } from '@runtipi/shared/src/schemas/socket';
-import { fileExists, readJsonFile } from '../../common/fs.helpers';
+import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
 
@@ -43,16 +42,6 @@ export class SystemServiceClass {
     } finally {
       await cache.close();
     }
-  };
-
-  public static systemInfo = () => {
-    const info = systemInfoSchema.safeParse(readJsonFile('/runtipi/state/system-info.json'));
-
-    if (!info.success) {
-      return { diskUsed: 0, diskSize: 0, percentUsed: 0, cpuLoad: 0, memoryTotal: 0, percentUsedMemory: 0 };
-    }
-
-    return info.data;
   };
 
   public static hasSeenWelcome = async () => {

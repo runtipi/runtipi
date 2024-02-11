@@ -31,7 +31,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const systemService = new SystemServiceClass();
   const { latest, current } = await systemService.getVersion();
-  const isLatest = semver.gte(current, latest || '0.0.0');
+
+  const isLatest = semver.valid(current) && semver.valid(latest) && semver.gte(current, latest);
 
   return (
     <div className="page">

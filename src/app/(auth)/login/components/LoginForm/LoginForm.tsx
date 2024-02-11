@@ -20,7 +20,7 @@ interface IProps {
 }
 
 export const LoginForm: React.FC<IProps> = ({ loading, onSubmit }) => {
-  const t = useTranslations('auth');
+  const t = useTranslations();
   const {
     register,
     handleSubmit,
@@ -37,24 +37,33 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit }) => {
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <h2 className="h2 text-center mb-3">{t('login.title')}</h2>
-      <Input {...register('email')} name="email" label={t('form.email')} error={errors.email?.message} disabled={loading} type="email" className="mb-3" placeholder={t('form.email-placeholder')} />
-      <span className="form-label-description">
-        <Link href="/reset-password">{t('form.forgot')}</Link>
-      </span>
+      <h2 className="h2 text-center mb-3">{t('AUTH_LOGIN_TITLE')}</h2>
+      <Input
+        {...register('email')}
+        name="email"
+        label={t('AUTH_FORM_EMAIL')}
+        error={errors.email?.message}
+        disabled={loading}
+        type="email"
+        className="mb-3"
+        placeholder={t('AUTH_FORM_EMAIL_PLACEHOLDER')}
+      />
       <Input
         {...register('password')}
         name="password"
-        label={t('form.password')}
+        label={t('AUTH_FORM_PASSWORD')}
         error={errors.password?.message}
         disabled={loading}
         type="password"
         className="mb-3"
-        placeholder={t('form.password-placeholder')}
+        placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
       />
       <Button disabled={isDisabled} loading={loading} type="submit" className="btn btn-primary w-100">
-        {t('login.submit')}
+        {t('AUTH_LOGIN_SUBMIT')}
       </Button>
+      <div className="form-text text-center">
+        <Link href="/reset-password">{t('AUTH_FORM_FORGOT')}</Link>
+      </div>
     </form>
   );
 };

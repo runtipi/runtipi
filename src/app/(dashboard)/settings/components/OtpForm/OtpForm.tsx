@@ -8,14 +8,14 @@ import { OtpInput } from '@/components/ui/OtpInput';
 import { toast } from 'react-hot-toast';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { useTranslations } from 'next-intl';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { getTotpUriAction } from '@/actions/settings/get-totp-uri';
 import { setupTotpAction } from '@/actions/settings/setup-totp-action';
 import { disableTotpAction } from '@/actions/settings/disable-totp';
 
 export const OtpForm = (props: { totpEnabled: boolean }) => {
   const { totpEnabled } = props;
-  const t = useTranslations('settings.security');
+  const t = useTranslations();
   const [password, setPassword] = React.useState('');
   const [key, setKey] = React.useState('');
   const [uri, setUri] = React.useState('');
@@ -48,7 +48,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
       setTotpCode('');
       setKey('');
       setUri('');
-      toast.success(t('2fa-enable-success'));
+      toast.success(t('SETTINGS_SECURITY_2FA_ENABLE_SUCCESS'));
     },
   });
 
@@ -61,7 +61,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
       if (e.serverError) toast.error(e.serverError);
     },
     onSuccess: () => {
-      toast.success(t('2fa-disable-success'));
+      toast.success(t('SETTINGS_SECURITY_2FA_DISABLE_SUCCESS'));
     },
   });
 
@@ -71,18 +71,18 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
     return (
       <div className="mt-4">
         <div className="mb-4">
-          <p className="text-muted">{t('scan-qr-code')}</p>
+          <p className="text-muted">{t('SETTINGS_SECURITY_SCAN_QR_CODE')}</p>
           <QRCodeSVG value={uri} />
         </div>
         <div className="mb-4">
-          <p className="text-muted">{t('enter-key-manually')}</p>
+          <p className="text-muted">{t('SETTINGS_SECURITY_ENTER_KEY_MANUALLY')}</p>
           <Input name="secret key" value={key} readOnly />
         </div>
         <div className="mb-4">
-          <p className="text-muted">{t('enter-2fa-code')}</p>
+          <p className="text-muted">{t('SETTINGS_SECURITY_ENTER_2FA_CODE')}</p>
           <OtpInput value={totpCode} valueLength={6} onChange={(e) => setTotpCode(e)} />
           <Button disabled={totpCode.trim().length < 6} onClick={() => setupTotpMutation.execute({ totpCode })} className="mt-3 btn-success">
-            {t('enable-2fa')}
+            {t('SETTINGS_SECURITY_ENABLE_2FA')}
           </Button>
         </div>
       </div>
@@ -99,7 +99,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
 
   return (
     <>
-      {!key && <Switch onCheckedChange={handleTotp} checked={totpEnabled} label={t('enable-2fa')} />}
+      {!key && <Switch onCheckedChange={handleTotp} checked={totpEnabled} label={t('SETTINGS_SECURITY_ENABLE_2FA')} />}
       {getTotpUriMutation.status === 'executing' && (
         <div className="progress w-50">
           <div className="progress-bar progress-bar-indeterminate bg-green" />
@@ -109,7 +109,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
       <Dialog open={setupOtpDisclosure.isOpen} onOpenChange={(o: boolean) => setupOtpDisclosure.toggle(o)}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>{t('password-needed')}</DialogTitle>
+            <DialogTitle>{t('SETTINGS_SECURITY_PASSWORD_NEEDED')}</DialogTitle>
           </DialogHeader>
           <DialogDescription className="d-flex flex-column">
             <form
@@ -118,10 +118,15 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
                 getTotpUriMutation.execute({ password });
               }}
             >
-              <p className="text-muted">{t('password-needed-hint')}</p>
-              <Input name="password" type="password" onChange={(e) => setPassword(e.target.value)} placeholder={t('form.password')} />
+              <p className="text-muted">{t('SETTINGS_SECURITY_PASSWORD_NEEDED_HINT')}</p>
+              <Input
+                name="password"
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t('SETTINGS_SECURITY_PASSWORD_NEEDED')}
+              />
               <Button loading={getTotpUriMutation.status === 'executing'} type="submit" className="btn-success mt-3">
-                {t('enable-2fa')}
+                {t('SETTINGS_SECURITY_ENABLE_2FA')}
               </Button>
             </form>
           </DialogDescription>
@@ -130,7 +135,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
       <Dialog open={disableOtpDisclosure.isOpen} onOpenChange={(o: boolean) => disableOtpDisclosure.toggle(o)}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>{t('password-needed')}</DialogTitle>
+            <DialogTitle>{t('SETTINGS_SECURITY_PASSWORD_NEEDED')}</DialogTitle>
           </DialogHeader>
           <DialogDescription className="d-flex flex-column">
             <form
@@ -139,10 +144,15 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
                 disableTotpMutation.execute({ password });
               }}
             >
-              <p className="text-muted">{t('password-needed-hint')}</p>
-              <Input name="password" type="password" onChange={(e) => setPassword(e.target.value)} placeholder={t('form.password')} />
+              <p className="text-muted">{t('SETTINGS_SECURITY_PASSWORD_NEEDED_HINT')}</p>
+              <Input
+                name="password"
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t('SETTINGS_SECURITY_PASSWORD_NEEDED')}
+              />
               <Button loading={disableTotpMutation.status === 'executing'} type="submit" className="btn-danger mt-3">
-                {t('disable-2fa')}
+                {t('SETTINGS_SECURITY_DISABLE_2FA')}
               </Button>
             </form>
           </DialogDescription>

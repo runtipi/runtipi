@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -29,10 +29,10 @@ export const ResetPasswordContainer: React.FC = () => {
   if (resetPasswordMutation.result.data?.success && resetPasswordMutation.result.data?.email) {
     return (
       <>
-        <h2 className="h2 text-center mb-3">{t('auth.reset-password.success-title')}</h2>
-        <p>{t('auth.reset-password.success', { email: resetPasswordMutation.result.data.email })}</p>
+        <h2 className="h2 text-center mb-3">{t('AUTH_RESET_PASSWORD_SUCCESS_TITLE')}</h2>
+        <p>{t('AUTH_RESET_PASSWORD_SUCCESS', { email: resetPasswordMutation.result.data.email })}</p>
         <Button onClick={() => router.push('/login')} type="button" className="btn btn-primary w-100">
-          {t('auth.reset-password.back-to-login')}
+          {t('AUTH_RESET_PASSWORD_BACK_TO_LOGIN')}
         </Button>
       </>
     );

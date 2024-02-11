@@ -11,13 +11,13 @@ interface IProps {
 }
 
 export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
-  const t = useTranslations('apps.app-details');
+  const t = useTranslations();
 
   return (
     <Tabs defaultValue="description" orientation="vertical" style={{ marginTop: -1 }}>
       <TabsList>
-        <TabsTrigger value="description">{t('description')}</TabsTrigger>
-        <TabsTrigger value="info">{t('base-info')}</TabsTrigger>
+        <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
+        <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
       </TabsList>
       <TabsContent value="description">
         {info.deprecated && (
@@ -27,8 +27,8 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
                 <IconAlertCircle />
               </div>
               <div className="ms-2">
-                <h4 className="alert-title">{t('deprecated-alert-title')}</h4>
-                <div className="text-secondary">{t('deprecated-alert-subtitle')} </div>
+                <h4 className="alert-title">{t('APP_DETAILS_DEPRECATED_ALERT_TITLE')}</h4>
+                <div className="text-secondary">{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')} </div>
               </div>
             </div>
           </div>
@@ -37,26 +37,26 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
       </TabsContent>
       <TabsContent value="info">
         <DataGrid>
-          <DataGridItem title={t('source-code')}>
+          <DataGridItem title={t('APP_DETAILS_SOURCE_CODE')}>
             <a target="_blank" rel="noreferrer" className="text-blue-500 text-xs" href={info.source}>
-              {t('link')}
+              {t('APP_DETAILS_LINK')}
               <IconExternalLink size={15} className="ms-1 mb-1" />
             </a>
           </DataGridItem>
-          <DataGridItem title={t('author')}>{info.author}</DataGridItem>
-          <DataGridItem title={t('port')}>
+          <DataGridItem title={t('APP_DETAILS_AUTHOR')}>{info.author}</DataGridItem>
+          <DataGridItem title={t('APP_DETAILS_PORT')}>
             <b>{info.port}</b>
           </DataGridItem>
-          <DataGridItem title={t('categories-title')}>
+          <DataGridItem title={t('APP_DETAILS_CATEGORIES_TITLE')}>
             {info.categories.map((c) => (
               <div key={c} className="badge text-white bg-green me-1">
-                {t(`categories.${c}`)}
+                {t(`APP_CATEGORY_${c.toUpperCase() as Uppercase<typeof c>}`)}
               </div>
             ))}
           </DataGridItem>
-          <DataGridItem title={t('version')}>{info.version}</DataGridItem>
+          <DataGridItem title={t('APP_DETAILS_VERSION')}>{info.version}</DataGridItem>
           {info.supported_architectures && (
-            <DataGridItem title={t('supported-arch')}>
+            <DataGridItem title={t('APP_DETAILS_SUPPORTED_ARCH')}>
               {info.supported_architectures.map((a) => (
                 <div key={a} className="badge text-white bg-red me-1">
                   {a.toLowerCase()}
@@ -65,7 +65,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
             </DataGridItem>
           )}
           {info.website && (
-            <DataGridItem title={t('website')}>
+            <DataGridItem title={t('APP_DETAILS_WEBSITE')}>
               <a target="_blank" rel="noreferrer" className="text-blue-500 text-xs" href={info.website}>
                 {info.website}
                 <IconExternalLink size={15} className="ms-1 mb-1" />

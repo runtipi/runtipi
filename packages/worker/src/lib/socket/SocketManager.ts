@@ -1,4 +1,4 @@
-import { SocketEvent } from '@runtipi/shared/src/schemas/socket';
+import { SocketEvent } from '@runtipi/shared';
 import { Server } from 'socket.io';
 import { logger } from '../logger';
 

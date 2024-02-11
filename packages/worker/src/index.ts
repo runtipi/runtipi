@@ -1,19 +1,20 @@
-import { SystemEvent } from '@runtipi/shared';
+import { SystemEvent, cleanseErrorData } from '@runtipi/shared';
 
-import http from 'node:http';
 import path from 'node:path';
 import Redis from 'ioredis';
 import dotenv from 'dotenv';
 import { Queue } from 'bullmq';
 import * as Sentry from '@sentry/node';
-import { cleanseErrorData } from '@runtipi/shared/src/helpers/error-helpers';
 import { ExtraErrorData } from '@sentry/integrations';
-import { copySystemFiles, ensureFilePermissions, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
 import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
-import { AppExecutors, RepoExecutors, SystemExecutors } from './services';
+import { AppExecutors, RepoExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
+import { setupRoutes } from './api';
 
 const rootFolder = '/app';
 const envFile = path.join(rootFolder, '.env');
@@ -41,6 +42,7 @@ const main = async () => {
   try {
     await logger.flush();
 
+    logger.info(`Running tipi-worker version: ${process.env.TIPI_VERSION}`);
     logger.info('Generating system env file...');
     const envMap = await generateSystemEnvFile();
 
@@ -59,13 +61,10 @@ const main = async () => {
     logger.info('Generating TLS certificates...');
     await generateTlsCertificates({ domain: envMap.get('LOCAL_DOMAIN') });
 
-    logger.info('Ensuring file permissions...');
-    await ensureFilePermissions();
-
     SocketManager.init();
 
     const repoExecutors = new RepoExecutors();
-    const systemExecutors = new SystemExecutors();
+
     const clone = await repoExecutors.cloneRepo(envMap.get('APPS_REPO_URL') as string);
     if (!clone.success) {
       logger.error(`Failed to clone repo ${envMap.get('APPS_REPO_URL') as string}`);
@@ -81,12 +80,9 @@ const main = async () => {
     logger.info('Obliterating queue...');
     await queue.obliterate({ force: true });
 
-    await systemExecutors.systemInfo();
-
     // Scheduled jobs
     logger.info('Adding scheduled jobs to queue...');
     await repeatQueue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
-    await repeatQueue.add(`${Math.random().toString()}_system_info`, { type: 'system', command: 'system_info' } as SystemEvent, { repeat: { every: 3000 } });
 
     logger.info('Closing queue...');
     await queue.close();
@@ -112,18 +108,12 @@ const main = async () => {
     logger.info('Starting all apps...');
     appExecutor.startAllApps();
 
-    const server = http.createServer((req, res) => {
-      if (req.url === '/healthcheck') {
-        res.writeHead(200);
-        res.end('OK');
-      } else {
-        res.writeHead(404);
-        res.end('Not Found');
-      }
-    });
-
-    server.listen(3000, () => {
+    const app = new Hono().basePath('/worker-api');
+    serve({ fetch: app.fetch, port: 3000 }, (info) => {
       startWorker();
+
+      setupRoutes(app);
+      logger.info(`Listening on http://localhost:${info.port}`);
     });
   } catch (e) {
     Sentry.captureException(e);

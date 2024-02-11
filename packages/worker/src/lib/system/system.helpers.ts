@@ -4,7 +4,8 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { envMapToString, envStringToMap, execAsync, pathExists, settingsSchema } from '@runtipi/shared';
+import { envMapToString, envStringToMap, settingsSchema } from '@runtipi/shared';
+import { execAsync, pathExists } from '@runtipi/shared/node';
 import { logger } from '../logger/logger';
 import { getRepoHash } from '../../services/repo/repo.helpers';
 import { ROOT_FOLDER } from '@/config/constants';
@@ -267,24 +268,5 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
     await fs.promises.writeFile(path.join(ROOT_FOLDER, 'traefik', 'tls', `${data.domain}.txt`), '');
   } catch (error) {
     logger.error(error);
-  }
-};
-
-export const ensureFilePermissions = async () => {
-  const filesAndFolders = [path.join(ROOT_FOLDER, 'state'), path.join(ROOT_FOLDER, 'traefik'), path.join(ROOT_FOLDER, 'media'), path.join(ROOT_FOLDER, 'apps')];
-
-  const files600 = [path.join(ROOT_FOLDER, 'traefik', 'shared', 'acme.json')];
-
-  // Give permission to read and write to all files and folders for the current user
-  for (const directory of filesAndFolders) {
-    if (await pathExists(directory)) {
-      await execAsync(`find ${directory} -type d -exec chmod a+rwx {} +`).catch(() => {});
-    }
-  }
-
-  for (const fileOrFolder of files600) {
-    if (await pathExists(fileOrFolder)) {
-      await execAsync(`chmod 600 ${fileOrFolder}`).catch(() => {});
-    }
   }
 };

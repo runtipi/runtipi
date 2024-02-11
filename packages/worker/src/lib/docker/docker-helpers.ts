@@ -1,5 +1,5 @@
 import path from 'path';
-import { execAsync, pathExists } from '@runtipi/shared';
+import { execAsync, pathExists } from '@runtipi/shared/node';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';

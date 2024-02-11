@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { changeUsernameAction } from '@/actions/settings/change-username';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
@@ -19,9 +19,9 @@ type Props = {
 export const ChangeUsernameForm = ({ username }: Props) => {
   const router = useRouter();
   const changeUsernameDisclosure = useDisclosure();
-  const t = useTranslations('settings.security');
+  const t = useTranslations();
   const schema = z.object({
-    newUsername: z.string().email(t('change-username.form.invalid-username')),
+    newUsername: z.string().email(t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_INVALID_USERNAME')),
     password: z.string().min(1),
   });
   type FormValues = z.infer<typeof schema>;
@@ -31,7 +31,7 @@ export const ChangeUsernameForm = ({ username }: Props) => {
       if (e.serverError) toast.error(e.serverError);
     },
     onSuccess: () => {
-      toast.success(t('change-username.success'));
+      toast.success(t('SETTINGS_SECURITY_CHANGE_USERNAME_SUCCESS'));
       router.push('/');
     },
   });
@@ -48,21 +48,21 @@ export const ChangeUsernameForm = ({ username }: Props) => {
     <div className="mb-4">
       <Input disabled type="email" value={username} />
       <Button className="mt-3" onClick={() => changeUsernameDisclosure.open()}>
-        {t('change-username.form.submit')}
+        {t('SETTINGS_SECURITY_CHANGE_USERNAME_TITLE')}
       </Button>
       <Dialog open={changeUsernameDisclosure.isOpen} onOpenChange={changeUsernameDisclosure.toggle}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>{t('password-needed')}</DialogTitle>
+            <DialogTitle>{t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_PASSWORD')}</DialogTitle>
           </DialogHeader>
           <DialogDescription className="d-flex flex-column">
             <form onSubmit={handleSubmit(onSubmit)} className="w-100">
-              <p className="text-muted">{t('change-username.form.password-needed-hint')}</p>
+              <p className="text-muted">{t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_PASSWORD_NEEDED_HINT')}</p>
               <Input
                 error={formState.errors.newUsername?.message}
                 disabled={changeUsernameMutation.status === 'executing'}
                 type="email"
-                placeholder={t('change-username.form.new-username')}
+                placeholder={t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_NEW_USERNAME')}
                 {...register('newUsername')}
               />
               <Input
@@ -70,11 +70,11 @@ export const ChangeUsernameForm = ({ username }: Props) => {
                 error={formState.errors.password?.message}
                 disabled={changeUsernameMutation.status === 'executing'}
                 type="password"
-                placeholder={t('form.password')}
+                placeholder={t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_PASSWORD')}
                 {...register('password')}
               />
               <Button loading={changeUsernameMutation.status === 'executing'} type="submit" className="btn-success mt-3">
-                {t('change-username.form.submit')}
+                {t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_SUBMIT')}
               </Button>
             </form>
           </DialogDescription>

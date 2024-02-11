@@ -2,7 +2,7 @@ import fs from 'fs';
 import { describe, it, expect, vi } from 'vitest';
 import path from 'path';
 import { faker } from '@faker-js/faker';
-import { pathExists } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
 import { AppExecutors } from '../app.executors';
 import { createAppConfig } from '@/tests/apps.factory';
 import * as dockerHelpers from '@/lib/docker';
@@ -28,7 +28,7 @@ describe('test: app executors', () => {
 
       expect(success).toBe(true);
       expect(message).toBe(`App ${config.id} installed successfully`);
-      expect(spy).toHaveBeenCalledWith(config.id, 'up -d');
+      expect(spy).toHaveBeenCalledWith(config.id, 'up --detach --force-recreate --remove-orphans --pull always');
       expect(envExists).toBe(true);
       spy.mockRestore();
     });

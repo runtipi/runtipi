@@ -2,32 +2,16 @@
 /* eslint-disable no-restricted-syntax */
 import fs from 'fs';
 import path from 'path';
-import pg from 'pg';
 import * as Sentry from '@sentry/node';
-import { execAsync, pathExists } from '@runtipi/shared';
-import { SocketEvent } from '@runtipi/shared/src/schemas/socket';
+import { execAsync, pathExists } from '@runtipi/shared/node';
+import { SocketEvent } from '@runtipi/shared';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
 import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
 import { SocketManager } from '@/lib/socket/SocketManager';
-
-const getDbClient = async () => {
-  const { postgresHost, postgresDatabase, postgresUsername, postgresPassword, postgresPort } = getEnv();
-
-  const client = new pg.Client({
-    host: postgresHost,
-    database: postgresDatabase,
-    user: postgresUsername,
-    password: postgresPassword,
-    port: Number(postgresPort),
-  });
-
-  await client.connect();
-
-  return client;
-};
+import { getDbClient } from '@/lib/db';
 
 export class AppExecutors {
   private readonly logger;
@@ -68,7 +52,7 @@ export class AppExecutors {
    * @param {string} appId - App id
    */
   private ensureAppDir = async (appId: string) => {
-    const { appDirPath, repoPath } = this.getAppPaths(appId);
+    const { appDirPath, appDataDirPath, repoPath } = this.getAppPaths(appId);
     const dockerFilePath = path.join(ROOT_FOLDER, 'apps', appId, 'docker-compose.yml');
 
     if (!(await pathExists(dockerFilePath))) {
@@ -80,6 +64,10 @@ export class AppExecutors {
       this.logger.info(`Copying app ${appId} from repo ${getEnv().appsRepoId}`);
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
     }
+
+    await execAsync(`chmod -R 770 ${path.join(appDataDirPath)}`).catch(() => {
+      this.logger.error(`Error setting permissions for app ${appId}`);
+    });
   };
 
   public regenerateAppEnv = async (appId: string, config: Record<string, unknown>) => {
@@ -148,13 +136,11 @@ export class AppExecutors {
         await copyDataDir(appId);
       }
 
-      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {
-        this.logger.error(`Error setting permissions for app ${appId}`);
-      });
+      await this.ensureAppDir(appId);
 
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
-      await compose(appId, 'up -d');
+      await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
 
@@ -196,6 +182,8 @@ export class AppExecutors {
 
       SocketManager.emit({ type: 'app', event: 'stop_success', data: { appId } });
 
+      const client = await getDbClient();
+      await client?.query('UPDATE app SET status = $1 WHERE id = $2', ['stopped', appId]);
       return { success: true, message: `App ${appId} stopped successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'stop_error');
@@ -205,8 +193,6 @@ export class AppExecutors {
   public startApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
-
-      const { appDataDirPath } = this.getAppPaths(appId);
 
       this.logger.info(`Starting app ${appId}`);
 
@@ -221,13 +207,10 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} started`);
 
-      this.logger.info(`Setting permissions for app ${appId}`);
-      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {
-        this.logger.error(`Error setting permissions for app ${appId}`);
-      });
-
       SocketManager.emit({ type: 'app', event: 'start_success', data: { appId } });
 
+      const client = await getDbClient();
+      await client?.query('UPDATE app SET status = $1 WHERE id = $2', ['running', appId]);
       return { success: true, message: `App ${appId} started successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'start_error');
@@ -268,6 +251,8 @@ export class AppExecutors {
 
       SocketManager.emit({ type: 'app', event: 'uninstall_success', data: { appId } });
 
+      const client = await getDbClient();
+      await client?.query(`DELETE FROM app WHERE id = $1`, [appId]);
       return { success: true, message: `App ${appId} uninstalled successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'uninstall_error');
@@ -310,10 +295,7 @@ export class AppExecutors {
         await copyDataDir(appId);
       }
 
-      // Set permissions
-      await execAsync(`chmod -R a+rwx ${path.join(appDataDirPath)}`).catch(() => {
-        this.logger.error(`Error setting permissions for app ${appId}`);
-      });
+      await this.ensureAppDir(appId);
 
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
@@ -321,6 +303,8 @@ export class AppExecutors {
 
       SocketManager.emit({ type: 'app', event: 'reset_success', data: { appId } });
 
+      const client = await getDbClient();
+      await client?.query(`UPDATE app SET status = $1 WHERE id = $2`, ['running', appId]);
       return { success: true, message: `App ${appId} reset successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'reset_error');
@@ -349,6 +333,8 @@ export class AppExecutors {
       this.logger.info(`Copying folder ${repoPath} to ${appDirPath}`);
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
 
+      await this.ensureAppDir(appId);
+
       await compose(appId, 'pull');
 
       SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
@@ -362,15 +348,23 @@ export class AppExecutors {
   /**
    * Start all apps with status running
    */
-  public startAllApps = async () => {
-    const client = await getDbClient();
-
+  public startAllApps = async (forceStartAll = false) => {
     try {
-      // Get all apps with status running
-      const { rows } = await client.query(`SELECT * FROM app WHERE status = 'running'`);
+      const client = await getDbClient();
+      let rows: { id: string; config: Record<string, unknown> }[] = [];
+
+      if (!forceStartAll) {
+        // Get all apps with status running
+        const result = await client?.query(`SELECT * FROM app WHERE status = 'running'`);
+        rows = result?.rows || [];
+      } else {
+        // Get all apps
+        const result = await client?.query(`SELECT * FROM app`);
+        rows = result?.rows || [];
+      }
 
       // Update all apps with status different than running or stopped to stopped
-      await client.query(`UPDATE app SET status = 'stopped' WHERE status != 'stopped' AND status != 'running' AND status != 'missing'`);
+      await client?.query(`UPDATE app SET status = 'stopped' WHERE status != 'stopped' AND status != 'running' AND status != 'missing'`);
 
       // Start all apps
       for (const row of rows) {
@@ -380,15 +374,13 @@ export class AppExecutors {
 
         if (!success) {
           this.logger.error(`Error starting app ${id}`);
-          await client.query(`UPDATE app SET status = 'stopped' WHERE id = '${id}'`);
+          await client?.query(`UPDATE app SET status = $1 WHERE id = $2`, ['stopped', id]);
         } else {
-          await client.query(`UPDATE app SET status = 'running' WHERE id = '${id}'`);
+          await client?.query(`UPDATE app SET status = $1 WHERE id = $2`, ['running', id]);
         }
       }
     } catch (err) {
       this.logger.error(`Error starting apps: ${err}`);
-    } finally {
-      await client.end();
     }
   };
 }

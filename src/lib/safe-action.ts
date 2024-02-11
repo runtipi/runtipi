@@ -5,8 +5,6 @@ export const action = createSafeActionClient({
     // eslint-disable-next-line no-console
     console.error('Error from server', e);
 
-    return {
-      serverError: e.message || 'An unexpected error occurred',
-    };
+    return e.message || 'An unexpected error occurred';
   },
 });

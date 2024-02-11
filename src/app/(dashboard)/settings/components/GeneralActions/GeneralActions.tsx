@@ -13,12 +13,11 @@ export const GeneralActions = (props: Props) => {
   const t = useTranslations();
   const { version } = props;
 
-  const defaultVersion = '0.0.0';
-  const isLatest = semver.gte(version.current || defaultVersion, version.latest || defaultVersion);
+  const isLatest = semver.valid(version.current) && semver.valid(version.latest) && semver.gte(version.current, version.latest);
 
   const renderUpdate = () => {
     if (isLatest) {
-      return <Button disabled>{t('settings.actions.already-latest')}</Button>;
+      return <Button disabled>{t('SETTINGS_ACTIONS_ALREADY_LATEST')}</Button>;
     }
 
     return (
@@ -41,9 +40,11 @@ export const GeneralActions = (props: Props) => {
 
   return (
     <div className="card-body">
-      <h2 className="mb-4">{t('settings.actions.title')}</h2>
-      <h3 className="card-title mt-4">{t('settings.actions.current-version', { version: version.current })}</h3>
-      <p className="card-subtitle">{isLatest ? t('settings.actions.stay-up-to-date') : t('settings.actions.new-version', { version: version.latest })}</p>
+      <h2 className="mb-4">{t('SETTINGS_ACTIONS_TITLE')}</h2>
+      <h3 className="card-title mt-4">{t('SETTINGS_ACTIONS_CURRENT_VERSION', { version: version.current })}</h3>
+      <p className="card-subtitle">
+        {isLatest ? t('SETTINGS_ACTIONS_STAY_UP_TO_DATE') : t('SETTINGS_ACTIONS_NEW_VERSION', { version: version.latest })}
+      </p>
       {renderUpdate()}
     </div>
   );

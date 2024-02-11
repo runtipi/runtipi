@@ -1,4 +1,4 @@
-import { settingsSchema } from '@runtipi/shared/src/schemas/env-schemas';
+import { settingsSchema } from '@runtipi/shared';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
 

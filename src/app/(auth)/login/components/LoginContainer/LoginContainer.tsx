@@ -1,6 +1,6 @@
 'use client';
 
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { loginAction } from '@/actions/login/login-action';

@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { Tooltip } from 'react-tooltip';
 import { useTranslations } from 'next-intl';
 import { useUIStore } from '@/client/state/uiStore';
-import { useAction } from 'next-safe-action/hook';
+import { useAction } from 'next-safe-action/hooks';
 import { logoutAction } from '@/actions/logout/logout-action';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
@@ -24,7 +24,7 @@ interface IProps {
 
 export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = true }) => {
   const { setDarkMode } = useUIStore();
-  const t = useTranslations('header');
+  const t = useTranslations();
   const { allowAutoThemes = false } = useClientSettings();
 
   const router = useRouter();
@@ -73,17 +73,17 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
             <div className="btn-list">
               <a href="https://github.com/runtipi/runtipi" target="_blank" rel="noreferrer" className="btn btn-dark">
                 <IconBrandGithub data-testid="icon-github" className="me-1 icon" size={24} />
-                {t('source-code')}
+                {t('HEADER_SOURCE_CODE')}
               </a>
               <a href="https://github.com/runtipi/runtipi?sponsor=1" target="_blank" rel="noreferrer" className="btn btn-dark">
                 <IconHeart className="me-1 icon text-pink" size={24} />
-                {t('sponsor')}
+                {t('HEADER_SPONSOR')}
               </a>
             </div>
           </div>
           <div style={{ zIndex: 1 }} className="d-flex">
             <Tooltip className="tooltip" anchorSelect=".darkMode">
-              {t('dark-mode')}
+              {t('HEADER_DARK_MODE')}
             </Tooltip>
             <div
               onClick={() => setDarkMode(true)}
@@ -95,7 +95,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
               <IconMoon data-testid="icon-moon" size={20} />
             </div>
             <Tooltip className="tooltip" anchorSelect=".lightMode">
-              {t('light-mode')}
+              {t('HEADER_LIGHT_MODE')}
             </Tooltip>
             <div
               onClick={() => setDarkMode(false)}
@@ -106,7 +106,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
               <IconSun data-testid="icon-sun" size={20} />
             </div>
             <Tooltip className="tooltip" anchorSelect=".logOut">
-              {authenticated ? t('logout') : t('login')}
+              {authenticated ? t('HEADER_LOGOUT') : t('HEADER_LOGIN')}
             </Tooltip>
             <div
               onClick={() => logHandler()}

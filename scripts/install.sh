@@ -17,34 +17,33 @@ fi
 ### --------------------------------
 UPDATE="false"
 VERSION="latest"
-ASSET="runtipi-cli-linux-x64"
+ASSET="runtipi-cli-linux-x86_64.tar.gz"
 
 while [ -n "${1-}" ]; do
-    case "$1" in
-    --update) UPDATE="true" ;;
-    --version)
-        shift # Move to the next parameter
-        VERSION="$1" # Assign the value to VERSION
-        if [ -z "$VERSION" ]; then
-            echo "Option --version requires a value" && exit 1
-        fi
-        ;;
-    --asset)
-        shift # Move to the next parameter
-        ASSET="$1" # Assign the value to ASSET
-        if [ -z "$ASSET" ]; then
-            echo "Option --asset requires a value" && exit 1
-        fi
-        ;;
-    --)
-        shift # The double dash makes them parameters
-        break
-        ;;
-    *) echo "Option $1 not recognized" && exit 1 ;;
-    esac
-    shift
+  case "$1" in
+  --update) UPDATE="true" ;;
+  --version)
+    shift        # Move to the next parameter
+    VERSION="$1" # Assign the value to VERSION
+    if [ -z "$VERSION" ]; then
+      echo "Option --version requires a value" && exit 1
+    fi
+    ;;
+  --asset)
+    shift      # Move to the next parameter
+    ASSET="$1" # Assign the value to ASSET
+    if [ -z "$ASSET" ]; then
+      echo "Option --asset requires a value" && exit 1
+    fi
+    ;;
+  --)
+    shift # The double dash makes them parameters
+    break
+    ;;
+  *) echo "Option $1 not recognized" && exit 1 ;;
+  esac
+  shift
 done
-
 
 OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"' || echo 'unknown')"
@@ -68,17 +67,17 @@ function install_generic() {
   elif [[ "${os}" == "fedora" ]]; then
     sudo dnf -y install "${dependency}"
     return 0
-  elif [[ "${os}" == "arch" ]]; then
-    if ! sudo pacman -Sy --noconfirm "${dependency}" ; then
-      if command -v yay > /dev/null 2>&1 ; then
-        sudo -u $SUDO_USER yay -Sy --noconfirm "${dependency}"
+  elif [[ "${os}" == "arch" || "${os}" == "manjaro" ]]; then
+    if ! sudo pacman -Sy --noconfirm "${dependency}"; then
+      if command -v yay >/dev/null 2>&1; then
+        sudo -u "$SUDO_USER" yay -Sy --noconfirm "${dependency}"
       else
         echo "Could not install \"${dependency}\", either using pacman or the yay AUR helper. Please try installing it manually."
         return 1
       fi
     fi
     return 0
-  
+
   else
     return 1
   fi
@@ -125,7 +124,7 @@ function install_docker() {
     sudo systemctl start docker
     sudo systemctl enable docker
     return 0
-  elif [[ "${os}" == "arch" ]]; then
+  elif [[ "${os}" == "arch" || "${os}" == "manjaro" ]]; then
     sudo pacman -Sy --noconfirm docker docker-compose
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
@@ -186,11 +185,8 @@ if [[ "${VERSION}" == "latest" ]]; then
   VERSION="${LATEST_VERSION}"
 fi
 
-# Temporary workaround to support current assets before the release of the new version
 if [[ "$ARCHITECTURE" == "arm64" || "$ARCHITECTURE" == "aarch64" ]]; then
-  if [[ "$ASSET" == "runtipi-cli-linux-x64" ]]; then
-    ASSET="runtipi-cli-linux-arm64"
-  fi
+  ASSET="runtipi-cli-linux-aarch64.tar.gz"
 fi
 
 URL="https://github.com/runtipi/runtipi/releases/download/$VERSION/$ASSET"
@@ -204,6 +200,9 @@ fi
 if [[ "$ASSET" == *".tar.gz" ]]; then
   curl --location "$URL" -o ./runtipi-cli.tar.gz
   tar -xzf ./runtipi-cli.tar.gz
+
+  asset_name=$(tar -tzf ./runtipi-cli.tar.gz | head -n 1 | cut -f1 -d"/")
+  mv "./${asset_name}" ./runtipi-cli
   rm ./runtipi-cli.tar.gz
 else
   curl --location "$URL" -o ./runtipi-cli

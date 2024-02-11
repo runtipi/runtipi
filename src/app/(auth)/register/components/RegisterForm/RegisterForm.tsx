@@ -14,18 +14,18 @@ interface IProps {
 type FormValues = { email: string; password: string; passwordConfirm: string };
 
 export const RegisterForm: React.FC<IProps> = ({ onSubmit, loading }) => {
-  const t = useTranslations('auth');
+  const t = useTranslations();
   const schema = z
     .object({
       email: z.string().email(),
-      password: z.string().min(8, t('form.errors.password.minlength')),
-      passwordConfirm: z.string().min(8, t('form.errors.password.minlength')),
+      password: z.string().min(8, t('AUTH_ERROR_INVALID_PASSWORD_LENGTH')),
+      passwordConfirm: z.string().min(8, t('AUTH_ERROR_INVALID_PASSWORD_LENGTH')),
     })
     .superRefine((data, ctx) => {
       if (data.password !== data.passwordConfirm) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: t('form.errors.password-confirmation.match'),
+          message: t('AUTH_FORM_ERROR_PASSWORD_CONFIRMATION_MATCH'),
           path: ['passwordConfirm'],
         });
       }
@@ -40,20 +40,36 @@ export const RegisterForm: React.FC<IProps> = ({ onSubmit, loading }) => {
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <h2 className="h2 text-center mb-3">{t('register.title')}</h2>
-      <Input {...register('email')} label={t('form.email')} error={errors.email?.message} disabled={loading} type="email" className="mb-3" placeholder={t('form.email-placeholder')} />
-      <Input {...register('password')} label={t('form.password')} error={errors.password?.message} disabled={loading} type="password" className="mb-3" placeholder={t('form.password-placeholder')} />
+      <h2 className="h2 text-center mb-3">{t('AUTH_REGISTER_TITLE')}</h2>
+      <Input
+        {...register('email')}
+        label={t('AUTH_FORM_EMAIL')}
+        error={errors.email?.message}
+        disabled={loading}
+        type="email"
+        className="mb-3"
+        placeholder={t('AUTH_FORM_EMAIL_PLACEHOLDER')}
+      />
+      <Input
+        {...register('password')}
+        label={t('AUTH_FORM_PASSWORD')}
+        error={errors.password?.message}
+        disabled={loading}
+        type="password"
+        className="mb-3"
+        placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
+      />
       <Input
         {...register('passwordConfirm')}
-        label={t('form.password-confirmation')}
+        label={t('AUTH_FORM_PASSWORD_CONFIRMATION')}
         error={errors.passwordConfirm?.message}
         disabled={loading}
         type="password"
         className="mb-3"
-        placeholder={t('form.password-confirmation-placeholder')}
+        placeholder={t('AUTH_FORM_PASSWORD_CONFIRMATION_PLACEHOLDER')}
       />
       <Button loading={loading} type="submit" className="btn btn-primary w-100">
-        {t('register.submit')}
+        {t('AUTH_REGISTER_SUBMIT')}
       </Button>
     </form>
   );

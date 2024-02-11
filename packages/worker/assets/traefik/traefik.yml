@@ -8,7 +8,7 @@ providers:
     watch: true
     exposedByDefault: false
   file:
-    directory: /root/.config/dynamic
+    directory: /etc/traefik/dynamic
     watch: true
 
 entryPoints:
