@@ -57,8 +57,8 @@ export class RepoExecutors {
       await execAsync(cloneCommand);
 
       // Chmod the repo folder to 777
-      this.logger.info(`Executing: chmod -R 777 ${repoPath}`);
-      await execAsync(`chmod -R 777 ${repoPath}`);
+      this.logger.info(`Executing: chmod -R 755 ${repoPath}`);
+      await execAsync(`chmod -R 755 ${repoPath}`);
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
