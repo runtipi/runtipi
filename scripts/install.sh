@@ -20,31 +20,30 @@ VERSION="latest"
 ASSET="runtipi-cli-linux-x86_64.tar.gz"
 
 while [ -n "${1-}" ]; do
-    case "$1" in
-    --update) UPDATE="true" ;;
-    --version)
-        shift # Move to the next parameter
-        VERSION="$1" # Assign the value to VERSION
-        if [ -z "$VERSION" ]; then
-            echo "Option --version requires a value" && exit 1
-        fi
-        ;;
-    --asset)
-        shift # Move to the next parameter
-        ASSET="$1" # Assign the value to ASSET
-        if [ -z "$ASSET" ]; then
-            echo "Option --asset requires a value" && exit 1
-        fi
-        ;;
-    --)
-        shift # The double dash makes them parameters
-        break
-        ;;
-    *) echo "Option $1 not recognized" && exit 1 ;;
-    esac
-    shift
+  case "$1" in
+  --update) UPDATE="true" ;;
+  --version)
+    shift        # Move to the next parameter
+    VERSION="$1" # Assign the value to VERSION
+    if [ -z "$VERSION" ]; then
+      echo "Option --version requires a value" && exit 1
+    fi
+    ;;
+  --asset)
+    shift      # Move to the next parameter
+    ASSET="$1" # Assign the value to ASSET
+    if [ -z "$ASSET" ]; then
+      echo "Option --asset requires a value" && exit 1
+    fi
+    ;;
+  --)
+    shift # The double dash makes them parameters
+    break
+    ;;
+  *) echo "Option $1 not recognized" && exit 1 ;;
+  esac
+  shift
 done
-
 
 OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 SUB_OS="$(cat /etc/[A-Za-z]*[_-][rv]e[lr]* | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"' || echo 'unknown')"
@@ -69,16 +68,16 @@ function install_generic() {
     sudo dnf -y install "${dependency}"
     return 0
   elif [[ "${os}" == "arch" || "${os}" == "manjaro" ]]; then
-    if ! sudo pacman -Sy --noconfirm "${dependency}" ; then
-      if command -v yay > /dev/null 2>&1 ; then
-        sudo -u $SUDO_USER yay -Sy --noconfirm "${dependency}"
+    if ! sudo pacman -Sy --noconfirm "${dependency}"; then
+      if command -v yay >/dev/null 2>&1; then
+        sudo -u "$SUDO_USER" yay -Sy --noconfirm "${dependency}"
       else
         echo "Could not install \"${dependency}\", either using pacman or the yay AUR helper. Please try installing it manually."
         return 1
       fi
     fi
     return 0
-  
+
   else
     return 1
   fi

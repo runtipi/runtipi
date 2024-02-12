@@ -68,9 +68,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --from=builder --chown=node:node /app/packages/worker/dist .
-COPY --from=builder --chown=node:node /app/packages/worker/assets ./assets
-COPY --from=builder --chown=node:node /app/docker-binary /usr/local/bin/docker-compose
+COPY --from=builder /app/packages/worker/dist .
+COPY --from=builder /app/packages/worker/assets ./assets
+COPY --from=builder /app/docker-binary /usr/local/bin/docker-compose
 
 CMD ["node", "index.js", "start"]
 
