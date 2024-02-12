@@ -65,7 +65,8 @@ export class AppExecutors {
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
     }
 
-    await execAsync(`chmod -R 770 ${path.join(appDataDirPath)}`).catch(() => {
+    // Set permissions
+    await execAsync(`chmod -Rf a+rwx ${path.join(appDataDirPath)}`).catch(() => {
       this.logger.error(`Error setting permissions for app ${appId}`);
     });
   };
