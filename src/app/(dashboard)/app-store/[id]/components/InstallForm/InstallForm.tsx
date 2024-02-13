@@ -100,7 +100,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
           name={field.env_variable}
           defaultValue={field.default}
           render={({ field: { onChange, value, ref, ...props } }) => (
-            <Select value={value as string} defaultValue={field.default as string} onValueChange={onChange} {...props}>
+            <Select value={value as string} defaultValue={(initalValues ? initalValues[field.env_variable] : field.default) as string} onValueChange={onChange} {...props}>
               <SelectTrigger className="mb-3" error={errors[field.env_variable]?.message} label={label}>
                 <SelectValue placeholder={t('APP_INSTALL_FORM_CHOOSE_OPTION')} />
               </SelectTrigger>
