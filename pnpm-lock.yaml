@@ -376,8 +376,8 @@ importers:
         specifier: ^11.1.0
         version: 11.1.0
       dotenv:
-        specifier: ^16.3.1
-        version: 16.3.1
+        specifier: ^16.4.4
+        version: 16.4.4
       log-update:
         specifier: ^5.0.1
         version: 5.0.1
@@ -473,8 +473,8 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
       dotenv:
-        specifier: ^16.3.1
-        version: 16.3.1
+        specifier: ^16.4.4
+        version: 16.4.4
       hono:
         specifier: ^3.12.2
         version: 3.12.2
@@ -3331,7 +3331,7 @@ packages:
       '@sentry/cli': 2.23.0
       '@sentry/node': 7.94.1
       '@sentry/utils': 7.94.1
-      dotenv: 16.3.1
+      dotenv: 16.4.4
       find-up: 5.0.0
       glob: 9.3.2
       magic-string: 0.27.0
@@ -5723,7 +5723,7 @@ packages:
     hasBin: true
     dependencies:
       cross-spawn: 7.0.3
-      dotenv: 16.3.1
+      dotenv: 16.4.4
       dotenv-expand: 10.0.0
       minimist: 1.2.8
     dev: true
@@ -5733,8 +5733,8 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /dotenv@16.3.1:
-    resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
+  /dotenv@16.4.4:
+    resolution: {integrity: sha512-XvPXc8XAQThSjAbY6cQ/9PcBXmFoWuw1sQ3b8HqUCR6ziGXjkTi//kB9SWa2UwqlgdAIuRqAa/9hVljzPehbYg==}
     engines: {node: '>=12'}
 
   /drizzle-orm@0.29.3(@types/pg@8.10.9)(@types/react@18.2.48)(pg@8.11.3)(react@18.2.0):
