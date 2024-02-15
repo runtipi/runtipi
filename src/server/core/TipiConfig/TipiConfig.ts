@@ -66,8 +66,8 @@ export class TipiConfigClass {
       demoMode: conf.DEMO_MODE,
       guestDashboard: conf.GUEST_DASHBOARD,
       allowErrorMonitoring: conf.ALLOW_ERROR_MONITORING,
+      allowAutoThemes: conf.ALLOW_AUTO_THEMES,
       seePreReleaseVersions: false,
-      allowAutoThemes: true,
     };
 
     const parsedConfig = envSchema.safeParse({ ...envConfig, ...this.getFileConfig() });

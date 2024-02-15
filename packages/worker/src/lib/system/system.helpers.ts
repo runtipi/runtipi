@@ -162,6 +162,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('DEMO_MODE', typeof data.demoMode === 'boolean' || typeof data.demoMode === 'string' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
   envMap.set('GUEST_DASHBOARD', typeof data.guestDashboard === 'boolean' || typeof data.guestDashboard === 'string' ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
   envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
+  envMap.set('ALLOW_AUTO_THEMES', typeof data.allowAutoThemes === 'boolean' || typeof data.allowAutoThemes === 'string' ? String(data.allowAutoThemes) : envMap.get('ALLOW_AUTO_THEMES') || 'true');
   envMap.set(
     'ALLOW_ERROR_MONITORING',
     typeof data.allowErrorMonitoring === 'boolean' || typeof data.allowErrorMonitoring === 'string' ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
@@ -170,6 +171,7 @@ export const generateSystemEnvFile = async () => {
     'PERSIST_TRAEFIK_CONFIG',
     typeof data.persistTraefikConfig === 'boolean' || typeof data.persistTraefikConfig === 'string' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
+
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 
   return envMap;
