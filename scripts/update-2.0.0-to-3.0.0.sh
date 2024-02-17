@@ -10,7 +10,7 @@ if [[ "$ARCHITECTURE" == "arm64" || "$ARCHITECTURE" == "aarch64" ]]; then
   ASSET="runtipi-cli-linux-aarch64.tar.gz"
 fi
 
-URL="https://github.com/runtipi/runtipi/releases/download/v3.0.0/$ASSET"
+URL="https://github.com/runtipi/runtipi/releases/download/v3.0.3/$ASSET"
 
 rm -f ./runtipi-cli
 
