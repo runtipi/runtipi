@@ -37,7 +37,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@sentry/types": "^7.94.1",
+    "@sentry/types": "^7.102.0",
     "@types/lodash.clonedeep": "^4.5.9"
   }
 }
