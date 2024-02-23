@@ -102,8 +102,8 @@ importers:
         specifier: ^3.4.4
         version: 3.4.4(next@14.0.4)(react@18.2.0)
       next-safe-action:
-        specifier: ^6.0.2
-        version: 6.0.2(next@14.0.4)(react@18.2.0)(vite@5.0.12)
+        specifier: ^6.1.0
+        version: 6.1.0(next@14.0.4)(react@18.2.0)(vite@5.0.12)
       pg:
         specifier: ^8.11.3
         version: 8.11.3
@@ -901,6 +901,7 @@ packages:
 
   /@decs/typeschema@0.12.2(vite@5.0.12)(zod@3.22.4):
     resolution: {integrity: sha512-PA8uAH/Xfsa5X2UNNSnb5i6vB8qWZywp4+d2U8kNMCO7qwirYRPbFCHwIfWBJyURh4rULn3Ey+VBADLcK2xxaQ==}
+    deprecated: TypeSchema has been restructured. Install @typeschema/main or @typeschema/all instead.
     peerDependencies:
       '@deepkit/type': ^1.0.1-alpha.113
       '@effect/schema': ^0.60.6
@@ -9186,8 +9187,8 @@ packages:
       react: 18.2.0
     dev: true
 
-  /next-safe-action@6.0.2(next@14.0.4)(react@18.2.0)(vite@5.0.12):
-    resolution: {integrity: sha512-czJrcw4Ov6obePv/AwUki+Z90xxFH6Gx9V5cBN/TU/cuEggxj151kTggo0h1fAiYqZEOxw5PRbDvutvm9/exaw==}
+  /next-safe-action@6.1.0(next@14.0.4)(react@18.2.0)(vite@5.0.12):
+    resolution: {integrity: sha512-AoSTn6bCwadZg0CXoI4MHkeIQxw6PPegFvmn0Qw/h5+hPfaX4cdeXOCJjXLOy/EkMi5rf59A95RRvfyaiu212w==}
     engines: {node: '>=18.17'}
     peerDependencies:
       next: '>= 14.0.0'
