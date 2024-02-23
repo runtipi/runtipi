@@ -48,8 +48,8 @@ importers:
         specifier: workspace:^
         version: link:packages/shared
       '@sentry/integrations':
-        specifier: ^7.94.1
-        version: 7.94.1
+        specifier: ^7.102.1
+        version: 7.102.1
       '@sentry/nextjs':
         specifier: ^7.94.1
         version: 7.94.1(next@14.0.4)(react@18.2.0)
@@ -464,8 +464,8 @@ importers:
         specifier: workspace:^
         version: link:../shared
       '@sentry/integrations':
-        specifier: ^7.94.1
-        version: 7.94.1
+        specifier: ^7.102.1
+        version: 7.102.1
       '@sentry/node':
         specifier: ^7.94.1
         version: 7.94.1
@@ -3315,7 +3315,7 @@ packages:
     dependencies:
       '@sentry/cli': 2.23.0
       '@sentry/node': 7.94.1
-      '@sentry/utils': 7.94.1
+      '@sentry/utils': 7.102.1
       dotenv: 16.4.5
       find-up: 5.0.0
       glob: 9.3.2
@@ -3428,6 +3428,14 @@ packages:
       - supports-color
     dev: true
 
+  /@sentry/core@7.102.1:
+    resolution: {integrity: sha512-QjY+LSP3du3J/C8x/FfEbRxgZgsWd0jfTJ4P7s9f219I1csK4OeBMC3UA1HwEa0pY/9OF6H/egW2CjOcMM5Pdg==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/types': 7.102.1
+      '@sentry/utils': 7.102.1
+    dev: false
+
   /@sentry/core@7.94.1:
     resolution: {integrity: sha512-4sjiMnkbGpv9O98YHVZe7fHNwwdYl+zLoCOoEOadtrJ1EYYvnK/MSixN2HJF7g/0s22xd4xY958QyNIRVR+Iiw==}
     engines: {node: '>=8'}
@@ -3446,6 +3454,16 @@ packages:
       - encoding
       - supports-color
     dev: true
+
+  /@sentry/integrations@7.102.1:
+    resolution: {integrity: sha512-Its3Ru6xCAqpaLE3cTxW/b91js2SIFoXa8LWtQDJ7tmTdwPAbT8Pij1F4bOhhaqLYbjLtCXGl/NR2cffsiRLww==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/core': 7.102.1
+      '@sentry/types': 7.102.1
+      '@sentry/utils': 7.102.1
+      localforage: 1.10.0
+    dev: false
 
   /@sentry/integrations@7.94.1:
     resolution: {integrity: sha512-Fw7OxLlGkrVAVO9WtBJezrb5IxxItCTuefv2IfKku+A5EhHtH1AhXYjQynmt0TLLYIUlyBWiatpOngBzS2wSxw==}
@@ -3521,9 +3539,19 @@ packages:
       '@sentry/utils': 7.94.1
     dev: false
 
+  /@sentry/types@7.102.1:
+    resolution: {integrity: sha512-htKorf3t/D0XYtM7foTcmG+rM47rDP6XdbvCcX5gBCuCYlzpM1vqCt2rl3FLktZC6TaIpFRJw1TLfx6m+x5jdA==}
+    engines: {node: '>=8'}
+
   /@sentry/types@7.94.1:
     resolution: {integrity: sha512-A7CdEXFSgGyWv2BT2p9cAvJfb+dypvOtsY8ZvZvdPLUa7kqCV7ndhURUqKjvMBzsL2GParHn3ehDTl2eVc7pvA==}
     engines: {node: '>=8'}
+
+  /@sentry/utils@7.102.1:
+    resolution: {integrity: sha512-+8WcFjHVV/HROXSAwMuUzveElBFC43EiTG7SNEBNgOUeQzQVTmbUZXyTVgLrUmtoWqvnIxCacoLxtZo1o67kdg==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/types': 7.102.1
 
   /@sentry/utils@7.94.1:
     resolution: {integrity: sha512-gQ2EaMpUU1gGH3S+iqpog9gkXbCo8tlhGYA9a5FUtEtER3D3OAlp8dGFwClwzWDAwzjdLT1+X55zmEptU1cP/A==}

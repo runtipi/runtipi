@@ -33,7 +33,7 @@
     "@hono/node-server": "^1.5.0",
     "@runtipi/postgres-migrations": "^5.3.0",
     "@runtipi/shared": "workspace:^",
-    "@sentry/integrations": "^7.94.1",
+    "@sentry/integrations": "^7.102.1",
     "@sentry/node": "^7.94.1",
     "bullmq": "^5.1.6",
     "dotenv": "^16.4.5",
