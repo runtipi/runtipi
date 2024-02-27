@@ -13,10 +13,20 @@ type Store = {
   setSortDirection: (sortDirection: 'asc' | 'desc') => void;
 };
 
+const debouncedSearch = (fn: (search: string) => void, delay: number) => {
+  let timeoutId: NodeJS.Timeout;
+  return (search: string) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      fn(search);
+    }, delay);
+  };
+};
+
 export const useAppStoreState = create<Store>((set) => ({
   category: undefined,
   search: '',
-  setSearch: (search) => set({ search }),
+  setSearch: debouncedSearch((search) => set({ search }), 300),
   setCategory: (category) => set({ category }),
   sort: 'id',
   setSort: (sort) => set({ sort }),
