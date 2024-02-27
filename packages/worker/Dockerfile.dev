@@ -4,7 +4,6 @@ ARG DOCKER_COMPOSE_VERSION="v2.23.3"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
-
 # Install docker
 RUN apk upgrade --update-cache --available && \
   apk add openssl git docker docker-cli-compose curl && \
@@ -13,6 +12,7 @@ RUN apk upgrade --update-cache --available && \
 ARG TARGETARCH
 ARG DOCKER_COMPOSE_VERSION="v2.23.3"
 ENV TARGETARCH=${TARGETARCH}
+ENV NODE_ENV="development"
 
 RUN echo "Building for ${TARGETARCH}"
 
