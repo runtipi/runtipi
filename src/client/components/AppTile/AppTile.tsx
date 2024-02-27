@@ -50,7 +50,7 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
             <Tooltip className="tooltip" anchorSelect=".deprecated">
               {t('MY_APPS_DEPRECATED')}
             </Tooltip>
-            <div className="deprecated ribbon bg-red">
+            <div className="deprecated ribbon bg-red ribbon-top">
               <IconAlertCircle />
             </div>
           </>
