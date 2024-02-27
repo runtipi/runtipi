@@ -157,7 +157,7 @@
   "DASHBOARD_CPU_TITLE": "CPU 负载",
   "DASHBOARD_DISK_SPACE_SUBTITLE": "已使用 {total} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "磁盘空间",
-  "DASHBOARD_MEMORY_TITLE": "手机已用内存",
+  "DASHBOARD_MEMORY_TITLE": "已用内存",
   "DASHBOARD_TITLE": "控制面板",
   "GUEST_DASHBOARD": "Guest dashboard",
   "GUEST_DASHBOARD_NO_APPS": "No apps to display",
