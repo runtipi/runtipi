@@ -81,8 +81,10 @@ const main = async () => {
     await queue.obliterate({ force: true });
 
     // Scheduled jobs
-    logger.info('Adding scheduled jobs to queue...');
-    await repeatQueue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
+    if (process.env.NODE_ENV === 'production') {
+      logger.info('Adding scheduled jobs to queue...');
+      await repeatQueue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
+    }
 
     logger.info('Closing queue...');
     await queue.close();

@@ -11,7 +11,6 @@ export const getRepoHash = (repoUrl: string) => {
   return hash.digest('hex');
 };
 
-
 /**
  * Extracts the base URL and branch from a repository URL.
  * @param repoUrl The repository URL.
@@ -20,8 +19,8 @@ export const getRepoHash = (repoUrl: string) => {
 export const getRepoBaseUrlAndBranch = (repoUrl: string) => {
   const branchMatch = repoUrl.match(/^(.*)\/tree\/(.*)$/);
   if (branchMatch) {
-    return [branchMatch[1], branchMatch[2]] ;
+    return [branchMatch[1], branchMatch[2]];
   }
 
-  return [repoUrl, undefined] ;
+  return [repoUrl, undefined];
 };
