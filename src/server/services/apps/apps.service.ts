@@ -1,4 +1,5 @@
 import validator from 'validator';
+import MiniSearch from 'minisearch';
 import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
@@ -196,6 +197,48 @@ export class AppServiceClass {
     const filteredApps = filterApps(apps);
 
     return { apps: filteredApps, total: apps.length };
+  };
+
+  public searchApps = async (params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null }) => {
+    const { search, category, pageSize, cursor } = params;
+
+    const apps = await getAvailableApps();
+
+    let filteredApps = filterApps(apps);
+
+    if (category) {
+      filteredApps = filteredApps.filter((app) => app.categories.some((c) => c === category));
+    }
+
+    if (search) {
+      // Create a mini search instance
+      const miniSearch = new MiniSearch<(typeof filteredApps)[number]>({
+        fields: ['name', 'description', 'categories'],
+        storeFields: ['id'],
+        idField: 'id',
+        searchOptions: {
+          boost: { name: 2 },
+          fuzzy: 0.2,
+          prefix: true,
+        },
+      });
+      miniSearch.addAll(filteredApps);
+
+      // Search for apps
+      const result = miniSearch.search(search);
+
+      const searchIds = result.map((app) => app.id);
+
+      // Filter apps by search results and keep the order
+      filteredApps = filteredApps.filter((app) => searchIds.includes(app.id)).sort((a, b) => searchIds.indexOf(a.id) - searchIds.indexOf(b.id));
+    }
+
+    const start = cursor ? filteredApps.findIndex((app) => app.id === cursor) : 0;
+
+    const end = start + pageSize;
+    const data = filteredApps.slice(start, end);
+
+    return { data, total: filteredApps.length, nextCursor: filteredApps[end]?.id };
   };
 
   /**
