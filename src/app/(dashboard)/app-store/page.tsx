@@ -13,7 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AppStorePage() {
-  const { apps } = await AppServiceClass.listApps();
+  const appsService = new AppServiceClass();
+  const apps = await appsService.searchApps({ pageSize: 18 });
 
-  return <AppStoreTable data={apps} />;
+  return <AppStoreTable initialData={apps} />;
 }
