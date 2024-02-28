@@ -37,7 +37,7 @@ export class AppServiceClass {
 
   private miniSearch: MiniSearch<AppInfo> | null = null;
 
-  private cacheTimeout = 1000 * 60 * 1; // 15 minutes
+  private cacheTimeout = 1000 * 60 * 15; // 15 minutes
 
   private cacheLastUpdated = 0;
 
