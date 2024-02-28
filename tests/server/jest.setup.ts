@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { Job } from 'bullmq';
+import { tipiCache } from '@/server/core/TipiCache';
 
 global.fetch = jest.fn();
 // Mock global location
@@ -42,6 +43,10 @@ beforeEach(async () => {
   await fs.promises.mkdir('/runtipi/state', { recursive: true });
   await fs.promises.writeFile('/runtipi/state/settings.json', '{}');
   await fs.promises.mkdir('/app/logs', { recursive: true });
+});
+
+afterAll(async () => {
+  await tipiCache.close();
 });
 
 // Mock Logger

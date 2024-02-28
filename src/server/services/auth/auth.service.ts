@@ -7,8 +7,8 @@ import { TranslatedError } from '@/server/utils/errors';
 import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
 import { generateSessionId, setSession } from '@/server/common/session.helpers';
 import { Database } from '@/server/db';
+import { tipiCache } from '@/server/core/TipiCache/TipiCache';
 import { TipiConfig } from '../../core/TipiConfig';
-import { TipiCache } from '../../core/TipiCache';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
 
@@ -45,10 +45,8 @@ export class AuthServiceClass {
     }
 
     if (user.totpEnabled) {
-      const cache = new TipiCache('login');
       const totpSessionId = generateSessionId('otp');
-      await cache.set(totpSessionId, user.id.toString());
-      await cache.close();
+      await tipiCache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
 
@@ -67,9 +65,7 @@ export class AuthServiceClass {
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
     const { totpSessionId, totpCode } = params;
-    const cache = new TipiCache('verifyTotp');
-    const userId = await cache.get(totpSessionId);
-    await cache.close();
+    const userId = await tipiCache.get(totpSessionId);
 
     if (!userId) {
       throw new TranslatedError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -259,9 +255,7 @@ export class AuthServiceClass {
    * @returns {Promise<boolean>} - Returns true if the session token is removed successfully
    */
   public logout = async (sessionId: string): Promise<boolean> => {
-    const cache = new TipiCache('logout');
-    await cache.del(`session:${sessionId}`);
-    await cache.close();
+    await tipiCache.del(`session:${sessionId}`);
 
     return true;
   };
@@ -339,13 +333,13 @@ export class AuthServiceClass {
    *
    * @param {number} userId - The user ID
    */
-  private destroyAllSessionsByUserId = async (userId: number, cache: TipiCache) => {
-    const sessions = await cache.getByPrefix(`session:${userId}:`);
+  private destroyAllSessionsByUserId = async (userId: number) => {
+    const sessions = await tipiCache.getByPrefix(`session:${userId}:`);
 
     await Promise.all(
       sessions.map(async (session) => {
-        await cache.del(session.key);
-        if (session.val) await cache.del(session.val);
+        await tipiCache.del(session.key);
+        if (session.val) await tipiCache.del(session.val);
       }),
     );
   };
@@ -375,9 +369,7 @@ export class AuthServiceClass {
 
     const hash = await argon2.hash(newPassword);
     await this.queries.updateUser(user.id, { password: hash });
-    const cache = new TipiCache('changePassword');
-    await this.destroyAllSessionsByUserId(user.id, cache);
-    await cache.close();
+    await this.destroyAllSessionsByUserId(user.id);
 
     return true;
   };
@@ -414,9 +406,7 @@ export class AuthServiceClass {
     }
 
     await this.queries.updateUser(user.id, { username: email });
-    const cache = new TipiCache('changeUsername');
-    await this.destroyAllSessionsByUserId(user.id, cache);
-    await cache.close();
+    await this.destroyAllSessionsByUserId(user.id);
 
     return true;
   };

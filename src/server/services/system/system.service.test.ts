@@ -1,15 +1,15 @@
 import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { faker } from '@faker-js/faker';
+import { TipiCacheClass } from '@/server/core/TipiCache/TipiCache';
 import { TipiConfig } from '../../core/TipiConfig';
-import { TipiCache } from '../../core/TipiCache';
 import { SystemServiceClass } from '.';
 
 const SystemService = new SystemServiceClass();
 
 const server = setupServer();
 
-const cache = new TipiCache('system.service.test');
+const cache = new TipiCacheClass();
 
 afterAll(async () => {
   server.close();

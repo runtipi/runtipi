@@ -37,16 +37,13 @@ export class AppServiceClass {
 
   private miniSearch: MiniSearch<AppInfo> | null = null;
 
+  private cacheTimeout = 1000 * 60 * 1; // 15 minutes
+
+  private cacheLastUpdated = 0;
+
   constructor(p: Database = db) {
     Logger.debug('AppServiceClass constructor');
     this.queries = new AppQueries(p);
-
-    setInterval(
-      () => {
-        this.invalidateCache();
-      },
-      1000 * 60 * 15, // 15 minutes
-    );
   }
 
   private invalidateCache() {
@@ -57,8 +54,14 @@ export class AppServiceClass {
   }
 
   private async getAvailableApps() {
+    // Invalidate cache if it's older than 15 minutes
+    if (this.cacheLastUpdated && Date.now() - this.cacheLastUpdated > this.cacheTimeout) {
+      Logger.debug('apps service -> invalidateCache');
+      this.invalidateCache();
+    }
+
     if (!this.appsAvailable) {
-      Logger.debug('expensive getAvailableApps');
+      Logger.debug('apps service -> getAvailableApps');
       const apps = await slow_getAvailableApps();
       this.appsAvailable = filterApps(apps);
 
@@ -73,6 +76,8 @@ export class AppServiceClass {
         },
       });
       this.miniSearch.addAll(this.appsAvailable);
+
+      this.cacheLastUpdated = Date.now();
     }
 
     return this.appsAvailable;

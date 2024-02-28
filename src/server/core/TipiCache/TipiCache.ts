@@ -1,25 +1,18 @@
 import { createClient, RedisClientType } from 'redis';
-import { Logger } from '../Logger';
 import { TipiConfig } from '../TipiConfig';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
-export class TipiCache {
+export class TipiCacheClass {
   private client: RedisClientType;
 
-  private timeout: NodeJS.Timeout;
-
-  constructor(reference: string) {
+  constructor() {
     const client = createClient({
       url: `redis://${TipiConfig.getConfig().REDIS_HOST}:6379`,
       password: TipiConfig.getConfig().redisPassword,
     });
 
     this.client = client as RedisClientType;
-
-    this.timeout = setTimeout(() => {
-      Logger.debug(`Redis connection is running for more than 30 seconds. Consider closing it. reference: ${reference}`);
-    }, 30000);
   }
 
   private async getClient(): Promise<RedisClientType> {
@@ -62,7 +55,6 @@ export class TipiCache {
   }
 
   public async close() {
-    clearTimeout(this.timeout);
     return this.client.quit();
   }
 
@@ -71,3 +63,15 @@ export class TipiCache {
     return client.ttl(key);
   }
 }
+
+declare global {
+  // eslint-disable-next-line vars-on-top, no-var -- globalThis is not a module
+  var TipiCache: TipiCacheClass;
+}
+
+const tipiCacheSingleton = () => {
+  return new TipiCacheClass();
+};
+export const tipiCache = globalThis.TipiCache ?? tipiCacheSingleton();
+
+if (process.env.NODE_ENV !== 'production') globalThis.TipiCache = tipiCache;
