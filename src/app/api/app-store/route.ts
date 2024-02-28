@@ -1,4 +1,4 @@
-import { AppServiceClass } from '@/server/services/apps/apps.service';
+import { appService } from '@/server/services/apps/apps.service';
 
 const getApps = async (searchParams: URLSearchParams) => {
   const search = searchParams.get('search');
@@ -6,9 +6,7 @@ const getApps = async (searchParams: URLSearchParams) => {
   const category = searchParams.get('category');
   const cursor = searchParams.get('cursor');
 
-  const appsService = new AppServiceClass();
-
-  return appsService.searchApps({ search, category, pageSize: Number(pageSize), cursor });
+  return appService.searchApps({ search, category, pageSize: Number(pageSize), cursor });
 };
 
 export async function GET(request: Request) {

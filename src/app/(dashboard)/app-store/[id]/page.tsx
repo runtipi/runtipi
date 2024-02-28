@@ -1,7 +1,6 @@
-import { AppServiceClass } from '@/server/services/apps/apps.service';
+import { appService } from '@/server/services/apps/apps.service';
 import React from 'react';
 import { Metadata } from 'next';
-import { db } from '@/server/db';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { ErrorPage } from '@/components/ui/ErrorPage';
 import { getTranslatorFromCookie } from '@/lib/get-translator';
@@ -15,9 +14,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 export default async function AppDetailsPage({ params }: { params: { id: string } }) {
-  const appsService = new AppServiceClass(db);
   try {
-    const app = await appsService.getApp(params.id);
+    const app = await appService.getApp(params.id);
     const settings = TipiConfig.getSettings();
 
     return <AppDetailsWrapper app={app} localDomain={settings.localDomain} />;

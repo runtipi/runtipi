@@ -265,7 +265,7 @@ describe('List apps', () => {
     await insertApp({}, appConfig2, db);
 
     // act
-    const { apps } = await AppServiceClass.listApps();
+    const { apps } = await AppsService.listApps();
 
     // assert
     expect(apps).toBeDefined();
@@ -280,7 +280,7 @@ describe('List apps', () => {
     createAppConfig({ supported_architectures: ['amd64'] });
 
     // act
-    const { apps } = await AppServiceClass.listApps();
+    const { apps } = await AppsService.listApps();
 
     // assert
     expect(apps).toBeDefined();
@@ -293,7 +293,7 @@ describe('List apps', () => {
     createAppConfig({ supported_architectures: ['arm'] });
 
     // act
-    const { apps } = await AppServiceClass.listApps();
+    const { apps } = await AppsService.listApps();
 
     // assert
     expect(apps).toBeDefined();
@@ -306,7 +306,7 @@ describe('List apps', () => {
     createAppConfig({ supported_architectures: undefined });
 
     // act
-    const { apps } = await AppServiceClass.listApps();
+    const { apps } = await AppsService.listApps();
 
     // assert
     expect(apps).toBeDefined();
@@ -320,7 +320,7 @@ describe('List apps', () => {
     fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, 'invalid json');
 
     // act
-    const { apps } = await AppServiceClass.listApps();
+    const { apps } = await AppsService.listApps();
 
     // assert
     expect(apps).toBeDefined();

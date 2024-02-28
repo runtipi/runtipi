@@ -7,7 +7,7 @@ import { Database, db } from '@/server/db';
 import { AppInfo } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
-import { checkAppRequirements, getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
+import { checkAppRequirements, getAvailableApps as slow_getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
@@ -33,8 +33,49 @@ const filterApps = (apps: AppInfo[]): AppInfo[] => apps.sort(sortApps).filter(fi
 export class AppServiceClass {
   private queries;
 
+  private appsAvailable: AppInfo[] | null = null;
+
+  private miniSearch: MiniSearch<AppInfo> | null = null;
+
   constructor(p: Database = db) {
+    Logger.debug('AppServiceClass constructor');
     this.queries = new AppQueries(p);
+
+    setInterval(
+      () => {
+        this.invalidateCache();
+      },
+      1000 * 60 * 15, // 15 minutes
+    );
+  }
+
+  private invalidateCache() {
+    this.appsAvailable = null;
+    if (this.miniSearch) {
+      this.miniSearch.removeAll();
+    }
+  }
+
+  private async getAvailableApps() {
+    if (!this.appsAvailable) {
+      Logger.debug('expensive getAvailableApps');
+      const apps = await slow_getAvailableApps();
+      this.appsAvailable = filterApps(apps);
+
+      this.miniSearch = new MiniSearch<(typeof this.appsAvailable)[number]>({
+        fields: ['name', 'description', 'categories'],
+        storeFields: ['id'],
+        idField: 'id',
+        searchOptions: {
+          boost: { name: 2 },
+          fuzzy: 0.2,
+          prefix: true,
+        },
+      });
+      this.miniSearch.addAll(this.appsAvailable);
+    }
+
+    return this.appsAvailable;
   }
 
   /**
@@ -192,40 +233,24 @@ export class AppServiceClass {
   /**
    * Lists available apps
    */
-  public static listApps = async () => {
-    const apps = await getAvailableApps();
-    const filteredApps = filterApps(apps);
+  public listApps = async () => {
+    const apps = await this.getAvailableApps();
 
-    return { apps: filteredApps, total: apps.length };
+    return { apps, total: apps.length };
   };
 
   public searchApps = async (params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null }) => {
     const { search, category, pageSize, cursor } = params;
 
-    const apps = await getAvailableApps();
-
-    let filteredApps = filterApps(apps);
+    let filteredApps = await this.getAvailableApps();
 
     if (category) {
       filteredApps = filteredApps.filter((app) => app.categories.some((c) => c === category));
     }
 
-    if (search) {
-      // Create a mini search instance
-      const miniSearch = new MiniSearch<(typeof filteredApps)[number]>({
-        fields: ['name', 'description', 'categories'],
-        storeFields: ['id'],
-        idField: 'id',
-        searchOptions: {
-          boost: { name: 2 },
-          fuzzy: 0.2,
-          prefix: true,
-        },
-      });
-      miniSearch.addAll(filteredApps);
-
+    if (search && this.miniSearch) {
       // Search for apps
-      const result = miniSearch.search(search);
+      const result = this.miniSearch.search(search);
 
       const searchIds = result.map((app) => app.id);
 
@@ -493,3 +518,15 @@ export class AppServiceClass {
 }
 
 export type AppService = InstanceType<typeof AppServiceClass>;
+
+declare global {
+  // eslint-disable-next-line vars-on-top, no-var -- globalThis is not a module
+  var AppService: AppService;
+}
+
+const appServiceSingleton = () => {
+  return new AppServiceClass();
+};
+export const appService = globalThis.AppService ?? appServiceSingleton();
+
+if (process.env.NODE_ENV !== 'production') globalThis.AppService = appService;

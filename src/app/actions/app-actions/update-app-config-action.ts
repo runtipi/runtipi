@@ -1,10 +1,9 @@
 'use server';
 
 import { z } from 'zod';
-import { db } from '@/server/db';
 import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
-import { AppServiceClass } from '@/server/services/apps/apps.service';
+import { appService } from '@/server/services/apps/apps.service';
 import { handleActionError } from '../utils/handle-action-error';
 import { ensureUser } from '../utils/ensure-user';
 
@@ -24,8 +23,7 @@ export const updateAppConfigAction = action(input, async ({ id, form }) => {
   try {
     await ensureUser();
 
-    const appsService = new AppServiceClass(db);
-    await appsService.updateAppConfig(id, form);
+    await appService.updateAppConfig(id, form);
 
     revalidatePath('/apps');
     revalidatePath(`/app/${id}`);

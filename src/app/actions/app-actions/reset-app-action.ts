@@ -1,8 +1,7 @@
 'use server';
 
 import { action } from '@/lib/safe-action';
-import { db } from '@/server/db';
-import { AppServiceClass } from '@/server/services/apps/apps.service';
+import { appService } from '@/server/services/apps/apps.service';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { handleActionError } from '../utils/handle-action-error';
@@ -16,8 +15,7 @@ export const resetAppAction = action(input, async ({ id }) => {
   try {
     await ensureUser();
 
-    const appsService = new AppServiceClass(db);
-    await appsService.resetApp(id);
+    await appService.resetApp(id);
 
     revalidatePath('/apps');
     revalidatePath(`/app/${id}`);
