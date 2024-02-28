@@ -1,4 +1,22 @@
-import fs from 'fs-extra';
+import fs from 'fs';
+
+export const safeReadJson = async (path: string): Promise<unknown | null> => {
+  try {
+    const rawFile = await fs.promises.readFile(path).then((f) => f.toString());
+
+    return JSON.parse(rawFile);
+  } catch {
+    return null;
+  }
+};
+
+export const safeReadFile = async (path: string) => {
+  try {
+    return await fs.promises.readFile(path).then((f) => f.toString());
+  } catch (e) {
+    return '';
+  }
+};
 
 export const readJsonFile = (path: string): unknown | null => {
   try {

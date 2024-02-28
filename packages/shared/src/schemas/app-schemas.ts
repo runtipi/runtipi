@@ -78,6 +78,8 @@ export const appInfoSchema = z.object({
   supported_architectures: z.nativeEnum(ARCHITECTURES).array().optional(),
   uid: z.number().optional(),
   gid: z.number().optional(),
+  tipi_breaking_version: z.string().optional(),
+  can_update_from: z.array(z.string()).optional(),
 });
 
 // Derived types

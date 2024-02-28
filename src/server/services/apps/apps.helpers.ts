@@ -1,7 +1,9 @@
-import { App } from '@/server/db/schema';
+import fs from 'fs';
 import { appInfoSchema } from '@runtipi/shared';
 import { pathExists } from '@runtipi/shared/node';
-import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
+import { App } from '@/server/db/schema';
+import path from 'path';
+import { fileExists, readdirSync, readFile, readJsonFile, safeReadFile, safeReadJson } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
@@ -29,6 +31,25 @@ export const checkAppRequirements = (appName: string) => {
   }
 
   return parsedConfig.data;
+};
+
+/**
+ * Given a folder
+ */
+export const getAppConfigFromFolder = async (appFolder: string) => {
+  const configFile = await safeReadJson(path.join(appFolder, 'config.json'));
+  const parsedConfig = appInfoSchema.safeParse(configFile);
+
+  if (!parsedConfig.success) {
+    Logger.error(JSON.stringify(parsedConfig.error, null, 2));
+  }
+
+  if (parsedConfig.success && parsedConfig.data.available) {
+    const description = await safeReadFile(path.join(appFolder, 'description.md'));
+    return { ...parsedConfig.data, description };
+  }
+
+  return null;
 };
 
 /**
@@ -76,7 +97,35 @@ export const getAvailableApps = async () => {
  *
  *  @param {string} id - The app id.
  */
-export const getUpdateInfo = (id: string) => {
+export const getUpdateInfo = async (id: string) => {
+  const info = getAppInfo(id);
+
+  const currentMajorVersion = info?.tipi_breaking_version || '0';
+  const variant = 'default';
+
+  const versionsFolder = `/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/variants/${variant}/versions`;
+  const versions = await fs.promises.readdir(versionsFolder).catch(() => []);
+
+  if (versions.length > 0) {
+    const majorVersionsUpdateInfo = await Promise.all(
+      versions.map(async (version) => {
+        const config = await getAppConfigFromFolder(path.join(versionsFolder, version));
+
+        const canUpdateTo = !config?.can_update_from?.includes(currentMajorVersion);
+
+        if (config?.available && canUpdateTo) {
+          return {
+            latestVersion: config.tipi_version,
+            latestDockerVersion: config.version,
+          };
+        }
+
+        return null;
+      }),
+    ).then((d) => d.filter(notEmpty));
+  }
+
+  /// LEGACY BACKWARDS COMPATIBLE ///
   const repoConfig = readJsonFile(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/config.json`);
   const parsedConfig = appInfoSchema.safeParse(repoConfig);
 
@@ -88,6 +137,7 @@ export const getUpdateInfo = (id: string) => {
   }
 
   return { latestVersion: 0, latestDockerVersion: '0.0.0' };
+  /// END LEGACY BACKWARDS COMPATIBLE ///
 };
 
 /**

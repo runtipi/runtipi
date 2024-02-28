@@ -53,6 +53,7 @@ const runCommand = async (jobData: unknown) => {
     }
 
     if (data.command === 'update') {
+      logger.debug('Received command update');
       ({ success, message } = await pullRepo(data.url));
     }
   }
