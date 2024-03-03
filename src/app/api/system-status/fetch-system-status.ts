@@ -7,7 +7,7 @@ export async function fetchSystemStatus() {
   try {
     const { jwtSecret } = TipiConfig.getConfig();
     const token = jwt.sign({ skill: 'issue' }, jwtSecret);
-    const response = await fetch('http://tipi-worker:3000/worker-api/system-status', {
+    const response = await fetch('http://localhost:5000/worker-api/system-status', {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });

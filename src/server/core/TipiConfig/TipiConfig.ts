@@ -3,6 +3,7 @@ import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
 import fs from 'fs-extra';
 import nextConfig from 'next/config';
 import * as Sentry from '@sentry/nextjs';
+import { DATA_DIR } from 'src/config';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../Logger';
 
@@ -34,7 +35,7 @@ export class TipiConfigClass {
   private genConfig() {
     let envFile = '';
     try {
-      envFile = fs.readFileSync('/runtipi/.env').toString();
+      envFile = fs.readFileSync(`${DATA_DIR}/.env`).toString();
     } catch (e) {
       Sentry.captureException(e);
       Logger.error('❌ .env file not found');
@@ -53,7 +54,6 @@ export class TipiConfigClass {
       redisPassword: conf.REDIS_PASSWORD,
       NODE_ENV: process.env.NODE_ENV || 'production',
       architecture: conf.ARCHITECTURE || 'amd64',
-      rootFolder: '/runtipi',
       internalIp: conf.INTERNAL_IP,
       version: conf.TIPI_VERSION,
       jwtSecret: conf.JWT_SECRET,
@@ -62,7 +62,7 @@ export class TipiConfigClass {
       domain: conf.DOMAIN,
       localDomain: conf.LOCAL_DOMAIN,
       dnsIp: conf.DNS_IP || '9.9.9.9',
-      storagePath: conf.STORAGE_PATH,
+      appDataDirPath: conf.APP_DATA_DIR,
       demoMode: conf.DEMO_MODE,
       guestDashboard: conf.GUEST_DASHBOARD,
       allowErrorMonitoring: conf.ALLOW_ERROR_MONITORING,
@@ -89,7 +89,7 @@ export class TipiConfigClass {
     if (this.fileConfigCache && now - this.cacheTime < this.cacheTimeout) {
       fileConfig = this.fileConfigCache;
     } else {
-      const rawFileConfig = readJsonFile('/runtipi/state/settings.json') || {};
+      const rawFileConfig = readJsonFile(`${DATA_DIR}/state/settings.json`) || {};
       const parsedFileConfig = settingsSchema.safeParse(rawFileConfig);
 
       if (parsedFileConfig.success) {
@@ -137,13 +137,13 @@ export class TipiConfigClass {
     this.config = envSchema.parse(newConf);
 
     if (writeFile) {
-      const currentJsonConf = readJsonFile('/runtipi/state/settings.json') || {};
+      const currentJsonConf = readJsonFile(`${DATA_DIR}/state/settings.json`) || {};
       const parsedConf = envSchema.partial().parse(currentJsonConf);
 
       parsedConf[key] = value;
       const parsed = envSchema.partial().parse(parsedConf);
 
-      await fs.promises.writeFile('/runtipi/state/settings.json', JSON.stringify(parsed));
+      await fs.promises.writeFile(`${DATA_DIR}/state/settings.json`, JSON.stringify(parsed));
     }
   }
 
@@ -159,7 +159,7 @@ export class TipiConfigClass {
       return;
     }
 
-    await fs.promises.writeFile('/runtipi/state/settings.json', JSON.stringify(parsed.data));
+    await fs.promises.writeFile(`${DATA_DIR}/state/settings.json`, JSON.stringify(parsed.data));
 
     // Reset cache
     this.cacheTime = 0;

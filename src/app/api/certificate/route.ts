@@ -1,14 +1,14 @@
 import * as Sentry from '@sentry/nextjs';
 import { getUserFromCookie } from '@/server/common/session.helpers';
-import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
 import fs from 'fs-extra';
+import { APP_DIR } from 'src/config';
 
 export async function GET() {
   try {
     const user = await getUserFromCookie();
 
     if (user?.operator) {
-      const filePath = `${TipiConfig.getConfig().rootFolder}/traefik/tls/cert.pem`;
+      const filePath = `${APP_DIR}/traefik/tls/cert.pem`;
 
       if (await fs.pathExists(filePath)) {
         const file = await fs.promises.readFile(filePath);

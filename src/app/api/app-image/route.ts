@@ -3,6 +3,7 @@ import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
 import { pathExists } from '@runtipi/shared/node';
 import fs from 'fs-extra';
 import path from 'path';
+import { APP_DIR, DATA_DIR } from 'src/config';
 
 export async function GET(request: Request) {
   try {
@@ -13,17 +14,10 @@ export async function GET(request: Request) {
       return new Response('Not found', { status: 404 });
     }
 
-    const defaultFilePath = path.join(TipiConfig.getConfig().rootFolder, 'apps', id, 'metadata', 'logo.jpg');
-    const appRepoFilePath = path.join(
-      TipiConfig.getConfig().rootFolder,
-      'repos',
-      TipiConfig.getConfig().appsRepoId,
-      'apps',
-      id,
-      'metadata',
-      'logo.jpg',
-    );
-    let filePath = path.join('/app', 'public', 'app-not-found.jpg');
+    const defaultFilePath = path.join(DATA_DIR, 'apps', id, 'metadata', 'logo.jpg');
+    const appRepoFilePath = path.join(DATA_DIR, 'repos', TipiConfig.getConfig().appsRepoId, 'apps', id, 'metadata', 'logo.jpg');
+
+    let filePath = path.join(APP_DIR, 'public', 'app-not-found.jpg');
 
     if (await pathExists(defaultFilePath)) {
       filePath = defaultFilePath;

@@ -70,3 +70,6 @@ temp
 
 # Sentry Config File
 .sentryclirc
+
+# Runtipi data folder
+/runtipi-data/

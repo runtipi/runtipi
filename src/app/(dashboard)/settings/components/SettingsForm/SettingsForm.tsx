@@ -16,7 +16,7 @@ export type SettingsFormValues = {
   internalIp?: string;
   appsRepoUrl?: string;
   domain?: string;
-  storagePath?: string;
+  appDataDirPath?: string;
   localDomain?: string;
   guestDashboard?: boolean;
   allowAutoThemes?: boolean;
@@ -246,18 +246,18 @@ export const SettingsForm = (props: IProps) => {
         </div>
         <div className="mb-3">
           <Input
-            {...register('storagePath')}
+            {...register('appDataDirPath')}
             label={
               <>
-                {t('SETTINGS_GENERAL_STORAGE_PATH')}
+                {t('SETTINGS_GENERAL_APP_DATA_DIR')}
                 <Tooltip className="tooltip" anchorSelect=".storage-path-hint">
-                  {t('SETTINGS_GENERAL_STORAGE_PATH_HINT')}
+                  {t('SETTINGS_GENERAL_APP_DATA_DIR_HINT')}
                 </Tooltip>
                 <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
               </>
             }
-            error={errors.storagePath?.message}
-            placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
+            error={errors.appDataDirPath?.message}
+            placeholder={t('SETTINGS_GENERAL_APP_DATA_DIR')}
           />
         </div>
         <div className="mb-3">

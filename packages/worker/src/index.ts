@@ -15,9 +15,9 @@ import { logger } from '@/lib/logger';
 import { AppExecutors, RepoExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
 import { setupRoutes } from './api';
+import { DATA_DIR } from './config';
 
-const rootFolder = '/app';
-const envFile = path.join(rootFolder, '.env');
+const envFile = path.join(DATA_DIR, '.env');
 
 const setupSentry = (release?: string) => {
   Sentry.init({
@@ -111,7 +111,7 @@ const main = async () => {
     appExecutor.startAllApps();
 
     const app = new Hono().basePath('/worker-api');
-    serve({ fetch: app.fetch, port: 3000 }, (info) => {
+    serve({ fetch: app.fetch, port: 5000 }, (info) => {
       startWorker();
 
       setupRoutes(app);
