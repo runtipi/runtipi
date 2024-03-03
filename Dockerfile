@@ -3,15 +3,22 @@ ARG ALPINE_VERSION="3.18"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
+# ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
-RUN apk add --no-cache python3 make g++
 RUN npm install pnpm -g
+RUN apk add --no-cache curl python3 make g++
 
-# BUILDER
-FROM builder_base AS builder
+# ---- RUNNER BASE ----
+FROM node_base AS runner_base
 
-WORKDIR /app
+RUN apk add --no-cache curl openssl git
+RUN npm install pm2 -g
+
+# ---- BUILD DASHBOARD ----
+FROM builder_base AS dashboard_builder
+
+WORKDIR /dashboard
 
 COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch
@@ -43,21 +50,73 @@ ENV NEXT_SHARP_PATH=/app/node_modules/sharp
 
 RUN pnpm build
 
-# APP
-FROM node_base AS app
+# ---- BUILD WORKER ----
+FROM builder_base AS worker_builder
 
-ENV NODE_ENV production
+WORKDIR /worker
 
-USER 1000:1000
+ARG TARGETARCH
+ENV TARGETARCH=${TARGETARCH}
+ARG DOCKER_COMPOSE_VERSION="v2.23.3"
 
-WORKDIR /app
+RUN echo "Building for ${TARGETARCH}"
 
-COPY --from=builder /app/next.config.mjs ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder --chown=1000:1000 /app/.next/standalone ./
-COPY --from=builder --chown=1000:1000 /app/.next/static ./.next/static
 
-EXPOSE 3000
+RUN if [ "${TARGETARCH}" = "arm64" ]; then \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
+  elif [ "${TARGETARCH}" = "amd64" ]; then \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-x86_64"; \
+  else \
+  echo "Unsupported architecture"; \
+  fi
 
-CMD ["npm", "run", "start"]
+RUN chmod +x docker-binary
+
+COPY ./pnpm-lock.yaml ./
+RUN pnpm fetch --ignore-scripts
+
+COPY ./pnpm-workspace.yaml ./
+COPY ./packages ./packages
+
+RUN pnpm install -r --prefer-offline
+
+COPY ./packages/worker/build.js ./packages/worker/build.js
+COPY ./packages/worker/src ./packages/worker/src
+COPY ./packages/worker/package.json ./packages/worker/package.json
+COPY ./packages/worker/assets ./packages/worker/assets
+
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_DISABLE_AUTO_UPLOAD
+ARG TIPI_VERSION
+
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
+ENV TIPI_VERSION=${TIPI_VERSION}
+
+RUN pnpm -r build --filter @runtipi/worker
+
+# ---- RUNNER ----
+FROM runner_base AS app
+
+ENV NODE_ENV=production
+
+WORKDIR /worker
+
+COPY --from=worker_builder /worker/packages/worker/dist .
+COPY --from=worker_builder /worker/packages/worker/assets ./assets
+COPY --from=worker_builder /worker/docker-binary /usr/local/bin/docker-compose
+
+WORKDIR /dashboard
+
+COPY --from=dashboard_builder /dashboard/next.config.mjs ./
+COPY --from=dashboard_builder /dashboard/public ./public
+COPY --from=dashboard_builder /dashboard/package.json ./package.json
+COPY --from=dashboard_builder /dashboard/.next/standalone ./
+COPY --from=dashboard_builder /dashboard/.next/static ./.next/static
+
+WORKDIR /
+COPY ./start.prod.sh ./start.sh
+
+EXPOSE 3000 5000
+
+CMD ["sh", "start.sh"]

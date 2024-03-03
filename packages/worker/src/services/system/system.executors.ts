@@ -29,13 +29,13 @@ export class SystemExecutors {
       const memResult = { total: 0, used: 0, available: 0 };
 
       try {
-        const memInfo = await fs.promises.readFile('/host/proc/meminfo');
+        const memInfo = await fs.promises.readFile('/mnt/host/proc/meminfo');
 
         memResult.total = Number(memInfo.toString().match(/MemTotal:\s+(\d+)/)?.[1] ?? 0) * 1024;
         memResult.available = Number(memInfo.toString().match(/MemAvailable:\s+(\d+)/)?.[1] ?? 0) * 1024;
         memResult.used = memResult.total - memResult.available;
       } catch (e) {
-        this.logger.error(`Unable to read /host/proc/meminfo: ${e}`);
+        this.logger.error(`Unable to read /mnt/host/proc/meminfo: ${e}`);
       }
 
       const [disk0] = await si.fsSize();

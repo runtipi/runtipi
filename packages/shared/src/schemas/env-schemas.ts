@@ -13,7 +13,6 @@ export const envSchema = z.object({
   redisPassword: z.string(),
   architecture: z.nativeEnum(ARCHITECTURES),
   dnsIp: z.string().ip().trim(),
-  rootFolder: z.string(),
   internalIp: z.string(),
   version: z.string(),
   jwtSecret: z.string(),
@@ -21,7 +20,7 @@ export const envSchema = z.object({
   appsRepoUrl: z.string().url().trim(),
   domain: z.string().trim(),
   localDomain: z.string().trim(),
-  storagePath: z
+  appDataDirPath: z
     .string()
     .trim()
     .optional()
@@ -98,7 +97,7 @@ export const settingsSchema = envSchema
     postgresPort: true,
     appsRepoUrl: true,
     domain: true,
-    storagePath: true,
+    appDataDirPath: true,
     localDomain: true,
     demoMode: true,
     guestDashboard: true,
