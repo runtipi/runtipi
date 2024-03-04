@@ -124,6 +124,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         label={label}
         error={errors[field.env_variable]?.message}
         disabled={loading}
+        type={field.type}
         className="mb-3"
         placeholder={field.placeholder || field.label}
       />
