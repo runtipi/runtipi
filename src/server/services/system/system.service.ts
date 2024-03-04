@@ -42,12 +42,12 @@ export class SystemServiceClass {
   };
 
   public static hasSeenWelcome = async () => {
-    return fileExists(`/runtipi/state/seen-welcome`);
+    return fileExists(`/state/seen-welcome`);
   };
 
   public static markSeenWelcome = async () => {
     // Create file state/seen-welcome
-    await promises.writeFile(`/runtipi/state/seen-welcome`, '');
+    await promises.writeFile(`/state/seen-welcome`, '');
     return true;
   };
 }

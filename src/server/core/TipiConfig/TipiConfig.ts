@@ -34,7 +34,7 @@ export class TipiConfigClass {
   private genConfig() {
     let envFile = '';
     try {
-      envFile = fs.readFileSync('/runtipi/.env').toString();
+      envFile = fs.readFileSync('/data/.env').toString();
     } catch (e) {
       Sentry.captureException(e);
       Logger.error('❌ .env file not found');
@@ -53,7 +53,7 @@ export class TipiConfigClass {
       redisPassword: conf.REDIS_PASSWORD,
       NODE_ENV: process.env.NODE_ENV || 'production',
       architecture: conf.ARCHITECTURE || 'amd64',
-      rootFolder: '/runtipi',
+      rootFolder: '/data',
       internalIp: conf.INTERNAL_IP,
       version: conf.TIPI_VERSION,
       jwtSecret: conf.JWT_SECRET,
@@ -89,7 +89,7 @@ export class TipiConfigClass {
     if (this.fileConfigCache && now - this.cacheTime < this.cacheTimeout) {
       fileConfig = this.fileConfigCache;
     } else {
-      const rawFileConfig = readJsonFile('/runtipi/state/settings.json') || {};
+      const rawFileConfig = readJsonFile('/data/state/settings.json') || {};
       const parsedFileConfig = settingsSchema.safeParse(rawFileConfig);
 
       if (parsedFileConfig.success) {
@@ -137,13 +137,13 @@ export class TipiConfigClass {
     this.config = envSchema.parse(newConf);
 
     if (writeFile) {
-      const currentJsonConf = readJsonFile('/runtipi/state/settings.json') || {};
+      const currentJsonConf = readJsonFile('/data/state/settings.json') || {};
       const parsedConf = envSchema.partial().parse(currentJsonConf);
 
       parsedConf[key] = value;
       const parsed = envSchema.partial().parse(parsedConf);
 
-      await fs.promises.writeFile('/runtipi/state/settings.json', JSON.stringify(parsed));
+      await fs.promises.writeFile('/data/state/settings.json', JSON.stringify(parsed));
     }
   }
 
@@ -159,7 +159,7 @@ export class TipiConfigClass {
       return;
     }
 
-    await fs.promises.writeFile('/runtipi/state/settings.json', JSON.stringify(parsed.data));
+    await fs.promises.writeFile('/data/state/settings.json', JSON.stringify(parsed.data));
 
     // Reset cache
     this.cacheTime = 0;

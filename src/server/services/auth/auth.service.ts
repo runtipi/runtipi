@@ -294,7 +294,7 @@ export class AuthServiceClass {
 
     await this.queries.updateUser(user.id, { password: hash, totpEnabled: false, totpSecret: null });
 
-    await unlinkFile(`/runtipi/state/password-change-request`);
+    await unlinkFile(`/data/state/password-change-request`);
 
     return { email: user.username };
   };
@@ -306,7 +306,7 @@ export class AuthServiceClass {
    * @returns {boolean} - A boolean indicating if there is a password change request or not
    */
   public static checkPasswordChangeRequest = () => {
-    if (fileExists(`/runtipi/state/password-change-request`)) {
+    if (fileExists(`/data/state/password-change-request`)) {
       return true;
     }
 
@@ -321,8 +321,8 @@ export class AuthServiceClass {
    * @throws {Error} - If the file cannot be removed
    */
   public static cancelPasswordChangeRequest = async () => {
-    if (fileExists(`/runtipi/state/password-change-request`)) {
-      await unlinkFile(`/runtipi/state/password-change-request`);
+    if (fileExists(`/data/state/password-change-request`)) {
+      await unlinkFile(`/data/state/password-change-request`);
     }
 
     return true;

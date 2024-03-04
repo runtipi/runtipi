@@ -34,10 +34,10 @@ const createAppConfig = (props?: Partial<AppInfo>) => {
   });
 
   const mockFiles: Record<string, string | string[]> = {};
-  mockFiles['/runtipi/.env'] = 'TEST=test';
-  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
-  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
-  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+  mockFiles['/data/.env'] = 'TEST=test';
+  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
+  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   // @ts-expect-error - custom mock method
   fs.__applyMockFiles(mockFiles);
@@ -101,10 +101,10 @@ const createApp = async (props: IProps, database: TestDatabase) => {
   }
 
   const mockFiles: Record<string, string | string[]> = {};
-  mockFiles['/runtipi/.env'] = 'TEST=test';
-  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
-  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
-  mockFiles[`/runtipi/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+  mockFiles['/data/.env'] = 'TEST=test';
+  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
+  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   let appEntity: App = {} as App;
   if (installed) {
@@ -122,9 +122,9 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
     // eslint-disable-next-line prefer-destructuring
     appEntity = insertedApp[0] as App;
-    mockFiles[`/app/storage/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
-    mockFiles[`/runtipi/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
-    mockFiles[`/runtipi/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+    mockFiles[`/data/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    mockFiles[`/data/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+    mockFiles[`/data/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
   }
 
   // @ts-expect-error - custom mock method
@@ -146,12 +146,12 @@ const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: Test
 
   const mockFiles: Record<string, string | string[]> = {};
   if (data.status !== 'missing') {
-    mockFiles[`/app/storage/app-data/${values.id}/app.env`] = `TEST=test\nAPP_PORT=3000\n${Object.entries(data.config || {})
+    mockFiles[`/data/app-data/${values.id}/app.env`] = `TEST=test\nAPP_PORT=3000\n${Object.entries(data.config || {})
       .map(([key, value]) => `${key}=${value}`)
       .join('\n')}`;
-    mockFiles[`/runtipi/apps/${values.id}/config.json`] = JSON.stringify(appInfo);
-    mockFiles[`/runtipi/apps/${values.id}/metadata/description.md`] = 'md desc';
-    mockFiles[`/runtipi/apps/${values.id}/docker-compose.yml`] = 'compose';
+    mockFiles[`/data/apps/${values.id}/config.json`] = JSON.stringify(appInfo);
+    mockFiles[`/data/apps/${values.id}/metadata/description.md`] = 'md desc';
+    mockFiles[`/data/apps/${values.id}/docker-compose.yml`] = 'compose';
   }
 
   // @ts-expect-error - custom mock method

@@ -1,2 +1,2 @@
-export const ROOT_FOLDER = '/app';
-export const STORAGE_FOLDER = '/storage';
+export const ROOT_FOLDER = '/dash';
+export const STORAGE_FOLDER = '/data';

@@ -91,5 +91,8 @@ COPY --from=builder /app/packages/worker/assets ./assets
 COPY --from=builder /app/docker-binary /usr/local/bin/docker-compose
 
 WORKDIR /
+COPY ./start.sh .
+
+EXPOSE 3000, 5000, 5001
 
 CMD ["sh", "start.sh"]
