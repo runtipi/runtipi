@@ -100,7 +100,12 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
           name={field.env_variable}
           defaultValue={field.default}
           render={({ field: { onChange, value, ref, ...props } }) => (
-            <Select value={value as string} defaultValue={(initalValues ? initalValues[field.env_variable] : field.default) as string} onValueChange={onChange} {...props}>
+            <Select
+              value={value as string}
+              defaultValue={(initalValues ? initalValues[field.env_variable] : field.default) as string}
+              onValueChange={onChange}
+              {...props}
+            >
               <SelectTrigger className="mb-3" error={errors[field.env_variable]?.message} label={label}>
                 <SelectValue placeholder={t('APP_INSTALL_FORM_CHOOSE_OPTION')} />
               </SelectTrigger>
@@ -117,6 +122,26 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
       );
     }
 
+    let type;
+
+    switch (field.type) {
+      case 'password':
+        type = 'password' as const;
+        break;
+      case 'number':
+        type = 'number' as const;
+        break;
+      case 'email':
+        type = 'email' as const;
+        break;
+      case 'url':
+        type = 'url' as const;
+        break;
+      default:
+        type = 'text' as const;
+        break;
+    }
+
     return (
       <Input
         key={field.env_variable}
@@ -124,7 +149,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         label={label}
         error={errors[field.env_variable]?.message}
         disabled={loading}
-        type={field.type}
+        type={type}
         className="mb-3"
         placeholder={field.placeholder || field.label}
       />
