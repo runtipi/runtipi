@@ -22,7 +22,7 @@
     "dotenv-cli": "^7.3.0",
     "esbuild": "^0.19.4",
     "knip": "^3.8.2",
-    "memfs": "^4.6.0",
+    "memfs": "^4.7.7",
     "nodemon": "^3.0.3",
     "tsx": "^4.6.2",
     "typescript": "^5.2.2",
