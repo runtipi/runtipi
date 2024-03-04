@@ -54,7 +54,7 @@
     "connect-redis": "^7.1.1",
     "drizzle-orm": "^0.29.3",
     "fs-extra": "^11.2.0",
-    "geist": "^1.2.0",
+    "geist": "^1.2.2",
     "jsonwebtoken": "^9.0.2",
     "let-it-go": "^1.0.0",
     "lodash.merge": "^4.6.2",
