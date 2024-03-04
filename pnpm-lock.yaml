@@ -382,8 +382,8 @@ importers:
         specifier: workspace:^
         version: link:../shared
       '@sentry/integrations':
-        specifier: ^7.94.1
-        version: 7.94.1
+        specifier: ^7.104.0
+        version: 7.104.0
       '@sentry/node':
         specifier: ^7.94.1
         version: 7.94.1
@@ -3370,16 +3370,6 @@ packages:
       '@sentry/core': 7.104.0
       '@sentry/types': 7.104.0
       '@sentry/utils': 7.104.0
-      localforage: 1.10.0
-    dev: false
-
-  /@sentry/integrations@7.94.1:
-    resolution: {integrity: sha512-Fw7OxLlGkrVAVO9WtBJezrb5IxxItCTuefv2IfKku+A5EhHtH1AhXYjQynmt0TLLYIUlyBWiatpOngBzS2wSxw==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/core': 7.94.1
-      '@sentry/types': 7.94.1
-      '@sentry/utils': 7.94.1
       localforage: 1.10.0
     dev: false
 
