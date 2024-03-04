@@ -68,8 +68,6 @@ services:
         condition: service_healthy
       runtipi-redis:
         condition: service_healthy
-      runtipi-worker:
-        condition: service_healthy
     env_file:
       - .env
     environment:
@@ -90,10 +88,11 @@ services:
       - ./:/data
       - ${STORAGE_PATH:-$PWD}/app-data:/data/app-data
     labels:
-      # ---- Dashboard ----
+      # ---- General ----
       traefik.enable: true
-      traefik.http.services.dashboard.loadbalancer.server.port: 3000
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
+      # ---- Dashboard ----
+      traefik.http.services.dashboard.loadbalancer.server.port: 3000
       # Local ip
       traefik.http.routers.dashboard.rule: PathPrefix("/")
       traefik.http.routers.dashboard.service: dashboard
@@ -109,10 +108,8 @@ services:
       traefik.http.routers.dashboard-local.tls: true
       traefik.http.routers.dashboard-local.service: dashboard
       # --- Worker ----
-      traefik.enable: true
       traefik.http.services.worker.loadbalancer.server.port: 5001
       traefik.http.services.worker-api.loadbalancer.server.port: 5000
-      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
       # Local ip
       traefik.http.routers.worker.rule: PathPrefix("/worker")
       traefik.http.routers.worker.service: worker
