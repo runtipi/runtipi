@@ -42,7 +42,7 @@
     "pg": "^8.11.3",
     "socket.io": "^4.7.4",
     "systeminformation": "^5.21.22",
-    "web-push": "^3.6.6",
+    "web-push": "^3.6.7",
     "zod": "^3.22.4"
   }
 }

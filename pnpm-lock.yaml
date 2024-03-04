@@ -409,8 +409,8 @@ importers:
         specifier: ^5.21.22
         version: 5.21.22
       web-push:
-        specifier: ^3.6.6
-        version: 3.6.6
+        specifier: ^3.6.7
+        version: 3.6.7
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -7196,11 +7196,9 @@ packages:
       - supports-color
     dev: true
 
-  /http_ece@1.1.0:
-    resolution: {integrity: sha512-bptAfCDdPJxOs5zYSe7Y3lpr772s1G346R4Td5LgRUeCwIGpCGDUTJxRrhTNcAXbx37spge0kWEIH7QAYWNTlA==}
-    engines: {node: '>=4'}
-    dependencies:
-      urlsafe-base64: 1.0.0
+  /http_ece@1.2.0:
+    resolution: {integrity: sha512-JrF8SSLVmcvc5NducxgyOrKXe3EsyHMgBFgSaIUGmArKe+rwr0uphRkRXvwiom3I+fpIfoItveHrfudL8/rxuA==}
+    engines: {node: '>=16'}
     dev: false
 
   /https-proxy-agent@5.0.1:
@@ -11755,10 +11753,6 @@ packages:
       requires-port: 1.0.0
     dev: true
 
-  /urlsafe-base64@1.0.0:
-    resolution: {integrity: sha512-RtuPeMy7c1UrHwproMZN9gN6kiZ0SvJwRaEzwZY0j9MypEkFqyBaKv176jvlPtg58Zh36bOkS0NFABXMHvvGCA==}
-    dev: false
-
   /use-callback-ref@1.3.0(@types/react@18.2.48)(react@18.2.0):
     resolution: {integrity: sha512-3FT9PRuRdbB9HfXhEq35u4oZkvpJ5kuYbpqhCfmiZyReuRgpnhDlbr2ZEnnuS0RrJAPn6l23xjFg9kpDM+Ms7w==}
     engines: {node: '>=10'}
@@ -12069,13 +12063,13 @@ packages:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
     dev: false
 
-  /web-push@3.6.6:
-    resolution: {integrity: sha512-SyteEck9fiCskNmPxs/GFhJsZrIyLfRvjWNmcUwULLJyCU0f1oxo2sWTokXA1mDAq9vxk4e4gVcb/8agq73NkQ==}
+  /web-push@3.6.7:
+    resolution: {integrity: sha512-OpiIUe8cuGjrj3mMBFWY+e4MMIkW3SVT+7vEIjvD9kejGUypv8GPDf84JdPWskK8zMRIJ6xYGm+Kxr8YkPyA0A==}
     engines: {node: '>= 16'}
     hasBin: true
     dependencies:
       asn1.js: 5.4.1
-      http_ece: 1.1.0
+      http_ece: 1.2.0
       https-proxy-agent: 7.0.0
       jws: 4.0.0
       minimist: 1.2.8
