@@ -145,7 +145,7 @@
     "tsx": "^4.6.2",
     "typescript": "5.2.2",
     "vite-tsconfig-paths": "^4.3.1",
-    "vitest": "^1.2.1",
+    "vitest": "^1.3.1",
     "wait-for-expect": "^3.0.2"
   },
   "msw": {
