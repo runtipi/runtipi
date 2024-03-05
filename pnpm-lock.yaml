@@ -406,8 +406,8 @@ importers:
         specifier: ^4.7.4
         version: 4.7.4
       systeminformation:
-        specifier: ^5.21.22
-        version: 5.21.22
+        specifier: ^5.22.0
+        version: 5.22.0
       web-push:
         specifier: ^3.6.7
         version: 3.6.7
@@ -11567,8 +11567,8 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /systeminformation@5.21.22:
-    resolution: {integrity: sha512-gNHloAJSyS+sKWkwvmvozZ1eHrdVTEsynWMTY6lvLGBB70gflkBQFw8drXXr1oEXY84+Vr9tOOrN8xHZLJSycA==}
+  /systeminformation@5.22.0:
+    resolution: {integrity: sha512-oAP80ymt8ssrAzjX8k3frbL7ys6AotqC35oikG6/SG15wBw+tG9nCk4oPaXIhEaAOAZ8XngxUv3ORq2IuR3r4Q==}
     engines: {node: '>=8.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
