@@ -394,8 +394,8 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       hono:
-        specifier: ^3.12.2
-        version: 3.12.2
+        specifier: ^4.0.9
+        version: 4.0.9
       ioredis:
         specifier: ^5.3.2
         version: 5.3.2
@@ -7419,8 +7419,8 @@ packages:
       react-is: 16.13.1
     dev: false
 
-  /hono@3.12.2:
-    resolution: {integrity: sha512-h8MlaLiWEeiqMtpQBBhWor4UTu/8bYWuv0yc7DaCRsG3Ny2rXdkXzrYrgc+FWXoyh06CL2QDB/HbjJ9XJLjEhw==}
+  /hono@4.0.9:
+    resolution: {integrity: sha512-XkFx6y6jAl08bGmoy53oGtHl8eHUixvmBulfcghrSySoJD3cW4UfFUa7JDGLOsIeJUv/a9d2pBFQUX7rzRnjvA==}
     engines: {node: '>=16.0.0'}
     dev: false
 
