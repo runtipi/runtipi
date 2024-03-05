@@ -21,7 +21,7 @@
     "@types/web-push": "^3.6.3",
     "dotenv-cli": "^7.3.0",
     "esbuild": "^0.19.4",
-    "knip": "^3.8.2",
+    "knip": "^5.0.3",
     "memfs": "^4.7.7",
     "nodemon": "^3.1.0",
     "tsx": "^4.7.1",
