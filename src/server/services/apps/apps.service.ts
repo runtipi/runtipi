@@ -1,4 +1,5 @@
 import validator from 'validator';
+import MiniSearch from 'minisearch';
 import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
@@ -6,7 +7,7 @@ import { Database, db } from '@/server/db';
 import { AppInfo } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
-import { checkAppRequirements, getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
+import { checkAppRequirements, getAvailableApps as slow_getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
@@ -32,8 +33,54 @@ const filterApps = (apps: AppInfo[]): AppInfo[] => apps.sort(sortApps).filter(fi
 export class AppServiceClass {
   private queries;
 
+  private appsAvailable: AppInfo[] | null = null;
+
+  private miniSearch: MiniSearch<AppInfo> | null = null;
+
+  private cacheTimeout = 1000 * 60 * 15; // 15 minutes
+
+  private cacheLastUpdated = 0;
+
   constructor(p: Database = db) {
+    Logger.debug('AppServiceClass constructor');
     this.queries = new AppQueries(p);
+  }
+
+  private invalidateCache() {
+    this.appsAvailable = null;
+    if (this.miniSearch) {
+      this.miniSearch.removeAll();
+    }
+  }
+
+  private async getAvailableApps() {
+    // Invalidate cache if it's older than 15 minutes
+    if (this.cacheLastUpdated && Date.now() - this.cacheLastUpdated > this.cacheTimeout) {
+      Logger.debug('apps service -> invalidateCache');
+      this.invalidateCache();
+    }
+
+    if (!this.appsAvailable) {
+      Logger.debug('apps service -> getAvailableApps');
+      const apps = await slow_getAvailableApps();
+      this.appsAvailable = filterApps(apps);
+
+      this.miniSearch = new MiniSearch<(typeof this.appsAvailable)[number]>({
+        fields: ['name', 'description', 'categories'],
+        storeFields: ['id'],
+        idField: 'id',
+        searchOptions: {
+          boost: { name: 2 },
+          fuzzy: 0.2,
+          prefix: true,
+        },
+      });
+      this.miniSearch.addAll(this.appsAvailable);
+
+      this.cacheLastUpdated = Date.now();
+    }
+
+    return this.appsAvailable;
   }
 
   /**
@@ -191,11 +238,37 @@ export class AppServiceClass {
   /**
    * Lists available apps
    */
-  public static listApps = async () => {
-    const apps = await getAvailableApps();
-    const filteredApps = filterApps(apps);
+  public listApps = async () => {
+    const apps = await this.getAvailableApps();
 
-    return { apps: filteredApps, total: apps.length };
+    return { apps, total: apps.length };
+  };
+
+  public searchApps = async (params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null }) => {
+    const { search, category, pageSize, cursor } = params;
+
+    let filteredApps = await this.getAvailableApps();
+
+    if (category) {
+      filteredApps = filteredApps.filter((app) => app.categories.some((c) => c === category));
+    }
+
+    if (search && this.miniSearch) {
+      // Search for apps
+      const result = this.miniSearch.search(search);
+
+      const searchIds = result.map((app) => app.id);
+
+      // Filter apps by search results and keep the order
+      filteredApps = filteredApps.filter((app) => searchIds.includes(app.id)).sort((a, b) => searchIds.indexOf(a.id) - searchIds.indexOf(b.id));
+    }
+
+    const start = cursor ? filteredApps.findIndex((app) => app.id === cursor) : 0;
+
+    const end = start + pageSize;
+    const data = filteredApps.slice(start, end);
+
+    return { data, total: filteredApps.length, nextCursor: filteredApps[end]?.id };
   };
 
   /**
@@ -450,3 +523,15 @@ export class AppServiceClass {
 }
 
 export type AppService = InstanceType<typeof AppServiceClass>;
+
+declare global {
+  // eslint-disable-next-line vars-on-top, no-var -- globalThis is not a module
+  var AppService: AppService;
+}
+
+const appServiceSingleton = () => {
+  return new AppServiceClass();
+};
+export const appService = globalThis.AppService ?? appServiceSingleton();
+
+if (process.env.NODE_ENV !== 'production') globalThis.AppService = appService;

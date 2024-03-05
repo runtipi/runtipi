@@ -2,6 +2,8 @@ name: Nightly Release
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   build-worker:
@@ -31,7 +33,7 @@ jobs:
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
             TIPI_VERSION=nightly
           file: ./packages/worker/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/worker:nightly
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/worker:buildcache
@@ -63,7 +65,7 @@ jobs:
           build-args: |
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
             TIPI_VERSION=nightly
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/runtipi/runtipi:nightly
           cache-from: type=registry,ref=ghcr.io/runtipi/runtipi:buildcache
@@ -89,7 +91,7 @@ jobs:
           repo: cli
           owner: runtipi
           run_id: ${{ steps.return_dispatch.outputs.run_id }}
-          run_timeout_seconds: 300
+          run_timeout_seconds: 600
           poll_interval_ms: 5000
 
       - name: Create bin folder

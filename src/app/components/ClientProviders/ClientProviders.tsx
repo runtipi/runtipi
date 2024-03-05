@@ -15,7 +15,7 @@ type Props = {
   messages: AbstractIntlMessages;
 };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false } } });
 
 export const ClientProviders = ({ children, initialTheme, cookies, locale, messages }: Props) => {
   return (

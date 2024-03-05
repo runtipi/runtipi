@@ -2,7 +2,7 @@ import React from 'react';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import { redirect } from 'next/navigation';
 import { db } from '@/server/db';
-import { AppServiceClass } from '@/server/services/apps/apps.service';
+import { appService } from '@/server/services/apps/apps.service';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { UnauthenticatedPage } from '@/components/UnauthenticatedPage';
@@ -13,7 +13,6 @@ import { EmptyPage } from './components/EmptyPage';
 export const dynamic = 'force-dynamic';
 
 export default async function RootPage() {
-  const appService = new AppServiceClass(db);
   const { guestDashboard } = TipiConfig.getConfig();
 
   const headersList = headers();

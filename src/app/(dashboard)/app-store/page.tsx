@@ -1,4 +1,4 @@
-import { AppServiceClass } from '@/server/services/apps/apps.service';
+import { appService } from '@/server/services/apps/apps.service';
 import React from 'react';
 import { Metadata } from 'next';
 import { getTranslatorFromCookie } from '@/lib/get-translator';
@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AppStorePage() {
-  const { apps } = await AppServiceClass.listApps();
+  const apps = await appService.searchApps({ pageSize: 18 });
 
-  return <AppStoreTable data={apps} />;
+  return <AppStoreTable initialData={apps} />;
 }

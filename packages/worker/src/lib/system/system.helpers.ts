@@ -110,6 +110,7 @@ export const generateSystemEnvFile = async () => {
   const envFile = await fs.promises.readFile(envFilePath, 'utf-8');
 
   const envMap: Map<EnvKeys, string> = envStringToMap(envFile);
+  envMap.set('NODE_ENV', process.env.NODE_ENV || 'production');
 
   if (!(await pathExists(settingsFilePath))) {
     await fs.promises.writeFile(settingsFilePath, JSON.stringify({}));

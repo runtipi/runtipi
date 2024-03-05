@@ -1,1 +1,1 @@
-export { TipiCache } from './TipiCache';
+export { tipiCache } from './TipiCache';

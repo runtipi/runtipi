@@ -1,4 +1,4 @@
-import { AppServiceClass } from '@/server/services/apps/apps.service';
+import { appService } from '@/server/services/apps/apps.service';
 import { CustomLinksServiceClass } from '@/server/services/custom-links/custom-links.service';
 import { db } from '@/server/db';
 import React from 'react';
@@ -23,8 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  const appsService = new AppServiceClass(db);
-  const installedApps = await appsService.installedApps();
+  const installedApps = await appService.installedApps();
 
   const user = await getUserFromCookie();
   const linksService = new CustomLinksServiceClass(db);

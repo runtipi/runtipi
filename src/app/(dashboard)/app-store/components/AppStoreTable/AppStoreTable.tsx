@@ -1,35 +1,71 @@
 'use client';
 
 import React from 'react';
+import { useInfiniteQuery } from 'react-query';
+import type { AppStoreApiResponse } from '@/api/app-store/route';
+import { Button } from '@/components/ui/Button';
 import { EmptyPage } from '../../../../components/EmptyPage';
 import { AppStoreTile } from '../AppStoreTile';
-import { AppTableData } from '../../helpers/table.types';
 import { useAppStoreState } from '../../state/appStoreState';
-import { sortTable } from '../../helpers/table.helpers';
 
 interface IProps {
-  data: AppTableData;
+  initialData: AppStoreApiResponse;
 }
 
-export const AppStoreTable: React.FC<IProps> = ({ data }) => {
-  const { category, search, sort, sortDirection } = useAppStoreState();
+async function searchApps({ search, category, pageParam }: { search?: string; category?: string; pageParam?: string }) {
+  const url = new URL('/api/app-store', window.location.origin);
 
-  const tableData = React.useMemo(
-    () => sortTable({ data: data || [], col: sort, direction: sortDirection, category, search }),
-    [data, sort, sortDirection, category, search],
-  );
+  if (search) {
+    url.searchParams.append('search', search);
+  }
 
-  if (!tableData.length) {
+  if (category) {
+    url.searchParams.append('category', category);
+  }
+
+  if (pageParam) {
+    url.searchParams.append('cursor', pageParam);
+  }
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    throw new Error('Problem fetching data');
+  }
+  return response.json() as Promise<AppStoreApiResponse>;
+}
+
+export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
+  const { category, search } = useAppStoreState();
+
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = useInfiniteQuery({
+    queryFn: (other) => searchApps({ search, category, ...other }),
+    queryKey: ['app-store', search, category],
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    initialData: { pages: [initialData], pageParams: [] },
+    keepPreviousData: true,
+  });
+
+  const apps = data?.pages.map((page) => page.data).flat();
+
+  if (!apps?.length) {
     return <EmptyPage title="APP_STORE_NO_RESULTS" subtitle="APP_STORE_NO_RESULTS_SUBTITLE" />;
   }
+
+  const shouldShowButton = (hasNextPage && !isFetching) || isFetchingNextPage;
 
   return (
     <div className="card px-3 pb-3">
       <div className="row row-cards">
-        {tableData.map((app) => (
+        {apps.map((app) => (
           <AppStoreTile key={app.id} app={app} />
         ))}
       </div>
+      {shouldShowButton && (
+        <Button loading={isFetchingNextPage} onClick={() => fetchNextPage()}>
+          Load more
+        </Button>
+      )}
     </div>
   );
 };
