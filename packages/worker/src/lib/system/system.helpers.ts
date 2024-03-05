@@ -155,11 +155,11 @@ export const generateSystemEnvFile = async () => {
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
   envMap.set('STORAGE_PATH', data.storagePath || envMap.get('STORAGE_PATH') || rootFolderHost);
-  envMap.set('POSTGRES_HOST', 'tipi-db');
+  envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
   envMap.set('POSTGRES_PORT', String(5432));
-  envMap.set('REDIS_HOST', 'tipi-redis');
+  envMap.set('REDIS_HOST', 'runtipi-redis');
   envMap.set('DEMO_MODE', typeof data.demoMode === 'boolean' || typeof data.demoMode === 'string' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
   envMap.set('GUEST_DASHBOARD', typeof data.guestDashboard === 'boolean' || typeof data.guestDashboard === 'string' ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
   envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');

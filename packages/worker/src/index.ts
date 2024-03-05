@@ -16,7 +16,7 @@ import { AppExecutors, RepoExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
 import { setupRoutes } from './api';
 
-const rootFolder = '/app';
+const rootFolder = '/data';
 const envFile = path.join(rootFolder, '.env');
 
 const setupSentry = (release?: string) => {

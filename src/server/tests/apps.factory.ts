@@ -122,7 +122,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
     // eslint-disable-next-line prefer-destructuring
     appEntity = insertedApp[0] as App;
-    mockFiles[`/data/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    mockFiles[`/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
     mockFiles[`/data/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
     mockFiles[`/data/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
   }
@@ -146,7 +146,7 @@ const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: Test
 
   const mockFiles: Record<string, string | string[]> = {};
   if (data.status !== 'missing') {
-    mockFiles[`/data/app-data/${values.id}/app.env`] = `TEST=test\nAPP_PORT=3000\n${Object.entries(data.config || {})
+    mockFiles[`app-data/${values.id}/app.env`] = `TEST=test\nAPP_PORT=3000\n${Object.entries(data.config || {})
       .map(([key, value]) => `${key}=${value}`)
       .join('\n')}`;
     mockFiles[`/data/apps/${values.id}/config.json`] = JSON.stringify(appInfo);
