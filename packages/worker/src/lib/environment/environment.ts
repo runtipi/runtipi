@@ -26,7 +26,7 @@ const environmentSchema = z
   })
   .transform((env) => {
     const {
-      STORAGE_PATH = '/app',
+      STORAGE_PATH = '/data',
       ARCHITECTURE,
       ROOT_FOLDER_HOST,
       APPS_REPO_ID,

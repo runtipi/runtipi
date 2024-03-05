@@ -42,12 +42,12 @@ export class SystemServiceClass {
   };
 
   public static hasSeenWelcome = async () => {
-    return fileExists(`/state/seen-welcome`);
+    return fileExists(`/data/state/seen-welcome`);
   };
 
   public static markSeenWelcome = async () => {
     // Create file state/seen-welcome
-    await promises.writeFile(`/state/seen-welcome`, '');
+    await promises.writeFile(`/data/state/seen-welcome`, '');
     return true;
   };
 }

@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# Kill all instances of npm or node
-pkill -f "npm|node"
-
-# Run npm run start in the worker/ directory
-cd /worker
-pm2 start pnpm --name worker -- --filter @runtipi/worker -r dev
+# Start worker
+cd worker/
+pm2 start pnpm --ignore-watch="/worker" --name worker -- --filter @runtipi/worker -r dev
 
 # Wait for http://localhost:5000/healthcheck to return OK with a maximum of 5 retries
 while true; do
@@ -15,6 +12,9 @@ while true; do
     sleep 1
 done
 
-# Go to the dash/ directory and run npm run start
+# Start apps
 cd /dash
-pm2 start npm --name dashboard -- run dev
+pm2 start npm --ignore-watch="/dash" --name dashboard -- run dev
+
+# Log apps realtime
+pm2 logs

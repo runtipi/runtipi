@@ -38,7 +38,7 @@ export class AppExecutors {
   private getAppPaths = (appId: string) => {
     const { appsRepoId } = getEnv();
 
-    const appDataDirPath = path.join(STORAGE_FOLDER, 'app-data', appId);
+    const appDataDirPath = path.join('/app-data', appId);
     const appDirPath = path.join(ROOT_FOLDER, 'apps', appId);
     const configJsonPath = path.join(appDirPath, 'config.json');
     const repoPath = path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', appId);

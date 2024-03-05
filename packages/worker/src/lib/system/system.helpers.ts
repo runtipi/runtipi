@@ -8,7 +8,7 @@ import { envMapToString, envStringToMap, settingsSchema } from '@runtipi/shared'
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { logger } from '../logger/logger';
 import { getRepoHash } from '../../services/repo/repo.helpers';
-import { ROOT_FOLDER } from '@/config/constants';
+import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
 
 type EnvKeys =
   | 'APPS_REPO_ID'
@@ -48,7 +48,7 @@ const DEFAULT_REPO_URL = 'https://github.com/runtipi/runtipi-appstore';
  * Reads and returns the generated seed
  */
 const getSeed = async () => {
-  const seedFilePath = path.join(ROOT_FOLDER, 'state', 'seed');
+  const seedFilePath = path.join(STORAGE_FOLDER, 'state', 'seed');
 
   if (!(await pathExists(seedFilePath))) {
     throw new Error('Seed file not found');
@@ -75,11 +75,11 @@ const deriveEntropy = async (entropy: string) => {
  * Generates a random seed if it does not exist yet
  */
 const generateSeed = async () => {
-  if (!(await pathExists(path.join(ROOT_FOLDER, 'state', 'seed')))) {
+  if (!(await pathExists(path.join(STORAGE_FOLDER, 'state', 'seed')))) {
     const randomBytes = crypto.randomBytes(32);
     const seed = randomBytes.toString('hex');
 
-    await fs.promises.writeFile(path.join(ROOT_FOLDER, 'state', 'seed'), seed);
+    await fs.promises.writeFile(path.join(STORAGE_FOLDER, 'state', 'seed'), seed);
   }
 };
 
@@ -99,9 +99,9 @@ const getArchitecture = () => {
  * Generates a valid .env file from the settings.json file
  */
 export const generateSystemEnvFile = async () => {
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'state'), { recursive: true });
-  const settingsFilePath = path.join(ROOT_FOLDER, 'state', 'settings.json');
-  const envFilePath = path.join(ROOT_FOLDER, '.env');
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'state'), { recursive: true });
+  const settingsFilePath = path.join(STORAGE_FOLDER, 'state', 'settings.json');
+  const envFilePath = path.join(STORAGE_FOLDER, '.env');
 
   if (!(await pathExists(envFilePath))) {
     await fs.promises.writeFile(envFilePath, '');
@@ -183,56 +183,56 @@ export const generateSystemEnvFile = async () => {
  */
 export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
   // Remove old unused files
-  if (await pathExists(path.join(ROOT_FOLDER, 'scripts'))) {
+  if (await pathExists(path.join(STORAGE_FOLDER, 'scripts'))) {
     logger.info('Removing old scripts folder');
-    await fs.promises.rmdir(path.join(ROOT_FOLDER, 'scripts'), { recursive: true });
+    await fs.promises.rmdir(path.join(STORAGE_FOLDER, 'scripts'), { recursive: true });
   }
 
   const assetsFolder = path.join(ROOT_FOLDER, 'assets');
 
   // Copy traefik folder from assets
   logger.info('Creating traefik folders');
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'dynamic'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'shared'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'traefik', 'tls'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'traefik', 'dynamic'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'traefik', 'shared'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'traefik', 'tls'), { recursive: true });
 
   if (envMap.get('PERSIST_TRAEFIK_CONFIG') === 'true') {
     logger.warn('Skipping the copy of traefik files because persistTraefikConfig is set to true');
   } else {
     logger.info('Copying traefik files');
-    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(ROOT_FOLDER, 'traefik', 'traefik.yml'));
-    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'), path.join(ROOT_FOLDER, 'traefik', 'dynamic', 'dynamic.yml'));
+    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(STORAGE_FOLDER, 'traefik', 'traefik.yml'));
+    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'), path.join(STORAGE_FOLDER, 'traefik', 'dynamic', 'dynamic.yml'));
   }
 
   // Create base folders
   logger.info('Creating base folders');
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'apps'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'app-data'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'state'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'repos'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'apps'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'app-data'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'state'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'repos'), { recursive: true });
 
   // Create media folders
   logger.info('Creating media folders');
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'torrents', 'watch'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'torrents', 'complete'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'torrents', 'incomplete'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'torrents', 'watch'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'torrents', 'complete'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'torrents', 'incomplete'), { recursive: true });
 
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'usenet', 'watch'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'usenet', 'complete'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'usenet', 'incomplete'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'usenet', 'watch'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'usenet', 'complete'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'usenet', 'incomplete'), { recursive: true });
 
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'downloads', 'watch'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'downloads', 'complete'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'downloads', 'incomplete'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'downloads', 'watch'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'downloads', 'complete'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'downloads', 'incomplete'), { recursive: true });
 
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'data', 'books'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'data', 'comics'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'data', 'movies'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'data', 'music'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'data', 'tv'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'data', 'podcasts'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'data', 'images'), { recursive: true });
-  await fs.promises.mkdir(path.join(ROOT_FOLDER, 'media', 'data', 'roms'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'data', 'books'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'data', 'comics'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'data', 'movies'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'data', 'music'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'data', 'tv'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'data', 'podcasts'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'data', 'images'), { recursive: true });
+  await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'media', 'data', 'roms'), { recursive: true });
 };
 
 /**
@@ -246,19 +246,19 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
   }
 
   // If the certificate already exists, don't generate it again
-  if (await pathExists(path.join(ROOT_FOLDER, 'traefik', 'tls', `${data.domain}.txt`))) {
+  if (await pathExists(path.join(STORAGE_FOLDER, 'traefik', 'tls', `${data.domain}.txt`))) {
     logger.info(`TLS certificate for ${data.domain} already exists`);
     return;
   }
 
   // Remove old certificates
-  if (await pathExists(path.join(ROOT_FOLDER, 'traefik', 'tls', 'cert.pem'))) {
+  if (await pathExists(path.join(STORAGE_FOLDER, 'traefik', 'tls', 'cert.pem'))) {
     logger.info('Removing old TLS certificate');
-    await fs.promises.unlink(path.join(ROOT_FOLDER, 'traefik', 'tls', 'cert.pem'));
+    await fs.promises.unlink(path.join(STORAGE_FOLDER, 'traefik', 'tls', 'cert.pem'));
   }
-  if (await pathExists(path.join(ROOT_FOLDER, 'traefik', 'tls', 'key.pem'))) {
+  if (await pathExists(path.join(STORAGE_FOLDER, 'traefik', 'tls', 'key.pem'))) {
     logger.info('Removing old TLS key');
-    await fs.promises.unlink(path.join(ROOT_FOLDER, 'traefik', 'tls', 'key.pem'));
+    await fs.promises.unlink(path.join(STORAGE_FOLDER, 'traefik', 'tls', 'key.pem'));
   }
 
   const subject = `/O=runtipi.io/OU=IT/CN=*.${data.domain}/emailAddress=webmaster@${data.domain}`;
@@ -268,7 +268,7 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
     logger.info(`Generating TLS certificate for ${data.domain}`);
     await execAsync(`openssl req -x509 -newkey rsa:4096 -keyout traefik/tls/key.pem -out traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "subjectAltName = ${subjectAltName}" -nodes`);
     logger.info(`Writing txt file for ${data.domain}`);
-    await fs.promises.writeFile(path.join(ROOT_FOLDER, 'traefik', 'tls', `${data.domain}.txt`), '');
+    await fs.promises.writeFile(path.join(STORAGE_FOLDER, 'traefik', 'tls', `${data.domain}.txt`), '');
   } catch (error) {
     logger.error(error);
   }

@@ -11,7 +11,7 @@ import { STORAGE_FOLDER } from '@/config/constants';
  */
 export const getAppEnvMap = async (appId: string) => {
   try {
-    const envFile = await fs.promises.readFile(path.join(STORAGE_FOLDER, 'app-data', appId, 'app.env'));
+    const envFile = await fs.promises.readFile(path.join('/app-data', appId, 'app.env'));
     const envVars = envFile.toString().split('\n');
     const envVarsMap = new Map<string, string>();
 

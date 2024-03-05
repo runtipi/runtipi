@@ -22,7 +22,7 @@ const combinedLogFormatDev = combine(
 );
 
 const productionLogger = () => {
-  const logsFolder = '/app/logs';
+  const logsFolder = '/data/logs';
   try {
     if (!fs.existsSync(logsFolder)) {
       fs.mkdirSync(logsFolder);

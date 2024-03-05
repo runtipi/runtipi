@@ -2,7 +2,7 @@ import path from 'path';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
-import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
+import { ROOT_FOLDER } from '@/config/constants';
 
 const composeUp = async (args: string[]) => {
   logger.info(`Running docker compose with args ${args.join(' ')}`);
@@ -22,7 +22,7 @@ const composeUp = async (args: string[]) => {
  */
 export const compose = async (appId: string, command: string) => {
   const { arch, appsRepoId } = getEnv();
-  const appDataDirPath = path.join(STORAGE_FOLDER, 'app-data', appId);
+  const appDataDirPath = path.join('/app-data', appId);
   const appDirPath = path.join(ROOT_FOLDER, 'apps', appId);
 
   const args: string[] = [`--env-file ${path.join(appDataDirPath, 'app.env')}`];

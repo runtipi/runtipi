@@ -3,7 +3,7 @@ ARG ALPINE_VERSION="3.18"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
-RUN apk add --no-cache python3 make g++ curl
+RUN apk add --no-cache python3 make g++ curl git
 RUN npm install pnpm pm2 -g
 
 ARG TARGETARCH

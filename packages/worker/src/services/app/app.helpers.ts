@@ -101,12 +101,12 @@ export const generateEnvFile = async (appId: string, config: Record<string, unkn
   }
 
   // Create app-data folder if it doesn't exist
-  const appDataDirectoryExists = await fs.promises.stat(path.join(STORAGE_FOLDER, 'app-data', appId)).catch(() => false);
+  const appDataDirectoryExists = await fs.promises.stat(path.join('/app-data', appId)).catch(() => false);
   if (!appDataDirectoryExists) {
-    await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'app-data', appId), { recursive: true });
+    await fs.promises.mkdir(path.join('/app-data', appId), { recursive: true });
   }
 
-  await fs.promises.writeFile(path.join(STORAGE_FOLDER, 'app-data', appId, 'app.env'), envMapToString(envMap));
+  await fs.promises.writeFile(path.join('/app-data', appId, 'app.env'), envMapToString(envMap));
 };
 
 /**
@@ -141,8 +141,8 @@ export const copyDataDir = async (id: string) => {
   }
 
   // Create app-data folder if it doesn't exist
-  if (!(await pathExists(`${STORAGE_FOLDER}/app-data/${id}/data`))) {
-    await fs.promises.mkdir(`${STORAGE_FOLDER}/app-data/${id}/data`, { recursive: true });
+  if (!(await pathExists(`/app-data/${id}/data`))) {
+    await fs.promises.mkdir(`/app-data/${id}/data`, { recursive: true });
   }
 
   const dataDir = await fs.promises.readdir(`${ROOT_FOLDER}/apps/${id}/data`);
@@ -152,14 +152,14 @@ export const copyDataDir = async (id: string) => {
       const template = await fs.promises.readFile(`${ROOT_FOLDER}/apps/${id}/data/${file}`, 'utf-8');
       const renderedTemplate = renderTemplate(template, envMap);
 
-      await fs.promises.writeFile(`${STORAGE_FOLDER}/app-data/${id}/data/${file.replace('.template', '')}`, renderedTemplate);
+      await fs.promises.writeFile(`/app-data/${id}/data/${file.replace('.template', '')}`, renderedTemplate);
     } else {
-      await fs.promises.copyFile(`${ROOT_FOLDER}/apps/${id}/data/${file}`, `${STORAGE_FOLDER}/app-data/${id}/data/${file}`);
+      await fs.promises.copyFile(`${ROOT_FOLDER}/apps/${id}/data/${file}`, `/app-data/${id}/data/${file}`);
     }
   };
 
   const processDir = async (p: string) => {
-    await fs.promises.mkdir(`${STORAGE_FOLDER}/app-data/${id}/data/${p}`, { recursive: true });
+    await fs.promises.mkdir(`/app-data/${id}/data/${p}`, { recursive: true });
     const files = await fs.promises.readdir(`${ROOT_FOLDER}/apps/${id}/data/${p}`);
 
     await Promise.all(
@@ -188,7 +188,7 @@ export const copyDataDir = async (id: string) => {
   );
 
   // Remove any .gitkeep files from the app-data folder at any level
-  if (await pathExists(`${STORAGE_FOLDER}/app-data/${id}/data`)) {
-    await execAsync(`find ${STORAGE_FOLDER}/app-data/${id}/data -name .gitkeep -delete`).catch(() => {});
+  if (await pathExists(`/app-data/${id}/data`)) {
+    await execAsync(`find /app-data/${id}/data -name .gitkeep -delete`).catch(() => {});
   }
 };

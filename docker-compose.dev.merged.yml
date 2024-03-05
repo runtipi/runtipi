@@ -75,7 +75,7 @@ services:
       - ./packages:/worker/packages
       - ./src:/dash/src
       - ./:/data
-      - /proc:/mnt/host:ro
+      - /:/mnt/host:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${STORAGE_PATH:-$PWD}:/app-data
     networks:
