@@ -245,20 +245,22 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
     return;
   }
 
+  const tlsFolder = path.join(ROOT_FOLDER, 'traefik', 'tls');
+
   // If the certificate already exists, don't generate it again
-  if (await pathExists(path.join(ROOT_FOLDER, 'traefik', 'tls', `${data.domain}.txt`))) {
+  if ((await pathExists(path.join(tlsFolder, `${data.domain}.txt`))) && (await pathExists(path.join(tlsFolder, 'cert.pem'))) && (await pathExists(path.join(tlsFolder, 'key.pem')))) {
     logger.info(`TLS certificate for ${data.domain} already exists`);
     return;
   }
 
   // Remove old certificates
-  if (await pathExists(path.join(ROOT_FOLDER, 'traefik', 'tls', 'cert.pem'))) {
+  if (await pathExists(path.join(tlsFolder, 'cert.pem'))) {
     logger.info('Removing old TLS certificate');
-    await fs.promises.unlink(path.join(ROOT_FOLDER, 'traefik', 'tls', 'cert.pem'));
+    await fs.promises.unlink(path.join(tlsFolder, 'cert.pem'));
   }
-  if (await pathExists(path.join(ROOT_FOLDER, 'traefik', 'tls', 'key.pem'))) {
+  if (await pathExists(path.join(tlsFolder, 'key.pem'))) {
     logger.info('Removing old TLS key');
-    await fs.promises.unlink(path.join(ROOT_FOLDER, 'traefik', 'tls', 'key.pem'));
+    await fs.promises.unlink(path.join(tlsFolder, 'key.pem'));
   }
 
   const subject = `/O=runtipi.io/OU=IT/CN=*.${data.domain}/emailAddress=webmaster@${data.domain}`;
@@ -266,9 +268,11 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
 
   try {
     logger.info(`Generating TLS certificate for ${data.domain}`);
-    await execAsync(`openssl req -x509 -newkey rsa:4096 -keyout traefik/tls/key.pem -out traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "subjectAltName = ${subjectAltName}" -nodes`);
+    await execAsync(
+      `openssl req -x509 -newkey rsa:4096 -keyout /app/traefik/tls/key.pem -out /app/traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "subjectAltName = ${subjectAltName}" -nodes`,
+    );
     logger.info(`Writing txt file for ${data.domain}`);
-    await fs.promises.writeFile(path.join(ROOT_FOLDER, 'traefik', 'tls', `${data.domain}.txt`), '');
+    await fs.promises.writeFile(path.join(tlsFolder, `${data.domain}.txt`), '');
   } catch (error) {
     logger.error(error);
   }
