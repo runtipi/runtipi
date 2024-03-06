@@ -15,10 +15,9 @@ import { logger } from '@/lib/logger';
 import { AppExecutors, RepoExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
 import { setupRoutes } from './api';
-import { APP_DIR } from './config';
+import { DATA_DIR } from './config';
 
-const rootFolder = APP_DIR;
-const envFile = path.join(rootFolder, '.env');
+const envFile = path.join(DATA_DIR, '.env');
 
 const setupSentry = (release?: string) => {
   Sentry.init({

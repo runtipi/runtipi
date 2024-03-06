@@ -2,7 +2,7 @@ import path from 'path';
 import pg from 'pg';
 import { migrate } from '@runtipi/postgres-migrations';
 import { logger } from '@/lib/logger';
-import { APP_DATA_DIR } from '@/config/constants';
+import { APP_DIR } from '@/config/constants';
 
 type MigrationParams = {
   postgresHost: string;
@@ -13,7 +13,7 @@ type MigrationParams = {
 };
 
 export const runPostgresMigrations = async (params: MigrationParams) => {
-  const assetsFolder = path.join(APP_DATA_DIR, 'assets');
+  const assetsFolder = path.join(APP_DIR, 'assets');
 
   const { postgresHost, postgresDatabase, postgresUsername, postgresPassword, postgresPort } = params;
 

@@ -69,11 +69,10 @@ services:
       runtipi-redis:
         condition: service_healthy
     volumes:
-      - ./.env:/dash/.env
-      - ./.env:/worker/.env
       - ./packages:/dash/packages
       - ./packages:/worker/packages
       - ./src:/dash/src
+      - ./.env:/data/.env
       - ./runtipi-data:/data
       - /:/mnt/host:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
