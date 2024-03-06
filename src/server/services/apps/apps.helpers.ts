@@ -5,6 +5,7 @@ import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
+import { DATA_DIR } from 'src/config';
 
 /**
  *  This function checks the requirements for the app with the provided name.
@@ -17,7 +18,7 @@ import { notEmpty } from '../../common/typescript.helpers';
  *  @throws Will throw an error if the app has an invalid config.json file or if the current system architecture is not supported by the app.
  */
 export const checkAppRequirements = (appName: string) => {
-  const configFile = readJsonFile(`/data/repos/${TipiConfig.getConfig().appsRepoId}/apps/${appName}/config.json`);
+  const configFile = readJsonFile(`${DATA_DIR}/repos/${TipiConfig.getConfig().appsRepoId}/apps/${appName}/config.json`);
   const parsedConfig = appInfoSchema.safeParse(configFile);
 
   if (!parsedConfig.success) {
@@ -37,12 +38,12 @@ export const checkAppRequirements = (appName: string) => {
   If the config.json file is invalid, it logs an error message.
  */
 export const getAvailableApps = async () => {
-  if (!(await pathExists(`/data/repos/${TipiConfig.getConfig().appsRepoId}/apps`))) {
+  if (!(await pathExists(`${DATA_DIR}/repos/${TipiConfig.getConfig().appsRepoId}/apps`))) {
     Logger.error(`Apps repo ${TipiConfig.getConfig().appsRepoId} not found. Make sure your repo is configured correctly.`);
     return [];
   }
 
-  const appsDir = readdirSync(`/data/repos/${TipiConfig.getConfig().appsRepoId}/apps`);
+  const appsDir = readdirSync(`${DATA_DIR}/repos/${TipiConfig.getConfig().appsRepoId}/apps`);
 
   const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
 
@@ -50,14 +51,14 @@ export const getAvailableApps = async () => {
     .map((app) => {
       if (skippedFiles.includes(app)) return null;
 
-      const configFile = readJsonFile(`/data/repos/${TipiConfig.getConfig().appsRepoId}/apps/${app}/config.json`);
+      const configFile = readJsonFile(`${DATA_DIR}/repos/${TipiConfig.getConfig().appsRepoId}/apps/${app}/config.json`);
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (!parsedConfig.success) {
         Logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
         Logger.error(JSON.stringify(parsedConfig.error, null, 2));
       } else if (parsedConfig.data.available) {
-        const description = readFile(`/data/repos/${TipiConfig.getConfig().appsRepoId}/apps/${parsedConfig.data.id}/metadata/description.md`);
+        const description = readFile(`${DATA_DIR}/repos/${TipiConfig.getConfig().appsRepoId}/apps/${parsedConfig.data.id}/metadata/description.md`);
         return { ...parsedConfig.data, description };
       }
 
@@ -77,7 +78,7 @@ export const getAvailableApps = async () => {
  *  @param {string} id - The app id.
  */
 export const getUpdateInfo = (id: string) => {
-  const repoConfig = readJsonFile(`/data/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/config.json`);
+  const repoConfig = readJsonFile(`${DATA_DIR}/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/config.json`);
   const parsedConfig = appInfoSchema.safeParse(repoConfig);
 
   if (parsedConfig.success) {
@@ -105,22 +106,22 @@ export const getAppInfo = (id: string, status?: App['status']) => {
     // Check if app is installed
     const installed = typeof status !== 'undefined' && status !== 'missing';
 
-    if (installed && fileExists(`/data/apps/${id}/config.json`)) {
-      const configFile = readJsonFile(`/data/apps/${id}/config.json`);
+    if (installed && fileExists(`${DATA_DIR}/apps/${id}/config.json`)) {
+      const configFile = readJsonFile(`${DATA_DIR}/apps/${id}/config.json`);
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (parsedConfig.success && parsedConfig.data.available) {
-        const description = readFile(`/data/apps/${id}/metadata/description.md`);
+        const description = readFile(`${DATA_DIR}/apps/${id}/metadata/description.md`);
         return { ...parsedConfig.data, description };
       }
     }
 
     if (fileExists(`/data/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/config.json`)) {
-      const configFile = readJsonFile(`/data/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/config.json`);
+      const configFile = readJsonFile(`${DATA_DIR}/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/config.json`);
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (parsedConfig.success && parsedConfig.data.available) {
-        const description = readFile(`/data/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/metadata/description.md`);
+        const description = readFile(`${DATA_DIR}/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/metadata/description.md`);
         return { ...parsedConfig.data, description };
       }
     }

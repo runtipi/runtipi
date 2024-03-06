@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { AppInfo, Architecture, appInfoSchema, APP_CATEGORIES } from '@runtipi/shared';
 import { TestDatabase } from './test-utils';
 import { appTable, AppStatus, App, NewApp } from '../db/schema';
+import { APP_DATA_DIR, DATA_DIR } from 'src/config';
 
 interface IProps {
   installed?: boolean;
@@ -101,10 +102,10 @@ const createApp = async (props: IProps, database: TestDatabase) => {
   }
 
   const mockFiles: Record<string, string | string[]> = {};
-  mockFiles['/data/.env'] = 'TEST=test';
-  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
-  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
-  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+  mockFiles[`${DATA_DIR}/.env`] = 'TEST=test';
+  mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
+  mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   let appEntity: App = {} as App;
   if (installed) {
@@ -122,9 +123,9 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
     // eslint-disable-next-line prefer-destructuring
     appEntity = insertedApp[0] as App;
-    mockFiles[`/app-data/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
-    mockFiles[`/data/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
-    mockFiles[`/data/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+    mockFiles[`${APP_DATA_DIR}/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
+    mockFiles[`${DATA_DIR}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
+    mockFiles[`${DATA_DIR}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
   }
 
   // @ts-expect-error - custom mock method
@@ -149,9 +150,9 @@ const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: Test
     mockFiles[`app-data/${values.id}/app.env`] = `TEST=test\nAPP_PORT=3000\n${Object.entries(data.config || {})
       .map(([key, value]) => `${key}=${value}`)
       .join('\n')}`;
-    mockFiles[`/data/apps/${values.id}/config.json`] = JSON.stringify(appInfo);
-    mockFiles[`/data/apps/${values.id}/metadata/description.md`] = 'md desc';
-    mockFiles[`/data/apps/${values.id}/docker-compose.yml`] = 'compose';
+    mockFiles[`${DATA_DIR}/apps/${values.id}/config.json`] = JSON.stringify(appInfo);
+    mockFiles[`${DATA_DIR}/apps/${values.id}/metadata/description.md`] = 'md desc';
+    mockFiles[`${DATA_DIR}/apps/${values.id}/docker-compose.yml`] = 'compose';
   }
 
   // @ts-expect-error - custom mock method

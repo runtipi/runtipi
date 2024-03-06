@@ -5,6 +5,7 @@ import nextConfig from 'next/config';
 import * as Sentry from '@sentry/nextjs';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../Logger';
+import { DATA_DIR } from 'src/config';
 
 type TipiSettingsType = z.input<typeof settingsSchema>;
 
@@ -34,7 +35,7 @@ export class TipiConfigClass {
   private genConfig() {
     let envFile = '';
     try {
-      envFile = fs.readFileSync('/data/.env').toString();
+      envFile = fs.readFileSync(`${DATA_DIR}/.env`).toString();
     } catch (e) {
       Sentry.captureException(e);
       Logger.error('❌ .env file not found');
@@ -89,7 +90,7 @@ export class TipiConfigClass {
     if (this.fileConfigCache && now - this.cacheTime < this.cacheTimeout) {
       fileConfig = this.fileConfigCache;
     } else {
-      const rawFileConfig = readJsonFile('/data/state/settings.json') || {};
+      const rawFileConfig = readJsonFile(`${DATA_DIR}/state/settings.json`) || {};
       const parsedFileConfig = settingsSchema.safeParse(rawFileConfig);
 
       if (parsedFileConfig.success) {
@@ -137,13 +138,13 @@ export class TipiConfigClass {
     this.config = envSchema.parse(newConf);
 
     if (writeFile) {
-      const currentJsonConf = readJsonFile('/data/state/settings.json') || {};
+      const currentJsonConf = readJsonFile(`${DATA_DIR}/state/settings.json`) || {};
       const parsedConf = envSchema.partial().parse(currentJsonConf);
 
       parsedConf[key] = value;
       const parsed = envSchema.partial().parse(parsedConf);
 
-      await fs.promises.writeFile('/data/state/settings.json', JSON.stringify(parsed));
+      await fs.promises.writeFile(`${DATA_DIR}/state/settings.json`, JSON.stringify(parsed));
     }
   }
 
@@ -159,7 +160,7 @@ export class TipiConfigClass {
       return;
     }
 
-    await fs.promises.writeFile('/data/state/settings.json', JSON.stringify(parsed.data));
+    await fs.promises.writeFile(`${DATA_DIR}/state/settings.json`, JSON.stringify(parsed.data));
 
     // Reset cache
     this.cacheTime = 0;

@@ -4,6 +4,7 @@ import { tipiCache } from '@/server/core/TipiCache';
 import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
+import { DATA_DIR } from 'src/config';
 
 export class SystemServiceClass {
   /**
@@ -42,12 +43,12 @@ export class SystemServiceClass {
   };
 
   public static hasSeenWelcome = async () => {
-    return fileExists(`/data/state/seen-welcome`);
+    return fileExists(`${DATA_DIR}/state/seen-welcome`);
   };
 
   public static markSeenWelcome = async () => {
     // Create file state/seen-welcome
-    await promises.writeFile(`/data/state/seen-welcome`, '');
+    await promises.writeFile(`${DATA_DIR}/state/seen-welcome`, '');
     return true;
   };
 }
