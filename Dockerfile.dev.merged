@@ -62,6 +62,6 @@ RUN pnpm install -r --prefer-offline
 
 WORKDIR /
 
-COPY ./start.dev.sh ./start.dev.sh
+COPY ./start.dev.sh ./start.sh
 
-CMD ["sh", "start.dev.sh"]
+CMD ["sh", "start.sh"]
