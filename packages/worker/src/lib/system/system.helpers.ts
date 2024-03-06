@@ -19,7 +19,6 @@ type EnvKeys =
   | 'ARCHITECTURE'
   | 'TIPI_VERSION'
   | 'JWT_SECRET'
-  | 'ROOT_FOLDER_HOST'
   | 'NGINX_PORT'
   | 'NGINX_PORT_SSL'
   | 'DOMAIN'
@@ -135,12 +134,7 @@ export const generateSystemEnvFile = async () => {
   const jwtSecret = envMap.get('JWT_SECRET') || (await deriveEntropy('jwt_secret'));
   const repoId = getRepoHash(data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
 
-  const rootFolderHost = envMap.get('ROOT_FOLDER_HOST');
   const internalIp = envMap.get('INTERNAL_IP');
-
-  if (!rootFolderHost) {
-    throw new Error('ROOT_FOLDER_HOST not set in .env file');
-  }
 
   if (!internalIp) {
     throw new Error('INTERNAL_IP not set in .env file');
@@ -154,7 +148,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('ARCHITECTURE', getArchitecture());
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
-  envMap.set('STORAGE_PATH', data.storagePath || envMap.get('STORAGE_PATH') || rootFolderHost);
+  envMap.set('STORAGE_PATH', data.storagePath || envMap.get('STORAGE_PATH') || '/runtipi');
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');

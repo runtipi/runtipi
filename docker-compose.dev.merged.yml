@@ -76,7 +76,7 @@ services:
       - ./runtipi-data:/data
       - /:/mnt/host:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${STORAGE_PATH:-$PWD}:/app-data
+      - /runtipi-data/app-data:/app-data
     networks:
       - tipi_main_network
     ports:

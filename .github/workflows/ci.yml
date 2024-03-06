@@ -5,7 +5,6 @@ on:
 env:
   ROOT_FOLDER: /runtipi
   JWT_SECRET: 'secret'
-  ROOT_FOLDER_HOST: /runtipi
   APPS_REPO_ID: repo-id
   INTERNAL_IP: localhost
   REDIS_HOST: redis
