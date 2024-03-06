@@ -6,7 +6,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@runtipi/shared'],
   experimental: {
-    serverComponentsExternalPackages: ['bullmq'],
+    serverComponentsExternalPackages: ['bullmq', '@sentry/nextjs'],
   },
   serverRuntimeConfig: {
     INTERNAL_IP: process.env.INTERNAL_IP,
