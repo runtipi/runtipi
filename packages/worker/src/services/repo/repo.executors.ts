@@ -3,7 +3,7 @@ import { execAsync, pathExists } from '@runtipi/shared/node';
 import * as Sentry from '@sentry/node';
 import { getRepoHash, getRepoBaseUrlAndBranch } from './repo.helpers';
 import { logger } from '@/lib/logger';
-import { STORAGE_FOLDER } from '@/config/constants';
+import { DATA_DIR } from '@/config/constants';
 
 export class RepoExecutors {
   private readonly logger;
@@ -37,7 +37,7 @@ export class RepoExecutors {
       // We may have a potential branch computed in the hash (see getRepoBaseUrlAndBranch)
       // so we do it here before splitting the url into repoUrl and branch
       const repoHash = getRepoHash(url);
-      const repoPath = path.join(STORAGE_FOLDER, 'repos', repoHash);
+      const repoPath = path.join(DATA_DIR, 'repos', repoHash);
 
       if (await pathExists(repoPath)) {
         this.logger.info(`Repo ${url} already exists`);
@@ -76,7 +76,7 @@ export class RepoExecutors {
   public pullRepo = async (repoUrl: string) => {
     try {
       const repoHash = getRepoHash(repoUrl);
-      const repoPath = path.join(STORAGE_FOLDER, 'repos', repoHash);
+      const repoPath = path.join(DATA_DIR, 'repos', repoHash);
 
       if (!(await pathExists(repoPath))) {
         this.logger.info(`Repo ${repoUrl} does not exist`);

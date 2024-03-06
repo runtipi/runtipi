@@ -1,2 +1,3 @@
-export const ROOT_FOLDER = '/worker';
-export const STORAGE_FOLDER = '/data';
+export const APP_DIR = '/worker';
+export const DATA_DIR = '/data';
+export const APP_DATA_DIR = '/app-data';

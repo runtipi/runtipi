@@ -15,8 +15,9 @@ import { logger } from '@/lib/logger';
 import { AppExecutors, RepoExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
 import { setupRoutes } from './api';
+import { APP_DIR } from './config';
 
-const rootFolder = '/data';
+const rootFolder = APP_DIR;
 const envFile = path.join(rootFolder, '.env');
 
 const setupSentry = (release?: string) => {

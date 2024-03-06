@@ -74,7 +74,7 @@ services:
       - ./packages:/dash/packages
       - ./packages:/worker/packages
       - ./src:/dash/src
-      - ./:/data
+      - ./runtipi-data:/data
       - /:/mnt/host:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${STORAGE_PATH:-$PWD}:/app-data
