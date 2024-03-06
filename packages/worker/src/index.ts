@@ -78,7 +78,7 @@ const main = async () => {
     const queue = new Queue('events', { connection: { host: envMap.get('REDIS_HOST'), port: 6379, password: envMap.get('REDIS_PASSWORD') } });
     const repeatQueue = new Queue('repeat', { connection: { host: envMap.get('REDIS_HOST'), port: 6379, password: envMap.get('REDIS_PASSWORD') } });
     logger.info('Obliterating queue...');
-    await queue.obliterate({ force: true });
+    await queue.drain(true);
 
     // Scheduled jobs
     if (process.env.NODE_ENV === 'production') {
