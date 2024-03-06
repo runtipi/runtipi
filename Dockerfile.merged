@@ -13,9 +13,10 @@ RUN apk add --no-cache curl python3 make g++
 FROM node_base AS runner_base
 
 RUN apk add --no-cache curl openssl git
+RUN npm install pm2 -g
 
 # ---- BUILD DASHBOARD ----
-FROM builder_base AS builder
+FROM builder_base AS dashboard_builder
 
 WORKDIR /dash
 
@@ -49,7 +50,7 @@ ENV TIPI_VERSION=${TIPI_VERSION}
 RUN pnpm build
 
 # ---- BUILD WORKER ----
-FROM builder_base AS builder
+FROM builder_base AS worker_builder
 
 WORKDIR /worker
 
@@ -100,17 +101,17 @@ ENV NODE_ENV=production
 
 WORKDIR /worker
 
-COPY --from=builder /worker/packages/worker/dist .
-COPY --from=builder /worker/packages/worker/assets ./assets
-COPY --from=builder /worker/docker-binary /usr/local/bin/docker-compose
+COPY --from=worker_builder /worker/packages/worker/dist .
+COPY --from=worker_builder /worker/packages/worker/assets ./assets
+COPY --from=worker_builder /worker/docker-binary /usr/local/bin/docker-compose
 
 WORKDIR /dash
 
-COPY --from=builder /dash/next.config.mjs ./
-COPY --from=builder /dash/public ./public
-COPY --from=builder /dash/package.json ./package.json
-COPY --from=builder /dash/.next/standalone ./
-COPY --from=builder /dash/.next/static ./.next/static
+COPY --from=dashboard_builder /dash/next.config.mjs ./
+COPY --from=dashboard_builder /dash/public ./public
+COPY --from=dashboard_builder /dash/package.json ./package.json
+COPY --from=dashboard_builder /dash/.next/standalone ./
+COPY --from=dashboard_builder /dash/.next/static ./.next/static
 
 WORKDIR /
 COPY ./start.prod.sh ./start.sh
