@@ -5,7 +5,7 @@ import Redis from 'ioredis';
 import dotenv from 'dotenv';
 import { Queue } from 'bullmq';
 import * as Sentry from '@sentry/node';
-import { ExtraErrorData } from '@sentry/integrations';
+import { extraErrorDataIntegration } from '@sentry/integrations';
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
@@ -33,7 +33,7 @@ const setupSentry = (release?: string) => {
       new Sentry.Integrations.LocalVariables({
         captureAllExceptions: true,
       }),
-      new ExtraErrorData(),
+      extraErrorDataIntegration(),
     ],
   });
 };
