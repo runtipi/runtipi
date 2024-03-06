@@ -91,7 +91,7 @@ services:
       - ./logs:/app/logs
       - ./traefik:/app/traefik
       - ./user-config:/app/user-config
-      - ${STORAGE_PATH:-.}:/storage
+      - ${APP_DATA_DIR:-.}:/storage
     networks:
       - tipi_main_network
     labels:
@@ -156,7 +156,7 @@ services:
       - ./apps:/runtipi/apps
       - ./logs:/app/logs
       - ./traefik:/runtipi/traefik
-      - ${STORAGE_PATH:-.}:/app/storage
+      - ${APP_DATA_DIR:-.}:/app/storage
     labels:
       traefik.enable: true
       traefik.http.services.dashboard.loadbalancer.server.port: 3000

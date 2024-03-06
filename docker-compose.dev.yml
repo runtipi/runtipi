@@ -88,7 +88,7 @@ services:
       - ./state:/app/state
       - ./repos:/app/repos
       - ./apps:/app/apps
-      - ${STORAGE_PATH:-$PWD}/app-data:/storage/app-data
+      - ${APP_DATA_DIR:-$PWD}/app-data:/storage/app-data
       - ./logs:/app/logs
       - ./traefik:/app/traefik
       - ./user-config:/app/user-config
@@ -158,7 +158,7 @@ services:
       - ./apps:/runtipi/apps
       - ./logs:/app/logs
       - ./traefik:/runtipi/traefik
-      - ${STORAGE_PATH:-$PWD}:/app/storage
+      - ${APP_DATA_DIR:-$PWD}:/app/storage
     labels:
       traefik.enable: true
       traefik.http.services.dashboard.loadbalancer.server.port: 3000

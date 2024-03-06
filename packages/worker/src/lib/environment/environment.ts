@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const environmentSchema = z
   .object({
-    STORAGE_PATH: z.string(),
+    APP_DATA_DIR: z.string(),
     APPS_REPO_ID: z.string(),
     ARCHITECTURE: z.enum(['arm64', 'amd64']),
     INTERNAL_IP: z.string().ip().or(z.literal('localhost')),
@@ -25,7 +25,7 @@ const environmentSchema = z
   })
   .transform((env) => {
     const {
-      STORAGE_PATH = '/data',
+      APP_DATA_DIR = '/data',
       ARCHITECTURE,
       APPS_REPO_ID,
       INTERNAL_IP,
@@ -42,7 +42,7 @@ const environmentSchema = z
     } = env;
 
     return {
-      storagePath: STORAGE_PATH,
+      appDataDirPath: APP_DATA_DIR,
       appsRepoId: APPS_REPO_ID,
       arch: ARCHITECTURE,
       tipiVersion: TIPI_VERSION,
