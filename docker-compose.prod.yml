@@ -60,7 +60,7 @@ services:
   runtipi:
     build:
       context: .
-      dockerfile: Dockerfile.merged
+      dockerfile: Dockerfile
       args:
         SENTRY_DISABLE_AUTO_UPLOAD: true
         TIPI_VERSION: development
