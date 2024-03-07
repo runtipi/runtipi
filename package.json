@@ -3,7 +3,8 @@
   "version": "3.0.3",
   "description": "A homeserver for everyone",
   "scripts": {
-    "clean-containers": "docker rm -f $(docker ps -a -q)",
+    "clean:test-files": "sudo rm -rf app-data apps media repos runtipi-data state traefik",
+    "clean:containers": "docker rm -f $(docker ps -a -q)",
     "knip": "knip",
     "test": "dotenv -e .env.test -- jest --colors",
     "test:e2e": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test",
