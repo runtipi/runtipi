@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const ARCHITECTURES = {
-  ARM: 'arm',
   ARM64: 'arm64',
   AMD64: 'amd64',
 } as const;
@@ -19,7 +18,15 @@ export const envSchema = z.object({
   appsRepoId: z.string(),
   appsRepoUrl: z.string().url().trim(),
   domain: z.string().trim(),
-  localDomain: z.string().trim(),
+  localDomain: z.string().trim(),\
+  rootFolder: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => {
+      if (!value) return undefined;
+      return value?.replace(/\s/g, '');
+    }),
   appDataDirPath: z
     .string()
     .trim()
@@ -97,6 +104,7 @@ export const settingsSchema = envSchema
     postgresPort: true,
     appsRepoUrl: true,
     domain: true,
+    rootFolder: true,
     appDataDirPath: true,
     localDomain: true,
     demoMode: true,

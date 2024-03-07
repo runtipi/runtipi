@@ -62,6 +62,7 @@ export class TipiConfigClass {
       domain: conf.DOMAIN,
       localDomain: conf.LOCAL_DOMAIN,
       dnsIp: conf.DNS_IP || '9.9.9.9',
+      rootFolder: conf.rootFolder,
       appDataDirPath: conf.APP_DATA_DIR,
       demoMode: conf.DEMO_MODE,
       guestDashboard: conf.GUEST_DASHBOARD,

@@ -70,8 +70,8 @@ services:
       - .env
     volumes:
       - ./.env:/data/.env
-      - ./runtipi-data:/data
-      - ${APP_DATA_DIR:-.}:/app-data
+      - ${ROOT_FOLDER}:/data
+      - ${APP_DATA_DIR}:/app-data
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /:/mnt/host:ro
     environment:

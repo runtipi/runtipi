@@ -38,7 +38,7 @@ export class SystemExecutors {
         this.logger.error(`Unable to read /mnt/host/proc/meminfo: ${e}`);
       }
 
-      const [disk0] = await si.fsSize();
+      const [disk0] = await si.fsSize('/mnt/host');
 
       const disk = disk0 ?? { available: 0, size: 0 };
       const diskFree = Math.round(disk.available / 1024 / 1024 / 1024);

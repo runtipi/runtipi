@@ -73,10 +73,10 @@ services:
       - ./packages:/worker/packages
       - ./src:/dash/src
       - ./.env:/data/.env
-      - ./runtipi-data:/data
+      - ${ROOT_FOLDER}:/data
       - /:/mnt/host:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /runtipi-data/app-data:/app-data
+      - ${APP_DATA_DIR}:/app-data
     networks:
       - tipi_main_network
     ports:
