@@ -70,7 +70,7 @@ services:
       - .env
     volumes:
       - ./.env:/data/.env
-      - ${ROOT_FOLDER}:/data
+      - ${ROOT_FOLDER_HOST}:/data
       - ${APP_DATA_DIR}:/app-data
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /:/mnt/host:ro

@@ -73,7 +73,7 @@ services:
       - ./packages:/worker/packages
       - ./src:/dash/src
       - ./.env:/data/.env
-      - ${ROOT_FOLDER}:/data
+      - ${ROOT_FOLDER_HOST}:/data
       - /:/mnt/host:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${APP_DATA_DIR}:/app-data

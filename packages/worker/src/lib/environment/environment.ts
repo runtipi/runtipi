@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const environmentSchema = z
   .object({
-    ROOT_FOLDER: z.string(),
+    ROOT_FOLDER_HOST: z.string(),
     APP_DATA_DIR: z.string(),
     APPS_REPO_ID: z.string(),
     ARCHITECTURE: z.enum(['arm64', 'amd64']),
@@ -26,7 +26,7 @@ const environmentSchema = z
   })
   .transform((env) => {
     const {
-      ROOT_FOLDER,
+      ROOT_FOLDER_HOST,
       APP_DATA_DIR,
       ARCHITECTURE,
       APPS_REPO_ID,
@@ -44,7 +44,7 @@ const environmentSchema = z
     } = env;
 
     return {
-      rootFolder: ROOT_FOLDER,
+      rootFolder: ROOT_FOLDER_HOST,
       appDataDirPath: APP_DATA_DIR,
       appsRepoId: APPS_REPO_ID,
       arch: ARCHITECTURE,
