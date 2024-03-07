@@ -18,7 +18,7 @@ export const envSchema = z.object({
   appsRepoId: z.string(),
   appsRepoUrl: z.string().url().trim(),
   domain: z.string().trim(),
-  localDomain: z.string().trim(),\
+  localDomain: z.string().trim(),
   rootFolder: z
     .string()
     .trim()
