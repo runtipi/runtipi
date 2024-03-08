@@ -1,8 +1,7 @@
--
+*
 
-### Includes
-
-!pnpm-_.yaml
+### Includes ###
+!pnpm-*.yaml
 !package.json
 !patches/**
 !packages/**/src/**
@@ -10,10 +9,10 @@
 !**/package.json
 !**/nodemon.json
 !**/tsconfig.json
-!\*\*/build.js
+!**/build.js
 !next.config.mjs
-!sentry._.config.ts
+!sentry.*.config.ts
 !public/**
 !src/**
-!tests/\*\*
-!start.\_.sh
+!tests/**
+!start.*.sh
