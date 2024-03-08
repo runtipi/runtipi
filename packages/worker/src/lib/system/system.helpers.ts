@@ -245,7 +245,7 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
     return;
   }
 
-  const tlsFolder = path.join(ROOT_FOLDER, 'traefik', 'tls');
+  const tlsFolder = path.join(DATA_DIR, 'traefik', 'tls');
 
   // If the certificate already exists, don't generate it again
   if ((await pathExists(path.join(tlsFolder, `${data.domain}.txt`))) && (await pathExists(path.join(tlsFolder, 'cert.pem'))) && (await pathExists(path.join(tlsFolder, 'key.pem')))) {

@@ -1,9 +1,8 @@
 import { z } from 'zod';
 import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
 import fs from 'fs-extra';
-import nextConfig from 'next/config';
 import * as Sentry from '@sentry/nextjs';
-import { DATA_DIR } from 'src/config';
+import { DATA_DIR } from '../../../config';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../Logger';
 
@@ -43,8 +42,8 @@ export class TipiConfigClass {
 
     const envMap = envStringToMap(envFile.toString());
 
-    const conf = { ...process.env, ...Object.fromEntries(envMap), ...nextConfig().serverRuntimeConfig };
-    const envConfig: z.input<typeof envSchema> = {
+    const conf = { ...process.env, ...Object.fromEntries(envMap) } as Record<string, string>;
+    const envConfig = {
       postgresHost: conf.POSTGRES_HOST,
       postgresDatabase: conf.POSTGRES_DBNAME,
       postgresUsername: conf.POSTGRES_USERNAME,

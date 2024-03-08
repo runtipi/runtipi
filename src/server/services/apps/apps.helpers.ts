@@ -1,11 +1,11 @@
 import { App } from '@/server/db/schema';
 import { appInfoSchema } from '@runtipi/shared';
 import { pathExists } from '@runtipi/shared/node';
+import { DATA_DIR } from '../../../config';
 import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
-import { DATA_DIR } from 'src/config';
 
 /**
  *  This function checks the requirements for the app with the provided name.

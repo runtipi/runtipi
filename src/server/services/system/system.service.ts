@@ -1,10 +1,10 @@
 import { promises } from 'fs';
 import axios from 'redaxios';
 import { tipiCache } from '@/server/core/TipiCache';
+import { DATA_DIR } from '../../../config';
 import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
-import { DATA_DIR } from 'src/config';
 
 export class SystemServiceClass {
   /**
