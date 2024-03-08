@@ -117,6 +117,6 @@ COPY --from=dashboard_builder /dashboard/.next/static ./.next/static
 WORKDIR /
 COPY ./start.prod.sh ./start.sh
 
-EXPOSE 3000 5000
+EXPOSE 3000 5000 5001
 
 CMD ["sh", "start.sh"]
