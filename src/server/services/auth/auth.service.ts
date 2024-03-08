@@ -8,10 +8,10 @@ import { Locales, getLocaleFromString } from '@/shared/internationalization/loca
 import { generateSessionId, setSession } from '@/server/common/session.helpers';
 import { Database } from '@/server/db';
 import { tipiCache } from '@/server/core/TipiCache/TipiCache';
+import { DATA_DIR } from '../../../config';
 import { TipiConfig } from '../../core/TipiConfig';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
-import { DATA_DIR } from 'src/config';
 
 type UsernamePasswordInput = {
   username: string;
