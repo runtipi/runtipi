@@ -28,7 +28,7 @@ export const createAppConfig = (props?: Partial<AppInfo>, isInstalled = true) =>
     mockFiles[`${DATA_DIR}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
     mockFiles[`${DATA_DIR}/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
     mockFiles[`${DATA_DIR}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
-    mockFiles[`${APP_DATA_DIR}/app-data/${appInfo.id}/data/test.txt`] = 'data';
+    mockFiles[`${APP_DATA_DIR}/${appInfo.id}/data/test.txt`] = 'data';
   }
 
   // @ts-expect-error - custom mock method

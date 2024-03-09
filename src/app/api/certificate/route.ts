@@ -1,14 +1,14 @@
 import * as Sentry from '@sentry/nextjs';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import fs from 'fs-extra';
-import { APP_DIR } from 'src/config';
+import { DATA_DIR } from '../../../config/constants';
 
 export async function GET() {
   try {
     const user = await getUserFromCookie();
 
     if (user?.operator) {
-      const filePath = `${APP_DIR}/traefik/tls/cert.pem`;
+      const filePath = `${DATA_DIR}/traefik/tls/cert.pem`;
 
       if (await fs.pathExists(filePath)) {
         const file = await fs.promises.readFile(filePath);

@@ -33,6 +33,9 @@
       "@/api/*": [
         "./src/app/api/*"
       ],
+      "@/config/*": [
+        "./src/config/*"
+      ],
     },
     "lib": [
       "dom",

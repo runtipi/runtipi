@@ -35,10 +35,10 @@ const createAppConfig = (props?: Partial<AppInfo>) => {
   });
 
   const mockFiles: Record<string, string | string[]> = {};
-  mockFiles['/data/.env'] = 'TEST=test';
-  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
-  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
-  mockFiles[`/data/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+  mockFiles[`${DATA_DIR}/.env`] = 'TEST=test';
+  mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
+  mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   // @ts-expect-error - custom mock method
   fs.__applyMockFiles(mockFiles);
@@ -147,7 +147,7 @@ const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: Test
 
   const mockFiles: Record<string, string | string[]> = {};
   if (data.status !== 'missing') {
-    mockFiles[`app-data/${values.id}/app.env`] = `TEST=test\nAPP_PORT=3000\n${Object.entries(data.config || {})
+    mockFiles[`${APP_DATA_DIR}/${values.id}/app.env`] = `TEST=test\nAPP_PORT=3000\n${Object.entries(data.config || {})
       .map(([key, value]) => `${key}=${value}`)
       .join('\n')}`;
     mockFiles[`${DATA_DIR}/apps/${values.id}/config.json`] = JSON.stringify(appInfo);

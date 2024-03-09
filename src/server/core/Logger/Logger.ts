@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { DATA_DIR } from 'src/config';
 import { createLogger, format, transports } from 'winston';
+import { DATA_DIR } from '../../../config/constants';
 
 const { align, printf, timestamp, combine, colorize } = format;
 

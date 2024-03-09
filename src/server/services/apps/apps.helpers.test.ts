@@ -3,6 +3,8 @@ import { fromAny } from '@total-typescript/shoehorn';
 import { faker } from '@faker-js/faker';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { appInfoSchema } from '@runtipi/shared';
+import path from 'path';
+import { DATA_DIR } from '@/config/constants';
 import { TipiConfig } from '../../core/TipiConfig';
 import { checkAppRequirements, getAppInfo, getAvailableApps, getUpdateInfo } from './apps.helpers';
 import { createAppConfig, insertApp } from '../../tests/apps.factory';
@@ -104,7 +106,7 @@ describe('Test: getAvailableApps()', () => {
     // arrange
     const appConfig = createAppConfig();
     createAppConfig();
-    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appConfig.id}/config.json`, 'invalid json');
+    fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'invalid json');
 
     // act
     const availableApps = await getAvailableApps();
@@ -131,7 +133,7 @@ describe('Test: getAppInfo()', () => {
     const appConfig = createAppConfig();
     const secondAppConfig = createAppConfig();
     const app = await insertApp({}, appConfig, db);
-    fs.writeFileSync(`/runtipi/apps/${app.id}/config.json`, JSON.stringify(secondAppConfig));
+    fs.writeFileSync(path.join(DATA_DIR, 'apps', app.id, 'config.json'), JSON.stringify(secondAppConfig));
 
     // act
     const result = getAppInfo(app.id, app.status);
@@ -145,7 +147,7 @@ describe('Test: getAppInfo()', () => {
     const appConfig = createAppConfig();
     const app = await insertApp({ status: 'missing' }, appConfig, db);
     const secondAppConfig = createAppConfig();
-    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${app.id}/config.json`, JSON.stringify(secondAppConfig));
+    fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', app.id, 'config.json'), JSON.stringify(secondAppConfig));
 
     // act
     const result = getAppInfo(app.id, app.status);
@@ -199,7 +201,7 @@ describe('Test: getUpdateInfo()', () => {
   it('Should return default values if config.json is invalid', async () => {
     // arrange
     const appConfig = createAppConfig();
-    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appConfig.id}/config.json`, 'invalid json');
+    fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'invalid json');
 
     // act
     const updateInfo = getUpdateInfo(appConfig.id);

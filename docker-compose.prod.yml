@@ -80,7 +80,7 @@ services:
       # Static
       - ./.env:/data/.env
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /:/mnt/host:ro
+      - /proc:/host/proc
     environment:
       NODE_ENV: production
       TIPI_VERSION: development
@@ -138,6 +138,7 @@ services:
       traefik.http.routers.worker-api-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker-api")
       traefik.http.routers.worker-api-local.entrypoints: websecure
       traefik.http.routers.worker-api-local.tls: true
+      traefik.http.routers.worker-api-local.service: worker-api
 
 networks:
   tipi_main_network:

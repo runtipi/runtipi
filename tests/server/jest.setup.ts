@@ -2,6 +2,8 @@ import fs from 'fs-extra';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { Job } from 'bullmq';
 import { tipiCache } from '@/server/core/TipiCache';
+import path from 'path';
+import { DATA_DIR } from '@/config/constants';
 
 global.fetch = jest.fn();
 // Mock global location
@@ -40,9 +42,9 @@ console.error = jest.fn();
 beforeEach(async () => {
   // @ts-expect-error - custom mock method
   fs.__resetAllMocks();
-  await fs.promises.mkdir('/runtipi/state', { recursive: true });
-  await fs.promises.writeFile('/runtipi/state/settings.json', '{}');
-  await fs.promises.mkdir('/app/logs', { recursive: true });
+  await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
+  await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'settings.json'), '{}');
+  await fs.promises.mkdir(path.join(DATA_DIR, 'logs'), { recursive: true });
 });
 
 afterAll(async () => {

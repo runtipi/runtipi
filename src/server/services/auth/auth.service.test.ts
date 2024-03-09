@@ -8,6 +8,8 @@ import { mockInsert, mockQuery, mockSelect } from '@/tests/mocks/drizzle';
 import { createDatabase, clearDatabase, closeDatabase, TestDatabase } from '@/server/tests/test-utils';
 import { v4 } from 'uuid';
 import { tipiCache } from '@/server/core/TipiCache';
+import path from 'path';
+import { DATA_DIR } from '@/config/constants';
 import { encrypt } from '../../utils/encryption';
 import { TipiConfig } from '../../core/TipiConfig';
 import { createUser, getUserByEmail, getUserById } from '../../tests/user.factory';
@@ -538,7 +540,7 @@ describe('Test: changeOperatorPassword', () => {
     const user = await createUser({ email }, database);
     const newPassword = faker.internet.password();
     // @ts-expect-error - mocking fs
-    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: '' });
 
     // Act
     const result = await AuthService.changeOperatorPassword({ newPassword });
@@ -567,7 +569,7 @@ describe('Test: changeOperatorPassword', () => {
     await createUser({ email, operator: false }, database);
     const newPassword = faker.internet.password();
     // @ts-expect-error - mocking fs
-    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: '' });
 
     // Act & Assert
     await expect(AuthService.changeOperatorPassword({ newPassword })).rejects.toThrowError('AUTH_ERROR_OPERATOR_NOT_FOUND');
@@ -579,7 +581,7 @@ describe('Test: changeOperatorPassword', () => {
     const user = await createUser({ email, totpEnabled: true }, database);
     const newPassword = faker.internet.password();
     // @ts-expect-error - mocking fs
-    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: '' });
 
     // Act
     const result = await AuthService.changeOperatorPassword({ newPassword });
@@ -597,7 +599,7 @@ describe('Test: checkPasswordChangeRequest', () => {
   it('should return true if the password change request file exists', async () => {
     // Arrange
     // @ts-expect-error - mocking fs
-    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: '' });
 
     // Act
     const result = AuthServiceClass.checkPasswordChangeRequest();
@@ -623,13 +625,13 @@ describe('Test: cancelPasswordChangeRequest', () => {
   it('should delete the password change request file', async () => {
     // Arrange
     // @ts-expect-error - mocking fs
-    fs.__createMockFiles({ '/runtipi/state/password-change-request': '' });
+    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: '' });
 
     // Act
     await AuthServiceClass.cancelPasswordChangeRequest();
 
     // Assert
-    expect(fs.existsSync('/runtipi/state/password-change-request')).toBe(false);
+    expect(fs.existsSync(path.join(DATA_DIR, 'state', 'password-change-request'))).toBe(false);
   });
 });
 

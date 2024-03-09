@@ -4,6 +4,7 @@ import { vi, it, describe, beforeEach, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
 import fs from 'fs';
 import { compose } from './docker-helpers';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 
 const execAsync = vi.fn().mockImplementation(() => Promise.resolve({ stdout: '', stderr: '' }));
 
@@ -39,10 +40,10 @@ describe('docker helpers', async () => {
     // assert
     const expected = [
       'docker-compose',
-      `--env-file /storage/app-data/${appId}/app.env`,
+      `--env-file ${APP_DATA_DIR}/${appId}/app.env`,
       `--project-name ${appId}`,
-      `-f /app/apps/${appId}/docker-compose.yml`,
-      '-f /app/repos/repo-id/apps/docker-compose.common.yml',
+      `-f ${DATA_DIR}/apps/${appId}/docker-compose.yml`,
+      `-f ${DATA_DIR}/repos/repo-id/apps/docker-compose.common.yml`,
       command,
     ].join(' ');
 
@@ -53,8 +54,8 @@ describe('docker helpers', async () => {
     // arrange
     const appId = faker.word.noun().toLowerCase();
     const command = faker.word.noun().toLowerCase();
-    await fs.promises.mkdir(`/app/user-config/${appId}`, { recursive: true });
-    const userEnvFile = `/app/user-config/${appId}/app.env`;
+    await fs.promises.mkdir(`${DATA_DIR}/user-config/${appId}`, { recursive: true });
+    const userEnvFile = `${DATA_DIR}/user-config/${appId}/app.env`;
     await fs.promises.writeFile(userEnvFile, 'test');
 
     // act
@@ -63,11 +64,11 @@ describe('docker helpers', async () => {
     // assert
     const expected = [
       'docker-compose',
-      `--env-file /storage/app-data/${appId}/app.env`,
+      `--env-file ${APP_DATA_DIR}/${appId}/app.env`,
       `--env-file ${userEnvFile}`,
       `--project-name ${appId}`,
-      `-f /app/apps/${appId}/docker-compose.yml`,
-      '-f /app/repos/repo-id/apps/docker-compose.common.yml',
+      `-f ${DATA_DIR}/apps/${appId}/docker-compose.yml`,
+      `-f ${DATA_DIR}/repos/repo-id/apps/docker-compose.common.yml`,
       command,
     ].join(' ');
 
@@ -78,8 +79,8 @@ describe('docker helpers', async () => {
     // arrange
     const appId = faker.word.noun().toLowerCase();
     const command = faker.word.noun().toLowerCase();
-    await fs.promises.mkdir(`/app/user-config/${appId}`, { recursive: true });
-    const userComposeFile = `/app/user-config/${appId}/docker-compose.yml`;
+    await fs.promises.mkdir(`${DATA_DIR}/user-config/${appId}`, { recursive: true });
+    const userComposeFile = `${DATA_DIR}/user-config/${appId}/docker-compose.yml`;
     await fs.promises.writeFile(userComposeFile, 'test');
 
     // act
@@ -88,10 +89,10 @@ describe('docker helpers', async () => {
     // assert
     const expected = [
       'docker-compose',
-      `--env-file /storage/app-data/${appId}/app.env`,
+      `--env-file ${APP_DATA_DIR}/${appId}/app.env`,
       `--project-name ${appId}`,
-      `-f /app/apps/${appId}/docker-compose.yml`,
-      '-f /app/repos/repo-id/apps/docker-compose.common.yml',
+      `-f ${DATA_DIR}/apps/${appId}/docker-compose.yml`,
+      `-f ${DATA_DIR}/repos/repo-id/apps/docker-compose.common.yml`,
       `--file ${userComposeFile}`,
       command,
     ].join(' ');
@@ -107,8 +108,8 @@ describe('docker helpers', async () => {
     });
     const appId = faker.word.noun().toLowerCase();
     const command = faker.word.noun().toLowerCase();
-    await fs.promises.mkdir(`/app/apps/${appId}`, { recursive: true });
-    const arm64ComposeFile = `/app/apps/${appId}/docker-compose.arm64.yml`;
+    await fs.promises.mkdir(`${DATA_DIR}/apps/${appId}`, { recursive: true });
+    const arm64ComposeFile = `${DATA_DIR}/apps/${appId}/docker-compose.arm64.yml`;
     await fs.promises.writeFile(arm64ComposeFile, 'test');
 
     // act
@@ -117,10 +118,10 @@ describe('docker helpers', async () => {
     // assert
     const expected = [
       'docker-compose',
-      `--env-file /storage/app-data/${appId}/app.env`,
+      `--env-file ${APP_DATA_DIR}/${appId}/app.env`,
       `--project-name ${appId}`,
       `-f ${arm64ComposeFile}`,
-      `-f /app/repos/repo-id/apps/docker-compose.common.yml`,
+      `-f ${DATA_DIR}/repos/repo-id/apps/docker-compose.common.yml`,
       command,
     ].join(' ');
 
