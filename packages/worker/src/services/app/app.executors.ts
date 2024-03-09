@@ -123,7 +123,7 @@ export class AppExecutors {
       this.logger.info(`Copying folder ${repoPath} to ${appDirPath}`);
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
 
-      // Create folder app-data folder
+      // Create app-data folder
       this.logger.info(`Creating folder ${appDataDirPath}`);
       await fs.promises.mkdir(appDataDirPath, { recursive: true });
 

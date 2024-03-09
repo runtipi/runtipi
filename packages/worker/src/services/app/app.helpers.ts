@@ -119,7 +119,8 @@ const renderTemplate = (template: string, envMap: Map<string, string>) => {
   let renderedTemplate = template;
 
   envMap.forEach((value, key) => {
-    renderedTemplate = renderedTemplate.replace(new RegExp(`{{${key}}}`, 'g'), value);
+    const safeKey = key.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    renderedTemplate = renderedTemplate.replace(new RegExp(`{{${safeKey}}}`, 'g'), value);
   });
 
   return renderedTemplate;

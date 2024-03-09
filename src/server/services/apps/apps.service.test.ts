@@ -3,6 +3,8 @@ import waitForExpect from 'wait-for-expect';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { faker } from '@faker-js/faker';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
+import path from 'path';
+import { DATA_DIR } from '@/config/constants';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { getAllApps, getAppById, updateApp, createAppConfig, insertApp } from '../../tests/apps.factory';
@@ -116,7 +118,7 @@ describe('Install app', () => {
   it('Should throw if config.json is not valid', async () => {
     // arrange
     const appConfig = createAppConfig({});
-    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appConfig.id}/config.json`, 'test');
+    fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'test');
 
     // act & assert
     await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
@@ -317,7 +319,7 @@ describe('List apps', () => {
     // arrange
     const appInfo = createAppConfig({});
     createAppConfig({});
-    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appInfo.id}/config.json`, 'invalid json');
+    fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appInfo.id, 'config.json'), 'invalid json');
 
     // act
     const { apps } = await AppsService.listApps();
@@ -373,8 +375,8 @@ describe('installedApps', () => {
     await insertApp({}, appConfig2, db);
     await insertApp({}, appConfig3, db);
 
-    fs.writeFileSync(`/runtipi/apps/${appConfig3.id}/config.json`, 'invalid json');
-    fs.writeFileSync(`/runtipi/repos/repo-id/apps/${appConfig3.id}/config.json`, 'invalid json');
+    fs.writeFileSync(path.join(DATA_DIR, 'apps', appConfig3.id, 'config.json'), 'invalid json');
+    fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig3.id, 'config.json'), 'invalid json');
 
     // act
     const apps = await AppsService.installedApps();

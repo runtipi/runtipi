@@ -23,7 +23,7 @@ type EnvKeys =
   | 'NGINX_PORT'
   | 'NGINX_PORT_SSL'
   | 'DOMAIN'
-  | 'APP_DATA_DIR'
+  | 'STOTAGE_PATH'
   | 'POSTGRES_PORT'
   | 'POSTGRES_HOST'
   | 'POSTGRES_DBNAME'

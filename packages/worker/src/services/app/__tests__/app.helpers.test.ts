@@ -115,7 +115,7 @@ describe('app helpers', () => {
     it('Should not re-create app-data folder if it already exists', async () => {
       // arrange
       const appConfig = createAppConfig({});
-      await fs.promises.mkdir(`${DATA_DIR}/app-data/${appConfig.id}`, { recursive: true });
+      await fs.promises.mkdir(`${APP_DATA_DIR}/${appConfig.id}`, { recursive: true });
 
       // act
       await generateEnvFile(appConfig.id, {});

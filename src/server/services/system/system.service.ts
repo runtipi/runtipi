@@ -1,7 +1,7 @@
 import { promises } from 'fs';
 import axios from 'redaxios';
 import { tipiCache } from '@/server/core/TipiCache';
-import { DATA_DIR } from '../../../config';
+import { DATA_DIR } from '@/config/constants';
 import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';

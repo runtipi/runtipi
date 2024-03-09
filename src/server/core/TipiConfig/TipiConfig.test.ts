@@ -1,5 +1,7 @@
 import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
+import path from 'path';
+import { DATA_DIR } from '@/config/constants';
 import { TipiConfigClass } from './TipiConfig';
 import { readJsonFile } from '../../common/fs.helpers';
 
@@ -13,7 +15,6 @@ describe('Test: getConfig', () => {
     // assert
     expect(config).toBeDefined();
     expect(config.NODE_ENV).toBe('test');
-    expect(config.rootFolder).toBe('/runtipi');
     expect(config.internalIp).toBe('localhost');
   });
 
@@ -78,7 +79,7 @@ describe('Test: setConfig', () => {
     expect(config).toBeDefined();
     expect(config.appsRepoUrl).toBe(randomWord);
 
-    const settingsJson = readJsonFile('/data/state/settings.json') as { [key: string]: string };
+    const settingsJson = readJsonFile(path.join(DATA_DIR, 'state', 'settings.json')) as { [key: string]: string };
 
     expect(settingsJson).toBeDefined();
     expect(settingsJson.appsRepoUrl).toBe(randomWord);
