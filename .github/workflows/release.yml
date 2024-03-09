@@ -142,6 +142,20 @@ jobs:
           name: cli
           path: bin
 
+  build-pi-image:
+    runs-on: ubuntu-latest
+    needs: create-tag
+    steps:
+      - name: Dispatch the release action
+        uses: codex-/return-dispatch@v1
+        with:
+          token: ${{ secrets.PI_IMAGE }}
+          ref: main
+          repo: raspberrypi
+          owner: runtipi
+          workflow: release.yml
+          workflow_inputs: '{ "version": "${{ needs.create-tag.outputs.tagname }}" }'
+
   publish-release:
     runs-on: ubuntu-latest
     needs: [create-tag, build-images, build-worker, build-cli]
