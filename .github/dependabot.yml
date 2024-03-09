@@ -5,17 +5,9 @@ updates:
     versioning-strategy: increase
     schedule:
       interval: 'daily'
-    open-pull-requests-limit: 10
     rebase-strategy: 'auto'
     groups:
-      minor-patch-dev:
-        dependency-type: development
-        update-types:
-          - minor
-          - patch
-
-      minor-patch-prod:
-        dependency-type: production
+      minor-patch:
         update-types:
           - minor
           - patch
