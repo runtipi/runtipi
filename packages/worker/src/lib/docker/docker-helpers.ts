@@ -42,7 +42,7 @@ export const compose = async (appId: string, command: string) => {
   }
   args.push(`-f ${composeFile}`);
 
-  const commonComposeFile = path.join(DATA_DIR, 'repos', appsRepoId, 'apps', 'docker-compose.common.yml');
+  const commonComposeFile = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', 'docker-compose.common.yml');
   args.push(`-f ${commonComposeFile}`);
 
   // User defined overrides

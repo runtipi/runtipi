@@ -157,11 +157,6 @@ describe('test: app executors', () => {
       spy.mockRestore();
     });
 
-    // it('should re-genereate app.env file', async () => {
-    //   // arrange
-    //   const config = createAppConfig();
-    // });
-
     it('should handle errors gracefully', async () => {
       // arrange
       const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.reject(new Error('test')));
