@@ -249,15 +249,15 @@ export const SettingsForm = (props: IProps) => {
             {...register('appDataDirPath')}
             label={
               <>
-                {t('SETTINGS_GENERAL_APP_DATA_DIR')}
+                {t('SETTINGS_GENERAL_STORAGE_PATH')}
                 <Tooltip className="tooltip" anchorSelect=".storage-path-hint">
-                  {t('SETTINGS_GENERAL_APP_DATA_DIR_HINT')}
+                  {t('SETTINGS_GENERAL_STORAGE_PATH_HINT')}
                 </Tooltip>
                 <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
               </>
             }
             error={errors.appDataDirPath?.message}
-            placeholder={t('SETTINGS_GENERAL_APP_DATA_DIR')}
+            placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
           />
         </div>
         <div className="mb-3">
