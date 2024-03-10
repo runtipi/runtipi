@@ -1,6 +1,7 @@
 import webpush from 'web-push';
 import fs from 'fs';
 import path from 'path';
+import { sanitizePath } from '@runtipi/shared';
 import { APP_DATA_DIR } from '@/config/constants';
 
 /**
@@ -11,7 +12,7 @@ import { APP_DATA_DIR } from '@/config/constants';
  */
 export const getAppEnvMap = async (appId: string) => {
   try {
-    const envFile = await fs.promises.readFile(path.join(APP_DATA_DIR, appId, 'app.env'));
+    const envFile = await fs.promises.readFile(path.join(APP_DATA_DIR, sanitizePath(appId), 'app.env'));
     const envVars = envFile.toString().split('\n');
     const envVarsMap = new Map<string, string>();
 
