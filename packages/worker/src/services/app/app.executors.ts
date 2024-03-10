@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import * as Sentry from '@sentry/node';
 import { execAsync, pathExists } from '@runtipi/shared/node';
-import { SocketEvent } from '@runtipi/shared';
+import { SocketEvent, sanitizePath } from '@runtipi/shared';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
@@ -38,10 +38,10 @@ export class AppExecutors {
   private getAppPaths = (appId: string) => {
     const { appsRepoId } = getEnv();
 
-    const appDataDirPath = path.join(APP_DATA_DIR, appId);
-    const appDirPath = path.join(DATA_DIR, 'apps', appId);
+    const appDataDirPath = path.join(APP_DATA_DIR, sanitizePath(appId));
+    const appDirPath = path.join(DATA_DIR, 'apps', sanitizePath(appId));
     const configJsonPath = path.join(appDirPath, 'config.json');
-    const repoPath = path.join(DATA_DIR, 'repos', appsRepoId, 'apps', appId);
+    const repoPath = path.join(DATA_DIR, 'repos', appsRepoId, 'apps', sanitizePath(appId));
 
     return { appDataDirPath, appDirPath, configJsonPath, repoPath };
   };
@@ -53,7 +53,7 @@ export class AppExecutors {
    */
   private ensureAppDir = async (appId: string) => {
     const { appDirPath, appDataDirPath, repoPath } = this.getAppPaths(appId);
-    const dockerFilePath = path.join(DATA_DIR, 'apps', appId, 'docker-compose.yml');
+    const dockerFilePath = path.join(DATA_DIR, 'apps', sanitizePath(appId), 'docker-compose.yml');
 
     if (!(await pathExists(dockerFilePath))) {
       // delete eventual app folder if exists
@@ -104,7 +104,7 @@ export class AppExecutors {
       const { appDirPath, repoPath, appDataDirPath } = this.getAppPaths(appId);
 
       // Check if app exists in repo
-      const apps = await fs.promises.readdir(path.join(DATA_DIR, 'repos', appsRepoId, 'apps'));
+      const apps = await fs.promises.readdir(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
 
       if (!apps.includes(appId)) {
         this.logger.error(`App ${appId} not found in repo ${appsRepoId}`);
