@@ -9,16 +9,7 @@ import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 
 describe('app helpers', () => {
   describe('Test: generateEnvFile()', () => {
-    it('should throw an error if the app has an invalid config.json file', async () => {
-      // arrange
-      const appConfig = createAppConfig();
-      await fs.promises.writeFile(`${DATA_DIR}/apps/${appConfig.id}/config.json`, '{}');
-
-      // act & assert
-      expect(generateEnvFile(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
-    });
-
-    it('Should generate an env file', async () => {
+    it('should generate an env file', async () => {
       // arrange
       const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST_FIELD', type: 'text', label: 'test', required: true }] });
       const fakevalue = faker.string.alphanumeric(10);
@@ -29,6 +20,22 @@ describe('app helpers', () => {
 
       // assert
       expect(envmap.get('TEST_FIELD')).toBe(fakevalue);
+      expect(envmap.get('APP_PORT')).toBe(String(appConfig.port));
+      expect(envmap.get('APP_ID')).toBe(appConfig.id);
+      expect(envmap.get('ROOT_FOLDER_HOST')).toBe(process.env.ROOT_FOLDER_HOST);
+      expect(envmap.get('APP_DATA_DIR')).toBe(`${process.env.STORAGE_PATH}/app-data/${appConfig.id}`);
+      expect(envmap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
+      expect(envmap.get('APP_HOST')).toBe(`localhost`);
+      expect(envmap.get('APP_PROTOCOL')).toBe(`http`);
+    });
+
+    it('should throw an error if the app has an invalid config.json file', async () => {
+      // arrange
+      const appConfig = createAppConfig();
+      await fs.promises.writeFile(`${DATA_DIR}/apps/${appConfig.id}/config.json`, '{}');
+
+      // act & assert
+      expect(generateEnvFile(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
     });
 
     it('Should automatically generate value for random field', async () => {
