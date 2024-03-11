@@ -152,7 +152,7 @@ jobs:
       - name: Dispatch the release action
         uses: codex-/return-dispatch@v1
         with:
-          token: ${{ secrets.PI_IMAGE }}
+          token: ${{ secrets.PAT_CLI }}
           ref: main
           repo: raspberrypi
           owner: runtipi
