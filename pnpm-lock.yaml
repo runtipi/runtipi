@@ -57,8 +57,8 @@ importers:
         specifier: 1.0.0-beta20
         version: 1.0.0-beta20
       '@tabler/icons-react':
-        specifier: ^2.47.0
-        version: 2.47.0(react@18.2.0)
+        specifier: ^3.0.1
+        version: 3.0.1(react@18.2.0)
       argon2:
         specifier: ^0.40.1
         version: 0.40.1
@@ -3902,13 +3902,12 @@ packages:
       bootstrap: 5.3.1(@popperjs/core@2.11.8)
     dev: false
 
-  /@tabler/icons-react@2.47.0(react@18.2.0):
-    resolution: {integrity: sha512-iqly2FvCF/qUbgmvS8E40rVeYY7laltc5GUjRxQj59DuX0x/6CpKHTXt86YlI2whg4czvd/c8Ce8YR08uEku0g==}
+  /@tabler/icons-react@3.0.1(react@18.2.0):
+    resolution: {integrity: sha512-CaB72mZo3t+DCYfwelPHBp3dCfghocSKESau0AZZGKLozNnh7nOtVk4riH0+UBN2Gu0hKq9DZzIU4dUW8uq+mw==}
     peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0
+      react: '>= 16'
     dependencies:
-      '@tabler/icons': 2.47.0
-      prop-types: 15.8.1
+      '@tabler/icons': 3.0.1
       react: 18.2.0
     dev: false
 
@@ -3916,8 +3915,8 @@ packages:
     resolution: {integrity: sha512-iK3j2jIEGIUaJcbYYg5iwyG1Y/m4lzUxAUbxRpvgeXCWP29jvZaH5hajZmU3KaSealddHuJg7PSQislPHpCsoQ==}
     dev: false
 
-  /@tabler/icons@2.47.0:
-    resolution: {integrity: sha512-4w5evLh+7FUUiA1GucvGj2ReX2TvOjEr4ejXdwL/bsjoSkof6r1gQmzqI+VHrE2CpJpB3al7bCTulOkFa/RcyA==}
+  /@tabler/icons@3.0.1:
+    resolution: {integrity: sha512-K/ZgJkxWcrMWdkgvS7VmgZ4F6SXM5UPolh2Y/dPTJnRpjMSySzfi93+XvfP2YfAzH7bd4ilqmTp7TADPLHrn0A==}
     dev: false
 
   /@testing-library/dom@9.3.4:
