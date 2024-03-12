@@ -47,7 +47,7 @@
     "@sentry/integrations": "^7.106.1",
     "@sentry/nextjs": "^7.106.1",
     "@tabler/core": "1.0.0-beta20",
-    "@tabler/icons-react": "^2.47.0",
+    "@tabler/icons-react": "^3.0.0",
     "argon2": "^0.40.1",
     "bullmq": "^5.4.2",
     "clsx": "^2.1.0",
