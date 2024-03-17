@@ -6,7 +6,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@runtipi/shared'],
   experimental: {
-    serverComponentsExternalPackages: ['bullmq', '@sentry/nextjs'],
+    serverComponentsExternalPackages: ['bullmq'],
   },
   async rewrites() {
     return [

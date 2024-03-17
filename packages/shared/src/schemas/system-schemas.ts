@@ -9,4 +9,4 @@ export const systemLoadSchema = z.object({
   percentUsedMemory: z.number().nullish().default(0),
 });
 
-export type SystemLoad = z.infer<typeof systemLoadSchema>;
+export type SystemLoad = z.output<typeof systemLoadSchema>;
