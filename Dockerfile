@@ -6,8 +6,16 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_DISABLE_AUTO_UPLOAD
+ARG TIPI_VERSION
+
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
+ENV TIPI_VERSION=${TIPI_VERSION}
+
 RUN npm install pnpm -g
-RUN apk add --no-cache curl python3 make g++
+RUN apk add --no-cache curl python3 make g++ git
 
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
@@ -38,14 +46,6 @@ COPY ./tests ./tests
 COPY ./sentry.client.config.ts ./sentry.client.config.ts
 COPY ./sentry.edge.config.ts ./sentry.edge.config.ts
 COPY ./sentry.server.config.ts ./sentry.server.config.ts
-
-ARG SENTRY_AUTH_TOKEN
-ARG SENTRY_DISABLE_AUTO_UPLOAD
-ARG TIPI_VERSION
-
-ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
-ENV TIPI_VERSION=${TIPI_VERSION}
 
 RUN pnpm build
 
@@ -84,15 +84,10 @@ COPY ./packages/worker/src ./packages/worker/src
 COPY ./packages/worker/package.json ./packages/worker/package.json
 COPY ./packages/worker/assets ./packages/worker/assets
 
-ARG SENTRY_AUTH_TOKEN
-ARG SENTRY_DISABLE_AUTO_UPLOAD
-ARG TIPI_VERSION
+# Print TIPI_VERSION to the console
+RUN echo "TIPI_VERSION: ${TIPI_VERSION}"
 
-ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
-ENV TIPI_VERSION=${TIPI_VERSION}
-
-RUN pnpm -r build --filter @runtipi/worker
+RUN pnpm -r --filter @runtipi/worker build
 
 # ---- RUNNER ----
 FROM runner_base AS app
