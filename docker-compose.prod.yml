@@ -66,10 +66,16 @@ services:
         TIPI_VERSION: development
     container_name: runtipi
     restart: unless-stopped
+    depends_on:
+      runtipi-db:
+        condition: service_healthy
+      runtipi-redis:
+        condition: service_healthy
     env_file:
       - .env
     volumes:
       # Data
+      - ./media:/data/media
       - ./state:/data/state
       - ./repos:/data/repos
       - ./apps:/data/apps

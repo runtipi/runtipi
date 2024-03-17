@@ -92,14 +92,12 @@ ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_DISABLE_AUTO_UPLOAD=${SENTRY_DISABLE_AUTO_UPLOAD}
 ENV TIPI_VERSION=${TIPI_VERSION}
 
-
 RUN pnpm -r build --filter @runtipi/worker
 
 # ---- RUNNER ----
 FROM runner_base AS app
 
 ENV NODE_ENV=production
-
 
 WORKDIR /worker
 
