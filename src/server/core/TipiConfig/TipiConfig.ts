@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
 import fs from 'fs';
 import * as Sentry from '@sentry/nextjs';
+import path from 'path';
 import { DATA_DIR } from '../../../config';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../Logger';
@@ -44,14 +45,6 @@ export class TipiConfigClass {
 
     const conf = { ...process.env, ...Object.fromEntries(envMap) } as Record<string, string>;
     const envConfig = {
-      postgresHost: conf.POSTGRES_HOST,
-      postgresDatabase: conf.POSTGRES_DBNAME,
-      postgresUsername: conf.POSTGRES_USERNAME,
-      postgresPassword: conf.POSTGRES_PASSWORD,
-      postgresPort: Number(conf.POSTGRES_PORT),
-      REDIS_HOST: conf.REDIS_HOST,
-      redisPassword: conf.REDIS_PASSWORD,
-      NODE_ENV: process.env.NODE_ENV || 'production',
       architecture: conf.ARCHITECTURE || 'amd64',
       internalIp: conf.INTERNAL_IP,
       version: conf.TIPI_VERSION,
@@ -88,7 +81,16 @@ export class TipiConfigClass {
     if (this.fileConfigCache && now - this.cacheTime < this.cacheTimeout) {
       fileConfig = this.fileConfigCache;
     } else {
-      const rawFileConfig = readJsonFile(`${DATA_DIR}/state/settings.json`) || {};
+      let rawFileConfig = '';
+
+      try {
+        const temp = fs.readFileSync(path.join(DATA_DIR, 'state', 'settings.json'), 'utf-8') || '{}';
+        rawFileConfig = JSON.parse(temp) as string;
+      } catch (e) {
+        Sentry.captureException(e);
+        rawFileConfig = '{}';
+      }
+
       const parsedFileConfig = settingsSchema.safeParse(rawFileConfig);
 
       if (parsedFileConfig.success) {
@@ -109,14 +111,7 @@ export class TipiConfigClass {
   }
 
   public getConfig() {
-    let conf = { ...this.config, ...this.getFileConfig() };
-
-    // If we are not in test mode, we need to set the postgres port to 5432 (internal port)
-    if (conf.NODE_ENV !== 'test') {
-      conf = { ...conf, postgresPort: 5432 };
-    }
-
-    return conf;
+    return { ...this.config, ...this.getFileConfig() };
   }
 
   public getSettings() {
@@ -130,13 +125,14 @@ export class TipiConfigClass {
   }
 
   public async setConfig<T extends keyof typeof envSchema.shape>(key: T, value: z.infer<typeof envSchema>[T], writeFile = false) {
-    const newConf: z.infer<typeof envSchema> = { ...this.getConfig() };
+    const conf = this.getConfig();
+    const newConf: z.infer<typeof envSchema> = { ...conf };
     newConf[key] = value;
 
     this.config = envSchema.parse(newConf);
 
     if (writeFile) {
-      const currentJsonConf = readJsonFile(`${DATA_DIR}/state/settings.json`) || {};
+      const currentJsonConf = (await readJsonFile(`${DATA_DIR}/state/settings.json`)) || {};
       const parsedConf = envSchema.partial().parse(currentJsonConf);
 
       parsedConf[key] = value;

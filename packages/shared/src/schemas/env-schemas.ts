@@ -8,9 +8,6 @@ export const ARCHITECTURES = {
 export type Architecture = (typeof ARCHITECTURES)[keyof typeof ARCHITECTURES];
 
 export const envSchema = z.object({
-  NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
-  REDIS_HOST: z.string(),
-  redisPassword: z.string(),
   architecture: z.nativeEnum(ARCHITECTURES),
   dnsIp: z.string().ip().trim(),
   internalIp: z.string(),
@@ -28,11 +25,6 @@ export const envSchema = z.object({
       if (!value) return undefined;
       return value?.replace(/\s/g, '');
     }),
-  postgresHost: z.string(),
-  postgresDatabase: z.string(),
-  postgresUsername: z.string(),
-  postgresPassword: z.string(),
-  postgresPort: z.number(),
   demoMode: z
     .string()
     .or(z.boolean())

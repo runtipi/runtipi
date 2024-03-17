@@ -1,6 +1,5 @@
 import { Queue, QueueEvents } from 'bullmq';
 import { eventResultSchema, eventSchema, SystemEvent } from '@runtipi/shared';
-import { TipiConfig } from '@/server/core/TipiConfig';
 import { Logger } from '../Logger';
 
 export class EventDispatcher {
@@ -8,18 +7,16 @@ export class EventDispatcher {
 
   private queueEvents;
 
-  private instanceId: string;
-
   private timeout: NodeJS.Timeout;
 
   constructor(reference: string) {
+    const {} = process.env;
     this.queue = new Queue('events', {
-      connection: { host: TipiConfig.getConfig().REDIS_HOST, port: 6379, password: TipiConfig.getConfig().redisPassword },
+      connection: { host: process.env.REDIS_HOST, port: 6379, password: process.env.REDIS_PASSWORD },
     });
     this.queueEvents = new QueueEvents('events', {
-      connection: { host: TipiConfig.getConfig().REDIS_HOST, port: 6379, password: TipiConfig.getConfig().redisPassword },
+      connection: { host: process.env.REDIS_HOST, port: 6379, password: process.env.REDIS_PASSWORD },
     });
-    this.instanceId = `${TipiConfig.getConfig().version}-${Date.now()}`;
 
     this.timeout = setTimeout(() => {
       Logger.debug(`Redis connection is running for more than 30 seconds. Consider closing it. reference: ${reference}`);
@@ -60,7 +57,7 @@ export class EventDispatcher {
    * @returns {Promise<{ success: boolean; stdout?: string }>} - Promise that resolves when the event is done
    */
   public async dispatchEventAsync(event: SystemEvent): Promise<{ success: boolean; stdout?: string }> {
-    Logger.info(`Dispatching event ${JSON.stringify(event)}. Instance: ${this.instanceId}`);
+    Logger.info(`Dispatching event ${JSON.stringify(event)}`);
     try {
       const job = await this.dispatchEvent(event);
       const result = await job.waitUntilFinished(this.queueEvents, 1000 * 60 * 5);

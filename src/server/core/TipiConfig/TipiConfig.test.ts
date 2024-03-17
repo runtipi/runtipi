@@ -12,7 +12,6 @@ describe('Test: getConfig', () => {
 
     // assert
     expect(config).toBeDefined();
-    expect(config.NODE_ENV).toBe('test');
     expect(config.internalIp).toBe('localhost');
   });
 

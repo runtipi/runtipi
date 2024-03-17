@@ -11,6 +11,7 @@ jest.mock('react-markdown', () => ({
 jest.mock('remark-breaks', () => () => ({}));
 jest.mock('remark-gfm', () => () => ({}));
 jest.mock('rehype-raw', () => () => ({}));
+jest.mock('fs');
 
 console.error = jest.fn();
 

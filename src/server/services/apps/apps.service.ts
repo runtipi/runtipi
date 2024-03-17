@@ -184,7 +184,7 @@ export class AppServiceClass {
         throw new TranslatedError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
       }
 
-      checkAppRequirements(id);
+      await checkAppRequirements(id);
 
       const appInfo = await getAppInfo(id);
 

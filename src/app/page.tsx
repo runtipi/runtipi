@@ -11,7 +11,7 @@ import { GuestDashboardApps } from './components/GuestDashboardApps';
 import { EmptyPage } from './components/EmptyPage';
 
 export default async function RootPage() {
-  const { guestDashboard } = TipiConfig.getConfig();
+  const { guestDashboard } = await TipiConfig.getConfig();
 
   const headersList = headers();
   const host = headersList.get('host');
