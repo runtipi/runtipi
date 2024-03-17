@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { Job } from 'bullmq';
 import { tipiCache } from '@/server/core/TipiCache';

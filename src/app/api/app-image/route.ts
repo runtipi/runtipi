@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/nextjs';
 import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
 import { pathExists } from '@runtipi/shared/node';
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 import { sanitizePath } from '@runtipi/shared';
 import { APP_DIR, DATA_DIR } from '../../../config/constants';
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
       filePath = appRepoFilePath;
     }
 
-    const file = fs.readFileSync(filePath);
+    const file = await fs.promises.readFile(filePath);
 
     return new Response(file, { headers: { 'content-type': 'image/jpeg' } });
   } catch (error) {

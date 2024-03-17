@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 import * as argon2 from 'argon2';
 import { faker } from '@faker-js/faker';
 import { TotpAuthenticator } from '@/server/utils/totp';
@@ -10,6 +10,7 @@ import { v4 } from 'uuid';
 import { tipiCache } from '@/server/core/TipiCache';
 import path from 'path';
 import { DATA_DIR } from '@/config/constants';
+import { pathExists } from '@runtipi/shared/node';
 import { encrypt } from '../../utils/encryption';
 import { TipiConfig } from '../../core/TipiConfig';
 import { createUser, getUserByEmail, getUserById } from '../../tests/user.factory';
@@ -630,8 +631,9 @@ describe('Test: cancelPasswordChangeRequest', () => {
     // Act
     await AuthServiceClass.cancelPasswordChangeRequest();
 
+    const exists = await pathExists(path.join(DATA_DIR, 'state', 'password-change-request'));
     // Assert
-    expect(fs.existsSync(path.join(DATA_DIR, 'state', 'password-change-request'))).toBe(false);
+    expect(exists).toBe(false);
   });
 });
 

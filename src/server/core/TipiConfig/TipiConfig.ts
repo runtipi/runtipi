@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
-import fs from 'fs-extra';
+import fs from 'fs';
 import * as Sentry from '@sentry/nextjs';
 import { DATA_DIR } from '../../../config';
 import { readJsonFile } from '../../common/fs.helpers';
@@ -31,10 +31,10 @@ export class TipiConfigClass {
     this.genConfig();
   }
 
-  private genConfig() {
+  private async genConfig() {
     let envFile = '';
     try {
-      envFile = fs.readFileSync(`${DATA_DIR}/.env`).toString();
+      envFile = await fs.promises.readFile(`${DATA_DIR}/.env`).then((s) => s.toString());
     } catch (e) {
       Sentry.captureException(e);
       Logger.error('❌ .env file not found');

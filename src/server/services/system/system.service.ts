@@ -1,8 +1,9 @@
-import { promises } from 'fs';
+import fs from 'fs';
 import axios from 'redaxios';
 import { tipiCache } from '@/server/core/TipiCache';
 import { DATA_DIR } from '@/config/constants';
-import { fileExists } from '../../common/fs.helpers';
+import { pathExists } from '@runtipi/shared/node';
+import path from 'path';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
 
@@ -43,12 +44,12 @@ export class SystemServiceClass {
   };
 
   public static hasSeenWelcome = async () => {
-    return fileExists(`${DATA_DIR}/state/seen-welcome`);
+    return pathExists(path.join(DATA_DIR, 'state', 'seen-welcome'));
   };
 
   public static markSeenWelcome = async () => {
     // Create file state/seen-welcome
-    await promises.writeFile(`${DATA_DIR}/state/seen-welcome`, '');
+    await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'seen-welcome'), '');
     return true;
   };
 }

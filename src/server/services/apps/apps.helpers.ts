@@ -1,9 +1,10 @@
 import { App } from '@/server/db/schema';
+import fs from 'fs';
 import { appInfoSchema, sanitizePath } from '@runtipi/shared';
 import { pathExists } from '@runtipi/shared/node';
 import { DATA_DIR } from '@/config/constants';
 import path from 'path';
-import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
+import { readFile, readJsonFile } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
@@ -46,31 +47,31 @@ export const getAvailableApps = async () => {
     return [];
   }
 
-  const appsDir = readdirSync(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
+  const appsDir = await fs.promises.readdir(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
 
   const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
 
-  const apps = appsDir
-    .map((app) => {
+  const apps = await Promise.all(
+    appsDir.map(async (app) => {
       if (skippedFiles.includes(app)) return null;
 
       const repoPath = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(app));
-      const configFile = readJsonFile(path.join(repoPath, 'config.json'));
+      const configFile = await readJsonFile(path.join(repoPath, 'config.json'));
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (!parsedConfig.success) {
         Logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
         Logger.error(JSON.stringify(parsedConfig.error, null, 2));
       } else if (parsedConfig.data.available) {
-        const description = readFile(path.join(repoPath, 'metadata', 'description.md'));
+        const description = await readFile(path.join(repoPath, 'metadata', 'description.md'));
         return { ...parsedConfig.data, description };
       }
 
       return null;
-    })
-    .filter(notEmpty);
+    }),
+  );
 
-  return apps;
+  return apps.filter(notEmpty);
 };
 
 /**
@@ -81,9 +82,9 @@ export const getAvailableApps = async () => {
  *
  *  @param {string} id - The app id.
  */
-export const getUpdateInfo = (id: string) => {
+export const getUpdateInfo = async (id: string) => {
   const { appsRepoId } = TipiConfig.getConfig();
-  const repoConfig = readJsonFile(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id), 'config.json'));
+  const repoConfig = await readJsonFile(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(repoConfig);
 
   if (parsedConfig.success) {
@@ -106,19 +107,19 @@ export const getUpdateInfo = (id: string) => {
  *  @param {string} id - The app id.
  *  @param {App['status']} [status] - The app status.
  */
-export const getAppInfo = (id: string, status?: App['status']) => {
+export const getAppInfo = async (id: string, status?: App['status']) => {
   try {
     // Check if app is installed
     const installed = typeof status !== 'undefined' && status !== 'missing';
 
     const appsFolder = path.join(DATA_DIR, 'apps', sanitizePath(id));
 
-    if (installed && fileExists(path.join(appsFolder, 'config.json'))) {
+    if (installed && (await pathExists(path.join(appsFolder, 'config.json')))) {
       const configFile = readJsonFile(path.join(appsFolder, 'config.json'));
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (parsedConfig.success && parsedConfig.data.available) {
-        const description = readFile(path.join(appsFolder, 'metadata', 'description.md'));
+        const description = await readFile(path.join(appsFolder, 'metadata', 'description.md'));
         return { ...parsedConfig.data, description };
       }
     }
@@ -126,12 +127,12 @@ export const getAppInfo = (id: string, status?: App['status']) => {
     const { appsRepoId } = TipiConfig.getConfig();
     const repoFolder = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id));
 
-    if (fileExists(path.join(repoFolder, 'config.json'))) {
+    if (await pathExists(path.join(repoFolder, 'config.json'))) {
       const configFile = readJsonFile(path.join(repoFolder, 'config.json'));
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (parsedConfig.success && parsedConfig.data.available) {
-        const description = readFile(path.join(repoFolder, 'metadata', 'description.md'));
+        const description = await readFile(path.join(repoFolder, 'metadata', 'description.md'));
         return { ...parsedConfig.data, description };
       }
     }
