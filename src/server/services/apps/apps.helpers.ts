@@ -19,9 +19,9 @@ import { notEmpty } from '../../common/typescript.helpers';
  *  @param {string} appName - The name of the app.
  *  @throws Will throw an error if the app has an invalid config.json file or if the current system architecture is not supported by the app.
  */
-export const checkAppRequirements = (appName: string) => {
-  const { appsRepoId, architecture } = TipiConfig.getConfig();
-  const configFile = readJsonFile(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(appName), 'config.json'));
+export const checkAppRequirements = async (appName: string) => {
+  const { appsRepoId, architecture } = await TipiConfig.getConfig();
+  const configFile = await readJsonFile(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(appName), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(configFile);
 
   if (!parsedConfig.success) {
@@ -41,7 +41,7 @@ export const checkAppRequirements = (appName: string) => {
   If the config.json file is invalid, it logs an error message.
  */
 export const getAvailableApps = async () => {
-  const { appsRepoId } = TipiConfig.getConfig();
+  const { appsRepoId } = await TipiConfig.getConfig();
   if (!(await pathExists(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps')))) {
     Logger.error(`Apps repo ${appsRepoId} not found. Make sure your repo is configured correctly.`);
     return [];
@@ -83,7 +83,7 @@ export const getAvailableApps = async () => {
  *  @param {string} id - The app id.
  */
 export const getUpdateInfo = async (id: string) => {
-  const { appsRepoId } = TipiConfig.getConfig();
+  const { appsRepoId } = await TipiConfig.getConfig();
   const repoConfig = await readJsonFile(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(repoConfig);
 
@@ -115,7 +115,7 @@ export const getAppInfo = async (id: string, status?: App['status']) => {
     const appsFolder = path.join(DATA_DIR, 'apps', sanitizePath(id));
 
     if (installed && (await pathExists(path.join(appsFolder, 'config.json')))) {
-      const configFile = readJsonFile(path.join(appsFolder, 'config.json'));
+      const configFile = await readJsonFile(path.join(appsFolder, 'config.json'));
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (parsedConfig.success && parsedConfig.data.available) {
@@ -124,11 +124,11 @@ export const getAppInfo = async (id: string, status?: App['status']) => {
       }
     }
 
-    const { appsRepoId } = TipiConfig.getConfig();
+    const { appsRepoId } = await TipiConfig.getConfig();
     const repoFolder = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id));
 
     if (await pathExists(path.join(repoFolder, 'config.json'))) {
-      const configFile = readJsonFile(path.join(repoFolder, 'config.json'));
+      const configFile = await readJsonFile(path.join(repoFolder, 'config.json'));
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (parsedConfig.success && parsedConfig.data.available) {

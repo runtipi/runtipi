@@ -30,14 +30,14 @@ describe('Test: checkAppRequirements()', () => {
     const appConfig = createAppConfig();
 
     // act
-    const result = checkAppRequirements(appConfig.id);
+    const result = await checkAppRequirements(appConfig.id);
 
     // assert
     expect(result.id).toEqual(appConfig.id);
   });
 
   it('Should throw an error if app does not exist', async () => {
-    expect(() => checkAppRequirements('notexisting')).toThrowError('App notexisting has invalid config.json');
+    await expect(() => checkAppRequirements('notexisting')).toThrowError('App notexisting has invalid config.json');
   });
 
   it('Should throw if architecture is not supported', async () => {
@@ -46,7 +46,7 @@ describe('Test: checkAppRequirements()', () => {
     const appConfig = createAppConfig({ supported_architectures: ['arm'] });
 
     // assert
-    expect(() => checkAppRequirements(appConfig.id)).toThrowError(`App ${appConfig.id} is not supported on this architecture`);
+    await expect(() => checkAppRequirements(appConfig.id)).toThrowError(`App ${appConfig.id} is not supported on this architecture`);
   });
 });
 

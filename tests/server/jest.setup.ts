@@ -15,6 +15,11 @@ global.location = fromPartial({
 jest.mock('vitest', () => ({
   vi: jest,
 }));
+jest.mock('@sentry/node', () => () => ({}));
+jest.mock('@sentry/nextjs', () => ({
+  captureException: jest.fn(),
+}));
+jest.mock('fs');
 
 export const waitUntilFinishedMock = jest.fn().mockResolvedValue({ success: true, stdout: '' });
 jest.mock('bullmq', () => ({
