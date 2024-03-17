@@ -1,6 +1,6 @@
 import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
 import { pathExists } from '@runtipi/shared/node';
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 import { sanitizePath } from '@runtipi/shared';
 import { handleApiError } from '@/actions/utils/handle-api-error';
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
       filePath = appRepoFilePath;
     }
 
-    const file = fs.readFileSync(filePath);
+    const file = await fs.promises.readFile(filePath);
 
     return new Response(file, { headers: { 'content-type': 'image/jpeg' } });
   } catch (error) {

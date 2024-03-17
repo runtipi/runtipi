@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 import * as argon2 from 'argon2';
 import validator from 'validator';
 import { TotpAuthenticator } from '@/server/utils/totp';
@@ -9,8 +10,9 @@ import { generateSessionId, setSession } from '@/server/common/session.helpers';
 import { Database } from '@/server/db';
 import { tipiCache } from '@/server/core/TipiCache/TipiCache';
 import { DATA_DIR } from '@/config/constants';
+import path from 'path';
+import { pathExists } from '@runtipi/shared/node';
 import { TipiConfig } from '../../core/TipiConfig';
-import { fileExists, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
 
 type UsernamePasswordInput = {
@@ -295,7 +297,7 @@ export class AuthServiceClass {
 
     await this.queries.updateUser(user.id, { password: hash, totpEnabled: false, totpSecret: null });
 
-    await unlinkFile(`${DATA_DIR}/state/password-change-request`);
+    await fs.promises.unlink(path.join(DATA_DIR, 'state', 'password-change-request'));
 
     return { email: user.username };
   };
@@ -306,12 +308,8 @@ export class AuthServiceClass {
    *
    * @returns {boolean} - A boolean indicating if there is a password change request or not
    */
-  public static checkPasswordChangeRequest = () => {
-    if (fileExists(`${DATA_DIR}/state/password-change-request`)) {
-      return true;
-    }
-
-    return false;
+  public static checkPasswordChangeRequest = async () => {
+    return pathExists(path.join(DATA_DIR, 'state', 'password-change-request'));
   };
 
   /*
@@ -322,8 +320,8 @@ export class AuthServiceClass {
    * @throws {Error} - If the file cannot be removed
    */
   public static cancelPasswordChangeRequest = async () => {
-    if (fileExists(`${DATA_DIR}/state/password-change-request`)) {
-      await unlinkFile(`${DATA_DIR}/state/password-change-request`);
+    if (await pathExists(path.join(DATA_DIR, 'state', 'password-change-request'))) {
+      await fs.promises.unlink(path.join(DATA_DIR, 'state', 'password-change-request'));
     }
 
     return true;

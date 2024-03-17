@@ -1,4 +1,5 @@
 {
+  "name": "@runtipi/shared/node",
   "browser": null,
   "main": "../src/node/index.ts",
   "module": "../src/node/index.ts",

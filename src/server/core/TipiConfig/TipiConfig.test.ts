@@ -1,11 +1,9 @@
 import { faker } from '@faker-js/faker';
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 import { DATA_DIR } from '@/config/constants';
 import { TipiConfigClass } from './TipiConfig';
 import { readJsonFile } from '../../common/fs.helpers';
-
-jest.mock('fs-extra');
 
 describe('Test: getConfig', () => {
   it('It should return config from .env', () => {
@@ -79,7 +77,7 @@ describe('Test: setConfig', () => {
     expect(config).toBeDefined();
     expect(config.appsRepoUrl).toBe(randomWord);
 
-    const settingsJson = readJsonFile(path.join(DATA_DIR, 'state', 'settings.json')) as { [key: string]: string };
+    const settingsJson = (await readJsonFile(path.join(DATA_DIR, 'state', 'settings.json'))) as { [key: string]: string };
 
     expect(settingsJson).toBeDefined();
     expect(settingsJson.appsRepoUrl).toBe(randomWord);
@@ -130,20 +128,20 @@ describe('Test: setSettings', () => {
 
     // act
     await new TipiConfigClass(0).setSettings(fakeSettings);
-    const settingsJson = readJsonFile('/data/state/settings.json') as { [key: string]: string };
+    const settingsJson = (await readJsonFile('/data/state/settings.json')) as { [key: string]: string };
 
     // assert
     expect(settingsJson).toBeDefined();
     expect(settingsJson.appsRepoUrl).toBe(fakeSettings.appsRepoUrl);
   });
 
-  it('should not write settings to json file if there are invalid values', () => {
+  it('should not write settings to json file if there are invalid values', async () => {
     // arrange
     const fakeSettings = { appsRepoUrl: 10 };
 
     // act
     new TipiConfigClass(0).setSettings(fakeSettings as object);
-    const settingsJson = (readJsonFile('/data/state/settings.json') || {}) as { [key: string]: string };
+    const settingsJson = (await (readJsonFile('/data/state/settings.json') || {})) as { [key: string]: string };
 
     // assert
     expect(settingsJson).toBeDefined();

@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 import { fromAny } from '@total-typescript/shoehorn';
 import { faker } from '@faker-js/faker';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
@@ -11,7 +11,6 @@ import { createAppConfig, insertApp } from '../../tests/apps.factory';
 
 let db: TestDatabase;
 const TEST_SUITE = 'appshelpers';
-jest.mock('fs-extra');
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
@@ -106,7 +105,7 @@ describe('Test: getAvailableApps()', () => {
     // arrange
     const appConfig = createAppConfig();
     createAppConfig();
-    fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'invalid json');
+    await fs.promises.writeFile(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'invalid json');
 
     // act
     const availableApps = await getAvailableApps();
@@ -122,7 +121,7 @@ describe('Test: getAppInfo()', () => {
     const appConfig = createAppConfig();
 
     // act
-    const appInfo = getAppInfo(appConfig.id);
+    const appInfo = await getAppInfo(appConfig.id);
 
     // assert
     expect(appInfo?.id).toBe(appConfig.id);
@@ -133,10 +132,11 @@ describe('Test: getAppInfo()', () => {
     const appConfig = createAppConfig();
     const secondAppConfig = createAppConfig();
     const app = await insertApp({}, appConfig, db);
-    fs.writeFileSync(path.join(DATA_DIR, 'apps', app.id, 'config.json'), JSON.stringify(secondAppConfig));
+
+    await fs.promises.writeFile(path.join(DATA_DIR, 'apps', app.id, 'config.json'), JSON.stringify(secondAppConfig));
 
     // act
-    const result = getAppInfo(app.id, app.status);
+    const result = await getAppInfo(app.id, app.status);
 
     // assert
     expect(result?.id).toEqual(secondAppConfig.id);
@@ -147,10 +147,10 @@ describe('Test: getAppInfo()', () => {
     const appConfig = createAppConfig();
     const app = await insertApp({ status: 'missing' }, appConfig, db);
     const secondAppConfig = createAppConfig();
-    fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', app.id, 'config.json'), JSON.stringify(secondAppConfig));
+    await fs.promises.writeFile(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', app.id, 'config.json'), JSON.stringify(secondAppConfig));
 
     // act
-    const result = getAppInfo(app.id, app.status);
+    const result = await getAppInfo(app.id, app.status);
 
     // assert
     expect(result?.id).toEqual(secondAppConfig.id);
@@ -184,7 +184,7 @@ describe('Test: getUpdateInfo()', () => {
     const app = await insertApp({}, appConfig, db);
 
     // act
-    const updateInfo = getUpdateInfo(app.id);
+    const updateInfo = await getUpdateInfo(app.id);
 
     // assert
     expect(updateInfo?.latestVersion).toBe(app.version);
@@ -201,7 +201,7 @@ describe('Test: getUpdateInfo()', () => {
   it('Should return default values if config.json is invalid', async () => {
     // arrange
     const appConfig = createAppConfig();
-    fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'invalid json');
+    await fs.promises.writeFile(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'invalid json');
 
     // act
     const updateInfo = getUpdateInfo(appConfig.id);

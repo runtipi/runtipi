@@ -186,7 +186,7 @@ export class AppServiceClass {
 
       checkAppRequirements(id);
 
-      const appInfo = getAppInfo(id);
+      const appInfo = await getAppInfo(id);
 
       if (!appInfo) {
         throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id });
@@ -292,7 +292,7 @@ export class AppServiceClass {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id });
     }
 
-    const appInfo = getAppInfo(app.id, app.status);
+    const appInfo = await getAppInfo(app.id, app.status);
 
     if (!appInfo) {
       throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id });
@@ -427,8 +427,8 @@ export class AppServiceClass {
    */
   public getApp = async (id: string) => {
     let app = await this.queries.getApp(id);
-    const info = getAppInfo(id, app?.status);
-    const updateInfo = getUpdateInfo(id);
+    const info = await getAppInfo(id, app?.status);
+    const updateInfo = await getUpdateInfo(id);
 
     if (info) {
       if (!app) {
@@ -465,9 +465,9 @@ export class AppServiceClass {
         appid: id,
         form: castAppConfig(app.config),
       })
-      .then(({ success, stdout }) => {
+      .then(async ({ success, stdout }) => {
         if (success) {
-          const appInfo = getAppInfo(app.id, app.status);
+          const appInfo = await getAppInfo(app.id, app.status);
 
           this.queries.updateApp(id, { version: appInfo?.tipi_version });
           if (appStatusBeforeUpdate === 'running') {
@@ -493,30 +493,30 @@ export class AppServiceClass {
   public installedApps = async () => {
     const apps = await this.queries.getApps();
 
-    return apps
-      .map((app) => {
-        const info = getAppInfo(app.id, app.status);
-        const updateInfo = getUpdateInfo(app.id);
+    return Promise.all(
+      apps.map(async (app) => {
+        const info = await getAppInfo(app.id, app.status);
+        const updateInfo = await getUpdateInfo(app.id);
         if (info) {
           return { ...app, ...updateInfo, info };
         }
         return null;
-      })
-      .filter(notEmpty);
+      }),
+    ).then((r) => r.filter(notEmpty));
   };
 
   public getGuestDashboardApps = async () => {
     const apps = await this.queries.getGuestDashboardApps();
 
-    return apps
-      .map((app) => {
-        const info = getAppInfo(app.id, app.status);
+    return Promise.all(
+      apps.map(async (app) => {
+        const info = await getAppInfo(app.id, app.status);
         if (info) {
           return { ...app, info };
         }
         return null;
-      })
-      .filter(notEmpty);
+      }),
+    ).then((r) => r.filter(notEmpty));
   };
 }
 

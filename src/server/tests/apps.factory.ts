@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 import { faker } from '@faker-js/faker';
 import { eq } from 'drizzle-orm';
 import { AppInfo, Architecture, appInfoSchema, APP_CATEGORIES } from '@runtipi/shared';

@@ -10,10 +10,3 @@ vi.mock('../core/Logger', () => ({
 }));
 
 vi.mock('redis', () => redisMock);
-
-vi.mock('fs-extra', async () => {
-  const { fsExtraMock } = await import('@/tests/mocks/fs-extra');
-  return {
-    ...fsExtraMock,
-  };
-});
