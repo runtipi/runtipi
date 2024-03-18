@@ -73,5 +73,3 @@ const tipiCacheSingleton = () => {
   return new TipiCacheClass();
 };
 export const tipiCache = globalThis.TipiCache ?? tipiCacheSingleton();
-
-if (process.env.NODE_ENV !== 'production') globalThis.TipiCache = tipiCache;
