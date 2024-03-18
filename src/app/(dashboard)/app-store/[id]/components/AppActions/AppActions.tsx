@@ -11,7 +11,7 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import clsx from 'clsx';
-import React from 'react';
+import React, { Fragment } from 'react';
 import type { AppStatus } from '@/server/db/schema';
 
 import { useTranslations } from 'next-intl';
@@ -167,5 +167,11 @@ export const AppActions: React.FC<IProps> = ({
       break;
   }
 
-  return <div className="d-flex justify-content-center flex-wrap">{buttons.map((button) => button)}</div>;
+  return (
+    <div className="d-flex justify-content-center flex-wrap">
+      {buttons.map((button) => (
+        <Fragment key={button.key}>{button}</Fragment>
+      ))}
+    </div>
+  );
 };
