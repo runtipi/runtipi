@@ -3,20 +3,19 @@ import pg from 'pg';
 import { migrate } from '@runtipi/postgres-migrations';
 import { createClient } from 'redis';
 import { Logger } from './core/Logger';
-import { TipiConfig } from './core/TipiConfig';
 
 export const runPostgresMigrations = async (dbName?: string) => {
   Logger.info('Starting database migration');
 
-  const { postgresHost, postgresDatabase, postgresUsername, postgresPassword, postgresPort } = TipiConfig.getConfig();
+  const { POSTGRES_HOST, POSTGRES_DBNAME, POSTGRES_USERNAME, POSTGRES_PASSWORD, POSTGRES_PORT, REDIS_HOST, REDIS_PASSWORD } = process.env;
 
-  Logger.info(`Connecting to database ${postgresDatabase} on ${postgresHost} as ${postgresUsername} on port ${postgresPort}`);
+  Logger.info(`Connecting to database ${POSTGRES_DBNAME} on ${POSTGRES_HOST} as ${POSTGRES_USERNAME} on port ${POSTGRES_PORT}`);
 
   const client = new pg.Client({
-    user: postgresUsername,
-    host: postgresHost,
-    database: dbName || postgresDatabase,
-    password: postgresPassword,
+    user: POSTGRES_USERNAME,
+    host: POSTGRES_HOST,
+    database: dbName || POSTGRES_DBNAME,
+    password: POSTGRES_PASSWORD,
     port: Number(process.env.POSTGRES_PORT),
   });
   await client.connect();
@@ -49,8 +48,8 @@ export const runPostgresMigrations = async (dbName?: string) => {
   // Flush redis cache
   try {
     const cache = createClient({
-      url: `redis://${TipiConfig.getConfig().REDIS_HOST}:6379`,
-      password: TipiConfig.getConfig().redisPassword,
+      url: `redis://${REDIS_HOST}:6379`,
+      password: REDIS_PASSWORD,
     });
     await cache.connect();
     await cache.flushAll();

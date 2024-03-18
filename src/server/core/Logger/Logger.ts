@@ -1,4 +1,3 @@
-import fs from 'fs-extra';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
 import { DATA_DIR } from '../../../config/constants';
@@ -25,9 +24,6 @@ const combinedLogFormatDev = combine(
 const productionLogger = () => {
   const logsFolder = `${DATA_DIR}/logs`;
   try {
-    if (!fs.existsSync(logsFolder)) {
-      fs.mkdirSync(logsFolder);
-    }
     return createLogger({
       level: 'info',
       format: combinedLogFormat,
