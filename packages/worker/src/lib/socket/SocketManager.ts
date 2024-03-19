@@ -1,6 +1,7 @@
 import { SocketEvent } from '@runtipi/shared';
 import { Server } from 'socket.io';
 import { logger } from '../logger';
+import { handleViewLogsEvent } from '../docker';
 
 class SocketManager {
   private io: Server | null = null;
@@ -8,7 +9,10 @@ class SocketManager {
   init() {
     const io = new Server(5001, { cors: { origin: '*' }, path: '/worker/socket.io' });
 
-    io.on('connection', (socket) => {
+    io.on('connection', async (socket) => {
+
+      socket.on('viewLogs', (appId) => handleViewLogsEvent(socket, appId));
+
       socket.on('disconnect', () => {});
     });
 
