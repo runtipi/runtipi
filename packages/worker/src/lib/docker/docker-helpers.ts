@@ -1,9 +1,12 @@
 import path from 'path';
+import { ChildProcessWithoutNullStreams, exec, spawn } from 'node:child_process';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { sanitizePath } from '@runtipi/shared';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { Socket } from 'socket.io';
+import { promisify } from 'util';
 
 const composeUp = async (args: string[]) => {
   logger.info(`Running docker compose with args ${args.join(' ')}`);
@@ -55,3 +58,50 @@ export const compose = async (appId: string, command: string) => {
 
   return composeUp(args);
 };
+
+const logs = async (appId: string): Promise<string> => {
+  const { arch, appsRepoId } = getEnv();
+  const appDirPath = path.join(DATA_DIR, 'apps', sanitizePath(appId));
+  
+  let command: string[] = ["docker-compose"]
+
+  let composeFile = path.join(appDirPath, 'docker-compose.yml');
+  if (arch === 'arm64' && (await pathExists(path.join(appDirPath, 'docker-compose.arm64.yml')))) {
+    composeFile = path.join(appDirPath, 'docker-compose.arm64.yml');
+  }
+  command.push(`-f ${composeFile}`);
+
+
+  const commonComposeFile = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', 'docker-compose.common.yml');
+  command.push(`-f ${commonComposeFile}`);
+
+  // User defined overrides
+  const userComposeFile = path.join(DATA_DIR, 'user-config', sanitizePath(appId), 'docker-compose.yml');
+  if (await pathExists(userComposeFile)) {
+    command.push(`--file ${userComposeFile}`);
+  }
+
+  command.push('logs --follow');
+  console.log(command.join(' '));
+
+  return command.join(' ');
+}
+
+export const handleViewLogsEvent = async (socket: Socket, appId: string) => {
+  console.log('handleViewLogs');
+  const logsCommand = await logs(appId);
+  const ls = spawn('sh', ['-c', logsCommand]);
+
+  socket.on('disconnect', () => {
+    ls.kill('SIGINT');
+  });
+
+  ls.on('error', (error) => {
+    logger.error('Error running logs command: ', error);
+    ls.kill('SIGINT');
+  });
+
+  ls.stdout.on('data', (data) => {
+    socket.emit('logs', data.toString().trim());
+  });
+}
