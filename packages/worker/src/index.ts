@@ -49,7 +49,7 @@ const main = async () => {
     logger.info('Copying system files...');
     await copySystemFiles(envMap);
 
-    if (envMap.get('ALLOW_ERROR_MONITORING') === 'true' && process.env.NODE_ENV === 'production') {
+    if (envMap.get('ALLOW_ERROR_MONITORING') === 'true' && process.env.NODE_ENV === 'production' && process.env.LOCAL !== 'true') {
       logger.info(`Anonymous error monitoring is enabled, to disable it add "allowErrorMonitoring": false to your settings.json file. Version: ${process.env.TIPI_VERSION}`);
       setupSentry(process.env.TIPI_VERSION);
     }

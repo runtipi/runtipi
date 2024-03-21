@@ -11,7 +11,7 @@
     "test:client": "jest --colors --selectProjects client --",
     "test:server": "jest --colors --selectProjects server --",
     "test:vite": "dotenv -e .env.test -- vitest run --coverage",
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "db:migrate": "NODE_ENV=development dotenv -e .env.local -- tsx ./src/server/run-migrations-dev.ts",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

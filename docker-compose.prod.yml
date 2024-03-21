@@ -63,8 +63,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        SENTRY_DISABLE_AUTO_UPLOAD: true
         TIPI_VERSION: development
+        LOCAL: true
     container_name: runtipi
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:5000/worker-api/healthcheck']
@@ -97,6 +97,7 @@ services:
       NODE_ENV: production
       TIPI_VERSION: development
       NEXT_PUBLIC_TIPI_VERSION: development
+      LOCAL: true
     networks:
       - tipi_main_network
     ports:
