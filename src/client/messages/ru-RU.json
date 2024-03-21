@@ -173,6 +173,7 @@
   "HEADER_SOURCE_CODE": "Исходный код",
   "HEADER_SPONSOR": "Спонсировать",
   "HEADER_UPDATE_AVAILABLE": "Доступно обновление",
+  "INTERNAL_SERVER_ERROR": "Внутренняя ошибка сервера",
   "LINKS_ADD_SUBMIT": "Добавить",
   "LINKS_ADD_SUBTITLE": "Добавить внешнюю ссылку в обзор",
   "LINKS_ADD_SUCCESS": "Ссылка успешно добавлена",
