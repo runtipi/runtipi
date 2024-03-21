@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/nextjs';
 import { ensureUser } from '@/actions/utils/ensure-user';
+import { handleApiError } from '@/actions/utils/handle-api-error';
 import { fetchSystemStatus } from './fetch-system-status';
 
 export async function GET() {
@@ -9,7 +9,6 @@ export async function GET() {
     const data = await fetchSystemStatus();
     return new Response(JSON.stringify(data), { status: 200 });
   } catch (error) {
-    Sentry.captureException(error);
-    return new Response('Error', { status: 500 });
+    return handleApiError(error);
   }
 }
