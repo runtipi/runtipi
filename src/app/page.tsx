@@ -10,8 +10,6 @@ import { headers } from 'next/headers';
 import { GuestDashboardApps } from './components/GuestDashboardApps';
 import { EmptyPage } from './components/EmptyPage';
 
-export const dynamic = 'force-dynamic';
-
 export default async function RootPage() {
   const { guestDashboard } = TipiConfig.getConfig();
 

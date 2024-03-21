@@ -15,7 +15,7 @@
     "db:migrate": "NODE_ENV=development dotenv -e .env.local -- tsx ./src/server/run-migrations-dev.ts",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "build": "next build",
+    "build": "next experimental-compile",
     "start": "NODE_ENV=production node server.js",
     "start:dev-container": "./.devcontainer/filewatcher.sh && npm run start:dev",
     "start:rc": "docker compose -f docker-compose.rc.yml --env-file .env up --build",
