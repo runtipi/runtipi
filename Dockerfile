@@ -75,10 +75,12 @@ COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch --ignore-scripts
 
 COPY ./pnpm-workspace.yaml ./
-COPY ./packages ./packages
+COPY ./packages/worker/package.json ./packages/worker/package.json
+COPY ./packages/shared/package.json ./packages/shared/package.json
 
 RUN pnpm install -r --prefer-offline
 
+COPY ./packages ./packages
 COPY ./packages/worker/build.js ./packages/worker/build.js
 COPY ./packages/worker/src ./packages/worker/src
 COPY ./packages/worker/package.json ./packages/worker/package.json

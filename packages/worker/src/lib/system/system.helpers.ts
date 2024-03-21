@@ -268,10 +268,15 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
 
   try {
     logger.info(`Generating TLS certificate for ${data.domain}`);
-    await execAsync(
-      `openssl req -x509 -newkey rsa:4096 -keyout /app/traefik/tls/key.pem -out /app/traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "subjectAltName = ${subjectAltName}" -nodes`,
+    const { stderr } = await execAsync(
+      `openssl req -x509 -newkey rsa:4096 -keyout ${DATA_DIR}/traefik/tls/key.pem -out ${DATA_DIR}/traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "subjectAltName = ${subjectAltName}" -nodes`,
     );
-    logger.info(`Writing txt file for ${data.domain}`);
+    if (!(await pathExists(path.join(tlsFolder, 'cert.pem'))) || !(await pathExists(path.join(tlsFolder, 'key.pem')))) {
+      logger.error(`Failed to generate TLS certificate for ${data.domain}`);
+      logger.error(stderr);
+    } else {
+      logger.info(`Writing txt file for ${data.domain}`);
+    }
     await fs.promises.writeFile(path.join(tlsFolder, `${data.domain}.txt`), '');
   } catch (error) {
     logger.error(error);

@@ -17,4 +17,4 @@ cd /dashboard || exit
 pm2 start npm --name dashboard -- run start
 
 # Log apps realtime
-pm2 logs --raw
+pm2 logs --raw --lines 1000
