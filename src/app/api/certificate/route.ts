@@ -1,14 +1,14 @@
-import * as Sentry from '@sentry/nextjs';
 import { getUserFromCookie } from '@/server/common/session.helpers';
-import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
 import fs from 'fs-extra';
+import { handleApiError } from '@/actions/utils/handle-api-error';
+import { DATA_DIR } from '../../../config/constants';
 
 export async function GET() {
   try {
     const user = await getUserFromCookie();
 
     if (user?.operator) {
-      const filePath = `${TipiConfig.getConfig().rootFolder}/traefik/tls/cert.pem`;
+      const filePath = `${DATA_DIR}/traefik/tls/cert.pem`;
 
       if (await fs.pathExists(filePath)) {
         const file = await fs.promises.readFile(filePath);
@@ -26,7 +26,6 @@ export async function GET() {
 
     return new Response('Forbidden', { status: 403 });
   } catch (error) {
-    Sentry.captureException(error);
-    return new Response('Error', { status: 500 });
+    return handleApiError(error);
   }
 }

@@ -8,6 +8,7 @@ import { Locales, getLocaleFromString } from '@/shared/internationalization/loca
 import { generateSessionId, setSession } from '@/server/common/session.helpers';
 import { Database } from '@/server/db';
 import { tipiCache } from '@/server/core/TipiCache/TipiCache';
+import { DATA_DIR } from '@/config/constants';
 import { TipiConfig } from '../../core/TipiConfig';
 import { fileExists, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
@@ -294,7 +295,7 @@ export class AuthServiceClass {
 
     await this.queries.updateUser(user.id, { password: hash, totpEnabled: false, totpSecret: null });
 
-    await unlinkFile(`/runtipi/state/password-change-request`);
+    await unlinkFile(`${DATA_DIR}/state/password-change-request`);
 
     return { email: user.username };
   };
@@ -306,7 +307,7 @@ export class AuthServiceClass {
    * @returns {boolean} - A boolean indicating if there is a password change request or not
    */
   public static checkPasswordChangeRequest = () => {
-    if (fileExists(`/runtipi/state/password-change-request`)) {
+    if (fileExists(`${DATA_DIR}/state/password-change-request`)) {
       return true;
     }
 
@@ -321,8 +322,8 @@ export class AuthServiceClass {
    * @throws {Error} - If the file cannot be removed
    */
   public static cancelPasswordChangeRequest = async () => {
-    if (fileExists(`/runtipi/state/password-change-request`)) {
-      await unlinkFile(`/runtipi/state/password-change-request`);
+    if (fileExists(`${DATA_DIR}/state/password-change-request`)) {
+      await unlinkFile(`${DATA_DIR}/state/password-change-request`);
     }
 
     return true;

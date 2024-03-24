@@ -7,7 +7,7 @@ import { AppExecutors } from '../app.executors';
 import { createAppConfig } from '@/tests/apps.factory';
 import * as dockerHelpers from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
-import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 
 const { appsRepoId } = getEnv();
 
@@ -24,7 +24,7 @@ describe('test: app executors', () => {
       const { message, success } = await appExecutors.installApp(config.id, config);
 
       // assert
-      const envExists = await pathExists(path.join(STORAGE_FOLDER, 'app-data', config.id, 'app.env'));
+      const envExists = await pathExists(path.join(APP_DATA_DIR, config.id, 'app.env'));
 
       expect(success).toBe(true);
       expect(message).toBe(`App ${config.id} installed successfully`);
@@ -53,14 +53,14 @@ describe('test: app executors', () => {
     it('should delete existing app folder', async () => {
       // arrange
       const config = createAppConfig();
-      await fs.promises.mkdir(path.join(ROOT_FOLDER, 'apps', config.id), { recursive: true });
-      await fs.promises.writeFile(path.join(ROOT_FOLDER, 'apps', config.id, 'test.txt'), 'test');
+      await fs.promises.mkdir(path.join(DATA_DIR, 'apps', config.id), { recursive: true });
+      await fs.promises.writeFile(path.join(DATA_DIR, 'apps', config.id, 'test.txt'), 'test');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
-      const exists = await pathExists(path.join(STORAGE_FOLDER, 'apps', config.id, 'test.txt'));
+      const exists = await pathExists(path.join(DATA_DIR, 'apps', config.id, 'test.txt'));
 
       expect(exists).toBe(false);
     });
@@ -69,13 +69,13 @@ describe('test: app executors', () => {
       // arrange
       const config = createAppConfig();
       const filename = faker.system.fileName();
-      await fs.promises.writeFile(path.join(STORAGE_FOLDER, 'app-data', config.id, filename), 'test');
+      await fs.promises.writeFile(path.join(APP_DATA_DIR, config.id, filename), 'test');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
-      const exists = await pathExists(path.join(STORAGE_FOLDER, 'app-data', config.id, filename));
+      const exists = await pathExists(path.join(APP_DATA_DIR, config.id, filename));
 
       expect(exists).toBe(true);
     });
@@ -84,15 +84,15 @@ describe('test: app executors', () => {
       // arrange
       const config = createAppConfig({}, false);
       const filename = faker.system.fileName();
-      await fs.promises.mkdir(path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', config.id, 'data'), { recursive: true });
-      await fs.promises.writeFile(path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'test');
+      await fs.promises.mkdir(path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data'), { recursive: true });
+      await fs.promises.writeFile(path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'test');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
-      const exists = await pathExists(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename));
-      const data = await fs.promises.readFile(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename), 'utf-8');
+      const exists = await pathExists(path.join(APP_DATA_DIR, config.id, 'data', filename));
+      const data = await fs.promises.readFile(path.join(APP_DATA_DIR, config.id, 'data', filename), 'utf-8');
 
       expect(exists).toBe(true);
       expect(data).toBe('test');
@@ -102,16 +102,16 @@ describe('test: app executors', () => {
       // arrange
       const config = createAppConfig();
       const filename = faker.system.fileName();
-      await fs.promises.writeFile(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename), 'test');
-      await fs.promises.mkdir(path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', config.id, 'data'), { recursive: true });
-      await fs.promises.writeFile(path.join(ROOT_FOLDER, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'yeah');
+      await fs.promises.writeFile(path.join(APP_DATA_DIR, config.id, 'data', filename), 'test');
+      await fs.promises.mkdir(path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data'), { recursive: true });
+      await fs.promises.writeFile(path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'yeah');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
-      const exists = await pathExists(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename));
-      const data = await fs.promises.readFile(path.join(STORAGE_FOLDER, 'app-data', config.id, 'data', filename), 'utf-8');
+      const exists = await pathExists(path.join(APP_DATA_DIR, config.id, 'data', filename));
+      const data = await fs.promises.readFile(path.join(APP_DATA_DIR, config.id, 'data', filename), 'utf-8');
 
       expect(exists).toBe(true);
       expect(data).toBe('test');
@@ -157,11 +157,6 @@ describe('test: app executors', () => {
       spy.mockRestore();
     });
 
-    // it('should re-genereate app.env file', async () => {
-    //   // arrange
-    //   const config = createAppConfig();
-    // });
-
     it('should handle errors gracefully', async () => {
       // arrange
       const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.reject(new Error('test')));
@@ -198,7 +193,7 @@ describe('test: app executors', () => {
     it('should replace app directory with new one', async () => {
       // arrange
       const config = createAppConfig();
-      const oldFolder = path.join(ROOT_FOLDER, 'apps', config.id);
+      const oldFolder = path.join(DATA_DIR, 'apps', config.id);
 
       await fs.promises.writeFile(path.join(oldFolder, 'docker-compose.yml'), 'test');
 

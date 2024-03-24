@@ -13,7 +13,6 @@ export const envSchema = z.object({
   redisPassword: z.string(),
   architecture: z.nativeEnum(ARCHITECTURES),
   dnsIp: z.string().ip().trim(),
-  rootFolder: z.string(),
   internalIp: z.string(),
   version: z.string(),
   jwtSecret: z.string(),

@@ -118,7 +118,10 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
 
   const openResetAppModal = () => {
     updateSettingsDisclosure.close();
-    resetAppDisclosure.open();
+
+    setTimeout(() => {
+      resetAppDisclosure.open();
+    }, 300);
   };
 
   const handleOpen = (type: OpenType) => {

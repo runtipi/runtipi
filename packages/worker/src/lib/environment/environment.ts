@@ -26,7 +26,7 @@ const environmentSchema = z
   })
   .transform((env) => {
     const {
-      STORAGE_PATH = '/app',
+      STORAGE_PATH,
       ARCHITECTURE,
       ROOT_FOLDER_HOST,
       APPS_REPO_ID,
@@ -63,3 +63,4 @@ const environmentSchema = z
   });
 
 export const getEnv = () => environmentSchema.parse(process.env);
+

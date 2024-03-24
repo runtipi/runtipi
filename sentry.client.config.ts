@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
-import { ExtraErrorData } from '@sentry/integrations';
 import { settingsSchema, cleanseErrorData } from '@runtipi/shared';
+import { extraErrorDataIntegration } from '@sentry/integrations';
 
 const getClientConfig = () => {
   if (typeof window === 'undefined') {
@@ -20,13 +20,13 @@ const getClientConfig = () => {
 
 const { allowErrorMonitoring } = getClientConfig();
 
-if (allowErrorMonitoring && process.env.NODE_ENV === 'production') {
+if (allowErrorMonitoring && process.env.NODE_ENV === 'production' && process.env.LOCAL !== 'true') {
   Sentry.init({
     release: process.env.NEXT_PUBLIC_TIPI_VERSION,
     environment: process.env.NODE_ENV,
     dsn: 'https://7a73d72f886948478b55621e7b92c3c7@o4504242900238336.ingest.sentry.io/4504826587971584',
     beforeSend: cleanseErrorData,
-    integrations: [new ExtraErrorData()],
+    integrations: [extraErrorDataIntegration()],
     initialScope: {
       tags: { version: process.env.TIPI_VERSION },
     },

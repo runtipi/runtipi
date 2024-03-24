@@ -1,3 +1,5 @@
+import { ensureUser } from '@/actions/utils/ensure-user';
+import { handleApiError } from '@/actions/utils/handle-api-error';
 import { appService } from '@/server/services/apps/apps.service';
 
 const getApps = async (searchParams: URLSearchParams) => {
@@ -10,11 +12,17 @@ const getApps = async (searchParams: URLSearchParams) => {
 };
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
+  try {
+    await ensureUser();
 
-  const apps = await getApps(searchParams);
+    const { searchParams } = new URL(request.url);
 
-  return new Response(JSON.stringify(apps), { headers: { 'content-type': 'application/json' } });
+    const apps = await getApps(searchParams);
+
+    return new Response(JSON.stringify(apps), { headers: { 'content-type': 'application/json' } });
+  } catch (error) {
+    return handleApiError(error);
+  }
 }
 
 export type AppStoreApiResponse = Awaited<ReturnType<typeof getApps>>;

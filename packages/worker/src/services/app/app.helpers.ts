@@ -1,11 +1,11 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { appInfoSchema, envMapToString, envStringToMap } from '@runtipi/shared';
+import { appInfoSchema, envMapToString, envStringToMap, sanitizePath } from '@runtipi/shared';
 import { pathExists, execAsync } from '@runtipi/shared/node';
 import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 import { getEnv } from '@/lib/environment';
-import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 
 /**
  *  This function generates a random string of the provided length by using the SHA-256 hash algorithm.
@@ -17,7 +17,7 @@ import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
  */
 const getEntropy = async (name: string, length: number) => {
   const hash = crypto.createHash('sha256');
-  const seed = await fs.promises.readFile(path.join(ROOT_FOLDER, 'state', 'seed'));
+  const seed = await fs.promises.readFile(path.join(DATA_DIR, 'state', 'seed'));
 
   hash.update(name + seed.toString());
   return hash.digest('hex').substring(0, length);
@@ -38,21 +38,21 @@ const getEntropy = async (name: string, length: number) => {
 export const generateEnvFile = async (appId: string, config: Record<string, unknown>) => {
   const { internalIp, storagePath, rootFolderHost } = getEnv();
 
-  const configFile = await fs.promises.readFile(path.join(ROOT_FOLDER, 'apps', appId, 'config.json'));
+  const configFile = await fs.promises.readFile(path.join(DATA_DIR, 'apps', sanitizePath(appId), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile.toString()));
 
   if (!parsedConfig.success) {
     throw new Error(`App ${appId} has invalid config.json file`);
   }
 
-  const baseEnvFile = await fs.promises.readFile(path.join(ROOT_FOLDER, '.env'));
+  const baseEnvFile = await fs.promises.readFile(path.join(DATA_DIR, '.env'));
   const envMap = envStringToMap(baseEnvFile.toString());
 
   // Default always present env variables
   envMap.set('APP_PORT', String(parsedConfig.data.port));
   envMap.set('APP_ID', appId);
   envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
-  envMap.set('APP_DATA_DIR', path.join(storagePath, 'app-data', appId));
+  envMap.set('APP_DATA_DIR', path.join(storagePath, 'app-data', sanitizePath(appId)));
 
   const existingEnvMap = await getAppEnvMap(appId);
 
@@ -101,12 +101,12 @@ export const generateEnvFile = async (appId: string, config: Record<string, unkn
   }
 
   // Create app-data folder if it doesn't exist
-  const appDataDirectoryExists = await fs.promises.stat(path.join(STORAGE_FOLDER, 'app-data', appId)).catch(() => false);
+  const appDataDirectoryExists = await fs.promises.stat(path.join(APP_DATA_DIR, sanitizePath(appId))).catch(() => false);
   if (!appDataDirectoryExists) {
-    await fs.promises.mkdir(path.join(STORAGE_FOLDER, 'app-data', appId), { recursive: true });
+    await fs.promises.mkdir(path.join(APP_DATA_DIR, sanitizePath(appId)), { recursive: true });
   }
 
-  await fs.promises.writeFile(path.join(STORAGE_FOLDER, 'app-data', appId, 'app.env'), envMapToString(envMap));
+  await fs.promises.writeFile(path.join(APP_DATA_DIR, sanitizePath(appId), 'app.env'), envMapToString(envMap));
 };
 
 /**
@@ -119,7 +119,8 @@ const renderTemplate = (template: string, envMap: Map<string, string>) => {
   let renderedTemplate = template;
 
   envMap.forEach((value, key) => {
-    renderedTemplate = renderedTemplate.replace(new RegExp(`{{${key}}}`, 'g'), value);
+    const safeKey = key.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    renderedTemplate = renderedTemplate.replace(new RegExp(`{{${safeKey}}}`, 'g'), value);
   });
 
   return renderedTemplate;
@@ -136,40 +137,41 @@ export const copyDataDir = async (id: string) => {
   const envMap = await getAppEnvMap(id);
 
   // return if app does not have a data directory
-  if (!(await pathExists(`${ROOT_FOLDER}/apps/${id}/data`))) {
+  if (!(await pathExists(path.join(DATA_DIR, 'apps', sanitizePath(id), 'data')))) {
     return;
   }
 
   // Create app-data folder if it doesn't exist
-  if (!(await pathExists(`${STORAGE_FOLDER}/app-data/${id}/data`))) {
-    await fs.promises.mkdir(`${STORAGE_FOLDER}/app-data/${id}/data`, { recursive: true });
+  if (!(await pathExists(path.join(APP_DATA_DIR, sanitizePath(id), 'data')))) {
+    await fs.promises.mkdir(path.join(APP_DATA_DIR, sanitizePath(id), 'data'), { recursive: true });
   }
 
-  const dataDir = await fs.promises.readdir(`${ROOT_FOLDER}/apps/${id}/data`);
+  const dataDir = await fs.promises.readdir(path.join(DATA_DIR, 'apps', sanitizePath(id), 'data'));
 
   const processFile = async (file: string) => {
     if (file.endsWith('.template')) {
-      const template = await fs.promises.readFile(`${ROOT_FOLDER}/apps/${id}/data/${file}`, 'utf-8');
+      const template = await fs.promises.readFile(path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', file), 'utf-8');
       const renderedTemplate = renderTemplate(template, envMap);
 
-      await fs.promises.writeFile(`${STORAGE_FOLDER}/app-data/${id}/data/${file.replace('.template', '')}`, renderedTemplate);
+      await fs.promises.writeFile(path.join(APP_DATA_DIR, sanitizePath(id), 'data', file.replace('.template', '')), renderedTemplate);
     } else {
-      await fs.promises.copyFile(`${ROOT_FOLDER}/apps/${id}/data/${file}`, `${STORAGE_FOLDER}/app-data/${id}/data/${file}`);
+      await fs.promises.copyFile(path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', file), path.join(APP_DATA_DIR, sanitizePath(id), 'data', file));
     }
   };
 
   const processDir = async (p: string) => {
-    await fs.promises.mkdir(`${STORAGE_FOLDER}/app-data/${id}/data/${p}`, { recursive: true });
-    const files = await fs.promises.readdir(`${ROOT_FOLDER}/apps/${id}/data/${p}`);
+    await fs.promises.mkdir(path.join(APP_DATA_DIR, sanitizePath(id), 'data', p), { recursive: true });
+
+    const files = await fs.promises.readdir(path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', p));
 
     await Promise.all(
       files.map(async (file) => {
-        const fullPath = `${ROOT_FOLDER}/apps/${id}/data/${p}/${file}`;
+        const fullPath = path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', p, file);
 
         if ((await fs.promises.lstat(fullPath)).isDirectory()) {
-          await processDir(`${p}/${file}`);
+          await processDir(path.join(p, file));
         } else {
-          await processFile(`${p}/${file}`);
+          await processFile(path.join(p, file));
         }
       }),
     );
@@ -177,7 +179,7 @@ export const copyDataDir = async (id: string) => {
 
   await Promise.all(
     dataDir.map(async (file) => {
-      const fullPath = `${ROOT_FOLDER}/apps/${id}/data/${file}`;
+      const fullPath = path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', file);
 
       if ((await fs.promises.lstat(fullPath)).isDirectory()) {
         await processDir(file);
@@ -188,7 +190,7 @@ export const copyDataDir = async (id: string) => {
   );
 
   // Remove any .gitkeep files from the app-data folder at any level
-  if (await pathExists(`${STORAGE_FOLDER}/app-data/${id}/data`)) {
-    await execAsync(`find ${STORAGE_FOLDER}/app-data/${id}/data -name .gitkeep -delete`).catch(() => {});
+  if (await pathExists(path.join(APP_DATA_DIR, sanitizePath(id), 'data'))) {
+    await execAsync(`find ${APP_DATA_DIR}/${sanitizePath(id)}/data -name .gitkeep -delete`).catch(() => {});
   }
 };

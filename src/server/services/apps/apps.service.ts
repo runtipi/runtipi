@@ -42,7 +42,6 @@ export class AppServiceClass {
   private cacheLastUpdated = 0;
 
   constructor(p: Database = db) {
-    Logger.debug('AppServiceClass constructor');
     this.queries = new AppQueries(p);
   }
 
@@ -56,7 +55,6 @@ export class AppServiceClass {
   private async getAvailableApps() {
     // Invalidate cache if it's older than 15 minutes
     if (this.cacheLastUpdated && Date.now() - this.cacheLastUpdated > this.cacheTimeout) {
-      Logger.debug('apps service -> invalidateCache');
       this.invalidateCache();
     }
 
@@ -533,5 +531,3 @@ const appServiceSingleton = () => {
   return new AppServiceClass();
 };
 export const appService = globalThis.AppService ?? appServiceSingleton();
-
-if (process.env.NODE_ENV !== 'production') globalThis.AppService = appService;

@@ -1,6 +1,8 @@
 import { App } from '@/server/db/schema';
-import { appInfoSchema } from '@runtipi/shared';
+import { appInfoSchema, sanitizePath } from '@runtipi/shared';
 import { pathExists } from '@runtipi/shared/node';
+import { DATA_DIR } from '@/config/constants';
+import path from 'path';
 import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
@@ -17,14 +19,15 @@ import { notEmpty } from '../../common/typescript.helpers';
  *  @throws Will throw an error if the app has an invalid config.json file or if the current system architecture is not supported by the app.
  */
 export const checkAppRequirements = (appName: string) => {
-  const configFile = readJsonFile(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${appName}/config.json`);
+  const { appsRepoId, architecture } = TipiConfig.getConfig();
+  const configFile = readJsonFile(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(appName), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(configFile);
 
   if (!parsedConfig.success) {
     throw new Error(`App ${appName} has invalid config.json file`);
   }
 
-  if (parsedConfig.data.supported_architectures && !parsedConfig.data.supported_architectures.includes(TipiConfig.getConfig().architecture)) {
+  if (parsedConfig.data.supported_architectures && !parsedConfig.data.supported_architectures.includes(architecture)) {
     throw new Error(`App ${appName} is not supported on this architecture`);
   }
 
@@ -37,12 +40,13 @@ export const checkAppRequirements = (appName: string) => {
   If the config.json file is invalid, it logs an error message.
  */
 export const getAvailableApps = async () => {
-  if (!(await pathExists(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps`))) {
-    Logger.error(`Apps repo ${TipiConfig.getConfig().appsRepoId} not found. Make sure your repo is configured correctly.`);
+  const { appsRepoId } = TipiConfig.getConfig();
+  if (!(await pathExists(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps')))) {
+    Logger.error(`Apps repo ${appsRepoId} not found. Make sure your repo is configured correctly.`);
     return [];
   }
 
-  const appsDir = readdirSync(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps`);
+  const appsDir = readdirSync(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
 
   const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
 
@@ -50,14 +54,15 @@ export const getAvailableApps = async () => {
     .map((app) => {
       if (skippedFiles.includes(app)) return null;
 
-      const configFile = readJsonFile(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${app}/config.json`);
+      const repoPath = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(app));
+      const configFile = readJsonFile(path.join(repoPath, 'config.json'));
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (!parsedConfig.success) {
         Logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
         Logger.error(JSON.stringify(parsedConfig.error, null, 2));
       } else if (parsedConfig.data.available) {
-        const description = readFile(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${parsedConfig.data.id}/metadata/description.md`);
+        const description = readFile(path.join(repoPath, 'metadata', 'description.md'));
         return { ...parsedConfig.data, description };
       }
 
@@ -77,7 +82,8 @@ export const getAvailableApps = async () => {
  *  @param {string} id - The app id.
  */
 export const getUpdateInfo = (id: string) => {
-  const repoConfig = readJsonFile(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/config.json`);
+  const { appsRepoId } = TipiConfig.getConfig();
+  const repoConfig = readJsonFile(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(repoConfig);
 
   if (parsedConfig.success) {
@@ -105,22 +111,27 @@ export const getAppInfo = (id: string, status?: App['status']) => {
     // Check if app is installed
     const installed = typeof status !== 'undefined' && status !== 'missing';
 
-    if (installed && fileExists(`/runtipi/apps/${id}/config.json`)) {
-      const configFile = readJsonFile(`/runtipi/apps/${id}/config.json`);
+    const appsFolder = path.join(DATA_DIR, 'apps', sanitizePath(id));
+
+    if (installed && fileExists(path.join(appsFolder, 'config.json'))) {
+      const configFile = readJsonFile(path.join(appsFolder, 'config.json'));
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (parsedConfig.success && parsedConfig.data.available) {
-        const description = readFile(`/runtipi/apps/${id}/metadata/description.md`);
+        const description = readFile(path.join(appsFolder, 'metadata', 'description.md'));
         return { ...parsedConfig.data, description };
       }
     }
 
-    if (fileExists(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/config.json`)) {
-      const configFile = readJsonFile(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/config.json`);
+    const { appsRepoId } = TipiConfig.getConfig();
+    const repoFolder = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id));
+
+    if (fileExists(path.join(repoFolder, 'config.json'))) {
+      const configFile = readJsonFile(path.join(repoFolder, 'config.json'));
       const parsedConfig = appInfoSchema.safeParse(configFile);
 
       if (parsedConfig.success && parsedConfig.data.available) {
-        const description = readFile(`/runtipi/repos/${TipiConfig.getConfig().appsRepoId}/apps/${id}/metadata/description.md`);
+        const description = readFile(path.join(repoFolder, 'metadata', 'description.md'));
         return { ...parsedConfig.data, description };
       }
     }

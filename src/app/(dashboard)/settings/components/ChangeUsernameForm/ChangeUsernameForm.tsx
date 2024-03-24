@@ -32,7 +32,7 @@ export const ChangeUsernameForm = ({ username }: Props) => {
     },
     onSuccess: () => {
       toast.success(t('SETTINGS_SECURITY_CHANGE_USERNAME_SUCCESS'));
-      router.push('/');
+      router.refresh();
     },
   });
 

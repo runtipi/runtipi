@@ -1,5 +1,7 @@
 import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
+import path from 'path';
+import { DATA_DIR } from '@/config/constants';
 import { TipiConfigClass } from './TipiConfig';
 import { readJsonFile } from '../../common/fs.helpers';
 
@@ -13,7 +15,6 @@ describe('Test: getConfig', () => {
     // assert
     expect(config).toBeDefined();
     expect(config.NODE_ENV).toBe('test');
-    expect(config.rootFolder).toBe('/runtipi');
     expect(config.internalIp).toBe('localhost');
   });
 
@@ -24,7 +25,7 @@ describe('Test: getConfig', () => {
       domain: faker.lorem.word(),
     };
     const MockFiles = {
-      '/runtipi/state/settings.json': JSON.stringify(settingsJson),
+      '/data/state/settings.json': JSON.stringify(settingsJson),
     };
     // @ts-expect-error - We are mocking fs
     fs.__createMockFiles(MockFiles);
@@ -78,7 +79,7 @@ describe('Test: setConfig', () => {
     expect(config).toBeDefined();
     expect(config.appsRepoUrl).toBe(randomWord);
 
-    const settingsJson = readJsonFile('/runtipi/state/settings.json') as { [key: string]: string };
+    const settingsJson = readJsonFile(path.join(DATA_DIR, 'state', 'settings.json')) as { [key: string]: string };
 
     expect(settingsJson).toBeDefined();
     expect(settingsJson.appsRepoUrl).toBe(randomWord);
@@ -91,7 +92,7 @@ describe('Test: getSettings', () => {
     const fakeSettings = {
       appsRepoUrl: faker.internet.url(),
     };
-    const MockFiles = { '/runtipi/state/settings.json': JSON.stringify(fakeSettings) };
+    const MockFiles = { '/data/state/settings.json': JSON.stringify(fakeSettings) };
     // @ts-expect-error - We are mocking fs
     fs.__createMockFiles(MockFiles);
 
@@ -106,7 +107,7 @@ describe('Test: getSettings', () => {
   it('It should return current config if settings.json has any invalid value', () => {
     // arrange
     const tipiConf = new TipiConfigClass(0);
-    const MockFiles = { '/runtipi/state/settings.json': JSON.stringify({ appsRepoUrl: 10 }) };
+    const MockFiles = { '/data/state/settings.json': JSON.stringify({ appsRepoUrl: 10 }) };
     // @ts-expect-error - We are mocking fs
     fs.__createMockFiles(MockFiles);
 
@@ -129,7 +130,7 @@ describe('Test: setSettings', () => {
 
     // act
     await new TipiConfigClass(0).setSettings(fakeSettings);
-    const settingsJson = readJsonFile('/runtipi/state/settings.json') as { [key: string]: string };
+    const settingsJson = readJsonFile('/data/state/settings.json') as { [key: string]: string };
 
     // assert
     expect(settingsJson).toBeDefined();
@@ -142,7 +143,7 @@ describe('Test: setSettings', () => {
 
     // act
     new TipiConfigClass(0).setSettings(fakeSettings as object);
-    const settingsJson = (readJsonFile('/runtipi/state/settings.json') || {}) as { [key: string]: string };
+    const settingsJson = (readJsonFile('/data/state/settings.json') || {}) as { [key: string]: string };
 
     // assert
     expect(settingsJson).toBeDefined();

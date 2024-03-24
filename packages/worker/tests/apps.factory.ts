@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import fs from 'fs';
 import { APP_CATEGORIES, AppInfo, appInfoSchema } from '@runtipi/shared';
-import { ROOT_FOLDER, STORAGE_FOLDER } from '@/config/constants';
+import { DATA_DIR, APP_DATA_DIR } from '@/config/constants';
 
 export const createAppConfig = (props?: Partial<AppInfo>, isInstalled = true) => {
   const appInfo = appInfoSchema.parse({
@@ -19,16 +19,16 @@ export const createAppConfig = (props?: Partial<AppInfo>, isInstalled = true) =>
   });
 
   const mockFiles: Record<string, string | string[]> = {};
-  mockFiles[`${ROOT_FOLDER}/.env`] = 'TEST=test';
-  mockFiles[`${ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
-  mockFiles[`${ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
-  mockFiles[`${ROOT_FOLDER}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+  mockFiles[`${DATA_DIR}/.env`] = 'TEST=test';
+  mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
+  mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+  mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
   if (isInstalled) {
-    mockFiles[`${ROOT_FOLDER}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
-    mockFiles[`${ROOT_FOLDER}/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
-    mockFiles[`${ROOT_FOLDER}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
-    mockFiles[`${STORAGE_FOLDER}/app-data/${appInfo.id}/data/test.txt`] = 'data';
+    mockFiles[`${DATA_DIR}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfoSchema.parse(appInfo));
+    mockFiles[`${DATA_DIR}/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
+    mockFiles[`${DATA_DIR}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
+    mockFiles[`${APP_DATA_DIR}/${appInfo.id}/data/test.txt`] = 'data';
   }
 
   // @ts-expect-error - custom mock method

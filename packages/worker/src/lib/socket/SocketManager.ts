@@ -6,7 +6,7 @@ class SocketManager {
   private io: Server | null = null;
 
   init() {
-    const io = new Server(3001, { cors: { origin: '*' }, path: '/worker/socket.io' });
+    const io = new Server(5001, { cors: { origin: '*' }, path: '/worker/socket.io' });
 
     io.on('connection', (socket) => {
       socket.on('disconnect', () => {});

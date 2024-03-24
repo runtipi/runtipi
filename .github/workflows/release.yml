@@ -55,41 +55,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  build-worker:
-    runs-on: ubuntu-latest
-    if: github.repository == 'runtipi/runtipi'
-    needs: create-tag
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push images
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          build-args: |
-            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-            TIPI_VERSION=${{ needs.create-tag.outputs.tagname }}
-          file: ./packages/worker/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/worker:${{ needs.create-tag.outputs.tagname }},ghcr.io/${{ github.repository_owner }}/worker:latest
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/worker:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/worker:buildcache,mode=max
-
   build-cli:
     runs-on: ubuntu-latest
     needs: create-tag
@@ -142,9 +107,23 @@ jobs:
           name: cli
           path: bin
 
+  build-pi-image:
+    runs-on: ubuntu-latest
+    needs: create-tag
+    steps:
+      - name: Dispatch the release action
+        uses: codex-/return-dispatch@v1
+        with:
+          token: ${{ secrets.PAT_CLI }}
+          ref: main
+          repo: raspberrypi
+          owner: runtipi
+          workflow: release.yml
+          workflow_inputs: '{ "version": "${{ needs.create-tag.outputs.tagname }}" }'
+
   publish-release:
     runs-on: ubuntu-latest
-    needs: [create-tag, build-images, build-worker, build-cli]
+    needs: [create-tag, build-images, build-cli]
     outputs:
       id: ${{ steps.create_release.outputs.id }}
     steps:
@@ -156,7 +135,7 @@ jobs:
 
       - name: Create release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
