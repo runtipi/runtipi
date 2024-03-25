@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import * as Sentry from '@sentry/node';
+import YAML from 'yaml';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { SocketEvent, sanitizePath } from '@runtipi/shared';
 import { copyDataDir, generateEnvFile } from './app.helpers';
@@ -12,6 +13,7 @@ import { getEnv } from '@/lib/environment';
 import { SocketManager } from '@/lib/socket/SocketManager';
 import { getDbClient } from '@/lib/db';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { composeData } from 'src/types/types';
 
 export class AppExecutors {
   private readonly logger;
@@ -317,6 +319,8 @@ export class AppExecutors {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDirPath, repoPath } = this.getAppPaths(appId);
+      const oldAppImage = (JSON.parse(JSON.stringify(YAML.parse(fs.readFileSync(`${appDirPath}/docker-compose.yml`, 'utf8')))) as composeData)['services'][appId]?.['image'];
+
       this.logger.info(`Updating app ${appId}`);
       await this.ensureAppDir(appId);
       await generateEnvFile(appId, config);
@@ -337,6 +341,8 @@ export class AppExecutors {
       await this.ensureAppDir(appId);
 
       await compose(appId, 'pull');
+
+      await execAsync(`curl -X DELETE --unix-socket /var/run/docker.sock "http://docker/images/${oldAppImage}"`);
 
       SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
 
