@@ -173,6 +173,7 @@
   "HEADER_SOURCE_CODE": "Code source",
   "HEADER_SPONSOR": "Sponsor",
   "HEADER_UPDATE_AVAILABLE": "Mise à jour disponible",
+  "INTERNAL_SERVER_ERROR": "Internal server error",
   "LINKS_ADD_SUBMIT": "Submit",
   "LINKS_ADD_SUBTITLE": "Add external link to the dashboard",
   "LINKS_ADD_SUCCESS": "Link added succesfully",

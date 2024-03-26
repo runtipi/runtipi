@@ -173,6 +173,7 @@
   "HEADER_SOURCE_CODE": "Código fuente",
   "HEADER_SPONSOR": "Patrocinador",
   "HEADER_UPDATE_AVAILABLE": "Actualización disponible",
+  "INTERNAL_SERVER_ERROR": "Internal server error",
   "LINKS_ADD_SUBMIT": "Enviar",
   "LINKS_ADD_SUBTITLE": "Agrega un enlace externo al tablero",
   "LINKS_ADD_SUCCESS": "Enlace agregado correctamente",

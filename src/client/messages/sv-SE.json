@@ -173,6 +173,7 @@
   "HEADER_SOURCE_CODE": "Källkod",
   "HEADER_SPONSOR": "Sponsor",
   "HEADER_UPDATE_AVAILABLE": "Ny version tillgänglig",
+  "INTERNAL_SERVER_ERROR": "Internal server error",
   "LINKS_ADD_SUBMIT": "Skicka in",
   "LINKS_ADD_SUBTITLE": "Lägg till extern länk till instrumentpanelen",
   "LINKS_ADD_SUCCESS": "Länken har lagts till",
