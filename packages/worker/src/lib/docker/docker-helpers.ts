@@ -1,9 +1,12 @@
 import path from 'path';
+import yaml from 'yaml';
+import fs from 'fs';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { sanitizePath } from '@runtipi/shared';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { getAppLabels, getDockerCompose } from '@/config/docker-templates';
 
 const composeUp = async (args: string[]) => {
   logger.info(`Running docker compose with args ${args.join(' ')}`);
@@ -40,6 +43,18 @@ export const compose = async (appId: string, command: string) => {
   if (arch === 'arm64' && (await pathExists(path.join(appDirPath, 'docker-compose.arm64.yml')))) {
     composeFile = path.join(appDirPath, 'docker-compose.arm64.yml');
   }
+
+  // const composeFileRaw = await fs.promises.readFile(composeFile, 'utf8');
+
+  // const composeConfig = yaml.parse(composeFileRaw);
+
+  const generated = getDockerCompose([
+    { isMain: true, name: appId, image: 'nginx:1.25.3', internalPort: 80 },
+    { isMain: false, name: 'test', image: 'nginx:1.25.3', internalPort: 80 },
+  ]);
+
+  console.log(JSON.stringify(generated, null, 2));
+
   args.push(`-f ${composeFile}`);
 
   const commonComposeFile = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', 'docker-compose.common.yml');

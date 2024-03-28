@@ -80,7 +80,7 @@ services:
       - ./logs:/data/logs
       - ./traefik:/data/traefik
       - ./user-config:/data/user-config
-      - ${STORAGE_PATH:-$PWD}/app-data:/app-data
+      - ${STORAGE_PATH:-.}/app-data:/app-data
       # Static
       - ./.env:/data/.env
       - /var/run/docker.sock:/var/run/docker.sock:ro
