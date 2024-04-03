@@ -36,21 +36,21 @@ export const DashboardContainer: React.FC<IProps> = ({ initialData }) => {
         metric={`${data.diskUsed} GB`}
         subtitle={t('DASHBOARD_DISK_SPACE_SUBTITLE', { total: data.diskSize })}
         icon={IconDatabase}
-        progress={data.percentUsed}
+        progress={data.percentUsed || 0}
       />
       <SystemStat
         title={t('DASHBOARD_CPU_TITLE')}
-        metric={`${data.cpuLoad.toFixed(2)}%`}
+        metric={`${data.cpuLoad?.toFixed(2)}%`}
         subtitle={t('DASHBOARD_CPU_SUBTITLE')}
         icon={IconCpu}
-        progress={data.cpuLoad}
+        progress={data.cpuLoad || 0}
       />
       <SystemStat
         title={t('DASHBOARD_MEMORY_TITLE')}
         metric={`${data.percentUsedMemory || 0}%`}
         subtitle={`${data.memoryTotal} GB`}
         icon={IconCircuitResistor}
-        progress={data.percentUsedMemory}
+        progress={data.percentUsedMemory || 0}
       />
     </div>
   );

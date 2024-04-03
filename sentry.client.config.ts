@@ -20,7 +20,7 @@ const getClientConfig = () => {
 
 const { allowErrorMonitoring } = getClientConfig();
 
-if (allowErrorMonitoring && process.env.NODE_ENV === 'production') {
+if (allowErrorMonitoring && process.env.NODE_ENV === 'production' && process.env.LOCAL !== 'true') {
   Sentry.init({
     release: process.env.NEXT_PUBLIC_TIPI_VERSION,
     environment: process.env.NODE_ENV,

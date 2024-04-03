@@ -39,7 +39,7 @@ export const ChangePasswordForm = () => {
     },
     onSuccess: () => {
       toast.success(t('SETTINGS_SECURITY_PASSWORD_CHANGE_SUCCESS'));
-      router.push('/');
+      router.refresh();
     },
   });
 

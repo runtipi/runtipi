@@ -21,7 +21,7 @@ export const StopModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfirm }
           <h5 className="modal-title">{t('APP_STOP_FORM_TITLE', { name: info.name })}</h5>
         </DialogHeader>
         <DialogDescription>
-          <div className="text-muted">{t('APP_STOP_FORM_SUBTITLE')}</div>
+          <span className="text-muted">{t('APP_STOP_FORM_SUBTITLE')}</span>
         </DialogDescription>
         <DialogFooter>
           <Button onClick={onConfirm} className="btn-danger">

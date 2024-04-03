@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Start worker
-cd worker/ || exit
+cd /worker || exit
 pm2 start index.js --name worker -- start
 
 # Wait for http://localhost:5000/healthcheck to return OK
@@ -17,4 +17,4 @@ cd /dashboard || exit
 pm2 start npm --name dashboard -- run start
 
 # Log apps realtime
-pm2 logs --raw
+pm2 logs --raw --lines 1000

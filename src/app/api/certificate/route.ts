@@ -1,6 +1,6 @@
-import * as Sentry from '@sentry/nextjs';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import fs from 'fs-extra';
+import { handleApiError } from '@/actions/utils/handle-api-error';
 import { DATA_DIR } from '../../../config/constants';
 
 export async function GET() {
@@ -26,7 +26,6 @@ export async function GET() {
 
     return new Response('Forbidden', { status: 403 });
   } catch (error) {
-    Sentry.captureException(error);
-    return new Response('Error', { status: 500 });
+    return handleApiError(error);
   }
 }

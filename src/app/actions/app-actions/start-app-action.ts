@@ -14,7 +14,7 @@ const input = z.object({ id: z.string() });
  */
 export const startAppAction = action(input, async ({ id }) => {
   try {
-    ensureUser();
+    await ensureUser();
 
     await appService.startApp(id);
 

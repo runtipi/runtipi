@@ -10,7 +10,7 @@ import { extraErrorDataIntegration } from '@sentry/integrations';
 
 const { version, allowErrorMonitoring, NODE_ENV } = TipiConfig.getConfig();
 
-if (allowErrorMonitoring && NODE_ENV === 'production') {
+if (allowErrorMonitoring && NODE_ENV === 'production' && process.env.LOCAL !== 'true') {
   Sentry.init({
     release: version,
     environment: NODE_ENV,

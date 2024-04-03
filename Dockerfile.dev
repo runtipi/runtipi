@@ -30,10 +30,12 @@ COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch --ignore-scripts
 
 COPY ./package*.json ./
-COPY ./packages ./packages
+COPY ./packages/worker/package.json ./packages/worker/package.json
+COPY ./packages/shared/package.json ./packages/shared/package.json
 
 RUN pnpm install -r --prefer-offline 
 
+COPY ./packages ./packages
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
 COPY ./public ./public

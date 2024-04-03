@@ -6,7 +6,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@runtipi/shared'],
   experimental: {
-    serverComponentsExternalPackages: ['bullmq', '@sentry/nextjs'],
+    serverComponentsExternalPackages: ['bullmq'],
   },
   async rewrites() {
     return [
@@ -18,22 +18,23 @@ const nextConfig = {
   },
 };
 
-export default withSentryConfig(
-  nextConfig,
-  {
-    // https://github.com/getsentry/sentry-webpack-plugin#options
-    silent: false,
-    org: 'runtipi',
-    project: 'runtipi-dashboard',
-    dryRun: process.env.SENTRY_DISABLE_AUTO_UPLOAD === 'true',
-    release: process.env.TIPI_VERSION,
-  },
-  {
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-    widenClientFileUpload: true,
-    transpileClientSDK: false,
-    tunnelRoute: '/errors',
-    hideSourceMaps: false,
-    disableLogger: true,
-  },
-);
+export default !process.env.LOCAL === 'true'
+  ? withSentryConfig(
+      nextConfig,
+      {
+        // https://github.com/getsentry/sentry-webpack-plugin#options
+        silent: false,
+        org: 'runtipi',
+        project: 'runtipi-dashboard',
+        release: process.env.TIPI_VERSION,
+      },
+      {
+        // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+        widenClientFileUpload: true,
+        transpileClientSDK: false,
+        tunnelRoute: '/errors',
+        hideSourceMaps: false,
+        disableLogger: true,
+      },
+    )
+  : nextConfig;

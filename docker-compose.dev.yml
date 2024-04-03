@@ -95,6 +95,7 @@ services:
       WORKER_APP_DIR: /app/packages/worker
       DASHBOARD_APP_DIR: /app
       NEXT_PUBLIC_TIPI_VERSION: development
+      LOCAL: true
     env_file:
       - .env
     labels:

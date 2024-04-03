@@ -3,7 +3,7 @@
 import React from 'react';
 import { useInfiniteQuery } from 'react-query';
 import type { AppStoreApiResponse } from '@/api/app-store/route';
-import { Button } from '@/components/ui/Button';
+import { useInfiniteScroll } from '@/client/hooks/useInfiniteScroll';
 import { EmptyPage } from '../../../../components/EmptyPage';
 import { AppStoreTile } from '../AppStoreTile';
 import { useAppStoreState } from '../../state/appStoreState';
@@ -48,24 +48,25 @@ export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
 
   const apps = data?.pages.map((page) => page.data).flat();
 
+  const { lastElementRef } = useInfiniteScroll({
+    fetchNextPage,
+    hasNextPage: Boolean(hasNextPage),
+    isFetching: isFetchingNextPage || isFetching,
+  });
+
   if (!apps?.length) {
     return <EmptyPage title="APP_STORE_NO_RESULTS" subtitle="APP_STORE_NO_RESULTS_SUBTITLE" />;
   }
 
-  const shouldShowButton = (hasNextPage && !isFetching) || isFetchingNextPage;
-
   return (
     <div className="card px-3 pb-3">
       <div className="row row-cards">
-        {apps.map((app) => (
-          <AppStoreTile key={app.id} app={app} />
+        {apps.map((app, index) => (
+          <div ref={index === apps.length - 1 ? lastElementRef : null} key={app.id} className="cursor-pointer col-sm-6 col-lg-4 p-2 mt-4">
+            <AppStoreTile app={app} />
+          </div>
         ))}
       </div>
-      {shouldShowButton && (
-        <Button loading={isFetchingNextPage} onClick={() => fetchNextPage()}>
-          Load more
-        </Button>
-      )}
     </div>
   );
 };

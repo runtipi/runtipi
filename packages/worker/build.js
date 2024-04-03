@@ -1,6 +1,21 @@
 const { build } = require('esbuild');
 const { sentryEsbuildPlugin } = require('@sentry/esbuild-plugin');
 
+const plugins = [];
+
+if (process.env.LOCAL !== 'true') {
+  plugins.push(
+    sentryEsbuildPlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      release: {
+        name: process.env.TIPI_VERSION,
+      },
+      org: 'runtipi',
+      project: 'runtipi-worker',
+    }),
+  );
+}
+
 async function bundle() {
   const start = Date.now();
   const options = {
@@ -15,14 +30,7 @@ async function bundle() {
       '.node': 'copy',
     },
     minify: true,
-    plugins: [
-      sentryEsbuildPlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        release: process.env.TIPI_VERSION,
-        org: 'runtipi',
-        project: 'runtipi-worker',
-      }),
-    ],
+    plugins,
   };
 
   await build({
