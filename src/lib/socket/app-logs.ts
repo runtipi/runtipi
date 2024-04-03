@@ -34,19 +34,13 @@ const ws = new LogsWebSocket();
 
 export const emitViewLogs = (appId: string) => {
   
-  
-  if (ws.getWasCalled()) {
-    console.log('was called');
-    return;
-  }
-  console.log('viewLogs', appId);
+  if (ws.getWasCalled()) return;
 
   ws.socket.emit('viewLogs', appId);
   ws.setWasCalled(true);
 }
 
 export const stopLogs = () => {
-  console.log('stopLogs client');
   ws.socket.emit('stopLogs', null);
   ws.setWasCalled(false);
 }

@@ -97,7 +97,6 @@ export const handleViewLogsEvent = async (socket: Socket, appId: string) => {
   });
 
   socket.on('stopLogs', () => {
-    console.log('stopLogs');
     ls.kill('SIGINT');
   });
 
