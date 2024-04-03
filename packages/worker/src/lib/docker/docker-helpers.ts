@@ -81,7 +81,7 @@ const logs = async (appId: string): Promise<string> => {
     command.push(`--file ${userComposeFile}`);
   }
 
-  command.push('logs --follow -n 10');
+  command.push('logs --follow -n 25');
   console.log(command.join(' '));
 
   return command.join(' ');
