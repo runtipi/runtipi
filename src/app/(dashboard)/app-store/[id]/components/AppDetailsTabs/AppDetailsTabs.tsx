@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
+import { LogsTerminal }  from './LogsTerminal';
 
 interface IProps {
   info: AppInfo;
@@ -18,6 +19,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
       <TabsList>
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
+        <TabsTrigger value="logs">Logs</TabsTrigger>
       </TabsList>
       <TabsContent value="description">
         {info.deprecated && (
@@ -73,6 +75,9 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
             </DataGridItem>
           )}
         </DataGrid>
+      </TabsContent>
+      <TabsContent value="logs">
+        <LogsTerminal appId={info.id}/>
       </TabsContent>
     </Tabs>
   );

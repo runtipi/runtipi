@@ -26,6 +26,11 @@ export const socketEventSchema = z.union([
     }),
   }),
   z.object({
+    type: z.literal('logs'),
+    event: z.literal('logs'),
+    data: z.array(z.string()),
+  }),
+  z.object({
     type: z.literal('dummy'),
     event: z.literal('dummy_event'),
     data: z.object({
