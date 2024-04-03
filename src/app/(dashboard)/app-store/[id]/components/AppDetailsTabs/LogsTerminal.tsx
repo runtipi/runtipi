@@ -3,26 +3,32 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSocket } from '@/lib/socket/useSocket';
 import { emitViewLogs, stopLogs } from '@/lib/socket/app-logs';
+import clsx from 'clsx';
+import styles from './LogsTerminal.module.scss';
 
-export const LogsTerminal = () => {
+export const LogsTerminal = ({ appId }: { appId: string }) => {
   let nextId = 0;
   const [logs, setLogs] = useState<{ id: number, text: string }[]>([]);
-  const messageEl: React.RefObject<HTMLElement> = useRef(null);
+  const [follow, setFollow] = useState<boolean>(true);
+  const ref = useRef<HTMLPreElement>(null);
 
   useEffect(() => {
-    if (messageEl) {
-      messageEl.current?.addEventListener('DOMNodeInserted', (event) => {
-        const { currentTarget } = event;
-        const targetElement = currentTarget as HTMLElement;
-        targetElement?.scroll({ top: targetElement.scrollHeight, behavior: 'auto' });
-      });
-    }
-
-    emitViewLogs();
+    emitViewLogs(appId);
     return () => {
       stopLogs();
     }
-  }, []);
+  }, [appId]);
+
+
+  useEffect(() => {
+    if (ref.current && follow) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
+  }, [logs, follow]);
+
+  const handleChangeFollow = () => {
+    setFollow(!follow);
+  }
 
   useSocket({
     selector: { type: 'logs' },
@@ -39,16 +45,20 @@ export const LogsTerminal = () => {
 
   return (
     <div>
-      <h1>Logs</h1>
-      <div style={{ overflow: "overlay", maxHeight: "300px" }} ref={messageEl}>
-        <pre>
-          <code>
-            {logs.map((log) => (
-              <React.Fragment key={log.id}>{log.text}<br /></React.Fragment>
-            ))}
-          </code>
+        <label className="form-check form-switch mt-1" htmlFor="follow-logs">
+          <input
+            id="follow-logs"
+            className="form-check-input"
+            type="checkbox"
+            checked={follow}
+            onChange={handleChangeFollow} />
+          <span className="form-check-label">Follow logs</span>
+        </label>
+        <pre id='log-terminal' className={clsx('mt-2', styles.logTerminal)} ref={ref} >
+          {logs.map((log) => (
+            <React.Fragment key={log.id}>{log.text}<br /></React.Fragment>
+          ))}
         </pre>
-      </div>
     </div>
   );
 }
