@@ -82,13 +82,11 @@ const logs = async (appId: string): Promise<string> => {
   }
 
   command.push('logs --follow -n 25');
-  console.log(command.join(' '));
 
   return command.join(' ');
 }
 
 export const handleViewLogsEvent = async (socket: Socket, appId: string) => {
-  console.log('handleViewLogs');
   const logsCommand = await logs(appId);
   const ls = spawn('sh', ['-c', logsCommand]);
 
