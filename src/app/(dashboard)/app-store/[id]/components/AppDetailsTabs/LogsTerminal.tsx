@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useSocket } from '@/lib/socket/useSocket';
-import { emitViewLogs, stopLogs } from '@/lib/socket/app-logs';
+import { useSocketEmit } from '@/lib/socket/useSocketEmit';
 import clsx from 'clsx';
 import styles from './LogsTerminal.module.scss';
 
@@ -12,12 +12,7 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
   const [follow, setFollow] = useState<boolean>(true);
   const ref = useRef<HTMLPreElement>(null);
 
-  useEffect(() => {
-    emitViewLogs(appId);
-    return () => {
-      stopLogs();
-    }
-  }, [appId]);
+  useSocketEmit({ type: 'viewLogs', data: { appId }});
 
 
   useEffect(() => {
