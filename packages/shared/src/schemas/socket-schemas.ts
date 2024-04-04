@@ -33,6 +33,13 @@ export const socketEventSchema = z.union([
     data: z.array(z.string()),
   }),
   z.object({
+    type: z.literal('viewLogs'),
+    event: z.literal('viewLogs'),
+    data: z.object({
+      appId: z.string(),
+    }),
+  }),
+  z.object({
     type: z.literal('dummy'),
     event: z.literal('dummy_event'),
     data: z.object({
