@@ -56,7 +56,7 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
         }
 
         const property = selector.data?.property as keyof SocketEvent['data'];
-        if (selector.data && selector.data.value !== data[property]) {
+        if (selector.data && data && selector.data.value !== data[property]) {
           return;
         }
       }

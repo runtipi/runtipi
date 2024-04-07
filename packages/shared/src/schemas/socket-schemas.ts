@@ -30,7 +30,9 @@ export const socketEventSchema = z.union([
   z.object({
     type: z.literal('logs'),
     event: z.literal('logs'),
-    data: z.array(z.string()),
+    data: z.object({
+      lines: z.array(z.string())
+    })
   }),
   z.object({
     type: z.literal('viewLogs'),
@@ -38,6 +40,11 @@ export const socketEventSchema = z.union([
     data: z.object({
       appId: z.string(),
     }),
+  }),
+  z.object({
+    type: z.literal('stopLogs'),
+    event: z.literal('stopLogs'),
+    data: z.void(),
   }),
   z.object({
     type: z.literal('dummy'),
