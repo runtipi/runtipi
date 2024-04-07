@@ -4,7 +4,7 @@ import { Socket, io } from 'socket.io-client';
 
 type Props = {
   type: SocketEvent['type'];
-  data?: Extract<SocketEvent, { type: SocketEvent['type'] }>['data'];
+  data?: SocketEvent['data'];
   emitOnDisconnect?: SocketEvent['type'];
 };
 
@@ -15,6 +15,7 @@ export const useSocketEmit = (props: Props) => {
     const { hostname, protocol } = window.location;
 
     if (!socketRef.current) {
+      console.log('create socket');
       socketRef.current = io(`${protocol}//${hostname}`, { path: '/worker/socket.io' });
     }
 
@@ -22,16 +23,26 @@ export const useSocketEmit = (props: Props) => {
       socketRef.current.connect();
     }
 
-    console.log('emit', props.type, props.data);
-    socketRef.current?.emit(props.type, props.data);
+    socketRef.current.on('disconnect', () => {
+      console.log('disconnected')
+    });
+
+    socketRef.current.on('connect', () => {
+      console.log('connected');
+      try {
+        socketRef.current?.emit(props.type, props.data);
+      } catch (error) {
+        console.error('Error emitting socket event:', error);
+      }
+    });
 
     return () => {
-      console.log('disconnect', props.emitOnDisconnect, props.data)
+      console.log('return disconnect', props.emitOnDisconnect, props.data)
       if (props.emitOnDisconnect) {
         socketRef.current?.emit(props.emitOnDisconnect, props.data);
-      } else {
-        socketRef.current?.disconnect();
       }
+      
+      socketRef.current?.disconnect();
     };
 
   } , [props.data, props.emitOnDisconnect, props.type]);

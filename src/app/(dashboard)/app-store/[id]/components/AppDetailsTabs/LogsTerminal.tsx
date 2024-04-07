@@ -12,8 +12,7 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
   const [follow, setFollow] = useState<boolean>(true);
   const ref = useRef<HTMLPreElement>(null);
 
-  useSocketEmit({ type: 'viewLogs', data: { appId }});
-
+  useSocketEmit({ type: 'viewLogs', data: { appId }, emitOnDisconnect: 'stopLogs' });
 
   useEffect(() => {
     if (ref.current && follow) {
@@ -27,8 +26,9 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
 
   useSocket({
     selector: { type: 'logs' },
-    onEvent: (event, lines) => {
-      lines.forEach((line) => {
+    onEvent: (event, data) => {
+      console.log(data, event);
+      data.lines.forEach((line) => {
         setLogs(prevLogs => [
           ...prevLogs,
           // eslint-disable-next-line no-plusplus

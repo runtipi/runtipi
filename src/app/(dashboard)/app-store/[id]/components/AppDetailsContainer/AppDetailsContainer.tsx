@@ -216,7 +216,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
           />
         </div>
       </div>
-      <AppDetailsTabs info={app.info} />
+      <AppDetailsTabs info={app.info} status={optimisticStatus}/>
     </div>
   );
 };
