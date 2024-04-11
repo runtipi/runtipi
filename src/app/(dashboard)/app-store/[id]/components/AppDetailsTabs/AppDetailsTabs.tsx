@@ -1,5 +1,5 @@
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
@@ -15,9 +15,20 @@ interface IProps {
 
 export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
   const t = useTranslations();
+  const [tab, setTab] = useState("description");
+
+  useEffect(() => {
+    if (tab === 'logs' && status !== 'running') {
+      setTab('description');
+    }
+  }, [status, tab]);
+
+  const onTabChange = (value: string) => {
+    setTab(value);
+  }
 
   return (
-    <Tabs defaultValue="description" orientation="vertical" style={{ marginTop: -1 }}>
+    <Tabs value={tab} onValueChange={onTabChange} orientation="vertical" style={{ marginTop: -1 }}>
       <TabsList>
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
