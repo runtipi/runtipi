@@ -1,25 +1,20 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 
-export const readJsonFile = (path: string): unknown | null => {
+export const readJsonFile = async (path: string): Promise<unknown | null> => {
   try {
-    const rawFile = fs.readFileSync(path).toString();
+    const rawFile = await fs.promises.readFile(path);
 
-    return JSON.parse(rawFile);
+    return JSON.parse(rawFile.toString());
   } catch (e) {
     return null;
   }
 };
 
-export const readFile = (path: string): string => {
+export const readFile = async (path: string): Promise<string> => {
   try {
-    return fs.readFileSync(path).toString();
+    const file = await fs.promises.readFile(path);
+    return file.toString();
   } catch {
     return '';
   }
 };
-
-export const readdirSync = (path: string): string[] => fs.readdirSync(path);
-
-export const fileExists = (path: string): boolean => fs.existsSync(path);
-
-export const unlinkFile = (path: string) => fs.promises.unlink(path);

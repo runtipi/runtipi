@@ -1,6 +1,7 @@
 import { getUserFromCookie } from '@/server/common/session.helpers';
-import fs from 'fs-extra';
 import { handleApiError } from '@/actions/utils/handle-api-error';
+import fs from 'fs';
+import { pathExists } from '@runtipi/shared/node';
 import { DATA_DIR } from '../../../config/constants';
 
 export async function GET() {
@@ -10,7 +11,7 @@ export async function GET() {
     if (user?.operator) {
       const filePath = `${DATA_DIR}/traefik/tls/cert.pem`;
 
-      if (await fs.pathExists(filePath)) {
+      if (await pathExists(filePath)) {
         const file = await fs.promises.readFile(filePath);
 
         return new Response(file, {
