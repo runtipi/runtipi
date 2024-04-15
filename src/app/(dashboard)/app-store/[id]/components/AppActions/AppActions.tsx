@@ -94,9 +94,7 @@ export const AppActions: React.FC<IProps> = ({
   const RemoveButton = <ActionButton key="remove" IconComponent={IconTrash} onClick={onUninstall} title={t('APP_ACTION_REMOVE')} color="danger" />;
   const SettingsButton = <ActionButton key="settings" IconComponent={IconSettings} onClick={onUpdateSettings} title={t('APP_ACTION_SETTINGS')} />;
   const StopButton = <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={onStop} title={t('APP_ACTION_STOP')} color="danger" />;
-  const restartButton = (
-    <ActionButton key="restart" IconComponent={IconRotateClockwise} onClick={onRestart} title={t('APP_ACTION_RESTART')} color="warning" />
-  );
+  const restartButton = <ActionButton key="restart" IconComponent={IconRotateClockwise} onClick={onRestart} title={t('APP_ACTION_RESTART')} />;
   const LoadingButtion = <ActionButton key="loading" loading color="success" title={t('APP_ACTION_LOADING')} />;
   const CancelButton = <ActionButton key="cancel" IconComponent={IconX} onClick={onCancel} title={t('APP_ACTION_CANCEL')} />;
   const InstallButton = <ActionButton key="install" onClick={onInstall} title={t('APP_ACTION_INSTALL')} color="success" />;

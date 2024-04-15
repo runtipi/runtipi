@@ -24,7 +24,7 @@ export const RestartModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfir
           <span className="text-muted">{t('APP_RESTART_FORM_SUBTITLE')}</span>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={onConfirm} className="btn-warning">
+          <Button onClick={onConfirm} className="btn-danger">
             {t('APP_RESTART_FORM_SUBMIT')}
           </Button>
         </DialogFooter>
