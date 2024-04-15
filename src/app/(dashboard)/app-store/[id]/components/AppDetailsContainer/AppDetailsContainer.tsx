@@ -6,6 +6,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { installAppAction } from '@/actions/app-actions/install-app-action';
 import { uninstallAppAction } from '@/actions/app-actions/uninstall-app-action';
 import { stopAppAction } from '@/actions/app-actions/stop-app-action';
+import { restartAppAction } from '@/actions/app-actions/restart-app-action';
 import { startAppAction } from '@/actions/app-actions/start-app-action';
 import { updateAppAction } from '@/actions/app-actions/update-app-action';
 import { updateAppConfigAction } from '@/actions/app-actions/update-app-config-action';
@@ -24,7 +25,6 @@ import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal'
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
 import { ResetAppModal } from '../ResetAppModal';
-import { restartAppAction } from '@/actions/app-actions/restart-app-action';
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
