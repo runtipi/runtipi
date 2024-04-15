@@ -17,12 +17,14 @@ import { resetAppAction } from '@/actions/app-actions/reset-app-action';
 import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { InstallModal } from '../InstallModal';
 import { StopModal } from '../StopModal';
+import { RestartModal } from '../RestartModal';
 import { UninstallModal } from '../UninstallModal';
 import { UpdateModal } from '../UpdateModal';
 import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal';
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
 import { ResetAppModal } from '../ResetAppModal';
+import { restartAppAction } from '@/actions/app-actions/restart-app-action';
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
@@ -39,6 +41,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
   const installDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
+  const restartDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
   const updateSettingsDisclosure = useDisclosure();
   const resetAppDisclosure = useDisclosure();
@@ -70,6 +73,16 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
     onExecute: () => {
       stopDisclosure.close();
       setOptimisticStatus('stopping');
+    },
+  });
+
+  const restartMutation = useAction(restartAppAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      restartDisclosure.close();
+      setOptimisticStatus('restarting');
     },
   });
 
@@ -162,6 +175,12 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
         onClose={stopDisclosure.close}
         info={app.info}
       />
+      <RestartModal
+        onConfirm={() => restartMutation.execute({ id: app.id })}
+        isOpen={restartDisclosure.isOpen}
+        onClose={restartDisclosure.close}
+        info={app.info}
+      />
       <UninstallModal
         onConfirm={() => uninstallMutation.execute({ id: app.id })}
         isOpen={uninstallDisclosure.isOpen}
@@ -206,6 +225,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
             onUpdate={updateDisclosure.open}
             onUpdateSettings={updateSettingsDisclosure.open}
             onStop={stopDisclosure.open}
+            onRestart={restartDisclosure.open}
             onCancel={stopDisclosure.open}
             onUninstall={uninstallDisclosure.open}
             onInstall={installDisclosure.open}

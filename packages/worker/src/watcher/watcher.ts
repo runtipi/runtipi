@@ -4,7 +4,7 @@ import { AppExecutors, RepoExecutors } from '@/services';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 
-const { installApp, resetApp, startApp, stopApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
+const { installApp, resetApp, startApp, stopApp, restartApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
 const { cloneRepo, pullRepo } = new RepoExecutors();
 
 const runCommand = async (jobData: unknown) => {
@@ -42,6 +42,10 @@ const runCommand = async (jobData: unknown) => {
 
     if (data.command === 'reset') {
       ({ success, message } = await resetApp(data.appid, data.form));
+    }
+
+    if (data.command === 'restart') {
+      ({ success, message } = await restartApp(data.appid, data.form));
     }
 
     if (data.command === 'generate_env') {

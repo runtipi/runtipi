@@ -421,6 +421,32 @@ export class AppServiceClass {
   };
 
   /**
+   * Restart App with the specified ID
+   *
+   * @param {string} appId - ID of the app to reset
+   * @throws {Error} - If the app is not found or if the update process fails.
+   */
+  public restartApp = async (appId: string) => {
+    const app = await this.getApp(appId);
+
+    this.queries.updateApp(appId, { status: 'restarting' });
+
+    const eventDispatcher = new EventDispatcher('restartApp');
+
+    eventDispatcher
+      .dispatchEventAsync({ type: 'app', command: 'restart', appid: appId, form: castAppConfig(app.config) })
+      .then(({ stdout, success }) => {
+        if (success) {
+          this.queries.updateApp(appId, { status: 'running' });
+        } else {
+          this.queries.updateApp(appId, { status: 'stopped' });
+          Logger.error(`Failed to restart app ${appId}: ${stdout}`);
+        }
+        eventDispatcher.close();
+      });
+  };
+
+  /**
    * Returns the app with the provided id. If the app is not found, it returns a default app object
    *
    * @param {string} id - The id of the app to retrieve

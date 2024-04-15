@@ -191,6 +191,52 @@ export class AppExecutors {
     }
   };
 
+  public restartApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
+    try {
+      const { appDirPath } = this.getAppPaths(appId);
+      const configJsonPath = path.join(appDirPath, 'config.json');
+      const isActualApp = await pathExists(configJsonPath);
+
+      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+
+      this.logger.info(`Restarting app ${appId}`);
+
+      if (!isActualApp) {
+        return { success: true, message: `App ${appId} is not an app. Skipping...` };
+      }
+
+      this.logger.info(`Stopping app ${appId}`);
+
+      await this.ensureAppDir(appId);
+
+      if (!skipEnvGeneration) {
+        this.logger.info(`Regenerating app.env file for app ${appId}`);
+        await generateEnvFile(appId, config);
+      }
+
+      await compose(appId, 'rm --force --stop');
+
+      this.logger.info(`Starting app ${appId}`);
+
+      if (!skipEnvGeneration) {
+        this.logger.info(`Regenerating app.env file for app ${appId}`);
+        await generateEnvFile(appId, config);
+      }
+
+      await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
+
+      this.logger.info(`App ${appId} started`);
+
+      this.logger.info(`App ${appId} restarted`);
+
+      SocketManager.emit({ type: 'app', event: 'restart_success', data: { appId } });
+
+      return { success: true, message: `App ${appId} restarted successfully` };
+    } catch (err) {
+      return this.handleAppError(err, appId, 'restart_error');
+    }
+  };
+
   public startApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
