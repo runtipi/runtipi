@@ -421,29 +421,37 @@ export class AppServiceClass {
   };
 
   /**
-   * Restart App with the specified ID
+   * Restarts a running application by its id
    *
-   * @param {string} appId - ID of the app to reset
-   * @throws {Error} - If the app is not found or if the update process fails.
+   * @param {string} id - The id of the application to restart
+   * @throws {Error} - If the app cannot be found or if restarting the app failed
    */
-  public restartApp = async (appId: string) => {
-    const app = await this.getApp(appId);
+  public restartApp = async (id: string) => {
+    const app = await this.queries.getApp(id);
 
-    this.queries.updateApp(appId, { status: 'restarting' });
+    if (!app) {
+      throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id });
+    }
+
+    // Run script
+    await this.queries.updateApp(id, { status: 'restarting' });
 
     const eventDispatcher = new EventDispatcher('restartApp');
-
     eventDispatcher
-      .dispatchEventAsync({ type: 'app', command: 'restart', appid: appId, form: castAppConfig(app.config) })
-      .then(({ stdout, success }) => {
+      .dispatchEventAsync({ type: 'app', command: 'restart', appid: id, form: castAppConfig(app.config) })
+      .then(({ success, stdout }) => {
         if (success) {
-          this.queries.updateApp(appId, { status: 'running' });
+          this.queries.updateApp(id, { status: 'running' });
         } else {
-          this.queries.updateApp(appId, { status: 'stopped' });
-          Logger.error(`Failed to restart app ${appId}: ${stdout}`);
+          Logger.error(`Failed to restart app ${id}: ${stdout}`);
+          this.queries.updateApp(id, { status: 'running' });
         }
+
         eventDispatcher.close();
       });
+
+    const updatedApp = await this.queries.getApp(id);
+    return updatedApp;
   };
 
   /**
