@@ -39,8 +39,6 @@ You can try out a demo of Tipi at [demo.runtipi.io](https://demo.runtipi.io) usi
 
 ## 📚 Documentation
 
-For a detailed guide on how to install Tipi. This amazing article by @kycfree [Running a Home Server with Tipi](https://kyc3.life/running-a-home-server-with-tipi/)
-
 You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.runtipi.io/docs/introduction?utm_source=github&utm_medium=README&utm_campaign=main-repo-docs)
 
 ## ❤️ Contributing
