@@ -30,19 +30,19 @@
     "vitest": "^1.5.0"
   },
   "dependencies": {
-    "@hono/node-server": "^1.10.0",
+    "@hono/node-server": "^1.11.0",
     "@runtipi/postgres-migrations": "^5.3.0",
     "@runtipi/shared": "workspace:^",
-    "@sentry/integrations": "^7.110.1",
-    "@sentry/node": "^7.110.1",
-    "bullmq": "^5.7.1",
+    "@sentry/integrations": "^7.111.0",
+    "@sentry/node": "^7.111.0",
+    "bullmq": "^5.7.2",
     "dotenv": "^16.4.5",
-    "hono": "^4.2.4",
+    "hono": "^4.2.5",
     "ioredis": "^5.4.1",
     "pg": "^8.11.5",
     "socket.io": "^4.7.5",
     "systeminformation": "^5.22.7",
     "web-push": "^3.6.7",
-    "zod": "^3.22.4"
+    "zod": "^3.22.5"
   }
 }
