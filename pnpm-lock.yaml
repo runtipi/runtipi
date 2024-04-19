@@ -370,8 +370,8 @@ importers:
   packages/worker:
     dependencies:
       '@hono/node-server':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@runtipi/postgres-migrations':
         specifier: ^5.3.0
         version: 5.3.0
@@ -1692,8 +1692,8 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@hono/node-server@1.10.0:
-    resolution: {integrity: sha512-XXFmIT4swUm3gG9yPU/HMAqHAHTP/Wr2mqgJakOFQhbbWipomaLu7ys0h9KrgF9032j18efBYk2aHz2SfgDbTA==}
+  /@hono/node-server@1.10.1:
+    resolution: {integrity: sha512-5BKW25JH5PQKPDkTcIgv3yNUPtOAbnnjFFgWvIxxAY/B/ZNeYjjWoAeDmqhIiCgOAJ3Tauuw+0G+VainhuZRYQ==}
     engines: {node: '>=18.14.1'}
     dev: false
 
