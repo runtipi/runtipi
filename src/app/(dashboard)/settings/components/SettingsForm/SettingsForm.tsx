@@ -16,7 +16,7 @@ export type SettingsFormValues = {
   internalIp?: string;
   appsRepoUrl?: string;
   domain?: string;
-  storagePath?: string;
+  appDataPath?: string;
   localDomain?: string;
   guestDashboard?: boolean;
   allowAutoThemes?: boolean;
@@ -246,7 +246,7 @@ export const SettingsForm = (props: IProps) => {
         </div>
         <div className="mb-3">
           <Input
-            {...register('storagePath')}
+            {...register('appDataPath')}
             label={
               <>
                 {t('SETTINGS_GENERAL_STORAGE_PATH')}
@@ -256,7 +256,7 @@ export const SettingsForm = (props: IProps) => {
                 <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
               </>
             }
-            error={errors.storagePath?.message}
+            error={errors.appDataPath?.message}
             placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
           />
         </div>

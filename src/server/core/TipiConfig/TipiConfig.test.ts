@@ -168,51 +168,51 @@ describe('Test: setSettings', () => {
     expect(error).toBeDefined();
   });
 
-  it('should replace empty string with undefined if storagePath is empty', async () => {
+  it('should replace empty string with undefined if appDataPath is empty', async () => {
     // arrange
-    const fakeSettings = { storagePath: '' };
+    const fakeSettings = { appDataPath: '' };
     const tipiConf = new TipiConfigClass(0);
 
     // act
     await tipiConf.setSettings(fakeSettings);
 
     // assert
-    expect(tipiConf.getConfig().storagePath).toBeUndefined();
+    expect(tipiConf.getConfig().appDataPath).toBeUndefined();
   });
 
-  it('should trim storagePath if it is not empty', async () => {
+  it('should trim appDataPath if it is not empty', async () => {
     // arrange
-    const fakeSettings = { storagePath: ' /tmp ' };
+    const fakeSettings = { appDataPath: ' /tmp ' };
     const tipiConf = new TipiConfigClass(0);
 
     // act
     await tipiConf.setSettings(fakeSettings);
 
     // assert
-    expect(tipiConf.getConfig().storagePath).toBe('/tmp');
+    expect(tipiConf.getConfig().appDataPath).toBe('/tmp');
   });
 
-  it('should trim storagePath and return undefined if it is empty', async () => {
+  it('should trim appDataPath and return undefined if it is empty', async () => {
     // arrange
-    const fakeSettings = { storagePath: '   ' };
+    const fakeSettings = { appDataPath: '   ' };
     const tipiConf = new TipiConfigClass();
 
     // act
     await tipiConf.setSettings(fakeSettings);
 
     // assert
-    expect(tipiConf.getConfig().storagePath).toBeUndefined();
+    expect(tipiConf.getConfig().appDataPath).toBeUndefined();
   });
 
-  it('should remove all whitespaces from storagePath', async () => {
+  it('should remove all whitespaces from appDataPath', async () => {
     // arrange
-    const fakeSettings = { storagePath: ' /tmp /test ' };
+    const fakeSettings = { appDataPath: ' /tmp /test ' };
     const tipiConf = new TipiConfigClass();
 
     // act
     await tipiConf.setSettings(fakeSettings);
 
     // assert
-    expect(tipiConf.getConfig().storagePath).toBe('/tmp/test');
+    expect(tipiConf.getConfig().appDataPath).toBe('/tmp/test');
   });
 });

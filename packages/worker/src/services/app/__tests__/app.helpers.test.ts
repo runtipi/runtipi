@@ -23,7 +23,7 @@ describe('app helpers', () => {
       expect(envmap.get('APP_PORT')).toBe(String(appConfig.port));
       expect(envmap.get('APP_ID')).toBe(appConfig.id);
       expect(envmap.get('ROOT_FOLDER_HOST')).toBe(process.env.ROOT_FOLDER_HOST);
-      expect(envmap.get('APP_DATA_DIR')).toBe(`${process.env.STORAGE_PATH}/app-data/${appConfig.id}`);
+      expect(envmap.get('APP_DATA_DIR')).toBe(`${process.env.RUNTIPI_APP_DATA_PATH}/app-data/${appConfig.id}`);
       expect(envmap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
       expect(envmap.get('APP_HOST')).toBe(`localhost`);
       expect(envmap.get('APP_PROTOCOL')).toBe(`http`);
