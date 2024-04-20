@@ -86,7 +86,7 @@ const logs = async (appId: string): Promise<string> => {
   return command.join(' ');
 }
 
-export const handleViewLogsEvent = async (socket: Socket, appId: string) => {
+export const handleViewLogsEvent = async (socket: Socket, { appId } : { appId: string }) => {
   const logsCommand = await logs(appId);
   const ls = spawn('sh', ['-c', logsCommand]);
 
@@ -105,7 +105,6 @@ export const handleViewLogsEvent = async (socket: Socket, appId: string) => {
 
   ls.stdout.on('data', (data) => {
     let lines = data.toString().split(/(?:\r\n|\r|\n)/g).filter(Boolean);
-    SocketManager.emit({ type: 'logs', event: 'logs', data: lines });
-    socket.emit('logs', data.toString().trim());
+    SocketManager.emit({ type: 'logs', event: 'logs', data: { lines } });
   });
 }
