@@ -17,7 +17,7 @@ describe('Test: SettingsForm', () => {
       domain: faker.internet.domainName(),
       internalIp: faker.internet.ipv4(),
       appsRepoUrl: faker.internet.url(),
-      storagePath: faker.system.directoryPath(),
+      appDataPath: faker.system.directoryPath(),
     };
     render(<SettingsForm onSubmit={jest.fn()} initalValues={initialValues} />);
 
@@ -28,7 +28,7 @@ describe('Test: SettingsForm', () => {
     expect(screen.getByDisplayValue(initialValues.domain)).toBeInTheDocument();
     expect(screen.getByDisplayValue(initialValues.internalIp)).toBeInTheDocument();
     expect(screen.getByDisplayValue(initialValues.appsRepoUrl)).toBeInTheDocument();
-    expect(screen.getByDisplayValue(initialValues.storagePath)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(initialValues.appDataPath)).toBeInTheDocument();
   });
 
   it('should put submit errors in the fields', async () => {
@@ -38,7 +38,7 @@ describe('Test: SettingsForm', () => {
       domain: 'invalid domain',
       internalIp: 'invalid internal ip',
       appsRepoUrl: 'invalid url',
-      storagePath: 'invalid path',
+      appDataPath: 'invalid path',
       localDomain: 'invalid local domain',
     };
     render(<SettingsForm onSubmit={jest.fn()} submitErrors={submitErrors} />);
@@ -50,7 +50,7 @@ describe('Test: SettingsForm', () => {
     expect(screen.getByText(submitErrors.domain)).toBeInTheDocument();
     expect(screen.getByText(submitErrors.internalIp)).toBeInTheDocument();
     expect(screen.getByText(submitErrors.appsRepoUrl)).toBeInTheDocument();
-    expect(screen.getByText(submitErrors.storagePath)).toBeInTheDocument();
+    expect(screen.getByText(submitErrors.appDataPath)).toBeInTheDocument();
     expect(screen.getByText(submitErrors.localDomain)).toBeInTheDocument();
   });
 

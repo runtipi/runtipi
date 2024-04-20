@@ -36,7 +36,7 @@ const getEntropy = async (name: string, length: number) => {
  * @throws Will throw an error if the app has an invalid config.json file or if a required variable is missing.
  */
 export const generateEnvFile = async (appId: string, config: Record<string, unknown>) => {
-  const { internalIp, storagePath, rootFolderHost } = getEnv();
+  const { internalIp, appDataPath, rootFolderHost } = getEnv();
 
   const configFile = await fs.promises.readFile(path.join(DATA_DIR, 'apps', sanitizePath(appId), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile.toString()));
@@ -52,7 +52,7 @@ export const generateEnvFile = async (appId: string, config: Record<string, unkn
   envMap.set('APP_PORT', String(parsedConfig.data.port));
   envMap.set('APP_ID', appId);
   envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
-  envMap.set('APP_DATA_DIR', path.join(storagePath, 'app-data', sanitizePath(appId)));
+  envMap.set('APP_DATA_DIR', path.join(appDataPath, 'app-data', sanitizePath(appId)));
 
   const existingEnvMap = await getAppEnvMap(appId);
 

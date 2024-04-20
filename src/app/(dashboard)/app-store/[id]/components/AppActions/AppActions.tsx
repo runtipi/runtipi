@@ -1,5 +1,4 @@
 import {
-  Icon,
   IconDownload,
   IconExternalLink,
   IconLock,
@@ -42,7 +41,7 @@ interface IProps {
 }
 
 interface BtnProps {
-  IconComponent?: Icon;
+  IconComponent?: typeof IconDownload;
   onClick?: () => void;
   width?: number | null;
   title?: string;

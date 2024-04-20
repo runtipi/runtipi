@@ -23,7 +23,7 @@ type EnvKeys =
   | 'NGINX_PORT'
   | 'NGINX_PORT_SSL'
   | 'DOMAIN'
-  | 'STORAGE_PATH'
+  | 'RUNTIPI_APP_DATA_PATH'
   | 'POSTGRES_PORT'
   | 'POSTGRES_HOST'
   | 'POSTGRES_DBNAME'
@@ -154,7 +154,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('ARCHITECTURE', getArchitecture());
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
-  envMap.set('STORAGE_PATH', data.storagePath || envMap.get('STORAGE_PATH') || rootFolderHost);
+  envMap.set('RUNTIPI_APP_DATA_PATH', data.appDataPath || envMap.get('APP_DATA_PATH') || rootFolderHost);
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
