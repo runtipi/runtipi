@@ -22,6 +22,12 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
     }
   }, [logs, follow, wrapLines]);
 
+  useEffect(() => {
+    if (logs.length > maxLines) {
+      setLogs(logs.slice(logs.length - maxLines));
+    }
+  }, [logs, maxLines]);
+
   useSocket({
     selector: { type: 'logs' },
     onEvent: (event, data) => {
@@ -30,7 +36,7 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
           ...prevLogs,
           // eslint-disable-next-line no-plusplus
           { id: nextId++, text: line.trim() }
-        ])
+        ]);
       });
     },
   });
@@ -68,7 +74,7 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
                 id="max-lines"
                 type="number"
                 className="form-control"
-                value="300"
+                value={maxLines}
                 onChange={(e) => setMaxLines(parseInt(e.target.value, 10))} />
             </div>
           </div>
