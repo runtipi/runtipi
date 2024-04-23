@@ -91,7 +91,7 @@
     "@babel/core": "^7.24.4",
     "@faker-js/faker": "^8.4.1",
     "@playwright/test": "^1.43.1",
-    "@testing-library/dom": "^9.3.4",
+    "@testing-library/dom": "^10.0.0",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.2",
     "@testing-library/user-event": "^14.5.2",
