@@ -24,10 +24,27 @@ test('user can activate the guest dashboard and see it when logged out', async (
 
 test('logged out users can see the apps on the guest dashboard', async ({ browser }) => {
   await setSettings({ guestDashboard: true });
+  await db.insert(appTable).values({
+    config: {},
+    isVisibleOnGuestDashboard: true,
+    id: 'hello-world',
+    exposed: true,
+    exposedLocal: true,
+    domain: 'duckduckgo.com',
+    status: 'running',
+    openPort: true,
+  });
   await db
     .insert(appTable)
-    .values({ config: {}, isVisibleOnGuestDashboard: true, id: 'hello-world', exposed: true, domain: 'duckduckgo.com', status: 'running' });
-  await db.insert(appTable).values({ config: {}, isVisibleOnGuestDashboard: false, id: 'actual-budget', exposed: false, status: 'running' });
+    .values({
+      config: {},
+      openPort: true,
+      isVisibleOnGuestDashboard: false,
+      id: 'actual-budget',
+      exposed: false,
+      exposedLocal: false,
+      status: 'running',
+    });
 
   const context = await browser.newContext();
   const page = await context.newPage();
