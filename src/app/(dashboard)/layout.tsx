@@ -6,11 +6,13 @@ import semver from 'semver';
 import clsx from 'clsx';
 import { appService } from '@/server/services/apps/apps.service';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import { isInstanceInsecure } from '@/server/utils/network';
 import { Header } from './components/Header';
 import { PageTitle } from './components/PageTitle';
 import styles from './layout.module.scss';
 import { LayoutActions } from './components/LayoutActions/LayoutActions';
 import { Welcome } from './components/Welcome/Welcome';
+import { AtRiskBanner } from './components/AtRiskBanner/AtRiskBanner';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getUserFromCookie();
@@ -50,7 +52,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         </div>
         <div className="page-body">
-          <div className="container-xl">{children}</div>
+          <div className="container-xl">
+            {children}
+            {isInstanceInsecure() && <AtRiskBanner isInsecure />}
+          </div>
         </div>
       </div>
     </div>
