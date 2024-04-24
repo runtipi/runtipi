@@ -31,7 +31,7 @@ export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, on
               onSubmit={onSubmit}
               formFields={info.form_fields}
               info={info}
-              initalValues={{ ...config }}
+              initialValues={{ ...config }}
               onReset={onReset}
               status={status}
             />
