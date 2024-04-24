@@ -94,7 +94,14 @@ describe('Test: InstallForm', () => {
 
     const onSubmit = jest.fn();
 
-    render(<InstallForm info={fromPartial({})} formFields={formFields} onSubmit={onSubmit} initalValues={{ 'test-env': 'test', 'test-select': selectValue, 'test-boolean': true }} />);
+    render(
+      <InstallForm
+        info={fromPartial({})}
+        formFields={formFields}
+        onSubmit={onSubmit}
+        initialValues={{ 'test-env': 'test', 'test-select': selectValue, 'test-boolean': true }}
+      />,
+    );
 
     expect(screen.getByRole('textbox', { name: 'test-env' })).toHaveValue('test');
     expect(screen.getByRole('combobox', { name: 'test-select' })).toHaveTextContent('Should appear');

@@ -1,1 +1,2 @@
-export { InstallForm, type FormValues } from './InstallForm';
+export { InstallForm } from './InstallForm';
+export { type FormValues } from './InstallForm.types';
