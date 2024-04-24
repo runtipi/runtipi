@@ -1,4 +1,4 @@
-export interface composeData {
+export interface ComposeData {
   services: {
     [containerName: string]: {
       image: string;
