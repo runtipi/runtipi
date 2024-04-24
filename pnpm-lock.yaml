@@ -80,6 +80,9 @@ importers:
       geist:
         specifier: ^1.3.0
         version: 1.3.0(next@14.2.3)
+      ipaddr.js:
+        specifier: ^2.2.0
+        version: 2.2.0
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -6976,6 +6979,11 @@ packages:
       standard-as-callback: 2.1.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /ipaddr.js@2.2.0:
+    resolution: {integrity: sha512-Ag3wB2o37wslZS19hZqorUnrnzSkpOVy+IiiDEiTqNubEYpYuHWIf6K4psgN2ZWKExS4xhVCrRVfb/wfW8fWJA==}
+    engines: {node: '>= 10'}
     dev: false
 
   /is-alphabetical@2.0.1:
