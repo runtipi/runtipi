@@ -12,6 +12,7 @@ import { pathExists, execAsync } from '@runtipi/shared/node';
 import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 import { getEnv } from '@/lib/environment';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { getMainEnvMap } from '@/lib/system/system.helpers';
 
 /**
  *  This function generates a random string of the provided length by using the SHA-256 hash algorithm.
@@ -102,6 +103,11 @@ export const generateEnvFile = async (appId: string, form: AppEventForm) => {
     envMap.set('APP_DOMAIN', form.domain);
     envMap.set('APP_PROTOCOL', 'https');
     envMap.set('APP_HOST', form.domain);
+  } else if (form.exposedLocal && !form.openPort) {
+    const mainEnvMap = await getMainEnvMap();
+    envMap.set('APP_DOMAIN', `${parsedConfig.data.id}.${mainEnvMap.get('LOCAL_DOMAIN')}`);
+    envMap.set('APP_PROTOCOL', 'https');
+    envMap.set('APP_HOST', internalIp);
   } else {
     envMap.set('APP_DOMAIN', `${internalIp}:${parsedConfig.data.port}`);
     envMap.set('APP_HOST', internalIp);
