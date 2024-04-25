@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   runtipi-reverse-proxy:
     container_name: runtipi-reverse-proxy
