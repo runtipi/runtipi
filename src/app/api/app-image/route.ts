@@ -28,7 +28,7 @@ export async function GET(request: Request) {
 
     const file = fs.readFileSync(filePath);
 
-    return new Response(file, { headers: { 'content-type': 'image/jpeg', 'cache-control': 'public, max-age=31536000' } });
+    return new Response(file, { headers: { 'content-type': 'image/jpeg', 'cache-control': 'public, max-age=86400' } });
   } catch (error) {
     return handleApiError(error);
   }
