@@ -346,8 +346,17 @@ export class AppExecutors {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDirPath, repoPath } = this.getAppPaths(appId);
-      const oldAppImage = YAML.parse(fs.readFileSync(`${appDirPath}/docker-compose.yml`, 'utf8'))
-        .services.appId.image;
+
+      let oldAppImage = '';
+      let deleteOldImage = true;
+
+      try {
+        oldAppImage = YAML.parse(fs.readFileSync(`${appDirPath}/docker-compose.yml`, 'utf8'))
+          .services.appId.image;
+      } catch (e) {
+        this.logger.error('Cannot get old app image!');
+        deleteOldImage = false;
+      }
 
       this.logger.info(`Updating app ${appId}`);
       await this.ensureAppDir(appId, form);
@@ -372,9 +381,11 @@ export class AppExecutors {
 
       await compose(appId, 'pull');
 
-      await execAsync(
-        `curl -X DELETE --unix-socket /var/run/docker.sock "http://docker/images/${oldAppImage}"`,
-      );
+      if (deleteOldImage) {
+        await execAsync(
+          `curl -X DELETE --unix-socket /var/run/docker.sock "http://docker/images/${oldAppImage}"`,
+        );
+      }
 
       SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
 
