@@ -1,4 +1,4 @@
-import { InferModel } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { pgTable, pgEnum, integer, varchar, timestamp, serial, boolean, text, jsonb } from 'drizzle-orm/pg-core';
 
 const updateStatusEnum = pgEnum('update_status_enum', ['SUCCESS', 'FAILED']);
@@ -37,8 +37,8 @@ export const userTable = pgTable('user', {
   salt: text('salt'),
   locale: varchar('locale').default('en').notNull(),
 });
-export type User = InferModel<typeof userTable>;
-export type NewUser = InferModel<typeof userTable, 'insert'>;
+export type User = InferSelectModel<typeof userTable>;
+export type NewUser = InferInsertModel<typeof userTable>;
 
 export const update = pgTable('update', {
   id: serial('id').notNull(),
@@ -58,6 +58,8 @@ export const appTable = pgTable('app', {
   updatedAt: timestamp('updatedAt', { mode: 'string' }).defaultNow().notNull(),
   version: integer('version').default(1).notNull(),
   exposed: boolean('exposed').notNull(),
+  exposedLocal: boolean('exposed_local').notNull(),
+  openPort: boolean('open_port').notNull(),
   domain: varchar('domain'),
   isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
 });
@@ -75,6 +77,6 @@ export const linkTable = pgTable('link', {
     .references(() => userTable.id, { onDelete: 'cascade' }),
 });
 
-export type App = InferModel<typeof appTable>;
-export type NewApp = InferModel<typeof appTable, 'insert'>;
-export type Link = InferModel<typeof linkTable>;
+export type App = InferSelectModel<typeof appTable>;
+export type NewApp = InferInsertModel<typeof appTable>;
+export type Link = InferSelectModel<typeof linkTable>;

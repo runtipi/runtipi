@@ -4,19 +4,13 @@ import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import { Database, db } from '@/server/db';
-import { AppInfo } from '@runtipi/shared';
+import { AppInfo, AppEventFormInput } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { checkAppRequirements, getAvailableApps as slow_getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
-
-type AlwaysFields = {
-  isVisibleOnGuestDashboard?: boolean;
-  domain?: string;
-  exposed?: boolean;
-};
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.id.localeCompare(b.id);
 const filterApp = (app: AppInfo): boolean => {
@@ -162,7 +156,7 @@ export class AppServiceClass {
    * @param {string} id - The id of the app to be installed
    * @param {Record<string, string>} form - The form data submitted by the user
    */
-  public installApp = async (id: string, form: Record<string, unknown> & AlwaysFields) => {
+  public installApp = async (id: string, form: AppEventFormInput) => {
     const app = await this.queries.getApp(id);
 
     const { exposed, domain, isVisibleOnGuestDashboard } = form;
@@ -215,6 +209,8 @@ export class AppServiceClass {
         version: appInfo.tipi_version,
         exposed: exposed || false,
         domain: domain || null,
+        openPort: form.openPort || false,
+        exposedLocal: form.exposedLocal || false,
         isVisibleOnGuestDashboard,
       });
 
@@ -275,7 +271,7 @@ export class AppServiceClass {
    * @param {string} id - The ID of the app to update.
    * @param {object} form - The new configuration of the app.
    */
-  public updateAppConfig = async (id: string, form: Record<string, unknown> & AlwaysFields) => {
+  public updateAppConfig = async (id: string, form: AppEventFormInput) => {
     const { exposed, domain } = form;
 
     if (exposed && !domain) {
@@ -321,6 +317,8 @@ export class AppServiceClass {
     if (success) {
       const updatedApp = await this.queries.updateApp(id, {
         exposed: exposed || false,
+        exposedLocal: form.exposedLocal || false,
+        openPort: form.openPort || false,
         domain: domain || null,
         config: form,
         isVisibleOnGuestDashboard: form.isVisibleOnGuestDashboard,

@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   runtipi-reverse-proxy:
     container_name: runtipi-reverse-proxy
@@ -81,14 +79,14 @@ services:
       - .env
     volumes:
       # Data
-      - ./media:/data/media
-      - ./state:/data/state
-      - ./repos:/data/repos
-      - ./apps:/data/apps
-      - ./logs:/data/logs
-      - ./traefik:/data/traefik
-      - ./user-config:/data/user-config
-      - ${STORAGE_PATH:-$PWD}/app-data:/app-data
+      - ${RUNTIPI_MEDIA_PATH:-.}/media:/data/media
+      - ${RUNTIPI_STATE_PATH:-.}/state:/data/state
+      - ${RUNTIPI_REPOS_PATH:-.}/repos:/data/repos
+      - ${RUNTIPI_APPS_PATH:-.}/apps:/data/apps
+      - ${RUNTIPI_LOGS_PATH:-.}/logs:/data/logs
+      - ${RUNTIPI_TRAEFIK_PATH:-.}/traefik:/data/traefik
+      - ${RUNTIPI_USER_CONFIG_PATH:-.}/user-config:/data/user-config
+      - ${RUNTIPI_APP_DATA_PATH:-.}/app-data:/app-data
       # Static
       - ./.env:/data/.env
       - /var/run/docker.sock:/var/run/docker.sock:ro

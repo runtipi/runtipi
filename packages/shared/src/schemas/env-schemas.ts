@@ -20,7 +20,7 @@ export const envSchema = z.object({
   appsRepoUrl: z.string().url().trim(),
   domain: z.string().trim(),
   localDomain: z.string().trim(),
-  storagePath: z
+  appDataPath: z
     .string()
     .trim()
     .optional()
@@ -97,7 +97,7 @@ export const settingsSchema = envSchema
     postgresPort: true,
     appsRepoUrl: true,
     domain: true,
-    storagePath: true,
+    appDataPath: true,
     localDomain: true,
     demoMode: true,
     guestDashboard: true,

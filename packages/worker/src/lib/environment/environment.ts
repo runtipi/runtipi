@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const environmentSchema = z
   .object({
-    STORAGE_PATH: z.string(),
+    RUNTIPI_APP_DATA_PATH: z.string(),
     ROOT_FOLDER_HOST: z.string(),
     APPS_REPO_ID: z.string(),
     ARCHITECTURE: z.enum(['arm64', 'amd64']),
@@ -26,7 +26,7 @@ const environmentSchema = z
   })
   .transform((env) => {
     const {
-      STORAGE_PATH,
+      RUNTIPI_APP_DATA_PATH,
       ARCHITECTURE,
       ROOT_FOLDER_HOST,
       APPS_REPO_ID,
@@ -44,7 +44,7 @@ const environmentSchema = z
     } = env;
 
     return {
-      storagePath: STORAGE_PATH,
+      appDataPath: RUNTIPI_APP_DATA_PATH,
       rootFolderHost: ROOT_FOLDER_HOST,
       appsRepoId: APPS_REPO_ID,
       arch: ARCHITECTURE,
@@ -63,4 +63,3 @@ const environmentSchema = z
   });
 
 export const getEnv = () => environmentSchema.parse(process.env);
-

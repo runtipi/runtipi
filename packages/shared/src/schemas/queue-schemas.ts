@@ -8,7 +8,7 @@ export const EVENT_TYPES = {
 
 export type EventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
 
-const appCommandSchema = z.object({
+const appEventSchema = z.object({
   type: z.literal(EVENT_TYPES.APP),
   command: z.union([
     z.literal('start'),
@@ -22,8 +22,20 @@ const appCommandSchema = z.object({
   ]),
   appid: z.string(),
   skipEnv: z.boolean().optional().default(false),
-  form: z.object({}).catchall(z.any()),
+  form: z
+    .object({
+      exposed: z.boolean().optional(),
+      exposedLocal: z.boolean().optional(),
+      openPort: z.boolean().optional(),
+      domain: z.string().optional(),
+      isVisibleOnGuestDashboard: z.boolean().optional(),
+    })
+    .extend({})
+    .catchall(z.unknown()),
 });
+
+export type AppEventFormInput = z.input<typeof appEventSchema>['form'];
+export type AppEventForm = z.output<typeof appEventSchema>['form'];
 
 const repoCommandSchema = z.object({
   type: z.literal(EVENT_TYPES.REPO),
@@ -36,7 +48,7 @@ const systemCommandSchema = z.object({
   command: z.literal('system_info'),
 });
 
-export const eventSchema = appCommandSchema.or(repoCommandSchema).or(systemCommandSchema);
+export const eventSchema = appEventSchema.or(repoCommandSchema).or(systemCommandSchema);
 
 export const eventResultSchema = z.object({
   success: z.boolean(),

@@ -18,11 +18,12 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@sentry/esbuild-plugin": "^2.16.1",
+    "@total-typescript/shoehorn": "^0.1.2",
     "@types/web-push": "^3.6.3",
     "dotenv-cli": "^7.4.1",
     "esbuild": "^0.19.4",
     "knip": "^5.9.4",
-    "memfs": "^4.8.1",
+    "memfs": "^4.8.2",
     "nodemon": "^3.1.0",
     "tsx": "^4.7.2",
     "typescript": "^5.4.5",
@@ -30,19 +31,20 @@
     "vitest": "^1.5.0"
   },
   "dependencies": {
-    "@hono/node-server": "^1.10.0",
+    "@hono/node-server": "^1.11.0",
     "@runtipi/postgres-migrations": "^5.3.0",
     "@runtipi/shared": "workspace:^",
-    "@sentry/integrations": "^7.110.0",
-    "@sentry/node": "^7.110.0",
-    "bullmq": "^5.7.1",
+    "@sentry/integrations": "^7.111.0",
+    "@sentry/node": "^7.111.0",
+    "bullmq": "^5.7.4",
     "dotenv": "^16.4.5",
-    "hono": "^4.2.3",
-    "ioredis": "^5.3.2",
+    "hono": "^4.2.6",
+    "ioredis": "^5.4.1",
     "pg": "^8.11.5",
     "socket.io": "^4.7.5",
     "systeminformation": "^5.22.7",
     "web-push": "^3.6.7",
-    "zod": "^3.22.4"
+    "yaml": "^2.4.1",
+    "zod": "^3.23.0"
   }
 }
