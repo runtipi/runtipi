@@ -346,9 +346,8 @@ export class AppExecutors {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDirPath, repoPath } = this.getAppPaths(appId);
-      const oldAppImage = YAML.parse(fs.readFileSync(`${appDirPath}/docker-compose.yml`, 'utf8'))[
-        'services'
-      ][appId]['image'];
+      const oldAppImage = YAML.parse(fs.readFileSync(`${appDirPath}/docker-compose.yml`, 'utf8'))
+        .services.appId.image;
 
       this.logger.info(`Updating app ${appId}`);
       await this.ensureAppDir(appId, form);
