@@ -78,6 +78,7 @@ export const appInfoSchema = z.object({
   supported_architectures: z.nativeEnum(ARCHITECTURES).array().optional(),
   uid: z.number().optional(),
   gid: z.number().optional(),
+  dynamic_config: z.boolean().optional().default(false),
 });
 
 // Derived types

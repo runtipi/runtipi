@@ -5,7 +5,7 @@ import path from 'path';
 import * as Sentry from '@sentry/node';
 import YAML from 'yaml';
 import { execAsync, pathExists } from '@runtipi/shared/node';
-import { SocketEvent, sanitizePath } from '@runtipi/shared';
+import { AppEventForm, SocketEvent, sanitizePath } from '@runtipi/shared';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
@@ -14,6 +14,7 @@ import { SocketManager } from '@/lib/socket/SocketManager';
 import { getDbClient } from '@/lib/db';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { ComposeData } from 'src/types/types';
+import { getDockerCompose } from '@/config/docker-templates';
 
 export class AppExecutors {
   private readonly logger;
@@ -53,7 +54,7 @@ export class AppExecutors {
    * If not, copies the app folder from the repo
    * @param {string} appId - App id
    */
-  private ensureAppDir = async (appId: string) => {
+  private ensureAppDir = async (appId: string, form: AppEventForm) => {
     const { appDirPath, appDataDirPath, repoPath } = this.getAppPaths(appId);
     const dockerFilePath = path.join(DATA_DIR, 'apps', sanitizePath(appId), 'docker-compose.yml');
 
@@ -67,17 +68,28 @@ export class AppExecutors {
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
     }
 
+    // Check if app has a compose.json file
+    if (await pathExists(path.join(repoPath, 'compose.json'))) {
+      // Generate docker-compose.yml file
+      const rawComposeConfig = await fs.promises.readFile(path.join(repoPath, 'compose.json'), 'utf-8');
+      const jsonComposeConfig = JSON.parse(rawComposeConfig);
+
+      const composeFile = getDockerCompose(jsonComposeConfig.services, form);
+
+      await fs.promises.writeFile(dockerFilePath, composeFile);
+    }
+
     // Set permissions
     await execAsync(`chmod -Rf a+rwx ${path.join(appDataDirPath)}`).catch(() => {
       this.logger.error(`Error setting permissions for app ${appId}`);
     });
   };
 
-  public regenerateAppEnv = async (appId: string, config: Record<string, unknown>) => {
+  public regenerateAppEnv = async (appId: string, form: AppEventForm) => {
     try {
       this.logger.info(`Regenerating app.env file for app ${appId}`);
-      await this.ensureAppDir(appId);
-      await generateEnvFile(appId, config);
+      await this.ensureAppDir(appId, form);
+      await generateEnvFile(appId, form);
 
       SocketManager.emit({ type: 'app', event: 'generate_env_success', data: { appId } });
       return { success: true, message: `App ${appId} env file regenerated successfully` };
@@ -89,9 +101,9 @@ export class AppExecutors {
   /**
    * Install an app from the repo
    * @param {string} appId - The id of the app to install
-   * @param {Record<string, unknown>} config - The config of the app
+   * @param {AppEventForm} form - The config of the app
    */
-  public installApp = async (appId: string, config: Record<string, unknown>) => {
+  public installApp = async (appId: string, form: AppEventForm) => {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
@@ -131,7 +143,7 @@ export class AppExecutors {
 
       // Create app.env file
       this.logger.info(`Creating app.env file for app ${appId}`);
-      await generateEnvFile(appId, config);
+      await generateEnvFile(appId, form);
 
       // Copy data dir
       this.logger.info(`Copying data dir for app ${appId}`);
@@ -139,7 +151,7 @@ export class AppExecutors {
         await copyDataDir(appId);
       }
 
-      await this.ensureAppDir(appId);
+      await this.ensureAppDir(appId, form);
 
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
@@ -158,9 +170,9 @@ export class AppExecutors {
   /**
    * Stops an app
    * @param {string} appId - The id of the app to stop
-   * @param {Record<string, unknown>} config - The config of the app
+   * @param {Record<string, unknown>} form - The config of the app
    */
-  public stopApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
+  public stopApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
     try {
       const { appDirPath } = this.getAppPaths(appId);
       const configJsonPath = path.join(appDirPath, 'config.json');
@@ -173,11 +185,11 @@ export class AppExecutors {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
       this.logger.info(`Stopping app ${appId}`);
 
-      await this.ensureAppDir(appId);
+      await this.ensureAppDir(appId, form);
 
       if (!skipEnvGeneration) {
         this.logger.info(`Regenerating app.env file for app ${appId}`);
-        await generateEnvFile(appId, config);
+        await generateEnvFile(appId, form);
       }
       await compose(appId, 'rm --force --stop');
 
@@ -189,21 +201,22 @@ export class AppExecutors {
       await client?.query('UPDATE app SET status = $1 WHERE id = $2', ['stopped', appId]);
       return { success: true, message: `App ${appId} stopped successfully` };
     } catch (err) {
+      console.error(err);
       return this.handleAppError(err, appId, 'stop_error');
     }
   };
 
-  public startApp = async (appId: string, config: Record<string, unknown>, skipEnvGeneration = false) => {
+  public startApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       this.logger.info(`Starting app ${appId}`);
 
-      await this.ensureAppDir(appId);
+      await this.ensureAppDir(appId, form);
 
       if (!skipEnvGeneration) {
         this.logger.info(`Regenerating app.env file for app ${appId}`);
-        await generateEnvFile(appId, config);
+        await generateEnvFile(appId, form);
       }
 
       await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
@@ -220,7 +233,7 @@ export class AppExecutors {
     }
   };
 
-  public uninstallApp = async (appId: string, config: Record<string, unknown>) => {
+  public uninstallApp = async (appId: string, form: AppEventForm) => {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
@@ -228,8 +241,8 @@ export class AppExecutors {
       this.logger.info(`Uninstalling app ${appId}`);
 
       this.logger.info(`Regenerating app.env file for app ${appId}`);
-      await this.ensureAppDir(appId);
-      await generateEnvFile(appId, config);
+      await this.ensureAppDir(appId, form);
+      await generateEnvFile(appId, form);
       try {
         await compose(appId, 'down --remove-orphans --volumes --rmi all');
       } catch (err) {
@@ -262,14 +275,14 @@ export class AppExecutors {
     }
   };
 
-  public resetApp = async (appId: string, config: Record<string, unknown>) => {
+  public resetApp = async (appId: string, form: AppEventForm) => {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDataDirPath } = this.getAppPaths(appId);
       this.logger.info(`Resetting app ${appId}`);
-      await this.ensureAppDir(appId);
-      await generateEnvFile(appId, config);
+      await this.ensureAppDir(appId, form);
+      await generateEnvFile(appId, form);
 
       // Stop app
       try {
@@ -290,7 +303,7 @@ export class AppExecutors {
 
       // Create app.env file
       this.logger.info(`Creating app.env file for app ${appId}`);
-      await generateEnvFile(appId, config);
+      await generateEnvFile(appId, form);
 
       // Copy data dir
       this.logger.info(`Copying data dir for app ${appId}`);
@@ -298,7 +311,7 @@ export class AppExecutors {
         await copyDataDir(appId);
       }
 
-      await this.ensureAppDir(appId);
+      await this.ensureAppDir(appId, form);
 
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
@@ -314,7 +327,7 @@ export class AppExecutors {
     }
   };
 
-  public updateApp = async (appId: string, config: Record<string, unknown>) => {
+  public updateApp = async (appId: string, form: AppEventForm) => {
     try {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
@@ -322,8 +335,8 @@ export class AppExecutors {
       const oldAppImage = (YAML.parse(fs.readFileSync(`${appDirPath}/docker-compose.yml`, 'utf8')) as ComposeData)['services'][appId]?.['image'];
 
       this.logger.info(`Updating app ${appId}`);
-      await this.ensureAppDir(appId);
-      await generateEnvFile(appId, config);
+      await this.ensureAppDir(appId, form);
+      await generateEnvFile(appId, form);
 
       try {
         await compose(appId, 'up --detach --force-recreate --remove-orphans');
@@ -338,7 +351,7 @@ export class AppExecutors {
       this.logger.info(`Copying folder ${repoPath} to ${appDirPath}`);
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
 
-      await this.ensureAppDir(appId);
+      await this.ensureAppDir(appId, form);
 
       await compose(appId, 'pull');
 
@@ -377,7 +390,7 @@ export class AppExecutors {
       for (const row of rows) {
         const { id, config } = row;
 
-        const { success } = await this.startApp(id, config);
+        const { success } = await this.startApp(id, config as AppEventForm);
 
         if (!success) {
           this.logger.error(`Error starting app ${id}`);

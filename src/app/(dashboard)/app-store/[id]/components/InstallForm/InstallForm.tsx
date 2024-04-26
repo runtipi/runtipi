@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Tooltip } from 'react-tooltip';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -10,30 +9,27 @@ import { Switch } from '@/components/ui/Switch';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { AppStatus } from '@/server/db/schema';
+import { useClientSettings } from '@/hooks/use-client-settings';
 import { validateAppConfig } from '../../utils/validators';
+import { InstallFormField } from './InstallFormField';
+import { FormValues } from './InstallForm.types';
 
 interface IProps {
   formFields: FormField[];
   onSubmit: (values: FormValues) => void;
-  initalValues?: { [key: string]: unknown };
+  initialValues?: { [key: string]: unknown };
   info: AppInfo;
   loading?: boolean;
   onReset?: () => void;
   status?: AppStatus;
 }
 
-export type FormValues = {
-  exposed?: boolean;
-  domain?: string;
-  isVisibleOnGuestDashboard?: boolean;
-  [key: string]: string | boolean | undefined;
-};
-
 const hiddenTypes = ['random'];
 const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 
-export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, initalValues, loading, onReset, status }) => {
+export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, initialValues, loading, onReset, status }) => {
   const t = useTranslations();
+  const { guestDashboard, localDomain, internalIp } = useClientSettings();
   const {
     register,
     handleSubmit,
@@ -44,6 +40,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
     control,
   } = useForm<FormValues>({});
   const watchExposed = watch('exposed', false);
+  // const watchExposedLocal = watch('exposedLocal', false);
 
   useEffect(() => {
     if (info.force_expose) {
@@ -52,12 +49,12 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
   }, [info.force_expose, setValue]);
 
   useEffect(() => {
-    if (initalValues && !isDirty) {
-      Object.entries(initalValues).forEach(([key, value]) => {
+    if (initialValues && !isDirty) {
+      Object.entries(initialValues).forEach(([key, value]) => {
         setValue(key, value as string);
       });
     }
-  }, [initalValues, isDirty, setValue]);
+  }, [initialValues, isDirty, setValue]);
 
   const onClickReset = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -65,93 +62,15 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
   };
 
   const renderField = (field: FormField) => {
-    const label = (
-      <>
-        {field.label}
-        {field.required && <span className="ms-1 text-danger">*</span>}
-        {Boolean(field.hint) && (
-          <>
-            <Tooltip className="tooltip" anchorSelect={`.${field.env_variable}`}>
-              {field.hint}
-            </Tooltip>
-            <span className={clsx('ms-1 form-help', field.env_variable)}>?</span>
-          </>
-        )}
-      </>
-    );
-
-    if (field.type === 'boolean') {
-      return (
-        <Controller
-          control={control}
-          name={field.env_variable}
-          defaultValue={field.default}
-          render={({ field: { onChange, value, ref, ...props } }) => (
-            <Switch className="mb-3" ref={ref} checked={Boolean(value)} onCheckedChange={onChange} {...props} label={label} />
-          )}
-        />
-      );
-    }
-
-    if (Array.isArray(field.options)) {
-      return (
-        <Controller
-          control={control}
-          name={field.env_variable}
-          defaultValue={field.default}
-          render={({ field: { onChange, value, ref, ...props } }) => (
-            <Select
-              value={value as string}
-              defaultValue={(initalValues ? initalValues[field.env_variable] : field.default) as string}
-              onValueChange={onChange}
-              {...props}
-            >
-              <SelectTrigger className="mb-3" error={errors[field.env_variable]?.message} label={label}>
-                <SelectValue placeholder={t('APP_INSTALL_FORM_CHOOSE_OPTION')} />
-              </SelectTrigger>
-              <SelectContent>
-                {field.options?.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-      );
-    }
-
-    let type;
-
-    switch (field.type) {
-      case 'password':
-        type = 'password' as const;
-        break;
-      case 'number':
-        type = 'number' as const;
-        break;
-      case 'email':
-        type = 'email' as const;
-        break;
-      case 'url':
-        type = 'url' as const;
-        break;
-      default:
-        type = 'text' as const;
-        break;
-    }
-
     return (
-      <Input
+      <InstallFormField
+        loading={loading}
+        initialValue={(initialValues ? initialValues[field.env_variable] : field.default) as string}
+        register={register}
+        field={field}
+        control={control}
         key={field.env_variable}
-        {...register(field.env_variable)}
-        label={label}
         error={errors[field.env_variable]?.message}
-        disabled={loading}
-        type={type}
-        className="mb-3"
-        placeholder={field.placeholder || field.label}
       />
     );
   };
@@ -189,6 +108,58 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
     </>
   );
 
+  const renderDynamicConfigForm = () => {
+    return (
+      <>
+        <Controller
+          control={control}
+          name="openPort"
+          defaultValue
+          render={({ field: { onChange, value, ref, ...props } }) => (
+            <Switch
+              {...props}
+              className="mb-3"
+              ref={ref}
+              checked={value}
+              onCheckedChange={onChange}
+              label={
+                <>
+                  {t('APP_INSTALL_FORM_OPEN_PORT')}
+                  <Tooltip className="tooltip" anchorSelect=".open-port-hint">
+                    {t('APP_INSTALL_FORM_OPEN_PORT_HINT', { port: info.port, internalIp })}
+                  </Tooltip>
+                  <span className={clsx('ms-1 form-help open-port-hint')}>?</span>
+                </>
+              }
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="exposedLocal"
+          render={({ field: { onChange, value, ref, ...props } }) => (
+            <Switch
+              {...props}
+              className="mb-3"
+              ref={ref}
+              checked={value}
+              onCheckedChange={onChange}
+              label={
+                <>
+                  {t('APP_INSTALL_FORM_EXPOSE_LOCAL')}
+                  <Tooltip className="tooltip" anchorSelect=".expose-local-hint">
+                    {t('APP_INSTALL_FORM_EXPOSE_LOCAL_HINT', { domain: localDomain, appId: info.id })}
+                  </Tooltip>
+                  <span className={clsx('ms-1 form-help expose-local-hint')}>?</span>
+                </>
+              }
+            />
+          )}
+        />
+      </>
+    );
+  };
+
   const validate = (values: FormValues) => {
     const validationErrors = validateAppConfig(values, formFields);
 
@@ -205,28 +176,31 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
+      {info.dynamic_config && renderDynamicConfigForm()}
       {formFields.filter(typeFilter).map(renderField)}
-      <Controller
-        control={control}
-        name="isVisibleOnGuestDashboard"
-        defaultValue={false}
-        render={({ field: { onChange, value, ref, ...props } }) => (
-          <Switch
-            className="mb-3"
-            disabled={info.force_expose}
-            ref={ref}
-            checked={value}
-            onCheckedChange={onChange}
-            {...props}
-            label={t('APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD')}
-          />
-        )}
-      />
+      {guestDashboard && (
+        <Controller
+          control={control}
+          name="isVisibleOnGuestDashboard"
+          defaultValue={false}
+          render={({ field: { onChange, value, ref, ...props } }) => (
+            <Switch
+              className="mb-3"
+              disabled={info.force_expose}
+              ref={ref}
+              checked={value}
+              onCheckedChange={onChange}
+              {...props}
+              label={t('APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD')}
+            />
+          )}
+        />
+      )}
       {info.exposable && renderExposeForm()}
       <Button loading={loading} type="submit" className="btn-success">
-        {initalValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
+        {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
       </Button>
-      {initalValues && onReset && (
+      {initialValues && onReset && (
         <Button loading={status === 'stopping'} onClick={onClickReset} className="btn-danger ms-2">
           {t('APP_INSTALL_FORM_RESET')}
         </Button>
