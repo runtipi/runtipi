@@ -440,12 +440,11 @@ export class AppServiceClass {
     eventDispatcher
       .dispatchEventAsync({ type: 'app', command: 'restart', appid: id, form: castAppConfig(app.config) })
       .then(({ success, stdout }) => {
-        if (success) {
-          this.queries.updateApp(id, { status: 'running' });
-        } else {
+        if (!success) {
           Logger.error(`Failed to restart app ${id}: ${stdout}`);
-          this.queries.updateApp(id, { status: 'running' });
         }
+
+        this.queries.updateApp(id, { status: 'running' });
 
         eventDispatcher.close();
       });

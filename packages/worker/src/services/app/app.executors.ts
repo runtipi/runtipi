@@ -197,13 +197,13 @@ export class AppExecutors {
       const configJsonPath = path.join(appDirPath, 'config.json');
       const isActualApp = await pathExists(configJsonPath);
 
-      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
-
-      this.logger.info(`Restarting app ${appId}`);
-
       if (!isActualApp) {
         return { success: true, message: `App ${appId} is not an app. Skipping...` };
       }
+
+      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+
+      this.logger.info(`Restarting app ${appId}`);
 
       this.logger.info(`Stopping app ${appId}`);
 
