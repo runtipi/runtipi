@@ -13,7 +13,6 @@ import { getEnv } from '@/lib/environment';
 import { SocketManager } from '@/lib/socket/SocketManager';
 import { getDbClient } from '@/lib/db';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { ComposeData } from 'src/types/types';
 import { getDockerCompose } from '@/config/docker-templates';
 
 export class AppExecutors {
@@ -23,7 +22,11 @@ export class AppExecutors {
     this.logger = logger;
   }
 
-  private handleAppError = (err: unknown, appId: string, event: Extract<SocketEvent, { type: 'app' }>['event']) => {
+  private handleAppError = (
+    err: unknown,
+    appId: string,
+    event: Extract<SocketEvent, { type: 'app' }>['event'],
+  ) => {
     Sentry.captureException(err, {
       tags: { appId, event },
     });
@@ -71,7 +74,10 @@ export class AppExecutors {
     // Check if app has a compose.json file
     if (await pathExists(path.join(repoPath, 'compose.json'))) {
       // Generate docker-compose.yml file
-      const rawComposeConfig = await fs.promises.readFile(path.join(repoPath, 'compose.json'), 'utf-8');
+      const rawComposeConfig = await fs.promises.readFile(
+        path.join(repoPath, 'compose.json'),
+        'utf-8',
+      );
       const jsonComposeConfig = JSON.parse(rawComposeConfig);
 
       const composeFile = getDockerCompose(jsonComposeConfig.services, form);
@@ -108,7 +114,9 @@ export class AppExecutors {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       if (process.getuid && process.getgid) {
-        this.logger.info(`Installing app ${appId} as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`);
+        this.logger.info(
+          `Installing app ${appId} as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`,
+        );
       } else {
         this.logger.info(`Installing app ${appId}. No User ID or Group ID found.`);
       }
@@ -118,7 +126,9 @@ export class AppExecutors {
       const { appDirPath, repoPath, appDataDirPath } = this.getAppPaths(appId);
 
       // Check if app exists in repo
-      const apps = await fs.promises.readdir(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
+      const apps = await fs.promises.readdir(
+        path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'),
+      );
 
       if (!apps.includes(appId)) {
         this.logger.error(`App ${appId} not found in repo ${appsRepoId}`);
@@ -247,7 +257,9 @@ export class AppExecutors {
         await compose(appId, 'down --remove-orphans --volumes --rmi all');
       } catch (err) {
         if (err instanceof Error && err.message.includes('conflict')) {
-          this.logger.warn(`Could not fully uninstall app ${appId}. Some images are in use by other apps. Consider cleaning unused images docker system prune -a`);
+          this.logger.warn(
+            `Could not fully uninstall app ${appId}. Some images are in use by other apps. Consider cleaning unused images docker system prune -a`,
+          );
         } else {
           throw err;
         }
@@ -289,7 +301,9 @@ export class AppExecutors {
         await compose(appId, 'down --remove-orphans --volumes');
       } catch (err) {
         if (err instanceof Error && err.message.includes('conflict')) {
-          this.logger.warn(`Could not reset app ${appId}. Most likely there have been made changes to the compose file.`);
+          this.logger.warn(
+            `Could not reset app ${appId}. Most likely there have been made changes to the compose file.`,
+          );
         } else {
           throw err;
         }
@@ -332,7 +346,9 @@ export class AppExecutors {
       SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDirPath, repoPath } = this.getAppPaths(appId);
-      const oldAppImage = (YAML.parse(fs.readFileSync(`${appDirPath}/docker-compose.yml`, 'utf8')) as ComposeData)['services'][appId]?.['image'];
+      const oldAppImage = YAML.parse(fs.readFileSync(`${appDirPath}/docker-compose.yml`, 'utf8'))[
+        'services'
+      ][appId]['image'];
 
       this.logger.info(`Updating app ${appId}`);
       await this.ensureAppDir(appId, form);
@@ -342,7 +358,9 @@ export class AppExecutors {
         await compose(appId, 'up --detach --force-recreate --remove-orphans');
         await compose(appId, 'down --rmi all --remove-orphans');
       } catch (err) {
-        logger.warn(`App ${appId} has likely a broken docker-compose.yml file. Continuing with update...`);
+        logger.warn(
+          `App ${appId} has likely a broken docker-compose.yml file. Continuing with update...`,
+        );
       }
 
       this.logger.info(`Deleting folder ${appDirPath}`);
@@ -355,7 +373,9 @@ export class AppExecutors {
 
       await compose(appId, 'pull');
 
-      await execAsync(`curl -X DELETE --unix-socket /var/run/docker.sock "http://docker/images/${oldAppImage}"`);
+      await execAsync(
+        `curl -X DELETE --unix-socket /var/run/docker.sock "http://docker/images/${oldAppImage}"`,
+      );
 
       SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
 
@@ -384,7 +404,9 @@ export class AppExecutors {
       }
 
       // Update all apps with status different than running or stopped to stopped
-      await client?.query(`UPDATE app SET status = 'stopped' WHERE status != 'stopped' AND status != 'running' AND status != 'missing'`);
+      await client?.query(
+        `UPDATE app SET status = 'stopped' WHERE status != 'stopped' AND status != 'running' AND status != 'missing'`,
+      );
 
       // Start all apps
       for (const row of rows) {
