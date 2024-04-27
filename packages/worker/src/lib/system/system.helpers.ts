@@ -156,7 +156,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
   envMap.set(
     'RUNTIPI_APP_DATA_PATH',
-    data.appDataPath || envMap.get('APP_DATA_PATH') || rootFolderHost,
+    data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH') || rootFolderHost,
   );
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
