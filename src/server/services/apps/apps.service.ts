@@ -14,6 +14,10 @@ import { notEmpty } from '../../common/typescript.helpers';
 
 const sortApps = (a: AppInfo, b: AppInfo) => a.id.localeCompare(b.id);
 const filterApp = (app: AppInfo): boolean => {
+  if (app.deprecated) {
+    return false;
+  }
+
   if (!app.supported_architectures) {
     return true;
   }
