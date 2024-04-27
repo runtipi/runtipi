@@ -331,7 +331,7 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
 export const getMainEnvMap = async (): Promise<Map<EnvKeys, string>> => {
   const envFilePath = path.join(DATA_DIR, '.env');
 
-  if (!fs.existsSync(envFilePath)) {
+  if (!(await pathExists(envFilePath))) {
     throw new Error('Env file not found');
   }
 
