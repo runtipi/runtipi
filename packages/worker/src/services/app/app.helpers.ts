@@ -101,13 +101,13 @@ export const generateEnvFile = async (appId: string, form: AppEventForm) => {
   if (form.exposed && form.domain && typeof form.domain === 'string') {
     envMap.set('APP_EXPOSED', 'true');
     envMap.set('APP_DOMAIN', form.domain);
-    envMap.set('APP_PROTOCOL', 'https');
     envMap.set('APP_HOST', form.domain);
+    envMap.set('APP_PROTOCOL', 'https');
   } else if (form.exposedLocal && !form.openPort) {
     const mainEnvMap = await getMainEnvMap();
     envMap.set('APP_DOMAIN', `${parsedConfig.data.id}.${mainEnvMap.get('LOCAL_DOMAIN')}`);
+    envMap.set('APP_HOST', `${parsedConfig.data.id}.${mainEnvMap.get('LOCAL_DOMAIN')}`);
     envMap.set('APP_PROTOCOL', 'https');
-    envMap.set('APP_HOST', internalIp);
   } else {
     envMap.set('APP_DOMAIN', `${internalIp}:${parsedConfig.data.port}`);
     envMap.set('APP_HOST', internalIp);
