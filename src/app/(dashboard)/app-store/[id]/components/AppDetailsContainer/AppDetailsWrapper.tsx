@@ -47,6 +47,12 @@ export const AppDetailsWrapper = (props: IProps) => {
         case 'stop_error':
           changeStatus('running');
           break;
+        case 'restart_success':
+          changeStatus('running');
+          break;
+        case 'restart_error':
+          changeStatus('running');
+          break;
         case 'uninstall_success':
           changeStatus('missing');
           break;

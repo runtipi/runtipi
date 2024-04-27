@@ -172,6 +172,38 @@ describe('test: app executors', () => {
     });
   });
 
+  describe('test: restartApp()', () => {
+    it('should start and stop the app', async () => {
+      // arrange
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: 'done', stderr: '' }));
+      const config = createAppConfig();
+
+      // act
+      const { message, success } = await appExecutors.restartApp(config.id, {}, true);
+
+      // assert
+      expect(success).toBe(true);
+      expect(message).toBe(`App ${config.id} restarted successfully`);
+      expect(spy).toHaveBeenCalledWith(config.id, 'up --detach --force-recreate --remove-orphans --pull always');
+      expect(spy).toHaveBeenCalledWith(config.id, 'rm --force --stop');
+      spy.mockRestore();
+    });
+
+    it('should handle errors gracefully', async () => {
+      // arrange
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.reject(new Error('test')));
+      const config = createAppConfig();
+
+      // act
+      const { message, success } = await appExecutors.restartApp(config.id, {}, true);
+
+      // assert
+      expect(success).toBe(false);
+      expect(message).toBe('test');
+      spy.mockRestore();
+    });
+  });
+
   describe('test: updateApp()', () => {
     it('should still update even if current compose file is broken', async () => {
       // arrange
