@@ -17,6 +17,8 @@ export const socketEventSchema = z.union([
       z.literal('start_error'),
       z.literal('stop_success'),
       z.literal('stop_error'),
+      z.literal('restart_success'),
+      z.literal('restart_error'),
       z.literal('generate_env_success'),
       z.literal('generate_env_error'),
     ]),

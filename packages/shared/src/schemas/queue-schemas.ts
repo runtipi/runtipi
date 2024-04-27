@@ -17,6 +17,7 @@ const appEventSchema = z.object({
     z.literal('uninstall'),
     z.literal('update'),
     z.literal('reset'),
+    z.literal('restart'),
     z.literal('generate_env'),
   ]),
   appid: z.string(),

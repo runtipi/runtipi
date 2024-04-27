@@ -152,6 +152,12 @@ describe('Stop app', () => {
   });
 });
 
+describe('Restart app', () => {
+  it('Should throw if app is not installed', async () => {
+    await expect(AppsService.restartApp('any')).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
+  });
+});
+
 describe('Update app config', () => {
   it('Should correctly update app config', async () => {
     // arrange
