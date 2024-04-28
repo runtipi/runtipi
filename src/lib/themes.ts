@@ -5,6 +5,12 @@ export const THEMES = {
     day: 1,
     durationInDays: 26,
   },
+  easter: {
+    name: 'easter',
+    month: 2,
+    day: 24,
+    durationInDays: 36,
+  },
 };
 
 export type Theme = keyof typeof THEMES | 'default';
@@ -32,6 +38,8 @@ export const getLogo = (autoTheme: boolean) => {
   switch (theme) {
     case 'christmas':
       return '/tipi-christmas.png';
+    case 'easter':
+      return '/tipi-easter.png';
     default:
       return '/tipi.png';
   }
