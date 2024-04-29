@@ -33,6 +33,7 @@ beforeEach(async () => {
   // @ts-expect-error - custom mock method
   fs.__resetAllMocks();
 
+  await fs.promises.mkdir(DATA_DIR, { recursive: true });
   await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
   await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'seed'), 'seed');
   await fs.promises.mkdir(path.join(DATA_DIR, 'repos', 'repo-id', 'apps'), { recursive: true });
