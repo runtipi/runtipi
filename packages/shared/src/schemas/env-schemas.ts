@@ -105,4 +105,4 @@ export const settingsSchema = envSchema
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
   })
-  .and(z.object({ port: z.number(), sslPort: z.number(), listenIp: z.string().ip().trim() }).partial());
+  .and(z.object({ port: z.coerce.number(), sslPort: z.coerce.number(), listenIp: z.string().ip().trim() }).partial());
