@@ -1,6 +1,5 @@
 import { AppCategory, AppInfo } from '@runtipi/shared';
 import {
-  Icon,
   IconBook,
   IconBrain,
   IconBroadcast,
@@ -68,7 +67,7 @@ export const colorSchemeForCategory: Record<AppCategory, string> = {
 
 type AppCategoryEntry = {
   id: AppCategory;
-  icon: Icon;
+  icon: typeof IconBook;
 };
 
 export const iconForCategory: AppCategoryEntry[] = [

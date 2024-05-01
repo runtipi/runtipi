@@ -20,7 +20,7 @@ export const envSchema = z.object({
   appsRepoUrl: z.string().url().trim(),
   domain: z.string().trim(),
   localDomain: z.string().trim(),
-  storagePath: z
+  appDataPath: z
     .string()
     .trim()
     .optional()
@@ -97,7 +97,7 @@ export const settingsSchema = envSchema
     postgresPort: true,
     appsRepoUrl: true,
     domain: true,
-    storagePath: true,
+    appDataPath: true,
     localDomain: true,
     demoMode: true,
     guestDashboard: true,
@@ -105,4 +105,4 @@ export const settingsSchema = envSchema
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
   })
-  .and(z.object({ port: z.number(), sslPort: z.number(), listenIp: z.string().ip().trim() }).partial());
+  .and(z.object({ port: z.coerce.number(), sslPort: z.coerce.number(), listenIp: z.string().ip().trim() }).partial());

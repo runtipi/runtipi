@@ -1,4 +1,4 @@
-import { IconApps, IconBrandAppstore, IconHome, IconSettings, Icon } from '@tabler/icons-react';
+import { IconApps, IconBrandAppstore, IconHome, IconSettings } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
   const t = useTranslations();
   const path = usePathname()?.split('/')[1];
 
-  const renderItem = (title: string, name: string, IconComponent: Icon) => {
+  const renderItem = (title: string, name: string, IconComponent: typeof IconApps) => {
     const isActive = path === name;
     const itemClass = clsx('nav-item', { active: isActive, 'border-primary': isActive, 'border-bottom-wide': isActive });
 

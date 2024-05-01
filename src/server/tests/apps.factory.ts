@@ -8,10 +8,12 @@ import { appTable, AppStatus, App, NewApp } from '../db/schema';
 
 interface IProps {
   installed?: boolean;
+  openPort?: boolean;
   status?: AppStatus;
   requiredPort?: number;
   randomField?: boolean;
   exposed?: boolean;
+  exposedLocal?: boolean;
   domain?: string;
   exposable?: boolean;
   forceExpose?: boolean;
@@ -52,6 +54,8 @@ const createApp = async (props: IProps, database: TestDatabase) => {
     status = 'running',
     randomField = false,
     exposed = false,
+    exposedLocal = false,
+    openPort = true,
     domain = null,
     exposable = false,
     supportedArchitectures,
@@ -65,6 +69,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
   const appInfo: AppInfo = {
     id: randomId,
+    dynamic_config: true,
     deprecated: false,
     port: faker.number.int({ min: 3000, max: 5000 }),
     available: true,
@@ -80,7 +85,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
     description: faker.lorem.words(),
     tipi_version: faker.number.int({ min: 1, max: 10 }),
     short_desc: faker.lorem.words(),
-    author: faker.name.firstName(),
+    author: faker.person.firstName(),
     source: faker.internet.url(),
     categories: [categories[faker.number.int({ min: 0, max: categories.length - 1 })]] as AppInfo['categories'],
     exposable,
@@ -118,6 +123,8 @@ const createApp = async (props: IProps, database: TestDatabase) => {
         exposed,
         domain,
         version: 1,
+        openPort,
+        exposedLocal,
       })
       .returning();
 
@@ -140,8 +147,10 @@ const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: Test
     config: {},
     status: 'running',
     exposed: false,
+    exposedLocal: false,
     domain: null,
     version: 1,
+    openPort: true,
     ...data,
   };
 

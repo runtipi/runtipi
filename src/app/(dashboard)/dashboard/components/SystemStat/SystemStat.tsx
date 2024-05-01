@@ -1,9 +1,9 @@
-import { Icon } from '@tabler/icons-react';
+import { IconAperture } from '@tabler/icons-react';
 import clsx from 'clsx';
 import React from 'react';
 
 interface IProps {
-  icon: Icon;
+  icon: typeof IconAperture;
   progress: number;
   title: string;
   subtitle: string;

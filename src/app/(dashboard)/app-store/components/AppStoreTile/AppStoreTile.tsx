@@ -21,7 +21,7 @@ export const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
   const t = useTranslations();
 
   return (
-    <Link aria-label={app.name} className={clsx('cursor-pointer col-sm-6 col-lg-4 p-2 mt-4', styles.appTile)} href={`/app-store/${app.id}`} passHref>
+    <Link aria-label={app.name} className={clsx(styles.appTile)} href={`/app-store/${app.id}`} passHref>
       <div key={app.id} className="d-flex overflow-hidden align-items-center py-2 ps-2">
         <AppLogo className={styles.logo} id={app.id} />
         <div className="card-body">

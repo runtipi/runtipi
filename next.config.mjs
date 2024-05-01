@@ -7,6 +7,9 @@ const nextConfig = {
   transpilePackages: ['@runtipi/shared'],
   experimental: {
     serverComponentsExternalPackages: ['bullmq'],
+    outputFileTracingIncludes: {
+      '/login': ['./node_modules/argon2/**'],
+    },
   },
   async rewrites() {
     return [
