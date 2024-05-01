@@ -68,7 +68,8 @@ export const getAvailableApps = async () => {
 
       return null;
     })
-    .filter(notEmpty);
+    .filter(notEmpty)
+    .map(({ id, categories, name, short_desc }) => ({ id, categories, name, short_desc }));
 
   return apps;
 };
