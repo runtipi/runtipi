@@ -4,7 +4,7 @@ import { App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import { Database, db } from '@/server/db';
-import { AppInfo, AppEventFormInput } from '@runtipi/shared';
+import { AppEventFormInput } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { checkAppRequirements, getAvailableApps as slow_getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
@@ -12,8 +12,8 @@ import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
 
-const sortApps = (a: AppInfo, b: AppInfo) => a.id.localeCompare(b.id);
-const filterApp = (app: AppInfo): boolean => {
+const sortApps = (a: AppList[number], b: AppList[number]) => a.id.localeCompare(b.id);
+const filterApp = (app: AppList[number]): boolean => {
   if (app.deprecated) {
     return false;
   }
@@ -26,14 +26,16 @@ const filterApp = (app: AppInfo): boolean => {
   return app.supported_architectures.includes(arch);
 };
 
-const filterApps = (apps: AppInfo[]): AppInfo[] => apps.sort(sortApps).filter(filterApp);
+type AppList = Awaited<ReturnType<typeof slow_getAvailableApps>>;
+
+const filterApps = (apps: AppList): AppList => apps.sort(sortApps).filter(filterApp);
 
 export class AppServiceClass {
   private queries;
 
-  private appsAvailable: AppInfo[] | null = null;
+  private appsAvailable: AppList | null = null;
 
-  private miniSearch: MiniSearch<AppInfo> | null = null;
+  private miniSearch: MiniSearch<AppList[number]> | null = null;
 
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
 
