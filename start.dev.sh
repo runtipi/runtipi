@@ -14,4 +14,4 @@ done
 pm2 start npm --name dashboard -- run dev
 
 # Log apps realtime
-pm2 logs --raw
+pm2 logs --raw --lines 1000

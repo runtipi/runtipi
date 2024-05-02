@@ -97,6 +97,7 @@ export const getUpdateInfo = (id: string) => {
   if (parsedConfig.success) {
     return {
       latestVersion: parsedConfig.data.tipi_version,
+      minTipiVersion: parsedConfig.data.min_tipi_version,
       latestDockerVersion: parsedConfig.data.version,
     };
   }

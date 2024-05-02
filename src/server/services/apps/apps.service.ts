@@ -1,12 +1,13 @@
 import validator from 'validator';
 import MiniSearch from 'minisearch';
-import { App } from '@/server/db/schema';
+import { type App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
-import { Database, db } from '@/server/db';
-import { AppEventFormInput } from '@runtipi/shared';
+import { type Database, db } from '@/server/db';
+import { type AppEventFormInput } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
+import semver from 'semver';
 import { checkAppRequirements, getAvailableApps as slow_getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
@@ -206,6 +207,11 @@ export class AppServiceClass {
         if (appsWithSameDomain.length > 0) {
           throw new TranslatedError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.id });
         }
+      }
+
+      const { version } = TipiConfig.getConfig();
+      if (appInfo?.min_tipi_version && semver.valid(version) && semver.lt(version, appInfo.min_tipi_version)) {
+        throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id, minVersion: appInfo.min_tipi_version });
       }
 
       await this.queries.createApp({
@@ -490,6 +496,13 @@ export class AppServiceClass {
 
     if (!app) {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id });
+    }
+
+    const { version } = TipiConfig.getConfig();
+
+    const { minTipiVersion } = getUpdateInfo(app.id);
+    if (minTipiVersion && semver.valid(version) && semver.lt(version, minTipiVersion)) {
+      throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id, minVersion: minTipiVersion });
     }
 
     await this.queries.updateApp(id, { status: 'updating' });
