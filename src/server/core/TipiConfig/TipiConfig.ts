@@ -42,7 +42,8 @@ export class TipiConfigClass {
 
     const envMap = envStringToMap(envFile.toString());
 
-    const conf = { ...process.env, ...Object.fromEntries(envMap) } as Record<string, string>;
+    const conf = { ...Object.fromEntries(envMap), ...process.env } as Record<string, string>;
+
     const envConfig = {
       postgresHost: conf.POSTGRES_HOST,
       postgresDatabase: conf.POSTGRES_DBNAME,
