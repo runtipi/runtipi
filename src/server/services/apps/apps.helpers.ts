@@ -69,7 +69,14 @@ export const getAvailableApps = async () => {
       return null;
     })
     .filter(notEmpty)
-    .map(({ id, categories, name, short_desc }) => ({ id, categories, name, short_desc }));
+    .map(({ id, categories, name, short_desc, deprecated, supported_architectures }) => ({
+      id,
+      categories,
+      name,
+      short_desc,
+      deprecated,
+      supported_architectures,
+    }));
 
   return apps;
 };

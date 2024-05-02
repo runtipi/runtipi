@@ -38,6 +38,7 @@ type EnvKeys =
   | 'TIPI_UID'
   | 'ALLOW_ERROR_MONITORING'
   | 'PERSIST_TRAEFIK_CONFIG'
+  | 'ALLOW_AUTO_THEMES'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
@@ -156,7 +157,7 @@ export const generateSystemEnvFile = async () => {
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
   envMap.set(
     'RUNTIPI_APP_DATA_PATH',
-    data.appDataPath || envMap.get('APP_DATA_PATH') || rootFolderHost,
+    data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH') || rootFolderHost,
   );
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
@@ -165,32 +166,30 @@ export const generateSystemEnvFile = async () => {
   envMap.set('REDIS_HOST', 'runtipi-redis');
   envMap.set(
     'DEMO_MODE',
-    typeof data.demoMode === 'boolean' || typeof data.demoMode === 'string'
-      ? String(data.demoMode)
-      : envMap.get('DEMO_MODE') || 'false',
+    typeof data.demoMode === 'boolean' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false',
   );
   envMap.set(
     'GUEST_DASHBOARD',
-    typeof data.guestDashboard === 'boolean' || typeof data.guestDashboard === 'string'
+    typeof data.guestDashboard === 'boolean'
       ? String(data.guestDashboard)
       : envMap.get('GUEST_DASHBOARD') || 'false',
   );
   envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
   envMap.set(
     'ALLOW_AUTO_THEMES',
-    typeof data.allowAutoThemes === 'boolean' || typeof data.allowAutoThemes === 'string'
+    typeof data.allowAutoThemes === 'boolean'
       ? String(data.allowAutoThemes)
       : envMap.get('ALLOW_AUTO_THEMES') || 'true',
   );
   envMap.set(
     'ALLOW_ERROR_MONITORING',
-    typeof data.allowErrorMonitoring === 'boolean' || typeof data.allowErrorMonitoring === 'string'
+    typeof data.allowErrorMonitoring === 'boolean'
       ? String(data.allowErrorMonitoring)
       : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
   );
   envMap.set(
     'PERSIST_TRAEFIK_CONFIG',
-    typeof data.persistTraefikConfig === 'boolean' || typeof data.persistTraefikConfig === 'string'
+    typeof data.persistTraefikConfig === 'boolean'
       ? String(data.persistTraefikConfig)
       : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
@@ -234,43 +233,55 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
 
   // Create base folders
   logger.info('Creating base folders');
-  await fs.promises.mkdir(path.join(DATA_DIR, 'apps'), { recursive: true });
-  await fs.promises.mkdir(APP_DATA_DIR, { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'repos'), { recursive: true });
+  try {
+    await fs.promises.mkdir(path.join(DATA_DIR, 'apps'), { recursive: true });
+    await fs.promises.mkdir(APP_DATA_DIR, { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'repos'), { recursive: true });
+  } catch (error) {
+    logger.error("Couldn't create base folders", error);
+  }
 
   // Create media folders
   logger.info('Creating media folders');
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'torrents', 'watch'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'torrents', 'complete'), {
-    recursive: true,
-  });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'torrents', 'incomplete'), {
-    recursive: true,
-  });
+  try {
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'torrents', 'watch'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'torrents', 'complete'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'torrents', 'incomplete'), {
+      recursive: true,
+    });
 
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'usenet', 'watch'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'usenet', 'complete'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'usenet', 'incomplete'), {
-    recursive: true,
-  });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'usenet', 'watch'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'usenet', 'complete'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'usenet', 'incomplete'), {
+      recursive: true,
+    });
 
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'downloads', 'watch'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'downloads', 'complete'), {
-    recursive: true,
-  });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'downloads', 'incomplete'), {
-    recursive: true,
-  });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'downloads', 'watch'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'downloads', 'complete'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'downloads', 'incomplete'), {
+      recursive: true,
+    });
 
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'books'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'comics'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'movies'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'music'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'tv'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'podcasts'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'images'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'roms'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'books'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'comics'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'movies'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'music'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'tv'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'podcasts'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'images'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'roms'), { recursive: true });
+  } catch (error) {
+    logger.error("Couldn't create media folders", error);
+  }
 };
 
 /**
@@ -331,7 +342,7 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
 export const getMainEnvMap = async (): Promise<Map<EnvKeys, string>> => {
   const envFilePath = path.join(DATA_DIR, '.env');
 
-  if (!fs.existsSync(envFilePath)) {
+  if (!(await pathExists(envFilePath))) {
     throw new Error('Env file not found');
   }
 
