@@ -22,6 +22,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await clearDatabase(db);
+  await TipiConfig.setConfig('version', 'test');
   dispatcher.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
 });
 
@@ -51,7 +52,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: true });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true })).rejects.toThrowError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true })).rejects.toThrow('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
   });
 
   it('Should throw if app is exposed and config does not allow it', async () => {
@@ -59,7 +60,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: false });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError('APP_ERROR_APP_NOT_EXPOSABLE');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrow('APP_ERROR_APP_NOT_EXPOSABLE');
   });
 
   it('Should throw if app is exposed and domain is not valid', async () => {
@@ -67,7 +68,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ exposable: true });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError('APP_ERROR_DOMAIN_NOT_VALID');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrow('APP_ERROR_DOMAIN_NOT_VALID');
   });
 
   it('Should throw if app is exposed and domain is already used by another exposed app', async () => {
@@ -78,21 +79,21 @@ describe('Install app', () => {
     await insertApp({ domain, exposed: true }, appConfig2, db);
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain })).rejects.toThrowError('APP_ERROR_DOMAIN_ALREADY_IN_USE');
+    await expect(AppsService.installApp(appConfig.id, { exposed: true, domain })).rejects.toThrow('APP_ERROR_DOMAIN_ALREADY_IN_USE');
   });
 
   it('Should throw if architecure is not supported', async () => {
     // arrange
-    TipiConfig.setConfig('architecture', 'amd64');
+    await TipiConfig.setConfig('architecture', 'amd64');
     const appConfig = createAppConfig({ supported_architectures: ['arm64'] });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} is not supported on this architecture`);
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrow(`App ${appConfig.id} is not supported on this architecture`);
   });
 
   it('Can install if architecture is supported', async () => {
     // arrange
-    TipiConfig.setConfig('architecture', 'arm');
+    await TipiConfig.setConfig('architecture', 'arm');
     const appConfig = createAppConfig({ supported_architectures: ['arm'] });
 
     // act
@@ -104,7 +105,7 @@ describe('Install app', () => {
 
   it('Can install if no architecture is specified', async () => {
     // arrange
-    TipiConfig.setConfig('architecture', 'arm');
+    await TipiConfig.setConfig('architecture', 'arm');
     const appConfig = createAppConfig({ supported_architectures: undefined });
 
     // act
@@ -121,7 +122,7 @@ describe('Install app', () => {
     fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'test');
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrow(`App ${appConfig.id} has invalid config.json file`);
   });
 
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
@@ -129,32 +130,77 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ force_expose: true });
 
     // act & assert
-    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrowError();
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrow();
+  });
+
+  it('should throw if the current tipi version is lower than min_tipi_version', async () => {
+    // arrange
+    await TipiConfig.setConfig('version', '3.1.0');
+    const appConfig = createAppConfig({ min_tipi_version: '3.2.0' });
+
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrow('APP_UPDATE_ERROR_MIN_TIPI_VERSION');
+  });
+
+  it('should not throw if the current tipi version is equal to min_tipi_version', async () => {
+    // arrange
+    await TipiConfig.setConfig('version', '3.2.0');
+    const appConfig = createAppConfig({ min_tipi_version: '3.2.0' });
+
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {})).resolves.not.toThrow();
+  });
+
+  it('should not throw if the current tipi version is higher than min_tipi_version', async () => {
+    // arrange
+    await TipiConfig.setConfig('version', '3.3.0');
+    const appConfig = createAppConfig({ min_tipi_version: '3.2.0' });
+
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {})).resolves.not.toThrow();
+  });
+
+  it('should throw if the version format is invalid', async () => {
+    // arrange
+    await TipiConfig.setConfig('version', '3.3.0');
+    const appConfig = createAppConfig({ min_tipi_version: 'invalid' });
+
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {})).rejects.toThrow();
+  });
+
+  it('should work with a version including a v prefix', async () => {
+    // arrange
+    await TipiConfig.setConfig('version', '3.3.0');
+    const appConfig = createAppConfig({ min_tipi_version: 'v3.2.0' });
+
+    // act & assert
+    await expect(AppsService.installApp(appConfig.id, {})).resolves.not.toThrow();
   });
 });
 
 describe('Uninstall app', () => {
   it('Should throw if app is not installed', async () => {
     // act & assert
-    await expect(AppsService.uninstallApp('any')).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
+    await expect(AppsService.uninstallApp('any')).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 });
 
 describe('Start app', () => {
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.startApp('any')).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
+    await expect(AppsService.startApp('any')).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 });
 
 describe('Stop app', () => {
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.stopApp('any')).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
+    await expect(AppsService.stopApp('any')).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 });
 
 describe('Restart app', () => {
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.restartApp('any')).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
+    await expect(AppsService.restartApp('any')).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 });
 
@@ -175,7 +221,7 @@ describe('Update app config', () => {
   });
 
   it('Should throw if app is not installed', async () => {
-    await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrowError('APP_ERROR_APP_NOT_FOUND');
+    await expect(AppsService.updateAppConfig('test-app-2', { test: 'test' })).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
@@ -184,7 +230,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true })).rejects.toThrowError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
+    await expect(AppsService.updateAppConfig(appConfig.id, { exposed: true })).rejects.toThrow('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
   });
 
   it('Should throw if app is exposed and domain is not valid', async () => {
@@ -193,10 +239,10 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrowError('APP_ERROR_DOMAIN_NOT_VALID');
+    await expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test' })).rejects.toThrow('APP_ERROR_DOMAIN_NOT_VALID');
   });
 
-  it.skip('Should throw if app is exposed and domain is already used', async () => {
+  it('Should throw if app is exposed and domain is already used', async () => {
     // arrange
     const domain = faker.internet.domainName();
     const appConfig = createAppConfig({ exposable: true });
@@ -205,7 +251,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig2, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appConfig2.id, { exposed: true, domain })).rejects.toThrowError('APP_ERROR_DOMAIN_ALREADY_IN_USE');
+    await expect(AppsService.updateAppConfig(appConfig2.id, { exposed: true, domain })).rejects.toThrow('APP_ERROR_DOMAIN_ALREADY_IN_USE');
   });
 
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
@@ -214,7 +260,7 @@ describe('Update app config', () => {
     await insertApp({ exposed: true }, appConfig, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appConfig.id, {})).rejects.toThrowError('APP_ERROR_APP_FORCE_EXPOSED');
+    await expect(AppsService.updateAppConfig(appConfig.id, {})).rejects.toThrow('APP_ERROR_APP_FORCE_EXPOSED');
   });
 
   it('Should throw if app is exposed and config does not allow it', async () => {
@@ -223,9 +269,7 @@ describe('Update app config', () => {
     await insertApp({}, appConfig, db);
 
     // act & assert
-    await expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrowError(
-      'APP_ERROR_APP_NOT_EXPOSABLE',
-    );
+    await expect(AppsService.updateAppConfig(appConfig.id, { exposed: true, domain: 'test.com' })).rejects.toThrow('APP_ERROR_APP_NOT_EXPOSABLE');
   });
 });
 
@@ -284,7 +328,7 @@ describe('List apps', () => {
 
   it('Should not list apps that have supportedArchitectures and are not supported', async () => {
     // arrange
-    TipiConfig.setConfig('architecture', 'arm64');
+    await TipiConfig.setConfig('architecture', 'arm64');
     createAppConfig({ supported_architectures: ['amd64'] });
 
     // act
@@ -297,7 +341,7 @@ describe('List apps', () => {
 
   it.skip('Should list apps that have supportedArchitectures and are supported', async () => {
     // arrange
-    TipiConfig.setConfig('architecture', 'arm');
+    await TipiConfig.setConfig('architecture', 'arm');
     createAppConfig({ supported_architectures: ['arm'] });
 
     // act
@@ -310,7 +354,7 @@ describe('List apps', () => {
 
   it.skip('Should list apps that have no supportedArchitectures specified', async () => {
     // Arrange
-    TipiConfig.setConfig('architecture', 'arm');
+    await TipiConfig.setConfig('architecture', 'arm');
     createAppConfig({ supported_architectures: undefined });
 
     // act
@@ -350,6 +394,26 @@ describe('Update app', () => {
     await updateApp(appConfig.id, { version: 0 }, db);
     const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('stopped');
+  });
+
+  it('should throw if the current tipi version is lower than min_tipi_version', async () => {
+    // arrange
+    await TipiConfig.setConfig('version', '3.1.0');
+    const appConfig = createAppConfig({ min_tipi_version: '3.2.0' });
+    await insertApp({ status: 'running' }, appConfig, db);
+
+    // act & assert
+    await expect(AppsService.updateApp(appConfig.id)).rejects.toThrow('APP_UPDATE_ERROR_MIN_TIPI_VERSION');
+  });
+
+  it.skip('should not throw if the current tipi version is equal to min_tipi_version', async () => {
+    // arrange
+    await TipiConfig.setConfig('version', '3.2.0');
+    const appConfig = createAppConfig({ min_tipi_version: '3.2.0' });
+    await insertApp({ status: 'running' }, appConfig, db);
+
+    // act & assert
+    await expect(AppsService.updateApp(appConfig.id)).resolves.not.toThrow();
   });
 });
 
