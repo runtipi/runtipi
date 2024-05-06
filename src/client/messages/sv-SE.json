@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Är du säker? Den här åtgärden kan inte ångras.",
   "APP_UNINSTALL_SUCCESS": "Appen {id} avinstallerades",
   "APP_UPDATE_CONFIG_SUCCESS": "Appkonfiguration har uppdaterats. Starta om appen för att tillämpa ändringarna",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Uppdatera",
   "APP_UPDATE_FORM_SUBTITLE_1": "Uppdatera appen till senaste version :",
   "APP_UPDATE_FORM_SUBTITLE_2": "Detta kommer att återställa din anpassade konfiguration (t.ex. ändringar i docker-compose.yml)",
