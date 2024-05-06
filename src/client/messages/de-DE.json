@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Sind Sie sicher? Dieser Schritt kann nicht rückgängig gemacht werden.",
   "APP_UNINSTALL_SUCCESS": "App {id} erfolgreich deinstalliert",
   "APP_UPDATE_CONFIG_SUCCESS": "App-Konfiguration erfolgreich aktualisiert. Starte die App neu, um die Änderungen zu übernehmen",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Aktualisieren",
   "APP_UPDATE_FORM_SUBTITLE_1": "App auf die neueste Version aktualisieren:",
   "APP_UPDATE_FORM_SUBTITLE_2": "Dies wird Ihre benutzerdefinierte Konfiguration zurücksetzen (z.B. Änderungen in docker-compose.yml).",
