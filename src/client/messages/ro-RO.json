@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Sunteți sigur? Această acțiune nu poate fi anulată.",
   "APP_UNINSTALL_SUCCESS": "App {id} uninstalled successfully",
   "APP_UPDATE_CONFIG_SUCCESS": "Configurarea aplicației a fost actualizată. Reporniți aplicația pentru a aplica modificările",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Actualizare",
   "APP_UPDATE_FORM_SUBTITLE_1": "Actualizează aplicația la cea mai recentă versiune:",
   "APP_UPDATE_FORM_SUBTITLE_2": "Aceasta va reseta configuraţia personalizată (de ex. modificări în docker-compose.yml)",
