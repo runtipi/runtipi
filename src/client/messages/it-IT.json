@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Sei sicuro? Questa azione è irreversibile.",
   "APP_UNINSTALL_SUCCESS": "App {id} disinstallata con successo",
   "APP_UPDATE_CONFIG_SUCCESS": "App configurata con successo. Riavvia l'app per applicare le modifiche",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Aggiorna",
   "APP_UPDATE_FORM_SUBTITLE_1": "Aggiorna app all'ultima versione :",
   "APP_UPDATE_FORM_SUBTITLE_2": "Questo resetterà la tua configurazione personalizzata (es. le modifiche in docker-compose.yml).",
