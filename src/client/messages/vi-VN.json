@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Bạn chắc chứ? Hành động này không thể hoàn tác.",
   "APP_UNINSTALL_SUCCESS": "App {id} uninstalled successfully",
   "APP_UPDATE_CONFIG_SUCCESS": "Cài đặt của ứng dụng đã được cập nhật. Khởi động lại ứng dụng để áp dụng thay đổi",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Cập nhật",
   "APP_UPDATE_FORM_SUBTITLE_1": "Cập nhật ứng dụng lên phiên bản mới nhất:",
   "APP_UPDATE_FORM_SUBTITLE_2": "Việc này sẽ thay đổi cấu hình tùy chọn của bạn (ví dụ: các thay đổi trong file docker-compose.yml).",
