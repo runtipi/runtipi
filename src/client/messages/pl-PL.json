@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Jesteś pewien? Tej akcji nie można cofnąć.",
   "APP_UNINSTALL_SUCCESS": "App {id} uninstalled successfully",
   "APP_UPDATE_CONFIG_SUCCESS": "Konfiguracja aplikacji została zaktualizowana. Uruchom aplikację ponownie, aby zastosować zmiany",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Aktualizuj",
   "APP_UPDATE_FORM_SUBTITLE_1": "Zaktualizuj aplikację do najnowszej wersji:",
   "APP_UPDATE_FORM_SUBTITLE_2": "Spowoduje to zresetowanie twojej konfiguracji (np. zmiany w docker-compose.yml)",
