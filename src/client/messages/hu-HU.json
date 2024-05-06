@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Biztos benne? Ezt a műveletet nem lehet visszavonni.",
   "APP_UNINSTALL_SUCCESS": "{id} Alkalmazás sikeresen eltávolítva",
   "APP_UPDATE_CONFIG_SUCCESS": "Az alkalmazás konfigurációja sikeresen frissült. Indítsa újra az alkalmazást a módosítások alkalmazásához",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Frissítés",
   "APP_UPDATE_FORM_SUBTITLE_1": "Frissítse az alkalmazást a legújabb verzióra:",
   "APP_UPDATE_FORM_SUBTITLE_2": "Ez visszaállítja az egyéni konfigurációt (pl. változások a docker-compose.yml-ben)",
