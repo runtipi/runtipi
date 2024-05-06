@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Êtes-vous sûr ? Cette action ne peut pas être annulée.",
   "APP_UNINSTALL_SUCCESS": "Application {id} désinstallée avec succès",
   "APP_UPDATE_CONFIG_SUCCESS": "Configuration de l'application mise à jour avec succès. Redémarrez l'application pour appliquer les modifications",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Mettre à jour",
   "APP_UPDATE_FORM_SUBTITLE_1": "Mettre à jour l'application vers la dernière version :",
   "APP_UPDATE_FORM_SUBTITLE_2": "Assurez-vous que vous avez lu les notes de version de l'application et que vous avez sauvegardé vos données d'application.",
