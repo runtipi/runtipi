@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Είστε βέβαιοι; Αυτό δεν μπορεί να αναιρεθεί.",
   "APP_UNINSTALL_SUCCESS": "App {id} uninstalled successfully",
   "APP_UPDATE_CONFIG_SUCCESS": "Η ρύθμιση της εφαρμογής ενημερώθηκε με επιτυχία. Επανεκκινήστε την εφαρμογή για να εφαρμόσετε τις αλλαγές",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Ενημέρωση",
   "APP_UPDATE_FORM_SUBTITLE_1": "Ενημέρωση στην την πιο πρόσφατη έκδοση:",
   "APP_UPDATE_FORM_SUBTITLE_2": "Αυτό θα επαναφέρει τις προσαρμοσμένες ρυθμίσεις σας (π.χ. αλλαγές στο docker-compose.yml).",
