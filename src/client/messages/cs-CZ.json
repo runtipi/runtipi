@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Are you sure? This action cannot be undone.",
   "APP_UNINSTALL_SUCCESS": "App {id} uninstalled successfully",
   "APP_UPDATE_CONFIG_SUCCESS": "App config updated successfully. Restart the app to apply the changes",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "Update",
   "APP_UPDATE_FORM_SUBTITLE_1": "Update app to latest verion :",
   "APP_UPDATE_FORM_SUBTITLE_2": "Make sure you've read the release notes of the app and you've backed up your app data.",
