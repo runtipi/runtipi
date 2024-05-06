@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "您確定嗎？這個動作無法被復原！",
   "APP_UNINSTALL_SUCCESS": "App {id} uninstalled successfully",
   "APP_UPDATE_CONFIG_SUCCESS": "應用配置更新成功。 重新啟動應用程序以應用更改",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "更新",
   "APP_UPDATE_FORM_SUBTITLE_1": "更新到最新版本：",
   "APP_UPDATE_FORM_SUBTITLE_2": "這將重置您的自定義配置 (例如 docker-compose. yml 中的更改)",
