@@ -112,6 +112,7 @@
   "APP_UNINSTALL_FORM_WARNING": "本当に実行しますか？この作業は元に戻せません。",
   "APP_UNINSTALL_SUCCESS": "App {id} uninstalled successfully",
   "APP_UPDATE_CONFIG_SUCCESS": "アプリの設定が正常に更新されました。変更を適用するにはアプリを再起動してください",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {id} update requires Tipi version {minVersion} or higher. Please update your instance.",
   "APP_UPDATE_FORM_SUBMIT": "更新",
   "APP_UPDATE_FORM_SUBTITLE_1": "アプリを最新のバージョンに更新:",
   "APP_UPDATE_FORM_SUBTITLE_2": "カスタム構成をリセットします (例: docker-compose.yml の変更)",
