@@ -24,12 +24,13 @@ describe('Test: CategorySelector', () => {
     const combobox = screen.getByRole('combobox');
 
     // act
-    fireEvent.input(combobox, { target: { value: 'automation' } });
-    const listItem = screen.getByText('Automation');
-    fireEvent.click(listItem);
+    fireEvent.focus(combobox);
+    fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+    const listItem = screen.getByText('Network');
+    fireEvent.keyDown(listItem, { key: 'Enter' });
 
     // assert
-    expect(onSelect).toHaveBeenCalledWith('automation');
+    expect(onSelect).toHaveBeenCalledWith('network');
   });
 
   it('should set the initial value when provided', () => {

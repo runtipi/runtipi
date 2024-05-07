@@ -8,7 +8,11 @@ const createJestConfig = nextJest({
 const customClientConfig = {
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/tests/client/jest.setup.tsx'],
-  testMatch: ['<rootDir>/src/client/**/*.{spec,test}.{ts,tsx}', '!<rootDir>/src/server/**/*.{spec,test}.{ts,tsx}'],
+  testMatch: [
+    '<rootDir>/src/client/**/*.{spec,test}.{ts,tsx}',
+    '<rootDir>/src/app/**/*.{spec,test}.{ts,tsx}',
+    '!<rootDir>/src/server/**/*.{spec,test}.{ts,tsx}',
+  ],
 };
 
 const customServerConfig = {

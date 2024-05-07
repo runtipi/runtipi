@@ -166,7 +166,7 @@ export class AppServiceClass {
   public installApp = async (id: string, form: AppEventFormInput) => {
     const app = await this.queries.getApp(id);
 
-    const { exposed, domain, isVisibleOnGuestDashboard } = form;
+    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
 
     if (app) {
       await this.startApp(id);
@@ -221,8 +221,8 @@ export class AppServiceClass {
         version: appInfo.tipi_version,
         exposed: exposed || false,
         domain: domain || null,
-        openPort: form.openPort || false,
-        exposedLocal: form.exposedLocal || false,
+        openPort: openPort || false,
+        exposedLocal: exposedLocal || false,
         isVisibleOnGuestDashboard,
       });
 
