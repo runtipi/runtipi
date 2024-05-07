@@ -44,6 +44,7 @@ const localStorageMock = (() => {
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 Object.defineProperty(window, 'ResizeObserver', { value: ResizeObserver });
 Object.defineProperty(window, 'MutationObserver', { value: ResizeObserver });
+Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', { value: jest.fn() });
 
 Object.defineProperty(window, 'matchMedia', {
   value: () => {

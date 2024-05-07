@@ -114,7 +114,8 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         <Controller
           control={control}
           name="openPort"
-          defaultValue
+          defaultValue={!info.force_expose}
+          disabled={info.force_expose}
           render={({ field: { onChange, value, ref, ...props } }) => (
             <Switch
               {...props}
@@ -186,7 +187,6 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
           render={({ field: { onChange, value, ref, ...props } }) => (
             <Switch
               className="mb-3"
-              disabled={info.force_expose}
               ref={ref}
               checked={value}
               onCheckedChange={onChange}
