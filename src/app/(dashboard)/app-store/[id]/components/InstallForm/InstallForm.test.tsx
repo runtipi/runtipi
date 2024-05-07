@@ -5,6 +5,15 @@ import { FormField } from '@runtipi/shared';
 import { fireEvent, render, screen, waitFor } from '../../../../../../../tests/test-utils';
 import { InstallForm } from './InstallForm';
 
+let useClientSettingsMock = { guestDashboard: false };
+jest.mock('../../../../../hooks/use-client-settings.ts', () => ({
+  useClientSettings: () => useClientSettingsMock,
+}));
+
+beforeEach(() => {
+  useClientSettingsMock = { guestDashboard: false };
+});
+
 describe('Test: InstallForm', () => {
   it('should render the form', () => {
     render(<InstallForm formFields={[]} onSubmit={jest.fn} info={fromPartial({})} />);
@@ -115,7 +124,7 @@ describe('Test: InstallForm', () => {
 
     render(<InstallForm formFields={formFields} onSubmit={onSubmit} info={fromPartial({ exposable: true })} />);
 
-    expect(screen.getByLabelText('Expose app')).toBeInTheDocument();
+    expect(screen.getByLabelText('Expose app on the internet')).toBeInTheDocument();
   });
 
   it('should render the domain form and disable the expose switch when info has force_expose set to true', () => {
@@ -128,5 +137,49 @@ describe('Test: InstallForm', () => {
     expect(screen.getByRole('switch')).toBeDisabled();
     expect(screen.getByRole('switch')).toBeChecked();
     expect(screen.getByRole('textbox', { name: 'domain' })).toBeInTheDocument();
+  });
+
+  it('should disable the open port switch when info has force_expose set to true', () => {
+    const formFields: FormField[] = [{ env_variable: 'test-env', label: 'test-field', type: 'text', required: true }];
+
+    const onSubmit = jest.fn();
+
+    render(<InstallForm formFields={formFields} onSubmit={onSubmit} info={fromPartial({ force_expose: true, dynamic_config: true })} />);
+
+    expect(screen.getByRole('switch', { name: 'openPort' })).toBeDisabled();
+    expect(screen.getByRole('switch', { name: 'openPort' })).not.toBeChecked();
+  });
+
+  it('should show display on guest dashboard switch when guest dashboard setting is true', async () => {
+    // Arrange
+    useClientSettingsMock = { guestDashboard: true };
+    const onSubmit = jest.fn();
+
+    // Act
+    render(<InstallForm formFields={[]} onSubmit={onSubmit} info={fromPartial({})} />);
+    fireEvent.click(screen.getByRole('switch', { name: 'isVisibleOnGuestDashboard' }));
+    screen.getByText('Install').click();
+
+    // Assert
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({ isVisibleOnGuestDashboard: true });
+    });
+  });
+
+  it('should not show display on guest dashboard switch when guest dashboard setting is false', async () => {
+    // Arrange
+    useClientSettingsMock = { guestDashboard: false };
+    const onSubmit = jest.fn();
+
+    // Act
+    render(<InstallForm formFields={[]} onSubmit={onSubmit} info={fromPartial({})} />);
+    screen.getByText('Install').click();
+
+    // Assert
+    expect(screen.queryByRole('switch', { name: 'isVisibleOnGuestDashboard' })).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({});
+    });
   });
 });

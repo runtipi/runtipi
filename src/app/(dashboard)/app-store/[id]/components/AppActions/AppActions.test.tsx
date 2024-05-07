@@ -149,11 +149,11 @@ describe('Test: AppActions', () => {
     });
   });
 
-  it('should render local_domain open button', async () => {
+  it('should render local_domain open button when exposed locally', async () => {
     // arrange
     const openFn = jest.fn();
     // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions localDomain="tipi.lan" onOpen={openFn} status="running" app={app} />);
+    render(<AppActions localDomain="tipi.lan" onOpen={openFn} status="running" app={{ ...app, exposedLocal: true }} />);
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });
@@ -170,11 +170,11 @@ describe('Test: AppActions', () => {
     });
   });
 
-  it('should render local open button', async () => {
+  it('should render local open button when port is open', async () => {
     // arrange
     const openFn = jest.fn();
     // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions localUrl="http://localhost:3000" onOpen={openFn} status="running" app={app} />);
+    render(<AppActions localUrl="http://localhost:3000" onOpen={openFn} status="running" app={{ ...app, openPort: true }} />);
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });
