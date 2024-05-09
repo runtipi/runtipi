@@ -32,12 +32,12 @@
   "license": "ISC",
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
-    "validator": "^13.11.0",
+    "validator": "^13.12.0",
     "winston": "^3.13.0",
-    "zod": "^3.23.0"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@sentry/types": "^7.111.0",
+    "@sentry/types": "^7.114.0",
     "@types/lodash.clonedeep": "^4.5.9"
   }
 }
