@@ -307,8 +307,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       knip:
-        specifier: ^5.13.0
-        version: 5.13.0(@types/node@20.12.11)(typescript@5.4.5)
+        specifier: ^5.14.0
+        version: 5.14.0(@types/node@20.12.11)(typescript@5.4.5)
       memfs:
         specifier: ^4.8.2
         version: 4.9.2
@@ -331,8 +331,8 @@ importers:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.12.11)(typescript@5.4.5)
       tsx:
-        specifier: ^4.9.3
-        version: 4.9.3
+        specifier: ^4.9.4
+        version: 4.9.4
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -437,8 +437,8 @@ importers:
         specifier: ^0.19.4
         version: 0.19.12
       knip:
-        specifier: ^5.13.0
-        version: 5.13.0(@types/node@20.12.11)(typescript@5.4.5)
+        specifier: ^5.14.0
+        version: 5.14.0(@types/node@20.12.11)(typescript@5.4.5)
       memfs:
         specifier: ^4.8.2
         version: 4.9.2
@@ -446,8 +446,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0
       tsx:
-        specifier: ^4.9.3
-        version: 4.9.3
+        specifier: ^4.9.4
+        version: 4.9.4
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -7988,8 +7988,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /knip@5.13.0(@types/node@20.12.11)(typescript@5.4.5):
-    resolution: {integrity: sha512-CvGvUkb4SIpLWNYOwv8sqGp9WlWe7i57Qw3w/cvEMOdbPxIyzCWBKuD+xpty4zKtdrWxwdV5Jr0LtSKcxxA6Yw==}
+  /knip@5.14.0(@types/node@20.12.11)(typescript@5.4.5):
+    resolution: {integrity: sha512-DnoY9c2RDH2CGpG4A8qgr7cjiGdbC6yCCht06qegy4GsfFVLg/9QCX+MfUCzDbsBZWk8Nh4zBdmmlrcac9jboQ==}
     engines: {node: '>=18.6.0'}
     hasBin: true
     peerDependencies:
@@ -8015,7 +8015,7 @@ packages:
       summary: 2.1.0
       typescript: 5.4.5
       zod: 3.23.8
-      zod-validation-error: 3.2.0(zod@3.23.8)
+      zod-validation-error: 3.3.0(zod@3.23.8)
     dev: true
 
   /kuler@2.0.0:
@@ -10857,8 +10857,8 @@ packages:
       typescript: 5.4.5
     dev: true
 
-  /tsx@4.9.3:
-    resolution: {integrity: sha512-czVbetlILiyJZI5zGlj2kw9vFiSeyra9liPD4nG+Thh4pKTi0AmMEQ8zdV/L2xbIVKrIqif4sUNrsMAOksx9Zg==}
+  /tsx@4.9.4:
+    resolution: {integrity: sha512-TlSJTVn2taGGDgdV3jAqCj7WQ/CafCB5p4SbG7W2Bl/0AJWH1ShJlBbc0y2lOFTjQEVAAULSTlmehw/Mwv3S/Q==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     dependencies:
@@ -11639,8 +11639,8 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
-  /zod-validation-error@3.2.0(zod@3.23.8):
-    resolution: {integrity: sha512-cYlPR6zuyrgmu2wRTdumEAJGuwI7eHVHGT+VyneAQxmRAKtGRL1/7pjz4wfLhz4J05f5qoSZc3rGacswgyTjjw==}
+  /zod-validation-error@3.3.0(zod@3.23.8):
+    resolution: {integrity: sha512-Syib9oumw1NTqEv4LT0e6U83Td9aVRk9iTXPUQr1otyV1PuXQKOvOwhMNqZIq5hluzHP2pMgnOmHEo7kPdI2mw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       zod: ^3.18.0
