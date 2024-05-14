@@ -10,7 +10,7 @@ import { Database } from '@/server/db';
 import { tipiCache } from '@/server/core/TipiCache/TipiCache';
 import { DATA_DIR } from '@/config/constants';
 import { TipiConfig } from '../../core/TipiConfig';
-import { fileExists, unlinkFile } from '../../common/fs.helpers';
+import { fileExists, readFile, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
 
 type UsernamePasswordInput = {
@@ -296,6 +296,8 @@ export class AuthServiceClass {
     await this.queries.updateUser(user.id, { password: hash, totpEnabled: false, totpSecret: null });
 
     await unlinkFile(`${DATA_DIR}/state/password-change-request`);
+    
+    await this.destroyAllSessionsByUserId(user.id);
 
     return { email: user.username };
   };
@@ -307,8 +309,16 @@ export class AuthServiceClass {
    * @returns {boolean} - A boolean indicating if there is a password change request or not
    */
   public static checkPasswordChangeRequest = () => {
-    if (fileExists(`${DATA_DIR}/state/password-change-request`)) {
-      return true;
+    const resetPasswordFilePath = `${DATA_DIR}/state/password-change-request`
+    if (fileExists(resetPasswordFilePath)) {
+      let resetFile = readFile(resetPasswordFilePath);
+      
+      try {
+        let expiry = Number(resetFile)
+        return expiry > Date.now() / 1000
+      } catch {
+        return false
+      }
     }
 
     return false;
