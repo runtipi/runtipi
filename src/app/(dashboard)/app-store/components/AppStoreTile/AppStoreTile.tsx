@@ -19,6 +19,7 @@ type App = {
 
 export const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
   const t = useTranslations();
+  const isNewApp = app.created + (14 * 24 * 60 * 60 * 1000) > Date.now();
 
   return (
     <Link aria-label={app.name} className={clsx(styles.appTile)} href={`/app-store/${app.id}`} passHref>
@@ -27,7 +28,7 @@ export const AppStoreTile: React.FC<{ app: App }> = ({ app }) => {
         <div className="card-body">
           <div className="d-flex align-items-center" style={{"columnGap": "0.75rem"}}>
           	<h3 className="text-bold h-3 mb-2">{limitText(app.name, 20)}</h3>
-          	{app.created + (14 * 24 * 60 * 60 * 1000) > Date.now() ? <div className="text-white badge me-1 bg-green">{t("APP_NEW")}</div> : null}
+          	{isNewApp ? <div className="text-white badge me-1 bg-green">{t("APP_NEW")}</div> : null}
           </div>
           <p className="text-muted text-nowrap mb-2">{limitText(app.short_desc, 30)}</p>
           {app.categories?.map((category) => (
