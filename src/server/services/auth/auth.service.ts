@@ -309,15 +309,16 @@ export class AuthServiceClass {
    * @returns {boolean} - A boolean indicating if there is a password change request or not
    */
   public static checkPasswordChangeRequest = () => {
+    const REQUEST_TIMEOUT_SECS = 15 * 60; // 15 minutes
     const resetPasswordFilePath = `${DATA_DIR}/state/password-change-request`
     if (fileExists(resetPasswordFilePath)) {
       let resetFile = readFile(resetPasswordFilePath);
       
       try {
-        let expiry = Number(resetFile)
-        return expiry > Date.now() / 1000
+        let requestCreation = Number(resetFile);
+        return requestCreation + REQUEST_TIMEOUT_SECS > Date.now() / 1000;
       } catch {
-        return false
+        return false;
       }
     }
 
