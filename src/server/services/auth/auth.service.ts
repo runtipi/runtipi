@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
+import { pathExists } from '@runtipi/shared/node';
 import * as argon2 from 'argon2';
 import validator from 'validator';
 import { TotpAuthenticator } from '@/server/utils/totp';
@@ -9,8 +11,8 @@ import { generateSessionId, setSession } from '@/server/common/session.helpers';
 import { Database } from '@/server/db';
 import { tipiCache } from '@/server/core/TipiCache/TipiCache';
 import { DATA_DIR } from '@/config/constants';
+import path from 'path';
 import { TipiConfig } from '../../core/TipiConfig';
-import { fileExists, readFile, unlinkFile } from '../../common/fs.helpers';
 import { decrypt, encrypt } from '../../utils/encryption';
 
 type UsernamePasswordInput = {
@@ -279,7 +281,9 @@ export class AuthServiceClass {
    * @param {string} params.newPassword - The new password
    */
   public changeOperatorPassword = async (params: { newPassword: string }) => {
-    if (!AuthServiceClass.checkPasswordChangeRequest()) {
+    const isRequested = await this.checkPasswordChangeRequest();
+
+    if (!isRequested) {
       throw new TranslatedError('AUTH_ERROR_NO_CHANGE_PASSWORD_REQUEST');
     }
 
@@ -295,8 +299,8 @@ export class AuthServiceClass {
 
     await this.queries.updateUser(user.id, { password: hash, totpEnabled: false, totpSecret: null });
 
-    await unlinkFile(`${DATA_DIR}/state/password-change-request`);
-    
+    await fs.promises.unlink(path.join(DATA_DIR, 'state', 'password-change-request'));
+
     await this.destroyAllSessionsByUserId(user.id);
 
     return { email: user.username };
@@ -308,18 +312,19 @@ export class AuthServiceClass {
    *
    * @returns {boolean} - A boolean indicating if there is a password change request or not
    */
-  public static checkPasswordChangeRequest = () => {
+  public checkPasswordChangeRequest = async () => {
     const REQUEST_TIMEOUT_SECS = 15 * 60; // 15 minutes
-    const resetPasswordFilePath = `${DATA_DIR}/state/password-change-request`
-    if (fileExists(resetPasswordFilePath)) {
-      let resetFile = readFile(resetPasswordFilePath);
-      
-      try {
-        let requestCreation = Number(resetFile);
+    const resetPasswordFilePath = path.join(DATA_DIR, 'state', 'password-change-request');
+
+    try {
+      if (await pathExists(resetPasswordFilePath)) {
+        const timestamp = await fs.promises.readFile(resetPasswordFilePath, 'utf8');
+
+        const requestCreation = Number(timestamp);
         return requestCreation + REQUEST_TIMEOUT_SECS > Date.now() / 1000;
-      } catch {
-        return false;
       }
+    } catch {
+      return false;
     }
 
     return false;
@@ -333,8 +338,10 @@ export class AuthServiceClass {
    * @throws {Error} - If the file cannot be removed
    */
   public static cancelPasswordChangeRequest = async () => {
-    if (fileExists(`${DATA_DIR}/state/password-change-request`)) {
-      await unlinkFile(`${DATA_DIR}/state/password-change-request`);
+    const changeRequestPath = path.join(DATA_DIR, 'state', 'password-change-request');
+
+    if (await pathExists(changeRequestPath)) {
+      await fs.promises.unlink(changeRequestPath);
     }
 
     return true;
