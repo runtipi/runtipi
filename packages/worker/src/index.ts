@@ -5,7 +5,7 @@ import Redis from 'ioredis';
 import dotenv from 'dotenv';
 import { Queue } from 'bullmq';
 import * as Sentry from '@sentry/node';
-import { extraErrorDataIntegration } from "@sentry/nextjs";
+import { extraErrorDataIntegration } from '@sentry/integrations';
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
@@ -33,7 +33,7 @@ const setupSentry = (release?: string) => {
       Sentry.localVariablesIntegration({
         captureAllExceptions: true,
       }),
-      extraErrorDataIntegration(),
+      extraErrorDataIntegration,
     ],
   });
 };
@@ -49,8 +49,14 @@ const main = async () => {
     logger.info('Copying system files...');
     await copySystemFiles(envMap);
 
-    if (envMap.get('ALLOW_ERROR_MONITORING') === 'true' && process.env.NODE_ENV === 'production' && process.env.LOCAL !== 'true') {
-      logger.info(`Anonymous error monitoring is enabled, to disable it add "allowErrorMonitoring": false to your settings.json file. Version: ${process.env.TIPI_VERSION}`);
+    if (
+      envMap.get('ALLOW_ERROR_MONITORING') === 'true' &&
+      process.env.NODE_ENV === 'production' &&
+      process.env.LOCAL !== 'true'
+    ) {
+      logger.info(
+        `Anonymous error monitoring is enabled, to disable it add "allowErrorMonitoring": false to your settings.json file. Version: ${process.env.TIPI_VERSION}`,
+      );
       setupSentry(process.env.TIPI_VERSION);
     }
 
@@ -75,15 +81,31 @@ const main = async () => {
     }
 
     logger.info('Starting queue...');
-    const queue = new Queue('events', { connection: { host: envMap.get('REDIS_HOST'), port: 6379, password: envMap.get('REDIS_PASSWORD') } });
-    const repeatQueue = new Queue('repeat', { connection: { host: envMap.get('REDIS_HOST'), port: 6379, password: envMap.get('REDIS_PASSWORD') } });
+    const queue = new Queue('events', {
+      connection: {
+        host: envMap.get('REDIS_HOST'),
+        port: 6379,
+        password: envMap.get('REDIS_PASSWORD'),
+      },
+    });
+    const repeatQueue = new Queue('repeat', {
+      connection: {
+        host: envMap.get('REDIS_HOST'),
+        port: 6379,
+        password: envMap.get('REDIS_PASSWORD'),
+      },
+    });
     logger.info('Obliterating queue...');
     await queue.drain(true);
 
     // Scheduled jobs
     if (process.env.NODE_ENV === 'production') {
       logger.info('Adding scheduled jobs to queue...');
-      await repeatQueue.add(`${Math.random().toString()}_repo_update`, { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent, { repeat: { pattern: '*/30 * * * *' } });
+      await repeatQueue.add(
+        `${Math.random().toString()}_repo_update`,
+        { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent,
+        { repeat: { pattern: '*/30 * * * *' } },
+      );
     }
 
     logger.info('Closing queue...');
@@ -101,7 +123,11 @@ const main = async () => {
 
     // Set status to running
     logger.info('Setting status to running...');
-    const cache = new Redis({ host: envMap.get('REDIS_HOST'), port: 6379, password: envMap.get('REDIS_PASSWORD') });
+    const cache = new Redis({
+      host: envMap.get('REDIS_HOST'),
+      port: 6379,
+      password: envMap.get('REDIS_PASSWORD'),
+    });
     await cache.set('status', 'RUNNING');
     await cache.quit();
 
