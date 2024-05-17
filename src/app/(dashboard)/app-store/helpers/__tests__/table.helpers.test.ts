@@ -1,4 +1,5 @@
 import { limitText } from '@/lib/helpers/text-helpers';
+import { describe, it, expect } from 'vitest';
 import { createAppConfig } from '../../../../../server/tests/apps.factory';
 import { sortTable } from '../table.helpers';
 import { AppTableData } from '../table.types';

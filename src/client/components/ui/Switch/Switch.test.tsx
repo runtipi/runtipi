@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { vi, describe, it, expect } from 'vitest';
 import { Switch } from './Switch';
 import { fireEvent, render, screen } from '../../../../../tests/test-utils';
 
@@ -25,7 +26,7 @@ describe('Switch', () => {
 
   it('renders the checked state', () => {
     // arrange
-    render(<Switch checked onChange={jest.fn} />);
+    render(<Switch checked onChange={vi.fn} />);
     const checkbox = screen.getByRole('switch');
 
     // assert
@@ -34,7 +35,7 @@ describe('Switch', () => {
 
   it('triggers onChange event when clicked', () => {
     // arrange
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<Switch onCheckedChange={onChange} />);
     const checkbox = screen.getByRole('switch');
 
@@ -47,7 +48,7 @@ describe('Switch', () => {
 
   it('triggers onBlur event when blurred', () => {
     // arrange
-    const onBlur = jest.fn();
+    const onBlur = vi.fn();
     render(<Switch onBlur={onBlur} />);
     const checkbox = screen.getByRole('switch');
 
@@ -60,7 +61,7 @@ describe('Switch', () => {
 
   it('should change the checked state when clicked', () => {
     // arrange
-    render(<Switch onChange={jest.fn} />);
+    render(<Switch onChange={vi.fn} />);
     const checkbox = screen.getByRole('switch');
 
     // act

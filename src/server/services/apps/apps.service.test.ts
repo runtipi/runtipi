@@ -5,6 +5,7 @@ import { faker } from '@faker-js/faker';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import path from 'path';
 import { DATA_DIR } from '@/config/constants';
+import { vi, beforeEach, beforeAll, afterAll, describe, it, expect } from 'vitest';
 import { AppServiceClass } from './apps.service';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { getAllApps, getAppById, updateApp, createAppConfig, insertApp } from '../../tests/apps.factory';
@@ -23,7 +24,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await clearDatabase(db);
   await TipiConfig.setConfig('version', 'test');
-  dispatcher.dispatchEventAsync = jest.fn().mockResolvedValue({ success: true });
+  dispatcher.dispatchEventAsync = vi.fn().mockResolvedValue({ success: true });
 });
 
 afterAll(async () => {
@@ -461,7 +462,7 @@ describe('startAllApps', () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'stopped' }, appConfig, db);
-    const spy = jest.spyOn(dispatcher, 'dispatchEventAsync');
+    const spy = vi.spyOn(dispatcher, 'dispatchEventAsync');
     spy.mockResolvedValueOnce({ success: false, stdout: 'error' });
 
     // act

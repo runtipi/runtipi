@@ -4,12 +4,14 @@ import { getTranslatorFromCookie } from '@/lib/get-translator';
 import { ResetPasswordContainer } from './components/ResetPasswordContainer';
 
 export default async function ResetPasswordPage() {
-  const isRequested = AuthServiceClass.checkPasswordChangeRequest();
-  const translator = await getTranslatorFromCookie();
+  const authService = new AuthServiceClass();
+  const isRequested = await authService.checkPasswordChangeRequest();
 
   if (isRequested) {
     return <ResetPasswordContainer />;
   }
+
+  const translator = await getTranslatorFromCookie();
 
   return (
     <>
