@@ -1,4 +1,5 @@
 import React from 'react';
+import { vi, describe, it, expect } from 'vitest';
 import { Input } from './Input';
 import { fireEvent, render, waitFor, screen } from '../../../../../tests/test-utils';
 
@@ -40,7 +41,7 @@ describe('Input', () => {
 
   it('should call onChange when the input value is changed', async () => {
     // arrange
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<Input name="test-input" label="Test Label" onChange={onChange} />);
     const input = screen.getByLabelText('Test Label');
 
@@ -53,7 +54,7 @@ describe('Input', () => {
 
   it('should call onBlur when the input is blurred', async () => {
     // arrange
-    const onBlur = jest.fn();
+    const onBlur = vi.fn();
     render(<Input name="test-input" label="Test Label" onBlur={onBlur} />);
     const input = screen.getByLabelText('Test Label');
 
@@ -75,7 +76,7 @@ describe('Input', () => {
 
   it('should set the input value if provided', () => {
     // arrange
-    render(<Input name="test-input" label="Test Label" value="Test Value" onChange={jest.fn} />);
+    render(<Input name="test-input" label="Test Label" value="Test Value" onChange={vi.fn} />);
     const input = screen.getByLabelText('Test Label') as HTMLInputElement;
 
     // assert

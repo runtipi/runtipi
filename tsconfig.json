@@ -58,8 +58,8 @@
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
     "types": [
-      "jest",
-      "@testing-library/jest-dom"
+      "@testing-library/jest-dom",
+      "node"
     ],
     "experimentalDecorators": true,
     "plugins": [

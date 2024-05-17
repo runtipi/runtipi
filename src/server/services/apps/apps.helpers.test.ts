@@ -5,13 +5,13 @@ import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/se
 import { appInfoSchema } from '@runtipi/shared';
 import path from 'path';
 import { DATA_DIR } from '@/config/constants';
+import { beforeAll, beforeEach, afterAll, describe, it, expect } from 'vitest';
 import { TipiConfig } from '../../core/TipiConfig';
 import { checkAppRequirements, getAppInfo, getAvailableApps, getUpdateInfo } from './apps.helpers';
 import { createAppConfig, insertApp } from '../../tests/apps.factory';
 
 let db: TestDatabase;
 const TEST_SUITE = 'appshelpers';
-jest.mock('fs-extra');
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);

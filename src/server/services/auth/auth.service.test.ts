@@ -10,6 +10,7 @@ import { v4 } from 'uuid';
 import { tipiCache } from '@/server/core/TipiCache';
 import path from 'path';
 import { DATA_DIR } from '@/config/constants';
+import { vi, beforeAll, beforeEach, afterAll, describe, it, expect } from 'vitest';
 import { encrypt } from '../../utils/encryption';
 import { TipiConfig } from '../../core/TipiConfig';
 import { createUser, getUserByEmail, getUserById } from '../../tests/user.factory';
@@ -20,8 +21,8 @@ let database: TestDatabase;
 const TEST_SUITE = 'authservice';
 
 let cookieStore: Record<string, string> = {};
-jest.mock('next/headers', () => ({
-  cookies: jest.fn(() => ({
+vi.mock('next/headers', () => ({
+  cookies: vi.fn(() => ({
     set: (name: string, value: string) => {
       cookieStore[name] = value;
     },
@@ -540,7 +541,7 @@ describe('Test: changeOperatorPassword', () => {
     const user = await createUser({ email }, database);
     const newPassword = faker.internet.password();
     // @ts-expect-error - mocking fs
-    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: '' });
+    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: new Date().getTime().toString() });
 
     // Act
     const result = await AuthService.changeOperatorPassword({ newPassword });
@@ -569,7 +570,7 @@ describe('Test: changeOperatorPassword', () => {
     await createUser({ email, operator: false }, database);
     const newPassword = faker.internet.password();
     // @ts-expect-error - mocking fs
-    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: '' });
+    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: new Date().getTime().toString() });
 
     // Act & Assert
     await expect(AuthService.changeOperatorPassword({ newPassword })).rejects.toThrowError('AUTH_ERROR_OPERATOR_NOT_FOUND');
@@ -581,7 +582,7 @@ describe('Test: changeOperatorPassword', () => {
     const user = await createUser({ email, totpEnabled: true }, database);
     const newPassword = faker.internet.password();
     // @ts-expect-error - mocking fs
-    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: '' });
+    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: new Date().getTime().toString() });
 
     // Act
     const result = await AuthService.changeOperatorPassword({ newPassword });
@@ -599,10 +600,10 @@ describe('Test: checkPasswordChangeRequest', () => {
   it('should return true if the password change request file exists', async () => {
     // Arrange
     // @ts-expect-error - mocking fs
-    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: '' });
+    fs.__createMockFiles({ [path.join(DATA_DIR, 'state', 'password-change-request')]: new Date().getTime().toString() });
 
     // Act
-    const result = AuthServiceClass.checkPasswordChangeRequest();
+    const result = await AuthService.checkPasswordChangeRequest();
 
     // Assert
     expect(result).toBe(true);
@@ -614,7 +615,7 @@ describe('Test: checkPasswordChangeRequest', () => {
     fs.__createMockFiles({});
 
     // Act
-    const result = AuthServiceClass.checkPasswordChangeRequest();
+    const result = await AuthService.checkPasswordChangeRequest();
 
     // Assert
     expect(result).toBe(false);

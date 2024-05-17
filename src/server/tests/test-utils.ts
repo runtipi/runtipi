@@ -59,19 +59,4 @@ const closeDatabase = async (database: TestDatabase) => {
   await database.client.end();
 };
 
-/**
- * Setup a test suite by mocking the database.
- *
- * @param {string} testSuite - name of the test suite
- */
-export async function setupTestSuite(testSuite: string) {
-  const db = await createDatabase(testSuite);
-
-  jest.mock('../db', () => {
-    return { db: db.db };
-  });
-
-  return { db: db.db, client: db.client };
-}
-
 export { createDatabase, clearDatabase, closeDatabase };

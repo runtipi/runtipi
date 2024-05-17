@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppInfo } from '@runtipi/shared';
+import { vi, describe, it, expect } from 'vitest';
 import { InstallModal } from './InstallModal';
 import { fireEvent, render, screen, waitFor } from '../../../../../../../tests/test-utils';
 
@@ -14,29 +15,29 @@ describe('InstallModal', () => {
   } as unknown as AppInfo;
 
   it('renders with the correct title', () => {
-    render(<InstallModal info={app} isOpen onClose={jest.fn()} onSubmit={jest.fn()} />);
+    render(<InstallModal info={app} isOpen onClose={vi.fn()} onSubmit={vi.fn()} />);
 
     expect(screen.getByText(`Install ${app.name}`)).toBeInTheDocument();
   });
 
   it('renders the InstallForm with the correct props', () => {
-    render(<InstallModal info={app} isOpen onClose={jest.fn()} onSubmit={jest.fn()} />);
+    render(<InstallModal info={app} isOpen onClose={vi.fn()} onSubmit={vi.fn()} />);
 
     expect(screen.getByRole('textbox', { name: app.form_fields[0]?.env_variable })).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: app.form_fields[1]?.env_variable })).toBeInTheDocument();
   });
 
   it('calls onClose when the close button is clicked', () => {
-    const onClose = jest.fn();
-    render(<InstallModal info={app} isOpen onClose={onClose} onSubmit={jest.fn()} />);
+    const onClose = vi.fn();
+    render(<InstallModal info={app} isOpen onClose={onClose} onSubmit={vi.fn()} />);
 
     fireEvent.click(screen.getByTestId('modal-close-button'));
     expect(onClose).toHaveBeenCalled();
   });
 
   it('calls onSubmit with the correct values when the form is submitted', async () => {
-    const onSubmit = jest.fn();
-    render(<InstallModal info={app} isOpen onClose={jest.fn()} onSubmit={onSubmit} />);
+    const onSubmit = vi.fn();
+    render(<InstallModal info={app} isOpen onClose={vi.fn()} onSubmit={onSubmit} />);
 
     const hostnameInput = screen.getByRole('textbox', { name: app.form_fields[0]?.env_variable });
     const passwordInput = screen.getByRole('textbox', { name: app.form_fields[1]?.env_variable });
