@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
+import { vi, expect, describe, it } from 'vitest';
 import { Button } from './Button';
 
 describe('Button component', () => {
@@ -59,7 +60,7 @@ describe('Button component', () => {
 
   it('should call onClick callback when clicked', () => {
     // arrange
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     render(<Button onClick={onClick}>Click me</Button>);
     const button = screen.getByRole('button');
 

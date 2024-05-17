@@ -118,20 +118,18 @@ export const AppActions: React.FC<IProps> = ({
               {app.domain}
             </DropdownMenuItem>
           )}
-          {app.exposedLocal ||
-            (!info.dynamic_config && (
-              <DropdownMenuItem onClick={() => onOpen('local_domain')}>
-                <IconLock className="text-muted me-2" size={16} />
-                {app.id}.{localDomain}
-              </DropdownMenuItem>
-            ))}
-          {app.openPort ||
-            (!info.dynamic_config && (
-              <DropdownMenuItem onClick={() => onOpen('local')}>
-                <IconLockOff className="text-muted me-2" size={16} />
-                {hostname}:{app.info.port}
-              </DropdownMenuItem>
-            ))}
+          {(app.exposedLocal || !info.dynamic_config) && (
+            <DropdownMenuItem onClick={() => onOpen('local_domain')}>
+              <IconLock className="text-muted me-2" size={16} />
+              {app.id}.{localDomain}
+            </DropdownMenuItem>
+          )}
+          {(app.openPort || !info.dynamic_config) && (
+            <DropdownMenuItem onClick={() => onOpen('local')}>
+              <IconLockOff className="text-muted me-2" size={16} />
+              {hostname}:{app.info.port}
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -44,7 +44,7 @@ module.exports = {
           '**/*.factory.{ts,tsx}',
           '**/mocks/**',
           '**/__mocks__/**',
-          'tests/**',
+          '**/tests/**',
           '**/*.d.ts',
           '**/*.workspace.ts',
           '**/*.setup.{ts,js}',

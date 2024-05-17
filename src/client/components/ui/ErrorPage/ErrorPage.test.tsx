@@ -1,4 +1,5 @@
 import React from 'react';
+import { vi, it, describe, expect } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../tests/test-utils';
 import { ErrorPage } from './ErrorPage';
 
@@ -11,7 +12,7 @@ describe('ErrorPage', () => {
   });
 
   it('should render the retry button when onRetry is provided', () => {
-    const onRetry = jest.fn();
+    const onRetry = vi.fn();
     render(<ErrorPage onRetry={onRetry} />);
 
     expect(screen.getByTestId('error-page-action')).toBeInTheDocument();
@@ -24,7 +25,7 @@ describe('ErrorPage', () => {
   });
 
   it('should call the onRetry callback when the retry button is clicked', () => {
-    const onRetry = jest.fn();
+    const onRetry = vi.fn();
     render(<ErrorPage onRetry={onRetry} />);
 
     fireEvent.click(screen.getByTestId('error-page-action'));

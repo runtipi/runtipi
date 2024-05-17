@@ -8,7 +8,7 @@ import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
 import { generateSessionId, setSession } from '@/server/common/session.helpers';
-import { Database } from '@/server/db';
+import { Database, db } from '@/server/db';
 import { tipiCache } from '@/server/core/TipiCache/TipiCache';
 import { DATA_DIR } from '@/config/constants';
 import path from 'path';
@@ -24,7 +24,7 @@ type UsernamePasswordInput = {
 export class AuthServiceClass {
   private queries;
 
-  constructor(p: Database) {
+  constructor(p: Database = db) {
     this.queries = new AuthQueries(p);
   }
 

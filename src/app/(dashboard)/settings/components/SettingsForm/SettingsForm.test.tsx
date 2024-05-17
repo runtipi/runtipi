@@ -1,11 +1,12 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
+import { vi, describe, it, expect } from 'vitest';
 import { SettingsForm } from './SettingsForm';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 
 describe('Test: SettingsForm', () => {
   it('should render without error', () => {
-    render(<SettingsForm onSubmit={jest.fn()} />);
+    render(<SettingsForm onSubmit={vi.fn()} />);
 
     expect(screen.getByText('General settings')).toBeInTheDocument();
   });
@@ -19,7 +20,7 @@ describe('Test: SettingsForm', () => {
       appsRepoUrl: faker.internet.url(),
       appDataPath: faker.system.directoryPath(),
     };
-    render(<SettingsForm onSubmit={jest.fn()} initalValues={initialValues} />);
+    render(<SettingsForm onSubmit={vi.fn()} initalValues={initialValues} />);
 
     // assert
     await waitFor(() => {
@@ -41,7 +42,7 @@ describe('Test: SettingsForm', () => {
       appDataPath: 'invalid path',
       localDomain: 'invalid local domain',
     };
-    render(<SettingsForm onSubmit={jest.fn()} submitErrors={submitErrors} />);
+    render(<SettingsForm onSubmit={vi.fn()} submitErrors={submitErrors} />);
 
     // assert
     await waitFor(() => {
@@ -56,8 +57,8 @@ describe('Test: SettingsForm', () => {
 
   it('should correctly validate the form', async () => {
     // arrange
-    render(<SettingsForm onSubmit={jest.fn()} />);
-    const submitButton = screen.getByRole('button', { name: 'Save' });
+    render(<SettingsForm onSubmit={vi.fn()} />);
+    const submitButton = screen.getByRole('button', { name: 'Update settings' });
     const dnsIpInput = screen.getByRole('textbox', { name: 'dnsIp' });
     const domainInput = screen.getByRole('textbox', { name: 'domain' });
     const internalIpInput = screen.getByRole('textbox', { name: 'internalIp' });
@@ -82,9 +83,9 @@ describe('Test: SettingsForm', () => {
 
   it('should call onSubmit when the form is submitted', async () => {
     // arrange
-    const onSubmit = jest.fn();
+    const onSubmit = vi.fn();
     render(<SettingsForm onSubmit={onSubmit} />);
-    const submitButton = screen.getByRole('button', { name: 'Save' });
+    const submitButton = screen.getByRole('button', { name: 'Update settings' });
 
     // act
     fireEvent.click(submitButton);
@@ -97,8 +98,8 @@ describe('Test: SettingsForm', () => {
 
   it('should download the certificate when the download button is clicked', async () => {
     // arrange
-    const spy = jest.spyOn(window, 'open').mockImplementation();
-    render(<SettingsForm onSubmit={jest.fn} />);
+    const spy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    render(<SettingsForm onSubmit={vi.fn} />);
     const downloadButton = screen.getByRole('button', { name: 'Download certificate' });
 
     // act

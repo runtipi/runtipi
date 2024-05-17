@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { describe, it, expect } from 'vitest';
 import { TipiConfig } from '../../core/TipiConfig';
 import { encrypt, decrypt } from '../encryption';
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
+import { describe, it, expect, vi } from 'vitest';
 import { OtpInput } from './OtpInput';
 import { fireEvent, render, screen } from '../../../../../tests/test-utils';
 
@@ -23,7 +24,7 @@ describe('<OtpInput />', () => {
   it('should allow typing of digits', () => {
     // arrange
     const valueLength = faker.number.int({ min: 2, max: 6 }); // random number from 2-6 (minimum 2 so it can focus on the next input)
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<OtpInput valueLength={valueLength} onChange={onChange} value="" />);
 
     const inputEls = screen.queryAllByRole('textbox');
@@ -51,7 +52,7 @@ describe('<OtpInput />', () => {
   it('should NOT allow typing of non-digits', () => {
     // arrange
     const valueLength = faker.number.int({ min: 2, max: 6 });
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<OtpInput valueLength={valueLength} onChange={onChange} value="" />);
 
     const inputEls = screen.queryAllByRole('textbox');
@@ -76,7 +77,7 @@ describe('<OtpInput />', () => {
     const value = faker.number.int({ min: 10, max: 999999 }).toString(); // minimum 2-digit so it can focus on the previous input
     const valueLength = value.length;
     const lastIdx = valueLength - 1;
-    const onChange = jest.fn();
+    const onChange = vi.fn();
 
     render(<OtpInput value={value} valueLength={valueLength} onChange={onChange} />);
 
@@ -121,7 +122,7 @@ describe('<OtpInput />', () => {
     const valueArray = value.split('');
     const valueLength = value.length;
     const lastIdx = valueLength - 1;
-    const onChange = jest.fn();
+    const onChange = vi.fn();
 
     render(<OtpInput value={value} valueLength={valueLength} onChange={onChange} />);
 
@@ -149,7 +150,7 @@ describe('<OtpInput />', () => {
   it('should NOT allow deleting of digits in the middle', () => {
     const value = faker.number.int({ min: 100000, max: 999999 }).toString();
     const valueLength = value.length;
-    const onChange = jest.fn();
+    const onChange = vi.fn();
 
     render(<OtpInput value={value} valueLength={valueLength} onChange={onChange} />);
 
@@ -169,7 +170,7 @@ describe('<OtpInput />', () => {
   it('should allow pasting of digits (same length as valueLength)', () => {
     const value = faker.number.int({ min: 10, max: 999999 }).toString(); // minimum 2-digit so it is considered as a paste event
     const valueLength = value.length;
-    const onChange = jest.fn();
+    const onChange = vi.fn();
 
     render(<OtpInput valueLength={valueLength} onChange={onChange} value="" />);
 
@@ -190,7 +191,7 @@ describe('<OtpInput />', () => {
   it('should NOT allow pasting of digits (less than valueLength)', () => {
     const value = faker.number.int({ min: 10, max: 99999 }).toString(); // random 2-5 digit code (less than "valueLength")
     const valueLength = faker.number.int({ min: 6, max: 10 }); // random number from 6-10
-    const onChange = jest.fn();
+    const onChange = vi.fn();
 
     render(<OtpInput valueLength={valueLength} onChange={onChange} value="" />);
 
@@ -204,7 +205,7 @@ describe('<OtpInput />', () => {
   });
 
   it('should focus to next element on right/down key', () => {
-    render(<OtpInput valueLength={3} onChange={jest.fn} value="1234" />);
+    render(<OtpInput valueLength={3} onChange={vi.fn} value="1234" />);
 
     const inputEls = screen.queryAllByRole('textbox');
     const firstInputEl = inputEls[0] as HTMLInputElement;
@@ -225,7 +226,7 @@ describe('<OtpInput />', () => {
   });
 
   it('should focus to next element on left/up key', () => {
-    render(<OtpInput valueLength={3} onChange={jest.fn} value="1234" />);
+    render(<OtpInput valueLength={3} onChange={vi.fn} value="1234" />);
 
     const inputEls = screen.queryAllByRole('textbox');
     const lastInputEl = inputEls[2] as HTMLInputElement;
@@ -248,7 +249,7 @@ describe('<OtpInput />', () => {
   it('should only focus to input if previous input has value', () => {
     const valueLength = 6;
 
-    render(<OtpInput valueLength={valueLength} onChange={jest.fn} value="" />);
+    render(<OtpInput valueLength={valueLength} onChange={vi.fn} value="" />);
 
     const inputEls = screen.queryAllByRole('textbox');
     const lastInputEl = inputEls[valueLength - 1] as HTMLInputElement;
