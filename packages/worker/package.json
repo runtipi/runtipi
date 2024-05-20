@@ -25,7 +25,7 @@
     "knip": "^5.15.1",
     "memfs": "^4.8.2",
     "nodemon": "^3.1.0",
-    "tsx": "^4.10.2",
+    "tsx": "^4.10.5",
     "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0"
@@ -38,7 +38,7 @@
     "@sentry/node": "^8.0.0",
     "bullmq": "^5.7.4",
     "dotenv": "^16.4.5",
-    "hono": "^4.3.6",
+    "hono": "^4.3.8",
     "ioredis": "^5.4.1",
     "pg": "^8.11.5",
     "socket.io": "^4.7.5",
