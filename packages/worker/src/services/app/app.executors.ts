@@ -87,12 +87,15 @@ export class AppExecutors {
         this.logger.error(
           `Error generating docker-compose.yml file for app ${appId}. Falling back to default docker-compose.yml`,
         );
+        this.logger.error(err);
+        Sentry.captureException(err);
       }
     }
 
     // Set permissions
-    await execAsync(`chmod -Rf a+rwx ${path.join(appDataDirPath)}`).catch(() => {
+    await execAsync(`chmod -Rf a+rwx ${path.join(appDataDirPath)}`).catch((e) => {
       this.logger.error(`Error setting permissions for app ${appId}`);
+      Sentry.captureException(e);
     });
   };
 
