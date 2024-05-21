@@ -5,7 +5,7 @@ import path from 'path';
 import * as Sentry from '@sentry/node';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { AppEventForm, SocketEvent, sanitizePath } from '@runtipi/shared';
-import { copyDataDir, generateEnvFile } from './app.helpers';
+import { copyDataDir, generateEnvFile, runHookScript } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
@@ -162,11 +162,17 @@ export class AppExecutors {
 
       await this.ensureAppDir(appId, form);
 
+      // run the pre-install hook script
+      await runHookScript('pre-install.sh', appDirPath);
+
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
+
+      // run the post-install hook script
+      await runHookScript('post-install.sh', appDirPath);
 
       SocketManager.emit({ type: 'app', event: 'install_success', data: { appId } });
 
@@ -298,6 +304,10 @@ export class AppExecutors {
       this.logger.info(`Regenerating app.env file for app ${appId}`);
       await this.ensureAppDir(appId, form);
       await generateEnvFile(appId, form);
+
+      // run the pre-uninstall hook script
+      await runHookScript('pre-uninstall.sh', appDirPath);
+
       try {
         await compose(appId, 'down --remove-orphans --volumes --rmi all');
       } catch (err) {
@@ -309,6 +319,9 @@ export class AppExecutors {
           throw err;
         }
       }
+
+      // run the post-uninstall hook script
+      await runHookScript('post-uninstall.sh', appDirPath);
 
       this.logger.info(`Deleting folder ${appDirPath}`);
       await fs.promises.rm(appDirPath, { recursive: true, force: true }).catch((err) => {
@@ -395,6 +408,9 @@ export class AppExecutors {
       await this.ensureAppDir(appId, form);
       await generateEnvFile(appId, form);
 
+      // run the pre-update hook script
+      await runHookScript('pre-update.sh', appDirPath);
+
       try {
         await compose(appId, 'up --detach --force-recreate --remove-orphans');
         await compose(appId, 'down --rmi all --remove-orphans');
@@ -413,6 +429,9 @@ export class AppExecutors {
       await this.ensureAppDir(appId, form);
 
       await compose(appId, 'pull');
+
+      // run the post-update hook script
+      await runHookScript('post-update.sh', appDirPath);
 
       SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
 

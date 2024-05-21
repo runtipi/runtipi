@@ -11,8 +11,9 @@ import {
 import { pathExists, execAsync } from '@runtipi/shared/node';
 import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 import { getEnv } from '@/lib/environment';
-import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR, TRUSTED_APP_STORES } from '@/config/constants';
 import { getMainEnvMap } from '@/lib/system/system.helpers';
+import { logger } from '@/lib/logger';
 
 /**
  *  This function generates a random string of the provided length by using the SHA-256 hash algorithm.
@@ -227,4 +228,48 @@ export const copyDataDir = async (id: string) => {
       () => {},
     );
   }
+};
+
+/** 
+ * This function runs the specified app hook script after veryfing
+ * it comes from a trusted repository and that it actually exists.
+
+ * @param {string} script - The name of the script to run.
+ * @param {string} appDirPath - The path of the app.
+*/
+export const runHookScript = async (script: string, appDirPath: string) => {
+  logger.info(`Running hook script ${script}`);
+
+  const { appsRepoId } = getEnv();
+  const scriptDirPath = path.join(appDirPath, 'scripts');
+  const scriptPath = path.join(scriptDirPath, script);
+
+  // Verify the script folder exists
+  if (!(await pathExists(scriptDirPath))) {
+    logger.warn('Scripts directory does not exist! Skipping...');
+    return;
+  }
+
+  // Verify the script exists
+  if (!(await pathExists(scriptPath))) {
+    logger.warn('Script does not exist! Skipping...');
+    return;
+  }
+
+  // Verify we have a trusted repository
+  if (!(appsRepoId in TRUSTED_APP_STORES)) {
+    logger.warn(
+      'Repository hash not trusted! Please use the official repository to run hook scripts.',
+    );
+    return;
+  }
+
+  // Run the hook script
+  const { stdout, stderr } = await execAsync(`sh ${scriptPath}`);
+
+  if (stderr) {
+    logger.error(`Hook script failed! Error: ${stderr}`);
+  }
+
+  logger.info(`Hook script ${script} finished!`);
 };
