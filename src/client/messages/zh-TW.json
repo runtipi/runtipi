@@ -76,6 +76,8 @@
   "APP_INSTALL_FORM_SUBMIT_INSTALL": "安裝",
   "APP_INSTALL_FORM_SUBMIT_UPDATE": "更新",
   "APP_INSTALL_FORM_TITLE": "安裝 {name}",
+  "APP_INSTALL_FORM_GENERAL": "General",
+  "APP_INSTALL_FORM_REVERSE_PROXY": "Reverse proxy",
   "APP_INSTALL_SUCCESS": "App {id} installed successfully",
   "APP_NEW": "NEW",
   "APP_RESET_FORM_SUBMIT": "Reset",
