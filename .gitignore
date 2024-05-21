@@ -55,6 +55,7 @@ node_modules/
 /repos/
 /apps/
 /traefik/
+.devcontainer/.tipi-data
 
 # media folder
 media

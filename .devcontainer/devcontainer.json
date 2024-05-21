@@ -1,15 +1,56 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
-  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node",
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+  "name": "Tipi (Dev Environment)",
+  "dockerComposeFile": "../docker-compose.devcontainer.yml",
+  "service": "tipi-dev-env",
+  "workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
+
+  "hostRequirements": {
+    "cpus": 4
+  },
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker": {
-      "version": "latest",
-      "moby": true
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+        "version": "latest",
+        "moby": false,
+        "dockerDashComposeVersion": "v2"
+      }
+  },
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [3000, 8080],
+  "portsAttributes": {
+    "3000": {
+      "label": "Tipi Dashboard",
+      "onAutoForward": "notify"
+    },
+    "5432": {
+      "label": "Tipi DB"
+    },
+    "8080": {
+      "label": "Traefik Dashboard",
+      "onAutoForward": "notify"
     }
   },
-  "extensions": [
-    "ms-azuretools.vscode-docker",
-    "ms-vscode.vscode-typescript-next",
-    "waderyan.gitblame"
-  ],
-  "postCreateCommand": "./.devcontainer/postCreateCommand.sh"
+
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode-remote.remote-containers",
+        "mikestead.dotenv",
+        "emilast.LogFileHighlighter",
+        "ms-azuretools.vscode-docker",
+        "bierner.github-markdown-preview",
+        "codeandstuff.package-json-upgrade",
+        "ms-playwright.playwright"
+      ]
+    }
+  },
+
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "vscode"
 }
