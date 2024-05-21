@@ -76,6 +76,8 @@
   "APP_INSTALL_FORM_SUBMIT_INSTALL": "Installieren",
   "APP_INSTALL_FORM_SUBMIT_UPDATE": "Aktualisieren",
   "APP_INSTALL_FORM_TITLE": "{name} installieren",
+  "APP_INSTALL_FORM_GENERAL": "General",
+  "APP_INSTALL_FORM_REVERSE_PROXY": "Reverse proxy",
   "APP_INSTALL_SUCCESS": "App- {id} erfolgreich installiert",
   "APP_NEW": "NEW",
   "APP_RESET_FORM_SUBMIT": "Reset",
