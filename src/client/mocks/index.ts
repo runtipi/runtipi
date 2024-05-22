@@ -7,10 +7,10 @@ async function initMocks() {
     server.listen();
   } else {
     const { worker } = await import('./browser');
-    worker.start();
+    await worker.start();
   }
 }
 
-initMocks();
+void initMocks();
 
 export { initMocks };

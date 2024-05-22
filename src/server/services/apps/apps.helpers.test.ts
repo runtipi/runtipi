@@ -43,7 +43,7 @@ describe('Test: checkAppRequirements()', () => {
 
   it('Should throw if architecture is not supported', async () => {
     // arrange
-    TipiConfig.setConfig('architecture', 'arm64');
+    await TipiConfig.setConfig('architecture', 'arm64');
     const appConfig = createAppConfig({ supported_architectures: ['arm'] });
 
     // assert
