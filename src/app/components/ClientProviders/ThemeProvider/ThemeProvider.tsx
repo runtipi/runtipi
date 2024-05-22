@@ -42,7 +42,7 @@ export const ThemeProvider = (props: Props) => {
   useEffect(() => {
     const autoTheme = getAutoTheme();
     if (autoTheme === 'christmas' && allowAutoThemes && typeof window !== 'undefined') {
-      loadChristmasTheme();
+      void loadChristmasTheme();
     }
   }, [allowAutoThemes]);
 

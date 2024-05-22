@@ -1,18 +1,11 @@
 module.exports = {
-  plugins: ['@typescript-eslint', 'import', 'react', 'jest', 'jsx-a11y', 'testing-library', 'jest-dom', 'jsonc', 'drizzle'],
+  plugins: ['@typescript-eslint', 'import', 'react', 'jsx-a11y'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'next/core-web-vitals',
-    'next',
-    'airbnb',
-    'airbnb-typescript',
-    'eslint:recommended',
     'plugin:import/typescript',
     'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
-    'plugin:jsonc/recommended-with-json',
-    'plugin:jsonc/prettier',
-    'plugin:drizzle/recommended',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
@@ -23,6 +16,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   rules: {
+    '@typescript-eslint/no-floating-promises': 1,
     'no-restricted-exports': 0,
     'no-redeclare': 0, // already handled by @typescript-eslint/no-redeclare
     'react/display-name': 0,
@@ -70,10 +64,13 @@ module.exports = {
   overrides: [
     {
       files: ['*.test.ts', '*.test.tsx'],
+      plugins: ['jest', 'jest-dom', 'testing-library'],
       extends: ['plugin:jest-dom/recommended', 'plugin:testing-library/react'],
     },
     {
       files: ['**/*.json', '*.json5', '*.jsonc'],
+      plugins: ['jsonc'],
+      extends: ['plugin:jsonc/recommended-with-json', 'plugin:jsonc/prettier'],
       parser: 'jsonc-eslint-parser',
       rules: {
         // Disable all @typescript-eslint rules as they don't apply here
@@ -84,15 +81,12 @@ module.exports = {
         '@typescript-eslint/return-await': 'off',
         // jsonc rules
         'jsonc/sort-keys': 2,
-        'jsonc/key-name-casing': 0,
+        'jsonc/key-name-casing': 1,
       },
     },
   ],
   globals: {
     JSX: true,
     NodeJS: true,
-  },
-  env: {
-    'jest/globals': true,
   },
 };
