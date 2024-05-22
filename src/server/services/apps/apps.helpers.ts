@@ -1,12 +1,14 @@
 import { App } from '@/server/db/schema';
 import { appInfoSchema, sanitizePath } from '@runtipi/shared';
-import { pathExists } from '@runtipi/shared/node';
+import { execAsync, pathExists } from '@runtipi/shared/node';
 import { DATA_DIR } from '@/config/constants';
-import path from 'path';
+import path, { parse } from 'path';
 import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
+import fs from 'fs';
+import { exec } from 'child_process';
 
 /**
  *  This function checks the requirements for the app with the provided name.
@@ -63,19 +65,20 @@ export const getAvailableApps = async () => {
         Logger.error(JSON.stringify(parsedConfig.error, null, 2));
       } else if (parsedConfig.data.available) {
         const description = readFile(path.join(repoPath, 'metadata', 'description.md'));
-        return { ...parsedConfig.data, description };
+        return { ...parsedConfig.data, description, isNew: isAppNew(app) };
       }
 
       return null;
     })
     .filter(notEmpty)
-    .map(({ id, categories, name, short_desc, deprecated, supported_architectures }) => ({
+    .map(({ id, categories, name, short_desc, deprecated, supported_architectures, isNew }) => ({
       id,
       categories,
       name,
       short_desc,
       deprecated,
       supported_architectures,
+      isNew,
     }));
 
   return apps;
@@ -150,4 +153,43 @@ export const getAppInfo = (id: string, status?: App['status']) => {
     Logger.error(`Error loading app: ${id}`);
     throw new Error(`Error loading app: ${id}`);
   }
+};
+
+/**
+ * Given an appId it gets the app creation date in unix format through git
+ * @param {string} appId - The name of the app to get the date
+ */
+export const isAppNew = (appId: string) => {
+  const { appsRepoId } = TipiConfig.getConfig();
+  const appStoreRepoPath = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId));
+  const composePath = path.join('apps', appId, 'docker-compose.yml');
+  const dateBeforeTwoWeeks = Math.round(Date.now() / 1000) - 1209600;
+  let isNew = false;
+
+  if (!fs.existsSync(path.join(appStoreRepoPath, composePath))) {
+    Logger.error(`App ${appId} does not exist!`);
+    return false;
+  }
+
+  exec(`git log --diff-filter=A --follow --format=%at -- ${composePath} | tail -1`, { cwd: appStoreRepoPath }, (error, stderr, stdout) => {
+    if (error) {
+      Logger.error(`Error in getting the creation date of the app!`);
+      isNew = false;
+    }
+
+    if (Number.isNaN(parseInt(stderr))) {
+      Logger.error(`Error in getting the creation date of the app! Git output not a number!`);
+      isNew = false;
+    }
+
+    if (Number(stderr) > dateBeforeTwoWeeks) {
+      isNew = true;
+    }
+  });
+
+  if (isNew) {
+    return true;
+  }
+
+  return false;
 };

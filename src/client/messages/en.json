@@ -79,7 +79,7 @@
   "APP_INSTALL_FORM_GENERAL": "General",
   "APP_INSTALL_FORM_REVERSE_PROXY": "Reverse proxy",
   "APP_INSTALL_SUCCESS": "App {id} installed successfully",
-  "APP_NEW": "NEW",
+  "APP_NEW": "New",
   "APP_RESET_FORM_SUBMIT": "Reset",
   "APP_RESET_FORM_SUBTITLE": "All data for this app will be lost.",
   "APP_RESET_FORM_TITLE": "Reset {name} ?",
