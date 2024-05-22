@@ -12,8 +12,6 @@ type TriggerProps = {
 
 const Select: React.FC<React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> & { label?: string; error?: string; className?: string }> = ({
   children,
-  error,
-  className,
   ...props
 }) => {
   return <SelectPrimitive.Root {...props}>{children}</SelectPrimitive.Root>;

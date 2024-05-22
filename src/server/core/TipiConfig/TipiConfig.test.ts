@@ -40,13 +40,13 @@ describe('Test: getConfig', () => {
 });
 
 describe('Test: setConfig', () => {
-  it('It should be able set config', () => {
+  it('It should be able set config', async () => {
     // arrange
     const randomWord = faker.internet.url();
 
     // act
     const tipiConfig = new TipiConfigClass(0);
-    tipiConfig.setConfig('appsRepoUrl', randomWord);
+    await tipiConfig.setConfig('appsRepoUrl', randomWord);
     const config = tipiConfig.getConfig();
 
     // assert
@@ -136,12 +136,12 @@ describe('Test: setSettings', () => {
     expect(settingsJson.appsRepoUrl).toBe(fakeSettings.appsRepoUrl);
   });
 
-  it('should not write settings to json file if there are invalid values', () => {
+  it('should not write settings to json file if there are invalid values', async () => {
     // arrange
     const fakeSettings = { appsRepoUrl: 10 };
 
     // act
-    new TipiConfigClass(0).setSettings(fakeSettings as object);
+    await new TipiConfigClass(0).setSettings(fakeSettings as object);
     const settingsJson = (readJsonFile('/data/state/settings.json') || {}) as { [key: string]: string };
 
     // assert
@@ -154,7 +154,7 @@ describe('Test: setSettings', () => {
     let error;
     const fakeSettings = { appsRepoUrl: faker.internet.url() };
     const tipiConf = new TipiConfigClass(0);
-    tipiConf.setConfig('demoMode', true);
+    await tipiConf.setConfig('demoMode', true);
 
     // act
     try {
