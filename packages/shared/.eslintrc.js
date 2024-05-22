@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   plugins: ['@typescript-eslint', 'import'],
-  extends: ['plugin:@typescript-eslint/recommended', 'airbnb', 'airbnb-typescript', 'eslint:recommended', 'plugin:import/typescript', 'prettier'],
+  extends: ['plugin:@typescript-eslint/recommended', 'plugin:import/typescript', 'prettier'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
@@ -10,6 +10,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   rules: {
+    '@typescript-eslint/no-floating-promises': 1,
     'import/prefer-default-export': 0,
     'class-methods-use-this': 0,
     'import/extensions': [
@@ -26,7 +27,15 @@ module.exports = {
     'import/no-extraneous-dependencies': [
       'error',
       {
-        devDependencies: ['build.js', '**/*.test.{ts,tsx}', '**/mocks/**', '**/__mocks__/**', '**/*.setup.{ts,js}', '**/*.config.{ts,js}', '**/tests/**'],
+        devDependencies: [
+          'build.js',
+          '**/*.test.{ts,tsx}',
+          '**/mocks/**',
+          '**/__mocks__/**',
+          '**/*.setup.{ts,js}',
+          '**/*.config.{ts,js}',
+          '**/tests/**',
+        ],
       },
     ],
     'arrow-body-style': 0,
