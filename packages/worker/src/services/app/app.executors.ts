@@ -21,7 +21,7 @@ export class AppExecutors {
     this.logger = logger;
   }
 
-  private handleAppError = (
+  private handleAppError = async (
     err: unknown,
     appId: string,
     event: Extract<SocketEvent, { type: 'app' }>['event'],
@@ -31,12 +31,12 @@ export class AppExecutors {
     });
 
     if (err instanceof Error) {
-      SocketManager.emit({ type: 'app', event, data: { appId, error: err.message } });
+      await SocketManager.emit({ type: 'app', event, data: { appId, error: err.message } });
       this.logger.error(`An error occurred: ${err.message}`);
       return { success: false, message: err.message };
     }
 
-    SocketManager.emit({ type: 'app', event, data: { appId, error: String(err) } });
+    await SocketManager.emit({ type: 'app', event, data: { appId, error: String(err) } });
     return { success: false, message: `An error occurred: ${String(err)}` };
   };
 
@@ -105,7 +105,7 @@ export class AppExecutors {
       await this.ensureAppDir(appId, form);
       await generateEnvFile(appId, form);
 
-      SocketManager.emit({ type: 'app', event: 'generate_env_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'generate_env_success', data: { appId } });
       return { success: true, message: `App ${appId} env file regenerated successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'generate_env_error');
@@ -119,7 +119,7 @@ export class AppExecutors {
    */
   public installApp = async (appId: string, form: AppEventForm) => {
     try {
-      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       if (process.getuid && process.getgid) {
         this.logger.info(
@@ -177,7 +177,7 @@ export class AppExecutors {
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
 
-      SocketManager.emit({ type: 'app', event: 'install_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'install_success', data: { appId } });
 
       return { success: true, message: `App ${appId} installed successfully` };
     } catch (err) {
@@ -200,7 +200,7 @@ export class AppExecutors {
         return { success: true, message: `App ${appId} is not an app. Skipping...` };
       }
 
-      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
       this.logger.info(`Stopping app ${appId}`);
 
       await this.ensureAppDir(appId, form);
@@ -213,7 +213,7 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} stopped`);
 
-      SocketManager.emit({ type: 'app', event: 'stop_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'stop_success', data: { appId } });
 
       const client = await getDbClient();
       await client?.query('UPDATE app SET status = $1 WHERE id = $2', ['stopped', appId]);
@@ -234,7 +234,7 @@ export class AppExecutors {
         return { success: true, message: `App ${appId} is not an app. Skipping...` };
       }
 
-      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       this.logger.info(`Restarting app ${appId}`);
 
@@ -262,7 +262,7 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} restarted`);
 
-      SocketManager.emit({ type: 'app', event: 'restart_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'restart_success', data: { appId } });
 
       return { success: true, message: `App ${appId} restarted successfully` };
     } catch (err) {
@@ -272,7 +272,7 @@ export class AppExecutors {
 
   public startApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
     try {
-      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       this.logger.info(`Starting app ${appId}`);
 
@@ -287,7 +287,7 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} started`);
 
-      SocketManager.emit({ type: 'app', event: 'start_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'start_success', data: { appId } });
 
       const client = await getDbClient();
       await client?.query('UPDATE app SET status = $1 WHERE id = $2', ['running', appId]);
@@ -299,7 +299,7 @@ export class AppExecutors {
 
   public uninstallApp = async (appId: string, form: AppEventForm) => {
     try {
-      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDirPath, appDataDirPath } = this.getAppPaths(appId);
       this.logger.info(`Uninstalling app ${appId}`);
@@ -331,7 +331,7 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} uninstalled`);
 
-      SocketManager.emit({ type: 'app', event: 'uninstall_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'uninstall_success', data: { appId } });
 
       const client = await getDbClient();
       await client?.query(`DELETE FROM app WHERE id = $1`, [appId]);
@@ -343,7 +343,7 @@ export class AppExecutors {
 
   public resetApp = async (appId: string, form: AppEventForm) => {
     try {
-      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDataDirPath } = this.getAppPaths(appId);
       this.logger.info(`Resetting app ${appId}`);
@@ -385,7 +385,7 @@ export class AppExecutors {
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up -d');
 
-      SocketManager.emit({ type: 'app', event: 'reset_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'reset_success', data: { appId } });
 
       const client = await getDbClient();
       await client?.query(`UPDATE app SET status = $1 WHERE id = $2`, ['running', appId]);
@@ -397,7 +397,7 @@ export class AppExecutors {
 
   public updateApp = async (appId: string, form: AppEventForm) => {
     try {
-      SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDirPath, repoPath } = this.getAppPaths(appId);
       this.logger.info(`Updating app ${appId}`);
@@ -423,7 +423,7 @@ export class AppExecutors {
 
       await compose(appId, 'pull');
 
-      SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
 
       return { success: true, message: `App ${appId} updated successfully` };
     } catch (err) {

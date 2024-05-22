@@ -38,6 +38,11 @@
   },
   "devDependencies": {
     "@sentry/types": "^8.0.0",
-    "@types/lodash.clonedeep": "^4.5.9"
+    "@types/lodash.clonedeep": "^4.5.9",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "prettier": "^3.2.5"
   }
 }

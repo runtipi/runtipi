@@ -76,7 +76,7 @@ const runCommand = async (jobData: unknown) => {
 /**
  * Start the worker for the events queue
  */
-export const startWorker = async () => {
+export const startWorker = () => {
   const repeatWorker = new Worker(
     'repeat',
     async (job) => {
