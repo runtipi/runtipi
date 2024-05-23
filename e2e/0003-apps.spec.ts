@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import { loginUser } from './fixtures/fixtures';
 import { clearDatabase } from './helpers/db';
 
-test.beforeEach(async ({ page, isMobile }) => {
+test.beforeEach(async ({ page, context, isMobile }) => {
   await clearDatabase();
-  await loginUser(page);
+  await loginUser(page, context);
 
   if (isMobile) {
     // TODO: Fix mobile accessibility for the dropdown menu

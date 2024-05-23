@@ -10,8 +10,8 @@ test.beforeEach(async () => {
   await setSettings({});
 });
 
-test('user can activate the guest dashboard and see it when logged out', async ({ page }) => {
-  await loginUser(page);
+test('user can activate the guest dashboard and see it when logged out', async ({ page, context }) => {
+  await loginUser(page, context);
   await page.goto('/settings');
 
   await page.getByRole('tab', { name: 'Settings' }).click();
@@ -34,17 +34,15 @@ test('logged out users can see the apps on the guest dashboard', async ({ browse
     status: 'running',
     openPort: true,
   });
-  await db
-    .insert(appTable)
-    .values({
-      config: {},
-      openPort: true,
-      isVisibleOnGuestDashboard: false,
-      id: 'actual-budget',
-      exposed: false,
-      exposedLocal: false,
-      status: 'running',
-    });
+  await db.insert(appTable).values({
+    config: {},
+    openPort: true,
+    isVisibleOnGuestDashboard: false,
+    id: 'actual-budget',
+    exposed: false,
+    exposedLocal: false,
+    status: 'running',
+  });
 
   const context = await browser.newContext();
   const page = await context.newPage();
@@ -62,8 +60,8 @@ test('logged out users can see the apps on the guest dashboard', async ({ browse
   await context.close();
 });
 
-test('user can deactivate the guest dashboard and not see it when logged out', async ({ page }) => {
-  await loginUser(page);
+test('user can deactivate the guest dashboard and not see it when logged out', async ({ page, context }) => {
+  await loginUser(page, context);
   await page.goto('/settings');
 
   await page.getByRole('tab', { name: 'Settings' }).click();
