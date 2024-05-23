@@ -45,7 +45,7 @@ while [ -n "${1-}" ]; do
   shift
 done
 
-OS="$(cat $(ls -p /etc | grep -v / | grep [A-Za-z]*[_-][rv]e[lr] | awk '{print "/etc/" $1}') | grep "^ID=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
+OS="$(grep -h "^ID=" /etc/*[_-][rv]e[lr]* 2>/dev/null | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"')"
 SUB_OS="$(cat $(ls -p /etc | grep -v / | grep [A-Za-z]*[_-][rv]e[lr] | awk '{print "/etc/" $1}') | grep "^ID_LIKE=" | cut -d= -f2 | uniq | tr '[:upper:]' '[:lower:]' | tr -d '"' || echo 'unknown')"
 
 function install_generic() {
