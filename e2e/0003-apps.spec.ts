@@ -14,8 +14,8 @@ test.beforeEach(async ({ page, context, isMobile }) => {
     await page.getByRole('link', { name: 'App store' }).click();
   }
 
-  await page.getByPlaceholder('Search').fill('hello');
-  await page.getByRole('link', { name: 'Hello World' }).click();
+  await page.getByPlaceholder('Search').fill('nginx');
+  await page.getByRole('link', { name: 'Nginx' }).click();
 });
 
 test('user can install and uninstall app', async ({ page, context }) => {
@@ -23,7 +23,7 @@ test('user can install and uninstall app', async ({ page, context }) => {
   // Install app
   await page.getByRole('button', { name: 'Install' }).click();
 
-  await expect(page.getByText('Install Hello World')).toBeVisible();
+  await expect(page.getByText('Install Nginx')).toBeVisible();
 
   await page.getByRole('button', { name: 'Install' }).click();
 
@@ -33,16 +33,16 @@ test('user can install and uninstall app', async ({ page, context }) => {
   await page.getByTestId('app-details').getByRole('button', { name: 'Open' }).press('ArrowDown');
   const [newPage] = await Promise.all([
     context.waitForEvent('page'),
-    await page.getByRole('menuitem', { name: `${process.env.SERVER_IP}:8000` }).click(),
+    await page.getByRole('menuitem', { name: `${process.env.SERVER_IP}:8754` }).click(),
   ]);
 
   await newPage.waitForLoadState();
-  await expect(newPage.getByText('Hello World')).toBeVisible();
+  await expect(newPage.getByText('Welcome to nginx!')).toBeVisible();
   await newPage.close();
 
   // Stop app
   await page.getByRole('button', { name: 'Stop' }).click();
-  await expect(page.getByText('Stop Hello World')).toBeVisible();
+  await expect(page.getByText('Stop Nginx')).toBeVisible();
 
   await page.getByRole('button', { name: 'Stop' }).click();
 
@@ -50,7 +50,7 @@ test('user can install and uninstall app', async ({ page, context }) => {
 
   // Uninstall app
   await page.getByRole('button', { name: 'Remove' }).click();
-  await expect(page.getByText('Uninstall Hello World ?')).toBeVisible();
+  await expect(page.getByText('Uninstall Nginx ?')).toBeVisible();
 
   await page.getByRole('button', { name: 'Uninstall' }).click();
 

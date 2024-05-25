@@ -1,5 +1,4 @@
 name: E2E Tests
-
 on:
   workflow_call:
     inputs:
@@ -7,110 +6,90 @@ on:
         required: true
         type: string
         description: 'Version to test (e.g. v1.6.0-beta.1)'
-    outputs:
-      page_url:
-        description: 'URL of the deployed report'
-        value: ${{ jobs.report-deployment.outputs.page_url }}
   workflow_dispatch:
-    inputs:
-      version:
-        required: true
-        type: string
-        description: 'Version to test (e.g. v1.6.0-beta.1)'
 
 jobs:
-  deploy:
-    timeout-minutes: 15
+  build-images:
+    if: ${{ !inputs.version }}
     runs-on: ubuntu-latest
-    outputs:
-      droplet_id: ${{ steps.create-droplet.outputs.droplet_id }}
-      droplet_ip: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
-      postgres_password: ${{ steps.get-postgres-password.outputs.postgres_password }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: unnecessary
-          name: id_rsa
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get sha of last commit
-        id: get-sha
-        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+      - name: Build and push images
+        uses: docker/build-push-action@v5
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          context: .
+          build-args: |
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            TIPI_VERSION=e2e
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/runtipi/runtipi:e2e
+          cache-from: type=registry,ref=ghcr.io/runtipi/runtipi:buildcache
+          cache-to: type=registry,ref=ghcr.io/runtipi/runtipi:buildcache,mode=max
 
-      - name: Create new Droplet
-        id: create-droplet
+      - name: Create cli folder
+        run: mkdir -p bin
+
+      - name: Download CLI form release on runtipi/cli repo
         run: |
-          droplet_id=$(doctl compute droplet create runtipi-${{ steps.get-sha.outputs.sha }} \
-          --image ubuntu-20-04-x64 \
-          --size s-2vcpu-2gb \
-          --format ID \
-          --no-header \
-          --ssh-keys ${{ secrets.SSH_KEY_FINGERPRINT }})
-          echo "droplet_id=$droplet_id" >> $GITHUB_OUTPUT
+          REPO="runtipi/cli"
+          VERSION="nightly"
 
-      - name: Wait for Droplet to become active
-        run: |
-          while ! doctl compute droplet get ${{ steps.create-droplet.outputs.droplet_id }} --format Status --no-header | grep -q "active"; do sleep 5; done
+          ASSETS_URL=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/releases/tags/$VERSION" \
+            | jq -r '.assets[] | select(.name | test("runtipi-cli.+")) | .browser_download_url')
 
-      - name: Get Droplet IP address
-        id: get-droplet-ip
-        run: |
-          droplet_ip=$(doctl compute droplet get ${{ steps.create-droplet.outputs.droplet_id }} --format PublicIPv4 --no-header)
-          echo "droplet_ip=$droplet_ip" >> $GITHUB_OUTPUT
+          echo "Assets URL: $ASSETS_URL"
 
-      - name: Wait for SSH to be ready on Droplet
-        run: |
-          while ! ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${{ steps.get-droplet-ip.outputs.droplet_ip }} "echo 'SSH is ready'"; do sleep 5; done
+          for url in $ASSETS_URL; do
+            echo "Downloading from $url"
+            curl -L -o "bin/${url##*/}" -H "Accept: application/octet-stream" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$url"
+          done
 
-      - name: Create docker group on Droplet
-        uses: fifsky/ssh-action@master
+      - name: Print files
+        run: tree bin
+
+      - uses: pyTooling/Actions/releaser@r0
         with:
-          command: |
-            groupadd docker
-            usermod -aG docker root
-          host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
-          user: root
-          key: ${{ secrets.SSH_KEY }}
-
-      - name: Wait 90 seconds for Docker to be ready on Droplet
-        run: sleep 90
-
-      - name: Deploy app to Droplet
-        uses: fifsky/ssh-action@master
-        with:
-          command: |
-            echo 'Downloading install script from GitHub'
-            curl -s https://raw.githubusercontent.com/runtipi/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
-            chmod +x install.sh
-            echo 'Running install script'
-            ./install.sh --version ${{ inputs.version }} --asset runtipi-cli-linux-x86_64.tar.gz
-            echo 'App deployed'
-          host: ${{ steps.get-droplet-ip.outputs.droplet_ip }}
-          user: root # TODO: use non-root user
-          key: ${{ secrets.SSH_KEY }}
-
-      - name: Get POSTGRES_PASSWORD from .env file
-        id: get-postgres-password
-        run: |
-          postgres_password=$(ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${{ steps.get-droplet-ip.outputs.droplet_ip }} "cat ./runtipi/.env | grep POSTGRES_PASSWORD | cut -d '=' -f2")
-          echo "postgres_password=$postgres_password" >> $GITHUB_OUTPUT
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: e2e
+          rm: true
+          files: bin/runtipi-cli-*
 
   e2e:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    needs: [deploy]
+    needs: [build-images]
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run install script
+        if: ${{ inputs.version }}
+        run: |
+          curl -s https://raw.githubusercontent.com/runtipi/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
+          chmod +x install.sh
+          ./install.sh --version ${{ inputs.version }} --asset runtipi-cli-linux-x86_64.tar.gz
+
+      - name: Run install script
+        if: ${{ !inputs.version }}
+        run: |
+          ./scripts/install.sh --version e2e
+          cd ..
 
       - uses: pnpm/action-setup@v4.0.0
         name: Install pnpm
@@ -128,33 +107,25 @@ jobs:
         name: Setup pnpm cache
         with:
           path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
+
+      - name: Create .env.e2e file with Droplet IP
+        run: |
+          echo "SERVER_IP=$(hostname -I | awk '{print $1}')" > .env.e2e
+          echo "POSTGRES_PASSWORD=$(grep POSTGRES_PASSWORD runtipi/.env | cut -d '=' -f2)" >> .env.e2e
+          echo "BASE_PATH=./runtipi" >> .env.e2e
+
+      - name: Install dependencies
+        run: pnpm install
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Create .env.e2e file with Droplet IP
-        run: |
-          echo "SERVER_IP=${{ needs.deploy.outputs.droplet_ip }}" > .env.e2e
-          echo "POSTGRES_PASSWORD=${{ needs.deploy.outputs.postgres_password }}" >> .env.e2e
-          echo "REMOTE=true" >> .env.e2e
-          echo "${{ secrets.SSH_KEY }}" > .temp-ssh-key
-          # Base 64 encode SSH key to avoid issues with newlines
-          echo "SSH_PRIVATE_KEY=$(base64 -w 0 .temp-ssh-key)" >> .env.e2e
-
-      - name: Install dependencies
-        run: pnpm install
-
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-
-      - name: Create state/settings.json
-        run: |
-          mkdir -p state
-          echo '{}' > state/settings.json
 
       - name: Run Playwright tests
         id: run-e2e
@@ -197,16 +168,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-  teardown:
-    runs-on: ubuntu-latest
-    if: always()
-    needs: [e2e, deploy]
-    steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Delete Droplet
-        run: doctl compute droplet delete ${{ needs.deploy.outputs.droplet_id }} --force
