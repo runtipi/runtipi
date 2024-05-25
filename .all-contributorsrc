@@ -466,6 +466,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "hex-developer",
+      "name": "hex-developer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/77530549?v=4",
+      "profile": "https://github.com/hex-developer",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
