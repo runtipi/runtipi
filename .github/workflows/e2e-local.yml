@@ -1,6 +1,7 @@
-name: E2E Tests
+name: E2E Local Tests
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   build-images:
