@@ -14,7 +14,7 @@ export const isInstanceInsecure = () => {
 
   if (ipaddrjs.isValid(ip)) {
     const range = ipaddrjs.parse(ip!).range();
-    if (range !== 'private' && range !== 'carrierGradeNat') {
+    if (range !== 'private' && range !== 'carrierGradeNat' && range !== 'loopback') {
       return true;
     }
   } else if (ip !== 'localhost' && myHeaders.get('x-forwarded-proto') === 'http') {

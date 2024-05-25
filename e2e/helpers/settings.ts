@@ -18,9 +18,10 @@ export const setSettings = async (settings: z.infer<typeof settingsSchema>) => {
 
 export const setPassowrdChangeRequest = async () => {
   if (process.env.REMOTE === 'true') {
-    await execRemoteCommand('touch ./runtipi/state/password-change-request');
+    // Write date in ms to file
+    await execRemoteCommand('touch ./runtipi/state/password-change-request && echo $(date +%s) >> ./runtipi/state/password-change-request');
   } else {
-    await promises.writeFile('./state/password-change-request', '');
+    await promises.writeFile('./state/password-change-request', `${new Date().getTime() / 1000}`);
   }
 };
 
