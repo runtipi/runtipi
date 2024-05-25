@@ -79,6 +79,7 @@ export const appInfoSchema = z.object({
   uid: z.number().optional(),
   gid: z.number().optional(),
   dynamic_config: z.boolean().optional().default(false),
+  min_tipi_version: z.string().optional(),
 });
 
 // Derived types

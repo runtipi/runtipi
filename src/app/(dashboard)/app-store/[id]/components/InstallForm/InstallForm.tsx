@@ -114,7 +114,8 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
         <Controller
           control={control}
           name="openPort"
-          defaultValue
+          defaultValue={!info.force_expose}
+          disabled={info.force_expose}
           render={({ field: { onChange, value, ref, ...props } }) => (
             <Switch
               {...props}
@@ -176,7 +177,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
-      {info.dynamic_config && renderDynamicConfigForm()}
+      {(guestDashboard || formFields.filter(typeFilter).length !== 0) && <h3>{t('APP_INSTALL_FORM_GENERAL')}</h3>}
       {formFields.filter(typeFilter).map(renderField)}
       {guestDashboard && (
         <Controller
@@ -186,7 +187,6 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
           render={({ field: { onChange, value, ref, ...props } }) => (
             <Switch
               className="mb-3"
-              disabled={info.force_expose}
               ref={ref}
               checked={value}
               onCheckedChange={onChange}
@@ -196,6 +196,8 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
           )}
         />
       )}
+      {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
+      {info.dynamic_config && renderDynamicConfigForm()}
       {info.exposable && renderExposeForm()}
       <Button loading={loading} type="submit" className="btn-success">
         {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}

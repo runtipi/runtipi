@@ -1,3 +1,4 @@
+import { expect, describe, test } from 'vitest';
 import { nonNullable, objectKeys } from '../typescript';
 
 describe('objectKeys and nonNullable', () => {

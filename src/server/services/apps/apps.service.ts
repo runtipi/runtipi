@@ -1,12 +1,13 @@
 import validator from 'validator';
 import MiniSearch from 'minisearch';
-import { App } from '@/server/db/schema';
+import { type App } from '@/server/db/schema';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
-import { Database, db } from '@/server/db';
-import { AppEventFormInput } from '@runtipi/shared';
+import { type Database, db } from '@/server/db';
+import { type AppEventFormInput } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
+import semver from 'semver';
 import { checkAppRequirements, getAvailableApps as slow_getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
@@ -165,7 +166,7 @@ export class AppServiceClass {
   public installApp = async (id: string, form: AppEventFormInput) => {
     const app = await this.queries.getApp(id);
 
-    const { exposed, domain, isVisibleOnGuestDashboard } = form;
+    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
 
     if (app) {
       await this.startApp(id);
@@ -208,6 +209,11 @@ export class AppServiceClass {
         }
       }
 
+      const { version } = TipiConfig.getConfig();
+      if (appInfo?.min_tipi_version && semver.valid(version) && semver.lt(version, appInfo.min_tipi_version)) {
+        throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id, minVersion: appInfo.min_tipi_version });
+      }
+
       await this.queries.createApp({
         id,
         status: 'installing',
@@ -215,8 +221,8 @@ export class AppServiceClass {
         version: appInfo.tipi_version,
         exposed: exposed || false,
         domain: domain || null,
-        openPort: form.openPort || false,
-        exposedLocal: form.exposedLocal || false,
+        openPort: openPort || false,
+        exposedLocal: exposedLocal || false,
         isVisibleOnGuestDashboard,
       });
 
@@ -490,6 +496,13 @@ export class AppServiceClass {
 
     if (!app) {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id });
+    }
+
+    const { version } = TipiConfig.getConfig();
+
+    const { minTipiVersion } = getUpdateInfo(app.id);
+    if (minTipiVersion && semver.valid(version) && semver.lt(version, minTipiVersion)) {
+      throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id, minVersion: minTipiVersion });
     }
 
     await this.queries.updateApp(id, { status: 'updating' });

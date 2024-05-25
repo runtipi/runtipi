@@ -1,4 +1,5 @@
 import React from 'react';
+import { vi, describe, it, expect } from 'vitest';
 import { fireEvent, screen, render } from '../../../../../tests/test-utils';
 import { EmptyPage } from './EmptyPage';
 
@@ -14,7 +15,7 @@ describe('<EmptyPage />', () => {
 
   it('should render the action button and trigger the onAction callback', () => {
     // arrange
-    const onAction = jest.fn();
+    const onAction = vi.fn();
     render(<EmptyPage title="Title" onAction={onAction} actionLabel="Action" />);
 
     // act

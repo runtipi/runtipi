@@ -1,18 +1,36 @@
+/* eslint-disable no-console */
 import React from 'react';
-import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 // Mock next/router
-// eslint-disable-next-line global-require
-jest.mock('next/router', () => require('next-router-mock'));
-jest.mock('react-markdown', () => ({
+vi.mock('next/navigation', async () => {
+  const router = await import('next-router-mock');
+
+  return router;
+});
+
+vi.mock('react-markdown', () => ({
   __esModule: true,
   default: () => <div data-testid="markdown" />,
 }));
-jest.mock('remark-breaks', () => () => ({}));
-jest.mock('remark-gfm', () => () => ({}));
-jest.mock('rehype-raw', () => () => ({}));
+vi.mock('remark-breaks', () => () => ({}));
+vi.mock('remark-gfm', () => () => ({}));
+vi.mock('rehype-raw', () => () => ({}));
+vi.mock('fs-extra', async () => {
+  const { fsMock } = await import('@/tests/mocks/fs');
+  return {
+    ...fsMock,
+  };
+});
+vi.mock('fs', async () => {
+  const { fsMock } = await import('@/tests/mocks/fs');
+  return {
+    ...fsMock,
+  };
+});
 
-console.error = jest.fn();
+console.error = vi.fn();
 
 class ResizeObserver {
   observe() {}
@@ -44,6 +62,7 @@ const localStorageMock = (() => {
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 Object.defineProperty(window, 'ResizeObserver', { value: ResizeObserver });
 Object.defineProperty(window, 'MutationObserver', { value: ResizeObserver });
+Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', { value: vi.fn() });
 
 Object.defineProperty(window, 'matchMedia', {
   value: () => {

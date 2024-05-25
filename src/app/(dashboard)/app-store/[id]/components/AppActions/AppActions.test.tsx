@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppInfo } from '@runtipi/shared';
+import { vi, afterEach, describe, it, expect } from 'vitest';
 import { AppActions } from './AppActions';
 import { cleanup, fireEvent, render, screen, waitFor, userEvent } from '../../../../../../../tests/test-utils';
 
@@ -19,8 +20,8 @@ describe('Test: AppActions', () => {
 
   it('should call the callbacks when buttons are clicked', () => {
     // arrange
-    const onStart = jest.fn();
-    const onRemove = jest.fn();
+    const onStart = vi.fn();
+    const onRemove = vi.fn();
     // @ts-expect-error - we don't need to pass all props for this test
     render(<AppActions status="stopped" app={app} onStart={onStart} onUninstall={onRemove} />);
 
@@ -130,7 +131,7 @@ describe('Test: AppActions', () => {
       exposed: true,
       domain: 'myapp.example.com',
     };
-    const openFn = jest.fn();
+    const openFn = vi.fn();
     // @ts-expect-error - we don't need to pass all props for this test
     render(<AppActions onOpen={openFn} status="running" app={appWithDomain} />);
 
@@ -149,11 +150,11 @@ describe('Test: AppActions', () => {
     });
   });
 
-  it('should render local_domain open button', async () => {
+  it('should render local_domain open button when exposed locally', async () => {
     // arrange
-    const openFn = jest.fn();
+    const openFn = vi.fn();
     // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions localDomain="tipi.lan" onOpen={openFn} status="running" app={app} />);
+    render(<AppActions localDomain="tipi.lan" onOpen={openFn} status="running" app={{ ...app, exposedLocal: true }} />);
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });
@@ -170,11 +171,11 @@ describe('Test: AppActions', () => {
     });
   });
 
-  it('should render local open button', async () => {
+  it('should render local open button when port is open', async () => {
     // arrange
-    const openFn = jest.fn();
+    const openFn = vi.fn();
     // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions localUrl="http://localhost:3000" onOpen={openFn} status="running" app={app} />);
+    render(<AppActions localUrl="http://localhost:3000" onOpen={openFn} status="running" app={{ ...app, openPort: true }} />);
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });

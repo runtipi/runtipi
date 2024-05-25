@@ -2,10 +2,9 @@ import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
 import path from 'path';
 import { DATA_DIR } from '@/config/constants';
+import { describe, it, expect } from 'vitest';
 import { TipiConfigClass } from './TipiConfig';
 import { readJsonFile } from '../../common/fs.helpers';
-
-jest.mock('fs-extra');
 
 describe('Test: getConfig', () => {
   it('It should return config from .env', () => {
