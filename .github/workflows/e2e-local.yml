@@ -1,0 +1,111 @@
+name: E2E Tests
+on:
+  workflow_call:
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push images
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          build-args: |
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            TIPI_VERSION=e2e
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/runtipi/runtipi:e2e
+          cache-from: type=registry,ref=ghcr.io/runtipi/runtipi:buildcache
+          cache-to: type=registry,ref=ghcr.io/runtipi/runtipi:buildcache,mode=max
+
+  build-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch an action and get the run ID
+        uses: codex-/return-dispatch@v1
+        id: return_dispatch
+        with:
+          token: ${{ secrets.PAT_CLI }}
+          ref: develop
+          repo: cli
+          owner: runtipi
+          workflow: nightly.yml
+
+      - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
+        uses: Codex-/await-remote-run@v1.12.2
+        with:
+          token: ${{ secrets.PAT_CLI }}
+          repo: cli
+          owner: runtipi
+          run_id: ${{ steps.return_dispatch.outputs.run_id }}
+          run_timeout_seconds: 600
+          poll_interval_ms: 5000
+
+      - name: Create bin folder
+        run: mkdir -p bin
+
+      - name: Download CLI form release on runtipi/cli repo
+        run: |
+          REPO="runtipi/cli"
+          VERSION="nightly"
+
+          ASSETS_URL=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/releases/tags/$VERSION" \
+            | jq -r '.assets[] | select(.name | test("runtipi-cli.+")) | .browser_download_url')
+
+          echo "Assets URL: $ASSETS_URL"
+
+          for url in $ASSETS_URL; do
+            echo "Downloading from $url"
+            curl -L -o "bin/${url##*/}" -H "Accept: application/octet-stream" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$url"
+          done
+
+      - name: Upload CLI
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli
+          path: bin
+
+  update-release:
+    runs-on: ubuntu-latest
+    needs: [build-images, build-cli]
+    steps:
+      - name: Download CLI
+        uses: actions/download-artifact@v4
+        with:
+          name: cli
+          path: cli
+
+      - uses: pyTooling/Actions/releaser@r0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: e2e
+          rm: true
+          files: cli/runtipi-cli-*
+
+  install-app:
+    runs-on: ubuntu-latest
+    needs: [update-release]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run install script
+        run: |
+          ./scripts/install.sh --version e2e
