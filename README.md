@@ -1,9 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-49-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-50-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -139,6 +137,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/asermax"><img src="https://avatars.githubusercontent.com/u/1452164?v=4?s=100" width="100px;" alt="Agustín Carrasco"/><br /><sub><b>Agustín Carrasco</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=asermax" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://thibaultclaude.be"><img src="https://avatars.githubusercontent.com/u/23203061?v=4?s=100" width="100px;" alt="Thibault Claude"/><br /><sub><b>Thibault Claude</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=thclaude" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/DansNewLegs"><img src="https://avatars.githubusercontent.com/u/152246049?v=4?s=100" width="100px;" alt="Joshua Banks"/><br /><sub><b>Joshua Banks</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=DansNewLegs" title="Code">💻</a> <a href="https://github.com/runtipi/runtipi/commits?author=DansNewLegs" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/hex-developer"><img src="https://avatars.githubusercontent.com/u/77530549?v=4?s=100" width="100px;" alt="hex-developer"/><br /><sub><b>hex-developer</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=hex-developer" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
