@@ -19,8 +19,8 @@ test('user can login and is redirected to the dashboard', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 });
 
-test('user can logout', async ({ page }) => {
-  await loginUser(page);
+test('user can logout', async ({ page, context }) => {
+  await loginUser(page, context);
   await page.getByTestId('logout-button').click();
 
   await expect(page.getByText('Login to your account')).toBeVisible();

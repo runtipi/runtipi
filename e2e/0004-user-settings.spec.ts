@@ -5,10 +5,10 @@ import { clearDatabase } from './helpers/db';
 import { testUser } from './helpers/constants';
 import { setSettings } from './helpers/settings';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, context }) => {
   await setSettings({});
   await clearDatabase();
-  await loginUser(page);
+  await loginUser(page, context);
 
   await page.goto('/settings');
 });

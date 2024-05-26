@@ -1,5 +1,5 @@
 import * as argon2 from 'argon2';
-import { expect, Page } from '@playwright/test';
+import { BrowserContext, expect, Page } from '@playwright/test';
 import { userTable } from '@/server/db/schema';
 import { db } from '../helpers/db';
 import { testUser } from '../helpers/constants';
@@ -10,9 +10,11 @@ export const createTestUser = async () => {
   await db.insert(userTable).values({ password, username: testUser.email, operator: true });
 };
 
-export const loginUser = async (page: Page) => {
+export const loginUser = async (page: Page, context: BrowserContext) => {
   // Create user in database
   await createTestUser();
+
+  await context.addCookies([{ name: 'hide-insecure-instance', value: 'true', path: '/', domain: process.env.SERVER_IP }]);
 
   // Login flow
   await page.goto('/login');
