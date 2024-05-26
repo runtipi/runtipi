@@ -25,7 +25,8 @@
   ],
   "scripts": {
     "lint": "eslint --ext .ts src",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "prettier-check": "prettier --check ."
   },
   "keywords": [],
   "author": "",

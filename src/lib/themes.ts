@@ -1,4 +1,4 @@
-export const THEMES = {
+const THEMES = {
   christmas: {
     name: 'christmas',
     month: 11,
@@ -7,7 +7,7 @@ export const THEMES = {
   },
 };
 
-export type Theme = keyof typeof THEMES | 'default';
+type Theme = keyof typeof THEMES | 'default';
 
 export const getAutoTheme = (): Theme => {
   const date = new Date();
