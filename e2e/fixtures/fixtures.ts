@@ -10,11 +10,14 @@ export const createTestUser = async () => {
   await db.insert(userTable).values({ password, username: testUser.email, operator: true });
 };
 
-export const loginUser = async (page: Page, context: BrowserContext) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const loginUser = async (page: Page, _: BrowserContext) => {
+  await page.addLocatorHandler(page.getByText('Insecure configuration'), async () => {
+    await page.getByRole('button', { name: 'Close' }).click();
+  });
+
   // Create user in database
   await createTestUser();
-
-  await context.addCookies([{ name: 'hide-insecure-instance', value: 'true', path: '/', domain: process.env.SERVER_IP }]);
 
   // Login flow
   await page.goto('/login');

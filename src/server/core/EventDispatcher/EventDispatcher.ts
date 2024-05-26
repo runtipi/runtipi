@@ -85,7 +85,7 @@ export class EventDispatcher {
     Logger.info(`Scheduling event ${JSON.stringify(event)} with cron expression ${cronExpression}`);
     const jobid = this.generateJobId(event);
 
-    this.queue.add(jobid, eventSchema.parse(event), { repeat: { pattern: cronExpression } });
+    void this.queue.add(jobid, eventSchema.parse(event), { repeat: { pattern: cronExpression } });
   }
 
   public async close() {

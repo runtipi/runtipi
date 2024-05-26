@@ -138,7 +138,9 @@ const main = async () => {
     // Start all apps
     const appExecutor = new AppExecutors();
     logger.info('Starting all apps...');
-    appExecutor.startAllApps();
+
+    // Fire and forget
+    void appExecutor.startAllApps();
 
     const app = new Hono().basePath('/worker-api');
     serve({ fetch: app.fetch, port: 5000 }, (info) => {
@@ -157,4 +159,4 @@ const main = async () => {
   }
 };
 
-main();
+void main();

@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { Toaster } from 'react-hot-toast';
 import { getCurrentLocale } from '../utils/getCurrentLocale';
 import { ClientProviders } from './components/ClientProviders';
+import { CookiesProvider } from 'next-client-cookies/server';
 
 export const metadata: Metadata = {
   title: 'Tipi',
@@ -30,13 +31,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} className={clsx(GeistSans.className, 'border-top-wide border-primary')}>
-      <ClientProviders messages={mergedMessages} locale={locale} initialTheme={theme?.value} cookies={cookies().getAll()}>
-        <body data-bs-theme={theme?.value}>
-          <input type="hidden" value={JSON.stringify(clientSettings)} id="client-settings" />
-          {children}
-          <Toaster />
-        </body>
-      </ClientProviders>
+      <CookiesProvider>
+        <ClientProviders messages={mergedMessages} locale={locale} initialTheme={theme?.value}>
+          <body data-bs-theme={theme?.value}>
+            <input type="hidden" value={JSON.stringify(clientSettings)} id="client-settings" />
+            {children}
+            <Toaster />
+          </body>
+        </ClientProviders>
+      </CookiesProvider>
     </html>
   );
 }

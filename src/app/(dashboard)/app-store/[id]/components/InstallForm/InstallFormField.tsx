@@ -61,7 +61,7 @@ export const InstallFormField = (props: IProps) => {
         control={control}
         name={field.env_variable}
         defaultValue={field.default}
-        render={({ field: { onChange, value, ref, ...rest } }) => (
+        render={({ field: { onChange, value, ...rest } }) => (
           <Select value={value as string} defaultValue={initialValue} onValueChange={onChange} {...rest}>
             <SelectTrigger className="mb-3" error={error} label={label}>
               <SelectValue placeholder={t('APP_INSTALL_FORM_CHOOSE_OPTION')} />

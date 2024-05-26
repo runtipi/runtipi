@@ -70,3 +70,6 @@ temp
 
 # Sentry Config File
 .sentryclirc
+
+public/js/*
+!public/js/.gitkeep
