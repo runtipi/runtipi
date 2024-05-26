@@ -10,7 +10,8 @@
     "tsc": "tsc",
     "dev": "dotenv -e ../../.env nodemon",
     "knip": "knip",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "prettier-check": "prettier --check ."
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,6 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@sentry/esbuild-plugin": "^2.17.0",
-    "@total-typescript/shoehorn": "^0.1.2",
     "@types/web-push": "^3.6.3",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^6.21.0",
