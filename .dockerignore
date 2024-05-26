@@ -16,3 +16,4 @@
 !src/**
 !tests/**
 !start.*.sh
+!scripts/**

@@ -2,6 +2,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'import', 'react', 'jsx-a11y'],
   extends: [
     'plugin:@typescript-eslint/recommended',
+    'plugin:react-hooks/recommended',
     'next/core-web-vitals',
     'plugin:import/typescript',
     'plugin:react/recommended',

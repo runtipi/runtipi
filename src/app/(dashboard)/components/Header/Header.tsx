@@ -45,7 +45,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
 
   return (
     <header className="text-white navbar navbar-expand-md navbar-dark navbar-overlap d-print-none" data-bs-theme="dark">
-      <Script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js" async />
+      <Script src="/js/tabler.min.js" async />
       <div className="container-xl">
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
           <span className="navbar-toggler-icon" />

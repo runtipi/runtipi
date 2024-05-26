@@ -34,12 +34,13 @@ RUN pnpm fetch
 COPY ./pnpm-workspace.yaml ./
 COPY ./package*.json ./
 COPY ./packages/shared ./packages/shared
+COPY ./scripts ./scripts
+COPY ./public ./public
 
 RUN pnpm install -r --prefer-offline 
 COPY ./src ./src
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
-COPY ./public ./public
 COPY ./tests ./tests
 
 # Sentry
