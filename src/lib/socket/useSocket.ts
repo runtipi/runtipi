@@ -17,12 +17,13 @@ type Selector<T, U> = {
 type Props<T, U> = {
   onEvent?: (event: Extract<Extract<SocketEvent, { type: T }>['event'], U>, data: Extract<SocketEvent, { type: T }>['data']) => void;
   onError?: (error: string) => void;
+  onCleanup?: () => void;
   initialData?: Extract<SocketEvent, { type: T }>['data'] | undefined;
   selector: Selector<T, U>;
 };
 
 export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['event']>(props: Props<T, U>) => {
-  const { onEvent, onError, selector, initialData } = props;
+  const { onEvent, onError, onCleanup, selector, initialData } = props;
   const [lastData, setLastData] = useState(initialData as unknown);
   const socketRef = useRef<Socket>();
 
@@ -78,6 +79,8 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
     return () => {
       socketRef.current?.off(selector.type as string);
       socketRef.current?.off('error');
+      socketRef.current = undefined;
+      onCleanup?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- This effect should never re-run
   }, []);

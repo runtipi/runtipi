@@ -31,8 +31,9 @@ export const socketEventSchema = z.union([
     type: z.literal('logs'),
     event: z.literal('logs'),
     data: z.object({
-      lines: z.array(z.string())
-    })
+      lines: z.array(z.string()),
+      appId: z.string(),
+    }),
   }),
   z.object({
     type: z.literal('viewLogs'),
