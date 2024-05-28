@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useSocket } from '@/lib/socket/useSocket';
-import { useSocketEmit } from '@/lib/socket/useSocketEmit';
 import clsx from 'clsx';
 import styles from './LogsTerminal.module.scss';
 
@@ -14,8 +13,6 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
   const [wrapLines, setWrapLines] = useState<boolean>(false);
   const ref = useRef<HTMLPreElement>(null);
 
-  useSocketEmit({ type: 'viewLogs', data: { appId }, emitOnDisconnect: 'stopLogs' });
-
   useEffect(() => {
     if (ref.current && follow) {
       ref.current.scrollTop = ref.current.scrollHeight;
@@ -23,10 +20,15 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
   }, [logs, follow, wrapLines]);
 
   useSocket({
-    selector: { type: 'logs', data: { property: 'appId', value: appId } },
+    selector: { type: 'logs', event: 'newLogs', data: { property: 'appId', value: appId } },
     onCleanup: () => setLogs([]),
+    emitOnConnect: { type: 'logs', event: 'viewLogs', data: { appId } },
+    emitOnDisconnect: { type: 'logs', event: 'stopLogs', data: { appId } },
     onEvent: (_, data) => {
       setLogs((prevLogs) => {
+        if (!data.lines) {
+          return prevLogs;
+        }
         const newLogs = [...prevLogs, ...data.lines.map((line) => ({ id: nextId++, text: line.trim() }))];
         if (newLogs.length > maxLines) {
           return newLogs.slice(newLogs.length - maxLines);

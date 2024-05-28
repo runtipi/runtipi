@@ -18,12 +18,14 @@ type Props<T, U> = {
   onEvent?: (event: Extract<Extract<SocketEvent, { type: T }>['event'], U>, data: Extract<SocketEvent, { type: T }>['data']) => void;
   onError?: (error: string) => void;
   onCleanup?: () => void;
+  emitOnConnect?: SocketEvent;
+  emitOnDisconnect?: SocketEvent;
   initialData?: Extract<SocketEvent, { type: T }>['data'] | undefined;
   selector: Selector<T, U>;
 };
 
 export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['event']>(props: Props<T, U>) => {
-  const { onEvent, onError, onCleanup, selector, initialData } = props;
+  const { onEvent, onError, onCleanup, selector, initialData, emitOnConnect, emitOnDisconnect } = props;
   const [lastData, setLastData] = useState(initialData as unknown);
   const socketRef = useRef<Socket>();
 
@@ -37,6 +39,12 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
     if (socketRef.current?.disconnected) {
       socketRef.current.connect();
     }
+
+    socketRef.current.on('connect', () => {
+      if (emitOnConnect) {
+        socketRef.current?.emit(emitOnConnect.event, emitOnConnect.data);
+      }
+    });
 
     const handleEvent = (type: SocketEvent['type'], rawData: unknown) => {
       const parsedEvent = socketEventSchema.safeParse(rawData);
@@ -77,6 +85,10 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
     });
 
     return () => {
+      if (emitOnDisconnect) {
+        socketRef.current?.emit(emitOnDisconnect.event, emitOnDisconnect.data);
+      }
+
       socketRef.current?.off(selector.type as string);
       socketRef.current?.off('error');
       socketRef.current = undefined;
@@ -85,5 +97,5 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
     // eslint-disable-next-line react-hooks/exhaustive-deps -- This effect should never re-run
   }, []);
 
-  return { lastData } as { lastData: Extract<SocketEvent, { type: T }>['data'] | undefined };
+  return { lastData, socket: socketRef.current } as { lastData: Extract<SocketEvent, { type: T }>['data'] | undefined; socket: Socket | undefined };
 };

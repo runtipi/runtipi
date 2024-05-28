@@ -97,7 +97,7 @@ export const handleViewLogsEvent = async (socket: Socket, { appId }: { appId: st
       .toString()
       .split(/(?:\r\n|\r|\n)/g)
       .filter(Boolean);
-    await SocketManager.emit({ type: 'logs', event: 'logs', data: { lines, appId } });
+
+    await SocketManager.emit({ type: 'logs', event: 'newLogs', data: { lines, appId } });
   });
 };
-
