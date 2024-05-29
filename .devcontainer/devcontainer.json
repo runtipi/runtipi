@@ -11,5 +11,17 @@
     "ms-vscode.vscode-typescript-next",
     "waderyan.gitblame"
   ],
-  "postCreateCommand": "./.devcontainer/postCreateCommand.sh"
+  "postCreateCommand": "./.devcontainer/postCreateCommand.sh",
+  "forwardPorts": [
+    80,
+    3000
+  ],
+  "portsAttributes": {
+    "3000": {
+      "label": "Runtipi"
+    },
+    "80": {
+      "label": "WebSocket"
+    }
+  }
 }
