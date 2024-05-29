@@ -4,11 +4,11 @@ import { execAsync, pathExists } from '@runtipi/shared/node';
 import { sanitizePath } from '@runtipi/shared';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
-import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/config/constants';
 import { Socket } from 'socket.io';
 import { SocketManager } from '@/lib/socket/SocketManager';
 
-const getBaseComposeArgs = async (appId: string) => {
+const getBaseComposeArgsApp = async (appId: string) => {
   const { arch, appsRepoId } = getEnv();
   const appDataDirPath = path.join(APP_DATA_DIR, sanitizePath(appId));
   const appDirPath = path.join(DATA_DIR, 'apps', sanitizePath(appId));
@@ -52,13 +52,34 @@ const getBaseComposeArgs = async (appId: string) => {
   return args;
 };
 
+const getBaseComposeArgsTipi = async () => {
+  const args: string[] = [`--env-file ${path.join(DATA_DIR, '.env')}`];
+
+  args.push(`--project-name tipi`);
+
+  let composeFile = path.join(DATA_DIR, 'docker-compose.yml');
+  args.push(`-f ${composeFile}`);
+
+  // User defined overrides
+  const userComposeFile = path.join(
+    DATA_DIR,
+    'user-config',
+    'tipi-compose.yml',
+  );
+  if (await pathExists(userComposeFile)) {
+    args.push(`--file ${userComposeFile}`);
+  }
+
+  return args;
+};
+
 /**
  * Helpers to execute docker compose commands
  * @param {string} appId - App name
  * @param {string} command - Command to execute
  */
 export const compose = async (appId: string, command: string) => {
-  const args = await getBaseComposeArgs(appId);
+  const args = await getBaseComposeArgsApp(appId);
   args.push(command);
 
   logger.info(`Running docker compose with args ${args.join(' ')}`);
@@ -71,33 +92,40 @@ export const compose = async (appId: string, command: string) => {
   return { stdout, stderr };
 };
 
-export const handleViewLogsEvent = async (socket: Socket, { appId }: { appId: string }) => {
-  const args = await getBaseComposeArgs(appId);
+export const handleViewLogsEvent = async (socket: Socket, { type }: { type: string }) => {
+  let args: string[] = []
+
+  if (type == 'tipi') {
+    args = await getBaseComposeArgsTipi()
+  } else {
+    args = await getBaseComposeArgsApp(type)
+  }
+
   args.push('logs --follow -n 25');
 
   const logsCommand = `docker-compose ${args.join(' ')}`;
 
-  const ls = spawn('sh', ['-c', logsCommand]);
+  const logs = spawn('sh', ['-c', logsCommand]);
 
   socket.on('disconnect', () => {
-    ls.kill('SIGINT');
+    logs.kill('SIGINT');
   });
 
   socket.on('stopLogs', () => {
-    ls.kill('SIGINT');
+    logs.kill('SIGINT');
   });
 
-  ls.on('error', (error) => {
+  logs.on('error', (error) => {
     logger.error('Error running logs command: ', error);
-    ls.kill('SIGINT');
+    logs.kill('SIGINT');
   });
 
-  ls.stdout.on('data', async (data) => {
+  logs.stdout.on('data', async (data) => {
     const lines = data
       .toString()
       .split(/(?:\r\n|\r|\n)/g)
       .filter(Boolean);
 
-    await SocketManager.emit({ type: 'logs', event: 'newLogs', data: { lines, appId } });
+    await SocketManager.emit({ type: 'logs', event: 'newLogs', data: { lines, type } });
   });
 };

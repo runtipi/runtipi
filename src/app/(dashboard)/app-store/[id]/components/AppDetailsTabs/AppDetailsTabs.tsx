@@ -22,7 +22,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
         <TabsTrigger disabled={status === 'missing'} value="logs">
-          Logs
+          {t('LOGS')}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="description">

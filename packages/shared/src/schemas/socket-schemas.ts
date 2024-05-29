@@ -31,7 +31,7 @@ export const socketEventSchema = z.union([
     type: z.literal('logs'),
     event: z.union([z.literal('newLogs'), z.literal('viewLogs'), z.literal('stopLogs')]),
     data: z.object({
-      appId: z.string(),
+      type: z.string(), // can be an appId or tipi for main compose logs
       lines: z.array(z.string()).optional(),
     }),
   }),

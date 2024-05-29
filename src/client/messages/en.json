@@ -299,5 +299,9 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Current version is already up to date",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "The major version has changed. Please update manually (instructions in release notes)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
+  "LOGS": "Logs",
+  "LOGS_FOLLOW_LINES": "Follow logs",
+  "LOGS_WRAP_LINES": "Wrap lines",
+  "LOGS_MAX_LINES": "Max lines"
 }

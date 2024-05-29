@@ -3,10 +3,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSocket } from '@/lib/socket/useSocket';
 import clsx from 'clsx';
-import styles from './LogsTerminal.module.scss';
+import styles from './LogsContainer.module.scss';
 import { useTranslations } from 'next-intl';
 
-export const LogsTerminal = ({ appId }: { appId: string }) => {
+export const LogsContainer = () => {
   const t = useTranslations();
 
   let nextId = 0;
@@ -23,10 +23,10 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
   }, [logs, follow, wrapLines]);
 
   useSocket({
-    selector: { type: 'logs', event: 'newLogs', data: { property: 'type', value: appId } },
+    selector: { type: 'logs', event: 'newLogs', data: { property: 'type', value: 'tipi' } },
     onCleanup: () => setLogs([]),
-    emitOnConnect: { type: 'logs', event: 'viewLogs', data: { type: appId } },
-    emitOnDisconnect: { type: 'logs', event: 'stopLogs', data: { type: appId } },
+    emitOnConnect: { type: 'logs', event: 'viewLogs', data: { type: 'tipi' } },
+    emitOnDisconnect: { type: 'logs', event: 'stopLogs', data: { type: 'tipi' } },
     onEvent: (_, data) => {
       setLogs((prevLogs) => {
         if (!data.lines) {
