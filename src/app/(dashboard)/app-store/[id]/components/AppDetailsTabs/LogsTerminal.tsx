@@ -1,11 +1,14 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSocket } from '@/lib/socket/useSocket';
 import clsx from 'clsx';
 import styles from './LogsTerminal.module.scss';
 
 export const LogsTerminal = ({ appId }: { appId: string }) => {
+  const t = useTranslations();
+
   let nextId = 0;
   const [logs, setLogs] = useState<{ id: number; text: string }[]>([]);
   const [follow, setFollow] = useState<boolean>(true);
@@ -50,18 +53,18 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
         <div className="col">
           <label className="form-check form-switch mt-1" htmlFor="follow-logs">
             <input id="follow-logs" className="form-check-input" type="checkbox" checked={follow} onChange={() => setFollow(!follow)} />
-            <span className="form-check-label">Follow logs</span>
+            <span className="form-check-label">{t('APP_LOGS_TAB_FOLLOW')}</span>
           </label>
         </div>
         <div className="col">
           <label className="form-check form-switch mt-1" htmlFor="follow-logs">
             <input id="follow-logs" className="form-check-input" type="checkbox" checked={wrapLines} onChange={() => setWrapLines(!wrapLines)} />
-            <span className="form-check-label">Wrap lines</span>
+            <span className="form-check-label">{t('APP_LOGS_TAB_WRAP_LINES')}</span>
           </label>
         </div>
         <div className="col">
           <div className="input-group mb-2">
-            <span className="input-group-text">Max lines:</span>
+            <span className="input-group-text">{t('APP_LOGS_TAB_MAX_LINES')}</span>
             <input
               id="max-lines"
               type="number"
