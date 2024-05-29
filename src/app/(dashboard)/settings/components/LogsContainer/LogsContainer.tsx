@@ -4,16 +4,16 @@ import React, { useState } from 'react';
 import { useSocket } from '@/lib/socket/useSocket';
 import { LogsTerminal } from 'src/app/components/LogsTerminal/LogsTerminal';
 
-export const AppLogs = ({ appId }: { appId: string }) => {
+export const LogsContainer = () => {
   let nextId = 0;
   const [logs, setLogs] = useState<{ id: number; text: string }[]>([]);
   const [maxLines, setMaxLines] = useState<number>(300);
 
   useSocket({
-    selector: { type: 'app-logs', event: 'newLogs', data: { property: 'appId', value: appId } },
+    selector: { type: 'runtipi-logs', event: 'newLogs' },
     onCleanup: () => setLogs([]),
-    emitOnConnect: { type: 'app-logs', event: 'viewLogs', data: { appId } },
-    emitOnDisconnect: { type: 'app-logs', event: 'stopLogs', data: { appId } },
+    emitOnConnect: { type: 'runtipi-logs', event: 'viewLogs', data: {} },
+    emitOnDisconnect: { type: 'runtipi-logs', event: 'stopLogs', data: {} },
     onEvent: (_, data) => {
       setLogs((prevLogs) => {
         if (!data.lines) {

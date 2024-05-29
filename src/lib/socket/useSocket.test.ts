@@ -27,7 +27,7 @@ describe('useSocket', () => {
 
   it('should connect to the socket on mount', () => {
     const props = {
-      selector: { type: 'logs' },
+      selector: { type: 'runtipi-logs' },
     } as const;
 
     renderHook(() => useSocket(props));
@@ -37,24 +37,24 @@ describe('useSocket', () => {
   });
 
   it('should emit on connect if emitOnConnect is provided', () => {
-    const emitOnConnect = { type: 'logs', event: 'viewLogs', data: { appId: 'value' } } as const;
-    renderHook(() => useSocket({ selector: { type: 'logs' }, emitOnConnect }));
+    const emitOnConnect = { type: 'runtipi-logs', event: 'viewLogs', data: {} } as const;
+    renderHook(() => useSocket({ selector: { type: 'runtipi-logs' }, emitOnConnect }));
 
     expect(mockSocket.on).toHaveBeenCalledWith('connect', expect.any(Function));
     mockSocket.on.mock.calls.find((call) => call[0] === 'connect')[1](); // Call the connect handler
 
-    expect(mockSocket.emit).toHaveBeenCalledWith(emitOnConnect.event, emitOnConnect.data);
+    expect(mockSocket.emit).toHaveBeenCalledWith(emitOnConnect.type, emitOnConnect);
   });
 
   it('should handle events according to the selector', () => {
-    const eventData = { type: 'logs', event: 'newLogs', data: { appId: 'test' } };
+    const eventData = { type: 'app-logs', event: 'newLogs', data: { appId: 'test' } };
     const onEvent = vi.fn();
 
-    renderHook(() => useSocket({ selector: { type: 'logs', event: 'newLogs' }, onEvent }));
+    renderHook(() => useSocket({ selector: { type: 'app-logs', event: 'newLogs' }, onEvent }));
 
-    expect(mockSocket.on).toHaveBeenCalledWith('logs', expect.any(Function));
+    expect(mockSocket.on).toHaveBeenCalledWith('app-logs', expect.any(Function));
 
-    mockSocket.on.mock.calls.find((call) => call[0] === 'logs')[1](eventData); // Call the event handler
+    mockSocket.on.mock.calls.find((call) => call[0] === 'app-logs')[1](eventData); // Call the event handler
 
     expect(onEvent).toHaveBeenCalledWith('newLogs', eventData.data);
   });
@@ -65,7 +65,7 @@ describe('useSocket', () => {
 
     renderHook(() =>
       useSocket({
-        selector: { type: 'logs' },
+        selector: { type: 'runtipi-logs' },
         onError,
       }),
     );
@@ -78,12 +78,12 @@ describe('useSocket', () => {
 
   it('should emit on disconnect if emitOnDisconnect is provided', () => {
     const { unmount } = renderHook(() =>
-      useSocket({ selector: { type: 'app' }, emitOnDisconnect: { event: 'stop_error', data: { appId: 'test' } } }),
+      useSocket({ selector: { type: 'app' }, emitOnDisconnect: { type: 'app', event: 'stop_error', data: { appId: 'test' } } }),
     );
 
     unmount();
 
-    expect(mockSocket.emit).toHaveBeenCalledWith('stop_error', { appId: 'test' });
+    expect(mockSocket.emit).toHaveBeenCalledWith('app', { type: 'app', event: 'stop_error', data: { appId: 'test' } });
     expect(mockSocket.off).toHaveBeenCalledWith('app');
     expect(mockSocket.off).toHaveBeenCalledWith('error');
   });
@@ -91,7 +91,7 @@ describe('useSocket', () => {
   it('should call onCleanup on unmount', () => {
     const onCleanup = vi.fn();
 
-    const { unmount } = renderHook(() => useSocket({ selector: { type: 'logs' }, onCleanup }));
+    const { unmount } = renderHook(() => useSocket({ selector: { type: 'app-logs' }, onCleanup }));
 
     unmount();
 
