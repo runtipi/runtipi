@@ -25,8 +25,8 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
   useSocket({
     selector: { type: 'logs', event: 'newLogs', data: { property: 'appId', value: appId } },
     onCleanup: () => setLogs([]),
-    emitOnConnect: { type: 'logs', event: 'viewLogs', data: { appId } },
-    emitOnDisconnect: { type: 'logs', event: 'stopLogs', data: { appId } },
+    emitOnConnect: { event: 'viewLogs', data: { appId } },
+    emitOnDisconnect: { event: 'stopLogs', data: { appId } },
     onEvent: (_, data) => {
       setLogs((prevLogs) => {
         if (!data.lines) {

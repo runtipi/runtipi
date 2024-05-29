@@ -10,8 +10,7 @@ class SocketManager {
     const io = new Server(5001, { cors: { origin: '*' }, path: '/worker/socket.io' });
 
     io.on('connection', async (socket) => {
-      socket.on('viewLogs', (appId) => handleViewLogsEvent(socket, appId));
-
+      socket.on('viewLogs', (data) => handleViewLogsEvent(socket, data));
       socket.on('disconnect', () => {});
     });
 

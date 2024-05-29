@@ -7,6 +7,7 @@ import { getEnv } from '@/lib/environment';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { Socket } from 'socket.io';
 import { SocketManager } from '@/lib/socket/SocketManager';
+import { z } from 'zod';
 
 const getBaseComposeArgs = async (appId: string) => {
   const { arch, appsRepoId } = getEnv();
@@ -71,8 +72,15 @@ export const compose = async (appId: string, command: string) => {
   return { stdout, stderr };
 };
 
-export const handleViewLogsEvent = async (socket: Socket, { appId }: { appId: string }) => {
-  const args = await getBaseComposeArgs(appId);
+export const handleViewLogsEvent = async (socket: Socket, eventData: { appId: string }) => {
+  const parsedData = z.object({ appId: z.string() }).safeParse(eventData);
+
+  if (!parsedData.success) {
+    logger.error('Invalid viewLogs event data:', eventData);
+    return;
+  }
+
+  const args = await getBaseComposeArgs(parsedData.data.appId);
   args.push('logs --follow -n 25');
 
   const logsCommand = `docker-compose ${args.join(' ')}`;
@@ -98,6 +106,10 @@ export const handleViewLogsEvent = async (socket: Socket, { appId }: { appId: st
       .split(/(?:\r\n|\r|\n)/g)
       .filter(Boolean);
 
-    await SocketManager.emit({ type: 'logs', event: 'newLogs', data: { lines, appId } });
+    await SocketManager.emit({
+      type: 'logs',
+      event: 'newLogs',
+      data: { lines, appId: parsedData.data.appId },
+    });
   });
 };
