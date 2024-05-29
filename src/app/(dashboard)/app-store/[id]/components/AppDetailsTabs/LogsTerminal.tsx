@@ -20,7 +20,7 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
     if (ref.current && follow) {
       ref.current.scrollTop = ref.current.scrollHeight;
     }
-  }, [logs, follow, wrapLines]);
+  }, [logs, follow]);
 
   useSocket({
     selector: { type: 'logs', event: 'newLogs', data: { property: 'appId', value: appId } },
