@@ -4,7 +4,7 @@ import { execAsync, pathExists } from '@runtipi/shared/node';
 import { sanitizePath } from '@runtipi/shared';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
-import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { Socket } from 'socket.io';
 import { SocketManager } from '@/lib/socket/SocketManager';
 
@@ -57,7 +57,7 @@ const getBaseComposeArgsTipi = async () => {
 
   args.push(`--project-name tipi`);
 
-  let composeFile = path.join(DATA_DIR, 'docker-compose.yml');
+  const composeFile = path.join(DATA_DIR, 'docker-compose.yml');
   args.push(`-f ${composeFile}`);
 
   // User defined overrides
