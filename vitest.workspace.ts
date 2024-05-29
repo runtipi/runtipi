@@ -22,7 +22,7 @@ export default defineWorkspace([
       name: 'client',
       root: './',
       environment: 'jsdom',
-      include: ['./src/client/**/*.{spec,test}.{ts,tsx}', './src/app/**/*.{spec,test}.{ts,tsx}'],
+      include: ['./src/client/**/*.{spec,test}.{ts,tsx}', './src/app/**/*.{spec,test}.{ts,tsx}', './src/lib/**/*.{spec,test}.{ts,tsx}'],
       setupFiles: ['./tests/client/test.setup.tsx'],
     },
   },
