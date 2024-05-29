@@ -18,9 +18,16 @@ export const DeleteAppStoreDialog = ({ appstore }: { appstore: string }) => {
     onError: (e) => {
       if (e.serverError) toast.error(e.serverError);
     },
-    onSuccess: () => {
-      toast.success(t('SETTINGS_APP_STORE_DELETE_SUCCESS'));
-      router.refresh();
+    onSuccess: (result) => {
+      if (result) {
+        if (result.success) {
+          toast.success(t('SETTINGS_APP_STORE_DELETE_SUCCESS'));
+          deleteAppStoreDisclosure.toggle();
+          router.refresh();
+        } else {
+          toast.error(result.message);
+        }
+      }
     },
   });
 

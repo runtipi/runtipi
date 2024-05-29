@@ -16,7 +16,7 @@ export const EditAppStoreForm = ({ appstore }: { appstore: string }) => {
 
   const editAppStoreDisclosure = useDisclosure();
   const schema = z.object({
-    appStoreUrl: z.string().url(),
+    newAppStoreUrl: z.string().url(),
   });
 
   type FormValues = z.infer<typeof schema>;
@@ -29,6 +29,7 @@ export const EditAppStoreForm = ({ appstore }: { appstore: string }) => {
     },
     onSuccess: () => {
       toast.success(t('SETTINGS_APP_STORE_EDIT_SUCCESS'));
+      editAppStoreDisclosure.toggle();
       router.refresh();
     },
   });
@@ -38,7 +39,7 @@ export const EditAppStoreForm = ({ appstore }: { appstore: string }) => {
   });
 
   const onSubmit = (values: FormValues) => {
-    editAppStoreMutation.execute(values);
+    editAppStoreMutation.execute({ newAppStoreUrl: values.newAppStoreUrl, appStoreUrl: appstore });
   };
 
   return (
@@ -57,9 +58,9 @@ export const EditAppStoreForm = ({ appstore }: { appstore: string }) => {
               <Input
                 disabled={editAppStoreMutation.status === 'executing'}
                 type="url"
-                placeholder={appstore}
-                error={formState.errors.appStoreUrl?.message}
-                {...register('appStoreUrl')}
+                defaultValue={appstore}
+                error={formState.errors.newAppStoreUrl?.message}
+                {...register('newAppStoreUrl')}
               />
               <div className="mt-3">
                 <Button loading={editAppStoreMutation.status === 'executing'} type="submit" className="btn-success me-2">

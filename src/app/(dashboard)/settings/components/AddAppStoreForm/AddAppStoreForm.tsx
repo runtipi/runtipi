@@ -27,9 +27,16 @@ export const AddAppStoreForm = () => {
     onError: (e) => {
       if (e.serverError) toast.error(e.serverError);
     },
-    onSuccess: () => {
-      toast.success(t('SETTINGS_APP_STORE_ADD_NEW_SUCCESS'));
-      router.refresh();
+    onSuccess: (result) => {
+      if (result) {
+        if (result.success) {
+          toast.success(t('SETTINGS_APP_STORE_ADD_NEW_SUCCESS'));
+          addAppStoreDisclosure.toggle();
+          router.refresh();
+        } else {
+          toast.error(result.message);
+        }
+      }
     },
   });
 

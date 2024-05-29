@@ -24,15 +24,10 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
   const { tab } = searchParams;
   const systemService = new SystemServiceClass();
   const version = await systemService.getVersion();
+  const appStores = await systemService.getAppStores();
   const settings = TipiConfig.getSettings();
   const locale = getCurrentLocale();
   const user = await getUserFromCookie();
-
-  const appStores = [
-    'https://github.com/runtipi/runtipi-appstore',
-    'https://github.com/somebody/runtipi-appstore',
-    'https://github.com/someone/runtipi-appstore',
-  ];
 
   return (
     <div className="card d-flex">
@@ -48,7 +43,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
           <SecurityContainer totpEnabled={Boolean(user?.totpEnabled)} username={user?.username} />
         </TabsContent>
         <TabsContent value="appstores">
-          <AppStores appStores={appStores} />
+          <AppStores appStores={appStores.appstores} />
         </TabsContent>
       </Tabs>
     </div>

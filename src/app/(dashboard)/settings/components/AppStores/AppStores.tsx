@@ -31,8 +31,6 @@ export const AppStores: React.FC<props> = ({ appStores }) => {
 };
 
 const renderAppStore = (url: string) => {
-  const t = useTranslations();
-
   return (
     <div key={url} className="card-body d-flex flex-wrap justify-content-between">
       <div style={{ whiteSpace: 'normal' }} className="d-flex">

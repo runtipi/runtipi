@@ -1,10 +1,13 @@
 import { promises } from 'fs';
 import axios from 'redaxios';
 import { tipiCache } from '@/server/core/TipiCache';
-import { DATA_DIR } from '@/config/constants';
+import { DATA_DIR, DEFAULT_REPO_URL } from '@/config/constants';
 import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
+import path from 'path';
+import { appstoreFileSchema } from 'packages/shared/src/schemas/appstore-schemas';
+import { pathExists } from 'packages/shared/src/node';
 
 export class SystemServiceClass {
   /**
@@ -50,5 +53,30 @@ export class SystemServiceClass {
     // Create file state/seen-welcome
     await promises.writeFile(`${DATA_DIR}/state/seen-welcome`, '');
     return true;
+  };
+
+  public getAppStores = async () => {
+    const appStoresConfig = path.join(DATA_DIR, 'state', 'appstores.json');
+
+    if (!(await pathExists(appStoresConfig))) {
+      Logger.error('App stores file does not exist! Returning default appstore...');
+      return { appstores: [DEFAULT_REPO_URL] };
+    }
+
+    const appStores = await promises.readFile(appStoresConfig, 'utf-8');
+
+    const parsed = await appstoreFileSchema.safeParseAsync(JSON.parse(appStores));
+
+    if (!parsed.success) {
+      Logger.error('Failed to parse appstores file! Returning default appstore...');
+      return { appstores: [DEFAULT_REPO_URL] };
+    }
+
+    if (parsed.data.appstores.length === 0) {
+      Logger.error('No app store found! Returning default appstore...');
+      return { appstores: [DEFAULT_REPO_URL] };
+    }
+
+    return parsed.data;
   };
 }
