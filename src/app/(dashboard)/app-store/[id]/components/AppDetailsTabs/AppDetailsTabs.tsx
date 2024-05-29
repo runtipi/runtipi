@@ -1,12 +1,12 @@
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { AppStatus as AppStatusEnum } from '@/server/db/schema';
-import { LogsTerminal }  from './LogsTerminal';
+import { LogsTerminal } from './LogsTerminal';
 
 interface IProps {
   info: AppInfo;
@@ -15,24 +15,15 @@ interface IProps {
 
 export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
   const t = useTranslations();
-  const [tab, setTab] = useState("description");
-
-  useEffect(() => {
-    if (tab === 'logs' && status !== 'running') {
-      setTab('description');
-    }
-  }, [status, tab]);
-
-  const onTabChange = (value: string) => {
-    setTab(value);
-  }
 
   return (
-    <Tabs value={tab} onValueChange={onTabChange} orientation="vertical" style={{ marginTop: -1 }}>
+    <Tabs defaultValue="description" orientation="vertical" style={{ marginTop: -1 }}>
       <TabsList>
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
-        { status === 'running' && <TabsTrigger value="logs">Logs</TabsTrigger> }
+        <TabsTrigger disabled={status === 'missing'} value="logs">
+          Logs
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="description">
         {info.deprecated && (
@@ -89,13 +80,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
           )}
         </DataGrid>
       </TabsContent>
-      {
-        status === 'running' && (
-          <TabsContent value="logs">
-            <LogsTerminal appId={info.id}/>
-          </TabsContent>
-        )
-      }
+      <TabsContent value="logs">{status === 'running' && <LogsTerminal appId={info.id} />}</TabsContent>
     </Tabs>
   );
 };
