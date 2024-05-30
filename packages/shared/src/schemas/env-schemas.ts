@@ -16,8 +16,6 @@ export const envSchema = z.object({
   internalIp: z.string(),
   version: z.string(),
   jwtSecret: z.string(),
-  appsRepoId: z.string(),
-  appsRepoUrl: z.string().url().trim(),
   domain: z.string().trim(),
   localDomain: z.string().trim(),
   appDataPath: z
@@ -95,7 +93,6 @@ export const settingsSchema = envSchema
     dnsIp: true,
     internalIp: true,
     postgresPort: true,
-    appsRepoUrl: true,
     domain: true,
     appDataPath: true,
     localDomain: true,

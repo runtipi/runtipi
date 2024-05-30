@@ -21,7 +21,12 @@ import crypto from 'crypto';
  *  @throws Will throw an error if the app has an invalid config.json file or if the current system architecture is not supported by the app.
  */
 export const checkAppRequirements = (appName: string) => {
-  const { appsRepoId, architecture } = TipiConfig.getConfig();
+  const { architecture } = TipiConfig.getConfig();
+  let appsRepoId = '';
+
+  getAppRepository(appName).then((repoId) => {
+    appsRepoId = repoId;
+  });
   const configFile = readJsonFile(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(appName), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(configFile);
 
@@ -112,6 +117,8 @@ export const getAppRepository = async (appId: string) => {
       return repository;
     }
   }
+
+  return '';
 };
 
 /**
@@ -123,7 +130,10 @@ export const getAppRepository = async (appId: string) => {
  *  @param {string} id - The app id.
  */
 export const getUpdateInfo = (id: string) => {
-  const { appsRepoId } = TipiConfig.getConfig();
+  let appsRepoId = '';
+  getAppRepository(id).then((repoId) => {
+    appsRepoId = repoId;
+  });
   const repoConfig = readJsonFile(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(repoConfig);
 
@@ -150,6 +160,8 @@ export const getUpdateInfo = (id: string) => {
  */
 export const getAppInfo = (id: string, status?: App['status']) => {
   try {
+    let appsRepoId = '';
+
     // Check if app is installed
     const installed = typeof status !== 'undefined' && status !== 'missing';
 
@@ -165,7 +177,10 @@ export const getAppInfo = (id: string, status?: App['status']) => {
       }
     }
 
-    const { appsRepoId } = TipiConfig.getConfig();
+    getAppRepository(id).then((repoId) => {
+      appsRepoId = repoId;
+    });
+
     const repoFolder = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id));
 
     if (fileExists(path.join(repoFolder, 'config.json'))) {

@@ -14,7 +14,6 @@ import { LanguageSelector } from '../../../../components/LanguageSelector';
 export type SettingsFormValues = {
   dnsIp?: string;
   internalIp?: string;
-  appsRepoUrl?: string;
   domain?: string;
   appDataPath?: string;
   localDomain?: string;
@@ -48,10 +47,6 @@ export const SettingsForm = (props: IProps) => {
 
     if (values.internalIp && values.internalIp !== 'localhost' && !validator.isIP(values.internalIp)) {
       errors.internalIp = t('SETTINGS_GENERAL_INVALID_IP');
-    }
-
-    if (values.appsRepoUrl && !validator.isURL(values.appsRepoUrl)) {
-      errors.appsRepoUrl = t('SETTINGS_GENERAL_INVALID_URL');
     }
 
     if (values.domain && !validator.isFQDN(values.domain)) {
@@ -226,22 +221,6 @@ export const SettingsForm = (props: IProps) => {
             }
             error={errors.internalIp?.message}
             placeholder="192.168.1.100"
-          />
-        </div>
-        <div className="mb-3">
-          <Input
-            {...register('appsRepoUrl')}
-            label={
-              <>
-                {t('SETTINGS_GENERAL_APPS_REPO')}
-                <Tooltip className="tooltip" anchorSelect=".apps-repo-hint">
-                  {t('SETTINGS_GENERAL_APPS_REPO_HINT')}
-                </Tooltip>
-                <span className={clsx('ms-1 form-help apps-repo-hint')}>?</span>
-              </>
-            }
-            error={errors.appsRepoUrl?.message}
-            placeholder="https://github.com/runtipi/runtipi-appstore"
           />
         </div>
         <div className="mb-3">
