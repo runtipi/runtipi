@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "Sua senha é necessária para alterar as configurações de autenticação em duas etapas.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Escaneie este código de barras com\nseu aplicativo autenticador.",
   "SETTINGS_SECURITY_TAB_TITLE": "Segurança",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Configurações",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Error ao baixar atualização",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "A versão atual já está atualizada",
