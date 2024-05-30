@@ -265,10 +265,10 @@ export const runHookScript = async (script: string, appDirPath: string) => {
   }
 
   // Run the hook script
-  const { stdout, stderr } = await execAsync(`sh ${scriptPath}`);
+  const result = await execAsync(`sh ${scriptPath}`);
 
-  if (stderr) {
-    logger.error(`Hook script failed! Error: ${stderr}`);
+  if (result.stderr) {
+    logger.error(`Hook script failed! Error: ${result.stderr}`);
   }
 
   logger.info(`Hook script ${script} finished!`);

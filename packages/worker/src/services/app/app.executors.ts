@@ -183,7 +183,7 @@ export class AppExecutors {
       // run the post-install hook script
       await runHookScript('post-install.sh', appDirPath);
 
-      SocketManager.emit({ type: 'app', event: 'install_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'install_success', data: { appId } });
 
       return { success: true, message: `App ${appId} installed successfully` };
     } catch (err) {
@@ -442,7 +442,7 @@ export class AppExecutors {
       // run the post-update hook script
       await runHookScript('post-update.sh', appDirPath);
 
-      SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
+      await SocketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
 
       return { success: true, message: `App ${appId} updated successfully` };
     } catch (err) {
