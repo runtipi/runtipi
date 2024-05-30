@@ -18,8 +18,8 @@ type Props<T, U> = {
   onEvent?: (event: Extract<Extract<SocketEvent, { type: T }>['event'], U>, data: Extract<SocketEvent, { type: T }>['data']) => void;
   onError?: (error: string) => void;
   onCleanup?: () => void;
-  emitOnConnect?: Omit<SocketEvent, 'type'>;
-  emitOnDisconnect?: Omit<SocketEvent, 'type'>;
+  emitOnConnect?: SocketEvent;
+  emitOnDisconnect?: SocketEvent;
   initialData?: Extract<SocketEvent, { type: T }>['data'] | undefined;
   selector: Selector<T, U>;
 };
@@ -42,7 +42,7 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
 
     socketRef.current.on('connect', () => {
       if (emitOnConnect) {
-        socketRef.current?.emit(emitOnConnect.event, emitOnConnect.data);
+        socketRef.current?.emit(emitOnConnect.type, emitOnConnect);
       }
     });
 
@@ -86,7 +86,7 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
 
     return () => {
       if (emitOnDisconnect) {
-        socketRef.current?.emit(emitOnDisconnect.event, emitOnDisconnect.data);
+        socketRef.current?.emit(emitOnDisconnect.type, emitOnDisconnect);
       }
 
       socketRef.current?.off(selector.type as string);

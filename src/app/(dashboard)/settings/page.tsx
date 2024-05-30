@@ -10,6 +10,7 @@ import { SettingsTabTriggers } from './components/SettingsTabTriggers';
 import { GeneralActions } from './components/GeneralActions';
 import { SettingsContainer } from './components/SettingsContainer';
 import { SecurityContainer } from './components/SecurityContainer';
+import { LogsContainer } from './components/LogsContainer';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
@@ -39,6 +40,9 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
         </TabsContent>
         <TabsContent value="security">
           <SecurityContainer totpEnabled={Boolean(user?.totpEnabled)} username={user?.username} />
+        </TabsContent>
+        <TabsContent value="logs">
+          <LogsContainer />
         </TabsContent>
       </Tabs>
     </div>

@@ -6,7 +6,7 @@ import { AppInfo } from '@runtipi/shared';
 import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { AppStatus as AppStatusEnum } from '@/server/db/schema';
-import { LogsTerminal } from './LogsTerminal';
+import { AppLogs } from './AppLogs';
 
 interface IProps {
   info: AppInfo;
@@ -80,7 +80,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
           )}
         </DataGrid>
       </TabsContent>
-      <TabsContent value="logs">{status === 'running' && <LogsTerminal appId={info.id} />}</TabsContent>
+      <TabsContent value="logs">{status === 'running' && <AppLogs appId={info.id} />}</TabsContent>
     </Tabs>
   );
 };

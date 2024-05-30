@@ -1,18 +1,21 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { useSocket } from '@/lib/socket/useSocket';
 import clsx from 'clsx';
 import styles from './LogsTerminal.module.scss';
+import { useTranslations } from 'next-intl';
 
-export const LogsTerminal = ({ appId }: { appId: string }) => {
+type Props = {
+  logs: { id: number; text: string }[];
+  maxLines: number;
+  onMaxLinesChange: (lines: number) => void;
+};
+
+export const LogsTerminal = (props: Props) => {
   const t = useTranslations();
 
-  let nextId = 0;
-  const [logs, setLogs] = useState<{ id: number; text: string }[]>([]);
+  const { logs, onMaxLinesChange, maxLines } = props;
   const [follow, setFollow] = useState<boolean>(true);
-  const [maxLines, setMaxLines] = useState<number>(300);
   const [wrapLines, setWrapLines] = useState<boolean>(false);
   const ref = useRef<HTMLPreElement>(null);
 
@@ -22,29 +25,9 @@ export const LogsTerminal = ({ appId }: { appId: string }) => {
     }
   }, [logs, follow]);
 
-  useSocket({
-    selector: { type: 'logs', event: 'newLogs', data: { property: 'appId', value: appId } },
-    onCleanup: () => setLogs([]),
-    emitOnConnect: { event: 'viewLogs', data: { appId } },
-    emitOnDisconnect: { event: 'stopLogs', data: { appId } },
-    onEvent: (_, data) => {
-      setLogs((prevLogs) => {
-        if (!data.lines) {
-          return prevLogs;
-        }
-        const newLogs = [...prevLogs, ...data.lines.map((line) => ({ id: nextId++, text: line.trim() }))];
-        if (newLogs.length > maxLines) {
-          return newLogs.slice(newLogs.length - maxLines);
-        }
-        return newLogs;
-      });
-    },
-  });
-
   const updateMaxLines = (lines: number) => {
     const linesToKeep = Math.max(1, lines);
-    setMaxLines(linesToKeep);
-    setLogs(logs.slice(logs.length - linesToKeep));
+    onMaxLinesChange(linesToKeep);
   };
 
   return (

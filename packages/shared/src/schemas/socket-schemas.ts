@@ -28,10 +28,17 @@ export const socketEventSchema = z.union([
     }),
   }),
   z.object({
-    type: z.literal('logs'),
+    type: z.literal('app-logs'),
     event: z.union([z.literal('newLogs'), z.literal('viewLogs'), z.literal('stopLogs')]),
     data: z.object({
       appId: z.string(),
+      lines: z.array(z.string()).optional(),
+    }),
+  }),
+  z.object({
+    type: z.literal('runtipi-logs'),
+    event: z.union([z.literal('newLogs'), z.literal('viewLogs'), z.literal('stopLogs')]),
+    data: z.object({
       lines: z.array(z.string()).optional(),
     }),
   }),
