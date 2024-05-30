@@ -27,8 +27,10 @@ export const deleteAppStoreAction = action(input, async ({ appStoreUrl }) => {
 
     await promises.writeFile(appStoresConfig, JSON.stringify(currentAppStores));
 
+    await systemService.deleteAppStore(appStoreUrl);
+
     return { success: true };
   } catch (e) {
-    handleActionError(e);
+    await handleActionError(e);
   }
 });

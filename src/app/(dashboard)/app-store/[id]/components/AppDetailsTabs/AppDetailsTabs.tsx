@@ -8,9 +8,13 @@ import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 
 interface IProps {
   info: AppInfo;
+  repository: {
+    url: string | undefined;
+    name: string | undefined;
+  };
 }
 
-export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
+export const AppDetailsTabs: React.FC<IProps> = ({ info, repository }) => {
   const t = useTranslations();
 
   return (
@@ -72,6 +76,12 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
               </a>
             </DataGridItem>
           )}
+          <DataGridItem title={t('APP_DETAILS_APPSTORE')}>
+            <a target="_blank" rel="noreferrer" className="text-blue-500 text-xs" href={repository.url}>
+              {repository.name}
+              <IconExternalLink size={15} className="ms-1 mb-1" />
+            </a>
+          </DataGridItem>
         </DataGrid>
       </TabsContent>
     </Tabs>

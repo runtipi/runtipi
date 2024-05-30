@@ -33,6 +33,6 @@ export const addAppStoreAction = action(input, async ({ appStoreUrl }) => {
 
     return { success: true };
   } catch (e) {
-    handleActionError(e);
+    await handleActionError(e);
   }
 });

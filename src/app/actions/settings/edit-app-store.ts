@@ -26,6 +26,6 @@ export const editAppStoreAction = action(input, async ({ appStoreUrl, newAppStor
 
     return { success: true };
   } catch (e) {
-    handleActionError(e);
+    await handleActionError(e);
   }
 });

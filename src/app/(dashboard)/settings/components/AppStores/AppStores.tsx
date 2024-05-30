@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { AddAppStoreForm } from '../AddAppStoreForm';
 import { EditAppStoreForm } from '../EditAppStoreForm';
 import { DeleteAppStoreDialog } from '../DeleteAppStoreDialog';
+import React from 'react';
 
 interface props {
   appStores: string[];

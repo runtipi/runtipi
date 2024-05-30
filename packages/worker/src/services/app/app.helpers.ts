@@ -238,16 +238,14 @@ export const getRepositoryIdByAppStoresFile = async (appId: string) => {
   const repositories = (await getRepositoriesFromAppStoresFile()).appstores
   let repoId = "";
 
-  repositories.map((store: string) => {
+  for (const store of repositories) {
     const repoIdTemp = getRepoHash(store)
     const appPath = path.join(DATA_DIR, 'repos', repoIdTemp, 'apps', appId)
 
-    pathExists(appPath).then((exists) => {
-      if (exists) {
-        repoId = repoIdTemp
-      }
-    })
-  })
+    if (await pathExists(appPath)) {
+      repoId = repoIdTemp
+    }
+  }
 
   return repoId;
 }

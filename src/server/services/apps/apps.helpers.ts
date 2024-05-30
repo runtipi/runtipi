@@ -44,56 +44,74 @@ export const checkAppRequirements = (appName: string) => {
 export const getAvailableApps = async () => {
   const systemService = new SystemServiceClass();
   const repositories = (await systemService.getAppStores()).appstores;
-  let finalApps: any = [];
+  // too bad
+  // eslint-disable-next-line
+  let finalApps: Array<any> = []; // TODO: fix that someday
 
-  repositories.map((appsRepoUrl: string) => {
+  for (const repository of repositories) {
     const hash = crypto.createHash('sha256');
-    hash.update(appsRepoUrl);
+    hash.update(repository);
     const appsRepoId = hash.digest('hex');
 
-    pathExists(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps')).then((exists: boolean) => {
-      if (!exists) {
-        Logger.error(`Apps repo ${appsRepoId} not found. Make sure your repo is configured correctly.`);
-      } else {
-        const appsDir = readdirSync(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
+    if (!(await pathExists(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps')))) {
+      Logger.error(`Apps repo ${appsRepoId} not found. Make sure your repo is configured correctly.`);
+    } else {
+      const appsDir = readdirSync(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
 
-        const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
+      const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
 
-        const apps = appsDir
-          .map((app) => {
-            if (skippedFiles.includes(app)) return null;
+      const apps = appsDir
+        .map((app) => {
+          if (skippedFiles.includes(app)) return null;
 
-            const repoPath = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(app));
-            const configFile = readJsonFile(path.join(repoPath, 'config.json'));
-            const parsedConfig = appInfoSchema.safeParse(configFile);
+          const repoPath = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(app));
+          const configFile = readJsonFile(path.join(repoPath, 'config.json'));
+          const parsedConfig = appInfoSchema.safeParse(configFile);
 
-            if (!parsedConfig.success) {
-              Logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
-              Logger.error(JSON.stringify(parsedConfig.error, null, 2));
-            } else if (parsedConfig.data.available) {
-              const description = readFile(path.join(repoPath, 'metadata', 'description.md'));
-              return { ...parsedConfig.data, description };
-            }
+          if (!parsedConfig.success) {
+            Logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
+            Logger.error(JSON.stringify(parsedConfig.error, null, 2));
+          } else if (parsedConfig.data.available) {
+            const description = readFile(path.join(repoPath, 'metadata', 'description.md'));
+            return { ...parsedConfig.data, description };
+          }
 
-            return null;
-          })
-          .filter(notEmpty)
-          .map(({ id, categories, name, short_desc, deprecated, supported_architectures }) => ({
-            id,
-            categories,
-            name,
-            short_desc,
-            deprecated,
-            supported_architectures,
-          }));
+          return null;
+        })
+        .filter(notEmpty)
+        .map(({ id, categories, name, short_desc, deprecated, supported_architectures }) => ({
+          id,
+          categories,
+          name,
+          short_desc,
+          deprecated,
+          supported_architectures,
+        }));
 
-        finalApps.concat(apps);
-      }
-    });
-  });
-
-  console.log(finalApps);
+      finalApps = finalApps.concat(apps);
+    }
+  }
   return finalApps;
+};
+
+/**
+ * Given an appId it returns in which repository the app is located. The function goes through all the repos configured
+ * in appstore.json
+ * @param {string} appId - The app id to get the repo
+ */
+export const getAppRepository = async (appId: string) => {
+  const systemService = new SystemServiceClass();
+  const repositories = (await systemService.getAppStores()).appstores;
+
+  for (const repository of repositories) {
+    const hash = crypto.createHash('sha256');
+    hash.update(repository);
+    const appsRepoId = hash.digest('hex');
+
+    if (await pathExists(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', appId))) {
+      return repository;
+    }
+  }
 };
 
 /**

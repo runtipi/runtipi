@@ -120,7 +120,7 @@ export class RepoExecutors {
     try {
       const repositories = (await getRepositoriesFromAppStoresFile()).appstores;
 
-      repositories.map((store: string) => {
+      repositories.forEach((store: string) => {
         void this.pullRepo(store)
       })
 
@@ -134,7 +134,7 @@ export class RepoExecutors {
     try {
       const repositories = (await getRepositoriesFromAppStoresFile()).appstores;
 
-      repositories.map((store: string) => {
+      repositories.forEach((store: string) => {
         void this.cloneRepo(store)
       })
 

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import React from 'react';
 
 export const DeleteAppStoreDialog = ({ appstore }: { appstore: string }) => {
   const t = useTranslations();

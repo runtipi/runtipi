@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
+import React from 'react';
 
 export const EditAppStoreForm = ({ appstore }: { appstore: string }) => {
   const t = useTranslations();

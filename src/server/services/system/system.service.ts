@@ -8,6 +8,7 @@ import { TipiConfig } from '../../core/TipiConfig';
 import path from 'path';
 import { appStoresFileSchema } from 'packages/shared';
 import { pathExists } from 'packages/shared/src/node';
+import crypto from 'crypto';
 
 export class SystemServiceClass {
   /**
@@ -75,6 +76,19 @@ export class SystemServiceClass {
     } catch (e) {
       Logger.error(e);
       return { appstores: [] };
+    }
+  };
+
+  public deleteAppStore = async (appStore: string) => {
+    try {
+      const hash = crypto.createHash('sha256');
+      hash.update(appStore);
+      const appsRepoId = hash.digest('hex');
+      const repositoryPath = path.join(DATA_DIR, 'repos', appsRepoId);
+
+      await promises.rm(repositoryPath, { recursive: true, force: true });
+    } catch (e) {
+      Logger.error(e);
     }
   };
 }
