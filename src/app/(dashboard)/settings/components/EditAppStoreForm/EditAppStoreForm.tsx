@@ -29,7 +29,7 @@ export const EditAppStoreForm = ({ appstore }: { appstore: string }) => {
     },
     onSuccess: () => {
       toast.success(t('SETTINGS_APP_STORE_EDIT_SUCCESS'));
-      editAppStoreDisclosure.toggle();
+      editAppStoreDisclosure.close();
       router.refresh();
     },
   });

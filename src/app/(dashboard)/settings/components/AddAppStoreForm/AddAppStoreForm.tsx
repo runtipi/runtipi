@@ -31,7 +31,7 @@ export const AddAppStoreForm = () => {
       if (result) {
         if (result.success) {
           toast.success(t('SETTINGS_APP_STORE_ADD_NEW_SUCCESS'));
-          addAppStoreDisclosure.toggle();
+          addAppStoreDisclosure.close();
           router.refresh();
         } else {
           toast.error(result.message);

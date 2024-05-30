@@ -60,21 +60,23 @@ export class SystemServiceClass {
 
     if (!(await pathExists(appStoresConfig))) {
       Logger.error('App stores file does not exist! Returning default appstore...');
-      return { appstores: [DEFAULT_REPO_URL] };
+      return { appstores: [] };
     }
 
-    const appStores = await promises.readFile(appStoresConfig, 'utf-8');
+    let appStores = await promises.readFile(appStoresConfig, 'utf-8');
+
+    appStores === '' && (appStores = '{}');
 
     const parsed = await appstoreFileSchema.safeParseAsync(JSON.parse(appStores));
 
     if (!parsed.success) {
       Logger.error('Failed to parse appstores file! Returning default appstore...');
-      return { appstores: [DEFAULT_REPO_URL] };
+      return { appstores: [] };
     }
 
     if (parsed.data.appstores.length === 0) {
       Logger.error('No app store found! Returning default appstore...');
-      return { appstores: [DEFAULT_REPO_URL] };
+      return { appstores: [] };
     }
 
     return parsed.data;
