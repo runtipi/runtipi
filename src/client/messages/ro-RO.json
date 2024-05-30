@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "Parola dvs. este necesară pentru a schimba setările de autentificare cu doi factori.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Scanați acest cod QR cu aplicația de autentificare.",
   "SETTINGS_SECURITY_TAB_TITLE": "Securitate",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Setări",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Nu s-a putut obține cea mai recentă versiune",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Versiunea curentă este deja actualizată",
