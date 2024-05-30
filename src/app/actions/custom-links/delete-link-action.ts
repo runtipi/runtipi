@@ -12,7 +12,6 @@ export const deleteLinkAction = action(z.number(), async (linkId: number) => {
 
     const linksService = new CustomLinksServiceClass();
 
-    // eslint-disable-next-line drizzle/enforce-delete-with-where -- False positive
     await linksService.delete(linkId, user.id);
     return { success: true };
   } catch (e) {

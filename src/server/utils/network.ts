@@ -12,14 +12,7 @@ export const isInstanceInsecure = () => {
   const myHeaders = headers();
   const ip = myHeaders.get('x-forwarded-host')?.split(':')[0] || '';
 
-  if (ipaddrjs.isValid(ip)) {
-    const range = ipaddrjs.parse(ip!).range();
-    if (range !== 'private' && range !== 'carrierGradeNat') {
-      return true;
-    }
-  } else if (ip !== 'localhost' && myHeaders.get('x-forwarded-proto') === 'http') {
-    return true;
-  }
-
-  return false;
+  const isPublicIp = ipaddrjs.isValid(ip) && !['private', 'carrierGradeNat', 'loopback'].includes(ipaddrjs.parse(ip).range());
+  const isHttpProtocol = ip !== 'localhost' && myHeaders.get('x-forwarded-proto') === 'http';
+  return isPublicIp || isHttpProtocol;
 };

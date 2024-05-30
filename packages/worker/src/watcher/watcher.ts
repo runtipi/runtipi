@@ -4,7 +4,16 @@ import { AppExecutors, RepoExecutors } from '@/services';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 
-const { installApp, resetApp, startApp, stopApp, restartApp, uninstallApp, updateApp, regenerateAppEnv } = new AppExecutors();
+const {
+  installApp,
+  resetApp,
+  startApp,
+  stopApp,
+  restartApp,
+  uninstallApp,
+  updateApp,
+  regenerateAppEnv,
+} = new AppExecutors();
 const { cloneRepo, pullRepo } = new RepoExecutors();
 
 const runCommand = async (jobData: unknown) => {
@@ -56,7 +65,7 @@ const runCommand = async (jobData: unknown) => {
       ({ success, message } = await cloneRepo(data.url));
     }
 
-    if (data.command === 'update') {
+    if (data.command === 'update' && process.env.NODE_ENV !== 'development') {
       ({ success, message } = await pullRepo(data.url));
     }
   }
@@ -67,7 +76,7 @@ const runCommand = async (jobData: unknown) => {
 /**
  * Start the worker for the events queue
  */
-export const startWorker = async () => {
+export const startWorker = () => {
   const repeatWorker = new Worker(
     'repeat',
     async (job) => {
@@ -78,7 +87,17 @@ export const startWorker = async () => {
 
       return { success, stdout: message };
     },
-    { connection: { host: getEnv().redisHost, port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 }, concurrency: 3 },
+    {
+      connection: {
+        host: getEnv().redisHost,
+        port: 6379,
+        password: getEnv().redisPassword,
+        connectTimeout: 60000,
+      },
+      removeOnComplete: { count: 200 },
+      removeOnFail: { count: 500 },
+      concurrency: 3,
+    },
   );
 
   const worker = new Worker(
@@ -89,7 +108,17 @@ export const startWorker = async () => {
 
       return { success, stdout: message };
     },
-    { connection: { host: getEnv().redisHost, port: 6379, password: getEnv().redisPassword, connectTimeout: 60000 }, removeOnComplete: { count: 200 }, removeOnFail: { count: 500 }, concurrency: 1 },
+    {
+      connection: {
+        host: getEnv().redisHost,
+        port: 6379,
+        password: getEnv().redisPassword,
+        connectTimeout: 60000,
+      },
+      removeOnComplete: { count: 200 },
+      removeOnFail: { count: 500 },
+      concurrency: 1,
+    },
   );
 
   worker.on('ready', () => {

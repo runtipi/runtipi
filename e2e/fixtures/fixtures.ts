@@ -1,5 +1,5 @@
 import * as argon2 from 'argon2';
-import { expect, Page } from '@playwright/test';
+import { BrowserContext, expect, Page } from '@playwright/test';
 import { userTable } from '@/server/db/schema';
 import { db } from '../helpers/db';
 import { testUser } from '../helpers/constants';
@@ -10,7 +10,12 @@ export const createTestUser = async () => {
   await db.insert(userTable).values({ password, username: testUser.email, operator: true });
 };
 
-export const loginUser = async (page: Page) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const loginUser = async (page: Page, _: BrowserContext) => {
+  await page.addLocatorHandler(page.getByText('Insecure configuration'), async () => {
+    await page.getByRole('button', { name: 'Close' }).click();
+  });
+
   // Create user in database
   await createTestUser();
 

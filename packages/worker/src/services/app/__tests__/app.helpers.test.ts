@@ -11,7 +11,9 @@ describe('app helpers', () => {
   describe('Test: generateEnvFile()', () => {
     it('should generate an env file', async () => {
       // arrange
-      const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST_FIELD', type: 'text', label: 'test', required: true }] });
+      const appConfig = createAppConfig({
+        form_fields: [{ env_variable: 'TEST_FIELD', type: 'text', label: 'test', required: true }],
+      });
       const fakevalue = faker.string.alphanumeric(10);
 
       // act
@@ -23,7 +25,9 @@ describe('app helpers', () => {
       expect(envmap.get('APP_PORT')).toBe(String(appConfig.port));
       expect(envmap.get('APP_ID')).toBe(appConfig.id);
       expect(envmap.get('ROOT_FOLDER_HOST')).toBe(process.env.ROOT_FOLDER_HOST);
-      expect(envmap.get('APP_DATA_DIR')).toBe(`${process.env.RUNTIPI_APP_DATA_PATH}/app-data/${appConfig.id}`);
+      expect(envmap.get('APP_DATA_DIR')).toBe(
+        `${process.env.RUNTIPI_APP_DATA_PATH}/app-data/${appConfig.id}`,
+      );
       expect(envmap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
       expect(envmap.get('APP_HOST')).toBe(`localhost`);
       expect(envmap.get('APP_PROTOCOL')).toBe(`http`);
@@ -35,12 +39,25 @@ describe('app helpers', () => {
       await fs.promises.writeFile(`${DATA_DIR}/apps/${appConfig.id}/config.json`, '{}');
 
       // act & assert
-      expect(generateEnvFile(appConfig.id, {})).rejects.toThrowError(`App ${appConfig.id} has invalid config.json file`);
+      await expect(generateEnvFile(appConfig.id, {})).rejects.toThrowError(
+        `App ${appConfig.id} has invalid config.json file`,
+      );
     });
 
     it('Should automatically generate value for random field', async () => {
       // arrange
-      const appConfig = createAppConfig({ form_fields: [{ env_variable: 'RANDOM_FIELD', type: 'random', label: 'test', min: 32, max: 32, required: true }] });
+      const appConfig = createAppConfig({
+        form_fields: [
+          {
+            env_variable: 'RANDOM_FIELD',
+            type: 'random',
+            label: 'test',
+            min: 32,
+            max: 32,
+            required: true,
+          },
+        ],
+      });
 
       // act
       await generateEnvFile(appConfig.id, {});
@@ -53,10 +70,24 @@ describe('app helpers', () => {
 
     it('Should not re-generate random field if it already exists', async () => {
       // arrange
-      const appConfig = createAppConfig({ form_fields: [{ env_variable: 'RANDOM_FIELD', type: 'random', label: 'test', min: 32, max: 32, required: true }] });
+      const appConfig = createAppConfig({
+        form_fields: [
+          {
+            env_variable: 'RANDOM_FIELD',
+            type: 'random',
+            label: 'test',
+            min: 32,
+            max: 32,
+            required: true,
+          },
+        ],
+      });
       const randomField = faker.string.alphanumeric(32);
       await fs.promises.mkdir(`${APP_DATA_DIR}/${appConfig.id}`, { recursive: true });
-      await fs.promises.writeFile(`${APP_DATA_DIR}/${appConfig.id}/app.env`, `RANDOM_FIELD=${randomField}`);
+      await fs.promises.writeFile(
+        `${APP_DATA_DIR}/${appConfig.id}/app.env`,
+        `RANDOM_FIELD=${randomField}`,
+      );
 
       // act
       await generateEnvFile(appConfig.id, {});
@@ -68,7 +99,9 @@ describe('app helpers', () => {
 
     it('Should throw an error if required field is not provided', async () => {
       // arrange
-      const appConfig = createAppConfig({ form_fields: [{ env_variable: 'TEST_FIELD', type: 'text', label: 'test', required: true }] });
+      const appConfig = createAppConfig({
+        form_fields: [{ env_variable: 'TEST_FIELD', type: 'text', label: 'test', required: true }],
+      });
 
       // act & assert
       await expect(generateEnvFile(appConfig.id, {})).rejects.toThrowError();
@@ -167,7 +200,10 @@ describe('app helpers', () => {
 
       // act
       await fs.promises.mkdir(`${APP_DATA_DIR}/${appConfig.id}`, { recursive: true });
-      await fs.promises.writeFile(`${APP_DATA_DIR}/${appConfig.id}/app.env`, `VAPID_PRIVATE_KEY=${vapidPrivateKey}\nVAPID_PUBLIC_KEY=${vapidPublicKey}`);
+      await fs.promises.writeFile(
+        `${APP_DATA_DIR}/${appConfig.id}/app.env`,
+        `VAPID_PRIVATE_KEY=${vapidPrivateKey}\nVAPID_PUBLIC_KEY=${vapidPublicKey}`,
+      );
       await generateEnvFile(appConfig.id, {});
       const envmap = await getAppEnvMap(appConfig.id);
 
@@ -223,7 +259,9 @@ describe('app helpers', () => {
 
       // assert
       const appDataDir = `${APP_DATA_DIR}/${appConfig.id}`;
-      expect(await fs.promises.readFile(`${appDataDir}/data/subdir/subsubdir/test.txt`, 'utf8')).toBe('test');
+      expect(
+        await fs.promises.readFile(`${appDataDir}/data/subdir/subsubdir/test.txt`, 'utf8'),
+      ).toBe('test');
       expect(await fs.promises.readFile(`${appDataDir}/data/test.txt`, 'utf8')).toBe('test');
     });
 

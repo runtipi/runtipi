@@ -21,5 +21,3 @@ export const readFile = (path: string): string => {
 export const readdirSync = (path: string): string[] => fs.readdirSync(path);
 
 export const fileExists = (path: string): boolean => fs.existsSync(path);
-
-export const unlinkFile = (path: string) => fs.promises.unlink(path);

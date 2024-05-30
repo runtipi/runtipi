@@ -48,9 +48,7 @@ const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
  * @param {TestDatabase} database - database to clear
  */
 const clearDatabase = async (database: TestDatabase) => {
-  // eslint-disable-next-line drizzle/enforce-delete-with-where -- we want to clear the whole table
   await database.db.delete(schema.userTable);
-  // eslint-disable-next-line drizzle/enforce-delete-with-where -- we want to clear the whole table
   await database.db.delete(schema.appTable);
 };
 

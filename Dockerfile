@@ -11,7 +11,7 @@ ARG TIPI_VERSION
 ARG LOCAL
 
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-ENV TIPI_VERSION=${TIPI_VERSION}
+ENV SENTRY_RELEASE=${TIPI_VERSION}
 ENV LOCAL=${LOCAL}
 
 RUN npm install pnpm -g
@@ -34,18 +34,17 @@ RUN pnpm fetch
 COPY ./pnpm-workspace.yaml ./
 COPY ./package*.json ./
 COPY ./packages/shared ./packages/shared
+COPY ./scripts ./scripts
+COPY ./public ./public
 
 RUN pnpm install -r --prefer-offline 
 COPY ./src ./src
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
-COPY ./public ./public
 COPY ./tests ./tests
 
 # Sentry
 COPY ./sentry.client.config.ts ./sentry.client.config.ts
-COPY ./sentry.edge.config.ts ./sentry.edge.config.ts
-COPY ./sentry.server.config.ts ./sentry.server.config.ts
 
 RUN pnpm build
 
@@ -87,7 +86,7 @@ COPY ./packages/worker/package.json ./packages/worker/package.json
 COPY ./packages/worker/assets ./packages/worker/assets
 
 # Print TIPI_VERSION to the console
-RUN echo "TIPI_VERSION: ${TIPI_VERSION}"
+RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
 
 RUN pnpm -r --filter @runtipi/worker build
 

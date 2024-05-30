@@ -25,7 +25,8 @@
   ],
   "scripts": {
     "lint": "eslint --ext .ts src",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "prettier-check": "prettier --check ."
   },
   "keywords": [],
   "author": "",
@@ -37,7 +38,12 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@sentry/types": "^8.0.0",
-    "@types/lodash.clonedeep": "^4.5.9"
+    "@sentry/types": "^8.7.0",
+    "@types/lodash.clonedeep": "^4.5.9",
+    "@typescript-eslint/eslint-plugin": "^7.11.0",
+    "@typescript-eslint/parser": "^7.11.0",
+    "eslint": "8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "prettier": "^3.2.5"
   }
 }

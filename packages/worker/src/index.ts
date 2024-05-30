@@ -75,9 +75,12 @@ const main = async () => {
     if (!clone.success) {
       logger.error(`Failed to clone repo ${envMap.get('APPS_REPO_URL') as string}`);
     }
-    const pull = await repoExecutors.pullRepo(envMap.get('APPS_REPO_URL') as string);
-    if (!pull.success) {
-      logger.error(`Failed to pull repo ${envMap.get('APPS_REPO_URL') as string}`);
+
+    if (process.env.NODE_ENV !== 'development') {
+      const pull = await repoExecutors.pullRepo(envMap.get('APPS_REPO_URL') as string);
+      if (!pull.success) {
+        logger.error(`Failed to pull repo ${envMap.get('APPS_REPO_URL') as string}`);
+      }
     }
 
     logger.info('Starting queue...');
@@ -97,6 +100,7 @@ const main = async () => {
     });
     logger.info('Obliterating queue...');
     await queue.drain(true);
+    await repeatQueue.drain(true);
 
     // Scheduled jobs
     if (process.env.NODE_ENV === 'production') {
@@ -134,7 +138,9 @@ const main = async () => {
     // Start all apps
     const appExecutor = new AppExecutors();
     logger.info('Starting all apps...');
-    appExecutor.startAllApps();
+
+    // Fire and forget
+    void appExecutor.startAllApps();
 
     const app = new Hono().basePath('/worker-api');
     serve({ fetch: app.fetch, port: 5000 }, (info) => {
@@ -153,4 +159,4 @@ const main = async () => {
   }
 };
 
-main();
+void main();

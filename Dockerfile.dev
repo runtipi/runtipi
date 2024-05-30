@@ -3,6 +3,9 @@ ARG ALPINE_VERSION="3.18"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
+ENV LOCAL=true
+ENV SENTRY_RELEASE=development
+
 RUN apk add --no-cache python3 make g++ curl git
 RUN npm install pnpm pm2 -g
 
@@ -32,13 +35,14 @@ RUN pnpm fetch --ignore-scripts
 COPY ./package*.json ./
 COPY ./packages/worker/package.json ./packages/worker/package.json
 COPY ./packages/shared/package.json ./packages/shared/package.json
+COPY ./scripts ./scripts
+COPY ./public ./public
 
 RUN pnpm install -r --prefer-offline 
 
 COPY ./packages ./packages
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
-COPY ./public ./public
 
 # Sentry
 COPY ./sentry.client.config.ts ./sentry.client.config.ts

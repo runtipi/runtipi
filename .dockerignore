@@ -12,7 +12,9 @@
 !**/build.js
 !next.config.mjs
 !sentry.*.config.ts
+!instrumentation.ts
 !public/**
 !src/**
 !tests/**
 !start.*.sh
+!scripts/**
