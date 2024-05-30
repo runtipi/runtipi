@@ -21,7 +21,7 @@
     "@sentry/esbuild-plugin": "^2.17.0",
     "@types/web-push": "^3.6.3",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@typescript-eslint/parser": "^7.11.0",
     "dotenv-cli": "^7.4.2",
     "esbuild": "^0.19.4",
     "eslint": "8.57.0",
