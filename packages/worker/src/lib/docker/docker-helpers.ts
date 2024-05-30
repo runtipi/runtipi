@@ -104,7 +104,6 @@ export const handleViewLogsEvent = async (socket: Socket, { type }: { type: stri
   args.push('logs --follow -n 25');
 
   const logsCommand = `docker-compose ${args.join(' ')}`;
-
   const logs = spawn('sh', ['-c', logsCommand]);
 
   socket.on('disconnect', () => {

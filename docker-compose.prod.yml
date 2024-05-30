@@ -61,8 +61,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        TIPI_VERSION: development
         LOCAL: true
+        TIPI_VERSION: development
     container_name: runtipi
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:5000/worker-api/healthcheck']
@@ -91,12 +91,10 @@ services:
       - ./.env:/data/.env
       - ./docker-compose.prod.yml:/data/docker-compose.yml
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /proc:/host/proc
+      - /proc:/host/proc:ro
     environment:
-      NODE_ENV: production
-      TIPI_VERSION: development
-      NEXT_PUBLIC_TIPI_VERSION: development
       LOCAL: true
+      NODE_ENV: production
     networks:
       - tipi_main_network
     ports:
