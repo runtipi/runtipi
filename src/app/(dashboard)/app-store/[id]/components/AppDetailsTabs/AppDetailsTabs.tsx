@@ -11,9 +11,13 @@ import { LogsTerminal } from './LogsTerminal';
 interface IProps {
   info: AppInfo;
   status: AppStatusEnum;
+  repository: {
+    url: string | undefined;
+    name: string | undefined;
+  };
 }
 
-export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
+export const AppDetailsTabs: React.FC<IProps> = ({ info, status, repository }) => {
   const t = useTranslations();
 
   return (
@@ -78,6 +82,12 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
               </a>
             </DataGridItem>
           )}
+          <DataGridItem title={t('APP_DETAILS_APPSTORE')}>
+            <a target="_blank" rel="noreferrer" className="text-blue-500 text-xs" href={repository.url}>
+              {repository.name}
+              <IconExternalLink size={15} className="ms-1 mb-1" />
+            </a>
+          </DataGridItem>
         </DataGrid>
       </TabsContent>
       <TabsContent value="logs">{status === 'running' && <LogsTerminal appId={info.id} />}</TabsContent>

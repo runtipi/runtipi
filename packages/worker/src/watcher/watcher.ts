@@ -14,7 +14,7 @@ const {
   updateApp,
   regenerateAppEnv,
 } = new AppExecutors();
-const { cloneRepo, pullRepo } = new RepoExecutors();
+const { cloneRepos, pullRepos } = new RepoExecutors();
 
 const runCommand = async (jobData: unknown) => {
   const event = eventSchema.safeParse(jobData);
@@ -62,11 +62,11 @@ const runCommand = async (jobData: unknown) => {
     }
   } else if (data.type === 'repo') {
     if (data.command === 'clone') {
-      ({ success, message } = await cloneRepo(data.url));
+      ({ success, message } = await cloneRepos());
     }
 
     if (data.command === 'update' && process.env.NODE_ENV !== 'development') {
-      ({ success, message } = await pullRepo(data.url));
+      ({ success, message } = await pullRepos());
     }
   }
 

@@ -10,6 +10,7 @@ import { SettingsTabTriggers } from './components/SettingsTabTriggers';
 import { GeneralActions } from './components/GeneralActions';
 import { SettingsContainer } from './components/SettingsContainer';
 import { SecurityContainer } from './components/SecurityContainer';
+import { AppStores } from './components/AppStores';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
@@ -23,6 +24,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
   const { tab } = searchParams;
   const systemService = new SystemServiceClass();
   const version = await systemService.getVersion();
+  const appStores = await systemService.getAppStores();
   const settings = TipiConfig.getSettings();
   const locale = getCurrentLocale();
   const user = await getUserFromCookie();
@@ -39,6 +41,9 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
         </TabsContent>
         <TabsContent value="security">
           <SecurityContainer totpEnabled={Boolean(user?.totpEnabled)} username={user?.username} />
+        </TabsContent>
+        <TabsContent value="appstores">
+          <AppStores appStores={appStores.appstores} />
         </TabsContent>
       </Tabs>
     </div>

@@ -5,6 +5,10 @@ import { DATA_DIR } from '@/config/constants';
 import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
+import path from 'path';
+import { appStoresFileSchema } from 'packages/shared';
+import { pathExists } from 'packages/shared/src/node';
+import crypto from 'crypto';
 
 export class SystemServiceClass {
   /**
@@ -50,5 +54,41 @@ export class SystemServiceClass {
     // Create file state/seen-welcome
     await promises.writeFile(`${DATA_DIR}/state/seen-welcome`, '');
     return true;
+  };
+
+  public getAppStores = async () => {
+    try {
+      const appStoreFilePath = path.join(DATA_DIR, 'state', 'appstores.json');
+
+      if (!(await pathExists(appStoreFilePath))) {
+        throw new Error('App stores file does not exist! Is the worker runnning?');
+      }
+
+      const appStoreFile = await promises.readFile(appStoreFilePath, 'utf-8');
+
+      const parsedSchema = await appStoresFileSchema.safeParseAsync(JSON.parse(appStoreFile));
+
+      if (parsedSchema.error) {
+        throw new Error('Failed to parse appstores file. Is the schema correct?');
+      }
+
+      return parsedSchema.data;
+    } catch (e) {
+      Logger.error(e);
+      return { appstores: [] };
+    }
+  };
+
+  public deleteAppStore = async (appStore: string) => {
+    try {
+      const hash = crypto.createHash('sha256');
+      hash.update(appStore);
+      const appsRepoId = hash.digest('hex');
+      const repositoryPath = path.join(DATA_DIR, 'repos', appsRepoId);
+
+      await promises.rm(repositoryPath, { recursive: true, force: true });
+    } catch (e) {
+      Logger.error(e);
+    }
   };
 }

@@ -57,8 +57,6 @@ export class TipiConfigClass {
       internalIp: conf.INTERNAL_IP,
       version: conf.TIPI_VERSION,
       jwtSecret: conf.JWT_SECRET,
-      appsRepoId: conf.APPS_REPO_ID,
-      appsRepoUrl: conf.APPS_REPO_URL,
       domain: conf.DOMAIN,
       localDomain: conf.LOCAL_DOMAIN,
       dnsIp: conf.DNS_IP || '9.9.9.9',

@@ -8,7 +8,7 @@ import { type AppEventFormInput } from '@runtipi/shared';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import semver from 'semver';
-import { checkAppRequirements, getAvailableApps as slow_getAvailableApps, getAppInfo, getUpdateInfo } from './apps.helpers';
+import { checkAppRequirements, getAvailableApps as slow_getAvailableApps, getAppInfo, getUpdateInfo, getAppRepository } from './apps.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
@@ -256,7 +256,7 @@ export class AppServiceClass {
     let filteredApps = await this.getAvailableApps();
 
     if (category) {
-      filteredApps = filteredApps.filter((app) => app.categories.some((c) => c === category));
+      filteredApps = filteredApps.filter((app) => app.categories.some((c: string) => c === category));
     }
 
     if (search && this.miniSearch) {
@@ -482,7 +482,10 @@ export class AppServiceClass {
         app = { id, status: 'missing', config: {}, exposed: false, domain: '' } as App;
       }
 
-      return { ...app, ...updateInfo, info };
+      const repository = await getAppRepository(app.id);
+      const repositoryName = repository?.split('/').splice(3, 4).join('/');
+
+      return { ...app, ...updateInfo, info, repository: { url: repository, name: repositoryName } };
     }
 
     throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id });
