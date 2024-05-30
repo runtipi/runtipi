@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "Mật khẩu của bạn được yêu cầu khi muốn thay đổi cấu hình Xác thực 2 bước.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Quét mã QR này bằng ứng dụng xác thực của bạn.",
   "SETTINGS_SECURITY_TAB_TITLE": "Bảo mật",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Cài đặt",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Không thể kiểm tra phiên bản mới nhất",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Phiên bản hiện tại đã được cập nhật",
