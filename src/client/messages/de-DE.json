@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "Ihr Passwort wird benötigt, um die Zwei-Faktor-Authentifizierungseinstellungen zu ändern.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Scannen Sie diesen QR-Code mit Ihrer Authentifizierungs-App.",
   "SETTINGS_SECURITY_TAB_TITLE": "Sicherheit",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Einstellungen",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Konnte aktuellste Version nicht abfragen",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Die aktuelle Version ist bereits auf dem neuesten Stand",
