@@ -5,10 +5,9 @@ import path from 'path';
 import * as Sentry from '@sentry/node';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { AppEventForm, SocketEvent, sanitizePath } from '@runtipi/shared';
-import { copyDataDir, generateEnvFile } from './app.helpers';
+import { copyDataDir, generateEnvFile, getRepositoryIdByAppStoresFile } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
-import { getEnv } from '@/lib/environment';
 import { SocketManager } from '@/lib/socket/SocketManager';
 import { getDbClient } from '@/lib/db';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
@@ -40,15 +39,15 @@ export class AppExecutors {
     return { success: false, message: `An error occurred: ${String(err)}` };
   };
 
-  private getAppPaths = (appId: string) => {
-    const { appsRepoId } = getEnv();
+  private getAppPaths = async (appId: string) => {
+    const appsRepoId = await getRepositoryIdByAppStoresFile(appId);
 
     const appDataDirPath = path.join(APP_DATA_DIR, sanitizePath(appId));
     const appDirPath = path.join(DATA_DIR, 'apps', sanitizePath(appId));
     const configJsonPath = path.join(appDirPath, 'config.json');
     const repoPath = path.join(DATA_DIR, 'repos', appsRepoId, 'apps', sanitizePath(appId));
 
-    return { appDataDirPath, appDirPath, configJsonPath, repoPath };
+    return { appDataDirPath, appDirPath, configJsonPath, repoPath, appsRepoId };
   };
 
   /**
@@ -57,7 +56,7 @@ export class AppExecutors {
    * @param {string} appId - App id
    */
   private ensureAppDir = async (appId: string, form: AppEventForm) => {
-    const { appDirPath, appDataDirPath, repoPath } = this.getAppPaths(appId);
+    const { appDirPath, appDataDirPath, repoPath, appsRepoId } = await this.getAppPaths(appId);
     const dockerFilePath = path.join(DATA_DIR, 'apps', sanitizePath(appId), 'docker-compose.yml');
 
     if (!(await pathExists(dockerFilePath))) {
@@ -66,7 +65,7 @@ export class AppExecutors {
       await fs.promises.rm(appDirPath, { recursive: true, force: true });
 
       // Copy app folder from repo
-      this.logger.info(`Copying app ${appId} from repo ${getEnv().appsRepoId}`);
+      this.logger.info(`Copying app ${appId} from repo ${appsRepoId}`);
       await fs.promises.cp(repoPath, appDirPath, { recursive: true });
     }
 
@@ -129,9 +128,7 @@ export class AppExecutors {
         this.logger.info(`Installing app ${appId}. No User ID or Group ID found.`);
       }
 
-      const { appsRepoId } = getEnv();
-
-      const { appDirPath, repoPath, appDataDirPath } = this.getAppPaths(appId);
+      const { appDirPath, repoPath, appDataDirPath, appsRepoId } = await this.getAppPaths(appId);
 
       // Check if app exists in repo
       const apps = await fs.promises.readdir(
@@ -192,7 +189,7 @@ export class AppExecutors {
    */
   public stopApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
     try {
-      const { appDirPath } = this.getAppPaths(appId);
+      const { appDirPath } = await this.getAppPaths(appId);
       const configJsonPath = path.join(appDirPath, 'config.json');
       const isActualApp = await pathExists(configJsonPath);
 
@@ -226,7 +223,7 @@ export class AppExecutors {
 
   public restartApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
     try {
-      const { appDirPath } = this.getAppPaths(appId);
+      const { appDirPath } = await this.getAppPaths(appId);
       const configJsonPath = path.join(appDirPath, 'config.json');
       const isActualApp = await pathExists(configJsonPath);
 
@@ -301,7 +298,7 @@ export class AppExecutors {
     try {
       await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
-      const { appDirPath, appDataDirPath } = this.getAppPaths(appId);
+      const { appDirPath, appDataDirPath } = await this.getAppPaths(appId);
       this.logger.info(`Uninstalling app ${appId}`);
 
       this.logger.info(`Regenerating app.env file for app ${appId}`);
@@ -345,7 +342,7 @@ export class AppExecutors {
     try {
       await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
-      const { appDataDirPath } = this.getAppPaths(appId);
+      const { appDataDirPath } = await this.getAppPaths(appId);
       this.logger.info(`Resetting app ${appId}`);
       await this.ensureAppDir(appId, form);
       await generateEnvFile(appId, form);
@@ -399,7 +396,7 @@ export class AppExecutors {
     try {
       await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
-      const { appDirPath, repoPath } = this.getAppPaths(appId);
+      const { appDirPath, repoPath } = await this.getAppPaths(appId);
       this.logger.info(`Updating app ${appId}`);
       await this.ensureAppDir(appId, form);
       await generateEnvFile(appId, form);

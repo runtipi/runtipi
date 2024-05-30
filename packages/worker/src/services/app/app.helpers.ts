@@ -13,6 +13,7 @@ import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 import { getEnv } from '@/lib/environment';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { getMainEnvMap } from '@/lib/system/system.helpers';
+import { getRepoHash, getRepositoriesFromAppStoresFile } from '../repo/repo.helpers';
 
 /**
  *  This function generates a random string of the provided length by using the SHA-256 hash algorithm.
@@ -228,3 +229,25 @@ export const copyDataDir = async (id: string) => {
     );
   }
 };
+/**
+ * Given an appId this function returns the id of the first repository in the appstores.json that contains the required
+ * app files.
+ * @param {string} appId - The app id we want to get the repository
+ */
+export const getRepositoryIdByAppStoresFile = async (appId: string) => {
+  const repositories = (await getRepositoriesFromAppStoresFile()).appstores
+  let repoId = "";
+
+  repositories.map((store: string) => {
+    const repoIdTemp = getRepoHash(store)
+    const appPath = path.join(DATA_DIR, 'repos', repoIdTemp, 'apps', appId)
+
+    pathExists(appPath).then((exists) => {
+      if (exists) {
+        repoId = repoIdTemp
+      }
+    })
+  })
+
+  return repoId;
+}

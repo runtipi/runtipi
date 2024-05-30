@@ -18,3 +18,4 @@ export { systemLoadSchema, type SystemLoad } from './schemas/system-schemas';
 export { envMapToString, envStringToMap } from './helpers/env-helpers';
 export { cleanseErrorData } from './helpers/error-helpers';
 export { sanitizePath } from './helpers/sanitizers';
+export { appStoresFileSchema } from './schemas/appstore-schemas'

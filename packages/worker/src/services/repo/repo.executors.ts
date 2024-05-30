@@ -2,7 +2,7 @@ import path from 'path';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import * as Sentry from '@sentry/node';
 import { sanitizePath } from '@runtipi/shared';
-import { getRepoHash, getRepoBaseUrlAndBranch } from './repo.helpers';
+import { getRepoBaseUrlAndBranch, getRepoHash, getRepositoriesFromAppStoresFile } from './repo.helpers';
 import { logger } from '@/lib/logger';
 import { DATA_DIR } from '@/config/constants';
 
@@ -115,4 +115,32 @@ export class RepoExecutors {
       return this.handleRepoError(err);
     }
   };
+
+  public pullRepos = async () => {
+    try {
+      const repositories = (await getRepositoriesFromAppStoresFile()).appstores;
+
+      repositories.map((store: string) => {
+        void this.pullRepo(store)
+      })
+
+      return { success: true, message: '' };
+    } catch (err) {
+      return this.handleRepoError(err)
+    }
+  }
+
+  public cloneRepos = async () => {
+    try {
+      const repositories = (await getRepositoriesFromAppStoresFile()).appstores;
+
+      repositories.map((store: string) => {
+        void this.cloneRepo(store)
+      })
+
+      return { success: true, message: '' };
+    } catch (err) {
+      return this.handleRepoError(err)
+    }
+  }
 }

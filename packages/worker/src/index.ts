@@ -71,15 +71,15 @@ const main = async () => {
 
     const repoExecutors = new RepoExecutors();
 
-    const clone = await repoExecutors.cloneRepo(envMap.get('APPS_REPO_URL') as string);
+    const clone = await repoExecutors.cloneRepos();
     if (!clone.success) {
-      logger.error(`Failed to clone repo ${envMap.get('APPS_REPO_URL') as string}`);
+      logger.error('Failed to clone repositories!');
     }
 
     if (process.env.NODE_ENV !== 'development') {
-      const pull = await repoExecutors.pullRepo(envMap.get('APPS_REPO_URL') as string);
+      const pull = await repoExecutors.pullRepos();
       if (!pull.success) {
-        logger.error(`Failed to pull repo ${envMap.get('APPS_REPO_URL') as string}`);
+        logger.error('Failed to pull repositories!');
       }
     }
 
@@ -107,7 +107,7 @@ const main = async () => {
       logger.info('Adding scheduled jobs to queue...');
       await repeatQueue.add(
         `${Math.random().toString()}_repo_update`,
-        { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent,
+        { type: 'repo', command: 'update' } as SystemEvent,
         { repeat: { pattern: '*/30 * * * *' } },
       );
     }
