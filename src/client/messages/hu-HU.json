@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "A kétlépcsős hitelesítési beállítások megváltoztatásához szükséges a jelszavad.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Ezt a QR kódot kell beolvasni a hitelesítő alkalmazással.",
   "SETTINGS_SECURITY_TAB_TITLE": "Biztonság",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Beállítások",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Nem sikerült letölteni a legújabb verziót",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "A jelenlegi verzió már naprakész",
