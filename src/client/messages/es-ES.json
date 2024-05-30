@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "Tu contraseña es necesaria para cambiar la configuración de autenticación de dos factores.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Escanea este código QR con tu aplicación de autenticación.",
   "SETTINGS_SECURITY_TAB_TITLE": "Seguridad",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Configuración",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "No se pudo obtener la última versión",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "La versión ya está actualizada",
