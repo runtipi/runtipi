@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "Twoje hasło jest wymagane do zmiany ustawień weryfikacji dwuetapowej.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Zeskanuj ten kod QR za pomocą aplikacji uwierzytelniającej.",
   "SETTINGS_SECURITY_TAB_TITLE": "Bezpieczeństwo",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Ustawienia",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Nie udało się pobrać najnowszej wersji",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Bieżąca wersja jest już aktualna",
