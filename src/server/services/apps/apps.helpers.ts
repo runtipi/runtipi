@@ -7,6 +7,8 @@ import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
+import { SystemServiceClass } from '../system';
+import crypto from 'crypto';
 
 /**
  *  This function checks the requirements for the app with the provided name.
@@ -40,45 +42,58 @@ export const checkAppRequirements = (appName: string) => {
   If the config.json file is invalid, it logs an error message.
  */
 export const getAvailableApps = async () => {
-  const { appsRepoId } = TipiConfig.getConfig();
-  if (!(await pathExists(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps')))) {
-    Logger.error(`Apps repo ${appsRepoId} not found. Make sure your repo is configured correctly.`);
-    return [];
-  }
+  const systemService = new SystemServiceClass();
+  const repositories = (await systemService.getAppStores()).appstores;
+  let finalApps: any = [];
 
-  const appsDir = readdirSync(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
+  repositories.map((appsRepoUrl: string) => {
+    const hash = crypto.createHash('sha256');
+    hash.update(appsRepoUrl);
+    const appsRepoId = hash.digest('hex');
 
-  const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
+    pathExists(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps')).then((exists: boolean) => {
+      if (!exists) {
+        Logger.error(`Apps repo ${appsRepoId} not found. Make sure your repo is configured correctly.`);
+      } else {
+        const appsDir = readdirSync(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
 
-  const apps = appsDir
-    .map((app) => {
-      if (skippedFiles.includes(app)) return null;
+        const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
 
-      const repoPath = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(app));
-      const configFile = readJsonFile(path.join(repoPath, 'config.json'));
-      const parsedConfig = appInfoSchema.safeParse(configFile);
+        const apps = appsDir
+          .map((app) => {
+            if (skippedFiles.includes(app)) return null;
 
-      if (!parsedConfig.success) {
-        Logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
-        Logger.error(JSON.stringify(parsedConfig.error, null, 2));
-      } else if (parsedConfig.data.available) {
-        const description = readFile(path.join(repoPath, 'metadata', 'description.md'));
-        return { ...parsedConfig.data, description };
+            const repoPath = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(app));
+            const configFile = readJsonFile(path.join(repoPath, 'config.json'));
+            const parsedConfig = appInfoSchema.safeParse(configFile);
+
+            if (!parsedConfig.success) {
+              Logger.error(`App ${JSON.stringify(app)} has invalid config.json`);
+              Logger.error(JSON.stringify(parsedConfig.error, null, 2));
+            } else if (parsedConfig.data.available) {
+              const description = readFile(path.join(repoPath, 'metadata', 'description.md'));
+              return { ...parsedConfig.data, description };
+            }
+
+            return null;
+          })
+          .filter(notEmpty)
+          .map(({ id, categories, name, short_desc, deprecated, supported_architectures }) => ({
+            id,
+            categories,
+            name,
+            short_desc,
+            deprecated,
+            supported_architectures,
+          }));
+
+        finalApps.concat(apps);
       }
+    });
+  });
 
-      return null;
-    })
-    .filter(notEmpty)
-    .map(({ id, categories, name, short_desc, deprecated, supported_architectures }) => ({
-      id,
-      categories,
-      name,
-      short_desc,
-      deprecated,
-      supported_architectures,
-    }));
-
-  return apps;
+  console.log(finalApps);
+  return finalApps;
 };
 
 /**
