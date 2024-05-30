@@ -5,16 +5,19 @@ import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
+import { AppStatus as AppStatusEnum } from '@/server/db/schema';
+import { LogsTerminal } from './LogsTerminal';
 
 interface IProps {
   info: AppInfo;
+  status: AppStatusEnum;
   repository: {
     url: string | undefined;
     name: string | undefined;
   };
 }
 
-export const AppDetailsTabs: React.FC<IProps> = ({ info, repository }) => {
+export const AppDetailsTabs: React.FC<IProps> = ({ info, status, repository }) => {
   const t = useTranslations();
 
   return (
@@ -22,6 +25,9 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info, repository }) => {
       <TabsList>
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
+        <TabsTrigger value="logs" disabled={status === 'missing'}>
+          {t('APP_LOGS_TAB_TITLE')}
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="description">
         {info.deprecated && (
@@ -84,6 +90,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info, repository }) => {
           </DataGridItem>
         </DataGrid>
       </TabsContent>
+      <TabsContent value="logs">{status === 'running' && <LogsTerminal appId={info.id} />}</TabsContent>
     </Tabs>
   );
 };

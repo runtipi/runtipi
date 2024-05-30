@@ -236,7 +236,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
           />
         </div>
       </div>
-      <AppDetailsTabs info={app.info} repository={app.repository} />
+      <AppDetailsTabs info={app.info} status={optimisticStatus} repository={app.repository} />
     </div>
   );
 };
