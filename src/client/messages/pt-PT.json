@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "A sua senha é necessária para alterar as configurações de autenticação de dois fatores.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Digitalize este código QR com o seu aplicativo de autenticação.",
   "SETTINGS_SECURITY_TAB_TITLE": "Segurança",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Configurações",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Não foi possível obter a versão recente",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "A versão atual já é atualizada",
