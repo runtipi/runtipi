@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "二段階認証の設定を変更するにはパスワードが必要です。",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "認証アプリでQRコードをスキャンして下さい。",
   "SETTINGS_SECURITY_TAB_TITLE": "セキュリティ",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "設定",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "最新バージョンを取得できませんでした",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "現在のバージョンは既に最新です",
