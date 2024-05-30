@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "İki faktörlü kimlik doğrulama ayarlarını değiştirmek için parolanız gereklidir.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Bu QR kodunu kimlik doğrulama uygulamanızla tarayın.",
   "SETTINGS_SECURITY_TAB_TITLE": "Güvenlik",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Ayarlar",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "En son sürüm alınamadı",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Son versiyon zaten yüklü",
