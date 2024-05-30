@@ -298,6 +298,7 @@
   "SETTINGS_SECURITY_PASSWORD_NEEDED_HINT": "Для изменения параметров двухфакторной аутентификации требуется пароль.",
   "SETTINGS_SECURITY_SCAN_QR_CODE": "Сканируйте этот QR-код вашим приложением-аутентификатором.",
   "SETTINGS_SECURITY_TAB_TITLE": "Безопасность",
+  "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Настройки",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Не удалось получить последнюю версию",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Текущая версия уже актуальна",
