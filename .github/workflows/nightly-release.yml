@@ -110,4 +110,4 @@ jobs:
     uses: './.github/workflows/e2e.yml'
     secrets: inherit
     with:
-      version: ${{ needs.create-tag.outputs.tagname }}
+      version: nightly
