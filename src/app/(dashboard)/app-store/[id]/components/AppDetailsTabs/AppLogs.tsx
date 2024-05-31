@@ -12,7 +12,7 @@ export const AppLogs = ({ appId }: { appId: string }) => {
   useSocket({
     selector: { type: 'app-logs', event: 'newLogs', data: { property: 'appId', value: appId } },
     onCleanup: () => setLogs([]),
-    emitOnConnect: { type: 'app-logs', event: 'viewLogs', data: { appId } },
+    emitOnConnect: { type: 'app-logs-init', event: 'initLogs', data: { appId, maxLines } },
     emitOnDisconnect: { type: 'app-logs', event: 'stopLogs', data: { appId } },
     onEvent: (_, data) => {
       setLogs((prevLogs) => {

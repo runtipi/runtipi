@@ -104,3 +104,10 @@ jobs:
           tag: nightly
           rm: true
           files: cli/runtipi-cli-*
+
+  e2e-tests:
+    needs: [update-release]
+    uses: './.github/workflows/e2e.yml'
+    secrets: inherit
+    with:
+      version: ${{ needs.create-tag.outputs.tagname }}

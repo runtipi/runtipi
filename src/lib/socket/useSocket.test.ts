@@ -37,7 +37,7 @@ describe('useSocket', () => {
   });
 
   it('should emit on connect if emitOnConnect is provided', () => {
-    const emitOnConnect = { type: 'runtipi-logs', event: 'viewLogs', data: {} } as const;
+    const emitOnConnect = { type: 'runtipi-logs', event: 'stopLogs', data: {} } as const;
     renderHook(() => useSocket({ selector: { type: 'runtipi-logs' }, emitOnConnect }));
 
     expect(mockSocket.on).toHaveBeenCalledWith('connect', expect.any(Function));

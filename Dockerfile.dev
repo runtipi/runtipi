@@ -46,8 +46,6 @@ COPY ./next.config.mjs ./next.config.mjs
 
 # Sentry
 COPY ./sentry.client.config.ts ./sentry.client.config.ts
-COPY ./sentry.edge.config.ts ./sentry.edge.config.ts
-COPY ./sentry.server.config.ts ./sentry.server.config.ts
 
 COPY ./start.dev.sh ./start.sh
 

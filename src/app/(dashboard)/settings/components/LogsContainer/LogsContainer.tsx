@@ -12,7 +12,7 @@ export const LogsContainer = () => {
   useSocket({
     selector: { type: 'runtipi-logs', event: 'newLogs' },
     onCleanup: () => setLogs([]),
-    emitOnConnect: { type: 'runtipi-logs', event: 'viewLogs', data: {} },
+    emitOnConnect: { type: 'runtipi-logs-init', event: 'initLogs', data: { maxLines } },
     emitOnDisconnect: { type: 'runtipi-logs', event: 'stopLogs', data: {} },
     onEvent: (_, data) => {
       setLogs((prevLogs) => {

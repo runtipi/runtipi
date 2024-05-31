@@ -55,7 +55,7 @@ const getBaseComposeArgsApp = async (appId: string) => {
 const getBaseComposeArgsTipi = async () => {
   const args: string[] = [`--env-file ${path.join(DATA_DIR, '.env')}`];
 
-  args.push(`--project-name tipi`);
+  args.push(`--project-name runtipi`);
 
   const composeFile = path.join(DATA_DIR, 'docker-compose.yml');
   args.push(`-f ${composeFile}`);
@@ -89,20 +89,22 @@ export const compose = async (appId: string, command: string) => {
 };
 
 export const handleViewRuntipiLogsEvent = async (socket: Socket, event: SocketEvent) => {
-  const parsedEvent = socketEventSchema.safeParse(event);
+  const { success, data } = socketEventSchema.safeParse(event);
 
-  if (!parsedEvent.success) {
+  if (!success) {
     logger.error('Invalid viewLogs event data:', event);
     return;
   }
 
-  if (parsedEvent.data.type !== 'runtipi-logs' && parsedEvent.data.event !== 'viewLogs') {
+  if (data.type !== 'runtipi-logs-init') {
     return;
   }
 
+  const { maxLines } = data.data;
+
   const args = await getBaseComposeArgsTipi();
 
-  args.push('logs --follow -n 25');
+  args.push(`logs --follow -n ${maxLines || 25}`);
 
   const logsCommand = `docker-compose ${args.join(' ')}`;
 
@@ -114,7 +116,6 @@ export const handleViewRuntipiLogsEvent = async (socket: Socket, event: SocketEv
 
   socket.on('runtipi-logs', (data) => {
     if (data.event === 'stopLogs') {
-      console.log('Stopping logs');
       logs.kill('SIGINT');
     }
   });
@@ -146,18 +147,14 @@ export const handleViewAppLogsEvent = async (socket: Socket, event: SocketEvent)
     return;
   }
 
-  if (parsedEvent.data.type !== 'app-logs') {
+  if (parsedEvent.data.type !== 'app-logs-init') {
     return;
   }
 
-  if (parsedEvent.data.event !== 'viewLogs') {
-    return;
-  }
-
-  const { appId } = parsedEvent.data.data;
+  const { appId, maxLines } = parsedEvent.data.data;
 
   const args = await getBaseComposeArgsApp(appId);
-  args.push('logs --follow -n 25');
+  args.push(`logs --follow -n ${maxLines || 25}`);
 
   const logsCommand = `docker-compose ${args.join(' ')}`;
 
