@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import * as Sentry from '@sentry/node';
 import { execAsync, pathExists } from '@runtipi/shared/node';
-import { AppEventForm, SocketEvent, sanitizePath } from '@runtipi/shared';
+import { AppEventForm, SocketEvent, appInfoSchema, sanitizePath } from '@runtipi/shared';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
@@ -91,12 +91,6 @@ export class AppExecutors {
         Sentry.captureException(err);
       }
     }
-
-    // Set permissions
-    await execAsync(`chmod -Rf a+rwx ${path.join(appDataDirPath)}`).catch((e) => {
-      this.logger.error(`Error setting permissions for app ${appId}`);
-      Sentry.captureException(e);
-    });
   };
 
   public regenerateAppEnv = async (appId: string, form: AppEventForm) => {
@@ -133,6 +127,9 @@ export class AppExecutors {
 
       const { appDirPath, repoPath, appDataDirPath } = this.getAppPaths(appId);
 
+      const configFile = await fs.promises.readFile(path.join(repoPath, 'config.json'));
+      const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile.toString()));
+
       // Check if app exists in repo
       const apps = await fs.promises.readdir(
         path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'),
@@ -157,17 +154,32 @@ export class AppExecutors {
 
       // Create app-data folder
       this.logger.info(`Creating folder ${appDataDirPath}`);
-      await fs.promises.mkdir(appDataDirPath, { recursive: true });
-
-      // Create app.env file
-      this.logger.info(`Creating app.env file for app ${appId}`);
-      await generateEnvFile(appId, form);
+      await fs.promises.mkdir(path.join(appDataDirPath, 'data'), { recursive: true });
 
       // Copy data dir
       this.logger.info(`Copying data dir for app ${appId}`);
       if (!(await pathExists(`${appDataDirPath}/data`))) {
         await copyDataDir(appId);
       }
+
+      // Create extra data directories if requested
+      if (parsedConfig.data?.createDirs) {
+        for (const folder of parsedConfig.data.createDirs) {
+          this.logger.info(`Creating folder ${appDataDirPath}`);
+          await fs.promises.mkdir(path.join(appDataDirPath, 'data', folder), { recursive: true });
+        } 
+      }
+
+      // Set permissions
+      this.logger.info('Settings permissions for app data folder...')
+      await execAsync(`chmod -R 777 ${path.join(appDataDirPath, 'data')}`).catch((e) => {
+        this.logger.error(`Error setting permissions for app ${appId}`);
+        Sentry.captureException(e);
+      });
+
+      // Create app.env file
+      this.logger.info(`Creating app.env file for app ${appId}`);
+      await generateEnvFile(appId, form);
 
       await this.ensureAppDir(appId, form);
 
@@ -345,7 +357,11 @@ export class AppExecutors {
     try {
       await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
-      const { appDataDirPath } = this.getAppPaths(appId);
+      const { repoPath, appDataDirPath } = this.getAppPaths(appId);
+
+      const configFile = await fs.promises.readFile(path.join(repoPath, 'config.json'));
+      const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile.toString()));
+
       this.logger.info(`Resetting app ${appId}`);
       await this.ensureAppDir(appId, form);
       await generateEnvFile(appId, form);
@@ -369,15 +385,34 @@ export class AppExecutors {
         this.logger.error(`Error deleting folder ${appDataDirPath}: ${err.message}`);
       });
 
-      // Create app.env file
-      this.logger.info(`Creating app.env file for app ${appId}`);
-      await generateEnvFile(appId, form);
+      // Create app-data folder
+      this.logger.info(`Creating folder ${appDataDirPath}`);
+      await fs.promises.mkdir(path.join(appDataDirPath, 'data'), { recursive: true });
 
       // Copy data dir
       this.logger.info(`Copying data dir for app ${appId}`);
       if (!(await pathExists(`${appDataDirPath}/data`))) {
         await copyDataDir(appId);
       }
+
+      // Create extra data directories if requested
+      if (parsedConfig.data?.createDirs) {
+        for (const folder of parsedConfig.data.createDirs) {
+          this.logger.info(`Creating folder ${appDataDirPath}`);
+          await fs.promises.mkdir(path.join(appDataDirPath, 'data', folder), { recursive: true });
+        } 
+      }
+
+      // Set permissions
+      this.logger.info('Settings permissions for app data folder...')
+      await execAsync(`chmod -R 777 ${path.join(appDataDirPath, 'data')}`).catch((e) => {
+        this.logger.error(`Error setting permissions for app ${appId}`);
+        Sentry.captureException(e);
+      });
+
+      // Create app.env file
+      this.logger.info(`Creating app.env file for app ${appId}`);
+      await generateEnvFile(appId, form);
 
       await this.ensureAppDir(appId, form);
 
