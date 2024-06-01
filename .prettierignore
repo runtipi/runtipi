@@ -1,3 +1,17 @@
-packages
-coverage
-.github
+# Next files
+.next
+
+# Node modules
+node_modules
+packages/shared/node_modules
+packages/worker/node_modules
+
+# Tipi data
+app-data
+apps
+logs
+media
+repos
+state
+traefik
+user-config

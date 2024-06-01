@@ -71,12 +71,23 @@ const serviceSchema = z
     name: z.string(),
     internalPort: z.number(),
     isMain: z.boolean().optional(),
+    addPorts: z
+      .array(
+        z.object({
+          containerPort: z.number(),
+          hostPort: z.number(),
+          udp: z.boolean(),
+          tcp: z.boolean(),
+        }),
+      )
+      .optional(),
     command: z.string().optional(),
     volumes: z
       .array(
         z.object({
           hostPath: z.string(),
           containerPath: z.string(),
+          readOnly: z.boolean().optional(),
         }),
       )
       .optional(),
@@ -104,13 +115,31 @@ const serviceSchema = z
       command: data.command,
     };
 
+    let ports: string[] = [];
+
     if (data.isMain && data.openPort) {
-      base.ports = [`\${APP_PORT}:${data.internalPort}`];
+      ports = ports.concat([`\${APP_PORT}:${data.internalPort}`]);
+    }
+
+    if (data.addPorts?.length) {
+      for (const port of data.addPorts) {
+        if (port.tcp) {
+          ports = ports.concat([`${port.hostPort}:${port.containerPort}/tcp`]);
+        }
+        if (port.udp) {
+          ports = ports.concat([`${port.hostPort}:${port.containerPort}/udp`]);
+        }
+      }
+    }
+
+    if (ports.length) {
+      base.ports = ports;
     }
 
     if (data.volumes?.length) {
       base.volumes = data.volumes.map(
-        ({ hostPath, containerPath }) => `${hostPath}:${containerPath}`,
+        ({ hostPath, containerPath, readOnly }) =>
+          `${hostPath}:${containerPath}${readOnly === true ? ':ro' : ''}`,
       );
     }
 
