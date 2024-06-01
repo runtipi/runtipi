@@ -139,7 +139,7 @@ const serviceSchema = z
     if (data.volumes?.length) {
       base.volumes = data.volumes.map(
         ({ hostPath, containerPath, readOnly }) =>
-          `${hostPath}:${containerPath}${readOnly === true ? ':ro' : ''}`,
+          `${hostPath}:${containerPath}${readOnly ? ':ro' : ''}`,
       );
     }
 
