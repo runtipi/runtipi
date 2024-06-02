@@ -53,7 +53,7 @@ export const LogsTerminal = (props: Props) => {
               type="number"
               className="form-control"
               value={maxLines}
-              onChange={(e) => updateMaxLines(parseInt(e.target.value, 10))}
+              onChange={(e) => updateMaxLines(Number.parseInt(e.target.value, 10))}
             />
           </div>
         </div>
