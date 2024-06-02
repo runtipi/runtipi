@@ -1,11 +1,13 @@
-import { defineWorkspace } from 'vitest/config';
+import { UserWorkspaceConfig, defineWorkspace } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+type Plugins = UserWorkspaceConfig['plugins'];
+
 export default defineWorkspace([
   {
-    plugins: [tsconfigPaths()],
+    plugins: [tsconfigPaths()] as Plugins,
     test: {
       globals: true,
       name: 'server',
@@ -16,13 +18,13 @@ export default defineWorkspace([
     },
   },
   {
-    plugins: [tsconfigPaths(), react()],
+    plugins: [tsconfigPaths(), react()] as Plugins,
     test: {
       globals: true,
       name: 'client',
       root: './',
       environment: 'jsdom',
-      include: ['./src/client/**/*.{spec,test}.{ts,tsx}', './src/app/**/*.{spec,test}.{ts,tsx}'],
+      include: ['./src/client/**/*.{spec,test}.{ts,tsx}', './src/app/**/*.{spec,test}.{ts,tsx}', './src/lib/**/*.{spec,test}.{ts,tsx}'],
       setupFiles: ['./tests/client/test.setup.tsx'],
     },
   },

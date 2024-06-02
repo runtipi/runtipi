@@ -24,6 +24,9 @@ export const SettingsTabTriggers = () => {
       <TabsTrigger onClick={() => handleTabChange('security')} value="security">
         {t('SETTINGS_SECURITY_TAB_TITLE')}
       </TabsTrigger>
+      <TabsTrigger onClick={() => handleTabChange('logs')} value="logs">
+        {t('SETTINGS_LOGS_TAB_TITLE')}
+      </TabsTrigger>
     </TabsList>
   );
 };

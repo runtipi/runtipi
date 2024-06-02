@@ -5,12 +5,15 @@ import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
+import { AppStatus as AppStatusEnum } from '@/server/db/schema';
+import { AppLogs } from './AppLogs';
 
 interface IProps {
   info: AppInfo;
+  status: AppStatusEnum;
 }
 
-export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
+export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
   const t = useTranslations();
 
   return (
@@ -18,6 +21,9 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
       <TabsList>
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
+        <TabsTrigger value="logs" disabled={status === 'missing'}>
+          {t('APP_LOGS_TAB_TITLE')}
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="description">
         {info.deprecated && (
@@ -74,6 +80,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info }) => {
           )}
         </DataGrid>
       </TabsContent>
+      <TabsContent value="logs">{status === 'running' && <AppLogs appId={info.id} />}</TabsContent>
     </Tabs>
   );
 };

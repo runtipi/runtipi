@@ -82,6 +82,7 @@ services:
       - ${RUNTIPI_APP_DATA_PATH:-.}/app-data:/app-data
       # Static
       - ./.env:/data/.env
+      - ./docker-compose.dev.yml:/data/docker-compose.yml
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc:/host/proc:ro
     networks:
@@ -89,12 +90,10 @@ services:
     ports:
       - 3000:3000
     environment:
+      LOCAL: true
       NODE_ENV: development
-      TIPI_VERSION: development
       WORKER_APP_DIR: /app/packages/worker
       DASHBOARD_APP_DIR: /app
-      NEXT_PUBLIC_TIPI_VERSION: development
-      LOCAL: true
     env_file:
       - .env
     labels:
