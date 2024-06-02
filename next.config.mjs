@@ -21,14 +21,16 @@ const nextConfig = {
   },
 };
 
-export default process.env.LOCAL !== 'true'
-  ? withSentryConfig(nextConfig, {
-      silent: false,
-      org: 'runtipi',
-      project: 'runtipi-dashboard',
-      widenClientFileUpload: true,
-      tunnelRoute: '/errors',
-      hideSourceMaps: false,
-      disableLogger: false,
-    })
-  : nextConfig;
+const sentryConfig = {
+  silent: false,
+  org: 'runtipi',
+  project: 'runtipi-dashboard',
+  widenClientFileUpload: true,
+  tunnelRoute: '/errors',
+  hideSourceMaps: false,
+  disableLogger: false,
+};
+
+const config = process.env.LOCAL !== 'true' ? withSentryConfig(nextConfig, sentryConfig) : nextConfig;
+
+export default config;

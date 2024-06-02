@@ -19,11 +19,13 @@ export const LogsTerminal = (props: Props) => {
   const [wrapLines, setWrapLines] = useState<boolean>(false);
   const ref = useRef<HTMLPreElement>(null);
 
+  const lastLogId = logs.length > 0 ? logs.at(-1)?.id : null;
+
   useEffect(() => {
     if (ref.current && follow) {
       ref.current.scrollTop = ref.current.scrollHeight;
     }
-  }, [logs, follow]);
+  }, [lastLogId, follow]);
 
   const updateMaxLines = (lines: number) => {
     const linesToKeep = Math.max(1, lines);
@@ -53,7 +55,7 @@ export const LogsTerminal = (props: Props) => {
               type="number"
               className="form-control"
               value={maxLines}
-              onChange={(e) => updateMaxLines(parseInt(e.target.value, 10))}
+              onChange={(e) => updateMaxLines(Number.parseInt(e.target.value, 10))}
             />
           </div>
         </div>

@@ -31,7 +31,7 @@ export const AppLogs = ({ appId }: { appId: string }) => {
   const updateMaxLines = (lines: number) => {
     const linesToKeep = Math.max(1, lines);
     setMaxLines(linesToKeep);
-    setLogs(logs.slice(logs.length - linesToKeep));
+    setLogs((currentLogs) => currentLogs.slice(currentLogs.length - linesToKeep));
   };
 
   return <LogsTerminal logs={logs} maxLines={maxLines} onMaxLinesChange={updateMaxLines} />;
