@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-50-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-51-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -140,6 +140,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/hex-developer"><img src="https://avatars.githubusercontent.com/u/77530549?v=4?s=100" width="100px;" alt="hex-developer"/><br /><sub><b>hex-developer</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=hex-developer" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/brazilian"><img src="https://avatars.githubusercontent.com/u/6293418?v=4?s=100" width="100px;" alt="Brazilian"/><br /><sub><b>Brazilian</b></sub></a><br /><a href="#translation-Brazilian" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
