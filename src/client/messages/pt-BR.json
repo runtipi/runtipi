@@ -224,7 +224,7 @@
   "MY_APPS_UPDATE_ALL_FORM_SUBTITLE_2": "Isso atualizará todos os seus aplicativos para a versão mais recente. Certifique-se de ter lido as notas de lançamento dos aplicativos e ter feito backup dos dados do seu aplicativo.",
   "MY_APPS_UPDATE_ALL_FORM_TITLE": "Atualizar todos os aplicativos",
   "MY_APPS_UPDATE_ALL_IN_PROGRESS": "Atualizando todos os aplicativos",
-  "MY_APPS_UPDATE_AVAILABLE": "Uma nova atualização está Disponível",
+  "MY_APPS_UPDATE_AVAILABLE": "Atualização disponível",
   "RUNTIPI": "Runtipi",
   "SERVER_ERROR_INVALID_LOCALE": "Idioma inválido",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Não é permitido no modo demonstração",
