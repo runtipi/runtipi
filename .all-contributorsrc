@@ -475,6 +475,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Brazilian",
+      "name": "Brazilian",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6293418?v=4",
+      "profile": "https://github.com/brazilian",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
