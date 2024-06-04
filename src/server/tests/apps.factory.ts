@@ -95,6 +95,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
     https: false,
     no_gui: false,
     generate_vapid_keys: generateVapidKeys,
+    traefik_supported: true,
   };
 
   if (randomField) {
