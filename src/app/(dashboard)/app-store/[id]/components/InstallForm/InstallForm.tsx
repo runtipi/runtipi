@@ -109,56 +109,77 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
   );
 
   const renderDynamicConfigForm = () => {
-    return (
-      <>
-        <Controller
-          control={control}
-          name="openPort"
-          defaultValue={!info.force_expose}
-          disabled={info.force_expose}
-          render={({ field: { onChange, value, ref, ...props } }) => (
-            <Switch
-              {...props}
-              className="mb-3"
-              ref={ref}
-              checked={value}
-              onCheckedChange={onChange}
-              label={
-                <>
-                  {t('APP_INSTALL_FORM_OPEN_PORT')}
-                  <Tooltip className="tooltip" anchorSelect=".open-port-hint">
-                    {t('APP_INSTALL_FORM_OPEN_PORT_HINT', { port: info.port, internalIp })}
-                  </Tooltip>
-                  <span className={clsx('ms-1 form-help open-port-hint')}>?</span>
-                </>
-              }
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="exposedLocal"
-          render={({ field: { onChange, value, ref, ...props } }) => (
-            <Switch
-              {...props}
-              className="mb-3"
-              ref={ref}
-              checked={value}
-              onCheckedChange={onChange}
-              label={
-                <>
-                  {t('APP_INSTALL_FORM_EXPOSE_LOCAL')}
-                  <Tooltip className="tooltip" anchorSelect=".expose-local-hint">
-                    {t('APP_INSTALL_FORM_EXPOSE_LOCAL_HINT', { domain: localDomain, appId: info.id })}
-                  </Tooltip>
-                  <span className={clsx('ms-1 form-help expose-local-hint')}>?</span>
-                </>
-              }
-            />
-          )}
-        />
-      </>
-    );
+    if (info.traefik_supported) {
+      return (
+        <>
+          <Controller
+            control={control}
+            name="openPort"
+            defaultValue={!info.force_expose}
+            disabled={info.force_expose}
+            render={({ field: { onChange, value, ref, ...props } }) => (
+              <Switch
+                {...props}
+                className="mb-3"
+                ref={ref}
+                checked={value}
+                onCheckedChange={onChange}
+                label={
+                  <>
+                    {t('APP_INSTALL_FORM_OPEN_PORT')}
+                    <Tooltip className="tooltip" anchorSelect=".open-port-hint">
+                      {t('APP_INSTALL_FORM_OPEN_PORT_HINT', { port: info.port, internalIp })}
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help open-port-hint')}>?</span>
+                  </>
+                }
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="exposedLocal"
+            render={({ field: { onChange, value, ref, ...props } }) => (
+              <Switch
+                {...props}
+                className="mb-3"
+                ref={ref}
+                checked={value}
+                onCheckedChange={onChange}
+                label={
+                  <>
+                    {t('APP_INSTALL_FORM_EXPOSE_LOCAL')}
+                    <Tooltip className="tooltip" anchorSelect=".expose-local-hint">
+                      {t('APP_INSTALL_FORM_EXPOSE_LOCAL_HINT', { domain: localDomain, appId: info.id })}
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help expose-local-hint')}>?</span>
+                  </>
+                }
+              />
+            )}
+          />
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Switch
+            className="mb-3"
+            checked={true}
+            disabled={true}
+            label={
+              <>
+                {t('APP_INSTALL_FORM_OPEN_PORT')}
+                <Tooltip className="tooltip" anchorSelect=".open-port-hint">
+                  {t('APP_INSTALL_FORM_OPEN_PORT_HINT', { port: info.port, internalIp })}
+                </Tooltip>
+                <span className={clsx('ms-1 form-help open-port-hint')}>?</span>
+              </>
+            }
+          />
+        </>
+      );
+    }
   };
 
   const validate = (values: FormValues) => {
@@ -198,7 +219,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
       )}
       {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
       {info.dynamic_config && renderDynamicConfigForm()}
-      {info.exposable && renderExposeForm()}
+      {info.exposable && info.traefik_supported && renderExposeForm()}
       <Button loading={loading} type="submit" className="btn-success">
         {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
       </Button>

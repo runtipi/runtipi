@@ -80,6 +80,7 @@ export const appInfoSchema = z.object({
   gid: z.number().optional(),
   dynamic_config: z.boolean().optional().default(false),
   min_tipi_version: z.string().optional(),
+  traefik_supported: z.boolean().optional().default(true),
 });
 
 // Derived types

@@ -78,7 +78,24 @@ export class AppExecutors {
           path.join(repoPath, 'docker-compose.json'),
           'utf-8',
         );
+
+        const rawAppConfig = await fs.promises.readFile(
+          path.join(repoPath, 'config.json'),
+          'utf-8',
+        );
+
+        const appConfig = JSON.parse(rawAppConfig);
+
         const jsonComposeConfig = JSON.parse(rawComposeConfig);
+
+        if (!appConfig.traefik_supported) {
+          form = {
+            exposed: false,
+            exposedLocal: false,
+            openPort: true,
+            isVisibleOnGuestDashboard: form.isVisibleOnGuestDashboard,
+          };
+        }
 
         const composeFile = getDockerCompose(jsonComposeConfig.services, form);
 
@@ -91,12 +108,6 @@ export class AppExecutors {
         Sentry.captureException(err);
       }
     }
-
-    // Set permissions
-    await execAsync(`chmod -Rf a+rwx ${path.join(appDataDirPath)}`).catch((e) => {
-      this.logger.error(`Error setting permissions for app ${appId}`);
-      Sentry.captureException(e);
-    });
   };
 
   public regenerateAppEnv = async (appId: string, form: AppEventForm) => {
@@ -174,6 +185,12 @@ export class AppExecutors {
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
+
+      // Set permissions
+      await execAsync(`chmod -R 777 ${path.join(appDataDirPath)}`).catch((e) => {
+        this.logger.error(`Error setting permissions for app ${appId}`);
+        Sentry.captureException(e);
+      });
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
 
@@ -384,6 +401,12 @@ export class AppExecutors {
       // run docker-compose up
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up -d');
+
+      // Set permissions
+      await execAsync(`chmod -R 777 ${path.join(appDataDirPath)}`).catch((e) => {
+        this.logger.error(`Error setting permissions for app ${appId}`);
+        Sentry.captureException(e);
+      });
 
       await SocketManager.emit({ type: 'app', event: 'reset_success', data: { appId } });
 
