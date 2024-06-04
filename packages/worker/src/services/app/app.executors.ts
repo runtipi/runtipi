@@ -57,7 +57,7 @@ export class AppExecutors {
    * @param {string} appId - App id
    */
   private ensureAppDir = async (appId: string, form: AppEventForm) => {
-    const { appDirPath, appDataDirPath, repoPath } = this.getAppPaths(appId);
+    const { appDirPath, repoPath } = this.getAppPaths(appId);
     const dockerFilePath = path.join(DATA_DIR, 'apps', sanitizePath(appId), 'docker-compose.yml');
 
     if (!(await pathExists(dockerFilePath))) {
