@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useSocket } from '@/lib/socket/useSocket';
 import { LogsTerminal } from 'src/app/components/LogsTerminal/LogsTerminal';
 
