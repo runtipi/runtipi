@@ -475,6 +475,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "gabrielfariasnunes",
+      "name": "Gabriel Farias Nunes",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21142663?v=4",
+      "profile": "http://www.bielfarias.com",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
