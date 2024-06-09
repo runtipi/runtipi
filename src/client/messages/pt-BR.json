@@ -176,7 +176,7 @@
   "DASHBOARD_CPU_SUBTITLE": "Desinstale aplicativos para reduzir a carga",
   "DASHBOARD_CPU_TITLE": "Utilização do Processador",
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Espaço disponível {total} GB",
-  "DASHBOARD_DISK_SPACE_TITLE": "Espaço total em disco",
+  "DASHBOARD_DISK_SPACE_TITLE": "Espaço em disco",
   "DASHBOARD_MEMORY_TITLE": "Memória utilizada",
   "DASHBOARD_TITLE": "Painel de controle",
   "DASHBOARD_IP_WARNING_TITLE": "Configuração insegura",
