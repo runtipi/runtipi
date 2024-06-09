@@ -41,6 +41,7 @@
     "@sentry/nextjs": "^8.8.0",
     "@tabler/core": "1.0.0-beta20",
     "@tabler/icons-react": "^3.5.0",
+    "@uidotdev/usehooks": "^2.4.1",
     "argon2": "^0.40.3",
     "bullmq": "^5.7.15",
     "clsx": "^2.1.0",
