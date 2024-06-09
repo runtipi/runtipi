@@ -25,7 +25,7 @@ describe('getDockerCompose', async () => {
         isMain: true,
         volumes: [
           { hostPath: '${APP_DATA_DIR}/data/redis', containerPath: '/data' },
-          { hostPath: '${APP_DATA_DIR}/logs/redis', containerPath: '/logs' },
+          { hostPath: '${APP_DATA_DIR}/logs/redis', containerPath: '/logs', readOnly: true },
         ],
         dependsOn: {
           [serviceName2]: {
@@ -48,6 +48,11 @@ describe('getDockerCompose', async () => {
         dependsOn: [serviceName1],
         image: serviceImage2,
         internalPort: servicePort2,
+        addPorts: [
+          { containerPort: 3000, hostPort: 4444, tcp: true },
+          { containerPort: 3001, hostPort: 4445, udp: true },
+          { containerPort: 3002, hostPort: 4446 },
+        ],
       },
     ] satisfies ServiceInput[];
 
@@ -75,7 +80,7 @@ describe('getDockerCompose', async () => {
             - \${APP_PORT}:${servicePort1}
           volumes:
             - \${APP_DATA_DIR}/data/redis:/data
-            - \${APP_DATA_DIR}/logs/redis:/logs
+            - \${APP_DATA_DIR}/logs/redis:/logs:ro
           depends_on:
             ${serviceName2}:
               condition: service_healthy
@@ -95,6 +100,10 @@ describe('getDockerCompose', async () => {
             interval: 30s
             timeout: 10s
             retries: 3
+          ports:
+            - 4444:3000/tcp
+            - 4445:3001/udp
+            - 4446:3002
           depends_on:
             - ${serviceName1}
       networks:
