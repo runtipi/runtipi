@@ -1,12 +1,14 @@
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { AppLogs } from './AppLogs';
+import { AppDetailsTabTriggers } from './AppDetailsTabTriggers';
+import { useSearchParams } from 'next/navigation';
 
 interface IProps {
   info: AppInfo;
@@ -16,15 +18,11 @@ interface IProps {
 export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
   const t = useTranslations();
 
+  const defaultTab = useSearchParams().get('tab');
+
   return (
-    <Tabs defaultValue="description" orientation="vertical" style={{ marginTop: -1 }}>
-      <TabsList>
-        <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
-        <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
-        <TabsTrigger value="logs" disabled={status === 'missing'}>
-          {t('APP_LOGS_TAB_TITLE')}
-        </TabsTrigger>
-      </TabsList>
+    <Tabs defaultValue={defaultTab || 'description'} orientation="vertical" style={{ marginTop: -1 }}>
+      <AppDetailsTabTriggers status={status} />
       <TabsContent value="description">
         {info.deprecated && (
           <div className="alert alert-danger" role="alert">

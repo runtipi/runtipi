@@ -15,6 +15,8 @@ const APP_LOCALES = {
   'vi-VN': 'Tiếng Việt',
   'zh-CN': '简体中文',
   'zh-TW': '繁體中文',
+  'pt-PT': 'Português',
+  'pt-BR': 'Português (Brasil)',
 } as const;
 
 type BaseLang<T extends string> = T extends `${infer U}-${string}` ? U : T; // 'en-US' -> 'en'
@@ -28,6 +30,7 @@ const FALLBACK_LOCALES: { from: BaseLang<keyof typeof APP_LOCALES>; to: keyof ty
   { from: 'it', to: 'it-IT' },
   { from: 'ja', to: 'ja-JP' },
   { from: 'pl', to: 'pl-PL' },
+  { from: 'pt', to: 'pt-PT' },
   { from: 'sv', to: 'sv-SE' },
   { from: 'ro', to: 'ro-RO' },
   { from: 'ru', to: 'ru-RU' },

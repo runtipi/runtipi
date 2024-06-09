@@ -107,6 +107,15 @@ services:
       traefik.http.routers.dashboard.rule: PathPrefix("/")
       traefik.http.routers.dashboard.service: dashboard
       traefik.http.routers.dashboard.entrypoints: web
+      # Websecure
+      traefik.http.routers.dashboard-insecure.rule: Host(`${DOMAIN}`) && PathPrefix(`/`)
+      traefik.http.routers.dashboard-insecure.service: dashboard
+      traefik.http.routers.dashboard-insecure.entrypoints: web
+      traefik.http.routers.dashboard-insecure.middlewares: redirect-to-https
+      traefik.http.routers.dashboard-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/`)
+      traefik.http.routers.dashboard-secure.service: dashboard
+      traefik.http.routers.dashboard-secure.entrypoints: websecure
+      traefik.http.routers.dashboard-secure.tls.certresolver: myresolver
       # Local domain
       traefik.http.routers.dashboard-local-insecure.rule: Host(`${LOCAL_DOMAIN}`)
       traefik.http.routers.dashboard-local-insecure.entrypoints: web
@@ -128,6 +137,23 @@ services:
       traefik.http.routers.worker-api.rule: PathPrefix("/worker-api")
       traefik.http.routers.worker-api.service: worker-api
       traefik.http.routers.worker-api.entrypoints: web
+      # Websecure
+      traefik.http.routers.worker-insecure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker`)
+      traefik.http.routers.worker-insecure.service: worker
+      traefik.http.routers.worker-insecure.entrypoints: web
+      traefik.http.routers.worker-insecure.middlewares: redirect-to-https
+      traefik.http.routers.worker-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker`)
+      traefik.http.routers.worker-secure.service: worker
+      traefik.http.routers.worker-secure.entrypoints: websecure
+      traefik.http.routers.worker-secure.tls.certresolver: myresolver
+      traefik.http.routers.worker-api-insecure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker-api`)
+      traefik.http.routers.worker-api-insecure.service: worker-api
+      traefik.http.routers.worker-api-insecure.entrypoints: web
+      traefik.http.routers.worker-api-insecure.middlewares: redirect-to-https
+      traefik.http.routers.worker-api-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker-api`)
+      traefik.http.routers.worker-api-secure.service: worker-api
+      traefik.http.routers.worker-api-secure.entrypoints: websecure
+      traefik.http.routers.worker-api-secure.tls.certresolver: myresolver
       # Local domain
       traefik.http.routers.worker-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker")
       traefik.http.routers.worker-local-insecure.entrypoints: web
