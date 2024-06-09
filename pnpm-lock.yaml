@@ -445,9 +445,6 @@ importers:
       prettier:
         specifier: ^3.3.1
         version: 3.3.1
-      tsx:
-        specifier: ^4.13.2
-        version: 4.13.2
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -11442,17 +11439,6 @@ packages:
     dependencies:
       tslib: 1.14.1
       typescript: 5.4.5
-    dev: true
-
-  /tsx@4.13.2:
-    resolution: {integrity: sha512-s+WGqChkA77uU8xij1IdO9jQnwJAiWJto0bF5yJLbAZpLtNs82Qa5CwMBxWjJ7QOYU9MzBf4MCNt6lZduwkQ+g==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
-    dependencies:
-      esbuild: 0.20.2
-      get-tsconfig: 4.7.5
-    optionalDependencies:
-      fsevents: 2.3.3
     dev: true
 
   /type-check@0.4.0:

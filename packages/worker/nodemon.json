@@ -1,5 +1,5 @@
 {
   "watch": ["src"],
-  "exec": "NODE_ENV=development tsx ./src/index.ts",
+  "exec": "NODE_ENV=development npm run build && node dist/index.js",
   "ext": "js ts"
 }
