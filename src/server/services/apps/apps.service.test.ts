@@ -10,6 +10,7 @@ import { AppServiceClass } from './apps.service';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { getAllApps, getAppById, updateApp, createAppConfig, insertApp } from '../../tests/apps.factory';
 import { TipiConfig } from '../../core/TipiConfig';
+import { AppQueries } from '@/server/queries/apps/apps.queries';
 
 let db: TestDatabase;
 let AppsService: AppServiceClass;
@@ -18,7 +19,7 @@ const dispatcher = new EventDispatcher(TEST_SUITE);
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  AppsService = new AppServiceClass(db.db);
+  AppsService = new AppServiceClass(new AppQueries(db.db), dispatcher);
 });
 
 beforeEach(async () => {
@@ -45,7 +46,7 @@ describe('Install app', () => {
     expect(dbApp).toBeDefined();
     expect(dbApp?.id).toBe(appConfig.id);
     expect(dbApp?.config).toStrictEqual({ TEST_FIELD: 'test' });
-    expect(dbApp?.status).toBe('installing');
+    expect(dbApp?.status).toBe('running');
   });
 
   it('Should throw if app is exposed and domain is not provided', async () => {
