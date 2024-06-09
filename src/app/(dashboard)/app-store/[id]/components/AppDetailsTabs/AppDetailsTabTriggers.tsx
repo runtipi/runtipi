@@ -2,7 +2,7 @@ import React from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
 import { AppStatus } from '@/server/db/schema';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 interface IProps {
   status: AppStatus;
