@@ -111,7 +111,7 @@ export class AppExecutors implements IAppExecutors {
         let dockerComposeFile = '';
 
         if (
-          arch == 'arm64' &&
+          arch === 'arm64' &&
           (await pathExists(path.join(repoPath, 'docker-compose.arm64.json')))
         ) {
           jsonComposeFile = 'docker-compose.arm64.json';
