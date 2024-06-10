@@ -127,7 +127,7 @@ export class AppExecutors implements IAppExecutors {
 
         const composeFile = getDockerCompose(jsonComposeConfig.services, form);
 
-        await fs.promises.writeFile(dockerComposeFile, composeFile);
+        await fs.promises.writeFile(path.join(appDirPath, dockerComposeFile), composeFile);
       } catch (err) {
         this.logger.error(`Error generating docker-compose.yml file for app ${appId}. Falling back to default docker-compose.yml`);
         this.logger.error(err);
