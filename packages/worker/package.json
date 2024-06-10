@@ -41,6 +41,7 @@
     "@sentry/integrations": "^7.114.0",
     "@sentry/node": "^8.8.0",
     "bullmq": "^5.7.15",
+    "dockerode": "^4.0.2",
     "dotenv": "^16.4.5",
     "hono": "^4.4.4",
     "ioredis": "^5.4.1",
