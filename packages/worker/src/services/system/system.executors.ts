@@ -77,6 +77,8 @@ export class SystemExecutors {
     try {
       const { rootFolderHost } = getEnv();
 
+      this.docker.getContainer('runtipi-events-handler').remove({ force: true });
+
       const commandData = {
         Domainname: 'runtipi-events-handler',
         Image: 'busybox:1.36.1',
