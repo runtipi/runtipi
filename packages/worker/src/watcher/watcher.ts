@@ -1,6 +1,6 @@
 import { eventSchema } from '@runtipi/shared';
 import { Worker } from 'bullmq';
-import { AppExecutors, RepoExecutors } from '@/services';
+import { AppExecutors, RepoExecutors, SystemExecutors } from '@/services';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 
@@ -15,6 +15,7 @@ const {
   regenerateAppEnv,
 } = new AppExecutors();
 const { cloneRepo, pullRepo } = new RepoExecutors();
+const { restart } = new SystemExecutors();
 
 const runCommand = async (jobData: unknown) => {
   const event = eventSchema.safeParse(jobData);
@@ -67,6 +68,10 @@ const runCommand = async (jobData: unknown) => {
 
     if (data.command === 'update' && process.env.NODE_ENV !== 'development') {
       ({ success, message } = await pullRepo(data.url));
+    }
+  } else if (data.type === 'system') {
+    if (data.command === 'restart') {
+      ({ success, message } = await restart());
     }
   }
 

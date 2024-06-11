@@ -73,18 +73,29 @@ export class SystemExecutors {
     }
   };
 
-  public restartRuntipi = async () => {
+  public restart = async () => {
     try {
       const { rootFolderHost } = getEnv();
 
-      this.docker.getContainer('runtipi-events-handler').remove({ force: true });
+      try {
+        await this.docker.getContainer('runtipi-events-handler').remove({ force: true });
+      } catch (e) {
+        this.logger.warn(
+          "Faield to remove old runtipi-events-handler container, probably doesn't exist",
+        );
+      }
+
+      await this.docker.createImage({
+        fromImage: 'busybox:1.36.1',
+      });
 
       const commandData = {
-        Domainname: 'runtipi-events-handler',
+        name: 'runtipi-events-handler',
         Image: 'busybox:1.36.1',
         AttachStdin: false,
         AttachStdout: false,
         AttachStderr: false,
+        Tty: true,
         HostConfig: {
           AutoRemove: true,
           Binds: [
@@ -98,7 +109,9 @@ export class SystemExecutors {
         Cmd: [`${rootFolderHost}/runtipi-cli`, 'restart'],
       };
 
-      this.docker.createContainer(commandData);
+      await this.docker.createContainer(commandData).then(async () => {
+        await this.docker.getContainer('runtipi-events-handler').start();
+      });
 
       return { success: true, message: '' };
     } catch (e) {
