@@ -4,7 +4,6 @@ import { getUserFromCookie } from '@/server/common/session.helpers';
 import { SystemServiceClass } from '@/server/services/system';
 import semver from 'semver';
 import clsx from 'clsx';
-import { appService } from '@/server/services/apps/apps.service';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { isInstanceInsecure } from '@/server/utils/network';
 import { Header } from './components/Header';
@@ -13,12 +12,13 @@ import styles from './layout.module.scss';
 import { LayoutActions } from './components/LayoutActions/LayoutActions';
 import { Welcome } from './components/Welcome/Welcome';
 import { AtRiskBanner } from './components/AtRiskBanner/AtRiskBanner';
+import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getUserFromCookie();
-  const { apps } = await appService.listApps();
+  const { apps } = await appCatalog.listApps();
 
-  const installedApps = await appService.installedApps();
+  const installedApps = await appCatalog.installedApps();
   const availableUpdates = installedApps.filter((app) => Number(app.version) < Number(app.latestVersion) && app.status !== 'updating').length;
   const { allowErrorMonitoring } = TipiConfig.getConfig();
 

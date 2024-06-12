@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
-import { appService } from '@/server/services/apps/apps.service';
+import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
 import { handleActionError } from '../utils/handle-action-error';
 import { ensureUser } from '../utils/ensure-user';
 
@@ -16,7 +16,7 @@ export const uninstallAppAction = action(input, async ({ id }) => {
   try {
     await ensureUser();
 
-    await appService.uninstallApp(id);
+    await appLifecycle.executeCommand('uninstallApp', { appId: id });
 
     revalidatePath('/apps');
     revalidatePath(`/app/${id}`);

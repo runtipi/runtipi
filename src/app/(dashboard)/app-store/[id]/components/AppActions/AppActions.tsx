@@ -24,10 +24,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { Button } from '@/components/ui/Button';
-import type { AppService } from '@/server/services/apps/apps.service';
+import { GetAppCommand } from '@/server/services/app-catalog/commands';
 
 interface IProps {
-  app: Awaited<ReturnType<AppService['getApp']>>;
+  app: Awaited<ReturnType<GetAppCommand['execute']>>;
   status?: AppStatus;
   updateAvailable: boolean;
   localDomain?: string;

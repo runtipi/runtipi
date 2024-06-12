@@ -1,12 +1,12 @@
 import { AppTile } from '@/components/AppTile';
-import type { AppService } from '@/server/services/apps/apps.service';
 import Link from 'next/link';
 
 import React from 'react';
 import styles from './GuestDashboardApps.module.css';
+import { GetGuestDashboardApps } from '@/server/services/app-catalog/commands';
 
 type Props = {
-  apps: Awaited<ReturnType<AppService['getGuestDashboardApps']>>;
+  apps: Awaited<ReturnType<GetGuestDashboardApps['execute']>>;
   hostname?: string;
 };
 

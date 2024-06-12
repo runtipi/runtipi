@@ -1,12 +1,16 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { getAppInfo, getUpdateInfo } from '../apps.helpers';
 import { notEmpty } from '@/server/common/typescript.helpers';
-import { ICommand } from './types';
+import { AppCatalogCommandParams, ICommand } from './types';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetInstalledAppsCommand>['execute']>>;
 
 export class GetInstalledAppsCommand implements ICommand<ReturnValue> {
-  constructor(private queries: AppQueries) {}
+  private queries: AppQueries;
+
+  constructor(params: AppCatalogCommandParams) {
+    this.queries = params.queries;
+  }
 
   async execute() {
     const apps = await this.queries.getApps();
