@@ -47,8 +47,8 @@ export const GeneralActions = (props: Props) => {
         {isLatest ? t('SETTINGS_ACTIONS_STAY_UP_TO_DATE') : t('SETTINGS_ACTIONS_NEW_VERSION', { version: version.latest })}
       </p>
       {renderUpdate()}
-      <h3 className="card-title mt-4">Maintainance</h3>
-      <p className="card-subtitle">Manage your runtipi instance.</p>
+      <h3 className="card-title mt-4">{t('SETTINGS_ACTIONS_MAINTENANCE_TITLE')}</h3>
+      <p className="card-subtitle">{t('SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE')}</p>
       <RestartModal />
     </div>
   );

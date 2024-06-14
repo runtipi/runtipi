@@ -27,20 +27,20 @@ export const RestartModal = () => {
 
   return (
     <div>
-      <Button onClick={restartDisclosure.open}>Restart</Button>
+      <Button onClick={restartDisclosure.open}>{t('SETTINGS_ACTIONS_RESTART')}</Button>
       <Dialog open={restartDisclosure.isOpen} onOpenChange={restartDisclosure.toggle}>
         <DialogContent size="sm" type="danger">
           <DialogHeader>
-            <DialogTitle>Restart Runtipi?</DialogTitle>
+            <DialogTitle>{t('SETTINGS_ACTIONS_RESTART')}</DialogTitle>
           </DialogHeader>
           <DialogDescription>
-            <p className="text-muted">Runtipi is going to restart now, please do not close the web page.</p>
+            <p className="text-muted">{t('SETTINGS_ACTIONS_RESTART_SUBTITLE')}</p>
             <div className="mt-3 d-flex justify-content-end">
               <Button disabled={restartMutation.status === 'executing'} onClick={restartDisclosure.close}>
-                Cancel
+                {t('SETTINGS_CANCEL_BUTTON')}
               </Button>
               <Button className="btn btn-danger ms-2" loading={restartMutation.status === 'executing'} onClick={onSubmit}>
-                Restart
+                {t('SETTINGS_ACTIONS_RESTART')}
               </Button>
             </div>
           </DialogDescription>
