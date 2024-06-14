@@ -4,6 +4,8 @@ import * as Sentry from '@sentry/node';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 import Docker from 'dockerode';
+import { pathExists } from '@runtipi/shared/node';
+import path from 'path';
 
 export class SystemExecutors {
   private readonly logger;
@@ -76,6 +78,18 @@ export class SystemExecutors {
   public restart = async () => {
     try {
       const { rootFolderHost } = getEnv();
+      let composeFile = '';
+
+      if (process.env.NODE_ENV === 'development') {
+        composeFile = path.join(rootFolderHost, 'docker-compose.prod.yml');
+      } else if (
+        process.env.NODE_ENV === 'production' &&
+        (await pathExists(path.join(rootFolderHost, 'docker-compose.prod.yml')))
+      ) {
+        composeFile = path.join(rootFolderHost, 'docker-compose.prod.yml');
+      } else {
+        composeFile = path.join(rootFolderHost, 'docker-compose.yml');
+      }
 
       try {
         await this.docker.getContainer('runtipi-events-handler').remove({ force: true });
@@ -97,7 +111,7 @@ export class SystemExecutors {
         AttachStderr: false,
         Tty: true,
         HostConfig: {
-          AutoRemove: true,
+          AutoRemove: process.env.NODE_ENV === 'development' ? false : true,
           Binds: [
             `${rootFolderHost}:${rootFolderHost}`,
             '/var/run/docker.sock:/var/run/docker.sock:ro',
@@ -106,7 +120,17 @@ export class SystemExecutors {
           ],
         },
         WorkingDir: rootFolderHost,
-        Cmd: [`${rootFolderHost}/runtipi-cli`, 'restart'],
+        Cmd: [
+          'docker',
+          'compose',
+          '-f',
+          composeFile,
+          '--env-file',
+          path.join(rootFolderHost, '.env'),
+          '--project-name',
+          'runtipi',
+          'restart',
+        ],
       };
 
       await this.docker.createContainer(commandData).then(async () => {
