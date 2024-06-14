@@ -4,6 +4,7 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
+import { AppEventFormInput } from '@runtipi/shared';
 
 export class StartAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
@@ -12,6 +13,17 @@ export class StartAppCommand implements IAppLifecycleCommand {
   constructor(params: AppLifecycleCommandParams) {
     this.queries = params.queries;
     this.eventDispatcher = params.eventDispatcher;
+  }
+
+  private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'start', appid: appId, form });
+
+    if (success) {
+      await this.queries.updateApp(appId, { status: 'running' });
+    } else {
+      Logger.error(`Failed to start app ${appId}: ${stdout}`);
+      await this.queries.updateApp(appId, { status: 'stopped' });
+    }
   }
 
   async execute(params: { appId: string }): Promise<void> {
@@ -23,20 +35,7 @@ export class StartAppCommand implements IAppLifecycleCommand {
     }
 
     await this.queries.updateApp(appId, { status: 'starting' });
-    void this.eventDispatcher
-      .dispatchEventAsync({
-        type: 'app',
-        command: 'start',
-        appid: appId,
-        form: castAppConfig(app.config),
-      })
-      .then(({ success, stdout }) => {
-        if (success) {
-          this.queries.updateApp(appId, { status: 'running' }).catch(Logger.error);
-        } else {
-          Logger.error(`Failed to start app ${appId}: ${stdout}`);
-          this.queries.updateApp(appId, { status: 'stopped' }).catch(Logger.error);
-        }
-      });
+
+    void this.sendEvent(appId, castAppConfig(app.config));
   }
 }

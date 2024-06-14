@@ -10,9 +10,7 @@ export class EventDispatcher {
 
   private instanceId: string;
 
-  private timeout: NodeJS.Timeout;
-
-  constructor(reference: string) {
+  constructor() {
     this.queue = new Queue('events', {
       connection: { host: TipiConfig.getConfig().REDIS_HOST, port: 6379, password: TipiConfig.getConfig().redisPassword },
     });
@@ -20,10 +18,6 @@ export class EventDispatcher {
       connection: { host: TipiConfig.getConfig().REDIS_HOST, port: 6379, password: TipiConfig.getConfig().redisPassword },
     });
     this.instanceId = `${TipiConfig.getConfig().version}-${Date.now()}`;
-
-    this.timeout = setTimeout(() => {
-      Logger.debug(`Redis connection is running for more than 30 seconds. Consider closing it. reference: ${reference}`);
-    }, 30000);
   }
 
   public async cleanRepeatableJobs() {
@@ -91,6 +85,5 @@ export class EventDispatcher {
   public async close() {
     await this.queue.close();
     await this.queueEvents.close();
-    clearTimeout(this.timeout);
   }
 }

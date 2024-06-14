@@ -17,6 +17,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   rules: {
+    'no-console': 1,
     '@typescript-eslint/no-floating-promises': 1,
     'no-restricted-exports': 0,
     'no-redeclare': 0, // already handled by @typescript-eslint/no-redeclare

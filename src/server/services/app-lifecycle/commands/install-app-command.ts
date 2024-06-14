@@ -8,7 +8,7 @@ import { StartAppCommand } from './start-app-command';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { TranslatedError } from '@/server/utils/errors';
 import validator from 'validator';
-import { checkAppRequirements, getAppInfo } from '../../app-catalog/apps.helpers';
+import { checkAppRequirements } from '../../app-catalog/apps.helpers';
 
 export class InstallAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
@@ -19,81 +19,81 @@ export class InstallAppCommand implements IAppLifecycleCommand {
     this.eventDispatcher = params.eventDispatcher;
   }
 
+  private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'install', appid: appId, form });
+
+    if (success) {
+      await this.queries.updateApp(appId, { status: 'running' });
+    } else {
+      Logger.error(`Failed to install app ${appId}: ${stdout}`);
+      await this.queries.deleteApp(appId);
+    }
+  }
+
+  private async startApp(appId: string): Promise<void> {
+    const command = new StartAppCommand({ queries: this.queries, eventDispatcher: this.eventDispatcher });
+    await command.execute({ appId });
+  }
+
   async execute(params: { appId: string; form: AppEventFormInput }): Promise<void> {
     const { appId, form } = params;
 
     const app = await this.queries.getApp(appId);
 
-    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
-
     if (app) {
-      const command = new StartAppCommand({ queries: this.queries, eventDispatcher: this.eventDispatcher });
-      await command.execute({ appId });
-    } else {
-      const apps = await this.queries.getApps();
-
-      if (apps.length >= 6 && TipiConfig.getConfig().demoMode) {
-        throw new TranslatedError('SYSTEM_ERROR_DEMO_MODE_LIMIT');
-      }
-
-      if (exposed && !domain) {
-        throw new TranslatedError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
-      }
-
-      if (domain && !validator.isFQDN(domain)) {
-        throw new TranslatedError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
-      }
-
-      checkAppRequirements(appId);
-
-      const appInfo = getAppInfo(appId);
-
-      if (!appInfo) {
-        throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id: appId });
-      }
-
-      if (!appInfo.exposable && exposed) {
-        throw new TranslatedError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appId });
-      }
-
-      if ((appInfo.force_expose && !exposed) || (appInfo.force_expose && !domain)) {
-        throw new TranslatedError('APP_ERROR_APP_FORCE_EXPOSED', { id: appId });
-      }
-
-      if (exposed && domain) {
-        const appsWithSameDomain = await this.queries.getAppsByDomain(domain, appId);
-
-        if (appsWithSameDomain.length > 0) {
-          throw new TranslatedError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.id });
-        }
-      }
-
-      const { version } = TipiConfig.getConfig();
-      if (appInfo?.min_tipi_version && semver.valid(version) && semver.lt(version, appInfo.min_tipi_version)) {
-        throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: appInfo.min_tipi_version });
-      }
-
-      await this.queries.createApp({
-        id: appId,
-        status: 'installing',
-        config: form,
-        version: appInfo.tipi_version,
-        exposed: exposed || false,
-        domain: domain || null,
-        openPort: openPort || false,
-        exposedLocal: exposedLocal || false,
-        isVisibleOnGuestDashboard,
-      });
-
-      // Run script
-      void this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'install', appid: appId, form: form }).then(({ success, stdout }) => {
-        if (success) {
-          this.queries.updateApp(appId, { status: 'running' }).catch(Logger.error);
-        } else {
-          this.queries.deleteApp(appId).catch(Logger.error);
-          Logger.error(`Failed to install app ${appId}: ${stdout}`);
-        }
-      });
+      return this.startApp(appId);
     }
+
+    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
+    const apps = await this.queries.getApps();
+
+    if (apps.length >= 6 && TipiConfig.getConfig().demoMode) {
+      throw new TranslatedError('SYSTEM_ERROR_DEMO_MODE_LIMIT');
+    }
+
+    if (exposed && !domain) {
+      throw new TranslatedError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
+    }
+
+    if (domain && !validator.isFQDN(domain)) {
+      throw new TranslatedError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
+    }
+
+    const appInfo = checkAppRequirements(appId);
+
+    if (!appInfo.exposable && exposed) {
+      throw new TranslatedError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appId });
+    }
+
+    if (appInfo.force_expose && !exposed) {
+      throw new TranslatedError('APP_ERROR_APP_FORCE_EXPOSED', { id: appId });
+    }
+
+    if (exposed && domain) {
+      const appsWithSameDomain = await this.queries.getAppsByDomain(domain, appId);
+
+      if (appsWithSameDomain.length > 0) {
+        throw new TranslatedError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.id });
+      }
+    }
+
+    const { version } = TipiConfig.getConfig();
+    if (appInfo?.min_tipi_version && semver.valid(version) && semver.lt(version, appInfo.min_tipi_version)) {
+      throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: appInfo.min_tipi_version });
+    }
+
+    await this.queries.createApp({
+      id: appId,
+      status: 'installing',
+      config: form,
+      version: appInfo.tipi_version,
+      exposed: exposed || false,
+      domain: domain || null,
+      openPort: openPort || false,
+      exposedLocal: exposedLocal || false,
+      isVisibleOnGuestDashboard,
+    });
+
+    void this.sendEvent(appId, form);
   }
 }

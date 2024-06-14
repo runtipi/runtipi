@@ -8,6 +8,8 @@ import semver from 'semver';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { StartAppCommand } from './start-app-command';
 import { getAppInfo, getUpdateInfo } from '../../app-catalog/apps.helpers';
+import { AppEventFormInput } from '@runtipi/shared';
+import { AppStatus } from '@/server/db/schema';
 
 export class UpdateAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
@@ -16,6 +18,26 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
   constructor(params: AppLifecycleCommandParams) {
     this.queries = params.queries;
     this.eventDispatcher = params.eventDispatcher;
+  }
+
+  private async sendEvent(appId: string, form: AppEventFormInput, appStatusBeforeUpdate: AppStatus): Promise<void> {
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'update', appid: appId, form });
+
+    if (success) {
+      const appInfo = getAppInfo(appId, appStatusBeforeUpdate);
+
+      await this.queries.updateApp(appId, { version: appInfo?.tipi_version });
+
+      if (appStatusBeforeUpdate === 'running') {
+        const command = new StartAppCommand({ queries: this.queries, eventDispatcher: this.eventDispatcher });
+        await command.execute({ appId });
+      } else {
+        await this.queries.updateApp(appId, { status: appStatusBeforeUpdate });
+      }
+    } else {
+      await this.queries.updateApp(appId, { status: 'stopped' });
+      Logger.error(`Failed to update app ${appId}: ${stdout}`);
+    }
   }
 
   async execute(params: { appId: string }): Promise<void> {
@@ -36,28 +58,6 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
     await this.queries.updateApp(appId, { status: 'updating' });
 
-    void this.eventDispatcher
-      .dispatchEventAsync({
-        type: 'app',
-        command: 'update',
-        appid: appId,
-        form: castAppConfig(app.config),
-      })
-      .then(({ success, stdout }) => {
-        if (success) {
-          const appInfo = getAppInfo(app.id, app.status);
-
-          this.queries.updateApp(appId, { version: appInfo?.tipi_version }).catch(Logger.error);
-          if (appStatusBeforeUpdate === 'running') {
-            const command = new StartAppCommand({ queries: this.queries, eventDispatcher: this.eventDispatcher });
-            command.execute({ appId }).catch(Logger.error);
-          } else {
-            this.queries.updateApp(appId, { status: appStatusBeforeUpdate }).catch(Logger.error);
-          }
-        } else {
-          this.queries.updateApp(appId, { status: 'stopped' }).catch(Logger.error);
-          Logger.error(`Failed to update app ${appId}: ${stdout}`);
-        }
-      });
+    void this.sendEvent(appId, castAppConfig(app.config), appStatusBeforeUpdate || 'missing');
   }
 }

@@ -60,6 +60,6 @@ export class AppLifecycleClass {
 export type AppLifecycle = InstanceType<typeof AppLifecycleClass>;
 
 const queries = new AppQueries();
-const eventDispatcher = new EventDispatcher('appService');
+const eventDispatcher = new EventDispatcher();
 
 export const appLifecycle = new AppLifecycleClass(queries, eventDispatcher);

@@ -4,6 +4,7 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { TranslatedError } from '@/server/utils/errors';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { Logger } from '@/server/core/Logger';
+import { AppEventFormInput } from '@runtipi/shared';
 
 export class StopAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
@@ -14,6 +15,17 @@ export class StopAppCommand implements IAppLifecycleCommand {
     this.eventDispatcher = params.eventDispatcher;
   }
 
+  private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'stop', appid: appId, form });
+
+    if (success) {
+      await this.queries.updateApp(appId, { status: 'stopped' });
+    } else {
+      Logger.error(`Failed to stop app ${appId}: ${stdout}`);
+      await this.queries.updateApp(appId, { status: 'running' });
+    }
+  }
+
   async execute(params: { appId: string }): Promise<void> {
     const { appId } = params;
     const app = await this.queries.getApp(appId);
@@ -22,18 +34,8 @@ export class StopAppCommand implements IAppLifecycleCommand {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
     }
 
-    // Run script
     await this.queries.updateApp(appId, { status: 'stopping' });
 
-    void this.eventDispatcher
-      .dispatchEventAsync({ type: 'app', command: 'stop', appid: appId, form: castAppConfig(app.config) })
-      .then(({ success, stdout }) => {
-        if (success) {
-          this.queries.updateApp(appId, { status: 'stopped' }).catch(Logger.error);
-        } else {
-          Logger.error(`Failed to stop app ${appId}: ${stdout}`);
-          this.queries.updateApp(appId, { status: 'running' }).catch(Logger.error);
-        }
-      });
+    void this.sendEvent(appId, castAppConfig(app.config));
   }
 }

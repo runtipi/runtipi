@@ -58,19 +58,17 @@ export class UpdateAppConfigCommand implements IAppLifecycleCommand {
 
     const { success } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'generate_env', appid: appId, form });
 
-    if (success) {
-      await this.queries.updateApp(appId, {
-        exposed: exposed || false,
-        exposedLocal: form.exposedLocal || false,
-        openPort: form.openPort || false,
-        domain: domain || null,
-        config: form,
-        isVisibleOnGuestDashboard: form.isVisibleOnGuestDashboard,
-      });
-
-      return;
+    if (!success) {
+      throw new TranslatedError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appId });
     }
 
-    throw new TranslatedError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appId });
+    await this.queries.updateApp(appId, {
+      exposed: exposed || false,
+      exposedLocal: form.exposedLocal || false,
+      openPort: form.openPort || false,
+      domain: domain || null,
+      config: form,
+      isVisibleOnGuestDashboard: form.isVisibleOnGuestDashboard,
+    });
   }
 }
