@@ -7,6 +7,7 @@ import { fileExists, readdirSync, readFile, readJsonFile } from '../../common/fs
 import { TipiConfig } from '../../core/TipiConfig';
 import { Logger } from '../../core/Logger';
 import { notEmpty } from '../../common/typescript.helpers';
+import { TranslatedError } from '@/server/utils/errors';
 
 /**
  *  This function checks the requirements for the app with the provided name.
@@ -150,4 +151,37 @@ export const getAppInfo = (id: string, status?: App['status']) => {
     Logger.error(`Error loading app: ${id}`);
     throw new Error(`Error loading app: ${id}`);
   }
+};
+
+export const getInstalledAppInfo = (id: string) => {
+  const appsFolder = path.join(DATA_DIR, 'apps', sanitizePath(id));
+
+  if (fileExists(path.join(appsFolder, 'config.json'))) {
+    const configFile = readJsonFile(path.join(appsFolder, 'config.json'));
+    const parsedConfig = appInfoSchema.safeParse(configFile);
+
+    if (parsedConfig.success && parsedConfig.data.available) {
+      const description = readFile(path.join(appsFolder, 'metadata', 'description.md'));
+      return { ...parsedConfig.data, description };
+    }
+  }
+
+  throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id });
+};
+
+export const getAvailableAppInfo = (id: string) => {
+  const { appsRepoId } = TipiConfig.getConfig();
+  const repoFolder = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', sanitizePath(id));
+
+  if (fileExists(path.join(repoFolder, 'config.json'))) {
+    const configFile = readJsonFile(path.join(repoFolder, 'config.json'));
+    const parsedConfig = appInfoSchema.safeParse(configFile);
+
+    if (parsedConfig.success && parsedConfig.data.available) {
+      const description = readFile(path.join(repoFolder, 'metadata', 'description.md'));
+      return { ...parsedConfig.data, description };
+    }
+  }
+
+  throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id });
 };

@@ -1,4 +1,3 @@
-import { appService } from '@/server/services/apps/apps.service';
 import { CustomLinksServiceClass } from '@/server/services/custom-links/custom-links.service';
 import { db } from '@/server/db';
 import React from 'react';
@@ -13,6 +12,7 @@ import { LinkTile } from '@/components/LinkTile/LinkTile';
 import { EmptyPage } from '../../components/EmptyPage';
 import styles from './page.module.css';
 import { AddLinkButton } from '../components/AddLink/AddLinkButton';
+import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslatorFromCookie();
@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  const installedApps = await appService.installedApps();
+  const installedApps = await appCatalog.installedApps();
 
   const user = await getUserFromCookie();
   const linksService = new CustomLinksServiceClass(db);

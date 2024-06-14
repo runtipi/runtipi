@@ -25,7 +25,7 @@ export class AppCacheManager {
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
   private cacheLastUpdated = 0;
 
-  private invalidateCache() {
+  public invalidateCache() {
     this.appsAvailable = null;
     if (this.miniSearch) {
       this.miniSearch.removeAll();
@@ -42,7 +42,7 @@ export class AppCacheManager {
     }
 
     if (!this.appsAvailable) {
-      Logger.debug('apps service -> getAvailableApps');
+      Logger.debug('app catalog -> getAvailableApps');
       const apps = await slow_getAvailableApps();
       this.appsAvailable = this.filterApps(apps);
 

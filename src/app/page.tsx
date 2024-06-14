@@ -2,7 +2,7 @@ import React from 'react';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import { redirect } from 'next/navigation';
 import { db } from '@/server/db';
-import { appService } from '@/server/services/apps/apps.service';
+import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { AuthQueries } from '@/server/queries/auth/auth.queries';
 import { UnauthenticatedPage } from '@/components/UnauthenticatedPage';
@@ -18,7 +18,7 @@ export default async function RootPage() {
   const hostname = host?.split(':')[0];
 
   if (guestDashboard) {
-    const apps = await appService.getGuestDashboardApps();
+    const apps = await appCatalog.getGuestDashboardApps();
 
     return (
       <UnauthenticatedPage title="GUEST_DASHBOARD" subtitle="RUNTIPI">

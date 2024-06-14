@@ -1,4 +1,3 @@
-import { appService } from '@/server/services/apps/apps.service';
 import React from 'react';
 import { Metadata } from 'next';
 import { TipiConfig } from '@/server/core/TipiConfig';
@@ -6,6 +5,7 @@ import { ErrorPage } from '@/components/ui/ErrorPage';
 import { getTranslatorFromCookie } from '@/lib/get-translator';
 import { MessageKey, TranslatedError } from '@/server/utils/errors';
 import { AppDetailsWrapper } from './components/AppDetailsContainer';
+import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   return {
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function AppDetailsPage({ params }: { params: { id: string } }) {
   try {
-    const app = await appService.getApp(params.id);
+    const app = await appCatalog.getApp(params.id);
     const settings = TipiConfig.getSettings();
 
     return <AppDetailsWrapper app={app} localDomain={settings.localDomain} />;
