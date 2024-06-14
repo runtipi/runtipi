@@ -48,7 +48,7 @@ export const getAvailableApps = async () => {
 
   const appsDir = readdirSync(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
 
-  const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
+  const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store', 'app-config-schema.json', 'docker-compose-schema.json'];
 
   const apps = appsDir
     .map((app) => {
