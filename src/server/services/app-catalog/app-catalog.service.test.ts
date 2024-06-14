@@ -12,26 +12,24 @@ import { AppCacheManager } from './app-cache-manager';
 
 let db: TestDatabase;
 let appCatalog: AppCatalogClass;
-const TEST_SUITE = 'appsservice';
-const cacheManager = new AppCacheManager();
+const TEST_SUITE = 'appcatalog';
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  appCatalog = new AppCatalogClass(new AppQueries(db.db), cacheManager);
 });
 
 beforeEach(async () => {
+  appCatalog = new AppCatalogClass(new AppQueries(db.db), new AppCacheManager());
   await clearDatabase(db);
   await TipiConfig.setConfig('version', 'test');
 });
 
 afterAll(async () => {
   await closeDatabase(db);
-  cacheManager.invalidateCache();
 });
 
 describe('Get app config', () => {
-  it('Should correctly get app config', async () => {
+  it('should correctly get app config', async () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ config: { TEST_FIELD: 'test' } }, appConfig, db);
@@ -46,7 +44,7 @@ describe('Get app config', () => {
     expect(app.status).toBe('running');
   });
 
-  it('Should return default values if app is not installed', async () => {
+  it('should return default values if app is not installed', async () => {
     // arrange
     const appConfig = createAppConfig({});
 
@@ -62,7 +60,7 @@ describe('Get app config', () => {
 });
 
 describe('List apps', () => {
-  it.skip('Should correctly list apps sorted by id', async () => {
+  it('should correctly list apps sorted by id', async () => {
     // arrange
     const randomName1 = faker.lorem.word();
     const randomName2 = faker.lorem.word();
@@ -83,7 +81,7 @@ describe('List apps', () => {
     expect(apps[1]?.name).toBe(sortedNames[1]);
   });
 
-  it('Should not list apps that have supportedArchitectures and are not supported', async () => {
+  it('should not list apps that have supportedArchitectures and are not supported', async () => {
     // arrange
     await TipiConfig.setConfig('architecture', 'arm64');
     createAppConfig({ supported_architectures: ['amd64'] });
@@ -96,7 +94,7 @@ describe('List apps', () => {
     expect(apps.length).toBe(0);
   });
 
-  it.skip('Should list apps that have supportedArchitectures and are supported', async () => {
+  it('should list apps that have supportedArchitectures and are supported', async () => {
     // arrange
     await TipiConfig.setConfig('architecture', 'arm');
     createAppConfig({ supported_architectures: ['arm'] });
@@ -109,7 +107,7 @@ describe('List apps', () => {
     expect(apps.length).toBe(1);
   });
 
-  it.skip('Should list apps that have no supportedArchitectures specified', async () => {
+  it('should list apps that have no supportedArchitectures specified', async () => {
     // Arrange
     await TipiConfig.setConfig('architecture', 'arm');
     createAppConfig({ supported_architectures: undefined });
@@ -122,7 +120,7 @@ describe('List apps', () => {
     expect(apps.length).toBe(1);
   });
 
-  it.skip('Should not list app with invalid config.json', async () => {
+  it('should not list app with invalid config.json', async () => {
     // arrange
     const appInfo = createAppConfig({});
     createAppConfig({});
@@ -138,7 +136,7 @@ describe('List apps', () => {
 });
 
 describe('installedApps', () => {
-  it('Should list installed apps', async () => {
+  it('should list installed apps', async () => {
     // arrange
     const appConfig = createAppConfig({});
     const appConfig2 = createAppConfig({});
@@ -155,7 +153,7 @@ describe('installedApps', () => {
     expect(apps.length).toBe(3);
   });
 
-  it('Should not list app with invalid config', async () => {
+  it('should not list app with invalid config', async () => {
     // arrange
     const appConfig = createAppConfig({ id: '1' });
     const appConfig2 = createAppConfig({ id: '2' });

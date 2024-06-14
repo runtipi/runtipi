@@ -8,7 +8,7 @@ import { StartAppCommand } from './start-app-command';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { TranslatedError } from '@/server/utils/errors';
 import validator from 'validator';
-import { checkAppRequirements } from '../../app-catalog/apps.helpers';
+import { checkAppRequirements, getAvailableAppInfo } from '../../app-catalog/apps.helpers';
 
 export class InstallAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
@@ -59,7 +59,8 @@ export class InstallAppCommand implements IAppLifecycleCommand {
       throw new TranslatedError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
     }
 
-    const appInfo = checkAppRequirements(appId);
+    checkAppRequirements(appId);
+    const appInfo = getAvailableAppInfo(appId);
 
     if (!appInfo.exposable && exposed) {
       throw new TranslatedError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appId });

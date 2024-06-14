@@ -27,6 +27,11 @@ export class UninstallAppCommand implements IAppLifecycleCommand {
     }
   }
 
+  private stopApp(appId: string) {
+    const startCommand = new StopAppCommand({ queries: this.queries, eventDispatcher: this.eventDispatcher });
+    return startCommand.execute({ appId });
+  }
+
   async execute(params: { appId: string }): Promise<void> {
     const { appId } = params;
 
@@ -37,8 +42,7 @@ export class UninstallAppCommand implements IAppLifecycleCommand {
     }
 
     if (app.status === 'running') {
-      const stopCommand = new StopAppCommand({ queries: this.queries, eventDispatcher: this.eventDispatcher });
-      await stopCommand.execute({ appId });
+      await this.stopApp(appId);
     }
 
     await this.queries.updateApp(appId, { status: 'uninstalling' });

@@ -1,5 +1,5 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { getAppInfo, getUpdateInfo } from '../apps.helpers';
+import { getInstalledAppInfo, getUpdateInfo } from '../apps.helpers';
 import { notEmpty } from '@/server/common/typescript.helpers';
 import { AppCatalogCommandParams, ICommand } from './types';
 
@@ -17,12 +17,15 @@ export class GetInstalledAppsCommand implements ICommand<ReturnValue> {
 
     const res = apps
       .map((app) => {
-        const info = getAppInfo(app.id, app.status);
-        const updateInfo = getUpdateInfo(app.id);
-        if (info) {
-          return { ...app, ...updateInfo, info };
+        try {
+          const info = getInstalledAppInfo(app.id);
+          const updateInfo = getUpdateInfo(app.id);
+          if (info) {
+            return { ...app, ...updateInfo, info };
+          }
+        } catch (e) {
+          return null;
         }
-        return null;
       })
       .filter(notEmpty);
 

@@ -1,9 +1,9 @@
 import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 import fs from 'fs-extra';
 import { EventDispatcher } from '@/server/core/EventDispatcher';
-import { TestDatabase, clearDatabase, createDatabase } from '@/server/tests/test-utils';
+import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { InstallAppCommand } from '../install-app-command';
 import { faker } from '@faker-js/faker';
@@ -12,7 +12,7 @@ import path from 'path';
 import { DATA_DIR } from '@/config/constants';
 
 let db: TestDatabase;
-const TEST_SUITE = 'startappcommand';
+const TEST_SUITE = 'installappcommand';
 const dispatcher = new EventDispatcher();
 let installApp: InstallAppCommand;
 
@@ -24,6 +24,11 @@ beforeAll(async () => {
 beforeEach(async () => {
   await clearDatabase(db);
   dispatcher.dispatchEventAsync = vi.fn().mockResolvedValue({ success: true });
+});
+
+afterAll(async () => {
+  await closeDatabase(db);
+  await dispatcher.close();
 });
 
 describe('Install app', () => {
@@ -39,6 +44,7 @@ describe('Install app', () => {
     expect(dbApp).toBeDefined();
     expect(dbApp?.id).toBe(appConfig.id);
     expect(dbApp?.config).toStrictEqual({ TEST_FIELD: 'test' });
+    expect(dbApp?.status).toBe('installing');
 
     await waitForExpect(async () => {
       const dbApp = await getAppById(appConfig.id, db);

@@ -4,7 +4,7 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { AppEventFormInput } from '@runtipi/shared';
 import { TranslatedError } from '@/server/utils/errors';
 import validator from 'validator';
-import { getAppInfo } from '../../app-catalog/apps.helpers';
+import { getInstalledAppInfo } from '../../app-catalog/apps.helpers';
 
 export class UpdateAppConfigCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
@@ -34,17 +34,13 @@ export class UpdateAppConfigCommand implements IAppLifecycleCommand {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
     }
 
-    const appInfo = getAppInfo(app.id, app.status);
-
-    if (!appInfo) {
-      throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id: appId });
-    }
+    const appInfo = getInstalledAppInfo(app.id);
 
     if (!appInfo.exposable && exposed) {
       throw new TranslatedError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appId });
     }
 
-    if ((appInfo.force_expose && !exposed) || (appInfo.force_expose && !domain)) {
+    if (appInfo.force_expose && !exposed) {
       throw new TranslatedError('APP_ERROR_APP_FORCE_EXPOSED', { id: appId });
     }
 

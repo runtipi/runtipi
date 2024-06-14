@@ -7,7 +7,7 @@ import { TranslatedError } from '@/server/utils/errors';
 import semver from 'semver';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { StartAppCommand } from './start-app-command';
-import { getAppInfo, getUpdateInfo } from '../../app-catalog/apps.helpers';
+import { getInstalledAppInfo, getUpdateInfo } from '../../app-catalog/apps.helpers';
 import { AppEventFormInput } from '@runtipi/shared';
 import { AppStatus } from '@/server/db/schema';
 
@@ -24,7 +24,7 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'update', appid: appId, form });
 
     if (success) {
-      const appInfo = getAppInfo(appId, appStatusBeforeUpdate);
+      const appInfo = getInstalledAppInfo(appId);
 
       await this.queries.updateApp(appId, { version: appInfo?.tipi_version });
 
