@@ -1,0 +1,40 @@
+ARG NODE_VERSION="20.10"
+ARG ALPINE_VERSION="3.18"
+
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+
+RUN apk add --no-cache curl
+RUN npm install pnpm -g
+
+ARG TARGETARCH
+ARG DOCKER_COMPOSE_VERSION="v2.23.3"
+ENV TARGETARCH=${TARGETARCH}
+ENV NODE_ENV="development"
+
+WORKDIR /app
+
+RUN echo "Building for ${TARGETARCH}"
+
+RUN if [ "${TARGETARCH}" = "arm64" ]; then \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
+  elif [ "${TARGETARCH}" = "amd64" ]; then \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-x86_64"; \
+  fi
+
+RUN chmod +x docker-binary
+
+RUN mv docker-binary /usr/local/bin/docker-compose
+
+COPY ./pnpm-lock.yaml ./
+RUN pnpm fetch --ignore-scripts
+
+COPY ./package*.json ./
+COPY ./packages/events-handler/package.json ./packages/events-handler/package.json
+COPY ./packages/shared/package.json ./packages/shared/package.json
+
+RUN pnpm install -r --ignore-scripts --prefer-offline
+
+COPY ./packages/events-handler/ ./packages/events-handler/
+COPY ./packages/shared/ ./packages/shared/
+
+CMD ["pnpm", "--filter", "@runtipi/events-handler", "-r", "dev"]

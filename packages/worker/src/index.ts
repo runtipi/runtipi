@@ -12,7 +12,7 @@ import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from 
 import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
-import { AppExecutors, RepoExecutors } from './services';
+import { AppExecutors, RepoExecutors, SystemExecutors } from './services';
 import { SocketManager } from './lib/socket/SocketManager';
 import { setupRoutes } from './api';
 import { DATA_DIR } from './config';
@@ -124,6 +124,11 @@ const main = async () => {
       postgresPassword: envMap.get('POSTGRES_PASSWORD') as string,
       postgresPort: envMap.get('POSTGRES_PORT') as string,
     });
+
+    // Launch revents handler container
+    logger.info('Launching events handler container...');
+    const systemExecutors = new SystemExecutors();
+    systemExecutors.launchEventHnalderContainer();
 
     // Set status to running
     logger.info('Setting status to running...');

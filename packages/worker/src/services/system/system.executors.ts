@@ -4,8 +4,7 @@ import * as Sentry from '@sentry/node';
 import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 import Docker from 'dockerode';
-import { pathExists } from '@runtipi/shared/node';
-import path from 'path';
+import * as jwt from 'jsonwebtoken';
 
 export class SystemExecutors {
   private readonly logger;
@@ -75,66 +74,72 @@ export class SystemExecutors {
     }
   };
 
-  public restart = async () => {
+  public launchEventHnalderContainer = async () => {
     try {
-      const { rootFolderHost } = getEnv();
-      let composeFile = '';
+      const { rootFolderHost, tipiVersion, jwtSecret } = getEnv();
 
-      if (process.env.NODE_ENV === 'development') {
-        composeFile = path.join(rootFolderHost, 'docker-compose.prod.yml');
-      } else if (
-        process.env.NODE_ENV === 'production' &&
-        (await pathExists(path.join(rootFolderHost, 'docker-compose.prod.yml')))
-      ) {
-        composeFile = path.join(rootFolderHost, 'docker-compose.prod.yml');
-      } else {
-        composeFile = path.join(rootFolderHost, 'docker-compose.yml');
-      }
-
+      this.logger.info('Deleting old events handler container...');
       try {
         await this.docker.getContainer('runtipi-events-handler').remove({ force: true });
       } catch (e) {
         this.logger.warn(
-          "Faield to remove old runtipi-events-handler container, probably doesn't exist",
+          "Failed to remove old runtipi-events-handler container, probably doesn't exist",
         );
       }
 
-      await this.docker.createImage({
-        fromImage: 'busybox:1.36.1',
-      });
+      if (process.env.NODE_ENV !== 'development') {
+        this.logger.info('Pulling events handler image...');
+        await this.docker.createImage({
+          fromImage: `runtipi/events-handler:${tipiVersion}`,
+        });
+      }
 
-      const commandData = {
+      this.logger.info('Creating events handler container...');
+      await this.docker.createContainer({
         name: 'runtipi-events-handler',
-        Image: 'busybox:1.36.1',
+        Image:
+          process.env.NODE_ENV === 'development'
+            ? 'runtipi/events-handler:development'
+            : `runtipi/events-handler:${tipiVersion}`,
         AttachStdin: false,
         AttachStdout: false,
         AttachStderr: false,
-        Tty: true,
+        Env: [
+          `ROOT_FOLDER_HOST=${rootFolderHost}`,
+          `NODE_ENV=${process.env.NODE_ENV}`,
+          `JWT_SECRET=${jwtSecret}`,
+        ],
         HostConfig: {
-          AutoRemove: process.env.NODE_ENV === 'development' ? false : true,
           Binds: [
             `${rootFolderHost}:${rootFolderHost}`,
             '/var/run/docker.sock:/var/run/docker.sock:ro',
-            '/usr/libexec/docker/cli-plugins:/usr/libexec/docker/cli-plugins:ro',
-            '/usr/bin/docker:/usr/bin/docker:ro',
+            process.env.NODE_ENV === 'development'
+              ? `${rootFolderHost}/packages/events-handler/src:/app/packages/events-handler/src`
+              : '',
           ],
+          NetworkMode: 'runtipi_tipi_main_network',
         },
-        WorkingDir: rootFolderHost,
-        Cmd: [
-          'docker',
-          'compose',
-          '-f',
-          composeFile,
-          '--env-file',
-          path.join(rootFolderHost, '.env'),
-          '--project-name',
-          'runtipi',
-          'restart',
-        ],
-      };
+      });
 
-      await this.docker.createContainer(commandData).then(async () => {
-        await this.docker.getContainer('runtipi-events-handler').start();
+      this.logger.info('Starting events handler container...');
+      await this.docker.getContainer('runtipi-events-handler').start();
+
+      this.logger.info('Events handler container ready!');
+
+      return { success: true, message: '' };
+    } catch (e) {
+      return this.handleSystemError(e);
+    }
+  };
+
+  public restart = async () => {
+    try {
+      const { jwtSecret } = getEnv();
+
+      const token = jwt.sign({ skill: 'issue' }, jwtSecret);
+      await fetch('http://runtipi-events-handler/api/restart', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       return { success: true, message: '' };

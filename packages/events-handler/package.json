@@ -1,0 +1,21 @@
+{
+  "name": "@runtipi/events-handler",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@hono/node-server": "^1.11.2",
+    "hono": "^4.4.6",
+    "zod": "^3.23.8"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "dev": "nodemon"
+  },
+  "author": "runtipi",
+  "license": "ISC",
+  "devDependencies": {
+    "@sentry/esbuild-plugin": "^2.18.0",
+    "esbuild": "^0.19.4",
+    "nodemon": "^3.1.3"
+  }
+}

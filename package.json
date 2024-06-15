@@ -15,7 +15,7 @@
     "build": "next build --experimental-build-mode compile",
     "start": "NODE_ENV=production node server.js",
     "start:dev-container": "./.devcontainer/filewatcher.sh && npm run start:dev",
-    "start:dev": "docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
+    "start:dev": "docker buildx build -t runtipi/events-handler:development -f ./packages/events-handler/Dockerfile.dev . && docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
     "start:prod": "docker compose --env-file ./.env --project-name runtipi -f docker-compose.prod.yml up --build",
     "start:pg": "docker run --name test-db -p 5433:5432 -d --rm -e POSTGRES_PASSWORD=postgres postgres:14",
     "version": "echo $npm_package_version",
