@@ -74,7 +74,7 @@ export class SystemExecutors {
     }
   };
 
-  public launchEventHnalderContainer = async () => {
+  public launchEventHandlerContainer = async () => {
     try {
       const { rootFolderHost, tipiVersion, jwtSecret } = getEnv();
 

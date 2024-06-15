@@ -128,7 +128,7 @@ const main = async () => {
     // Launch revents handler container
     logger.info('Launching events handler container...');
     const systemExecutors = new SystemExecutors();
-    systemExecutors.launchEventHnalderContainer();
+    systemExecutors.launchEventHandlerContainer();
 
     // Set status to running
     logger.info('Setting status to running...');
