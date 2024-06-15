@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
-import { appService } from '@/server/services/apps/apps.service';
+import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
 import { handleActionError } from '../utils/handle-action-error';
 import { ensureUser } from '../utils/ensure-user';
 
@@ -23,7 +23,7 @@ export const updateAppConfigAction = action(input, async ({ id, form }) => {
   try {
     await ensureUser();
 
-    await appService.updateAppConfig(id, form);
+    await appLifecycle.executeCommand('updateAppConfig', { appId: id, form });
 
     revalidatePath('/apps');
     revalidatePath(`/app/${id}`);

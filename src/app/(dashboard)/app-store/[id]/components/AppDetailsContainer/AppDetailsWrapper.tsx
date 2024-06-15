@@ -3,11 +3,11 @@
 import React, { startTransition, useOptimistic } from 'react';
 import { useSocket } from '@/lib/socket/useSocket';
 import { AppStatus } from '@/server/db/schema';
-import { AppService } from '@/server/services/apps/apps.service';
 import { AppDetailsContainer } from './AppDetailsContainer';
+import { GetAppCommand } from '@/server/services/app-catalog/commands';
 
 interface IProps {
-  app: Awaited<ReturnType<AppService['getApp']>>;
+  app: Awaited<ReturnType<GetAppCommand['execute']>>;
   localDomain?: string;
 }
 

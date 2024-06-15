@@ -13,7 +13,6 @@ import { updateAppConfigAction } from '@/actions/app-actions/update-app-config-a
 import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
-import { AppService } from '@/server/services/apps/apps.service';
 import { resetAppAction } from '@/actions/app-actions/reset-app-action';
 import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { InstallModal } from '../InstallModal';
@@ -25,11 +24,12 @@ import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal'
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
 import { ResetAppModal } from '../ResetAppModal';
+import { GetAppCommand } from '@/server/services/app-catalog/commands';
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
 type AppDetailsContainerProps = {
-  app: Awaited<ReturnType<AppService['getApp']>>;
+  app: Awaited<ReturnType<GetAppCommand['execute']>>;
   localDomain?: string;
   optimisticStatus: AppStatusEnum;
   setOptimisticStatus: (status: AppStatusEnum) => void;
@@ -236,7 +236,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
           />
         </div>
       </div>
-      <AppDetailsTabs info={app.info} status={optimisticStatus}/>
+      <AppDetailsTabs info={app.info} status={optimisticStatus} />
     </div>
   );
 };
