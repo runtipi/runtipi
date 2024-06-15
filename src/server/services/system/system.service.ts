@@ -5,8 +5,23 @@ import { DATA_DIR } from '@/config/constants';
 import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
+import { ICommand } from './commands/types';
+import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
+import { restartCommand } from './commands/restart-command';
+
+class CommandInvoker {
+  public async execute<T>(command: ICommand<T>) {
+    return command.execute();
+  }
+}
 
 export class SystemServiceClass {
+  private commandInvoker: CommandInvoker;
+
+  constructor(private eventDispatcher: EventDispatcher) {
+    this.commandInvoker = new CommandInvoker();
+  }
+
   /**
    * Get the current and latest version of Tipi
    *
@@ -51,4 +66,13 @@ export class SystemServiceClass {
     await promises.writeFile(`${DATA_DIR}/state/seen-welcome`, '');
     return true;
   };
+
+  public restart = async () => {
+    const command = new restartCommand(this.eventDispatcher);
+    this.commandInvoker.execute(command);
+  };
 }
+
+const eventDispatcher = new EventDispatcher('systemService');
+
+export const systemService = new SystemServiceClass(eventDispatcher);

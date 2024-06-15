@@ -45,7 +45,7 @@ const repoCommandSchema = z.object({
 
 const systemCommandSchema = z.object({
   type: z.literal(EVENT_TYPES.SYSTEM),
-  command: z.literal('system_info'),
+  command: z.union([z.literal('system_info'), z.literal('restart')]),
 });
 
 export const eventSchema = appEventSchema.or(repoCommandSchema).or(systemCommandSchema);

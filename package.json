@@ -90,6 +90,7 @@
     "@testing-library/user-event": "^14.5.2",
     "@total-typescript/shoehorn": "^0.1.2",
     "@total-typescript/ts-reset": "^0.5.1",
+    "@types/dockerode": "^3.3.29",
     "@types/eslint": "^8.56.10",
     "@types/fs-extra": "^11.0.4",
     "@types/jsonwebtoken": "^9.0.6",
