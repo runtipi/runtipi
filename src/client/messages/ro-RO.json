@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Aplicația {id} funcționează numai cu domeniul expus",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Aplicația {id} nu poate fi expusă",
   "APP_ERROR_APP_NOT_FOUND": "Aplicația {id} nu a fost găsită",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domeniul {domain} este deja utilizat de către aplicația {id}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domeniul {domain} nu este un domeniu valid",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domeniul este necesar în cazul în care aplicația este expusă",
