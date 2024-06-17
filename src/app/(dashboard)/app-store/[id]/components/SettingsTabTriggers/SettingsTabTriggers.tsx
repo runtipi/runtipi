@@ -16,10 +16,10 @@ export const SettingsTabTriggers = ({ appId }: { appId: string }) => {
   return (
     <TabsList>
       <TabsTrigger onClick={() => handleTabChange('general')} value="general">
-        General
+        {t('APP_SETTINGS_GENERAL_TITLE')}
       </TabsTrigger>
       <TabsTrigger onClick={() => handleTabChange('backups')} value="backups">
-        Backups
+        {t('APP_SETTINGS_BACKUPS_TITLE')}
       </TabsTrigger>
     </TabsList>
   );
