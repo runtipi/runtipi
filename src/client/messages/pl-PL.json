@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Aplikacja {id} działa tylko z udostępnioną domeną",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Aplikacji {id} nie można udostępnić",
   "APP_ERROR_APP_NOT_FOUND": "Aplikacja {id} nie została znaleziona",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domena {domain} jest już w użyciu przez aplikację {id}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domena {domain} nie jest poprawną domeną",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domena jest wymagana, jeśli aplikacja jest udostępniona",
