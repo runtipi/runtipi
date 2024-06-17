@@ -35,7 +35,7 @@ export class BackupAppCommand implements IAppLifecycleCommand {
     }
 
     // Run script
-    await this.queries.updateApp(appId, { status: 'backingup' });
+    await this.queries.updateApp(appId, { status: 'backing_up' });
 
     void this.sendEvent(appId, castAppConfig(app.config));
   }
