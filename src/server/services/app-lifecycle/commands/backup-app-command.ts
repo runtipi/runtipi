@@ -15,8 +15,14 @@ export class BackupAppCommand implements IAppLifecycleCommand {
     this.eventDispatcher = params.eventDispatcher;
   }
 
-  private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
-    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'backup', appid: appId, form });
+  private async sendEvent(appId: string, archiveName: string, form: AppEventFormInput): Promise<void> {
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({
+      type: 'app',
+      command: 'backup',
+      appid: appId,
+      archiveName,
+      form,
+    });
 
     if (success) {
       await this.queries.updateApp(appId, { status: 'running' });
@@ -26,8 +32,8 @@ export class BackupAppCommand implements IAppLifecycleCommand {
     }
   }
 
-  async execute(params: { appId: string }): Promise<void> {
-    const { appId } = params;
+  async execute(params: { appId: string; archiveName: string }): Promise<void> {
+    const { appId, archiveName } = params;
     const app = await this.queries.getApp(appId);
 
     if (!app) {
@@ -37,6 +43,6 @@ export class BackupAppCommand implements IAppLifecycleCommand {
     // Run script
     await this.queries.updateApp(appId, { status: 'backing_up' });
 
-    void this.sendEvent(appId, castAppConfig(app.config));
+    void this.sendEvent(appId, archiveName, castAppConfig(app.config));
   }
 }

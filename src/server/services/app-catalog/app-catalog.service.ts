@@ -2,6 +2,7 @@ import { AppCacheManager } from './app-cache-manager';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { GetInstalledAppsCommand, GetGuestDashboardApps, GetAppCommand } from './commands';
 import { IAppLifecycleCommand } from '../app-lifecycle/commands/types';
+import { GetAppBackups } from './commands/get-app-backups';
 
 class CommandInvoker {
   public async execute<T>(command: IAppLifecycleCommand<T>) {
@@ -40,6 +41,11 @@ export class AppCatalogClass {
 
   public async getApp(id: string) {
     const command = new GetAppCommand({ queries: this.queries, appId: id });
+    return this.commandInvoker.execute(command);
+  }
+
+  public async getAppBackups(id: string) {
+    const command = new GetAppBackups({ appId: id });
     return this.commandInvoker.execute(command);
   }
 }

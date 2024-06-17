@@ -64,11 +64,11 @@ const runCommand = async (jobData: unknown) => {
     }
 
     if (data.command === 'backup') {
-      ({ success, message } = await backupApp(data.appid, data.form));
+      ({ success, message } = await backupApp(data.appid, data.archiveName || '', data.form));
     }
 
     if (data.command === 'restore') {
-      ({ success, message } = await restoreApp(data.appid, data.form));
+      ({ success, message } = await restoreApp(data.appid, data.archiveName || '', data.form));
     }
   } else if (data.type === 'repo') {
     if (data.command === 'clone') {

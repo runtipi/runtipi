@@ -34,12 +34,13 @@ type OpenType = 'local' | 'domain' | 'local_domain';
 
 type AppDetailsContainerProps = {
   app: Awaited<ReturnType<GetAppCommand['execute']>>;
+  backups: string[];
   localDomain?: string;
   optimisticStatus: AppStatusEnum;
   setOptimisticStatus: (status: AppStatusEnum) => void;
 };
 
-export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, localDomain, optimisticStatus, setOptimisticStatus }) => {
+export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, backups, localDomain, optimisticStatus, setOptimisticStatus }) => {
   const t = useTranslations();
 
   const installDisclosure = useDisclosure();
@@ -253,15 +254,16 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
         status={optimisticStatus}
         onBackup={openBackupModal}
         onRestore={openRestoreModal}
+        backups={backups}
       />
       <BackupModal
-        onConfirm={() => backupMutation.execute({ id: app.info.id })}
+        onSubmit={(values) => backupMutation.execute({ id: app.id, archiveName: values.archiveName })}
         isOpen={backupDisclosure.isOpen}
         onClose={backupDisclosure.close}
         info={app.info}
       />
       <RestoreModal
-        onConfirm={() => restoreMutation.execute({ id: app.info.id })}
+        onConfirm={() => restoreMutation.execute({ id: app.info.id, archiveName: 'hi' })}
         isOpen={restoreDisclosure.isOpen}
         onClose={restoreDisclosure.close}
         info={app.info}

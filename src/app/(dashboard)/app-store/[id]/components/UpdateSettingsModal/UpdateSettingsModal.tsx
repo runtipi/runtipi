@@ -9,7 +9,6 @@ import { Tabs } from '@/components/ui/tabs';
 import { SettingsTabTriggers } from '../SettingsTabTriggers';
 import { TabsContent } from '@radix-ui/react-tabs';
 import { Button } from '@/components/ui/Button';
-import { IconStackPop, IconStackPush } from '@tabler/icons-react';
 
 interface IProps {
   info: AppInfo;
@@ -20,10 +19,11 @@ interface IProps {
   onReset: () => void;
   status?: AppStatus;
   onBackup: () => void;
-  onRestore: () => void;
+  onRestore: (backup: string) => void;
+  backups: string[];
 }
 
-export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, onClose, onSubmit, onReset, status, onBackup, onRestore }) => {
+export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, onClose, onSubmit, onReset, status, onBackup, onRestore, backups }) => {
   const t = useTranslations();
 
   return (
@@ -47,23 +47,45 @@ export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, on
                 />
               </TabsContent>
               <TabsContent value="backups" className="p-3">
-                <h3 className="mb-1">{t('APP_BACKUP_SUBMIT')}</h3>
-                <p className="text-muted mb-2">{t('APP_BACKUP_SETTINGS_SUBTITLE')}</p>
-                <Button onClick={onBackup}>
-                  {t('APP_BACKUP_SUBMIT')}
-                  <IconStackPush className="ms-1" size={14} />
-                </Button>
-                <h3 className="mb-1 mt-3">{t('APP_RESTORE_SUBMIT')}</h3>
-                <p className="text-muted mb-2">{t('APP_RESTORE_SETTINGS_SUBTITILE')}</p>
-                <Button onClick={onRestore}>
-                  {t('APP_RESTORE_SUBMIT')}
-                  <IconStackPop className="ms-1" size={14} />
-                </Button>
+                <h3 className="mb-0">{t('APP_BACKUP_SUBMIT')}</h3>
+                <div className="d-flex justify-content-between mb-2 mt-0">
+                  <p className="text-muted my-auto">Manage backups for your app.</p>
+                  <Button onClick={onBackup}>{t('APP_BACKUP_SUBMIT')}</Button>
+                </div>
+                <pre>
+                  {backups.length !== 0 ? (
+                    <div className="card">
+                      {backups.map((backup) => (
+                        <RenderBackup backup={backup} />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mx-auto my-3 text-muted">No backups found! Why don't you create one?</p>
+                  )}
+                </pre>
               </TabsContent>
             </Tabs>
           </DialogDescription>
         </ScrollArea>
       </DialogContent>
     </Dialog>
+  );
+};
+
+interface props {
+  backup: string;
+  // onRestore: () => void;
+  // onDelete: () => void;
+}
+
+const RenderBackup: React.FC<props> = ({ backup }) => {
+  return (
+    <div key={backup} className="card-body d-flex justify-content-between">
+      <p className="my-auto">{backup}</p>
+      <div>
+        <Button className="btn-danger">Delete</Button>
+        <Button className="ms-2">Restore</Button>
+      </div>
+    </div>
   );
 };

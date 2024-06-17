@@ -34,6 +34,7 @@ const appEventSchema = z.object({
     })
     .extend({})
     .catchall(z.unknown()),
+  archiveName: z.string().optional(),
 });
 
 export type AppEventFormInput = z.input<typeof appEventSchema>['form'];

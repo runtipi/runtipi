@@ -8,11 +8,12 @@ import { GetAppCommand } from '@/server/services/app-catalog/commands';
 
 interface IProps {
   app: Awaited<ReturnType<GetAppCommand['execute']>>;
+  backups: string[];
   localDomain?: string;
 }
 
 export const AppDetailsWrapper = (props: IProps) => {
-  const { app, localDomain } = props;
+  const { app, localDomain, backups } = props;
   const [optimisticStatus, setOptimisticStatus] = useOptimistic<AppStatus>(app.status);
 
   const changeStatus = (status: AppStatus) => {
@@ -90,5 +91,13 @@ export const AppDetailsWrapper = (props: IProps) => {
     selector: { type: 'app', data: { property: 'appId', value: app.id } },
   });
 
-  return <AppDetailsContainer localDomain={localDomain} app={app} optimisticStatus={optimisticStatus} setOptimisticStatus={setOptimisticStatus} />;
+  return (
+    <AppDetailsContainer
+      localDomain={localDomain}
+      app={app}
+      backups={backups}
+      optimisticStatus={optimisticStatus}
+      setOptimisticStatus={setOptimisticStatus}
+    />
+  );
 };

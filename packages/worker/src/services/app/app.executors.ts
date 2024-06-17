@@ -472,12 +472,19 @@ export class AppExecutors {
     }
   };
 
-  public backupApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
+  public backupApp = async (
+    appId: string,
+    archiveName: string,
+    form: AppEventForm,
+    skipEnvGeneration = false,
+  ) => {
     try {
       await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
-      const backupDir = path.join(DATA_DIR, 'backups', appId);
+      const backupRootDir = path.join(DATA_DIR, 'backups', appId);
+      const tmpData = path.join(backupRootDir, archiveName);
+      const archive = `${archiveName}.tar.gz`;
 
       this.logger.info('Backing up app...');
 
@@ -497,29 +504,41 @@ export class AppExecutors {
 
       this.logger.info('Copying files to backup location...');
 
-      // Remove old backup archive
-      await fs.promises.rm(`${backupDir}.tar.gz`, { force: true, recursive: true });
+      // Remove old backup archive if exists
+      if (await pathExists(path.join(backupRootDir, archive))) {
+        await fs.promises.rm(path.join(backupRootDir, archive), { force: true, recursive: true });
+      }
 
-      // Create app backup directory
-      await fs.promises.mkdir(backupDir, { recursive: true });
+      // Create app backups directory if it doesn't exist
+      if (!(await pathExists(backupRootDir))) {
+        await fs.promises.mkdir(backupRootDir, { recursive: true });
+      }
+
+      // Remove old temp backup directory if exists
+      if (await pathExists(tmpData)) {
+        await fs.promises.rm(tmpData, { force: true, recursive: true });
+      }
+
+      // Create app temp backup directory
+      await fs.promises.mkdir(tmpData, { recursive: true });
 
       // Move app data and app directories
-      await fs.promises.cp(appDataDirPath, path.join(backupDir, 'data'), { recursive: true });
-      await fs.promises.cp(appDirPath, path.join(backupDir, 'app'), { recursive: true });
+      await fs.promises.cp(appDataDirPath, path.join(tmpData, 'data'), { recursive: true });
+      await fs.promises.cp(appDirPath, path.join(tmpData, 'app'), { recursive: true });
 
       // Check if the user config folder exists and if it does copy it too
       if (await pathExists(path.join(DATA_DIR, 'user-config', appId))) {
         await fs.promises.cp(
           path.join(DATA_DIR, 'user-config', appId),
-          path.join(backupDir, 'user-config'),
+          path.join(tmpData, 'user-config'),
         );
       }
 
       // Create the archive
-      await execAsync(`tar -czpf ${backupDir}.tar.gz -C ${backupDir} .`);
+      await execAsync(`tar -czpf ${backupRootDir}/${archiveName}.tar.gz -C ${tmpData} .`);
 
       // Remove the backup folder
-      await fs.promises.rm(backupDir, { force: true, recursive: true });
+      await fs.promises.rm(tmpData, { force: true, recursive: true });
 
       this.logger.info('Backup completed!');
 
@@ -538,20 +557,26 @@ export class AppExecutors {
     }
   };
 
-  public restoreApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
+  public restoreApp = async (
+    appId: string,
+    archiveName: string,
+    form: AppEventForm,
+    skipEnvGeneration = false,
+  ) => {
     try {
       await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
-      const backupDir = path.join(DATA_DIR, 'backups', appId);
-      const archive = path.join(DATA_DIR, 'backups', `${appId}.tar.gz`);
+      const backupRootDir = path.join(DATA_DIR, 'backups', appId);
+      const tmpData = path.join(backupRootDir, archiveName);
+      const archive = `${archiveName}.tar.gz`;
       const client = await getDbClient();
 
       this.logger.info('Restoring app from backup...');
 
-      // Verify the app has a backup
-      if (!(await pathExists(archive))) {
-        throw new Error('App does not have any backups!');
+      // Verify the archive exists
+      if (!(await pathExists(path.join(backupRootDir, archive)))) {
+        throw new Error('Archive does not exist!');
       }
 
       // Ensure app directory and generate env
@@ -577,25 +602,30 @@ export class AppExecutors {
         recursive: true,
       });
 
+      // Delete old tmp data directory if exists
+      if (await pathExists(tmpData)) {
+        await fs.promises.rm(tmpData, { force: true, recursive: true });
+      }
+
       // Unzip the archive
-      await fs.promises.mkdir(backupDir, { recursive: true });
-      await execAsync(`tar -xf ${archive} -C ${backupDir}`);
+      await fs.promises.mkdir(tmpData, { recursive: true });
+      await execAsync(`tar -xf ${path.join(backupRootDir, archive)} -C ${tmpData}`);
 
       // Copy data from the backup folder
-      await fs.promises.cp(path.join(backupDir, 'app'), appDirPath, { recursive: true });
-      await fs.promises.cp(path.join(backupDir, 'data'), appDataDirPath, { recursive: true });
+      await fs.promises.cp(path.join(tmpData, 'app'), appDirPath, { recursive: true });
+      await fs.promises.cp(path.join(tmpData, 'data'), appDataDirPath, { recursive: true });
 
       // Copy user config foler if it exists
-      if (await pathExists(path.join(backupDir, 'user-config'))) {
+      if (await pathExists(path.join(tmpData, 'user-config'))) {
         await fs.promises.cp(
-          path.join(backupDir, 'user-config'),
+          path.join(tmpData, 'user-config'),
           path.join(DATA_DIR, 'user-config', appId),
           { recursive: true },
         );
       }
 
       // Delete backup folder
-      await fs.promises.rm(backupDir, { force: true, recursive: true });
+      await fs.promises.rm(tmpData, { force: true, recursive: true });
 
       // Set the version in the database
       const configFileRaw = await fs.promises.readFile(path.join(appDirPath, 'config.json'), {
