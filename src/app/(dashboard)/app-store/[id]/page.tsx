@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function AppDetailsPage({ params }: { params: { id: string } }) {
   try {
-    const app = await appCatalog.getApp(params.id);
+    const app = await appCatalog.executeCommand('getApp', params.id);
     const settings = TipiConfig.getSettings();
 
     return <AppDetailsWrapper app={app} localDomain={settings.localDomain} />;

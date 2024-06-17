@@ -10,15 +10,23 @@ import { faker } from '@faker-js/faker';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import path from 'path';
 import { DATA_DIR } from '@/config/constants';
+import { AppDataService } from '@runtipi/shared/node';
 
 let db: TestDatabase;
 const TEST_SUITE = 'installappcommand';
 const dispatcher = new EventDispatcher();
+const appDataService = new AppDataService(DATA_DIR, 'repo-id');
+const executeOtherCommandMock = vi.fn(() => Promise.resolve({ success: true }));
 let installApp: InstallAppCommand;
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  installApp = new InstallAppCommand({ queries: new AppQueries(db.db), eventDispatcher: dispatcher });
+  installApp = new InstallAppCommand({
+    queries: new AppQueries(db.db),
+    eventDispatcher: dispatcher,
+    executeOtherCommand: executeOtherCommandMock,
+    appDataService,
+  });
 });
 
 beforeEach(async () => {
@@ -77,8 +85,7 @@ describe('Install app', () => {
 
     // assert
     await waitForExpect(async () => {
-      const dbApp = await getAppById(appConfig.id, db);
-      expect(dbApp?.status).toBe('running');
+      expect(executeOtherCommandMock).toHaveBeenCalledWith('startApp', { appId: appConfig.id });
     });
   });
 
@@ -125,7 +132,7 @@ describe('Install app', () => {
     const appConfig = createAppConfig({ supported_architectures: ['arm64'] });
 
     // act & assert
-    await expect(installApp.execute({ appId: appConfig.id, form: {} })).rejects.toThrow(`App ${appConfig.id} is not supported on this architecture`);
+    await expect(installApp.execute({ appId: appConfig.id, form: {} })).rejects.toThrow('APP_ERROR_ARCHITECTURE_NOT_SUPPORTED');
   });
 
   it('can install if architecture is supported', async () => {
@@ -159,7 +166,7 @@ describe('Install app', () => {
     fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'test');
 
     // act & assert
-    await expect(installApp.execute({ appId: appConfig.id, form: {} })).rejects.toThrow(`App ${appConfig.id} has invalid config.json file`);
+    await expect(installApp.execute({ appId: appConfig.id, form: {} })).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 
   it('should throw if app is not exposed and config has force_expose set to true', async () => {
@@ -241,6 +248,6 @@ describe('Install app', () => {
     fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig.id, 'config.json'), 'test');
 
     // act & assert
-    await expect(installApp.execute({ appId: appConfig.id, form: {} })).rejects.toThrow(`App ${appConfig.id} has invalid config.json file`);
+    await expect(installApp.execute({ appId: appConfig.id, form: {} })).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 });

@@ -1,4 +1,4 @@
-import { DependsOn } from '@/config/docker-templates';
+import { DependsOn } from './schemas';
 
 interface ServicePort {
   containerPort: number;

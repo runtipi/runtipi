@@ -1,31 +1,35 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { getInstalledAppInfo } from '../apps.helpers';
 import { notEmpty } from '@/server/common/typescript.helpers';
-import { AppCatalogCommandParams, ICommand } from './types';
+import { AppCatalogCommandParams, IAppCatalogCommand } from './types';
+import { AppDataService } from '@runtipi/shared/node';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetGuestDashboardApps>['execute']>>;
 
-export class GetGuestDashboardApps implements ICommand<ReturnValue> {
+export class GetGuestDashboardApps implements IAppCatalogCommand<ReturnValue> {
   private queries: AppQueries;
+  private appDataService: AppDataService;
 
   constructor(params: AppCatalogCommandParams) {
     this.queries = params.queries;
+    this.appDataService = params.appDataService;
   }
 
   async execute() {
     const apps = await this.queries.getGuestDashboardApps();
 
-    return apps
-      .map((app) => {
+    const guestApps = await Promise.all(
+      apps.map(async (app) => {
         try {
-          const info = getInstalledAppInfo(app.id);
+          const info = await this.appDataService.getInstalledInfo(app.id);
           if (info) {
             return { ...app, info };
           }
         } catch (e) {
           return null;
         }
-      })
-      .filter(notEmpty);
+      }),
+    );
+
+    return guestApps.filter(notEmpty);
   }
 }

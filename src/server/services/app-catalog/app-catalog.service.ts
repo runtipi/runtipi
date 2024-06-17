@@ -1,11 +1,29 @@
-import { AppCacheManager } from './app-cache-manager';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { GetInstalledAppsCommand, GetGuestDashboardApps, GetAppCommand } from './commands';
-import { IAppLifecycleCommand } from '../app-lifecycle/commands/types';
+import { AppDataService } from '@runtipi/shared/node';
+import { DATA_DIR } from '@/config/constants';
+import { TipiConfig } from '@/server/core/TipiConfig';
+import { SearchAppsCommand } from './commands/search-apps-command';
+import { ListAppsCommand } from './commands/list-apps-command';
+import { AppCatalogCache } from './app-catalog-cache';
+import { IAppCatalogCommand } from './commands/types';
+
+const availableCommands = {
+  getInstalledApps: GetInstalledAppsCommand,
+  getGuestDashboardApps: GetGuestDashboardApps,
+  getApp: GetAppCommand,
+  searchApps: SearchAppsCommand,
+  listApps: ListAppsCommand,
+} as const;
+
+export type ExecuteCatalogFunction = <K extends keyof typeof availableCommands>(
+  command: K,
+  ...args: Parameters<(typeof availableCommands)[K]['prototype']['execute']>
+) => Promise<ReturnType<(typeof availableCommands)[K]['prototype']['execute']>>;
 
 class CommandInvoker {
-  public async execute<T>(command: IAppLifecycleCommand<T>) {
-    return command.execute();
+  public async execute(command: IAppCatalogCommand, args: unknown[]) {
+    return command.execute(...args);
   }
 }
 
@@ -14,39 +32,35 @@ export class AppCatalogClass {
 
   constructor(
     private queries: AppQueries,
-    private appCacheManager: AppCacheManager,
+    private appCatalogCache: AppCatalogCache,
+    private appDataService: AppDataService,
   ) {
     this.commandInvoker = new CommandInvoker();
   }
 
-  public async listApps() {
-    const apps = await this.appCacheManager.getAvailableApps();
-    return { apps, total: apps.length };
-  }
+  public executeCommand: ExecuteCatalogFunction = (command, ...args) => {
+    const Command = availableCommands[command];
 
-  public async searchApps(params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null }) {
-    return this.appCacheManager.searchApps(params);
-  }
+    if (!Command) {
+      throw new Error(`Command ${command} not found`);
+    }
 
-  public async installedApps() {
-    const command = new GetInstalledAppsCommand({ queries: this.queries });
-    return this.commandInvoker.execute(command);
-  }
+    type ReturnValue = Awaited<ReturnType<InstanceType<typeof Command>['execute']>>;
 
-  public async getGuestDashboardApps() {
-    const command = new GetGuestDashboardApps({ queries: this.queries });
-    return this.commandInvoker.execute(command);
-  }
+    const constructed = new Command({
+      queries: this.queries,
+      appDataService: this.appDataService,
+      appCatalogCache: this.appCatalogCache,
+    });
 
-  public async getApp(id: string) {
-    const command = new GetAppCommand({ queries: this.queries, appId: id });
-    return this.commandInvoker.execute(command);
-  }
+    return this.commandInvoker.execute(constructed, args) as Promise<ReturnValue>;
+  };
 }
 
 export type AppCatalog = InstanceType<typeof AppCatalogClass>;
 
 const queries = new AppQueries();
-const appCacheManager = new AppCacheManager();
+const appDataService = new AppDataService(DATA_DIR, TipiConfig.getConfig().appsRepoId);
+const appCacheManager = new AppCatalogCache(appDataService);
 
-export const appCatalog = new AppCatalogClass(queries, appCacheManager);
+export const appCatalog = new AppCatalogClass(queries, appCacheManager, appDataService);

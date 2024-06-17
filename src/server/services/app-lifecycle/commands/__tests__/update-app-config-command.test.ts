@@ -9,15 +9,23 @@ import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { UpdateAppConfigCommand } from '../update-app-config-command';
 import path from 'path';
 import { DATA_DIR } from '@/config/constants';
+import { AppDataService } from '@runtipi/shared/node';
 
 let db: TestDatabase;
 const TEST_SUITE = 'updateappconfigcommand';
 const dispatcher = new EventDispatcher();
+const appDataService = new AppDataService(DATA_DIR, 'repo-id');
 let updateAppConfig: UpdateAppConfigCommand;
+const executeOtherCommandMock = vi.fn(() => Promise.resolve({ success: true }));
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  updateAppConfig = new UpdateAppConfigCommand({ queries: new AppQueries(db.db), eventDispatcher: dispatcher });
+  updateAppConfig = new UpdateAppConfigCommand({
+    queries: new AppQueries(db.db),
+    eventDispatcher: dispatcher,
+    executeOtherCommand: executeOtherCommandMock,
+    appDataService,
+  });
 });
 
 beforeEach(async () => {

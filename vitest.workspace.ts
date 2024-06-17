@@ -10,6 +10,9 @@ export default defineWorkspace([
     plugins: [tsconfigPaths()] as Plugins,
     test: {
       globals: true,
+      deps: {
+        inline: ['fs-extra'],
+      },
       name: 'server',
       root: './',
       environment: 'node',

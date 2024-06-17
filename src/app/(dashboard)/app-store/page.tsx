@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AppStorePage() {
-  const apps = await appCatalog.searchApps({ pageSize: 18 });
+  const apps = await appCatalog.executeCommand('searchApps', { pageSize: 18 });
 
   return <AppStoreTable initialData={apps} />;
 }

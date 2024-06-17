@@ -1,5 +1,13 @@
 // Schemas
-export { appInfoSchema, formFieldSchema, FIELD_TYPES, APP_CATEGORIES, type AppInfo, type FormField, type AppCategory } from './schemas/app-schemas';
+export {
+  appInfoSchema,
+  formFieldSchema,
+  FIELD_TYPES,
+  APP_CATEGORIES,
+  type AppInfo,
+  type FormField,
+  type AppCategory,
+} from './schemas/app-schemas';
 export { envSchema, settingsSchema, ARCHITECTURES, type Architecture } from './schemas/env-schemas';
 export {
   eventSchema,

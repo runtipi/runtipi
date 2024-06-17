@@ -5,15 +5,18 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { RestartAppCommand } from '../restart-app-command';
+import { AppDataService } from '@runtipi/shared/node';
+import { DATA_DIR } from '@/config/constants';
 
 let db: TestDatabase;
 const TEST_SUITE = 'stopappcommand';
 const dispatcher = new EventDispatcher();
+const appDataService = new AppDataService(DATA_DIR, 'repo-id');
 let restartApp: RestartAppCommand;
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  restartApp = new RestartAppCommand({ queries: new AppQueries(db.db), eventDispatcher: dispatcher });
+  restartApp = new RestartAppCommand({ queries: new AppQueries(db.db), eventDispatcher: dispatcher, executeOtherCommand: vi.fn(), appDataService });
 });
 
 beforeEach(async () => {

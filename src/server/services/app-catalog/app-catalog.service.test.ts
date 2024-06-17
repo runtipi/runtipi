@@ -8,7 +8,8 @@ import { AppCatalogClass } from './app-catalog.service';
 import { createAppConfig, insertApp } from '../../tests/apps.factory';
 import { TipiConfig } from '../../core/TipiConfig';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { AppCacheManager } from './app-cache-manager';
+import { AppDataService } from '@runtipi/shared/node';
+import { AppCatalogCache } from './app-catalog-cache';
 
 let db: TestDatabase;
 let appCatalog: AppCatalogClass;
@@ -19,7 +20,8 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  appCatalog = new AppCatalogClass(new AppQueries(db.db), new AppCacheManager());
+  const appDataService = new AppDataService(DATA_DIR, TipiConfig.getConfig().appsRepoId);
+  appCatalog = new AppCatalogClass(new AppQueries(db.db), new AppCatalogCache(appDataService), appDataService);
   await clearDatabase(db);
   await TipiConfig.setConfig('version', 'test');
 });
@@ -35,7 +37,7 @@ describe('Get app config', () => {
     await insertApp({ config: { TEST_FIELD: 'test' } }, appConfig, db);
 
     // act
-    const app = await appCatalog.getApp(appConfig.id);
+    const app = await appCatalog.executeCommand('getApp', appConfig.id);
 
     // assert
     expect(app).toBeDefined();
@@ -49,7 +51,7 @@ describe('Get app config', () => {
     const appConfig = createAppConfig({});
 
     // act
-    const app = await appCatalog.getApp(appConfig.id);
+    const app = await appCatalog.executeCommand('getApp', appConfig.id);
 
     // assert
     expect(app).toBeDefined();
@@ -72,7 +74,7 @@ describe('List apps', () => {
     await insertApp({}, appConfig2, db);
 
     // act
-    const { apps } = await appCatalog.listApps();
+    const { apps } = await appCatalog.executeCommand('listApps');
 
     // assert
     expect(apps).toBeDefined();
@@ -87,7 +89,7 @@ describe('List apps', () => {
     createAppConfig({ supported_architectures: ['amd64'] });
 
     // act
-    const { apps } = await appCatalog.listApps();
+    const { apps } = await appCatalog.executeCommand('listApps');
 
     // assert
     expect(apps).toBeDefined();
@@ -100,7 +102,7 @@ describe('List apps', () => {
     createAppConfig({ supported_architectures: ['arm'] });
 
     // act
-    const { apps } = await appCatalog.listApps();
+    const { apps } = await appCatalog.executeCommand('listApps');
 
     // assert
     expect(apps).toBeDefined();
@@ -113,7 +115,7 @@ describe('List apps', () => {
     createAppConfig({ supported_architectures: undefined });
 
     // act
-    const { apps } = await appCatalog.listApps();
+    const { apps } = await appCatalog.executeCommand('listApps');
 
     // assert
     expect(apps).toBeDefined();
@@ -127,7 +129,7 @@ describe('List apps', () => {
     fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appInfo.id, 'config.json'), 'invalid json');
 
     // act
-    const { apps } = await appCatalog.listApps();
+    const { apps } = await appCatalog.executeCommand('listApps');
 
     // assert
     expect(apps).toBeDefined();
@@ -147,7 +149,7 @@ describe('installedApps', () => {
     await insertApp({}, appConfig3, db);
 
     // act
-    const apps = await appCatalog.installedApps();
+    const apps = await appCatalog.executeCommand('getInstalledApps');
 
     // assert
     expect(apps.length).toBe(3);
@@ -167,7 +169,7 @@ describe('installedApps', () => {
     fs.writeFileSync(path.join(DATA_DIR, 'repos', 'repo-id', 'apps', appConfig3.id, 'config.json'), 'invalid json');
 
     // act
-    const apps = await appCatalog.installedApps();
+    const apps = await appCatalog.executeCommand('getInstalledApps');
 
     // assert
     expect(apps.length).toBe(2);

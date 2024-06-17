@@ -6,20 +6,31 @@ import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/se
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { UpdateAppCommand } from '../update-app-command';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import { AppDataService } from '@runtipi/shared/node';
+import { DATA_DIR } from '@/config/constants';
 
 let db: TestDatabase;
 const TEST_SUITE = 'updateappcommand';
 const dispatcher = new EventDispatcher();
+const appDataService = new AppDataService(DATA_DIR, 'repo-id');
 let updateApp: UpdateAppCommand;
+
+const executeOtherCommandMock = vi.fn(() => Promise.resolve({ success: true }));
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  updateApp = new UpdateAppCommand({ queries: new AppQueries(db.db), eventDispatcher: dispatcher });
+  updateApp = new UpdateAppCommand({
+    queries: new AppQueries(db.db),
+    eventDispatcher: dispatcher,
+    executeOtherCommand: executeOtherCommandMock,
+    appDataService,
+  });
 });
 
 beforeEach(async () => {
   await clearDatabase(db);
   dispatcher.dispatchEventAsync = vi.fn().mockResolvedValue({ success: true });
+  executeOtherCommandMock.mockRestore();
 });
 
 afterAll(async () => {
@@ -28,11 +39,11 @@ afterAll(async () => {
 });
 
 describe('Update app', () => {
-  it("Should throw if app doesn't exist", async () => {
+  it("should throw if app doesn't exist", async () => {
     await expect(updateApp.execute({ appId: 'test-app2' })).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 
-  it('Should comme back to the previous status before the update of the app', async () => {
+  it('should comme back to the previous status before the update of the app', async () => {
     // arrange
     const appConfig = createAppConfig({});
     await insertApp({ status: 'stopped' }, appConfig, db);
@@ -66,6 +77,11 @@ describe('Update app', () => {
 
     // act & assert
     await expect(updateApp.execute({ appId: appConfig.id })).resolves.not.toThrow();
+
+    await waitForExpect(async () => {
+      const app = await getAppById(appConfig.id, db);
+      expect(app?.status).toBe('stopped');
+    });
   });
 
   it('should start app if it was running before the update', async () => {
@@ -78,8 +94,7 @@ describe('Update app', () => {
 
     // assert
     await waitForExpect(async () => {
-      const app = await getAppById(appConfig.id, db);
-      expect(app?.status).toBe('running');
+      expect(executeOtherCommandMock).toHaveBeenCalledWith('startApp', { appId: appConfig.id });
     });
   });
 
