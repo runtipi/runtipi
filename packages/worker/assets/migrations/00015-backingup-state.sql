@@ -6,10 +6,10 @@ BEGIN
         FROM
             pg_enum
         WHERE
-            enumlabel = 'backingup'::text
+            enumlabel = 'backing_up'::text
             AND enumtypid = 'public.app_status_enum'::regtype) THEN
     ALTER TYPE "public"."app_status_enum"
-        ADD VALUE 'backingup';
+        ADD VALUE 'backing_up';
 END IF;
 END
 $$;

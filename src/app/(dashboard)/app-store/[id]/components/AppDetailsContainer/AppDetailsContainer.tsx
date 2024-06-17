@@ -139,7 +139,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
     },
     onExecute: () => {
       backupDisclosure.close();
-      setOptimisticStatus('backingup');
+      setOptimisticStatus('backing_up');
     },
   });
 
