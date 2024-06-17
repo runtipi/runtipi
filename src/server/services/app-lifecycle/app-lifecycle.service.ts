@@ -13,6 +13,8 @@ import {
   UninstallAppCommand,
   UpdateAppCommand,
   UpdateAppConfigCommand,
+  BackupAppCommand,
+  RestoreAppCommand,
 } from './commands';
 
 export const availableCommands = {
@@ -24,6 +26,8 @@ export const availableCommands = {
   restartApp: RestartAppCommand,
   installApp: InstallAppCommand,
   uninstallApp: UninstallAppCommand,
+  backupApp: BackupAppCommand,
+  restoreApp: RestoreAppCommand,
 } as const;
 
 export type ExecuteLifecycleFunction = <K extends keyof typeof availableCommands>(

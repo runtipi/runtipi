@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import * as Sentry from '@sentry/node';
 import { execAsync, pathExists } from '@runtipi/shared/node';
-import { AppEventForm, SocketEvent, sanitizePath } from '@runtipi/shared';
+import { AppEventForm, SocketEvent, appInfoSchema, sanitizePath } from '@runtipi/shared';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
@@ -534,6 +534,158 @@ export class AppExecutors {
       }
     } catch (err) {
       this.logger.error(`Error starting apps: ${err}`);
+    }
+  };
+
+  public backupApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
+    try {
+      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+
+      const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
+      const backupDir = path.join(DATA_DIR, 'backups', appId);
+
+      this.logger.info('Backing up app...');
+
+      await this.ensureAppDir(appId, form);
+
+      if (!skipEnvGeneration) {
+        this.logger.info(`Regenerating app.env file for app ${appId}`);
+        await generateEnvFile(appId, form);
+      }
+
+      // Stop app so containers like databases don't cause problems
+      this.logger.info(`Stopping app ${appId}`);
+
+      await compose(appId, 'rm --force --stop');
+
+      this.logger.info('App stopped!');
+
+      this.logger.info('Copying files to backup location...');
+
+      // Remove old backup archive
+      await fs.promises.rm(`${backupDir}.tar.gz`, { force: true, recursive: true });
+
+      // Create app backup directory
+      await fs.promises.mkdir(backupDir, { recursive: true });
+
+      // Move app data and app directories
+      await fs.promises.cp(appDataDirPath, path.join(backupDir, 'data'), { recursive: true });
+      await fs.promises.cp(appDirPath, path.join(backupDir, 'app'), { recursive: true });
+
+      // Check if the user config folder exists and if it does copy it too
+      if (await pathExists(path.join(DATA_DIR, 'user-config', appId))) {
+        await fs.promises.cp(
+          path.join(DATA_DIR, 'user-config', appId),
+          path.join(backupDir, 'user-config'),
+        );
+      }
+
+      // Create the archive
+      await execAsync(`tar -czpf ${backupDir}.tar.gz -C ${backupDir} .`);
+
+      // Remove the backup folder
+      await fs.promises.rm(backupDir, { force: true, recursive: true });
+
+      this.logger.info('Backup completed!');
+
+      // Start the app
+      this.logger.info(`Starting app ${appId}`);
+
+      await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
+
+      this.logger.info(`App ${appId} started`);
+
+      // Done
+      await SocketManager.emit({ type: 'app', event: 'backup_success', data: { appId } });
+      return { success: true, message: `App ${appId} backed up successfully` };
+    } catch (err) {
+      return this.handleAppError(err, appId, 'backup_error');
+    }
+  };
+
+  public restoreApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
+    try {
+      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+
+      const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
+      const backupDir = path.join(DATA_DIR, 'backups', appId);
+      const archive = path.join(DATA_DIR, 'backups', `${appId}.tar.gz`);
+      const client = await getDbClient();
+
+      this.logger.info('Restoring app from backup...');
+
+      // Verify the app has a backup
+      if (!(await pathExists(archive))) {
+        throw new Error('App does not have any backups!');
+      }
+
+      // Ensure app directory and generate env
+      await this.ensureAppDir(appId, form);
+
+      if (!skipEnvGeneration) {
+        this.logger.info(`Regenerating app.env file for app ${appId}`);
+        await generateEnvFile(appId, form);
+      }
+
+      // Stop the app
+      this.logger.info(`Stopping app ${appId}`);
+
+      await compose(appId, 'rm --force --stop');
+
+      this.logger.info('App stopped!');
+
+      // Remove old data directories
+      await fs.promises.rm(appDataDirPath, { force: true, recursive: true });
+      await fs.promises.rm(appDirPath, { force: true, recursive: true });
+      await fs.promises.rm(path.join(DATA_DIR, 'user-config', appId), {
+        force: true,
+        recursive: true,
+      });
+
+      // Unzip the archive
+      await fs.promises.mkdir(backupDir, { recursive: true });
+      await execAsync(`tar -xf ${archive} -C ${backupDir}`);
+
+      // Copy data from the backup folder
+      await fs.promises.cp(path.join(backupDir, 'app'), appDirPath, { recursive: true });
+      await fs.promises.cp(path.join(backupDir, 'data'), appDataDirPath, { recursive: true });
+
+      // Copy user config foler if it exists
+      if (await pathExists(path.join(backupDir, 'user-config'))) {
+        await fs.promises.cp(
+          path.join(backupDir, 'user-config'),
+          path.join(DATA_DIR, 'user-config', appId),
+          { recursive: true },
+        );
+      }
+
+      // Delete backup folder
+      await fs.promises.rm(backupDir, { force: true, recursive: true });
+
+      // Set the version in the database
+      const configFileRaw = await fs.promises.readFile(path.join(appDirPath, 'config.json'), {
+        encoding: 'utf-8',
+      });
+      const configParsed = await appInfoSchema.safeParseAsync(JSON.parse(configFileRaw));
+      await client?.query(`UPDATE app SET version = $1 WHERE id = $2`, [
+        configParsed.data?.tipi_version,
+        appId,
+      ]);
+
+      // Start the app
+      this.logger.info(`Starting app ${appId}`);
+
+      await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
+
+      this.logger.info(`App ${appId} started`);
+
+      this.logger.info(`App ${appId} restored!`);
+
+      // Done
+      await SocketManager.emit({ type: 'app', event: 'restore_success', data: { appId } });
+      return { success: true, message: `App ${appId} restored successfully` };
+    } catch (err) {
+      return this.handleAppError(err, appId, 'restore_error');
     }
   };
 }

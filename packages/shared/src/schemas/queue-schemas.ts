@@ -19,6 +19,8 @@ const appEventSchema = z.object({
     z.literal('reset'),
     z.literal('restart'),
     z.literal('generate_env'),
+    z.literal('backup'),
+    z.literal('restore'),
   ]),
   appid: z.string(),
   skipEnv: z.boolean().optional().default(false),
