@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "App {id} works only with exposed domain",
   "APP_ERROR_APP_NOT_EXPOSABLE": "App {id} is not exposable",
   "APP_ERROR_APP_NOT_FOUND": "App {id} is niet gevonden",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domein {domain} is al in gebruik door app {id}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domein {domain} is geen geldig domein",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domain is required if app is exposed",
