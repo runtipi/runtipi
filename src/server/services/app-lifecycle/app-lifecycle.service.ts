@@ -9,6 +9,8 @@ import {
   UninstallAppCommand,
   UpdateAppCommand,
   UpdateAppConfigCommand,
+  BackupAppCommand,
+  RestoreAppCommand,
 } from './commands';
 import { IAppLifecycleCommand } from './commands/types';
 
@@ -27,6 +29,8 @@ const availableCommands = {
   restartApp: RestartAppCommand,
   installApp: InstallAppCommand,
   uninstallApp: UninstallAppCommand,
+  backupApp: BackupAppCommand,
+  restoreApp: RestoreAppCommand,
 } as const;
 
 export class AppLifecycleClass {

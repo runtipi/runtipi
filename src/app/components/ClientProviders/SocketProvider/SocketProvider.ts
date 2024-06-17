@@ -56,6 +56,18 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         case 'restart_error':
           toast.error(t('APP_ERROR_APP_FAILED_TO_RESTART', { id: data.appId }));
           break;
+        case 'backup_success':
+          toast.success(t('APP_BACKUP_SUCCESS', { id: data.appId }));
+          break;
+        case 'backup_error':
+          toast.error(t('APP_BACKUP_ERROR', { id: data.appId }));
+          break;
+        case 'restore_success':
+          toast.success(t('APP_RESTORE_SUCCESS', { id: data.appId }));
+          break;
+        case 'restore_error':
+          toast.error(t('APP_RESTORE_ERROR', { id: data.appId }));
+          break;
         default:
           break;
       }

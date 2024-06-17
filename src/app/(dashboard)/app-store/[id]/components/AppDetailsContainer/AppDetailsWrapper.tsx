@@ -71,6 +71,18 @@ export const AppDetailsWrapper = (props: IProps) => {
         case 'reset_error':
           changeStatus('stopped');
           break;
+        case 'backup_success':
+          changeStatus('running');
+          break;
+        case 'backup_error':
+          changeStatus('stopped');
+          break;
+        case 'restore_success':
+          changeStatus('running');
+          break;
+        case 'restore_error':
+          changeStatus('stopped');
+          break;
         default:
           break;
       }

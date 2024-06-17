@@ -80,6 +80,7 @@ services:
       - ${RUNTIPI_TRAEFIK_PATH:-.}/traefik:/data/traefik
       - ${RUNTIPI_USER_CONFIG_PATH:-.}/user-config:/data/user-config
       - ${RUNTIPI_APP_DATA_PATH:-.}/app-data:/app-data
+      - ${RUNTIPI_BACKUPS_PATH:-.}/backups:/data/backups
       # Static
       - ./.env:/data/.env
       - ./docker-compose.dev.yml:/data/docker-compose.yml

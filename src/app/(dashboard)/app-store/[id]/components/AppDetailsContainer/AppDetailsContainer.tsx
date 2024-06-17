@@ -25,6 +25,10 @@ import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
 import { ResetAppModal } from '../ResetAppModal';
 import { GetAppCommand } from '@/server/services/app-catalog/commands';
+import { backupAppAction } from '@/actions/app-actions/backup-app-action';
+import { BackupModal } from '../BackupModal';
+import { restoreAppAction } from '@/actions/app-actions/restore-app-action';
+import { RestoreModal } from '../RestoreModal';
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
@@ -45,6 +49,8 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
   const updateDisclosure = useDisclosure();
   const updateSettingsDisclosure = useDisclosure();
   const resetAppDisclosure = useDisclosure();
+  const backupDisclosure = useDisclosure();
+  const restoreDisclosure = useDisclosure();
 
   const installMutation = useAction(installAppAction, {
     onError: (e) => {
@@ -127,6 +133,26 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
     },
   });
 
+  const backupMutation = useAction(backupAppAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      backupDisclosure.close();
+      setOptimisticStatus('backingup');
+    },
+  });
+
+  const restoreMutation = useAction(restoreAppAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      restoreDisclosure.close();
+      setOptimisticStatus('restoring');
+    },
+  });
+
   const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
 
   const openResetAppModal = () => {
@@ -134,6 +160,22 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
 
     setTimeout(() => {
       resetAppDisclosure.open();
+    }, 300);
+  };
+
+  const openBackupModal = () => {
+    updateSettingsDisclosure.close();
+
+    setTimeout(() => {
+      backupDisclosure.open();
+    }, 300);
+  };
+
+  const openRestoreModal = () => {
+    updateSettingsDisclosure.close();
+
+    setTimeout(() => {
+      restoreDisclosure.open();
     }, 300);
   };
 
@@ -209,6 +251,20 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
         config={castAppConfig(app?.config)}
         onReset={openResetAppModal}
         status={optimisticStatus}
+        onBackup={openBackupModal}
+        onRestore={openRestoreModal}
+      />
+      <BackupModal
+        onConfirm={() => backupMutation.execute({ id: app.info.id })}
+        isOpen={backupDisclosure.isOpen}
+        onClose={backupDisclosure.close}
+        info={app.info}
+      />
+      <RestoreModal
+        onConfirm={() => restoreMutation.execute({ id: app.info.id })}
+        isOpen={restoreDisclosure.isOpen}
+        onClose={restoreDisclosure.close}
+        info={app.info}
       />
       <div className="card-header d-flex flex-column flex-md-row">
         <AppLogo id={app.id} size={130} alt={app.info.name} />
