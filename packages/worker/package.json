@@ -25,6 +25,7 @@
     "dotenv-cli": "^7.4.2",
     "esbuild": "^0.19.4",
     "eslint": "8.57.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
     "knip": "^5.19.0",
     "memfs": "^4.8.2",

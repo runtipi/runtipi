@@ -6,31 +6,33 @@ import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
 import semver from 'semver';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { StartAppCommand } from './start-app-command';
-import { getInstalledAppInfo, getUpdateInfo } from '../../app-catalog/apps.helpers';
 import { AppEventFormInput } from '@runtipi/shared';
 import { AppStatus } from '@/server/db/schema';
+import { AppDataService } from '@runtipi/shared/node';
 
 export class UpdateAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
   private eventDispatcher: EventDispatcher;
+  private appDataService: AppDataService;
+  private executeOtherCommand: IAppLifecycleCommand['execute'];
 
   constructor(params: AppLifecycleCommandParams) {
     this.queries = params.queries;
     this.eventDispatcher = params.eventDispatcher;
+    this.appDataService = params.appDataService;
+    this.executeOtherCommand = params.executeOtherCommand;
   }
 
   private async sendEvent(appId: string, form: AppEventFormInput, appStatusBeforeUpdate: AppStatus): Promise<void> {
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'update', appid: appId, form });
 
     if (success) {
-      const appInfo = getInstalledAppInfo(appId);
+      const appInfo = await this.appDataService.getInstalledInfo(appId);
 
       await this.queries.updateApp(appId, { version: appInfo?.tipi_version });
 
       if (appStatusBeforeUpdate === 'running') {
-        const command = new StartAppCommand({ queries: this.queries, eventDispatcher: this.eventDispatcher });
-        await command.execute({ appId });
+        await this.executeOtherCommand('startApp', { appId });
       } else {
         await this.queries.updateApp(appId, { status: appStatusBeforeUpdate });
       }
@@ -51,7 +53,7 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
     const { version } = TipiConfig.getConfig();
 
-    const { minTipiVersion } = getUpdateInfo(app.id);
+    const { minTipiVersion } = await this.appDataService.getUpdateInfo(appId);
     if (minTipiVersion && semver.valid(version) && semver.lt(version, minTipiVersion)) {
       throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: minTipiVersion });
     }

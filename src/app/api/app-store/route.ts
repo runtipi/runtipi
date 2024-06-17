@@ -8,7 +8,7 @@ const getApps = async (searchParams: URLSearchParams) => {
   const category = searchParams.get('category');
   const cursor = searchParams.get('cursor');
 
-  return appCatalog.searchApps({ search, category, pageSize: Number(pageSize), cursor });
+  return appCatalog.executeCommand('searchApps', { search, category, pageSize: Number(pageSize), cursor });
 };
 
 export async function GET(request: Request) {

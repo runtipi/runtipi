@@ -1,5 +1,9 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
+import { IAppLifecycleCommand } from './commands/types';
+import { AppDataService } from '@runtipi/shared/node';
+import { DATA_DIR } from '@/config/constants';
+import { TipiConfig } from '@/server/core/TipiConfig';
 import {
   InstallAppCommand,
   ResetAppCommand,
@@ -10,15 +14,8 @@ import {
   UpdateAppCommand,
   UpdateAppConfigCommand,
 } from './commands';
-import { IAppLifecycleCommand } from './commands/types';
 
-class CommandInvoker {
-  public async execute(command: IAppLifecycleCommand, args: unknown[]) {
-    return command.execute(...args);
-  }
-}
-
-const availableCommands = {
+export const availableCommands = {
   startApp: StartAppCommand,
   resetApp: ResetAppCommand,
   updateApp: UpdateAppCommand,
@@ -29,20 +26,29 @@ const availableCommands = {
   uninstallApp: UninstallAppCommand,
 } as const;
 
+export type ExecuteLifecycleFunction = <K extends keyof typeof availableCommands>(
+  command: K,
+  ...args: Parameters<(typeof availableCommands)[K]['prototype']['execute']>
+) => Promise<ReturnType<(typeof availableCommands)[K]['prototype']['execute']>>;
+
+class CommandInvoker {
+  public async execute(command: IAppLifecycleCommand, args: unknown[]) {
+    return command.execute(...args);
+  }
+}
+
 export class AppLifecycleClass {
   private commandInvoker: CommandInvoker;
 
   constructor(
     private queries: AppQueries,
     private eventDispatcher: EventDispatcher,
+    private appDataService: AppDataService,
   ) {
     this.commandInvoker = new CommandInvoker();
   }
 
-  public executeCommand<K extends keyof typeof availableCommands>(
-    command: K,
-    ...args: Parameters<(typeof availableCommands)[K]['prototype']['execute']>
-  ) {
+  public executeCommand: ExecuteLifecycleFunction = (command, ...args) => {
     const Command = availableCommands[command];
 
     if (!Command) {
@@ -51,15 +57,21 @@ export class AppLifecycleClass {
 
     type ReturnValue = Awaited<ReturnType<InstanceType<typeof Command>['execute']>>;
 
-    const constructed = new Command({ queries: this.queries, eventDispatcher: this.eventDispatcher });
+    const constructed = new Command({
+      queries: this.queries,
+      eventDispatcher: this.eventDispatcher,
+      appDataService: this.appDataService,
+      executeOtherCommand: this.executeCommand,
+    });
 
     return this.commandInvoker.execute(constructed, args) as Promise<ReturnValue>;
-  }
+  };
 }
 
 export type AppLifecycle = InstanceType<typeof AppLifecycleClass>;
 
 const queries = new AppQueries();
 const eventDispatcher = new EventDispatcher();
+const appDataService = new AppDataService(DATA_DIR, TipiConfig.getConfig().appsRepoId);
 
-export const appLifecycle = new AppLifecycleClass(queries, eventDispatcher);
+export const appLifecycle = new AppLifecycleClass(queries, eventDispatcher, appDataService);

@@ -1,7 +1,7 @@
 import MiniSearch from 'minisearch';
-import { getAvailableApps as slow_getAvailableApps } from './apps.helpers';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { Logger } from '@/server/core/Logger';
+import { AppDataService } from 'packages/shared/src/node';
 
 const sortApps = (a: AppList[number], b: AppList[number]) => a.id.localeCompare(b.id);
 const filterApp = (app: AppList[number]): boolean => {
@@ -17,13 +17,18 @@ const filterApp = (app: AppList[number]): boolean => {
   return app.supported_architectures.includes(arch);
 };
 
-type AppList = Awaited<ReturnType<typeof slow_getAvailableApps>>;
+type AppList = Awaited<ReturnType<InstanceType<typeof AppDataService>['getAllAvailableApps']>>;
 
-export class AppCacheManager {
+export class AppCatalogCache {
   private appsAvailable: AppList | null = null;
+  private appDataService: AppDataService;
   private miniSearch: MiniSearch<AppList[number]> | null = null;
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
   private cacheLastUpdated = 0;
+
+  constructor(appDataService: AppDataService) {
+    this.appDataService = appDataService;
+  }
 
   public invalidateCache() {
     this.appsAvailable = null;
@@ -43,7 +48,7 @@ export class AppCacheManager {
 
     if (!this.appsAvailable) {
       Logger.debug('app catalog -> getAvailableApps');
-      const apps = await slow_getAvailableApps();
+      const apps = await this.appDataService.getAllAvailableApps();
       this.appsAvailable = this.filterApps(apps);
 
       this.miniSearch = new MiniSearch<(typeof this.appsAvailable)[number]>({

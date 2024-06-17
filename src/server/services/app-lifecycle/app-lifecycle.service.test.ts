@@ -6,15 +6,18 @@ import { getAppById, createAppConfig, insertApp } from '../../tests/apps.factory
 import { TipiConfig } from '../../core/TipiConfig';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import waitForExpect from 'wait-for-expect';
+import { AppDataService } from '@runtipi/shared/node';
+import { DATA_DIR } from '@/config/constants';
 
 let db: TestDatabase;
 let appLifecycle: AppLifecycleClass;
 const TEST_SUITE = 'applifecycle';
 const dispatcher = new EventDispatcher();
+const appDataService = new AppDataService(DATA_DIR, 'repo-id');
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  appLifecycle = new AppLifecycleClass(new AppQueries(db.db), dispatcher);
+  appLifecycle = new AppLifecycleClass(new AppQueries(db.db), dispatcher, appDataService);
 });
 
 beforeEach(async () => {

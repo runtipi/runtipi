@@ -1,22 +1,25 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 import { EventDispatcher } from '@/server/core/EventDispatcher';
-import semver from 'semver';
+import { lt, valid } from 'semver';
 import { Logger } from '@/server/core/Logger';
 import { AppEventFormInput } from '@runtipi/shared';
-import { StartAppCommand } from './start-app-command';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { TranslatedError } from '@/server/utils/errors';
-import validator from 'validator';
-import { checkAppRequirements, getAvailableAppInfo } from '../../app-catalog/apps.helpers';
+import { isFQDN } from 'validator';
+import { AppDataService } from '@runtipi/shared/node';
 
 export class InstallAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
   private eventDispatcher: EventDispatcher;
+  private appDataService: AppDataService;
+  private executeOtherCommand: IAppLifecycleCommand['execute'];
 
   constructor(params: AppLifecycleCommandParams) {
     this.queries = params.queries;
     this.eventDispatcher = params.eventDispatcher;
+    this.appDataService = params.appDataService;
+    this.executeOtherCommand = params.executeOtherCommand;
   }
 
   private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
@@ -31,8 +34,7 @@ export class InstallAppCommand implements IAppLifecycleCommand {
   }
 
   private async startApp(appId: string): Promise<void> {
-    const command = new StartAppCommand({ queries: this.queries, eventDispatcher: this.eventDispatcher });
-    await command.execute({ appId });
+    await this.executeOtherCommand('startApp', { appId });
   }
 
   async execute(params: { appId: string; form: AppEventFormInput }): Promise<void> {
@@ -55,12 +57,19 @@ export class InstallAppCommand implements IAppLifecycleCommand {
       throw new TranslatedError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
     }
 
-    if (domain && !validator.isFQDN(domain)) {
+    if (domain && !isFQDN(domain)) {
       throw new TranslatedError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
     }
 
-    checkAppRequirements(appId);
-    const appInfo = getAvailableAppInfo(appId);
+    const appInfo = await this.appDataService.getInfoFromAppStore(appId);
+
+    if (!appInfo) {
+      throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+    }
+
+    if (appInfo.supported_architectures?.length && !appInfo.supported_architectures.includes(TipiConfig.getConfig().architecture)) {
+      throw new TranslatedError('APP_ERROR_ARCHITECTURE_NOT_SUPPORTED', { id: appId, arch: TipiConfig.getConfig().architecture });
+    }
 
     if (!appInfo.exposable && exposed) {
       throw new TranslatedError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appId });
@@ -79,7 +88,7 @@ export class InstallAppCommand implements IAppLifecycleCommand {
     }
 
     const { version } = TipiConfig.getConfig();
-    if (appInfo?.min_tipi_version && semver.valid(version) && semver.lt(version, appInfo.min_tipi_version)) {
+    if (appInfo?.min_tipi_version && valid(version) && lt(version, appInfo.min_tipi_version)) {
       throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: appInfo.min_tipi_version });
     }
 

@@ -1,34 +1,36 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { getInstalledAppInfo, getUpdateInfo } from '../apps.helpers';
 import { notEmpty } from '@/server/common/typescript.helpers';
-import { AppCatalogCommandParams, ICommand } from './types';
+import { AppCatalogCommandParams, IAppCatalogCommand } from './types';
+import { AppDataService } from '@runtipi/shared/node';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetInstalledAppsCommand>['execute']>>;
 
-export class GetInstalledAppsCommand implements ICommand<ReturnValue> {
+export class GetInstalledAppsCommand implements IAppCatalogCommand<ReturnValue> {
   private queries: AppQueries;
+  private appDataService: AppDataService;
 
   constructor(params: AppCatalogCommandParams) {
     this.queries = params.queries;
+    this.appDataService = params.appDataService;
   }
 
   async execute() {
     const apps = await this.queries.getApps();
 
-    const res = apps
-      .map((app) => {
+    const installedApps = await Promise.all(
+      apps.map(async (app) => {
         try {
-          const info = getInstalledAppInfo(app.id);
-          const updateInfo = getUpdateInfo(app.id);
+          const info = await this.appDataService.getInstalledInfo(app.id);
+          const updateInfo = await this.appDataService.getUpdateInfo(app.id);
           if (info) {
             return { ...app, ...updateInfo, info };
           }
         } catch (e) {
           return null;
         }
-      })
-      .filter(notEmpty);
+      }),
+    );
 
-    return res;
+    return installedApps.filter(notEmpty);
   }
 }

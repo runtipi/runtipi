@@ -10,8 +10,12 @@ class SocketManager {
     const io = new Server(5001, { cors: { origin: '*' }, path: '/worker/socket.io' });
 
     io.on('connection', async (socket) => {
-      socket.on('app-logs-init', (event) => handleViewAppLogsEvent(socket, event));
-      socket.on('runtipi-logs-init', (event) => handleViewRuntipiLogsEvent(socket, event));
+      socket.on('app-logs-init', (event) =>
+        handleViewAppLogsEvent(socket, event, this.emit.bind(this)),
+      );
+      socket.on('runtipi-logs-init', (event) =>
+        handleViewRuntipiLogsEvent(socket, event, this.emit.bind(this)),
+      );
       socket.on('disconnect', () => {});
     });
 

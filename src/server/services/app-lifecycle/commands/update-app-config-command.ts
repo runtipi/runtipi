@@ -4,15 +4,17 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { AppEventFormInput } from '@runtipi/shared';
 import { TranslatedError } from '@/server/utils/errors';
 import validator from 'validator';
-import { getInstalledAppInfo } from '../../app-catalog/apps.helpers';
+import { AppDataService } from '@runtipi/shared/node';
 
 export class UpdateAppConfigCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
   private eventDispatcher: EventDispatcher;
+  private appDataService: AppDataService;
 
   constructor(params: AppLifecycleCommandParams) {
     this.queries = params.queries;
     this.eventDispatcher = params.eventDispatcher;
+    this.appDataService = params.appDataService;
   }
 
   async execute(params: { appId: string; form: AppEventFormInput }): Promise<void> {
@@ -34,7 +36,11 @@ export class UpdateAppConfigCommand implements IAppLifecycleCommand {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
     }
 
-    const appInfo = getInstalledAppInfo(app.id);
+    const appInfo = await this.appDataService.getInstalledInfo(appId);
+
+    if (!appInfo) {
+      throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+    }
 
     if (!appInfo.exposable && exposed) {
       throw new TranslatedError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appId });

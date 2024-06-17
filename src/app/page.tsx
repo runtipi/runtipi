@@ -18,7 +18,7 @@ export default async function RootPage() {
   const hostname = host?.split(':')[0];
 
   if (guestDashboard) {
-    const apps = await appCatalog.getGuestDashboardApps();
+    const apps = await appCatalog.executeCommand('getGuestDashboardApps');
 
     return (
       <UnauthenticatedPage title="GUEST_DASHBOARD" subtitle="RUNTIPI">

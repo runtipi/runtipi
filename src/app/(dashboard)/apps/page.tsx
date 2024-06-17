@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  const installedApps = await appCatalog.installedApps();
+  const installedApps = await appCatalog.executeCommand('getInstalledApps');
 
   const user = await getUserFromCookie();
   const linksService = new CustomLinksServiceClass(db);

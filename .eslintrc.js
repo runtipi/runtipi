@@ -4,6 +4,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
     'next/core-web-vitals',
+    'plugin:import/recommended',
     'plugin:import/typescript',
     'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
@@ -17,6 +18,9 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   rules: {
+    'import/no-cycle': 2,
+    'import/no-named-as-default-member': 0,
+    'import/no-named-as-default': 0,
     'no-console': 1,
     '@typescript-eslint/no-floating-promises': 1,
     'no-restricted-exports': 0,
@@ -87,6 +91,16 @@ module.exports = {
       },
     },
   ],
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+      },
+    },
+  },
   globals: {
     JSX: true,
     NodeJS: true,

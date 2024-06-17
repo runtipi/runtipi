@@ -4,16 +4,17 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { TranslatedError } from '@/server/utils/errors';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { Logger } from '@/server/core/Logger';
-import { StopAppCommand } from './stop-app-command';
 import { AppEventFormInput } from '@runtipi/shared';
 
 export class UninstallAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
   private eventDispatcher: EventDispatcher;
+  private executeOtherCommand: IAppLifecycleCommand['execute'];
 
   constructor(params: AppLifecycleCommandParams) {
     this.queries = params.queries;
     this.eventDispatcher = params.eventDispatcher;
+    this.executeOtherCommand = params.executeOtherCommand;
   }
 
   private async sendEvent(appId: string, form: AppEventFormInput) {
@@ -28,8 +29,7 @@ export class UninstallAppCommand implements IAppLifecycleCommand {
   }
 
   private stopApp(appId: string) {
-    const startCommand = new StopAppCommand({ queries: this.queries, eventDispatcher: this.eventDispatcher });
-    return startCommand.execute({ appId });
+    return this.executeOtherCommand('stopApp', { appId });
   }
 
   async execute(params: { appId: string }): Promise<void> {

@@ -16,9 +16,9 @@ import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getUserFromCookie();
-  const { apps } = await appCatalog.listApps();
+  const { apps } = await appCatalog.executeCommand('listApps');
 
-  const installedApps = await appCatalog.installedApps();
+  const installedApps = await appCatalog.executeCommand('getInstalledApps');
   const availableUpdates = installedApps.filter((app) => Number(app.version) < Number(app.latestVersion) && app.status !== 'updating').length;
   const { allowErrorMonitoring } = TipiConfig.getConfig();
 
