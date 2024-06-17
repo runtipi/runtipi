@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "App {id} 只能使用公开域名",
   "APP_ERROR_APP_NOT_EXPOSABLE": "App {id} 不可发布",
   "APP_ERROR_APP_NOT_FOUND": "找不到应用程序 {id}",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "域名 {domain} 已被应用程序 {id} 使用",
   "APP_ERROR_DOMAIN_NOT_VALID": "{domain} 不是有效域名",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "如果应用程序被暴露给公网则需要域名",
