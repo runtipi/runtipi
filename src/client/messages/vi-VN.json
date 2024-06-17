@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Ứng dụng {id} chỉ hoạt động với tên miền công khai",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Ứng dụng {id} không được mở công khai",
   "APP_ERROR_APP_NOT_FOUND": "Không tìm thấy ứng dụng {id}",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Tên miền {domain} đã được sử dụng bởi ứng dụng {id}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Tên miên {domain} không hợp lệ",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Tên miền là bắt buộc nếu ứng dụng được mở công khai",
