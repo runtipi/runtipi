@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "App {id} funktioniert nur mit veröffentlichter Domain",
   "APP_ERROR_APP_NOT_EXPOSABLE": "App {id} nicht veröffentlichbar",
   "APP_ERROR_APP_NOT_FOUND": "App {id} nicht gefunden",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Die Domain {domain} ist bereits in Verwendung von der App {id}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Die Domain {domain} ist ungültig",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Eine Domain ist erforderlich, wenn die App freigegeben ist",
