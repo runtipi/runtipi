@@ -1,10 +1,8 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 import { EventDispatcher } from '@/server/core/EventDispatcher';
-import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
-import { AppEventFormInput } from '@runtipi/shared';
 
 export class BackupAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
@@ -15,8 +13,8 @@ export class BackupAppCommand implements IAppLifecycleCommand {
     this.eventDispatcher = params.eventDispatcher;
   }
 
-  private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
-    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'backup', appid: appId, form });
+  private async sendEvent(appId: string): Promise<void> {
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'backup', appid: appId, form: {} });
 
     if (success) {
       await this.queries.updateApp(appId, { status: 'running' });
@@ -37,6 +35,6 @@ export class BackupAppCommand implements IAppLifecycleCommand {
     // Run script
     await this.queries.updateApp(appId, { status: 'backing_up' });
 
-    void this.sendEvent(appId, castAppConfig(app.config));
+    void this.sendEvent(appId);
   }
 }

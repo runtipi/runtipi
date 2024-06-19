@@ -9,16 +9,17 @@ import { ensureUser } from '../utils/ensure-user';
 
 const input = z.object({
   id: z.string(),
+  filename: z.string(),
 });
 
 /**
  * Given an app id, backs up the app.
  */
-export const restoreAppAction = action(input, async ({ id }) => {
+export const restoreAppAction = action(input, async ({ id, filename }) => {
   try {
     await ensureUser();
 
-    await appLifecycle.executeCommand('restoreApp', { appId: id });
+    await appLifecycle.executeCommand('restoreApp', { appId: id, filename });
 
     revalidatePath('/apps');
     revalidatePath(`/app/${id}`);

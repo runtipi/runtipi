@@ -98,6 +98,7 @@
   "APP_RESTORE_SUBTITILE": "All the current data of the app will be erased and replaced with the data from the backup.",
   "APP_RESTORE_SUBMIT": "Restore",
   "APP_BACKUP_SETTINGS_SUBTITLE": "Use the button below to create a backup of your app",
+  "APP_BACKUPS_TAB_TITLE": "Backups",
   "APP_RESTORE_SETTINGS_SUBTITILE": "Restore your app to an older state",
   "APP_SETTINGS_GENERAL_TITLE": "General",
   "APP_SETTINGS_BACKUPS_TITLE": "Backups",

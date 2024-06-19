@@ -1,10 +1,8 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 import { EventDispatcher } from '@/server/core/EventDispatcher';
-import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
-import { AppEventFormInput } from '@runtipi/shared';
 
 export class RestoreAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
@@ -15,8 +13,8 @@ export class RestoreAppCommand implements IAppLifecycleCommand {
     this.eventDispatcher = params.eventDispatcher;
   }
 
-  private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
-    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'restore', appid: appId, form });
+  private async sendEvent(appId: string, filename: string): Promise<void> {
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'restore', appid: appId, filename });
 
     if (success) {
       await this.queries.updateApp(appId, { status: 'running' });
@@ -26,8 +24,8 @@ export class RestoreAppCommand implements IAppLifecycleCommand {
     }
   }
 
-  async execute(params: { appId: string }): Promise<void> {
-    const { appId } = params;
+  async execute(params: { appId: string; filename: string }): Promise<void> {
+    const { appId, filename } = params;
     const app = await this.queries.getApp(appId);
 
     if (!app) {
@@ -37,6 +35,6 @@ export class RestoreAppCommand implements IAppLifecycleCommand {
     // Run script
     await this.queries.updateApp(appId, { status: 'restoring' });
 
-    void this.sendEvent(appId, castAppConfig(app.config));
+    void this.sendEvent(appId, filename);
   }
 }

@@ -1,31 +1,31 @@
 *.swo
 *.swp
 
-.DS_Store/
-.vscode/
-.idea/
+.DS_Store
+.vscode
+.idea
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules/
-.pnp/
+/node_modules
+/.pnp
 .pnp.js
 
 # testing
-coverage/
+/coverage
 
 # next.js
-.next/
-out/
+/.next/
+/out/
 
 # production
-build/
-dist/
+/build
+/dist
 server-preload.js
 
 # misc
-.DS_Store/
+.DS_Store
 *.pem
 
 # debug
@@ -38,36 +38,36 @@ yarn-error.log*
 .env*.local
 
 # vercel
-.vercel/
+.vercel
 
 # typescript
 *.tsbuildinfo
 
-logs/
+logs
 .pnpm-debug.log
 .env*
 !.env.example
 !.env.test
 github.secrets
 node_modules/
-app-data/
-data/
-repos/
-apps/
-traefik/
-backups/
+/app-data/
+/data/
+/repos/
+/apps/
+/traefik/
+/backups/
 
 # media folder
-media/
+media
 
-state/
-test-results/
-playwright-report/
-playwright/.cache/
-temp/
+/state/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+temp
 
 ./traefik/
-user-config/
+/user-config/
 
 # Sentry Config File
 .sentryclirc
