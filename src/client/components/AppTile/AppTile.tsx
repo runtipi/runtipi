@@ -3,18 +3,19 @@
 import React from 'react';
 import { IconAlertCircle, IconDownload } from '@tabler/icons-react';
 import { Tooltip } from 'react-tooltip';
-import type { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { useTranslations } from 'next-intl';
 import type { AppInfo } from '@runtipi/shared';
 import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
 import { limitText } from '@/lib/helpers/text-helpers';
 import styles from './AppTile.module.scss';
+import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc' | 'deprecated'>;
 
-export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; updateAvailable: boolean }> = ({ app, status, updateAvailable }) => {
+export const AppTile: React.FC<{ app: AppTileInfo; updateAvailable: boolean }> = ({ app, updateAvailable }) => {
   const t = useTranslations();
+  const status = useAppStatusStore((state) => state.statuses[app.id]);
 
   return (
     <div data-testid={`app-tile-${app.id}`}>
@@ -28,7 +29,7 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
               <div className="d-flex h-3 align-items-center">
                 <span className="h4 me-2 mb-1 fw-bolder">{app.name}</span>
                 <div className={styles.statusContainer}>
-                  <AppStatus lite status={status} />
+                  <AppStatus lite status={status ?? 'missing'} />
                 </div>
               </div>
               <div className="text-muted">{limitText(app.short_desc, 50)}</div>

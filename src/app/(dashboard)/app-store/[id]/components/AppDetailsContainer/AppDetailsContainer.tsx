@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
@@ -14,7 +16,6 @@ import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { resetAppAction } from '@/actions/app-actions/reset-app-action';
-import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { InstallModal } from '../InstallModal';
 import { StopModal } from '../StopModal';
 import { RestartModal } from '../RestartModal';
@@ -25,18 +26,19 @@ import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
 import { ResetAppModal } from '../ResetAppModal';
 import { GetAppCommand } from '@/server/services/app-catalog/commands';
+import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
 type AppDetailsContainerProps = {
   app: Awaited<ReturnType<GetAppCommand['execute']>>;
   localDomain?: string;
-  optimisticStatus: AppStatusEnum;
-  setOptimisticStatus: (status: AppStatusEnum) => void;
 };
 
-export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, localDomain, optimisticStatus, setOptimisticStatus }) => {
+export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, localDomain }) => {
   const t = useTranslations();
+  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+  const appStatus = useAppStatusStore((state) => state.statuses[app.id]);
 
   const installDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
@@ -51,7 +53,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
       if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
-      setOptimisticStatus('installing');
+      setAppStatus(app.id, 'installing');
       installDisclosure.close();
     },
   });
@@ -62,7 +64,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
     },
     onExecute: () => {
       uninstallDisclosure.close();
-      setOptimisticStatus('uninstalling');
+      setAppStatus(app.id, 'uninstalling');
     },
   });
 
@@ -72,7 +74,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
     },
     onExecute: () => {
       stopDisclosure.close();
-      setOptimisticStatus('stopping');
+      setAppStatus(app.id, 'stopping');
     },
   });
 
@@ -82,7 +84,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
     },
     onExecute: () => {
       restartDisclosure.close();
-      setOptimisticStatus('restarting');
+      setAppStatus(app.id, 'restarting');
     },
   });
 
@@ -91,7 +93,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
       if (e.serverError) toast.error(e.serverError);
     },
     onExecute: () => {
-      setOptimisticStatus('starting');
+      setAppStatus(app.id, 'starting');
     },
   });
 
@@ -101,7 +103,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
     },
     onExecute: () => {
       updateDisclosure.close();
-      setOptimisticStatus('updating');
+      setAppStatus(app.id, 'updating');
     },
   });
 
@@ -123,7 +125,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
     },
     onExecute: () => {
       resetAppDisclosure.close();
-      setOptimisticStatus('resetting');
+      setAppStatus(app.id, 'resetting');
     },
   });
 
@@ -208,7 +210,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
         info={app.info}
         config={castAppConfig(app?.config)}
         onReset={openResetAppModal}
-        status={optimisticStatus}
+        status={appStatus}
       />
       <div className="card-header d-flex flex-column flex-md-row">
         <AppLogo id={app.id} size={130} alt={app.info.name} />
@@ -218,7 +220,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
             <span className="badge bg-muted mt-2 text-white">{app.info.version}</span>
           </div>
           <span className="mt-1 text-muted text-center text-md-start mb-2">{app.info.short_desc}</span>
-          <div className="mb-1">{optimisticStatus !== 'missing' && <AppStatus status={optimisticStatus} />}</div>
+          <div className="mb-1">{appStatus && appStatus !== 'missing' && <AppStatus status={appStatus} />}</div>
           <AppActions
             localDomain={localDomain}
             updateAvailable={updateAvailable}
@@ -232,11 +234,11 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
             onOpen={handleOpen}
             onStart={() => startMutation.execute({ id: app.id })}
             app={app}
-            status={optimisticStatus}
+            status={appStatus}
           />
         </div>
       </div>
-      <AppDetailsTabs info={app.info} status={optimisticStatus} />
+      <AppDetailsTabs info={app.info} status={appStatus || 'missing'} />
     </div>
   );
 };

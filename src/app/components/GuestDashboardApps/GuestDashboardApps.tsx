@@ -29,7 +29,7 @@ export const GuestDashboardApps = (props: Props) => {
     return (
       <div key={app.id} className="col-sm-6 col-lg-4">
         <Link passHref href={url} target="_blank" rel="noopener noreferrer" className={styles.link}>
-          <AppTile key={app.id} app={app.info} status={app.status} updateAvailable={false} />
+          <AppTile key={app.id} app={app.info} updateAvailable={false} />
         </Link>
       </div>
     );

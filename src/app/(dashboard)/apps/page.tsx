@@ -35,7 +35,7 @@ export default async function Page() {
     if (app.info?.available)
       return (
         <Link key={app.id} href={`/apps/${app.id}`} className={clsx('col-sm-6 col-lg-4', styles.link)} passHref>
-          <AppTile key={app.id} app={app.info} status={app.status} updateAvailable={updateAvailable} />
+          <AppTile key={app.id} app={app.info} updateAvailable={updateAvailable} />
         </Link>
       );
 
