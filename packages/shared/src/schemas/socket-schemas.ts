@@ -24,6 +24,20 @@ export const socketEventSchema = z.union([
     ]),
     data: z.object({
       appId: z.string(),
+      appStatus: z
+        .enum([
+          'running',
+          'stopped',
+          'starting',
+          'stopping',
+          'updating',
+          'missing',
+          'installing',
+          'uninstalling',
+          'resetting',
+          'restarting',
+        ])
+        .optional(),
       error: z.string().optional(),
     }),
   }),
