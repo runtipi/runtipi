@@ -23,25 +23,18 @@ export const AppDetailsTabs = ({ info }: IProps) => {
       <TabsList>
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
+        <TabsTrigger value="backups" disabled={appStatus === 'missing'}>
+          {t('APP_BACKUPS_TAB_TITLE')}
+        </TabsTrigger>
         <TabsTrigger value="logs" disabled={appStatus === 'missing'}>
           {t('APP_LOGS_TAB_TITLE')}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="description">
-        {info.deprecated && (
-          <div className="alert alert-danger" role="alert">
-            <div className="d-flex">
-              <div>
-                <IconAlertCircle />
-              </div>
-              <div className="ms-2">
-                <h4 className="alert-title">{t('APP_DETAILS_DEPRECATED_ALERT_TITLE')}</h4>
-                <div className="text-secondary">{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')} </div>
-              </div>
-            </div>
-          </div>
-        )}
-        <Markdown className="markdown">{info.description}</Markdown>
+        <AppBackups appId={info.id} />
+      </TabsContent>
+      <TabsContent value="backups">
+        <AppBackups appId={info.id} />
       </TabsContent>
       <TabsContent value="info">
         <DataGrid>

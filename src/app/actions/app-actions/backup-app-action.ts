@@ -1,11 +1,9 @@
 'use server';
 
 import { z } from 'zod';
-import { action } from '@/lib/safe-action';
+import { authActionClient } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
-import { handleActionError } from '../utils/handle-action-error';
-import { ensureUser } from '../utils/ensure-user';
 
 const input = z.object({
   id: z.string(),
@@ -14,18 +12,12 @@ const input = z.object({
 /**
  * Given an app id, backs up the app.
  */
-export const backupAppAction = action(input, async ({ id }) => {
-  try {
-    await ensureUser();
+export const backupAppAction = authActionClient.schema(input).action(async ({ parsedInput: { id } }) => {
+  await appLifecycle.executeCommand('backupApp', { appId: id });
 
-    await appLifecycle.executeCommand('backupApp', { appId: id });
+  revalidatePath('/apps');
+  revalidatePath(`/app/${id}`);
+  revalidatePath(`/app-store/${id}`);
 
-    revalidatePath('/apps');
-    revalidatePath(`/app/${id}`);
-    revalidatePath(`/app-store/${id}`);
-
-    return { success: true };
-  } catch (e) {
-    return handleActionError(e);
-  }
+  return { success: true };
 });

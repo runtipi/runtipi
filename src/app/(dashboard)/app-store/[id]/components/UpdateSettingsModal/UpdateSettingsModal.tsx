@@ -16,8 +16,6 @@ interface IProps {
   onClose: () => void;
   onReset: () => void;
   status?: AppStatus;
-  onBackup: () => void;
-  onRestore: () => void;
 }
 
 export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, onClose, onReset, status }) => {
