@@ -1,3 +1,5 @@
+import 'server-only';
+
 import React from 'react';
 import { Metadata } from 'next';
 import { TipiConfig } from '@/server/core/TipiConfig';

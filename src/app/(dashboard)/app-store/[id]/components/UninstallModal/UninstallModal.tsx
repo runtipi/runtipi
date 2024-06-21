@@ -4,16 +4,30 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } 
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Button } from '@/components/ui/Button';
+import { useAction } from 'next-safe-action/hooks';
+import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { uninstallAppAction } from '@/actions/app-actions/uninstall-app-action';
+import toast from 'react-hot-toast';
 
 interface IProps {
   info: AppInfo;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
 }
 
-export const UninstallModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfirm }) => {
+export const UninstallModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
   const t = useTranslations();
+  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+
+  const uninstallMutation = useAction(uninstallAppAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      setAppStatus(info.id, 'uninstalling');
+      onClose();
+    },
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -27,7 +41,7 @@ export const UninstallModal: React.FC<IProps> = ({ info, isOpen, onClose, onConf
           <div className="text-muted">{t('APP_UNINSTALL_FORM_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={onConfirm} className="btn-danger">
+          <Button onClick={() => uninstallMutation.execute({ id: info.id })} className="btn-danger">
             {t('APP_UNINSTALL_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

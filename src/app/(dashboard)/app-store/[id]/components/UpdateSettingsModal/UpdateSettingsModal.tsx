@@ -5,19 +5,33 @@ import { AppInfo } from '@runtipi/shared';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { AppStatus } from '@/server/db/schema';
 import { InstallForm, type FormValues } from '../InstallForm';
+import { useAction } from 'next-safe-action/hooks';
+import { updateAppConfigAction } from '@/actions/app-actions/update-app-config-action';
+import toast from 'react-hot-toast';
 
 interface IProps {
   info: AppInfo;
   config: Record<string, unknown>;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: FormValues) => void;
   onReset: () => void;
   status?: AppStatus;
 }
 
-export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, onClose, onSubmit, onReset, status }) => {
+export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, onClose, onReset, status }) => {
   const t = useTranslations();
+
+  const updateConfigMutation = useAction(updateAppConfigAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      onClose();
+    },
+    onSuccess: () => {
+      toast.success(t('APP_UPDATE_CONFIG_SUCCESS'));
+    },
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -28,7 +42,7 @@ export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, on
         <ScrollArea maxHeight={500}>
           <DialogDescription>
             <InstallForm
-              onSubmit={onSubmit}
+              onSubmit={(values: FormValues) => updateConfigMutation.execute({ id: info.id, form: values })}
               formFields={info.form_fields}
               info={info}
               initialValues={{ ...config }}

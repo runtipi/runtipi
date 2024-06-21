@@ -3,17 +3,31 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } 
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Button } from '@/components/ui/Button';
+import { useAction } from 'next-safe-action/hooks';
+import { updateAppAction } from '@/actions/app-actions/update-app-action';
+import toast from 'react-hot-toast';
+import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 
 interface IProps {
   newVersion: string;
-  info: Pick<AppInfo, 'name'>;
+  info: Pick<AppInfo, 'id' | 'name'>;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
 }
 
-export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClose, onConfirm }) => {
+export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClose }) => {
   const t = useTranslations();
+  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+
+  const updateMutation = useAction(updateAppAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      setAppStatus(info.id, 'updating');
+      onClose();
+    },
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -28,7 +42,7 @@ export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClos
           </div>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={onConfirm} className="btn-success">
+          <Button onClick={() => updateMutation.execute({ id: info.id })} className="btn-success">
             {t('APP_UPDATE_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

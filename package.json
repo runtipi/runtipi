@@ -73,6 +73,7 @@
     "remark-gfm": "^4.0.0",
     "sass": "^1.77.6",
     "semver": "^7.6.2",
+    "server-only": "^0.0.1",
     "sharp": "0.33.4",
     "socket.io-client": "^4.7.5",
     "uuid": "^10.0.0",
