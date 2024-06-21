@@ -126,7 +126,7 @@
     "msw": "^2.3.1",
     "next-router-mock": "^0.9.13",
     "prettier": "^3.3.2",
-    "typescript": "5.5.2",
+    "typescript": "5.4.5",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0",
     "wait-for-expect": "^3.0.2"
