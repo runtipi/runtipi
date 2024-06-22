@@ -3,16 +3,30 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } 
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Button } from '@/components/ui/Button';
+import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { useAction } from 'next-safe-action/hooks';
+import { stopAppAction } from '@/actions/app-actions/stop-app-action';
+import toast from 'react-hot-toast';
 
 interface IProps {
   info: AppInfo;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
 }
 
-export const StopModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfirm }) => {
+export const StopModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
   const t = useTranslations();
+  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+
+  const stopMutation = useAction(stopAppAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      setAppStatus(info.id, 'stopping');
+      onClose();
+    },
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -24,7 +38,7 @@ export const StopModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfirm }
           <span className="text-muted">{t('APP_STOP_FORM_SUBTITLE')}</span>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={onConfirm} className="btn-danger">
+          <Button onClick={() => stopMutation.execute({ id: info.id })} className="btn-danger">
             {t('APP_STOP_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

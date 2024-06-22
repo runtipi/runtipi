@@ -9,13 +9,11 @@ import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
 import { limitText } from '@/lib/helpers/text-helpers';
 import styles from './AppTile.module.scss';
-import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc' | 'deprecated'>;
 
 export const AppTile: React.FC<{ app: AppTileInfo; updateAvailable: boolean }> = ({ app, updateAvailable }) => {
   const t = useTranslations();
-  const status = useAppStatusStore((state) => state.statuses[app.id]);
 
   return (
     <div data-testid={`app-tile-${app.id}`}>
@@ -29,7 +27,7 @@ export const AppTile: React.FC<{ app: AppTileInfo; updateAvailable: boolean }> =
               <div className="d-flex h-3 align-items-center">
                 <span className="h4 me-2 mb-1 fw-bolder">{app.name}</span>
                 <div className={styles.statusContainer}>
-                  <AppStatus lite status={status ?? 'missing'} />
+                  <AppStatus lite appId={app.id} />
                 </div>
               </div>
               <div className="text-muted">{limitText(app.short_desc, 50)}</div>

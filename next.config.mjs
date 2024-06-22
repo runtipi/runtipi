@@ -1,4 +1,6 @@
 import { withSentryConfig } from '@sentry/nextjs';
+import withNextIntl from 'next-intl/plugin';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: true,
@@ -33,4 +35,4 @@ const sentryConfig = {
 
 const config = process.env.LOCAL !== 'true' ? withSentryConfig(nextConfig, sentryConfig) : nextConfig;
 
-export default config;
+export default withNextIntl()(config);

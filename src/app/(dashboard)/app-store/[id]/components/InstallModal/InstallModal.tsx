@@ -3,17 +3,31 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/compon
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { InstallForm, FormValues } from '../InstallForm';
+import { InstallForm } from '../InstallForm';
+import { useAction } from 'next-safe-action/hooks';
+import { installAppAction } from '@/actions/app-actions/install-app-action';
+import toast from 'react-hot-toast';
+import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 
 interface IProps {
   info: AppInfo;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: FormValues) => void;
 }
 
-export const InstallModal: React.FC<IProps> = ({ info, isOpen, onClose, onSubmit }) => {
+export const InstallModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
   const t = useTranslations();
+  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+
+  const installMutation = useAction(installAppAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      setAppStatus(info.id, 'installing');
+      onClose();
+    },
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -23,7 +37,7 @@ export const InstallModal: React.FC<IProps> = ({ info, isOpen, onClose, onSubmit
         </DialogHeader>
         <ScrollArea maxHeight={500}>
           <DialogDescription>
-            <InstallForm onSubmit={onSubmit} formFields={info.form_fields} info={info} />
+            <InstallForm onSubmit={(data) => installMutation.execute({ id: info.id, form: data })} formFields={info.form_fields} info={info} />
           </DialogDescription>
         </ScrollArea>
       </DialogContent>

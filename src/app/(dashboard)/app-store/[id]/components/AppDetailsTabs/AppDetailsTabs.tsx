@@ -1,3 +1,5 @@
+'use client';
+
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -5,23 +7,23 @@ import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
-import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { AppLogs } from './AppLogs';
+import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 
 interface IProps {
   info: AppInfo;
-  status: AppStatusEnum;
 }
 
-export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
+export const AppDetailsTabs = ({ info }: IProps) => {
   const t = useTranslations();
+  const appStatus = useAppStatusStore((state) => state.statuses[info.id]) || 'missing';
 
   return (
     <Tabs defaultValue="description" orientation="vertical" style={{ marginTop: -1 }}>
       <TabsList>
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
-        <TabsTrigger value="logs" disabled={status === 'missing'}>
+        <TabsTrigger value="logs" disabled={appStatus === 'missing'}>
           {t('APP_LOGS_TAB_TITLE')}
         </TabsTrigger>
       </TabsList>
@@ -80,7 +82,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
           )}
         </DataGrid>
       </TabsContent>
-      <TabsContent value="logs">{status === 'running' && <AppLogs appId={info.id} />}</TabsContent>
+      <TabsContent value="logs">{appStatus === 'running' && <AppLogs appId={info.id} />}</TabsContent>
     </Tabs>
   );
 };

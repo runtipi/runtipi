@@ -4,12 +4,13 @@ import { Toaster } from 'react-hot-toast';
 import { IntlProvider } from 'next-intl';
 import ue from '@testing-library/user-event';
 import messages from '../src/client/messages/en.json';
+import { AppStatusStoreProvider } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 
 const userEvent = ue.setup();
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => (
   <IntlProvider locale="en" messages={messages}>
-    {children}
+    <AppStatusStoreProvider initialStatuses={{}}>{children}</AppStatusStoreProvider>
     <Toaster />
   </IntlProvider>
 );

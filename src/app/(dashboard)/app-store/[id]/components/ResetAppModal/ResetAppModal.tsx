@@ -4,17 +4,31 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } 
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Button } from '@/components/ui/Button';
+import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { useAction } from 'next-safe-action/hooks';
+import { resetAppAction } from '@/actions/app-actions/reset-app-action';
+import toast from 'react-hot-toast';
 
 interface IProps {
   info: AppInfo;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
   isLoading?: boolean;
 }
 
-export const ResetAppModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfirm, isLoading }) => {
+export const ResetAppModal: React.FC<IProps> = ({ info, isOpen, onClose, isLoading }) => {
   const t = useTranslations();
+  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+
+  const resetMutation = useAction(resetAppAction, {
+    onError: (e) => {
+      if (e.serverError) toast.error(e.serverError);
+    },
+    onExecute: () => {
+      setAppStatus(info.id, 'resetting');
+      onClose();
+    },
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -28,7 +42,7 @@ export const ResetAppModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfi
           <div className="text-muted">{t('APP_RESET_FORM_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>
-          <Button loading={isLoading} onClick={onConfirm} className="btn-danger">
+          <Button loading={isLoading} onClick={() => resetMutation.execute({ id: info.id })} className="btn-danger">
             {t('APP_RESET_FORM_SUBMIT')}
           </Button>
         </DialogFooter>
