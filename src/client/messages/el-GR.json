@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Η εφαρμογή {id} λειτουργεί μόνο με εκτεθειμένο τομέα",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Η εφαρμογή {id} δεν μπορεί να εκτεθεί",
   "APP_ERROR_APP_NOT_FOUND": "Η εφαρμογή {id} δε βρέθηκε",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Ο τομέας {domain} χρησιμοποιείται ήδη από την εφαρμογή {id}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Ο τομέας {domain} δεν είναι έγκυρος",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Ο τομέας απαιτείται εάν η εφαρμογή εκτεθεί",

@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "{id} uygulaması yalnızca herkese açık şekilde alan adıyla çalışır",
   "APP_ERROR_APP_NOT_EXPOSABLE": "{id} uygulaması herkese açılamaz",
   "APP_ERROR_APP_NOT_FOUND": "Uygulama {id} bulunamadı",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "{domain} alan adı zaten {id} uygulaması tarafından kullanılıyor",
   "APP_ERROR_DOMAIN_NOT_VALID": "{domain} alan adı geçerli bir alan adı değil",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Uygulamanın herkese açılabilmesi için alan adı gereklidir",

@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Доступ к приложению {id} возможен только по доменному имени",
   "APP_ERROR_APP_NOT_EXPOSABLE": "К приложению {id} невозможно получить доступ по доменному имени",
   "APP_ERROR_APP_NOT_FOUND": "Приложение {id} не найдено",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Ваша архитектура {arch} не поддерживается приложением {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Домен {domain} уже используется приложением {id}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Домен {domain} недопустим",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Доменное имя обязательно, если указан внешний доступ",

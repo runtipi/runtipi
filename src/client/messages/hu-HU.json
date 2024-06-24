@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Az {id} alkalmazás csak nyilvános domainnel működik",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Az {id} alkalmazás nem hozzáférhető",
   "APP_ERROR_APP_NOT_FOUND": "A(z) {id} alkalmazás nem található",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "A(z) {domain} domaint már használja a(z) {id} alkalmazás",
   "APP_ERROR_DOMAIN_NOT_VALID": "A(z) {domain} domain nem érvényes domain",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domain szükséges, ha az alkalmazás exponálva van",

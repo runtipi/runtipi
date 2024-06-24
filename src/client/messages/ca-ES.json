@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "L'aplicació {id} només funciona amb un domini exposat",
   "APP_ERROR_APP_NOT_EXPOSABLE": "L'aplicació {id} no es pot exposar",
   "APP_ERROR_APP_NOT_FOUND": "No s'ha trobat l'aplicació {id}",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "L'aplicació {id} ja està utilitzant el domini {domain}",
   "APP_ERROR_DOMAIN_NOT_VALID": "El domini {domain} no és un nom vàlid de domini",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Cal un nom de domini si s'exposa l'aplicació",

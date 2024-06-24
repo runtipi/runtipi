@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Appen {id} fungerar endast med exponerad domän",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Appen {id} kan inte exponeras",
   "APP_ERROR_APP_NOT_FOUND": "Appen {id} hittades inte",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domän {domain} används redan av appen {id}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domän {domain} är inte en giltig domän",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domän krävs om appen är exponerad",

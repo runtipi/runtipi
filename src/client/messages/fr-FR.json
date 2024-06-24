@@ -48,6 +48,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "L'application {id} ne fonctionne qu'avec un domaine exposé",
   "APP_ERROR_APP_NOT_EXPOSABLE": "L'application {id} n'est pas exposable",
   "APP_ERROR_APP_NOT_FOUND": "L'application {id} est introuvable",
+  "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {arch} is not supported by app {id}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Le domaine {domain} est déjà utilisé par l'application {id}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Le domaine {domain} n'est pas valide",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Le domaine est requis si l'application est exposée",
