@@ -14,11 +14,11 @@ export function LoginContainer() {
   const router = useRouter();
 
   const loginMutation = useAction(loginAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
-    onSuccess: (data) => {
-      if (data.success && data.totpSessionId) {
+    onSuccess: ({ data }) => {
+      if (data?.success && data.totpSessionId) {
         setTotpSessionId(data.totpSessionId);
       } else {
         router.push('/dashboard');
@@ -27,8 +27,8 @@ export function LoginContainer() {
   });
 
   const verifyTotpMutation = useAction(verifyTotpAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onSuccess: () => {
       router.push('/dashboard');

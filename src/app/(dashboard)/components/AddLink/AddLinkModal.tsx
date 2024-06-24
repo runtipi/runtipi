@@ -47,8 +47,8 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
   }, [link, reset]);
 
   const addLinkMutation = useAction(addLinkAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onSuccess: () => {
       router.refresh();
@@ -59,8 +59,8 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
   });
 
   const editLinkMutation = useAction(editLinkAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onSuccess: () => {
       router.refresh();

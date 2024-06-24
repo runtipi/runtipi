@@ -17,8 +17,8 @@ export const UpdateAllButton: React.FC = () => {
     onSuccess: () => {
       toast.loading(t('MY_APPS_UPDATE_ALL_IN_PROGRESS'), { duration: 3000 });
     },
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onExecute: () => {
       updateDisclosure.close();

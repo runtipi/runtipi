@@ -1,24 +1,16 @@
 'use server';
 
-import { z } from 'zod';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
-import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
-import { handleActionError } from '../utils/handle-action-error';
-
-const input = z.void();
+import { authActionClient } from '@/lib/safe-action';
 
 /**
  * Given that a password change request has been made, cancels the password change request.
  */
-export const cancelResetPasswordAction = action(input, async () => {
-  try {
-    await AuthServiceClass.cancelPasswordChangeRequest();
+export const cancelResetPasswordAction = authActionClient.action(async () => {
+  await AuthServiceClass.cancelPasswordChangeRequest();
 
-    revalidatePath('/reset-password');
+  revalidatePath('/reset-password');
 
-    return { success: true };
-  } catch (e) {
-    return handleActionError(e);
-  }
+  return { success: true };
 });

@@ -1,29 +1,21 @@
 'use server';
 
 import { z } from 'zod';
-import { action } from '@/lib/safe-action';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
 import { db } from '@/server/db';
 import { revalidatePath } from 'next/cache';
-import { handleActionError } from '../utils/handle-action-error';
-import { ensureUser } from '../utils/ensure-user';
+import { authActionClient } from '@/lib/safe-action';
 
 const input = z.object({ password: z.string() });
 
 /**
  * Given a valid user password, disable TOTP for the user
  */
-export const disableTotpAction = action(input, async ({ password }) => {
-  try {
-    const { id } = await ensureUser();
+export const disableTotpAction = authActionClient.schema(input).action(async ({ parsedInput: { password }, ctx: { user } }) => {
+  const authService = new AuthServiceClass(db);
+  await authService.disableTotp({ userId: user.id, password });
 
-    const authService = new AuthServiceClass(db);
-    await authService.disableTotp({ userId: id, password });
+  revalidatePath('/settings');
 
-    revalidatePath('/settings');
-
-    return { success: true };
-  } catch (e) {
-    return handleActionError(e);
-  }
+  return { success: true };
 });

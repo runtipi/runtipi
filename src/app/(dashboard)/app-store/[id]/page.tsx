@@ -1,10 +1,8 @@
-import 'server-only';
-
 import React from 'react';
 import { Metadata } from 'next';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { ErrorPage } from '@/components/ui/ErrorPage';
-import { getTranslatorFromCookie } from '@/lib/get-translator';
+import { getTranslator } from '@/lib/get-translator';
 import { MessageKey, TranslatedError } from '@/server/utils/errors';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { AppDetailsContainer } from './components/AppDetailsContainer/AppDetailsContainer';
@@ -22,7 +20,7 @@ export default async function AppDetailsPage({ params }: { params: { id: string 
 
     return <AppDetailsContainer app={app} localDomain={settings.localDomain} />;
   } catch (e) {
-    const translator = await getTranslatorFromCookie();
+    const translator = await getTranslator();
 
     if (e instanceof TranslatedError) {
       return <ErrorPage error={translator(e.message as MessageKey, { id: params.id })} />;

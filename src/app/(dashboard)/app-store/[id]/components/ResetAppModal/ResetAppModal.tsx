@@ -21,8 +21,8 @@ export const ResetAppModal: React.FC<IProps> = ({ info, isOpen, onClose, isLoadi
   const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
 
   const resetMutation = useAction(resetAppAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onExecute: () => {
       setAppStatus(info.id, 'resetting');

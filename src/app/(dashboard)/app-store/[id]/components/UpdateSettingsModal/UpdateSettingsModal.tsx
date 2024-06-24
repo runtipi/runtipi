@@ -22,8 +22,8 @@ export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, on
   const t = useTranslations();
 
   const updateConfigMutation = useAction(updateAppConfigAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onExecute: () => {
       onClose();
