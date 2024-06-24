@@ -99,8 +99,8 @@ importers:
         specifier: ^3.15.2
         version: 3.15.2(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.44.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6))(react@18.3.1)
       next-safe-action:
-        specifier: ^7.1.1
-        version: 7.1.1(@types/json-schema@7.0.15)(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.44.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8)
+        specifier: ^7.1.2
+        version: 7.1.2(@types/json-schema@7.0.15)(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.44.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8)
       pg:
         specifier: ^8.12.0
         version: 8.12.0
@@ -149,9 +149,6 @@ importers:
       semver:
         specifier: ^7.6.2
         version: 7.6.2
-      server-only:
-        specifier: ^0.0.1
-        version: 0.0.1
       sharp:
         specifier: 0.33.4
         version: 0.33.4
@@ -5367,8 +5364,8 @@ packages:
       next: '>=10.0.0'
       react: '>=17.0.0'
 
-  next-safe-action@7.1.1:
-    resolution: {integrity: sha512-zetoVC/+DfPGRPAesKRaeDqqh4cJB/oY+AZQrUHMffeDDUewy2az0/VHuwbd+cX+Tl1cLlJXIi3wOpVVEA47LQ==}
+  next-safe-action@7.1.2:
+    resolution: {integrity: sha512-OxQ0ASX/kC91kkGq0HNz7KxO6E5C3NJI6xYeszhK2GtuQUzw3BJSayiqpEJEYDJgSRhdIwwz4PVmf5hFOpedKQ==}
     engines: {node: '>=18.17'}
     peerDependencies:
       next: '>= 14.0.0'
@@ -6060,9 +6057,6 @@ packages:
 
   serialize-javascript@6.0.2:
     resolution: {integrity: sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==}
-
-  server-only@0.0.1:
-    resolution: {integrity: sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==}
 
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
@@ -12834,7 +12828,7 @@ snapshots:
       next: 14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.44.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6)
       react: 18.3.1
 
-  next-safe-action@7.1.1(@types/json-schema@7.0.15)(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.44.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8):
+  next-safe-action@7.1.2(@types/json-schema@7.0.15)(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.44.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8):
     dependencies:
       '@typeschema/main': 0.13.10(@types/json-schema@7.0.15)(@typeschema/zod@0.13.3(@types/json-schema@7.0.15)(zod@3.23.8))
       '@typeschema/zod': 0.13.3(@types/json-schema@7.0.15)(zod@3.23.8)
@@ -13591,8 +13585,6 @@ snapshots:
   serialize-javascript@6.0.2:
     dependencies:
       randombytes: 2.1.0
-
-  server-only@0.0.1: {}
 
   set-function-length@1.2.2:
     dependencies:

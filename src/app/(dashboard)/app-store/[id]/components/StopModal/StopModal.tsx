@@ -19,8 +19,8 @@ export const StopModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
   const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
 
   const stopMutation = useAction(stopAppAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onExecute: () => {
       setAppStatus(info.id, 'stopping');

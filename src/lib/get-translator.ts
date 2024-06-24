@@ -1,20 +1,12 @@
-import { getLocaleFromString } from '@/shared/internationalization/locales';
-import merge from 'lodash.merge';
 import { createTranslator } from 'next-intl';
-import { cookies } from 'next/headers';
+import { getLocale, getMessages } from 'next-intl/server';
 
-export const getTranslatorFromCookie = async () => {
-  const cookieStore = cookies();
-  const cookieLocale = cookieStore.get('tipi-locale');
-
-  const locale = getLocaleFromString(cookieLocale?.value);
-
-  const englishMessages = (await import(`../client/messages/en.json`)).default;
-  const messages = (await import(`../client/messages/${locale}.json`)).default;
-  const mergedMessages = merge(englishMessages, messages);
+export const getTranslator = async () => {
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return createTranslator({
-    messages: mergedMessages,
+    messages: messages as typeof import('../client/messages/en.json'),
     locale,
   });
 };

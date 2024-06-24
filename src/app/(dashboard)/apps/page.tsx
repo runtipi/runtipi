@@ -3,7 +3,7 @@ import { db } from '@/server/db';
 import React from 'react';
 import { Metadata } from 'next';
 import { getUserFromCookie } from '@/server/common/session.helpers';
-import { getTranslatorFromCookie } from '@/lib/get-translator';
+import { getTranslator } from '@/lib/get-translator';
 import { AppTile } from '@/components/AppTile';
 import Link from 'next/link';
 import { Link as CustomLink } from '@/server/db/schema';
@@ -15,7 +15,7 @@ import { AddLinkButton } from '../components/AddLink/AddLinkButton';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const translator = await getTranslatorFromCookie();
+  const translator = await getTranslator();
 
   return {
     title: `${translator('MY_APPS_TITLE')} - Tipi`,

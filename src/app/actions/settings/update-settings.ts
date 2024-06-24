@@ -1,29 +1,21 @@
 'use server';
 
-import { action } from '@/lib/safe-action';
+import { authActionClient } from '@/lib/safe-action';
 import { settingsSchema } from '@runtipi/shared';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { revalidatePath } from 'next/cache';
-import { handleActionError } from '../utils/handle-action-error';
-import { ensureUser } from '../utils/ensure-user';
 
 /**
  * Given a settings object, update the settings.json file
  */
-export const updateSettingsAction = action(settingsSchema, async (settings) => {
-  try {
-    const { operator } = await ensureUser();
-
-    if (!operator) {
-      throw new Error('Not authorized');
-    }
-
-    await TipiConfig.setSettings(settings);
-
-    revalidatePath('/');
-
-    return { success: true };
-  } catch (e) {
-    return handleActionError(e);
+export const updateSettingsAction = authActionClient.schema(settingsSchema).action(async ({ parsedInput: settings, ctx: { user } }) => {
+  if (!user.operator) {
+    throw new Error('Not authorized');
   }
+
+  await TipiConfig.setSettings(settings);
+
+  revalidatePath('/');
+
+  return { success: true };
 });

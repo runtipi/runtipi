@@ -3,13 +3,13 @@
 import { z } from 'zod';
 import { getLocaleFromString } from '@/shared/internationalization/locales';
 import { cookies } from 'next/headers';
-import { action } from '@/lib/safe-action';
+import { publicActionClient } from '@/lib/safe-action';
 
 const input = z.object({
   newLocale: z.string(),
 });
 
-export const changeLocaleAction = action(input, async ({ newLocale }) => {
+export const changeLocaleAction = publicActionClient.schema(input).action(async ({ parsedInput: { newLocale } }) => {
   const locale = getLocaleFromString(newLocale);
 
   const cookieStore = cookies();

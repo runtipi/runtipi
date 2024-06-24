@@ -11,8 +11,8 @@ export const RegisterContainer: React.FC = () => {
   const router = useRouter();
 
   const registerMutation = useAction(registerAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onSuccess: () => {
       router.push('/dashboard');

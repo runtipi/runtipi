@@ -84,8 +84,8 @@ export const AppActions: React.FC<IProps> = ({ app, localDomain }) => {
   const resetAppDisclosure = useDisclosure();
 
   const startMutation = useAction(startAppAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onExecute: () => {
       setAppStatus(app.id, 'starting');

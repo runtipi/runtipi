@@ -1,20 +1,12 @@
 'use server';
 
 import { CustomLinksServiceClass } from '@/server/services/custom-links/custom-links.service';
-import { LinkInfo, linkSchema } from '@runtipi/shared';
-import { action } from '@/lib/safe-action';
-import { handleActionError } from '../utils/handle-action-error';
-import { ensureUser } from '../utils/ensure-user';
+import { linkSchema } from '@runtipi/shared';
+import { authActionClient } from '@/lib/safe-action';
 
-export const addLinkAction = action(linkSchema, async (link: LinkInfo) => {
-  try {
-    const user = await ensureUser();
+export const addLinkAction = authActionClient.schema(linkSchema).action(async ({ parsedInput: link, ctx }) => {
+  const linksService = new CustomLinksServiceClass();
 
-    const linksService = new CustomLinksServiceClass();
-
-    const linkResponse = await linksService.add(link, user.id);
-    return { success: true, link: linkResponse };
-  } catch (e) {
-    return handleActionError(e);
-  }
+  const linkResponse = await linksService.add(link, ctx.user.id);
+  return { success: true, link: linkResponse };
 });

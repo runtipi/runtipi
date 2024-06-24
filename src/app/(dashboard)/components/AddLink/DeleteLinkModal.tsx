@@ -19,8 +19,8 @@ export const DeleteLinkModal: React.FC<DeleteLinkModalProps> = ({ isOpen, onClos
   const router = useRouter();
 
   const deleteLinkMutation = useAction(deleteLinkAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onSuccess: () => {
       router.refresh();

@@ -15,13 +15,13 @@ export const ResetPasswordContainer: React.FC = () => {
   const router = useRouter();
 
   const resetPasswordMutation = useAction(resetPasswordAction, {
-    onError: (error) => {
+    onError: ({ error }) => {
       if (error.serverError) toast.error(error.serverError);
     },
   });
 
   const cancelRequestMutation = useAction(cancelResetPasswordAction, {
-    onError: (error) => {
+    onError: ({ error }) => {
       if (error.serverError) toast.error(error.serverError);
     },
   });
