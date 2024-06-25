@@ -30,9 +30,7 @@ export const StatusScreen: React.FC<IProps> = ({ title, subtitle, onAction, acti
       {loading && <div className="spinner-border spinner-border-sm text-muted" />}
       {onAction && (
         <div className="empty-action">
-          <Button onClick={onAction} className="btn">
-            {actionTitle}
-          </Button>
+          <Button onClick={onAction}>{actionTitle}</Button>
         </div>
       )}
     </div>

@@ -38,7 +38,7 @@ export const StopModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
           <span className="text-muted">{t('APP_STOP_FORM_SUBTITLE')}</span>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={() => stopMutation.execute({ id: info.id })} className="btn-danger">
+          <Button onClick={() => stopMutation.execute({ id: info.id })} intent="danger">
             {t('APP_STOP_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

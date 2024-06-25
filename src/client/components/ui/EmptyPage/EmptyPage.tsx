@@ -28,7 +28,7 @@ export const EmptyPage: React.FC<IProps> = ({ title, subtitle, onAction, actionL
     <p className="empty-subtitle text-muted">{subtitle}</p>
     <div className="empty-action">
       {onAction && (
-        <Button data-testid="empty-page-action" onClick={onAction} className="btn-primary">
+        <Button data-testid="empty-page-action" onClick={onAction} intent="primary">
           {actionLabel}
         </Button>
       )}

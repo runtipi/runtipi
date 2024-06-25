@@ -279,7 +279,7 @@ export const SettingsForm = (props: IProps) => {
             {t('SETTINGS_GENERAL_DOWNLOAD_CERTIFICATE')}
           </Button>
         </div>
-        <Button loading={loading} type="submit" className="btn-success">
+        <Button loading={loading} type="submit" intent="success">
           {t('SETTINGS_GENERAL_SUBMIT')}
         </Button>
       </form>

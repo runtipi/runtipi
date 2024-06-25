@@ -42,7 +42,7 @@ export const ResetAppModal: React.FC<IProps> = ({ info, isOpen, onClose, isLoadi
           <div className="text-muted">{t('APP_RESET_FORM_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>
-          <Button loading={isLoading} onClick={() => resetMutation.execute({ id: info.id })} className="btn-danger">
+          <Button loading={isLoading} onClick={() => resetMutation.execute({ id: info.id })} intent="danger">
             {t('APP_RESET_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

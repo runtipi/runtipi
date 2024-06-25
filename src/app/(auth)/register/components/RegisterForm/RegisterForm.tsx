@@ -68,7 +68,7 @@ export const RegisterForm: React.FC<IProps> = ({ onSubmit, loading }) => {
         className="mb-3"
         placeholder={t('AUTH_FORM_PASSWORD_CONFIRMATION_PLACEHOLDER')}
       />
-      <Button loading={loading} type="submit" className="btn btn-primary w-100">
+      <Button loading={loading} type="submit" intent="primary" className="w-100">
         {t('AUTH_REGISTER_SUBMIT')}
       </Button>
     </form>

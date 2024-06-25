@@ -126,7 +126,7 @@ export const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, lin
             />
           </DialogDescription>
           <DialogFooter>
-            <Button type="submit" className="btn-success" disabled={mutationExecuting}>
+            <Button type="submit" intent="success" disabled={mutationExecuting}>
               {link ? t('LINKS_EDIT_SUBMIT') : t('LINKS_ADD_SUBMIT')}
             </Button>
           </DialogFooter>

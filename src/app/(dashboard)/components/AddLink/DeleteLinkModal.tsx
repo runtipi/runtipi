@@ -41,7 +41,7 @@ export const DeleteLinkModal: React.FC<DeleteLinkModalProps> = ({ isOpen, onClos
           <div className="text-muted">{t('LINKS_DELETE_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>
-          <Button className="btn-danger" onClick={() => deleteLinkMutation.execute(linkId)}>
+          <Button intent="danger" onClick={() => deleteLinkMutation.execute(linkId)}>
             {t('LINKS_DELETE_SUBMIT')}
           </Button>
         </DialogFooter>

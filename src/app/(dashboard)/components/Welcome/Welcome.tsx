@@ -56,7 +56,8 @@ export const Welcome = ({ allowErrorMonitoring }: Props) => {
             <div className="d-flex flex-column align-items-center">
               <Switch checked={errorMonitoring} onCheckedChange={setErrorMonitoring} label="Enable error reporting" />
               <Button
-                className="btn-primary mt-3"
+                intent="primary"
+                className="mt-3"
                 onClick={() => acknowledgeMutation.execute({ allowErrorMonitoring: errorMonitoring })}
                 loading={acknowledgeMutation.status === 'hasSucceeded' || acknowledgeMutation.status === 'executing'}
                 disabled={acknowledgeMutation.status === 'hasSucceeded' || acknowledgeMutation.status === 'executing'}
