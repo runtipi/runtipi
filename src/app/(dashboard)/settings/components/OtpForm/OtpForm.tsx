@@ -82,7 +82,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
         <div className="mb-4">
           <p className="text-muted">{t('SETTINGS_SECURITY_ENTER_2FA_CODE')}</p>
           <OtpInput value={totpCode} valueLength={6} onChange={(e) => setTotpCode(e)} />
-          <Button disabled={totpCode.trim().length < 6} onClick={() => setupTotpMutation.execute({ totpCode })} className="mt-3 btn-success">
+          <Button disabled={totpCode.trim().length < 6} onClick={() => setupTotpMutation.execute({ totpCode })} intent="success" className="mt-3">
             {t('SETTINGS_SECURITY_ENABLE_2FA')}
           </Button>
         </div>
@@ -126,7 +126,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t('SETTINGS_SECURITY_PASSWORD_NEEDED')}
               />
-              <Button loading={getTotpUriMutation.status === 'executing'} type="submit" className="btn-success mt-3">
+              <Button loading={getTotpUriMutation.status === 'executing'} type="submit" intent="success" className="mt-3">
                 {t('SETTINGS_SECURITY_ENABLE_2FA')}
               </Button>
             </form>
@@ -152,7 +152,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t('SETTINGS_SECURITY_PASSWORD_NEEDED')}
               />
-              <Button loading={disableTotpMutation.status === 'executing'} type="submit" className="btn-danger mt-3">
+              <Button loading={disableTotpMutation.status === 'executing'} type="submit" intent="danger" className="mt-3">
                 {t('SETTINGS_SECURITY_DISABLE_2FA')}
               </Button>
             </form>

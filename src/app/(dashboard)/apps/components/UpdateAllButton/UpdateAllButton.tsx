@@ -28,7 +28,7 @@ export const UpdateAllButton: React.FC = () => {
   return (
     <div className="d-flex align-items-end align-items-md-center flex-column flex-md-row justify-content-end">
       <UpdateAllModal isOpen={updateDisclosure.isOpen} onClose={() => updateDisclosure.close()} onConfirm={() => updateAllMutation.execute()} />
-      <Button className="btn-success" onClick={updateDisclosure.open}>
+      <Button intent="success" onClick={updateDisclosure.open}>
         Update all
       </Button>
     </div>

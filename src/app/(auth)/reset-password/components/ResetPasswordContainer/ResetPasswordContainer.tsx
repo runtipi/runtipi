@@ -31,7 +31,7 @@ export const ResetPasswordContainer: React.FC = () => {
       <>
         <h2 className="h2 text-center mb-3">{t('AUTH_RESET_PASSWORD_SUCCESS_TITLE')}</h2>
         <p>{t('AUTH_RESET_PASSWORD_SUCCESS', { email: resetPasswordMutation.result.data.email })}</p>
-        <Button onClick={() => router.push('/login')} type="button" className="btn btn-primary w-100">
+        <Button onClick={() => router.push('/login')} type="button" intent="primary" className="w-100">
           {t('AUTH_RESET_PASSWORD_BACK_TO_LOGIN')}
         </Button>
       </>

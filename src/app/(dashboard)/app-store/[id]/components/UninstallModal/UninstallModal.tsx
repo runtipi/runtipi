@@ -41,7 +41,7 @@ export const UninstallModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
           <div className="text-muted">{t('APP_UNINSTALL_FORM_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={() => uninstallMutation.execute({ id: info.id })} className="btn-danger">
+          <Button onClick={() => uninstallMutation.execute({ id: info.id })} intent="danger">
             {t('APP_UNINSTALL_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

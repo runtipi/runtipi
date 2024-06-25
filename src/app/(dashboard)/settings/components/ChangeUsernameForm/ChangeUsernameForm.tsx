@@ -73,7 +73,7 @@ export const ChangeUsernameForm = ({ username }: Props) => {
                 placeholder={t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_PASSWORD')}
                 {...register('password')}
               />
-              <Button loading={changeUsernameMutation.status === 'executing'} type="submit" className="btn-success mt-3">
+              <Button loading={changeUsernameMutation.status === 'executing'} type="submit" intent="success" className="mt-3">
                 {t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_SUBMIT')}
               </Button>
             </form>

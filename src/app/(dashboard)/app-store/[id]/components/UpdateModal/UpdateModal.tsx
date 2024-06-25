@@ -42,7 +42,7 @@ export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClos
           </div>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={() => updateMutation.execute({ id: info.id })} className="btn-success">
+          <Button onClick={() => updateMutation.execute({ id: info.id })} intent="success">
             {t('APP_UPDATE_FORM_SUBMIT')}
           </Button>
         </DialogFooter>
