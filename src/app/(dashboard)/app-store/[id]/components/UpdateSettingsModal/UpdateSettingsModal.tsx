@@ -37,7 +37,7 @@ export const UpdateSettingsModal: React.FC<IProps> = ({ info, config, isOpen, on
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <h5 className="modal-title">{t('APP_UPDATE_SETTINGS_FORM_TITLE', { name: info.name })}</h5>
+          <h5 className="modal-title">{t('APP_UPDATE_SETTINGS_FORM_TITLE', { name: info.id })}</h5>
         </DialogHeader>
         <ScrollArea maxHeight={500}>
           <DialogDescription>

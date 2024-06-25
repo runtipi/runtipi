@@ -9,6 +9,7 @@ import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { AppLogs } from './AppLogs';
 import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { AppBackups } from './AppBackups';
 
 interface IProps {
   info: AppInfo;
@@ -23,6 +24,9 @@ export const AppDetailsTabs = ({ info }: IProps) => {
       <TabsList>
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
+        <TabsTrigger value="backups" disabled={appStatus === 'missing'}>
+          {t('APP_BACKUPS_TAB_TITLE')}
+        </TabsTrigger>
         <TabsTrigger value="logs" disabled={appStatus === 'missing'}>
           {t('APP_LOGS_TAB_TITLE')}
         </TabsTrigger>
@@ -42,6 +46,9 @@ export const AppDetailsTabs = ({ info }: IProps) => {
           </div>
         )}
         <Markdown className="markdown">{info.description}</Markdown>
+      </TabsContent>
+      <TabsContent value="backups">
+        <AppBackups appId={info.id} />
       </TabsContent>
       <TabsContent value="info">
         <DataGrid>

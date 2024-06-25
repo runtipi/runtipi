@@ -238,6 +238,7 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
     await fs.promises.mkdir(APP_DATA_DIR, { recursive: true });
     await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
     await fs.promises.mkdir(path.join(DATA_DIR, 'repos'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'backups'), { recursive: true });
   } catch (error) {
     logger.error("Couldn't create base folders", error);
   }
