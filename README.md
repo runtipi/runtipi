@@ -66,6 +66,10 @@ Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may co
 - [Crowdin](https://crowdin.com) - Thanks for providing localization management for the project
 - [CodeRabbit](https://coderabbit.ai/) - Thanks for providing free AI code reviews in our Pull Requests
 
+## 🔀 Server Actions - Component Flow
+
+[![Server Actions - Component Flow](https://nextjs.apidiagram.com/github/runtipi/runtipi/diagram.svg)](https://nextjs.apidiagram.com/github/runtipi/runtipi)
+
 ## ✨ Contributors
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
