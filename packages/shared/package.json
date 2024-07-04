@@ -39,10 +39,10 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@sentry/types": "^8.10.0",
+    "@sentry/types": "^8.14.0",
     "@types/lodash.clonedeep": "^4.5.9",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
     "eslint": "8.57.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
