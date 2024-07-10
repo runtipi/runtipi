@@ -1,16 +1,10 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/Pagination/Pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import React from 'react';
+import { TablePagination } from 'src/app/components/TablePagination/TablePagination';
 
 export const AppBackups = ({ appId }: { appId: string }) => {
+  const [currentPage, setCurrentPage] = React.useState(1);
+
   return (
     <div className="card">
       <Table>
@@ -32,30 +26,13 @@ export const AppBackups = ({ appId }: { appId: string }) => {
         </TableBody>
       </Table>
       <div className="card-footer">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                2
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">3</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <TablePagination
+          totalPages={80}
+          currentPage={currentPage}
+          onPageChange={(p) => setCurrentPage(p)}
+          onBack={() => setCurrentPage(currentPage - 1)}
+          onNext={() => setCurrentPage(currentPage + 1)}
+        />
       </div>
     </div>
   );
