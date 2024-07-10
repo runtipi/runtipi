@@ -4,8 +4,9 @@ import { DataAccessApp } from '../data-access/data-access-app';
 export class AppDataService {
   private dataAccessApp: DataAccessApp;
 
-  constructor(dataDir: string, appsRepoId: string) {
-    this.dataAccessApp = new DataAccessApp(dataDir, appsRepoId);
+  constructor(params: { dataDir: string; appDataDir: string; appsRepoId: string }) {
+    const { dataDir, appDataDir, appsRepoId } = params;
+    this.dataAccessApp = new DataAccessApp({ dataDir, appDataDir, appsRepoId });
   }
 
   /**
@@ -59,5 +60,21 @@ export class AppDataService {
         deprecated,
         supported_architectures,
       }));
+  }
+
+  public async getAppBackups(params: { appId: string; pageSize: number; page: number }) {
+    const { appId, page, pageSize } = params;
+    const backups = await this.dataAccessApp.listBackupsByAppId(appId);
+
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const data = backups.slice(start, end);
+
+    return {
+      data,
+      total: backups.length,
+      currentPage: Math.floor(start / pageSize) + 1,
+      lastPage: Math.ceil(backups.length / pageSize),
+    };
   }
 }
