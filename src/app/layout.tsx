@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getLocale, getMessages } from 'next-intl/server';
 
 import { cookies } from 'next/headers';
+// eslint-disable-next-line import/no-unresolved
 import { GeistSans } from 'geist/font/sans';
 import { TipiConfig } from '@/server/core/TipiConfig';
 
