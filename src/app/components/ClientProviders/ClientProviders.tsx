@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './ThemeProvider';
 import { SocketProvider } from './SocketProvider/SocketProvider';
 import type { AppStatus } from '@/server/db/schema';
