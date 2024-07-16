@@ -87,6 +87,8 @@ export const envSchema = z.object({
 
       return false;
     }),
+  eventsTimeout: z.number().optional(),
+  repeatTimeout: z.number().optional(),
 });
 
 export const settingsSchema = envSchema
@@ -104,5 +106,15 @@ export const settingsSchema = envSchema
     allowAutoThemes: true,
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
+    eventsTimeout: true,
+    repeatTimeout: true,
   })
-  .and(z.object({ port: z.coerce.number(), sslPort: z.coerce.number(), listenIp: z.string().ip().trim() }).partial());
+  .and(
+    z
+      .object({
+        port: z.coerce.number(),
+        sslPort: z.coerce.number(),
+        listenIp: z.string().ip().trim(),
+      })
+      .partial(),
+  );

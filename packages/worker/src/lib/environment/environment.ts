@@ -23,6 +23,8 @@ const environmentSchema = z
     POSTGRES_DBNAME: z.string(),
     POSTGRES_HOST: z.string(),
     JWT_SECRET: z.string(),
+    EVENTS_TIMEOUT: z.string(),
+    REPEAT_TIMEOUT: z.string(),
   })
   .transform((env) => {
     const {
@@ -40,6 +42,8 @@ const environmentSchema = z
       POSTGRES_PORT,
       POSTGRES_HOST,
       JWT_SECRET,
+      EVENTS_TIMEOUT,
+      REPEAT_TIMEOUT,
       ...rest
     } = env;
 
@@ -58,6 +62,8 @@ const environmentSchema = z
       postgresDatabase: POSTGRES_DBNAME,
       postgresHost: POSTGRES_HOST,
       jwtSecret: JWT_SECRET,
+      eventsTimeout: EVENTS_TIMEOUT,
+      repeatTimeout: REPEAT_TIMEOUT,
       ...rest,
     };
   });
