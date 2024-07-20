@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Bieżąca wersja jest już aktualna",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Tylko 6 aplikacji może być zainstalowanych w trybie demo. Odinstaluj inną aplikację, aby zainstalować nową.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Główna wersja uległa zmianie. Proszę zaktualizować ręcznie (instrukcje w notatkach o wydaniu)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Musisz być zalogowany, aby wykonać tę akcję"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Musisz być zalogowany, aby wykonać tę akcję",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
