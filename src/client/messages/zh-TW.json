@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "當前版本已經是最新的",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "在演示模式下只能安裝6個應用。請卸載其他應用來安裝新應用。",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "主要版本已更改。 請手動更新（参照更新說明）",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
