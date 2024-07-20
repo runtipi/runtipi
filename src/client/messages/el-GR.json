@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Η τρέχουσα έκδοση είναι ενημερωμένη",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Μόνο 6 εφαρμογές μπορούν να εγκατασταθούν στη λειτουργία επίδειξης. Παρακαλώ απεγκαταστήστε μια άλλη εφαρμογή για να εγκαταστήσετε μια νέα.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Η κύρια έκδοση έχει αλλάξει. Παρακαλούμε ενημερώστε χειροκίνητα (οδηγίες σε σημειώσεις έκδοσης)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
