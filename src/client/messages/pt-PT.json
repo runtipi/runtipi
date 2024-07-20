@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "A versão atual já é atualizada",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Apenas 6 apps podem ser instalados no modo de demonstração. Por favor, desinstale outro aplicativo para instalar um novo.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "A versão principal mudou. Por favor, atualize manualmente (instruções nas notas de lançamento)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
