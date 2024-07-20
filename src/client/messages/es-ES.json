@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "La versión ya está actualizada",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "En la versión demo, únicamente pueden instalarse 6 aplicaciones. Por favor, desinstale otra aplicación para instalar una nueva.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "La versión principal ha cambiado. Por favor, actualice manualmente (instrucciones en las notas de la versión)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Debes iniciar sesión para realizar esta acción"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Debes iniciar sesión para realizar esta acción",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
