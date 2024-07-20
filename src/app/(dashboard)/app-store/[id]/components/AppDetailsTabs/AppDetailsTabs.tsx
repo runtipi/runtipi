@@ -1,20 +1,22 @@
 'use client';
 
-import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
+import { IconExternalLink } from '@tabler/icons-react';
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
-import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { AppLogs } from './AppLogs';
 import { useAppStatus } from '@/hooks/useAppStatus';
+import { AppBackups } from './AppBackups';
+import type { AppBackupsApiResponse } from '@/api/app-backups/route';
 
 interface IProps {
   info: AppInfo;
+  backups: AppBackupsApiResponse;
 }
 
-export const AppDetailsTabs = ({ info }: IProps) => {
+export const AppDetailsTabs = ({ info, backups }: IProps) => {
   const t = useTranslations();
   const appStatus = useAppStatus((state) => state.statuses[info.id]) || 'missing';
 
@@ -31,10 +33,10 @@ export const AppDetailsTabs = ({ info }: IProps) => {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="description">
-        <AppBackups appId={info.id} />
+        <AppBackups info={info} initialData={backups} />
       </TabsContent>
       <TabsContent value="backups">
-        <AppBackups appId={info.id} />
+        <AppBackups info={info} initialData={backups} />
       </TabsContent>
       <TabsContent value="info">
         <DataGrid>

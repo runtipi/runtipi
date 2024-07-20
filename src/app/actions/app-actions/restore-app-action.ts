@@ -13,8 +13,8 @@ const input = z.object({
 /**
  * Given an app id and a filename, restores the app to a previous state.
  */
-export const restoreAppAction = authActionClient.schema(input).action(async ({ parsedInput: { id, filename } }) => {
-  await appLifecycle.executeCommand('restoreApp', { appId: id, filename });
+export const restoreBackupAction = authActionClient.schema(input).action(async ({ parsedInput: { id, filename } }) => {
+  await appLifecycle.executeCommand('restoreBackup', { appId: id, filename });
 
   revalidatePath('/apps');
   revalidatePath(`/app/${id}`);

@@ -2,7 +2,7 @@ import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { IAppLifecycleCommand } from './commands/types';
 import { AppDataService } from '@runtipi/shared/node';
-import { DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import {
   InstallAppCommand,
@@ -14,7 +14,7 @@ import {
   UpdateAppCommand,
   UpdateAppConfigCommand,
   BackupAppCommand,
-  RestoreAppCommand,
+  RestoreBackupCommand,
 } from './commands';
 
 export const availableCommands = {
@@ -27,7 +27,7 @@ export const availableCommands = {
   installApp: InstallAppCommand,
   uninstallApp: UninstallAppCommand,
   backupApp: BackupAppCommand,
-  restoreApp: RestoreAppCommand,
+  restoreBackup: RestoreBackupCommand,
 } as const;
 
 export type ExecuteLifecycleFunction = <K extends keyof typeof availableCommands>(
@@ -76,6 +76,6 @@ export type AppLifecycle = InstanceType<typeof AppLifecycleClass>;
 
 const queries = new AppQueries();
 const eventDispatcher = new EventDispatcher();
-const appDataService = new AppDataService(DATA_DIR, TipiConfig.getConfig().appsRepoId);
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
 
 export const appLifecycle = new AppLifecycleClass(queries, eventDispatcher, appDataService);

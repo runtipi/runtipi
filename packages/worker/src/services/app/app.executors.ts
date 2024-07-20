@@ -543,9 +543,8 @@ export class AppExecutors {
 
       const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
       const backupName = `${appId}-${new Date().toISOString()}`;
-      const backupDir = path.join(DATA_DIR, 'backups', appId, backupName);
-
-      this.logger.info('Backing up app', appId);
+      const backupDir = path.join(appDataDirPath, 'backups');
+      const tempDir = path.join('/tmp', appId);
 
       // Stop app so containers like databases don't cause problems
       this.logger.info(`Stopping app ${appId}`);
@@ -556,26 +555,40 @@ export class AppExecutors {
 
       this.logger.info('Copying files to backup location...');
 
-      // Create app backup directory
-      await fs.promises.mkdir(backupDir, { recursive: true });
+      // Ensure backup directory exists
+      await fs.promises.mkdir(tempDir, { recursive: true });
 
       // Move app data and app directories
-      await fs.promises.cp(appDataDirPath, path.join(backupDir, 'data'), { recursive: true });
-      await fs.promises.cp(appDirPath, path.join(backupDir, 'app'), { recursive: true });
+      await fs.promises.cp(appDataDirPath, path.join(tempDir, 'app-data'), {
+        recursive: true,
+        filter: (src) => !src.includes('backups'),
+      });
+      await fs.promises.cp(appDirPath, path.join(tempDir, 'app'), { recursive: true });
 
       // Check if the user config folder exists and if it does copy it too
       if (await pathExists(path.join(DATA_DIR, 'user-config', appId))) {
         await fs.promises.cp(
           path.join(DATA_DIR, 'user-config', appId),
-          path.join(backupDir, 'user-config'),
+          path.join(tempDir, 'user-config'),
         );
       }
 
-      // Create the archive
-      await execAsync(`tar -czpf ${backupDir}.tar.gz -C ${backupDir} .`);
+      this.logger.info('Creating archive...');
 
-      // Remove the backup folder
-      await fs.promises.rm(backupDir, { force: true, recursive: true });
+      // Create the archive
+      await execAsync(`tar -czpf ${path.join(tempDir, backupName)}.tar.gz -C ${tempDir} .`);
+
+      this.logger.info('Moving archive to backup directory...');
+
+      // Move the archive to the backup directory
+      await fs.promises.mkdir(backupDir, { recursive: true });
+      await fs.promises.cp(
+        path.join(tempDir, `${backupName}.tar.gz`),
+        path.join(backupDir, backupName),
+      );
+
+      // Remove the temp backup folder
+      await fs.promises.rm(tempDir, { force: true, recursive: true });
 
       this.logger.info('Backup completed!');
 

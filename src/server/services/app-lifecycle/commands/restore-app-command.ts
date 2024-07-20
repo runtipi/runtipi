@@ -4,7 +4,7 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
 
-export class RestoreAppCommand implements IAppLifecycleCommand {
+export class RestoreBackupCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
   private eventDispatcher: EventDispatcher;
 

@@ -21,9 +21,9 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
 
-    const apps = await getAppBackups(searchParams);
+    const backups = await getAppBackups(searchParams);
 
-    return new Response(JSON.stringify(apps), { headers: { 'content-type': 'application/json' } });
+    return new Response(JSON.stringify(backups), { headers: { 'content-type': 'application/json' } });
   } catch (error) {
     return handleApiError(error);
   }

@@ -65,6 +65,7 @@ export class AppDataService {
   public async getAppBackups(params: { appId: string; pageSize: number; page: number }) {
     const { appId, page, pageSize } = params;
     const backups = await this.dataAccessApp.listBackupsByAppId(appId);
+    backups.reverse();
 
     const start = (page - 1) * pageSize;
     const end = start + pageSize;

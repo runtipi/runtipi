@@ -7,4 +7,4 @@ export { UninstallAppCommand } from './uninstall-app-command';
 export { UpdateAppCommand } from './update-app-command';
 export { UpdateAppConfigCommand } from './update-app-config-command';
 export { BackupAppCommand } from './backup-app-command';
-export { RestoreAppCommand } from './restore-app-command';
+export { RestoreBackupCommand } from './restore-app-command';

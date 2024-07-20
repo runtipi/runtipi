@@ -16,9 +16,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function AppDetailsPage({ params }: { params: { id: string } }) {
   try {
     const app = await appCatalog.executeCommand('getApp', params.id);
+    const backups = await appCatalog.executeCommand('getAppBackups', { appId: params.id, pageSize: 5, page: 1 });
     const settings = TipiConfig.getSettings();
 
-    return <AppDetailsContainer app={app} localDomain={settings.localDomain} />;
+    return <AppDetailsContainer app={app} localDomain={settings.localDomain} backups={backups} />;
   } catch (e) {
     const translator = await getTranslator();
 
