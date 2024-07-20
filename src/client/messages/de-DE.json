@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Die aktuelle Version ist bereits auf dem neuesten Stand",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Im Demo-Modus können nur 6 Apps installiert werden. Bitte deinstallieren Sie eine andere App, um eine neue zu installieren.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Die Hauptversion hat sich geändert. Bitte aktualisieren Sie manuell. (Anleitung auf GitHub)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Du musst angemeldet sein, um diese Aktion auszuführen"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Du musst angemeldet sein, um diese Aktion auszuführen",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
