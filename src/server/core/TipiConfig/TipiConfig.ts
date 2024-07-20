@@ -68,6 +68,7 @@ export class TipiConfigClass {
       allowErrorMonitoring: conf.ALLOW_ERROR_MONITORING,
       allowAutoThemes: conf.ALLOW_AUTO_THEMES,
       seePreReleaseVersions: false,
+      timeZone: conf.TZ,
     };
 
     const parsedConfig = envSchema.safeParse({ ...envConfig, ...this.getFileConfig() });
