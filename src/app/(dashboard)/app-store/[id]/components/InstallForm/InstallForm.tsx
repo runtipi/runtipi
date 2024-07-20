@@ -9,10 +9,10 @@ import { Switch } from '@/components/ui/Switch';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { AppStatus } from '@/server/db/schema';
-import { useClientSettings } from '@/hooks/use-client-settings';
 import { validateAppConfig } from '../../utils/validators';
 import { InstallFormField } from './InstallFormField';
 import { FormValues } from './InstallForm.types';
+import { useClientSettings } from '@/hooks/useClientSettings';
 
 interface IProps {
   formFields: FormField[];

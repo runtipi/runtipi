@@ -5,11 +5,11 @@ import React from 'react';
 import { Tooltip } from 'react-tooltip';
 import { useTranslations } from 'next-intl';
 import styles from './AppStatus.module.scss';
-import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { useAppStatus } from '@/hooks/useAppStatus';
 
 export const AppStatus: React.FC<{ appId: string; lite?: boolean }> = ({ appId, lite }) => {
   const t = useTranslations();
-  const appStatus = useAppStatusStore((state) => state.statuses[appId] || 'missing');
+  const appStatus = useAppStatus((state) => state.statuses[appId] || 'missing');
 
   const formattedStatus = t(`APP_STATUS_${appStatus.toUpperCase() as Uppercase<typeof appStatus>}`);
 

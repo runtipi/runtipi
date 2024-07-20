@@ -5,9 +5,9 @@ import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Button } from '@/components/ui/Button';
 import { useAction } from 'next-safe-action/hooks';
-import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 import { uninstallAppAction } from '@/actions/app-actions/uninstall-app-action';
 import toast from 'react-hot-toast';
+import { useAppStatus } from '@/hooks/useAppStatus';
 
 interface IProps {
   info: AppInfo;
@@ -17,7 +17,7 @@ interface IProps {
 
 export const UninstallModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
   const t = useTranslations();
-  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+  const setAppStatus = useAppStatus((state) => state.setAppStatus);
 
   const uninstallMutation = useAction(uninstallAppAction, {
     onError: ({ error }) => {
