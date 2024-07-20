@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "現在のバージョンは既に最新です",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "デモモードには、6つのアプリのみインストールできます。新しいアプリをインストールするには、他のアプリをアンインストールしてください。",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "メジャーバージョンが変更されました。リリースノートの手順に従って、手動で更新してください。",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
