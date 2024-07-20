@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Поточна версія вже є актуальною",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Тільки 6 додатків можуть бути встановлені в демонстраційному режимі. Будь ласка, видаліть інший додаток, щоб встановити новий.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Основна версія змінилася. Будь ласка, оновіть вручну (інструкції у примітках до випуску)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Ви повинні увійти, щоб виконати цю дію"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Ви повинні увійти, щоб виконати цю дію",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
