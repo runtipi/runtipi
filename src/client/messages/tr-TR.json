@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Son versiyon zaten yüklü",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Demo modunda yalnızca 6 uygulama yüklenebilir. Yeni bir uygulama yüklemek için lütfen başka bir uygulamayı kaldırın.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Ana sürüm değişti. Lütfen manuel olarak güncelleyin (sürüm notlarındaki talimatlar)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Bu işlemi gerçekleştirmek için giriş yapmalısınız"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Bu işlemi gerçekleştirmek için giriş yapmalısınız",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
