@@ -4,7 +4,7 @@ import { useUIStore } from '@/client/state/uiStore';
 import React, { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
 import { getAutoTheme } from '@/lib/themes';
-import { useClientSettings } from '@/hooks/use-client-settings';
+import { useClientSettings } from '@/hooks/useClientSettings';
 
 type Props = {
   children: React.ReactNode;

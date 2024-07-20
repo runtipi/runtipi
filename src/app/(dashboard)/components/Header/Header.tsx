@@ -14,8 +14,8 @@ import { logoutAction } from '@/actions/logout/logout-action';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
 import { getLogo } from '@/lib/themes';
-import { useClientSettings } from '@/hooks/use-client-settings';
 import { NavBar } from '../NavBar';
+import { useClientSettings } from '@/hooks/useClientSettings';
 
 interface IProps {
   isUpdateAvailable?: boolean;

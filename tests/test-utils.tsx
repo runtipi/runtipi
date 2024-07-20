@@ -5,12 +5,15 @@ import { IntlProvider } from 'next-intl';
 import ue from '@testing-library/user-event';
 import messages from '../src/client/messages/en.json';
 import { AppStatusStoreProvider } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { ClientSettingsStoreProvider } from 'src/app/components/ClientProviders/ClientSettingsProvider/ClientSettingsProvider';
 
 const userEvent = ue.setup();
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => (
   <IntlProvider locale="en" messages={messages}>
-    <AppStatusStoreProvider initialStatuses={{}}>{children}</AppStatusStoreProvider>
+    <ClientSettingsStoreProvider initialSettings={{}}>
+      <AppStatusStoreProvider initialStatuses={{}}>{children}</AppStatusStoreProvider>
+    </ClientSettingsStoreProvider>
     <Toaster />
   </IntlProvider>
 );

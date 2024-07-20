@@ -40,9 +40,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={clsx(GeistSans.className, 'border-top-wide border-primary')}>
       <CookiesProvider>
-        <ClientProviders messages={messages} locale={locale} initialTheme={theme?.value} appStatuses={appStatuses}>
+        <ClientProviders messages={messages} locale={locale} initialTheme={theme?.value} appStatuses={appStatuses} clientSettings={clientSettings}>
           <body data-bs-theme={theme?.value}>
-            <input type="hidden" value={JSON.stringify(clientSettings)} id="client-settings" />
             {children}
             <Toaster />
           </body>

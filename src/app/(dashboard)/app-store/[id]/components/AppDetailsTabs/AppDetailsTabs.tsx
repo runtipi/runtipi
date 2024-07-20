@@ -8,7 +8,7 @@ import { AppInfo } from '@runtipi/shared';
 import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { AppLogs } from './AppLogs';
-import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { useAppStatus } from '@/hooks/useAppStatus';
 
 interface IProps {
   info: AppInfo;
@@ -16,7 +16,7 @@ interface IProps {
 
 export const AppDetailsTabs = ({ info }: IProps) => {
   const t = useTranslations();
-  const appStatus = useAppStatusStore((state) => state.statuses[info.id]) || 'missing';
+  const appStatus = useAppStatus((state) => state.statuses[info.id]) || 'missing';
 
   return (
     <Tabs defaultValue="description" orientation="vertical" style={{ marginTop: -1 }}>

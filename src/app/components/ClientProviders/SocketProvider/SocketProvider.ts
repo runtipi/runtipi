@@ -4,12 +4,12 @@ import { useSocket } from '@/lib/socket/useSocket';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
 import toast from 'react-hot-toast';
-import { useAppStatusStore } from '../AppStatusProvider/app-status-provider';
+import { useAppStatus } from '@/hooks/useAppStatus';
 
 export const SocketProvider = ({ children }: PropsWithChildren) => {
   const revalidateAppMutation = useAction(revalidateAppAction);
   const t = useTranslations();
-  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+  const setAppStatus = useAppStatus((state) => state.setAppStatus);
 
   useSocket({
     onEvent: (event, data) => {
