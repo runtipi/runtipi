@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "La versione corrente è già la più recente",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "La version major è cambiata. Aggiorna manualmente (istruzioni su GitHub)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
