@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Den nuvarande versionen är redan uppdaterad",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Endast 6 appar kan installeras i demoläget. Avinstallera en annan app för att installera en ny.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Huvudversionen har ändrats. Vänligen uppdatera manuellt (instruktioner på GitHub)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Du måste vara inloggad för att utföra denna åtgärd"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Du måste vara inloggad för att utföra denna åtgärd",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
