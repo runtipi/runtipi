@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Текущая версия уже актуальна",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Только 6 приложений могут быть установлены в демо режиме. Пожалуйста, удалите другое приложение, чтобы установить новое.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Основная версия была изменена. Пожалуйста, обновите вручную (инструкции в примечаниях к релизу)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Вы должны войти для выполнения этого действия"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Вы должны войти для выполнения этого действия",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
