@@ -85,6 +85,8 @@ services:
       - ./docker-compose.dev.yml:/data/docker-compose.yml
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc:/host/proc:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     networks:
       - tipi_main_network
     ports:
