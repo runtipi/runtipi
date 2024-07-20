@@ -305,5 +305,7 @@
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Phiên bản hiện tại đã được cập nhật",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Chỉ có thể cài đặt 6 ứng dụng trong chế độ demo. Vui lòng gỡ bỏ một ứng dụng khác để cài đặt một ứng dụng mới.",
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Ứng dụng được cập nhật phiên bản lớn. Vui lòng cập nhật thủ công (hướng dẫn được tim thấy ở GitHub)",
-  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Bạn phải đăng nhập để thực hiện hành động này"
+  "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Bạn phải đăng nhập để thực hiện hành động này",
+  "TIMEZONE_SELECTOR_LABEL": "Timezone",
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
 }
