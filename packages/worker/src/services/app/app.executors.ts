@@ -13,12 +13,15 @@ import { SocketManager } from '@/lib/socket/SocketManager';
 import { getDbClient } from '@/lib/db';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { getDockerCompose } from '@/config/docker-templates';
+import { ArchiveManager } from '@/lib/archive/ArchiveManager';
 
 export class AppExecutors {
   private readonly logger;
+  private archiveManager: ArchiveManager;
 
   constructor() {
     this.logger = logger;
+    this.archiveManager = new ArchiveManager();
   }
 
   private handleAppError = async (
@@ -542,7 +545,7 @@ export class AppExecutors {
       await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
-      const backupName = `${appId}-${new Date().toISOString()}`;
+      const backupName = `${appId}-${new Date().getTime()}`;
       const backupDir = path.join(appDataDirPath, 'backups');
       const tempDir = path.join('/tmp', appId);
 
@@ -576,7 +579,9 @@ export class AppExecutors {
       this.logger.info('Creating archive...');
 
       // Create the archive
-      await execAsync(`tar -czpf ${path.join(tempDir, backupName)}.tar.gz -C ${tempDir} .`);
+      await this.archiveManager.createTarGz(tempDir, `${path.join(tempDir, backupName)}.tar.gz`);
+
+      // await execAsync(`tar -czpf ${path.join(tempDir, backupName)}.tar.gz -C ${tempDir} .`);
 
       this.logger.info('Moving archive to backup directory...');
 
@@ -584,7 +589,7 @@ export class AppExecutors {
       await fs.promises.mkdir(backupDir, { recursive: true });
       await fs.promises.cp(
         path.join(tempDir, `${backupName}.tar.gz`),
-        path.join(backupDir, backupName),
+        path.join(backupDir, `${backupName}.tar.gz`),
       );
 
       // Remove the temp backup folder
@@ -613,8 +618,8 @@ export class AppExecutors {
       await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
 
       const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
-      const restoreDir = path.join(DATA_DIR, 'backups', appId, filename.replace('.tar.gz', ''));
-      const archive = path.join(DATA_DIR, 'backups', appId, filename);
+      const restoreDir = path.join('/tmp', appId);
+      const archive = path.join(appDataDirPath, 'backups', filename);
       const client = await getDbClient();
 
       this.logger.info('Restoring app from backup...');
@@ -634,6 +639,10 @@ export class AppExecutors {
       // Creating backup of the app before restoring
       await this.backupApp(appId);
 
+      // Unzip the archive
+      await fs.promises.mkdir(restoreDir, { recursive: true });
+      await this.archiveManager.extractTarGz(archive, restoreDir);
+
       // Remove old data directories
       await fs.promises.rm(appDataDirPath, { force: true, recursive: true });
       await fs.promises.rm(appDirPath, { force: true, recursive: true });
@@ -642,13 +651,12 @@ export class AppExecutors {
         recursive: true,
       });
 
-      // Unzip the archive
-      await fs.promises.mkdir(restoreDir, { recursive: true });
-      await execAsync(`tar -xf ${archive} -C ${restoreDir}`);
+      await fs.promises.mkdir(appDataDirPath, { recursive: true });
+      await fs.promises.mkdir(appDirPath, { recursive: true });
 
       // Copy data from the backup folder
       await fs.promises.cp(path.join(restoreDir, 'app'), appDirPath, { recursive: true });
-      await fs.promises.cp(path.join(restoreDir, 'data'), appDataDirPath, { recursive: true });
+      await fs.promises.cp(path.join(restoreDir, 'app-data'), appDataDirPath, { recursive: true });
 
       // Copy user config foler if it exists
       if (await pathExists(path.join(restoreDir, 'user-config'))) {
@@ -684,6 +692,7 @@ export class AppExecutors {
       await SocketManager.emit({ type: 'app', event: 'restore_success', data: { appId } });
       return { success: true, message: `App ${appId} restored successfully` };
     } catch (err) {
+      console.error(err);
       return this.handleAppError(err, appId, 'restore_error');
     }
   };
