@@ -3,35 +3,34 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 import type { AppBackup } from '@/api/app-backups/route';
-import { useDateFormat } from '@/components/DateFormat/DateFormat';
 import { IconAlertTriangle } from '@tabler/icons-react';
+import { useDateFormat } from '@/components/DateFormat/DateFormat';
 
 interface IProps {
   backup?: AppBackup | null;
-  appName: string;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export const RestoreModal: React.FC<IProps> = ({ appName, backup, isOpen, onClose, onConfirm }) => {
+export const DeleteBackupModal: React.FC<IProps> = ({ backup, isOpen, onClose, onConfirm }) => {
   const t = useTranslations();
   const formatDate = useDateFormat();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent size="sm">
+      <DialogContent type="danger" size="sm">
         <DialogHeader>
-          <DialogTitle>{t('APP_RESTORE_TITLE', { name: appName })}</DialogTitle>
+          <DialogTitle>{t('DELETE_BACKUP_MODAL_TITLE')}</DialogTitle>
         </DialogHeader>
         <DialogDescription className="text-center py-4">
-          <IconAlertTriangle className="icon mb-2 text-warning icon-lg" />
-          <h3>{t('APP_RESTORE_WARNING', { id: backup?.id, date: formatDate(backup?.date) })}</h3>
-          <div className="text-muted">{t('APP_RESTORE_SUBTITLE')}</div>
+          <IconAlertTriangle className="icon mb-2 text-danger icon-lg" />
+          <h3>{t('DELETE_BACKUP_MODAL_WARNING', { id: backup?.id, date: formatDate(backup?.date) })}</h3>
+          <div className="text-muted">{t('DELETE_BACKUP_MODAL_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={onConfirm} intent="warning">
-            {t('APP_RESTORE_SUBMIT')}
+          <Button onClick={onConfirm} intent="danger">
+            {t('DELETE_BACKUP_MODAL_SUBMIT')}
           </Button>
         </DialogFooter>
       </DialogContent>

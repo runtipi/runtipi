@@ -457,6 +457,9 @@ export class AppExecutors {
 
   public updateApp = async (appId: string, form: AppEventForm) => {
     try {
+      // Creating backup of the app before updating
+      await this.backupApp(appId);
+
       await SocketManager.emit({
         type: 'app',
         event: 'status_change',
@@ -542,11 +545,15 @@ export class AppExecutors {
 
   public backupApp = async (appId: string) => {
     try {
-      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      await SocketManager.emit({
+        type: 'app',
+        event: 'status_change',
+        data: { appId, appStatus: 'backing_up' },
+      });
 
       const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
       const backupName = `${appId}-${new Date().getTime()}`;
-      const backupDir = path.join(appDataDirPath, 'backups');
+      const backupDir = path.join(DATA_DIR, 'backups', appId);
       const tempDir = path.join('/tmp', appId);
 
       // Stop app so containers like databases don't cause problems
@@ -597,16 +604,12 @@ export class AppExecutors {
 
       this.logger.info('Backup completed!');
 
-      // Start the app
-      this.logger.info(`Starting app ${appId}`);
-
-      // TODO: start only if the app was running before
-      await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
-
-      this.logger.info(`App ${appId} started`);
-
       // Done
-      await SocketManager.emit({ type: 'app', event: 'backup_success', data: { appId } });
+      await SocketManager.emit({
+        type: 'app',
+        event: 'backup_success',
+        data: { appId, appStatus: 'stopped' },
+      });
       return { success: true, message: `App ${appId} backed up successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'backup_error');
@@ -615,11 +618,15 @@ export class AppExecutors {
 
   public restoreApp = async (appId: string, filename: string) => {
     try {
-      await SocketManager.emit({ type: 'app', event: 'status_change', data: { appId } });
+      await SocketManager.emit({
+        type: 'app',
+        event: 'status_change',
+        data: { appId, appStatus: 'restoring' },
+      });
 
       const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
       const restoreDir = path.join('/tmp', appId);
-      const archive = path.join(appDataDirPath, 'backups', filename);
+      const archive = path.join(DATA_DIR, 'backups', appId, filename);
       const client = await getDbClient();
 
       this.logger.info('Restoring app from backup...');
@@ -632,12 +639,12 @@ export class AppExecutors {
       // Stop the app
       this.logger.info(`Stopping app ${appId}`);
 
+      // Simulate 10 seconds of waiting for the app to stop
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+
       await compose(appId, 'rm --force --stop');
 
       this.logger.info('App stopped!');
-
-      // Creating backup of the app before restoring
-      await this.backupApp(appId);
 
       // Unzip the archive
       await fs.promises.mkdir(restoreDir, { recursive: true });
@@ -680,16 +687,15 @@ export class AppExecutors {
         appId,
       ]);
 
-      // Start the app
-      this.logger.info(`Starting app ${appId}`);
-
-      // TODO: start only if the app was running before
-      await compose(appId, 'up --detach --force-recreate --remove-orphans --pull always');
-
       this.logger.info(`App ${appId} restored!`);
 
       // Done
-      await SocketManager.emit({ type: 'app', event: 'restore_success', data: { appId } });
+      await SocketManager.emit({
+        type: 'app',
+        event: 'restore_success',
+        data: { appId, appStatus: 'stopped' },
+      });
+
       return { success: true, message: `App ${appId} restored successfully` };
     } catch (err) {
       console.error(err);

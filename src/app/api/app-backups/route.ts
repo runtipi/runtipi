@@ -30,3 +30,5 @@ export async function GET(request: Request) {
 }
 
 export type AppBackupsApiResponse = Awaited<ReturnType<typeof getAppBackups>>;
+
+export type AppBackup = AppBackupsApiResponse['data'][number];

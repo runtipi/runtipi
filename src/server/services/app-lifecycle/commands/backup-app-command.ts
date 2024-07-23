@@ -3,20 +3,29 @@ import { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
+import { AppStatus } from '@/server/db/schema';
 
 export class BackupAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
   private eventDispatcher: EventDispatcher;
+  private executeOtherCommand: IAppLifecycleCommand['execute'];
 
   constructor(params: AppLifecycleCommandParams) {
     this.queries = params.queries;
     this.eventDispatcher = params.eventDispatcher;
+    this.executeOtherCommand = params.executeOtherCommand;
   }
 
-  private async sendEvent(appId: string): Promise<void> {
+  private async sendEvent(appId: string, appStatusBeforeUpdate: AppStatus): Promise<void> {
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'backup', appid: appId, form: {} });
 
     if (success) {
+      if (appStatusBeforeUpdate === 'running') {
+        await this.executeOtherCommand('startApp', { appId });
+      } else {
+        await this.queries.updateApp(appId, { status: appStatusBeforeUpdate });
+      }
+
       await this.queries.updateApp(appId, { status: 'running' });
     } else {
       Logger.error(`Failed to backup app ${appId}: ${stdout}`);
@@ -35,6 +44,6 @@ export class BackupAppCommand implements IAppLifecycleCommand {
     // Run script
     await this.queries.updateApp(appId, { status: 'backing_up' });
 
-    await this.sendEvent(appId);
+    void this.sendEvent(appId, app.status);
   }
 }

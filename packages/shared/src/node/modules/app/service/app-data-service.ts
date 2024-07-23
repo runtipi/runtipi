@@ -17,16 +17,13 @@ export class AppDataService {
    *  If an error occurs during the process, it logs the error message and throws an error.
    *
    *  @param {string} id - The app id.
-   *  @param {App['status']} [status] - The app status.
    */
-  public async getAppInfoFromInstalledOrAppStore(id: string, status?: string) {
-    const installed = typeof status !== 'undefined' && status !== 'missing';
-
-    if (installed) {
-      return this.dataAccessApp.getInstalledAppInfo(id);
-    } else {
+  public async getAppInfoFromInstalledOrAppStore(id: string) {
+    const info = await this.dataAccessApp.getInstalledAppInfo(id);
+    if (!info) {
       return this.dataAccessApp.getAppInfoFromAppStore(id);
     }
+    return info;
   }
 
   public getInstalledInfo(id: string) {

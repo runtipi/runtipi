@@ -1,8 +1,7 @@
-import { AppBackupsApiResponse } from '@/api/app-backups/route';
+import type { AppBackup, AppBackupsApiResponse } from '@/api/app-backups/route';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
-import { useCookies } from 'next-client-cookies';
 import React from 'react';
-import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { TablePagination } from 'src/app/components/TablePagination/TablePagination';
 import { BackupModal } from '../BackupModal';
 import { AppInfo } from '@runtipi/shared';
@@ -13,7 +12,11 @@ import { backupAppAction } from '@/actions/app-actions/backup-app-action';
 import toast from 'react-hot-toast';
 import { RestoreModal } from '../RestoreModal';
 import { restoreBackupAction } from '@/actions/app-actions/restore-app-action';
-import { useClientSettings } from '@/hooks/useClientSettings';
+import { FileSize } from '@/components/FileSize/FileSize';
+import { useAppStatus } from '@/hooks/useAppStatus';
+import { DateFormat } from '@/components/DateFormat/DateFormat';
+import { useTranslations } from 'next-intl';
+import { DeleteBackupModal } from '../DeleteBackupModal/DeleteBackupModal';
 
 type Props = {
   info: AppInfo;
@@ -37,19 +40,17 @@ async function getBackupsQueryFn(params: { appId: string; page: number; pageSize
 }
 
 export const AppBackups = ({ info, initialData }: Props) => {
-  const cookies = useCookies();
-  const locale = cookies.get('tipi-locale') || 'en-US';
+  const t = useTranslations();
   const [page, setPage] = React.useState(1);
-  const [restoreBackupId, setRestoreBackupId] = React.useState<string | null>(null);
+  const [selectedBackup, setSelectedBackup] = React.useState<AppBackup | null>(null);
+  const appStatus = useAppStatus((state) => state.statuses[info.id]) || 'missing';
 
   const backupModalDisclosure = useDisclosure();
   const restoreModalDisclosure = useDisclosure();
-  const { timeZone } = useClientSettings();
-
-  const queryClient = useQueryClient();
+  const deleteBackupModalDisclosure = useDisclosure();
 
   const { data } = useQuery({
-    queryKey: ['app-backups', page, info.id],
+    queryKey: ['app-backups', page, info.id, initialData.total],
     queryFn: () => getBackupsQueryFn({ appId: info.id, page: page, pageSize: 5 }),
     initialData,
     placeholderData: keepPreviousData,
@@ -58,9 +59,6 @@ export const AppBackups = ({ info, initialData }: Props) => {
   const backupMutation = useAction(backupAppAction, {
     onExecute: () => {
       backupModalDisclosure.close();
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['app-backups'] });
     },
     onError: ({ error }) => {
       if (error.serverError) toast.error(error.serverError);
@@ -76,38 +74,58 @@ export const AppBackups = ({ info, initialData }: Props) => {
     },
   });
 
-  const handleRestoreClick = (backupId: string) => {
-    setRestoreBackupId(backupId);
+  const handleRestoreClick = (backup: AppBackup) => {
+    setSelectedBackup(backup);
     restoreModalDisclosure.open();
   };
 
+  const handleDeleteClick = (backup: AppBackup) => {
+    setSelectedBackup(backup);
+    deleteBackupModalDisclosure.open();
+  };
+
+  const disableActions = appStatus === 'missing' || appStatus === 'backing_up' || appStatus === 'restoring';
+
   return (
     <div className="card">
-      <div className="card-header">
-        <Button size="sm" onClick={backupModalDisclosure.open} intent="primary" loading={backupMutation.status === 'executing'}>
-          Backup now
+      <div className="card-header d-flex justify-content-between align-items-center">
+        <div className="">
+          <h3 className="h3 mb-0">{t('BACKUPS_LIST')}</h3>
+        </div>
+        <Button
+          onClick={backupModalDisclosure.open}
+          variant="outline"
+          intent="primary"
+          disabled={disableActions}
+          loading={backupMutation.status === 'executing'}
+        >
+          {t('BACKUPS_LIST_BACKUP_NOW')}
         </Button>
       </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>size</TableHead>
-            <TableHead>date</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t('BACKUPS_LIST_ROW_TITLE_ID')}</TableHead>
+            <TableHead>{t('BACKUPS_LIST_ROW_TITLE_SIZE')}</TableHead>
+            <TableHead>{t('BACKUPS_LIST_ROW_TITLE_DATE')}</TableHead>
+            <TableHead>{t('BACKUPS_LIST_ROW_TITLE_ACTIONS')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.data.map((backup) => (
             <TableRow key={backup.id}>
               <TableCell>{backup.id}</TableCell>
-              <TableCell>{backup.size}</TableCell>
-              <TableCell>{new Date(backup.date).toLocaleString(locale, { timeZone })}</TableCell>
-              <TableCell className="gap-2 d-flex">
-                <Button size="sm" intent="secondary" onClick={() => handleRestoreClick(backup.id)}>
+              <TableCell>
+                <FileSize size={backup.size} />
+              </TableCell>
+              <TableCell>
+                <DateFormat date={backup.date} />
+              </TableCell>
+              <TableCell className="gap-2 d-flex" style={{ marginLeft: -4 }}>
+                <Button size="sm" intent="primary" variant="ghost" onClick={() => handleRestoreClick(backup)} disabled={disableActions}>
                   Restore
                 </Button>
-                <Button size="sm" intent="danger" onClick={() => restoreModalDisclosure.open()}>
+                <Button size="sm" intent="danger" variant="ghost" onClick={() => handleDeleteClick(backup)} disabled={disableActions}>
                   Delete
                 </Button>
               </TableCell>
@@ -115,7 +133,7 @@ export const AppBackups = ({ info, initialData }: Props) => {
           ))}
         </TableBody>
       </Table>
-      <div className="card-footer">
+      <div className="card-footer d-flex justify-content-end">
         <TablePagination
           totalPages={Math.max(1, data.lastPage)}
           currentPage={page}
@@ -131,10 +149,17 @@ export const AppBackups = ({ info, initialData }: Props) => {
         onConfirm={() => backupMutation.execute({ id: info.id })}
       />
       <RestoreModal
-        info={info}
+        appName={info.name}
+        backup={selectedBackup}
         isOpen={restoreModalDisclosure.isOpen}
         onClose={restoreModalDisclosure.close}
-        onConfirm={() => restoreMutation.execute({ id: info.id, filename: restoreBackupId! })}
+        onConfirm={() => selectedBackup && restoreMutation.execute({ id: info.id, filename: selectedBackup.id })}
+      />
+      <DeleteBackupModal
+        backup={selectedBackup}
+        isOpen={deleteBackupModalDisclosure.isOpen}
+        onClose={deleteBackupModalDisclosure.close}
+        onConfirm={() => selectedBackup && restoreMutation.execute({ id: info.id, filename: selectedBackup.id })}
       />
     </div>
   );

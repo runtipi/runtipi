@@ -45,7 +45,6 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
   async execute(params: { appId: string }): Promise<void> {
     const { appId } = params;
     const app = await this.queries.getApp(appId);
-    const appStatusBeforeUpdate = app?.status;
 
     if (!app) {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
@@ -60,6 +59,6 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
     await this.queries.updateApp(appId, { status: 'updating' });
 
-    void this.sendEvent(appId, castAppConfig(app.config), appStatusBeforeUpdate || 'missing');
+    void this.sendEvent(appId, castAppConfig(app.config), app.status || 'missing');
   }
 }

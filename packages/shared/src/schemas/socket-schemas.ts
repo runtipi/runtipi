@@ -40,6 +40,8 @@ export const socketEventSchema = z.union([
           'uninstalling',
           'resetting',
           'restarting',
+          'backing_up',
+          'restoring',
         ])
         .optional(),
       error: z.string().optional(),

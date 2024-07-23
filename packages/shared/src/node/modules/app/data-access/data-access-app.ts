@@ -122,7 +122,7 @@ export class DataAccessApp {
   }
 
   public async listBackupsByAppId(appId: string) {
-    const backupsDir = path.join(this.appDataDir, sanitizePath(appId), 'backups');
+    const backupsDir = path.join(this.dataDir, 'backups', sanitizePath(appId));
 
     if (!(await pathExists(backupsDir))) {
       return [];
