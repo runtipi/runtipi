@@ -8,15 +8,15 @@ import { AppInfo } from '@runtipi/shared';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { Button } from '@/components/ui/Button';
 import { useAction } from 'next-safe-action/hooks';
-import { backupAppAction } from '@/actions/app-actions/backup-app-action';
 import toast from 'react-hot-toast';
 import { RestoreModal } from '../RestoreModal';
-import { restoreBackupAction } from '@/actions/app-actions/restore-app-action';
 import { FileSize } from '@/components/FileSize/FileSize';
 import { useAppStatus } from '@/hooks/useAppStatus';
 import { DateFormat } from '@/components/DateFormat/DateFormat';
 import { useTranslations } from 'next-intl';
 import { DeleteBackupModal } from '../DeleteBackupModal/DeleteBackupModal';
+import { createAppBackupAction } from '@/actions/backup/create-app-backup-action';
+import { restoreAppBackupAction } from '@/actions/backup/restore-app-backup-action';
 
 type Props = {
   info: AppInfo;
@@ -56,7 +56,7 @@ export const AppBackups = ({ info, initialData }: Props) => {
     placeholderData: keepPreviousData,
   });
 
-  const backupMutation = useAction(backupAppAction, {
+  const backupMutation = useAction(createAppBackupAction, {
     onExecute: () => {
       backupModalDisclosure.close();
     },
@@ -65,7 +65,7 @@ export const AppBackups = ({ info, initialData }: Props) => {
     },
   });
 
-  const restoreMutation = useAction(restoreBackupAction, {
+  const restoreMutation = useAction(restoreAppBackupAction, {
     onExecute: () => {
       restoreModalDisclosure.close();
     },
@@ -121,8 +121,15 @@ export const AppBackups = ({ info, initialData }: Props) => {
               <TableCell>
                 <DateFormat date={backup.date} />
               </TableCell>
-              <TableCell className="gap-2 d-flex" style={{ marginLeft: -4 }}>
-                <Button size="sm" intent="primary" variant="ghost" onClick={() => handleRestoreClick(backup)} disabled={disableActions}>
+              <TableCell>
+                <Button
+                  size="sm"
+                  intent="primary"
+                  variant="ghost"
+                  onClick={() => handleRestoreClick(backup)}
+                  disabled={disableActions}
+                  className="me-1"
+                >
                   Restore
                 </Button>
                 <Button size="sm" intent="danger" variant="ghost" onClick={() => handleDeleteClick(backup)} disabled={disableActions}>

@@ -1,14 +1,14 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
+import { AppBackupCommandParams, IAppBackupCommand } from './types';
 import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
 
-export class RestoreBackupCommand implements IAppLifecycleCommand {
+export class RestoreAppBackupCommand implements IAppBackupCommand {
   private queries: AppQueries;
   private eventDispatcher: EventDispatcher;
 
-  constructor(params: AppLifecycleCommandParams) {
+  constructor(params: AppBackupCommandParams) {
     this.queries = params.queries;
     this.eventDispatcher = params.eventDispatcher;
   }

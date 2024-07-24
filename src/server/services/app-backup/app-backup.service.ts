@@ -1,43 +1,29 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
-import { IAppLifecycleCommand } from './commands/types';
+import { IAppBackupCommand } from './commands/types';
 import { AppDataService } from '@runtipi/shared/node';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import {
-  InstallAppCommand,
-  ResetAppCommand,
-  RestartAppCommand,
-  StartAppCommand,
-  StopAppCommand,
-  UninstallAppCommand,
-  UpdateAppCommand,
-  UpdateAppConfigCommand,
-} from './commands';
+import { CreateAppBackupCommand, GetAppBackupsCommand, RestoreAppBackupCommand } from './commands';
 
 export const availableCommands = {
-  startApp: StartAppCommand,
-  resetApp: ResetAppCommand,
-  updateApp: UpdateAppCommand,
-  updateAppConfig: UpdateAppConfigCommand,
-  stopApp: StopAppCommand,
-  restartApp: RestartAppCommand,
-  installApp: InstallAppCommand,
-  uninstallApp: UninstallAppCommand,
+  createAppBackup: CreateAppBackupCommand,
+  restoreAppBackup: RestoreAppBackupCommand,
+  getAppBackups: GetAppBackupsCommand,
 } as const;
 
-export type ExecuteLifecycleFunction = <K extends keyof typeof availableCommands>(
+export type ExecuteAppBackupFunction = <K extends keyof typeof availableCommands>(
   command: K,
   ...args: Parameters<(typeof availableCommands)[K]['prototype']['execute']>
 ) => Promise<ReturnType<(typeof availableCommands)[K]['prototype']['execute']>>;
 
 class CommandInvoker {
-  public async execute(command: IAppLifecycleCommand, args: unknown[]) {
+  public async execute(command: IAppBackupCommand, args: unknown[]) {
     return command.execute(...args);
   }
 }
 
-export class AppLifecycleClass {
+export class AppBackupClass {
   private commandInvoker: CommandInvoker;
 
   constructor(
@@ -48,7 +34,7 @@ export class AppLifecycleClass {
     this.commandInvoker = new CommandInvoker();
   }
 
-  public executeCommand: ExecuteLifecycleFunction = (command, ...args) => {
+  public executeCommand: ExecuteAppBackupFunction = (command, ...args) => {
     const Command = availableCommands[command];
 
     if (!Command) {
@@ -68,10 +54,10 @@ export class AppLifecycleClass {
   };
 }
 
-export type AppLifecycle = InstanceType<typeof AppLifecycleClass>;
+export type AppBackup = InstanceType<typeof AppBackupClass>;
 
 const queries = new AppQueries();
 const eventDispatcher = new EventDispatcher();
 const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
 
-export const appLifecycle = new AppLifecycleClass(queries, eventDispatcher, appDataService);
+export const appBackupService = new AppBackupClass(queries, eventDispatcher, appDataService);

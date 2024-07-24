@@ -1,6 +1,6 @@
 import { ensureUser } from '@/actions/utils/ensure-user';
 import { handleApiError } from '@/actions/utils/handle-api-error';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
+import { appBackupService } from '@/server/services/app-backup/app-backup.service';
 import { TranslatedError } from '@/server/utils/errors';
 
 const getAppBackups = async (searchParams: URLSearchParams) => {
@@ -12,7 +12,7 @@ const getAppBackups = async (searchParams: URLSearchParams) => {
     throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
   }
 
-  return appCatalog.executeCommand('getAppBackups', { appId, pageSize: Number(pageSize), page: Number(page) });
+  return appBackupService.executeCommand('getAppBackups', { appId, pageSize: Number(pageSize), page: Number(page) });
 };
 
 export async function GET(request: Request) {

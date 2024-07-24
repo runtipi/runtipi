@@ -7,7 +7,6 @@ import { SearchAppsCommand } from './commands/search-apps-command';
 import { ListAppsCommand } from './commands/list-apps-command';
 import { AppCatalogCache } from './app-catalog-cache';
 import { IAppCatalogCommand } from './commands/types';
-import { GetAppBackupsCommand } from './commands/get-app-backups-command';
 
 const availableCommands = {
   getInstalledApps: GetInstalledAppsCommand,
@@ -15,7 +14,6 @@ const availableCommands = {
   getApp: GetAppCommand,
   searchApps: SearchAppsCommand,
   listApps: ListAppsCommand,
-  getAppBackups: GetAppBackupsCommand,
 } as const;
 
 export type ExecuteCatalogFunction = <K extends keyof typeof availableCommands>(

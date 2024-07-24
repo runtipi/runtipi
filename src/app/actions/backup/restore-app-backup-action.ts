@@ -2,8 +2,8 @@
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
 import { authActionClient } from '@/lib/safe-action';
+import { appBackupService } from '@/server/services/app-backup/app-backup.service';
 
 const input = z.object({
   id: z.string(),
@@ -13,8 +13,8 @@ const input = z.object({
 /**
  * Given an app id and a filename, restores the app to a previous state.
  */
-export const restoreBackupAction = authActionClient.schema(input).action(async ({ parsedInput: { id, filename } }) => {
-  await appLifecycle.executeCommand('restoreBackup', { appId: id, filename });
+export const restoreAppBackupAction = authActionClient.schema(input).action(async ({ parsedInput: { id, filename } }) => {
+  await appBackupService.executeCommand('restoreAppBackup', { appId: id, filename });
 
   revalidatePath('/apps');
   revalidatePath(`/app/${id}`);

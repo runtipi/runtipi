@@ -1,12 +1,12 @@
-import { AppCatalogCommandParams, IAppCatalogCommand } from './types';
+import { AppBackupCommandParams, IAppBackupCommand } from './types';
 import { AppDataService } from '@runtipi/shared/node';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetAppBackupsCommand>['execute']>>;
 
-export class GetAppBackupsCommand implements IAppCatalogCommand<ReturnValue> {
+export class GetAppBackupsCommand implements IAppBackupCommand<ReturnValue> {
   private appDataService: AppDataService;
 
-  constructor(params: AppCatalogCommandParams) {
+  constructor(params: AppBackupCommandParams) {
     this.appDataService = params.appDataService;
   }
 
