@@ -173,7 +173,6 @@ export const handleViewAppLogsEvent = async (
 
   socket.on('app-logs', (data) => {
     if (data.event === 'stopLogs') {
-      console.log('Stopping logs');
       logs.kill('SIGINT');
     }
   });

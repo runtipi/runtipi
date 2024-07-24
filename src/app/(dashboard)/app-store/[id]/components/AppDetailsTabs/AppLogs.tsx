@@ -3,6 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { useSocket } from '@/lib/socket/useSocket';
 import { LogsTerminal } from 'src/app/components/LogsTerminal/LogsTerminal';
+import { ClientOnly } from '@/components/ClientOnly/ClientOnly';
 
 export const AppLogs = ({ appId }: { appId: string }) => {
   let nextId = 0;
@@ -34,5 +35,9 @@ export const AppLogs = ({ appId }: { appId: string }) => {
     setLogs((currentLogs) => currentLogs.slice(currentLogs.length - linesToKeep));
   };
 
-  return <LogsTerminal logs={logs} maxLines={maxLines.current} onMaxLinesChange={updateMaxLines} />;
+  return (
+    <ClientOnly>
+      <LogsTerminal logs={logs} maxLines={maxLines.current} onMaxLinesChange={updateMaxLines} />
+    </ClientOnly>
+  );
 };
