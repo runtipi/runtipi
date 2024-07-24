@@ -16,11 +16,9 @@ export class RestoreAppBackupCommand implements IAppBackupCommand {
   private async sendEvent(appId: string, filename: string): Promise<void> {
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'restore', appid: appId, filename });
 
-    if (success) {
-      await this.queries.updateApp(appId, { status: 'running' });
-    } else {
+    await this.queries.updateApp(appId, { status: 'stopped' });
+    if (!success) {
       Logger.error(`Failed to restore app ${appId}: ${stdout}`);
-      await this.queries.updateApp(appId, { status: 'stopped' });
     }
   }
 

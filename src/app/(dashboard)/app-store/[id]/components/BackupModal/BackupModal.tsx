@@ -21,7 +21,7 @@ export const BackupModal: React.FC<IProps> = ({ info, isOpen, onClose, onConfirm
           <DialogTitle>{t('APP_BACKUP_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          <span className="text-muted">{t('APP_BACKUP_SUBTITILE')}</span>
+          <span className="text-muted">{t('APP_BACKUP_SUBTITLE')}</span>
         </DialogDescription>
         <DialogFooter>
           <Button onClick={onConfirm} intent="success">

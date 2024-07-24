@@ -128,16 +128,21 @@ export class DataAccessApp {
       return [];
     }
 
-    const list = await fs.promises.readdir(backupsDir);
+    try {
+      const list = await fs.promises.readdir(backupsDir);
 
-    const backups = await Promise.all(
-      list.map(async (backup) => {
-        const stats = await fs.promises.stat(path.join(backupsDir, backup));
-        return { id: backup, size: stats.size, date: stats.mtime.toISOString() };
-      }),
-    );
+      const backups = await Promise.all(
+        list.map(async (backup) => {
+          const stats = await fs.promises.stat(path.join(backupsDir, backup));
+          return { id: backup, size: stats.size, date: stats.mtime.toISOString() };
+        }),
+      );
 
-    return backups;
+      return backups;
+    } catch (error) {
+      this.logger.error(`Error listing backups for app ${appId}: ${error}`);
+      return [];
+    }
   }
 
   public async deleteBackup(appId: string, filename: string) {

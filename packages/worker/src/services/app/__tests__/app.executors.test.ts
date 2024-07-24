@@ -247,8 +247,11 @@ describe('test: app executors', () => {
       const spy = vi.spyOn(dockerHelpers, 'compose');
       const config = createAppConfig();
 
-      spy.mockRejectedValueOnce(new Error('test'));
       spy.mockResolvedValueOnce({ stdout: 'done', stderr: '' });
+      spy.mockImplementationOnce(() => {
+        throw new Error('test');
+      });
+      spy.mockResolvedValue({ stdout: 'done', stderr: '' });
 
       // act
       const { message, success } = await appExecutors.updateApp(config.id, config);
@@ -261,6 +264,9 @@ describe('test: app executors', () => {
 
     it('should replace app directory with new one', async () => {
       // arrange
+      const spy = vi.spyOn(dockerHelpers, 'compose');
+      spy.mockResolvedValue({ stdout: 'done', stderr: '' });
+
       const config = createAppConfig();
       const oldFolder = path.join(DATA_DIR, 'apps', config.id);
 
@@ -278,6 +284,7 @@ describe('test: app executors', () => {
 
       expect(exists).toBe(true);
       expect(content).not.toBe('test');
+      spy.mockRestore();
     });
   });
 
@@ -295,7 +302,7 @@ describe('test: app executors', () => {
 
       // assert
       expect(success).toBe(true);
-      const backups = await fs.promises.readdir(path.join(APP_DATA_DIR, config.id, 'backups'));
+      const backups = await fs.promises.readdir(path.join(DATA_DIR, 'backups', config.id));
 
       expect(backups.length).toBe(2);
 
@@ -310,8 +317,8 @@ describe('test: app executors', () => {
         .spyOn(dockerHelpers, 'compose')
         .mockResolvedValue({ stdout: 'done', stderr: '' });
       const config = createAppConfig({ version: '2.0.0' }, true);
-      await fs.promises.mkdir(path.join(APP_DATA_DIR, config.id, 'backups'), { recursive: true });
-      const filename = path.join(APP_DATA_DIR, config.id, 'backups', 'test.tar.gz');
+      await fs.promises.mkdir(path.join(DATA_DIR, 'backups', config.id), { recursive: true });
+      const filename = path.join(DATA_DIR, 'backups', config.id, 'test.tar.gz');
       const tempDir = path.join('/tmp', config.id);
       await fs.promises.mkdir(tempDir, { recursive: true });
       await fs.promises.cp(path.join(APP_DATA_DIR, config.id), path.join(tempDir, 'app-data'));
@@ -332,6 +339,7 @@ describe('test: app executors', () => {
       expect(success).toBe(true);
       const content = await fs.promises.readFile(fileToCheck, 'utf-8');
       expect(JSON.parse(content).version).toBe('2.0.0');
+
       spy.mockRestore();
     });
   });

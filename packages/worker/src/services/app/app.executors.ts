@@ -247,7 +247,6 @@ export class AppExecutors {
       await client?.query('UPDATE app SET status = $1 WHERE id = $2', ['stopped', appId]);
       return { success: true, message: `App ${appId} stopped successfully` };
     } catch (err) {
-      console.error(err);
       return this.handleAppError(err, appId, 'stop_error', 'running');
     }
   };
@@ -637,9 +636,6 @@ export class AppExecutors {
       // Stop the app
       this.logger.info(`Stopping app ${appId}`);
 
-      // Simulate 10 seconds of waiting for the app to stop
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-
       await compose(appId, 'rm --force --stop');
 
       this.logger.info('App stopped!');
@@ -696,7 +692,6 @@ export class AppExecutors {
 
       return { success: true, message: `App ${appId} restored successfully` };
     } catch (err) {
-      console.error(err);
       return this.handleAppError(err, appId, 'restore_error');
     }
   };

@@ -13,7 +13,11 @@ export const useDateFormat = () => {
   const locale = cookies.get('tipi-locale') || 'en-US';
 
   const formatDate = (date?: Date | string) => {
-    if (!date) return '';
+    if (!date) return 'Invalid date';
+
+    const parsedDate = new Date(date);
+    if (Number.isNaN(parsedDate.getTime())) return 'Invalid date';
+
     return new Date(date).toLocaleString(locale, { timeZone });
   };
 
