@@ -44,6 +44,7 @@
     "@tabler/core": "1.0.0-beta20",
     "@tabler/icons-react": "^3.11.0",
     "@tanstack/react-query": "^5.51.11",
+    "@uidotdev/usehooks": "^2.4.1",
     "argon2": "^0.40.3",
     "bullmq": "^5.10.3",
     "class-variance-authority": "^0.7.0",

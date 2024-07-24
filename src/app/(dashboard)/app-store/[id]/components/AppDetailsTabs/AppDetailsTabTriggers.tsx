@@ -25,6 +25,9 @@ export const AppDetailsTabTriggers = ({ status }: IProps) => {
       <TabsTrigger onClick={() => handleTabChange('info')} value="info">
         {t('APP_DETAILS_BASE_INFO')}
       </TabsTrigger>
+      <TabsTrigger value="backups" onClick={() => handleTabChange('backups')} disabled={status === 'missing'}>
+        {t('APP_BACKUPS_TAB_TITLE')}
+      </TabsTrigger>
       <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={status === 'missing'}>
         {t('APP_LOGS_TAB_TITLE')}
       </TabsTrigger>
