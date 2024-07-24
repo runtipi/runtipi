@@ -1,6 +1,6 @@
 {
   "name": "runtipi",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "A homeserver for everyone",
   "packageManager": "pnpm@9.4.0",
   "scripts": {
