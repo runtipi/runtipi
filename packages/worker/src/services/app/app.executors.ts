@@ -588,8 +588,6 @@ export class AppExecutors {
       // Create the archive
       await this.archiveManager.createTarGz(tempDir, `${path.join(tempDir, backupName)}.tar.gz`);
 
-      // await execAsync(`tar -czpf ${path.join(tempDir, backupName)}.tar.gz -C ${tempDir} .`);
-
       this.logger.info('Moving archive to backup directory...');
 
       // Move the archive to the backup directory

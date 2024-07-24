@@ -75,4 +75,8 @@ export class AppDataService {
       lastPage: Math.ceil(backups.length / pageSize),
     };
   }
+
+  public async deleteAppBackup(appId: string, filename: string) {
+    return this.dataAccessApp.deleteBackup(appId, filename);
+  }
 }

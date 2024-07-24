@@ -1,7 +1,7 @@
 import type { AppBackup, AppBackupsApiResponse } from '@/api/app-backups/route';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import React from 'react';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { TablePagination } from 'src/app/components/TablePagination/TablePagination';
 import { BackupModal } from '../BackupModal';
 import { AppInfo } from '@runtipi/shared';
@@ -17,6 +17,7 @@ import { useTranslations } from 'next-intl';
 import { DeleteBackupModal } from '../DeleteBackupModal/DeleteBackupModal';
 import { createAppBackupAction } from '@/actions/backup/create-app-backup-action';
 import { restoreAppBackupAction } from '@/actions/backup/restore-app-backup-action';
+import { deleteAppBackupAction } from '@/actions/backup/delete-app-backup';
 
 type Props = {
   info: AppInfo;
@@ -49,6 +50,8 @@ export const AppBackups = ({ info, initialData }: Props) => {
   const restoreModalDisclosure = useDisclosure();
   const deleteBackupModalDisclosure = useDisclosure();
 
+  const queryClient = useQueryClient();
+
   const { data } = useQuery({
     queryKey: ['app-backups', page, info.id, initialData.total],
     queryFn: () => getBackupsQueryFn({ appId: info.id, page: page, pageSize: 5 }),
@@ -74,6 +77,19 @@ export const AppBackups = ({ info, initialData }: Props) => {
     },
   });
 
+  const deleteMutation = useAction(deleteAppBackupAction, {
+    onExecute: () => {
+      deleteBackupModalDisclosure.close();
+    },
+    onSuccess: () => {
+      toast.success(t('BACKUPS_LIST_DELETE_SUCCESS'));
+      void queryClient.invalidateQueries({ queryKey: ['app-backups'] });
+    },
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
+    },
+  });
+
   const handleRestoreClick = (backup: AppBackup) => {
     setSelectedBackup(backup);
     restoreModalDisclosure.open();
@@ -84,7 +100,12 @@ export const AppBackups = ({ info, initialData }: Props) => {
     deleteBackupModalDisclosure.open();
   };
 
-  const disableActions = appStatus === 'missing' || appStatus === 'backing_up' || appStatus === 'restoring';
+  const disableActions =
+    appStatus === 'missing' ||
+    appStatus === 'backing_up' ||
+    appStatus === 'restoring' ||
+    backupMutation.status === 'executing' ||
+    restoreMutation.status === 'executing';
 
   return (
     <div className="card">
@@ -92,13 +113,7 @@ export const AppBackups = ({ info, initialData }: Props) => {
         <div className="">
           <h3 className="h3 mb-0">{t('BACKUPS_LIST')}</h3>
         </div>
-        <Button
-          onClick={backupModalDisclosure.open}
-          variant="outline"
-          intent="primary"
-          disabled={disableActions}
-          loading={backupMutation.status === 'executing'}
-        >
+        <Button onClick={backupModalDisclosure.open} variant="outline" intent="primary" disabled={disableActions}>
           {t('BACKUPS_LIST_BACKUP_NOW')}
         </Button>
       </div>
@@ -166,7 +181,7 @@ export const AppBackups = ({ info, initialData }: Props) => {
         backup={selectedBackup}
         isOpen={deleteBackupModalDisclosure.isOpen}
         onClose={deleteBackupModalDisclosure.close}
-        onConfirm={() => selectedBackup && restoreMutation.execute({ id: info.id, filename: selectedBackup.id })}
+        onConfirm={() => selectedBackup && deleteMutation.execute({ appId: info.id, filename: selectedBackup.id })}
       />
     </div>
   );

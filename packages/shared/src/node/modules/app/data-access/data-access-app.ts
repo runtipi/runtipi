@@ -139,4 +139,12 @@ export class DataAccessApp {
 
     return backups;
   }
+
+  public async deleteBackup(appId: string, filename: string) {
+    const backupPath = path.join(this.dataDir, 'backups', sanitizePath(appId), filename);
+
+    if (await pathExists(backupPath)) {
+      await fs.promises.unlink(backupPath);
+    }
+  }
 }

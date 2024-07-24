@@ -196,6 +196,7 @@
   "BACKUPS_LIST_ROW_TITLE_DATE": "Date",
   "BACKUPS_LIST_ROW_TITLE_ACTIONS": "Actions",
   "BACKUPS_LIST_ROW_TITLE_SIZE": "Size",
+  "BACKUPS_LIST_DELETE_SUCCESS": "Backup deleted successfully",
   "COMMON_CLOSE": "Close",
   "DASHBOARD_CPU_SUBTITLE": "Uninstall apps to reduce load",
   "DASHBOARD_CPU_TITLE": "CPU load",

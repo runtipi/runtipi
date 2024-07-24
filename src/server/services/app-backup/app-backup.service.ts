@@ -4,12 +4,13 @@ import { IAppBackupCommand } from './commands/types';
 import { AppDataService } from '@runtipi/shared/node';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { CreateAppBackupCommand, GetAppBackupsCommand, RestoreAppBackupCommand } from './commands';
+import { CreateAppBackupCommand, DeleteAppBackupCommand, GetAppBackupsCommand, RestoreAppBackupCommand } from './commands';
 
 export const availableCommands = {
   createAppBackup: CreateAppBackupCommand,
   restoreAppBackup: RestoreAppBackupCommand,
   getAppBackups: GetAppBackupsCommand,
+  deleteAppBackup: DeleteAppBackupCommand,
 } as const;
 
 export type ExecuteAppBackupFunction = <K extends keyof typeof availableCommands>(

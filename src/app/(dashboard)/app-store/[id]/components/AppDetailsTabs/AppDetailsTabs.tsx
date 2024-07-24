@@ -1,6 +1,6 @@
 'use client';
 
-import { IconExternalLink } from '@tabler/icons-react';
+import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
@@ -10,6 +10,7 @@ import { AppLogs } from './AppLogs';
 import { useAppStatus } from '@/hooks/useAppStatus';
 import { AppBackups } from './AppBackups';
 import type { AppBackupsApiResponse } from '@/api/app-backups/route';
+import { Markdown } from '@/components/Markdown';
 
 interface IProps {
   info: AppInfo;
@@ -33,7 +34,20 @@ export const AppDetailsTabs = ({ info, backups }: IProps) => {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="description">
-        <AppBackups info={info} initialData={backups} />
+        {info.deprecated && (
+          <div className="alert alert-danger" role="alert">
+            <div className="d-flex">
+              <div>
+                <IconAlertCircle />
+              </div>
+              <div className="ms-2">
+                <h4 className="alert-title">{t('APP_DETAILS_DEPRECATED_ALERT_TITLE')}</h4>
+                <div className="text-secondary">{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')} </div>
+              </div>
+            </div>
+          </div>
+        )}
+        <Markdown className="markdown">{info.description}</Markdown>
       </TabsContent>
       <TabsContent value="backups">
         <AppBackups info={info} initialData={backups} />
