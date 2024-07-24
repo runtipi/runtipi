@@ -7,12 +7,12 @@ import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { UpdateAppCommand } from '../update-app-command';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { AppDataService } from '@runtipi/shared/node';
-import { DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 
 let db: TestDatabase;
 const TEST_SUITE = 'updateappcommand';
 const dispatcher = new EventDispatcher();
-const appDataService = new AppDataService(DATA_DIR, 'repo-id');
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 let updateApp: UpdateAppCommand;
 
 const executeOtherCommandMock = vi.fn(() => Promise.resolve({ success: true }));

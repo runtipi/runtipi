@@ -1,9 +1,9 @@
-/* eslint-disable jsx-a11y/anchor-has-content */
 import * as React from 'react';
 
-import { ButtonProps } from '@/components/ui/Button';
 import clsx from 'clsx';
 import { IconChevronLeft, IconChevronRight, IconDots } from '@tabler/icons-react';
+import { Button, type ButtonProps } from '../Button';
+import styles from './Pagination.module.scss';
 
 const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
   <nav role="navigation" aria-label="pagination" className={clsx('m-0 ms-auto', className)} {...props} />
@@ -15,39 +15,43 @@ const PaginationContent = React.forwardRef<HTMLUListElement, React.ComponentProp
 ));
 PaginationContent.displayName = 'PaginationContent';
 
-const PaginationItem = React.forwardRef<HTMLLIElement, React.ComponentProps<'li'>>(({ className, ...props }, ref) => (
-  <li ref={ref} className={clsx('page-item', className)} {...props} />
-));
+const PaginationItem = React.forwardRef<HTMLLIElement, React.ComponentProps<'li'> & { isActive?: boolean }>(
+  ({ className, isActive, ...props }, ref) => <li ref={ref} className={clsx('page-item', { active: isActive }, className)} {...props} />,
+);
 PaginationItem.displayName = 'PaginationItem';
 
 type PaginationLinkProps = {
-  isActive?: boolean;
-} & Pick<ButtonProps, 'size'> &
-  React.ComponentProps<'a'>;
+  small?: boolean;
+} & ButtonProps;
 
-const PaginationLink = ({ className, isActive, ...props }: PaginationLinkProps) => (
-  <a aria-current={isActive ? 'page' : undefined} className={clsx('page-link', { active: isActive }, className)} {...props} />
+const PaginationLink = ({ className, small = true, disabled, ...props }: PaginationLinkProps) => (
+  <Button
+    aria-disabled={disabled}
+    disabled={disabled}
+    size="sm"
+    variant="ghost"
+    className={clsx('page-link cursor-pointer', { [`${styles.paginationLink}`]: small }, styles.pageButton, className)}
+    {...props}
+  />
 );
 PaginationLink.displayName = 'PaginationLink';
 
 const PaginationPrevious = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to previous page" size="default" className={clsx('gap-1 pl-2.5', className)} {...props}>
+  <PaginationLink aria-label="Go to previous page" small={false} className={clsx('', className)} {...props}>
     <IconChevronLeft className="" />
-    <span>prev</span>
   </PaginationLink>
 );
 PaginationPrevious.displayName = 'PaginationPrevious';
 
 const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to next page" size="default" className={clsx('gap-1 pr-2.5', className)} {...props}>
-    <span>next</span>
+  <PaginationLink aria-label="Go to next page" small={false} className={clsx('', className)} {...props}>
     <IconChevronRight className="" />
   </PaginationLink>
 );
 PaginationNext.displayName = 'PaginationNext';
 
 const PaginationEllipsis = ({ className, ...props }: React.ComponentProps<'span'>) => (
-  <span aria-hidden className={clsx('d-flex align-items-center justify-content-center h-100', className)} {...props}>
+  <span aria-hidden className={clsx('px-1 d-flex align-items-center justify-content-center h-100', styles.paginationLink, className)} {...props}>
     <IconDots size={14} className="mx-1" />
   </span>
 );

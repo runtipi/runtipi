@@ -21,6 +21,10 @@ export const socketEventSchema = z.union([
       z.literal('restart_error'),
       z.literal('generate_env_success'),
       z.literal('generate_env_error'),
+      z.literal('backup_success'),
+      z.literal('backup_error'),
+      z.literal('restore_success'),
+      z.literal('restore_error'),
     ]),
     data: z.object({
       appId: z.string(),
@@ -36,6 +40,8 @@ export const socketEventSchema = z.union([
           'uninstalling',
           'resetting',
           'restarting',
+          'backing_up',
+          'restoring',
         ])
         .optional(),
       error: z.string().optional(),

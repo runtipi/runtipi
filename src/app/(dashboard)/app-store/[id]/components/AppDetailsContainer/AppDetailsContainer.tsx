@@ -5,13 +5,15 @@ import { AppStatus } from '@/components/AppStatus';
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
 import { GetAppCommand } from '@/server/services/app-catalog/commands';
+import { AppBackupsApiResponse } from '@/api/app-backups/route';
 
 type AppDetailsContainerProps = {
   app: Awaited<ReturnType<GetAppCommand['execute']>>;
+  backups: AppBackupsApiResponse;
   localDomain?: string;
 };
 
-export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, localDomain }) => {
+export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, localDomain, backups }) => {
   const t = useTranslations();
 
   return (
@@ -30,7 +32,7 @@ export const AppDetailsContainer: React.FC<AppDetailsContainerProps> = ({ app, l
           <AppActions localDomain={localDomain} app={app} />
         </div>
       </div>
-      <AppDetailsTabs info={app.info} />
+      <AppDetailsTabs info={app.info} backups={backups} />
     </div>
   );
 };

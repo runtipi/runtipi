@@ -1,7 +1,7 @@
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { GetInstalledAppsCommand, GetGuestDashboardApps, GetAppCommand } from './commands';
 import { AppDataService } from '@runtipi/shared/node';
-import { DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { SearchAppsCommand } from './commands/search-apps-command';
 import { ListAppsCommand } from './commands/list-apps-command';
@@ -60,7 +60,7 @@ export class AppCatalogClass {
 export type AppCatalog = InstanceType<typeof AppCatalogClass>;
 
 const queries = new AppQueries();
-const appDataService = new AppDataService(DATA_DIR, TipiConfig.getConfig().appsRepoId);
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
 const appCacheManager = new AppCatalogCache(appDataService);
 
 export const appCatalog = new AppCatalogClass(queries, appCacheManager, appDataService);

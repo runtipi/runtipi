@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery } from 'react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import type { AppStoreApiResponse } from '@/api/app-store/route';
 import { useInfiniteScroll } from '@/client/hooks/useInfiniteScroll';
 import { EmptyPage } from '../../../../components/EmptyPage';
@@ -12,38 +12,39 @@ interface IProps {
   initialData: AppStoreApiResponse;
 }
 
-async function searchApps({ search, category, pageParam }: { search?: string; category?: string; pageParam?: string }) {
-  const url = new URL('/api/app-store', window.location.origin);
-
-  if (search) {
-    url.searchParams.append('search', search);
-  }
-
-  if (category) {
-    url.searchParams.append('category', category);
-  }
-
-  if (pageParam) {
-    url.searchParams.append('cursor', pageParam);
-  }
-
-  const response = await fetch(url.toString());
-
-  if (!response.ok) {
-    throw new Error('Problem fetching data');
-  }
-  return response.json() as Promise<AppStoreApiResponse>;
-}
-
 export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
   const { category, search } = useAppStoreState();
 
+  async function searchApps({ pageParam }: { pageParam?: string }) {
+    const url = new URL('/api/app-store', window.location.origin);
+
+    if (search) {
+      url.searchParams.append('search', search);
+    }
+
+    if (category) {
+      url.searchParams.append('category', category);
+    }
+
+    if (pageParam) {
+      url.searchParams.append('cursor', pageParam);
+    }
+
+    const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      throw new Error('Problem fetching data');
+    }
+    return response.json() as Promise<AppStoreApiResponse>;
+  }
+
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = useInfiniteQuery({
-    queryFn: (other) => searchApps({ search, category, ...other }),
+    queryFn: searchApps,
     queryKey: ['app-store', search, category],
+    initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     initialData: { pages: [initialData], pageParams: [] },
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   const apps = data?.pages.map((page) => page.data).flat();

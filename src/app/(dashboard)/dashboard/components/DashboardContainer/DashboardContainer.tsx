@@ -3,7 +3,7 @@
 import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons-react';
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { systemLoadSchema, type SystemLoad } from '@runtipi/shared';
 import { SystemStat } from '../SystemStat';
 
@@ -22,7 +22,8 @@ async function fetchSystemStatus() {
 }
 
 export const DashboardContainer: React.FC<IProps> = ({ initialData }) => {
-  const { data } = useQuery<SystemLoad>('systemLoad', fetchSystemStatus, { initialData, refetchInterval: 3000 });
+  const { data } = useQuery({ queryKey: ['systemLoad'], queryFn: fetchSystemStatus, initialData, refetchInterval: 3000 });
+
   const t = useTranslations();
 
   if (!data) {

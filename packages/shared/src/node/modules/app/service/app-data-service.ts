@@ -4,8 +4,9 @@ import { DataAccessApp } from '../data-access/data-access-app';
 export class AppDataService {
   private dataAccessApp: DataAccessApp;
 
-  constructor(dataDir: string, appsRepoId: string) {
-    this.dataAccessApp = new DataAccessApp(dataDir, appsRepoId);
+  constructor(params: { dataDir: string; appDataDir: string; appsRepoId: string }) {
+    const { dataDir, appDataDir, appsRepoId } = params;
+    this.dataAccessApp = new DataAccessApp({ dataDir, appDataDir, appsRepoId });
   }
 
   /**
@@ -16,16 +17,13 @@ export class AppDataService {
    *  If an error occurs during the process, it logs the error message and throws an error.
    *
    *  @param {string} id - The app id.
-   *  @param {App['status']} [status] - The app status.
    */
-  public async getAppInfoFromInstalledOrAppStore(id: string, status?: string) {
-    const installed = typeof status !== 'undefined' && status !== 'missing';
-
-    if (installed) {
-      return this.dataAccessApp.getInstalledAppInfo(id);
-    } else {
+  public async getAppInfoFromInstalledOrAppStore(id: string) {
+    const info = await this.dataAccessApp.getInstalledAppInfo(id);
+    if (!info) {
       return this.dataAccessApp.getAppInfoFromAppStore(id);
     }
+    return info;
   }
 
   public getInstalledInfo(id: string) {
@@ -59,5 +57,26 @@ export class AppDataService {
         deprecated,
         supported_architectures,
       }));
+  }
+
+  public async getAppBackups(params: { appId: string; pageSize: number; page: number }) {
+    const { appId, page, pageSize } = params;
+    const backups = await this.dataAccessApp.listBackupsByAppId(appId);
+    backups.reverse();
+
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const data = backups.slice(start, end);
+
+    return {
+      data,
+      total: backups.length,
+      currentPage: Math.floor(start / pageSize) + 1,
+      lastPage: Math.ceil(backups.length / pageSize),
+    };
+  }
+
+  public async deleteAppBackup(appId: string, filename: string) {
+    return this.dataAccessApp.deleteBackup(appId, filename);
   }
 }

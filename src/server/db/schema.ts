@@ -13,6 +13,8 @@ const appStatusEnum = pgEnum('app_status_enum', [
   'uninstalling',
   'resetting',
   'restarting',
+  'backing_up',
+  'restoring',
 ]);
 
 const APP_STATUS = appStatusEnum.enumValues;
