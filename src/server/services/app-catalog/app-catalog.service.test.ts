@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { faker } from '@faker-js/faker';
 import path from 'path';
-import { DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { beforeEach, beforeAll, afterAll, describe, it, expect } from 'vitest';
 import { AppCatalogClass } from './app-catalog.service';
 import { createAppConfig, insertApp } from '../../tests/apps.factory';
@@ -20,7 +20,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  const appDataService = new AppDataService(DATA_DIR, TipiConfig.getConfig().appsRepoId);
+  const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
   appCatalog = new AppCatalogClass(new AppQueries(db.db), new AppCatalogCache(appDataService), appDataService);
   await clearDatabase(db);
   await TipiConfig.setConfig('version', 'test');

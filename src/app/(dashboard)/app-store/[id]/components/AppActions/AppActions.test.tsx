@@ -6,12 +6,12 @@ import { GetAppCommand } from '@/server/services/app-catalog/commands';
 
 afterEach(cleanup);
 
-const useAppStatusStoreMock = vi.fn();
-vi.mock('src/app/components/ClientProviders/AppStatusProvider/app-status-provider', async (importOriginal) => {
+const useAppStatusMock = vi.fn();
+vi.mock('@/hooks/useAppStatus', async (importOriginal) => {
   const original = (await importOriginal()) as typeof importOriginal;
   return {
     ...original,
-    useAppStatusStore: () => useAppStatusStoreMock(),
+    useAppStatus: () => useAppStatusMock(),
   };
 });
 
@@ -29,7 +29,7 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is running', () => {
     // arrange
-    useAppStatusStoreMock.mockImplementation(() => 'running');
+    useAppStatusMock.mockImplementation(() => 'running');
 
     render(<AppActions app={app} />);
 
@@ -41,7 +41,7 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is starting', () => {
     // arrange
-    useAppStatusStoreMock.mockImplementation(() => 'starting');
+    useAppStatusMock.mockImplementation(() => 'starting');
     render(<AppActions app={app} />);
 
     // assert
@@ -51,7 +51,7 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is stopping', () => {
     // arrange
-    useAppStatusStoreMock.mockImplementation(() => 'stopping');
+    useAppStatusMock.mockImplementation(() => 'stopping');
     render(<AppActions app={app} />);
 
     // assert
@@ -61,7 +61,7 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is removing', () => {
     // arrange
-    useAppStatusStoreMock.mockImplementation(() => 'uninstalling');
+    useAppStatusMock.mockImplementation(() => 'uninstalling');
     render(<AppActions app={app} />);
 
     // assert
@@ -71,7 +71,7 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is installing', () => {
     // arrange
-    useAppStatusStoreMock.mockImplementation(() => 'installing');
+    useAppStatusMock.mockImplementation(() => 'installing');
     render(<AppActions app={app} />);
 
     // assert
@@ -81,7 +81,7 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is updating', () => {
     // arrange
-    useAppStatusStoreMock.mockImplementation(() => 'updating');
+    useAppStatusMock.mockImplementation(() => 'updating');
     render(<AppActions app={app} />);
 
     // assert
@@ -91,7 +91,7 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is missing', () => {
     // arrange
-    useAppStatusStoreMock.mockImplementation(() => 'missing');
+    useAppStatusMock.mockImplementation(() => 'missing');
     render(<AppActions app={app} />);
 
     // assert
@@ -100,7 +100,7 @@ describe('Test: AppActions', () => {
 
   it('should render update button if app is running and has an update available', () => {
     // arrange
-    useAppStatusStoreMock.mockImplementation(() => 'running');
+    useAppStatusMock.mockImplementation(() => 'running');
     render(<AppActions app={{ ...app, version: 1, latestVersion: 2 }} />);
 
     // assert
@@ -109,7 +109,7 @@ describe('Test: AppActions', () => {
 
   it('should render update button if app is stopped and has an update available', () => {
     // arrange
-    useAppStatusStoreMock.mockImplementation(() => 'stopped');
+    useAppStatusMock.mockImplementation(() => 'stopped');
     render(<AppActions app={{ ...app, version: 1, latestVersion: 2 }} />);
 
     // assert
@@ -124,7 +124,7 @@ describe('Test: AppActions', () => {
       domain: 'myapp.example.com',
     };
     window.open = vi.fn();
-    useAppStatusStoreMock.mockImplementation(() => 'running');
+    useAppStatusMock.mockImplementation(() => 'running');
     render(<AppActions app={appWithDomain} />);
 
     // act
@@ -145,7 +145,7 @@ describe('Test: AppActions', () => {
   it('should render local_domain open button when exposed locally', async () => {
     // arrange
     window.open = vi.fn();
-    useAppStatusStoreMock.mockImplementation(() => 'running');
+    useAppStatusMock.mockImplementation(() => 'running');
     render(<AppActions localDomain="tipi.lan" app={{ ...app, exposedLocal: true }} />);
 
     // act
@@ -166,7 +166,7 @@ describe('Test: AppActions', () => {
   it('should render local open button when port is open', async () => {
     // arrange
     window.open = vi.fn();
-    useAppStatusStoreMock.mockImplementation(() => 'running');
+    useAppStatusMock.mockImplementation(() => 'running');
     render(<AppActions app={{ ...app, openPort: true }} />);
 
     // act

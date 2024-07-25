@@ -5,24 +5,30 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
-import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { AppLogs } from './AppLogs';
-import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { useAppStatus } from '@/hooks/useAppStatus';
+import { AppBackups } from './AppBackups';
+import type { AppBackupsApiResponse } from '@/api/app-backups/route';
+import { Markdown } from '@/components/Markdown';
 
 interface IProps {
   info: AppInfo;
+  backups: AppBackupsApiResponse;
 }
 
-export const AppDetailsTabs = ({ info }: IProps) => {
+export const AppDetailsTabs = ({ info, backups }: IProps) => {
   const t = useTranslations();
-  const appStatus = useAppStatusStore((state) => state.statuses[info.id]) || 'missing';
+  const appStatus = useAppStatus((state) => state.statuses[info.id]) || 'missing';
 
   return (
     <Tabs defaultValue="description" orientation="vertical" style={{ marginTop: -1 }}>
       <TabsList>
         <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
         <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
+        <TabsTrigger value="backups" disabled={appStatus === 'missing'}>
+          {t('APP_BACKUPS_TAB_TITLE')}
+        </TabsTrigger>
         <TabsTrigger value="logs" disabled={appStatus === 'missing'}>
           {t('APP_LOGS_TAB_TITLE')}
         </TabsTrigger>
@@ -42,6 +48,9 @@ export const AppDetailsTabs = ({ info }: IProps) => {
           </div>
         )}
         <Markdown className="markdown">{info.description}</Markdown>
+      </TabsContent>
+      <TabsContent value="backups">
+        <AppBackups info={info} initialData={backups} />
       </TabsContent>
       <TabsContent value="info">
         <DataGrid>

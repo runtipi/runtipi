@@ -6,12 +6,12 @@ import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/se
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { RestartAppCommand } from '../restart-app-command';
 import { AppDataService } from '@runtipi/shared/node';
-import { DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 
 let db: TestDatabase;
 const TEST_SUITE = 'stopappcommand';
 const dispatcher = new EventDispatcher();
-const appDataService = new AppDataService(DATA_DIR, 'repo-id');
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 let restartApp: RestartAppCommand;
 
 beforeAll(async () => {

@@ -9,13 +9,13 @@ import { InstallAppCommand } from '../install-app-command';
 import { faker } from '@faker-js/faker';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import path from 'path';
-import { DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { AppDataService } from '@runtipi/shared/node';
 
 let db: TestDatabase;
 const TEST_SUITE = 'installappcommand';
 const dispatcher = new EventDispatcher();
-const appDataService = new AppDataService(DATA_DIR, 'repo-id');
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 const executeOtherCommandMock = vi.fn(() => Promise.resolve({ success: true }));
 let installApp: InstallAppCommand;
 

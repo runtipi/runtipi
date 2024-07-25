@@ -13,6 +13,8 @@ const {
   uninstallApp,
   updateApp,
   regenerateAppEnv,
+  backupApp,
+  restoreApp,
 } = new AppExecutors();
 const { cloneRepo, pullRepo } = new RepoExecutors();
 
@@ -59,6 +61,14 @@ const runCommand = async (jobData: unknown) => {
 
     if (data.command === 'generate_env') {
       ({ success, message } = await regenerateAppEnv(data.appid, data.form));
+    }
+
+    if (data.command === 'backup') {
+      ({ success, message } = await backupApp(data.appid));
+    }
+
+    if (data.command === 'restore') {
+      ({ success, message } = await restoreApp(data.appid, data.filename));
     }
   } else if (data.type === 'repo') {
     if (data.command === 'clone') {

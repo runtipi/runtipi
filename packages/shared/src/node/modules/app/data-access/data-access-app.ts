@@ -8,13 +8,15 @@ import { appInfoSchema } from '../../../../schemas/app-schemas';
 // Lower level data access class for apps
 export class DataAccessApp {
   private dataDir: string;
+  private appDataDir: string;
   private appsRepoId: string;
   private logger: FileLogger;
 
-  constructor(dataDir: string, appsRepoId: string) {
-    this.dataDir = dataDir;
-    this.appsRepoId = appsRepoId;
-    this.logger = new FileLogger('data-access-app', path.join(dataDir, 'logs'), true);
+  constructor(params: { dataDir: string; appDataDir: string; appsRepoId: string }) {
+    this.dataDir = params.dataDir;
+    this.appDataDir = params.appDataDir;
+    this.appsRepoId = params.appsRepoId;
+    this.logger = new FileLogger('data-access-app', path.join(params.dataDir, 'logs'), true);
   }
 
   private getInstalledAppsFolder() {
@@ -117,5 +119,37 @@ export class DataAccessApp {
     const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
 
     return appsDir.filter((app) => !skippedFiles.includes(app));
+  }
+
+  public async listBackupsByAppId(appId: string) {
+    const backupsDir = path.join(this.dataDir, 'backups', sanitizePath(appId));
+
+    if (!(await pathExists(backupsDir))) {
+      return [];
+    }
+
+    try {
+      const list = await fs.promises.readdir(backupsDir);
+
+      const backups = await Promise.all(
+        list.map(async (backup) => {
+          const stats = await fs.promises.stat(path.join(backupsDir, backup));
+          return { id: backup, size: stats.size, date: stats.mtime.toISOString() };
+        }),
+      );
+
+      return backups;
+    } catch (error) {
+      this.logger.error(`Error listing backups for app ${appId}: ${error}`);
+      return [];
+    }
+  }
+
+  public async deleteBackup(appId: string, filename: string) {
+    const backupPath = path.join(this.dataDir, 'backups', sanitizePath(appId), filename);
+
+    if (await pathExists(backupPath)) {
+      await fs.promises.unlink(backupPath);
+    }
   }
 }

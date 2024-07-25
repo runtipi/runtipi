@@ -7,7 +7,7 @@ ENV LOCAL=true
 ENV SENTRY_RELEASE=development
 
 RUN apk add --no-cache python3 make g++ curl git
-RUN npm install pnpm pm2 -g
+RUN npm install pnpm@9.4.0 pm2 -g
 
 ARG TARGETARCH
 ARG DOCKER_COMPOSE_VERSION="v2.23.3"

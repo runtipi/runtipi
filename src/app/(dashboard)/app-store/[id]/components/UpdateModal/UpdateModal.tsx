@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { useAction } from 'next-safe-action/hooks';
 import { updateAppAction } from '@/actions/app-actions/update-app-action';
 import toast from 'react-hot-toast';
-import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { useAppStatus } from '@/hooks/useAppStatus';
 
 interface IProps {
   newVersion: string;
@@ -17,7 +17,7 @@ interface IProps {
 
 export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClose }) => {
   const t = useTranslations();
-  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+  const setAppStatus = useAppStatus((state) => state.setAppStatus);
 
   const updateMutation = useAction(updateAppAction, {
     onError: ({ error }) => {

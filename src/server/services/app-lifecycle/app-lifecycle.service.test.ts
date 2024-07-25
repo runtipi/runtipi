@@ -7,13 +7,13 @@ import { TipiConfig } from '../../core/TipiConfig';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import waitForExpect from 'wait-for-expect';
 import { AppDataService } from '@runtipi/shared/node';
-import { DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 
 let db: TestDatabase;
 let appLifecycle: AppLifecycleClass;
 const TEST_SUITE = 'applifecycle';
 const dispatcher = new EventDispatcher();
-const appDataService = new AppDataService(DATA_DIR, 'repo-id');
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);

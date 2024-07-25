@@ -17,7 +17,7 @@ export class GetAppCommand implements IAppCatalogCommand<ReturnValue> {
 
   async execute(appId: string) {
     let app = await this.queries.getApp(appId);
-    const info = await this.appDataService.getAppInfoFromInstalledOrAppStore(appId, app?.status);
+    const info = await this.appDataService.getAppInfoFromInstalledOrAppStore(appId);
     const updateInfo = await this.appDataService.getUpdateInfo(appId);
 
     if (info) {

@@ -3,10 +3,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } 
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { Button } from '@/components/ui/Button';
-import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 import { useAction } from 'next-safe-action/hooks';
 import { stopAppAction } from '@/actions/app-actions/stop-app-action';
 import toast from 'react-hot-toast';
+import { useAppStatus } from '@/hooks/useAppStatus';
 
 interface IProps {
   info: AppInfo;
@@ -16,7 +16,7 @@ interface IProps {
 
 export const StopModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
   const t = useTranslations();
-  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+  const setAppStatus = useAppStatus((state) => state.setAppStatus);
 
   const stopMutation = useAction(stopAppAction, {
     onError: ({ error }) => {

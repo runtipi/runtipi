@@ -10,6 +10,7 @@ import validator from 'validator';
 import { Locale } from '@/shared/internationalization/locales';
 import { Switch } from '@/components/ui/Switch';
 import { LanguageSelector } from '../../../../components/LanguageSelector';
+import { TimeZoneSelector } from 'src/app/components/TimeZoneSelector/TimeZoneSelector';
 
 export type SettingsFormValues = {
   dnsIp?: string;
@@ -21,6 +22,7 @@ export type SettingsFormValues = {
   guestDashboard?: boolean;
   allowAutoThemes?: boolean;
   allowErrorMonitoring?: boolean;
+  timeZone?: string;
 };
 
 interface IProps {
@@ -261,6 +263,14 @@ export const SettingsForm = (props: IProps) => {
           />
         </div>
         <div className="mb-3">
+          <Controller
+            control={control}
+            name="timeZone"
+            defaultValue="Etc/GMT"
+            render={({ field: { onChange, value } }) => <TimeZoneSelector onChange={onChange} timeZone={value} />}
+          />
+        </div>
+        <div className="mb-3">
           <Input
             {...register('localDomain')}
             label={
@@ -279,6 +289,7 @@ export const SettingsForm = (props: IProps) => {
             {t('SETTINGS_GENERAL_DOWNLOAD_CERTIFICATE')}
           </Button>
         </div>
+
         <Button loading={loading} type="submit" intent="success">
           {t('SETTINGS_GENERAL_SUBMIT')}
         </Button>

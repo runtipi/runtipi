@@ -1,10 +1,9 @@
 'use client';
 
 import React from 'react';
-import { type ReactNode, createContext, useRef, useContext } from 'react';
-import { useStore } from 'zustand';
+import { type ReactNode, createContext, useRef } from 'react';
 
-import { type AppStatusStore, createAppStatusStore } from './app-status-store';
+import { createAppStatusStore } from './app-status-store';
 import type { AppStatus } from '@/server/db/schema';
 
 export type AppStatusStoreApi = ReturnType<typeof createAppStatusStore>;
@@ -23,14 +22,4 @@ export const AppStatusStoreProvider = ({ children, initialStatuses }: AppStatusS
   }
 
   return <AppStatusStoreContext.Provider value={storeRef.current}>{children}</AppStatusStoreContext.Provider>;
-};
-
-export const useAppStatusStore = <T,>(selector: (store: AppStatusStore) => T): T => {
-  const appStatusStoreContext = useContext(AppStatusStoreContext);
-
-  if (!appStatusStoreContext) {
-    throw new Error(`useAppStatusStore must be used within a AppStatusStoreProvider`);
-  }
-
-  return useStore(appStatusStoreContext, selector);
 };

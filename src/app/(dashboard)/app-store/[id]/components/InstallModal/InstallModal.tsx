@@ -7,7 +7,7 @@ import { InstallForm } from '../InstallForm';
 import { useAction } from 'next-safe-action/hooks';
 import { installAppAction } from '@/actions/app-actions/install-app-action';
 import toast from 'react-hot-toast';
-import { useAppStatusStore } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
+import { useAppStatus } from '@/hooks/useAppStatus';
 
 interface IProps {
   info: AppInfo;
@@ -17,7 +17,7 @@ interface IProps {
 
 export const InstallModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
   const t = useTranslations();
-  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
+  const setAppStatus = useAppStatus((state) => state.setAppStatus);
 
   const installMutation = useAction(installAppAction, {
     onError: ({ error }) => {

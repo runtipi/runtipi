@@ -6,6 +6,7 @@ import { getTranslator } from '@/lib/get-translator';
 import { MessageKey, TranslatedError } from '@/server/utils/errors';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { AppDetailsContainer } from './components/AppDetailsContainer/AppDetailsContainer';
+import { appBackupService } from '@/server/services/app-backup/app-backup.service';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   return {
@@ -16,9 +17,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function AppDetailsPage({ params }: { params: { id: string } }) {
   try {
     const app = await appCatalog.executeCommand('getApp', params.id);
+    const backups = await appBackupService.executeCommand('getAppBackups', { appId: params.id, pageSize: 5, page: 1 });
     const settings = TipiConfig.getSettings();
 
-    return <AppDetailsContainer app={app} localDomain={settings.localDomain} />;
+    return <AppDetailsContainer app={app} localDomain={settings.localDomain} backups={backups} />;
   } catch (e) {
     const translator = await getTranslator();
 

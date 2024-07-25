@@ -19,6 +19,7 @@ const appEventSchema = z.object({
     z.literal('reset'),
     z.literal('restart'),
     z.literal('generate_env'),
+    z.literal('backup'),
   ]),
   appid: z.string(),
   skipEnv: z.boolean().optional().default(false),
@@ -32,6 +33,13 @@ const appEventSchema = z.object({
     })
     .extend({})
     .catchall(z.unknown()),
+});
+
+const restoreAppCommandSchema = z.object({
+  type: z.literal(EVENT_TYPES.APP),
+  command: z.literal('restore'),
+  appid: z.string(),
+  filename: z.string(),
 });
 
 export type AppEventFormInput = z.input<typeof appEventSchema>['form'];
@@ -48,7 +56,7 @@ const systemCommandSchema = z.object({
   command: z.literal('system_info'),
 });
 
-export const eventSchema = appEventSchema.or(repoCommandSchema).or(systemCommandSchema);
+export const eventSchema = appEventSchema.or(restoreAppCommandSchema).or(repoCommandSchema).or(systemCommandSchema);
 
 export const eventResultSchema = z.object({
   success: z.boolean(),

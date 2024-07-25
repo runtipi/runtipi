@@ -7,7 +7,7 @@ import { fireEvent, render, screen, waitFor } from '../../../../../../../tests/t
 import { InstallForm } from './InstallForm';
 
 let useClientSettingsMock = { guestDashboard: false };
-vi.mock('../../../../../hooks/use-client-settings.ts', () => ({
+vi.mock('@/hooks/useClientSettings', () => ({
   useClientSettings: () => useClientSettingsMock,
 }));
 

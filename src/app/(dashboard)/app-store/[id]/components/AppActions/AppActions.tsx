@@ -37,8 +37,8 @@ import { UpdateModal } from '../UpdateModal';
 import { ResetAppModal } from '../ResetAppModal';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal';
-import { useAppStatusStore } from '../../../../../components/ClientProviders/AppStatusProvider/app-status-provider';
 import styles from './AppActions.module.scss';
+import { useAppStatus } from '@/hooks/useAppStatus';
 
 interface IProps {
   app: Awaited<ReturnType<GetAppCommand['execute']>>;
@@ -66,8 +66,8 @@ type OpenType = 'local' | 'domain' | 'local_domain';
 
 export const AppActions: React.FC<IProps> = ({ app, localDomain }) => {
   const { info } = app;
-  const setAppStatus = useAppStatusStore((state) => state.setAppStatus);
-  const appStatus = useAppStatusStore((state) => state.statuses[info.id] || 'missing');
+  const setAppStatus = useAppStatus((state) => state.setAppStatus);
+  const appStatus = useAppStatus((state) => state.statuses[info.id] || 'missing');
   const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
 
   const installDisclosure = useDisclosure();
@@ -186,6 +186,12 @@ export const AppActions: React.FC<IProps> = ({ app, localDomain }) => {
     case 'restarting':
     case 'updating':
     case 'resetting':
+      buttons.push(LoadingButton, CancelButton);
+      break;
+    case 'backing_up':
+      buttons.push(LoadingButton, CancelButton);
+      break;
+    case 'restoring':
       buttons.push(LoadingButton, CancelButton);
       break;
     case 'missing':

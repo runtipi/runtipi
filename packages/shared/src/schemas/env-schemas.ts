@@ -20,6 +20,19 @@ export const envSchema = z.object({
   appsRepoUrl: z.string().url().trim(),
   domain: z.string().trim(),
   localDomain: z.string().trim(),
+  timeZone: z
+    .string()
+    .trim()
+    .optional()
+    .default('Etc/GMT')
+    .transform((value) => {
+      try {
+        Intl.DateTimeFormat(undefined, { timeZone: value }).resolvedOptions().timeZone === value;
+        return value;
+      } catch (error) {
+        return 'Etc/GMT';
+      }
+    }),
   appDataPath: z
     .string()
     .trim()
@@ -108,6 +121,7 @@ export const settingsSchema = envSchema
     persistTraefikConfig: true,
     eventsTimeout: true,
     repeatTimeout: true,
+    timeZone: true,
   })
   .and(
     z
