@@ -2,7 +2,7 @@
 
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
@@ -11,6 +11,8 @@ import { useAppStatus } from '@/hooks/useAppStatus';
 import { AppBackups } from './AppBackups';
 import type { AppBackupsApiResponse } from '@/api/app-backups/route';
 import { Markdown } from '@/components/Markdown';
+import { useSearchParams } from 'next/navigation';
+import { AppDetailsTabTriggers } from './AppDetailsTabTriggers';
 
 interface IProps {
   info: AppInfo;
@@ -21,18 +23,11 @@ export const AppDetailsTabs = ({ info, backups }: IProps) => {
   const t = useTranslations();
   const appStatus = useAppStatus((state) => state.statuses[info.id]) || 'missing';
 
+  const defaultTab = useSearchParams().get('tab');
+
   return (
-    <Tabs defaultValue="description" orientation="vertical" style={{ marginTop: -1 }}>
-      <TabsList>
-        <TabsTrigger value="description">{t('APP_DETAILS_DESCRIPTION')}</TabsTrigger>
-        <TabsTrigger value="info">{t('APP_DETAILS_BASE_INFO')}</TabsTrigger>
-        <TabsTrigger value="backups" disabled={appStatus === 'missing'}>
-          {t('APP_BACKUPS_TAB_TITLE')}
-        </TabsTrigger>
-        <TabsTrigger value="logs" disabled={appStatus === 'missing'}>
-          {t('APP_LOGS_TAB_TITLE')}
-        </TabsTrigger>
-      </TabsList>
+    <Tabs defaultValue={defaultTab || 'description'} orientation="vertical" style={{ marginTop: -1 }}>
+      <AppDetailsTabTriggers status={appStatus} />
       <TabsContent value="description">
         {info.deprecated && (
           <div className="alert alert-danger" role="alert">
