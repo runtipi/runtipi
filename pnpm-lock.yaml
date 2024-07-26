@@ -111,8 +111,8 @@ importers:
         specifier: ^3.17.2
         version: 3.17.2(next@14.2.5(@babel/core@7.24.9)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.3)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8))(react@18.3.1)
       next-safe-action:
-        specifier: 7.4.2
-        version: 7.4.2(next@14.2.5(@babel/core@7.24.9)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.3)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8)
+        specifier: 7.4.3
+        version: 7.4.3(next@14.2.5(@babel/core@7.24.9)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.3)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8)
       pg:
         specifier: ^8.12.0
         version: 8.12.0
@@ -5287,8 +5287,8 @@ packages:
       next: '>=10.0.0'
       react: '>=17.0.0'
 
-  next-safe-action@7.4.2:
-    resolution: {integrity: sha512-2e8a2wOT/XsNguJEWSdviakXDfmC5wB37Q+tWLnf35yjkVxON3P51+bP7K0N0TKU9Gl5JIZPwz8SudVTQGgilQ==}
+  next-safe-action@7.4.3:
+    resolution: {integrity: sha512-wUVs5Leh6GWR4vnQuSdJDIJFAuz9YWuCYo7S4px1bofu+Pfg9Em/1zZxZvwaFmIqu+TJssOM5rsq64Og2owagQ==}
     engines: {node: '>=18.17'}
     peerDependencies:
       next: '>= 14.0.0'
@@ -12583,7 +12583,7 @@ snapshots:
       next: 14.2.5(@babel/core@7.24.9)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.3)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8)
       react: 18.3.1
 
-  next-safe-action@7.4.2(next@14.2.5(@babel/core@7.24.9)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.3)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8):
+  next-safe-action@7.4.3(next@14.2.5(@babel/core@7.24.9)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.3)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8):
     dependencies:
       next: 14.2.5(@babel/core@7.24.9)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.3)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8)
       react: 18.3.1
