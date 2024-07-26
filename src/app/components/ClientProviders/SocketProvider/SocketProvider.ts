@@ -72,7 +72,6 @@ export const SocketProvider = ({ children }: PropsWithChildren) => {
           break;
         case 'restore_success':
           toast.success(t('APP_RESTORE_SUCCESS', { id: data.appId }));
-          void queryClient.invalidateQueries({ queryKey: ['app-backups'] });
           break;
         case 'restore_error':
           toast.error(t('APP_RESTORE_ERROR', { id: data.appId }));
