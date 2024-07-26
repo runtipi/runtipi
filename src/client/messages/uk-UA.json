@@ -99,7 +99,6 @@
   "APP_RESTORE_SUBTITLE": "Всі поточні дані додатка будуть стерті та замінені даними з резервної копії. Рекомендується зробити резервну копію вашого додатка перед відновленням.",
   "APP_RESTORE_SUBMIT": "Відновити",
   "APP_BACKUPS_TAB_TITLE": "Резервні копії",
-  "APP_RESTORE_SETTINGS_SUBTITILE": "Відновити ваш додаток до попереднього стану",
   "APP_SETTINGS_GENERAL_TITLE": "Загальні",
   "APP_SETTINGS_BACKUPS_TITLE": "Резервні копії",
   "APP_STATUS_INSTALLING": "Встановлення",
