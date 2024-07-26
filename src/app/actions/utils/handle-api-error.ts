@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
 import { MessageKey, TranslatedError } from '@/server/utils/errors';
-import { getTranslatorFromCookie } from '@/lib/get-translator';
+import { getTranslator } from '@/lib/get-translator';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { Logger } from '../../../server/core/Logger';
 
@@ -12,7 +12,7 @@ export const handleApiError = async (e: unknown) => {
   const status = e instanceof TranslatedError ? e.status : 500;
   const errorVariables = e instanceof TranslatedError ? e.variableValues : {};
 
-  const translator = await getTranslatorFromCookie();
+  const translator = await getTranslator();
   const messageTranslated =
     e instanceof TranslatedError ? translator(originalMessage as MessageKey, errorVariables) : translator('INTERNAL_SERVER_ERROR');
 

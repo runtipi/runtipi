@@ -14,26 +14,27 @@ type Transports = transports.ConsoleTransportInstance | transports.FileTransport
 export const newLogger = (id: string, logsFolder: string, console?: boolean) => {
   const tr: Transports[] = [];
   let exceptionHandlers: Transports[] = [new transports.Console()];
+  try {
+    tr.push(
+      new transports.File({
+        filename: path.join(logsFolder, 'error.log'),
+        level: 'error',
+      }),
+    );
+    tr.push(
+      new transports.File({
+        filename: path.join(logsFolder, 'app.log'),
+        level: 'info',
+      }),
+    );
+    exceptionHandlers = [new transports.File({ filename: path.join(logsFolder, 'error.log') })];
 
-  tr.push(
-    new transports.File({
-      filename: path.join(logsFolder, 'error.log'),
-      level: 'error',
-    }),
-  );
-  tr.push(
-    new transports.File({
-      filename: path.join(logsFolder, 'app.log'),
-      level: 'info',
-    }),
-  );
-  exceptionHandlers = [new transports.File({ filename: path.join(logsFolder, 'error.log') })];
-
-  if (process.env.NODE_ENV === 'development') {
-    tr.push(new transports.Console({ level: 'debug' }));
-  } else if (console) {
-    tr.push(new transports.Console({ level: 'info' }));
-  }
+    if (process.env.NODE_ENV === 'development') {
+      tr.push(new transports.Console({ level: 'debug' }));
+    } else if (console) {
+      tr.push(new transports.Console({ level: 'info' }));
+    }
+  } catch (error) {}
 
   return createLogger({
     level: 'debug',

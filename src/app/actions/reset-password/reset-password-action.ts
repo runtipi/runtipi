@@ -3,8 +3,7 @@
 import { z } from 'zod';
 import { db } from '@/server/db';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
-import { action } from '@/lib/safe-action';
-import { handleActionError } from '../utils/handle-action-error';
+import { publicActionClient } from '@/lib/safe-action';
 
 const input = z.object({
   newPassword: z.string(),
@@ -13,13 +12,9 @@ const input = z.object({
 /**
  * Given that a password change request has been made, changes the password of the first operator.
  */
-export const resetPasswordAction = action(input, async ({ newPassword }) => {
-  try {
-    const authService = new AuthServiceClass(db);
-    const { email } = await authService.changeOperatorPassword({ newPassword });
+export const resetPasswordAction = publicActionClient.schema(input).action(async ({ parsedInput: { newPassword } }) => {
+  const authService = new AuthServiceClass(db);
+  const { email } = await authService.changeOperatorPassword({ newPassword });
 
-    return { success: true, email };
-  } catch (e) {
-    return handleActionError(e);
-  }
+  return { success: true, email };
 });

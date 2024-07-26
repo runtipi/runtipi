@@ -6,7 +6,6 @@ import { logger } from '@/lib/logger';
 import { getEnv } from '@/lib/environment';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { Socket } from 'socket.io';
-import { SocketManager } from '@/lib/socket/SocketManager';
 
 const getBaseComposeArgsApp = async (appId: string) => {
   const { arch, appsRepoId } = getEnv();
@@ -88,7 +87,11 @@ export const compose = async (appId: string, command: string) => {
   return { stdout, stderr };
 };
 
-export const handleViewRuntipiLogsEvent = async (socket: Socket, event: SocketEvent) => {
+export const handleViewRuntipiLogsEvent = async (
+  socket: Socket,
+  event: SocketEvent,
+  emit: (event: SocketEvent) => Promise<void>,
+) => {
   const { success, data } = socketEventSchema.safeParse(event);
 
   if (!success) {
@@ -131,7 +134,7 @@ export const handleViewRuntipiLogsEvent = async (socket: Socket, event: SocketEv
       .split(/(?:\r\n|\r|\n)/g)
       .filter(Boolean);
 
-    await SocketManager.emit({
+    await emit({
       type: 'runtipi-logs',
       event: 'newLogs',
       data: { lines },
@@ -139,7 +142,11 @@ export const handleViewRuntipiLogsEvent = async (socket: Socket, event: SocketEv
   });
 };
 
-export const handleViewAppLogsEvent = async (socket: Socket, event: SocketEvent) => {
+export const handleViewAppLogsEvent = async (
+  socket: Socket,
+  event: SocketEvent,
+  emit: (event: SocketEvent) => Promise<void>,
+) => {
   const parsedEvent = socketEventSchema.safeParse(event);
 
   if (!parsedEvent.success) {
@@ -181,7 +188,7 @@ export const handleViewAppLogsEvent = async (socket: Socket, event: SocketEvent)
       .split(/(?:\r\n|\r|\n)/g)
       .filter(Boolean);
 
-    await SocketManager.emit({
+    await emit({
       type: 'app-logs',
       event: 'newLogs',
       data: { lines, appId },

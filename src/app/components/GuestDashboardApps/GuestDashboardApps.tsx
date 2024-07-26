@@ -1,12 +1,12 @@
 import { AppTile } from '@/components/AppTile';
-import type { AppService } from '@/server/services/apps/apps.service';
 import Link from 'next/link';
 
 import React from 'react';
 import styles from './GuestDashboardApps.module.css';
+import { GetGuestDashboardApps } from '@/server/services/app-catalog/commands';
 
 type Props = {
-  apps: Awaited<ReturnType<AppService['getGuestDashboardApps']>>;
+  apps: Awaited<ReturnType<GetGuestDashboardApps['execute']>>;
   hostname?: string;
 };
 
@@ -29,7 +29,7 @@ export const GuestDashboardApps = (props: Props) => {
     return (
       <div key={app.id} className="col-sm-6 col-lg-4">
         <Link passHref href={url} target="_blank" rel="noopener noreferrer" className={styles.link}>
-          <AppTile key={app.id} app={app.info} status={app.status} updateAvailable={false} />
+          <AppTile key={app.id} app={app.info} updateAvailable={false} />
         </Link>
       </div>
     );

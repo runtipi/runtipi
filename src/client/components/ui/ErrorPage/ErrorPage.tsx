@@ -28,7 +28,7 @@ export const ErrorPage: React.FC<IProps> = ({ error, onRetry }) => (
     <p className="empty-subtitle text-muted">{error}</p>
     <div className="empty-action">
       {onRetry && (
-        <Button data-testid="error-page-action" onClick={onRetry} className="btn-danger">
+        <Button data-testid="error-page-action" onClick={onRetry} intent="danger">
           <IconRotateClockwise />
           Retry
         </Button>

@@ -27,8 +27,8 @@ export const ChangeUsernameForm = ({ username }: Props) => {
   type FormValues = z.infer<typeof schema>;
 
   const changeUsernameMutation = useAction(changeUsernameAction, {
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onSuccess: () => {
       toast.success(t('SETTINGS_SECURITY_CHANGE_USERNAME_SUCCESS'));
@@ -73,7 +73,7 @@ export const ChangeUsernameForm = ({ username }: Props) => {
                 placeholder={t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_PASSWORD')}
                 {...register('password')}
               />
-              <Button loading={changeUsernameMutation.status === 'executing'} type="submit" className="btn-success mt-3">
+              <Button loading={changeUsernameMutation.status === 'executing'} type="submit" intent="success" className="mt-3">
                 {t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_SUBMIT')}
               </Button>
             </form>

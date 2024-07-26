@@ -1,5 +1,5 @@
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { getTranslatorFromCookie } from '@/lib/get-translator';
+import { getTranslator } from '@/lib/get-translator';
 import { Metadata } from 'next';
 import React from 'react';
 import { SystemServiceClass } from '@/server/services/system';
@@ -13,7 +13,7 @@ import { SecurityContainer } from './components/SecurityContainer';
 import { LogsContainer } from './components/LogsContainer';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const translator = await getTranslatorFromCookie();
+  const translator = await getTranslator();
 
   return {
     title: `${translator('SETTINGS_TITLE')} - Tipi`,

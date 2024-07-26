@@ -4,24 +4,12 @@
     "baseUrl": ".",
     "outDir": "./dist",
     "paths": {
-      "@/lib/*": [
-        "./src/lib/*"
-      ],
-      "@/services": [
-        "./src/services"
-      ],
-      "@/config/*": [
-        "./src/config/*"
-      ],
-      "@/tests/*": [
-        "./tests/*"
-      ],
+      "@/lib/*": ["./src/lib/*"],
+      "@/services": ["./src/services"],
+      "@/config/*": ["./src/config/*"],
+      "@/tests/*": ["./tests/*"]
     },
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -37,19 +25,9 @@
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "experimentalDecorators": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.mjs",
-    "**/*.js",
-    "**/*.jsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.mjs", "**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules"]
 }

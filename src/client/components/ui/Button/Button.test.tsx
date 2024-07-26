@@ -22,15 +22,6 @@ describe('Button component', () => {
     expect(button).toHaveClass('test-class');
   });
 
-  it('should render spinner when loading prop is true', () => {
-    // arrange
-    render(<Button loading>Click me</Button>);
-
-    // assert
-    const status = screen.getByTestId('loader');
-    expect(status).toBeInTheDocument();
-  });
-
   it('should disable button when disabled prop is true', () => {
     // arrange
     render(<Button disabled>Click me</Button>);
@@ -47,15 +38,6 @@ describe('Button component', () => {
 
     // assert
     expect(button).toHaveAttribute('type', 'submit');
-  });
-
-  it('should applies width correctly', () => {
-    // arrange
-    render(<Button width={100}>Click me</Button>);
-    const button = screen.getByRole('button');
-
-    // assert
-    expect(button).toHaveStyle('width: 100px');
   });
 
   it('should call onClick callback when clicked', () => {

@@ -1,7 +1,7 @@
 # Tipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-51-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-52-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -65,6 +65,10 @@ Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may co
 - [Sentry](https://sentry.io) - Thanks for providing error tracking for the project
 - [Crowdin](https://crowdin.com) - Thanks for providing localization management for the project
 - [CodeRabbit](https://coderabbit.ai/) - Thanks for providing free AI code reviews in our Pull Requests
+
+## 🔀 Server Actions - Component Flow
+
+[![Server Actions - Component Flow](https://nextjs.apidiagram.com/github/runtipi/runtipi/diagram.svg)](https://nextjs.apidiagram.com/github/runtipi/runtipi)
 
 ## ✨ Contributors
 
@@ -141,6 +145,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/hex-developer"><img src="https://avatars.githubusercontent.com/u/77530549?v=4?s=100" width="100px;" alt="hex-developer"/><br /><sub><b>hex-developer</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=hex-developer" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://www.bielfarias.com"><img src="https://avatars.githubusercontent.com/u/21142663?v=4?s=100" width="100px;" alt="Gabriel Farias Nunes"/><br /><sub><b>Gabriel Farias Nunes</b></sub></a><br /><a href="#translation-gabrielfariasnunes" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://apidiagram.com"><img src="https://avatars.githubusercontent.com/u/56985156?v=4?s=100" width="100px;" alt="Boogie Cigdemoglu"/><br /><sub><b>Boogie Cigdemoglu</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=bcigdemoglu" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

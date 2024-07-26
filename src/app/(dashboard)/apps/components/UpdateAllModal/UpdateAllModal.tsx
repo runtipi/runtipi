@@ -27,7 +27,7 @@ export const UpdateAllModal: React.FC<IProps> = ({ isOpen, onClose, onConfirm })
           </div>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={onConfirm} className="btn-success">
+          <Button onClick={onConfirm} intent="success">
             {t('MY_APPS_UPDATE_ALL_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

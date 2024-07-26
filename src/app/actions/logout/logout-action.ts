@@ -1,16 +1,15 @@
 'use server';
 
-import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { db } from '@/server/db';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
-import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
+import { authActionClient } from '@/lib/safe-action';
 
 /**
  * Logs out the current user making the request.
  */
-export const logoutAction = action(z.void(), async () => {
+export const logoutAction = authActionClient.action(async () => {
   const cookieStore = cookies();
   const sessionCookie = cookieStore.get('tipi.sid');
 

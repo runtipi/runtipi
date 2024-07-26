@@ -55,6 +55,7 @@ node_modules/
 /repos/
 /apps/
 /traefik/
+/backups/
 
 # media folder
 media

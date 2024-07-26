@@ -58,7 +58,7 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit }) => {
         className="mb-3"
         placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
       />
-      <Button disabled={isDisabled} loading={loading} type="submit" className="btn btn-primary w-100">
+      <Button disabled={isDisabled} loading={loading} type="submit" intent="primary" className="w-100">
         {t('AUTH_LOGIN_SUBMIT')}
       </Button>
       <div className="form-text text-center">

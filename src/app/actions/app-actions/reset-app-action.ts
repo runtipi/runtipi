@@ -1,28 +1,20 @@
 'use server';
 
-import { action } from '@/lib/safe-action';
-import { appService } from '@/server/services/apps/apps.service';
+import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { handleActionError } from '../utils/handle-action-error';
-import { ensureUser } from '../utils/ensure-user';
+import { authActionClient } from '@/lib/safe-action';
 
 const input = z.object({
   id: z.string(),
 });
 
-export const resetAppAction = action(input, async ({ id }) => {
-  try {
-    await ensureUser();
+export const resetAppAction = authActionClient.schema(input).action(async ({ parsedInput: { id } }) => {
+  await appLifecycle.executeCommand('resetApp', { appId: id });
 
-    await appService.resetApp(id);
+  revalidatePath('/apps');
+  revalidatePath(`/app/${id}`);
+  revalidatePath(`/app-store/${id}`);
 
-    revalidatePath('/apps');
-    revalidatePath(`/app/${id}`);
-    revalidatePath(`/app-store/${id}`);
-
-    return { success: true };
-  } catch (e) {
-    return handleActionError(e);
-  }
+  return { success: true };
 });

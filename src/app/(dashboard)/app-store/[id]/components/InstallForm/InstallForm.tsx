@@ -9,10 +9,10 @@ import { Switch } from '@/components/ui/Switch';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { AppStatus } from '@/server/db/schema';
-import { useClientSettings } from '@/hooks/use-client-settings';
 import { validateAppConfig } from '../../utils/validators';
 import { InstallFormField } from './InstallFormField';
 import { FormValues } from './InstallForm.types';
+import { useClientSettings } from '@/hooks/useClientSettings';
 
 interface IProps {
   formFields: FormField[];
@@ -199,11 +199,11 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
       {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
       {info.dynamic_config && renderDynamicConfigForm()}
       {info.exposable && renderExposeForm()}
-      <Button loading={loading} type="submit" className="btn-success">
+      <Button loading={loading} type="submit" intent="success">
         {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
       </Button>
       {initialValues && onReset && (
-        <Button loading={status === 'stopping'} onClick={onClickReset} className="btn-danger ms-2">
+        <Button loading={status === 'stopping'} onClick={onClickReset} intent="danger" className="ms-2">
           {t('APP_INSTALL_FORM_RESET')}
         </Button>
       )}

@@ -14,7 +14,7 @@ ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_RELEASE=${TIPI_VERSION}
 ENV LOCAL=${LOCAL}
 
-RUN npm install pnpm -g
+RUN npm install pnpm@9.4.0 -g
 RUN apk add --no-cache curl python3 make g++ git
 
 # ---- RUNNER BASE ----

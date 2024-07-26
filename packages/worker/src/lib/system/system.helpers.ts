@@ -149,7 +149,7 @@ export const generateSystemEnvFile = async () => {
 
   envMap.set('APPS_REPO_ID', repoId);
   envMap.set('APPS_REPO_URL', data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
-  envMap.set('TZ', envMap.get('TZ') || Intl.DateTimeFormat().resolvedOptions().timeZone);
+  envMap.set('TZ', data.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone);
   envMap.set('INTERNAL_IP', data.listenIp || internalIp);
   envMap.set('DNS_IP', data.dnsIp || envMap.get('DNS_IP') || '9.9.9.9');
   envMap.set('ARCHITECTURE', getArchitecture());
@@ -238,6 +238,7 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
     await fs.promises.mkdir(APP_DATA_DIR, { recursive: true });
     await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
     await fs.promises.mkdir(path.join(DATA_DIR, 'repos'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'backups'), { recursive: true });
   } catch (error) {
     logger.error("Couldn't create base folders", error);
   }

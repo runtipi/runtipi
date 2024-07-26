@@ -1,6 +1,6 @@
 import { ensureUser } from '@/actions/utils/ensure-user';
 import { handleApiError } from '@/actions/utils/handle-api-error';
-import { appService } from '@/server/services/apps/apps.service';
+import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 
 const getApps = async (searchParams: URLSearchParams) => {
   const search = searchParams.get('search');
@@ -8,7 +8,7 @@ const getApps = async (searchParams: URLSearchParams) => {
   const category = searchParams.get('category');
   const cursor = searchParams.get('cursor');
 
-  return appService.searchApps({ search, category, pageSize: Number(pageSize), cursor });
+  return appCatalog.executeCommand('searchApps', { search, category, pageSize: Number(pageSize), cursor });
 };
 
 export async function GET(request: Request) {

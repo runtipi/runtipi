@@ -17,8 +17,8 @@ export const UpdateAllButton: React.FC = () => {
     onSuccess: () => {
       toast.loading(t('MY_APPS_UPDATE_ALL_IN_PROGRESS'), { duration: 3000 });
     },
-    onError: (e) => {
-      if (e.serverError) toast.error(e.serverError);
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
     },
     onExecute: () => {
       updateDisclosure.close();
@@ -28,7 +28,7 @@ export const UpdateAllButton: React.FC = () => {
   return (
     <div className="d-flex align-items-end align-items-md-center flex-column flex-md-row justify-content-end">
       <UpdateAllModal isOpen={updateDisclosure.isOpen} onClose={() => updateDisclosure.close()} onConfirm={() => updateAllMutation.execute()} />
-      <Button className="btn-success" onClick={updateDisclosure.open}>
+      <Button intent="success" onClick={updateDisclosure.open}>
         Update all
       </Button>
     </div>

@@ -1,3 +1,5 @@
+'use client';
+
 import {
   IconDownload,
   IconExternalLink,
@@ -10,9 +12,7 @@ import {
   IconX,
   IconRotateClockwise,
 } from '@tabler/icons-react';
-import clsx from 'clsx';
 import React, { Fragment } from 'react';
-import type { AppStatus } from '@/server/db/schema';
 
 import { useTranslations } from 'next-intl';
 import {
@@ -23,41 +23,39 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { Button } from '@/components/ui/Button';
-import type { AppService } from '@/server/services/apps/apps.service';
+import { Button, type ButtonProps } from '@/components/ui/Button';
+import { GetAppCommand } from '@/server/services/app-catalog/commands';
+import { InstallModal } from '../InstallModal';
+import { useDisclosure } from '@/client/hooks/useDisclosure';
+import { useAction } from 'next-safe-action/hooks';
+import { startAppAction } from '@/actions/app-actions/start-app-action';
+import toast from 'react-hot-toast';
+import { StopModal } from '../StopModal';
+import { RestartModal } from '../RestartModal';
+import { UninstallModal } from '../UninstallModal';
+import { UpdateModal } from '../UpdateModal';
+import { ResetAppModal } from '../ResetAppModal';
+import { castAppConfig } from '@/lib/helpers/castAppConfig';
+import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal';
+import styles from './AppActions.module.scss';
+import { useAppStatus } from '@/hooks/useAppStatus';
 
 interface IProps {
-  app: Awaited<ReturnType<AppService['getApp']>>;
-  status?: AppStatus;
-  updateAvailable: boolean;
+  app: Awaited<ReturnType<GetAppCommand['execute']>>;
   localDomain?: string;
-  onInstall: () => void;
-  onUninstall: () => void;
-  onStart: () => void;
-  onStop: () => void;
-  onRestart: () => void;
-  onOpen: (url: OpenType) => void;
-  onUpdate: () => void;
-  onUpdateSettings: () => void;
-  onCancel: () => void;
 }
 
-interface BtnProps {
+interface BtnProps extends ButtonProps {
   IconComponent?: typeof IconDownload;
-  onClick?: () => void;
-  width?: number | null;
-  title?: string;
-  color?: string;
-  loading?: boolean;
 }
 
 const ActionButton: React.FC<BtnProps> = (props) => {
-  const { IconComponent, onClick, title, loading, color, width = 140 } = props;
+  const { IconComponent, loading, title, ...rest } = props;
 
   const testId = loading ? 'action-button-loading' : undefined;
 
   return (
-    <Button loading={loading} data-testid={testId} onClick={onClick} width={width} className={clsx('me-2 px-4 mt-2', [`btn-${color}`])}>
+    <Button data-testid={testId} loading={loading} {...rest} className={styles.actionButton}>
       {title}
       {IconComponent && <IconComponent className="ms-1" size={14} />}
     </Button>
@@ -66,22 +64,29 @@ const ActionButton: React.FC<BtnProps> = (props) => {
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
-export const AppActions: React.FC<IProps> = ({
-  app,
-  status,
-  localDomain,
-  onInstall,
-  onUninstall,
-  onStart,
-  onStop,
-  onRestart,
-  onOpen,
-  onUpdate,
-  onCancel,
-  updateAvailable,
-  onUpdateSettings,
-}) => {
+export const AppActions: React.FC<IProps> = ({ app, localDomain }) => {
   const { info } = app;
+  const setAppStatus = useAppStatus((state) => state.setAppStatus);
+  const appStatus = useAppStatus((state) => state.statuses[info.id] || 'missing');
+  const updateAvailable = Number(app.version || 0) < Number(app?.latestVersion || 0);
+
+  const installDisclosure = useDisclosure();
+  const stopDisclosure = useDisclosure();
+  const restartDisclosure = useDisclosure();
+  const updateDisclosure = useDisclosure();
+  const updateSettingsDisclosure = useDisclosure();
+  const uninstallDisclosure = useDisclosure();
+  const resetAppDisclosure = useDisclosure();
+
+  const startMutation = useAction(startAppAction, {
+    onError: ({ error }) => {
+      if (error.serverError) toast.error(error.serverError);
+    },
+    onExecute: () => {
+      setAppStatus(app.id, 'starting');
+    },
+  });
+
   const t = useTranslations();
   const hasSettings = Object.keys(info.form_fields).length > 0 || info.exposable;
 
@@ -89,22 +94,38 @@ export const AppActions: React.FC<IProps> = ({
 
   const buttons: JSX.Element[] = [];
 
-  const StartButton = <ActionButton key="start" IconComponent={IconPlayerPlay} onClick={onStart} title={t('APP_ACTION_START')} color="success" />;
-  const RemoveButton = <ActionButton key="remove" IconComponent={IconTrash} onClick={onUninstall} title={t('APP_ACTION_REMOVE')} color="danger" />;
-  const SettingsButton = <ActionButton key="settings" IconComponent={IconSettings} onClick={onUpdateSettings} title={t('APP_ACTION_SETTINGS')} />;
-  const StopButton = <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={onStop} title={t('APP_ACTION_STOP')} color="danger" />;
-  const restartButton = <ActionButton key="restart" IconComponent={IconRotateClockwise} onClick={onRestart} title={t('APP_ACTION_RESTART')} />;
-  const LoadingButtion = <ActionButton key="loading" loading color="success" title={t('APP_ACTION_LOADING')} />;
-  const CancelButton = <ActionButton key="cancel" IconComponent={IconX} onClick={onCancel} title={t('APP_ACTION_CANCEL')} />;
-  const InstallButton = <ActionButton key="install" onClick={onInstall} title={t('APP_ACTION_INSTALL')} color="success" />;
+  const StartButton = (
+    <ActionButton
+      key="start"
+      IconComponent={IconPlayerPlay}
+      onClick={() => startMutation.execute({ id: app.id })}
+      title={t('APP_ACTION_START')}
+      intent="success"
+    />
+  );
+  const RemoveButton = (
+    <ActionButton key="remove" IconComponent={IconTrash} onClick={uninstallDisclosure.open} title={t('APP_ACTION_REMOVE')} intent="danger" />
+  );
+  const SettingsButton = (
+    <ActionButton key="settings" IconComponent={IconSettings} onClick={updateSettingsDisclosure.open} title={t('APP_ACTION_SETTINGS')} />
+  );
+  const StopButton = (
+    <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={stopDisclosure.open} title={t('APP_ACTION_STOP')} intent="danger" />
+  );
+  const restartButton = (
+    <ActionButton key="restart" IconComponent={IconRotateClockwise} onClick={restartDisclosure.open} title={t('APP_ACTION_RESTART')} />
+  );
+  const LoadingButton = <ActionButton key="loading" loading intent="success" title={t('APP_ACTION_LOADING')} />;
+  const CancelButton = <ActionButton key="cancel" IconComponent={IconX} onClick={stopDisclosure.open} title={t('APP_ACTION_CANCEL')} />;
+  const InstallButton = <ActionButton key="install" onClick={installDisclosure.open} title={t('APP_ACTION_INSTALL')} intent="success" />;
   const UpdateButton = (
-    <ActionButton key="update" IconComponent={IconDownload} onClick={onUpdate} width={null} title={t('APP_ACTION_UPDATE')} color="success" />
+    <ActionButton key="update" IconComponent={IconDownload} onClick={updateDisclosure.open} title={t('APP_ACTION_UPDATE')} intent="success" />
   );
 
   const OpenButton = (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button width={140} className={clsx('me-2 px-4 mt-2')}>
+        <Button className={styles.actionButton}>
           {t('APP_ACTION_OPEN')}
           <IconExternalLink className="ms-1" size={14} />
         </Button>
@@ -113,19 +134,19 @@ export const AppActions: React.FC<IProps> = ({
         <DropdownMenuLabel>{t('APP_DETAILS_CHOOSE_OPEN_METHOD')}</DropdownMenuLabel>
         <DropdownMenuGroup>
           {app.exposed && app.domain && (
-            <DropdownMenuItem onClick={() => onOpen('domain')}>
+            <DropdownMenuItem onClick={() => handleOpen('domain')}>
               <IconLock className="text-green me-2" size={16} />
               {app.domain}
             </DropdownMenuItem>
           )}
           {(app.exposedLocal || !info.dynamic_config) && (
-            <DropdownMenuItem onClick={() => onOpen('local_domain')}>
+            <DropdownMenuItem onClick={() => handleOpen('local_domain')}>
               <IconLock className="text-muted me-2" size={16} />
               {app.id}.{localDomain}
             </DropdownMenuItem>
           )}
           {(app.openPort || !info.dynamic_config) && (
-            <DropdownMenuItem onClick={() => onOpen('local')}>
+            <DropdownMenuItem onClick={() => handleOpen('local')}>
               <IconLockOff className="text-muted me-2" size={16} />
               {hostname}:{app.info.port}
             </DropdownMenuItem>
@@ -135,7 +156,7 @@ export const AppActions: React.FC<IProps> = ({
     </DropdownMenu>
   );
 
-  switch (status) {
+  switch (appStatus) {
     case 'stopped':
       buttons.push(StartButton, RemoveButton);
       if (hasSettings) {
@@ -165,7 +186,13 @@ export const AppActions: React.FC<IProps> = ({
     case 'restarting':
     case 'updating':
     case 'resetting':
-      buttons.push(LoadingButtion, CancelButton);
+      buttons.push(LoadingButton, CancelButton);
+      break;
+    case 'backing_up':
+      buttons.push(LoadingButton, CancelButton);
+      break;
+    case 'restoring':
+      buttons.push(LoadingButton, CancelButton);
       break;
     case 'missing':
       buttons.push(InstallButton);
@@ -174,11 +201,58 @@ export const AppActions: React.FC<IProps> = ({
       break;
   }
 
+  const handleOpen = (type: OpenType) => {
+    let url = '';
+    const { https } = app.info;
+    const protocol = https ? 'https' : 'http';
+
+    if (typeof window !== 'undefined') {
+      // Current domain
+      const domain = window.location.hostname;
+      url = `${protocol}://${domain}:${app.info.port}${app.info.url_suffix || ''}`;
+    }
+
+    if (type === 'domain' && app.domain) {
+      url = `https://${app.domain}${app.info.url_suffix || ''}`;
+    }
+
+    if (type === 'local_domain') {
+      url = `https://${app.id}.${localDomain}`;
+    }
+
+    window.open(url, '_blank', 'noreferrer');
+  };
+
+  const openResetAppModal = () => {
+    updateSettingsDisclosure.close();
+
+    setTimeout(() => {
+      resetAppDisclosure.open();
+    }, 300);
+  };
+
+  const newVersion = [app?.latestDockerVersion ? `${app?.latestDockerVersion}` : '', `(${String(app?.latestVersion)})`].join(' ');
+
   return (
-    <div className="d-flex justify-content-center flex-wrap">
-      {buttons.map((button) => (
-        <Fragment key={button.key}>{button}</Fragment>
-      ))}
-    </div>
+    <>
+      <InstallModal isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={app.info} />
+      <StopModal isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={app.info} />
+      <RestartModal isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} info={app.info} />
+      <UninstallModal isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={app.info} />
+      <UpdateModal isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={app.info} newVersion={newVersion} />
+      <ResetAppModal isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={app.info} />
+      <UpdateSettingsModal
+        isOpen={updateSettingsDisclosure.isOpen}
+        onClose={updateSettingsDisclosure.close}
+        info={app.info}
+        config={castAppConfig(app?.config)}
+        onReset={openResetAppModal}
+      />
+      <div className="mt-1 btn-list d-flex">
+        {buttons.map((button) => (
+          <Fragment key={button.key}>{button}</Fragment>
+        ))}
+      </div>
+    </>
   );
 };

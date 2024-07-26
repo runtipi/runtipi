@@ -3,9 +3,8 @@
 import { z } from 'zod';
 import { db } from '@/server/db';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
-import { action } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
-import { handleActionError } from '../utils/handle-action-error';
+import { publicActionClient } from '@/lib/safe-action';
 
 const input = z.object({
   username: z.string(),
@@ -16,18 +15,14 @@ const input = z.object({
  * Given a username and password, logs in the user and returns a totpSessionId
  * if that user has 2FA enabled.
  */
-export const loginAction = action(input, async ({ username, password }) => {
-  try {
-    const authService = new AuthServiceClass(db);
+export const loginAction = publicActionClient.schema(input).action(async ({ parsedInput: { username, password } }) => {
+  const authService = new AuthServiceClass(db);
 
-    const { totpSessionId } = await authService.login({ username, password });
+  const { totpSessionId } = await authService.login({ username, password });
 
-    if (!totpSessionId) {
-      revalidatePath('/login');
-    }
-
-    return { totpSessionId, success: true };
-  } catch (e) {
-    return handleActionError(e);
+  if (!totpSessionId) {
+    revalidatePath('/login');
   }
+
+  return { totpSessionId, success: true };
 });

@@ -38,7 +38,7 @@ export const EmptyPage: React.FC<IProps> = ({ title, subtitle, redirectPath, act
       {subtitle && <p className="empty-subtitle text-muted">{t(subtitle)}</p>}
       <div className="empty-action">
         {redirectPath && actionLabel && (
-          <Button data-testid="empty-page-action" onClick={() => router.push(redirectPath)} className="btn-primary">
+          <Button data-testid="empty-page-action" onClick={() => router.push(redirectPath)} intent="primary">
             {t(actionLabel)}
           </Button>
         )}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { AuthServiceClass } from '@/server/services/auth/auth.service';
-import { getTranslatorFromCookie } from '@/lib/get-translator';
+import { getTranslator } from '@/lib/get-translator';
 import { ResetPasswordContainer } from './components/ResetPasswordContainer';
 
 export default async function ResetPasswordPage() {
@@ -11,7 +11,7 @@ export default async function ResetPasswordPage() {
     return <ResetPasswordContainer />;
   }
 
-  const translator = await getTranslatorFromCookie();
+  const translator = await getTranslator();
 
   return (
     <>

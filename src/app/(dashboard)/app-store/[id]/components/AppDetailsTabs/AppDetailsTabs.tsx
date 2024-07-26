@@ -1,28 +1,33 @@
+'use client';
+
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import React from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
 import { AppInfo } from '@runtipi/shared';
-import { Markdown } from '@/components/Markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
-import { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { AppLogs } from './AppLogs';
-import { AppDetailsTabTriggers } from './AppDetailsTabTriggers';
+import { useAppStatus } from '@/hooks/useAppStatus';
+import { AppBackups } from './AppBackups';
+import type { AppBackupsApiResponse } from '@/api/app-backups/route';
+import { Markdown } from '@/components/Markdown';
 import { useSearchParams } from 'next/navigation';
+import { AppDetailsTabTriggers } from './AppDetailsTabTriggers';
 
 interface IProps {
   info: AppInfo;
-  status: AppStatusEnum;
+  backups: AppBackupsApiResponse;
 }
 
-export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
+export const AppDetailsTabs = ({ info, backups }: IProps) => {
   const t = useTranslations();
+  const appStatus = useAppStatus((state) => state.statuses[info.id]) || 'missing';
 
   const defaultTab = useSearchParams().get('tab');
 
   return (
     <Tabs defaultValue={defaultTab || 'description'} orientation="vertical" style={{ marginTop: -1 }}>
-      <AppDetailsTabTriggers status={status} />
+      <AppDetailsTabTriggers status={appStatus} />
       <TabsContent value="description">
         {info.deprecated && (
           <div className="alert alert-danger" role="alert">
@@ -38,6 +43,9 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
           </div>
         )}
         <Markdown className="markdown">{info.description}</Markdown>
+      </TabsContent>
+      <TabsContent value="backups">
+        <AppBackups info={info} initialData={backups} />
       </TabsContent>
       <TabsContent value="info">
         <DataGrid>
@@ -78,7 +86,7 @@ export const AppDetailsTabs: React.FC<IProps> = ({ info, status }) => {
           )}
         </DataGrid>
       </TabsContent>
-      <TabsContent value="logs">{status === 'running' && <AppLogs appId={info.id} />}</TabsContent>
+      <TabsContent value="logs">{appStatus === 'running' && <AppLogs appId={info.id} />}</TabsContent>
     </Tabs>
   );
 };

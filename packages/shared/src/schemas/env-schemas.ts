@@ -20,6 +20,19 @@ export const envSchema = z.object({
   appsRepoUrl: z.string().url().trim(),
   domain: z.string().trim(),
   localDomain: z.string().trim(),
+  timeZone: z
+    .string()
+    .trim()
+    .optional()
+    .default('Etc/GMT')
+    .transform((value) => {
+      try {
+        Intl.DateTimeFormat(undefined, { timeZone: value }).resolvedOptions().timeZone === value;
+        return value;
+      } catch (error) {
+        return 'Etc/GMT';
+      }
+    }),
   appDataPath: z
     .string()
     .trim()
@@ -104,5 +117,14 @@ export const settingsSchema = envSchema
     allowAutoThemes: true,
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
+    timeZone: true,
   })
-  .and(z.object({ port: z.coerce.number(), sslPort: z.coerce.number(), listenIp: z.string().ip().trim() }).partial());
+  .and(
+    z
+      .object({
+        port: z.coerce.number(),
+        sslPort: z.coerce.number(),
+        listenIp: z.string().ip().trim(),
+      })
+      .partial(),
+  );

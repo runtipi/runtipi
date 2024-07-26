@@ -3,7 +3,6 @@
 import React from 'react';
 import { IconAlertCircle, IconDownload } from '@tabler/icons-react';
 import { Tooltip } from 'react-tooltip';
-import type { AppStatus as AppStatusEnum } from '@/server/db/schema';
 import { useTranslations } from 'next-intl';
 import type { AppInfo } from '@runtipi/shared';
 import { AppLogo } from '@/components/AppLogo';
@@ -13,7 +12,7 @@ import styles from './AppTile.module.scss';
 
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc' | 'deprecated'>;
 
-export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; updateAvailable: boolean }> = ({ app, status, updateAvailable }) => {
+export const AppTile: React.FC<{ app: AppTileInfo; updateAvailable: boolean }> = ({ app, updateAvailable }) => {
   const t = useTranslations();
 
   return (
@@ -28,7 +27,7 @@ export const AppTile: React.FC<{ app: AppTileInfo; status: AppStatusEnum; update
               <div className="d-flex h-3 align-items-center">
                 <span className="h4 me-2 mb-1 fw-bolder">{app.name}</span>
                 <div className={styles.statusContainer}>
-                  <AppStatus lite status={status} />
+                  <AppStatus lite appId={app.id} />
                 </div>
               </div>
               <div className="text-muted">{limitText(app.short_desc, 50)}</div>

@@ -1,10 +1,19 @@
 import React from 'react';
-import { AppInfo } from '@runtipi/shared';
 import { vi, afterEach, describe, it, expect } from 'vitest';
 import { AppActions } from './AppActions';
-import { cleanup, fireEvent, render, screen, waitFor, userEvent } from '../../../../../../../tests/test-utils';
+import { cleanup, render, screen, waitFor, userEvent } from '../../../../../../../tests/test-utils';
+import { GetAppCommand } from '@/server/services/app-catalog/commands';
 
 afterEach(cleanup);
+
+const useAppStatusMock = vi.fn();
+vi.mock('@/hooks/useAppStatus', async (importOriginal) => {
+  const original = (await importOriginal()) as typeof importOriginal;
+  return {
+    ...original,
+    useAppStatus: () => useAppStatusMock(),
+  };
+});
 
 describe('Test: AppActions', () => {
   const app = {
@@ -16,30 +25,13 @@ describe('Test: AppActions', () => {
       form_fields: [],
       exposable: [],
     },
-  } as unknown as AppInfo;
-
-  it('should call the callbacks when buttons are clicked', () => {
-    // arrange
-    const onStart = vi.fn();
-    const onRemove = vi.fn();
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="stopped" app={app} onStart={onStart} onUninstall={onRemove} />);
-
-    // act
-    const startButton = screen.getByRole('button', { name: 'Start' });
-    fireEvent.click(startButton);
-    const removeButton = screen.getByText('Remove');
-    fireEvent.click(removeButton);
-
-    // assert
-    expect(onStart).toHaveBeenCalled();
-    expect(onRemove).toHaveBeenCalled();
-  });
+  } as unknown as Awaited<ReturnType<GetAppCommand['execute']>>;
 
   it('should render the correct buttons when app status is running', () => {
     // arrange
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="running" app={app} />);
+    useAppStatusMock.mockImplementation(() => 'running');
+
+    render(<AppActions app={app} />);
 
     // assert
     expect(screen.getByRole('button', { name: 'Stop' })).toBeInTheDocument();
@@ -49,8 +41,8 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is starting', () => {
     // arrange
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="starting" app={app} />);
+    useAppStatusMock.mockImplementation(() => 'starting');
+    render(<AppActions app={app} />);
 
     // assert
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -59,8 +51,8 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is stopping', () => {
     // arrange
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="stopping" app={app} />);
+    useAppStatusMock.mockImplementation(() => 'stopping');
+    render(<AppActions app={app} />);
 
     // assert
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -69,8 +61,8 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is removing', () => {
     // arrange
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="uninstalling" app={app} />);
+    useAppStatusMock.mockImplementation(() => 'uninstalling');
+    render(<AppActions app={app} />);
 
     // assert
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -79,8 +71,8 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is installing', () => {
     // arrange
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="installing" app={app} />);
+    useAppStatusMock.mockImplementation(() => 'installing');
+    render(<AppActions app={app} />);
 
     // assert
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -89,8 +81,8 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is updating', () => {
     // arrange
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="updating" app={app} />);
+    useAppStatusMock.mockImplementation(() => 'updating');
+    render(<AppActions app={app} />);
 
     // assert
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -99,8 +91,8 @@ describe('Test: AppActions', () => {
 
   it('should render the correct buttons when app status is missing', () => {
     // arrange
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="missing" app={app} />);
+    useAppStatusMock.mockImplementation(() => 'missing');
+    render(<AppActions app={app} />);
 
     // assert
     expect(screen.getByRole('button', { name: 'Install' })).toBeInTheDocument();
@@ -108,8 +100,8 @@ describe('Test: AppActions', () => {
 
   it('should render update button if app is running and has an update available', () => {
     // arrange
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="running" updateAvailable app={app} />);
+    useAppStatusMock.mockImplementation(() => 'running');
+    render(<AppActions app={{ ...app, version: 1, latestVersion: 2 }} />);
 
     // assert
     expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument();
@@ -117,8 +109,8 @@ describe('Test: AppActions', () => {
 
   it('should render update button if app is stopped and has an update available', () => {
     // arrange
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions status="stopped" updateAvailable app={app} />);
+    useAppStatusMock.mockImplementation(() => 'stopped');
+    render(<AppActions app={{ ...app, version: 1, latestVersion: 2 }} />);
 
     // assert
     expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument();
@@ -131,9 +123,9 @@ describe('Test: AppActions', () => {
       exposed: true,
       domain: 'myapp.example.com',
     };
-    const openFn = vi.fn();
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions onOpen={openFn} status="running" app={appWithDomain} />);
+    window.open = vi.fn();
+    useAppStatusMock.mockImplementation(() => 'running');
+    render(<AppActions app={appWithDomain} />);
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });
@@ -146,15 +138,15 @@ describe('Test: AppActions', () => {
     // assert
     await userEvent.click(domainButton);
     await waitFor(() => {
-      expect(openFn).toHaveBeenCalledWith('domain');
+      expect(window.open).toHaveBeenCalledWith('https://myapp.example.com', '_blank', 'noreferrer');
     });
   });
 
   it('should render local_domain open button when exposed locally', async () => {
     // arrange
-    const openFn = vi.fn();
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions localDomain="tipi.lan" onOpen={openFn} status="running" app={{ ...app, exposedLocal: true }} />);
+    window.open = vi.fn();
+    useAppStatusMock.mockImplementation(() => 'running');
+    render(<AppActions localDomain="tipi.lan" app={{ ...app, exposedLocal: true }} />);
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });
@@ -167,15 +159,15 @@ describe('Test: AppActions', () => {
     // assert
     await userEvent.click(localButton);
     await waitFor(() => {
-      expect(openFn).toHaveBeenCalledWith('local_domain');
+      expect(window.open).toHaveBeenCalledWith('https://test.tipi.lan', '_blank', 'noreferrer');
     });
   });
 
   it('should render local open button when port is open', async () => {
     // arrange
-    const openFn = vi.fn();
-    // @ts-expect-error - we don't need to pass all props for this test
-    render(<AppActions localUrl="http://localhost:3000" onOpen={openFn} status="running" app={{ ...app, openPort: true }} />);
+    window.open = vi.fn();
+    useAppStatusMock.mockImplementation(() => 'running');
+    render(<AppActions app={{ ...app, openPort: true }} />);
 
     // act
     const openButton = screen.getByRole('button', { name: 'Open' });
@@ -188,7 +180,7 @@ describe('Test: AppActions', () => {
     // assert
     await userEvent.click(localButton);
     await waitFor(() => {
-      expect(openFn).toHaveBeenCalledWith('local');
+      expect(window.open).toHaveBeenCalledWith('http://localhost:3000', '_blank', 'noreferrer');
     });
   });
 });

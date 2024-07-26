@@ -1,10 +1,9 @@
-import { appService } from '@/server/services/apps/apps.service';
 import { CustomLinksServiceClass } from '@/server/services/custom-links/custom-links.service';
 import { db } from '@/server/db';
 import React from 'react';
 import { Metadata } from 'next';
 import { getUserFromCookie } from '@/server/common/session.helpers';
-import { getTranslatorFromCookie } from '@/lib/get-translator';
+import { getTranslator } from '@/lib/get-translator';
 import { AppTile } from '@/components/AppTile';
 import Link from 'next/link';
 import { Link as CustomLink } from '@/server/db/schema';
@@ -13,9 +12,10 @@ import { LinkTile } from '@/components/LinkTile/LinkTile';
 import { EmptyPage } from '../../components/EmptyPage';
 import styles from './page.module.css';
 import { AddLinkButton } from '../components/AddLink/AddLinkButton';
+import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const translator = await getTranslatorFromCookie();
+  const translator = await getTranslator();
 
   return {
     title: `${translator('MY_APPS_TITLE')} - Tipi`,
@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  const installedApps = await appService.installedApps();
+  const installedApps = await appCatalog.executeCommand('getInstalledApps');
 
   const user = await getUserFromCookie();
   const linksService = new CustomLinksServiceClass(db);
@@ -35,7 +35,7 @@ export default async function Page() {
     if (app.info?.available)
       return (
         <Link key={app.id} href={`/apps/${app.id}`} className={clsx('col-sm-6 col-lg-4', styles.link)} passHref>
-          <AppTile key={app.id} app={app.info} status={app.status} updateAvailable={updateAvailable} />
+          <AppTile key={app.id} app={app.info} updateAvailable={updateAvailable} />
         </Link>
       );
 
