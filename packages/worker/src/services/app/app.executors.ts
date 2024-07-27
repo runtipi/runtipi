@@ -579,6 +579,7 @@ export class AppExecutors {
         await fs.promises.cp(
           path.join(DATA_DIR, 'user-config', appId),
           path.join(tempDir, 'user-config'),
+          { recursive: true },
         );
       }
 

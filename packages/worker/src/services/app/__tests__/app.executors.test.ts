@@ -343,4 +343,43 @@ describe('test: app executors', () => {
       spy.mockRestore();
     });
   });
+
+  describe('test: integration backup and restore', () => {
+    it('it should restore user-config/<app-id> folder', async () => {
+      // arrange
+      const spy = vi
+        .spyOn(dockerHelpers, 'compose')
+        .mockResolvedValue({ stdout: 'done', stderr: '' });
+
+      const config = createAppConfig({ version: '2.0.0' }, true);
+      // Create user-config folder with some content
+      const userConfigDir = path.join(DATA_DIR, 'user-config', config.id);
+      await fs.promises.mkdir(userConfigDir, { recursive: true });
+      await fs.promises.writeFile(path.join(userConfigDir, 'docker-compose.yml'), 'test');
+
+      // Create backup
+      await appExecutors.backupApp(config.id);
+      const backups = await fs.promises.readdir(path.join(DATA_DIR, 'backups', config.id));
+      expect(backups.length).toBe(1);
+
+      // delete user-config folder
+      await fs.promises.rm(userConfigDir, { recursive: true });
+
+      expect(await pathExists(userConfigDir)).toBe(false);
+
+      // act
+      await appExecutors.restoreApp(config.id, backups[0]!);
+
+      // assert
+      expect(await pathExists(userConfigDir)).toBe(true);
+      expect(await pathExists(path.join(userConfigDir, 'docker-compose.yml'))).toBe(true);
+      const content = await fs.promises.readFile(
+        path.join(userConfigDir, 'docker-compose.yml'),
+        'utf-8',
+      );
+      expect(content).toBe('test');
+
+      spy.mockRestore();
+    });
+  });
 });
