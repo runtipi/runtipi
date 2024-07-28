@@ -39,6 +39,8 @@ type EnvKeys =
   | 'ALLOW_ERROR_MONITORING'
   | 'PERSIST_TRAEFIK_CONFIG'
   | 'ALLOW_AUTO_THEMES'
+  | 'EVENTS_TIMEOUT'
+  | 'REPEAT_TIMEOUT'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
@@ -193,6 +195,8 @@ export const generateSystemEnvFile = async () => {
       ? String(data.persistTraefikConfig)
       : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
+  envMap.set('EVENTS_TIMEOUT', String(data.eventsTimeout || 60000));
+  envMap.set('REPEAT_TIMEOUT', String(data.repeatTimeout || 60000));
 
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
 

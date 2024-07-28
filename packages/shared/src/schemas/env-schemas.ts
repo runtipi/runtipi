@@ -100,6 +100,8 @@ export const envSchema = z.object({
 
       return false;
     }),
+  eventsTimeout: z.number().optional(),
+  repeatTimeout: z.number().optional(),
 });
 
 export const settingsSchema = envSchema
@@ -117,6 +119,8 @@ export const settingsSchema = envSchema
     allowAutoThemes: true,
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
+    eventsTimeout: true,
+    repeatTimeout: true,
     timeZone: true,
   })
   .and(
