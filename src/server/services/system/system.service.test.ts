@@ -1,20 +1,18 @@
 import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { faker } from '@faker-js/faker';
-import { TipiCacheClass } from '@/server/core/TipiCache/TipiCache';
 import { afterAll, beforeAll, beforeEach, describe, it, expect } from 'vitest';
 import { TipiConfig } from '../../core/TipiConfig';
 import { SystemServiceClass } from '.';
+import { tipiCache } from '@/server/core/TipiCache';
 
 const SystemService = new SystemServiceClass();
 
 const server = setupServer();
 
-const cache = new TipiCacheClass();
-
 afterAll(async () => {
   server.close();
-  await cache.close();
+  await tipiCache.close();
 });
 
 beforeAll(() => {
@@ -23,7 +21,7 @@ beforeAll(() => {
 
 beforeEach(async () => {
   await TipiConfig.setConfig('demoMode', false);
-  await cache.del('latestVersion');
+  await tipiCache.del('latestVersion');
   server.resetHandlers();
 });
 

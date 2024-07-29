@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { FileLogger } from '../../../logger/FileLogger';
+import { Logger } from '../../../logger/FileLogger';
 import { sanitizePath } from '../../../../helpers/sanitizers';
 import { pathExists } from '../../../helpers/fs-helpers';
 import { appInfoSchema } from '../../../../schemas/app-schemas';
@@ -8,15 +8,13 @@ import { appInfoSchema } from '../../../../schemas/app-schemas';
 // Lower level data access class for apps
 export class DataAccessApp {
   private dataDir: string;
-  private appDataDir: string;
   private appsRepoId: string;
-  private logger: FileLogger;
+  private logger: Logger;
 
   constructor(params: { dataDir: string; appDataDir: string; appsRepoId: string }) {
     this.dataDir = params.dataDir;
-    this.appDataDir = params.appDataDir;
     this.appsRepoId = params.appsRepoId;
-    this.logger = new FileLogger('data-access-app', path.join(params.dataDir, 'logs'), true);
+    this.logger = new Logger('data-access-app', path.join(params.dataDir, 'logs'));
   }
 
   private getInstalledAppsFolder() {

@@ -9,11 +9,11 @@ import { TranslatedError } from '@/server/utils/errors';
 import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
 import { generateSessionId, setSession } from '@/server/common/session.helpers';
 import { Database, db } from '@/server/db';
-import { tipiCache } from '@/server/core/TipiCache/TipiCache';
 import { DATA_DIR } from '@/config/constants';
 import path from 'path';
 import { TipiConfig } from '../../core/TipiConfig';
 import { decrypt, encrypt } from '../../utils/encryption';
+import { tipiCache } from '@/server/core/TipiCache';
 
 type UsernamePasswordInput = {
   username: string;

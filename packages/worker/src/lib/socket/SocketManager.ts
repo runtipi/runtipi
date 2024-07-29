@@ -1,15 +1,26 @@
 import { SocketEvent } from '@runtipi/shared';
 import { Server } from 'socket.io';
-import { logger } from '../logger';
 import { handleViewAppLogsEvent, handleViewRuntipiLogsEvent } from '../docker';
+import { inject, injectable } from 'inversify';
+import { ILogger } from '@runtipi/shared/src/node';
 
-class SocketManager {
+export interface ISocketManager {
+  init(): void;
+  emit(event: SocketEvent): Promise<void>;
+}
+
+@injectable()
+export class SocketManager implements ISocketManager {
   private io: Server | null = null;
+
+  constructor(@inject('ILogger') private logger: ILogger) {}
 
   init() {
     const io = new Server(5001, { cors: { origin: '*' }, path: '/worker/socket.io' });
+    this.logger.info('SocketManager initialized');
 
     io.on('connection', async (socket) => {
+      this.logger.debug('Client connected to socket', socket.id);
       socket.on('app-logs-init', (event) =>
         handleViewAppLogsEvent(socket, event, this.emit.bind(this)),
       );
@@ -24,7 +35,7 @@ class SocketManager {
 
   async emit(event: SocketEvent) {
     if (!this.io) {
-      logger.error('SocketManager is not initialized');
+      this.logger.error('SocketManager is not initialized');
       return;
     }
 
@@ -36,15 +47,11 @@ class SocketManager {
         try {
           socket.emit(event.type, event);
         } catch (error) {
-          logger.error('Error sending socket event:', error);
+          this.logger.error('Error sending socket event:', error);
         }
       }
     } catch (error) {
-      logger.error('Error emitting socket event:', error);
+      this.logger.error('Error emitting socket event:', error);
     }
   }
 }
-
-const instance = new SocketManager();
-
-export { instance as SocketManager };
