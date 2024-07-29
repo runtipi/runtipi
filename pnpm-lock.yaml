@@ -408,12 +408,18 @@ importers:
       hono:
         specifier: ^4.5.1
         version: 4.5.1
+      inversify:
+        specifier: ^6.0.2
+        version: 6.0.2
       ioredis:
         specifier: ^5.4.1
         version: 5.4.1
       pg:
         specifier: ^8.12.0
         version: 8.12.0
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       socket.io:
         specifier: ^4.7.5
         version: 4.7.5

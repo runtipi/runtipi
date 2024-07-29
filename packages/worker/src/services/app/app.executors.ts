@@ -9,11 +9,11 @@ import { copyDataDir, generateEnvFile } from './app.helpers';
 import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
-import { SocketManager } from '@/lib/socket/SocketManager';
 import { getDbClient } from '@/lib/db';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { getDockerCompose } from '@/config/docker-templates';
 import { ArchiveManager } from '@/lib/archive/ArchiveManager';
+import { socketManager } from '@/lib/socket';
 
 export class AppExecutors {
   private readonly logger;
@@ -35,7 +35,7 @@ export class AppExecutors {
     });
 
     if (err instanceof Error) {
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event,
         data: { appId, error: err.message, appStatus: newStatus },
@@ -44,7 +44,7 @@ export class AppExecutors {
       return { success: false, message: err.message };
     }
 
-    await SocketManager.emit({
+    await socketManager.emit({
       type: 'app',
       event,
       data: { appId, error: String(err), appStatus: newStatus },
@@ -117,7 +117,7 @@ export class AppExecutors {
       await this.ensureAppDir(appId, form);
       await generateEnvFile(appId, form);
 
-      await SocketManager.emit({ type: 'app', event: 'generate_env_success', data: { appId } });
+      await socketManager.emit({ type: 'app', event: 'generate_env_success', data: { appId } });
       return { success: true, message: `App ${appId} env file regenerated successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'generate_env_error');
@@ -131,7 +131,7 @@ export class AppExecutors {
    */
   public installApp = async (appId: string, form: AppEventForm) => {
     try {
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'installing' },
@@ -193,7 +193,7 @@ export class AppExecutors {
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'install_success',
         data: { appId, appStatus: 'running' },
@@ -220,7 +220,7 @@ export class AppExecutors {
         return { success: true, message: `App ${appId} is not an app. Skipping...` };
       }
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'stopping' },
@@ -237,7 +237,7 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} stopped`);
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'stop_success',
         data: { appId, appStatus: 'stopped' },
@@ -261,7 +261,7 @@ export class AppExecutors {
         return { success: true, message: `App ${appId} is not an app. Skipping...` };
       }
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'restarting' },
@@ -293,7 +293,7 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} restarted`);
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'restart_success',
         data: { appId, appStatus: 'running' },
@@ -307,7 +307,7 @@ export class AppExecutors {
 
   public startApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
     try {
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'starting' },
@@ -326,7 +326,7 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} started`);
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'start_success',
         data: { appId, appStatus: 'running' },
@@ -342,7 +342,7 @@ export class AppExecutors {
 
   public uninstallApp = async (appId: string, form: AppEventForm) => {
     try {
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'uninstalling' },
@@ -378,7 +378,7 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} uninstalled`);
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'uninstall_success',
         data: { appId, appStatus: 'missing' },
@@ -394,7 +394,7 @@ export class AppExecutors {
 
   public resetApp = async (appId: string, form: AppEventForm) => {
     try {
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'resetting' },
@@ -440,7 +440,7 @@ export class AppExecutors {
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up -d');
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'reset_success',
         data: { appId, appStatus: 'running' },
@@ -459,7 +459,7 @@ export class AppExecutors {
       // Creating backup of the app before updating
       await this.backupApp(appId);
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'updating' },
@@ -489,7 +489,7 @@ export class AppExecutors {
 
       await compose(appId, 'pull');
 
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'update_success',
         data: { appId, appStatus: 'stopped' },
@@ -544,7 +544,7 @@ export class AppExecutors {
 
   public backupApp = async (appId: string) => {
     try {
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'backing_up' },
@@ -603,7 +603,7 @@ export class AppExecutors {
       this.logger.info('Backup completed!');
 
       // Done
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'backup_success',
         data: { appId, appStatus: 'stopped' },
@@ -616,7 +616,7 @@ export class AppExecutors {
 
   public restoreApp = async (appId: string, filename: string) => {
     try {
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'restoring' },
@@ -685,7 +685,7 @@ export class AppExecutors {
       this.logger.info(`App ${appId} restored!`);
 
       // Done
-      await SocketManager.emit({
+      await socketManager.emit({
         type: 'app',
         event: 'restore_success',
         data: { appId, appStatus: 'stopped' },
