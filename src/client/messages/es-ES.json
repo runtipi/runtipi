@@ -140,6 +140,7 @@
   "APP_UPDATE_FORM_TITLE": "¿Actualizar {nombre}?",
   "APP_UPDATE_SETTINGS_FORM_TITLE": "Actualizar la configuración de {nombre}",
   "APP_UPDATE_SUCCESS": "La aplicación {id} se actualizó correctamente",
+  "APP_UPDATE_FORM_BACKUP": "Backup app before updating",
   "APP_BACKUP_SUCCESS": "Se realizó una copia de seguridad exitosa de la aplicación {id}",
   "APP_BACKUP_ERROR": "No se pudo realizar la copia de seguridad de {id}; consulte los registros para obtener más detalles",
   "APP_RESTORE_SUCCESS": "Restauración de la aplicación {id} exitosa",
