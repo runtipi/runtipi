@@ -140,6 +140,7 @@
   "APP_UPDATE_FORM_TITLE": "Оновити {name} ?",
   "APP_UPDATE_SETTINGS_FORM_TITLE": "Оновити {name} конфігурацію",
   "APP_UPDATE_SUCCESS": "Додаток {id} успішно оновлено",
+  "APP_UPDATE_FORM_BACKUP": "Backup app before updating",
   "APP_BACKUP_SUCCESS": "Додаток {id} успішно збережено в резервну копію",
   "APP_BACKUP_ERROR": "Не вдалося створити резервну копію {id}, дивіться журнали для отримання додаткової інформації",
   "APP_RESTORE_SUCCESS": "Додаток {id} успішно відновлено",
