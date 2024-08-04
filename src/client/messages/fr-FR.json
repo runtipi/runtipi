@@ -140,6 +140,7 @@
   "APP_UPDATE_FORM_TITLE": "Mettre à jour {name}?",
   "APP_UPDATE_SETTINGS_FORM_TITLE": "Mettre à jour la configuration de {name}",
   "APP_UPDATE_SUCCESS": "Application {id} mise à jour avec succès",
+  "APP_UPDATE_FORM_BACKUP": "Backup app before updating",
   "APP_BACKUP_SUCCESS": "Application {id} sauvegardée avec succès",
   "APP_BACKUP_ERROR": "Impossible de sauvegarder {id}, voir les logs pour plus de détails",
   "APP_RESTORE_SUCCESS": "Application {id} restaurée avec succès",
