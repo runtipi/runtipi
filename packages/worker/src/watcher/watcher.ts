@@ -48,7 +48,7 @@ const runCommand = async (jobData: unknown) => {
     }
 
     if (data.command === 'update') {
-      ({ success, message } = await updateApp(data.appid, data.form));
+      ({ success, message } = await updateApp(data.appid, data.form, data.performBackup));
     }
 
     if (data.command === 'reset') {

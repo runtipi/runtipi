@@ -23,8 +23,18 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
     this.executeOtherCommand = params.executeOtherCommand;
   }
 
-  private async sendEvent(appId: string, form: AppEventFormInput, appStatusBeforeUpdate: AppStatus): Promise<void> {
-    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'update', appid: appId, form });
+  private async sendEvent(params: {
+    appId: string;
+    form: AppEventFormInput;
+    appStatusBeforeUpdate: AppStatus;
+    performBackup: boolean;
+  }): Promise<void> {
+    const { appId, form, appStatusBeforeUpdate, performBackup } = params;
+
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync(
+      { type: 'app', command: 'update', appid: appId, form, performBackup },
+      1000 * 60 * 15,
+    );
 
     if (success) {
       const appInfo = await this.appDataService.getInstalledInfo(appId);
@@ -42,8 +52,8 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
     }
   }
 
-  async execute(params: { appId: string }): Promise<void> {
-    const { appId } = params;
+  async execute(params: { appId: string; performBackup: boolean }): Promise<void> {
+    const { appId, performBackup } = params;
     const app = await this.queries.getApp(appId);
 
     if (!app) {
@@ -59,6 +69,6 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
     await this.queries.updateApp(appId, { status: 'updating' });
 
-    void this.sendEvent(appId, castAppConfig(app.config), app.status || 'missing');
+    void this.sendEvent({ appId, form: castAppConfig(app.config), appStatusBeforeUpdate: app.status || 'missing', performBackup });
   }
 }

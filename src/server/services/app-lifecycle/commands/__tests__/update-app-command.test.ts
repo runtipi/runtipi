@@ -40,7 +40,7 @@ afterAll(async () => {
 
 describe('Update app', () => {
   it("should throw if app doesn't exist", async () => {
-    await expect(updateApp.execute({ appId: 'test-app2' })).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
+    await expect(updateApp.execute({ appId: 'test-app2', performBackup: false })).rejects.toThrow('APP_ERROR_APP_NOT_FOUND');
   });
 
   it('should comme back to the previous status before the update of the app', async () => {
@@ -49,7 +49,7 @@ describe('Update app', () => {
     await insertApp({ status: 'stopped' }, appConfig, db);
 
     // act & assert
-    await updateApp.execute({ appId: appConfig.id });
+    await updateApp.execute({ appId: appConfig.id, performBackup: false });
     const app = await getAppById(appConfig.id, db);
     expect(app?.status).toBe('updating');
 
@@ -66,7 +66,7 @@ describe('Update app', () => {
     await insertApp({ status: 'stopped' }, appConfig, db);
 
     // act & assert
-    await expect(updateApp.execute({ appId: appConfig.id })).rejects.toThrow('APP_UPDATE_ERROR_MIN_TIPI_VERSION');
+    await expect(updateApp.execute({ appId: appConfig.id, performBackup: false })).rejects.toThrow('APP_UPDATE_ERROR_MIN_TIPI_VERSION');
   });
 
   it('should not throw if the current tipi version is equal to min_tipi_version', async () => {
@@ -76,7 +76,7 @@ describe('Update app', () => {
     await insertApp({ status: 'stopped' }, appConfig, db);
 
     // act & assert
-    await expect(updateApp.execute({ appId: appConfig.id })).resolves.not.toThrow();
+    await expect(updateApp.execute({ appId: appConfig.id, performBackup: false })).resolves.not.toThrow();
 
     await waitForExpect(async () => {
       const app = await getAppById(appConfig.id, db);
@@ -90,7 +90,7 @@ describe('Update app', () => {
     await insertApp({ status: 'running' }, appConfig, db);
 
     // act
-    await updateApp.execute({ appId: appConfig.id });
+    await updateApp.execute({ appId: appConfig.id, performBackup: false });
 
     // assert
     await waitForExpect(async () => {
@@ -105,7 +105,7 @@ describe('Update app', () => {
     await insertApp({ status: 'stopped' }, appConfig, db);
 
     // act
-    await updateApp.execute({ appId: appConfig.id });
+    await updateApp.execute({ appId: appConfig.id, performBackup: false });
 
     // assert
     await waitForExpect(async () => {

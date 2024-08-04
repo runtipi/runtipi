@@ -454,10 +454,12 @@ export class AppExecutors {
     }
   };
 
-  public updateApp = async (appId: string, form: AppEventForm) => {
+  public updateApp = async (appId: string, form: AppEventForm, performBackup: boolean) => {
     try {
-      // Creating backup of the app before updating
-      await this.backupApp(appId);
+      if (performBackup) {
+        // Creating backup of the app before updating
+        await this.backupApp(appId);
+      }
 
       await socketManager.emit({
         type: 'app',
@@ -610,7 +612,7 @@ export class AppExecutors {
       });
       return { success: true, message: `App ${appId} backed up successfully` };
     } catch (err) {
-      return this.handleAppError(err, appId, 'backup_error');
+      return this.handleAppError(err, appId, 'backup_error', 'stopped');
     }
   };
 
@@ -643,6 +645,8 @@ export class AppExecutors {
 
       // Unzip the archive
       await fs.promises.mkdir(restoreDir, { recursive: true });
+
+      this.logger.info('Extracting archive...');
       await this.archiveManager.extractTarGz(archive, restoreDir);
 
       // Remove old data directories
@@ -693,7 +697,7 @@ export class AppExecutors {
 
       return { success: true, message: `App ${appId} restored successfully` };
     } catch (err) {
-      return this.handleAppError(err, appId, 'restore_error');
+      return this.handleAppError(err, appId, 'restore_error', 'stopped');
     }
   };
 }
