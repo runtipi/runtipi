@@ -53,7 +53,7 @@ export const setupRoutes = (app: Hono) => {
 
   app.post('/apps/:id/update', async (c) => {
     const appId = c.req.param('id');
-    const { success, message } = await apps.updateApp(appId, {});
+    const { success, message } = await apps.updateApp(appId, {}, false);
     if (success) {
       return c.json({ message, ok: true }, 200);
     }

@@ -101,8 +101,8 @@ const main = async () => {
       },
     });
     logger.info('Obliterating queue...');
-    await queue.drain(true);
-    await repeatQueue.drain(true);
+    await queue.obliterate({ force: true });
+    await repeatQueue.obliterate({ force: true });
 
     // Scheduled jobs
     if (process.env.NODE_ENV === 'production') {

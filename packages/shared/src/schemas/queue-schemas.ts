@@ -8,6 +8,17 @@ export const EVENT_TYPES = {
 
 export type EventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
 
+const formSchema = z
+  .object({
+    exposed: z.boolean().optional(),
+    exposedLocal: z.boolean().optional(),
+    openPort: z.boolean().optional(),
+    domain: z.string().optional(),
+    isVisibleOnGuestDashboard: z.boolean().optional(),
+  })
+  .extend({})
+  .catchall(z.unknown());
+
 const appEventSchema = z.object({
   type: z.literal(EVENT_TYPES.APP),
   command: z.union([
@@ -15,7 +26,6 @@ const appEventSchema = z.object({
     z.literal('stop'),
     z.literal('install'),
     z.literal('uninstall'),
-    z.literal('update'),
     z.literal('reset'),
     z.literal('restart'),
     z.literal('generate_env'),
@@ -23,16 +33,15 @@ const appEventSchema = z.object({
   ]),
   appid: z.string(),
   skipEnv: z.boolean().optional().default(false),
-  form: z
-    .object({
-      exposed: z.boolean().optional(),
-      exposedLocal: z.boolean().optional(),
-      openPort: z.boolean().optional(),
-      domain: z.string().optional(),
-      isVisibleOnGuestDashboard: z.boolean().optional(),
-    })
-    .extend({})
-    .catchall(z.unknown()),
+  form: formSchema,
+});
+
+const updateAppCommandSchema = z.object({
+  type: z.literal(EVENT_TYPES.APP),
+  command: z.literal('update'),
+  appid: z.string(),
+  form: formSchema,
+  performBackup: z.boolean(),
 });
 
 const restoreAppCommandSchema = z.object({
@@ -56,7 +65,11 @@ const systemCommandSchema = z.object({
   command: z.literal('system_info'),
 });
 
-export const eventSchema = appEventSchema.or(restoreAppCommandSchema).or(repoCommandSchema).or(systemCommandSchema);
+export const eventSchema = appEventSchema
+  .or(restoreAppCommandSchema)
+  .or(repoCommandSchema)
+  .or(updateAppCommandSchema)
+  .or(systemCommandSchema);
 
 export const eventResultSchema = z.object({
   success: z.boolean(),

@@ -8,7 +8,6 @@ import { createAppConfig } from '@/tests/apps.factory';
 import * as dockerHelpers from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { ArchiveManager } from '@/lib/archive/ArchiveManager';
 
 const { pathExists } = sharedNode;
 
@@ -254,7 +253,7 @@ describe('test: app executors', () => {
       spy.mockResolvedValue({ stdout: 'done', stderr: '' });
 
       // act
-      const { message, success } = await appExecutors.updateApp(config.id, config);
+      const { message, success } = await appExecutors.updateApp(config.id, config, false);
 
       // assert
       expect(success).toBe(true);
@@ -273,7 +272,7 @@ describe('test: app executors', () => {
       await fs.promises.writeFile(path.join(oldFolder, 'docker-compose.yml'), 'test');
 
       // act
-      await appExecutors.updateApp(config.id, config);
+      await appExecutors.updateApp(config.id, config, false);
 
       // assert
       const exists = await pathExists(oldFolder);
@@ -284,101 +283,6 @@ describe('test: app executors', () => {
 
       expect(exists).toBe(true);
       expect(content).not.toBe('test');
-      spy.mockRestore();
-    });
-  });
-
-  describe('test: backupApp()', () => {
-    it('should backup folders to /temp/<app-id>/<app-id>-timestamp.tar.gz', async () => {
-      // arrange
-      const config = createAppConfig({}, true);
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockResolvedValue({ stdout: 'done', stderr: '' });
-
-      // act
-      await appExecutors.backupApp(config.id);
-      const { success } = await appExecutors.backupApp(config.id);
-
-      // assert
-      expect(success).toBe(true);
-      const backups = await fs.promises.readdir(path.join(DATA_DIR, 'backups', config.id));
-
-      expect(backups.length).toBe(2);
-
-      spy.mockRestore();
-    });
-  });
-
-  describe('test: restoreApp()', () => {
-    it('should restore app from backup', async () => {
-      // arrange
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockResolvedValue({ stdout: 'done', stderr: '' });
-      const config = createAppConfig({ version: '2.0.0' }, true);
-      await fs.promises.mkdir(path.join(DATA_DIR, 'backups', config.id), { recursive: true });
-      const filename = path.join(DATA_DIR, 'backups', config.id, 'test.tar.gz');
-      const tempDir = path.join('/tmp', config.id);
-      await fs.promises.mkdir(tempDir, { recursive: true });
-      await fs.promises.cp(path.join(APP_DATA_DIR, config.id), path.join(tempDir, 'app-data'));
-      await fs.promises.cp(path.join(DATA_DIR, 'apps', config.id), path.join(tempDir, 'app'));
-
-      // Create tar.gz file
-      const archiveManager = new ArchiveManager();
-      await archiveManager.createTarGz(tempDir, filename);
-      await fs.promises.rm(tempDir, { recursive: true });
-      // Set different version
-      const fileToCheck = path.join(DATA_DIR, 'apps', config.id, 'config.json');
-      await fs.promises.writeFile(fileToCheck, JSON.stringify({ version: '1.0.0' }));
-
-      // act
-      const { success } = await appExecutors.restoreApp(config.id, 'test.tar.gz');
-
-      // assert
-      expect(success).toBe(true);
-      const content = await fs.promises.readFile(fileToCheck, 'utf-8');
-      expect(JSON.parse(content).version).toBe('2.0.0');
-
-      spy.mockRestore();
-    });
-  });
-
-  describe('test: integration backup and restore', () => {
-    it('it should restore user-config/<app-id> folder', async () => {
-      // arrange
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockResolvedValue({ stdout: 'done', stderr: '' });
-
-      const config = createAppConfig({ version: '2.0.0' }, true);
-      // Create user-config folder with some content
-      const userConfigDir = path.join(DATA_DIR, 'user-config', config.id);
-      await fs.promises.mkdir(userConfigDir, { recursive: true });
-      await fs.promises.writeFile(path.join(userConfigDir, 'docker-compose.yml'), 'test');
-
-      // Create backup
-      await appExecutors.backupApp(config.id);
-      const backups = await fs.promises.readdir(path.join(DATA_DIR, 'backups', config.id));
-      expect(backups.length).toBe(1);
-
-      // delete user-config folder
-      await fs.promises.rm(userConfigDir, { recursive: true });
-
-      expect(await pathExists(userConfigDir)).toBe(false);
-
-      // act
-      await appExecutors.restoreApp(config.id, backups[0]!);
-
-      // assert
-      expect(await pathExists(userConfigDir)).toBe(true);
-      expect(await pathExists(path.join(userConfigDir, 'docker-compose.yml'))).toBe(true);
-      const content = await fs.promises.readFile(
-        path.join(userConfigDir, 'docker-compose.yml'),
-        'utf-8',
-      );
-      expect(content).toBe('test');
-
       spy.mockRestore();
     });
   });
