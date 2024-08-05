@@ -142,7 +142,7 @@
   "APP_UPDATE_FORM_BACKUP": "Резервное копирование перед обновлением",
   "APP_BACKUP_SUCCESS": "Приложение {id} успешно сохранено",
   "APP_BACKUP_ERROR": "Не удалось создать резервную копию {id}. См. подробности в логах",
-  "APP_RESTORE_SUCCESS": "App {id} restored successfully",
+  "APP_RESTORE_SUCCESS": "Приложение {id} успешно восстановлено",
   "APP_RESTORE_ERROR": "Не удалось восстановить приложение {id}. См. подробности в логах",
   "AUTH_ERROR_ADMIN_ALREADY_EXISTS": "Администратор уже существует. Пожалуйста, войдите в систему для создания нового пользователя из панели администратора.",
   "AUTH_ERROR_ERROR_CREATING_USER": "Ошибка при создании пользователя",
