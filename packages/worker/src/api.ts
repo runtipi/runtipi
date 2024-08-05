@@ -1,14 +1,16 @@
 import { jwt } from 'hono/jwt';
 import { prettyJSON } from 'hono/pretty-json';
 import { secureHeaders } from 'hono/secure-headers';
-import { Hono } from 'hono';
+import type { Hono } from 'hono';
 import { getEnv } from './lib/environment';
-import { AppExecutors, SystemExecutors } from './services';
+import { SystemExecutors } from './services';
+import { container } from './inversify.config';
+import type { IAppExecutors } from './services/app/app.executors';
 
-const apps = new AppExecutors();
 const system = new SystemExecutors();
 
 export const setupRoutes = (app: Hono) => {
+  const apps = container.get<IAppExecutors>('IAppExecutors');
   app.get('/healthcheck', (c) => c.text('OK', 200));
 
   app.use('*', prettyJSON());

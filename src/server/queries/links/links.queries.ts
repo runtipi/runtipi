@@ -1,14 +1,18 @@
-import { Database } from '@/server/db';
-import { linkTable } from '@/server/db/schema';
-import { LinkInfoInput } from '@runtipi/shared';
+import { type IDbClient, type Link, linkTable } from '@runtipi/db';
+import type { LinkInfoInput } from '@runtipi/shared';
 import { eq, and } from 'drizzle-orm';
+import { inject, injectable } from 'inversify';
 
-export class LinkQueries {
-  private db;
+export interface ILinkQueries {
+  addLink(link: LinkInfoInput, userId: number): Promise<Link | undefined>;
+  editLink(link: LinkInfoInput, userId: number): Promise<Link | undefined>;
+  deleteLink(linkId: number, userId: number): Promise<void>;
+  getLinks(userId: number): Promise<Link[]>;
+}
 
-  constructor(p: Database) {
-    this.db = p;
-  }
+@injectable()
+export class LinkQueries implements ILinkQueries {
+  constructor(@inject('IDbClient') private dbClient: IDbClient) {}
 
   /**
    * Adds a new link to the database.
@@ -17,7 +21,7 @@ export class LinkQueries {
    */
   public async addLink(link: LinkInfoInput, userId: number) {
     const { title, description, url, iconUrl } = link;
-    const newLinks = await this.db.insert(linkTable).values({ title, description, url, iconUrl, userId }).returning().execute();
+    const newLinks = await this.dbClient.db.insert(linkTable).values({ title, description, url, iconUrl, userId }).returning().execute();
     return newLinks[0];
   }
 
@@ -32,7 +36,7 @@ export class LinkQueries {
 
     if (!id) throw new Error('No id provided');
 
-    const updatedLinks = await this.db
+    const updatedLinks = await this.dbClient.db
       .update(linkTable)
       .set({ title, description, url, iconUrl, updatedAt: new Date() })
       .where(and(eq(linkTable.id, id), eq(linkTable.userId, userId)))
@@ -47,7 +51,7 @@ export class LinkQueries {
    * @param {number} linkId - The id of the link to be deleted.
    */
   public async deleteLink(linkId: number, userId: number) {
-    await this.db
+    await this.dbClient.db
       .delete(linkTable)
       .where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)))
       .returning()
@@ -60,7 +64,7 @@ export class LinkQueries {
    * @returns An array of links belonging to the user.
    */
   public async getLinks(userId: number) {
-    const links = await this.db.select().from(linkTable).where(eq(linkTable.userId, userId)).orderBy(linkTable.id);
+    const links = await this.dbClient.db.select().from(linkTable).where(eq(linkTable.userId, userId)).orderBy(linkTable.id);
     return links;
   }
 }

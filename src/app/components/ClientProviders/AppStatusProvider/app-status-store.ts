@@ -1,4 +1,4 @@
-import { AppStatus } from '@/server/db/schema';
+import type { AppStatus } from '@runtipi/db';
 import { createStore } from 'zustand/vanilla';
 
 export type AppStatusState = {

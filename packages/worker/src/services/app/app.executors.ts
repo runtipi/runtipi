@@ -1,26 +1,42 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import * as Sentry from '@sentry/node';
-import { execAsync, pathExists } from '@runtipi/shared/node';
-import { AppEventForm, SocketEvent, appInfoSchema, sanitizePath } from '@runtipi/shared';
+import { execAsync, type ILogger, pathExists } from '@runtipi/shared/node';
+import { type AppEventForm, type SocketEvent, appInfoSchema, sanitizePath } from '@runtipi/shared';
 import { copyDataDir, generateEnvFile } from './app.helpers';
-import { logger } from '@/lib/logger';
 import { compose } from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
-import { getDbClient } from '@/lib/db';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { getDockerCompose } from '@/config/docker-templates';
 import { ArchiveManager } from '@/lib/archive/ArchiveManager';
-import { socketManager } from '@/lib/socket';
+import { type App, appTable, type IDbClient } from '@runtipi/db';
+import { and, eq, ne } from 'drizzle-orm';
+import { inject, injectable } from 'inversify';
+import type { ISocketManager } from '@/lib/socket/SocketManager';
 
-export class AppExecutors {
-  private readonly logger;
+export interface IAppExecutors {
+  regenerateAppEnv(appId: string, form: AppEventForm): Promise<{ success: boolean; message: string }>;
+  installApp(appId: string, form: AppEventForm): Promise<{ success: boolean; message: string }>;
+  stopApp(appId: string, form: AppEventForm, skipEnvGeneration?: boolean): Promise<{ success: boolean; message: string }>;
+  restartApp(appId: string, form: AppEventForm, skipEnvGeneration?: boolean): Promise<{ success: boolean; message: string }>;
+  startApp(appId: string, form: AppEventForm, skipEnvGeneration?: boolean): Promise<{ success: boolean; message: string }>;
+  uninstallApp(appId: string, form: AppEventForm): Promise<{ success: boolean; message: string }>;
+  resetApp(appId: string, form: AppEventForm): Promise<{ success: boolean; message: string }>;
+  updateApp(appId: string, form: AppEventForm, performBackup: boolean): Promise<{ success: boolean; message: string }>;
+  startAllApps(forceStartAll?: boolean): Promise<void>;
+  backupApp(appId: string): Promise<{ success: boolean; message: string }>;
+  restoreApp(appId: string, filename: string): Promise<{ success: boolean; message: string }>;
+}
+
+@injectable()
+export class AppExecutors implements IAppExecutors {
   private archiveManager: ArchiveManager;
 
-  constructor() {
-    this.logger = logger;
+  constructor(
+    @inject('ILogger') private logger: ILogger,
+    @inject('IDbClient') private dbClient: IDbClient,
+    @inject('ISocketManager') private socketManager: ISocketManager,
+  ) {
     this.archiveManager = new ArchiveManager();
   }
 
@@ -35,7 +51,7 @@ export class AppExecutors {
     });
 
     if (err instanceof Error) {
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event,
         data: { appId, error: err.message, appStatus: newStatus },
@@ -44,7 +60,7 @@ export class AppExecutors {
       return { success: false, message: err.message };
     }
 
-    await socketManager.emit({
+    await this.socketManager.emit({
       type: 'app',
       event,
       data: { appId, error: String(err), appStatus: newStatus },
@@ -86,19 +102,14 @@ export class AppExecutors {
     if (await pathExists(path.join(repoPath, 'docker-compose.json'))) {
       try {
         // Generate docker-compose.yml file
-        const rawComposeConfig = await fs.promises.readFile(
-          path.join(repoPath, 'docker-compose.json'),
-          'utf-8',
-        );
+        const rawComposeConfig = await fs.promises.readFile(path.join(repoPath, 'docker-compose.json'), 'utf-8');
         const jsonComposeConfig = JSON.parse(rawComposeConfig);
 
         const composeFile = getDockerCompose(jsonComposeConfig.services, form);
 
         await fs.promises.writeFile(dockerFilePath, composeFile);
       } catch (err) {
-        this.logger.error(
-          `Error generating docker-compose.yml file for app ${appId}. Falling back to default docker-compose.yml`,
-        );
+        this.logger.error(`Error generating docker-compose.yml file for app ${appId}. Falling back to default docker-compose.yml`);
         this.logger.error(err);
         Sentry.captureException(err);
       }
@@ -117,7 +128,7 @@ export class AppExecutors {
       await this.ensureAppDir(appId, form);
       await generateEnvFile(appId, form);
 
-      await socketManager.emit({ type: 'app', event: 'generate_env_success', data: { appId } });
+      await this.socketManager.emit({ type: 'app', event: 'generate_env_success', data: { appId } });
       return { success: true, message: `App ${appId} env file regenerated successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'generate_env_error');
@@ -131,16 +142,14 @@ export class AppExecutors {
    */
   public installApp = async (appId: string, form: AppEventForm) => {
     try {
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'installing' },
       });
 
       if (process.getuid && process.getgid) {
-        this.logger.info(
-          `Installing app ${appId} as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`,
-        );
+        this.logger.info(`Installing app ${appId} as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`);
       } else {
         this.logger.info(`Installing app ${appId}. No User ID or Group ID found.`);
       }
@@ -150,9 +159,7 @@ export class AppExecutors {
       const { appDirPath, repoPath, appDataDirPath } = this.getAppPaths(appId);
 
       // Check if app exists in repo
-      const apps = await fs.promises.readdir(
-        path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'),
-      );
+      const apps = await fs.promises.readdir(path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps'));
 
       if (!apps.includes(appId)) {
         this.logger.error(`App ${appId} not found in repo ${appsRepoId}`);
@@ -193,7 +200,7 @@ export class AppExecutors {
 
       this.logger.info(`Docker-compose up for app ${appId} finished`);
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'install_success',
         data: { appId, appStatus: 'running' },
@@ -220,7 +227,7 @@ export class AppExecutors {
         return { success: true, message: `App ${appId} is not an app. Skipping...` };
       }
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'stopping' },
@@ -237,14 +244,14 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} stopped`);
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'stop_success',
         data: { appId, appStatus: 'stopped' },
       });
 
-      const client = await getDbClient();
-      await client?.query('UPDATE app SET status = $1 WHERE id = $2', ['stopped', appId]);
+      await this.dbClient.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, appId));
+
       return { success: true, message: `App ${appId} stopped successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'stop_error', 'running');
@@ -261,7 +268,7 @@ export class AppExecutors {
         return { success: true, message: `App ${appId} is not an app. Skipping...` };
       }
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'restarting' },
@@ -293,7 +300,7 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} restarted`);
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'restart_success',
         data: { appId, appStatus: 'running' },
@@ -307,7 +314,7 @@ export class AppExecutors {
 
   public startApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
     try {
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'starting' },
@@ -326,14 +333,13 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} started`);
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'start_success',
         data: { appId, appStatus: 'running' },
       });
 
-      const client = await getDbClient();
-      await client?.query('UPDATE app SET status = $1 WHERE id = $2', ['running', appId]);
+      await this.dbClient.db.update(appTable).set({ status: 'running' }).where(eq(appTable.id, appId));
       return { success: true, message: `App ${appId} started successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'start_error', 'stopped');
@@ -342,7 +348,7 @@ export class AppExecutors {
 
   public uninstallApp = async (appId: string, form: AppEventForm) => {
     try {
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'uninstalling' },
@@ -378,14 +384,14 @@ export class AppExecutors {
 
       this.logger.info(`App ${appId} uninstalled`);
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'uninstall_success',
         data: { appId, appStatus: 'missing' },
       });
 
-      const client = await getDbClient();
-      await client?.query(`DELETE FROM app WHERE id = $1`, [appId]);
+      await this.dbClient.db.delete(appTable).where(eq(appTable.id, appId));
+
       return { success: true, message: `App ${appId} uninstalled successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'uninstall_error', 'stopped');
@@ -394,7 +400,7 @@ export class AppExecutors {
 
   public resetApp = async (appId: string, form: AppEventForm) => {
     try {
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'resetting' },
@@ -410,9 +416,7 @@ export class AppExecutors {
         await compose(appId, 'down --remove-orphans --volumes');
       } catch (err) {
         if (err instanceof Error && err.message.includes('conflict')) {
-          this.logger.warn(
-            `Could not reset app ${appId}. Most likely there have been made changes to the compose file.`,
-          );
+          this.logger.warn(`Could not reset app ${appId}. Most likely there have been made changes to the compose file.`);
         } else {
           throw err;
         }
@@ -440,14 +444,14 @@ export class AppExecutors {
       this.logger.info(`Running docker-compose up for app ${appId}`);
       await compose(appId, 'up -d');
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'reset_success',
         data: { appId, appStatus: 'running' },
       });
 
-      const client = await getDbClient();
-      await client?.query(`UPDATE app SET status = $1 WHERE id = $2`, ['running', appId]);
+      await this.dbClient.db.update(appTable).set({ status: 'running' }).where(eq(appTable.id, appId));
+
       return { success: true, message: `App ${appId} reset successfully` };
     } catch (err) {
       return this.handleAppError(err, appId, 'reset_error', 'stopped');
@@ -461,7 +465,7 @@ export class AppExecutors {
         await this.backupApp(appId);
       }
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'updating' },
@@ -476,9 +480,7 @@ export class AppExecutors {
         await compose(appId, 'up --detach --force-recreate --remove-orphans');
         await compose(appId, 'down --rmi all --remove-orphans');
       } catch (err) {
-        logger.warn(
-          `App ${appId} has likely a broken docker-compose.yml file. Continuing with update...`,
-        );
+        this.logger.warn(`App ${appId} has likely a broken docker-compose.yml file. Continuing with update...`);
       }
 
       this.logger.info(`Deleting folder ${appDirPath}`);
@@ -491,7 +493,7 @@ export class AppExecutors {
 
       await compose(appId, 'pull');
 
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'update_success',
         data: { appId, appStatus: 'stopped' },
@@ -508,35 +510,32 @@ export class AppExecutors {
    */
   public startAllApps = async (forceStartAll = false) => {
     try {
-      const client = await getDbClient();
-      let rows: { id: string; config: Record<string, unknown> }[] = [];
+      let apps: App[] = [];
 
       if (!forceStartAll) {
-        // Get all apps with status running
-        const result = await client?.query(`SELECT * FROM app WHERE status = 'running'`);
-        rows = result?.rows || [];
+        apps = await this.dbClient.db.select().from(appTable).where(eq(appTable.status, 'running'));
       } else {
         // Get all apps
-        const result = await client?.query(`SELECT * FROM app`);
-        rows = result?.rows || [];
+        apps = await this.dbClient.db.select().from(appTable);
       }
 
       // Update all apps with status different than running or stopped to stopped
-      await client?.query(
-        `UPDATE app SET status = 'stopped' WHERE status != 'stopped' AND status != 'running' AND status != 'missing'`,
-      );
+      await this.dbClient.db
+        .update(appTable)
+        .set({ status: 'stopped' })
+        .where(and(ne(appTable.status, 'running'), ne(appTable.status, 'stopped'), ne(appTable.status, 'missing')));
 
       // Start all apps
-      for (const row of rows) {
+      for (const row of apps) {
         const { id, config } = row;
 
         const { success } = await this.startApp(id, config as AppEventForm);
 
         if (!success) {
           this.logger.error(`Error starting app ${id}`);
-          await client?.query(`UPDATE app SET status = $1 WHERE id = $2`, ['stopped', id]);
+          await this.dbClient.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, id));
         } else {
-          await client?.query(`UPDATE app SET status = $1 WHERE id = $2`, ['running', id]);
+          await this.dbClient.db.update(appTable).set({ status: 'running' }).where(eq(appTable.id, id));
         }
       }
     } catch (err) {
@@ -546,7 +545,7 @@ export class AppExecutors {
 
   public backupApp = async (appId: string) => {
     try {
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'backing_up' },
@@ -578,11 +577,7 @@ export class AppExecutors {
 
       // Check if the user config folder exists and if it does copy it too
       if (await pathExists(path.join(DATA_DIR, 'user-config', appId))) {
-        await fs.promises.cp(
-          path.join(DATA_DIR, 'user-config', appId),
-          path.join(tempDir, 'user-config'),
-          { recursive: true },
-        );
+        await fs.promises.cp(path.join(DATA_DIR, 'user-config', appId), path.join(tempDir, 'user-config'), { recursive: true });
       }
 
       this.logger.info('Creating archive...');
@@ -594,10 +589,7 @@ export class AppExecutors {
 
       // Move the archive to the backup directory
       await fs.promises.mkdir(backupDir, { recursive: true });
-      await fs.promises.cp(
-        path.join(tempDir, `${backupName}.tar.gz`),
-        path.join(backupDir, `${backupName}.tar.gz`),
-      );
+      await fs.promises.cp(path.join(tempDir, `${backupName}.tar.gz`), path.join(backupDir, `${backupName}.tar.gz`));
 
       // Remove the temp backup folder
       await fs.promises.rm(tempDir, { force: true, recursive: true });
@@ -605,7 +597,7 @@ export class AppExecutors {
       this.logger.info('Backup completed!');
 
       // Done
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'backup_success',
         data: { appId, appStatus: 'stopped' },
@@ -618,7 +610,7 @@ export class AppExecutors {
 
   public restoreApp = async (appId: string, filename: string) => {
     try {
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'status_change',
         data: { appId, appStatus: 'restoring' },
@@ -627,7 +619,6 @@ export class AppExecutors {
       const { appDataDirPath, appDirPath } = this.getAppPaths(appId);
       const restoreDir = path.join('/tmp', appId);
       const archive = path.join(DATA_DIR, 'backups', appId, filename);
-      const client = await getDbClient();
 
       this.logger.info('Restoring app from backup...');
 
@@ -666,11 +657,7 @@ export class AppExecutors {
 
       // Copy user config foler if it exists
       if (await pathExists(path.join(restoreDir, 'user-config'))) {
-        await fs.promises.cp(
-          path.join(restoreDir, 'user-config'),
-          path.join(DATA_DIR, 'user-config', appId),
-          { recursive: true },
-        );
+        await fs.promises.cp(path.join(restoreDir, 'user-config'), path.join(DATA_DIR, 'user-config', appId), { recursive: true });
       }
 
       // Delete restore folder
@@ -681,15 +668,13 @@ export class AppExecutors {
         encoding: 'utf-8',
       });
       const configParsed = appInfoSchema.safeParse(JSON.parse(configFileRaw));
-      await client?.query(`UPDATE app SET version = $1 WHERE id = $2`, [
-        configParsed.data?.tipi_version,
-        appId,
-      ]);
+
+      await this.dbClient.db.update(appTable).set({ version: configParsed.data?.tipi_version }).where(eq(appTable.id, appId));
 
       this.logger.info(`App ${appId} restored!`);
 
       // Done
-      await socketManager.emit({
+      await this.socketManager.emit({
         type: 'app',
         event: 'restore_success',
         data: { appId, appStatus: 'stopped' },

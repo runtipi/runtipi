@@ -1,13 +1,13 @@
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { type App } from '@/server/db/schema';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
+import type { App } from '@runtipi/db';
 import { TranslatedError } from '@/server/utils/errors';
-import { AppCatalogCommandParams, IAppCatalogCommand } from './types';
-import { AppDataService } from '@runtipi/shared/node';
+import type { AppCatalogCommandParams, IAppCatalogCommand } from './types';
+import type { AppDataService } from '@runtipi/shared/node';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetAppCommand>['execute']>>;
 
 export class GetAppCommand implements IAppCatalogCommand<ReturnValue> {
-  private queries: AppQueries;
+  private queries: IAppQueries;
   private appDataService: AppDataService;
 
   constructor(params: AppCatalogCommandParams) {

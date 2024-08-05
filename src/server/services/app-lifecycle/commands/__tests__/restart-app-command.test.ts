@@ -2,7 +2,7 @@ import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.fact
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 import { EventDispatcher } from '@/server/core/EventDispatcher';
-import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { RestartAppCommand } from '../restart-app-command';
 import { AppDataService } from '@runtipi/shared/node';
@@ -16,7 +16,12 @@ let restartApp: RestartAppCommand;
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  restartApp = new RestartAppCommand({ queries: new AppQueries(db.db), eventDispatcher: dispatcher, executeOtherCommand: vi.fn(), appDataService });
+  restartApp = new RestartAppCommand({
+    queries: new AppQueries(db.dbClient),
+    eventDispatcher: dispatcher,
+    executeOtherCommand: vi.fn(),
+    appDataService,
+  });
 });
 
 beforeEach(async () => {

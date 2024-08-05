@@ -1,4 +1,5 @@
-import React from 'react';
+import 'reflect-metadata';
+import type React from 'react';
 import type { Metadata } from 'next';
 import { getLocale, getMessages } from 'next-intl/server';
 
@@ -13,7 +14,7 @@ import { Toaster } from 'react-hot-toast';
 import { ClientProviders } from './components/ClientProviders';
 import { CookiesProvider } from 'next-client-cookies/server';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
-import { AppStatus } from '@/server/db/schema';
+import type { AppStatus } from '@runtipi/db';
 
 export const metadata: Metadata = {
   title: 'Tipi',

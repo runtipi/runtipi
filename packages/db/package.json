@@ -1,0 +1,19 @@
+{
+  "name": "@runtipi/db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@runtipi/postgres-migrations": "^5.3.0",
+    "@runtipi/shared": "workspace:^",
+    "drizzle-orm": "^0.32.1",
+    "pg": "^8.12.0"
+  }
+}
