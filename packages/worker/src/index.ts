@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { SystemEvent, cleanseErrorData } from '@runtipi/shared';
 
 import path from 'node:path';
@@ -13,9 +15,9 @@ import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
 import { AppExecutors, RepoExecutors } from './services';
-import { SocketManager } from './lib/socket/SocketManager';
 import { setupRoutes } from './api';
 import { DATA_DIR } from './config';
+import { socketManager } from './lib/socket';
 
 const envFile = path.join(DATA_DIR, '.env');
 
@@ -67,7 +69,7 @@ const main = async () => {
     logger.info('Generating TLS certificates...');
     await generateTlsCertificates({ domain: envMap.get('LOCAL_DOMAIN') });
 
-    SocketManager.init();
+    socketManager.init();
 
     const repoExecutors = new RepoExecutors();
 
@@ -99,8 +101,8 @@ const main = async () => {
       },
     });
     logger.info('Obliterating queue...');
-    await queue.drain(true);
-    await repeatQueue.drain(true);
+    await queue.obliterate({ force: true });
+    await repeatQueue.obliterate({ force: true });
 
     // Scheduled jobs
     if (process.env.NODE_ENV === 'production') {

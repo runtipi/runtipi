@@ -12,7 +12,7 @@ export const updateAllAppsAction = authActionClient.action(async () => {
 
   const updatePromises = availableUpdates.map(async (app) => {
     try {
-      await appLifecycle.executeCommand('updateApp', { appId: app.id });
+      await appLifecycle.executeCommand('updateApp', { appId: app.id, performBackup: true });
       revalidatePath(`/app/${app.id}`);
       revalidatePath(`/app-store/${app.id}`);
     } catch (e) {

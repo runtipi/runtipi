@@ -14,7 +14,6 @@
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
     "esModuleInterop": true,
     "module": "CommonJS",
     "moduleResolution": "node",
@@ -25,8 +24,9 @@
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
-    "types": ["node"],
-    "experimentalDecorators": true
+    "types": ["node", "reflect-metadata"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mjs", "**/*.js", "**/*.jsx"],
   "exclude": ["node_modules"]
