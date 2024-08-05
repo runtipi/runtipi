@@ -1,8 +1,8 @@
 import 'reflect-metadata';
-import { ITipiCache, TipiCache } from '@/server/core/TipiCache/TipiCache';
+import { type ITipiCache, TipiCache } from '@/server/core/TipiCache/TipiCache';
 import { type ILogger, Logger } from '@runtipi/shared/node';
 import { Container } from 'inversify';
-import path from 'path';
+import path from 'node:path';
 import { DATA_DIR } from './config';
 
 export function createContainer() {

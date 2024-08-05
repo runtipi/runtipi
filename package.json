@@ -89,6 +89,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@biomejs/biome": "1.8.3",
     "@faker-js/faker": "^8.4.1",
     "@playwright/test": "^1.45.3",
     "@testing-library/dom": "^10.4.0",
