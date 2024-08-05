@@ -22,7 +22,7 @@
     "@types/tar-fs": "^2.0.4",
     "@types/web-push": "^3.6.3",
     "@typescript-eslint/eslint-plugin": "^7.17.0",
-    "@typescript-eslint/parser": "^7.17.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "dotenv-cli": "^7.4.2",
     "esbuild": "^0.19.4",
     "eslint": "8.57.0",
