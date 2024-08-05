@@ -140,7 +140,7 @@
   "APP_UPDATE_FORM_TITLE": "Обновить {name}?",
   "APP_UPDATE_SETTINGS_FORM_TITLE": "Обновить настройки {name}",
   "APP_UPDATE_SUCCESS": "Приложение {id} успешно обновлено",
-  "APP_UPDATE_FORM_BACKUP": "Backup app before updating",
+  "APP_UPDATE_FORM_BACKUP": "Резервное копирование перед обновлением",
   "APP_BACKUP_SUCCESS": "Приложение {id} успешно сохранено",
   "APP_BACKUP_ERROR": "Не удалось создать резервную копию {id}. См. подробности в логах",
   "APP_RESTORE_SUCCESS": "Приложение {id} успешно восстановлено",
