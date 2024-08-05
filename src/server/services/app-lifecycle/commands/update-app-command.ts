@@ -10,6 +10,8 @@ import { AppEventFormInput } from '@runtipi/shared';
 import { AppStatus } from '@/server/db/schema';
 import { AppDataService } from '@runtipi/shared/node';
 
+const FIFTEEN_MINUTES = 15 * 60 * 1000;
+
 export class UpdateAppCommand implements IAppLifecycleCommand {
   private queries: AppQueries;
   private eventDispatcher: EventDispatcher;
@@ -33,7 +35,7 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync(
       { type: 'app', command: 'update', appid: appId, form, performBackup },
-      1000 * 60 * 15,
+      performBackup ? FIFTEEN_MINUTES : undefined,
     );
 
     if (success) {
