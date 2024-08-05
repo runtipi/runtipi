@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import * as Sentry from '@sentry/node';
 import { sanitizePath } from '@runtipi/shared';
@@ -47,7 +47,7 @@ export class RepoExecutors {
 
       const [repoUrl, branch] = getRepoBaseUrlAndBranch(url);
 
-      let cloneCommand;
+      let cloneCommand: string;
       if (branch) {
         this.logger.info(`Cloning repo ${repoUrl} on branch ${branch} to ${repoPath}`);
         cloneCommand = `git clone -b ${branch} ${repoUrl} ${repoPath}`;

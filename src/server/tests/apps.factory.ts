@@ -1,10 +1,10 @@
 import fs from 'fs-extra';
 import { faker } from '@faker-js/faker';
 import { eq } from 'drizzle-orm';
-import { AppInfo, Architecture, appInfoSchema, APP_CATEGORIES } from '@runtipi/shared';
+import { type AppInfo, type Architecture, appInfoSchema, APP_CATEGORIES } from '@runtipi/shared';
 import { APP_DATA_DIR, DATA_DIR } from '../../config';
-import { TestDatabase } from './test-utils';
-import { appTable, AppStatus, App, NewApp } from '../db/schema';
+import type { TestDatabase } from './test-utils';
+import { appTable, type AppStatus, type App, type NewApp } from '../db/schema';
 
 interface IProps {
   installed?: boolean;
