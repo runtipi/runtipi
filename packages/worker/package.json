@@ -41,7 +41,7 @@
     "@runtipi/postgres-migrations": "^5.3.0",
     "@runtipi/shared": "workspace:^",
     "@sentry/integrations": "^7.114.0",
-    "@sentry/node": "^8.22.0",
+    "@sentry/node": "^8.23.0",
     "bullmq": "^5.12.0",
     "dotenv": "^16.4.5",
     "hono": "^4.5.3",
