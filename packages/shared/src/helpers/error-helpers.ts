@@ -6,10 +6,13 @@ const IgnoreErrors = [
   // Innocuous browser errors
   /ResizeObserver loop limit exceeded/,
   /ResizeObserver loop completed with undelivered notifications/,
-  // Error on user's side
-  /no space left on device/,
   // Dark reader extension
   /WeakMap key undefined must be an object or an unregistered symbol/,
+  // Docker-compose error
+  /no space left on device/,
+  /port is already allocated/,
+  /address already in use/,
+  /Error with your custom app/,
 ];
 
 const cleanseUrl = (url: string) => {
