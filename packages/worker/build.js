@@ -29,7 +29,7 @@ async function bundle() {
     loader: {
       '.node': 'copy',
     },
-    minify: true,
+    minify: process.env.LOCAL !== 'true',
     plugins,
   };
 

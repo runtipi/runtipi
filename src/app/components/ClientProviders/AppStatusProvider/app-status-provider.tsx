@@ -4,7 +4,7 @@ import React from 'react';
 import { type ReactNode, createContext, useRef } from 'react';
 
 import { createAppStatusStore } from './app-status-store';
-import type { AppStatus } from '@/server/db/schema';
+import type { AppStatus } from '@runtipi/db';
 
 export type AppStatusStoreApi = ReturnType<typeof createAppStatusStore>;
 

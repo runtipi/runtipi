@@ -4,13 +4,15 @@ import { faker } from '@faker-js/faker';
 import { afterAll, beforeAll, beforeEach, describe, it, expect } from 'vitest';
 import { TipiConfig } from '../../core/TipiConfig';
 import { SystemServiceClass } from '.';
-import { tipiCache } from '@/server/core/TipiCache';
+import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
+import { container } from 'src/inversify.config';
 
 const SystemService = new SystemServiceClass();
 
 const server = setupServer();
 
 afterAll(async () => {
+  const tipiCache = container.get<ITipiCache>('ITipiCache');
   server.close();
   await tipiCache.close();
 });
@@ -20,6 +22,7 @@ beforeAll(() => {
 });
 
 beforeEach(async () => {
+  const tipiCache = container.get<ITipiCache>('ITipiCache');
   await TipiConfig.setConfig('demoMode', false);
   await tipiCache.del('latestVersion');
   server.resetHandlers();

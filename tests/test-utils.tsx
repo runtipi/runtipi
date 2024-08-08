@@ -1,5 +1,8 @@
-import React, { FC, ReactElement } from 'react';
-import { render, RenderOptions, renderHook } from '@testing-library/react';
+/* eslint-disable import/export */
+import 'reflect-metadata';
+import type React from 'react';
+import type { FC, ReactElement } from 'react';
+import { render, type RenderOptions, renderHook } from '@testing-library/react';
 import { Toaster } from 'react-hot-toast';
 import { IntlProvider } from 'next-intl';
 import ue from '@testing-library/user-event';

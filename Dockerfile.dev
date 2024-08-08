@@ -10,7 +10,7 @@ RUN apk add --no-cache python3 make g++ curl git
 RUN npm install pnpm@9.4.0 pm2 -g
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.23.3"
+ARG DOCKER_COMPOSE_VERSION="v2.29.1"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 
@@ -35,12 +35,16 @@ RUN pnpm fetch --ignore-scripts
 COPY ./package*.json ./
 COPY ./packages/worker/package.json ./packages/worker/package.json
 COPY ./packages/shared/package.json ./packages/shared/package.json
+COPY ./packages/db/package.json ./packages/db/package.json
+
 COPY ./scripts ./scripts
 COPY ./public ./public
 
 RUN pnpm install -r --prefer-offline 
 
 COPY ./packages ./packages
+
+COPY ./packages/db/assets/migrations ./packages/worker/assets/migrations
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
 

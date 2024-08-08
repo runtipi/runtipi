@@ -99,7 +99,6 @@
   "APP_RESTORE_SUBTITLE": "Все текущие данные приложения будут удалены и заменены данными из резервной копии. Рекомендуется сделать резервную копию вашего приложения перед восстановлением.",
   "APP_RESTORE_SUBMIT": "Восстановить",
   "APP_BACKUPS_TAB_TITLE": "Резервные копии",
-  "APP_RESTORE_SETTINGS_SUBTITILE": "Восстановить предыдущее состояние приложения",
   "APP_SETTINGS_GENERAL_TITLE": "Основные",
   "APP_SETTINGS_BACKUPS_TITLE": "Резервные копии",
   "APP_STATUS_INSTALLING": "Устанавливается",

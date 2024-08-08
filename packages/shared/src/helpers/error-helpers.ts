@@ -1,15 +1,18 @@
+import type { ErrorEvent, EventHint } from '@sentry/types';
 import cloneDeep from 'lodash.clonedeep';
-import type { ErrorEvent, EventHint, Exception } from '@sentry/types';
 import validator from 'validator';
 
 const IgnoreErrors = [
   // Innocuous browser errors
   /ResizeObserver loop limit exceeded/,
   /ResizeObserver loop completed with undelivered notifications/,
-  // Error on user's side
-  /no space left on device/,
   // Dark reader extension
   /WeakMap key undefined must be an object or an unregistered symbol/,
+  // Docker-compose error
+  /no space left on device/,
+  /port is already allocated/,
+  /address already in use/,
+  /Error with your custom app/,
 ];
 
 const cleanseUrl = (url: string) => {
@@ -36,30 +39,26 @@ export const cleanseErrorData = (event: ErrorEvent, hint: EventHint) => {
   }
 
   if (result.breadcrumbs) {
-    result.breadcrumbs.forEach((breadcrumb) => {
-      if (breadcrumb.data && breadcrumb.data.url) {
-        // eslint-disable-next-line no-param-reassign -- mutate in place on a clone
+    for (const breadcrumb of result.breadcrumbs) {
+      if (breadcrumb.data?.url) {
         breadcrumb.data.url = cleanseUrl(breadcrumb.data.url);
       }
-    });
+    }
   }
 
-  if (result.exception && result.exception.values) {
-    result.exception.values.forEach((exception: Exception) => {
-      const { stacktrace } = exception;
-
-      if (stacktrace && stacktrace.frames) {
-        stacktrace.frames.forEach((frame) => {
+  if (result.exception?.values) {
+    for (const exception of result.exception.values) {
+      if (exception.stacktrace?.frames) {
+        for (const frame of exception.stacktrace.frames) {
           if (frame.filename) {
-            // eslint-disable-next-line no-param-reassign -- mutate in place on a clone
             frame.filename = cleanseUrl(frame.filename);
           }
-        });
+        }
       }
-    });
+    }
   }
 
-  if (error && error?.message && shouldIgnoreException(error.message)) {
+  if (error?.message && shouldIgnoreException(error.message)) {
     return null;
   }
 
@@ -71,7 +70,7 @@ export const cleanseErrorData = (event: ErrorEvent, hint: EventHint) => {
     result.message = `Error with ${appName}: ${message}`;
   }
 
-  if (result.request && result.request.url) {
+  if (result.request?.url) {
     result.request.url = cleanseUrl(result.request.url);
   }
 

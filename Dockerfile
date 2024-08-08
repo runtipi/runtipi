@@ -17,6 +17,11 @@ ENV LOCAL=${LOCAL}
 RUN npm install pnpm@9.4.0 -g
 RUN apk add --no-cache curl python3 make g++ git
 
+WORKDIR /deps
+
+COPY ./pnpm-lock.yaml ./
+RUN pnpm fetch
+
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
 
@@ -28,12 +33,10 @@ FROM builder_base AS dashboard_builder
 
 WORKDIR /dashboard
 
-COPY ./pnpm-lock.yaml ./
-RUN pnpm fetch
-
 COPY ./pnpm-workspace.yaml ./
 COPY ./package*.json ./
 COPY ./packages/shared ./packages/shared
+COPY ./packages/db ./packages/db
 COPY ./scripts ./scripts
 COPY ./public ./public
 
@@ -55,10 +58,9 @@ WORKDIR /worker
 
 ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH}
-ARG DOCKER_COMPOSE_VERSION="v2.27.0"
+ARG DOCKER_COMPOSE_VERSION="v2.29.1"
 
 RUN echo "Building for ${TARGETARCH}"
-
 
 RUN if [ "${TARGETARCH}" = "arm64" ]; then \
   curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
@@ -70,20 +72,15 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
 
 RUN chmod +x docker-binary
 
-COPY ./pnpm-lock.yaml ./
-RUN pnpm fetch --ignore-scripts
-
 COPY ./pnpm-workspace.yaml ./
 COPY ./packages/worker/package.json ./packages/worker/package.json
+COPY ./packages/shared/package.json ./packages/shared/package.json
+COPY ./packages/db/package.json ./packages/db/package.json
 COPY ./packages/shared/package.json ./packages/shared/package.json
 
 RUN pnpm install -r --prefer-offline
 
 COPY ./packages ./packages
-COPY ./packages/worker/build.js ./packages/worker/build.js
-COPY ./packages/worker/src ./packages/worker/src
-COPY ./packages/worker/package.json ./packages/worker/package.json
-COPY ./packages/worker/assets ./packages/worker/assets
 
 # Print TIPI_VERSION to the console
 RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
@@ -99,6 +96,7 @@ WORKDIR /worker
 
 COPY --from=worker_builder /worker/packages/worker/dist .
 COPY --from=worker_builder /worker/packages/worker/assets ./assets
+COPY --from=worker_builder /worker/packages/db/assets/migrations ./assets/migrations
 COPY --from=worker_builder /worker/docker-binary /usr/local/bin/docker-compose
 
 WORKDIR /dashboard

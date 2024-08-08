@@ -1,8 +1,8 @@
-import { SocketEvent } from '@runtipi/shared';
+import type { SocketEvent } from '@runtipi/shared';
+import type { ILogger } from '@runtipi/shared/src/node';
+import { inject, injectable } from 'inversify';
 import { Server } from 'socket.io';
 import { handleViewAppLogsEvent, handleViewRuntipiLogsEvent } from '../docker';
-import { inject, injectable } from 'inversify';
-import { ILogger } from '@runtipi/shared/src/node';
 
 export interface ISocketManager {
   init(): void;

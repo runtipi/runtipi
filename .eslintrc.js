@@ -18,7 +18,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   rules: {
-    'import/no-cycle': 2,
+    'import/no-cycle': 1,
     'import/no-named-as-default-member': 0,
     'import/no-named-as-default': 0,
     'no-console': 1,

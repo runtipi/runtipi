@@ -1,10 +1,11 @@
-import { promises } from 'fs';
+import { promises } from 'node:fs';
 import axios from 'redaxios';
-import { tipiCache } from '@/server/core/TipiCache';
 import { DATA_DIR } from '@/config/constants';
 import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
+import { container } from 'src/inversify.config';
+import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
 
 export class SystemServiceClass {
   /**
@@ -13,6 +14,7 @@ export class SystemServiceClass {
    * @returns {Promise<{ current: string; latest: string }>} The current and latest version
    */
   public getVersion = async () => {
+    const tipiCache = container.get<ITipiCache>('ITipiCache');
     try {
       const { seePreReleaseVersions, version: currentVersion } = TipiConfig.getConfig();
 

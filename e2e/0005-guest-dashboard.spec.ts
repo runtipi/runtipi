@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { appTable } from '@/server/db/schema';
+import { appTable } from '@runtipi/db';
 import { setSettings } from './helpers/settings';
 import { loginUser } from './fixtures/fixtures';
 import { clearDatabase, db } from './helpers/db';
@@ -49,7 +49,7 @@ test('logged out users can see the apps on the guest dashboard', async ({ browse
   await page.goto('/');
   await expect(page.getByText(/Hello World web server/)).toBeVisible();
   const locator = page.locator('text=Actual Budget');
-  expect(locator).not.toBeVisible();
+  await expect(locator).not.toBeVisible();
 
   const [newPage] = await Promise.all([context.waitForEvent('page'), await page.getByRole('link', { name: /Hello World/ }).click()]);
 

@@ -1,9 +1,9 @@
-import React from 'react';
+import type React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
 import { useTranslations } from 'next-intl';
-import { AppInfo } from '@runtipi/shared';
+import type { AppInfo } from '@runtipi/shared';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { AppStatus } from '@/server/db/schema';
+import type { AppStatus } from '@runtipi/db';
 import { InstallForm, type FormValues } from '../InstallForm';
 import { useAction } from 'next-safe-action/hooks';
 import { updateAppConfigAction } from '@/actions/app-actions/update-app-config-action';

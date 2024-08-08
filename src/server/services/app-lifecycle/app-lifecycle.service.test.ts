@@ -1,4 +1,4 @@
-import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { vi, beforeEach, beforeAll, afterAll, describe, it, expect } from 'vitest';
 import { AppLifecycleClass } from './app-lifecycle.service';
 import { EventDispatcher } from '../../core/EventDispatcher';
@@ -17,7 +17,7 @@ const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_D
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  appLifecycle = new AppLifecycleClass(new AppQueries(db.db), dispatcher, appDataService);
+  appLifecycle = new AppLifecycleClass(new AppQueries(db.dbClient), dispatcher, appDataService);
 });
 
 beforeEach(async () => {

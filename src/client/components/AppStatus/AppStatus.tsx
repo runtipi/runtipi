@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import React from 'react';
+import type React from 'react';
 import { Tooltip } from 'react-tooltip';
 import { useTranslations } from 'next-intl';
 import styles from './AppStatus.module.scss';

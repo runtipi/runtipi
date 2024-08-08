@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
+import type React from 'react';
 import { IconTrash, IconEdit } from '@tabler/icons-react';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { ContextMenu, ContextMenuItem, ContextMenuContent, ContextMenuTrigger } from '@/client/components/ui/ContextMenu/ContextMenu';
 import { AddLinkModal } from 'src/app/(dashboard)/components/AddLink/AddLinkModal';
 import { DeleteLinkModal } from 'src/app/(dashboard)/components/AddLink/DeleteLinkModal';
-import { LinkInfo } from '@runtipi/shared';
-import { Link } from '@/server/db/schema';
+import type { LinkInfo } from '@runtipi/shared';
+import type { Link } from '@runtipi/db';
 import { useTranslations } from 'next-intl';
 import { AppLogo } from '../AppLogo';
 

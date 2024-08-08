@@ -1,18 +1,18 @@
-import { CustomLinksServiceClass } from '@/server/services/custom-links/custom-links.service';
-import { db } from '@/server/db';
 import React from 'react';
 import { Metadata } from 'next';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import { getTranslator } from '@/lib/get-translator';
 import { AppTile } from '@/components/AppTile';
 import Link from 'next/link';
-import { Link as CustomLink } from '@/server/db/schema';
+import { Link as CustomLink } from '@runtipi/db';
 import clsx from 'clsx';
 import { LinkTile } from '@/components/LinkTile/LinkTile';
 import { EmptyPage } from '../../components/EmptyPage';
 import styles from './page.module.css';
 import { AddLinkButton } from '../components/AddLink/AddLinkButton';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
+import { container } from 'src/inversify.config';
+import { ICustomLinksService } from '@/server/services/custom-links/custom-links.service';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslator();
@@ -26,7 +26,7 @@ export default async function Page() {
   const installedApps = await appCatalog.executeCommand('getInstalledApps');
 
   const user = await getUserFromCookie();
-  const linksService = new CustomLinksServiceClass(db);
+  const linksService = container.get<ICustomLinksService>('ICustomLinksService');
   const customLinks = await linksService.getLinks(user?.id);
 
   const renderApp = (app: (typeof installedApps)[number]) => {
