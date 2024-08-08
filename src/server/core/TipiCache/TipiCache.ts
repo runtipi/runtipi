@@ -84,7 +84,12 @@ export class TipiCache implements ITipiCache {
 
   public async clear() {
     const client = await this.getClient();
-    const keys = await client.keys('*');
-    return Promise.all(keys.map((key) => client.del(key)));
+    try {
+      const keys = await client.keys('*');
+      return Promise.all(keys.map((key) => client.del(key)));
+    } catch (error) {
+      this.logger.error('Failed to clear cache', error);
+      throw error;
+    }
   }
 }

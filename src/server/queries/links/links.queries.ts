@@ -21,7 +21,7 @@ export class LinkQueries implements ILinkQueries {
    */
   public async addLink(link: LinkInfoInput, userId: number) {
     const { title, description, url, iconUrl } = link;
-    const newLinks = await this.dbClient.db.insert(linkTable).values({ title, description, url, iconUrl, userId }).returning().execute();
+    const newLinks = await this.dbClient.db.insert(linkTable).values({ title, description, url, iconUrl, userId }).returning();
     return newLinks[0];
   }
 
@@ -40,8 +40,7 @@ export class LinkQueries implements ILinkQueries {
       .update(linkTable)
       .set({ title, description, url, iconUrl, updatedAt: new Date() })
       .where(and(eq(linkTable.id, id), eq(linkTable.userId, userId)))
-      .returning()
-      .execute();
+      .returning();
 
     return updatedLinks[0];
   }
@@ -51,11 +50,7 @@ export class LinkQueries implements ILinkQueries {
    * @param {number} linkId - The id of the link to be deleted.
    */
   public async deleteLink(linkId: number, userId: number) {
-    await this.dbClient.db
-      .delete(linkTable)
-      .where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)))
-      .returning()
-      .execute();
+    await this.dbClient.db.delete(linkTable).where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)));
   }
 
   /**
@@ -64,7 +59,6 @@ export class LinkQueries implements ILinkQueries {
    * @returns An array of links belonging to the user.
    */
   public async getLinks(userId: number) {
-    const links = await this.dbClient.db.select().from(linkTable).where(eq(linkTable.userId, userId)).orderBy(linkTable.id);
-    return links;
+    return this.dbClient.db.select().from(linkTable).where(eq(linkTable.userId, userId)).orderBy(linkTable.id);
   }
 }

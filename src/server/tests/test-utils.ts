@@ -3,6 +3,8 @@ import pg, { Pool } from 'pg';
 import { TipiConfig } from '../core/TipiConfig';
 import * as schema from '@runtipi/db';
 import { runPostgresMigrations } from '../run-migrations-dev';
+import { container } from 'src/inversify.config';
+import type { ILogger } from '@runtipi/shared/node';
 
 export type TestDatabase = {
   client: Pool;
@@ -38,15 +40,20 @@ const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
     }:${TipiConfig.getConfig().postgresPort}/${testsuite}?connect_timeout=300`,
   });
 
+  const logger = container.get<ILogger>('ILogger');
+
   return {
     client,
-    dbClient: new schema.DbClient({
-      host: postgresHost,
-      port: postgresPort,
-      username: postgresUsername,
-      password: postgresPassword,
-      database: testsuite,
-    }),
+    dbClient: new schema.DbClient(
+      {
+        host: postgresHost,
+        port: postgresPort,
+        username: postgresUsername,
+        password: postgresPassword,
+        database: testsuite,
+      },
+      logger,
+    ),
   };
 };
 

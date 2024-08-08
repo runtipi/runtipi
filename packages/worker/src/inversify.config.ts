@@ -19,14 +19,17 @@ export function createContainer() {
 
   container
     .bind<IDbClient>('IDbClient')
-    .toDynamicValue(() => {
-      return new DbClient({
-        host: postgresHost,
-        port: Number(postgresPort),
-        database: postgresDatabase,
-        password: postgresPassword,
-        username: postgresUsername,
-      });
+    .toDynamicValue((context) => {
+      return new DbClient(
+        {
+          host: postgresHost,
+          port: Number(postgresPort),
+          database: postgresDatabase,
+          password: postgresPassword,
+          username: postgresUsername,
+        },
+        context.container.get<ILogger>('ILogger'),
+      );
     })
     .inSingletonScope();
 
