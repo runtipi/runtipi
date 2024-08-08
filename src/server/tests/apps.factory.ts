@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { type AppInfo, type Architecture, appInfoSchema, APP_CATEGORIES } from '@runtipi/shared';
 import { APP_DATA_DIR, DATA_DIR } from '../../config';
 import type { TestDatabase } from './test-utils';
-import { appTable, type AppStatus, type App, type NewApp } from '../db/schema';
+import { appTable, type AppStatus, type App, type NewApp } from '@runtipi/db';
 
 interface IProps {
   installed?: boolean;
@@ -114,7 +114,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
   let appEntity: App = {} as App;
   if (installed) {
-    const insertedApp = await database.db
+    const insertedApp = await database.dbClient.db
       .insert(appTable)
       .values({
         id: appInfo.id,
@@ -167,21 +167,21 @@ const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: Test
   // @ts-expect-error - custom mock method
   fs.__applyMockFiles(mockFiles);
 
-  const insertedApp = await database.db.insert(appTable).values(values).returning();
+  const insertedApp = await database.dbClient.db.insert(appTable).values(values).returning();
   return insertedApp[0] as App;
 };
 
 const getAppById = async (id: string, database: TestDatabase) => {
-  const apps = await database.db.select().from(appTable).where(eq(appTable.id, id));
+  const apps = await database.dbClient.db.select().from(appTable).where(eq(appTable.id, id));
   return apps[0] || null;
 };
 
 const updateApp = async (id: string, props: Partial<App>, database: TestDatabase) => {
-  await database.db.update(appTable).set(props).where(eq(appTable.id, id));
+  await database.dbClient.db.update(appTable).set(props).where(eq(appTable.id, id));
 };
 
 const getAllApps = async (database: TestDatabase) => {
-  const apps = await database.db.select().from(appTable);
+  const apps = await database.dbClient.db.select().from(appTable);
   return apps;
 };
 

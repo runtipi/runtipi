@@ -44,6 +44,9 @@ importers:
       '@radix-ui/react-tabs':
         specifier: ^1.1.0
         version: 1.1.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@runtipi/db':
+        specifier: workspace:^
+        version: link:packages/db
       '@runtipi/postgres-migrations':
         specifier: ^5.3.0
         version: 5.3.0
@@ -340,6 +343,21 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
 
+  packages/db:
+    dependencies:
+      '@runtipi/postgres-migrations':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@runtipi/shared':
+        specifier: workspace:^
+        version: link:../shared
+      drizzle-orm:
+        specifier: ^0.32.1
+        version: 0.32.1(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(react@18.3.1)
+      pg:
+        specifier: ^8.12.0
+        version: 8.12.0
+
   packages/shared:
     dependencies:
       fs-extra:
@@ -390,6 +408,9 @@ importers:
       '@hono/node-server':
         specifier: ^1.12.0
         version: 1.12.0
+      '@runtipi/db':
+        specifier: workspace:^
+        version: link:../db
       '@runtipi/postgres-migrations':
         specifier: ^5.3.0
         version: 5.3.0
@@ -408,6 +429,9 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
+      drizzle-orm:
+        specifier: ^0.32.1
+        version: 0.32.1(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(react@18.3.1)
       hono:
         specifier: ^4.5.3
         version: 4.5.3
@@ -426,6 +450,9 @@ importers:
       socket.io:
         specifier: ^4.7.5
         version: 4.7.5
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
       systeminformation:
         specifier: ^5.23.3
         version: 5.23.3

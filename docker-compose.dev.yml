@@ -31,7 +31,7 @@ services:
       POSTGRES_USER: tipi
       POSTGRES_DB: tipi
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -d tipi -U tipi']
+      test: ["CMD-SHELL", "pg_isready -d tipi -U tipi"]
       interval: 5s
       timeout: 10s
       retries: 120
@@ -48,7 +48,7 @@ services:
     volumes:
       - redisdata:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 10s
       retries: 120
@@ -71,6 +71,7 @@ services:
       - ./src:/app/src
       - ./packages/worker/src:/app/packages/worker/src
       - ./packages/shared/src:/app/packages/shared/src
+      - ./packages/db/src:/app/packages/db/src
       # Data
       - ${RUNTIPI_MEDIA_PATH:-.}/media:/data/media
       - ${RUNTIPI_STATE_PATH:-.}/state:/data/state

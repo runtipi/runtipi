@@ -12,7 +12,8 @@ import {
   IconX,
   IconRotateClockwise,
 } from '@tabler/icons-react';
-import React, { Fragment } from 'react';
+import type React from 'react';
+import { Fragment } from 'react';
 
 import { useTranslations } from 'next-intl';
 import {
@@ -24,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { Button, type ButtonProps } from '@/components/ui/Button';
-import { GetAppCommand } from '@/server/services/app-catalog/commands';
+import type { GetAppCommand } from '@/server/services/app-catalog/commands';
 import { InstallModal } from '../InstallModal';
 import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { useAction } from 'next-safe-action/hooks';

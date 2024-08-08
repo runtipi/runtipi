@@ -1,14 +1,14 @@
 import React from 'react';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import { redirect } from 'next/navigation';
-import { db } from '@/server/db';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { AuthQueries } from '@/server/queries/auth/auth.queries';
+import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
 import { UnauthenticatedPage } from '@/components/UnauthenticatedPage';
 import { headers } from 'next/headers';
 import { GuestDashboardApps } from './components/GuestDashboardApps';
 import { EmptyPage } from './components/EmptyPage';
+import { container } from 'src/inversify.config';
 
 export default async function RootPage() {
   const { guestDashboard } = TipiConfig.getConfig();
@@ -33,7 +33,7 @@ export default async function RootPage() {
     );
   }
 
-  const authQueries = new AuthQueries(db);
+  const authQueries = container.get<IAuthQueries>('IAuthQueries');
 
   const isConfigured = await authQueries.getFirstOperator();
 

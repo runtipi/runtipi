@@ -1,13 +1,13 @@
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
-import { EventDispatcher } from '@/server/core/EventDispatcher';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
+import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
+import type { EventDispatcher } from '@/server/core/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
-import { AppEventFormInput } from '@runtipi/shared';
+import type { AppEventFormInput } from '@runtipi/shared';
 
 export class StartAppCommand implements IAppLifecycleCommand {
-  private queries: AppQueries;
+  private queries: IAppQueries;
   private eventDispatcher: EventDispatcher;
 
   constructor(params: AppLifecycleCommandParams) {

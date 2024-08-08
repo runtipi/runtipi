@@ -1,6 +1,7 @@
 import 'reflect-metadata';
+import 'source-map-support/register';
 
-import { SystemEvent, cleanseErrorData } from '@runtipi/shared';
+import { type SystemEvent, cleanseErrorData } from '@runtipi/shared';
 
 import path from 'node:path';
 import Redis from 'ioredis';
@@ -11,13 +12,16 @@ import { extraErrorDataIntegration } from '@sentry/integrations';
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
-import { runPostgresMigrations } from '@/lib/migrations';
 import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
-import { AppExecutors, RepoExecutors } from './services';
+import { RepoExecutors } from './services';
 import { setupRoutes } from './api';
-import { DATA_DIR } from './config';
+import { APP_DIR, DATA_DIR } from './config';
 import { socketManager } from './lib/socket';
+import { container } from './inversify.config';
+import type { IAppExecutors } from './services/app/app.executors';
+import type { ILogger } from '@runtipi/shared/node';
+import type { IMigrator } from '@runtipi/db';
 
 const envFile = path.join(DATA_DIR, '.env');
 
@@ -42,6 +46,11 @@ const setupSentry = (release?: string) => {
 
 const main = async () => {
   try {
+    // TODO: Convert to class with injected dependencies
+    const logger = container.get<ILogger>('ILogger');
+    const migrator = container.get<IMigrator>('IMigrator');
+    const appExecutor = container.get<IAppExecutors>('IAppExecutors');
+
     await logger.flush();
 
     logger.info(`Running tipi-worker version: ${process.env.TIPI_VERSION}`);
@@ -51,11 +60,7 @@ const main = async () => {
     logger.info('Copying system files...');
     await copySystemFiles(envMap);
 
-    if (
-      envMap.get('ALLOW_ERROR_MONITORING') === 'true' &&
-      process.env.NODE_ENV === 'production' &&
-      process.env.LOCAL !== 'true'
-    ) {
+    if (envMap.get('ALLOW_ERROR_MONITORING') === 'true' && process.env.NODE_ENV === 'production' && process.env.LOCAL !== 'true') {
       logger.info(
         `Anonymous error monitoring is enabled, to disable it add "allowErrorMonitoring": false to your settings.json file. Version: ${process.env.TIPI_VERSION}`,
       );
@@ -119,12 +124,14 @@ const main = async () => {
     await repeatQueue.close();
 
     logger.info('Running database migrations...');
-    await runPostgresMigrations({
-      postgresHost: envMap.get('POSTGRES_HOST') as string,
-      postgresDatabase: envMap.get('POSTGRES_DBNAME') as string,
-      postgresUsername: envMap.get('POSTGRES_USERNAME') as string,
-      postgresPassword: envMap.get('POSTGRES_PASSWORD') as string,
-      postgresPort: envMap.get('POSTGRES_PORT') as string,
+
+    await migrator.runPostgresMigrations({
+      host: envMap.get('POSTGRES_HOST') as string,
+      database: envMap.get('POSTGRES_DBNAME') as string,
+      username: envMap.get('POSTGRES_USERNAME') as string,
+      password: envMap.get('POSTGRES_PASSWORD') as string,
+      port: Number(envMap.get('POSTGRES_PORT')),
+      migrationsFolder: path.join(APP_DIR, 'assets'),
     });
 
     // Set status to running
@@ -138,7 +145,6 @@ const main = async () => {
     await cache.quit();
 
     // Start all apps
-    const appExecutor = new AppExecutors();
     logger.info('Starting all apps...');
 
     // Fire and forget
@@ -153,7 +159,11 @@ const main = async () => {
     });
   } catch (e) {
     Sentry.captureException(e);
-    logger.error(e);
+    logger.error('Failed to start');
+
+    if (e instanceof Error) {
+      logger.error(e.stack);
+    }
 
     setTimeout(() => {
       process.exit(1);

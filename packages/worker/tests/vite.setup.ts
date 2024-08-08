@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import fs from 'node:fs';
 import path from 'node:path';
 import { vi, beforeEach } from 'vitest';

@@ -1,13 +1,13 @@
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { AppBackupCommandParams, IAppBackupCommand } from './types';
-import { EventDispatcher } from '@/server/core/EventDispatcher';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
+import type { AppBackupCommandParams, IAppBackupCommand } from './types';
+import type { EventDispatcher } from '@/server/core/EventDispatcher';
 import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
-import { AppStatus } from '@/server/db/schema';
+import type { AppStatus } from '@runtipi/db';
 import { appLifecycle } from '../../app-lifecycle/app-lifecycle.service';
 
 export class CreateAppBackupCommand implements IAppBackupCommand {
-  private queries: AppQueries;
+  private queries: IAppQueries;
   private eventDispatcher: EventDispatcher;
 
   constructor(params: AppBackupCommandParams) {
@@ -15,7 +15,7 @@ export class CreateAppBackupCommand implements IAppBackupCommand {
     this.eventDispatcher = params.eventDispatcher;
   }
 
-  private async sendEvent(appId: string, appStatusBeforeUpdate: AppStatus): Promise<void> {
+  private async sendEvent(appId: string, appStatusBeforeUpdate?: AppStatus): Promise<void> {
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync(
       { type: 'app', command: 'backup', appid: appId, form: {} },
       1000 * 60 * 15, // 15 minutes
