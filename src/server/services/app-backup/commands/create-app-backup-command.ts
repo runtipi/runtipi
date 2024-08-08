@@ -5,6 +5,7 @@ import { Logger } from '@/server/core/Logger';
 import { TranslatedError } from '@/server/utils/errors';
 import type { AppStatus } from '@runtipi/db';
 import { appLifecycle } from '../../app-lifecycle/app-lifecycle.service';
+import { TipiConfig } from '@/server/core/TipiConfig';
 
 export class CreateAppBackupCommand implements IAppBackupCommand {
   private queries: IAppQueries;
@@ -36,6 +37,10 @@ export class CreateAppBackupCommand implements IAppBackupCommand {
   }
 
   async execute(params: { appId: string }): Promise<void> {
+    if (TipiConfig.getConfig().demoMode) {
+      throw new TranslatedError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
+    }
+
     const { appId } = params;
     const app = await this.queries.getApp(appId);
 
