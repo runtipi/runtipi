@@ -1,6 +1,6 @@
 import path from 'node:path';
-import pg from 'pg';
 import { migrate } from '@runtipi/postgres-migrations';
+import pg from 'pg';
 import { createClient } from 'redis';
 import { Logger } from './core/Logger';
 import { TipiConfig } from './core/TipiConfig';

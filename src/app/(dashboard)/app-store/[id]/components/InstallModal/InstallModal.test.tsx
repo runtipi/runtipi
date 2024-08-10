@@ -1,8 +1,8 @@
+import type { AppInfo } from '@runtipi/shared';
 import React from 'react';
-import { AppInfo } from '@runtipi/shared';
-import { vi, describe, it, expect } from 'vitest';
-import { InstallModal } from './InstallModal';
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../../../tests/test-utils';
+import { InstallModal } from './InstallModal';
 
 describe('InstallModal', () => {
   const app = {

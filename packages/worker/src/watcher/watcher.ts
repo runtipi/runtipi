@@ -1,8 +1,8 @@
+import { getEnv } from '@/lib/environment';
+import { logger } from '@/lib/logger';
+import { RepoExecutors } from '@/services';
 import { eventSchema } from '@runtipi/shared';
 import { Worker } from 'bullmq';
-import { RepoExecutors } from '@/services';
-import { logger } from '@/lib/logger';
-import { getEnv } from '@/lib/environment';
 import { container } from 'src/inversify.config';
 import type { IAppExecutors } from 'src/services/app/app.executors';
 

@@ -1,14 +1,14 @@
-import React from 'react';
+import { UnauthenticatedPage } from '@/components/UnauthenticatedPage';
 import { getUserFromCookie } from '@/server/common/session.helpers';
-import { redirect } from 'next/navigation';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
-import { UnauthenticatedPage } from '@/components/UnauthenticatedPage';
+import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { headers } from 'next/headers';
-import { GuestDashboardApps } from './components/GuestDashboardApps';
-import { EmptyPage } from './components/EmptyPage';
+import { redirect } from 'next/navigation';
+import React from 'react';
 import { container } from 'src/inversify.config';
+import { EmptyPage } from './components/EmptyPage';
+import { GuestDashboardApps } from './components/GuestDashboardApps';
 
 export default async function RootPage() {
   const { guestDashboard } = TipiConfig.getConfig();

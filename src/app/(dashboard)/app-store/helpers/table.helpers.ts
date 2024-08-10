@@ -1,4 +1,4 @@
-import { AppCategory, AppInfo } from '@runtipi/shared';
+import type { AppCategory, AppInfo } from '@runtipi/shared';
 import {
   IconBook,
   IconBrain,
@@ -16,7 +16,7 @@ import {
   IconTool,
   IconUsers,
 } from '@tabler/icons-react';
-import { AppTableData } from './table.types';
+import type { AppTableData } from './table.types';
 
 type SortParams = {
   data: AppTableData;

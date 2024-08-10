@@ -1,8 +1,8 @@
 'use server';
 
 import { authActionClient } from '@/lib/safe-action';
-import { settingsSchema } from '@runtipi/shared';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import { settingsSchema } from '@runtipi/shared';
 import { revalidatePath } from 'next/cache';
 
 /**

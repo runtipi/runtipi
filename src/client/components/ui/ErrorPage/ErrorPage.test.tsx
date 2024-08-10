@@ -1,5 +1,5 @@
 import React from 'react';
-import { vi, it, describe, expect } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../tests/test-utils';
 import { ErrorPage } from './ErrorPage';
 

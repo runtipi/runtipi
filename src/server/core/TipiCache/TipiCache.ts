@@ -1,7 +1,7 @@
-import { createClient, type RedisClientType } from 'redis';
-import { TipiConfig } from '../TipiConfig';
-import { inject, injectable } from 'inversify';
 import type { ILogger } from '@runtipi/shared/node';
+import { inject, injectable } from 'inversify';
+import { type RedisClientType, createClient } from 'redis';
+import { TipiConfig } from '../TipiConfig';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 

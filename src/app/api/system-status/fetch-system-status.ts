@@ -1,7 +1,7 @@
-import * as Sentry from '@sentry/nextjs';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import * as jwt from 'jsonwebtoken';
 import { systemLoadSchema } from '@runtipi/shared';
+import * as Sentry from '@sentry/nextjs';
+import * as jwt from 'jsonwebtoken';
 
 export async function fetchSystemStatus() {
   try {

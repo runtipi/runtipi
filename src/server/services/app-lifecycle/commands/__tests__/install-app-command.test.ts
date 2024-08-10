@@ -1,16 +1,16 @@
-import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import waitForExpect from 'wait-for-expect';
-import fs from 'fs-extra';
-import { EventDispatcher } from '@/server/core/EventDispatcher';
-import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { InstallAppCommand } from '../install-app-command';
-import { faker } from '@faker-js/faker';
-import { TipiConfig } from '@/server/core/TipiConfig';
 import path from 'node:path';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { EventDispatcher } from '@/server/core/EventDispatcher';
+import { TipiConfig } from '@/server/core/TipiConfig';
+import { AppQueries } from '@/server/queries/apps/apps.queries';
+import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
+import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { faker } from '@faker-js/faker';
 import { AppDataService } from '@runtipi/shared/node';
+import fs from 'fs-extra';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import waitForExpect from 'wait-for-expect';
+import { InstallAppCommand } from '../install-app-command';
 
 let db: TestDatabase;
 const TEST_SUITE = 'installappcommand';

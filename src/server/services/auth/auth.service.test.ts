@@ -1,21 +1,21 @@
-import fs from 'fs-extra';
-import * as argon2 from 'argon2';
-import { faker } from '@faker-js/faker';
-import { TotpAuthenticator } from '@/server/utils/totp';
-import { generateSessionId } from '@/server/common/session.helpers';
-import { createDatabase, clearDatabase, closeDatabase, type TestDatabase } from '@/server/tests/test-utils';
-import { v4 } from 'uuid';
 import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
-import { beforeAll, beforeEach, afterAll, describe, it, expect } from 'vitest';
-import { encrypt } from '../../utils/encryption';
+import { generateSessionId } from '@/server/common/session.helpers';
+import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
+import { AuthQueries } from '@/server/queries/auth/auth.queries';
+import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { TotpAuthenticator } from '@/server/utils/totp';
+import { faker } from '@faker-js/faker';
+import * as argon2 from 'argon2';
+import fs from 'fs-extra';
+import { cookies } from 'next/headers';
+import { container } from 'src/inversify.config';
+import { v4 } from 'uuid';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { TipiConfig } from '../../core/TipiConfig';
 import { createUser, getUserByEmail, getUserById } from '../../tests/user.factory';
+import { encrypt } from '../../utils/encryption';
 import { AuthService } from './auth.service';
-import { AuthQueries } from '@/server/queries/auth/auth.queries';
-import { cookies } from 'next/headers';
-import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
-import { container } from 'src/inversify.config';
 
 const TEST_SUITE = 'authservice';
 

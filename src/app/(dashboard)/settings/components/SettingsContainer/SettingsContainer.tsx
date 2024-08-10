@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
-import { toast } from 'react-hot-toast';
+import { updateSettingsAction } from '@/actions/settings/update-settings';
+import type { Locale } from '@/shared/internationalization/locales';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { updateSettingsAction } from '@/actions/settings/update-settings';
-import { Locale } from '@/shared/internationalization/locales';
 import { useRouter } from 'next/navigation';
-import { SettingsForm, SettingsFormValues } from '../SettingsForm';
+import React from 'react';
+import { toast } from 'react-hot-toast';
+import { SettingsForm, type SettingsFormValues } from '../SettingsForm';
 
 type Props = {
   initialValues?: SettingsFormValues;

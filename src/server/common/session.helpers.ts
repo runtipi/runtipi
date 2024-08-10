@@ -1,8 +1,8 @@
-import { v4 } from 'uuid';
 import { cookies } from 'next/headers';
-import type { IAuthQueries } from '../queries/auth/auth.queries';
 import { container } from 'src/inversify.config';
+import { v4 } from 'uuid';
 import type { ITipiCache } from '../core/TipiCache/TipiCache';
+import type { IAuthQueries } from '../queries/auth/auth.queries';
 
 const COOKIE_MAX_AGE = 60 * 60 * 24; // 1 day
 const COOKIE_NAME = 'tipi.sid';

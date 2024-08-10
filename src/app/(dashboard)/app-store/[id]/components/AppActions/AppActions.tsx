@@ -7,15 +7,17 @@ import {
   IconLockOff,
   IconPlayerPause,
   IconPlayerPlay,
+  IconRotateClockwise,
   IconSettings,
   IconTrash,
   IconX,
-  IconRotateClockwise,
 } from '@tabler/icons-react';
 import type React from 'react';
 import { Fragment } from 'react';
 
-import { useTranslations } from 'next-intl';
+import { startAppAction } from '@/actions/app-actions/start-app-action';
+import { useDisclosure } from '@/client/hooks/useDisclosure';
+import { Button, type ButtonProps } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,22 +26,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { Button, type ButtonProps } from '@/components/ui/Button';
+import { useAppStatus } from '@/hooks/useAppStatus';
+import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import type { GetAppCommand } from '@/server/services/app-catalog/commands';
-import { InstallModal } from '../InstallModal';
-import { useDisclosure } from '@/client/hooks/useDisclosure';
+import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { startAppAction } from '@/actions/app-actions/start-app-action';
 import toast from 'react-hot-toast';
-import { StopModal } from '../StopModal';
+import { InstallModal } from '../InstallModal';
+import { ResetAppModal } from '../ResetAppModal';
 import { RestartModal } from '../RestartModal';
+import { StopModal } from '../StopModal';
 import { UninstallModal } from '../UninstallModal';
 import { UpdateModal } from '../UpdateModal';
-import { ResetAppModal } from '../ResetAppModal';
-import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal';
 import styles from './AppActions.module.scss';
-import { useAppStatus } from '@/hooks/useAppStatus';
 
 interface IProps {
   app: Awaited<ReturnType<GetAppCommand['execute']>>;

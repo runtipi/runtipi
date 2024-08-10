@@ -1,7 +1,7 @@
 import { IconRotateClockwise } from '@tabler/icons-react';
 import clsx from 'clsx';
 import Image from 'next/image';
-import React from 'react';
+import type React from 'react';
 import { Button } from '../Button';
 import styles from './ErrorPage.module.scss';
 

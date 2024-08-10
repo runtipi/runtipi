@@ -1,12 +1,12 @@
 'use client';
 
+import { useDisclosure } from '@/client/hooks/useDisclosure';
+import { Button } from '@/components/ui/Button';
+import { IconAlertTriangle } from '@tabler/icons-react';
+import { useCookies } from 'next-client-cookies';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 import { OffCanvas } from 'src/app/components/OffCanvas/OffCanvas';
-import { Button } from '@/components/ui/Button';
-import { useTranslations } from 'next-intl';
-import { useDisclosure } from '@/client/hooks/useDisclosure';
-import { useCookies } from 'next-client-cookies';
-import { IconAlertTriangle } from '@tabler/icons-react';
 
 export const AtRiskBanner = ({ isInsecure }: { isInsecure: boolean }) => {
   const { isOpen, close } = useDisclosure(isInsecure);

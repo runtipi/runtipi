@@ -1,7 +1,7 @@
 import path from 'node:path';
-import pg from 'pg';
 import { migrate } from '@runtipi/postgres-migrations';
 import type { ILogger } from '@runtipi/shared/node';
+import pg from 'pg';
 
 type MigrationParams = {
   host: string;

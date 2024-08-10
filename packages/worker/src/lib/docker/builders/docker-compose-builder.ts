@@ -1,5 +1,5 @@
 import * as yaml from 'yaml';
-import { BuiltService } from './service-builder';
+import type { BuiltService } from './service-builder';
 
 interface Network {
   key?: string;

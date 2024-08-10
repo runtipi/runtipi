@@ -1,9 +1,9 @@
 'use server';
 
-import { z } from 'zod';
 import { authActionClient } from '@/lib/safe-action';
 import type { IAuthService } from '@/server/services/auth/auth.service';
 import { container } from 'src/inversify.config';
+import { z } from 'zod';
 
 const input = z.object({ password: z.string() });
 

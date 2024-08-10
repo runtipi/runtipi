@@ -1,13 +1,13 @@
-import type React from 'react';
+import { updateAppConfigAction } from '@/actions/app-actions/update-app-config-action';
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
-import { useTranslations } from 'next-intl';
-import type { AppInfo } from '@runtipi/shared';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import type { AppStatus } from '@runtipi/db';
-import { InstallForm, type FormValues } from '../InstallForm';
+import type { AppInfo } from '@runtipi/shared';
+import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { updateAppConfigAction } from '@/actions/app-actions/update-app-config-action';
+import type React from 'react';
 import toast from 'react-hot-toast';
+import { type FormValues, InstallForm } from '../InstallForm';
 
 interface IProps {
   info: AppInfo;

@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { appTable } from '@runtipi/db';
-import { setSettings } from './helpers/settings';
 import { loginUser } from './fixtures/fixtures';
 import { clearDatabase, db } from './helpers/db';
+import { setSettings } from './helpers/settings';
 
 test.beforeEach(async () => {
   test.fixme(true, 'This test is flaky due to incorrect revalidation of the guest dashboard');

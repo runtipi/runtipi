@@ -65,11 +65,7 @@ const systemCommandSchema = z.object({
   command: z.literal('system_info'),
 });
 
-export const eventSchema = appEventSchema
-  .or(restoreAppCommandSchema)
-  .or(repoCommandSchema)
-  .or(updateAppCommandSchema)
-  .or(systemCommandSchema);
+export const eventSchema = appEventSchema.or(restoreAppCommandSchema).or(repoCommandSchema).or(updateAppCommandSchema).or(systemCommandSchema);
 
 export const eventResultSchema = z.object({
   success: z.boolean(),

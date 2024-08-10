@@ -1,11 +1,11 @@
-import React from 'react';
-import { useTranslations } from 'next-intl';
+import type { AppBackupsApiResponse } from '@/api/app-backups/route';
 import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
+import type { GetAppCommand } from '@/server/services/app-catalog/commands';
+import { useTranslations } from 'next-intl';
+import type React from 'react';
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
-import { GetAppCommand } from '@/server/services/app-catalog/commands';
-import { AppBackupsApiResponse } from '@/api/app-backups/route';
 
 type AppDetailsContainerProps = {
   app: Awaited<ReturnType<GetAppCommand['execute']>>;

@@ -1,7 +1,7 @@
-import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { notEmpty } from '@/server/common/typescript.helpers';
-import type { AppCatalogCommandParams, IAppCatalogCommand } from './types';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import type { AppDataService } from '@runtipi/shared/node';
+import type { AppCatalogCommandParams, IAppCatalogCommand } from './types';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetGuestDashboardApps>['execute']>>;
 

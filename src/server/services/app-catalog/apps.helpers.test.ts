@@ -1,8 +1,8 @@
-import fs from 'fs-extra';
-import { fromAny } from '@total-typescript/shoehorn';
-import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { appInfoSchema } from '@runtipi/shared';
-import { beforeAll, beforeEach, afterAll, describe, it, expect } from 'vitest';
+import { fromAny } from '@total-typescript/shoehorn';
+import fs from 'fs-extra';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { createAppConfig } from '../../tests/apps.factory';
 
 let db: TestDatabase;

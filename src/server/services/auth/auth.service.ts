@@ -1,20 +1,20 @@
-import { v4 as uuidv4 } from 'uuid';
 import fs from 'node:fs';
-import { pathExists } from '@runtipi/shared/node';
-import * as argon2 from 'argon2';
-import validator from 'validator';
-import { TotpAuthenticator } from '@/server/utils/totp';
+import path from 'node:path';
+import { DATA_DIR } from '@/config/constants';
+import { generateSessionId, setSession } from '@/server/common/session.helpers';
+import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
 import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
 import { TranslatedError } from '@/server/utils/errors';
+import { TotpAuthenticator } from '@/server/utils/totp';
 import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
-import { generateSessionId, setSession } from '@/server/common/session.helpers';
-import { DATA_DIR } from '@/config/constants';
-import path from 'node:path';
+import type { User } from '@runtipi/db';
+import { pathExists } from '@runtipi/shared/node';
+import * as argon2 from 'argon2';
+import { inject, injectable } from 'inversify';
+import { v4 as uuidv4 } from 'uuid';
+import validator from 'validator';
 import { TipiConfig } from '../../core/TipiConfig';
 import { decrypt, encrypt } from '../../utils/encryption';
-import type { User } from '@runtipi/db';
-import { inject, injectable } from 'inversify';
-import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
 
 type UsernamePasswordInput = {
   username: string;

@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/nextjs';
 import { cleanseErrorData } from '@runtipi/shared';
+import * as Sentry from '@sentry/nextjs';
 
 export async function register() {
   if (process.env.ALLOW_ERROR_MONITORING === 'true' && process.env.NODE_ENV === 'production' && process.env.LOCAL !== 'true') {

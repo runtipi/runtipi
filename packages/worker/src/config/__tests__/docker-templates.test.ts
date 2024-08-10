@@ -1,7 +1,7 @@
-/* eslint-disable no-template-curly-in-string */
-import { it, describe, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { ServiceInput, getDockerCompose } from '../docker-templates';
+/* eslint-disable no-template-curly-in-string */
+import { describe, expect, it } from 'vitest';
+import { type ServiceInput, getDockerCompose } from '../docker-templates';
 
 describe('getDockerCompose', async () => {
   it('should return correct docker-compose config', async () => {

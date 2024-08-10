@@ -1,5 +1,5 @@
-import fs from 'fs-extra';
 import path from 'path';
+import fs from 'fs-extra';
 import { createLogger, format, transports } from 'winston';
 import { DATA_DIR } from '../../../config/constants';
 

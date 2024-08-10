@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { newLogger as createLogger } from './Logger';
-import { ILogger } from './Logger.interface';
+import type { ILogger } from './Logger.interface';
 
 export class Logger implements ILogger {
   private winstonLogger;
@@ -16,10 +16,7 @@ export class Logger implements ILogger {
   streamLogToHistory(logFile: string) {
     return new Promise((resolve, reject) => {
       const appLogReadStream = fs.createReadStream(path.join(this.logsFolder, logFile), 'utf-8');
-      const appLogHistoryWriteStream = fs.createWriteStream(
-        path.join(this.logsFolder, `${logFile}.history`),
-        { flags: 'a' },
-      );
+      const appLogHistoryWriteStream = fs.createWriteStream(path.join(this.logsFolder, `${logFile}.history`), { flags: 'a' });
 
       appLogReadStream
         .pipe(appLogHistoryWriteStream)

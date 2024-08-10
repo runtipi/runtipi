@@ -1,10 +1,10 @@
 'use server';
 
-import { z } from 'zod';
 import { publicActionClient } from '@/lib/safe-action';
+import type { IAuthService } from '@/server/services/auth/auth.service';
 import { revalidatePath } from 'next/cache';
 import { container } from 'src/inversify.config';
-import type { IAuthService } from '@/server/services/auth/auth.service';
+import { z } from 'zod';
 
 const input = z.object({
   username: z.string(),

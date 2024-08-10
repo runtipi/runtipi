@@ -1,17 +1,17 @@
-import React from 'react';
-import { Switch } from '@/components/ui/Switch';
+import { disableTotpAction } from '@/actions/settings/disable-totp';
+import { getTotpUriAction } from '@/actions/settings/get-totp-uri';
+import { setupTotpAction } from '@/actions/settings/setup-totp-action';
+import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
-import { QRCodeSVG } from 'qrcode.react';
 import { OtpInput } from '@/components/ui/OtpInput';
-import { toast } from 'react-hot-toast';
-import { useDisclosure } from '@/client/hooks/useDisclosure';
+import { Switch } from '@/components/ui/Switch';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { getTotpUriAction } from '@/actions/settings/get-totp-uri';
-import { setupTotpAction } from '@/actions/settings/setup-totp-action';
-import { disableTotpAction } from '@/actions/settings/disable-totp';
+import { QRCodeSVG } from 'qrcode.react';
+import React from 'react';
+import { toast } from 'react-hot-toast';
 
 export const OtpForm = (props: { totpEnabled: boolean }) => {
   const { totpEnabled } = props;

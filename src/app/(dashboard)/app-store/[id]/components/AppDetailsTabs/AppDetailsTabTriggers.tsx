@@ -1,8 +1,8 @@
-import React from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useTranslations } from 'next-intl';
 import type { AppStatus } from '@runtipi/db';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 
 interface IProps {
   status: AppStatus;

@@ -1,8 +1,8 @@
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import type { App } from '@runtipi/db';
 import { TranslatedError } from '@/server/utils/errors';
-import type { AppCatalogCommandParams, IAppCatalogCommand } from './types';
+import type { App } from '@runtipi/db';
 import type { AppDataService } from '@runtipi/shared/node';
+import type { AppCatalogCommandParams, IAppCatalogCommand } from './types';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetAppCommand>['execute']>>;
 

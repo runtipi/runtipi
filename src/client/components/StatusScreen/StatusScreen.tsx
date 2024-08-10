@@ -1,6 +1,6 @@
-import Image from 'next/image';
-import React from 'react';
 import { getLogo } from '@/lib/themes';
+import Image from 'next/image';
+import type React from 'react';
 import { Button } from '../ui/Button';
 
 interface IProps {

@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { getLogo } from '@/lib/themes';
+import { acknowledgeWelcomeAction } from '@/actions/acknowledge-welcome/acknowledge-welcome';
 import { Button } from '@/components/ui/Button';
 import { Switch } from '@/components/ui/Switch';
+import { getLogo } from '@/lib/themes';
 import { IconBrandDiscord, IconBrandGithub } from '@tabler/icons-react';
 import { useAction } from 'next-safe-action/hooks';
-import { acknowledgeWelcomeAction } from '@/actions/acknowledge-welcome/acknowledge-welcome';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 type Props = {
   allowErrorMonitoring: boolean;

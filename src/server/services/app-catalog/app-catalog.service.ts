@@ -1,13 +1,13 @@
-import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import { GetInstalledAppsCommand, GetGuestDashboardApps, GetAppCommand } from './commands';
-import { AppDataService } from '@runtipi/shared/node';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { SearchAppsCommand } from './commands/search-apps-command';
-import { ListAppsCommand } from './commands/list-apps-command';
-import { AppCatalogCache } from './app-catalog-cache';
-import type { IAppCatalogCommand } from './commands/types';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
+import { AppDataService } from '@runtipi/shared/node';
 import { container } from 'src/inversify.config';
+import { AppCatalogCache } from './app-catalog-cache';
+import { GetAppCommand, GetGuestDashboardApps, GetInstalledAppsCommand } from './commands';
+import { ListAppsCommand } from './commands/list-apps-command';
+import { SearchAppsCommand } from './commands/search-apps-command';
+import type { IAppCatalogCommand } from './commands/types';
 
 const availableCommands = {
   getInstalledApps: GetInstalledAppsCommand,

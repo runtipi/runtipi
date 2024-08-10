@@ -1,8 +1,8 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
-import { useTranslations } from 'next-intl';
-import { AppInfo } from '@runtipi/shared';
 import { Button } from '@/components/ui/Button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
+import type { AppInfo } from '@runtipi/shared';
+import { useTranslations } from 'next-intl';
+import type React from 'react';
 
 interface IProps {
   info: AppInfo;

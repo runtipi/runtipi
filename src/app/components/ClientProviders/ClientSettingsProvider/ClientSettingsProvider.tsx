@@ -3,9 +3,9 @@
 import React from 'react';
 import { type ReactNode, createContext, useRef } from 'react';
 
+import type { settingsSchema } from '@runtipi/shared';
+import type { z } from 'zod';
 import { createClientSettingsStore } from './client-settings-store';
-import { settingsSchema } from '@runtipi/shared';
-import { z } from 'zod';
 
 export type ClientSettingsStoreApi = ReturnType<typeof createClientSettingsStore>;
 

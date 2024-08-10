@@ -1,21 +1,21 @@
 'use client';
 
-import React from 'react';
 import { IconBrandGithub, IconHeart, IconLogin, IconLogout, IconMoon, IconSun } from '@tabler/icons-react';
-import Image from 'next/image';
 import clsx from 'clsx';
+import Image from 'next/image';
 import Link from 'next/link';
+import type React from 'react';
 
-import { Tooltip } from 'react-tooltip';
-import { useTranslations } from 'next-intl';
-import { useUIStore } from '@/client/state/uiStore';
-import { useAction } from 'next-safe-action/hooks';
 import { logoutAction } from '@/actions/logout/logout-action';
-import Script from 'next/script';
-import { useRouter } from 'next/navigation';
-import { getLogo } from '@/lib/themes';
-import { NavBar } from '../NavBar';
+import { useUIStore } from '@/client/state/uiStore';
 import { useClientSettings } from '@/hooks/useClientSettings';
+import { getLogo } from '@/lib/themes';
+import { useTranslations } from 'next-intl';
+import { useAction } from 'next-safe-action/hooks';
+import { useRouter } from 'next/navigation';
+import Script from 'next/script';
+import { Tooltip } from 'react-tooltip';
+import { NavBar } from '../NavBar';
 
 interface IProps {
   isUpdateAvailable?: boolean;

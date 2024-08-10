@@ -1,7 +1,7 @@
-import { type ILogger, Logger } from '@runtipi/shared/node';
-import { type IDbClient, type IMigrator, DbClient, Migrator } from '@runtipi/db';
-import { Container } from 'inversify';
 import path from 'node:path';
+import { DbClient, type IDbClient, type IMigrator, Migrator } from '@runtipi/db';
+import { type ILogger, Logger } from '@runtipi/shared/node';
+import { Container } from 'inversify';
 import { DATA_DIR } from './config';
 import { type ISocketManager, SocketManager } from './lib/socket/SocketManager';
 import { AppExecutors, type IAppExecutors } from './services/app/app.executors';

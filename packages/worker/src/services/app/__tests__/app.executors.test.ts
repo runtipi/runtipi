@@ -1,14 +1,14 @@
 import fs from 'node:fs';
-import { describe, it, expect, vi } from 'vitest';
 import path from 'node:path';
-import { faker } from '@faker-js/faker';
-import * as sharedNode from '@runtipi/shared/node';
-import type { IAppExecutors } from '../app.executors';
-import { createAppConfig } from '@/tests/apps.factory';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import * as dockerHelpers from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
-import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { createAppConfig } from '@/tests/apps.factory';
+import { faker } from '@faker-js/faker';
+import * as sharedNode from '@runtipi/shared/node';
 import { container } from 'src/inversify.config';
+import { describe, expect, it, vi } from 'vitest';
+import type { IAppExecutors } from '../app.executors';
 
 const { pathExists } = sharedNode;
 

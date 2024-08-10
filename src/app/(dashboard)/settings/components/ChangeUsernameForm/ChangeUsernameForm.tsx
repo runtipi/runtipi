@@ -1,16 +1,16 @@
-import React from 'react';
-import { Input } from '@/components/ui/Input';
+import { changeUsernameAction } from '@/actions/settings/change-username';
+import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { Button } from '@/components/ui/Button';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-hot-toast';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
+import { Input } from '@/components/ui/Input';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { changeUsernameAction } from '@/actions/settings/change-username';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
-import { useDisclosure } from '@/client/hooks/useDisclosure';
-import { z } from 'zod';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'react-hot-toast';
+import { z } from 'zod';
 
 type Props = {
   username?: string;

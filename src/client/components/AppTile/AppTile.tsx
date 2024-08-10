@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
-import { IconAlertCircle, IconDownload } from '@tabler/icons-react';
-import { Tooltip } from 'react-tooltip';
-import { useTranslations } from 'next-intl';
-import type { AppInfo } from '@runtipi/shared';
 import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
 import { limitText } from '@/lib/helpers/text-helpers';
+import type { AppInfo } from '@runtipi/shared';
+import { IconAlertCircle, IconDownload } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
+import type React from 'react';
+import { Tooltip } from 'react-tooltip';
 import styles from './AppTile.module.scss';
 
 type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc' | 'deprecated'>;

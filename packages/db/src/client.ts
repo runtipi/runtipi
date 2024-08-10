@@ -1,7 +1,7 @@
-import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
+import type { ILogger } from '@runtipi/shared/node';
+import { type NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
-import type { ILogger } from '@runtipi/shared/node';
 
 export type IDatabase = NodePgDatabase<typeof schema>;
 

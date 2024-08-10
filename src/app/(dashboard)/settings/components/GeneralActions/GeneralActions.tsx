@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
-import semver from 'semver';
 import { Markdown } from '@/components/Markdown';
+import { Button } from '@/components/ui/Button';
 import { IconStar } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/Button';
+import React from 'react';
+import semver from 'semver';
 
 type Props = { version: { current: string; latest: string; body?: string | null } };
 

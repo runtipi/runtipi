@@ -1,10 +1,10 @@
 import fs from 'fs';
-import { it, describe, expect, beforeEach } from 'vitest';
 import path from 'path';
-import { envMapToString } from '@runtipi/shared';
-import { faker } from '@faker-js/faker';
-import { generateSystemEnvFile } from './system.helpers';
 import { DATA_DIR } from '@/config/constants';
+import { faker } from '@faker-js/faker';
+import { envMapToString } from '@runtipi/shared';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { generateSystemEnvFile } from './system.helpers';
 
 const envMap = new Map();
 
@@ -29,10 +29,7 @@ describe('generateSystemEnvFile()', async () => {
     expect(envFileExists).toBe(true);
 
     const settingsFileExists = fs.existsSync(path.join(DATA_DIR, 'state', 'settings.json'));
-    const settingsFileContent = fs.readFileSync(
-      path.join(DATA_DIR, 'state', 'settings.json'),
-      'utf8',
-    );
+    const settingsFileContent = fs.readFileSync(path.join(DATA_DIR, 'state', 'settings.json'), 'utf8');
     expect(settingsFileExists).toBe(true);
     expect(settingsFileContent).toBe('{}');
   });
@@ -67,9 +64,7 @@ describe('generateSystemEnvFile()', async () => {
     const generated = await generateSystemEnvFile();
 
     // assert
-    expect(generated.get('APPS_REPO_ID')).toBe(
-      '29ca930bfdaffa1dfabf5726336380ede7066bc53297e3c0c868b27c97282903',
-    );
+    expect(generated.get('APPS_REPO_ID')).toBe('29ca930bfdaffa1dfabf5726336380ede7066bc53297e3c0c868b27c97282903');
     expect(generated.get('APPS_REPO_URL')).toBe('https://github.com/runtipi/runtipi-appstore');
     expect(generated.get('JWT_SECRET')).toBeTruthy();
     expect(generated.get('DOMAIN')).toBe('example.com');

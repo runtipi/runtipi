@@ -1,10 +1,10 @@
 'use server';
 
-import { z } from 'zod';
 import { authActionClient } from '@/lib/safe-action';
-import { revalidatePath } from 'next/cache';
-import { SystemServiceClass } from '@/server/services/system';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import { SystemServiceClass } from '@/server/services/system';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
 const input = z.object({
   allowErrorMonitoring: z.boolean(),

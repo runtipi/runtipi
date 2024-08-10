@@ -1,6 +1,6 @@
-import { SocketEvent, socketEventSchema } from '@runtipi/shared';
+import { type SocketEvent, socketEventSchema } from '@runtipi/shared';
 import { useEffect, useRef, useState } from 'react';
-import io, { Socket } from 'socket.io-client';
+import io, { type Socket } from 'socket.io-client';
 
 // Data selector is used to select a specific property/value from the data object if it exists
 type DataSelector<T> = {
