@@ -1,16 +1,18 @@
-import { HttpResponse, http } from 'msw';
-import { setupServer } from 'msw/node';
+import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
 import { faker } from '@faker-js/faker';
-import { afterAll, beforeAll, beforeEach, describe, it, expect } from 'vitest';
-import { TipiConfig } from '../../core/TipiConfig';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { container } from 'src/inversify.config';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { SystemServiceClass } from '.';
-import { tipiCache } from '@/server/core/TipiCache';
+import { TipiConfig } from '../../core/TipiConfig';
 
 const SystemService = new SystemServiceClass();
 
 const server = setupServer();
 
 afterAll(async () => {
+  const tipiCache = container.get<ITipiCache>('ITipiCache');
   server.close();
   await tipiCache.close();
 });
@@ -20,6 +22,7 @@ beforeAll(() => {
 });
 
 beforeEach(async () => {
+  const tipiCache = container.get<ITipiCache>('ITipiCache');
   await TipiConfig.setConfig('demoMode', false);
   await tipiCache.del('latestVersion');
   server.resetHandlers();

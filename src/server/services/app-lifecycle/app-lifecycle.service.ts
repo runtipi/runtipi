@@ -1,9 +1,9 @@
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
-import { IAppLifecycleCommand } from './commands/types';
-import { AppDataService } from '@runtipi/shared/node';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
+import { AppDataService } from '@runtipi/shared/node';
+import { container } from 'src/inversify.config';
 import {
   InstallAppCommand,
   ResetAppCommand,
@@ -14,6 +14,7 @@ import {
   UpdateAppCommand,
   UpdateAppConfigCommand,
 } from './commands';
+import type { IAppLifecycleCommand } from './commands/types';
 
 export const availableCommands = {
   startApp: StartAppCommand,
@@ -41,7 +42,7 @@ export class AppLifecycleClass {
   private commandInvoker: CommandInvoker;
 
   constructor(
-    private queries: AppQueries,
+    private queries: IAppQueries,
     private eventDispatcher: EventDispatcher,
     private appDataService: AppDataService,
   ) {
@@ -70,7 +71,7 @@ export class AppLifecycleClass {
 
 export type AppLifecycle = InstanceType<typeof AppLifecycleClass>;
 
-const queries = new AppQueries();
+const queries = container.get<IAppQueries>('IAppQueries');
 const eventDispatcher = new EventDispatcher();
 const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
 

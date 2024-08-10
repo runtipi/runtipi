@@ -1,13 +1,13 @@
-import { IconAlertTriangle } from '@tabler/icons-react';
-import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
-import { useTranslations } from 'next-intl';
-import { AppInfo } from '@runtipi/shared';
-import { Button } from '@/components/ui/Button';
-import { useAction } from 'next-safe-action/hooks';
 import { resetAppAction } from '@/actions/app-actions/reset-app-action';
-import toast from 'react-hot-toast';
+import { Button } from '@/components/ui/Button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
 import { useAppStatus } from '@/hooks/useAppStatus';
+import type { AppInfo } from '@runtipi/shared';
+import { IconAlertTriangle } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
+import { useAction } from 'next-safe-action/hooks';
+import type React from 'react';
+import toast from 'react-hot-toast';
 
 interface IProps {
   info: AppInfo;

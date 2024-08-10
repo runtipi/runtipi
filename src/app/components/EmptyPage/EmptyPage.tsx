@@ -1,12 +1,12 @@
 'use client';
 
-import clsx from 'clsx';
-import Image from 'next/image';
-import React from 'react';
 import { Button } from '@/components/ui/Button';
+import type { MessageKey } from '@/server/utils/errors';
+import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import { MessageKey } from '@/server/utils/errors';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import type React from 'react';
 import styles from './EmptyPage.module.scss';
 
 interface IProps {

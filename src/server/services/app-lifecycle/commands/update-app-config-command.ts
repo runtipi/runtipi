@@ -1,13 +1,13 @@
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
-import { EventDispatcher } from '@/server/core/EventDispatcher';
-import { AppEventFormInput } from '@runtipi/shared';
+import type { EventDispatcher } from '@/server/core/EventDispatcher';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
+import type { AppEventFormInput } from '@runtipi/shared';
+import type { AppDataService } from '@runtipi/shared/node';
 import validator from 'validator';
-import { AppDataService } from '@runtipi/shared/node';
+import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 
 export class UpdateAppConfigCommand implements IAppLifecycleCommand {
-  private queries: AppQueries;
+  private queries: IAppQueries;
   private eventDispatcher: EventDispatcher;
   private appDataService: AppDataService;
 

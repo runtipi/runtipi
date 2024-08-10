@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import { testUser } from './helpers/constants';
 import { clearDatabase } from './helpers/db';

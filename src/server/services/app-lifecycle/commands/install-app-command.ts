@@ -1,16 +1,16 @@
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
-import { EventDispatcher } from '@/server/core/EventDispatcher';
-import { lt, valid } from 'semver';
+import type { EventDispatcher } from '@/server/core/EventDispatcher';
 import { Logger } from '@/server/core/Logger';
-import { AppEventFormInput } from '@runtipi/shared';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
+import type { AppEventFormInput } from '@runtipi/shared';
+import type { AppDataService } from '@runtipi/shared/node';
+import { lt, valid } from 'semver';
 import { isFQDN } from 'validator';
-import { AppDataService } from '@runtipi/shared/node';
+import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 
 export class InstallAppCommand implements IAppLifecycleCommand {
-  private queries: AppQueries;
+  private queries: IAppQueries;
   private eventDispatcher: EventDispatcher;
   private appDataService: AppDataService;
   private executeOtherCommand: IAppLifecycleCommand['execute'];

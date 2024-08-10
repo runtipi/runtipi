@@ -37,7 +37,8 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "noEmit": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.mjs", "**/*.js", "**/*.jsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules", "packages", "repos"]

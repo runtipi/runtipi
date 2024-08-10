@@ -1,13 +1,23 @@
 import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
-import { Database, db } from '@/server/db';
-import { appTable, NewApp, AppStatus } from '../../db/schema';
+import { appTable, App, NewApp, AppStatus, IDbClient } from '@runtipi/db';
+import { inject, injectable } from 'inversify';
 
-export class AppQueries {
-  private db;
+export interface IAppQueries {
+  getApp(appId: string): Promise<App | undefined>;
+  updateApp(appId: string, data: Partial<NewApp>): Promise<App | undefined>;
+  deleteApp(appId: string): Promise<void>;
+  createApp(data: NewApp): Promise<App | undefined>;
+  getAppsByStatus(status: AppStatus): Promise<App[]>;
+  getApps(): Promise<App[]>;
+  getGuestDashboardApps(): Promise<App[]>;
+  getAppsByDomain(domain: string, id: string): Promise<App[]>;
+  updateAppsByStatusNotIn(statuses: AppStatus[], data: Partial<NewApp>): Promise<App[]>;
+}
 
-  constructor(p: Database = db) {
-    this.db = p;
-  }
+@injectable()
+export class AppQueries implements IAppQueries {
+
+  constructor(@inject('IDbClient') private dbClient: IDbClient) { }
 
   /**
    * Given an app id, return the app
@@ -15,7 +25,7 @@ export class AppQueries {
    * @param {string} appId - The id of the app to return
    */
   public async getApp(appId: string) {
-    return this.db.query.appTable.findFirst({ where: eq(appTable.id, appId) });
+    return this.dbClient.db.query.appTable.findFirst({ where: eq(appTable.id, appId) });
   }
 
   /**
@@ -25,7 +35,7 @@ export class AppQueries {
    * @param {Partial<NewApp>} data - The data to update the app with
    */
   public async updateApp(appId: string, data: Partial<NewApp>) {
-    const updatedApps = await this.db.update(appTable).set(data).where(eq(appTable.id, appId)).returning().execute();
+    const updatedApps = await this.dbClient.db.update(appTable).set(data).where(eq(appTable.id, appId)).returning().execute();
     return updatedApps[0];
   }
 
@@ -35,7 +45,7 @@ export class AppQueries {
    * @param {string} appId - The id of the app to delete
    */
   public async deleteApp(appId: string) {
-    await this.db.delete(appTable).where(eq(appTable.id, appId)).execute();
+    await this.dbClient.db.delete(appTable).where(eq(appTable.id, appId)).execute();
   }
 
   /**
@@ -44,7 +54,7 @@ export class AppQueries {
    * @param {NewApp} data - The data to create the app with
    */
   public async createApp(data: NewApp) {
-    const newApps = await this.db.insert(appTable).values(data).returning().execute();
+    const newApps = await this.dbClient.db.insert(appTable).values(data).returning().execute();
     return newApps[0];
   }
 
@@ -54,21 +64,21 @@ export class AppQueries {
    * @param {AppStatus} status - The status of the apps to return
    */
   public async getAppsByStatus(status: AppStatus) {
-    return this.db.query.appTable.findMany({ where: eq(appTable.status, status), orderBy: asc(appTable.id) });
+    return this.dbClient.db.query.appTable.findMany({ where: eq(appTable.status, status), orderBy: asc(appTable.id) });
   }
 
   /**
    * Returns all apps installed sorted by id ascending
    */
   public async getApps() {
-    return this.db.query.appTable.findMany({ orderBy: asc(appTable.id) });
+    return this.dbClient.db.query.appTable.findMany({ orderBy: asc(appTable.id) });
   }
 
   /**
    * Returns all apps that are running and visible on guest dashboard sorted by id ascending
    */
   public async getGuestDashboardApps() {
-    return this.db.query.appTable.findMany({
+    return this.dbClient.db.query.appTable.findMany({
       where: and(eq(appTable.status, 'running'), eq(appTable.isVisibleOnGuestDashboard, true)),
       orderBy: asc(appTable.id),
     });
@@ -81,7 +91,7 @@ export class AppQueries {
    * @param {string} id - The id of the app to exclude
    */
   public async getAppsByDomain(domain: string, id: string) {
-    return this.db.query.appTable.findMany({ where: and(eq(appTable.domain, domain), eq(appTable.exposed, true), ne(appTable.id, id)) });
+    return this.dbClient.db.query.appTable.findMany({ where: and(eq(appTable.domain, domain), eq(appTable.exposed, true), ne(appTable.id, id)) });
   }
 
   /**
@@ -91,6 +101,6 @@ export class AppQueries {
    * @param {Partial<NewApp>} data - The data to update the apps with
    */
   public async updateAppsByStatusNotIn(statuses: AppStatus[], data: Partial<NewApp>) {
-    return this.db.update(appTable).set(data).where(notInArray(appTable.status, statuses)).returning().execute();
+    return this.dbClient.db.update(appTable).set(data).where(notInArray(appTable.status, statuses)).returning().execute();
   }
 }

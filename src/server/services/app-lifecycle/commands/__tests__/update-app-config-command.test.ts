@@ -1,15 +1,15 @@
-import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import fs from 'fs-extra';
-import { EventDispatcher } from '@/server/core/EventDispatcher';
-import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { faker } from '@faker-js/faker';
-import { castAppConfig } from '@/lib/helpers/castAppConfig';
-import { UpdateAppConfigCommand } from '../update-app-config-command';
-import path from 'path';
+import path from 'node:path';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { castAppConfig } from '@/lib/helpers/castAppConfig';
+import { EventDispatcher } from '@/server/core/EventDispatcher';
+import { AppQueries } from '@/server/queries/apps/apps.queries';
+import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
+import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { faker } from '@faker-js/faker';
 import { AppDataService } from '@runtipi/shared/node';
+import fs from 'fs-extra';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { UpdateAppConfigCommand } from '../update-app-config-command';
 
 let db: TestDatabase;
 const TEST_SUITE = 'updateappconfigcommand';
@@ -21,7 +21,7 @@ const executeOtherCommandMock = vi.fn(() => Promise.resolve({ success: true }));
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
   updateAppConfig = new UpdateAppConfigCommand({
-    queries: new AppQueries(db.db),
+    queries: new AppQueries(db.dbClient),
     eventDispatcher: dispatcher,
     executeOtherCommand: executeOtherCommandMock,
     appDataService,

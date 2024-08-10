@@ -1,17 +1,18 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { addLinkAction } from '@/actions/custom-links/add-link-action';
+import { editLinkAction } from '@/actions/custom-links/edit-link-action';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
-import React, { useEffect } from 'react';
-import { addLinkAction } from '@/actions/custom-links/add-link-action';
-import { editLinkAction } from '@/actions/custom-links/edit-link-action';
-import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import { useAction } from 'next-safe-action/hooks';
-import { LinkInfo } from '@runtipi/shared';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { LinkInfo } from '@runtipi/shared';
 import { useTranslations } from 'next-intl';
+import { useAction } from 'next-safe-action/hooks';
+import { useRouter } from 'next/navigation';
+import type React from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { z } from 'zod';
 
 type FormValues = { title: string; url: string; description: string | null; iconUrl: string | null };
 

@@ -1,10 +1,10 @@
 'use server';
 
-import { z } from 'zod';
-import { db } from '@/server/db';
-import { AuthServiceClass } from '@/server/services/auth/auth.service';
 import { publicActionClient } from '@/lib/safe-action';
+import type { IAuthService } from '@/server/services/auth/auth.service';
 import { revalidatePath } from 'next/cache';
+import { container } from 'src/inversify.config';
+import { z } from 'zod';
 
 const input = z.object({
   totpCode: z.string(),
@@ -12,7 +12,7 @@ const input = z.object({
 });
 
 export const verifyTotpAction = publicActionClient.schema(input).action(async ({ parsedInput: { totpSessionId, totpCode } }) => {
-  const authService = new AuthServiceClass(db);
+  const authService = container.get<IAuthService>('IAuthService');
   await authService.verifyTotp({ totpSessionId, totpCode });
 
   revalidatePath('/login');

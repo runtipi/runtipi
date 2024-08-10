@@ -2,8 +2,8 @@ import { DockerComposeBuilder } from '@/lib/docker/builders/docker-compose-build
 import { serviceSchema } from '@/lib/docker/builders/schemas';
 import { ServiceBuilder } from '@/lib/docker/builders/service-builder';
 import { TraefikLabelsBuilder } from '@/lib/docker/builders/traefik-labels-builder';
-import { AppEventForm } from '@runtipi/shared';
-import { z } from 'zod';
+import type { AppEventForm } from '@runtipi/shared';
+import type { z } from 'zod';
 
 export type ServiceInput = z.input<typeof serviceSchema>;
 export type Service = z.output<typeof serviceSchema>;

@@ -1,16 +1,16 @@
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { getTranslator } from '@/lib/get-translator';
-import { Metadata } from 'next';
-import React from 'react';
-import { SystemServiceClass } from '@/server/services/system';
-import { TipiConfig } from '@/server/core/TipiConfig';
-import { getCurrentLocale } from 'src/utils/getCurrentLocale';
 import { getUserFromCookie } from '@/server/common/session.helpers';
-import { SettingsTabTriggers } from './components/SettingsTabTriggers';
+import { TipiConfig } from '@/server/core/TipiConfig';
+import { SystemServiceClass } from '@/server/services/system';
+import type { Metadata } from 'next';
+import React from 'react';
+import { getCurrentLocale } from 'src/utils/getCurrentLocale';
 import { GeneralActions } from './components/GeneralActions';
-import { SettingsContainer } from './components/SettingsContainer';
-import { SecurityContainer } from './components/SecurityContainer';
 import { LogsContainer } from './components/LogsContainer';
+import { SecurityContainer } from './components/SecurityContainer';
+import { SettingsContainer } from './components/SettingsContainer';
+import { SettingsTabTriggers } from './components/SettingsTabTriggers';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslator();

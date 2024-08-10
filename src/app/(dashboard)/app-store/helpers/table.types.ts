@@ -1,4 +1,4 @@
-import { AppInfo } from '@runtipi/shared';
+import type { AppInfo } from '@runtipi/shared';
 
 export type SortableColumns = keyof Pick<AppInfo, 'id'>;
 

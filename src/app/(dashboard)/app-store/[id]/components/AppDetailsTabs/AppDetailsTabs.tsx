@@ -1,18 +1,18 @@
 'use client';
 
-import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
-import React from 'react';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { useTranslations } from 'next-intl';
-import { AppInfo } from '@runtipi/shared';
-import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
-import { AppLogs } from './AppLogs';
-import { useAppStatus } from '@/hooks/useAppStatus';
-import { AppBackups } from './AppBackups';
 import type { AppBackupsApiResponse } from '@/api/app-backups/route';
 import { Markdown } from '@/components/Markdown';
+import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { useAppStatus } from '@/hooks/useAppStatus';
+import type { AppInfo } from '@runtipi/shared';
+import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
+import React from 'react';
+import { AppBackups } from './AppBackups';
 import { AppDetailsTabTriggers } from './AppDetailsTabTriggers';
+import { AppLogs } from './AppLogs';
 
 interface IProps {
   info: AppInfo;

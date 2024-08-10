@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageKey } from '@/server/utils/errors';
+import type { MessageKey } from '@/server/utils/errors';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';

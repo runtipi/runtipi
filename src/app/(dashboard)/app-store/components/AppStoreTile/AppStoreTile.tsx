@@ -1,14 +1,14 @@
 'use client';
 
-import clsx from 'clsx';
-import Link from 'next/link';
-import React from 'react';
-import { useTranslations } from 'next-intl';
-import { AppCategory } from '@runtipi/shared';
 import { AppLogo } from '@/components/AppLogo';
 import { limitText } from '@/lib/helpers/text-helpers';
-import styles from './AppStoreTile.module.scss';
+import type { AppCategory } from '@runtipi/shared';
+import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import type React from 'react';
 import { colorSchemeForCategory } from '../../helpers/table.helpers';
+import styles from './AppStoreTile.module.scss';
 
 type App = {
   id: string;

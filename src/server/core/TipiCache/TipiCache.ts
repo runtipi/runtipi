@@ -1,7 +1,7 @@
-import { createClient, RedisClientType } from 'redis';
-import { TipiConfig } from '../TipiConfig';
+import type { ILogger } from '@runtipi/shared/node';
 import { inject, injectable } from 'inversify';
-import { ILogger } from '@runtipi/shared/node';
+import { type RedisClientType, createClient } from 'redis';
+import { TipiConfig } from '../TipiConfig';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
@@ -12,10 +12,11 @@ export interface ITipiCache {
   getByPrefix(prefix: string): Promise<Array<{ key: string; val: string | null }>>;
   close(): Promise<string>;
   ttl(key: string): Promise<number>;
+  clear(): Promise<number[]>;
 }
 
 @injectable()
-export class TipiCache {
+export class TipiCache implements ITipiCache {
   private client: RedisClientType;
 
   constructor(@inject('ILogger') private logger: ILogger) {
@@ -79,5 +80,16 @@ export class TipiCache {
   public async ttl(key: string) {
     const client = await this.getClient();
     return client.ttl(key);
+  }
+
+  public async clear() {
+    const client = await this.getClient();
+    try {
+      const keys = await client.keys('*');
+      return Promise.all(keys.map((key) => client.del(key)));
+    } catch (error) {
+      this.logger.error('Failed to clear cache', error);
+      throw error;
+    }
   }
 }

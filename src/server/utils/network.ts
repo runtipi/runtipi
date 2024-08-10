@@ -1,5 +1,5 @@
-import { cookies, headers } from 'next/headers';
 import * as ipaddrjs from 'ipaddr.js';
+import { cookies, headers } from 'next/headers';
 
 export const isInstanceInsecure = () => {
   const cookieStore = cookies();

@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { useSocket } from '@/lib/socket/useSocket';
-import { LogsTerminal } from 'src/app/components/LogsTerminal/LogsTerminal';
 import { ClientOnly } from '@/components/ClientOnly/ClientOnly';
+import { useSocket } from '@/lib/socket/useSocket';
+import React, { useState, useRef } from 'react';
+import { LogsTerminal } from 'src/app/components/LogsTerminal/LogsTerminal';
 
 export const AppLogs = ({ appId }: { appId: string }) => {
   let nextId = 0;

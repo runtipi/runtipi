@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
 import { useTranslations } from 'next-intl';
+import React from 'react';
+import { allTimezones, useTimezoneSelect } from 'react-timezone-select';
 
 type IProps = {
   timeZone?: string;

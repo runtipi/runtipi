@@ -1,11 +1,11 @@
-import React from 'react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import type React from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
 
 type FormValues = { email: string; password: string };
 

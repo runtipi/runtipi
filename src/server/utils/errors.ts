@@ -1,5 +1,5 @@
-import { TranslationValues, createTranslator } from 'next-intl';
 import { Logger } from '@/server/core/Logger';
+import { type TranslationValues, createTranslator } from 'next-intl';
 import messages from '../../client/messages/en.json';
 
 const t = createTranslator({ locale: 'en', messages });

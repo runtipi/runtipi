@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { loginUser, createTestUser } from './fixtures/fixtures';
+import { expect, test } from '@playwright/test';
+import { createTestUser, loginUser } from './fixtures/fixtures';
 import { testUser } from './helpers/constants';
 import { clearDatabase } from './helpers/db';
 import { setPassowrdChangeRequest, unsetPasswordChangeRequest } from './helpers/settings';

@@ -1,13 +1,13 @@
-import React from 'react';
 import { Input } from '@/components/ui/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Switch } from '@/components/ui/Switch';
-import { FormField } from '@runtipi/shared';
-import { Tooltip } from 'react-tooltip';
+import type { FormField } from '@runtipi/shared';
 import clsx from 'clsx';
-import { Control, Controller, UseFormRegister } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
-import { FormValues } from './InstallForm.types';
+import React from 'react';
+import { type Control, Controller, type UseFormRegister } from 'react-hook-form';
+import { Tooltip } from 'react-tooltip';
+import type { FormValues } from './InstallForm.types';
 
 type IProps = {
   field: FormField;

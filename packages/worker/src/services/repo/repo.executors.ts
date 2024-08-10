@@ -1,10 +1,10 @@
-import path from 'path';
+import path from 'node:path';
+import { DATA_DIR } from '@/config/constants';
+import { logger } from '@/lib/logger';
+import { sanitizePath } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import * as Sentry from '@sentry/node';
-import { sanitizePath } from '@runtipi/shared';
-import { getRepoHash, getRepoBaseUrlAndBranch } from './repo.helpers';
-import { logger } from '@/lib/logger';
-import { DATA_DIR } from '@/config/constants';
+import { getRepoBaseUrlAndBranch, getRepoHash } from './repo.helpers';
 
 export class RepoExecutors {
   private readonly logger;
@@ -47,7 +47,7 @@ export class RepoExecutors {
 
       const [repoUrl, branch] = getRepoBaseUrlAndBranch(url);
 
-      let cloneCommand;
+      let cloneCommand: string;
       if (branch) {
         this.logger.info(`Cloning repo ${repoUrl} on branch ${branch} to ${repoPath}`);
         cloneCommand = `git clone -b ${branch} ${repoUrl} ${repoPath}`;

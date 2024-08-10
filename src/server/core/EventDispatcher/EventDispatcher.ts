@@ -1,6 +1,6 @@
-import { Queue, QueueEvents } from 'bullmq';
-import { eventResultSchema, eventSchema, SystemEvent } from '@runtipi/shared';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import { type SystemEvent, eventResultSchema, eventSchema } from '@runtipi/shared';
+import { Queue, QueueEvents } from 'bullmq';
 import { Logger } from '../Logger';
 
 export class EventDispatcher {

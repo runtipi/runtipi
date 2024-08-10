@@ -1,13 +1,20 @@
+import { type IDbClient, type NewUser, type User, userTable } from '@runtipi/db';
 import { eq } from 'drizzle-orm';
-import { Database } from '@/server/db';
-import { userTable, NewUser } from '../../db/schema';
+import { inject, injectable } from 'inversify';
 
-export class AuthQueries {
-  private db;
+export interface IAuthQueries {
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserById(id: number): Promise<User | undefined>;
+  getUserDtoById(id: number): Promise<Pick<User, 'id' | 'username' | 'totpEnabled' | 'locale' | 'operator'> | undefined>;
+  updateUser(id: number, data: Partial<NewUser>): Promise<User | undefined>;
+  getOperators(): Promise<User[]>;
+  getFirstOperator(): Promise<User | undefined>;
+  createUser(data: NewUser): Promise<User | undefined>;
+}
 
-  constructor(p: Database) {
-    this.db = p;
-  }
+@injectable()
+export class AuthQueries implements IAuthQueries {
+  constructor(@inject('IDbClient') private dbClient: IDbClient) {}
 
   /**
    * Given a username, return the user associated to it
@@ -15,7 +22,7 @@ export class AuthQueries {
    * @param {string} username - The username of the user to return
    */
   public async getUserByUsername(username: string) {
-    return this.db.query.userTable.findFirst({ where: eq(userTable.username, username.trim().toLowerCase()) });
+    return this.dbClient.db.query.userTable.findFirst({ where: eq(userTable.username, username.trim().toLowerCase()) });
   }
 
   /**
@@ -24,7 +31,7 @@ export class AuthQueries {
    * @param {number} id - The id of the user to return
    */
   public async getUserById(id: number) {
-    return this.db.query.userTable.findFirst({ where: eq(userTable.id, Number(id)) });
+    return this.dbClient.db.query.userTable.findFirst({ where: eq(userTable.id, Number(id)) });
   }
 
   /**
@@ -33,7 +40,10 @@ export class AuthQueries {
    * @param {number} id - The id of the user to return
    */
   public async getUserDtoById(id: number) {
-    return this.db.query.userTable.findFirst({ where: eq(userTable.id, Number(id)), columns: { id: true, username: true, totpEnabled: true, locale: true, operator: true } });
+    return this.dbClient.db.query.userTable.findFirst({
+      where: eq(userTable.id, Number(id)),
+      columns: { id: true, username: true, totpEnabled: true, locale: true, operator: true },
+    });
   }
 
   /**
@@ -43,7 +53,7 @@ export class AuthQueries {
    * @param {Partial<NewUser>} data - The data to update the user with
    */
   public async updateUser(id: number, data: Partial<NewUser>) {
-    const updatedUsers = await this.db
+    const updatedUsers = await this.dbClient.db
       .update(userTable)
       .set(data)
       .where(eq(userTable.id, Number(id)))
@@ -56,14 +66,14 @@ export class AuthQueries {
    * Returns all operators registered in the system
    */
   public async getOperators() {
-    return this.db.select().from(userTable).where(eq(userTable.operator, true));
+    return this.dbClient.db.select().from(userTable).where(eq(userTable.operator, true));
   }
 
   /**
    * Returns the first operator found in the system
    */
   public async getFirstOperator() {
-    return this.db.query.userTable.findFirst({ where: eq(userTable.operator, true) });
+    return this.dbClient.db.query.userTable.findFirst({ where: eq(userTable.operator, true) });
   }
 
   /**
@@ -72,7 +82,7 @@ export class AuthQueries {
    * @param {NewUser} data - The data to create the user with
    */
   public async createUser(data: NewUser) {
-    const newUsers = await this.db.insert(userTable).values(data).returning();
+    const newUsers = await this.dbClient.db.insert(userTable).values(data).returning();
     return newUsers[0];
   }
 }

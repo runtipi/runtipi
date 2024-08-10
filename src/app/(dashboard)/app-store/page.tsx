@@ -1,8 +1,8 @@
-import React from 'react';
-import { Metadata } from 'next';
 import { getTranslator } from '@/lib/get-translator';
-import { AppStoreTable } from './components/AppStoreTable';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
+import type { Metadata } from 'next';
+import React from 'react';
+import { AppStoreTable } from './components/AppStoreTable';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslator();

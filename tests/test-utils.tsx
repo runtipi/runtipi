@@ -1,11 +1,14 @@
-import React, { FC, ReactElement } from 'react';
-import { render, RenderOptions, renderHook } from '@testing-library/react';
-import { Toaster } from 'react-hot-toast';
-import { IntlProvider } from 'next-intl';
+/* eslint-disable import/export */
+import 'reflect-metadata';
+import { type RenderOptions, render, renderHook } from '@testing-library/react';
 import ue from '@testing-library/user-event';
-import messages from '../src/client/messages/en.json';
+import { IntlProvider } from 'next-intl';
+import type React from 'react';
+import type { FC, ReactElement } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { AppStatusStoreProvider } from 'src/app/components/ClientProviders/AppStatusProvider/app-status-provider';
 import { ClientSettingsStoreProvider } from 'src/app/components/ClientProviders/ClientSettingsProvider/ClientSettingsProvider';
+import messages from '../src/client/messages/en.json';
 
 const userEvent = ue.setup();
 

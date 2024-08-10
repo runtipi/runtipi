@@ -47,16 +47,14 @@ export class AppDataService {
       }),
     );
 
-    return apps
-      .filter(notEmpty)
-      .map(({ id, categories, name, short_desc, deprecated, supported_architectures }) => ({
-        id,
-        categories,
-        name,
-        short_desc,
-        deprecated,
-        supported_architectures,
-      }));
+    return apps.filter(notEmpty).map(({ id, categories, name, short_desc, deprecated, supported_architectures }) => ({
+      id,
+      categories,
+      name,
+      short_desc,
+      deprecated,
+      supported_architectures,
+    }));
   }
 
   public async getAppBackups(params: { appId: string; pageSize: number; page: number }) {

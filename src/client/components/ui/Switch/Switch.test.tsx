@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { vi, describe, it, expect } from 'vitest';
-import { Switch } from './Switch';
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../tests/test-utils';
+import { Switch } from './Switch';
 
 describe('Switch', () => {
   it('renders the label', () => {

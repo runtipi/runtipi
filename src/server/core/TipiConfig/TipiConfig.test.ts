@@ -1,10 +1,10 @@
-import { faker } from '@faker-js/faker';
-import fs from 'fs-extra';
 import path from 'path';
 import { DATA_DIR } from '@/config/constants';
-import { describe, it, expect } from 'vitest';
-import { TipiConfigClass } from './TipiConfig';
+import { faker } from '@faker-js/faker';
+import fs from 'fs-extra';
+import { describe, expect, it } from 'vitest';
 import { readJsonFile } from '../../common/fs.helpers';
+import { TipiConfigClass } from './TipiConfig';
 
 describe('Test: getConfig', () => {
   it('It should return config from .env', () => {

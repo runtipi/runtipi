@@ -1,11 +1,11 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
+import { deleteLinkAction } from '@/actions/custom-links/delete-link-action';
 import { Button } from '@/components/ui/Button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
+import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
-import { deleteLinkAction } from '@/actions/custom-links/delete-link-action';
+import type React from 'react';
 import toast from 'react-hot-toast';
-import { useTranslations } from 'next-intl';
 
 type DeleteLinkModalProps = {
   isOpen: boolean;

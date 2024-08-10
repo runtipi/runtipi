@@ -1,6 +1,6 @@
+import { handleApiError } from '@/actions/utils/handle-api-error';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import fs from 'fs-extra';
-import { handleApiError } from '@/actions/utils/handle-api-error';
 import { DATA_DIR } from '../../../config/constants';
 
 export async function GET() {

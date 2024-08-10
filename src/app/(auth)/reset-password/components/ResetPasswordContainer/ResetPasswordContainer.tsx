@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
-import { useAction } from 'next-safe-action/hooks';
-import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/Button';
-import { resetPasswordAction } from '@/actions/reset-password/reset-password-action';
 import { cancelResetPasswordAction } from '@/actions/cancel-reset-password/cancel-reset-password-action';
+import { resetPasswordAction } from '@/actions/reset-password/reset-password-action';
+import { Button } from '@/components/ui/Button';
+import { useTranslations } from 'next-intl';
+import { useAction } from 'next-safe-action/hooks';
+import { useRouter } from 'next/navigation';
+import type React from 'react';
+import { toast } from 'react-hot-toast';
 import { ResetPasswordForm } from '../ResetPasswordForm';
 
 export const ResetPasswordContainer: React.FC = () => {

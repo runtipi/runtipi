@@ -1,16 +1,20 @@
-import path from 'path';
 import { spawn } from 'node:child_process';
-import { execAsync, pathExists } from '@runtipi/shared/node';
-import { SocketEvent, sanitizePath, socketEventSchema } from '@runtipi/shared';
-import { logger } from '@/lib/logger';
-import { getEnv } from '@/lib/environment';
+import path from 'node:path';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { Socket } from 'socket.io';
+import { getEnv } from '@/lib/environment';
+import { logger } from '@/lib/logger';
+import { type SocketEvent, sanitizePath, socketEventSchema } from '@runtipi/shared';
+import { execAsync, pathExists } from '@runtipi/shared/node';
+import type { Socket } from 'socket.io';
+import { getRepoHash } from 'src/services/repo/repo.helpers';
+import { DEFAULT_REPO_URL } from '../system/system.helpers';
 
 const getBaseComposeArgsApp = async (appId: string) => {
   const { arch, appsRepoId } = getEnv();
   const appDataDirPath = path.join(APP_DATA_DIR, sanitizePath(appId));
   const appDirPath = path.join(DATA_DIR, 'apps', sanitizePath(appId));
+
+  let isCustomConfig = appsRepoId !== getRepoHash(DEFAULT_REPO_URL);
 
   const args: string[] = [`--env-file ${path.join(appDataDirPath, 'app.env')}`];
 
@@ -28,33 +32,23 @@ const getBaseComposeArgsApp = async (appId: string) => {
   }
   args.push(`-f ${composeFile}`);
 
-  const commonComposeFile = path.join(
-    DATA_DIR,
-    'repos',
-    sanitizePath(appsRepoId),
-    'apps',
-    'docker-compose.common.yml',
-  );
+  const commonComposeFile = path.join(DATA_DIR, 'repos', sanitizePath(appsRepoId), 'apps', 'docker-compose.common.yml');
   args.push(`-f ${commonComposeFile}`);
 
   // User defined overrides
-  const userComposeFile = path.join(
-    DATA_DIR,
-    'user-config',
-    sanitizePath(appId),
-    'docker-compose.yml',
-  );
+  const userComposeFile = path.join(DATA_DIR, 'user-config', sanitizePath(appId), 'docker-compose.yml');
   if (await pathExists(userComposeFile)) {
+    isCustomConfig = true;
     args.push(`--file ${userComposeFile}`);
   }
 
-  return args;
+  return { args, isCustomConfig };
 };
 
 const getBaseComposeArgsTipi = async () => {
   const args: string[] = [`--env-file ${path.join(DATA_DIR, '.env')}`];
 
-  args.push(`--project-name runtipi`);
+  args.push('--project-name runtipi');
 
   const composeFile = path.join(DATA_DIR, 'docker-compose.yml');
   args.push(`-f ${composeFile}`);
@@ -74,24 +68,25 @@ const getBaseComposeArgsTipi = async () => {
  * @param {string} command - Command to execute
  */
 export const compose = async (appId: string, command: string) => {
-  const args = await getBaseComposeArgsApp(appId);
+  const { args, isCustomConfig } = await getBaseComposeArgsApp(appId);
   args.push(command);
 
   logger.info(`Running docker compose with args ${args.join(' ')}`);
   const { stdout, stderr } = await execAsync(`docker-compose ${args.join(' ')}`);
 
-  if (stderr && stderr.includes('Command failed:')) {
+  if (stderr?.includes('Command failed:')) {
+    if (isCustomConfig) {
+      throw new Error(
+        `Error with your custom app: ${stderr}. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.`,
+      );
+    }
     throw new Error(stderr);
   }
 
   return { stdout, stderr };
 };
 
-export const handleViewRuntipiLogsEvent = async (
-  socket: Socket,
-  event: SocketEvent,
-  emit: (event: SocketEvent) => Promise<void>,
-) => {
+export const handleViewRuntipiLogsEvent = async (socket: Socket, event: SocketEvent, emit: (event: SocketEvent) => Promise<void>) => {
   const { success, data } = socketEventSchema.safeParse(event);
 
   if (!success) {
@@ -142,11 +137,7 @@ export const handleViewRuntipiLogsEvent = async (
   });
 };
 
-export const handleViewAppLogsEvent = async (
-  socket: Socket,
-  event: SocketEvent,
-  emit: (event: SocketEvent) => Promise<void>,
-) => {
+export const handleViewAppLogsEvent = async (socket: Socket, event: SocketEvent, emit: (event: SocketEvent) => Promise<void>) => {
   const parsedEvent = socketEventSchema.safeParse(event);
 
   if (!parsedEvent.success) {
@@ -160,7 +151,7 @@ export const handleViewAppLogsEvent = async (
 
   const { appId, maxLines } = parsedEvent.data.data;
 
-  const args = await getBaseComposeArgsApp(appId);
+  const { args } = await getBaseComposeArgsApp(appId);
   args.push(`logs --follow -n ${maxLines || 25}`);
 
   const logsCommand = `docker-compose ${args.join(' ')}`;

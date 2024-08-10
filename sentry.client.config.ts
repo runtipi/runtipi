@@ -1,5 +1,5 @@
+import { cleanseErrorData, settingsSchema } from '@runtipi/shared';
 import * as Sentry from '@sentry/nextjs';
-import { settingsSchema, cleanseErrorData } from '@runtipi/shared';
 
 const getClientConfig = () => {
   if (typeof window === 'undefined') {
@@ -25,6 +25,5 @@ if (allowErrorMonitoring && process.env.NODE_ENV === 'production' && process.env
     dsn: 'https://7a73d72f886948478b55621e7b92c3c7@o4504242900238336.ingest.sentry.io/4504826587971584',
     beforeSend: cleanseErrorData,
     integrations: [Sentry.extraErrorDataIntegration()],
-    tracesSampleRate: 1.0,
   });
 }

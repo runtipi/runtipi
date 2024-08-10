@@ -1,14 +1,14 @@
-import React from 'react';
-import { Input } from '@/components/ui/Input';
+import { changePasswordAction } from '@/actions/settings/change-password';
 import { Button } from '@/components/ui/Button';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { Input } from '@/components/ui/Input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { changePasswordAction } from '@/actions/settings/change-password';
+import { useRouter } from 'next/navigation';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { z } from 'zod';
 
 export const ChangePasswordForm = () => {
   const t = useTranslations();

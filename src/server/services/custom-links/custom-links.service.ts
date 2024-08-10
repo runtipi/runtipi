@@ -1,15 +1,20 @@
-import { Database, db } from '@/server/db';
-import { LinkInfo } from '@runtipi/shared';
-import { LinkQueries } from '@/server/queries/links/links.queries';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import type { ILinkQueries } from '@/server/queries/links/links.queries';
 import { TranslatedError } from '@/server/utils/errors';
+import type { Link } from '@runtipi/db';
+import type { LinkInfo } from '@runtipi/shared';
+import { inject, injectable } from 'inversify';
 
-export class CustomLinksServiceClass {
-  private queries;
+export interface ICustomLinksService {
+  add(link: LinkInfo, userId: number): Promise<Link | undefined>;
+  edit(link: LinkInfo, userId: number): Promise<Link | undefined>;
+  delete(linkId: number, userId: number): Promise<void>;
+  getLinks(userId: number | undefined): Promise<Link[]>;
+}
 
-  constructor(p: Database = db) {
-    this.queries = new LinkQueries(p);
-  }
+@injectable()
+export class CustomLinksService implements ICustomLinksService {
+  constructor(@inject('ILinkQueries') private queries: ILinkQueries) {}
 
   public add = async (link: LinkInfo, userId: number) => {
     if (TipiConfig.getConfig().demoMode) {

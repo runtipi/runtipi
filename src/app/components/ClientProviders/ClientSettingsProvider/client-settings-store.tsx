@@ -1,5 +1,5 @@
-import { settingsSchema } from '@runtipi/shared';
-import { z } from 'zod';
+import type { settingsSchema } from '@runtipi/shared';
+import type { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 
 export type SettingsState = z.infer<typeof settingsSchema>;

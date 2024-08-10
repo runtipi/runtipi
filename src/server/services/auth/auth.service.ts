@@ -1,19 +1,20 @@
-import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { DATA_DIR } from '@/config/constants';
+import { generateSessionId, setSession } from '@/server/common/session.helpers';
+import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
+import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
+import { TranslatedError } from '@/server/utils/errors';
+import { TotpAuthenticator } from '@/server/utils/totp';
+import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
+import type { User } from '@runtipi/db';
 import { pathExists } from '@runtipi/shared/node';
 import * as argon2 from 'argon2';
+import { inject, injectable } from 'inversify';
+import { v4 as uuidv4 } from 'uuid';
 import validator from 'validator';
-import { TotpAuthenticator } from '@/server/utils/totp';
-import { AuthQueries } from '@/server/queries/auth/auth.queries';
-import { TranslatedError } from '@/server/utils/errors';
-import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
-import { generateSessionId, setSession } from '@/server/common/session.helpers';
-import { Database, db } from '@/server/db';
-import { DATA_DIR } from '@/config/constants';
-import path from 'path';
 import { TipiConfig } from '../../core/TipiConfig';
 import { decrypt, encrypt } from '../../utils/encryption';
-import { tipiCache } from '@/server/core/TipiCache';
 
 type UsernamePasswordInput = {
   username: string;
@@ -21,12 +22,30 @@ type UsernamePasswordInput = {
   locale?: string;
 };
 
-export class AuthServiceClass {
-  private queries;
+export interface IAuthService {
+  login(input: UsernamePasswordInput): Promise<{ sessionId?: string; totpSessionId?: string }>;
+  verifyTotp(params: { totpSessionId: string; totpCode: string }): Promise<boolean>;
+  getTotpUri(params: { userId: number; password: string }): Promise<{ uri: string; key: string }>;
+  setupTotp(params: { userId: number; totpCode: string }): Promise<boolean>;
+  disableTotp(params: { userId: number; password: string }): Promise<boolean>;
+  register(input: UsernamePasswordInput): Promise<boolean>;
+  me(userId: number | undefined): Promise<Pick<User, 'id' | 'username' | 'totpEnabled' | 'locale' | 'operator'> | null>;
+  logout(sessionId: string): Promise<boolean>;
+  isConfigured(): Promise<boolean>;
+  changeOperatorPassword(params: { newPassword: string }): Promise<{ email: string }>;
+  checkPasswordChangeRequest(): Promise<boolean>;
+  changePassword(params: { currentPassword: string; newPassword: string; userId: number }): Promise<boolean>;
+  changeUsername(params: { newUsername: string; password: string; userId: number }): Promise<boolean>;
+  changeLocale(params: { locale: string; userId: number }): Promise<boolean>;
+  cancelPasswordChangeRequest(): Promise<boolean>;
+}
 
-  constructor(p: Database = db) {
-    this.queries = new AuthQueries(p);
-  }
+@injectable()
+export class AuthService implements IAuthService {
+  constructor(
+    @inject('IAuthQueries') private queries: IAuthQueries,
+    @inject('ITipiCache') private tipiCache: ITipiCache,
+  ) {}
 
   /**
    * Authenticate user with given username and password
@@ -49,7 +68,7 @@ export class AuthServiceClass {
 
     if (user.totpEnabled) {
       const totpSessionId = generateSessionId('otp');
-      await tipiCache.set(totpSessionId, user.id.toString());
+      await this.tipiCache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
 
@@ -68,7 +87,7 @@ export class AuthServiceClass {
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
     const { totpSessionId, totpCode } = params;
-    const userId = await tipiCache.get(totpSessionId);
+    const userId = await this.tipiCache.get(totpSessionId);
 
     if (!userId) {
       throw new TranslatedError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -258,7 +277,7 @@ export class AuthServiceClass {
    * @returns {Promise<boolean>} - Returns true if the session token is removed successfully
    */
   public logout = async (sessionId: string): Promise<boolean> => {
-    await tipiCache.del(`session:${sessionId}`);
+    await this.tipiCache.del(`session:${sessionId}`);
 
     return true;
   };
@@ -337,7 +356,7 @@ export class AuthServiceClass {
    * @returns {boolean} - A boolean indicating if the file is removed successfully or not
    * @throws {Error} - If the file cannot be removed
    */
-  public static cancelPasswordChangeRequest = async () => {
+  public cancelPasswordChangeRequest = async () => {
     const changeRequestPath = path.join(DATA_DIR, 'state', 'password-change-request');
 
     if (await pathExists(changeRequestPath)) {
@@ -353,12 +372,12 @@ export class AuthServiceClass {
    * @param {number} userId - The user ID
    */
   private destroyAllSessionsByUserId = async (userId: number) => {
-    const sessions = await tipiCache.getByPrefix(`session:${userId}:`);
+    const sessions = await this.tipiCache.getByPrefix(`session:${userId}:`);
 
     await Promise.all(
       sessions.map(async (session) => {
-        await tipiCache.del(session.key);
-        if (session.val) await tipiCache.del(session.val);
+        await this.tipiCache.del(session.key);
+        if (session.val) await this.tipiCache.del(session.val);
       }),
     );
   };

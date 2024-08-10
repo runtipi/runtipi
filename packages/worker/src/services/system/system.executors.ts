@@ -1,7 +1,7 @@
 import fs from 'fs';
-import si from 'systeminformation';
-import * as Sentry from '@sentry/node';
 import { logger } from '@/lib/logger';
+import * as Sentry from '@sentry/node';
+import si from 'systeminformation';
 
 export class SystemExecutors {
   private readonly logger;

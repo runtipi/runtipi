@@ -1,8 +1,8 @@
+import { type BrowserContext, type Page, expect } from '@playwright/test';
+import { userTable } from '@runtipi/db';
 import * as argon2 from 'argon2';
-import { BrowserContext, expect, Page } from '@playwright/test';
-import { userTable } from '@/server/db/schema';
-import { db } from '../helpers/db';
 import { testUser } from '../helpers/constants';
+import { db } from '../helpers/db';
 
 export const createTestUser = async () => {
   // Create user in database

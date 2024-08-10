@@ -1,12 +1,7 @@
 module.exports = {
   root: true,
   plugins: ['@typescript-eslint', 'import'],
-  extends: [
-    'plugin:@typescript-eslint/recommended',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
-    'prettier',
-  ],
+  extends: ['plugin:@typescript-eslint/recommended', 'plugin:import/recommended', 'plugin:import/typescript', 'prettier'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
@@ -46,7 +41,7 @@ module.exports = {
     'arrow-body-style': 0,
     'no-underscore-dangle': 0,
     'no-console': 0,
-    'import/no-cycle': 2,
+    'import/no-cycle': 1,
   },
   settings: {
     'import/parsers': {
