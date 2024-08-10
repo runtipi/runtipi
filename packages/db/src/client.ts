@@ -34,7 +34,11 @@ export class DbClient {
     });
 
     pool.on('connect', () => {
-      this.logger.info('Connected to the database successfully.');
+      this.logger.debug('Connected to the database successfully.');
+    });
+
+    pool.on('remove', () => {
+      this.logger.debug('Client removed from the pool.');
     });
 
     this.db = drizzle(pool, { schema });
