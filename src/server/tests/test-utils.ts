@@ -1,10 +1,10 @@
+import * as schema from '@runtipi/db';
+import type { ILogger } from '@runtipi/shared/node';
 /* eslint-disable no-restricted-syntax */
 import pg, { Pool } from 'pg';
-import { TipiConfig } from '../core/TipiConfig';
-import * as schema from '@runtipi/db';
-import { runPostgresMigrations } from '../run-migrations-dev';
 import { container } from 'src/inversify.config';
-import type { ILogger } from '@runtipi/shared/node';
+import { TipiConfig } from '../core/TipiConfig';
+import { runPostgresMigrations } from '../run-migrations-dev';
 
 export type TestDatabase = {
   client: Pool;

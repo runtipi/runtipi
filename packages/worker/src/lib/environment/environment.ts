@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import dotenv from 'dotenv';
+import { z } from 'zod';
 
 if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.dev', override: true });

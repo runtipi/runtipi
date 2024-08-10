@@ -2,13 +2,13 @@
 /* eslint-disable no-restricted-syntax */
 import crypto from 'crypto';
 import fs from 'fs';
-import path from 'path';
 import os from 'os';
+import path from 'path';
+import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/config/constants';
 import { envMapToString, envStringToMap, settingsSchema } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';
-import { logger } from '../logger/logger';
 import { getRepoHash } from '../../services/repo/repo.helpers';
-import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/config/constants';
+import { logger } from '../logger/logger';
 
 type EnvKeys =
   | 'APPS_REPO_ID'

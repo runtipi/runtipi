@@ -1,10 +1,10 @@
 'use server';
 
-import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
 import { authActionClient } from '@/lib/safe-action';
-import { container } from 'src/inversify.config';
 import type { IAuthService } from '@/server/services/auth/auth.service';
+import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { container } from 'src/inversify.config';
 
 /**
  * Logs out the current user making the request.

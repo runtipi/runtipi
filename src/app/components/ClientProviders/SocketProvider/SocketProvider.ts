@@ -1,11 +1,11 @@
-import { PropsWithChildren } from 'react';
 import { revalidateAppAction } from '@/actions/app-actions/revalidate-app';
+import { useAppStatus } from '@/hooks/useAppStatus';
 import { useSocket } from '@/lib/socket/useSocket';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
+import type { PropsWithChildren } from 'react';
 import toast from 'react-hot-toast';
-import { useAppStatus } from '@/hooks/useAppStatus';
-import { useQueryClient } from '@tanstack/react-query';
 
 export const SocketProvider = ({ children }: PropsWithChildren) => {
   const revalidateAppMutation = useAction(revalidateAppAction);

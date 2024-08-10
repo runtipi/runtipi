@@ -1,9 +1,9 @@
 'use client';
 
-import { MessageKey } from '@/server/utils/errors';
+import type { MessageKey } from '@/server/utils/errors';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import React from 'react';
+import type React from 'react';
 import { Header } from 'src/app/(dashboard)/components/Header';
 
 type Props = {

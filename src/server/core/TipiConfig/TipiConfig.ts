@@ -1,7 +1,7 @@
-import { z } from 'zod';
 import { envSchema, envStringToMap, settingsSchema } from '@runtipi/shared';
-import fs from 'fs-extra';
 import * as Sentry from '@sentry/nextjs';
+import fs from 'fs-extra';
+import type { z } from 'zod';
 import { DATA_DIR } from '../../../config';
 import { readJsonFile } from '../../common/fs.helpers';
 import { Logger } from '../Logger';

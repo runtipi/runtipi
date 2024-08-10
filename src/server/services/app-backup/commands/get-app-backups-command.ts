@@ -1,5 +1,5 @@
-import { AppBackupCommandParams, IAppBackupCommand } from './types';
-import { AppDataService } from '@runtipi/shared/node';
+import type { AppDataService } from '@runtipi/shared/node';
+import type { AppBackupCommandParams, IAppBackupCommand } from './types';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetAppBackupsCommand>['execute']>>;
 

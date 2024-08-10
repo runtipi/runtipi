@@ -1,9 +1,9 @@
-import React from 'react';
-import { redirect } from 'next/navigation';
 import { getUserFromCookie } from '@/server/common/session.helpers';
 import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
-import { RegisterContainer } from './components/RegisterContainer';
+import { redirect } from 'next/navigation';
+import React from 'react';
 import { container } from 'src/inversify.config';
+import { RegisterContainer } from './components/RegisterContainer';
 
 export default async function LoginPage() {
   const user = await getUserFromCookie();

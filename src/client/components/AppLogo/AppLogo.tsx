@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React from 'react';
+import type React from 'react';
 import styles from './AppLogo.module.scss';
 
 export const AppLogo: React.FC<{ id?: string; url?: string; size?: number; className?: string; alt?: string }> = ({

@@ -1,6 +1,6 @@
-import { IconAperture } from '@tabler/icons-react';
+import type { IconAperture } from '@tabler/icons-react';
 import clsx from 'clsx';
-import React from 'react';
+import type React from 'react';
 
 interface IProps {
   icon: typeof IconAperture;

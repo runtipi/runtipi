@@ -1,8 +1,8 @@
-import webpush from 'web-push';
 import fs from 'fs';
 import path from 'path';
-import { sanitizePath } from '@runtipi/shared';
 import { APP_DATA_DIR } from '@/config/constants';
+import { sanitizePath } from '@runtipi/shared';
+import webpush from 'web-push';
 
 /**
  * This function reads the env file for the app with the provided id and returns a Map containing the key-value pairs of the environment variables.

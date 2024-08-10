@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
+import { type User, userTable } from '@runtipi/db';
 import * as argon2 from 'argon2';
 import { eq } from 'drizzle-orm';
-import { userTable, type User } from '@runtipi/db';
 import type { TestDatabase } from './test-utils';
 
 /**

@@ -1,8 +1,8 @@
 'use client';
 
-import * as React from 'react';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import clsx from 'clsx';
+import * as React from 'react';
 import styles from './ScrollArea.module.css';
 
 const ScrollBar = React.forwardRef<

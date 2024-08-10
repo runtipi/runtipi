@@ -1,8 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { publicActionClient } from '@/lib/safe-action';
 import type { IAuthService } from '@/server/services/auth/auth.service';
+import { revalidatePath } from 'next/cache';
 import { container } from 'src/inversify.config';
 
 /**

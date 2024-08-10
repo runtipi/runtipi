@@ -1,11 +1,11 @@
 import { promises } from 'node:fs';
-import axios from 'redaxios';
 import { DATA_DIR } from '@/config/constants';
+import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
+import axios from 'redaxios';
+import { container } from 'src/inversify.config';
 import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
-import { container } from 'src/inversify.config';
-import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
 
 export class SystemServiceClass {
   /**

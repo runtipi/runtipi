@@ -1,16 +1,16 @@
 'use client';
 
 import 'reflect-metadata';
-import type React from 'react';
-import { type AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from './ThemeProvider';
-import { SocketProvider } from './SocketProvider/SocketProvider';
 import type { AppStatus } from '@runtipi/db';
+import type { settingsSchema } from '@runtipi/shared';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { type AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
+import type React from 'react';
+import type { z } from 'zod';
 import { AppStatusStoreProvider } from './AppStatusProvider/app-status-provider';
 import { ClientSettingsStoreProvider } from './ClientSettingsProvider/ClientSettingsProvider';
-import type { settingsSchema } from '@runtipi/shared';
-import type { z } from 'zod';
+import { SocketProvider } from './SocketProvider/SocketProvider';
+import { ThemeProvider } from './ThemeProvider';
 
 type Props = {
   children: React.ReactNode;

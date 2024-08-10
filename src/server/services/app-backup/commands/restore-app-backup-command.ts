@@ -1,10 +1,10 @@
-import type { AppBackupCommandParams, IAppBackupCommand } from './types';
 import type { EventDispatcher } from '@/server/core/EventDispatcher';
 import { Logger } from '@/server/core/Logger';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import type { AppStatus } from '@runtipi/db';
 import { appLifecycle } from '../../app-lifecycle/app-lifecycle.service';
-import type { IAppQueries } from '@/server/queries/apps/apps.queries';
+import type { AppBackupCommandParams, IAppBackupCommand } from './types';
 
 export class RestoreAppBackupCommand implements IAppBackupCommand {
   private queries: IAppQueries;

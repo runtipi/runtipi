@@ -1,7 +1,7 @@
-import React from 'react';
 import { faker } from '@faker-js/faker';
-import { describe, it, expect } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '../../../../../../tests/test-utils';
+import React from 'react';
+import { describe, expect, it } from 'vitest';
+import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { ChangePasswordForm } from './ChangePasswordForm';
 
 describe('<ChangePasswordForm />', () => {

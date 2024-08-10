@@ -3,11 +3,7 @@
     "target": "es2017",
     "baseUrl": ".",
     "paths": {},
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -22,19 +18,9 @@
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "experimentalDecorators": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.mjs",
-    "**/*.js",
-    "**/*.jsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.mjs", "**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules"]
 }

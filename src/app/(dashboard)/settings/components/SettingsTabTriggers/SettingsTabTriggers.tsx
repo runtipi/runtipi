@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
 export const SettingsTabTriggers = () => {
   const t = useTranslations();

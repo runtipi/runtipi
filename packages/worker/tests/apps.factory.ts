@@ -1,7 +1,7 @@
-import { faker } from '@faker-js/faker';
 import fs from 'fs';
-import { APP_CATEGORIES, AppInfo, appInfoSchema } from '@runtipi/shared';
-import { DATA_DIR, APP_DATA_DIR } from '@/config/constants';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { faker } from '@faker-js/faker';
+import { APP_CATEGORIES, type AppInfo, appInfoSchema } from '@runtipi/shared';
 
 export const createAppConfig = (props?: Partial<AppInfo>, isInstalled = true) => {
   const appInfo = appInfoSchema.parse({

@@ -2,18 +2,18 @@ import type React from 'react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { Tooltip } from 'react-tooltip';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Switch } from '@/components/ui/Switch';
+import { useClientSettings } from '@/hooks/useClientSettings';
+import type { AppStatus } from '@runtipi/db';
+import type { AppInfo, FormField } from '@runtipi/shared';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import type { FormField, AppInfo } from '@runtipi/shared';
-import { Switch } from '@/components/ui/Switch';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import type { AppStatus } from '@runtipi/db';
+import { Tooltip } from 'react-tooltip';
 import { validateAppConfig } from '../../utils/validators';
-import { InstallFormField } from './InstallFormField';
 import type { FormValues } from './InstallForm.types';
-import { useClientSettings } from '@/hooks/useClientSettings';
+import { InstallFormField } from './InstallFormField';
 
 interface IProps {
   formFields: FormField[];

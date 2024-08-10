@@ -1,18 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import * as Sentry from '@sentry/node';
-import { execAsync, type ILogger, pathExists } from '@runtipi/shared/node';
-import { type AppEventForm, type SocketEvent, appInfoSchema, sanitizePath } from '@runtipi/shared';
-import { copyDataDir, generateEnvFile } from './app.helpers';
-import { compose } from '@/lib/docker';
-import { getEnv } from '@/lib/environment';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { getDockerCompose } from '@/config/docker-templates';
 import { ArchiveManager } from '@/lib/archive/ArchiveManager';
-import { type App, appTable, type IDbClient } from '@runtipi/db';
+import { compose } from '@/lib/docker';
+import { getEnv } from '@/lib/environment';
+import type { ISocketManager } from '@/lib/socket/SocketManager';
+import { type App, type IDbClient, appTable } from '@runtipi/db';
+import { type AppEventForm, type SocketEvent, appInfoSchema, sanitizePath } from '@runtipi/shared';
+import { type ILogger, execAsync, pathExists } from '@runtipi/shared/node';
+import * as Sentry from '@sentry/node';
 import { and, eq, ne } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import type { ISocketManager } from '@/lib/socket/SocketManager';
+import { copyDataDir, generateEnvFile } from './app.helpers';
 
 export interface IAppExecutors {
   regenerateAppEnv(appId: string, form: AppEventForm): Promise<{ success: boolean; message: string }>;

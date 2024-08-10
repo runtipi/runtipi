@@ -1,13 +1,13 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
-import { useTranslations } from 'next-intl';
-import { AppInfo } from '@runtipi/shared';
-import { ScrollArea } from '@/components/ui/ScrollArea';
-import { InstallForm } from '../InstallForm';
-import { useAction } from 'next-safe-action/hooks';
 import { installAppAction } from '@/actions/app-actions/install-app-action';
-import toast from 'react-hot-toast';
+import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { useAppStatus } from '@/hooks/useAppStatus';
+import type { AppInfo } from '@runtipi/shared';
+import { useTranslations } from 'next-intl';
+import { useAction } from 'next-safe-action/hooks';
+import type React from 'react';
+import toast from 'react-hot-toast';
+import { InstallForm } from '../InstallForm';
 
 interface IProps {
   info: AppInfo;

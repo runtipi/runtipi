@@ -1,5 +1,5 @@
-import { AppCatalogCache } from '../app-catalog-cache';
-import { AppCatalogCommandParams, IAppCatalogCommand } from './types';
+import type { AppCatalogCache } from '../app-catalog-cache';
+import type { AppCatalogCommandParams, IAppCatalogCommand } from './types';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof SearchAppsCommand>['execute']>>;
 

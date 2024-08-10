@@ -1,13 +1,13 @@
-import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
-import { vi, beforeEach, beforeAll, afterAll, describe, it, expect } from 'vitest';
-import { AppLifecycleClass } from './app-lifecycle.service';
-import { EventDispatcher } from '../../core/EventDispatcher';
-import { getAppById, createAppConfig, insertApp } from '../../tests/apps.factory';
-import { TipiConfig } from '../../core/TipiConfig';
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import waitForExpect from 'wait-for-expect';
-import { AppDataService } from '@runtipi/shared/node';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { AppQueries } from '@/server/queries/apps/apps.queries';
+import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { AppDataService } from '@runtipi/shared/node';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import waitForExpect from 'wait-for-expect';
+import { EventDispatcher } from '../../core/EventDispatcher';
+import { TipiConfig } from '../../core/TipiConfig';
+import { createAppConfig, getAppById, insertApp } from '../../tests/apps.factory';
+import { AppLifecycleClass } from './app-lifecycle.service';
 
 let db: TestDatabase;
 let appLifecycle: AppLifecycleClass;

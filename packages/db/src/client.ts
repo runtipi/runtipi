@@ -1,7 +1,7 @@
-import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
+import type { ILogger } from '@runtipi/shared/node';
+import { type NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
-import type { ILogger } from '@runtipi/shared/node';
 
 export type IDatabase = NodePgDatabase<typeof schema>;
 
@@ -34,7 +34,11 @@ export class DbClient {
     });
 
     pool.on('connect', () => {
-      this.logger.info('Connected to the database successfully.');
+      this.logger.debug('Connected to the database successfully.');
+    });
+
+    pool.on('remove', () => {
+      this.logger.debug('Client removed from the pool.');
     });
 
     this.db = drizzle(pool, { schema });

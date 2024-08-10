@@ -1,12 +1,12 @@
-import React from 'react';
-import { Metadata } from 'next';
-import { TipiConfig } from '@/server/core/TipiConfig';
 import { ErrorPage } from '@/components/ui/ErrorPage';
 import { getTranslator } from '@/lib/get-translator';
-import { MessageKey, TranslatedError } from '@/server/utils/errors';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
-import { AppDetailsContainer } from './components/AppDetailsContainer/AppDetailsContainer';
+import { TipiConfig } from '@/server/core/TipiConfig';
 import { appBackupService } from '@/server/services/app-backup/app-backup.service';
+import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
+import { type MessageKey, TranslatedError } from '@/server/utils/errors';
+import type { Metadata } from 'next';
+import React from 'react';
+import { AppDetailsContainer } from './components/AppDetailsContainer/AppDetailsContainer';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   return {

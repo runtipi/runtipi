@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
-import { describe, test, expect } from 'vitest';
 import { act } from 'react';
+import { describe, expect, test } from 'vitest';
 import { useDisclosure } from '../useDisclosure';
 
 describe('useDisclosure', () => {

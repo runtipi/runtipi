@@ -1,7 +1,7 @@
 import React from 'react';
-import { vi, describe, it, expect } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen, waitFor } from '../../../../../tests/test-utils';
 import { Input } from './Input';
-import { fireEvent, render, waitFor, screen } from '../../../../../tests/test-utils';
 
 describe('Input', () => {
   it('should render without errors', () => {

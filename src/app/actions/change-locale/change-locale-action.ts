@@ -1,9 +1,9 @@
 'use server';
 
-import { z } from 'zod';
+import { publicActionClient } from '@/lib/safe-action';
 import { getLocaleFromString } from '@/shared/internationalization/locales';
 import { cookies } from 'next/headers';
-import { publicActionClient } from '@/lib/safe-action';
+import { z } from 'zod';
 
 const input = z.object({
   newLocale: z.string(),

@@ -4,24 +4,24 @@ import 'source-map-support/register';
 import { type SystemEvent, cleanseErrorData } from '@runtipi/shared';
 
 import path from 'node:path';
-import Redis from 'ioredis';
-import dotenv from 'dotenv';
-import { Queue } from 'bullmq';
-import * as Sentry from '@sentry/node';
-import { extraErrorDataIntegration } from '@sentry/integrations';
-import { serve } from '@hono/node-server';
-import { Hono } from 'hono';
-import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
-import { startWorker } from './watcher/watcher';
 import { logger } from '@/lib/logger';
-import { RepoExecutors } from './services';
+import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
+import { serve } from '@hono/node-server';
+import type { IMigrator } from '@runtipi/db';
+import type { ILogger } from '@runtipi/shared/node';
+import { extraErrorDataIntegration } from '@sentry/integrations';
+import * as Sentry from '@sentry/node';
+import { Queue } from 'bullmq';
+import dotenv from 'dotenv';
+import { Hono } from 'hono';
+import Redis from 'ioredis';
 import { setupRoutes } from './api';
 import { APP_DIR, DATA_DIR } from './config';
-import { socketManager } from './lib/socket';
 import { container } from './inversify.config';
+import { socketManager } from './lib/socket';
+import { RepoExecutors } from './services';
 import type { IAppExecutors } from './services/app/app.executors';
-import type { ILogger } from '@runtipi/shared/node';
-import type { IMigrator } from '@runtipi/db';
+import { startWorker } from './watcher/watcher';
 
 const envFile = path.join(DATA_DIR, '.env');
 

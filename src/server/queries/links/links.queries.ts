@@ -1,6 +1,6 @@
 import { type IDbClient, type Link, linkTable } from '@runtipi/db';
 import type { LinkInfoInput } from '@runtipi/shared';
-import { eq, and } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 
 export interface ILinkQueries {

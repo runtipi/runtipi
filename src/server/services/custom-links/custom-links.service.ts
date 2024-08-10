@@ -1,9 +1,9 @@
-import type { LinkInfo } from '@runtipi/shared';
-import type { ILinkQueries } from '@/server/queries/links/links.queries';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import type { ILinkQueries } from '@/server/queries/links/links.queries';
 import { TranslatedError } from '@/server/utils/errors';
-import { inject, injectable } from 'inversify';
 import type { Link } from '@runtipi/db';
+import type { LinkInfo } from '@runtipi/shared';
+import { inject, injectable } from 'inversify';
 
 export interface ICustomLinksService {
   add(link: LinkInfo, userId: number): Promise<Link | undefined>;

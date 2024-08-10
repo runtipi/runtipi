@@ -1,18 +1,12 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import {
-  AppEventForm,
-  appInfoSchema,
-  envMapToString,
-  envStringToMap,
-  sanitizePath,
-} from '@runtipi/shared';
-import { pathExists, execAsync } from '@runtipi/shared/node';
-import { generateVapidKeys, getAppEnvMap } from './env.helpers';
-import { getEnv } from '@/lib/environment';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { getEnv } from '@/lib/environment';
 import { getMainEnvMap } from '@/lib/system/system.helpers';
+import { type AppEventForm, appInfoSchema, envMapToString, envStringToMap, sanitizePath } from '@runtipi/shared';
+import { execAsync, pathExists } from '@runtipi/shared/node';
+import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 
 /**
  *  This function generates a random string of the provided length by using the SHA-256 hash algorithm.
@@ -45,9 +39,7 @@ const getEntropy = async (name: string, length: number) => {
 export const generateEnvFile = async (appId: string, form: AppEventForm) => {
   const { internalIp, appDataPath, rootFolderHost } = getEnv();
 
-  const configFile = await fs.promises.readFile(
-    path.join(DATA_DIR, 'apps', sanitizePath(appId), 'config.json'),
-  );
+  const configFile = await fs.promises.readFile(path.join(DATA_DIR, 'apps', sanitizePath(appId), 'config.json'));
   const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile.toString()));
 
   if (!parsedConfig.success) {
@@ -115,17 +107,12 @@ export const generateEnvFile = async (appId: string, form: AppEventForm) => {
   }
 
   // Create app-data folder if it doesn't exist
-  const appDataDirectoryExists = await fs.promises
-    .stat(path.join(APP_DATA_DIR, sanitizePath(appId)))
-    .catch(() => false);
+  const appDataDirectoryExists = await fs.promises.stat(path.join(APP_DATA_DIR, sanitizePath(appId))).catch(() => false);
   if (!appDataDirectoryExists) {
     await fs.promises.mkdir(path.join(APP_DATA_DIR, sanitizePath(appId)), { recursive: true });
   }
 
-  await fs.promises.writeFile(
-    path.join(APP_DATA_DIR, sanitizePath(appId), 'app.env'),
-    envMapToString(envMap),
-  );
+  await fs.promises.writeFile(path.join(APP_DATA_DIR, sanitizePath(appId), 'app.env'), envMapToString(envMap));
 };
 
 /**
@@ -169,16 +156,10 @@ export const copyDataDir = async (id: string) => {
 
   const processFile = async (file: string) => {
     if (file.endsWith('.template')) {
-      const template = await fs.promises.readFile(
-        path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', file),
-        'utf-8',
-      );
+      const template = await fs.promises.readFile(path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', file), 'utf-8');
       const renderedTemplate = renderTemplate(template, envMap);
 
-      await fs.promises.writeFile(
-        path.join(APP_DATA_DIR, sanitizePath(id), 'data', file.replace('.template', '')),
-        renderedTemplate,
-      );
+      await fs.promises.writeFile(path.join(APP_DATA_DIR, sanitizePath(id), 'data', file.replace('.template', '')), renderedTemplate);
     } else {
       await fs.promises.copyFile(
         path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', file),
@@ -192,9 +173,7 @@ export const copyDataDir = async (id: string) => {
       recursive: true,
     });
 
-    const files = await fs.promises.readdir(
-      path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', p),
-    );
+    const files = await fs.promises.readdir(path.join(DATA_DIR, 'apps', sanitizePath(id), 'data', p));
 
     await Promise.all(
       files.map(async (file) => {
@@ -223,8 +202,6 @@ export const copyDataDir = async (id: string) => {
 
   // Remove any .gitkeep files from the app-data folder at any level
   if (await pathExists(path.join(APP_DATA_DIR, sanitizePath(id), 'data'))) {
-    await execAsync(`find ${APP_DATA_DIR}/${sanitizePath(id)}/data -name .gitkeep -delete`).catch(
-      () => {},
-    );
+    await execAsync(`find ${APP_DATA_DIR}/${sanitizePath(id)}/data -name .gitkeep -delete`).catch(() => {});
   }
 };

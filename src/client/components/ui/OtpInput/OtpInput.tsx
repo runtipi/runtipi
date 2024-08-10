@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
 import clsx from 'clsx';
+import type React from 'react';
+import { useMemo } from 'react';
 import classes from './OtpInput.module.scss';
 
 type Props = {

@@ -1,10 +1,10 @@
 'use client';
 
+import { type SystemLoad, systemLoadSchema } from '@runtipi/shared';
 import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons-react';
-import React from 'react';
-import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
-import { systemLoadSchema, type SystemLoad } from '@runtipi/shared';
+import { useTranslations } from 'next-intl';
+import type React from 'react';
 import { SystemStat } from '../SystemStat';
 
 type IProps = {

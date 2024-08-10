@@ -1,7 +1,7 @@
-import { MockedFunction, afterEach, describe, expect, it, vi } from 'vitest';
-import { useSocket } from './useSocket'; // Adjust the path as needed
-import io, { Socket } from 'socket.io-client';
 import { renderHook, waitFor } from '@/tests/test-utils';
+import io, { type Socket } from 'socket.io-client';
+import { type MockedFunction, afterEach, describe, expect, it, vi } from 'vitest';
+import { useSocket } from './useSocket'; // Adjust the path as needed
 
 // Mocking socket.io-client
 vi.mock('socket.io-client');

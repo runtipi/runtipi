@@ -1,13 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
   "files": {
-    "include": [
-      "**/*.js",
-      "**/*.jsx",
-      "**/*.ts",
-      "**/*.tsx",
-      "**/*.json"
-    ],
+    "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"],
     "ignore": [
       "node_modules/**",
       "dist/**",
@@ -21,7 +15,8 @@
       "repos/**",
       "state/**",
       "traefik/**",
-      "user-config/**"
+      "user-config/**",
+      "playwright-report/**"
     ]
   },
   "formatter": {

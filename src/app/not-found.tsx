@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
 import { StatusScreen } from '@/components/StatusScreen';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 
 export default function NotFound() {
   const router = useRouter();

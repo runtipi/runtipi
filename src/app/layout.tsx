@@ -1,20 +1,20 @@
 import 'reflect-metadata';
-import type React from 'react';
 import type { Metadata } from 'next';
 import { getLocale, getMessages } from 'next-intl/server';
+import type React from 'react';
 
-import { cookies } from 'next/headers';
+import { TipiConfig } from '@/server/core/TipiConfig';
 // eslint-disable-next-line import/no-unresolved
 import { GeistSans } from 'geist/font/sans';
-import { TipiConfig } from '@/server/core/TipiConfig';
+import { cookies } from 'next/headers';
 
 import './global.css';
-import clsx from 'clsx';
-import { Toaster } from 'react-hot-toast';
-import { ClientProviders } from './components/ClientProviders';
-import { CookiesProvider } from 'next-client-cookies/server';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import type { AppStatus } from '@runtipi/db';
+import clsx from 'clsx';
+import { CookiesProvider } from 'next-client-cookies/server';
+import { Toaster } from 'react-hot-toast';
+import { ClientProviders } from './components/ClientProviders';
 
 export const metadata: Metadata = {
   title: 'Tipi',

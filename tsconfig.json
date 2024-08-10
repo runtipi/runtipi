@@ -3,45 +3,19 @@
     "target": "es2017",
     "baseUrl": ".",
     "paths": {
-      "@/components/*": [
-        "./src/client/components/*"
-      ],
-      "@/hooks/*": [
-        "./src/app/hooks/*"
-      ],
-      "@/utils/*": [
-        "./src/utils/*"
-      ],
-      "@/client/*": [
-        "./src/client/*"
-      ],
-      "@/server/*": [
-        "./src/server/*"
-      ],
-      "@/shared/*": [
-        "./src/shared/*"
-      ],
-      "@/lib/*": [
-        "./src/lib/*"
-      ],
-      "@/actions/*": [
-        "./src/app/actions/*"
-      ],
-      "@/tests/*": [
-        "./tests/*"
-      ],
-      "@/api/*": [
-        "./src/app/api/*"
-      ],
-      "@/config/*": [
-        "./src/config/*"
-      ]
+      "@/components/*": ["./src/client/components/*"],
+      "@/hooks/*": ["./src/app/hooks/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/client/*": ["./src/client/*"],
+      "@/server/*": ["./src/server/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/actions/*": ["./src/app/actions/*"],
+      "@/tests/*": ["./tests/*"],
+      "@/api/*": ["./src/app/api/*"],
+      "@/config/*": ["./src/config/*"]
     },
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -56,11 +30,7 @@
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
-    "types": [
-      "@testing-library/jest-dom",
-      "node",
-      "reflect-metadata"
-    ],
+    "types": ["@testing-library/jest-dom", "node", "reflect-metadata"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "plugins": [
@@ -70,18 +40,6 @@
     ],
     "noEmit": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.mjs",
-    "**/*.js",
-    "**/*.jsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "packages",
-    "repos"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.mjs", "**/*.js", "**/*.jsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", "packages", "repos"]
 }

@@ -1,10 +1,10 @@
+import type { Hono } from 'hono';
 import { jwt } from 'hono/jwt';
 import { prettyJSON } from 'hono/pretty-json';
 import { secureHeaders } from 'hono/secure-headers';
-import type { Hono } from 'hono';
+import { container } from './inversify.config';
 import { getEnv } from './lib/environment';
 import { SystemExecutors } from './services';
-import { container } from './inversify.config';
 import type { IAppExecutors } from './services/app/app.executors';
 
 const system = new SystemExecutors();

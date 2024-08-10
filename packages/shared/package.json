@@ -18,11 +18,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "src",
-    "node",
-    "dist"
-  ],
+  "files": ["src", "node", "dist"],
   "scripts": {
     "lint": "eslint --ext .ts src",
     "tsc": "tsc --noEmit",

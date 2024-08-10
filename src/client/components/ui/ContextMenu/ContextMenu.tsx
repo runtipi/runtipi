@@ -1,9 +1,9 @@
 'use client';
 
-import * as React from 'react';
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
-import clsx from 'clsx';
 import { IconCheck, IconChevronRight, IconCircle } from '@tabler/icons-react';
+import clsx from 'clsx';
+import * as React from 'react';
 
 const ContextMenu = ContextMenuPrimitive.Root;
 

@@ -1,5 +1,5 @@
-import { FormField } from '@runtipi/shared';
-import { describe, it, expect } from 'vitest';
+import type { FormField } from '@runtipi/shared';
+import { describe, expect, it } from 'vitest';
 import { validateAppConfig, validateField } from './validators';
 
 describe('Test: validateField', () => {

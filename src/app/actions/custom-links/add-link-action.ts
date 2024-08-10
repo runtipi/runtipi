@@ -1,9 +1,9 @@
 'use server';
 
-import { linkSchema } from '@runtipi/shared';
 import { authActionClient } from '@/lib/safe-action';
-import { container } from 'src/inversify.config';
 import type { ICustomLinksService } from '@/server/services/custom-links/custom-links.service';
+import { linkSchema } from '@runtipi/shared';
+import { container } from 'src/inversify.config';
 
 export const addLinkAction = authActionClient.schema(linkSchema).action(async ({ parsedInput: link, ctx }) => {
   const linksService = container.get<ICustomLinksService>('ICustomLinksService');

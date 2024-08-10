@@ -1,6 +1,6 @@
+import { type IDbClient, type NewUser, type User, userTable } from '@runtipi/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import { type IDbClient, type NewUser, type User, userTable } from '@runtipi/db';
 
 export interface IAuthQueries {
   getUserByUsername(username: string): Promise<User | undefined>;
