@@ -23,8 +23,8 @@ export function createContainer() {
             host: String(process.env.POSTGRES_HOST),
             port: Number(process.env.POSTGRES_PORT),
             password: String(process.env.POSTGRES_PASSWORD),
-            database: 'tipi',
-            username: 'tipi',
+            database: String(process.env.POSTGRES_DBNAME),
+            username: String(process.env.POSTGRES_USERNAME),
           },
           context.container.get<ILogger>('ILogger'),
         );
