@@ -61,14 +61,17 @@ export const LogsTerminal = (props: Props) => {
           </div>
         </div>
       </div>
-      <pre id="log-terminal" className={clsx('mt-2', styles.logTerminal, { [styles.wrapLines || '']: wrapLines })} ref={ref}>
-        {logs.map((log) => (
-          <React.Fragment key={log.id}>
-            {log.text}
-            <br />
-          </React.Fragment>
-        ))}
-      </pre>
+      <pre
+        id="log-terminal"
+        className={clsx("mt-2", styles.logTerminal, {
+          [styles.wrapLines || ""]: wrapLines,
+        })}
+        ref={ref}
+        // style={{ backgroundColor: "#0f111a" }}
+        dangerouslySetInnerHTML={{
+          __html: logs.map(({ id, text }) => text).join("<br>"),
+        }}
+      ></pre>
     </div>
   );
 };

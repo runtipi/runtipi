@@ -8,6 +8,7 @@ import { execAsync, pathExists } from '@runtipi/shared/node';
 import type { Socket } from 'socket.io';
 import { getRepoHash } from 'src/services/repo/repo.helpers';
 import { DEFAULT_REPO_URL } from '../system/system.helpers';
+import { codeToHast, hastToHtml } from 'shiki';
 
 const getBaseComposeArgsApp = async (appId: string) => {
   const { arch, appsRepoId } = getEnv();
@@ -124,10 +125,12 @@ export const handleViewRuntipiLogsEvent = async (socket: Socket, event: SocketEv
   });
 
   logs.stdout.on('data', async (data) => {
-    const lines = data
-      .toString()
-      .split(/(?:\r\n|\r|\n)/g)
-      .filter(Boolean);
+    const lines = await colorize(
+      data
+        .toString()
+        .split(/(?:\r\n|\r|\n)/g)
+        .filter(Boolean),
+    );
 
     await emit({
       type: 'runtipi-logs',
@@ -174,10 +177,12 @@ export const handleViewAppLogsEvent = async (socket: Socket, event: SocketEvent,
   });
 
   logs.stdout.on('data', async (data) => {
-    const lines = data
-      .toString()
-      .split(/(?:\r\n|\r|\n)/g)
-      .filter(Boolean);
+    const lines = await colorize(
+      data
+        .toString()
+        .split(/(?:\r\n|\r|\n)/g)
+        .filter(Boolean),
+    );
 
     await emit({
       type: 'app-logs',
@@ -186,3 +191,15 @@ export const handleViewAppLogsEvent = async (socket: Socket, event: SocketEvent,
     });
   });
 };
+
+const colorize = async (lines: string[]) =>
+  await Promise.all(
+    lines.map(async (line: string) => {
+      const hast: any = await codeToHast(line, { // Using type any here because Shiki doesn't export the required types to use the result without type errors
+        lang: 'ansi',
+        theme: 'material-theme-ocean',
+      });
+      const l = hast.children[0].children[0].children[0]; // This is necessary (see https://shiki.style/api#codetohast). We need the span element and since we're passing Shiki 1 line at a time, it's always located at this position
+      return hastToHtml(l);
+    }),
+  );
