@@ -67,11 +67,10 @@ export const LogsTerminal = (props: Props) => {
           [styles.wrapLines || ""]: wrapLines,
         })}
         ref={ref}
-        // style={{ backgroundColor: "#0f111a" }}
         dangerouslySetInnerHTML={{
-          __html: logs.map(({ id, text }) => text).join("<br>"),
+          __html: logs.map(({ text }) => text).join("<br>"),
         }}
-      ></pre>
+      />
     </div>
   );
 };
