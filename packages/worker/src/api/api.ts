@@ -178,9 +178,12 @@ export const setupRoutes = (app: Hono) => {
     }
     const backupPath = path.join(DATA_DIR, 'backups', appId);
     if (await pathExists(backupPath)) {
-      return c.json({ message: [(await promises.readdir(backupPath))[0]], ok: true }, 200);
+      return c.json(
+        { message: '', backups: [(await promises.readdir(backupPath))[0]], ok: true },
+        200,
+      );
     }
-    return c.json({ message: 'No backups found', ok: false }, 404);
+    return c.json({ message: 'No backups found', backups: [''], ok: false }, 404);
   });
 
   app.get('/apps/available-apps', async (c) => {
@@ -188,9 +191,9 @@ export const setupRoutes = (app: Hono) => {
       path.join(DATA_DIR, 'repos', getEnv().appsRepoId, 'apps'),
     );
     if (availableApps.success) {
-      return c.json({ message: availableApps.appList, ok: true }, 200);
+      return c.json({ message: '', availableApps: availableApps.appList, ok: true }, 200);
     }
-    return c.json({ message: availableApps.error, ok: false }, 500);
+    return c.json({ message: availableApps.error, availableApps: [''], ok: false }, 500);
   });
 
   app.get('/apps/:id/logo', async (c) => {
@@ -242,17 +245,17 @@ export const setupRoutes = (app: Hono) => {
     const configRaw = await promises.readFile(configPath, 'utf-8');
     const configParsed = await appInfoSchema.safeParseAsync(configRaw);
     if (configParsed.success) {
-      return c.json({ message: configParsed.data, ok: true }, 200);
+      return c.json({ message: '', config: configParsed.data, ok: true }, 200);
     }
-    return c.json({ message: configParsed.error, ok: false }, 500);
+    return c.json({ message: configParsed.error, config: {}, ok: false }, 500);
   });
 
   app.get('/apps/installed-apps', async (c) => {
     const installedApps = await getAvailableApps(path.join(DATA_DIR, 'apps'));
     if (installedApps.success) {
-      return c.json({ message: installedApps.appList, ok: true }, 200);
+      return c.json({ message: '', installedApps: installedApps.appList, ok: true }, 200);
     }
-    return c.json({ message: installedApps.error, ok: false }, 500);
+    return c.json({ message: installedApps.error, installedApps: [''], ok: false }, 500);
   });
 
   app.post('/apps/start-all', async (c) => {
