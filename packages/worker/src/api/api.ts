@@ -38,15 +38,19 @@ export const setupRoutes = (app: Hono) => {
     const filePath = path.join(DATA_DIR, 'traefik', 'tls', 'cert.pem');
     if (await pathExists(filePath)) {
       const cert = await promises.readFile(filePath);
-      c.header('content-type', 'application/x-pem-file');
-      c.header('content-disposition', 'attachment; filename=cert.pem');
-      c.status(200);
-      return c.body(cert);
+      return c.body(cert, 200, {
+        'content-type': 'application/x-pem-file',
+        'content-disposition': 'attachment; filename=cert.pem',
+      });
     }
     return c.json({ message: 'File not found', ok: false }, 404);
   });
 
-  app.get('/system/updates', async (c) => {
+  app.get(`/system/arch`, async (c) => {
+    return c.json({ arch: getEnv().arch, ok: true });
+  });
+
+  app.get('/system/version', async (c) => {
     const tipiVersion = getEnv().tipiVersion;
     const releaseStatus = await fetch(
       'https://api.github.com/repos/runtipi/runtipi/releases/latest',
@@ -196,6 +200,8 @@ export const setupRoutes = (app: Hono) => {
     return c.json({ message: availableApps.error, availableApps: [''], ok: false }, 500);
   });
 
+  // TODO: Why does this fail
+
   app.get('/apps/:id/logo', async (c) => {
     const appId = c.req.param('id');
     if (!(await validateApp(appId))) {
@@ -222,11 +228,10 @@ export const setupRoutes = (app: Hono) => {
 
     const file = await promises.readFile(filePath);
 
-    c.header('content-type', 'image/jpeg');
-    c.header('cache-control', 'public, max-age=86400');
-    c.status(200);
-
-    return c.body(file);
+    return c.body(file, 200, {
+      'content-type': 'image/jpeg',
+      'cache-control': 'public, max-age=86400',
+    });
   });
 
   app.get('/apps/:id/get-config', async (c) => {
