@@ -200,13 +200,7 @@ const colorize = async (lines: string[]) =>
           lang: 'ansi',
           theme: 'night-owl',
         });
-        // Manually narrow down type to avoid having to redefine types from Shiki library. This check will always return true
-        if (
-          hast.children[0]!.type === 'element' &&
-          hast.children[0]!.children[0]!.type === 'element'
-        )
-          return hastToHtml(hast.children[0]!.children[0]!.children[0]!); // This is necessary (see https://shiki.style/api#codetohast). We need the span element and since we're passing Shiki 1 line at a time, it's always located at this position
-        return ''; // Unreachable
+        return hastToHtml(hast.children[0].children[0].children[0]);
       } catch (e) {
         return line;
       }
