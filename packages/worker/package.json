@@ -51,6 +51,7 @@
     "ioredis": "^5.4.1",
     "pg": "^8.12.0",
     "reflect-metadata": "^0.2.2",
+    "semver": "^7.6.3",
     "socket.io": "^4.7.5",
     "source-map-support": "^0.5.21",
     "systeminformation": "^5.23.4",

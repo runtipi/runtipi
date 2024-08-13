@@ -15,7 +15,7 @@ import { Queue } from 'bullmq';
 import dotenv from 'dotenv';
 import { Hono } from 'hono';
 import Redis from 'ioredis';
-import { setupRoutes } from './api';
+import { setupRoutes } from './api/api';
 import { APP_DIR, DATA_DIR } from './config';
 import { container } from './inversify.config';
 import { socketManager } from './lib/socket';
@@ -60,7 +60,11 @@ const main = async () => {
     logger.info('Copying system files...');
     await copySystemFiles(envMap);
 
-    if (envMap.get('ALLOW_ERROR_MONITORING') === 'true' && process.env.NODE_ENV === 'production' && process.env.LOCAL !== 'true') {
+    if (
+      envMap.get('ALLOW_ERROR_MONITORING') === 'true' &&
+      process.env.NODE_ENV === 'production' &&
+      process.env.LOCAL !== 'true'
+    ) {
       logger.info(
         `Anonymous error monitoring is enabled, to disable it add "allowErrorMonitoring": false to your settings.json file. Version: ${process.env.TIPI_VERSION}`,
       );

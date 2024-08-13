@@ -447,6 +447,9 @@ importers:
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
+      semver:
+        specifier: ^7.6.3
+        version: 7.6.3
       socket.io:
         specifier: ^4.7.5
         version: 4.7.5
