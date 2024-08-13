@@ -200,6 +200,8 @@ const colorize = async (lines: string[]) =>
           lang: 'ansi',
           theme: 'night-owl',
         });
+
+        // @ts-expect-error - Wrong typings provided by shiki
         return hastToHtml(hast.children[0].children[0].children[0]);
       } catch (e) {
         return line;
