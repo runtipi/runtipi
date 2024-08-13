@@ -195,11 +195,20 @@ export const handleViewAppLogsEvent = async (socket: Socket, event: SocketEvent,
 const colorize = async (lines: string[]) =>
   await Promise.all(
     lines.map(async (line: string) => {
-      const hast: any = await codeToHast(line, { // Using type any here because Shiki doesn't export the required types to use the result without type errors
-        lang: 'ansi',
-        theme: 'material-theme-ocean',
-      });
-      const l = hast.children[0].children[0].children[0]; // This is necessary (see https://shiki.style/api#codetohast). We need the span element and since we're passing Shiki 1 line at a time, it's always located at this position
-      return hastToHtml(l);
+      try {
+        const hast = await codeToHast(line, {
+          lang: 'ansi',
+          theme: 'night-owl',
+        });
+        // Manually narrow down type to avoid having to redefine types from Shiki library. This check will always return true
+        if (
+          hast.children[0]!.type === 'element' &&
+          hast.children[0]!.children[0]!.type === 'element'
+        )
+          return hastToHtml(hast.children[0]!.children[0]!.children[0]!); // This is necessary (see https://shiki.style/api#codetohast). We need the span element and since we're passing Shiki 1 line at a time, it's always located at this position
+        return ''; // Unreachable
+      } catch (e) {
+        return line;
+      }
     }),
   );
