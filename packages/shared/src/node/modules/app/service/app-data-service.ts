@@ -47,13 +47,14 @@ export class AppDataService {
       }),
     );
 
-    return apps.filter(notEmpty).map(({ id, categories, name, short_desc, deprecated, supported_architectures }) => ({
+    return apps.filter(notEmpty).map(({ id, categories, name, short_desc, deprecated, supported_architectures, created_at }) => ({
       id,
       categories,
       name,
       short_desc,
       deprecated,
       supported_architectures,
+      created_at,
     }));
   }
 

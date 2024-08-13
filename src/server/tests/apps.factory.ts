@@ -69,6 +69,8 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
   const appInfo: AppInfo = {
     id: randomId,
+    created_at: faker.date.recent().getTime(),
+    updated_at: faker.date.recent().getTime(),
     dynamic_config: true,
     deprecated: false,
     port: faker.number.int({ min: 3000, max: 5000 }),
