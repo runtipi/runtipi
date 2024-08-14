@@ -19,6 +19,7 @@ env:
   POSTGRES_USERNAME: postgres
   POSTGRES_PASSWORD: postgres
   POSTGRES_PORT: 5433
+  JOB_TIMEOUT: 300000
 
 jobs:
   tests:

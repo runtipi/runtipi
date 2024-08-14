@@ -99,6 +99,7 @@ export const envSchema = z.object({
 
       return false;
     }),
+  jobTimeout: z.number().default(300000)
 });
 
 export const settingsSchema = envSchema
@@ -117,6 +118,7 @@ export const settingsSchema = envSchema
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
     timeZone: true,
+    jobTimeout: true,
   })
   .and(
     z

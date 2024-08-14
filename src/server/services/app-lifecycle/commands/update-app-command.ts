@@ -10,7 +10,7 @@ import type { AppDataService } from '@runtipi/shared/node';
 import semver from 'semver';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 
-const FIFTEEN_MINUTES = 15 * 60 * 1000;
+const TEN_MINUTES = 10 * 60 * 1000;
 
 export class UpdateAppCommand implements IAppLifecycleCommand {
   private queries: IAppQueries;
@@ -35,7 +35,7 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync(
       { type: 'app', command: 'update', appid: appId, form, performBackup },
-      performBackup ? FIFTEEN_MINUTES : undefined,
+      performBackup ? TEN_MINUTES : undefined,
     );
 
     if (success) {
