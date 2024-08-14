@@ -52,7 +52,7 @@ export class AppCatalogCache {
       this.appsAvailable = this.filterApps(apps);
 
       this.miniSearch = new MiniSearch<(typeof this.appsAvailable)[number]>({
-        fields: ['name', 'description', 'categories'],
+        fields: ['name', 'short_desc', 'categories'],
         storeFields: ['id'],
         idField: 'id',
         searchOptions: {
