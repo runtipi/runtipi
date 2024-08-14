@@ -88,10 +88,7 @@ export class AppExecutors implements IAppExecutors {
     const { appDirPath, appDataDirPath, repoPath } = this.getAppPaths(appId);
     const { arch } = getEnv();
 
-    if (
-      !(await pathExists(path.join(appDirPath, 'docker-compose.yml'))) ||
-      !(await pathExists(path.join(appDirPath, 'docker-compose.arm64.yml')))
-    ) {
+    if (!(await pathExists(path.join(appDirPath, 'docker-compose.yml'))) || !(await pathExists(path.join(appDirPath, 'docker-compose.arm64.yml')))) {
       // delete eventual app folder if exists
       this.logger.info(`Deleting app ${appId} folder if exists`);
       await fs.promises.rm(appDirPath, { recursive: true, force: true });
@@ -102,32 +99,20 @@ export class AppExecutors implements IAppExecutors {
     }
 
     // Check if app has a docker-compose.json file
-    if (
-      (await pathExists(path.join(repoPath, 'docker-compose.json'))) ||
-      (await pathExists(path.join(repoPath, 'docker-compose.arm64.json')))
-    ) {
+    if ((await pathExists(path.join(repoPath, 'docker-compose.json'))) || (await pathExists(path.join(repoPath, 'docker-compose.arm64.json')))) {
       try {
-        let jsonComposeFile = '';
-        let dockerComposeFile = '';
-
-        if (
-          arch === 'arm64' &&
-          (await pathExists(path.join(repoPath, 'docker-compose.arm64.json')))
-        ) {
-          jsonComposeFile = 'docker-compose.arm64.json';
-          dockerComposeFile = 'docker-compose.arm64.yml';
-        } else {
-          jsonComposeFile = 'docker-compose.json';
-          dockerComposeFile = 'docker-compose.yml';
-        }
+        const jsonComposeFile =
+          arch === 'arm64' && (await pathExists(path.join(repoPath, 'docker-compose.arm64.json')))
+            ? 'docker-compose.arm64.json'
+            : 'docker-compose.json';
 
         // Generate docker-compose.yml file
-        const rawComposeConfig = await fs.promises.readFile(path.join(repoPath, 'docker-compose.json'), 'utf-8');
+        const rawComposeConfig = await fs.promises.readFile(path.join(repoPath, jsonComposeFile), 'utf-8');
         const jsonComposeConfig = JSON.parse(rawComposeConfig);
 
         const composeFile = getDockerCompose(jsonComposeConfig.services, form);
 
-        await fs.promises.writeFile(path.join(appDirPath, dockerComposeFile), composeFile);
+        await fs.promises.writeFile(path.join(appDirPath, 'docker-compose.yml'), composeFile);
       } catch (err) {
         this.logger.error(`Error generating docker-compose.yml file for app ${appId}. Falling back to default docker-compose.yml`);
         this.logger.error(err);

@@ -137,8 +137,8 @@ describe('Install app', () => {
 
   it('can install if architecture is supported', async () => {
     // arrange
-    await TipiConfig.setConfig('architecture', 'arm');
-    const appConfig = createAppConfig({ supported_architectures: ['arm'] });
+    await TipiConfig.setConfig('architecture', 'arm64');
+    const appConfig = createAppConfig({ supported_architectures: ['arm64'] });
 
     // act
     await installApp.execute({ appId: appConfig.id, form: {} });
@@ -149,7 +149,7 @@ describe('Install app', () => {
 
   it('can install if no architecture is specified', async () => {
     // arrange
-    await TipiConfig.setConfig('architecture', 'arm');
+    await TipiConfig.setConfig('architecture', 'arm64');
     const appConfig = createAppConfig({ supported_architectures: undefined });
 
     // act
