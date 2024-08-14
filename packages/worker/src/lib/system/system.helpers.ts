@@ -39,8 +39,7 @@ type EnvKeys =
   | 'ALLOW_ERROR_MONITORING'
   | 'PERSIST_TRAEFIK_CONFIG'
   | 'ALLOW_AUTO_THEMES'
-  | 'EVENTS_TIMEOUT'
-  | 'REPEAT_TIMEOUT'
+  | 'JOB_TIMEOUT'
   // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
