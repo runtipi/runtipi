@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
+import { type User, userTable } from '@runtipi/db';
 import * as argon2 from 'argon2';
 import { eq } from 'drizzle-orm';
-import { userTable, User } from '../db/schema';
-import { TestDatabase } from './test-utils';
+import type { TestDatabase } from './test-utils';
 
 /**
  *
@@ -15,7 +15,7 @@ async function createUser(params: Partial<User & { email?: string }>, database: 
 
   const username = email?.toLowerCase().trim() || faker.internet.email().toLowerCase().trim();
 
-  const users = await database.db
+  const users = await database.dbClient.db
     .insert(userTable)
     .values({ username, password: hash, operator, ...rest })
     .returning();
@@ -25,14 +25,14 @@ async function createUser(params: Partial<User & { email?: string }>, database: 
 }
 
 const getUserById = async (id: number, database: TestDatabase) => {
-  const usersFromDb = await database.db.select().from(userTable).where(eq(userTable.id, id));
+  const usersFromDb = await database.dbClient.db.select().from(userTable).where(eq(userTable.id, id));
   const userFromDb = usersFromDb[0];
 
   return userFromDb as User;
 };
 
 const getUserByEmail = async (email: string, database: TestDatabase) => {
-  const usersFromDb = await database.db.select().from(userTable).where(eq(userTable.username, email));
+  const usersFromDb = await database.dbClient.db.select().from(userTable).where(eq(userTable.username, email));
   const userFromDb = usersFromDb[0];
 
   return userFromDb as User;

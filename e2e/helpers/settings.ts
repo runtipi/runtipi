@@ -1,8 +1,8 @@
 import { promises } from 'fs';
-import { z } from 'zod';
-import { settingsSchema } from '@runtipi/shared';
-import { pathExists } from '@runtipi/shared/node';
 import path from 'path';
+import type { settingsSchema } from '@runtipi/shared';
+import { pathExists } from '@runtipi/shared/node';
+import type { z } from 'zod';
 import { BASE_PATH } from './constants';
 
 export const setSettings = async (settings: z.infer<typeof settingsSchema>) => {

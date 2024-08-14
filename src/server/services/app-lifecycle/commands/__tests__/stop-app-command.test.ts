@@ -1,12 +1,12 @@
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { EventDispatcher } from '@/server/core/EventDispatcher';
+import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
+import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { AppDataService } from '@runtipi/shared/node';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
-import { EventDispatcher } from '@/server/core/EventDispatcher';
-import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
-import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { StopAppCommand } from '../stop-app-command';
-import { AppDataService } from '@runtipi/shared/node';
-import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 
 let db: TestDatabase;
 const TEST_SUITE = 'stopappcommand';
@@ -16,7 +16,7 @@ let stopApp: StopAppCommand;
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  stopApp = new StopAppCommand({ queries: new AppQueries(db.db), eventDispatcher: dispatcher, executeOtherCommand: vi.fn(), appDataService });
+  stopApp = new StopAppCommand({ queries: new AppQueries(db.dbClient), eventDispatcher: dispatcher, executeOtherCommand: vi.fn(), appDataService });
 });
 
 beforeEach(async () => {

@@ -1,28 +1,26 @@
-import fs from 'fs';
-import { describe, it, expect, vi } from 'vitest';
-import path from 'path';
-import { faker } from '@faker-js/faker';
-import * as sharedNode from '@runtipi/shared/node';
-import { AppExecutors } from '../app.executors';
-import { createAppConfig } from '@/tests/apps.factory';
+import fs from 'node:fs';
+import path from 'node:path';
+import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import * as dockerHelpers from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
-import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { ArchiveManager } from '@/lib/archive/ArchiveManager';
+import { createAppConfig } from '@/tests/apps.factory';
+import { faker } from '@faker-js/faker';
+import * as sharedNode from '@runtipi/shared/node';
+import { container } from 'src/inversify.config';
+import { describe, expect, it, vi } from 'vitest';
+import type { IAppExecutors } from '../app.executors';
 
 const { pathExists } = sharedNode;
 
 const { appsRepoId } = getEnv();
 
 describe('test: app executors', () => {
-  const appExecutors = new AppExecutors();
+  const appExecutors = container.get<IAppExecutors>('IAppExecutors');
 
   describe('test: installApp()', () => {
     it('should run correct compose script', async () => {
       // arrange
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockImplementation(() => Promise.resolve({ stdout: 'done', stderr: '' }));
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: 'done', stderr: '' }));
       const config = createAppConfig({}, false);
 
       // act
@@ -33,10 +31,7 @@ describe('test: app executors', () => {
 
       expect(success).toBe(true);
       expect(message).toBe(`App ${config.id} installed successfully`);
-      expect(spy).toHaveBeenCalledWith(
-        config.id,
-        'up --detach --force-recreate --remove-orphans --pull always',
-      );
+      expect(spy).toHaveBeenCalledWith(config.id, 'up --detach --force-recreate --remove-orphans --pull always');
       expect(envExists).toBe(true);
       spy.mockRestore();
     });
@@ -95,20 +90,14 @@ describe('test: app executors', () => {
       await fs.promises.mkdir(path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data'), {
         recursive: true,
       });
-      await fs.promises.writeFile(
-        path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data', filename),
-        'test',
-      );
+      await fs.promises.writeFile(path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'test');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
       const exists = await pathExists(path.join(APP_DATA_DIR, config.id, 'data', filename));
-      const data = await fs.promises.readFile(
-        path.join(APP_DATA_DIR, config.id, 'data', filename),
-        'utf-8',
-      );
+      const data = await fs.promises.readFile(path.join(APP_DATA_DIR, config.id, 'data', filename), 'utf-8');
 
       expect(exists).toBe(true);
       expect(data).toBe('test');
@@ -122,20 +111,14 @@ describe('test: app executors', () => {
       await fs.promises.mkdir(path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data'), {
         recursive: true,
       });
-      await fs.promises.writeFile(
-        path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data', filename),
-        'yeah',
-      );
+      await fs.promises.writeFile(path.join(DATA_DIR, 'repos', appsRepoId, 'apps', config.id, 'data', filename), 'yeah');
 
       // act
       await appExecutors.installApp(config.id, config);
 
       // assert
       const exists = await pathExists(path.join(APP_DATA_DIR, config.id, 'data', filename));
-      const data = await fs.promises.readFile(
-        path.join(APP_DATA_DIR, config.id, 'data', filename),
-        'utf-8',
-      );
+      const data = await fs.promises.readFile(path.join(APP_DATA_DIR, config.id, 'data', filename), 'utf-8');
 
       expect(exists).toBe(true);
       expect(data).toBe('test');
@@ -143,9 +126,7 @@ describe('test: app executors', () => {
 
     it('should handle errors gracefully', async () => {
       // arrange
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockImplementation(() => Promise.reject(new Error('test')));
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.reject(new Error('test')));
       const config = createAppConfig();
 
       // act
@@ -170,9 +151,7 @@ describe('test: app executors', () => {
   describe('test: stopApp()', () => {
     it('should run correct compose script', async () => {
       // arrange
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockImplementation(() => Promise.resolve({ stdout: 'done', stderr: '' }));
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: 'done', stderr: '' }));
       const config = createAppConfig();
 
       // act
@@ -187,9 +166,7 @@ describe('test: app executors', () => {
 
     it('should handle errors gracefully', async () => {
       // arrange
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockImplementation(() => Promise.reject(new Error('test')));
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.reject(new Error('test')));
       const config = createAppConfig();
 
       // act
@@ -205,9 +182,7 @@ describe('test: app executors', () => {
   describe('test: restartApp()', () => {
     it('should start and stop the app', async () => {
       // arrange
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockImplementation(() => Promise.resolve({ stdout: 'done', stderr: '' }));
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: 'done', stderr: '' }));
       const config = createAppConfig();
 
       // act
@@ -216,19 +191,14 @@ describe('test: app executors', () => {
       // assert
       expect(success).toBe(true);
       expect(message).toBe(`App ${config.id} restarted successfully`);
-      expect(spy).toHaveBeenCalledWith(
-        config.id,
-        'up --detach --force-recreate --remove-orphans --pull always',
-      );
+      expect(spy).toHaveBeenCalledWith(config.id, 'up --detach --force-recreate --remove-orphans --pull always');
       expect(spy).toHaveBeenCalledWith(config.id, 'rm --force --stop');
       spy.mockRestore();
     });
 
     it('should handle errors gracefully', async () => {
       // arrange
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockImplementation(() => Promise.reject(new Error('test')));
+      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.reject(new Error('test')));
       const config = createAppConfig();
 
       // act
@@ -254,7 +224,7 @@ describe('test: app executors', () => {
       spy.mockResolvedValue({ stdout: 'done', stderr: '' });
 
       // act
-      const { message, success } = await appExecutors.updateApp(config.id, config);
+      const { message, success } = await appExecutors.updateApp(config.id, config, false);
 
       // assert
       expect(success).toBe(true);
@@ -273,73 +243,14 @@ describe('test: app executors', () => {
       await fs.promises.writeFile(path.join(oldFolder, 'docker-compose.yml'), 'test');
 
       // act
-      await appExecutors.updateApp(config.id, config);
+      await appExecutors.updateApp(config.id, config, false);
 
       // assert
       const exists = await pathExists(oldFolder);
-      const content = await fs.promises.readFile(
-        path.join(oldFolder, 'docker-compose.yml'),
-        'utf-8',
-      );
+      const content = await fs.promises.readFile(path.join(oldFolder, 'docker-compose.yml'), 'utf-8');
 
       expect(exists).toBe(true);
       expect(content).not.toBe('test');
-      spy.mockRestore();
-    });
-  });
-
-  describe('test: backupApp()', () => {
-    it('should backup folders to /temp/<app-id>/<app-id>-timestamp.tar.gz', async () => {
-      // arrange
-      const config = createAppConfig({}, true);
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockResolvedValue({ stdout: 'done', stderr: '' });
-
-      // act
-      await appExecutors.backupApp(config.id);
-      const { success } = await appExecutors.backupApp(config.id);
-
-      // assert
-      expect(success).toBe(true);
-      const backups = await fs.promises.readdir(path.join(DATA_DIR, 'backups', config.id));
-
-      expect(backups.length).toBe(2);
-
-      spy.mockRestore();
-    });
-  });
-
-  describe('test: restoreApp()', () => {
-    it('should restore app from backup', async () => {
-      // arrange
-      const spy = vi
-        .spyOn(dockerHelpers, 'compose')
-        .mockResolvedValue({ stdout: 'done', stderr: '' });
-      const config = createAppConfig({ version: '2.0.0' }, true);
-      await fs.promises.mkdir(path.join(DATA_DIR, 'backups', config.id), { recursive: true });
-      const filename = path.join(DATA_DIR, 'backups', config.id, 'test.tar.gz');
-      const tempDir = path.join('/tmp', config.id);
-      await fs.promises.mkdir(tempDir, { recursive: true });
-      await fs.promises.cp(path.join(APP_DATA_DIR, config.id), path.join(tempDir, 'app-data'));
-      await fs.promises.cp(path.join(DATA_DIR, 'apps', config.id), path.join(tempDir, 'app'));
-
-      // Create tar.gz file
-      const archiveManager = new ArchiveManager();
-      await archiveManager.createTarGz(tempDir, filename);
-      await fs.promises.rm(tempDir, { recursive: true });
-      // Set different version
-      const fileToCheck = path.join(DATA_DIR, 'apps', config.id, 'config.json');
-      await fs.promises.writeFile(fileToCheck, JSON.stringify({ version: '1.0.0' }));
-
-      // act
-      const { success } = await appExecutors.restoreApp(config.id, 'test.tar.gz');
-
-      // assert
-      expect(success).toBe(true);
-      const content = await fs.promises.readFile(fileToCheck, 'utf-8');
-      expect(JSON.parse(content).version).toBe('2.0.0');
-
       spy.mockRestore();
     });
   });

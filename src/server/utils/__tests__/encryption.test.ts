@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { TipiConfig } from '../../core/TipiConfig';
-import { encrypt, decrypt } from '../encryption';
+import { decrypt, encrypt } from '../encryption';
 
 describe('Test: encrypt', () => {
   it('should encrypt the provided data', async () => {

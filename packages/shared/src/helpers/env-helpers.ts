@@ -7,12 +7,12 @@ export const envStringToMap = (envString: string) => {
   const envMap = new Map<string, string>();
   const envArray = envString.split('\n');
 
-  envArray.forEach((env) => {
+  for (const env of envArray) {
     const [key, value] = env.split('=');
     if (key && value) {
       envMap.set(key, value);
     }
-  });
+  }
 
   return envMap;
 };

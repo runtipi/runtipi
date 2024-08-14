@@ -1,5 +1,5 @@
 import React from 'react';
-import { vi, expect, describe, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../../../tests/test-utils';
 import { UpdateModal } from './UpdateModal';
 

@@ -1,11 +1,11 @@
 'use client';
 
-import clsx from 'clsx';
-import React from 'react';
-import { Tooltip } from 'react-tooltip';
-import { useTranslations } from 'next-intl';
-import styles from './AppStatus.module.scss';
 import { useAppStatus } from '@/hooks/useAppStatus';
+import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
+import type React from 'react';
+import { Tooltip } from 'react-tooltip';
+import styles from './AppStatus.module.scss';
 
 export const AppStatus: React.FC<{ appId: string; lite?: boolean }> = ({ appId, lite }) => {
   const t = useTranslations();

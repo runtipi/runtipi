@@ -1,12 +1,13 @@
 'use client';
 
-import clsx from 'clsx';
-import React, { useState } from 'react';
 import { Input } from '@/components/ui/Input';
+import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import styles from './AppStoreTableActions.module.scss';
+import type React from 'react';
+import { useState } from 'react';
 import { useAppStoreState } from '../../state/appStoreState';
 import { CategorySelector } from '../CategorySelector';
+import styles from './AppStoreTableActions.module.scss';
 
 export const AppStoreTableActions = () => {
   const { setCategory, category, search: initialSearch, setSearch } = useAppStoreState();

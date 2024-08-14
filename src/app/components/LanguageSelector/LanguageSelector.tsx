@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
-import { useAction } from 'next-safe-action/hooks';
-import { LOCALE_OPTIONS, Locale } from '@/shared/internationalization/locales';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { useRouter } from 'next/navigation';
 import { changeLocaleAction } from '@/actions/change-locale/change-locale-action';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
+import { LOCALE_OPTIONS, type Locale } from '@/shared/internationalization/locales';
+import { useAction } from 'next-safe-action/hooks';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 import { LanguageSelectorLabel } from './LanguageSelectorLabel';
 
 type IProps = {

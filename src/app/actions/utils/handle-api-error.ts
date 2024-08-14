@@ -1,7 +1,7 @@
-import * as Sentry from '@sentry/nextjs';
-import { MessageKey, TranslatedError } from '@/server/utils/errors';
 import { getTranslator } from '@/lib/get-translator';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import { type MessageKey, TranslatedError } from '@/server/utils/errors';
+import * as Sentry from '@sentry/nextjs';
 import { Logger } from '../../../server/core/Logger';
 
 /**

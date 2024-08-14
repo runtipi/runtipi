@@ -1,17 +1,19 @@
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
-import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
+import type { EventDispatcher } from '@/server/core/EventDispatcher';
 import { Logger } from '@/server/core/Logger';
-import { TranslatedError } from '@/server/utils/errors';
-import semver from 'semver';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { AppEventFormInput } from '@runtipi/shared';
-import { AppStatus } from '@/server/db/schema';
-import { AppDataService } from '@runtipi/shared/node';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
+import { TranslatedError } from '@/server/utils/errors';
+import type { AppStatus } from '@runtipi/db';
+import type { AppEventFormInput } from '@runtipi/shared';
+import type { AppDataService } from '@runtipi/shared/node';
+import semver from 'semver';
+import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
+
+const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
 export class UpdateAppCommand implements IAppLifecycleCommand {
-  private queries: AppQueries;
+  private queries: IAppQueries;
   private eventDispatcher: EventDispatcher;
   private appDataService: AppDataService;
   private executeOtherCommand: IAppLifecycleCommand['execute'];
@@ -23,8 +25,18 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
     this.executeOtherCommand = params.executeOtherCommand;
   }
 
-  private async sendEvent(appId: string, form: AppEventFormInput, appStatusBeforeUpdate: AppStatus): Promise<void> {
-    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'update', appid: appId, form });
+  private async sendEvent(params: {
+    appId: string;
+    form: AppEventFormInput;
+    appStatusBeforeUpdate: AppStatus;
+    performBackup: boolean;
+  }): Promise<void> {
+    const { appId, form, appStatusBeforeUpdate, performBackup } = params;
+
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync(
+      { type: 'app', command: 'update', appid: appId, form, performBackup },
+      performBackup ? FIFTEEN_MINUTES : undefined,
+    );
 
     if (success) {
       const appInfo = await this.appDataService.getInstalledInfo(appId);
@@ -42,8 +54,8 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
     }
   }
 
-  async execute(params: { appId: string }): Promise<void> {
-    const { appId } = params;
+  async execute(params: { appId: string; performBackup: boolean }): Promise<void> {
+    const { appId, performBackup } = params;
     const app = await this.queries.getApp(appId);
 
     if (!app) {
@@ -59,6 +71,6 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
     await this.queries.updateApp(appId, { status: 'updating' });
 
-    void this.sendEvent(appId, castAppConfig(app.config), app.status || 'missing');
+    void this.sendEvent({ appId, form: castAppConfig(app.config), appStatusBeforeUpdate: app.status || 'missing', performBackup });
   }
 }

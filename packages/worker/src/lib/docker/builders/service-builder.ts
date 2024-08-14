@@ -1,4 +1,4 @@
-import { DependsOn } from './schemas';
+import type { DependsOn } from './schemas';
 
 interface ServicePort {
   containerPort: number;

@@ -1,10 +1,10 @@
 'use server';
 
-import { cookies } from 'next/headers';
-import { db } from '@/server/db';
-import { AuthServiceClass } from '@/server/services/auth/auth.service';
-import { revalidatePath } from 'next/cache';
 import { authActionClient } from '@/lib/safe-action';
+import type { IAuthService } from '@/server/services/auth/auth.service';
+import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { container } from 'src/inversify.config';
 
 /**
  * Logs out the current user making the request.
@@ -19,7 +19,7 @@ export const logoutAction = authActionClient.action(async () => {
     };
   }
 
-  const authService = new AuthServiceClass(db);
+  const authService = container.get<IAuthService>('IAuthService');
   await authService.logout(sessionCookie.value);
 
   revalidatePath('/');

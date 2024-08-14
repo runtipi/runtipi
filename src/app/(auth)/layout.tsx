@@ -1,8 +1,8 @@
-import React from 'react';
-import Image from 'next/image';
-import { getCurrentLocale } from 'src/utils/getCurrentLocale';
 import { getLogo } from '@/lib/themes';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import Image from 'next/image';
+import type React from 'react';
+import { getCurrentLocale } from 'src/utils/getCurrentLocale';
 import { LanguageSelector } from '../components/LanguageSelector';
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {

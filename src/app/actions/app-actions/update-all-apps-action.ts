@@ -1,10 +1,10 @@
 'use server';
 
-import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
-import { revalidatePath } from 'next/cache';
-import { Logger } from '@/server/core/Logger';
 import { authActionClient } from '@/lib/safe-action';
+import { Logger } from '@/server/core/Logger';
+import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
+import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
+import { revalidatePath } from 'next/cache';
 
 export const updateAllAppsAction = authActionClient.action(async () => {
   const installedApps = await appCatalog.executeCommand('getInstalledApps');
@@ -12,7 +12,7 @@ export const updateAllAppsAction = authActionClient.action(async () => {
 
   const updatePromises = availableUpdates.map(async (app) => {
     try {
-      await appLifecycle.executeCommand('updateApp', { appId: app.id });
+      await appLifecycle.executeCommand('updateApp', { appId: app.id, performBackup: true });
       revalidatePath(`/app/${app.id}`);
       revalidatePath(`/app-store/${app.id}`);
     } catch (e) {

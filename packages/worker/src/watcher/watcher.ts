@@ -1,21 +1,13 @@
+import { getEnv } from '@/lib/environment';
+import { logger } from '@/lib/logger';
+import { RepoExecutors } from '@/services';
 import { eventSchema } from '@runtipi/shared';
 import { Worker } from 'bullmq';
-import { AppExecutors, RepoExecutors } from '@/services';
-import { logger } from '@/lib/logger';
-import { getEnv } from '@/lib/environment';
+import { container } from 'src/inversify.config';
+import type { IAppExecutors } from 'src/services/app/app.executors';
 
-const {
-  installApp,
-  resetApp,
-  startApp,
-  stopApp,
-  restartApp,
-  uninstallApp,
-  updateApp,
-  regenerateAppEnv,
-  backupApp,
-  restoreApp,
-} = new AppExecutors();
+const { installApp, resetApp, startApp, stopApp, restartApp, uninstallApp, updateApp, regenerateAppEnv, backupApp, restoreApp } =
+  container.get<IAppExecutors>('IAppExecutors');
 const { cloneRepo, pullRepo } = new RepoExecutors();
 
 const runCommand = async (jobData: unknown) => {
@@ -48,7 +40,7 @@ const runCommand = async (jobData: unknown) => {
     }
 
     if (data.command === 'update') {
-      ({ success, message } = await updateApp(data.appid, data.form));
+      ({ success, message } = await updateApp(data.appid, data.form, data.performBackup));
     }
 
     if (data.command === 'reset') {

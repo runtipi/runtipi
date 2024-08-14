@@ -2,13 +2,13 @@
 /* eslint-disable no-restricted-syntax */
 import crypto from 'crypto';
 import fs from 'fs';
-import path from 'path';
 import os from 'os';
+import path from 'path';
+import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/config/constants';
 import { envMapToString, envStringToMap, settingsSchema } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';
-import { logger } from '../logger/logger';
 import { getRepoHash } from '../../services/repo/repo.helpers';
-import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/config/constants';
+import { logger } from '../logger/logger';
 
 type EnvKeys =
   | 'APPS_REPO_ID'
@@ -45,7 +45,7 @@ type EnvKeys =
   | (string & {});
 
 const OLD_DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
-const DEFAULT_REPO_URL = 'https://github.com/runtipi/runtipi-appstore';
+export const DEFAULT_REPO_URL = 'https://github.com/runtipi/runtipi-appstore';
 
 /**
  * Reads and returns the generated seed
@@ -157,43 +157,26 @@ export const generateSystemEnvFile = async () => {
   envMap.set('ARCHITECTURE', getArchitecture());
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
-  envMap.set(
-    'RUNTIPI_APP_DATA_PATH',
-    data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH') || rootFolderHost,
-  );
+  envMap.set('RUNTIPI_APP_DATA_PATH', data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH') || rootFolderHost);
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
   envMap.set('POSTGRES_PORT', String(5432));
   envMap.set('REDIS_HOST', 'runtipi-redis');
-  envMap.set(
-    'DEMO_MODE',
-    typeof data.demoMode === 'boolean' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false',
-  );
-  envMap.set(
-    'GUEST_DASHBOARD',
-    typeof data.guestDashboard === 'boolean'
-      ? String(data.guestDashboard)
-      : envMap.get('GUEST_DASHBOARD') || 'false',
-  );
+  envMap.set('DEMO_MODE', typeof data.demoMode === 'boolean' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
+  envMap.set('GUEST_DASHBOARD', typeof data.guestDashboard === 'boolean' ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
   envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
   envMap.set(
     'ALLOW_AUTO_THEMES',
-    typeof data.allowAutoThemes === 'boolean'
-      ? String(data.allowAutoThemes)
-      : envMap.get('ALLOW_AUTO_THEMES') || 'true',
+    typeof data.allowAutoThemes === 'boolean' ? String(data.allowAutoThemes) : envMap.get('ALLOW_AUTO_THEMES') || 'true',
   );
   envMap.set(
     'ALLOW_ERROR_MONITORING',
-    typeof data.allowErrorMonitoring === 'boolean'
-      ? String(data.allowErrorMonitoring)
-      : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
+    typeof data.allowErrorMonitoring === 'boolean' ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
   );
   envMap.set(
     'PERSIST_TRAEFIK_CONFIG',
-    typeof data.persistTraefikConfig === 'boolean'
-      ? String(data.persistTraefikConfig)
-      : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
+    typeof data.persistTraefikConfig === 'boolean' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
   envMap.set('JOB_TIMEOUT', String(data.jobTimeout || 300000));
 
@@ -224,10 +207,7 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
     logger.warn('Skipping the copy of traefik files because persistTraefikConfig is set to true');
   } else {
     logger.info('Copying traefik files');
-    await fs.promises.copyFile(
-      path.join(assetsFolder, 'traefik', 'traefik.yml'),
-      path.join(DATA_DIR, 'traefik', 'traefik.yml'),
-    );
+    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(DATA_DIR, 'traefik', 'traefik.yml'));
     await fs.promises.copyFile(
       path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'),
       path.join(DATA_DIR, 'traefik', 'dynamic', 'dynamic.yml'),
@@ -328,10 +308,7 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
     const { stderr } = await execAsync(
       `openssl req -x509 -newkey rsa:4096 -keyout ${DATA_DIR}/traefik/tls/key.pem -out ${DATA_DIR}/traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "subjectAltName = ${subjectAltName}" -nodes`,
     );
-    if (
-      !(await pathExists(path.join(tlsFolder, 'cert.pem'))) ||
-      !(await pathExists(path.join(tlsFolder, 'key.pem')))
-    ) {
+    if (!(await pathExists(path.join(tlsFolder, 'cert.pem'))) || !(await pathExists(path.join(tlsFolder, 'key.pem')))) {
       logger.error(`Failed to generate TLS certificate for ${data.domain}`);
       logger.error(stderr);
     } else {

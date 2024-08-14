@@ -1,6 +1,6 @@
 import React from 'react';
-import { vi, describe, it, expect } from 'vitest';
-import { fireEvent, screen, render } from '../../../../../tests/test-utils';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '../../../../../tests/test-utils';
 import { EmptyPage } from './EmptyPage';
 
 describe('<EmptyPage />', () => {

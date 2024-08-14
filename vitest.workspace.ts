@@ -1,5 +1,5 @@
-import { UserWorkspaceConfig, defineWorkspace } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { type UserWorkspaceConfig, defineWorkspace } from 'vitest/config';
 
 import tsconfigPaths from 'vite-tsconfig-paths';
 

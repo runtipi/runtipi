@@ -1,18 +1,18 @@
-import React from 'react';
-import { redirect } from 'next/navigation';
 import { getUserFromCookie } from '@/server/common/session.helpers';
-import { SystemServiceClass } from '@/server/services/system';
-import semver from 'semver';
-import clsx from 'clsx';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { isInstanceInsecure } from '@/server/utils/network';
-import { Header } from './components/Header';
-import { PageTitle } from './components/PageTitle';
-import styles from './layout.module.scss';
-import { LayoutActions } from './components/LayoutActions/LayoutActions';
-import { Welcome } from './components/Welcome/Welcome';
-import { AtRiskBanner } from './components/AtRiskBanner/AtRiskBanner';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
+import { SystemServiceClass } from '@/server/services/system';
+import { isInstanceInsecure } from '@/server/utils/network';
+import clsx from 'clsx';
+import { redirect } from 'next/navigation';
+import type React from 'react';
+import semver from 'semver';
+import { AtRiskBanner } from './components/AtRiskBanner/AtRiskBanner';
+import { Header } from './components/Header';
+import { LayoutActions } from './components/LayoutActions/LayoutActions';
+import { PageTitle } from './components/PageTitle';
+import { Welcome } from './components/Welcome/Welcome';
+import styles from './layout.module.scss';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getUserFromCookie();

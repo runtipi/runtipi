@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useLocalStorage } from '@uidotdev/usehooks';
 import clsx from 'clsx';
-import styles from './LogsTerminal.module.scss';
 import { useTranslations } from 'next-intl';
+import React, { useEffect, useRef } from 'react';
+import styles from './LogsTerminal.module.scss';
+import DOMPurify from 'dompurify';
 
 type Props = {
   logs: { id: number; text: string }[];
@@ -15,8 +17,8 @@ export const LogsTerminal = (props: Props) => {
   const t = useTranslations();
 
   const { logs, onMaxLinesChange, maxLines } = props;
-  const [follow, setFollow] = useState<boolean>(true);
-  const [wrapLines, setWrapLines] = useState<boolean>(false);
+  const [follow, setFollow] = useLocalStorage<boolean>('logs-follow', true);
+  const [wrapLines, setWrapLines] = useLocalStorage<boolean>('logs-wraplines', false);
   const ref = useRef<HTMLPreElement>(null);
 
   const lastLogId = logs.length > 0 ? logs.at(-1)?.id : null;
@@ -60,14 +62,16 @@ export const LogsTerminal = (props: Props) => {
           </div>
         </div>
       </div>
-      <pre id="log-terminal" className={clsx('mt-2', styles.logTerminal, { [styles.wrapLines || '']: wrapLines })} ref={ref}>
-        {logs.map((log) => (
-          <React.Fragment key={log.id}>
-            {log.text}
-            <br />
-          </React.Fragment>
-        ))}
-      </pre>
+      <pre
+        id="log-terminal"
+        className={clsx("mt-2", styles.logTerminal, {
+          [styles.wrapLines || ""]: wrapLines,
+        })}
+        ref={ref}
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(logs.map(({ text }) => text).join("<br>")),
+        }}
+      />
     </div>
   );
 };

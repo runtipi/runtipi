@@ -5,7 +5,7 @@
     "paths": {
       "@/components/*": ["./src/client/components/*"],
       "@/hooks/*": ["./src/app/hooks/*"],
-      "@/utils/*": ["./src/client/utils/*"],
+      "@/utils/*": ["./src/utils/*"],
       "@/client/*": ["./src/client/*"],
       "@/server/*": ["./src/server/*"],
       "@/shared/*": ["./src/shared/*"],
@@ -20,7 +20,6 @@
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
     "esModuleInterop": true,
     "module": "CommonJS",
     "moduleResolution": "node",
@@ -31,13 +30,15 @@
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
-    "types": ["@testing-library/jest-dom", "node"],
+    "types": ["@testing-library/jest-dom", "node", "reflect-metadata"],
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "noEmit": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.mjs", "**/*.js", "**/*.jsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules", "packages", "repos"]

@@ -11,7 +11,7 @@ type Transports = transports.ConsoleTransportInstance | transports.FileTransport
  * @param {string} id - The id of the logger, used to identify the logger in the logs
  * @param {string} logsFolder - The folder where the logs will be stored
  */
-export const newLogger = (id: string, logsFolder: string, console?: boolean) => {
+export const newLogger = (id: string, logsFolder: string) => {
   const tr: Transports[] = [];
   let exceptionHandlers: Transports[] = [new transports.Console()];
   try {
@@ -29,15 +29,11 @@ export const newLogger = (id: string, logsFolder: string, console?: boolean) => 
     );
     exceptionHandlers = [new transports.File({ filename: path.join(logsFolder, 'error.log') })];
 
-    if (process.env.NODE_ENV === 'development') {
-      tr.push(new transports.Console({ level: 'debug' }));
-    } else if (console) {
-      tr.push(new transports.Console({ level: 'info' }));
-    }
+    tr.push(new transports.Console({ level: process.env.NODE_ENV === 'development' ? 'debug' : 'info' }));
   } catch (error) {}
 
   return createLogger({
-    level: 'debug',
+    level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
     format: combine(
       label({ label: id }),
       colorize(),

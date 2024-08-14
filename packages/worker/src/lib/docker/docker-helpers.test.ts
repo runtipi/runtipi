@@ -1,10 +1,10 @@
 // const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: '', stderr: randomError }));
 
-import { vi, it, describe, beforeEach, expect } from 'vitest';
-import { faker } from '@faker-js/faker';
 import fs from 'fs';
-import { compose } from './docker-helpers';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
+import { faker } from '@faker-js/faker';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { compose } from './docker-helpers';
 
 const execAsync = vi.fn().mockImplementation(() => Promise.resolve({ stdout: '', stderr: '' }));
 

@@ -1,41 +1,42 @@
 import fs from 'fs';
 import path from 'path';
 import { newLogger as createLogger } from './Logger';
+import type { ILogger } from './Logger.interface';
 
-function streamLogToHistory(logsFolder: string, logFile: string) {
-  return new Promise((resolve, reject) => {
-    const appLogReadStream = fs.createReadStream(path.join(logsFolder, logFile), 'utf-8');
-    const appLogHistoryWriteStream = fs.createWriteStream(path.join(logsFolder, `${logFile}.history`), { flags: 'a' });
-
-    appLogReadStream
-      .pipe(appLogHistoryWriteStream)
-      .on('finish', () => {
-        fs.writeFileSync(path.join(logsFolder, logFile), '');
-        resolve(true);
-      })
-      .on('error', (error) => {
-        reject(error);
-      });
-  });
-}
-
-export class FileLogger {
+export class Logger implements ILogger {
   private winstonLogger;
 
   private logsFolder;
 
-  constructor(name: string, folder: string, console?: boolean) {
-    this.winstonLogger = createLogger(name, folder, console);
+  constructor(id: string, folder: string) {
+    this.winstonLogger = createLogger(id, folder);
     this.logsFolder = folder;
+  }
+
+  streamLogToHistory(logFile: string) {
+    return new Promise((resolve, reject) => {
+      const appLogReadStream = fs.createReadStream(path.join(this.logsFolder, logFile), 'utf-8');
+      const appLogHistoryWriteStream = fs.createWriteStream(path.join(this.logsFolder, `${logFile}.history`), { flags: 'a' });
+
+      appLogReadStream
+        .pipe(appLogHistoryWriteStream)
+        .on('finish', () => {
+          fs.writeFileSync(path.join(this.logsFolder, logFile), '');
+          resolve(true);
+        })
+        .on('error', (error) => {
+          reject(error);
+        });
+    });
   }
 
   public flush = async () => {
     try {
       if (fs.existsSync(path.join(this.logsFolder, 'app.log'))) {
-        await streamLogToHistory(this.logsFolder, 'app.log');
+        await this.streamLogToHistory('app.log');
       }
       if (fs.existsSync(path.join(this.logsFolder, 'error.log'))) {
-        await streamLogToHistory(this.logsFolder, 'error.log');
+        await this.streamLogToHistory('error.log');
       }
       this.winstonLogger.info('Logs flushed');
     } catch (error) {
@@ -43,19 +44,28 @@ export class FileLogger {
     }
   };
 
+  private log = (level: string, messages: unknown[]) => {
+    if (typeof window !== 'undefined') {
+      console.log(level, messages.join(' '));
+      return;
+    }
+
+    this.winstonLogger.log(level, messages.join(' '));
+  };
+
   public error = (...message: unknown[]) => {
-    this.winstonLogger.error(message.join(' '));
+    this.log('error', message);
   };
 
   public info = (...message: unknown[]) => {
-    this.winstonLogger.info(message.join(' '));
+    this.log('info', message);
   };
 
   public warn = (...message: unknown[]) => {
-    this.winstonLogger.warn(message.join(' '));
+    this.log('warn', message);
   };
 
   public debug = (...message: unknown[]) => {
-    this.winstonLogger.debug(message.join(' '));
+    this.log('debug', message);
   };
 }

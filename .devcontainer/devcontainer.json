@@ -6,16 +6,9 @@
       "moby": true
     }
   },
-  "extensions": [
-    "ms-azuretools.vscode-docker",
-    "ms-vscode.vscode-typescript-next",
-    "waderyan.gitblame"
-  ],
+  "extensions": ["ms-azuretools.vscode-docker", "ms-vscode.vscode-typescript-next", "waderyan.gitblame"],
   "postCreateCommand": "./.devcontainer/postCreateCommand.sh",
-  "forwardPorts": [
-    80,
-    3000
-  ],
+  "forwardPorts": [80, 3000],
   "portsAttributes": {
     "3000": {
       "label": "Runtipi"

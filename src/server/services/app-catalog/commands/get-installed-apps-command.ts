@@ -1,12 +1,12 @@
-import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { notEmpty } from '@/server/common/typescript.helpers';
-import { AppCatalogCommandParams, IAppCatalogCommand } from './types';
-import { AppDataService } from '@runtipi/shared/node';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
+import type { AppDataService } from '@runtipi/shared/node';
+import type { AppCatalogCommandParams, IAppCatalogCommand } from './types';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetInstalledAppsCommand>['execute']>>;
 
 export class GetInstalledAppsCommand implements IAppCatalogCommand<ReturnValue> {
-  private queries: AppQueries;
+  private queries: IAppQueries;
   private appDataService: AppDataService;
 
   constructor(params: AppCatalogCommandParams) {

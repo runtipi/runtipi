@@ -1,9 +1,9 @@
+import path from 'path';
+import { handleApiError } from '@/actions/utils/handle-api-error';
 import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
+import { sanitizePath } from '@runtipi/shared';
 import { pathExists } from '@runtipi/shared/node';
 import fs from 'fs-extra';
-import path from 'path';
-import { sanitizePath } from '@runtipi/shared';
-import { handleApiError } from '@/actions/utils/handle-api-error';
 import { APP_DIR, DATA_DIR } from '../../../config/constants';
 
 export async function GET(request: Request) {

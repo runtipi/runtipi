@@ -1,18 +1,19 @@
-import React, { useEffect } from 'react';
+import type React from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { Tooltip } from 'react-tooltip';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Switch } from '@/components/ui/Switch';
+import { useClientSettings } from '@/hooks/useClientSettings';
+import type { AppStatus } from '@runtipi/db';
+import type { AppInfo, FormField } from '@runtipi/shared';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import { type FormField, type AppInfo } from '@runtipi/shared';
-import { Switch } from '@/components/ui/Switch';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { AppStatus } from '@/server/db/schema';
+import { Tooltip } from 'react-tooltip';
 import { validateAppConfig } from '../../utils/validators';
+import type { FormValues } from './InstallForm.types';
 import { InstallFormField } from './InstallFormField';
-import { FormValues } from './InstallForm.types';
-import { useClientSettings } from '@/hooks/useClientSettings';
 
 interface IProps {
   formFields: FormField[];
@@ -50,9 +51,9 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
 
   useEffect(() => {
     if (initialValues && !isDirty) {
-      Object.entries(initialValues).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(initialValues)) {
         setValue(key, value as string);
-      });
+      }
     }
   }, [initialValues, isDirty, setValue]);
 
@@ -164,11 +165,11 @@ export const InstallForm: React.FC<IProps> = ({ formFields, info, onSubmit, init
   const validate = (values: FormValues) => {
     const validationErrors = validateAppConfig(values, formFields);
 
-    Object.entries(validationErrors).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(validationErrors)) {
       if (value) {
         setError(key, { message: value });
       }
-    });
+    }
 
     if (Object.keys(validationErrors).length === 0) {
       onSubmit(values);

@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
-import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import type { AppStoreApiResponse } from '@/api/app-store/route';
 import { useInfiniteScroll } from '@/client/hooks/useInfiniteScroll';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
+import type React from 'react';
 import { EmptyPage } from '../../../../components/EmptyPage';
-import { AppStoreTile } from '../AppStoreTile';
 import { useAppStoreState } from '../../state/appStoreState';
+import { AppStoreTile } from '../AppStoreTile';
 
 interface IProps {
   initialData: AppStoreApiResponse;
@@ -47,7 +47,7 @@ export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
     placeholderData: keepPreviousData,
   });
 
-  const apps = data?.pages.map((page) => page.data).flat();
+  const apps = data?.pages.flatMap((page) => page.data);
 
   const { lastElementRef } = useInfiniteScroll({
     fetchNextPage,

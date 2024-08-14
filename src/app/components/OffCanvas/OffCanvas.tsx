@@ -1,7 +1,7 @@
 'use client';
 
-import React, { PropsWithChildren } from 'react';
 import clsx from 'clsx';
+import React, { type PropsWithChildren } from 'react';
 
 type Props = {
   position: 'bottom' | 'top';

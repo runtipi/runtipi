@@ -1,10 +1,10 @@
-import * as Sentry from '@sentry/nextjs';
 import { ensureUser } from '@/actions/utils/ensure-user';
-import { MessageKey, TranslatedError } from '@/server/utils/errors';
-import { createSafeActionClient } from 'next-safe-action';
-import { getTranslator } from './get-translator';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import { type MessageKey, TranslatedError } from '@/server/utils/errors';
+import * as Sentry from '@sentry/nextjs';
+import { createSafeActionClient } from 'next-safe-action';
 import { revalidatePath } from 'next/cache';
+import { getTranslator } from './get-translator';
 
 export const publicActionClient = createSafeActionClient({
   handleReturnedServerError: async (e) => {

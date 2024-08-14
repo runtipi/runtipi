@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import clsx from 'clsx';
 import { IconChevronLeft, IconChevronRight, IconDots } from '@tabler/icons-react';
+import clsx from 'clsx';
 import { Button, type ButtonProps } from '../Button';
 import styles from './Pagination.module.scss';
 

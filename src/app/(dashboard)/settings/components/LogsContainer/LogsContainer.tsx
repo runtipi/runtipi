@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import { ClientOnly } from '@/components/ClientOnly/ClientOnly';
 import { useSocket } from '@/lib/socket/useSocket';
+import React, { useState, useRef } from 'react';
 import { LogsTerminal } from 'src/app/components/LogsTerminal/LogsTerminal';
 
 export const LogsContainer = () => {
@@ -34,5 +35,9 @@ export const LogsContainer = () => {
     setLogs(logs.slice(logs.length - linesToKeep));
   };
 
-  return <LogsTerminal logs={logs} maxLines={maxLines.current} onMaxLinesChange={updateMaxLines} />;
+  return (
+    <ClientOnly>
+      <LogsTerminal logs={logs} maxLines={maxLines.current} onMaxLinesChange={updateMaxLines} />
+    </ClientOnly>
+  );
 };

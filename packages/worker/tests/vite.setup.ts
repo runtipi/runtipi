@@ -1,7 +1,8 @@
-import fs from 'fs';
-import path from 'path';
-import { vi, beforeEach } from 'vitest';
+import 'reflect-metadata';
+import fs from 'node:fs';
+import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
+import { beforeEach, vi } from 'vitest';
 
 vi.mock('@runtipi/shared/node', async (importOriginal) => {
   const mod = (await importOriginal()) as object;

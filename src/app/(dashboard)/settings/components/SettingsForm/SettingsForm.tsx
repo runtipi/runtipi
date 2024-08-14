@@ -1,16 +1,17 @@
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Switch } from '@/components/ui/Switch';
+import type { Locale } from '@/shared/internationalization/locales';
 import { IconAdjustmentsAlt, IconUser } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import React, { useEffect } from 'react';
+import type React from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
-import validator from 'validator';
-import { Locale } from '@/shared/internationalization/locales';
-import { Switch } from '@/components/ui/Switch';
-import { LanguageSelector } from '../../../../components/LanguageSelector';
 import { TimeZoneSelector } from 'src/app/components/TimeZoneSelector/TimeZoneSelector';
+import validator from 'validator';
+import { LanguageSelector } from '../../../../components/LanguageSelector';
 
 export type SettingsFormValues = {
   dnsIp?: string;

@@ -1,6 +1,6 @@
-import path from 'path';
-import pg from 'pg';
+import path from 'node:path';
 import { migrate } from '@runtipi/postgres-migrations';
+import pg from 'pg';
 import { createClient } from 'redis';
 import { Logger } from './core/Logger';
 import { TipiConfig } from './core/TipiConfig';
@@ -36,11 +36,11 @@ export const runPostgresMigrations = async (dbName?: string) => {
 
   Logger.info('Running migrations');
   try {
-    await migrate({ client }, path.join(__dirname, '../../packages/worker/assets/migrations'), { skipCreateMigrationTable: true });
+    await migrate({ client }, path.join(__dirname, '../../packages/db/assets/migrations'), { skipCreateMigrationTable: true });
   } catch (e) {
     Logger.error('Error running migrations. Dropping table migrations and trying again');
     await client.query('DROP TABLE migrations');
-    await migrate({ client }, path.join(__dirname, '../../packages/worker/assets/migrations'), { skipCreateMigrationTable: true });
+    await migrate({ client }, path.join(__dirname, '../../packages/db/assets/migrations'), { skipCreateMigrationTable: true });
   }
 
   Logger.info('Migration complete');

@@ -1,8 +1,8 @@
-import React from 'react';
 import { faker } from '@faker-js/faker';
-import { describe, it, expect, vi } from 'vitest';
-import { OtpInput } from './OtpInput';
+import React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../tests/test-utils';
+import { OtpInput } from './OtpInput';
 
 describe('<OtpInput />', () => {
   it('should accept value & valueLength props', () => {

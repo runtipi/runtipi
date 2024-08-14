@@ -1,22 +1,20 @@
-import fs from 'fs-extra';
 import path from 'path';
-import { FileLogger } from '../../../logger/FileLogger';
+import fs from 'fs-extra';
 import { sanitizePath } from '../../../../helpers/sanitizers';
-import { pathExists } from '../../../helpers/fs-helpers';
 import { appInfoSchema } from '../../../../schemas/app-schemas';
+import { pathExists } from '../../../helpers/fs-helpers';
+import { Logger } from '../../../logger/FileLogger';
 
 // Lower level data access class for apps
 export class DataAccessApp {
   private dataDir: string;
-  private appDataDir: string;
   private appsRepoId: string;
-  private logger: FileLogger;
+  private logger: Logger;
 
   constructor(params: { dataDir: string; appDataDir: string; appsRepoId: string }) {
     this.dataDir = params.dataDir;
-    this.appDataDir = params.appDataDir;
     this.appsRepoId = params.appsRepoId;
-    this.logger = new FileLogger('data-access-app', path.join(params.dataDir, 'logs'), true);
+    this.logger = new Logger('data-access-app', path.join(params.dataDir, 'logs'));
   }
 
   private getInstalledAppsFolder() {
@@ -36,17 +34,11 @@ export class DataAccessApp {
       const repoAppFolder = path.join(this.getAppsRepoFolder(), sanitizePath(id));
 
       if (await pathExists(path.join(repoAppFolder, 'config.json'))) {
-        const configFile = await fs.promises.readFile(
-          path.join(repoAppFolder, 'config.json'),
-          'utf8',
-        );
+        const configFile = await fs.promises.readFile(path.join(repoAppFolder, 'config.json'), 'utf8');
         const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile));
 
         if (parsedConfig.success && parsedConfig.data.available) {
-          const description = await fs.promises.readFile(
-            path.join(repoAppFolder, 'metadata', 'description.md'),
-            'utf8',
-          );
+          const description = await fs.promises.readFile(path.join(repoAppFolder, 'metadata', 'description.md'), 'utf8');
           return { ...parsedConfig.data, description };
         }
       }
@@ -64,17 +56,11 @@ export class DataAccessApp {
       const installedAppFolder = path.join(this.getInstalledAppsFolder(), sanitizePath(id));
 
       if (await pathExists(path.join(installedAppFolder, 'config.json'))) {
-        const configFile = await fs.promises.readFile(
-          path.join(installedAppFolder, 'config.json'),
-          'utf8',
-        );
+        const configFile = await fs.promises.readFile(path.join(installedAppFolder, 'config.json'), 'utf8');
         const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile));
 
         if (parsedConfig.success && parsedConfig.data.available) {
-          const description = await fs.promises.readFile(
-            path.join(installedAppFolder, 'metadata', 'description.md'),
-            'utf8',
-          );
+          const description = await fs.promises.readFile(path.join(installedAppFolder, 'metadata', 'description.md'), 'utf8');
           return { ...parsedConfig.data, description };
         }
       }
@@ -109,9 +95,7 @@ export class DataAccessApp {
     const appsRepoFolder = this.getAppsRepoFolder();
 
     if (!(await pathExists(appsRepoFolder))) {
-      this.logger.error(
-        `Apps repo ${this.appsRepoId} not found. Make sure your repo is configured correctly.`,
-      );
+      this.logger.error(`Apps repo ${this.appsRepoId} not found. Make sure your repo is configured correctly.`);
       return [];
     }
 

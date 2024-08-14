@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
-import { useAction } from 'next-safe-action/hooks';
-import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
 import { registerAction } from '@/actions/register/register-action';
+import { useAction } from 'next-safe-action/hooks';
+import { useRouter } from 'next/navigation';
+import type React from 'react';
+import { toast } from 'react-hot-toast';
 import { RegisterForm } from '../RegisterForm';
 
 export const RegisterContainer: React.FC = () => {

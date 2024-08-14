@@ -1,1 +1,0 @@
-export { tipiCache } from './TipiCache';

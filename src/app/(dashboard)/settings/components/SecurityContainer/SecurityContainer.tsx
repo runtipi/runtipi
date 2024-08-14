@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
-import { IconLock, IconKey, IconUser } from '@tabler/icons-react';
+import { IconKey, IconLock, IconUser } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import { OtpForm } from '../OtpForm';
+import React from 'react';
 import { ChangePasswordForm } from '../ChangePasswordForm';
 import { ChangeUsernameForm } from '../ChangeUsernameForm';
+import { OtpForm } from '../OtpForm';
 
 export const SecurityContainer = (props: { totpEnabled: boolean; username?: string }) => {
   const { totpEnabled, username } = props;

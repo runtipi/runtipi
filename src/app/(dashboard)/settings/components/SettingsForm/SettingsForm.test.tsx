@@ -1,8 +1,8 @@
-import React from 'react';
 import { faker } from '@faker-js/faker';
-import { vi, describe, it, expect } from 'vitest';
-import { SettingsForm } from './SettingsForm';
+import React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
+import { SettingsForm } from './SettingsForm';
 
 describe('Test: SettingsForm', () => {
   it('should render without error', () => {

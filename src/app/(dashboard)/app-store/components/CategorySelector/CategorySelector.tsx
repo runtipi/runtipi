@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Select, SelectItem, SelectValue, SelectContent, SelectTrigger } from '@/components/ui/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
+import type { AppCategory } from '@runtipi/shared';
 import { useTranslations } from 'next-intl';
-import { AppCategory } from '@runtipi/shared';
+import React, { useState } from 'react';
 import { iconForCategory } from '../../helpers/table.helpers';
 
 interface Props {

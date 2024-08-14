@@ -1,15 +1,15 @@
-import fs from 'fs-extra';
-import { TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
-import { faker } from '@faker-js/faker';
-import path from 'path';
+import path from 'node:path';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { beforeEach, beforeAll, afterAll, describe, it, expect } from 'vitest';
-import { AppCatalogClass } from './app-catalog.service';
-import { createAppConfig, insertApp } from '../../tests/apps.factory';
-import { TipiConfig } from '../../core/TipiConfig';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
+import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
+import { faker } from '@faker-js/faker';
 import { AppDataService } from '@runtipi/shared/node';
+import fs from 'fs-extra';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { TipiConfig } from '../../core/TipiConfig';
+import { createAppConfig, insertApp } from '../../tests/apps.factory';
 import { AppCatalogCache } from './app-catalog-cache';
+import { AppCatalogClass } from './app-catalog.service';
 
 let db: TestDatabase;
 let appCatalog: AppCatalogClass;
@@ -21,7 +21,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
-  appCatalog = new AppCatalogClass(new AppQueries(db.db), new AppCatalogCache(appDataService), appDataService);
+  appCatalog = new AppCatalogClass(new AppQueries(db.dbClient), new AppCatalogCache(appDataService), appDataService);
   await clearDatabase(db);
   await TipiConfig.setConfig('version', 'test');
 });

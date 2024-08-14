@@ -1,5 +1,5 @@
-import { UserWorkspaceConfig, defineConfig } from 'vitest/config';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { type UserWorkspaceConfig, defineConfig } from 'vitest/config';
 
 type Plugin = Exclude<UserWorkspaceConfig['plugins'], undefined>[number];
 

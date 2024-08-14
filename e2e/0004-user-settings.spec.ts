@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
 import fs from 'fs';
+import { expect, test } from '@playwright/test';
 import { loginUser } from './fixtures/fixtures';
-import { clearDatabase } from './helpers/db';
 import { testUser } from './helpers/constants';
+import { clearDatabase } from './helpers/db';
 import { setSettings } from './helpers/settings';
 
 test.beforeEach(async ({ page, context }) => {

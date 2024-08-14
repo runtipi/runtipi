@@ -1,9 +1,9 @@
 'use server';
 
-import { z } from 'zod';
-import { revalidatePath } from 'next/cache';
-import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
 import { authActionClient } from '@/lib/safe-action';
+import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
 const formSchema = z.object({}).catchall(z.any());
 

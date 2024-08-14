@@ -1,6 +1,6 @@
-import validator from 'validator';
 import { useUIStore } from '@/client/state/uiStore';
 import type { FormField } from '@runtipi/shared';
+import validator from 'validator';
 
 export const validateField = (field: FormField, value: string | undefined | boolean): string | undefined => {
   const { translator } = useUIStore.getState();

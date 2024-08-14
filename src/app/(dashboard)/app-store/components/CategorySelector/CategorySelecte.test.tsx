@@ -1,7 +1,7 @@
 import React from 'react';
-import { vi, describe, it, expect } from 'vitest';
-import { CategorySelector } from './CategorySelector';
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../../tests/test-utils';
+import { CategorySelector } from './CategorySelector';
 
 describe('Test: CategorySelector', () => {
   it('should render without crashing', () => {

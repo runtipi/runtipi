@@ -1,6 +1,6 @@
-import { Queue, QueueEvents } from 'bullmq';
-import { eventResultSchema, eventSchema, SystemEvent } from '@runtipi/shared';
 import { TipiConfig } from '@/server/core/TipiConfig';
+import { type SystemEvent, eventResultSchema, eventSchema } from '@runtipi/shared';
+import { Queue, QueueEvents } from 'bullmq';
 import { Logger } from '../Logger';
 
 export class EventDispatcher {
@@ -53,7 +53,7 @@ export class EventDispatcher {
    * @param {SystemEvent} event - Event object
    * @returns {Promise<{ success: boolean; stdout?: string }>} - Promise that resolves when the event is done
    */
-  public async dispatchEventAsync(event: SystemEvent): Promise<{ success: boolean; stdout?: string }> {
+  public async dispatchEventAsync(event: SystemEvent, timeout: number = 1000 * 60 * 5): Promise<{ success: boolean; stdout?: string }> {
     Logger.info(`Dispatching event ${JSON.stringify(event)}. Instance: ${this.instanceId}`);
     try {
       const job = await this.dispatchEvent(event);

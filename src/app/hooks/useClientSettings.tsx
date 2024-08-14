@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { ClientSettingsStoreContext } from '../components/ClientProviders/ClientSettingsProvider/ClientSettingsProvider';
 import { useStore } from 'zustand';
+import { ClientSettingsStoreContext } from '../components/ClientProviders/ClientSettingsProvider/ClientSettingsProvider';
 
 export const useClientSettings = () => {
   const clientSettingsStoreContext = useContext(ClientSettingsStoreContext);

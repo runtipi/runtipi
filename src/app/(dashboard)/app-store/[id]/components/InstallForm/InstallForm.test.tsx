@@ -1,8 +1,8 @@
-import React from 'react';
 import { faker } from '@faker-js/faker';
+import type { FormField } from '@runtipi/shared';
 import { fromPartial } from '@total-typescript/shoehorn';
-import { FormField } from '@runtipi/shared';
-import { vi, it, beforeEach, describe, expect } from 'vitest';
+import React from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../../../../../../tests/test-utils';
 import { InstallForm } from './InstallForm';
 

@@ -1,14 +1,14 @@
+import * as schema from '@runtipi/db';
+import type { ILogger } from '@runtipi/shared/node';
 /* eslint-disable no-restricted-syntax */
 import pg, { Pool } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { container } from 'src/inversify.config';
 import { TipiConfig } from '../core/TipiConfig';
-import * as schema from '../db/schema';
-import { Database } from '../db';
 import { runPostgresMigrations } from '../run-migrations-dev';
 
 export type TestDatabase = {
   client: Pool;
-  db: Database;
+  dbClient: schema.IDbClient;
 };
 
 /**
@@ -17,12 +17,13 @@ export type TestDatabase = {
  * @param {string} testsuite - name of the test suite
  */
 const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
+  const { postgresHost, postgresDatabase, postgresPort, postgresUsername, postgresPassword } = TipiConfig.getConfig();
   const pgClient = new pg.Client({
-    user: TipiConfig.getConfig().postgresUsername,
-    host: TipiConfig.getConfig().postgresHost,
-    database: TipiConfig.getConfig().postgresDatabase,
-    password: TipiConfig.getConfig().postgresPassword,
-    port: TipiConfig.getConfig().postgresPort,
+    user: postgresUsername,
+    host: postgresHost,
+    database: postgresDatabase,
+    password: postgresPassword,
+    port: postgresPort,
   });
   await pgClient.connect();
 
@@ -39,7 +40,21 @@ const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
     }:${TipiConfig.getConfig().postgresPort}/${testsuite}?connect_timeout=300`,
   });
 
-  return { client, db: drizzle(client, { schema }) };
+  const logger = container.get<ILogger>('ILogger');
+
+  return {
+    client,
+    dbClient: new schema.DbClient(
+      {
+        host: postgresHost,
+        port: postgresPort,
+        username: postgresUsername,
+        password: postgresPassword,
+        database: testsuite,
+      },
+      logger,
+    ),
+  };
 };
 
 /**
@@ -48,8 +63,8 @@ const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
  * @param {TestDatabase} database - database to clear
  */
 const clearDatabase = async (database: TestDatabase) => {
-  await database.db.delete(schema.userTable);
-  await database.db.delete(schema.appTable);
+  await database.dbClient.db.delete(schema.userTable);
+  await database.dbClient.db.delete(schema.appTable);
 };
 
 const closeDatabase = async (database: TestDatabase) => {

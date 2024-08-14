@@ -1,13 +1,13 @@
-import { AppQueries } from '@/server/queries/apps/apps.queries';
-import { AppDataService } from '@runtipi/shared/node';
-import { AppCatalogCache } from '../app-catalog-cache';
+import type { IAppQueries } from '@/server/queries/apps/apps.queries';
+import type { AppDataService } from '@runtipi/shared/node';
+import type { AppCatalogCache } from '../app-catalog-cache';
 
 export interface IAppCatalogCommand<T = unknown> {
   execute(...args: unknown[]): Promise<T>;
 }
 
 export type AppCatalogCommandParams = {
-  queries: AppQueries;
+  queries: IAppQueries;
   appDataService: AppDataService;
   appCatalogCache: AppCatalogCache;
 };

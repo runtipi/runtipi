@@ -1,10 +1,10 @@
-import fs from 'fs-extra';
 import { faker } from '@faker-js/faker';
+import { type App, type AppStatus, type NewApp, appTable } from '@runtipi/db';
+import { APP_CATEGORIES, type AppInfo, type Architecture, appInfoSchema } from '@runtipi/shared';
 import { eq } from 'drizzle-orm';
-import { AppInfo, Architecture, appInfoSchema, APP_CATEGORIES } from '@runtipi/shared';
+import fs from 'fs-extra';
 import { APP_DATA_DIR, DATA_DIR } from '../../config';
-import { TestDatabase } from './test-utils';
-import { appTable, AppStatus, App, NewApp } from '../db/schema';
+import type { TestDatabase } from './test-utils';
 
 interface IProps {
   installed?: boolean;
@@ -69,6 +69,8 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
   const appInfo: AppInfo = {
     id: randomId,
+    created_at: faker.date.recent().getTime(),
+    updated_at: faker.date.recent().getTime(),
     dynamic_config: true,
     deprecated: false,
     port: faker.number.int({ min: 3000, max: 5000 }),
@@ -114,7 +116,7 @@ const createApp = async (props: IProps, database: TestDatabase) => {
 
   let appEntity: App = {} as App;
   if (installed) {
-    const insertedApp = await database.db
+    const insertedApp = await database.dbClient.db
       .insert(appTable)
       .values({
         id: appInfo.id,
@@ -167,21 +169,21 @@ const insertApp = async (data: Partial<NewApp>, appInfo: AppInfo, database: Test
   // @ts-expect-error - custom mock method
   fs.__applyMockFiles(mockFiles);
 
-  const insertedApp = await database.db.insert(appTable).values(values).returning();
+  const insertedApp = await database.dbClient.db.insert(appTable).values(values).returning();
   return insertedApp[0] as App;
 };
 
 const getAppById = async (id: string, database: TestDatabase) => {
-  const apps = await database.db.select().from(appTable).where(eq(appTable.id, id));
+  const apps = await database.dbClient.db.select().from(appTable).where(eq(appTable.id, id));
   return apps[0] || null;
 };
 
 const updateApp = async (id: string, props: Partial<App>, database: TestDatabase) => {
-  await database.db.update(appTable).set(props).where(eq(appTable.id, id));
+  await database.dbClient.db.update(appTable).set(props).where(eq(appTable.id, id));
 };
 
 const getAllApps = async (database: TestDatabase) => {
-  const apps = await database.db.select().from(appTable);
+  const apps = await database.dbClient.db.select().from(appTable);
   return apps;
 };
 
