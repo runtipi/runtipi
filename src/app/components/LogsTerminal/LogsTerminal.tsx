@@ -2,10 +2,10 @@
 
 import { useLocalStorage } from '@uidotdev/usehooks';
 import clsx from 'clsx';
+import DOMPurify from 'dompurify';
 import { useTranslations } from 'next-intl';
 import React, { useEffect, useRef } from 'react';
 import styles from './LogsTerminal.module.scss';
-import DOMPurify from 'dompurify';
 
 type Props = {
   logs: { id: number; text: string }[];
@@ -23,6 +23,7 @@ export const LogsTerminal = (props: Props) => {
 
   const lastLogId = logs.length > 0 ? logs.at(-1)?.id : null;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This is used to scroll to the bottom of the logs
   useEffect(() => {
     if (ref.current && follow) {
       ref.current.scrollTop = ref.current.scrollHeight;
@@ -64,12 +65,13 @@ export const LogsTerminal = (props: Props) => {
       </div>
       <pre
         id="log-terminal"
-        className={clsx("mt-2", styles.logTerminal, {
-          [styles.wrapLines || ""]: wrapLines,
+        className={clsx('mt-2', styles.logTerminal, {
+          [styles.wrapLines || '']: wrapLines,
         })}
         ref={ref}
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: safe to use because the content is sanitized
         dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(logs.map(({ text }) => text).join("<br>")),
+          __html: DOMPurify.sanitize(logs.map(({ text }) => text).join('<br>')),
         }}
       />
     </div>

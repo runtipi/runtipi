@@ -75,28 +75,28 @@ export const SettingsForm = (props: IProps) => {
 
   useEffect(() => {
     if (initalValues && !isDirty) {
-      Object.entries(initalValues).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(initalValues)) {
         setValue(key as keyof SettingsFormValues, value);
-      });
+      }
     }
   }, [initalValues, isDirty, setValue]);
 
   useEffect(() => {
     if (submitErrors) {
-      Object.entries(submitErrors).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(submitErrors)) {
         setError(key as keyof SettingsFormValues, { message: value });
-      });
+      }
     }
   }, [submitErrors, setError]);
 
   const validate = (values: SettingsFormValues) => {
     const validationErrors = validateFields(values);
 
-    Object.entries(validationErrors).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(validationErrors)) {
       if (value) {
         setError(key as keyof SettingsFormValues, { message: value });
       }
-    });
+    }
 
     if (Object.keys(validationErrors).length === 0) {
       onSubmit(values);

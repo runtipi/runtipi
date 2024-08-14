@@ -29,6 +29,7 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
   const [lastData, setLastData] = useState(initialData as unknown);
   const socketRef = useRef<Socket>();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This effect should never re-run
   useEffect(() => {
     const { hostname, protocol } = window.location;
 

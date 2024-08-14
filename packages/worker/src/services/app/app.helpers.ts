@@ -1,6 +1,6 @@
-import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { getEnv } from '@/lib/environment';
 import { getMainEnvMap } from '@/lib/system/system.helpers';

@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import { createLogger, format, transports } from 'winston';
 import { DATA_DIR } from '../../../config/constants';

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { faker } from '@faker-js/faker';
 import { APP_CATEGORIES, type AppInfo, appInfoSchema } from '@runtipi/shared';

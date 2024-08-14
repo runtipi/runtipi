@@ -60,7 +60,7 @@ describe('<OtpInput />', () => {
     // assert
     expect(inputEls).toHaveLength(valueLength);
 
-    inputEls.forEach((inputEl) => {
+    for (const inputEl of inputEls) {
       const nonDigit = faker.number.float(1);
 
       fireEvent.change(inputEl, {
@@ -70,7 +70,7 @@ describe('<OtpInput />', () => {
       expect(onChange).not.toBeCalled();
 
       onChange.mockReset();
-    });
+    }
   });
 
   it('should allow deleting of digits (focus on previous element)', () => {

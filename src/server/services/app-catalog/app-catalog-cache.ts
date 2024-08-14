@@ -1,7 +1,7 @@
 import { Logger } from '@/server/core/Logger';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import MiniSearch from 'minisearch';
 import type { AppDataService } from '@runtipi/shared/node';
+import MiniSearch from 'minisearch';
 
 const sortApps = (a: AppList[number], b: AppList[number]) => a.id.localeCompare(b.id);
 const filterApp = (app: AppList[number]): boolean => {

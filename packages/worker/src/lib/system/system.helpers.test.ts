@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
 import { faker } from '@faker-js/faker';
 import { envMapToString } from '@runtipi/shared';

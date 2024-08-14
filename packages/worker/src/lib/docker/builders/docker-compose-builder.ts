@@ -17,7 +17,9 @@ export class DockerComposeBuilder {
   }
 
   addServices(services: BuiltService[]) {
-    services.forEach((service) => this.addService(service));
+    for (const service of services) {
+      this.addService(service);
+    }
     return this;
   }
 

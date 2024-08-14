@@ -62,8 +62,8 @@ export const TablePagination = ({ totalPages, currentPage, delta = 2, onPageChan
         <PaginationItem>
           <PaginationPrevious onClick={onBack} disabled={currentPage === 1} />
         </PaginationItem>
-        {pages.map((page, index) => (
-          <PaginationItem key={index} isActive={page === currentPage}>
+        {pages.map((page) => (
+          <PaginationItem key={page.toString()} isActive={page === currentPage}>
             {page === '...' ? (
               <PaginationEllipsis />
             ) : (

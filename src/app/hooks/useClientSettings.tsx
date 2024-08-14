@@ -6,7 +6,7 @@ export const useClientSettings = () => {
   const clientSettingsStoreContext = useContext(ClientSettingsStoreContext);
 
   if (!clientSettingsStoreContext) {
-    throw new Error(`useClientSettings must be used within a ClientSettingsStoreProvider`);
+    throw new Error('useClientSettings must be used within a ClientSettingsStoreProvider');
   }
 
   return useStore(clientSettingsStoreContext);

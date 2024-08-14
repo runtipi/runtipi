@@ -1,9 +1,7 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
-import crypto from 'crypto';
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/config/constants';
 import { envMapToString, envStringToMap, settingsSchema } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';

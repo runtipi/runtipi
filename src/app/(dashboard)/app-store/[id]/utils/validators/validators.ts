@@ -82,13 +82,13 @@ export const validateAppConfig = (values: Record<string, string | boolean | unde
 
   const errors: Record<string, string | undefined> = {};
 
-  fields.forEach((field) => {
+  for (const field of fields) {
     const error = validateField(field, config[field.env_variable]);
 
     if (error) {
       errors[field.env_variable] = validateField(field, config[field.env_variable]);
     }
-  });
+  }
 
   if (exposed) {
     const error = validateDomain(domain);

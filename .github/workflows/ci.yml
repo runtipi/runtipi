@@ -4,7 +4,7 @@ on:
 
 env:
   ROOT_FOLDER: /runtipi
-  JWT_SECRET: 'secret'
+  JWT_SECRET: "secret"
   ROOT_FOLDER_HOST: /runtipi
   APPS_REPO_ID: repo-id
   INTERNAL_IP: localhost
@@ -73,6 +73,9 @@ jobs:
 
       - name: Run linter on packages
         run: pnpm -r run lint
+
+      - name: Run biome tests
+        run: pnpm biome check
 
       - name: Get number of CPU cores
         id: cpu-cores

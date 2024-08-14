@@ -87,6 +87,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
             </Tooltip>
             <div
               onClick={() => setDarkMode(true)}
+              onKeyUp={() => setDarkMode(true)}
               role="button"
               aria-hidden="true"
               className="darkMode nav-link px-0 hide-theme-dark cursor-pointer"
@@ -99,6 +100,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
             </Tooltip>
             <div
               onClick={() => setDarkMode(false)}
+              onKeyUp={() => setDarkMode(false)}
               aria-hidden="true"
               className="lightMode nav-link px-0 hide-theme-light cursor-pointer"
               data-testid="light-mode-toggle"
@@ -112,6 +114,7 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
               onClick={() => logHandler()}
               tabIndex={0}
               onKeyPress={() => logHandler()}
+              onKeyUp={() => logHandler()}
               role="button"
               className="logOut nav-link px-0 cursor-pointer"
               data-testid="logout-button"
