@@ -3,12 +3,12 @@ import path from 'node:path';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { type SocketEvent, sanitizePath, socketEventSchema } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';
+import { codeToHast, hastToHtml } from 'shiki';
 import type { Socket } from 'socket.io';
 import { getRepoHash } from 'src/services/repo/repo.helpers';
-import { DEFAULT_REPO_URL } from '../system/system.helpers';
-import { codeToHast, hastToHtml } from 'shiki';
 import { getEnv } from '../environment';
 import { logger } from '../logger';
+import { DEFAULT_REPO_URL } from '../system/system.helpers';
 
 const getBaseComposeArgsApp = async (appId: string) => {
   const { arch, appsRepoId } = getEnv();

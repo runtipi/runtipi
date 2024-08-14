@@ -13,7 +13,7 @@ export const isInstanceInsecure = () => {
   const ip = myHeaders.get('x-forwarded-host')?.split(':')[0] || '';
 
   if (ipaddrjs.isValid(ip)) {
-    const range = ipaddrjs.parse(ip!).range();
+    const range = ipaddrjs.parse(ip).range();
     if (range !== 'private' && range !== 'carrierGradeNat') {
       return true;
     }

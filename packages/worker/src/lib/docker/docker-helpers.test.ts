@@ -1,6 +1,4 @@
-// const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: '', stderr: randomError }));
-
-import fs from 'fs';
+import fs from 'node:fs';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { faker } from '@faker-js/faker';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

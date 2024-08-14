@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import { logger } from '@/lib/logger';
 import * as Sentry from '@sentry/node';
 import si from 'systeminformation';

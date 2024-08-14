@@ -1,5 +1,5 @@
-import fs from 'fs';
-import zlib from 'zlib';
+import fs from 'node:fs';
+import zlib from 'node:zlib';
 import { extract, pack } from 'tar-fs';
 
 export class ArchiveManager {

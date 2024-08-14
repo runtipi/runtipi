@@ -79,7 +79,7 @@ export const InstallFormField = (props: IProps) => {
     );
   }
 
-  let type;
+  let type: string;
 
   switch (field.type) {
     case 'password':

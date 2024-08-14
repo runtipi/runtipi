@@ -14,7 +14,7 @@ const ScrollBar = React.forwardRef<
     orientation={orientation}
     className={clsx(
       styles.scrollbar,
-      { [styles.scrollbarVertical!]: orientation === 'vertical', [styles.scrollbarHorizontal!]: orientation === 'horizontal' },
+      { [styles.scrollbarVertical as string]: orientation === 'vertical', [styles.scrollbarHorizontal as string]: orientation === 'horizontal' },
       className,
     )}
     {...props}

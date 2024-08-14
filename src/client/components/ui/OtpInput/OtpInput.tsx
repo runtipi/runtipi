@@ -142,7 +142,7 @@ export const OtpInput = ({ value, valueLength, onChange, className }: Props) => 
           onChange={(e) => inputOnChange(e, idx)}
           onKeyDown={inputOnKeyDown}
           onFocus={inputOnFocus}
-          // eslint-disable-next-line react/no-array-index-key
+          // biome-ignore lint/suspicious/noArrayIndexKey: The index is used as a key because the array is static
           key={idx}
           type="text"
           inputMode="numeric"

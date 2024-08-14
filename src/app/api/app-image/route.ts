@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { handleApiError } from '@/actions/utils/handle-api-error';
 import { TipiConfig } from '@/server/core/TipiConfig/TipiConfig';
 import { sanitizePath } from '@runtipi/shared';

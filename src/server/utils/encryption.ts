@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { TipiConfig } from '../core/TipiConfig';
 
 const algorithm = 'aes-256-gcm';

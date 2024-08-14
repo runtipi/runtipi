@@ -14,7 +14,7 @@ export const AddLinkButton = () => {
 
   return (
     <>
-      <button className={clsx('col-sm-6 col-lg-4', styles.addLinkButton)} onClick={() => addLinkDisclosure.open()}>
+      <button type="button" className={clsx('col-sm-6 col-lg-4', styles.addLinkButton)} onClick={() => addLinkDisclosure.open()}>
         <div className="card card-sm card-link">
           <div className="card-body">
             <div className="d-flex align-items-center">
