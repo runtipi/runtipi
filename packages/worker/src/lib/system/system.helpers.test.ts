@@ -85,8 +85,7 @@ describe('generateSystemEnvFile()', async () => {
     expect(generated.get('ALLOW_AUTO_THEMES')).toBe('true');
     expect(generated.get('ALLOW_ERROR_MONITORING')).toBe('false');
     expect(generated.get('PERSIST_TRAEFIK_CONFIG')).toBe('false');
-    expect(generated.get('EVENTS_TIMEOUT')).toBe('60000');
-    expect(generated.get('REPEAT_TIMEOUT')).toBe('60000');
+    expect(generated.get('JOB_TIMEOUT')).toBe('60000');
   });
 
   it('should replace any old repo url from settings.json to the new one', async () => {

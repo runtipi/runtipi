@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const ARCHITECTURES = {
-  ARM: 'arm',
   ARM64: 'arm64',
   AMD64: 'amd64',
 } as const;
@@ -100,8 +99,7 @@ export const envSchema = z.object({
 
       return false;
     }),
-  eventsTimeout: z.number().optional(),
-  repeatTimeout: z.number().optional(),
+  jobTimeout: z.number().optional(),
 });
 
 export const settingsSchema = envSchema
@@ -119,8 +117,7 @@ export const settingsSchema = envSchema
     allowAutoThemes: true,
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
-    eventsTimeout: true,
-    repeatTimeout: true,
+    jobTimeout: true,
     timeZone: true,
   })
   .and(
