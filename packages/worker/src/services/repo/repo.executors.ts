@@ -50,10 +50,10 @@ export class RepoExecutors {
       let cloneCommand: string;
       if (branch) {
         this.logger.info(`Cloning repo ${repoUrl} on branch ${branch} to ${repoPath}`);
-        cloneCommand = `git clone -b ${branch} ${repoUrl} ${repoPath}`;
+        cloneCommand = `git clone --depth 1 -b ${branch} ${repoUrl} ${repoPath}`;
       } else {
         this.logger.info(`Cloning repo ${repoUrl} to ${repoPath}`);
-        cloneCommand = `git clone ${repoUrl} ${repoPath}`;
+        cloneCommand = `git clone --depth 1 ${repoUrl} ${repoPath}`;
       }
 
       await execAsync(cloneCommand);
@@ -102,17 +102,61 @@ export class RepoExecutors {
       });
 
       this.logger.info(`Executing: git -C ${repoPath} rev-parse --abbrev-ref HEAD`);
-      const currentBranch = await execAsync(`git -C ${repoPath} rev-parse --abbrev-ref HEAD`).then(({ stdout }) => {
-        return stdout.trim();
-      });
+      const currentBranch = await execAsync(`git -C ${repoPath} rev-parse --abbrev-ref HEAD`).then(
+        ({ stdout }) => {
+          return stdout.trim();
+        },
+      );
 
-      this.logger.info(`Executing: git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
-      await execAsync(`git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
+      this.logger.info(
+        `Executing: git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`,
+      );
+      await execAsync(
+        `git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`,
+      );
 
       this.logger.info(`Pulled repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
     } catch (err) {
       return this.handleRepoError(err);
+    }
+  };
+
+  /**
+   * Given an array of repository URLs it pulls them.
+   *
+   * @param {array} repoUrls
+   */
+  public pullRepos = async (repoUrls: string[]) => {
+    try {
+      for (const repo of repoUrls) {
+        const { success, message } = await this.pullRepo(repo);
+        if (!success) {
+          return { success, message };
+        }
+      }
+      return { success: true, message: '' };
+    } catch (e) {
+      return this.handleRepoError(e);
+    }
+  };
+
+  /**
+   * Given an array of repository URLs it clones them.
+   *
+   * @param {array} repoUrls
+   */
+  public cloneRepos = async (repoUrls: string[]) => {
+    try {
+      for (const repo of repoUrls) {
+        const { success, message } = await this.cloneRepo(repo);
+        if (!success) {
+          return { success, message };
+        }
+      }
+      return { success: true, message: '' };
+    } catch (e) {
+      return this.handleRepoError(e);
     }
   };
 }

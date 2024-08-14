@@ -22,6 +22,7 @@ import { socketManager } from './lib/socket';
 import { RepoExecutors } from './services';
 import type { IAppExecutors } from './services/app/app.executors';
 import { startWorker } from './watcher/watcher';
+import { generateAppStoresFile, getRepositories } from './lib/system/system.helpers';
 
 const envFile = path.join(DATA_DIR, '.env');
 
@@ -59,8 +60,13 @@ const main = async () => {
 
     logger.info('Copying system files...');
     await copySystemFiles(envMap);
+    await generateAppStoresFile();
 
-    if (envMap.get('ALLOW_ERROR_MONITORING') === 'true' && process.env.NODE_ENV === 'production' && process.env.LOCAL !== 'true') {
+    if (
+      envMap.get('ALLOW_ERROR_MONITORING') === 'true' &&
+      process.env.NODE_ENV === 'production' &&
+      process.env.LOCAL !== 'true'
+    ) {
       logger.info(
         `Anonymous error monitoring is enabled, to disable it add "allowErrorMonitoring": false to your settings.json file. Version: ${process.env.TIPI_VERSION}`,
       );
@@ -77,16 +83,17 @@ const main = async () => {
     socketManager.init();
 
     const repoExecutors = new RepoExecutors();
+    const repos = await getRepositories();
 
-    const clone = await repoExecutors.cloneRepo(envMap.get('APPS_REPO_URL') as string);
+    const clone = await repoExecutors.cloneRepos(repos);
     if (!clone.success) {
-      logger.error(`Failed to clone repo ${envMap.get('APPS_REPO_URL') as string}`);
+      logger.error('Failed to clone repos!');
     }
 
     if (process.env.NODE_ENV !== 'development') {
-      const pull = await repoExecutors.pullRepo(envMap.get('APPS_REPO_URL') as string);
+      const pull = await repoExecutors.pullRepos(repos);
       if (!pull.success) {
-        logger.error(`Failed to pull repo ${envMap.get('APPS_REPO_URL') as string}`);
+        logger.error('Failed to pull repos!');
       }
     }
 
@@ -114,7 +121,7 @@ const main = async () => {
       logger.info('Adding scheduled jobs to queue...');
       await repeatQueue.add(
         `${Math.random().toString()}_repo_update`,
-        { type: 'repo', command: 'update', url: envMap.get('APPS_REPO_URL') } as SystemEvent,
+        { type: 'repo', command: 'update', urls: repos } as SystemEvent,
         { repeat: { pattern: '*/30 * * * *' } },
       );
     }

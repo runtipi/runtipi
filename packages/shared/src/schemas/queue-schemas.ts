@@ -57,7 +57,7 @@ export type AppEventForm = z.output<typeof appEventSchema>['form'];
 const repoCommandSchema = z.object({
   type: z.literal(EVENT_TYPES.REPO),
   command: z.union([z.literal('clone'), z.literal('update')]),
-  url: z.string().url(),
+  urls: z.array(z.string()),
 });
 
 const systemCommandSchema = z.object({
@@ -65,7 +65,11 @@ const systemCommandSchema = z.object({
   command: z.literal('system_info'),
 });
 
-export const eventSchema = appEventSchema.or(restoreAppCommandSchema).or(repoCommandSchema).or(updateAppCommandSchema).or(systemCommandSchema);
+export const eventSchema = appEventSchema
+  .or(restoreAppCommandSchema)
+  .or(repoCommandSchema)
+  .or(updateAppCommandSchema)
+  .or(systemCommandSchema);
 
 export const eventResultSchema = z.object({
   success: z.boolean(),

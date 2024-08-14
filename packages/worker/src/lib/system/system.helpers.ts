@@ -4,8 +4,8 @@ import crypto from 'crypto';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/config/constants';
-import { envMapToString, envStringToMap, settingsSchema } from '@runtipi/shared';
+import { APP_DATA_DIR, APP_DIR, DATA_DIR, DEFAULT_APPS_REPO } from '@/config/constants';
+import { envMapToString, envStringToMap, repoSchema, settingsSchema } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { getRepoHash } from '../../services/repo/repo.helpers';
 import { logger } from '../logger/logger';
@@ -155,26 +155,43 @@ export const generateSystemEnvFile = async () => {
   envMap.set('ARCHITECTURE', getArchitecture());
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
-  envMap.set('RUNTIPI_APP_DATA_PATH', data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH') || rootFolderHost);
+  envMap.set(
+    'RUNTIPI_APP_DATA_PATH',
+    data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH') || rootFolderHost,
+  );
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
   envMap.set('POSTGRES_PORT', String(5432));
   envMap.set('REDIS_HOST', 'runtipi-redis');
-  envMap.set('DEMO_MODE', typeof data.demoMode === 'boolean' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
-  envMap.set('GUEST_DASHBOARD', typeof data.guestDashboard === 'boolean' ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
+  envMap.set(
+    'DEMO_MODE',
+    typeof data.demoMode === 'boolean' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false',
+  );
+  envMap.set(
+    'GUEST_DASHBOARD',
+    typeof data.guestDashboard === 'boolean'
+      ? String(data.guestDashboard)
+      : envMap.get('GUEST_DASHBOARD') || 'false',
+  );
   envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
   envMap.set(
     'ALLOW_AUTO_THEMES',
-    typeof data.allowAutoThemes === 'boolean' ? String(data.allowAutoThemes) : envMap.get('ALLOW_AUTO_THEMES') || 'true',
+    typeof data.allowAutoThemes === 'boolean'
+      ? String(data.allowAutoThemes)
+      : envMap.get('ALLOW_AUTO_THEMES') || 'true',
   );
   envMap.set(
     'ALLOW_ERROR_MONITORING',
-    typeof data.allowErrorMonitoring === 'boolean' ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
+    typeof data.allowErrorMonitoring === 'boolean'
+      ? String(data.allowErrorMonitoring)
+      : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
   );
   envMap.set(
     'PERSIST_TRAEFIK_CONFIG',
-    typeof data.persistTraefikConfig === 'boolean' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
+    typeof data.persistTraefikConfig === 'boolean'
+      ? String(data.persistTraefikConfig)
+      : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
 
   await fs.promises.writeFile(envFilePath, envMapToString(envMap));
@@ -204,7 +221,10 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
     logger.warn('Skipping the copy of traefik files because persistTraefikConfig is set to true');
   } else {
     logger.info('Copying traefik files');
-    await fs.promises.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(DATA_DIR, 'traefik', 'traefik.yml'));
+    await fs.promises.copyFile(
+      path.join(assetsFolder, 'traefik', 'traefik.yml'),
+      path.join(DATA_DIR, 'traefik', 'traefik.yml'),
+    );
     await fs.promises.copyFile(
       path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'),
       path.join(DATA_DIR, 'traefik', 'dynamic', 'dynamic.yml'),
@@ -305,7 +325,10 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
     const { stderr } = await execAsync(
       `openssl req -x509 -newkey rsa:4096 -keyout ${DATA_DIR}/traefik/tls/key.pem -out ${DATA_DIR}/traefik/tls/cert.pem -days 365 -subj "${subject}" -addext "subjectAltName = ${subjectAltName}" -nodes`,
     );
-    if (!(await pathExists(path.join(tlsFolder, 'cert.pem'))) || !(await pathExists(path.join(tlsFolder, 'key.pem')))) {
+    if (
+      !(await pathExists(path.join(tlsFolder, 'cert.pem'))) ||
+      !(await pathExists(path.join(tlsFolder, 'key.pem')))
+    ) {
       logger.error(`Failed to generate TLS certificate for ${data.domain}`);
       logger.error(stderr);
     } else {
@@ -327,4 +350,38 @@ export const getMainEnvMap = async (): Promise<Map<EnvKeys, string>> => {
   const envFile = await fs.promises.readFile(envFilePath, 'utf-8');
 
   return envStringToMap(envFile);
+};
+
+export const generateAppStoresFile = async () => {
+  try {
+    const appStoresFile = path.join(DATA_DIR, 'state', 'appstores.json');
+    if (!(await pathExists(appStoresFile))) {
+      logger.info('Generating default appstores file...');
+      await fs.promises.writeFile(
+        appStoresFile,
+        JSON.stringify({ 'runtipi-default': DEFAULT_APPS_REPO }),
+      );
+    }
+  } catch (e) {
+    logger.error(e);
+  }
+};
+
+/**
+ * Reads the repositories from appstores.json and returns only the repository URLs.
+ */
+export const getRepositories = async () => {
+  try {
+    const appStoresFile = path.join(DATA_DIR, 'state', 'appstores.json');
+    const appStoresRaw = await fs.promises.readFile(appStoresFile, 'utf-8');
+    const appStoresParsed = await repoSchema.safeParseAsync(JSON.parse(appStoresRaw));
+    if (appStoresParsed.success) {
+      return Object.values(appStoresParsed.data);
+    }
+    logger.error('Failed to parse appstores.json! Returning default repo.');
+    return [DEFAULT_APPS_REPO];
+  } catch (e) {
+    logger.error(e);
+    return [DEFAULT_APPS_REPO];
+  }
 };

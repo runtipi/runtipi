@@ -6,9 +6,19 @@ import { Worker } from 'bullmq';
 import { container } from 'src/inversify.config';
 import type { IAppExecutors } from 'src/services/app/app.executors';
 
-const { installApp, resetApp, startApp, stopApp, restartApp, uninstallApp, updateApp, regenerateAppEnv, backupApp, restoreApp } =
-  container.get<IAppExecutors>('IAppExecutors');
-const { cloneRepo, pullRepo } = new RepoExecutors();
+const {
+  installApp,
+  resetApp,
+  startApp,
+  stopApp,
+  restartApp,
+  uninstallApp,
+  updateApp,
+  regenerateAppEnv,
+  backupApp,
+  restoreApp,
+} = container.get<IAppExecutors>('IAppExecutors');
+const { cloneRepos, pullRepos } = new RepoExecutors();
 
 const runCommand = async (jobData: unknown) => {
   const event = eventSchema.safeParse(jobData);
@@ -64,11 +74,11 @@ const runCommand = async (jobData: unknown) => {
     }
   } else if (data.type === 'repo') {
     if (data.command === 'clone') {
-      ({ success, message } = await cloneRepo(data.url));
+      ({ success, message } = await cloneRepos(data.urls));
     }
 
     if (data.command === 'update' && process.env.NODE_ENV !== 'development') {
-      ({ success, message } = await pullRepo(data.url));
+      ({ success, message } = await pullRepos(data.urls));
     }
   }
 

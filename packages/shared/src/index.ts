@@ -21,6 +21,7 @@ export {
 export { linkSchema, type LinkInfo, type LinkInfoInput } from './schemas/link-schemas';
 export { socketEventSchema, type SocketEvent } from './schemas/socket-schemas';
 export { systemLoadSchema, type SystemLoad } from './schemas/system-schemas';
+export { repoSchema, type RepoSchema } from './schemas/repo-schemas';
 
 // Helpers
 export { envMapToString, envStringToMap } from './helpers/env-helpers';
