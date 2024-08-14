@@ -29,7 +29,10 @@ describe('generateSystemEnvFile()', async () => {
     expect(envFileExists).toBe(true);
 
     const settingsFileExists = fs.existsSync(path.join(DATA_DIR, 'state', 'settings.json'));
-    const settingsFileContent = fs.readFileSync(path.join(DATA_DIR, 'state', 'settings.json'), 'utf8');
+    const settingsFileContent = fs.readFileSync(
+      path.join(DATA_DIR, 'state', 'settings.json'),
+      'utf8',
+    );
     expect(settingsFileExists).toBe(true);
     expect(settingsFileContent).toBe('{}');
   });
@@ -64,7 +67,9 @@ describe('generateSystemEnvFile()', async () => {
     const generated = await generateSystemEnvFile();
 
     // assert
-    expect(generated.get('APPS_REPO_ID')).toBe('29ca930bfdaffa1dfabf5726336380ede7066bc53297e3c0c868b27c97282903');
+    expect(generated.get('APPS_REPO_ID')).toBe(
+      '29ca930bfdaffa1dfabf5726336380ede7066bc53297e3c0c868b27c97282903',
+    );
     expect(generated.get('APPS_REPO_URL')).toBe('https://github.com/runtipi/runtipi-appstore');
     expect(generated.get('JWT_SECRET')).toBeTruthy();
     expect(generated.get('DOMAIN')).toBe('example.com');
@@ -80,7 +85,7 @@ describe('generateSystemEnvFile()', async () => {
     expect(generated.get('ALLOW_AUTO_THEMES')).toBe('true');
     expect(generated.get('ALLOW_ERROR_MONITORING')).toBe('false');
     expect(generated.get('PERSIST_TRAEFIK_CONFIG')).toBe('false');
-    expect(generated.get('JOB_TIMEOUT')).toBe('60000');
+    expect(generated.get('JOB_TIMEOUT')).toBe('300000');
   });
 
   it('should replace any old repo url from settings.json to the new one', async () => {
