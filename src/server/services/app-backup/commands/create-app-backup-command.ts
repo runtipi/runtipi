@@ -20,12 +20,15 @@ export class CreateAppBackupCommand implements IAppBackupCommand {
     appId: string,
     appStatusBeforeUpdate?: AppStatus
   ): Promise<void> {
-    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({
-      type: "app",
-      command: "backup",
-      appid: appId,
-      form: {},
-    });
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync(
+      {
+        type: "app",
+        command: "backup",
+        appid: appId,
+        form: {},
+      },
+      1000 * 60 * 10 // +10 minutes
+    );
 
     if (success) {
       if (appStatusBeforeUpdate === "running") {

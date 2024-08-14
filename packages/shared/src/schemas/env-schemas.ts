@@ -100,7 +100,7 @@ export const envSchema = z.object({
 
       return false;
     }),
-  jobTimeout: z.number().optional(),
+  jobTimeout: z.number().default(300000),
 });
 
 export const settingsSchema = envSchema

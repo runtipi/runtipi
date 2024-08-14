@@ -33,13 +33,16 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
   }): Promise<void> {
     const { appId, form, appStatusBeforeUpdate, performBackup } = params;
 
-    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({
-      type: "app",
-      command: "update",
-      appid: appId,
-      form,
-      performBackup,
-    });
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync(
+      {
+        type: "app",
+        command: "update",
+        appid: appId,
+        form,
+        performBackup,
+      },
+      performBackup ? FIFTEEN_MINUTES : undefined
+    );
 
     if (success) {
       const appInfo = await this.appDataService.getInstalledInfo(appId);

@@ -66,7 +66,8 @@ export class EventDispatcher {
    * @returns {Promise<{ success: boolean; stdout?: string }>} - Promise that resolves when the event is done
    */
   public async dispatchEventAsync(
-    event: SystemEvent
+    event: SystemEvent,
+    timeout: number = 0
   ): Promise<{ success: boolean; stdout?: string }> {
     Logger.info(
       `Dispatching event ${JSON.stringify(event)}. Instance: ${this.instanceId}`
@@ -75,7 +76,7 @@ export class EventDispatcher {
       const job = await this.dispatchEvent(event);
       const result = await job.waitUntilFinished(
         this.queueEvents,
-        TipiConfig.getConfig().jobTimeout
+        TipiConfig.getConfig().jobTimeout + timeout
       );
 
       return eventResultSchema.parse(result);
