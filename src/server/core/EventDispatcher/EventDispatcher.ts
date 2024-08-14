@@ -57,7 +57,7 @@ export class EventDispatcher {
     Logger.info(`Dispatching event ${JSON.stringify(event)}. Instance: ${this.instanceId}`);
     try {
       const job = await this.dispatchEvent(event);
-      const result = await job.waitUntilFinished(this.queueEvents, TipiConfig.getConfig().jobTimeout + number);
+      const result = await job.waitUntilFinished(this.queueEvents, TipiConfig.getConfig().jobTimeout + timeout);
 
       return eventResultSchema.parse(result);
     } catch (e) {
