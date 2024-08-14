@@ -238,38 +238,42 @@ export const copyDataDir = async (id: string) => {
  * @param {string} appDirPath - The path of the app.
 */
 export const runHookScript = async (script: string, appDirPath: string) => {
-  logger.info(`Running hook script ${script}`);
+  try {
+    logger.info(`Running hook script ${script}`);
 
-  const { appsRepoId } = getEnv();
-  const scriptDirPath = path.join(appDirPath, 'scripts');
-  const scriptPath = path.join(scriptDirPath, script);
+    const { appsRepoId } = getEnv();
+    const scriptDirPath = path.join(appDirPath, 'scripts');
+    const scriptPath = path.join(scriptDirPath, script);
 
-  // Verify the script folder exists
-  if (!(await pathExists(scriptDirPath))) {
-    logger.warn('Scripts directory does not exist! Skipping...');
-    return;
+    // Verify the script folder exists
+    if (!(await pathExists(scriptDirPath))) {
+      logger.warn('Scripts directory does not exist! Skipping...');
+      return;
+    }
+
+    // Verify the script exists
+    if (!(await pathExists(scriptPath))) {
+      logger.warn('Script does not exist! Skipping...');
+      return;
+    }
+
+    // Verify we have a trusted repository
+    if (!(appsRepoId in TRUSTED_APP_STORES)) {
+      logger.warn(
+        'Repository hash not trusted! Please use the official repository to run hook scripts.',
+      );
+      return;
+    }
+
+    // Run the hook script
+    const result = await execAsync(`sh ${scriptPath}`);
+
+    if (result.stderr) {
+      logger.error(`Hook script failed! Error: ${result.stderr}`);
+    }
+
+    logger.info(`Hook script ${script} finished!`);
+  } catch (e) {
+    logger.error(`Hook script failed! Error: ${e}`)
   }
-
-  // Verify the script exists
-  if (!(await pathExists(scriptPath))) {
-    logger.warn('Script does not exist! Skipping...');
-    return;
-  }
-
-  // Verify we have a trusted repository
-  if (!(appsRepoId in TRUSTED_APP_STORES)) {
-    logger.warn(
-      'Repository hash not trusted! Please use the official repository to run hook scripts.',
-    );
-    return;
-  }
-
-  // Run the hook script
-  const result = await execAsync(`sh ${scriptPath}`);
-
-  if (result.stderr) {
-    logger.error(`Hook script failed! Error: ${result.stderr}`);
-  }
-
-  logger.info(`Hook script ${script} finished!`);
 };
