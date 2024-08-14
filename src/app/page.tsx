@@ -1,5 +1,5 @@
 import { UnauthenticatedPage } from '@/components/UnauthenticatedPage';
-import { getUserFromCookie } from '@/server/common/session.helpers';
+import type { ISessionManager } from '@/server/common/session-manager';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
@@ -34,6 +34,7 @@ export default async function RootPage() {
   }
 
   const authQueries = container.get<IAuthQueries>('IAuthQueries');
+  const sessionManager = container.get<ISessionManager>('ISessionManager');
 
   const isConfigured = await authQueries.getFirstOperator();
 
@@ -41,7 +42,7 @@ export default async function RootPage() {
     redirect('/register');
   }
 
-  const user = await getUserFromCookie();
+  const user = await sessionManager.getUserFromCookie();
 
   if (!user) {
     redirect('/login');

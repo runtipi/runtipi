@@ -1,20 +1,25 @@
 import { promises } from 'node:fs';
 import { DATA_DIR } from '@/config/constants';
-import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
+import type { ICache } from '@runtipi/cache';
+import { inject, injectable } from 'inversify';
 import axios from 'redaxios';
-import { container } from 'src/inversify.config';
 import { fileExists } from '../../common/fs.helpers';
 import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
 
-export class SystemServiceClass {
+export interface ISystemService {
+  getVersion: () => Promise<{ current: string; latest: string; body?: string | null }>;
+}
+
+@injectable()
+export class SystemService implements ISystemService {
+  constructor(@inject('ICache') private cache: ICache) {}
   /**
    * Get the current and latest version of Tipi
    *
    * @returns {Promise<{ current: string; latest: string }>} The current and latest version
    */
   public getVersion = async () => {
-    const tipiCache = container.get<ITipiCache>('ITipiCache');
     try {
       const { seePreReleaseVersions, version: currentVersion } = TipiConfig.getConfig();
 
@@ -24,8 +29,8 @@ export class SystemServiceClass {
         return { current: currentVersion, latest: data[0]?.tag_name ?? currentVersion, body: data[0]?.body };
       }
 
-      let version = await tipiCache.get('latestVersion');
-      let body = await tipiCache.get('latestVersionBody');
+      let version = await this.cache.get('latestVersion');
+      let body = await this.cache.get('latestVersionBody');
 
       if (!version) {
         const { data } = await axios.get<{ tag_name: string; body: string }>('https://api.github.com/repos/runtipi/runtipi/releases/latest');
@@ -33,8 +38,8 @@ export class SystemServiceClass {
         version = data.tag_name;
         body = data.body;
 
-        await tipiCache.set('latestVersion', version || '', 60 * 60);
-        await tipiCache.set('latestVersionBody', body || '', 60 * 60);
+        await this.cache.set('latestVersion', version || '', 60 * 60);
+        await this.cache.set('latestVersionBody', body || '', 60 * 60);
       }
 
       return { current: TipiConfig.getConfig().version, latest: version, body };

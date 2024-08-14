@@ -3,13 +3,13 @@ import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 
 export interface IAuthQueries {
-  getUserByUsername(username: string): Promise<User | undefined>;
-  getUserById(id: number): Promise<User | undefined>;
-  getUserDtoById(id: number): Promise<Pick<User, 'id' | 'username' | 'totpEnabled' | 'locale' | 'operator'> | undefined>;
-  updateUser(id: number, data: Partial<NewUser>): Promise<User | undefined>;
-  getOperators(): Promise<User[]>;
-  getFirstOperator(): Promise<User | undefined>;
-  createUser(data: NewUser): Promise<User | undefined>;
+  getUserByUsername: (username: string) => Promise<User | undefined>;
+  getUserById: (id: number) => Promise<User | undefined>;
+  getUserDtoById: (id: number) => Promise<Pick<User, 'id' | 'username' | 'totpEnabled' | 'locale' | 'operator'> | undefined>;
+  updateUser: (id: number, data: Partial<NewUser>) => Promise<User | undefined>;
+  getOperators: () => Promise<User[]>;
+  getFirstOperator: () => Promise<User | undefined>;
+  createUser: (data: NewUser) => Promise<User | undefined>;
 }
 
 @injectable()

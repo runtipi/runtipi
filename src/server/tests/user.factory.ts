@@ -9,19 +9,24 @@ import type { TestDatabase } from './test-utils';
  * @param {User} params - user params
  * @param {TestDatabase} database - database client
  */
-async function createUser(params: Partial<User & { email?: string }>, database: TestDatabase) {
+async function createUser(params: Partial<User & { email?: string }>, database?: TestDatabase) {
   const { email, operator = true, ...rest } = params;
   const hash = await argon2.hash('password');
 
   const username = email?.toLowerCase().trim() || faker.internet.email().toLowerCase().trim();
 
-  const users = await database.dbClient.db
-    .insert(userTable)
-    .values({ username, password: hash, operator, ...rest })
-    .returning();
-  const user = users[0];
+  if (database) {
+    const users = await database.dbClient.db
+      .insert(userTable)
+      .values({ username, password: hash, operator, ...rest })
+      .returning();
+    const user = users[0];
 
-  return user as User;
+    return user as User;
+  }
+
+  const id = faker.number.int();
+  return { username, id, password: hash, operator, ...rest } as User;
 }
 
 const getUserById = async (id: number, database: TestDatabase) => {
