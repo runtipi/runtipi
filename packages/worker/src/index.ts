@@ -22,7 +22,7 @@ import { socketManager } from './lib/socket';
 import { RepoExecutors } from './services';
 import type { IAppExecutors } from './services/app/app.executors';
 import { startWorker } from './watcher/watcher';
-import { generateAppStoresFile, getRepositories } from './lib/system/system.helpers';
+import { generateAppStoresFile, getRepositoryUrls } from './lib/system/system.helpers';
 
 const envFile = path.join(DATA_DIR, '.env');
 
@@ -83,7 +83,7 @@ const main = async () => {
     socketManager.init();
 
     const repoExecutors = new RepoExecutors();
-    const repos = await getRepositories();
+    const repos = await getRepositoryUrls();
 
     const clone = await repoExecutors.cloneRepos(repos);
     if (!clone.success) {

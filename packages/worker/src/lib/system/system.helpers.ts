@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import crypto from 'crypto';
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR, DEFAULT_APPS_REPO } from '@/config/constants';
 import { envMapToString, envStringToMap, repoSchema, settingsSchema } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';
@@ -370,13 +370,18 @@ export const generateAppStoresFile = async () => {
 /**
  * Reads the repositories from appstores.json and returns only the repository URLs.
  */
-export const getRepositories = async () => {
+export const getRepositoryUrls = async () => {
   try {
     const appStoresFile = path.join(DATA_DIR, 'state', 'appstores.json');
     const appStoresRaw = await fs.promises.readFile(appStoresFile, 'utf-8');
     const appStoresParsed = await repoSchema.safeParseAsync(JSON.parse(appStoresRaw));
+    const appStoreRepos: string[] = [];
     if (appStoresParsed.success) {
-      return Object.values(appStoresParsed.data);
+      for (const repo of appStoresParsed.data) {
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        appStoreRepos.push(Object.values(repo)[0]!);
+      }
+      return appStoreRepos;
     }
     logger.error('Failed to parse appstores.json! Returning default repo.');
     return [DEFAULT_APPS_REPO];

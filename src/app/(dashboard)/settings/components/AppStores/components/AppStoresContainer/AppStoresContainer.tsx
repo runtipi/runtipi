@@ -11,15 +11,13 @@ import {
 import type { RepoSchema } from "packages/shared/src";
 import type React from "react";
 import { DeleteAppStoreModal } from "../DeleteAppStoreModal";
+import { EditAppStoreModal } from "../EditAppStoreModal";
 
 type IPros = {
   repositories: RepoSchema;
 };
 
 export const AppStoresContainer: React.FC<IPros> = ({ repositories }) => {
-  for (const repo of repositories) {
-    console.log(Object.keys(repo)[0]);
-  }
   if (repositories.length === 0) {
     return (
       <Table>
@@ -51,8 +49,14 @@ export const AppStoresContainer: React.FC<IPros> = ({ repositories }) => {
             <TableCell>
               <a href={Object.values(repo)[0]}>{Object.values(repo)[0]}</a>
             </TableCell>
-            <TableCell>
+            <TableCell className="d-flex flex-row">
               <DeleteAppStoreModal
+                // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                name={Object.keys(repo)[0]!}
+                // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                url={Object.values(repo)[0]!}
+              />
+              <EditAppStoreModal
                 // biome-ignore lint/style/noNonNullAssertion: <explanation>
                 name={Object.keys(repo)[0]!}
                 // biome-ignore lint/style/noNonNullAssertion: <explanation>
