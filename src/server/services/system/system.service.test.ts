@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { CacheMock } from '@runtipi/cache';
+import { CacheMock } from '@runtipi/cache/src/mock';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';

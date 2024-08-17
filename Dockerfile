@@ -42,7 +42,6 @@ COPY ./packages/worker/package.json ./packages/worker/package.json
 COPY ./packages/shared/package.json ./packages/shared/package.json
 COPY ./packages/db/package.json ./packages/db/package.json
 COPY ./packages/cache/package.json ./packages/cache/package.json
-COPY ./packages/shared/package.json ./packages/shared/package.json
 
 RUN pnpm install -r --prefer-offline 
 

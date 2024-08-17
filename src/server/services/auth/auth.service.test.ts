@@ -4,7 +4,8 @@ import { type ISessionManager, SessionManager } from '@/server/common/session-ma
 import { AuthQueries, type IAuthQueries } from '@/server/queries/auth/auth.queries';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { faker } from '@faker-js/faker';
-import { CacheMock, type ICache } from '@runtipi/cache';
+import type { ICache } from '@runtipi/cache';
+import { CacheMock } from '@runtipi/cache/src/mock';
 import type { User } from '@runtipi/db';
 import * as argon2 from 'argon2';
 import fs from 'fs-extra';

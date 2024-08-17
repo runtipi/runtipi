@@ -12,8 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "@runtipi/shared": "workspace:^",
-    "ioredis": "^5.4.1",
-    "redis": "^4.7.0",
+    "ioredis": "^5.4.1"
+  },
+  "devDependencies": {
     "vitest": "^1.6.0"
   }
 }
