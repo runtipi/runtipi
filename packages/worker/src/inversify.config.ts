@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { Cache, type ICache } from '@runtipi/cache';
 import { DbClient, type IDbClient, type IMigrator, Migrator } from '@runtipi/db';
 import { type ILogger, Logger } from '@runtipi/shared/node';
 import { Container } from 'inversify';
@@ -13,6 +14,12 @@ export function createContainer() {
     container.bind<ILogger>('ILogger').toDynamicValue(() => {
       return new Logger('worker', path.join(DATA_DIR, 'logs'));
     });
+
+    container.bind<ICache>('ICache').toDynamicValue((context) => {
+      const logger = context.container.get<ILogger>('ILogger');
+      return new Cache({ host: String(process.env.REDIS_HOST), port: 6379, password: String(process.env.REDIS_PASSWORD) }, logger);
+    });
+
     container.bind<ISocketManager>('ISocketManager').to(SocketManager).inSingletonScope();
 
     container

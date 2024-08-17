@@ -1,11 +1,10 @@
 import 'reflect-metadata';
 import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
-import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
+import type { ICache } from '@runtipi/cache';
 import { fromPartial } from '@total-typescript/shoehorn';
 import type { Job } from 'bullmq';
 import fs from 'fs-extra';
-import { container } from 'src/inversify.config';
 import { afterAll, beforeEach, vi } from 'vitest';
 
 let cookieStore: Record<string, string> = {};
@@ -52,21 +51,15 @@ vi.mock('bullmq', () => ({
 console.error = vi.fn();
 
 beforeEach(async () => {
-  const tipiCache = container.get<ITipiCache>('ITipiCache');
-
   // @ts-expect-error - custom mock method
   fs.__resetAllMocks();
   await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
   await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'settings.json'), '{}');
   await fs.promises.mkdir(path.join(DATA_DIR, 'logs'), { recursive: true });
-  await tipiCache.clear();
   cookieStore = {};
 });
 
-afterAll(async () => {
-  const tipiCache = container.get<ITipiCache>('ITipiCache');
-  await tipiCache.close();
-});
+afterAll(async () => {});
 
 vi.mock('fs-extra', async () => {
   const { fsMock } = await import('@/tests/mocks/fs');
@@ -78,13 +71,6 @@ vi.mock('fs', async () => {
   const { fsMock } = await import('@/tests/mocks/fs');
   return {
     ...fsMock,
-  };
-});
-vi.mock('redis', async () => {
-  const { redisMock } = await import('@/tests/mocks/redis');
-
-  return {
-    ...redisMock,
   };
 });
 

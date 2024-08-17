@@ -1,11 +1,15 @@
 import type { ILogger } from '@runtipi/shared/node';
-import { inject, injectable } from 'inversify';
-import { type RedisClientType, createClient } from 'redis';
-import { TipiConfig } from '../TipiConfig';
+import IORedis from 'ioredis';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
-export interface ITipiCache {
+type IConfig = {
+  host: string;
+  port: number;
+  password: string;
+};
+
+export interface ICache {
   set(key: string, value: string, expiration?: number): Promise<string | null>;
   get(key: string): Promise<string | null>;
   del(key: string): Promise<number>;
@@ -13,38 +17,38 @@ export interface ITipiCache {
   close(): Promise<string>;
   ttl(key: string): Promise<number>;
   clear(): Promise<number[]>;
+  getClient(): Promise<IORedis>;
 }
 
-@injectable()
-export class TipiCache implements ITipiCache {
-  private client: RedisClientType;
+export class Cache implements ICache {
+  private client: IORedis;
 
-  constructor(@inject('ILogger') private logger: ILogger) {
-    const client = createClient({
-      url: `redis://${TipiConfig.getConfig().REDIS_HOST}:6379`,
-      password: TipiConfig.getConfig().redisPassword,
-    });
-
-    this.client = client as RedisClientType;
+  constructor(
+    config: IConfig,
+    private logger: ILogger,
+  ) {
+    const { host, port, password } = config;
+    this.client = new IORedis({ host, port, password, maxRetriesPerRequest: null });
 
     this.client.on('error', (error) => {
       this.logger.error('cache error', error);
     });
+
+    this.client.on('connect', () => {
+      this.logger.debug('connected to cache');
+    });
   }
 
-  private async getClient(): Promise<RedisClientType> {
-    if (!this.client.isOpen) {
+  public async getClient() {
+    if (this.client.status === 'close') {
       await this.client.connect();
-      this.logger.info('connected to cache');
     }
     return this.client;
   }
 
   public async set(key: string, value: string, expiration = ONE_DAY_IN_SECONDS) {
     const client = await this.getClient();
-    return client.set(key, value, {
-      EX: expiration,
-    });
+    return client.set(key, value, 'EX', expiration);
   }
 
   public async get(key: string) {

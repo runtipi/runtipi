@@ -1,10 +1,9 @@
+import path from 'node:path';
 import * as schema from '@runtipi/db';
 import type { ILogger } from '@runtipi/shared/node';
-/* eslint-disable no-restricted-syntax */
 import pg, { Pool } from 'pg';
 import { container } from 'src/inversify.config';
 import { TipiConfig } from '../core/TipiConfig';
-import { runPostgresMigrations } from '../run-migrations-dev';
 
 export type TestDatabase = {
   client: Pool;
@@ -32,15 +31,23 @@ const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
 
   await pgClient.end();
 
-  await runPostgresMigrations(testsuite);
+  const logger = container.get<ILogger>('ILogger');
+
+  const migrator = new schema.Migrator(logger);
+  await migrator.runPostgresMigrations({
+    port: postgresPort,
+    host: postgresHost,
+    username: postgresUsername,
+    password: postgresPassword,
+    database: testsuite,
+    migrationsFolder: path.join(__dirname, '../../../packages/db/assets'),
+  });
 
   const client = new Pool({
     connectionString: `postgresql://${TipiConfig.getConfig().postgresUsername}:${TipiConfig.getConfig().postgresPassword}@${
       TipiConfig.getConfig().postgresHost
     }:${TipiConfig.getConfig().postgresPort}/${testsuite}?connect_timeout=300`,
   });
-
-  const logger = container.get<ILogger>('ILogger');
 
   return {
     client,
