@@ -18,9 +18,9 @@ import styles from './layout.module.scss';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const systemService = container.get<ISystemService>('ISystemService');
-  const { getUserFromCookie } = container.get<ISessionManager>('ISessionManager');
+  const sessionManager = container.get<ISessionManager>('ISessionManager');
 
-  const user = await getUserFromCookie();
+  const user = await sessionManager.getUserFromCookie();
   const { apps } = await appCatalog.executeCommand('listApps');
 
   const installedApps = await appCatalog.executeCommand('getInstalledApps');
