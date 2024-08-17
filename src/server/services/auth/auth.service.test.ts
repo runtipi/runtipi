@@ -691,7 +691,6 @@ describe('Test: changePassword', () => {
     await authService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' });
 
     // assert
-    // eslint-disable-next-line testing-library/no-await-sync-queries
     const sessions = await tipiCache.getByPrefix(`session:${user.id}:`);
     expect(sessions).toHaveLength(0);
   });

@@ -4,7 +4,6 @@ import { getLocale, getMessages } from 'next-intl/server';
 import type React from 'react';
 
 import { TipiConfig } from '@/server/core/TipiConfig';
-// eslint-disable-next-line import/no-unresolved
 import { GeistSans } from 'geist/font/sans';
 import { cookies } from 'next/headers';
 

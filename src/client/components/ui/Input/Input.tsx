@@ -25,7 +25,6 @@ export const Input = React.forwardRef<HTMLInputElement, IProps>(
           {label}
         </label>
       )}
-      {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
       <input
         maxLength={maxLength}
         suppressHydrationWarning

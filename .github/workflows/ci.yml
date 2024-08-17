@@ -68,12 +68,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run linter
-        run: pnpm run lint
-
-      - name: Run linter on packages
-        run: pnpm -r run lint
-
       - name: Run biome tests
         run: pnpm biome check
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import 'reflect-metadata';
 import React from 'react';
 import { vi } from 'vitest';
