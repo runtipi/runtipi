@@ -9,9 +9,7 @@
     "build": "node build.js",
     "tsc": "tsc --noEmit",
     "dev": "dotenv -e ../../.env nodemon",
-    "knip": "knip",
-    "lint": "eslint . --ext .ts",
-    "prettier-check": "prettier --check ."
+    "knip": "knip"
   },
   "keywords": [],
   "author": "",
@@ -21,17 +19,11 @@
     "@sentry/esbuild-plugin": "^2.22.0",
     "@types/tar-fs": "^2.0.4",
     "@types/web-push": "^3.6.3",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
     "dotenv-cli": "^7.4.2",
     "esbuild": "^0.19.4",
-    "eslint": "8.57.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "^2.29.1",
     "knip": "^5.27.2",
     "memfs": "^4.11.1",
     "nodemon": "^3.1.4",
-    "prettier": "^3.3.3",
     "typescript": "^5.5.4",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0"

@@ -130,7 +130,6 @@ const createApp = async (props: IProps, database: TestDatabase) => {
       })
       .returning();
 
-    // eslint-disable-next-line prefer-destructuring
     appEntity = insertedApp[0] as App;
     mockFiles[`${APP_DATA_DIR}/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
     mockFiles[`${DATA_DIR}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);

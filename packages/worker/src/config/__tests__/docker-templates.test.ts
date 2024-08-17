@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-/* eslint-disable no-template-curly-in-string */
 import { describe, expect, it } from 'vitest';
 import { type ServiceInput, getDockerCompose } from '../docker-templates';
 

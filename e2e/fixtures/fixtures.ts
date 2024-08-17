@@ -10,7 +10,6 @@ export const createTestUser = async () => {
   await db.insert(userTable).values({ password, username: testUser.email, operator: true });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const loginUser = async (page: Page, _: BrowserContext) => {
   await page.addLocatorHandler(page.getByText('Insecure configuration'), async () => {
     await page.getByRole('button', { name: 'Close' }).click();

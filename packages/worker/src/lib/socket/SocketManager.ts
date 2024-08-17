@@ -38,7 +38,6 @@ export class SocketManager implements ISocketManager {
     try {
       const sockets = await this.io.fetchSockets();
 
-      // eslint-disable-next-line no-restricted-syntax
       for (const socket of sockets) {
         try {
           socket.emit(event.type, event);

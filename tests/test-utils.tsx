@@ -1,4 +1,3 @@
-/* eslint-disable import/export */
 import 'reflect-metadata';
 import { type RenderOptions, render, renderHook } from '@testing-library/react';
 import ue from '@testing-library/user-event';

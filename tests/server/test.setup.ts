@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import 'reflect-metadata';
 import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
