@@ -1,9 +1,11 @@
-import path from 'path';
+import path, { parse } from 'node:path';
 import fs from 'fs-extra';
 import { sanitizePath } from '../../../../helpers/sanitizers';
 import { appInfoSchema } from '../../../../schemas/app-schemas';
 import { pathExists } from '../../../helpers/fs-helpers';
 import { Logger } from '../../../logger/FileLogger';
+import { repoSchema } from 'src/schemas/repo-schemas';
+import { getRepoHash } from 'src/node/helpers/repo-helpers';
 
 // Lower level data access class for apps
 export class DataAccessApp {
@@ -21,24 +23,59 @@ export class DataAccessApp {
     return path.join(this.dataDir, 'apps');
   }
 
-  private getAppsRepoFolder() {
-    return path.join(this.dataDir, 'repos', sanitizePath(this.appsRepoId), 'apps');
+  private async getAppsRepoFolder(repoId: string) {
+    return path.join(this.dataDir, 'repos', repoId, 'apps');
+  }
+
+  private async getRepoIdByName(name: string) {
+    const repositories = await this.getRepositories();
+    if (repositories[name]) {
+      return getRepoHash(repositories[name]);
+    }
+    return '';
+  }
+
+  private async getRepositories() {
+    try {
+      const appStoresFilePath = path.join(this.dataDir, 'state', 'appstores.json');
+      const appStoresFile = await fs.promises.readFile(appStoresFilePath, 'utf-8');
+      const appStoresParsed = await repoSchema.safeParseAsync(JSON.parse(appStoresFile));
+      if (appStoresParsed.success) {
+        return appStoresParsed.data;
+      }
+      return { 'runtipi-default': 'https://github.com/runtipi/runtipi-appstore' };
+    } catch {
+      return { 'runtipi-default': 'https://github.com/runtipi/runtipi-appstore' };
+    }
   }
 
   /**
    * Get the app info from the app store
    * @param id - The app id
    */
-  public async getAppInfoFromAppStore(id: string) {
+  public async getAppInfoFromAppStore(id: string, repo: string) {
     try {
-      const repoAppFolder = path.join(this.getAppsRepoFolder(), sanitizePath(id));
+      const repoAppFolder = path.join(
+        await this.getAppsRepoFolder(await this.getRepoIdByName(repo)),
+        sanitizePath(id),
+      );
 
       if (await pathExists(path.join(repoAppFolder, 'config.json'))) {
-        const configFile = await fs.promises.readFile(path.join(repoAppFolder, 'config.json'), 'utf8');
+        const configFile = await fs.promises.readFile(
+          path.join(repoAppFolder, 'config.json'),
+          'utf8',
+        );
         const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile));
 
         if (parsedConfig.success && parsedConfig.data.available) {
-          const description = await fs.promises.readFile(path.join(repoAppFolder, 'metadata', 'description.md'), 'utf8');
+          const description = await fs.promises.readFile(
+            path.join(repoAppFolder, 'metadata', 'description.md'),
+            'utf8',
+          );
+          parsedConfig.data.repo = repo;
+          if (repo !== 'runtipi-default') {
+            parsedConfig.data.id = `${repo}-${parsedConfig.data.id}`;
+          }
           return { ...parsedConfig.data, description };
         }
       }
@@ -56,11 +93,17 @@ export class DataAccessApp {
       const installedAppFolder = path.join(this.getInstalledAppsFolder(), sanitizePath(id));
 
       if (await pathExists(path.join(installedAppFolder, 'config.json'))) {
-        const configFile = await fs.promises.readFile(path.join(installedAppFolder, 'config.json'), 'utf8');
+        const configFile = await fs.promises.readFile(
+          path.join(installedAppFolder, 'config.json'),
+          'utf8',
+        );
         const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile));
 
         if (parsedConfig.success && parsedConfig.data.available) {
-          const description = await fs.promises.readFile(path.join(installedAppFolder, 'metadata', 'description.md'), 'utf8');
+          const description = await fs.promises.readFile(
+            path.join(installedAppFolder, 'metadata', 'description.md'),
+            'utf8',
+          );
           return { ...parsedConfig.data, description };
         }
       }
@@ -77,8 +120,8 @@ export class DataAccessApp {
    *
    *  @param {string} id - The app id.
    */
-  public async getAppUpdateInfo(id: string) {
-    const config = await this.getAppInfoFromAppStore(id);
+  public async getAppUpdateInfo(id: string, repo: string) {
+    const config = await this.getAppInfoFromAppStore(id, repo);
 
     if (config) {
       return {
@@ -92,17 +135,25 @@ export class DataAccessApp {
   }
 
   public async getAvailableAppIds() {
-    const appsRepoFolder = this.getAppsRepoFolder();
-
-    if (!(await pathExists(appsRepoFolder))) {
-      this.logger.error(`Apps repo ${this.appsRepoId} not found. Make sure your repo is configured correctly.`);
-      return [];
+    const repositories = await this.getRepositories();
+    const allAppIds: Record<string, string[]> = {};
+    for (const repoName of Object.keys(repositories)) {
+      if (repoName) {
+        if (repositories[repoName]) {
+          const repoDir = await this.getAppsRepoFolder(getRepoHash(repositories[repoName]));
+          const appsDir = await fs.promises.readdir(repoDir);
+          const skippedFiles = [
+            '__tests__',
+            'docker-compose.common.yml',
+            'schema.json',
+            '.DS_Store',
+          ];
+          allAppIds[repoName] = appsDir.filter((app) => !skippedFiles.includes(app));
+        }
+      }
     }
 
-    const appsDir = await fs.promises.readdir(appsRepoFolder);
-    const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
-
-    return appsDir.filter((app) => !skippedFiles.includes(app));
+    return allAppIds;
   }
 
   public async listBackupsByAppId(appId: string) {

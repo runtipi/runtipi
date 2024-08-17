@@ -18,10 +18,10 @@ export class AppDataService {
    *
    *  @param {string} id - The app id.
    */
-  public async getAppInfoFromInstalledOrAppStore(id: string) {
+  public async getAppInfoFromInstalledOrAppStore(id: string, repo: string) {
     const info = await this.dataAccessApp.getInstalledAppInfo(id);
     if (!info) {
-      return this.dataAccessApp.getAppInfoFromAppStore(id);
+      return this.dataAccessApp.getAppInfoFromAppStore(id, repo);
     }
     return info;
   }
@@ -30,32 +30,55 @@ export class AppDataService {
     return this.dataAccessApp.getInstalledAppInfo(id);
   }
 
-  public getInfoFromAppStore(id: string) {
-    return this.dataAccessApp.getAppInfoFromAppStore(id);
+  public getInfoFromAppStore(id: string, repo: string) {
+    return this.dataAccessApp.getAppInfoFromAppStore(id, repo);
   }
 
-  public async getUpdateInfo(id: string) {
-    return this.dataAccessApp.getAppUpdateInfo(id);
+  public async getUpdateInfo(id: string, repo: string) {
+    return this.dataAccessApp.getAppUpdateInfo(id, repo);
   }
 
   public async getAllAvailableApps() {
     const appIds = await this.dataAccessApp.getAvailableAppIds();
 
-    const apps = await Promise.all(
-      appIds.map(async (app) => {
-        return this.dataAccessApp.getAppInfoFromAppStore(app);
-      }),
-    );
+    const apps = []; // TODO: Fix the type here
 
-    return apps.filter(notEmpty).map(({ id, categories, name, short_desc, deprecated, supported_architectures, created_at }) => ({
-      id,
-      categories,
-      name,
-      short_desc,
-      deprecated,
-      supported_architectures,
-      created_at,
-    }));
+    // this doesnt work
+    for (const appRepo of Object.keys(appIds)) {
+      console.log(Array(appIds[appRepo])[0]);
+      apps.push(
+        await Promise.all(
+          Array(appIds[appRepo]).map(async (app) => {
+            console.log(app);
+            return await this.dataAccessApp.getAppInfoFromAppStore(app, appRepo);
+          }),
+        ),
+      );
+    }
+
+    return apps
+      .filter(notEmpty)
+      .map(
+        ({
+          id,
+          categories,
+          name,
+          short_desc,
+          deprecated,
+          supported_architectures,
+          created_at,
+          repo,
+        }) => ({
+          id,
+          categories,
+          name,
+          short_desc,
+          deprecated,
+          supported_architectures,
+          created_at,
+          repo,
+        }),
+      );
   }
 
   public async getAppBackups(params: { appId: string; pageSize: number; page: number }) {

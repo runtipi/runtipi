@@ -1,9 +1,10 @@
-import { Logger } from '@/server/core/Logger';
-import { TipiConfig } from '@/server/core/TipiConfig';
-import MiniSearch from 'minisearch';
-import type { AppDataService } from '@runtipi/shared/node';
+import { Logger } from "@/server/core/Logger";
+import { TipiConfig } from "@/server/core/TipiConfig";
+import MiniSearch from "minisearch";
+import type { AppDataService } from "@runtipi/shared/node";
 
-const sortApps = (a: AppList[number], b: AppList[number]) => a.id.localeCompare(b.id);
+const sortApps = (a: AppList[number], b: AppList[number]) =>
+  a.id.localeCompare(b.id);
 const filterApp = (app: AppList[number]): boolean => {
   if (app.deprecated) {
     return false;
@@ -17,7 +18,9 @@ const filterApp = (app: AppList[number]): boolean => {
   return app.supported_architectures.includes(arch);
 };
 
-type AppList = Awaited<ReturnType<InstanceType<typeof AppDataService>['getAllAvailableApps']>>;
+type AppList = Awaited<
+  ReturnType<InstanceType<typeof AppDataService>["getAllAvailableApps"]>
+>;
 
 export class AppCatalogCache {
   private appsAvailable: AppList | null = null;
@@ -42,19 +45,22 @@ export class AppCatalogCache {
   }
 
   public async getAvailableApps(): Promise<AppList> {
-    if (this.cacheLastUpdated && Date.now() - this.cacheLastUpdated > this.cacheTimeout) {
+    if (
+      this.cacheLastUpdated &&
+      Date.now() - this.cacheLastUpdated > this.cacheTimeout
+    ) {
       this.invalidateCache();
     }
 
     if (!this.appsAvailable) {
-      Logger.debug('app catalog -> getAvailableApps');
+      Logger.debug("app catalog -> getAvailableApps");
       const apps = await this.appDataService.getAllAvailableApps();
       this.appsAvailable = this.filterApps(apps);
 
       this.miniSearch = new MiniSearch<(typeof this.appsAvailable)[number]>({
-        fields: ['name', 'description', 'categories'],
-        storeFields: ['id'],
-        idField: 'id',
+        fields: ["name", "description", "categories"],
+        storeFields: ["id"],
+        idField: "id",
         searchOptions: {
           boost: { name: 2 },
           fuzzy: 0.2,
@@ -69,25 +75,40 @@ export class AppCatalogCache {
     return this.appsAvailable;
   }
 
-  public async searchApps(params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null }) {
+  public async searchApps(params: {
+    search?: string | null;
+    category?: string | null;
+    pageSize: number;
+    cursor?: string | null;
+  }) {
     const { search, category, pageSize, cursor } = params;
 
     let filteredApps = await this.getAvailableApps();
 
     if (category) {
-      filteredApps = filteredApps.filter((app) => app.categories.some((c) => c === category));
+      filteredApps = filteredApps.filter((app) =>
+        app.categories.some((c) => c === category)
+      );
     }
 
     if (search && this.miniSearch) {
       const result = this.miniSearch.search(search);
       const searchIds = result.map((app) => app.id);
-      filteredApps = filteredApps.filter((app) => searchIds.includes(app.id)).sort((a, b) => searchIds.indexOf(a.id) - searchIds.indexOf(b.id));
+      filteredApps = filteredApps
+        .filter((app) => searchIds.includes(app.id))
+        .sort((a, b) => searchIds.indexOf(a.id) - searchIds.indexOf(b.id));
     }
 
-    const start = cursor ? filteredApps.findIndex((app) => app.id === cursor) : 0;
+    const start = cursor
+      ? filteredApps.findIndex((app) => app.id === cursor)
+      : 0;
     const end = start + pageSize;
     const data = filteredApps.slice(start, end);
 
-    return { data, total: filteredApps.length, nextCursor: filteredApps[end]?.id };
+    return {
+      data,
+      total: filteredApps.length,
+      nextCursor: filteredApps[end]?.id,
+    };
   }
 }

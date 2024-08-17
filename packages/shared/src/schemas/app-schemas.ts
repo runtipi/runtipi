@@ -94,6 +94,7 @@ export const appInfoSchema = z.object({
     .refine((v) => v < Date.now())
     .optional()
     .default(0),
+  repo: z.string().optional(),
 });
 
 // Derived types

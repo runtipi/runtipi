@@ -380,6 +380,7 @@ export const getRepositoryUrls = async () => {
       for (const [repoName, repoUrl] of Object.entries(appStoresParsed.data)) {
         appStoreRepos.push(repoUrl);
       }
+      return appStoreRepos;
     }
     logger.error('Failed to parse appstores.json! Returning default repo.');
     return [DEFAULT_APPS_REPO];
