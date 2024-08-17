@@ -52,11 +52,11 @@ export const EditAppStoreModal: React.FC<IProps> = ({ name, url }) => {
     const errors: { [k in keyof FormValues]?: string } = {};
 
     if (values.newName && !validator.isLength(values.newName, { max: 16 })) {
-      errors.newName = "Appstore name can't be over 16 characters!";
+      errors.newName = "String must contain at most 16 character(s)";
     }
 
     if (values.newUrl && !validator.isURL(values.newUrl)) {
-      errors.newUrl = "Invalid URL.";
+      errors.newUrl = "Invalid url";
     }
 
     return errors;

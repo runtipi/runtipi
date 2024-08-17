@@ -6,14 +6,13 @@ import { z } from "zod";
 
 const schema = z.object({
   name: z.string(),
-  url: z.string(),
 });
 
 export const deleteAppstoreAction = authActionClient
   .schema(schema)
-  .action(async ({ parsedInput: { name, url } }) => {
+  .action(async ({ parsedInput: { name } }) => {
     const appstores = await SystemServiceClass.getRepositories();
-    appstores.splice(appstores.indexOf({ [name]: url }), 1);
+    delete appstores[name];
     const result = await SystemServiceClass.writeRepositories(appstores);
     if (result.success) {
       return { success: true };

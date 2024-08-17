@@ -377,11 +377,9 @@ export const getRepositoryUrls = async () => {
     const appStoresParsed = await repoSchema.safeParseAsync(JSON.parse(appStoresRaw));
     const appStoreRepos: string[] = [];
     if (appStoresParsed.success) {
-      for (const repo of appStoresParsed.data) {
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        appStoreRepos.push(Object.values(repo)[0]!);
+      for (const [repoName, repoUrl] of Object.entries(appStoresParsed.data)) {
+        appStoreRepos.push(repoUrl);
       }
-      return appStoreRepos;
     }
     logger.error('Failed to parse appstores.json! Returning default repo.');
     return [DEFAULT_APPS_REPO];

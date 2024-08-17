@@ -17,10 +17,10 @@ import toast from "react-hot-toast";
 
 type IProps = {
   name: string;
-  url: string;
+  length: number;
 };
 
-export const DeleteAppStoreModal: React.FC<IProps> = ({ name, url }) => {
+export const DeleteAppStoreModal: React.FC<IProps> = ({ name, length }) => {
   const router = useRouter();
   const deleteAppStoreDisclosure = useDisclosure();
 
@@ -35,7 +35,7 @@ export const DeleteAppStoreModal: React.FC<IProps> = ({ name, url }) => {
   });
 
   const handleDelete = () => {
-    deleteAppStoreMutation.execute({ name, url });
+    deleteAppStoreMutation.execute({ name });
   };
 
   return (
@@ -44,6 +44,7 @@ export const DeleteAppStoreModal: React.FC<IProps> = ({ name, url }) => {
         size="sm"
         intent="danger"
         variant="ghost"
+        disabled={length === 1}
         onClick={() => deleteAppStoreDisclosure.open()}
       >
         Delete

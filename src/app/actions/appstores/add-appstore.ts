@@ -13,7 +13,7 @@ export const addAppstoreAction = authActionClient
   .schema(schema)
   .action(async ({ parsedInput: { name, url } }) => {
     const appstores = await SystemServiceClass.getRepositories();
-    appstores.push({ [name]: url });
+    appstores[name] = url;
     const result = await SystemServiceClass.writeRepositories(appstores);
     if (result.success) {
       return { success: true };

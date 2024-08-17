@@ -81,9 +81,9 @@ export class SystemServiceClass {
         return appStoresParsed.data;
       }
       console.log(appStoresParsed.error);
-      return [];
+      return {};
     } catch (e) {
-      return [];
+      return {};
     }
   };
 

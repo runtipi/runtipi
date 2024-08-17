@@ -18,7 +18,7 @@ type IPros = {
 };
 
 export const AppStoresContainer: React.FC<IPros> = ({ repositories }) => {
-  if (repositories.length === 0) {
+  if (Object.keys(repositories).length === 0) {
     return (
       <Table>
         <TableHeader>
@@ -26,8 +26,12 @@ export const AppStoresContainer: React.FC<IPros> = ({ repositories }) => {
             <TableHead>No repositories found :(</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody className="d-flex justify-content-center text-center">
-          <p className="text-muted mt-4">No repositories found :(</p>
+        <TableBody>
+          <TableRow className="d-flex justify-content-center text-center">
+            <TableCell className="text-muted mt-2">
+              No repositories found :(
+            </TableCell>
+          </TableRow>
         </TableBody>
       </Table>
     );
@@ -43,24 +47,20 @@ export const AppStoresContainer: React.FC<IPros> = ({ repositories }) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {repositories.map((repo) => (
-          <TableRow key={Object.keys(repo)[0]}>
-            <TableCell>{Object.keys(repo)[0]}</TableCell>
+        {Object.keys(repositories).map((repoName: string) => (
+          <TableRow key={repoName}>
+            <TableCell>{repoName}</TableCell>
             <TableCell>
-              <a href={Object.values(repo)[0]}>{Object.values(repo)[0]}</a>
+              <a href={repositories[repoName]}>{repositories[repoName]}</a>
             </TableCell>
             <TableCell className="d-flex flex-row">
               <DeleteAppStoreModal
-                // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                name={Object.keys(repo)[0]!}
-                // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                url={Object.values(repo)[0]!}
+                name={repoName}
+                length={Object.keys(repositories).length}
               />
               <EditAppStoreModal
-                // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                name={Object.keys(repo)[0]!}
-                // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                url={Object.values(repo)[0]!}
+                name={repoName}
+                url={repositories[repoName] || ""}
               />
             </TableCell>
           </TableRow>
