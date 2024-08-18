@@ -1,7 +1,7 @@
 import { ensureUser } from '@/actions/utils/ensure-user';
 import { handleApiError } from '@/actions/utils/handle-api-error';
-import { appBackupService } from '@/server/services/app-backup/app-backup.service';
 import { TranslatedError } from '@/server/utils/errors';
+import { getClass } from 'src/inversify.config';
 
 const getAppBackups = async (searchParams: URLSearchParams) => {
   const appId = searchParams.get('appId');
@@ -11,6 +11,8 @@ const getAppBackups = async (searchParams: URLSearchParams) => {
   if (!appId) {
     throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
   }
+
+  const appBackupService = getClass('IAppBackupService');
 
   return appBackupService.executeCommand('getAppBackups', { appId, pageSize: Number(pageSize), page: Number(page) });
 };

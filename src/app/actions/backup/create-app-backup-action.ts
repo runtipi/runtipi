@@ -1,8 +1,8 @@
 'use server';
 
 import { authActionClient } from '@/lib/safe-action';
-import { appBackupService } from '@/server/services/app-backup/app-backup.service';
 import { revalidatePath } from 'next/cache';
+import { getClass } from 'src/inversify.config';
 import { z } from 'zod';
 
 const input = z.object({
@@ -13,6 +13,7 @@ const input = z.object({
  * Given an app id, backs up the app.
  */
 export const createAppBackupAction = authActionClient.schema(input).action(async ({ parsedInput: { id } }) => {
+  const appBackupService = getClass('IAppBackupService');
   await appBackupService.executeCommand('createAppBackup', { appId: id });
 
   revalidatePath('/apps');

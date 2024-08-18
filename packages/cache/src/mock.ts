@@ -32,5 +32,5 @@ export class CacheMock implements ICache {
     return Promise.all(keys.map((key) => this.del(key)));
   });
 
-  public getClient = () => Promise.resolve(new IORedis());
+  public getClient = () => new IORedis();
 }

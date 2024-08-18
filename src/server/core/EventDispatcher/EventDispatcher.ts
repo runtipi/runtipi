@@ -1,23 +1,33 @@
-import { TipiConfig } from '@/server/core/TipiConfig';
 import { type SystemEvent, eventResultSchema, eventSchema } from '@runtipi/shared';
-import { Queue, QueueEvents } from 'bullmq';
-import { Logger } from '../Logger';
+import { type Job, Queue, QueueEvents } from 'bullmq';
+import { inject, injectable } from 'inversify';
+import type { ILogger } from '@runtipi/shared/node';
+import type { ICache } from '@runtipi/cache';
 
-export class EventDispatcher {
-  private queue;
+export interface IEventDispatcher {
+  dispatchEvent: (event: SystemEvent) => Promise<Job<unknown>>;
+  dispatchEventAsync: (event: SystemEvent, timeout?: number) => Promise<{ success: boolean; stdout?: string }>;
+  clear: () => Promise<void>;
+  close: () => Promise<void>;
+  scheduleEvent: (event: SystemEvent, cronExpression: string) => void;
+}
 
-  private queueEvents;
+@injectable()
+export class EventDispatcher implements IEventDispatcher {
+  private queue: Queue;
 
-  private instanceId: string;
+  private queueEvents: QueueEvents;
 
-  constructor() {
+  constructor(
+    @inject('ILogger') private logger: ILogger,
+    @inject('ICache') private cache: ICache,
+  ) {
     this.queue = new Queue('events', {
-      connection: { host: TipiConfig.getConfig().REDIS_HOST, port: 6379, password: TipiConfig.getConfig().redisPassword },
+      connection: this.cache.getClient(),
     });
     this.queueEvents = new QueueEvents('events', {
-      connection: { host: TipiConfig.getConfig().REDIS_HOST, port: 6379, password: TipiConfig.getConfig().redisPassword },
+      connection: this.cache.getClient(),
     });
-    this.instanceId = `${TipiConfig.getConfig().version}-${Date.now()}`;
   }
 
   public async cleanRepeatableJobs() {
@@ -54,14 +64,14 @@ export class EventDispatcher {
    * @returns {Promise<{ success: boolean; stdout?: string }>} - Promise that resolves when the event is done
    */
   public async dispatchEventAsync(event: SystemEvent, timeout: number = 1000 * 60 * 5): Promise<{ success: boolean; stdout?: string }> {
-    Logger.info(`Dispatching event ${JSON.stringify(event)}. Instance: ${this.instanceId}`);
+    this.logger.info(`Dispatching event ${JSON.stringify(event)}.`);
     try {
       const job = await this.dispatchEvent(event);
       const result = await job.waitUntilFinished(this.queueEvents, timeout);
 
       return eventResultSchema.parse(result);
     } catch (e) {
-      Logger.error(`Event failed: ${e}`);
+      this.logger.error(`Event failed: ${e}`);
       let message = 'Event failed';
       if (e instanceof Error) {
         message = e.message;
@@ -76,7 +86,7 @@ export class EventDispatcher {
   }
 
   public scheduleEvent(event: SystemEvent, cronExpression: string) {
-    Logger.info(`Scheduling event ${JSON.stringify(event)} with cron expression ${cronExpression}`);
+    this.logger.info(`Scheduling event ${JSON.stringify(event)} with cron expression ${cronExpression}`);
     const jobid = this.generateJobId(event);
 
     void this.queue.add(jobid, eventSchema.parse(event), { repeat: { pattern: cronExpression } });

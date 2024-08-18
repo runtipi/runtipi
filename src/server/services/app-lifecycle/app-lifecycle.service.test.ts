@@ -7,17 +7,23 @@ import waitForExpect from 'wait-for-expect';
 import { EventDispatcher } from '../../core/EventDispatcher';
 import { TipiConfig } from '../../core/TipiConfig';
 import { createAppConfig, getAppById, insertApp } from '../../tests/apps.factory';
-import { AppLifecycleClass } from './app-lifecycle.service';
+import { type IAppLifecycleService, AppLifecycleService } from './app-lifecycle.service';
+import { CacheMock } from 'packages/cache/src/mock';
+import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
 
 let db: TestDatabase;
-let appLifecycle: AppLifecycleClass;
+let appLifecycle: IAppLifecycleService;
 const TEST_SUITE = 'applifecycle';
-const dispatcher = new EventDispatcher();
+
+const logger = new LoggerMock();
+const cache = new CacheMock();
+
+const dispatcher = new EventDispatcher(logger, cache);
 const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  appLifecycle = new AppLifecycleClass(new AppQueries(db.dbClient), dispatcher, appDataService);
+  appLifecycle = new AppLifecycleService(new AppQueries(db.dbClient), dispatcher, appDataService);
 });
 
 beforeEach(async () => {

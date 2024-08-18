@@ -1,7 +1,17 @@
 import { notEmpty } from '../../../helpers/typescript-helpers';
 import { DataAccessApp } from '../data-access/data-access-app';
 
-export class AppDataService {
+export interface IAppDataService {
+  getAppInfoFromInstalledOrAppStore: AppDataService['getAppInfoFromInstalledOrAppStore'];
+  getInstalledInfo: AppDataService['getInstalledInfo'];
+  getInfoFromAppStore: AppDataService['getInfoFromAppStore'];
+  getUpdateInfo: AppDataService['getUpdateInfo'];
+  getAllAvailableApps: AppDataService['getAllAvailableApps'];
+  getAppBackups: AppDataService['getAppBackups'];
+  deleteAppBackup: AppDataService['deleteAppBackup'];
+}
+
+export class AppDataService implements IAppDataService {
   private dataAccessApp: DataAccessApp;
 
   constructor(params: { dataDir: string; appDataDir: string; appsRepoId: string }) {

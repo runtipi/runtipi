@@ -36,7 +36,7 @@ async function bundle() {
   await build({
     ...options,
   });
-  console.log(`Build time: ${Date.now() - start}ms`);
+  console.info(`Build time: ${Date.now() - start}ms`);
 }
 
 bundle();

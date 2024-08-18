@@ -1,14 +1,13 @@
-import type { EventDispatcher } from '@/server/core/EventDispatcher';
-import { Logger } from '@/server/core/Logger';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import type { AppStatus } from '@runtipi/db';
-import { appLifecycle } from '../../app-lifecycle/app-lifecycle.service';
 import type { AppBackupCommandParams, IAppBackupCommand } from './types';
+import { getClass } from 'src/inversify.config';
+import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 
 export class RestoreAppBackupCommand implements IAppBackupCommand {
   private queries: IAppQueries;
-  private eventDispatcher: EventDispatcher;
+  private eventDispatcher: IEventDispatcher;
 
   constructor(params: AppBackupCommandParams) {
     this.queries = params.queries;
@@ -18,6 +17,9 @@ export class RestoreAppBackupCommand implements IAppBackupCommand {
   private async sendEvent(appId: string, filename: string, appStatusBeforeUpdate: AppStatus): Promise<void> {
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'restore', appid: appId, filename });
 
+    const appLifecycle = getClass('IAppLifecycleService');
+    const logger = getClass('ILogger');
+
     await this.queries.updateApp(appId, { status: 'stopped' });
     if (success) {
       if (appStatusBeforeUpdate === 'running') {
@@ -26,7 +28,7 @@ export class RestoreAppBackupCommand implements IAppBackupCommand {
         await this.queries.updateApp(appId, { status: appStatusBeforeUpdate });
       }
     } else {
-      Logger.error(`Failed to restore app ${appId}: ${stdout}`);
+      logger.error(`Failed to restore app ${appId}: ${stdout}`);
     }
   }
 

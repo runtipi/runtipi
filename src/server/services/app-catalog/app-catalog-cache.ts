@@ -1,4 +1,3 @@
-import { Logger } from '@/server/core/Logger';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import type { AppDataService } from '@runtipi/shared/node';
 import MiniSearch from 'minisearch';
@@ -47,7 +46,6 @@ export class AppCatalogCache {
     }
 
     if (!this.appsAvailable) {
-      Logger.debug('app catalog -> getAvailableApps');
       const apps = await this.appDataService.getAllAvailableApps();
       this.appsAvailable = this.filterApps(apps);
 

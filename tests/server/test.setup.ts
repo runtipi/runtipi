@@ -1,11 +1,10 @@
 import 'reflect-metadata';
 import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
-import type { ICache } from '@runtipi/cache';
 import { fromPartial } from '@total-typescript/shoehorn';
 import type { Job } from 'bullmq';
 import fs from 'fs-extra';
-import { afterAll, beforeEach, vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 
 let cookieStore: Record<string, string> = {};
 vi.mock('next/headers', () => {
@@ -58,8 +57,6 @@ beforeEach(async () => {
   await fs.promises.mkdir(path.join(DATA_DIR, 'logs'), { recursive: true });
   cookieStore = {};
 });
-
-afterAll(async () => {});
 
 vi.mock('fs-extra', async () => {
   const { fsMock } = await import('@/tests/mocks/fs');

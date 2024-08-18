@@ -46,6 +46,7 @@ export class Logger implements ILogger {
 
   private log = (level: string, messages: unknown[]) => {
     if (typeof window !== 'undefined') {
+      // biome-ignore lint/suspicious/noConsoleLog: used for logging
       console.log(level, messages.join(' '));
       return;
     }

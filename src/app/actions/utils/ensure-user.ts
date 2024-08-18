@@ -1,9 +1,8 @@
-import type { ISessionManager } from '@/server/common/session-manager';
 import { TranslatedError } from '@/server/utils/errors';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 
 export const ensureUser = async () => {
-  const sessionHelpers = container.get<ISessionManager>('ISessionManager');
+  const sessionHelpers = getClass('ISessionManager');
   const user = await sessionHelpers.getUserFromCookie();
 
   if (!user) {

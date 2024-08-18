@@ -4,8 +4,8 @@ import type { ICache } from '@runtipi/cache';
 import { inject, injectable } from 'inversify';
 import axios from 'redaxios';
 import { fileExists } from '../../common/fs.helpers';
-import { Logger } from '../../core/Logger';
 import { TipiConfig } from '../../core/TipiConfig';
+import type { ILogger } from '@runtipi/shared/node';
 
 export interface ISystemService {
   getVersion: () => Promise<{ current: string; latest: string; body?: string | null }>;
@@ -13,7 +13,10 @@ export interface ISystemService {
 
 @injectable()
 export class SystemService implements ISystemService {
-  constructor(@inject('ICache') private cache: ICache) {}
+  constructor(
+    @inject('ICache') private cache: ICache,
+    @inject('ILogger') private logger: ILogger,
+  ) {}
   /**
    * Get the current and latest version of Tipi
    *
@@ -44,7 +47,7 @@ export class SystemService implements ISystemService {
 
       return { current: TipiConfig.getConfig().version, latest: version, body };
     } catch (e) {
-      Logger.error(e);
+      this.logger.error(e);
       return { current: TipiConfig.getConfig().version, latest: TipiConfig.getConfig().version, body: '' };
     }
   };

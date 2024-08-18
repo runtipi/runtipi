@@ -1,12 +1,11 @@
 import { handleApiError } from '@/actions/utils/handle-api-error';
-import type { ISessionManager } from '@/server/common/session-manager';
 import fs from 'fs-extra';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 import { DATA_DIR } from '../../../config/constants';
 
 export async function GET() {
   try {
-    const sessionManager = container.get<ISessionManager>('ISessionManager');
+    const sessionManager = getClass('ISessionManager');
     const user = await sessionManager.getUserFromCookie();
 
     if (user?.operator) {

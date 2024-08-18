@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import React from 'react';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 
@@ -33,11 +32,17 @@ vi.mock('fs', async () => {
 console.error = vi.fn();
 
 class ResizeObserver {
-  observe() {}
+  observe() {
+    // no-op
+  }
 
-  unobserve() {}
+  unobserve() {
+    // no-op
+  }
 
-  disconnect() {}
+  disconnect() {
+    // no-op
+  }
 }
 
 // Mock localStorage
@@ -68,8 +73,12 @@ Object.defineProperty(window, 'matchMedia', {
   value: () => {
     return {
       matches: false,
-      addListener: () => {},
-      removeListener: () => {},
+      addListener: () => {
+        // no-op
+      },
+      removeListener: () => {
+        // no-op
+      },
     };
   },
 });

@@ -11,10 +11,14 @@ import fs from 'fs-extra';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 import { InstallAppCommand } from '../install-app-command';
+import { CacheMock } from 'packages/cache/src/mock';
+import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
 
 let db: TestDatabase;
 const TEST_SUITE = 'installappcommand';
-const dispatcher = new EventDispatcher();
+const logger = new LoggerMock();
+const cache = new CacheMock();
+const dispatcher = new EventDispatcher(logger, cache);
 const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 const executeOtherCommandMock = vi.fn(() => Promise.resolve({ success: true }));
 let installApp: InstallAppCommand;

@@ -23,7 +23,6 @@ export class SocketManager implements ISocketManager {
       this.logger.debug('Client connected to socket', socket.id);
       socket.on('app-logs-init', (event) => handleViewAppLogsEvent(socket, event, this.emit.bind(this)));
       socket.on('runtipi-logs-init', (event) => handleViewRuntipiLogsEvent(socket, event, this.emit.bind(this)));
-      socket.on('disconnect', () => {});
     });
 
     this.io = io;

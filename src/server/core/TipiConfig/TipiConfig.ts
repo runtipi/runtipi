@@ -4,7 +4,6 @@ import fs from 'fs-extra';
 import type { z } from 'zod';
 import { DATA_DIR } from '../../../config';
 import { readJsonFile } from '../../common/fs.helpers';
-import { Logger } from '../Logger';
 
 type TipiSettingsType = z.input<typeof settingsSchema>;
 
@@ -37,7 +36,7 @@ export class TipiConfigClass {
       envFile = fs.readFileSync(`${DATA_DIR}/.env`).toString();
     } catch (e) {
       Sentry.captureException(e);
-      Logger.error('❌ .env file not found');
+      console.error('❌ .env file not found');
     }
 
     const envMap = envStringToMap(envFile.toString());
@@ -77,7 +76,7 @@ export class TipiConfigClass {
     } else {
       const errors = formatErrors(parsedConfig.error.flatten());
       Sentry.captureException(new Error(`Invalid env config ${JSON.stringify(parsedConfig.error.flatten())}`));
-      Logger.error(`❌ Invalid env config ${JSON.stringify(errors)}`);
+      console.error(`❌ Invalid env config ${JSON.stringify(errors)}`);
     }
   }
 
@@ -98,7 +97,7 @@ export class TipiConfigClass {
         this.fileConfigCache = fileConfig;
         this.cacheTime = Date.now();
       } else {
-        Logger.error(`❌ Invalid settings.json file: ${JSON.stringify(parsedFileConfig.error.flatten())}`);
+        console.error(`❌ Invalid settings.json file: ${JSON.stringify(parsedFileConfig.error.flatten())}`);
       }
     }
 
@@ -156,7 +155,7 @@ export class TipiConfigClass {
     const parsed = settingsSchema.safeParse(settings);
 
     if (!parsed.success) {
-      Logger.error('❌ Invalid settings.json file');
+      console.error('❌ Invalid settings.json file');
       return;
     }
 

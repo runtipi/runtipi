@@ -48,7 +48,7 @@ const createAppConfig = (props?: Partial<AppInfo>) => {
   return appInfo;
 };
 
-const createApp = async (props: IProps, database: TestDatabase) => {
+const createApp = async (props: IProps, database?: TestDatabase) => {
   const {
     installed = false,
     status = 'running',
@@ -114,23 +114,34 @@ const createApp = async (props: IProps, database: TestDatabase) => {
   mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/docker-compose.yml`] = 'compose';
   mockFiles[`${DATA_DIR}/repos/repo-id/apps/${appInfo.id}/metadata/description.md`] = 'md desc';
 
-  let appEntity: App = {} as App;
+  let appEntity: App = {
+    id: appInfo.id,
+    config: { TEST_FIELD: 'test' },
+    status,
+    exposed,
+    domain,
+    version: 1,
+    openPort,
+    exposedLocal,
+  } as App;
   if (installed) {
-    const insertedApp = await database.dbClient.db
-      .insert(appTable)
-      .values({
-        id: appInfo.id,
-        config: { TEST_FIELD: 'test' },
-        status,
-        exposed,
-        domain,
-        version: 1,
-        openPort,
-        exposedLocal,
-      })
-      .returning();
+    if (database) {
+      const insertedApp = await database.dbClient.db
+        .insert(appTable)
+        .values({
+          id: appInfo.id,
+          config: { TEST_FIELD: 'test' },
+          status,
+          exposed,
+          domain,
+          version: 1,
+          openPort,
+          exposedLocal,
+        })
+        .returning();
+      appEntity = insertedApp[0] as App;
+    }
 
-    appEntity = insertedApp[0] as App;
     mockFiles[`${APP_DATA_DIR}/${appInfo.id}/app.env`] = 'TEST=test\nAPP_PORT=3000\nTEST_FIELD=test';
     mockFiles[`${DATA_DIR}/apps/${appInfo.id}/config.json`] = JSON.stringify(appInfo);
     mockFiles[`${DATA_DIR}/apps/${appInfo.id}/metadata/description.md`] = 'md desc';

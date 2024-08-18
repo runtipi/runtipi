@@ -2,7 +2,7 @@ import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { AppDataService } from '@runtipi/shared/node';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 import { AppCatalogCache } from './app-catalog-cache';
 import { GetAppCommand, GetGuestDashboardApps, GetInstalledAppsCommand } from './commands';
 import { ListAppsCommand } from './commands/list-apps-command';
@@ -60,7 +60,7 @@ export class AppCatalogClass {
 
 export type AppCatalog = InstanceType<typeof AppCatalogClass>;
 
-const queries = container.get<IAppQueries>('IAppQueries');
+const queries = getClass('IAppQueries');
 const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
 const appCacheManager = new AppCatalogCache(appDataService);
 

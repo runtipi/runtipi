@@ -1,18 +1,16 @@
-import type { ISessionManager } from '@/server/common/session-manager';
-import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
 import { redirect } from 'next/navigation';
-import React from 'react';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 import { RegisterContainer } from './components/RegisterContainer';
 
 export default async function LoginPage() {
-  const sessionManager = container.get<ISessionManager>('ISessionManager');
+  const sessionManager = getClass('ISessionManager');
+  const authQueries = getClass('IAuthQueries');
+
   const user = await sessionManager.getUserFromCookie();
   if (user) {
     redirect('/dashboard');
   }
 
-  const authQueries = container.get<IAuthQueries>('IAuthQueries');
   const isConfigured = await authQueries.getFirstOperator();
 
   if (isConfigured) {

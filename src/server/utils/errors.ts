@@ -1,6 +1,6 @@
-import { Logger } from '@/server/core/Logger';
 import { type TranslationValues, createTranslator } from 'next-intl';
 import messages from '../../client/messages/en.json';
+import { getClass } from 'src/inversify.config';
 
 const t = createTranslator({ locale: 'en', messages });
 export type MessageKey = Parameters<typeof t>[0];
@@ -13,7 +13,8 @@ export class TranslatedError extends Error {
   constructor(message: MessageKey, variableValues: TranslationValues = {}, status?: number) {
     super(message);
 
-    Logger.error(`server error: ${t(message, variableValues)}`);
+    const logger = getClass('ILogger');
+    logger.error(`server error: ${t(message, variableValues)}`);
 
     this.name = 'TranslatedError';
     this.variableValues = variableValues;

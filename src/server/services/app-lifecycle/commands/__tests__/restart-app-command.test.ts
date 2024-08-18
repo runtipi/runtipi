@@ -3,14 +3,19 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
 import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
-import { AppDataService } from '@runtipi/shared/node';
+import { AppDataService, Logger } from '@runtipi/shared/node';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 import { RestartAppCommand } from '../restart-app-command';
+import { CacheMock } from 'packages/cache/src/mock';
+import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
 
 let db: TestDatabase;
 const TEST_SUITE = 'stopappcommand';
-const dispatcher = new EventDispatcher();
+const cache = new CacheMock();
+const logger = new LoggerMock();
+
+const dispatcher = new EventDispatcher(logger, cache);
 const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 let restartApp: RestartAppCommand;
 
