@@ -3,7 +3,7 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
 import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
-import { AppDataService, Logger } from '@runtipi/shared/node';
+import { AppDataService } from '@runtipi/shared/node';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 import { RestartAppCommand } from '../restart-app-command';
@@ -11,7 +11,7 @@ import { CacheMock } from 'packages/cache/src/mock';
 import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
 
 let db: TestDatabase;
-const TEST_SUITE = 'stopappcommand';
+const TEST_SUITE = 'restartappcommand';
 const cache = new CacheMock();
 const logger = new LoggerMock();
 
@@ -31,7 +31,10 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await clearDatabase(db);
-  dispatcher.dispatchEventAsync = vi.fn().mockResolvedValue({ success: true });
+  dispatcher.dispatchEventAsync = vi.fn().mockImplementation(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    return { success: true };
+  });
 });
 
 afterAll(async () => {

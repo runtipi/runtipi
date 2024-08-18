@@ -35,7 +35,10 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await clearDatabase(db);
-  dispatcher.dispatchEventAsync = vi.fn().mockResolvedValue({ success: true });
+  dispatcher.dispatchEventAsync = vi.fn().mockImplementation(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    return { success: true };
+  });
 });
 
 afterAll(async () => {
