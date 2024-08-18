@@ -17,7 +17,7 @@ export interface ICache {
   close(): Promise<string>;
   ttl(key: string): Promise<number>;
   clear(): Promise<number[]>;
-  getClient(): Promise<IORedis>;
+  getClient(): IORedis;
 }
 
 export class Cache implements ICache {
@@ -39,34 +39,30 @@ export class Cache implements ICache {
     });
   }
 
-  public async getClient() {
+  public getClient() {
     if (this.client.status === 'close') {
-      await this.client.connect();
+      this.client.connect();
     }
     return this.client;
   }
 
   public async set(key: string, value: string, expiration = ONE_DAY_IN_SECONDS) {
-    const client = await this.getClient();
-    return client.set(key, value, 'EX', expiration);
+    return this.client.set(key, value, 'EX', expiration);
   }
 
   public async get(key: string) {
-    const client = await this.getClient();
-    return client.get(key);
+    return this.client.get(key);
   }
 
   public async del(key: string) {
-    const client = await this.getClient();
-    return client.del(key);
+    return this.client.del(key);
   }
 
   public async getByPrefix(prefix: string) {
-    const client = await this.getClient();
-    const keys = await client.keys(`${prefix}*`);
+    const keys = await this.client.keys(`${prefix}*`);
 
     const promises = keys.map(async (key) => {
-      const val = await client.get(key);
+      const val = await this.client.get(key);
       return {
         key,
         val,
@@ -82,15 +78,13 @@ export class Cache implements ICache {
   }
 
   public async ttl(key: string) {
-    const client = await this.getClient();
-    return client.ttl(key);
+    return this.client.ttl(key);
   }
 
   public async clear() {
-    const client = await this.getClient();
     try {
-      const keys = await client.keys('*');
-      return Promise.all(keys.map((key) => client.del(key)));
+      const keys = await this.client.keys('*');
+      return Promise.all(keys.map((key) => this.client.del(key)));
     } catch (error) {
       this.logger.error('Failed to clear cache', error);
       throw error;

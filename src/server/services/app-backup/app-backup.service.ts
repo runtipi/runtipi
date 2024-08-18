@@ -1,11 +1,9 @@
-import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
-import { TipiConfig } from '@/server/core/TipiConfig';
+import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import { AppDataService } from '@runtipi/shared/node';
-import { container } from 'src/inversify.config';
+import type { IAppDataService } from '@runtipi/shared/node';
 import { CreateAppBackupCommand, DeleteAppBackupCommand, GetAppBackupsCommand, RestoreAppBackupCommand } from './commands';
 import type { IAppBackupCommand } from './commands/types';
+import { inject, injectable } from 'inversify';
 
 export const availableCommands = {
   createAppBackup: CreateAppBackupCommand,
@@ -25,13 +23,18 @@ class CommandInvoker {
   }
 }
 
-export class AppBackupClass {
+export interface IAppBackupService {
+  executeCommand: ExecuteAppBackupFunction;
+}
+
+@injectable()
+export class AppBackupService {
   private commandInvoker: CommandInvoker;
 
   constructor(
-    private queries: IAppQueries,
-    private eventDispatcher: EventDispatcher,
-    private appDataService: AppDataService,
+    @inject('IAppQueries') private queries: IAppQueries,
+    @inject('IEventDispatcher') private eventDispatcher: IEventDispatcher,
+    @inject('IAppDataService') private appDataService: IAppDataService,
   ) {
     this.commandInvoker = new CommandInvoker();
   }
@@ -56,10 +59,4 @@ export class AppBackupClass {
   };
 }
 
-export type AppBackup = InstanceType<typeof AppBackupClass>;
-
-const queries = container.get<IAppQueries>('IAppQueries');
-const eventDispatcher = new EventDispatcher();
-const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
-
-export const appBackupService = new AppBackupClass(queries, eventDispatcher, appDataService);
+export type AppBackup = InstanceType<typeof AppBackupService>;

@@ -1,6 +1,8 @@
-export { execAsync } from './helpers/exec-async';
-export { pathExists } from './helpers/fs-helpers';
+import { execAsync } from './helpers/exec-async';
+import { pathExists } from './helpers/fs-helpers';
 
-export { Logger } from './logger/FileLogger';
-export type { ILogger } from './logger/Logger.interface';
-export { AppDataService } from './modules/app/service/app-data-service';
+import { Logger } from './logger/FileLogger';
+import type { ILogger } from './logger/Logger.interface';
+import { AppDataService, type IAppDataService } from './modules/app/service/app-data-service';
+
+export { execAsync, pathExists, Logger, AppDataService, type ILogger, type IAppDataService };

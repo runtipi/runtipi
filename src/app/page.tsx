@@ -1,12 +1,9 @@
 import { UnauthenticatedPage } from '@/components/UnauthenticatedPage';
-import type { ISessionManager } from '@/server/common/session-manager';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import React from 'react';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 import { EmptyPage } from './components/EmptyPage';
 import { GuestDashboardApps } from './components/GuestDashboardApps';
 
@@ -33,8 +30,8 @@ export default async function RootPage() {
     );
   }
 
-  const authQueries = container.get<IAuthQueries>('IAuthQueries');
-  const sessionManager = container.get<ISessionManager>('ISessionManager');
+  const authQueries = getClass('IAuthQueries');
+  const sessionManager = getClass('ISessionManager');
 
   const isConfigured = await authQueries.getFirstOperator();
 

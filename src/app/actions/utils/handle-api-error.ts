@@ -2,12 +2,13 @@ import { getTranslator } from '@/lib/get-translator';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { type MessageKey, TranslatedError } from '@/server/utils/errors';
 import * as Sentry from '@sentry/nextjs';
-import { Logger } from '../../../server/core/Logger';
+import { getClass } from 'src/inversify.config';
 
 /**
  * Given an error, returns a 500 response with the translated error message.
  */
 export const handleApiError = async (e: unknown) => {
+  const logger = getClass('ILogger');
   const originalMessage = e instanceof Error ? e.message : e;
   const status = e instanceof TranslatedError ? e.status : 500;
   const errorVariables = e instanceof TranslatedError ? e.variableValues : {};
@@ -18,7 +19,7 @@ export const handleApiError = async (e: unknown) => {
 
   // Non TranslatedErrors are unexpected and should be reported to Sentry.
   if (!(e instanceof TranslatedError) && TipiConfig.getConfig().allowErrorMonitoring) {
-    Logger.error(e);
+    logger.error(e);
     Sentry.captureException(e);
   }
 

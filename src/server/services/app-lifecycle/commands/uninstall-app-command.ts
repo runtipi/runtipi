@@ -1,14 +1,14 @@
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
-import type { EventDispatcher } from '@/server/core/EventDispatcher';
-import { Logger } from '@/server/core/Logger';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import type { AppEventFormInput } from '@runtipi/shared';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
+import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
+import { getClass } from 'src/inversify.config';
 
 export class UninstallAppCommand implements IAppLifecycleCommand {
   private queries: IAppQueries;
-  private eventDispatcher: EventDispatcher;
+  private eventDispatcher: IEventDispatcher;
   private executeOtherCommand: IAppLifecycleCommand['execute'];
 
   constructor(params: AppLifecycleCommandParams) {
@@ -18,13 +18,14 @@ export class UninstallAppCommand implements IAppLifecycleCommand {
   }
 
   private async sendEvent(appId: string, form: AppEventFormInput) {
+    const logger = getClass('ILogger');
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'uninstall', appid: appId, form });
 
     if (success) {
       await this.queries.deleteApp(appId);
     } else {
       await this.queries.updateApp(appId, { status: 'stopped' });
-      Logger.error(`Failed to uninstall app ${appId}: ${stdout}`);
+      logger.error(`Failed to uninstall app ${appId}: ${stdout}`);
     }
   }
 

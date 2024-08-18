@@ -5,9 +5,11 @@ import { setupServer } from 'msw/node';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { TipiConfig } from '../../core/TipiConfig';
 import { SystemService } from './system.service';
+import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
 
 const cache = new CacheMock();
-const systemService = new SystemService(cache);
+const logger = new LoggerMock();
+const systemService = new SystemService(cache, logger);
 const server = setupServer();
 
 afterAll(async () => {

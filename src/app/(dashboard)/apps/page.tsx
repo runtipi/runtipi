@@ -10,9 +10,7 @@ import { EmptyPage } from '../../components/EmptyPage';
 import styles from './page.module.css';
 import { AddLinkButton } from '../components/AddLink/AddLinkButton';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
-import { container } from 'src/inversify.config';
-import { ICustomLinksService } from '@/server/services/custom-links/custom-links.service';
-import { ISessionManager } from '@/server/common/session-manager';
+import { getClass } from 'src/inversify.config';
 
 export async function generateMetadata(): Promise<Metadata> {
   const translator = await getTranslator();
@@ -25,10 +23,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Page() {
   const installedApps = await appCatalog.executeCommand('getInstalledApps');
 
-  const sessionManager = container.get<ISessionManager>('ISessionManager');
+  const sessionManager = getClass('ISessionManager');
   const user = await sessionManager.getUserFromCookie();
 
-  const linksService = container.get<ICustomLinksService>('ICustomLinksService');
+  const linksService = getClass('ICustomLinksService');
   const customLinks = await linksService.getLinks(user?.id);
 
   const renderApp = (app: (typeof installedApps)[number]) => {

@@ -1,8 +1,7 @@
 import path from 'node:path';
 import * as schema from '@runtipi/db';
-import type { ILogger } from '@runtipi/shared/node';
 import pg, { Pool } from 'pg';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 import { TipiConfig } from '../core/TipiConfig';
 
 export type TestDatabase = {
@@ -31,7 +30,7 @@ const createDatabase = async (testsuite: string): Promise<TestDatabase> => {
 
   await pgClient.end();
 
-  const logger = container.get<ILogger>('ILogger');
+  const logger = getClass('ILogger');
 
   const migrator = new schema.Migrator(logger);
   await migrator.runPostgresMigrations({

@@ -1,15 +1,14 @@
-import type { EventDispatcher } from '@/server/core/EventDispatcher';
-import { Logger } from '@/server/core/Logger';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import type { AppStatus } from '@runtipi/db';
-import { appLifecycle } from '../../app-lifecycle/app-lifecycle.service';
 import type { AppBackupCommandParams, IAppBackupCommand } from './types';
+import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
+import { getClass } from 'src/inversify.config';
 
 export class CreateAppBackupCommand implements IAppBackupCommand {
   private queries: IAppQueries;
-  private eventDispatcher: EventDispatcher;
+  private eventDispatcher: IEventDispatcher;
 
   constructor(params: AppBackupCommandParams) {
     this.queries = params.queries;
@@ -17,6 +16,9 @@ export class CreateAppBackupCommand implements IAppBackupCommand {
   }
 
   private async sendEvent(appId: string, appStatusBeforeUpdate?: AppStatus): Promise<void> {
+    const appLifecycle = getClass('IAppLifecycleService');
+    const logger = getClass('ILogger');
+
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync(
       { type: 'app', command: 'backup', appid: appId, form: {} },
       1000 * 60 * 15, // 15 minutes
@@ -31,7 +33,7 @@ export class CreateAppBackupCommand implements IAppBackupCommand {
 
       await this.queries.updateApp(appId, { status: 'running' });
     } else {
-      Logger.error(`Failed to backup app ${appId}: ${stdout}`);
+      logger.error(`Failed to backup app ${appId}: ${stdout}`);
       await this.queries.updateApp(appId, { status: 'stopped' });
     }
   }

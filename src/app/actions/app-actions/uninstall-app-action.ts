@@ -1,8 +1,8 @@
 'use server';
 
 import { authActionClient } from '@/lib/safe-action';
-import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
 import { revalidatePath } from 'next/cache';
+import { getClass } from 'src/inversify.config';
 import { z } from 'zod';
 
 const input = z.object({ id: z.string() });
@@ -11,6 +11,7 @@ const input = z.object({ id: z.string() });
  * Given an app id, uninstalls the app.
  */
 export const uninstallAppAction = authActionClient.schema(input).action(async ({ parsedInput: { id } }) => {
+  const appLifecycle = getClass('IAppLifecycleService');
   await appLifecycle.executeCommand('uninstallApp', { appId: id });
 
   revalidatePath('/apps');

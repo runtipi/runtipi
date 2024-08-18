@@ -76,7 +76,7 @@ describe('Input', () => {
 
   it('should set the input value if provided', () => {
     // arrange
-    render(<Input name="test-input" label="Test Label" value="Test Value" onChange={vi.fn} />);
+    render(<Input name="test-input" label="Test Label" value="Test Value" onChange={vi.fn()} />);
     const input = screen.getByLabelText('Test Label') as HTMLInputElement;
 
     // assert

@@ -7,10 +7,15 @@ import { AppDataService } from '@runtipi/shared/node';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 import { UninstallAppCommand } from '../uninstall-app-command';
+import { CacheMock } from 'packages/cache/src/mock';
+import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
 
 let db: TestDatabase;
 const TEST_SUITE = 'uninstallappcommand';
-const dispatcher = new EventDispatcher();
+const logger = new LoggerMock();
+const cache = new CacheMock();
+
+const dispatcher = new EventDispatcher(logger, cache);
 const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 let uninstallApp: UninstallAppCommand;
 
@@ -26,7 +31,10 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await clearDatabase(db);
-  dispatcher.dispatchEventAsync = vi.fn().mockResolvedValue({ success: true });
+  dispatcher.dispatchEventAsync = vi.fn().mockImplementation(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    return { success: true };
+  });
 });
 
 afterAll(async () => {

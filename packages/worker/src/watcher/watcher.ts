@@ -81,7 +81,7 @@ const runCommand = async (jobData: unknown) => {
  */
 export const startWorker = async () => {
   const cache = container.get<ICache>('ICache');
-  const connection = await cache.getClient();
+  const connection = cache.getClient();
 
   const repeatWorker = new Worker(
     'repeat',

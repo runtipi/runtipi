@@ -202,6 +202,8 @@ export const copyDataDir = async (id: string) => {
 
   // Remove any .gitkeep files from the app-data folder at any level
   if (await pathExists(path.join(APP_DATA_DIR, sanitizePath(id), 'data'))) {
-    await execAsync(`find ${APP_DATA_DIR}/${sanitizePath(id)}/data -name .gitkeep -delete`).catch(() => {});
+    await execAsync(`find ${APP_DATA_DIR}/${sanitizePath(id)}/data -name .gitkeep -delete`).catch(() => {
+      console.error(`Error removing .gitkeep files from ${APP_DATA_DIR}/${sanitizePath(id)}/data`);
+    });
   }
 };

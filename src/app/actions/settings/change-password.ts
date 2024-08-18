@@ -1,8 +1,7 @@
 'use server';
 
 import { authActionClient } from '@/lib/safe-action';
-import type { IAuthService } from '@/server/services/auth/auth.service';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 import { z } from 'zod';
 
 const input = z.object({ currentPassword: z.string(), newPassword: z.string() });
@@ -13,7 +12,7 @@ const input = z.object({ currentPassword: z.string(), newPassword: z.string() })
 export const changePasswordAction = authActionClient
   .schema(input)
   .action(async ({ parsedInput: { currentPassword, newPassword }, ctx: { user } }) => {
-    const authService = container.get<IAuthService>('IAuthService');
+    const authService = getClass('IAuthService');
 
     await authService.changePassword({ userId: user.id, currentPassword, newPassword });
 

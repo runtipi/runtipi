@@ -1,8 +1,8 @@
 'use server';
 
 import { authActionClient } from '@/lib/safe-action';
-import { appLifecycle } from '@/server/services/app-lifecycle/app-lifecycle.service';
 import { revalidatePath } from 'next/cache';
+import { getClass } from 'src/inversify.config';
 import { z } from 'zod';
 
 const input = z.object({
@@ -10,6 +10,7 @@ const input = z.object({
 });
 
 export const resetAppAction = authActionClient.schema(input).action(async ({ parsedInput: { id } }) => {
+  const appLifecycle = getClass('IAppLifecycleService');
   await appLifecycle.executeCommand('resetApp', { appId: id });
 
   revalidatePath('/apps');

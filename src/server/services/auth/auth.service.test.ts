@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
-import { type ISessionManager, SessionManager } from '@/server/common/session-manager';
-import { AuthQueries, type IAuthQueries } from '@/server/queries/auth/auth.queries';
+import type { ISessionManager } from '@/server/common/session-manager';
+import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
 import { TotpAuthenticator } from '@/server/utils/totp';
 import { faker } from '@faker-js/faker';
 import type { ICache } from '@runtipi/cache';
@@ -11,44 +11,35 @@ import * as argon2 from 'argon2';
 import fs from 'fs-extra';
 import { Container } from 'inversify';
 import { cookies } from 'next/headers';
-import { anyString, anything, instance, mock, when } from 'ts-mockito';
 import { v4 } from 'uuid';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { TipiConfig } from '../../core/TipiConfig';
 import { createUser } from '../../tests/user.factory';
 import { encrypt } from '../../utils/encryption';
 import { AuthService, type IAuthService } from './auth.service';
-
-const cache = new CacheMock();
-
-const createTestContainer = (queries: IAuthQueries, sessionManager: ISessionManager) => {
-  const container = new Container();
-
-  // Bind your dependencies, replacing the real implementations with mocks
-  container.bind<IAuthQueries>('IAuthQueries').toConstantValue(instance(queries));
-  container.bind<ICache>('ICache').toConstantValue(cache);
-  container.bind<ISessionManager>('ISessionManager').toConstantValue(instance(sessionManager));
-
-  // Bind the service under test
-  container.bind<IAuthService>('IAuthService').to(AuthService);
-
-  return container;
-};
-
-const getAuthService = (queries: IAuthQueries, sessionManager: ISessionManager) => {
-  const container = createTestContainer(queries, sessionManager);
-  return container.get<IAuthService>('IAuthService');
-};
+import { mock, anyString, mockReset, anyObject } from 'vitest-mock-extended';
 
 describe('AuthService', () => {
-  let mockQueries: IAuthQueries;
-  let mockSessionManager: ISessionManager;
+  // Prepare the mocks
+  const mockQueries = mock<IAuthQueries>();
+  const mockSessionManager = mock<ISessionManager>();
+  const mockCache = new CacheMock();
+
+  // Prepare the container
+  const container = new Container();
+  container.bind<IAuthQueries>('IAuthQueries').toConstantValue(mockQueries);
+  container.bind<ICache>('ICache').toConstantValue(mockCache);
+  container.bind<ISessionManager>('ISessionManager').toConstantValue(mockSessionManager);
+  container.bind<IAuthService>('IAuthService').to(AuthService);
+
+  // Get the service
+  const authService = container.get<IAuthService>('IAuthService');
   const cookieStore = cookies();
 
   beforeEach(async () => {
-    mockQueries = mock(AuthQueries);
-    mockSessionManager = mock(SessionManager);
     await TipiConfig.setConfig('demoMode', false);
+    mockReset(mockQueries);
+    mockReset(mockSessionManager);
   });
 
   describe('Login', () => {
@@ -56,9 +47,8 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email });
-      when(mockQueries.getUserByUsername(email)).thenResolve(user);
-      when(mockSessionManager.setSession(anyString(), anyString())).thenCall((sessionId, userId) => cache.set(`session:${sessionId}`, userId));
-      const authService = getAuthService(mockQueries, mockSessionManager);
+
+      mockQueries.getUserByUsername.calledWith(email).mockResolvedValue(user);
 
       // act
       const { sessionId } = await authService.login({ username: email, password: 'password' });
@@ -69,10 +59,6 @@ describe('AuthService', () => {
     });
 
     it('should throw if user does not exist', async () => {
-      // arrange
-      when(mockQueries.getUserByUsername(anyString())).thenReturn(Promise.resolve(undefined));
-      const authService = getAuthService(mockQueries, mockSessionManager);
-
       // act & assert
       await expect(authService.login({ username: 'test', password: 'test' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
     });
@@ -81,8 +67,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email });
-      when(mockQueries.getUserByUsername(email)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserByUsername.calledWith(email).mockResolvedValue(user);
 
       await expect(authService.login({ username: email, password: 'wrong' })).rejects.toThrowError('AUTH_ERROR_INVALID_CREDENTIALS');
     });
@@ -93,9 +78,9 @@ describe('AuthService', () => {
       const email = faker.internet.email();
       const totpSecret = TotpAuthenticator.generateSecret();
       const user = await createUser({ email, totpEnabled: true, totpSecret });
-      when(mockQueries.getUserByUsername(email)).thenResolve(user);
-      when(mockSessionManager.generateSessionId(anyString())).thenReturn('otp-session');
-      const authService = getAuthService(mockQueries, mockSessionManager);
+
+      mockQueries.getUserByUsername.calledWith(email).mockResolvedValue(user);
+      mockSessionManager.generateSessionId.calledWith(anyString()).mockReturnValue('otp-session');
 
       // act
       const { totpSessionId } = await authService.login({ username: email, password: 'password' });
@@ -115,11 +100,11 @@ describe('AuthService', () => {
 
       const encryptedTotpSecret = encrypt(totpSecret, salt);
       const user = await createUser({ email, totpEnabled: true, totpSecret: encryptedTotpSecret, salt });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
       const otp = TotpAuthenticator.generate(totpSecret);
 
-      await cache.set('session-id', user.id.toString());
+      await mockCache.set('session-id', user.id.toString());
 
       // act
       const res = await authService.verifyTotp({ totpSessionId: 'session-id', totpCode: otp });
@@ -135,9 +120,9 @@ describe('AuthService', () => {
       const totpSecret = TotpAuthenticator.generateSecret();
       const encryptedTotpSecret = encrypt(totpSecret, salt);
       const user = await createUser({ email, totpEnabled: true, totpSecret: encryptedTotpSecret, salt });
-      await cache.set('session-id', user.id.toString());
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      await mockCache.set('session-id', user.id.toString());
+
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.verifyTotp({ totpSessionId: 'session-id', totpCode: 'wrong' })).rejects.toThrowError('AUTH_ERROR_TOTP_INVALID_CODE');
@@ -151,13 +136,12 @@ describe('AuthService', () => {
       const encryptedTotpSecret = encrypt(totpSecret, salt);
       const user = await createUser({ email, totpEnabled: true, totpSecret: encryptedTotpSecret, salt });
 
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       const totpSessionId = 'session-id';
       const otp = TotpAuthenticator.generate(totpSecret);
 
-      await cache.set(totpSessionId, user.id.toString());
+      await mockCache.set(totpSessionId, user.id.toString());
 
       // act & assert
       await expect(authService.verifyTotp({ totpSessionId: 'wrong', totpCode: otp })).rejects.toThrowError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -165,8 +149,7 @@ describe('AuthService', () => {
 
     it('should throw if the user does not exist', async () => {
       // arrange
-      await cache.set('session-id', '1234');
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      await mockCache.set('session-id', '1234');
 
       // act & assert
       await expect(authService.verifyTotp({ totpSessionId: 'session-id', totpCode: '1234' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
@@ -179,12 +162,11 @@ describe('AuthService', () => {
       const totpSecret = TotpAuthenticator.generateSecret();
       const encryptedTotpSecret = encrypt(totpSecret, salt);
       const user = await createUser({ email, totpEnabled: false, totpSecret: encryptedTotpSecret, salt });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
       const totpSessionId = 'session-id';
       const otp = TotpAuthenticator.generate(totpSecret);
 
-      await cache.set(totpSessionId, user.id.toString());
+      await mockCache.set(totpSessionId, user.id.toString());
 
       // act & assert
       await expect(authService.verifyTotp({ totpSessionId, totpCode: otp })).rejects.toThrowError('AUTH_ERROR_TOTP_NOT_ENABLED');
@@ -196,9 +178,8 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      when(mockSessionManager.generateSessionId(anyString())).thenReturn('session-id');
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
+      mockSessionManager.generateSessionId.calledWith(anyString()).mockReturnValue('session-id');
 
       // act
       const { uri, key } = await authService.getTotpUri({ userId: user.id, password: 'password' });
@@ -215,13 +196,12 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email, totpSecret: null, salt: 'smthg' });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      when(mockQueries.updateUser(user.id, anything())).thenCall((_, args) => {
-        user.totpSecret = args.totpSecret;
-        user.salt = args.salt;
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
+      mockQueries.updateUser.calledWith(user.id, anyObject()).mockImplementation(async (_, data) => {
+        user.totpSecret = data.totpSecret as string;
+        user.salt = data.salt as string;
         return user;
       });
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       await authService.getTotpUri({ userId: user.id, password: 'password' });
@@ -238,13 +218,12 @@ describe('AuthService', () => {
       const totpSecret = TotpAuthenticator.generateSecret();
       const encryptedTotpSecret = encrypt(totpSecret, salt);
       const user = await createUser({ email, totpSecret: encryptedTotpSecret, salt });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      when(mockQueries.updateUser(user.id, anything())).thenCall((_, args) => {
-        user.totpSecret = args.totpSecret;
-        user.salt = args.salt;
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
+      mockQueries.updateUser.calledWith(user.id, anyObject()).mockImplementation(async (_, data) => {
+        user.totpSecret = data.totpSecret as string;
+        user.salt = data.salt as string;
         return user;
       });
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       await authService.getTotpUri({ userId: user.id, password: 'password' });
@@ -260,8 +239,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email, totpEnabled: true });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError('AUTH_ERROR_TOTP_ALREADY_ENABLED');
@@ -271,8 +249,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.getTotpUri({ userId: user.id, password: 'wrong' })).rejects.toThrowError('AUTH_ERROR_INVALID_PASSWORD');
@@ -281,7 +258,6 @@ describe('AuthService', () => {
     it('should throw an error if the user does not exist', async () => {
       // arrange
       const userId = 11;
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act & assert
       await expect(authService.getTotpUri({ userId, password: 'password' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
@@ -292,8 +268,7 @@ describe('AuthService', () => {
       await TipiConfig.setConfig('demoMode', true);
       const email = faker.internet.email();
       const user = await createUser({ email });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.getTotpUri({ userId: user.id, password: 'password' })).rejects.toThrowError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
@@ -309,12 +284,11 @@ describe('AuthService', () => {
       const encryptedTotpSecret = encrypt(totpSecret, salt);
 
       const user = await createUser({ email, totpSecret: encryptedTotpSecret, salt });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      when(mockQueries.updateUser(user.id, anything())).thenCall((_, args) => {
-        user.totpEnabled = args.totpEnabled;
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
+      mockQueries.updateUser.calledWith(user.id, anyObject()).mockImplementation(async (_, data) => {
+        user.totpEnabled = data.totpEnabled as boolean;
         return user;
       });
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       const otp = TotpAuthenticator.generate(totpSecret);
 
@@ -330,8 +304,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email, totpEnabled: true });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('AUTH_ERROR_TOTP_ALREADY_ENABLED');
@@ -340,7 +313,6 @@ describe('AuthService', () => {
     it('should throw if the user does not exist', async () => {
       // arrange
       const userId = 11;
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act & assert
       await expect(authService.setupTotp({ userId, totpCode: '1234' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
@@ -354,8 +326,7 @@ describe('AuthService', () => {
       const encryptedTotpSecret = encrypt(totpSecret, salt);
 
       const user = await createUser({ email, totpSecret: encryptedTotpSecret, salt });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('AUTH_ERROR_TOTP_INVALID_CODE');
@@ -366,8 +337,7 @@ describe('AuthService', () => {
       await TipiConfig.setConfig('demoMode', true);
       const email = faker.internet.email();
       const user = await createUser({ email });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.setupTotp({ userId: user.id, totpCode: '1234' })).rejects.toThrowError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
@@ -379,13 +349,12 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email, totpEnabled: true });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      when(mockQueries.updateUser(user.id, anything())).thenCall((_, args) => {
-        user.totpEnabled = args.totpEnabled;
-        user.totpSecret = args.totpSecret;
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
+      mockQueries.updateUser.calledWith(user.id, anyObject()).mockImplementation(async (_, data) => {
+        user.totpEnabled = data.totpEnabled as boolean;
+        user.totpSecret = data.totpSecret as string;
         return user;
       });
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       await authService.disableTotp({ userId: user.id, password: 'password' });
@@ -399,8 +368,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email, totpEnabled: false });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.disableTotp({ userId: user.id, password: 'password' })).rejects.toThrowError('AUTH_ERROR_TOTP_NOT_ENABLED');
@@ -409,7 +377,6 @@ describe('AuthService', () => {
     it('should throw if the user does not exist', async () => {
       // arrange
       const userId = 11;
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act & assert
       await expect(authService.disableTotp({ userId, password: 'password' })).rejects.toThrowError('AUTH_ERROR_USER_NOT_FOUND');
@@ -419,8 +386,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email, totpEnabled: true });
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.disableTotp({ userId: user.id, password: 'wrong' })).rejects.toThrowError('AUTH_ERROR_INVALID_PASSWORD');
@@ -431,13 +397,13 @@ describe('AuthService', () => {
     it('should correctly set session cookie', async () => {
       // arrange
       const email = faker.internet.email();
-      when(mockQueries.getOperators()).thenResolve([]);
-      when(mockQueries.createUser(anything())).thenCall((args) => {
+      mockQueries.getOperators.mockResolvedValue([]);
+      mockQueries.createUser.calledWith(anyObject()).mockImplementation(async (args) => {
         return createUser(args);
       });
-      when(mockSessionManager.setSession(anyString(), anyString())).thenCall((sessionId) => cookieStore.set('tipi.sid', sessionId));
-
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockSessionManager.setSession.calledWith(anyString(), anyString()).mockImplementation(async (sessionId) => {
+        cookieStore.set('tipi.sid', sessionId);
+      });
 
       // act
       await authService.register({ username: email, password: 'password' });
@@ -452,12 +418,11 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       let user = {} as User;
-      when(mockQueries.getOperators()).thenResolve([]);
-      when(mockQueries.createUser(anything())).thenCall(async (args) => {
+      mockQueries.getOperators.mockResolvedValue([]);
+      mockQueries.createUser.calledWith(anyObject()).mockImplementation(async (args) => {
         user = await createUser(args);
         return user;
       });
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       await authService.register({ username: `${email.toUpperCase()} `, password: 'test' });
@@ -471,8 +436,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email, operator: true });
-      when(mockQueries.getOperators()).thenResolve([user]);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getOperators.mockResolvedValue([user]);
 
       // act & assert
       await expect(authService.register({ username: email, password: 'test' })).rejects.toThrowError('AUTH_ERROR_ADMIN_ALREADY_EXISTS');
@@ -482,9 +446,8 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email, operator: false });
-      when(mockQueries.getOperators()).thenResolve([]);
-      when(mockQueries.getUserByUsername(email.toLowerCase().trim())).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getOperators.mockResolvedValue([]);
+      mockQueries.getUserByUsername.calledWith(email.toLowerCase().trim()).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.register({ username: email, password: 'test' })).rejects.toThrowError('AUTH_ERROR_USER_ALREADY_EXISTS');
@@ -492,15 +455,13 @@ describe('AuthService', () => {
 
     it('should throw if email is not provided', async () => {
       // arrange
-      when(mockQueries.getOperators()).thenResolve([]);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getOperators.mockResolvedValue([]);
 
       await expect(authService.register({ username: '', password: 'test' })).rejects.toThrowError('AUTH_ERROR_MISSING_EMAIL_OR_PASSWORD');
     });
 
     it('should throw if password is not provided', async () => {
-      when(mockQueries.getOperators()).thenResolve([]);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getOperators.mockResolvedValue([]);
 
       await expect(authService.register({ username: faker.internet.email(), password: '' })).rejects.toThrowError(
         'AUTH_ERROR_MISSING_EMAIL_OR_PASSWORD',
@@ -511,12 +472,11 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email().toLowerCase().trim();
       let user = {} as User;
-      when(mockQueries.getOperators()).thenResolve([]);
-      when(mockQueries.createUser(anything())).thenCall(async (args) => {
+      mockQueries.getOperators.mockResolvedValue([]);
+      mockQueries.createUser.calledWith(anyObject()).mockImplementation(async (args) => {
         user = await createUser(args);
         return user;
       });
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       await authService.register({ username: email, password: 'test' });
@@ -528,8 +488,7 @@ describe('AuthService', () => {
 
     it('should throw if email is invalid', async () => {
       // arrange
-      when(mockQueries.getOperators()).thenResolve([]);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getOperators.mockResolvedValue([]);
 
       // act & assert
       await expect(authService.register({ username: 'test', password: 'test' })).rejects.toThrowError('AUTH_ERROR_INVALID_USERNAME');
@@ -537,9 +496,8 @@ describe('AuthService', () => {
 
     it('should throw if database fails to create user', async () => {
       // arrange
-      when(mockQueries.getOperators()).thenResolve([]);
-      when(mockQueries.createUser(anything())).thenCall(() => null);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getOperators.mockResolvedValue([]);
+      mockQueries.createUser.calledWith(anyObject()).mockResolvedValue(undefined);
 
       // act & assert
       await expect(authService.register({ username: faker.internet.email(), password: 'test' })).rejects.toThrowError(
@@ -551,7 +509,6 @@ describe('AuthService', () => {
   describe('Test: logout', () => {
     it('should return true if there is no session to delete', async () => {
       // act
-      const authService = getAuthService(mockQueries, mockSessionManager);
       const result = await authService.logout('session');
 
       // assert
@@ -561,12 +518,11 @@ describe('AuthService', () => {
     it('should destroy session upon logount', async () => {
       // arrange
       const sessionId = v4();
-      await cache.set(`session:${sessionId}`, '1');
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      await mockCache.set(`session:${sessionId}`, '1');
 
       // act
       const result = await authService.logout(sessionId);
-      const session = await cache.get(`session:${sessionId}`);
+      const session = await mockCache.get(`session:${sessionId}`);
 
       // assert
       expect(result).toBe(true);
@@ -576,9 +532,6 @@ describe('AuthService', () => {
 
   describe('Test: me', () => {
     it('should return null if userId is not provided', async () => {
-      // arrange
-      const authService = getAuthService(mockQueries, mockSessionManager);
-
       // act
       const result = await authService.me(undefined);
 
@@ -587,9 +540,6 @@ describe('AuthService', () => {
     });
 
     it('should return null if user does not exist', async () => {
-      // arrange
-      const authService = getAuthService(mockQueries, mockSessionManager);
-
       // act
       const result = await authService.me(1);
 
@@ -601,8 +551,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email });
-      when(mockQueries.getUserDtoById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserDtoById.calledWith(user.id).mockResolvedValue(user);
 
       // act
       const result = await authService.me(user.id);
@@ -617,8 +566,7 @@ describe('AuthService', () => {
   describe('Test: isConfigured', () => {
     it('should return false if no user exists', async () => {
       // arrange
-      when(mockQueries.getOperators()).thenResolve([]);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getOperators.calledWith().mockResolvedValue([]);
 
       // act
       const result = await authService.isConfigured();
@@ -631,8 +579,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email });
-      when(mockQueries.getOperators()).thenResolve([user]);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getOperators.calledWith().mockResolvedValue([user]);
 
       // act
       const result = await authService.isConfigured();
@@ -649,13 +596,12 @@ describe('AuthService', () => {
       const user = await createUser({ email });
       const previousPassword = user.password;
       const newPassword = faker.internet.password();
-      when(mockQueries.getFirstOperator()).thenResolve(user);
-      when(mockQueries.updateUser(user.id, anything())).thenCall((_, args) => {
-        user.password = args.password;
+      mockQueries.getFirstOperator.calledWith().mockResolvedValue(user);
+      mockQueries.updateUser.calledWith(user.id, anyObject()).mockImplementation(async (_, args) => {
+        user.password = args.password as string;
         return user;
       });
       await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'password-change-request'), new Date().getTime().toString());
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       const result = await authService.changeOperatorPassword({ newPassword });
@@ -670,8 +616,7 @@ describe('AuthService', () => {
       const email = faker.internet.email();
       const user = await createUser({ email });
       const newPassword = faker.internet.password();
-      when(mockQueries.getFirstOperator()).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getFirstOperator.calledWith().mockResolvedValue(user);
 
       // act & assert
       await expect(authService.changeOperatorPassword({ newPassword })).rejects.toThrowError('AUTH_ERROR_NO_CHANGE_PASSWORD_REQUEST');
@@ -681,8 +626,7 @@ describe('AuthService', () => {
       // arrange
       const newPassword = faker.internet.password();
       await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'password-change-request'), new Date().getTime().toString());
-      when(mockQueries.getFirstOperator()).thenResolve(undefined);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getFirstOperator.calledWith().mockResolvedValue(undefined);
 
       // act & assert
       await expect(authService.changeOperatorPassword({ newPassword })).rejects.toThrowError('AUTH_ERROR_OPERATOR_NOT_FOUND');
@@ -695,14 +639,13 @@ describe('AuthService', () => {
       const previousPassword = user.password;
       const newPassword = faker.internet.password();
       await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'password-change-request'), new Date().getTime().toString());
-      when(mockQueries.getFirstOperator()).thenResolve(user);
-      when(mockQueries.updateUser(user.id, anything())).thenCall((_, args) => {
-        user.password = args.password;
-        user.totpEnabled = args.totpEnabled;
-        user.totpSecret = args.totpSecret;
+      mockQueries.getFirstOperator.calledWith().mockResolvedValue(user);
+      mockQueries.updateUser.calledWith(user.id, anyObject()).mockImplementation(async (_, args) => {
+        user.password = args.password as string;
+        user.totpEnabled = args.totpEnabled as boolean;
+        user.totpSecret = args.totpSecret as string;
         return user;
       });
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       const result = await authService.changeOperatorPassword({ newPassword });
@@ -719,7 +662,6 @@ describe('AuthService', () => {
     it('should return true if the password change request file exists', async () => {
       // arrange
       await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'password-change-request'), new Date().getTime().toString());
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       const result = await authService.checkPasswordChangeRequest();
@@ -729,9 +671,6 @@ describe('AuthService', () => {
     });
 
     it('should return false if the password change request file does not exist', async () => {
-      // arrange
-      const authService = getAuthService(mockQueries, mockSessionManager);
-
       // act
       const result = await authService.checkPasswordChangeRequest();
 
@@ -744,7 +683,6 @@ describe('AuthService', () => {
     it('should delete the password change request file', async () => {
       // arrange
       await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'password-change-request'), new Date().getTime().toString());
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       await authService.cancelPasswordChangeRequest();
@@ -761,12 +699,11 @@ describe('AuthService', () => {
       const user = await createUser({ email });
       const previousPassword = user.password;
       const newPassword = faker.internet.password();
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      when(mockQueries.updateUser(user.id, anything())).thenCall((_, args) => {
-        user.password = args.password;
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
+      mockQueries.updateUser.calledWith(user.id, anyObject()).mockImplementation(async (_, args) => {
+        user.password = args.password as string;
         return user;
       });
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act
       await authService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' });
@@ -778,7 +715,6 @@ describe('AuthService', () => {
     it('should throw if the user does not exist', async () => {
       // arrange
       const newPassword = faker.internet.password();
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act & assert
       await expect(authService.changePassword({ userId: 1, newPassword, currentPassword: 'password' })).rejects.toThrowError(
@@ -791,8 +727,7 @@ describe('AuthService', () => {
       const email = faker.internet.email();
       const user = await createUser({ email });
       const newPassword = faker.internet.password();
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.changePassword({ userId: user.id, newPassword, currentPassword: 'wrongpassword' })).rejects.toThrowError(
@@ -805,8 +740,7 @@ describe('AuthService', () => {
       const email = faker.internet.email();
       const user = await createUser({ email });
       const newPassword = faker.internet.password(7);
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
       await expect(authService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError(
@@ -820,7 +754,6 @@ describe('AuthService', () => {
       const email = faker.internet.email();
       const user = await createUser({ email });
       const newPassword = faker.internet.password();
-      const authService = getAuthService(mockQueries, mockSessionManager);
 
       // act & assert
       await expect(authService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' })).rejects.toThrowError(
@@ -833,16 +766,14 @@ describe('AuthService', () => {
       const email = faker.internet.email();
       const user = await createUser({ email });
       const newPassword = faker.internet.password();
-      await cache.set(`session:${user.id}:${faker.lorem.word()}`, 'test');
-      when(mockQueries.getUserById(user.id)).thenResolve(user);
-      const authService = getAuthService(mockQueries, mockSessionManager);
+      await mockCache.set(`session:${user.id}:${faker.lorem.word()}`, 'test');
+      mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act
       await authService.changePassword({ userId: user.id, newPassword, currentPassword: 'password' });
 
       // assert
-      // eslint-disable-next-line testing-library/no-await-sync-queries
-      const sessions = await cache.getByPrefix(`session:${user.id}:`);
+      const sessions = await mockCache.getByPrefix(`session:${user.id}:`);
       expect(sessions).toHaveLength(0);
     });
   });

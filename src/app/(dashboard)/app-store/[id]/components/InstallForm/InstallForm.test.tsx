@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import type { FormField } from '@runtipi/shared';
 import { fromPartial } from '@total-typescript/shoehorn';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../../../../../../tests/test-utils';
 import { InstallForm } from './InstallForm';
@@ -17,7 +16,7 @@ beforeEach(() => {
 
 describe('Test: InstallForm', () => {
   it('should render the form', () => {
-    render(<InstallForm formFields={[]} onSubmit={vi.fn} info={fromPartial({})} />);
+    render(<InstallForm formFields={[]} onSubmit={vi.fn()} info={fromPartial({})} />);
 
     expect(screen.getByText('Install')).toBeInTheDocument();
   });
@@ -31,7 +30,7 @@ describe('Test: InstallForm', () => {
       { env_variable: 'test5', label: 'test5', type: 'number', required: false },
     ];
 
-    render(<InstallForm info={fromPartial({})} formFields={formFields} onSubmit={vi.fn} />);
+    render(<InstallForm info={fromPartial({})} formFields={formFields} onSubmit={vi.fn()} />);
 
     expect(screen.getByLabelText('test')).toBeInTheDocument();
     expect(screen.getByLabelText('test2')).toBeInTheDocument();

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../tests/test-utils';
 import { Switch } from './Switch';
@@ -26,7 +24,7 @@ describe('Switch', () => {
 
   it('renders the checked state', () => {
     // arrange
-    render(<Switch checked onChange={vi.fn} />);
+    render(<Switch checked onChange={vi.fn()} />);
     const checkbox = screen.getByRole('switch');
 
     // assert
@@ -61,7 +59,7 @@ describe('Switch', () => {
 
   it('should change the checked state when clicked', () => {
     // arrange
-    render(<Switch onChange={vi.fn} />);
+    render(<Switch onChange={vi.fn()} />);
     const checkbox = screen.getByRole('switch');
 
     // act

@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../tests/test-utils';
 import { OtpInput } from './OtpInput';
@@ -205,7 +204,7 @@ describe('<OtpInput />', () => {
   });
 
   it('should focus to next element on right/down key', () => {
-    render(<OtpInput valueLength={3} onChange={vi.fn} value="1234" />);
+    render(<OtpInput valueLength={3} onChange={vi.fn()} value="1234" />);
 
     const inputEls = screen.queryAllByRole('textbox');
     const firstInputEl = inputEls[0] as HTMLInputElement;
@@ -226,7 +225,7 @@ describe('<OtpInput />', () => {
   });
 
   it('should focus to next element on left/up key', () => {
-    render(<OtpInput valueLength={3} onChange={vi.fn} value="1234" />);
+    render(<OtpInput valueLength={3} onChange={vi.fn()} value="1234" />);
 
     const inputEls = screen.queryAllByRole('textbox');
     const lastInputEl = inputEls[2] as HTMLInputElement;
@@ -249,7 +248,7 @@ describe('<OtpInput />', () => {
   it('should only focus to input if previous input has value', () => {
     const valueLength = 6;
 
-    render(<OtpInput valueLength={valueLength} onChange={vi.fn} value="" />);
+    render(<OtpInput valueLength={valueLength} onChange={vi.fn()} value="" />);
 
     const inputEls = screen.queryAllByRole('textbox');
     const lastInputEl = inputEls[valueLength - 1] as HTMLInputElement;

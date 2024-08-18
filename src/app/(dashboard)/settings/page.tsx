@@ -1,11 +1,8 @@
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { getTranslator } from '@/lib/get-translator';
-import type { ISessionManager } from '@/server/common/session-manager';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import type { ISystemService } from '@/server/services/system/system.service';
 import type { Metadata } from 'next';
-import React from 'react';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 import { getCurrentLocale } from 'src/utils/getCurrentLocale';
 import { GeneralActions } from './components/GeneralActions';
 import { LogsContainer } from './components/LogsContainer';
@@ -23,8 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SettingsPage({ searchParams }: { searchParams: { tab: string } }) {
   const { tab } = searchParams;
-  const systemService = container.get<ISystemService>('ISystemService');
-  const sessionManager = container.get<ISessionManager>('ISessionManager');
+  const systemService = getClass('ISystemService');
+  const sessionManager = getClass('ISessionManager');
 
   const version = await systemService.getVersion();
   const settings = TipiConfig.getSettings();

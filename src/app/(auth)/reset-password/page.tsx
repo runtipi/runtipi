@@ -1,11 +1,9 @@
 import { getTranslator } from '@/lib/get-translator';
-import type { IAuthService } from '@/server/services/auth/auth.service';
-import React from 'react';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 import { ResetPasswordContainer } from './components/ResetPasswordContainer';
 
 export default async function ResetPasswordPage() {
-  const authService = container.get<IAuthService>('IAuthService');
+  const authService = getClass('IAuthService');
   const isRequested = await authService.checkPasswordChangeRequest();
 
   if (isRequested) {

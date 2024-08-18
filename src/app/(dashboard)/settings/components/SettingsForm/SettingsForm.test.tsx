@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { SettingsForm } from './SettingsForm';
@@ -99,7 +98,7 @@ describe('Test: SettingsForm', () => {
   it('should download the certificate when the download button is clicked', async () => {
     // arrange
     const spy = vi.spyOn(window, 'open').mockImplementation(() => null);
-    render(<SettingsForm onSubmit={vi.fn} />);
+    render(<SettingsForm onSubmit={vi.fn()} />);
     const downloadButton = screen.getByRole('button', { name: 'Download certificate' });
 
     // act
