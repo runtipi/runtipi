@@ -1,5 +1,5 @@
 import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
-import { appTable, App, NewApp, AppStatus, IDbClient } from '@runtipi/db';
+import { appTable, type App, type NewApp, type AppStatus, type IDbClient } from '@runtipi/db';
 import { inject, injectable } from 'inversify';
 
 export interface IAppQueries {
@@ -16,8 +16,7 @@ export interface IAppQueries {
 
 @injectable()
 export class AppQueries implements IAppQueries {
-
-  constructor(@inject('IDbClient') private dbClient: IDbClient) { }
+  constructor(@inject('IDbClient') private dbClient: IDbClient) {}
 
   /**
    * Given an app id, return the app

@@ -9,7 +9,7 @@
       ".next/**",
       "public/**",
       "app-data/**",
-      "apps/**",
+      "apps/*/**",
       "logs/**",
       "media/**",
       "repos/**",
@@ -41,7 +41,8 @@
           "level": "warn"
         },
         "useHookAtTopLevel": {
-          "level": "error"
+          "level": "error",
+          "options": {}
         }
       },
       "performance": {
