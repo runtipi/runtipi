@@ -7,14 +7,12 @@
   "exports": {
     ".": {
       "import": "./src/index.ts",
-      "require": "./src/index.ts",
-      "default": "./src/index.ts"
+      "require": "./src/index.ts"
     },
     "./node": {
       "browser": null,
       "import": "./src/node/index.ts",
-      "require": "./src/node/index.ts",
-      "default": "./src/node/index.ts"
+      "require": "./src/node/index.ts"
     },
     "./package.json": "./package.json"
   },
