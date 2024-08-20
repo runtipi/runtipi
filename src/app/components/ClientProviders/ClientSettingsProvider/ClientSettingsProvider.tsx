@@ -1,6 +1,4 @@
 'use client';
-
-import React from 'react';
 import { type ReactNode, createContext, useRef } from 'react';
 
 import type { settingsSchema } from '@runtipi/shared';

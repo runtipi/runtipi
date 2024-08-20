@@ -4,7 +4,6 @@ import { Switch } from '@/components/ui/Switch';
 import type { FormField } from '@runtipi/shared';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import React from 'react';
 import { type Control, Controller, type UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type { FormValues } from './InstallForm.types';

@@ -1,6 +1,5 @@
 import { IconExternalLink } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import React from 'react';
 
 export const LanguageSelectorLabel = () => {
   const t = useTranslations();

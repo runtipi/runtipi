@@ -1,5 +1,4 @@
 import type { GetAppCommand } from '@/server/services/app-catalog/commands';
-import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, userEvent, waitFor } from '../../../../../../../tests/test-utils';
 import { AppActions } from './AppActions';

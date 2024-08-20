@@ -2,7 +2,6 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { useTranslations } from 'next-intl';
-import React from 'react';
 import { allTimezones, useTimezoneSelect } from 'react-timezone-select';
 
 type IProps = {

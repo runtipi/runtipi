@@ -7,7 +7,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/Pagination/Pagination';
-import React from 'react';
 
 type TablePaginationProps = {
   totalPages: number;

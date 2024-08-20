@@ -1,5 +1,4 @@
 import type { AppInfo } from '@runtipi/shared';
-import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../../../../../../tests/test-utils';
 import { InstallModal } from './InstallModal';

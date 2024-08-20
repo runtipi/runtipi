@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/Button';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useCookies } from 'next-client-cookies';
 import { useTranslations } from 'next-intl';
-import React from 'react';
 import { OffCanvas } from 'src/app/components/OffCanvas/OffCanvas';
 
 export const AtRiskBanner = ({ isInsecure }: { isInsecure: boolean }) => {

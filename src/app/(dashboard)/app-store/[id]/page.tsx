@@ -5,8 +5,7 @@ import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { type MessageKey, TranslatedError } from '@/server/utils/errors';
 import type { Metadata } from 'next';
 import { AppDetailsContainer } from './components/AppDetailsContainer/AppDetailsContainer';
-import { container, getClass } from 'src/inversify.config';
-import type { IAppBackupService } from '@/server/services/app-backup/app-backup.service';
+import { getClass } from 'src/inversify.config';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   return {

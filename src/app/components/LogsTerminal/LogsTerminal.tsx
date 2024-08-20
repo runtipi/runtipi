@@ -4,7 +4,7 @@ import { useLocalStorage } from '@uidotdev/usehooks';
 import clsx from 'clsx';
 import DOMPurify from 'dompurify';
 import { useTranslations } from 'next-intl';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styles from './LogsTerminal.module.scss';
 
 type Props = {
