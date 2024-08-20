@@ -9,7 +9,7 @@
 !**/package.json
 !**/nodemon.json
 !**/tsconfig.json
-!**/build.js
+!**/build.mjs
 !next.config.mjs
 !sentry.*.config.ts
 !public/**

@@ -1,5 +1,7 @@
-const { build } = require('esbuild');
-const { sentryEsbuildPlugin } = require('@sentry/esbuild-plugin');
+import fs from 'node:fs';
+import { build } from 'esbuild';
+import path from 'node:path';
+import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
 
 const plugins = [];
 
@@ -31,12 +33,13 @@ async function bundle() {
     },
     minify: process.env.LOCAL !== 'true',
     plugins,
+    // metafile: true,
   };
 
-  await build({
-    ...options,
-  });
-  console.log(`Build time: ${Date.now() - start}ms`);
+  await build({ ...options });
+
+  // fs.writeFileSync(path.join(process.cwd(), 'dist', 'meta.json'), JSON.stringify(res.metafile));
+  console.info(`Build time: ${Date.now() - start}ms`);
 }
 
 bundle();

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { loginUser } from './fixtures/fixtures';
 import { testUser } from './helpers/constants';

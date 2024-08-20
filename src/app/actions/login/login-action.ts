@@ -1,9 +1,8 @@
 'use server';
 
 import { publicActionClient } from '@/lib/safe-action';
-import type { IAuthService } from '@/server/services/auth/auth.service';
 import { revalidatePath } from 'next/cache';
-import { container } from 'src/inversify.config';
+import { getClass } from 'src/inversify.config';
 import { z } from 'zod';
 
 const input = z.object({
@@ -16,7 +15,7 @@ const input = z.object({
  * if that user has 2FA enabled.
  */
 export const loginAction = publicActionClient.schema(input).action(async ({ parsedInput: { username, password } }) => {
-  const authService = container.get<IAuthService>('IAuthService');
+  const authService = getClass('IAuthService');
 
   const { totpSessionId } = await authService.login({ username, password });
 

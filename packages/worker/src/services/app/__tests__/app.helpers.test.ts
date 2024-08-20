@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { createAppConfig } from '@/tests/apps.factory';
 import { faker } from '@faker-js/faker';
@@ -27,8 +27,8 @@ describe('app helpers', () => {
       expect(envmap.get('ROOT_FOLDER_HOST')).toBe(process.env.ROOT_FOLDER_HOST);
       expect(envmap.get('APP_DATA_DIR')).toBe(`${process.env.RUNTIPI_APP_DATA_PATH}/app-data/${appConfig.id}`);
       expect(envmap.get('APP_DOMAIN')).toBe(`localhost:${appConfig.port}`);
-      expect(envmap.get('APP_HOST')).toBe(`localhost`);
-      expect(envmap.get('APP_PROTOCOL')).toBe(`http`);
+      expect(envmap.get('APP_HOST')).toBe('localhost');
+      expect(envmap.get('APP_PROTOCOL')).toBe('http');
     });
 
     it('should throw an error if the app has an invalid config.json file', async () => {

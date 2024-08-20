@@ -2,7 +2,6 @@
 
 import { IconKey, IconLock, IconUser } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import React from 'react';
 import { ChangePasswordForm } from '../ChangePasswordForm';
 import { ChangeUsernameForm } from '../ChangeUsernameForm';
 import { OtpForm } from '../OtpForm';

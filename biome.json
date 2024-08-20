@@ -30,14 +30,70 @@
     "ignore": []
   },
   "organizeImports": {
-    "enabled": true
+    "enabled": false
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "correctness": {
+        "noUnusedImports": {
+          "level": "warn"
+        },
+        "useHookAtTopLevel": {
+          "level": "error"
+        }
+      },
+      "performance": {
+        "noBarrelFile": {
+          "level": "warn"
+        },
+        "noReExportAll": {
+          "level": "warn"
+        }
+      },
+      "style": {
+        "noDefaultExport": {
+          "level": "warn"
+        },
+        "noNegationElse": {
+          "level": "warn"
+        },
+        "useCollapsedElseIf": {
+          "level": "warn"
+        },
+        "useFilenamingConvention": {
+          "level": "info",
+          "options": {
+            "requireAscii": true,
+            "filenameCases": ["kebab-case"]
+          }
+        }
+      },
+      "suspicious": {
+        "noConsoleLog": {
+          "level": "error"
+        },
+        "noEmptyBlockStatements": {
+          "level": "error"
+        }
+      }
     }
   },
+  "overrides": [
+    {
+      "include": ["**/*.test.ts", "**/*.test.tsx"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noEmptyBlockStatements": {
+              "level": "off"
+            }
+          }
+        }
+      }
+    }
+  ],
   "javascript": {
     "parser": {
       "unsafeParameterDecoratorsEnabled": true

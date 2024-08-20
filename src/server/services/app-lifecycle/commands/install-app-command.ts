@@ -1,18 +1,18 @@
-import type { EventDispatcher } from '@/server/core/EventDispatcher';
-import { Logger } from '@/server/core/Logger';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import type { AppEventFormInput } from '@runtipi/shared';
-import type { AppDataService } from '@runtipi/shared/node';
+import type { IAppDataService } from '@runtipi/shared/node';
 import { lt, valid } from 'semver';
 import { isFQDN } from 'validator';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
+import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
+import { getClass } from 'src/inversify.config';
 
 export class InstallAppCommand implements IAppLifecycleCommand {
   private queries: IAppQueries;
-  private eventDispatcher: EventDispatcher;
-  private appDataService: AppDataService;
+  private eventDispatcher: IEventDispatcher;
+  private appDataService: IAppDataService;
   private executeOtherCommand: IAppLifecycleCommand['execute'];
 
   constructor(params: AppLifecycleCommandParams) {
@@ -23,12 +23,13 @@ export class InstallAppCommand implements IAppLifecycleCommand {
   }
 
   private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
+    const logger = getClass('ILogger');
     const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'install', appid: appId, form });
 
     if (success) {
       await this.queries.updateApp(appId, { status: 'running' });
     } else {
-      Logger.error(`Failed to install app ${appId}: ${stdout}`);
+      logger.error(`Failed to install app ${appId}: ${stdout}`);
       await this.queries.deleteApp(appId);
     }
   }

@@ -1,10 +1,8 @@
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { getTranslator } from '@/lib/get-translator';
-import { getUserFromCookie } from '@/server/common/session.helpers';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { SystemServiceClass } from '@/server/services/system';
 import type { Metadata } from 'next';
-import React from 'react';
+import { getClass } from 'src/inversify.config';
 import { getCurrentLocale } from 'src/utils/getCurrentLocale';
 import { GeneralActions } from './components/GeneralActions';
 import { LogsContainer } from './components/LogsContainer';
@@ -22,11 +20,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SettingsPage({ searchParams }: { searchParams: { tab: string } }) {
   const { tab } = searchParams;
-  const systemService = new SystemServiceClass();
+  const systemService = getClass('ISystemService');
+  const sessionManager = getClass('ISessionManager');
+
   const version = await systemService.getVersion();
   const settings = TipiConfig.getSettings();
   const locale = getCurrentLocale();
-  const user = await getUserFromCookie();
+  const user = await sessionManager.getUserFromCookie();
 
   return (
     <div className="card d-flex">

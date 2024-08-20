@@ -1,8 +1,8 @@
-import type { AppDataService } from '@runtipi/shared/node';
+import type { IAppDataService } from '@runtipi/shared/node';
 import type { AppBackupCommandParams, IAppBackupCommand } from './types';
 
 export class DeleteAppBackupCommand implements IAppBackupCommand {
-  private appDataService: AppDataService;
+  private appDataService: IAppDataService;
 
   constructor(params: AppBackupCommandParams) {
     this.appDataService = params.appDataService;

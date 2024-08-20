@@ -19,7 +19,6 @@ export const publicActionClient = createSafeActionClient({
       Sentry.captureException(e);
     }
 
-    // eslint-disable-next-line no-console
     console.error('Error from server', e.message);
 
     revalidatePath('/');

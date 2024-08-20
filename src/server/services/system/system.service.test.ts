@@ -1,20 +1,19 @@
-import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
 import { faker } from '@faker-js/faker';
+import { CacheMock } from '@runtipi/cache/src/mock';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { container } from 'src/inversify.config';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { SystemServiceClass } from '.';
 import { TipiConfig } from '../../core/TipiConfig';
+import { SystemService } from './system.service';
+import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
 
-const SystemService = new SystemServiceClass();
-
+const cache = new CacheMock();
+const logger = new LoggerMock();
+const systemService = new SystemService(cache, logger);
 const server = setupServer();
 
 afterAll(async () => {
-  const tipiCache = container.get<ITipiCache>('ITipiCache');
   server.close();
-  await tipiCache.close();
 });
 
 beforeAll(() => {
@@ -22,9 +21,8 @@ beforeAll(() => {
 });
 
 beforeEach(async () => {
-  const tipiCache = container.get<ITipiCache>('ITipiCache');
   await TipiConfig.setConfig('demoMode', false);
-  await tipiCache.del('latestVersion');
+  await cache.del('latestVersion');
   server.resetHandlers();
 });
 
@@ -36,7 +34,7 @@ describe('Test: getVersion', () => {
       }),
     );
 
-    const version = await SystemService.getVersion();
+    const version = await systemService.getVersion();
 
     expect(version).toBeDefined();
     expect(version.current).toBeDefined();
@@ -52,8 +50,8 @@ describe('Test: getVersion', () => {
     );
 
     // Act
-    const version = await SystemService.getVersion();
-    const version2 = await SystemService.getVersion();
+    const version = await systemService.getVersion();
+    const version2 = await systemService.getVersion();
 
     // Assert
     expect(version).toBeDefined();

@@ -34,13 +34,19 @@ FROM builder_base AS dashboard_builder
 WORKDIR /dashboard
 
 COPY ./pnpm-workspace.yaml ./
-COPY ./package*.json ./
-COPY ./packages/shared ./packages/shared
-COPY ./packages/db ./packages/db
 COPY ./scripts ./scripts
 COPY ./public ./public
 
+COPY ./package.json ./
+COPY ./packages/worker/package.json ./packages/worker/package.json
+COPY ./packages/shared/package.json ./packages/shared/package.json
+COPY ./packages/db/package.json ./packages/db/package.json
+COPY ./packages/cache/package.json ./packages/cache/package.json
+
 RUN pnpm install -r --prefer-offline 
+
+COPY ./packages ./packages
+
 COPY ./src ./src
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./next.config.mjs ./next.config.mjs
@@ -76,6 +82,7 @@ COPY ./pnpm-workspace.yaml ./
 COPY ./packages/worker/package.json ./packages/worker/package.json
 COPY ./packages/shared/package.json ./packages/shared/package.json
 COPY ./packages/db/package.json ./packages/db/package.json
+COPY ./packages/cache/package.json ./packages/cache/package.json
 COPY ./packages/shared/package.json ./packages/shared/package.json
 
 RUN pnpm install -r --prefer-offline

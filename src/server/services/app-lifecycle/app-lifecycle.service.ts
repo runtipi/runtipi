@@ -1,9 +1,6 @@
-import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { EventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
-import { TipiConfig } from '@/server/core/TipiConfig';
+import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import { AppDataService } from '@runtipi/shared/node';
-import { container } from 'src/inversify.config';
+import type { IAppDataService } from '@runtipi/shared/node';
 import {
   InstallAppCommand,
   ResetAppCommand,
@@ -15,6 +12,7 @@ import {
   UpdateAppConfigCommand,
 } from './commands';
 import type { IAppLifecycleCommand } from './commands/types';
+import { inject, injectable } from 'inversify';
 
 export const availableCommands = {
   startApp: StartAppCommand,
@@ -38,13 +36,18 @@ class CommandInvoker {
   }
 }
 
-export class AppLifecycleClass {
+export interface IAppLifecycleService {
+  executeCommand: ExecuteLifecycleFunction;
+}
+
+@injectable()
+export class AppLifecycleService {
   private commandInvoker: CommandInvoker;
 
   constructor(
-    private queries: IAppQueries,
-    private eventDispatcher: EventDispatcher,
-    private appDataService: AppDataService,
+    @inject('IAppQueries') private queries: IAppQueries,
+    @inject('IEventDispatcher') private eventDispatcher: IEventDispatcher,
+    @inject('IAppDataService') private appDataService: IAppDataService,
   ) {
     this.commandInvoker = new CommandInvoker();
   }
@@ -69,10 +72,4 @@ export class AppLifecycleClass {
   };
 }
 
-export type AppLifecycle = InstanceType<typeof AppLifecycleClass>;
-
-const queries = container.get<IAppQueries>('IAppQueries');
-const eventDispatcher = new EventDispatcher();
-const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
-
-export const appLifecycle = new AppLifecycleClass(queries, eventDispatcher, appDataService);
+export type AppLifecycle = InstanceType<typeof AppLifecycleService>;

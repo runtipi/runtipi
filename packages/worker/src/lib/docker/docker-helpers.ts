@@ -1,13 +1,16 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { getEnv } from '@/lib/environment';
-import { logger } from '@/lib/logger';
 import { type SocketEvent, sanitizePath, socketEventSchema } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import type { Socket } from 'socket.io';
 import { getRepoHash } from 'src/services/repo/repo.helpers';
+import { getEnv } from '../environment';
+import { logger } from '../logger';
 import { DEFAULT_REPO_URL } from '../system/system.helpers';
+import Convert from 'ansi-to-html';
+
+const convert = new Convert();
 
 const getBaseComposeArgsApp = async (appId: string) => {
   const { arch, appsRepoId } = getEnv();
@@ -124,10 +127,12 @@ export const handleViewRuntipiLogsEvent = async (socket: Socket, event: SocketEv
   });
 
   logs.stdout.on('data', async (data) => {
-    const lines = data
-      .toString()
-      .split(/(?:\r\n|\r|\n)/g)
-      .filter(Boolean);
+    const lines = await colorize(
+      data
+        .toString()
+        .split(/(?:\r\n|\r|\n)/g)
+        .filter(Boolean),
+    );
 
     await emit({
       type: 'runtipi-logs',
@@ -174,10 +179,12 @@ export const handleViewAppLogsEvent = async (socket: Socket, event: SocketEvent,
   });
 
   logs.stdout.on('data', async (data) => {
-    const lines = data
-      .toString()
-      .split(/(?:\r\n|\r|\n)/g)
-      .filter(Boolean);
+    const lines = await colorize(
+      data
+        .toString()
+        .split(/(?:\r\n|\r|\n)/g)
+        .filter(Boolean),
+    );
 
     await emit({
       type: 'app-logs',
@@ -186,3 +193,14 @@ export const handleViewAppLogsEvent = async (socket: Socket, event: SocketEvent,
     });
   });
 };
+
+const colorize = async (lines: string[]) =>
+  await Promise.all(
+    lines.map(async (line: string) => {
+      try {
+        return convert.toHtml(line);
+      } catch (e) {
+        return line;
+      }
+    }),
+  );

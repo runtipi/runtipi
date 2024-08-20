@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 type Props = {
   apps: { id: string; name: string }[];

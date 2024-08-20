@@ -2,8 +2,9 @@
 
 import { useLocalStorage } from '@uidotdev/usehooks';
 import clsx from 'clsx';
+import DOMPurify from 'dompurify';
 import { useTranslations } from 'next-intl';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styles from './LogsTerminal.module.scss';
 
 type Props = {
@@ -22,6 +23,7 @@ export const LogsTerminal = (props: Props) => {
 
   const lastLogId = logs.length > 0 ? logs.at(-1)?.id : null;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: necessary to update the scroll when a new log is added
   useEffect(() => {
     if (ref.current && follow) {
       ref.current.scrollTop = ref.current.scrollHeight;
@@ -61,14 +63,15 @@ export const LogsTerminal = (props: Props) => {
           </div>
         </div>
       </div>
-      <pre id="log-terminal" className={clsx('mt-2', styles.logTerminal, { [styles.wrapLines || '']: wrapLines })} ref={ref}>
-        {logs.map((log) => (
-          <React.Fragment key={log.id}>
-            {log.text}
-            <br />
-          </React.Fragment>
-        ))}
-      </pre>
+      <pre
+        id="log-terminal"
+        className={clsx('mt-2', styles.logTerminal, {
+          [styles.wrapLines || '']: wrapLines,
+        })}
+        ref={ref}
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: safe to use because the content is sanitized
+        dangerouslySetInnerHTML={{ __html: logs.map((log) => DOMPurify.sanitize(log.text)).join('<br />') }}
+      />
     </div>
   );
 };

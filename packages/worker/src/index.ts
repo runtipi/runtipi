@@ -7,6 +7,7 @@ import path from 'node:path';
 import { logger } from '@/lib/logger';
 import { copySystemFiles, generateSystemEnvFile, generateTlsCertificates } from '@/lib/system';
 import { serve } from '@hono/node-server';
+import type { ICache } from '@runtipi/cache';
 import type { IMigrator } from '@runtipi/db';
 import type { ILogger } from '@runtipi/shared/node';
 import { extraErrorDataIntegration } from '@sentry/integrations';
@@ -14,7 +15,6 @@ import * as Sentry from '@sentry/node';
 import { Queue } from 'bullmq';
 import dotenv from 'dotenv';
 import { Hono } from 'hono';
-import Redis from 'ioredis';
 import { setupRoutes } from './api';
 import { APP_DIR, DATA_DIR } from './config';
 import { container } from './inversify.config';
@@ -50,6 +50,7 @@ const main = async () => {
     const logger = container.get<ILogger>('ILogger');
     const migrator = container.get<IMigrator>('IMigrator');
     const appExecutor = container.get<IAppExecutors>('IAppExecutors');
+    const cache = container.get<ICache>('ICache');
 
     await logger.flush();
 
@@ -136,13 +137,7 @@ const main = async () => {
 
     // Set status to running
     logger.info('Setting status to running...');
-    const cache = new Redis({
-      host: envMap.get('REDIS_HOST'),
-      port: 6379,
-      password: envMap.get('REDIS_PASSWORD'),
-    });
     await cache.set('status', 'RUNNING');
-    await cache.quit();
 
     // Start all apps
     logger.info('Starting all apps...');

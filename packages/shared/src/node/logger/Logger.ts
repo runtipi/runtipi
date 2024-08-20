@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { createLogger, format, transports } from 'winston';
 
 const { printf, timestamp, combine, colorize, align, label } = format;
@@ -30,7 +30,9 @@ export const newLogger = (id: string, logsFolder: string) => {
     exceptionHandlers = [new transports.File({ filename: path.join(logsFolder, 'error.log') })];
 
     tr.push(new transports.Console({ level: process.env.NODE_ENV === 'development' ? 'debug' : 'info' }));
-  } catch (error) {}
+  } catch (error) {
+    // no-op
+  }
 
   return createLogger({
     level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',

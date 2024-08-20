@@ -1,5 +1,5 @@
-import { promises } from 'fs';
-import path from 'path';
+import { promises } from 'node:fs';
+import path from 'node:path';
 import type { settingsSchema } from '@runtipi/shared';
 import { pathExists } from '@runtipi/shared/node';
 import type { z } from 'zod';

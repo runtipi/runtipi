@@ -11,10 +11,14 @@ import fs from 'fs-extra';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 import { InstallAppCommand } from '../install-app-command';
+import { CacheMock } from 'packages/cache/src/mock';
+import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
 
 let db: TestDatabase;
 const TEST_SUITE = 'installappcommand';
-const dispatcher = new EventDispatcher();
+const logger = new LoggerMock();
+const cache = new CacheMock();
+const dispatcher = new EventDispatcher(logger, cache);
 const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 const executeOtherCommandMock = vi.fn(() => Promise.resolve({ success: true }));
 let installApp: InstallAppCommand;
@@ -31,7 +35,10 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await clearDatabase(db);
-  dispatcher.dispatchEventAsync = vi.fn().mockResolvedValue({ success: true });
+  dispatcher.dispatchEventAsync = vi.fn().mockImplementation(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    return { success: true };
+  });
 });
 
 afterAll(async () => {
@@ -137,8 +144,8 @@ describe('Install app', () => {
 
   it('can install if architecture is supported', async () => {
     // arrange
-    await TipiConfig.setConfig('architecture', 'arm');
-    const appConfig = createAppConfig({ supported_architectures: ['arm'] });
+    await TipiConfig.setConfig('architecture', 'arm64');
+    const appConfig = createAppConfig({ supported_architectures: ['arm64'] });
 
     // act
     await installApp.execute({ appId: appConfig.id, form: {} });
@@ -149,7 +156,7 @@ describe('Install app', () => {
 
   it('can install if no architecture is specified', async () => {
     // arrange
-    await TipiConfig.setConfig('architecture', 'arm');
+    await TipiConfig.setConfig('architecture', 'arm64');
     const appConfig = createAppConfig({ supported_architectures: undefined });
 
     // act

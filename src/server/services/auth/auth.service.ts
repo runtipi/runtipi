@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
-import { generateSessionId, setSession } from '@/server/common/session.helpers';
-import type { ITipiCache } from '@/server/core/TipiCache/TipiCache';
+import type { ISessionManager } from '@/server/common/session-manager';
 import type { IAuthQueries } from '@/server/queries/auth/auth.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import { TotpAuthenticator } from '@/server/utils/totp';
-import { Locales, getLocaleFromString } from '@/shared/internationalization/locales';
+import { getLocaleFromString } from '@/shared/internationalization/locales';
+import type { ICache } from '@runtipi/cache';
 import type { User } from '@runtipi/db';
 import { pathExists } from '@runtipi/shared/node';
 import * as argon2 from 'argon2';
@@ -36,7 +36,6 @@ export interface IAuthService {
   checkPasswordChangeRequest(): Promise<boolean>;
   changePassword(params: { currentPassword: string; newPassword: string; userId: number }): Promise<boolean>;
   changeUsername(params: { newUsername: string; password: string; userId: number }): Promise<boolean>;
-  changeLocale(params: { locale: string; userId: number }): Promise<boolean>;
   cancelPasswordChangeRequest(): Promise<boolean>;
 }
 
@@ -44,7 +43,8 @@ export interface IAuthService {
 export class AuthService implements IAuthService {
   constructor(
     @inject('IAuthQueries') private queries: IAuthQueries,
-    @inject('ITipiCache') private tipiCache: ITipiCache,
+    @inject('ICache') private cache: ICache,
+    @inject('ISessionManager') private sessionManager: ISessionManager,
   ) {}
 
   /**
@@ -67,13 +67,13 @@ export class AuthService implements IAuthService {
     }
 
     if (user.totpEnabled) {
-      const totpSessionId = generateSessionId('otp');
-      await this.tipiCache.set(totpSessionId, user.id.toString());
+      const totpSessionId = this.sessionManager.generateSessionId('otp');
+      await this.cache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
 
     const sessionId = uuidv4();
-    await setSession(sessionId, user.id.toString());
+    await this.sessionManager.setSession(sessionId, user.id.toString());
 
     return { sessionId };
   };
@@ -87,7 +87,7 @@ export class AuthService implements IAuthService {
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
     const { totpSessionId, totpCode } = params;
-    const userId = await this.tipiCache.get(totpSessionId);
+    const userId = await this.cache.get(totpSessionId);
 
     if (!userId) {
       throw new TranslatedError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -111,7 +111,7 @@ export class AuthService implements IAuthService {
     }
 
     const sessionId = uuidv4();
-    await setSession(sessionId, user.id.toString());
+    await this.sessionManager.setSession(sessionId, user.id.toString());
 
     return true;
   };
@@ -149,7 +149,7 @@ export class AuthService implements IAuthService {
     const newTotpSecret = TotpAuthenticator.generateSecret();
 
     if (!salt) {
-      salt = generateSessionId('');
+      salt = this.sessionManager.generateSessionId('');
     }
 
     const encryptedTotpSecret = encrypt(newTotpSecret, salt);
@@ -250,7 +250,7 @@ export class AuthService implements IAuthService {
     }
 
     const sessionId = uuidv4();
-    await setSession(sessionId, newUser.id.toString());
+    await this.sessionManager.setSession(sessionId, newUser.id.toString());
 
     return true;
   };
@@ -277,7 +277,7 @@ export class AuthService implements IAuthService {
    * @returns {Promise<boolean>} - Returns true if the session token is removed successfully
    */
   public logout = async (sessionId: string): Promise<boolean> => {
-    await this.tipiCache.del(`session:${sessionId}`);
+    await this.cache.del(`session:${sessionId}`);
 
     return true;
   };
@@ -372,12 +372,12 @@ export class AuthService implements IAuthService {
    * @param {number} userId - The user ID
    */
   private destroyAllSessionsByUserId = async (userId: number) => {
-    const sessions = await this.tipiCache.getByPrefix(`session:${userId}:`);
+    const sessions = await this.cache.getByPrefix(`session:${userId}:`);
 
     await Promise.all(
       sessions.map(async (session) => {
-        await this.tipiCache.del(session.key);
-        if (session.val) await this.tipiCache.del(session.val);
+        await this.cache.del(session.key);
+        if (session.val) await this.cache.del(session.val);
       }),
     );
   };
@@ -445,33 +445,6 @@ export class AuthService implements IAuthService {
 
     await this.queries.updateUser(user.id, { username: email });
     await this.destroyAllSessionsByUserId(user.id);
-
-    return true;
-  };
-
-  /**
-   * Given a userId and a locale, change the user's locale
-   *
-   * @param {object} params - An object containing the user ID and the new locale
-   * @param {string} params.locale - The new locale
-   * @param {number} params.userId - The user ID
-   */
-  public changeLocale = async (params: { locale: string; userId: number }) => {
-    const { locale, userId } = params;
-
-    const isLocaleValid = Locales.includes(locale);
-
-    if (!isLocaleValid) {
-      throw new TranslatedError('SERVER_ERROR_INVALID_LOCALE');
-    }
-
-    const user = await this.queries.getUserById(userId);
-
-    if (!user) {
-      throw new TranslatedError('AUTH_ERROR_USER_NOT_FOUND');
-    }
-
-    await this.queries.updateUser(user.id, { locale });
 
     return true;
   };

@@ -2,7 +2,9 @@ import 'reflect-metadata';
 import fs from 'node:fs';
 import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
-import { beforeEach, vi } from 'vitest';
+import { beforeAll, beforeEach, vi } from 'vitest';
+import { Migrator } from '@runtipi/db';
+import type { ILogger } from '@runtipi/shared/src/node';
 
 vi.mock('@runtipi/shared/node', async (importOriginal) => {
   const mod = (await importOriginal()) as object;
@@ -28,6 +30,20 @@ vi.mock('fs', async () => {
   return {
     ...fsMock,
   };
+});
+
+console.info = vi.fn();
+
+beforeAll(async () => {
+  const migrator = new Migrator(console as unknown as ILogger);
+  await migrator.runPostgresMigrations({
+    host: String(process.env.POSTGRES_HOST),
+    port: Number(process.env.POSTGRES_PORT),
+    password: String(process.env.POSTGRES_PASSWORD),
+    database: String(process.env.POSTGRES_DBNAME),
+    username: String(process.env.POSTGRES_USERNAME),
+    migrationsFolder: path.join(__dirname, '../../db/assets'),
+  });
 });
 
 beforeEach(async () => {

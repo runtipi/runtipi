@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/Button';
-import React from 'react';
 
 export default function TestErrorPage() {
   const fetchFaultyApi = async () => {

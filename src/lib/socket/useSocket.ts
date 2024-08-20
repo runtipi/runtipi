@@ -29,11 +29,12 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
   const [lastData, setLastData] = useState(initialData as unknown);
   const socketRef = useRef<Socket>();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This effect should never re-run
   useEffect(() => {
-    const { hostname, protocol } = window.location;
+    const { hostname, port, protocol } = window.location;
 
     if (!socketRef.current) {
-      socketRef.current = io(`${protocol}//${hostname}`, { path: '/worker/socket.io' });
+      socketRef.current = io(`${protocol}//${hostname}:${port}`, { path: '/worker/socket.io' });
     }
 
     if (socketRef.current?.disconnected) {
@@ -71,7 +72,6 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
       }
 
       setLastData(data);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore - This is fine
       if (onEvent) onEvent(event, data);
     };
@@ -94,7 +94,6 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
       socketRef.current = undefined;
       onCleanup?.();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- This effect should never re-run
   }, []);
 
   return { lastData, socket: socketRef.current } as { lastData: Extract<SocketEvent, { type: T }>['data'] | undefined; socket: Socket | undefined };

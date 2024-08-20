@@ -23,7 +23,6 @@ export class SocketManager implements ISocketManager {
       this.logger.debug('Client connected to socket', socket.id);
       socket.on('app-logs-init', (event) => handleViewAppLogsEvent(socket, event, this.emit.bind(this)));
       socket.on('runtipi-logs-init', (event) => handleViewRuntipiLogsEvent(socket, event, this.emit.bind(this)));
-      socket.on('disconnect', () => {});
     });
 
     this.io = io;
@@ -38,7 +37,6 @@ export class SocketManager implements ISocketManager {
     try {
       const sockets = await this.io.fetchSockets();
 
-      // eslint-disable-next-line no-restricted-syntax
       for (const socket of sockets) {
         try {
           socket.emit(event.type, event);

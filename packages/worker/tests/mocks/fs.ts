@@ -6,9 +6,10 @@ const copyFolderRecursiveSync = (src: string, dest: string) => {
   const isDirectory = exists && stats.isDirectory();
   if (isDirectory) {
     vol.mkdirSync(dest, { recursive: true });
-    vol.readdirSync(src).forEach((childItemName) => {
+
+    for (const childItemName of vol.readdirSync(src)) {
       copyFolderRecursiveSync(`${src}/${childItemName}`, `${dest}/${childItemName}`);
-    });
+    }
   } else {
     vol.copyFileSync(src, dest);
   }

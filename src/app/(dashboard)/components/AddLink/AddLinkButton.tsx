@@ -4,7 +4,6 @@ import { useDisclosure } from '@/client/hooks/useDisclosure';
 import { IconNewSection } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import React from 'react';
 import { AddLinkModal } from './AddLinkModal';
 import styles from './addLink.module.css';
 
@@ -14,7 +13,7 @@ export const AddLinkButton = () => {
 
   return (
     <>
-      <button className={clsx('col-sm-6 col-lg-4', styles.addLinkButton)} onClick={() => addLinkDisclosure.open()}>
+      <button type="button" className={clsx('col-sm-6 col-lg-4', styles.addLinkButton)} onClick={() => addLinkDisclosure.open()}>
         <div className="card card-sm card-link">
           <div className="card-body">
             <div className="d-flex align-items-center">

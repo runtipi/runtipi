@@ -8,10 +8,15 @@ import { AppDataService } from '@runtipi/shared/node';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 import { UpdateAppCommand } from '../update-app-command';
+import { CacheMock } from 'packages/cache/src/mock';
+import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
 
 let db: TestDatabase;
 const TEST_SUITE = 'updateappcommand';
-const dispatcher = new EventDispatcher();
+const logger = new LoggerMock();
+const cache = new CacheMock();
+
+const dispatcher = new EventDispatcher(logger, cache);
 const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
 let updateApp: UpdateAppCommand;
 

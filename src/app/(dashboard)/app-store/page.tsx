@@ -1,7 +1,6 @@
 import { getTranslator } from '@/lib/get-translator';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import type { Metadata } from 'next';
-import React from 'react';
 import { AppStoreTable } from './components/AppStoreTable';
 
 export async function generateMetadata(): Promise<Metadata> {

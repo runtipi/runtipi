@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { newLogger as createLogger } from './Logger';
 import type { ILogger } from './Logger.interface';
 
@@ -46,6 +46,7 @@ export class Logger implements ILogger {
 
   private log = (level: string, messages: unknown[]) => {
     if (typeof window !== 'undefined') {
+      // biome-ignore lint/suspicious/noConsoleLog: used for logging
       console.log(level, messages.join(' '));
       return;
     }

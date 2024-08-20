@@ -1,6 +1,6 @@
-import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { getEnv } from '@/lib/environment';
 import { getMainEnvMap } from '@/lib/system/system.helpers';
@@ -202,6 +202,8 @@ export const copyDataDir = async (id: string) => {
 
   // Remove any .gitkeep files from the app-data folder at any level
   if (await pathExists(path.join(APP_DATA_DIR, sanitizePath(id), 'data'))) {
-    await execAsync(`find ${APP_DATA_DIR}/${sanitizePath(id)}/data -name .gitkeep -delete`).catch(() => {});
+    await execAsync(`find ${APP_DATA_DIR}/${sanitizePath(id)}/data -name .gitkeep -delete`).catch(() => {
+      console.error(`Error removing .gitkeep files from ${APP_DATA_DIR}/${sanitizePath(id)}/data`);
+    });
   }
 };

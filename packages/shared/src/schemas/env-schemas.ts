@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const ARCHITECTURES = {
-  ARM: 'arm',
   ARM64: 'arm64',
   AMD64: 'amd64',
 } as const;

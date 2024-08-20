@@ -2,7 +2,7 @@
 
 import { ClientOnly } from '@/components/ClientOnly/ClientOnly';
 import { useSocket } from '@/lib/socket/useSocket';
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { LogsTerminal } from 'src/app/components/LogsTerminal/LogsTerminal';
 
 export const AppLogs = ({ appId }: { appId: string }) => {

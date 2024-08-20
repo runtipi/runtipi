@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { DATA_DIR } from '@/config/constants';
 import { faker } from '@faker-js/faker';
 import fs from 'fs-extra';
@@ -56,7 +56,7 @@ describe('Test: setConfig', () => {
 
   it('Should not be able to set invalid NODE_ENV', async () => {
     // arrange
-    let error;
+    let error: unknown | undefined;
 
     // act
     try {
@@ -151,7 +151,7 @@ describe('Test: setSettings', () => {
 
   it('should throw and error if demo mode is enabled', async () => {
     // arrange
-    let error;
+    let error: unknown | undefined;
     const fakeSettings = { appsRepoUrl: faker.internet.url() };
     const tipiConf = new TipiConfigClass(0);
     await tipiConf.setConfig('demoMode', true);

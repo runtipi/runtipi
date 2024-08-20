@@ -41,7 +41,7 @@ describe('useSocket', () => {
     renderHook(() => useSocket({ selector: { type: 'runtipi-logs' }, emitOnConnect }));
 
     expect(mockSocket.on).toHaveBeenCalledWith('connect', expect.any(Function));
-    mockSocket.on.mock.calls.find((call) => call[0] === 'connect')[1](); // Call the connect handler
+    mockSocket.on.mock.calls.find((call) => call[0] === 'connect')?.[1](); // Call the connect handler
 
     expect(mockSocket.emit).toHaveBeenCalledWith(emitOnConnect.type, emitOnConnect);
   });
@@ -54,7 +54,7 @@ describe('useSocket', () => {
 
     expect(mockSocket.on).toHaveBeenCalledWith('app-logs', expect.any(Function));
 
-    mockSocket.on.mock.calls.find((call) => call[0] === 'app-logs')[1](eventData); // Call the event handler
+    mockSocket.on.mock.calls.find((call) => call[0] === 'app-logs')?.[1](eventData); // Call the event handler
 
     expect(onEvent).toHaveBeenCalledWith('newLogs', eventData.data);
   });
@@ -71,7 +71,7 @@ describe('useSocket', () => {
     );
 
     expect(mockSocket.on).toHaveBeenCalledWith('error', expect.any(Function));
-    mockSocket.on.mock.calls.find((call) => call[0] === 'error')[1](errorMessage); // Call the error handler
+    mockSocket.on.mock.calls.find((call) => call[0] === 'error')?.[1](errorMessage); // Call the error handler
 
     expect(onError).toHaveBeenCalledWith(errorMessage);
   });
@@ -104,7 +104,7 @@ describe('useSocket', () => {
     const { result } = renderHook(() => useSocket({ selector: { type: 'app' } }));
 
     expect(mockSocket.on).toHaveBeenCalledWith('app', expect.any(Function));
-    mockSocket.on.mock.calls.find((call) => call[0] === 'app')[1](eventData); // Call the event handler
+    mockSocket.on.mock.calls.find((call) => call[0] === 'app')?.[1]?.(eventData); // Call the event handler
 
     await waitFor(() => {
       expect(result.current.lastData).toEqual(eventData.data);

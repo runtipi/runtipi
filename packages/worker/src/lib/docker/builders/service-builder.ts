@@ -148,7 +148,9 @@ export class ServiceBuilder {
    */
   addPorts(ports?: ServicePort[]) {
     if (ports) {
-      ports.forEach((port) => this.addPort(port));
+      for (const port of ports) {
+        this.addPort(port);
+      }
     }
     return this;
   }
@@ -186,7 +188,9 @@ export class ServiceBuilder {
    */
   addVolumes(volumes?: ServiceVolume[]) {
     if (volumes && volumes.length > 0) {
-      volumes.forEach((volume) => this.addVolume(volume));
+      for (const volume of volumes) {
+        this.addVolume(volume);
+      }
     }
     return this;
   }

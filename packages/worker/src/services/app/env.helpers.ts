@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { APP_DATA_DIR } from '@/config/constants';
 import { sanitizePath } from '@runtipi/shared';
 import webpush from 'web-push';
@@ -16,10 +16,10 @@ export const getAppEnvMap = async (appId: string) => {
     const envVars = envFile.toString().split('\n');
     const envVarsMap = new Map<string, string>();
 
-    envVars.forEach((envVar) => {
+    for (const envVar of envVars) {
       const [key, value] = envVar.split('=');
       if (key && value) envVarsMap.set(key, value);
-    });
+    }
 
     return envVarsMap;
   } catch (e) {

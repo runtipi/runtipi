@@ -2,7 +2,7 @@
 
 import { authActionClient } from '@/lib/safe-action';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { SystemServiceClass } from '@/server/services/system';
+import { SystemService } from '@/server/services/system';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -11,7 +11,7 @@ const input = z.object({
 });
 
 export const acknowledgeWelcomeAction = authActionClient.schema(input).action(async ({ parsedInput: { allowErrorMonitoring } }) => {
-  await SystemServiceClass.markSeenWelcome();
+  await SystemService.markSeenWelcome();
   const settings = TipiConfig.getSettings();
 
   await TipiConfig.setSettings({ ...settings, allowErrorMonitoring });

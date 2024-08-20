@@ -1,16 +1,17 @@
-import { getEnv } from '@/lib/environment';
 import { logger } from '@/lib/logger';
 import { RepoExecutors } from '@/services';
+import type { ICache } from '@runtipi/cache';
 import { eventSchema } from '@runtipi/shared';
 import { Worker } from 'bullmq';
 import { container } from 'src/inversify.config';
 import type { IAppExecutors } from 'src/services/app/app.executors';
 
-const { installApp, resetApp, startApp, stopApp, restartApp, uninstallApp, updateApp, regenerateAppEnv, backupApp, restoreApp } =
-  container.get<IAppExecutors>('IAppExecutors');
 const { cloneRepo, pullRepo } = new RepoExecutors();
 
 const runCommand = async (jobData: unknown) => {
+  const { installApp, resetApp, startApp, stopApp, restartApp, uninstallApp, updateApp, regenerateAppEnv, backupApp, restoreApp } =
+    container.get<IAppExecutors>('IAppExecutors');
+
   const event = eventSchema.safeParse(jobData);
 
   if (!event.success) {
@@ -78,7 +79,10 @@ const runCommand = async (jobData: unknown) => {
 /**
  * Start the worker for the events queue
  */
-export const startWorker = () => {
+export const startWorker = async () => {
+  const cache = container.get<ICache>('ICache');
+  const connection = cache.getClient();
+
   const repeatWorker = new Worker(
     'repeat',
     async (job) => {
@@ -90,12 +94,7 @@ export const startWorker = () => {
       return { success, stdout: message };
     },
     {
-      connection: {
-        host: getEnv().redisHost,
-        port: 6379,
-        password: getEnv().redisPassword,
-        connectTimeout: 60000,
-      },
+      connection,
       removeOnComplete: { count: 200 },
       removeOnFail: { count: 500 },
       concurrency: 3,
@@ -111,12 +110,7 @@ export const startWorker = () => {
       return { success, stdout: message };
     },
     {
-      connection: {
-        host: getEnv().redisHost,
-        port: 6379,
-        password: getEnv().redisPassword,
-        connectTimeout: 60000,
-      },
+      connection,
       removeOnComplete: { count: 200 },
       removeOnFail: { count: 500 },
       concurrency: 1,

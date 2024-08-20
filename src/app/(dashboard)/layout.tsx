@@ -1,12 +1,12 @@
-import { getUserFromCookie } from '@/server/common/session.helpers';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
-import { SystemServiceClass } from '@/server/services/system';
+import { SystemService } from '@/server/services/system';
 import { isInstanceInsecure } from '@/server/utils/network';
 import clsx from 'clsx';
 import { redirect } from 'next/navigation';
 import type React from 'react';
 import semver from 'semver';
+import { getClass } from 'src/inversify.config';
 import { AtRiskBanner } from './components/AtRiskBanner/AtRiskBanner';
 import { Header } from './components/Header';
 import { LayoutActions } from './components/LayoutActions/LayoutActions';
@@ -15,7 +15,10 @@ import { Welcome } from './components/Welcome/Welcome';
 import styles from './layout.module.scss';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const user = await getUserFromCookie();
+  const systemService = getClass('ISystemService');
+  const sessionManager = getClass('ISessionManager');
+
+  const user = await sessionManager.getUserFromCookie();
   const { apps } = await appCatalog.executeCommand('listApps');
 
   const installedApps = await appCatalog.executeCommand('getInstalledApps');
@@ -26,11 +29,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect('/login');
   }
 
-  if (!(await SystemServiceClass.hasSeenWelcome())) {
+  if (!(await SystemService.hasSeenWelcome())) {
     return <Welcome allowErrorMonitoring={allowErrorMonitoring} />;
   }
 
-  const systemService = new SystemServiceClass();
   const { latest, current } = await systemService.getVersion();
 
   const isLatest = semver.valid(current) && semver.valid(latest) && semver.gte(current, latest);

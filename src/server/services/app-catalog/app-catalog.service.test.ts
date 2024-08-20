@@ -98,8 +98,8 @@ describe('List apps', () => {
 
   it('should list apps that have supportedArchitectures and are supported', async () => {
     // arrange
-    await TipiConfig.setConfig('architecture', 'arm');
-    createAppConfig({ supported_architectures: ['arm'] });
+    await TipiConfig.setConfig('architecture', 'arm64');
+    createAppConfig({ supported_architectures: ['arm64'] });
 
     // act
     const { apps } = await appCatalog.executeCommand('listApps');
@@ -111,7 +111,7 @@ describe('List apps', () => {
 
   it('should list apps that have no supportedArchitectures specified', async () => {
     // Arrange
-    await TipiConfig.setConfig('architecture', 'arm');
+    await TipiConfig.setConfig('architecture', 'arm64');
     createAppConfig({ supported_architectures: undefined });
 
     // act

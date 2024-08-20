@@ -43,11 +43,10 @@ export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
     queryKey: ['app-store', search, category],
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
-    initialData: { pages: [initialData], pageParams: [] },
     placeholderData: keepPreviousData,
   });
 
-  const apps = data?.pages.flatMap((page) => page.data);
+  const apps = data?.pages.flatMap((page) => page.data) ?? initialData.data;
 
   const { lastElementRef } = useInfiniteScroll({
     fetchNextPage,
