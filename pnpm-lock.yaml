@@ -422,9 +422,6 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
-      '@hyrious/esbuild-plugin-commonjs':
-        specifier: ^0.2.4
-        version: 0.2.4(cjs-module-lexer@1.3.1)(esbuild@0.23.1)
       '@sentry/esbuild-plugin':
         specifier: ^2.22.2
         version: 2.22.2
@@ -1010,16 +1007,6 @@ packages:
     resolution: {integrity: sha512-bU0Gr4EepJ/EQsH/IwEzYLsT/PEj5C0ynLQ4m+GSHS+xKH4TfSelhluTgOaoc4kA5s7eCsQbM4wvZLzELmWzUg==}
     peerDependencies:
       react-hook-form: ^7.0.0
-
-  '@hyrious/esbuild-plugin-commonjs@0.2.4':
-    resolution: {integrity: sha512-NKR8bsDbNP7EpM//cjoo8Bpihmc97gPpnwrggG+18iSGow6oaJpfmy3Bv+oBgPkPlxcGzC9SXh+6szoCoKFvCw==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      cjs-module-lexer: '*'
-      esbuild: '*'
-    peerDependenciesMeta:
-      cjs-module-lexer:
-        optional: true
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -5655,12 +5642,6 @@ snapshots:
   '@hookform/resolvers@3.9.0(react-hook-form@7.52.2(react@18.3.1))':
     dependencies:
       react-hook-form: 7.52.2(react@18.3.1)
-
-  '@hyrious/esbuild-plugin-commonjs@0.2.4(cjs-module-lexer@1.3.1)(esbuild@0.23.1)':
-    dependencies:
-      esbuild: 0.23.1
-    optionalDependencies:
-      cjs-module-lexer: 1.3.1
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
