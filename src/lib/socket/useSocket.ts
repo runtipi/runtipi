@@ -31,10 +31,10 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: This effect should never re-run
   useEffect(() => {
-    const { hostname, protocol } = window.location;
+    const { hostname, port, protocol } = window.location;
 
     if (!socketRef.current) {
-      socketRef.current = io(`${protocol}//${hostname}`, { path: '/worker/socket.io' });
+      socketRef.current = io(`${protocol}//${hostname}:${port}`, { path: '/worker/socket.io' });
     }
 
     if (socketRef.current?.disconnected) {
