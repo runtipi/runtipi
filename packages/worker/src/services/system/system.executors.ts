@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { logger } from '@/lib/logger';
 import * as Sentry from '@sentry/node';
-import si from 'systeminformation';
+import { currentLoad, fsSize } from 'systeminformation';
 
 export class SystemExecutors {
   private readonly logger;
@@ -24,7 +24,7 @@ export class SystemExecutors {
 
   public getSystemLoad = async () => {
     try {
-      const { currentLoad } = await si.currentLoad();
+      const load = await currentLoad();
 
       const memResult = { total: 0, used: 0, available: 0 };
 
@@ -38,7 +38,7 @@ export class SystemExecutors {
         this.logger.error(`Unable to read /host/proc/meminfo: ${e}`);
       }
 
-      const [disk0] = await si.fsSize();
+      const [disk0] = await fsSize();
 
       const disk = disk0 ?? { available: 0, size: 0 };
       const diskFree = Math.round(disk.available / 1024 / 1024 / 1024);
@@ -50,7 +50,7 @@ export class SystemExecutors {
       const memoryFree = Math.round(Number(memResult.available) / 1024 / 1024 / 1024);
       const percentUsedMemory = Math.round(((memoryTotal - memoryFree) / memoryTotal) * 100);
 
-      return { success: true as const, data: { diskUsed, diskSize, percentUsed, cpuLoad: currentLoad, memoryTotal, percentUsedMemory } };
+      return { success: true as const, data: { diskUsed, diskSize, percentUsed, cpuLoad: load, memoryTotal, percentUsedMemory } };
     } catch (e) {
       return this.handleSystemError(e);
     }
