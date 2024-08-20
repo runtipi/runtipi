@@ -6,7 +6,7 @@
   "scripts": {
     "test": "dotenv -e .env.test vitest -- --coverage --watch=false",
     "test:watch": "dotenv -e .env.test vitest",
-    "build": "node build.js",
+    "build": "node build.mjs",
     "tsc": "tsc --noEmit",
     "dev": "dotenv -e ../../.env nodemon",
     "knip": "knip"
@@ -35,13 +35,13 @@
     "@runtipi/shared": "workspace:^",
     "@sentry/integrations": "^7.114.0",
     "@sentry/node": "^8.26.0",
+    "ansi-to-html": "^0.7.2",
     "bullmq": "^5.12.8",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
     "hono": "^4.5.6",
     "inversify": "^6.0.2",
     "reflect-metadata": "^0.2.2",
-    "shiki": "^1.13.0",
     "socket.io": "^4.7.5",
     "source-map-support": "^0.5.21",
     "systeminformation": "^5.23.4",
