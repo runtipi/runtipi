@@ -23,6 +23,7 @@ export const LogsTerminal = (props: Props) => {
 
   const lastLogId = logs.length > 0 ? logs.at(-1)?.id : null;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: necessary to update the scroll when a new log is added
   useEffect(() => {
     if (ref.current && follow) {
       ref.current.scrollTop = ref.current.scrollHeight;
