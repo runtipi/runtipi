@@ -34,6 +34,6 @@ export const useAppStoreState = create<Store>((set) => ({
   setSort: (sort) => set({ sort }),
   sortDirection: 'asc',
   setSortDirection: (sortDirection) => set({ sortDirection }),
-  hideInstalledApps: false,
+  hideInstalledApps: true,
   setHideInstalledApps: (hideInstalledApps) => set({hideInstalledApps})
 }));
