@@ -15,6 +15,7 @@ import {
   IconStar,
   IconTool,
   IconUsers,
+  IconGridDots
 } from '@tabler/icons-react';
 import type { AppTableData } from './table.types';
 
@@ -66,11 +67,12 @@ export const colorSchemeForCategory: Record<AppCategory, string> = {
 };
 
 type AppCategoryEntry = {
-  id: AppCategory;
+  id: AppCategory | 'all';
   icon: typeof IconBook;
 };
 
 export const iconForCategory: AppCategoryEntry[] = [
+  { id: 'all', icon: IconGridDots},
   { id: 'network', icon: IconBroadcast },
   { id: 'media', icon: IconMovie },
   { id: 'development', icon: IconCode },

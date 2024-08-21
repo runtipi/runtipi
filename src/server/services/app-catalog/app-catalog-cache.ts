@@ -72,7 +72,7 @@ export class AppCatalogCache {
 
     let filteredApps = await this.getAvailableApps();
 
-    if (category) {
+    if (category && category !== "all") {
       filteredApps = filteredApps.filter((app) => app.categories.some((c) => c === category));
     }
 
