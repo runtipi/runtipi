@@ -83,7 +83,7 @@ export class AppCatalogCache {
       filteredApps = filteredApps.filter((app) => searchIds.includes(app.id)).sort((a, b) => searchIds.indexOf(a.id) - searchIds.indexOf(b.id));
     }
 
-    if (hideInstalled == "1") {
+    if (hideInstalled === "1") {
       const installedApps = (await appCatalog.executeCommand('getInstalledApps')).map(({id}) => id);
       filteredApps = filteredApps.filter(({id}) => !installedApps.includes(id));
     }
