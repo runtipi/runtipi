@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import React from 'react';
 import { AppStoreTableActions } from '../../app-store/components/AppStoreTableActions/AppStoreTableActions';
 import { UpdateAllButton } from '../../apps/components/UpdateAllButton/UpdateAllButton';
 

@@ -517,11 +517,11 @@ export class AppExecutors implements IAppExecutors {
     try {
       let apps: App[] = [];
 
-      if (!forceStartAll) {
-        apps = await this.dbClient.db.select().from(appTable).where(eq(appTable.status, 'running'));
-      } else {
+      if (forceStartAll) {
         // Get all apps
         apps = await this.dbClient.db.select().from(appTable);
+      } else {
+        apps = await this.dbClient.db.select().from(appTable).where(eq(appTable.status, 'running'));
       }
 
       // Update all apps with status different than running or stopped to stopped
@@ -536,11 +536,11 @@ export class AppExecutors implements IAppExecutors {
 
         const { success } = await this.startApp(id, config as AppEventForm);
 
-        if (!success) {
+        if (success) {
+          await this.dbClient.db.update(appTable).set({ status: 'running' }).where(eq(appTable.id, id));
+        } else {
           this.logger.error(`Error starting app ${id}`);
           await this.dbClient.db.update(appTable).set({ status: 'stopped' }).where(eq(appTable.id, id));
-        } else {
-          await this.dbClient.db.update(appTable).set({ status: 'running' }).where(eq(appTable.id, id));
         }
       }
     } catch (err) {

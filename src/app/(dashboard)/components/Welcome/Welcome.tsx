@@ -8,7 +8,7 @@ import { IconBrandDiscord, IconBrandGithub } from '@tabler/icons-react';
 import { useAction } from 'next-safe-action/hooks';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 type Props = {
   allowErrorMonitoring: boolean;

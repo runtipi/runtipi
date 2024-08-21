@@ -4,7 +4,7 @@ import { loginAction } from '@/actions/login/login-action';
 import { verifyTotpAction } from '@/actions/verify-totp/verify-totp-action';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { LoginForm } from '../LoginForm';
 import { TotpForm } from '../TotpForm';

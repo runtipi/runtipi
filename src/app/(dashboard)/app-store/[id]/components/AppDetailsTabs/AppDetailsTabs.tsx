@@ -9,7 +9,6 @@ import type { AppInfo } from '@runtipi/shared';
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import React from 'react';
 import { AppBackups } from './AppBackups';
 import { AppDetailsTabTriggers } from './AppDetailsTabTriggers';
 import { AppLogs } from './AppLogs';

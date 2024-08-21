@@ -5,7 +5,6 @@ import type { Locale } from '@/shared/internationalization/locales';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
-import React from 'react';
 import { toast } from 'react-hot-toast';
 import { SettingsForm, type SettingsFormValues } from '../SettingsForm';
 

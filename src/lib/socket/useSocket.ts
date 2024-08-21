@@ -72,7 +72,6 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
       }
 
       setLastData(data);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore - This is fine
       if (onEvent) onEvent(event, data);
     };
@@ -95,7 +94,6 @@ export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['
       socketRef.current = undefined;
       onCleanup?.();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- This effect should never re-run
   }, []);
 
   return { lastData, socket: socketRef.current } as { lastData: Extract<SocketEvent, { type: T }>['data'] | undefined; socket: Socket | undefined };

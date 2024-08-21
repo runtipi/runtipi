@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../../../../../tests/test-utils';
 import { ChangePasswordForm } from './ChangePasswordForm';

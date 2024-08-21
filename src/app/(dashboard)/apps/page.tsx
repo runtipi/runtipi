@@ -1,9 +1,8 @@
-import React from 'react';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { getTranslator } from '@/lib/get-translator';
 import { AppTile } from '@/components/AppTile';
 import Link from 'next/link';
-import { Link as CustomLink } from '@runtipi/db';
+import type { Link as CustomLink } from '@runtipi/db';
 import clsx from 'clsx';
 import { LinkTile } from '@/components/LinkTile/LinkTile';
 import { EmptyPage } from '../../components/EmptyPage';

@@ -78,7 +78,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         disabled={disabled}
-        style={{ height: !size ? '36px' : 'auto' }}
+        style={{ height: size ? 'auto' : '36px' }}
         className={clsx(buttonVariants({ variant, size, intent, className }), { disabled: disabled || loading, 'btn-loading': loading }, className)}
         ref={ref}
         {...props}

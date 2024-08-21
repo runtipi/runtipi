@@ -1,6 +1,5 @@
 import { useClientSettings } from '@/hooks/useClientSettings';
 import { useCookies } from 'next-client-cookies';
-import React from 'react';
 
 type IProps = {
   date: Date | string;

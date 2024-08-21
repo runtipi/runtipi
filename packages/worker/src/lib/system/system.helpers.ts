@@ -37,7 +37,6 @@ type EnvKeys =
   | 'ALLOW_ERROR_MONITORING'
   | 'PERSIST_TRAEFIK_CONFIG'
   | 'ALLOW_AUTO_THEMES'
-  // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
 const OLD_DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
