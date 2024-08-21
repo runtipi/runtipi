@@ -6,7 +6,9 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 ENV LOCAL=true
 ENV SENTRY_RELEASE=development
 
-RUN apk add --no-cache python3 make g++ curl git
+RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache curl openssl git
+
 RUN npm install pnpm@9.4.0 pm2 -g
 
 ARG TARGETARCH
