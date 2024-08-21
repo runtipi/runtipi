@@ -8,9 +8,10 @@ import { useState } from 'react';
 import { useAppStoreState } from '../../state/appStoreState';
 import { CategorySelector } from '../CategorySelector';
 import styles from './AppStoreTableActions.module.scss';
+import { Switch } from '@/components/ui/Switch';
 
 export const AppStoreTableActions = () => {
-  const { setCategory, category, search: initialSearch, setSearch } = useAppStoreState();
+  const { setCategory, category, search: initialSearch, setSearch, hideInstalledApps, setHideInstalledApps } = useAppStoreState();
   const [search, setLocalSearch] = useState(initialSearch);
   const t = useTranslations();
 
@@ -21,6 +22,7 @@ export const AppStoreTableActions = () => {
 
   return (
     <div className="d-flex align-items-stretch align-items-md-center flex-column flex-md-row justify-content-end">
+      <Switch checked={hideInstalledApps} onCheckedChange={setHideInstalledApps} label={t('APP_STORE_HIDE_INSTALLED')} className='my-auto me-md-2' />
       <Input
         value={search}
         onChange={onSearch}

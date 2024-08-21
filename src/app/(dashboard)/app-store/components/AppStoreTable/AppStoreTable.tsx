@@ -13,7 +13,7 @@ interface IProps {
 }
 
 export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
-  const { category, search } = useAppStoreState();
+  const { category, search, hideInstalledApps } = useAppStoreState();
 
   async function searchApps({ pageParam }: { pageParam?: string }) {
     const url = new URL('/api/app-store', window.location.origin);
@@ -24,6 +24,10 @@ export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
 
     if (category) {
       url.searchParams.append('category', category);
+    }
+
+    if (hideInstalledApps) {
+      url.searchParams.append('hideInstalled', Number(hideInstalledApps).toString());
     }
 
     if (pageParam) {
@@ -40,7 +44,7 @@ export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
 
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = useInfiniteQuery({
     queryFn: searchApps,
-    queryKey: ['app-store', search, category],
+    queryKey: ['app-store', search, category, hideInstalledApps],
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     placeholderData: keepPreviousData,

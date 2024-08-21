@@ -1,6 +1,7 @@
 import { TipiConfig } from '@/server/core/TipiConfig';
 import type { AppDataService } from '@runtipi/shared/node';
 import MiniSearch from 'minisearch';
+import { appCatalog } from './app-catalog.service';
 
 const sortApps = (a: AppList[number], b: AppList[number]) => a.id.localeCompare(b.id);
 const filterApp = (app: AppList[number]): boolean => {
@@ -67,8 +68,8 @@ export class AppCatalogCache {
     return this.appsAvailable;
   }
 
-  public async searchApps(params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null }) {
-    const { search, category, pageSize, cursor } = params;
+  public async searchApps(params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null, hideInstalled?: string | null }) {
+    const { search, category, pageSize, cursor, hideInstalled } = params;
 
     let filteredApps = await this.getAvailableApps();
 
@@ -80,6 +81,11 @@ export class AppCatalogCache {
       const result = this.miniSearch.search(search);
       const searchIds = result.map((app) => app.id);
       filteredApps = filteredApps.filter((app) => searchIds.includes(app.id)).sort((a, b) => searchIds.indexOf(a.id) - searchIds.indexOf(b.id));
+    }
+
+    if (hideInstalled == "1") {
+      const installedApps = (await appCatalog.executeCommand('getInstalledApps')).map(({id}) => id);
+      filteredApps = filteredApps.filter(({id}) => !installedApps.includes(id));
     }
 
     const start = cursor ? filteredApps.findIndex((app) => app.id === cursor) : 0;

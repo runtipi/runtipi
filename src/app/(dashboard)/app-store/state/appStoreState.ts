@@ -11,6 +11,8 @@ type Store = {
   setSort: (sort: SortableColumns) => void;
   sortDirection: 'asc' | 'desc';
   setSortDirection: (sortDirection: 'asc' | 'desc') => void;
+  hideInstalledApps: boolean,
+  setHideInstalledApps: (hideInstalledApps: boolean) => void;
 };
 
 const debouncedSearch = (fn: (search: string) => void, delay: number) => {
@@ -32,4 +34,6 @@ export const useAppStoreState = create<Store>((set) => ({
   setSort: (sort) => set({ sort }),
   sortDirection: 'asc',
   setSortDirection: (sortDirection) => set({ sortDirection }),
+  hideInstalledApps: false,
+  setHideInstalledApps: (hideInstalledApps) => set({hideInstalledApps})
 }));

@@ -10,7 +10,7 @@ export class SearchAppsCommand implements IAppCatalogCommand<ReturnValue> {
     this.appCatalogCache = params.appCatalogCache;
   }
 
-  async execute(params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null }) {
+  async execute(params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null, hideInstalled?: string | null; }) {
     return this.appCatalogCache.searchApps(params);
   }
 }

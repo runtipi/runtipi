@@ -7,8 +7,9 @@ const getApps = async (searchParams: URLSearchParams) => {
   const pageSize = searchParams.get('pageSize') || 18;
   const category = searchParams.get('category');
   const cursor = searchParams.get('cursor');
+  const hideInstalled = searchParams.get('hideInstalled');
 
-  return appCatalog.executeCommand('searchApps', { search, category, pageSize: Number(pageSize), cursor });
+  return appCatalog.executeCommand('searchApps', { search, category, pageSize: Number(pageSize), cursor, hideInstalled });
 };
 
 export async function GET(request: Request) {
