@@ -72,7 +72,6 @@ export class AppDataService implements IAppDataService {
     const { appId, page, pageSize } = params;
     const backups = await this.dataAccessApp.listBackupsByAppId(appId);
     backups.sort((a, b) => b.date.getTime() - a.date.getTime());
-    backups.map(({date}) => date.toISOString());
 
     const start = (page - 1) * pageSize;
     const end = start + pageSize;
