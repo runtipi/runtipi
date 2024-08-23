@@ -7,10 +7,10 @@ import { iconForCategory } from '../../helpers/table.helpers';
 interface Props {
   onSelect: (value?: AppCategory) => void;
   className?: string;
-  initialValue?: AppCategory;
+  value?: AppCategory;
 }
 
-export const CategorySelector = ({ onSelect, className, initialValue }: Props) => {
+export const CategorySelector = ({ onSelect, className, value }: Props) => {
   const t = useTranslations();
   const options = iconForCategory.map((category) => ({
     value: category.id,
@@ -18,10 +18,7 @@ export const CategorySelector = ({ onSelect, className, initialValue }: Props) =
     icon: category.icon,
   }));
 
-  const [value, setValue] = useState(initialValue);
-
   const handleChange = (option: AppCategory) => {
-    setValue(option);
     onSelect(option);
   };
 

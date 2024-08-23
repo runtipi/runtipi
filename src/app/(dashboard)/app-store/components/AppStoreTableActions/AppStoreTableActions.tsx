@@ -27,7 +27,7 @@ export const AppStoreTableActions = () => {
         placeholder={t('APP_STORE_SEARCH_PLACEHOLDER')}
         className={clsx('flex-fill mt-2 mt-md-0 me-md-2', styles.selector)}
       />
-      <CategorySelector initialValue={category} className={clsx('flex-fill mt-2 mt-md-0', styles.selector)} onSelect={setCategory} />
+      <CategorySelector value={category} className={clsx('flex-fill mt-2 mt-md-0', styles.selector)} onSelect={setCategory} />
     </div>
   );
 };
