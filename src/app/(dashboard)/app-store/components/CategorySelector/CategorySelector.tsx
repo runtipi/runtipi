@@ -1,7 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import type { AppCategory } from '@runtipi/shared';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { iconForCategory } from '../../helpers/table.helpers';
 
 interface Props {

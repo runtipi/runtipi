@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type React from 'react';
-import { MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 import { colorSchemeForCategory } from '../../helpers/table.helpers';
 import styles from './AppStoreTile.module.scss';
 
@@ -41,7 +41,7 @@ export const AppStoreTile: React.FC<{ app: App, onClickCategory: (category: AppC
           </div>
           <p className="text-muted text-nowrap mb-2">{limitText(app.short_desc, 30)}</p>
           {app.categories?.map((category) => (
-            <button className={`text-white badge me-1 bg-${colorSchemeForCategory[category]}`} key={`${app.id}-${category}`} onClick={handleClick(category)}>
+            <button className={`text-white badge me-1 bg-${colorSchemeForCategory[category]}`} key={`${app.id}-${category}`} onClick={handleClick(category)} type="button">
               {t(`APP_CATEGORY_${category.toUpperCase() as Uppercase<typeof category>}`)}
             </button>
           ))}
