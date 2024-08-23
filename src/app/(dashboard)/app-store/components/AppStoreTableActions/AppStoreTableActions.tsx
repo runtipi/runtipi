@@ -22,7 +22,7 @@ export const AppStoreTableActions = () => {
 
   return (
     <div className="d-flex align-items-stretch align-items-md-center flex-column flex-md-row justify-content-end">
-      <Switch checked={hideInstalledApps} onCheckedChange={setHideInstalledApps} label={t('APP_STORE_HIDE_INSTALLED')} className='my-auto me-md-2' />
+      <Switch checked={hideInstalledApps} onCheckedChange={setHideInstalledApps} label={t('APP_STORE_HIDE_INSTALLED')} className="my-auto me-md-2" />
       <Input
         value={search}
         onChange={onSearch}
