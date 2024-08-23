@@ -19,7 +19,7 @@ type App = {
   short_desc: string;
 };
 
-export const AppStoreTile: React.FC<{ app: App, onClickCategory: (category: AppCategory) => void }> = ({ app, onClickCategory }) => {
+export const AppStoreTile: React.FC<{ app: App; onClickCategory: (category: AppCategory) => void }> = ({ app, onClickCategory }) => {
   const t = useTranslations();
   const isNew = app.created_at + 14 * 24 * 60 * 60 * 1000 > Date.now();
 
@@ -27,8 +27,8 @@ export const AppStoreTile: React.FC<{ app: App, onClickCategory: (category: AppC
     return (event: MouseEvent) => {
       event.preventDefault();
       onClickCategory(category);
-    }
-  }
+    };
+  };
 
   return (
     <Link aria-label={app.name} className={clsx(styles.appTile)} href={`/app-store/${app.id}`} passHref>
@@ -41,7 +41,12 @@ export const AppStoreTile: React.FC<{ app: App, onClickCategory: (category: AppC
           </div>
           <p className="text-muted text-nowrap mb-2">{limitText(app.short_desc, 30)}</p>
           {app.categories?.map((category) => (
-            <button className={`text-white badge me-1 bg-${colorSchemeForCategory[category]}`} key={`${app.id}-${category}`} onClick={handleClick(category)} type="button">
+            <button
+              className={`text-white badge me-1 bg-${colorSchemeForCategory[category]}`}
+              key={`${app.id}-${category}`}
+              onClick={handleClick(category)}
+              type="button"
+            >
               {t(`APP_CATEGORY_${category.toUpperCase() as Uppercase<typeof category>}`)}
             </button>
           ))}
