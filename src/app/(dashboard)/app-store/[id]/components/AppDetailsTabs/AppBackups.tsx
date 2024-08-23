@@ -113,7 +113,7 @@ export const AppBackups = ({ info, initialData }: Props) => {
         <div className="">
           <h3 className="h3 mb-0">{t('BACKUPS_LIST')}</h3>
         </div>
-        <Button onClick={backupModalDisclosure.open} variant={disableActions ? "default" : "outline"} intent="primary" disabled={disableActions}>
+        <Button onClick={backupModalDisclosure.open} variant={disableActions ? 'default' : 'outline'} intent="primary" disabled={disableActions}>
           {t('BACKUPS_LIST_BACKUP_NOW')}
         </Button>
       </div>
