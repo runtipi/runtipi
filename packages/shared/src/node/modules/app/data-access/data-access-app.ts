@@ -118,7 +118,7 @@ export class DataAccessApp {
       const backups = await Promise.all(
         list.map(async (backup) => {
           const stats = await fs.promises.stat(path.join(backupsDir, backup));
-          return { id: backup, size: stats.size, date: stats.mtime.toISOString() };
+          return { id: backup, size: stats.size, date: stats.mtime };
         }),
       );
 
