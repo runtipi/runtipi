@@ -17,8 +17,10 @@ export const getAppEnvMap = async (appId: string) => {
     const envVarsMap = new Map<string, string>();
 
     for (const envVar of envVars) {
-      const [key, value] = envVar.split('=');
-      if (key && value) envVarsMap.set(key, value);
+      if (envVar.startsWith('#')) continue;
+
+      const [key, ...rest] = envVar.split('=');
+      if (key && rest.length) envVarsMap.set(key, rest.join('='));
     }
 
     return envVarsMap;
