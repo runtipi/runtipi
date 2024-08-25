@@ -16,7 +16,6 @@ import { type ISystemService, SystemService } from './server/services/system/sys
 import { EventDispatcher, type IEventDispatcher } from './server/core/EventDispatcher/EventDispatcher';
 import { AppLifecycleService, type IAppLifecycleService } from './server/services/app-lifecycle/app-lifecycle.service';
 import { AppBackupService, type IAppBackupService } from './server/services/app-backup/app-backup.service';
-import { AppCatalogCache, type IAppCatalogCache } from './server/services/app-catalog/app-catalog-cache';
 import { AppCatalogService, type IAppCatalogService } from './server/services/app-catalog/app-catalog.service';
 
 export function createContainer() {
@@ -70,7 +69,6 @@ export function createContainer() {
   container.bind<IAppBackupService>('IAppBackupService').to(AppBackupService);
   container.bind<IAppCatalogService>('IAppCatalogService').to(AppCatalogService);
 
-  container.bind<IAppCatalogCache>('IAppCatalogCache').to(AppCatalogCache);
   container.bind<ISessionManager>('ISessionManager').to(SessionManager);
   container.bind<IEventDispatcher>('IEventDispatcher').to(EventDispatcher).inSingletonScope();
 
@@ -92,7 +90,6 @@ type IImplementation = {
   IAppBackupService: IAppBackupService;
   ISessionManager: ISessionManager;
   IEventDispatcher: IEventDispatcher;
-  IAppCatalogCache: IAppCatalogCache;
   IAppCatalogService: IAppCatalogService;
 };
 

@@ -268,7 +268,7 @@
   "SETTINGS_ACTIONS_TAB_TITLE": "Actions",
   "SETTINGS_ACTIONS_TITLE": "Actions",
   "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update Repository",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITILE": "Use this button to update your appstore",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstore",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your repository and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Update",
   "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstore repository updated successfully",

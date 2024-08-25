@@ -19,9 +19,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const appCatalog = getClass('IAppCatalogService');
 
   const user = await sessionManager.getUserFromCookie();
-  const { apps } = await appCatalog.executeCommand('listApps');
+  const { apps } = await appCatalog.listApps();
 
-  const installedApps = await appCatalog.executeCommand('getInstalledApps');
+  const installedApps = await appCatalog.getInstalledApps();
   const availableUpdates = installedApps.filter((app) => Number(app.version) < Number(app.latestVersion) && app.status !== 'updating').length;
   const { allowErrorMonitoring } = TipiConfig.getConfig();
 

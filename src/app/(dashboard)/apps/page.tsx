@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page() {
   const appCatalog = getClass('IAppCatalogService');
-  const installedApps = await appCatalog.executeCommand('getInstalledApps');
+  const installedApps = await appCatalog.getInstalledApps();
 
   const sessionManager = getClass('ISessionManager');
   const user = await sessionManager.getUserFromCookie();

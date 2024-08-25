@@ -7,7 +7,7 @@ import { fileExists } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import type { ILogger } from '@runtipi/shared/node';
 import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
-import type { IAppCatalogCache } from '../app-catalog/app-catalog-cache';
+import type { IAppCatalogService } from '../app-catalog/app-catalog.service';
 
 export interface ISystemService {
   getVersion: () => Promise<{
@@ -24,7 +24,7 @@ export class SystemService implements ISystemService {
     @inject('ICache') private cache: ICache,
     @inject('ILogger') private logger: ILogger,
     @inject('IEventDispatcher') private eventDispatcher: IEventDispatcher,
-    @inject('IAppCatalogCache') private appCatalogCache: IAppCatalogCache,
+    @inject('IAppCatalogService') private appCatalog: IAppCatalogService,
   ) {}
   /**
    * Get the current and latest version of Tipi
@@ -81,30 +81,27 @@ export class SystemService implements ISystemService {
 
   public updateRepos = async () => {
     const { appsRepoUrl } = TipiConfig.getConfig();
-    const { success: CloneSuccess, stdout: CloneStdout } = await this.eventDispatcher.dispatchEventAsync({
+    const cloneEvent = await this.eventDispatcher.dispatchEventAsync({
       type: 'repo',
       command: 'clone',
       url: appsRepoUrl,
     });
 
-    if (!CloneSuccess) {
-      return { success: false, message: CloneStdout || '' };
+    if (!cloneEvent.success) {
+      return { success: false, message: cloneEvent.stdout || '' };
     }
 
-    if (process.env.NODE_ENV === 'development') {
-      this.logger.warn('Development mode detected! Skipping repo update');
-    } else {
-      const { success: UpdateSuccess, stdout: UpdateStdout } = await this.eventDispatcher.dispatchEventAsync({
-        type: 'repo',
-        command: 'update',
-        url: appsRepoUrl,
-      });
-      if (!UpdateSuccess) {
-        return { success: false, message: UpdateStdout || '' };
-      }
+    const updateEvent = await this.eventDispatcher.dispatchEventAsync({
+      type: 'repo',
+      command: 'update',
+      url: appsRepoUrl,
+    });
+
+    if (!updateEvent.success) {
+      return { success: false, message: updateEvent.stdout || '' };
     }
 
-    this.appCatalogCache.invalidateCache();
+    this.appCatalog.invalidateCache();
 
     return { success: true, message: '' };
   };

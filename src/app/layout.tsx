@@ -27,7 +27,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   const clientSettings = TipiConfig.getSettings();
 
-  const apps = await appCatalog.executeCommand('getInstalledApps');
+  const apps = await appCatalog.getInstalledApps();
   const appStatuses = apps.reduce(
     (acc, app) => {
       acc[app.id] = app.status;

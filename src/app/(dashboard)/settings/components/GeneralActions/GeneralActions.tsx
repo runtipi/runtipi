@@ -49,7 +49,7 @@ export const GeneralActions = (props: Props) => {
       </p>
       {renderUpdate()}
       <h3 className="card-title mt-4">{t('SETTINGS_ACTIONS_UPDATE_REPO_TITLE')}</h3>
-      <p className="card-subtitle">{t('SETTINGS_ACTIONS_UPDATE_REPO_SUBTITILE')}</p>
+      <p className="card-subtitle">{t('SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE')}</p>
       <UpdateRepoModal />
     </div>
   );

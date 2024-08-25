@@ -9,7 +9,7 @@ export const updateAllAppsAction = authActionClient.action(async () => {
   const appLifecycle = getClass('IAppLifecycleService');
   const appCatalog = getClass('IAppCatalogService');
 
-  const installedApps = await appCatalog.executeCommand('getInstalledApps');
+  const installedApps = await appCatalog.getInstalledApps();
   const availableUpdates = installedApps.filter((app) => Number(app.version) < Number(app.latestVersion));
 
   const updatePromises = availableUpdates.map(async (app) => {

@@ -28,7 +28,6 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { useAppStatus } from '@/hooks/useAppStatus';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
-import type { GetAppCommand } from '@/server/services/app-catalog/commands';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
 import toast from 'react-hot-toast';
@@ -40,9 +39,10 @@ import { UninstallModal } from '../UninstallModal';
 import { UpdateModal } from '../UpdateModal';
 import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal';
 import styles from './AppActions.module.scss';
+import type { IAppCatalogService } from '@/server/services/app-catalog/app-catalog.service';
 
 interface IProps {
-  app: Awaited<ReturnType<GetAppCommand['execute']>>;
+  app: Awaited<ReturnType<IAppCatalogService['getApp']>>;
   localDomain?: string;
 }
 

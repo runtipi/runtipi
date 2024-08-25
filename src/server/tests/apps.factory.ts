@@ -7,6 +7,8 @@ import { APP_DATA_DIR, DATA_DIR } from '../../config';
 import type { TestDatabase } from './test-utils';
 
 interface IProps {
+  id?: string;
+  name?: string;
   installed?: boolean;
   openPort?: boolean;
   status?: AppStatus;
@@ -50,6 +52,8 @@ const createAppConfig = (props?: Partial<AppInfo>) => {
 
 const createApp = async (props: IProps, database?: TestDatabase) => {
   const {
+    id = faker.string.alphanumeric(32),
+    name = faker.lorem.word(),
     installed = false,
     status = 'running',
     randomField = false,
@@ -65,10 +69,8 @@ const createApp = async (props: IProps, database?: TestDatabase) => {
 
   const categories = Object.values(APP_CATEGORIES);
 
-  const randomId = faker.string.alphanumeric(32);
-
   const appInfo: AppInfo = {
-    id: randomId,
+    id,
     created_at: faker.date.recent().getTime(),
     updated_at: faker.date.recent().getTime(),
     dynamic_config: true,
@@ -83,7 +85,7 @@ const createApp = async (props: IProps, database?: TestDatabase) => {
         env_variable: 'TEST_FIELD',
       },
     ],
-    name: faker.lorem.word(),
+    name,
     description: faker.lorem.words(),
     tipi_version: faker.number.int({ min: 1, max: 10 }),
     short_desc: faker.lorem.words(),
@@ -92,7 +94,7 @@ const createApp = async (props: IProps, database?: TestDatabase) => {
     categories: [categories[faker.number.int({ min: 0, max: categories.length - 1 })]] as AppInfo['categories'],
     exposable,
     force_expose: forceExpose,
-    supported_architectures: supportedArchitectures,
+    supported_architectures: supportedArchitectures || ['arm64', 'amd64'],
     version: String(faker.number.int({ min: 1, max: 10 })),
     https: false,
     no_gui: false,

@@ -3,61 +3,81 @@ import { CacheMock } from '@runtipi/cache/src/mock';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { TipiConfig } from '../../core/TipiConfig';
 import { SystemService } from './system.service';
 import { LoggerMock } from 'packages/shared/src/node/logger/LoggerMock';
+import { mock, mockReset } from 'vitest-mock-extended';
+import { Container } from 'inversify';
+import type { IAppCatalogService } from '../app-catalog/app-catalog.service';
+import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 
-const cache = new CacheMock();
-const logger = new LoggerMock();
-const systemService = new SystemService(cache, logger);
 const server = setupServer();
 
-afterAll(async () => {
-  server.close();
-});
+describe('SystemService', () => {
+  // Prepare the mocks
+  const mockCache = new CacheMock();
+  const mockLogger = new LoggerMock();
+  const mockEventDispatcher = mock<IEventDispatcher>();
+  const mockAppCatalogService = mock<IAppCatalogService>();
 
-beforeAll(() => {
-  server.listen();
-});
+  // Prepare the container
+  const container = new Container();
+  container.bind('ICache').toConstantValue(mockCache);
+  container.bind('ILogger').toConstantValue(mockLogger);
+  container.bind('IEventDispatcher').toConstantValue(mockEventDispatcher);
+  container.bind('IAppCatalogService').toConstantValue(mockAppCatalogService);
+  container.bind(SystemService).toSelf();
 
-beforeEach(async () => {
-  await TipiConfig.setConfig('demoMode', false);
-  await cache.del('latestVersion');
-  server.resetHandlers();
-});
+  // Get the AppCatalogService
+  const systemService = container.get(SystemService);
 
-describe('Test: getVersion', () => {
-  it('Should return current version for latest if request fails', async () => {
-    server.use(
-      http.get('https://api.github.com/*', () => {
-        return HttpResponse.json('Error', { status: 500 });
-      }),
-    );
-
-    const version = await systemService.getVersion();
-
-    expect(version).toBeDefined();
-    expect(version.current).toBeDefined();
-    expect(version.latest).toBe(version.current);
+  beforeEach(async () => {
+    mockReset(mockEventDispatcher);
+    mockReset(mockAppCatalogService);
+    await mockCache.clear();
+    server.resetHandlers();
   });
 
-  it('Should return cached version', async () => {
-    // Arrange
-    server.use(
-      http.get('https://api.github.com/*', () => {
-        return HttpResponse.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` });
-      }),
-    );
+  afterAll(async () => {
+    server.close();
+  });
 
-    // Act
-    const version = await systemService.getVersion();
-    const version2 = await systemService.getVersion();
+  beforeAll(() => {
+    server.listen();
+  });
 
-    // Assert
-    expect(version).toBeDefined();
-    expect(version.current).toBeDefined();
+  describe('Test: getVersion', () => {
+    it('Should return current version for latest if request fails', async () => {
+      server.use(
+        http.get('https://api.github.com/*', () => {
+          return HttpResponse.json('Error', { status: 500 });
+        }),
+      );
 
-    expect(version2.latest).toBe(version.latest);
-    expect(version2.current).toBeDefined();
+      const version = await systemService.getVersion();
+
+      expect(version).toBeDefined();
+      expect(version.current).toBeDefined();
+      expect(version.latest).toBe(version.current);
+    });
+
+    it('Should return cached version', async () => {
+      // Arrange
+      server.use(
+        http.get('https://api.github.com/*', () => {
+          return HttpResponse.json({ tag_name: `v${faker.string.numeric(1)}.${faker.string.numeric(1)}.${faker.string.numeric()}` });
+        }),
+      );
+
+      // Act
+      const version = await systemService.getVersion();
+      const version2 = await systemService.getVersion();
+
+      // Assert
+      expect(version).toBeDefined();
+      expect(version.current).toBeDefined();
+
+      expect(version2.latest).toBe(version.latest);
+      expect(version2.current).toBeDefined();
+    });
   });
 });

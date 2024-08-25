@@ -17,7 +17,7 @@ export default async function AppDetailsPage({ params }: { params: { id: string 
     const appCatalog = getClass('IAppCatalogService');
     const appBackupService = getClass('IAppBackupService');
 
-    const app = await appCatalog.executeCommand('getApp', params.id);
+    const app = await appCatalog.getApp(params.id);
     const backups = await appBackupService.executeCommand('getAppBackups', { appId: params.id, pageSize: 5, page: 1 });
     const settings = TipiConfig.getSettings();
 
