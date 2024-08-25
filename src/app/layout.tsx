@@ -8,12 +8,12 @@ import { GeistSans } from 'geist/font/sans';
 import { cookies } from 'next/headers';
 
 import './global.css';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import type { AppStatus } from '@runtipi/db';
 import clsx from 'clsx';
 import { CookiesProvider } from 'next-client-cookies/server';
 import { Toaster } from 'react-hot-toast';
 import { ClientProviders } from './components/ClientProviders';
+import { getClass } from 'src/inversify.config';
 
 export const metadata: Metadata = {
   title: 'Tipi',
@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const appCatalog = getClass('IAppCatalogService');
 
   const clientSettings = TipiConfig.getSettings();
 

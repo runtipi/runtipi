@@ -8,7 +8,6 @@ import { LinkTile } from '@/components/LinkTile/LinkTile';
 import { EmptyPage } from '../../components/EmptyPage';
 import styles from './page.module.css';
 import { AddLinkButton } from '../components/AddLink/AddLinkButton';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { getClass } from 'src/inversify.config';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,6 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
+  const appCatalog = getClass('IAppCatalogService');
   const installedApps = await appCatalog.executeCommand('getInstalledApps');
 
   const sessionManager = getClass('ISessionManager');

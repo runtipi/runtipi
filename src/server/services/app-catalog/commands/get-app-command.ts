@@ -1,24 +1,16 @@
-import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import type { App } from '@runtipi/db';
-import type { AppDataService } from '@runtipi/shared/node';
 import type { AppCatalogCommandParams, IAppCatalogCommand } from './types';
 
 type ReturnValue = Awaited<ReturnType<InstanceType<typeof GetAppCommand>['execute']>>;
 
 export class GetAppCommand implements IAppCatalogCommand<ReturnValue> {
-  private queries: IAppQueries;
-  private appDataService: AppDataService;
-
-  constructor(params: AppCatalogCommandParams) {
-    this.queries = params.queries;
-    this.appDataService = params.appDataService;
-  }
+  constructor(private params: AppCatalogCommandParams) {}
 
   async execute(appId: string) {
-    let app = await this.queries.getApp(appId);
-    const info = await this.appDataService.getAppInfoFromInstalledOrAppStore(appId);
-    const updateInfo = await this.appDataService.getUpdateInfo(appId);
+    let app = await this.params.queries.getApp(appId);
+    const info = await this.params.appDataService.getAppInfoFromInstalledOrAppStore(appId);
+    const updateInfo = await this.params.appDataService.getUpdateInfo(appId);
 
     if (info) {
       if (!app) {

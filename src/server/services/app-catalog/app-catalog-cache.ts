@@ -1,5 +1,6 @@
 import { TipiConfig } from '@/server/core/TipiConfig';
-import type { AppDataService } from '@runtipi/shared/node';
+import type { AppDataService, IAppDataService } from '@runtipi/shared/node';
+import { inject, injectable } from 'inversify';
 import MiniSearch from 'minisearch';
 
 const sortApps = (a: AppList[number], b: AppList[number]) => a.id.localeCompare(b.id);
@@ -18,16 +19,20 @@ const filterApp = (app: AppList[number]): boolean => {
 
 type AppList = Awaited<ReturnType<InstanceType<typeof AppDataService>['getAllAvailableApps']>>;
 
-export class AppCatalogCache {
+export interface IAppCatalogCache {
+  getAvailableApps: AppCatalogCache['getAvailableApps'];
+  searchApps: AppCatalogCache['searchApps'];
+  invalidateCache: AppCatalogCache['invalidateCache'];
+}
+
+@injectable()
+export class AppCatalogCache implements IAppCatalogCache {
   private appsAvailable: AppList | null = null;
-  private appDataService: AppDataService;
   private miniSearch: MiniSearch<AppList[number]> | null = null;
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
   private cacheLastUpdated = 0;
 
-  constructor(appDataService: AppDataService) {
-    this.appDataService = appDataService;
-  }
+  constructor(@inject('IAppDataService') private appDataService: IAppDataService) {}
 
   public invalidateCache() {
     this.appsAvailable = null;

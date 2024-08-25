@@ -1,6 +1,5 @@
 import { UnauthenticatedPage } from '@/components/UnauthenticatedPage';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getClass } from 'src/inversify.config';
@@ -9,6 +8,7 @@ import { GuestDashboardApps } from './components/GuestDashboardApps';
 
 export default async function RootPage() {
   const { guestDashboard } = TipiConfig.getConfig();
+  const appCatalog = getClass('IAppCatalogService');
 
   const headersList = headers();
   const host = headersList.get('host');

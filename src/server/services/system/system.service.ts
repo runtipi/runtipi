@@ -7,6 +7,7 @@ import { fileExists } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import type { ILogger } from '@runtipi/shared/node';
 import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
+import type { IAppCatalogCache } from '../app-catalog/app-catalog-cache';
 
 export interface ISystemService {
   getVersion: () => Promise<{
@@ -23,6 +24,7 @@ export class SystemService implements ISystemService {
     @inject('ICache') private cache: ICache,
     @inject('ILogger') private logger: ILogger,
     @inject('IEventDispatcher') private eventDispatcher: IEventDispatcher,
+    @inject('IAppCatalogCache') private appCatalogCache: IAppCatalogCache,
   ) {}
   /**
    * Get the current and latest version of Tipi
@@ -89,6 +91,9 @@ export class SystemService implements ISystemService {
       command: 'update',
       url: appsRepoUrl,
     });
+
+    this.appCatalogCache.invalidateCache();
+
     return true;
   };
 }

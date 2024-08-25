@@ -1,8 +1,9 @@
 import { ensureUser } from '@/actions/utils/ensure-user';
 import { handleApiError } from '@/actions/utils/handle-api-error';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
+import { getClass } from 'src/inversify.config';
 
 const getApps = async (searchParams: URLSearchParams) => {
+  const appCatalog = getClass('IAppCatalogService');
   const search = searchParams.get('search');
   const pageSize = searchParams.get('pageSize') || 18;
   const category = searchParams.get('category');

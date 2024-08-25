@@ -1,13 +1,11 @@
-import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { TipiConfig } from '@/server/core/TipiConfig';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import { AppDataService } from '@runtipi/shared/node';
-import { getClass } from 'src/inversify.config';
-import { AppCatalogCache } from './app-catalog-cache';
+import type { IAppDataService } from '@runtipi/shared/node';
+import type { IAppCatalogCache } from './app-catalog-cache';
 import { GetAppCommand, GetGuestDashboardApps, GetInstalledAppsCommand } from './commands';
 import { ListAppsCommand } from './commands/list-apps-command';
 import { SearchAppsCommand } from './commands/search-apps-command';
 import type { IAppCatalogCommand } from './commands/types';
+import { inject, injectable } from 'inversify';
 
 const availableCommands = {
   getInstalledApps: GetInstalledAppsCommand,
@@ -28,13 +26,18 @@ class CommandInvoker {
   }
 }
 
-export class AppCatalogClass {
+export interface IAppCatalogService {
+  executeCommand: ExecuteCatalogFunction;
+}
+
+@injectable()
+export class AppCatalogService {
   private commandInvoker: CommandInvoker;
 
   constructor(
-    private queries: IAppQueries,
-    private appCatalogCache: AppCatalogCache,
-    private appDataService: AppDataService,
+    @inject('IAppQueries') private queries: IAppQueries,
+    @inject('IAppCatalogCache') private appCatalogCache: IAppCatalogCache,
+    @inject('IAppDataService') private appDataService: IAppDataService,
   ) {
     this.commandInvoker = new CommandInvoker();
   }
@@ -57,11 +60,3 @@ export class AppCatalogClass {
     return this.commandInvoker.execute(constructed, args) as Promise<ReturnValue>;
   };
 }
-
-export type AppCatalog = InstanceType<typeof AppCatalogClass>;
-
-const queries = getClass('IAppQueries');
-const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
-const appCacheManager = new AppCatalogCache(appDataService);
-
-export const appCatalog = new AppCatalogClass(queries, appCacheManager, appDataService);

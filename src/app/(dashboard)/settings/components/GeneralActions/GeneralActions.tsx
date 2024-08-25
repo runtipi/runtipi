@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { IconStar } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import semver from 'semver';
+import { UpdateRepoModal } from './components/UpdateRepoModal/UpateRepoModal';
 
 type Props = {
   version: { current: string; latest: string; body?: string | null };
@@ -47,6 +48,9 @@ export const GeneralActions = (props: Props) => {
         {isLatest ? t('SETTINGS_ACTIONS_STAY_UP_TO_DATE') : t('SETTINGS_ACTIONS_NEW_VERSION', { version: version.latest })}
       </p>
       {renderUpdate()}
+      <h3 className="card-title mt-4">{t('SETTINGS_ACTIONS_UPDATE_REPO_TITLE')}</h3>
+      <p className="card-subtitle">{t('SETTINGS_ACTIONS_UPDATE_REPO_SUBTITILE')}</p>
+      <UpdateRepoModal />
     </div>
   );
 };

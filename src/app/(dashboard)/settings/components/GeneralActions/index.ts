@@ -1,1 +1,3 @@
-export { GeneralActions } from './GeneralActions';
+import { GeneralActions } from './GeneralActions';
+
+export { GeneralActions };

@@ -1,5 +1,4 @@
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { SystemService } from '@/server/services/system';
 import { isInstanceInsecure } from '@/server/utils/network';
 import clsx from 'clsx';
@@ -17,6 +16,7 @@ import styles from './layout.module.scss';
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const systemService = getClass('ISystemService');
   const sessionManager = getClass('ISessionManager');
+  const appCatalog = getClass('IAppCatalogService');
 
   const user = await sessionManager.getUserFromCookie();
   const { apps } = await appCatalog.executeCommand('listApps');

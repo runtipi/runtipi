@@ -1,7 +1,6 @@
 import { ErrorPage } from '@/components/ui/ErrorPage';
 import { getTranslator } from '@/lib/get-translator';
 import { TipiConfig } from '@/server/core/TipiConfig';
-import { appCatalog } from '@/server/services/app-catalog/app-catalog.service';
 import { type MessageKey, TranslatedError } from '@/server/utils/errors';
 import type { Metadata } from 'next';
 import { AppDetailsContainer } from './components/AppDetailsContainer/AppDetailsContainer';
@@ -15,6 +14,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function AppDetailsPage({ params }: { params: { id: string } }) {
   try {
+    const appCatalog = getClass('IAppCatalogService');
     const appBackupService = getClass('IAppBackupService');
 
     const app = await appCatalog.executeCommand('getApp', params.id);
