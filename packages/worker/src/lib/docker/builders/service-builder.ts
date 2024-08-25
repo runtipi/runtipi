@@ -349,6 +349,7 @@ export class ServiceBuilder {
 
     return {
       image: this.service.image,
+      command: this.service.command,
       container_name: this.service.containerName,
       restart: this.service.restart,
       networks: this.service.networks,

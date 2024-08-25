@@ -8,6 +8,8 @@ import { type AppEventForm, appInfoSchema, envMapToString, envStringToMap, sanit
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 
+type RandomFieldEncoding = 'hex' | 'base64';
+
 /**
  *  This function generates a random string of the provided length by using the SHA-256 hash algorithm.
  *  It takes the provided name and a seed value, concatenates them, and uses them as input for the hash algorithm.
@@ -16,11 +18,18 @@ import { generateVapidKeys, getAppEnvMap } from './env.helpers';
  *  @param {string} name - A name used as input for the hash algorithm.
  *  @param {number} length - The desired length of the random string.
  */
-const getEntropy = async (name: string, length: number) => {
+const getEntropy = async (name: string, length: number, encoding: RandomFieldEncoding = 'hex') => {
   const hash = crypto.createHash('sha256');
   const seed = await fs.promises.readFile(path.join(DATA_DIR, 'state', 'seed'));
 
   hash.update(name + seed.toString());
+
+  if (encoding === 'base64') {
+    // Generate the hash and slice the buffer to get the exact number of bytes
+    const randomBytes = hash.digest().slice(0, length);
+    return randomBytes.toString('base64');
+  }
+
   return hash.digest('hex').substring(0, length);
 };
 
@@ -80,7 +89,7 @@ export const generateEnvFile = async (appId: string, form: AppEventForm) => {
           envMap.set(envVar, existingEnvMap.get(envVar) as string);
         } else {
           const length = field.min || 32;
-          const randomString = await getEntropy(field.env_variable, length);
+          const randomString = await getEntropy(field.env_variable, length, field.encoding);
 
           envMap.set(envVar, randomString);
         }
