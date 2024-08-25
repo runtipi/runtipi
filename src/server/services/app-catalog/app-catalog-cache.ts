@@ -1,5 +1,5 @@
 import { TipiConfig } from '@/server/core/TipiConfig';
-import type { AppDataService } from '@runtipi/shared/node';
+import type { AppDataService, IAppDataService } from '@runtipi/shared/node';
 import MiniSearch from 'minisearch';
 
 const sortApps = (a: AppList[number], b: AppList[number]) => a.id.localeCompare(b.id);
@@ -12,22 +12,19 @@ const filterApp = (app: AppList[number]): boolean => {
     return true;
   }
 
-  const arch = TipiConfig.getConfig().architecture;
-  return app.supported_architectures.includes(arch);
+  const { architecture } = TipiConfig.getConfig();
+  return app.supported_architectures.includes(architecture);
 };
 
 type AppList = Awaited<ReturnType<InstanceType<typeof AppDataService>['getAllAvailableApps']>>;
 
 export class AppCatalogCache {
   private appsAvailable: AppList | null = null;
-  private appDataService: AppDataService;
   private miniSearch: MiniSearch<AppList[number]> | null = null;
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
   private cacheLastUpdated = 0;
 
-  constructor(appDataService: AppDataService) {
-    this.appDataService = appDataService;
-  }
+  constructor(private appDataService: IAppDataService) {}
 
   public invalidateCache() {
     this.appsAvailable = null;

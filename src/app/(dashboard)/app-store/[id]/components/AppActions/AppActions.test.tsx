@@ -1,7 +1,7 @@
-import type { GetAppCommand } from '@/server/services/app-catalog/commands';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, userEvent, waitFor } from '../../../../../../../tests/test-utils';
 import { AppActions } from './AppActions';
+import type { IAppCatalogService } from '@/server/services/app-catalog/app-catalog.service';
 
 afterEach(cleanup);
 
@@ -24,7 +24,7 @@ describe('Test: AppActions', () => {
       form_fields: [],
       exposable: [],
     },
-  } as unknown as Awaited<ReturnType<GetAppCommand['execute']>>;
+  } as unknown as Awaited<ReturnType<IAppCatalogService['getApp']>>;
 
   it('should render the correct buttons when app status is running', () => {
     // arrange
