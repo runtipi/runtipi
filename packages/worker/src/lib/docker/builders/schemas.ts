@@ -10,11 +10,19 @@ const dependsOnSchema = z.union([
   ),
 ]);
 
+const ulimitsSchema = z.object({
+  nproc: z.number().or(z.object({ soft: z.number(), hard: z.number() })),
+  nofile: z.number().or(z.object({ soft: z.number(), hard: z.number() })),
+});
+
 export const serviceSchema = z.object({
   image: z.string(),
   name: z.string(),
-  internalPort: z.number(),
+  internalPort: z.number().optional(),
   isMain: z.boolean().optional(),
+  networkMode: z.string().optional(),
+  extraHosts: z.array(z.string()).optional(),
+  ulimits: ulimitsSchema.optional(),
   addPorts: z
     .array(
       z.object({
