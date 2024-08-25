@@ -20,6 +20,11 @@ interface HealthCheck {
   retries: number;
 }
 
+interface Ulimits {
+  nproc: number | { soft: number; hard: number };
+  nofile: number | { soft: number; hard: number };
+}
+
 export interface BuilderService {
   image: string;
   containerName: string;
@@ -32,6 +37,9 @@ export interface BuilderService {
   labels?: Record<string, string | boolean>;
   dependsOn?: DependsOn;
   networks?: string[];
+  networkMode?: string;
+  extraHosts?: string[];
+  ulimits?: Ulimits;
 }
 
 export type BuiltService = ReturnType<typeof ServiceBuilder.prototype.build>;
@@ -288,6 +296,34 @@ export class ServiceBuilder {
     return this;
   }
 
+  setNetworkMode(networkMode?: string) {
+    if (!networkMode) {
+      return this;
+    }
+
+    this.service.networkMode = networkMode;
+
+    return this;
+  }
+
+  addExtraHosts(extraHosts?: string[]) {
+    if (!extraHosts) {
+      return this;
+    }
+
+    this.service.extraHosts = extraHosts;
+    return this;
+  }
+
+  addUlimits(ulimits?: Ulimits) {
+    if (!ulimits) {
+      return this;
+    }
+
+    this.service.ulimits = ulimits;
+    return this;
+  }
+
   /**
    * Builds the service object.
    * @returns The built service object.
@@ -306,11 +342,19 @@ export class ServiceBuilder {
       throw new Error('Service name and image are required');
     }
 
+    if (this.service.networkMode) {
+      this.service.ports = undefined;
+      this.service.networks = undefined;
+    }
+
     return {
       image: this.service.image,
       container_name: this.service.containerName,
       restart: this.service.restart,
       networks: this.service.networks,
+      network_mode: this.service.networkMode,
+      extra_hosts: this.service.extraHosts,
+      ulimits: this.service.ulimits,
       healthcheck: this.service.healthCheck,
       environment: this.service.environment,
       ports: this.service.ports,

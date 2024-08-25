@@ -12,7 +12,6 @@ describe('getDockerCompose', async () => {
     const serviceImage2 = faker.system.semver();
 
     const servicePort1 = faker.number.int({ min: 64, max: 65535 });
-    const servicePort2 = faker.number.int({ min: 64, max: 65535 });
 
     const fakeEnv = {
       one: faker.system.semver(),
@@ -46,7 +45,6 @@ describe('getDockerCompose', async () => {
         },
         dependsOn: [serviceName1],
         image: serviceImage2,
-        internalPort: servicePort2,
         addPorts: [
           { containerPort: 3000, hostPort: 4444, tcp: true },
           { containerPort: 3001, hostPort: 4445, udp: true },
@@ -209,6 +207,108 @@ describe('getDockerCompose', async () => {
             traefik.http.routers.${serviceName1}-local.entrypoints: websecure
             traefik.http.routers.${serviceName1}-local.service: ${serviceName1}
             traefik.http.routers.${serviceName1}-local.tls: true
+      networks:
+        tipi_main_network:
+          name: runtipi_tipi_main_network
+          external: true
+      "
+    `);
+  });
+
+  it('should remove port mappings and network if networkMode is set', async () => {
+    // arrange
+    const serviceName1 = faker.word.noun();
+    const serviceImage1 = faker.system.semver();
+    const servicePort1 = faker.number.int({ min: 64, max: 65535 });
+
+    const services = [
+      {
+        isMain: true,
+        name: serviceName1,
+        image: serviceImage1,
+        internalPort: servicePort1,
+        networkMode: 'host',
+      },
+    ] satisfies ServiceInput[];
+
+    // act
+    const result = getDockerCompose(services, {
+      exposed: false,
+      exposedLocal: false,
+      openPort: false,
+      isVisibleOnGuestDashboard: false,
+    });
+
+    // assert
+    expect(result).toMatchInlineSnapshot(`
+      "services:
+        ${serviceName1}:
+          image: ${serviceImage1}
+          container_name: ${serviceName1}
+          restart: unless-stopped
+          network_mode: host
+          labels:
+            generated: true
+            traefik.enable: false
+            traefik.http.middlewares.${serviceName1}-web-redirect.redirectscheme.scheme: https
+            traefik.http.services.${serviceName1}.loadbalancer.server.port: "${servicePort1}"
+      networks:
+        tipi_main_network:
+          name: runtipi_tipi_main_network
+          external: true
+      "
+    `);
+  });
+
+  it('can add ulimits to service', async () => {
+    // arrange
+    const serviceName1 = faker.word.noun();
+    const serviceImage1 = faker.system.semver();
+    const servicePort1 = faker.number.int({ min: 64, max: 65535 });
+
+    const services = [
+      {
+        isMain: true,
+        name: serviceName1,
+        image: serviceImage1,
+        internalPort: servicePort1,
+        ulimits: {
+          nofile: 1000,
+          nproc: {
+            soft: 1000,
+            hard: 1000,
+          },
+        },
+      },
+    ] satisfies ServiceInput[];
+
+    // act
+    const result = getDockerCompose(services, {
+      exposed: false,
+      exposedLocal: false,
+      openPort: false,
+      isVisibleOnGuestDashboard: false,
+    });
+
+    // assert
+    expect(result).toMatchInlineSnapshot(`
+      "services:
+        ${serviceName1}:
+          image: ${serviceImage1}
+          container_name: ${serviceName1}
+          restart: unless-stopped
+          networks:
+            - tipi_main_network
+          ulimits:
+            nproc:
+              soft: 1000
+              hard: 1000
+            nofile: 1000
+          labels:
+            generated: true
+            traefik.enable: false
+            traefik.http.middlewares.${serviceName1}-web-redirect.redirectscheme.scheme: https
+            traefik.http.services.${serviceName1}.loadbalancer.server.port: "${servicePort1}"
       networks:
         tipi_main_network:
           name: runtipi_tipi_main_network

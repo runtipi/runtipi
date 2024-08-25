@@ -17,12 +17,19 @@ const buildService = (params: Service, form: AppEventForm) => {
     .setCommand(params.command)
     .setHealthCheck(params.healthCheck)
     .setDependsOn(params.dependsOn)
-    .addPorts(params.addPorts)
     .addVolumes(params.volumes)
     .setRestartPolicy('unless-stopped')
-    .addNetwork('tipi_main_network');
+    .addExtraHosts(params.extraHosts)
+    .addUlimits(params.ulimits)
+    .addPorts(params.addPorts)
+    .addNetwork('tipi_main_network')
+    .setNetworkMode(params.networkMode);
 
   if (params.isMain) {
+    if (!params.internalPort) {
+      throw new Error('Main service must have an internal port specified');
+    }
+
     if (form.openPort) {
       service.addPort({
         containerPort: params.internalPort,
