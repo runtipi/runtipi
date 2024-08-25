@@ -12,7 +12,7 @@ const formSchema = z
   .object({
     exposed: z.boolean().optional(),
     exposedLocal: z.boolean().optional(),
-    openPort: z.boolean().optional(),
+    openPort: z.boolean().optional().default(true),
     domain: z.string().optional(),
     isVisibleOnGuestDashboard: z.boolean().optional(),
   })

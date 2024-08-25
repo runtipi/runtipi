@@ -89,7 +89,6 @@ export const AppActions: React.FC<IProps> = ({ app, localDomain }) => {
   });
 
   const t = useTranslations();
-  const hasSettings = Object.keys(info.form_fields).length > 0 || info.exposable;
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
 
@@ -159,22 +158,15 @@ export const AppActions: React.FC<IProps> = ({ app, localDomain }) => {
 
   switch (appStatus) {
     case 'stopped':
-      buttons.push(StartButton, RemoveButton);
-      if (hasSettings) {
-        buttons.push(SettingsButton);
-      }
+      buttons.push(StartButton, RemoveButton, SettingsButton);
       if (updateAvailable) {
         buttons.push(UpdateButton);
       }
       break;
     case 'running':
-      buttons.push(StopButton);
-      buttons.push(restartButton);
+      buttons.push(StopButton, restartButton, SettingsButton);
       if (!info.no_gui) {
         buttons.push(OpenButton);
-      }
-      if (hasSettings) {
-        buttons.push(SettingsButton);
       }
       if (updateAvailable) {
         buttons.push(UpdateButton);
