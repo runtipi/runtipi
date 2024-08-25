@@ -284,15 +284,14 @@ export const generateTlsCertificates = async (data: { domain?: string }) => {
     return;
   }
 
-  // Remove old certificates
-  if (await pathExists(path.join(tlsFolder, 'cert.pem'))) {
-    logger.info('Removing old TLS certificate');
-    await fs.promises.unlink(path.join(tlsFolder, 'cert.pem'));
-  }
-  if (await pathExists(path.join(tlsFolder, 'key.pem'))) {
-    logger.info('Removing old TLS key');
-    await fs.promises.unlink(path.join(tlsFolder, 'key.pem'));
-  }
+  // Empty out the folder
+  const files = await fs.promises.readdir(tlsFolder);
+  await Promise.all(
+    files.map(async (file) => {
+      logger.info(`Removing file ${file}`);
+      await fs.promises.unlink(path.join(tlsFolder, file));
+    }),
+  );
 
   const subject = `/O=runtipi.io/OU=IT/CN=*.${data.domain}/emailAddress=webmaster@${data.domain}`;
   const subjectAltName = `DNS:*.${data.domain},DNS:${data.domain}`;

@@ -6,9 +6,16 @@ import axios from 'redaxios';
 import { fileExists } from '../../common/fs.helpers';
 import { TipiConfig } from '../../core/TipiConfig';
 import type { ILogger } from '@runtipi/shared/node';
+import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
+import type { IAppCatalogService } from '../app-catalog/app-catalog.service';
 
 export interface ISystemService {
-  getVersion: () => Promise<{ current: string; latest: string; body?: string | null }>;
+  getVersion: () => Promise<{
+    current: string;
+    latest: string;
+    body?: string | null;
+  }>;
+  updateRepos: () => Promise<{ success: boolean; message: string }>;
 }
 
 @injectable()
@@ -16,6 +23,8 @@ export class SystemService implements ISystemService {
   constructor(
     @inject('ICache') private cache: ICache,
     @inject('ILogger') private logger: ILogger,
+    @inject('IEventDispatcher') private eventDispatcher: IEventDispatcher,
+    @inject('IAppCatalogService') private appCatalog: IAppCatalogService,
   ) {}
   /**
    * Get the current and latest version of Tipi
@@ -29,7 +38,11 @@ export class SystemService implements ISystemService {
       if (seePreReleaseVersions) {
         const { data } = await axios.get<{ tag_name: string; body: string }[]>('https://api.github.com/repos/runtipi/runtipi/releases');
 
-        return { current: currentVersion, latest: data[0]?.tag_name ?? currentVersion, body: data[0]?.body };
+        return {
+          current: currentVersion,
+          latest: data[0]?.tag_name ?? currentVersion,
+          body: data[0]?.body,
+        };
       }
 
       let version = await this.cache.get('latestVersion');
@@ -48,7 +61,11 @@ export class SystemService implements ISystemService {
       return { current: TipiConfig.getConfig().version, latest: version, body };
     } catch (e) {
       this.logger.error(e);
-      return { current: TipiConfig.getConfig().version, latest: TipiConfig.getConfig().version, body: '' };
+      return {
+        current: TipiConfig.getConfig().version,
+        latest: TipiConfig.getConfig().version,
+        body: '',
+      };
     }
   };
 
@@ -60,5 +77,32 @@ export class SystemService implements ISystemService {
     // Create file state/seen-welcome
     await promises.writeFile(`${DATA_DIR}/state/seen-welcome`, '');
     return true;
+  };
+
+  public updateRepos = async () => {
+    const { appsRepoUrl } = TipiConfig.getConfig();
+    const cloneEvent = await this.eventDispatcher.dispatchEventAsync({
+      type: 'repo',
+      command: 'clone',
+      url: appsRepoUrl,
+    });
+
+    if (!cloneEvent.success) {
+      return { success: false, message: cloneEvent.stdout || '' };
+    }
+
+    const updateEvent = await this.eventDispatcher.dispatchEventAsync({
+      type: 'repo',
+      command: 'update',
+      url: appsRepoUrl,
+    });
+
+    if (!updateEvent.success) {
+      return { success: false, message: updateEvent.stdout || '' };
+    }
+
+    this.appCatalog.invalidateCache();
+
+    return { success: true, message: '' };
   };
 }

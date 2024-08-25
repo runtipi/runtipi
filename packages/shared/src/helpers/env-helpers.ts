@@ -8,10 +8,11 @@ export const envStringToMap = (envString: string) => {
   const envArray = envString.split('\n');
 
   for (const env of envArray) {
-    const [key, value] = env.split('=');
-    if (key && value) {
-      envMap.set(key, value);
-    }
+    if (env.startsWith('#')) continue;
+
+    const [key, ...rest] = env.split('=');
+
+    if (key && rest.length) envMap.set(key, rest.join('='));
   }
 
   return envMap;

@@ -68,7 +68,7 @@ const runCommand = async (jobData: unknown) => {
       ({ success, message } = await cloneRepo(data.url));
     }
 
-    if (data.command === 'update' && process.env.NODE_ENV !== 'development') {
+    if (data.command === 'update') {
       ({ success, message } = await pullRepo(data.url));
     }
   }

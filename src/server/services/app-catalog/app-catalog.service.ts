@@ -1,67 +1,82 @@
-import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
-import { TipiConfig } from '@/server/core/TipiConfig';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import { AppDataService } from '@runtipi/shared/node';
-import { getClass } from 'src/inversify.config';
+import type { IAppDataService } from '@runtipi/shared/node';
 import { AppCatalogCache } from './app-catalog-cache';
-import { GetAppCommand, GetGuestDashboardApps, GetInstalledAppsCommand } from './commands';
-import { ListAppsCommand } from './commands/list-apps-command';
-import { SearchAppsCommand } from './commands/search-apps-command';
-import type { IAppCatalogCommand } from './commands/types';
+import { inject, injectable } from 'inversify';
+import { notEmpty } from '@/server/common/typescript.helpers';
+import type { App } from 'packages/db/src';
+import { TranslatedError } from '@/server/utils/errors';
 
-const availableCommands = {
-  getInstalledApps: GetInstalledAppsCommand,
-  getGuestDashboardApps: GetGuestDashboardApps,
-  getApp: GetAppCommand,
-  searchApps: SearchAppsCommand,
-  listApps: ListAppsCommand,
-} as const;
-
-export type ExecuteCatalogFunction = <K extends keyof typeof availableCommands>(
-  command: K,
-  ...args: Parameters<(typeof availableCommands)[K]['prototype']['execute']>
-) => Promise<ReturnType<(typeof availableCommands)[K]['prototype']['execute']>>;
-
-class CommandInvoker {
-  public async execute(command: IAppCatalogCommand, args: unknown[]) {
-    return command.execute(...args);
-  }
+export interface IAppCatalogService {
+  searchApps: AppCatalogService['searchApps'];
+  listApps: AppCatalogService['listApps'];
+  getInstalledApps: AppCatalogService['getInstalledApps'];
+  getGuestDashboardApps: AppCatalogService['getGuestDashboardApps'];
+  getApp: AppCatalogService['getApp'];
+  invalidateCache: AppCatalogService['invalidateCache'];
 }
 
-export class AppCatalogClass {
-  private commandInvoker: CommandInvoker;
+@injectable()
+export class AppCatalogService implements IAppCatalogService {
+  private appCatalogCache: AppCatalogCache;
 
   constructor(
-    private queries: IAppQueries,
-    private appCatalogCache: AppCatalogCache,
-    private appDataService: AppDataService,
+    @inject('IAppQueries') private queries: IAppQueries,
+    @inject('IAppDataService') private appDataService: IAppDataService,
   ) {
-    this.commandInvoker = new CommandInvoker();
+    this.appCatalogCache = new AppCatalogCache(appDataService);
   }
 
-  public executeCommand: ExecuteCatalogFunction = (command, ...args) => {
-    const Command = availableCommands[command];
+  private async constructSingleApp(app: App) {
+    try {
+      const info = await this.appDataService.getInstalledInfo(app.id);
+      const updateInfo = await this.appDataService.getUpdateInfo(app.id);
+      return info ? { ...app, ...updateInfo, info } : null;
+    } catch (e) {
+      return null;
+    }
+  }
 
-    if (!Command) {
-      throw new Error(`Command ${command} not found`);
+  private async constructAppList(apps: App[]) {
+    const appPromises = apps.map((app) => this.constructSingleApp(app));
+    const constructedApps = await Promise.all(appPromises);
+    return constructedApps.filter(notEmpty);
+  }
+
+  public async searchApps(params: { search?: string | null; category?: string | null; pageSize: number; cursor?: string | null }) {
+    return this.appCatalogCache.searchApps(params);
+  }
+
+  public async listApps() {
+    const apps = await this.appCatalogCache.getAvailableApps();
+    return { apps, total: apps.length };
+  }
+
+  public async getInstalledApps() {
+    const apps = await this.queries.getApps();
+    return this.constructAppList(apps);
+  }
+
+  public async getGuestDashboardApps() {
+    const apps = await this.queries.getGuestDashboardApps();
+    return this.constructAppList(apps);
+  }
+
+  public async getApp(appId: string) {
+    let app = await this.queries.getApp(appId);
+    const info = await this.appDataService.getAppInfoFromInstalledOrAppStore(appId);
+    const updateInfo = await this.appDataService.getUpdateInfo(appId);
+
+    if (!info) {
+      throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id: appId });
     }
 
-    type ReturnValue = Awaited<ReturnType<InstanceType<typeof Command>['execute']>>;
+    if (!app) {
+      app = { id: appId, status: 'missing', config: {}, exposed: false, domain: '' } as App;
+    }
+    return { ...app, ...updateInfo, info };
+  }
 
-    const constructed = new Command({
-      queries: this.queries,
-      appDataService: this.appDataService,
-      appCatalogCache: this.appCatalogCache,
-    });
-
-    return this.commandInvoker.execute(constructed, args) as Promise<ReturnValue>;
-  };
+  public invalidateCache() {
+    this.appCatalogCache.invalidateCache();
+  }
 }
-
-export type AppCatalog = InstanceType<typeof AppCatalogClass>;
-
-const queries = getClass('IAppQueries');
-const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: TipiConfig.getConfig().appsRepoId });
-const appCacheManager = new AppCatalogCache(appDataService);
-
-export const appCatalog = new AppCatalogClass(queries, appCacheManager, appDataService);

@@ -93,20 +93,13 @@ const main = async () => {
 
     logger.info('Starting queue...');
     const queue = new Queue('events', {
-      connection: {
-        host: envMap.get('REDIS_HOST'),
-        port: 6379,
-        password: envMap.get('REDIS_PASSWORD'),
-      },
+      connection: cache.getClient(),
     });
     const repeatQueue = new Queue('repeat', {
-      connection: {
-        host: envMap.get('REDIS_HOST'),
-        port: 6379,
-        password: envMap.get('REDIS_PASSWORD'),
-      },
+      connection: cache.getClient(),
     });
     logger.info('Obliterating queue...');
+    await queue.drain();
     await queue.obliterate({ force: true });
     await repeatQueue.obliterate({ force: true });
 

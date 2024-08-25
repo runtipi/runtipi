@@ -62,13 +62,6 @@
         },
         "useCollapsedElseIf": {
           "level": "warn"
-        },
-        "useFilenamingConvention": {
-          "level": "info",
-          "options": {
-            "requireAscii": true,
-            "filenameCases": ["kebab-case"]
-          }
         }
       },
       "suspicious": {

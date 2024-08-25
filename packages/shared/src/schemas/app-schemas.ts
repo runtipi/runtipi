@@ -34,6 +34,11 @@ export const FIELD_TYPES = {
   BOOLEAN: 'boolean',
 } as const;
 
+export const RANDOM_ENCODINGS = {
+  HEX: 'hex',
+  BASE64: 'base64',
+} as const;
+
 export const formFieldSchema = z.object({
   type: z.nativeEnum(FIELD_TYPES).catch(() => FIELD_TYPES.TEXT),
   label: z.string(),
@@ -47,6 +52,7 @@ export const formFieldSchema = z.object({
   regex: z.string().optional(),
   pattern_error: z.string().optional(),
   env_variable: z.string(),
+  encoding: z.nativeEnum(RANDOM_ENCODINGS).optional(),
 });
 
 export const appInfoSchema = z.object({

@@ -1,14 +1,14 @@
 import type { AppBackupsApiResponse } from '@/api/app-backups/route';
 import { AppLogo } from '@/components/AppLogo';
 import { AppStatus } from '@/components/AppStatus';
-import type { GetAppCommand } from '@/server/services/app-catalog/commands';
 import { useTranslations } from 'next-intl';
 import type React from 'react';
 import { AppActions } from '../AppActions';
 import { AppDetailsTabs } from '../AppDetailsTabs';
+import type { IAppCatalogService } from '@/server/services/app-catalog/app-catalog.service';
 
 type AppDetailsContainerProps = {
-  app: Awaited<ReturnType<GetAppCommand['execute']>>;
+  app: Awaited<ReturnType<IAppCatalogService['getApp']>>;
   backups: AppBackupsApiResponse;
   localDomain?: string;
 };

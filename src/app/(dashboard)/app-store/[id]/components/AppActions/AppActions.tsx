@@ -28,7 +28,6 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { useAppStatus } from '@/hooks/useAppStatus';
 import { castAppConfig } from '@/lib/helpers/castAppConfig';
-import type { GetAppCommand } from '@/server/services/app-catalog/commands';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
 import toast from 'react-hot-toast';
@@ -40,9 +39,10 @@ import { UninstallModal } from '../UninstallModal';
 import { UpdateModal } from '../UpdateModal';
 import { UpdateSettingsModal } from '../UpdateSettingsModal/UpdateSettingsModal';
 import styles from './AppActions.module.scss';
+import type { IAppCatalogService } from '@/server/services/app-catalog/app-catalog.service';
 
 interface IProps {
-  app: Awaited<ReturnType<GetAppCommand['execute']>>;
+  app: Awaited<ReturnType<IAppCatalogService['getApp']>>;
   localDomain?: string;
 }
 
@@ -89,7 +89,6 @@ export const AppActions: React.FC<IProps> = ({ app, localDomain }) => {
   });
 
   const t = useTranslations();
-  const hasSettings = Object.keys(info.form_fields).length > 0 || info.exposable;
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
 
@@ -159,22 +158,15 @@ export const AppActions: React.FC<IProps> = ({ app, localDomain }) => {
 
   switch (appStatus) {
     case 'stopped':
-      buttons.push(StartButton, RemoveButton);
-      if (hasSettings) {
-        buttons.push(SettingsButton);
-      }
+      buttons.push(StartButton, RemoveButton, SettingsButton);
       if (updateAvailable) {
         buttons.push(UpdateButton);
       }
       break;
     case 'running':
-      buttons.push(StopButton);
-      buttons.push(restartButton);
+      buttons.push(StopButton, restartButton, SettingsButton);
       if (!info.no_gui) {
         buttons.push(OpenButton);
-      }
-      if (hasSettings) {
-        buttons.push(SettingsButton);
       }
       if (updateAvailable) {
         buttons.push(UpdateButton);
