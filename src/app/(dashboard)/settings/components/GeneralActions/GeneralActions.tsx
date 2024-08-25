@@ -6,7 +6,9 @@ import { IconStar } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import semver from 'semver';
 
-type Props = { version: { current: string; latest: string; body?: string | null } };
+type Props = {
+  version: { current: string; latest: string; body?: string | null };
+};
 
 export const GeneralActions = (props: Props) => {
   const t = useTranslations();
