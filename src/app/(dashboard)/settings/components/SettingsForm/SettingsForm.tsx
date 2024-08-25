@@ -263,7 +263,7 @@ export const SettingsForm = (props: IProps) => {
             placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
           />
         </div>
-        <div className="mb-3">
+        <div>
           <Controller
             control={control}
             name="timeZone"

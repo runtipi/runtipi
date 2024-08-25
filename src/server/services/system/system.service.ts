@@ -15,7 +15,7 @@ export interface ISystemService {
     latest: string;
     body?: string | null;
   }>;
-  updateRepos: () => Promise<boolean>;
+  updateRepos: () => Promise<{ success: boolean; message: string }>;
 }
 
 @injectable()
@@ -81,19 +81,31 @@ export class SystemService implements ISystemService {
 
   public updateRepos = async () => {
     const { appsRepoUrl } = TipiConfig.getConfig();
-    await this.eventDispatcher.dispatchEventAsync({
+    const { success: CloneSuccess, stdout: CloneStdout } = await this.eventDispatcher.dispatchEventAsync({
       type: 'repo',
       command: 'clone',
       url: appsRepoUrl,
     });
-    await this.eventDispatcher.dispatchEventAsync({
-      type: 'repo',
-      command: 'update',
-      url: appsRepoUrl,
-    });
+
+    if (!CloneSuccess) {
+      return { success: false, message: CloneStdout || '' };
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      this.logger.warn('Development mode detected! Skipping repo update');
+    } else {
+      const { success: UpdateSuccess, stdout: UpdateStdout } = await this.eventDispatcher.dispatchEventAsync({
+        type: 'repo',
+        command: 'update',
+        url: appsRepoUrl,
+      });
+      if (!UpdateSuccess) {
+        return { success: false, message: UpdateStdout || '' };
+      }
+    }
 
     this.appCatalogCache.invalidateCache();
 
-    return true;
+    return { success: true, message: '' };
   };
 }
