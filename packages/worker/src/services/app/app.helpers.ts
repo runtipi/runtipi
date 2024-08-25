@@ -4,7 +4,7 @@ import path from 'node:path';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { getEnv } from '@/lib/environment';
 import { getMainEnvMap } from '@/lib/system/system.helpers';
-import { type AppEventForm, appInfoSchema, envMapToString, envStringToMap, sanitizePath } from '@runtipi/shared';
+import { type AppEventFormInput, appInfoSchema, envMapToString, envStringToMap, sanitizePath } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 
@@ -42,10 +42,10 @@ const getEntropy = async (name: string, length: number, encoding: RandomFieldEnc
  * It also creates the app-data folder for the app if it does not exist
  *
  * @param {string} appId - The id of the app to generate the env file for.
- * @param {AppEventForm} form - The config object for the app.
+ * @param {AppEventFormInput} form - The config object for the app.
  * @throws Will throw an error if the app has an invalid config.json file or if a required variable is missing.
  */
-export const generateEnvFile = async (appId: string, form: AppEventForm) => {
+export const generateEnvFile = async (appId: string, form: AppEventFormInput) => {
   const { internalIp, appDataPath, rootFolderHost } = getEnv();
 
   const configFile = await fs.promises.readFile(path.join(DATA_DIR, 'apps', sanitizePath(appId), 'config.json'));
