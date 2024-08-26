@@ -1,13 +1,17 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const ARCHITECTURES = {
-  ARM64: 'arm64',
-  AMD64: 'amd64',
+  ARM64: "arm64",
+  AMD64: "amd64",
 } as const;
 export type Architecture = (typeof ARCHITECTURES)[keyof typeof ARCHITECTURES];
 
 export const envSchema = z.object({
-  NODE_ENV: z.union([z.literal('development'), z.literal('production'), z.literal('test')]),
+  NODE_ENV: z.union([
+    z.literal("development"),
+    z.literal("production"),
+    z.literal("test"),
+  ]),
   REDIS_HOST: z.string(),
   redisPassword: z.string(),
   architecture: z.nativeEnum(ARCHITECTURES),
@@ -23,13 +27,14 @@ export const envSchema = z.object({
     .string()
     .trim()
     .optional()
-    .default('Etc/GMT')
+    .default("Etc/GMT")
     .transform((value) => {
       try {
-        Intl.DateTimeFormat(undefined, { timeZone: value }).resolvedOptions().timeZone === value;
+        Intl.DateTimeFormat(undefined, { timeZone: value }).resolvedOptions()
+          .timeZone === value;
         return value;
       } catch (error) {
-        return 'Etc/GMT';
+        return "Etc/GMT";
       }
     }),
   appDataPath: z
@@ -38,7 +43,7 @@ export const envSchema = z.object({
     .optional()
     .transform((value) => {
       if (!value) return undefined;
-      return value?.replace(/\s/g, '');
+      return value?.replace(/\s/g, "");
     }),
   postgresHost: z.string(),
   postgresDatabase: z.string(),
@@ -50,32 +55,32 @@ export const envSchema = z.object({
     .or(z.boolean())
     .optional()
     .transform((value) => {
-      if (typeof value === 'boolean') return value;
-      return value === 'true';
+      if (typeof value === "boolean") return value;
+      return value === "true";
     }),
   guestDashboard: z
     .string()
     .or(z.boolean())
     .optional()
     .transform((value) => {
-      if (typeof value === 'boolean') return value;
-      return value === 'true';
+      if (typeof value === "boolean") return value;
+      return value === "true";
     }),
   seePreReleaseVersions: z
     .string()
     .or(z.boolean())
     .optional()
     .transform((value) => {
-      if (typeof value === 'boolean') return value;
-      return value === 'true';
+      if (typeof value === "boolean") return value;
+      return value === "true";
     }),
   allowAutoThemes: z
     .string()
     .or(z.boolean())
     .optional()
     .transform((value) => {
-      if (typeof value === 'boolean') return value;
-      if (typeof value === 'string') return value === 'true';
+      if (typeof value === "boolean") return value;
+      if (typeof value === "string") return value === "true";
 
       return true;
     }),
@@ -84,8 +89,8 @@ export const envSchema = z.object({
     .or(z.boolean())
     .optional()
     .transform((value) => {
-      if (typeof value === 'boolean') return value;
-      if (typeof value === 'string') return value === 'true';
+      if (typeof value === "boolean") return value;
+      if (typeof value === "string") return value === "true";
 
       return false;
     }),
@@ -94,11 +99,12 @@ export const envSchema = z.object({
     .or(z.boolean())
     .optional()
     .transform((value) => {
-      if (typeof value === 'boolean') return value;
-      if (typeof value === 'string') return value === 'true';
+      if (typeof value === "boolean") return value;
+      if (typeof value === "string") return value === "true";
 
       return false;
     }),
+  gitSSLVerify: z.boolean().default(true),
 });
 
 export const settingsSchema = envSchema
@@ -117,6 +123,7 @@ export const settingsSchema = envSchema
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
     timeZone: true,
+    gitSSLVerify: true,
   })
   .and(
     z
@@ -125,5 +132,5 @@ export const settingsSchema = envSchema
         sslPort: z.coerce.number(),
         listenIp: z.string().ip().trim(),
       })
-      .partial(),
+      .partial()
   );
