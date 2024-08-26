@@ -1,8 +1,8 @@
-import dotenv from "dotenv";
-import { z } from "zod";
+import dotenv from 'dotenv';
+import { z } from 'zod';
 
-if (process.env.NODE_ENV === "development") {
-  dotenv.config({ path: ".env.dev", override: true });
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config({ path: '.env.dev', override: true });
 } else {
   dotenv.config({ override: true });
 }
@@ -12,8 +12,8 @@ const environmentSchema = z
     RUNTIPI_APP_DATA_PATH: z.string(),
     ROOT_FOLDER_HOST: z.string(),
     APPS_REPO_ID: z.string(),
-    ARCHITECTURE: z.enum(["arm64", "amd64"]),
-    INTERNAL_IP: z.string().ip().or(z.literal("localhost")),
+    ARCHITECTURE: z.enum(['arm64', 'amd64']),
+    INTERNAL_IP: z.string().ip().or(z.literal('localhost')),
     TIPI_VERSION: z.string(),
     REDIS_PASSWORD: z.string(),
     REDIS_HOST: z.string(),
