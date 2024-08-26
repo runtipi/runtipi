@@ -59,10 +59,10 @@ export class RepoExecutors {
       let cloneCommand: string;
       if (branch) {
         this.logger.info(`Cloning repo ${repoUrl} on branch ${branch} to ${repoPath}`);
-        cloneCommand = `git clone ${getEnv().gitSSLVerify === 'true' && '-c http.sslVerify=false'} -b ${branch} ${repoUrl} ${repoPath}`;
+        cloneCommand = `git clone -b ${branch} ${repoUrl} ${repoPath}`;
       } else {
         this.logger.info(`Cloning repo ${repoUrl} to ${repoPath}`);
-        cloneCommand = `git clone ${getEnv().gitSSLVerify === 'true' && '-c http.sslVerify=false'} ${repoUrl} ${repoPath}`;
+        cloneCommand = `git clone ${repoUrl} ${repoPath}`;
       }
 
       await execAsync(cloneCommand);
