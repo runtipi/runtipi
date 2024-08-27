@@ -17,6 +17,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@sentry/esbuild-plugin": "^2.22.2",
+    "@types/gunzip-maybe": "^1.4.2",
     "@types/tar-fs": "^2.0.4",
     "@types/web-push": "^3.6.3",
     "dotenv-cli": "^7.4.2",
@@ -39,6 +40,7 @@
     "bullmq": "^5.12.10",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
+    "gunzip-maybe": "^1.4.2",
     "hono": "^4.5.8",
     "inversify": "^6.0.2",
     "reflect-metadata": "^0.2.2",
