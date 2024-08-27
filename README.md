@@ -30,9 +30,9 @@ Tipi is a personal homeserver orchestrator that makes it easy to manage and run 
 
 Thanks to our generous sponsors for supporting the development of Runtipi:
 
-| Sponsor 1        |
+| CodeRabbit       |
 |------------------|
-| ![coderabbit logo](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/sponsors/coderabbit.png) |
+| <img src="https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/sponsors/coderabbit.png" alt="CodeRabbit logo" width="200"/> |
 | [coderabbit.ai](https://coderabbit.ai) |
 
 ## Getting started
