@@ -2,13 +2,13 @@ import { DockerComposeBuilder } from '@/lib/docker/builders/docker-compose-build
 import { serviceSchema } from '@/lib/docker/builders/schemas';
 import { ServiceBuilder } from '@/lib/docker/builders/service-builder';
 import { TraefikLabelsBuilder } from '@/lib/docker/builders/traefik-labels-builder';
-import type { AppEventForm } from '@runtipi/shared';
+import type { AppEventFormInput } from '@runtipi/shared';
 import type { z } from 'zod';
 
 export type ServiceInput = z.input<typeof serviceSchema>;
 export type Service = z.output<typeof serviceSchema>;
 
-const buildService = (params: Service, form: AppEventForm) => {
+const buildService = (params: Service, form: AppEventFormInput) => {
   const service = new ServiceBuilder();
   service
     .setImage(params.image)
@@ -52,7 +52,7 @@ const buildService = (params: Service, form: AppEventForm) => {
   return service.build();
 };
 
-export const getDockerCompose = (services: ServiceInput[], form: AppEventForm) => {
+export const getDockerCompose = (services: ServiceInput[], form: AppEventFormInput) => {
   const myServices = services.map((service) => buildService(serviceSchema.parse(service), form));
 
   const dockerCompose = new DockerComposeBuilder().addServices(myServices).addNetwork({

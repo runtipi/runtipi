@@ -7,7 +7,7 @@ import { compose } from '@/lib/docker';
 import { getEnv } from '@/lib/environment';
 import type { ISocketManager } from '@/lib/socket/SocketManager';
 import { type App, type IDbClient, appTable } from '@runtipi/db';
-import { type AppEventForm, type SocketEvent, appInfoSchema, sanitizePath } from '@runtipi/shared';
+import { type AppEventForm, type AppEventFormInput, type SocketEvent, appInfoSchema, sanitizePath } from '@runtipi/shared';
 import { type ILogger, execAsync, pathExists } from '@runtipi/shared/node';
 import * as Sentry from '@sentry/node';
 import { and, eq, ne } from 'drizzle-orm';
@@ -15,17 +15,17 @@ import { inject, injectable } from 'inversify';
 import { copyDataDir, generateEnvFile } from './app.helpers';
 
 export interface IAppExecutors {
-  regenerateAppEnv(appId: string, form: AppEventForm): Promise<{ success: boolean; message: string }>;
-  installApp(appId: string, form: AppEventForm): Promise<{ success: boolean; message: string }>;
-  stopApp(appId: string, form: AppEventForm, skipEnvGeneration?: boolean): Promise<{ success: boolean; message: string }>;
-  restartApp(appId: string, form: AppEventForm, skipEnvGeneration?: boolean): Promise<{ success: boolean; message: string }>;
-  startApp(appId: string, form: AppEventForm, skipEnvGeneration?: boolean): Promise<{ success: boolean; message: string }>;
-  uninstallApp(appId: string, form: AppEventForm): Promise<{ success: boolean; message: string }>;
-  resetApp(appId: string, form: AppEventForm): Promise<{ success: boolean; message: string }>;
-  updateApp(appId: string, form: AppEventForm, performBackup: boolean): Promise<{ success: boolean; message: string }>;
-  startAllApps(forceStartAll?: boolean): Promise<void>;
-  backupApp(appId: string): Promise<{ success: boolean; message: string }>;
-  restoreApp(appId: string, filename: string): Promise<{ success: boolean; message: string }>;
+  regenerateAppEnv: (appId: string, form: AppEventFormInput) => Promise<{ success: boolean; message: string }>;
+  installApp: (appId: string, form: AppEventFormInput) => Promise<{ success: boolean; message: string }>;
+  stopApp: (appId: string, form: AppEventFormInput, skipEnvGeneration?: boolean) => Promise<{ success: boolean; message: string }>;
+  restartApp: (appId: string, form: AppEventFormInput, skipEnvGeneration?: boolean) => Promise<{ success: boolean; message: string }>;
+  startApp: (appId: string, form: AppEventFormInput, skipEnvGeneration?: boolean) => Promise<{ success: boolean; message: string }>;
+  uninstallApp: (appId: string, form: AppEventFormInput) => Promise<{ success: boolean; message: string }>;
+  resetApp: (appId: string, form: AppEventFormInput) => Promise<{ success: boolean; message: string }>;
+  updateApp: (appId: string, form: AppEventFormInput, performBackup: boolean) => Promise<{ success: boolean; message: string }>;
+  startAllApps: (forceStartAll?: boolean) => Promise<void>;
+  backupApp: (appId: string) => Promise<{ success: boolean; message: string }>;
+  restoreApp: (appId: string, filename: string) => Promise<{ success: boolean; message: string }>;
 }
 
 @injectable()
@@ -84,7 +84,7 @@ export class AppExecutors implements IAppExecutors {
    * If not, copies the app folder from the repo
    * @param {string} appId - App id
    */
-  private ensureAppDir = async (appId: string, form: AppEventForm) => {
+  private ensureAppDir = async (appId: string, form: AppEventFormInput) => {
     const { appDirPath, appDataDirPath, repoPath } = this.getAppPaths(appId);
     const { arch } = getEnv();
 
@@ -127,7 +127,7 @@ export class AppExecutors implements IAppExecutors {
     });
   };
 
-  public regenerateAppEnv = async (appId: string, form: AppEventForm) => {
+  public regenerateAppEnv = async (appId: string, form: AppEventFormInput) => {
     try {
       this.logger.info(`Regenerating app.env file for app ${appId}`);
       await this.ensureAppDir(appId, form);
@@ -145,7 +145,7 @@ export class AppExecutors implements IAppExecutors {
    * @param {string} appId - The id of the app to install
    * @param {AppEventForm} form - The config of the app
    */
-  public installApp = async (appId: string, form: AppEventForm) => {
+  public installApp = async (appId: string, form: AppEventFormInput) => {
     try {
       await this.socketManager.emit({
         type: 'app',
@@ -222,7 +222,7 @@ export class AppExecutors implements IAppExecutors {
    * @param {string} appId - The id of the app to stop
    * @param {Record<string, unknown>} form - The config of the app
    */
-  public stopApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
+  public stopApp = async (appId: string, form: AppEventFormInput, skipEnvGeneration = false) => {
     try {
       const { appDirPath } = this.getAppPaths(appId);
       const configJsonPath = path.join(appDirPath, 'config.json');
@@ -263,7 +263,7 @@ export class AppExecutors implements IAppExecutors {
     }
   };
 
-  public restartApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
+  public restartApp = async (appId: string, form: AppEventFormInput, skipEnvGeneration = false) => {
     try {
       const { appDirPath } = this.getAppPaths(appId);
       const configJsonPath = path.join(appDirPath, 'config.json');
@@ -317,7 +317,7 @@ export class AppExecutors implements IAppExecutors {
     }
   };
 
-  public startApp = async (appId: string, form: AppEventForm, skipEnvGeneration = false) => {
+  public startApp = async (appId: string, form: AppEventFormInput, skipEnvGeneration = false) => {
     try {
       await this.socketManager.emit({
         type: 'app',
@@ -351,7 +351,7 @@ export class AppExecutors implements IAppExecutors {
     }
   };
 
-  public uninstallApp = async (appId: string, form: AppEventForm) => {
+  public uninstallApp = async (appId: string, form: AppEventFormInput) => {
     try {
       await this.socketManager.emit({
         type: 'app',
@@ -403,7 +403,7 @@ export class AppExecutors implements IAppExecutors {
     }
   };
 
-  public resetApp = async (appId: string, form: AppEventForm) => {
+  public resetApp = async (appId: string, form: AppEventFormInput) => {
     try {
       await this.socketManager.emit({
         type: 'app',
@@ -463,7 +463,7 @@ export class AppExecutors implements IAppExecutors {
     }
   };
 
-  public updateApp = async (appId: string, form: AppEventForm, performBackup: boolean) => {
+  public updateApp = async (appId: string, form: AppEventFormInput, performBackup: boolean) => {
     try {
       if (performBackup) {
         // Creating backup of the app before updating
