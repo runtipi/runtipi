@@ -21,7 +21,10 @@ export const InstallModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
 
   const installMutation = useAction(installAppAction, {
     onError: ({ error }) => {
-      if (error.serverError) toast.error(error.serverError);
+      if (error.serverError) {
+        toast.error(error.serverError);
+      }
+      setAppStatus(info.id, 'missing');
     },
     onExecute: () => {
       setAppStatus(info.id, 'installing');

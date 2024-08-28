@@ -81,7 +81,10 @@ export const AppActions: React.FC<IProps> = ({ app, localDomain }) => {
 
   const startMutation = useAction(startAppAction, {
     onError: ({ error }) => {
-      if (error.serverError) toast.error(error.serverError);
+      if (error.serverError) {
+        toast.error(error.serverError);
+      }
+      setAppStatus(app.id, 'stopped');
     },
     onExecute: () => {
       setAppStatus(app.id, 'starting');

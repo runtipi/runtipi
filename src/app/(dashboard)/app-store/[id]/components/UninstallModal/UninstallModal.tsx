@@ -21,7 +21,10 @@ export const UninstallModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
 
   const uninstallMutation = useAction(uninstallAppAction, {
     onError: ({ error }) => {
-      if (error.serverError) toast.error(error.serverError);
+      if (error.serverError) {
+        toast.error(error.serverError);
+      }
+      setAppStatus(info.id, 'stopped');
     },
     onExecute: () => {
       setAppStatus(info.id, 'uninstalling');

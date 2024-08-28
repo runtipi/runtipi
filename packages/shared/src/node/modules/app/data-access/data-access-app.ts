@@ -37,6 +37,11 @@ export class DataAccessApp {
         const configFile = await fs.promises.readFile(path.join(repoAppFolder, 'config.json'), 'utf8');
         const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile));
 
+        if (!parsedConfig.success) {
+          this.logger.debug(`App ${id} config error:`);
+          this.logger.debug(parsedConfig.error);
+        }
+
         if (parsedConfig.success && parsedConfig.data.available) {
           const description = await fs.promises.readFile(path.join(repoAppFolder, 'metadata', 'description.md'), 'utf8');
           return { ...parsedConfig.data, description };
@@ -58,6 +63,11 @@ export class DataAccessApp {
       if (await pathExists(path.join(installedAppFolder, 'config.json'))) {
         const configFile = await fs.promises.readFile(path.join(installedAppFolder, 'config.json'), 'utf8');
         const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile));
+
+        if (!parsedConfig.success) {
+          this.logger.debug(`App ${id} config error:`);
+          this.logger.debug(parsedConfig.error);
+        }
 
         if (parsedConfig.success && parsedConfig.data.available) {
           const description = await fs.promises.readFile(path.join(installedAppFolder, 'metadata', 'description.md'), 'utf8');
