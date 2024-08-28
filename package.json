@@ -10,7 +10,7 @@
     "test:ui": "dotenv -e .env.test -- vitest --ui",
     "test:e2e": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test",
     "test:e2e:ui": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test --ui",
-    "dev": "next dev --turbo",
+    "dev": "NODE_OPTIONS='--trace-warnings' next dev --turbo",
     "build": "next build --experimental-build-mode compile",
     "start": "NODE_ENV=production node server.js",
     "start:dev-container": "./.devcontainer/filewatcher.sh && npm run start:dev",

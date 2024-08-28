@@ -1,3 +1,4 @@
+import type { ILogger } from 'src/node/logger/Logger.interface';
 import { notEmpty } from '../../../helpers/typescript-helpers';
 import { DataAccessApp } from '../data-access/data-access-app';
 
@@ -14,9 +15,12 @@ export interface IAppDataService {
 export class AppDataService implements IAppDataService {
   private dataAccessApp: DataAccessApp;
 
-  constructor(params: { dataDir: string; appDataDir: string; appsRepoId: string }) {
+  constructor(
+    params: { dataDir: string; appDataDir: string; appsRepoId: string },
+    private logger: ILogger,
+  ) {
     const { dataDir, appDataDir, appsRepoId } = params;
-    this.dataAccessApp = new DataAccessApp({ dataDir, appDataDir, appsRepoId });
+    this.dataAccessApp = new DataAccessApp({ dataDir, appDataDir, appsRepoId }, this.logger);
   }
 
   /**
