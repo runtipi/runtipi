@@ -10,14 +10,14 @@ type IConfig = {
 };
 
 export interface ICache {
-  set(key: string, value: string, expiration?: number): Promise<string | null>;
-  get(key: string): Promise<string | null>;
-  del(key: string): Promise<number>;
-  getByPrefix(prefix: string): Promise<Array<{ key: string; val: string | null }>>;
-  close(): Promise<string>;
-  ttl(key: string): Promise<number>;
-  clear(): Promise<number[]>;
-  getClient(): IORedis;
+  set: (key: string, value: string, expiration?: number) => Promise<string | null>;
+  get: (key: string) => Promise<string | null>;
+  del: (key: string) => Promise<number>;
+  getByPrefix: (prefix: string) => Promise<Array<{ key: string; val: string | null }>>;
+  close: () => Promise<string>;
+  ttl: (key: string) => Promise<number>;
+  clear: () => Promise<number[]>;
+  getClient: () => IORedis;
 }
 
 export class Cache implements ICache {

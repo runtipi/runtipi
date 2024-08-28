@@ -5,8 +5,8 @@ import { Server } from 'socket.io';
 import { handleViewAppLogsEvent, handleViewRuntipiLogsEvent } from '../docker';
 
 export interface ISocketManager {
-  init(): void;
-  emit(event: SocketEvent): Promise<void>;
+  init: () => void;
+  emit: (event: SocketEvent) => Promise<void>;
 }
 
 @injectable()

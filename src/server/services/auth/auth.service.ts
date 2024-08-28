@@ -23,20 +23,20 @@ type UsernamePasswordInput = {
 };
 
 export interface IAuthService {
-  login(input: UsernamePasswordInput): Promise<{ sessionId?: string; totpSessionId?: string }>;
-  verifyTotp(params: { totpSessionId: string; totpCode: string }): Promise<boolean>;
-  getTotpUri(params: { userId: number; password: string }): Promise<{ uri: string; key: string }>;
-  setupTotp(params: { userId: number; totpCode: string }): Promise<boolean>;
-  disableTotp(params: { userId: number; password: string }): Promise<boolean>;
-  register(input: UsernamePasswordInput): Promise<boolean>;
-  me(userId: number | undefined): Promise<Pick<User, 'id' | 'username' | 'totpEnabled' | 'locale' | 'operator'> | null>;
-  logout(sessionId: string): Promise<boolean>;
-  isConfigured(): Promise<boolean>;
-  changeOperatorPassword(params: { newPassword: string }): Promise<{ email: string }>;
-  checkPasswordChangeRequest(): Promise<boolean>;
-  changePassword(params: { currentPassword: string; newPassword: string; userId: number }): Promise<boolean>;
-  changeUsername(params: { newUsername: string; password: string; userId: number }): Promise<boolean>;
-  cancelPasswordChangeRequest(): Promise<boolean>;
+  login: (input: UsernamePasswordInput) => Promise<{ sessionId?: string; totpSessionId?: string }>;
+  verifyTotp: (params: { totpSessionId: string; totpCode: string }) => Promise<boolean>;
+  getTotpUri: (params: { userId: number; password: string }) => Promise<{ uri: string; key: string }>;
+  setupTotp: (params: { userId: number; totpCode: string }) => Promise<boolean>;
+  disableTotp: (params: { userId: number; password: string }) => Promise<boolean>;
+  register: (input: UsernamePasswordInput) => Promise<boolean>;
+  me: (userId: number | undefined) => Promise<Pick<User, 'id' | 'username' | 'totpEnabled' | 'locale' | 'operator'> | null>;
+  logout: (sessionId: string) => Promise<boolean>;
+  isConfigured: () => Promise<boolean>;
+  changeOperatorPassword: (params: { newPassword: string }) => Promise<{ email: string }>;
+  checkPasswordChangeRequest: () => Promise<boolean>;
+  changePassword: (params: { currentPassword: string; newPassword: string; userId: number }) => Promise<boolean>;
+  changeUsername: (params: { newUsername: string; password: string; userId: number }) => Promise<boolean>;
+  cancelPasswordChangeRequest: () => Promise<boolean>;
 }
 
 @injectable()
