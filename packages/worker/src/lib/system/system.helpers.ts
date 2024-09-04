@@ -22,6 +22,9 @@ type EnvKeys =
   | 'NGINX_PORT_SSL'
   | 'DOMAIN'
   | 'RUNTIPI_APP_DATA_PATH'
+  | 'RUNTIPI_MEDIA_PATH'
+  | 'RUNTIPI_USER_CONFIG_PATH'
+  | 'RUNTIPI_BACKUPS_PATH'
   | 'POSTGRES_PORT'
   | 'POSTGRES_HOST'
   | 'POSTGRES_DBNAME'
@@ -153,6 +156,9 @@ export const generateSystemEnvFile = async () => {
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
   envMap.set('RUNTIPI_APP_DATA_PATH', data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH') || rootFolderHost);
+  envMap.set('RUNTIPI_MEDIA_PATH', data.mediaPath || envMap.get('RUNTIPI_MEDIA_PATH') || rootFolderHost);
+  envMap.set('RUNTIPI_USER_CONFIG_PATH', data.userConfigPath || envMap.get('RUNTIPI_USER_CONFIG_PATH') || rootFolderHost);
+  envMap.set('RUNTIPI_BACKUPS_PATH', data.backupsPath || envMap.get('RUNTIPI_BACKUPS_PATH') || rootFolderHost);
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');

@@ -10,6 +10,9 @@ if (process.env.NODE_ENV === 'development') {
 const environmentSchema = z
   .object({
     RUNTIPI_APP_DATA_PATH: z.string(),
+    RUNTIPI_MEDIA_PATH: z.string(),
+    RUNTIPI_USER_CONFIG_PATH: z.string(),
+    RUNTIPI_BACKUPS_PATH: z.string(),
     ROOT_FOLDER_HOST: z.string(),
     APPS_REPO_ID: z.string(),
     ARCHITECTURE: z.enum(['arm64', 'amd64']),
@@ -27,6 +30,9 @@ const environmentSchema = z
   .transform((env) => {
     const {
       RUNTIPI_APP_DATA_PATH,
+      RUNTIPI_MEDIA_PATH,
+      RUNTIPI_USER_CONFIG_PATH,
+      RUNTIPI_BACKUPS_PATH,
       ARCHITECTURE,
       ROOT_FOLDER_HOST,
       APPS_REPO_ID,
@@ -45,6 +51,9 @@ const environmentSchema = z
 
     return {
       appDataPath: RUNTIPI_APP_DATA_PATH,
+      mediaPath: RUNTIPI_MEDIA_PATH,
+      backupsPath: RUNTIPI_BACKUPS_PATH,
+      userConfigPath: RUNTIPI_USER_CONFIG_PATH,
       rootFolderHost: ROOT_FOLDER_HOST,
       appsRepoId: APPS_REPO_ID,
       arch: ARCHITECTURE,
