@@ -16,7 +16,7 @@ const cache = new CacheMock();
 const logger = new LoggerMock();
 
 const dispatcher = new EventDispatcher(logger, cache);
-const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' }, logger);
 let stopApp: StopAppCommand;
 
 beforeAll(async () => {
