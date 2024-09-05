@@ -1,4 +1,4 @@
-import type { ILogger } from 'src/node/logger/Logger.interface';
+import type { ILogger } from '../../../../node/logger/Logger.interface';
 import { notEmpty } from '../../../helpers/typescript-helpers';
 import { DataAccessApp } from '../data-access/data-access-app';
 import { pLimit } from '../../../../helpers/utils';

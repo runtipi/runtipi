@@ -16,7 +16,7 @@ const logger = new LoggerMock();
 const cache = new CacheMock();
 
 const dispatcher = new EventDispatcher(logger, cache);
-const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' }, logger);
 let uninstallApp: UninstallAppCommand;
 
 beforeAll(async () => {
