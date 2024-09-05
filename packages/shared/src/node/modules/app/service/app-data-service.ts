@@ -1,6 +1,7 @@
 import type { ILogger } from 'src/node/logger/Logger.interface';
 import { notEmpty } from '../../../helpers/typescript-helpers';
 import { DataAccessApp } from '../data-access/data-access-app';
+import { pLimit } from '../../../../helpers/utils';
 
 export interface IAppDataService {
   getAppInfoFromInstalledOrAppStore: AppDataService['getAppInfoFromInstalledOrAppStore'];
@@ -55,9 +56,10 @@ export class AppDataService implements IAppDataService {
   public async getAllAvailableApps() {
     const appIds = await this.dataAccessApp.getAvailableAppIds();
 
+    const limit = pLimit(10);
     const apps = await Promise.all(
       appIds.map(async (app) => {
-        return this.dataAccessApp.getAppInfoFromAppStore(app);
+        return limit(() => this.dataAccessApp.getAppInfoFromAppStore(app));
       }),
     );
 
