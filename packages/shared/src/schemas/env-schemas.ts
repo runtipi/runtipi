@@ -40,30 +40,6 @@ export const envSchema = z.object({
       if (!value) return undefined;
       return value?.replace(/\s/g, '');
     }),
-  mediaPath: z
-    .string()
-    .trim()
-    .optional()
-    .transform((value) => {
-      if (!value) return undefined;
-      return value?.replace(/\s/g, '');
-    }),
-  backupsPath: z
-    .string()
-    .trim()
-    .optional()
-    .transform((value) => {
-      if (!value) return undefined;
-      return value?.replace(/\s/g, '');
-    }),
-  userConfigPath: z
-    .string()
-    .trim()
-    .optional()
-    .transform((value) => {
-      if (!value) return undefined;
-      return value?.replace(/\s/g, '');
-    }),
   postgresHost: z.string(),
   postgresDatabase: z.string(),
   postgresUsername: z.string(),
@@ -133,6 +109,7 @@ export const settingsSchema = envSchema
     postgresPort: true,
     appsRepoUrl: true,
     domain: true,
+    appDataPath: true,
     localDomain: true,
     demoMode: true,
     guestDashboard: true,
@@ -140,10 +117,6 @@ export const settingsSchema = envSchema
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
     timeZone: true,
-    appDataPath: true,
-    mediaPath: true,
-    backupsPath: true,
-    userConfigPath: true,
   })
   .and(
     z

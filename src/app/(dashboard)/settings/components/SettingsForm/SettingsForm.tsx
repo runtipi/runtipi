@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
 import type { Locale } from '@/shared/internationalization/locales';
-import { IconAdjustmentsAlt, IconUser, IconDatabase } from '@tabler/icons-react';
+import { IconAdjustmentsAlt, IconUser } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import type React from 'react';
@@ -18,15 +18,12 @@ export type SettingsFormValues = {
   internalIp?: string;
   appsRepoUrl?: string;
   domain?: string;
+  appDataPath?: string;
   localDomain?: string;
   guestDashboard?: boolean;
   allowAutoThemes?: boolean;
   allowErrorMonitoring?: boolean;
   timeZone?: string;
-  appDataPath?: string;
-  mediaPath?: string;
-  backupsPath?: string;
-  userConfigPath?: string;
 };
 
 interface IProps {
@@ -250,6 +247,22 @@ export const SettingsForm = (props: IProps) => {
             placeholder="https://github.com/runtipi/runtipi-appstore"
           />
         </div>
+        <div className="mb-3">
+          <Input
+            {...register('appDataPath')}
+            label={
+              <>
+                {t('SETTINGS_GENERAL_STORAGE_PATH')}
+                <Tooltip className="tooltip" anchorSelect=".storage-path-hint">
+                  {t('SETTINGS_GENERAL_STORAGE_PATH_HINT')}
+                </Tooltip>
+                <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
+              </>
+            }
+            error={errors.appDataPath?.message}
+            placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
+          />
+        </div>
         <div>
           <Controller
             control={control}
@@ -277,74 +290,7 @@ export const SettingsForm = (props: IProps) => {
             {t('SETTINGS_GENERAL_DOWNLOAD_CERTIFICATE')}
           </Button>
         </div>
-        <div className="d-flex">
-          <IconDatabase className="me-2" />
-          <h2 className="text-2xl font-bold">Storage Settings</h2>
-        </div>
-        <div className="mb-3">
-          <Input
-            {...register('appDataPath')}
-            label={
-              <>
-                {t('SETTINGS_GENERAL_STORAGE_PATH')}
-                <Tooltip className="tooltip" anchorSelect=".storage-path-hint">
-                  {t('SETTINGS_GENERAL_STORAGE_PATH_HINT')}
-                </Tooltip>
-                <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
-              </>
-            }
-            error={errors.appDataPath?.message}
-            placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
-          />
-        </div>
-        <div className="mb-3">
-          <Input
-            {...register('mediaPath')}
-            label={
-              <>
-                Media path
-                <Tooltip className="tooltip" anchorSelect=".storage-path-hint">
-                  {t('SETTINGS_GENERAL_STORAGE_PATH_HINT')}
-                </Tooltip>
-                <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
-              </>
-            }
-            error={errors.appDataPath?.message}
-            placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
-          />
-        </div>
-        <div className="mb-3">
-          <Input
-            {...register('backupsPath')}
-            label={
-              <>
-                Backups path
-                <Tooltip className="tooltip" anchorSelect=".storage-path-hint">
-                  {t('SETTINGS_GENERAL_STORAGE_PATH_HINT')}
-                </Tooltip>
-                <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
-              </>
-            }
-            error={errors.appDataPath?.message}
-            placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
-          />
-        </div>
-        <div className="mb-3">
-          <Input
-            {...register('userConfigPath')}
-            label={
-              <>
-                User config path
-                <Tooltip className="tooltip" anchorSelect=".storage-path-hint">
-                  {t('SETTINGS_GENERAL_STORAGE_PATH_HINT')}
-                </Tooltip>
-                <span className={clsx('ms-1 form-help storage-path-hint')}>?</span>
-              </>
-            }
-            error={errors.appDataPath?.message}
-            placeholder={t('SETTINGS_GENERAL_STORAGE_PATH')}
-          />
-        </div>
+
         <Button loading={loading} type="submit" intent="success">
           {t('SETTINGS_GENERAL_SUBMIT')}
         </Button>
