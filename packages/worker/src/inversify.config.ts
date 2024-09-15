@@ -1,37 +1,50 @@
 import path from 'node:path';
 import { Cache, type ICache } from '@runtipi/cache';
 import { DbClient, type IDbClient, type IMigrator, Migrator } from '@runtipi/db';
-import { type ILogger, Logger } from '@runtipi/shared/node';
+import { AppDataService, BackupManager, type IAppDataService, type IBackupManager, type ILogger, Logger } from '@runtipi/shared/node';
 import { Container } from 'inversify';
-import { DATA_DIR } from './config';
+import { DATA_DIR, APP_DATA_DIR } from './config';
 import { type ISocketManager, SocketManager } from './lib/socket/SocketManager';
 import { AppExecutors, type IAppExecutors } from './services/app/app.executors';
+import { getEnv } from './lib/environment';
+import { AppFileAccessor, type IAppFileAccessor } from '@runtipi/shared/node';
 
 export function createContainer() {
   try {
     const container = new Container();
 
-    container.bind<ILogger>('ILogger').toDynamicValue(() => {
-      return new Logger('worker', path.join(DATA_DIR, 'logs'));
-    });
+    const { appsRepoId, redisPassword, redisHost, postgresHost, postgresPassword, postgresDatabase, postgresPort, postgresUsername } = getEnv();
 
-    container.bind<ICache>('ICache').toDynamicValue((context) => {
-      const logger = context.container.get<ILogger>('ILogger');
-      return new Cache({ host: String(process.env.REDIS_HOST), port: 6379, password: String(process.env.REDIS_PASSWORD) }, logger);
-    });
+    const logger = new Logger('worker', path.join(DATA_DIR, 'logs'));
+    container.bind<ILogger>('ILogger').toConstantValue(logger);
+
+    const cache = new Cache({ host: redisHost, port: 6379, password: redisPassword }, logger);
+    container.bind<ICache>('ICache').toConstantValue(cache);
 
     container.bind<ISocketManager>('ISocketManager').to(SocketManager).inSingletonScope();
+
+    container.bind<IAppFileAccessor>('IAppFileAccessor').toDynamicValue(() => {
+      return new AppFileAccessor({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
+    });
+
+    container.bind<IAppDataService>('IAppDataService').toDynamicValue(() => {
+      return new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
+    });
+
+    container.bind<IBackupManager>('IBackupManager').toDynamicValue(() => {
+      return new BackupManager({ dataDir: DATA_DIR, logger });
+    });
 
     container
       .bind<IDbClient>('IDbClient')
       .toDynamicValue((context) => {
         return new DbClient(
           {
-            host: String(process.env.POSTGRES_HOST),
-            port: Number(process.env.POSTGRES_PORT),
-            password: String(process.env.POSTGRES_PASSWORD),
-            database: String(process.env.POSTGRES_DBNAME),
-            username: String(process.env.POSTGRES_USERNAME),
+            host: postgresHost,
+            port: postgresPort,
+            password: postgresPassword,
+            database: postgresDatabase,
+            username: postgresUsername,
           },
           context.container.get<ILogger>('ILogger'),
         );

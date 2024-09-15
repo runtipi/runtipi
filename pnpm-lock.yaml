@@ -334,9 +334,15 @@ importers:
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
+      gunzip-maybe:
+        specifier: ^1.4.2
+        version: 1.4.2
       lodash.clonedeep:
         specifier: ^4.5.0
         version: 4.5.0
+      tar-fs:
+        specifier: ^3.0.6
+        version: 3.0.6
       validator:
         specifier: ^13.12.0
         version: 13.12.0
@@ -350,9 +356,15 @@ importers:
       '@sentry/types':
         specifier: ^8.30.0
         version: 8.30.0
+      '@types/gunzip-maybe':
+        specifier: ^1.4.2
+        version: 1.4.2
       '@types/lodash.clonedeep':
         specifier: ^4.5.9
         version: 4.5.9
+      '@types/tar-fs':
+        specifier: ^2.0.4
+        version: 2.0.4
 
   packages/shared/node: {}
 
@@ -388,9 +400,6 @@ importers:
       drizzle-orm:
         specifier: ^0.33.0
         version: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@18.3.7)(pg@8.13.0)(react@18.3.1)
-      gunzip-maybe:
-        specifier: ^1.4.2
-        version: 1.4.2
       hono:
         specifier: ^4.6.2
         version: 4.6.2
@@ -409,9 +418,6 @@ importers:
       systeminformation:
         specifier: ^5.23.5
         version: 5.23.5
-      tar-fs:
-        specifier: ^3.0.6
-        version: 3.0.6
       web-push:
         specifier: ^3.6.7
         version: 3.6.7
@@ -428,12 +434,6 @@ importers:
       '@sentry/esbuild-plugin':
         specifier: ^2.22.4
         version: 2.22.4
-      '@types/gunzip-maybe':
-        specifier: ^1.4.2
-        version: 1.4.2
-      '@types/tar-fs':
-        specifier: ^2.0.4
-        version: 2.0.4
       '@types/web-push':
         specifier: ^3.6.3
         version: 3.6.3

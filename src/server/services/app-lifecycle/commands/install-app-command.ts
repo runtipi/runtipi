@@ -1,54 +1,41 @@
 import { TipiConfig } from '@/server/core/TipiConfig';
-import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
 import type { AppEventFormInput } from '@runtipi/shared';
-import type { IAppDataService } from '@runtipi/shared/node';
 import { lt, valid } from 'semver';
 import { isFQDN } from 'validator';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
-import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { getClass } from 'src/inversify.config';
 
 export class InstallAppCommand implements IAppLifecycleCommand {
-  private queries: IAppQueries;
-  private eventDispatcher: IEventDispatcher;
-  private appDataService: IAppDataService;
-  private executeOtherCommand: IAppLifecycleCommand['execute'];
-
-  constructor(params: AppLifecycleCommandParams) {
-    this.queries = params.queries;
-    this.eventDispatcher = params.eventDispatcher;
-    this.appDataService = params.appDataService;
-    this.executeOtherCommand = params.executeOtherCommand;
-  }
+  constructor(private params: AppLifecycleCommandParams) {}
 
   private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
     const logger = getClass('ILogger');
-    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'install', appid: appId, form });
+    const { success, stdout } = await this.params.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'install', appid: appId, form });
 
     if (success) {
-      await this.queries.updateApp(appId, { status: 'running' });
+      await this.params.queries.updateApp(appId, { status: 'running' });
     } else {
       logger.error(`Failed to install app ${appId}: ${stdout}`);
-      await this.queries.deleteApp(appId);
+      await this.params.queries.deleteApp(appId);
     }
   }
 
   private async startApp(appId: string): Promise<void> {
-    await this.executeOtherCommand('startApp', { appId });
+    await this.params.executeOtherCommand('startApp', { appId });
   }
 
   async execute(params: { appId: string; form: AppEventFormInput }): Promise<void> {
     const { appId, form } = params;
 
-    const app = await this.queries.getApp(appId);
+    const app = await this.params.queries.getApp(appId);
 
     if (app) {
       return this.startApp(appId);
     }
 
     const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
-    const apps = await this.queries.getApps();
+    const apps = await this.params.queries.getApps();
 
     if (apps.length >= 6 && TipiConfig.getConfig().demoMode) {
       throw new TranslatedError('SYSTEM_ERROR_DEMO_MODE_LIMIT');
@@ -62,7 +49,7 @@ export class InstallAppCommand implements IAppLifecycleCommand {
       throw new TranslatedError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
     }
 
-    const appInfo = await this.appDataService.getInfoFromAppStore(appId);
+    const appInfo = await this.params.appFileAccessor.getAppInfoFromAppStore(appId);
 
     if (!appInfo) {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
@@ -81,7 +68,7 @@ export class InstallAppCommand implements IAppLifecycleCommand {
     }
 
     if (exposed && domain) {
-      const appsWithSameDomain = await this.queries.getAppsByDomain(domain, appId);
+      const appsWithSameDomain = await this.params.queries.getAppsByDomain(domain, appId);
 
       if (appsWithSameDomain.length > 0) {
         throw new TranslatedError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.id });
@@ -93,7 +80,7 @@ export class InstallAppCommand implements IAppLifecycleCommand {
       throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: appInfo.min_tipi_version });
     }
 
-    await this.queries.createApp({
+    await this.params.queries.createApp({
       id: appId,
       status: 'installing',
       config: form,

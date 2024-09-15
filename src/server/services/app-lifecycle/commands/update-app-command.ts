@@ -27,7 +27,7 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
     );
 
     if (success) {
-      const appInfo = await this.params.appDataService.getInstalledInfo(appId);
+      const appInfo = await this.params.appFileAccessor.getInstalledAppInfo(appId);
 
       await this.params.queries.updateApp(appId, { version: appInfo?.tipi_version });
 
@@ -52,7 +52,7 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
     const { version } = TipiConfig.getConfig();
 
-    const { minTipiVersion } = await this.params.appDataService.getUpdateInfo(appId);
+    const { minTipiVersion } = await this.params.appFileAccessor.getAppUpdateInfo(appId);
     if (minTipiVersion && semver.valid(version) && semver.lt(version, minTipiVersion)) {
       throw new TranslatedError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: minTipiVersion });
     }

@@ -6,7 +6,7 @@ import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
 import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
 import { faker } from '@faker-js/faker';
-import { AppDataService } from '@runtipi/shared/node';
+import { AppDataService, AppFileAccessor } from '@runtipi/shared/node';
 import fs from 'fs-extra';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
@@ -19,13 +19,15 @@ const TEST_SUITE = 'installappcommand';
 const logger = new LoggerMock();
 const cache = new CacheMock();
 const dispatcher = new EventDispatcher(logger, cache);
-const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' }, logger);
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id', logger });
+const appFileAccessor = new AppFileAccessor({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id', logger });
 const executeOtherCommandMock = vi.fn(() => Promise.resolve({ success: true }));
 let installApp: InstallAppCommand;
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
   installApp = new InstallAppCommand({
+    appFileAccessor,
     queries: new AppQueries(db.dbClient),
     eventDispatcher: dispatcher,
     executeOtherCommand: executeOtherCommandMock,

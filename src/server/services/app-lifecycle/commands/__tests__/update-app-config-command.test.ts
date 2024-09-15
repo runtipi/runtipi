@@ -1,7 +1,7 @@
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { createApp } from '@/server/tests/apps.factory';
 import { faker } from '@faker-js/faker';
-import type { IAppDataService } from '@runtipi/shared/node';
+import type { IAppDataService, IAppFileAccessor } from '@runtipi/shared/node';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UpdateAppConfigCommand } from '../update-app-config-command';
 import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
@@ -13,12 +13,14 @@ describe('Update app config', () => {
   const mockQueries = mock<IAppQueries>();
   const mockEventDispatcher = mock<IEventDispatcher>();
   const mockAppDataService = mock<IAppDataService>();
+  const mockAppFileAccessor = mock<IAppFileAccessor>();
 
   const updateAppConfig = new UpdateAppConfigCommand({
     queries: mockQueries,
     eventDispatcher: mockEventDispatcher,
     appDataService: mockAppDataService,
     executeOtherCommand: vi.fn(),
+    appFileAccessor: mockAppFileAccessor,
   });
 
   beforeEach(() => {
@@ -32,7 +34,7 @@ describe('Update app config', () => {
       const word = faker.lorem.word();
       let update = {} as Partial<App>;
 
-      mockAppDataService.getInstalledInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
+      mockAppFileAccessor.getInstalledAppInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
       mockQueries.getApp.calledWith(appEntity.id).mockResolvedValue(appEntity);
       mockQueries.updateApp.calledWith(appEntity.id, anyObject()).mockImplementation(async (_, data) => {
         update = data;
@@ -81,7 +83,7 @@ describe('Update app config', () => {
       const domain = faker.internet.domainName();
       const { appEntity, appInfo } = await createApp({ exposable: true });
       mockQueries.getApp.calledWith(appEntity.id).mockResolvedValue(appEntity);
-      mockAppDataService.getInstalledInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
+      mockAppFileAccessor.getInstalledAppInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
       mockQueries.getAppsByDomain.calledWith(domain, appEntity.id).mockResolvedValue([appEntity]);
 
       // act & assert
@@ -95,7 +97,7 @@ describe('Update app config', () => {
       const { appEntity, appInfo } = await createApp({ forceExpose: true });
       mockQueries.getApp.calledWith(appEntity.id).mockResolvedValue(appEntity);
 
-      mockAppDataService.getInstalledInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
+      mockAppFileAccessor.getInstalledAppInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
       // act & assert
       await expect(updateAppConfig.execute({ appId: appEntity.id, form: {} })).rejects.toThrow('APP_ERROR_APP_FORCE_EXPOSED');
     });
@@ -104,7 +106,7 @@ describe('Update app config', () => {
       // arrange
       const { appEntity, appInfo } = await createApp({ exposable: false });
       mockQueries.getApp.calledWith(appEntity.id).mockResolvedValue(appEntity);
-      mockAppDataService.getInstalledInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
+      mockAppFileAccessor.getInstalledAppInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
 
       // act & assert
       await expect(updateAppConfig.execute({ appId: appEntity.id, form: { exposed: true, domain: 'test.com' } })).rejects.toThrow(
@@ -116,7 +118,7 @@ describe('Update app config', () => {
       // arrange
       const { appEntity, appInfo } = await createApp({ forceExpose: true });
       mockQueries.getApp.calledWith(appEntity.id).mockResolvedValue(appEntity);
-      mockAppDataService.getInstalledInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
+      mockAppFileAccessor.getInstalledAppInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
 
       // act & assert
       await expect(updateAppConfig.execute({ appId: appEntity.id, form: { exposed: true } })).rejects.toThrow(
@@ -128,7 +130,7 @@ describe('Update app config', () => {
       // arrange
       const { appEntity, appInfo } = await createApp({ exposable: true });
       mockQueries.getApp.calledWith(appEntity.id).mockResolvedValue(appEntity);
-      mockAppDataService.getInstalledInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
+      mockAppFileAccessor.getInstalledAppInfo.calledWith(appEntity.id).mockResolvedValue(appInfo);
       mockEventDispatcher.dispatchEventAsync.mockResolvedValue({ success: false });
 
       // act & assert
@@ -140,7 +142,7 @@ describe('Update app config', () => {
       const { appEntity } = await createApp({});
 
       mockQueries.getApp.calledWith(appEntity.id).mockResolvedValue(appEntity);
-      mockAppDataService.getInstalledInfo.calledWith(appEntity.id).mockResolvedValue(undefined);
+      mockAppFileAccessor.getInstalledAppInfo.calledWith(appEntity.id).mockResolvedValue(undefined);
 
       // act & assert
       await expect(updateAppConfig.execute({ appId: appEntity.id, form: { exposed: true, domain: 'test.com' } })).rejects.toThrow(
