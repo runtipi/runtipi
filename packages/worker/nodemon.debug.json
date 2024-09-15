@@ -1,0 +1,5 @@
+{
+  "watch": ["src"],
+  "exec": "NODE_ENV=development npm run build && node --trace-warnings --inspect-brk=0.0.0.0 dist/index.js",
+  "ext": "js ts"
+}

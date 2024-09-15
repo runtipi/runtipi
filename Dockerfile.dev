@@ -3,6 +3,11 @@ ARG ALPINE_VERSION="3.20"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
+ARG DEBUG_MODE=false
+ENV DEBUG_MODE=${DEBUG_MODE}
+
+RUN echo "Debug mode is $DEBUG_MODE"
+
 ENV LOCAL=true
 ENV SENTRY_RELEASE=development
 
@@ -55,5 +60,15 @@ COPY ./next.config.mjs ./next.config.mjs
 COPY ./sentry.client.config.ts ./sentry.client.config.ts
 
 COPY ./start.dev.sh ./start.sh
+
+EXPOSE 3000 5000 5001 9229
+
+RUN echo "Debug mode is $DEBUG_MODE"
+# Copy the appropriate nodemon configuration based on DEBUG_MODE
+RUN if [ "$DEBUG_MODE" = "true" ]; then \
+  echo "Debug mode is enabled" \
+  && rm -f ./packages/worker/nodemon.json \
+  && cp ./packages/worker/nodemon.debug.json ./packages/worker/nodemon.json; \
+  fi
 
 CMD ["sh", "start.sh"]

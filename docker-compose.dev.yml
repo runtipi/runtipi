@@ -31,7 +31,7 @@ services:
       POSTGRES_USER: tipi
       POSTGRES_DB: tipi
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d tipi -U tipi"]
+      test: [ "CMD-SHELL", "pg_isready -d tipi -U tipi" ]
       interval: 5s
       timeout: 10s
       retries: 120
@@ -48,7 +48,7 @@ services:
     volumes:
       - redisdata:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 10s
       retries: 120
@@ -59,8 +59,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+      args:
+        DEBUG_MODE: ${DEBUG_MODE:-false}
     container_name: runtipi
     restart: unless-stopped
+    ports:
+      - 9229:9229
     depends_on:
       runtipi-db:
         condition: service_healthy
@@ -70,6 +74,7 @@ services:
       # Hot reload
       - ./src:/app/src
       - ./packages/worker/src:/app/packages/worker/src
+      - ./packages/worker/dist:/app/packages/worker/dist
       - ./packages/shared/src:/app/packages/shared/src
       - ./packages/db/src:/app/packages/db/src
       # Data
