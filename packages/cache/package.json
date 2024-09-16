@@ -15,6 +15,6 @@
     "ioredis": "^5.4.1"
   },
   "devDependencies": {
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.1"
   }
 }
