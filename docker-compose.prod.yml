@@ -32,7 +32,7 @@ services:
       POSTGRES_USER: tipi
       POSTGRES_DB: tipi
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -d tipi -U tipi']
+      test: ["CMD-SHELL", "pg_isready -d tipi -U tipi"]
       interval: 5s
       timeout: 10s
       retries: 120
@@ -49,7 +49,7 @@ services:
     volumes:
       - redisdata:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 10s
       retries: 120
@@ -65,7 +65,8 @@ services:
         TIPI_VERSION: development
     container_name: runtipi
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:5000/worker-api/healthcheck']
+      test:
+        ["CMD", "curl", "-f", "http://localhost:5000/worker-api/healthcheck"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -96,6 +97,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     environment:
+      LOG_LEVEL: debug
       LOCAL: true
       NODE_ENV: production
     networks:

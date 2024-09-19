@@ -18,6 +18,8 @@ export function createContainer() {
     const logger = new Logger('worker', path.join(DATA_DIR, 'logs'));
     container.bind<ILogger>('ILogger').toConstantValue(logger);
 
+    logger.debug('process.env', JSON.stringify(process.env, null, 2));
+
     const cache = new Cache({ host: REDIS_HOST, port: 6379, password: REDIS_PASSWORD }, logger);
     container.bind<ICache>('ICache').toConstantValue(cache);
 
