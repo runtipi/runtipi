@@ -29,7 +29,6 @@ export const Input = React.forwardRef<HTMLInputElement, IProps>(
         maxLength={maxLength}
         suppressHydrationWarning
         aria-label={name}
-        role="textbox"
         disabled={disabled}
         name={name}
         id={name}

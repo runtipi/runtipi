@@ -24,14 +24,13 @@ export const SystemStat: React.FC<IProps> = ({ icon: IconComponent, progress, ti
         <div className="progress progress-sm">
           <div
             className="progress-bar bg-primary"
-            role="progressbar"
             style={{ width: `${progress.toFixed(0)}%` }}
             aria-valuenow={progress}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label="75% Complete"
+            aria-label={`${progress.toFixed(0)}%`}
           >
-            <span className="visually-hidden">75% Complete</span>
+            <span className="visually-hidden">{`${progress.toFixed(0)}%`}</span>
           </div>
         </div>
       </div>
