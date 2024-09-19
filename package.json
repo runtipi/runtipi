@@ -40,7 +40,7 @@
     "@runtipi/postgres-migrations": "^5.3.0",
     "@runtipi/shared": "workspace:^",
     "@sentry/nextjs": "^8.30.0",
-    "@tabler/core": "1.0.0-beta20",
+    "@tabler/core": "1.0.0-beta21",
     "@tabler/icons-react": "^3.17.0",
     "@tanstack/react-query": "^5.56.2",
     "@uidotdev/usehooks": "^2.4.1",
