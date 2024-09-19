@@ -22,7 +22,7 @@
     "esbuild": "^0.23.1",
     "knip": "^5.30.2",
     "memfs": "^4.11.2",
-    "nodemon": "^3.1.5",
+    "nodemon": "^3.1.6",
     "typescript": "^5.6.2",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.1.1"
