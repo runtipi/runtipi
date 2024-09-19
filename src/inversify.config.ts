@@ -46,7 +46,7 @@ export function createContainer() {
   container.bind<IDbClient>('IDbClient').toConstantValue(dbClient);
 
   container.bind<IBackupManager>('IBackupManager').toDynamicValue(() => {
-    return new BackupManager({ dataDir: DATA_DIR, logger });
+    return new BackupManager({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, logger });
   });
 
   container.bind<IAppDataService>('IAppDataService').toDynamicValue(() => {

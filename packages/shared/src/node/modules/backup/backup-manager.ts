@@ -15,11 +15,13 @@ export class BackupManager {
   private archiveManager: ArchiveManager;
   private logger: ILogger;
   private dataDir: string;
+  private appDataDir: string;
 
-  constructor(params: { logger: ILogger; dataDir: string }) {
+  constructor(params: { logger: ILogger; dataDir: string; appDataDir: string }) {
     this.archiveManager = new ArchiveManager();
     this.logger = params.logger;
     this.dataDir = params.dataDir;
+    this.appDataDir = params.appDataDir;
   }
 
   public backupApp = async (appId: string) => {
@@ -27,23 +29,17 @@ export class BackupManager {
     const backupDir = path.join(this.dataDir, 'backups', appId);
     const tempDir = path.join('/tmp', appId);
 
-    // Stop app so containers like databases don't cause problems
     this.logger.info('Copying files to backup location...');
 
     // Ensure backup directory exists
     await fs.promises.mkdir(tempDir, { recursive: true });
 
     // Move app data and app directories
-    await fs.promises.cp(path.join(this.dataDir, 'apps', appId), path.join(tempDir, 'app-data'), {
+    await fs.promises.cp(path.join(this.appDataDir, appId), path.join(tempDir, 'app-data'), {
       recursive: true,
       filter: (src) => !src.includes('backups'),
     });
     await fs.promises.cp(path.join(this.dataDir, 'apps', appId), path.join(tempDir, 'app'), { recursive: true });
-
-    // Check if the user config folder exists and if it does copy it too
-    if (await pathExists(path.join(this.dataDir, 'user-config', appId))) {
-      await fs.promises.cp(path.join(this.dataDir, 'user-config', appId), path.join(tempDir, 'user-config'), { recursive: true });
-    }
 
     this.logger.info('Creating archive...');
 
@@ -79,16 +75,12 @@ export class BackupManager {
     this.logger.info('Extracting archive...');
     await this.archiveManager.extractTarGz(archive, restoreDir);
 
-    const appDataDirPath = path.join(this.dataDir, 'apps', appId);
+    const appDataDirPath = path.join(this.appDataDir, appId);
     const appDirPath = path.join(this.dataDir, 'apps', appId);
 
     // Remove old data directories
     await fs.promises.rm(appDataDirPath, { force: true, recursive: true });
     await fs.promises.rm(appDirPath, { force: true, recursive: true });
-    await fs.promises.rm(path.join(this.dataDir, 'user-config', appId), {
-      force: true,
-      recursive: true,
-    });
 
     await fs.promises.mkdir(appDataDirPath, { recursive: true });
     await fs.promises.mkdir(appDirPath, { recursive: true });
@@ -96,11 +88,6 @@ export class BackupManager {
     // Copy data from the backup folder
     await fs.promises.cp(path.join(restoreDir, 'app'), appDirPath, { recursive: true });
     await fs.promises.cp(path.join(restoreDir, 'app-data'), appDataDirPath, { recursive: true });
-
-    // Copy user config foler if it exists
-    if (await pathExists(path.join(restoreDir, 'user-config'))) {
-      await fs.promises.cp(path.join(restoreDir, 'user-config'), path.join(this.dataDir, 'user-config', appId), { recursive: true });
-    }
 
     // Delete restore folder
     await fs.promises.rm(restoreDir, { force: true, recursive: true });

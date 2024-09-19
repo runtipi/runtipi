@@ -32,7 +32,7 @@ export function createContainer() {
     });
 
     container.bind<IBackupManager>('IBackupManager').toDynamicValue(() => {
-      return new BackupManager({ dataDir: DATA_DIR, logger });
+      return new BackupManager({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, logger });
     });
 
     container

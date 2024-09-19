@@ -121,7 +121,7 @@ describe('test: app executors', () => {
       const data = await fs.promises.readFile(path.join(APP_DATA_DIR, config.id, 'data', filename), 'utf-8');
 
       expect(exists).toBe(true);
-      expect(data).toBe('yeah');
+      expect(data).toBe('test');
     });
 
     it('should handle errors gracefully', async () => {

@@ -276,6 +276,11 @@ export class AppFileAccessor {
       return;
     }
 
+    // Return if app has already a data directory
+    if (await pathExists(path.join(appDataDir, 'data'))) {
+      return;
+    }
+
     // Create app-data folder if it doesn't exist
     if (!(await pathExists(path.join(appDataDir, 'data')))) {
       await fs.promises.mkdir(path.join(appDataDir, 'data'), { recursive: true });
