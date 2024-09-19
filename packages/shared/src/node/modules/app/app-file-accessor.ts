@@ -151,6 +151,11 @@ export class AppFileAccessor {
   public async copyAppFromRepoToInstalled(id: string) {
     const { appRepoDir, appDataDir, appInstalledDir } = this.getAppPaths(id);
 
+    if (!(await pathExists(appRepoDir))) {
+      this.logger.error(`App ${id} not found in repo ${this.appsRepoId}`);
+      throw new Error(`App ${id} not found in repo ${this.appsRepoId}`);
+    }
+
     // delete eventual app folder if exists
     this.logger.info(`Deleting app ${id} folder if exists`);
     await fs.promises.rm(appInstalledDir, { recursive: true, force: true });
@@ -223,14 +228,14 @@ export class AppFileAccessor {
   public async deleteAppFolder(appId: string) {
     const { appInstalledDir } = this.getAppPaths(appId);
     await fs.promises.rm(appInstalledDir, { recursive: true, force: true }).catch((err) => {
-      this.logger.error(`Error deleting folder ${appInstalledDir}: ${err.message}`);
+      this.logger.error(`Error deleting folder ${appInstalledDir}: ${JSON.stringify(err)}`);
     });
   }
 
   public async deleteAppDataDir(appId: string) {
     const { appDataDir } = this.getAppPaths(appId);
     await fs.promises.rm(appDataDir, { recursive: true, force: true }).catch((err) => {
-      this.logger.error(`Error deleting folder ${appDataDir}: ${err.message}`);
+      this.logger.error(`Error deleting folder ${appDataDir}: ${JSON.stringify(err)}`);
     });
   }
 
