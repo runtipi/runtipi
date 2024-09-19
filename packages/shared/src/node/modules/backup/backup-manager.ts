@@ -27,7 +27,7 @@ export class BackupManager {
   public backupApp = async (appId: string) => {
     const backupName = `${appId}-${new Date().getTime()}`;
     const backupDir = path.join(this.dataDir, 'backups', appId);
-    const tempDir = path.join('/tmp', appId);
+    const tempDir = await fs.promises.mkdtemp(appId);
 
     this.logger.info('Copying files to backup location...');
 
@@ -59,7 +59,7 @@ export class BackupManager {
   };
 
   public restoreApp = async (appId: string, filename: string) => {
-    const restoreDir = path.join('/tmp', appId);
+    const restoreDir = await fs.promises.mkdtemp(appId);
     const archive = path.join(this.dataDir, 'backups', appId, filename);
 
     this.logger.info('Restoring app from backup...');
