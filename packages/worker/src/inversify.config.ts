@@ -6,29 +6,29 @@ import { Container } from 'inversify';
 import { DATA_DIR, APP_DATA_DIR } from './config';
 import { type ISocketManager, SocketManager } from './lib/socket/SocketManager';
 import { AppExecutors, type IAppExecutors } from './services/app/app.executors';
-import { getEnv } from './lib/environment';
 import { AppFileAccessor, type IAppFileAccessor } from '@runtipi/shared/node';
 
 export function createContainer() {
   try {
     const container = new Container();
 
-    const { appsRepoId, redisPassword, redisHost, postgresHost, postgresPassword, postgresDatabase, postgresPort, postgresUsername } = getEnv();
+    const { REDIS_HOST, REDIS_PASSWORD, APPS_REPO_ID, POSTGRES_HOST, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_DBNAME, POSTGRES_USERNAME } =
+      process.env;
 
     const logger = new Logger('worker', path.join(DATA_DIR, 'logs'));
     container.bind<ILogger>('ILogger').toConstantValue(logger);
 
-    const cache = new Cache({ host: redisHost, port: 6379, password: redisPassword }, logger);
+    const cache = new Cache({ host: REDIS_HOST, port: 6379, password: REDIS_PASSWORD }, logger);
     container.bind<ICache>('ICache').toConstantValue(cache);
 
     container.bind<ISocketManager>('ISocketManager').to(SocketManager).inSingletonScope();
 
     container.bind<IAppFileAccessor>('IAppFileAccessor').toDynamicValue(() => {
-      return new AppFileAccessor({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
+      return new AppFileAccessor({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: APPS_REPO_ID, logger });
     });
 
     container.bind<IAppDataService>('IAppDataService').toDynamicValue(() => {
-      return new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
+      return new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: APPS_REPO_ID, logger });
     });
 
     container.bind<IBackupManager>('IBackupManager').toDynamicValue(() => {
@@ -40,11 +40,11 @@ export function createContainer() {
       .toDynamicValue((context) => {
         return new DbClient(
           {
-            host: postgresHost,
-            port: postgresPort,
-            password: postgresPassword,
-            database: postgresDatabase,
-            username: postgresUsername,
+            host: POSTGRES_HOST,
+            port: Number(POSTGRES_PORT),
+            password: POSTGRES_PASSWORD,
+            database: POSTGRES_DBNAME,
+            username: POSTGRES_USERNAME,
           },
           context.container.get<ILogger>('ILogger'),
         );
