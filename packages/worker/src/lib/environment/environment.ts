@@ -52,7 +52,7 @@ const environmentSchema = z
       internalIp: INTERNAL_IP,
       redisPassword: REDIS_PASSWORD,
       redisHost: REDIS_HOST,
-      postgresPort: POSTGRES_PORT,
+      postgresPort: Number(POSTGRES_PORT),
       postgresUsername: POSTGRES_USERNAME,
       postgresPassword: POSTGRES_PASSWORD,
       postgresDatabase: POSTGRES_DBNAME,

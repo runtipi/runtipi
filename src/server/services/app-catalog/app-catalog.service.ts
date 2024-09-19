@@ -1,5 +1,5 @@
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import type { IAppDataService } from '@runtipi/shared/node';
+import type { IAppDataService, IAppFileAccessor } from '@runtipi/shared/node';
 import { AppCatalogCache } from './app-catalog-cache';
 import { inject, injectable } from 'inversify';
 import { notEmpty } from '@/server/common/typescript.helpers';
@@ -22,14 +22,15 @@ export class AppCatalogService implements IAppCatalogService {
   constructor(
     @inject('IAppQueries') private queries: IAppQueries,
     @inject('IAppDataService') private appDataService: IAppDataService,
+    @inject('IAppFileAccessor') private appFileAccessor: IAppFileAccessor,
   ) {
     this.appCatalogCache = new AppCatalogCache(appDataService);
   }
 
   private async constructSingleApp(app: App) {
     try {
-      const info = await this.appDataService.getInstalledInfo(app.id);
-      const updateInfo = await this.appDataService.getUpdateInfo(app.id);
+      const info = await this.appFileAccessor.getInstalledAppInfo(app.id);
+      const updateInfo = await this.appFileAccessor.getAppUpdateInfo(app.id);
       return info ? { ...app, ...updateInfo, info } : null;
     } catch (e) {
       return null;
@@ -64,7 +65,7 @@ export class AppCatalogService implements IAppCatalogService {
   public async getApp(appId: string) {
     let app = await this.queries.getApp(appId);
     const info = await this.appDataService.getAppInfoFromInstalledOrAppStore(appId);
-    const updateInfo = await this.appDataService.getUpdateInfo(appId);
+    const updateInfo = await this.appFileAccessor.getAppUpdateInfo(appId);
 
     if (!info) {
       throw new TranslatedError('APP_ERROR_INVALID_CONFIG', { id: appId });

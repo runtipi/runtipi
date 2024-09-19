@@ -17,8 +17,6 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@sentry/esbuild-plugin": "^2.22.4",
-    "@types/gunzip-maybe": "^1.4.2",
-    "@types/tar-fs": "^2.0.4",
     "@types/web-push": "^3.6.3",
     "dotenv-cli": "^7.4.2",
     "esbuild": "^0.23.1",
@@ -40,14 +38,12 @@
     "bullmq": "^5.13.1",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
-    "gunzip-maybe": "^1.4.2",
     "hono": "^4.6.2",
     "inversify": "^6.0.2",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.7.5",
     "source-map-support": "^0.5.21",
     "systeminformation": "^5.23.5",
-    "tar-fs": "^3.0.6",
     "web-push": "^3.6.7",
     "yaml": "^2.5.1",
     "zod": "^3.23.8"

@@ -1,6 +1,6 @@
 import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import type { IAppDataService } from '@runtipi/shared/node';
+import type { IAppDataService, IAppFileAccessor } from '@runtipi/shared/node';
 import {
   InstallAppCommand,
   ResetAppCommand,
@@ -48,6 +48,7 @@ export class AppLifecycleService {
     @inject('IAppQueries') private queries: IAppQueries,
     @inject('IEventDispatcher') private eventDispatcher: IEventDispatcher,
     @inject('IAppDataService') private appDataService: IAppDataService,
+    @inject('IAppFileAccessor') private appFileAccessor: IAppFileAccessor,
   ) {
     this.commandInvoker = new CommandInvoker();
   }
@@ -62,6 +63,7 @@ export class AppLifecycleService {
     type ReturnValue = Awaited<ReturnType<InstanceType<typeof Command>['execute']>>;
 
     const constructed = new Command({
+      appFileAccessor: this.appFileAccessor,
       queries: this.queries,
       eventDispatcher: this.eventDispatcher,
       appDataService: this.appDataService,

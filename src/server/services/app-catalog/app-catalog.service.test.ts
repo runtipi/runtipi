@@ -1,5 +1,5 @@
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import type { IAppDataService } from '@runtipi/shared/node';
+import type { IAppDataService, IAppFileAccessor } from '@runtipi/shared/node';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createApp } from '../../tests/apps.factory';
 import { mock, anyString, mockReset } from 'vitest-mock-extended';
@@ -10,11 +10,13 @@ describe('AppCatalogService', () => {
   // Prepare the mocks
   const mockQueries = mock<IAppQueries>();
   const mockAppDataService = mock<IAppDataService>();
+  const mockAppFileAccessor = mock<IAppFileAccessor>();
 
   // Prepare the container
   const container = new Container();
   container.bind<IAppQueries>('IAppQueries').toConstantValue(mockQueries);
   container.bind<IAppDataService>('IAppDataService').toConstantValue(mockAppDataService);
+  container.bind<IAppFileAccessor>('IAppFileAccessor').toConstantValue(mockAppFileAccessor);
   container.bind<IAppCatalogService>('IAppCatalogService').to(AppCatalogService);
 
   // Get the AppCatalogService

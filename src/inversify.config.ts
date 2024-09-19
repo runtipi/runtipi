@@ -2,7 +2,16 @@ import 'reflect-metadata';
 import path from 'node:path';
 import { Cache, type ICache } from '@runtipi/cache';
 import { DbClient, type IDbClient } from '@runtipi/db';
-import { AppDataService, type IAppDataService, type ILogger, Logger } from '@runtipi/shared/node';
+import {
+  AppDataService,
+  AppFileAccessor,
+  BackupManager,
+  type IAppDataService,
+  type IAppFileAccessor,
+  type IBackupManager,
+  type ILogger,
+  Logger,
+} from '@runtipi/shared/node';
 import { Container } from 'inversify';
 import { APP_DATA_DIR, DATA_DIR } from './config';
 import { type ISessionManager, SessionManager } from './server/common/session-manager';
@@ -36,8 +45,16 @@ export function createContainer() {
   );
   container.bind<IDbClient>('IDbClient').toConstantValue(dbClient);
 
+  container.bind<IBackupManager>('IBackupManager').toDynamicValue(() => {
+    return new BackupManager({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, logger });
+  });
+
   container.bind<IAppDataService>('IAppDataService').toDynamicValue(() => {
-    return new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId }, logger);
+    return new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
+  });
+
+  container.bind<IAppFileAccessor>('IAppFileAccessor').toDynamicValue(() => {
+    return new AppFileAccessor({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
   });
 
   // Repositories

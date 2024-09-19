@@ -3,7 +3,7 @@ import { EventDispatcher } from '@/server/core/EventDispatcher';
 import { AppQueries } from '@/server/queries/apps/apps.queries';
 import { createAppConfig, getAppById, insertApp } from '@/server/tests/apps.factory';
 import { type TestDatabase, clearDatabase, closeDatabase, createDatabase } from '@/server/tests/test-utils';
-import { AppDataService } from '@runtipi/shared/node';
+import { AppDataService, AppFileAccessor } from '@runtipi/shared/node';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import waitForExpect from 'wait-for-expect';
 import { StopAppCommand } from '../stop-app-command';
@@ -16,12 +16,19 @@ const cache = new CacheMock();
 const logger = new LoggerMock();
 
 const dispatcher = new EventDispatcher(logger, cache);
-const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' }, logger);
+const appDataService = new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id', logger });
+const appFileAccessor = new AppFileAccessor({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id', logger });
 let stopApp: StopAppCommand;
 
 beforeAll(async () => {
   db = await createDatabase(TEST_SUITE);
-  stopApp = new StopAppCommand({ queries: new AppQueries(db.dbClient), eventDispatcher: dispatcher, executeOtherCommand: vi.fn(), appDataService });
+  stopApp = new StopAppCommand({
+    queries: new AppQueries(db.dbClient),
+    eventDispatcher: dispatcher,
+    executeOtherCommand: vi.fn(),
+    appDataService,
+    appFileAccessor,
+  });
 });
 
 beforeEach(async () => {
