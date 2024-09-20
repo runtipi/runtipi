@@ -13,7 +13,6 @@ import type { ILogger } from '@runtipi/shared/node';
 import { extraErrorDataIntegration } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import { Queue } from 'bullmq';
-import dotenv from 'dotenv';
 import { Hono } from 'hono';
 import { setupRoutes } from './api';
 import { APP_DIR, DATA_DIR } from './config';
@@ -67,10 +66,6 @@ const main = async () => {
       );
       setupSentry(process.env.TIPI_VERSION);
     }
-
-    // Reload env variables after generating the env file
-    logger.info('Reloading env variables...');
-    dotenv.config({ path: envFile, override: true });
 
     logger.info('Generating TLS certificates...');
     await generateTlsCertificates({ domain: envMap.get('LOCAL_DOMAIN') });

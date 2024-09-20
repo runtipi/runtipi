@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -171,6 +172,8 @@ export const generateSystemEnvFile = (): Map<EnvKeys, string> => {
   );
 
   fs.writeFileSync(envFilePath, envMapToString(envMap));
+
+  dotenv.config({ path: envFilePath, override: true });
 
   return envMap;
 };
