@@ -22,7 +22,7 @@
     "esbuild": "^0.23.1",
     "knip": "^5.30.2",
     "memfs": "^4.11.2",
-    "nodemon": "^3.1.5",
+    "nodemon": "^3.1.7",
     "typescript": "^5.6.2",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.1.1"
@@ -35,7 +35,7 @@
     "@sentry/integrations": "^7.114.0",
     "@sentry/node": "^8.30.0",
     "ansi-to-html": "^0.7.2",
-    "bullmq": "^5.13.1",
+    "bullmq": "^5.13.2",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
     "hono": "^4.6.2",
