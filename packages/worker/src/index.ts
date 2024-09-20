@@ -56,7 +56,7 @@ const main = async () => {
 
     logger.info(`Running tipi-worker version: ${process.env.TIPI_VERSION}`);
     logger.info('Generating system env file...');
-    const envMap = await generateSystemEnvFile();
+    const envMap = generateSystemEnvFile();
 
     logger.info('Copying system files...');
     await copySystemFiles(envMap);
