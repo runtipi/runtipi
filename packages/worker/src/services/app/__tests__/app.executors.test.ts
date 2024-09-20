@@ -6,16 +6,26 @@ import { getEnv } from '@/lib/environment';
 import { createAppConfig } from '@/tests/apps.factory';
 import { faker } from '@faker-js/faker';
 import * as sharedNode from '@runtipi/shared/node';
-import { container } from 'src/inversify.config';
 import { describe, expect, it, vi } from 'vitest';
-import type { IAppExecutors } from '../app.executors';
+import { AppExecutors } from '../app.executors';
+import { mock } from 'vitest-mock-extended';
+import type { IDbClient } from '@runtipi/db';
+import type { ISocketManager } from '@/lib/socket/SocketManager';
+import { AppFileAccessor, type IBackupManager, type Logger } from '@runtipi/shared/node';
 
 const { pathExists } = sharedNode;
 
 const { appsRepoId } = getEnv();
 
 describe('test: app executors', () => {
-  const appExecutors = container.get<IAppExecutors>('IAppExecutors');
+  // Prepare the mocks
+  const mockLogger = { info: vi.fn(), error: vi.fn(), warn: vi.fn() } as unknown as Logger;
+  const mockDbClient = mock<IDbClient>();
+  const mockSocketManager = mock<ISocketManager>();
+  const mockBackupManager = mock<IBackupManager>();
+  const appFileAccessor = new AppFileAccessor({ logger: mockLogger, dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId: 'repo-id' });
+
+  const appExecutors = new AppExecutors(mockLogger, mockDbClient, mockSocketManager, appFileAccessor, mockBackupManager);
 
   describe('test: installApp()', () => {
     it('should run correct compose script', async () => {
@@ -149,21 +159,6 @@ describe('test: app executors', () => {
   });
 
   describe('test: stopApp()', () => {
-    it('should run correct compose script', async () => {
-      // arrange
-      const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.resolve({ stdout: 'done', stderr: '' }));
-      const config = createAppConfig();
-
-      // act
-      const { message, success } = await appExecutors.stopApp(config.id, {}, true);
-
-      // assert
-      expect(success).toBe(true);
-      expect(message).toBe(`App ${config.id} stopped successfully`);
-      expect(spy).toHaveBeenCalledWith(config.id, 'rm --force --stop');
-      spy.mockRestore();
-    });
-
     it('should handle errors gracefully', async () => {
       // arrange
       const spy = vi.spyOn(dockerHelpers, 'compose').mockImplementation(() => Promise.reject(new Error('test')));

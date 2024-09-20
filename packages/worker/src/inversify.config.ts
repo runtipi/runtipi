@@ -12,9 +12,9 @@ import { getEnv } from './lib/environment';
 
 export function createContainer() {
   try {
-    const container = new Container();
-
     generateSystemEnvFile();
+
+    const container = new Container();
 
     const { postgresHost, postgresPort, postgresDatabase, postgresPassword, postgresUsername, redisHost, redisPassword, appsRepoId } = getEnv();
 

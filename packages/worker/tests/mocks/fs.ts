@@ -1,4 +1,5 @@
 import { fs, vol } from 'memfs';
+import type { IMkdirOptions } from 'memfs/lib/node/types/options';
 
 const copyFolderRecursiveSync = (src: string, dest: string) => {
   const exists = vol.existsSync(src);
@@ -18,6 +19,15 @@ const copyFolderRecursiveSync = (src: string, dest: string) => {
 export const fsMock = {
   default: {
     ...fs,
+    readFileSync: (path: string, format: string) => {
+      return vol.readFileSync(path, format);
+    },
+    writeFileSync: (path: string, data: string) => {
+      vol.writeFileSync(path, data);
+    },
+    mkdirSync: (path: string, options: IMkdirOptions) => {
+      vol.mkdirSync(path, options);
+    },
     promises: {
       ...fs.promises,
       cp: copyFolderRecursiveSync,

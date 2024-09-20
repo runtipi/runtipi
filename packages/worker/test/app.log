@@ -1,0 +1,172 @@
+test: 2024-09-20T06:20:47.789Z - [32minfo[39m > 	Installing app Y9WTYrhmtZU2IyWHl6uEDs8gStPmDo3u as User ID: 501, Group ID: 20
+test: 2024-09-20T06:20:47.791Z - [32minfo[39m > 	Deleting app Y9WTYrhmtZU2IyWHl6uEDs8gStPmDo3u folder if exists
+test: 2024-09-20T06:20:47.791Z - [32minfo[39m > 	Creating app Y9WTYrhmtZU2IyWHl6uEDs8gStPmDo3u folder
+test: 2024-09-20T06:20:47.791Z - [32minfo[39m > 	Creating app Y9WTYrhmtZU2IyWHl6uEDs8gStPmDo3u data folder
+test: 2024-09-20T06:20:47.791Z - [32minfo[39m > 	Copying app Y9WTYrhmtZU2IyWHl6uEDs8gStPmDo3u from repo repo-id
+test: 2024-09-20T06:20:47.792Z - [32minfo[39m > 	Creating app.env file for app Y9WTYrhmtZU2IyWHl6uEDs8gStPmDo3u
+test: 2024-09-20T06:20:47.793Z - [32minfo[39m > 	Copying data dir for app Y9WTYrhmtZU2IyWHl6uEDs8gStPmDo3u
+test: 2024-09-20T06:20:47.803Z - [32minfo[39m > 	Installing app 6TUhHoHoJ1GeDkzRVqHnchEoxU8vDhnK as User ID: 501, Group ID: 20
+test: 2024-09-20T06:20:47.804Z - [32minfo[39m > 	Deleting app 6TUhHoHoJ1GeDkzRVqHnchEoxU8vDhnK folder if exists
+test: 2024-09-20T06:20:47.804Z - [32minfo[39m > 	Creating app 6TUhHoHoJ1GeDkzRVqHnchEoxU8vDhnK folder
+test: 2024-09-20T06:20:47.804Z - [32minfo[39m > 	Creating app 6TUhHoHoJ1GeDkzRVqHnchEoxU8vDhnK data folder
+test: 2024-09-20T06:20:47.804Z - [32minfo[39m > 	Copying app 6TUhHoHoJ1GeDkzRVqHnchEoxU8vDhnK from repo repo-id
+test: 2024-09-20T06:20:47.804Z - [32minfo[39m > 	Creating app.env file for app 6TUhHoHoJ1GeDkzRVqHnchEoxU8vDhnK
+test: 2024-09-20T06:20:47.805Z - [32minfo[39m > 	Copying data dir for app 6TUhHoHoJ1GeDkzRVqHnchEoxU8vDhnK
+test: 2024-09-20T06:20:47.811Z - [31merror[39m > 	An error occurred: knavishly_helpless.spx
+test: 2024-09-20T06:20:47.813Z - [32minfo[39m > 	Installing app CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn as User ID: 501, Group ID: 20
+test: 2024-09-20T06:20:47.813Z - [32minfo[39m > 	Deleting app CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn folder if exists
+test: 2024-09-20T06:20:47.813Z - [32minfo[39m > 	Creating app CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn folder
+test: 2024-09-20T06:20:47.813Z - [32minfo[39m > 	Creating app CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn data folder
+test: 2024-09-20T06:20:47.813Z - [32minfo[39m > 	Copying app CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn from repo repo-id
+test: 2024-09-20T06:20:47.814Z - [32minfo[39m > 	Creating app.env file for app CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn
+test: 2024-09-20T06:20:47.814Z - [32minfo[39m > 	Copying data dir for app CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn
+test: 2024-09-20T06:20:47.828Z - [31merror[39m > 	An error occurred: Error with your custom app: Command failed: docker-compose --env-file /app-data/CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn/app.env --project-name CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn -f /data/apps/CD2BnaSoZl2HtKwn45mUkTBfqKWY4Mxn/docker-compose.yml -f /data/repos/repo-id/apps/docker-compose.common.yml up --detach --force-recreate --remove-orphans --pull always
+/bin/sh: docker-compose: command not found
+. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.
+test: 2024-09-20T06:20:47.830Z - [32minfo[39m > 	Installing app mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88 as User ID: 501, Group ID: 20
+test: 2024-09-20T06:20:47.830Z - [32minfo[39m > 	Deleting app mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88 folder if exists
+test: 2024-09-20T06:20:47.831Z - [32minfo[39m > 	Creating app mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88 folder
+test: 2024-09-20T06:20:47.831Z - [32minfo[39m > 	Creating app mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88 data folder
+test: 2024-09-20T06:20:47.831Z - [32minfo[39m > 	Copying app mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88 from repo repo-id
+test: 2024-09-20T06:20:47.831Z - [32minfo[39m > 	Creating app.env file for app mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88
+test: 2024-09-20T06:20:47.832Z - [32minfo[39m > 	Copying data dir for app mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88
+test: 2024-09-20T06:20:47.841Z - [31merror[39m > 	An error occurred: Error with your custom app: Command failed: docker-compose --env-file /app-data/mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88/app.env --project-name mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88 -f /data/apps/mhEcJ6HP5hIhqAsEzqhLU2PUZWAUrF88/docker-compose.yml -f /data/repos/repo-id/apps/docker-compose.common.yml up --detach --force-recreate --remove-orphans --pull always
+/bin/sh: docker-compose: command not found
+. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.
+test: 2024-09-20T06:20:47.842Z - [32minfo[39m > 	Installing app IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps as User ID: 501, Group ID: 20
+test: 2024-09-20T06:20:47.842Z - [32minfo[39m > 	Deleting app IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps folder if exists
+test: 2024-09-20T06:20:47.843Z - [32minfo[39m > 	Creating app IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps folder
+test: 2024-09-20T06:20:47.843Z - [32minfo[39m > 	Creating app IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps data folder
+test: 2024-09-20T06:20:47.843Z - [32minfo[39m > 	Copying app IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps from repo repo-id
+test: 2024-09-20T06:20:47.843Z - [32minfo[39m > 	Creating app.env file for app IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps
+test: 2024-09-20T06:20:47.844Z - [32minfo[39m > 	Copying data dir for app IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps
+test: 2024-09-20T06:20:47.859Z - [31merror[39m > 	An error occurred: Error with your custom app: Command failed: docker-compose --env-file /app-data/IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps/app.env --project-name IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps -f /data/apps/IBUJPdLQBqEvh7UbFIhGdFHul5Ru8Bps/docker-compose.yml -f /data/repos/repo-id/apps/docker-compose.common.yml up --detach --force-recreate --remove-orphans --pull always
+/bin/sh: docker-compose: command not found
+. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.
+test: 2024-09-20T06:20:47.861Z - [32minfo[39m > 	Installing app YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB as User ID: 501, Group ID: 20
+test: 2024-09-20T06:20:47.861Z - [32minfo[39m > 	Deleting app YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB folder if exists
+test: 2024-09-20T06:20:47.861Z - [32minfo[39m > 	Creating app YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB folder
+test: 2024-09-20T06:20:47.861Z - [32minfo[39m > 	Creating app YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB data folder
+test: 2024-09-20T06:20:47.862Z - [32minfo[39m > 	Copying app YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB from repo repo-id
+test: 2024-09-20T06:20:47.862Z - [32minfo[39m > 	Creating app.env file for app YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB
+test: 2024-09-20T06:20:47.863Z - [32minfo[39m > 	Copying data dir for app YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB
+test: 2024-09-20T06:20:47.875Z - [31merror[39m > 	An error occurred: Error with your custom app: Command failed: docker-compose --env-file /app-data/YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB/app.env --project-name YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB -f /data/apps/YKhI2ZsN8f3rqebrw0bsWhTfjyg5STAB/docker-compose.yml -f /data/repos/repo-id/apps/docker-compose.common.yml up --detach --force-recreate --remove-orphans --pull always
+/bin/sh: docker-compose: command not found
+. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.
+test: 2024-09-20T06:20:47.877Z - [32minfo[39m > 	Installing app ttIoEmIiHVFCrDSOrCQ1uH82zhjPJUDw as User ID: 501, Group ID: 20
+test: 2024-09-20T06:20:47.877Z - [32minfo[39m > 	Deleting app ttIoEmIiHVFCrDSOrCQ1uH82zhjPJUDw folder if exists
+test: 2024-09-20T06:20:47.877Z - [32minfo[39m > 	Creating app ttIoEmIiHVFCrDSOrCQ1uH82zhjPJUDw folder
+test: 2024-09-20T06:20:47.877Z - [32minfo[39m > 	Creating app ttIoEmIiHVFCrDSOrCQ1uH82zhjPJUDw data folder
+test: 2024-09-20T06:20:47.877Z - [32minfo[39m > 	Copying app ttIoEmIiHVFCrDSOrCQ1uH82zhjPJUDw from repo repo-id
+test: 2024-09-20T06:20:47.877Z - [32minfo[39m > 	Creating app.env file for app ttIoEmIiHVFCrDSOrCQ1uH82zhjPJUDw
+test: 2024-09-20T06:20:47.878Z - [32minfo[39m > 	Copying data dir for app ttIoEmIiHVFCrDSOrCQ1uH82zhjPJUDw
+test: 2024-09-20T06:20:47.883Z - [31merror[39m > 	An error occurred: test
+test: 2024-09-20T06:20:47.883Z - [32minfo[39m > 	Installing app inexistant as User ID: 501, Group ID: 20
+test: 2024-09-20T06:20:47.884Z - [31merror[39m > 	App inexistant not found in repo repo-id
+test: 2024-09-20T06:20:47.884Z - [31merror[39m > 	An error occurred: App inexistant not found in repo repo-id
+test: 2024-09-20T06:20:47.885Z - [32minfo[39m > 	Stopping app yBCk4olz18Ff01uzICBYMsrFS9imSAll
+test: 2024-09-20T06:20:47.890Z - [32minfo[39m > 	App yBCk4olz18Ff01uzICBYMsrFS9imSAll stopped
+test: 2024-09-20T06:20:47.890Z - [31merror[39m > 	An error occurred: this.dbClient.db.update is not a function
+test: 2024-09-20T06:20:47.897Z - [32minfo[39m > 	Stopping app vBwKnrOc6BxhMqR7SVG3haLvwpz3xBa4
+test: 2024-09-20T06:20:47.901Z - [31merror[39m > 	An error occurred: test
+test: 2024-09-20T06:20:47.909Z - [32minfo[39m > 	Stopping app 4lJkxIAl0NSKJ0tjnmrM8VfPqrw2VKzn
+test: 2024-09-20T06:20:47.913Z - [32minfo[39m > 	App 4lJkxIAl0NSKJ0tjnmrM8VfPqrw2VKzn restarted
+test: 2024-09-20T06:20:47.920Z - [32minfo[39m > 	Stopping app tZKd5Xc4rnMeQQy9VYp84ppOmFOtCh7G
+test: 2024-09-20T06:20:47.920Z - [31merror[39m > 	An error occurred: test
+test: 2024-09-20T06:20:47.922Z - [32minfo[39m > 	Updating app VpwdD51cYLl9xIODJJPMoioxEMQEWKpy
+test: 2024-09-20T06:20:47.927Z - [33mwarn[39m > 	App VpwdD51cYLl9xIODJJPMoioxEMQEWKpy has likely a broken docker-compose.yml file. Continuing with update...
+test: 2024-09-20T06:20:47.928Z - [32minfo[39m > 	Deleting app VpwdD51cYLl9xIODJJPMoioxEMQEWKpy folder if exists
+test: 2024-09-20T06:20:47.928Z - [32minfo[39m > 	Creating app VpwdD51cYLl9xIODJJPMoioxEMQEWKpy folder
+test: 2024-09-20T06:20:47.928Z - [32minfo[39m > 	Creating app VpwdD51cYLl9xIODJJPMoioxEMQEWKpy data folder
+test: 2024-09-20T06:20:47.928Z - [32minfo[39m > 	Copying app VpwdD51cYLl9xIODJJPMoioxEMQEWKpy from repo repo-id
+test: 2024-09-20T06:20:47.935Z - [32minfo[39m > 	Updating app DMKVKCe1Id98x573wqIC5IE7j3yN6xlB
+test: 2024-09-20T06:20:47.944Z - [32minfo[39m > 	Deleting app DMKVKCe1Id98x573wqIC5IE7j3yN6xlB folder if exists
+test: 2024-09-20T06:20:47.945Z - [32minfo[39m > 	Creating app DMKVKCe1Id98x573wqIC5IE7j3yN6xlB folder
+test: 2024-09-20T06:20:47.945Z - [32minfo[39m > 	Creating app DMKVKCe1Id98x573wqIC5IE7j3yN6xlB data folder
+test: 2024-09-20T06:20:47.945Z - [32minfo[39m > 	Copying app DMKVKCe1Id98x573wqIC5IE7j3yN6xlB from repo repo-id
+test: 2024-09-20T06:21:11.941Z - [32minfo[39m > 	Installing app qvqjBmCl3a4Abr7wBAtyo9x9iWSllOt0 as User ID: 501, Group ID: 20
+test: 2024-09-20T06:21:11.942Z - [32minfo[39m > 	Deleting app qvqjBmCl3a4Abr7wBAtyo9x9iWSllOt0 folder if exists
+test: 2024-09-20T06:21:11.942Z - [32minfo[39m > 	Creating app qvqjBmCl3a4Abr7wBAtyo9x9iWSllOt0 folder
+test: 2024-09-20T06:21:11.942Z - [32minfo[39m > 	Creating app qvqjBmCl3a4Abr7wBAtyo9x9iWSllOt0 data folder
+test: 2024-09-20T06:21:11.943Z - [32minfo[39m > 	Copying app qvqjBmCl3a4Abr7wBAtyo9x9iWSllOt0 from repo repo-id
+test: 2024-09-20T06:21:11.944Z - [32minfo[39m > 	Creating app.env file for app qvqjBmCl3a4Abr7wBAtyo9x9iWSllOt0
+test: 2024-09-20T06:21:11.945Z - [32minfo[39m > 	Copying data dir for app qvqjBmCl3a4Abr7wBAtyo9x9iWSllOt0
+test: 2024-09-20T06:21:11.954Z - [32minfo[39m > 	Installing app rRvq1SxTrR6nykHoxkmXFTgr02U6pUy4 as User ID: 501, Group ID: 20
+test: 2024-09-20T06:21:11.954Z - [32minfo[39m > 	Deleting app rRvq1SxTrR6nykHoxkmXFTgr02U6pUy4 folder if exists
+test: 2024-09-20T06:21:11.954Z - [32minfo[39m > 	Creating app rRvq1SxTrR6nykHoxkmXFTgr02U6pUy4 folder
+test: 2024-09-20T06:21:11.954Z - [32minfo[39m > 	Creating app rRvq1SxTrR6nykHoxkmXFTgr02U6pUy4 data folder
+test: 2024-09-20T06:21:11.954Z - [32minfo[39m > 	Copying app rRvq1SxTrR6nykHoxkmXFTgr02U6pUy4 from repo repo-id
+test: 2024-09-20T06:21:11.954Z - [32minfo[39m > 	Creating app.env file for app rRvq1SxTrR6nykHoxkmXFTgr02U6pUy4
+test: 2024-09-20T06:21:11.955Z - [32minfo[39m > 	Copying data dir for app rRvq1SxTrR6nykHoxkmXFTgr02U6pUy4
+test: 2024-09-20T06:21:11.963Z - [31merror[39m > 	An error occurred: attribute_tough_cup.mpg
+test: 2024-09-20T06:21:11.965Z - [32minfo[39m > 	Installing app z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5 as User ID: 501, Group ID: 20
+test: 2024-09-20T06:21:11.965Z - [32minfo[39m > 	Deleting app z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5 folder if exists
+test: 2024-09-20T06:21:11.965Z - [32minfo[39m > 	Creating app z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5 folder
+test: 2024-09-20T06:21:11.965Z - [32minfo[39m > 	Creating app z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5 data folder
+test: 2024-09-20T06:21:11.965Z - [32minfo[39m > 	Copying app z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5 from repo repo-id
+test: 2024-09-20T06:21:11.966Z - [32minfo[39m > 	Creating app.env file for app z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5
+test: 2024-09-20T06:21:11.966Z - [32minfo[39m > 	Copying data dir for app z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5
+test: 2024-09-20T06:21:11.975Z - [31merror[39m > 	An error occurred: Error with your custom app: Command failed: docker-compose --env-file /app-data/z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5/app.env --project-name z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5 -f /data/apps/z6D5jBOArHW6Xg7vgd73So4nIw4jOmK5/docker-compose.yml -f /data/repos/repo-id/apps/docker-compose.common.yml up --detach --force-recreate --remove-orphans --pull always
+/bin/sh: docker-compose: command not found
+. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.
+test: 2024-09-20T06:21:11.977Z - [32minfo[39m > 	Installing app BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw as User ID: 501, Group ID: 20
+test: 2024-09-20T06:21:11.977Z - [32minfo[39m > 	Deleting app BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw folder if exists
+test: 2024-09-20T06:21:11.977Z - [32minfo[39m > 	Creating app BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw folder
+test: 2024-09-20T06:21:11.977Z - [32minfo[39m > 	Creating app BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw data folder
+test: 2024-09-20T06:21:11.977Z - [32minfo[39m > 	Copying app BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw from repo repo-id
+test: 2024-09-20T06:21:11.978Z - [32minfo[39m > 	Creating app.env file for app BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw
+test: 2024-09-20T06:21:11.978Z - [32minfo[39m > 	Copying data dir for app BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw
+test: 2024-09-20T06:21:11.986Z - [31merror[39m > 	An error occurred: Error with your custom app: Command failed: docker-compose --env-file /app-data/BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw/app.env --project-name BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw -f /data/apps/BjsSEthlPFuJrzdOMx52xqZvqzdHDtkw/docker-compose.yml -f /data/repos/repo-id/apps/docker-compose.common.yml up --detach --force-recreate --remove-orphans --pull always
+/bin/sh: docker-compose: command not found
+. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.
+test: 2024-09-20T06:21:11.987Z - [32minfo[39m > 	Installing app oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh as User ID: 501, Group ID: 20
+test: 2024-09-20T06:21:11.988Z - [32minfo[39m > 	Deleting app oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh folder if exists
+test: 2024-09-20T06:21:11.988Z - [32minfo[39m > 	Creating app oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh folder
+test: 2024-09-20T06:21:11.988Z - [32minfo[39m > 	Creating app oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh data folder
+test: 2024-09-20T06:21:11.988Z - [32minfo[39m > 	Copying app oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh from repo repo-id
+test: 2024-09-20T06:21:11.988Z - [32minfo[39m > 	Creating app.env file for app oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh
+test: 2024-09-20T06:21:11.989Z - [32minfo[39m > 	Copying data dir for app oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh
+test: 2024-09-20T06:21:12.003Z - [31merror[39m > 	An error occurred: Error with your custom app: Command failed: docker-compose --env-file /app-data/oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh/app.env --project-name oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh -f /data/apps/oQCD8RTl2OuLLnGzaSTKGCQumrZ8vweh/docker-compose.yml -f /data/repos/repo-id/apps/docker-compose.common.yml up --detach --force-recreate --remove-orphans --pull always
+/bin/sh: docker-compose: command not found
+. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.
+test: 2024-09-20T06:21:12.005Z - [32minfo[39m > 	Installing app FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP as User ID: 501, Group ID: 20
+test: 2024-09-20T06:21:12.005Z - [32minfo[39m > 	Deleting app FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP folder if exists
+test: 2024-09-20T06:21:12.005Z - [32minfo[39m > 	Creating app FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP folder
+test: 2024-09-20T06:21:12.006Z - [32minfo[39m > 	Creating app FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP data folder
+test: 2024-09-20T06:21:12.006Z - [32minfo[39m > 	Copying app FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP from repo repo-id
+test: 2024-09-20T06:21:12.006Z - [32minfo[39m > 	Creating app.env file for app FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP
+test: 2024-09-20T06:21:12.007Z - [32minfo[39m > 	Copying data dir for app FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP
+test: 2024-09-20T06:21:12.016Z - [31merror[39m > 	An error occurred: Error with your custom app: Command failed: docker-compose --env-file /app-data/FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP/app.env --project-name FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP -f /data/apps/FZ73V4KBLVdMUmWSW67qVZo7c7n8DvhP/docker-compose.yml -f /data/repos/repo-id/apps/docker-compose.common.yml up --detach --force-recreate --remove-orphans --pull always
+/bin/sh: docker-compose: command not found
+. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.
+test: 2024-09-20T06:21:12.017Z - [32minfo[39m > 	Installing app DL4VDAG1NN37sAasmdLiTWDbhg16o3SU as User ID: 501, Group ID: 20
+test: 2024-09-20T06:21:12.017Z - [32minfo[39m > 	Deleting app DL4VDAG1NN37sAasmdLiTWDbhg16o3SU folder if exists
+test: 2024-09-20T06:21:12.017Z - [32minfo[39m > 	Creating app DL4VDAG1NN37sAasmdLiTWDbhg16o3SU folder
+test: 2024-09-20T06:21:12.017Z - [32minfo[39m > 	Creating app DL4VDAG1NN37sAasmdLiTWDbhg16o3SU data folder
+test: 2024-09-20T06:21:12.017Z - [32minfo[39m > 	Copying app DL4VDAG1NN37sAasmdLiTWDbhg16o3SU from repo repo-id
+test: 2024-09-20T06:21:12.018Z - [32minfo[39m > 	Creating app.env file for app DL4VDAG1NN37sAasmdLiTWDbhg16o3SU
+test: 2024-09-20T06:21:12.018Z - [32minfo[39m > 	Copying data dir for app DL4VDAG1NN37sAasmdLiTWDbhg16o3SU
+test: 2024-09-20T06:21:12.027Z - [31merror[39m > 	An error occurred: test
+test: 2024-09-20T06:21:12.028Z - [32minfo[39m > 	Installing app inexistant as User ID: 501, Group ID: 20
+test: 2024-09-20T06:21:12.028Z - [31merror[39m > 	App inexistant not found in repo repo-id
+test: 2024-09-20T06:21:12.028Z - [31merror[39m > 	An error occurred: App inexistant not found in repo repo-id
+test: 2024-09-20T06:21:12.030Z - [32minfo[39m > 	Stopping app kTlsRTZu3YpvXsljjhbBOthuF8d592oU
+test: 2024-09-20T06:21:12.034Z - [32minfo[39m > 	App kTlsRTZu3YpvXsljjhbBOthuF8d592oU stopped
+test: 2024-09-20T06:21:12.034Z - [31merror[39m > 	An error occurred: this.dbClient.db.update is not a function
+test: 2024-09-20T06:21:12.040Z - [32minfo[39m > 	Stopping app DwbwWevSGr2SJ2uz2sOdA5TytJWudaW2
+test: 2024-09-20T06:21:12.045Z - [31merror[39m > 	An error occurred: test
+test: 2024-09-20T06:21:12.051Z - [32minfo[39m > 	Stopping app MOaBg3sbC50xfvloTzTgmq0ICOXTEU2T
+test: 2024-09-20T06:21:12.057Z - [32minfo[39m > 	App MOaBg3sbC50xfvloTzTgmq0ICOXTEU2T restarted
+test: 2024-09-20T06:21:12.063Z - [32minfo[39m > 	Stopping app SB9hjU1FsnpnNSKv09DlkvszbHY0ecVS
+test: 2024-09-20T06:21:12.063Z - [31merror[39m > 	An error occurred: test
+test: 2024-09-20T06:21:12.064Z - [32minfo[39m > 	Updating app xCgJTFyLKaK197cbj4kZ9CFTrMwenmO8
+test: 2024-09-20T06:21:12.070Z - [33mwarn[39m > 	App xCgJTFyLKaK197cbj4kZ9CFTrMwenmO8 has likely a broken docker-compose.yml file. Continuing with update...
+test: 2024-09-20T06:21:12.070Z - [32minfo[39m > 	Deleting app xCgJTFyLKaK197cbj4kZ9CFTrMwenmO8 folder if exists
+test: 2024-09-20T06:21:12.070Z - [32minfo[39m > 	Creating app xCgJTFyLKaK197cbj4kZ9CFTrMwenmO8 folder
+test: 2024-09-20T06:21:12.070Z - [32minfo[39m > 	Creating app xCgJTFyLKaK197cbj4kZ9CFTrMwenmO8 data folder
+test: 2024-09-20T06:21:12.070Z - [32minfo[39m > 	Copying app xCgJTFyLKaK197cbj4kZ9CFTrMwenmO8 from repo repo-id
+test: 2024-09-20T06:21:12.079Z - [32minfo[39m > 	Updating app Ma4v7hi18PZTpuZfD1O1m0A2dVsjWtXk
+test: 2024-09-20T06:21:12.085Z - [32minfo[39m > 	Deleting app Ma4v7hi18PZTpuZfD1O1m0A2dVsjWtXk folder if exists
+test: 2024-09-20T06:21:12.085Z - [32minfo[39m > 	Creating app Ma4v7hi18PZTpuZfD1O1m0A2dVsjWtXk folder
+test: 2024-09-20T06:21:12.085Z - [32minfo[39m > 	Creating app Ma4v7hi18PZTpuZfD1O1m0A2dVsjWtXk data folder
+test: 2024-09-20T06:21:12.085Z - [32minfo[39m > 	Copying app Ma4v7hi18PZTpuZfD1O1m0A2dVsjWtXk from repo repo-id

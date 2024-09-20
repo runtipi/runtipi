@@ -22,7 +22,9 @@ beforeEach(() => {
 describe('generateSystemEnvFile()', async () => {
   it("should create an empty env file and settigns file if they don't exist", async () => {
     // act
-    await generateSystemEnvFile().catch(() => {});
+    try {
+      generateSystemEnvFile();
+    } catch (err) {}
 
     // assert
     const envFileExists = fs.existsSync(path.join(DATA_DIR, '.env'));
@@ -39,9 +41,11 @@ describe('generateSystemEnvFile()', async () => {
     envMap.clear();
 
     // act
-    await generateSystemEnvFile().catch((err) => {
-      expect(err.message).toBe('ROOT_FOLDER_HOST not set in .env file');
-    });
+    try {
+      generateSystemEnvFile();
+    } catch (err) {
+      expect((err as Error).message).toBe('ROOT_FOLDER_HOST not set in .env file');
+    }
   });
 
   it('should throw an error if INTERNAL_IP is not set in the env file', async () => {
@@ -51,9 +55,11 @@ describe('generateSystemEnvFile()', async () => {
     prepareEnvFile();
 
     // act
-    await generateSystemEnvFile().catch((err) => {
-      expect(err.message).toBe('INTERNAL_IP not set in .env file');
-    });
+    try {
+      generateSystemEnvFile();
+    } catch (err) {
+      expect((err as Error).message).toBe('INTERNAL_IP not set in .env file');
+    }
   });
 
   it('should successfully generate the system env file with default values', async () => {
@@ -61,7 +67,7 @@ describe('generateSystemEnvFile()', async () => {
     prepareEnvFile();
 
     // act
-    const generated = await generateSystemEnvFile();
+    const generated = generateSystemEnvFile();
 
     // assert
     expect(generated.get('APPS_REPO_ID')).toBe('29ca930bfdaffa1dfabf5726336380ede7066bc53297e3c0c868b27c97282903');
@@ -93,7 +99,7 @@ describe('generateSystemEnvFile()', async () => {
     );
 
     // act
-    const generated = await generateSystemEnvFile();
+    const generated = generateSystemEnvFile();
 
     // assert
     expect(generated.get('APPS_REPO_URL')).toBe('https://github.com/runtipi/runtipi-appstore');
@@ -111,7 +117,7 @@ describe('generateSystemEnvFile()', async () => {
     );
 
     // act
-    const generated = await generateSystemEnvFile();
+    const generated = generateSystemEnvFile();
 
     // assert
     expect(generated.get('APPS_REPO_URL')).toBe(url);
@@ -124,7 +130,7 @@ describe('generateSystemEnvFile()', async () => {
     prepareEnvFile();
 
     // act
-    const generated = await generateSystemEnvFile();
+    const generated = generateSystemEnvFile();
 
     // assert
     expect(generated.get('JWT_SECRET')).toBe(secret);

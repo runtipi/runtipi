@@ -50,7 +50,7 @@ const getSeed = (): string => {
   if (!fs.existsSync(seedFilePath)) {
     throw new Error('Seed file not found');
   }
-  return readFileSync(seedFilePath, 'utf-8');
+  return fs.readFileSync(seedFilePath, 'utf-8');
 };
 
 /**
@@ -72,7 +72,7 @@ const generateSeed = () => {
   if (!fs.existsSync(seedFilePath)) {
     const randomBytes = crypto.randomBytes(32);
     const seed = randomBytes.toString('hex');
-    writeFileSync(seedFilePath, seed);
+    fs.writeFileSync(seedFilePath, seed);
   }
 };
 
@@ -91,27 +91,26 @@ const getArchitecture = () => {
 /**
  * Generates a valid .env file from the settings.json file
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 export const generateSystemEnvFile = (): Map<EnvKeys, string> => {
-  mkdirSync(path.join(DATA_DIR, 'state'), { recursive: true });
+  fs.mkdirSync(path.join(DATA_DIR, 'state'), { recursive: true });
   const settingsFilePath = path.join(DATA_DIR, 'state', 'settings.json');
   const envFilePath = path.join(DATA_DIR, '.env');
 
   if (!fs.existsSync(envFilePath)) {
-    writeFileSync(envFilePath, '');
+    fs.writeFileSync(envFilePath, '');
   }
 
-  const envFile = readFileSync(envFilePath, 'utf-8');
+  const envFile = fs.readFileSync(envFilePath, 'utf-8');
 
   const envMap: Map<EnvKeys, string> = envStringToMap(envFile);
   envMap.set('NODE_ENV', process.env.NODE_ENV || 'production');
 
   if (!fs.existsSync(settingsFilePath)) {
-    writeFileSync(settingsFilePath, JSON.stringify({}));
+    fs.writeFileSync(settingsFilePath, JSON.stringify({}));
   }
 
-  const settingsFile = readFileSync(settingsFilePath, 'utf-8');
+  const settingsFile = fs.readFileSync(settingsFilePath, 'utf-8');
 
   const settings = settingsSchema.safeParse(JSON.parse(settingsFile));
 
@@ -171,7 +170,7 @@ export const generateSystemEnvFile = (): Map<EnvKeys, string> => {
     typeof data.persistTraefikConfig === 'boolean' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
 
-  writeFileSync(envFilePath, envMapToString(envMap));
+  fs.writeFileSync(envFilePath, envMapToString(envMap));
 
   return envMap;
 };

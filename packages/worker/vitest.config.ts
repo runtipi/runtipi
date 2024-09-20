@@ -8,5 +8,6 @@ export default defineConfig({
   test: {
     setupFiles: ['./tests/vite.setup.ts'],
     coverage: { all: true, reporter: ['lcov', 'text-summary'] },
+    reporters: ['default'],
   },
 });
