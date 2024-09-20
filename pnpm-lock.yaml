@@ -60,8 +60,8 @@ importers:
         specifier: ^8.30.0
         version: 8.30.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.53.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(next@14.2.12(@babel/core@7.25.2)(@opentelemetry/api@1.9.0)(@playwright/test@1.47.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.79.1))(react@18.3.1)(webpack@5.94.0)
       '@tabler/core':
-        specifier: 1.0.0-beta20
-        version: 1.0.0-beta20
+        specifier: 1.0.0-beta21
+        version: 1.0.0-beta21
       '@tabler/icons-react':
         specifier: ^3.17.0
         version: 3.17.0(react@18.3.1)
@@ -2136,8 +2136,8 @@ packages:
   '@swc/helpers@0.5.5':
     resolution: {integrity: sha512-KGYxvIOXcceOAbEk4bi/dVLEK9z8sZ0uBB3Il5b1rhfClSpcX0yfRO0KmTkqR2cnQDymwLB+25ZyMzICg/cm/A==}
 
-  '@tabler/core@1.0.0-beta20':
-    resolution: {integrity: sha512-OzKpur+Ug7e+HMbNJrMcSuWZGUsJTvu7HYboBNRE8qyo1RKIWqvwL5YewKBJ+odW5pDOqBPzbsS4je3EBQQxHw==}
+  '@tabler/core@1.0.0-beta21':
+    resolution: {integrity: sha512-9ZKu38BScc0eHruhX/SlVDSiXenBFSgBp2WDq6orkuC8J/1yutKDt7CdXuJpBwkiADEk5yqYV31Ku+CnhwOc3Q==}
     engines: {node: '>=18'}
     peerDependencies:
       '@melloware/coloris': ^0.19.1
@@ -2155,7 +2155,7 @@ packages:
       nouislider: ^15.7.0
       plyr: ^3.7.8
       star-rating.js: ^4.3.0
-      tinymce: ^6.4.2
+      tinymce: ^6.4.2 || ^7.0.0
       tom-select: ^2.2.2
     peerDependenciesMeta:
       '@melloware/coloris':
@@ -2197,9 +2197,6 @@ packages:
     resolution: {integrity: sha512-Ndm9Htv7KpIU1PYYrzs5EMhyA3aZGcgaxUp9Q1XOxcRZ+I0X+Ub2WS5f4bkRyDdL1s0++k2T9XRgmg2pG113sw==}
     peerDependencies:
       react: '>= 16'
-
-  '@tabler/icons@2.47.0':
-    resolution: {integrity: sha512-4w5evLh+7FUUiA1GucvGj2ReX2TvOjEr4ejXdwL/bsjoSkof6r1gQmzqI+VHrE2CpJpB3al7bCTulOkFa/RcyA==}
 
   '@tabler/icons@3.17.0':
     resolution: {integrity: sha512-sCSfAQ0w93KSnSL7tS08n73CdIKpuHP8foeLMWgDKiZaCs8ZE//N3ytazCk651ZtruTtByI3b+ZDj7nRf+hHvA==}
@@ -2649,8 +2646,8 @@ packages:
   bn.js@4.12.0:
     resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
 
-  bootstrap@5.3.1:
-    resolution: {integrity: sha512-jzwza3Yagduci2x0rr9MeFSORjcHpt0lRZukZPZQJT1Dth5qzV7XcgGqYzi39KGAVYR8QEDVoO0ubFKOxzMG+g==}
+  bootstrap@5.3.3:
+    resolution: {integrity: sha512-8HLCdWgyoMguSO9o+aH+iuZ+aht+mzW0u3HIMzVu7Srrpv7EBBxTnrFlSCskwdY1+EOFQSm7uMJhNQHkdPcmjg==}
     peerDependencies:
       '@popperjs/core': ^2.11.8
 
@@ -6871,18 +6868,16 @@ snapshots:
       '@swc/counter': 0.1.3
       tslib: 2.7.0
 
-  '@tabler/core@1.0.0-beta20':
+  '@tabler/core@1.0.0-beta21':
     dependencies:
       '@popperjs/core': 2.11.8
-      '@tabler/icons': 2.47.0
-      bootstrap: 5.3.1(@popperjs/core@2.11.8)
+      '@tabler/icons': 3.17.0
+      bootstrap: 5.3.3(@popperjs/core@2.11.8)
 
   '@tabler/icons-react@3.17.0(react@18.3.1)':
     dependencies:
       '@tabler/icons': 3.17.0
       react: 18.3.1
-
-  '@tabler/icons@2.47.0': {}
 
   '@tabler/icons@3.17.0': {}
 
@@ -7411,7 +7406,7 @@ snapshots:
 
   bn.js@4.12.0: {}
 
-  bootstrap@5.3.1(@popperjs/core@2.11.8):
+  bootstrap@5.3.3(@popperjs/core@2.11.8):
     dependencies:
       '@popperjs/core': 2.11.8
 
