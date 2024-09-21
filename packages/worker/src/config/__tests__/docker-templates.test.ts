@@ -49,6 +49,7 @@ describe('getDockerCompose', async () => {
           { containerPort: 3000, hostPort: 4444, tcp: true },
           { containerPort: 3001, hostPort: 4445, udp: true },
           { containerPort: 3002, hostPort: 4446 },
+          { containerPort: 3003, hostPort: 4447, interface: '0.0.0.0' },
         ],
       },
     ] satisfies ServiceInput[];
@@ -101,6 +102,7 @@ describe('getDockerCompose', async () => {
             - 4444:3000/tcp
             - 4445:3001/udp
             - 4446:3002
+            - 0.0.0.0:4447:3003
           depends_on:
             - ${serviceName1}
       networks:
