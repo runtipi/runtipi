@@ -5,6 +5,7 @@ interface ServicePort {
   hostPort: number | string;
   tcp?: boolean;
   udp?: boolean;
+  interface?: string;
 }
 
 interface ServiceVolume {
@@ -126,17 +127,23 @@ export class ServiceBuilder {
       this.service.ports = [];
     }
 
+    let port_string = `${port.hostPort}:${port.containerPort}`;
+
+    if (port.interface) {
+      port_string = `${port.interface}:${port_string}`;
+    }
+
     if (!port.tcp && !port.udp) {
-      this.service.ports.push(`${port.hostPort}:${port.containerPort}`);
+      this.service.ports.push(port_string);
       return this;
     }
 
     if (port.tcp) {
-      this.service.ports.push(`${port.hostPort}:${port.containerPort}/tcp`);
+      this.service.ports.push(`${port_string}/tcp`);
     }
 
     if (port.udp) {
-      this.service.ports.push(`${port.hostPort}:${port.containerPort}/udp`);
+      this.service.ports.push(`${port_string}/udp`);
     }
 
     return this;
