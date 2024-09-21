@@ -49,7 +49,7 @@ describe('getDockerCompose', async () => {
           { containerPort: 3000, hostPort: 4444, tcp: true },
           { containerPort: 3001, hostPort: 4445, udp: true },
           { containerPort: 3002, hostPort: 4446 },
-          { containerPort: 3003, hostPort: 4447, interface: "0.0.0.0" },
+          { containerPort: 3003, hostPort: 4447, interface: '0.0.0.0' },
         ],
       },
     ] satisfies ServiceInput[];

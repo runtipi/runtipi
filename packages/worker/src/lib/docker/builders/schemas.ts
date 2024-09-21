@@ -30,7 +30,7 @@ export const serviceSchema = z.object({
         hostPort: z.number(),
         udp: z.boolean().optional(),
         tcp: z.boolean().optional(),
-        interface: z.string().optional()
+        interface: z.string().optional(),
       }),
     )
     .optional(),
