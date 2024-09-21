@@ -28,17 +28,26 @@ export function createContainer() {
 
     container.bind<ISocketManager>('ISocketManager').to(SocketManager).inSingletonScope();
 
-    container.bind<IAppFileAccessor>('IAppFileAccessor').toDynamicValue(() => {
-      return new AppFileAccessor({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
-    });
+    container
+      .bind<IAppFileAccessor>('IAppFileAccessor')
+      .toDynamicValue(() => {
+        return new AppFileAccessor({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
+      })
+      .inSingletonScope();
 
-    container.bind<IAppDataService>('IAppDataService').toDynamicValue(() => {
-      return new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
-    });
+    container
+      .bind<IAppDataService>('IAppDataService')
+      .toDynamicValue(() => {
+        return new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
+      })
+      .inSingletonScope();
 
-    container.bind<IBackupManager>('IBackupManager').toDynamicValue(() => {
-      return new BackupManager({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, logger });
-    });
+    container
+      .bind<IBackupManager>('IBackupManager')
+      .toDynamicValue(() => {
+        return new BackupManager({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, logger });
+      })
+      .inSingletonScope();
 
     container
       .bind<IDbClient>('IDbClient')
@@ -56,9 +65,12 @@ export function createContainer() {
       })
       .inSingletonScope();
 
-    container.bind<IMigrator>('IMigrator').toDynamicValue((context) => {
-      return new Migrator(context.container.get<ILogger>('ILogger'));
-    });
+    container
+      .bind<IMigrator>('IMigrator')
+      .toDynamicValue((context) => {
+        return new Migrator(context.container.get<ILogger>('ILogger'));
+      })
+      .inSingletonScope();
 
     container.bind<IAppExecutors>('IAppExecutors').to(AppExecutors);
 

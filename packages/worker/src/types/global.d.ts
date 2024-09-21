@@ -8,6 +8,5 @@ namespace NodeJS {
     POSTGRES_PORT: string;
     POSTGRES_USERNAME: string;
     POSTGRES_DBNAME: string;
-    APPS_REPO_ID: string;
   }
 }
