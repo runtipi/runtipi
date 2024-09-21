@@ -62,8 +62,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.create-tag.outputs.tagname }},ghcr.io/${{ github.repository_owner }}/runtipi:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   build-cli:
     runs-on: ubuntu-latest
