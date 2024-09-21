@@ -101,7 +101,7 @@ export class AppFileAccessor {
         }
       }
     } catch (error) {
-      this.logger.error(`Error getting installed app info for ${id}: ${error}`);
+      return null;
     }
   }
 
