@@ -6,10 +6,10 @@ import type { LinkInfo } from '@runtipi/shared';
 import { inject, injectable } from 'inversify';
 
 export interface ICustomLinksService {
-  add(link: LinkInfo, userId: number): Promise<Link | undefined>;
-  edit(link: LinkInfo, userId: number): Promise<Link | undefined>;
-  delete(linkId: number, userId: number): Promise<void>;
-  getLinks(userId: number | undefined): Promise<Link[]>;
+  add: (link: LinkInfo, userId: number) => Promise<Link | undefined>;
+  edit: (link: LinkInfo, userId: number) => Promise<Link | undefined>;
+  delete: (linkId: number, userId: number) => Promise<void>;
+  getLinks: (userId: number | undefined) => Promise<Link[]>;
 }
 
 @injectable()

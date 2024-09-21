@@ -29,7 +29,7 @@ export const AppDetailsTabs = ({ info, backups }: IProps) => {
       <AppDetailsTabTriggers status={appStatus} />
       <TabsContent value="description">
         {info.deprecated && (
-          <div className="alert alert-danger" role="alert">
+          <aside className="alert alert-danger" aria-live="assertive">
             <div className="d-flex">
               <div>
                 <IconAlertCircle />
@@ -39,7 +39,7 @@ export const AppDetailsTabs = ({ info, backups }: IProps) => {
                 <div className="text-secondary">{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')} </div>
               </div>
             </div>
-          </div>
+          </aside>
         )}
         <Markdown className="markdown">{info.description}</Markdown>
       </TabsContent>

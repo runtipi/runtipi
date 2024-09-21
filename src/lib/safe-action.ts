@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { getTranslator } from './get-translator';
 
 export const publicActionClient = createSafeActionClient({
-  handleReturnedServerError: async (e) => {
+  handleServerError: async (e) => {
     const message = e instanceof Error ? e.message : e;
     const errorVariables = e instanceof TranslatedError ? e.variableValues : {};
 

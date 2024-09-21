@@ -2,7 +2,16 @@ import 'reflect-metadata';
 import path from 'node:path';
 import { Cache, type ICache } from '@runtipi/cache';
 import { DbClient, type IDbClient } from '@runtipi/db';
-import { AppDataService, type IAppDataService, type ILogger, Logger } from '@runtipi/shared/node';
+import {
+  AppDataService,
+  AppFileAccessor,
+  BackupManager,
+  type IAppDataService,
+  type IAppFileAccessor,
+  type IBackupManager,
+  type ILogger,
+  Logger,
+} from '@runtipi/shared/node';
 import { Container } from 'inversify';
 import { APP_DATA_DIR, DATA_DIR } from './config';
 import { type ISessionManager, SessionManager } from './server/common/session-manager';
@@ -24,37 +33,29 @@ export function createContainer() {
   const { postgresHost, appsRepoId, postgresPort, postgresDatabase, postgresPassword, postgresUsername, redisPassword, REDIS_HOST } =
     TipiConfig.getConfig();
 
-  container.bind<ILogger>('ILogger').toDynamicValue(() => {
-    return new Logger('dashboard', path.join(DATA_DIR, 'logs'));
+  const logger = new Logger('dashboard', path.join(DATA_DIR, 'logs'));
+  container.bind<ILogger>('ILogger').toConstantValue(logger);
+
+  const cache = new Cache({ host: REDIS_HOST, port: 6379, password: redisPassword }, logger);
+  container.bind<ICache>('ICache').toConstantValue(cache);
+
+  const dbClient = new DbClient(
+    { host: postgresHost, port: Number(postgresPort), database: postgresDatabase, password: postgresPassword, username: postgresUsername },
+    logger,
+  );
+  container.bind<IDbClient>('IDbClient').toConstantValue(dbClient);
+
+  container.bind<IBackupManager>('IBackupManager').toDynamicValue(() => {
+    return new BackupManager({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, logger });
   });
 
   container.bind<IAppDataService>('IAppDataService').toDynamicValue(() => {
-    return new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId });
+    return new AppDataService({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
   });
 
-  container
-    .bind<ICache>('ICache')
-    .toDynamicValue((context) => {
-      const logger = context.container.get<ILogger>('ILogger');
-      return new Cache({ host: REDIS_HOST, port: 6379, password: redisPassword }, logger);
-    })
-    .inSingletonScope();
-
-  container
-    .bind<IDbClient>('IDbClient')
-    .toDynamicValue((context) => {
-      return new DbClient(
-        {
-          host: postgresHost,
-          port: Number(postgresPort),
-          database: postgresDatabase,
-          password: postgresPassword,
-          username: postgresUsername,
-        },
-        context.container.get<ILogger>('ILogger'),
-      );
-    })
-    .inSingletonScope();
+  container.bind<IAppFileAccessor>('IAppFileAccessor').toDynamicValue(() => {
+    return new AppFileAccessor({ dataDir: DATA_DIR, appDataDir: APP_DATA_DIR, appsRepoId, logger });
+  });
 
   // Repositories
   container.bind<IAppQueries>('IAppQueries').to(AppQueries);

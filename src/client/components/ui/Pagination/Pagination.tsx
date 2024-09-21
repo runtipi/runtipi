@@ -6,7 +6,7 @@ import { Button, type ButtonProps } from '../Button';
 import styles from './Pagination.module.scss';
 
 const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
-  <nav role="navigation" aria-label="pagination" className={clsx('m-0 ms-auto', className)} {...props} />
+  <nav aria-label="pagination" className={clsx('m-0 ms-auto', className)} {...props} />
 );
 Pagination.displayName = 'Pagination';
 

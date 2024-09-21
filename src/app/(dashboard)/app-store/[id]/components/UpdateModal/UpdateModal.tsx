@@ -24,7 +24,10 @@ export const UpdateModal: React.FC<IProps> = ({ info, newVersion, isOpen, onClos
 
   const updateMutation = useAction(updateAppAction, {
     onError: ({ error }) => {
-      if (error.serverError) toast.error(error.serverError);
+      if (error.serverError) {
+        toast.error(error.serverError);
+      }
+      setAppStatus(info.id, 'stopped');
     },
     onExecute: () => {
       setAppStatus(info.id, 'updating');

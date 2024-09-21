@@ -1,6 +1,6 @@
 import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
-import type { IAppDataService } from '@runtipi/shared/node';
+import type { IAppDataService, IBackupManager } from '@runtipi/shared/node';
 import { CreateAppBackupCommand, DeleteAppBackupCommand, GetAppBackupsCommand, RestoreAppBackupCommand } from './commands';
 import type { IAppBackupCommand } from './commands/types';
 import { inject, injectable } from 'inversify';
@@ -35,6 +35,7 @@ export class AppBackupService {
     @inject('IAppQueries') private queries: IAppQueries,
     @inject('IEventDispatcher') private eventDispatcher: IEventDispatcher,
     @inject('IAppDataService') private appDataService: IAppDataService,
+    @inject('IBackupManager') private backupManager: IBackupManager,
   ) {
     this.commandInvoker = new CommandInvoker();
   }
@@ -52,6 +53,7 @@ export class AppBackupService {
       queries: this.queries,
       eventDispatcher: this.eventDispatcher,
       appDataService: this.appDataService,
+      backupManager: this.backupManager,
       executeOtherCommand: this.executeCommand,
     });
 

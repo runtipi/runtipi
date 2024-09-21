@@ -145,10 +145,10 @@ export const AppBackups = ({ info, initialData }: Props) => {
                   disabled={disableActions}
                   className="me-1"
                 >
-                  Restore
+                  {t('APP_RESTORE_SUBMIT')}
                 </Button>
                 <Button size="sm" intent="danger" variant="ghost" onClick={() => handleDeleteClick(backup)} disabled={disableActions}>
-                  Delete
+                  {t('DELETE_BACKUP_MODAL_SUBMIT')}
                 </Button>
               </TableCell>
             </TableRow>

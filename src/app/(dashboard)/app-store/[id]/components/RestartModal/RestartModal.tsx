@@ -20,7 +20,10 @@ export const RestartModal: React.FC<IProps> = ({ info, isOpen, onClose }) => {
 
   const restartMutation = useAction(restartAppAction, {
     onError: ({ error }) => {
-      if (error.serverError) toast.error(error.serverError);
+      if (error.serverError) {
+        toast.error(error.serverError);
+      }
+      setAppStatus(info.id, 'running');
     },
     onExecute: () => {
       setAppStatus(info.id, 'restarting');

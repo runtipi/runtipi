@@ -3,15 +3,15 @@ import { appTable, type App, type NewApp, type AppStatus, type IDbClient } from 
 import { inject, injectable } from 'inversify';
 
 export interface IAppQueries {
-  getApp(appId: string): Promise<App | undefined>;
-  updateApp(appId: string, data: Partial<NewApp>): Promise<App | undefined>;
-  deleteApp(appId: string): Promise<void>;
-  createApp(data: NewApp): Promise<App | undefined>;
-  getAppsByStatus(status: AppStatus): Promise<App[]>;
-  getApps(): Promise<App[]>;
-  getGuestDashboardApps(): Promise<App[]>;
-  getAppsByDomain(domain: string, id: string): Promise<App[]>;
-  updateAppsByStatusNotIn(statuses: AppStatus[], data: Partial<NewApp>): Promise<App[]>;
+  getApp: (appId: string) => Promise<App | undefined>;
+  updateApp: (appId: string, data: Partial<NewApp>) => Promise<App | undefined>;
+  deleteApp: (appId: string) => Promise<void>;
+  createApp: (data: NewApp) => Promise<App | undefined>;
+  getAppsByStatus: (status: AppStatus) => Promise<App[]>;
+  getApps: () => Promise<App[]>;
+  getGuestDashboardApps: () => Promise<App[]>;
+  getAppsByDomain: (domain: string, id: string) => Promise<App[]>;
+  updateAppsByStatusNotIn: (statuses: AppStatus[], data: Partial<NewApp>) => Promise<App[]>;
 }
 
 @injectable()

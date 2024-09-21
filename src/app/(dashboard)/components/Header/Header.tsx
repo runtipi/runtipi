@@ -85,42 +85,37 @@ export const Header: React.FC<IProps> = ({ isUpdateAvailable, authenticated = tr
             <Tooltip className="tooltip" anchorSelect=".darkMode">
               {t('HEADER_DARK_MODE')}
             </Tooltip>
-            <div
+            <button
+              type="button"
               onClick={() => setDarkMode(true)}
-              onKeyUp={() => setDarkMode(true)}
-              role="button"
-              aria-hidden="true"
               className="darkMode nav-link px-0 hide-theme-dark cursor-pointer"
               data-testid="dark-mode-toggle"
             >
               <IconMoon data-testid="icon-moon" size={20} />
-            </div>
+            </button>
             <Tooltip className="tooltip" anchorSelect=".lightMode">
               {t('HEADER_LIGHT_MODE')}
             </Tooltip>
-            <div
+            <button
+              type="button"
               onClick={() => setDarkMode(false)}
-              onKeyUp={() => setDarkMode(false)}
-              aria-hidden="true"
               className="lightMode nav-link px-0 hide-theme-light cursor-pointer"
               data-testid="light-mode-toggle"
             >
               <IconSun data-testid="icon-sun" size={20} />
-            </div>
+            </button>
             <Tooltip className="tooltip" anchorSelect=".logOut">
               {authenticated ? t('HEADER_LOGOUT') : t('HEADER_LOGIN')}
             </Tooltip>
-            <div
+            <button
+              type="button"
               onClick={() => logHandler()}
               tabIndex={0}
-              onKeyPress={() => logHandler()}
-              onKeyUp={() => logHandler()}
-              role="button"
               className="logOut nav-link px-0 cursor-pointer"
               data-testid="logout-button"
             >
               {authenticated ? <IconLogout size={20} /> : <IconLogin size={20} />}
-            </div>
+            </button>
           </div>
         </div>
         <NavBar isUpdateAvailable={isUpdateAvailable} />

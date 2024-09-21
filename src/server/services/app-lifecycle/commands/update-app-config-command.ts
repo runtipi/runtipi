@@ -25,7 +25,7 @@ export class UpdateAppConfigCommand implements IAppLifecycleCommand {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });
     }
 
-    const appInfo = await this.params.appDataService.getInstalledInfo(appId);
+    const appInfo = await this.params.appFileAccessor.getInstalledAppInfo(appId);
 
     if (!appInfo) {
       throw new TranslatedError('APP_ERROR_APP_NOT_FOUND', { id: appId });

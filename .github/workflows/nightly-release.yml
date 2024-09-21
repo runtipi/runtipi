@@ -3,7 +3,7 @@ name: Nightly Release
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 jobs:
   build-images:
@@ -107,7 +107,7 @@ jobs:
 
   e2e-tests:
     needs: [update-release]
-    uses: './.github/workflows/e2e.yml'
+    uses: "./.github/workflows/e2e.yml"
     secrets: inherit
     with:
       version: nightly

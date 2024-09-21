@@ -1,5 +1,5 @@
 {
   "watch": ["src"],
-  "exec": "NODE_ENV=development npm run build && node dist/index.js",
+  "exec": "NODE_ENV=development npm run build && node dist/index.js --trace-warnings",
   "ext": "js ts"
 }

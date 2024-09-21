@@ -4,10 +4,10 @@ import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 
 export interface ILinkQueries {
-  addLink(link: LinkInfoInput, userId: number): Promise<Link | undefined>;
-  editLink(link: LinkInfoInput, userId: number): Promise<Link | undefined>;
-  deleteLink(linkId: number, userId: number): Promise<void>;
-  getLinks(userId: number): Promise<Link[]>;
+  addLink: (link: LinkInfoInput, userId: number) => Promise<Link | undefined>;
+  editLink: (link: LinkInfoInput, userId: number) => Promise<Link | undefined>;
+  deleteLink: (linkId: number, userId: number) => Promise<void>;
+  getLinks: (userId: number) => Promise<Link[]>;
 }
 
 @injectable()

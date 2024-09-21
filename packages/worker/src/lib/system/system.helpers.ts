@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -45,39 +46,34 @@ export const DEFAULT_REPO_URL = 'https://github.com/runtipi/runtipi-appstore';
 /**
  * Reads and returns the generated seed
  */
-const getSeed = async () => {
+const getSeed = (): string => {
   const seedFilePath = path.join(DATA_DIR, 'state', 'seed');
-
-  if (!(await pathExists(seedFilePath))) {
+  if (!fs.existsSync(seedFilePath)) {
     throw new Error('Seed file not found');
   }
-
-  const seed = await fs.promises.readFile(seedFilePath, 'utf-8');
-
-  return seed;
+  return fs.readFileSync(seedFilePath, 'utf-8');
 };
 
 /**
  * Derives a new entropy value from the provided entropy and the seed
  * @param {string} entropy - The entropy value to derive from
  */
-const deriveEntropy = async (entropy: string) => {
-  const seed = await getSeed();
+const deriveEntropy = (entropy: string): string => {
+  const seed = getSeed();
   const hmac = crypto.createHmac('sha256', seed);
   hmac.update(entropy);
-
   return hmac.digest('hex');
 };
 
 /**
  * Generates a random seed if it does not exist yet
  */
-const generateSeed = async () => {
-  if (!(await pathExists(path.join(DATA_DIR, 'state', 'seed')))) {
+const generateSeed = () => {
+  const seedFilePath = path.join(DATA_DIR, 'state', 'seed');
+  if (!fs.existsSync(seedFilePath)) {
     const randomBytes = crypto.randomBytes(32);
     const seed = randomBytes.toString('hex');
-
-    await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'seed'), seed);
+    fs.writeFileSync(seedFilePath, seed);
   }
 };
 
@@ -96,25 +92,26 @@ const getArchitecture = () => {
 /**
  * Generates a valid .env file from the settings.json file
  */
-export const generateSystemEnvFile = async () => {
-  await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
+
+export const generateSystemEnvFile = (): Map<EnvKeys, string> => {
+  fs.mkdirSync(path.join(DATA_DIR, 'state'), { recursive: true });
   const settingsFilePath = path.join(DATA_DIR, 'state', 'settings.json');
   const envFilePath = path.join(DATA_DIR, '.env');
 
-  if (!(await pathExists(envFilePath))) {
-    await fs.promises.writeFile(envFilePath, '');
+  if (!fs.existsSync(envFilePath)) {
+    fs.writeFileSync(envFilePath, '');
   }
 
-  const envFile = await fs.promises.readFile(envFilePath, 'utf-8');
+  const envFile = fs.readFileSync(envFilePath, 'utf-8');
 
   const envMap: Map<EnvKeys, string> = envStringToMap(envFile);
   envMap.set('NODE_ENV', process.env.NODE_ENV || 'production');
 
-  if (!(await pathExists(settingsFilePath))) {
-    await fs.promises.writeFile(settingsFilePath, JSON.stringify({}));
+  if (!fs.existsSync(settingsFilePath)) {
+    fs.writeFileSync(settingsFilePath, JSON.stringify({}));
   }
 
-  const settingsFile = await fs.promises.readFile(settingsFilePath, 'utf-8');
+  const settingsFile = fs.readFileSync(settingsFilePath, 'utf-8');
 
   const settings = settingsSchema.safeParse(JSON.parse(settingsFile));
 
@@ -122,7 +119,7 @@ export const generateSystemEnvFile = async () => {
     throw new Error(`Invalid settings.json file: ${settings.error.message}`);
   }
 
-  await generateSeed();
+  generateSeed();
 
   const { data } = settings;
 
@@ -130,7 +127,7 @@ export const generateSystemEnvFile = async () => {
     data.appsRepoUrl = DEFAULT_REPO_URL;
   }
 
-  const jwtSecret = envMap.get('JWT_SECRET') || (await deriveEntropy('jwt_secret'));
+  const jwtSecret = envMap.get('JWT_SECRET') || deriveEntropy('jwt_secret');
   const repoId = getRepoHash(data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
 
   const rootFolderHost = envMap.get('ROOT_FOLDER_HOST');
@@ -174,7 +171,9 @@ export const generateSystemEnvFile = async () => {
     typeof data.persistTraefikConfig === 'boolean' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
 
-  await fs.promises.writeFile(envFilePath, envMapToString(envMap));
+  fs.writeFileSync(envFilePath, envMapToString(envMap));
+
+  dotenv.config({ path: envFilePath, override: true });
 
   return envMap;
 };
