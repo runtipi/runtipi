@@ -33,7 +33,7 @@ const buildService = (params: Service, form: AppEventFormInput) => {
     if (form.openPort) {
       service.addPort({
         containerPort: params.internalPort,
-        hostPort: Number('${APP_PORT}'),
+        hostPort: '${APP_PORT}',
       });
     }
 

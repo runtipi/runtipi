@@ -2,7 +2,7 @@ import type { DependsOn } from './schemas';
 
 interface ServicePort {
   containerPort: number;
-  hostPort: number;
+  hostPort: number | string;
   tcp?: boolean;
   udp?: boolean;
   interface?: string;

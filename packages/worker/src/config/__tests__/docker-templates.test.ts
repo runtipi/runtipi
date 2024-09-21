@@ -102,6 +102,7 @@ describe('getDockerCompose', async () => {
             - 4444:3000/tcp
             - 4445:3001/udp
             - 4446:3002
+            - 0.0.0.0:4447:3003
           depends_on:
             - ${serviceName1}
       networks:
