@@ -15,7 +15,7 @@ const buildService = (params: Service, form: AppEventFormInput) => {
     .setName(params.name)
     .setEnvironment(params.environment)
     .setCommand(params.command)
-    .addHealthCheck(params.healthCheck)
+    .setHealthCheck(params.healthCheck)
     .setDependsOn(params.dependsOn)
     .addVolumes(params.volumes)
     .setRestartPolicy('unless-stopped')

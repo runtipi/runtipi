@@ -244,7 +244,7 @@ export class ServiceBuilder {
    * @example
    * ```typescript
    * const service = new ServiceBuilder();
-   * service.addHealthCheck({
+   * service.setHealthCheck({
    *    test: 'curl --fail http://localhost:3000 || exit 1',
    *    retries: 3,
    *    interval: '30s',
@@ -252,13 +252,13 @@ export class ServiceBuilder {
    * });
    *  ```
    */
-  addHealthCheck(healthCheck?: typeof serviceSchema._type.healthCheck) {
+  setHealthCheck(healthCheck?: typeof serviceSchema._type.healthCheck) {
     if (healthCheck) {
       this.service.healthCheck = {
         test: healthCheck.test,
-        retries: healthCheck.retries,
         interval: healthCheck.interval,
         timeout: healthCheck.timeout,
+        retries: healthCheck.retries,
         start_interval: healthCheck.startInterval,
         start_period: healthCheck.startPeriod,
       };
