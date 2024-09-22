@@ -239,8 +239,8 @@ export class ServiceBuilder {
   }
 
   /**
-   * Adds the health check for the service.
-   * @param {HealthCheck} healthCheck The health check to add for the service.
+   * Sets the health check for the service.
+   * @param {HealthCheck} healthCheck The health check to set for the service.
    * @example
    * ```typescript
    * const service = new ServiceBuilder();
