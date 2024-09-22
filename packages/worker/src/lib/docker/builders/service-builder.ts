@@ -1,4 +1,4 @@
-import type { DependsOn } from './schemas';
+import type { DependsOn, serviceSchema } from './schemas';
 
 interface ServicePort {
   containerPort: number;
@@ -15,9 +15,11 @@ interface ServiceVolume {
 
 interface HealthCheck {
   test: string;
-  interval: string;
-  timeout: string;
-  retries: number;
+  interval?: string;
+  timeout?: string;
+  retries?: number;
+  start_interval?: string;
+  start_period?: string;
 }
 
 interface Ulimits {
@@ -30,7 +32,7 @@ export interface BuilderService {
   containerName: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
   environment?: Record<string, string>;
-  command?: string;
+  command?: string | string[];
   volumes?: string[];
   ports?: string[];
   healthCheck?: HealthCheck;
@@ -228,7 +230,7 @@ export class ServiceBuilder {
    * service.setCommand('npm run start');
    * ```
    */
-  setCommand(command?: string) {
+  setCommand(command?: string | string[]) {
     if (command) {
       this.service.command = command;
     }
@@ -237,12 +239,12 @@ export class ServiceBuilder {
   }
 
   /**
-   * Sets the health check for the service.
-   * @param {HealthCheck} healthCheck The health check to set for the service.
+   * Adds the health check for the service.
+   * @param {HealthCheck} healthCheck The health check to add for the service.
    * @example
    * ```typescript
    * const service = new ServiceBuilder();
-   * service.setHealthCheck({
+   * service.addHealthCheck({
    *    test: 'curl --fail http://localhost:3000 || exit 1',
    *    retries: 3,
    *    interval: '30s',
@@ -250,9 +252,16 @@ export class ServiceBuilder {
    * });
    *  ```
    */
-  setHealthCheck(healthCheck?: HealthCheck) {
+  addHealthCheck(healthCheck?: typeof serviceSchema._type.healthCheck) {
     if (healthCheck) {
-      this.service.healthCheck = healthCheck;
+      this.service.healthCheck = {
+        test: healthCheck.test,
+        retries: healthCheck.retries,
+        interval: healthCheck.interval,
+        timeout: healthCheck.timeout,
+        start_interval: healthCheck.startInterval,
+        start_period: healthCheck.startPeriod,
+      };
     }
 
     return this;
