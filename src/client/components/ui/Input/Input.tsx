@@ -15,10 +15,11 @@ interface IProps {
   value?: string;
   readOnly?: boolean;
   maxLength?: number;
+  tabindex?: number;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, IProps>(
-  ({ onChange, onBlur, name, label, placeholder, error, type = 'text', className, value, isInvalid, disabled, readOnly, maxLength }, ref) => (
+  ({ onChange, onBlur, name, label, placeholder, error, type = 'text', className, value, isInvalid, disabled, readOnly, maxLength, tabindex }, ref) => (
     <div className={clsx(className)}>
       {label && (
         <label htmlFor={name} className="form-label">
@@ -40,6 +41,7 @@ export const Input = React.forwardRef<HTMLInputElement, IProps>(
         className={clsx('form-control', { 'is-invalid is-invalid-lite': error || isInvalid })}
         placeholder={placeholder}
         readOnly={readOnly}
+        tabIndex={tabindex}
       />
       {error && <div className="invalid-feedback">{error}</div>}
     </div>
