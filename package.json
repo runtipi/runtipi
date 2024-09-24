@@ -118,7 +118,7 @@
     "msw": "^2.4.9",
     "next-router-mock": "^0.9.13",
     "typescript": "5.6.2",
-    "vite-tsconfig-paths": "^4.3.2",
+    "vite-tsconfig-paths": "^5.0.1",
     "vitest": "^2.1.1",
     "vitest-mock-extended": "^2.0.2",
     "wait-for-expect": "^3.0.2"
