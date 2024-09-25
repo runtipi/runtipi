@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import type { DependsOn, serviceSchema } from './schemas';
 
 interface ServicePort {
@@ -259,7 +260,7 @@ export class ServiceBuilder {
    * });
    *  ```
    */
-  setHealthCheck(healthCheck?: typeof serviceSchema._type.healthCheck) {
+  setHealthCheck(healthCheck?: z.infer<typeof serviceSchema>['healthCheck']) {
     if (healthCheck) {
       this.service.healthCheck = {
         test: healthCheck.test,
