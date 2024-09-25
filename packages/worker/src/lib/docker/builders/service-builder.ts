@@ -1,4 +1,5 @@
-import type { DependsOn } from './schemas';
+import type { z } from 'zod';
+import type { DependsOn, serviceSchema } from './schemas';
 
 interface ServicePort {
   containerPort: number;
@@ -16,9 +17,11 @@ interface ServiceVolume {
 
 interface HealthCheck {
   test: string;
-  interval: string;
-  timeout: string;
-  retries: number;
+  interval?: string;
+  timeout?: string;
+  retries?: number;
+  start_interval?: string;
+  start_period?: string;
 }
 
 interface Ulimits {
@@ -31,7 +34,7 @@ export interface BuilderService {
   containerName: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
   environment?: Record<string, string>;
-  command?: string;
+  command?: string | string[];
   volumes?: string[];
   ports?: string[];
   healthCheck?: HealthCheck;
@@ -235,7 +238,7 @@ export class ServiceBuilder {
    * service.setCommand('npm run start');
    * ```
    */
-  setCommand(command?: string) {
+  setCommand(command?: string | string[]) {
     if (command) {
       this.service.command = command;
     }
@@ -257,9 +260,16 @@ export class ServiceBuilder {
    * });
    *  ```
    */
-  setHealthCheck(healthCheck?: HealthCheck) {
+  setHealthCheck(healthCheck?: z.infer<typeof serviceSchema>['healthCheck']) {
     if (healthCheck) {
-      this.service.healthCheck = healthCheck;
+      this.service.healthCheck = {
+        test: healthCheck.test,
+        interval: healthCheck.interval,
+        timeout: healthCheck.timeout,
+        retries: healthCheck.retries,
+        start_interval: healthCheck.startInterval,
+        start_period: healthCheck.startPeriod,
+      };
     }
 
     return this;

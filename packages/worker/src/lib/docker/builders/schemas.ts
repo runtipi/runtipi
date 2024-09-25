@@ -34,7 +34,7 @@ export const serviceSchema = z.object({
       }),
     )
     .optional(),
-  command: z.string().optional(),
+  command: z.string().optional().or(z.array(z.string()).optional()),
   volumes: z
     .array(
       z.object({
@@ -48,9 +48,11 @@ export const serviceSchema = z.object({
   healthCheck: z
     .object({
       test: z.string(),
-      interval: z.string(),
-      timeout: z.string(),
-      retries: z.number(),
+      interval: z.string().optional(),
+      timeout: z.string().optional(),
+      retries: z.number().optional(),
+      startInterval: z.string().optional(),
+      startPeriod: z.string().optional(),
     })
     .optional(),
   dependsOn: dependsOnSchema.optional(),
