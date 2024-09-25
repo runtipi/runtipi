@@ -1,10 +1,12 @@
-import type { DependsOn } from './schemas';
+import type { z } from 'zod';
+import type { DependsOn, serviceSchema } from './schemas';
 
 interface ServicePort {
   containerPort: number;
   hostPort: number | string;
   tcp?: boolean;
   udp?: boolean;
+  interface?: string;
 }
 
 interface ServiceVolume {
@@ -15,9 +17,11 @@ interface ServiceVolume {
 
 interface HealthCheck {
   test: string;
-  interval: string;
-  timeout: string;
-  retries: number;
+  interval?: string;
+  timeout?: string;
+  retries?: number;
+  start_interval?: string;
+  start_period?: string;
 }
 
 interface Ulimits {
@@ -30,7 +34,7 @@ export interface BuilderService {
   containerName: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
   environment?: Record<string, string>;
-  command?: string;
+  command?: string | string[];
   volumes?: string[];
   ports?: string[];
   healthCheck?: HealthCheck;
@@ -126,17 +130,23 @@ export class ServiceBuilder {
       this.service.ports = [];
     }
 
+    let port_string = `${port.hostPort}:${port.containerPort}`;
+
+    if (port.interface) {
+      port_string = `${port.interface}:${port_string}`;
+    }
+
     if (!port.tcp && !port.udp) {
-      this.service.ports.push(`${port.hostPort}:${port.containerPort}`);
+      this.service.ports.push(port_string);
       return this;
     }
 
     if (port.tcp) {
-      this.service.ports.push(`${port.hostPort}:${port.containerPort}/tcp`);
+      this.service.ports.push(`${port_string}/tcp`);
     }
 
     if (port.udp) {
-      this.service.ports.push(`${port.hostPort}:${port.containerPort}/udp`);
+      this.service.ports.push(`${port_string}/udp`);
     }
 
     return this;
@@ -228,7 +238,7 @@ export class ServiceBuilder {
    * service.setCommand('npm run start');
    * ```
    */
-  setCommand(command?: string) {
+  setCommand(command?: string | string[]) {
     if (command) {
       this.service.command = command;
     }
@@ -250,9 +260,16 @@ export class ServiceBuilder {
    * });
    *  ```
    */
-  setHealthCheck(healthCheck?: HealthCheck) {
+  setHealthCheck(healthCheck?: z.infer<typeof serviceSchema>['healthCheck']) {
     if (healthCheck) {
-      this.service.healthCheck = healthCheck;
+      this.service.healthCheck = {
+        test: healthCheck.test,
+        interval: healthCheck.interval,
+        timeout: healthCheck.timeout,
+        retries: healthCheck.retries,
+        start_interval: healthCheck.startInterval,
+        start_period: healthCheck.startPeriod,
+      };
     }
 
     return this;

@@ -34,6 +34,7 @@ describe('getDockerCompose', async () => {
         image: serviceImage1,
         internalPort: servicePort1,
         environment: fakeEnv,
+        command: 'echo "Hello, world!"',
       },
       {
         name: serviceName2,
@@ -42,6 +43,8 @@ describe('getDockerCompose', async () => {
           retries: 3,
           interval: '30s',
           timeout: '10s',
+          startPeriod: '10s',
+          startInterval: '5s',
         },
         dependsOn: [serviceName1],
         image: serviceImage2,
@@ -49,7 +52,9 @@ describe('getDockerCompose', async () => {
           { containerPort: 3000, hostPort: 4444, tcp: true },
           { containerPort: 3001, hostPort: 4445, udp: true },
           { containerPort: 3002, hostPort: 4446 },
+          { containerPort: 3003, hostPort: 4447, interface: '0.0.0.0' },
         ],
+        command: ['CMD-SHELL', "echo 'Hello, world!'"],
       },
     ] satisfies ServiceInput[];
 
@@ -66,6 +71,7 @@ describe('getDockerCompose', async () => {
       "services:
         ${serviceName1}:
           image: ${serviceImage1}
+          command: echo \"Hello, world!\"
           container_name: ${serviceName1}
           restart: unless-stopped
           networks:
@@ -88,6 +94,9 @@ describe('getDockerCompose', async () => {
             traefik.http.services.${serviceName1}.loadbalancer.server.port: "${servicePort1}"
         ${serviceName2}:
           image: ${serviceImage2}
+          command:
+            - CMD-SHELL
+            - echo 'Hello, world!'
           container_name: ${serviceName2}
           restart: unless-stopped
           networks:
@@ -97,10 +106,13 @@ describe('getDockerCompose', async () => {
             interval: 30s
             timeout: 10s
             retries: 3
+            start_interval: 5s
+            start_period: 10s
           ports:
             - 4444:3000/tcp
             - 4445:3001/udp
             - 4446:3002
+            - 0.0.0.0:4447:3003
           depends_on:
             - ${serviceName1}
       networks:
