@@ -2,8 +2,7 @@ services:
   runtipi-reverse-proxy:
     container_name: runtipi-reverse-proxy
     depends_on:
-      runtipi:
-        condition: service_healthy
+      - runtipi
     image: traefik:v3.1.4
     restart: unless-stopped
     ports:
