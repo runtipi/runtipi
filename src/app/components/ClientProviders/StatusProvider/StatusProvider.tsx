@@ -32,7 +32,7 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
   }
 
   if (isLoading) {
-    return <StatusScreen title={t('STATUS_LOADING_TITLE')} subtitle={t('STATUS_LOADING_SUBTITLE')} loading={true} />;
+    return <StatusScreen title={t('STATUS_LOADING_TITLE')} subtitle={t('STATUS_LOADING_SUBTITLE')} />;
   }
 
   if (data.status === 'RESTARTING') {

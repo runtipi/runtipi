@@ -63,9 +63,9 @@ services:
       args:
         LOCAL: true
         TIPI_VERSION: development
+    container_name: runtipi
     pid: host
     privileged: true
-    container_name: runtipi
     healthcheck:
       test:
         ["CMD", "curl", "-f", "http://localhost:5000/worker-api/healthcheck"]
