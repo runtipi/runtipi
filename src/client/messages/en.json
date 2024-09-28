@@ -264,6 +264,8 @@
   "SETTINGS_ACTIONS_MAINTENANCE_TITLE": "Maintenance",
   "SETTINGS_ACTIONS_NEW_VERSION": "A new version ({version}) of Tipi is available",
   "SETTINGS_ACTIONS_RESTART": "Restart",
+  "SETTINGS_ACTIONS_RESTART_SUBTITLE": "You will not be able to access the dashboard until the instance is back online",
+  "SETTINGS_ACTIONS_RESTARTING_STATUS": "Restarting...",
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Stay up to date with the latest version of Tipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Actions",
   "SETTINGS_ACTIONS_TITLE": "Actions",

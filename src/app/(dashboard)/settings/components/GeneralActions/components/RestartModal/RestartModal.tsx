@@ -15,7 +15,7 @@ export const RestartModal = () => {
       if (error.serverError) toast.error(error.serverError);
     },
     onSuccess: () => {
-      toast.loading("Restarting...");
+      toast.loading(t('SETTINGS_ACTIONS_RESTARTING_STATUS'));
     },
     onSettled: () => {
       restartDisclosure.close();
@@ -24,18 +24,18 @@ export const RestartModal = () => {
 
   return (
     <div>
-      <Button onClick={() => restartDisclosure.open()}>Restart Runtipi</Button>
+      <Button onClick={() => restartDisclosure.open()}>{t('SETTINGS_ACTIONS_RESTART')}</Button>
       <Dialog open={restartDisclosure.isOpen} onOpenChange={restartDisclosure.toggle}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>Restart?</DialogTitle>
+            <DialogTitle>{t('SETTINGS_ACTIONS_RESTART')}</DialogTitle>
           </DialogHeader>
           <DialogDescription>
-            <span className="text-muted">You won't be able to use Runtipi while restarting.</span>
+            <span className="text-muted">{t('SETTINGS_ACTIONS_RESTART_SUBTITLE')}</span>
           </DialogDescription>
           <DialogFooter>
             <Button intent="danger" loading={restartMutation.isExecuting} onClick={() => restartMutation.execute()}>
-              Restart
+              {t('SETTINGS_ACTIONS_RESTART')}
             </Button>
           </DialogFooter>
         </DialogContent>
