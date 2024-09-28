@@ -61,6 +61,8 @@ services:
       dockerfile: Dockerfile.dev
     container_name: runtipi
     restart: unless-stopped
+    pid: host
+    privileged: true
     depends_on:
       runtipi-db:
         condition: service_healthy

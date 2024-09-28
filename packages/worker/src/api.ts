@@ -4,10 +4,10 @@ import { prettyJSON } from 'hono/pretty-json';
 import { secureHeaders } from 'hono/secure-headers';
 import { container } from './inversify.config';
 import { getEnv } from './lib/environment';
-import { SystemExecutors } from './services';
 import type { IAppExecutors } from './services/app/app.executors';
+import type { ISystemExecutors } from './services/system/system.executors';
 
-const system = new SystemExecutors();
+const { getSystemLoad } = container.get<ISystemExecutors>('ISystemExecutors');
 
 export const setupRoutes = (app: Hono) => {
   const apps = container.get<IAppExecutors>('IAppExecutors');
@@ -19,7 +19,7 @@ export const setupRoutes = (app: Hono) => {
   app.use('*', jwt({ secret: getEnv().jwtSecret, alg: 'HS256' }));
 
   app.get('/system-status', async (c) => {
-    const result = await system.getSystemLoad();
+    const result = await getSystemLoad();
     if (result.success) {
       return c.json({ data: result.data, ok: true }, 200);
     }

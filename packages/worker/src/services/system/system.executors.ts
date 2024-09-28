@@ -1,13 +1,20 @@
 import fs from 'node:fs';
-import { logger } from '@/lib/logger';
 import * as Sentry from '@sentry/node';
 import si from 'systeminformation';
+import { getEnv } from '@/lib/environment';
+import { execAsync, type ILogger } from '@runtipi/shared/node';
+import { inject, injectable } from 'inversify';
 
-export class SystemExecutors {
-  private readonly logger;
+export interface ISystemExecutors {
+  getSystemLoad: () => Promise<{ success: true; data: { diskUsed: number; diskSize: number; percentUsed: number; cpuLoad: number; memoryTotal: number; percentUsedMemory: number }} | { success: false, message: string }>;
+  execSysCommandNohup: (command: string, useRootFolder: boolean) => Promise<{ success: boolean; message: string }>;
+}
 
-  constructor() {
-    this.logger = logger;
+@injectable()
+export class SystemExecutors implements ISystemExecutors {
+  constructor(
+    @inject('ILogger') private logger: ILogger
+  ) {
   }
 
   private handleSystemError = (err: unknown) => {
@@ -55,4 +62,29 @@ export class SystemExecutors {
       return this.handleSystemError(e);
     }
   };
+
+  public execSysCommandNohup = async (command: string, useRootFolder = true) => {
+    try {
+      const { rootFolderHost } = getEnv()
+
+      const execCommand = `
+        nsenter -m -u -i -n -p -t 1 bash -c '
+          nohup bash -c "
+            ${useRootFolder ? `cd ${rootFolderHost}` : ''}
+            ${command}
+          " &> ${rootFolderHost}/logs/exec-sys-command.log &
+        '
+      `
+
+      const { stdout, stderr } = await execAsync(execCommand)
+
+      if (stderr) {
+        throw stderr
+      }
+
+      return { success: true, message: stdout }
+    } catch (e) {
+      return this.handleSystemError(e);
+    }
+  }
 }

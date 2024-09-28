@@ -9,6 +9,7 @@ import { AppExecutors, type IAppExecutors } from './services/app/app.executors';
 import { AppFileAccessor, type IAppFileAccessor } from '@runtipi/shared/node';
 import { generateSystemEnvFile } from './lib/system';
 import { getEnv } from './lib/environment';
+import { type ISystemExecutors, SystemExecutors } from './services/system/system.executors';
 
 export function createContainer() {
   try {
@@ -73,6 +74,8 @@ export function createContainer() {
       .inSingletonScope();
 
     container.bind<IAppExecutors>('IAppExecutors').to(AppExecutors);
+
+    container.bind<ISystemExecutors>('ISystemExecutors').to(SystemExecutors);
 
     return container;
   } catch (error) {

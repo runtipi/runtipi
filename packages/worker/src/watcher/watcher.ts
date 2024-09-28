@@ -5,12 +5,15 @@ import { eventSchema } from '@runtipi/shared';
 import { Worker } from 'bullmq';
 import { container } from 'src/inversify.config';
 import type { IAppExecutors } from 'src/services/app/app.executors';
+import type { ISystemExecutors } from 'src/services/system/system.executors';
 
 const { cloneRepo, pullRepo } = new RepoExecutors();
 
 const runCommand = async (jobData: unknown) => {
   const { installApp, resetApp, startApp, stopApp, restartApp, uninstallApp, updateApp, regenerateAppEnv, backupApp, restoreApp } =
     container.get<IAppExecutors>('IAppExecutors');
+
+  const { execSysCommandNohup } = container.get<ISystemExecutors>('ISystemExecutors');
 
   const event = eventSchema.safeParse(jobData);
 
@@ -63,6 +66,7 @@ const runCommand = async (jobData: unknown) => {
     if (data.command === 'restore') {
       ({ success, message } = await restoreApp(data.appid, data.filename));
     }
+
   } else if (data.type === 'repo') {
     if (data.command === 'clone') {
       ({ success, message } = await cloneRepo(data.url));
@@ -70,6 +74,10 @@ const runCommand = async (jobData: unknown) => {
 
     if (data.command === 'update') {
       ({ success, message } = await pullRepo(data.url));
+    }
+  } else if (data.type === 'system') {
+    if (data.command === 'execSysCommandNohup') {
+      ({ success, message } = await execSysCommandNohup(data.exec, data.useRootFolder));
     }
   }
 

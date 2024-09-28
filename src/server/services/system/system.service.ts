@@ -1,5 +1,5 @@
 import { promises } from 'node:fs';
-import { DATA_DIR } from '@/config/constants';
+import { COMMANDS, DATA_DIR } from '@/config/constants';
 import type { ICache } from '@runtipi/cache';
 import { inject, injectable } from 'inversify';
 import axios from 'redaxios';
@@ -16,6 +16,7 @@ export interface ISystemService {
     body?: string | null;
   }>;
   updateRepos: () => Promise<{ success: boolean; message: string }>;
+  restart: () => Promise<{ success: boolean; message: string }>;
 }
 
 @injectable()
@@ -105,4 +106,19 @@ export class SystemService implements ISystemService {
 
     return { success: true, message: '' };
   };
+
+  public restart = async () => {
+    const restartEvent = await this.eventDispatcher.dispatchEventAsync({
+      type: 'system',
+      command: 'execSysCommandNohup',
+      exec: COMMANDS.restart,
+      useRootFolder: true,
+    });
+
+    if (!restartEvent.success) {
+      return { success: false, message: restartEvent.stdout || '' };
+    }
+
+    return { success: true, message: '' };
+  }
 }

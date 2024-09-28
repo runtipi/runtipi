@@ -62,7 +62,9 @@ const repoCommandSchema = z.object({
 
 const systemCommandSchema = z.object({
   type: z.literal(EVENT_TYPES.SYSTEM),
-  command: z.literal('system_info'),
+  command: z.union([z.literal('execSysCommandNohup'), z.literal('getSystemLoad')]),
+  exec: z.string().optional().default(''),
+  useRootFolder: z.boolean().optional().default(true),
 });
 
 export const eventSchema = appEventSchema.or(restoreAppCommandSchema).or(repoCommandSchema).or(updateAppCommandSchema).or(systemCommandSchema);
