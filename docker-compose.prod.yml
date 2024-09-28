@@ -63,6 +63,8 @@ services:
       args:
         LOCAL: true
         TIPI_VERSION: development
+    pid: host
+    privileged: true
     container_name: runtipi
     healthcheck:
       test:
