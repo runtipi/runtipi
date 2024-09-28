@@ -108,6 +108,12 @@ export class SystemService implements ISystemService {
   };
 
   public restart = async () => {
+    const { NODE_ENV, demoMode } = TipiConfig.getConfig();
+
+    if (NODE_ENV === 'development' || demoMode) {
+      return { success: false, message: 'Restart not allowed' };
+    }
+
     const restartEvent = await this.eventDispatcher.dispatchEventAsync({
       type: 'system',
       command: 'execSysCommandNohup',
