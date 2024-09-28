@@ -44,9 +44,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <CookiesProvider>
         <ClientProviders messages={messages} locale={locale} initialTheme={theme?.value} appStatuses={appStatuses} clientSettings={clientSettings}>
           <body data-bs-theme={theme?.value}>
-            <StatusProvider>
-              {children}
-            </StatusProvider>
+            <StatusProvider>{children}</StatusProvider>
             <Toaster />
           </body>
         </ClientProviders>

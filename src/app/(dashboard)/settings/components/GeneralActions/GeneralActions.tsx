@@ -52,8 +52,8 @@ export const GeneralActions = (props: Props) => {
       <h3 className="card-title mt-4">{t('SETTINGS_ACTIONS_UPDATE_REPO_TITLE')}</h3>
       <p className="card-subtitle">{t('SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE')}</p>
       <UpdateRepoModal />
-      <h3 className='card-title mt-4'>{t('SETTINGS_ACTIONS_MAINTENANCE_TITLE')}</h3>
-      <p className='card-subtitle'>{t('SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE')}</p>
+      <h3 className="card-title mt-4">{t('SETTINGS_ACTIONS_MAINTENANCE_TITLE')}</h3>
+      <p className="card-subtitle">{t('SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE')}</p>
       <RestartModal />
     </div>
   );

@@ -5,7 +5,6 @@ import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { getEnv } from '@/lib/environment';
 import { getMainEnvMap } from '@/lib/system/system.helpers';
 import { type AppEventFormInput, appInfoSchema, envMapToString, envStringToMap, sanitizePath } from '@runtipi/shared';
-import { execAsync, pathExists } from '@runtipi/shared/node';
 import { generateVapidKeys, getAppEnvMap } from './env.helpers';
 
 type RandomFieldEncoding = 'hex' | 'base64';

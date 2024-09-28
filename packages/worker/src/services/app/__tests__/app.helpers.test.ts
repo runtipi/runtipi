@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import { APP_DATA_DIR, DATA_DIR } from '@/config/constants';
 import { createAppConfig } from '@/tests/apps.factory';
 import { faker } from '@faker-js/faker';
-import { pathExists } from '@runtipi/shared/node';
 import { describe, expect, it } from 'vitest';
 import { generateEnvFile } from '../app.helpers';
 import { getAppEnvMap } from '../env.helpers';

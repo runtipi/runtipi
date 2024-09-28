@@ -115,7 +115,7 @@ export class SystemService implements ISystemService {
     }
 
     await this.cache.set('status', 'RESTARTING');
-    
+
     const restartEvent = await this.eventDispatcher.dispatchEventAsync({
       type: 'system',
       command: 'execSysCommandNohup',
@@ -128,5 +128,5 @@ export class SystemService implements ISystemService {
     }
 
     return { success: true, message: '' };
-  }
+  };
 }

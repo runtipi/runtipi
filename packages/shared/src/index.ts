@@ -54,5 +54,5 @@ export {
   type LinkInfoInput,
   type SocketEvent,
   type SystemLoad,
-  type StatusSchema
+  type StatusSchema,
 };

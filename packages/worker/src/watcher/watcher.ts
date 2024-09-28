@@ -66,7 +66,6 @@ const runCommand = async (jobData: unknown) => {
     if (data.command === 'restore') {
       ({ success, message } = await restoreApp(data.appid, data.filename));
     }
-
   } else if (data.type === 'repo') {
     if (data.command === 'clone') {
       ({ success, message } = await cloneRepo(data.url));
