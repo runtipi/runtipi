@@ -22,7 +22,7 @@ async function fetchSystemStatus() {
 }
 
 export const DashboardContainer: React.FC<IProps> = ({ initialData }) => {
-  const { data } = useQuery({ queryKey: ['systemLoad'], queryFn: fetchSystemStatus, initialData, refetchInterval: 3000 });
+  const { data } = useQuery({ queryKey: ['systemLoad'], queryFn: fetchSystemStatus, initialData, refetchInterval: 2000 });
 
   const t = useTranslations();
 

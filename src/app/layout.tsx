@@ -14,6 +14,7 @@ import { CookiesProvider } from 'next-client-cookies/server';
 import { Toaster } from 'react-hot-toast';
 import { ClientProviders } from './components/ClientProviders';
 import { getClass } from 'src/inversify.config';
+import { StatusProvider } from './components/ClientProviders/StatusProvider/StatusProvider';
 
 export const metadata: Metadata = {
   title: 'Tipi',
@@ -43,7 +44,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <CookiesProvider>
         <ClientProviders messages={messages} locale={locale} initialTheme={theme?.value} appStatuses={appStatuses} clientSettings={clientSettings}>
           <body data-bs-theme={theme?.value}>
-            {children}
+            <StatusProvider>
+              {children}
+            </StatusProvider>
             <Toaster />
           </body>
         </ClientProviders>

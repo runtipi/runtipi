@@ -9,4 +9,9 @@ export const systemLoadSchema = z.object({
   percentUsedMemory: z.number().nullish().default(0),
 });
 
+export const statusSchema = z.object({
+  status: z.string(),
+});
+
 export type SystemLoad = z.output<typeof systemLoadSchema>;
+export type StatusSchema = z.output<typeof statusSchema>;

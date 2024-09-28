@@ -14,9 +14,6 @@ export const RestartModal = () => {
     onError: ({ error }) => {
       if (error.serverError) toast.error(error.serverError);
     },
-    onSuccess: () => {
-      toast.loading(t('SETTINGS_ACTIONS_RESTARTING_STATUS'));
-    },
     onSettled: () => {
       restartDisclosure.close();
     },

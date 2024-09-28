@@ -12,7 +12,7 @@ import {
 } from './schemas/queue-schemas';
 import { linkSchema, type LinkInfo, type LinkInfoInput } from './schemas/link-schemas';
 import { socketEventSchema, type SocketEvent } from './schemas/socket-schemas';
-import { systemLoadSchema, type SystemLoad } from './schemas/system-schemas';
+import { systemLoadSchema, statusSchema, type SystemLoad, type StatusSchema } from './schemas/system-schemas';
 
 // Helpers
 import { envMapToString, envStringToMap } from './helpers/env-helpers';
@@ -35,6 +35,7 @@ export {
   linkSchema,
   socketEventSchema,
   systemLoadSchema,
+  statusSchema,
   // Helpers
   envMapToString,
   envStringToMap,
@@ -53,4 +54,5 @@ export {
   type LinkInfoInput,
   type SocketEvent,
   type SystemLoad,
+  type StatusSchema
 };

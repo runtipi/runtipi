@@ -265,7 +265,6 @@
   "SETTINGS_ACTIONS_NEW_VERSION": "A new version ({version}) of Tipi is available",
   "SETTINGS_ACTIONS_RESTART": "Restart",
   "SETTINGS_ACTIONS_RESTART_SUBTITLE": "You will not be able to access the dashboard until the instance is back online",
-  "SETTINGS_ACTIONS_RESTARTING_STATUS": "Restarting...",
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Stay up to date with the latest version of Tipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Actions",
   "SETTINGS_ACTIONS_TITLE": "Actions",
@@ -342,5 +341,11 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "The major version has changed. Please update manually (instructions in release notes)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "STATUS_RESTARTING_TITLE": "Restarting",
+  "STATUS_RESTARTING_SUBTITLE": "Please do not refresh this page",
+  "STATUS_ERROR_TITLE": "Error",
+  "STATUS_ERROR_SUBTITLE": "We encountered an error while loading Tipi",
+  "STATUS_LOADING_TITLE": "Loading",
+  "STATUS_LOADING_SUBTITLE": "Tipi is loading"
 }
