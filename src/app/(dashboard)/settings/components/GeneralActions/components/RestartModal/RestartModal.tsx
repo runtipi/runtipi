@@ -73,9 +73,9 @@ export const RestartModal = () => {
                     onCheckedChange={onChange}
                     label={
                       <>
-                        No Permissions
+                        {t('SETTINGS_ACTIONS_RESTART_MODAL_NO_PERMISSIONS_TITLE')}
                         <Tooltip className="tooltip" anchorSelect=".no-permissions-hint">
-                          Enable this to pass the --no-permissions flag to the cli when restarting
+                          {t('SETTINGS_ACTIONS_RESTART_MODAL_NO_PERMISSIONS_SUBTITLE')}
                         </Tooltip>
                         <span className={clsx('ms-1 form-help no-permissions-hint')}>?</span>
                       </>
@@ -96,9 +96,9 @@ export const RestartModal = () => {
                     onCheckedChange={onChange}
                     label={
                       <>
-                        Environment File
+                        {t('SETTINGS_ACTIONS_RESTART_MODAL_ENV_FILE_TITLE')}
                         <Tooltip className="tooltip" anchorSelect=".env-file-hint">
-                          Enable this to use a custom environment file when restarting
+                          {t('SETTINGS_ACTIONS_RESTART_MODAL_ENV_FILE_SUBTITLE')}
                         </Tooltip>
                         <span className={clsx('ms-1 form-help env-file-hint')}>?</span>
                       </>
