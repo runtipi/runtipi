@@ -1,5 +1,5 @@
 import { promises } from 'node:fs';
-import { COMMANDS, DATA_DIR } from '@/config/constants';
+import { DATA_DIR } from '@/config/constants';
 import type { ICache } from '@runtipi/cache';
 import { inject, injectable } from 'inversify';
 import axios from 'redaxios';
@@ -16,7 +16,7 @@ export interface ISystemService {
     body?: string | null;
   }>;
   updateRepos: () => Promise<{ success: boolean; message: string }>;
-  restart: () => Promise<{ success: boolean; message: string }>;
+  restart: (noPermissions: boolean, envFile: boolean, envFilePath: string) => Promise<{ success: boolean; message: string }>;
 }
 
 @injectable()
@@ -107,7 +107,7 @@ export class SystemService implements ISystemService {
     return { success: true, message: '' };
   };
 
-  public restart = async () => {
+  public restart = async (noPermissions: boolean, envFile: boolean, envFilePath: string) => {
     const { NODE_ENV, demoMode } = TipiConfig.getConfig();
 
     if (NODE_ENV === 'development' || demoMode) {
@@ -116,10 +116,21 @@ export class SystemService implements ISystemService {
 
     await this.cache.set('status', 'RESTARTING');
 
+    const command: string[] = ['./runtipi-cli', 'restart'];
+
+    if (noPermissions) {
+      command.push('--no-permissions');
+    }
+
+    if (envFile) {
+      command.push('--env-file');
+      command.push(envFilePath);
+    }
+
     const restartEvent = await this.eventDispatcher.dispatchEventAsync({
       type: 'system',
       command: 'execSysCommandNohup',
-      exec: COMMANDS.restart,
+      exec: command.join(' '),
       useRootFolder: true,
     });
 

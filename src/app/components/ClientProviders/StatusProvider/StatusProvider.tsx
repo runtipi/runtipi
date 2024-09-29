@@ -24,7 +24,7 @@ export const StatusProvider: React.FC<IProps> = ({ children }) => {
   const t = useTranslations();
 
   if (!data) {
-    return null;
+    return <StatusScreen title={t('STATUS_LOADING_TITLE')} subtitle={t('STATUS_LOADING_SUBTITLE')} />;
   }
 
   if (error) {
