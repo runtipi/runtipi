@@ -5,6 +5,7 @@ import { sanitizePath } from '@runtipi/shared';
 import { execAsync, pathExists } from '@runtipi/shared/node';
 import * as Sentry from '@sentry/node';
 import { getRepoBaseUrlAndBranch, getRepoHash } from './repo.helpers';
+import { getEnv } from '@/lib/environment';
 
 export class RepoExecutors {
   private readonly logger;
@@ -39,6 +40,7 @@ export class RepoExecutors {
       // so we do it here before splitting the url into repoUrl and branch
       const repoHash = getRepoHash(url);
       const repoPath = path.join(DATA_DIR, 'repos', sanitizePath(repoHash));
+      const gitSSLVerify = getEnv().gitSSLVerify;
 
       if (await pathExists(repoPath)) {
         this.logger.info(`Repo ${url} already exists`);
@@ -46,6 +48,13 @@ export class RepoExecutors {
       }
 
       const [repoUrl, branch] = getRepoBaseUrlAndBranch(url);
+
+      this.logger.info(`Executing: git config --global http.sslVerify ${gitSSLVerify}`);
+      await execAsync(`git config --global http.sslVerify ${gitSSLVerify}`).then(({ stderr }) => {
+        if (stderr) {
+          this.logger.error(`stderr: ${stderr}`);
+        }
+      });
 
       let cloneCommand: string;
       if (branch) {
@@ -78,6 +87,7 @@ export class RepoExecutors {
     try {
       const repoHash = getRepoHash(repoUrl);
       const repoPath = path.join(DATA_DIR, 'repos', sanitizePath(repoHash));
+      const gitSSLVerify = getEnv().gitSSLVerify;
 
       if (!(await pathExists(repoPath))) {
         this.logger.info(`Repo ${repoUrl} does not exist`);
@@ -85,6 +95,13 @@ export class RepoExecutors {
       }
 
       this.logger.info(`Pulling repo ${repoUrl} to ${repoPath}`);
+
+      this.logger.info(`Executing: git config --global http.sslVerify ${gitSSLVerify === 'true'}`);
+      await execAsync(`git config --global http.sslVerify ${gitSSLVerify}`).then(({ stderr }) => {
+        if (stderr) {
+          this.logger.error(`stderr: ${stderr}`);
+        }
+      });
 
       this.logger.info(`Executing: git config --global --add safe.directory ${repoPath}`);
       await execAsync(`git config --global --add safe.directory ${repoPath}`).then(({ stderr }) => {

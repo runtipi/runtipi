@@ -99,6 +99,7 @@ export const envSchema = z.object({
 
       return false;
     }),
+  gitSSLVerify: z.boolean().default(true),
 });
 
 export const settingsSchema = envSchema
@@ -117,6 +118,7 @@ export const settingsSchema = envSchema
     allowErrorMonitoring: true,
     persistTraefikConfig: true,
     timeZone: true,
+    gitSSLVerify: true,
   })
   .and(
     z

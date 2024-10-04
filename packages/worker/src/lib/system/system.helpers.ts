@@ -38,6 +38,7 @@ type EnvKeys =
   | 'ALLOW_ERROR_MONITORING'
   | 'PERSIST_TRAEFIK_CONFIG'
   | 'ALLOW_AUTO_THEMES'
+  | 'GIT_NO_SSL'
   | (string & {});
 
 const OLD_DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
@@ -170,6 +171,7 @@ export const generateSystemEnvFile = (): Map<EnvKeys, string> => {
     'PERSIST_TRAEFIK_CONFIG',
     typeof data.persistTraefikConfig === 'boolean' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
+  envMap.set('GIT_SSL_VERIFY', typeof data.gitSSLVerify === 'boolean' ? String(data.gitSSLVerify) : envMap.get('GIT_SSL_VERIFY') || 'true');
 
   fs.writeFileSync(envFilePath, envMapToString(envMap));
 
@@ -185,16 +187,24 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
   // Remove old unused files
   if (await pathExists(path.join(DATA_DIR, 'scripts'))) {
     logger.info('Removing old scripts folder');
-    await fs.promises.rmdir(path.join(DATA_DIR, 'scripts'), { recursive: true });
+    await fs.promises.rmdir(path.join(DATA_DIR, 'scripts'), {
+      recursive: true,
+    });
   }
 
   const assetsFolder = path.join(APP_DIR, 'assets');
 
   // Copy traefik folder from assets
   logger.info('Creating traefik folders');
-  await fs.promises.mkdir(path.join(DATA_DIR, 'traefik', 'dynamic'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'traefik', 'shared'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'traefik', 'tls'), { recursive: true });
+  await fs.promises.mkdir(path.join(DATA_DIR, 'traefik', 'dynamic'), {
+    recursive: true,
+  });
+  await fs.promises.mkdir(path.join(DATA_DIR, 'traefik', 'shared'), {
+    recursive: true,
+  });
+  await fs.promises.mkdir(path.join(DATA_DIR, 'traefik', 'tls'), {
+    recursive: true,
+  });
 
   if (envMap.get('PERSIST_TRAEFIK_CONFIG') === 'true') {
     logger.warn('Skipping the copy of traefik files because persistTraefikConfig is set to true');
@@ -214,7 +224,9 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
     await fs.promises.mkdir(APP_DATA_DIR, { recursive: true });
     await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
     await fs.promises.mkdir(path.join(DATA_DIR, 'repos'), { recursive: true });
-    await fs.promises.mkdir(path.join(DATA_DIR, 'backups'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'backups'), {
+      recursive: true,
+    });
   } catch (error) {
     logger.error("Couldn't create base folders", error);
   }
@@ -222,7 +234,9 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
   // Create media folders
   logger.info('Creating media folders');
   try {
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'torrents', 'watch'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'torrents', 'watch'), {
+      recursive: true,
+    });
     await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'torrents', 'complete'), {
       recursive: true,
     });
@@ -230,7 +244,9 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
       recursive: true,
     });
 
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'usenet', 'watch'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'usenet', 'watch'), {
+      recursive: true,
+    });
     await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'usenet', 'complete'), {
       recursive: true,
     });
@@ -248,14 +264,30 @@ export const copySystemFiles = async (envMap: Map<EnvKeys, string>) => {
       recursive: true,
     });
 
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'books'), { recursive: true });
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'comics'), { recursive: true });
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'movies'), { recursive: true });
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'music'), { recursive: true });
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'tv'), { recursive: true });
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'podcasts'), { recursive: true });
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'images'), { recursive: true });
-    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'roms'), { recursive: true });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'books'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'comics'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'movies'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'music'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'tv'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'podcasts'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'images'), {
+      recursive: true,
+    });
+    await fs.promises.mkdir(path.join(DATA_DIR, 'media', 'data', 'roms'), {
+      recursive: true,
+    });
   } catch (error) {
     logger.error("Couldn't create media folders", error);
   }
