@@ -13,7 +13,7 @@ interface IProps {
 }
 
 export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
-  const { category, search } = useAppStoreState();
+  const { setCategory, category, search } = useAppStoreState();
 
   async function searchApps({ pageParam }: { pageParam?: string }) {
     const url = new URL('/api/app-store', window.location.origin);
@@ -63,7 +63,7 @@ export const AppStoreTable: React.FC<IProps> = ({ initialData }) => {
       <div className="row row-cards">
         {apps.map((app, index) => (
           <div ref={index === apps.length - 1 ? lastElementRef : null} key={app.id} className="cursor-pointer col-sm-6 col-lg-4 p-2 mt-4">
-            <AppStoreTile app={app} />
+            <AppStoreTile app={app} onClickCategory={setCategory} />
           </div>
         ))}
       </div>
