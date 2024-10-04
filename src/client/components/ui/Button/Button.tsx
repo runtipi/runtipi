@@ -70,10 +70,11 @@ const buttonVariants = cva('btn', {
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
+  tabindex?: number;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, intent, asChild = false, disabled, loading, ...props }, ref) => {
+  ({ className, variant, size, intent, asChild = false, disabled, loading, tabindex, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
     return (
       <Comp
@@ -81,6 +82,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         style={{ height: size ? 'auto' : '36px' }}
         className={clsx(buttonVariants({ variant, size, intent, className }), { disabled: disabled || loading, 'btn-loading': loading }, className)}
         ref={ref}
+        tabIndex={tabindex}
         {...props}
       />
     );
