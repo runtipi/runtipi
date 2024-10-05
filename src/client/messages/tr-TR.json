@@ -202,7 +202,7 @@
   "DASHBOARD_CPU_TITLE": "CPU yükü",
   "DASHBOARD_DISK_SPACE_SUBTITLE": "{total} GB'den kullanılan",
   "DASHBOARD_DISK_SPACE_TITLE": "Disk alanı",
-  "DASHBOARD_MEMORY_TITLE": "Kullanılan Bellek",
+  "DASHBOARD_MEMORY_TITLE": "Kullanılan bellek",
   "DASHBOARD_TITLE": "Gösterge Paneli",
   "DASHBOARD_IP_WARNING_TITLE": "Güvensiz yapılandırma",
   "DASHBOARD_IP_WARNING": "Uyarı, risk altında olabilirsiniz! Görünüşe göre instance'ınıza genel bir IP adresi üzerinden erişiyorsunuz. Bu, gösterge panelinizi ve kurduğunuz tüm uygulamaları saldırganlara karşı savunmasız hale getirir.",
