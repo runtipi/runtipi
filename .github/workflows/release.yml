@@ -68,7 +68,7 @@ jobs:
     needs: create-tag
     steps:
       - name: Dispatch an action and get the run ID
-        uses: codex-/return-dispatch@v1
+        uses: codex-/return-dispatch@v2
         id: return_dispatch
         with:
           token: ${{ secrets.PAT_CLI }}
@@ -120,7 +120,7 @@ jobs:
     needs: create-tag
     steps:
       - name: Dispatch the release action
-        uses: codex-/return-dispatch@v1
+        uses: codex-/return-dispatch@v2
         with:
           token: ${{ secrets.PAT_CLI }}
           ref: main
