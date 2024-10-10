@@ -29,11 +29,11 @@
     "lodash.clonedeep": "^4.5.0",
     "tar-fs": "^3.0.6",
     "validator": "^13.12.0",
-    "winston": "^3.14.2",
+    "winston": "^3.15.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@sentry/types": "^8.31.0",
+    "@sentry/types": "^8.34.0",
     "@types/gunzip-maybe": "^1.4.2",
     "@types/lodash.clonedeep": "^4.5.9",
     "@types/tar-fs": "^2.0.4"
