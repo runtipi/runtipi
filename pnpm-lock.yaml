@@ -202,8 +202,8 @@ importers:
         specifier: 1.9.3
         version: 1.9.3
       '@faker-js/faker':
-        specifier: ^8.4.1
-        version: 8.4.1
+        specifier: ^9.0.3
+        version: 9.0.3
       '@playwright/test':
         specifier: ^1.48.0
         version: 1.48.0
@@ -429,8 +429,8 @@ importers:
         version: 3.23.8
     devDependencies:
       '@faker-js/faker':
-        specifier: ^8.4.1
-        version: 8.4.1
+        specifier: ^9.0.3
+        version: 9.0.3
       '@sentry/esbuild-plugin':
         specifier: ^2.22.5
         version: 2.22.5
@@ -976,9 +976,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@faker-js/faker@8.4.1':
-    resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
+  '@faker-js/faker@9.0.3':
+    resolution: {integrity: sha512-lWrrK4QNlFSU+13PL9jMbMKLJYXDFu3tQfayBsMXX7KL/GiQeqfB1CzHkqD5UHBUtPAuPo6XwGbMFNdVMZObRA==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   '@floating-ui/core@1.6.8':
     resolution: {integrity: sha512-7XJ9cPU+yI2QeLS+FCSlqNFZJq8arvswefkZrYI1yQBbftw6FyrZOxYSh+9S7z7TpeWlRt9zJ5IhM1WIL334jA==}
@@ -5709,7 +5709,7 @@ snapshots:
   '@esbuild/win32-x64@0.23.1':
     optional: true
 
-  '@faker-js/faker@8.4.1': {}
+  '@faker-js/faker@9.0.3': {}
 
   '@floating-ui/core@1.6.8':
     dependencies:
