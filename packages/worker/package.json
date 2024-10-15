@@ -38,7 +38,7 @@
     "bullmq": "^5.18.0",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.34.1",
-    "hono": "^4.6.3",
+    "hono": "^4.6.5",
     "inversify": "^6.0.2",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.0",

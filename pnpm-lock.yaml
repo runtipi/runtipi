@@ -372,7 +372,7 @@ importers:
     dependencies:
       '@hono/node-server':
         specifier: ^1.13.1
-        version: 1.13.1(hono@4.6.3)
+        version: 1.13.1(hono@4.6.5)
       '@runtipi/cache':
         specifier: workspace:^
         version: link:../cache
@@ -401,8 +401,8 @@ importers:
         specifier: ^0.34.1
         version: 0.34.1(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@18.3.11)(pg@8.13.0)(react@18.3.1)
       hono:
-        specifier: ^4.6.3
-        version: 4.6.3
+        specifier: ^4.6.5
+        version: 4.6.5
       inversify:
         specifier: ^6.0.2
         version: 6.0.2
@@ -3369,8 +3369,8 @@ packages:
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
-  hono@4.6.3:
-    resolution: {integrity: sha512-0LeEuBNFeSHGqZ9sNVVgZjB1V5fmhkBSB0hZrpqStSMLOWgfLy0dHOvrjbJh0H2khsjet6rbHfWTHY0kpYThKQ==}
+  hono@4.6.5:
+    resolution: {integrity: sha512-qsmN3V5fgtwdKARGLgwwHvcdLKursMd+YOt69eGpl1dUCJb8mCd7hZfyZnBYjxCegBG7qkJRQRUy2oO25yHcyQ==}
     engines: {node: '>=16.9.0'}
 
   html-encoding-sniffer@4.0.0:
@@ -5753,9 +5753,9 @@ snapshots:
     dependencies:
       tslib: 2.7.0
 
-  '@hono/node-server@1.13.1(hono@4.6.3)':
+  '@hono/node-server@1.13.1(hono@4.6.5)':
     dependencies:
-      hono: 4.6.3
+      hono: 4.6.5
 
   '@hookform/resolvers@3.9.0(react-hook-form@7.53.0(react@18.3.1))':
     dependencies:
@@ -8210,7 +8210,7 @@ snapshots:
     dependencies:
       react-is: 16.13.1
 
-  hono@4.6.3: {}
+  hono@4.6.5: {}
 
   html-encoding-sniffer@4.0.0:
     dependencies:
