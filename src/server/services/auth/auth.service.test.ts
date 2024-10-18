@@ -739,7 +739,7 @@ describe('AuthService', () => {
       // arrange
       const email = faker.internet.email();
       const user = await createUser({ email });
-      const newPassword = faker.internet.password(7);
+      const newPassword = faker.internet.password({ length: 7 });
       mockQueries.getUserById.calledWith(user.id).mockResolvedValue(user);
 
       // act & assert
