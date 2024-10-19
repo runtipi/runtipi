@@ -37,7 +37,7 @@ describe('Test: CategorySelector', () => {
     // arrange
     const onSelect = vi.fn();
     const className = 'test-class';
-    render(<CategorySelector onSelect={onSelect} className={className} initialValue="automation" />);
+    render(<CategorySelector onSelect={onSelect} className={className} value="automation" />);
 
     // assert
     expect(screen.getByText('Automation')).toBeInTheDocument();
