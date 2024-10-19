@@ -44,7 +44,10 @@ export class BackupManager {
     this.logger.info('Creating archive...');
 
     // Create the archive
-    await this.archiveManager.createTarGz(tempDir, `${path.join(tempDir, backupName)}.tar.gz`);
+    const { stdout, stderr } = await this.archiveManager.createTarGz(tempDir, `${path.join(tempDir, backupName)}.tar.gz`);
+    this.logger.debug('--- archiveManager.createTarGz ---');
+    this.logger.debug('stderr:', stderr);
+    this.logger.debug('stdout:', stdout);
 
     this.logger.info('Moving archive to backup directory...');
 
@@ -73,7 +76,10 @@ export class BackupManager {
     await fs.promises.mkdir(restoreDir, { recursive: true });
 
     this.logger.info('Extracting archive...');
-    await this.archiveManager.extractTarGz(archive, restoreDir);
+    const { stderr, stdout } = await this.archiveManager.extractTarGz(archive, restoreDir);
+    this.logger.debug('--- archiveManager.extractTarGz ---');
+    this.logger.debug('stderr:', stderr);
+    this.logger.debug('stdout:', stdout);
 
     const appDataDirPath = path.join(this.appDataDir, appId);
     const appDirPath = path.join(this.dataDir, 'apps', appId);
