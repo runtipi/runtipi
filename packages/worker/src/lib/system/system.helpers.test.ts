@@ -86,6 +86,7 @@ describe('generateSystemEnvFile()', async () => {
     expect(generated.get('ALLOW_AUTO_THEMES')).toBe('true');
     expect(generated.get('ALLOW_ERROR_MONITORING')).toBe('false');
     expect(generated.get('PERSIST_TRAEFIK_CONFIG')).toBe('false');
+    expect(generated.get('GIT_VERIFY_SSL')).toBe('true');
   });
 
   it('should replace any old repo url from settings.json to the new one', async () => {

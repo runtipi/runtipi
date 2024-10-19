@@ -23,6 +23,7 @@ const environmentSchema = z
     POSTGRES_DBNAME: z.string(),
     POSTGRES_HOST: z.string(),
     JWT_SECRET: z.string(),
+    GIT_SSL_VERIFY: z.string(),
   })
   .transform((env) => {
     const {
@@ -40,6 +41,7 @@ const environmentSchema = z
       POSTGRES_PORT,
       POSTGRES_HOST,
       JWT_SECRET,
+      GIT_SSL_VERIFY,
       ...rest
     } = env;
 
@@ -58,6 +60,7 @@ const environmentSchema = z
       postgresDatabase: POSTGRES_DBNAME,
       postgresHost: POSTGRES_HOST,
       jwtSecret: JWT_SECRET,
+      gitSSLVerify: GIT_SSL_VERIFY,
       ...rest,
     };
   });
