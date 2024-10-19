@@ -1,4 +1,4 @@
-import { execAsync } from 'src/node/helpers/exec-async';
+import { execAsync } from '../../helpers/exec-async';
 
 export class ArchiveManager {
   createTarGz = async (sourceDir: string, destinationFile: string) => {
