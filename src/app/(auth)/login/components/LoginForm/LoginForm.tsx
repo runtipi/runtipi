@@ -47,7 +47,11 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit }) => {
         type="email"
         className="mb-3"
         placeholder={t('AUTH_FORM_EMAIL_PLACEHOLDER')}
+        tabindex={1}
       />
+      <span className="form-label-description">
+        <Link href="/reset-password" tabIndex={4}>{t('AUTH_FORM_FORGOT')}</Link>
+      </span>
       <Input
         {...register('password')}
         name="password"
@@ -57,13 +61,11 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit }) => {
         type="password"
         className="mb-3"
         placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
+        tabindex={2}
       />
-      <Button disabled={isDisabled} loading={loading} type="submit" intent="primary" className="w-100">
+      <Button disabled={isDisabled} loading={loading} type="submit" intent="primary" className="w-100" tabindex={3}>
         {t('AUTH_LOGIN_SUBMIT')}
       </Button>
-      <div className="form-text text-center">
-        <Link href="/reset-password">{t('AUTH_FORM_FORGOT')}</Link>
-      </div>
     </form>
   );
 };
