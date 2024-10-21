@@ -33,7 +33,7 @@
     "@runtipi/db": "workspace:^",
     "@runtipi/shared": "workspace:^",
     "@sentry/integrations": "^7.114.0",
-    "@sentry/node": "^8.34.0",
+    "@sentry/node": "^8.35.0",
     "ansi-to-html": "^0.7.2",
     "bullmq": "^5.21.1",
     "dotenv": "^16.4.5",
