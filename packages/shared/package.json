@@ -33,7 +33,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@sentry/types": "^8.34.0",
+    "@sentry/types": "^8.35.0",
     "@types/gunzip-maybe": "^1.4.2",
     "@types/lodash.clonedeep": "^4.5.9",
     "@types/tar-fs": "^2.0.4"
