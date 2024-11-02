@@ -1,6 +1,6 @@
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { TranslatedError } from '@/server/utils/errors';
-import type { AppEventFormInput } from '@runtipi/shared';
+import { formSchema } from '@runtipi/shared';
 import { lt, valid } from 'semver';
 import { isFQDN } from 'validator';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
@@ -9,9 +9,14 @@ import { getClass } from 'src/inversify.config';
 export class InstallAppCommand implements IAppLifecycleCommand {
   constructor(private params: AppLifecycleCommandParams) {}
 
-  private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
+  private async sendEvent(appId: string, form: unknown): Promise<void> {
     const logger = getClass('ILogger');
-    const { success, stdout } = await this.params.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'install', appid: appId, form });
+    const { success, stdout } = await this.params.eventDispatcher.dispatchEventAsync({
+      type: 'app',
+      command: 'install',
+      appid: appId,
+      form: formSchema.parse(form),
+    });
 
     if (success) {
       await this.params.queries.updateApp(appId, { status: 'running' });
@@ -25,8 +30,10 @@ export class InstallAppCommand implements IAppLifecycleCommand {
     await this.params.executeOtherCommand('startApp', { appId });
   }
 
-  async execute(params: { appId: string; form: AppEventFormInput }): Promise<void> {
+  async execute(params: { appId: string; form: unknown }): Promise<void> {
     const { appId, form } = params;
+
+    const parsedForm = formSchema.parse(form);
 
     const app = await this.params.queries.getApp(appId);
 
@@ -34,7 +41,8 @@ export class InstallAppCommand implements IAppLifecycleCommand {
       return this.startApp(appId);
     }
 
-    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
+    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = parsedForm;
+
     const apps = await this.params.queries.getApps();
 
     if (apps.length >= 6 && TipiConfig.getConfig().demoMode) {

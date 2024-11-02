@@ -1,10 +1,9 @@
-import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import type { IAppQueries } from '@/server/queries/apps/apps.queries';
 import { TranslatedError } from '@/server/utils/errors';
-import type { AppEventFormInput } from '@runtipi/shared';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { getClass } from 'src/inversify.config';
+import { formSchema } from 'packages/shared/src';
 
 export class RestartAppCommand implements IAppLifecycleCommand {
   private queries: IAppQueries;
@@ -15,9 +14,14 @@ export class RestartAppCommand implements IAppLifecycleCommand {
     this.eventDispatcher = params.eventDispatcher;
   }
 
-  private async sendEvent(appId: string, form: AppEventFormInput): Promise<void> {
+  private async sendEvent(appId: string, form: unknown): Promise<void> {
     const logger = getClass('ILogger');
-    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'restart', appid: appId, form });
+    const { success, stdout } = await this.eventDispatcher.dispatchEventAsync({
+      type: 'app',
+      command: 'restart',
+      appid: appId,
+      form: formSchema.parse(form),
+    });
 
     if (success) {
       await this.queries.updateApp(appId, { status: 'running' });
@@ -38,6 +42,6 @@ export class RestartAppCommand implements IAppLifecycleCommand {
     // Run script
     await this.queries.updateApp(appId, { status: 'restarting' });
 
-    void this.sendEvent(appId, castAppConfig(app.config));
+    void this.sendEvent(appId, app.config);
   }
 }
