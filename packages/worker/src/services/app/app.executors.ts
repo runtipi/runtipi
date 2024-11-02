@@ -66,8 +66,10 @@ export class AppExecutors implements IAppExecutors {
       await this.appFileAccessor.copyAppFromRepoToInstalled(appId);
     }
 
+    const appInfo = await this.appFileAccessor.getInstalledAppInfo(appId);
+
     const rawComposeConfig = await this.appFileAccessor.getInstalledAppDockerComposeJson(appId);
-    if (rawComposeConfig) {
+    if (rawComposeConfig && appInfo?.dynamic_config) {
       try {
         const composeFile = getDockerCompose(rawComposeConfig.services, form);
 

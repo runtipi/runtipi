@@ -1,11 +1,10 @@
-import { castAppConfig } from '@/lib/helpers/castAppConfig';
 import { TipiConfig } from '@/server/core/TipiConfig';
 import { TranslatedError } from '@/server/utils/errors';
 import type { AppStatus } from '@runtipi/db';
-import type { AppEventFormInput } from '@runtipi/shared';
 import semver from 'semver';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 import { getClass } from 'src/inversify.config';
+import { formSchema } from 'packages/shared/src';
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
@@ -14,7 +13,7 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
   private async sendEvent(params: {
     appId: string;
-    form: AppEventFormInput;
+    form: unknown;
     appStatusBeforeUpdate: AppStatus;
     performBackup: boolean;
   }): Promise<void> {
@@ -22,7 +21,7 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
     const { appId, form, appStatusBeforeUpdate, performBackup } = params;
 
     const { success, stdout } = await this.params.eventDispatcher.dispatchEventAsync(
-      { type: 'app', command: 'update', appid: appId, form, performBackup },
+      { type: 'app', command: 'update', appid: appId, form: formSchema.parse(form), performBackup },
       performBackup ? FIFTEEN_MINUTES : undefined,
     );
 
@@ -59,6 +58,6 @@ export class UpdateAppCommand implements IAppLifecycleCommand {
 
     await this.params.queries.updateApp(appId, { status: 'updating' });
 
-    void this.sendEvent({ appId, form: castAppConfig(app.config), appStatusBeforeUpdate: app.status || 'missing', performBackup });
+    void this.sendEvent({ appId, form: app.config, appStatusBeforeUpdate: app.status || 'missing', performBackup });
   }
 }
