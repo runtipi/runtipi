@@ -65,7 +65,7 @@ export class UpdateAppConfigCommand implements IAppLifecycleCommand {
       exposedLocal: parsedForm.exposedLocal || false,
       openPort: parsedForm.openPort || false,
       domain: domain || null,
-      config: form,
+      config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard,
     });
   }
