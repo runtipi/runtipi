@@ -140,7 +140,7 @@
   "APP_UPDATE_SETTINGS_FORM_TITLE": "Atualizar configuração do {name}",
   "APP_UPDATE_SUCCESS": "App {id} updated successfully",
   "APP_UPDATE_FORM_BACKUP": "Backup app before updating",
-  "APP_BACKUP_SUCCESS": "App {id} iniciado com sucesso",
+  "APP_BACKUP_SUCCESS": "Backup do App {id} realizado com sucesso",
   "APP_BACKUP_ERROR": "Failed to backup {id}, see logs for more details",
   "APP_RESTORE_SUCCESS": "App {id} restored successfully",
   "APP_RESTORE_ERROR": "Failed to restore {id}, see logs for more details",
