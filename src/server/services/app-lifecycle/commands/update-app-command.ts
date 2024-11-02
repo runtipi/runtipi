@@ -4,7 +4,7 @@ import type { AppStatus } from '@runtipi/db';
 import semver from 'semver';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 import { getClass } from 'src/inversify.config';
-import { formSchema } from 'packages/shared/src';
+import { formSchema } from '@runtipi/shared';
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 

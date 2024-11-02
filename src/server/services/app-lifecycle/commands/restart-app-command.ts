@@ -3,7 +3,7 @@ import { TranslatedError } from '@/server/utils/errors';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
 import type { IEventDispatcher } from '@/server/core/EventDispatcher/EventDispatcher';
 import { getClass } from 'src/inversify.config';
-import { formSchema } from 'packages/shared/src';
+import { formSchema } from '@runtipi/shared';
 
 export class RestartAppCommand implements IAppLifecycleCommand {
   private queries: IAppQueries;
