@@ -9,6 +9,7 @@ import {
   type SystemEvent,
   type AppEventForm,
   type AppEventFormInput,
+  formSchema,
 } from './schemas/queue-schemas';
 import { linkSchema, type LinkInfo, type LinkInfoInput } from './schemas/link-schemas';
 import { socketEventSchema, type SocketEvent } from './schemas/socket-schemas';
@@ -26,6 +27,7 @@ export {
   ARCHITECTURES,
   EVENT_TYPES,
   // Schemas
+  formSchema,
   appInfoSchema,
   formFieldSchema,
   envSchema,

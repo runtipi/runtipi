@@ -493,6 +493,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Lancelot-Enguerrand",
+      "name": "Lancelot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18631550?v=4",
+      "profile": "https://github.com/Lancelot-Enguerrand",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

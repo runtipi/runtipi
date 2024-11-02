@@ -8,7 +8,7 @@ export const EVENT_TYPES = {
 
 export type EventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
 
-const formSchema = z
+export const formSchema = z
   .object({
     exposed: z.boolean().optional(),
     exposedLocal: z.boolean().optional(),

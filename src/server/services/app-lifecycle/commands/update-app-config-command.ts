@@ -1,15 +1,17 @@
 import { TranslatedError } from '@/server/utils/errors';
-import type { AppEventFormInput } from '@runtipi/shared';
 import validator from 'validator';
 import type { AppLifecycleCommandParams, IAppLifecycleCommand } from './types';
+import { formSchema } from '@runtipi/shared';
 
 export class UpdateAppConfigCommand implements IAppLifecycleCommand {
   constructor(private params: AppLifecycleCommandParams) {}
 
-  async execute(params: { appId: string; form: AppEventFormInput }): Promise<void> {
+  async execute(params: { appId: string; form: unknown }): Promise<void> {
     const { appId, form } = params;
 
-    const { exposed, domain } = form;
+    const parsedForm = formSchema.parse(form);
+
+    const { exposed, domain } = parsedForm;
 
     if (exposed && !domain) {
       throw new TranslatedError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
@@ -47,7 +49,12 @@ export class UpdateAppConfigCommand implements IAppLifecycleCommand {
       }
     }
 
-    const { success } = await this.params.eventDispatcher.dispatchEventAsync({ type: 'app', command: 'generate_env', appid: appId, form });
+    const { success } = await this.params.eventDispatcher.dispatchEventAsync({
+      type: 'app',
+      command: 'generate_env',
+      appid: appId,
+      form: parsedForm,
+    });
 
     if (!success) {
       throw new TranslatedError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appId });
@@ -55,11 +62,11 @@ export class UpdateAppConfigCommand implements IAppLifecycleCommand {
 
     await this.params.queries.updateApp(appId, {
       exposed: exposed || false,
-      exposedLocal: form.exposedLocal || false,
-      openPort: form.openPort || false,
+      exposedLocal: parsedForm.exposedLocal || false,
+      openPort: parsedForm.openPort || false,
       domain: domain || null,
-      config: form,
-      isVisibleOnGuestDashboard: form.isVisibleOnGuestDashboard,
+      config: parsedForm,
+      isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard,
     });
   }
 }
