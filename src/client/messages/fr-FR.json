@@ -271,7 +271,7 @@
   "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Utilisez ce bouton pour mettre à jour votre boutique d'applications",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Cela va réinitialiser votre dépôt et récupérer les dernières modifications depuis GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Mettre à jour",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstore repository updated successfully",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Le dépôt de la boutique d'applications a été mit à jour avec succès",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Autoriser les thèmes automatiques",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Soyez surpris par les thèmes qui changent automatiquement en fonction de la période de l'année.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Autoriser le suivi anonyme des erreurs",
