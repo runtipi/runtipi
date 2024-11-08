@@ -9,7 +9,9 @@
     "start": "node ./index.js",
     "start:dev": "docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
     "start:prod": "docker compose --project-name runtipi -f docker-compose.prod.yml up --build ",
-    "gen:api-client": "openapi-ts"
+    "gen:api-client": "openapi-ts",
+    "lint:ci": "biome ci . --changed --error-on-warnings --no-errors-on-unmatched",
+    "lint": "biome check"
   },
   "keywords": [],
   "author": "",
