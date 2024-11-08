@@ -26,7 +26,7 @@ export const RestoreAppDialog: React.FC<IProps> = ({ appName, backup, isOpen, on
         </DialogHeader>
         <DialogDescription className="text-center py-4">
           <IconAlertTriangle className="icon mb-2 text-warning icon-lg" />
-          <h3>{t('APP_RESTORE_WARNING', { id: backup?.id, date: formatDate(backup?.date) })}</h3>
+          <h3>{t('APP_RESTORE_WARNING', { id: backup?.id, date: formatDate(new Date(backup?.date ?? 0)) })}</h3>
           <div className="text-muted">{t('APP_RESTORE_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>

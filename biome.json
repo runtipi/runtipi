@@ -1,10 +1,13 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "defaultBranch": "origin/develop",
+    "useIgnoreFile": true
+  },
   "files": {
-    "ignore": [
-      "dist/**",
-      "public/**"
-    ]
+    "ignore": ["dist/**", "public/**", "legacy/**"]
   },
   "formatter": {
     "enabled": true,
@@ -63,10 +66,7 @@
   },
   "overrides": [
     {
-      "include": [
-        "**/*.test.ts",
-        "**/*.test.tsx"
-      ],
+      "include": ["**/*.test.ts", "**/*.test.tsx"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -78,9 +78,7 @@
       }
     },
     {
-      "include": [
-        "packages/backend/**"
-      ],
+      "include": ["packages/backend/**"],
       "linter": {
         "rules": {
           "style": {
