@@ -1,0 +1,42 @@
+import { Body, Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '../auth/auth.guard';
+import { AppLifecycleService } from './app-lifecycle.service';
+import { AppFormBody, appFormSchema } from './dto/app-lifecycle.dto';
+
+@UseGuards(AuthGuard)
+@Controller('app-lifecycle')
+export class AppLifecycleController {
+  constructor(private readonly appLifecycleService: AppLifecycleService) {}
+
+  @Post(':id/install')
+  async installApp(@Param('id') id: string, @Body() body: AppFormBody) {
+    const form = appFormSchema.parse(body);
+
+    return this.appLifecycleService.installApp({ appId: id, form });
+  }
+
+  @Post(':id/start')
+  async startApp(@Param('id') id: string) {
+    return this.appLifecycleService.startApp({ appId: id });
+  }
+
+  @Post(':id/stop')
+  async stopApp(@Param('id') id: string) {
+    return this.appLifecycleService.stopApp({ appId: id });
+  }
+
+  @Post(':id/restart')
+  async restartApp(@Param('id') id: string) {
+    return this.appLifecycleService.restartApp({ appId: id });
+  }
+
+  @Delete(':id/uninstall')
+  async uninstallApp(@Param('id') id: string) {
+    return this.appLifecycleService.uninstallApp({ appId: id });
+  }
+
+  @Post(':id/reset')
+  async resetApp(@Param('id') id: string) {
+    return this.appLifecycleService.resetApp({ appId: id });
+  }
+}

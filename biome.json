@@ -1,22 +1,9 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"],
     "ignore": [
-      "node_modules/**",
       "dist/**",
-      "coverage/**",
-      ".next/**",
-      "public/**",
-      "app-data/**",
-      "apps/*/**",
-      "logs/**",
-      "media/**",
-      "repos/**",
-      "state/**",
-      "traefik/**",
-      "user-config/**",
-      "playwright-report/**"
+      "public/**"
     ]
   },
   "formatter": {
@@ -30,7 +17,7 @@
     "ignore": []
   },
   "organizeImports": {
-    "enabled": false
+    "enabled": true
   },
   "linter": {
     "enabled": true,
@@ -76,12 +63,33 @@
   },
   "overrides": [
     {
-      "include": ["**/*.test.ts", "**/*.test.tsx"],
+      "include": [
+        "**/*.test.ts",
+        "**/*.test.tsx"
+      ],
       "linter": {
         "rules": {
           "suspicious": {
             "noEmptyBlockStatements": {
               "level": "off"
+            }
+          }
+        }
+      }
+    },
+    {
+      "include": [
+        "packages/backend/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
+          },
+          "correctness": {
+            "useHookAtTopLevel": {
+              "level": "off",
+              "options": {}
             }
           }
         }

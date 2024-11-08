@@ -1,0 +1,76 @@
+services:
+  runtipi-db:
+    container_name: runtipi-db
+    image: postgres:14
+    restart: unless-stopped
+    stop_grace_period: 1m
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: tipi
+      POSTGRES_DB: tipi
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d tipi -U tipi"]
+      interval: 5s
+      timeout: 10s
+      retries: 120
+    networks:
+      - tipi_main_network
+
+  runtipi:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    depends_on:
+      runtipi-db:
+        condition: service_healthy
+    container_name: runtipi
+    restart: unless-stopped
+    ports:
+      - 3000:8080
+      - 5001:5001
+    volumes:
+      # Hot reload
+      - ./packages/backend/src:/app/packages/backend/src
+      - ./packages/frontend/src:/app/packages/frontend/src
+      # Data
+      - ${RUNTIPI_MEDIA_PATH:-.}/media:/data/media
+      - ${RUNTIPI_STATE_PATH:-.}/state:/data/state
+      - ${RUNTIPI_REPOS_PATH:-.}/repos:/data/repos
+      - ${RUNTIPI_APPS_PATH:-.}/apps:/data/apps
+      - ${RUNTIPI_LOGS_PATH:-.}/logs:/data/logs
+      - ${RUNTIPI_TRAEFIK_PATH:-.}/traefik:/data/traefik
+      - ${RUNTIPI_USER_CONFIG_PATH:-.}/user-config:/data/user-config
+      - ${RUNTIPI_APP_DATA_PATH:-.}/app-data:/app-data
+      - ${RUNTIPI_BACKUPS_PATH:-.}/backups:/data/backups
+      # Static
+      - ./.env:/data/.env
+      - ./cache:/cache
+      - ./docker-compose.dev.yml:/data/docker-compose.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/meminfo:/host/proc/meminfo:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - tipi_main_network
+    environment:
+      LOCAL: true
+      NODE_ENV: development
+      ROOT_FOLDER_HOST: ${PWD}
+      POSTGRES_PASSWORD: postgres
+      INTERNAL_IP: 127.0.0.1
+      TIPI_VERSION: 0.0.0
+      LOG_LEVEL: debug
+    env_file:
+      - .env
+
+networks:
+  tipi_main_network:
+    driver: bridge
+    name: runtipi_tipi_main_network
+
+volumes:
+  pgdata:

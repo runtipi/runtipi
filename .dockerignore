@@ -1,0 +1,19 @@
+*
+
+### Includes ###
+!packages/**/src/**
+!packages/**/public/**
+!packages/**/assets/**
+!packages/**/scripts/**
+!pnpm-*.yaml
+!package.json
+!turbo.json
+!supervisord.*.conf
+
+!**/package.json
+!**/tsconfig.json
+!**/nest-cli.json
+!**/tsup.config.ts
+!**/vite.config.ts
+!**/index.html
+

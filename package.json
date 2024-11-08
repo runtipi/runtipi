@@ -1,0 +1,22 @@
+{
+  "name": "runtipi",
+  "version": "1.0.0",
+  "description": "",
+  "packageManager": "pnpm@9.12.2",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo build",
+    "start": "node ./index.js",
+    "start:dev": "docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
+    "start:prod": "docker compose --project-name runtipi -f docker-compose.prod.yml up --build ",
+    "gen:api-client": "openapi-ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GNU General Public License v3.0",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.2",
+    "@hey-api/openapi-ts": "^0.53.7",
+    "turbo": "^2.2.3"
+  }
+}
