@@ -17,10 +17,6 @@ jobs:
           VERSION=$(npm run version --silent)
           echo "tagname=v${VERSION}" >> $GITHUB_OUTPUT
 
-      - uses: rickstaa/action-create-tag@v1
-        with:
-          tag: ${{ steps.get_tag.outputs.tagname }}
-
   build-images:
     if: github.repository == 'runtipi/runtipi'
     needs: create-tag

@@ -5,7 +5,7 @@ on:
       version:
         required: true
         type: string
-        description: 'Version to test (e.g. v1.6.0-beta.1)'
+        description: "Version to test (e.g. v1.6.0-beta.1)"
   workflow_dispatch:
 
 jobs:
@@ -96,7 +96,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 9.4.0
+          version: 9.12.2
           run_install: false
 
       - name: Get pnpm store directory

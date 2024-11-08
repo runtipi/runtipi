@@ -22,10 +22,6 @@ jobs:
           VERSION=$(npm run version --silent)
           echo "tagname=v${VERSION}-beta.${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
 
-      - uses: rickstaa/action-create-tag@v1
-        with:
-          tag: ${{ steps.get_tag.outputs.tagname }}
-
   build-images:
     needs: create-tag
     runs-on: ubuntu-latest
