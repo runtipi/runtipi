@@ -1,0 +1,17 @@
+@import '@tabler/core/dist/css/tabler.min.css';
+
+
+#root {
+  overflow-y: scroll;
+  height: 100%;
+}
+
+main {
+  height: 100%;
+}
+
+.tooltip {
+  max-width: 300px;
+  text-align: center;
+}
+

@@ -1,0 +1,14 @@
+http:
+  serversTransports:
+    insecuretransport:
+      insecureSkipVerify: true
+
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/traefik/tls/cert.pem
+        keyFile: /etc/traefik/tls/key.pem
+  certificates:
+    - certFile: /etc/traefik/tls/cert.pem
+      keyFile: /etc/traefik/tls/key.pem

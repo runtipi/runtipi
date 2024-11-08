@@ -1,0 +1,50 @@
+ARG NODE_VERSION="iron"
+ARG ALPINE_VERSION="3.20"
+
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+
+RUN apk add --no-cache curl git
+RUN npm install pnpm@9.12.2 -g
+
+RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
+
+ARG TARGETARCH
+ARG DOCKER_COMPOSE_VERSION="v2.29.2"
+ENV TARGETARCH=${TARGETARCH}
+ENV NODE_ENV="development"
+
+WORKDIR /app
+
+RUN echo "Building for ${TARGETARCH}"
+
+RUN if [ "${TARGETARCH}" = "arm64" ]; then \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
+  elif [ "${TARGETARCH}" = "amd64" ]; then \
+  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-x86_64"; \
+  fi
+
+RUN chmod +x docker-binary
+RUN mv docker-binary /usr/local/bin/docker-compose
+
+COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY ./pnpm-lock.yaml ./
+RUN pnpm fetch
+
+COPY ./packages/backend/package.json ./packages/backend/package.json
+COPY ./packages/frontend/package.json ./packages/frontend/package.json
+COPY ./packages/frontend/scripts ./packages/frontend/scripts
+COPY ./packages/frontend/public ./packages/frontend/public
+COPY ./package.json ./package.json
+
+RUN pnpm install
+
+COPY ./turbo.json ./turbo.json
+COPY ./packages ./packages
+COPY ./packages/backend/assets ./assets
+COPY ./packages/backend/src/core/database/migrations ./assets/migrations
+
+COPY ./supervisord.dev.conf /etc/supervisord.conf
+
+EXPOSE 3000 5001
+
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]
