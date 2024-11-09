@@ -18,8 +18,6 @@ test('user can activate the guest dashboard and see it when logged out', async (
   await page.getByRole('button', { name: 'Update settings' }).click();
   await page.getByTestId('logout-button').click();
 
-  await page.goto('/');
-
   await expect(page.getByText('No apps to display')).toBeVisible();
 });
 
@@ -54,7 +52,6 @@ test('logged out users can see the apps on the guest dashboard', async ({ browse
   await page.getByLabel('guestDashboard').setChecked(true);
   await page.getByRole('button', { name: 'Update settings' }).click();
   await page.getByTestId('logout-button').click();
-  await page.goto('/');
 
   await expect(page.getByText(/Hello World web server/)).toBeVisible();
   const locator = page.locator('text=Actual Budget');
@@ -79,8 +76,6 @@ test('user can deactivate the guest dashboard and not see it when logged out', a
   await page.getByLabel('guestDashboard').setChecked(false);
   await page.getByRole('button', { name: 'Update settings' }).click();
   await page.getByTestId('logout-button').click();
-
-  await page.goto('/');
 
   // We should be redirected to the login page
   await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();

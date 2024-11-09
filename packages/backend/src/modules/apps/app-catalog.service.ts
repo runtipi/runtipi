@@ -2,6 +2,7 @@ import { TranslatableError } from '@/common/error/translatable-error';
 import { notEmpty, pLimit } from '@/common/helpers/file-helpers';
 import { type Architecture, ConfigurationService } from '@/core/config/configuration.service';
 import type { App } from '@/core/database/schema';
+import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import MiniSearch from 'minisearch';
 import { AppFilesManager } from './app-files-manager';
@@ -30,6 +31,7 @@ export class AppCatalogService {
     private readonly filesManager: AppFilesManager,
     private readonly configuration: ConfigurationService,
     private readonly appsRepository: AppsRepository,
+    private readonly logger: LoggerService,
   ) {}
 
   private appsAvailable: AppList | null = null;
@@ -211,7 +213,10 @@ export class AppCatalogService {
   }
 
   public async getGuestDashboardApps() {
+    this.logger.debug('Getting guest dashboard apps');
     const apps = await this.appsRepository.getGuestDashboardApps();
+    this.logger.debug(`Got ${apps.length} guest dashboard apps`);
+
     return this.constructAppList(apps);
   }
 }
