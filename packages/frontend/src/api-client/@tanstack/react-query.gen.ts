@@ -29,6 +29,7 @@ import {
   searchApps,
   getAppDetails,
   getImage,
+  pull,
   installApp,
   startApp,
   stopApp,
@@ -89,6 +90,8 @@ import type {
   SearchAppsResponse,
   GetAppDetailsData,
   GetImageData,
+  PullError,
+  PullResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -662,6 +665,35 @@ export const getImageOptions = (options: Options<GetImageData>) => {
     },
     queryKey: getImageQueryKey(options),
   });
+};
+
+export const pullQueryKey = (options?: Options) => [createQueryKey('pull', options)];
+
+export const pullOptions = (options?: Options) => {
+  return queryOptions({
+    queryFn: async ({ queryKey }) => {
+      const { data } = await pull({
+        ...options,
+        ...queryKey[0],
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: pullQueryKey(options),
+  });
+};
+
+export const pullMutation = () => {
+  const mutationOptions: UseMutationOptions<PullResponse, PullError, Options> = {
+    mutationFn: async (options) => {
+      const { data } = await pull({
+        ...options,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
 };
 
 export const installAppQueryKey = (options: Options<InstallAppData>) => [createQueryKey('installApp', options)];

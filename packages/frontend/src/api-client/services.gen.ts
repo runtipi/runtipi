@@ -67,6 +67,8 @@ import type {
   GetImageData,
   GetImageError,
   GetImageResponse,
+  PullError,
+  PullResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -286,6 +288,13 @@ export const getImage = <ThrowOnError extends boolean = false>(options: Options<
   return (options?.client ?? client).get<GetImageResponse, GetImageError, ThrowOnError>({
     ...options,
     url: '/api/apps/{id}/image',
+  });
+};
+
+export const pull = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).post<PullResponse, PullError, ThrowOnError>({
+    ...options,
+    url: '/api/repos/pull',
   });
 };
 
