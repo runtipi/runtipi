@@ -147,4 +147,10 @@ export class BackupManager {
       return [];
     }
   }
+
+  public async deleteBackupsByAppId(appId: string) {
+    const backups = await this.listBackupsByAppId(appId);
+
+    await Promise.all(backups.map((backup) => this.deleteBackup(appId, backup.id)));
+  }
 }

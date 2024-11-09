@@ -13,3 +13,5 @@ export const appFormSchema = z
   .catchall(z.unknown());
 
 export class AppFormBody extends createZodDto(appFormSchema) {}
+
+export class UninstallAppBody extends createZodDto(z.object({ deleteBackups: z.boolean() })) {}

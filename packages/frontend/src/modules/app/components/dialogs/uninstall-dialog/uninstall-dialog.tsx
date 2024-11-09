@@ -42,7 +42,7 @@ export const UninstallDialog = ({ info, isOpen, onClose }: IProps) => {
           <div className="text-muted">{t('APP_UNINSTALL_FORM_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={() => uninstallMutation.mutate({ path: { id: info.id } })} intent="danger">
+          <Button onClick={() => uninstallMutation.mutate({ path: { id: info.id }, body: { deleteBackups: 'changeme' } })} intent="danger">
             {t('APP_UNINSTALL_FORM_SUBMIT')}
           </Button>
         </DialogFooter>
