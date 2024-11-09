@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppLifecycleService } from './app-lifecycle.service';
-import { AppFormBody, appFormSchema } from './dto/app-lifecycle.dto';
+import { AppFormBody, UninstallAppBody, appFormSchema } from './dto/app-lifecycle.dto';
 
 @UseGuards(AuthGuard)
 @Controller('app-lifecycle')
@@ -31,8 +31,8 @@ export class AppLifecycleController {
   }
 
   @Delete(':id/uninstall')
-  async uninstallApp(@Param('id') id: string) {
-    return this.appLifecycleService.uninstallApp({ appId: id });
+  async uninstallApp(@Param('id') id: string, @Body() body: UninstallAppBody) {
+    return this.appLifecycleService.uninstallApp({ appId: id, removeBackups: body.removeBackups });
   }
 
   @Post(':id/reset')

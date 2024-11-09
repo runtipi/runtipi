@@ -118,6 +118,16 @@ export class BackupManager {
   }
 
   /**
+   * Delete all backups for an app
+   * @param appId - The app id 
+   */
+  public async deleteAppBackupsById(appId: string): Promise<void> {
+    const backups = await this.listBackupsByAppId(appId);
+
+    await Promise.all(backups.map((backup) => this.deleteBackup(appId, backup.id)))
+  }
+
+  /**
    * List the backups for an app
    * @param appId - The app id
    * @returns The list of backups

@@ -668,6 +668,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UninstallAppBody"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -2541,6 +2551,17 @@
             "type": "boolean"
           }
         }
+      },
+      "UninstallAppBody": {
+        "type": "object",
+        "properties": {
+          "removeBackups": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "removeBackups"
+        ]
       },
       "RestoreAppBackupDto": {
         "type": "object",
