@@ -565,6 +565,24 @@
         }
       }
     },
+    "/api/repos/pull": {
+      "post": {
+        "operationId": "PullRepo",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PullDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/app-lifecycle/{id}/install": {
       "post": {
         "operationId": "installApp",
@@ -2520,6 +2538,10 @@
           "app",
           "updateInfo"
         ]
+      },
+      "PullDto": {
+        "type": "object",
+        "properties": {}
       },
       "AppFormBody": {
         "type": "object",

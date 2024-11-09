@@ -844,3 +844,9 @@ export type DeleteLinkData = {
 export type DeleteLinkResponse = unknown;
 
 export type DeleteLinkError = unknown;
+
+export type PullRepo = unknown;
+
+export type PullRepoError = unknown;
+
+export type PullRepoResponse = unknown;
