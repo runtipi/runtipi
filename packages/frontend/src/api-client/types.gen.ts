@@ -758,6 +758,9 @@ export type UninstallAppData = {
   path: {
     id: string;
   };
+  body: {
+    removeBackups: boolean;
+  }
 };
 
 export type UninstallAppResponse = unknown;

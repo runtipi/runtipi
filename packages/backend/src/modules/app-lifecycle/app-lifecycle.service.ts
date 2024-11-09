@@ -8,6 +8,7 @@ import { isFQDN } from 'validator';
 import type { z } from 'zod';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
+import { BackupManager } from '../backups/backup.manager';
 import { type AppEventFormInput, AppEventsQueue, appEventSchema } from '../queue/entities/app-events';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 
@@ -21,6 +22,7 @@ export class AppLifecycleService {
     private readonly config: ConfigurationService,
     private readonly appFilesManager: AppFilesManager,
     private readonly socketManager: SocketManager,
+    private readonly backupManager: BackupManager,
   ) {
     this.logger.debug('Subscribing to app events...');
     this.appEventsQueue.onEvent(({ eventId, ...data }) => this.invokeCommand(eventId, data));
@@ -203,13 +205,17 @@ export class AppLifecycleService {
   /**
    * Uninstall an app by its ID
    */
-  public async uninstallApp(params: { appId: string }) {
-    const { appId } = params;
+  public async uninstallApp(params: { appId: string, removeBackups: boolean }) {
+    const { appId, removeBackups } = params;
 
     const app = await this.appRepository.getApp(appId);
 
     if (!app) {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+    }
+
+    if (removeBackups) {
+      await this.backupManager.deleteAppBackupsById(appId);
     }
 
     await this.appRepository.updateApp(appId, { status: 'uninstalling' });
