@@ -4,7 +4,7 @@ import { useUIStore } from '@/stores/ui-store';
 import { IconBrandGithub, IconHeart, IconLogin, IconLogout, IconMoon, IconSun } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import { NavBar } from '../navbar/navbar';
 
@@ -21,8 +21,13 @@ export const Header = (props: HeaderProps) => {
 
   const { t } = useTranslation();
 
+  const navigate = useNavigate();
+
   const logout = useMutation({
     ...logoutMutation(),
+    onSuccess: () => {
+      navigate('/', { replace: true });
+    },
   });
 
   return (

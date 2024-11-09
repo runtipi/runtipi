@@ -17,10 +17,6 @@ jobs:
           VERSION=$(npm run version --silent)
           echo "tagname=v${VERSION}" >> $GITHUB_OUTPUT
 
-      - uses: rickstaa/action-create-tag@v1
-        with:
-          tag: ${{ steps.get_tag.outputs.tagname }}
-
   build-images:
     if: github.repository == 'runtipi/runtipi'
     needs: create-tag
@@ -28,9 +24,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3

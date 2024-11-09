@@ -22,19 +22,12 @@ jobs:
           VERSION=$(npm run version --silent)
           echo "tagname=v${VERSION}-alpha.${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
 
-      - uses: rickstaa/action-create-tag@v1
-        with:
-          tag: ${{ steps.get_tag.outputs.tagname }}
-
   build-images:
     runs-on: ubuntu-latest
     needs: create-tag
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3

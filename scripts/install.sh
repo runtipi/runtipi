@@ -18,6 +18,7 @@ fi
 UPDATE="false"
 VERSION="latest"
 ASSET="runtipi-cli-linux-x86_64.tar.gz"
+ENV_FILE=""
 
 while [ -n "${1-}" ]; do
   case "$1" in
@@ -34,6 +35,13 @@ while [ -n "${1-}" ]; do
     ASSET="$1" # Assign the value to ASSET
     if [ -z "$ASSET" ]; then
       echo "Option --asset requires a value" && exit 1
+    fi
+    ;;
+  --env-file)
+    shift         # Move to the next parameter
+    ENV_FILE="$1" # Assign the value to ENV_FILE
+    if [ -z "$ENV_FILE" ]; then
+      echo "Option --env-file requires a value" && exit 1
     fi
     ;;
   --)
@@ -209,4 +217,10 @@ else
 fi
 
 chmod +x ./runtipi-cli
-sudo ./runtipi-cli start
+
+if [[ "${ENV_FILE}" != "" ]]; then
+  echo "Starting runtipi with env file ${ENV_FILE}"
+  sudo ./runtipi-cli start --env-file "${ENV_FILE}"
+else
+  sudo ./runtipi-cli start
+fi

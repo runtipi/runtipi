@@ -1,13 +1,13 @@
 import { type BrowserContext, type Page, expect } from '@playwright/test';
-import { userTable } from '@runtipi/db';
 import * as argon2 from 'argon2';
+import { userTable } from '../../packages/backend/src/core/database/schema';
 import { testUser } from '../helpers/constants';
 import { db } from '../helpers/db';
 
 export const createTestUser = async () => {
   // Create user in database
   const password = await argon2.hash(testUser.password);
-  await db.insert(userTable).values({ password, username: testUser.email, operator: true });
+  await db.insert(userTable).values({ password, username: testUser.email, operator: true, hasSeenWelcome: true });
 };
 
 export const loginUser = async (page: Page, _: BrowserContext) => {
