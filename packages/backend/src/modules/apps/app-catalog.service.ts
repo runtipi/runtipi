@@ -39,7 +39,7 @@ export class AppCatalogService {
 
   private async constructSingleApp(app: App) {
     try {
-      const info = await this.filesManager.getInstalledAppInfo(app.id);
+      const info = await this.filesManager.getAppInfoFromAppStore(app.id);
       const updateInfo = await this.filesManager.getAppUpdateInfo(app.id);
       return info ? { app, info, updateInfo } : null;
     } catch (e) {

@@ -15,6 +15,7 @@ import { IconLock, IconLockOff } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import './guest-dashboard.css';
+import { EmptyPage } from '@/components/empty-page/empty-page';
 
 const Tile = ({ data }: { data: GuestAppsDto['installed'][number] }) => {
   const { t } = useTranslation();
@@ -88,6 +89,7 @@ export const GuestDashboard = () => {
         </div>
         <div className="page-body">
           <div className="container-xl">
+            {data.installed.length === 0 && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
             <div className="row row-cards">
               {data.installed.map((data) => {
                 return <Tile key={data.app.id} data={data} />;

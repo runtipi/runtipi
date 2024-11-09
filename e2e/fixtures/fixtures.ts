@@ -7,7 +7,7 @@ import { db } from '../helpers/db';
 export const createTestUser = async () => {
   // Create user in database
   const password = await argon2.hash(testUser.password);
-  await db.insert(userTable).values({ password, username: testUser.email, operator: true });
+  await db.insert(userTable).values({ password, username: testUser.email, operator: true, hasSeenWelcome: true });
 };
 
 export const loginUser = async (page: Page, _: BrowserContext) => {
