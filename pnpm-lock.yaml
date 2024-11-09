@@ -7,6 +7,19 @@ settings:
 importers:
 
   .:
+    dependencies:
+      argon2:
+        specifier: ^0.41.1
+        version: 0.41.1
+      drizzle-orm:
+        specifier: ^0.33.0
+        version: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@18.3.6)(pg@8.12.0)(react@18.3.1)(sqlite3@5.1.7)
+      pg:
+        specifier: ^8.12.0
+        version: 8.12.0
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.2
@@ -17,6 +30,9 @@ importers:
       '@playwright/test':
         specifier: ^1.48.2
         version: 1.48.2
+      '@types/pg':
+        specifier: ^8.11.10
+        version: 8.11.10
       dotenv-cli:
         specifier: ^7.4.2
         version: 7.4.2

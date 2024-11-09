@@ -1,6 +1,6 @@
 import { type BrowserContext, type Page, expect } from '@playwright/test';
-import { userTable } from '@runtipi/db';
 import * as argon2 from 'argon2';
+import { userTable } from '../../packages/backend/src/core/database/schema';
 import { testUser } from '../helpers/constants';
 import { db } from '../helpers/db';
 

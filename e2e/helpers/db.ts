@@ -1,6 +1,6 @@
-import * as schema from '@runtipi/db';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
+import * as schema from '../../packages/backend/src/core/database/schema';
 
 const connectionString = `postgresql://tipi:${process.env.POSTGRES_PASSWORD}@${process.env.SERVER_IP}:5432/tipi?connect_timeout=300`;
 

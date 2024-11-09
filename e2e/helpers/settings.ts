@@ -1,11 +1,19 @@
 import { promises } from 'node:fs';
 import path from 'node:path';
-import type { settingsSchema } from '@runtipi/shared';
-import { pathExists } from '@runtipi/shared/node';
 import type { z } from 'zod';
+import type { settingsSchema } from '../../packages/backend/src/app.dto';
 import { BASE_PATH } from './constants';
 
-export const setSettings = async (settings: z.infer<typeof settingsSchema>) => {
+const pathExists = async (path: string) => {
+  try {
+    await promises.access(path);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const setSettings = async (settings: Partial<z.infer<typeof settingsSchema>>) => {
   await promises.mkdir(path.join(BASE_PATH, 'state'), { recursive: true });
   await promises.writeFile(path.join(BASE_PATH, 'state', 'settings.json'), JSON.stringify(settings));
 };

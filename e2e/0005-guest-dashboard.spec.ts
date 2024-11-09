@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { appTable } from '@runtipi/db';
+import { appTable } from '../packages/backend/src/core/database/schema';
 import { loginUser } from './fixtures/fixtures';
 import { clearDatabase, db } from './helpers/db';
 import { setSettings } from './helpers/settings';
