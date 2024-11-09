@@ -89,26 +89,20 @@ jobs:
 
       - name: Create .env.local
         run: |
-          touch .env.local
-          echo "LOG_LEVEL=debug" >> .env.local
+          echo "LOG_LEVEL=debug" > .env.local
 
       - name: Run install script
         if: ${{ inputs.version }}
         run: |
           curl -s https://raw.githubusercontent.com/runtipi/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
           chmod +x install.sh
-          ./install.sh --version ${{ inputs.version }} --asset runtipi-cli-linux-x86_64.tar.gz
-          cd runtipi
-          ./runtipi-cli start --env-file .env.local
-          cd ..
+          ./install.sh --version ${{ inputs.version }} --asset runtipi-cli-linux-x86_64.tar.gz --env-file ${{ github.workspace }}/.env.local
 
       - name: Run install script
         if: ${{ !inputs.version }}
         run: |
-          ./scripts/install.sh --version e2e
-          cd runtipi
-          ./runtipi-cli start --env-file .env.local
-          cd ../..
+          ./scripts/install.sh --version e2e --env-file ${{ github.workspace }}/.env.local
+          cd ..
 
       - uses: pnpm/action-setup@v4.0.0
         name: Install pnpm
