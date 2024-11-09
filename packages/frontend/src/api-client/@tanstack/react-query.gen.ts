@@ -8,7 +8,9 @@ import {
   appContext,
   updateUserSettings,
   acknowledgeWelcome,
+  getError,
   systemLoad,
+  downloadLocalCertificate,
   getTranslation,
   login,
   verifyTotp,
@@ -41,6 +43,7 @@ import {
   createLink,
   editLink,
   deleteLink,
+  check,
 } from '../services.gen';
 import type {
   UpdateUserSettingsData,
@@ -212,6 +215,22 @@ export const acknowledgeWelcomeMutation = () => {
   return mutationOptions;
 };
 
+export const getErrorQueryKey = (options?: Options) => [createQueryKey('getError', options)];
+
+export const getErrorOptions = (options?: Options) => {
+  return queryOptions({
+    queryFn: async ({ queryKey }) => {
+      const { data } = await getError({
+        ...options,
+        ...queryKey[0],
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getErrorQueryKey(options),
+  });
+};
+
 export const systemLoadQueryKey = (options?: Options) => [createQueryKey('systemLoad', options)];
 
 export const systemLoadOptions = (options?: Options) => {
@@ -225,6 +244,22 @@ export const systemLoadOptions = (options?: Options) => {
       return data;
     },
     queryKey: systemLoadQueryKey(options),
+  });
+};
+
+export const downloadLocalCertificateQueryKey = (options?: Options) => [createQueryKey('downloadLocalCertificate', options)];
+
+export const downloadLocalCertificateOptions = (options?: Options) => {
+  return queryOptions({
+    queryFn: async ({ queryKey }) => {
+      const { data } = await downloadLocalCertificate({
+        ...options,
+        ...queryKey[0],
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: downloadLocalCertificateQueryKey(options),
   });
 };
 
@@ -980,4 +1015,20 @@ export const deleteLinkMutation = () => {
     },
   };
   return mutationOptions;
+};
+
+export const checkQueryKey = (options?: Options) => [createQueryKey('check', options)];
+
+export const checkOptions = (options?: Options) => {
+  return queryOptions({
+    queryFn: async ({ queryKey }) => {
+      const { data } = await check({
+        ...options,
+        ...queryKey[0],
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: checkQueryKey(options),
+  });
 };

@@ -548,9 +548,17 @@ export type AcknowledgeWelcomeResponse = unknown;
 
 export type AcknowledgeWelcomeError = unknown;
 
+export type GetErrorResponse = unknown;
+
+export type GetErrorError = unknown;
+
 export type SystemLoadResponse = LoadDto;
 
 export type SystemLoadError = unknown;
+
+export type DownloadLocalCertificateResponse = unknown;
+
+export type DownloadLocalCertificateError = unknown;
 
 export type GetTranslationData = {
   path: {
@@ -844,3 +852,47 @@ export type DeleteLinkData = {
 export type DeleteLinkResponse = unknown;
 
 export type DeleteLinkError = unknown;
+
+export type CheckResponse = {
+  status?: string;
+  info?: {
+    [key: string]: {
+      status: string;
+      [key: string]: unknown | string;
+    };
+  } | null;
+  error?: {
+    [key: string]: {
+      status: string;
+      [key: string]: unknown | string;
+    };
+  } | null;
+  details?: {
+    [key: string]: {
+      status: string;
+      [key: string]: unknown | string;
+    };
+  };
+};
+
+export type CheckError = {
+  status?: string;
+  info?: {
+    [key: string]: {
+      status: string;
+      [key: string]: unknown | string;
+    };
+  } | null;
+  error?: {
+    [key: string]: {
+      status: string;
+      [key: string]: unknown | string;
+    };
+  } | null;
+  details?: {
+    [key: string]: {
+      status: string;
+      [key: string]: unknown | string;
+    };
+  };
+};

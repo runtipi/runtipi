@@ -12,8 +12,12 @@ import type {
   AcknowledgeWelcomeData,
   AcknowledgeWelcomeError,
   AcknowledgeWelcomeResponse,
+  GetErrorError,
+  GetErrorResponse,
   SystemLoadError,
   SystemLoadResponse,
+  DownloadLocalCertificateError,
+  DownloadLocalCertificateResponse,
   GetTranslationData,
   GetTranslationError,
   GetTranslationResponse,
@@ -104,6 +108,8 @@ import type {
   DeleteLinkData,
   DeleteLinkError,
   DeleteLinkResponse,
+  CheckError,
+  CheckResponse,
 } from './types.gen';
 
 export const client = createClient(createConfig());
@@ -136,10 +142,24 @@ export const acknowledgeWelcome = <ThrowOnError extends boolean = false>(options
   });
 };
 
+export const getError = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetErrorResponse, GetErrorError, ThrowOnError>({
+    ...options,
+    url: '/api/debug-sentry',
+  });
+};
+
 export const systemLoad = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
   return (options?.client ?? client).get<SystemLoadResponse, SystemLoadError, ThrowOnError>({
     ...options,
     url: '/api/system/load',
+  });
+};
+
+export const downloadLocalCertificate = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).get<DownloadLocalCertificateResponse, DownloadLocalCertificateError, ThrowOnError>({
+    ...options,
+    url: '/api/system/certificate',
   });
 };
 
@@ -364,5 +384,12 @@ export const deleteLink = <ThrowOnError extends boolean = false>(options: Option
   return (options?.client ?? client).delete<DeleteLinkResponse, DeleteLinkError, ThrowOnError>({
     ...options,
     url: '/api/links/{id}',
+  });
+};
+
+export const check = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).get<CheckResponse, CheckError, ThrowOnError>({
+    ...options,
+    url: '/api/health',
   });
 };
