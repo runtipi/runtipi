@@ -4,6 +4,7 @@ import { useAppContext } from '@/context/app-context';
 import { IconStar } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import semver from 'semver';
+import { UpdateRepoModal } from '../components/update-repo-modal/update-repo-modal';
 
 export const GeneralActionsContainer = () => {
   const { t } = useTranslation();
@@ -44,7 +45,7 @@ export const GeneralActionsContainer = () => {
       {renderUpdate()}
       <h3 className="card-title mt-4">{t('SETTINGS_ACTIONS_UPDATE_REPO_TITLE')}</h3>
       <p className="card-subtitle">{t('SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE')}</p>
-      {/* <UpdateRepoModal /> */}
+      <UpdateRepoModal />
     </div>
   );
 };

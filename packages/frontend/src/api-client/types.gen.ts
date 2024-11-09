@@ -472,12 +472,20 @@ export type status =
   | 'backing_up'
   | 'restoring';
 
+export type PullDto = {
+  success: boolean;
+};
+
 export type AppFormBody = {
   exposed?: boolean;
   exposedLocal?: boolean;
   openPort?: boolean;
   domain?: string;
   isVisibleOnGuestDashboard?: boolean;
+};
+
+export type UninstallAppBody = {
+  removeBackups: boolean;
 };
 
 export type RestoreAppBackupDto = {
@@ -713,6 +721,10 @@ export type GetImageResponse = unknown;
 
 export type GetImageError = unknown;
 
+export type PullResponse = PullDto;
+
+export type PullError = unknown;
+
 export type InstallAppData = {
   body: AppFormBody;
   path: {
@@ -755,12 +767,10 @@ export type RestartAppResponse = unknown;
 export type RestartAppError = unknown;
 
 export type UninstallAppData = {
+  body: UninstallAppBody;
   path: {
     id: string;
   };
-  body: {
-    removeBackups: boolean;
-  }
 };
 
 export type UninstallAppResponse = unknown;

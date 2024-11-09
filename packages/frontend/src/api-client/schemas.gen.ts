@@ -1263,6 +1263,16 @@ export const AppDetailsDtoSchema = {
   required: ['info', 'app', 'updateInfo'],
 } as const;
 
+export const PullDtoSchema = {
+  type: 'object',
+  properties: {
+    success: {
+      type: 'boolean',
+    },
+  },
+  required: ['success'],
+} as const;
+
 export const AppFormBodySchema = {
   type: 'object',
   properties: {
@@ -1283,6 +1293,16 @@ export const AppFormBodySchema = {
       type: 'boolean',
     },
   },
+} as const;
+
+export const UninstallAppBodySchema = {
+  type: 'object',
+  properties: {
+    removeBackups: {
+      type: 'boolean',
+    },
+  },
+  required: ['removeBackups'],
 } as const;
 
 export const RestoreAppBackupDtoSchema = {
