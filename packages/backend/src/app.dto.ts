@@ -32,6 +32,7 @@ export class AppContextDto extends createZodDto(
     userSettings: UserSettingsDto.schema,
     user: UserDto.schema,
     apps: AppInfoSimpleDto.schema.array(),
+    updatesAvailable: z.number(),
   }),
 ) {}
 

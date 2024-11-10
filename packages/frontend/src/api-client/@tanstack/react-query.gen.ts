@@ -37,6 +37,7 @@ import {
   uninstallApp,
   resetApp,
   updateApp,
+  updateAllApps,
   updateAppConfig,
   backupApp,
   restoreAppBackup,
@@ -115,6 +116,8 @@ import type {
   UpdateAppData,
   UpdateAppError,
   UpdateAppResponse,
+  UpdateAllAppsError,
+  UpdateAllAppsResponse,
   UpdateAppConfigData,
   UpdateAppConfigError,
   UpdateAppConfigResponse,
@@ -910,6 +913,20 @@ export const updateAppMutation = (options?: Partial<Options<UpdateAppData>>) => 
   const mutationOptions: UseMutationOptions<UpdateAppResponse, UpdateAppError, Options<UpdateAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await updateApp({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const updateAllAppsMutation = (options?: Partial<Options>) => {
+  const mutationOptions: UseMutationOptions<UpdateAllAppsResponse, UpdateAllAppsError, Options> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await updateAllApps({
         ...options,
         ...localOptions,
         throwOnError: true,

@@ -753,6 +753,17 @@
         }
       }
     },
+    "/api/app-lifecycle/update-all": {
+      "patch": {
+        "operationId": "updateAllApps",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/app-lifecycle/{id}/update-config": {
       "patch": {
         "operationId": "updateAppConfig",
@@ -1388,13 +1399,17 @@
                 "available"
               ]
             }
+          },
+          "updatesAvailable": {
+            "type": "number"
           }
         },
         "required": [
           "version",
           "userSettings",
           "user",
-          "apps"
+          "apps",
+          "updatesAvailable"
         ]
       },
       "PartialUserSettingsDto": {

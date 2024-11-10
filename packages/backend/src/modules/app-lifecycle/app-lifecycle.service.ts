@@ -1,4 +1,5 @@
 import { TranslatableError } from '@/common/error/translatable-error';
+import { pLimit } from '@/common/helpers/file-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { SocketManager } from '@/core/socket/socket.service';
@@ -7,6 +8,7 @@ import { lt, valid } from 'semver';
 import semver from 'semver';
 import validator, { isFQDN } from 'validator';
 import type { z } from 'zod';
+import { AppCatalogService } from '../apps/app-catalog.service';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
 import { BackupManager } from '../backups/backup.manager';
@@ -25,6 +27,7 @@ export class AppLifecycleService {
     private readonly appFilesManager: AppFilesManager,
     private readonly socketManager: SocketManager,
     private readonly backupManager: BackupManager,
+    private readonly appCatalog: AppCatalogService,
   ) {
     this.logger.debug('Subscribing to app events...');
     this.appEventsQueue.onEvent(({ eventId, ...data }) => this.invokeCommand(eventId, data));
@@ -367,5 +370,17 @@ export class AppLifecycleService {
         await this.appRepository.updateApp(appId, { status: 'stopped' });
       }
     });
+  }
+
+  async updateAllApps() {
+    const installedApps = await this.appCatalog.getInstalledApps();
+    const availableUpdates = installedApps.filter(({ app, updateInfo }) => Number(app.version) < Number(updateInfo.latestVersion));
+
+    const limit = pLimit(1);
+    const updatePromises = availableUpdates.map(async ({ app }) => {
+      return limit(() => this.updateApp({ appId: app.id, performBackup: true }));
+    });
+
+    await Promise.all(updatePromises);
   }
 }

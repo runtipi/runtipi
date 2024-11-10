@@ -42,7 +42,13 @@ export class AppController {
 
     const apps = await this.appCatalog.getAvailableApps();
 
-    return { version, userSettings, user: req.user as UserDto, apps };
+    const installedApps = await this.appCatalog.getInstalledApps();
+
+    const updatesAvailable = installedApps.filter(({ app, updateInfo }) => {
+      return Number(app.version) < Number(updateInfo.latestVersion) && app.status !== 'updating';
+    });
+
+    return { version, userSettings, user: req.user as UserDto, apps, updatesAvailable: updatesAvailable.length };
   }
 
   @Patch('/user-settings')

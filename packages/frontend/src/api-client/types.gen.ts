@@ -62,6 +62,7 @@ export type AppContextDto = {
     supported_architectures?: Array<'arm64' | 'amd64'>;
     available: boolean;
   }>;
+  updatesAvailable: number;
 };
 
 export type AppDetailsDto = {
@@ -814,6 +815,10 @@ export type UpdateAppData = {
 export type UpdateAppResponse = unknown;
 
 export type UpdateAppError = unknown;
+
+export type UpdateAllAppsResponse = unknown;
+
+export type UpdateAllAppsError = unknown;
 
 export type UpdateAppConfigData = {
   body: AppFormBody;

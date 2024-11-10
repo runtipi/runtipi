@@ -8,6 +8,7 @@ const FIVE_MINUTES = 5 * 60 * 1000;
 export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; message: string }>> {
   private queueNameResponse: string;
   private responsePromises: { [id: string]: { resolve: (data: z.output<R>) => void } };
+  private activeTasks: number;
 
   constructor(
     private queueFactory: QueueFactory,
@@ -40,13 +41,14 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
 
   public onEvent(callback: (data: z.output<T> & { eventId: string }) => void) {
     this.queueFactory.createConsumer(this.queueName, (eventData) => {
-      if (Object.keys(this.responsePromises).length > this.workers) {
+      if (this.activeTasks > this.workers) {
         this.requeueWithBackoff(eventData);
         return;
       }
 
       const parsedData = this.eventSchema.and(z.object({ eventId: z.string() })).safeParse(eventData.body);
       if (parsedData.success) {
+        this.activeTasks++;
         callback(parsedData.data);
       }
     });
@@ -63,6 +65,7 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
           resolve({ success: false, message: 'Invalid response data' });
         }
 
+        this.activeTasks--;
         delete this.responsePromises[body.eventId];
       }
     });

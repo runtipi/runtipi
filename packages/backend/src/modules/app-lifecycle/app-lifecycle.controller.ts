@@ -45,6 +45,11 @@ export class AppLifecycleController {
     return this.appLifecycleService.updateApp({ appId: id, performBackup: body.performBackup });
   }
 
+  @Patch('update-all')
+  async updateAllApps() {
+    return this.appLifecycleService.updateAllApps();
+  }
+
   @Patch(':id/update-config')
   async updateAppConfig(@Param('id') id: string, @Body() body: AppFormBody) {
     const form = appFormSchema.parse(body);

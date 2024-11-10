@@ -90,6 +90,8 @@ import type {
   UpdateAppData,
   UpdateAppError,
   UpdateAppResponse,
+  UpdateAllAppsError,
+  UpdateAllAppsResponse,
   UpdateAppConfigData,
   UpdateAppConfigError,
   UpdateAppConfigResponse,
@@ -350,6 +352,13 @@ export const updateApp = <ThrowOnError extends boolean = false>(options: Options
   return (options?.client ?? client).patch<UpdateAppResponse, UpdateAppError, ThrowOnError>({
     ...options,
     url: '/api/app-lifecycle/{id}/update',
+  });
+};
+
+export const updateAllApps = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).patch<UpdateAllAppsResponse, UpdateAllAppsError, ThrowOnError>({
+    ...options,
+    url: '/api/app-lifecycle/update-all',
   });
 };
 

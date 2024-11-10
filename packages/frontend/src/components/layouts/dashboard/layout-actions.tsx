@@ -1,4 +1,5 @@
 import { AppStoreLayoutActions } from '@/components/app-store-layout-actions/app-store-layout-actions';
+import { UpdateAllButton } from '@/modules/app/components/update-all-button/update-all-button';
 import { useUIStore } from '@/stores/ui-store';
 
 type Props = {
@@ -6,16 +7,16 @@ type Props = {
 };
 
 export const LayoutActions = (props: Props) => {
-  // const { availableUpdates } = props;
+  const { availableUpdates } = props;
   const { activeRoute } = useUIStore();
 
   if (activeRoute === 'app-store') {
     return <AppStoreLayoutActions />;
   }
 
-  // if (activeRoute === '/apps' && availableUpdates >= 2) {
-  //   return <UpdateAllButton />;
-  // }
+  if (activeRoute === 'apps' && availableUpdates >= 2) {
+    return <UpdateAllButton />;
+  }
 
   return null;
 };

@@ -28,8 +28,7 @@ export const DashboardLayoutSuspense = ({ children }: PropsWithChildren) => {
 };
 
 export const DashboardLayout = ({ children }: PropsWithChildren) => {
-  const { userSettings, user, apps, version } = useAppContext();
-  // const availableUpdates = apps.filter((app) => Number(app.version) < Number(app.latestVersion) && app.status !== 'updating').length;
+  const { userSettings, user, apps, version, updatesAvailable } = useAppContext();
 
   const { isLoggedIn } = useUserContext();
 
@@ -50,7 +49,7 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
                 <PageTitle apps={apps} />
               </div>
               <div className="flex-fill col-auto ms-auto d-print-none">
-                <LayoutActions availableUpdates={0} />
+                <LayoutActions availableUpdates={updatesAvailable} />
               </div>
             </div>
           </div>
