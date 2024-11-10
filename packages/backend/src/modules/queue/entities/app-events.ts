@@ -26,7 +26,14 @@ const restoreAppCommandSchema = z.object({
   form: appFormSchema,
 });
 
-export const appEventSchema = commonAppCommandSchema.or(restoreAppCommandSchema);
+const updateAppCommandSchema = z.object({
+  command: z.literal('update'),
+  appid: z.string(),
+  form: appFormSchema,
+  performBackup: z.boolean().optional().default(true),
+});
+
+export const appEventSchema = commonAppCommandSchema.or(restoreAppCommandSchema).or(updateAppCommandSchema);
 
 export const appEventResultSchema = z.object({
   success: z.boolean(),

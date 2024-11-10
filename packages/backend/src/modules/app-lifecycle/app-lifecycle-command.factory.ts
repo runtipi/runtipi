@@ -16,6 +16,7 @@ import { RestoreAppCommand } from './commands/restore-app-command';
 import { StartAppCommand } from './commands/start-app-command';
 import { StopAppCommand } from './commands/stop-app-command';
 import { UninstallAppCommand } from './commands/uninstall-app-command';
+import { UpdateAppCommand } from './commands/update-app-command';
 
 @Injectable()
 export class AppLifecycleCommandFactory {
@@ -50,6 +51,15 @@ export class AppLifecycleCommandFactory {
         return new RestoreAppCommand(this.logger, this.appFilesManager, this.dockerService, this.backupManager, eventData.filename);
       case 'generate_env':
         return new GenerateAppEnvCommand(this.logger, this.appFilesManager, this.dockerService, this.appHelpers);
+      case 'update':
+        return new UpdateAppCommand(
+          this.logger,
+          this.appFilesManager,
+          this.dockerService,
+          this.appHelpers,
+          this.backupManager,
+          eventData.performBackup,
+        );
       default:
         throw new Error(`Unknown command: ${command}`);
     }

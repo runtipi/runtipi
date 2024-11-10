@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppLifecycleService } from './app-lifecycle.service';
-import { AppFormBody, UninstallAppBody, appFormSchema } from './dto/app-lifecycle.dto';
+import { AppFormBody, UninstallAppBody, UpdateAppBody, appFormSchema } from './dto/app-lifecycle.dto';
 
 @UseGuards(AuthGuard)
 @Controller('app-lifecycle')
@@ -38,6 +38,11 @@ export class AppLifecycleController {
   @Post(':id/reset')
   async resetApp(@Param('id') id: string) {
     return this.appLifecycleService.resetApp({ appId: id });
+  }
+
+  @Patch(':id/update')
+  async updateApp(@Param('id') id: string, @Body() body: UpdateAppBody) {
+    return this.appLifecycleService.updateApp({ appId: id, performBackup: body.performBackup });
   }
 
   @Patch(':id/update-config')

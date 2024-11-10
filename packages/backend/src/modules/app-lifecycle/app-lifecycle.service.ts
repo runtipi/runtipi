@@ -4,6 +4,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { SocketManager } from '@/core/socket/socket.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { lt, valid } from 'semver';
+import semver from 'semver';
 import validator, { isFQDN } from 'validator';
 import type { z } from 'zod';
 import { AppFilesManager } from '../apps/app-files-manager';
@@ -257,11 +258,11 @@ export class AppLifecycleService {
         if (appStatusBeforeReset === 'running') {
           this.startApp({ appId });
         } else {
-          await this.appRepository.updateApp(appId, { status: 'running' });
+          await this.appRepository.updateApp(appId, { status: appStatusBeforeReset });
         }
       } else {
         this.logger.error(`Failed to reset app ${appId}: ${message}`);
-        await this.socketManager.emit({ type: 'app', event: 'reset_error', data: { appId, appStatus: 'running' } });
+        await this.socketManager.emit({ type: 'app', event: 'reset_error', data: { appId, appStatus: appStatusBeforeReset } });
         await this.appRepository.updateApp(appId, { status: 'running' });
       }
     });
@@ -327,6 +328,44 @@ export class AppLifecycleService {
       domain: domain || null,
       config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
+    });
+  }
+
+  public async updateApp(params: { appId: string; performBackup: boolean }) {
+    const { appId, performBackup } = params;
+    const app = await this.appRepository.getApp(appId);
+
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+    }
+
+    const version = this.config.get('version');
+
+    const { minTipiVersion } = await this.appFilesManager.getAppUpdateInfo(appId);
+    if (minTipiVersion && semver.valid(version) && semver.lt(version, minTipiVersion)) {
+      throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: minTipiVersion });
+    }
+
+    await this.appRepository.updateApp(appId, { status: 'updating' });
+
+    const appStatusBeforeUpdate = app.status;
+    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'updating' } });
+
+    this.appEventsQueue.publishAsync({ command: 'update', appid: appId, form: app.config, performBackup }).then(async ({ success, message }) => {
+      if (success) {
+        const appInfo = await this.appFilesManager.getInstalledAppInfo(appId);
+
+        await this.appRepository.updateApp(appId, { status: appStatusBeforeUpdate, version: appInfo?.tipi_version });
+        await this.socketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
+
+        if (appStatusBeforeUpdate === 'running') {
+          this.startApp({ appId });
+        }
+      } else {
+        this.logger.error(`Failed to update app ${appId}: ${message}`);
+        await this.socketManager.emit({ type: 'app', event: 'update_error', data: { appId, appStatus: 'stopped' } });
+        await this.appRepository.updateApp(appId, { status: 'stopped' });
+      }
     });
   }
 }

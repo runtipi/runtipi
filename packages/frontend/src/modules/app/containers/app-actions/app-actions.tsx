@@ -35,6 +35,7 @@ import { ResetDialog } from '../../components/dialogs/reset-dialog/reset-dialog'
 import { RestartDialog } from '../../components/dialogs/restart-dialog/restart-dialog';
 import { StopDialog } from '../../components/dialogs/stop-dialog/stop-dialog';
 import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/uninstall-dialog';
+import { UpdateDialog } from '../../components/dialogs/update-dialog/update-dialog';
 import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
 
@@ -231,7 +232,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
       <StopDialog isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={info} />
       <RestartDialog isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} info={info} />
       <UninstallDialog isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={info} />
-      {/* <UpdateModal isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={app.info} newVersion={newVersion} /> */}
+      <UpdateDialog isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={info} newVersion={newVersion} />
       <ResetDialog isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={info} />
       <UpdateSettingsDialog
         isOpen={updateSettingsDisclosure.isOpen}

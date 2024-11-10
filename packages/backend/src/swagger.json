@@ -723,6 +723,36 @@
         }
       }
     },
+    "/api/app-lifecycle/{id}/update": {
+      "patch": {
+        "operationId": "updateApp",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAppBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/app-lifecycle/{id}/update-config": {
       "patch": {
         "operationId": "updateAppConfig",
@@ -2637,6 +2667,17 @@
         },
         "required": [
           "removeBackups"
+        ]
+      },
+      "UpdateAppBody": {
+        "type": "object",
+        "properties": {
+          "performBackup": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "performBackup"
         ]
       },
       "RestoreAppBackupDto": {
