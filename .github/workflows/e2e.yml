@@ -139,7 +139,7 @@ jobs:
 
       - name: Get installed playwright version
         id: playwright-version
-        run: echo "version=$(npx playwright --version)" >> $GITHUB_OUTPUT
+        run: echo "version=$(node -e "console.log(require('./package.json').devDependencies['@playwright/test'])")" >> $GITHUB_OUTPUT
 
       - name: Cache Playwright binaries
         id: cache-playwright-binaries
