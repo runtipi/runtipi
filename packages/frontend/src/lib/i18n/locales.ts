@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 const APP_LOCALES = {
   'de-DE': 'Deutsch',
   'en-US': 'English',
@@ -61,4 +63,10 @@ export const getLocaleFromString = (locale?: string): Locale => {
   }
 
   return 'en-US';
+};
+
+export const getCurrentLocale = (): Locale => {
+  const cookieLocale = Cookies.get('tipi-locale');
+
+  return getLocaleFromString(cookieLocale);
 };

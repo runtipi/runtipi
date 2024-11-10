@@ -1,6 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { LOCALE_OPTIONS, type Locale, getLocaleFromString } from '@/lib/i18n/locales';
 import { IconExternalLink } from '@tabler/icons-react';
+import i18next from 'i18next';
 import Cookies from 'js-cookie';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +34,7 @@ export const LanguageSelector = (props: IProps) => {
     const locale = getLocaleFromString(newLocale);
     setLocale(newLocale);
     Cookies.set('tipi-locale', locale);
+    i18next.changeLanguage(locale);
   };
 
   return (

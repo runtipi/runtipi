@@ -1,9 +1,8 @@
 import { updateUserSettingsMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useAppContext } from '@/context/app-context';
-import { getLocaleFromString } from '@/lib/i18n/locales';
+import { getCurrentLocale, getLocaleFromString } from '@/lib/i18n/locales';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
-import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { type SettingsFormValues, UserSettingsForm } from '../components/user-settings-form/user-settings-form';
@@ -13,7 +12,7 @@ type Props = {
 };
 
 export const UserSettingsContainer = ({ initialValues }: Props) => {
-  const currentLocale = Cookies.get('tipi-locale') || 'en-US';
+  const currentLocale = getCurrentLocale();
   const { t } = useTranslation();
   const { refreshAppContext } = useAppContext();
 

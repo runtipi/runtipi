@@ -119,12 +119,12 @@
         }
       }
     },
-    "/api/i18n/locales/{lng}/{ns}.json": {
+    "/api/i18n/locales/{ns}/{lng}.json": {
       "get": {
         "operationId": "getTranslation",
         "parameters": [
           {
-            "name": "lng",
+            "name": "ns",
             "required": true,
             "in": "path",
             "schema": {
@@ -132,7 +132,7 @@
             }
           },
           {
-            "name": "ns",
+            "name": "lng",
             "required": true,
             "in": "path",
             "schema": {

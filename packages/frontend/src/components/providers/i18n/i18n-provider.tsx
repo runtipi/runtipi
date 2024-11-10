@@ -1,18 +1,23 @@
-import type { PropsWithChildren } from 'react';
+import { getCurrentLocale } from '@/lib/i18n/locales';
 import i18n from 'i18next';
-import HttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { initReactI18next, I18nextProvider } from 'react-i18next';
+import HttpBackend from 'i18next-http-backend';
+import type { PropsWithChildren } from 'react';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 
 i18n
   .use(HttpBackend)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
+    react: {
+      useSuspense: true,
+    },
     backend: {
-      loadPath: '/api/i18n/locales/{{lng}}/{{ns}}.json',
+      loadPath: '/api/i18n/locales/{{ns}}/{{lng}}.json',
     },
     fallbackLng: 'en',
+    lng: getCurrentLocale(),
     interpolation: {
       escapeValue: false,
     },

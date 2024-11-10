@@ -174,7 +174,7 @@ export const downloadLocalCertificate = <ThrowOnError extends boolean = false>(o
 export const getTranslation = <ThrowOnError extends boolean = false>(options: Options<GetTranslationData, ThrowOnError>) => {
   return (options?.client ?? client).get<GetTranslationResponse, GetTranslationError, ThrowOnError>({
     ...options,
-    url: '/api/i18n/locales/{lng}/{ns}.json',
+    url: '/api/i18n/locales/{ns}/{lng}.json',
   });
 };
 
