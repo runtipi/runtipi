@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppLifecycleService } from './app-lifecycle.service';
 import { AppFormBody, UninstallAppBody, appFormSchema } from './dto/app-lifecycle.dto';
@@ -38,5 +38,12 @@ export class AppLifecycleController {
   @Post(':id/reset')
   async resetApp(@Param('id') id: string) {
     return this.appLifecycleService.resetApp({ appId: id });
+  }
+
+  @Patch(':id/update-config')
+  async updateAppConfig(@Param('id') id: string, @Body() body: AppFormBody) {
+    const form = appFormSchema.parse(body);
+
+    return this.appLifecycleService.updateAppConfig({ appId: id, form });
   }
 }

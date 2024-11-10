@@ -528,6 +528,10 @@ export const MyAppsDtoSchema = {
               isVisibleOnGuestDashboard: {
                 type: 'boolean',
               },
+              config: {
+                type: 'object',
+                additionalProperties: {},
+              },
             },
             required: ['id', 'status', 'lastOpened', 'version', 'exposed', 'openPort', 'exposedLocal', 'domain', 'isVisibleOnGuestDashboard'],
           },
@@ -676,6 +680,10 @@ export const GuestAppsDtoSchema = {
               },
               isVisibleOnGuestDashboard: {
                 type: 'boolean',
+              },
+              config: {
+                type: 'object',
+                additionalProperties: {},
               },
             },
             required: ['id', 'status', 'lastOpened', 'version', 'exposed', 'openPort', 'exposedLocal', 'domain', 'isVisibleOnGuestDashboard'],
@@ -1240,6 +1248,10 @@ export const AppDetailsDtoSchema = {
         },
         isVisibleOnGuestDashboard: {
           type: 'boolean',
+        },
+        config: {
+          type: 'object',
+          additionalProperties: {},
         },
       },
       required: ['id', 'status', 'lastOpened', 'version', 'exposed', 'openPort', 'exposedLocal', 'domain', 'isVisibleOnGuestDashboard'],

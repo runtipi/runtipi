@@ -43,6 +43,7 @@ export class AppDto extends createZodDto(
     exposedLocal: z.boolean(),
     domain: z.string().nullable(),
     isVisibleOnGuestDashboard: z.boolean(),
+    config: z.record(z.any()).optional(),
   }),
 ) {}
 

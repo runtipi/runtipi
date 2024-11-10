@@ -36,6 +36,7 @@ import {
   restartApp,
   uninstallApp,
   resetApp,
+  updateAppConfig,
   backupApp,
   restoreAppBackup,
   getAppBackups,
@@ -110,6 +111,9 @@ import type {
   ResetAppData,
   ResetAppError,
   ResetAppResponse,
+  UpdateAppConfigData,
+  UpdateAppConfigError,
+  UpdateAppConfigResponse,
   BackupAppData,
   BackupAppError,
   BackupAppResponse,
@@ -845,6 +849,19 @@ export const resetAppMutation = () => {
   const mutationOptions: UseMutationOptions<ResetAppResponse, ResetAppError, Options<ResetAppData>> = {
     mutationFn: async (options) => {
       const { data } = await resetApp({
+        ...options,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const updateAppConfigMutation = () => {
+  const mutationOptions: UseMutationOptions<UpdateAppConfigResponse, UpdateAppConfigError, Options<UpdateAppConfigData>> = {
+    mutationFn: async (options) => {
+      const { data } = await updateAppConfig({
         ...options,
         throwOnError: true,
       });

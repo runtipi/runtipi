@@ -198,6 +198,9 @@ export type MyAppsDto = {
       exposedLocal: boolean;
       domain: string | null;
       isVisibleOnGuestDashboard: boolean;
+      config?: {
+        [key: string]: unknown;
+      };
     };
     info: {
       id: string;
@@ -260,6 +263,9 @@ export type GuestAppsDto = {
       exposedLocal: boolean;
       domain: string | null;
       isVisibleOnGuestDashboard: boolean;
+      config?: {
+        [key: string]: unknown;
+      };
     };
     info: {
       id: string;
@@ -450,6 +456,9 @@ export type AppDetailsDto = {
     exposedLocal: boolean;
     domain: string | null;
     isVisibleOnGuestDashboard: boolean;
+    config?: {
+      [key: string]: unknown;
+    };
   };
   updateInfo: {
     latestVersion: number;
@@ -786,6 +795,17 @@ export type ResetAppData = {
 export type ResetAppResponse = unknown;
 
 export type ResetAppError = unknown;
+
+export type UpdateAppConfigData = {
+  body: AppFormBody;
+  path: {
+    id: string;
+  };
+};
+
+export type UpdateAppConfigResponse = unknown;
+
+export type UpdateAppConfigError = unknown;
 
 export type BackupAppData = {
   path: {

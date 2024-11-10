@@ -723,6 +723,36 @@
         }
       }
     },
+    "/api/app-lifecycle/{id}/update-config": {
+      "patch": {
+        "operationId": "updateAppConfig",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppFormBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/backups/{appid}/backup": {
       "post": {
         "operationId": "backupApp",
@@ -1680,6 +1710,10 @@
                     },
                     "isVisibleOnGuestDashboard": {
                       "type": "boolean"
+                    },
+                    "config": {
+                      "type": "object",
+                      "additionalProperties": {}
                     }
                   },
                   "required": [
@@ -1854,6 +1888,10 @@
                     },
                     "isVisibleOnGuestDashboard": {
                       "type": "boolean"
+                    },
+                    "config": {
+                      "type": "object",
+                      "additionalProperties": {}
                     }
                   },
                   "required": [
@@ -2511,6 +2549,10 @@
               },
               "isVisibleOnGuestDashboard": {
                 "type": "boolean"
+              },
+              "config": {
+                "type": "object",
+                "additionalProperties": {}
               }
             },
             "required": [

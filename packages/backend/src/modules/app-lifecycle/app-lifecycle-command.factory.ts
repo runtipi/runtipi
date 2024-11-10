@@ -8,6 +8,7 @@ import { DockerService } from '../docker/docker.service';
 import { EnvUtils } from '../env/env.utils';
 import type { appEventSchema } from '../queue/entities/app-events';
 import { BackupAppCommand } from './commands/backup-app-command';
+import { GenerateAppEnvCommand } from './commands/generate-env-command';
 import { InstallAppCommand } from './commands/install-app-command';
 import { ResetAppCommand } from './commands/reset-app-command';
 import { RestartAppCommand } from './commands/restart-app-command';
@@ -28,7 +29,9 @@ export class AppLifecycleCommandFactory {
   ) {}
 
   createCommand(eventData: z.infer<typeof appEventSchema>) {
-    switch (eventData.command) {
+    const command = eventData.command;
+
+    switch (command) {
       case 'install':
         return new InstallAppCommand(this.logger, this.appFilesManager, this.dockerService, this.appHelpers, this.envUtils);
       case 'start':
@@ -45,8 +48,10 @@ export class AppLifecycleCommandFactory {
         return new BackupAppCommand(this.logger, this.appFilesManager, this.dockerService, this.backupManager);
       case 'restore':
         return new RestoreAppCommand(this.logger, this.appFilesManager, this.dockerService, this.backupManager, eventData.filename);
+      case 'generate_env':
+        return new GenerateAppEnvCommand(this.logger, this.appFilesManager, this.dockerService, this.appHelpers);
       default:
-        throw new Error(`Unknown command: ${eventData.command}`);
+        throw new Error(`Unknown command: ${command}`);
     }
   }
 }

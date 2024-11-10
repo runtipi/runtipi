@@ -4,13 +4,14 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { SocketManager } from '@/core/socket/socket.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { lt, valid } from 'semver';
-import { isFQDN } from 'validator';
+import validator, { isFQDN } from 'validator';
 import type { z } from 'zod';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
 import { BackupManager } from '../backups/backup.manager';
 import { type AppEventFormInput, AppEventsQueue, appEventSchema } from '../queue/entities/app-events';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
+import { appFormSchema } from './dto/app-lifecycle.dto';
 
 @Injectable()
 export class AppLifecycleService {
@@ -205,7 +206,7 @@ export class AppLifecycleService {
   /**
    * Uninstall an app by its ID
    */
-  public async uninstallApp(params: { appId: string, removeBackups: boolean }) {
+  public async uninstallApp(params: { appId: string; removeBackups: boolean }) {
     const { appId, removeBackups } = params;
 
     const app = await this.appRepository.getApp(appId);
@@ -263,6 +264,69 @@ export class AppLifecycleService {
         await this.socketManager.emit({ type: 'app', event: 'reset_error', data: { appId, appStatus: 'running' } });
         await this.appRepository.updateApp(appId, { status: 'running' });
       }
+    });
+  }
+
+  public async updateAppConfig(params: { appId: string; form: unknown }) {
+    const { appId, form } = params;
+
+    const parsedForm = appFormSchema.parse(form);
+
+    const { exposed, domain } = parsedForm;
+
+    if (exposed && !domain) {
+      throw new TranslatableError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
+    }
+
+    if (domain && !validator.isFQDN(domain)) {
+      throw new TranslatableError('APP_ERROR_DOMAIN_NOT_VALID');
+    }
+
+    const app = await this.appRepository.getApp(appId);
+
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+    }
+
+    const appInfo = await this.appFilesManager.getInstalledAppInfo(appId);
+
+    if (!appInfo) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+    }
+
+    if (!appInfo.exposable && exposed) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appId });
+    }
+
+    if (appInfo.force_expose && !exposed) {
+      throw new TranslatableError('APP_ERROR_APP_FORCE_EXPOSED', { id: appId });
+    }
+
+    if (exposed && domain) {
+      const appsWithSameDomain = await this.appRepository.getAppsByDomain(domain, appId);
+
+      if (appsWithSameDomain.length > 0) {
+        throw new TranslatableError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.id });
+      }
+    }
+
+    const { success } = await this.appEventsQueue.publishAsync({
+      command: 'generate_env',
+      appid: appId,
+      form: parsedForm,
+    });
+
+    if (!success) {
+      throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appId });
+    }
+
+    await this.appRepository.updateApp(appId, {
+      exposed: exposed ?? false,
+      exposedLocal: parsedForm.exposedLocal ?? false,
+      openPort: parsedForm.openPort,
+      domain: domain || null,
+      config: parsedForm,
+      isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
     });
   }
 }

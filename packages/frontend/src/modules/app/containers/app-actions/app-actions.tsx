@@ -35,6 +35,7 @@ import { ResetDialog } from '../../components/dialogs/reset-dialog/reset-dialog'
 import { RestartDialog } from '../../components/dialogs/restart-dialog/restart-dialog';
 import { StopDialog } from '../../components/dialogs/stop-dialog/stop-dialog';
 import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/uninstall-dialog';
+import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
 
 interface IProps {
@@ -232,13 +233,13 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
       <UninstallDialog isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={info} />
       {/* <UpdateModal isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={app.info} newVersion={newVersion} /> */}
       <ResetDialog isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={info} />
-      {/* <UpdateSettingsModal */}
-      {/*   isOpen={updateSettingsDisclosure.isOpen} */}
-      {/*   onClose={updateSettingsDisclosure.close} */}
-      {/*   info={app.info} */}
-      {/*   config={castAppConfig(app?.config)} */}
-      {/*   onReset={openResetAppModal} */}
-      {/* /> */}
+      <UpdateSettingsDialog
+        isOpen={updateSettingsDisclosure.isOpen}
+        onClose={updateSettingsDisclosure.close}
+        info={info}
+        config={app.config ?? {}}
+        onReset={openResetAppModal}
+      />
       <div className="mt-1 btn-list d-flex">
         {buttons.map((button) => (
           <Fragment key={button.key}>{button}</Fragment>

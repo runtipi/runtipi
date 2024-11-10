@@ -87,6 +87,9 @@ import type {
   ResetAppData,
   ResetAppError,
   ResetAppResponse,
+  UpdateAppConfigData,
+  UpdateAppConfigError,
+  UpdateAppConfigResponse,
   BackupAppData,
   BackupAppError,
   BackupAppResponse,
@@ -337,6 +340,13 @@ export const resetApp = <ThrowOnError extends boolean = false>(options: Options<
   return (options?.client ?? client).post<ResetAppResponse, ResetAppError, ThrowOnError>({
     ...options,
     url: '/api/app-lifecycle/{id}/reset',
+  });
+};
+
+export const updateAppConfig = <ThrowOnError extends boolean = false>(options: Options<UpdateAppConfigData, ThrowOnError>) => {
+  return (options?.client ?? client).patch<UpdateAppConfigResponse, UpdateAppConfigError, ThrowOnError>({
+    ...options,
+    url: '/api/app-lifecycle/{id}/update-config',
   });
 };
 
