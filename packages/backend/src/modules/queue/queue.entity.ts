@@ -4,11 +4,13 @@ import { type ZodSchema, z } from 'zod';
 import type { QueueFactory } from './queue.factory';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
+const QUEUE_PROCESS_INTERVAL = 1000; // Process queue every second
 
 export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; message: string }>> {
   private queueNameResponse: string;
   private responsePromises: { [id: string]: { resolve: (data: z.output<R>) => void } };
   private activeTasks: number;
+  private taskQueue: AsyncMessage[];
 
   constructor(
     private queueFactory: QueueFactory,
@@ -20,7 +22,9 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
   ) {
     this.queueNameResponse = `${this.queueName}-response`;
     this.responsePromises = {};
-    this.workers = workers;
+    this.activeTasks = 0;
+    this.taskQueue = [];
+    this.startQueueProcessing();
   }
 
   private generateEventId(command: string) {
@@ -39,18 +43,39 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
     });
   }
 
-  public onEvent(callback: (data: z.output<T> & { eventId: string }) => void) {
-    this.queueFactory.createConsumer(this.queueName, (eventData) => {
-      if (this.activeTasks > this.workers) {
-        this.requeueWithBackoff(eventData);
-        return;
+  private startQueueProcessing() {
+    setInterval(() => {
+      if (this.taskQueue.length > 0) {
+        this.processNextTask();
       }
+    }, QUEUE_PROCESS_INTERVAL);
+  }
 
-      const parsedData = this.eventSchema.and(z.object({ eventId: z.string() })).safeParse(eventData.body);
-      if (parsedData.success) {
-        this.activeTasks++;
-        callback(parsedData.data);
-      }
+  private processNextTask() {
+    if (this.activeTasks >= this.workers || this.taskQueue.length === 0) {
+      return;
+    }
+
+    const eventData = this.taskQueue.shift();
+    if (!eventData) return;
+
+    const parsedData = this.eventSchema.and(z.object({ eventId: z.string() })).safeParse(eventData.body);
+    if (!parsedData.success) return;
+
+    this.activeTasks++;
+    this.currentCallback?.(parsedData.data);
+  }
+
+  private currentCallback: ((data: z.output<T> & { eventId: string }) => void) | null = null;
+
+  public onEvent(callback: (data: z.output<T> & { eventId: string }) => void) {
+    if (this.currentCallback) {
+      throw new Error('Callback already set for this queue');
+    }
+    this.currentCallback = callback;
+
+    this.queueFactory.createConsumer(this.queueName, (eventData) => {
+      this.taskQueue.push(eventData);
     });
 
     this.queueFactory.createConsumer(this.queueNameResponse, ({ body }) => {
@@ -64,19 +89,10 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
           console.error('Invalid response data', response.error.flatten());
           resolve({ success: false, message: 'Invalid response data' });
         }
-
         this.activeTasks--;
         delete this.responsePromises[body.eventId];
       }
     });
-  }
-
-  private requeueWithBackoff(eventData: AsyncMessage) {
-    console.warn('Requeuing event due to backpressure');
-    const backoffTime = 5000;
-    setTimeout(() => {
-      this.publisher.send(this.queueName, eventData.body);
-    }, backoffTime);
   }
 
   async publishAsync(event: z.input<T>, timeout = FIVE_MINUTES): Promise<z.output<R>> {

@@ -1,5 +1,4 @@
 import { TranslatableError } from '@/common/error/translatable-error';
-import { pLimit } from '@/common/helpers/file-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { SocketManager } from '@/core/socket/socket.service';
@@ -376,9 +375,12 @@ export class AppLifecycleService {
     const installedApps = await this.appCatalog.getInstalledApps();
     const availableUpdates = installedApps.filter(({ app, updateInfo }) => Number(app.version) < Number(updateInfo.latestVersion));
 
-    const limit = pLimit(1);
     const updatePromises = availableUpdates.map(async ({ app }) => {
-      return limit(() => this.updateApp({ appId: app.id, performBackup: true }));
+      try {
+        await this.updateApp({ appId: app.id, performBackup: true });
+      } catch (e) {
+        this.logger.error(`Failed to update app ${app.id}`, e);
+      }
     });
 
     await Promise.all(updatePromises);
