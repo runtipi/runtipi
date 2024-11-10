@@ -32,7 +32,7 @@ export const AuthenticatedRoute = () => {
             )}
             onReset={reset}
           >
-            <Suspense fallback={<DashboardLayoutSuspense />}>
+            <Suspense fallback={null}>
               <AppContextProvider>
                 <Suspense fallback={<DashboardLayout />}>
                   <DashboardLayout>
