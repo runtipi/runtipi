@@ -1,7 +1,9 @@
+import { useUserContext } from '@/context/user-context';
 import { getLogo } from '@/lib/theme/theme';
 import type { PropsWithChildren } from 'react';
 
 export const AuthLayout = ({ children }: PropsWithChildren) => {
+  const { allowAutoThemes } = useUserContext();
   return (
     <div className="page page-center">
       <div className="position-absolute top-0 mt-3 end-0 me-1 pb-4" />
@@ -9,7 +11,7 @@ export const AuthLayout = ({ children }: PropsWithChildren) => {
         <div className="text-center mb-4">
           <img
             alt="Tipi logo"
-            src={getLogo(false)}
+            src={getLogo(allowAutoThemes)}
             height={50}
             width={50}
             style={{

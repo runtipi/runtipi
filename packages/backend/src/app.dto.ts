@@ -40,6 +40,7 @@ export class UserContextDto extends createZodDto(
     isLoggedIn: z.boolean().describe('Indicates if the user is logged in'),
     isConfigured: z.boolean().describe('Indicates if the app is already configured'),
     isGuestDashboardEnabled: z.boolean().describe('Indicates if the guest dashboard is enabled'),
+    allowAutoThemes: z.boolean().describe('Indicates if the app allows auto themes'),
   }),
 ) {}
 

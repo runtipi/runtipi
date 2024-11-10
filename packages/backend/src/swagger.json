@@ -1151,12 +1151,17 @@
           "isGuestDashboardEnabled": {
             "description": "Indicates if the guest dashboard is enabled",
             "type": "boolean"
+          },
+          "allowAutoThemes": {
+            "description": "Indicates if the app allows auto themes",
+            "type": "boolean"
           }
         },
         "required": [
           "isLoggedIn",
           "isConfigured",
-          "isGuestDashboardEnabled"
+          "isGuestDashboardEnabled",
+          "allowAutoThemes"
         ]
       },
       "AppContextDto": {

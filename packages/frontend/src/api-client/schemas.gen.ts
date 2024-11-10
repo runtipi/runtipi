@@ -15,8 +15,12 @@ export const UserContextDtoSchema = {
       description: 'Indicates if the guest dashboard is enabled',
       type: 'boolean',
     },
+    allowAutoThemes: {
+      description: 'Indicates if the app allows auto themes',
+      type: 'boolean',
+    },
   },
-  required: ['isLoggedIn', 'isConfigured', 'isGuestDashboardEnabled'],
+  required: ['isLoggedIn', 'isConfigured', 'isGuestDashboardEnabled', 'allowAutoThemes'],
 } as const;
 
 export const AppContextDtoSchema = {

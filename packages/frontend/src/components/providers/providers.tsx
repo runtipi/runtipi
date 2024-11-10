@@ -6,6 +6,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorPage } from '../error/error-page';
 import { I18nProvider } from './i18n/i18n-provider';
 import { SocketProvider } from './socket/socket-provider';
+import { AutoThemeProvider } from './theme/auto-theme-provider';
 import { ThemeProvider } from './theme/theme-provider';
 
 const queryClient = new QueryClient({
@@ -43,9 +44,11 @@ export const Providers = ({ children }: PropsWithChildren) => {
             <Suspense fallback={<PageSuspense />}>
               <UserContextProvider>
                 <ThemeProvider>
-                  <I18nProvider>
-                    <SocketProvider>{children}</SocketProvider>
-                  </I18nProvider>
+                  <AutoThemeProvider>
+                    <I18nProvider>
+                      <SocketProvider>{children}</SocketProvider>
+                    </I18nProvider>
+                  </AutoThemeProvider>
                 </ThemeProvider>
               </UserContextProvider>
             </Suspense>

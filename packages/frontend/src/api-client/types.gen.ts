@@ -13,6 +13,10 @@ export type UserContextDto = {
    * Indicates if the guest dashboard is enabled
    */
   isGuestDashboardEnabled: boolean;
+  /**
+   * Indicates if the app allows auto themes
+   */
+  allowAutoThemes: boolean;
 };
 
 export type AppContextDto = {

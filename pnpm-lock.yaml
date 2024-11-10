@@ -331,6 +331,9 @@ importers:
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      let-it-go:
+        specifier: ^1.0.0
+        version: 1.0.0
       qrcode.react:
         specifier: ^4.1.0
         version: 4.1.0(react@18.3.1)
@@ -4409,6 +4412,9 @@ packages:
 
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
+
+  let-it-go@1.0.0:
+    resolution: {integrity: sha512-yzn7EFjddUpsSzhCsJSh8aWGNcTelVaPOUfOvHuR/4VZjpRQNZFznkiTT5dw4txP0aUQ4/B4lLsY37PwBHw0kA==}
 
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
@@ -10565,6 +10571,8 @@ snapshots:
       '@keyv/serialize': 1.0.1
 
   kuler@2.0.0: {}
+
+  let-it-go@1.0.0: {}
 
   levn@0.4.1:
     dependencies:
