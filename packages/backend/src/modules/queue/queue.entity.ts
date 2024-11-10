@@ -11,6 +11,7 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
   private responsePromises: { [id: string]: { resolve: (data: z.output<R>) => void } };
   private activeTasks: number;
   private taskQueue: AsyncMessage[];
+  private callbacks: ((data: z.output<T> & { eventId: string }) => void)[];
 
   constructor(
     private queueFactory: QueueFactory,
@@ -24,6 +25,7 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
     this.responsePromises = {};
     this.activeTasks = 0;
     this.taskQueue = [];
+    this.callbacks = [];
     this.startQueueProcessing();
   }
 
@@ -63,16 +65,13 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
     if (!parsedData.success) return;
 
     this.activeTasks++;
-    this.currentCallback?.(parsedData.data);
+    for (const callback of this.callbacks) {
+      callback({ ...parsedData.data, eventId: parsedData.data.eventId });
+    }
   }
 
-  private currentCallback: ((data: z.output<T> & { eventId: string }) => void) | null = null;
-
   public onEvent(callback: (data: z.output<T> & { eventId: string }) => void) {
-    if (this.currentCallback) {
-      throw new Error('Callback already set for this queue');
-    }
-    this.currentCallback = callback;
+    this.callbacks.push(callback);
 
     this.queueFactory.createConsumer(this.queueName, (eventData) => {
       this.taskQueue.push(eventData);

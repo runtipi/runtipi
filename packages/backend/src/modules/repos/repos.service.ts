@@ -16,14 +16,18 @@ export class ReposService {
     private readonly filesystem: FilesystemService,
     private readonly repoQueue: RepoEventsQueue,
   ) {
-    this.repoQueue.onEvent(({ command, url }) => {
+    this.repoQueue.onEvent(async ({ eventId, command, url }) => {
       switch (command) {
-        case 'clone':
-          this.cloneRepo(url);
+        case 'clone': {
+          const { success, message } = await this.cloneRepo(url);
+          this.repoQueue.sendEventResponse(eventId, { success, message });
           break;
-        case 'update':
-          this.pullRepo(url);
+        }
+        case 'update': {
+          const { success, message } = await this.pullRepo(url);
+          this.repoQueue.sendEventResponse(eventId, { success, message });
           break;
+        }
         default:
           this.logger.error(`Unknown command: ${command}`);
       }
