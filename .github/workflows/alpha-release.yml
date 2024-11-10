@@ -112,7 +112,7 @@ jobs:
           name: cli
           path: bin
 
-  create-release:
+  publish-release:
     runs-on: ubuntu-latest
     needs: [build-images, build-cli, create-tag]
     outputs:
