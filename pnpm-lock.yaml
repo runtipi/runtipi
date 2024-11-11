@@ -154,8 +154,8 @@ importers:
         specifier: ^5.23.5
         version: 5.23.5
       uuid:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.3
+        version: 11.0.3
       validator:
         specifier: ^13.12.0
         version: 13.12.0
@@ -6274,8 +6274,8 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uuid@10.0.0:
-    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+  uuid@11.0.3:
+    resolution: {integrity: sha512-d0z310fCWv5dJwnX1Y/MncBAqGMKEzlBb1AOf7z9K8ALnd0utBX/msg/fA0+sbyN1ihbMsLhrBlnl1ak7Wa0rg==}
     hasBin: true
 
   uuid@8.3.2:
@@ -12685,7 +12685,7 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
-  uuid@10.0.0: {}
+  uuid@11.0.3: {}
 
   uuid@8.3.2: {}
 
