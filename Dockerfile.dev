@@ -41,7 +41,7 @@ RUN pnpm install
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
 COPY ./packages/backend/assets ./assets
-COPY ./packages/backend/src/core/database/migrations ./assets/migrations
+COPY ./packages/backend/src/core/database/drizzle ./assets/migrations
 
 COPY ./supervisord.dev.conf /etc/supervisord.conf
 

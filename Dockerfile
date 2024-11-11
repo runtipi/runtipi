@@ -68,7 +68,7 @@ COPY --from=builder /app/docker-binary /usr/local/bin/docker-compose
 
 # Assets
 COPY --from=builder /app/packages/backend/assets ./assets
-COPY --from=builder /app/packages/backend/src/core/database/migrations ./assets/migrations
+COPY --from=builder /app/packages/backend/src/core/database/drizzle ./assets/migrations
 COPY --from=builder /app/packages/backend/src/modules/i18n/translations ./assets/translations
 COPY --from=builder /app/packages/frontend/dist ./assets/frontend
 

@@ -1,5 +1,6 @@
 import { DatabaseService } from '@/core/database/database.service';
-import { type NewUser, userTable } from '@/core/database/schema';
+import { user } from '@/core/database/drizzle/schema';
+import type { NewUser } from '@/core/database/drizzle/types';
 import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm/sql';
 
@@ -13,7 +14,7 @@ export class UserRepository {
    * @param {string} username - The username of the user to return
    */
   public async getUserByUsername(username: string) {
-    return this.databaseService.db.query.userTable.findFirst({ where: eq(userTable.username, username.trim().toLowerCase()) });
+    return this.databaseService.db.query.user.findFirst({ where: eq(user.username, username.trim().toLowerCase()) });
   }
 
   /**
@@ -22,7 +23,7 @@ export class UserRepository {
    * @param {number} id - The id of the user to return
    */
   public async getUserById(id: number) {
-    return this.databaseService.db.query.userTable.findFirst({ where: eq(userTable.id, Number(id)) });
+    return this.databaseService.db.query.user.findFirst({ where: eq(user.id, Number(id)) });
   }
 
   /**
@@ -31,8 +32,8 @@ export class UserRepository {
    * @param {number} id - The id of the user to return
    */
   public async getUserDtoById(id: number) {
-    return this.databaseService.db.query.userTable.findFirst({
-      where: eq(userTable.id, Number(id)),
+    return this.databaseService.db.query.user.findFirst({
+      where: eq(user.id, Number(id)),
       columns: { id: true, username: true, totpEnabled: true, locale: true, operator: true, hasSeenWelcome: true },
     });
   }
@@ -45,9 +46,9 @@ export class UserRepository {
    */
   public async updateUser(id: number, data: Partial<NewUser>) {
     const updatedUsers = await this.databaseService.db
-      .update(userTable)
+      .update(user)
       .set(data)
-      .where(eq(userTable.id, Number(id)))
+      .where(eq(user.id, Number(id)))
       .returning();
 
     return updatedUsers[0];
@@ -57,14 +58,14 @@ export class UserRepository {
    * Returns all operators registered in the system
    */
   public async getOperators() {
-    return this.databaseService.db.select().from(userTable).where(eq(userTable.operator, true));
+    return this.databaseService.db.select().from(user).where(eq(user.operator, true));
   }
 
   /**
    * Returns the first operator found in the system
    */
   public async getFirstOperator() {
-    return this.databaseService.db.query.userTable.findFirst({ where: eq(userTable.operator, true) });
+    return this.databaseService.db.query.user.findFirst({ where: eq(user.operator, true) });
   }
 
   /**
@@ -73,7 +74,7 @@ export class UserRepository {
    * @param {NewUser} data - The data to create the user with
    */
   public async createUser(data: NewUser) {
-    const newUsers = await this.databaseService.db.insert(userTable).values(data).returning();
+    const newUsers = await this.databaseService.db.insert(user).values(data).returning();
     return newUsers[0];
   }
 }

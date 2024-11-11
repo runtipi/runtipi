@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { appTable } from '../packages/backend/src/core/database/schema';
+import { app } from '../packages/backend/src/core/database/drizzle/schema';
 import { loginUser } from './fixtures/fixtures';
 import { clearDatabase, db } from './helpers/db';
 import { setSettings } from './helpers/settings';
@@ -23,7 +23,7 @@ test('user can activate the guest dashboard and see it when logged out', async (
 });
 
 test('logged out users can see the apps on the guest dashboard', async ({ browser }) => {
-  await db.insert(appTable).values({
+  await db.insert(app).values({
     config: {},
     isVisibleOnGuestDashboard: true,
     id: 'hello-world',
@@ -33,7 +33,7 @@ test('logged out users can see the apps on the guest dashboard', async ({ browse
     status: 'running',
     openPort: true,
   });
-  await db.insert(appTable).values({
+  await db.insert(app).values({
     config: {},
     openPort: true,
     isVisibleOnGuestDashboard: false,

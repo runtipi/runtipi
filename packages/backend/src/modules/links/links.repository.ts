@@ -1,5 +1,5 @@
 import { DatabaseService } from '@/core/database/database.service';
-import { linkTable } from '@/core/database/schema';
+import { link as linkTable } from '@/core/database/drizzle/schema';
 import { Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import type { EditLinkBodyDto, LinkBodyDto } from './dto/links.dto';
@@ -30,7 +30,7 @@ export class LinksRepository {
 
     const updatedLinks = await this.databaseService.db
       .update(linkTable)
-      .set({ title, description, url, iconUrl, updatedAt: new Date() })
+      .set({ title, description, url, iconUrl, updatedAt: new Date().toString() })
       .where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)))
       .returning();
 

@@ -2,7 +2,7 @@ import { promises } from 'node:fs';
 import path from 'node:path';
 import type { z } from 'zod';
 import type { settingsSchema } from '../../packages/backend/src/app.dto';
-import { userTable } from '../../packages/backend/src/core/database/schema';
+import { user } from '../../packages/backend/src/core/database/drizzle/schema';
 import { BASE_PATH } from './constants';
 import { db } from './db';
 
@@ -32,6 +32,6 @@ export const unsetPasswordChangeRequest = async () => {
 };
 
 export const setWelcomeSeen = async (seen: boolean) => {
-  await db.update(userTable).set({ hasSeenWelcome: seen });
+  await db.update(user).set({ hasSeenWelcome: seen });
   return Promise.resolve();
 };

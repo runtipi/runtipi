@@ -1,4 +1,4 @@
-import { APP_STATUS } from '@/core/database/schema';
+import { APP_STATUS } from '@/core/database/drizzle/types';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import { APP_CATEGORIES, AppInfoDto, AppInfoSimpleDto } from './app-info.dto';

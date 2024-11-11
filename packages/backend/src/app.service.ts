@@ -7,7 +7,6 @@ import { cleanseErrorData } from './common/helpers/error-helpers';
 import { execAsync } from './common/helpers/exec-helpers';
 import { CacheService } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
-import { DatabaseMigrator } from './core/database/database-migrator.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
 import { SocketManager } from './core/socket/socket.service';
@@ -20,7 +19,6 @@ export class AppService {
     private readonly cache: CacheService,
     private readonly configuration: ConfigurationService,
     private readonly logger: LoggerService,
-    private readonly migrator: DatabaseMigrator,
     private readonly repos: ReposService,
     private readonly repoQueue: RepoEventsQueue,
     private readonly socketManager: SocketManager,
@@ -28,8 +26,7 @@ export class AppService {
   ) {}
 
   public async bootstrap() {
-    const { directories, version, appsRepoUrl, userSettings } = this.configuration.getConfig();
-    const { appDir } = directories;
+    const { version, appsRepoUrl, userSettings } = this.configuration.getConfig();
 
     this.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
 
@@ -37,9 +34,6 @@ export class AppService {
 
     this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
     this.logger.info('Generating system env file...');
-
-    // Run migrations
-    await this.migrator.runPostgresMigrations(path.join(appDir, 'assets'));
 
     const clone = await this.repos.cloneRepo(appsRepoUrl);
     if (!clone.success) {
