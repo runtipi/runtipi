@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { colorSchemeForCategory } from '../../helpers/table-helpers';
 
+const DESCRIPTION_LENGTH_LIMIT = 30;
+
 export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean }> = ({ app, isLoading }) => {
   const { t } = useTranslation();
 
@@ -28,8 +30,8 @@ export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean }> = (
           </div>
           <p className="text-muted text-nowrap mb-2">
             <Skeleton loading={isLoading}>
-              <span title={app.short_desc.length > 30 ? app.short_desc : undefined}>
-                {limitText(app.short_desc, 30)}
+              <span title={app.short_desc.length > DESCRIPTION_LENGTH_LIMIT ? app.short_desc : undefined}>
+                {limitText(app.short_desc, DESCRIPTION_LENGTH_LIMIT)}
               </span>
             </Skeleton>
           </p>
