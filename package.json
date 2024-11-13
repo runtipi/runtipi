@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo build",
+    "bundle": "turbo bundle",
     "start": "node ./index.js",
     "start:dev": "docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
     "start:prod": "docker compose --project-name runtipi -f docker-compose.prod.yml up --build ",

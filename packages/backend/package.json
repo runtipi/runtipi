@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "nest start --watch --preserveWatchOutput",
     "build": "nest build",
-    "bundle": "ncc build dist/main.js -o dist/bundle --external argon2",
+    "bundle": "rm -rf dist && ncc build src/main.ts -o dist/bundle --external argon2 --source-map",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -78,7 +78,7 @@
     "@types/supertest": "^6.0.0",
     "@types/validator": "^13.12.2",
     "@types/web-push": "^3.6.4",
-    "@vercel/ncc": "^0.38.2",
+    "@vercel/ncc": "^0.34.0",
     "drizzle-kit": "^0.28.0",
     "esbuild": "^0.24.0",
     "source-map-support": "^0.5.21",

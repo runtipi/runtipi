@@ -51,7 +51,7 @@ RUN pnpm install -r --prefer-offline
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
 
-RUN npm run build && pnpm -r bundle
+RUN npm run bundle
 
 # ---- RUNNER ----
 FROM runner_base AS runner

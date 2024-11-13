@@ -7,6 +7,11 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/"]
     },
+    "bundle": {
+      "dependsOn": ["^bundle"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/"]
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },

@@ -215,8 +215,8 @@ importers:
         specifier: ^3.6.4
         version: 3.6.4
       '@vercel/ncc':
-        specifier: ^0.38.2
-        version: 0.38.2
+        specifier: ^0.34.0
+        version: 0.34.0
       drizzle-kit:
         specifier: ^0.28.0
         version: 0.28.0
@@ -3000,8 +3000,8 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
-  '@vercel/ncc@0.38.2':
-    resolution: {integrity: sha512-3yel3jaxUg9pHBv4+KeC9qlbdZPug+UMtUOlhvpDYCMSgcNSrS2Hv1LoqMsOV7hf2lYscx+BESfJOIla1WsmMQ==}
+  '@vercel/ncc@0.34.0':
+    resolution: {integrity: sha512-G9h5ZLBJ/V57Ou9vz5hI8pda/YQX5HQszCs3AmIus3XzsmRn/0Ptic5otD3xVST8QLKk7AMk7AqpsyQGN7MZ9A==}
     hasBin: true
 
   '@vitejs/plugin-react@4.3.3':
@@ -9157,7 +9157,7 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vercel/ncc@0.38.2': {}
+  '@vercel/ncc@0.34.0': {}
 
   '@vitejs/plugin-react@4.3.3(vite@5.4.10(@types/node@22.9.0)(sass-embedded@1.79.4)(terser@5.32.0))':
     dependencies:
