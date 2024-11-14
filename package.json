@@ -9,7 +9,7 @@
     "bundle": "turbo bundle",
     "start": "node ./index.js",
     "start:dev": "docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
-    "start:prod": "docker compose --project-name runtipi -f docker-compose.prod.yml up --build ",
+    "start:prod": "docker compose --project-name runtipi -f docker-compose.prod.yml up --build",
     "test:e2e": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test",
     "test:e2e:ui": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test --ui",
     "gen:api-client": "openapi-ts",

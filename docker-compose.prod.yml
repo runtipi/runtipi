@@ -43,6 +43,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        TIPI_VERSION: 0.0.0
+        LOCAL: true
     depends_on:
       runtipi-db:
         condition: service_healthy

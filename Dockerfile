@@ -6,6 +6,13 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
+ARG SENTRY_AUTH_TOKEN
+ARG TIPI_VERSION
+ARG LOCAL
+
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+ENV SENTRY_RELEASE=${TIPI_VERSION}
+
 RUN npm install pnpm@9.12.2 -g
 RUN apk add --no-cache curl python3 make g++ git
 
@@ -51,7 +58,14 @@ RUN pnpm install -r --prefer-offline
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
 
+RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
+RUN echo "LOCAL: ${LOCAL}"
+
 RUN npm run bundle
+
+RUN if [ "${LOCAL}" != "true" ]; then \
+  pnpm -r sentry:sourcemaps --filter backend; \
+  fi
 
 # ---- RUNNER ----
 FROM runner_base AS runner
@@ -63,7 +77,7 @@ WORKDIR /app
 RUN npm install argon2
 
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/packages/backend/dist/bundle ./
+COPY --from=builder /app/packages/backend/dist ./
 COPY --from=builder /app/docker-binary /usr/local/bin/docker-compose
 
 # Assets

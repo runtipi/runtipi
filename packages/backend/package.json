@@ -9,14 +9,15 @@
   "scripts": {
     "dev": "nest start --watch --preserveWatchOutput",
     "build": "nest build",
-    "bundle": "rm -rf dist && ncc build src/main.ts -o dist/bundle --external argon2 --source-map",
+    "bundle": "rm -rf dist && ncc build src/main.ts -o dist --external argon2 --source-map",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org runtipi --project runtipi-backend ./dist && sentry-cli sourcemaps upload --org runtipi --project runtipi-backend ./dist"
   },
   "dependencies": {
     "@keyv/sqlite": "^4.0.1",
@@ -31,6 +32,7 @@
     "@otplib/core": "^12.0.1",
     "@otplib/plugin-crypto": "^12.0.1",
     "@otplib/plugin-thirty-two": "^12.0.1",
+    "@sentry/cli": "^2.38.2",
     "@sentry/nestjs": "^8.37.1",
     "ansi-to-html": "^0.7.2",
     "argon2": "^0.41.1",
@@ -90,3 +92,4 @@
     "vitest": "^2.1.4"
   }
 }
+
