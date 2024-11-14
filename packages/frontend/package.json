@@ -23,6 +23,8 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-switch": "^1.1.1",
     "@radix-ui/react-tabs": "^1.1.1",
+    "@sentry/react": "^8.38.0",
+    "@sentry/vite-plugin": "^2.22.6",
     "@tabler/core": "1.0.0-beta21",
     "@tabler/icons-react": "^3.21.0",
     "@tanstack/react-query": "^5.59.20",

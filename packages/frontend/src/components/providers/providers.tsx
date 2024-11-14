@@ -5,6 +5,7 @@ import { type PropsWithChildren, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorPage } from '../error/error-page';
 import { I18nProvider } from './i18n/i18n-provider';
+import { SentryProvider } from './sentry/sentry-provider';
 import { SocketProvider } from './socket/socket-provider';
 import { AutoThemeProvider } from './theme/auto-theme-provider';
 import { ThemeProvider } from './theme/theme-provider';
@@ -43,13 +44,15 @@ export const Providers = ({ children }: PropsWithChildren) => {
           >
             <Suspense fallback={<PageSuspense />}>
               <UserContextProvider>
-                <ThemeProvider>
-                  <AutoThemeProvider>
-                    <I18nProvider>
-                      <SocketProvider>{children}</SocketProvider>
-                    </I18nProvider>
-                  </AutoThemeProvider>
-                </ThemeProvider>
+                <SentryProvider>
+                  <ThemeProvider>
+                    <AutoThemeProvider>
+                      <I18nProvider>
+                        <SocketProvider>{children}</SocketProvider>
+                      </I18nProvider>
+                    </AutoThemeProvider>
+                  </ThemeProvider>
+                </SentryProvider>
               </UserContextProvider>
             </Suspense>
           </ErrorBoundary>

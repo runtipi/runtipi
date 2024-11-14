@@ -25,3 +25,6 @@ dist-ssr
 
 public/js/*
 !public/js/.gitkeep
+
+# Sentry Config File
+.env.sentry-build-plugin

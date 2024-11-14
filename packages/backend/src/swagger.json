@@ -1328,13 +1328,18 @@
           "allowAutoThemes": {
             "description": "Indicates if the app allows auto themes",
             "type": "boolean"
+          },
+          "allowErrorMonitoring": {
+            "description": "Indicates if the app allows anonymous error monitoring",
+            "type": "boolean"
           }
         },
         "required": [
           "isLoggedIn",
           "isConfigured",
           "isGuestDashboardEnabled",
-          "allowAutoThemes"
+          "allowAutoThemes",
+          "allowErrorMonitoring"
         ]
       },
       "AppContextDto": {

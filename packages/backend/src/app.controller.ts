@@ -21,7 +21,7 @@ export class AppController {
   @Get('/user-context')
   @ZodSerializerDto(UserContextDto)
   async userContext(@Req() req: Request): Promise<UserContextDto> {
-    const { guestDashboard, allowAutoThemes } = this.configuration.get('userSettings');
+    const { guestDashboard, allowAutoThemes, allowErrorMonitoring } = this.configuration.get('userSettings');
     const operator = await this.userRepository.getFirstOperator();
 
     return {
@@ -29,6 +29,7 @@ export class AppController {
       isConfigured: Boolean(operator),
       isGuestDashboardEnabled: guestDashboard,
       allowAutoThemes,
+      allowErrorMonitoring,
     };
   }
 

@@ -133,12 +133,12 @@ export type AppDetailsDto = {
     status:
       | 'running'
       | 'stopped'
-      | 'starting'
-      | 'stopping'
-      | 'updating'
-      | 'missing'
       | 'installing'
       | 'uninstalling'
+      | 'stopping'
+      | 'starting'
+      | 'missing'
+      | 'updating'
       | 'resetting'
       | 'restarting'
       | 'backing_up'
@@ -167,12 +167,12 @@ export type AppDetailsDto = {
 export type status =
   | 'running'
   | 'stopped'
-  | 'starting'
-  | 'stopping'
-  | 'updating'
-  | 'missing'
   | 'installing'
   | 'uninstalling'
+  | 'stopping'
+  | 'starting'
+  | 'missing'
+  | 'updating'
   | 'resetting'
   | 'restarting'
   | 'backing_up'
@@ -242,12 +242,12 @@ export type GuestAppsDto = {
       status:
         | 'running'
         | 'stopped'
-        | 'starting'
-        | 'stopping'
-        | 'updating'
-        | 'missing'
         | 'installing'
         | 'uninstalling'
+        | 'stopping'
+        | 'starting'
+        | 'missing'
+        | 'updating'
         | 'resetting'
         | 'restarting'
         | 'backing_up'
@@ -380,12 +380,12 @@ export type MyAppsDto = {
       status:
         | 'running'
         | 'stopped'
-        | 'starting'
-        | 'stopping'
-        | 'updating'
-        | 'missing'
         | 'installing'
         | 'uninstalling'
+        | 'stopping'
+        | 'starting'
+        | 'missing'
+        | 'updating'
         | 'resetting'
         | 'restarting'
         | 'backing_up'
@@ -543,6 +543,10 @@ export type UserContextDto = {
    * Indicates if the app allows auto themes
    */
   allowAutoThemes: boolean;
+  /**
+   * Indicates if the app allows anonymous error monitoring
+   */
+  allowErrorMonitoring: boolean;
 };
 
 export type VerifyTotpBody = {
