@@ -11,6 +11,7 @@
 [![Docker Image Size](https://badgen.net/docker/size/meienberger/runtipi?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/runtipi/)
 ![Build](https://github.com/runtipi/runtipi/workflows/Tipi%20CI/badge.svg)
 [![Crowdin](https://badges.crowdin.net/runtipi/localized.svg)](https://crowdin.com/project/runtipi)
+[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20Tipi%20Guru-006BFF)](https://gurubase.io/g/tipi)
 
 > [!NOTE]
 > Tipi is built with TypeScript, Next.js app router and Drizzle ORM! If you want to collaborate on a cool project, join the discussion on Discord!
