@@ -143,7 +143,7 @@ jobs:
 
       - name: Cache Playwright binaries
         id: cache-playwright-binaries
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
