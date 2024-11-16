@@ -116,7 +116,7 @@ jobs:
         run: pnpm install
 
       - name: Build client
-        run: npm run build
+        run: npm run bundle
 
       - name: Run tsc
         run: pnpm -r run tsc
