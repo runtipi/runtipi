@@ -59,6 +59,6 @@ export class AppsController {
       'Cache-Control': 'public, max-age=86400',
     });
 
-    res.send(image);
+    return res.send(image);
   }
 }

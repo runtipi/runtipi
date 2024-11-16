@@ -16,7 +16,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "App"
+        ]
       }
     },
     "/api/app-context": {
@@ -34,7 +37,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "App"
+        ]
       }
     },
     "/api/user-settings": {
@@ -55,7 +61,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "App"
+        ]
       }
     },
     "/api/acknowledge-welcome": {
@@ -76,7 +85,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "App"
+        ]
       }
     },
     "/api/debug-sentry": {
@@ -87,7 +99,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "App"
+        ]
       }
     },
     "/api/system/load": {
@@ -105,7 +120,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "System"
+        ]
       }
     },
     "/api/system/certificate": {
@@ -116,7 +134,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "System"
+        ]
       }
     },
     "/api/i18n/locales/{ns}/{lng}.json": {
@@ -151,7 +172,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "I18n"
+        ]
       }
     },
     "/api/auth/login": {
@@ -179,7 +203,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/verify-totp": {
@@ -207,7 +234,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/register": {
@@ -235,7 +265,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/logout": {
@@ -246,7 +279,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/username": {
@@ -267,7 +303,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/password": {
@@ -288,7 +327,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/totp/get-uri": {
@@ -316,7 +358,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/totp/setup": {
@@ -337,7 +382,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/totp/disable": {
@@ -358,7 +406,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/reset-password": {
@@ -386,7 +437,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       },
       "delete": {
         "operationId": "cancelResetPassword",
@@ -395,7 +449,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       },
       "get": {
         "operationId": "checkResetPasswordRequest",
@@ -411,7 +468,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/apps/installed": {
@@ -429,7 +489,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Apps"
+        ]
       }
     },
     "/api/apps/guest": {
@@ -447,7 +510,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Apps"
+        ]
       }
     },
     "/api/apps/search": {
@@ -515,7 +581,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Apps"
+        ]
       }
     },
     "/api/apps/{id}": {
@@ -542,7 +611,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Apps"
+        ]
       }
     },
     "/api/apps/{id}/image": {
@@ -562,7 +634,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Apps"
+        ]
       }
     },
     "/api/repos/pull": {
@@ -580,7 +655,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Repos"
+        ]
       }
     },
     "/api/app-lifecycle/{id}/install": {
@@ -610,7 +688,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{id}/start": {
@@ -630,7 +711,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{id}/stop": {
@@ -650,7 +734,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{id}/restart": {
@@ -670,7 +757,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{id}/uninstall": {
@@ -700,7 +790,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{id}/reset": {
@@ -720,7 +813,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{id}/update": {
@@ -750,7 +846,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/update-all": {
@@ -761,7 +860,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{id}/update-config": {
@@ -791,7 +893,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/backups/{appid}/backup": {
@@ -811,7 +916,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Backups"
+        ]
       }
     },
     "/api/backups/{appid}/restore": {
@@ -841,7 +949,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Backups"
+        ]
       }
     },
     "/api/backups/{id}": {
@@ -884,7 +995,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Backups"
+        ]
       }
     },
     "/api/backups/{appid}": {
@@ -914,7 +1028,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Backups"
+        ]
       }
     },
     "/api/links": {
@@ -932,7 +1049,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Links"
+        ]
       },
       "post": {
         "operationId": "createLink",
@@ -951,7 +1071,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Links"
+        ]
       }
     },
     "/api/links/{id}": {
@@ -981,7 +1104,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Links"
+        ]
       },
       "delete": {
         "operationId": "deleteLink",
@@ -999,7 +1125,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Links"
+        ]
       }
     },
     "/api/health": {
@@ -1164,7 +1293,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Health"
+        ]
       }
     }
   },
