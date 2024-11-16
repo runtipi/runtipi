@@ -17,17 +17,12 @@ export class UninstallAppCommand extends AppLifecycleCommand {
       this.logger.info(`Uninstalling app ${appId}`);
       await this.ensureAppDir(appId, form);
 
-      try {
-        await this.dockerService.composeApp(appId, 'down --remove-orphans --volumes --rmi all');
-      } catch (err) {
-        if (err instanceof Error && err.message.includes('conflict')) {
-          this.logger.warn(
-            `Could not fully uninstall app ${appId}. Some images are in use by other apps. Consider cleaning unused images docker system prune -a`,
-          );
-        } else {
-          throw err;
-        }
-      }
+      await this.dockerService.composeApp(appId, 'down --remove-orphans --volumes --rmi all').catch((err) => {
+        this.logger.warn(
+          `Could not fully uninstall app ${appId}. Some images may be in use by other apps or a folder has been deleted. Consider cleaning unused images docker system prune -a`,
+          err,
+        );
+      });
 
       await this.appFilesManager.deleteAppFolder(appId);
       await this.appFilesManager.deleteAppDataDir(appId);

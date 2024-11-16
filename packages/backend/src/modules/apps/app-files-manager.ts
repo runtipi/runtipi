@@ -230,6 +230,11 @@ export class AppFilesManager {
     await this.filesystem.removeDirectory(appDataDir);
   }
 
+  public async createAppDataDir(appId: string) {
+    const { appDataDir } = this.getAppPaths(appId);
+    await this.filesystem.createDirectory(appDataDir);
+  }
+
   /**
    * Set the permissions for the app data directory
    * @param appId - The app id

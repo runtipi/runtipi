@@ -40,6 +40,7 @@ export class ResetAppCommand extends AppLifecycleCommand {
 
       // Delete app data directory
       await this.appFilesManager.deleteAppDataDir(appId);
+      await this.appFilesManager.createAppDataDir(appId);
 
       // Create app.env file
       this.logger.info(`Creating app.env file for app ${appId}`);

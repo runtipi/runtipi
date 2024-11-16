@@ -58,6 +58,7 @@ export class FilesystemService {
 
   async writeTextFile(filePath: string, content: string): Promise<boolean> {
     try {
+      await fs.promises.mkdir(filePath.split('/').slice(0, -1).join('/'), { recursive: true });
       await fs.promises.writeFile(filePath, content, 'utf8');
       return true;
     } catch (error) {

@@ -1,5 +1,4 @@
 import { IconReload } from '@tabler/icons-react';
-import { useLocation } from 'react-router-dom';
 import { Button } from '../ui/Button';
 
 type ErrorPageProps = {
@@ -8,8 +7,6 @@ type ErrorPageProps = {
 };
 
 export const ErrorPage = ({ error, onReset }: ErrorPageProps) => {
-  const location = useLocation();
-
   return (
     <div className="page page-center">
       <div className="container-tight py-4">

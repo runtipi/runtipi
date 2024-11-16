@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "nest start --watch --preserveWatchOutput",
     "build": "nest build",
-    "bundle": "rm -rf dist && ncc build src/main.ts -o dist --external argon2 --source-map",
+    "bundle": "rm -rf dist && ncc build src/main.ts -o dist --source-map",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -92,4 +92,3 @@
     "vitest": "^2.1.4"
   }
 }
-
