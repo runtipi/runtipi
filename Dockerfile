@@ -74,6 +74,8 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
+RUN npm install argon2
+
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
 COPY --from=builder /app/docker-binary /usr/local/bin/docker-compose
