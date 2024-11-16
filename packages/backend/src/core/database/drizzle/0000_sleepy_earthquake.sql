@@ -30,15 +30,6 @@ CREATE TABLE IF NOT EXISTS "migrations" (
 	CONSTRAINT "migrations_name_key" UNIQUE("name")
 );
 -- > statement-breakpoint
-CREATE TABLE IF NOT EXISTS "update" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"name" varchar NOT NULL,
-	"status" "update_status_enum" NOT NULL,
-	"createdAt" timestamp DEFAULT now() NOT NULL,
-	"updatedAt" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "UQ_6e7d7ecccdc972caa0ad33cb014" UNIQUE("name")
-);
--- > statement-breakpoint
 CREATE TABLE IF NOT EXISTS "link" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" varchar(20) NOT NULL,

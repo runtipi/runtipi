@@ -98,7 +98,7 @@ export class ConfigurationService {
         appsRepoUrl: env.data.APPS_REPO_URL,
         postgresPort: env.data.POSTGRES_PORT,
         dnsIp: env.data.DNS_IP,
-        appDataPath: env.data.RUNTIPI_APP_DATA_PATH, // TODO: Check how it's used
+        appDataPath: path.join(env.data.RUNTIPI_APP_DATA_PATH, 'app-data'),
         persistTraefikConfig: env.data.PERSIST_TRAEFIK_CONFIG,
       },
       appsRepoId: env.data.APPS_REPO_ID,
