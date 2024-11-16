@@ -16,7 +16,12 @@ BEGIN
         'uninstalling',
         'stopping',
         'starting',
-        'missing'
+        'missing',
+        'updating',
+        'resetting',
+        'restarting',
+        'backing_up',
+        'restoring'
 );
 END IF;
 END
