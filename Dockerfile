@@ -64,7 +64,7 @@ RUN echo "LOCAL: ${LOCAL}"
 RUN npm run bundle
 
 RUN if [ "${LOCAL}" != "true" ]; then \
-  pnpm -r sentry:sourcemaps --filter backend; \
+  pnpm -r sentry:sourcemaps; \
   fi
 
 # ---- RUNNER ----
