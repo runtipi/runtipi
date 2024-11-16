@@ -1,6 +1,6 @@
+import crypto from 'node:crypto';
 import { CacheService } from '@/core/cache/cache.service';
 import { Injectable } from '@nestjs/common';
-import { v4 } from 'uuid';
 
 @Injectable()
 export class SessionManager {
@@ -14,7 +14,7 @@ export class SessionManager {
    * @returns The session ID.
    */
   public async createSession(userId: number) {
-    const sessionId = v4();
+    const sessionId = crypto.randomUUID();
     const sessionKey = `session:${sessionId}`;
 
     await this.cache.set(sessionKey, userId.toString(), this.COOKIE_MAX_AGE * 7);
@@ -24,7 +24,7 @@ export class SessionManager {
   }
 
   public generateSalt() {
-    return v4();
+    return crypto.randomBytes(16).toString('hex');
   }
 
   /**

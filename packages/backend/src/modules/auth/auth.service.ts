@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { CacheService } from '@/core/cache/cache.service';
@@ -7,7 +8,6 @@ import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
-import { v4 } from 'uuid';
 import validator from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
@@ -47,7 +47,7 @@ export class AuthService {
     }
 
     if (user.totpEnabled) {
-      const totpSessionId = v4();
+      const totpSessionId = crypto.randomUUID();
       await this.cache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
