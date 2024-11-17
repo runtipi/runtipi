@@ -26,7 +26,7 @@ export const EditUserComposeDialog: React.FC<IProps> = ({ info, isOpen, onClose,
         setCompose(value);
     }, []);
 
-    const editUserComposeMutatuion = useMutation({
+    const editUserComposeMutation = useMutation({
         ...updateUserComposeMutation(),
         onError: (e: TranslatableError) => {
             toast.error(t(e.message, e.intlParams));
@@ -42,7 +42,7 @@ export const EditUserComposeDialog: React.FC<IProps> = ({ info, isOpen, onClose,
         if (!compose.endsWith("\n")) {
             setCompose(`${compose}\n`);
         }
-        editUserComposeMutatuion.mutate({
+        editUserComposeMutation.mutate({
             path: { id: info.id },
             body: {
                 compose: compose,
