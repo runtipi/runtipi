@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { ZodSchema } from 'zod';
-import { EOL } from 'os';
+import { EOL } from 'node:os';
 
 @Injectable()
 export class FilesystemService {
