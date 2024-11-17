@@ -162,6 +162,10 @@ export type AppDetailsDto = {
     minTipiVersion?: string;
     latestDockerVersion?: string;
   };
+  userCompose: {
+    path: string;
+    content: string | null;
+  };
 };
 
 export type status =
@@ -526,6 +530,10 @@ export type UpdateAppBody = {
   performBackup: boolean;
 };
 
+export type UpdateUserComposeBody = {
+  compose: string;
+};
+
 export type UserContextDto = {
   /**
    * Indicates if the user is logged in
@@ -834,6 +842,17 @@ export type UpdateAppConfigData = {
 export type UpdateAppConfigResponse = unknown;
 
 export type UpdateAppConfigError = unknown;
+
+export type UpdateUserComposeData = {
+  body: UpdateUserComposeBody;
+  path: {
+    id: string;
+  };
+};
+
+export type UpdateUserComposeResponse = unknown;
+
+export type UpdateUserComposeError = unknown;
 
 export type BackupAppData = {
   path: {

@@ -15,10 +15,11 @@ interface IProps {
   isOpen: boolean;
   onClose: () => void;
   onReset: () => void;
+  onEditUserCompose: () => void;
   status?: AppStatus;
 }
 
-export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, onClose, onReset, status }) => {
+export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, onClose, onReset, status, onEditUserCompose }) => {
   const { t } = useTranslation();
 
   const updateConfig = useMutation({
@@ -49,6 +50,7 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
               initialValues={{ ...config }}
               onReset={onReset}
               status={status}
+              onEditUserCompose={onEditUserCompose}
             />
           </DialogDescription>
         </ScrollArea>

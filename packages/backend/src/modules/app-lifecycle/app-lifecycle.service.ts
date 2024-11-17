@@ -385,4 +385,16 @@ export class AppLifecycleService {
 
     await Promise.all(updatePromises);
   }
+
+  async updateAppUserCompose(params: { appId: string; compose: string }) {
+    const { appId, compose } = params;
+
+    const app = await this.appRepository.getApp(appId);
+
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+    }
+
+    this.appFilesManager.writeUserComposeFile(appId, compose);
+  }
 }

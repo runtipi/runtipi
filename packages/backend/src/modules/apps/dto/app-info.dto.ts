@@ -85,6 +85,12 @@ export const appInfoSchema = z.object({
     .default(0),
 });
 
+// User compose
+export const userComposeSchema = z.object({
+  path: z.string(),
+  content: z.string().nullable(),
+});
+
 // Derived types
 export type AppInfo = z.output<typeof appInfoSchema>;
 export type FormField = z.output<typeof formFieldSchema>;
@@ -102,5 +108,7 @@ export class AppInfoSimpleDto extends createZodDto(
     available: true,
   }),
 ) {}
+
+export class UserComposeDto extends createZodDto(userComposeSchema) {}
 
 export class AppInfoDto extends createZodDto(appInfoSchema) {}

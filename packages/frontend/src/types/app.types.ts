@@ -12,3 +12,5 @@ export type AppCategory = NonNullable<AppInfoSimple['categories']>[number];
 export type CustomLink = LinksDto['links'][number];
 
 export type AppBackup = GetAppBackupsDto['data'][number];
+
+export type UserCompose = AppDetailsDto['userCompose'];

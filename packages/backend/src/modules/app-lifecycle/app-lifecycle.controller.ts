@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppLifecycleService } from './app-lifecycle.service';
-import { AppFormBody, UninstallAppBody, UpdateAppBody, appFormSchema } from './dto/app-lifecycle.dto';
+import { AppFormBody, UninstallAppBody, UpdateAppBody, UpdateUserComposeBody, appFormSchema, updateUserComposeSchema } from './dto/app-lifecycle.dto';
 
 @UseGuards(AuthGuard)
 @Controller('app-lifecycle')
@@ -55,5 +55,12 @@ export class AppLifecycleController {
     const form = appFormSchema.parse(body);
 
     return this.appLifecycleService.updateAppConfig({ appId: id, form });
+  }
+
+  @Patch(':id/update-user-compose')
+  async updateUserCompose(@Param('id') id: string, @Body() body: UpdateUserComposeBody) {
+    const form = updateUserComposeSchema.parse(body);
+
+    return this.appLifecycleService.updateAppUserCompose({ appId: id, compose: form.compose });
   }
 }

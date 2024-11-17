@@ -27,7 +27,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import './app-actions.css';
 import { startAppMutation } from '@/api-client/@tanstack/react-query.gen';
-import type { AppDetails, AppInfo, AppUpdateInfo } from '@/types/app.types';
+import type { AppDetails, AppInfo, AppUpdateInfo, UserCompose } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
@@ -38,12 +38,14 @@ import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/unins
 import { UpdateDialog } from '../../components/dialogs/update-dialog/update-dialog';
 import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
+import { EditUserComposeDialog } from '../../components/dialogs/edit-user-compose-dialog/edit-user-compose-dialog';
 
 interface IProps {
   app: AppDetails;
   info: AppInfo;
   updateInfo: AppUpdateInfo;
   localDomain?: string;
+  userCompose: UserCompose;
 }
 
 interface BtnProps extends ButtonProps {
@@ -65,7 +67,7 @@ const ActionButton: React.FC<BtnProps> = (props) => {
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
-export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
+export const AppActions = ({ app, info, localDomain, updateInfo, userCompose }: IProps) => {
   const installDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const restartDisclosure = useDisclosure();
@@ -73,6 +75,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
   const updateSettingsDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
   const resetAppDisclosure = useDisclosure();
+  const editUserComposeDisclosure = useDisclosure();
 
   const { t } = useTranslation();
   const { setOptimisticStatus } = useAppStatus();
@@ -222,6 +225,14 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     }, 300);
   };
 
+  const openEditUserCompose = () => {
+    updateSettingsDisclosure.close();
+
+    setTimeout(() => {
+      editUserComposeDisclosure.open();
+    }, 300);
+  }
+
   const newVersion = [updateInfo?.latestDockerVersion ? `${updateInfo?.latestDockerVersion}` : '', `(${String(updateInfo?.latestVersion)})`].join(
     ' ',
   );
@@ -240,7 +251,9 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
         info={info}
         config={app.config ?? {}}
         onReset={openResetAppModal}
+        onEditUserCompose={openEditUserCompose}
       />
+      <EditUserComposeDialog isOpen={editUserComposeDisclosure.isOpen} onClose={editUserComposeDisclosure.close} info={info} userCompose={userCompose} />
       <div className="mt-1 btn-list d-flex">
         {buttons.map((button) => (
           <Fragment key={button.key}>{button}</Fragment>

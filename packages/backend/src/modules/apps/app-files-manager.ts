@@ -404,4 +404,14 @@ export class AppFilesManager {
 
     return { path: userComposeFile, content };
   }
+
+  public async writeUserComposeFile(appId: string, compose: string) {
+    const { directories } = this.configuration.getConfig();
+
+    const userComposePath = path.join(directories.dataDir, 'user-config', appId);
+    const userComposeFile = path.join(userComposePath, 'docker-compose.yml');
+
+    await this.filesystem.createDirectory(userComposePath);
+    await this.filesystem.writeTextFile(userComposeFile, compose);
+  }
 }

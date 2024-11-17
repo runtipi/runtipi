@@ -12,7 +12,11 @@ export const appFormSchema = z
   .extend({})
   .catchall(z.unknown());
 
+export const updateUserComposeSchema = z.object({ compose: z.string() });
+
 export class AppFormBody extends createZodDto(appFormSchema) {}
+
+export class UpdateUserComposeBody extends createZodDto(updateUserComposeSchema) {}
 
 export class UninstallAppBody extends createZodDto(z.object({ removeBackups: z.boolean() })) {}
 

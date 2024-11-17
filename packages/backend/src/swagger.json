@@ -899,6 +899,39 @@
         ]
       }
     },
+    "/api/app-lifecycle/{id}/update-user-compose": {
+      "patch": {
+        "operationId": "updateUserCompose",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserComposeBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
     "/api/backups/{appid}/backup": {
       "post": {
         "operationId": "backupApp",
@@ -2770,12 +2803,29 @@
             "required": [
               "latestVersion"
             ]
+          },
+          "userCompose": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "path",
+              "content"
+            ]
           }
         },
         "required": [
           "info",
           "app",
-          "updateInfo"
+          "updateInfo",
+          "userCompose"
         ]
       },
       "PullDto": {
@@ -2830,6 +2880,17 @@
         },
         "required": [
           "performBackup"
+        ]
+      },
+      "UpdateUserComposeBody": {
+        "type": "object",
+        "properties": {
+          "compose": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "compose"
         ]
       },
       "RestoreAppBackupDto": {

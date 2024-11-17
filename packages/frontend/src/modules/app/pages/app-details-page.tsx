@@ -18,7 +18,7 @@ export const AppDetailsPage = () => {
   });
   const { userSettings } = useAppContext();
 
-  const { app, info, updateInfo } = data;
+  const { app, info, updateInfo, userCompose } = data;
 
   return (
     <div className="card" data-testid="app-details">
@@ -33,10 +33,10 @@ export const AppDetailsPage = () => {
           <div className="mb-1">
             <AppStatus status={app.status} />
           </div>
-          <AppActions app={app} updateInfo={updateInfo} info={info} localDomain={userSettings.localDomain} />
+          <AppActions app={app} updateInfo={updateInfo} info={info} localDomain={userSettings.localDomain} userCompose={userCompose} />
         </div>
       </div>
-      <AppDetailsTabs info={info} app={app} />
+      <AppDetailsTabs info={info} app={app} userCompose={userCompose} />
     </div>
   );
 };

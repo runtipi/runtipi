@@ -176,6 +176,7 @@ export class AppCatalogService {
   public async getApp(appId: string) {
     let app = await this.appsRepository.getApp(appId);
     const info = await this.getAppInfoFromInstalledOrAppStore(appId);
+    const userCompose = await this.filesManager.getUserComposeFile(appId);
 
     const updateInfo = await this.filesManager.getAppUpdateInfo(appId);
 
@@ -201,7 +202,7 @@ export class AppCatalogService {
       } satisfies App;
     }
 
-    return { app, updateInfo, info };
+    return { app, updateInfo, info, userCompose };
   }
 
   /**

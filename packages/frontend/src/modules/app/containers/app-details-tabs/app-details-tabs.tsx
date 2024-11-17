@@ -1,7 +1,7 @@
 import { Markdown } from '@/components/markdown/markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { AppDetails, AppInfo } from '@/types/app.types';
+import type { AppDetails, AppInfo, UserCompose } from '@/types/app.types';
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +13,10 @@ const AppLogs = lazy(() => import('../app-logs/app-logs').then((module) => ({ de
 interface IProps {
   info: AppInfo;
   app: AppDetails;
+  userCompose: UserCompose
 }
 
-export const AppDetailsTabs = ({ info, app }: IProps) => {
+export const AppDetailsTabs = ({ info, app, userCompose }: IProps) => {
   const { t } = useTranslation();
 
   const [params] = useSearchParams();
@@ -100,6 +101,13 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
               </a>
             </DataGridItem>
           )}
+          {
+            app.status !== "missing" && (
+              <DataGridItem title={t('APP_DETAILS_USER_COMPOSE')}>
+                {userCompose.content ? t("APP_DETAILS_USER_COMPOSE_YES") : t("APP_DETAILS_USER_COMPOSE_NO")}
+              </DataGridItem>
+            )
+          }
         </DataGrid>
       </TabsContent>
       <TabsContent value="logs">
