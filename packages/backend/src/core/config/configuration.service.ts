@@ -85,7 +85,7 @@ export class ConfigurationService {
       version: env.data.TIPI_VERSION,
       userSettings: {
         allowAutoThemes: env.data.ALLOW_AUTO_THEMES,
-        allowErrorMonitoring: env.data.ALLOW_ERROR_MONITORING,
+        allowErrorMonitoring: env.data.ALLOW_ERROR_MONITORING && process.env.NODE_ENV === 'production',
         demoMode: env.data.DEMO_MODE,
         guestDashboard: env.data.GUEST_DASHBOARD,
         timeZone: env.data.TZ,
