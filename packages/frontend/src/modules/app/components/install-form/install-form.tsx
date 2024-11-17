@@ -73,7 +73,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
     if (onReset) onReset();
   };
 
-  const onClickEditUserCompose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onClickEditUserConfig = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     if (onEditUserConfig) onEditUserConfig();
   }
@@ -232,7 +232,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           )}
           {
             initialValues && onEditUserConfig && (
-              <Button onClick={onClickEditUserCompose} intent="default"> 
+              <Button onClick={onClickEditUserConfig} intent="default"> 
                 {t('APP_INSTALL_FORM_EDIT_USER_CONFIG')}
               </Button>
             )

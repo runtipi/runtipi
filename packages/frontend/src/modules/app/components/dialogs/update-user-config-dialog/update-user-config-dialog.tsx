@@ -22,7 +22,7 @@ interface IProps {
   
 export const UpdateUserConfigDialog: React.FC<IProps> = ({ info, isOpen, onClose, userConfig }) => {
     const { t } = useTranslation();
-    const [compose, setCompose] = useState(userConfig.compose ? userConfig.compose : `services:\n\t${info.id}:\n`);
+    const [compose, setCompose] = useState(userConfig.compose ? userConfig.compose : "");
     const [env, setEnv] = useState(userConfig.env ? userConfig.env : "");
 
     const onComposeChange = useCallback((value: string) => {

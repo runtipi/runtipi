@@ -105,6 +105,9 @@ export class DockerService {
     const { args, isCustomConfig } = await this.getBaseComposeArgsApp(appId);
     args.push(command);
 
+    if (isCustomConfig) {
+      this.logger.warn("User-config detected, make sure what you know what you are doing. Issues about user-config will be closed.");
+    }
     this.logger.info(`Running docker compose with args ${args.join(' ')}`);
     const { stdout, stderr } = await execAsync(`docker-compose ${args.join(' ')}`);
 

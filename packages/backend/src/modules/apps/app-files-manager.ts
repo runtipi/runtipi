@@ -412,6 +412,14 @@ export class AppFilesManager {
     const userComposeFile = path.join(userComposePath, 'docker-compose.yml');
 
     await this.filesystem.createDirectory(userComposePath);
+
+    if (compose.trim().length === 0) {
+      if (await this.filesystem.pathExists(userComposeFile)) {
+        await this.filesystem.removeFile(userComposeFile);
+      }
+      return;
+    }
+
     await this.filesystem.writeTextFile(userComposeFile, compose);
   }
 
@@ -422,6 +430,14 @@ export class AppFilesManager {
     const userEnvFile = path.join(userEnvPath, 'app.env');
 
     await this.filesystem.createDirectory(userEnvPath);
+    
+    if (env.trim().length === 0) {
+      if (await this.filesystem.pathExists(userEnvFile)) {
+        await this.filesystem.removeFile(userEnvFile);
+      }
+      return;
+    }
+
     await this.filesystem.writeTextFile(userEnvFile, env);
   }
 }
