@@ -88,6 +88,8 @@
   "USER_CONFIG_UPDATE_SUBMIT": "Update",
   "USER_CONFIG_UPDATE_COMPOSE": "Compose file",
   "USER_CONFIG_UPDATE_ENV": "Environment file",
+  "USER_CONFIG_MESSAGE": "User config allows you to customize how your app is deployed. Check our documentation",
+  "USER_CONFIG_MESSAGE_HERE": "here",
   "APP_INSTALL_SUCCESS": "App {{id}} installed successfully",
   "APP_LOGS_TAB_FOLLOW": "Follow logs",
   "APP_LOGS_TAB_MAX_LINES": "Max lines:",

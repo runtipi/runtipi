@@ -68,6 +68,7 @@ export const UpdateUserConfigDialog: React.FC<IProps> = ({ info, isOpen, onClose
                     <DialogTitle>{t('APP_INSTALL_FORM_EDIT_USER_CONFIG')}</DialogTitle>
                 </DialogHeader>
                     <DialogDescription>
+                        <p className="text-muted">{t('USER_CONFIG_MESSAGE')} <a href="https://runtipi.io/docs/guides/customize-app-config" target="_blank" rel="noreferrer">{t('USER_CONFIG_MESSAGE_HERE')}</a>.</p>
                         <Tabs defaultValue="compose" orientation="vertical">
                             <TabsList>
                                 <TabsTrigger onClick={() => handleTabChange('compose')} value="compose">{t('USER_CONFIG_UPDATE_COMPOSE')}</TabsTrigger>
