@@ -1,6 +1,5 @@
 import { updateAppConfigMutation } from '@/api-client/@tanstack/react-query.gen';
-import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
-import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Dialog, DialogContent, DialogHeader } from '@/components/ui/Dialog';
 import type { AppInfo, AppStatus } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
@@ -41,8 +40,6 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
         <DialogHeader>
           <h5 className="modal-title">{t('APP_UPDATE_SETTINGS_FORM_TITLE', { name: info.id })}</h5>
         </DialogHeader>
-        <ScrollArea maxHeight={500}>
-          <DialogDescription>
             <InstallForm
               onSubmit={(values: FormValues) => updateConfig.mutate({ path: { id: info.id }, body: values })}
               formFields={info.form_fields}
@@ -52,8 +49,6 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
               status={status}
               onEditUserCompose={onEditUserCompose}
             />
-          </DialogDescription>
-        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

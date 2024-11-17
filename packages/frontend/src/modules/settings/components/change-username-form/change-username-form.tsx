@@ -1,11 +1,12 @@
 import { changeUsernameMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import type { TranslatableError } from '@/types/error.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +19,8 @@ type Props = {
 export const ChangeUsernameForm = ({ username }: Props) => {
   const changeUsernameDisclosure = useDisclosure();
   const { t } = useTranslation();
+  const formId = useId();
+
   const schema = z.object({
     newUsername: z.string().email(t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_INVALID_USERNAME')),
     password: z.string().min(1),
@@ -55,7 +58,7 @@ export const ChangeUsernameForm = ({ username }: Props) => {
             <DialogTitle>{t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_PASSWORD')}</DialogTitle>
           </DialogHeader>
           <DialogDescription className="d-flex flex-column">
-            <form onSubmit={handleSubmit(onSubmit)} className="w-100">
+            <form onSubmit={handleSubmit(onSubmit)} className="w-100" id={formId}>
               <p className="text-muted">{t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_PASSWORD_NEEDED_HINT')}</p>
               <Input
                 error={formState.errors.newUsername?.message}
@@ -72,11 +75,13 @@ export const ChangeUsernameForm = ({ username }: Props) => {
                 placeholder={t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_PASSWORD')}
                 {...register('password')}
               />
-              <Button loading={changeUsername.isPending} type="submit" intent="success" className="mt-3">
-                {t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_SUBMIT')}
-              </Button>
             </form>
           </DialogDescription>
+          <DialogFooter>
+            <Button loading={changeUsername.isPending} type="submit" intent="success" className="mt-3" form={formId}>
+                {t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_SUBMIT')}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

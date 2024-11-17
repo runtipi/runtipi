@@ -1,6 +1,6 @@
 import { disableTotpMutation, getTotpUriMutation, setupTotpMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
 import { OtpInput } from '@/components/ui/OtpInput';
 import { Switch } from '@/components/ui/Switch';
@@ -9,7 +9,7 @@ import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import { QRCodeSVG } from 'qrcode.react';
-import React from 'react';
+import React, { useId } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +20,8 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
   const [key, setKey] = React.useState('');
   const [uri, setUri] = React.useState('');
   const [totpCode, setTotpCode] = React.useState('');
+  const passwordFormId = useId();
+  const totpFormId = useId();
 
   // Dialog statuses
   const setupOtpDisclosure = useDisclosure();
@@ -130,6 +132,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
                 e.preventDefault();
                 getTotpUri.mutate({ body: { password } });
               }}
+              id={passwordFormId}
             >
               <p className="text-muted">{t('SETTINGS_SECURITY_PASSWORD_NEEDED_HINT')}</p>
               <Input
@@ -138,11 +141,13 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t('SETTINGS_SECURITY_PASSWORD_NEEDED')}
               />
-              <Button loading={getTotpUri.isPending} type="submit" intent="success" className="mt-3">
-                {t('SETTINGS_SECURITY_ENABLE_2FA')}
-              </Button>
             </form>
           </DialogDescription>
+          <DialogFooter>
+            <Button loading={getTotpUri.isPending} type="submit" intent="success" className="mt-3" form={passwordFormId}>
+                {t('SETTINGS_SECURITY_ENABLE_2FA')}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
       <Dialog open={disableOtpDisclosure.isOpen} onOpenChange={(o: boolean) => disableOtpDisclosure.toggle(o)}>
@@ -164,11 +169,13 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t('SETTINGS_SECURITY_PASSWORD_NEEDED')}
               />
-              <Button loading={disableTotp.isPending} type="submit" intent="danger" className="mt-3">
-                {t('SETTINGS_SECURITY_DISABLE_2FA')}
-              </Button>
             </form>
           </DialogDescription>
+          <DialogFooter>
+            <Button loading={disableTotp.isPending} type="submit" intent="danger" className="mt-3" form={totpFormId}>
+                {t('SETTINGS_SECURITY_DISABLE_2FA')}
+              </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

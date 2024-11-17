@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -11,6 +11,8 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import { validateAppConfig } from './form-validators';
 import { InstallFormField } from './install-form-field';
+import { DialogDescription, DialogFooter } from '@/components/ui/Dialog';
+import { ScrollArea } from '@/components/ui/ScrollArea/ScrollArea';
 
 interface IProps {
   formFields?: FormField[];
@@ -39,6 +41,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
   const { t } = useTranslation();
   const { userSettings } = useAppContext();
   const { guestDashboard, localDomain, internalIp } = userSettings;
+  const formId = useId();
 
   const {
     register,
@@ -190,46 +193,52 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
   };
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(validate)}>
-      {(guestDashboard || formFields.filter(typeFilter).length !== 0) && <h3>{t('APP_INSTALL_FORM_GENERAL')}</h3>}
-      {formFields.filter(typeFilter).map(renderField)}
-      {guestDashboard && (
-        <Controller
-          control={control}
-          name="isVisibleOnGuestDashboard"
-          defaultValue={false}
-          render={({ field: { onChange, value, ref, ...props } }) => (
-            <Switch
-              className="mb-3"
-              ref={ref}
-              checked={value}
-              onCheckedChange={onChange}
-              {...props}
-              label={t('APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD')}
+    <ScrollArea maxHeight={500}>
+      <DialogDescription>
+        <form className="flex flex-col" onSubmit={handleSubmit(validate)} id={formId}>
+          {(guestDashboard || formFields.filter(typeFilter).length !== 0) && <h3>{t('APP_INSTALL_FORM_GENERAL')}</h3>}
+          {formFields.filter(typeFilter).map(renderField)}
+          {guestDashboard && (
+            <Controller
+              control={control}
+              name="isVisibleOnGuestDashboard"
+              defaultValue={false}
+              render={({ field: { onChange, value, ref, ...props } }) => (
+                <Switch
+                  className="mb-3"
+                  ref={ref}
+                  checked={value}
+                  onCheckedChange={onChange}
+                  {...props}
+                  label={t('APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD')}
+                />
+              )}
             />
           )}
-        />
-      )}
-      {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
-      {info.dynamic_config && renderDynamicConfigForm()}
-      {info.exposable && renderExposeForm()}
-      <div className="d-flex btn-list">
-        <Button loading={loading} type="submit" intent="success">
-          {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
-        </Button>
-        {initialValues && onReset && (
-          <Button loading={status === 'stopping'} onClick={onClickReset} intent="danger">
-            {t('APP_INSTALL_FORM_RESET')}
+          {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
+          {info.dynamic_config && renderDynamicConfigForm()}
+          {info.exposable && renderExposeForm()}
+        </form>
+      </DialogDescription>
+      <DialogFooter>
+        <div className='d-flex btn-list'>
+          <Button loading={loading} type="submit" intent="success" form={formId}>
+            {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
           </Button>
-        )}
-        {
-          initialValues && onEditUserCompose && (
-            <Button onClick={onClickEditUserCompose} intent="default"> 
-              {t('APP_INSTALL_FORM_EDIT_USER_COMPOSE')}
+          {initialValues && onReset && (
+            <Button loading={status === 'stopping'} onClick={onClickReset} intent="danger">
+              {t('APP_INSTALL_FORM_RESET')}
             </Button>
-          )
-        }
-      </div>
-    </form>
+          )}
+          {
+            initialValues && onEditUserCompose && (
+              <Button onClick={onClickEditUserCompose} intent="default"> 
+                {t('APP_INSTALL_FORM_EDIT_USER_COMPOSE')}
+              </Button>
+            )
+          }
+        </div>
+      </DialogFooter>
+    </ScrollArea>
   );
 };
