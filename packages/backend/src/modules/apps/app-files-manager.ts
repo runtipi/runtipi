@@ -414,4 +414,14 @@ export class AppFilesManager {
     await this.filesystem.createDirectory(userComposePath);
     await this.filesystem.writeTextFile(userComposeFile, compose);
   }
+
+  public async writeUserEnv(appId: string, env: string) {
+    const { directories } = this.configuration.getConfig();
+
+    const userEnvPath = path.join(directories.dataDir, 'user-config', appId);
+    const userEnvFile = path.join(userEnvPath, 'app.env');
+
+    await this.filesystem.createDirectory(userEnvPath);
+    await this.filesystem.writeTextFile(userEnvFile, env);
+  }
 }

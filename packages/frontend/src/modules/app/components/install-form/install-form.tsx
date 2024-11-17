@@ -21,7 +21,7 @@ interface IProps {
   info: AppInfo;
   loading?: boolean;
   onReset?: () => void;
-  onEditUserCompose?: () => void;
+  onEditUserConfig?: () => void;
   status?: AppStatus;
 }
 
@@ -37,7 +37,7 @@ export type FormValues = {
 const hiddenTypes = ['random'];
 const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 
-export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit, initialValues, loading, onReset, onEditUserCompose, status }) => {
+export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit, initialValues, loading, onReset, onEditUserConfig, status }) => {
   const { t } = useTranslation();
   const { userSettings } = useAppContext();
   const { guestDashboard, localDomain, internalIp } = userSettings;
@@ -75,7 +75,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
 
   const onClickEditUserCompose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    if (onEditUserCompose) onEditUserCompose();
+    if (onEditUserConfig) onEditUserConfig();
   }
 
   const renderField = (field: FormField) => {
@@ -231,9 +231,9 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
             </Button>
           )}
           {
-            initialValues && onEditUserCompose && (
+            initialValues && onEditUserConfig && (
               <Button onClick={onClickEditUserCompose} intent="default"> 
-                {t('APP_INSTALL_FORM_EDIT_USER_COMPOSE')}
+                {t('APP_INSTALL_FORM_EDIT_USER_CONFIG')}
               </Button>
             )
           }

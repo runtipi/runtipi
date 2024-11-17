@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { ZodSchema } from 'zod';
+import { EOL } from 'os';
 
 @Injectable()
 export class FilesystemService {
@@ -60,6 +61,7 @@ export class FilesystemService {
     try {
       await fs.promises.mkdir(filePath.split('/').slice(0, -1).join('/'), { recursive: true });
       await fs.promises.writeFile(filePath, content, 'utf8');
+      await fs.promises.appendFile(filePath, EOL, 'utf8');
       return true;
     } catch (error) {
       this.logger.error(`Error writing file ${filePath}: ${error}`);

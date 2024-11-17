@@ -1,7 +1,7 @@
 import { Markdown } from '@/components/markdown/markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { AppDetails, AppInfo, UserCompose } from '@/types/app.types';
+import type { AppDetails, AppInfo, UserConfig } from '@/types/app.types';
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,10 +13,10 @@ const AppLogs = lazy(() => import('../app-logs/app-logs').then((module) => ({ de
 interface IProps {
   info: AppInfo;
   app: AppDetails;
-  userCompose: UserCompose
+  userConfig: UserConfig
 }
 
-export const AppDetailsTabs = ({ info, app, userCompose }: IProps) => {
+export const AppDetailsTabs = ({ info, app, userConfig }: IProps) => {
   const { t } = useTranslation();
 
   const [params] = useSearchParams();
@@ -103,8 +103,8 @@ export const AppDetailsTabs = ({ info, app, userCompose }: IProps) => {
           )}
           {
             app.status !== "missing" && (
-              <DataGridItem title={t('APP_DETAILS_USER_COMPOSE')}>
-                {userCompose.content ? t("APP_DETAILS_USER_COMPOSE_YES") : t("APP_DETAILS_USER_COMPOSE_NO")}
+              <DataGridItem title={t('APP_DETAILS_USER_CONFIG')}>
+                {userConfig.compose || userConfig.env ? t("APP_DETAILS_USER_CONFIG_YES") : t("APP_DETAILS_USER_CONFIG_NO")}
               </DataGridItem>
             )
           }

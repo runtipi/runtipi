@@ -386,8 +386,8 @@ export class AppLifecycleService {
     await Promise.all(updatePromises);
   }
 
-  async updateAppUserCompose(params: { appId: string; compose: string }) {
-    const { appId, compose } = params;
+  async updateAppUserConfig(params: { appId: string; compose: string, env: string }) {
+    const { appId, compose, env } = params;
 
     const app = await this.appRepository.getApp(appId);
 
@@ -396,5 +396,6 @@ export class AppLifecycleService {
     }
 
     this.appFilesManager.writeUserComposeFile(appId, compose);
+    this.appFilesManager.writeUserEnv(appId, env);
   }
 }

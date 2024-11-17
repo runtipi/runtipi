@@ -162,9 +162,9 @@ export type AppDetailsDto = {
     minTipiVersion?: string;
     latestDockerVersion?: string;
   };
-  userCompose: {
-    path: string;
-    content: string | null;
+  userConfig: {
+    compose: string | null;
+    env: string | null;
   };
 };
 
@@ -530,8 +530,9 @@ export type UpdateAppBody = {
   performBackup: boolean;
 };
 
-export type UpdateUserComposeBody = {
+export type UpdateUserConfigBody = {
   compose: string;
+  env: string;
 };
 
 export type UserContextDto = {
@@ -843,16 +844,16 @@ export type UpdateAppConfigResponse = unknown;
 
 export type UpdateAppConfigError = unknown;
 
-export type UpdateUserComposeData = {
-  body: UpdateUserComposeBody;
+export type UpdateUserConfigData = {
+  body: UpdateUserConfigBody;
   path: {
     id: string;
   };
 };
 
-export type UpdateUserComposeResponse = unknown;
+export type UpdateUserConfigResponse = unknown;
 
-export type UpdateUserComposeError = unknown;
+export type UpdateUserConfigError = unknown;
 
 export type BackupAppData = {
   path: {

@@ -39,7 +39,7 @@ import {
   updateApp,
   updateAllApps,
   updateAppConfig,
-  updateUserCompose,
+  updateUserConfig,
   backupApp,
   restoreAppBackup,
   getAppBackups,
@@ -122,9 +122,9 @@ import type {
   UpdateAppConfigData,
   UpdateAppConfigError,
   UpdateAppConfigResponse,
-  UpdateUserComposeData,
-  UpdateUserComposeError,
-  UpdateUserComposeResponse,
+  UpdateUserConfigData,
+  UpdateUserConfigError,
+  UpdateUserConfigResponse,
   BackupAppData,
   BackupAppError,
   BackupAppResponse,
@@ -955,10 +955,10 @@ export const updateAppConfigMutation = (options?: Partial<Options<UpdateAppConfi
   return mutationOptions;
 };
 
-export const updateUserComposeMutation = (options?: Partial<Options<UpdateUserComposeData>>) => {
-  const mutationOptions: UseMutationOptions<UpdateUserComposeResponse, UpdateUserComposeError, Options<UpdateUserComposeData>> = {
+export const updateUserConfigMutation = (options?: Partial<Options<UpdateUserConfigData>>) => {
+  const mutationOptions: UseMutationOptions<UpdateUserConfigResponse, UpdateUserConfigError, Options<UpdateUserConfigData>> = {
     mutationFn: async (localOptions) => {
-      const { data } = await updateUserCompose({
+      const { data } = await updateUserConfig({
         ...options,
         ...localOptions,
         throwOnError: true,

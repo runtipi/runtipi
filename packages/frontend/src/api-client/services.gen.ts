@@ -95,9 +95,9 @@ import type {
   UpdateAppConfigData,
   UpdateAppConfigError,
   UpdateAppConfigResponse,
-  UpdateUserComposeData,
-  UpdateUserComposeError,
-  UpdateUserComposeResponse,
+  UpdateUserConfigData,
+  UpdateUserConfigError,
+  UpdateUserConfigResponse,
   BackupAppData,
   BackupAppError,
   BackupAppResponse,
@@ -372,10 +372,10 @@ export const updateAppConfig = <ThrowOnError extends boolean = false>(options: O
   });
 };
 
-export const updateUserCompose = <ThrowOnError extends boolean = false>(options: Options<UpdateUserComposeData, ThrowOnError>) => {
-  return (options?.client ?? client).patch<UpdateUserComposeResponse, UpdateUserComposeError, ThrowOnError>({
+export const updateUserConfig = <ThrowOnError extends boolean = false>(options: Options<UpdateUserConfigData, ThrowOnError>) => {
+  return (options?.client ?? client).patch<UpdateUserConfigResponse, UpdateUserConfigError, ThrowOnError>({
     ...options,
-    url: '/api/app-lifecycle/{id}/update-user-compose',
+    url: '/api/app-lifecycle/{id}/update-user-config',
   });
 };
 

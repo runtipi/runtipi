@@ -177,6 +177,7 @@ export class AppCatalogService {
     let app = await this.appsRepository.getApp(appId);
     const info = await this.getAppInfoFromInstalledOrAppStore(appId);
     const userCompose = await this.filesManager.getUserComposeFile(appId);
+    const userEnv = await this.filesManager.getUserEnv(appId);
 
     const updateInfo = await this.filesManager.getAppUpdateInfo(appId);
 
@@ -202,7 +203,7 @@ export class AppCatalogService {
       } satisfies App;
     }
 
-    return { app, updateInfo, info, userCompose };
+    return { app, updateInfo, info, userConfig: { compose: userCompose.content, env: userEnv.content } };
   }
 
   /**

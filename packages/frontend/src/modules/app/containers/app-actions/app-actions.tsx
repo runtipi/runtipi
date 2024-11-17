@@ -27,7 +27,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import './app-actions.css';
 import { startAppMutation } from '@/api-client/@tanstack/react-query.gen';
-import type { AppDetails, AppInfo, AppUpdateInfo, UserCompose } from '@/types/app.types';
+import type { AppDetails, AppInfo, AppUpdateInfo, UserConfig } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
@@ -38,14 +38,14 @@ import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/unins
 import { UpdateDialog } from '../../components/dialogs/update-dialog/update-dialog';
 import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
-import { EditUserComposeDialog } from '../../components/dialogs/edit-user-compose-dialog/edit-user-compose-dialog';
+import { UpdateUserConfigDialog } from '../../components/dialogs/update-user-config-dialog/update-user-config-dialog';
 
 interface IProps {
   app: AppDetails;
   info: AppInfo;
   updateInfo: AppUpdateInfo;
   localDomain?: string;
-  userCompose: UserCompose;
+  userConfig: UserConfig;
 }
 
 interface BtnProps extends ButtonProps {
@@ -67,7 +67,7 @@ const ActionButton: React.FC<BtnProps> = (props) => {
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
-export const AppActions = ({ app, info, localDomain, updateInfo, userCompose }: IProps) => {
+export const AppActions = ({ app, info, localDomain, updateInfo, userConfig }: IProps) => {
   const installDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const restartDisclosure = useDisclosure();
@@ -75,7 +75,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo, userCompose }: 
   const updateSettingsDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
   const resetAppDisclosure = useDisclosure();
-  const editUserComposeDisclosure = useDisclosure();
+  const updateUserConfigDisclosure = useDisclosure();
 
   const { t } = useTranslation();
   const { setOptimisticStatus } = useAppStatus();
@@ -225,11 +225,11 @@ export const AppActions = ({ app, info, localDomain, updateInfo, userCompose }: 
     }, 300);
   };
 
-  const openEditUserCompose = () => {
+  const openEditUserConfig = () => {
     updateSettingsDisclosure.close();
 
     setTimeout(() => {
-      editUserComposeDisclosure.open();
+      updateUserConfigDisclosure.open();
     }, 300);
   }
 
@@ -251,9 +251,9 @@ export const AppActions = ({ app, info, localDomain, updateInfo, userCompose }: 
         info={info}
         config={app.config ?? {}}
         onReset={openResetAppModal}
-        onEditUserCompose={openEditUserCompose}
+        onEditUserConfig={openEditUserConfig}
       />
-      <EditUserComposeDialog isOpen={editUserComposeDisclosure.isOpen} onClose={editUserComposeDisclosure.close} info={info} userCompose={userCompose} />
+      <UpdateUserConfigDialog isOpen={updateUserConfigDisclosure.isOpen} onClose={updateUserConfigDisclosure.close} info={info} userConfig={userConfig} />
       <div className="mt-1 btn-list d-flex">
         {buttons.map((button) => (
           <Fragment key={button.key}>{button}</Fragment>

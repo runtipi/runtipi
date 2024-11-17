@@ -1,7 +1,7 @@
 import { APP_STATUS } from '@/core/database/drizzle/types';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
-import { APP_CATEGORIES, AppInfoDto, AppInfoSimpleDto, UserComposeDto } from './app-info.dto';
+import { APP_CATEGORIES, AppInfoDto, AppInfoSimpleDto, UserConfigSchema } from './app-info.dto';
 
 // Search apps
 export class SearchAppsQueryDto extends createZodDto(
@@ -77,6 +77,6 @@ export class AppDetailsDto extends createZodDto(
     info: AppInfoDto.schema,
     app: AppDto.schema,
     updateInfo: UpdateInfoDto.schema,
-    userCompose: UserComposeDto.schema,
+    userConfig: UserConfigSchema.schema,
   }),
 ) {}

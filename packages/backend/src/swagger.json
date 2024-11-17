@@ -899,9 +899,9 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/update-user-compose": {
+    "/api/app-lifecycle/{id}/update-user-config": {
       "patch": {
-        "operationId": "updateUserCompose",
+        "operationId": "updateUserConfig",
         "parameters": [
           {
             "name": "id",
@@ -917,7 +917,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateUserComposeBody"
+                "$ref": "#/components/schemas/UpdateUserConfigBody"
               }
             }
           }
@@ -2804,20 +2804,21 @@
               "latestVersion"
             ]
           },
-          "userCompose": {
+          "userConfig": {
             "type": "object",
             "properties": {
-              "path": {
-                "type": "string"
+              "compose": {
+                "type": "string",
+                "nullable": true
               },
-              "content": {
+              "env": {
                 "type": "string",
                 "nullable": true
               }
             },
             "required": [
-              "path",
-              "content"
+              "compose",
+              "env"
             ]
           }
         },
@@ -2825,7 +2826,7 @@
           "info",
           "app",
           "updateInfo",
-          "userCompose"
+          "userConfig"
         ]
       },
       "PullDto": {
@@ -2882,15 +2883,19 @@
           "performBackup"
         ]
       },
-      "UpdateUserComposeBody": {
+      "UpdateUserConfigBody": {
         "type": "object",
         "properties": {
           "compose": {
             "type": "string"
+          },
+          "env": {
+            "type": "string"
           }
         },
         "required": [
-          "compose"
+          "compose",
+          "env"
         ]
       },
       "RestoreAppBackupDto": {

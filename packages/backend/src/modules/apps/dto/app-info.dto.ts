@@ -85,10 +85,10 @@ export const appInfoSchema = z.object({
     .default(0),
 });
 
-// User compose
-export const userComposeSchema = z.object({
-  path: z.string(),
-  content: z.string().nullable(),
+// User config
+export const userConfigSchema = z.object({
+  compose: z.string().nullable(),
+  env: z.string().nullable(),
 });
 
 // Derived types
@@ -109,6 +109,6 @@ export class AppInfoSimpleDto extends createZodDto(
   }),
 ) {}
 
-export class UserComposeDto extends createZodDto(userComposeSchema) {}
+export class UserConfigSchema extends createZodDto(userConfigSchema) {}
 
 export class AppInfoDto extends createZodDto(appInfoSchema) {}
