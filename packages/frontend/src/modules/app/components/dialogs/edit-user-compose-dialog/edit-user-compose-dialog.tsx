@@ -1,17 +1,15 @@
 import { updateUserComposeMutation } from "@/api-client/@tanstack/react-query.gen";
 import { Button } from "@/components/ui/Button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
-import { ScrollArea } from "@/components/ui/ScrollArea";
 import type { AppInfo, UserCompose } from "@/types/app.types";
 import type { TranslatableError } from "@/types/error.types";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useId } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import TextareaAutosize from 'react-textarea-autosize';
-import { z } from "zod";
+import CodeMirror from '@uiw/react-codemirror';
+import { yaml } from '@codemirror/lang-yaml';
+import "./edit-user-compose-dialog.css"
 
 interface IProps {
     info: AppInfo;
@@ -19,20 +17,14 @@ interface IProps {
     onClose: () => void;
     userCompose: UserCompose;
 }
-
+  
 export const EditUserComposeDialog: React.FC<IProps> = ({ info, isOpen, onClose, userCompose }) => {
     const { t } = useTranslation();
-    const formId = useId();
+    const [compose, setCompose] = useState(userCompose.content ? userCompose.content : `services:\n\t${info.id}:\n`);
 
-    const schema = z.object({
-        data: z.string(),
-    })
-
-    type FormValues = z.infer<typeof schema>
-
-    const { register, handleSubmit } = useForm<FormValues>({
-        resolver: zodResolver(schema),
-    });
+    const onChange = useCallback((value: string) => {
+        setCompose(value);
+    }, []);
 
     const editUserComposeMutatuion = useMutation({
         ...updateUserComposeMutation(),
@@ -45,15 +37,15 @@ export const EditUserComposeDialog: React.FC<IProps> = ({ info, isOpen, onClose,
         }
     })
 
-    const onSubmit = (values: FormValues) => {
+    const onSubmit = () => {
         // Make sure the file ends with a new line
-        if (!values.data.endsWith("\n")) {
-            values.data += "\n";
+        if (!compose.endsWith("\n")) {
+            setCompose(`${compose}\n`);
         }
         editUserComposeMutatuion.mutate({
             path: { id: info.id },
             body: {
-                compose: values.data,
+                compose: compose,
             }
         })
     }
@@ -64,20 +56,20 @@ export const EditUserComposeDialog: React.FC<IProps> = ({ info, isOpen, onClose,
                 <DialogHeader>
                     <DialogTitle>{t('APP_INSTALL_FORM_EDIT_USER_COMPOSE')}</DialogTitle>
                 </DialogHeader>
-                <ScrollArea maxHeight={500}>
                     <DialogDescription>
-                        <form onSubmit={handleSubmit(onSubmit)} id={formId}>
-                            <TextareaAutosize className="form-control" {...register("data")}>
-                                    {userCompose.content ? userCompose.content : `services:\n\t${info.id}:`}
-                            </TextareaAutosize>
-                        </form>
+                        <CodeMirror
+                            value={compose}
+                            height="400px"
+                            extensions={[yaml()]}
+                            onChange={onChange}
+                            theme="dark"
+                        />
                     </DialogDescription>
                     {/* Add footer buttons inside scroll area to go below the text area, can go outside to always appear */}
                     <DialogFooter> 
                         <Button intent="danger" onClick={onClose}>{t('USER_COMPOSE_UPDATE_CANCEL')}</Button>
-                        <Button intent="success" type="submit" form={formId}>{t('USER_COMPOSE_UPDATE_SUBMIT')}</Button>
+                        <Button intent="success" onClick={onSubmit}>{t('USER_COMPOSE_UPDATE_SUBMIT')}</Button>
                     </DialogFooter>
-                </ScrollArea>
             </DialogContent>
         </Dialog>
     );

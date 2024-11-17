@@ -1,0 +1,12 @@
+.cm-editor.cm-focused {
+    outline: none;
+}
+
+.cm-editor {
+    border-radius: 0.25rem;
+}
+
+.cm-gutters {
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+}

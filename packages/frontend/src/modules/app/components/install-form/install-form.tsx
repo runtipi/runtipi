@@ -1,7 +1,6 @@
 import type React from 'react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
@@ -214,21 +213,23 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
       {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
       {info.dynamic_config && renderDynamicConfigForm()}
       {info.exposable && renderExposeForm()}
-      <Button loading={loading} type="submit" intent="success">
-        {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
-      </Button>
-      {initialValues && onReset && (
-        <Button loading={status === 'stopping'} onClick={onClickReset} intent="danger" className="ms-2">
-          {t('APP_INSTALL_FORM_RESET')}
+      <div className="d-flex btn-list">
+        <Button loading={loading} type="submit" intent="success">
+          {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
         </Button>
-      )}
-      {
-        initialValues && onEditUserCompose && (
-          <Button onClick={onClickEditUserCompose} intent="primary" className="ms-2"> 
-             {t('APP_INSTALL_FORM_EDIT_USER_COMPOSE')}
+        {initialValues && onReset && (
+          <Button loading={status === 'stopping'} onClick={onClickReset} intent="danger">
+            {t('APP_INSTALL_FORM_RESET')}
           </Button>
-        )
-      }
+        )}
+        {
+          initialValues && onEditUserCompose && (
+            <Button onClick={onClickEditUserCompose} intent="default"> 
+              {t('APP_INSTALL_FORM_EDIT_USER_COMPOSE')}
+            </Button>
+          )
+        }
+      </div>
     </form>
   );
 };
