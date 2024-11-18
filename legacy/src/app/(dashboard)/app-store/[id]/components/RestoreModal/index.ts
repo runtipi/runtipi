@@ -1,1 +1,0 @@
-export { RestoreModal } from './RestoreModal';

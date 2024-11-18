@@ -1,1 +1,0 @@
-export { SettingsContainer } from './SettingsContainer';

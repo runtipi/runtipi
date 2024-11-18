@@ -1,1 +1,0 @@
-export { ThemeProvider } from './ThemeProvider';
