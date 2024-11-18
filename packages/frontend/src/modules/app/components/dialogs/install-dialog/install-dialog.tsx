@@ -40,7 +40,7 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
         <DialogHeader>
           <DialogTitle>{t('APP_INSTALL_FORM_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
-        <ScrollArea maxHeight={500}>
+        <ScrollArea maxheight={500}>
           <DialogDescription>
             <InstallForm
               onSubmit={(data) => installMutation.mutate({ path: { id: info.id }, body: data })}

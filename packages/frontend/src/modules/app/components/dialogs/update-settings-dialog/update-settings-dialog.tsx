@@ -43,7 +43,7 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
         <DialogHeader>
           <DialogTitle>{t('APP_UPDATE_SETTINGS_FORM_TITLE', { name: info.id })}</DialogTitle>
         </DialogHeader>
-        <ScrollArea maxHeight={500}>
+        <ScrollArea maxheight={500}>
           <DialogDescription>
             <InstallForm
               onSubmit={(values: FormValues) => updateConfig.mutate({ path: { id: info.id }, body: values })}
@@ -55,7 +55,7 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
           </DialogDescription>
         </ScrollArea>
         <DialogFooter>
-          <InstallFormButtons loading={updateConfig.isPending} initialValues={{ ...config }} onReset={onReset} status={status} formId={formId} />
+          <InstallFormButtons loading={updateConfig.isPending} isEdit onReset={onReset} status={status} formId={formId} />
         </DialogFooter>
       </DialogContent>
     </Dialog>
