@@ -82,7 +82,7 @@
     "@types/supertest": "^6.0.0",
     "@types/validator": "^13.12.2",
     "@types/web-push": "^3.6.4",
-    "@vercel/ncc": "^0.34.0",
+    "@vercel/ncc": "^0.38.3",
     "drizzle-kit": "^0.28.1",
     "esbuild": "^0.24.0",
     "source-map-support": "^0.5.21",
