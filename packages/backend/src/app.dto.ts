@@ -38,6 +38,7 @@ export class AppContextDto extends createZodDto(
 
 export class UserContextDto extends createZodDto(
   z.object({
+    version: z.object({ current: z.string(), latest: z.string(), body: z.string() }),
     isLoggedIn: z.boolean().describe('Indicates if the user is logged in'),
     isConfigured: z.boolean().describe('Indicates if the app is already configured'),
     isGuestDashboardEnabled: z.boolean().describe('Indicates if the guest dashboard is enabled'),

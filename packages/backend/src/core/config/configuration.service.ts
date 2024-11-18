@@ -125,6 +125,10 @@ export class ConfigurationService {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
 
+    if (settings.allowErrorMonitoring) {
+      // TODO: Implement Sentry as a module and init
+    }
+
     await fs.promises.writeFile(`${DATA_DIR}/state/settings.json`, JSON.stringify(settings, null, 2));
 
     this.config.userSettings = {

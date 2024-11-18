@@ -1313,6 +1313,25 @@
       "UserContextDto": {
         "type": "object",
         "properties": {
+          "version": {
+            "type": "object",
+            "properties": {
+              "current": {
+                "type": "string"
+              },
+              "latest": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "current",
+              "latest",
+              "body"
+            ]
+          },
           "isLoggedIn": {
             "description": "Indicates if the user is logged in",
             "type": "boolean"
@@ -1335,6 +1354,7 @@
           }
         },
         "required": [
+          "version",
           "isLoggedIn",
           "isConfigured",
           "isGuestDashboardEnabled",

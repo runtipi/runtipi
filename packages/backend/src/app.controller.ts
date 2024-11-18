@@ -22,6 +22,7 @@ export class AppController {
   @ZodSerializerDto(UserContextDto)
   async userContext(@Req() req: Request): Promise<UserContextDto> {
     const { guestDashboard, allowAutoThemes, allowErrorMonitoring } = this.configuration.get('userSettings');
+    const version = await this.appService.getVersion();
     const operator = await this.userRepository.getFirstOperator();
 
     return {
@@ -30,6 +31,7 @@ export class AppController {
       isGuestDashboardEnabled: guestDashboard,
       allowAutoThemes,
       allowErrorMonitoring,
+      version,
     };
   }
 
@@ -64,6 +66,9 @@ export class AppController {
     if (!req.user) {
       return;
     }
+
+    const version = await this.appService.getVersion();
+    this.appService.initSentry({ release: version.current, allowSentry: body.allowErrorMonitoring });
 
     await this.userRepository.updateUser(req.user.id, { hasSeenWelcome: true });
     await this.configuration.setUserSettings({ allowErrorMonitoring: body.allowErrorMonitoring });

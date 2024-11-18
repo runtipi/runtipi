@@ -527,6 +527,11 @@ export type UpdateAppBody = {
 };
 
 export type UserContextDto = {
+  version: {
+    current: string;
+    latest: string;
+    body: string;
+  };
   /**
    * Indicates if the user is logged in
    */
