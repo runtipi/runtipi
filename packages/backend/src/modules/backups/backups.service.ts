@@ -4,6 +4,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { SocketManager } from '@/core/socket/socket.service';
 import { Injectable } from '@nestjs/common';
 import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
+import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
 import { AppEventsQueue } from '../queue/entities/app-events';
 import { BackupManager } from './backup.manager';
@@ -17,6 +18,7 @@ export class BackupsService {
     private config: ConfigurationService,
     private appEventsQueue: AppEventsQueue,
     private appLifecycle: AppLifecycleService,
+    private appFilesManager: AppFilesManager,
     private backupManager: BackupManager,
   ) {}
 
@@ -71,6 +73,9 @@ export class BackupsService {
       .publishAsync({ appid: appId, command: 'restore', filename, form: app.config }, 1000 * 60 * 15)
       .then(async ({ success, message }) => {
         if (success) {
+          const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appId);
+          await this.appsRepository.updateApp(appId, { version: restoredAppConfig?.tipi_version });
+
           if (appStatusBeforeUpdate === 'running') {
             await this.appLifecycle.startApp({ appId });
           } else {
