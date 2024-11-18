@@ -153,6 +153,9 @@ importers:
       sqlite3:
         specifier: ^5.1.7
         version: 5.1.7
+      swagger-ui-dist:
+        specifier: ^5.18.2
+        version: 5.18.2
       systeminformation:
         specifier: ^5.23.5
         version: 5.23.5

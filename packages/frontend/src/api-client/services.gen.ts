@@ -12,8 +12,6 @@ import type {
   AcknowledgeWelcomeData,
   AcknowledgeWelcomeError,
   AcknowledgeWelcomeResponse,
-  GetErrorError,
-  GetErrorResponse,
   SystemLoadError,
   SystemLoadResponse,
   DownloadLocalCertificateError,
@@ -149,13 +147,6 @@ export const acknowledgeWelcome = <ThrowOnError extends boolean = false>(options
   return (options?.client ?? client).patch<AcknowledgeWelcomeResponse, AcknowledgeWelcomeError, ThrowOnError>({
     ...options,
     url: '/api/acknowledge-welcome',
-  });
-};
-
-export const getError = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
-  return (options?.client ?? client).get<GetErrorResponse, GetErrorError, ThrowOnError>({
-    ...options,
-    url: '/api/debug-sentry',
   });
 };
 

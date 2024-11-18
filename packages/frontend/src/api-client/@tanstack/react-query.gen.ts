@@ -8,7 +8,6 @@ import {
   appContext,
   updateUserSettings,
   acknowledgeWelcome,
-  getError,
   systemLoad,
   downloadLocalCertificate,
   getTranslation,
@@ -231,23 +230,6 @@ export const acknowledgeWelcomeMutation = (options?: Partial<Options<Acknowledge
     },
   };
   return mutationOptions;
-};
-
-export const getErrorQueryKey = (options?: Options) => [createQueryKey('getError', options)];
-
-export const getErrorOptions = (options?: Options) => {
-  return queryOptions({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getError({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: getErrorQueryKey(options),
-  });
 };
 
 export const systemLoadQueryKey = (options?: Options) => [createQueryKey('systemLoad', options)];

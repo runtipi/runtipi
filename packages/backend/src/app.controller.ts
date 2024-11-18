@@ -74,8 +74,8 @@ export class AppController {
     await this.configuration.setUserSettings({ allowErrorMonitoring: body.allowErrorMonitoring });
   }
 
-  @Get('/debug-sentry')
-  getError() {
-    throw new Error('My first Sentry error!');
-  }
+  // @Get('/debug-sentry')
+  // getError() {
+  //   throw new Error('My first Sentry error!');
+  // }
 }

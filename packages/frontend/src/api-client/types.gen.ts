@@ -583,10 +583,6 @@ export type AcknowledgeWelcomeResponse = unknown;
 
 export type AcknowledgeWelcomeError = unknown;
 
-export type GetErrorResponse = unknown;
-
-export type GetErrorError = unknown;
-
 export type SystemLoadResponse = LoadDto;
 
 export type SystemLoadError = unknown;
