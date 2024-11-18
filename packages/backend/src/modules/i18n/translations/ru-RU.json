@@ -126,7 +126,7 @@
   "APP_STORE_NO_RESULTS_SUBTITLE": "Попробуйте уточнить поиск",
   "APP_STORE_SEARCH_PLACEHOLDER": "Поиск приложений",
   "APP_STORE_TITLE": "Магазин приложений",
-  "APP_UNINSTALL_FORM_REMOVE_BACKUPS": "Remove backups",
+  "APP_UNINSTALL_FORM_REMOVE_BACKUPS": "Удалить резервные копии",
   "APP_UNINSTALL_FORM_SUBMIT": "Удалить",
   "APP_UNINSTALL_FORM_SUBTITLE": "Все данные этого приложения будут потеряны.",
   "APP_UNINSTALL_FORM_TITLE": "Удалить {{name}}?",
