@@ -14,16 +14,23 @@ export class FilesystemService {
   ) {}
 
   private getSafeFilePath(filePath: string): string {
-    // Check if the file path starts with one of the directories
     const { appDir, appDataDir, dataDir } = this.configuration.get('directories');
 
-    for (const dir of [appDir, appDataDir, dataDir, '/host/proc/', '/tmp/']) {
-      if (path.resolve(filePath).startsWith(dir)) {
-        return path.resolve(filePath);
+    // Define allowed directories as absolute paths
+    const allowedDirs = [path.resolve(appDir), path.resolve(appDataDir), path.resolve(dataDir), path.resolve('/host/proc/'), path.resolve('/tmp/')];
+
+    // Resolve and normalize the file path to an absolute path
+    const resolvedPath = path.resolve(filePath);
+
+    for (const dir of allowedDirs) {
+      if (path.relative(dir, resolvedPath).startsWith('..')) {
+        continue; // If relative path starts with '..', it's outside the allowed dir
       }
+
+      return resolvedPath;
     }
 
-    this.logger.error(`File path ${filePath} is not allowed`);
+    this.logger.error(`File path "${filePath}" is not allowed. Resolved: "${resolvedPath}"`);
     throw new Error('File path is not allowed');
   }
 
