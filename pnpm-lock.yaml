@@ -447,7 +447,7 @@ importers:
         specifier: ^9.15.0
         version: 9.15.0(jiti@2.4.0)
       eslint-plugin-react-hooks:
-        specifier: ^5.1.0-rc.0
+        specifier: ^5.1.0-rc.1
         version: 5.1.0-rc-fb9a90fa48-20240614(eslint@9.15.0(jiti@2.4.0))
       eslint-plugin-react-refresh:
         specifier: ^0.4.14
