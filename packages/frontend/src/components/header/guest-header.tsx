@@ -15,9 +15,6 @@ export const GuestHeader = () => {
   return (
     <header className="text-white navbar navbar-expand-md navbar-dark navbar-overlap d-print-none" data-bs-theme="dark">
       <div className="container-xl">
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
-          <span className="navbar-toggler-icon" />
-        </button>
         <Link to="/">
           <h1 className="navbar-brand d-none-navbar-horizontal pe-0 pe-md-3">
             <img
