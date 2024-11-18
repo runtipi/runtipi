@@ -26,10 +26,10 @@ ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
 
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & { maxHeight: number }
+  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & { maxheight: number }
 >(({ className, children, ...props }, ref) => (
   <ScrollAreaPrimitive.Root ref={ref} className={clsx('position-relative overflow-hidden', className)} {...props}>
-    <ScrollAreaPrimitive.Viewport style={{ maxHeight: props.maxHeight }} className={clsx(styles.viewport, 'w-100')}>
+    <ScrollAreaPrimitive.Viewport style={{ maxHeight: props.maxheight }} className={clsx(styles.viewport, 'w-100')}>
       {children}
     </ScrollAreaPrimitive.Viewport>
     <ScrollBar />

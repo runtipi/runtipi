@@ -1,6 +1,6 @@
 import { deleteLinkMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import type React from 'react';
@@ -32,9 +32,7 @@ export const DeleteLinkDialog: React.FC<DeleteLinkDialogProps> = ({ isOpen, onCl
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
         <DialogHeader>
-          <h5 className="modal-title">
-            {t('LINKS_DELETE_TITLE')} {linkTitle}?
-          </h5>
+          <DialogTitle>{t('LINKS_DELETE_TITLE')} {linkTitle}?</DialogTitle>
         </DialogHeader>
         <DialogDescription>
           <div className="text-muted">{t('LINKS_DELETE_SUBTITLE')}</div>

@@ -1,6 +1,6 @@
 import { uninstallAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { Switch } from '@/components/ui/Switch';
 import { useAppStatus } from '@/modules/app/helpers/use-app-status';
 import type { AppInfo } from '@/types/app.types';
@@ -38,13 +38,15 @@ export const UninstallDialog = ({ info, isOpen, onClose }: IProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent type="danger" size="sm">
         <DialogHeader>
-          <h5 className="modal-title">{t('APP_UNINSTALL_FORM_TITLE', { name: info.name })}</h5>
+          <DialogTitle>{t('APP_UNINSTALL_FORM_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
         <DialogDescription className="text-center py-4">
           <IconAlertTriangle className="icon mb-2 text-danger icon-lg" />
           <h3>{t('APP_UNINSTALL_FORM_WARNING')}</h3>
-          <div className="text-muted">{t('APP_UNINSTALL_FORM_SUBTITLE')}</div>
-          <Switch checked={shouldRemoveBackups} onCheckedChange={setShouldRemoveBackups} label={t('APP_UNINSTALL_FORM_REMOVE_BACKUPS')} className='text-start pt-5'/>
+          <span className="text-muted">{t('APP_UNINSTALL_FORM_SUBTITLE')}</span>
+          <div className='justify-content-center d-flex pt-3'>
+            <Switch className="text-start" checked={shouldRemoveBackups} onCheckedChange={setShouldRemoveBackups} label={t('APP_UNINSTALL_FORM_REMOVE_BACKUPS')} />
+          </div>
         </DialogDescription>
         <DialogFooter>
           <Button onClick={() => uninstallMutation.mutate({ path: { id: info.id }, body: {removeBackups: shouldRemoveBackups} })} intent="danger">

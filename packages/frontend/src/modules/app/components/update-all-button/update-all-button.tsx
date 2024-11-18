@@ -1,6 +1,6 @@
 import { updateAllAppsMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
@@ -20,7 +20,7 @@ const UpdateAllDialog = ({ isOpen, onClose, onConfirm }: Props) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
         <DialogHeader>
-          <h5 className="modal-title">{t('MY_APPS_UPDATE_ALL_FORM_TITLE')}</h5>
+          <DialogTitle>{t('MY_APPS_UPDATE_ALL_FORM_TITLE')}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
           <div className="text-muted">

@@ -1,13 +1,15 @@
 import { installAppMutation } from '@/api-client/@tanstack/react-query.gen';
-import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { useAppStatus } from '@/modules/app/helpers/use-app-status';
 import type { AppInfo } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import type React from 'react';
+import { useId } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { InstallFormButtons } from '../../install-form-buttons/install-form-buttons';
 import { InstallForm } from '../../install-form/install-form';
 
 interface IProps {
@@ -19,6 +21,7 @@ interface IProps {
 export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
   const { t } = useTranslation();
   const { setOptimisticStatus } = useAppStatus();
+  const formId = useId();
 
   const installMutation = useMutation({
     ...installAppMutation(),
@@ -35,17 +38,21 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <h5 className="modal-title">{t('APP_INSTALL_FORM_TITLE', { name: info.name })}</h5>
+          <DialogTitle>{t('APP_INSTALL_FORM_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
-        <ScrollArea maxHeight={500}>
+        <ScrollArea maxheight={500}>
           <DialogDescription>
             <InstallForm
               onSubmit={(data) => installMutation.mutate({ path: { id: info.id }, body: data })}
               formFields={info.form_fields}
               info={info}
+              formId={formId}
             />
           </DialogDescription>
         </ScrollArea>
+        <DialogFooter>
+          <InstallFormButtons loading={installMutation.isPending} formId={formId} />
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
