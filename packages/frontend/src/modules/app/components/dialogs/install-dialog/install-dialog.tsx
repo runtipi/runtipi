@@ -8,6 +8,7 @@ import type React from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { InstallForm } from '../../install-form/install-form';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 
 interface IProps {
   info: AppInfo;
@@ -36,11 +37,13 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
         <DialogHeader>
           <DialogTitle>{t('APP_INSTALL_FORM_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
-        <InstallForm
-          onSubmit={(data) => installMutation.mutate({ path: { id: info.id }, body: data })}
-          formFields={info.form_fields}
-          info={info}
-        />
+        <ScrollArea maxHeight={500}>
+          <InstallForm
+            onSubmit={(data) => installMutation.mutate({ path: { id: info.id }, body: data })}
+            formFields={info.form_fields}
+            info={info}
+          />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

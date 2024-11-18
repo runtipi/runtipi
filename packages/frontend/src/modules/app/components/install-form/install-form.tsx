@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import { validateAppConfig } from './form-validators';
 import { InstallFormField } from './install-form-field';
-import { ScrollArea } from '@/components/ui/ScrollArea';
 import { DialogDescription, DialogFooter } from '@/components/ui/Dialog';
 
 interface IProps {
@@ -189,13 +188,12 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
 
   return (
     <>
-      <ScrollArea maxHeight={500}>
-        <DialogDescription>
-          <form className="flex flex-col" onSubmit={handleSubmit(validate)} id={formId}>
-            {(guestDashboard || formFields.filter(typeFilter).length !== 0) && <h3>{t('APP_INSTALL_FORM_GENERAL')}</h3>}
-            {formFields.filter(typeFilter).map(renderField)}
-            {guestDashboard && (
-              <Controller
+      <DialogDescription>
+        <form className="flex flex-col" onSubmit={handleSubmit(validate)} id={formId}>
+          {(guestDashboard || formFields.filter(typeFilter).length !== 0) && <h3>{t('APP_INSTALL_FORM_GENERAL')}</h3>}
+          {formFields.filter(typeFilter).map(renderField)}
+          {guestDashboard && (
+            <Controller
                 control={control}
                 name="isVisibleOnGuestDashboard"
                 defaultValue={false}
@@ -216,7 +214,6 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
             {info.exposable && renderExposeForm()}
           </form>
         </DialogDescription>
-      </ScrollArea>
       <DialogFooter>
         <Button loading={loading} type="submit" intent="success" form={formId}>
           {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}

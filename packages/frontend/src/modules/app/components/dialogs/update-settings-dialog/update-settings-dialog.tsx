@@ -7,6 +7,7 @@ import type React from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { type FormValues, InstallForm } from '../../install-form/install-form';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 
 interface IProps {
   info: AppInfo;
@@ -39,14 +40,16 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
         <DialogHeader>
           <DialogTitle>{t('APP_UPDATE_SETTINGS_FORM_TITLE', { name: info.id })}</DialogTitle>
         </DialogHeader>
-        <InstallForm
-          onSubmit={(values: FormValues) => updateConfig.mutate({ path: { id: info.id }, body: values })}
-          formFields={info.form_fields}
-          info={info}
-          initialValues={{ ...config }}
-          onReset={onReset}
-          status={status}
-        />
+        <ScrollArea maxHeight={500}>
+          <InstallForm
+            onSubmit={(values: FormValues) => updateConfig.mutate({ path: { id: info.id }, body: values })}
+            formFields={info.form_fields}
+            info={info}
+            initialValues={{ ...config }}
+            onReset={onReset}
+            status={status}
+          />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
