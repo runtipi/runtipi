@@ -1,6 +1,6 @@
 import { updateAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { Switch } from '@/components/ui/Switch';
 import type { AppInfo } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
@@ -35,7 +35,7 @@ export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, onClo
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
         <DialogHeader>
-          <h5 className="modal-title">{t('APP_UPDATE_FORM_TITLE', { name: info.name })}</h5>
+          <DialogTitle>{t('APP_UPDATE_FORM_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
           <div className="text-muted">

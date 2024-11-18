@@ -1,6 +1,6 @@
 import { stopAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { useAppStatus } from '@/modules/app/helpers/use-app-status';
 import type { AppInfo } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
@@ -34,7 +34,7 @@ export const StopDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
         <DialogHeader>
-          <h5 className="modal-title">{t('APP_STOP_FORM_TITLE', { name: info.name })}</h5>
+          <DialogTitle>{t('APP_STOP_FORM_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
           <span className="text-muted">{t('APP_STOP_FORM_SUBTITLE')}</span>

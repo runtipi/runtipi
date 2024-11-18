@@ -1,6 +1,5 @@
 import { installAppMutation } from '@/api-client/@tanstack/react-query.gen';
-import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
-import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { useAppStatus } from '@/modules/app/helpers/use-app-status';
 import type { AppInfo } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
@@ -35,17 +34,13 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <h5 className="modal-title">{t('APP_INSTALL_FORM_TITLE', { name: info.name })}</h5>
+          <DialogTitle>{t('APP_INSTALL_FORM_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
-        <ScrollArea maxHeight={500}>
-          <DialogDescription>
-            <InstallForm
-              onSubmit={(data) => installMutation.mutate({ path: { id: info.id }, body: data })}
-              formFields={info.form_fields}
-              info={info}
-            />
-          </DialogDescription>
-        </ScrollArea>
+        <InstallForm
+          onSubmit={(data) => installMutation.mutate({ path: { id: info.id }, body: data })}
+          formFields={info.form_fields}
+          info={info}
+        />
       </DialogContent>
     </Dialog>
   );
