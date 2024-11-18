@@ -1,9 +1,7 @@
 import path from 'node:path';
 
 import { Injectable } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
 import { z } from 'zod';
-import { cleanseErrorData } from './common/helpers/error-helpers';
 import { execAsync } from './common/helpers/exec-helpers';
 import { CacheService } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
@@ -28,7 +26,7 @@ export class AppService {
   public async bootstrap() {
     const { version, appsRepoUrl, userSettings } = this.configuration.getConfig();
 
-    this.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
+    this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
 
     await this.logger.flush();
 
@@ -54,24 +52,6 @@ export class AppService {
 
     await this.copyAssets();
     await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
-  }
-
-  public async initSentry(params: { release: string; allowSentry: boolean }) {
-    const { release, allowSentry } = params;
-
-    if (allowSentry) {
-      Sentry.init({
-        release,
-        dsn: 'https://6cc88df40d1cdd0222ff30d996ca457c@o4504242900238336.ingest.us.sentry.io/4508264534835200',
-        environment: process.env.NODE_ENV,
-        beforeSend: cleanseErrorData,
-        includeLocalVariables: true,
-        integrations: [],
-        initialScope: {
-          tags: { version: release },
-        },
-      });
-    }
   }
 
   public async getVersion() {

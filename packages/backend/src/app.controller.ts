@@ -68,7 +68,7 @@ export class AppController {
     }
 
     const version = await this.appService.getVersion();
-    this.appService.initSentry({ release: version.current, allowSentry: body.allowErrorMonitoring });
+    this.configuration.initSentry({ release: version.current, allowSentry: body.allowErrorMonitoring });
 
     await this.userRepository.updateUser(req.user.id, { hasSeenWelcome: true });
     await this.configuration.setUserSettings({ allowErrorMonitoring: body.allowErrorMonitoring });
