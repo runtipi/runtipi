@@ -4,8 +4,8 @@
   height: 100%;
 }
 
-main {
-  height: 100%;
+body {
+  overflow-y: scroll;
 }
 
 .tooltip {
