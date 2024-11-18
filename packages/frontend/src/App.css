@@ -1,8 +1,6 @@
-@import '@tabler/core/dist/css/tabler.min.css';
-
+@import "@tabler/core/dist/css/tabler.min.css";
 
 #root {
-  overflow-y: scroll;
   height: 100%;
 }
 
@@ -14,4 +12,3 @@ main {
   max-width: 300px;
   text-align: center;
 }
-
