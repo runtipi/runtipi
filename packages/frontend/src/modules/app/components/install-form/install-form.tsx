@@ -1,18 +1,15 @@
-import type React from 'react';
-import { useEffect, useId } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-
-import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
 import { useAppContext } from '@/context/app-context';
-import type { AppInfo, AppStatus, FormField } from '@/types/app.types';
+import type { AppInfo, FormField } from '@/types/app.types';
 import clsx from 'clsx';
+import type React from 'react';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import { validateAppConfig } from './form-validators';
 import { InstallFormField } from './install-form-field';
-import { DialogDescription, DialogFooter } from '@/components/ui/Dialog';
 
 interface IProps {
   formFields?: FormField[];
@@ -20,8 +17,7 @@ interface IProps {
   initialValues?: { [key: string]: unknown };
   info: AppInfo;
   loading?: boolean;
-  onReset?: () => void;
-  status?: AppStatus;
+  formId: string;
 }
 
 export type FormValues = {
@@ -36,11 +32,10 @@ export type FormValues = {
 const hiddenTypes = ['random'];
 const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 
-export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit, initialValues, loading, onReset, status }) => {
+export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit, initialValues, loading, formId }) => {
   const { t } = useTranslation();
   const { userSettings } = useAppContext();
   const { guestDashboard, localDomain, internalIp } = userSettings;
-  const formId = useId();
 
   const {
     register,
@@ -66,11 +61,6 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
       }
     }
   }, [initialValues, isDirty, setValue]);
-
-  const onClickReset = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-    if (onReset) onReset();
-  };
 
   const renderField = (field: FormField) => {
     return (
@@ -187,43 +177,29 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
   };
 
   return (
-    <>
-      <DialogDescription>
-        <form className="flex flex-col" onSubmit={handleSubmit(validate)} id={formId}>
-          {(guestDashboard || formFields.filter(typeFilter).length !== 0) && <h3>{t('APP_INSTALL_FORM_GENERAL')}</h3>}
-          {formFields.filter(typeFilter).map(renderField)}
-          {guestDashboard && (
-            <Controller
-                control={control}
-                name="isVisibleOnGuestDashboard"
-                defaultValue={false}
-                render={({ field: { onChange, value, ref, ...props } }) => (
-                  <Switch
-                    className="mb-3"
-                    ref={ref}
-                    checked={value}
-                    onCheckedChange={onChange}
-                    {...props}
-                    label={t('APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD')}
-                  />
-                )}
-              />
-            )}
-            {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
-            {info.dynamic_config && renderDynamicConfigForm()}
-            {info.exposable && renderExposeForm()}
-          </form>
-        </DialogDescription>
-      <DialogFooter>
-        <Button loading={loading} type="submit" intent="success" form={formId}>
-          {initialValues ? t('APP_INSTALL_FORM_SUBMIT_UPDATE') : t('APP_INSTALL_FORM_SUBMIT_INSTALL')}
-        </Button>
-        {initialValues && onReset && (
-          <Button loading={status === 'stopping'} onClick={onClickReset} intent="danger" className="ms-2">
-            {t('APP_INSTALL_FORM_RESET')}
-          </Button>
-        )}
-      </DialogFooter>
-    </>
+    <form className="flex flex-col" onSubmit={handleSubmit(validate)} id={formId}>
+      {(guestDashboard || formFields.filter(typeFilter).length !== 0) && <h3>{t('APP_INSTALL_FORM_GENERAL')}</h3>}
+      {formFields.filter(typeFilter).map(renderField)}
+      {guestDashboard && (
+        <Controller
+          control={control}
+          name="isVisibleOnGuestDashboard"
+          defaultValue={false}
+          render={({ field: { onChange, value, ref, ...props } }) => (
+            <Switch
+              className="mb-3"
+              ref={ref}
+              checked={value}
+              onCheckedChange={onChange}
+              {...props}
+              label={t('APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD')}
+            />
+          )}
+        />
+      )}
+      {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
+      {info.dynamic_config && renderDynamicConfigForm()}
+      {info.exposable && renderExposeForm()}
+    </form>
   );
 };
