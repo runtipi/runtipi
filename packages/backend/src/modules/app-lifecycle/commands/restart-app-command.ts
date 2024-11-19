@@ -30,7 +30,9 @@ export class RestartAppCommand extends AppLifecycleCommand {
 
       this.logger.info(`Stopping app ${appId}`);
 
-      await this.dockerService.composeApp(appId, 'rm --force --stop');
+      await this.dockerService.composeApp(appId, 'rm --force --stop').catch((err) => {
+        this.logger.error(`Failed to stop app ${appId}: ${err.message}`);
+      });
       await this.ensureAppDir(appId, form);
 
       if (!skipEnvGeneration) {

@@ -35,10 +35,7 @@ export class StopAppCommand extends AppLifecycleCommand {
         await this.appHelpers.generateEnvFile(appId, form);
       }
 
-      await this.dockerService.composeApp(appId, 'rm --force --stop').catch((err) => {
-        this.logger.error(`Error stopping app ${appId}`, err);
-      });
-
+      await this.dockerService.composeApp(appId, 'rm --force --stop');
       this.logger.info(`App ${appId} stopped`);
 
       return { success: true, message: `App ${appId} stopped successfully` };

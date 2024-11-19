@@ -20,8 +20,9 @@ export class BackupAppCommand extends AppLifecycleCommand {
   public async execute(appId: string): Promise<{ success: boolean; message: string }> {
     try {
       this.logger.info(`Stopping app ${appId}`);
-      await this.dockerService.composeApp(appId, 'rm --force --stop');
-      this.logger.info('App stopped!');
+      await this.dockerService.composeApp(appId, 'rm --force --stop').catch((err) => {
+        this.logger.error(`Failed to stop app ${appId}: ${err.message}`);
+      });
 
       await this.backupManager.backupApp(appId);
 
