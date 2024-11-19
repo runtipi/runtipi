@@ -1,23 +1,24 @@
 import fs from 'node:fs';
 import { EOL } from 'node:os';
 import path from 'node:path';
+import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { ZodSchema } from 'zod';
-import { ConfigurationService } from '../config/configuration.service';
 
 @Injectable()
 export class FilesystemService {
-  constructor(
-    private readonly logger: LoggerService,
-    private readonly configuration: ConfigurationService,
-  ) {}
+  constructor(private readonly logger: LoggerService) {}
 
   private getSafeFilePath(filePath: string): string {
-    const { appDir, appDataDir, dataDir } = this.configuration.get('directories');
-
     // Define allowed directories as absolute paths
-    const allowedDirs = [path.resolve(appDir), path.resolve(appDataDir), path.resolve(dataDir), path.resolve('/host/proc/'), path.resolve('/tmp/')];
+    const allowedDirs = [
+      path.resolve(APP_DIR),
+      path.resolve(APP_DATA_DIR),
+      path.resolve(DATA_DIR),
+      path.resolve('/host/proc/'),
+      path.resolve('/tmp/'),
+    ];
 
     // Resolve and normalize the file path to an absolute path
     const resolvedPath = path.resolve(filePath);
