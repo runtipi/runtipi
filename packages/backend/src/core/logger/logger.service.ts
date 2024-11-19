@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Injectable } from '@nestjs/common';
 import winston, { createLogger, format, transports } from 'winston';
-import { ConfigurationService } from '../config/configuration.service';
 
 const { printf, timestamp, combine, colorize, align, label } = format;
 
@@ -58,10 +57,8 @@ export class LoggerService {
 
   private logsFolder: string;
 
-  constructor(id: string, folder: string, configurationService: ConfigurationService) {
-    const { logLevel } = configurationService.getConfig();
-
-    this.winstonLogger = newLogger(id, folder, logLevel);
+  constructor(id: string, folder: string) {
+    this.winstonLogger = newLogger(id, folder, process.env.LOG_LEVEL);
     this.logsFolder = folder;
   }
 

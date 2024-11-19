@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { settingsSchema, type PartialUserSettingsDto } from '@/app.dto';
-import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
+import { type PartialUserSettingsDto, settingsSchema } from '@/app.dto';
+import { APP_DATA_DIR, APP_DIR, ARCHITECTURES, DATA_DIR } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { cleanseErrorData } from '@/common/helpers/error-helpers';
 import { EnvUtils } from '@/modules/env/env.utils';
@@ -10,9 +10,6 @@ import * as Sentry from '@sentry/nestjs';
 import dotenv from 'dotenv';
 import { z } from 'zod';
 import { FilesystemService } from '../filesystem/filesystem.service';
-
-export const ARCHITECTURES = ['arm64', 'amd64'] as const;
-export type Architecture = (typeof ARCHITECTURES)[number];
 
 const envSchema = z.object({
   POSTGRES_HOST: z.string(),
@@ -48,7 +45,10 @@ export class ConfigurationService {
   private envPath = path.join(DATA_DIR, '.env');
 
   // Lowest level, cannot use any other service or module to avoid circular dependencies
-  constructor(private readonly envUtils: EnvUtils, private readonly filesystem: FilesystemService) {
+  constructor(
+    private readonly envUtils: EnvUtils,
+    private readonly filesystem: FilesystemService,
+  ) {
     dotenv.config({ path: this.envPath });
     this.config = this.configure();
   }
@@ -132,7 +132,7 @@ export class ConfigurationService {
       this.initSentry({ release: this.config.version, allowSentry: true });
     }
 
-    const settingsPath = path.join(DATA_DIR, "state", "settings.json")
+    const settingsPath = path.join(DATA_DIR, 'state', 'settings.json');
 
     const currentSettings = await this.filesystem.readJsonFile(settingsPath, settingsSchema.partial());
 
