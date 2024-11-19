@@ -31,7 +31,9 @@ export class AppLifecycleCommand {
       } catch (err) {
         this.logger.error(`Error generating docker-compose.yml file for app ${appId}. Falling back to default docker-compose.yml`);
         this.logger.error(err);
-        Sentry.captureException(err);
+        Sentry.captureException(err, {
+          tags: { appId, event: 'ensure_app_dir' },
+        });
       }
     }
 
