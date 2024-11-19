@@ -1,22 +1,4 @@
 services:
-  runtipi-reverse-proxy:
-    container_name: runtipi-reverse-proxy
-    depends_on:
-      - runtipi
-    image: traefik:v3.1.4
-    restart: unless-stopped
-    ports:
-      - 3000:80
-      - 443:443
-      - 8080:8080
-    command: --providers.docker
-    volumes:
-      - ./traefik:/etc/traefik
-      - ./traefik/shared:/shared
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - tipi_main_network
-
   runtipi-db:
     container_name: runtipi-db
     image: postgres:14
@@ -27,7 +9,7 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: postgres
       POSTGRES_USER: tipi
       POSTGRES_DB: tipi
     healthcheck:
@@ -38,40 +20,22 @@ services:
     networks:
       - tipi_main_network
 
-  runtipi-redis:
-    container_name: runtipi-redis
-    image: redis:7.2.0
-    restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD} --stop-writes-on-bgsave-error no
-    ports:
-      - 6379:6379
-    volumes:
-      - redisdata:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 10s
-      retries: 120
-    networks:
-      - tipi_main_network
-
   runtipi:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: runtipi
-    restart: unless-stopped
     depends_on:
       runtipi-db:
         condition: service_healthy
-      runtipi-redis:
-        condition: service_healthy
+    container_name: runtipi
+    restart: unless-stopped
+    ports:
+      - 3000:8080
+      - 5001:5001
     volumes:
       # Hot reload
-      - ./src:/app/src
-      - ./packages/worker/src:/app/packages/worker/src
-      - ./packages/shared/src:/app/packages/shared/src
-      - ./packages/db/src:/app/packages/db/src
+      - ./packages/backend/src:/app/packages/backend/src
+      - ./packages/frontend/src:/app/packages/frontend/src
       # Data
       - ${RUNTIPI_MEDIA_PATH:-.}/media:/data/media
       - ${RUNTIPI_STATE_PATH:-.}/state:/data/state
@@ -84,9 +48,10 @@ services:
       - ${RUNTIPI_BACKUPS_PATH:-.}/backups:/data/backups
       # Static
       - ./.env:/data/.env
+      - ./cache:/cache
       - ./docker-compose.dev.yml:/data/docker-compose.yml
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /proc:/host/proc:ro
+      - /proc/meminfo:/host/proc/meminfo:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     networks:
@@ -94,86 +59,13 @@ services:
     environment:
       LOCAL: true
       NODE_ENV: development
-      WORKER_APP_DIR: /app/packages/worker
-      DASHBOARD_APP_DIR: /app
+      ROOT_FOLDER_HOST: ${PWD}
+      POSTGRES_PASSWORD: postgres
+      INTERNAL_IP: 127.0.0.1
+      TIPI_VERSION: 0.0.0
+      LOG_LEVEL: debug
     env_file:
       - .env
-    labels:
-      # ---- General ----- #
-      traefik.enable: true
-      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
-
-      # ---- Dashboard ---- #
-      traefik.http.services.dashboard.loadbalancer.server.port: 3000
-      # Local ip
-      traefik.http.routers.dashboard.rule: PathPrefix("/")
-      traefik.http.routers.dashboard.service: dashboard
-      traefik.http.routers.dashboard.entrypoints: web
-      # Websecure
-      traefik.http.routers.dashboard-insecure.rule: Host(`${DOMAIN}`) && PathPrefix(`/`)
-      traefik.http.routers.dashboard-insecure.service: dashboard
-      traefik.http.routers.dashboard-insecure.entrypoints: web
-      traefik.http.routers.dashboard-insecure.middlewares: redirect-to-https
-      traefik.http.routers.dashboard-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/`)
-      traefik.http.routers.dashboard-secure.service: dashboard
-      traefik.http.routers.dashboard-secure.entrypoints: websecure
-      traefik.http.routers.dashboard-secure.tls.certresolver: myresolver
-      # Local domain
-      traefik.http.routers.dashboard-local-insecure.rule: Host(`${LOCAL_DOMAIN}`)
-      traefik.http.routers.dashboard-local-insecure.entrypoints: web
-      traefik.http.routers.dashboard-local-insecure.service: dashboard
-      traefik.http.routers.dashboard-local-insecure.middlewares: redirect-to-https
-      # Secure
-      traefik.http.routers.dashboard-local.rule: Host(`${LOCAL_DOMAIN}`)
-      traefik.http.routers.dashboard-local.entrypoints: websecure
-      traefik.http.routers.dashboard-local.tls: true
-      traefik.http.routers.dashboard-local.service: dashboard
-
-      # ---- Worker ---- #
-      traefik.http.services.worker.loadbalancer.server.port: 5001
-      traefik.http.services.worker-api.loadbalancer.server.port: 5000
-      # Local ip
-      traefik.http.routers.worker.rule: PathPrefix("/worker")
-      traefik.http.routers.worker.service: worker
-      traefik.http.routers.worker.entrypoints: web
-      traefik.http.routers.worker-api.rule: PathPrefix("/worker-api")
-      traefik.http.routers.worker-api.service: worker-api
-      traefik.http.routers.worker-api.entrypoints: web
-      # Websecure
-      traefik.http.routers.worker-insecure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker`)
-      traefik.http.routers.worker-insecure.service: worker
-      traefik.http.routers.worker-insecure.entrypoints: web
-      traefik.http.routers.worker-insecure.middlewares: redirect-to-https
-      traefik.http.routers.worker-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker`)
-      traefik.http.routers.worker-secure.service: worker
-      traefik.http.routers.worker-secure.entrypoints: websecure
-      traefik.http.routers.worker-secure.tls.certresolver: myresolver
-      traefik.http.routers.worker-api-insecure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker-api`)
-      traefik.http.routers.worker-api-insecure.service: worker-api
-      traefik.http.routers.worker-api-insecure.entrypoints: web
-      traefik.http.routers.worker-api-insecure.middlewares: redirect-to-https
-      traefik.http.routers.worker-api-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/worker-api`)
-      traefik.http.routers.worker-api-secure.service: worker-api
-      traefik.http.routers.worker-api-secure.entrypoints: websecure
-      traefik.http.routers.worker-api-secure.tls.certresolver: myresolver
-      # Local domain
-      traefik.http.routers.worker-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker")
-      traefik.http.routers.worker-local-insecure.entrypoints: web
-      traefik.http.routers.worker-local-insecure.service: worker
-      traefik.http.routers.worker-local-insecure.middlewares: redirect-to-https
-      traefik.http.routers.worker-api-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker-api")
-      traefik.http.routers.worker-api-local-insecure.entrypoints: web
-      traefik.http.routers.worker-api-local-insecure.service: worker-api
-      traefik.http.routers.worker-api-local-insecure.middlewares: redirect-to-https
-      # Secure
-      traefik.http.routers.worker-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker")
-      traefik.http.routers.worker-local.entrypoints: websecure
-      traefik.http.routers.worker-local.tls: true
-      traefik.http.routers.worker-local.service: worker
-      traefik.http.routers.worker-api-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/worker-api")
-      traefik.http.routers.worker-api-local.entrypoints: websecure
-      traefik.http.routers.worker-api-local.service: worker-api
-      traefik.http.routers.worker-api-local.tls: true
 
 networks:
   tipi_main_network:
@@ -182,4 +74,3 @@ networks:
 
 volumes:
   pgdata:
-  redisdata:

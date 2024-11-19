@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "monorepo": true,
+  "compilerOptions": {
+    "plugins": ["@nestjs/swagger"],
+    "deleteOutDir": true,
+    "typeCheck": true,
+    "builder": "swc",
+    "assets": [
+      {
+        "include": "./src/core/database/migrations/*.sql",
+        "outDir": "./dist/assets/migrations",
+        "watchAssets": true
+      }
+    ]
+  }
+}

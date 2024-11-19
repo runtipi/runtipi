@@ -1,3 +1,7 @@
+/node_modules
+**/dist/**
+.turbo
+
 *.swo
 *.swp
 
@@ -74,3 +78,5 @@ temp
 
 public/js/*
 !public/js/.gitkeep
+
+/cache

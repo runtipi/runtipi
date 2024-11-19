@@ -1,1 +1,0 @@
-export { AppDetailsTabs } from './AppDetailsTabs';

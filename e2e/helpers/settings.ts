@@ -1,11 +1,21 @@
 import { promises } from 'node:fs';
 import path from 'node:path';
-import type { settingsSchema } from '@runtipi/shared';
-import { pathExists } from '@runtipi/shared/node';
 import type { z } from 'zod';
+import type { settingsSchema } from '../../packages/backend/src/app.dto';
+import { user } from '../../packages/backend/src/core/database/drizzle/schema';
 import { BASE_PATH } from './constants';
+import { db } from './db';
 
-export const setSettings = async (settings: z.infer<typeof settingsSchema>) => {
+const pathExists = async (path: string) => {
+  try {
+    await promises.access(path);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const setSettings = async (settings: Partial<z.infer<typeof settingsSchema>>) => {
   await promises.mkdir(path.join(BASE_PATH, 'state'), { recursive: true });
   await promises.writeFile(path.join(BASE_PATH, 'state', 'settings.json'), JSON.stringify(settings));
 };
@@ -22,15 +32,6 @@ export const unsetPasswordChangeRequest = async () => {
 };
 
 export const setWelcomeSeen = async (seen: boolean) => {
-  const seenPath = path.join(BASE_PATH, 'state', 'seen-welcome');
-
-  if (seen && !(await pathExists(seenPath))) {
-    return promises.writeFile(seenPath, '');
-  }
-
-  if (!seen && (await pathExists(seenPath))) {
-    return promises.unlink(seenPath);
-  }
-
+  await db.update(user).set({ hasSeenWelcome: seen });
   return Promise.resolve();
 };

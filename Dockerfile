@@ -12,9 +12,8 @@ ARG LOCAL
 
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_RELEASE=${TIPI_VERSION}
-ENV LOCAL=${LOCAL}
 
-RUN npm install pnpm@9.4.0 -g
+RUN npm install pnpm@9.12.2 -g
 RUN apk add --no-cache curl python3 make g++ git
 
 WORKDIR /deps
@@ -25,46 +24,16 @@ RUN pnpm fetch
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
 
-RUN apk add --no-cache curl openssl git
-RUN npm install pm2 -g
+RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 
-# ---- BUILD DASHBOARD ----
-FROM builder_base AS dashboard_builder
-
-WORKDIR /dashboard
-
-COPY ./pnpm-workspace.yaml ./
-COPY ./scripts ./scripts
-COPY ./public ./public
-
-COPY ./package.json ./
-COPY ./packages/worker/package.json ./packages/worker/package.json
-COPY ./packages/shared/package.json ./packages/shared/package.json
-COPY ./packages/db/package.json ./packages/db/package.json
-COPY ./packages/cache/package.json ./packages/cache/package.json
-
-RUN pnpm install -r --prefer-offline 
-
-COPY ./packages ./packages
-
-COPY ./src ./src
-COPY ./tsconfig.json ./tsconfig.json
-COPY ./next.config.mjs ./next.config.mjs
-COPY ./tests ./tests
-
-# Sentry
-COPY ./sentry.client.config.ts ./sentry.client.config.ts
-
-RUN pnpm build
-
-# ---- BUILD WORKER ----
-FROM builder_base AS worker_builder
-
-WORKDIR /worker
+# ---- BUILDER ----
+FROM builder_base AS builder
 
 ARG TARGETARCH
+ARG DOCKER_COMPOSE_VERSION="v2.29.2"
 ENV TARGETARCH=${TARGETARCH}
-ARG DOCKER_COMPOSE_VERSION="v2.30.1"
+
+WORKDIR /app
 
 RUN echo "Building for ${TARGETARCH}"
 
@@ -72,51 +41,58 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
   curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
   elif [ "${TARGETARCH}" = "amd64" ]; then \
   curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-x86_64"; \
-  else \
-  echo "Unsupported architecture"; \
   fi
 
 RUN chmod +x docker-binary
 
 COPY ./pnpm-workspace.yaml ./
-COPY ./packages/worker/package.json ./packages/worker/package.json
-COPY ./packages/shared/package.json ./packages/shared/package.json
-COPY ./packages/db/package.json ./packages/db/package.json
-COPY ./packages/cache/package.json ./packages/cache/package.json
-COPY ./packages/shared/package.json ./packages/shared/package.json
+COPY ./pnpm-lock.yaml ./
+COPY ./package.json ./
+COPY ./packages/backend/package.json ./packages/backend/package.json
+COPY ./packages/frontend/package.json ./packages/frontend/package.json
+COPY ./packages/frontend/scripts ./packages/frontend/scripts
+COPY ./packages/frontend/public ./packages/frontend/public
 
 RUN pnpm install -r --prefer-offline
 
+COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
 
-# Print TIPI_VERSION to the console
 RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
+RUN echo "LOCAL: ${LOCAL}"
 
-RUN pnpm -r --filter @runtipi/worker build
+RUN npm run bundle
+
+RUN if [ "${LOCAL}" != "true" ]; then \
+  pnpm -r sentry:sourcemaps; \
+  fi
 
 # ---- RUNNER ----
-FROM runner_base AS app
+FROM runner_base AS runner
 
-ENV NODE_ENV=production
+ENV NODE_ENV="production"
 
-WORKDIR /worker
+WORKDIR /app
 
-COPY --from=worker_builder /worker/packages/worker/dist .
-COPY --from=worker_builder /worker/packages/worker/assets ./assets
-COPY --from=worker_builder /worker/packages/db/assets/migrations ./assets/migrations
-COPY --from=worker_builder /worker/docker-binary /usr/local/bin/docker-compose
+RUN npm install argon2
 
-WORKDIR /dashboard
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/packages/backend/dist ./
+COPY --from=builder /app/docker-binary /usr/local/bin/docker-compose
 
-COPY --from=dashboard_builder /dashboard/next.config.mjs ./
-COPY --from=dashboard_builder /dashboard/public ./public
-COPY --from=dashboard_builder /dashboard/package.json ./package.json
-COPY --from=dashboard_builder /dashboard/.next/standalone ./
-COPY --from=dashboard_builder /dashboard/.next/static ./.next/static
+# Swagger UI
+COPY --from=builder /app/packages/backend/node_modules/swagger-ui-dist/swagger-ui.css ./swagger-ui.css
+COPY --from=builder /app/packages/backend/node_modules/swagger-ui-dist/swagger-ui-bundle.js ./swagger-ui-bundle.js
+COPY --from=builder /app/packages/backend/node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js ./swagger-ui-standalone-preset.js
 
-WORKDIR /
-COPY ./start.prod.sh ./start.sh
+# Assets
+COPY --from=builder /app/packages/backend/assets ./assets
+COPY --from=builder /app/packages/backend/src/core/database/drizzle ./assets/migrations
+COPY --from=builder /app/packages/backend/src/modules/i18n/translations ./assets/translations
+COPY --from=builder /app/packages/frontend/dist ./assets/frontend
 
-EXPOSE 3000 5000 5001
+COPY ./supervisord.prod.conf /etc/supervisord.conf
 
-CMD ["sh", "start.sh"]
+EXPOSE 3000 5001
+
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]

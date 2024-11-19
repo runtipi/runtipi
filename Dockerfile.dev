@@ -3,20 +3,16 @@ ARG ALPINE_VERSION="3.20"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
-ENV LOCAL=true
-ENV SENTRY_RELEASE=development
+RUN apk add --no-cache curl git
+RUN npm install pnpm@9.12.2 -g
 
-RUN apk add --no-cache python3 make g++
-RUN apk add --no-cache curl openssl git
-
-RUN npm install pnpm@9.4.0 pm2 -g
+RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.29.7"
+ARG DOCKER_COMPOSE_VERSION="v2.29.2"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 
-# Dashboard
 WORKDIR /app
 
 RUN echo "Building for ${TARGETARCH}"
@@ -28,32 +24,27 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
   fi
 
 RUN chmod +x docker-binary
-
 RUN mv docker-binary /usr/local/bin/docker-compose
 
+COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./pnpm-lock.yaml ./
-RUN pnpm fetch --ignore-scripts
+RUN pnpm fetch
 
-COPY ./package*.json ./
-COPY ./packages/worker/package.json ./packages/worker/package.json
-COPY ./packages/shared/package.json ./packages/shared/package.json
-COPY ./packages/db/package.json ./packages/db/package.json
-COPY ./packages/cache/package.json ./packages/cache/package.json
+COPY ./packages/backend/package.json ./packages/backend/package.json
+COPY ./packages/frontend/package.json ./packages/frontend/package.json
+COPY ./packages/frontend/scripts ./packages/frontend/scripts
+COPY ./packages/frontend/public ./packages/frontend/public
+COPY ./package.json ./package.json
 
-COPY ./scripts ./scripts
-COPY ./public ./public
+RUN pnpm install
 
-RUN pnpm install -r --prefer-offline 
-
+COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
+COPY ./packages/backend/assets ./assets
+COPY ./packages/backend/src/core/database/drizzle ./assets/migrations
 
-COPY ./packages/db/assets/migrations ./packages/worker/assets/migrations
-COPY ./tsconfig.json ./tsconfig.json
-COPY ./next.config.mjs ./next.config.mjs
+COPY ./supervisord.dev.conf /etc/supervisord.conf
 
-# Sentry
-COPY ./sentry.client.config.ts ./sentry.client.config.ts
+EXPOSE 3000 5001
 
-COPY ./start.dev.sh ./start.sh
-
-CMD ["sh", "start.sh"]
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]

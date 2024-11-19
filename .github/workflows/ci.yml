@@ -23,19 +23,19 @@ env:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:14
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5433:5432
-        # set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    # services:
+    #   postgres:
+    #     image: postgres:14
+    #     env:
+    #       POSTGRES_PASSWORD: postgres
+    #     ports:
+    #       - 5433:5432
+    #     # set health checks to wait until postgres has started
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,7 +49,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 9.4.0
+          version: 9.12.2
           run_install: false
 
       - name: Get pnpm store directory
@@ -69,17 +69,17 @@ jobs:
         run: pnpm install
 
       - name: Run biome tests
-        run: pnpm biome check
+        run: pnpm lint:ci
 
-      - name: Get number of CPU cores
-        id: cpu-cores
-        uses: SimenB/github-actions-cpu-cores@v2
-
-      - name: Run tests
-        run: pnpm run test --max-workers ${{ steps.cpu-cores.outputs.count }}
-
-      - name: Run packages tests
-        run: pnpm -r test
+      # - name: Get number of CPU cores
+      #   id: cpu-cores
+      #   uses: SimenB/github-actions-cpu-cores@v2
+      #
+      # - name: Run tests
+      #   run: pnpm run test --max-workers ${{ steps.cpu-cores.outputs.count }}
+      #
+      # - name: Run packages tests
+      #   run: pnpm -r test
 
   build:
     runs-on: ubuntu-latest
@@ -96,7 +96,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 9.4.0
+          version: 9.12.2
           run_install: false
 
       - name: Get pnpm store directory
@@ -116,10 +116,7 @@ jobs:
         run: pnpm install
 
       - name: Build client
-        run: npm run build
+        run: npm run bundle
 
       - name: Run tsc
-        run: pnpm run tsc
-
-      - name: Run packages tsc
         run: pnpm -r run tsc

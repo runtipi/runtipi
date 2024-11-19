@@ -1,0 +1,18 @@
+.app-tile {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  &:hover .logo {
+    transform: scale(1.1);
+  }
+}
+
+.logo {
+  transition: transform 0.15s ease-in-out;
+  scale: 1;
+}

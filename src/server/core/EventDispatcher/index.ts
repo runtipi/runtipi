@@ -1,1 +1,0 @@
-export { EventDispatcher } from './EventDispatcher';

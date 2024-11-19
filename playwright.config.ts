@@ -3,6 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+
+// biome-ignore lint/style/noDefaultExport: needed for Playwright to work
 export default defineConfig({
   globalSetup: require.resolve('./e2e/helpers/global-setup'),
   testDir: './e2e',
@@ -11,21 +13,18 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 0 : 0,
   /* Opt out of parallel tests on CI. */
   workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: `http://${process.env.SERVER_IP}${process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : ''}`,
-
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
-
-    video: 'on',
+    trace: 'on',
+    video: 'retain-on-failure',
   },
   // timeout: 5000,
 

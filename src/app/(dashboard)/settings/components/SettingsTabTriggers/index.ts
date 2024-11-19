@@ -1,1 +1,0 @@
-export { SettingsTabTriggers } from './SettingsTabTriggers';

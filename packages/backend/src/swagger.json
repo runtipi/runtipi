@@ -1,0 +1,3035 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/user-context": {
+      "get": {
+        "operationId": "userContext",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserContextDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/app-context": {
+      "get": {
+        "operationId": "appContext",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppContextDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/user-settings": {
+      "patch": {
+        "operationId": "updateUserSettings",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUserSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/acknowledge-welcome": {
+      "patch": {
+        "operationId": "acknowledgeWelcome",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcknowledgeWelcomeBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/system/load": {
+      "get": {
+        "operationId": "systemLoad",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoadDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/api/system/certificate": {
+      "get": {
+        "operationId": "downloadLocalCertificate",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/api/i18n/locales/{ns}/{lng}.json": {
+      "get": {
+        "operationId": "getTranslation",
+        "parameters": [
+          {
+            "name": "ns",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lng",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "I18n"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "operationId": "login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/verify-totp": {
+      "post": {
+        "operationId": "verifyTotp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyTotpBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "operationId": "register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/username": {
+      "patch": {
+        "operationId": "changeUsername",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeUsernameBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/password": {
+      "patch": {
+        "operationId": "changePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/totp/get-uri": {
+      "patch": {
+        "operationId": "getTotpUri",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetTotpUriBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTotpUriDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/totp/setup": {
+      "patch": {
+        "operationId": "setupTotp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetupTotpBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/totp/disable": {
+      "patch": {
+        "operationId": "disableTotp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisableTotpBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/reset-password": {
+      "post": {
+        "operationId": "resetPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetPasswordDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      },
+      "delete": {
+        "operationId": "cancelResetPassword",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      },
+      "get": {
+        "operationId": "checkResetPasswordRequest",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckResetPasswordRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/apps/installed": {
+      "get": {
+        "operationId": "getInstalledApps",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyAppsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
+    "/api/apps/guest": {
+      "get": {
+        "operationId": "getGuestApps",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestAppsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
+    "/api/apps/search": {
+      "get": {
+        "operationId": "searchApps",
+        "parameters": [
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "network",
+                "media",
+                "development",
+                "automation",
+                "social",
+                "utilities",
+                "photography",
+                "security",
+                "featured",
+                "books",
+                "data",
+                "music",
+                "finance",
+                "gaming",
+                "ai"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchAppsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
+    "/api/apps/{id}": {
+      "get": {
+        "operationId": "getAppDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
+    "/api/apps/{id}/image": {
+      "get": {
+        "operationId": "getImage",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
+    "/api/repos/pull": {
+      "post": {
+        "operationId": "pull",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PullDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Repos"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{id}/install": {
+      "post": {
+        "operationId": "installApp",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppFormBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{id}/start": {
+      "post": {
+        "operationId": "startApp",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{id}/stop": {
+      "post": {
+        "operationId": "stopApp",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{id}/restart": {
+      "post": {
+        "operationId": "restartApp",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{id}/uninstall": {
+      "delete": {
+        "operationId": "uninstallApp",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UninstallAppBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{id}/reset": {
+      "post": {
+        "operationId": "resetApp",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{id}/update": {
+      "patch": {
+        "operationId": "updateApp",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAppBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/update-all": {
+      "patch": {
+        "operationId": "updateAllApps",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{id}/update-config": {
+      "patch": {
+        "operationId": "updateAppConfig",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppFormBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/backups/{appid}/backup": {
+      "post": {
+        "operationId": "backupApp",
+        "parameters": [
+          {
+            "name": "appid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Backups"
+        ]
+      }
+    },
+    "/api/backups/{appid}/restore": {
+      "post": {
+        "operationId": "restoreAppBackup",
+        "parameters": [
+          {
+            "name": "appid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreAppBackupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Backups"
+        ]
+      }
+    },
+    "/api/backups/{id}": {
+      "get": {
+        "operationId": "getAppBackups",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAppBackupsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Backups"
+        ]
+      }
+    },
+    "/api/backups/{appid}": {
+      "delete": {
+        "operationId": "deleteAppBackup",
+        "parameters": [
+          {
+            "name": "appid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAppBackupBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Backups"
+        ]
+      }
+    },
+    "/api/links": {
+      "get": {
+        "operationId": "getLinks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      },
+      "post": {
+        "operationId": "createLink",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
+    "/api/links/{id}": {
+      "patch": {
+        "operationId": "editLink",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditLinkBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteLink",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "operationId": "check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Runtipi API",
+    "description": "API specs for Runtipi",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "UserContextDto": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "object",
+            "properties": {
+              "current": {
+                "type": "string"
+              },
+              "latest": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "current",
+              "latest",
+              "body"
+            ]
+          },
+          "isLoggedIn": {
+            "description": "Indicates if the user is logged in",
+            "type": "boolean"
+          },
+          "isConfigured": {
+            "description": "Indicates if the app is already configured",
+            "type": "boolean"
+          },
+          "isGuestDashboardEnabled": {
+            "description": "Indicates if the guest dashboard is enabled",
+            "type": "boolean"
+          },
+          "allowAutoThemes": {
+            "description": "Indicates if the app allows auto themes",
+            "type": "boolean"
+          },
+          "allowErrorMonitoring": {
+            "description": "Indicates if the app allows anonymous error monitoring",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "version",
+          "isLoggedIn",
+          "isConfigured",
+          "isGuestDashboardEnabled",
+          "allowAutoThemes",
+          "allowErrorMonitoring"
+        ]
+      },
+      "AppContextDto": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "object",
+            "properties": {
+              "current": {
+                "type": "string"
+              },
+              "latest": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "current",
+              "latest",
+              "body"
+            ]
+          },
+          "userSettings": {
+            "type": "object",
+            "properties": {
+              "dnsIp": {
+                "type": "string"
+              },
+              "internalIp": {
+                "type": "string"
+              },
+              "postgresPort": {
+                "type": "number"
+              },
+              "appsRepoUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "domain": {
+                "type": "string"
+              },
+              "appDataPath": {
+                "type": "string"
+              },
+              "localDomain": {
+                "type": "string"
+              },
+              "demoMode": {
+                "type": "boolean"
+              },
+              "guestDashboard": {
+                "type": "boolean"
+              },
+              "allowAutoThemes": {
+                "type": "boolean"
+              },
+              "allowErrorMonitoring": {
+                "type": "boolean"
+              },
+              "persistTraefikConfig": {
+                "type": "boolean"
+              },
+              "port": {
+                "type": "number"
+              },
+              "sslPort": {
+                "type": "number"
+              },
+              "listenIp": {
+                "type": "string"
+              },
+              "timeZone": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "dnsIp",
+              "internalIp",
+              "postgresPort",
+              "appsRepoUrl",
+              "domain",
+              "appDataPath",
+              "localDomain",
+              "demoMode",
+              "guestDashboard",
+              "allowAutoThemes",
+              "allowErrorMonitoring",
+              "persistTraefikConfig",
+              "port",
+              "sslPort",
+              "listenIp",
+              "timeZone"
+            ]
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "username": {
+                "type": "string"
+              },
+              "totpEnabled": {
+                "type": "boolean"
+              },
+              "locale": {
+                "type": "string"
+              },
+              "operator": {
+                "type": "boolean"
+              },
+              "hasSeenWelcome": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "username",
+              "totpEnabled",
+              "locale",
+              "operator",
+              "hasSeenWelcome"
+            ]
+          },
+          "apps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "short_desc": {
+                  "type": "string"
+                },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "network",
+                      "media",
+                      "development",
+                      "automation",
+                      "social",
+                      "utilities",
+                      "photography",
+                      "security",
+                      "featured",
+                      "books",
+                      "data",
+                      "music",
+                      "finance",
+                      "gaming",
+                      "ai"
+                    ]
+                  },
+                  "default": []
+                },
+                "deprecated": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "created_at": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "exclusiveMinimum": false,
+                  "default": 0
+                },
+                "supported_architectures": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "arm64",
+                      "amd64"
+                    ]
+                  }
+                },
+                "available": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "short_desc",
+                "available"
+              ]
+            }
+          },
+          "updatesAvailable": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "version",
+          "userSettings",
+          "user",
+          "apps",
+          "updatesAvailable"
+        ]
+      },
+      "PartialUserSettingsDto": {
+        "type": "object",
+        "properties": {
+          "dnsIp": {
+            "type": "string"
+          },
+          "internalIp": {
+            "type": "string"
+          },
+          "postgresPort": {
+            "type": "number"
+          },
+          "appsRepoUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "appDataPath": {
+            "type": "string"
+          },
+          "localDomain": {
+            "type": "string"
+          },
+          "demoMode": {
+            "type": "boolean"
+          },
+          "guestDashboard": {
+            "type": "boolean"
+          },
+          "allowAutoThemes": {
+            "type": "boolean"
+          },
+          "allowErrorMonitoring": {
+            "type": "boolean"
+          },
+          "persistTraefikConfig": {
+            "type": "boolean"
+          },
+          "port": {
+            "type": "number"
+          },
+          "sslPort": {
+            "type": "number"
+          },
+          "listenIp": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        }
+      },
+      "AcknowledgeWelcomeBody": {
+        "type": "object",
+        "properties": {
+          "allowErrorMonitoring": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "allowErrorMonitoring"
+        ]
+      },
+      "LoadDto": {
+        "type": "object",
+        "properties": {
+          "diskUsed": {
+            "type": "number",
+            "nullable": true,
+            "default": 0
+          },
+          "diskSize": {
+            "type": "number",
+            "nullable": true,
+            "default": 0
+          },
+          "percentUsed": {
+            "type": "number",
+            "nullable": true,
+            "default": 0
+          },
+          "cpuLoad": {
+            "type": "number",
+            "nullable": true,
+            "default": 0
+          },
+          "memoryTotal": {
+            "type": "number",
+            "nullable": true,
+            "default": 0
+          },
+          "percentUsedMemory": {
+            "type": "number",
+            "nullable": true,
+            "default": 0
+          }
+        }
+      },
+      "LoginBody": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "totpSessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "VerifyTotpBody": {
+        "type": "object",
+        "properties": {
+          "totpCode": {
+            "type": "string"
+          },
+          "totpSessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "totpCode",
+          "totpSessionId"
+        ]
+      },
+      "RegisterBody": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "ChangeUsernameBody": {
+        "type": "object",
+        "properties": {
+          "newUsername": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "newUsername",
+          "password"
+        ]
+      },
+      "ChangePasswordBody": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
+      },
+      "GetTotpUriBody": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "GetTotpUriDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "uri"
+        ]
+      },
+      "SetupTotpBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "DisableTotpBody": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "ResetPasswordBody": {
+        "type": "object",
+        "properties": {
+          "newPassword": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "newPassword"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "email"
+        ]
+      },
+      "CheckResetPasswordRequestDto": {
+        "type": "object",
+        "properties": {
+          "isRequestPending": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isRequestPending"
+        ]
+      },
+      "MyAppsDto": {
+        "type": "object",
+        "properties": {
+          "installed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "app": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "stopped",
+                        "installing",
+                        "uninstalling",
+                        "stopping",
+                        "starting",
+                        "missing",
+                        "updating",
+                        "resetting",
+                        "restarting",
+                        "backing_up",
+                        "restoring"
+                      ]
+                    },
+                    "lastOpened": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "numOpened": {
+                      "type": "number",
+                      "default": 0
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "number"
+                    },
+                    "exposed": {
+                      "type": "boolean"
+                    },
+                    "openPort": {
+                      "type": "boolean"
+                    },
+                    "exposedLocal": {
+                      "type": "boolean"
+                    },
+                    "domain": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "isVisibleOnGuestDashboard": {
+                      "type": "boolean"
+                    },
+                    "config": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "lastOpened",
+                    "version",
+                    "exposed",
+                    "openPort",
+                    "exposedLocal",
+                    "domain",
+                    "isVisibleOnGuestDashboard"
+                  ]
+                },
+                "info": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "short_desc": {
+                      "type": "string"
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "network",
+                          "media",
+                          "development",
+                          "automation",
+                          "social",
+                          "utilities",
+                          "photography",
+                          "security",
+                          "featured",
+                          "books",
+                          "data",
+                          "music",
+                          "finance",
+                          "gaming",
+                          "ai"
+                        ]
+                      },
+                      "default": []
+                    },
+                    "deprecated": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "created_at": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": false,
+                      "default": 0
+                    },
+                    "supported_architectures": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "arm64",
+                          "amd64"
+                        ]
+                      }
+                    },
+                    "available": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "short_desc",
+                    "available"
+                  ]
+                },
+                "updateInfo": {
+                  "type": "object",
+                  "properties": {
+                    "latestVersion": {
+                      "type": "number"
+                    },
+                    "minTipiVersion": {
+                      "type": "string"
+                    },
+                    "latestDockerVersion": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "latestVersion"
+                  ]
+                }
+              },
+              "required": [
+                "app",
+                "info",
+                "updateInfo"
+              ]
+            }
+          }
+        },
+        "required": [
+          "installed"
+        ]
+      },
+      "GuestAppsDto": {
+        "type": "object",
+        "properties": {
+          "installed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "app": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "stopped",
+                        "installing",
+                        "uninstalling",
+                        "stopping",
+                        "starting",
+                        "missing",
+                        "updating",
+                        "resetting",
+                        "restarting",
+                        "backing_up",
+                        "restoring"
+                      ]
+                    },
+                    "lastOpened": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "numOpened": {
+                      "type": "number",
+                      "default": 0
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "number"
+                    },
+                    "exposed": {
+                      "type": "boolean"
+                    },
+                    "openPort": {
+                      "type": "boolean"
+                    },
+                    "exposedLocal": {
+                      "type": "boolean"
+                    },
+                    "domain": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "isVisibleOnGuestDashboard": {
+                      "type": "boolean"
+                    },
+                    "config": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "lastOpened",
+                    "version",
+                    "exposed",
+                    "openPort",
+                    "exposedLocal",
+                    "domain",
+                    "isVisibleOnGuestDashboard"
+                  ]
+                },
+                "info": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "available": {
+                      "type": "boolean"
+                    },
+                    "deprecated": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "port": {
+                      "type": "number",
+                      "minimum": 1,
+                      "exclusiveMinimum": false,
+                      "maximum": 65535,
+                      "exclusiveMaximum": false
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string",
+                      "default": ""
+                    },
+                    "version": {
+                      "type": "string",
+                      "default": "latest"
+                    },
+                    "tipi_version": {
+                      "type": "number"
+                    },
+                    "short_desc": {
+                      "type": "string"
+                    },
+                    "author": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "website": {
+                      "type": "string"
+                    },
+                    "force_expose": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "generate_vapid_keys": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "network",
+                          "media",
+                          "development",
+                          "automation",
+                          "social",
+                          "utilities",
+                          "photography",
+                          "security",
+                          "featured",
+                          "books",
+                          "data",
+                          "music",
+                          "finance",
+                          "gaming",
+                          "ai"
+                        ]
+                      },
+                      "default": []
+                    },
+                    "url_suffix": {
+                      "type": "string"
+                    },
+                    "form_fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "text",
+                              "password",
+                              "email",
+                              "number",
+                              "fqdn",
+                              "ip",
+                              "fqdnip",
+                              "url",
+                              "random",
+                              "boolean"
+                            ]
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "placeholder": {
+                            "type": "string"
+                          },
+                          "max": {
+                            "type": "number"
+                          },
+                          "min": {
+                            "type": "number"
+                          },
+                          "hint": {
+                            "type": "string"
+                          },
+                          "options": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "value"
+                              ]
+                            }
+                          },
+                          "required": {
+                            "type": "boolean",
+                            "default": false
+                          },
+                          "default": {
+                            "oneOf": [
+                              {
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ]
+                          },
+                          "regex": {
+                            "type": "string"
+                          },
+                          "pattern_error": {
+                            "type": "string"
+                          },
+                          "env_variable": {
+                            "type": "string"
+                          },
+                          "encoding": {
+                            "type": "string",
+                            "enum": [
+                              "hex",
+                              "base64"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "label",
+                          "env_variable"
+                        ]
+                      },
+                      "default": []
+                    },
+                    "https": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "exposable": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "no_gui": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "supported_architectures": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "arm64",
+                          "amd64"
+                        ]
+                      }
+                    },
+                    "uid": {
+                      "type": "number"
+                    },
+                    "gid": {
+                      "type": "number"
+                    },
+                    "dynamic_config": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "min_tipi_version": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": false,
+                      "default": 0
+                    },
+                    "updated_at": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": false,
+                      "default": 0
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "available",
+                    "port",
+                    "name",
+                    "tipi_version",
+                    "short_desc",
+                    "author",
+                    "source"
+                  ]
+                },
+                "updateInfo": {
+                  "type": "object",
+                  "properties": {
+                    "latestVersion": {
+                      "type": "number"
+                    },
+                    "minTipiVersion": {
+                      "type": "string"
+                    },
+                    "latestDockerVersion": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "latestVersion"
+                  ]
+                }
+              },
+              "required": [
+                "app",
+                "info",
+                "updateInfo"
+              ]
+            }
+          }
+        },
+        "required": [
+          "installed"
+        ]
+      },
+      "SearchAppsDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "short_desc": {
+                  "type": "string"
+                },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "network",
+                      "media",
+                      "development",
+                      "automation",
+                      "social",
+                      "utilities",
+                      "photography",
+                      "security",
+                      "featured",
+                      "books",
+                      "data",
+                      "music",
+                      "finance",
+                      "gaming",
+                      "ai"
+                    ]
+                  },
+                  "default": []
+                },
+                "deprecated": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "created_at": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "exclusiveMinimum": false,
+                  "default": 0
+                },
+                "supported_architectures": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "arm64",
+                      "amd64"
+                    ]
+                  }
+                },
+                "available": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "short_desc",
+                "available"
+              ]
+            }
+          },
+          "nextCursor": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "data",
+          "total"
+        ]
+      },
+      "AppDetailsDto": {
+        "type": "object",
+        "properties": {
+          "info": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "available": {
+                "type": "boolean"
+              },
+              "deprecated": {
+                "type": "boolean",
+                "default": false
+              },
+              "port": {
+                "type": "number",
+                "minimum": 1,
+                "exclusiveMinimum": false,
+                "maximum": 65535,
+                "exclusiveMaximum": false
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string",
+                "default": ""
+              },
+              "version": {
+                "type": "string",
+                "default": "latest"
+              },
+              "tipi_version": {
+                "type": "number"
+              },
+              "short_desc": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "website": {
+                "type": "string"
+              },
+              "force_expose": {
+                "type": "boolean",
+                "default": false
+              },
+              "generate_vapid_keys": {
+                "type": "boolean",
+                "default": false
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "network",
+                    "media",
+                    "development",
+                    "automation",
+                    "social",
+                    "utilities",
+                    "photography",
+                    "security",
+                    "featured",
+                    "books",
+                    "data",
+                    "music",
+                    "finance",
+                    "gaming",
+                    "ai"
+                  ]
+                },
+                "default": []
+              },
+              "url_suffix": {
+                "type": "string"
+              },
+              "form_fields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "text",
+                        "password",
+                        "email",
+                        "number",
+                        "fqdn",
+                        "ip",
+                        "fqdnip",
+                        "url",
+                        "random",
+                        "boolean"
+                      ]
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "placeholder": {
+                      "type": "string"
+                    },
+                    "max": {
+                      "type": "number"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "hint": {
+                      "type": "string"
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "value"
+                        ]
+                      }
+                    },
+                    "required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "default": {
+                      "oneOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "regex": {
+                      "type": "string"
+                    },
+                    "pattern_error": {
+                      "type": "string"
+                    },
+                    "env_variable": {
+                      "type": "string"
+                    },
+                    "encoding": {
+                      "type": "string",
+                      "enum": [
+                        "hex",
+                        "base64"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "label",
+                    "env_variable"
+                  ]
+                },
+                "default": []
+              },
+              "https": {
+                "type": "boolean",
+                "default": false
+              },
+              "exposable": {
+                "type": "boolean",
+                "default": false
+              },
+              "no_gui": {
+                "type": "boolean",
+                "default": false
+              },
+              "supported_architectures": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "arm64",
+                    "amd64"
+                  ]
+                }
+              },
+              "uid": {
+                "type": "number"
+              },
+              "gid": {
+                "type": "number"
+              },
+              "dynamic_config": {
+                "type": "boolean",
+                "default": false
+              },
+              "min_tipi_version": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": false,
+                "default": 0
+              },
+              "updated_at": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": false,
+                "default": 0
+              }
+            },
+            "required": [
+              "id",
+              "available",
+              "port",
+              "name",
+              "tipi_version",
+              "short_desc",
+              "author",
+              "source"
+            ]
+          },
+          "app": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "running",
+                  "stopped",
+                  "installing",
+                  "uninstalling",
+                  "stopping",
+                  "starting",
+                  "missing",
+                  "updating",
+                  "resetting",
+                  "restarting",
+                  "backing_up",
+                  "restoring"
+                ]
+              },
+              "lastOpened": {
+                "type": "string",
+                "nullable": true
+              },
+              "numOpened": {
+                "type": "number",
+                "default": 0
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "version": {
+                "type": "number"
+              },
+              "exposed": {
+                "type": "boolean"
+              },
+              "openPort": {
+                "type": "boolean"
+              },
+              "exposedLocal": {
+                "type": "boolean"
+              },
+              "domain": {
+                "type": "string",
+                "nullable": true
+              },
+              "isVisibleOnGuestDashboard": {
+                "type": "boolean"
+              },
+              "config": {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "lastOpened",
+              "version",
+              "exposed",
+              "openPort",
+              "exposedLocal",
+              "domain",
+              "isVisibleOnGuestDashboard"
+            ]
+          },
+          "updateInfo": {
+            "type": "object",
+            "properties": {
+              "latestVersion": {
+                "type": "number"
+              },
+              "minTipiVersion": {
+                "type": "string"
+              },
+              "latestDockerVersion": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "latestVersion"
+            ]
+          }
+        },
+        "required": [
+          "info",
+          "app",
+          "updateInfo"
+        ]
+      },
+      "PullDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "AppFormBody": {
+        "type": "object",
+        "properties": {
+          "exposed": {
+            "type": "boolean"
+          },
+          "exposedLocal": {
+            "type": "boolean"
+          },
+          "openPort": {
+            "type": "boolean",
+            "default": true
+          },
+          "domain": {
+            "type": "string"
+          },
+          "isVisibleOnGuestDashboard": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UninstallAppBody": {
+        "type": "object",
+        "properties": {
+          "removeBackups": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "removeBackups"
+        ]
+      },
+      "UpdateAppBody": {
+        "type": "object",
+        "properties": {
+          "performBackup": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "performBackup"
+        ]
+      },
+      "RestoreAppBackupDto": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "filename"
+        ]
+      },
+      "GetAppBackupsDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "size": {
+                  "type": "number"
+                },
+                "date": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "size",
+                "date"
+              ]
+            }
+          },
+          "total": {
+            "type": "number"
+          },
+          "currentPage": {
+            "type": "number"
+          },
+          "lastPage": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "currentPage",
+          "lastPage"
+        ]
+      },
+      "DeleteAppBackupBodyDto": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "filename"
+        ]
+      },
+      "LinksDto": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 0,
+                  "maxLength": 50,
+                  "nullable": true
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "iconUrl": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "type": "string",
+                      "maxLength": 0
+                    }
+                  ],
+                  "nullable": true
+                },
+                "userId": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "description",
+                "url",
+                "iconUrl",
+                "userId"
+              ]
+            }
+          }
+        },
+        "required": [
+          "links"
+        ]
+      },
+      "LinkBodyDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "iconUrl": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "string",
+                "maxLength": 0
+              }
+            ]
+          }
+        },
+        "required": [
+          "title",
+          "url"
+        ]
+      },
+      "EditLinkBodyDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "iconUrl": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "string",
+                "maxLength": 0
+              }
+            ]
+          }
+        },
+        "required": [
+          "title",
+          "url"
+        ]
+      }
+    }
+  }
+}

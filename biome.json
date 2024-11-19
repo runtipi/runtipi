@@ -1,23 +1,13 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "defaultBranch": "origin/develop",
+    "useIgnoreFile": true
+  },
   "files": {
-    "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"],
-    "ignore": [
-      "node_modules/**",
-      "dist/**",
-      "coverage/**",
-      ".next/**",
-      "public/**",
-      "app-data/**",
-      "apps/*/**",
-      "logs/**",
-      "media/**",
-      "repos/**",
-      "state/**",
-      "traefik/**",
-      "user-config/**",
-      "playwright-report/**"
-    ]
+    "ignore": ["dist/**", "public/**", "legacy/**"]
   },
   "formatter": {
     "enabled": true,
@@ -30,7 +20,7 @@
     "ignore": []
   },
   "organizeImports": {
-    "enabled": false
+    "enabled": true
   },
   "linter": {
     "enabled": true,
@@ -82,6 +72,22 @@
           "suspicious": {
             "noEmptyBlockStatements": {
               "level": "off"
+            }
+          }
+        }
+      }
+    },
+    {
+      "include": ["packages/backend/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
+          },
+          "correctness": {
+            "useHookAtTopLevel": {
+              "level": "off",
+              "options": {}
             }
           }
         }

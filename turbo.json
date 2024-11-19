@@ -1,0 +1,24 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/"]
+    },
+    "bundle": {
+      "dependsOn": ["^bundle"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["NODE_ENV", "LOCAL", "ROOT_FOLDER_HOST", "POSTGRES_PASSWORD", "INTERNAL_IP", "TIPI_VERSION", "LOG_LEVEL"]
+    }
+  }
+}
