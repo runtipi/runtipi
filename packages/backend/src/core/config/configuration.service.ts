@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { PartialUserSettingsDto } from '@/app.dto';
+import { settingsSchema, type PartialUserSettingsDto } from '@/app.dto';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { cleanseErrorData } from '@/common/helpers/error-helpers';
@@ -9,6 +9,7 @@ import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import dotenv from 'dotenv';
 import { z } from 'zod';
+import { FilesystemService } from '../filesystem/filesystem.service';
 
 export const ARCHITECTURES = ['arm64', 'amd64'] as const;
 export type Architecture = (typeof ARCHITECTURES)[number];
@@ -47,7 +48,7 @@ export class ConfigurationService {
   private envPath = path.join(DATA_DIR, '.env');
 
   // Lowest level, cannot use any other service or module to avoid circular dependencies
-  constructor(private readonly envUtils: EnvUtils) {
+  constructor(private readonly envUtils: EnvUtils, private readonly filesystem: FilesystemService) {
     dotenv.config({ path: this.envPath });
     this.config = this.configure();
   }
@@ -131,7 +132,14 @@ export class ConfigurationService {
       this.initSentry({ release: this.config.version, allowSentry: true });
     }
 
-    await fs.promises.writeFile(`${DATA_DIR}/state/settings.json`, JSON.stringify(settings, null, 2));
+    const settingsPath = path.join(DATA_DIR, "state", "settings.json")
+
+    const currentSettings = await this.filesystem.readJsonFile(settingsPath, settingsSchema.partial());
+
+    await this.filesystem.writeJsonFile(settingsPath, {
+      ...currentSettings,
+      ...settings,
+    });
 
     this.config.userSettings = {
       ...this.config.userSettings,
