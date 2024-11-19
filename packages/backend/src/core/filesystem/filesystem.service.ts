@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { ZodSchema } from 'zod';
+import { EOL } from 'node:os';
 
 @Injectable()
 export class FilesystemService {
@@ -48,7 +49,7 @@ export class FilesystemService {
 
   async writeJsonFile<T>(filePath: string, data: T): Promise<boolean> {
     try {
-      await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
+      await fs.promises.writeFile(filePath, `${JSON.stringify(data, null, 2)}${EOL}`, 'utf8');
       return true;
     } catch (error) {
       this.logger.error(`Error writing file ${filePath}: ${error}`);
@@ -59,7 +60,7 @@ export class FilesystemService {
   async writeTextFile(filePath: string, content: string): Promise<boolean> {
     try {
       await fs.promises.mkdir(filePath.split('/').slice(0, -1).join('/'), { recursive: true });
-      await fs.promises.writeFile(filePath, content, 'utf8');
+      await fs.promises.writeFile(filePath, `${content}${EOL}`, 'utf8');
       return true;
     } catch (error) {
       this.logger.error(`Error writing file ${filePath}: ${error}`);
