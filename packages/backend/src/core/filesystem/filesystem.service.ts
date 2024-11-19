@@ -48,7 +48,7 @@ export class FilesystemService {
 
   async writeJsonFile<T>(filePath: string, data: T): Promise<boolean> {
     try {
-      await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
+      await fs.promises.writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
       return true;
     } catch (error) {
       this.logger.error(`Error writing file ${filePath}: ${error}`);
@@ -59,7 +59,7 @@ export class FilesystemService {
   async writeTextFile(filePath: string, content: string): Promise<boolean> {
     try {
       await fs.promises.mkdir(filePath.split('/').slice(0, -1).join('/'), { recursive: true });
-      await fs.promises.writeFile(filePath, content, 'utf8');
+      await fs.promises.writeFile(filePath, `${content}\n`, 'utf8');
       return true;
     } catch (error) {
       this.logger.error(`Error writing file ${filePath}: ${error}`);
