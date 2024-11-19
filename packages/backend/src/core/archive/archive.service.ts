@@ -8,6 +8,16 @@ export class ArchiveService {
   };
 
   extractTarGz = async (sourceFile: string, destinationDir: string) => {
-    return execAsync(`tar -xzf ${sourceFile} -C ${destinationDir}`);
+    const fileType = await execAsync(`file --brief --mime-type ${sourceFile}`);
+    const mimeType = fileType.stdout.trim();
+
+    let tarCommand = `tar -xzf ${sourceFile} -C ${destinationDir}`;
+
+    // Support for legacy tarballs without the 'z' flag
+    if (mimeType === 'application/x-tar') {
+      tarCommand = `tar -xf ${sourceFile} -C ${destinationDir}`;
+    }
+
+    return await execAsync(tarCommand);
   };
 }

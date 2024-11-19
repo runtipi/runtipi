@@ -1,4 +1,4 @@
-import { ARCHITECTURES } from '@/core/config/configuration.service';
+import { ARCHITECTURES } from '@/common/constants';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 

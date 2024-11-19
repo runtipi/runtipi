@@ -1,6 +1,7 @@
+import type { Architecture } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { notEmpty, pLimit } from '@/common/helpers/file-helpers';
-import { type Architecture, ConfigurationService } from '@/core/config/configuration.service';
+import { ConfigurationService } from '@/core/config/configuration.service';
 import type { App } from '@/core/database/drizzle/types';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';

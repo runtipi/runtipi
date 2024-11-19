@@ -22,8 +22,9 @@ export class RestoreAppCommand extends AppLifecycleCommand {
     try {
       // Stop the app
       this.logger.info(`Stopping app ${appId}`);
-      await this.dockerService.composeApp(appId, 'rm --force --stop');
-      this.logger.info('App stopped!');
+      await this.dockerService.composeApp(appId, 'rm --force --stop').catch((err) => {
+        this.logger.error(`Failed to stop app ${appId}: ${err.message}`);
+      });
 
       await this.backupManager.restoreApp(appId, this.filename);
 

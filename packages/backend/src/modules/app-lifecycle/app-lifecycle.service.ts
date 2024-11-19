@@ -358,6 +358,7 @@ export class AppLifecycleService {
         const appInfo = await this.appFilesManager.getInstalledAppInfo(appId);
 
         await this.appRepository.updateApp(appId, { status: appStatusBeforeUpdate, version: appInfo?.tipi_version });
+        await this.updateAppConfig({ appId, form: app.config });
         await this.socketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
 
         if (appStatusBeforeUpdate === 'running') {
