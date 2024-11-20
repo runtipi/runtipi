@@ -8,7 +8,7 @@ type Props = {
 
 export const LayoutActions = (props: Props) => {
   const { availableUpdates } = props;
-  const { activeRoute } = useUIStore();
+  const activeRoute = useUIStore((state) => state.activeRoute);
 
   if (activeRoute === 'app-store') {
     return <AppStoreLayoutActions />;
