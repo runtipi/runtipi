@@ -208,7 +208,7 @@
   "DASHBOARD_IP_WARNING_TITLE": "Nem biztonságos konfiguráció",
   "DASHBOARD_IP_WARNING": "Figyelmeztetés, veszélyben lehetsz! Úgy tűnik, hogy nyilvános IP-címen keresztül lépsz be a példányodba. Ezáltal a műszerfalad és az összes telepített alkalmazásod sebezhetővé válik a támadók számára",
   "DELETE_BACKUP_MODAL_TITLE": "Biztonsági mentés törlése",
-  "DELETE_BACKUP_MODAL_WARNING": "",
+  "DELETE_BACKUP_MODAL_WARNING": "Tényleg vissza akarja állítani a {{date}} készült {{id}} biztonsági mentést?",
   "DELETE_BACKUP_MODAL_SUBTITLE": "Ez a művelet nem vonható vissza",
   "DELETE_BACKUP_MODAL_SUBMIT": "Törlés",
   "GUEST_DASHBOARD": "Vendég műszerfal",
