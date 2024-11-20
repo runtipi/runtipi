@@ -33,7 +33,7 @@ export interface BuilderService {
   image: string;
   containerName: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
-  environment?: Record<string, string>;
+  environment?: Record<string, string | number>;
   command?: string | string[];
   volumes?: string[];
   ports?: string[];
@@ -222,7 +222,7 @@ export class ServiceBuilder {
    * service.setEnvironment({ key: 'value' });
    * ```
    */
-  setEnvironment(environment?: Record<string, string>) {
+  setEnvironment(environment?: Record<string, string | number>) {
     if (environment) {
       this.service.environment = { ...this.service.environment, ...environment };
     }
