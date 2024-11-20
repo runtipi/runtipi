@@ -11,7 +11,7 @@ type Props = {
 
 export const PageTitle = ({ apps }: Props) => {
   const { t } = useTranslation();
-  const { activeRoute } = useUIStore();
+  const activeRoute = useUIStore((state) => state.activeRoute);
 
   const path = window.location.pathname;
   // biome-ignore lint/correctness/useExhaustiveDependencies: Explicitly ignore this rule to re-render the component when the activeRoute changes

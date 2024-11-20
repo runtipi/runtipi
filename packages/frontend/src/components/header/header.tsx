@@ -15,7 +15,7 @@ type HeaderProps = {
 };
 
 export const Header = (props: HeaderProps) => {
-  const { setDarkMode } = useUIStore();
+  const setDarkMode = useUIStore((state) => state.setDarkMode);
 
   const { isUpdateAvailable, allowAutoThemes, isLoggedIn } = props;
 
