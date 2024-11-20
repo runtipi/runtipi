@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AppService > copyAssets > should create base folder structure 1`] = `
+"/
+├─ app-data/
+└─ data/
+   ├─ apps/
+   ├─ backups/
+   ├─ media/
+   │  ├─ data/
+   │  │  ├─ books/
+   │  │  ├─ comics/
+   │  │  ├─ images/
+   │  │  ├─ movies/
+   │  │  ├─ music/
+   │  │  ├─ podcasts/
+   │  │  ├─ roms/
+   │  │  └─ tv/
+   │  ├─ downloads/
+   │  │  ├─ complete/
+   │  │  ├─ incomplete/
+   │  │  └─ watch/
+   │  ├─ torrents/
+   │  │  ├─ complete/
+   │  │  ├─ incomplete/
+   │  │  └─ watch/
+   │  └─ usenet/
+   │     ├─ complete/
+   │     ├─ incomplete/
+   │     └─ watch/
+   ├─ repos/
+   │  └─ repo-id/
+   │     └─ apps/
+   ├─ state/
+   │  └─ seed
+   └─ traefik/
+      ├─ dynamic/
+      ├─ shared/
+      └─ tls/"
+`;
