@@ -9,6 +9,7 @@
 !package.json
 !turbo.json
 !supervisord.*.conf
+!patches/**
 
 !**/package.json
 !**/tsconfig.json

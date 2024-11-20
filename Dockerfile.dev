@@ -26,6 +26,7 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
 RUN chmod +x docker-binary
 RUN mv docker-binary /usr/local/bin/docker-compose
 
+COPY ./patches ./patches
 COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch
