@@ -15,7 +15,9 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "tsc": "tsc --noEmit",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org runtipi --project runtipi-backend ./dist && sentry-cli sourcemaps upload --org runtipi --project runtipi-backend ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org runtipi --project runtipi-backend ./dist && sentry-cli sourcemaps upload --org runtipi --project runtipi-backend ./dist",
+    "test": "vitest --coverage --watch=false",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@keyv/sqlite": "^4.0.1",
@@ -64,12 +66,14 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.2.0",
     "@nestjs/cli": "^10.4.7",
     "@nestjs/schematics": "^10.2.3",
     "@nestjs/testing": "^10.4.8",
     "@sentry/types": "^8.38.0",
     "@swc/cli": "0.5.0",
     "@swc/core": "^1.9.2",
+    "@total-typescript/shoehorn": "^0.1.2",
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^4.17.17",
     "@types/jsonwebtoken": "^9.0.7",
@@ -82,14 +86,20 @@
     "@types/validator": "^13.12.2",
     "@types/web-push": "^3.6.4",
     "@vercel/ncc": "^0.34.0",
+    "@vitest/coverage-v8": "2.1.5",
     "drizzle-kit": "^0.28.1",
     "esbuild": "^0.24.0",
+    "memfs": "^4.14.0",
+    "msw": "^2.6.5",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.6.3",
-    "vitest": "^2.1.5"
+    "unplugin-swc": "^1.5.1",
+    "vite-tsconfig-paths": "5.1.2",
+    "vitest": "^2.1.5",
+    "vitest-mock-extended": "^2.0.2"
   }
 }
