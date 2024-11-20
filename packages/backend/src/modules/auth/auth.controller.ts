@@ -61,7 +61,7 @@ export class AuthController {
   }
 
   @Post('/logout')
-  async logout(@Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<void> {
+  async logout(@Res() res: Response, @Req() req: Request): Promise<void> {
     res.clearCookie(SESSION_COOKIE_NAME);
     const sessionId = req.cookies['tipi.sid'];
 
@@ -71,7 +71,7 @@ export class AuthController {
 
     await this.authService.logout(sessionId);
 
-    return;
+    res.status(204).send();
   }
 
   @Patch('/username')
