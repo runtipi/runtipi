@@ -12,10 +12,6 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/"]
     },
-    "test": {
-      "dependsOn": ["^test"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"]
-    },
     "lint": {
       "dependsOn": ["^lint"]
     },
@@ -23,6 +19,12 @@
       "cache": false,
       "persistent": true,
       "env": ["NODE_ENV", "LOCAL", "ROOT_FOLDER_HOST", "POSTGRES_PASSWORD", "INTERNAL_IP", "TIPI_VERSION", "LOG_LEVEL"]
+    },
+    "test": {
+      "cache": false,
+      "dependsOn": ["^test"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["coverage/"]
     }
   }
 }
