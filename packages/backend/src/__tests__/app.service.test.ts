@@ -1,21 +1,157 @@
-import { AppController } from '@/app.controller';
+import fs from 'node:fs';
 import { AppService } from '@/app.service';
+import { APP_DATA_DIR, APP_DIR, DATA_DIR, LATEST_RELEASE_URL } from '@/common/constants';
+import { CacheService } from '@/core/cache/cache.service';
+import { ConfigurationService } from '@/core/config/configuration.service';
+import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import { faker } from '@faker-js/faker';
 import { Test } from '@nestjs/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { fromPartial } from '@total-typescript/shoehorn';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { mock } from 'vitest-mock-extended';
+
+const server = setupServer();
 
 describe('AppService', () => {
   let appService: AppService;
+  let configurationService = mock<ConfigurationService>();
+  let cacheService = mock<CacheService>();
+
+  beforeAll(() => {
+    server.listen();
+    server.use(
+      http.get(LATEST_RELEASE_URL, () => {
+        return HttpResponse.json({
+          tag_name: 'latest',
+          body: 'body',
+        });
+      }),
+    );
+  });
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [AppController],
-      providers: [AppService],
-    }).compile();
+      providers: [AppService, FilesystemService],
+    })
+      .useMocker(mock)
+      .compile();
 
     appService = moduleRef.get(AppService);
+    configurationService = moduleRef.get(ConfigurationService);
+    cacheService = moduleRef.get(CacheService);
   });
 
-  it('should return the version', async () => {
-    expect(1).toBe(1);
+  describe('getVersion', () => {
+    it('should return the version', async () => {
+      // arrange
+      const version = faker.system.semver();
+      configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
+
+      // act
+      const result = await appService.getVersion();
+
+      // assert
+      expect(result.current).toBe(version);
+    });
+
+    it('shoult return version from cache if set', async () => {
+      // arrange
+      const version = faker.system.semver();
+      const latest = faker.system.semver();
+      configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
+      cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(latest);
+      cacheService.get.calledWith('latestVersionBody').mockResolvedValueOnce('body');
+
+      // act
+      const result = await appService.getVersion();
+
+      // assert
+      expect(result.current).toBe(version);
+      expect(result.latest).toBe(latest);
+      expect(result.body).toBe('body');
+    });
+
+    it('should fetch latest version from github if not in cache', async () => {
+      // arrange
+      const version = faker.system.semver();
+      const latest = faker.system.semver();
+      const body = faker.lorem.paragraph();
+      configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
+      cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(undefined);
+      cacheService.get.calledWith('latestVersionBody').mockResolvedValueOnce(undefined);
+
+      server.use(
+        http.get(LATEST_RELEASE_URL, () => {
+          return HttpResponse.json({
+            tag_name: latest,
+            body,
+          });
+        }),
+      );
+
+      // act
+      const result = await appService.getVersion();
+
+      // assert
+      expect(result.current).toBe(version);
+      expect(result.latest).toBe(latest);
+      expect(result.body).toBe(body);
+    });
+
+    it('should return current version if cache fails', async () => {
+      // arrange
+      const version = faker.system.semver();
+      configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
+      cacheService.get.calledWith('latestVersion').mockRejectedValueOnce(new Error('error'));
+
+      // act
+      const result = await appService.getVersion();
+
+      // assert
+      expect(result.current).toBe(version);
+      expect(result.latest).toBe(version);
+      expect(result.body).toBe('');
+    });
+
+    it('should return current version if fetch fails', async () => {
+      // arrange
+      const version = faker.system.semver();
+      configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
+      cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(undefined);
+
+      server.use(
+        http.get(LATEST_RELEASE_URL, () => {
+          return new HttpResponse('error', { status: 500 });
+        }),
+      );
+
+      // act
+      const result = await appService.getVersion();
+
+      // assert
+      expect(result.current).toBe(version);
+      expect(result.latest).toBe(version);
+      expect(result.body).toBe('');
+    });
+  });
+
+  describe('copyAssets', () => {
+    it('should create base folder structure', async () => {
+      // arrange
+      const appDir = APP_DIR;
+      const dataDir = DATA_DIR;
+      const appDataDir = APP_DATA_DIR;
+      const directories = { appDir, dataDir, appDataDir };
+      configurationService.getConfig.mockReturnValueOnce(fromPartial({ directories, userSettings: { persistTraefikConfig: false } }));
+
+      // act
+      await appService.copyAssets();
+
+      // assert
+      // @ts-expect-error
+      expect(fs.tree()).toMatchSnapshot();
+    });
   });
 });

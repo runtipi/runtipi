@@ -2,6 +2,7 @@ import path from 'node:path';
 
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
+import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
 import { CacheService } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
@@ -62,7 +63,7 @@ export class AppService {
       let body = (await this.cache.get('latestVersionBody')) ?? '';
 
       if (!version) {
-        const response = await fetch('https://api.github.com/repos/runtipi/runtipi/releases/latest');
+        const response = await fetch(LATEST_RELEASE_URL);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
