@@ -1,8 +1,8 @@
+import type { AppStatus as AppStatusType } from '@/types/app.types';
 import clsx from 'clsx';
 import type React from 'react';
-import { Tooltip } from 'react-tooltip';
-import type { AppStatus as AppStatusType } from '@/types/app.types';
 import { useTranslation } from 'react-i18next';
+import { Tooltip } from 'react-tooltip';
 
 export const AppStatus: React.FC<{ lite?: boolean; status: AppStatusType }> = ({ status, lite }) => {
   const { t } = useTranslation();

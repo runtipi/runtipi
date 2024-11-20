@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
 export const GuestHeader = () => {
-  const { setDarkMode } = useUIStore();
+  const setDarkMode = useUIStore((state) => state.setDarkMode);
 
   const { t } = useTranslation();
 

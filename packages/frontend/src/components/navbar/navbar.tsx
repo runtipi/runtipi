@@ -11,7 +11,7 @@ interface IProps {
 
 export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
   const { t } = useTranslation();
-  const { activeRoute } = useUIStore();
+  const activeRoute = useUIStore((state) => state.activeRoute);
 
   const renderItem = (title: string, name: string, IconComponent: typeof IconApps) => {
     const isActive = activeRoute?.split('/')[0] === name;
