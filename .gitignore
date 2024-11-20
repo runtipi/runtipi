@@ -80,3 +80,5 @@ public/js/*
 !public/js/.gitkeep
 
 /cache
+
+coverage

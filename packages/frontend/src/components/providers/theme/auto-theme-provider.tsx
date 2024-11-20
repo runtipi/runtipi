@@ -21,7 +21,7 @@ export const AutoThemeProvider = (props: PropsWithChildren<Props>) => {
   switch (theme) {
     case 'christmas':
       return (
-        <Suspense fallback="YOLOO">
+        <Suspense>
           <ChristmasTheme>{children}</ChristmasTheme>
         </Suspense>
       );
