@@ -23,10 +23,10 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@hey-api/openapi-ts": "^0.55.3",
-    "@playwright/test": "^1.48.2",
+    "@hey-api/openapi-ts": "^0.56.2",
+    "@playwright/test": "^1.49.0",
     "@types/pg": "^8.11.10",
-    "dotenv-cli": "^7.4.2",
+    "dotenv-cli": "^7.4.3",
     "turbo": "^2.3.0"
   },
   "dependencies": {
