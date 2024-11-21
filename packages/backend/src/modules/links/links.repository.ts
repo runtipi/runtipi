@@ -30,7 +30,7 @@ export class LinksRepository {
 
     const updatedLinks = await this.databaseService.db
       .update(linkTable)
-      .set({ title, description, url, iconUrl, updatedAt: new Date().toString() })
+      .set({ title, description, url, iconUrl, updatedAt: new Date().toISOString() })
       .where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)))
       .returning();
 
