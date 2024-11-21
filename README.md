@@ -23,7 +23,7 @@
 ![Preview](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png)
 
 > [!WARNING]  
-> Runtipi is built and maintained by volunteers. There is no guarantee of support or security when you use Tipi. While the system is considered stable, it is still in active development and may contain bugs.
+> Runtipi is built and maintained by volunteers. There is no guarantee of support or security when you use Runtipi. While the system is considered stable, it is still in active development and may contain bugs.
 
 Runtipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Runtipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Runtipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/runtipi/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
 
