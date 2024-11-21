@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { Injectable } from '@nestjs/common';

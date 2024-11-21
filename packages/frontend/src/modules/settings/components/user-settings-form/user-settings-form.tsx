@@ -12,10 +12,20 @@ import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import validator from 'validator';
+import { z } from 'zod';
 
 const TimeZoneSelector = lazy(() =>
   import('@/components/timezone-selector/timezone-selector').then((module) => ({ default: module.TimeZoneSelector })),
 );
+
+const settingsSchema = z.object({
+  appsRepoUrl: z.string().optional(),
+  localDomain: z.string().optional(),
+  guestDashboard: z.boolean().optional(),
+  allowAutoThemes: z.boolean().optional(),
+  allowErrorMonitoring: z.boolean().optional(),
+  timeZone: z.string().optional(),
+});
 
 export type SettingsFormValues = {
   appsRepoUrl?: string;
@@ -35,7 +45,7 @@ interface IProps {
 }
 
 export const UserSettingsForm = (props: IProps) => {
-  const { onSubmit, initialValues: initalValues, loading, currentLocale = 'en-US', submitErrors } = props;
+  const { onSubmit, initialValues, loading, currentLocale = 'en-US', submitErrors } = props;
   const { t } = useTranslation();
 
   const validateFields = (values: SettingsFormValues) => {
@@ -58,7 +68,7 @@ export const UserSettingsForm = (props: IProps) => {
     setError,
     control,
     formState: { errors },
-  } = useForm<SettingsFormValues>({ values: initalValues });
+  } = useForm<SettingsFormValues>({ values: initialValues });
 
   useEffect(() => {
     if (submitErrors) {
@@ -78,7 +88,7 @@ export const UserSettingsForm = (props: IProps) => {
     }
 
     if (Object.keys(validationErrors).length === 0) {
-      onSubmit(values);
+      onSubmit(settingsSchema.parse(values));
     }
   };
 
