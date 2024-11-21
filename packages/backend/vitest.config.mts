@@ -8,7 +8,7 @@ type Plugin = Exclude<UserWorkspaceConfig['plugins'], undefined>[number];
 export default defineConfig({
   plugins: [swc.vite(), viteTsconfigPaths()] as Plugin[],
   test: {
-    setupFiles: ['./tests/vite.setup.ts'],
+    setupFiles: ['./src/tests/vite.setup.ts'],
     coverage: { all: true, reporter: ['lcov', 'text-summary'] },
     reporters: ['default'],
   },
