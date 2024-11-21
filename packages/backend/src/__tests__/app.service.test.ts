@@ -4,12 +4,12 @@ import { APP_DATA_DIR, APP_DIR, DATA_DIR, LATEST_RELEASE_URL } from '@/common/co
 import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import type { FsMock } from '@/tests/__mocks__/fs';
 import { faker } from '@faker-js/faker';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import type { FsMock } from 'tests/__mocks__/fs';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
