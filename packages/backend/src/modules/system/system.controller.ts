@@ -26,6 +26,6 @@ export class SystemController {
       'Content-Disposition': 'attachment; filename=cert.pem',
     });
 
-    res.send(cert);
+    return res.send(cert);
   }
 }
