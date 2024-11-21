@@ -13,6 +13,7 @@ const IgnoreErrors = [
   /port is already allocated/,
   /address already in use/,
   /Error with your custom app/,
+  /cannot assign requested address/,
 ];
 
 const cleanseUrl = (url: string) => {
