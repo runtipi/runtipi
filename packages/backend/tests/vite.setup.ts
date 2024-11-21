@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DATA_DIR } from '@/common/constants';
 import { beforeEach, vi } from 'vitest';
+import type { FsMock } from './__mocks__/fs';
 
 vi.mock('fs', async () => {
   const { fsMock } = await import('./__mocks__/fs');
@@ -11,12 +12,19 @@ vi.mock('fs', async () => {
 });
 
 beforeEach(async () => {
-  // @ts-expect-error - custom mock method
-  fs.__resetAllMocks();
+  (fs as unknown as FsMock).__resetAllMocks();
 
-  await fs.promises.mkdir(DATA_DIR, { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
-  await fs.promises.mkdir(path.join(DATA_DIR, 'backups'), { recursive: true });
-  await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'seed'), 'seed');
-  await fs.promises.mkdir(path.join(DATA_DIR, 'repos', 'repo-id', 'apps'), { recursive: true });
+  const directories = [DATA_DIR, path.join(DATA_DIR, 'state'), path.join(DATA_DIR, 'backups'), path.join(DATA_DIR, 'repos', 'repo-id', 'apps')];
+
+  try {
+    await Promise.all(
+      directories.map(async (dir) => {
+        await fs.promises.mkdir(dir, { recursive: true });
+      }),
+    );
+
+    await fs.promises.writeFile(path.join(DATA_DIR, 'state', 'seed'), 'seed');
+  } catch (err) {
+    console.error('Failed to setup test directories', err);
+  }
 });
