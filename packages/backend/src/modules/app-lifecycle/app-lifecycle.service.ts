@@ -313,13 +313,14 @@ export class AppLifecycleService {
       }
     }
 
-    const { success } = await this.appEventsQueue.publishAsync({
+    const { success, message } = await this.appEventsQueue.publishAsync({
       command: 'generate_env',
       appid: appId,
       form: parsedForm,
     });
 
     if (!success) {
+      this.logger.error(`Failed to update app ${appId}: ${message}`);
       throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appId });
     }
 
