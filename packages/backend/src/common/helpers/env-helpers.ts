@@ -87,6 +87,9 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
     );
   }
 
+  // Ensure that the app data path does not contain the /app-data suffix
+  const fixedAppDataPath = data.appDataPath?.split('/app-data')[0];
+
   envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
   envMap.set('APPS_REPO_ID', repoId);
   envMap.set('APPS_REPO_URL', data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
@@ -96,7 +99,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   envMap.set('ARCHITECTURE', getArchitecture());
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
-  envMap.set('RUNTIPI_APP_DATA_PATH', data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH') || rootFolderHost);
+  envMap.set('RUNTIPI_APP_DATA_PATH', fixedAppDataPath || envMap.get('RUNTIPI_APP_DATA_PATH') || rootFolderHost);
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
