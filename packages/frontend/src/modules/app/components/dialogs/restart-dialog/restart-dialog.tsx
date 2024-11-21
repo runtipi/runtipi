@@ -24,7 +24,7 @@ export const RestartDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('installing', info.id);
+      setOptimisticStatus('restarting', info.id);
       onClose();
     },
   });

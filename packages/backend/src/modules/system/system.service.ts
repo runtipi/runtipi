@@ -39,7 +39,14 @@ export class SystemService {
     const memoryFree = Math.round(Number(memResult.available) / 1024 / 1024 / 1024);
     const percentUsedMemory = Math.round(((memoryTotal - memoryFree) / memoryTotal) * 100);
 
-    return { diskUsed, diskSize, percentUsed, cpuLoad: currentLoad, memoryTotal, percentUsedMemory };
+    return {
+      diskUsed: diskUsed || 0,
+      diskSize: diskSize || 0,
+      percentUsed: percentUsed || 0,
+      cpuLoad: currentLoad || 0,
+      memoryTotal: memoryTotal || 0,
+      percentUsedMemory: percentUsedMemory || 0,
+    };
   }
 
   public async getLocalCertificate() {

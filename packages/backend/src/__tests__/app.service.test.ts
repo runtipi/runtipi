@@ -4,6 +4,7 @@ import { APP_DATA_DIR, APP_DIR, DATA_DIR, LATEST_RELEASE_URL } from '@/common/co
 import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import type { FsMock } from '@/tests/__mocks__/fs';
 import { faker } from '@faker-js/faker';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
@@ -150,8 +151,7 @@ describe('AppService', () => {
       await appService.copyAssets();
 
       // assert
-      // @ts-expect-error
-      expect(fs.tree()).toMatchSnapshot();
+      expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
     });
   });
 });

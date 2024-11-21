@@ -11,7 +11,8 @@ type Props = {
 export const ThemeProvider = (props: Props) => {
   const { children, initialTheme } = props;
 
-  const { theme, setDarkMode } = useUIStore();
+  const theme = useUIStore((state) => state.theme);
+  const setDarkMode = useUIStore((state) => state.setDarkMode);
 
   useEffect(() => {
     if (theme) {
