@@ -51,7 +51,7 @@ export class AppsController {
   }
 
   @Get(':id/image')
-  async getImage(@Param('id') id: string, @Res({ passthrough: true }) res: Response) {
+  async getImage(@Param('id') id: string, @Res() res: Response) {
     const image = await this.appCatalog.getAppImage(id);
 
     res.set({
@@ -59,6 +59,6 @@ export class AppsController {
       'Cache-Control': 'public, max-age=86400',
     });
 
-    res.send(image).end();
+    return res.send(image);
   }
 }
