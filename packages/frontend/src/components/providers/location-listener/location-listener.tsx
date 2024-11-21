@@ -11,7 +11,6 @@ export const LocationListener = () => {
   useEffect(() => {
     const newRoute = location.pathname.substring(1);
     if (activeRoute !== newRoute) {
-      console.log('newRoute', newRoute);
       // This will run whenever the URL changes
       setActiveRoute(newRoute);
     }
