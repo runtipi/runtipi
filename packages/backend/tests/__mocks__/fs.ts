@@ -56,3 +56,5 @@ export const fsMock = {
     },
   },
 };
+
+export type FsMock = typeof fsMock.default;

@@ -9,6 +9,7 @@ import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import type { FsMock } from 'tests/__mocks__/fs';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
@@ -150,8 +151,7 @@ describe('AppService', () => {
       await appService.copyAssets();
 
       // assert
-      // @ts-expect-error
-      expect(fs.tree()).toMatchSnapshot();
+      expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
     });
   });
 });
