@@ -61,7 +61,7 @@ export class AuthController {
   }
 
   @Post('/logout')
-  async logout(@Res() res: Response, @Req() req: Request): Promise<void> {
+  async logout(@Res() res: Response, @Req() req: Request) {
     res.clearCookie(SESSION_COOKIE_NAME);
     const sessionId = req.cookies['tipi.sid'];
 
@@ -71,12 +71,12 @@ export class AuthController {
 
     await this.authService.logout(sessionId);
 
-    res.status(204).send();
+    return res.status(204).send();
   }
 
   @Patch('/username')
   @UseGuards(AuthGuard)
-  async changeUsername(@Body() body: ChangeUsernameBody, @Req() req: Request, @Res() res: Response): Promise<void> {
+  async changeUsername(@Body() body: ChangeUsernameBody, @Req() req: Request, @Res() res: Response) {
     const userId = req.user?.id;
 
     if (!userId) {
@@ -86,12 +86,12 @@ export class AuthController {
     await this.authService.changeUsername({ userId, ...body });
 
     res.clearCookie(SESSION_COOKIE_NAME);
-    res.status(204).send();
+    return res.status(204).send();
   }
 
   @Patch('/password')
   @UseGuards(AuthGuard)
-  async changePassword(@Body() body: ChangePasswordBody, @Req() req: Request, @Res() res: Response): Promise<void> {
+  async changePassword(@Body() body: ChangePasswordBody, @Req() req: Request, @Res() res: Response) {
     const userId = req.user?.id;
 
     if (!userId) {
@@ -101,7 +101,7 @@ export class AuthController {
     await this.authService.changePassword({ userId, ...body });
 
     res.clearCookie(SESSION_COOKIE_NAME);
-    res.status(204).send();
+    return res.status(204).send();
   }
 
   @Patch('/totp/get-uri')
