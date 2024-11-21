@@ -31,7 +31,7 @@ export class MainExceptionFilter implements ExceptionFilter {
       message = exception.message;
     }
 
-    if (status >= 500) {
+    if (status >= 500 && !(exception instanceof TranslatableError)) {
       Sentry.captureException(exception, {
         tags: {
           url: request.url,
