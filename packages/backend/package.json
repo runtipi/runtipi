@@ -42,7 +42,7 @@
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.4",
     "drizzle-orm": "^0.36.3",
-    "i18next": "^23.16.8",
+    "i18next": "^24.0.0",
     "i18next-fs-backend": "^2.5.0",
     "jsonwebtoken": "^9.0.2",
     "keyv": "^5.2.1",
