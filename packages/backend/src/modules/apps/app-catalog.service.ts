@@ -199,6 +199,7 @@ export class AppCatalogService {
         updatedAt: '',
         exposedLocal: false,
         isVisibleOnGuestDashboard: false,
+        appStoreId: null,
       } satisfies App;
     }
 

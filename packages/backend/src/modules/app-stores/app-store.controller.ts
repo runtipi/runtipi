@@ -1,18 +1,17 @@
 import { Controller, Post, UseGuards } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
-import { PullDto } from './dto/repos.dto';
-import { ReposService } from './repos.service';
+import { AppStoreService } from './app-store.service';
+import { PullDto } from './dto/app-store.dto';
 
 @UseGuards(AuthGuard)
 @Controller('repos')
-export class ReposController {
-  constructor(private readonly reposService: ReposService) {}
+export class AppStoreController {
+  constructor(private readonly appStoreService: AppStoreService) {}
 
   @Post('/pull')
   @ZodSerializerDto(PullDto)
   async pull(): Promise<PullDto> {
-    return this.reposService.pullRepositories();
+    return this.appStoreService.pullRepositories();
   }
 }
-

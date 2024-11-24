@@ -9,8 +9,8 @@ import { ConfigurationService } from './core/config/configuration.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
 import { SocketManager } from './core/socket/socket.service';
+import { ReposHelpers } from './modules/app-stores/repos.helpers';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
-import { ReposHelpers } from './modules/repos/repos.helpers';
 
 @Injectable()
 export class AppService {

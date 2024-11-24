@@ -5,7 +5,7 @@ import { RepoEventsQueue } from '../queue/entities/repo-events';
 import { ReposHelpers } from './repos.helpers';
 
 @Injectable()
-export class ReposService {
+export class AppStoreService {
   constructor(
     private readonly logger: LoggerService,
     private readonly repoQueue: RepoEventsQueue,
@@ -34,5 +34,9 @@ export class ReposService {
     const appsRepoUrl = this.config.get('appsRepoUrl');
     await this.repoHelpers.pullRepo(appsRepoUrl);
     return { success: true };
+  }
+
+  public async migrateCurrentRepo() {
+    const appsRepoUrl = this.config.get('appsRepoUrl');
   }
 }
