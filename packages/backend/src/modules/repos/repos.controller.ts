@@ -1,23 +1,18 @@
-import { Controller, Post, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "../auth/auth.guard";
-import { ConfigurationService } from "@/core/config/configuration.service";
-import { ReposService } from "./repos.service";
-import { PullDto } from "./dto/repos.dto";
-import { ZodSerializerDto } from "nestjs-zod";
+import { Controller, Post, UseGuards } from '@nestjs/common';
+import { ZodSerializerDto } from 'nestjs-zod';
+import { AuthGuard } from '../auth/auth.guard';
+import { PullDto } from './dto/repos.dto';
+import { ReposService } from './repos.service';
 
 @UseGuards(AuthGuard)
-@Controller("repos")
+@Controller('repos')
 export class ReposController {
-    constructor(
-        private readonly reposService: ReposService,
-        private readonly config: ConfigurationService
-    ) {}
+  constructor(private readonly reposService: ReposService) {}
 
-    @Post("/pull")
-    @ZodSerializerDto(PullDto)
-    async pull(): Promise<PullDto> {
-        const appsRepoUrl = this.config.get("appsRepoUrl");
-        await this.reposService.pullRepo(appsRepoUrl);
-        return { success: true };
-    }
+  @Post('/pull')
+  @ZodSerializerDto(PullDto)
+  async pull(): Promise<PullDto> {
+    return this.reposService.pullRepositories();
+  }
 }
+

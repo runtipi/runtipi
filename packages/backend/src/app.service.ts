@@ -10,7 +10,7 @@ import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
 import { SocketManager } from './core/socket/socket.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
-import { ReposService } from './modules/repos/repos.service';
+import { ReposHelpers } from './modules/repos/repos.helpers';
 
 @Injectable()
 export class AppService {
@@ -18,7 +18,7 @@ export class AppService {
     private readonly cache: CacheService,
     private readonly configuration: ConfigurationService,
     private readonly logger: LoggerService,
-    private readonly repos: ReposService,
+    private readonly repos: ReposHelpers,
     private readonly repoQueue: RepoEventsQueue,
     private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,

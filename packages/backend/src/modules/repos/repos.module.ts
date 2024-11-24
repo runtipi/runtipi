@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { ReposService } from './repos.service';
 import { QueueModule } from '../queue/queue.module';
 import { ReposController } from './repos.controller';
+import { ReposHelpers } from './repos.helpers';
+import { ReposService } from './repos.service';
 
 @Module({
   imports: [QueueModule],
   controllers: [ReposController],
-  providers: [ReposService],
-  exports: [ReposService],
+  providers: [ReposService, ReposHelpers],
+  exports: [ReposService, ReposHelpers],
 })
-export class ReposModule { }
+export class ReposModule {}
