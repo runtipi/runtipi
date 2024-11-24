@@ -8,7 +8,7 @@ import { SocketManager } from '@/core/socket/socket.service';
 import { Injectable } from '@nestjs/common';
 import { AppFilesManager } from '../apps/app-files-manager';
 import type { AppEventFormInput } from '../queue/entities/app-events';
-import { ReposService } from '../repos/repos.service';
+import { ReposHelpers } from '../repos/repos.helpers';
 import { DockerComposeBuilder } from './builders/compose.builder';
 import { type Service, type ServiceInput, serviceSchema } from './builders/schemas';
 import { ServiceBuilder } from './builders/service.builder';
@@ -23,7 +23,7 @@ export class DockerService {
     private readonly logger: LoggerService,
     private readonly config: ConfigurationService,
     private readonly appFilesManager: AppFilesManager,
-    private readonly repoService: ReposService,
+    private readonly repoHelpers: ReposHelpers,
     private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
   ) {
@@ -49,7 +49,7 @@ export class DockerService {
   public getBaseComposeArgsApp = async (appId: string) => {
     const { appsRepoId, directories } = this.config.getConfig();
 
-    let isCustomConfig = appsRepoId !== this.repoService.getRepoHash(DEFAULT_REPO_URL);
+    let isCustomConfig = appsRepoId !== this.repoHelpers.getRepoHash(DEFAULT_REPO_URL);
 
     const appEnv = await this.appFilesManager.getAppEnv(appId);
     const args: string[] = [`--env-file ${appEnv.path}`];
