@@ -29,7 +29,7 @@ export class AppService {
   ) {}
 
   public async bootstrap() {
-    const { version, appsRepoUrl, userSettings } = this.configuration.getConfig();
+    const { version, userSettings } = this.configuration.getConfig();
 
     this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
 
@@ -38,25 +38,15 @@ export class AppService {
     this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
     this.logger.info('Generating system env file...');
 
-    const clone = await this.repos.cloneRepo(appsRepoUrl);
-    if (!clone.success) {
-      this.logger.error(`Failed to clone repo ${appsRepoUrl}`);
-    }
-
-    if (process.env.NODE_ENV !== 'development') {
-      const pull = await this.repos.pullRepo(appsRepoUrl);
-      if (!pull.success) {
-        this.logger.error(`Failed to pull repo ${appsRepoUrl}`);
-      }
-    }
-
     const repoId = await this.appStoreService.migrateLegacyRepo();
     if (repoId) {
       await this.appsRepository.updateAppAppStoreIdWhereNull(repoId);
     }
 
+    this.repoQueue.publish({ command: 'clone_all' });
+
     // Every 15 minutes, check for updates to the apps repo
-    this.repoQueue.publishRepeatable({ command: 'update_all', url: '' }, '*/15 * * * *');
+    this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');
 
     this.socketManager.init();
 
