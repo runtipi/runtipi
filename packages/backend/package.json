@@ -18,7 +18,8 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org runtipi --project runtipi-backend ./dist && sentry-cli sourcemaps upload --org runtipi --project runtipi-backend ./dist",
     "test": "vitest --coverage --watch=false",
     "test:watch": "vitest",
-    "studio": "drizzle-kit studio"
+    "studio": "drizzle-kit studio",
+    "gen:migrations": "drizzle-kit generate"
   },
   "dependencies": {
     "@keyv/sqlite": "^4.0.1",

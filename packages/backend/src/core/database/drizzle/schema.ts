@@ -1,4 +1,3 @@
-import { sql } from 'drizzle-orm';
 import { boolean, customType, foreignKey, integer, pgEnum, pgTable, serial, text, timestamp, unique, varchar } from 'drizzle-orm/pg-core';
 
 export const appStatusEnum = pgEnum('app_status_enum', [
@@ -16,37 +15,6 @@ export const appStatusEnum = pgEnum('app_status_enum', [
   'restoring',
 ]);
 export const updateStatusEnum = pgEnum('update_status_enum', ['FAILED', 'SUCCESS']);
-
-export const migrations = pgTable(
-  'migrations',
-  {
-    id: integer().primaryKey().notNull(),
-    name: varchar({ length: 100 }).notNull(),
-    hash: varchar({ length: 40 }).notNull(),
-    executedAt: timestamp('executed_at', { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`),
-  },
-  (table) => {
-    return {
-      migrationsNameKey: unique('migrations_name_key').on(table.name),
-    };
-  },
-);
-
-export const update = pgTable(
-  'update',
-  {
-    id: serial().primaryKey().notNull(),
-    name: varchar().notNull(),
-    status: updateStatusEnum().notNull(),
-    createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-  },
-  (table) => {
-    return {
-      uq6E7D7Ecccdc972Caa0Ad33Cb014: unique('UQ_6e7d7ecccdc972caa0ad33cb014').on(table.name),
-    };
-  },
-);
 
 export const link = pgTable(
   'link',
@@ -122,6 +90,21 @@ export const user = pgTable(
   (table) => {
     return {
       uq78A916Df40E02A9Deb1C4B75Edb: unique('UQ_78a916df40e02a9deb1c4b75edb').on(table.username),
+    };
+  },
+);
+
+export const appStore = pgTable(
+  'app_store',
+  {
+    id: serial().primaryKey().notNull(),
+    name: varchar().notNull(),
+    createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      uqD5Bf4Ff3Fb8Bc0Ff5Ae8Bc9Dd3: unique('UQ_d5bf4ff3fb8bc0ff5ae8bc9dd3').on(table.name),
     };
   },
 );
