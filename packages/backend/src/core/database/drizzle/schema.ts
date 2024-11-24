@@ -64,6 +64,7 @@ export const app = pgTable(
     isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
     openPort: boolean('open_port').default(true).notNull(),
     exposedLocal: boolean('exposed_local').default(true).notNull(),
+    appStoreId: integer('app_store_id'),
   },
   (table) => {
     return {
@@ -94,17 +95,13 @@ export const user = pgTable(
   },
 );
 
-export const appStore = pgTable(
-  'app_store',
-  {
-    id: serial().primaryKey().notNull(),
-    name: varchar().notNull(),
-    createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-  },
-  (table) => {
-    return {
-      uqD5Bf4Ff3Fb8Bc0Ff5Ae8Bc9Dd3: unique('UQ_d5bf4ff3fb8bc0ff5ae8bc9dd3').on(table.name),
-    };
-  },
-);
+export const appStore = pgTable('app_store', {
+  id: serial().primaryKey().notNull(),
+  hash: varchar().notNull().unique(),
+  name: varchar().notNull(),
+  enabled: boolean().default(true).notNull(),
+  url: varchar().notNull(),
+  branch: varchar().default('main').notNull(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+});

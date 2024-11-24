@@ -1,8 +1,8 @@
 import { DatabaseService } from '@/core/database/database.service';
-import { app } from '@/core/database/drizzle/schema';
+import { app, appStore } from '@/core/database/drizzle/schema';
 import type { AppStatus, NewApp } from '@/core/database/drizzle/types';
 import { Injectable } from '@nestjs/common';
-import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
+import { and, asc, eq, isNull, ne, notInArray } from 'drizzle-orm';
 
 @Injectable()
 export class AppsRepository {
@@ -15,6 +15,11 @@ export class AppsRepository {
    */
   public async getApp(appId: string) {
     return this.db.db.query.app.findFirst({ where: eq(app.id, appId) });
+  }
+
+  public async getAppWithAppStore(appId: string) {
+    const foundApp = await this.db.db.select().from(app).where(eq(app.id, appId)).innerJoin(appStore, eq(app.appStoreId, appStore.id)).execute();
+    return foundApp[0];
   }
 
   /**
@@ -91,5 +96,12 @@ export class AppsRepository {
    */
   public async updateAppsByStatusNotIn(statuses: AppStatus[], data: Partial<NewApp>) {
     return this.db.db.update(app).set(data).where(notInArray(app.status, statuses)).returning().execute();
+  }
+
+  /**
+   * Given an app store id, update all apps that have a null app store id with the given app store id
+   */
+  public async updateAppAppStoreIdWhereNull(appStoreId: number) {
+    return this.db.db.update(app).set({ appStoreId }).where(isNull(app.appStoreId)).returning().execute();
   }
 }

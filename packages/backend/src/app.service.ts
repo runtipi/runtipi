@@ -9,7 +9,9 @@ import { ConfigurationService } from './core/config/configuration.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
 import { SocketManager } from './core/socket/socket.service';
+import { AppStoreService } from './modules/app-stores/app-store.service';
 import { ReposHelpers } from './modules/app-stores/repos.helpers';
+import { AppsRepository } from './modules/apps/apps.repository';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 
 @Injectable()
@@ -22,6 +24,8 @@ export class AppService {
     private readonly repoQueue: RepoEventsQueue,
     private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
+    private readonly appStoreService: AppStoreService,
+    private readonly appsRepository: AppsRepository,
   ) {}
 
   public async bootstrap() {
@@ -46,8 +50,13 @@ export class AppService {
       }
     }
 
+    const repoId = await this.appStoreService.migrateLegacyRepo();
+    if (repoId) {
+      await this.appsRepository.updateAppAppStoreIdWhereNull(repoId);
+    }
+
     // Every 15 minutes, check for updates to the apps repo
-    this.repoQueue.publishRepeatable({ command: 'update', url: appsRepoUrl }, '*/15 * * * *');
+    this.repoQueue.publishRepeatable({ command: 'update_all', url: '' }, '*/15 * * * *');
 
     this.socketManager.init();
 

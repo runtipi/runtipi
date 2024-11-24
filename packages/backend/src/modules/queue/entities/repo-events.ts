@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Queue } from '../queue.entity';
 import { z } from 'zod';
+import { Queue } from '../queue.entity';
 
 export const repoCommandSchema = z.object({
-  command: z.union([z.literal('clone'), z.literal('update')]),
+  command: z.union([z.literal('clone'), z.literal('update'), z.literal('update_all')]),
   url: z.string().url(),
 });
 
@@ -13,4 +13,4 @@ export const repoCommandResultSchema = z.object({
 });
 
 @Injectable()
-export class RepoEventsQueue extends Queue<typeof repoCommandSchema, typeof repoCommandResultSchema> { }
+export class RepoEventsQueue extends Queue<typeof repoCommandSchema, typeof repoCommandResultSchema> {}
