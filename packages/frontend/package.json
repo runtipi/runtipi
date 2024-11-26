@@ -12,7 +12,7 @@
     "postinstall": "./scripts/postinstall.sh"
   },
   "dependencies": {
-    "@hey-api/client-fetch": "^0.4.4",
+    "@hey-api/client-fetch": "^0.5.0",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-context-menu": "^2.2.2",
     "@radix-ui/react-dialog": "^1.1.2",
@@ -22,15 +22,15 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-switch": "^1.1.1",
     "@radix-ui/react-tabs": "^1.1.1",
-    "@sentry/react": "^8.39.0",
+    "@sentry/react": "^8.40.0",
     "@sentry/vite-plugin": "^2.22.6",
     "@tabler/core": "1.0.0-beta21",
     "@tabler/icons-react": "^3.22.0",
-    "@tanstack/react-query": "^5.61.0",
-    "@tanstack/react-query-devtools": "^5.61.0",
+    "@tanstack/react-query": "^5.61.4",
+    "@tanstack/react-query-devtools": "^5.61.4",
     "@uidotdev/usehooks": "^2.4.1",
     "backend": "workspace:*",
-    "class-variance-authority": "^0.7.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "consola": "^3.2.3",
     "dompurify": "^3.2.1",
@@ -47,7 +47,7 @@
     "react-error-boundary": "^4.1.2",
     "react-hook-form": "^7.53.2",
     "react-hot-toast": "^2.4.1",
-    "react-i18next": "^15.1.1",
+    "react-i18next": "^15.1.2",
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.28.0",
     "react-timezone-select": "^3.2.8",
@@ -63,7 +63,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.2.0",
-    "@hey-api/openapi-ts": "^0.56.3",
+    "@hey-api/openapi-ts": "^0.57.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
@@ -74,10 +74,10 @@
     "@types/react-dom": "^18.3.1",
     "@types/semver": "^7.5.8",
     "@types/validator": "^13.12.2",
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^4.3.4",
     "globals": "^15.12.0",
-    "typescript": "^5.6.3",
+    "typescript": "^5.7.2",
     "vite": "^5.4.11",
-    "vitest": "^2.1.5"
+    "vitest": "^2.1.6"
   }
 }
