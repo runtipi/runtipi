@@ -3,6 +3,7 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { DockerService } from '@/modules/docker/docker.service';
 import { EnvUtils } from '@/modules/env/env.utils';
+import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import { AppLifecycleCommand } from './command';
 
@@ -11,13 +12,11 @@ export class InstallAppCommand extends AppLifecycleCommand {
     logger: LoggerService,
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
+    marketplaceService: MarketplaceService,
     private readonly appHelpers: AppHelpers,
     private readonly envUtils: EnvUtils,
   ) {
-    super(logger, appFilesManager, dockerService);
-
-    this.logger = logger;
-    this.appFilesManager = appFilesManager;
+    super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
   public async execute(appId: string, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
@@ -28,7 +27,7 @@ export class InstallAppCommand extends AppLifecycleCommand {
         this.logger.info(`Installing app ${appId}. No User ID or Group ID found.`);
       }
 
-      await this.appFilesManager.copyAppFromRepoToInstalled(appId);
+      await this.marketplaceService.copyAppFromRepoToInstalled(appId);
 
       // Create app.env file
       this.logger.info(`Creating app.env file for app ${appId}`);
@@ -38,7 +37,7 @@ export class InstallAppCommand extends AppLifecycleCommand {
       this.logger.info(`Copying data dir for app ${appId}`);
       const appEnv = await this.appFilesManager.getAppEnv(appId);
       const envMap = this.envUtils.envStringToMap(appEnv.content);
-      await this.appFilesManager.copyDataDir(appId, envMap);
+      await this.marketplaceService.copyDataDir(appId, envMap);
 
       await this.ensureAppDir(appId, form);
 

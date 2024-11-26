@@ -502,80 +502,9 @@
         ]
       }
     },
-    "/api/apps/search": {
-      "get": {
-        "operationId": "searchApps",
-        "parameters": [
-          {
-            "name": "category",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "enum": [
-                "network",
-                "media",
-                "development",
-                "automation",
-                "social",
-                "utilities",
-                "photography",
-                "security",
-                "featured",
-                "books",
-                "data",
-                "music",
-                "finance",
-                "gaming",
-                "ai"
-              ],
-              "type": "string"
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SearchAppsDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Apps"
-        ]
-      }
-    },
     "/api/apps/{id}": {
       "get": {
-        "operationId": "getAppDetails",
+        "operationId": "getApp",
         "parameters": [
           {
             "name": "id",
@@ -592,7 +521,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppDetailsDto"
+                  "$ref": "#/components/schemas/GetAppDto"
                 }
               }
             }
@@ -603,30 +532,7 @@
         ]
       }
     },
-    "/api/apps/{id}/image": {
-      "get": {
-        "operationId": "getImage",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Apps"
-        ]
-      }
-    },
-    "/api/repos/pull": {
+    "/api/app-store/pull": {
       "post": {
         "operationId": "pull",
         "parameters": [],
@@ -882,6 +788,130 @@
         },
         "tags": [
           "AppLifecycle"
+        ]
+      }
+    },
+    "/api/marketplace/search": {
+      "get": {
+        "operationId": "searchApps",
+        "parameters": [
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "network",
+                "media",
+                "development",
+                "automation",
+                "social",
+                "utilities",
+                "photography",
+                "security",
+                "featured",
+                "books",
+                "data",
+                "music",
+                "finance",
+                "gaming",
+                "ai"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchAppsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/{id}": {
+      "get": {
+        "operationId": "getAppDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/{id}/image": {
+      "get": {
+        "operationId": "getImage",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Marketplace"
         ]
       }
     },
@@ -1987,29 +2017,11 @@
                     "short_desc",
                     "available"
                   ]
-                },
-                "updateInfo": {
-                  "type": "object",
-                  "properties": {
-                    "latestVersion": {
-                      "type": "number"
-                    },
-                    "minTipiVersion": {
-                      "type": "string"
-                    },
-                    "latestDockerVersion": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "latestVersion"
-                  ]
                 }
               },
               "required": [
                 "app",
-                "info",
-                "updateInfo"
+                "info"
               ]
             }
           }
@@ -2333,35 +2345,386 @@
                     "author",
                     "source"
                   ]
-                },
-                "updateInfo": {
-                  "type": "object",
-                  "properties": {
-                    "latestVersion": {
-                      "type": "number"
-                    },
-                    "minTipiVersion": {
-                      "type": "string"
-                    },
-                    "latestDockerVersion": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "latestVersion"
-                  ]
                 }
               },
               "required": [
                 "app",
-                "info",
-                "updateInfo"
+                "info"
               ]
             }
           }
         },
         "required": [
           "installed"
+        ]
+      },
+      "GetAppDto": {
+        "type": "object",
+        "properties": {
+          "app": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "running",
+                  "stopped",
+                  "installing",
+                  "uninstalling",
+                  "stopping",
+                  "starting",
+                  "missing",
+                  "updating",
+                  "resetting",
+                  "restarting",
+                  "backing_up",
+                  "restoring"
+                ]
+              },
+              "lastOpened": {
+                "type": "string",
+                "nullable": true
+              },
+              "numOpened": {
+                "type": "number",
+                "default": 0
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "version": {
+                "type": "number"
+              },
+              "exposed": {
+                "type": "boolean"
+              },
+              "openPort": {
+                "type": "boolean"
+              },
+              "exposedLocal": {
+                "type": "boolean"
+              },
+              "domain": {
+                "type": "string",
+                "nullable": true
+              },
+              "isVisibleOnGuestDashboard": {
+                "type": "boolean"
+              },
+              "config": {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "lastOpened",
+              "version",
+              "exposed",
+              "openPort",
+              "exposedLocal",
+              "domain",
+              "isVisibleOnGuestDashboard"
+            ],
+            "nullable": true
+          },
+          "info": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "available": {
+                "type": "boolean"
+              },
+              "deprecated": {
+                "type": "boolean",
+                "default": false
+              },
+              "port": {
+                "type": "number",
+                "minimum": 1,
+                "exclusiveMinimum": false,
+                "maximum": 65535,
+                "exclusiveMaximum": false
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string",
+                "default": ""
+              },
+              "version": {
+                "type": "string",
+                "default": "latest"
+              },
+              "tipi_version": {
+                "type": "number"
+              },
+              "short_desc": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "website": {
+                "type": "string"
+              },
+              "force_expose": {
+                "type": "boolean",
+                "default": false
+              },
+              "generate_vapid_keys": {
+                "type": "boolean",
+                "default": false
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "network",
+                    "media",
+                    "development",
+                    "automation",
+                    "social",
+                    "utilities",
+                    "photography",
+                    "security",
+                    "featured",
+                    "books",
+                    "data",
+                    "music",
+                    "finance",
+                    "gaming",
+                    "ai"
+                  ]
+                },
+                "default": []
+              },
+              "url_suffix": {
+                "type": "string"
+              },
+              "form_fields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "text",
+                        "password",
+                        "email",
+                        "number",
+                        "fqdn",
+                        "ip",
+                        "fqdnip",
+                        "url",
+                        "random",
+                        "boolean"
+                      ]
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "placeholder": {
+                      "type": "string"
+                    },
+                    "max": {
+                      "type": "number"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "hint": {
+                      "type": "string"
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "value"
+                        ]
+                      }
+                    },
+                    "required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "default": {
+                      "oneOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "regex": {
+                      "type": "string"
+                    },
+                    "pattern_error": {
+                      "type": "string"
+                    },
+                    "env_variable": {
+                      "type": "string"
+                    },
+                    "encoding": {
+                      "type": "string",
+                      "enum": [
+                        "hex",
+                        "base64"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "label",
+                    "env_variable"
+                  ]
+                },
+                "default": []
+              },
+              "https": {
+                "type": "boolean",
+                "default": false
+              },
+              "exposable": {
+                "type": "boolean",
+                "default": false
+              },
+              "no_gui": {
+                "type": "boolean",
+                "default": false
+              },
+              "supported_architectures": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "arm64",
+                    "amd64"
+                  ]
+                }
+              },
+              "uid": {
+                "type": "number"
+              },
+              "gid": {
+                "type": "number"
+              },
+              "dynamic_config": {
+                "type": "boolean",
+                "default": false
+              },
+              "min_tipi_version": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": false,
+                "default": 0
+              },
+              "updated_at": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": false,
+                "default": 0
+              }
+            },
+            "required": [
+              "id",
+              "available",
+              "port",
+              "name",
+              "tipi_version",
+              "short_desc",
+              "author",
+              "source"
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "PullDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "AppFormBody": {
+        "type": "object",
+        "properties": {
+          "exposed": {
+            "type": "boolean"
+          },
+          "exposedLocal": {
+            "type": "boolean"
+          },
+          "openPort": {
+            "type": "boolean",
+            "default": true
+          },
+          "domain": {
+            "type": "string"
+          },
+          "isVisibleOnGuestDashboard": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UninstallAppBody": {
+        "type": "object",
+        "properties": {
+          "removeBackups": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "removeBackups"
+        ]
+      },
+      "UpdateAppBody": {
+        "type": "object",
+        "properties": {
+          "performBackup": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "performBackup"
         ]
       },
       "SearchAppsDto": {
@@ -2687,79 +3050,6 @@
               "source"
             ]
           },
-          "app": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "running",
-                  "stopped",
-                  "installing",
-                  "uninstalling",
-                  "stopping",
-                  "starting",
-                  "missing",
-                  "updating",
-                  "resetting",
-                  "restarting",
-                  "backing_up",
-                  "restoring"
-                ]
-              },
-              "lastOpened": {
-                "type": "string",
-                "nullable": true
-              },
-              "numOpened": {
-                "type": "number",
-                "default": 0
-              },
-              "createdAt": {
-                "type": "string"
-              },
-              "updatedAt": {
-                "type": "string"
-              },
-              "version": {
-                "type": "number"
-              },
-              "exposed": {
-                "type": "boolean"
-              },
-              "openPort": {
-                "type": "boolean"
-              },
-              "exposedLocal": {
-                "type": "boolean"
-              },
-              "domain": {
-                "type": "string",
-                "nullable": true
-              },
-              "isVisibleOnGuestDashboard": {
-                "type": "boolean"
-              },
-              "config": {
-                "type": "object",
-                "additionalProperties": {}
-              }
-            },
-            "required": [
-              "id",
-              "status",
-              "lastOpened",
-              "version",
-              "exposed",
-              "openPort",
-              "exposedLocal",
-              "domain",
-              "isVisibleOnGuestDashboard"
-            ]
-          },
           "updateInfo": {
             "type": "object",
             "properties": {
@@ -2780,62 +3070,7 @@
         },
         "required": [
           "info",
-          "app",
           "updateInfo"
-        ]
-      },
-      "PullDto": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "success"
-        ]
-      },
-      "AppFormBody": {
-        "type": "object",
-        "properties": {
-          "exposed": {
-            "type": "boolean"
-          },
-          "exposedLocal": {
-            "type": "boolean"
-          },
-          "openPort": {
-            "type": "boolean",
-            "default": true
-          },
-          "domain": {
-            "type": "string"
-          },
-          "isVisibleOnGuestDashboard": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UninstallAppBody": {
-        "type": "object",
-        "properties": {
-          "removeBackups": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "removeBackups"
-        ]
-      },
-      "UpdateAppBody": {
-        "type": "object",
-        "properties": {
-          "performBackup": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "performBackup"
         ]
       },
       "RestoreAppBackupDto": {

@@ -12,7 +12,7 @@ const AppLogs = lazy(() => import('../app-logs/app-logs').then((module) => ({ de
 
 interface IProps {
   info: AppInfo;
-  app: AppDetails;
+  app?: AppDetails | null;
 }
 
 export const AppDetailsTabs = ({ info, app }: IProps) => {
@@ -35,10 +35,10 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
         <TabsTrigger onClick={() => handleTabChange('info')} value="info">
           {t('APP_DETAILS_BASE_INFO')}
         </TabsTrigger>
-        <TabsTrigger value="backups" onClick={() => handleTabChange('backups')} disabled={app.status === 'missing'}>
+        <TabsTrigger value="backups" onClick={() => handleTabChange('backups')} disabled={!app}>
           {t('APP_BACKUPS_TAB_TITLE')}
         </TabsTrigger>
-        <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={app.status === 'missing'}>
+        <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={!app}>
           {t('APP_LOGS_TAB_TITLE')}
         </TabsTrigger>
       </TabsList>
@@ -60,7 +60,7 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
       </TabsContent>
       <TabsContent value="backups">
         <Suspense>
-          <AppBackups info={info} status={app.status} />
+          <AppBackups info={info} status={app?.status ?? 'missing'} />
         </Suspense>
       </TabsContent>
       <TabsContent value="info">
@@ -103,7 +103,7 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
         </DataGrid>
       </TabsContent>
       <TabsContent value="logs">
-        {app.status === 'running' && (
+        {app?.status === 'running' && (
           <Suspense>
             <AppLogs appId={info.id} />
           </Suspense>

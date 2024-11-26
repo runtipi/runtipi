@@ -1,17 +1,7 @@
-import { LoggerService } from '@/core/logger/logger.service';
-import { AppFilesManager } from '@/modules/apps/app-files-manager';
-import { DockerService } from '@/modules/docker/docker.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import { AppLifecycleCommand } from './command';
 
 export class UninstallAppCommand extends AppLifecycleCommand {
-  constructor(logger: LoggerService, appFilesManager: AppFilesManager, dockerService: DockerService) {
-    super(logger, appFilesManager, dockerService);
-
-    this.logger = logger;
-    this.appFilesManager = appFilesManager;
-  }
-
   public async execute(appId: string, form: AppEventFormInput) {
     try {
       this.logger.info(`Uninstalling app ${appId}`);

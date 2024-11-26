@@ -2,6 +2,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { BackupManager } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
+import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { AppLifecycleCommand } from './command';
 
 export class RestoreAppCommand extends AppLifecycleCommand {
@@ -9,13 +10,11 @@ export class RestoreAppCommand extends AppLifecycleCommand {
     logger: LoggerService,
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
+    marketplaceService: MarketplaceService,
     private readonly backupManager: BackupManager,
     private readonly filename: string,
   ) {
-    super(logger, appFilesManager, dockerService);
-
-    this.logger = logger;
-    this.appFilesManager = appFilesManager;
+    super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
   public async execute(appId: string): Promise<{ success: boolean; message: string }> {

@@ -25,10 +25,11 @@ import {
   checkResetPasswordRequest,
   getInstalledApps,
   getGuestApps,
+  getApp,
+  pull,
   searchApps,
   getAppDetails,
   getImage,
-  pull,
   installApp,
   startApp,
   stopApp,
@@ -87,13 +88,14 @@ import type {
   ResetPasswordResponse,
   CancelResetPasswordError,
   CancelResetPasswordResponse,
+  GetAppData,
+  PullError,
+  PullResponse,
   SearchAppsData,
   SearchAppsError,
   SearchAppsResponse,
   GetAppDetailsData,
   GetImageData,
-  PullError,
-  PullResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -573,7 +575,55 @@ export const getGuestAppsOptions = (options?: OptionsLegacyParser) => {
   });
 };
 
-export const searchAppsQueryKey = (options?: OptionsLegacyParser<SearchAppsData>) => [createQueryKey('searchApps', options)];
+export const getAppQueryKey = (options: Options<GetAppData>) => [createQueryKey('getApp', options)];
+
+export const getAppOptions = (options: Options<GetAppData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApp({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getAppQueryKey(options),
+  });
+};
+
+export const pullQueryKey = (options?: Options) => [createQueryKey('pull', options)];
+
+export const pullOptions = (options?: Options) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await pull({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: pullQueryKey(options),
+  });
+};
+
+export const pullMutation = (options?: Partial<Options>) => {
+  const mutationOptions: UseMutationOptions<PullResponse, PullError, Options> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await pull({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const searchAppsQueryKey = (options?: Options<SearchAppsData>) => [createQueryKey('searchApps', options)];
 
 export const searchAppsOptions = (options?: OptionsLegacyParser<SearchAppsData>) => {
   return queryOptions({
@@ -694,38 +744,7 @@ export const getImageOptions = (options: OptionsLegacyParser<GetImageData>) => {
   });
 };
 
-export const pullQueryKey = (options?: OptionsLegacyParser) => [createQueryKey('pull', options)];
-
-export const pullOptions = (options?: OptionsLegacyParser) => {
-  return queryOptions({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await pull({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: pullQueryKey(options),
-  });
-};
-
-export const pullMutation = (options?: Partial<OptionsLegacyParser>) => {
-  const mutationOptions: UseMutationOptions<PullResponse, PullError, OptionsLegacyParser> = {
-    mutationFn: async (localOptions) => {
-      const { data } = await pull({
-        ...options,
-        ...localOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
-export const installAppQueryKey = (options: OptionsLegacyParser<InstallAppData>) => [createQueryKey('installApp', options)];
+export const installAppQueryKey = (options: Options<InstallAppData>) => [createQueryKey('installApp', options)];
 
 export const installAppOptions = (options: OptionsLegacyParser<InstallAppData>) => {
   return queryOptions({

@@ -7,10 +7,10 @@ import { lt, valid } from 'semver';
 import semver from 'semver';
 import validator, { isFQDN } from 'validator';
 import type { z } from 'zod';
-import { AppCatalogService } from '../apps/app-catalog.service';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
 import { BackupManager } from '../backups/backup.manager';
+import { MarketplaceService } from '../marketplace/marketplace.service';
 import { type AppEventFormInput, AppEventsQueue, appEventSchema } from '../queue/entities/app-events';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { appFormSchema } from './dto/app-lifecycle.dto';
@@ -23,10 +23,10 @@ export class AppLifecycleService {
     private readonly commandFactory: AppLifecycleCommandFactory,
     private readonly appRepository: AppsRepository,
     private readonly config: ConfigurationService,
+    private readonly marketplaceService: MarketplaceService,
     private readonly appFilesManager: AppFilesManager,
     private readonly socketManager: SocketManager,
     private readonly backupManager: BackupManager,
-    private readonly appCatalog: AppCatalogService,
   ) {
     this.logger.debug('Subscribing to app events...');
     this.appEventsQueue.onEvent(({ eventId, ...data }) => this.invokeCommand(eventId, data));
@@ -94,7 +94,7 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
     }
 
-    const appInfo = await this.appFilesManager.getAppInfoFromAppStore(appId);
+    const appInfo = await this.marketplaceService.getAppInfoFromAppStore(appId);
 
     if (!appInfo) {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId }, HttpStatus.NOT_FOUND);
@@ -344,7 +344,7 @@ export class AppLifecycleService {
 
     const version = this.config.get('version');
 
-    const { minTipiVersion } = await this.appFilesManager.getAppUpdateInfo(appId);
+    const { minTipiVersion } = await this.marketplaceService.getAppUpdateInfo(appId);
     if (minTipiVersion && semver.valid(version) && semver.lt(version, minTipiVersion)) {
       throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: minTipiVersion });
     }
@@ -374,17 +374,17 @@ export class AppLifecycleService {
   }
 
   async updateAllApps() {
-    const installedApps = await this.appCatalog.getInstalledApps();
-    const availableUpdates = installedApps.filter(({ app, updateInfo }) => Number(app.version) < Number(updateInfo.latestVersion));
-
-    const updatePromises = availableUpdates.map(async ({ app }) => {
-      try {
-        await this.updateApp({ appId: app.id, performBackup: true });
-      } catch (e) {
-        this.logger.error(`Failed to update app ${app.id}`, e);
-      }
-    });
-
-    await Promise.all(updatePromises);
+    // const installedApps = await this.appsService.getInstalledApps();
+    // const availableUpdates = installedApps.filter(({ app, updateInfo }) => Number(app.version) < Number(updateInfo.latestVersion));
+    //
+    // const updatePromises = availableUpdates.map(async ({ app }) => {
+    //   try {
+    //     await this.updateApp({ appId: app.id, performBackup: true });
+    //   } catch (e) {
+    //     this.logger.error(`Failed to update app ${app.id}`, e);
+    //   }
+    // });
+    //
+    // await Promise.all(updatePromises);
   }
 }

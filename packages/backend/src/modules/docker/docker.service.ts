@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { DEFAULT_REPO_URL } from '@/common/helpers/env-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -47,9 +46,9 @@ export class DockerService {
    * @param {string} appId - App name
    */
   public getBaseComposeArgsApp = async (appId: string) => {
-    const { appsRepoId, directories } = this.config.getConfig();
+    const { directories } = this.config.getConfig();
 
-    let isCustomConfig = appsRepoId !== this.repoHelpers.getRepoHash(DEFAULT_REPO_URL);
+    const [appsRepoId] = appId.split('_') as [string];
 
     const appEnv = await this.appFilesManager.getAppEnv(appId);
     const args: string[] = [`--env-file ${appEnv.path}`];
@@ -71,11 +70,10 @@ export class DockerService {
     // User defined overrides
     const userComposeFile = await this.appFilesManager.getUserComposeFile(appId);
     if (userComposeFile.content) {
-      isCustomConfig = true;
       args.push(`--file ${userComposeFile.path}`);
     }
 
-    return { args, isCustomConfig };
+    return { args };
   };
 
   public getBaseComposeArgsRuntipi = async () => {
@@ -102,18 +100,13 @@ export class DockerService {
    * @param {string} command - Command to execute
    */
   public composeApp = async (appId: string, command: string) => {
-    const { args, isCustomConfig } = await this.getBaseComposeArgsApp(appId);
+    const { args } = await this.getBaseComposeArgsApp(appId);
     args.push(command);
 
     this.logger.info(`Running docker compose with args ${args.join(' ')}`);
     const { stdout, stderr } = await execAsync(`docker-compose ${args.join(' ')}`);
 
     if (stderr?.includes('Command failed:')) {
-      if (isCustomConfig) {
-        throw new Error(
-          `Error with your custom app: ${stderr}. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.`,
-        );
-      }
       throw new Error(stderr);
     }
 
