@@ -1,5 +1,6 @@
 import type { Architecture } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
+import { extractAppId } from '@/common/helpers/app-helpers';
 import { notEmpty, pLimit } from '@/common/helpers/file-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -51,11 +52,7 @@ export class MarketplaceService {
   }
 
   private extractStoreFromNamespacedId(namespacedAppId: string) {
-    const [storeId, appId] = namespacedAppId.split('_');
-
-    if (!storeId || !appId) {
-      throw new Error(`Invalid namespaced app id: ${namespacedAppId}`);
-    }
+    const { storeId } = extractAppId(namespacedAppId);
 
     const store = this.stores.get(storeId);
     if (!store) {

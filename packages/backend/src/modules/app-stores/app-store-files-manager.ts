@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { extractAppId } from '@/common/helpers/app-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import type { ConfigurationService } from '@/core/config/configuration.service';
 import type { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -25,11 +26,7 @@ export class AppStoreFilesManager {
   }
 
   public getAppPaths(namespacedId: string) {
-    const [storeId, appId] = namespacedId.split('_');
-
-    if (!storeId || !appId) {
-      throw new Error(`Invalid namespaced app id: ${namespacedId}`);
-    }
+    const { storeId, appId } = extractAppId(namespacedId);
 
     const { directories } = this.configuration.getConfig();
 

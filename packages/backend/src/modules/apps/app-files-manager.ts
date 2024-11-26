@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { extractAppId } from '@/common/helpers/app-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -23,15 +24,11 @@ export class AppFilesManager {
   public getAppPaths(namespacedAppId: string) {
     const { directories } = this.configuration.getConfig();
 
-    const [store, id] = namespacedAppId.split('_');
-
-    if (!store || !id) {
-      throw new Error(`Invalid namespaced app id: ${namespacedAppId}`);
-    }
+    const { storeId, appId } = extractAppId(namespacedAppId);
 
     return {
-      appDataDir: path.join(directories.appDataDir, store, id),
-      appInstalledDir: path.join(this.getInstalledAppsFolder(), store, id),
+      appDataDir: path.join(directories.appDataDir, storeId, appId),
+      appInstalledDir: path.join(this.getInstalledAppsFolder(), storeId, appId),
     };
   }
 
@@ -54,7 +51,7 @@ export class AppFilesManager {
 
         if (parsedConfig.success && parsedConfig.data.available) {
           const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
-          return { ...parsedConfig.data, description };
+          return { ...parsedConfig.data, id, description };
         }
       }
     } catch (error) {
