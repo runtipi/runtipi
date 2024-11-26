@@ -2,6 +2,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { DockerService } from '@/modules/docker/docker.service';
+import type { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import { AppLifecycleCommand } from './command';
 
@@ -10,12 +11,10 @@ export class StopAppCommand extends AppLifecycleCommand {
     logger: LoggerService,
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
+    marketplaceService: MarketplaceService,
     private readonly appHelpers: AppHelpers,
   ) {
-    super(logger, appFilesManager, dockerService);
-
-    this.logger = logger;
-    this.appFilesManager = appFilesManager;
+    super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
   public async execute(appId: string, form: AppEventFormInput, skipEnvGeneration = false) {

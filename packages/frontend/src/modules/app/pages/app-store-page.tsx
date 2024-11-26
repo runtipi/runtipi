@@ -1,9 +1,9 @@
-import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
-import { useAppStoreState } from '@/stores/app-store';
-import { useInfiniteScroll } from '@/lib/hooks/use-infinite-scroll';
-import { StoreTile } from '../components/store-tile/store-tile';
-import { searchAppsFn } from '@/lib/api/search-apps';
+import { searchAppsInfiniteOptions } from '@/api-client/@tanstack/react-query.gen';
 import { EmptyPage } from '@/components/empty-page/empty-page';
+import { useInfiniteScroll } from '@/lib/hooks/use-infinite-scroll';
+import { useAppStoreState } from '@/stores/app-store';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
+import { StoreTile } from '../components/store-tile/store-tile';
 
 export const AppStorePageSuspense = () => {
   return <div className="card px-3 pb-3" style={{ height: 4000 }} />;
@@ -12,10 +12,8 @@ export const AppStorePageSuspense = () => {
 export const AppStorePage = () => {
   const { category, search } = useAppStoreState();
 
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = useInfiniteQuery({
-    queryFn: searchAppsFn({ search, category }),
-    queryKey: ['app-store', search, category],
-    initialPageParam: undefined,
+  const { data, hasNextPage, isFetchingNextPage, isFetching, fetchNextPage } = useInfiniteQuery({
+    ...searchAppsInfiniteOptions({ query: { search, category, pageSize: 24 } }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     placeholderData: keepPreviousData,
   });

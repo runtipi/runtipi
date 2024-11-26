@@ -10,8 +10,8 @@ import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
 import { SocketManager } from './core/socket/socket.service';
 import { AppStoreService } from './modules/app-stores/app-store.service';
-import { ReposHelpers } from './modules/app-stores/repos.helpers';
 import { AppsRepository } from './modules/apps/apps.repository';
+import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 
 @Injectable()
@@ -20,12 +20,12 @@ export class AppService {
     private readonly cache: CacheService,
     private readonly configuration: ConfigurationService,
     private readonly logger: LoggerService,
-    private readonly repos: ReposHelpers,
     private readonly repoQueue: RepoEventsQueue,
     private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
     private readonly appStoreService: AppStoreService,
     private readonly appsRepository: AppsRepository,
+    private readonly marketplaceService: MarketplaceService,
   ) {}
 
   public async bootstrap() {
@@ -44,6 +44,8 @@ export class AppService {
     }
 
     this.repoQueue.publish({ command: 'clone_all' });
+
+    await this.marketplaceService.initialize();
 
     // Every 15 minutes, check for updates to the apps repo
     this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');

@@ -5,7 +5,7 @@ import { AppStoreService } from './app-store.service';
 import { PullDto } from './dto/app-store.dto';
 
 @UseGuards(AuthGuard)
-@Controller('repos')
+@Controller('app-store')
 export class AppStoreController {
   constructor(private readonly appStoreService: AppStoreService) {}
 

@@ -40,7 +40,7 @@ import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-d
 import { useAppStatus } from '../../helpers/use-app-status';
 
 interface IProps {
-  app: AppDetails;
+  app?: AppDetails | null;
   info: AppInfo;
   updateInfo: AppUpdateInfo;
   localDomain?: string;
@@ -78,7 +78,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
   const { setOptimisticStatus } = useAppStatus();
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-  const updateAvailable = Number(app.version || 0) < Number(updateInfo?.latestVersion || 0);
+  const updateAvailable = Number(app?.version ?? 0) < Number(updateInfo?.latestVersion || 0);
 
   const buttons: JSX.Element[] = [];
 
@@ -88,7 +88,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('starting', app.id);
+      setOptimisticStatus('starting', info.id);
     },
   });
 
@@ -96,7 +96,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     <ActionButton
       key="start"
       IconComponent={IconPlayerPlay}
-      onClick={() => startMutation.mutate({ path: { id: app.id } })}
+      onClick={() => startMutation.mutate({ path: { id: info.id } })}
       title={t('APP_ACTION_START')}
       intent="success"
     />
@@ -131,19 +131,19 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
       <DropdownMenuContent>
         <DropdownMenuLabel>{t('APP_DETAILS_CHOOSE_OPEN_METHOD')}</DropdownMenuLabel>
         <DropdownMenuGroup>
-          {app.exposed && app.domain && (
+          {app?.exposed && app.domain && (
             <DropdownMenuItem onClick={() => handleOpen('domain')}>
               <IconLock className="text-green me-2" size={16} />
               {app.domain}
             </DropdownMenuItem>
           )}
-          {(app.exposedLocal || !info.dynamic_config) && (
+          {(app?.exposedLocal || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('local_domain')}>
               <IconLock className="text-muted me-2" size={16} />
-              {app.id}.{localDomain}
+              {info.id}.{localDomain}
             </DropdownMenuItem>
           )}
-          {(app.openPort || !info.dynamic_config) && (
+          {(app?.openPort || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('local')}>
               <IconLockOff className="text-muted me-2" size={16} />
               {hostname}:{info.port}
@@ -154,7 +154,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     </DropdownMenu>
   );
 
-  switch (app.status) {
+  switch (app?.status ?? 'missing') {
     case 'stopped':
       buttons.push(StartButton, RemoveButton, SettingsButton);
       if (updateAvailable) {
@@ -203,12 +203,12 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
       url = `${protocol}://${domain}:${info.port}${info.url_suffix || ''}`;
     }
 
-    if (type === 'domain' && app.domain) {
+    if (type === 'domain' && app?.domain) {
       url = `https://${app.domain}${info.url_suffix || ''}`;
     }
 
     if (type === 'local_domain') {
-      url = `https://${app.id}.${localDomain}`;
+      url = `https://${info.id}.${localDomain}`;
     }
 
     window.open(url, '_blank', 'noreferrer');
@@ -238,7 +238,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
         isOpen={updateSettingsDisclosure.isOpen}
         onClose={updateSettingsDisclosure.close}
         info={info}
-        config={app.config ?? {}}
+        config={app?.config ?? {}}
         onReset={openResetAppModal}
       />
       <div className="mt-1 btn-list d-flex">

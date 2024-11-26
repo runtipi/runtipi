@@ -56,6 +56,11 @@ import type {
   GetInstalledAppsResponse,
   GetGuestAppsError,
   GetGuestAppsResponse,
+  GetAppData,
+  GetAppError,
+  GetAppResponse,
+  PullError,
+  PullResponse,
   SearchAppsData,
   SearchAppsError,
   SearchAppsResponse,
@@ -65,8 +70,6 @@ import type {
   GetImageData,
   GetImageError,
   GetImageResponse,
-  PullError,
-  PullResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -269,31 +272,38 @@ export const getGuestApps = <ThrowOnError extends boolean = false>(options?: Opt
   });
 };
 
-export const searchApps = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<SearchAppsData, ThrowOnError>) => {
-  return (options?.client ?? client).get<SearchAppsResponse, SearchAppsError, ThrowOnError>({
-    ...options,
-    url: '/api/apps/search',
-  });
-};
-
-export const getAppDetails = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetAppDetailsData, ThrowOnError>) => {
-  return (options?.client ?? client).get<GetAppDetailsResponse, GetAppDetailsError, ThrowOnError>({
+export const getApp = <ThrowOnError extends boolean = false>(options: Options<GetAppData, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetAppResponse, GetAppError, ThrowOnError>({
     ...options,
     url: '/api/apps/{id}',
   });
 };
 
-export const getImage = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetImageData, ThrowOnError>) => {
-  return (options?.client ?? client).get<GetImageResponse, GetImageError, ThrowOnError>({
+export const pull = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).post<PullResponse, PullError, ThrowOnError>({
     ...options,
-    url: '/api/apps/{id}/image',
+    url: '/api/app-store/pull',
   });
 };
 
-export const pull = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
-  return (options?.client ?? client).post<PullResponse, PullError, ThrowOnError>({
+export const searchApps = <ThrowOnError extends boolean = false>(options?: Options<SearchAppsData, ThrowOnError>) => {
+  return (options?.client ?? client).get<SearchAppsResponse, SearchAppsError, ThrowOnError>({
     ...options,
-    url: '/api/repos/pull',
+    url: '/api/marketplace/search',
+  });
+};
+
+export const getAppDetails = <ThrowOnError extends boolean = false>(options: Options<GetAppDetailsData, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetAppDetailsResponse, GetAppDetailsError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/{id}',
+  });
+};
+
+export const getImage = <ThrowOnError extends boolean = false>(options: Options<GetImageData, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetImageResponse, GetImageError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/{id}/image',
   });
 };
 

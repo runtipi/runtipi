@@ -3,6 +3,7 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { DockerService } from '@/modules/docker/docker.service';
 import type { EnvUtils } from '@/modules/env/env.utils';
+import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import { AppLifecycleCommand } from './command';
 
@@ -11,13 +12,11 @@ export class ResetAppCommand extends AppLifecycleCommand {
     logger: LoggerService,
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
+    marketplaceService: MarketplaceService,
     private readonly appHelpers: AppHelpers,
     private readonly envUtils: EnvUtils,
   ) {
-    super(logger, appFilesManager, dockerService);
-
-    this.logger = logger;
-    this.appFilesManager = appFilesManager;
+    super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
   public async execute(appId: string, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
@@ -51,7 +50,7 @@ export class ResetAppCommand extends AppLifecycleCommand {
       const env = await this.appFilesManager.getAppEnv(appId);
       const envMap = this.envUtils.envStringToMap(env.content);
 
-      await this.appFilesManager.copyDataDir(appId, envMap);
+      await this.marketplaceService.copyDataDir(appId, envMap);
       await this.ensureAppDir(appId, form);
 
       return { success: true, message: `App ${appId} reset successfully` };

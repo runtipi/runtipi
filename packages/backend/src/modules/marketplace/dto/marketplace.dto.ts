@@ -104,3 +104,36 @@ export class AppInfoSimpleDto extends createZodDto(
 ) {}
 
 export class AppInfoDto extends createZodDto(appInfoSchema) {}
+
+export class UpdateInfoDto extends createZodDto(
+  z.object({
+    latestVersion: z.number(),
+    minTipiVersion: z.string().optional(),
+    latestDockerVersion: z.string().optional(),
+  }),
+) {}
+
+// Search apps
+export class SearchAppsQueryDto extends createZodDto(
+  z.object({
+    search: z.string().optional(),
+    pageSize: z.coerce.number().optional(),
+    cursor: z.string().optional(),
+    category: z.enum(APP_CATEGORIES).optional(),
+  }),
+) {}
+
+export class SearchAppsDto extends createZodDto(
+  z.object({
+    data: AppInfoSimpleDto.schema.array(),
+    nextCursor: z.string().optional(),
+    total: z.number(),
+  }),
+) {}
+
+export class AppDetailsDto extends createZodDto(
+  z.object({
+    info: AppInfoDto.schema,
+    updateInfo: UpdateInfoDto.schema,
+  }),
+) {}

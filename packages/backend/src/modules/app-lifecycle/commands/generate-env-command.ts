@@ -2,6 +2,7 @@ import type { LoggerService } from '@/core/logger/logger.service';
 import type { AppFilesManager } from '@/modules/apps/app-files-manager';
 import type { AppHelpers } from '@/modules/apps/app.helpers';
 import type { DockerService } from '@/modules/docker/docker.service';
+import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import { AppLifecycleCommand } from './command';
 
@@ -10,9 +11,10 @@ export class GenerateAppEnvCommand extends AppLifecycleCommand {
     logger: LoggerService,
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
+    marketplaceService: MarketplaceService,
     private readonly appHelpers: AppHelpers,
   ) {
-    super(logger, appFilesManager, dockerService);
+    super(logger, appFilesManager, dockerService, marketplaceService);
 
     this.logger = logger;
     this.appFilesManager = appFilesManager;

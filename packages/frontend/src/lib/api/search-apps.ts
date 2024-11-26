@@ -3,7 +3,7 @@ import type { SearchAppsDto } from '@/api-client';
 export const searchAppsFn =
   ({ search, category }: { search?: string; category?: string }) =>
   async ({ pageParam }: { pageParam?: string }) => {
-    const url = new URL('/api/apps/search', window.location.origin);
+    const url = new URL('/api/marketplace/search', window.location.origin);
 
     url.searchParams.append('pageSize', '24');
 

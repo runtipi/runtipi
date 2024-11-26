@@ -128,55 +128,12 @@ export type AppDetailsDto = {
     created_at?: number;
     updated_at?: number;
   };
-  app: {
-    id: string;
-    status:
-      | 'running'
-      | 'stopped'
-      | 'installing'
-      | 'uninstalling'
-      | 'stopping'
-      | 'starting'
-      | 'missing'
-      | 'updating'
-      | 'resetting'
-      | 'restarting'
-      | 'backing_up'
-      | 'restoring';
-    lastOpened: string | null;
-    numOpened?: number;
-    createdAt?: string;
-    updatedAt?: string;
-    version: number;
-    exposed: boolean;
-    openPort: boolean;
-    exposedLocal: boolean;
-    domain: string | null;
-    isVisibleOnGuestDashboard: boolean;
-    config?: {
-      [key: string]: unknown;
-    };
-  };
   updateInfo: {
     latestVersion: number;
     minTipiVersion?: string;
     latestDockerVersion?: string;
   };
 };
-
-export type status =
-  | 'running'
-  | 'stopped'
-  | 'installing'
-  | 'uninstalling'
-  | 'stopping'
-  | 'starting'
-  | 'missing'
-  | 'updating'
-  | 'resetting'
-  | 'restarting'
-  | 'backing_up'
-  | 'restoring';
 
 export type AppFormBody = {
   exposed?: boolean;
@@ -225,6 +182,114 @@ export type GetAppBackupsDto = {
   currentPage: number;
   lastPage: number;
 };
+
+export type GetAppDto = {
+  app?: {
+    id: string;
+    status:
+      | 'running'
+      | 'stopped'
+      | 'installing'
+      | 'uninstalling'
+      | 'stopping'
+      | 'starting'
+      | 'missing'
+      | 'updating'
+      | 'resetting'
+      | 'restarting'
+      | 'backing_up'
+      | 'restoring';
+    lastOpened: string | null;
+    numOpened?: number;
+    createdAt?: string;
+    updatedAt?: string;
+    version: number;
+    exposed: boolean;
+    openPort: boolean;
+    exposedLocal: boolean;
+    domain: string | null;
+    isVisibleOnGuestDashboard: boolean;
+    config?: {
+      [key: string]: unknown;
+    };
+  } | null;
+  info?: {
+    id: string;
+    available: boolean;
+    deprecated?: boolean;
+    port: number;
+    name: string;
+    description?: string;
+    version?: string;
+    tipi_version: number;
+    short_desc: string;
+    author: string;
+    source: string;
+    website?: string;
+    force_expose?: boolean;
+    generate_vapid_keys?: boolean;
+    categories?: Array<
+      | 'network'
+      | 'media'
+      | 'development'
+      | 'automation'
+      | 'social'
+      | 'utilities'
+      | 'photography'
+      | 'security'
+      | 'featured'
+      | 'books'
+      | 'data'
+      | 'music'
+      | 'finance'
+      | 'gaming'
+      | 'ai'
+    >;
+    url_suffix?: string;
+    form_fields?: Array<{
+      type: 'text' | 'password' | 'email' | 'number' | 'fqdn' | 'ip' | 'fqdnip' | 'url' | 'random' | 'boolean';
+      label: string;
+      placeholder?: string;
+      max?: number;
+      min?: number;
+      hint?: string;
+      options?: Array<{
+        label: string;
+        value: string;
+      }>;
+      required?: boolean;
+      default?: boolean | string | number;
+      regex?: string;
+      pattern_error?: string;
+      env_variable: string;
+      encoding?: 'hex' | 'base64';
+    }>;
+    https?: boolean;
+    exposable?: boolean;
+    no_gui?: boolean;
+    supported_architectures?: Array<'arm64' | 'amd64'>;
+    uid?: number;
+    gid?: number;
+    dynamic_config?: boolean;
+    min_tipi_version?: string;
+    created_at?: number;
+    updated_at?: number;
+  } | null;
+};
+
+export type status =
+  | 'running'
+  | 'stopped'
+  | 'installing'
+  | 'uninstalling'
+  | 'stopping'
+  | 'starting'
+  | 'missing'
+  | 'updating'
+  | 'resetting'
+  | 'restarting'
+  | 'backing_up'
+  | 'restoring';
 
 export type GetTotpUriBody = {
   password: string;
@@ -328,11 +393,6 @@ export type GuestAppsDto = {
       created_at?: number;
       updated_at?: number;
     };
-    updateInfo: {
-      latestVersion: number;
-      minTipiVersion?: string;
-      latestDockerVersion?: string;
-    };
   }>;
 };
 
@@ -429,11 +489,6 @@ export type MyAppsDto = {
       created_at?: number;
       supported_architectures?: Array<'arm64' | 'amd64'>;
       available: boolean;
-    };
-    updateInfo: {
-      latestVersion: number;
-      minTipiVersion?: string;
-      latestDockerVersion?: string;
     };
   }>;
 };
@@ -696,6 +751,20 @@ export type GetGuestAppsResponse = GuestAppsDto;
 
 export type GetGuestAppsError = unknown;
 
+export type GetAppData = {
+  path: {
+    id: string;
+  };
+};
+
+export type GetAppResponse = GetAppDto;
+
+export type GetAppError = unknown;
+
+export type PullResponse = PullDto;
+
+export type PullError = unknown;
+
 export type SearchAppsData = {
   query?: {
     category?:
@@ -743,10 +812,6 @@ export type GetImageData = {
 export type GetImageResponse = unknown;
 
 export type GetImageError = unknown;
-
-export type PullResponse = PullDto;
-
-export type PullError = unknown;
 
 export type InstallAppData = {
   body: AppFormBody;

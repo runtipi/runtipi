@@ -1,10 +1,10 @@
-import type { AppDetailsDto, GetAppBackupsDto, LinksDto, SearchAppsDto } from '@/api-client';
+import type { AppDetailsDto, GetAppBackupsDto, GetAppDto, LinksDto, SearchAppsDto } from '@/api-client';
 
-export type AppStatus = AppDetailsDto['app']['status'];
 export type FormField = NonNullable<AppDetailsDto['info']['form_fields']>[number];
 export type AppInfo = AppDetailsDto['info'];
 export type AppUpdateInfo = AppDetailsDto['updateInfo'];
-export type AppDetails = AppDetailsDto['app'];
+export type AppDetails = NonNullable<GetAppDto['app']>;
+export type AppStatus = NonNullable<AppDetails>['status'];
 
 export type AppInfoSimple = SearchAppsDto['data'][number];
 export type AppCategory = NonNullable<AppInfoSimple['categories']>[number];
