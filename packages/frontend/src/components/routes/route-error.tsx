@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useRouteError } from 'react-router-dom';
+import { useNavigate, useRouteError } from 'react-router';
 import { ErrorPage } from '../error/error-page';
 
 export const RouteError = () => {

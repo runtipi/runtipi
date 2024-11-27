@@ -2,7 +2,7 @@ import { getLogo } from '@/lib/theme/theme';
 import { useUIStore } from '@/stores/ui-store';
 import { IconBrandGithub, IconHeart, IconLogin, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { Tooltip } from 'react-tooltip';
 
 export const GuestHeader = () => {

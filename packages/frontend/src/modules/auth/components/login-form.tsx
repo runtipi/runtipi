@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type React from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import z from 'zod';
 
 type FormValues = { email: string; password: string };

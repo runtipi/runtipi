@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router';
 import { LoginForm } from '../components/login-form';
 import { TotpForm } from '../components/totp-form/totp-form';
 
