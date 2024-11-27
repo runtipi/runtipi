@@ -1,6 +1,6 @@
 import { useUIStore } from '@/stores/ui-store';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
 export const LocationListener = () => {
   const setActiveRoute = useUIStore((state) => state.setActiveRoute);

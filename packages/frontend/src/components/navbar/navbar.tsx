@@ -3,7 +3,7 @@ import { IconApps, IconBrandAppstore, IconHome, IconSettings } from '@tabler/ico
 import clsx from 'clsx';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 interface IProps {
   isUpdateAvailable?: boolean;

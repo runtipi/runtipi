@@ -5,7 +5,7 @@ import { AppLogo } from '@/components/app-logo/app-logo';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
 import type { AppInfoSimple } from '@/types/app.types';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { colorSchemeForCategory } from '../../helpers/table-helpers';
 
 export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean }> = ({ app, isLoading }) => {
