@@ -15,6 +15,90 @@
       "when": 1731335935965,
       "tag": "0001_crazy_vanisher",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732529309886,
+      "tag": "0002_add-app-version",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1732529344918,
+      "tag": "0003_add-status-updating",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1732529372297,
+      "tag": "0004_add-exposed-domain-fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1732529416112,
+      "tag": "0005_add-user-operator",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1732529440403,
+      "tag": "0006_add-totp-user-fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1732529494219,
+      "tag": "0007_merge-config-with-domain-and-exposed",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1732529539686,
+      "tag": "0008_add-guest-dashboard",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1732529564105,
+      "tag": "0009_add-status-resetting",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1732529654682,
+      "tag": "0010_link-table-description",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1732529678975,
+      "tag": "0011_app-local-exposed",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1732529705065,
+      "tag": "0012_restarting-state",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1732529725697,
+      "tag": "0013_backingup-state",
+      "breakpoints": true
     }
   ]
 }
