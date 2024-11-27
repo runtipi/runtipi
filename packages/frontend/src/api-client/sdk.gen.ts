@@ -272,42 +272,42 @@ export const getGuestApps = <ThrowOnError extends boolean = false>(options?: Opt
   });
 };
 
-export const getApp = <ThrowOnError extends boolean = false>(options: Options<GetAppData, ThrowOnError>) => {
+export const getApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetAppData, ThrowOnError>) => {
   return (options?.client ?? client).get<GetAppResponse, GetAppError, ThrowOnError>({
     ...options,
     url: '/api/apps/{id}',
   });
 };
 
-export const searchApps = <ThrowOnError extends boolean = false>(options?: Options<SearchAppsData, ThrowOnError>) => {
+export const searchApps = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<SearchAppsData, ThrowOnError>) => {
   return (options?.client ?? client).get<SearchAppsResponse, SearchAppsError, ThrowOnError>({
     ...options,
     url: '/api/marketplace/search',
   });
 };
 
-export const getAppDetails = <ThrowOnError extends boolean = false>(options: Options<GetAppDetailsData, ThrowOnError>) => {
+export const getAppDetails = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetAppDetailsData, ThrowOnError>) => {
   return (options?.client ?? client).get<GetAppDetailsResponse, GetAppDetailsError, ThrowOnError>({
     ...options,
     url: '/api/marketplace/{id}',
   });
 };
 
-export const getImage = <ThrowOnError extends boolean = false>(options: Options<GetImageData, ThrowOnError>) => {
+export const getImage = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetImageData, ThrowOnError>) => {
   return (options?.client ?? client).get<GetImageResponse, GetImageError, ThrowOnError>({
     ...options,
     url: '/api/marketplace/{id}/image',
   });
 };
 
-export const pull = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
+export const pull = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
   return (options?.client ?? client).post<PullResponse, PullError, ThrowOnError>({
     ...options,
     url: '/api/app-store/pull',
   });
 };
 
-export const installApp = <ThrowOnError extends boolean = false>(options: Options<InstallAppData, ThrowOnError>) => {
+export const installApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<InstallAppData, ThrowOnError>) => {
   return (options?.client ?? client).post<InstallAppResponse, InstallAppError, ThrowOnError>({
     ...options,
     url: '/api/app-lifecycle/{id}/install',

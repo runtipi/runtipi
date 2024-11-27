@@ -575,9 +575,9 @@ export const getGuestAppsOptions = (options?: OptionsLegacyParser) => {
   });
 };
 
-export const getAppQueryKey = (options: Options<GetAppData>) => [createQueryKey('getApp', options)];
+export const getAppQueryKey = (options: OptionsLegacyParser<GetAppData>) => [createQueryKey('getApp', options)];
 
-export const getAppOptions = (options: Options<GetAppData>) => {
+export const getAppOptions = (options: OptionsLegacyParser<GetAppData>) => {
   return queryOptions({
     queryFn: async ({ queryKey, signal }) => {
       const { data } = await getApp({
@@ -592,7 +592,7 @@ export const getAppOptions = (options: Options<GetAppData>) => {
   });
 };
 
-export const searchAppsQueryKey = (options?: Options<SearchAppsData>) => [createQueryKey('searchApps', options)];
+export const searchAppsQueryKey = (options?: OptionsLegacyParser<SearchAppsData>) => [createQueryKey('searchApps', options)];
 
 export const searchAppsOptions = (options?: OptionsLegacyParser<SearchAppsData>) => {
   return queryOptions({
@@ -713,9 +713,9 @@ export const getImageOptions = (options: OptionsLegacyParser<GetImageData>) => {
   });
 };
 
-export const pullQueryKey = (options?: Options) => [createQueryKey('pull', options)];
+export const pullQueryKey = (options?: OptionsLegacyParser) => [createQueryKey('pull', options)];
 
-export const pullOptions = (options?: Options) => {
+export const pullOptions = (options?: OptionsLegacyParser) => {
   return queryOptions({
     queryFn: async ({ queryKey, signal }) => {
       const { data } = await pull({
@@ -730,8 +730,8 @@ export const pullOptions = (options?: Options) => {
   });
 };
 
-export const pullMutation = (options?: Partial<Options>) => {
-  const mutationOptions: UseMutationOptions<PullResponse, PullError, Options> = {
+export const pullMutation = (options?: Partial<OptionsLegacyParser>) => {
+  const mutationOptions: UseMutationOptions<PullResponse, PullError, OptionsLegacyParser> = {
     mutationFn: async (localOptions) => {
       const { data } = await pull({
         ...options,
@@ -744,7 +744,7 @@ export const pullMutation = (options?: Partial<Options>) => {
   return mutationOptions;
 };
 
-export const installAppQueryKey = (options: Options<InstallAppData>) => [createQueryKey('installApp', options)];
+export const installAppQueryKey = (options: OptionsLegacyParser<InstallAppData>) => [createQueryKey('installApp', options)];
 
 export const installAppOptions = (options: OptionsLegacyParser<InstallAppData>) => {
   return queryOptions({
