@@ -677,6 +677,27 @@
         ]
       }
     },
+    "/api/app-store/all": {
+      "get": {
+        "operationId": "getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllAppStoresDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "AppStore"
+        ]
+      }
+    },
     "/api/app-lifecycle/{id}/install": {
       "post": {
         "operationId": "installApp",
@@ -3047,6 +3068,32 @@
         "required": [
           "success"
         ]
+      },
+      "AllAppStoresDto": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "url",
+            "enabled"
+          ]
+        }
       },
       "AppFormBody": {
         "type": "object",

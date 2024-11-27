@@ -70,6 +70,8 @@ import type {
   GetImageResponse,
   PullError,
   PullResponse,
+  GetAllError,
+  GetAllResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -304,6 +306,13 @@ export const pull = <ThrowOnError extends boolean = false>(options?: OptionsLega
   return (options?.client ?? client).post<PullResponse, PullError, ThrowOnError>({
     ...options,
     url: '/api/app-store/pull',
+  });
+};
+
+export const getAll = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetAllResponse, GetAllError, ThrowOnError>({
+    ...options,
+    url: '/api/app-store/all',
   });
 };
 

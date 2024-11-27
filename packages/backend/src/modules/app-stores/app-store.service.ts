@@ -17,7 +17,7 @@ export class AppStoreService {
     this.repoQueue.onEvent(async (data) => {
       switch (data.command) {
         case 'update_all': {
-          const stores = await this.appStoreRepository.getAppStores();
+          const stores = await this.appStoreRepository.getEnabledAppStores();
           for (const store of stores) {
             await this.repoHelpers.pullRepo(store.url, store.id.toString());
           }
@@ -25,7 +25,7 @@ export class AppStoreService {
           break;
         }
         case 'clone_all': {
-          const stores = await this.appStoreRepository.getAppStores();
+          const stores = await this.appStoreRepository.getEnabledAppStores();
           for (const store of stores) {
             await this.repoHelpers.cloneRepo(store.url, store.id.toString());
           }
@@ -47,7 +47,7 @@ export class AppStoreService {
   }
 
   public async pullRepositories() {
-    const repositories = await this.appStoreRepository.getAppStores();
+    const repositories = await this.appStoreRepository.getEnabledAppStores();
 
     for (const repo of repositories) {
       await this.repoHelpers.pullRepo(repo.url, repo.id.toString());
@@ -57,9 +57,9 @@ export class AppStoreService {
   }
 
   public async migrateLegacyRepo() {
-    const { appsRepoId, appsRepoUrl } = this.config.getConfig();
+    const { appsRepoUrl } = this.config.getConfig();
 
-    const existing = await this.appStoreRepository.getAppStores();
+    const existing = await this.appStoreRepository.getEnabledAppStores();
 
     if (existing.length) {
       this.logger.debug('Skipping repo migration, app stores already exist');
@@ -68,10 +68,7 @@ export class AppStoreService {
 
     this.logger.info('Migrating default repo');
 
-    let migrated = await this.appStoreRepository.getAppStoreByHash(appsRepoId);
-    if (!migrated) {
-      migrated = await this.appStoreRepository.createAppStore({ url: appsRepoUrl, name: 'migrated' });
-    }
+    const migrated = await this.appStoreRepository.createAppStore({ url: appsRepoUrl, name: 'migrated' });
 
     if (!migrated) {
       throw new Error('Failed to migrate current repo');
@@ -80,7 +77,11 @@ export class AppStoreService {
     return migrated.id;
   }
 
-  public async getAppStores() {
-    return this.appStoreRepository.getAppStores();
+  public async getEnabledAppStores() {
+    return this.appStoreRepository.getEnabledAppStores();
+  }
+
+  public async getAllAppStores() {
+    return this.appStoreRepository.getAllAppStores();
   }
 }

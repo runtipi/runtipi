@@ -8,3 +8,13 @@ export class PullDto extends createZodDto(
   }),
 ) {}
 
+export class AllAppStoresDto extends createZodDto(
+  z
+    .object({
+      id: z.number(),
+      name: z.string(),
+      url: z.string(),
+      enabled: z.boolean(),
+    })
+    .array(),
+) {}

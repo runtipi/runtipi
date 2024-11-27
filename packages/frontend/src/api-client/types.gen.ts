@@ -4,6 +4,13 @@ export type AcknowledgeWelcomeBody = {
   allowErrorMonitoring: boolean;
 };
 
+export type AllAppStoresDto = Array<{
+  id: number;
+  name: string;
+  url: string;
+  enabled: boolean;
+}>;
+
 export type AppContextDto = {
   version: {
     current: string;
@@ -817,6 +824,10 @@ export type GetImageError = unknown;
 export type PullResponse = PullDto;
 
 export type PullError = unknown;
+
+export type GetAllResponse = AllAppStoresDto;
+
+export type GetAllError = unknown;
 
 export type InstallAppData = {
   body: AppFormBody;

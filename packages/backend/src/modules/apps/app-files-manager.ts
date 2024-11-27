@@ -168,12 +168,14 @@ export class AppFilesManager {
 
   /**
    * Get the user env file content
-   * @param appId - The app id
+   * @param namespacedAppId - The app id
    */
-  public async getUserEnv(appId: string) {
+  public async getUserEnv(namespacedAppId: string) {
     const { directories } = this.configuration.getConfig();
 
-    const userEnvFile = path.join(directories.dataDir, 'user-config', appId, 'app.env');
+    const { storeId, appId } = extractAppId(namespacedAppId);
+
+    const userEnvFile = path.join(directories.dataDir, 'user-config', storeId, appId, 'app.env');
     let content = null;
 
     if (await this.filesystem.pathExists(userEnvFile)) {
@@ -183,10 +185,16 @@ export class AppFilesManager {
     return { path: userEnvFile, content };
   }
 
-  public async getUserComposeFile(appId: string) {
+  /**
+   * Get the user compose file content
+   * @param namespacedAppId - The app id
+   */
+  public async getUserComposeFile(namespacedAppId: string) {
     const { directories } = this.configuration.getConfig();
 
-    const userComposeFile = path.join(directories.dataDir, 'user-config', appId, 'docker-compose.yml');
+    const { storeId, appId } = extractAppId(namespacedAppId);
+
+    const userComposeFile = path.join(directories.dataDir, 'user-config', storeId, appId, 'docker-compose.yml');
     let content = null;
 
     if (await this.filesystem.pathExists(userComposeFile)) {
