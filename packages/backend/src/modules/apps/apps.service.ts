@@ -1,6 +1,7 @@
 import { pLimit } from '@/common/helpers/file-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
+import { MarketplaceService } from '../marketplace/marketplace.service';
 import { AppFilesManager } from './app-files-manager';
 import { AppsRepository } from './apps.repository';
 
@@ -12,6 +13,7 @@ export class AppsService {
     private readonly appsRepository: AppsRepository,
     private readonly appFilesManager: AppFilesManager,
     private readonly logger: LoggerService,
+    private readonly marketplaceService: MarketplaceService,
   ) {}
 
   private async populateAppInfo(apps: AppList) {
@@ -21,10 +23,11 @@ export class AppsService {
       apps.map(async (app) => {
         return limit(async () => {
           const appInfo = await this.appFilesManager.getInstalledAppInfo(app.id);
+          const updateInfo = await this.marketplaceService.getAppUpdateInfo(app.id);
           if (!appInfo) {
             return null;
           }
-          return { app, info: appInfo };
+          return { app, info: appInfo, updateInfo };
         });
       }),
     );

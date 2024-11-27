@@ -20,8 +20,8 @@ export const MyAppsPage = () => {
   const { installed } = apps;
   const { links: customLinks = [] } = links;
 
-  const renderApp = ({ info, app }: (typeof installed)[number]) => {
-    const updateAvailable = false; // TODO: Number(app.version) < Number(updateInfo.latestVersion);
+  const renderApp = ({ info, app, updateInfo }: (typeof installed)[number]) => {
+    const updateAvailable = Number(app.version) < Number(updateInfo.latestVersion);
 
     if (info.available)
       return (

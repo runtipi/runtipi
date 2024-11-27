@@ -59,8 +59,6 @@ import type {
   GetAppData,
   GetAppError,
   GetAppResponse,
-  PullError,
-  PullResponse,
   SearchAppsData,
   SearchAppsError,
   SearchAppsResponse,
@@ -70,6 +68,8 @@ import type {
   GetImageData,
   GetImageError,
   GetImageResponse,
+  PullError,
+  PullResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -279,13 +279,6 @@ export const getApp = <ThrowOnError extends boolean = false>(options: Options<Ge
   });
 };
 
-export const pull = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
-  return (options?.client ?? client).post<PullResponse, PullError, ThrowOnError>({
-    ...options,
-    url: '/api/app-store/pull',
-  });
-};
-
 export const searchApps = <ThrowOnError extends boolean = false>(options?: Options<SearchAppsData, ThrowOnError>) => {
   return (options?.client ?? client).get<SearchAppsResponse, SearchAppsError, ThrowOnError>({
     ...options,
@@ -307,7 +300,14 @@ export const getImage = <ThrowOnError extends boolean = false>(options: Options<
   });
 };
 
-export const installApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<InstallAppData, ThrowOnError>) => {
+export const pull = <ThrowOnError extends boolean = false>(options?: Options<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).post<PullResponse, PullError, ThrowOnError>({
+    ...options,
+    url: '/api/app-store/pull',
+  });
+};
+
+export const installApp = <ThrowOnError extends boolean = false>(options: Options<InstallAppData, ThrowOnError>) => {
   return (options?.client ?? client).post<InstallAppResponse, InstallAppError, ThrowOnError>({
     ...options,
     url: '/api/app-lifecycle/{id}/install',
