@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import './page.css';
 import { getInstalledAppsOptions, getLinksOptions } from '@/api-client/@tanstack/react-query.gen';
 import { EmptyPage } from '@/components/empty-page/empty-page';

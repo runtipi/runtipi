@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
+import { Outlet } from 'react-router';
 import { AuthLayout } from '../layouts/auth/layout';
-import { Outlet } from 'react-router-dom';
 import { RouteWrapper } from './route-wrapper';
 
 export const UnauthenticatedRoute = () => {

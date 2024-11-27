@@ -2,7 +2,7 @@ import './App.css';
 import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Toaster } from 'react-hot-toast';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from 'react-router';
 import { client } from './api-client';
 import { Providers } from './components/providers/providers';
 

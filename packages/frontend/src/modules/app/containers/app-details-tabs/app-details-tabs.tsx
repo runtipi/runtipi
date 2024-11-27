@@ -5,7 +5,7 @@ import type { AppDetails, AppInfo } from '@/types/app.types';
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router';
 
 const AppBackups = lazy(() => import('../app-backups/app-backups').then((module) => ({ default: module.AppBackups })));
 const AppLogs = lazy(() => import('../app-logs/app-logs').then((module) => ({ default: module.AppLogs })));

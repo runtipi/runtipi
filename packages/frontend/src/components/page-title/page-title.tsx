@@ -3,7 +3,7 @@ import type { AppInfoSimple } from '@/types/app.types';
 import clsx from 'clsx';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 type Props = {
   apps: AppInfoSimple[];

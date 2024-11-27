@@ -4,7 +4,7 @@ import { GuestDashboard } from '@/modules/dashboard/pages/guest-dashboard';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router';
 import { ErrorPage } from '../error/error-page';
 import { DashboardLayout, DashboardLayoutSuspense } from '../layouts/dashboard/layout';
 import { RouteWrapper } from './route-wrapper';
