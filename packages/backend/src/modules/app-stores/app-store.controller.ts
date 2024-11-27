@@ -1,8 +1,8 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppStoreService } from './app-store.service';
-import { PullDto } from './dto/app-store.dto';
+import { AllAppStoresDto, PullDto } from './dto/app-store.dto';
 
 @UseGuards(AuthGuard)
 @Controller('app-store')
@@ -13,5 +13,11 @@ export class AppStoreController {
   @ZodSerializerDto(PullDto)
   async pull(): Promise<PullDto> {
     return this.appStoreService.pullRepositories();
+  }
+
+  @Get('/all')
+  @ZodSerializerDto(AllAppStoresDto)
+  async getAll(): Promise<AllAppStoresDto> {
+    return this.appStoreService.getEnabledAppStores();
   }
 }

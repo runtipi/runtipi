@@ -43,7 +43,7 @@ export class MarketplaceService {
   ) {}
 
   async initialize() {
-    const stores = await this.appStoreService.getAppStores();
+    const stores = await this.appStoreService.getEnabledAppStores();
 
     for (const config of stores) {
       const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config.id.toString());

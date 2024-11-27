@@ -30,6 +30,7 @@ import {
   getAppDetails,
   getImage,
   pull,
+  getAll,
   installApp,
   startApp,
   stopApp,
@@ -742,6 +743,23 @@ export const pullMutation = (options?: Partial<OptionsLegacyParser>) => {
     },
   };
   return mutationOptions;
+};
+
+export const getAllQueryKey = (options?: OptionsLegacyParser) => [createQueryKey('getAll', options)];
+
+export const getAllOptions = (options?: OptionsLegacyParser) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getAll({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getAllQueryKey(options),
+  });
 };
 
 export const installAppQueryKey = (options: OptionsLegacyParser<InstallAppData>) => [createQueryKey('installApp', options)];

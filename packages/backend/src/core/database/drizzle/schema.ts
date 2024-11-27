@@ -104,4 +104,5 @@ export const appStore = pgTable('app_store', {
   branch: varchar().default('main').notNull(),
   createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
   updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+  deleted: boolean().default(false).notNull(),
 });
