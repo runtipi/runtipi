@@ -9,6 +9,7 @@ import validator, { isFQDN } from 'validator';
 import type { z } from 'zod';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
+import { AppsService } from '../apps/apps.service';
 import { BackupManager } from '../backups/backup.manager';
 import { MarketplaceService } from '../marketplace/marketplace.service';
 import { type AppEventFormInput, AppEventsQueue, appEventSchema } from '../queue/entities/app-events';
@@ -24,6 +25,7 @@ export class AppLifecycleService {
     private readonly appRepository: AppsRepository,
     private readonly config: ConfigurationService,
     private readonly marketplaceService: MarketplaceService,
+    private readonly appsService: AppsService,
     private readonly appFilesManager: AppFilesManager,
     private readonly socketManager: SocketManager,
     private readonly backupManager: BackupManager,
@@ -374,17 +376,17 @@ export class AppLifecycleService {
   }
 
   async updateAllApps() {
-    // const installedApps = await this.appsService.getInstalledApps();
-    // const availableUpdates = installedApps.filter(({ app, updateInfo }) => Number(app.version) < Number(updateInfo.latestVersion));
-    //
-    // const updatePromises = availableUpdates.map(async ({ app }) => {
-    //   try {
-    //     await this.updateApp({ appId: app.id, performBackup: true });
-    //   } catch (e) {
-    //     this.logger.error(`Failed to update app ${app.id}`, e);
-    //   }
-    // });
-    //
-    // await Promise.all(updatePromises);
+    const installedApps = await this.appsService.getInstalledApps();
+    const availableUpdates = installedApps.filter(({ app, updateInfo }) => Number(app.version) < Number(updateInfo.latestVersion));
+
+    const updatePromises = availableUpdates.map(async ({ app }) => {
+      try {
+        await this.updateApp({ appId: app.id, performBackup: true });
+      } catch (e) {
+        this.logger.error(`Failed to update app ${app.id}`, e);
+      }
+    });
+
+    await Promise.all(updatePromises);
   }
 }
