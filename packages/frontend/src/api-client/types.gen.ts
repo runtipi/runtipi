@@ -490,6 +490,11 @@ export type MyAppsDto = {
       supported_architectures?: Array<'arm64' | 'amd64'>;
       available: boolean;
     };
+    updateInfo: {
+      latestVersion: number;
+      minTipiVersion?: string;
+      latestDockerVersion?: string;
+    };
   }>;
 };
 
@@ -761,10 +766,6 @@ export type GetAppResponse = GetAppDto;
 
 export type GetAppError = unknown;
 
-export type PullResponse = PullDto;
-
-export type PullError = unknown;
-
 export type SearchAppsData = {
   query?: {
     category?:
@@ -812,6 +813,10 @@ export type GetImageData = {
 export type GetImageResponse = unknown;
 
 export type GetImageError = unknown;
+
+export type PullResponse = PullDto;
+
+export type PullError = unknown;
 
 export type InstallAppData = {
   body: AppFormBody;

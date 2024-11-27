@@ -49,7 +49,7 @@ export class ConfigurationService {
     private readonly envUtils: EnvUtils,
     private readonly filesystem: FilesystemService,
   ) {
-    dotenv.config({ path: this.envPath });
+    dotenv.config({ path: this.envPath, override: true });
     this.config = this.configure();
   }
 

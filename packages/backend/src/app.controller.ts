@@ -48,13 +48,11 @@ export class AppController {
     const apps = await this.marketplaceService.getAvailableApps();
 
     const installedApps = await this.appsService.getInstalledApps();
+    const updatesAvailable = installedApps.filter(({ app, updateInfo }) => {
+      return Number(app.version) < Number(updateInfo.latestVersion) && app.status !== 'updating';
+    });
 
-    // TODO: Implement updates
-    // const updatesAvailable = installedApps.filter(({ app, updateInfo }) => {
-    //   return Number(app.version) < Number(updateInfo.latestVersion) && app.status !== 'updating';
-    // });
-
-    return { version, userSettings, user: req.user as UserDto, apps, updatesAvailable: 0 }; //updatesAvailable: updatesAvailable.length };
+    return { version, userSettings, user: req.user as UserDto, apps, updatesAvailable: updatesAvailable.length };
   }
 
   @Patch('/user-settings')

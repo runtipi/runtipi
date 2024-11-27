@@ -532,6 +532,130 @@
         ]
       }
     },
+    "/api/marketplace/search": {
+      "get": {
+        "operationId": "searchApps",
+        "parameters": [
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "network",
+                "media",
+                "development",
+                "automation",
+                "social",
+                "utilities",
+                "photography",
+                "security",
+                "featured",
+                "books",
+                "data",
+                "music",
+                "finance",
+                "gaming",
+                "ai"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchAppsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/{id}": {
+      "get": {
+        "operationId": "getAppDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/{id}/image": {
+      "get": {
+        "operationId": "getImage",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
     "/api/app-store/pull": {
       "post": {
         "operationId": "pull",
@@ -788,130 +912,6 @@
         },
         "tags": [
           "AppLifecycle"
-        ]
-      }
-    },
-    "/api/marketplace/search": {
-      "get": {
-        "operationId": "searchApps",
-        "parameters": [
-          {
-            "name": "category",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "enum": [
-                "network",
-                "media",
-                "development",
-                "automation",
-                "social",
-                "utilities",
-                "photography",
-                "security",
-                "featured",
-                "books",
-                "data",
-                "music",
-                "finance",
-                "gaming",
-                "ai"
-              ],
-              "type": "string"
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SearchAppsDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Marketplace"
-        ]
-      }
-    },
-    "/api/marketplace/{id}": {
-      "get": {
-        "operationId": "getAppDetails",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AppDetailsDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Marketplace"
-        ]
-      }
-    },
-    "/api/marketplace/{id}/image": {
-      "get": {
-        "operationId": "getImage",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Marketplace"
         ]
       }
     },
@@ -2017,11 +2017,29 @@
                     "short_desc",
                     "available"
                   ]
+                },
+                "updateInfo": {
+                  "type": "object",
+                  "properties": {
+                    "latestVersion": {
+                      "type": "number"
+                    },
+                    "minTipiVersion": {
+                      "type": "string"
+                    },
+                    "latestDockerVersion": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "latestVersion"
+                  ]
                 }
               },
               "required": [
                 "app",
-                "info"
+                "info",
+                "updateInfo"
               ]
             }
           }
@@ -2673,60 +2691,6 @@
           }
         }
       },
-      "PullDto": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "success"
-        ]
-      },
-      "AppFormBody": {
-        "type": "object",
-        "properties": {
-          "exposed": {
-            "type": "boolean"
-          },
-          "exposedLocal": {
-            "type": "boolean"
-          },
-          "openPort": {
-            "type": "boolean",
-            "default": true
-          },
-          "domain": {
-            "type": "string"
-          },
-          "isVisibleOnGuestDashboard": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UninstallAppBody": {
-        "type": "object",
-        "properties": {
-          "removeBackups": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "removeBackups"
-        ]
-      },
-      "UpdateAppBody": {
-        "type": "object",
-        "properties": {
-          "performBackup": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "performBackup"
-        ]
-      },
       "SearchAppsDto": {
         "type": "object",
         "properties": {
@@ -3071,6 +3035,60 @@
         "required": [
           "info",
           "updateInfo"
+        ]
+      },
+      "PullDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "AppFormBody": {
+        "type": "object",
+        "properties": {
+          "exposed": {
+            "type": "boolean"
+          },
+          "exposedLocal": {
+            "type": "boolean"
+          },
+          "openPort": {
+            "type": "boolean",
+            "default": true
+          },
+          "domain": {
+            "type": "string"
+          },
+          "isVisibleOnGuestDashboard": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UninstallAppBody": {
+        "type": "object",
+        "properties": {
+          "removeBackups": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "removeBackups"
+        ]
+      },
+      "UpdateAppBody": {
+        "type": "object",
+        "properties": {
+          "performBackup": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "performBackup"
         ]
       },
       "RestoreAppBackupDto": {
