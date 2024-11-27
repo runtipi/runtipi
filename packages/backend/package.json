@@ -17,7 +17,8 @@
     "tsc": "tsc --noEmit",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org runtipi --project runtipi-backend ./dist && sentry-cli sourcemaps upload --org runtipi --project runtipi-backend ./dist",
     "test": "vitest --coverage --watch=false",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@keyv/sqlite": "^4.0.1",
