@@ -76,7 +76,7 @@
     "@swc/core": "^1.9.3",
     "@total-typescript/shoehorn": "^0.1.2",
     "@types/cookie-parser": "^1.4.8",
-    "@types/express": "^4.17.17",
+    "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/lodash.clonedeep": "^4.5.9",
     "@types/node": "^22.10.0",
