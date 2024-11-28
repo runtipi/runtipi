@@ -14,7 +14,7 @@ vi.mock('fs', async () => {
 beforeEach(async () => {
   (fs as unknown as FsMock).__resetAllMocks();
 
-  const directories = [DATA_DIR, path.join(DATA_DIR, 'state'), path.join(DATA_DIR, 'backups'), path.join(DATA_DIR, 'repos', 'repo-id', 'apps')];
+  const directories = [DATA_DIR, path.join(DATA_DIR, 'state'), path.join(DATA_DIR, 'backups')];
 
   try {
     await Promise.all(

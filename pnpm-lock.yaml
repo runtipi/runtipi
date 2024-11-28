@@ -285,6 +285,9 @@ importers:
       vitest-mock-extended:
         specifier: ^2.0.2
         version: 2.0.2(typescript@5.7.2)(vitest@2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0))
+      wait-for-expect:
+        specifier: ^3.0.2
+        version: 3.0.2
 
   packages/frontend:
     dependencies:
@@ -6895,6 +6898,9 @@ packages:
   void-elements@3.1.0:
     resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
     engines: {node: '>=0.10.0'}
+
+  wait-for-expect@3.0.2:
+    resolution: {integrity: sha512-cfS1+DZxuav1aBYbaO/kE06EOS8yRw7qOFoD3XtjTkYvCvh3zUvNST8DXK/nPaeqIzIv3P3kL3lRJn8iwOiSag==}
 
   watchpack@2.4.2:
     resolution: {integrity: sha512-TnbFSbcOCcDgjZ4piURLCbJ3nJhznVh9kw6F6iokjiFPl8ONxe9A6nMDVXDiNbrSfLILs6vB07F7wLBrwPYzJw==}
@@ -13722,6 +13728,8 @@ snapshots:
       - terser
 
   void-elements@3.1.0: {}
+
+  wait-for-expect@3.0.2: {}
 
   watchpack@2.4.2:
     dependencies:

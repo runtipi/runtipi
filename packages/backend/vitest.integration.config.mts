@@ -7,9 +7,7 @@ export default defineConfig({
   plugins: [swc.vite(), viteTsconfigPaths() as unknown] as Plugin[],
   test: {
     setupFiles: ['./src/tests/vite.setup.ts'],
-    include: ['src/**/*.test.ts'],
-    exclude: ['**/integration/**'],
-    coverage: { all: true, reporter: ['lcov', 'text-summary'] },
+    include: ['src/**/integration/**/*.test.ts'],
     reporters: ['default'],
   },
   resolve: {},

@@ -84,7 +84,7 @@ export class AppLifecycleService {
     const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
     const apps = await this.appRepository.getApps();
 
-    if (apps.length >= 6 && demoMode) {
+    if (demoMode && apps.length >= 6) {
       throw new TranslatableError('SYSTEM_ERROR_DEMO_MODE_LIMIT');
     }
 

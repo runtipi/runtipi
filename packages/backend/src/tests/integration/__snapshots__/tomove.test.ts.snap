@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App lifecycle > install app > should copy the correct files and folders from app store 1`] = `
+"/
+├─ app-data/
+│  └─ 1/
+│     └─ test/
+│        └─ data/
+└─ data/
+   ├─ apps/
+   │  └─ 1/
+   │     └─ test/
+   │        ├─ config.json
+   │        ├─ data/
+   │        └─ docker-compose.json
+   ├─ backups/
+   ├─ repos/
+   │  └─ 1/
+   │     └─ apps/
+   │        └─ test/
+   │           ├─ config.json
+   │           ├─ data/
+   │           └─ docker-compose.json
+   └─ state/
+      └─ seed"
+`;

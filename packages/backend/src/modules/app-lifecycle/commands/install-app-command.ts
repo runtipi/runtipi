@@ -34,9 +34,10 @@ export class InstallAppCommand extends AppLifecycleCommand {
       await this.appHelpers.generateEnvFile(appId, form);
 
       // Copy data dir
-      this.logger.info(`Copying data dir for app ${appId}`);
       const appEnv = await this.appFilesManager.getAppEnv(appId);
       const envMap = this.envUtils.envStringToMap(appEnv.content);
+
+      this.logger.info(`Copying data dir for app ${appId}`);
       await this.marketplaceService.copyDataDir(appId, envMap);
 
       await this.ensureAppDir(appId, form);

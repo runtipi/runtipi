@@ -15,8 +15,8 @@ export class DatabaseService {
     private configurationService: ConfigurationService,
     private logger: LoggerService,
   ) {
-    const { username, port, database, host, password } = this.configurationService.getConfig().database;
-    const { appDir } = this.configurationService.getConfig().directories;
+    const { username, port, database, host, password } = this.configurationService.get('database');
+    const { appDir } = this.configurationService.get('directories');
     const connectionString = `postgresql://${username}:${password}@${host}:${port}/${database}?connect_timeout=300`;
 
     const pool = new Pool({
