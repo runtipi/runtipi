@@ -217,8 +217,8 @@ importers:
         specifier: ^4.5.9
         version: 4.5.9
       '@types/node':
-        specifier: ^22.10.0
-        version: 22.10.0
+        specifier: ^22.10.1
+        version: 22.10.1
       '@types/node-cron':
         specifier: ^3.0.11
         version: 3.0.11
@@ -242,7 +242,7 @@ importers:
         version: 0.38.3(patch_hash=axzumlm3nhmagtutcgv7eurdfa)
       '@vitest/coverage-v8':
         specifier: 2.1.6
-        version: 2.1.6(vitest@2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0))
+        version: 2.1.6(vitest@2.1.6(@types/node@22.10.1)(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0))
       drizzle-kit:
         specifier: ^0.28.1
         version: 0.28.1
@@ -254,7 +254,7 @@ importers:
         version: 4.14.0
       msw:
         specifier: ^2.6.6
-        version: 2.6.6(@types/node@22.10.0)(typescript@5.7.2)
+        version: 2.6.6(@types/node@22.10.1)(typescript@5.7.2)
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
@@ -266,7 +266,7 @@ importers:
         version: 9.5.1(typescript@5.7.2)(webpack@5.96.1(@swc/core@1.9.3(@swc/helpers@0.5.5))(esbuild@0.24.0))
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.2(@swc/core@1.9.3(@swc/helpers@0.5.5))(@types/node@22.10.0)(typescript@5.7.2)
+        version: 10.9.2(@swc/core@1.9.3(@swc/helpers@0.5.5))(@types/node@22.10.1)(typescript@5.7.2)
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -278,13 +278,13 @@ importers:
         version: 1.5.1(@swc/core@1.9.3(@swc/helpers@0.5.5))(rollup@4.21.3)
       vite-tsconfig-paths:
         specifier: 5.1.3
-        version: 5.1.3(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0))
+        version: 5.1.3(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0))
       vitest:
         specifier: ^2.1.6
-        version: 2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)
+        version: 2.1.6(@types/node@22.10.1)(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)
       vitest-mock-extended:
         specifier: ^2.0.2
-        version: 2.0.2(typescript@5.7.2)(vitest@2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0))
+        version: 2.0.2(typescript@5.7.2)(vitest@2.1.6(@types/node@22.10.1)(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0))
 
   packages/frontend:
     dependencies:
@@ -328,8 +328,8 @@ importers:
         specifier: 1.0.0-beta21
         version: 1.0.0-beta21
       '@tabler/icons-react':
-        specifier: ^3.22.0
-        version: 3.22.0(react@18.3.1)
+        specifier: ^3.23.0
+        version: 3.23.0(react@18.3.1)
       '@tanstack/react-query':
         specifier: ^5.61.5
         version: 5.61.5(react@18.3.1)
@@ -471,7 +471,7 @@ importers:
         version: 13.12.2
       '@vitejs/plugin-react':
         specifier: ^4.3.4
-        version: 4.3.4(vite@5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0))
+        version: 4.3.4(vite@5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0))
       globals:
         specifier: ^15.12.0
         version: 15.12.0
@@ -480,10 +480,10 @@ importers:
         version: 5.7.2
       vite:
         specifier: ^5.4.11
-        version: 5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0)
+        version: 5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0)
       vitest:
         specifier: ^2.1.6
-        version: 2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)
+        version: 2.1.6(@types/node@22.10.1)(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)
 
 packages:
 
@@ -2814,16 +2814,16 @@ packages:
       tom-select:
         optional: true
 
-  '@tabler/icons-react@3.22.0':
-    resolution: {integrity: sha512-pOnn+IqZpnkYsEKRvbXXLXwXhYwg4cy1fEVr5SRrgAYJXkobpDjFTdVHlab0HEBXY5AE1NjsMlVeK6H/8Vv2uQ==}
+  '@tabler/icons-react@3.23.0':
+    resolution: {integrity: sha512-uSJfu1Tnhk6AAkerNCOBL3KL3aPpb/bnB4UjTbV3jItTJKitEgr4a98ted67qu5FHB3/tG1bxs32pqy5OL7NGw==}
     peerDependencies:
       react: '>= 16'
 
   '@tabler/icons@3.17.0':
     resolution: {integrity: sha512-sCSfAQ0w93KSnSL7tS08n73CdIKpuHP8foeLMWgDKiZaCs8ZE//N3ytazCk651ZtruTtByI3b+ZDj7nRf+hHvA==}
 
-  '@tabler/icons@3.22.0':
-    resolution: {integrity: sha512-IfgGzhFph5OBr2wTieWL/hyAs0FThnq9O155a6kfGYxqx7h5LQw91wnRswhEaGhXCcfmR7ZVDUr9H+x4b9Pb8g==}
+  '@tabler/icons@3.23.0':
+    resolution: {integrity: sha512-Cz+X58jfRm0g/KcupXXuPw5knj671lNR054AnmLXvCjudiQBWI0wZulDDSsqDoGezvBzMTNPQtNcjLkZs82ZxQ==}
 
   '@tanstack/query-core@5.61.5':
     resolution: {integrity: sha512-iG5vqurEOEbv+paP6kW3zPENa99kSIrd1THISJMaTwVlJ+N5yjVDNOUwp9McK2DWqWCXM3v13ubBbAyhxT78UQ==}
@@ -3004,8 +3004,8 @@ packages:
   '@types/node-cron@3.0.11':
     resolution: {integrity: sha512-0ikrnug3/IyneSHqCBeslAhlK2aBfYek1fGo4bP4QnZPmiqSGRK+Oy7ZMisLWkesffJvQ1cqAcBnJC+8+nxIAg==}
 
-  '@types/node@22.10.0':
-    resolution: {integrity: sha512-XC70cRZVElFHfIUB40FgZOBbgJYFKKMa5nb9lxcwYstFG/Mi+/Y0bGS+rs6Dmhmkpq4pnNiLiuZAbc02YCOnmA==}
+  '@types/node@22.10.1':
+    resolution: {integrity: sha512-qKgsUwfHZV2WCWLAnVP1JqnpE6Im6h3Y0+fYgMTasNQ7V++CBX5OT1as0g0f+OyubbFqhf6XVNIsmN4IIhEgGQ==}
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -7713,16 +7713,16 @@ snapshots:
     dependencies:
       react-hook-form: 7.53.2(react@18.3.1)
 
-  '@inquirer/confirm@5.0.2(@types/node@22.10.0)':
+  '@inquirer/confirm@5.0.2(@types/node@22.10.1)':
     dependencies:
-      '@inquirer/core': 10.1.0(@types/node@22.10.0)
-      '@inquirer/type': 3.0.1(@types/node@22.10.0)
-      '@types/node': 22.10.0
+      '@inquirer/core': 10.1.0(@types/node@22.10.1)
+      '@inquirer/type': 3.0.1(@types/node@22.10.1)
+      '@types/node': 22.10.1
 
-  '@inquirer/core@10.1.0(@types/node@22.10.0)':
+  '@inquirer/core@10.1.0(@types/node@22.10.1)':
     dependencies:
       '@inquirer/figures': 1.0.8
-      '@inquirer/type': 3.0.1(@types/node@22.10.0)
+      '@inquirer/type': 3.0.1(@types/node@22.10.1)
       ansi-escapes: 4.3.2
       cli-width: 4.1.0
       mute-stream: 2.0.0
@@ -7735,9 +7735,9 @@ snapshots:
 
   '@inquirer/figures@1.0.8': {}
 
-  '@inquirer/type@3.0.1(@types/node@22.10.0)':
+  '@inquirer/type@3.0.1(@types/node@22.10.1)':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -9139,14 +9139,14 @@ snapshots:
       '@tabler/icons': 3.17.0
       bootstrap: 5.3.3(@popperjs/core@2.11.8)
 
-  '@tabler/icons-react@3.22.0(react@18.3.1)':
+  '@tabler/icons-react@3.23.0(react@18.3.1)':
     dependencies:
-      '@tabler/icons': 3.22.0
+      '@tabler/icons': 3.23.0
       react: 18.3.1
 
   '@tabler/icons@3.17.0': {}
 
-  '@tabler/icons@3.22.0': {}
+  '@tabler/icons@3.23.0': {}
 
   '@tanstack/query-core@5.61.5': {}
 
@@ -9239,15 +9239,15 @@ snapshots:
   '@types/body-parser@1.19.5':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@types/connect@3.4.36':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@types/cookie-parser@1.4.8(@types/express@5.0.0)':
     dependencies:
@@ -9261,7 +9261,7 @@ snapshots:
 
   '@types/cors@2.8.17':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@types/debug@4.1.12':
     dependencies:
@@ -9291,7 +9291,7 @@ snapshots:
 
   '@types/express-serve-static-core@5.0.2':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
       '@types/qs': 6.9.16
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
@@ -9317,7 +9317,7 @@ snapshots:
 
   '@types/jsonwebtoken@9.0.7':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@types/lodash.clonedeep@4.5.9':
     dependencies:
@@ -9337,11 +9337,11 @@ snapshots:
 
   '@types/mysql@2.15.26':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@types/node-cron@3.0.11': {}
 
-  '@types/node@22.10.0':
+  '@types/node@22.10.1':
     dependencies:
       undici-types: 6.20.0
 
@@ -9353,13 +9353,13 @@ snapshots:
 
   '@types/pg@8.11.10':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
       pg-protocol: 1.6.1
       pg-types: 4.0.2
 
   '@types/pg@8.6.1':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
       pg-protocol: 1.7.0
       pg-types: 2.2.0
 
@@ -9387,12 +9387,12 @@ snapshots:
   '@types/send@0.17.4':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@types/serve-static@1.15.7':
     dependencies:
       '@types/http-errors': 2.0.4
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
       '@types/send': 0.17.4
 
   '@types/shimmer@1.2.0': {}
@@ -9403,7 +9403,7 @@ snapshots:
     dependencies:
       '@types/cookiejar': 2.1.5
       '@types/methods': 1.1.4
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
       form-data: 4.0.0
 
   '@types/supertest@6.0.2':
@@ -9413,7 +9413,7 @@ snapshots:
 
   '@types/tedious@4.0.14':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@types/tough-cookie@4.0.5': {}
 
@@ -9430,7 +9430,7 @@ snapshots:
 
   '@types/web-push@3.6.4':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@uidotdev/usehooks@2.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -9441,18 +9441,18 @@ snapshots:
 
   '@vercel/ncc@0.38.3(patch_hash=axzumlm3nhmagtutcgv7eurdfa)': {}
 
-  '@vitejs/plugin-react@4.3.4(vite@5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0))':
+  '@vitejs/plugin-react@4.3.4(vite@5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.0)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0)
+      vite: 5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@2.1.6(vitest@2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0))':
+  '@vitest/coverage-v8@2.1.6(vitest@2.1.6(@types/node@22.10.1)(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -9466,7 +9466,7 @@ snapshots:
       std-env: 3.8.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)
+      vitest: 2.1.6(@types/node@22.10.1)(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -9477,14 +9477,14 @@ snapshots:
       chai: 5.1.2
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.6(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(vite@5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0))':
+  '@vitest/mocker@2.1.6(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(vite@5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0))':
     dependencies:
       '@vitest/spy': 2.1.6
       estree-walker: 3.0.3
       magic-string: 0.30.12
     optionalDependencies:
-      msw: 2.6.6(@types/node@22.10.0)(typescript@5.7.2)
-      vite: 5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0)
+      msw: 2.6.6(@types/node@22.10.1)(typescript@5.7.2)
+      vite: 5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0)
 
   '@vitest/pretty-format@2.1.6':
     dependencies:
@@ -10426,7 +10426,7 @@ snapshots:
     dependencies:
       '@types/cookie': 0.4.1
       '@types/cors': 2.8.17
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
       accepts: 1.3.8
       base64id: 2.0.0
       cookie: 0.7.2
@@ -11336,7 +11336,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -12015,12 +12015,12 @@ snapshots:
 
   ms@2.1.3: {}
 
-  msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2):
+  msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.1
       '@bundled-es-modules/statuses': 1.0.1
       '@bundled-es-modules/tough-cookie': 0.1.6
-      '@inquirer/confirm': 5.0.2(@types/node@22.10.0)
+      '@inquirer/confirm': 5.0.2(@types/node@22.10.1)
       '@mswjs/interceptors': 0.37.1
       '@open-draft/deferred-promise': 2.2.0
       '@open-draft/until': 2.1.0
@@ -13395,14 +13395,14 @@ snapshots:
       typescript: 5.7.2
       webpack: 5.96.1(@swc/core@1.9.3(@swc/helpers@0.5.5))(esbuild@0.24.0)
 
-  ts-node@10.9.2(@swc/core@1.9.3(@swc/helpers@0.5.5))(@types/node@22.10.0)(typescript@5.7.2):
+  ts-node@10.9.2(@swc/core@1.9.3(@swc/helpers@0.5.5))(@types/node@22.10.1)(typescript@5.7.2):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
       acorn: 8.12.1
       acorn-walk: 8.3.4
       arg: 4.1.3
@@ -13640,13 +13640,13 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-node@2.1.6(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0):
+  vite-node@2.1.6(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0):
     dependencies:
       cac: 6.7.14
       debug: 4.3.7
       es-module-lexer: 1.5.4
       pathe: 1.1.2
-      vite: 5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0)
+      vite: 5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -13658,38 +13658,38 @@ snapshots:
       - supports-color
       - terser
 
-  vite-tsconfig-paths@5.1.3(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0)):
+  vite-tsconfig-paths@5.1.3(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0)):
     dependencies:
       debug: 4.3.7
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.7.2)
     optionalDependencies:
-      vite: 5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0)
+      vite: 5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0):
+  vite@5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.47
       rollup: 4.21.3
     optionalDependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
       fsevents: 2.3.3
       sass-embedded: 1.79.4
       terser: 5.32.0
 
-  vitest-mock-extended@2.0.2(typescript@5.7.2)(vitest@2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)):
+  vitest-mock-extended@2.0.2(typescript@5.7.2)(vitest@2.1.6(@types/node@22.10.1)(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)):
     dependencies:
       ts-essentials: 10.0.3(typescript@5.7.2)
       typescript: 5.7.2
-      vitest: 2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)
+      vitest: 2.1.6(@types/node@22.10.1)(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0)
 
-  vitest@2.1.6(@types/node@22.10.0)(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0):
+  vitest@2.1.6(@types/node@22.10.1)(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(sass-embedded@1.79.4)(terser@5.32.0):
     dependencies:
       '@vitest/expect': 2.1.6
-      '@vitest/mocker': 2.1.6(msw@2.6.6(@types/node@22.10.0)(typescript@5.7.2))(vite@5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0))
+      '@vitest/mocker': 2.1.6(msw@2.6.6(@types/node@22.10.1)(typescript@5.7.2))(vite@5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0))
       '@vitest/pretty-format': 2.1.6
       '@vitest/runner': 2.1.6
       '@vitest/snapshot': 2.1.6
@@ -13705,11 +13705,11 @@ snapshots:
       tinyexec: 0.3.1
       tinypool: 1.0.1
       tinyrainbow: 1.2.0
-      vite: 5.4.11(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0)
-      vite-node: 2.1.6(@types/node@22.10.0)(sass-embedded@1.79.4)(terser@5.32.0)
+      vite: 5.4.11(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0)
+      vite-node: 2.1.6(@types/node@22.10.1)(sass-embedded@1.79.4)(terser@5.32.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
     transitivePeerDependencies:
       - less
       - lightningcss
