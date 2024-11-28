@@ -29,8 +29,6 @@ exports[`AppService > copyAssets > should create base folder structure 1`] = `
    │     ├─ incomplete/
    │     └─ watch/
    ├─ repos/
-   │  └─ repo-id/
-   │     └─ apps/
    ├─ state/
    │  └─ seed
    └─ traefik/
