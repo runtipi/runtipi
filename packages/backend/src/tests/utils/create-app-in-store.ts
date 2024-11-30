@@ -6,7 +6,7 @@ import { faker } from '@faker-js/faker';
 
 export const createAppInStore = async (storeId: number, app: Partial<AppInfo> = {}) => {
   const appInfo: AppInfo = {
-    id: faker.lorem.word(),
+    id: faker.string.uuid(),
     name: faker.lorem.words(2),
     port: faker.number.int({ min: 1000, max: 9999 }),
     https: false,

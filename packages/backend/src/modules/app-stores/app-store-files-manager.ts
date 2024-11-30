@@ -47,7 +47,7 @@ export class AppStoreFilesManager {
 
       if (await this.filesystem.pathExists(path.join(appRepoDir, 'config.json'))) {
         const configFile = await this.filesystem.readTextFile(path.join(appRepoDir, 'config.json'));
-        const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile ?? ''));
+        const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile ?? '{}'));
 
         if (!parsedConfig.success) {
           this.logger.debug(`App ${namespacedId} config error:`);
@@ -163,10 +163,8 @@ export class AppStoreFilesManager {
       return;
     }
 
-    // Create app-data folder if it doesn't exist
-    if (!(await this.filesystem.pathExists(path.join(appDataDir, 'data')))) {
-      await this.filesystem.createDirectory(path.join(appDataDir, 'data'));
-    }
+    // Create app-data folder
+    await this.filesystem.createDirectory(path.join(appDataDir, 'data'));
 
     const dataDir = await this.filesystem.listFiles(path.join(appInstalledDir, 'data'));
 

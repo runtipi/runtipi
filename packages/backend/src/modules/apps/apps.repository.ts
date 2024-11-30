@@ -1,5 +1,5 @@
 import { DatabaseService } from '@/core/database/database.service';
-import { app, appStore } from '@/core/database/drizzle/schema';
+import { app } from '@/core/database/drizzle/schema';
 import type { AppStatus, NewApp } from '@/core/database/drizzle/types';
 import { Injectable } from '@nestjs/common';
 import { and, asc, eq, isNull, ne, notInArray, sql } from 'drizzle-orm';
@@ -14,12 +14,7 @@ export class AppsRepository {
    * @param {string} appId - The id of the app to return
    */
   public async getApp(appId: string) {
-    return this.db.db.query.app.findFirst({ where: eq(app.id, appId) });
-  }
-
-  public async getAppWithAppStore(appId: string) {
-    const foundApp = await this.db.db.select().from(app).where(eq(app.id, appId)).innerJoin(appStore, eq(app.appStoreId, appStore.id)).execute();
-    return foundApp[0];
+    return this.db.db.query.app.findFirst({ where: eq(app.id, appId), with: { appStore: true } });
   }
 
   /**
@@ -65,7 +60,7 @@ export class AppsRepository {
    * Returns all apps installed sorted by id ascending
    */
   public async getApps() {
-    return this.db.db.query.app.findMany({ orderBy: asc(app.id) });
+    return this.db.db.query.app.findMany({ orderBy: asc(app.id), with: { appStore: true } });
   }
 
   /**
@@ -75,6 +70,7 @@ export class AppsRepository {
     return this.db.db.query.app.findMany({
       where: and(eq(app.status, 'running'), eq(app.isVisibleOnGuestDashboard, true)),
       orderBy: asc(app.id),
+      with: { appStore: true },
     });
   }
 

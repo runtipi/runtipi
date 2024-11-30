@@ -102,7 +102,7 @@ describe('App lifecycle', () => {
   });
 
   describe('install app', () => {
-    it('should copy the correct files and folders from app store', async () => {
+    it('should successfully install app and create expected directory structure', async () => {
       // arrange
       const appInfo = await createAppInStore(1, { id: 'test' });
       const appId = `1_${appInfo.id}`;

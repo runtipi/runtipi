@@ -35,9 +35,13 @@ export class AppStoreRepository {
     const existingAppStore = await this.getAppStoreByHash(hash);
 
     if (existingAppStore) {
-      await this.databaseService.db.update(appStore).set({ enabled: true, deleted: false }).where(eq(appStore.id, existingAppStore.id));
+      const updated = await this.databaseService.db
+        .update(appStore)
+        .set({ enabled: true, deleted: false })
+        .where(eq(appStore.id, existingAppStore.id))
+        .returning();
 
-      return existingAppStore;
+      return updated[0];
     }
 
     const newAppStore = await this.databaseService.db
