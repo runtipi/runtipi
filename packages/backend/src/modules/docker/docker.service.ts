@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { extractAppId } from '@/common/helpers/app-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -41,7 +42,7 @@ export class DockerService {
   public getBaseComposeArgsApp = async (appId: string) => {
     const { directories } = this.config.getConfig();
 
-    const [appsRepoId] = appId.split('_') as [string];
+    const { storeId } = extractAppId(appId);
 
     const appEnv = await this.appFilesManager.getAppEnv(appId);
     const args: string[] = [`--env-file ${appEnv.path}`];
@@ -57,7 +58,7 @@ export class DockerService {
     const composeFile = await this.appFilesManager.getDockerComposeYaml(appId);
     args.push(`-f ${composeFile.path}`);
 
-    const commonComposeFile = path.join(directories.dataDir, 'repos', appsRepoId, 'apps', 'docker-compose.common.yml');
+    const commonComposeFile = path.join(directories.dataDir, 'repos', storeId, 'apps', 'docker-compose.common.yml');
     args.push(`-f ${commonComposeFile}`);
 
     // User defined overrides
