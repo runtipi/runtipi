@@ -104,8 +104,8 @@ export class ConfigurationService {
         appDataPath: path.join(env.data.RUNTIPI_APP_DATA_PATH, 'app-data'),
         persistTraefikConfig: env.data.PERSIST_TRAEFIK_CONFIG,
       },
-      appsRepoId: env.data.APPS_REPO_ID, // @deprecated
-      appsRepoUrl: env.data.APPS_REPO_URL, // @deprecated
+      deprecatedAppsRepoId: env.data.APPS_REPO_ID, // @deprecated
+      deprecatedAppsRepoUrl: env.data.APPS_REPO_URL, // @deprecated
       architecture: env.data.ARCHITECTURE,
       demoMode: env.data.DEMO_MODE,
       rootFolderHost: env.data.ROOT_FOLDER_HOST,

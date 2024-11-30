@@ -56,8 +56,13 @@ export class AppStoreService {
     return { success: true };
   }
 
+  /**
+   * Migrate the legacy repo to the new app store system
+   *
+   * @returns The ID of the migrated repo
+   */
   public async migrateLegacyRepo() {
-    const { appsRepoUrl } = this.config.getConfig();
+    const { deprecatedAppsRepoUrl } = this.config.getConfig();
 
     const existing = await this.appStoreRepository.getEnabledAppStores();
 
@@ -68,7 +73,7 @@ export class AppStoreService {
 
     this.logger.info('Migrating default repo');
 
-    const migrated = await this.appStoreRepository.createAppStore({ url: appsRepoUrl, name: 'migrated' });
+    const migrated = await this.appStoreRepository.createAppStore({ url: deprecatedAppsRepoUrl, name: 'migrated' });
 
     if (!migrated) {
       throw new Error('Failed to migrate current repo');
