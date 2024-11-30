@@ -29,8 +29,8 @@ import {
   searchApps,
   getAppDetails,
   getImage,
-  pull,
-  getAll,
+  pullAppStore,
+  getAllAppStores,
   installApp,
   startApp,
   stopApp,
@@ -95,8 +95,8 @@ import type {
   SearchAppsResponse,
   GetAppDetailsData,
   GetImageData,
-  PullError,
-  PullResponse,
+  PullAppStoreError,
+  PullAppStoreResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -714,12 +714,12 @@ export const getImageOptions = (options: OptionsLegacyParser<GetImageData>) => {
   });
 };
 
-export const pullQueryKey = (options?: OptionsLegacyParser) => [createQueryKey('pull', options)];
+export const pullAppStoreQueryKey = (options?: OptionsLegacyParser) => [createQueryKey('pullAppStore', options)];
 
-export const pullOptions = (options?: OptionsLegacyParser) => {
+export const pullAppStoreOptions = (options?: OptionsLegacyParser) => {
   return queryOptions({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await pull({
+      const { data } = await pullAppStore({
         ...options,
         ...queryKey[0],
         signal,
@@ -727,14 +727,14 @@ export const pullOptions = (options?: OptionsLegacyParser) => {
       });
       return data;
     },
-    queryKey: pullQueryKey(options),
+    queryKey: pullAppStoreQueryKey(options),
   });
 };
 
-export const pullMutation = (options?: Partial<OptionsLegacyParser>) => {
-  const mutationOptions: UseMutationOptions<PullResponse, PullError, OptionsLegacyParser> = {
+export const pullAppStoreMutation = (options?: Partial<OptionsLegacyParser>) => {
+  const mutationOptions: UseMutationOptions<PullAppStoreResponse, PullAppStoreError, OptionsLegacyParser> = {
     mutationFn: async (localOptions) => {
-      const { data } = await pull({
+      const { data } = await pullAppStore({
         ...options,
         ...localOptions,
         throwOnError: true,
@@ -745,12 +745,12 @@ export const pullMutation = (options?: Partial<OptionsLegacyParser>) => {
   return mutationOptions;
 };
 
-export const getAllQueryKey = (options?: OptionsLegacyParser) => [createQueryKey('getAll', options)];
+export const getAllAppStoresQueryKey = (options?: OptionsLegacyParser) => [createQueryKey('getAllAppStores', options)];
 
-export const getAllOptions = (options?: OptionsLegacyParser) => {
+export const getAllAppStoresOptions = (options?: OptionsLegacyParser) => {
   return queryOptions({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getAll({
+      const { data } = await getAllAppStores({
         ...options,
         ...queryKey[0],
         signal,
@@ -758,7 +758,7 @@ export const getAllOptions = (options?: OptionsLegacyParser) => {
       });
       return data;
     },
-    queryKey: getAllQueryKey(options),
+    queryKey: getAllAppStoresQueryKey(options),
   });
 };
 

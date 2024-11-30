@@ -3,6 +3,7 @@ import { useAppContext } from '@/context/app-context';
 import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
+import { AppStoresContainer } from '../containers/app-stores-container';
 
 const GeneralActionsContainer = lazy(() => import('../containers/general-actions').then((module) => ({ default: module.GeneralActionsContainer })));
 const UserSettingsContainer = lazy(() => import('../containers/user-settings').then((module) => ({ default: module.UserSettingsContainer })));
@@ -33,6 +34,9 @@ export const SettingsPage = () => {
           <TabsTrigger onClick={() => handleTabChange('security')} value="security">
             {t('SETTINGS_SECURITY_TAB_TITLE')}
           </TabsTrigger>
+          <TabsTrigger onClick={() => handleTabChange('appstores')} value="appstores">
+            {t('SETTINGS_APPSTORES_TAB_TITLE')}
+          </TabsTrigger>
           <TabsTrigger onClick={() => handleTabChange('logs')} value="logs">
             {t('SETTINGS_LOGS_TAB_TITLE')}
           </TabsTrigger>
@@ -50,6 +54,11 @@ export const SettingsPage = () => {
         <TabsContent value="security">
           <Suspense>
             <SecurityContainer totpEnabled={Boolean(user.totpEnabled)} username={user.username} />
+          </Suspense>
+        </TabsContent>
+        <TabsContent value="appstores">
+          <Suspense>
+            <AppStoresContainer />
           </Suspense>
         </TabsContent>
         <TabsContent value="logs">

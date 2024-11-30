@@ -68,10 +68,10 @@ import type {
   GetImageData,
   GetImageError,
   GetImageResponse,
-  PullError,
-  PullResponse,
-  GetAllError,
-  GetAllResponse,
+  PullAppStoreError,
+  PullAppStoreResponse,
+  GetAllAppStoresError,
+  GetAllAppStoresResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -302,15 +302,15 @@ export const getImage = <ThrowOnError extends boolean = false>(options: OptionsL
   });
 };
 
-export const pull = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
-  return (options?.client ?? client).post<PullResponse, PullError, ThrowOnError>({
+export const pullAppStore = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).post<PullAppStoreResponse, PullAppStoreError, ThrowOnError>({
     ...options,
     url: '/api/app-store/pull',
   });
 };
 
-export const getAll = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
-  return (options?.client ?? client).get<GetAllResponse, GetAllError, ThrowOnError>({
+export const getAllAppStores = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetAllAppStoresResponse, GetAllAppStoresError, ThrowOnError>({
     ...options,
     url: '/api/app-store/all',
   });

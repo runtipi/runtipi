@@ -60,8 +60,8 @@ export class AppService {
       await this.copyAssets();
       await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
     } catch (e) {
-      Sentry.captureException(e, { tags: { source: 'bootstrap' } });
       this.logger.error(e);
+      Sentry.captureException(e, { tags: { source: 'bootstrap' } });
     }
   }
 
