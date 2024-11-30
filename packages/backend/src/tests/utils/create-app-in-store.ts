@@ -32,11 +32,25 @@ export const createAppInStore = async (storeId: number, app: Partial<AppInfo> = 
     ...app,
   };
 
+  const composeJson = {
+    services: [
+      {
+        name: appInfo.id,
+        image: 'test',
+        isMain: true,
+        internalPort: 80,
+        environment: {
+          TEST: 'test',
+        },
+      },
+    ],
+  };
+
   const appStorePath = `${DATA_DIR}/repos/${storeId}/apps/${appInfo.id}`;
 
   await fs.promises.mkdir(`${DATA_DIR}/repos/${storeId}/apps/${appInfo.id}/data`, { recursive: true });
   await fs.promises.writeFile(path.join(appStorePath, 'config.json'), JSON.stringify(appInfo, null, 2));
-  await fs.promises.writeFile(path.join(appStorePath, 'docker-compose.json'), JSON.stringify(appInfo, null, 2));
+  await fs.promises.writeFile(path.join(appStorePath, 'docker-compose.json'), JSON.stringify(composeJson, null, 2));
 
   return appInfo;
 };

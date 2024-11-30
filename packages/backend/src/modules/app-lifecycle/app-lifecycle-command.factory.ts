@@ -4,6 +4,7 @@ import type { z } from 'zod';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppHelpers } from '../apps/app.helpers';
 import { BackupManager } from '../backups/backup.manager';
+import { DockerComposeBuilder } from '../docker/builders/compose.builder';
 import { DockerService } from '../docker/docker.service';
 import { EnvUtils } from '../env/env.utils';
 import { MarketplaceService } from '../marketplace/marketplace.service';
@@ -29,6 +30,7 @@ export class AppLifecycleCommandFactory {
     private readonly dockerService: DockerService,
     private readonly backupManager: BackupManager,
     private readonly marketplaceService: MarketplaceService,
+    private readonly dockerComposeBuilder: DockerComposeBuilder,
   ) {}
 
   createCommand(eventData: z.infer<typeof appEventSchema>) {
@@ -36,36 +38,89 @@ export class AppLifecycleCommandFactory {
 
     switch (command) {
       case 'install':
-        return new InstallAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers, this.envUtils);
+        return new InstallAppCommand(
+          this.logger,
+          this.appFilesManager,
+          this.dockerService,
+          this.marketplaceService,
+          this.dockerComposeBuilder,
+          this.appHelpers,
+          this.envUtils,
+        );
       case 'start':
-        return new StartAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers);
+        return new StartAppCommand(
+          this.logger,
+          this.appFilesManager,
+          this.dockerService,
+          this.marketplaceService,
+          this.dockerComposeBuilder,
+          this.appHelpers,
+        );
       case 'stop':
-        return new StopAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers);
+        return new StopAppCommand(
+          this.logger,
+          this.appFilesManager,
+          this.dockerService,
+          this.marketplaceService,
+          this.dockerComposeBuilder,
+          this.appHelpers,
+        );
       case 'restart':
-        return new RestartAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers);
+        return new RestartAppCommand(
+          this.logger,
+          this.appFilesManager,
+          this.dockerService,
+          this.marketplaceService,
+          this.dockerComposeBuilder,
+          this.appHelpers,
+        );
       case 'uninstall':
-        return new UninstallAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService);
+        return new UninstallAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.dockerComposeBuilder);
       case 'reset':
-        return new ResetAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers, this.envUtils);
+        return new ResetAppCommand(
+          this.logger,
+          this.appFilesManager,
+          this.dockerService,
+          this.marketplaceService,
+          this.dockerComposeBuilder,
+          this.appHelpers,
+          this.envUtils,
+        );
       case 'backup':
-        return new BackupAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.backupManager);
+        return new BackupAppCommand(
+          this.logger,
+          this.appFilesManager,
+          this.dockerService,
+          this.marketplaceService,
+          this.dockerComposeBuilder,
+          this.backupManager,
+        );
       case 'restore':
         return new RestoreAppCommand(
           this.logger,
           this.appFilesManager,
           this.dockerService,
           this.marketplaceService,
+          this.dockerComposeBuilder,
           this.backupManager,
           eventData.filename,
         );
       case 'generate_env':
-        return new GenerateAppEnvCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers);
+        return new GenerateAppEnvCommand(
+          this.logger,
+          this.appFilesManager,
+          this.dockerService,
+          this.marketplaceService,
+          this.dockerComposeBuilder,
+          this.appHelpers,
+        );
       case 'update':
         return new UpdateAppCommand(
           this.logger,
           this.appFilesManager,
           this.dockerService,
           this.marketplaceService,
+          this.dockerComposeBuilder,
           this.appHelpers,
           this.backupManager,
           eventData.performBackup,
