@@ -1,6 +1,7 @@
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { BackupManager } from '@/modules/backups/backup.manager';
+import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { AppLifecycleCommand } from './command';
@@ -11,9 +12,10 @@ export class BackupAppCommand extends AppLifecycleCommand {
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
     marketplaceService: MarketplaceService,
+    dockerComposeBuilder: DockerComposeBuilder,
     private readonly backupManager: BackupManager,
   ) {
-    super(logger, appFilesManager, dockerService, marketplaceService);
+    super(logger, appFilesManager, dockerService, marketplaceService, dockerComposeBuilder);
 
     this.logger = logger;
     this.appFilesManager = appFilesManager;

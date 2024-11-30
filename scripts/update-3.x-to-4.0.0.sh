@@ -12,16 +12,16 @@ sudo ./runtipi-cli update v4.0.0
 # Wait for runtipi container to be healthy
 echo "Waiting for runtipi container to be healthy..."
 
-while [ "$(sudo docker inspect -f {{.State.Health.Status}} runtipi)" != "healthy" ]; do
+while [ "$(sudo docker inspect -f '{{.State.Health.Status}}' runtipi)" != "healthy" ]; do
   sleep 1
 done
 
 sleep 3
 
 # Get the first repo in the repos directory as a single string
-NEW_REPO_ID=$(ls ./repos/ | head -n 1)
-APPS_TO_MIGRATE=$(ls ./apps/)
-APP_DATA_PATH=$(cat .env | grep RUNTIPI_APP_DATA_PATH | cut -d '=' -f 2 | sed -E ':loop; s|/app-data$||; t loop')
+NEW_REPO_ID=$(basename "$(find ./repos/ -mindepth 1 -maxdepth 1 -type d | head -n 1)")
+APPS_TO_MIGRATE=$(find ./apps/ -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
+APP_DATA_PATH=$(grep '^RUNTIPI_APP_DATA_PATH=' .env | cut -d '=' -f2- | sed -E ':loop; s|/app-data$||; t loop')
 
 # Stop all apps
 for app in $APPS_TO_MIGRATE; do

@@ -1,0 +1,85 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App lifecycle > install app > should copy the correct files and folders from app store 1`] = `
+"/
+├─ app-data/
+│  └─ 1/
+│     └─ test/
+│        ├─ app.env
+│        └─ data/
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ 1/
+   │     └─ test/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        └─ docker-compose.yml
+   ├─ backups/
+   ├─ repos/
+   │  └─ 1/
+   │     └─ apps/
+   │        └─ test/
+   │           ├─ config.json
+   │           ├─ data/
+   │           └─ docker-compose.json
+   └─ state/
+      └─ seed"
+`;
+
+exports[`App lifecycle > install app > should copy the correct files and folders from app store 2`] = `
+"services:
+  test:
+    image: test
+    container_name: test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
+    environment:
+      TEST: test
+    ports:
+      - \${APP_PORT}:80
+    labels:
+      generated: true
+      traefik.enable: false
+      traefik.http.middlewares.test-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.test.loadbalancer.server.port: "80"
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+
+"
+`;
+
+exports[`App lifecycle > install app > should not delete an existing app-data folder even if the app is reinstalled 1`] = `
+"/
+├─ app-data/
+│  ├─ 1/
+│  │  └─ test2/
+│  │     ├─ app.env
+│  │     └─ data/
+│  └─ 1_test2/
+│     └─ data/
+│        └─ test.txt
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ 1/
+   │     └─ test2/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        └─ docker-compose.yml
+   ├─ backups/
+   ├─ repos/
+   │  └─ 1/
+   │     └─ apps/
+   │        └─ test2/
+   │           ├─ config.json
+   │           ├─ data/
+   │           └─ docker-compose.json
+   └─ state/
+      └─ seed"
+`;

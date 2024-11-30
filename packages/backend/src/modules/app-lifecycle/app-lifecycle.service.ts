@@ -38,10 +38,10 @@ export class AppLifecycleService {
     try {
       const command = this.commandFactory.createCommand(data);
       const { success, message } = await command.execute(data.appid, data.form);
-      this.appEventsQueue.sendEventResponse(eventId, { success, message });
+      await this.appEventsQueue.sendEventResponse(eventId, { success, message });
     } catch (err) {
       this.logger.error(`Error invoking command: ${err}`);
-      this.appEventsQueue.sendEventResponse(eventId, { success: false, message: String(err) });
+      await this.appEventsQueue.sendEventResponse(eventId, { success: false, message: String(err) });
     }
   }
 

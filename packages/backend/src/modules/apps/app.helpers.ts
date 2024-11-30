@@ -29,7 +29,7 @@ export class AppHelpers {
    * @throws Will throw an error if the app has an invalid config.json file or if a required variable is missing.
    */
   public generateEnvFile = async (namespacedAppId: string, form: AppEventFormInput) => {
-    const { internalIp, envFilePath, rootFolderHost } = this.config.getConfig();
+    const { internalIp, envFilePath, rootFolderHost, userSettings } = this.config.getConfig();
 
     const config = await this.appFilesManager.getInstalledAppInfo(namespacedAppId);
 
@@ -46,7 +46,7 @@ export class AppHelpers {
     envMap.set('APP_PORT', String(config.port));
     envMap.set('APP_ID', namespacedAppId);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
-    envMap.set('APP_DATA_DIR', path.join(this.config.get('userSettings').appDataPath, storeId, appId));
+    envMap.set('APP_DATA_DIR', path.join(userSettings.appDataPath, storeId, appId));
 
     const appEnv = await this.appFilesManager.getAppEnv(namespacedAppId);
     const existingAppEnvMap = this.envUtils.envStringToMap(appEnv.content);

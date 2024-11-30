@@ -1,5 +1,6 @@
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
+import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
 import { dynamicComposeSchema } from '@/modules/docker/builders/schemas';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
@@ -12,6 +13,7 @@ export class AppLifecycleCommand {
     protected appFilesManager: AppFilesManager,
     protected dockerService: DockerService,
     protected marketplaceService: MarketplaceService,
+    protected dockerComposeBuilder: DockerComposeBuilder,
   ) {}
 
   protected async ensureAppDir(appId: string, form: AppEventFormInput): Promise<void> {
@@ -27,7 +29,7 @@ export class AppLifecycleCommand {
     if (composeJson.content && appInfo?.dynamic_config) {
       try {
         const { services } = dynamicComposeSchema.parse(composeJson.content);
-        const composeFile = this.dockerService.getDockerCompose(services, form);
+        const composeFile = this.dockerComposeBuilder.getDockerCompose(services, form);
 
         await this.appFilesManager.writeDockerComposeYml(appId, composeFile);
       } catch (err) {
