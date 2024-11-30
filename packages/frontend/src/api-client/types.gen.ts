@@ -823,13 +823,13 @@ export type GetImageResponse = unknown;
 
 export type GetImageError = unknown;
 
-export type PullResponse = PullDto;
+export type PullAppStoreResponse = PullDto;
 
-export type PullError = unknown;
+export type PullAppStoreError = unknown;
 
-export type GetAllResponse = AllAppStoresDto;
+export type GetAllAppStoresResponse = AllAppStoresDto;
 
-export type GetAllError = unknown;
+export type GetAllAppStoresError = unknown;
 
 export type InstallAppData = {
   body: AppFormBody;

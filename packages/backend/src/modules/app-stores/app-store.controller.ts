@@ -11,13 +11,15 @@ export class AppStoreController {
 
   @Post('/pull')
   @ZodSerializerDto(PullDto)
-  async pull(): Promise<PullDto> {
+  async pullAppStore(): Promise<PullDto> {
     return this.appStoreService.pullRepositories();
   }
 
   @Get('/all')
   @ZodSerializerDto(AllAppStoresDto)
-  async getAll(): Promise<AllAppStoresDto> {
-    return this.appStoreService.getEnabledAppStores();
+  async getAllAppStores(): Promise<AllAppStoresDto> {
+    const appStores = await this.appStoreService.getEnabledAppStores();
+
+    return { appStores };
   }
 }

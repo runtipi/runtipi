@@ -658,7 +658,7 @@
     },
     "/api/app-store/pull": {
       "post": {
-        "operationId": "pull",
+        "operationId": "pullAppStore",
         "parameters": [],
         "responses": {
           "201": {
@@ -679,7 +679,7 @@
     },
     "/api/app-store/all": {
       "get": {
-        "operationId": "getAll",
+        "operationId": "getAllAppStores",
         "parameters": [],
         "responses": {
           "200": {
@@ -3077,30 +3077,38 @@
         ]
       },
       "AllAppStoresDto": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "number"
-            },
-            "name": {
-              "type": "string"
-            },
-            "url": {
-              "type": "string"
-            },
-            "enabled": {
-              "type": "boolean"
+        "type": "object",
+        "properties": {
+          "appStores": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "url",
+                "enabled"
+              ]
             }
-          },
-          "required": [
-            "id",
-            "name",
-            "url",
-            "enabled"
-          ]
-        }
+          }
+        },
+        "required": [
+          "appStores"
+        ]
       },
       "AppFormBody": {
         "type": "object",
