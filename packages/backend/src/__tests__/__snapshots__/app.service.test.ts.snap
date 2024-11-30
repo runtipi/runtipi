@@ -4,6 +4,7 @@ exports[`AppService > copyAssets > should create base folder structure 1`] = `
 "/
 ├─ app-data/
 └─ data/
+   ├─ .env
    ├─ apps/
    ├─ backups/
    ├─ media/

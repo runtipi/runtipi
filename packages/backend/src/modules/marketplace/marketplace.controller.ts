@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -20,7 +20,11 @@ export class MarketplaceController {
   async searchApps(@Query() query: SearchAppsQueryDto): Promise<SearchAppsDto> {
     const { search, pageSize, cursor, category } = query;
 
-    const res = await this.marketplaceService.searchApps({ search, pageSize: Number(pageSize), cursor, category });
+    const size = pageSize ? Number(pageSize) : 24;
+    if (Number.isNaN(size) || size <= 0) {
+      throw new BadRequestException('Invalid pageSize');
+    }
+    const res = await this.marketplaceService.searchApps({ search, pageSize: size, cursor, category });
 
     return res;
   }

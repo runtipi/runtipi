@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { boolean, customType, foreignKey, integer, pgEnum, pgTable, serial, text, timestamp, unique, varchar } from 'drizzle-orm/pg-core';
 
 export const appStatusEnum = pgEnum('app_status_enum', [
@@ -64,7 +65,7 @@ export const app = pgTable(
     isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
     openPort: boolean('open_port').default(true).notNull(),
     exposedLocal: boolean('exposed_local').default(true).notNull(),
-    appStoreId: integer('app_store_id'),
+    appStoreId: integer('app_store_id').references(() => appStore.id),
   },
   (table) => {
     return {
@@ -72,6 +73,13 @@ export const app = pgTable(
     };
   },
 );
+
+export const appRelations = relations(app, ({ one }) => ({
+  appStore: one(appStore, {
+    fields: [app.appStoreId],
+    references: [appStore.id],
+  }),
+}));
 
 export const user = pgTable(
   'user',

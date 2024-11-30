@@ -1,4 +1,5 @@
 import { TranslatableError } from '@/common/error/translatable-error';
+import { extractAppId } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { SocketManager } from '@/core/socket/socket.service';
@@ -135,6 +136,7 @@ export class AppLifecycleService {
       domain: domain || null,
       openPort: openPort || false,
       exposedLocal: exposedLocal || false,
+      appStoreId: Number.parseInt(extractAppId(appId).storeId, 10),
       isVisibleOnGuestDashboard,
     });
 

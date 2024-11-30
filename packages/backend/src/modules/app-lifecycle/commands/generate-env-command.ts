@@ -17,9 +17,6 @@ export class GenerateAppEnvCommand extends AppLifecycleCommand {
     private readonly appHelpers: AppHelpers,
   ) {
     super(logger, appFilesManager, dockerService, marketplaceService, dockerComposeBuilder);
-
-    this.logger = logger;
-    this.appFilesManager = appFilesManager;
   }
 
   public async execute(appId: string, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {

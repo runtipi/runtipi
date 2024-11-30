@@ -8,6 +8,6 @@ import { DockerService } from './docker.service';
 @Module({
   imports: [AppsModule, AppStoreModule, SocketModule],
   providers: [DockerService, DockerComposeBuilder],
-  exports: [DockerService],
+  exports: [DockerService, DockerComposeBuilder],
 })
 export class DockerModule {}
