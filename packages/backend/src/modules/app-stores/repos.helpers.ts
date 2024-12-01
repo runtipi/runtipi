@@ -141,4 +141,28 @@ export class ReposHelpers {
       return this.handleRepoError(err);
     }
   };
+
+  /**
+   * Given a repo id, delete it from the repos folder
+   */
+  public deleteRepo = async (id: string) => {
+    try {
+      const { dataDir } = this.configuration.get('directories');
+
+      const repoPath = path.join(dataDir, 'repos', id);
+
+      if (!(await this.filesystem.pathExists(repoPath))) {
+        this.logger.info(`Repo ${id} does not exist`);
+        return { success: false, message: `Repo ${id} does not exist` };
+      }
+
+      this.logger.info(`Deleting repo ${id} from ${repoPath}`);
+      await this.filesystem.removeDirectory(repoPath);
+
+      this.logger.info(`Deleted repo ${id} from ${repoPath}`);
+      return { success: true, message: '' };
+    } catch (err) {
+      return this.handleRepoError(err);
+    }
+  };
 }

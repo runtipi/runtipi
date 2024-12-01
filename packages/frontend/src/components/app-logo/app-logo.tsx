@@ -9,7 +9,7 @@ export const AppLogo: React.FC<{ id?: string; url?: string; size?: number; class
   className = '',
   alt = '',
 }) => {
-  const logoUrl = id ? `/api/marketplace/${id}/image` : '/app-not-found.jpg';
+  const logoUrl = id ? `/api/marketplace/apps/${id}/image` : '/app-not-found.jpg';
 
   return (
     <div aria-label={alt} className={clsx('drop-shadow', className)} style={{ width: size, height: size, minWidth: size }}>

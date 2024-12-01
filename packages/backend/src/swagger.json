@@ -532,7 +532,7 @@
         ]
       }
     },
-    "/api/marketplace/search": {
+    "/api/marketplace/apps/search": {
       "get": {
         "operationId": "searchApps",
         "parameters": [
@@ -603,7 +603,7 @@
         ]
       }
     },
-    "/api/marketplace/{id}": {
+    "/api/marketplace/apps/{id}": {
       "get": {
         "operationId": "getAppDetails",
         "parameters": [
@@ -633,7 +633,7 @@
         ]
       }
     },
-    "/api/marketplace/{id}/image": {
+    "/api/marketplace/apps/{id}/image": {
       "get": {
         "operationId": "getImage",
         "parameters": [
@@ -656,7 +656,7 @@
         ]
       }
     },
-    "/api/app-store/pull": {
+    "/api/marketplace/pull": {
       "post": {
         "operationId": "pullAppStore",
         "parameters": [],
@@ -673,11 +673,35 @@
           }
         },
         "tags": [
-          "AppStore"
+          "Marketplace"
         ]
       }
     },
-    "/api/app-store/all": {
+    "/api/marketplace/create": {
+      "post": {
+        "operationId": "createAppStore",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppStoreBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/all": {
       "get": {
         "operationId": "getAllAppStores",
         "parameters": [],
@@ -694,7 +718,61 @@
           }
         },
         "tags": [
-          "AppStore"
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/{id}": {
+      "patch": {
+        "operationId": "updateAppStore",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAppStoreBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteAppStore",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Marketplace"
         ]
       }
     },
@@ -3076,6 +3154,21 @@
           "success"
         ]
       },
+      "CreateAppStoreBodyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "url"
+        ]
+      },
       "AllAppStoresDto": {
         "type": "object",
         "properties": {
@@ -3108,6 +3201,21 @@
         },
         "required": [
           "appStores"
+        ]
+      },
+      "UpdateAppStoreBodyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "enabled"
         ]
       },
       "AppFormBody": {

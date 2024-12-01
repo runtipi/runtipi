@@ -1,4 +1,3 @@
-import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { DatabaseService } from '@/core/database/database.service';
 import { appStore } from '@/core/database/drizzle/schema';
@@ -26,23 +25,7 @@ export class AppStoreRepository {
    * Given appstore data, creates a appstore
    */
   public async createAppStore(data: Omit<NewAppStore, 'hash'>) {
-    if (this.config.get('demoMode')) {
-      throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
-    }
-
     const hash = this.repoHelpers.getRepoHash(data.url);
-
-    const existingAppStore = await this.getAppStoreByHash(hash);
-
-    if (existingAppStore) {
-      const updated = await this.databaseService.db
-        .update(appStore)
-        .set({ enabled: true, deleted: false })
-        .where(eq(appStore.id, existingAppStore.id))
-        .returning();
-
-      return updated[0];
-    }
 
     const newAppStore = await this.databaseService.db
       .insert(appStore)
@@ -61,5 +44,17 @@ export class AppStoreRepository {
 
   public async deleteAppStore(id: number) {
     return this.databaseService.db.update(appStore).set({ deleted: true }).where(eq(appStore.id, id));
+  }
+
+  public async updateAppStore(id: number, data: Omit<NewAppStore, 'hash' | 'id' | 'url'>) {
+    return this.databaseService.db.update(appStore).set({ name: data.name, enabled: data.enabled, deleted: false }).where(eq(appStore.id, id));
+  }
+
+  public async enableAppStore(id: number) {
+    return this.databaseService.db.update(appStore).set({ enabled: true }).where(eq(appStore.id, id));
+  }
+
+  public async disableAppStore(id: number) {
+    return this.databaseService.db.update(appStore).set({ enabled: false }).where(eq(appStore.id, id));
   }
 }
