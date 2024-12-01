@@ -1,4 +1,4 @@
-import type { AppDetailsDto, GetAppBackupsDto, GetAppDto, LinksDto, SearchAppsDto } from '@/api-client';
+import type { AppDetailsDto, GetAllAppStoresResponse, GetAppBackupsDto, GetAppDto, LinksDto, SearchAppsDto } from '@/api-client';
 
 export type FormField = NonNullable<AppDetailsDto['info']['form_fields']>[number];
 export type AppInfo = AppDetailsDto['info'];
@@ -12,3 +12,5 @@ export type AppCategory = NonNullable<AppInfoSimple['categories']>[number];
 export type CustomLink = LinksDto['links'][number];
 
 export type AppBackup = GetAppBackupsDto['data'][number];
+
+export type AppStore = GetAllAppStoresResponse['appStores'][number];

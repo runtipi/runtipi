@@ -1,16 +1,29 @@
-import { BadRequestException, Controller, Get, Param, Query, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
+import { AppStoreService } from '../app-stores/app-store.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { APP_CATEGORIES, AppDetailsDto, SearchAppsDto, SearchAppsQueryDto } from './dto/marketplace.dto';
+import {
+  APP_CATEGORIES,
+  AllAppStoresDto,
+  AppDetailsDto,
+  CreateAppStoreBodyDto,
+  PullDto,
+  SearchAppsDto,
+  SearchAppsQueryDto,
+  UpdateAppStoreBodyDto,
+} from './dto/marketplace.dto';
 import { MarketplaceService } from './marketplace.service';
 
 @Controller('marketplace')
 export class MarketplaceController {
-  constructor(private readonly marketplaceService: MarketplaceService) {}
+  constructor(
+    private readonly marketplaceService: MarketplaceService,
+    private readonly appStoreService: AppStoreService,
+  ) {}
 
-  @Get('search')
+  @Get('apps/search')
   @UseGuards(AuthGuard)
   @ZodSerializerDto(SearchAppsDto)
   @ApiQuery({ name: 'search', type: String, required: false })
@@ -29,7 +42,7 @@ export class MarketplaceController {
     return res;
   }
 
-  @Get(':id')
+  @Get('apps/:id')
   @UseGuards(AuthGuard)
   @ZodSerializerDto(AppDetailsDto)
   async getAppDetails(@Param('id') id: string): Promise<AppDetailsDto> {
@@ -38,7 +51,7 @@ export class MarketplaceController {
     return res;
   }
 
-  @Get(':id/image')
+  @Get('apps/:id/image')
   async getImage(@Param('id') id: string, @Res() res: Response) {
     const image = await this.marketplaceService.getAppImage(id);
 
@@ -48,5 +61,43 @@ export class MarketplaceController {
     });
 
     return res.send(image);
+  }
+
+  @Post('pull')
+  @UseGuards(AuthGuard)
+  @ZodSerializerDto(PullDto)
+  async pullAppStore(): Promise<PullDto> {
+    return this.appStoreService.pullRepositories();
+  }
+
+  @Post('create')
+  @UseGuards(AuthGuard)
+  async createAppStore(@Body() body: CreateAppStoreBodyDto) {
+    await this.appStoreService.createAppStore(body);
+    await this.appStoreService.pullRepositories();
+    await this.marketplaceService.initialize();
+  }
+
+  @Get('all')
+  @UseGuards(AuthGuard)
+  @ZodSerializerDto(AllAppStoresDto)
+  async getAllAppStores(): Promise<AllAppStoresDto> {
+    const appStores = await this.appStoreService.getEnabledAppStores();
+
+    return { appStores };
+  }
+
+  @Patch(':id')
+  @UseGuards(AuthGuard)
+  async updateAppStore(@Param('id') id: string, @Body() body: UpdateAppStoreBodyDto) {
+    await this.appStoreService.updateAppStore(id, body);
+    await this.marketplaceService.initialize();
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  async deleteAppStore(@Param('id') id: string) {
+    await this.appStoreService.deleteAppStore(id);
+    await this.marketplaceService.initialize();
   }
 }

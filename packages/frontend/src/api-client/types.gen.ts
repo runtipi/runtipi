@@ -4,12 +4,14 @@ export type AcknowledgeWelcomeBody = {
   allowErrorMonitoring: boolean;
 };
 
-export type AllAppStoresDto = Array<{
-  id: number;
-  name: string;
-  url: string;
-  enabled: boolean;
-}>;
+export type AllAppStoresDto = {
+  appStores: Array<{
+    id: number;
+    name: string;
+    url: string;
+    enabled: boolean;
+  }>;
+};
 
 export type AppContextDto = {
   version: {
@@ -163,6 +165,11 @@ export type ChangeUsernameBody = {
 
 export type CheckResetPasswordRequestDto = {
   isRequestPending: boolean;
+};
+
+export type CreateAppStoreBodyDto = {
+  name: string;
+  url: string;
 };
 
 export type DeleteAppBackupBodyDto = {
@@ -595,6 +602,11 @@ export type UpdateAppBody = {
   performBackup: boolean;
 };
 
+export type UpdateAppStoreBodyDto = {
+  name: string;
+  enabled: boolean;
+};
+
 export type UserContextDto = {
   version: {
     current: string;
@@ -827,9 +839,38 @@ export type PullAppStoreResponse = PullDto;
 
 export type PullAppStoreError = unknown;
 
+export type CreateAppStoreData = {
+  body: CreateAppStoreBodyDto;
+};
+
+export type CreateAppStoreResponse = unknown;
+
+export type CreateAppStoreError = unknown;
+
 export type GetAllAppStoresResponse = AllAppStoresDto;
 
 export type GetAllAppStoresError = unknown;
+
+export type UpdateAppStoreData = {
+  body: UpdateAppStoreBodyDto;
+  path: {
+    id: string;
+  };
+};
+
+export type UpdateAppStoreResponse = unknown;
+
+export type UpdateAppStoreError = unknown;
+
+export type DeleteAppStoreData = {
+  path: {
+    id: string;
+  };
+};
+
+export type DeleteAppStoreResponse = unknown;
+
+export type DeleteAppStoreError = unknown;
 
 export type InstallAppData = {
   body: AppFormBody;

@@ -1,6 +1,8 @@
+import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import type { UpdateAppStoreBodyDto } from '../marketplace/dto/marketplace.dto';
 import { RepoEventsQueue } from '../queue/entities/repo-events';
 import { AppStoreRepository } from './app-store.repository';
 import { ReposHelpers } from './repos.helpers';
@@ -88,5 +90,53 @@ export class AppStoreService {
 
   public async getAllAppStores() {
     return this.appStoreRepository.getAllAppStores();
+  }
+
+  /**
+   * Given an app store ID and the new data, update the app store in the database
+   *
+   * @param id The ID of the app store to update
+   * @param body The new data to update the app store with
+   */
+  public async updateAppStore(id: string, body: UpdateAppStoreBodyDto) {
+    return this.appStoreRepository.updateAppStore(Number(id), body);
+  }
+
+  /**
+   * Given an app store ID, delete it from the database and the filesystem
+   *
+   * @param id The ID of the app store to delete
+   */
+  public async deleteAppStore(id: string) {
+    const stores = await this.appStoreRepository.getAllAppStores();
+
+    if (stores.length === 1) {
+      throw new TranslatableError('APP_STORE_DELETE_ERROR_LAST_STORE', {}, HttpStatus.BAD_REQUEST);
+    }
+
+    await this.appStoreRepository.deleteAppStore(Number(id));
+
+    await this.repoHelpers.deleteRepo(id);
+
+    return { success: true };
+  }
+
+  public async createAppStore(body: { url: string; name: string }) {
+    if (this.config.get('demoMode')) {
+      throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
+    }
+
+    const hash = this.repoHelpers.getRepoHash(body.url);
+    const existing = await this.appStoreRepository.getAppStoreByHash(hash);
+
+    if (existing && !existing.deleted) {
+      throw new TranslatableError('SERVER_ERROR_APP_STORE_ALREADY_EXISTS', {}, HttpStatus.CONFLICT);
+    }
+
+    if (existing?.deleted) {
+      return this.appStoreRepository.updateAppStore(existing.id, { name: body.name, enabled: true });
+    }
+
+    return this.appStoreRepository.createAppStore(body);
   }
 }

@@ -30,7 +30,10 @@ import {
   getAppDetails,
   getImage,
   pullAppStore,
+  createAppStore,
   getAllAppStores,
+  updateAppStore,
+  deleteAppStore,
   installApp,
   startApp,
   stopApp,
@@ -97,6 +100,15 @@ import type {
   GetImageData,
   PullAppStoreError,
   PullAppStoreResponse,
+  CreateAppStoreData,
+  CreateAppStoreError,
+  CreateAppStoreResponse,
+  UpdateAppStoreData,
+  UpdateAppStoreError,
+  UpdateAppStoreResponse,
+  DeleteAppStoreData,
+  DeleteAppStoreError,
+  DeleteAppStoreResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -745,6 +757,37 @@ export const pullAppStoreMutation = (options?: Partial<OptionsLegacyParser>) => 
   return mutationOptions;
 };
 
+export const createAppStoreQueryKey = (options: OptionsLegacyParser<CreateAppStoreData>) => [createQueryKey('createAppStore', options)];
+
+export const createAppStoreOptions = (options: OptionsLegacyParser<CreateAppStoreData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await createAppStore({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: createAppStoreQueryKey(options),
+  });
+};
+
+export const createAppStoreMutation = (options?: Partial<OptionsLegacyParser<CreateAppStoreData>>) => {
+  const mutationOptions: UseMutationOptions<CreateAppStoreResponse, CreateAppStoreError, OptionsLegacyParser<CreateAppStoreData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await createAppStore({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
 export const getAllAppStoresQueryKey = (options?: OptionsLegacyParser) => [createQueryKey('getAllAppStores', options)];
 
 export const getAllAppStoresOptions = (options?: OptionsLegacyParser) => {
@@ -760,6 +803,34 @@ export const getAllAppStoresOptions = (options?: OptionsLegacyParser) => {
     },
     queryKey: getAllAppStoresQueryKey(options),
   });
+};
+
+export const updateAppStoreMutation = (options?: Partial<OptionsLegacyParser<UpdateAppStoreData>>) => {
+  const mutationOptions: UseMutationOptions<UpdateAppStoreResponse, UpdateAppStoreError, OptionsLegacyParser<UpdateAppStoreData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await updateAppStore({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const deleteAppStoreMutation = (options?: Partial<OptionsLegacyParser<DeleteAppStoreData>>) => {
+  const mutationOptions: UseMutationOptions<DeleteAppStoreResponse, DeleteAppStoreError, OptionsLegacyParser<DeleteAppStoreData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await deleteAppStore({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
 };
 
 export const installAppQueryKey = (options: OptionsLegacyParser<InstallAppData>) => [createQueryKey('installApp', options)];

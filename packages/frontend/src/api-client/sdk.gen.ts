@@ -70,8 +70,17 @@ import type {
   GetImageResponse,
   PullAppStoreError,
   PullAppStoreResponse,
+  CreateAppStoreData,
+  CreateAppStoreError,
+  CreateAppStoreResponse,
   GetAllAppStoresError,
   GetAllAppStoresResponse,
+  UpdateAppStoreData,
+  UpdateAppStoreError,
+  UpdateAppStoreResponse,
+  DeleteAppStoreData,
+  DeleteAppStoreError,
+  DeleteAppStoreResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -284,35 +293,56 @@ export const getApp = <ThrowOnError extends boolean = false>(options: OptionsLeg
 export const searchApps = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<SearchAppsData, ThrowOnError>) => {
   return (options?.client ?? client).get<SearchAppsResponse, SearchAppsError, ThrowOnError>({
     ...options,
-    url: '/api/marketplace/search',
+    url: '/api/marketplace/apps/search',
   });
 };
 
 export const getAppDetails = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetAppDetailsData, ThrowOnError>) => {
   return (options?.client ?? client).get<GetAppDetailsResponse, GetAppDetailsError, ThrowOnError>({
     ...options,
-    url: '/api/marketplace/{id}',
+    url: '/api/marketplace/apps/{id}',
   });
 };
 
 export const getImage = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetImageData, ThrowOnError>) => {
   return (options?.client ?? client).get<GetImageResponse, GetImageError, ThrowOnError>({
     ...options,
-    url: '/api/marketplace/{id}/image',
+    url: '/api/marketplace/apps/{id}/image',
   });
 };
 
 export const pullAppStore = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
   return (options?.client ?? client).post<PullAppStoreResponse, PullAppStoreError, ThrowOnError>({
     ...options,
-    url: '/api/app-store/pull',
+    url: '/api/marketplace/pull',
+  });
+};
+
+export const createAppStore = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<CreateAppStoreData, ThrowOnError>) => {
+  return (options?.client ?? client).post<CreateAppStoreResponse, CreateAppStoreError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/create',
   });
 };
 
 export const getAllAppStores = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
   return (options?.client ?? client).get<GetAllAppStoresResponse, GetAllAppStoresError, ThrowOnError>({
     ...options,
-    url: '/api/app-store/all',
+    url: '/api/marketplace/all',
+  });
+};
+
+export const updateAppStore = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<UpdateAppStoreData, ThrowOnError>) => {
+  return (options?.client ?? client).patch<UpdateAppStoreResponse, UpdateAppStoreError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/{id}',
+  });
+};
+
+export const deleteAppStore = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<DeleteAppStoreData, ThrowOnError>) => {
+  return (options?.client ?? client).delete<DeleteAppStoreResponse, DeleteAppStoreError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/{id}',
   });
 };
 

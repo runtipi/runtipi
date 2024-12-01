@@ -3,7 +3,6 @@ export default async () => {
     const t = {
         ["./app.dto"]: await import("./app.dto"),
         ["./modules/auth/dto/auth.dto"]: await import("./modules/auth/dto/auth.dto"),
-        ["./modules/app-stores/dto/app-store.dto"]: await import("./modules/app-stores/dto/app-store.dto"),
         ["./modules/marketplace/dto/marketplace.dto"]: await import("./modules/marketplace/dto/marketplace.dto"),
         ["./modules/apps/dto/app.dto"]: await import("./modules/apps/dto/app.dto"),
         ["./modules/backups/dto/backups.dto"]: await import("./modules/backups/dto/backups.dto"),
