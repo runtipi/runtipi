@@ -43,8 +43,8 @@ export class DockerComposeBuilder {
     });
   }
 
-  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput) => {
-    const myServices = services.map((service) => this.buildService(serviceSchema.parse(service), form));
+  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, storeId: string) => {
+    const myServices = services.map((service) => this.buildService(serviceSchema.parse(service), form, storeId));
 
     const dockerCompose = this.addServices(myServices).addNetwork({
       key: 'tipi_main_network',
@@ -55,11 +55,11 @@ export class DockerComposeBuilder {
     return dockerCompose.build();
   };
 
-  private buildService = (params: Service, form: AppEventFormInput) => {
+  private buildService = (params: Service, form: AppEventFormInput, storeId: string) => {
     const service = new ServiceBuilder();
     service
       .setImage(params.image)
-      .setName(params.name)
+      .setName(`${storeId}_${params.name}`)
       .setEnvironment(params.environment)
       .setCommand(params.command)
       .setHealthCheck(params.healthCheck)

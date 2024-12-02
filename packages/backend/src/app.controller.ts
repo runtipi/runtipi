@@ -49,7 +49,7 @@ export class AppController {
 
     const installedApps = await this.appsService.getInstalledApps();
     const updatesAvailable = installedApps.filter(({ app, updateInfo }) => {
-      return Number(app.version) < Number(updateInfo.latestVersion) && app.status !== 'updating';
+      return Number(app.version) < Number(updateInfo?.latestVersion ?? 0) && app.status !== 'updating';
     });
 
     return { version, userSettings, user: req.user as UserDto, apps, updatesAvailable: updatesAvailable.length };
