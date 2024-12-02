@@ -23,7 +23,10 @@ export class AppsService {
       apps.map(async (app) => {
         return limit(async () => {
           const appInfo = await this.appFilesManager.getInstalledAppInfo(app.id);
-          const updateInfo = await this.marketplaceService.getAppUpdateInfo(app.id);
+          const updateInfo = await this.marketplaceService.getAppUpdateInfo(app.id).catch((_) => {
+            this.logger.warn(`Error getting update info for app ${app.id}. Store might be removed.`);
+            return { latestVersion: 0, latestDockerVersion: '0.0.0' };
+          });
           if (!appInfo) {
             return null;
           }
