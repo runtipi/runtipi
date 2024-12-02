@@ -34,7 +34,7 @@ export class AppService {
     try {
       await this.databaseService.migrate();
 
-      const { version, userSettings } = this.configuration.getConfig();
+      const { version, userSettings, __prod__ } = this.configuration.getConfig();
 
       this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
 
@@ -42,6 +42,11 @@ export class AppService {
 
       this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
       this.logger.info('Generating system env file...');
+
+      // Delete all repos for a clean start
+      if (__prod__) {
+        await this.appStoreService.deleteAllRepos();
+      }
 
       const repoId = await this.appStoreService.migrateLegacyRepo();
       if (repoId) {

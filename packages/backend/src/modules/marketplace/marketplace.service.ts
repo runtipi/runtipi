@@ -51,6 +51,11 @@ export class MarketplaceService {
       const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config.id.toString());
       this.stores.set(config.id.toString(), store);
     }
+
+    await this.appStoreService.pullRepositories();
+    this.invalidateCache();
+
+    this.logger.debug('Marketplace service initialized with stores', Array.from(this.stores.keys()).join(', '));
   }
 
   private extractStoreFromNamespacedId(namespacedAppId: string) {
