@@ -52,6 +52,7 @@ export class AppStoreService {
     const repositories = await this.appStoreRepository.getEnabledAppStores();
 
     for (const repo of repositories) {
+      this.logger.debug(`Pulling repo ${repo.url}`);
       await this.repoHelpers.pullRepo(repo.url, repo.id.toString());
     }
 
@@ -114,8 +115,13 @@ export class AppStoreService {
       throw new TranslatableError('APP_STORE_DELETE_ERROR_LAST_STORE', {}, HttpStatus.BAD_REQUEST);
     }
 
-    await this.appStoreRepository.deleteAppStore(Number(id));
+    const count = await this.appStoreRepository.getAppCountForStore(Number(id));
 
+    if (count && count.count > 0) {
+      throw new TranslatableError('APP_STORE_DELETE_ERROR_APPS_EXIST', {}, HttpStatus.BAD_REQUEST);
+    }
+
+    await this.appStoreRepository.deleteAppStore(Number(id));
     await this.repoHelpers.deleteRepo(id);
 
     return { success: true };
@@ -134,9 +140,31 @@ export class AppStoreService {
     }
 
     if (existing?.deleted) {
+      const { success } = await this.repoHelpers.cloneRepo(body.url, existing.id.toString());
+
+      if (!success) {
+        throw new TranslatableError('APP_STORE_CLONE_ERROR', { url: body.url }, HttpStatus.BAD_REQUEST);
+      }
+
       return this.appStoreRepository.updateAppStore(existing.id, { name: body.name, enabled: true });
     }
 
-    return this.appStoreRepository.createAppStore(body);
+    const created = await this.appStoreRepository.createAppStore(body);
+    const { success } = await this.repoHelpers.cloneRepo(body.url, created.id.toString());
+
+    if (!success) {
+      await this.appStoreRepository.removeAppStoreEntity(created.id);
+      throw new TranslatableError('APP_STORE_CLONE_ERROR', { url: body.url }, HttpStatus.BAD_REQUEST);
+    }
+
+    return created;
+  }
+
+  public async getAppCountForStore(id: string) {
+    return this.appStoreRepository.getAppCountForStore(Number(id));
+  }
+
+  public async deleteAllRepos() {
+    await this.repoHelpers.deleteAllRepos();
   }
 }

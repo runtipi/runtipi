@@ -74,7 +74,6 @@ export class MarketplaceController {
   @UseGuards(AuthGuard)
   async createAppStore(@Body() body: CreateAppStoreBodyDto) {
     await this.appStoreService.createAppStore(body);
-    await this.appStoreService.pullRepositories();
     await this.marketplaceService.initialize();
   }
 

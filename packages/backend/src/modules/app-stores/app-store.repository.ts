@@ -1,9 +1,9 @@
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { DatabaseService } from '@/core/database/database.service';
-import { appStore } from '@/core/database/drizzle/schema';
-import type { NewAppStore } from '@/core/database/drizzle/types';
+import { app, appStore } from '@/core/database/drizzle/schema';
+import type { AppStore, NewAppStore } from '@/core/database/drizzle/types';
 import { Injectable } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq } from 'drizzle-orm';
 import { ReposHelpers } from './repos.helpers';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class AppStoreRepository {
       .insert(appStore)
       .values({ ...data, hash })
       .returning();
-    return newAppStore[0];
+    return newAppStore[0] as AppStore;
   }
 
   public async getEnabledAppStores() {
@@ -40,6 +40,10 @@ export class AppStoreRepository {
 
   public async getAllAppStores() {
     return this.databaseService.db.query.appStore.findMany({ where: eq(appStore.deleted, false) });
+  }
+
+  public async removeAppStoreEntity(id: number) {
+    return this.databaseService.db.delete(appStore).where(eq(appStore.id, id));
   }
 
   public async deleteAppStore(id: number) {
@@ -56,5 +60,10 @@ export class AppStoreRepository {
 
   public async disableAppStore(id: number) {
     return this.databaseService.db.update(appStore).set({ enabled: false }).where(eq(appStore.id, id));
+  }
+
+  public async getAppCountForStore(id: number) {
+    const res = await this.databaseService.db.select({ count: count() }).from(app).where(eq(app.appStoreId, id));
+    return res[0];
   }
 }

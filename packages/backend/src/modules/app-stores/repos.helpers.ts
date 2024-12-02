@@ -81,14 +81,14 @@ export class ReposHelpers {
         this.logger.info(`Cloning repo ${repoUrl} to ${repoPath}`);
         cloneCommand = `git clone --depth 1 ${repoUrl} ${repoPath}`;
       }
-      await execAsync(cloneCommand);
+      const { stderr } = await execAsync(cloneCommand);
 
       // Chmod the repo folder to 777
       this.logger.info(`Executing: chmod -R 755 ${repoPath}`);
       await execAsync(`chmod -R 755 ${repoPath}`);
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
-      return { success: true, message: '' };
+      return { success: !stderr.includes('fatal:'), message: '' };
     } catch (err) {
       return this.handleRepoError(err);
     }
@@ -165,4 +165,15 @@ export class ReposHelpers {
       return this.handleRepoError(err);
     }
   };
+
+  public async deleteAllRepos() {
+    const { dataDir } = this.configuration.get('directories');
+    const repos = await this.filesystem.listFiles(path.join(dataDir, 'repos'));
+
+    for (const repo of repos) {
+      await this.deleteRepo(repo);
+    }
+
+    return { success: true, message: '' };
+  }
 }

@@ -114,6 +114,7 @@ export class ConfigurationService {
       envFilePath: this.envPath,
       internalIp: env.data.INTERNAL_IP,
       jwtSecret: env.data.JWT_SECRET,
+      __prod__: process.env.NODE_ENV === 'production',
     };
   }
 
