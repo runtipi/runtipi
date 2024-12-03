@@ -64,7 +64,7 @@ export class AppLifecycleService {
         await this.appRepository.updateApp(appId, { status: 'running' });
       } else {
         this.logger.error(`Failed to start app ${appId}: ${message}`);
-        this.socketManager.emit({ type: 'app', event: 'start_error', data: { appId, appStatus: 'stopped' } });
+        this.socketManager.emit({ type: 'app', event: 'start_error', data: { appId, appStatus: 'stopped', error: message } });
         await this.appRepository.updateApp(appId, { status: 'stopped' });
       }
     });
@@ -147,7 +147,7 @@ export class AppLifecycleService {
         await this.socketManager.emit({ type: 'app', event: 'install_success', data: { appId, appStatus: 'running' } });
         await this.appRepository.updateApp(appId, { status: 'running' });
       } else {
-        this.socketManager.emit({ type: 'app', event: 'install_error', data: { appId, appStatus: 'missing' } });
+        this.socketManager.emit({ type: 'app', event: 'install_error', data: { appId, appStatus: 'missing', error: message } });
         this.logger.error(`Failed to install app ${appId}: ${message}`);
         await this.appRepository.deleteApp(appId);
       }
@@ -176,7 +176,7 @@ export class AppLifecycleService {
         this.logger.info(`App ${appId} stopped successfully`);
         await this.appRepository.updateApp(appId, { status: 'stopped' });
       } else {
-        this.socketManager.emit({ type: 'app', event: 'stop_error', data: { appId, appStatus: 'running' } });
+        this.socketManager.emit({ type: 'app', event: 'stop_error', data: { appId, appStatus: 'running', error: message } });
         this.logger.error(`Failed to stop app ${appId}: ${message}`);
         await this.appRepository.updateApp(appId, { status: 'running' });
       }
@@ -204,7 +204,7 @@ export class AppLifecycleService {
         await this.appRepository.updateApp(appId, { status: 'running' });
       } else {
         this.logger.error(`Failed to restart app ${appId}: ${message}`);
-        this.socketManager.emit({ type: 'app', event: 'restart_error', data: { appId, appStatus: 'running' } });
+        this.socketManager.emit({ type: 'app', event: 'restart_error', data: { appId, appStatus: 'running', error: message } });
         await this.appRepository.updateApp(appId, { status: 'stopped' });
       }
     });
@@ -237,7 +237,7 @@ export class AppLifecycleService {
       } else {
         this.logger.error(`Failed to uninstall app ${appId}: ${message}`);
         await this.appRepository.updateApp(appId, { status: 'stopped' });
-        await this.socketManager.emit({ type: 'app', event: 'uninstall_error', data: { appId, appStatus: 'stopped' } });
+        await this.socketManager.emit({ type: 'app', event: 'uninstall_error', data: { appId, appStatus: 'stopped', error: message } });
       }
     });
   }
@@ -268,7 +268,7 @@ export class AppLifecycleService {
         }
       } else {
         this.logger.error(`Failed to reset app ${appId}: ${message}`);
-        await this.socketManager.emit({ type: 'app', event: 'reset_error', data: { appId, appStatus: appStatusBeforeReset } });
+        await this.socketManager.emit({ type: 'app', event: 'reset_error', data: { appId, appStatus: appStatusBeforeReset, error: message } });
         await this.appRepository.updateApp(appId, { status: 'running' });
       }
     });
@@ -371,7 +371,7 @@ export class AppLifecycleService {
         }
       } else {
         this.logger.error(`Failed to update app ${appId}: ${message}`);
-        await this.socketManager.emit({ type: 'app', event: 'update_error', data: { appId, appStatus: 'stopped' } });
+        await this.socketManager.emit({ type: 'app', event: 'update_error', data: { appId, appStatus: 'stopped', error: message } });
         await this.appRepository.updateApp(appId, { status: 'stopped' });
       }
     });
