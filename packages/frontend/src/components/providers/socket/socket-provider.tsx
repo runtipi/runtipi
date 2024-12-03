@@ -10,6 +10,10 @@ export const SocketProvider = ({ children }: PropsWithChildren) => {
 
   useSocket({
     onEvent: (event, data) => {
+      if (data.error) {
+        console.error(data.error);
+      }
+
       queryClient.invalidateQueries();
 
       switch (event) {
