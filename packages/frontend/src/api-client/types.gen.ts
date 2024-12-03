@@ -75,76 +75,6 @@ export type AppContextDto = {
   updatesAvailable: number;
 };
 
-export type AppDetailsDto = {
-  info: {
-    id: string;
-    available: boolean;
-    deprecated?: boolean;
-    port: number;
-    name: string;
-    description?: string;
-    version?: string;
-    tipi_version: number;
-    short_desc: string;
-    author: string;
-    source: string;
-    website?: string;
-    force_expose?: boolean;
-    generate_vapid_keys?: boolean;
-    categories?: Array<
-      | 'network'
-      | 'media'
-      | 'development'
-      | 'automation'
-      | 'social'
-      | 'utilities'
-      | 'photography'
-      | 'security'
-      | 'featured'
-      | 'books'
-      | 'data'
-      | 'music'
-      | 'finance'
-      | 'gaming'
-      | 'ai'
-    >;
-    url_suffix?: string;
-    form_fields?: Array<{
-      type: 'text' | 'password' | 'email' | 'number' | 'fqdn' | 'ip' | 'fqdnip' | 'url' | 'random' | 'boolean';
-      label: string;
-      placeholder?: string;
-      max?: number;
-      min?: number;
-      hint?: string;
-      options?: Array<{
-        label: string;
-        value: string;
-      }>;
-      required?: boolean;
-      default?: boolean | string | number;
-      regex?: string;
-      pattern_error?: string;
-      env_variable: string;
-      encoding?: 'hex' | 'base64';
-    }>;
-    https?: boolean;
-    exposable?: boolean;
-    no_gui?: boolean;
-    supported_architectures?: Array<'arm64' | 'amd64'>;
-    uid?: number;
-    gid?: number;
-    dynamic_config?: boolean;
-    min_tipi_version?: string;
-    created_at?: number;
-    updated_at?: number;
-  };
-  updateInfo: {
-    latestVersion: number;
-    minTipiVersion?: string;
-    latestDockerVersion?: string;
-  };
-};
-
 export type AppFormBody = {
   exposed?: boolean;
   exposedLocal?: boolean;
@@ -228,7 +158,7 @@ export type GetAppDto = {
       [key: string]: unknown;
     };
   } | null;
-  info?: {
+  info: {
     id: string;
     available: boolean;
     deprecated?: boolean;
@@ -289,7 +219,12 @@ export type GetAppDto = {
     min_tipi_version?: string;
     created_at?: number;
     updated_at?: number;
-  } | null;
+  };
+  updateInfo: {
+    latestVersion: number;
+    minTipiVersion?: string;
+    latestDockerVersion?: string;
+  };
 };
 
 export type status =
@@ -808,22 +743,13 @@ export type SearchAppsData = {
     cursor?: string;
     pageSize?: number;
     search?: string;
+    storeId?: number;
   };
 };
 
 export type SearchAppsResponse = SearchAppsDto;
 
 export type SearchAppsError = unknown;
-
-export type GetAppDetailsData = {
-  path: {
-    id: string;
-  };
-};
-
-export type GetAppDetailsResponse = AppDetailsDto;
-
-export type GetAppDetailsError = unknown;
 
 export type GetImageData = {
   path: {
@@ -850,6 +776,10 @@ export type CreateAppStoreError = unknown;
 export type GetAllAppStoresResponse = AllAppStoresDto;
 
 export type GetAllAppStoresError = unknown;
+
+export type GetEnabledAppStoresResponse = AllAppStoresDto;
+
+export type GetEnabledAppStoresError = unknown;
 
 export type UpdateAppStoreData = {
   body: UpdateAppStoreBodyDto;

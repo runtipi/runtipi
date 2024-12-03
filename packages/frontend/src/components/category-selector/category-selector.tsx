@@ -12,6 +12,8 @@ interface Props {
 
 export const CategorySelector = ({ onSelect, className, initialValue }: Props) => {
   const { t } = useTranslation();
+  const [key, setKey] = useState(new Date().getTime().toString());
+
   const options = iconForCategory.map((category) => ({
     value: category.id,
     label: t(`APP_CATEGORY_${category.id.toUpperCase()}`),
@@ -20,15 +22,21 @@ export const CategorySelector = ({ onSelect, className, initialValue }: Props) =
 
   const [value, setValue] = useState(initialValue);
 
-  const handleChange = (option: AppCategory) => {
+  const handleChange = (option?: AppCategory) => {
     setValue(option);
     onSelect(option);
   };
 
+  const handleReset = () => {
+    setValue(undefined);
+    onSelect(undefined);
+    setKey(new Date().getTime().toString());
+  };
+
   return (
-    <Select value={value} onValueChange={handleChange}>
-      <SelectTrigger value={value} className={className}>
-        <SelectValue placeholder={t('APP_INSTALL_FORM_CHOOSE_OPTION')} />
+    <Select key={key} value={value} onValueChange={(o: AppCategory) => handleChange(o)}>
+      <SelectTrigger value={value} onClear={handleReset} className={className}>
+        <SelectValue placeholder={t('APP_STORE_CHOOSE_CATEGORY')} />
       </SelectTrigger>
       <SelectContent>
         {options?.map(({ value: category, icon: CategoryIcon, label }) => (

@@ -67,7 +67,7 @@ export class AppStoreService {
   public async migrateLegacyRepo() {
     const { deprecatedAppsRepoUrl } = this.config.getConfig();
 
-    const existing = await this.appStoreRepository.getEnabledAppStores();
+    const existing = await this.appStoreRepository.getAllAppStores();
 
     if (existing.length) {
       this.logger.debug('Skipping repo migration, app stores already exist');

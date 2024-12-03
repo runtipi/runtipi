@@ -120,6 +120,7 @@ export class SearchAppsQueryDto extends createZodDto(
     pageSize: z.coerce.number().optional(),
     cursor: z.string().optional(),
     category: z.enum(APP_CATEGORIES).optional(),
+    storeId: z.coerce.number().optional(),
   }),
 ) {}
 
