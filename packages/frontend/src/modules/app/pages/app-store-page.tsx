@@ -3,6 +3,7 @@ import { EmptyPage } from '@/components/empty-page/empty-page';
 import { useInfiniteScroll } from '@/lib/hooks/use-infinite-scroll';
 import { useAppStoreState } from '@/stores/app-store';
 import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
+import { Navigate, useParams } from 'react-router';
 import { StoreTile } from '../components/store-tile/store-tile';
 
 export const AppStorePageSuspense = () => {
@@ -10,10 +11,12 @@ export const AppStorePageSuspense = () => {
 };
 
 export const AppStorePage = () => {
-  const { category, search } = useAppStoreState();
+  const params = useParams<{ storeId: string }>();
+
+  const { category, search, storeId } = useAppStoreState();
 
   const { data, hasNextPage, isFetchingNextPage, isFetching, fetchNextPage } = useInfiniteQuery({
-    ...searchAppsInfiniteOptions({ query: { search, category, pageSize: 24 } }),
+    ...searchAppsInfiniteOptions({ query: { search, category, pageSize: 24, storeId } }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     placeholderData: keepPreviousData,
   });
@@ -26,6 +29,10 @@ export const AppStorePage = () => {
     hasNextPage: Boolean(hasNextPage),
     isFetching: isFetchingNextPage || isFetching,
   });
+
+  if (params.storeId) {
+    return <Navigate to="/app-store" />;
+  }
 
   if (isLoading) {
     return <AppStorePageSuspense />;

@@ -8,6 +8,13 @@ type Props = {
   appStores: AppStore[];
 };
 
+const EnabledBadge = ({ enabled }: { enabled: boolean }) => (
+  <div className="d-flex align-items-center">
+    <span className={`badge bg-${enabled ? 'success' : 'danger'} me-2`} />
+    <span>{enabled ? 'Enabled' : 'Disabled'}</span>
+  </div>
+);
+
 export const AppStoresTable = ({ appStores }: Props) => {
   if (!appStores.length) {
     return (
@@ -32,6 +39,7 @@ export const AppStoresTable = ({ appStores }: Props) => {
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>URL</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -40,6 +48,9 @@ export const AppStoresTable = ({ appStores }: Props) => {
           {appStores.map((appStore) => (
             <TableRow key={appStore.id}>
               <TableCell>{appStore.name}</TableCell>
+              <TableCell>
+                <EnabledBadge enabled={appStore.enabled} />
+              </TableCell>
               <TableCell>
                 <a href={appStore.url} target="_blank" rel="noreferrer">
                   {appStore.url}

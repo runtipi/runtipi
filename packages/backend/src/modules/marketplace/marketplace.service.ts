@@ -1,5 +1,4 @@
 import type { Architecture } from '@/common/constants';
-import { TranslatableError } from '@/common/error/translatable-error';
 import { extractAppId } from '@/common/helpers/app-helpers';
 import { notEmpty, pLimit } from '@/common/helpers/file-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
@@ -160,10 +159,14 @@ export class MarketplaceService {
    * @param params - The search parameters
    * @returns The search results
    */
-  public async searchApps(params: { search?: string | null; category?: string | null; pageSize?: number; cursor?: string | null }) {
-    const { search, category, pageSize, cursor } = params;
+  public async searchApps(params: { search?: string | null; category?: string | null; pageSize?: number; cursor?: string | null; storeId?: number }) {
+    const { search, category, pageSize, cursor, storeId } = params;
 
     let filteredApps = await this.getAvailableApps();
+
+    if (storeId) {
+      filteredApps = filteredApps.filter((app) => app.id.startsWith(`${storeId}_`));
+    }
 
     if (category) {
       filteredApps = filteredApps.filter((app) => app.categories.some((c) => c === category));
@@ -180,19 +183,6 @@ export class MarketplaceService {
     const data = filteredApps.slice(start, end);
 
     return { data, total: filteredApps.length, nextCursor: filteredApps[end]?.id };
-  }
-
-  public async getAppDetails(namespacedAppId: string) {
-    const { store } = this.extractStoreFromNamespacedId(namespacedAppId);
-
-    const updateInfo = await store.getAppUpdateInfo(namespacedAppId);
-    const info = await store.getAppInfoFromAppStore(namespacedAppId);
-
-    if (!info) {
-      throw new TranslatableError('APP_ERROR_INVALID_CONFIG', { id: namespacedAppId });
-    }
-
-    return { updateInfo, info };
   }
 
   /**

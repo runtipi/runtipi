@@ -1,9 +1,8 @@
-import { ConfigurationService } from '@/core/config/configuration.service';
 import { DatabaseService } from '@/core/database/database.service';
 import { app, appStore } from '@/core/database/drizzle/schema';
 import type { AppStore, NewAppStore } from '@/core/database/drizzle/types';
 import { Injectable } from '@nestjs/common';
-import { and, count, eq } from 'drizzle-orm';
+import { and, asc, count, eq } from 'drizzle-orm';
 import { ReposHelpers } from './repos.helpers';
 
 @Injectable()
@@ -11,7 +10,6 @@ export class AppStoreRepository {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly repoHelpers: ReposHelpers,
-    private readonly config: ConfigurationService,
   ) {}
 
   /**
@@ -35,11 +33,15 @@ export class AppStoreRepository {
   }
 
   public async getEnabledAppStores() {
-    return this.databaseService.db.query.appStore.findMany({ where: and(eq(appStore.enabled, true), eq(appStore.deleted, false)) });
+    return this.databaseService.db
+      .select()
+      .from(appStore)
+      .where(and(eq(appStore.enabled, true), eq(appStore.deleted, false)))
+      .orderBy(asc(appStore.hash));
   }
 
   public async getAllAppStores() {
-    return this.databaseService.db.query.appStore.findMany({ where: eq(appStore.deleted, false) });
+    return this.databaseService.db.select().from(appStore).where(eq(appStore.deleted, false)).orderBy(asc(appStore.hash));
   }
 
   public async removeAppStoreEntity(id: number) {

@@ -42,7 +42,7 @@ import { useAppStatus } from '../../helpers/use-app-status';
 interface IProps {
   app?: AppDetails | null;
   info: AppInfo;
-  updateInfo: AppUpdateInfo;
+  updateInfo?: AppUpdateInfo;
   localDomain?: string;
 }
 

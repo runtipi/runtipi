@@ -62,9 +62,6 @@ import type {
   SearchAppsData,
   SearchAppsError,
   SearchAppsResponse,
-  GetAppDetailsData,
-  GetAppDetailsError,
-  GetAppDetailsResponse,
   GetImageData,
   GetImageError,
   GetImageResponse,
@@ -75,6 +72,8 @@ import type {
   CreateAppStoreResponse,
   GetAllAppStoresError,
   GetAllAppStoresResponse,
+  GetEnabledAppStoresError,
+  GetEnabledAppStoresResponse,
   UpdateAppStoreData,
   UpdateAppStoreError,
   UpdateAppStoreResponse,
@@ -297,13 +296,6 @@ export const searchApps = <ThrowOnError extends boolean = false>(options?: Optio
   });
 };
 
-export const getAppDetails = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetAppDetailsData, ThrowOnError>) => {
-  return (options?.client ?? client).get<GetAppDetailsResponse, GetAppDetailsError, ThrowOnError>({
-    ...options,
-    url: '/api/marketplace/apps/{id}',
-  });
-};
-
 export const getImage = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetImageData, ThrowOnError>) => {
   return (options?.client ?? client).get<GetImageResponse, GetImageError, ThrowOnError>({
     ...options,
@@ -329,6 +321,13 @@ export const getAllAppStores = <ThrowOnError extends boolean = false>(options?: 
   return (options?.client ?? client).get<GetAllAppStoresResponse, GetAllAppStoresError, ThrowOnError>({
     ...options,
     url: '/api/marketplace/all',
+  });
+};
+
+export const getEnabledAppStores = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetEnabledAppStoresResponse, GetEnabledAppStoresError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/enabled',
   });
 };
 

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import { AppStatus } from '../app-status/app-status';
 
-type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc' | 'deprecated'>;
+type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'short_desc' | 'deprecated'>;
 
 export const AppTile: React.FC<{ info: AppTileInfo; status: AppStatusType; updateAvailable: boolean }> = ({ info, status, updateAvailable }) => {
   const { t } = useTranslation();

@@ -13,8 +13,10 @@ export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean }> = (
 
   const isNew = (app.created_at ?? 0) + 14 * 24 * 60 * 60 * 1000 > Date.now();
 
+  const [storeId, appId] = app.id.split('_');
+
   return (
-    <Link aria-label={app.name} className="app-tile" to={`/app-store/${app.id}`}>
+    <Link aria-label={app.name} className="app-tile" to={`/app-store/${storeId}/${appId}`}>
       <div key={app.id} className="d-flex overflow-hidden align-items-center py-2 ps-2">
         <Skeleton loading={isLoading}>
           <AppLogo className="logo" id={app.id} placeholder={isLoading} />

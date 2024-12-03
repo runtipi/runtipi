@@ -1,3 +1,4 @@
+import { TranslatableError } from '@/common/error/translatable-error';
 import { pLimit } from '@/common/helpers/file-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
@@ -23,8 +24,8 @@ export class AppsService {
       apps.map(async (app) => {
         return limit(async () => {
           const appInfo = await this.appFilesManager.getInstalledAppInfo(app.id);
+
           const updateInfo = await this.marketplaceService.getAppUpdateInfo(app.id).catch((_) => {
-            this.logger.warn(`Error getting update info for app ${app.id}. Store might be removed.`);
             return { latestVersion: 0, latestDockerVersion: '0.0.0' };
           });
           if (!appInfo) {
@@ -57,8 +58,20 @@ export class AppsService {
 
   public async getApp(id: string) {
     const app = await this.appsRepository.getApp(id);
-    const info = await this.appFilesManager.getInstalledAppInfo(id);
+    const updateInfo = await this.marketplaceService.getAppUpdateInfo(id).catch((_) => {
+      return { latestVersion: 0, latestDockerVersion: '0.0.0' };
+    });
 
-    return { app, info };
+    let info = await this.appFilesManager.getInstalledAppInfo(id);
+
+    if (!info) {
+      info = await this.marketplaceService.getAppInfoFromAppStore(id);
+    }
+
+    if (!info) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
+    }
+
+    return { app, info, updateInfo };
   }
 }

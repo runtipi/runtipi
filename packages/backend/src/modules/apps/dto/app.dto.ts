@@ -47,6 +47,7 @@ export class GuestAppsDto extends createZodDto(
 export class GetAppDto extends createZodDto(
   z.object({
     app: AppDto.schema.nullish(),
-    info: AppInfoDto.schema.nullish(),
+    info: AppInfoDto.schema,
+    updateInfo: UpdateInfoDto.schema,
   }),
 ) {}

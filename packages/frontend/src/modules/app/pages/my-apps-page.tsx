@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, Navigate, useParams } from 'react-router';
 import './page.css';
 import { getInstalledAppsOptions, getLinksOptions } from '@/api-client/@tanstack/react-query.gen';
 import { EmptyPage } from '@/components/empty-page/empty-page';
@@ -9,6 +9,8 @@ import { AppTile } from '../components/app-tile/app-tile';
 import { LinkTile } from '../components/link-tile/link-tile';
 
 export const MyAppsPage = () => {
+  const params = useParams<{ storeId: string }>();
+
   const { data: apps } = useSuspenseQuery({
     ...getInstalledAppsOptions(),
   });
@@ -23,9 +25,11 @@ export const MyAppsPage = () => {
   const renderApp = ({ info, app, updateInfo }: (typeof installed)[number]) => {
     const updateAvailable = Number(app.version) < Number(updateInfo.latestVersion);
 
+    const [storeId, appId] = app.id.split('_');
+
     if (info.available)
       return (
-        <Link key={app.id} to={`/apps/${app.id}`} className="col-sm-6 col-lg-4 my-apps-link">
+        <Link key={app.id} to={`/apps/${storeId}/${appId}`} className="col-sm-6 col-lg-4 my-apps-link">
           <AppTile key={app.id} status={app.status} info={info} updateAvailable={updateAvailable} />
         </Link>
       );
@@ -40,6 +44,10 @@ export const MyAppsPage = () => {
       </Link>
     );
   };
+
+  if (params.storeId) {
+    return <Navigate to="/apps" />;
+  }
 
   return (
     <>

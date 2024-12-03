@@ -279,6 +279,8 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Not allowed in dev mode",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "An app store with the same url already exists",
   "APP_STORE_CLONE_ERROR": "Error cloning app store at {{url}}. Is it a valid git repository?",
+  "APP_STORE_CHOOSE_CATEGORY": "Choose a category",
+  "APP_STORE_CHOOSE_STORE": "Choose an AppStore",
   "SETTINGS_ACTIONS_ALREADY_LATEST": "Already up to date",
   "SETTINGS_ACTIONS_CURRENT_VERSION": "Current version: {{version}}",
   "SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE": "Common actions to perform on your instance",

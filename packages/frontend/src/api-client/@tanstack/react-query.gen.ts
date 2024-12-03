@@ -27,11 +27,11 @@ import {
   getGuestApps,
   getApp,
   searchApps,
-  getAppDetails,
   getImage,
   pullAppStore,
   createAppStore,
   getAllAppStores,
+  getEnabledAppStores,
   updateAppStore,
   deleteAppStore,
   installApp,
@@ -96,7 +96,6 @@ import type {
   SearchAppsData,
   SearchAppsError,
   SearchAppsResponse,
-  GetAppDetailsData,
   GetImageData,
   PullAppStoreError,
   PullAppStoreResponse,
@@ -692,23 +691,6 @@ export const searchAppsInfiniteOptions = (options?: OptionsLegacyParser<SearchAp
   );
 };
 
-export const getAppDetailsQueryKey = (options: OptionsLegacyParser<GetAppDetailsData>) => [createQueryKey('getAppDetails', options)];
-
-export const getAppDetailsOptions = (options: OptionsLegacyParser<GetAppDetailsData>) => {
-  return queryOptions({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getAppDetails({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: getAppDetailsQueryKey(options),
-  });
-};
-
 export const getImageQueryKey = (options: OptionsLegacyParser<GetImageData>) => [createQueryKey('getImage', options)];
 
 export const getImageOptions = (options: OptionsLegacyParser<GetImageData>) => {
@@ -802,6 +784,23 @@ export const getAllAppStoresOptions = (options?: OptionsLegacyParser) => {
       return data;
     },
     queryKey: getAllAppStoresQueryKey(options),
+  });
+};
+
+export const getEnabledAppStoresQueryKey = (options?: OptionsLegacyParser) => [createQueryKey('getEnabledAppStores', options)];
+
+export const getEnabledAppStoresOptions = (options?: OptionsLegacyParser) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getEnabledAppStores({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getEnabledAppStoresQueryKey(options),
   });
 };
 

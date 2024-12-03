@@ -7,7 +7,6 @@ import { AuthGuard } from '../auth/auth.guard';
 import {
   APP_CATEGORIES,
   AllAppStoresDto,
-  AppDetailsDto,
   CreateAppStoreBodyDto,
   PullDto,
   SearchAppsDto,
@@ -30,23 +29,15 @@ export class MarketplaceController {
   @ApiQuery({ name: 'pageSize', type: Number, required: false })
   @ApiQuery({ name: 'cursor', type: String, required: false })
   @ApiQuery({ name: 'category', required: false, enum: APP_CATEGORIES })
+  @ApiQuery({ name: 'storeId', type: Number, required: false })
   async searchApps(@Query() query: SearchAppsQueryDto): Promise<SearchAppsDto> {
-    const { search, pageSize, cursor, category } = query;
+    const { search, pageSize, cursor, category, storeId } = query;
 
     const size = pageSize ? Number(pageSize) : 24;
     if (Number.isNaN(size) || size <= 0) {
       throw new BadRequestException('Invalid pageSize');
     }
-    const res = await this.marketplaceService.searchApps({ search, pageSize: size, cursor, category });
-
-    return res;
-  }
-
-  @Get('apps/:id')
-  @UseGuards(AuthGuard)
-  @ZodSerializerDto(AppDetailsDto)
-  async getAppDetails(@Param('id') id: string): Promise<AppDetailsDto> {
-    const res = await this.marketplaceService.getAppDetails(id);
+    const res = await this.marketplaceService.searchApps({ search, pageSize: size, cursor, category, storeId });
 
     return res;
   }
@@ -81,6 +72,15 @@ export class MarketplaceController {
   @UseGuards(AuthGuard)
   @ZodSerializerDto(AllAppStoresDto)
   async getAllAppStores(): Promise<AllAppStoresDto> {
+    const appStores = await this.appStoreService.getAllAppStores();
+
+    return { appStores };
+  }
+
+  @Get('enabled')
+  @UseGuards(AuthGuard)
+  @ZodSerializerDto(AllAppStoresDto)
+  async getEnabledAppStores(): Promise<AllAppStoresDto> {
     const appStores = await this.appStoreService.getEnabledAppStores();
 
     return { appStores };
