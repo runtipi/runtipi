@@ -5,6 +5,7 @@ import { UserDto } from './modules/user/dto/user.dto';
 import { z } from 'zod';
 
 export const settingsSchema = z.object({
+  dnsIp: z.string().ip().trim(),
   internalIp: z.string().ip().trim(),
   postgresPort: z.coerce.number(),
   appsRepoUrl: z.string().url().trim(),
