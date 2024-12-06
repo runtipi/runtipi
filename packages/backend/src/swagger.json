@@ -1424,6 +1424,9 @@
           "userSettings": {
             "type": "object",
             "properties": {
+              "dnsIp": {
+                "type": "string"
+              },
               "internalIp": {
                 "type": "string"
               },
@@ -1475,6 +1478,7 @@
               }
             },
             "required": [
+              "dnsIp",
               "internalIp",
               "postgresPort",
               "appsRepoUrl",
@@ -1609,6 +1613,9 @@
       "PartialUserSettingsDto": {
         "type": "object",
         "properties": {
+          "dnsIp": {
+            "type": "string"
+          },
           "internalIp": {
             "type": "string"
           },

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { AppInfoSimpleDto } from './modules/marketplace/dto/marketplace.dto';
 
 export const settingsSchema = z.object({
+  dnsIp: z.string().ip().trim(),
   internalIp: z.string().ip().trim(),
   postgresPort: z.coerce.number(),
   appsRepoUrl: z.string().url().trim(),
