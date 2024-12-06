@@ -18,7 +18,6 @@ export type AppContextDto = {
     body: string;
   };
   userSettings: {
-    dnsIp: string;
     internalIp: string;
     postgresPort: number;
     appsRepoUrl: string;
@@ -34,6 +33,7 @@ export type AppContextDto = {
     sslPort: number;
     listenIp: string;
     timeZone: string;
+    eventsTimeout: number;
   };
   user: {
     id: number;
@@ -506,7 +506,6 @@ export type MyAppsDto = {
 };
 
 export type PartialUserSettingsDto = {
-  dnsIp?: string;
   internalIp?: string;
   postgresPort?: number;
   appsRepoUrl?: string;
@@ -522,6 +521,7 @@ export type PartialUserSettingsDto = {
   sslPort?: number;
   listenIp?: string;
   timeZone?: string;
+  eventsTimeout?: number;
 };
 
 export type PullDto = {

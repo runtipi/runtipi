@@ -8,7 +8,7 @@ const QUEUE_PROCESS_INTERVAL = 1000; // Process queue every second
 
 export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; message: string }>> {
   private queueNameResponse: string;
-  private responsePromises: { [id: string]: { resolve: (data: z.output<R>) => void } };
+  private responsePromises: { [id: string]: { resolve: (data: z.output<R>) => void; timer: NodeJS.Timeout } };
   private activeTasks: number;
   private taskQueue: AsyncMessage[];
   private callbacks: ((data: z.output<T> & { eventId: string }) => void)[];
@@ -20,6 +20,7 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
     private workers: number,
     private eventSchema: T,
     private resultSchema: R,
+    private eventTimeout = FIVE_MINUTES,
   ) {
     this.queueNameResponse = `${this.queueName}-response`;
     this.responsePromises = {};
@@ -78,9 +79,10 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
     });
 
     this.queueFactory.createConsumer(this.queueNameResponse, ({ body }) => {
-      const { resolve } = this.responsePromises[body.eventId] ?? {};
+      const { resolve, timer } = this.responsePromises[body.eventId] ?? {};
 
       if (resolve) {
+        clearTimeout(timer);
         const response = this.resultSchema.safeParse(body.data);
         if (response.success) {
           resolve({ ...response.data });
@@ -94,7 +96,7 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
     });
   }
 
-  async publishAsync(event: z.input<T>, timeout = FIVE_MINUTES): Promise<z.output<R>> {
+  async publishAsync(event: z.input<T>, timeout = this.eventTimeout): Promise<z.output<R>> {
     const eventData = this.eventSchema.safeParse(event);
 
     if (!eventData.success) {
@@ -104,15 +106,15 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
     const eventId = await this.publish(eventData.data);
 
     return new Promise((resolve) => {
-      this.responsePromises[eventId] = { resolve };
-
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         if (this.responsePromises[eventId]) {
           // @ts-ignore - TS doesn't know that the promise is still in the map
           resolve({ success: false, message: 'Timeout' });
           delete this.responsePromises[eventId];
         }
       }, timeout);
+
+      this.responsePromises[eventId] = { resolve, timer };
     });
   }
 

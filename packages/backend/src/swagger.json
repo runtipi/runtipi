@@ -1424,9 +1424,6 @@
           "userSettings": {
             "type": "object",
             "properties": {
-              "dnsIp": {
-                "type": "string"
-              },
               "internalIp": {
                 "type": "string"
               },
@@ -1472,10 +1469,12 @@
               },
               "timeZone": {
                 "type": "string"
+              },
+              "eventsTimeout": {
+                "type": "number"
               }
             },
             "required": [
-              "dnsIp",
               "internalIp",
               "postgresPort",
               "appsRepoUrl",
@@ -1490,7 +1489,8 @@
               "port",
               "sslPort",
               "listenIp",
-              "timeZone"
+              "timeZone",
+              "eventsTimeout"
             ]
           },
           "user": {
@@ -1609,9 +1609,6 @@
       "PartialUserSettingsDto": {
         "type": "object",
         "properties": {
-          "dnsIp": {
-            "type": "string"
-          },
           "internalIp": {
             "type": "string"
           },
@@ -1657,6 +1654,9 @@
           },
           "timeZone": {
             "type": "string"
+          },
+          "eventsTimeout": {
+            "type": "number"
           }
         }
       },

@@ -16,7 +16,7 @@ const envSchema = z.object({
   POSTGRES_DBNAME: z.string(),
   POSTGRES_USERNAME: z.string(),
   POSTGRES_PASSWORD: z.string(),
-  POSTGRES_PORT: z.string().transform(Number),
+  POSTGRES_PORT: z.coerce.number().default(5432),
   ARCHITECTURE: z.enum(ARCHITECTURES).default('amd64'),
   INTERNAL_IP: z.string(),
   TIPI_VERSION: z.string(),
@@ -25,18 +25,18 @@ const envSchema = z.object({
   APPS_REPO_URL: z.string(),
   DOMAIN: z.string(),
   LOCAL_DOMAIN: z.string(),
-  DNS_IP: z.string().default('9.9.9.9'),
   RUNTIPI_APP_DATA_PATH: z.string(),
   DEMO_MODE: z.string().transform((val) => val.toLowerCase() === 'true'),
   GUEST_DASHBOARD: z.string().transform((val) => val.toLowerCase() === 'true'),
   ALLOW_ERROR_MONITORING: z.string().transform((val) => val.toLowerCase() === 'true'),
   ALLOW_AUTO_THEMES: z.string().transform((val) => val.toLowerCase() === 'true'),
   PERSIST_TRAEFIK_CONFIG: z.string().transform((val) => val.toLowerCase() === 'true'),
+  QUEUE_TIMEOUT_IN_MINUTES: z.coerce.number().default(5),
   LOG_LEVEL: z.string().default('info'),
   TZ: z.string(),
   ROOT_FOLDER_HOST: z.string(),
-  NGINX_PORT: z.string().default('80').transform(Number),
-  NGINX_PORT_SSL: z.string().default('443').transform(Number),
+  NGINX_PORT: z.coerce.number().default(80),
+  NGINX_PORT_SSL: z.coerce.number().default(443),
 });
 
 @Injectable()
@@ -100,9 +100,9 @@ export class ConfigurationService {
         internalIp: env.data.INTERNAL_IP,
         appsRepoUrl: env.data.APPS_REPO_URL,
         postgresPort: env.data.POSTGRES_PORT,
-        dnsIp: env.data.DNS_IP,
         appDataPath: path.join(env.data.RUNTIPI_APP_DATA_PATH, 'app-data'),
         persistTraefikConfig: env.data.PERSIST_TRAEFIK_CONFIG,
+        eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES * 60 * 1000,
       },
       deprecatedAppsRepoId: env.data.APPS_REPO_ID, // @deprecated
       deprecatedAppsRepoUrl: env.data.APPS_REPO_URL, // @deprecated
