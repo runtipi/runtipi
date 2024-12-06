@@ -1,6 +1,6 @@
 import { useUIStore } from '@/stores/ui-store';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
 export const LocationListener = () => {
   const setActiveRoute = useUIStore((state) => state.setActiveRoute);
@@ -11,7 +11,6 @@ export const LocationListener = () => {
   useEffect(() => {
     const newRoute = location.pathname.substring(1);
     if (activeRoute !== newRoute) {
-      console.log('newRoute', newRoute);
       // This will run whenever the URL changes
       setActiveRoute(newRoute);
     }

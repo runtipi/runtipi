@@ -1,11 +1,11 @@
+import { registerMutation } from '@/api-client/@tanstack/react-query.gen';
+import { useUserContext } from '@/context/user-context';
+import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
-import { RegisterForm } from '../components/register-form';
-import { Navigate, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { useUserContext } from '@/context/user-context';
-import { registerMutation } from '@/api-client/@tanstack/react-query.gen';
-import type { TranslatableError } from '@/types/error.types';
+import { Navigate, useNavigate } from 'react-router';
+import { RegisterForm } from '../components/register-form';
 
 export const RegisterPage = () => {
   const { t } = useTranslation();

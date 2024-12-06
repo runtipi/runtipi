@@ -85,7 +85,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
   const startMutation = useMutation({
     ...startAppMutation(),
     onError: (e: TranslatableError) => {
-      toast.error(e.message, e.intlParams);
+      toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
       setOptimisticStatus('starting', app.id);

@@ -47,7 +47,6 @@ export class AppLifecycleCommand {
     });
 
     if (err instanceof Error) {
-      this.logger.error(`An error occurred: ${err.message}`);
       return { success: false, message: err.message };
     }
 
