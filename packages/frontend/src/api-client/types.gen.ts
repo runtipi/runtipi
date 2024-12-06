@@ -11,6 +11,7 @@ export type AppContextDto = {
     body: string;
   };
   userSettings: {
+    dnsIp: string;
     internalIp: string;
     postgresPort: number;
     appsRepoUrl: string;
@@ -439,6 +440,7 @@ export type MyAppsDto = {
 };
 
 export type PartialUserSettingsDto = {
+  dnsIp?: string;
   internalIp?: string;
   postgresPort?: number;
   appsRepoUrl?: string;

@@ -100,6 +100,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   envMap.set('APPS_REPO_URL', data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
   envMap.set('TZ', data.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone);
   envMap.set('INTERNAL_IP', data.listenIp || internalIp);
+  envMap.set('DNS_IP', data.dnsIp || envMap.get('DNS_IP') || '9.9.9.9');
   envMap.set('ARCHITECTURE', getArchitecture());
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
