@@ -1,3 +1,4 @@
+import { ConfigurationService } from '@/core/config/configuration.service';
 import { Module } from '@nestjs/common';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from './entities/app-events';
 import { RepoEventsQueue, repoCommandResultSchema, repoCommandSchema } from './entities/repo-events';
@@ -11,25 +12,33 @@ import { QueueHealthIndicator } from './queue.health';
     QueueFactory,
     {
       provide: AppEventsQueue,
-      useFactory: (queueFactory: QueueFactory) =>
-        queueFactory.createQueue({
+      useFactory: (queueFactory: QueueFactory, config: ConfigurationService) => {
+        const timeout = config.get('userSettings').eventsTimeout;
+
+        return queueFactory.createQueue({
           queueName: 'app-events-queue',
           workers: 1,
           eventSchema: appEventSchema,
           resultSchema: appEventResultSchema,
-        }),
-      inject: [QueueFactory],
+          timeout: timeout,
+        });
+      },
+      inject: [QueueFactory, ConfigurationService],
     },
     {
       provide: RepoEventsQueue,
-      useFactory: (queueFactory: QueueFactory) =>
-        queueFactory.createQueue({
+      useFactory: (queueFactory: QueueFactory, config: ConfigurationService) => {
+        const timeout = config.get('userSettings').eventsTimeout;
+
+        return queueFactory.createQueue({
           queueName: 'repo-queue',
           workers: 3,
           eventSchema: repoCommandSchema,
           resultSchema: repoCommandResultSchema,
-        }),
-      inject: [QueueFactory],
+          timeout: timeout,
+        });
+      },
+      inject: [QueueFactory, ConfigurationService],
     },
   ],
   exports: [AppEventsQueue, RepoEventsQueue, QueueHealthIndicator],
