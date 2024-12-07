@@ -25,7 +25,7 @@ export const MyAppsPage = () => {
   const renderApp = ({ info, app, updateInfo }: (typeof installed)[number]) => {
     const updateAvailable = Number(app.version) < Number(updateInfo.latestVersion);
 
-    const [storeId, appId] = app.id.split('_');
+    const [appId, storeId] = app.id.split('_');
 
     if (info.available)
       return (
