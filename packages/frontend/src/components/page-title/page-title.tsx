@@ -29,7 +29,7 @@ export const PageTitle = ({ apps }: Props) => {
     );
   };
 
-  const appTitle = apps.find((app) => app.id.split('_')[1] === pathArray.at(-1))?.name;
+  const appTitle = apps.find((app) => app.id.split('_')[0] === pathArray.at(-1))?.name;
   const title = appTitle ?? t(`HEADER_${pathArray[0]?.toUpperCase().replace('-', '_')}`);
 
   return (

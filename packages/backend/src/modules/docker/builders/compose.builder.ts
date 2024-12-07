@@ -59,7 +59,7 @@ export class DockerComposeBuilder {
     const service = new ServiceBuilder();
     service
       .setImage(params.image)
-      .setName(`${storeId}_${params.name}`)
+      .setName(`${params.name}_${storeId}`)
       .setEnvironment(params.environment)
       .setCommand(params.command)
       .setHealthCheck(params.healthCheck)
