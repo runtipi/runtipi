@@ -171,6 +171,6 @@ export class UpdateAppStoreBodyDto extends createZodDto(
 export class CreateAppStoreBodyDto extends createZodDto(
   z.object({
     name: z.string(),
-    url: z.string(),
+    url: z.string().trim().toLowerCase(),
   }),
 ) {}
