@@ -16,23 +16,6 @@ const EnabledBadge = ({ enabled }: { enabled: boolean }) => (
 );
 
 export const AppStoresTable = ({ appStores }: Props) => {
-  if (!appStores.length) {
-    return (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>No repositories found :(</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow className="d-flex justify-content-center text-center">
-            <TableCell className="text-muted mt-2">No repositories found :(</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    );
-  }
-
   return (
     <div className="d-flex flex-column">
       <Table>
