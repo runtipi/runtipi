@@ -1,37 +1,42 @@
 import cron from 'node-cron';
-import type { AsyncMessage, Publisher } from 'rabbitmq-client';
+import type { Connection, RPCClient } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
-import type { QueueFactory } from './queue.factory';
-
-const FIVE_MINUTES = 5 * 60 * 1000;
-const QUEUE_PROCESS_INTERVAL = 1000; // Process queue every second
 
 export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; message: string }>> {
-  private queueNameResponse: string;
-  private responsePromises: { [id: string]: { resolve: (data: z.output<R>) => void; timer: NodeJS.Timeout } };
-  private activeTasks: number;
-  private taskQueue: AsyncMessage[];
-  private callbacks: ((data: z.output<T> & { eventId: string }) => void)[];
-
   constructor(
-    private queueFactory: QueueFactory,
-    private publisher: Publisher,
+    private rabbit: Connection,
+    private rpcClient: RPCClient,
     private queueName: string,
     private workers: number,
     private eventSchema: T,
     private resultSchema: R,
-    private eventTimeout = FIVE_MINUTES,
-  ) {
-    this.queueNameResponse = `${this.queueName}-response`;
-    this.responsePromises = {};
-    this.activeTasks = 0;
-    this.taskQueue = [];
-    this.callbacks = [];
-    this.startQueueProcessing();
+  ) {}
+
+  public onEvent(callback: (data: z.output<T> & { eventId: string }, reply: (response: z.input<R>) => Promise<void>) => Promise<void>) {
+    this.rabbit.createConsumer({ queue: this.queueName, concurrency: this.workers }, async (req, reply) => {
+      await callback(req.body, reply);
+    });
   }
 
-  private generateEventId(command: string) {
-    return `${command}-${Math.random().toString(36).substring(7)}`;
+  async publish(event: z.input<T>): Promise<z.output<R>> {
+    try {
+      const eventData = this.eventSchema.safeParse(event);
+
+      if (!eventData.success) {
+        throw new Error('Invalid event data');
+      }
+
+      const res = await this.rpcClient.send(this.queueName, eventData.data);
+      const response = this.resultSchema.safeParse(res.body);
+
+      if (response.success) {
+        return response.data;
+      }
+
+      throw new Error('Invalid response schema');
+    } catch (err) {
+      return { success: false, message: (err as Error)?.message };
+    }
   }
 
   public publishRepeatable(data: z.input<T>, cronPattern: string) {
@@ -41,98 +46,12 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
 
     const eventData = this.eventSchema.safeParse(data);
 
+    if (!eventData.success) {
+      throw new Error('Invalid event data');
+    }
+
     cron.schedule(cronPattern, () => {
-      this.publisher.send(this.queueName, { eventId: this.generateEventId(data.command), ...eventData.data });
+      this.rpcClient.send(this.queueName, eventData.data);
     });
-  }
-
-  private startQueueProcessing() {
-    setInterval(() => {
-      if (this.taskQueue.length > 0) {
-        this.processNextTask();
-      }
-    }, QUEUE_PROCESS_INTERVAL);
-  }
-
-  private processNextTask() {
-    if (this.activeTasks >= this.workers || this.taskQueue.length === 0) {
-      return;
-    }
-
-    const eventData = this.taskQueue.shift();
-    if (!eventData) return;
-
-    const parsedData = this.eventSchema.and(z.object({ eventId: z.string() })).safeParse(eventData.body);
-    if (!parsedData.success) return;
-
-    this.activeTasks++;
-    for (const callback of this.callbacks) {
-      callback({ ...parsedData.data, eventId: parsedData.data.eventId });
-    }
-  }
-
-  public onEvent(callback: (data: z.output<T> & { eventId: string }) => void) {
-    this.callbacks.push(callback);
-
-    this.queueFactory.createConsumer(this.queueName, (eventData) => {
-      this.taskQueue.push(eventData);
-    });
-
-    this.queueFactory.createConsumer(this.queueNameResponse, ({ body }) => {
-      const { resolve, timer } = this.responsePromises[body.eventId] ?? {};
-
-      if (resolve) {
-        clearTimeout(timer);
-        const response = this.resultSchema.safeParse(body.data);
-        if (response.success) {
-          resolve({ ...response.data });
-        } else {
-          console.error('Invalid response data', response.error.flatten());
-          resolve({ success: false, message: 'Invalid response data' });
-        }
-        this.activeTasks--;
-        delete this.responsePromises[body.eventId];
-      }
-    });
-  }
-
-  async publishAsync(event: z.input<T>, timeout = this.eventTimeout): Promise<z.output<R>> {
-    const eventData = this.eventSchema.safeParse(event);
-
-    if (!eventData.success) {
-      throw new Error('Invalid event data');
-    }
-
-    const eventId = await this.publish(eventData.data);
-
-    return new Promise((resolve) => {
-      const timer = setTimeout(() => {
-        if (this.responsePromises[eventId]) {
-          // @ts-ignore - TS doesn't know that the promise is still in the map
-          resolve({ success: false, message: 'Timeout' });
-          delete this.responsePromises[eventId];
-        }
-      }, timeout);
-
-      this.responsePromises[eventId] = { resolve, timer };
-    });
-  }
-
-  async publish(data: z.input<T>) {
-    const eventData = this.eventSchema.safeParse(data);
-
-    if (!eventData.success) {
-      throw new Error('Invalid event data');
-    }
-
-    const eventId = this.generateEventId(data.command);
-
-    await this.publisher.send(this.queueName, { eventId, ...eventData.data });
-
-    return eventId;
-  }
-
-  async sendEventResponse(eventId: string, data: z.input<R>) {
-    await this.publisher.send(this.queueNameResponse, { eventId, data });
   }
 }

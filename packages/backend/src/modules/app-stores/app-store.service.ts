@@ -14,14 +14,14 @@ export class AppStoreService {
     private readonly config: ConfigurationService,
     private readonly appStoreRepository: AppStoreRepository,
   ) {
-    this.repoQueue.onEvent(async (data) => {
+    this.repoQueue.onEvent(async (data, reply) => {
       switch (data.command) {
         case 'update_all': {
           const stores = await this.appStoreRepository.getEnabledAppStores();
           for (const store of stores) {
             await this.repoHelpers.pullRepo(store.url, store.id.toString());
           }
-          this.repoQueue.sendEventResponse(data.eventId, { success: true, message: 'All repos updated' });
+          reply({ success: true, message: 'All repos updated' });
           break;
         }
         case 'clone_all': {
@@ -29,17 +29,17 @@ export class AppStoreService {
           for (const store of stores) {
             await this.repoHelpers.cloneRepo(store.url, store.id.toString());
           }
-          this.repoQueue.sendEventResponse(data.eventId, { success: true, message: 'All repos cloned' });
+          reply({ success: true, message: 'All repos cloned' });
           break;
         }
         case 'clone': {
           const { success, message } = await this.repoHelpers.cloneRepo(data.url, data.id);
-          this.repoQueue.sendEventResponse(data.eventId, { success, message });
+          reply({ success, message });
           break;
         }
         case 'update': {
           const { success, message } = await this.repoHelpers.pullRepo(data.url, data.id);
-          this.repoQueue.sendEventResponse(data.eventId, { success, message });
+          reply({ success, message });
           break;
         }
       }

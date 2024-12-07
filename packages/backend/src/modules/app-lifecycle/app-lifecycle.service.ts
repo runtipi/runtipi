@@ -13,7 +13,7 @@ import { AppsRepository } from '../apps/apps.repository';
 import { AppsService } from '../apps/apps.service';
 import { BackupManager } from '../backups/backup.manager';
 import { MarketplaceService } from '../marketplace/marketplace.service';
-import { type AppEventFormInput, AppEventsQueue, appEventSchema } from '../queue/entities/app-events';
+import { type AppEventFormInput, AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { appFormSchema } from './dto/app-lifecycle.dto';
 
@@ -32,17 +32,17 @@ export class AppLifecycleService {
     private readonly backupManager: BackupManager,
   ) {
     this.logger.debug('Subscribing to app events...');
-    this.appEventsQueue.onEvent(({ eventId, ...data }) => this.invokeCommand(eventId, data));
+    this.appEventsQueue.onEvent(({ ...data }, reply) => this.invokeCommand(data, reply));
   }
 
-  async invokeCommand(eventId: string, data: z.infer<typeof appEventSchema>) {
+  async invokeCommand(data: z.infer<typeof appEventSchema>, reply: (response: z.output<typeof appEventResultSchema>) => void) {
     try {
       const command = this.commandFactory.createCommand(data);
       const { success, message } = await command.execute(data.appid, data.form);
-      await this.appEventsQueue.sendEventResponse(eventId, { success, message });
+      reply({ success, message });
     } catch (err) {
       this.logger.error(`Error invoking command: ${err}`);
-      await this.appEventsQueue.sendEventResponse(eventId, { success: false, message: String(err) });
+      reply({ success: false, message: String(err) });
     }
   }
 
@@ -57,7 +57,7 @@ export class AppLifecycleService {
     await this.appRepository.updateApp(appId, { status: 'starting' });
     this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'starting' } });
 
-    this.appEventsQueue.publishAsync({ appid: appId, command: 'start', form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ appid: appId, command: 'start', form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} started successfully`);
         this.socketManager.emit({ type: 'app', event: 'start_success', data: { appId, appStatus: 'running' } });
@@ -141,7 +141,7 @@ export class AppLifecycleService {
     });
 
     // Send install command to the queue
-    this.appEventsQueue.publishAsync({ appid: appId, command: 'install', form }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ appid: appId, command: 'install', form }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} installed successfully`);
         await this.socketManager.emit({ type: 'app', event: 'install_success', data: { appId, appStatus: 'running' } });
@@ -170,7 +170,7 @@ export class AppLifecycleService {
     await this.appRepository.updateApp(appId, { status: 'stopping' });
 
     // Send stop command to the queue
-    this.appEventsQueue.publishAsync({ command: 'stop', appid: appId, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'stop', appid: appId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.socketManager.emit({ type: 'app', event: 'stop_success', data: { appId, appStatus: 'stopped' } });
         this.logger.info(`App ${appId} stopped successfully`);
@@ -197,7 +197,7 @@ export class AppLifecycleService {
     this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'restarting' } });
     await this.appRepository.updateApp(appId, { status: 'restarting' });
 
-    this.appEventsQueue.publishAsync({ command: 'restart', appid: appId, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'restart', appid: appId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} restarted successfully`);
         this.socketManager.emit({ type: 'app', event: 'restart_success', data: { appId, appStatus: 'running' } });
@@ -229,7 +229,7 @@ export class AppLifecycleService {
     await this.appRepository.updateApp(appId, { status: 'uninstalling' });
     this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'uninstalling' } });
 
-    this.appEventsQueue.publishAsync({ command: 'uninstall', appid: appId, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'uninstall', appid: appId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} uninstalled successfully`);
         await this.appRepository.deleteApp(appId);
@@ -257,7 +257,7 @@ export class AppLifecycleService {
     this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'resetting' } });
     await this.appRepository.updateApp(appId, { status: 'resetting' });
 
-    this.appEventsQueue.publishAsync({ command: 'reset', appid: appId, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'reset', appid: appId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} reset successfully`);
         await this.socketManager.emit({ type: 'app', event: 'reset_success', data: { appId, appStatus: 'stopped' } });
@@ -317,7 +317,7 @@ export class AppLifecycleService {
       }
     }
 
-    const { success, message } = await this.appEventsQueue.publishAsync({
+    const { success, message } = await this.appEventsQueue.publish({
       command: 'generate_env',
       appid: appId,
       form: parsedForm,
@@ -358,7 +358,7 @@ export class AppLifecycleService {
     const appStatusBeforeUpdate = app.status;
     this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'updating' } });
 
-    this.appEventsQueue.publishAsync({ command: 'update', appid: appId, form: app.config, performBackup }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'update', appid: appId, form: app.config, performBackup }).then(async ({ success, message }) => {
       if (success) {
         const appInfo = await this.appFilesManager.getInstalledAppInfo(appId);
 
