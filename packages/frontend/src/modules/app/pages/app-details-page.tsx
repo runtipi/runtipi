@@ -14,7 +14,7 @@ export const AppDetailsPage = () => {
   const { appId, storeId } = useParams<{ appId: string; storeId: string }>();
 
   const getApp = useSuspenseQuery({
-    ...getAppOptions({ path: { id: `${storeId}_${appId}` } }),
+    ...getAppOptions({ path: { id: `${appId}_${storeId}` } }),
   });
 
   const { userSettings } = useAppContext();

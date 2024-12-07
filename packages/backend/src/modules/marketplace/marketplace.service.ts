@@ -80,7 +80,7 @@ export class MarketplaceService {
       const ids = await store.getAvailableAppIds();
       allIds.push(...ids);
     }
-    return allIds.sort();
+    return allIds.sort((a, b) => a.localeCompare(b));
   }
 
   /**
@@ -165,7 +165,7 @@ export class MarketplaceService {
     let filteredApps = await this.getAvailableApps();
 
     if (storeId) {
-      filteredApps = filteredApps.filter((app) => app.id.startsWith(`${storeId}_`));
+      filteredApps = filteredApps.filter((app) => app.id.endsWith(`_${storeId}`));
     }
 
     if (category) {

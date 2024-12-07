@@ -130,7 +130,7 @@ export class AppStoreFilesManager {
     const appsDir = await this.filesystem.listFiles(appsRepoFolder);
     const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
 
-    return appsDir.filter((app) => !skippedFiles.includes(app)).map((app) => `${this.storeId}_${app}`);
+    return appsDir.filter((app) => !skippedFiles.includes(app)).map((app) => `${app}_${this.storeId}`);
   }
 
   /**
