@@ -32,10 +32,12 @@ export class ReposHelpers {
    * @returns An array containing the base URL and branch, or just the base URL if no branch is found.
    */
   private getRepoBaseUrlAndBranch = (repoUrl: string) => {
-    const branchMatch = repoUrl.match(/^(.*?)\/tree\/(.+?)$/);
+    const treeIndex = repoUrl.indexOf('/tree/');
 
-    if (branchMatch) {
-      return [branchMatch[1], branchMatch[2]];
+    if (treeIndex !== -1) {
+      const baseUrl = repoUrl.substring(0, treeIndex);
+      const branch = repoUrl.substring(treeIndex + '/tree/'.length);
+      return [baseUrl, branch];
     }
 
     return [repoUrl, undefined];

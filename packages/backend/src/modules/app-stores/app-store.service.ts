@@ -76,7 +76,7 @@ export class AppStoreService {
 
     this.logger.info('Migrating default repo');
 
-    const migrated = await this.appStoreRepository.createAppStore({ url: deprecatedAppsRepoUrl, name: 'migrated' });
+    const migrated = await this.appStoreRepository.createAppStore({ url: deprecatedAppsRepoUrl.trim().toLowerCase(), name: 'migrated' });
 
     if (!migrated) {
       throw new Error('Failed to migrate current repo');
