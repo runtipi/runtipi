@@ -39,4 +39,12 @@ export class DatabaseService {
 
     migrate(this.db, { migrationsFolder: path.join(appDir, 'assets', 'migrations') });
   }
+
+  migrate = async () => {
+    try {
+      await migrate(this.db, { migrationsFolder: path.join(this.configurationService.get('directories').appDir, 'assets', 'migrations') });
+    } catch (error) {
+      this.logger.error('Error migrating database:', error);
+    }
+  };
 }

@@ -6,6 +6,7 @@ import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
 import { CacheService } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
+import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
 import { SocketManager } from './core/socket/socket.service';
@@ -22,9 +23,12 @@ export class AppService {
     private readonly repoQueue: RepoEventsQueue,
     private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
+    private readonly databaseService: DatabaseService,
   ) {}
 
   public async bootstrap() {
+    await this.databaseService.migrate();
+
     const { version, appsRepoUrl, userSettings } = this.configuration.getConfig();
 
     this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
