@@ -3,6 +3,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  integration-tests:
+    uses: "./.github/workflows/integration-tests.yml"
+    secrets: inherit
+
+  unit-tests:
+    uses: "./.github/workflows/ci.yml"
+    secrets: inherit
+
   create-tag:
     runs-on: ubuntu-latest
     outputs:

@@ -1,5 +1,6 @@
 name: Integraton tests
 on:
+  workflow_call:
   pull_request:
   push:
     branches:
