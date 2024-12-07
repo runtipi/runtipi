@@ -100,7 +100,7 @@ export class AppsRepository {
   public async updateAppAppStoreIdWhereNull(appStoreId: number) {
     await this.db.db
       .update(app)
-      .set({ appStoreId, id: sql`CONCAT('${sql.raw(appStoreId.toString())}', '_', id)` })
+      .set({ appStoreId, id: sql`CONCAT(id, '_', '${sql.raw(appStoreId.toString())}')` })
       .where(isNull(app.appStoreId))
       .returning()
       .execute();

@@ -61,9 +61,9 @@ exports[`App lifecycle > install app > should successfully install app and creat
 
 exports[`App lifecycle > install app > should successfully install app and create expected directory structure 2`] = `
 "services:
-  1_test:
+  test_1:
     image: test
-    container_name: 1_test
+    container_name: test_1
     restart: unless-stopped
     networks:
       - tipi_main_network

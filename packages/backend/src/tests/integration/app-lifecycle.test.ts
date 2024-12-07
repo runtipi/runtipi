@@ -105,7 +105,7 @@ describe('App lifecycle', () => {
     it('should successfully install app and create expected directory structure', async () => {
       // arrange
       const appInfo = await createAppInStore(1, { id: 'test' });
-      const appId = `1_${appInfo.id}`;
+      const appId = `${appInfo.id}_1`;
 
       // act
       await appLifecycleService.installApp({ appId, form: {} });
@@ -124,7 +124,7 @@ describe('App lifecycle', () => {
     it('should not delete an existing app-data folder even if the app is reinstalled', async () => {
       // arrange
       const appInfo = await createAppInStore(1, { id: 'test2' });
-      const appId = `1_${appInfo.id}`;
+      const appId = `${appInfo.id}_1`;
 
       await fs.promises.mkdir(`${APP_DATA_DIR}/1_test2/data`, { recursive: true });
       await fs.promises.writeFile(`${APP_DATA_DIR}/1_test2/data/test.txt`, 'test');
