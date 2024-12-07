@@ -23,6 +23,10 @@ export const AddAppStoreDialog = () => {
 
   type FormValues = z.infer<typeof schema>;
 
+  const { register, reset, handleSubmit, formState } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+  });
+
   const createAppStore = useMutation({
     ...createAppStoreMutation(),
     onError: (e: TranslatableError) => {
@@ -31,11 +35,8 @@ export const AddAppStoreDialog = () => {
     onSuccess: () => {
       toast.success(t('APP_STORE_ADD_SUCCESS'));
       addAppStoreDisclosure.close();
+      reset();
     },
-  });
-
-  const { register, handleSubmit, formState } = useForm<FormValues>({
-    resolver: zodResolver(schema),
   });
 
   const onSubmit = (values: FormValues) => {

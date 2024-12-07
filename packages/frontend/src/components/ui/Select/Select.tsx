@@ -52,15 +52,14 @@ const SelectTrigger = React.forwardRef<
         {value && (
           <button
             type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            aria-label="Clear selection"
+            onClick={(_) => {
               onClear?.();
             }}
-            className="btn btn-link position-absolute top-50 end-0 translate-middle-y pe-3"
+            className="btn btn-link position-absolute top-50 end-0 translate-middle-y"
             style={{ marginRight: '1rem' }}
           >
-            <IconX size={14} />
+            <IconX size={14} aria-hidden />
           </button>
         )}
       </div>

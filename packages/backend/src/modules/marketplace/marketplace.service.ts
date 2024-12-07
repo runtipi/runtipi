@@ -165,7 +165,10 @@ export class MarketplaceService {
     let filteredApps = await this.getAvailableApps();
 
     if (storeId) {
-      filteredApps = filteredApps.filter((app) => app.id.endsWith(`_${storeId}`));
+      filteredApps = filteredApps.filter((app) => {
+        const { storeId: appStoreId } = extractAppId(app.id);
+        return appStoreId === storeId.toString();
+      });
     }
 
     if (category) {

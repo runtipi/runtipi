@@ -1,6 +1,6 @@
 import { DatabaseService } from '@/core/database/database.service';
 import { app, appStore } from '@/core/database/drizzle/schema';
-import type { AppStore, NewAppStore } from '@/core/database/drizzle/types';
+import type { NewAppStore } from '@/core/database/drizzle/types';
 import { Injectable } from '@nestjs/common';
 import { and, asc, count, eq } from 'drizzle-orm';
 import { ReposHelpers } from './repos.helpers';
@@ -29,7 +29,13 @@ export class AppStoreRepository {
       .insert(appStore)
       .values({ ...data, hash })
       .returning();
-    return newAppStore[0] as AppStore;
+
+    const insertedAppStore = newAppStore[0];
+    if (!insertedAppStore) {
+      throw new Error('Failed to create new app store.');
+    }
+
+    return insertedAppStore;
   }
 
   public async getEnabledAppStores() {
@@ -53,7 +59,18 @@ export class AppStoreRepository {
   }
 
   public async updateAppStore(id: number, data: Omit<NewAppStore, 'hash' | 'id' | 'url'>) {
-    return this.databaseService.db.update(appStore).set({ name: data.name, enabled: data.enabled, deleted: false }).where(eq(appStore.id, id));
+    const update = await this.databaseService.db
+      .update(appStore)
+      .set({ name: data.name, enabled: data.enabled, deleted: false })
+      .where(eq(appStore.id, id))
+      .returning();
+    const store = update[0];
+
+    if (!store) {
+      throw new Error('Failed to update app store.');
+    }
+
+    return store;
   }
 
   public async enableAppStore(id: number) {

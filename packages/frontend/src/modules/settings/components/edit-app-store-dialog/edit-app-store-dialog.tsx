@@ -12,7 +12,6 @@ import { useId } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import validator from 'validator';
 import { z } from 'zod';
 
 type Props = {
@@ -37,19 +36,9 @@ export const EditAppStoreDialog = ({ appStore }: Props) => {
     },
     onSuccess: () => {
       editAppStoreDisclosure.close();
-      toast.success('APP_STORE_EDIT_DIALOG_SUCCESS');
+      toast.success(t('APP_STORE_EDIT_DIALOG_SUCCESS'));
     },
   });
-
-  const validateFields = (values: FormValues) => {
-    const errors: { [k in keyof FormValues]?: string } = {};
-
-    if (values.name && !validator.isLength(values.name, { max: 16 })) {
-      errors.name = t('APP_INSTALL_FORM_ERROR_BETWEEN_LENGTH', { label: 'Name', min: 1, max: 16 });
-    }
-
-    return errors;
-  };
 
   const { register, control, handleSubmit, setError, formState } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -57,17 +46,7 @@ export const EditAppStoreDialog = ({ appStore }: Props) => {
   });
 
   const validate = (values: FormValues) => {
-    const errors = validateFields(values);
-
-    for (const [field, message] of Object.entries(errors)) {
-      if (message) {
-        setError(field as keyof FormValues, { message });
-      }
-    }
-
-    if (Object.keys(errors).length === 0) {
-      editAppStore.mutate({ path: { id: appStore.id.toString() }, body: values });
-    }
+    editAppStore.mutate({ path: { id: appStore.id.toString() }, body: values });
   };
 
   const formId = useId();
