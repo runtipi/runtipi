@@ -14,7 +14,12 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
 
   public onEvent(callback: (data: z.output<T> & { eventId: string }, reply: (response: z.input<R>) => Promise<void>) => Promise<void>) {
     this.rabbit.createConsumer({ queue: this.queueName, concurrency: this.workers }, async (req, reply) => {
-      await callback(req.body, reply);
+      try {
+        await callback(req.body, reply);
+      } catch (error) {
+        console.error('Error in consumer callback:', error);
+        await reply({ success: false, message: (error as Error)?.message });
+      }
     });
   }
 
