@@ -15,8 +15,7 @@ export class DatabaseService {
     private configurationService: ConfigurationService,
     private logger: LoggerService,
   ) {
-    const { username, port, database, host, password } = this.configurationService.getConfig().database;
-    const { appDir } = this.configurationService.getConfig().directories;
+    const { username, port, database, host, password } = this.configurationService.get('database');
     const connectionString = `postgresql://${username}:${password}@${host}:${port}/${database}?connect_timeout=300`;
 
     const pool = new Pool({
@@ -36,15 +35,21 @@ export class DatabaseService {
     });
 
     this.db = drizzle(pool, { schema });
+  }
 
-    migrate(this.db, { migrationsFolder: path.join(appDir, 'assets', 'migrations') });
+  private getMigrationsPath(): string {
+    const { appDir } = this.configurationService.get('directories');
+    return path.join(appDir, 'assets', 'migrations');
   }
 
   migrate = async () => {
     try {
-      await migrate(this.db, { migrationsFolder: path.join(this.configurationService.get('directories').appDir, 'assets', 'migrations') });
+      this.logger.debug('Starting database migration...');
+      await migrate(this.db, { migrationsFolder: this.getMigrationsPath() });
+      this.logger.debug('Database migration complete.');
     } catch (error) {
       this.logger.error('Error migrating database:', error);
+      throw error;
     }
   };
 }
