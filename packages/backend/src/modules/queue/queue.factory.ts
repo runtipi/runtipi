@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { type AsyncMessage, Connection } from 'rabbitmq-client';
+import { Connection } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
 import { Queue } from './queue.entity';
 
@@ -24,15 +24,12 @@ export class QueueFactory {
   }) {
     const { queueName, workers = 3, eventSchema, resultSchema = z.object({ success: z.boolean(), message: z.string() }), timeout } = params;
 
-    const publisher = this.rabbit.createPublisher({
+    const rpcClient = this.rabbit.createRPCClient({
+      timeout,
       confirm: true,
       maxAttempts: 3,
     });
 
-    return new Queue(this, publisher, queueName, workers, eventSchema, resultSchema, timeout);
-  }
-
-  public createConsumer(queueName: string, callback: (data: AsyncMessage) => void) {
-    return this.rabbit.createConsumer({ queue: queueName }, callback);
+    return new Queue(this.rabbit, rpcClient, queueName, workers, eventSchema, resultSchema);
   }
 }
