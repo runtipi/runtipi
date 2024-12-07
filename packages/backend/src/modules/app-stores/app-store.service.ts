@@ -1,7 +1,7 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import type { UpdateAppStoreBodyDto } from '../marketplace/dto/marketplace.dto';
 import { RepoEventsQueue } from '../queue/entities/repo-events';
 import { AppStoreRepository } from './app-store.repository';
@@ -100,7 +100,12 @@ export class AppStoreService {
    * @param body The new data to update the app store with
    */
   public async updateAppStore(id: string, body: UpdateAppStoreBodyDto) {
-    return this.appStoreRepository.updateAppStore(Number(id), body);
+    const numericId = Number(id);
+    if (Number.isNaN(numericId)) {
+      throw new HttpException(`Invalid ID ${id}`, HttpStatus.BAD_REQUEST);
+    }
+
+    return this.appStoreRepository.updateAppStore(numericId, body);
   }
 
   /**
@@ -115,13 +120,18 @@ export class AppStoreService {
       throw new TranslatableError('APP_STORE_DELETE_ERROR_LAST_STORE', {}, HttpStatus.BAD_REQUEST);
     }
 
-    const count = await this.appStoreRepository.getAppCountForStore(Number(id));
+    const numericId = Number(id);
+    if (Number.isNaN(numericId)) {
+      throw new HttpException(`Invalid ID ${id}`, HttpStatus.BAD_REQUEST);
+    }
+
+    const count = await this.appStoreRepository.getAppCountForStore(numericId);
 
     if (count && count.count > 0) {
       throw new TranslatableError('APP_STORE_DELETE_ERROR_APPS_EXIST', {}, HttpStatus.BAD_REQUEST);
     }
 
-    await this.appStoreRepository.deleteAppStore(Number(id));
+    await this.appStoreRepository.deleteAppStore(numericId);
     await this.repoHelpers.deleteRepo(id);
 
     return { success: true };

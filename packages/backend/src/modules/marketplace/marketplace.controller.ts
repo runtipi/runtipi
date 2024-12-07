@@ -64,8 +64,10 @@ export class MarketplaceController {
   @Post('create')
   @UseGuards(AuthGuard)
   async createAppStore(@Body() body: CreateAppStoreBodyDto) {
-    await this.appStoreService.createAppStore(body);
+    const appStore = await this.appStoreService.createAppStore(body);
     await this.marketplaceService.initialize();
+
+    return { appStore };
   }
 
   @Get('all')
@@ -91,6 +93,8 @@ export class MarketplaceController {
   async updateAppStore(@Param('id') id: string, @Body() body: UpdateAppStoreBodyDto) {
     await this.appStoreService.updateAppStore(id, body);
     await this.marketplaceService.initialize();
+
+    return { success: true };
   }
 
   @Delete(':id')
@@ -98,5 +102,7 @@ export class MarketplaceController {
   async deleteAppStore(@Param('id') id: string) {
     await this.appStoreService.deleteAppStore(id);
     await this.marketplaceService.initialize();
+
+    return { success: true };
   }
 }

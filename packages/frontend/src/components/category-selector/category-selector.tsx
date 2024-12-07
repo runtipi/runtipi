@@ -12,7 +12,7 @@ interface Props {
 
 export const CategorySelector = ({ onSelect, className, initialValue }: Props) => {
   const { t } = useTranslation();
-  const [key, setKey] = useState(new Date().getTime().toString());
+  const [resetCounter, setResetCounter] = useState(0);
 
   const options = iconForCategory.map((category) => ({
     value: category.id,
@@ -30,11 +30,11 @@ export const CategorySelector = ({ onSelect, className, initialValue }: Props) =
   const handleReset = () => {
     setValue(undefined);
     onSelect(undefined);
-    setKey(new Date().getTime().toString());
+    setResetCounter((prev) => prev + 1);
   };
 
   return (
-    <Select key={key} value={value} onValueChange={(o: AppCategory) => handleChange(o)}>
+    <Select key={resetCounter.toString()} value={value} onValueChange={(o: AppCategory) => handleChange(o)}>
       <SelectTrigger value={value} onClear={handleReset} className={className}>
         <SelectValue placeholder={t('APP_STORE_CHOOSE_CATEGORY')} />
       </SelectTrigger>

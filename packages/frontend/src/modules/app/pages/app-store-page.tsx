@@ -31,7 +31,7 @@ export const AppStorePage = () => {
   });
 
   if (params.storeId) {
-    return <Navigate to="/app-store" />;
+    return <Navigate to={`/app-store?store=${params.storeId}`} />;
   }
 
   if (isLoading) {

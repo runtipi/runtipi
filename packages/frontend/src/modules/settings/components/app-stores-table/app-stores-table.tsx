@@ -52,7 +52,7 @@ export const AppStoresTable = ({ appStores }: Props) => {
                 <EnabledBadge enabled={appStore.enabled} />
               </TableCell>
               <TableCell>
-                <a href={appStore.url} target="_blank" rel="noreferrer">
+                <a href={appStore.url} target="_blank" rel="noreferrer noopener nofollow">
                   {appStore.url}
                 </a>
               </TableCell>

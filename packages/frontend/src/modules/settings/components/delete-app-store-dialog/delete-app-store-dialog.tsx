@@ -23,14 +23,14 @@ export const DeleteAppStoreDialog = ({ appStore }: Props) => {
       toast.error(t(e.message, e.intlParams));
     },
     onSuccess: () => {
-      toast.success('APP_STORE_DELETE_SUCCESS');
+      toast.success(t('APP_STORE_DELETE_SUCCESS'));
       deleteAppStoreDisclosure.close();
     },
   });
 
   return (
     <div>
-      <Button size="sm" intent="danger" variant="ghost" disabled={length === 1} onClick={() => deleteAppStoreDisclosure.open()}>
+      <Button size="sm" intent="danger" variant="ghost" disabled={deleteAppStore.isPending} onClick={() => deleteAppStoreDisclosure.open()}>
         {t('APP_STORE_TABLE_DELETE')}
       </Button>
       <Dialog open={deleteAppStoreDisclosure.isOpen} onOpenChange={deleteAppStoreDisclosure.toggle}>
