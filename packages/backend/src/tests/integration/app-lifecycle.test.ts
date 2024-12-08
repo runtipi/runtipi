@@ -4,6 +4,7 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { DatabaseService } from '@/core/database/database.service';
 import { appStore } from '@/core/database/drizzle/schema';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import type { LoggerService } from '@/core/logger/logger.service';
 import { AppLifecycleCommandFactory } from '@/modules/app-lifecycle/app-lifecycle-command.factory';
 import { AppLifecycleService } from '@/modules/app-lifecycle/app-lifecycle.service';
 import { AppStoreRepository } from '@/modules/app-stores/app-store.repository';
@@ -34,7 +35,8 @@ describe('App lifecycle', () => {
   let appsRepository: AppsRepository;
   let configurationService = mock<ConfigurationService>();
   let databaseService = mock<DatabaseService>();
-  const queueFactory = new QueueFactory();
+  const loggerService = mock<LoggerService>();
+  const queueFactory = new QueueFactory(loggerService);
   const appEventsQueue = queueFactory.createQueue({
     queueName: 'app-events-queue',
     workers: 1,

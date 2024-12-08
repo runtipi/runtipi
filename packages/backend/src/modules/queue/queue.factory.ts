@@ -1,4 +1,6 @@
+import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
+import Sentry from '@sentry/nestjs';
 import { Connection } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
 import { Queue } from './queue.entity';
@@ -7,12 +9,17 @@ import { Queue } from './queue.entity';
 export class QueueFactory {
   private rabbit: Connection;
 
-  public constructor() {
+  public constructor(private readonly logger: LoggerService) {
     this.initializeConnection();
   }
 
   private initializeConnection() {
     this.rabbit = new Connection({ url: 'amqp://guest:guest@localhost:5672' });
+
+    this.rabbit.on('error', (error) => {
+      this.logger.error('RabbitMQ connection error:', error);
+      Sentry.captureException(error);
+    });
   }
 
   public createQueue<T extends ZodSchema, R extends ZodSchema>(params: {
