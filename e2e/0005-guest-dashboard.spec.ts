@@ -5,7 +5,6 @@ import { clearDatabase, db } from './helpers/db';
 import { setSettings } from './helpers/settings';
 
 test.beforeEach(async () => {
-  // test.fixme(true, 'Not working yet');
   await clearDatabase();
   await setSettings({});
 });
@@ -23,10 +22,12 @@ test('user can activate the guest dashboard and see it when logged out', async (
 });
 
 test('logged out users can see the apps on the guest dashboard', async ({ browser }) => {
+  const store = await db.query.appStore.findFirst();
+
   await db.insert(app).values({
     config: {},
     isVisibleOnGuestDashboard: true,
-    id: 'hello-world',
+    id: `hello-world_${store?.id}`,
     exposed: true,
     exposedLocal: true,
     domain: 'duckduckgo.com',
@@ -37,7 +38,7 @@ test('logged out users can see the apps on the guest dashboard', async ({ browse
     config: {},
     openPort: true,
     isVisibleOnGuestDashboard: false,
-    id: 'actual-budget',
+    id: `actual-budget_${store?.id}`,
     exposed: false,
     exposedLocal: false,
     status: 'running',
