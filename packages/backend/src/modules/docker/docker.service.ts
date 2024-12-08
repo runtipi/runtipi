@@ -40,6 +40,7 @@ export class DockerService {
    * @param {string} appId - App name
    */
   public getBaseComposeArgsApp = async (appId: string) => {
+    let isCustomConfig = false;
     const { directories } = this.config.getConfig();
 
     const { storeId } = extractAppId(appId);
@@ -50,6 +51,7 @@ export class DockerService {
     // User custom env file
     const userEnvFile = await this.appFilesManager.getUserEnv(appId);
     if (userEnvFile.content) {
+      isCustomConfig = true;
       args.push(`--env-file ${userEnvFile.path}`);
     }
 
@@ -64,10 +66,11 @@ export class DockerService {
     // User defined overrides
     const userComposeFile = await this.appFilesManager.getUserComposeFile(appId);
     if (userComposeFile.content) {
+      isCustomConfig = true;
       args.push(`--file ${userComposeFile.path}`);
     }
 
-    return { args };
+    return { args, isCustomConfig };
   };
 
   public getBaseComposeArgsRuntipi = async () => {
@@ -94,13 +97,17 @@ export class DockerService {
    * @param {string} command - Command to execute
    */
   public composeApp = async (appId: string, command: string) => {
-    const { args } = await this.getBaseComposeArgsApp(appId);
+    const { args, isCustomConfig } = await this.getBaseComposeArgsApp(appId);
     args.push(command);
 
     this.logger.info(`Running docker compose with args ${args.join(' ')}`);
     const { stdout, stderr } = await execAsync(`docker-compose ${args.join(' ')}`);
 
     if (stderr?.includes('Command failed:')) {
+      if (isCustomConfig) {
+        throw new Error(`Error with your custom app: ${stderr}`);
+      }
+
       throw new Error(stderr);
     }
 
