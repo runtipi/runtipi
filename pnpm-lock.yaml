@@ -134,6 +134,9 @@ importers:
       node-cron:
         specifier: ^3.0.3
         version: 3.0.3
+      pg:
+        specifier: ^8.13.1
+        version: 8.13.1
       rabbitmq-client:
         specifier: ^5.0.1
         version: 5.0.1
@@ -249,9 +252,6 @@ importers:
       msw:
         specifier: ^2.6.8
         version: 2.6.8(@types/node@22.10.1)(typescript@5.7.2)
-      pg:
-        specifier: ^8.13.1
-        version: 8.13.1
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
