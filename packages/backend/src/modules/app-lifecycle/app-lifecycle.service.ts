@@ -325,7 +325,7 @@ export class AppLifecycleService {
 
     if (!success) {
       this.logger.error(`Failed to update app ${appId}: ${message}`);
-      throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appId }, HttpStatus.INTERNAL_SERVER_ERROR, { cause: message });
     }
 
     await this.appRepository.updateApp(appId, {
