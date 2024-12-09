@@ -1,7 +1,6 @@
 import type { LoggerService } from '@/core/logger/logger.service';
 import type { AppFilesManager } from '@/modules/apps/app-files-manager';
 import type { AppHelpers } from '@/modules/apps/app.helpers';
-import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
 import type { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
@@ -13,10 +12,9 @@ export class GenerateAppEnvCommand extends AppLifecycleCommand {
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
     marketplaceService: MarketplaceService,
-    dockerComposeBuilder: DockerComposeBuilder,
     private readonly appHelpers: AppHelpers,
   ) {
-    super(logger, appFilesManager, dockerService, marketplaceService, dockerComposeBuilder);
+    super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
   public async execute(appId: string, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {

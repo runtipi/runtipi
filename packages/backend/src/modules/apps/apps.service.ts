@@ -28,7 +28,9 @@ export class AppsService {
           const updateInfo = await this.marketplaceService.getAppUpdateInfo(app.id).catch((_) => {
             return { latestVersion: 0, latestDockerVersion: '0.0.0' };
           });
+
           if (!appInfo) {
+            this.logger.debug(`App ${app.id} not found in app files`);
             return null;
           }
           return { app, info: appInfo, updateInfo };
