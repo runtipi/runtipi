@@ -1,5 +1,4 @@
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import { Injectable } from '@nestjs/common';
 import * as yaml from 'yaml';
 import { type Service, type ServiceInput, serviceSchema } from './schemas';
 import { type BuiltService, ServiceBuilder } from './service.builder';
@@ -11,24 +10,23 @@ interface Network {
   external: boolean;
 }
 
-@Injectable()
 export class DockerComposeBuilder {
   private services: Record<string, BuiltService> = {};
   private networks: Record<string, Network> = {};
 
-  addService(service: BuiltService) {
+  private addService(service: BuiltService) {
     this.services[service.container_name] = service;
     return this;
   }
 
-  addServices(services: BuiltService[]) {
+  private addServices(services: BuiltService[]) {
     for (const service of services) {
       this.addService(service);
     }
     return this;
   }
 
-  addNetwork(network: Network) {
+  private addNetwork(network: Network) {
     this.networks[network.key || network.name] = {
       name: network.name,
       external: network.external,
@@ -36,24 +34,12 @@ export class DockerComposeBuilder {
     return this;
   }
 
-  build() {
+  private build() {
     return yaml.stringify({
       services: this.services,
       networks: this.networks,
     });
   }
-
-  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, storeId: string) => {
-    const myServices = services.map((service) => this.buildService(serviceSchema.parse(service), form, storeId));
-
-    const dockerCompose = this.addServices(myServices).addNetwork({
-      key: 'tipi_main_network',
-      name: 'runtipi_tipi_main_network',
-      external: true,
-    });
-
-    return dockerCompose.build();
-  };
 
   private buildService = (params: Service, form: AppEventFormInput, storeId: string) => {
     const service = new ServiceBuilder();
@@ -97,5 +83,17 @@ export class DockerComposeBuilder {
     }
 
     return service.build();
+  };
+
+  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, storeId: string) => {
+    const myServices = services.map((service) => this.buildService(serviceSchema.parse(service), form, storeId));
+
+    const dockerCompose = this.addServices(myServices).addNetwork({
+      key: 'tipi_main_network',
+      name: 'runtipi_tipi_main_network',
+      external: true,
+    });
+
+    return dockerCompose.build();
   };
 }

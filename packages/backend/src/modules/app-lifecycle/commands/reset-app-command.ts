@@ -1,7 +1,6 @@
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
-import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
 import { DockerService } from '@/modules/docker/docker.service';
 import type { EnvUtils } from '@/modules/env/env.utils';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
@@ -14,11 +13,10 @@ export class ResetAppCommand extends AppLifecycleCommand {
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
     marketplaceService: MarketplaceService,
-    dockerComposeBuilder: DockerComposeBuilder,
     private readonly appHelpers: AppHelpers,
     private readonly envUtils: EnvUtils,
   ) {
-    super(logger, appFilesManager, dockerService, marketplaceService, dockerComposeBuilder);
+    super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
   public async execute(appId: string, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
