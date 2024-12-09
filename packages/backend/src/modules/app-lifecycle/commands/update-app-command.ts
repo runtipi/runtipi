@@ -2,7 +2,6 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import type { AppHelpers } from '@/modules/apps/app.helpers';
 import type { BackupManager } from '@/modules/backups/backup.manager';
-import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
@@ -14,12 +13,11 @@ export class UpdateAppCommand extends AppLifecycleCommand {
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
     marketplaceService: MarketplaceService,
-    dockerComposeBuilder: DockerComposeBuilder,
     private readonly appHelpers: AppHelpers,
     private readonly backupManager: BackupManager,
     private readonly performBackup: boolean = true,
   ) {
-    super(logger, appFilesManager, dockerService, marketplaceService, dockerComposeBuilder);
+    super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
   public async execute(appId: string, form: AppEventFormInput) {

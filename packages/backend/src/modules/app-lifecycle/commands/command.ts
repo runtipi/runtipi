@@ -14,7 +14,6 @@ export class AppLifecycleCommand {
     protected appFilesManager: AppFilesManager,
     protected dockerService: DockerService,
     protected marketplaceService: MarketplaceService,
-    protected dockerComposeBuilder: DockerComposeBuilder,
   ) {}
 
   protected async ensureAppDir(appId: string, form: AppEventFormInput): Promise<void> {
@@ -31,7 +30,8 @@ export class AppLifecycleCommand {
       try {
         const { services } = dynamicComposeSchema.parse(composeJson.content);
         const { storeId } = extractAppId(appId);
-        const composeFile = this.dockerComposeBuilder.getDockerCompose(services, form, storeId);
+        const dockerComposeBuilder = new DockerComposeBuilder();
+        const composeFile = dockerComposeBuilder.getDockerCompose(services, form, storeId);
 
         await this.appFilesManager.writeDockerComposeYml(appId, composeFile);
       } catch (err) {

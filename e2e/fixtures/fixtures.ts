@@ -27,3 +27,31 @@ export const loginUser = async (page: Page, _: BrowserContext) => {
 
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 };
+
+type InstallAppOpts = {
+  visibleOnGuestDashboard?: boolean;
+  domain?: string;
+};
+
+export const installApp = async (page: Page, storeId: number, appId: string, opts: InstallAppOpts = {}) => {
+  await page.goto(`/app-store/${storeId}/${appId}`);
+
+  // Install app
+  await page.getByRole('button', { name: 'Install' }).click();
+
+  await expect(page.getByText('Display on guest dashboard')).toBeVisible();
+
+  if (opts.visibleOnGuestDashboard) {
+    await page.getByLabel('isVisibleOnGuestDashboard').setChecked(true);
+  }
+
+  if (opts.domain) {
+    await page.getByLabel('exposed', { exact: true }).setChecked(true);
+    await page.getByPlaceholder('Domain name').fill(opts.domain);
+  }
+
+  await page.getByRole('button', { name: 'Install' }).click();
+
+  await expect(page.getByText('Installing')).toBeVisible();
+  await expect(page.getByText('Running')).toBeVisible({ timeout: 60000 });
+};

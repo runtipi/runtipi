@@ -12,7 +12,6 @@ import { AppStoreService } from '@/modules/app-stores/app-store.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { AppsRepository } from '@/modules/apps/apps.repository';
-import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
 import { EnvUtils } from '@/modules/env/env.utils';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '@/modules/queue/entities/app-events';
@@ -64,7 +63,6 @@ describe('App lifecycle', () => {
         AppsRepository,
         EnvUtils,
         AppHelpers,
-        DockerComposeBuilder,
         {
           provide: DatabaseService,
           useValue: databaseService,
