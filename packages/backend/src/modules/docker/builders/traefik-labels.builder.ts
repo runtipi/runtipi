@@ -22,10 +22,12 @@ export class TraefikLabelsBuilder {
       Object.assign(this.labels, {
         'traefik.enable': true,
         [`traefik.http.routers.${this.params.appId}-insecure.rule`]: 'Host(`${APP_DOMAIN}`)',
+        [`traefik.http.routers.${this.params.appId}-insecure.entrypoints`]: 'web',
         [`traefik.http.routers.${this.params.appId}-insecure.service`]: this.params.appId,
         [`traefik.http.routers.${this.params.appId}-insecure.middlewares`]: `${this.params.appId}-web-redirect`,
         [`traefik.http.routers.${this.params.appId}.rule`]: 'Host(`${APP_DOMAIN}`)',
         [`traefik.http.routers.${this.params.appId}.entrypoints`]: 'websecure',
+        [`traefik.http.routers.${this.params.appId}.service`]: this.params.appId,
         [`traefik.http.routers.${this.params.appId}.tls.certresolver`]: 'myresolver',
       });
     }
