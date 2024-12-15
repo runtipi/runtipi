@@ -7,17 +7,16 @@
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/runtipi/runtipi?color=%235351FB&label=version)](https://github.com/runtipi/runtipi/releases)
 ![Issues](https://img.shields.io/github/issues/runtipi/runtipi)
-[![Docker Pulls](https://badgen.net/docker/pulls/meienberger/runtipi?icon=docker&label=pulls)](https://hub.docker.com/r/meienberger/runtipi/)
-[![Docker Image Size](https://badgen.net/docker/size/meienberger/runtipi?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/runtipi/)
 ![Build](https://github.com/runtipi/runtipi/workflows/Tipi%20CI/badge.svg)
 [![Crowdin](https://badges.crowdin.net/runtipi/localized.svg)](https://crowdin.com/project/runtipi)
 [![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20Tipi%20Guru-006BFF)](https://gurubase.io/g/tipi)
 
 > [!NOTE]
-> Runtipi is built with TypeScript, NestJS and React! If you want to collaborate on a cool project, join the discussion on Discord!
+> Runtipi is built with TypeScript, NestJS and React! If you want to collaborate on a cool project, join the discussion in the forums or on Discord!
 
 #### Join the community
 
+[![Forums](https://img.shields.io/discourse/users?server=https%3A%2F%2Fforums.runtipi.io)](https://forums.runtipi.io/)
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 
 ![Preview](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png)
