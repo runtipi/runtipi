@@ -83,6 +83,7 @@ export const appInfoSchema = z.object({
     .refine((v) => v < Date.now())
     .optional()
     .default(0),
+  userConfig: z.boolean().optional().default(false),
 });
 
 // Derived types
@@ -100,6 +101,7 @@ export class AppInfoSimpleDto extends createZodDto(
     created_at: true,
     supported_architectures: true,
     available: true,
+    userConfig: true,
   }),
 ) {}
 

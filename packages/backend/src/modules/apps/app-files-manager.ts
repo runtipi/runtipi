@@ -51,7 +51,10 @@ export class AppFilesManager {
 
         if (parsedConfig.success && parsedConfig.data.available) {
           const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
-          return { ...parsedConfig.data, id, description };
+          const userCompose = await this.getUserComposeFile(id);
+          const userEnv = await this.getUserEnv(id);
+          const userConfig = userCompose.content != null || userEnv.content != null;
+          return { ...parsedConfig.data, id, description, userConfig };
         }
       }
     } catch (error) {
