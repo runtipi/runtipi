@@ -43,7 +43,7 @@ for app in $(ls apps); do
   echo -e "📦 Found app: ${Green}$app${ColorOff}"
 done
 
-echo -e "\n⚠️  ${Yellow}Warning:${ColorOff} If an app is missing from the list above, please cancel the script immidiately with Ctrl+C and seek help in our Discord or Forums\n"
+echo -e "\n⚠️  ${Yellow}Warning:${ColorOff} If an app is missing from the list above, please cancel the script immediately with Ctrl+C and seek help in our Discord or Forums\n"
 echo -e "⏳ Starting in 10 seconds...\n"
 
 sleep 10s
