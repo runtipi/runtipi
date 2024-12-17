@@ -83,7 +83,7 @@ export const appInfoSchema = z.object({
     .refine((v) => v < Date.now())
     .optional()
     .default(0),
-  userConfig: z.boolean().optional().default(false),
+  userConfig: z.boolean().default(false),
 });
 
 // Derived types
