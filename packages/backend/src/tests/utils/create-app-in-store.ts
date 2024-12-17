@@ -29,6 +29,7 @@ export const createAppInStore = async (storeId: number, app: Partial<AppInfo> = 
     force_expose: false,
     generate_vapid_keys: false,
     form_fields: [],
+    userConfig: false,
     ...app,
   };
 

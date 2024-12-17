@@ -1665,6 +1665,10 @@
                 },
                 "available": {
                   "type": "boolean"
+                },
+                "userConfig": {
+                  "type": "boolean",
+                  "default": false
                 }
               },
               "required": [
@@ -2114,6 +2118,10 @@
                     },
                     "available": {
                       "type": "boolean"
+                    },
+                    "userConfig": {
+                      "type": "boolean",
+                      "default": false
                     }
                   },
                   "required": [
@@ -2456,6 +2464,10 @@
                       "minimum": 0,
                       "exclusiveMinimum": false,
                       "default": 0
+                    },
+                    "userConfig": {
+                      "type": "boolean",
+                      "default": false
                     }
                   },
                   "required": [
@@ -2780,6 +2792,10 @@
                 "minimum": 0,
                 "exclusiveMinimum": false,
                 "default": 0
+              },
+              "userConfig": {
+                "type": "boolean",
+                "default": false
               }
             },
             "required": [
@@ -2879,6 +2895,10 @@
                 },
                 "available": {
                   "type": "boolean"
+                },
+                "userConfig": {
+                  "type": "boolean",
+                  "default": false
                 }
               },
               "required": [
