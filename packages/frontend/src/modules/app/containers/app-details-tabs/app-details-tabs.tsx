@@ -100,6 +100,11 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
               </a>
             </DataGridItem>
           )}
+          {app && (
+            <DataGridItem title={t('APP_DETAILS_USER_CONFIG')}>
+              <b>{info.userConfig ? t('YES') : t('NO') }</b>
+            </DataGridItem>
+          )}
         </DataGrid>
       </TabsContent>
       <TabsContent value="logs">
