@@ -162,8 +162,8 @@ importers:
         specifier: ^5.18.2
         version: 5.18.2
       systeminformation:
-        specifier: ^5.23.6
-        version: 5.23.6
+        specifier: ^5.23.8
+        version: 5.23.8
       validator:
         specifier: ^13.12.0
         version: 13.12.0
@@ -6538,8 +6538,8 @@ packages:
     resolution: {integrity: sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==}
     engines: {node: '>=0.10'}
 
-  systeminformation@5.23.6:
-    resolution: {integrity: sha512-IbnrETcn8v+S9NYRVLht0ivbP0BV3A8+GAFMWtz6rYZDXBUjPQVHo7TRPtoq3EMgesJ0biKJePI30/743OK5Iw==}
+  systeminformation@5.23.8:
+    resolution: {integrity: sha512-Osd24mNKe6jr/YoXLLK3k8TMdzaxDffhpCxgkfgBHcapykIkd50HXThM3TCEuHO2pPuCsSx2ms/SunqhU5MmsQ==}
     engines: {node: '>=8.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
@@ -13506,7 +13506,7 @@ snapshots:
 
   symbol-observable@4.0.0: {}
 
-  systeminformation@5.23.6: {}
+  systeminformation@5.23.8: {}
 
   tapable@2.2.1: {}
 
