@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Detalles de la aplicación",
   "APP_DETAILS_VERSION": "Versión",
   "APP_DETAILS_WEBSITE": "Página web",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Error al instalar la aplicación {{id}}, consulta los registros para obtener más detalles",
   "APP_ERROR_APP_FAILED_TO_RESET": "Error restableciendo {{id}}, mira las trazas para más detalles",
   "APP_ERROR_APP_FAILED_TO_START": "No se pudo iniciar la aplicación {{id}}, consulta los registros para obtener más detalles",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "La versión principal ha cambiado. Por favor, actualice manualmente (instrucciones en las notas de la versión)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Zona horaria",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
