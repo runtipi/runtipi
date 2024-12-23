@@ -41,7 +41,7 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
-    "dotenv-cli": "^7.4.4",
+    "dotenv-cli": "^8.0.0",
     "drizzle-orm": "^0.38.2",
     "i18next": "^24.2.0",
     "i18next-fs-backend": "^2.6.0",

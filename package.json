@@ -26,7 +26,7 @@
     "@hey-api/openapi-ts": "^0.60.1",
     "@playwright/test": "^1.49.1",
     "@types/pg": "^8.11.10",
-    "dotenv-cli": "^7.4.4",
+    "dotenv-cli": "^8.0.0",
     "turbo": "^2.3.3"
   },
   "dependencies": {
