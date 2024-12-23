@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Detalii despre aplicație",
   "APP_DETAILS_VERSION": "Versiune",
   "APP_DETAILS_WEBSITE": "Site web",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Instalarea aplicației {{id}} a eșuat, vezi jurnalele pentru mai multe detalii",
   "APP_ERROR_APP_FAILED_TO_RESET": "Failed to reset app {{id}}, see logs for more details",
   "APP_ERROR_APP_FAILED_TO_START": "Nu s-a putut porni aplicația {{id}}, vezi jurnalele pentru mai multe detalii",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Versiunea majoră s-a schimbat. Vă rugăm să actualizați manual (instrucțiuni pe GitHub)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Trebuie să fiți conectat pentru a efectua această acțiune",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
