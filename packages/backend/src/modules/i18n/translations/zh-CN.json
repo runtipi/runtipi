@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "应用详情",
   "APP_DETAILS_VERSION": "版本",
   "APP_DETAILS_WEBSITE": "网址",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "安装应用程序 {{id}} 失败，查看日志获取更多详细信息",
   "APP_ERROR_APP_FAILED_TO_RESET": "重置应用程序 {{id}} 失败，查看日志获取更多详细信息",
   "APP_ERROR_APP_FAILED_TO_START": "启动应用程序 {{id}} 失败，查看日志获取更多详细信息",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "主要版本已更新。请手动更新 (参照更新记录上的指示)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
