@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "App-Details",
   "APP_DETAILS_VERSION": "Version",
   "APP_DETAILS_WEBSITE": "Webseite",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Installieren der App {{id}} fehlgeschlagen, schau dir die Logs an für weitere Informationen",
   "APP_ERROR_APP_FAILED_TO_RESET": "Zurücksetzen der App {{id}} fehlgeschlagen, schau dir die Logs an für weitere Details",
   "APP_ERROR_APP_FAILED_TO_START": "Starten der App {{id}} fehlgeschlagen. Siehe die Logs für weitere Informationen",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Die Hauptversion hat sich geändert. Bitte aktualisieren Sie manuell. (Anleitung auf GitHub)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Du musst angemeldet sein, um diese Aktion auszuführen",
   "TIMEZONE_SELECTOR_LABEL": "Zeitzone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Zeitzone auswählen"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Zeitzone auswählen",
+  "YES": "Yes",
+  "NO": "No"
 }
