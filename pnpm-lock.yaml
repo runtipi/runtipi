@@ -348,9 +348,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      consola:
-        specifier: ^3.3.0
-        version: 3.3.0
       dompurify:
         specifier: ^3.2.3
         version: 3.2.3
