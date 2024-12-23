@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Про додаток",
   "APP_DETAILS_VERSION": "Версія",
   "APP_DETAILS_WEBSITE": "Сайт",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Не вдалося встановити додаток {{id}}, див. журнали для отримання додаткових відомостей",
   "APP_ERROR_APP_FAILED_TO_RESET": "Не вдалося скинути додаток {{id}}, перегляньте журнали для деталей",
   "APP_ERROR_APP_FAILED_TO_START": "Не вдалося запустити додаток {{id}}, дивіться журнали для отримання додаткової інформації",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Основна версія змінилася. Будь ласка, оновіть вручну (інструкції у примітках до випуску)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Ви повинні увійти, щоб виконати цю дію",
   "TIMEZONE_SELECTOR_LABEL": "Часовий пояс",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Вибрати часовий пояс"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Вибрати часовий пояс",
+  "YES": "Yes",
+  "NO": "No"
 }
