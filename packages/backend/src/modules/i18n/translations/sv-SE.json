@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Appdetaljer",
   "APP_DETAILS_VERSION": "Version",
   "APP_DETAILS_WEBSITE": "Webbsida",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Det gick inte att installera app {{id}}, se loggar för mer information",
   "APP_ERROR_APP_FAILED_TO_RESET": "Det gick inte att återställa appen {{id}}, se loggar för mer information",
   "APP_ERROR_APP_FAILED_TO_START": "Det gick inte att starta app {{id}}, se loggar för mer information",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Huvudversionen har ändrats. Vänligen uppdatera manuellt (instruktioner på GitHub)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Du måste vara inloggad för att utföra denna åtgärd",
   "TIMEZONE_SELECTOR_LABEL": "Tidszon",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Välj en tidszon"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Välj en tidszon",
+  "YES": "Yes",
+  "NO": "No"
 }
