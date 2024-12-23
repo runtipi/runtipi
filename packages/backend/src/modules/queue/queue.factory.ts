@@ -37,6 +37,6 @@ export class QueueFactory {
       maxAttempts: 3,
     });
 
-    return new Queue(this.rabbit, rpcClient, queueName, workers, eventSchema, resultSchema);
+    return new Queue(this.rabbit, rpcClient, queueName, workers, eventSchema, resultSchema, this.logger);
   }
 }
