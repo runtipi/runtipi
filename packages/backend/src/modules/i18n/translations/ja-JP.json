@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "App details",
   "APP_DETAILS_VERSION": "バージョン",
   "APP_DETAILS_WEBSITE": "ウェブサイト",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "アプリ {{id}} のインストールに失敗しました。詳細はログを参照してください。",
   "APP_ERROR_APP_FAILED_TO_RESET": "Failed to reset app {{id}}, see logs for more details",
   "APP_ERROR_APP_FAILED_TO_START": "アプリ {{id}} の起動に失敗しました。詳細はログを参照してください。",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "メジャーバージョンが変更されました。リリースノートの手順に従って、手動で更新してください。",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
