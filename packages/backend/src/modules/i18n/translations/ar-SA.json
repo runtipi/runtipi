@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "تفاصيل التطبيق",
   "APP_DETAILS_VERSION": "الإصدار",
   "APP_DETAILS_WEBSITE": "موقع",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "فشل تثبيت التطبيق {{id}}، أنظر إلى السجلات للمزيد من التفاصيل",
   "APP_ERROR_APP_FAILED_TO_RESET": "فشل إعادة تعيين التطبيق {{id}}، أنظر إلى السجلات للمزيد من التفاصيل",
   "APP_ERROR_APP_FAILED_TO_START": "فشل تشغيل التطبيق {{id}}، أنظر إلى السجلات للمزيد من التفاصيل",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "The major version has changed. Please update manually (instructions in release notes)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
