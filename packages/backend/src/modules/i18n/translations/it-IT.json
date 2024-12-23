@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Dettagli app",
   "APP_DETAILS_VERSION": "Versione",
   "APP_DETAILS_WEBSITE": "Sito web",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Non possibile installare l'app {{id}}, guarda i log per maggiori dettagli",
   "APP_ERROR_APP_FAILED_TO_RESET": "Failed to reset app {{id}}, see logs for more details",
   "APP_ERROR_APP_FAILED_TO_START": "Non possibile avviare l'app {{id}}, guarda i log per maggiori dettagli",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "La version major è cambiata. Aggiorna manualmente (istruzioni su GitHub)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
