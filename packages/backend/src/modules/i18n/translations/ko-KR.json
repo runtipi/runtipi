@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "앱 상세정보",
   "APP_DETAILS_VERSION": "버전",
   "APP_DETAILS_WEBSITE": "웹사이트",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "앱 {{id}} 설치 실패, 자세한 내용은 로그를 참조하세요",
   "APP_ERROR_APP_FAILED_TO_RESET": "앱 {{id}} 초기화 실패, 자세한 내용은 로그를 참조하세요",
   "APP_ERROR_APP_FAILED_TO_START": "앱 {{id}} 시작 실패, 자세한 내용은 로그를 참조하세요",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "The major version has changed. Please update manually (instructions in release notes)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
