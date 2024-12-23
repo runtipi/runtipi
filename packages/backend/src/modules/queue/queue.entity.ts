@@ -55,8 +55,12 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
       throw new Error('Invalid event data');
     }
 
-    cron.schedule(cronPattern, () => {
-      this.rpcClient.send(this.queueName, eventData.data);
+    cron.schedule(cronPattern, async () => {
+      try {
+        await this.rpcClient.send(this.queueName, eventData.data);
+      } catch (e) {
+        console.error('Error in cron job:', e);
+      }
     });
   }
 }
