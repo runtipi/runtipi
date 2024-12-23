@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "應用程式詳細資訊",
   "APP_DETAILS_VERSION": "版本",
   "APP_DETAILS_WEBSITE": "網址",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "安裝應用程式 {{id}} 失敗，請參閱日誌以瞭解更多詳細資訊",
   "APP_ERROR_APP_FAILED_TO_RESET": "重置應用程式 {{id}} 失敗，請參閱日誌以瞭解更多詳細資訊",
   "APP_ERROR_APP_FAILED_TO_START": "啟動應用程式 {{id}} 失敗，請參閱日誌以瞭解更多詳細資訊",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "主要版本已更改。 請手動更新（參考更新日誌中的說明）",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "你必須登入，才能執行此項操作。",
   "TIMEZONE_SELECTOR_LABEL": "時區",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "選擇一個時區"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "選擇一個時區",
+  "YES": "Yes",
+  "NO": "No"
 }
