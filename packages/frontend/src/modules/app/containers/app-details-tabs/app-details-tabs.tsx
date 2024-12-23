@@ -1,7 +1,7 @@
 import { Markdown } from '@/components/markdown/markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { AppDetails, AppInfo } from '@/types/app.types';
+import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +13,10 @@ const AppLogs = lazy(() => import('../app-logs/app-logs').then((module) => ({ de
 interface IProps {
   info: AppInfo;
   app?: AppDetails | null;
+  metadata?: AppMetadata;
 }
 
-export const AppDetailsTabs = ({ info, app }: IProps) => {
+export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
   const { t } = useTranslation();
 
   const [params] = useSearchParams();
@@ -100,9 +101,9 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
               </a>
             </DataGridItem>
           )}
-          {app && (
+          {metadata && (
             <DataGridItem title={t('APP_DETAILS_USER_CONFIG')}>
-              <b>{info.userConfig ? t('YES') : t('NO') }</b>
+              <b>{metadata.hasCustomConfig ? t('YES') : t('NO')}</b>
             </DataGridItem>
           )}
         </DataGrid>

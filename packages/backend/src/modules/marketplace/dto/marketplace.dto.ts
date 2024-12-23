@@ -83,10 +83,10 @@ export const appInfoSchema = z.object({
     .refine((v) => v < Date.now())
     .optional()
     .default(0),
-  userConfig: z.boolean().default(false),
 });
 
 // Derived types
+export type AppInfoInput = z.input<typeof appInfoSchema>;
 export type AppInfo = z.output<typeof appInfoSchema>;
 export type FormField = z.output<typeof formFieldSchema>;
 
@@ -101,14 +101,14 @@ export class AppInfoSimpleDto extends createZodDto(
     created_at: true,
     supported_architectures: true,
     available: true,
-    userConfig: true,
   }),
 ) {}
 
 export class AppInfoDto extends createZodDto(appInfoSchema) {}
 
-export class UpdateInfoDto extends createZodDto(
+export class MetadataDto extends createZodDto(
   z.object({
+    hasCustomConfig: z.boolean().optional(),
     latestVersion: z.number(),
     minTipiVersion: z.string().optional(),
     latestDockerVersion: z.string().optional(),
@@ -137,7 +137,7 @@ export class SearchAppsDto extends createZodDto(
 export class AppDetailsDto extends createZodDto(
   z.object({
     info: AppInfoDto.schema,
-    updateInfo: UpdateInfoDto.schema,
+    metadata: MetadataDto.schema,
   }),
 ) {}
 

@@ -56,7 +56,7 @@ export class AppStoreFilesManager {
 
         if (parsedConfig.success && parsedConfig.data.available) {
           const description = (await this.filesystem.readTextFile(path.join(appRepoDir, 'metadata', 'description.md'))) ?? '';
-          return { ...parsedConfig.data, id: namespacedId, description, userConfig: false };
+          return { ...parsedConfig.data, id: namespacedId, description };
         }
       }
     } catch (error) {

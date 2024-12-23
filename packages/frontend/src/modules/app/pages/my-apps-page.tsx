@@ -22,8 +22,8 @@ export const MyAppsPage = () => {
   const { installed } = apps;
   const { links: customLinks = [] } = links;
 
-  const renderApp = ({ info, app, updateInfo }: (typeof installed)[number]) => {
-    const updateAvailable = Number(app.version) < Number(updateInfo.latestVersion);
+  const renderApp = ({ info, app, metadata }: (typeof installed)[number]) => {
+    const updateAvailable = Number(app.version) < Number(metadata.latestVersion);
 
     const [appId, storeId] = app.id.split('_');
 

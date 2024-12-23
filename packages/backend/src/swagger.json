@@ -1665,10 +1665,6 @@
                 },
                 "available": {
                   "type": "boolean"
-                },
-                "userConfig": {
-                  "type": "boolean",
-                  "default": false
                 }
               },
               "required": [
@@ -2118,10 +2114,6 @@
                     },
                     "available": {
                       "type": "boolean"
-                    },
-                    "userConfig": {
-                      "type": "boolean",
-                      "default": false
                     }
                   },
                   "required": [
@@ -2131,9 +2123,12 @@
                     "available"
                   ]
                 },
-                "updateInfo": {
+                "metadata": {
                   "type": "object",
                   "properties": {
+                    "hasCustomConfig": {
+                      "type": "boolean"
+                    },
                     "latestVersion": {
                       "type": "number"
                     },
@@ -2152,7 +2147,7 @@
               "required": [
                 "app",
                 "info",
-                "updateInfo"
+                "metadata"
               ]
             }
           }
@@ -2464,10 +2459,6 @@
                       "minimum": 0,
                       "exclusiveMinimum": false,
                       "default": 0
-                    },
-                    "userConfig": {
-                      "type": "boolean",
-                      "default": false
                     }
                   },
                   "required": [
@@ -2792,10 +2783,6 @@
                 "minimum": 0,
                 "exclusiveMinimum": false,
                 "default": 0
-              },
-              "userConfig": {
-                "type": "boolean",
-                "default": false
               }
             },
             "required": [
@@ -2809,9 +2796,12 @@
               "source"
             ]
           },
-          "updateInfo": {
+          "metadata": {
             "type": "object",
             "properties": {
+              "hasCustomConfig": {
+                "type": "boolean"
+              },
               "latestVersion": {
                 "type": "number"
               },
@@ -2829,7 +2819,7 @@
         },
         "required": [
           "info",
-          "updateInfo"
+          "metadata"
         ]
       },
       "SearchAppsDto": {
@@ -2895,10 +2885,6 @@
                 },
                 "available": {
                   "type": "boolean"
-                },
-                "userConfig": {
-                  "type": "boolean",
-                  "default": false
                 }
               },
               "required": [
