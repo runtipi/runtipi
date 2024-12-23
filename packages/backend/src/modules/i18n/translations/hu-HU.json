@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Alkalmazás részletek",
   "APP_DETAILS_VERSION": "Verzió",
   "APP_DETAILS_WEBSITE": "Weboldal",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Nem sikerült telepíteni az {{id}} alkalmazást. További részletekért tekintse meg a naplókat",
   "APP_ERROR_APP_FAILED_TO_RESET": "Nem sikerült alaphelyzetbe állítani a(z) {{id}} alkalmazást. További részletekért tekintse meg a naplókat",
   "APP_ERROR_APP_FAILED_TO_START": "Nem sikerült elindítani az {{id}} alkalmazást. További részletekért tekintse meg a naplókat",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "A fő verzió megváltozott, kérjük frissítse manuálisan (utasítások a kiadás megjegyzéseiben)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "A művelet végrehajtásához be kell jelentkeznie",
   "TIMEZONE_SELECTOR_LABEL": "Időzóna",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Időzóna kiválasztása"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Időzóna kiválasztása",
+  "YES": "Yes",
+  "NO": "No"
 }
