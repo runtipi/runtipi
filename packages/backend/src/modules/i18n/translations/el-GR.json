@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Λεπτομέρειες εφαρμογής",
   "APP_DETAILS_VERSION": "Έκδοση",
   "APP_DETAILS_WEBSITE": "Ιστοσελίδα",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Αποτυχία εγκατάστασης της εφαρμογής {{id}}, δείτε τα logs για περισσότερες λεπτομέρειες",
   "APP_ERROR_APP_FAILED_TO_RESET": "Αποτυχία επαναφοράς της εφαρμογής {{id}}, δείτε τα logs για περισσότερες λεπτομέρειες",
   "APP_ERROR_APP_FAILED_TO_START": "Αποτυχία εκκίνησης της εφαρμογής {{id}}, δείτε τα logs για περισσότερες λεπτομέρειες",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Η κύρια έκδοση έχει αλλάξει. Παρακαλούμε ενημερώστε χειροκίνητα (οδηγίες σε σημειώσεις έκδοσης)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Πρέπει να είστε συνδεδεμένοι για να εκτελέσετε αυτή την ενέργεια",
   "TIMEZONE_SELECTOR_LABEL": "Ζώνη ώρας",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Επιλογή ζώνης ώρας"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Επιλογή ζώνης ώρας",
+  "YES": "Yes",
+  "NO": "No"
 }
