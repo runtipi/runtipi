@@ -80,7 +80,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
 
-  const buttons: JSX.Element[] = [];
+  const buttons: React.JSX.Element[] = [];
 
   const startMutation = useMutation({
     ...startAppMutation(),
