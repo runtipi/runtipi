@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "App-details",
   "APP_DETAILS_VERSION": "Versie",
   "APP_DETAILS_WEBSITE": "Website",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Installatie van app {{id}} mislukt, zie logs voor meer details",
   "APP_ERROR_APP_FAILED_TO_RESET": "Kon app {{id}} niet resetten, zie logs voor meer details",
   "APP_ERROR_APP_FAILED_TO_START": "Starten van app {{id}} is mislukt, zie logs voor meer details",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "The major version has changed. Please update manually (instructions in release notes)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
