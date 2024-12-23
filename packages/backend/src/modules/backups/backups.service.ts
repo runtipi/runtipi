@@ -72,7 +72,10 @@ export class BackupsService {
     this.appEventsQueue.publish({ appid: appId, command: 'restore', filename, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appId);
-        await this.appsRepository.updateApp(appId, { version: restoredAppConfig?.tipi_version });
+
+        if (restoredAppConfig?.tipi_version) {
+          await this.appsRepository.updateApp(appId, { version: restoredAppConfig?.tipi_version });
+        }
 
         if (appStatusBeforeUpdate === 'running') {
           await this.appLifecycle.startApp({ appId });
