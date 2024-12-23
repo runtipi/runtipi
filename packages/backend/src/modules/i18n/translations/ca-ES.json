@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Detalls de l'aplicació",
   "APP_DETAILS_VERSION": "Versió",
   "APP_DETAILS_WEBSITE": "Lloc web",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Ha fallat la instal·lació de l'aplicació {{id}}, consulta els logs pels detalls",
   "APP_ERROR_APP_FAILED_TO_RESET": "Ha fallat l'inici de l'aplicació {{id}}, consulta els logs pels detalls",
   "APP_ERROR_APP_FAILED_TO_START": "Ha fallat l'inici de l'aplicació {{id}}, consulta els logs pels detalls",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "La versió principal ha canviat. Actualitza manualment (instruccions a les notes de la versió)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
