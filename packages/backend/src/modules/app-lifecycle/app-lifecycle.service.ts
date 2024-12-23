@@ -379,7 +379,7 @@ export class AppLifecycleService {
 
   async updateAllApps() {
     const installedApps = await this.appsService.getInstalledApps();
-    const availableUpdates = installedApps.filter(({ app, updateInfo }) => Number(app.version) < Number(updateInfo.latestVersion));
+    const availableUpdates = installedApps.filter(({ app, metadata }) => Number(app.version) < Number(metadata.latestVersion));
 
     const updatePromises = availableUpdates.map(async ({ app }) => {
       try {

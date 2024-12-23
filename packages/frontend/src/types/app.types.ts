@@ -2,7 +2,7 @@ import type { GetAllAppStoresResponse, GetAppBackupsDto, GetAppDto, LinksDto, Se
 
 export type FormField = NonNullable<GetAppDto['info']['form_fields']>[number];
 export type AppInfo = GetAppDto['info'];
-export type AppUpdateInfo = GetAppDto['updateInfo'];
+export type AppMetadata = GetAppDto['metadata'];
 export type AppDetails = NonNullable<GetAppDto['app']>;
 export type AppStatus = NonNullable<AppDetails>['status'];
 

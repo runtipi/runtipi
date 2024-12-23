@@ -33,7 +33,7 @@ export class AppsService {
             this.logger.debug(`App ${app.id} not found in app files`);
             return null;
           }
-          return { app, info: appInfo, updateInfo };
+          return { app, info: appInfo, metadata: updateInfo };
         });
       }),
     );
@@ -66,6 +66,10 @@ export class AppsService {
 
     let info = await this.appFilesManager.getInstalledAppInfo(id);
 
+    const userCompose = await this.appFilesManager.getUserComposeFile(id);
+    const userEnv = await this.appFilesManager.getUserEnv(id);
+    const hasCustomConfig = Boolean(userCompose.content) || Boolean(userEnv.content);
+
     if (!info) {
       info = await this.marketplaceService.getAppInfoFromAppStore(id);
     }
@@ -74,6 +78,11 @@ export class AppsService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
     }
 
-    return { app, info, updateInfo };
+    const metadata = {
+      hasCustomConfig,
+      ...updateInfo,
+    };
+
+    return { app, info, metadata };
   }
 }

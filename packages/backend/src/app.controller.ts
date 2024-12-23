@@ -48,8 +48,8 @@ export class AppController {
     const apps = await this.marketplaceService.getAvailableApps();
 
     const installedApps = await this.appsService.getInstalledApps();
-    const updatesAvailable = installedApps.filter(({ app, updateInfo }) => {
-      return Number(app.version) < Number(updateInfo?.latestVersion ?? 0) && app.status !== 'updating';
+    const updatesAvailable = installedApps.filter(({ app, metadata }) => {
+      return Number(app.version) < Number(metadata?.latestVersion ?? 0) && app.status !== 'updating';
     });
 
     return { version, userSettings, user: req.user as UserDto, apps, updatesAvailable: updatesAvailable.length };

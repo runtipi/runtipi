@@ -1,5 +1,5 @@
 import { APP_STATUS } from '@/core/database/drizzle/types';
-import { AppInfoDto, AppInfoSimpleDto, UpdateInfoDto } from '@/modules/marketplace/dto/marketplace.dto';
+import { AppInfoDto, AppInfoSimpleDto, MetadataDto } from '@/modules/marketplace/dto/marketplace.dto';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
@@ -27,7 +27,7 @@ export class MyAppsDto extends createZodDto(
       z.object({
         app: AppDto.schema,
         info: AppInfoSimpleDto.schema,
-        updateInfo: UpdateInfoDto.schema,
+        metadata: MetadataDto.schema,
       }),
     ),
   }),
@@ -48,6 +48,6 @@ export class GetAppDto extends createZodDto(
   z.object({
     app: AppDto.schema.nullish(),
     info: AppInfoDto.schema,
-    updateInfo: UpdateInfoDto.schema,
+    metadata: MetadataDto.schema,
   }),
 ) {}

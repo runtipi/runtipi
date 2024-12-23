@@ -71,7 +71,6 @@ export type AppContextDto = {
     created_at?: number;
     supported_architectures?: Array<'arm64' | 'amd64'>;
     available: boolean;
-    userConfig?: boolean;
   }>;
   updatesAvailable: number;
 };
@@ -220,9 +219,9 @@ export type GetAppDto = {
     min_tipi_version?: string;
     created_at?: number;
     updated_at?: number;
-    userConfig?: boolean;
   };
-  updateInfo: {
+  metadata: {
+    hasCustomConfig?: boolean;
     latestVersion: number;
     minTipiVersion?: string;
     latestDockerVersion?: string;
@@ -344,7 +343,6 @@ export type GuestAppsDto = {
       min_tipi_version?: string;
       created_at?: number;
       updated_at?: number;
-      userConfig?: boolean;
     };
   }>;
 };
@@ -442,9 +440,9 @@ export type MyAppsDto = {
       created_at?: number;
       supported_architectures?: Array<'arm64' | 'amd64'>;
       available: boolean;
-      userConfig?: boolean;
     };
-    updateInfo: {
+    metadata: {
+      hasCustomConfig?: boolean;
       latestVersion: number;
       minTipiVersion?: string;
       latestDockerVersion?: string;
@@ -524,7 +522,6 @@ export type SearchAppsDto = {
     created_at?: number;
     supported_architectures?: Array<'arm64' | 'amd64'>;
     available: boolean;
-    userConfig?: boolean;
   }>;
   nextCursor?: string;
   total: number;

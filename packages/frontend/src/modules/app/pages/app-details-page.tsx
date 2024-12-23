@@ -19,7 +19,7 @@ export const AppDetailsPage = () => {
 
   const { userSettings } = useAppContext();
 
-  const { info, app, updateInfo } = getApp.data;
+  const { info, app, metadata } = getApp.data;
 
   return (
     <div className="card" data-testid="app-details">
@@ -34,10 +34,10 @@ export const AppDetailsPage = () => {
           <div className="mb-1">
             <AppStatus status={app?.status ?? 'missing'} />
           </div>
-          <AppActions app={app} updateInfo={updateInfo} info={info} localDomain={userSettings.localDomain} />
+          <AppActions app={app} metadata={metadata} info={info} localDomain={userSettings.localDomain} />
         </div>
       </div>
-      <AppDetailsTabs info={info} app={app} />
+      <AppDetailsTabs info={info} app={app} metadata={metadata} />
     </div>
   );
 };
