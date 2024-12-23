@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Infos sur l'application",
   "APP_DETAILS_VERSION": "Version",
   "APP_DETAILS_WEBSITE": "Site Web",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Impossible d'installer l'application {{id}}, voir les logs pour plus de détails",
   "APP_ERROR_APP_FAILED_TO_RESET": "Impossible de réinitialiser l'application {{id}}, voir les logs pour plus de détails",
   "APP_ERROR_APP_FAILED_TO_START": "Impossible de démarrer l'application {{id}}, voir les logs pour plus de détails",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "La version majeure a changé. Veuillez mettre à jour manuellement (instructions dans les notes de version)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Vous devez être connecté pour réaliser cette action",
   "TIMEZONE_SELECTOR_LABEL": "Fuseau horaire",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Sélectionner un fuseau horaire"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Sélectionner un fuseau horaire",
+  "YES": "Yes",
+  "NO": "No"
 }
