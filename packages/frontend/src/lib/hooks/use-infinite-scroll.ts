@@ -7,7 +7,7 @@ type Props = {
 };
 
 export const useInfiniteScroll = ({ fetchNextPage, hasNextPage, isFetching }: Props) => {
-  const observer = useRef<IntersectionObserver>();
+  const observer = useRef<IntersectionObserver | undefined>(undefined);
   const lastElementRef = useCallback(
     (node: HTMLDivElement) => {
       if (isFetching) return;
