@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Chi tiết ứng dụng",
   "APP_DETAILS_VERSION": "Phiên bản",
   "APP_DETAILS_WEBSITE": "Trang web",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Cài đặt ứng dụng {{id}} thất bại, xem nhật kí để biết chi tiết",
   "APP_ERROR_APP_FAILED_TO_RESET": "Failed to reset app {{id}}, see logs for more details",
   "APP_ERROR_APP_FAILED_TO_START": "Khởi động ứng dụng {{id}} thất bại, vui lòng xem log để biết chi tiết",
@@ -367,5 +368,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Ứng dụng được cập nhật phiên bản lớn. Vui lòng cập nhật thủ công (hướng dẫn được tim thấy ở GitHub)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Bạn phải đăng nhập để thực hiện hành động này",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
