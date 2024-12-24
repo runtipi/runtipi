@@ -48,10 +48,7 @@ export class AppService {
         await this.appStoreService.deleteAllRepos();
       }
 
-      const repoId = await this.appStoreService.migrateLegacyRepo();
-      if (repoId) {
-        await this.appsRepository.updateAppAppStoreIdWhereNull(repoId);
-      }
+      await this.appStoreService.migrateLegacyRepo();
 
       this.repoQueue.publish({ command: 'clone_all' });
 

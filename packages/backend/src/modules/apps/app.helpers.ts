@@ -2,6 +2,7 @@ import path from 'node:path';
 import { extractAppId } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
 import { EnvUtils } from '../env/env.utils';
 import type { AppEventFormInput } from '../queue/entities/app-events';
@@ -24,31 +25,31 @@ export class AppHelpers {
    * otherwise, it adds the internal IP address to the env file
    * It also creates the app-data folder for the app if it does not exist
    *
-   * @param {string} namespacedAppId - The id of the app to generate the env file for.
+   * @param {string} appUrn - The id of the app to generate the env file for.
    * @param {AppEventFormInput} form - The config object for the app.
    * @throws Will throw an error if the app has an invalid config.json file or if a required variable is missing.
    */
-  public generateEnvFile = async (namespacedAppId: string, form: AppEventFormInput) => {
+  public generateEnvFile = async (appUrn: AppUrn, form: AppEventFormInput) => {
     const { internalIp, envFilePath, rootFolderHost, userSettings } = this.config.getConfig();
 
-    const config = await this.appFilesManager.getInstalledAppInfo(namespacedAppId);
+    const config = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
     if (!config) {
-      throw new Error(`App ${namespacedAppId} not found`);
+      throw new Error(`App ${appUrn} not found`);
     }
 
     const baseEnvFile = await this.filesytem.readTextFile(envFilePath);
     const envMap = this.envUtils.envStringToMap(baseEnvFile?.toString() ?? '');
 
-    const { storeId, appId } = extractAppId(namespacedAppId);
+    const { storeId, appId } = extractAppId(appUrn);
 
     // Default always present env variables
     envMap.set('APP_PORT', String(config.port));
-    envMap.set('APP_ID', namespacedAppId);
+    envMap.set('APP_ID', appUrn);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
     envMap.set('APP_DATA_DIR', path.join(userSettings.appDataPath, storeId, appId));
 
-    const appEnv = await this.appFilesManager.getAppEnv(namespacedAppId);
+    const appEnv = await this.appFilesManager.getAppEnv(appUrn);
     const existingAppEnvMap = this.envUtils.envStringToMap(appEnv.content);
 
     if (config.generate_vapid_keys) {
@@ -99,6 +100,6 @@ export class AppHelpers {
       envMap.set('APP_PROTOCOL', 'http');
     }
 
-    await this.appFilesManager.writeAppEnv(namespacedAppId, this.envUtils.envMapToString(envMap));
+    await this.appFilesManager.writeAppEnv(appUrn, this.envUtils.envMapToString(envMap));
   };
 }

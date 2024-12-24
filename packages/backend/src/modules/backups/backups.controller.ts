@@ -1,3 +1,4 @@
+import { createAppUrn } from '@/common/helpers/app-helpers';
 import { Body, Controller, Delete, Get, Injectable, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -11,28 +12,36 @@ import { DeleteAppBackupBodyDto, GetAppBackupsDto, GetAppBackupsQueryDto, Restor
 export class BackupsController {
   constructor(private readonly backupsService: BackupsService) {}
 
-  @Post(':appid/backup')
-  async backupApp(@Param('appid') appId: string) {
-    return this.backupsService.backupApp({ appId });
+  @Post(':appstore/:id/backup')
+  async backupApp(@Param('appstore') appstore: string, @Param('id') id: string) {
+    const appUrn = createAppUrn(id, appstore);
+    return this.backupsService.backupApp({ appUrn });
   }
 
-  @Post(':appid/restore')
-  async restoreAppBackup(@Param('appid') id: string, @Body() body: RestoreAppBackupDto) {
-    return this.backupsService.restoreApp({ appId: id, filename: body.filename });
+  @Post(':appstore/:id/restore')
+  async restoreAppBackup(@Param('appstore') appstore: string, @Param('id') id: string, @Body() body: RestoreAppBackupDto) {
+    const appUrn = createAppUrn(id, appstore);
+    return this.backupsService.restoreApp({ appUrn, filename: body.filename });
   }
 
-  @Get(':id')
+  @Get(':appstore/:id')
   @ApiQuery({ name: 'pageSize', type: Number, required: false })
   @ApiQuery({ name: 'page', type: Number, required: false })
   @ZodSerializerDto(GetAppBackupsDto)
-  async getAppBackups(@Param('id') id: string, @Query() query: GetAppBackupsQueryDto): Promise<GetAppBackupsDto> {
-    const backups = await this.backupsService.getAppBackups({ appId: id, page: query.page ?? 0, pageSize: query.pageSize ?? 10 });
+  async getAppBackups(
+    @Param('appstore') appstore: string,
+    @Param('id') id: string,
+    @Query() query: GetAppBackupsQueryDto,
+  ): Promise<GetAppBackupsDto> {
+    const appUrn = createAppUrn(id, appstore);
+    const backups = await this.backupsService.getAppBackups({ appUrn, page: query.page ?? 0, pageSize: query.pageSize ?? 10 });
 
     return backups;
   }
 
   @Delete(':appid')
-  async deleteAppBackup(@Param('appid') appid: string, @Body() body: DeleteAppBackupBodyDto) {
-    return this.backupsService.deleteAppBackup({ appId: appid, filename: body.filename });
+  async deleteAppBackup(@Param('appstore') appstore: string, @Param('id') id: string, @Body() body: DeleteAppBackupBodyDto) {
+    const appUrn = createAppUrn(id, appstore);
+    return this.backupsService.deleteAppBackup({ appUrn, filename: body.filename });
   }
 }

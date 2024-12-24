@@ -14,21 +14,21 @@ const commonAppCommandSchema = z.object({
     z.literal('generate_env'),
     z.literal('backup'),
   ]),
-  appid: z.string(),
+  appUrn: z.string(),
   skipEnv: z.boolean().optional().default(false),
   form: appFormSchema,
 });
 
 const restoreAppCommandSchema = z.object({
   command: z.literal('restore'),
-  appid: z.string(),
+  appUrn: z.string(),
   filename: z.string(),
   form: appFormSchema,
 });
 
 const updateAppCommandSchema = z.object({
   command: z.literal('update'),
-  appid: z.string(),
+  appUrn: z.string(),
   form: appFormSchema,
   performBackup: z.boolean().optional().default(true),
 });

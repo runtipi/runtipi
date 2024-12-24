@@ -5,10 +5,8 @@ import { z } from 'zod';
 
 export class AppDto extends createZodDto(
   z.object({
-    id: z.string(),
+    id: z.number(),
     status: z.enum(APP_STATUS),
-    lastOpened: z.string().nullable(),
-    numOpened: z.number().default(0),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),
     version: z.number(),

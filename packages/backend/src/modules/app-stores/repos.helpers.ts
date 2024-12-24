@@ -102,11 +102,11 @@ export class ReposHelpers {
    *
    * @param {string} repoUrl
    */
-  public pullRepo = async (repoUrl: string, id: string) => {
+  public pullRepo = async (repoUrl: string, slug: string) => {
     try {
       const { dataDir } = this.configuration.get('directories');
 
-      const repoPath = path.join(dataDir, 'repos', id);
+      const repoPath = path.join(dataDir, 'repos', slug);
 
       if (!(await this.filesystem.pathExists(repoPath))) {
         this.logger.info(`Repo ${repoUrl} does not exist`);

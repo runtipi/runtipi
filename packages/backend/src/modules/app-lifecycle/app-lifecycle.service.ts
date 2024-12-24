@@ -1,8 +1,9 @@
 import { TranslatableError } from '@/common/error/translatable-error';
-import { extractAppId } from '@/common/helpers/app-helpers';
+import { createAppUrn, extractAppUrn } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { SocketManager } from '@/core/socket/socket.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { lt, valid } from 'semver';
 import semver from 'semver';
@@ -38,7 +39,7 @@ export class AppLifecycleService {
   async invokeCommand(data: z.infer<typeof appEventSchema>, reply: (response: z.output<typeof appEventResultSchema>) => void) {
     try {
       const command = this.commandFactory.createCommand(data);
-      const { success, message } = await command.execute(data.appid, data.form);
+      const { success, message } = await command.execute(data.appUrn as AppUrn, data.form);
       reply({ success, message });
     } catch (err) {
       this.logger.error(`Error invoking command: ${err}`);
@@ -46,40 +47,40 @@ export class AppLifecycleService {
     }
   }
 
-  async startApp(params: { appId: string }): Promise<void> {
-    const { appId } = params;
-    const app = await this.appRepository.getApp(appId);
+  async startApp(params: { appUrn: AppUrn }) {
+    const { appUrn } = params;
+    const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId }, HttpStatus.NOT_FOUND);
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn }, HttpStatus.NOT_FOUND);
     }
 
-    await this.appRepository.updateApp(appId, { status: 'starting' });
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'starting' } });
+    await this.appRepository.updateAppById(app.id, { status: 'starting' });
+    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appUrn, appStatus: 'starting' } });
 
-    this.appEventsQueue.publish({ appid: appId, command: 'start', form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ appUrn, command: 'start', form: app.config }).then(async ({ success, message }) => {
       if (success) {
-        this.logger.info(`App ${appId} started successfully`);
-        this.socketManager.emit({ type: 'app', event: 'start_success', data: { appId, appStatus: 'running' } });
-        await this.appRepository.updateApp(appId, { status: 'running' });
+        this.logger.info(`App ${appUrn} started successfully`);
+        this.socketManager.emit({ type: 'app', event: 'start_success', data: { appUrn, appStatus: 'running' } });
+        await this.appRepository.updateAppById(app.id, { status: 'running' });
       } else {
-        this.logger.error(`Failed to start app ${appId}: ${message}`);
-        this.socketManager.emit({ type: 'app', event: 'start_error', data: { appId, appStatus: 'stopped', error: message } });
-        await this.appRepository.updateApp(appId, { status: 'stopped' });
+        this.logger.error(`Failed to start app ${appUrn}: ${message}`);
+        this.socketManager.emit({ type: 'app', event: 'start_error', data: { appUrn, appStatus: 'stopped', error: message } });
+        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
       }
     });
   }
 
-  async installApp(params: { appId: string; form: AppEventFormInput }): Promise<void> {
-    const { appId, form } = params;
+  async installApp(params: { appUrn: AppUrn; form: AppEventFormInput }): Promise<void> {
+    const { appUrn, form } = params;
     const { demoMode, version, architecture } = this.config.getConfig();
 
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'installing' } });
+    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appUrn, appStatus: 'installing' } });
 
-    const app = await this.appRepository.getApp(appId);
+    const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (app) {
-      return this.startApp({ appId });
+      return this.startApp({ appUrn });
     }
 
     const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
@@ -97,38 +98,40 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
     }
 
-    const appInfo = await this.marketplaceService.getAppInfoFromAppStore(appId);
+    const appInfo = await this.marketplaceService.getAppInfoFromAppStore(appUrn);
 
     if (!appInfo) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId }, HttpStatus.NOT_FOUND);
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn }, HttpStatus.NOT_FOUND);
     }
 
     if (appInfo.supported_architectures?.length && !appInfo.supported_architectures.includes(architecture)) {
-      throw new TranslatableError('APP_ERROR_ARCHITECTURE_NOT_SUPPORTED', { id: appId, arch: architecture });
+      throw new TranslatableError('APP_ERROR_ARCHITECTURE_NOT_SUPPORTED', { id: appUrn, arch: architecture });
     }
 
     if (!appInfo.exposable && exposed) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appUrn });
     }
 
     if (appInfo.force_expose && !exposed) {
-      throw new TranslatableError('APP_ERROR_APP_FORCE_EXPOSED', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_FORCE_EXPOSED', { id: appUrn });
     }
 
     if (exposed && domain) {
-      const appsWithSameDomain = await this.appRepository.getAppsByDomain(domain, appId);
+      const appsWithSameDomain = await this.appRepository.getAppsByDomain(domain);
 
       if (appsWithSameDomain.length > 0) {
-        throw new TranslatableError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.id });
+        throw new TranslatableError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.appName });
       }
     }
 
     if (appInfo?.min_tipi_version && valid(version) && lt(version, appInfo.min_tipi_version)) {
-      throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: appInfo.min_tipi_version });
+      throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appUrn, minVersion: appInfo.min_tipi_version });
     }
 
-    await this.appRepository.createApp({
-      id: appId,
+    const { appName, appstore } = extractAppUrn(appUrn);
+
+    const createdApp = await this.appRepository.createApp({
+      appName,
       status: 'installing',
       config: form,
       version: appInfo.tipi_version,
@@ -136,20 +139,20 @@ export class AppLifecycleService {
       domain: domain || null,
       openPort: openPort || false,
       exposedLocal: exposedLocal || false,
-      appStoreId: Number.parseInt(extractAppId(appId).storeId, 10),
+      appStoreSlug: appstore,
       isVisibleOnGuestDashboard,
     });
 
     // Send install command to the queue
-    this.appEventsQueue.publish({ appid: appId, command: 'install', form }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ appUrn, command: 'install', form }).then(async ({ success, message }) => {
       if (success) {
-        this.logger.info(`App ${appId} installed successfully`);
-        await this.socketManager.emit({ type: 'app', event: 'install_success', data: { appId, appStatus: 'running' } });
-        await this.appRepository.updateApp(appId, { status: 'running' });
+        this.logger.info(`App ${appUrn} installed successfully`);
+        await this.socketManager.emit({ type: 'app', event: 'install_success', data: { appUrn, appStatus: 'running' } });
+        await this.appRepository.updateAppById(createdApp.id, { status: 'running' });
       } else {
-        this.socketManager.emit({ type: 'app', event: 'install_error', data: { appId, appStatus: 'missing', error: message } });
-        this.logger.error(`Failed to install app ${appId}: ${message}`);
-        await this.appRepository.deleteApp(appId);
+        this.socketManager.emit({ type: 'app', event: 'install_error', data: { appUrn, appStatus: 'missing', error: message } });
+        this.logger.error(`Failed to install app ${appUrn}: ${message}`);
+        await this.appRepository.deleteAppById(createdApp.id);
       }
     });
   }
@@ -157,28 +160,28 @@ export class AppLifecycleService {
   /**
    * Stop an app by its ID
    */
-  public async stopApp(params: { appId: string }) {
-    const { appId } = params;
-    const app = await this.appRepository.getApp(appId);
+  public async stopApp(params: { appUrn: AppUrn }) {
+    const { appUrn } = params;
+    const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId }, HttpStatus.NOT_FOUND);
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn }, HttpStatus.NOT_FOUND);
     }
 
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'stopping' } });
+    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appUrn, appStatus: 'stopping' } });
 
-    await this.appRepository.updateApp(appId, { status: 'stopping' });
+    await this.appRepository.updateAppById(app.id, { status: 'stopping' });
 
     // Send stop command to the queue
-    this.appEventsQueue.publish({ command: 'stop', appid: appId, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'stop', appUrn, form: app.config }).then(async ({ success, message }) => {
       if (success) {
-        this.socketManager.emit({ type: 'app', event: 'stop_success', data: { appId, appStatus: 'stopped' } });
-        this.logger.info(`App ${appId} stopped successfully`);
-        await this.appRepository.updateApp(appId, { status: 'stopped' });
+        this.socketManager.emit({ type: 'app', event: 'stop_success', data: { appUrn, appStatus: 'stopped' } });
+        this.logger.info(`App ${appUrn} stopped successfully`);
+        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
       } else {
-        this.socketManager.emit({ type: 'app', event: 'stop_error', data: { appId, appStatus: 'running', error: message } });
-        this.logger.error(`Failed to stop app ${appId}: ${message}`);
-        await this.appRepository.updateApp(appId, { status: 'running' });
+        this.socketManager.emit({ type: 'app', event: 'stop_error', data: { appUrn, appStatus: 'running', error: message } });
+        this.logger.error(`Failed to stop app ${appUrn}: ${message}`);
+        await this.appRepository.updateAppById(app.id, { status: 'running' });
       }
     });
   }
@@ -186,26 +189,26 @@ export class AppLifecycleService {
   /**
    * Restart an app by its ID
    */
-  public async restartApp(params: { appId: string }) {
-    const { appId } = params;
-    const app = await this.appRepository.getApp(appId);
+  public async restartApp(params: { appUrn: AppUrn }) {
+    const { appUrn } = params;
+    const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
     }
 
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'restarting' } });
-    await this.appRepository.updateApp(appId, { status: 'restarting' });
+    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appUrn, appStatus: 'restarting' } });
+    await this.appRepository.updateAppById(app.id, { status: 'restarting' });
 
-    this.appEventsQueue.publish({ command: 'restart', appid: appId, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'restart', appUrn, form: app.config }).then(async ({ success, message }) => {
       if (success) {
-        this.logger.info(`App ${appId} restarted successfully`);
-        this.socketManager.emit({ type: 'app', event: 'restart_success', data: { appId, appStatus: 'running' } });
-        await this.appRepository.updateApp(appId, { status: 'running' });
+        this.logger.info(`App ${appUrn} restarted successfully`);
+        this.socketManager.emit({ type: 'app', event: 'restart_success', data: { appUrn, appStatus: 'running' } });
+        await this.appRepository.updateAppById(app.id, { status: 'running' });
       } else {
-        this.logger.error(`Failed to restart app ${appId}: ${message}`);
-        this.socketManager.emit({ type: 'app', event: 'restart_error', data: { appId, appStatus: 'running', error: message } });
-        await this.appRepository.updateApp(appId, { status: 'stopped' });
+        this.logger.error(`Failed to restart app ${appUrn}: ${message}`);
+        this.socketManager.emit({ type: 'app', event: 'restart_error', data: { appUrn, appStatus: 'running', error: message } });
+        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
       }
     });
   }
@@ -213,31 +216,31 @@ export class AppLifecycleService {
   /**
    * Uninstall an app by its ID
    */
-  public async uninstallApp(params: { appId: string; removeBackups: boolean }) {
-    const { appId, removeBackups } = params;
+  public async uninstallApp(params: { appUrn: AppUrn; removeBackups: boolean }) {
+    const { appUrn, removeBackups } = params;
 
-    const app = await this.appRepository.getApp(appId);
+    const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
     }
 
     if (removeBackups) {
-      await this.backupManager.deleteAppBackupsById(appId);
+      await this.backupManager.deleteAppBackupsByUrn(appUrn);
     }
 
-    await this.appRepository.updateApp(appId, { status: 'uninstalling' });
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'uninstalling' } });
+    await this.appRepository.updateAppById(app.id, { status: 'uninstalling' });
+    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appUrn, appStatus: 'uninstalling' } });
 
-    this.appEventsQueue.publish({ command: 'uninstall', appid: appId, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'uninstall', appUrn, form: app.config }).then(async ({ success, message }) => {
       if (success) {
-        this.logger.info(`App ${appId} uninstalled successfully`);
-        await this.appRepository.deleteApp(appId);
-        await this.socketManager.emit({ type: 'app', event: 'uninstall_success', data: { appId, appStatus: 'missing' } });
+        this.logger.info(`App ${appUrn} uninstalled successfully`);
+        await this.appRepository.deleteAppById(app.id);
+        await this.socketManager.emit({ type: 'app', event: 'uninstall_success', data: { appUrn, appStatus: 'missing' } });
       } else {
-        this.logger.error(`Failed to uninstall app ${appId}: ${message}`);
-        await this.appRepository.updateApp(appId, { status: 'stopped' });
-        await this.socketManager.emit({ type: 'app', event: 'uninstall_error', data: { appId, appStatus: 'stopped', error: message } });
+        this.logger.error(`Failed to uninstall app ${appUrn}: ${message}`);
+        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
+        await this.socketManager.emit({ type: 'app', event: 'uninstall_error', data: { appUrn, appStatus: 'stopped', error: message } });
       }
     });
   }
@@ -245,37 +248,37 @@ export class AppLifecycleService {
   /**
    * Reset an app by its ID
    */
-  public async resetApp(params: { appId: string }) {
-    const { appId } = params;
-    const app = await this.appRepository.getApp(appId);
+  public async resetApp(params: { appUrn: AppUrn }) {
+    const { appUrn } = params;
+    const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
     }
 
     const appStatusBeforeReset = app?.status;
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'resetting' } });
-    await this.appRepository.updateApp(appId, { status: 'resetting' });
+    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appUrn, appStatus: 'resetting' } });
+    await this.appRepository.updateAppById(app.id, { status: 'resetting' });
 
-    this.appEventsQueue.publish({ command: 'reset', appid: appId, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'reset', appUrn, form: app.config }).then(async ({ success, message }) => {
       if (success) {
-        this.logger.info(`App ${appId} reset successfully`);
-        await this.socketManager.emit({ type: 'app', event: 'reset_success', data: { appId, appStatus: 'stopped' } });
+        this.logger.info(`App ${appUrn} reset successfully`);
+        await this.socketManager.emit({ type: 'app', event: 'reset_success', data: { appUrn, appStatus: 'stopped' } });
         if (appStatusBeforeReset === 'running') {
-          this.startApp({ appId });
+          this.startApp({ appUrn });
         } else {
-          await this.appRepository.updateApp(appId, { status: appStatusBeforeReset });
+          await this.appRepository.updateAppById(app.id, { status: appStatusBeforeReset });
         }
       } else {
-        this.logger.error(`Failed to reset app ${appId}: ${message}`);
-        await this.socketManager.emit({ type: 'app', event: 'reset_error', data: { appId, appStatus: appStatusBeforeReset, error: message } });
-        await this.appRepository.updateApp(appId, { status: 'running' });
+        this.logger.error(`Failed to reset app ${appUrn}: ${message}`);
+        await this.socketManager.emit({ type: 'app', event: 'reset_error', data: { appUrn, appStatus: appStatusBeforeReset, error: message } });
+        await this.appRepository.updateAppById(app.id, { status: 'running' });
       }
     });
   }
 
-  public async updateAppConfig(params: { appId: string; form: unknown }) {
-    const { appId, form } = params;
+  public async updateAppConfig(params: { appUrn: AppUrn; form: unknown }) {
+    const { appUrn, form } = params;
 
     const parsedForm = appFormSchema.parse(form);
 
@@ -289,46 +292,46 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_DOMAIN_NOT_VALID');
     }
 
-    const app = await this.appRepository.getApp(appId);
+    const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
     }
 
-    const appInfo = await this.appFilesManager.getInstalledAppInfo(appId);
+    const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
     if (!appInfo) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
     }
 
     if (!appInfo.exposable && exposed) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appUrn });
     }
 
     if (appInfo.force_expose && !exposed) {
-      throw new TranslatableError('APP_ERROR_APP_FORCE_EXPOSED', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_FORCE_EXPOSED', { id: appUrn });
     }
 
     if (exposed && domain) {
-      const appsWithSameDomain = await this.appRepository.getAppsByDomain(domain, appId);
+      const appsWithSameDomain = await this.appRepository.getAppsByDomain(domain, app.id);
 
       if (appsWithSameDomain.length > 0) {
-        throw new TranslatableError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.id });
+        throw new TranslatableError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.appName });
       }
     }
 
     const { success, message } = await this.appEventsQueue.publish({
       command: 'generate_env',
-      appid: appId,
+      appUrn,
       form: parsedForm,
     });
 
     if (!success) {
-      this.logger.error(`Failed to update app ${appId}: ${message}`);
-      throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appId }, HttpStatus.INTERNAL_SERVER_ERROR, { cause: message });
+      this.logger.error(`Failed to update app ${appUrn}: ${message}`);
+      throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appUrn }, HttpStatus.INTERNAL_SERVER_ERROR, { cause: message });
     }
 
-    await this.appRepository.updateApp(appId, {
+    await this.appRepository.updateAppById(app.id, {
       exposed: exposed ?? false,
       exposedLocal: parsedForm.exposedLocal ?? false,
       openPort: parsedForm.openPort,
@@ -338,41 +341,41 @@ export class AppLifecycleService {
     });
   }
 
-  public async updateApp(params: { appId: string; performBackup: boolean }) {
-    const { appId, performBackup } = params;
-    const app = await this.appRepository.getApp(appId);
+  public async updateApp(params: { appUrn: AppUrn; performBackup: boolean }) {
+    const { appUrn, performBackup } = params;
+    const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId });
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
     }
 
     const version = this.config.get('version');
 
-    const { minTipiVersion } = await this.marketplaceService.getAppUpdateInfo(appId);
+    const { minTipiVersion } = await this.marketplaceService.getAppUpdateInfo(appUrn);
     if (minTipiVersion && semver.valid(version) && semver.lt(version, minTipiVersion)) {
-      throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appId, minVersion: minTipiVersion });
+      throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appUrn, minVersion: minTipiVersion });
     }
 
-    await this.appRepository.updateApp(appId, { status: 'updating' });
+    await this.appRepository.updateAppById(app.id, { status: 'updating' });
 
     const appStatusBeforeUpdate = app.status;
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'updating' } });
+    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appUrn, appStatus: 'updating' } });
 
-    this.appEventsQueue.publish({ command: 'update', appid: appId, form: app.config, performBackup }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'update', appUrn, form: app.config, performBackup }).then(async ({ success, message }) => {
       if (success) {
-        const appInfo = await this.appFilesManager.getInstalledAppInfo(appId);
+        const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
-        await this.appRepository.updateApp(appId, { status: appStatusBeforeUpdate, version: appInfo?.tipi_version });
-        await this.updateAppConfig({ appId, form: app.config });
-        await this.socketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
+        await this.appRepository.updateAppById(app.id, { status: appStatusBeforeUpdate, version: appInfo?.tipi_version });
+        await this.updateAppConfig({ appUrn, form: app.config });
+        await this.socketManager.emit({ type: 'app', event: 'update_success', data: { appUrn } });
 
         if (appStatusBeforeUpdate === 'running') {
-          this.startApp({ appId });
+          this.startApp({ appUrn });
         }
       } else {
-        this.logger.error(`Failed to update app ${appId}: ${message}`);
-        await this.socketManager.emit({ type: 'app', event: 'update_error', data: { appId, appStatus: 'stopped', error: message } });
-        await this.appRepository.updateApp(appId, { status: 'stopped' });
+        this.logger.error(`Failed to update app ${appUrn}: ${message}`);
+        await this.socketManager.emit({ type: 'app', event: 'update_error', data: { appUrn, appStatus: 'stopped', error: message } });
+        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
       }
     });
   }
@@ -383,7 +386,8 @@ export class AppLifecycleService {
 
     const updatePromises = availableUpdates.map(async ({ app }) => {
       try {
-        await this.updateApp({ appId: app.id, performBackup: true });
+        const appUrn = createAppUrn(app.appName, app.appStoreSlug);
+        await this.updateApp({ appUrn, performBackup: true });
       } catch (e) {
         this.logger.error(`Failed to update app ${app.id}`, e);
       }
