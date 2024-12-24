@@ -73,9 +73,8 @@ export class AppStoreService {
       return;
     }
 
-    const existing = await this.appStoreRepository.getAppStoreByHash(this.repoHelpers.getRepoHash(deprecatedAppsRepoUrl));
-
-    if (existing && existing.hash === 'edit-this') {
+    const existing = await this.appStoreRepository.getAppStoreByHash('migrated');
+    if (existing) {
       this.logger.info('Migrating default repo');
       await this.appStoreRepository.updateAppStoreHashAndUrl(existing.slug, { url: deprecatedAppsRepoUrl, hash: deprecatedAppsRepoId });
     }

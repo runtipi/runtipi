@@ -1,5 +1,5 @@
 {
-  "id": "9826f2ba-0754-466e-a0e5-4fafea40385a",
+  "id": "a069576d-91a2-470f-8a07-cad90e823990",
   "prevId": "2c7fea12-4f0a-4951-a7ab-8a529933fff8",
   "version": "7",
   "dialect": "postgresql",
@@ -10,7 +10,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
@@ -21,20 +21,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'stopped'"
-        },
-        "lastOpened": {
-          "name": "lastOpened",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "numOpened": {
-          "name": "numOpened",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
         },
         "config": {
           "name": "config",
@@ -97,25 +83,37 @@
           "notNull": true,
           "default": true
         },
-        "app_store_id": {
-          "name": "app_store_id",
-          "type": "integer",
+        "app_store_slug": {
+          "name": "app_store_slug",
+          "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "app_name": {
+          "name": "app_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "UQ_9478629fc093d229df09e560aea": {
-          "name": "UQ_9478629fc093d229df09e560aea",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+      "foreignKeys": {
+        "app_app_store_slug_app_store_slug_fk": {
+          "name": "app_app_store_slug_app_store_slug_fk",
+          "tableFrom": "app",
+          "tableTo": "app_store",
+          "columnsFrom": [
+            "app_store_slug"
+          ],
+          "columnsTo": [
+            "slug"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -124,9 +122,9 @@
       "name": "app_store",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
+        "slug": {
+          "name": "slug",
+          "type": "varchar",
           "primaryKey": true,
           "notNull": true
         },
@@ -175,6 +173,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
@@ -250,8 +255,8 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "FK_link_user_id": {
-          "name": "FK_link_user_id",
+        "link_user_id_user_id_fk": {
+          "name": "link_user_id_user_id_fk",
           "tableFrom": "link",
           "tableTo": "user",
           "columnsFrom": [
@@ -260,7 +265,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -350,15 +355,7 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "UQ_78a916df40e02a9deb1c4b75edb": {
-          "name": "UQ_78a916df40e02a9deb1c4b75edb",
-          "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
