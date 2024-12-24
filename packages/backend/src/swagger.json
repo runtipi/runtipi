@@ -502,10 +502,18 @@
         ]
       }
     },
-    "/api/apps/{id}": {
+    "/api/apps/{appstore}/{id}": {
       "get": {
         "operationId": "getApp",
         "parameters": [
+          {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "required": true,
@@ -611,10 +619,18 @@
         ]
       }
     },
-    "/api/marketplace/apps/{id}/image": {
+    "/api/marketplace/apps/{appstore}/{id}/image": {
       "get": {
         "operationId": "getImage",
         "parameters": [
+          {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "required": true,
@@ -775,10 +791,18 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/install": {
+    "/api/app-lifecycle/{appstore}/{id}/install": {
       "post": {
         "operationId": "installApp",
         "parameters": [
+          {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "required": true,
@@ -808,11 +832,19 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/start": {
+    "/api/app-lifecycle/{appstore}/{id}/start": {
       "post": {
         "operationId": "startApp",
         "parameters": [
           {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "id",
             "required": true,
             "in": "path",
@@ -831,33 +863,18 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/stop": {
+    "/api/app-lifecycle/{appstore}/{id}/stop": {
       "post": {
         "operationId": "stopApp",
         "parameters": [
           {
-            "name": "id",
+            "name": "appstore",
             "required": true,
             "in": "path",
             "schema": {
               "type": "string"
             }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "AppLifecycle"
-        ]
-      }
-    },
-    "/api/app-lifecycle/{id}/restart": {
-      "post": {
-        "operationId": "restartApp",
-        "parameters": [
+          },
           {
             "name": "id",
             "required": true,
@@ -877,10 +894,49 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/uninstall": {
+    "/api/app-lifecycle/{appstore}/{id}/restart": {
+      "post": {
+        "operationId": "restartApp",
+        "parameters": [
+          {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{appstore}/{id}/uninstall": {
       "delete": {
         "operationId": "uninstallApp",
         "parameters": [
+          {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "required": true,
@@ -910,10 +966,18 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/reset": {
+    "/api/app-lifecycle/{appstore}/{id}/reset": {
       "post": {
         "operationId": "resetApp",
         "parameters": [
+          {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "required": true,
@@ -933,10 +997,18 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/update": {
+    "/api/app-lifecycle/{appstore}/{id}/update": {
       "patch": {
         "operationId": "updateApp",
         "parameters": [
+          {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "required": true,
@@ -980,10 +1052,18 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/update-config": {
+    "/api/app-lifecycle/{appstore}/{id}/update-config": {
       "patch": {
         "operationId": "updateAppConfig",
         "parameters": [
+          {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "required": true,
@@ -1013,12 +1093,20 @@
         ]
       }
     },
-    "/api/backups/{appid}/backup": {
+    "/api/backups/{appstore}/{id}/backup": {
       "post": {
         "operationId": "backupApp",
         "parameters": [
           {
-            "name": "appid",
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
             "required": true,
             "in": "path",
             "schema": {
@@ -1036,12 +1124,20 @@
         ]
       }
     },
-    "/api/backups/{appid}/restore": {
+    "/api/backups/{appstore}/{id}/restore": {
       "post": {
         "operationId": "restoreAppBackup",
         "parameters": [
           {
-            "name": "appid",
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
             "required": true,
             "in": "path",
             "schema": {
@@ -1069,10 +1165,18 @@
         ]
       }
     },
-    "/api/backups/{id}": {
+    "/api/backups/{appstore}/{id}": {
       "get": {
         "operationId": "getAppBackups",
         "parameters": [
+          {
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "id",
             "required": true,
@@ -1120,7 +1224,15 @@
         "operationId": "deleteAppBackup",
         "parameters": [
           {
-            "name": "appid",
+            "name": "appstore",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
             "required": true,
             "in": "path",
             "schema": {
@@ -1987,7 +2099,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string"
+                      "type": "number"
                     },
                     "status": {
                       "type": "string",
@@ -2005,14 +2117,6 @@
                         "backing_up",
                         "restoring"
                       ]
-                    },
-                    "lastOpened": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "numOpened": {
-                      "type": "number",
-                      "default": 0
                     },
                     "createdAt": {
                       "type": "string"
@@ -2047,7 +2151,6 @@
                   "required": [
                     "id",
                     "status",
-                    "lastOpened",
                     "version",
                     "exposed",
                     "openPort",
@@ -2168,7 +2271,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string"
+                      "type": "number"
                     },
                     "status": {
                       "type": "string",
@@ -2186,14 +2289,6 @@
                         "backing_up",
                         "restoring"
                       ]
-                    },
-                    "lastOpened": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "numOpened": {
-                      "type": "number",
-                      "default": 0
                     },
                     "createdAt": {
                       "type": "string"
@@ -2228,7 +2323,6 @@
                   "required": [
                     "id",
                     "status",
-                    "lastOpened",
                     "version",
                     "exposed",
                     "openPort",
@@ -2491,7 +2585,7 @@
             "type": "object",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "number"
               },
               "status": {
                 "type": "string",
@@ -2509,14 +2603,6 @@
                   "backing_up",
                   "restoring"
                 ]
-              },
-              "lastOpened": {
-                "type": "string",
-                "nullable": true
-              },
-              "numOpened": {
-                "type": "number",
-                "default": 0
               },
               "createdAt": {
                 "type": "string"
@@ -2551,7 +2637,6 @@
             "required": [
               "id",
               "status",
-              "lastOpened",
               "version",
               "exposed",
               "openPort",
@@ -2941,8 +3026,8 @@
             "items": {
               "type": "object",
               "properties": {
-                "id": {
-                  "type": "number"
+                "slug": {
+                  "type": "string"
                 },
                 "name": {
                   "type": "string"
@@ -2955,7 +3040,7 @@
                 }
               },
               "required": [
-                "id",
+                "slug",
                 "name",
                 "url",
                 "enabled"
