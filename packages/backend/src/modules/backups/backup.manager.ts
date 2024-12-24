@@ -3,6 +3,7 @@ import { ArchiveService } from '@/core/archive/archive.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
 import { AppFilesManager } from '../apps/app-files-manager';
 
@@ -16,12 +17,12 @@ export class BackupManager {
     private readonly appFilesManager: AppFilesManager,
   ) {}
 
-  public backupApp = async (appId: string) => {
+  public backupApp = async (appUrn: AppUrn) => {
     const { dataDir } = this.config.get('directories');
-    const backupName = `${appId}-${new Date().getTime()}`;
-    const backupDir = path.join(dataDir, 'backups', appId);
+    const backupName = `${appUrn}-${new Date().getTime()}`;
+    const backupDir = path.join(dataDir, 'backups', appUrn);
 
-    const tempDir = await this.filesystem.createTempDirectory(appId);
+    const tempDir = await this.filesystem.createTempDirectory(appUrn);
 
     if (!tempDir) {
       throw new Error('Failed to create temp directory');
@@ -32,7 +33,7 @@ export class BackupManager {
     // Ensure backup directory exists
     await this.filesystem.createDirectory(tempDir);
 
-    const { appDataDir, appInstalledDir } = this.appFilesManager.getAppPaths(appId);
+    const { appDataDir, appInstalledDir } = this.appFilesManager.getAppPaths(appUrn);
 
     // Move app data and app directories
     await this.filesystem.copyDirectory(appDataDir, path.join(tempDir, 'app-data'), {
@@ -62,15 +63,15 @@ export class BackupManager {
     this.logger.info('Backup completed!');
   };
 
-  public restoreApp = async (appId: string, filename: string) => {
+  public restoreApp = async (appUrn: AppUrn, filename: string) => {
     const { dataDir } = this.config.get('directories');
-    const restoreDir = await this.filesystem.createTempDirectory(appId);
+    const restoreDir = await this.filesystem.createTempDirectory(appUrn);
 
     if (!restoreDir) {
       throw new Error('Failed to create temp directory');
     }
 
-    const archive = path.join(dataDir, 'backups', appId, filename);
+    const archive = path.join(dataDir, 'backups', appUrn, filename);
 
     this.logger.info('Restoring app from backup...');
 
@@ -88,7 +89,7 @@ export class BackupManager {
     this.logger.debug('stderr:', stderr);
     this.logger.debug('stdout:', stdout);
 
-    const { appInstalledDir, appDataDir } = this.appFilesManager.getAppPaths(appId);
+    const { appInstalledDir, appDataDir } = this.appFilesManager.getAppPaths(appUrn);
 
     // Remove old data directories
     await this.filesystem.removeDirectory(appDataDir);
@@ -107,13 +108,13 @@ export class BackupManager {
 
   /**
    * Delete a backup file
-   * @param appId - The app id
+   * @param appUrn - The app id
    * @param filename - The filename of the backup
    */
-  public async deleteBackup(appId: string, filename: string) {
+  public async deleteBackup(appUrn: AppUrn, filename: string) {
     const { dataDir } = this.config.get('directories');
 
-    const backupPath = path.join(dataDir, 'backups', appId, filename);
+    const backupPath = path.join(dataDir, 'backups', appUrn, filename);
 
     if (await this.filesystem.pathExists(backupPath)) {
       await this.filesystem.removeFile(backupPath);
@@ -122,23 +123,23 @@ export class BackupManager {
 
   /**
    * Delete all backups for an app
-   * @param appId - The app id
+   * @param appUrn - The app id
    */
-  public async deleteAppBackupsById(appId: string): Promise<void> {
-    const backups = await this.listBackupsByAppId(appId);
+  public async deleteAppBackupsByUrn(appUrn: AppUrn): Promise<void> {
+    const backups = await this.listBackupsByAppId(appUrn);
 
-    await Promise.all(backups.map((backup) => this.deleteBackup(appId, backup.id)));
+    await Promise.all(backups.map((backup) => this.deleteBackup(appUrn, backup.id)));
   }
 
   /**
    * List the backups for an app
-   * @param appId - The app id
+   * @param appUrn - The app id
    * @returns The list of backups
    */
-  public async listBackupsByAppId(appId: string) {
+  public async listBackupsByAppId(appUrn: AppUrn) {
     const { dataDir } = this.config.get('directories');
 
-    const backupsDir = path.join(dataDir, 'backups', appId);
+    const backupsDir = path.join(dataDir, 'backups', appUrn);
 
     if (!(await this.filesystem.pathExists(backupsDir))) {
       return [];
@@ -156,7 +157,7 @@ export class BackupManager {
 
       return backups;
     } catch (error) {
-      this.logger.error(`Error listing backups for app ${appId}: ${error}`);
+      this.logger.error(`Error listing backups for app ${appUrn}: ${error}`);
       return [];
     }
   }

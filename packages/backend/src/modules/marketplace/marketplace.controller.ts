@@ -1,3 +1,4 @@
+import { createAppUrn } from '@/common/helpers/app-helpers';
 import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import type { Response } from 'express';
@@ -42,9 +43,10 @@ export class MarketplaceController {
     return res;
   }
 
-  @Get('apps/:id/image')
-  async getImage(@Param('id') id: string, @Res() res: Response) {
-    const image = await this.marketplaceService.getAppImage(id);
+  @Get('apps/:appstore/:id/image')
+  async getImage(@Param('appstore') appstore: string, @Param('id') id: string, @Res() res: Response) {
+    const appUrn = createAppUrn(id, appstore);
+    const image = await this.marketplaceService.getAppImage(appUrn);
 
     res.set({
       'Content-Type': 'image/jpeg',

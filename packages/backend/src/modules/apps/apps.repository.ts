@@ -1,8 +1,10 @@
+import { extractAppId } from '@/common/helpers/app-helpers';
 import { DatabaseService } from '@/core/database/database.service';
 import { app } from '@/core/database/drizzle/schema';
 import type { AppStatus, NewApp } from '@/core/database/drizzle/types';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
-import { and, asc, eq, isNull, ne, notInArray, sql } from 'drizzle-orm';
+import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
 
 @Injectable()
 export class AppsRepository {
@@ -13,8 +15,14 @@ export class AppsRepository {
    *
    * @param {string} appId - The id of the app to return
    */
-  public async getApp(appId: string) {
+  public async getAppById(appId: number) {
     return this.db.db.query.app.findFirst({ where: eq(app.id, appId), with: { appStore: true } });
+  }
+
+  public async getAppByUrn(appUrn: AppUrn) {
+    const { storeId, appId } = extractAppId(appUrn);
+
+    return this.db.db.query.app.findFirst({ where: and(eq(app.appName, appId), eq(app.appStoreSlug, storeId)) });
   }
 
   /**
@@ -23,7 +31,7 @@ export class AppsRepository {
    * @param {string} appId - The id of the app to update
    * @param {Partial<NewApp>} data - The data to update the app with
    */
-  public async updateApp(appId: string, data: Partial<NewApp>) {
+  public async updateAppById(appId: number, data: Partial<NewApp>) {
     const updatedApps = await this.db.db.update(app).set(data).where(eq(app.id, appId)).returning().execute();
     return updatedApps[0];
   }
@@ -33,7 +41,7 @@ export class AppsRepository {
    *
    * @param {string} appId - The id of the app to delete
    */
-  public async deleteApp(appId: string) {
+  public async deleteAppById(appId: number) {
     await this.db.db.delete(app).where(eq(app.id, appId)).execute();
   }
 
@@ -44,7 +52,14 @@ export class AppsRepository {
    */
   public async createApp(data: NewApp) {
     const newApps = await this.db.db.insert(app).values(data).returning().execute();
-    return newApps[0];
+
+    const createdApp = newApps[0];
+
+    if (!createdApp) {
+      throw new Error('Failed to create app');
+    }
+
+    return createdApp;
   }
 
   /**
@@ -53,14 +68,14 @@ export class AppsRepository {
    * @param {AppStatus} status - The status of the apps to return
    */
   public async getAppsByStatus(status: AppStatus) {
-    return this.db.db.query.app.findMany({ where: eq(app.status, status), orderBy: asc(app.id) });
+    return this.db.db.query.app.findMany({ where: eq(app.status, status), orderBy: asc(app.appName) });
   }
 
   /**
    * Returns all apps installed sorted by id ascending
    */
   public async getApps() {
-    return this.db.db.query.app.findMany({ orderBy: asc(app.id), with: { appStore: true } });
+    return this.db.db.query.app.findMany({ orderBy: asc(app.appName), with: { appStore: true } });
   }
 
   /**
@@ -69,7 +84,7 @@ export class AppsRepository {
   public async getGuestDashboardApps() {
     return this.db.db.query.app.findMany({
       where: and(eq(app.status, 'running'), eq(app.isVisibleOnGuestDashboard, true)),
-      orderBy: asc(app.id),
+      orderBy: asc(app.appName),
       with: { appStore: true },
     });
   }
@@ -80,7 +95,10 @@ export class AppsRepository {
    * @param {string} domain - The domain to search for
    * @param {string} id - The id of the app to exclude
    */
-  public async getAppsByDomain(domain: string, id: string) {
+  public async getAppsByDomain(domain: string, id?: number) {
+    if (!id) {
+      return this.db.db.query.app.findMany({ where: and(eq(app.domain, domain), eq(app.exposed, true)) });
+    }
     return this.db.db.query.app.findMany({ where: and(eq(app.domain, domain), eq(app.exposed, true), ne(app.id, id)) });
   }
 
@@ -92,17 +110,5 @@ export class AppsRepository {
    */
   public async updateAppsByStatusNotIn(statuses: AppStatus[], data: Partial<NewApp>) {
     return this.db.db.update(app).set(data).where(notInArray(app.status, statuses)).returning().execute();
-  }
-
-  /**
-   * Given an app store id, update all apps that have a null app store id with the given app store id
-   */
-  public async updateAppAppStoreIdWhereNull(appStoreId: number) {
-    await this.db.db
-      .update(app)
-      .set({ appStoreId, id: sql`CONCAT(id, '_', '${sql.raw(appStoreId.toString())}')` })
-      .where(isNull(app.appStoreId))
-      .returning()
-      .execute();
   }
 }

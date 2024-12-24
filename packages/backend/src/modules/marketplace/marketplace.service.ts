@@ -4,6 +4,7 @@ import { notEmpty, pLimit } from '@/common/helpers/file-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
 import MiniSearch from 'minisearch';
 import { AppStoreFilesManager } from '../app-stores/app-store-files-manager';
@@ -47,8 +48,8 @@ export class MarketplaceService {
     const stores = await this.appStoreService.getEnabledAppStores();
 
     for (const config of stores) {
-      const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config.id.toString());
-      this.stores.set(config.id.toString(), store);
+      const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config.slug);
+      this.stores.set(config.slug, store);
     }
 
     await this.appStoreService.pullRepositories();
@@ -57,8 +58,8 @@ export class MarketplaceService {
     this.logger.debug('Marketplace service initialized with stores', Array.from(this.stores.keys()).join(', '));
   }
 
-  private extractStoreFromNamespacedId(namespacedAppId: string) {
-    const { storeId } = extractAppId(namespacedAppId);
+  private extractStoreFromNamespacedId(appUrn: AppUrn) {
+    const { storeId } = extractAppId(appUrn);
 
     const store = this.stores.get(storeId);
     if (!store) {
@@ -68,14 +69,14 @@ export class MarketplaceService {
     return { store };
   }
 
-  async getAppInfoFromAppStore(namespacedAppId: string) {
-    const { store } = this.extractStoreFromNamespacedId(namespacedAppId);
+  async getAppInfoFromAppStore(appUrn: AppUrn) {
+    const { store } = this.extractStoreFromNamespacedId(appUrn);
 
-    return store.getAppInfoFromAppStore(namespacedAppId);
+    return store.getAppInfoFromAppStore(appUrn);
   }
 
-  async getAvailableAppIds(): Promise<string[]> {
-    const allIds: string[] = [];
+  async getAvailableAppIds(): Promise<AppUrn[]> {
+    const allIds: AppUrn[] = [];
     for (const store of this.stores.values()) {
       const ids = await store.getAvailableAppIds();
       allIds.push(...ids);
@@ -92,10 +93,10 @@ export class MarketplaceService {
 
     const limit = pLimit(10);
     const apps = await Promise.all(
-      appIds.map(async (namespacedId) => {
+      appIds.map(async (appUrn) => {
         return limit(() => {
-          const { store } = this.extractStoreFromNamespacedId(namespacedId);
-          return store.getAppInfoFromAppStore(namespacedId);
+          const { store } = this.extractStoreFromNamespacedId(appUrn);
+          return store.getAppInfoFromAppStore(appUrn);
         });
       }),
     );
@@ -190,26 +191,26 @@ export class MarketplaceService {
 
   /**
    * Get the image of an app
-   * @param namespacedId - The ID of the app
+   * @param appUrn - The ID of the app
    * @returns The image of the app
    */
-  public async getAppImage(namespacedId: string) {
-    const { store } = this.extractStoreFromNamespacedId(namespacedId);
-    return store.getAppImage(namespacedId);
+  public async getAppImage(appUrn: AppUrn) {
+    const { store } = this.extractStoreFromNamespacedId(appUrn);
+    return store.getAppImage(appUrn);
   }
 
-  public async getAppUpdateInfo(namespacedAppId: string) {
-    const { store } = this.extractStoreFromNamespacedId(namespacedAppId);
-    return store.getAppUpdateInfo(namespacedAppId);
+  public async getAppUpdateInfo(appUrn: AppUrn) {
+    const { store } = this.extractStoreFromNamespacedId(appUrn);
+    return store.getAppUpdateInfo(appUrn);
   }
 
-  public async copyAppFromRepoToInstalled(namespacedAppId: string) {
-    const { store } = this.extractStoreFromNamespacedId(namespacedAppId);
-    return store.copyAppFromRepoToInstalled(namespacedAppId);
+  public async copyAppFromRepoToInstalled(appUrn: AppUrn) {
+    const { store } = this.extractStoreFromNamespacedId(appUrn);
+    return store.copyAppFromRepoToInstalled(appUrn);
   }
 
-  public async copyDataDir(namespacedAppId: string, envMap: Map<string, string>) {
-    const { store } = this.extractStoreFromNamespacedId(namespacedAppId);
-    return store.copyDataDir(namespacedAppId, envMap);
+  public async copyDataDir(appUrn: AppUrn, envMap: Map<string, string>) {
+    const { store } = this.extractStoreFromNamespacedId(appUrn);
+    return store.copyDataDir(appUrn, envMap);
   }
 }

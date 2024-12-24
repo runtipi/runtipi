@@ -150,7 +150,7 @@ export class PullDto extends createZodDto(
 
 class AppStoreDto extends createZodDto(
   z.object({
-    id: z.number(),
+    slug: z.string(),
     name: z.string(),
     url: z.string(),
     enabled: z.boolean(),
