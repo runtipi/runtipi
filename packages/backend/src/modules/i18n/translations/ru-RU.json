@@ -38,7 +38,7 @@
   "APP_DETAILS_TITLE": "Описание приложения",
   "APP_DETAILS_VERSION": "Версия",
   "APP_DETAILS_WEBSITE": "Сайт",
-  "APP_DETAILS_USER_CONFIG": "User config",
+  "APP_DETAILS_USER_CONFIG": "Настройки пользователя",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Не удалось установить приложение {{id}}. См. подробности в логах",
   "APP_ERROR_APP_FAILED_TO_RESET": "Не удалось сбросить приложение {{id}}. См. подробности в логах",
   "APP_ERROR_APP_FAILED_TO_START": "Не удалось запустить приложение {{id}}. См. подробности в логах",
@@ -369,6 +369,6 @@
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Вы должны войти для выполнения этого действия",
   "TIMEZONE_SELECTOR_LABEL": "Часовой пояс",
   "TIMEZONE_SELECTOR_PLACEHOLDER": "Выберите часовой пояс",
-  "YES": "Yes",
-  "NO": "No"
+  "YES": "Да",
+  "NO": "Нет"
 }
