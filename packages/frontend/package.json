@@ -26,8 +26,8 @@
     "@sentry/vite-plugin": "^2.22.7",
     "@tabler/core": "1.0.0-beta21",
     "@tabler/icons-react": "^3.26.0",
-    "@tanstack/react-query": "^5.62.8",
-    "@tanstack/react-query-devtools": "^5.62.8",
+    "@tanstack/react-query": "^5.62.10",
+    "@tanstack/react-query-devtools": "^5.62.10",
     "@uidotdev/usehooks": "^2.4.1",
     "backend": "workspace:*",
     "class-variance-authority": "^0.7.1",
@@ -44,11 +44,11 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-error-boundary": "^5.0.0",
-    "react-hook-form": "^7.54.1",
+    "react-hook-form": "^7.54.2",
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^15.2.0",
     "react-markdown": "^9.0.1",
-    "react-router": "^7.0.2",
+    "react-router": "^7.1.1",
     "react-timezone-select": "^3.2.8",
     "react-tooltip": "^5.28.0",
     "rehype-raw": "^7.0.0",
@@ -76,7 +76,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "globals": "^15.14.0",
     "typescript": "^5.7.2",
-    "vite": "^6.0.5",
+    "vite": "^6.0.6",
     "vitest": "^2.1.8"
   }
 }
