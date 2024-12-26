@@ -39,7 +39,7 @@ export class AppLifecycleService {
   async invokeCommand(data: z.infer<typeof appEventSchema>, reply: (response: z.output<typeof appEventResultSchema>) => void) {
     try {
       const command = this.commandFactory.createCommand(data);
-      const { success, message } = await command.execute(data.appUrn as AppUrn, data.form);
+      const { success, message } = await command.execute(data.appUrn, data.form);
       reply({ success, message });
     } catch (err) {
       this.logger.error(`Error invoking command: ${err}`);

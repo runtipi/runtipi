@@ -36,7 +36,7 @@ export class AppsService {
             this.logger.debug(`App ${app.id} not found in app files`);
             return null;
           }
-          return { app, info: appInfo, metadata: { ...updateInfo, appStoreId: app.appStoreSlug, appName: app.appName } };
+          return { app, info: appInfo, metadata: updateInfo };
         });
       }),
     );

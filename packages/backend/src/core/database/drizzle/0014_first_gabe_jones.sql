@@ -151,6 +151,12 @@ ALTER TABLE "link" ADD CONSTRAINT "link_user_id_user_id_fk" FOREIGN KEY ("user_i
 
 --> statement-breakpoint
 ALTER TABLE "app"
+ALTER COLUMN "app_store_slug"
+SET
+  NOT NULL;
+
+--> statement-breakpoint
+ALTER TABLE "app"
 DROP COLUMN "lastOpened";
 
 --> statement-breakpoint
