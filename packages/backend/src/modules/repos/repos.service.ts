@@ -16,16 +16,16 @@ export class ReposService {
     private readonly filesystem: FilesystemService,
     private readonly repoQueue: RepoEventsQueue,
   ) {
-    this.repoQueue.onEvent(async ({ eventId, command, url }) => {
+    this.repoQueue.onEvent(async ({ command, url }, reply) => {
       switch (command) {
         case 'clone': {
           const { success, message } = await this.cloneRepo(url);
-          this.repoQueue.sendEventResponse(eventId, { success, message });
+          await reply({ success, message });
           break;
         }
         case 'update': {
           const { success, message } = await this.pullRepo(url);
-          this.repoQueue.sendEventResponse(eventId, { success, message });
+          await reply({ success, message });
           break;
         }
         default:
