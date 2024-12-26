@@ -279,6 +279,7 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Заборонено в демо-режимі",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Заборонено в режимі розробника",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "Магазин додатків з такою url-адресою вже існує",
+  "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "An app store with the same name already exists",
   "APP_STORE_CLONE_ERROR": "Помилка клонування магазину додатків за посиланням {{url}}. Це дійсний git репозиторій?",
   "APP_STORE_CHOOSE_CATEGORY": "Виберіть категорію",
   "APP_STORE_CHOOSE_STORE": "Оберіть магазин додатків",
