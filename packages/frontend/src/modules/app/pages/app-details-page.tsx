@@ -14,7 +14,7 @@ export const AppDetailsPage = () => {
   const { appId, storeId } = useParams<{ appId: string; storeId: string }>();
 
   const getApp = useSuspenseQuery({
-    ...getAppOptions({ path: { id: `${appId}_${storeId}` } }),
+    ...getAppOptions({ path: { urn: `${appId}:${storeId}` } }),
   });
 
   const { userSettings } = useAppContext();
@@ -24,7 +24,7 @@ export const AppDetailsPage = () => {
   return (
     <div className="card" data-testid="app-details">
       <div className="card-header d-flex flex-column flex-md-row">
-        <AppLogo id={info?.id} size={130} alt={info?.name} />
+        <AppLogo urn={info?.urn} size={130} alt={info?.name} />
         <div className="w-100 d-flex flex-column ms-md-3 align-items-center align-items-md-start">
           <div>
             <span className="mt-1 me-1">{t('APP_DETAILS_VERSION')}: </span>

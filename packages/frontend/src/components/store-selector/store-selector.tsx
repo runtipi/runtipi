@@ -6,7 +6,7 @@ interface Props {
   onSelect: (value?: string) => void;
   className?: string;
   initialValue?: string;
-  stores: { name: string; id: number }[];
+  stores: { name: string; slug: string }[];
 }
 
 export const StoreSelector = ({ onSelect, className, initialValue, stores }: Props) => {
@@ -14,7 +14,7 @@ export const StoreSelector = ({ onSelect, className, initialValue, stores }: Pro
   const [key, setKey] = useState(new Date().getTime().toString());
 
   const options = stores.map((store) => ({
-    value: store.id,
+    value: store.slug,
     label: store.name,
   }));
 

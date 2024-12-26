@@ -1,4 +1,4 @@
-import { extractAppId } from '@/common/helpers/app-helpers';
+import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { DatabaseService } from '@/core/database/database.service';
 import { app } from '@/core/database/drizzle/schema';
 import type { AppStatus, NewApp } from '@/core/database/drizzle/types';
@@ -20,9 +20,9 @@ export class AppsRepository {
   }
 
   public async getAppByUrn(appUrn: AppUrn) {
-    const { storeId, appId } = extractAppId(appUrn);
+    const { appStoreId, appName } = extractAppUrn(appUrn);
 
-    return this.db.db.query.app.findFirst({ where: and(eq(app.appName, appId), eq(app.appStoreSlug, storeId)) });
+    return this.db.db.query.app.findFirst({ where: and(eq(app.appName, appName), eq(app.appStoreSlug, appStoreId)) });
   }
 
   /**

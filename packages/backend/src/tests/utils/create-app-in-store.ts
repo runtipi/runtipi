@@ -2,11 +2,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DATA_DIR } from '@/common/constants';
 import type { AppInfo, AppInfoInput } from '@/modules/marketplace/dto/marketplace.dto';
+import type { AppUrn } from '@/types/app/app.types';
 import { faker } from '@faker-js/faker';
 
 export const createAppInStore = async (storeId: number, app: Partial<AppInfo> = {}) => {
+  const id = app.id ?? faker.string.uuid();
+
   const appInfo: AppInfoInput = {
     id: faker.string.uuid(),
+    urn: `${id}:${storeId}` as AppUrn,
     name: faker.lorem.words(2),
     port: faker.number.int({ min: 1000, max: 9999 }),
     https: false,

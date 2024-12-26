@@ -1,4 +1,4 @@
-import { createAppUrn } from '@/common/helpers/app-helpers';
+import { castAppUrn } from '@/common/helpers/app-helpers';
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
@@ -24,12 +24,10 @@ export class AppsController {
     return { installed: guest };
   }
 
-  @Get(':appstore/:id')
+  @Get(':urn')
   @UseGuards(AuthGuard)
   @ZodSerializerDto(GetAppDto)
-  async getApp(@Param('appstore') appstore: string, @Param('id') id: string): Promise<GetAppDto> {
-    const appUrn = createAppUrn(id, appstore);
-
-    return this.appsService.getApp(appUrn);
+  async getApp(@Param('urn') urn: string): Promise<GetAppDto> {
+    return this.appsService.getApp(castAppUrn(urn));
   }
 }

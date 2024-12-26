@@ -44,8 +44,8 @@ const Tile = ({ data }: { data: GuestAppsDto['installed'][number] }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <a href={app.id} className="col-sm-6 col-lg-4 app-link">
-          <AppTile key={app.id} info={info} status={app.status} updateAvailable={false} />
+        <a href={info.urn} className="col-sm-6 col-lg-4 app-link">
+          <AppTile key={info.urn} info={info} status={app.status} updateAvailable={false} />
         </a>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

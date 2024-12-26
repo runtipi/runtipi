@@ -43,11 +43,7 @@ export const DeleteAppStoreDialog = ({ appStore }: Props) => {
             <h3 className="text-muted">{t('APP_STORE_DELETE_DIALOG_WARNING', { name: appStore.name })}</h3>
           </DialogDescription>
           <DialogFooter>
-            <Button
-              loading={deleteAppStore.isPending}
-              intent="danger"
-              onClick={() => deleteAppStore.mutate({ path: { id: appStore.id.toString() } })}
-            >
+            <Button loading={deleteAppStore.isPending} intent="danger" onClick={() => deleteAppStore.mutate({ path: { id: appStore.slug } })}>
               {t('APP_STORE_DELETE_DIALOG_SUBMIT')}
             </Button>
           </DialogFooter>

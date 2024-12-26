@@ -1,5 +1,5 @@
 import type { Architecture } from '@/common/constants';
-import { extractAppId } from '@/common/helpers/app-helpers';
+import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { notEmpty, pLimit } from '@/common/helpers/file-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -12,7 +12,7 @@ import { AppStoreService } from '../app-stores/app-store.service';
 
 type AppList = Awaited<ReturnType<InstanceType<typeof MarketplaceService>['getAllAppFromStores']>>;
 
-const sortApps = (a: AppList[number], b: AppList[number]) => a.id.localeCompare(b.id);
+const sortApps = (a: AppList[number], b: AppList[number]) => a.urn.localeCompare(b.urn);
 const filterApp =
   (architecture: Architecture) =>
   (app: AppList[number]): boolean => {
@@ -58,30 +58,30 @@ export class MarketplaceService {
     this.logger.debug('Marketplace service initialized with stores', Array.from(this.stores.keys()).join(', '));
   }
 
-  private extractStoreFromNamespacedId(appUrn: AppUrn) {
-    const { storeId } = extractAppId(appUrn);
+  private getStoreFromUrn(appUrn: AppUrn) {
+    const { appStoreId } = extractAppUrn(appUrn);
 
-    const store = this.stores.get(storeId);
+    const store = this.stores.get(appStoreId);
     if (!store) {
-      throw new Error(`Store ${storeId} not found`);
+      throw new Error(`Store ${appStoreId} not found`);
     }
 
     return { store };
   }
 
   async getAppInfoFromAppStore(appUrn: AppUrn) {
-    const { store } = this.extractStoreFromNamespacedId(appUrn);
+    const { store } = this.getStoreFromUrn(appUrn);
 
     return store.getAppInfoFromAppStore(appUrn);
   }
 
-  async getAvailableAppIds(): Promise<AppUrn[]> {
-    const allIds: AppUrn[] = [];
+  async getAvailableAppUrns(): Promise<AppUrn[]> {
+    const allUrns: AppUrn[] = [];
     for (const store of this.stores.values()) {
-      const ids = await store.getAvailableAppIds();
-      allIds.push(...ids);
+      const urns = await store.getAvailableAppUrns();
+      allUrns.push(...urns);
     }
-    return allIds.sort((a, b) => a.localeCompare(b));
+    return allUrns.sort((a, b) => a.localeCompare(b));
   }
 
   /**
@@ -89,13 +89,13 @@ export class MarketplaceService {
    * @returns All available apps
    */
   private async getAllAppFromStores() {
-    const appIds = await this.getAvailableAppIds();
+    const appUrns = await this.getAvailableAppUrns();
 
     const limit = pLimit(10);
     const apps = await Promise.all(
-      appIds.map(async (appUrn) => {
+      appUrns.map(async (appUrn) => {
         return limit(() => {
-          const { store } = this.extractStoreFromNamespacedId(appUrn);
+          const { store } = this.getStoreFromUrn(appUrn);
           return store.getAppInfoFromAppStore(appUrn);
         });
       }),
@@ -135,12 +135,13 @@ export class MarketplaceService {
 
     if (!this.appsAvailable) {
       const apps = await this.getAllAppFromStores();
+
       this.appsAvailable = this.filterApps(apps);
 
       this.miniSearch = new MiniSearch<(typeof this.appsAvailable)[number]>({
         fields: ['name', 'short_desc', 'categories'],
-        storeFields: ['id'],
-        idField: 'id',
+        storeFields: ['urn'],
+        idField: 'urn',
         searchOptions: {
           boost: { name: 2 },
           fuzzy: 0.2,
@@ -160,15 +161,15 @@ export class MarketplaceService {
    * @param params - The search parameters
    * @returns The search results
    */
-  public async searchApps(params: { search?: string | null; category?: string | null; pageSize?: number; cursor?: string | null; storeId?: number }) {
+  public async searchApps(params: { search?: string | null; category?: string | null; pageSize?: number; cursor?: string | null; storeId?: string }) {
     const { search, category, pageSize, cursor, storeId } = params;
 
     let filteredApps = await this.getAvailableApps();
 
     if (storeId) {
       filteredApps = filteredApps.filter((app) => {
-        const { storeId: appStoreId } = extractAppId(app.id);
-        return appStoreId === storeId.toString();
+        const { appStoreId } = extractAppUrn(app.urn);
+        return appStoreId === storeId;
       });
     }
 
@@ -179,14 +180,14 @@ export class MarketplaceService {
     if (search && this.miniSearch) {
       const result = this.miniSearch.search(search);
       const searchIds = result.map((app) => app.id);
-      filteredApps = filteredApps.filter((app) => searchIds.includes(app.id)).sort((a, b) => searchIds.indexOf(a.id) - searchIds.indexOf(b.id));
+      filteredApps = filteredApps.filter((app) => searchIds.includes(app.urn)).sort((a, b) => searchIds.indexOf(a.urn) - searchIds.indexOf(b.urn));
     }
 
-    const start = cursor ? filteredApps.findIndex((app) => app.id === cursor) : 0;
+    const start = cursor ? filteredApps.findIndex((app) => app.urn === cursor) : 0;
     const end = start + (pageSize ?? 24);
     const data = filteredApps.slice(start, end);
 
-    return { data, total: filteredApps.length, nextCursor: filteredApps[end]?.id };
+    return { data, total: filteredApps.length, nextCursor: filteredApps[end]?.urn };
   }
 
   /**
@@ -195,22 +196,22 @@ export class MarketplaceService {
    * @returns The image of the app
    */
   public async getAppImage(appUrn: AppUrn) {
-    const { store } = this.extractStoreFromNamespacedId(appUrn);
+    const { store } = this.getStoreFromUrn(appUrn);
     return store.getAppImage(appUrn);
   }
 
   public async getAppUpdateInfo(appUrn: AppUrn) {
-    const { store } = this.extractStoreFromNamespacedId(appUrn);
+    const { store } = this.getStoreFromUrn(appUrn);
     return store.getAppUpdateInfo(appUrn);
   }
 
   public async copyAppFromRepoToInstalled(appUrn: AppUrn) {
-    const { store } = this.extractStoreFromNamespacedId(appUrn);
+    const { store } = this.getStoreFromUrn(appUrn);
     return store.copyAppFromRepoToInstalled(appUrn);
   }
 
   public async copyDataDir(appUrn: AppUrn, envMap: Map<string, string>) {
-    const { store } = this.extractStoreFromNamespacedId(appUrn);
+    const { store } = this.getStoreFromUrn(appUrn);
     return store.copyDataDir(appUrn, envMap);
   }
 }

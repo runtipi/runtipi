@@ -8,8 +8,8 @@ type Store = {
   setCategory: (selectedCategory?: AppCategory) => void;
   sortDirection: 'asc' | 'desc';
   setSortDirection: (sortDirection: 'asc' | 'desc') => void;
-  storeId?: number;
-  setStoreId: (storeId?: number) => void;
+  storeId?: string;
+  setStoreId: (storeId?: string) => void;
 };
 
 const debouncedSearch = (fn: (search: string) => void, delay: number) => {

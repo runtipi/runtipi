@@ -116,7 +116,7 @@ export class AppStoreService {
       throw new TranslatableError('APP_STORE_DELETE_ERROR_APPS_EXIST', {}, HttpStatus.BAD_REQUEST);
     }
 
-    await this.appStoreRepository.deleteAppStore(slug);
+    await this.appStoreRepository.removeAppStoreEntity(slug);
     await this.repoHelpers.deleteRepo(slug);
 
     return { success: true };
@@ -129,22 +129,16 @@ export class AppStoreService {
 
     const hash = this.repoHelpers.getRepoHash(body.url);
     const existing = await this.appStoreRepository.getAppStoreByHash(hash);
-
-    if (existing && !existing.deleted) {
+    if (existing) {
       throw new TranslatableError('SERVER_ERROR_APP_STORE_ALREADY_EXISTS', {}, HttpStatus.CONFLICT);
     }
 
-    if (existing?.deleted) {
-      const { success } = await this.repoHelpers.cloneRepo(body.url, existing.slug);
-
-      if (!success) {
-        throw new TranslatableError('APP_STORE_CLONE_ERROR', { url: body.url }, HttpStatus.BAD_REQUEST);
-      }
-
-      return this.appStoreRepository.updateAppStore(existing.slug, { name: body.name, enabled: true });
-    }
-
     const slug = slugify(body.name, { lower: true, trim: true });
+
+    const existingSlug = await this.appStoreRepository.getAppStoreBySlug(slug);
+    if (existingSlug) {
+      throw new TranslatableError('SERVER_ERROR_DUPLICATE_APP_STORE_NAME', {}, HttpStatus.CONFLICT);
+    }
 
     const created = await this.appStoreRepository.createAppStore({ ...body, slug });
     const { success } = await this.repoHelpers.cloneRepo(body.url, created.slug);

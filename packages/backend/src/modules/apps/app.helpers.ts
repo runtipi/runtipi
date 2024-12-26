@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { extractAppId } from '@/common/helpers/app-helpers';
+import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import type { AppUrn } from '@/types/app/app.types';
@@ -41,13 +41,13 @@ export class AppHelpers {
     const baseEnvFile = await this.filesytem.readTextFile(envFilePath);
     const envMap = this.envUtils.envStringToMap(baseEnvFile?.toString() ?? '');
 
-    const { storeId, appId } = extractAppId(appUrn);
+    const { appName, appStoreId } = extractAppUrn(appUrn);
 
     // Default always present env variables
     envMap.set('APP_PORT', String(config.port));
     envMap.set('APP_ID', appUrn);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
-    envMap.set('APP_DATA_DIR', path.join(userSettings.appDataPath, storeId, appId));
+    envMap.set('APP_DATA_DIR', path.join(userSettings.appDataPath, appStoreId, appName));
 
     const appEnv = await this.appFilesManager.getAppEnv(appUrn);
     const existingAppEnvMap = this.envUtils.envStringToMap(appEnv.content);

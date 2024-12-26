@@ -29,7 +29,7 @@ export const UninstallDialog = ({ info, isOpen, onClose }: IProps) => {
       toast.error(t(error.message, error.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('uninstalling', info.id);
+      setOptimisticStatus('uninstalling', info.urn);
       onClose();
     },
   });
@@ -44,12 +44,17 @@ export const UninstallDialog = ({ info, isOpen, onClose }: IProps) => {
           <IconAlertTriangle className="icon mb-2 text-danger icon-lg" />
           <h3>{t('APP_UNINSTALL_FORM_WARNING')}</h3>
           <span className="text-muted">{t('APP_UNINSTALL_FORM_SUBTITLE')}</span>
-          <div className='justify-content-center d-flex pt-3'>
-            <Switch className="text-start" checked={shouldRemoveBackups} onCheckedChange={setShouldRemoveBackups} label={t('APP_UNINSTALL_FORM_REMOVE_BACKUPS')} />
+          <div className="justify-content-center d-flex pt-3">
+            <Switch
+              className="text-start"
+              checked={shouldRemoveBackups}
+              onCheckedChange={setShouldRemoveBackups}
+              label={t('APP_UNINSTALL_FORM_REMOVE_BACKUPS')}
+            />
           </div>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={() => uninstallMutation.mutate({ path: { id: info.id }, body: {removeBackups: shouldRemoveBackups} })} intent="danger">
+          <Button onClick={() => uninstallMutation.mutate({ path: { urn: info.urn }, body: { removeBackups: shouldRemoveBackups } })} intent="danger">
             {t('APP_UNINSTALL_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

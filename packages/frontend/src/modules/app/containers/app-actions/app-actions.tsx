@@ -42,7 +42,7 @@ import { useAppStatus } from '../../helpers/use-app-status';
 interface IProps {
   app?: AppDetails | null;
   info: AppInfo;
-  metadata?: AppMetadata;
+  metadata: AppMetadata;
   localDomain?: string;
 }
 
@@ -88,7 +88,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('starting', info.id);
+      setOptimisticStatus('starting', info.urn);
     },
   });
 
@@ -96,7 +96,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
     <ActionButton
       key="start"
       IconComponent={IconPlayerPlay}
-      onClick={() => startMutation.mutate({ path: { id: info.id } })}
+      onClick={() => startMutation.mutate({ path: { urn: info.urn } })}
       title={t('APP_ACTION_START')}
       intent="success"
     />
