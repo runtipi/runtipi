@@ -279,6 +279,7 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Không được phép trong chế độ DEMO",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Không được phép trong chế độ DEV",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "An app store with the same url already exists",
+  "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "An app store with the same name already exists",
   "APP_STORE_CLONE_ERROR": "Error cloning app store at {{url}}. Is it a valid git repository?",
   "APP_STORE_CHOOSE_CATEGORY": "Choose a category",
   "APP_STORE_CHOOSE_STORE": "Choose an AppStore",
