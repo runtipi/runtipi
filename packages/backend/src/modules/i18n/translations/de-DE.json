@@ -279,6 +279,7 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Im Demo-Modus nicht erlaubt",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Im Dev-Modus nicht erlaubt",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "Ein App Store mit derselben URL existiert bereits",
+  "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "An app store with the same name already exists",
   "APP_STORE_CLONE_ERROR": "Fehler beim Klonen des App Stores unter der URL {{url}}. Ist es ein gültiges Git-Repository?",
   "APP_STORE_CHOOSE_CATEGORY": "Wählen Sie eine Kategorie",
   "APP_STORE_CHOOSE_STORE": "Wählen Sie einen App Store",
