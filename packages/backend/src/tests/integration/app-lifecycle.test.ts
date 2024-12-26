@@ -105,8 +105,8 @@ describe('App lifecycle', () => {
   describe('install app', () => {
     it('should successfully install app and create expected directory structure', async () => {
       // arrange
-      const appInfo = await createAppInStore(1, { id: 'test' });
-      const appUrn = `${appInfo.id}:1` as AppUrn;
+      const appInfo = await createAppInStore('test', { id: 'test' });
+      const appUrn = `${appInfo.id}:test` as AppUrn;
 
       // act
       await appLifecycleService.installApp({ appUrn, form: {} });
@@ -118,17 +118,17 @@ describe('App lifecycle', () => {
 
       // assert
       expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
-      const yml = await fs.promises.readFile(`${DATA_DIR}/apps/1/${appInfo.id}/docker-compose.yml`, 'utf-8');
+      const yml = await fs.promises.readFile(`${DATA_DIR}/apps/test/${appInfo.id}/docker-compose.yml`, 'utf-8');
       expect(yml).toMatchSnapshot();
     });
 
     it('should not delete an existing app-data folder even if the app is reinstalled', async () => {
       // arrange
-      const appInfo = await createAppInStore(1, { id: 'test2' });
-      const appUrn = `${appInfo.id}:1` as AppUrn;
+      const appInfo = await createAppInStore('test', { id: 'test2' });
+      const appUrn = `${appInfo.id}:test` as AppUrn;
 
-      await fs.promises.mkdir(`${APP_DATA_DIR}/1_test2/data`, { recursive: true });
-      await fs.promises.writeFile(`${APP_DATA_DIR}/1_test2/data/test.txt`, 'test');
+      await fs.promises.mkdir(`${APP_DATA_DIR}/test/test2/data`, { recursive: true });
+      await fs.promises.writeFile(`${APP_DATA_DIR}/test/test2/data/test.txt`, 'test');
 
       await appLifecycleService.installApp({ appUrn, form: {} });
 

@@ -5,7 +5,7 @@ import type { AppInfo, AppInfoInput } from '@/modules/marketplace/dto/marketplac
 import type { AppUrn } from '@/types/app/app.types';
 import { faker } from '@faker-js/faker';
 
-export const createAppInStore = async (storeId: number, app: Partial<AppInfo> = {}) => {
+export const createAppInStore = async (storeId: string, app: Partial<AppInfo> = {}) => {
   const id = app.id ?? faker.string.uuid();
 
   const appInfo: AppInfoInput = {
