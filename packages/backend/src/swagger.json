@@ -502,20 +502,12 @@
         ]
       }
     },
-    "/api/apps/{appstore}/{id}": {
+    "/api/apps/{urn}": {
       "get": {
         "operationId": "getApp",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -549,7 +541,7 @@
             "required": false,
             "in": "query",
             "schema": {
-              "type": "number"
+              "type": "string"
             }
           },
           {
@@ -619,20 +611,12 @@
         ]
       }
     },
-    "/api/marketplace/apps/{appstore}/{id}/image": {
+    "/api/marketplace/apps/{urn}/image": {
       "get": {
         "operationId": "getImage",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -791,20 +775,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{appstore}/{id}/install": {
+    "/api/app-lifecycle/{urn}/install": {
       "post": {
         "operationId": "installApp",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -832,20 +808,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{appstore}/{id}/start": {
+    "/api/app-lifecycle/{urn}/start": {
       "post": {
         "operationId": "startApp",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -863,20 +831,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{appstore}/{id}/stop": {
+    "/api/app-lifecycle/{urn}/stop": {
       "post": {
         "operationId": "stopApp",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -894,20 +854,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{appstore}/{id}/restart": {
+    "/api/app-lifecycle/{urn}/restart": {
       "post": {
         "operationId": "restartApp",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -925,20 +877,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{appstore}/{id}/uninstall": {
+    "/api/app-lifecycle/{urn}/uninstall": {
       "delete": {
         "operationId": "uninstallApp",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -966,20 +910,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{appstore}/{id}/reset": {
+    "/api/app-lifecycle/{urn}/reset": {
       "post": {
         "operationId": "resetApp",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -997,20 +933,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{appstore}/{id}/update": {
+    "/api/app-lifecycle/{urn}/update": {
       "patch": {
         "operationId": "updateApp",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -1024,6 +952,39 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/UpdateAppBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{urn}/update-config": {
+      "patch": {
+        "operationId": "updateAppConfig",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppFormBody"
               }
             }
           }
@@ -1052,61 +1013,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{appstore}/{id}/update-config": {
-      "patch": {
-        "operationId": "updateAppConfig",
-        "parameters": [
-          {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AppFormBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "AppLifecycle"
-        ]
-      }
-    },
-    "/api/backups/{appstore}/{id}/backup": {
+    "/api/backups/{urn}/backup": {
       "post": {
         "operationId": "backupApp",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -1124,20 +1036,12 @@
         ]
       }
     },
-    "/api/backups/{appstore}/{id}/restore": {
+    "/api/backups/{urn}/restore": {
       "post": {
         "operationId": "restoreAppBackup",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -1165,20 +1069,12 @@
         ]
       }
     },
-    "/api/backups/{appstore}/{id}": {
+    "/api/backups/{urn}": {
       "get": {
         "operationId": "getAppBackups",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -1217,22 +1113,12 @@
         "tags": [
           "Backups"
         ]
-      }
-    },
-    "/api/backups/{appid}": {
+      },
       "delete": {
         "operationId": "deleteAppBackup",
         "parameters": [
           {
-            "name": "appstore",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -1725,6 +1611,9 @@
                 "id": {
                   "type": "string"
                 },
+                "urn": {
+                  "type": "string"
+                },
                 "name": {
                   "type": "string"
                 },
@@ -1781,6 +1670,7 @@
               },
               "required": [
                 "id",
+                "urn",
                 "name",
                 "short_desc",
                 "available"
@@ -2165,6 +2055,9 @@
                     "id": {
                       "type": "string"
                     },
+                    "urn": {
+                      "type": "string"
+                    },
                     "name": {
                       "type": "string"
                     },
@@ -2221,6 +2114,7 @@
                   },
                   "required": [
                     "id",
+                    "urn",
                     "name",
                     "short_desc",
                     "available"
@@ -2335,6 +2229,9 @@
                   "type": "object",
                   "properties": {
                     "id": {
+                      "type": "string"
+                    },
+                    "urn": {
                       "type": "string"
                     },
                     "available": {
@@ -2557,6 +2454,7 @@
                   },
                   "required": [
                     "id",
+                    "urn",
                     "available",
                     "port",
                     "name",
@@ -2650,6 +2548,9 @@
             "type": "object",
             "properties": {
               "id": {
+                "type": "string"
+              },
+              "urn": {
                 "type": "string"
               },
               "available": {
@@ -2872,6 +2773,7 @@
             },
             "required": [
               "id",
+              "urn",
               "available",
               "port",
               "name",
@@ -2916,6 +2818,9 @@
               "type": "object",
               "properties": {
                 "id": {
+                  "type": "string"
+                },
+                "urn": {
                   "type": "string"
                 },
                 "name": {
@@ -2974,6 +2879,7 @@
               },
               "required": [
                 "id",
+                "urn",
                 "name",
                 "short_desc",
                 "available"
@@ -3007,7 +2913,9 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10
           },
           "url": {
             "type": "string"

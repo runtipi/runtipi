@@ -25,7 +25,7 @@ export const StopDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
       toast.error(t(error.message, error.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('stopping', info.id);
+      setOptimisticStatus('stopping', info.urn);
       onClose();
     },
   });
@@ -40,7 +40,7 @@ export const StopDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
           <span className="text-muted">{t('APP_STOP_FORM_SUBTITLE')}</span>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={() => stopMutation.mutate({ path: { id: info.id } })} intent="danger">
+          <Button onClick={() => stopMutation.mutate({ path: { urn: info.urn } })} intent="danger">
             {t('APP_STOP_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

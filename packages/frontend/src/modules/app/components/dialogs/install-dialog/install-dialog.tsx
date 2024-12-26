@@ -29,7 +29,7 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('installing', info.id);
+      setOptimisticStatus('installing', info.urn);
       onClose();
     },
   });
@@ -43,7 +43,7 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
         <ScrollArea maxheight={500}>
           <DialogDescription>
             <InstallForm
-              onSubmit={(data) => installMutation.mutate({ path: { id: info.id }, body: data })}
+              onSubmit={(data) => installMutation.mutate({ path: { urn: info.urn }, body: data })}
               formFields={info.form_fields}
               info={info}
               formId={formId}

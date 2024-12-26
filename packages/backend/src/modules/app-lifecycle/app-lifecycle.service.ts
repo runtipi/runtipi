@@ -128,7 +128,7 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appUrn, minVersion: appInfo.min_tipi_version });
     }
 
-    const { appName, appstore } = extractAppUrn(appUrn);
+    const { appName, appStoreId } = extractAppUrn(appUrn);
 
     const createdApp = await this.appRepository.createApp({
       appName,
@@ -139,7 +139,7 @@ export class AppLifecycleService {
       domain: domain || null,
       openPort: openPort || false,
       exposedLocal: exposedLocal || false,
-      appStoreSlug: appstore,
+      appStoreSlug: appStoreId,
       isVisibleOnGuestDashboard,
     });
 

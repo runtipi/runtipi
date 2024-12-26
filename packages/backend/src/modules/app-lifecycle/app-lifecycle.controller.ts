@@ -1,4 +1,4 @@
-import { createAppUrn } from '@/common/helpers/app-helpers';
+import { castAppUrn } from '@/common/helpers/app-helpers';
 import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppLifecycleService } from './app-lifecycle.service';
@@ -9,60 +9,52 @@ import { AppFormBody, UninstallAppBody, UpdateAppBody, appFormSchema } from './d
 export class AppLifecycleController {
   constructor(private readonly appLifecycleService: AppLifecycleService) {}
 
-  @Post(':appstore/:id/install')
-  async installApp(@Param('appstore') appstore: string, @Param('id') id: string, @Body() body: AppFormBody) {
+  @Post(':urn/install')
+  async installApp(@Param('urn') urn: string, @Body() body: AppFormBody) {
     const form = appFormSchema.parse(body);
-    const appUrn = createAppUrn(id, appstore);
 
-    return this.appLifecycleService.installApp({ appUrn, form });
+    return this.appLifecycleService.installApp({ appUrn: castAppUrn(urn), form });
   }
 
-  @Post(':appstore/:id/start')
-  async startApp(@Param('appstore') appstore: string, @Param('id') id: string) {
-    const appUrn = createAppUrn(id, appstore);
-    return this.appLifecycleService.startApp({ appUrn });
+  @Post(':urn/start')
+  async startApp(@Param('urn') urn: string) {
+    return this.appLifecycleService.startApp({ appUrn: castAppUrn(urn) });
   }
 
-  @Post(':appstore/:id/stop')
-  async stopApp(@Param('appstore') appstore: string, @Param('id') id: string) {
-    const appUrn = createAppUrn(id, appstore);
-    return this.appLifecycleService.stopApp({ appUrn });
+  @Post(':urn/stop')
+  async stopApp(@Param('urn') urn: string) {
+    return this.appLifecycleService.stopApp({ appUrn: castAppUrn(urn) });
   }
 
-  @Post(':appstore/:id/restart')
-  async restartApp(@Param('appstore') appstore: string, @Param('id') id: string) {
-    const appUrn = createAppUrn(id, appstore);
-    return this.appLifecycleService.restartApp({ appUrn });
+  @Post(':urn/restart')
+  async restartApp(@Param('urn') urn: string) {
+    return this.appLifecycleService.restartApp({ appUrn: castAppUrn(urn) });
   }
 
-  @Delete(':appstore/:id/uninstall')
-  async uninstallApp(@Param('appstore') appstore: string, @Param('id') id: string, @Body() body: UninstallAppBody) {
-    const appUrn = createAppUrn(id, appstore);
-    return this.appLifecycleService.uninstallApp({ appUrn, removeBackups: body.removeBackups });
+  @Delete(':urn/uninstall')
+  async uninstallApp(@Param('urn') urn: string, @Body() body: UninstallAppBody) {
+    return this.appLifecycleService.uninstallApp({ appUrn: castAppUrn(urn), removeBackups: body.removeBackups });
   }
 
-  @Post(':appstore/:id/reset')
-  async resetApp(@Param('appstore') appstore: string, @Param('id') id: string) {
-    const appUrn = createAppUrn(id, appstore);
-    return this.appLifecycleService.resetApp({ appUrn });
+  @Post(':urn/reset')
+  async resetApp(@Param('urn') urn: string) {
+    return this.appLifecycleService.resetApp({ appUrn: castAppUrn(urn) });
   }
 
-  @Patch(':appstore/:id/update')
-  async updateApp(@Param('appstore') appstore: string, @Param('id') id: string, @Body() body: UpdateAppBody) {
-    const appUrn = createAppUrn(id, appstore);
-    return this.appLifecycleService.updateApp({ appUrn, performBackup: body.performBackup });
+  @Patch(':urn/update')
+  async updateApp(@Param('urn') urn: string, @Body() body: UpdateAppBody) {
+    return this.appLifecycleService.updateApp({ appUrn: castAppUrn(urn), performBackup: body.performBackup });
+  }
+
+  @Patch(':urn/update-config')
+  async updateAppConfig(@Param('urn') urn: string, @Body() body: AppFormBody) {
+    const form = appFormSchema.parse(body);
+
+    return this.appLifecycleService.updateAppConfig({ appUrn: castAppUrn(urn), form });
   }
 
   @Patch('update-all')
   async updateAllApps() {
     return this.appLifecycleService.updateAllApps();
-  }
-
-  @Patch(':appstore/:id/update-config')
-  async updateAppConfig(@Param('appstore') appstore: string, @Param('id') id: string, @Body() body: AppFormBody) {
-    const appUrn = createAppUrn(id, appstore);
-    const form = appFormSchema.parse(body);
-
-    return this.appLifecycleService.updateAppConfig({ appUrn, form });
   }
 }

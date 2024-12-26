@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { extractAppId } from '@/common/helpers/app-helpers';
+import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -25,11 +25,11 @@ export class AppFilesManager {
   public getAppPaths(appUrn: AppUrn) {
     const { directories } = this.configuration.getConfig();
 
-    const { storeId, appId } = extractAppId(appUrn);
+    const { appStoreId, appName } = extractAppUrn(appUrn);
 
     return {
-      appDataDir: path.join(directories.appDataDir, storeId, appId),
-      appInstalledDir: path.join(this.getInstalledAppsFolder(), storeId, appId),
+      appDataDir: path.join(directories.appDataDir, appStoreId, appName),
+      appInstalledDir: path.join(this.getInstalledAppsFolder(), appStoreId, appName),
     };
   }
 
@@ -43,7 +43,9 @@ export class AppFilesManager {
 
       if (await this.filesystem.pathExists(path.join(appInstalledDir, 'config.json'))) {
         const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
-        const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile ?? ''));
+
+        const config = JSON.parse(configFile ?? '{}');
+        const parsedConfig = appInfoSchema.safeParse({ ...config, urn: appUrn });
 
         if (!parsedConfig.success) {
           this.logger.debug(`App ${appUrn} config error:`);
@@ -175,9 +177,9 @@ export class AppFilesManager {
   public async getUserEnv(appUrn: AppUrn) {
     const { directories } = this.configuration.getConfig();
 
-    const { storeId, appId } = extractAppId(appUrn);
+    const { appStoreId, appName } = extractAppUrn(appUrn);
 
-    const userEnvFile = path.join(directories.dataDir, 'user-config', storeId, appId, 'app.env');
+    const userEnvFile = path.join(directories.dataDir, 'user-config', appStoreId, appName, 'app.env');
     let content = null;
 
     if (await this.filesystem.pathExists(userEnvFile)) {
@@ -194,9 +196,9 @@ export class AppFilesManager {
   public async getUserComposeFile(appUrn: AppUrn) {
     const { directories } = this.configuration.getConfig();
 
-    const { storeId, appId } = extractAppId(appUrn);
+    const { appStoreId, appName } = extractAppUrn(appUrn);
 
-    const userComposeFile = path.join(directories.dataDir, 'user-config', storeId, appId, 'docker-compose.yml');
+    const userComposeFile = path.join(directories.dataDir, 'user-config', appStoreId, appName, 'docker-compose.yml');
     let content = null;
 
     if (await this.filesystem.pathExists(userComposeFile)) {

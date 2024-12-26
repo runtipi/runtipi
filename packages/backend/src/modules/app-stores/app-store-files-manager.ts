@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { extractAppId } from '@/common/helpers/app-helpers';
+import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import type { ConfigurationService } from '@/core/config/configuration.service';
 import type { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -27,14 +27,14 @@ export class AppStoreFilesManager {
   }
 
   public getAppPaths(appUrn: AppUrn) {
-    const { storeId, appId } = extractAppId(appUrn);
+    const { appStoreId, appName } = extractAppUrn(appUrn);
 
     const { directories } = this.configuration.getConfig();
 
     return {
-      appDataDir: path.join(directories.appDataDir, storeId, appId),
-      appRepoDir: path.join(this.getAppStoreFolder(), appId),
-      appInstalledDir: path.join(this.getInstalledAppsFolder(), storeId, appId),
+      appDataDir: path.join(directories.appDataDir, appStoreId, appName),
+      appRepoDir: path.join(this.getAppStoreFolder(), appName),
+      appInstalledDir: path.join(this.getInstalledAppsFolder(), appStoreId, appName),
     };
   }
 
@@ -48,7 +48,9 @@ export class AppStoreFilesManager {
 
       if (await this.filesystem.pathExists(path.join(appRepoDir, 'config.json'))) {
         const configFile = await this.filesystem.readTextFile(path.join(appRepoDir, 'config.json'));
-        const parsedConfig = appInfoSchema.safeParse(JSON.parse(configFile ?? '{}'));
+
+        const config = JSON.parse(configFile ?? '{}');
+        const parsedConfig = appInfoSchema.safeParse({ ...config, urn: appUrn });
 
         if (!parsedConfig.success) {
           this.logger.debug(`App ${appUrn} config error:`);
@@ -57,7 +59,7 @@ export class AppStoreFilesManager {
 
         if (parsedConfig.success && parsedConfig.data.available) {
           const description = (await this.filesystem.readTextFile(path.join(appRepoDir, 'metadata', 'description.md'))) ?? '';
-          return { ...parsedConfig.data, id: appUrn, description };
+          return { ...parsedConfig.data, description };
         }
       }
     } catch (error) {
@@ -120,7 +122,7 @@ export class AppStoreFilesManager {
    * Get the list of available app ids
    * @returns The list of app ids
    */
-  public async getAvailableAppIds() {
+  public async getAvailableAppUrns() {
     const appsRepoFolder = this.getAppStoreFolder();
 
     if (!(await this.filesystem.pathExists(appsRepoFolder))) {

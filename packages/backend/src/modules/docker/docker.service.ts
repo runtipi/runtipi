@@ -44,7 +44,7 @@ export class DockerService {
     let isCustomConfig = false;
     const { directories } = this.config.getConfig();
 
-    const { appstore } = extractAppUrn(appUrn);
+    const { appStoreId } = extractAppUrn(appUrn);
 
     const appEnv = await this.appFilesManager.getAppEnv(appUrn);
     const args: string[] = [`--env-file ${appEnv.path}`];
@@ -56,12 +56,12 @@ export class DockerService {
       args.push(`--env-file ${userEnvFile.path}`);
     }
 
-    args.push(`--project-name ${appUrn}`);
+    args.push(`--project-name ${appUrn.replace(':', '_')}`);
 
     const composeFile = await this.appFilesManager.getDockerComposeYaml(appUrn);
     args.push(`-f ${composeFile.path}`);
 
-    const commonComposeFile = path.join(directories.dataDir, 'repos', appstore, 'apps', 'docker-compose.common.yml');
+    const commonComposeFile = path.join(directories.dataDir, 'repos', appStoreId, 'apps', 'docker-compose.common.yml');
     args.push(`-f ${commonComposeFile}`);
 
     // User defined overrides

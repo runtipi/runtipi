@@ -81,11 +81,10 @@ export const user = pgTable('user', {
 export const appStore = pgTable('app_store', {
   slug: varchar().notNull().primaryKey(),
   hash: varchar().notNull().unique(),
-  name: varchar().notNull(),
+  name: varchar({ length: 16 }).notNull(),
   enabled: boolean().default(true).notNull(),
   url: varchar().notNull(),
   branch: varchar().default('main').notNull(),
   createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
   updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-  deleted: boolean().default(false).notNull(),
 });
