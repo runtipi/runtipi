@@ -40,7 +40,7 @@ export class BackupsService {
     await this.appsRepository.updateApp(appId, { status: 'backing_up' });
     this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'starting' } });
 
-    this.appEventsQueue.publishAsync({ appid: appId, command: 'backup', form: app.config }, 1000 * 60 * 15).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ appid: appId, command: 'backup', form: app.config }).then(async ({ success, message }) => {
       if (success) {
         if (appStatusBeforeUpdate === 'running') {
           await this.appLifecycle.startApp({ appId });
@@ -69,24 +69,22 @@ export class BackupsService {
     await this.appsRepository.updateApp(appId, { status: 'restoring' });
     await this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'restoring' } });
 
-    this.appEventsQueue
-      .publishAsync({ appid: appId, command: 'restore', filename, form: app.config }, 1000 * 60 * 15)
-      .then(async ({ success, message }) => {
-        if (success) {
-          const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appId);
-          await this.appsRepository.updateApp(appId, { version: restoredAppConfig?.tipi_version });
+    this.appEventsQueue.publish({ appid: appId, command: 'restore', filename, form: app.config }).then(async ({ success, message }) => {
+      if (success) {
+        const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appId);
+        await this.appsRepository.updateApp(appId, { version: restoredAppConfig?.tipi_version });
 
-          if (appStatusBeforeUpdate === 'running') {
-            await this.appLifecycle.startApp({ appId });
-          } else {
-            await this.appsRepository.updateApp(appId, { status: appStatusBeforeUpdate });
-            this.socketManager.emit({ type: 'app', event: 'restore_success', data: { appId, appStatus: 'stopped' } });
-          }
+        if (appStatusBeforeUpdate === 'running') {
+          await this.appLifecycle.startApp({ appId });
         } else {
-          this.logger.error(`Failed to restore app ${appId}: ${message}`);
-          await this.appsRepository.updateApp(appId, { status: 'stopped' });
+          await this.appsRepository.updateApp(appId, { status: appStatusBeforeUpdate });
+          this.socketManager.emit({ type: 'app', event: 'restore_success', data: { appId, appStatus: 'stopped' } });
         }
-      });
+      } else {
+        this.logger.error(`Failed to restore app ${appId}: ${message}`);
+        await this.appsRepository.updateApp(appId, { status: 'stopped' });
+      }
+    });
   }
 
   public async getAppBackups(params: { appId: string; page: number; pageSize: number }) {
