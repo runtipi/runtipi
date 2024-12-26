@@ -1,5 +1,4 @@
-import type { AppUrn } from '@/types/app/app.types';
-import { type ZodStringDef, z } from 'zod';
+import { z } from 'zod';
 
 export const socketEventSchema = z.union([
   z.object({
@@ -28,7 +27,7 @@ export const socketEventSchema = z.union([
       z.literal('restore_error'),
     ]),
     data: z.object({
-      appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
+      appUrn: z.string().refine((v) => v.split(':').length === 2),
       appStatus: z
         .enum([
           'running',
@@ -52,7 +51,7 @@ export const socketEventSchema = z.union([
     type: z.literal('app-logs-init'),
     event: z.literal('initLogs'),
     data: z.object({
-      appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
+      appUrn: z.string().refine((v) => v.split(':').length === 2),
       maxLines: z.number().optional(),
     }),
   }),
@@ -60,7 +59,7 @@ export const socketEventSchema = z.union([
     type: z.literal('app-logs'),
     event: z.union([z.literal('newLogs'), z.literal('stopLogs')]),
     data: z.object({
-      appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
+      appUrn: z.string().refine((v) => v.split(':').length === 2),
       lines: z.array(z.string()).optional(),
     }),
   }),
