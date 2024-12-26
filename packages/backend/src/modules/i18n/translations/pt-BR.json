@@ -279,6 +279,7 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Não é permitido no modo demonstração",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Não permitido no modo de desenvolvimento",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "Já existe uma loja de aplicativos com o mesmo endereço",
+  "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "An app store with the same name already exists",
   "APP_STORE_CLONE_ERROR": "Erro ao clonar a loja de aplicativos em {{url}}. É um repositório git válido?",
   "APP_STORE_CHOOSE_CATEGORY": "Selecione uma categoria",
   "APP_STORE_CHOOSE_STORE": "Selecione uma Loja de aplicativos",
