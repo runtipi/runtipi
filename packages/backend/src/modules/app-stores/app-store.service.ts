@@ -24,7 +24,7 @@ export class AppStoreService {
           for (const store of stores) {
             await this.repoHelpers.pullRepo(store.url, store.slug);
           }
-          reply({ success: true, message: 'All repos updated' });
+          await reply({ success: true, message: 'All repos updated' });
           break;
         }
         case 'clone_all': {
@@ -32,17 +32,17 @@ export class AppStoreService {
           for (const store of stores) {
             await this.repoHelpers.cloneRepo(store.url, store.slug);
           }
-          reply({ success: true, message: 'All repos cloned' });
+          await reply({ success: true, message: 'All repos cloned' });
           break;
         }
         case 'clone': {
           const { success, message } = await this.repoHelpers.cloneRepo(data.url, data.id);
-          reply({ success, message });
+          await reply({ success, message });
           break;
         }
         case 'update': {
           const { success, message } = await this.repoHelpers.pullRepo(data.url, data.id);
-          reply({ success, message });
+          await reply({ success, message });
           break;
         }
       }

@@ -33,17 +33,17 @@ export class AppLifecycleService {
     private readonly backupManager: BackupManager,
   ) {
     this.logger.debug('Subscribing to app events...');
-    this.appEventsQueue.onEvent(({ ...data }, reply) => this.invokeCommand(data, reply));
+    this.appEventsQueue.onEvent((data, reply) => this.invokeCommand(data, reply));
   }
 
-  async invokeCommand(data: z.infer<typeof appEventSchema>, reply: (response: z.output<typeof appEventResultSchema>) => void) {
+  async invokeCommand(data: z.infer<typeof appEventSchema>, reply: (response: z.output<typeof appEventResultSchema>) => Promise<void>) {
     try {
       const command = this.commandFactory.createCommand(data);
       const { success, message } = await command.execute(data.appUrn, data.form);
-      reply({ success, message });
+      await reply({ success, message });
     } catch (err) {
       this.logger.error(`Error invoking command: ${err}`);
-      reply({ success: false, message: String(err) });
+      await reply({ success: false, message: String(err) });
     }
   }
 

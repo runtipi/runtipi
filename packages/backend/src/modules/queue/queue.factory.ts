@@ -18,7 +18,7 @@ export class QueueFactory {
 
     this.rabbit.on('error', (error) => {
       this.logger.error('RabbitMQ connection error:', error);
-      Sentry.captureException(error);
+      Sentry.captureException(error, { tags: { source: 'rabbitmq' } });
     });
   }
 

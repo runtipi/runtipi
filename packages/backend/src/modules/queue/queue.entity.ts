@@ -1,4 +1,5 @@
 import type { LoggerService } from '@/core/logger/logger.service';
+import Sentry from '@sentry/nestjs';
 import cron from 'node-cron';
 import type { Connection, RPCClient } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
@@ -61,6 +62,7 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
       try {
         await this.rpcClient.send(this.queueName, eventData.data);
       } catch (e) {
+        Sentry.captureException(e, { tags: { queueName: this.queueName } });
         this.logger.error('Error in cron job:', e);
       }
     });
