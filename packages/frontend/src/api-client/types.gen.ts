@@ -77,7 +77,7 @@ export type AppContextDto = {
 };
 
 export type AppFormBody = {
-  port?: string;
+  port?: number;
   exposed?: boolean;
   exposedLocal?: boolean;
   openPort?: boolean;
