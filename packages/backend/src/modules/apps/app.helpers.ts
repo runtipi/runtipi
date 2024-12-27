@@ -44,7 +44,7 @@ export class AppHelpers {
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
     // Default always present env variables
-    envMap.set('APP_PORT', String(config.port));
+    envMap.set('APP_PORT', form.port ? String(form.port) : String(config.port));
     envMap.set('APP_ID', appUrn);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
     envMap.set('APP_DATA_DIR', path.join(userSettings.appDataPath, appStoreId, appName));

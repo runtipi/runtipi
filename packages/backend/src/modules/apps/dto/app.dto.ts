@@ -6,6 +6,7 @@ import { z } from 'zod';
 export class AppDto extends createZodDto(
   z.object({
     id: z.number(),
+    port: z.number().nullable(),
     status: z.enum(APP_STATUS),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),

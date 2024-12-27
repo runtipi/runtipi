@@ -1991,6 +1991,10 @@
                     "id": {
                       "type": "number"
                     },
+                    "port": {
+                      "type": "number",
+                      "nullable": true
+                    },
                     "status": {
                       "type": "string",
                       "enum": [
@@ -2040,6 +2044,7 @@
                   },
                   "required": [
                     "id",
+                    "port",
                     "status",
                     "version",
                     "exposed",
@@ -2167,6 +2172,10 @@
                     "id": {
                       "type": "number"
                     },
+                    "port": {
+                      "type": "number",
+                      "nullable": true
+                    },
                     "status": {
                       "type": "string",
                       "enum": [
@@ -2216,6 +2225,7 @@
                   },
                   "required": [
                     "id",
+                    "port",
                     "status",
                     "version",
                     "exposed",
@@ -2485,6 +2495,10 @@
               "id": {
                 "type": "number"
               },
+              "port": {
+                "type": "number",
+                "nullable": true
+              },
               "status": {
                 "type": "string",
                 "enum": [
@@ -2534,6 +2548,7 @@
             },
             "required": [
               "id",
+              "port",
               "status",
               "version",
               "exposed",
@@ -2978,6 +2993,9 @@
       "AppFormBody": {
         "type": "object",
         "properties": {
+          "port": {
+            "type": "string"
+          },
           "exposed": {
             "type": "boolean"
           },
@@ -2985,8 +3003,7 @@
             "type": "boolean"
           },
           "openPort": {
-            "type": "boolean",
-            "default": true
+            "type": "boolean"
           },
           "domain": {
             "type": "string"
