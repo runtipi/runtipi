@@ -2994,7 +2994,11 @@
         "type": "object",
         "properties": {
           "port": {
-            "type": "string"
+            "type": "number",
+            "minimum": 1024,
+            "exclusiveMinimum": false,
+            "maximum": 65535,
+            "exclusiveMaximum": false
           },
           "exposed": {
             "type": "boolean"
@@ -3003,7 +3007,8 @@
             "type": "boolean"
           },
           "openPort": {
-            "type": "boolean"
+            "type": "boolean",
+            "default": true
           },
           "domain": {
             "type": "string"

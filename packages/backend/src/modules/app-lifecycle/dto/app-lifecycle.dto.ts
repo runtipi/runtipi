@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const appFormSchema = z
   .object({
-    port: z.coerce.number().optional(),
+    port: z.coerce.number().min(1024).max(65535).optional(),
     exposed: z.boolean().optional(),
     exposedLocal: z.boolean().optional(),
     openPort: z.boolean().optional().default(true),
@@ -13,16 +13,7 @@ export const appFormSchema = z
   .extend({})
   .catchall(z.unknown());
 
-export class AppFormBody extends createZodDto(
-  z.object({
-    port: z.string().optional(),
-    exposed: z.boolean().optional(),
-    exposedLocal: z.boolean().optional(),
-    openPort: z.boolean().optional(),
-    domain: z.string().optional(),
-    isVisibleOnGuestDashboard: z.boolean().optional(),
-  }),
-) {}
+export class AppFormBody extends createZodDto(appFormSchema) {}
 
 export class UninstallAppBody extends createZodDto(z.object({ removeBackups: z.boolean() })) {}
 
