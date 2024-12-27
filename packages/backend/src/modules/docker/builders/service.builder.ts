@@ -29,6 +29,22 @@ interface Ulimits {
   nofile: number | { soft: number; hard: number };
 }
 
+interface Deploy {
+  reservations: {
+    devices: {
+      capabilities: string[];
+      driver: string;
+      count: 'all' | number;
+      deviceIds?: string[];
+    };
+  };
+}
+
+interface Logging {
+  driver: string;
+  options: Record<string, string>;
+}
+
 export interface BuilderService {
   image: string;
   containerName: string;
@@ -44,6 +60,24 @@ export interface BuilderService {
   networkMode?: string;
   extraHosts?: string[];
   ulimits?: Ulimits;
+  capAdd?: string[];
+  deploy?: Deploy;
+  hostname?: string;
+  devices?: Record<string, string>;
+  entrypoint?: string | string[];
+  pid?: string | number;
+  privileged?: boolean;
+  tty?: boolean;
+  user?: string;
+  workingDir?: string;
+  shmSize?: string;
+  capDrop?: string[];
+  logging?: Logging;
+  readOnly?: boolean;
+  securityOpt?: string[];
+  stopSignal?: string;
+  stopGracePeriod?: string;
+  stdinOpen?: boolean;
 }
 
 export type BuiltService = ReturnType<typeof ServiceBuilder.prototype.build>;
@@ -107,7 +141,7 @@ export class ServiceBuilder {
    * service.addNetwork('tipi_main_network');
    * ```
    */
-  addNetwork(network: string) {
+  setNetwork(network: string) {
     this.service.networks = [network];
     return this;
   }
@@ -121,7 +155,7 @@ export class ServiceBuilder {
    * const service = new ServiceBuilder();
    * service.addPort({ containerPort: 80, hostPort: 8080 });
    */
-  addPort(port?: ServicePort) {
+  setPort(port?: ServicePort) {
     if (!port) {
       return this;
     }
@@ -164,10 +198,10 @@ export class ServiceBuilder {
    *   { containerPort: 443, hostPort: 8443, tcp: true },
    * ]);
    */
-  addPorts(ports?: ServicePort[]) {
+  setPorts(ports?: ServicePort[]) {
     if (ports) {
       for (const port of ports) {
-        this.addPort(port);
+        this.setPort(port);
       }
     }
     return this;
@@ -182,7 +216,7 @@ export class ServiceBuilder {
    * service.addVolume({ hostPath: '/path/to/host', containerPath: '/path/to/container' });
    * ```
    */
-  addVolume(volume: ServiceVolume) {
+  setVolume(volume: ServiceVolume) {
     if (!this.service.volumes) {
       this.service.volumes = [];
     }
@@ -204,10 +238,10 @@ export class ServiceBuilder {
    * ]);
    * ```
    */
-  addVolumes(volumes?: ServiceVolume[]) {
+  setVolumes(volumes?: ServiceVolume[]) {
     if (volumes && volumes.length > 0) {
       for (const volume of volumes) {
-        this.addVolume(volume);
+        this.setVolume(volume);
       }
     }
     return this;
@@ -323,7 +357,7 @@ export class ServiceBuilder {
     return this;
   }
 
-  addExtraHosts(extraHosts?: string[]) {
+  setExtraHosts(extraHosts?: string[]) {
     if (!extraHosts) {
       return this;
     }
@@ -332,12 +366,102 @@ export class ServiceBuilder {
     return this;
   }
 
-  addUlimits(ulimits?: Ulimits) {
+  setUlimits(ulimits?: Ulimits) {
     if (!ulimits) {
       return this;
     }
 
     this.service.ulimits = ulimits;
+    return this;
+  }
+
+  setCapAdd(cap?: string[]) {
+    this.service.capAdd = cap;
+    return this;
+  }
+
+  setDeploy(deploy?: Deploy) {
+    this.service.deploy = deploy;
+    return this;
+  }
+
+  setHostname(hostname?: string) {
+    this.service.hostname = hostname;
+    return this;
+  }
+
+  setDevices(devices?: Record<string, string>) {
+    this.service.devices = devices;
+    return this;
+  }
+
+  setEntrypoint(entrypoint?: string | string[]) {
+    this.service.entrypoint = entrypoint;
+    return this;
+  }
+
+  setPid(pid?: string | number) {
+    this.service.pid = pid;
+    return this;
+  }
+
+  setPrivileged(privileged?: boolean) {
+    this.service.privileged = privileged;
+    return this;
+  }
+
+  setTty(tty?: boolean) {
+    this.service.tty = tty;
+    return this;
+  }
+
+  setUser(user?: string) {
+    this.service.user = user;
+    return this;
+  }
+
+  setWorkingDir(workingDir?: string) {
+    this.service.workingDir = workingDir;
+    return this;
+  }
+
+  setShmSize(shmSize?: string) {
+    this.service.shmSize = shmSize;
+    return this;
+  }
+
+  setCapDrop(capDrop?: string[]) {
+    this.service.capDrop = capDrop;
+    return this;
+  }
+
+  setLogging(logging?: Logging) {
+    this.service.logging = logging;
+    return this;
+  }
+
+  setReadOnly(readOnly?: boolean) {
+    this.service.readOnly = readOnly;
+    return this;
+  }
+
+  setSecurityOpt(securityOpt?: string[]) {
+    this.service.securityOpt = securityOpt;
+    return this;
+  }
+
+  setStopSignal(stopSignal?: string) {
+    this.service.stopSignal = stopSignal;
+    return this;
+  }
+
+  setStopGracePeriod(stopGracePeriod?: string) {
+    this.service.stopGracePeriod = stopGracePeriod;
+    return this;
+  }
+
+  setStdinOpen(stdinOpen?: boolean) {
+    this.service.stdinOpen = stdinOpen;
     return this;
   }
 
@@ -379,6 +503,24 @@ export class ServiceBuilder {
       volumes: this.service.volumes,
       depends_on: this.service.dependsOn,
       labels: this.service.labels,
+      cap_add: this.service.capAdd,
+      deploy: this.service.deploy,
+      hostname: this.service.hostname,
+      devices: this.service.devices,
+      entrypoint: this.service.entrypoint,
+      pid: this.service.pid,
+      privileged: this.service.privileged,
+      tty: this.service.tty,
+      user: this.service.user,
+      working_dir: this.service.workingDir,
+      shm_size: this.service.shmSize,
+      cap_drop: this.service.capDrop,
+      logging: this.service.logging,
+      read_only: this.service.readOnly,
+      security_opt: this.service.securityOpt,
+      stop_signal: this.service.stopSignal,
+      stop_grace_period: this.service.stopGracePeriod,
+      stdin_open: this.service.stdinOpen,
     };
   }
 }
