@@ -48,9 +48,7 @@ export class AppLifecycleController {
 
   @Patch(':urn/update-config')
   async updateAppConfig(@Param('urn') urn: string, @Body() body: AppFormBody) {
-    const form = appFormSchema.parse(body);
-
-    return this.appLifecycleService.updateAppConfig({ appUrn: castAppUrn(urn), form });
+    return this.appLifecycleService.updateAppConfig({ appUrn: castAppUrn(urn), form: body });
   }
 
   @Patch('update-all')

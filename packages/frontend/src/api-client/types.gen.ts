@@ -77,6 +77,7 @@ export type AppContextDto = {
 };
 
 export type AppFormBody = {
+  port?: string;
   exposed?: boolean;
   exposedLocal?: boolean;
   openPort?: boolean;
@@ -132,6 +133,7 @@ export type GetAppBackupsDto = {
 export type GetAppDto = {
   app?: {
     id: number;
+    port: number | null;
     status:
       | 'running'
       | 'stopped'
@@ -255,6 +257,7 @@ export type GuestAppsDto = {
   installed: Array<{
     app: {
       id: number;
+      port: number | null;
       status:
         | 'running'
         | 'stopped'
@@ -387,6 +390,7 @@ export type MyAppsDto = {
   installed: Array<{
     app: {
       id: number;
+      port: number | null;
       status:
         | 'running'
         | 'stopped'

@@ -14,7 +14,7 @@ import { AppsRepository } from '../apps/apps.repository';
 import { AppsService } from '../apps/apps.service';
 import { BackupManager } from '../backups/backup.manager';
 import { MarketplaceService } from '../marketplace/marketplace.service';
-import { type AppEventFormInput, AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events';
+import { AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { appFormSchema } from './dto/app-lifecycle.dto';
 
@@ -71,7 +71,7 @@ export class AppLifecycleService {
     });
   }
 
-  async installApp(params: { appUrn: AppUrn; form: AppEventFormInput }): Promise<void> {
+  async installApp(params: { appUrn: AppUrn; form: unknown }): Promise<void> {
     const { appUrn, form } = params;
     const { demoMode, version, architecture } = this.config.getConfig();
 
@@ -83,7 +83,8 @@ export class AppLifecycleService {
       return this.startApp({ appUrn });
     }
 
-    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
+    const parsedForm = appFormSchema.parse(form);
+    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = parsedForm;
     const apps = await this.appRepository.getApps();
 
     if (demoMode && apps.length >= 6) {
@@ -133,7 +134,8 @@ export class AppLifecycleService {
     const createdApp = await this.appRepository.createApp({
       appName,
       status: 'installing',
-      config: form,
+      config: parsedForm,
+      port: parsedForm.port ?? appInfo.port,
       version: appInfo.tipi_version,
       exposed: exposed || false,
       domain: domain || null,
@@ -144,7 +146,7 @@ export class AppLifecycleService {
     });
 
     // Send install command to the queue
-    this.appEventsQueue.publish({ appUrn, command: 'install', form }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ appUrn, command: 'install', form: parsedForm }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appUrn} installed successfully`);
         await this.socketManager.emit({ type: 'app', event: 'install_success', data: { appUrn, appStatus: 'running' } });
@@ -335,6 +337,7 @@ export class AppLifecycleService {
       exposed: exposed ?? false,
       exposedLocal: parsedForm.exposedLocal ?? false,
       openPort: parsedForm.openPort,
+      port: parsedForm.port ?? appInfo.port,
       domain: domain || null,
       config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
