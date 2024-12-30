@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Описание приложения",
   "APP_DETAILS_VERSION": "Версия",
   "APP_DETAILS_WEBSITE": "Сайт",
+  "APP_DETAILS_USER_CONFIG": "Настройки пользователя",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Не удалось установить приложение {{id}}. См. подробности в логах",
   "APP_ERROR_APP_FAILED_TO_RESET": "Не удалось сбросить приложение {{id}}. См. подробности в логах",
   "APP_ERROR_APP_FAILED_TO_START": "Не удалось запустить приложение {{id}}. См. подробности в логах",
@@ -68,6 +69,7 @@
   "APP_INSTALL_FORM_ERROR_REGEX": "Поле {{label}} должно совпадать с шаблоном {{pattern}}",
   "APP_INSTALL_FORM_ERROR_REQUIRED": "Требуется {{label}}",
   "APP_INSTALL_FORM_ERROR_URL": "Поле {{label}} должно быть корректным URL",
+  "APP_INSTALL_FORM_ERROR_PORT": "Порт должен быть числом от 1024 до 65535",
   "APP_INSTALL_FORM_EXPOSE_APP": "Открыть доступ из интернета",
   "APP_INSTALL_FORM_OPEN_PORT": "Открыть порт",
   "APP_INSTALL_FORM_OPEN_PORT_HINT": "Открыть порт на хосте? Это приложение будет доступно по адресу {{internalIp}}:{{port}}. (Самый простой, но менее безопасный способ)",
@@ -79,6 +81,7 @@
   "APP_INSTALL_FORM_TITLE": "Установить {{name}}",
   "APP_INSTALL_FORM_GENERAL": "Общее",
   "APP_INSTALL_FORM_REVERSE_PROXY": "Обратный прокси",
+  "APP_INSTALL_FORM_PORT_HINT": "Порт, на котором приложение будет доступно",
   "APP_INSTALL_SUCCESS": "Приложение {{id}} успешно установлено",
   "APP_LOGS_TAB_FOLLOW": "Следить за логами",
   "APP_LOGS_TAB_MAX_LINES": "Максимум строк:",
@@ -278,6 +281,7 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Запрещено в демо-режиме",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Запрещено в режиме разработки",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "Appstore с таким URL уже существует",
+  "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "Appstore с таким названием уже существует",
   "APP_STORE_CLONE_ERROR": "Ошибка клонирования appstore по адресу {{url}}. Это действительный git репозиторий?",
   "APP_STORE_CHOOSE_CATEGORY": "Выберите категорию",
   "APP_STORE_CHOOSE_STORE": "Выберите appstore",
@@ -367,5 +371,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Основная версия была изменена. Пожалуйста, обновите вручную (инструкции в примечаниях к релизу)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Вы должны войти для выполнения этого действия",
   "TIMEZONE_SELECTOR_LABEL": "Часовой пояс",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Выберите часовой пояс"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Выберите часовой пояс",
+  "YES": "Да",
+  "NO": "Нет"
 }
