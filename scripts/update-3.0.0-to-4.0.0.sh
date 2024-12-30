@@ -24,11 +24,13 @@ if [[ -d "app-data/app-data" ]] then
   exit 1
 fi
 
-# Check if already migrated
-if [[ -d "apps/1" ]] then
-  echo -e "❌ ${Red}You have already migrated your apps, if you haven't updated yet, run ${Green}./runtipi-cli update latest${ColorOff}"
-  exit 1
-fi
+# I don't think we can check this if we use app names
+
+# Check if already migrated 
+# if [[ -d "apps/1" ]] then
+#   echo -e "❌ ${Red}You have already migrated your apps, if you haven't updated yet, run ${Green}./runtipi-cli update latest${ColorOff}"
+#   exit 1
+# fi
 
 # Backups warning
 echo -e "⚠️  ${Yellow}Warning:${ColorOff} Make sure you have backed up your data before continuing, if something goes wrong during the migration process, you can risk losing important data! You can press Ctrl+C to cancel now if you need to backup\n"
@@ -61,28 +63,17 @@ echo -e "\n🛑 Stopping Runtipi...\n"
 
 ./runtipi-cli stop >/dev/null 2>&1
 
-# Moving apps
-echo -e "⏭️  Moving apps..."
+# Move app-data to backups
+echo -e "⏭️  Backing up data..."
 
-mkdir -p apps/1
-mkdir -p app-data/1
-mkdir -p user-config/1
-mkdir -p backups/1
+mkdir -p migration-backups
 
-for app in $(ls apps); do
-  if [[ $app == 1 ]] then
-    continue
-  fi
-  echo -e "⏭️  Moving app: ${Green}$app${ColorOff}"
-  mv apps/$app apps/1/$app
-  mv app-data/$app app-data/1/$app
-  if [[ -d "user-config/$app" ]]; then
-    mv user-config/$app user-config/1/$app
-  fi
-  if [[ -d "backups/$app" ]]; then
-    mv backups/$app backups/1/$app
-  fi
-done
+mv app-data migration-backups/app-data
+mv apps migration-backups/apps
+mv user-config migration-backups/user-config
+mv backups migration-backups/backups
+
+mkdir -p {app-data,apps,user-config,backups}
 
 # Clean repos
 echo -e "\n🧹 Cleaning repos...\n"
@@ -92,4 +83,36 @@ rm -rf repos/*
 # Update runtipi
 echo -e "🔄 Updating Runtipi...\n"
 
-./runtipi-cli update nightly
+./runtipi-cli update nightly >/dev/null 2>&1 # change this!
+
+# Stop runtipi
+echo -e "\n🛑 Stopping Runtipi...\n"
+
+./runtipi-cli stop >/dev/null 2>&1
+
+# Move apps
+echo -e "⏭️  Moving apps..."
+
+REPO_ID=$(ls apps)
+
+mkdir -p apps/$REPO_ID
+mkdir -p app-data/$REPO_ID
+mkdir -p user-config/$REPO_ID
+mkdir -p backups/$REPO_ID
+
+for app in $(ls migrations-backups/apps); do
+  echo -e "⏭️  Moving app: ${Green}$app${ColorOff}"
+  mv migration-backups/apps/$app apps/$REPO_ID/$app
+  mv migration-backups/app-data/$app app-data/$REPO_ID/$app
+  if [[ -d "migration-backups/user-config/$app" ]]; then
+    mv migration-backups/user-config/$app user-config/$REPO_ID/$app
+  fi
+  if [[ -d "migration-backups/backups/$app" ]]; then
+    mv migration-backups/backups/$app backups/$REPO_ID/$app
+  fi
+done
+
+# Start runtipi
+echo -e "\n🚀 Starting Runtipi...\n"
+
+./runtpi-cli start
