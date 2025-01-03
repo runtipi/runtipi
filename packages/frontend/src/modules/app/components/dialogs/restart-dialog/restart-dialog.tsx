@@ -24,7 +24,7 @@ export const RestartDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('restarting', info.id);
+      setOptimisticStatus('restarting', info.urn);
       onClose();
     },
   });
@@ -39,7 +39,7 @@ export const RestartDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
           <span className="text-muted">{t('APP_RESTART_FORM_SUBTITLE')}</span>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={() => restartMutation.mutate({ path: { id: info.id } })} intent="danger">
+          <Button onClick={() => restartMutation.mutate({ path: { urn: info.urn } })} intent="danger">
             {t('APP_RESTART_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

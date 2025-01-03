@@ -2,7 +2,7 @@ import type { z } from 'zod';
 import type { DependsOn, serviceSchema } from './schemas';
 
 interface ServicePort {
-  containerPort: number;
+  containerPort: number | string;
   hostPort: number | string;
   tcp?: boolean;
   udp?: boolean;
@@ -13,6 +13,8 @@ interface ServiceVolume {
   hostPath: string;
   containerPath: string;
   readOnly?: boolean;
+  shared?: boolean;
+  private?: boolean;
 }
 
 interface HealthCheck {
@@ -25,11 +27,37 @@ interface HealthCheck {
 }
 
 interface Ulimits {
-  nproc: number | { soft: number; hard: number };
-  nofile: number | { soft: number; hard: number };
+  nproc?: number | { soft: number; hard: number };
+  nofile?: number | { soft: number; hard: number };
+}
+
+interface Deploy {
+  resources: {
+    limits?: {
+      cpus?: string;
+      memory?: string;
+      pids?: number;
+    };
+    reservations?: {
+      cpus?: string;
+      memory?: string;
+      devices?: {
+        capabilities: string[];
+        driver?: string;
+        count?: 'all' | number;
+        deviceIds?: string[];
+      }[];
+    };
+  };
+}
+
+interface Logging {
+  driver: string;
+  options?: Record<string, string>;
 }
 
 export interface BuilderService {
+  name: string;
   image: string;
   containerName: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
@@ -40,10 +68,29 @@ export interface BuilderService {
   healthCheck?: HealthCheck;
   labels?: Record<string, string | boolean>;
   dependsOn?: DependsOn;
-  networks?: string[];
+  networks?: Record<string, { gw_priority: number }>;
   networkMode?: string;
   extraHosts?: string[];
   ulimits?: Ulimits;
+  capAdd?: string[];
+  deploy?: Deploy;
+  hostname?: string;
+  devices?: string[];
+  entrypoint?: string | string[];
+  pid?: string;
+  privileged?: boolean;
+  tty?: boolean;
+  user?: string;
+  workingDir?: string;
+  shmSize?: string;
+  capDrop?: string[];
+  logging?: Logging;
+  readOnly?: boolean;
+  securityOpt?: string[];
+  stopSignal?: string;
+  stopGracePeriod?: string;
+  stdinOpen?: boolean;
+  sysctls?: Record<string, number>;
 }
 
 export type BuiltService = ReturnType<typeof ServiceBuilder.prototype.build>;
@@ -70,17 +117,32 @@ export class ServiceBuilder {
   }
 
   /**
-   * Sets the name of the container. Will be used as the `container_name` property as well as the key
-   * @param name The name of the container.
+   * Sets the name of the service.
+   * @param name The name of the service.
    *
    * @example
    * ```typescript
    * const service = new ServiceBuilder();
-   * service.setName('nginx-container');
+   * service.setName('nginx');
    * ```
    */
   setName(name: string) {
-    this.service.containerName = name;
+    this.service.name = name;
+    return this;
+  }
+
+  /**
+   * Sets the container name of the service.
+   * @param containerName The container name of the service.
+   *
+   * @example
+   * ```typescript
+   * const service = new ServiceBuilder();
+   * service.setContainerName('nginx-migrated');
+   * ```
+   */
+  setContainerName(containerName: string) {
+    this.service.containerName = containerName;
     return this;
   }
 
@@ -107,8 +169,13 @@ export class ServiceBuilder {
    * service.addNetwork('tipi_main_network');
    * ```
    */
-  addNetwork(network: string) {
-    this.service.networks = [network];
+  setNetwork(network: string, priority = 0) {
+    if (!this.service.networks) {
+      this.service.networks = {};
+    }
+
+    this.service.networks[network] = { gw_priority: priority };
+
     return this;
   }
 
@@ -121,7 +188,7 @@ export class ServiceBuilder {
    * const service = new ServiceBuilder();
    * service.addPort({ containerPort: 80, hostPort: 8080 });
    */
-  addPort(port?: ServicePort) {
+  setPort(port?: ServicePort) {
     if (!port) {
       return this;
     }
@@ -164,10 +231,10 @@ export class ServiceBuilder {
    *   { containerPort: 443, hostPort: 8443, tcp: true },
    * ]);
    */
-  addPorts(ports?: ServicePort[]) {
+  setPorts(ports?: ServicePort[]) {
     if (ports) {
       for (const port of ports) {
-        this.addPort(port);
+        this.setPort(port);
       }
     }
     return this;
@@ -182,13 +249,20 @@ export class ServiceBuilder {
    * service.addVolume({ hostPath: '/path/to/host', containerPath: '/path/to/container' });
    * ```
    */
-  addVolume(volume: ServiceVolume) {
+  setVolume(volume: ServiceVolume) {
     if (!this.service.volumes) {
       this.service.volumes = [];
     }
 
     const readOnly = volume.readOnly ? ':ro' : '';
-    this.service.volumes.push(`${volume.hostPath}:${volume.containerPath}${readOnly}`);
+    const shared = volume.shared ? ':z' : '';
+    const privateVolume = volume.private ? ':Z' : '';
+
+    if ([readOnly, shared, privateVolume].filter((v) => v).length > 1) {
+      throw new Error('Only one of readOnly, shared, or private can be set');
+    }
+
+    this.service.volumes.push(`${volume.hostPath}:${volume.containerPath}${readOnly}${shared}${privateVolume}`);
     return this;
   }
 
@@ -204,10 +278,10 @@ export class ServiceBuilder {
    * ]);
    * ```
    */
-  addVolumes(volumes?: ServiceVolume[]) {
+  setVolumes(volumes?: ServiceVolume[]) {
     if (volumes && volumes.length > 0) {
       for (const volume of volumes) {
-        this.addVolume(volume);
+        this.setVolume(volume);
       }
     }
     return this;
@@ -323,7 +397,7 @@ export class ServiceBuilder {
     return this;
   }
 
-  addExtraHosts(extraHosts?: string[]) {
+  setExtraHosts(extraHosts?: string[]) {
     if (!extraHosts) {
       return this;
     }
@@ -332,12 +406,130 @@ export class ServiceBuilder {
     return this;
   }
 
-  addUlimits(ulimits?: Ulimits) {
+  setUlimits(ulimits?: Ulimits) {
     if (!ulimits) {
       return this;
     }
 
     this.service.ulimits = ulimits;
+    return this;
+  }
+
+  setCapAdd(cap?: string[]) {
+    this.service.capAdd = cap;
+    return this;
+  }
+
+  setDeploy(deploy?: Deploy) {
+    this.service.deploy = deploy;
+    return this;
+  }
+
+  setHostname(hostname?: string) {
+    this.service.hostname = hostname;
+    return this;
+  }
+
+  setDevices(devices?: string[]) {
+    this.service.devices = devices;
+    return this;
+  }
+
+  setEntrypoint(entrypoint?: string | string[]) {
+    this.service.entrypoint = entrypoint;
+    return this;
+  }
+
+  setPid(pid?: string) {
+    this.service.pid = pid;
+    return this;
+  }
+
+  setPrivileged(privileged?: boolean) {
+    this.service.privileged = privileged;
+    return this;
+  }
+
+  setTty(tty?: boolean) {
+    this.service.tty = tty;
+    return this;
+  }
+
+  setUser(user?: string) {
+    this.service.user = user;
+    return this;
+  }
+
+  setWorkingDir(workingDir?: string) {
+    this.service.workingDir = workingDir;
+    return this;
+  }
+
+  setShmSize(shmSize?: string) {
+    this.service.shmSize = shmSize;
+    return this;
+  }
+
+  setCapDrop(capDrop?: string[]) {
+    this.service.capDrop = capDrop;
+    return this;
+  }
+
+  setLogging(logging?: Logging) {
+    this.service.logging = logging;
+    return this;
+  }
+
+  setReadOnly(readOnly?: boolean) {
+    this.service.readOnly = readOnly;
+    return this;
+  }
+
+  setSecurityOpt(securityOpt?: string[]) {
+    this.service.securityOpt = securityOpt;
+    return this;
+  }
+
+  setStopSignal(stopSignal?: string) {
+    this.service.stopSignal = stopSignal;
+    return this;
+  }
+
+  setStopGracePeriod(stopGracePeriod?: string) {
+    this.service.stopGracePeriod = stopGracePeriod;
+    return this;
+  }
+
+  setStdinOpen(stdinOpen?: boolean) {
+    this.service.stdinOpen = stdinOpen;
+    return this;
+  }
+
+  setSysctls(sysctls?: Record<string, number>) {
+    this.service.sysctls = sysctls;
+    return this;
+  }
+
+  /*
+   * Search through the labels and replace any {{ RUNTIPI_APP_ID }} or {{RUNTIPI_APP_ID}} with the appId.
+   * @param {string} appId The appId to replace the variables with.
+   *
+   * @example: { 'runtipi.app_id': '{{RUNTIPI_APP_ID}}' } => { 'runtipi.app_id': 'my-app' }
+   */
+  public interpolateVariables(appId: string) {
+    if (this.service.labels) {
+      const interpolatedLabels: Record<string, string | boolean> = {};
+
+      for (const [key, value] of Object.entries(this.service.labels)) {
+        const interpolatedKey = key.replace(/\{\{\s*RUNTIPI_APP_ID\s*\}\}/g, appId);
+        const interpolatedValue = typeof value === 'string' ? value.replace(/\{\{\s*RUNTIPI_APP_ID\s*\}\}/g, appId) : value;
+
+        interpolatedLabels[interpolatedKey] = interpolatedValue;
+      }
+
+      this.service.labels = interpolatedLabels;
+    }
+
     return this;
   }
 
@@ -348,15 +540,16 @@ export class ServiceBuilder {
    * ```typescript
    * const service = new ServiceBuilder();
    * service.setImage('nginx:latest')
-   *  .setName('nginx-container')
+   *  .setName('nginx')
+   *  .setContainerName('nginx-migrated')
    *  .setRestartPolicy('always')
    *  .addNetwork('tipi_main_network')
    *  .build();
    *  ```
    */
   build() {
-    if (!this.service.containerName || !this.service.image) {
-      throw new Error('Service name and image are required');
+    if (!this.service.image || !this.service.name) {
+      throw new Error('Service name, container name and image are required');
     }
 
     if (this.service.networkMode) {
@@ -364,9 +557,10 @@ export class ServiceBuilder {
       this.service.networks = undefined;
     }
 
-    return {
+    const finalService = {
       image: this.service.image,
       command: this.service.command,
+      name: this.service.name,
       container_name: this.service.containerName,
       restart: this.service.restart,
       networks: this.service.networks,
@@ -379,6 +573,34 @@ export class ServiceBuilder {
       volumes: this.service.volumes,
       depends_on: this.service.dependsOn,
       labels: this.service.labels,
+      cap_add: this.service.capAdd,
+      deploy: this.service.deploy,
+      hostname: this.service.hostname,
+      devices: this.service.devices,
+      entrypoint: this.service.entrypoint,
+      pid: this.service.pid,
+      privileged: this.service.privileged,
+      tty: this.service.tty,
+      user: this.service.user,
+      working_dir: this.service.workingDir,
+      shm_size: this.service.shmSize,
+      cap_drop: this.service.capDrop,
+      logging: this.service.logging,
+      read_only: this.service.readOnly,
+      security_opt: this.service.securityOpt,
+      stop_signal: this.service.stopSignal,
+      stop_grace_period: this.service.stopGracePeriod,
+      stdin_open: this.service.stdinOpen,
+      sysctls: this.service.sysctls,
     };
+
+    // Delete any undefined properties
+    for (const key in finalService) {
+      if (finalService[key as keyof typeof finalService] === undefined) {
+        delete finalService[key as keyof typeof finalService];
+      }
+    }
+
+    return finalService;
   }
 }

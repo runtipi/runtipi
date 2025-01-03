@@ -26,7 +26,7 @@ export const AddLinkDialog: React.FC<AddLinkDialogProps> = ({ isOpen, onClose, l
 
   const schema = z.object({
     title: z.string().min(1).max(20),
-    description: z.string().min(0).max(50).nullable(),
+    description: z.string().min(0).max(50).optional(),
     url: z.string().url(),
     iconUrl: z.string().url().or(z.string().max(0)),
   });
@@ -37,7 +37,7 @@ export const AddLinkDialog: React.FC<AddLinkDialogProps> = ({ isOpen, onClose, l
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       ...link,
@@ -82,53 +82,53 @@ export const AddLinkDialog: React.FC<AddLinkDialogProps> = ({ isOpen, onClose, l
   return (
     <Dialog open={isOpen} onOpenChange={mutationExecuting ? undefined : onClose}>
       <DialogContent size="sm">
-          <DialogHeader>
-            <DialogTitle>{link ? t('LINKS_EDIT_TITLE') : t('LINKS_ADD_TITLE')}</DialogTitle>
-          </DialogHeader>
-          <DialogDescription>
-            <form onSubmit={handleSubmit((values) => onSubmit(values))} id={formId}>
-              <Input
-                disabled={mutationExecuting}
-                {...register('title')}
-                maxLength={20}
-                label={t('LINKS_FORM_LINK_TITLE')}
-                placeholder="Runtipi demo"
-                error={errors.title?.message}
-              />
-              <Input
-                disabled={mutationExecuting}
-                type="text"
-                {...register('description')}
-                maxLength={50}
-                className="mt-3"
-                label={t('LINKS_FROM_LINK_DESCRIPTION')}
-                placeholder="My super app"
-                error={errors.description?.message}
-              />
-              <Input
-                disabled={mutationExecuting}
-                {...register('url')}
-                className="mt-3"
-                label={t('LINKS_FORM_LINK_URL')}
-                placeholder="https://demo.runtipi.io"
-                error={errors.url?.message}
-              />
+        <DialogHeader>
+          <DialogTitle>{link ? t('LINKS_EDIT_TITLE') : t('LINKS_ADD_TITLE')}</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>
+          <form onSubmit={handleSubmit((values) => onSubmit(values))} id={formId}>
+            <Input
+              disabled={mutationExecuting}
+              {...register('title')}
+              maxLength={20}
+              label={t('LINKS_FORM_LINK_TITLE')}
+              placeholder="Runtipi demo"
+              error={errors.title?.message}
+            />
+            <Input
+              disabled={mutationExecuting}
+              type="text"
+              {...register('description')}
+              maxLength={50}
+              className="mt-3"
+              label={t('LINKS_FROM_LINK_DESCRIPTION')}
+              placeholder="My super app"
+              error={errors.description?.message}
+            />
+            <Input
+              disabled={mutationExecuting}
+              {...register('url')}
+              className="mt-3"
+              label={t('LINKS_FORM_LINK_URL')}
+              placeholder="https://demo.runtipi.io"
+              error={errors.url?.message}
+            />
 
-              <Input
-                disabled={mutationExecuting}
-                {...register('iconUrl')}
-                className="mt-3"
-                label={t('LINKS_FORM_ICON_URL')}
-                placeholder={t('LINKS_FORM_ICON_PLACEHOLDER')}
-                error={errors.iconUrl?.message}
-              />
-            </form>
-          </DialogDescription>
-          <DialogFooter>
-            <Button type="submit" intent="success" disabled={mutationExecuting} form={formId}>
-              {link ? t('LINKS_EDIT_SUBMIT') : t('LINKS_ADD_SUBMIT')}
-            </Button>
-          </DialogFooter>
+            <Input
+              disabled={mutationExecuting}
+              {...register('iconUrl')}
+              className="mt-3"
+              label={t('LINKS_FORM_ICON_URL')}
+              placeholder={t('LINKS_FORM_ICON_PLACEHOLDER')}
+              error={errors.iconUrl?.message}
+            />
+          </form>
+        </DialogDescription>
+        <DialogFooter>
+          <Button type="submit" intent="success" disabled={mutationExecuting} form={formId}>
+            {link ? t('LINKS_EDIT_SUBMIT') : t('LINKS_ADD_SUBMIT')}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

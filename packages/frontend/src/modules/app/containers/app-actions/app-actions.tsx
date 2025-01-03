@@ -27,7 +27,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import './app-actions.css';
 import { startAppMutation } from '@/api-client/@tanstack/react-query.gen';
-import type { AppDetails, AppInfo, AppUpdateInfo } from '@/types/app.types';
+import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
@@ -42,7 +42,7 @@ import { useAppStatus } from '../../helpers/use-app-status';
 interface IProps {
   app?: AppDetails | null;
   info: AppInfo;
-  updateInfo?: AppUpdateInfo;
+  metadata: AppMetadata;
   localDomain?: string;
 }
 
@@ -65,7 +65,7 @@ const ActionButton: React.FC<BtnProps> = (props) => {
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
-export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
+export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
   const installDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const restartDisclosure = useDisclosure();
@@ -78,9 +78,12 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
   const { setOptimisticStatus } = useAppStatus();
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-  const updateAvailable = Number(app?.version ?? 0) < Number(updateInfo?.latestVersion || 0);
+  const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
 
-  const buttons: JSX.Element[] = [];
+  const [appId, storeId] = info.urn.split(':');
+  const appLocalDomain = `${appId}-${storeId}.${localDomain}`;
+
+  const buttons: React.JSX.Element[] = [];
 
   const startMutation = useMutation({
     ...startAppMutation(),
@@ -88,7 +91,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('starting', info.id);
+      setOptimisticStatus('starting', info.urn);
     },
   });
 
@@ -96,7 +99,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     <ActionButton
       key="start"
       IconComponent={IconPlayerPlay}
-      onClick={() => startMutation.mutate({ path: { id: info.id } })}
+      onClick={() => startMutation.mutate({ path: { urn: info.urn } })}
       title={t('APP_ACTION_START')}
       intent="success"
     />
@@ -140,13 +143,13 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
           {(app?.exposedLocal || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('local_domain')}>
               <IconLock className="text-muted me-2" size={16} />
-              {info.id}.{localDomain}
+              {appLocalDomain}
             </DropdownMenuItem>
           )}
           {(app?.openPort || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('local')}>
               <IconLockOff className="text-muted me-2" size={16} />
-              {hostname}:{info.port}
+              {hostname}:{app?.port ?? info.port}
             </DropdownMenuItem>
           )}
         </DropdownMenuGroup>
@@ -200,7 +203,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     if (typeof window !== 'undefined') {
       // Current domain
       const domain = window.location.hostname;
-      url = `${protocol}://${domain}:${info.port}${info.url_suffix || ''}`;
+      url = `${protocol}://${domain}:${app?.port ?? info.port}${info.url_suffix || ''}`;
     }
 
     if (type === 'domain' && app?.domain) {
@@ -208,7 +211,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     }
 
     if (type === 'local_domain') {
-      url = `https://${info.id}.${localDomain}`;
+      url = `https://${appLocalDomain}${info.url_suffix || ''}`;
     }
 
     window.open(url, '_blank', 'noreferrer');
@@ -222,9 +225,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     }, 300);
   };
 
-  const newVersion = [updateInfo?.latestDockerVersion ? `${updateInfo?.latestDockerVersion}` : '', `(${String(updateInfo?.latestVersion)})`].join(
-    ' ',
-  );
+  const newVersion = [metadata?.latestDockerVersion ? `${metadata?.latestDockerVersion}` : '', `(${String(metadata?.latestVersion)})`].join(' ');
 
   return (
     <>

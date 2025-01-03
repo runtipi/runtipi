@@ -21,12 +21,14 @@ interface IProps {
 }
 
 export type FormValues = {
+  port?: string;
   exposed: boolean;
   exposedLocal: boolean;
   openPort: boolean;
   domain?: string;
   isVisibleOnGuestDashboard?: boolean;
-  [key: string]: string | boolean | undefined;
+  enableAuth: boolean;
+  [key: string]: unknown;
 };
 
 const hiddenTypes = ['random'];
@@ -47,6 +49,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
     control,
   } = useForm<FormValues>({});
   const watchExposed = watch('exposed', false);
+  const watchOpenPort = watch('openPort', true);
 
   useEffect(() => {
     if (info.force_expose) {
@@ -136,6 +139,21 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
             />
           )}
         />
+        {watchOpenPort && (
+          <div className="mb-3">
+            <Input
+              type="number"
+              defaultValue={info.port}
+              min={1024}
+              max={65535}
+              {...register('port')}
+              error={errors.port?.message}
+              disabled={loading}
+              placeholder="8484"
+            />
+            <span className="text-muted">{t('APP_INSTALL_FORM_PORT_HINT')}</span>
+          </div>
+        )}
         <Controller
           control={control}
           name="exposedLocal"
@@ -149,10 +167,32 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
               label={
                 <>
                   {t('APP_INSTALL_FORM_EXPOSE_LOCAL')}
-                  <Tooltip className="tooltip" anchorSelect=".expose-local-hint">
+                  <Tooltip className="tooltip" anchorSelect=".enable-auth-hint">
                     {t('APP_INSTALL_FORM_EXPOSE_LOCAL_HINT', { domain: localDomain, appId: info.id })}
                   </Tooltip>
-                  <span className={clsx('ms-1 form-help expose-local-hint')}>?</span>
+                  <span className={clsx('ms-1 form-help enable-auth-hint')}>?</span>
+                </>
+              }
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="enableAuth"
+          render={({ field: { onChange, value, ref, ...props } }) => (
+            <Switch
+              {...props}
+              className="mb-3"
+              ref={ref}
+              checked={value}
+              onCheckedChange={onChange}
+              label={
+                <>
+                  {t('APP_INSTALL_FORM_ENABLE_AUTH')}
+                  <Tooltip className="tooltip" anchorSelect=".enable-auth-hint">
+                    {t('APP_INSTALL_FORM_ENABLE_AUTH_HINT')}
+                  </Tooltip>
+                  <span className={clsx('ms-1 form-help enable-auth-hint')}>?</span>
                 </>
               }
             />
@@ -197,9 +237,13 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           )}
         />
       )}
-      {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
-      {info.dynamic_config && renderDynamicConfigForm()}
-      {info.exposable && renderExposeForm()}
+      {Boolean(info.port) && (
+        <>
+          {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
+          {info.dynamic_config && renderDynamicConfigForm()}
+          {info.exposable && renderExposeForm()}
+        </>
+      )}
     </form>
   );
 };

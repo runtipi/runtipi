@@ -37,7 +37,7 @@ export const ChangeUsernameForm = ({ username }: Props) => {
     },
   });
 
-  const { register, handleSubmit, formState } = useForm<FormValues>({
+  const { register, handleSubmit, formState } = useForm({
     resolver: zodResolver(schema),
   });
 

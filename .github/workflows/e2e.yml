@@ -53,7 +53,7 @@ jobs:
       - name: Download CLI form release on runtipi/cli repo
         run: |
           REPO="runtipi/cli"
-          VERSION="nightly"
+          VERSION=nightly
 
           ASSETS_URL=$(curl -s \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -94,6 +94,9 @@ jobs:
       - name: Run install script
         if: ${{ inputs.version }}
         run: |
+          docker version
+          mkdir -p runtipi/user-config
+          echo -e "services:\n  runtipi-db:\n    ports:\n      - 5432:5432" > runtipi/user-config/tipi-compose.yml
           curl -s https://raw.githubusercontent.com/runtipi/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
           chmod +x install.sh
           ./install.sh --version ${{ inputs.version }} --asset runtipi-cli-linux-x86_64.tar.gz --env-file ${{ github.workspace }}/.env.local
@@ -101,41 +104,16 @@ jobs:
       - name: Run install script
         if: ${{ !inputs.version }}
         run: |
+          mkdir -p runtipi/user-config
+          echo -e "services:\n  runtipi-db:\n    ports:\n      - 5432:5432" > runtipi/user-config/tipi-compose.yml
           ./scripts/install.sh --version e2e --env-file ${{ github.workspace }}/.env.local
           cd ..
-
-      - uses: pnpm/action-setup@v4.0.0
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: 9.12.2
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
 
       - name: Create .env.e2e file
         run: |
           echo "SERVER_IP=$(hostname -I | awk '{print $1}')" > .env.e2e
           echo "POSTGRES_PASSWORD=$(grep POSTGRES_PASSWORD runtipi/.env | cut -d '=' -f2)" >> .env.e2e
           echo "BASE_PATH=./runtipi" >> .env.e2e
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
 
       - name: Get installed playwright version
         id: playwright-version
@@ -151,6 +129,9 @@ jobs:
       - name: Install Playwright Browsers
         if: steps.cache-playwright-binaries.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
+
+      - name: Install dependencies
+        uses: "./.github/actions/install-dependencies"
 
       - name: Run Playwright tests
         id: run-e2e

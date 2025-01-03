@@ -40,24 +40,24 @@ export const EditAppStoreDialog = ({ appStore }: Props) => {
     },
   });
 
-  const { register, control, handleSubmit, setError, formState } = useForm<FormValues>({
+  const { register, control, handleSubmit, formState } = useForm({
     resolver: zodResolver(schema),
     values: appStore,
   });
 
   const validate = (values: FormValues) => {
-    editAppStore.mutate({ path: { id: appStore.id.toString() }, body: values });
+    editAppStore.mutate({ path: { id: appStore.slug }, body: values });
   };
 
   const formId = useId();
 
   return (
     <div>
-      <Button loading={editAppStore.isPending} size="sm" variant="ghost" onClick={() => editAppStoreDisclosure.open()}>
+      <Button loading={editAppStore.isPending} size="sm" variant="ghost" onClick={() => editAppStoreDisclosure.open()} className="me-2">
         {t('APP_STORE_TABLE_EDIT')}
       </Button>
       <Dialog open={editAppStoreDisclosure.isOpen} onOpenChange={editAppStoreDisclosure.toggle}>
-        <DialogContent>
+        <DialogContent size="sm">
           <DialogHeader>
             <DialogTitle>{t('APP_STORE_EDIT_DIALOG_TITLE')}</DialogTitle>
           </DialogHeader>

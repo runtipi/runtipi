@@ -1,17 +1,16 @@
 import path from 'node:path';
 import { Injectable } from '@nestjs/common';
-import Sentry from '@sentry/nestjs';
+import * as Sentry from '@sentry/nestjs';
 import { z } from 'zod';
 import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
-import { CacheService } from './core/cache/cache.service';
+import { CacheService, ONE_DAY_IN_SECONDS } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
 import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
-import { SocketManager } from './core/socket/socket.service';
+import { AppLifecycleService } from './modules/app-lifecycle/app-lifecycle.service';
 import { AppStoreService } from './modules/app-stores/app-store.service';
-import { AppsRepository } from './modules/apps/apps.repository';
 import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 
@@ -22,12 +21,11 @@ export class AppService {
     private readonly configuration: ConfigurationService,
     private readonly logger: LoggerService,
     private readonly repoQueue: RepoEventsQueue,
-    private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
     private readonly appStoreService: AppStoreService,
-    private readonly appsRepository: AppsRepository,
     private readonly marketplaceService: MarketplaceService,
     private readonly databaseService: DatabaseService,
+    private readonly appLifecycleService: AppLifecycleService,
   ) {}
 
   public async bootstrap() {
@@ -35,6 +33,9 @@ export class AppService {
       await this.databaseService.migrate();
 
       const { version, userSettings, __prod__ } = this.configuration.getConfig();
+      const config = this.configuration.getConfig();
+      this.logger.info('Log level', config.userSettings.logLevel);
+      this.logger.debug('Starting with configuration', config);
 
       this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
 
@@ -43,27 +44,35 @@ export class AppService {
       this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
       this.logger.info('Generating system env file...');
 
+      const buster = this.cache.get('buster');
+      if (buster !== version) {
+        this.logger.info('Clearing cache...');
+        this.cache.clear();
+        this.cache.set('buster', version, ONE_DAY_IN_SECONDS * 365);
+      }
+
       // Delete all repos for a clean start
       if (__prod__) {
         await this.appStoreService.deleteAllRepos();
       }
 
-      const repoId = await this.appStoreService.migrateLegacyRepo();
-      if (repoId) {
-        await this.appsRepository.updateAppAppStoreIdWhereNull(repoId);
-      }
+      await this.appStoreService.migrateLegacyRepo();
 
       this.repoQueue.publish({ command: 'clone_all' });
 
       await this.marketplaceService.initialize();
 
       // Every 15 minutes, check for updates to the apps repo
-      this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');
-
-      this.socketManager.init();
+      if (__prod__) {
+        this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');
+      }
 
       await this.copyAssets();
       await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
+
+      if (__prod__) {
+        this.appLifecycleService.startAllApps();
+      }
     } catch (e) {
       this.logger.error(e);
       Sentry.captureException(e, { tags: { source: 'bootstrap' } });
@@ -74,23 +83,27 @@ export class AppService {
     const { version: currentVersion } = this.configuration.getConfig();
 
     try {
-      let version = (await this.cache.get('latestVersion')) ?? '';
-      let body = (await this.cache.get('latestVersionBody')) ?? '';
+      let version = this.cache.get('latestVersion') ?? '';
+      let body = this.cache.get('latestVersionBody') ?? '';
 
       if (!version) {
-        const response = await fetch(LATEST_RELEASE_URL);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
+        version = currentVersion;
+        // Fetch the latest version in the background
+        fetch(LATEST_RELEASE_URL).then(async (response) => {
+          if (!response.ok) {
+            this.logger.error(`Failed to fetch latest version from GitHub: ${response.statusText}`);
+            return;
+          }
+          const data = await response.json();
 
-        const res = z.object({ tag_name: z.string(), body: z.string() }).parse(data);
+          const res = z.object({ tag_name: z.string(), body: z.string() }).parse(data);
 
-        version = res.tag_name;
-        body = res.body;
+          version = res.tag_name;
+          body = res.body;
 
-        await this.cache.set('latestVersion', version, 60 * 60);
-        await this.cache.set('latestVersionBody', body, 60 * 60);
+          this.cache.set('latestVersion', version, 60 * 60);
+          this.cache.set('latestVersionBody', body, 60 * 60);
+        });
       }
 
       return { current: currentVersion, latest: version, body };
@@ -182,8 +195,14 @@ export class AppService {
       (await this.filesystem.pathExists(path.join(tlsFolder, 'cert.pem'))) &&
       (await this.filesystem.pathExists(path.join(tlsFolder, 'key.pem')))
     ) {
-      this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
-      return;
+      // Check if the certificate is still valid
+      const { stdout } = await execAsync(`openssl x509 -checkend 86400 -noout -in ${tlsFolder}/cert.pem`);
+      if (stdout.includes('Certificate will not expire')) {
+        this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
+        return;
+      }
+
+      this.logger.warn(`TLS certificate for ${data.localDomain} is expired or will expire soon. Regenerating a new one...`);
     }
 
     // Empty out the folder

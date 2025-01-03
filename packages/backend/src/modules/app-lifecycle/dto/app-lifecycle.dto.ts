@@ -3,11 +3,13 @@ import { z } from 'zod';
 
 export const appFormSchema = z
   .object({
+    port: z.coerce.number().min(1024).max(65535).optional(),
     exposed: z.boolean().optional(),
     exposedLocal: z.boolean().optional(),
     openPort: z.boolean().optional().default(true),
     domain: z.string().optional(),
     isVisibleOnGuestDashboard: z.boolean().optional(),
+    enableAuth: z.boolean().optional(),
   })
   .extend({})
   .catchall(z.unknown());

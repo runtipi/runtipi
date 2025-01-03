@@ -4,7 +4,7 @@ services:
     depends_on:
       runtipi:
         condition: service_healthy
-    image: traefik:v3.1.4
+    image: traefik:v3.2
     restart: unless-stopped
     ports:
       - 80:80
@@ -39,6 +39,21 @@ services:
     networks:
       - tipi_main_network
 
+  runtipi-queue:
+    container_name: runtipi-queue
+    image: rabbitmq:4-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    environment:
+       RABBITMQ_DEFAULT_USER: tipi
+       RABBITMQ_DEFAULT_PASS: rabbitmq
+    networks:
+      - tipi_main_network
+
   runtipi:
     build:
       context: .
@@ -48,6 +63,8 @@ services:
         LOCAL: true
     depends_on:
       runtipi-db:
+        condition: service_healthy
+      runtipi-queue:
         condition: service_healthy
     container_name: runtipi
     restart: unless-stopped
@@ -83,6 +100,9 @@ services:
       NODE_ENV: production
       ROOT_FOLDER_HOST: ${PWD}
       POSTGRES_PASSWORD: postgres
+      RABBITMQ_USERNAME: tipi
+      RABBITMQ_PASSWORD: rabbitmq
+      RABBITMQ_HOST: runtipi-queue
       INTERNAL_IP: 127.0.0.1
       TIPI_VERSION: 0.0.0
       LOG_LEVEL: debug
@@ -118,32 +138,8 @@ services:
       traefik.http.routers.dashboard-local.entrypoints: websecure
       traefik.http.routers.dashboard-local.tls: true
       traefik.http.routers.dashboard-local.service: dashboard
-
-      # ---- socket ----- #
-      traefik.http.services.socket.loadbalancer.server.port: 5001
-      # Local ip
-      traefik.http.routers.socket.rule: PathPrefix("/api/socket.io")
-      traefik.http.routers.socket.service: socket
-      traefik.http.routers.socket.entrypoints: web
-      # Websecure
-      traefik.http.routers.socket-insecure.rule: Host(`${DOMAIN}`) && PathPrefix(`/api/socket.io`)
-      traefik.http.routers.socket-insecure.service: socket
-      traefik.http.routers.socket-insecure.entrypoints: web
-      traefik.http.routers.socket-insecure.middlewares: redirect-to-https
-      traefik.http.routers.socket-secure.rule: Host(`${DOMAIN}`) && PathPrefix(`/api/socket.io`)
-      traefik.http.routers.socket-secure.service: socket
-      traefik.http.routers.socket-secure.entrypoints: websecure
-      traefik.http.routers.socket-secure.tls.certresolver: myresolver
-      # Local domain
-      traefik.http.routers.socket-local-insecure.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/api/socket.io")
-      traefik.http.routers.socket-local-insecure.entrypoints: web
-      traefik.http.routers.socket-local-insecure.service: socket
-      traefik.http.routers.socket-local-insecure.middlewares: redirect-to-https
-      # Secure
-      traefik.http.routers.socket-local.rule: Host(`${LOCAL_DOMAIN}`) && PathPrefix("/api/socket.io")
-      traefik.http.routers.socket-local.entrypoints: websecure
-      traefik.http.routers.socket-local.tls: true
-      traefik.http.routers.socket-local.service: socket
+      # Middlewares
+      traefik.http.middlewares.runtipi.forwardauth.address: ${RUNTIPI_FORWARD_AUTH_URL:-http://runtipi:3000/api/auth/traefik}
 
 networks:
   tipi_main_network:

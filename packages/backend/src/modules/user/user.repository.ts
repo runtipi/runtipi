@@ -1,12 +1,12 @@
-import { DatabaseService } from '@/core/database/database.service';
+import { DATABASE, type Database } from '@/core/database/database.module';
 import { user } from '@/core/database/drizzle/schema';
 import type { NewUser } from '@/core/database/drizzle/types';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm/sql';
 
 @Injectable()
 export class UserRepository {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(@Inject(DATABASE) private db: Database) {}
 
   /**
    * Given a username, return the user associated to it
@@ -14,7 +14,7 @@ export class UserRepository {
    * @param {string} username - The username of the user to return
    */
   public async getUserByUsername(username: string) {
-    return this.databaseService.db.query.user.findFirst({ where: eq(user.username, username.trim().toLowerCase()) });
+    return this.db.query.user.findFirst({ where: eq(user.username, username.trim().toLowerCase()) });
   }
 
   /**
@@ -23,7 +23,7 @@ export class UserRepository {
    * @param {number} id - The id of the user to return
    */
   public async getUserById(id: number) {
-    return this.databaseService.db.query.user.findFirst({ where: eq(user.id, Number(id)) });
+    return this.db.query.user.findFirst({ where: eq(user.id, Number(id)) });
   }
 
   /**
@@ -32,7 +32,7 @@ export class UserRepository {
    * @param {number} id - The id of the user to return
    */
   public async getUserDtoById(id: number) {
-    return this.databaseService.db.query.user.findFirst({
+    return this.db.query.user.findFirst({
       where: eq(user.id, Number(id)),
       columns: { id: true, username: true, totpEnabled: true, locale: true, operator: true, hasSeenWelcome: true },
     });
@@ -45,7 +45,7 @@ export class UserRepository {
    * @param {Partial<NewUser>} data - The data to update the user with
    */
   public async updateUser(id: number, data: Partial<NewUser>) {
-    const updatedUsers = await this.databaseService.db
+    const updatedUsers = await this.db
       .update(user)
       .set(data)
       .where(eq(user.id, Number(id)))
@@ -58,14 +58,14 @@ export class UserRepository {
    * Returns all operators registered in the system
    */
   public async getOperators() {
-    return this.databaseService.db.select().from(user).where(eq(user.operator, true));
+    return this.db.select().from(user).where(eq(user.operator, true));
   }
 
   /**
    * Returns the first operator found in the system
    */
   public async getFirstOperator() {
-    return this.databaseService.db.query.user.findFirst({ where: eq(user.operator, true) });
+    return this.db.query.user.findFirst({ where: eq(user.operator, true) });
   }
 
   /**
@@ -74,7 +74,7 @@ export class UserRepository {
    * @param {NewUser} data - The data to create the user with
    */
   public async createUser(data: NewUser) {
-    const newUsers = await this.databaseService.db.insert(user).values(data).returning();
+    const newUsers = await this.db.insert(user).values(data).returning();
     return newUsers[0];
   }
 }

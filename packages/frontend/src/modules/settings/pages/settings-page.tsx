@@ -1,6 +1,8 @@
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAppContext } from '@/context/app-context';
 import { Suspense, lazy } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
 import { AppStoresContainer } from '../containers/app-stores-container';
@@ -16,14 +18,16 @@ export const SettingsPage = () => {
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab');
   const { userSettings, user } = useAppContext();
+  const [currentTab, setCurrentTab] = React.useState(tab || 'actions');
 
   const handleTabChange = (newTab: string) => {
-    navigate(`/settings?tab=${newTab}`, { replace: true });
+    setCurrentTab(newTab);
+    navigate(`?tab=${newTab}`, { replace: true });
   };
 
   return (
     <div className="card d-flex">
-      <Tabs defaultValue={tab || 'actions'}>
+      <Tabs value={currentTab}>
         <TabsList>
           <TabsTrigger onClick={() => handleTabChange('actions')} value="actions">
             {t('SETTINGS_ACTIONS_TAB_TITLE')}
@@ -34,12 +38,19 @@ export const SettingsPage = () => {
           <TabsTrigger onClick={() => handleTabChange('security')} value="security">
             {t('SETTINGS_SECURITY_TAB_TITLE')}
           </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange('appstores')} value="appstores">
+          <TabsTrigger onClick={() => handleTabChange('appstores')} value="appstores" className="d-none d-md-block">
             {t('SETTINGS_APPSTORES_TAB_TITLE')}
           </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange('logs')} value="logs">
+          <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" className="d-none d-md-block">
             {t('SETTINGS_LOGS_TAB_TITLE')}
           </TabsTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="nav-link dropdown-toggle d-block d-md-none">{t('MORE')}</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => handleTabChange('appstores')}>{t('SETTINGS_APPSTORES_TAB_TITLE')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTabChange('logs')}>{t('SETTINGS_LOGS_TAB_TITLE')}</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </TabsList>
         <TabsContent value="actions">
           <Suspense>

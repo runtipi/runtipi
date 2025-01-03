@@ -29,7 +29,7 @@ export const AppStoresTable = ({ appStores }: Props) => {
         </TableHeader>
         <TableBody>
           {appStores.map((appStore) => (
-            <TableRow key={appStore.id}>
+            <TableRow key={appStore.slug}>
               <TableCell>{appStore.name}</TableCell>
               <TableCell>
                 <EnabledBadge enabled={appStore.enabled} />
@@ -39,9 +39,11 @@ export const AppStoresTable = ({ appStores }: Props) => {
                   {appStore.url}
                 </a>
               </TableCell>
-              <TableCell className="d-flex flex-row">
-                <EditAppStoreDialog appStore={appStore} />
-                <DeleteAppStoreDialog appStore={appStore} />
+              <TableCell>
+                <div className="d-flex flex-row">
+                  <EditAppStoreDialog appStore={appStore} />
+                  <DeleteAppStoreDialog appStore={appStore} />
+                </div>
               </TableCell>
             </TableRow>
           ))}

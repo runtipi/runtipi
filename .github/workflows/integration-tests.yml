@@ -22,7 +22,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       rabbitmq:
-        image: rabbitmq:4
+        image: rabbitmq:4-alpine
         ports:
           - 5672:5672
         options: >-
@@ -34,33 +34,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - uses: pnpm/action-setup@v4.0.0
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: 9.12.2
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
       - name: Install dependencies
-        run: pnpm install
+        uses: "./.github/actions/install-dependencies"
 
       - name: Run integration tests
         run: pnpm test:integration

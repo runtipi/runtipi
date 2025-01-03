@@ -14,17 +14,17 @@ export const AppDetailsPage = () => {
   const { appId, storeId } = useParams<{ appId: string; storeId: string }>();
 
   const getApp = useSuspenseQuery({
-    ...getAppOptions({ path: { id: `${appId}_${storeId}` } }),
+    ...getAppOptions({ path: { urn: `${appId}:${storeId}` } }),
   });
 
   const { userSettings } = useAppContext();
 
-  const { info, app, updateInfo } = getApp.data;
+  const { info, app, metadata } = getApp.data;
 
   return (
     <div className="card" data-testid="app-details">
       <div className="card-header d-flex flex-column flex-md-row">
-        <AppLogo id={info?.id} size={130} alt={info?.name} />
+        <AppLogo urn={info?.urn} size={130} alt={info?.name} />
         <div className="w-100 d-flex flex-column ms-md-3 align-items-center align-items-md-start">
           <div>
             <span className="mt-1 me-1">{t('APP_DETAILS_VERSION')}: </span>
@@ -34,10 +34,10 @@ export const AppDetailsPage = () => {
           <div className="mb-1">
             <AppStatus status={app?.status ?? 'missing'} />
           </div>
-          <AppActions app={app} updateInfo={updateInfo} info={info} localDomain={userSettings.localDomain} />
+          <AppActions app={app} metadata={metadata} info={info} localDomain={userSettings.localDomain} />
         </div>
       </div>
-      <AppDetailsTabs info={info} app={app} />
+      <AppDetailsTabs info={info} app={app} metadata={metadata} />
     </div>
   );
 };

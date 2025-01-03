@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { settingsSchema } from '@/app.dto';
+import { type LogLevel, LoggerService } from '@/core/logger/logger.service';
 import { EnvUtils } from '@/modules/env/env.utils';
 import dotenv from 'dotenv';
 import { DATA_DIR } from '../constants';
@@ -35,6 +36,9 @@ const getArchitecture = () => {
 };
 
 export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
+  const logger = new LoggerService('backend', path.join(path.join(DATA_DIR, 'logs')), process.env.LOG_LEVEL as LogLevel);
+  logger.info('Generating system env file');
+
   const envUtils = new EnvUtils();
 
   await fs.promises.mkdir(path.join(DATA_DIR, 'state'), { recursive: true });
@@ -78,8 +82,8 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   hash.update(repoUrl);
   const repoId = hash.digest('hex');
 
-  const rootFolderHost = envMap.get('ROOT_FOLDER_HOST') ?? process.env.ROOT_FOLDER_HOST;
-  const internalIp = envMap.get('INTERNAL_IP') ?? '127.0.0.1';
+  const rootFolderHost = envMap.get('ROOT_FOLDER_HOST') || process.env.ROOT_FOLDER_HOST;
+  const internalIp = envMap.get('INTERNAL_IP') || '127.0.0.1';
 
   if (!rootFolderHost) {
     throw new Error(
@@ -92,6 +96,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   const appDataSegment = '/app-data';
 
   while (appDataPath?.endsWith(appDataSegment)) {
+    logger.warn('Your app data path setting should not end with /app-data. Please remove the /app-data suffix.');
     appDataPath = appDataPath.slice(0, -appDataSegment.length);
   }
 
@@ -105,6 +110,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
   envMap.set('RUNTIPI_APP_DATA_PATH', appDataPath || rootFolderHost);
+  envMap.set('RUNTIPI_FORWARD_AUTH_URL', data.forwardAuthUrl || envMap.get('RUNTIPI_FORWARD_AUTH_URL') || 'http://runtipi:3000/api/auth/traefik');
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
@@ -128,6 +134,12 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
     'QUEUE_TIMEOUT_IN_MINUTES',
     typeof data.eventsTimeout === 'number' ? String(data.eventsTimeout) : envMap.get('QUEUE_TIMEOUT_IN_MINUTES') || '5',
   );
+  envMap.set(
+    'ADVANCED_SETTINGS',
+    typeof data.advancedSettings === 'boolean' ? String(data.advancedSettings) : envMap.get('ADVANCED_SETTINGS') || 'false',
+  );
+  envMap.set('LOG_LEVEL', data.logLevel || envMap.get('LOG_LEVEL') || 'info');
+  envMap.set('EXPERIMENTAL_INSECURE_COOKIE', data.experimental_insecureCookie ? 'true' : 'false');
 
   await fs.promises.writeFile(envFilePath, envUtils.envMapToString(envMap));
 

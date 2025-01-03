@@ -1,10 +1,9 @@
-import { backupAppMutation, deleteAppBackupMutation, restoreAppBackupMutation } from '@/api-client/@tanstack/react-query.gen';
+import { backupAppMutation, deleteAppBackupMutation, getAppBackupsOptions, restoreAppBackupMutation } from '@/api-client/@tanstack/react-query.gen';
 import { DateFormat } from '@/components/date-format/date-format';
 import { FileSize } from '@/components/file-size/file-size';
 import { Button } from '@/components/ui/Button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { TablePagination } from '@/components/ui/TablePagination/TablePagination';
-import { getAppBackupsFn } from '@/lib/api/get-app-backups';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import type { AppBackup, AppInfo, AppStatus } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
@@ -31,8 +30,7 @@ export const AppBackups = ({ info, status }: Props) => {
   const deleteBackupModalDisclosure = useDisclosure();
 
   const { data } = useSuspenseQuery({
-    queryKey: ['app-backups', page, info.id],
-    queryFn: () => getAppBackupsFn({ appId: info.id, page: page, pageSize: 5 }),
+    ...getAppBackupsOptions({ path: { urn: info.urn }, query: { page, pageSize: 5 } }),
   });
 
   const backupApp = useMutation({
@@ -144,20 +142,20 @@ export const AppBackups = ({ info, status }: Props) => {
         info={info}
         isOpen={backupModalDisclosure.isOpen}
         onClose={backupModalDisclosure.close}
-        onConfirm={() => backupApp.mutate({ path: { appid: info.id } })}
+        onConfirm={() => backupApp.mutate({ path: { urn: info.urn } })}
       />
       <RestoreAppDialog
         appName={info.name}
         backup={selectedBackup}
         isOpen={restoreModalDisclosure.isOpen}
         onClose={restoreModalDisclosure.close}
-        onConfirm={() => selectedBackup && restoreAppBackup.mutate({ path: { appid: info.id }, body: { filename: selectedBackup.id } })}
+        onConfirm={() => selectedBackup && restoreAppBackup.mutate({ path: { urn: info.urn }, body: { filename: selectedBackup.id } })}
       />
       <DeleteAppBackupDialog
         backup={selectedBackup}
         isOpen={deleteBackupModalDisclosure.isOpen}
         onClose={deleteBackupModalDisclosure.close}
-        onConfirm={() => selectedBackup && deleteAppBackup.mutate({ path: { appid: info.id }, body: { filename: selectedBackup.id } })}
+        onConfirm={() => selectedBackup && deleteAppBackup.mutate({ path: { urn: info.urn }, body: { filename: selectedBackup.id } })}
       />
     </div>
   );

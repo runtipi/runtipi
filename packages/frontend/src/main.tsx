@@ -3,7 +3,6 @@ import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Toaster } from 'react-hot-toast';
 import { RouterProvider, createBrowserRouter } from 'react-router';
-import { client } from './api-client';
 import { Providers } from './components/providers/providers';
 
 const root = document.getElementById('root');
@@ -12,6 +11,7 @@ if (!root) {
   throw new Error('Could not find root element');
 }
 
+import { client } from './api-client/client.gen';
 import { AuthenticatedRoute } from './components/routes/authenticated-route';
 import { RouteError } from './components/routes/route-error';
 import { UnauthenticatedRoute } from './components/routes/unauthenticated-route';
@@ -129,6 +129,10 @@ client.interceptors.response.use(async (res) => {
   }
 
   return res;
+});
+
+window.addEventListener('vite:preloadError', () => {
+  window.location.reload();
 });
 
 client.setConfig({

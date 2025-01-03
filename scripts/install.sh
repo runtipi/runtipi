@@ -159,6 +159,24 @@ if ! command -v docker >/dev/null; then
   fi
 fi
 
+# If docker -v is lower than 28.0.0 it will be updated
+if [[ "$(docker -v | cut -d' ' -f3 | cut -d',' -f1)" < "28.0.0" ]]; then
+  echo "Updating docker"
+  install_docker "${OS}"
+  docker_result=$?
+
+  if [[ docker_result -ne 0 ]]; then
+    echo "Your system ${OS} is not supported trying with sub_os ${SUB_OS}"
+    install_docker "${SUB_OS}"
+    docker_sub_result=$?
+
+    if [[ docker_sub_result -ne 0 ]]; then
+      echo "Your system ${SUB_OS} is not supported please install docker manually"
+      exit 1
+    fi
+  fi
+fi
+
 function check_dependency_and_install() {
   local dependency="${1}"
 

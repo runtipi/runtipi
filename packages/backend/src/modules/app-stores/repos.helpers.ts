@@ -78,16 +78,16 @@ export class ReposHelpers {
 
       let cloneCommand: string;
       if (branch) {
-        this.logger.info(`Cloning repo ${repoUrl} on branch ${branch} to ${repoPath}`);
+        this.logger.debug(`Cloning repo ${repoUrl} on branch ${branch} to ${repoPath}`);
         cloneCommand = `git clone -b ${branch} --depth 1 ${repoUrl} ${repoPath}`;
       } else {
-        this.logger.info(`Cloning repo ${repoUrl} to ${repoPath}`);
+        this.logger.debug(`Cloning repo ${repoUrl} to ${repoPath}`);
         cloneCommand = `git clone --depth 1 ${repoUrl} ${repoPath}`;
       }
       const { stderr } = await execAsync(cloneCommand);
 
       // Chmod the repo folder to 777
-      this.logger.info(`Executing: chmod -R 755 ${repoPath}`);
+      this.logger.debug(`Executing: chmod -R 755 ${repoPath}`);
       await execAsync(`chmod -R 755 ${repoPath}`);
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
@@ -102,20 +102,20 @@ export class ReposHelpers {
    *
    * @param {string} repoUrl
    */
-  public pullRepo = async (repoUrl: string, id: string) => {
+  public pullRepo = async (repoUrl: string, slug: string) => {
     try {
       const { dataDir } = this.configuration.get('directories');
 
-      const repoPath = path.join(dataDir, 'repos', id);
+      const repoPath = path.join(dataDir, 'repos', slug);
 
       if (!(await this.filesystem.pathExists(repoPath))) {
         this.logger.info(`Repo ${repoUrl} does not exist`);
         return { success: false, message: `Repo ${repoUrl} does not exist` };
       }
 
-      this.logger.info(`Pulling repo ${repoUrl} to ${repoPath}`);
+      this.logger.debug(`Pulling repo ${repoUrl} to ${repoPath}`);
 
-      this.logger.info(`Executing: git config --global --add safe.directory ${repoPath}`);
+      this.logger.debug(`Executing: git config --global --add safe.directory ${repoPath}`);
       await execAsync(`git config --global --add safe.directory ${repoPath}`).then(({ stderr }) => {
         if (stderr) {
           this.logger.error(`stderr: ${stderr}`);
@@ -123,22 +123,22 @@ export class ReposHelpers {
       });
 
       // git config pull.rebase false
-      this.logger.info(`Executing: git -C ${repoPath} config pull.rebase false`);
+      this.logger.debug(`Executing: git -C ${repoPath} config pull.rebase false`);
       await execAsync(`git -C ${repoPath} config pull.rebase false`).then(({ stderr }) => {
         if (stderr) {
           this.logger.error(`stderr: ${stderr}`);
         }
       });
 
-      this.logger.info(`Executing: git -C ${repoPath} rev-parse --abbrev-ref HEAD`);
+      this.logger.debug(`Executing: git -C ${repoPath} rev-parse --abbrev-ref HEAD`);
       const currentBranch = await execAsync(`git -C ${repoPath} rev-parse --abbrev-ref HEAD`).then(({ stdout }) => {
         return stdout.trim();
       });
 
-      this.logger.info(`Executing: git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
+      this.logger.debug(`Executing: git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
       await execAsync(`git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
 
-      this.logger.info(`Pulled repo ${repoUrl} to ${repoPath}`);
+      this.logger.debug(`Pulled repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
     } catch (err) {
       return this.handleRepoError(err);

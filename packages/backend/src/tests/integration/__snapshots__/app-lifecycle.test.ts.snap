@@ -3,17 +3,15 @@
 exports[`App lifecycle > install app > should not delete an existing app-data folder even if the app is reinstalled 1`] = `
 "/
 ├─ app-data/
-│  ├─ 1/
-│  │  └─ test2/
-│  │     ├─ app.env
-│  │     └─ data/
-│  └─ 1_test2/
-│     └─ data/
-│        └─ test.txt
+│  └─ test/
+│     └─ test2/
+│        ├─ app.env
+│        └─ data/
+│           └─ test.txt
 └─ data/
    ├─ .env
    ├─ apps/
-   │  └─ 1/
+   │  └─ test/
    │     └─ test2/
    │        ├─ config.json
    │        ├─ data/
@@ -21,7 +19,7 @@ exports[`App lifecycle > install app > should not delete an existing app-data fo
    │        └─ docker-compose.yml
    ├─ backups/
    ├─ repos/
-   │  └─ 1/
+   │  └─ test/
    │     └─ apps/
    │        └─ test2/
    │           ├─ config.json
@@ -34,14 +32,14 @@ exports[`App lifecycle > install app > should not delete an existing app-data fo
 exports[`App lifecycle > install app > should successfully install app and create expected directory structure 1`] = `
 "/
 ├─ app-data/
-│  └─ 1/
+│  └─ test/
 │     └─ test/
 │        ├─ app.env
 │        └─ data/
 └─ data/
    ├─ .env
    ├─ apps/
-   │  └─ 1/
+   │  └─ test/
    │     └─ test/
    │        ├─ config.json
    │        ├─ data/
@@ -49,7 +47,7 @@ exports[`App lifecycle > install app > should successfully install app and creat
    │        └─ docker-compose.yml
    ├─ backups/
    ├─ repos/
-   │  └─ 1/
+   │  └─ test/
    │     └─ apps/
    │        └─ test/
    │           ├─ config.json
@@ -61,12 +59,15 @@ exports[`App lifecycle > install app > should successfully install app and creat
 
 exports[`App lifecycle > install app > should successfully install app and create expected directory structure 2`] = `
 "services:
-  test_1:
+  test:
     image: test
-    container_name: test_1
+    container_name: test-test-test
     restart: unless-stopped
     networks:
-      - tipi_main_network
+      test_test_network:
+        gw_priority: 0
+      tipi_main_network:
+        gw_priority: 1
     environment:
       TEST: test
     ports:
@@ -74,12 +75,16 @@ exports[`App lifecycle > install app > should successfully install app and creat
     labels:
       generated: true
       traefik.enable: false
-      traefik.http.middlewares.test-web-redirect.redirectscheme.scheme: https
-      traefik.http.services.test.loadbalancer.server.port: "80"
+      traefik.docker.network: runtipi_tipi_main_network
+      traefik.http.middlewares.test_test-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.test_test.loadbalancer.server.port: "80"
+      runtipi.managed: true
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+  test_test_network:
+    external: false
 
 "
 `;

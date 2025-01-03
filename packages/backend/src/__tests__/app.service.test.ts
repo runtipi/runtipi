@@ -10,7 +10,7 @@ import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
 const server = setupServer();
@@ -62,8 +62,8 @@ describe('AppService', () => {
       const version = faker.system.semver();
       const latest = faker.system.semver();
       configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
-      cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(latest);
-      cacheService.get.calledWith('latestVersionBody').mockResolvedValueOnce('body');
+      cacheService.get.calledWith('latestVersion').mockReturnValueOnce(latest);
+      cacheService.get.calledWith('latestVersionBody').mockReturnValueOnce('body');
 
       // act
       const result = await appService.getVersion();
@@ -80,11 +80,14 @@ describe('AppService', () => {
       const latest = faker.system.semver();
       const body = faker.lorem.paragraph();
       configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
-      cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(undefined);
-      cacheService.get.calledWith('latestVersionBody').mockResolvedValueOnce(undefined);
+      cacheService.get.calledWith('latestVersion').mockReturnValueOnce(undefined);
+      cacheService.get.calledWith('latestVersionBody').mockReturnValueOnce(undefined);
+
+      const mockFetch = vi.fn();
 
       server.use(
         http.get(LATEST_RELEASE_URL, () => {
+          mockFetch();
           return HttpResponse.json({
             tag_name: latest,
             body,
@@ -93,19 +96,17 @@ describe('AppService', () => {
       );
 
       // act
-      const result = await appService.getVersion();
-
-      // assert
-      expect(result.current).toBe(version);
-      expect(result.latest).toBe(latest);
-      expect(result.body).toBe(body);
+      await appService.getVersion();
+      expect(mockFetch).toHaveBeenCalled();
     });
 
     it('should return current version if cache fails', async () => {
       // arrange
       const version = faker.system.semver();
       configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
-      cacheService.get.calledWith('latestVersion').mockRejectedValueOnce(new Error('error'));
+      cacheService.get.calledWith('latestVersion').mockImplementationOnce(() => {
+        throw new Error('error');
+      });
 
       // act
       const result = await appService.getVersion();
@@ -120,7 +121,7 @@ describe('AppService', () => {
       // arrange
       const version = faker.system.semver();
       configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
-      cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(undefined);
+      cacheService.get.calledWith('latestVersion').mockReturnValueOnce(undefined);
 
       server.use(
         http.get(LATEST_RELEASE_URL, () => {

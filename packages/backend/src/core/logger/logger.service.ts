@@ -1,9 +1,24 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import * as readline from 'node:readline';
 import { Injectable } from '@nestjs/common';
-import winston, { createLogger, format, transports } from 'winston';
+import { type Logger, createLogger, format, transports } from 'winston';
 
-const { printf, timestamp, combine, colorize, align, label } = format;
+export const LOG_LEVEL_ENUM = {
+  debug: 'debug',
+  info: 'info',
+  warn: 'warn',
+  error: 'error',
+} as const;
+export type LogLevel = (typeof LOG_LEVEL_ENUM)[keyof typeof LOG_LEVEL_ENUM];
+
+const { printf, timestamp, combine, colorize, align } = format;
+
+const printFile = printf((info) => `${info.timestamp} - ${info.level} > ${info.message}`);
+const printConsole = printf((info) => `${info.level} > ${info.message}`);
+
+const fileFormat = combine(format.uncolorize(), timestamp(), align(), printFile);
+const consoleFormat = combine(colorize(), printConsole);
 
 type Transports = transports.ConsoleTransportInstance | transports.FileTransportInstance;
 
@@ -13,7 +28,7 @@ type Transports = transports.ConsoleTransportInstance | transports.FileTransport
  * @param {string} id - The id of the logger, used to identify the logger in the logs
  * @param {string} logsFolder - The folder where the logs will be stored
  */
-export const newLogger = (id: string, logsFolder: string, logLevel = 'info') => {
+export const newLogger = (id: string, logsFolder: string, logLevel: LogLevel = LOG_LEVEL_ENUM.info) => {
   const tr: Transports[] = [];
   const exceptionHandlers: Transports[] = [new transports.Console()];
 
@@ -21,30 +36,25 @@ export const newLogger = (id: string, logsFolder: string, logLevel = 'info') => 
     tr.push(
       new transports.File({
         filename: path.join(logsFolder, 'error.log'),
+        format: fileFormat,
         level: 'error',
       }),
     );
     tr.push(
       new transports.File({
         filename: path.join(logsFolder, 'app.log'),
+        format: fileFormat,
         level: logLevel,
       }),
     );
 
-    tr.push(new transports.Console({ level: logLevel }));
+    tr.push(new transports.Console({ level: logLevel, format: consoleFormat }));
   } catch (error) {
     // no-op
   }
 
   return createLogger({
     level: logLevel,
-    format: combine(
-      label({ label: id }),
-      colorize(),
-      timestamp(),
-      align(),
-      printf((info) => `${id}: ${info.timestamp} - ${info.level} > ${info.message}`),
-    ),
     transports: tr,
     exceptionHandlers,
     exitOnError: false,
@@ -53,29 +63,70 @@ export const newLogger = (id: string, logsFolder: string, logLevel = 'info') => 
 
 @Injectable()
 export class LoggerService {
-  private winstonLogger: winston.Logger;
+  private winstonLogger: Logger;
 
   private logsFolder: string;
 
-  constructor(id: string, folder: string) {
-    this.winstonLogger = newLogger(id, folder, process.env.LOG_LEVEL);
+  constructor(id: string, folder: string, logLevel: LogLevel) {
+    this.winstonLogger = newLogger(id, folder, logLevel);
     this.logsFolder = folder;
   }
 
   private streamLogToHistory(logFile: string) {
-    return new Promise((resolve, reject) => {
-      const appLogReadStream = fs.createReadStream(path.join(this.logsFolder, logFile), 'utf-8');
-      const appLogHistoryWriteStream = fs.createWriteStream(path.join(this.logsFolder, `${logFile}.history`), { flags: 'a' });
+    const maxLines = 10_000;
+    const logFilePath = path.join(this.logsFolder, logFile);
+    const historyFilePath = path.join(this.logsFolder, `${logFile}.history`);
+    const tempHistoryPath = `${historyFilePath}.tmp`;
 
-      appLogReadStream
-        .pipe(appLogHistoryWriteStream)
-        .on('finish', () => {
-          fs.writeFileSync(path.join(this.logsFolder, logFile), '');
-          resolve(true);
-        })
-        .on('error', (error) => {
-          reject(error);
-        });
+    return new Promise<void>((resolve, reject) => {
+      try {
+        const tempHistoryWriteStream = fs.createWriteStream(tempHistoryPath);
+
+        if (fs.existsSync(historyFilePath)) {
+          const historyReadStream = fs.createReadStream(historyFilePath, 'utf-8');
+          const historyLineReader = readline.createInterface({ input: historyReadStream });
+
+          const lineBuffer: string[] = [];
+          historyLineReader.on('line', (line) => {
+            lineBuffer.push(line);
+            if (lineBuffer.length > maxLines) {
+              lineBuffer.shift();
+            }
+          });
+
+          historyLineReader.on('close', () => {
+            // Write the last `maxLines` lines to the temp file
+            for (const line of lineBuffer) {
+              tempHistoryWriteStream.write(`${line}\n`);
+            }
+            appendLogFile();
+          });
+
+          historyReadStream.on('error', reject);
+        } else {
+          appendLogFile();
+        }
+
+        function appendLogFile() {
+          const logReadStream = fs.createReadStream(logFilePath, 'utf-8');
+          logReadStream.pipe(tempHistoryWriteStream, { end: false });
+
+          logReadStream.on('end', async () => {
+            tempHistoryWriteStream.end();
+
+            await fs.promises.rename(tempHistoryPath, historyFilePath);
+
+            await fs.promises.writeFile(logFilePath, '', 'utf-8');
+            resolve();
+          });
+
+          logReadStream.on('error', reject);
+        }
+
+        tempHistoryWriteStream.on('error', reject);
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 
@@ -94,7 +145,19 @@ export class LoggerService {
   };
 
   private log = (level: string, messages: unknown[]) => {
-    this.winstonLogger.log(level, messages.join(' '));
+    const stringMessages = messages.flatMap((m) => {
+      if (m instanceof Error) {
+        return [m.message, m.stack];
+      }
+
+      if (typeof m === 'object') {
+        return JSON.stringify(m, null, 2);
+      }
+
+      return m;
+    });
+
+    this.winstonLogger.log(level, stringMessages.join(' '));
   };
 
   public error = (...message: unknown[]) => {

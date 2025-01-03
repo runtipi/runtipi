@@ -4,6 +4,7 @@ import { AppHelpers } from '@/modules/apps/app.helpers';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import type { AppUrn } from '@/types/app/app.types';
 import { AppLifecycleCommand } from './command';
 
 export class StopAppCommand extends AppLifecycleCommand {
@@ -17,29 +18,29 @@ export class StopAppCommand extends AppLifecycleCommand {
     super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
-  public async execute(appId: string, form: AppEventFormInput, skipEnvGeneration = false) {
+  public async execute(appUrn: AppUrn, form: AppEventFormInput, skipEnvGeneration = false) {
     try {
-      const config = await this.appFilesManager.getInstalledAppInfo(appId);
+      const config = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
       if (!config) {
         return { success: true, message: 'App config not found. Skipping...' };
       }
 
-      this.logger.info(`Stopping app ${appId}`);
+      this.logger.info(`Stopping app ${appUrn}`);
 
-      await this.ensureAppDir(appId, form);
+      await this.ensureAppDir(appUrn, form);
 
       if (!skipEnvGeneration) {
-        this.logger.info(`Regenerating app.env file for app ${appId}`);
-        await this.appHelpers.generateEnvFile(appId, form);
+        this.logger.info(`Regenerating app.env file for app ${appUrn}`);
+        await this.appHelpers.generateEnvFile(appUrn, form);
       }
 
-      await this.dockerService.composeApp(appId, 'rm --force --stop');
-      this.logger.info(`App ${appId} stopped`);
+      await this.dockerService.composeApp(appUrn, 'rm --force --stop');
+      this.logger.info(`App ${appUrn} stopped`);
 
-      return { success: true, message: `App ${appId} stopped successfully` };
+      return { success: true, message: `App ${appUrn} stopped successfully` };
     } catch (err) {
-      return this.handleAppError(err, appId, 'stop');
+      return this.handleAppError(err, appUrn, 'stop');
     }
   }
 }

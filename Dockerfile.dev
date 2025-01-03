@@ -1,15 +1,13 @@
-ARG NODE_VERSION="iron"
-ARG ALPINE_VERSION="3.20"
+ARG NODE_VERSION="jod"
+ARG ALPINE_VERSION="3.21"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
-RUN apk add --no-cache curl git
-RUN npm install pnpm@9.12.2 -g
-
-RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
+RUN corepack enable pnpm && corepack install -g pnpm@latest-10
+RUN apk add --no-cache g++ make curl openssl git
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.29.2"
+ARG DOCKER_COMPOSE_VERSION="v2.33.1"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 
@@ -26,7 +24,7 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
 RUN chmod +x docker-binary
 RUN mv docker-binary /usr/local/bin/docker-compose
 
-COPY ./patches ./patches
+COPY ./package.json ./package.json
 COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch
@@ -35,17 +33,14 @@ COPY ./packages/backend/package.json ./packages/backend/package.json
 COPY ./packages/frontend/package.json ./packages/frontend/package.json
 COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
-COPY ./package.json ./package.json
 
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
 COPY ./packages/backend/assets ./assets
 COPY ./packages/backend/src/core/database/drizzle ./assets/migrations
 
-COPY ./supervisord.dev.conf /etc/supervisord.conf
+EXPOSE 3000
 
-EXPOSE 3000 5001
-
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["npm", "run", "dev"]

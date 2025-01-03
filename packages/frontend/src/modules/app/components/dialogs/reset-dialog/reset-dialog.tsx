@@ -25,7 +25,7 @@ export const ResetDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('resetting', info.id);
+      setOptimisticStatus('resetting', info.urn);
       onClose();
     },
   });
@@ -42,7 +42,7 @@ export const ResetDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
           <div className="text-muted">{t('APP_RESET_FORM_SUBTITLE')}</div>
         </DialogDescription>
         <DialogFooter>
-          <Button loading={resetMutation.isPending} onClick={() => resetMutation.mutate({ path: { id: info.id } })} intent="danger">
+          <Button loading={resetMutation.isPending} onClick={() => resetMutation.mutate({ path: { urn: info.urn } })} intent="danger">
             {t('APP_RESET_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

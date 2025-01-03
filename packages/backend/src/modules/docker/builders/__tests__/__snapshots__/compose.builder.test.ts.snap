@@ -1,0 +1,376 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DockerComposeBuilder > should add correct traefik labels to the main service 1`] = `
+"services:
+  service:
+    image: image
+    container_name: nginx-service-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+      tipi_main_network:
+        gw_priority: 1
+    ports:
+      - \${APP_PORT}:440
+    labels:
+      generated: true
+      traefik.enable: true
+      traefik.docker.network: runtipi_tipi_main_network
+      traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.nginx_store-id.loadbalancer.server.port: "440"
+      traefik.http.routers.nginx_store-id-insecure.rule: Host(\`\${APP_DOMAIN}\`)
+      traefik.http.routers.nginx_store-id-insecure.entrypoints: web
+      traefik.http.routers.nginx_store-id-insecure.service: nginx_store-id
+      traefik.http.routers.nginx_store-id-insecure.middlewares: nginx_store-id-web-redirect
+      traefik.http.routers.nginx_store-id.rule: Host(\`\${APP_DOMAIN}\`)
+      traefik.http.routers.nginx_store-id.entrypoints: websecure
+      traefik.http.routers.nginx_store-id.service: nginx_store-id
+      traefik.http.routers.nginx_store-id.tls.certresolver: myresolver
+      traefik.http.routers.nginx_store-id-local-insecure.rule: Host(\`nginx-store-id.\${LOCAL_DOMAIN}\`)
+      traefik.http.routers.nginx_store-id-local-insecure.entrypoints: web
+      traefik.http.routers.nginx_store-id-local-insecure.service: nginx_store-id
+      traefik.http.routers.nginx_store-id-local-insecure.middlewares: nginx_store-id-web-redirect
+      traefik.http.routers.nginx_store-id-local.rule: Host(\`nginx-store-id.\${LOCAL_DOMAIN}\`)
+      traefik.http.routers.nginx_store-id-local.entrypoints: websecure
+      traefik.http.routers.nginx_store-id-local.service: nginx_store-id
+      traefik.http.routers.nginx_store-id-local.tls: true
+      runtipi.managed: true
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    external: false
+"
+`;
+
+exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] = `
+"services:
+  ctfd:
+    image: ctfd/ctfd:3.7.5
+    container_name: nginx-ctfd-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+      tipi_main_network:
+        gw_priority: 1
+    environment:
+      UPLOAD_FOLDER: /var/uploads
+      DATABASE_URL: mysql+pymysql://tipi:\${CTFD_MYSQL_DB_PASSWORD}@ctfd-db/ctfd
+    ports:
+      - \${APP_PORT}:8000
+    volumes:
+      - \${APP_DATA_DIR}/data/uploads:/var/log/CTFd
+      - \${APP_DATA_DIR}/data/uploads:/var/uploads
+    depends_on:
+      - ctfd-db
+    labels:
+      generated: true
+      traefik.enable: false
+      traefik.docker.network: runtipi_tipi_main_network
+      traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.nginx_store-id.loadbalancer.server.port: "8000"
+      runtipi.managed: true
+      some-label: some-value
+      ctfd.service: true
+      com.docker.compose.service: ctfd
+      ctfd: ctfd
+      traefik.http.middlewares.ctfd-web-redirect.redirectscheme.scheme: wrongscheme
+  ctfd-db:
+    image: mariadb:10.4.12
+    command:
+      - mysqld
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --wait_timeout=28800
+      - --log-warnings=0
+    container_name: nginx-ctfd-db-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    environment:
+      MYSQL_ROOT_PASSWORD: \${CTFD_MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: tipi
+      MYSQL_PASSWORD: \${CTFD_MYSQL_DB_PASSWORD}
+      MYSQL_DATABASE: ctfd
+    volumes:
+      - \${APP_DATA_DIR}/data/db:/var/lib/mysql
+    labels:
+      runtipi.managed: true
+  ctfd-redis:
+    image: redis:4
+    container_name: nginx-ctfd-redis-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    volumes:
+      - \${APP_DATA_DIR}/data/redis:/data
+    labels:
+      runtipi.managed: true
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    external: false
+"
+`;
+
+exports[`DockerComposeBuilder > should build a docker-compose file 1`] = `
+"services:
+  service:
+    image: image
+    container_name: nginx-service-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    external: false
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format a complex docker-compose file 1`] = `
+"services:
+  service1:
+    image: image1
+    command: node index.js
+    container_name: nginx-service1-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    extra_hosts:
+      - host1
+      - host2
+    ulimits:
+      nproc: 1024
+      nofile: 65536
+    healthcheck:
+      test: curl -f http://localhost/ || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    environment:
+      NODE_ENV: production
+      PORT: 80
+      SOME_VAR: value
+    ports:
+      - 3400:8080
+    volumes:
+      - /host/path:/container/path:ro
+      - /host/path2:/container/path2
+    depends_on:
+      - service2
+    labels:
+      runtipi.managed: true
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 50M
+          pids: 1
+        reservations:
+          cpus: "0.25"
+          memory: 20M
+          devices:
+            - capabilities:
+                - gpu
+              driver: nvidia
+              count: all
+    hostname: hostname
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/sda:/dev/xvda:rwm
+    entrypoint:
+      - entrypoint
+      - arg1
+      - arg2
+    pid: "1"
+    privileged: true
+    tty: true
+    user: user
+    working_dir: /working/dir
+    shm_size: 1G
+    cap_drop:
+      - SYS_ADMIN
+      - NET_ADMIN
+    logging:
+      driver: json-file
+      options:
+        syslog-address: tcp://192.168.0.42:123
+    read_only: true
+    security_opt:
+      - label=disable
+      - label=role:ROLE
+    stop_signal: SIGTERM
+    stop_grace_period: 1m
+    stdin_open: true
+  service2:
+    image: image2
+    container_name: nginx-service2-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    external: false
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format deploy resources 1`] = `
+"services:
+  service:
+    image: image
+    container_name: nginx-service-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 50M
+          pids: 1
+        reservations:
+          cpus: "0.25"
+          memory: 20M
+          devices:
+            - capabilities:
+                - gpu
+              driver: nvidia
+              count: all
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    external: false
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format devices 1`] = `
+"services:
+  service:
+    image: image
+    container_name: nginx-service-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/sda:/dev/xvda:rwm
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    external: false
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format entrypoint as array 1`] = `
+"services:
+  service:
+    image: image
+    container_name: nginx-service-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+    entrypoint:
+      - entrypoint
+      - arg1
+      - arg2
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    external: false
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format entrypoint as string 1`] = `
+"services:
+  service:
+    image: image
+    container_name: nginx-service-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+    entrypoint: entrypoint
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    external: false
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format logging 1`] = `
+"services:
+  service:
+    image: image
+    container_name: nginx-service-store-id
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+    logging:
+      driver: json-file
+      options:
+        syslog-address: tcp://192.168.0.42:123
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    external: false
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly interpolate RUNTIPI_APP_ID in service labels 1`] = `
+"services:
+  service:
+    image: image
+    labels:
+      my-test-app.service: true
+      com.docker.compose.service: my-test-app
+      my-test-app: my-test-app
+"
+`;

@@ -1,12 +1,12 @@
-import { DatabaseService } from '@/core/database/database.service';
+import { DATABASE, type Database } from '@/core/database/database.module';
 import { link as linkTable } from '@/core/database/drizzle/schema';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import type { EditLinkBodyDto, LinkBodyDto } from './dto/links.dto';
 
 @Injectable()
 export class LinksRepository {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(@Inject(DATABASE) private db: Database) {}
 
   /**
    * Adds a new link to the database.
@@ -15,7 +15,7 @@ export class LinksRepository {
    */
   public async addLink(link: LinkBodyDto, userId: number) {
     const { title, description, url, iconUrl } = link;
-    const newLinks = await this.databaseService.db.insert(linkTable).values({ title, description, url, iconUrl, userId }).returning();
+    const newLinks = await this.db.insert(linkTable).values({ title, description, url, iconUrl, userId }).returning();
     return newLinks[0];
   }
 
@@ -28,7 +28,7 @@ export class LinksRepository {
   public async editLink(linkId: number, link: EditLinkBodyDto, userId: number) {
     const { title, description, url, iconUrl } = link;
 
-    const updatedLinks = await this.databaseService.db
+    const updatedLinks = await this.db
       .update(linkTable)
       .set({ title, description, url, iconUrl, updatedAt: new Date().toISOString() })
       .where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)))
@@ -42,7 +42,7 @@ export class LinksRepository {
    * @param {number} linkId - The id of the link to be deleted.
    */
   public async deleteLink(linkId: number, userId: number) {
-    await this.databaseService.db.delete(linkTable).where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)));
+    await this.db.delete(linkTable).where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)));
   }
 
   /**
@@ -51,6 +51,6 @@ export class LinksRepository {
    * @returns An array of links belonging to the user.
    */
   public async getLinks(userId: number) {
-    return this.databaseService.db.select().from(linkTable).where(eq(linkTable.userId, userId)).orderBy(linkTable.id);
+    return this.db.select().from(linkTable).where(eq(linkTable.userId, userId)).orderBy(linkTable.id);
   }
 }

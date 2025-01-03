@@ -1,9 +1,12 @@
 import { Markdown } from '@/components/markdown/markdown';
+import { Alert, AlertSubtitle, AlertTitle } from '@/components/ui/Alert/Alert';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { AppDetails, AppInfo } from '@/types/app.types';
+import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import { Suspense, lazy } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
 
@@ -13,21 +16,23 @@ const AppLogs = lazy(() => import('../app-logs/app-logs').then((module) => ({ de
 interface IProps {
   info: AppInfo;
   app?: AppDetails | null;
+  metadata?: AppMetadata;
 }
 
-export const AppDetailsTabs = ({ info, app }: IProps) => {
+export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
   const { t } = useTranslation();
 
   const [params] = useSearchParams();
-  const defaultTab = params.get('tab') || 'description';
   const navigate = useNavigate();
+  const [currentTab, setCurrentTab] = React.useState(params.get('tab') || 'description');
 
   const handleTabChange = (newTab: string) => {
+    setCurrentTab(newTab);
     navigate(`?tab=${newTab}`, { replace: true });
   };
 
   return (
-    <Tabs defaultValue={defaultTab} orientation="vertical" style={{ marginTop: -1 }}>
+    <Tabs value={currentTab} orientation="vertical" style={{ marginTop: -1 }}>
       <TabsList>
         <TabsTrigger onClick={() => handleTabChange('description')} value="description">
           {t('APP_DETAILS_DESCRIPTION')}
@@ -35,26 +40,33 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
         <TabsTrigger onClick={() => handleTabChange('info')} value="info">
           {t('APP_DETAILS_BASE_INFO')}
         </TabsTrigger>
-        <TabsTrigger value="backups" onClick={() => handleTabChange('backups')} disabled={!app}>
+        <TabsTrigger value="backups" onClick={() => handleTabChange('backups')} disabled={!app} className="d-none d-md-block">
           {t('APP_BACKUPS_TAB_TITLE')}
         </TabsTrigger>
-        <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={!app}>
+        <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={!app} className="d-none d-md-block">
           {t('APP_LOGS_TAB_TITLE')}
         </TabsTrigger>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="nav-link dropdown-toggle d-block d-md-none">{t('MORE')}</DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => handleTabChange('backups')}>{t('APP_BACKUPS_TAB_TITLE')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleTabChange('logs')}>{t('APP_LOGS_TAB_TITLE')}</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </TabsList>
       <TabsContent value="description">
         {info.deprecated && (
-          <aside className="alert alert-danger" aria-live="assertive">
+          <Alert variant="danger" className="mb-4">
             <div className="d-flex">
               <div>
                 <IconAlertCircle />
               </div>
               <div className="ms-2">
-                <h4 className="alert-title">{t('APP_DETAILS_DEPRECATED_ALERT_TITLE')}</h4>
-                <div className="text-secondary">{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')} </div>
+                <AlertTitle>{t('APP_DETAILS_DEPRECATED_ALERT_TITLE')}</AlertTitle>
+                <AlertSubtitle>{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')}</AlertSubtitle>
               </div>
             </div>
-          </aside>
+          </Alert>
         )}
         <Markdown content={info.description || ''} className="markdown" />
       </TabsContent>
@@ -100,12 +112,17 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
               </a>
             </DataGridItem>
           )}
+          {metadata && (
+            <DataGridItem title={t('APP_DETAILS_USER_CONFIG')}>
+              <b>{metadata.hasCustomConfig ? t('YES') : t('NO')}</b>
+            </DataGridItem>
+          )}
         </DataGrid>
       </TabsContent>
       <TabsContent value="logs">
         {app?.status === 'running' && (
           <Suspense>
-            <AppLogs appId={info.id} />
+            <AppLogs appUrn={info.urn} />
           </Suspense>
         )}
       </TabsContent>

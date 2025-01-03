@@ -2,7 +2,7 @@ import type { GetAllAppStoresResponse, GetAppBackupsDto, GetAppDto, LinksDto, Se
 
 export type FormField = NonNullable<GetAppDto['info']['form_fields']>[number];
 export type AppInfo = GetAppDto['info'];
-export type AppUpdateInfo = GetAppDto['updateInfo'];
+export type AppMetadata = GetAppDto['metadata'];
 export type AppDetails = NonNullable<GetAppDto['app']>;
 export type AppStatus = NonNullable<AppDetails>['status'];
 
@@ -14,3 +14,8 @@ export type CustomLink = LinksDto['links'][number];
 export type AppBackup = GetAppBackupsDto['data'][number];
 
 export type AppStore = GetAllAppStoresResponse['appStores'][number];
+
+export type AppUrn = `${string}:${string}` & {
+  readonly __type: 'urn';
+  split: (separator: ':') => [string, string];
+};
