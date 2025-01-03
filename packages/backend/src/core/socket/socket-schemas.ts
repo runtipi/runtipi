@@ -27,7 +27,7 @@ export const socketEventSchema = z.union([
       z.literal('restore_error'),
     ]),
     data: z.object({
-      appId: z.string(),
+      appUrn: z.string().refine((v) => v.split(':').length === 2),
       appStatus: z
         .enum([
           'running',
@@ -51,7 +51,7 @@ export const socketEventSchema = z.union([
     type: z.literal('app-logs-init'),
     event: z.literal('initLogs'),
     data: z.object({
-      appId: z.string(),
+      appUrn: z.string().refine((v) => v.split(':').length === 2),
       maxLines: z.number().optional(),
     }),
   }),
@@ -59,7 +59,7 @@ export const socketEventSchema = z.union([
     type: z.literal('app-logs'),
     event: z.union([z.literal('newLogs'), z.literal('stopLogs')]),
     data: z.object({
-      appId: z.string(),
+      appUrn: z.string().refine((v) => v.split(':').length === 2),
       lines: z.array(z.string()).optional(),
     }),
   }),

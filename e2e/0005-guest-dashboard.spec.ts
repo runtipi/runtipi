@@ -29,8 +29,8 @@ test('logged out users can see the apps on the guest dashboard', async ({ page, 
     throw new Error('No store found');
   }
 
-  await installApp(page, store?.id, 'nginx', { visibleOnGuestDashboard: true, domain: 'duckduckgo.com' });
-  await installApp(page, store?.id, '2fauth', { visibleOnGuestDashboard: false });
+  await installApp(page, store.slug, 'nginx', { visibleOnGuestDashboard: true, domain: 'duckduckgo.com' });
+  await installApp(page, store.slug, '2fauth', { visibleOnGuestDashboard: false });
 
   await page.goto('/settings');
   await page.getByRole('tab', { name: 'Settings' }).click();

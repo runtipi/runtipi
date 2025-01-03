@@ -1,6 +1,7 @@
 import { ARCHITECTURES } from '@/common/constants';
+import type { AppUrn } from '@/types/app/app.types';
 import { createZodDto } from 'nestjs-zod';
-import { z } from 'zod';
+import { type ZodStringDef, z } from 'zod';
 
 export const APP_CATEGORIES = [
   'network',
@@ -44,7 +45,8 @@ export const formFieldSchema = z.object({
 });
 
 export const appInfoSchema = z.object({
-  id: z.string(),
+  id: z.string().refine((v) => v.split(':').length === 1),
+  urn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
   available: z.boolean(),
   deprecated: z.boolean().optional().default(false),
   port: z.number().min(1).max(65535),
@@ -86,6 +88,7 @@ export const appInfoSchema = z.object({
 });
 
 // Derived types
+export type AppInfoInput = z.input<typeof appInfoSchema>;
 export type AppInfo = z.output<typeof appInfoSchema>;
 export type FormField = z.output<typeof formFieldSchema>;
 
@@ -93,6 +96,7 @@ export type FormField = z.output<typeof formFieldSchema>;
 export class AppInfoSimpleDto extends createZodDto(
   appInfoSchema.pick({
     id: true,
+    urn: true,
     name: true,
     short_desc: true,
     categories: true,
@@ -105,8 +109,9 @@ export class AppInfoSimpleDto extends createZodDto(
 
 export class AppInfoDto extends createZodDto(appInfoSchema) {}
 
-export class UpdateInfoDto extends createZodDto(
+export class MetadataDto extends createZodDto(
   z.object({
+    hasCustomConfig: z.boolean().optional(),
     latestVersion: z.number(),
     minTipiVersion: z.string().optional(),
     latestDockerVersion: z.string().optional(),
@@ -120,7 +125,7 @@ export class SearchAppsQueryDto extends createZodDto(
     pageSize: z.coerce.number().optional(),
     cursor: z.string().optional(),
     category: z.enum(APP_CATEGORIES).optional(),
-    storeId: z.coerce.number().optional(),
+    storeId: z.string().optional(),
   }),
 ) {}
 
@@ -135,7 +140,7 @@ export class SearchAppsDto extends createZodDto(
 export class AppDetailsDto extends createZodDto(
   z.object({
     info: AppInfoDto.schema,
-    updateInfo: UpdateInfoDto.schema,
+    metadata: MetadataDto.schema,
   }),
 ) {}
 
@@ -148,7 +153,7 @@ export class PullDto extends createZodDto(
 
 class AppStoreDto extends createZodDto(
   z.object({
-    id: z.number(),
+    slug: z.string(),
     name: z.string(),
     url: z.string(),
     enabled: z.boolean(),
@@ -170,7 +175,7 @@ export class UpdateAppStoreBodyDto extends createZodDto(
 
 export class CreateAppStoreBodyDto extends createZodDto(
   z.object({
-    name: z.string(),
+    name: z.string().min(1).max(16),
     url: z.string().trim().toLowerCase(),
   }),
 ) {}

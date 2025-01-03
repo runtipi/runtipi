@@ -1,6 +1,6 @@
 {
-  "id": "a28c8d8b-2cb5-4f59-89b3-4d1d6385016f",
-  "prevId": "9807c05d-41c5-4665-9bb5-0808de44eccd",
+  "id": "bc9468c8-4acb-4969-9873-9cf8562bc3fe",
+  "prevId": "c98e7f88-641b-4653-9209-1032249c1f09",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -10,7 +10,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
@@ -21,20 +21,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'stopped'"
-        },
-        "lastOpened": {
-          "name": "lastOpened",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "numOpened": {
-          "name": "numOpened",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
         },
         "config": {
           "name": "config",
@@ -90,6 +76,12 @@
           "notNull": true,
           "default": true
         },
+        "port": {
+          "name": "port",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "exposed_local": {
           "name": "exposed_local",
           "type": "boolean",
@@ -97,39 +89,37 @@
           "notNull": true,
           "default": true
         },
-        "app_store_id": {
-          "name": "app_store_id",
-          "type": "integer",
+        "app_store_slug": {
+          "name": "app_store_slug",
+          "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "app_name": {
+          "name": "app_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "app_app_store_id_app_store_id_fk": {
-          "name": "app_app_store_id_app_store_id_fk",
+        "app_app_store_slug_app_store_slug_fk": {
+          "name": "app_app_store_slug_app_store_slug_fk",
           "tableFrom": "app",
           "tableTo": "app_store",
           "columnsFrom": [
-            "app_store_id"
+            "app_store_slug"
           ],
           "columnsTo": [
-            "id"
+            "slug"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "UQ_9478629fc093d229df09e560aea": {
-          "name": "UQ_9478629fc093d229df09e560aea",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -138,9 +128,9 @@
       "name": "app_store",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
+        "slug": {
+          "name": "slug",
+          "type": "varchar",
           "primaryKey": true,
           "notNull": true
         },
@@ -152,7 +142,7 @@
         },
         "name": {
           "name": "name",
-          "type": "varchar",
+          "type": "varchar(16)",
           "primaryKey": false,
           "notNull": true
         },
@@ -189,13 +179,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
-        },
-        "deleted": {
-          "name": "deleted",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
         }
       },
       "indexes": {},
@@ -271,8 +254,8 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "FK_link_user_id": {
-          "name": "FK_link_user_id",
+        "link_user_id_user_id_fk": {
+          "name": "link_user_id_user_id_fk",
           "tableFrom": "link",
           "tableTo": "user",
           "columnsFrom": [
@@ -281,7 +264,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -371,15 +354,7 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "UQ_78a916df40e02a9deb1c4b75edb": {
-          "name": "UQ_78a916df40e02a9deb1c4b75edb",
-          "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

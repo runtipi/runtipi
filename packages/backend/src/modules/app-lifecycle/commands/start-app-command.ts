@@ -4,6 +4,7 @@ import { AppHelpers } from '@/modules/apps/app.helpers';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import type { AppUrn } from '@/types/app/app.types';
 import { AppLifecycleCommand } from './command';
 
 export class StartAppCommand extends AppLifecycleCommand {
@@ -20,24 +21,24 @@ export class StartAppCommand extends AppLifecycleCommand {
     this.appFilesManager = appFilesManager;
   }
 
-  public async execute(appId: string, form: AppEventFormInput, skipEnvGeneration = false) {
+  public async execute(appUrn: AppUrn, form: AppEventFormInput, skipEnvGeneration = false) {
     try {
-      this.logger.info(`Starting app ${appId}`);
+      this.logger.info(`Starting app ${appUrn}`);
 
-      await this.ensureAppDir(appId, form);
+      await this.ensureAppDir(appUrn, form);
 
       if (!skipEnvGeneration) {
-        this.logger.info(`Regenerating app.env file for app ${appId}`);
-        await this.appHelpers.generateEnvFile(appId, form);
+        this.logger.info(`Regenerating app.env file for app ${appUrn}`);
+        await this.appHelpers.generateEnvFile(appUrn, form);
       }
 
-      await this.dockerService.composeApp(appId, 'up --detach --force-recreate --remove-orphans --pull always');
+      await this.dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans --pull always');
 
-      this.logger.info(`App ${appId} started`);
+      this.logger.info(`App ${appUrn} started`);
 
-      return { success: true, message: `App ${appId} started successfully` };
+      return { success: true, message: `App ${appUrn} started successfully` };
     } catch (err) {
-      return this.handleAppError(err, appId, 'start');
+      return this.handleAppError(err, appUrn, 'start');
     }
   }
 }

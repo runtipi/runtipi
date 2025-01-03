@@ -5,6 +5,7 @@ import type { BackupManager } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import type { AppUrn } from '@/types/app/app.types';
 import { AppLifecycleCommand } from './command';
 
 export class UpdateAppCommand extends AppLifecycleCommand {
@@ -20,33 +21,33 @@ export class UpdateAppCommand extends AppLifecycleCommand {
     super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
-  public async execute(appId: string, form: AppEventFormInput) {
+  public async execute(appUrn: AppUrn, form: AppEventFormInput) {
     try {
       if (this.performBackup) {
-        await this.backupManager.backupApp(appId);
+        await this.backupManager.backupApp(appUrn);
       }
 
-      this.logger.info(`Updating app ${appId}`);
-      await this.ensureAppDir(appId, form);
-      await this.appHelpers.generateEnvFile(appId, form);
+      this.logger.info(`Updating app ${appUrn}`);
+      await this.ensureAppDir(appUrn, form);
+      await this.appHelpers.generateEnvFile(appUrn, form);
 
       try {
-        await this.dockerService.composeApp(appId, 'up --detach --force-recreate --remove-orphans');
-        await this.dockerService.composeApp(appId, 'down --rmi all --remove-orphans');
+        await this.dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans');
+        await this.dockerService.composeApp(appUrn, 'down --rmi all --remove-orphans');
       } catch (err) {
-        this.logger.warn(`App ${appId} has likely a broken docker-compose.yml file. Continuing with update...`);
+        this.logger.warn(`App ${appUrn} has likely a broken docker-compose.yml file. Continuing with update...`);
       }
 
-      await this.appFilesManager.deleteAppFolder(appId);
-      await this.marketplaceService.copyAppFromRepoToInstalled(appId);
+      await this.appFilesManager.deleteAppFolder(appUrn);
+      await this.marketplaceService.copyAppFromRepoToInstalled(appUrn);
 
-      await this.ensureAppDir(appId, form);
+      await this.ensureAppDir(appUrn, form);
 
-      await this.dockerService.composeApp(appId, 'pull');
+      await this.dockerService.composeApp(appUrn, 'pull');
 
-      return { success: true, message: `App ${appId} updated successfully` };
+      return { success: true, message: `App ${appUrn} updated successfully` };
     } catch (err) {
-      return this.handleAppError(err, appId, 'update_error');
+      return this.handleAppError(err, appUrn, 'update_error');
     }
   }
 }

@@ -7,13 +7,20 @@ import { produce } from 'immer';
 export const useAppStatus = () => {
   const queryClient = useQueryClient();
 
-  const setOptimisticStatus = (status: AppStatus, appId: string) => {
-    const queryKey = getAppQueryKey({ path: { id: appId } });
+  const setOptimisticStatus = (status: AppStatus, appUrn: string) => {
+    const [appName, appStoreId] = appUrn.split(':');
+
+    if (!appName || !appStoreId) {
+      console.error('setOptimisticStatus -> Invalid app urn', appUrn);
+      return;
+    }
+
+    const queryKey = getAppQueryKey({ path: { urn: appUrn } });
     const data = queryClient.getQueryData(queryKey) as GetAppDto;
 
     const newData = produce(data, (draft) => {
       if (!draft.app) {
-        draft.app = { id: appId, status } as GetAppDto['app'];
+        draft.app = { id: appName, urn: appUrn, status } as unknown as GetAppDto['app'];
         return;
       }
 

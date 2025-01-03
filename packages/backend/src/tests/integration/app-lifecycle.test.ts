@@ -16,6 +16,7 @@ import { EnvUtils } from '@/modules/env/env.utils';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '@/modules/queue/entities/app-events';
 import { QueueFactory } from '@/modules/queue/queue.factory';
+import type { AppUrn } from '@/types/app/app.types';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -97,42 +98,42 @@ describe('App lifecycle', () => {
       }),
     );
 
-    await db.insert(appStore).values({ id: 1, url: 'https://appstore.example.com', hash: 'test', name: 'test', enabled: true }).execute();
+    await db.insert(appStore).values({ slug: 'test', url: 'https://appstore.example.com', hash: 'test', name: 'test', enabled: true }).execute();
     await marketplaceService.initialize();
   });
 
   describe('install app', () => {
     it('should successfully install app and create expected directory structure', async () => {
       // arrange
-      const appInfo = await createAppInStore(1, { id: 'test' });
-      const appId = `${appInfo.id}_1`;
+      const appInfo = await createAppInStore('test', { id: 'test' });
+      const appUrn = `${appInfo.id}:test` as AppUrn;
 
       // act
-      await appLifecycleService.installApp({ appId, form: {} });
+      await appLifecycleService.installApp({ appUrn, form: {} });
 
       await waitFor(async () => {
-        const app = await appsRepository.getApp(appId);
+        const app = await appsRepository.getAppByUrn(appUrn);
         expect(app?.status).toBe('running');
       });
 
       // assert
       expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
-      const yml = await fs.promises.readFile(`${DATA_DIR}/apps/1/${appInfo.id}/docker-compose.yml`, 'utf-8');
+      const yml = await fs.promises.readFile(`${DATA_DIR}/apps/test/${appInfo.id}/docker-compose.yml`, 'utf-8');
       expect(yml).toMatchSnapshot();
     });
 
     it('should not delete an existing app-data folder even if the app is reinstalled', async () => {
       // arrange
-      const appInfo = await createAppInStore(1, { id: 'test2' });
-      const appId = `${appInfo.id}_1`;
+      const appInfo = await createAppInStore('test', { id: 'test2' });
+      const appUrn = `${appInfo.id}:test` as AppUrn;
 
-      await fs.promises.mkdir(`${APP_DATA_DIR}/1_test2/data`, { recursive: true });
-      await fs.promises.writeFile(`${APP_DATA_DIR}/1_test2/data/test.txt`, 'test');
+      await fs.promises.mkdir(`${APP_DATA_DIR}/test/test2/data`, { recursive: true });
+      await fs.promises.writeFile(`${APP_DATA_DIR}/test/test2/data/test.txt`, 'test');
 
-      await appLifecycleService.installApp({ appId, form: {} });
+      await appLifecycleService.installApp({ appUrn, form: {} });
 
       await waitFor(async () => {
-        const app = await appsRepository.getApp(appId);
+        const app = await appsRepository.getAppByUrn(appUrn);
         expect(app?.status).toBe('running');
       });
 

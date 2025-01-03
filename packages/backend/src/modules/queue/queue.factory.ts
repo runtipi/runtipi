@@ -1,6 +1,6 @@
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
-import Sentry from '@sentry/nestjs';
+import * as Sentry from '@sentry/nestjs';
 import { Connection } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
 import { Queue } from './queue.entity';
@@ -18,7 +18,7 @@ export class QueueFactory {
 
     this.rabbit.on('error', (error) => {
       this.logger.error('RabbitMQ connection error:', error);
-      Sentry.captureException(error);
+      Sentry.captureException(error, { tags: { source: 'rabbitmq' } });
     });
   }
 
@@ -37,6 +37,6 @@ export class QueueFactory {
       maxAttempts: 3,
     });
 
-    return new Queue(this.rabbit, rpcClient, queueName, workers, eventSchema, resultSchema);
+    return new Queue(this.rabbit, rpcClient, queueName, workers, eventSchema, resultSchema, this.logger);
   }
 }

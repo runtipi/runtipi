@@ -25,14 +25,14 @@ export const AppStoreLayoutActions = () => {
     setSearch(e.target.value);
   };
 
-  const [params, setParams] = useSearchParams();
-  const selectedStore = params.get('store') ?? undefined;
-
   useEffect(() => {
     if (selectedStore) {
-      setStoreId(Number.parseInt(selectedStore));
+      setStoreId(selectedStore);
     }
-  }, [selectedStore, setStoreId]);
+  }, [setStoreId]);
+
+  const [params, setParams] = useSearchParams();
+  const selectedStore = params.get('store') ?? undefined;
 
   const onSelectStore = (value?: string) => {
     if (value) {
@@ -40,7 +40,7 @@ export const AppStoreLayoutActions = () => {
     } else {
       setParams({});
     }
-    setStoreId(value ? Number.parseInt(value) : undefined);
+    setStoreId(value);
   };
 
   return (

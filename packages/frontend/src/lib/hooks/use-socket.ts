@@ -27,7 +27,7 @@ type Props<T, U> = {
 export const useSocket = <T extends SocketEvent['type'], U extends SocketEvent['event']>(props: Props<T, U>) => {
   const { onEvent, onError, onCleanup, selector, initialData, emitOnConnect, emitOnDisconnect } = props;
   const [lastData, setLastData] = useState(initialData as unknown);
-  const socketRef = useRef<Socket>();
+  const socketRef = useRef<Socket | undefined>(undefined);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: This effect should never re-run
   useEffect(() => {

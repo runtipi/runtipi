@@ -46,7 +46,7 @@ export const AppStorePage = () => {
     <div className="card px-3 pb-3">
       <div className="row row-cards">
         {apps.map((app, index) => (
-          <div ref={index === apps.length - 1 ? lastElementRef : null} key={app.id} className="cursor-pointer col-sm-6 col-lg-4 p-2 mt-4">
+          <div ref={index === apps.length - 1 ? lastElementRef : null} key={app.urn} className="cursor-pointer col-sm-6 col-lg-4 p-2 mt-4">
             <StoreTile app={app} isLoading={isLoading} />
           </div>
         ))}

@@ -1,4 +1,23 @@
 services:
+  runtipi-reverse-proxy:
+    container_name: runtipi-reverse-proxy
+    depends_on:
+      runtipi:
+        condition: service_healthy
+    image: traefik:v3.1.4
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    command: --providers.docker
+    volumes:
+      - ./traefik:/etc/traefik
+      - ./traefik/shared:/shared
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - tipi_main_network
+
   runtipi-db:
     container_name: runtipi-db
     image: postgres:14
@@ -29,6 +48,12 @@ services:
         condition: service_healthy
     container_name: runtipi
     restart: unless-stopped
+    healthcheck:
+      start_period: 10s
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
     ports:
       - 3000:8080
       - 5001:5001

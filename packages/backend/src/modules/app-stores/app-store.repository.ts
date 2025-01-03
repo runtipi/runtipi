@@ -20,6 +20,13 @@ export class AppStoreRepository {
   }
 
   /**
+   * Given a slug, return the app store associated to it
+   */
+  public async getAppStoreBySlug(slug: string) {
+    return this.databaseService.db.query.appStore.findFirst({ where: eq(appStore.slug, slug) });
+  }
+
+  /**
    * Given appstore data, creates a appstore
    */
   public async createAppStore(data: Omit<NewAppStore, 'hash'>) {
@@ -42,27 +49,27 @@ export class AppStoreRepository {
     return this.databaseService.db
       .select()
       .from(appStore)
-      .where(and(eq(appStore.enabled, true), eq(appStore.deleted, false)))
+      .where(and(eq(appStore.enabled, true)))
       .orderBy(asc(appStore.hash));
   }
 
   public async getAllAppStores() {
-    return this.databaseService.db.select().from(appStore).where(eq(appStore.deleted, false)).orderBy(asc(appStore.hash));
+    return this.databaseService.db.select().from(appStore).orderBy(asc(appStore.hash));
   }
 
-  public async removeAppStoreEntity(id: number) {
-    return this.databaseService.db.delete(appStore).where(eq(appStore.id, id));
+  public async removeAppStoreEntity(slug: string) {
+    return this.databaseService.db.delete(appStore).where(eq(appStore.slug, slug));
   }
 
-  public async deleteAppStore(id: number) {
-    return this.databaseService.db.update(appStore).set({ deleted: true }).where(eq(appStore.id, id));
+  public async updateAppStoreHashAndUrl(slug: string, data: Pick<NewAppStore, 'hash' | 'url'>) {
+    return this.databaseService.db.update(appStore).set({ hash: data.hash, url: data.url }).where(eq(appStore.slug, slug));
   }
 
-  public async updateAppStore(id: number, data: Omit<NewAppStore, 'hash' | 'id' | 'url'>) {
+  public async updateAppStore(slug: string, data: Omit<NewAppStore, 'hash' | 'slug' | 'url'>) {
     const update = await this.databaseService.db
       .update(appStore)
-      .set({ name: data.name, enabled: data.enabled, deleted: false })
-      .where(eq(appStore.id, id))
+      .set({ name: data.name, enabled: data.enabled })
+      .where(eq(appStore.slug, slug))
       .returning();
     const store = update[0];
 
@@ -73,16 +80,16 @@ export class AppStoreRepository {
     return store;
   }
 
-  public async enableAppStore(id: number) {
-    return this.databaseService.db.update(appStore).set({ enabled: true }).where(eq(appStore.id, id));
+  public async enableAppStore(slug: string) {
+    return this.databaseService.db.update(appStore).set({ enabled: true }).where(eq(appStore.slug, slug));
   }
 
-  public async disableAppStore(id: number) {
-    return this.databaseService.db.update(appStore).set({ enabled: false }).where(eq(appStore.id, id));
+  public async disableAppStore(slug: string) {
+    return this.databaseService.db.update(appStore).set({ enabled: false }).where(eq(appStore.slug, slug));
   }
 
-  public async getAppCountForStore(id: number) {
-    const res = await this.databaseService.db.select({ count: count() }).from(app).where(eq(app.appStoreId, id));
+  public async getAppCountForStore(slug: string) {
+    const res = await this.databaseService.db.select({ count: count() }).from(app).where(eq(app.appStoreSlug, slug));
     return res[0];
   }
 }

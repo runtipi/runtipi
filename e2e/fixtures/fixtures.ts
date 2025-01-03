@@ -33,8 +33,8 @@ type InstallAppOpts = {
   domain?: string;
 };
 
-export const installApp = async (page: Page, storeId: number, appId: string, opts: InstallAppOpts = {}) => {
-  await page.goto(`/app-store/${storeId}/${appId}`);
+export const installApp = async (page: Page, storeSlug: string, appId: string, opts: InstallAppOpts = {}) => {
+  await page.goto(`/app-store/${storeSlug}/${appId}`);
 
   // Install app
   await page.getByRole('button', { name: 'Install' }).click();

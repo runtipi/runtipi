@@ -29,7 +29,7 @@ export const AppStoresTable = ({ appStores }: Props) => {
         </TableHeader>
         <TableBody>
           {appStores.map((appStore) => (
-            <TableRow key={appStore.id}>
+            <TableRow key={appStore.slug}>
               <TableCell>{appStore.name}</TableCell>
               <TableCell>
                 <EnabledBadge enabled={appStore.enabled} />

@@ -4,6 +4,7 @@ import type { AppHelpers } from '@/modules/apps/app.helpers';
 import type { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import type { AppUrn } from '@/types/app/app.types';
 import { AppLifecycleCommand } from './command';
 
 export class GenerateAppEnvCommand extends AppLifecycleCommand {
@@ -17,15 +18,15 @@ export class GenerateAppEnvCommand extends AppLifecycleCommand {
     super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
-  public async execute(appId: string, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
+  public async execute(appUrn: AppUrn, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
     try {
-      this.logger.info(`Regenerating app.env file for app ${appId}`);
-      await this.ensureAppDir(appId, form);
-      await this.appHelpers.generateEnvFile(appId, form);
+      this.logger.info(`Regenerating app.env file for app ${appUrn}`);
+      await this.ensureAppDir(appUrn, form);
+      await this.appHelpers.generateEnvFile(appUrn, form);
 
-      return { success: true, message: `App ${appId} env file regenerated successfully` };
+      return { success: true, message: `App ${appUrn} env file regenerated successfully` };
     } catch (err) {
-      return this.handleAppError(err, appId, 'generate_env_error');
+      return this.handleAppError(err, appUrn, 'generate_env_error');
     }
   }
 }
