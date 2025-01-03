@@ -1,1 +1,3 @@
-ALTER TABLE "app" ADD COLUMN "port" integer;
+ALTER TABLE "app"
+ADD COLUMN IF NOT EXISTS "port" integer;
+
