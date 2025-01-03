@@ -1,7 +1,7 @@
 ARG NODE_VERSION="iron"
 ARG ALPINE_VERSION="3.20"
 
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
+FROM oven/bun:alpine AS node_base
 
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
@@ -13,14 +13,7 @@ ARG LOCAL
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_RELEASE=${TIPI_VERSION}
 
-RUN npm install pnpm@9.12.2 -g
 RUN apk add --no-cache curl python3 make g++ git
-
-WORKDIR /deps
-
-COPY ./pnpm-lock.yaml ./
-COPY ./patches ./patches
-RUN pnpm fetch
 
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
@@ -46,8 +39,7 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
 
 RUN chmod +x docker-binary
 
-COPY ./pnpm-workspace.yaml ./
-COPY ./pnpm-lock.yaml ./
+COPY ./bun.lockb ./
 COPY ./package.json ./
 COPY ./packages/backend/package.json ./packages/backend/package.json
 COPY ./packages/frontend/package.json ./packages/frontend/package.json
@@ -55,7 +47,7 @@ COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
 COPY ./patches ./patches
 
-RUN pnpm install -r --prefer-offline
+RUN bun install --frozen-lockfile
 
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
@@ -63,7 +55,7 @@ COPY ./packages ./packages
 RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
 RUN echo "LOCAL: ${LOCAL}"
 
-RUN npm run bundle
+RUN bun run bundle
 
 RUN if [ "${LOCAL}" != "true" ]; then \
   pnpm -r sentry:sourcemaps; \
@@ -76,16 +68,16 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install argon2
+RUN bun install argon2
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
 COPY --from=builder /app/docker-binary /usr/local/bin/docker-compose
 
 # Swagger UI
-COPY --from=builder /app/packages/backend/node_modules/swagger-ui-dist/swagger-ui.css ./swagger-ui.css
-COPY --from=builder /app/packages/backend/node_modules/swagger-ui-dist/swagger-ui-bundle.js ./swagger-ui-bundle.js
-COPY --from=builder /app/packages/backend/node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js ./swagger-ui-standalone-preset.js
+COPY --from=builder /app/node_modules/swagger-ui-dist/swagger-ui.css ./swagger-ui.css
+COPY --from=builder /app/node_modules/swagger-ui-dist/swagger-ui-bundle.js ./swagger-ui-bundle.js
+COPY --from=builder /app/node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js ./swagger-ui-standalone-preset.js
 
 # Assets
 COPY --from=builder /app/packages/backend/assets ./assets

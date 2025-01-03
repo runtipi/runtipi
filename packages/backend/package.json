@@ -8,8 +8,8 @@
   "main": "./src/exports/index.ts",
   "scripts": {
     "dev": "nest start --watch --preserveWatchOutput",
-    "build": "nest build",
-    "bundle": "rm -rf dist && ncc build src/main.ts -o dist --external argon2 --source-map",
+    "bundle": "NODE_ENV=production bun run scripts/build.ts",
+    "bundle2": "rm -rf dist && ncc build src/main.ts -o dist --external argon2 --source-map",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

@@ -40,6 +40,9 @@ services:
       - tipi_main_network
 
   runtipi:
+    ports:
+      - 3000:3000
+      - 5001:5001
     build:
       context: .
       dockerfile: Dockerfile

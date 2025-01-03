@@ -1,7 +1,7 @@
+import { Database } from 'bun:sqlite';
 import KeyvSqlite from '@keyv/sqlite';
 import { Injectable } from '@nestjs/common';
 import Keyv from 'keyv';
-import sqlite3 from 'sqlite3';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
@@ -36,16 +36,17 @@ export class CacheService {
   }
 
   public async getByPrefix(prefix: string) {
-    const db = new sqlite3.Database('/cache/cache.sqlite');
+    const db = new Database('/cache/cache.sqlite');
 
-    return new Promise<{ key: string; val: string }[]>((resolve, reject) => {
-      db.all('SELECT * FROM keyv WHERE key LIKE ?', [`cache:${prefix}%`], (err, rows: { key: string; value: string }[]) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows.map((row) => ({ key: row.key, val: JSON.parse(row.value).value })));
-        }
-      });
+    return new Promise<{ key: string; val: string }[]>((resolve) => {
+      try {
+        const query = db.query(`SELECT * FROM keyv WHERE key LIKE '$prefix%'`);
+        const rows = query.all({ prefix: `cache:${prefix}` }) as { key: string; value: string }[];
+
+        resolve(rows.map((row) => ({ key: row.key, val: JSON.parse(row.value).value })));
+      } catch (error) {
+        resolve([]);
+      }
     });
   }
 

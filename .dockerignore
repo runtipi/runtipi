@@ -10,6 +10,7 @@
 !turbo.json
 !supervisord.*.conf
 !patches/**
+!bun.lockb
 
 !**/package.json
 !**/tsconfig.json

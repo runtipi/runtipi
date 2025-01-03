@@ -1,0 +1,26 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index f33f21b694a86919a4b8b15e0bc25843fee388e6..bdf05838ba075a9ff7dd40bde4740f7ee4b987f4 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -36,7 +36,7 @@ __export(src_exports, {
+ module.exports = __toCommonJS(src_exports);
+ var import_events = __toESM(require("events"), 1);
+ var import_util = require("util");
+-var import_sqlite3 = __toESM(require("sqlite3"), 1);
++var import_sqlite3 = __toESM(require("bun:sqlite"), 1);
+ var toString = (input) => String(input).search(/^[a-zA-Z]+$/) < 0 ? "_" + input : input;
+ var KeyvSqlite = class extends import_events.default {
+   ttlSupport;
+diff --git a/dist/index.js b/dist/index.js
+index 44eabe437c67c694c14230464e30f019b57d8e8a..e9cee2b972dda75d1b72d292cebfa75c25a9f83e 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1,7 +1,7 @@
+ // src/index.ts
+ import EventEmitter from "events";
+ import { promisify } from "util";
+-import sqlite3 from "sqlite3";
++import * as sqlite3 from "bun:sqlite";
+ var toString = (input) => String(input).search(/^[a-zA-Z]+$/) < 0 ? "_" + input : input;
+ var KeyvSqlite = class extends EventEmitter {
+   ttlSupport;

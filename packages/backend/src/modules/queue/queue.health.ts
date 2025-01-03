@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HealthCheckError, HealthIndicator, type HealthIndicatorResult } from '@nestjs/terminus';
-import Connection from 'rabbitmq-client';
+import { Connection } from 'rabbitmq-client';
 
 @Injectable()
 export class QueueHealthIndicator extends HealthIndicator {

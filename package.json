@@ -2,16 +2,17 @@
   "name": "runtipi",
   "version": "3.7.5",
   "description": "",
-  "packageManager": "pnpm@9.12.2",
+  "packageManager": "bun@1.1.42",
+  "workspaces": ["packages/*"],
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo build",
-    "bundle": "turbo bundle",
+    "bundle": "turbo bundle --filter=frontend --filter=backend",
     "test": "turbo test",
     "test:integration": "turbo run test:integration",
-    "start": "node ./index.js",
+    "start": "bun ./main.js",
     "start:dev": "docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
-    "start:prod": "docker compose --project-name runtipi -f docker-compose.prod.yml up --build",
+    "start:prod": "docker compose --project-name runtipi --progress plain -f docker-compose.prod.yml up --build",
     "test:e2e": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test",
     "test:e2e:ui": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test --ui",
     "gen:api-client": "openapi-ts",
@@ -39,5 +40,8 @@
     "patchedDependencies": {
       "@vercel/ncc": "patches/@vercel__ncc.patch"
     }
+  },
+  "patchedDependencies": {
+    "@keyv/sqlite@4.0.1": "patches/@keyv%2Fsqlite@4.0.1.patch"
   }
 }
