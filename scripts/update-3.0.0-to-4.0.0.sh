@@ -19,6 +19,13 @@ if [[ "$EUID" -ne 0 ]]; then
   exit 1
 fi
 
+current_version=$(cat VERSION)
+if [[ ! "$current_version" =~ ^3\..* ]]; then
+  echo -e "❌ ${Red}This script is only for migrating from version 3.x.x to 4.0.0${ColorOff}"
+  echo -e "Current version: ${current_version}"
+  exit 1
+fi
+
 # Verify app data
 if [[ -d "app-data/app-data" ]]; then
   echo -e "❌ ${Red}You have an additional app-data folder, the script cannot continue with this folder, please seek help in our Discord or Forums for a guide on how to fix the issue.${ColorOff}"
