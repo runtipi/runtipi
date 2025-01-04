@@ -15,6 +15,28 @@ const ulimitsSchema = z.object({
   nofile: z.number().or(z.object({ soft: z.number(), hard: z.number() })),
 });
 
+const deploySchema = z.object({
+  resources: z.object({
+    limits: z.object({
+      cpus: z.string().optional(),
+      memory: z.string().optional(),
+      pids: z.number().optional(),
+    }),
+    reservations: z.object({
+      cpus: z.string().optional(),
+      memory: z.string().optional(),
+      devices: z
+        .object({
+          capabilities: z.array(z.string()),
+          driver: z.string().optional(),
+          count: z.enum(['all']).or(z.number()).optional(),
+          deviceIds: z.array(z.string()).optional(),
+        })
+        .array(),
+    }),
+  }),
+});
+
 export const serviceSchema = z.object({
   image: z.string(),
   name: z.string(),
@@ -56,6 +78,29 @@ export const serviceSchema = z.object({
     })
     .optional(),
   dependsOn: dependsOnSchema.optional(),
+  capAdd: z.array(z.string()).optional(),
+  deploy: deploySchema.optional(),
+  hostname: z.string().optional(),
+  devices: z.array(z.string()).optional(),
+  entrypoint: z.string().or(z.array(z.string())).optional(),
+  pid: z.string().optional(),
+  privileged: z.boolean().optional(),
+  tty: z.boolean().optional(),
+  user: z.string().optional(),
+  workingDir: z.string().optional(),
+  shmSize: z.string().optional(),
+  capDrop: z.array(z.string()).optional(),
+  logging: z
+    .object({
+      driver: z.string(),
+      options: z.record(z.string()),
+    })
+    .optional(),
+  readOnly: z.boolean().optional(),
+  securityOpt: z.array(z.string()).optional(),
+  stopSignal: z.string().optional(),
+  stopGracePeriod: z.string().optional(),
+  stdinOpen: z.boolean().optional(),
 });
 
 export const dynamicComposeSchema = z.object({

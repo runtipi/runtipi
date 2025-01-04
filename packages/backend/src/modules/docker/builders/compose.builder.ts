@@ -35,13 +35,21 @@ export class DockerComposeBuilder {
   }
 
   private build() {
+    const hasNetworks = Object.keys(this.networks).length > 0;
+
     return yaml.stringify({
       services: this.services,
-      networks: this.networks,
+      networks: hasNetworks ? this.networks : undefined,
     });
   }
 
   private buildService = (params: Service, form: AppEventFormInput, storeId: string) => {
+    const result = serviceSchema.safeParse(params);
+
+    if (!result.success) {
+      console.warn(`! Service ${params.name} has invalid schema: \n${JSON.stringify(result.error.flatten(), null, 2)}\nNotify the app maintainer`);
+    }
+
     const service = new ServiceBuilder();
     service
       .setImage(params.image)
@@ -50,13 +58,31 @@ export class DockerComposeBuilder {
       .setCommand(params.command)
       .setHealthCheck(params.healthCheck)
       .setDependsOn(params.dependsOn)
-      .addVolumes(params.volumes)
+      .setVolumes(params.volumes)
       .setRestartPolicy('unless-stopped')
-      .addExtraHosts(params.extraHosts)
-      .addUlimits(params.ulimits)
-      .addPorts(params.addPorts)
-      .addNetwork('tipi_main_network')
-      .setNetworkMode(params.networkMode);
+      .setExtraHosts(params.extraHosts)
+      .setUlimits(params.ulimits)
+      .setPorts(params.addPorts)
+      .setNetwork('tipi_main_network')
+      .setNetworkMode(params.networkMode)
+      .setCapAdd(params.capAdd)
+      .setDeploy(params.deploy)
+      .setHostname(params.hostname)
+      .setDevices(params.devices)
+      .setEntrypoint(params.entrypoint)
+      .setPid(params.pid)
+      .setPrivileged(params.privileged)
+      .setTty(params.tty)
+      .setUser(params.user)
+      .setWorkingDir(params.workingDir)
+      .setShmSize(params.shmSize)
+      .setCapDrop(params.capDrop)
+      .setLogging(params.logging)
+      .setReadOnly(params.readOnly)
+      .setSecurityOpt(params.securityOpt)
+      .setStopSignal(params.stopSignal)
+      .setStopGracePeriod(params.stopGracePeriod)
+      .setStdinOpen(params.stdinOpen);
 
     if (params.isMain) {
       if (!params.internalPort) {
@@ -64,18 +90,18 @@ export class DockerComposeBuilder {
       }
 
       if (form.openPort) {
-        service.addPort({
+        service.setPort({
           containerPort: params.internalPort,
           hostPort: '${APP_PORT}',
         });
       }
 
       const traefikLabels = new TraefikLabelsBuilder({
+        storeId,
         internalPort: params.internalPort,
         appId: params.name,
         exposedLocal: form.exposedLocal,
         exposed: form.exposed,
-        storeId,
       })
         .addExposedLabels()
         .addExposedLocalLabels();
@@ -87,7 +113,7 @@ export class DockerComposeBuilder {
   };
 
   public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, storeId: string) => {
-    const myServices = services.map((service) => this.buildService(serviceSchema.parse(service), form, storeId));
+    const myServices = services.map((service) => this.buildService(service, form, storeId));
 
     const dockerCompose = this.addServices(myServices).addNetwork({
       key: 'tipi_main_network',
