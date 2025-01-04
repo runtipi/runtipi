@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import * as readline from 'node:readline';
 import { Injectable } from '@nestjs/common';
 import winston, { createLogger, format, transports } from 'winston';
 
@@ -63,19 +64,60 @@ export class LoggerService {
   }
 
   private streamLogToHistory(logFile: string) {
-    return new Promise((resolve, reject) => {
-      const appLogReadStream = fs.createReadStream(path.join(this.logsFolder, logFile), 'utf-8');
-      const appLogHistoryWriteStream = fs.createWriteStream(path.join(this.logsFolder, `${logFile}.history`), { flags: 'a' });
+    const maxLines = 10_000;
+    const logFilePath = path.join(this.logsFolder, logFile);
+    const historyFilePath = path.join(this.logsFolder, `${logFile}.history`);
+    const tempHistoryPath = `${historyFilePath}.tmp`;
 
-      appLogReadStream
-        .pipe(appLogHistoryWriteStream)
-        .on('finish', () => {
-          fs.writeFileSync(path.join(this.logsFolder, logFile), '');
-          resolve(true);
-        })
-        .on('error', (error) => {
-          reject(error);
-        });
+    return new Promise<void>((resolve, reject) => {
+      try {
+        const tempHistoryWriteStream = fs.createWriteStream(tempHistoryPath);
+
+        if (fs.existsSync(historyFilePath)) {
+          const historyReadStream = fs.createReadStream(historyFilePath, 'utf-8');
+          const historyLineReader = readline.createInterface({ input: historyReadStream });
+
+          const lineBuffer: string[] = [];
+          historyLineReader.on('line', (line) => {
+            lineBuffer.push(line);
+            if (lineBuffer.length > maxLines) {
+              lineBuffer.shift();
+            }
+          });
+
+          historyLineReader.on('close', () => {
+            // Write the last `maxLines` lines to the temp file
+            for (const line of lineBuffer) {
+              tempHistoryWriteStream.write(`${line}\n`);
+            }
+            appendLogFile();
+          });
+
+          historyReadStream.on('error', reject);
+        } else {
+          appendLogFile();
+        }
+
+        function appendLogFile() {
+          const logReadStream = fs.createReadStream(logFilePath, 'utf-8');
+          logReadStream.pipe(tempHistoryWriteStream, { end: false });
+
+          logReadStream.on('end', async () => {
+            tempHistoryWriteStream.end();
+
+            await fs.promises.rename(tempHistoryPath, historyFilePath);
+
+            await fs.promises.writeFile(logFilePath, '', 'utf-8');
+            resolve();
+          });
+
+          logReadStream.on('error', reject);
+        }
+
+        tempHistoryWriteStream.on('error', reject);
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 
