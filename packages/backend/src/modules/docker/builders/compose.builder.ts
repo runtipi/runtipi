@@ -32,9 +32,11 @@ export class DockerComposeBuilder {
   }
 
   build() {
+    const hasNetworks = Object.keys(this.networks).length > 0;
+
     return yaml.stringify({
       services: this.services,
-      networks: this.networks,
+      networks: hasNetworks ? this.networks : undefined,
     });
   }
 }
