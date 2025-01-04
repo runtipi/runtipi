@@ -16,14 +16,23 @@ const ulimitsSchema = z.object({
 });
 
 const deploySchema = z.object({
-  reservations: z.object({
-    devices: z.object({
-      capabilities: z.array(z.string()),
-      driver: z.string(),
-      count: z.enum(["all"]).or(z.number()),
-      deviceIds: z.array(z.string()).optional(),
+  limits: z.object({
+    cpus: z.string().optional(),
+    memory: z.string().optional(),
+    pids: z.number().optional(),
+  }),
+  resources: z.object({
+    reservations: z.object({
+      devices: z
+        .object({
+          capabilities: z.array(z.string()),
+          driver: z.string().optional(),
+          count: z.enum(['all']).or(z.number()).optional(),
+          deviceIds: z.array(z.string()).optional(),
+        })
+        .array(),
     }),
-  })
+  }),
 });
 
 export const serviceSchema = z.object({
@@ -70,19 +79,21 @@ export const serviceSchema = z.object({
   capAdd: z.array(z.string()).optional(),
   deploy: deploySchema.optional(),
   hostname: z.string().optional(),
-  devices: z.record(z.string(), z.string()).optional(),
+  devices: z.array(z.string()).optional(),
   entrypoint: z.string().or(z.array(z.string())).optional(),
-  pid: z.string().or(z.number()).optional(),
+  pid: z.string().optional(),
   privileged: z.boolean().optional(),
   tty: z.boolean().optional(),
   user: z.string().optional(),
   workingDir: z.string().optional(),
   shmSize: z.string().optional(),
   capDrop: z.array(z.string()).optional(),
-  logging: z.object({
-    driver: z.string(),
-    options: z.record(z.string()),
-  }),
+  logging: z
+    .object({
+      driver: z.string(),
+      options: z.record(z.string()),
+    })
+    .optional(),
   readOnly: z.boolean().optional(),
   securityOpt: z.array(z.string()).optional(),
   stopSignal: z.string().optional(),

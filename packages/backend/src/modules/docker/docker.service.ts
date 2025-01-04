@@ -121,7 +121,7 @@ export class DockerService {
   };
 
   public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput) => {
-    const myServices = services.map((service) => this.buildService(serviceSchema.parse(service), form));
+    const myServices = services.map((service) => this.buildService(service, form));
 
     const dockerCompose = new DockerComposeBuilder().addServices(myServices).addNetwork({
       key: 'tipi_main_network',
@@ -133,6 +133,12 @@ export class DockerService {
   };
 
   private buildService = (params: Service, form: AppEventFormInput) => {
+    const result = serviceSchema.safeParse(params);
+
+    if (!result.success) {
+      console.warn(`! Service ${params.name} has invalid schema: \n${JSON.stringify(result.error.flatten(), null, 2)}\nNotify the app maintainer`);
+    }
+
     const service = new ServiceBuilder();
     service
       .setImage(params.image)

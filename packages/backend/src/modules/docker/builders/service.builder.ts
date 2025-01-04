@@ -30,12 +30,21 @@ interface Ulimits {
 }
 
 interface Deploy {
-  reservations: {
-    devices: {
-      capabilities: string[];
-      driver: string;
-      count: 'all' | number;
-      deviceIds?: string[];
+  resources: {
+    limits?: {
+      cpus?: string;
+      memory?: string;
+      pids?: number;
+    };
+    reservations?: {
+      cpus?: string;
+      memory?: string;
+      devices?: {
+        capabilities: string[];
+        driver?: string;
+        count?: 'all' | number;
+        deviceIds?: string[];
+      }[];
     };
   };
 }
@@ -63,9 +72,9 @@ export interface BuilderService {
   capAdd?: string[];
   deploy?: Deploy;
   hostname?: string;
-  devices?: Record<string, string>;
+  devices?: string[];
   entrypoint?: string | string[];
-  pid?: string | number;
+  pid?: string;
   privileged?: boolean;
   tty?: boolean;
   user?: string;
@@ -390,7 +399,7 @@ export class ServiceBuilder {
     return this;
   }
 
-  setDevices(devices?: Record<string, string>) {
+  setDevices(devices?: string[]) {
     this.service.devices = devices;
     return this;
   }
@@ -400,7 +409,7 @@ export class ServiceBuilder {
     return this;
   }
 
-  setPid(pid?: string | number) {
+  setPid(pid?: string) {
     this.service.pid = pid;
     return this;
   }
@@ -488,7 +497,7 @@ export class ServiceBuilder {
       this.service.networks = undefined;
     }
 
-    return {
+    const finalService = {
       image: this.service.image,
       command: this.service.command,
       container_name: this.service.containerName,
@@ -522,5 +531,14 @@ export class ServiceBuilder {
       stop_grace_period: this.service.stopGracePeriod,
       stdin_open: this.service.stdinOpen,
     };
+
+    // Delete any undefined properties
+    for (const key in finalService) {
+      if (finalService[key as keyof typeof finalService] === undefined) {
+        delete finalService[key as keyof typeof finalService];
+      }
+    }
+
+    return finalService;
   }
 }
