@@ -1,0 +1,160 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DockerComposeBuilder > should build a docker-compose file 1`] = `
+"services:
+  service:
+    image: image
+    container_name: service
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format a complex docker-compose file 1`] = `
+"services:
+  service1:
+    image: image1
+    command: node index.js
+    container_name: service1
+    extra_hosts:
+      - host1
+      - host2
+    ulimits:
+      nproc: 1024
+      nofile: 65536
+    healthcheck:
+      test: curl -f http://localhost/ || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    environment:
+      NODE_ENV: production
+      PORT: 80
+      SOME_VAR: value
+    ports:
+      - 80:80
+      - 9000:8080
+    volumes:
+      - /host/path:/container/path:ro
+      - /host/path2:/container/path2
+    depends_on:
+      - service2
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 50M
+          pids: 1
+        reservations:
+          cpus: "0.25"
+          memory: 20M
+          devices:
+            - capabilities:
+                - gpu
+              driver: nvidia
+              count: all
+    hostname: hostname
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/sda:/dev/xvda:rwm
+    entrypoint:
+      - entrypoint
+      - arg1
+      - arg2
+    pid: "1"
+    privileged: true
+    tty: true
+    user: user
+    working_dir: /working/dir
+    shm_size: 1G
+    cap_drop:
+      - SYS_ADMIN
+      - NET_ADMIN
+    logging:
+      driver: json-file
+      options:
+        syslog-address: tcp://192.168.0.42:123
+    read_only: true
+    security_opt:
+      - label=disable
+      - label=role:ROLE
+    stop_signal: SIGTERM
+    stop_grace_period: 1m
+    stdin_open: true
+  service2:
+    image: image2
+    container_name: service2
+networks:
+  network:
+    name: network
+    external: true
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format deploy resources 1`] = `
+"services:
+  service:
+    image: image
+    container_name: service
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 50M
+          pids: 1
+        reservations:
+          cpus: "0.25"
+          memory: 20M
+          devices:
+            - capabilities:
+                - gpu
+              driver: nvidia
+              count: all
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format devices 1`] = `
+"services:
+  service:
+    image: image
+    container_name: service
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/sda:/dev/xvda:rwm
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format entrypoint as array 1`] = `
+"services:
+  service:
+    image: image
+    container_name: service
+    entrypoint:
+      - entrypoint
+      - arg1
+      - arg2
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format entrypoint as string 1`] = `
+"services:
+  service:
+    image: image
+    container_name: service
+    entrypoint: entrypoint
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format logging 1`] = `
+"services:
+  service:
+    image: image
+    container_name: service
+    logging:
+      driver: json-file
+      options:
+        syslog-address: tcp://192.168.0.42:123
+"
+`;
