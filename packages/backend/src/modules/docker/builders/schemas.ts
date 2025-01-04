@@ -16,13 +16,15 @@ const ulimitsSchema = z.object({
 });
 
 const deploySchema = z.object({
-  limits: z.object({
-    cpus: z.string().optional(),
-    memory: z.string().optional(),
-    pids: z.number().optional(),
-  }),
   resources: z.object({
+    limits: z.object({
+      cpus: z.string().optional(),
+      memory: z.string().optional(),
+      pids: z.number().optional(),
+    }),
     reservations: z.object({
+      cpus: z.string().optional(),
+      memory: z.string().optional(),
       devices: z
         .object({
           capabilities: z.array(z.string()),
