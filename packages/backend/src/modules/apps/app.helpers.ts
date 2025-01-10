@@ -95,7 +95,7 @@ export class AppHelpers {
       envMap.set('APP_HOST', `${config.id}.${envMap.get('LOCAL_DOMAIN')}`);
       envMap.set('APP_PROTOCOL', 'https');
     } else {
-      envMap.set('APP_DOMAIN', `${internalIp}:${config.port}`);
+      envMap.set('APP_DOMAIN', `${internalIp}:${form.port}`);
       envMap.set('APP_HOST', internalIp);
       envMap.set('APP_PROTOCOL', 'http');
     }
