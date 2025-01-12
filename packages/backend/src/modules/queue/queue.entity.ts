@@ -1,5 +1,5 @@
 import type { LoggerService } from '@/core/logger/logger.service';
-import Sentry from '@sentry/nestjs';
+import * as Sentry from '@sentry/nestjs';
 import cron from 'node-cron';
 import type { Connection, RPCClient } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
