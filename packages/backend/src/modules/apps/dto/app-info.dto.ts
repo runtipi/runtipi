@@ -47,7 +47,7 @@ export const appInfoSchema = z.object({
   id: z.string(),
   available: z.boolean(),
   deprecated: z.boolean().optional().default(false),
-  port: z.number().min(1).max(65535),
+  port: z.number().min(1).max(65535).optional(),
   name: z.string(),
   description: z.string().optional().default(''),
   version: z.string().optional().default('latest'),

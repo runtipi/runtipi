@@ -20,10 +20,6 @@ describe('DockerService', () => {
     dockerService = moduleRef.get(DockerService);
   });
 
-  it('should be defined', () => {
-    expect(dockerService).toBeDefined();
-  });
-
   it('should be able to parse a compose.json file', async () => {
     const composeJson: { services: ServiceInput[] } = {
       services: [

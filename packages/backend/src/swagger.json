@@ -2333,7 +2333,6 @@
                   "required": [
                     "id",
                     "available",
-                    "port",
                     "name",
                     "tipi_version",
                     "short_desc",
@@ -2686,7 +2685,6 @@
             "required": [
               "id",
               "available",
-              "port",
               "name",
               "tipi_version",
               "short_desc",
