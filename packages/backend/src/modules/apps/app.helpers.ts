@@ -44,7 +44,9 @@ export class AppHelpers {
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
     // Default always present env variables
-    envMap.set('APP_PORT', form.port ? String(form.port) : String(config.port));
+    if (config.port) {
+      envMap.set('APP_PORT', form.port ? String(form.port) : String(config.port));
+    }
     envMap.set('APP_ID', appUrn);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
     envMap.set('APP_DATA_DIR', path.join(userSettings.appDataPath, appStoreId, appName));
@@ -95,7 +97,10 @@ export class AppHelpers {
       envMap.set('APP_HOST', `${config.id}.${envMap.get('LOCAL_DOMAIN')}`);
       envMap.set('APP_PROTOCOL', 'https');
     } else {
-      envMap.set('APP_DOMAIN', `${internalIp}:${form.port}`);
+      if (config.port) {
+        envMap.set('APP_DOMAIN', `${internalIp}:${form.port}`);
+      }
+
       envMap.set('APP_HOST', internalIp);
       envMap.set('APP_PROTOCOL', 'http');
     }
