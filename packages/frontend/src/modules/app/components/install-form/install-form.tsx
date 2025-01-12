@@ -197,9 +197,13 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           )}
         />
       )}
-      {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
-      {info.dynamic_config && renderDynamicConfigForm()}
-      {info.exposable && renderExposeForm()}
+      {Boolean(info.port) && (
+        <>
+          {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
+          {info.dynamic_config && renderDynamicConfigForm()}
+          {info.exposable && renderExposeForm()}
+        </>
+      )}
     </form>
   );
 };

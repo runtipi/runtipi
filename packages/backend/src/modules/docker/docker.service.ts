@@ -174,27 +174,25 @@ export class DockerService {
       .setStdinOpen(params.stdinOpen);
 
     if (params.isMain) {
-      if (!params.internalPort) {
-        throw new Error('Main service must have an internal port specified');
-      }
-
-      if (form.openPort) {
+      if (form.openPort && params.internalPort) {
         service.setPort({
           containerPort: params.internalPort,
           hostPort: '${APP_PORT}',
         });
       }
 
-      const traefikLabels = new TraefikLabelsBuilder({
-        internalPort: params.internalPort,
-        appId: params.name,
-        exposedLocal: form.exposedLocal,
-        exposed: form.exposed,
-      })
-        .addExposedLabels()
-        .addExposedLocalLabels();
+      if (params.internalPort) {
+        const traefikLabels = new TraefikLabelsBuilder({
+          internalPort: params.internalPort,
+          appId: params.name,
+          exposedLocal: form.exposedLocal,
+          exposed: form.exposed,
+        })
+          .addExposedLabels()
+          .addExposedLocalLabels();
 
-      service.setLabels(traefikLabels.build());
+        service.setLabels(traefikLabels.build());
+      }
     }
 
     return service.build();
