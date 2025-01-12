@@ -325,7 +325,7 @@
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "Settings updated. Restart your instance to apply new settings.",
   "SETTINGS_GENERAL_SETTINGS_UPDATED": "Settings updated.",
   "SETTINGS_GENERAL_APP_DATA_PATH": "App data path",
-  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "The location in which app data are storred.",
+  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "The location in which app data are stored.",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG": "Persist Traefik config",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT": "Persist the Traefik configuration folder throughout restarts. This will allow you to customize the Traefik configuration.",
   "SETTINGS_GENERAL_DOMAIN": "Domain name",
