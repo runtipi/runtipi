@@ -46,7 +46,7 @@ export const InstallFormField = (props: IProps) => {
       <Controller
         control={control}
         name={field.env_variable}
-        defaultValue={field.default as boolean}
+        defaultValue={(field.default as boolean) || false}
         render={({ field: { onChange, value, ref, ...rest } }) => (
           <Switch className="mb-3" ref={ref} checked={Boolean(value)} onCheckedChange={onChange} {...rest} label={label} />
         )}
