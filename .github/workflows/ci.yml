@@ -1,6 +1,10 @@
 name: Tipi CI
 on:
+  workflow_call:
   pull_request:
+  push:
+    branches:
+      - develop
 
 env:
   ROOT_FOLDER: /runtipi
@@ -59,7 +63,7 @@ jobs:
         run: pnpm lint:ci
 
       - name: Run tests
-        run: npm run test
+        run: pnpm test
 
   build:
     runs-on: ubuntu-latest

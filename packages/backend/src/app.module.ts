@@ -19,12 +19,13 @@ import { LoggerModule } from './core/logger/logger.module';
 import { LoggerService } from './core/logger/logger.service';
 import { SocketModule } from './core/socket/socket.module';
 import { AppLifecycleModule } from './modules/app-lifecycle/app-lifecycle.module';
+import { AppStoreModule } from './modules/app-stores/app-store.module';
 import { AppsModule } from './modules/apps/apps.module';
 import { AuthMiddleware } from './modules/auth/auth.middleware';
 import { BackupsModule } from './modules/backups/backups.module';
 import { LinksModule } from './modules/links/links.module';
+import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { QueueModule } from './modules/queue/queue.module';
-import { ReposModule } from './modules/repos/repos.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/user/user.module';
 
@@ -40,13 +41,14 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   LoggerModule,
   AppsModule,
   FilesystemModule,
-  ReposModule,
+  AppStoreModule,
   QueueModule,
   AppLifecycleModule,
   SocketModule,
   LinksModule,
   BackupsModule,
   HealthModule,
+  MarketplaceModule,
 ];
 
 if (process.env.NODE_ENV === 'production') {

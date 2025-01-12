@@ -1,16 +1,18 @@
 import path from 'node:path';
-
 import { Injectable } from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
 import { z } from 'zod';
 import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
 import { CacheService } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
+import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
 import { SocketManager } from './core/socket/socket.service';
+import { AppStoreService } from './modules/app-stores/app-store.service';
+import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
-import { ReposService } from './modules/repos/repos.service';
 
 @Injectable()
 export class AppService {
@@ -18,41 +20,49 @@ export class AppService {
     private readonly cache: CacheService,
     private readonly configuration: ConfigurationService,
     private readonly logger: LoggerService,
-    private readonly repos: ReposService,
     private readonly repoQueue: RepoEventsQueue,
     private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
+    private readonly appStoreService: AppStoreService,
+    private readonly marketplaceService: MarketplaceService,
+    private readonly databaseService: DatabaseService,
   ) {}
 
   public async bootstrap() {
-    const { version, appsRepoUrl, userSettings } = this.configuration.getConfig();
+    try {
+      await this.databaseService.migrate();
 
-    this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
+      const { version, userSettings, __prod__ } = this.configuration.getConfig();
 
-    await this.logger.flush();
+      this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
 
-    this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
-    this.logger.info('Generating system env file...');
+      await this.logger.flush();
 
-    const clone = await this.repos.cloneRepo(appsRepoUrl);
-    if (!clone.success) {
-      this.logger.error(`Failed to clone repo ${appsRepoUrl}`);
-    }
+      this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
+      this.logger.info('Generating system env file...');
 
-    if (process.env.NODE_ENV !== 'development') {
-      const pull = await this.repos.pullRepo(appsRepoUrl);
-      if (!pull.success) {
-        this.logger.error(`Failed to pull repo ${appsRepoUrl}`);
+      // Delete all repos for a clean start
+      if (__prod__) {
+        await this.appStoreService.deleteAllRepos();
       }
+
+      await this.appStoreService.migrateLegacyRepo();
+
+      this.repoQueue.publish({ command: 'clone_all' });
+
+      await this.marketplaceService.initialize();
+
+      // Every 15 minutes, check for updates to the apps repo
+      this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');
+
+      this.socketManager.init();
+
+      await this.copyAssets();
+      await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
+    } catch (e) {
+      this.logger.error(e);
+      Sentry.captureException(e, { tags: { source: 'bootstrap' } });
     }
-
-    // Every 15 minutes, check for updates to the apps repo
-    this.repoQueue.publishRepeatable({ command: 'update', url: appsRepoUrl }, '*/15 * * * *');
-
-    this.socketManager.init();
-
-    await this.copyAssets();
-    await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
   }
 
   public async getVersion() {

@@ -1,4 +1,4 @@
-# Tipi — A personal homeserver for everyone
+# Runtipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-53-orange.svg?style=flat-square)](#contributors-)
@@ -7,25 +7,24 @@
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/release/runtipi/runtipi?color=%235351FB&label=version)](https://github.com/runtipi/runtipi/releases)
 ![Issues](https://img.shields.io/github/issues/runtipi/runtipi)
-[![Docker Pulls](https://badgen.net/docker/pulls/meienberger/runtipi?icon=docker&label=pulls)](https://hub.docker.com/r/meienberger/runtipi/)
-[![Docker Image Size](https://badgen.net/docker/size/meienberger/runtipi?icon=docker&label=image%20size)](https://hub.docker.com/r/meienberger/runtipi/)
 ![Build](https://github.com/runtipi/runtipi/workflows/Tipi%20CI/badge.svg)
 [![Crowdin](https://badges.crowdin.net/runtipi/localized.svg)](https://crowdin.com/project/runtipi)
 [![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20Tipi%20Guru-006BFF)](https://gurubase.io/g/tipi)
 
 > [!NOTE]
-> Tipi is built with TypeScript, Next.js app router and Drizzle ORM! If you want to collaborate on a cool project, join the discussion on Discord!
+> Runtipi is built with TypeScript, NestJS and React! If you want to collaborate on a cool project, join the discussion in the forums or on Discord!
 
 #### Join the community
 
+[![Forums](https://img.shields.io/discourse/users?server=https%3A%2F%2Fforums.runtipi.io)](https://forums.runtipi.io/)
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 
 ![Preview](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png)
 
 > [!WARNING]  
-> Tipi is built and maintained by volunteers. There is no guarantee of support or security when you use Tipi. While the system is considered stable, it is still in active development and may contain bugs.
+> Runtipi is built and maintained by volunteers. There is no guarantee of support or security when you use Runtipi. While the system is considered stable, it is still in active development and may contain bugs.
 
-Tipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Tipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Tipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/runtipi/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
+Runtipi is a personal homeserver orchestrator that makes it easy to manage and run multiple services on a single server. It is based on Docker and comes with a simple web interface to manage your services. Runtipi is designed to be easy to use, so you don't have to worry about manual configuration or networking. Simply install Runtipi on your server and use the web interface to add and manage services. You can see a list of available services in the [App Store repo](https://github.com/runtipi/runtipi-appstore) and request new ones if you don't see what you need. To get started, follow the installation instructions below.
 
 ## Sponsors
 
@@ -39,10 +38,11 @@ Thanks to our generous sponsors for supporting the development of Runtipi:
 ## Getting started
 
 Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation?utm_source=github&utm_medium=README&utm_campaign=getting-started) for installation instructions, documentation and guides.
+If you need more personalized help, visit our [Forums](https://forums.runtipi.io/) to get help from the community.
 
 ## Demo
 
-You can try out a demo of Tipi at [demo.runtipi.io](https://demo.runtipi.io) using the following credentials:
+You can try out a demo of Runtipi at [demo.runtipi.io](https://demo.runtipi.io) using the following credentials:
 
     username: user@runtipi.io
     password: password
@@ -53,7 +53,7 @@ You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.
 
 ## ❤ Contributing
 
-Tipi is made to be very easy to plug in new apps. We welcome and appreciate new contributions.
+Runtipi is made to be very easy to plug in new apps. We welcome and appreciate new contributions.
 
 If you want to add a new app or feature, you can follow the [Contribution guide](https://www.runtipi.io/docs/contributing/adding-a-new-app) for instructions on how to do so.
 
@@ -63,11 +63,10 @@ We are looking for contributions of all kinds. If you know design, development, 
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
 
-Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may copy, distribute and modify the software as long as you track changes/dates in source files. Any modifications to or software including (via compiler) GPL-licensed code must also be made available under the GPL along with build & install instructions.
+Runtipi is licensed under the GNU General Public License v3.0. TL;DR — You may copy, distribute and modify the software as long as you track changes/dates in source files. Any modifications to or software including (via compiler) GPL-licensed code must also be made available under the GPL along with build & install instructions.
 
 ## 🗣 Community
 
-- [Twitter](https://twitter.com/runtipi)
 - [Discord](https://discord.gg/Bu9qEPnHsc)
 
 ## 🙏 Acknowledgements
@@ -77,10 +76,6 @@ Tipi is licensed under the GNU General Public License v3.0. TL;DR — You may co
 - [Sentry](https://sentry.io) - Thanks for providing error tracking for the project
 - [Crowdin](https://crowdin.com) - Thanks for providing localization management for the project
 - [CodeRabbit](https://coderabbit.ai/) - Thanks for providing free AI code reviews in our Pull Requests
-
-## 🔀 Server Actions - Component Flow
-
-[![Server Actions - Component Flow](https://nextjs.apidiagram.com/github/runtipi/runtipi/diagram.svg)](https://nextjs.apidiagram.com/github/runtipi/runtipi)
 
 ## ✨ Contributors
 
@@ -92,9 +87,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://meienberger.dev/"><img src="https://avatars.githubusercontent.com/u/47644445?v=4?s=100" width="100px;" alt="Nicolas Meienberger"/><br /><sub><b>Nicolas Meienberger</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=meienberger" title="Code">💻</a> <a href="#infra-meienberger" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/runtipi/runtipi/commits?author=meienberger" title="Tests">⚠️</a> <a href="https://github.com/runtipi/runtipi/commits?author=meienberger" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ArneNaessens"><img src="https://avatars.githubusercontent.com/u/16622722?v=4?s=100" width="100px;" alt="ArneNaessens"/><br /><sub><b>ArneNaessens</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=ArneNaessens" title="Code">💻</a> <a href="#ideas-ArneNaessens" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/runtipi/runtipi/commits?author=ArneNaessens" title="Tests">⚠️</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DrMxrcy"><img src="https://avatars.githubusercontent.com/u/58747968?v=4?s=100" width="100px;" alt="DrMxrcy"/><br /><sub><b>DrMxrcy</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=DrMxrcy" title="Code">💻</a> <a href="#ideas-DrMxrcy" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/runtipi/runtipi/commits?author=DrMxrcy" title="Tests">⚠️</a> <a href="#content-DrMxrcy" title="Content">🖋</a> <a href="#promotion-DrMxrcy" title="Promotion">📣</a> <a href="#question-DrMxrcy" title="Answering Questions">💬</a> <a href="https://github.com/runtipi/runtipi/pulls?q=is%3Apr+reviewed-by%3ADrMxrcy" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://meienberger.dev/"><img src="https://avatars.githubusercontent.com/u/47644445?v=4?s=100" width="100px;" alt="Nicolas Meienberger"/><br /><sub><b>Nicolas Meienberger</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=meienberger" title="Code">💻</a> <a href="#infra-meienberger" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/runtipi/runtipi/commits?author=meienberger" title="Tests">!</a> <a href="https://github.com/runtipi/runtipi/commits?author=meienberger" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ArneNaessens"><img src="https://avatars.githubusercontent.com/u/16622722?v=4?s=100" width="100px;" alt="ArneNaessens"/><br /><sub><b>ArneNaessens</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=ArneNaessens" title="Code">💻</a> <a href="#ideas-ArneNaessens" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/runtipi/runtipi/commits?author=ArneNaessens" title="Tests">!</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DrMxrcy"><img src="https://avatars.githubusercontent.com/u/58747968?v=4?s=100" width="100px;" alt="DrMxrcy"/><br /><sub><b>DrMxrcy</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=DrMxrcy" title="Code">💻</a> <a href="#ideas-DrMxrcy" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/runtipi/runtipi/commits?author=DrMxrcy" title="Tests">!</a> <a href="#content-DrMxrcy" title="Content">🖋</a> <a href="#promotion-DrMxrcy" title="Promotion">📣</a> <a href="#question-DrMxrcy" title="Answering Questions">💬</a> <a href="https://github.com/runtipi/runtipi/pulls?q=is%3Apr+reviewed-by%3ADrMxrcy" title="Reviewed Pull Requests">👀</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://cobre.dev"><img src="https://avatars.githubusercontent.com/u/36574329?v=4?s=100" width="100px;" alt="Cooper"/><br /><sub><b>Cooper</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=CobreDev" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JTruj1ll0923"><img src="https://avatars.githubusercontent.com/u/6656643?v=4?s=100" width="100px;" alt="JTruj1ll0923"/><br /><sub><b>JTruj1ll0923</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=JTruj1ll0923" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Stetsed"><img src="https://avatars.githubusercontent.com/u/33891782?v=4?s=100" width="100px;" alt="Stetsed"/><br /><sub><b>Stetsed</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=Stetsed" title="Code">💻</a></td>
@@ -132,7 +127,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://micro.nghialele.com"><img src="https://avatars.githubusercontent.com/u/129353223?v=4?s=100" width="100px;" alt="Nghia Lele"/><br /><sub><b>Nghia Lele</b></sub></a><br /><a href="#translation-nghialele" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/amusingimpala75"><img src="https://avatars.githubusercontent.com/u/69653100?v=4?s=100" width="100px;" alt="amusingimpala75"/><br /><sub><b>amusingimpala75</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=amusingimpala75" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://m1n.omg.lol"><img src="https://avatars.githubusercontent.com/u/54779580?v=4?s=100" width="100px;" alt="David"/><br /><sub><b>David</b></sub></a><br /><a href="#translation-M1n-4d316e" title="Translation">🌍</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/steveiliop56"><img src="https://avatars.githubusercontent.com/u/106091011?v=4?s=100" width="100px;" alt="Stavros"/><br /><sub><b>Stavros</b></sub></a><br /><a href="#translation-steveiliop56" title="Translation">🌍</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Code">💻</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Tests">⚠️</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/steveiliop56"><img src="https://avatars.githubusercontent.com/u/106091011?v=4?s=100" width="100px;" alt="Stavros"/><br /><sub><b>Stavros</b></sub></a><br /><a href="#translation-steveiliop56" title="Translation">🌍</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Code">💻</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Tests">!</a> <a href="https://github.com/runtipi/runtipi/commits?author=steveiliop56" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/loxiry"><img src="https://avatars.githubusercontent.com/u/86959495?v=4?s=100" width="100px;" alt="loxiry"/><br /><sub><b>loxiry</b></sub></a><br /><a href="#translation-loxiry" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JigSawFr"><img src="https://avatars.githubusercontent.com/u/5781907?v=4?s=100" width="100px;" alt="JigSaw"/><br /><sub><b>JigSaw</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=JigSawFr" title="Code">💻</a></td>
     </tr>
@@ -147,7 +142,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://www.armandgillot.fr"><img src="https://avatars.githubusercontent.com/u/79774155?v=4?s=100" width="100px;" alt="Armand Gillot"/><br /><sub><b>Armand Gillot</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=armandgillot" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jaffo73"><img src="https://avatars.githubusercontent.com/u/126406464?v=4?s=100" width="100px;" alt="Jaffo73"/><br /><sub><b>Jaffo73</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=Jaffo73" title="Tests">⚠️</a> <a href="https://github.com/runtipi/runtipi/commits?author=Jaffo73" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jaffo73"><img src="https://avatars.githubusercontent.com/u/126406464?v=4?s=100" width="100px;" alt="Jaffo73"/><br /><sub><b>Jaffo73</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=Jaffo73" title="Tests">!</a> <a href="https://github.com/runtipi/runtipi/commits?author=Jaffo73" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/MontejoJorge"><img src="https://avatars.githubusercontent.com/u/56157795?v=4?s=100" width="100px;" alt="Jorge Montejo"/><br /><sub><b>Jorge Montejo</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=MontejoJorge" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/CiliaFred"><img src="https://avatars.githubusercontent.com/u/1827520?v=4?s=100" width="100px;" alt="Frédéric Cilia"/><br /><sub><b>Frédéric Cilia</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=CiliaFred" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/asermax"><img src="https://avatars.githubusercontent.com/u/1452164?v=4?s=100" width="100px;" alt="Agustín Carrasco"/><br /><sub><b>Agustín Carrasco</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=asermax" title="Code">💻</a></td>

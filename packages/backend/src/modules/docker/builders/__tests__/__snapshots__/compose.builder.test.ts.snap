@@ -1,19 +1,67 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`DockerComposeBuilder > should add correct traefik labels to the main service 1`] = `
+"services:
+  service_test:
+    image: image
+    container_name: service_test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
+    ports:
+      - \${APP_PORT}:440
+    labels:
+      generated: true
+      traefik.enable: true
+      traefik.http.middlewares.service_test-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.service_test.loadbalancer.server.port: "440"
+      traefik.http.routers.service_test-insecure.rule: Host(\`\${APP_DOMAIN}\`)
+      traefik.http.routers.service_test-insecure.entrypoints: web
+      traefik.http.routers.service_test-insecure.service: service_test
+      traefik.http.routers.service_test-insecure.middlewares: service_test-web-redirect
+      traefik.http.routers.service_test.rule: Host(\`\${APP_DOMAIN}\`)
+      traefik.http.routers.service_test.entrypoints: websecure
+      traefik.http.routers.service_test.service: service_test
+      traefik.http.routers.service_test.tls.certresolver: myresolver
+      traefik.http.routers.service_test-local-insecure.rule: Host(\`service-test.\${LOCAL_DOMAIN}\`)
+      traefik.http.routers.service_test-local-insecure.entrypoints: web
+      traefik.http.routers.service_test-local-insecure.service: service_test
+      traefik.http.routers.service_test-local-insecure.middlewares: service_test-web-redirect
+      traefik.http.routers.service_test-local.rule: Host(\`service-test.\${LOCAL_DOMAIN}\`)
+      traefik.http.routers.service_test-local.entrypoints: websecure
+      traefik.http.routers.service_test-local.service: service_test
+      traefik.http.routers.service_test-local.tls: true
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+"
+`;
+
 exports[`DockerComposeBuilder > should build a docker-compose file 1`] = `
 "services:
-  service:
+  service_test:
     image: image
-    container_name: service
+    container_name: service_test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format a complex docker-compose file 1`] = `
 "services:
-  service1:
+  service1_test:
     image: image1
     command: node index.js
-    container_name: service1
+    container_name: service1_test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
     extra_hosts:
       - host1
       - host2
@@ -31,8 +79,7 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
       PORT: 80
       SOME_VAR: value
     ports:
-      - 80:80
-      - 9000:8080
+      - 3400:8080
     volumes:
       - /host/path:/container/path:ro
       - /host/path2:/container/path2
@@ -83,21 +130,27 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
     stop_signal: SIGTERM
     stop_grace_period: 1m
     stdin_open: true
-  service2:
+  service2_test:
     image: image2
-    container_name: service2
+    container_name: service2_test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
 networks:
-  network:
-    name: network
+  tipi_main_network:
+    name: runtipi_tipi_main_network
     external: true
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format deploy resources 1`] = `
 "services:
-  service:
+  service_test:
     image: image
-    container_name: service
+    container_name: service_test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
     deploy:
       resources:
         limits:
@@ -112,49 +165,81 @@ exports[`DockerComposeBuilder > should correctly format deploy resources 1`] = `
                 - gpu
               driver: nvidia
               count: all
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format devices 1`] = `
 "services:
-  service:
+  service_test:
     image: image
-    container_name: service
+    container_name: service_test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
       - /dev/sda:/dev/xvda:rwm
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format entrypoint as array 1`] = `
 "services:
-  service:
+  service_test:
     image: image
-    container_name: service
+    container_name: service_test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
     entrypoint:
       - entrypoint
       - arg1
       - arg2
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format entrypoint as string 1`] = `
 "services:
-  service:
+  service_test:
     image: image
-    container_name: service
+    container_name: service_test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
     entrypoint: entrypoint
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format logging 1`] = `
 "services:
-  service:
+  service_test:
     image: image
-    container_name: service
+    container_name: service_test
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
     logging:
       driver: json-file
       options:
         syslog-address: tcp://192.168.0.42:123
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
 "
 `;

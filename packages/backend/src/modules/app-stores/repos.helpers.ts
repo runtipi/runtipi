@@ -6,33 +6,14 @@ import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
-import { RepoEventsQueue } from '../queue/entities/repo-events';
 
 @Injectable()
-export class ReposService {
+export class ReposHelpers {
   constructor(
     private readonly logger: LoggerService,
     private readonly configuration: ConfigurationService,
     private readonly filesystem: FilesystemService,
-    private readonly repoQueue: RepoEventsQueue,
-  ) {
-    this.repoQueue.onEvent(async ({ command, url }, reply) => {
-      switch (command) {
-        case 'clone': {
-          const { success, message } = await this.cloneRepo(url);
-          await reply({ success, message });
-          break;
-        }
-        case 'update': {
-          const { success, message } = await this.pullRepo(url);
-          await reply({ success, message });
-          break;
-        }
-        default:
-          this.logger.error(`Unknown command: ${command}`);
-      }
-    });
-  }
+  ) {}
 
   /**
    * Given a repo url, return a hash of it to be used as a folder name
@@ -51,9 +32,12 @@ export class ReposService {
    * @returns An array containing the base URL and branch, or just the base URL if no branch is found.
    */
   private getRepoBaseUrlAndBranch = (repoUrl: string) => {
-    const branchMatch = repoUrl.match(/^(.*)\/tree\/(.*)$/);
-    if (branchMatch) {
-      return [branchMatch[1], branchMatch[2]];
+    const treeIndex = repoUrl.indexOf('/tree/');
+
+    if (treeIndex !== -1) {
+      const baseUrl = repoUrl.substring(0, treeIndex);
+      const branch = repoUrl.substring(treeIndex + '/tree/'.length);
+      return [baseUrl, branch];
     }
 
     return [repoUrl, undefined];
@@ -79,14 +63,11 @@ export class ReposService {
    *
    * @param {string} url
    */
-  public cloneRepo = async (url: string) => {
+  public cloneRepo = async (url: string, id: string) => {
     try {
       const { dataDir } = this.configuration.get('directories');
 
-      // We may have a potential branch computed in the hash (see getRepoBaseUrlAndBranch)
-      // so we do it here before splitting the url into repoUrl and branch
-      const repoHash = this.getRepoHash(url);
-      const repoPath = path.join(dataDir, 'repos', repoHash);
+      const repoPath = path.join(dataDir, 'repos', id);
 
       if (await this.filesystem.pathExists(repoPath)) {
         this.logger.info(`Repo ${url} already exists`);
@@ -103,14 +84,14 @@ export class ReposService {
         this.logger.info(`Cloning repo ${repoUrl} to ${repoPath}`);
         cloneCommand = `git clone --depth 1 ${repoUrl} ${repoPath}`;
       }
-      await execAsync(cloneCommand);
+      const { stderr } = await execAsync(cloneCommand);
 
       // Chmod the repo folder to 777
       this.logger.info(`Executing: chmod -R 755 ${repoPath}`);
       await execAsync(`chmod -R 755 ${repoPath}`);
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
-      return { success: true, message: '' };
+      return { success: !stderr.includes('fatal:'), message: '' };
     } catch (err) {
       return this.handleRepoError(err);
     }
@@ -121,12 +102,11 @@ export class ReposService {
    *
    * @param {string} repoUrl
    */
-  public pullRepo = async (repoUrl: string) => {
+  public pullRepo = async (repoUrl: string, slug: string) => {
     try {
       const { dataDir } = this.configuration.get('directories');
 
-      const repoHash = this.getRepoHash(repoUrl);
-      const repoPath = path.join(dataDir, 'repos', repoHash);
+      const repoPath = path.join(dataDir, 'repos', slug);
 
       if (!(await this.filesystem.pathExists(repoPath))) {
         this.logger.info(`Repo ${repoUrl} does not exist`);
@@ -164,4 +144,39 @@ export class ReposService {
       return this.handleRepoError(err);
     }
   };
+
+  /**
+   * Given a repo id, delete it from the repos folder
+   */
+  public deleteRepo = async (id: string) => {
+    try {
+      const { dataDir } = this.configuration.get('directories');
+
+      const repoPath = path.join(dataDir, 'repos', id);
+
+      if (!(await this.filesystem.pathExists(repoPath))) {
+        this.logger.info(`Repo ${id} does not exist`);
+        return { success: false, message: `Repo ${id} does not exist` };
+      }
+
+      this.logger.info(`Deleting repo ${id} from ${repoPath}`);
+      await this.filesystem.removeDirectory(repoPath);
+
+      this.logger.info(`Deleted repo ${id} from ${repoPath}`);
+      return { success: true, message: '' };
+    } catch (err) {
+      return this.handleRepoError(err);
+    }
+  };
+
+  public async deleteAllRepos() {
+    const { dataDir } = this.configuration.get('directories');
+    const repos = await this.filesystem.listFiles(path.join(dataDir, 'repos'));
+
+    for (const repo of repos) {
+      await this.deleteRepo(repo);
+    }
+
+    return { success: true, message: '' };
+  }
 }

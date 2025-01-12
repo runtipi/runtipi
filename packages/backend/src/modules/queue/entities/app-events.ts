@@ -1,6 +1,7 @@
 import { appFormSchema } from '@/modules/app-lifecycle/dto/app-lifecycle.dto';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import { type ZodStringDef, z } from 'zod';
 import { Queue } from '../queue.entity';
 
 const commonAppCommandSchema = z.object({
@@ -14,21 +15,21 @@ const commonAppCommandSchema = z.object({
     z.literal('generate_env'),
     z.literal('backup'),
   ]),
-  appid: z.string(),
+  appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
   skipEnv: z.boolean().optional().default(false),
   form: appFormSchema,
 });
 
 const restoreAppCommandSchema = z.object({
   command: z.literal('restore'),
-  appid: z.string(),
+  appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
   filename: z.string(),
   form: appFormSchema,
 });
 
 const updateAppCommandSchema = z.object({
   command: z.literal('update'),
-  appid: z.string(),
+  appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
   form: appFormSchema,
   performBackup: z.boolean().optional().default(true),
 });

@@ -25,6 +25,12 @@
       "dependsOn": ["^test"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["coverage/"]
+    },
+    "test:integration": {
+      "cache": false,
+      "dependsOn": ["^test:integration"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["coverage/"]
     }
   }
 }

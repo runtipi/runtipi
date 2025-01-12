@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 interface IProps {
   newVersion: string;
-  info: Pick<AppInfo, 'id' | 'name'>;
+  info: Pick<AppInfo, 'id' | 'name' | 'urn'>;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -47,7 +47,7 @@ export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, onClo
           </div>
         </DialogDescription>
         <DialogFooter>
-          <Button onClick={() => update.mutate({ path: { id: info.id }, body: { performBackup: backupApp } })} intent="success">
+          <Button onClick={() => update.mutate({ path: { urn: info.urn }, body: { performBackup: backupApp } })} intent="success">
             {t('APP_UPDATE_FORM_SUBMIT')}
           </Button>
         </DialogFooter>

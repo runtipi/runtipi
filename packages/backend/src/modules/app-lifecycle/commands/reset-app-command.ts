@@ -3,7 +3,9 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { DockerService } from '@/modules/docker/docker.service';
 import type { EnvUtils } from '@/modules/env/env.utils';
+import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import type { AppUrn } from '@/types/app/app.types';
 import { AppLifecycleCommand } from './command';
 
 export class ResetAppCommand extends AppLifecycleCommand {
@@ -11,52 +13,50 @@ export class ResetAppCommand extends AppLifecycleCommand {
     logger: LoggerService,
     appFilesManager: AppFilesManager,
     dockerService: DockerService,
+    marketplaceService: MarketplaceService,
     private readonly appHelpers: AppHelpers,
     private readonly envUtils: EnvUtils,
   ) {
-    super(logger, appFilesManager, dockerService);
-
-    this.logger = logger;
-    this.appFilesManager = appFilesManager;
+    super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
-  public async execute(appId: string, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
+  public async execute(appUrn: AppUrn, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
     try {
-      this.logger.info(`Resetting app ${appId}`);
+      this.logger.info(`Resetting app ${appUrn}`);
 
-      await this.ensureAppDir(appId, form);
-      await this.appHelpers.generateEnvFile(appId, form);
+      await this.ensureAppDir(appUrn, form);
+      await this.appHelpers.generateEnvFile(appUrn, form);
 
       // Stop app
       try {
-        await this.dockerService.composeApp(appId, 'down --remove-orphans --volumes');
+        await this.dockerService.composeApp(appUrn, 'down --remove-orphans --volumes');
       } catch (err) {
         if (err instanceof Error && err.message.includes('conflict')) {
-          this.logger.warn(`Could not reset app ${appId}. Most likely there have been made changes to the compose file.`);
+          this.logger.warn(`Could not reset app ${appUrn}. Most likely there have been made changes to the compose file.`);
         } else {
           throw err;
         }
       }
 
       // Delete app data directory
-      await this.appFilesManager.deleteAppDataDir(appId);
-      await this.appFilesManager.createAppDataDir(appId);
+      await this.appFilesManager.deleteAppDataDir(appUrn);
+      await this.appFilesManager.createAppDataDir(appUrn);
 
       // Create app.env file
-      this.logger.info(`Creating app.env file for app ${appId}`);
-      await this.appHelpers.generateEnvFile(appId, form);
+      this.logger.info(`Creating app.env file for app ${appUrn}`);
+      await this.appHelpers.generateEnvFile(appUrn, form);
 
       // Copy data dir
-      this.logger.info(`Copying data dir for app ${appId}`);
-      const env = await this.appFilesManager.getAppEnv(appId);
+      this.logger.info(`Copying data dir for app ${appUrn}`);
+      const env = await this.appFilesManager.getAppEnv(appUrn);
       const envMap = this.envUtils.envStringToMap(env.content);
 
-      await this.appFilesManager.copyDataDir(appId, envMap);
-      await this.ensureAppDir(appId, form);
+      await this.marketplaceService.copyDataDir(appUrn, envMap);
+      await this.ensureAppDir(appUrn, form);
 
-      return { success: true, message: `App ${appId} reset successfully` };
+      return { success: true, message: `App ${appUrn} reset successfully` };
     } catch (err) {
-      return this.handleAppError(err, appId, 'reset');
+      return this.handleAppError(err, appUrn, 'reset');
     }
   }
 }

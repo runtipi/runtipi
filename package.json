@@ -1,6 +1,6 @@
 {
   "name": "runtipi",
-  "version": "3.8.0",
+  "version": "3.8.1",
   "description": "",
   "packageManager": "pnpm@9.12.2",
   "scripts": {
@@ -8,6 +8,7 @@
     "build": "turbo build",
     "bundle": "turbo bundle",
     "test": "turbo test",
+    "test:integration": "turbo run test:integration",
     "start": "node ./index.js",
     "start:dev": "docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
     "start:prod": "docker compose --project-name runtipi -f docker-compose.prod.yml up --build",
@@ -23,17 +24,16 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@hey-api/openapi-ts": "^0.57.1",
-    "@playwright/test": "^1.49.0",
+    "@hey-api/openapi-ts": "^0.61.2",
+    "@playwright/test": "^1.49.1",
     "@types/pg": "^8.11.10",
-    "dotenv-cli": "^7.4.4",
+    "dotenv-cli": "^8.0.0",
     "turbo": "^2.3.3"
   },
   "dependencies": {
     "argon2": "^0.41.1",
-    "drizzle-orm": "^0.36.4",
-    "pg": "^8.13.1",
-    "zod": "^3.23.8"
+    "drizzle-orm": "^0.38.3",
+    "zod": "^3.24.1"
   },
   "pnpm": {
     "patchedDependencies": {

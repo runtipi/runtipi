@@ -4,6 +4,15 @@ export type AcknowledgeWelcomeBody = {
   allowErrorMonitoring: boolean;
 };
 
+export type AllAppStoresDto = {
+  appStores: Array<{
+    slug: string;
+    name: string;
+    url: string;
+    enabled: boolean;
+  }>;
+};
+
 export type AppContextDto = {
   version: {
     current: string;
@@ -39,6 +48,7 @@ export type AppContextDto = {
   };
   apps: Array<{
     id: string;
+    urn: string;
     name: string;
     short_desc: string;
     categories?: Array<
@@ -66,9 +76,92 @@ export type AppContextDto = {
   updatesAvailable: number;
 };
 
-export type AppDetailsDto = {
+export type AppFormBody = {
+  port?: number;
+  exposed?: boolean;
+  exposedLocal?: boolean;
+  openPort?: boolean;
+  domain?: string;
+  isVisibleOnGuestDashboard?: boolean;
+};
+
+export type ChangePasswordBody = {
+  currentPassword: string;
+  newPassword: string;
+};
+
+export type ChangeUsernameBody = {
+  newUsername: string;
+  password: string;
+};
+
+export type CheckResetPasswordRequestDto = {
+  isRequestPending: boolean;
+};
+
+export type CreateAppStoreBodyDto = {
+  name: string;
+  url: string;
+};
+
+export type DeleteAppBackupBodyDto = {
+  filename: string;
+};
+
+export type DisableTotpBody = {
+  password: string;
+};
+
+export type EditLinkBodyDto = {
+  title: string;
+  url: string;
+  description?: string;
+  iconUrl?: string;
+};
+
+export type GetAppBackupsDto = {
+  data: Array<{
+    id: string;
+    size: number;
+    date: number;
+  }>;
+  total: number;
+  currentPage: number;
+  lastPage: number;
+};
+
+export type GetAppDto = {
+  app?: {
+    id: number;
+    port: number | null;
+    status:
+      | 'running'
+      | 'stopped'
+      | 'installing'
+      | 'uninstalling'
+      | 'stopping'
+      | 'starting'
+      | 'missing'
+      | 'updating'
+      | 'resetting'
+      | 'restarting'
+      | 'backing_up'
+      | 'restoring';
+    createdAt?: string;
+    updatedAt?: string;
+    version: number;
+    exposed: boolean;
+    openPort: boolean;
+    exposedLocal: boolean;
+    domain: string | null;
+    isVisibleOnGuestDashboard: boolean;
+    config?: {
+      [key: string]: unknown;
+    };
+  } | null;
   info: {
     id: string;
+    urn: string;
     available: boolean;
     deprecated?: boolean;
     port: number;
@@ -129,36 +222,8 @@ export type AppDetailsDto = {
     created_at?: number;
     updated_at?: number;
   };
-  app: {
-    id: string;
-    status:
-      | 'running'
-      | 'stopped'
-      | 'installing'
-      | 'uninstalling'
-      | 'stopping'
-      | 'starting'
-      | 'missing'
-      | 'updating'
-      | 'resetting'
-      | 'restarting'
-      | 'backing_up'
-      | 'restoring';
-    lastOpened: string | null;
-    numOpened?: number;
-    createdAt?: string;
-    updatedAt?: string;
-    version: number;
-    exposed: boolean;
-    openPort: boolean;
-    exposedLocal: boolean;
-    domain: string | null;
-    isVisibleOnGuestDashboard: boolean;
-    config?: {
-      [key: string]: unknown;
-    };
-  };
-  updateInfo: {
+  metadata: {
+    hasCustomConfig?: boolean;
     latestVersion: number;
     minTipiVersion?: string;
     latestDockerVersion?: string;
@@ -179,54 +244,6 @@ export type status =
   | 'backing_up'
   | 'restoring';
 
-export type AppFormBody = {
-  exposed?: boolean;
-  exposedLocal?: boolean;
-  openPort?: boolean;
-  domain?: string;
-  isVisibleOnGuestDashboard?: boolean;
-};
-
-export type ChangePasswordBody = {
-  currentPassword: string;
-  newPassword: string;
-};
-
-export type ChangeUsernameBody = {
-  newUsername: string;
-  password: string;
-};
-
-export type CheckResetPasswordRequestDto = {
-  isRequestPending: boolean;
-};
-
-export type DeleteAppBackupBodyDto = {
-  filename: string;
-};
-
-export type DisableTotpBody = {
-  password: string;
-};
-
-export type EditLinkBodyDto = {
-  title: string;
-  url: string;
-  description?: string;
-  iconUrl?: string;
-};
-
-export type GetAppBackupsDto = {
-  data: Array<{
-    id: string;
-    size: number;
-    date: number;
-  }>;
-  total: number;
-  currentPage: number;
-  lastPage: number;
-};
-
 export type GetTotpUriBody = {
   password: string;
 };
@@ -239,7 +256,8 @@ export type GetTotpUriDto = {
 export type GuestAppsDto = {
   installed: Array<{
     app: {
-      id: string;
+      id: number;
+      port: number | null;
       status:
         | 'running'
         | 'stopped'
@@ -253,8 +271,6 @@ export type GuestAppsDto = {
         | 'restarting'
         | 'backing_up'
         | 'restoring';
-      lastOpened: string | null;
-      numOpened?: number;
       createdAt?: string;
       updatedAt?: string;
       version: number;
@@ -269,6 +285,7 @@ export type GuestAppsDto = {
     };
     info: {
       id: string;
+      urn: string;
       available: boolean;
       deprecated?: boolean;
       port: number;
@@ -329,11 +346,6 @@ export type GuestAppsDto = {
       created_at?: number;
       updated_at?: number;
     };
-    updateInfo: {
-      latestVersion: number;
-      minTipiVersion?: string;
-      latestDockerVersion?: string;
-    };
   }>;
 };
 
@@ -377,7 +389,8 @@ export type LoginDto = {
 export type MyAppsDto = {
   installed: Array<{
     app: {
-      id: string;
+      id: number;
+      port: number | null;
       status:
         | 'running'
         | 'stopped'
@@ -391,8 +404,6 @@ export type MyAppsDto = {
         | 'restarting'
         | 'backing_up'
         | 'restoring';
-      lastOpened: string | null;
-      numOpened?: number;
       createdAt?: string;
       updatedAt?: string;
       version: number;
@@ -407,6 +418,7 @@ export type MyAppsDto = {
     };
     info: {
       id: string;
+      urn: string;
       name: string;
       short_desc: string;
       categories?: Array<
@@ -431,7 +443,8 @@ export type MyAppsDto = {
       supported_architectures?: Array<'arm64' | 'amd64'>;
       available: boolean;
     };
-    updateInfo: {
+    metadata: {
+      hasCustomConfig?: boolean;
       latestVersion: number;
       minTipiVersion?: string;
       latestDockerVersion?: string;
@@ -488,6 +501,7 @@ export type RestoreAppBackupDto = {
 export type SearchAppsDto = {
   data: Array<{
     id: string;
+    urn: string;
     name: string;
     short_desc: string;
     categories?: Array<
@@ -526,6 +540,11 @@ export type UninstallAppBody = {
 
 export type UpdateAppBody = {
   performBackup: boolean;
+};
+
+export type UpdateAppStoreBodyDto = {
+  name: string;
+  enabled: boolean;
 };
 
 export type UserContextDto = {
@@ -698,6 +717,16 @@ export type GetGuestAppsResponse = GuestAppsDto;
 
 export type GetGuestAppsError = unknown;
 
+export type GetAppData = {
+  path: {
+    urn: string;
+  };
+};
+
+export type GetAppResponse = GetAppDto;
+
+export type GetAppError = unknown;
+
 export type SearchAppsData = {
   query?: {
     category?:
@@ -719,6 +748,7 @@ export type SearchAppsData = {
     cursor?: string;
     pageSize?: number;
     search?: string;
+    storeId?: string;
   };
 };
 
@@ -726,19 +756,9 @@ export type SearchAppsResponse = SearchAppsDto;
 
 export type SearchAppsError = unknown;
 
-export type GetAppDetailsData = {
-  path: {
-    id: string;
-  };
-};
-
-export type GetAppDetailsResponse = AppDetailsDto;
-
-export type GetAppDetailsError = unknown;
-
 export type GetImageData = {
   path: {
-    id: string;
+    urn: string;
   };
 };
 
@@ -746,14 +766,51 @@ export type GetImageResponse = unknown;
 
 export type GetImageError = unknown;
 
-export type PullResponse = PullDto;
+export type PullAppStoreResponse = PullDto;
 
-export type PullError = unknown;
+export type PullAppStoreError = unknown;
+
+export type CreateAppStoreData = {
+  body: CreateAppStoreBodyDto;
+};
+
+export type CreateAppStoreResponse = unknown;
+
+export type CreateAppStoreError = unknown;
+
+export type GetAllAppStoresResponse = AllAppStoresDto;
+
+export type GetAllAppStoresError = unknown;
+
+export type GetEnabledAppStoresResponse = AllAppStoresDto;
+
+export type GetEnabledAppStoresError = unknown;
+
+export type UpdateAppStoreData = {
+  body: UpdateAppStoreBodyDto;
+  path: {
+    id: string;
+  };
+};
+
+export type UpdateAppStoreResponse = unknown;
+
+export type UpdateAppStoreError = unknown;
+
+export type DeleteAppStoreData = {
+  path: {
+    id: string;
+  };
+};
+
+export type DeleteAppStoreResponse = unknown;
+
+export type DeleteAppStoreError = unknown;
 
 export type InstallAppData = {
   body: AppFormBody;
   path: {
-    id: string;
+    urn: string;
   };
 };
 
@@ -763,7 +820,7 @@ export type InstallAppError = unknown;
 
 export type StartAppData = {
   path: {
-    id: string;
+    urn: string;
   };
 };
 
@@ -773,7 +830,7 @@ export type StartAppError = unknown;
 
 export type StopAppData = {
   path: {
-    id: string;
+    urn: string;
   };
 };
 
@@ -783,7 +840,7 @@ export type StopAppError = unknown;
 
 export type RestartAppData = {
   path: {
-    id: string;
+    urn: string;
   };
 };
 
@@ -794,7 +851,7 @@ export type RestartAppError = unknown;
 export type UninstallAppData = {
   body: UninstallAppBody;
   path: {
-    id: string;
+    urn: string;
   };
 };
 
@@ -804,7 +861,7 @@ export type UninstallAppError = unknown;
 
 export type ResetAppData = {
   path: {
-    id: string;
+    urn: string;
   };
 };
 
@@ -815,7 +872,7 @@ export type ResetAppError = unknown;
 export type UpdateAppData = {
   body: UpdateAppBody;
   path: {
-    id: string;
+    urn: string;
   };
 };
 
@@ -823,14 +880,10 @@ export type UpdateAppResponse = unknown;
 
 export type UpdateAppError = unknown;
 
-export type UpdateAllAppsResponse = unknown;
-
-export type UpdateAllAppsError = unknown;
-
 export type UpdateAppConfigData = {
   body: AppFormBody;
   path: {
-    id: string;
+    urn: string;
   };
 };
 
@@ -838,9 +891,13 @@ export type UpdateAppConfigResponse = unknown;
 
 export type UpdateAppConfigError = unknown;
 
+export type UpdateAllAppsResponse = unknown;
+
+export type UpdateAllAppsError = unknown;
+
 export type BackupAppData = {
   path: {
-    appid: string;
+    urn: string;
   };
 };
 
@@ -851,7 +908,7 @@ export type BackupAppError = unknown;
 export type RestoreAppBackupData = {
   body: RestoreAppBackupDto;
   path: {
-    appid: string;
+    urn: string;
   };
 };
 
@@ -861,7 +918,7 @@ export type RestoreAppBackupError = unknown;
 
 export type GetAppBackupsData = {
   path: {
-    id: string;
+    urn: string;
   };
   query?: {
     page?: number;
@@ -876,7 +933,7 @@ export type GetAppBackupsError = unknown;
 export type DeleteAppBackupData = {
   body: DeleteAppBackupBodyDto;
   path: {
-    appid: string;
+    urn: string;
   };
 };
 

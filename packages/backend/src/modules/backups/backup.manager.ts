@@ -3,7 +3,9 @@ import { ArchiveService } from '@/core/archive/archive.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
+import { AppFilesManager } from '../apps/app-files-manager';
 
 @Injectable()
 export class BackupManager {
@@ -12,14 +14,17 @@ export class BackupManager {
     private readonly logger: LoggerService,
     private readonly config: ConfigurationService,
     private readonly filesystem: FilesystemService,
+    private readonly appFilesManager: AppFilesManager,
   ) {}
 
-  public backupApp = async (appId: string) => {
-    const { dataDir, appDataDir } = this.config.get('directories');
-    const backupName = `${appId}-${new Date().getTime()}`;
-    const backupDir = path.join(dataDir, 'backups', appId);
+  public backupApp = async (appUrn: AppUrn) => {
+    const { dataDir } = this.config.get('directories');
+    const backupName = `${appUrn}-${new Date().getTime()}`;
+    const [appName, storeName] = appUrn.split(':');
 
-    const tempDir = await this.filesystem.createTempDirectory(appId);
+    const backupDir = path.join(dataDir, 'backups', storeName, appName);
+
+    const tempDir = await this.filesystem.createTempDirectory(appUrn);
 
     if (!tempDir) {
       throw new Error('Failed to create temp directory');
@@ -30,13 +35,15 @@ export class BackupManager {
     // Ensure backup directory exists
     await this.filesystem.createDirectory(tempDir);
 
+    const { appDataDir, appInstalledDir } = this.appFilesManager.getAppPaths(appUrn);
+
     // Move app data and app directories
-    await this.filesystem.copyDirectory(path.join(appDataDir, appId), path.join(tempDir, 'app-data'), {
+    await this.filesystem.copyDirectory(appDataDir, path.join(tempDir, 'app-data'), {
       recursive: true,
       filter: (src) => !src.includes('backups'),
     });
 
-    await this.filesystem.copyDirectory(path.join(dataDir, 'apps', appId), path.join(tempDir, 'app'));
+    await this.filesystem.copyDirectory(appInstalledDir, path.join(tempDir, 'app'));
 
     this.logger.info('Creating archive...');
 
@@ -58,15 +65,17 @@ export class BackupManager {
     this.logger.info('Backup completed!');
   };
 
-  public restoreApp = async (appId: string, filename: string) => {
-    const { dataDir, appDataDir } = this.config.get('directories');
-    const restoreDir = await this.filesystem.createTempDirectory(appId);
+  public restoreApp = async (appUrn: AppUrn, filename: string) => {
+    const { dataDir } = this.config.get('directories');
+    const restoreDir = await this.filesystem.createTempDirectory(appUrn);
 
     if (!restoreDir) {
       throw new Error('Failed to create temp directory');
     }
 
-    const archive = path.join(dataDir, 'backups', appId, filename);
+    const [appName, storeName] = appUrn.split(':');
+
+    const archive = path.join(dataDir, 'backups', storeName, appName, filename);
 
     this.logger.info('Restoring app from backup...');
 
@@ -84,19 +93,18 @@ export class BackupManager {
     this.logger.debug('stderr:', stderr);
     this.logger.debug('stdout:', stdout);
 
-    const appDataDirPath = path.join(appDataDir, appId);
-    const appDirPath = path.join(dataDir, 'apps', appId);
+    const { appInstalledDir, appDataDir } = this.appFilesManager.getAppPaths(appUrn);
 
     // Remove old data directories
-    await this.filesystem.removeDirectory(appDataDirPath);
-    await this.filesystem.removeDirectory(appDirPath);
+    await this.filesystem.removeDirectory(appDataDir);
+    await this.filesystem.removeDirectory(appInstalledDir);
 
-    await this.filesystem.createDirectory(appDataDirPath);
-    await this.filesystem.createDirectory(appDirPath);
+    await this.filesystem.createDirectory(appDataDir);
+    await this.filesystem.createDirectory(appInstalledDir);
 
     // Copy data from the backup folder
-    await this.filesystem.copyDirectory(path.join(restoreDir, 'app-data'), appDataDirPath);
-    await this.filesystem.copyDirectory(path.join(restoreDir, 'app'), appDirPath);
+    await this.filesystem.copyDirectory(path.join(restoreDir, 'app-data'), appDataDir);
+    await this.filesystem.copyDirectory(path.join(restoreDir, 'app'), appInstalledDir);
 
     // Delete restore folder
     await this.filesystem.removeDirectory(restoreDir);
@@ -104,13 +112,15 @@ export class BackupManager {
 
   /**
    * Delete a backup file
-   * @param appId - The app id
+   * @param appUrn - The app id
    * @param filename - The filename of the backup
    */
-  public async deleteBackup(appId: string, filename: string) {
+  public async deleteBackup(appUrn: AppUrn, filename: string) {
     const { dataDir } = this.config.get('directories');
 
-    const backupPath = path.join(dataDir, 'backups', appId, filename);
+    const [appName, storeName] = appUrn.split(':');
+
+    const backupPath = path.join(dataDir, 'backups', storeName, appName, filename);
 
     if (await this.filesystem.pathExists(backupPath)) {
       await this.filesystem.removeFile(backupPath);
@@ -119,23 +129,25 @@ export class BackupManager {
 
   /**
    * Delete all backups for an app
-   * @param appId - The app id 
+   * @param appUrn - The app id
    */
-  public async deleteAppBackupsById(appId: string): Promise<void> {
-    const backups = await this.listBackupsByAppId(appId);
+  public async deleteAppBackupsByUrn(appUrn: AppUrn): Promise<void> {
+    const backups = await this.listBackupsByAppId(appUrn);
 
-    await Promise.all(backups.map((backup) => this.deleteBackup(appId, backup.id)))
+    await Promise.all(backups.map((backup) => this.deleteBackup(appUrn, backup.id)));
   }
 
   /**
    * List the backups for an app
-   * @param appId - The app id
+   * @param appUrn - The app id
    * @returns The list of backups
    */
-  public async listBackupsByAppId(appId: string) {
+  public async listBackupsByAppId(appUrn: AppUrn) {
     const { dataDir } = this.config.get('directories');
 
-    const backupsDir = path.join(dataDir, 'backups', appId);
+    const [appName, storeName] = appUrn.split(':');
+
+    const backupsDir = path.join(dataDir, 'backups', storeName, appName);
 
     if (!(await this.filesystem.pathExists(backupsDir))) {
       return [];
@@ -153,7 +165,7 @@ export class BackupManager {
 
       return backups;
     } catch (error) {
-      this.logger.error(`Error listing backups for app ${appId}: ${error}`);
+      this.logger.error(`Error listing backups for app ${appUrn}: ${error}`);
       return [];
     }
   }

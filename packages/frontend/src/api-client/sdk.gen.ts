@@ -56,17 +56,30 @@ import type {
   GetInstalledAppsResponse,
   GetGuestAppsError,
   GetGuestAppsResponse,
+  GetAppData,
+  GetAppError,
+  GetAppResponse,
   SearchAppsData,
   SearchAppsError,
   SearchAppsResponse,
-  GetAppDetailsData,
-  GetAppDetailsError,
-  GetAppDetailsResponse,
   GetImageData,
   GetImageError,
   GetImageResponse,
-  PullError,
-  PullResponse,
+  PullAppStoreError,
+  PullAppStoreResponse,
+  CreateAppStoreData,
+  CreateAppStoreError,
+  CreateAppStoreResponse,
+  GetAllAppStoresError,
+  GetAllAppStoresResponse,
+  GetEnabledAppStoresError,
+  GetEnabledAppStoresResponse,
+  UpdateAppStoreData,
+  UpdateAppStoreError,
+  UpdateAppStoreResponse,
+  DeleteAppStoreData,
+  DeleteAppStoreError,
+  DeleteAppStoreResponse,
   InstallAppData,
   InstallAppError,
   InstallAppResponse,
@@ -88,11 +101,11 @@ import type {
   UpdateAppData,
   UpdateAppError,
   UpdateAppResponse,
-  UpdateAllAppsError,
-  UpdateAllAppsResponse,
   UpdateAppConfigData,
   UpdateAppConfigError,
   UpdateAppConfigResponse,
+  UpdateAllAppsError,
+  UpdateAllAppsResponse,
   BackupAppData,
   BackupAppError,
   BackupAppResponse,
@@ -269,80 +282,122 @@ export const getGuestApps = <ThrowOnError extends boolean = false>(options?: Opt
   });
 };
 
-export const searchApps = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<SearchAppsData, ThrowOnError>) => {
-  return (options?.client ?? client).get<SearchAppsResponse, SearchAppsError, ThrowOnError>({
+export const getApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetAppData, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetAppResponse, GetAppError, ThrowOnError>({
     ...options,
-    url: '/api/apps/search',
+    url: '/api/apps/{urn}',
   });
 };
 
-export const getAppDetails = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetAppDetailsData, ThrowOnError>) => {
-  return (options?.client ?? client).get<GetAppDetailsResponse, GetAppDetailsError, ThrowOnError>({
+export const searchApps = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<SearchAppsData, ThrowOnError>) => {
+  return (options?.client ?? client).get<SearchAppsResponse, SearchAppsError, ThrowOnError>({
     ...options,
-    url: '/api/apps/{id}',
+    url: '/api/marketplace/apps/search',
   });
 };
 
 export const getImage = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetImageData, ThrowOnError>) => {
   return (options?.client ?? client).get<GetImageResponse, GetImageError, ThrowOnError>({
     ...options,
-    url: '/api/apps/{id}/image',
+    url: '/api/marketplace/apps/{urn}/image',
   });
 };
 
-export const pull = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
-  return (options?.client ?? client).post<PullResponse, PullError, ThrowOnError>({
+export const pullAppStore = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).post<PullAppStoreResponse, PullAppStoreError, ThrowOnError>({
     ...options,
-    url: '/api/repos/pull',
+    url: '/api/marketplace/pull',
+  });
+};
+
+export const createAppStore = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<CreateAppStoreData, ThrowOnError>) => {
+  return (options?.client ?? client).post<CreateAppStoreResponse, CreateAppStoreError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/create',
+  });
+};
+
+export const getAllAppStores = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetAllAppStoresResponse, GetAllAppStoresError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/all',
+  });
+};
+
+export const getEnabledAppStores = <ThrowOnError extends boolean = false>(options?: OptionsLegacyParser<unknown, ThrowOnError>) => {
+  return (options?.client ?? client).get<GetEnabledAppStoresResponse, GetEnabledAppStoresError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/enabled',
+  });
+};
+
+export const updateAppStore = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<UpdateAppStoreData, ThrowOnError>) => {
+  return (options?.client ?? client).patch<UpdateAppStoreResponse, UpdateAppStoreError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/{id}',
+  });
+};
+
+export const deleteAppStore = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<DeleteAppStoreData, ThrowOnError>) => {
+  return (options?.client ?? client).delete<DeleteAppStoreResponse, DeleteAppStoreError, ThrowOnError>({
+    ...options,
+    url: '/api/marketplace/{id}',
   });
 };
 
 export const installApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<InstallAppData, ThrowOnError>) => {
   return (options?.client ?? client).post<InstallAppResponse, InstallAppError, ThrowOnError>({
     ...options,
-    url: '/api/app-lifecycle/{id}/install',
+    url: '/api/app-lifecycle/{urn}/install',
   });
 };
 
 export const startApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<StartAppData, ThrowOnError>) => {
   return (options?.client ?? client).post<StartAppResponse, StartAppError, ThrowOnError>({
     ...options,
-    url: '/api/app-lifecycle/{id}/start',
+    url: '/api/app-lifecycle/{urn}/start',
   });
 };
 
 export const stopApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<StopAppData, ThrowOnError>) => {
   return (options?.client ?? client).post<StopAppResponse, StopAppError, ThrowOnError>({
     ...options,
-    url: '/api/app-lifecycle/{id}/stop',
+    url: '/api/app-lifecycle/{urn}/stop',
   });
 };
 
 export const restartApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<RestartAppData, ThrowOnError>) => {
   return (options?.client ?? client).post<RestartAppResponse, RestartAppError, ThrowOnError>({
     ...options,
-    url: '/api/app-lifecycle/{id}/restart',
+    url: '/api/app-lifecycle/{urn}/restart',
   });
 };
 
 export const uninstallApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<UninstallAppData, ThrowOnError>) => {
   return (options?.client ?? client).delete<UninstallAppResponse, UninstallAppError, ThrowOnError>({
     ...options,
-    url: '/api/app-lifecycle/{id}/uninstall',
+    url: '/api/app-lifecycle/{urn}/uninstall',
   });
 };
 
 export const resetApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<ResetAppData, ThrowOnError>) => {
   return (options?.client ?? client).post<ResetAppResponse, ResetAppError, ThrowOnError>({
     ...options,
-    url: '/api/app-lifecycle/{id}/reset',
+    url: '/api/app-lifecycle/{urn}/reset',
   });
 };
 
 export const updateApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<UpdateAppData, ThrowOnError>) => {
   return (options?.client ?? client).patch<UpdateAppResponse, UpdateAppError, ThrowOnError>({
     ...options,
-    url: '/api/app-lifecycle/{id}/update',
+    url: '/api/app-lifecycle/{urn}/update',
+  });
+};
+
+export const updateAppConfig = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<UpdateAppConfigData, ThrowOnError>) => {
+  return (options?.client ?? client).patch<UpdateAppConfigResponse, UpdateAppConfigError, ThrowOnError>({
+    ...options,
+    url: '/api/app-lifecycle/{urn}/update-config',
   });
 };
 
@@ -353,38 +408,31 @@ export const updateAllApps = <ThrowOnError extends boolean = false>(options?: Op
   });
 };
 
-export const updateAppConfig = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<UpdateAppConfigData, ThrowOnError>) => {
-  return (options?.client ?? client).patch<UpdateAppConfigResponse, UpdateAppConfigError, ThrowOnError>({
-    ...options,
-    url: '/api/app-lifecycle/{id}/update-config',
-  });
-};
-
 export const backupApp = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<BackupAppData, ThrowOnError>) => {
   return (options?.client ?? client).post<BackupAppResponse, BackupAppError, ThrowOnError>({
     ...options,
-    url: '/api/backups/{appid}/backup',
+    url: '/api/backups/{urn}/backup',
   });
 };
 
 export const restoreAppBackup = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<RestoreAppBackupData, ThrowOnError>) => {
   return (options?.client ?? client).post<RestoreAppBackupResponse, RestoreAppBackupError, ThrowOnError>({
     ...options,
-    url: '/api/backups/{appid}/restore',
+    url: '/api/backups/{urn}/restore',
   });
 };
 
 export const getAppBackups = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<GetAppBackupsData, ThrowOnError>) => {
   return (options?.client ?? client).get<GetAppBackupsResponse, GetAppBackupsError, ThrowOnError>({
     ...options,
-    url: '/api/backups/{id}',
+    url: '/api/backups/{urn}',
   });
 };
 
 export const deleteAppBackup = <ThrowOnError extends boolean = false>(options: OptionsLegacyParser<DeleteAppBackupData, ThrowOnError>) => {
   return (options?.client ?? client).delete<DeleteAppBackupResponse, DeleteAppBackupError, ThrowOnError>({
     ...options,
-    url: '/api/backups/{appid}',
+    url: '/api/backups/{urn}',
   });
 };
 
