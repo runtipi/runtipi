@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
 import type { Locale } from '@/lib/i18n/locales';
-import { IconAdjustmentsAlt, IconUser } from '@tabler/icons-react';
+import { IconAdjustmentsAlt, IconAdjustmentsCode, IconUser } from '@tabler/icons-react';
 import clsx from 'clsx';
 import type React from 'react';
 import { Suspense, lazy, useEffect } from 'react';
@@ -13,6 +13,8 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import validator from 'validator';
 import { z } from 'zod';
+import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-settings-modal';
+import { useDisclosure } from '@/lib/hooks/use-disclosure';
 
 const TimeZoneSelector = lazy(() =>
   import('@/components/timezone-selector/timezone-selector').then((module) => ({ default: module.TimeZoneSelector })),
@@ -25,6 +27,7 @@ const settingsSchema = z.object({
   allowAutoThemes: z.boolean().optional(),
   allowErrorMonitoring: z.boolean().optional(),
   timeZone: z.string().optional(),
+  advancedSettings: z.boolean().optional(),
 });
 
 export type SettingsFormValues = {
@@ -34,6 +37,14 @@ export type SettingsFormValues = {
   allowAutoThemes?: boolean;
   allowErrorMonitoring?: boolean;
   timeZone?: string;
+  advancedSettings?: boolean;
+  internalIp?: string;
+  listenIp?: string;
+  port?: number;
+  sslPort?: number;
+  eventsTimeout?: number;
+  persistTraefikConfig?: boolean;
+  domain?: string;
 };
 
 interface IProps {
@@ -47,6 +58,7 @@ interface IProps {
 export const UserSettingsForm = (props: IProps) => {
   const { onSubmit, initialValues, loading, currentLocale = 'en-US', submitErrors } = props;
   const { t } = useTranslation();
+  const advancedSettingsDisclosure = useDisclosure();
 
   const validateFields = (values: SettingsFormValues) => {
     const errors: { [K in keyof SettingsFormValues]?: string } = {};
@@ -67,6 +79,7 @@ export const UserSettingsForm = (props: IProps) => {
     handleSubmit,
     setError,
     control,
+    setValue,
     formState: { errors },
   } = useForm<SettingsFormValues>({ values: initialValues });
 
@@ -186,6 +199,43 @@ export const UserSettingsForm = (props: IProps) => {
           />
         </div>
         <div className="mb-3">
+          <Controller 
+            control={control}
+            name="advancedSettings"
+            defaultValue={false}
+            render={({ field: { onChange, value, ref, ...rest }}) => (
+              <div>
+                <AdvancedSettingsModal onEnable={() => {
+                  advancedSettingsDisclosure.close();
+                  onChange(true);
+                }} advancedSettingsDisclosure={advancedSettingsDisclosure} />
+                <Switch
+                  className="mb-3"
+                  ref={ref}
+                  checked={value}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      advancedSettingsDisclosure.open();
+                    } else {
+                      onChange(false);
+                    }
+                  }}
+                  {...rest}
+                  label={
+                    <>
+                      Advanced Settings
+                      <Tooltip className="tooltip" anchorSelect=".advanced-settings-hint">
+                        Enable advanced settings for more control over your instance.
+                      </Tooltip>
+                      <span className={clsx('ms-1 form-help advanced-settings-hint')}>?</span>
+                    </>
+                  }
+                />
+              </div>
+            )}
+          />
+        </div>
+        <div className="mb-3">
           <Input
             {...register('appsRepoUrl')}
             label={
@@ -226,13 +276,143 @@ export const UserSettingsForm = (props: IProps) => {
               </>
             }
             error={errors.localDomain?.message}
-            placeholder="tipi.lan"
-            disabled={true}
+            placeholder="tipi.local"
+            disabled={initialValues?.advancedSettings === false}
           />
           <Button className="mt-2" onClick={downloadCertificate}>
             {t('SETTINGS_GENERAL_DOWNLOAD_CERTIFICATE')}
           </Button>
         </div>
+        {initialValues?.advancedSettings && (
+          <div className="mt-2">
+            <div className="d-flex mb-2">
+              <IconAdjustmentsCode className="me-2" />
+              <h2 className="text-2xl font-bold mb-0">Advanced Settings</h2>
+            </div>
+            <p className="mb-4">Advanced settings used only if you know what you are doing.</p>
+            <div className="mb-3">
+              <Controller
+                control={control}
+                name="persistTraefikConfig"
+                defaultValue={false}
+                render={({ field: { onChange, value, ref, ...rest } }) => (
+                  <Switch
+                    className="mb-3"
+                    ref={ref}
+                    checked={value}
+                    onCheckedChange={onChange}
+                    {...rest}
+                    label={
+                      <>
+                        Persist Traefik Config
+                        <Tooltip className="tooltip" anchorSelect=".persist-traefik-config-hint">
+                          Do not overwrite the Traefik config when starting.
+                        </Tooltip>
+                        <span className={clsx('ms-1 form-help persist-traefik-config-hint')}>?</span>
+                      </>
+                    }
+                  />
+                )}
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('domain')}
+                label={
+                  <>
+                    Domain
+                    <Tooltip className="tooltip" anchorSelect=".domain-hint">
+                      Expose your dashboard on a custom domain.
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help domain-hint')}>?</span>
+                  </>
+                }
+                error={errors.domain?.message}
+                placeholder="example.com"
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('internalIp')}
+                label={
+                  <>
+                    Internal IP
+                    <Tooltip className="tooltip" anchorSelect=".internal-ip-hint">
+                      The internal IP address used when configuring app domains.
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help internal-ip-hint')}>?</span>
+                  </>
+                }
+                error={errors.internalIp?.message}
+                placeholder="192.168.1.1"
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('listenIp')}
+                label={
+                  <>
+                    Listen IP
+                    <Tooltip className="tooltip" anchorSelect=".listen-ip-hint">
+                      The IP address the app listens on.
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help listen-ip-hint')}>?</span>
+                  </>
+                }
+                error={errors.listenIp?.message}
+                placeholder="0.0.0.0"
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('port')}
+                label={
+                  <>
+                    Port
+                    <Tooltip className="tooltip" anchorSelect=".port-hint">
+                      The HTTP port the app will listen on.
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help port-hint')}>?</span>
+                  </>
+                }
+                error={errors.port?.message}
+                placeholder="80"
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('sslPort')}
+                label={
+                  <>
+                    Port (SSL)
+                    <Tooltip className="tooltip" anchorSelect=".sslPort-hint">
+                      The HTTPS port the app will listen on.
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help sslPort-hint')}>?</span>
+                  </>
+                }
+                error={errors.sslPort?.message}
+                placeholder="443"
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('eventsTimeout')}
+                label={
+                  <>
+                    Events Timeout
+                    <Tooltip className="tooltip" anchorSelect=".events-timeout-hint">
+                      The time in minutes after which events are considered stale.
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help events-timeout-hint')}>?</span>
+                  </>
+                }
+                error={errors.eventsTimeout?.message}
+                placeholder="5"
+              />
+            </div>
+          </div>
+        )}
         <Button loading={loading} type="submit" intent="success">
           {t('SETTINGS_GENERAL_SUBMIT')}
         </Button>
