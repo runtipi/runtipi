@@ -444,7 +444,7 @@ export const UserSettingsForm = (props: IProps) => {
                   </>
                 }
                 error={errors.appDataPath?.message}
-                placeholder="5"
+                placeholder="/path/to/app/data"
               />
             </div>
           </div>
