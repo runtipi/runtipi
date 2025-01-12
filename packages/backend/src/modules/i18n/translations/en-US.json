@@ -347,6 +347,8 @@
   "SETTINGS_GENERAL_ADVANCED_SETTINGS_SUBTITLE": "Advanced settings used only if you know what you are doing.",
   "SETTINGS_GENERAL_ADVANCED_SETTINGS_MODAL_TITLE": "Enable advanced settings?",
   "SETTINGS_GENERAL_ADVANCED_SETTINGS_MODAL_SUBTITLE": "Advanced settings are intended for experienced users only. Misconfiguration of these settings can result in a broken install. Are you sure you want to enable them?",
+  "SETTINGS_GENERAL_SAVE_ALERT_TITLE": "Make sure to save your settings",
+  "SETTINGS_GENERAL_SAVE_ALERT_SUBTITLE": "It seems like you have edited the settings. Make sure to press the Update Settings button below to apply them.",
   "SETTINGS_SECURITY_2FA_DISABLE_SUCCESS": "Two-factor authentication disabled",
   "SETTINGS_SECURITY_2FA_ENABLE_SUCCESS": "Two-factor authentication enabled",
   "SETTINGS_SECURITY_2FA_SUBTITLE": "Two-factor authentication (2FA) adds an additional layer of security to your account.",

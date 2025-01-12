@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
 import type { Locale } from '@/lib/i18n/locales';
-import { IconAdjustmentsAlt, IconAdjustmentsCode, IconUser } from '@tabler/icons-react';
+import { IconAdjustmentsAlt, IconAdjustmentsCode, IconInfoCircle, IconUser } from '@tabler/icons-react';
 import clsx from 'clsx';
 import type React from 'react';
 import { Suspense, lazy, useEffect } from 'react';
@@ -15,6 +15,7 @@ import validator from 'validator';
 import { z } from 'zod';
 import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-settings-modal';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
+import './user-settings-form.css';
 
 const TimeZoneSelector = lazy(() =>
   import('@/components/timezone-selector/timezone-selector').then((module) => ({ default: module.TimeZoneSelector })),
@@ -81,8 +82,7 @@ export const UserSettingsForm = (props: IProps) => {
     handleSubmit,
     setError,
     control,
-    setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<SettingsFormValues>({ values: initialValues });
 
   useEffect(() => {
@@ -114,6 +114,19 @@ export const UserSettingsForm = (props: IProps) => {
 
   return (
     <>
+      {isDirty && (
+        <div className="alert alert-info fade-in" role="alert">
+          <div className="d-flex">
+            <div>
+              <IconInfoCircle className="me-2" />
+            </div>
+            <div>
+              <h4 className="alert-title">{t('SETTINGS_GENERAL_SAVE_ALERT_TITLE')}</h4>
+              <div className="text-secondary">{t('SETTINGS_GENERAL_SAVE_ALERT_SUBTITLE')}</div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="d-flex mb-2">
         <IconUser className="me-2" />
         <h2 className="text-2xl font-bold mb-0">{t('SETTINGS_GENERAL_USER_SETTINGS')}</h2>
@@ -201,16 +214,19 @@ export const UserSettingsForm = (props: IProps) => {
           />
         </div>
         <div className="mb-3">
-          <Controller 
+          <Controller
             control={control}
             name="advancedSettings"
             defaultValue={false}
-            render={({ field: { onChange, value, ref, ...rest }}) => (
+            render={({ field: { onChange, value, ref, ...rest } }) => (
               <div>
-                <AdvancedSettingsModal onEnable={() => {
-                  advancedSettingsDisclosure.close();
-                  onChange(true);
-                }} advancedSettingsDisclosure={advancedSettingsDisclosure} />
+                <AdvancedSettingsModal
+                  onEnable={() => {
+                    advancedSettingsDisclosure.close();
+                    onChange(true);
+                  }}
+                  advancedSettingsDisclosure={advancedSettingsDisclosure}
+                />
                 <Switch
                   className="mb-3"
                   ref={ref}
@@ -308,7 +324,9 @@ export const UserSettingsForm = (props: IProps) => {
                       <>
                         {t('SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG')}
                         <Tooltip className="tooltip" anchorSelect=".persist-traefik-config-hint">
-                          {t('Persist the Traefik configuration folder throughout restarts. This will allow you to customize the Traefik configuration.')}
+                          {t(
+                            'Persist the Traefik configuration folder throughout restarts. This will allow you to customize the Traefik configuration.',
+                          )}
                         </Tooltip>
                         <span className={clsx('ms-1 form-help persist-traefik-config-hint')}>?</span>
                       </>
