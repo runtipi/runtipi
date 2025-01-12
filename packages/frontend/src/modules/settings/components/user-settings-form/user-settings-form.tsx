@@ -28,6 +28,7 @@ const settingsSchema = z.object({
   allowErrorMonitoring: z.boolean().optional(),
   timeZone: z.string().optional(),
   advancedSettings: z.boolean().optional(),
+  appDataPath: z.string().optional(),
 });
 
 export type SettingsFormValues = {
@@ -45,6 +46,7 @@ export type SettingsFormValues = {
   eventsTimeout?: number;
   persistTraefikConfig?: boolean;
   domain?: string;
+  appDataPath?: string;
 };
 
 interface IProps {
@@ -408,6 +410,22 @@ export const UserSettingsForm = (props: IProps) => {
                   </>
                 }
                 error={errors.eventsTimeout?.message}
+                placeholder="5"
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('appDataPath')}
+                label={
+                  <>
+                    App Data Path
+                    <Tooltip className="tooltip" anchorSelect=".app-data-path-hint">
+                      The location in which app data is stored.
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help app-data-path-hint')}>?</span>
+                  </>
+                }
+                error={errors.appDataPath?.message}
                 placeholder="5"
               />
             </div>
