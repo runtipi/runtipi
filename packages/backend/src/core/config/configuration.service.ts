@@ -38,6 +38,7 @@ const envSchema = z.object({
   ROOT_FOLDER_HOST: z.string(),
   NGINX_PORT: z.coerce.number().default(80),
   NGINX_PORT_SSL: z.coerce.number().default(443),
+  ADVANCED_SETTINGS: z.string().transform((val) => val.toLowerCase() === 'true'),
 });
 
 @Injectable()
@@ -104,7 +105,8 @@ export class ConfigurationService {
         dnsIp: env.data.DNS_IP,
         appDataPath: path.join(env.data.RUNTIPI_APP_DATA_PATH, 'app-data'),
         persistTraefikConfig: env.data.PERSIST_TRAEFIK_CONFIG,
-        eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES * 60 * 1000,
+        eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES,
+        advancedSettings: env.data.ADVANCED_SETTINGS,
       },
       appsRepoId: env.data.APPS_REPO_ID,
       appsRepoUrl: env.data.APPS_REPO_URL,
@@ -131,7 +133,10 @@ export class ConfigurationService {
     }
 
     if (settings.allowErrorMonitoring) {
-      this.initSentry({ release: this.config.version, allowSentry: settings.allowErrorMonitoring });
+      this.initSentry({
+        release: this.config.version,
+        allowSentry: settings.allowErrorMonitoring,
+      });
     }
 
     const settingsPath = path.join(DATA_DIR, 'state', 'settings.json');

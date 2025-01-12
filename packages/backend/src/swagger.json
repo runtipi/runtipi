@@ -1424,6 +1424,9 @@
               },
               "eventsTimeout": {
                 "type": "number"
+              },
+              "advancedSettings": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -1443,7 +1446,8 @@
               "sslPort",
               "listenIp",
               "timeZone",
-              "eventsTimeout"
+              "eventsTimeout",
+              "advancedSettings"
             ]
           },
           "user": {
@@ -1613,6 +1617,9 @@
           },
           "eventsTimeout": {
             "type": "number"
+          },
+          "advancedSettings": {
+            "type": "boolean"
           }
         }
       },
