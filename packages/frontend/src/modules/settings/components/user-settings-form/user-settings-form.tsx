@@ -289,9 +289,9 @@ export const UserSettingsForm = (props: IProps) => {
           <div className="mt-2">
             <div className="d-flex mb-2">
               <IconAdjustmentsCode className="me-2" />
-              <h2 className="text-2xl font-bold mb-0">Advanced Settings</h2>
+              <h2 className="text-2xl font-bold mb-0">{t('SETTINGS_GENERAL_ADVANCED_SETTINGS_TITLE')}</h2>
             </div>
-            <p className="mb-4">Advanced settings used only if you know what you are doing.</p>
+            <p className="mb-4">{t('SETTINGS_GENERAL_ADVANCED_SETTINGS_SUBTITLE')}</p>
             <div className="mb-3">
               <Controller
                 control={control}
@@ -306,9 +306,9 @@ export const UserSettingsForm = (props: IProps) => {
                     {...rest}
                     label={
                       <>
-                        Persist Traefik Config
+                        {t('SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG')}
                         <Tooltip className="tooltip" anchorSelect=".persist-traefik-config-hint">
-                          Do not overwrite the Traefik config when starting.
+                          {t('Persist the Traefik configuration folder throughout restarts. This will allow you to customize the Traefik configuration.')}
                         </Tooltip>
                         <span className={clsx('ms-1 form-help persist-traefik-config-hint')}>?</span>
                       </>
@@ -322,9 +322,9 @@ export const UserSettingsForm = (props: IProps) => {
                 {...register('domain')}
                 label={
                   <>
-                    Domain
+                    {t('SETTINGS_GENERAL_DOMAIN')}
                     <Tooltip className="tooltip" anchorSelect=".domain-hint">
-                      Expose your dashboard on a custom domain.
+                      {t('SETTINGS_GENERAL_DOMAIN_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help domain-hint')}>?</span>
                   </>
@@ -338,9 +338,9 @@ export const UserSettingsForm = (props: IProps) => {
                 {...register('internalIp')}
                 label={
                   <>
-                    Internal IP
+                    {t('SETTINGS_GENERAL_INTERNAL_IP')}
                     <Tooltip className="tooltip" anchorSelect=".internal-ip-hint">
-                      The internal IP address used when configuring app domains.
+                      {t('SETTINGS_GENERAL_INTERNAL_IP_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help internal-ip-hint')}>?</span>
                   </>
@@ -354,9 +354,9 @@ export const UserSettingsForm = (props: IProps) => {
                 {...register('listenIp')}
                 label={
                   <>
-                    Listen IP
+                    {t('SETTINGS_GENERAL_LISTEN_IP')}
                     <Tooltip className="tooltip" anchorSelect=".listen-ip-hint">
-                      The IP address the app listens on.
+                      {t('SETTINGS_GENERAL_LISTEN_IP_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help listen-ip-hint')}>?</span>
                   </>
@@ -370,9 +370,9 @@ export const UserSettingsForm = (props: IProps) => {
                 {...register('port')}
                 label={
                   <>
-                    Port
+                    {t('SETTINGS_GENERAL_PORT')}
                     <Tooltip className="tooltip" anchorSelect=".port-hint">
-                      The HTTP port the app will listen on.
+                      {t('SETTINGS_GENERAL_PORT_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help port-hint')}>?</span>
                   </>
@@ -386,9 +386,9 @@ export const UserSettingsForm = (props: IProps) => {
                 {...register('sslPort')}
                 label={
                   <>
-                    Port (SSL)
+                    {t('SETTINGS_GENERAL_SSL_PORT')}
                     <Tooltip className="tooltip" anchorSelect=".sslPort-hint">
-                      The HTTPS port the app will listen on.
+                      {t('SETTINGS_GENERAL_SSL_PORT_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help sslPort-hint')}>?</span>
                   </>
@@ -402,9 +402,9 @@ export const UserSettingsForm = (props: IProps) => {
                 {...register('eventsTimeout')}
                 label={
                   <>
-                    Events Timeout
+                    {t('SETTINGS_GENERAL_EVENTS_TIMEOUT')}
                     <Tooltip className="tooltip" anchorSelect=".events-timeout-hint">
-                      The time in minutes after which events are considered stale.
+                      {t('SETTINGS_GENERAL_EVENTS_TIMEOUT_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help events-timeout-hint')}>?</span>
                   </>
@@ -418,9 +418,9 @@ export const UserSettingsForm = (props: IProps) => {
                 {...register('appDataPath')}
                 label={
                   <>
-                    App Data Path
+                    {t('SETTINGS_GENERAL_APP_DATA_PATH')}
                     <Tooltip className="tooltip" anchorSelect=".app-data-path-hint">
-                      The location in which app data is stored.
+                      {t('SETTINGS_GENERAL_APP_DATA_PATH_HINT')}
                     </Tooltip>
                     <span className={clsx('ms-1 form-help app-data-path-hint')}>?</span>
                   </>
