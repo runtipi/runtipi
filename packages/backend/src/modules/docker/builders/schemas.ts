@@ -26,6 +26,8 @@ const deploySchema = z.object({
       .optional(),
     reservations: z
       .object({
+        cpus: z.string().optional(),
+        memory: z.string().optional(),
         devices: z
           .object({
             capabilities: z.array(z.string()),

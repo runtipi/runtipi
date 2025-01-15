@@ -1,41 +1,23 @@
+import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { DEFAULT_REPO_URL } from '@/common/helpers/env-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { SocketManager } from '@/core/socket/socket.service';
 import { Injectable } from '@nestjs/common';
 import { AppFilesManager } from '../apps/app-files-manager';
-import { ReposService } from '../repos/repos.service';
-import { DockerCommandFactory } from './docker-command.factory';
+import type { ReposService } from '../repos/repos.service';
 
 @Injectable()
 export class DockerService {
-  dockerCommandFactory: DockerCommandFactory;
-
   constructor(
     private readonly logger: LoggerService,
     private readonly config: ConfigurationService,
     private readonly appFilesManager: AppFilesManager,
-    private readonly repoService: ReposService,
-    private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
-  ) {
-    this.dockerCommandFactory = new DockerCommandFactory(this);
-
-    const io = this.socketManager.init();
-
-    io.on('connection', async (socket) => {
-      socket.onAny((event, body) => {
-        const command = this.dockerCommandFactory.createCommand(event);
-
-        if (command) {
-          command.execute(socket, body, this.socketManager.emit.bind(this.socketManager));
-        }
-      });
-    });
-  }
+    private readonly repoService: ReposService,
+  ) {}
 
   /**
    * Get the base compose args for an app
@@ -113,5 +95,43 @@ export class DockerService {
     }
 
     return { stdout, stderr };
+  };
+
+  public getAppLogs = async (appId: string, maxLines = 300) => {
+    const { args } = await this.getBaseComposeArgsApp(appId);
+
+    args.push(`logs --follow -n ${maxLines}`);
+
+    const logsCommand = `docker-compose ${args.join(' ')}`;
+
+    const logs = spawn('sh', ['-c', logsCommand]);
+
+    logs.on('error', () => {
+      logs.kill('SIGINT');
+    });
+
+    return {
+      on: logs.stdout.on.bind(logs.stdout),
+      kill: () => logs.kill('SIGINT'),
+    };
+  };
+
+  public getRuntipiLogs = async (maxLines = 300) => {
+    const args = await this.getBaseComposeArgsRuntipi();
+
+    args.push(`logs --follow -n ${maxLines || 25}`);
+
+    const logsCommand = `docker-compose ${args.join(' ')}`;
+
+    const logs = spawn('sh', ['-c', logsCommand]);
+
+    logs.on('error', () => {
+      logs.kill('SIGINT');
+    });
+
+    return {
+      on: logs.stdout.on.bind(logs.stdout),
+      kill: () => logs.kill('SIGINT'),
+    };
   };
 }

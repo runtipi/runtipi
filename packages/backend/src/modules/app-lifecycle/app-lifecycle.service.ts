@@ -1,7 +1,7 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { SocketManager } from '@/core/socket/socket.service';
+import { SSEService } from '@/core/sse/sse.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { lt, valid } from 'semver';
 import semver from 'semver';
@@ -24,7 +24,7 @@ export class AppLifecycleService {
     private readonly appRepository: AppsRepository,
     private readonly config: ConfigurationService,
     private readonly appFilesManager: AppFilesManager,
-    private readonly socketManager: SocketManager,
+    private readonly sseService: SSEService,
     private readonly backupManager: BackupManager,
     private readonly appCatalog: AppCatalogService,
   ) {
@@ -52,16 +52,16 @@ export class AppLifecycleService {
     }
 
     await this.appRepository.updateApp(appId, { status: 'starting' });
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'starting' } });
+    this.sseService.emit('app', { event: 'status_change', appId, appStatus: 'starting' });
 
     this.appEventsQueue.publish({ appid: appId, command: 'start', form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} started successfully`);
-        this.socketManager.emit({ type: 'app', event: 'start_success', data: { appId, appStatus: 'running' } });
+        this.sseService.emit('app', { event: 'start_success', appId, appStatus: 'running' });
         await this.appRepository.updateApp(appId, { status: 'running' });
       } else {
         this.logger.error(`Failed to start app ${appId}: ${message}`);
-        this.socketManager.emit({ type: 'app', event: 'start_error', data: { appId, appStatus: 'stopped', error: message } });
+        this.sseService.emit('app', { event: 'start_error', appId, appStatus: 'stopped', error: message });
         await this.appRepository.updateApp(appId, { status: 'stopped' });
       }
     });
@@ -71,7 +71,7 @@ export class AppLifecycleService {
     const { appId, form } = params;
     const { demoMode, version, architecture } = this.config.getConfig();
 
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'installing' } });
+    this.sseService.emit('app', { event: 'status_change', appId, appStatus: 'installing' });
 
     const app = await this.appRepository.getApp(appId);
 
@@ -140,10 +140,11 @@ export class AppLifecycleService {
     this.appEventsQueue.publish({ appid: appId, command: 'install', form }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} installed successfully`);
-        await this.socketManager.emit({ type: 'app', event: 'install_success', data: { appId, appStatus: 'running' } });
+
+        this.sseService.emit('app', { event: 'install_success', appId, appStatus: 'running' });
         await this.appRepository.updateApp(appId, { status: 'running' });
       } else {
-        this.socketManager.emit({ type: 'app', event: 'install_error', data: { appId, appStatus: 'missing', error: message } });
+        this.sseService.emit('app', { event: 'install_error', appId, appStatus: 'missing', error: message });
         this.logger.error(`Failed to install app ${appId}: ${message}`);
         await this.appRepository.deleteApp(appId);
       }
@@ -161,18 +162,18 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appId }, HttpStatus.NOT_FOUND);
     }
 
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'stopping' } });
+    this.sseService.emit('app', { event: 'status_change', appId, appStatus: 'stopping' });
 
     await this.appRepository.updateApp(appId, { status: 'stopping' });
 
     // Send stop command to the queue
     this.appEventsQueue.publish({ command: 'stop', appid: appId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
-        this.socketManager.emit({ type: 'app', event: 'stop_success', data: { appId, appStatus: 'stopped' } });
+        this.sseService.emit('app', { event: 'stop_success', appId, appStatus: 'stopped' });
         this.logger.info(`App ${appId} stopped successfully`);
         await this.appRepository.updateApp(appId, { status: 'stopped' });
       } else {
-        this.socketManager.emit({ type: 'app', event: 'stop_error', data: { appId, appStatus: 'running', error: message } });
+        this.sseService.emit('app', { event: 'stop_error', appId, appStatus: 'running', error: message });
         this.logger.error(`Failed to stop app ${appId}: ${message}`);
         await this.appRepository.updateApp(appId, { status: 'running' });
       }
@@ -190,17 +191,17 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
     }
 
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'restarting' } });
+    this.sseService.emit('app', { event: 'status_change', appId, appStatus: 'restarting' });
     await this.appRepository.updateApp(appId, { status: 'restarting' });
 
     this.appEventsQueue.publish({ command: 'restart', appid: appId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} restarted successfully`);
-        this.socketManager.emit({ type: 'app', event: 'restart_success', data: { appId, appStatus: 'running' } });
+        this.sseService.emit('app', { event: 'restart_success', appId, appStatus: 'running' });
         await this.appRepository.updateApp(appId, { status: 'running' });
       } else {
         this.logger.error(`Failed to restart app ${appId}: ${message}`);
-        this.socketManager.emit({ type: 'app', event: 'restart_error', data: { appId, appStatus: 'running', error: message } });
+        this.sseService.emit('app', { event: 'restart_error', appId, appStatus: 'running', error: message });
         await this.appRepository.updateApp(appId, { status: 'stopped' });
       }
     });
@@ -223,17 +224,17 @@ export class AppLifecycleService {
     }
 
     await this.appRepository.updateApp(appId, { status: 'uninstalling' });
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'uninstalling' } });
+    this.sseService.emit('app', { event: 'status_change', appId, appStatus: 'uninstalling' });
 
     this.appEventsQueue.publish({ command: 'uninstall', appid: appId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} uninstalled successfully`);
         await this.appRepository.deleteApp(appId);
-        await this.socketManager.emit({ type: 'app', event: 'uninstall_success', data: { appId, appStatus: 'missing' } });
+        this.sseService.emit('app', { event: 'uninstall_success', appId, appStatus: 'missing' });
       } else {
         this.logger.error(`Failed to uninstall app ${appId}: ${message}`);
         await this.appRepository.updateApp(appId, { status: 'stopped' });
-        await this.socketManager.emit({ type: 'app', event: 'uninstall_error', data: { appId, appStatus: 'stopped', error: message } });
+        this.sseService.emit('app', { event: 'uninstall_error', appId, appStatus: 'stopped', error: message });
       }
     });
   }
@@ -250,13 +251,13 @@ export class AppLifecycleService {
     }
 
     const appStatusBeforeReset = app?.status;
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'resetting' } });
+    this.sseService.emit('app', { event: 'status_change', appId, appStatus: 'resetting' });
     await this.appRepository.updateApp(appId, { status: 'resetting' });
 
     this.appEventsQueue.publish({ command: 'reset', appid: appId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appId} reset successfully`);
-        await this.socketManager.emit({ type: 'app', event: 'reset_success', data: { appId, appStatus: 'stopped' } });
+        this.sseService.emit('app', { event: 'reset_success', appId, appStatus: 'stopped' });
         if (appStatusBeforeReset === 'running') {
           this.startApp({ appId });
         } else {
@@ -264,7 +265,7 @@ export class AppLifecycleService {
         }
       } else {
         this.logger.error(`Failed to reset app ${appId}: ${message}`);
-        await this.socketManager.emit({ type: 'app', event: 'reset_error', data: { appId, appStatus: appStatusBeforeReset, error: message } });
+        this.sseService.emit('app', { event: 'reset_error', appId, appStatus: appStatusBeforeReset, error: message });
         await this.appRepository.updateApp(appId, { status: 'running' });
       }
     });
@@ -352,7 +353,7 @@ export class AppLifecycleService {
     await this.appRepository.updateApp(appId, { status: 'updating' });
 
     const appStatusBeforeUpdate = app.status;
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'updating' } });
+    this.sseService.emit('app', { event: 'status_change', appId, appStatus: 'updating' });
 
     this.appEventsQueue.publish({ command: 'update', appid: appId, form: app.config, performBackup }).then(async ({ success, message }) => {
       if (success) {
@@ -360,14 +361,14 @@ export class AppLifecycleService {
 
         await this.appRepository.updateApp(appId, { status: appStatusBeforeUpdate, version: appInfo?.tipi_version });
         await this.updateAppConfig({ appId, form: app.config });
-        await this.socketManager.emit({ type: 'app', event: 'update_success', data: { appId } });
+        this.sseService.emit('app', { event: 'update_success', appId });
 
         if (appStatusBeforeUpdate === 'running') {
           this.startApp({ appId });
         }
       } else {
         this.logger.error(`Failed to update app ${appId}: ${message}`);
-        await this.socketManager.emit({ type: 'app', event: 'update_error', data: { appId, appStatus: 'stopped', error: message } });
+        this.sseService.emit('app', { event: 'update_error', appId, appStatus: 'stopped', error: message });
         await this.appRepository.updateApp(appId, { status: 'stopped' });
       }
     });
