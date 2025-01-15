@@ -2,9 +2,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import * as readline from 'node:readline';
 import { Injectable } from '@nestjs/common';
-import winston, { createLogger, format, transports } from 'winston';
+import { type Logger, createLogger, format, transports } from 'winston';
 
-const { printf, timestamp, combine, colorize, align, label } = format;
+const { printf, timestamp, combine, colorize, align } = format;
+
+const printFile = printf((info) => `${info.timestamp} - ${info.level} > ${info.message}`);
+const printConsole = printf((info) => `${info.level} > ${info.message}`);
+
+const fileFormat = combine(format.uncolorize(), timestamp(), align(), printFile);
+const consoleFormat = combine(colorize(), printConsole);
 
 type Transports = transports.ConsoleTransportInstance | transports.FileTransportInstance;
 
@@ -22,30 +28,25 @@ export const newLogger = (id: string, logsFolder: string, logLevel = 'info') => 
     tr.push(
       new transports.File({
         filename: path.join(logsFolder, 'error.log'),
+        format: fileFormat,
         level: 'error',
       }),
     );
     tr.push(
       new transports.File({
         filename: path.join(logsFolder, 'app.log'),
+        format: fileFormat,
         level: logLevel,
       }),
     );
 
-    tr.push(new transports.Console({ level: logLevel }));
+    tr.push(new transports.Console({ level: logLevel, format: consoleFormat }));
   } catch (error) {
     // no-op
   }
 
   return createLogger({
     level: logLevel,
-    format: combine(
-      label({ label: id }),
-      colorize(),
-      timestamp(),
-      align(),
-      printf((info) => `${id}: ${info.timestamp} - ${info.level} > ${info.message}`),
-    ),
     transports: tr,
     exceptionHandlers,
     exitOnError: false,
@@ -54,7 +55,7 @@ export const newLogger = (id: string, logsFolder: string, logLevel = 'info') => 
 
 @Injectable()
 export class LoggerService {
-  private winstonLogger: winston.Logger;
+  private winstonLogger: Logger;
 
   private logsFolder: string;
 
