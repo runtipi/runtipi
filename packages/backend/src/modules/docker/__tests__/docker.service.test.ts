@@ -7,7 +7,11 @@ describe('DockerService', () => {
   let dockerService: DockerService;
 
   beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({}).useMocker(mock).compile();
+    const moduleRef = await Test.createTestingModule({
+      providers: [DockerService],
+    })
+      .useMocker(mock)
+      .compile();
 
     dockerService = moduleRef.get(DockerService);
   });

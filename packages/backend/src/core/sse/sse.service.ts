@@ -60,7 +60,7 @@ export class SSEService {
       formattedTopic = `${topic}:${appUrn}` as Topic;
     }
 
-    let currentTopic = this.topics.get(topic);
+    let currentTopic = this.topics.get(formattedTopic);
     if (!currentTopic) {
       currentTopic = new Subject<MessageEvent>();
       this.topics.set(formattedTopic, currentTopic);

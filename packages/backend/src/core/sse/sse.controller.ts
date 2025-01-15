@@ -1,5 +1,5 @@
+import { castAppUrn } from '@/common/helpers/app-helpers';
 import { AuthGuard } from '@/modules/auth/auth.guard';
-import type { AppUrn } from '@/types/app/app.types';
 import { Controller, type MessageEvent, Query, Sse, UseGuards } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
@@ -20,8 +20,8 @@ export class SSEController {
   @Sse('app-logs')
   @ApiQuery({ name: 'appUrn', type: String, required: true })
   @ApiQuery({ name: 'maxLines', type: Number, required: false })
-  async appLogsEvents(@Query('appUrn') appUrn: AppUrn, @Query('maxLines') maxLines: number): Promise<Observable<MessageEvent>> {
-    return this.sseService.getLogStreamObservable('app-logs', maxLines, appUrn);
+  async appLogsEvents(@Query('appUrn') appUrn: string, @Query('maxLines') maxLines: number): Promise<Observable<MessageEvent>> {
+    return this.sseService.getLogStreamObservable('app-logs', maxLines, castAppUrn(appUrn));
   }
 
   @Sse('runtipi-logs')
