@@ -58,7 +58,7 @@ export class DockerService {
 
   public getBaseComposeArgsRuntipi = async () => {
     const { dataDir } = this.config.get('directories');
-    const args: string[] = [`--env-file ${path.join(dataDir, '.env')}`];
+    const args: string[] = ['--env-file', path.join(dataDir, '.env')];
 
     args.push('--project-name', 'runtipi');
 
