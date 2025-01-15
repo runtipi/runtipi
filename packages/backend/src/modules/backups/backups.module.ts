@@ -1,5 +1,5 @@
 import { ArchiveModule } from '@/core/archive/archive.module';
-import { SocketModule } from '@/core/socket/socket.module';
+import { SSEModule } from '@/core/sse/sse.module';
 import { Module, forwardRef } from '@nestjs/common';
 import { AppLifecycleModule } from '../app-lifecycle/app-lifecycle.module';
 import { AppsModule } from '../apps/apps.module';
@@ -9,7 +9,7 @@ import { BackupsController } from './backups.controller';
 import { BackupsService } from './backups.service';
 
 @Module({
-  imports: [forwardRef(() => AppLifecycleModule), AppsModule, QueueModule, SocketModule, ArchiveModule],
+  imports: [forwardRef(() => AppLifecycleModule), AppsModule, QueueModule, ArchiveModule, SSEModule],
   controllers: [BackupsController],
   providers: [BackupsService, BackupManager],
   exports: [BackupsService, BackupManager],
