@@ -17,7 +17,7 @@ import { FilesystemModule } from './core/filesystem/filesystem.module';
 import { HealthModule } from './core/health/health.module';
 import { LoggerModule } from './core/logger/logger.module';
 import { LoggerService } from './core/logger/logger.service';
-import { SocketModule } from './core/socket/socket.module';
+import { SSEModule } from './core/sse/sse.module';
 import { AppLifecycleModule } from './modules/app-lifecycle/app-lifecycle.module';
 import { AppStoreModule } from './modules/app-stores/app-store.module';
 import { AppsModule } from './modules/apps/apps.module';
@@ -44,11 +44,11 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   AppStoreModule,
   QueueModule,
   AppLifecycleModule,
-  SocketModule,
   LinksModule,
   BackupsModule,
   HealthModule,
   MarketplaceModule,
+  SSEModule,
 ];
 
 if (process.env.NODE_ENV === 'production') {
