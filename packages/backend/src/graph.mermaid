@@ -117,26 +117,17 @@ graph LR
   AppLifecycleModule-->DockerModule
   DockerModule-->AppsModule
   DockerModule-->AppStoreModule
-  DockerModule-->SocketModule
-  SocketModule-->SentryModule
-  SocketModule-->ConfigurationModule
-  SocketModule-->DatabaseModule
-  SocketModule-->CacheModule
-  SocketModule-->LoggerModule
-  SocketModule-->FilesystemModule
   DockerModule-->SentryModule
   DockerModule-->ConfigurationModule
   DockerModule-->DatabaseModule
   DockerModule-->CacheModule
   DockerModule-->LoggerModule
   DockerModule-->FilesystemModule
-  AppLifecycleModule-->SocketModule
   AppLifecycleModule-->MarketplaceModule
   AppLifecycleModule-->BackupsModule
   BackupsModule-->AppLifecycleModule
   BackupsModule-->AppsModule
   BackupsModule-->QueueModule
-  BackupsModule-->SocketModule
   BackupsModule-->ArchiveModule
   ArchiveModule-->SentryModule
   ArchiveModule-->ConfigurationModule
@@ -144,19 +135,27 @@ graph LR
   ArchiveModule-->CacheModule
   ArchiveModule-->LoggerModule
   ArchiveModule-->FilesystemModule
+  BackupsModule-->SSEModule
+  SSEModule-->DockerModule
+  SSEModule-->SentryModule
+  SSEModule-->ConfigurationModule
+  SSEModule-->DatabaseModule
+  SSEModule-->CacheModule
+  SSEModule-->LoggerModule
+  SSEModule-->FilesystemModule
   BackupsModule-->SentryModule
   BackupsModule-->ConfigurationModule
   BackupsModule-->DatabaseModule
   BackupsModule-->CacheModule
   BackupsModule-->LoggerModule
   BackupsModule-->FilesystemModule
+  AppLifecycleModule-->SSEModule
   AppLifecycleModule-->SentryModule
   AppLifecycleModule-->ConfigurationModule
   AppLifecycleModule-->DatabaseModule
   AppLifecycleModule-->CacheModule
   AppLifecycleModule-->LoggerModule
   AppLifecycleModule-->FilesystemModule
-  AppModule-->SocketModule
   AppModule-->LinksModule
   LinksModule-->SentryModule
   LinksModule-->ConfigurationModule
@@ -174,7 +173,6 @@ graph LR
   TerminusModule-->LoggerModule
   TerminusModule-->FilesystemModule
   HealthModule-->QueueModule
-  HealthModule-->SocketModule
   HealthModule-->SentryModule
   HealthModule-->ConfigurationModule
   HealthModule-->DatabaseModule
@@ -182,3 +180,4 @@ graph LR
   HealthModule-->LoggerModule
   HealthModule-->FilesystemModule
   AppModule-->MarketplaceModule
+  AppModule-->SSEModule

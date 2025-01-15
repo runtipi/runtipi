@@ -1,3 +1,3 @@
-import { socketEventSchema, type SocketEvent } from '../core/socket/socket-schemas';
+import { type SSE, type Topic, sseSchema } from '../core/sse/dto/sse.dto';
 
-export { socketEventSchema, type SocketEvent };
+export { sseSchema, type Topic, type SSE };
