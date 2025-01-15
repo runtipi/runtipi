@@ -50,8 +50,8 @@ export const serviceSchema = z.object({
   addPorts: z
     .array(
       z.object({
-        containerPort: z.number(),
-        hostPort: z.number(),
+        containerPort: z.number().or(z.string()),
+        hostPort: z.number().or(z.string()),
         udp: z.boolean().optional(),
         tcp: z.boolean().optional(),
         interface: z.string().optional(),
