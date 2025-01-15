@@ -22,7 +22,11 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
     const eventSource = new EventSource(url);
 
     eventSource.onmessage = (e) => {
-      onEvent(JSON.parse(e.data));
+      try {
+        onEvent(JSON.parse(e.data));
+      } catch (error) {
+        console.error('Failed to parse SSE message:', error);
+      }
     };
 
     eventSource.onopen = () => {

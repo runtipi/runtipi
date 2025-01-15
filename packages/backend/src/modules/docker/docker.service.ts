@@ -29,27 +29,28 @@ export class DockerService {
     let isCustomConfig = appsRepoId !== this.repoService.getRepoHash(DEFAULT_REPO_URL);
 
     const appEnv = await this.appFilesManager.getAppEnv(appId);
-    const args: string[] = [`--env-file ${appEnv.path}`];
+    const args: string[] = ['--env-file', appEnv.path];
 
     // User custom env file
     const userEnvFile = await this.appFilesManager.getUserEnv(appId);
     if (userEnvFile.content) {
-      args.push(`--env-file ${userEnvFile.path}`);
+      isCustomConfig = true;
+      args.push('--env-file', userEnvFile.path);
     }
 
-    args.push(`--project-name ${appId}`);
+    args.push('--project-name', appId);
 
     const composeFile = await this.appFilesManager.getDockerComposeYaml(appId);
-    args.push(`-f ${composeFile.path}`);
+    args.push('-f', composeFile.path);
 
     const commonComposeFile = path.join(directories.dataDir, 'repos', appsRepoId, 'apps', 'docker-compose.common.yml');
-    args.push(`-f ${commonComposeFile}`);
+    args.push('-f', commonComposeFile);
 
     // User defined overrides
     const userComposeFile = await this.appFilesManager.getUserComposeFile(appId);
     if (userComposeFile.content) {
       isCustomConfig = true;
-      args.push(`--file ${userComposeFile.path}`);
+      args.push('--file', userComposeFile.path);
     }
 
     return { args, isCustomConfig };
@@ -57,20 +58,20 @@ export class DockerService {
 
   public getBaseComposeArgsRuntipi = async () => {
     const { dataDir } = this.config.get('directories');
-    const args: string[] = [`--env-file ${path.join(dataDir, '.env')}`];
+    const args: string[] = ['--env-file', path.join(dataDir, '.env')];
 
-    args.push('--project-name runtipi');
+    args.push('--project-name', 'runtipi');
 
     const composeFile = path.join(dataDir, 'docker-compose.yml');
-    args.push(`-f ${composeFile}`);
+    args.push('-f', composeFile);
 
     // User defined overrides
     const userComposeFile = path.join(dataDir, 'user-config', 'tipi-compose.yml');
     if (await this.filesystem.pathExists(userComposeFile)) {
-      args.push(`--file ${userComposeFile}`);
+      args.push('--file', userComposeFile);
     }
 
-    return args;
+    return { args };
   };
 
   /**
@@ -80,7 +81,7 @@ export class DockerService {
    */
   public composeApp = async (appId: string, command: string) => {
     const { args, isCustomConfig } = await this.getBaseComposeArgsApp(appId);
-    args.push(command);
+    args.push(...command.split(' '));
 
     this.logger.info(`Running docker compose with args ${args.join(' ')}`);
     const { stdout, stderr } = await execAsync(`docker-compose ${args.join(' ')}`);
@@ -97,33 +98,12 @@ export class DockerService {
     return { stdout, stderr };
   };
 
-  public getAppLogs = async (appId: string, maxLines = 300) => {
-    const { args } = await this.getBaseComposeArgsApp(appId);
+  public getLogsStream = async (maxLines: number, appId?: string) => {
+    const { args } = appId ? await this.getBaseComposeArgsApp(appId) : await this.getBaseComposeArgsRuntipi();
 
-    args.push(`logs --follow -n ${maxLines}`);
+    args.push('logs', '--follow', '-n', maxLines.toString());
 
-    const logsCommand = `docker-compose ${args.join(' ')}`;
-
-    const logs = spawn('sh', ['-c', logsCommand]);
-
-    logs.on('error', () => {
-      logs.kill('SIGINT');
-    });
-
-    return {
-      on: logs.stdout.on.bind(logs.stdout),
-      kill: () => logs.kill('SIGINT'),
-    };
-  };
-
-  public getRuntipiLogs = async (maxLines = 300) => {
-    const args = await this.getBaseComposeArgsRuntipi();
-
-    args.push(`logs --follow -n ${maxLines || 25}`);
-
-    const logsCommand = `docker-compose ${args.join(' ')}`;
-
-    const logs = spawn('sh', ['-c', logsCommand]);
+    const logs = spawn('docker-compose', args, { stdio: 'pipe' });
 
     logs.on('error', () => {
       logs.kill('SIGINT');
