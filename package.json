@@ -24,7 +24,7 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@hey-api/openapi-ts": "^0.61.2",
+    "@hey-api/openapi-ts": "^0.62.1",
     "@playwright/test": "^1.49.1",
     "@types/pg": "^8.11.10",
     "dotenv-cli": "^8.0.0",
