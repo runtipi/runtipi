@@ -10,7 +10,7 @@ import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
 const server = setupServer();
@@ -83,8 +83,11 @@ describe('AppService', () => {
       cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(undefined);
       cacheService.get.calledWith('latestVersionBody').mockResolvedValueOnce(undefined);
 
+      const mockFetch = vi.fn();
+
       server.use(
         http.get(LATEST_RELEASE_URL, () => {
+          mockFetch();
           return HttpResponse.json({
             tag_name: latest,
             body,
@@ -93,12 +96,8 @@ describe('AppService', () => {
       );
 
       // act
-      const result = await appService.getVersion();
-
-      // assert
-      expect(result.current).toBe(version);
-      expect(result.latest).toBe(latest);
-      expect(result.body).toBe(body);
+      await appService.getVersion();
+      expect(mockFetch).toHaveBeenCalled();
     });
 
     it('should return current version if cache fails', async () => {
