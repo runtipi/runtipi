@@ -1,5 +1,5 @@
 import type { SSE, Topic } from 'backend';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 type Props<T> = {
   topic: T;
@@ -11,14 +11,15 @@ type Props<T> = {
 
 export const useSSE = <T extends Topic>(props: Props<T>) => {
   const { topic, onEvent, onError, onOpen } = props;
+  const eventSourceRef = useRef<EventSource | null>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: This hook should only run once on mount
-  useEffect(() => {
+  const initializeSSE = () => {
     const url = new URL(`${window.location.origin}/api/sse/${topic}`);
 
     if (props.params) {
       url.search = props.params.toString();
     }
+
     const eventSource = new EventSource(url);
 
     eventSource.onmessage = (e) => {
@@ -40,11 +41,32 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
       } else {
         console.error('SSE connection error:', error);
       }
+
+      eventSource.close();
+      eventSourceRef.current = null;
     };
 
+    eventSourceRef.current = eventSource;
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This hook should only run once on mount
+  useEffect(() => {
+    initializeSSE();
+
+    const handleFocus = () => {
+      if (!eventSourceRef.current || eventSourceRef.current.readyState === EventSource.CLOSED) {
+        initializeSSE();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+
     return () => {
-      console.info('SSE connection closed');
-      eventSource.close();
+      console.info('Cleaning up SSE connection');
+      window.removeEventListener('focus', handleFocus);
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
     };
   }, []);
 };
