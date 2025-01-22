@@ -1,4 +1,3 @@
-import type { AppUrn } from '@/types/app/app.types';
 import { Injectable, type MessageEvent } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { LoggerService } from '../logger/logger.service';
@@ -13,12 +12,12 @@ export class SSEService {
   /**
    * Emits an event to the specified topic.
    */
-  emit<T extends Topic>(topic: T, data: Extract<SSE, { topic: T }>['data'], appUrn?: AppUrn) {
+  emit<T extends Topic>(topic: T, data: Extract<SSE, { topic: T }>['data'], appId?: string) {
     let formattedTopic = topic;
 
-    if (appUrn) {
+    if (appId) {
       // We want to use this topic for a specific app
-      formattedTopic = `${topic}:${appUrn}` as T;
+      formattedTopic = `${topic}:${appId}` as T;
     }
 
     let currentTopic = this.topics.get(formattedTopic);
@@ -36,12 +35,12 @@ export class SSEService {
    * Gets an observable for the specified topic.
    * If the topic does not exist, it creates it.
    */
-  getTopicObservable(topic: Topic, appUrn?: AppUrn): Observable<MessageEvent> {
+  getTopicObservable(topic: Topic, appId?: string): Observable<MessageEvent> {
     let formattedTopic = topic;
 
-    if (appUrn) {
+    if (appId) {
       // We want to use this topic for a specific app
-      formattedTopic = `${topic}:${appUrn}` as Topic;
+      formattedTopic = `${topic}:${appId}` as Topic;
     }
 
     let currentTopic = this.topics.get(topic);

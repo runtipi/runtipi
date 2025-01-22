@@ -1046,19 +1046,19 @@
         "operationId": "appLogsEvents",
         "parameters": [
           {
+            "name": "appId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "maxLines",
             "required": false,
             "in": "query",
             "schema": {
               "type": "number"
-            }
-          },
-          {
-            "name": "appUrn",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
             }
           }
         ],

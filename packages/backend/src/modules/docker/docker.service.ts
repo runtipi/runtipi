@@ -7,7 +7,7 @@ import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { AppFilesManager } from '../apps/app-files-manager';
-import type { ReposService } from '../repos/repos.service';
+import { ReposService } from '../repos/repos.service';
 
 @Injectable()
 export class DockerService {

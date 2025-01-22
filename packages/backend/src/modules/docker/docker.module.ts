@@ -4,7 +4,7 @@ import { ReposModule } from '../repos/repos.module';
 import { DockerService } from './docker.service';
 
 @Module({
-  imports: [AppsModule, AppStoreModule],
+  imports: [AppsModule, ReposModule],
   providers: [DockerService],
   exports: [DockerService],
 })
