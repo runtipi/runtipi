@@ -1,5 +1,6 @@
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
+import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
 import { dynamicComposeSchema } from '@/modules/docker/builders/schemas';
 import { DockerService } from '@/modules/docker/docker.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
@@ -25,7 +26,8 @@ export class AppLifecycleCommand {
     if (composeJson.content && appInfo?.dynamic_config) {
       try {
         const { services } = dynamicComposeSchema.parse(composeJson.content);
-        const composeFile = this.dockerService.getDockerCompose(services, form);
+        const dockerComposeBuilder = new DockerComposeBuilder();
+        const composeFile = dockerComposeBuilder.getDockerCompose(services, form);
 
         await this.appFilesManager.writeDockerComposeYml(appId, composeFile);
       } catch (err) {

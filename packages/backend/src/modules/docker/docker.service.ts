@@ -7,12 +7,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { SocketManager } from '@/core/socket/socket.service';
 import { Injectable } from '@nestjs/common';
 import { AppFilesManager } from '../apps/app-files-manager';
-import type { AppEventFormInput } from '../queue/entities/app-events';
 import { ReposService } from '../repos/repos.service';
-import { DockerComposeBuilder } from './builders/compose.builder';
-import { type Service, type ServiceInput, serviceSchema } from './builders/schemas';
-import { ServiceBuilder } from './builders/service.builder';
-import { TraefikLabelsBuilder } from './builders/traefik-labels.builder';
 import { DockerCommandFactory } from './docker-command.factory';
 
 @Injectable()
@@ -118,83 +113,5 @@ export class DockerService {
     }
 
     return { stdout, stderr };
-  };
-
-  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput) => {
-    const myServices = services.map((service) => this.buildService(service, form));
-
-    const dockerCompose = new DockerComposeBuilder().addServices(myServices).addNetwork({
-      key: 'tipi_main_network',
-      name: 'runtipi_tipi_main_network',
-      external: true,
-    });
-
-    return dockerCompose.build();
-  };
-
-  private buildService = (params: Service, form: AppEventFormInput) => {
-    const result = serviceSchema.safeParse(params);
-
-    if (!result.success) {
-      console.warn(`! Service ${params.name} has invalid schema: \n${JSON.stringify(result.error.flatten(), null, 2)}\nNotify the app maintainer`);
-    }
-
-    const service = new ServiceBuilder();
-    service
-      .setImage(params.image)
-      .setName(params.name)
-      .setEnvironment(params.environment)
-      .setCommand(params.command)
-      .setHealthCheck(params.healthCheck)
-      .setDependsOn(params.dependsOn)
-      .setVolumes(params.volumes)
-      .setRestartPolicy('unless-stopped')
-      .setExtraHosts(params.extraHosts)
-      .setUlimits(params.ulimits)
-      .setPorts(params.addPorts)
-      .setNetwork('tipi_main_network')
-      .setNetworkMode(params.networkMode)
-      .setCapAdd(params.capAdd)
-      .setDeploy(params.deploy)
-      .setHostname(params.hostname)
-      .setDevices(params.devices)
-      .setEntrypoint(params.entrypoint)
-      .setPid(params.pid)
-      .setPrivileged(params.privileged)
-      .setTty(params.tty)
-      .setUser(params.user)
-      .setWorkingDir(params.workingDir)
-      .setShmSize(params.shmSize)
-      .setCapDrop(params.capDrop)
-      .setLogging(params.logging)
-      .setReadOnly(params.readOnly)
-      .setSecurityOpt(params.securityOpt)
-      .setStopSignal(params.stopSignal)
-      .setStopGracePeriod(params.stopGracePeriod)
-      .setStdinOpen(params.stdinOpen);
-
-    if (params.isMain) {
-      if (form.openPort && params.internalPort) {
-        service.setPort({
-          containerPort: params.internalPort,
-          hostPort: '${APP_PORT}',
-        });
-      }
-
-      if (params.internalPort) {
-        const traefikLabels = new TraefikLabelsBuilder({
-          internalPort: params.internalPort,
-          appId: params.name,
-          exposedLocal: form.exposedLocal,
-          exposed: form.exposed,
-        })
-          .addExposedLabels()
-          .addExposedLocalLabels();
-
-        service.setLabels(traefikLabels.build());
-      }
-    }
-
-    return service.build();
   };
 }
