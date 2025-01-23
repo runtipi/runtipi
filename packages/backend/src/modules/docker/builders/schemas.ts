@@ -97,7 +97,7 @@ export const serviceSchema = z.object({
   logging: z
     .object({
       driver: z.string(),
-      options: z.record(z.string()),
+      options: z.record(z.string()).optional(),
     })
     .optional(),
   readOnly: z.boolean().optional(),
