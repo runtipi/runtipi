@@ -1,6 +1,7 @@
 import { ARCHITECTURES } from '@/common/constants';
+import type { AppUrn } from '@/types/app/app.types';
 import { createZodDto } from 'nestjs-zod';
-import { z } from 'zod';
+import { type ZodStringDef, z } from 'zod';
 
 export const APP_CATEGORIES = [
   'network',
@@ -44,10 +45,11 @@ export const formFieldSchema = z.object({
 });
 
 export const appInfoSchema = z.object({
-  id: z.string(),
+  id: z.string().refine((v) => v.split(':').length === 1),
+  urn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
   available: z.boolean(),
   deprecated: z.boolean().optional().default(false),
-  port: z.number().min(1).max(65535),
+  port: z.number().min(1).max(65535).optional(),
   name: z.string(),
   description: z.string().optional().default(''),
   version: z.string().optional().default('latest'),
@@ -94,6 +96,7 @@ export type FormField = z.output<typeof formFieldSchema>;
 export class AppInfoSimpleDto extends createZodDto(
   appInfoSchema.pick({
     id: true,
+    urn: true,
     name: true,
     short_desc: true,
     categories: true,
@@ -122,7 +125,7 @@ export class SearchAppsQueryDto extends createZodDto(
     pageSize: z.coerce.number().optional(),
     cursor: z.string().optional(),
     category: z.enum(APP_CATEGORIES).optional(),
-    storeId: z.coerce.number().optional(),
+    storeId: z.string().optional(),
   }),
 ) {}
 
@@ -150,7 +153,7 @@ export class PullDto extends createZodDto(
 
 class AppStoreDto extends createZodDto(
   z.object({
-    id: z.number(),
+    slug: z.string(),
     name: z.string(),
     url: z.string(),
     enabled: z.boolean(),
@@ -172,7 +175,7 @@ export class UpdateAppStoreBodyDto extends createZodDto(
 
 export class CreateAppStoreBodyDto extends createZodDto(
   z.object({
-    name: z.string(),
+    name: z.string().min(1).max(16),
     url: z.string().trim().toLowerCase(),
   }),
 ) {}

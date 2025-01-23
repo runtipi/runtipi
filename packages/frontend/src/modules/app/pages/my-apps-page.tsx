@@ -25,14 +25,15 @@ export const MyAppsPage = () => {
   const renderApp = ({ info, app, metadata }: (typeof installed)[number]) => {
     const updateAvailable = Number(app.version) < Number(metadata.latestVersion);
 
-    const [appId, storeId] = app.id.split('_');
+    const [appName, storeId] = info.urn.split(':');
 
-    if (info.available)
+    if (info.available) {
       return (
-        <Link key={app.id} to={`/apps/${storeId}/${appId}`} className="col-sm-6 col-lg-4 my-apps-link">
-          <AppTile key={app.id} status={app.status} info={info} updateAvailable={updateAvailable} />
+        <Link key={app.id} to={`/apps/${storeId}/${appName}`} className="col-sm-6 col-lg-4 my-apps-link">
+          <AppTile key={info.urn} status={app.status} info={info} updateAvailable={updateAvailable} />
         </Link>
       );
+    }
 
     return null;
   };

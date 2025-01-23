@@ -3,6 +3,7 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { BackupManager } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { AppLifecycleCommand } from './command';
 
 export class RestoreAppCommand extends AppLifecycleCommand {
@@ -17,21 +18,21 @@ export class RestoreAppCommand extends AppLifecycleCommand {
     super(logger, appFilesManager, dockerService, marketplaceService);
   }
 
-  public async execute(appId: string): Promise<{ success: boolean; message: string }> {
+  public async execute(appUrn: AppUrn): Promise<{ success: boolean; message: string }> {
     try {
       // Stop the app
-      this.logger.info(`Stopping app ${appId}`);
-      await this.dockerService.composeApp(appId, 'rm --force --stop').catch((err) => {
-        this.logger.error(`Failed to stop app ${appId}: ${err.message}`);
+      this.logger.info(`Stopping app ${appUrn}`);
+      await this.dockerService.composeApp(appUrn, 'rm --force --stop').catch((err) => {
+        this.logger.error(`Failed to stop app ${appUrn}: ${err.message}`);
       });
 
-      await this.backupManager.restoreApp(appId, this.filename);
+      await this.backupManager.restoreApp(appUrn, this.filename);
 
       // Done
-      this.logger.info(`App ${appId} restored!`);
-      return { success: true, message: `App ${appId} restored successfully` };
+      this.logger.info(`App ${appUrn} restored!`);
+      return { success: true, message: `App ${appUrn} restored successfully` };
     } catch (err) {
-      return this.handleAppError(err, appId, 'restore');
+      return this.handleAppError(err, appUrn, 'restore');
     }
   }
 }

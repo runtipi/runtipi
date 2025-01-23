@@ -42,7 +42,7 @@ import { useAppStatus } from '../../helpers/use-app-status';
 interface IProps {
   app?: AppDetails | null;
   info: AppInfo;
-  metadata?: AppMetadata;
+  metadata: AppMetadata;
   localDomain?: string;
 }
 
@@ -88,7 +88,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('starting', info.id);
+      setOptimisticStatus('starting', info.urn);
     },
   });
 
@@ -96,7 +96,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
     <ActionButton
       key="start"
       IconComponent={IconPlayerPlay}
-      onClick={() => startMutation.mutate({ path: { id: info.id } })}
+      onClick={() => startMutation.mutate({ path: { urn: info.urn } })}
       title={t('APP_ACTION_START')}
       intent="success"
     />
@@ -146,7 +146,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
           {(app?.openPort || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('local')}>
               <IconLockOff className="text-muted me-2" size={16} />
-              {hostname}:{info.port}
+              {hostname}:{app?.port ?? info.port}
             </DropdownMenuItem>
           )}
         </DropdownMenuGroup>
@@ -200,7 +200,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
     if (typeof window !== 'undefined') {
       // Current domain
       const domain = window.location.hostname;
-      url = `${protocol}://${domain}:${info.port}${info.url_suffix || ''}`;
+      url = `${protocol}://${domain}:${app?.port ?? info.port}${info.url_suffix || ''}`;
     }
 
     if (type === 'domain' && app?.domain) {

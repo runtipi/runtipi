@@ -38,6 +38,7 @@ Thanks to our generous sponsors for supporting the development of Runtipi:
 ## Getting started
 
 Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation?utm_source=github&utm_medium=README&utm_campaign=getting-started) for installation instructions, documentation and guides.
+If you need more personalized help, visit our [Forums](https://forums.runtipi.io/) to get help from the community.
 
 ## Demo
 

@@ -41,8 +41,8 @@ import {
   uninstallApp,
   resetApp,
   updateApp,
-  updateAllApps,
   updateAppConfig,
+  updateAllApps,
   backupApp,
   restoreAppBackup,
   getAppBackups,
@@ -129,11 +129,11 @@ import type {
   UpdateAppData,
   UpdateAppError,
   UpdateAppResponse,
-  UpdateAllAppsError,
-  UpdateAllAppsResponse,
   UpdateAppConfigData,
   UpdateAppConfigError,
   UpdateAppConfigResponse,
+  UpdateAllAppsError,
+  UpdateAllAppsResponse,
   BackupAppData,
   BackupAppError,
   BackupAppResponse,
@@ -1015,10 +1015,10 @@ export const updateAppMutation = (options?: Partial<OptionsLegacyParser<UpdateAp
   return mutationOptions;
 };
 
-export const updateAllAppsMutation = (options?: Partial<OptionsLegacyParser>) => {
-  const mutationOptions: UseMutationOptions<UpdateAllAppsResponse, UpdateAllAppsError, OptionsLegacyParser> = {
+export const updateAppConfigMutation = (options?: Partial<OptionsLegacyParser<UpdateAppConfigData>>) => {
+  const mutationOptions: UseMutationOptions<UpdateAppConfigResponse, UpdateAppConfigError, OptionsLegacyParser<UpdateAppConfigData>> = {
     mutationFn: async (localOptions) => {
-      const { data } = await updateAllApps({
+      const { data } = await updateAppConfig({
         ...options,
         ...localOptions,
         throwOnError: true,
@@ -1029,10 +1029,10 @@ export const updateAllAppsMutation = (options?: Partial<OptionsLegacyParser>) =>
   return mutationOptions;
 };
 
-export const updateAppConfigMutation = (options?: Partial<OptionsLegacyParser<UpdateAppConfigData>>) => {
-  const mutationOptions: UseMutationOptions<UpdateAppConfigResponse, UpdateAppConfigError, OptionsLegacyParser<UpdateAppConfigData>> = {
+export const updateAllAppsMutation = (options?: Partial<OptionsLegacyParser>) => {
+  const mutationOptions: UseMutationOptions<UpdateAllAppsResponse, UpdateAllAppsError, OptionsLegacyParser> = {
     mutationFn: async (localOptions) => {
-      const { data } = await updateAppConfig({
+      const { data } = await updateAllApps({
         ...options,
         ...localOptions,
         throwOnError: true,

@@ -10,7 +10,7 @@ import { useId } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { InstallFormButtons } from '../../install-form-buttons/install-form-buttons';
-import { InstallForm } from '../../install-form/install-form';
+import { type FormValues, InstallForm } from '../../install-form/install-form';
 
 interface IProps {
   info: AppInfo;
@@ -29,10 +29,17 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('installing', info.id);
+      setOptimisticStatus('installing', info.urn);
       onClose();
     },
   });
+
+  const normalizeFormValues = (values: FormValues) => {
+    return {
+      ...values,
+      port: values.port ? Number(values.port) : undefined,
+    };
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -43,7 +50,7 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
         <ScrollArea maxheight={500}>
           <DialogDescription>
             <InstallForm
-              onSubmit={(data) => installMutation.mutate({ path: { id: info.id }, body: data })}
+              onSubmit={(data) => installMutation.mutate({ path: { urn: info.urn }, body: normalizeFormValues(data) })}
               formFields={info.form_fields}
               info={info}
               formId={formId}

@@ -40,13 +40,13 @@ export const EditAppStoreDialog = ({ appStore }: Props) => {
     },
   });
 
-  const { register, control, handleSubmit, setError, formState } = useForm<FormValues>({
+  const { register, control, handleSubmit, formState } = useForm<FormValues>({
     resolver: zodResolver(schema),
     values: appStore,
   });
 
   const validate = (values: FormValues) => {
-    editAppStore.mutate({ path: { id: appStore.id.toString() }, body: values });
+    editAppStore.mutate({ path: { id: appStore.slug }, body: values });
   };
 
   const formId = useId();

@@ -1,4 +1,4 @@
-import { SocketModule } from '@/core/socket/socket.module';
+import { SSEModule } from '@/core/sse/sse.module';
 import { Module, forwardRef } from '@nestjs/common';
 import { AppsModule } from '../apps/apps.module';
 import { BackupsModule } from '../backups/backups.module';
@@ -11,7 +11,7 @@ import { AppLifecycleController } from './app-lifecycle.controller';
 import { AppLifecycleService } from './app-lifecycle.service';
 
 @Module({
-  imports: [QueueModule, AppsModule, EnvModule, DockerModule, SocketModule, MarketplaceModule, forwardRef(() => BackupsModule)],
+  imports: [QueueModule, AppsModule, EnvModule, DockerModule, MarketplaceModule, forwardRef(() => BackupsModule), SSEModule],
   providers: [AppLifecycleService, AppLifecycleCommandFactory],
   controllers: [AppLifecycleController],
   exports: [AppLifecycleService],

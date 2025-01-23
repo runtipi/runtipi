@@ -21,12 +21,13 @@ interface IProps {
 }
 
 export type FormValues = {
+  port?: string;
   exposed: boolean;
   exposedLocal: boolean;
   openPort: boolean;
   domain?: string;
   isVisibleOnGuestDashboard?: boolean;
-  [key: string]: string | boolean | undefined;
+  [key: string]: unknown;
 };
 
 const hiddenTypes = ['random'];
@@ -47,6 +48,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
     control,
   } = useForm<FormValues>({});
   const watchExposed = watch('exposed', false);
+  const watchOpenPort = watch('openPort', true);
 
   useEffect(() => {
     if (info.force_expose) {
@@ -136,6 +138,21 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
             />
           )}
         />
+        {watchOpenPort && (
+          <div className="mb-3">
+            <Input
+              type="number"
+              defaultValue={info.port}
+              min={1024}
+              max={65535}
+              {...register('port')}
+              error={errors.port?.message}
+              disabled={loading}
+              placeholder="8484"
+            />
+            <span className="text-muted">{t('APP_INSTALL_FORM_PORT_HINT')}</span>
+          </div>
+        )}
         <Controller
           control={control}
           name="exposedLocal"
@@ -197,9 +214,13 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           )}
         />
       )}
-      {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
-      {info.dynamic_config && renderDynamicConfigForm()}
-      {info.exposable && renderExposeForm()}
+      {Boolean(info.port) && (
+        <>
+          {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
+          {info.dynamic_config && renderDynamicConfigForm()}
+          {info.exposable && renderExposeForm()}
+        </>
+      )}
     </form>
   );
 };

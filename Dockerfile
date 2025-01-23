@@ -31,7 +31,7 @@ RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 FROM builder_base AS builder
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.29.2"
+ARG DOCKER_COMPOSE_VERSION="v2.32.1"
 ENV TARGETARCH=${TARGETARCH}
 
 WORKDIR /app

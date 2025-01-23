@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { Injectable } from '@nestjs/common';
-import Sentry from '@sentry/nestjs';
+import * as Sentry from '@sentry/nestjs';
 import { z } from 'zod';
 import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
@@ -9,9 +9,7 @@ import { ConfigurationService } from './core/config/configuration.service';
 import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
-import { SocketManager } from './core/socket/socket.service';
 import { AppStoreService } from './modules/app-stores/app-store.service';
-import { AppsRepository } from './modules/apps/apps.repository';
 import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 
@@ -22,10 +20,8 @@ export class AppService {
     private readonly configuration: ConfigurationService,
     private readonly logger: LoggerService,
     private readonly repoQueue: RepoEventsQueue,
-    private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
     private readonly appStoreService: AppStoreService,
-    private readonly appsRepository: AppsRepository,
     private readonly marketplaceService: MarketplaceService,
     private readonly databaseService: DatabaseService,
   ) {}
@@ -48,10 +44,7 @@ export class AppService {
         await this.appStoreService.deleteAllRepos();
       }
 
-      const repoId = await this.appStoreService.migrateLegacyRepo();
-      if (repoId) {
-        await this.appsRepository.updateAppAppStoreIdWhereNull(repoId);
-      }
+      await this.appStoreService.migrateLegacyRepo();
 
       this.repoQueue.publish({ command: 'clone_all' });
 
@@ -59,8 +52,6 @@ export class AppService {
 
       // Every 15 minutes, check for updates to the apps repo
       this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');
-
-      this.socketManager.init();
 
       await this.copyAssets();
       await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
