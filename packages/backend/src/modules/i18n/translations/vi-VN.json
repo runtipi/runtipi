@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Chi tiết ứng dụng",
   "APP_DETAILS_VERSION": "Phiên bản",
   "APP_DETAILS_WEBSITE": "Trang web",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Cài đặt ứng dụng {{id}} thất bại, xem nhật kí để biết chi tiết",
   "APP_ERROR_APP_FAILED_TO_RESET": "Failed to reset app {{id}}, see logs for more details",
   "APP_ERROR_APP_FAILED_TO_START": "Khởi động ứng dụng {{id}} thất bại, vui lòng xem log để biết chi tiết",
@@ -68,6 +69,7 @@
   "APP_INSTALL_FORM_ERROR_REGEX": "{{label}} phải theo mẫu {{pattern}}",
   "APP_INSTALL_FORM_ERROR_REQUIRED": "{{label}} là bắt buộc",
   "APP_INSTALL_FORM_ERROR_URL": "{{label}} phải là một đường dẫn",
+  "APP_INSTALL_FORM_ERROR_PORT": "Port must be a number between 1024 and 65535",
   "APP_INSTALL_FORM_EXPOSE_APP": "Mở ứng dụng để truy cập được từ internet",
   "APP_INSTALL_FORM_OPEN_PORT": "Mở cổng",
   "APP_INSTALL_FORM_OPEN_PORT_HINT": "Mở một cổng trên máy chủ? Ứng dụng này có thể truy cập tại {{internalIp}}:{{port}}. (Dễ nhất và kém an toàn nhất)",
@@ -79,6 +81,7 @@
   "APP_INSTALL_FORM_TITLE": "Cài đặt {{name}}",
   "APP_INSTALL_FORM_GENERAL": "Chung",
   "APP_INSTALL_FORM_REVERSE_PROXY": "Proxy ngược",
+  "APP_INSTALL_FORM_PORT_HINT": "Port on which the app will be accessible",
   "APP_INSTALL_SUCCESS": "Ứng dụng {{id}} đã được cài đặt thành công",
   "APP_LOGS_TAB_FOLLOW": "Follow logs",
   "APP_LOGS_TAB_MAX_LINES": "Max lines:",
@@ -278,6 +281,7 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Không được phép trong chế độ DEMO",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Không được phép trong chế độ DEV",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "An app store with the same url already exists",
+  "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "An app store with the same name already exists",
   "APP_STORE_CLONE_ERROR": "Error cloning app store at {{url}}. Is it a valid git repository?",
   "APP_STORE_CHOOSE_CATEGORY": "Choose a category",
   "APP_STORE_CHOOSE_STORE": "Choose an AppStore",
@@ -367,5 +371,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Ứng dụng được cập nhật phiên bản lớn. Vui lòng cập nhật thủ công (hướng dẫn được tim thấy ở GitHub)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Bạn phải đăng nhập để thực hiện hành động này",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }

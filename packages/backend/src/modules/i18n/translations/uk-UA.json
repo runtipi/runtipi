@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Про додаток",
   "APP_DETAILS_VERSION": "Версія",
   "APP_DETAILS_WEBSITE": "Сайт",
+  "APP_DETAILS_USER_CONFIG": "Конфігурація користувача",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Не вдалося встановити додаток {{id}}, див. журнали для отримання додаткових відомостей",
   "APP_ERROR_APP_FAILED_TO_RESET": "Не вдалося скинути додаток {{id}}, перегляньте журнали для деталей",
   "APP_ERROR_APP_FAILED_TO_START": "Не вдалося запустити додаток {{id}}, дивіться журнали для отримання додаткової інформації",
@@ -68,6 +69,7 @@
   "APP_INSTALL_FORM_ERROR_REGEX": "{{label}} має відповідати шаблону {{pattern}}",
   "APP_INSTALL_FORM_ERROR_REQUIRED": "{{label}} є обов'язковим",
   "APP_INSTALL_FORM_ERROR_URL": "{{label}} має бути коректним URL",
+  "APP_INSTALL_FORM_ERROR_PORT": "Порт має бути числом від 1024 до 65535",
   "APP_INSTALL_FORM_EXPOSE_APP": "Відкрити доступ до додатка в інтернеті",
   "APP_INSTALL_FORM_OPEN_PORT": "Відкрити порт",
   "APP_INSTALL_FORM_OPEN_PORT_HINT": "Відкрити порт на хості? Цей додаток буде доступний в режимі {{internalIp}}:{{port}}. (Найбезпечніше, але менш захищене)",
@@ -79,6 +81,7 @@
   "APP_INSTALL_FORM_TITLE": "Встановити {{name}}",
   "APP_INSTALL_FORM_GENERAL": "Загальні",
   "APP_INSTALL_FORM_REVERSE_PROXY": "Реверс-проксі",
+  "APP_INSTALL_FORM_PORT_HINT": "Порт, через який додаток буде доступний",
   "APP_INSTALL_SUCCESS": "Додаток {{id}} встановлено успішно",
   "APP_LOGS_TAB_FOLLOW": "Відстежувати журнали",
   "APP_LOGS_TAB_MAX_LINES": "Макс. рядків:",
@@ -278,6 +281,7 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Заборонено в демо-режимі",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Заборонено в режимі розробника",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "Магазин додатків з такою url-адресою вже існує",
+  "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "Магазин додатків з такою назвою вже існує",
   "APP_STORE_CLONE_ERROR": "Помилка клонування магазину додатків за посиланням {{url}}. Це дійсний git репозиторій?",
   "APP_STORE_CHOOSE_CATEGORY": "Виберіть категорію",
   "APP_STORE_CHOOSE_STORE": "Оберіть магазин додатків",
@@ -367,5 +371,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Основна версія змінилася. Будь ласка, оновіть вручну (інструкції у примітках до випуску)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Ви повинні увійти, щоб виконати цю дію",
   "TIMEZONE_SELECTOR_LABEL": "Часовий пояс",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Вибрати часовий пояс"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Вибрати часовий пояс",
+  "YES": "Так",
+  "NO": "Ні"
 }

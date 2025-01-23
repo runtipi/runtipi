@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "앱 상세정보",
   "APP_DETAILS_VERSION": "버전",
   "APP_DETAILS_WEBSITE": "웹사이트",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "앱 {{id}} 설치 실패, 자세한 내용은 로그를 참조하세요",
   "APP_ERROR_APP_FAILED_TO_RESET": "앱 {{id}} 초기화 실패, 자세한 내용은 로그를 참조하세요",
   "APP_ERROR_APP_FAILED_TO_START": "앱 {{id}} 시작 실패, 자세한 내용은 로그를 참조하세요",
@@ -68,6 +69,7 @@
   "APP_INSTALL_FORM_ERROR_REGEX": "{{label}} 은(는) 패턴 {{pattern}}과(와) 일치해야 합니다",
   "APP_INSTALL_FORM_ERROR_REQUIRED": "{{label}} is required",
   "APP_INSTALL_FORM_ERROR_URL": "{{label}} must be a valid URL",
+  "APP_INSTALL_FORM_ERROR_PORT": "Port must be a number between 1024 and 65535",
   "APP_INSTALL_FORM_EXPOSE_APP": "인터넷에서 앱 공개",
   "APP_INSTALL_FORM_OPEN_PORT": "포트 열기",
   "APP_INSTALL_FORM_OPEN_PORT_HINT": "Open a port on the host? This app will be accessible at {{internalIp}}:{{port}}. (Easiest but less secure)",
@@ -79,6 +81,7 @@
   "APP_INSTALL_FORM_TITLE": "{{name}} 설치",
   "APP_INSTALL_FORM_GENERAL": "일반",
   "APP_INSTALL_FORM_REVERSE_PROXY": "리버스 프록시",
+  "APP_INSTALL_FORM_PORT_HINT": "Port on which the app will be accessible",
   "APP_INSTALL_SUCCESS": "앱 {{id}} 설치 완료",
   "APP_LOGS_TAB_FOLLOW": "로그 추적",
   "APP_LOGS_TAB_MAX_LINES": "최대 줄 수:",
@@ -278,6 +281,7 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Not allowed in demo mode",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Not allowed in dev mode",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "An app store with the same url already exists",
+  "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "An app store with the same name already exists",
   "APP_STORE_CLONE_ERROR": "Error cloning app store at {{url}}. Is it a valid git repository?",
   "APP_STORE_CHOOSE_CATEGORY": "Choose a category",
   "APP_STORE_CHOOSE_STORE": "Choose an AppStore",
@@ -367,5 +371,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "The major version has changed. Please update manually (instructions in release notes)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
+  "YES": "Yes",
+  "NO": "No"
 }
