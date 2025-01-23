@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "Appdetaljer",
   "APP_DETAILS_VERSION": "Version",
   "APP_DETAILS_WEBSITE": "Webbsida",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Det gick inte att installera app {{id}}, se loggar för mer information",
   "APP_ERROR_APP_FAILED_TO_RESET": "Det gick inte att återställa appen {{id}}, se loggar för mer information",
   "APP_ERROR_APP_FAILED_TO_START": "Det gick inte att starta app {{id}}, se loggar för mer information",
@@ -68,6 +69,7 @@
   "APP_INSTALL_FORM_ERROR_REGEX": "{{label}} måste matcha mönstret {{pattern}}",
   "APP_INSTALL_FORM_ERROR_REQUIRED": "{{label}} krävs",
   "APP_INSTALL_FORM_ERROR_URL": "{{label}} måste vara en giltig URL",
+  "APP_INSTALL_FORM_ERROR_PORT": "Port must be a number between 1024 and 65535",
   "APP_INSTALL_FORM_EXPOSE_APP": "Exponera appen mot internet",
   "APP_INSTALL_FORM_OPEN_PORT": "Öppna en port",
   "APP_INSTALL_FORM_OPEN_PORT_HINT": "Öppna en port på värden? Denna app kommer att vara tillgänglig på {{internalIp}}:{{port}}. (Enklast men mindre säkert)",
@@ -79,6 +81,7 @@
   "APP_INSTALL_FORM_TITLE": "Installera {{name}}",
   "APP_INSTALL_FORM_GENERAL": "Allmänt",
   "APP_INSTALL_FORM_REVERSE_PROXY": "Omvänd proxy",
+  "APP_INSTALL_FORM_PORT_HINT": "Port on which the app will be accessible",
   "APP_INSTALL_SUCCESS": "Appen {{id}} installerades",
   "APP_LOGS_TAB_FOLLOW": "Följ loggar",
   "APP_LOGS_TAB_MAX_LINES": "Max antal rader:",
@@ -278,6 +281,7 @@
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Inte tillåtet i demoläge",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEV": "Ej tillåtet i dev-läge",
   "SERVER_ERROR_APP_STORE_ALREADY_EXISTS": "An app store with the same url already exists",
+  "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "An app store with the same name already exists",
   "APP_STORE_CLONE_ERROR": "Error cloning app store at {{url}}. Is it a valid git repository?",
   "APP_STORE_CHOOSE_CATEGORY": "Choose a category",
   "APP_STORE_CHOOSE_STORE": "Choose an AppStore",
@@ -367,5 +371,7 @@
   "SYSTEM_ERROR_MAJOR_VERSION_UPDATE": "Huvudversionen har ändrats. Vänligen uppdatera manuellt (instruktioner på GitHub)",
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "Du måste vara inloggad för att utföra denna åtgärd",
   "TIMEZONE_SELECTOR_LABEL": "Tidszon",
-  "TIMEZONE_SELECTOR_PLACEHOLDER": "Välj en tidszon"
+  "TIMEZONE_SELECTOR_PLACEHOLDER": "Välj en tidszon",
+  "YES": "Yes",
+  "NO": "No"
 }
