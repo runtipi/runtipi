@@ -4,7 +4,7 @@ ARG ALPINE_VERSION="3.21"
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
 RUN apk add --no-cache curl git
-RUN npm install pnpm@9.12.2 -g
+RUN npm install pnpm@9.15.4 -g
 
 RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 
