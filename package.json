@@ -2,7 +2,7 @@
   "name": "runtipi",
   "version": "3.8.3",
   "description": "",
-  "packageManager": "pnpm@9.12.2",
+  "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo build",
@@ -24,10 +24,10 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@hey-api/openapi-ts": "^0.62.3",
-    "@playwright/test": "^1.49.1",
-    "@types/pg": "^8.11.10",
+    "@playwright/test": "^1.50.0",
+    "@types/pg": "^8.11.11",
     "dotenv-cli": "^8.0.0",
-    "turbo": "^2.3.3"
+    "turbo": "^2.3.4"
   },
   "dependencies": {
     "argon2": "^0.41.1",

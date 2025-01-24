@@ -15,7 +15,7 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
 
   const renderItem = (title: string, name: string, IconComponent: typeof IconApps) => {
     const isActive = activeRoute?.split('/')[0] === name;
-    const itemClass = clsx('nav-item', { active: isActive, 'border-primary': isActive, 'border-bottom-wide': isActive });
+    const itemClass = clsx('nav-item', { active: isActive, 'border-primary': isActive });
 
     return (
       <li aria-label={title} data-testid={`nav-item-${name}`} className={itemClass}>
