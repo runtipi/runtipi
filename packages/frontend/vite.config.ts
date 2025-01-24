@@ -8,6 +8,10 @@ export default defineConfig({
   plugins: [
     react(),
     sentryVitePlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      release: {
+        name: process.env.TIPI_VERSION,
+      },
       org: 'runtipi',
       project: 'runtipi-frontend',
     }),
