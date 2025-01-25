@@ -1,5 +1,5 @@
-ARG NODE_VERSION="iron"
-ARG ALPINE_VERSION="3.20"
+ARG NODE_VERSION="jod"
+ARG ALPINE_VERSION="3.21"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
@@ -13,7 +13,7 @@ ARG LOCAL
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_RELEASE=${TIPI_VERSION}
 
-RUN npm install pnpm@9.12.2 -g
+RUN npm install pnpm@9.15.4 -g
 RUN apk add --no-cache curl python3 make g++ git
 
 WORKDIR /deps
@@ -31,7 +31,7 @@ RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 FROM builder_base AS builder
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.32.1"
+ARG DOCKER_COMPOSE_VERSION="v2.32.4"
 ENV TARGETARCH=${TARGETARCH}
 
 WORKDIR /app
@@ -95,6 +95,6 @@ COPY --from=builder /app/packages/frontend/dist ./assets/frontend
 
 COPY ./supervisord.prod.conf /etc/supervisord.conf
 
-EXPOSE 3000 5001
+EXPOSE 3000
 
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]

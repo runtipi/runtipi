@@ -1,5 +1,62 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] = `
+"services:
+  ctfd:
+    image: ctfd/ctfd:3.7.5
+    container_name: ctfd
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
+    environment:
+      UPLOAD_FOLDER: /var/uploads
+      DATABASE_URL: mysql+pymysql://tipi:\${CTFD_MYSQL_DB_PASSWORD}@ctfd-db/ctfd
+    ports:
+      - \${APP_PORT}:8000
+    volumes:
+      - \${APP_DATA_DIR}/data/uploads:/var/log/CTFd
+      - \${APP_DATA_DIR}/data/uploads:/var/uploads
+    depends_on:
+      - ctfd-db
+    labels:
+      generated: true
+      traefik.enable: false
+      traefik.http.middlewares.ctfd-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.ctfd.loadbalancer.server.port: "8000"
+  ctfd-db:
+    image: mariadb:10.4.12
+    command:
+      - mysqld
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --wait_timeout=28800
+      - --log-warnings=0
+    container_name: ctfd-db
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
+    environment:
+      MYSQL_ROOT_PASSWORD: \${CTFD_MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: tipi
+      MYSQL_PASSWORD: \${CTFD_MYSQL_DB_PASSWORD}
+      MYSQL_DATABASE: ctfd
+    volumes:
+      - \${APP_DATA_DIR}/data/db:/var/lib/mysql
+  ctfd-redis:
+    image: redis:4
+    container_name: ctfd-redis
+    restart: unless-stopped
+    networks:
+      - tipi_main_network
+    volumes:
+      - \${APP_DATA_DIR}/data/redis:/data
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+"
+`;
+
 exports[`DockerComposeBuilder > should build a docker-compose file 1`] = `
 "services:
   service:

@@ -51,7 +51,7 @@ interface Deploy {
 
 interface Logging {
   driver: string;
-  options: Record<string, string>;
+  options?: Record<string, string>;
 }
 
 export interface BuilderService {

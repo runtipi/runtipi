@@ -1,4 +1,4 @@
-import { useSocket } from '@/lib/hooks/use-socket';
+import { useSSE } from '@/lib/hooks/use-sse';
 import { Suspense, lazy, useRef, useState } from 'react';
 
 const LogsTerminal = lazy(() => import('@/components/logs-terminal/logs-terminal').then((module) => ({ default: module.LogsTerminal })));
@@ -8,12 +8,10 @@ export const LogsContainer = () => {
   const [logs, setLogs] = useState<{ id: number; text: string }[]>([]);
   const maxLines = useRef(300);
 
-  useSocket({
-    selector: { type: 'runtipi-logs', event: 'newLogs' },
-    onCleanup: () => setLogs([]),
-    emitOnConnect: { type: 'runtipi-logs-init', event: 'initLogs', data: { maxLines: maxLines.current } },
-    emitOnDisconnect: { type: 'runtipi-logs', event: 'stopLogs', data: {} },
-    onEvent: (_, data) => {
+  useSSE({
+    topic: 'runtipi-logs',
+    params: new URLSearchParams({ maxLines: maxLines.current.toString() }),
+    onEvent: (data) => {
       setLogs((prevLogs) => {
         if (!data.lines) {
           return prevLogs;

@@ -8,6 +8,10 @@ export default defineConfig({
   plugins: [
     react(),
     sentryVitePlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      release: {
+        name: process.env.TIPI_VERSION,
+      },
       org: 'runtipi',
       project: 'runtipi-frontend',
     }),
@@ -25,11 +29,6 @@ export default defineConfig({
     host: true,
     port: 8080,
     proxy: {
-      '/api/socket.io': {
-        target: 'http://localhost:5001',
-        changeOrigin: true,
-        ws: true,
-      },
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,

@@ -1,15 +1,15 @@
-ARG NODE_VERSION="iron"
-ARG ALPINE_VERSION="3.20"
+ARG NODE_VERSION="jod"
+ARG ALPINE_VERSION="3.21"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
 RUN apk add --no-cache curl git
-RUN npm install pnpm@9.12.2 -g
+RUN npm install pnpm@9.15.4 -g
 
 RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.29.2"
+ARG DOCKER_COMPOSE_VERSION="v2.32.4"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 
@@ -46,6 +46,6 @@ COPY ./packages/backend/src/core/database/drizzle ./assets/migrations
 
 COPY ./supervisord.dev.conf /etc/supervisord.conf
 
-EXPOSE 3000 5001
+EXPOSE 3000
 
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]

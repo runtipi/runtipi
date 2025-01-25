@@ -16,6 +16,7 @@ export class MainExceptionFilter implements ExceptionFilter {
     const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     let message = 'Internal server error';
+    let cause: unknown;
 
     if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(`An error occured while calling: ${request.url}`, exception);
@@ -34,6 +35,7 @@ export class MainExceptionFilter implements ExceptionFilter {
     let intlParams: Record<string, string | undefined> | undefined;
     if (exception instanceof TranslatableError) {
       const response = exception.getResponse();
+      cause = exception.cause;
 
       if (typeof response === 'string') {
         message = response;
@@ -48,6 +50,7 @@ export class MainExceptionFilter implements ExceptionFilter {
     if (status >= 500 && !(exception instanceof TranslatableError)) {
       Sentry.captureException(exception, {
         tags: {
+          cause: String(cause),
           url: request.url,
           status,
         },
@@ -59,6 +62,7 @@ export class MainExceptionFilter implements ExceptionFilter {
       message,
       path: request.url,
       intlParams,
+      cause,
     });
   }
 }

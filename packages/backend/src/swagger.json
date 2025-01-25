@@ -1020,6 +1020,95 @@
         ]
       }
     },
+    "/api/sse/app": {
+      "get": {
+        "operationId": "appEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "SSE"
+        ]
+      }
+    },
+    "/api/sse/app-logs": {
+      "get": {
+        "operationId": "appLogsEvents",
+        "parameters": [
+          {
+            "name": "appId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxLines",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "SSE"
+        ]
+      }
+    },
+    "/api/sse/runtipi-logs": {
+      "get": {
+        "operationId": "runtipiLogsEvents",
+        "parameters": [
+          {
+            "name": "maxLines",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "SSE"
+        ]
+      }
+    },
     "/api/links": {
       "get": {
         "operationId": "getLinks",

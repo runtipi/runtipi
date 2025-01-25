@@ -1,7 +1,7 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { SocketManager } from '@/core/socket/socket.service';
+import { SSEService } from '@/core/sse/sse.service';
 import { Injectable } from '@nestjs/common';
 import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
 import { AppFilesManager } from '../apps/app-files-manager';
@@ -14,12 +14,12 @@ export class BackupsService {
   constructor(
     private appsRepository: AppsRepository,
     private logger: LoggerService,
-    private socketManager: SocketManager,
     private config: ConfigurationService,
     private appEventsQueue: AppEventsQueue,
     private appLifecycle: AppLifecycleService,
     private appFilesManager: AppFilesManager,
     private backupManager: BackupManager,
+    private readonly sseService: SSEService,
   ) {}
 
   public async backupApp(params: { appId: string }) {
@@ -38,7 +38,7 @@ export class BackupsService {
 
     // Run script
     await this.appsRepository.updateApp(appId, { status: 'backing_up' });
-    this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'starting' } });
+    this.sseService.emit('app', { event: 'status_change', appId, appStatus: 'backing_up' });
 
     this.appEventsQueue.publish({ appid: appId, command: 'backup', form: app.config }).then(async ({ success, message }) => {
       if (success) {
@@ -46,7 +46,7 @@ export class BackupsService {
           await this.appLifecycle.startApp({ appId });
         } else {
           await this.appsRepository.updateApp(appId, { status: appStatusBeforeUpdate });
-          this.socketManager.emit({ type: 'app', event: 'backup_success', data: { appId, appStatus: 'stopped' } });
+          this.sseService.emit('app', { event: 'backup_success', appId, appStatus: 'stopped' });
         }
       } else {
         this.logger.error(`Failed to backup app ${appId}: ${message}`);
@@ -67,18 +67,21 @@ export class BackupsService {
 
     // Run script
     await this.appsRepository.updateApp(appId, { status: 'restoring' });
-    await this.socketManager.emit({ type: 'app', event: 'status_change', data: { appId, appStatus: 'restoring' } });
+    this.sseService.emit('app', { event: 'status_change', appId, appStatus: 'restoring' });
 
     this.appEventsQueue.publish({ appid: appId, command: 'restore', filename, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appId);
-        await this.appsRepository.updateApp(appId, { version: restoredAppConfig?.tipi_version });
+
+        if (restoredAppConfig?.tipi_version) {
+          await this.appsRepository.updateApp(appId, { version: restoredAppConfig?.tipi_version });
+        }
 
         if (appStatusBeforeUpdate === 'running') {
           await this.appLifecycle.startApp({ appId });
         } else {
           await this.appsRepository.updateApp(appId, { status: appStatusBeforeUpdate });
-          this.socketManager.emit({ type: 'app', event: 'restore_success', data: { appId, appStatus: 'stopped' } });
+          this.sseService.emit('app', { event: 'restore_success', appId, appStatus: 'stopped' });
         }
       } else {
         this.logger.error(`Failed to restore app ${appId}: ${message}`);

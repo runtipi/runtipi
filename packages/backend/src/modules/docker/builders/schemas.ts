@@ -26,6 +26,8 @@ const deploySchema = z.object({
       .optional(),
     reservations: z
       .object({
+        cpus: z.string().optional(),
+        memory: z.string().optional(),
         devices: z
           .object({
             capabilities: z.array(z.string()),
@@ -95,7 +97,7 @@ export const serviceSchema = z.object({
   logging: z
     .object({
       driver: z.string(),
-      options: z.record(z.string()),
+      options: z.record(z.string()).optional(),
     })
     .optional(),
   readOnly: z.boolean().optional(),

@@ -6,9 +6,9 @@ import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
 import { CacheService } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
+import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
-import { SocketManager } from './core/socket/socket.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 import { ReposService } from './modules/repos/repos.service';
 
@@ -20,11 +20,13 @@ export class AppService {
     private readonly logger: LoggerService,
     private readonly repos: ReposService,
     private readonly repoQueue: RepoEventsQueue,
-    private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
+    private readonly databaseService: DatabaseService,
   ) {}
 
   public async bootstrap() {
+    await this.databaseService.migrate();
+
     const { version, appsRepoUrl, userSettings } = this.configuration.getConfig();
 
     this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
@@ -48,8 +50,6 @@ export class AppService {
 
     // Every 15 minutes, check for updates to the apps repo
     this.repoQueue.publishRepeatable({ command: 'update', url: appsRepoUrl }, '*/15 * * * *');
-
-    this.socketManager.init();
 
     await this.copyAssets();
     await this.generateTlsCertificates({ localDomain: userSettings.localDomain });

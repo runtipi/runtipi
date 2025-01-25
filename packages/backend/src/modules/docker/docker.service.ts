@@ -1,46 +1,23 @@
+import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { DEFAULT_REPO_URL } from '@/common/helpers/env-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { SocketManager } from '@/core/socket/socket.service';
 import { Injectable } from '@nestjs/common';
 import { AppFilesManager } from '../apps/app-files-manager';
-import type { AppEventFormInput } from '../queue/entities/app-events';
 import { ReposService } from '../repos/repos.service';
-import { DockerComposeBuilder } from './builders/compose.builder';
-import { type Service, type ServiceInput, serviceSchema } from './builders/schemas';
-import { ServiceBuilder } from './builders/service.builder';
-import { TraefikLabelsBuilder } from './builders/traefik-labels.builder';
-import { DockerCommandFactory } from './docker-command.factory';
 
 @Injectable()
 export class DockerService {
-  dockerCommandFactory: DockerCommandFactory;
-
   constructor(
     private readonly logger: LoggerService,
     private readonly config: ConfigurationService,
     private readonly appFilesManager: AppFilesManager,
-    private readonly repoService: ReposService,
-    private readonly socketManager: SocketManager,
     private readonly filesystem: FilesystemService,
-  ) {
-    this.dockerCommandFactory = new DockerCommandFactory(this);
-
-    const io = this.socketManager.init();
-
-    io.on('connection', async (socket) => {
-      socket.onAny((event, body) => {
-        const command = this.dockerCommandFactory.createCommand(event);
-
-        if (command) {
-          command.execute(socket, body, this.socketManager.emit.bind(this.socketManager));
-        }
-      });
-    });
-  }
+    private readonly repoService: ReposService,
+  ) {}
 
   /**
    * Get the base compose args for an app
@@ -52,27 +29,28 @@ export class DockerService {
     let isCustomConfig = appsRepoId !== this.repoService.getRepoHash(DEFAULT_REPO_URL);
 
     const appEnv = await this.appFilesManager.getAppEnv(appId);
-    const args: string[] = [`--env-file ${appEnv.path}`];
+    const args: string[] = ['--env-file', appEnv.path];
 
     // User custom env file
     const userEnvFile = await this.appFilesManager.getUserEnv(appId);
     if (userEnvFile.content) {
-      args.push(`--env-file ${userEnvFile.path}`);
+      isCustomConfig = true;
+      args.push('--env-file', userEnvFile.path);
     }
 
-    args.push(`--project-name ${appId}`);
+    args.push('--project-name', appId);
 
     const composeFile = await this.appFilesManager.getDockerComposeYaml(appId);
-    args.push(`-f ${composeFile.path}`);
+    args.push('-f', composeFile.path);
 
     const commonComposeFile = path.join(directories.dataDir, 'repos', appsRepoId, 'apps', 'docker-compose.common.yml');
-    args.push(`-f ${commonComposeFile}`);
+    args.push('-f', commonComposeFile);
 
     // User defined overrides
     const userComposeFile = await this.appFilesManager.getUserComposeFile(appId);
     if (userComposeFile.content) {
       isCustomConfig = true;
-      args.push(`--file ${userComposeFile.path}`);
+      args.push('--file', userComposeFile.path);
     }
 
     return { args, isCustomConfig };
@@ -80,20 +58,20 @@ export class DockerService {
 
   public getBaseComposeArgsRuntipi = async () => {
     const { dataDir } = this.config.get('directories');
-    const args: string[] = [`--env-file ${path.join(dataDir, '.env')}`];
+    const args: string[] = ['--env-file', path.join(dataDir, '.env')];
 
-    args.push('--project-name runtipi');
+    args.push('--project-name', 'runtipi');
 
     const composeFile = path.join(dataDir, 'docker-compose.yml');
-    args.push(`-f ${composeFile}`);
+    args.push('-f', composeFile);
 
     // User defined overrides
     const userComposeFile = path.join(dataDir, 'user-config', 'tipi-compose.yml');
     if (await this.filesystem.pathExists(userComposeFile)) {
-      args.push(`--file ${userComposeFile}`);
+      args.push('--file', userComposeFile);
     }
 
-    return args;
+    return { args };
   };
 
   /**
@@ -103,7 +81,7 @@ export class DockerService {
    */
   public composeApp = async (appId: string, command: string) => {
     const { args, isCustomConfig } = await this.getBaseComposeArgsApp(appId);
-    args.push(command);
+    args.push(...command.split(' '));
 
     this.logger.info(`Running docker compose with args ${args.join(' ')}`);
     const { stdout, stderr } = await execAsync(`docker-compose ${args.join(' ')}`);
@@ -120,81 +98,20 @@ export class DockerService {
     return { stdout, stderr };
   };
 
-  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput) => {
-    const myServices = services.map((service) => this.buildService(service, form));
+  public getLogsStream = async (maxLines: number, appId?: string) => {
+    const { args } = appId ? await this.getBaseComposeArgsApp(appId) : await this.getBaseComposeArgsRuntipi();
 
-    const dockerCompose = new DockerComposeBuilder().addServices(myServices).addNetwork({
-      key: 'tipi_main_network',
-      name: 'runtipi_tipi_main_network',
-      external: true,
+    args.push('logs', '--follow', '-n', maxLines.toString());
+
+    const logs = spawn('docker-compose', args, { stdio: 'pipe' });
+
+    logs.on('error', () => {
+      logs.kill('SIGINT');
     });
 
-    return dockerCompose.build();
-  };
-
-  private buildService = (params: Service, form: AppEventFormInput) => {
-    const result = serviceSchema.safeParse(params);
-
-    if (!result.success) {
-      console.warn(`! Service ${params.name} has invalid schema: \n${JSON.stringify(result.error.flatten(), null, 2)}\nNotify the app maintainer`);
-    }
-
-    const service = new ServiceBuilder();
-    service
-      .setImage(params.image)
-      .setName(params.name)
-      .setEnvironment(params.environment)
-      .setCommand(params.command)
-      .setHealthCheck(params.healthCheck)
-      .setDependsOn(params.dependsOn)
-      .setVolumes(params.volumes)
-      .setRestartPolicy('unless-stopped')
-      .setExtraHosts(params.extraHosts)
-      .setUlimits(params.ulimits)
-      .setPorts(params.addPorts)
-      .setNetwork('tipi_main_network')
-      .setNetworkMode(params.networkMode)
-      .setCapAdd(params.capAdd)
-      .setDeploy(params.deploy)
-      .setHostname(params.hostname)
-      .setDevices(params.devices)
-      .setEntrypoint(params.entrypoint)
-      .setPid(params.pid)
-      .setPrivileged(params.privileged)
-      .setTty(params.tty)
-      .setUser(params.user)
-      .setWorkingDir(params.workingDir)
-      .setShmSize(params.shmSize)
-      .setCapDrop(params.capDrop)
-      .setLogging(params.logging)
-      .setReadOnly(params.readOnly)
-      .setSecurityOpt(params.securityOpt)
-      .setStopSignal(params.stopSignal)
-      .setStopGracePeriod(params.stopGracePeriod)
-      .setStdinOpen(params.stdinOpen);
-
-    if (params.isMain) {
-      if (form.openPort && params.internalPort) {
-        service.setPort({
-          containerPort: params.internalPort,
-          hostPort: '${APP_PORT}',
-        });
-      }
-
-      if (params.internalPort) {
-        const traefikLabels = new TraefikLabelsBuilder({
-          internalPort: params.internalPort,
-          appId: params.name,
-          exposedLocal: form.exposedLocal,
-          exposed: form.exposed,
-        })
-          .addExposedLabels()
-          .addExposedLocalLabels();
-
-        service.setLabels(traefikLabels.build());
-      }
-    }
-
-    return service.build();
+    return {
+      on: logs.stdout.on.bind(logs.stdout),
+      kill: () => logs.kill('SIGINT'),
+    };
   };
 }

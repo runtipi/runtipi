@@ -62,27 +62,25 @@ export class AppHelpers {
       }
     }
 
-    await Promise.all(
-      config.form_fields.map(async (field) => {
-        const formValue = form[field.env_variable];
-        const envVar = field.env_variable;
+    config.form_fields.map(async (field) => {
+      const formValue = form[field.env_variable];
+      const envVar = field.env_variable;
 
-        if (formValue || typeof formValue === 'boolean') {
-          envMap.set(envVar, String(formValue));
-        } else if (field.type === 'random') {
-          if (existingAppEnvMap.has(envVar)) {
-            envMap.set(envVar, existingAppEnvMap.get(envVar) as string);
-          } else {
-            const length = field.min || 32;
-            const randomString = this.envUtils.createRandomString(field.env_variable, length, field.encoding);
+      if (formValue || typeof formValue === 'boolean') {
+        envMap.set(envVar, String(formValue));
+      } else if (field.type === 'random') {
+        if (existingAppEnvMap.has(envVar)) {
+          envMap.set(envVar, existingAppEnvMap.get(envVar) as string);
+        } else {
+          const length = field.min || 32;
+          const randomString = this.envUtils.createRandomString(field.env_variable, length, field.encoding);
 
-            envMap.set(envVar, randomString);
-          }
-        } else if (field.required) {
-          throw new Error(`Variable ${field.label || field.env_variable} is required`);
+          envMap.set(envVar, randomString);
         }
-      }),
-    );
+      } else if (field.required) {
+        throw new Error(`Variable ${field.label || field.env_variable} is required`);
+      }
+    });
 
     if (form.exposed && form.domain && typeof form.domain === 'string') {
       envMap.set('APP_EXPOSED', 'true');
