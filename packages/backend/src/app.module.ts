@@ -53,7 +53,7 @@ if (process.env.NODE_ENV === 'production') {
   imports.push(
     ServeStaticModule.forRoot({
       rootPath: path.join(APP_DIR, 'assets', 'frontend'),
-      exclude: ['/api*'],
+      exclude: ['/api*path'],
     }),
   );
 }
