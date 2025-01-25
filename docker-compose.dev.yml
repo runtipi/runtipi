@@ -31,7 +31,6 @@ services:
     restart: unless-stopped
     ports:
       - 3000:8080
-      - 5001:5001
     volumes:
       # Hot reload
       - ./packages/backend/src:/app/packages/backend/src
