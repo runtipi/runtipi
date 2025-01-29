@@ -77,4 +77,9 @@ export class AppController {
 
     await this.configuration.setUserSettings({ allowErrorMonitoring: body.allowErrorMonitoring });
   }
+
+  @Get('/debug-sentry')
+  getError() {
+    throw new Error('This is a test error from the server');
+  }
 }

@@ -91,6 +91,20 @@
         ]
       }
     },
+    "/api/debug-sentry": {
+      "get": {
+        "operationId": "getError",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
     "/api/system/load": {
       "get": {
         "operationId": "systemLoad",

@@ -1,3 +1,5 @@
+import './instrument';
+
 import { patchNestJsSwagger } from 'nestjs-zod';
 
 import fs from 'node:fs';
