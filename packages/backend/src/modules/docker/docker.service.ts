@@ -5,7 +5,8 @@ import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { ReposService } from '../repos/repos.service';
 
@@ -99,19 +100,25 @@ export class DockerService {
   };
 
   public getLogsStream = async (maxLines: number, appId?: string) => {
-    const { args } = appId ? await this.getBaseComposeArgsApp(appId) : await this.getBaseComposeArgsRuntipi();
+    try {
+      const { args } = appId ? await this.getBaseComposeArgsApp(appId) : await this.getBaseComposeArgsRuntipi();
 
-    args.push('logs', '--follow', '-n', maxLines.toString());
+      args.push('logs', '--follow', '-n', maxLines.toString());
 
-    const logs = spawn('docker-compose', args, { stdio: 'pipe' });
+      const logs = spawn('docker-compose', args, { stdio: 'pipe' });
 
-    logs.on('error', () => {
-      logs.kill('SIGINT');
-    });
+      logs.on('error', () => {
+        logs.kill('SIGINT');
+      });
 
-    return {
-      on: logs.stdout.on.bind(logs.stdout),
-      kill: () => logs.kill('SIGINT'),
-    };
+      return {
+        on: logs.stdout.on.bind(logs.stdout),
+        kill: () => logs.kill('SIGINT'),
+      };
+    } catch (error) {
+      this.logger.error(`Error getting log stream: ${error}`);
+      Sentry.captureException(error, { tags: { source: 'docker log stream', appId } });
+      throw new InternalServerErrorException('Error getting log stream');
+    }
   };
 }
