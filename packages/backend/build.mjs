@@ -6,6 +6,9 @@ import * as esbuild from 'esbuild';
 const cwd = process.cwd();
 const tsconfig = path.resolve(cwd, 'tsconfig.json');
 
+console.info('Sentry Auth Token available: ', Boolean(process.env.SENTRY_AUTH_TOKEN));
+console.info('Sentry Release: ', process.env.SENTRY_RELEASE);
+
 await esbuild.build({
   entryPoints: ['src/main.ts'],
   bundle: true,
@@ -22,6 +25,7 @@ await esbuild.build({
     }),
     sentryEsbuildPlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
+      release: process.env.SENTRY_RELEASE,
       org: 'runtipi',
       project: 'runtipi-backend',
     }),

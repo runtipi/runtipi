@@ -6,12 +6,6 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
-ARG SENTRY_AUTH_TOKEN
-ARG TIPI_VERSION
-ARG LOCAL
-
-ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-ENV SENTRY_RELEASE=${TIPI_VERSION}
 
 RUN npm install pnpm@9.15.4 -g
 RUN apk add --no-cache curl python3 make g++ git
@@ -30,8 +24,14 @@ RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 # ---- BUILDER ----
 FROM builder_base AS builder
 
+ARG SENTRY_AUTH_TOKEN
+ARG TIPI_VERSION
+ARG LOCAL
 ARG TARGETARCH
 ARG DOCKER_COMPOSE_VERSION="v2.32.4"
+
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+ENV SENTRY_RELEASE=${TIPI_VERSION}
 ENV TARGETARCH=${TARGETARCH}
 
 WORKDIR /app
@@ -64,10 +64,6 @@ RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
 RUN echo "LOCAL: ${LOCAL}"
 
 RUN npm run bundle
-
-RUN if [ "${LOCAL}" != "true" ]; then \
-  pnpm -r sentry:sourcemaps; \
-  fi
 
 # ---- RUNNER ----
 FROM runner_base AS runner
