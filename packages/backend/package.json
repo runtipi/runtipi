@@ -7,15 +7,14 @@
   "license": "UNLICENSED",
   "main": "./src/exports/index.ts",
   "scripts": {
-    "dev": "nest start --watch --preserveWatchOutput",
+    "dev": "nest start --watch --preserveWatchOutput --debug 0.0.0.0:9229",
     "build": "nest build",
-    "bundle": "rm -rf dist && ncc build src/main.ts -o dist --external argon2 --source-map",
+    "bundle": "rm -rf dist && node build.mjs",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "tsc": "tsc --noEmit",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org runtipi --project runtipi-backend ./dist && sentry-cli sourcemaps upload --org runtipi --project runtipi-backend ./dist",
     "test": "vitest --coverage --watch=false",
     "test:watch": "vitest",
     "studio": "drizzle-kit studio"
@@ -34,6 +33,7 @@
     "@otplib/plugin-crypto": "^12.0.1",
     "@otplib/plugin-thirty-two": "^12.0.1",
     "@sentry/cli": "^2.41.1",
+    "@sentry/esbuild-plugin": "^3.1.1",
     "@sentry/nestjs": "^8.51.0",
     "ansi-to-html": "^0.7.2",
     "argon2": "^0.41.1",
@@ -66,6 +66,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@anatine/esbuild-decorators": "^0.2.19",
     "@faker-js/faker": "^9.4.0",
     "@nestjs/cli": "^11.0.2",
     "@nestjs/schematics": "^11.0.0",

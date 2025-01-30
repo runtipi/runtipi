@@ -83,6 +83,9 @@ importers:
       '@sentry/cli':
         specifier: ^2.41.1
         version: 2.41.1(encoding@0.1.13)
+      '@sentry/esbuild-plugin':
+        specifier: ^3.1.1
+        version: 3.1.1(encoding@0.1.13)
       '@sentry/nestjs':
         specifier: ^8.51.0
         version: 8.51.0(@nestjs/common@11.0.5(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.5)
@@ -174,6 +177,9 @@ importers:
         specifier: ^3.24.1
         version: 3.24.1
     devDependencies:
+      '@anatine/esbuild-decorators':
+        specifier: ^0.2.19
+        version: 0.2.19(esbuild@0.24.2)
       '@faker-js/faker':
         specifier: ^9.4.0
         version: 9.4.0
@@ -484,6 +490,11 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@anatine/esbuild-decorators@0.2.19':
+    resolution: {integrity: sha512-pyj6ULyMacyzpDqlnbS2OCkOqxcVgk8IqiTMRJ5CrsF8Yl1azvlX/AM6xWR8UzHKUYDlWOw5mOpos3+7KKR0Lw==}
+    peerDependencies:
+      esbuild: ~0.14.29
 
   '@angular-devkit/core@19.0.1':
     resolution: {integrity: sha512-oXIAV3hXqUW3Pmm95pvEmb+24n1cKQG62FzhQSjOIrMeHiCbGLNuc8zHosIi2oMrcCJJxR6KzWjThvbuzDwWlw==}
@@ -2513,12 +2524,20 @@ packages:
     resolution: {integrity: sha512-AJEt9UtU9euB6tDLRQRpCl0EUvY5UlDQEaMSu948OHC+E2jEDoh9RzmfxtqKaDhjT/6WO6g4UoSBNOLxdZkptw==}
     engines: {node: '>= 14'}
 
+  '@sentry/babel-plugin-component-annotate@3.1.1':
+    resolution: {integrity: sha512-gp6lFDhrpuVQSQ+N7zKCMJOyYkYoUs4AQlNQctZMRCpp6URGy+eGj5YDPdMNCFylVs8M6t1C6gbBqzrd5sz9Pg==}
+    engines: {node: '>= 14'}
+
   '@sentry/browser@8.51.0':
     resolution: {integrity: sha512-1kbbyVfBBAx5Xyynp+lC5lLnAHo0qJ2r4mtmdT6koPjesvoOocEK0QQnouQBmdUbm3L0L/bPI1SgXjbeJyhzHQ==}
     engines: {node: '>=14.18'}
 
   '@sentry/bundler-plugin-core@3.0.0':
     resolution: {integrity: sha512-vQofxVcdCxogQG4XZ41h4G07lspmN1SXOf30PgdDrR5JSleZrlevtDVbqadX2nMpSRxtyweL1jzzZ01+AMzoXg==}
+    engines: {node: '>= 14'}
+
+  '@sentry/bundler-plugin-core@3.1.1':
+    resolution: {integrity: sha512-FlYucOSGyujmhA5e1eDhwk+OmuM2RO9yljoBMjEFxtX6gIRioolmPvVa+8FowBMEd594KHPt9MyjOuAwsVIXwg==}
     engines: {node: '>= 14'}
 
   '@sentry/cli-darwin@2.39.1':
@@ -2616,6 +2635,10 @@ packages:
   '@sentry/core@8.51.0':
     resolution: {integrity: sha512-Go0KxCYLw+OBIlLSv5YsYX+x9NW43fNVcyB6rhkSp2Q5Zme3tAE6KtZFvyu4SO7G/903wisW5Q6qV6UuK/ee4A==}
     engines: {node: '>=14.18'}
+
+  '@sentry/esbuild-plugin@3.1.1':
+    resolution: {integrity: sha512-6L+i/5pTSuAK2sIL+LgpwG7/BPRJslIs5sXPuCDPxAOY/CcAHewwNwX02AiFTwxHPO8L5F6N/ChVk5cnfbHw6w==}
+    engines: {node: '>= 14'}
 
   '@sentry/nestjs@8.51.0':
     resolution: {integrity: sha512-0hvEq7u/JuRBskCt//FlQITb3cC8dGH3Ct8nmySF+zXuUCRiHfkJlxJTsQbX9fbaX2z+sQwI7QMZ+3LJrnZIJg==}
@@ -6783,6 +6806,10 @@ packages:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
 
+  uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
+
   v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
 
@@ -7068,6 +7095,10 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
+  '@anatine/esbuild-decorators@0.2.19(esbuild@0.24.2)':
+    dependencies:
+      esbuild: 0.24.2
+
   '@angular-devkit/core@19.0.1(chokidar@4.0.3)':
     dependencies:
       ajv: 8.17.1
@@ -7148,7 +7179,7 @@ snapshots:
       '@babel/traverse': 7.25.9
       '@babel/types': 7.26.0
       convert-source-map: 2.0.0
-      debug: 4.3.7
+      debug: 4.4.0
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -8935,6 +8966,8 @@ snapshots:
 
   '@sentry/babel-plugin-component-annotate@3.0.0': {}
 
+  '@sentry/babel-plugin-component-annotate@3.1.1': {}
+
   '@sentry/browser@8.51.0':
     dependencies:
       '@sentry-internal/browser-utils': 8.51.0
@@ -8947,6 +8980,20 @@ snapshots:
     dependencies:
       '@babel/core': 7.26.0
       '@sentry/babel-plugin-component-annotate': 3.0.0
+      '@sentry/cli': 2.39.1(encoding@0.1.13)
+      dotenv: 16.4.7
+      find-up: 5.0.0
+      glob: 9.3.5
+      magic-string: 0.30.8
+      unplugin: 1.0.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+
+  '@sentry/bundler-plugin-core@3.1.1(encoding@0.1.13)':
+    dependencies:
+      '@babel/core': 7.26.0
+      '@sentry/babel-plugin-component-annotate': 3.1.1
       '@sentry/cli': 2.39.1(encoding@0.1.13)
       dotenv: 16.4.7
       find-up: 5.0.0
@@ -9038,6 +9085,15 @@ snapshots:
       - supports-color
 
   '@sentry/core@8.51.0': {}
+
+  '@sentry/esbuild-plugin@3.1.1(encoding@0.1.13)':
+    dependencies:
+      '@sentry/bundler-plugin-core': 3.1.1(encoding@0.1.13)
+      unplugin: 1.0.1
+      uuid: 9.0.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
 
   '@sentry/nestjs@8.51.0(@nestjs/common@11.0.5(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.5)':
     dependencies:
@@ -11135,7 +11191,7 @@ snapshots:
   https-proxy-agent@7.0.5:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.7
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -13579,6 +13635,8 @@ snapshots:
   utils-merge@1.0.1: {}
 
   uuid@8.3.2: {}
+
+  uuid@9.0.1: {}
 
   v8-compile-cache-lib@3.0.1: {}
 

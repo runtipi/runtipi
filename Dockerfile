@@ -76,7 +76,7 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install argon2
+RUN npm install argon2 sqlite3 i18next-fs-backend class-transformer
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
