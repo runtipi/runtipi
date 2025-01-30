@@ -10,7 +10,8 @@
     "bundle": {
       "dependsOn": ["^bundle"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/"]
+      "outputs": ["dist/"],
+      "env": ["SENTRY_AUTH_TOKEN", "SENTRY_RELEASE"]
     },
     "lint": {
       "dependsOn": ["^lint"]
