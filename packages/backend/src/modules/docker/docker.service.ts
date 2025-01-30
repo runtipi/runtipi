@@ -95,7 +95,7 @@ export class DockerService {
         stdout.push(String(data).trim());
       });
       cmd.stderr.on('data', (data) => {
-        this.logger.warn(`Stderr in docker-compose: ${String(data).trim()}`);
+        this.logger.info(`Stderr in docker-compose: ${String(data).trim()}`);
         stderr.push(String(data).trim());
       });
       cmd.on('close', resolve);
