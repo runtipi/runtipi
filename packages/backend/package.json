@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "main": "./src/exports/index.ts",
   "scripts": {
-    "dev": "nest start --watch --preserveWatchOutput --debug 0.0.0.0:9229",
+    "dev": "nest start --watch --preserveWatchOutput",
     "build": "nest build",
     "bundle": "rm -rf dist && node build.mjs",
     "start": "nest start",

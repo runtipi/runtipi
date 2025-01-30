@@ -89,13 +89,13 @@ export class DockerService {
     const stdout: string[] = [];
     const stderr: string[] = [];
 
-    const exitCode: number = await new Promise((resolve) => {
+    const exitCode = await new Promise((resolve) => {
       cmd.stdout.on('data', (data) => {
-        this.logger.info(`Stdout in docker-compose: ${String(data).trim()}`);
+        this.logger.info(`docker-compose: ${String(data).trim()}`);
         stdout.push(String(data).trim());
       });
       cmd.stderr.on('data', (data) => {
-        this.logger.info(`Stderr in docker-compose: ${String(data).trim()}`);
+        this.logger.info(`docker-compose: ${String(data).trim()}`);
         stderr.push(String(data).trim());
       });
       cmd.on('close', resolve);
@@ -106,7 +106,8 @@ export class DockerService {
       if (isCustomConfig) {
         this.logger.warn('User-config detected, please make sure your configuration is correct before opening an issue');
       }
-      throw stderr.slice(-1);
+      const error = stderr.pop();
+      throw new Error(error);
     }
 
     return { success: true, stdout: stdout.join(''), stderr: stderr.join('') };
