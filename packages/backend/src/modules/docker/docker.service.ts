@@ -1,7 +1,6 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { DEFAULT_REPO_URL } from '@/common/helpers/env-helpers';
-import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
@@ -85,18 +84,32 @@ export class DockerService {
     args.push(...command.split(' '));
 
     this.logger.info(`Running docker compose with args ${args.join(' ')}`);
-    const { stdout, stderr } = await execAsync(`docker-compose ${args.join(' ')}`);
 
-    if (stderr?.includes('Command failed:')) {
+    const cmd = spawn('docker-compose', args);
+    const stdout: string[] = [];
+    const stderr: string[] = [];
+
+    const exitCode: number = await new Promise((resolve) => {
+      cmd.stdout.on('data', (data) => {
+        this.logger.info(`Stdout in docker-compose: ${String(data).trim()}`);
+        stdout.push(String(data).trim());
+      });
+      cmd.stderr.on('data', (data) => {
+        this.logger.warn(`Stderr in docker-compose: ${String(data).trim()}`);
+        stderr.push(String(data).trim());
+      });
+      cmd.on('close', resolve);
+    });
+
+    if (exitCode !== 0) {
+      this.logger.info(`Docker-compose exited with code ${exitCode}`);
       if (isCustomConfig) {
-        throw new Error(
-          `Error with your custom app: ${stderr}. Before opening an issue try to remove any user-config files or any custom app-store repo and try again.`,
-        );
+        this.logger.warn('User-config detected, please make sure your configuration is correct before opening an issue');
       }
-      throw new Error(stderr);
+      throw stderr.slice(-1);
     }
 
-    return { stdout, stderr };
+    return { success: true, stdout: stdout.join(''), stderr: stderr.join('') };
   };
 
   public getLogsStream = async (maxLines: number, appId?: string) => {
