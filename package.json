@@ -24,15 +24,15 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@hey-api/openapi-ts": "^0.62.3",
-    "@playwright/test": "^1.49.1",
-    "@types/pg": "^8.11.10",
+    "@hey-api/openapi-ts": "^0.63.2",
+    "@playwright/test": "^1.50.1",
+    "@types/pg": "^8.11.11",
     "dotenv-cli": "^8.0.0",
-    "turbo": "^2.3.3"
+    "turbo": "^2.4.0"
   },
   "dependencies": {
     "argon2": "^0.41.1",
-    "drizzle-orm": "^0.38.4",
+    "drizzle-orm": "^0.39.1",
     "zod": "^3.24.1"
   },
   "pnpm": {
