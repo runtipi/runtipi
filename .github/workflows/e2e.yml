@@ -104,7 +104,7 @@ jobs:
           ./scripts/install.sh --version e2e --env-file ${{ github.workspace }}/.env.local
           cd ..
 
-      - uses: pnpm/action-setup@v4.0.0
+      - uses: pnpm/action-setup@v4.1.0
         name: Install pnpm
         id: pnpm-install
         with:
