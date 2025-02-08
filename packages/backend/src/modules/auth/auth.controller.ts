@@ -28,24 +28,46 @@ export class AuthController {
 
   @Post('/login')
   @ZodSerializerDto(LoginDto)
-  async login(@Body() body: LoginBody, @Res({ passthrough: true }) res: Response): Promise<LoginDto> {
+  async login(@Body() body: LoginBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
     const { sessionId, totpSessionId } = await this.authService.login(body);
 
     if (totpSessionId) {
       return { success: true, totpSessionId };
     }
 
-    res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
+    const host = req.headers['x-forwarded-host'] as string | undefined;
+
+    const domain = host?.split('.');
+    domain?.shift();
+
+    res.cookie(SESSION_COOKIE_NAME, sessionId, {
+      httpOnly: true,
+      secure: false,
+      sameSite: false,
+      maxAge: SESSION_COOKIE_MAX_AGE,
+      domain: domain ? `.${domain.join('.')}` : undefined,
+    });
 
     return { success: true };
   }
 
   @Post('/verify-totp')
   @ZodSerializerDto(LoginDto)
-  async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response): Promise<LoginDto> {
+  async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
     const { sessionId } = await this.authService.verifyTotp(body);
 
-    res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
+    const host = req.headers['x-forwarded-host'] as string | undefined;
+
+    const domain = host?.split('.');
+    domain?.shift();
+
+    res.cookie(SESSION_COOKIE_NAME, sessionId, {
+      httpOnly: true,
+      secure: false,
+      sameSite: false,
+      maxAge: SESSION_COOKIE_MAX_AGE,
+      domain: domain ? `.${domain.join('.')}` : undefined,
+    });
 
     return { success: true };
   }
@@ -159,5 +181,25 @@ export class AuthController {
     const isPending = await this.authService.checkPasswordChangeRequest();
 
     return { isRequestPending: isPending };
+  }
+
+  @Get('/traefik')
+  async traefik(@Req() req: Request, @Res() res: Response) {
+    const isLoggedIn = req.user !== undefined;
+
+    const uri = req.headers['x-forwarded-uri'] as string;
+    const proto = req.headers['x-forwarded-proto'] as string;
+    const host = req.headers['x-forwarded-host'] as string;
+
+    const root = host.split('.');
+    root.shift();
+
+    const redirectUri = `${proto}://${host}${uri}`;
+
+    if (isLoggedIn) {
+      return res.status(200).send();
+    }
+
+    return res.status(302).redirect(`${proto}://${root.join('.')}/login?redirect_uri=${encodeURIComponent(redirectUri)}`);
   }
 }

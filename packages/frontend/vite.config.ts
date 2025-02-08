@@ -34,6 +34,7 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    allowedHosts: true,
   },
   build: {
     sourcemap: true,
