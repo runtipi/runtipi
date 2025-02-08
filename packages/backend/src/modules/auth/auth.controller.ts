@@ -191,6 +191,8 @@ export class AuthController {
     const proto = req.headers['x-forwarded-proto'] as string;
     const host = req.headers['x-forwarded-host'] as string;
 
+    const app = host.split('.')[0] ?? '';
+
     const root = host.split('.');
     root.shift();
 
@@ -200,6 +202,8 @@ export class AuthController {
       return res.status(200).send();
     }
 
-    return res.status(302).redirect(`${proto}://${root.join('.')}/login?redirect_uri=${encodeURIComponent(redirectUri)}`);
+    return res
+      .status(302)
+      .redirect(`${proto}://${root.join('.')}/login?redirect_uri=${encodeURIComponent(redirectUri)}&app=${encodeURIComponent(app)}`);
   }
 }
