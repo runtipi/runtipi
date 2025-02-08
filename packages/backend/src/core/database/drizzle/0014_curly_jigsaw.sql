@@ -1,0 +1,1 @@
+ALTER TABLE "app" ADD COLUMN "enable_auth" boolean DEFAULT false NOT NULL;

@@ -8,6 +8,7 @@ export const appFormSchema = z
     openPort: z.boolean().optional().default(true),
     domain: z.string().optional(),
     isVisibleOnGuestDashboard: z.boolean().optional(),
+    enableAuth: z.boolean().optional(),
   })
   .extend({})
   .catchall(z.unknown());

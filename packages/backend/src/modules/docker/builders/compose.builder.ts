@@ -110,6 +110,7 @@ export class DockerComposeBuilder {
           appId: params.name,
           exposedLocal: form.exposedLocal,
           exposed: form.exposed,
+          enableAuth: form.enableAuth,
         })
           .addExposedLabels()
           .addExposedLocalLabels();
