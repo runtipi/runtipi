@@ -79,7 +79,8 @@ export class AppLifecycleService {
       return this.startApp({ appId });
     }
 
-    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = form;
+    const parsedForm = appFormSchema.parse(form);
+    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth } = parsedForm;
     const apps = await this.appRepository.getApps();
 
     if (apps.length >= 6 && demoMode) {
@@ -134,6 +135,7 @@ export class AppLifecycleService {
       openPort: openPort || false,
       exposedLocal: exposedLocal || false,
       isVisibleOnGuestDashboard,
+      enableAuth: enableAuth || false,
     });
 
     // Send install command to the queue
@@ -332,6 +334,7 @@ export class AppLifecycleService {
       domain: domain || null,
       config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
+      enableAuth: parsedForm.enableAuth ?? false,
     });
   }
 

@@ -96,6 +96,7 @@ export const app = pgTable(
     isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
     openPort: boolean('open_port').default(true).notNull(),
     exposedLocal: boolean('exposed_local').default(true).notNull(),
+    enableAuth: boolean('enable_auth').default(false).notNull(),
   },
   (table) => {
     return {

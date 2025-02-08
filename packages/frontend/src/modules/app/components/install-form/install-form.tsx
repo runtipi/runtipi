@@ -26,7 +26,8 @@ export type FormValues = {
   openPort: boolean;
   domain?: string;
   isVisibleOnGuestDashboard?: boolean;
-  [key: string]: string | boolean | undefined;
+  enableAuth: boolean;
+  [key: string]: unknown;
 };
 
 const hiddenTypes = ['random'];
@@ -151,6 +152,28 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
                   {t('APP_INSTALL_FORM_EXPOSE_LOCAL')}
                   <Tooltip className="tooltip" anchorSelect=".expose-local-hint">
                     {t('APP_INSTALL_FORM_EXPOSE_LOCAL_HINT', { domain: localDomain, appId: info.id })}
+                  </Tooltip>
+                  <span className={clsx('ms-1 form-help expose-local-hint')}>?</span>
+                </>
+              }
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="enableAuth"
+          render={({ field: { onChange, value, ref, ...props } }) => (
+            <Switch
+              {...props}
+              className="mb-3"
+              ref={ref}
+              checked={value}
+              onCheckedChange={onChange}
+              label={
+                <>
+                  Enable auth
+                  <Tooltip className="tooltip" anchorSelect=".expose-local-hint">
+                    Add an additional layer of security to your app by enabling authentication.
                   </Tooltip>
                   <span className={clsx('ms-1 form-help expose-local-hint')}>?</span>
                 </>

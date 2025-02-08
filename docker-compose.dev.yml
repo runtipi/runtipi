@@ -50,6 +50,12 @@ services:
     restart: unless-stopped
     ports:
       - 3000:8080
+    healthcheck:
+      start_period: 10s
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
     volumes:
       # Hot reload
       - ./packages/backend/src:/app/packages/backend/src
