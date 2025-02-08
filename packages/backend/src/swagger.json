@@ -3123,6 +3123,9 @@
           },
           "isVisibleOnGuestDashboard": {
             "type": "boolean"
+          },
+          "enableAuth": {
+            "type": "boolean"
           }
         }
       },

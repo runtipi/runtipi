@@ -4,6 +4,7 @@ interface TraefikLabelsArgs {
   exposedLocal?: boolean;
   exposed?: boolean;
   storeId: string;
+  enableAuth?: boolean;
 }
 
 export class TraefikLabelsBuilder {
@@ -31,6 +32,12 @@ export class TraefikLabelsBuilder {
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.service`]: `${this.params.appId}_${this.params.storeId}`,
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.tls.certresolver`]: 'myresolver',
       });
+
+      if (this.params.enableAuth) {
+        Object.assign(this.labels, {
+          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.middlewares`]: 'runtipi',
+        });
+      }
     }
     return this;
   }
@@ -48,6 +55,11 @@ export class TraefikLabelsBuilder {
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.service`]: `${this.params.appId}_${this.params.storeId}`,
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.tls`]: true,
       });
+      if (this.params.enableAuth) {
+        Object.assign(this.labels, {
+          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.middlewares`]: 'runtipi',
+        });
+      }
     }
     return this;
   }

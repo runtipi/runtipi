@@ -84,7 +84,7 @@ export class AppLifecycleService {
     }
 
     const parsedForm = appFormSchema.parse(form);
-    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = parsedForm;
+    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth } = parsedForm;
     const apps = await this.appRepository.getApps();
 
     if (demoMode && apps.length >= 6) {
@@ -143,6 +143,7 @@ export class AppLifecycleService {
       exposedLocal: exposedLocal || false,
       appStoreSlug: appStoreId,
       isVisibleOnGuestDashboard,
+      enableAuth: enableAuth || false,
     });
 
     // Send install command to the queue
@@ -341,6 +342,7 @@ export class AppLifecycleService {
       domain: domain || null,
       config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
+      enableAuth: parsedForm.enableAuth ?? false,
     });
   }
 
