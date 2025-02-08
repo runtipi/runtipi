@@ -9,12 +9,15 @@ import { Navigate, useNavigate } from 'react-router';
 import { LoginForm } from '../components/login-form';
 import { TotpForm } from '../components/totp-form/totp-form';
 
+export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 export const LoginPage = () => {
   const { isLoggedIn, isConfigured, refreshUserContext, setUserContext } = useUserContext();
   const [totpSessionId, setTotpSessionId] = useState<string | null>(null);
   const queryString = window.location.search;
   const params = new URLSearchParams(queryString);
   const redirectUri = params.get('redirect_uri');
+  const app = capitalize(params.get('app') ?? '') || 'your account';
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -71,5 +74,11 @@ export const LoginPage = () => {
     return <TotpForm loading={verifyTotp.isPending} onSubmit={(totpCode) => verifyTotp.mutate({ body: { totpCode, totpSessionId } })} />;
   }
 
-  return <LoginForm onSubmit={(values) => login.mutate({ body: { password: values.password, username: values.email } })} loading={login.isPending} />;
+  return (
+    <LoginForm
+      onSubmit={(values) => login.mutate({ body: { password: values.password, username: values.email } })}
+      loading={login.isPending}
+      app={app}
+    />
+  );
 };

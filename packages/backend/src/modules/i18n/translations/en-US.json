@@ -199,7 +199,7 @@
   "AUTH_FORM_PASSWORD_CONFIRMATION_PLACEHOLDER": "Confirm your password",
   "AUTH_FORM_PASSWORD_PLACEHOLDER": "Enter your password",
   "AUTH_LOGIN_SUBMIT": "Login",
-  "AUTH_LOGIN_TITLE": "Login to your account",
+  "AUTH_LOGIN_TITLE": "Login to {{type}}",
   "AUTH_REGISTER_SUBMIT": "Register",
   "AUTH_REGISTER_TITLE": "Register your account",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Back to login",
