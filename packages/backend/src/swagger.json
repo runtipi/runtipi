@@ -460,6 +460,27 @@
         ]
       }
     },
+    "/api/auth/traefik": {
+      "get": {
+        "operationId": "traefik",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/api/apps/installed": {
       "get": {
         "operationId": "getInstalledApps",

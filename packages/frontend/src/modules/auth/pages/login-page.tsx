@@ -12,6 +12,9 @@ import { TotpForm } from '../components/totp-form/totp-form';
 export const LoginPage = () => {
   const { isLoggedIn, isConfigured, refreshUserContext, setUserContext } = useUserContext();
   const [totpSessionId, setTotpSessionId] = useState<string | null>(null);
+  const queryString = window.location.search;
+  const params = new URLSearchParams(queryString);
+  const redirectUri = params.get('redirect_uri');
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -24,6 +27,10 @@ export const LoginPage = () => {
       } else {
         setUserContext({ isLoggedIn: true });
         refreshUserContext();
+        if (redirectUri) {
+          window.location.href = redirectUri;
+          return;
+        }
         navigate('/dashboard');
       }
     },
@@ -40,11 +47,19 @@ export const LoginPage = () => {
     onSuccess: () => {
       setUserContext({ isLoggedIn: true });
       refreshUserContext();
+      if (redirectUri) {
+        window.location.href = redirectUri;
+        return;
+      }
       navigate('/dashboard');
     },
   });
 
   if (isLoggedIn) {
+    if (redirectUri) {
+      window.location.href = redirectUri;
+      return;
+    }
     return <Navigate to="/dashboard" />;
   }
 
