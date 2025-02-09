@@ -194,7 +194,7 @@ export class AuthController {
     const redirectUrl = new URL(uri, `${proto}://${host}`);
 
     const loginUrl = new URL('/login', `${proto}://${rootDomain}`);
-    loginUrl.searchParams.set('redirect_uri', redirectUrl.toString());
+    loginUrl.searchParams.set('redirect_url', redirectUrl.toString());
     loginUrl.searchParams.set('app', app);
 
     return res.status(302).redirect(loginUrl.toString());

@@ -5,19 +5,20 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router';
+import { redirect } from 'react-router';
+import { Navigate, useNavigate, useParams } from 'react-router';
 import { LoginForm } from '../components/login-form';
 import { TotpForm } from '../components/totp-form/totp-form';
 
-export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const isSafeRedirect = (url: string) => new URL(url).host.endsWith(`.${window.location.host}`);
 
 export const LoginPage = () => {
   const { isLoggedIn, isConfigured, refreshUserContext, setUserContext } = useUserContext();
   const [totpSessionId, setTotpSessionId] = useState<string | null>(null);
-  const queryString = window.location.search;
-  const params = new URLSearchParams(queryString);
-  const redirectUri = params.get('redirect_uri');
-  const app = capitalize(params.get('app') ?? '') || 'your account';
+
+  const { redirect_url, app } = useParams<{ redirect_url: string; app: string }>();
+  const loginType = capitalize(app ?? '') || 'your account';
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -30,9 +31,9 @@ export const LoginPage = () => {
       } else {
         setUserContext({ isLoggedIn: true });
         refreshUserContext();
-        if (redirectUri) {
-          window.location.href = redirectUri;
-          return;
+
+        if (redirect_url && isSafeRedirect(redirect_url)) {
+          return redirect(redirect_url);
         }
         navigate('/dashboard');
       }
@@ -50,18 +51,17 @@ export const LoginPage = () => {
     onSuccess: () => {
       setUserContext({ isLoggedIn: true });
       refreshUserContext();
-      if (redirectUri) {
-        window.location.href = redirectUri;
-        return;
+
+      if (redirect_url && isSafeRedirect(redirect_url)) {
+        return redirect(redirect_url);
       }
       navigate('/dashboard');
     },
   });
 
   if (isLoggedIn) {
-    if (redirectUri) {
-      window.location.href = redirectUri;
-      return;
+    if (redirect_url && isSafeRedirect(redirect_url)) {
+      return redirect(redirect_url);
     }
     return <Navigate to="/dashboard" />;
   }
@@ -78,7 +78,7 @@ export const LoginPage = () => {
     <LoginForm
       onSubmit={(values) => login.mutate({ body: { password: values.password, username: values.email } })}
       loading={login.isPending}
-      app={app}
+      loginType={loginType}
     />
   );
 };
