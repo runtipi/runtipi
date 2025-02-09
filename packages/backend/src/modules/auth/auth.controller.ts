@@ -3,6 +3,7 @@ import { TranslatableError } from '@/common/error/translatable-error';
 import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
+import validator from 'validator';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import {
@@ -29,7 +30,7 @@ export class AuthController {
   private setSessionCookie(res: Response, sessionId: string, host?: string) {
     const domain = host?.split('.') ?? [];
 
-    if (domain.length > 2) {
+    if (validator.isFQDN(host ?? '') && domain.length > 2) {
       domain.shift();
     }
 
@@ -38,7 +39,7 @@ export class AuthController {
       secure: false,
       sameSite: false,
       maxAge: SESSION_COOKIE_MAX_AGE,
-      domain: domain ? `.${domain.join('.')}` : undefined,
+      domain: domain.length ? `.${domain.join('.')}` : undefined,
     });
   }
 
