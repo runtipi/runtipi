@@ -167,10 +167,10 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
               label={
                 <>
                   {t('APP_INSTALL_FORM_EXPOSE_LOCAL')}
-                  <Tooltip className="tooltip" anchorSelect=".expose-local-hint">
+                  <Tooltip className="tooltip" anchorSelect=".enable-auth-hint">
                     {t('APP_INSTALL_FORM_EXPOSE_LOCAL_HINT', { domain: localDomain, appId: info.id })}
                   </Tooltip>
-                  <span className={clsx('ms-1 form-help expose-local-hint')}>?</span>
+                  <span className={clsx('ms-1 form-help enable-auth-hint')}>?</span>
                 </>
               }
             />

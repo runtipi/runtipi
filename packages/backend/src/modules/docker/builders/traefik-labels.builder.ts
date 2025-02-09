@@ -35,7 +35,7 @@ export class TraefikLabelsBuilder {
 
       if (this.params.enableAuth) {
         Object.assign(this.labels, {
-          [`traefik.http.routers.${this.params.appId}.middlewares`]: 'runtipi',
+          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.middlewares`]: 'runtipi',
         });
       }
     }
@@ -58,7 +58,7 @@ export class TraefikLabelsBuilder {
 
       if (this.params.enableAuth) {
         Object.assign(this.labels, {
-          [`traefik.http.routers.${this.params.appId}-local.middlewares`]: 'runtipi',
+          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.middlewares`]: 'runtipi',
         });
       }
     }
