@@ -6,3 +6,4 @@ SET
 --> statement-breakpoint
 ALTER TABLE "app_store"
 DROP COLUMN IF EXISTS "deleted";
+

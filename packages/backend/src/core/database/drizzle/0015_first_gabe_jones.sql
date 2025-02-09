@@ -162,3 +162,4 @@ DROP COLUMN "lastOpened";
 --> statement-breakpoint
 ALTER TABLE "app"
 DROP COLUMN "numOpened";
+
