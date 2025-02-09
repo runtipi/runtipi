@@ -179,25 +179,24 @@ export class AuthController {
 
   @Get('/traefik')
   async traefik(@Req() req: Request, @Res() res: Response) {
-    const isLoggedIn = req.user !== undefined;
+    if (req.user) {
+      return res.status(200).send();
+    }
 
     const uri = req.headers['x-forwarded-uri'] as string;
     const proto = req.headers['x-forwarded-proto'] as string;
     const host = req.headers['x-forwarded-host'] as string;
 
-    const app = host.split('.')[0] ?? '';
+    const subdomains = host.split('.');
+    const app = subdomains[0] ?? '';
+    const rootDomain = subdomains.slice(1).join('.');
 
-    const root = host.split('.');
-    root.shift();
+    const redirectUrl = new URL(uri, `${proto}://${host}`);
 
-    const redirectUri = `${proto}://${host}${uri}`;
+    const loginUrl = new URL('/login', `${proto}://${rootDomain}`);
+    loginUrl.searchParams.set('redirect_uri', redirectUrl.toString());
+    loginUrl.searchParams.set('app', app);
 
-    if (isLoggedIn) {
-      return res.status(200).send();
-    }
-
-    return res
-      .status(302)
-      .redirect(`${proto}://${root.join('.')}/login?redirect_uri=${encodeURIComponent(redirectUri)}&app=${encodeURIComponent(app)}`);
+    return res.status(302).redirect(loginUrl.toString());
   }
 }
