@@ -83,7 +83,7 @@
   "APP_INSTALL_FORM_PORT_HINT": "Port on which the app will be accessible",
   "APP_INSTALL_SUCCESS": "App {{id}} installed successfully",
   "APP_INSTALL_FORM_ENABLE_AUTH": "Enable authentication",
-  "APP_INSTALL_FORM_ENABLE_AUTH_HINT": "Enable authentication for this app, this does not work with IP addresses, you will need to use either the local domain or the expose feature.",
+  "APP_INSTALL_FORM_ENABLE_AUTH_HINT": "Protect this app with your Runtipi login. This does not work with IP addresses, you will need to use either the local domain or the expose feature.",
   "APP_LOGS_TAB_FOLLOW": "Follow logs",
   "APP_LOGS_TAB_MAX_LINES": "Max lines:",
   "APP_LOGS_TAB_TITLE": "Logs",

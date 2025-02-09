@@ -17,10 +17,10 @@ const schema = z.object({
 interface IProps {
   onSubmit: (values: FormValues) => void;
   loading: boolean;
-  app: string;
+  loginType: string;
 }
 
-export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, app }) => {
+export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) => {
   const { t } = useTranslation();
   const {
     register,
@@ -38,7 +38,7 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, app }) => {
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <h2 className="h2 text-center mb-3">{t('AUTH_LOGIN_TITLE', { type: app })}</h2>
+      <h2 className="h2 text-center mb-3">{t('AUTH_LOGIN_TITLE', { type: loginType })}</h2>
       <Input
         {...register('email')}
         name="email"
