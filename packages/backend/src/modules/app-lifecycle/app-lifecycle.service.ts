@@ -130,12 +130,12 @@ export class AppLifecycleService {
       status: 'installing',
       config: form,
       version: appInfo.tipi_version,
-      exposed: exposed || false,
-      domain: domain || null,
-      openPort: openPort || false,
-      exposedLocal: exposedLocal || false,
+      exposed: exposed ?? false,
+      domain: domain ?? null,
+      openPort: openPort ?? false,
+      exposedLocal: exposedLocal ?? false,
       isVisibleOnGuestDashboard,
-      enableAuth: enableAuth || false,
+      enableAuth: enableAuth ?? false,
     });
 
     // Send install command to the queue
@@ -331,7 +331,7 @@ export class AppLifecycleService {
       exposed: exposed ?? false,
       exposedLocal: parsedForm.exposedLocal ?? false,
       openPort: parsedForm.openPort,
-      domain: domain || null,
+      domain: domain ?? null,
       config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
       enableAuth: parsedForm.enableAuth ?? false,

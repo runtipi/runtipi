@@ -26,6 +26,19 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  private setSessionCookie(res: Response, sessionId: string, host?: string) {
+    const domain = host?.split('.');
+    domain?.shift();
+
+    res.cookie(SESSION_COOKIE_NAME, sessionId, {
+      httpOnly: true,
+      secure: false,
+      sameSite: false,
+      maxAge: SESSION_COOKIE_MAX_AGE,
+      domain: domain ? `.${domain.join('.')}` : undefined,
+    });
+  }
+
   @Post('/login')
   @ZodSerializerDto(LoginDto)
   async login(@Body() body: LoginBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
@@ -36,17 +49,7 @@ export class AuthController {
     }
 
     const host = req.headers['x-forwarded-host'] as string | undefined;
-
-    const domain = host?.split('.');
-    domain?.shift();
-
-    res.cookie(SESSION_COOKIE_NAME, sessionId, {
-      httpOnly: true,
-      secure: false,
-      sameSite: false,
-      maxAge: SESSION_COOKIE_MAX_AGE,
-      domain: domain ? `.${domain.join('.')}` : undefined,
-    });
+    this.setSessionCookie(res, sessionId, host);
 
     return { success: true };
   }
@@ -57,27 +60,18 @@ export class AuthController {
     const { sessionId } = await this.authService.verifyTotp(body);
 
     const host = req.headers['x-forwarded-host'] as string | undefined;
-
-    const domain = host?.split('.');
-    domain?.shift();
-
-    res.cookie(SESSION_COOKIE_NAME, sessionId, {
-      httpOnly: true,
-      secure: false,
-      sameSite: false,
-      maxAge: SESSION_COOKIE_MAX_AGE,
-      domain: domain ? `.${domain.join('.')}` : undefined,
-    });
+    this.setSessionCookie(res, sessionId, host);
 
     return { success: true };
   }
 
   @Post('/register')
   @ZodSerializerDto(RegisterDto)
-  async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response): Promise<RegisterDto> {
+  async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<RegisterDto> {
     const { sessionId } = await this.authService.register(body);
 
-    res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
+    const host = req.headers['x-forwarded-host'] as string | undefined;
+    this.setSessionCookie(res, sessionId, host);
 
     return { success: true };
   }
