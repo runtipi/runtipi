@@ -104,7 +104,7 @@
     "typescript": "^5.7.3",
     "unplugin-swc": "^1.5.1",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "^2.1.8",
+    "vitest": "^2.1.9",
     "vitest-mock-extended": "^2.0.2",
     "wait-for-expect": "^3.0.2"
   }
