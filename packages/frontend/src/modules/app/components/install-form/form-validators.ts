@@ -6,7 +6,7 @@ type ValidationError = {
   params?: Record<string, string>;
 };
 
-export const validateField = (field: FormField, value: string | undefined | boolean): ValidationError | undefined => {
+export const validateField = (field: FormField, value: unknown): ValidationError | undefined => {
   if (field.required && !value && typeof value !== 'boolean') {
     return { messageKey: 'APP_INSTALL_FORM_ERROR_REQUIRED', params: { label: field.label } };
   }
@@ -73,7 +73,7 @@ export const validateField = (field: FormField, value: string | undefined | bool
   return undefined;
 };
 
-const validateDomain = (domain?: string | boolean): ValidationError | undefined => {
+const validateDomain = (domain?: unknown): ValidationError | undefined => {
   if (typeof domain !== 'string' || !validator.isFQDN(domain || '')) {
     return { messageKey: 'APP_INSTALL_FORM_ERROR_FQDN', params: { label: String(domain) } };
   }
@@ -81,7 +81,7 @@ const validateDomain = (domain?: string | boolean): ValidationError | undefined 
   return undefined;
 };
 
-export const validateAppConfig = (values: Record<string, string | boolean | undefined>, fields: FormField[]) => {
+export const validateAppConfig = (values: Record<string, unknown>, fields: FormField[]) => {
   const { exposed, domain, ...config } = values;
 
   const errors: Record<string, ValidationError | undefined> = {};

@@ -8,6 +8,7 @@ import type {
   AppContextResponse,
   UpdateUserSettingsData,
   AcknowledgeWelcomeData,
+  GetErrorData,
   SystemLoadData,
   SystemLoadResponse,
   DownloadLocalCertificateData,
@@ -31,6 +32,8 @@ import type {
   CheckResetPasswordRequestResponse,
   ResetPasswordData,
   ResetPasswordResponse,
+  TraefikData,
+  TraefikResponse,
   GetInstalledAppsData,
   GetInstalledAppsResponse,
   GetGuestAppsData,
@@ -107,6 +110,13 @@ export const acknowledgeWelcome = <ThrowOnError extends boolean = false>(options
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+};
+
+export const getError = <ThrowOnError extends boolean = false>(options?: Options<GetErrorData, ThrowOnError>) => {
+  return (options?.client ?? client).get<unknown, unknown, ThrowOnError>({
+    url: '/api/debug-sentry',
+    ...options,
   });
 };
 
@@ -248,6 +258,13 @@ export const resetPassword = <ThrowOnError extends boolean = false>(options: Opt
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+};
+
+export const traefik = <ThrowOnError extends boolean = false>(options?: Options<TraefikData, ThrowOnError>) => {
+  return (options?.client ?? client).get<TraefikResponse, unknown, ThrowOnError>({
+    url: '/api/auth/traefik',
+    ...options,
   });
 };
 

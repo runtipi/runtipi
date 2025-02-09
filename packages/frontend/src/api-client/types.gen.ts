@@ -215,6 +215,7 @@ export type MyAppsDto = {
       domain: string | null;
       isVisibleOnGuestDashboard: boolean;
       config?: {};
+      enableAuth?: boolean;
     };
     info: {
       id: string;
@@ -278,6 +279,7 @@ export type GuestAppsDto = {
       domain: string | null;
       isVisibleOnGuestDashboard: boolean;
       config?: {};
+      enableAuth?: boolean;
     };
     info: {
       id: string;
@@ -469,6 +471,7 @@ export type AppDetailsDto = {
     domain: string | null;
     isVisibleOnGuestDashboard: boolean;
     config?: {};
+    enableAuth?: boolean;
   };
   updateInfo: {
     latestVersion: number;
@@ -487,6 +490,7 @@ export type AppFormBody = {
   openPort?: boolean;
   domain?: string;
   isVisibleOnGuestDashboard?: boolean;
+  enableAuth?: boolean;
 };
 
 export type UninstallAppBody = {
@@ -586,6 +590,17 @@ export type AcknowledgeWelcomeData = {
 };
 
 export type AcknowledgeWelcomeResponses = {
+  200: unknown;
+};
+
+export type GetErrorData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/debug-sentry';
+};
+
+export type GetErrorResponses = {
   200: unknown;
 };
 
@@ -774,6 +789,21 @@ export type ResetPasswordResponses = {
 };
 
 export type ResetPasswordResponse = ResetPasswordResponses[keyof ResetPasswordResponses];
+
+export type TraefikData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/auth/traefik';
+};
+
+export type TraefikResponses = {
+  200: {
+    [key: string]: unknown;
+  };
+};
+
+export type TraefikResponse = TraefikResponses[keyof TraefikResponses];
 
 export type GetInstalledAppsData = {
   body?: never;

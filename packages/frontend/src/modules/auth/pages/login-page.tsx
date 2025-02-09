@@ -61,7 +61,7 @@ export const LoginPage = () => {
 
   if (isLoggedIn) {
     if (redirect_url && isSafeRedirect(redirect_url)) {
-      return redirect(redirect_url);
+      redirect(redirect_url);
     }
     return <Navigate to="/dashboard" />;
   }
