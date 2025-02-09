@@ -8,6 +8,7 @@
     "build": "turbo build",
     "bundle": "turbo bundle",
     "test": "turbo test",
+    "test:integration": "turbo run test:integration",
     "start": "node ./main.js",
     "start:dev": "docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
     "start:prod": "docker compose --project-name runtipi -f docker-compose.prod.yml up --build",
