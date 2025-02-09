@@ -2,7 +2,7 @@ import type { z } from 'zod';
 import type { DependsOn, serviceSchema } from './schemas';
 
 interface ServicePort {
-  containerPort: number;
+  containerPort: number | string;
   hostPort: number | string;
   tcp?: boolean;
   udp?: boolean;
@@ -51,7 +51,7 @@ interface Deploy {
 
 interface Logging {
   driver: string;
-  options: Record<string, string>;
+  options?: Record<string, string>;
 }
 
 export interface BuilderService {

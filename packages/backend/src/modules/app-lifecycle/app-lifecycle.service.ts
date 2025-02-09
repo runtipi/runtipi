@@ -137,12 +137,13 @@ export class AppLifecycleService {
       config: parsedForm,
       port: parsedForm.port ?? appInfo.port,
       version: appInfo.tipi_version,
-      exposed: exposed || false,
-      domain: domain || null,
-      openPort: openPort || false,
-      exposedLocal: exposedLocal || false,
+      exposed: exposed ?? false,
+      domain: domain ?? null,
+      openPort: openPort ?? false,
+      exposedLocal: exposedLocal ?? false,
       appStoreSlug: appStoreId,
       isVisibleOnGuestDashboard,
+      enableAuth: enableAuth ?? false,
     });
 
     // Send install command to the queue
@@ -338,9 +339,10 @@ export class AppLifecycleService {
       exposedLocal: parsedForm.exposedLocal ?? false,
       openPort: parsedForm.openPort,
       port: parsedForm.port ?? appInfo.port,
-      domain: domain || null,
+      domain: domain ?? null,
       config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
+      enableAuth: parsedForm.enableAuth ?? false,
     });
   }
 

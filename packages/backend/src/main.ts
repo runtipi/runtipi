@@ -1,3 +1,5 @@
+import './instrument';
+
 import { patchNestJsSwagger } from 'nestjs-zod';
 
 import { SpelunkerModule } from 'nestjs-spelunker';

@@ -148,9 +148,8 @@ export type RegisterDto = {
   success: boolean;
 };
 
-export type ChangeUsernameBody = {
-  newUsername: string;
-  password: string;
+export type UpdateAppBody = {
+  performBackup: boolean;
 };
 
 export type ChangePasswordBody = {
@@ -1141,6 +1140,8 @@ export type AppEventsResponses = {
   200: {
     [key: string]: unknown;
   };
+  query?: never;
+  url: '/api/backups/{appid}';
 };
 
 export type AppEventsResponse = AppEventsResponses[keyof AppEventsResponses];

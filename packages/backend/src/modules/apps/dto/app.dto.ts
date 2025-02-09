@@ -17,6 +17,7 @@ export class AppDto extends createZodDto(
     domain: z.string().nullable(),
     isVisibleOnGuestDashboard: z.boolean(),
     config: z.record(z.any()).optional(),
+    enableAuth: z.boolean().optional(),
   }),
 ) {}
 

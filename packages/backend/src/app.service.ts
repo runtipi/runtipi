@@ -69,19 +69,23 @@ export class AppService {
       let body = (await this.cache.get('latestVersionBody')) ?? '';
 
       if (!version) {
-        const response = await fetch(LATEST_RELEASE_URL);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
+        version = currentVersion;
+        // Fetch the latest version in the background
+        fetch(LATEST_RELEASE_URL).then(async (response) => {
+          if (!response.ok) {
+            this.logger.error(`Failed to fetch latest version from GitHub: ${response.statusText}`);
+            return;
+          }
+          const data = await response.json();
 
-        const res = z.object({ tag_name: z.string(), body: z.string() }).parse(data);
+          const res = z.object({ tag_name: z.string(), body: z.string() }).parse(data);
 
-        version = res.tag_name;
-        body = res.body;
+          version = res.tag_name;
+          body = res.body;
 
-        await this.cache.set('latestVersion', version, 60 * 60);
-        await this.cache.set('latestVersionBody', body, 60 * 60);
+          await this.cache.set('latestVersion', version, 60 * 60);
+          await this.cache.set('latestVersionBody', body, 60 * 60);
+        });
       }
 
       return { current: currentVersion, latest: version, body };

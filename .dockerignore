@@ -17,4 +17,5 @@
 !**/tsup.config.ts
 !**/vite.config.ts
 !**/index.html
+!**/build.mjs
 

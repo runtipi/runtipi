@@ -1,7 +1,7 @@
 import type { LoggerService } from '@/core/logger/logger.service';
 import * as Sentry from '@sentry/nestjs';
 import cron from 'node-cron';
-import { AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';
+import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
 
 export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; message: string }>> {
@@ -43,6 +43,10 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
 
       throw new Error('Invalid response schema');
     } catch (err) {
+      if (err instanceof AMQPConnectionError) {
+        this.logger.error('Connection to the queue was lost. Try restarting your instance before retrying.');
+      }
+
       if (err instanceof AMQPError) {
         if (err.code === 'RPC_TIMEOUT') {
           this.logger.error('The queue timed out while processing the request. Try restarting your instance before retrying.');

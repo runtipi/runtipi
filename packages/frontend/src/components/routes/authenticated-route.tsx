@@ -7,6 +7,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { Navigate, Outlet } from 'react-router';
 import { ErrorPage } from '../error/error-page';
 import { DashboardLayout, DashboardLayoutSuspense } from '../layouts/dashboard/layout';
+import { SSEProvider } from '../providers/sse/sse-provider';
 import { RouteWrapper } from './route-wrapper';
 
 export const AuthenticatedRoute = () => {
@@ -34,11 +35,13 @@ export const AuthenticatedRoute = () => {
           >
             <Suspense fallback={null}>
               <AppContextProvider>
-                <Suspense fallback={<DashboardLayout />}>
-                  <DashboardLayout>
-                    <Outlet />
-                  </DashboardLayout>
-                </Suspense>
+                <SSEProvider>
+                  <Suspense fallback={<DashboardLayout />}>
+                    <DashboardLayout>
+                      <Outlet />
+                    </DashboardLayout>
+                  </Suspense>
+                </SSEProvider>
               </AppContextProvider>
             </Suspense>
           </ErrorBoundary>

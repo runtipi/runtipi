@@ -1,15 +1,14 @@
 {
   "name": "runtipi",
-  "version": "3.8.1",
+  "version": "3.8.4",
   "description": "",
-  "packageManager": "pnpm@9.12.2",
+  "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo build",
     "bundle": "turbo bundle",
     "test": "turbo test",
-    "test:integration": "turbo run test:integration",
-    "start": "node ./index.js",
+    "start": "node ./main.js",
     "start:dev": "docker compose --project-name runtipi -f docker-compose.dev.yml up --build",
     "start:prod": "docker compose --project-name runtipi -f docker-compose.prod.yml up --build",
     "test:e2e": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test",

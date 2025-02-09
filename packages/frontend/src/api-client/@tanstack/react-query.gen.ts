@@ -6,6 +6,7 @@ import {
   appContext,
   updateUserSettings,
   acknowledgeWelcome,
+  getError,
   systemLoad,
   downloadLocalCertificate,
   getTranslation,
@@ -53,6 +54,7 @@ import {
   deleteLink,
   editLink,
   check,
+  client,
 } from '../sdk.gen';
 import { queryOptions, type UseMutationOptions, type DefaultError, infiniteQueryOptions, type InfiniteData } from '@tanstack/react-query';
 import type {
