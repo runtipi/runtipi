@@ -84,7 +84,7 @@ export class AppLifecycleService {
     }
 
     const parsedForm = appFormSchema.parse(form);
-    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard } = parsedForm;
+    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth } = parsedForm;
     const apps = await this.appRepository.getApps();
 
     if (demoMode && apps.length >= 6) {

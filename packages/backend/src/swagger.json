@@ -2659,6 +2659,9 @@
               "config": {
                 "type": "object",
                 "additionalProperties": {}
+              },
+              "enableAuth": {
+                "type": "boolean"
               }
             },
             "required": [

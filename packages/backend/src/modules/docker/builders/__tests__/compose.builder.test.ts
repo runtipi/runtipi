@@ -206,7 +206,7 @@ describe('DockerComposeBuilder', () => {
       ],
     };
 
-    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true });
+    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true }, 'test');
 
     expect(yaml).toMatchSnapshot();
   });

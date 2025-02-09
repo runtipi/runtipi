@@ -6,7 +6,6 @@ import {
   appContext,
   updateUserSettings,
   acknowledgeWelcome,
-  getError,
   systemLoad,
   downloadLocalCertificate,
   getTranslation,
@@ -22,6 +21,7 @@ import {
   cancelResetPassword,
   checkResetPasswordRequest,
   resetPassword,
+  traefik,
   getInstalledApps,
   getGuestApps,
   getApp,
@@ -54,7 +54,6 @@ import {
   deleteLink,
   editLink,
   check,
-  client,
 } from '../sdk.gen';
 import { queryOptions, type UseMutationOptions, type DefaultError, infiniteQueryOptions, type InfiniteData } from '@tanstack/react-query';
 import type {
@@ -82,6 +81,7 @@ import type {
   CheckResetPasswordRequestData,
   ResetPasswordData,
   ResetPasswordResponse,
+  TraefikData,
   GetInstalledAppsData,
   GetGuestAppsData,
   GetAppData,
@@ -518,6 +518,23 @@ export const resetPasswordMutation = (options?: Partial<Options<ResetPasswordDat
     },
   };
   return mutationOptions;
+};
+
+export const traefikQueryKey = (options?: Options<TraefikData>) => [createQueryKey('traefik', options)];
+
+export const traefikOptions = (options?: Options<TraefikData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await traefik({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: traefikQueryKey(options),
+  });
 };
 
 export const getInstalledAppsQueryKey = (options?: Options<GetInstalledAppsData>) => [createQueryKey('getInstalledApps', options)];
