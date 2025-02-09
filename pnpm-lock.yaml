@@ -201,9 +201,6 @@ importers:
       '@sentry/core':
         specifier: ^8.54.0
         version: 8.54.0
-      '@sentry/types':
-        specifier: ^8.51.0
-        version: 8.54.0
       '@swc/cli':
         specifier: 0.6.0
         version: 0.6.0(@swc/core@1.10.9(@swc/helpers@0.5.5))(chokidar@4.0.3)
@@ -2744,10 +2741,6 @@ packages:
     engines: {node: '>=14.18'}
     peerDependencies:
       react: ^16.14.0 || 17.x || 18.x || 19.x
-
-  '@sentry/types@8.54.0':
-    resolution: {integrity: sha512-wztdtr7dOXQKi0iRvKc8XJhJ7HaAfOv8lGu0yqFOFwBZucO/SHnu87GOPi8mvrTiy1bentQO5l+zXWAaMvG4uw==}
-    engines: {node: '>=14.18'}
 
   '@sentry/vite-plugin@3.1.2':
     resolution: {integrity: sha512-a927sabQKviA4PAs9cM3rFONHiVdfEHHkypmub+hFwJNL0sbeg/8uht0WyqDT5WjVT5pbyvLaKLDjGdwrRBY6Q==}
@@ -9356,10 +9349,6 @@ snapshots:
       '@sentry/core': 8.54.0
       hoist-non-react-statics: 3.3.2
       react: 19.0.0
-
-  '@sentry/types@8.54.0':
-    dependencies:
-      '@sentry/core': 8.54.0
 
   '@sentry/vite-plugin@3.1.2(encoding@0.1.13)':
     dependencies:
