@@ -27,8 +27,11 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   private setSessionCookie(res: Response, sessionId: string, host?: string) {
-    const domain = host?.split('.');
-    domain?.shift();
+    const domain = host?.split('.') ?? [];
+
+    if (domain.length > 2) {
+      domain.shift();
+    }
 
     res.cookie(SESSION_COOKIE_NAME, sessionId, {
       httpOnly: true,

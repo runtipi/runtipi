@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate, useParams } from 'react-router';
+import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { LoginForm } from '../components/login-form';
 import { TotpForm } from '../components/totp-form/totp-form';
 
@@ -16,7 +16,10 @@ export const LoginPage = () => {
   const { isLoggedIn, isConfigured, refreshUserContext, setUserContext } = useUserContext();
   const [totpSessionId, setTotpSessionId] = useState<string | null>(null);
 
-  const { redirect_url, app } = useParams<{ redirect_url: string; app: string }>();
+  const [searchParams] = useSearchParams();
+  const redirect_url = searchParams.get('redirect_url');
+  const app = searchParams.get('app');
+
   const loginType = capitalize(app ?? '') || 'your account';
 
   const { t } = useTranslation();
@@ -32,7 +35,8 @@ export const LoginPage = () => {
         refreshUserContext();
 
         if (redirect_url && isSafeRedirect(redirect_url)) {
-          return navigate(redirect_url);
+          window.location.href = redirect_url;
+          return;
         }
         navigate('/dashboard');
       }
@@ -52,7 +56,8 @@ export const LoginPage = () => {
       refreshUserContext();
 
       if (redirect_url && isSafeRedirect(redirect_url)) {
-        return navigate(redirect_url);
+        window.location.href = redirect_url;
+        return;
       }
       navigate('/dashboard');
     },
@@ -60,7 +65,8 @@ export const LoginPage = () => {
 
   if (isLoggedIn) {
     if (redirect_url && isSafeRedirect(redirect_url)) {
-      navigate(redirect_url);
+      window.location.href = redirect_url;
+      return;
     }
     return <Navigate to="/dashboard" />;
   }
