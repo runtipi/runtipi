@@ -5,7 +5,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { redirect } from 'react-router';
 import { Navigate, useNavigate, useParams } from 'react-router';
 import { LoginForm } from '../components/login-form';
 import { TotpForm } from '../components/totp-form/totp-form';
@@ -33,7 +32,7 @@ export const LoginPage = () => {
         refreshUserContext();
 
         if (redirect_url && isSafeRedirect(redirect_url)) {
-          return redirect(redirect_url);
+          return navigate(redirect_url);
         }
         navigate('/dashboard');
       }
@@ -53,7 +52,7 @@ export const LoginPage = () => {
       refreshUserContext();
 
       if (redirect_url && isSafeRedirect(redirect_url)) {
-        return redirect(redirect_url);
+        return navigate(redirect_url);
       }
       navigate('/dashboard');
     },
@@ -61,7 +60,7 @@ export const LoginPage = () => {
 
   if (isLoggedIn) {
     if (redirect_url && isSafeRedirect(redirect_url)) {
-      redirect(redirect_url);
+      navigate(redirect_url);
     }
     return <Navigate to="/dashboard" />;
   }
