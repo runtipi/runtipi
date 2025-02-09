@@ -198,6 +198,9 @@ importers:
       '@nestjs/testing':
         specifier: ^11.0.5
         version: 11.0.8(@nestjs/common@11.0.5(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.5)(@nestjs/platform-express@11.0.5)
+      '@sentry/core':
+        specifier: ^8.54.0
+        version: 8.54.0
       '@sentry/types':
         specifier: ^8.51.0
         version: 8.54.0

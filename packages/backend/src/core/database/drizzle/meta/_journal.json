@@ -127,6 +127,13 @@
       "when": 1739115248605,
       "tag": "0017_stale_maverick",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1739116677048,
+      "tag": "0018_low_sentinels",
+      "breakpoints": true
     }
   ]
 }
