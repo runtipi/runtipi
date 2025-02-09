@@ -31,6 +31,8 @@ import type {
   CheckResetPasswordRequestResponse,
   ResetPasswordData,
   ResetPasswordResponse,
+  TraefikData,
+  TraefikResponse,
   GetInstalledAppsData,
   GetInstalledAppsResponse,
   GetGuestAppsData,
@@ -263,6 +265,13 @@ export const resetPassword = <ThrowOnError extends boolean = false>(options: Opt
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+};
+
+export const traefik = <ThrowOnError extends boolean = false>(options?: Options<TraefikData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).get<TraefikResponse, unknown, ThrowOnError>({
+    url: '/api/auth/traefik',
+    ...options,
   });
 };
 

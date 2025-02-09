@@ -26,36 +26,55 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  private setSessionCookie(res: Response, sessionId: string, host?: string) {
+    const domain = host?.split('.') ?? [];
+
+    if (domain.length > 2) {
+      domain.shift();
+    }
+
+    res.cookie(SESSION_COOKIE_NAME, sessionId, {
+      httpOnly: true,
+      secure: false,
+      sameSite: false,
+      maxAge: SESSION_COOKIE_MAX_AGE,
+      domain: domain ? `.${domain.join('.')}` : undefined,
+    });
+  }
+
   @Post('/login')
   @ZodSerializerDto(LoginDto)
-  async login(@Body() body: LoginBody, @Res({ passthrough: true }) res: Response): Promise<LoginDto> {
+  async login(@Body() body: LoginBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
     const { sessionId, totpSessionId } = await this.authService.login(body);
 
     if (totpSessionId) {
       return { success: true, totpSessionId };
     }
 
-    res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
+    const host = req.headers['x-forwarded-host'] as string | undefined;
+    this.setSessionCookie(res, sessionId, host);
 
     return { success: true };
   }
 
   @Post('/verify-totp')
   @ZodSerializerDto(LoginDto)
-  async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response): Promise<LoginDto> {
+  async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
     const { sessionId } = await this.authService.verifyTotp(body);
 
-    res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
+    const host = req.headers['x-forwarded-host'] as string | undefined;
+    this.setSessionCookie(res, sessionId, host);
 
     return { success: true };
   }
 
   @Post('/register')
   @ZodSerializerDto(RegisterDto)
-  async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response): Promise<RegisterDto> {
+  async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<RegisterDto> {
     const { sessionId } = await this.authService.register(body);
 
-    res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
+    const host = req.headers['x-forwarded-host'] as string | undefined;
+    this.setSessionCookie(res, sessionId, host);
 
     return { success: true };
   }
@@ -159,5 +178,28 @@ export class AuthController {
     const isPending = await this.authService.checkPasswordChangeRequest();
 
     return { isRequestPending: isPending };
+  }
+
+  @Get('/traefik')
+  async traefik(@Req() req: Request, @Res() res: Response) {
+    if (req.user) {
+      return res.status(200).send();
+    }
+
+    const uri = req.headers['x-forwarded-uri'] as string;
+    const proto = req.headers['x-forwarded-proto'] as string;
+    const host = req.headers['x-forwarded-host'] as string;
+
+    const subdomains = host.split('.');
+    const app = subdomains[0] ?? '';
+    const rootDomain = subdomains.slice(1).join('.');
+
+    const redirectUrl = new URL(uri, `${proto}://${host}`);
+
+    const loginUrl = new URL('/login', `${proto}://${rootDomain}`);
+    loginUrl.searchParams.set('redirect_url', redirectUrl.toString());
+    loginUrl.searchParams.set('app', app);
+
+    return res.status(302).redirect(loginUrl.toString());
   }
 }

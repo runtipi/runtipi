@@ -460,6 +460,27 @@
         ]
       }
     },
+    "/api/auth/traefik": {
+      "get": {
+        "operationId": "traefik",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/api/apps/installed": {
       "get": {
         "operationId": "getInstalledApps",
@@ -2129,6 +2150,9 @@
                     "config": {
                       "type": "object",
                       "additionalProperties": {}
+                    },
+                    "enableAuth": {
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -2310,6 +2334,9 @@
                     "config": {
                       "type": "object",
                       "additionalProperties": {}
+                    },
+                    "enableAuth": {
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -2632,6 +2659,9 @@
               "config": {
                 "type": "object",
                 "additionalProperties": {}
+              },
+              "enableAuth": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -3101,6 +3131,9 @@
             "type": "string"
           },
           "isVisibleOnGuestDashboard": {
+            "type": "boolean"
+          },
+          "enableAuth": {
             "type": "boolean"
           }
         }

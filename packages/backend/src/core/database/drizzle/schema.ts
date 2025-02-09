@@ -56,6 +56,7 @@ export const app = pgTable('app', {
     .notNull()
     .references(() => appStore.slug),
   appName: varchar('app_name').notNull(),
+  enableAuth: boolean('enable_auth').default(false).notNull(),
 });
 
 export const appRelations = relations(app, ({ one }) => ({

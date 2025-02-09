@@ -1,12 +1,12 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import type { AppUrn } from '@/types/app/app.types';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
 import { AppFilesManager } from '../apps/app-files-manager';
 
 @Injectable()
@@ -84,33 +84,55 @@ export class DockerService {
     args.push(...command.split(' '));
 
     this.logger.info(`Running docker compose with args ${args.join(' ')}`);
-    const { stdout, stderr } = await execAsync(`docker-compose ${args.join(' ')}`);
 
-    if (stderr?.includes('Command failed:')) {
+    const cmd = spawn('docker-compose', args);
+    const stdout: string[] = [];
+    const stderr: string[] = [];
+
+    const exitCode = await new Promise((resolve) => {
+      cmd.stdout.on('data', (data) => {
+        this.logger.info(`docker-compose: ${String(data).trim()}`);
+        stdout.push(String(data).trim());
+      });
+      cmd.stderr.on('data', (data) => {
+        this.logger.info(`docker-compose: ${String(data).trim()}`);
+        stderr.push(String(data).trim());
+      });
+      cmd.on('close', resolve);
+    });
+
+    if (exitCode !== 0) {
+      this.logger.info(`Docker-compose exited with code ${exitCode}`);
       if (isCustomConfig) {
-        throw new Error(`Error with your custom app: ${stderr}`);
+        this.logger.warn('User-config detected, please make sure your configuration is correct before opening an issue');
       }
-
-      throw new Error(stderr);
+      const error = stderr.pop();
+      throw new Error(error);
     }
 
-    return { stdout, stderr };
+    return { success: true, stdout: stdout.join(''), stderr: stderr.join('') };
   };
 
   public getLogsStream = async (maxLines: number, appUrn?: AppUrn) => {
-    const { args } = appUrn ? await this.getBaseComposeArgsApp(appUrn) : await this.getBaseComposeArgsRuntipi();
+    try {
+      const { args } = appUrn ? await this.getBaseComposeArgsApp(appUrn) : await this.getBaseComposeArgsRuntipi();
 
-    args.push('logs', '--follow', '-n', maxLines.toString());
+      args.push('logs', '--follow', '-n', maxLines.toString());
 
-    const logs = spawn('docker-compose', args, { stdio: 'pipe' });
+      const logs = spawn('docker-compose', args, { stdio: 'pipe' });
 
-    logs.on('error', () => {
-      logs.kill('SIGINT');
-    });
+      logs.on('error', () => {
+        logs.kill('SIGINT');
+      });
 
-    return {
-      on: logs.stdout.on.bind(logs.stdout),
-      kill: () => logs.kill('SIGINT'),
-    };
+      return {
+        on: logs.stdout.on.bind(logs.stdout),
+        kill: () => logs.kill('SIGINT'),
+      };
+    } catch (error) {
+      this.logger.error(`Error getting log stream: ${error}`);
+      Sentry.captureException(error, { tags: { source: 'docker log stream', appUrn } });
+      throw new InternalServerErrorException('Error getting log stream');
+    }
   };
 }

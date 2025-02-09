@@ -4,7 +4,7 @@ services:
     depends_on:
       runtipi:
         condition: service_healthy
-    image: traefik:v3.1.4
+    image: traefik:v3.2
     restart: unless-stopped
     ports:
       - 80:80
@@ -118,6 +118,8 @@ services:
       traefik.http.routers.dashboard-local.entrypoints: websecure
       traefik.http.routers.dashboard-local.tls: true
       traefik.http.routers.dashboard-local.service: dashboard
+      # Middlewares
+      traefik.http.middlewares.runtipi.forwardauth.address: http://runtipi:3000/api/auth/traefik
 
 networks:
   tipi_main_network:

@@ -3,7 +3,6 @@ import path from 'node:path';
 import { type PartialUserSettingsDto, settingsSchema } from '@/app.dto';
 import { APP_DATA_DIR, APP_DIR, ARCHITECTURES, DATA_DIR } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
-import { cleanseErrorData } from '@/common/helpers/error-helpers';
 import { EnvUtils } from '@/modules/env/env.utils';
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
@@ -131,9 +130,7 @@ export class ConfigurationService {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
 
-    if (settings.allowErrorMonitoring) {
-      this.initSentry({ release: this.config.version, allowSentry: settings.allowErrorMonitoring });
-    }
+    this.initSentry({ release: this.config.version, allowSentry: Boolean(settings.allowErrorMonitoring) });
 
     const settingsPath = path.join(DATA_DIR, 'state', 'settings.json');
 
@@ -151,20 +148,18 @@ export class ConfigurationService {
   }
 
   public async initSentry(params: { release: string; allowSentry: boolean }) {
-    const { release, allowSentry } = params;
+    const { allowSentry } = params;
+
+    const client = Sentry.getClient();
+
+    if (!client) {
+      return;
+    }
 
     if (allowSentry) {
-      Sentry.init({
-        release,
-        dsn: 'https://6cc88df40d1cdd0222ff30d996ca457c@o4504242900238336.ingest.us.sentry.io/4508264534835200',
-        environment: process.env.NODE_ENV,
-        beforeSend: cleanseErrorData,
-        includeLocalVariables: true,
-        integrations: [],
-        initialScope: {
-          tags: { version: release },
-        },
-      });
+      client.getOptions().enabled = true;
+    } else {
+      await client.close();
     }
   }
 }

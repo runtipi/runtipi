@@ -55,7 +55,7 @@ if (process.env.NODE_ENV === 'production') {
   imports.push(
     ServeStaticModule.forRoot({
       rootPath: path.join(APP_DIR, 'assets', 'frontend'),
-      exclude: ['/api*'],
+      exclude: ['/api*path'],
     }),
   );
 }
@@ -79,6 +79,6 @@ if (process.env.NODE_ENV === 'production') {
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes('*');
+    consumer.apply(AuthMiddleware).forRoutes('*all');
   }
 }

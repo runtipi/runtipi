@@ -10,6 +10,7 @@ export const LogsContainer = () => {
 
   useSSE({
     topic: 'runtipi-logs',
+    params: new URLSearchParams({ maxLines: maxLines.current.toString() }),
     onEvent: (data) => {
       setLogs((prevLogs) => {
         if (!data.lines) {

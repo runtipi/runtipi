@@ -1,4 +1,4 @@
-import type { ErrorEvent, EventHint } from '@sentry/types';
+import type { ErrorEvent, EventHint } from '@sentry/core';
 import cloneDeep from 'lodash.clonedeep';
 import validator from 'validator';
 

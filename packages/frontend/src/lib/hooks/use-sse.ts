@@ -13,6 +13,8 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
   const { topic, onEvent, onError, onOpen } = props;
   const eventSourceRef = useRef<EventSource | null>(null);
 
+  const retries = useRef(0);
+
   const initializeSSE = () => {
     const url = new URL(`${window.location.origin}/api/sse/${topic}`);
 
@@ -31,6 +33,7 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
     };
 
     eventSource.onopen = () => {
+      retries.current = 0;
       console.info('SSE connection opened');
       if (onOpen) onOpen();
     };
@@ -44,6 +47,20 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
 
       eventSource.close();
       eventSourceRef.current = null;
+
+      // Exponential backoff retry
+      if (retries.current < 5) {
+        retries.current++;
+        setTimeout(
+          () => {
+            console.info('Retrying SSE connection after error');
+            initializeSSE();
+          },
+          2 ** retries.current * 1000,
+        );
+      } else {
+        console.error('Max retries reached, refresh the page to reconnect');
+      }
     };
 
     eventSourceRef.current = eventSource;
