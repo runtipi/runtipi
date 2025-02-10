@@ -31,7 +31,7 @@
     "@nestjs/platform-express": "^11.0.5",
     "@nestjs/serve-static": "^5.0.1",
     "@nestjs/swagger": "^11.0.3",
-    "@nestjs/terminus": "^10.3.0",
+    "@nestjs/terminus": "^11.0.0",
     "@otplib/core": "^12.0.1",
     "@otplib/plugin-crypto": "^12.0.1",
     "@otplib/plugin-thirty-two": "^12.0.1",
