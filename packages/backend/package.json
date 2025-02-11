@@ -76,7 +76,7 @@
     "@nestjs/cli": "^11.0.2",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.5",
-    "@sentry/core": "^8.54.0",
+    "@sentry/core": "^9.0.1",
     "@swc/cli": "0.6.0",
     "@swc/core": "^1.10.9",
     "@total-typescript/shoehorn": "^0.1.2",
