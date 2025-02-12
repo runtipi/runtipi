@@ -26,6 +26,10 @@ export type UserContextDto = {
    * Indicates if the app allows anonymous error monitoring
    */
   allowErrorMonitoring: boolean;
+  /**
+   * Status of the app
+   */
+  status: string;
 };
 
 export type AppContextDto = {
@@ -121,6 +125,10 @@ export type LoadDto = {
   cpuLoad?: number | null;
   memoryTotal?: number | null;
   percentUsedMemory?: number | null;
+};
+
+export type UpdateDto = {
+  success: boolean;
 };
 
 export type LoginBody = {
@@ -593,17 +601,6 @@ export type AcknowledgeWelcomeResponses = {
   200: unknown;
 };
 
-export type GetErrorData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/api/debug-sentry';
-};
-
-export type GetErrorResponses = {
-  200: unknown;
-};
-
 export type SystemLoadData = {
   body?: never;
   path?: never;
@@ -627,6 +624,19 @@ export type DownloadLocalCertificateData = {
 export type DownloadLocalCertificateResponses = {
   200: unknown;
 };
+
+export type UpdateSystemData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/system/update';
+};
+
+export type UpdateSystemResponses = {
+  201: UpdateDto;
+};
+
+export type UpdateSystemResponse = UpdateSystemResponses[keyof UpdateSystemResponses];
 
 export type GetTranslationData = {
   body?: never;

@@ -13,6 +13,8 @@ import { AppService } from './app.service';
 import { APP_DIR } from './common/constants';
 import { generateSystemEnvFile } from './common/helpers/env-helpers';
 import metadata from './metadata';
+import { CacheService } from './core/cache/cache.service';
+import { CacheModule } from './core/cache/cache.module';
 
 async function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder().setTitle('Runtipi API').setDescription('API specs for Runtipi').setVersion('1.0').build();
@@ -39,6 +41,11 @@ async function bootstrap() {
     logger: ['error', 'warn', 'fatal'],
   });
 
+  const cache = await NestFactory.create(CacheModule, {
+    abortOnError: true,
+    logger: ['error', 'warn', 'fatal'],
+  });
+
   const appService = app.get(AppService);
   await appService.bootstrap();
 
@@ -48,6 +55,9 @@ async function bootstrap() {
   app.use(cookieParser());
 
   await setupSwagger(app);
+
+  const cacheService = cache.get(CacheService);
+  await cacheService.set('status', 'running');
 
   await app.listen(3000);
 }

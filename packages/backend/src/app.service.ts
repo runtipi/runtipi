@@ -206,4 +206,15 @@ export class AppService {
       this.logger.error(error);
     }
   };
+
+  public getStatus = async () => {
+    const status = await this.cache.get('status');
+
+    if (!status) {
+      this.logger.warn('Status not found in cache, assuming running');
+      return 'running';
+    }
+
+    return status;
+  };
 }

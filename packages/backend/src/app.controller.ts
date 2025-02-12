@@ -24,6 +24,7 @@ export class AppController {
     const { guestDashboard, allowAutoThemes, allowErrorMonitoring } = this.configuration.get('userSettings');
     const version = await this.appService.getVersion();
     const operator = await this.userRepository.getFirstOperator();
+    const status = await this.appService.getStatus();
 
     return {
       isLoggedIn: Boolean(req.user),
@@ -32,6 +33,7 @@ export class AppController {
       allowAutoThemes,
       allowErrorMonitoring,
       version,
+      status,
     };
   }
 

@@ -8,6 +8,7 @@ import { I18nProvider } from './i18n/i18n-provider';
 import { SentryProvider } from './sentry/sentry-provider';
 import { AutoThemeProvider } from './theme/auto-theme-provider';
 import { ThemeProvider } from './theme/theme-provider';
+import { StatusProvider } from './status/status-provider';
 
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
@@ -46,7 +47,9 @@ export const Providers = ({ children }: PropsWithChildren) => {
                 <SentryProvider>
                   <ThemeProvider>
                     <AutoThemeProvider>
-                      <I18nProvider>{children}</I18nProvider>
+                      <I18nProvider>
+                        <StatusProvider>{children}</StatusProvider>
+                      </I18nProvider>
                     </AutoThemeProvider>
                   </ThemeProvider>
                 </SentryProvider>

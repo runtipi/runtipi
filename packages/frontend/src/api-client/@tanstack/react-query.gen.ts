@@ -7,9 +7,10 @@ import type {
   AppContextData,
   UpdateUserSettingsData,
   AcknowledgeWelcomeData,
-  GetErrorData,
   SystemLoadData,
   DownloadLocalCertificateData,
+  UpdateSystemData,
+  UpdateSystemResponse,
   GetTranslationData,
   LoginData,
   LoginResponse,
@@ -65,9 +66,9 @@ import {
   appContext,
   updateUserSettings,
   acknowledgeWelcome,
-  getError,
   systemLoad,
   downloadLocalCertificate,
+  updateSystem,
   getTranslation,
   login,
   verifyTotp,
@@ -201,23 +202,6 @@ export const acknowledgeWelcomeMutation = (options?: Partial<Options<Acknowledge
   return mutationOptions;
 };
 
-export const getErrorQueryKey = (options?: Options<GetErrorData>) => [createQueryKey('getError', options)];
-
-export const getErrorOptions = (options?: Options<GetErrorData>) => {
-  return queryOptions({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getError({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: getErrorQueryKey(options),
-  });
-};
-
 export const systemLoadQueryKey = (options?: Options<SystemLoadData>) => [createQueryKey('systemLoad', options)];
 
 export const systemLoadOptions = (options?: Options<SystemLoadData>) => {
@@ -252,6 +236,37 @@ export const downloadLocalCertificateOptions = (options?: Options<DownloadLocalC
     },
     queryKey: downloadLocalCertificateQueryKey(options),
   });
+};
+
+export const updateSystemQueryKey = (options?: Options<UpdateSystemData>) => [createQueryKey('updateSystem', options)];
+
+export const updateSystemOptions = (options?: Options<UpdateSystemData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await updateSystem({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: updateSystemQueryKey(options),
+  });
+};
+
+export const updateSystemMutation = (options?: Partial<Options<UpdateSystemData>>) => {
+  const mutationOptions: UseMutationOptions<UpdateSystemResponse, DefaultError, Options<UpdateSystemData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await updateSystem({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
 };
 
 export const getTranslationQueryKey = (options: Options<GetTranslationData>) => [createQueryKey('getTranslation', options)];

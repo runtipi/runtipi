@@ -1,3 +1,4 @@
+import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
@@ -10,6 +11,7 @@ export class SystemService {
     private readonly logger: LoggerService,
     private readonly config: ConfigurationService,
     private readonly filesystem: FilesystemService,
+    private readonly cache: CacheService,
   ) {}
 
   public async getSystemLoad() {
@@ -57,5 +59,9 @@ export class SystemService {
       const file = await this.filesystem.readTextFile(filePath);
       return file;
     }
+  }
+
+  public async updateSystem() {
+    await this.cache.set('status', 'updating');
   }
 }

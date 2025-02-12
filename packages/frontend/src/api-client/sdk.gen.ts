@@ -8,10 +8,11 @@ import type {
   AppContextResponse,
   UpdateUserSettingsData,
   AcknowledgeWelcomeData,
-  GetErrorData,
   SystemLoadData,
   SystemLoadResponse,
   DownloadLocalCertificateData,
+  UpdateSystemData,
+  UpdateSystemResponse,
   GetTranslationData,
   GetTranslationResponse,
   LoginData,
@@ -113,13 +114,6 @@ export const acknowledgeWelcome = <ThrowOnError extends boolean = false>(options
   });
 };
 
-export const getError = <ThrowOnError extends boolean = false>(options?: Options<GetErrorData, ThrowOnError>) => {
-  return (options?.client ?? client).get<unknown, unknown, ThrowOnError>({
-    url: '/api/debug-sentry',
-    ...options,
-  });
-};
-
 export const systemLoad = <ThrowOnError extends boolean = false>(options?: Options<SystemLoadData, ThrowOnError>) => {
   return (options?.client ?? client).get<SystemLoadResponse, unknown, ThrowOnError>({
     url: '/api/system/load',
@@ -130,6 +124,13 @@ export const systemLoad = <ThrowOnError extends boolean = false>(options?: Optio
 export const downloadLocalCertificate = <ThrowOnError extends boolean = false>(options?: Options<DownloadLocalCertificateData, ThrowOnError>) => {
   return (options?.client ?? client).get<unknown, unknown, ThrowOnError>({
     url: '/api/system/certificate',
+    ...options,
+  });
+};
+
+export const updateSystem = <ThrowOnError extends boolean = false>(options?: Options<UpdateSystemData, ThrowOnError>) => {
+  return (options?.client ?? client).post<UpdateSystemResponse, unknown, ThrowOnError>({
+    url: '/api/system/update',
     ...options,
   });
 };

@@ -1,8 +1,8 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
-import { LoadDto } from './dto/system.dto';
+import { LoadDto, UpdateDto } from './dto/system.dto';
 import { SystemService } from './system.service';
 
 @UseGuards(AuthGuard)
@@ -27,5 +27,13 @@ export class SystemController {
     });
 
     return res.send(cert);
+  }
+
+  @Post('/update')
+  @ZodSerializerDto(UpdateDto)
+  async updateSystem(): Promise<UpdateDto> {
+    await this.systemService.updateSystem();
+
+    return { success: true };
   }
 }

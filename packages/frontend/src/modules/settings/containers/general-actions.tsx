@@ -5,6 +5,7 @@ import { IconStar } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import semver from 'semver';
 import { UpdateRepoModal } from '../components/update-repo-modal/update-repo-modal';
+import { UpdateModal } from '../components/update-modal/update-modal';
 
 export const GeneralActionsContainer = () => {
   const { t } = useTranslation();
@@ -31,6 +32,7 @@ export const GeneralActionsContainer = () => {
             </div>
           </div>
         )}
+        <UpdateModal version={version.current} latest={version.latest} />
       </div>
     );
   };

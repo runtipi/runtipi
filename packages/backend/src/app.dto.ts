@@ -45,6 +45,7 @@ export class UserContextDto extends createZodDto(
     isGuestDashboardEnabled: z.boolean().describe('Indicates if the guest dashboard is enabled'),
     allowAutoThemes: z.boolean().describe('Indicates if the app allows auto themes'),
     allowErrorMonitoring: z.boolean().describe('Indicates if the app allows anonymous error monitoring'),
+    status: z.string().describe('Status of the app'),
   }),
 ) {}
 

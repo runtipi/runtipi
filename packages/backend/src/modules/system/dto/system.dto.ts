@@ -12,3 +12,10 @@ export class LoadDto extends createZodDto(
     percentUsedMemory: z.number().nullish().default(0),
   }),
 ) {}
+
+// Update
+export class UpdateDto extends createZodDto(
+  z.object({
+    success: z.boolean(),
+  }),
+) {}

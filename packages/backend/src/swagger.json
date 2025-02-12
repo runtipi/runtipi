@@ -126,6 +126,27 @@
         ]
       }
     },
+    "/api/system/update": {
+      "post": {
+        "operationId": "updateSystem",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
     "/api/i18n/locales/{ns}/{lng}.json": {
       "get": {
         "operationId": "getTranslation",
@@ -1447,6 +1468,10 @@
           "allowErrorMonitoring": {
             "description": "Indicates if the app allows anonymous error monitoring",
             "type": "boolean"
+          },
+          "status": {
+            "description": "Status of the app",
+            "type": "string"
           }
         },
         "required": [
@@ -1455,7 +1480,8 @@
           "isConfigured",
           "isGuestDashboardEnabled",
           "allowAutoThemes",
-          "allowErrorMonitoring"
+          "allowErrorMonitoring",
+          "status"
         ]
       },
       "AppContextDto": {
@@ -1771,6 +1797,17 @@
             "default": 0
           }
         }
+      },
+      "UpdateDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
       },
       "LoginBody": {
         "type": "object",
