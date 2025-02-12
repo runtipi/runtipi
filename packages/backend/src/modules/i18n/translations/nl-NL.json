@@ -137,7 +137,7 @@
   "APP_STORE_EDIT_DIALOG_SUBMIT": "Save",
   "APP_STORE_EDIT_DIALOG_SUCCESS": "Appstore edited successfully",
   "APP_STORE_EDIT_DIALOG_ENABLED": "Enabled",
-  "APP_STORE_DELETE_DIALOG_TITLE": "Delete appstore",
+  "APP_STORE_DELETE_DIALOG_TITLE": "App store verwijderen",
   "APP_STORE_DELETE_DIALOG_WARNING": "Are you sure you want to delete appstore {{name}}?",
   "APP_STORE_DELETE_DIALOG_SUBMIT": "Delete",
   "APP_STORE_DELETE_SUCCESS": "Appstore deleted successfully",
