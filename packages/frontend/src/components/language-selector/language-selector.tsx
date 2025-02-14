@@ -33,7 +33,7 @@ export const LanguageSelector = (props: IProps) => {
   const onChange = (newLocale: Locale) => {
     const locale = getLocaleFromString(newLocale);
     setLocale(newLocale);
-    Cookies.set('tipi-locale', locale);
+    Cookies.set('tipi-locale', locale, { expires: 365 });
     i18next.changeLanguage(locale);
   };
 
