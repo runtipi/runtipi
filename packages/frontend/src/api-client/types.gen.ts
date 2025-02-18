@@ -63,6 +63,7 @@ export type AppContextDto = {
   };
   apps: Array<{
     id: string;
+    urn: string;
     name: string;
     short_desc: string;
     categories?: Array<
@@ -190,7 +191,8 @@ export type CheckResetPasswordRequestDto = {
 export type MyAppsDto = {
   installed: Array<{
     app: {
-      id: string;
+      id: number;
+      port: number | null;
       status:
         | 'running'
         | 'stopped'
@@ -204,8 +206,6 @@ export type MyAppsDto = {
         | 'restarting'
         | 'backing_up'
         | 'restoring';
-      lastOpened: string | null;
-      numOpened?: number;
       createdAt?: string;
       updatedAt?: string;
       version: number;
@@ -219,6 +219,7 @@ export type MyAppsDto = {
     };
     info: {
       id: string;
+      urn: string;
       name: string;
       short_desc: string;
       categories?: Array<
@@ -243,7 +244,8 @@ export type MyAppsDto = {
       supported_architectures?: Array<'arm64' | 'amd64'>;
       available: boolean;
     };
-    updateInfo: {
+    metadata: {
+      hasCustomConfig?: boolean;
       latestVersion: number;
       minTipiVersion?: string;
       latestDockerVersion?: string;
@@ -254,7 +256,8 @@ export type MyAppsDto = {
 export type GuestAppsDto = {
   installed: Array<{
     app: {
-      id: string;
+      id: number;
+      port: number | null;
       status:
         | 'running'
         | 'stopped'
@@ -268,8 +271,6 @@ export type GuestAppsDto = {
         | 'restarting'
         | 'backing_up'
         | 'restoring';
-      lastOpened: string | null;
-      numOpened?: number;
       createdAt?: string;
       updatedAt?: string;
       version: number;
@@ -283,6 +284,7 @@ export type GuestAppsDto = {
     };
     info: {
       id: string;
+      urn: string;
       available: boolean;
       deprecated?: boolean;
       port?: number;
@@ -343,48 +345,39 @@ export type GuestAppsDto = {
       created_at?: number;
       updated_at?: number;
     };
-    updateInfo: {
-      latestVersion: number;
-      minTipiVersion?: string;
-      latestDockerVersion?: string;
-    };
   }>;
 };
 
-export type SearchAppsDto = {
-  data: Array<{
-    id: string;
-    name: string;
-    short_desc: string;
-    categories?: Array<
-      | 'network'
-      | 'media'
-      | 'development'
-      | 'automation'
-      | 'social'
-      | 'utilities'
-      | 'photography'
-      | 'security'
-      | 'featured'
-      | 'books'
-      | 'data'
-      | 'music'
-      | 'finance'
-      | 'gaming'
-      | 'ai'
-    >;
-    deprecated?: boolean;
-    created_at?: number;
-    supported_architectures?: Array<'arm64' | 'amd64'>;
-    available: boolean;
-  }>;
-  nextCursor?: string;
-  total: number;
-};
-
-export type AppDetailsDto = {
+export type GetAppDto = {
+  app?: {
+    id: number;
+    port: number | null;
+    status:
+      | 'running'
+      | 'stopped'
+      | 'installing'
+      | 'uninstalling'
+      | 'stopping'
+      | 'starting'
+      | 'missing'
+      | 'updating'
+      | 'resetting'
+      | 'restarting'
+      | 'backing_up'
+      | 'restoring';
+    createdAt?: string;
+    updatedAt?: string;
+    version: number;
+    exposed: boolean;
+    openPort: boolean;
+    exposedLocal: boolean;
+    domain: string | null;
+    isVisibleOnGuestDashboard: boolean;
+    config?: {};
+  } | null;
   info: {
     id: string;
+    urn: string;
     available: boolean;
     deprecated?: boolean;
     port?: number;
@@ -445,46 +438,71 @@ export type AppDetailsDto = {
     created_at?: number;
     updated_at?: number;
   };
-  app: {
-    id: string;
-    status:
-      | 'running'
-      | 'stopped'
-      | 'installing'
-      | 'uninstalling'
-      | 'stopping'
-      | 'starting'
-      | 'missing'
-      | 'updating'
-      | 'resetting'
-      | 'restarting'
-      | 'backing_up'
-      | 'restoring';
-    lastOpened: string | null;
-    numOpened?: number;
-    createdAt?: string;
-    updatedAt?: string;
-    version: number;
-    exposed: boolean;
-    openPort: boolean;
-    exposedLocal: boolean;
-    domain: string | null;
-    isVisibleOnGuestDashboard: boolean;
-    config?: {};
-    enableAuth?: boolean;
-  };
-  updateInfo: {
+  metadata: {
+    hasCustomConfig?: boolean;
     latestVersion: number;
     minTipiVersion?: string;
     latestDockerVersion?: string;
   };
 };
 
+export type SearchAppsDto = {
+  data: Array<{
+    id: string;
+    urn: string;
+    name: string;
+    short_desc: string;
+    categories?: Array<
+      | 'network'
+      | 'media'
+      | 'development'
+      | 'automation'
+      | 'social'
+      | 'utilities'
+      | 'photography'
+      | 'security'
+      | 'featured'
+      | 'books'
+      | 'data'
+      | 'music'
+      | 'finance'
+      | 'gaming'
+      | 'ai'
+    >;
+    deprecated?: boolean;
+    created_at?: number;
+    supported_architectures?: Array<'arm64' | 'amd64'>;
+    available: boolean;
+  }>;
+  nextCursor?: string;
+  total: number;
+};
+
 export type PullDto = {
   success: boolean;
 };
 
+export type CreateAppStoreBodyDto = {
+  name: string;
+  url: string;
+};
+
+export type AllAppStoresDto = {
+  appStores: Array<{
+    slug: string;
+    name: string;
+    url: string;
+    enabled: boolean;
+  }>;
+};
+
+export type UpdateAppStoreBodyDto = {
+  name: string;
+  enabled: boolean;
+};
+
 export type AppFormBody = {
+  port?: number;
   exposed?: boolean;
   exposedLocal?: boolean;
   openPort?: boolean;
@@ -590,17 +608,6 @@ export type AcknowledgeWelcomeData = {
 };
 
 export type AcknowledgeWelcomeResponses = {
-  200: unknown;
-};
-
-export type GetErrorData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/api/debug-sentry';
-};
-
-export type GetErrorResponses = {
   200: unknown;
 };
 
@@ -831,10 +838,26 @@ export type GetGuestAppsResponses = {
 
 export type GetGuestAppsResponse = GetGuestAppsResponses[keyof GetGuestAppsResponses];
 
+export type GetAppData = {
+  body?: never;
+  path: {
+    urn: string;
+  };
+  query?: never;
+  url: '/api/apps/{urn}';
+};
+
+export type GetAppResponses = {
+  200: GetAppDto;
+};
+
+export type GetAppResponse = GetAppResponses[keyof GetAppResponses];
+
 export type SearchAppsData = {
   body?: never;
   path?: never;
   query?: {
+    storeId?: string;
     category?:
       | 'network'
       | 'media'
@@ -855,7 +878,7 @@ export type SearchAppsData = {
     pageSize?: number;
     search?: string;
   };
-  url: '/api/apps/search';
+  url: '/api/marketplace/apps/search';
 };
 
 export type SearchAppsResponses = {
@@ -864,54 +887,102 @@ export type SearchAppsResponses = {
 
 export type SearchAppsResponse = SearchAppsResponses[keyof SearchAppsResponses];
 
-export type GetAppDetailsData = {
-  body?: never;
-  path: {
-    id: string;
-  };
-  query?: never;
-  url: '/api/apps/{id}';
-};
-
-export type GetAppDetailsResponses = {
-  200: AppDetailsDto;
-};
-
-export type GetAppDetailsResponse = GetAppDetailsResponses[keyof GetAppDetailsResponses];
-
 export type GetImageData = {
   body?: never;
   path: {
-    id: string;
+    urn: string;
   };
   query?: never;
-  url: '/api/apps/{id}/image';
+  url: '/api/marketplace/apps/{urn}/image';
 };
 
 export type GetImageResponses = {
   200: unknown;
 };
 
-export type PullData = {
+export type PullAppStoreData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/repos/pull';
+  url: '/api/marketplace/pull';
 };
 
-export type PullResponses = {
+export type PullAppStoreResponses = {
   201: PullDto;
 };
 
-export type PullResponse = PullResponses[keyof PullResponses];
+export type PullAppStoreResponse = PullAppStoreResponses[keyof PullAppStoreResponses];
 
-export type InstallAppData = {
-  body: AppFormBody;
+export type CreateAppStoreData = {
+  body: CreateAppStoreBodyDto;
+  path?: never;
+  query?: never;
+  url: '/api/marketplace/create';
+};
+
+export type CreateAppStoreResponses = {
+  201: unknown;
+};
+
+export type GetAllAppStoresData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/marketplace/all';
+};
+
+export type GetAllAppStoresResponses = {
+  200: AllAppStoresDto;
+};
+
+export type GetAllAppStoresResponse = GetAllAppStoresResponses[keyof GetAllAppStoresResponses];
+
+export type GetEnabledAppStoresData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/marketplace/enabled';
+};
+
+export type GetEnabledAppStoresResponses = {
+  200: AllAppStoresDto;
+};
+
+export type GetEnabledAppStoresResponse = GetEnabledAppStoresResponses[keyof GetEnabledAppStoresResponses];
+
+export type DeleteAppStoreData = {
+  body?: never;
   path: {
     id: string;
   };
   query?: never;
-  url: '/api/app-lifecycle/{id}/install';
+  url: '/api/marketplace/{id}';
+};
+
+export type DeleteAppStoreResponses = {
+  200: unknown;
+};
+
+export type UpdateAppStoreData = {
+  body: UpdateAppStoreBodyDto;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/marketplace/{id}';
+};
+
+export type UpdateAppStoreResponses = {
+  200: unknown;
+};
+
+export type InstallAppData = {
+  body: AppFormBody;
+  path: {
+    urn: string;
+  };
+  query?: never;
+  url: '/api/app-lifecycle/{urn}/install';
 };
 
 export type InstallAppResponses = {
@@ -921,10 +992,10 @@ export type InstallAppResponses = {
 export type StartAppData = {
   body?: never;
   path: {
-    id: string;
+    urn: string;
   };
   query?: never;
-  url: '/api/app-lifecycle/{id}/start';
+  url: '/api/app-lifecycle/{urn}/start';
 };
 
 export type StartAppResponses = {
@@ -934,10 +1005,10 @@ export type StartAppResponses = {
 export type StopAppData = {
   body?: never;
   path: {
-    id: string;
+    urn: string;
   };
   query?: never;
-  url: '/api/app-lifecycle/{id}/stop';
+  url: '/api/app-lifecycle/{urn}/stop';
 };
 
 export type StopAppResponses = {
@@ -947,10 +1018,10 @@ export type StopAppResponses = {
 export type RestartAppData = {
   body?: never;
   path: {
-    id: string;
+    urn: string;
   };
   query?: never;
-  url: '/api/app-lifecycle/{id}/restart';
+  url: '/api/app-lifecycle/{urn}/restart';
 };
 
 export type RestartAppResponses = {
@@ -960,10 +1031,10 @@ export type RestartAppResponses = {
 export type UninstallAppData = {
   body: UninstallAppBody;
   path: {
-    id: string;
+    urn: string;
   };
   query?: never;
-  url: '/api/app-lifecycle/{id}/uninstall';
+  url: '/api/app-lifecycle/{urn}/uninstall';
 };
 
 export type UninstallAppResponses = {
@@ -973,10 +1044,10 @@ export type UninstallAppResponses = {
 export type ResetAppData = {
   body?: never;
   path: {
-    id: string;
+    urn: string;
   };
   query?: never;
-  url: '/api/app-lifecycle/{id}/reset';
+  url: '/api/app-lifecycle/{urn}/reset';
 };
 
 export type ResetAppResponses = {
@@ -986,13 +1057,26 @@ export type ResetAppResponses = {
 export type UpdateAppData = {
   body: UpdateAppBody;
   path: {
-    id: string;
+    urn: string;
   };
   query?: never;
-  url: '/api/app-lifecycle/{id}/update';
+  url: '/api/app-lifecycle/{urn}/update';
 };
 
 export type UpdateAppResponses = {
+  200: unknown;
+};
+
+export type UpdateAppConfigData = {
+  body: AppFormBody;
+  path: {
+    urn: string;
+  };
+  query?: never;
+  url: '/api/app-lifecycle/{urn}/update-config';
+};
+
+export type UpdateAppConfigResponses = {
   200: unknown;
 };
 
@@ -1007,26 +1091,13 @@ export type UpdateAllAppsResponses = {
   200: unknown;
 };
 
-export type UpdateAppConfigData = {
-  body: AppFormBody;
-  path: {
-    id: string;
-  };
-  query?: never;
-  url: '/api/app-lifecycle/{id}/update-config';
-};
-
-export type UpdateAppConfigResponses = {
-  200: unknown;
-};
-
 export type BackupAppData = {
   body?: never;
   path: {
-    appid: string;
+    urn: string;
   };
   query?: never;
-  url: '/api/backups/{appid}/backup';
+  url: '/api/backups/{urn}/backup';
 };
 
 export type BackupAppResponses = {
@@ -1036,26 +1107,39 @@ export type BackupAppResponses = {
 export type RestoreAppBackupData = {
   body: RestoreAppBackupDto;
   path: {
-    appid: string;
+    urn: string;
   };
   query?: never;
-  url: '/api/backups/{appid}/restore';
+  url: '/api/backups/{urn}/restore';
 };
 
 export type RestoreAppBackupResponses = {
   201: unknown;
 };
 
+export type DeleteAppBackupData = {
+  body: DeleteAppBackupBodyDto;
+  path: {
+    urn: string;
+  };
+  query?: never;
+  url: '/api/backups/{urn}';
+};
+
+export type DeleteAppBackupResponses = {
+  200: unknown;
+};
+
 export type GetAppBackupsData = {
   body?: never;
   path: {
-    id: string;
+    urn: string;
   };
   query?: {
     page?: number;
     pageSize?: number;
   };
-  url: '/api/backups/{id}';
+  url: '/api/backups/{urn}';
 };
 
 export type GetAppBackupsResponses = {
@@ -1063,19 +1147,6 @@ export type GetAppBackupsResponses = {
 };
 
 export type GetAppBackupsResponse = GetAppBackupsResponses[keyof GetAppBackupsResponses];
-
-export type DeleteAppBackupData = {
-  body: DeleteAppBackupBodyDto;
-  path: {
-    appid: string;
-  };
-  query?: never;
-  url: '/api/backups/{appid}';
-};
-
-export type DeleteAppBackupResponses = {
-  200: unknown;
-};
 
 export type AppEventsData = {
   body?: never;
@@ -1096,8 +1167,8 @@ export type AppLogsEventsData = {
   body?: never;
   path?: never;
   query: {
-    appId: string;
     maxLines?: number;
+    appUrn: string;
   };
   url: '/api/sse/app-logs';
 };
@@ -1241,3 +1312,7 @@ export type CheckResponses = {
 };
 
 export type CheckResponse = CheckResponses[keyof CheckResponses];
+
+export type ClientOptions = {
+  baseUrl: string;
+};

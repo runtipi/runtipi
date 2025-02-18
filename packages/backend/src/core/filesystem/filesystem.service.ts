@@ -143,7 +143,7 @@ export class FilesystemService {
 
   async removeDirectory(dirPath: string): Promise<boolean> {
     try {
-      await fs.promises.rm(this.getSafeFilePath(dirPath), { recursive: true, force: true });
+      await fs.promises.rm(this.getSafeFilePath(dirPath), { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
       return true;
     } catch (error) {
       this.logger.error(`Error removing directory ${this.getSafeFilePath(dirPath)}: ${error}`);

@@ -14,7 +14,7 @@ export class I18nService {
     }
 
     i18n.use(Backend).init<FsBackendOptions>({
-      initImmediate: false,
+      initAsync: false,
       fallbackLng: 'en',
       lng: 'en',
       preload: fs.readdirSync(directory).map((file) => file.replace('.json', '')),

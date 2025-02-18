@@ -1,3 +1,4 @@
+import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 export type Topic = 'app' | 'app-logs' | 'runtipi-logs';
@@ -29,7 +30,7 @@ export const sseSchema = z.union([
         z.literal('restore_success'),
         z.literal('restore_error'),
       ]),
-      appId: z.string(),
+      appUrn: z.string().refine((v) => v.split(':').length === 2),
       appStatus: z
         .enum([
           'running',
@@ -53,7 +54,7 @@ export const sseSchema = z.union([
     topic: z.literal('app-logs'),
     data: z.object({
       event: z.union([z.literal('newLogs'), z.literal('stopLogs')]),
-      appId: z.string(),
+      appUrn: z.string().refine((v) => v.split(':').length === 2),
       lines: z.array(z.string()).optional(),
     }),
   }),
@@ -67,3 +68,16 @@ export const sseSchema = z.union([
 ]);
 
 export type SSE = z.infer<typeof sseSchema>;
+
+export class StreamAppLogsQueryDto extends createZodDto(
+  z.object({
+    appUrn: z.string().refine((v) => v.split(':').length === 2),
+    maxLines: z.number().optional(),
+  }),
+) {}
+
+export class StreamRuntipiLogsQueryDto extends createZodDto(
+  z.object({
+    maxLines: z.number().optional(),
+  }),
+) {}

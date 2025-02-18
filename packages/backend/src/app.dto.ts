@@ -1,8 +1,8 @@
 import { createZodDto } from 'nestjs-zod';
-import { AppInfoSimpleDto } from './modules/apps/dto/app-info.dto';
 import { UserDto } from './modules/user/dto/user.dto';
 
 import { z } from 'zod';
+import { AppInfoSimpleDto } from './modules/marketplace/dto/marketplace.dto';
 
 export const settingsSchema = z.object({
   dnsIp: z.string().ip().trim(),

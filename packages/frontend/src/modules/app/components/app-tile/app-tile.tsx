@@ -7,18 +7,18 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import { AppStatus } from '../app-status/app-status';
 
-type AppTileInfo = Pick<AppInfo, 'id' | 'name' | 'description' | 'short_desc' | 'deprecated'>;
+type AppTileInfo = Pick<AppInfo, 'urn' | 'name' | 'short_desc' | 'deprecated'>;
 
 export const AppTile: React.FC<{ info: AppTileInfo; status: AppStatusType; updateAvailable: boolean }> = ({ info, status, updateAvailable }) => {
   const { t } = useTranslation();
 
   return (
-    <div data-testid={`app-tile-${info.id}`}>
+    <div>
       <div className="card card-sm card-link">
         <div className="card-body">
           <div className="d-flex align-items-center">
             <span className="me-3">
-              <AppLogo alt={`${info.name} logo`} id={info.id} size={60} />
+              <AppLogo alt={`${info.name} logo`} urn={info.urn} size={60} />
             </span>
             <div className="d-flex flex-column">
               <div className="d-flex h-3 align-items-center">

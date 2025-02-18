@@ -49,7 +49,7 @@ export class ConfigurationService {
     private readonly envUtils: EnvUtils,
     private readonly filesystem: FilesystemService,
   ) {
-    dotenv.config({ path: this.envPath });
+    dotenv.config({ path: this.envPath, override: true });
     this.config = this.configure();
   }
 
@@ -105,14 +105,15 @@ export class ConfigurationService {
         persistTraefikConfig: env.data.PERSIST_TRAEFIK_CONFIG,
         eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES * 60 * 1000,
       },
-      appsRepoId: env.data.APPS_REPO_ID,
-      appsRepoUrl: env.data.APPS_REPO_URL,
+      deprecatedAppsRepoId: env.data.APPS_REPO_ID, // @deprecated
+      deprecatedAppsRepoUrl: env.data.APPS_REPO_URL, // @deprecated
       architecture: env.data.ARCHITECTURE,
       demoMode: env.data.DEMO_MODE,
       rootFolderHost: env.data.ROOT_FOLDER_HOST,
       envFilePath: this.envPath,
       internalIp: env.data.INTERNAL_IP,
       jwtSecret: env.data.JWT_SECRET,
+      __prod__: process.env.NODE_ENV === 'production',
     };
   }
 
