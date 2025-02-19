@@ -87,6 +87,7 @@ export class ConfigurationService {
       },
       logLevel: env.data.LOG_LEVEL,
       version: env.data.TIPI_VERSION,
+      isProduction: process.env.NODE_ENV === 'production',
       userSettings: {
         allowAutoThemes: env.data.ALLOW_AUTO_THEMES,
         allowErrorMonitoring: env.data.ALLOW_ERROR_MONITORING && process.env.NODE_ENV === 'production',
