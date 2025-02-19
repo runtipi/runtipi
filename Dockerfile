@@ -6,9 +6,8 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
-
 RUN npm install pnpm@9.15.4 -g
-RUN apk add --no-cache curl python3 make g++ git
+RUN apk add --no-cache curl python3 make g++ make git
 
 WORKDIR /deps
 
@@ -28,7 +27,7 @@ ARG SENTRY_AUTH_TOKEN
 ARG TIPI_VERSION
 ARG LOCAL
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.32.4"
+ARG DOCKER_COMPOSE_VERSION="v2.33.0"
 
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_RELEASE=${TIPI_VERSION}

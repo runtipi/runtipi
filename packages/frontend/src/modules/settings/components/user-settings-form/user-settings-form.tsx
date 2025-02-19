@@ -3,6 +3,7 @@ import { TimeZoneSuspense } from '@/components/timezone-selector/timezone-select
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
+import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import type { Locale } from '@/lib/i18n/locales';
 import { IconAdjustmentsAlt, IconAdjustmentsCode, IconInfoCircle, IconUser } from '@tabler/icons-react';
 import clsx from 'clsx';
@@ -14,7 +15,6 @@ import { Tooltip } from 'react-tooltip';
 import validator from 'validator';
 import { z } from 'zod';
 import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-settings-modal';
-import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import './user-settings-form.css';
 
 const TimeZoneSelector = lazy(() =>
@@ -297,12 +297,12 @@ export const UserSettingsForm = (props: IProps) => {
             placeholder="tipi.local"
             disabled={initialValues?.advancedSettings === false}
           />
-          <Button className="mt-2" onClick={downloadCertificate}>
+          <Button className="mt-2 mb-2" onClick={downloadCertificate}>
             {t('SETTINGS_GENERAL_DOWNLOAD_CERTIFICATE')}
           </Button>
         </div>
         {initialValues?.advancedSettings && (
-          <div className="mt-2">
+          <div>
             <div className="d-flex mb-2">
               <IconAdjustmentsCode className="me-2" />
               <h2 className="text-2xl font-bold mb-0">{t('SETTINGS_GENERAL_ADVANCED_SETTINGS_TITLE')}</h2>
