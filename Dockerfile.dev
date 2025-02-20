@@ -4,7 +4,7 @@ ARG ALPINE_VERSION="3.21"
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
 RUN apk add --no-cache curl git
-RUN npm install pnpm@9.15.4 -g
+RUN npm install pnpm@10.4.1 -g
 
 RUN apk add --no-cache g++ make curl openssl git rabbitmq-server supervisor
 
@@ -26,7 +26,6 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
 RUN chmod +x docker-binary
 RUN mv docker-binary /usr/local/bin/docker-compose
 
-COPY ./patches ./patches
 COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch

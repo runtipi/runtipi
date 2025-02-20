@@ -6,13 +6,13 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
-RUN npm install pnpm@9.15.4 -g
-RUN apk add --no-cache curl python3 make g++ make git
+
+RUN npm install pnpm@10.4.1 -g
+RUN apk add --no-cache curl python3 make g++ git
 
 WORKDIR /deps
 
 COPY ./pnpm-lock.yaml ./
-COPY ./patches ./patches
 RUN pnpm fetch
 
 # ---- RUNNER BASE ----
@@ -52,7 +52,6 @@ COPY ./packages/backend/package.json ./packages/backend/package.json
 COPY ./packages/frontend/package.json ./packages/frontend/package.json
 COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
-COPY ./patches ./patches
 
 RUN pnpm install -r --prefer-offline
 

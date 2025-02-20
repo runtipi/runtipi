@@ -2,7 +2,7 @@
   "name": "runtipi",
   "version": "3.9.0",
   "description": "",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.4.1",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo build",
@@ -35,8 +35,6 @@
     "zod": "^3.24.2"
   },
   "pnpm": {
-    "patchedDependencies": {
-      "@vercel/ncc": "patches/@vercel__ncc.patch"
-    }
+    "onlyBuiltDependencies": ["@nestjs/core"]
   }
 }
