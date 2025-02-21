@@ -69,7 +69,7 @@
   "APP_INSTALL_FORM_ERROR_REGEX": "{{label}} stimmt nicht mit dem Format {{pattern}} überein",
   "APP_INSTALL_FORM_ERROR_REQUIRED": "{{label}} ist erforderlich",
   "APP_INSTALL_FORM_ERROR_URL": "{{label}} muss eine gültige URL sein",
-  "APP_INSTALL_FORM_ERROR_PORT": "",
+  "APP_INSTALL_FORM_ERROR_PORT": "Port muss eine Zahl zwischen 1024 und 65535 sein",
   "APP_INSTALL_FORM_EXPOSE_APP": "App im Internet verfügbar machen",
   "APP_INSTALL_FORM_OPEN_PORT": "Port öffnen",
   "APP_INSTALL_FORM_OPEN_PORT_HINT": "Einen Port auf dem Host öffnen? Diese App wird unter {{internalIp}}:{{port}} erreichbar sein. (Einfachste, aber weniger sichere Methode)",
