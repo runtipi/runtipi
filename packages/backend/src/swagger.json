@@ -2451,6 +2451,10 @@
                       "minimum": 0,
                       "exclusiveMinimum": false,
                       "default": 0
+                    },
+                    "force_pull": {
+                      "type": "boolean",
+                      "default": false
                     }
                   },
                   "required": [
@@ -2803,6 +2807,10 @@
                 "minimum": 0,
                 "exclusiveMinimum": false,
                 "default": 0
+              },
+              "force_pull": {
+                "type": "boolean",
+                "default": false
               }
             },
             "required": [
