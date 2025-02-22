@@ -35,6 +35,6 @@
     "zod": "^3.24.2"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@nestjs/core"]
+    "onlyBuiltDependencies": ["@biomejs/biome", "@nestjs/core", "@sentry/cli", "@swc/core", "argon2", "esbuild", "msw", "sqlite3"]
   }
 }

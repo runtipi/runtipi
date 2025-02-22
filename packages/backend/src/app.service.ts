@@ -171,8 +171,14 @@ export class AppService {
       (await this.filesystem.pathExists(path.join(tlsFolder, 'cert.pem'))) &&
       (await this.filesystem.pathExists(path.join(tlsFolder, 'key.pem')))
     ) {
-      this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
-      return;
+      // Check if the certificate is still valid
+      const { stdout } = await execAsync(`openssl x509 -checkend 86400 -noout -in ${tlsFolder}/cert.pem`);
+      if (stdout.includes('Certificate will not expire')) {
+        this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
+        return;
+      }
+
+      this.logger.warn(`TLS certificate for ${data.localDomain} is expired or will expire soon. Regenerating a new one...`);
     }
 
     // Empty out the folder

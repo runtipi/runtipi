@@ -9,7 +9,7 @@ RUN npm install pnpm@10.4.1 -g
 RUN apk add --no-cache g++ make curl openssl git rabbitmq-server supervisor
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.33.0"
+ARG DOCKER_COMPOSE_VERSION="v2.33.1"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 
@@ -26,6 +26,7 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
 RUN chmod +x docker-binary
 RUN mv docker-binary /usr/local/bin/docker-compose
 
+COPY ./package.json ./package.json
 COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch
@@ -34,7 +35,6 @@ COPY ./packages/backend/package.json ./packages/backend/package.json
 COPY ./packages/frontend/package.json ./packages/frontend/package.json
 COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
-COPY ./package.json ./package.json
 
 RUN pnpm install
 
