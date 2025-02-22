@@ -156,8 +156,13 @@ export class AppCatalogService {
     }
 
     if (search && this.miniSearch) {
+      const exactMatches = filteredApps
+        .filter((app) => app.name.toLowerCase().includes(search.toLowerCase()) || app.short_desc.toLowerCase().includes(search.toLowerCase()))
+        .map((app) => app.id);
+
       const result = this.miniSearch.search(search);
-      const searchIds = result.map((app) => app.id);
+      const searchIds = [...new Set<string>(result.map((app) => app.id).concat(exactMatches))];
+
       filteredApps = filteredApps.filter((app) => searchIds.includes(app.id)).sort((a, b) => searchIds.indexOf(a.id) - searchIds.indexOf(b.id));
     }
 
