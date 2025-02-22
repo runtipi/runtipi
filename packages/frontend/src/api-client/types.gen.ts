@@ -52,6 +52,7 @@ export type AppContextDto = {
     listenIp: string;
     timeZone: string;
     eventsTimeout: number;
+    advancedSettings: boolean;
   };
   user: {
     id: number;
@@ -108,6 +109,7 @@ export type PartialUserSettingsDto = {
   listenIp?: string;
   timeZone?: string;
   eventsTimeout?: number;
+  advancedSettings?: boolean;
 };
 
 export type AcknowledgeWelcomeBody = {
@@ -342,6 +344,7 @@ export type GuestAppsDto = {
       min_tipi_version?: string;
       created_at?: number;
       updated_at?: number;
+      force_pull?: boolean;
     };
     updateInfo: {
       latestVersion: number;
@@ -444,6 +447,7 @@ export type AppDetailsDto = {
     min_tipi_version?: string;
     created_at?: number;
     updated_at?: number;
+    force_pull?: boolean;
   };
   app: {
     id: string;
@@ -590,17 +594,6 @@ export type AcknowledgeWelcomeData = {
 };
 
 export type AcknowledgeWelcomeResponses = {
-  200: unknown;
-};
-
-export type GetErrorData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/api/debug-sentry';
-};
-
-export type GetErrorResponses = {
   200: unknown;
 };
 
@@ -1241,3 +1234,7 @@ export type CheckResponses = {
 };
 
 export type CheckResponse = CheckResponses[keyof CheckResponses];
+
+export type ClientOptions = {
+  baseUrl: string;
+};
