@@ -6,9 +6,8 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
-
 RUN npm install pnpm@10.4.1 -g
-RUN apk add --no-cache curl python3 make g++ git
+RUN apk add --no-cache curl python3 py3-setuptools make g++ git
 
 WORKDIR /deps
 
