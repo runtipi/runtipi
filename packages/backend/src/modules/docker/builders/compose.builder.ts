@@ -94,7 +94,8 @@ export class DockerComposeBuilder {
       .setSecurityOpt(params.securityOpt)
       .setStopSignal(params.stopSignal)
       .setStopGracePeriod(params.stopGracePeriod)
-      .setStdinOpen(params.stdinOpen);
+      .setStdinOpen(params.stdinOpen)
+      .setSysctls(params.sysctls);
 
     if (params.isMain) {
       if (form.openPort && params.internalPort) {

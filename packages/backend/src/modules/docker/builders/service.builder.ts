@@ -87,6 +87,7 @@ export interface BuilderService {
   stopSignal?: string;
   stopGracePeriod?: string;
   stdinOpen?: boolean;
+  sysctls?: Record<string, number>;
 }
 
 export type BuiltService = ReturnType<typeof ServiceBuilder.prototype.build>;
@@ -471,6 +472,11 @@ export class ServiceBuilder {
 
   setStdinOpen(stdinOpen?: boolean) {
     this.service.stdinOpen = stdinOpen;
+    return this;
+  }
+
+  setSysctls(sysctls?: Record<string, number>) {
+    this.service.sysctls = sysctls;
     return this;
   }
 
