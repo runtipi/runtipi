@@ -19,7 +19,7 @@ RUN pnpm fetch
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
 
-RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
+RUN apk add --no-cache curl openssl git rabbitmq-server supervisor build-base python3
 
 # ---- BUILDER ----
 FROM builder_base AS builder
