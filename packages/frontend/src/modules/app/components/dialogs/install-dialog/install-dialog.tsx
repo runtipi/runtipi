@@ -1,4 +1,5 @@
 import { installAppMutation } from '@/api-client/@tanstack/react-query.gen';
+import { Alert, AlertSubtitle, AlertTitle } from '@/components/ui/Alert/Alert';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { useAppStatus } from '@/modules/app/helpers/use-app-status';
@@ -10,8 +11,7 @@ import { useId } from 'react';
 import toast from 'react-hot-toast';
 import { Trans, useTranslation } from 'react-i18next';
 import { InstallFormButtons } from '../../install-form-buttons/install-form-buttons';
-import { type FormValues, InstallForm } from '../../install-form/install-form';
-import { Alert, AlertSubtitle, AlertTitle } from '@/components/ui/Alert/Alert';
+import { InstallForm } from '../../install-form/install-form';
 
 interface IProps {
   info: AppInfo;
