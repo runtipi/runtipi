@@ -71,6 +71,7 @@ export const serviceSchema = z.object({
     )
     .optional(),
   environment: z.record(z.union([z.string(), z.number()])).optional(),
+  sysctls: z.record(z.string(), z.number()).optional(),
   healthCheck: z
     .object({
       test: z.string(),
