@@ -25,8 +25,8 @@ interface HealthCheck {
 }
 
 interface Ulimits {
-  nproc: number | { soft: number; hard: number };
-  nofile: number | { soft: number; hard: number };
+  nproc?: number | { soft: number; hard: number };
+  nofile?: number | { soft: number; hard: number };
 }
 
 interface Deploy {
