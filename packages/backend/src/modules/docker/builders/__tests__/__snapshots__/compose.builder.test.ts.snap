@@ -4,9 +4,9 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
 "services:
   service_test:
     image: image
-    container_name: service_test
     restart: unless-stopped
     networks:
+      - test_test_network
       - tipi_main_network
     ports:
       - \${APP_PORT}:440
@@ -35,6 +35,9 @@ networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+    gw_priority: 1
+  test_test_network:
+    external: false
 "
 `;
 
@@ -42,9 +45,9 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
 "services:
   ctfd_test:
     image: ctfd/ctfd:3.7.5
-    container_name: ctfd_test
     restart: unless-stopped
     networks:
+      - ctfd_test_network
       - tipi_main_network
     environment:
       UPLOAD_FOLDER: /var/uploads
@@ -61,7 +64,7 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       traefik.enable: false
       traefik.http.middlewares.ctfd_test-web-redirect.redirectscheme.scheme: https
       traefik.http.services.ctfd_test.loadbalancer.server.port: "8000"
-  ctfd-db_test:
+  ctfd-db:
     image: mariadb:10.4.12
     command:
       - mysqld
@@ -69,10 +72,9 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       - --collation-server=utf8mb4_unicode_ci
       - --wait_timeout=28800
       - --log-warnings=0
-    container_name: ctfd-db_test
     restart: unless-stopped
     networks:
-      - tipi_main_network
+      - ctfd_test_network
     environment:
       MYSQL_ROOT_PASSWORD: \${CTFD_MYSQL_ROOT_PASSWORD}
       MYSQL_USER: tipi
@@ -80,18 +82,20 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       MYSQL_DATABASE: ctfd
     volumes:
       - \${APP_DATA_DIR}/data/db:/var/lib/mysql
-  ctfd-redis_test:
+  ctfd-redis:
     image: redis:4
-    container_name: ctfd-redis_test
     restart: unless-stopped
     networks:
-      - tipi_main_network
+      - ctfd_test_network
     volumes:
       - \${APP_DATA_DIR}/data/redis:/data
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+    gw_priority: 1
+  ctfd_test_network:
+    external: false
 "
 `;
 
@@ -99,14 +103,17 @@ exports[`DockerComposeBuilder > should build a docker-compose file 1`] = `
 "services:
   service_test:
     image: image
-    container_name: service_test
     restart: unless-stopped
     networks:
+      - test_test_network
       - tipi_main_network
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+    gw_priority: 1
+  test_test_network:
+    external: false
 "
 `;
 
@@ -115,9 +122,9 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
   service1_test:
     image: image1
     command: node index.js
-    container_name: service1_test
     restart: unless-stopped
     networks:
+      - test_test_network
       - tipi_main_network
     extra_hosts:
       - host1
@@ -142,6 +149,11 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
       - /host/path2:/container/path2
     depends_on:
       - service2
+    labels:
+      generated: true
+      traefik.enable: false
+      traefik.http.middlewares.service1_test-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.service1_test.loadbalancer.server.port: "80"
     cap_add:
       - SYS_ADMIN
       - NET_ADMIN
@@ -187,27 +199,28 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
     stop_signal: SIGTERM
     stop_grace_period: 1m
     stdin_open: true
-  service2_test:
+  service2:
     image: image2
-    container_name: service2_test
     restart: unless-stopped
     networks:
-      - tipi_main_network
+      - test_test_network
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+    gw_priority: 1
+  test_test_network:
+    external: false
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format deploy resources 1`] = `
 "services:
-  service_test:
+  service:
     image: image
-    container_name: service_test
     restart: unless-stopped
     networks:
-      - tipi_main_network
+      - test_test_network
     deploy:
       resources:
         limits:
@@ -226,17 +239,19 @@ networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+    gw_priority: 1
+  test_test_network:
+    external: false
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format devices 1`] = `
 "services:
-  service_test:
+  service:
     image: image
-    container_name: service_test
     restart: unless-stopped
     networks:
-      - tipi_main_network
+      - test_test_network
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
       - /dev/sda:/dev/xvda:rwm
@@ -244,17 +259,19 @@ networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+    gw_priority: 1
+  test_test_network:
+    external: false
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format entrypoint as array 1`] = `
 "services:
-  service_test:
+  service:
     image: image
-    container_name: service_test
     restart: unless-stopped
     networks:
-      - tipi_main_network
+      - test_test_network
     entrypoint:
       - entrypoint
       - arg1
@@ -263,33 +280,37 @@ networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+    gw_priority: 1
+  test_test_network:
+    external: false
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format entrypoint as string 1`] = `
 "services:
-  service_test:
+  service:
     image: image
-    container_name: service_test
     restart: unless-stopped
     networks:
-      - tipi_main_network
+      - test_test_network
     entrypoint: entrypoint
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+    gw_priority: 1
+  test_test_network:
+    external: false
 "
 `;
 
 exports[`DockerComposeBuilder > should correctly format logging 1`] = `
 "services:
-  service_test:
+  service:
     image: image
-    container_name: service_test
     restart: unless-stopped
     networks:
-      - tipi_main_network
+      - test_test_network
     logging:
       driver: json-file
       options:
@@ -298,5 +319,8 @@ networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+    gw_priority: 1
+  test_test_network:
+    external: false
 "
 `;

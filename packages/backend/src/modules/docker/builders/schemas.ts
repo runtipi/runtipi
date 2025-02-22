@@ -49,6 +49,7 @@ export const serviceSchema = z.object({
   networkMode: z.string().optional(),
   extraHosts: z.array(z.string()).optional(),
   ulimits: ulimitsSchema.optional(),
+  addToMainNetwork: z.boolean().optional(),
   addPorts: z
     .array(
       z.object({
