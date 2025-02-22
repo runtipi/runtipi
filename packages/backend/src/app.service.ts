@@ -9,6 +9,7 @@ import { ConfigurationService } from './core/config/configuration.service';
 import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
+import { AppLifecycleService } from './modules/app-lifecycle/app-lifecycle.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 import { ReposService } from './modules/repos/repos.service';
 
@@ -22,6 +23,7 @@ export class AppService {
     private readonly repoQueue: RepoEventsQueue,
     private readonly filesystem: FilesystemService,
     private readonly databaseService: DatabaseService,
+    private readonly appLifecycleService: AppLifecycleService,
   ) {}
 
   public async bootstrap() {
@@ -53,6 +55,8 @@ export class AppService {
 
     await this.copyAssets();
     await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
+
+    this.appLifecycleService.startAllApps();
   }
 
   public async getVersion() {
