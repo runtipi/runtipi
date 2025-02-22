@@ -17,10 +17,11 @@ import { useTranslation } from 'react-i18next';
 import './guest-dashboard.css';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 
-const Tile = ({ data }: { data: GuestAppsDto['installed'][number] }) => {
+const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; localDomain: string }) => {
   const { t } = useTranslation();
 
   const { info, app } = data;
+
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
 
   const handleOpen = (type: string) => {
@@ -57,6 +58,12 @@ const Tile = ({ data }: { data: GuestAppsDto['installed'][number] }) => {
               {app.domain}
             </DropdownMenuItem>
           )}
+          {app.exposedLocal && (
+            <DropdownMenuItem onClick={() => handleOpen('local')}>
+              <IconLock className="text-muted me-2" size={16} />
+              {app.id}.{localDomain}
+            </DropdownMenuItem>
+          )}
           {(app.openPort || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('local')}>
               <IconLockOff className="text-muted me-2" size={16} />
@@ -91,8 +98,8 @@ export const GuestDashboard = () => {
           <div className="container-xl">
             {data.installed.length === 0 && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
             <div className="row row-cards">
-              {data.installed.map((data) => {
-                return <Tile key={data.app.id} data={data} />;
+              {data.installed.map((appData) => {
+                return <Tile key={appData.app.id} data={appData} localDomain={data.localDomain} />;
               })}
             </div>
           </div>

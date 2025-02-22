@@ -32,11 +32,11 @@ jobs:
         with:
           node-version: 20
 
-      - uses: pnpm/action-setup@v4.0.0
+      - uses: pnpm/action-setup@v4.1.0
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 9.15.4
+          version: 10.4.1
           run_install: false
 
       - name: Get pnpm store directory
@@ -72,11 +72,11 @@ jobs:
         with:
           node-version: 20
 
-      - uses: pnpm/action-setup@v4.0.0
+      - uses: pnpm/action-setup@v4.1.0
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 9.15.4
+          version: 10.4.1
           run_install: false
 
       - name: Get pnpm store directory

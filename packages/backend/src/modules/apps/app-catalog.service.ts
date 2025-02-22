@@ -29,7 +29,7 @@ const filterApp =
 @Injectable()
 export class AppCatalogService {
   constructor(
-    private readonly filesManager: AppFilesManager,
+    private readonly appFilesManager: AppFilesManager,
     private readonly configuration: ConfigurationService,
     private readonly appsRepository: AppsRepository,
     private readonly logger: LoggerService,
@@ -42,8 +42,8 @@ export class AppCatalogService {
 
   private async constructSingleApp(app: App) {
     try {
-      const info = await this.filesManager.getAppInfoFromAppStore(app.id);
-      const updateInfo = await this.filesManager.getAppUpdateInfo(app.id);
+      const info = await this.getAppInfoFromInstalledOrAppStore(app.id);
+      const updateInfo = await this.appFilesManager.getAppUpdateInfo(app.id);
       return info ? { app, info, updateInfo } : null;
     } catch (e) {
       return null;
@@ -63,11 +63,14 @@ export class AppCatalogService {
   }
 
   private async getAppInfoFromInstalledOrAppStore(id: string) {
-    const info = await this.filesManager.getInstalledAppInfo(id);
-    if (!info) {
-      return this.filesManager.getAppInfoFromAppStore(id);
+    const info = await this.appFilesManager.getInstalledAppInfo(id);
+    const appstoreInfo = await this.appFilesManager.getAppInfoFromAppStore(id);
+
+    if (info && (!appstoreInfo || appstoreInfo.deprecated)) {
+      return { ...info, deprecated: true };
     }
-    return info;
+
+    return info || appstoreInfo;
   }
 
   /**
@@ -75,12 +78,12 @@ export class AppCatalogService {
    * @returns All available apps
    */
   private async getAllAvailableApps() {
-    const appIds = await this.filesManager.getAvailableAppIds();
+    const appIds = await this.appFilesManager.getAvailableAppIds();
 
     const limit = pLimit(10);
     const apps = await Promise.all(
       appIds.map(async (app) => {
-        return limit(() => this.filesManager.getAppInfoFromAppStore(app));
+        return limit(() => this.appFilesManager.getAppInfoFromAppStore(app));
       }),
     );
 
@@ -112,7 +115,7 @@ export class AppCatalogService {
    * @returns All available apps
    */
   public async getAvailableApps(): Promise<AppList> {
-    if (this.cacheLastUpdated && Date.now() - this.cacheLastUpdated > this.cacheTimeout) {
+    if (!this.configuration.get('isProduction') || (this.cacheLastUpdated && Date.now() - this.cacheLastUpdated > this.cacheTimeout)) {
       this.invalidateCache();
     }
 
@@ -153,8 +156,13 @@ export class AppCatalogService {
     }
 
     if (search && this.miniSearch) {
+      const exactMatches = filteredApps
+        .filter((app) => app.name.toLowerCase().includes(search.toLowerCase()) || app.short_desc.toLowerCase().includes(search.toLowerCase()))
+        .map((app) => app.id);
+
       const result = this.miniSearch.search(search);
-      const searchIds = result.map((app) => app.id);
+      const searchIds = [...new Set<string>(result.map((app) => app.id).concat(exactMatches))];
+
       filteredApps = filteredApps.filter((app) => searchIds.includes(app.id)).sort((a, b) => searchIds.indexOf(a.id) - searchIds.indexOf(b.id));
     }
 
@@ -171,14 +179,14 @@ export class AppCatalogService {
    * @returns The image of the app
    */
   public async getAppImage(id: string) {
-    return this.filesManager.getAppImage(id);
+    return this.appFilesManager.getAppImage(id);
   }
 
   public async getApp(appId: string) {
     let app = await this.appsRepository.getApp(appId);
     const info = await this.getAppInfoFromInstalledOrAppStore(appId);
 
-    const updateInfo = await this.filesManager.getAppUpdateInfo(appId);
+    const updateInfo = await this.appFilesManager.getAppUpdateInfo(appId);
 
     if (!info) {
       throw new TranslatableError('APP_ERROR_INVALID_CONFIG', { id: appId });

@@ -1534,6 +1534,9 @@
               },
               "eventsTimeout": {
                 "type": "number"
+              },
+              "advancedSettings": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -1553,7 +1556,8 @@
               "sslPort",
               "listenIp",
               "timeZone",
-              "eventsTimeout"
+              "eventsTimeout",
+              "advancedSettings"
             ]
           },
           "user": {
@@ -1723,6 +1727,9 @@
           },
           "eventsTimeout": {
             "type": "number"
+          },
+          "advancedSettings": {
+            "type": "boolean"
           }
         }
       },
@@ -2444,6 +2451,10 @@
                       "minimum": 0,
                       "exclusiveMinimum": false,
                       "default": 0
+                    },
+                    "force_pull": {
+                      "type": "boolean",
+                      "default": false
                     }
                   },
                   "required": [
@@ -2480,10 +2491,14 @@
                 "updateInfo"
               ]
             }
+          },
+          "localDomain": {
+            "type": "string"
           }
         },
         "required": [
-          "installed"
+          "installed",
+          "localDomain"
         ]
       },
       "SearchAppsDto": {
@@ -2796,6 +2811,10 @@
                 "minimum": 0,
                 "exclusiveMinimum": false,
                 "default": 0
+              },
+              "force_pull": {
+                "type": "boolean",
+                "default": false
               }
             },
             "required": [

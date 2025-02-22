@@ -128,6 +128,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
     'QUEUE_TIMEOUT_IN_MINUTES',
     typeof data.eventsTimeout === 'number' ? String(data.eventsTimeout) : envMap.get('QUEUE_TIMEOUT_IN_MINUTES') || '5',
   );
+  envMap.set('ADVANCED_SETTINGS', typeof data.advancedSettings === 'boolean' ? String(data.advancedSettings) : envMap.get('ADVANCED_SETTINGS') || 'false');
 
   await fs.promises.writeFile(envFilePath, envUtils.envMapToString(envMap));
 

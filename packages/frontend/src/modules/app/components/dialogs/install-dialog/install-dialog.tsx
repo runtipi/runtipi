@@ -1,4 +1,5 @@
 import { installAppMutation } from '@/api-client/@tanstack/react-query.gen';
+import { Alert, AlertSubtitle, AlertTitle } from '@/components/ui/Alert/Alert';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { useAppStatus } from '@/modules/app/helpers/use-app-status';
@@ -8,7 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import type React from 'react';
 import { useId } from 'react';
 import toast from 'react-hot-toast';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { InstallFormButtons } from '../../install-form-buttons/install-form-buttons';
 import { InstallForm } from '../../install-form/install-form';
 
@@ -42,6 +43,14 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
         </DialogHeader>
         <ScrollArea maxheight={500}>
           <DialogDescription>
+            {info.force_pull && (
+              <Alert variant={'warning'}>
+                <AlertTitle>{t('WARNING')}</AlertTitle>
+                <AlertSubtitle>
+                  <Trans i18nKey={'APP_INSTALL_FORM_FORCE_PULL_WARNING'} values={{ tag: info.version }} components={{ code: <code /> }} />
+                </AlertSubtitle>
+              </Alert>
+            )}
             <InstallForm
               onSubmit={(data) => installMutation.mutate({ path: { id: info.id }, body: data })}
               formFields={info.form_fields}
