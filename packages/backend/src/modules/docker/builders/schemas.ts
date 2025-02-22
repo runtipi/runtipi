@@ -11,8 +11,22 @@ const dependsOnSchema = z.union([
 ]);
 
 const ulimitsSchema = z.object({
-  nproc: z.number().or(z.object({ soft: z.number(), hard: z.number() })),
-  nofile: z.number().or(z.object({ soft: z.number(), hard: z.number() })),
+  nproc: z
+    .number()
+    .or(z.object({ soft: z.number(), hard: z.number() }))
+    .optional(),
+  nofile: z
+    .number()
+    .or(z.object({ soft: z.number(), hard: z.number() }))
+    .optional(),
+  core: z
+    .number()
+    .or(z.object({ soft: z.number(), hard: z.number() }))
+    .optional(),
+  memlock: z
+    .number()
+    .or(z.object({ soft: z.number(), hard: z.number() }))
+    .optional(),
 });
 
 const deploySchema = z.object({
@@ -44,7 +58,7 @@ const deploySchema = z.object({
 export const serviceSchema = z.object({
   image: z.string(),
   name: z.string(),
-  internalPort: z.number().optional(),
+  internalPort: z.number().or(z.string()).optional(),
   isMain: z.boolean().optional(),
   networkMode: z.string().optional(),
   extraHosts: z.array(z.string()).optional(),
