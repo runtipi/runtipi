@@ -52,7 +52,12 @@ export class MarketplaceService {
       this.stores.set(config.slug, store);
     }
 
-    await this.appStoreService.pullRepositories();
+    if (process.env.NODE_ENV === 'development') {
+      this.logger.warn('Running in development mode, skipping repository update');
+    } else {
+      await this.appStoreService.pullRepositories();
+    }
+
     this.invalidateCache();
 
     this.logger.debug('Marketplace service initialized with stores', Array.from(this.stores.keys()).join(', '));

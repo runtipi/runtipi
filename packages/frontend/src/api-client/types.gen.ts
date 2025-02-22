@@ -344,6 +344,7 @@ export type GuestAppsDto = {
       min_tipi_version?: string;
       created_at?: number;
       updated_at?: number;
+      force_pull?: boolean;
     };
   }>;
 };
@@ -374,6 +375,7 @@ export type GetAppDto = {
     domain: string | null;
     isVisibleOnGuestDashboard: boolean;
     config?: {};
+    enableAuth?: boolean;
   } | null;
   info: {
     id: string;
@@ -437,6 +439,7 @@ export type GetAppDto = {
     min_tipi_version?: string;
     created_at?: number;
     updated_at?: number;
+    force_pull?: boolean;
   };
   metadata: {
     hasCustomConfig?: boolean;
