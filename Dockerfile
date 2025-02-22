@@ -23,13 +23,11 @@ RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 # ---- BUILDER ----
 FROM builder_base AS builder
 
-ARG SENTRY_AUTH_TOKEN
 ARG TIPI_VERSION
 ARG LOCAL
 ARG TARGETARCH
 ARG DOCKER_COMPOSE_VERSION="v2.33.1"
 
-ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_RELEASE=${TIPI_VERSION}
 ENV TARGETARCH=${TARGETARCH}
 
@@ -61,7 +59,7 @@ COPY ./packages ./packages
 RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
 RUN echo "LOCAL: ${LOCAL}"
 
-RUN npm run bundle
+RUN --mount=type=secret,id=sentry_token,env=SENTRY_AUTH_TOKEN npm run bundle
 
 # ---- RUNNER ----
 FROM runner_base AS runner

@@ -49,8 +49,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          secrets: |
+            "sentry_token=${{ secrets.SENTRY_AUTH_TOKEN }}"
           build-args: |
-            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
             TIPI_VERSION=${{ needs.create-tag.outputs.tagname }}
           platforms: linux/amd64,linux/arm64
           push: true
