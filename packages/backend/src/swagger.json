@@ -2491,10 +2491,14 @@
                 "updateInfo"
               ]
             }
+          },
+          "localDomain": {
+            "type": "string"
           }
         },
         "required": [
-          "installed"
+          "installed",
+          "localDomain"
         ]
       },
       "SearchAppsDto": {

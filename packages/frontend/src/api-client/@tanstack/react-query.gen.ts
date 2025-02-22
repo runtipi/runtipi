@@ -110,14 +110,14 @@ import type {
 } from '../types.gen';
 import { client as _heyApiClient } from '../client.gen';
 
-export type QueryKey<TOptions extends Options> = [
+type QueryKey<TOptions extends Options> = [
   Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
     _id: string;
     _infinite?: boolean;
   },
 ];
 
-const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions, infinite?: boolean): [QueryKey<TOptions>[0]] => {
+const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions, infinite?: boolean): QueryKey<TOptions>[0] => {
   const params: QueryKey<TOptions>[0] = { _id: id, baseUrl: (options?.client ?? _heyApiClient).getConfig().baseUrl } as QueryKey<TOptions>[0];
   if (infinite) {
     params._infinite = infinite;
@@ -134,10 +134,10 @@ const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions
   if (options?.query) {
     params.query = options.query;
   }
-  return [params];
+  return params;
 };
 
-export const userContextQueryKey = (options?: Options<UserContextData>) => createQueryKey('userContext', options);
+export const userContextQueryKey = (options?: Options<UserContextData>) => [createQueryKey('userContext', options)];
 
 export const userContextOptions = (options?: Options<UserContextData>) => {
   return queryOptions({
@@ -154,7 +154,7 @@ export const userContextOptions = (options?: Options<UserContextData>) => {
   });
 };
 
-export const appContextQueryKey = (options?: Options<AppContextData>) => createQueryKey('appContext', options);
+export const appContextQueryKey = (options?: Options<AppContextData>) => [createQueryKey('appContext', options)];
 
 export const appContextOptions = (options?: Options<AppContextData>) => {
   return queryOptions({
@@ -199,7 +199,7 @@ export const acknowledgeWelcomeMutation = (options?: Partial<Options<Acknowledge
   return mutationOptions;
 };
 
-export const systemLoadQueryKey = (options?: Options<SystemLoadData>) => createQueryKey('systemLoad', options);
+export const systemLoadQueryKey = (options?: Options<SystemLoadData>) => [createQueryKey('systemLoad', options)];
 
 export const systemLoadOptions = (options?: Options<SystemLoadData>) => {
   return queryOptions({
@@ -216,8 +216,9 @@ export const systemLoadOptions = (options?: Options<SystemLoadData>) => {
   });
 };
 
-export const downloadLocalCertificateQueryKey = (options?: Options<DownloadLocalCertificateData>) =>
-  createQueryKey('downloadLocalCertificate', options);
+export const downloadLocalCertificateQueryKey = (options?: Options<DownloadLocalCertificateData>) => [
+  createQueryKey('downloadLocalCertificate', options),
+];
 
 export const downloadLocalCertificateOptions = (options?: Options<DownloadLocalCertificateData>) => {
   return queryOptions({
@@ -234,7 +235,7 @@ export const downloadLocalCertificateOptions = (options?: Options<DownloadLocalC
   });
 };
 
-export const getTranslationQueryKey = (options: Options<GetTranslationData>) => createQueryKey('getTranslation', options);
+export const getTranslationQueryKey = (options: Options<GetTranslationData>) => [createQueryKey('getTranslation', options)];
 
 export const getTranslationOptions = (options: Options<GetTranslationData>) => {
   return queryOptions({
@@ -251,7 +252,7 @@ export const getTranslationOptions = (options: Options<GetTranslationData>) => {
   });
 };
 
-export const loginQueryKey = (options: Options<LoginData>) => createQueryKey('login', options);
+export const loginQueryKey = (options: Options<LoginData>) => [createQueryKey('login', options)];
 
 export const loginOptions = (options: Options<LoginData>) => {
   return queryOptions({
@@ -282,7 +283,7 @@ export const loginMutation = (options?: Partial<Options<LoginData>>) => {
   return mutationOptions;
 };
 
-export const verifyTotpQueryKey = (options: Options<VerifyTotpData>) => createQueryKey('verifyTotp', options);
+export const verifyTotpQueryKey = (options: Options<VerifyTotpData>) => [createQueryKey('verifyTotp', options)];
 
 export const verifyTotpOptions = (options: Options<VerifyTotpData>) => {
   return queryOptions({
@@ -313,7 +314,7 @@ export const verifyTotpMutation = (options?: Partial<Options<VerifyTotpData>>) =
   return mutationOptions;
 };
 
-export const registerQueryKey = (options: Options<RegisterData>) => createQueryKey('register', options);
+export const registerQueryKey = (options: Options<RegisterData>) => [createQueryKey('register', options)];
 
 export const registerOptions = (options: Options<RegisterData>) => {
   return queryOptions({
@@ -344,7 +345,7 @@ export const registerMutation = (options?: Partial<Options<RegisterData>>) => {
   return mutationOptions;
 };
 
-export const logoutQueryKey = (options?: Options<LogoutData>) => createQueryKey('logout', options);
+export const logoutQueryKey = (options?: Options<LogoutData>) => [createQueryKey('logout', options)];
 
 export const logoutOptions = (options?: Options<LogoutData>) => {
   return queryOptions({
@@ -459,8 +460,9 @@ export const cancelResetPasswordMutation = (options?: Partial<Options<CancelRese
   return mutationOptions;
 };
 
-export const checkResetPasswordRequestQueryKey = (options?: Options<CheckResetPasswordRequestData>) =>
-  createQueryKey('checkResetPasswordRequest', options);
+export const checkResetPasswordRequestQueryKey = (options?: Options<CheckResetPasswordRequestData>) => [
+  createQueryKey('checkResetPasswordRequest', options),
+];
 
 export const checkResetPasswordRequestOptions = (options?: Options<CheckResetPasswordRequestData>) => {
   return queryOptions({
@@ -477,7 +479,7 @@ export const checkResetPasswordRequestOptions = (options?: Options<CheckResetPas
   });
 };
 
-export const resetPasswordQueryKey = (options: Options<ResetPasswordData>) => createQueryKey('resetPassword', options);
+export const resetPasswordQueryKey = (options: Options<ResetPasswordData>) => [createQueryKey('resetPassword', options)];
 
 export const resetPasswordOptions = (options: Options<ResetPasswordData>) => {
   return queryOptions({
@@ -508,7 +510,7 @@ export const resetPasswordMutation = (options?: Partial<Options<ResetPasswordDat
   return mutationOptions;
 };
 
-export const traefikQueryKey = (options?: Options<TraefikData>) => createQueryKey('traefik', options);
+export const traefikQueryKey = (options?: Options<TraefikData>) => [createQueryKey('traefik', options)];
 
 export const traefikOptions = (options?: Options<TraefikData>) => {
   return queryOptions({
@@ -525,7 +527,7 @@ export const traefikOptions = (options?: Options<TraefikData>) => {
   });
 };
 
-export const getInstalledAppsQueryKey = (options?: Options<GetInstalledAppsData>) => createQueryKey('getInstalledApps', options);
+export const getInstalledAppsQueryKey = (options?: Options<GetInstalledAppsData>) => [createQueryKey('getInstalledApps', options)];
 
 export const getInstalledAppsOptions = (options?: Options<GetInstalledAppsData>) => {
   return queryOptions({
@@ -542,7 +544,7 @@ export const getInstalledAppsOptions = (options?: Options<GetInstalledAppsData>)
   });
 };
 
-export const getGuestAppsQueryKey = (options?: Options<GetGuestAppsData>) => createQueryKey('getGuestApps', options);
+export const getGuestAppsQueryKey = (options?: Options<GetGuestAppsData>) => [createQueryKey('getGuestApps', options)];
 
 export const getGuestAppsOptions = (options?: Options<GetGuestAppsData>) => {
   return queryOptions({
@@ -559,7 +561,7 @@ export const getGuestAppsOptions = (options?: Options<GetGuestAppsData>) => {
   });
 };
 
-export const searchAppsQueryKey = (options?: Options<SearchAppsData>) => createQueryKey('searchApps', options);
+export const searchAppsQueryKey = (options?: Options<SearchAppsData>) => [createQueryKey('searchApps', options)];
 
 export const searchAppsOptions = (options?: Options<SearchAppsData>) => {
   return queryOptions({
@@ -605,8 +607,9 @@ const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'hea
   return params as unknown as typeof page;
 };
 
-export const searchAppsInfiniteQueryKey = (options?: Options<SearchAppsData>): QueryKey<Options<SearchAppsData>> =>
-  createQueryKey('searchApps', options, true);
+export const searchAppsInfiniteQueryKey = (options?: Options<SearchAppsData>): QueryKey<Options<SearchAppsData>> => [
+  createQueryKey('searchApps', options, true),
+];
 
 export const searchAppsInfiniteOptions = (options?: Options<SearchAppsData>) => {
   return infiniteQueryOptions<
@@ -642,7 +645,7 @@ export const searchAppsInfiniteOptions = (options?: Options<SearchAppsData>) => 
   );
 };
 
-export const getAppDetailsQueryKey = (options: Options<GetAppDetailsData>) => createQueryKey('getAppDetails', options);
+export const getAppDetailsQueryKey = (options: Options<GetAppDetailsData>) => [createQueryKey('getAppDetails', options)];
 
 export const getAppDetailsOptions = (options: Options<GetAppDetailsData>) => {
   return queryOptions({
@@ -659,7 +662,7 @@ export const getAppDetailsOptions = (options: Options<GetAppDetailsData>) => {
   });
 };
 
-export const getImageQueryKey = (options: Options<GetImageData>) => createQueryKey('getImage', options);
+export const getImageQueryKey = (options: Options<GetImageData>) => [createQueryKey('getImage', options)];
 
 export const getImageOptions = (options: Options<GetImageData>) => {
   return queryOptions({
@@ -676,7 +679,7 @@ export const getImageOptions = (options: Options<GetImageData>) => {
   });
 };
 
-export const pullQueryKey = (options?: Options<PullData>) => createQueryKey('pull', options);
+export const pullQueryKey = (options?: Options<PullData>) => [createQueryKey('pull', options)];
 
 export const pullOptions = (options?: Options<PullData>) => {
   return queryOptions({
@@ -707,7 +710,7 @@ export const pullMutation = (options?: Partial<Options<PullData>>) => {
   return mutationOptions;
 };
 
-export const installAppQueryKey = (options: Options<InstallAppData>) => createQueryKey('installApp', options);
+export const installAppQueryKey = (options: Options<InstallAppData>) => [createQueryKey('installApp', options)];
 
 export const installAppOptions = (options: Options<InstallAppData>) => {
   return queryOptions({
@@ -738,7 +741,7 @@ export const installAppMutation = (options?: Partial<Options<InstallAppData>>) =
   return mutationOptions;
 };
 
-export const startAppQueryKey = (options: Options<StartAppData>) => createQueryKey('startApp', options);
+export const startAppQueryKey = (options: Options<StartAppData>) => [createQueryKey('startApp', options)];
 
 export const startAppOptions = (options: Options<StartAppData>) => {
   return queryOptions({
@@ -769,7 +772,7 @@ export const startAppMutation = (options?: Partial<Options<StartAppData>>) => {
   return mutationOptions;
 };
 
-export const stopAppQueryKey = (options: Options<StopAppData>) => createQueryKey('stopApp', options);
+export const stopAppQueryKey = (options: Options<StopAppData>) => [createQueryKey('stopApp', options)];
 
 export const stopAppOptions = (options: Options<StopAppData>) => {
   return queryOptions({
@@ -800,7 +803,7 @@ export const stopAppMutation = (options?: Partial<Options<StopAppData>>) => {
   return mutationOptions;
 };
 
-export const restartAppQueryKey = (options: Options<RestartAppData>) => createQueryKey('restartApp', options);
+export const restartAppQueryKey = (options: Options<RestartAppData>) => [createQueryKey('restartApp', options)];
 
 export const restartAppOptions = (options: Options<RestartAppData>) => {
   return queryOptions({
@@ -845,7 +848,7 @@ export const uninstallAppMutation = (options?: Partial<Options<UninstallAppData>
   return mutationOptions;
 };
 
-export const resetAppQueryKey = (options: Options<ResetAppData>) => createQueryKey('resetApp', options);
+export const resetAppQueryKey = (options: Options<ResetAppData>) => [createQueryKey('resetApp', options)];
 
 export const resetAppOptions = (options: Options<ResetAppData>) => {
   return queryOptions({
@@ -918,7 +921,7 @@ export const updateAppConfigMutation = (options?: Partial<Options<UpdateAppConfi
   return mutationOptions;
 };
 
-export const backupAppQueryKey = (options: Options<BackupAppData>) => createQueryKey('backupApp', options);
+export const backupAppQueryKey = (options: Options<BackupAppData>) => [createQueryKey('backupApp', options)];
 
 export const backupAppOptions = (options: Options<BackupAppData>) => {
   return queryOptions({
@@ -949,7 +952,7 @@ export const backupAppMutation = (options?: Partial<Options<BackupAppData>>) => 
   return mutationOptions;
 };
 
-export const restoreAppBackupQueryKey = (options: Options<RestoreAppBackupData>) => createQueryKey('restoreAppBackup', options);
+export const restoreAppBackupQueryKey = (options: Options<RestoreAppBackupData>) => [createQueryKey('restoreAppBackup', options)];
 
 export const restoreAppBackupOptions = (options: Options<RestoreAppBackupData>) => {
   return queryOptions({
@@ -980,7 +983,7 @@ export const restoreAppBackupMutation = (options?: Partial<Options<RestoreAppBac
   return mutationOptions;
 };
 
-export const getAppBackupsQueryKey = (options: Options<GetAppBackupsData>) => createQueryKey('getAppBackups', options);
+export const getAppBackupsQueryKey = (options: Options<GetAppBackupsData>) => [createQueryKey('getAppBackups', options)];
 
 export const getAppBackupsOptions = (options: Options<GetAppBackupsData>) => {
   return queryOptions({
@@ -997,8 +1000,9 @@ export const getAppBackupsOptions = (options: Options<GetAppBackupsData>) => {
   });
 };
 
-export const getAppBackupsInfiniteQueryKey = (options: Options<GetAppBackupsData>): QueryKey<Options<GetAppBackupsData>> =>
-  createQueryKey('getAppBackups', options, true);
+export const getAppBackupsInfiniteQueryKey = (options: Options<GetAppBackupsData>): QueryKey<Options<GetAppBackupsData>> => [
+  createQueryKey('getAppBackups', options, true),
+];
 
 export const getAppBackupsInfiniteOptions = (options: Options<GetAppBackupsData>) => {
   return infiniteQueryOptions<
@@ -1048,7 +1052,7 @@ export const deleteAppBackupMutation = (options?: Partial<Options<DeleteAppBacku
   return mutationOptions;
 };
 
-export const appEventsQueryKey = (options?: Options<AppEventsData>) => createQueryKey('appEvents', options);
+export const appEventsQueryKey = (options?: Options<AppEventsData>) => [createQueryKey('appEvents', options)];
 
 export const appEventsOptions = (options?: Options<AppEventsData>) => {
   return queryOptions({
@@ -1065,7 +1069,7 @@ export const appEventsOptions = (options?: Options<AppEventsData>) => {
   });
 };
 
-export const appLogsEventsQueryKey = (options: Options<AppLogsEventsData>) => createQueryKey('appLogsEvents', options);
+export const appLogsEventsQueryKey = (options: Options<AppLogsEventsData>) => [createQueryKey('appLogsEvents', options)];
 
 export const appLogsEventsOptions = (options: Options<AppLogsEventsData>) => {
   return queryOptions({
@@ -1082,7 +1086,7 @@ export const appLogsEventsOptions = (options: Options<AppLogsEventsData>) => {
   });
 };
 
-export const runtipiLogsEventsQueryKey = (options?: Options<RuntipiLogsEventsData>) => createQueryKey('runtipiLogsEvents', options);
+export const runtipiLogsEventsQueryKey = (options?: Options<RuntipiLogsEventsData>) => [createQueryKey('runtipiLogsEvents', options)];
 
 export const runtipiLogsEventsOptions = (options?: Options<RuntipiLogsEventsData>) => {
   return queryOptions({
@@ -1099,7 +1103,7 @@ export const runtipiLogsEventsOptions = (options?: Options<RuntipiLogsEventsData
   });
 };
 
-export const getLinksQueryKey = (options?: Options<GetLinksData>) => createQueryKey('getLinks', options);
+export const getLinksQueryKey = (options?: Options<GetLinksData>) => [createQueryKey('getLinks', options)];
 
 export const getLinksOptions = (options?: Options<GetLinksData>) => {
   return queryOptions({
@@ -1116,7 +1120,7 @@ export const getLinksOptions = (options?: Options<GetLinksData>) => {
   });
 };
 
-export const createLinkQueryKey = (options: Options<CreateLinkData>) => createQueryKey('createLink', options);
+export const createLinkQueryKey = (options: Options<CreateLinkData>) => [createQueryKey('createLink', options)];
 
 export const createLinkOptions = (options: Options<CreateLinkData>) => {
   return queryOptions({
@@ -1175,7 +1179,7 @@ export const editLinkMutation = (options?: Partial<Options<EditLinkData>>) => {
   return mutationOptions;
 };
 
-export const checkQueryKey = (options?: Options<CheckData>) => createQueryKey('check', options);
+export const checkQueryKey = (options?: Options<CheckData>) => [createQueryKey('check', options)];
 
 export const checkOptions = (options?: Options<CheckData>) => {
   return queryOptions({
