@@ -23,6 +23,7 @@ export const createMockAppInfo = (data: Partial<AppInfo> = {}): AppInfo => ({
   source: faker.internet.url(),
   tipi_version: faker.number.int(),
   version: faker.system.semver(),
+  force_pull: false,
   ...data,
 });
 
