@@ -82,6 +82,7 @@
   "APP_INSTALL_SUCCESS": "App {{id}} installed successfully",
   "APP_INSTALL_FORM_ENABLE_AUTH": "Enable authentication",
   "APP_INSTALL_FORM_ENABLE_AUTH_HINT": "Protect this app with your Runtipi login. This does not work with IP addresses, you will need to use either the local domain or the expose feature.",
+  "APP_INSTALL_FORM_FORCE_PULL_WARNING": "This app uses the <code>{{tag}}</code> tag, this means that the image will be pulled every time you start it and you may get rate-limited by the registry.",
   "APP_LOGS_TAB_FOLLOW": "Follow logs",
   "APP_LOGS_TAB_MAX_LINES": "Max lines:",
   "APP_LOGS_TAB_TITLE": "Logs",
@@ -361,5 +362,8 @@
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
   "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
   "ACTIONS_CANCEL": "Cancel",
-  "ACTIONS_ENABLE": "Enable"
+  "ACTIONS_ENABLE": "Enable",
+  "YES": "Yes",
+  "NO": "No",
+  "WARNING": "Warning"
 }
