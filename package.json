@@ -23,7 +23,7 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@hey-api/openapi-ts": "^0.64.4",
+    "@hey-api/openapi-ts": "^0.64.5",
     "@playwright/test": "^1.50.1",
     "@types/pg": "^8.11.11",
     "dotenv-cli": "^8.0.0",
@@ -35,6 +35,15 @@
     "zod": "^3.24.2"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@biomejs/biome", "@nestjs/core", "@sentry/cli", "@swc/core", "argon2", "esbuild", "msw", "sqlite3"]
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "@nestjs/core",
+      "@sentry/cli",
+      "@swc/core",
+      "argon2",
+      "esbuild",
+      "msw",
+      "sqlite3"
+    ]
   }
 }

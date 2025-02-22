@@ -12,7 +12,7 @@
     "postinstall": "./scripts/postinstall.sh"
   },
   "dependencies": {
-    "@hey-api/client-fetch": "^0.7.1",
+    "@hey-api/client-fetch": "^0.8.1",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-context-menu": "^2.2.6",
     "@radix-ui/react-dialog": "^1.1.6",
@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.5.0",
-    "@hey-api/openapi-ts": "^0.64.4",
+    "@hey-api/openapi-ts": "^0.64.5",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
