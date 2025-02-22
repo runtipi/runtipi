@@ -6,10 +6,14 @@ import { AuthGuard } from '../auth/auth.guard';
 import { AppCatalogService } from './app-catalog.service';
 import { APP_CATEGORIES } from './dto/app-info.dto';
 import { AppDetailsDto, GuestAppsDto, MyAppsDto, SearchAppsDto, SearchAppsQueryDto } from './dto/app.dto';
+import { ConfigurationService } from '@/core/config/configuration.service';
 
 @Controller('apps')
 export class AppsController {
-  constructor(private readonly appCatalog: AppCatalogService) {}
+  constructor(
+    private readonly appCatalog: AppCatalogService,
+    private readonly config: ConfigurationService,
+  ) {}
 
   @Get('installed')
   @UseGuards(AuthGuard)
@@ -23,7 +27,8 @@ export class AppsController {
   @ZodSerializerDto(GuestAppsDto)
   async getGuestApps(): Promise<GuestAppsDto> {
     const guest = await this.appCatalog.getGuestDashboardApps();
-    return { installed: guest };
+    const { localDomain } = await this.config.get('userSettings');
+    return { installed: guest, localDomain };
   }
 
   @Get('search')

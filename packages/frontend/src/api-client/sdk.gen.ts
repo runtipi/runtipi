@@ -82,11 +82,6 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
    * custom client.
    */
   client?: Client;
-  /**
-   * You can pass arbitrary values through the `meta` object. This can be
-   * used to access values that aren't defined as part of the SDK function.
-   */
-  meta?: Record<string, unknown>;
 };
 
 export const userContext = <ThrowOnError extends boolean = false>(options?: Options<UserContextData, ThrowOnError>) => {

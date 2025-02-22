@@ -352,6 +352,7 @@ export type GuestAppsDto = {
       latestDockerVersion?: string;
     };
   }>;
+  localDomain: string;
 };
 
 export type SearchAppsDto = {
