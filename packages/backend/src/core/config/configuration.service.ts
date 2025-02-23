@@ -103,7 +103,7 @@ export class ConfigurationService {
         appsRepoUrl: env.data.APPS_REPO_URL,
         postgresPort: env.data.POSTGRES_PORT,
         dnsIp: env.data.DNS_IP,
-        appDataPath: path.join(env.data.RUNTIPI_APP_DATA_PATH, 'app-data'),
+        appDataPath: env.data.RUNTIPI_APP_DATA_PATH,
         persistTraefikConfig: env.data.PERSIST_TRAEFIK_CONFIG,
         eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES,
         advancedSettings: env.data.ADVANCED_SETTINGS,

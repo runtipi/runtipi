@@ -46,7 +46,7 @@ export class AppHelpers {
 
     envMap.set('APP_ID', appId);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
-    envMap.set('APP_DATA_DIR', path.join(this.config.get('userSettings').appDataPath, appId));
+    envMap.set('APP_DATA_DIR', path.join(`${this.config.get('userSettings').appDataPath}/app-data`, appId));
 
     const appEnv = await this.appFilesManager.getAppEnv(appId);
     const existingAppEnvMap = this.envUtils.envStringToMap(appEnv.content);
