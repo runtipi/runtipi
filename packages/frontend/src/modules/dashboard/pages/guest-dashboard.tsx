@@ -29,29 +29,25 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
     const { https } = info;
     const protocol = https ? 'https' : 'http';
 
-    switch (type) {
-      case 'domain':
-        url = `https://${app.domain}${info.url_suffix || ''}`;
-        break;
-      case 'localDomain':
-        url = `https://${app.id}.${localDomain}${info.url_suffix || ''}`;
-        break;
-      case 'port': {
-        const domain = window.location.hostname;
-        url = `${protocol}://${domain}:${info.port}${info.url_suffix || ''}`;
-        break;
-      }
+    if (typeof window !== 'undefined') {
+      // Current domain
+      const domain = window.location.hostname;
+      url = `${protocol}://${domain}:${info.port}${info.url_suffix || ''}`;
+    }
+
+    if (type === 'domain' && app.domain) {
+      url = `https://${app.domain}${info.url_suffix || ''}`;
     }
 
     window.open(url, '_blank', 'noreferrer');
   };
 
   return (
-    <DropdownMenu modal={false}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="col-sm-6 col-lg-4 app-link">
+        <a href={app.id} className="col-sm-6 col-lg-4 app-link">
           <AppTile key={app.id} info={info} status={app.status} updateAvailable={false} />
-        </div>
+        </a>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>{t('APP_DETAILS_CHOOSE_OPEN_METHOD')}</DropdownMenuLabel>
@@ -63,13 +59,13 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
             </DropdownMenuItem>
           )}
           {app.exposedLocal && (
-            <DropdownMenuItem onClick={() => handleOpen('localDomain')}>
+            <DropdownMenuItem onClick={() => handleOpen('local')}>
               <IconLock className="text-muted me-2" size={16} />
               {app.id}.{localDomain}
             </DropdownMenuItem>
           )}
           {(app.openPort || !info.dynamic_config) && (
-            <DropdownMenuItem onClick={() => handleOpen('port')}>
+            <DropdownMenuItem onClick={() => handleOpen('local')}>
               <IconLockOff className="text-muted me-2" size={16} />
               {hostname}:{info.port}
             </DropdownMenuItem>
