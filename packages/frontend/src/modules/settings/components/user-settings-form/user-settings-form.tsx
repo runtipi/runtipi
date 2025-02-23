@@ -29,6 +29,13 @@ const settingsSchema = z.object({
   allowErrorMonitoring: z.boolean().optional(),
   timeZone: z.string().optional(),
   advancedSettings: z.boolean().optional(),
+  internalIp: z.string().optional(),
+  listenIp: z.string().optional(),
+  port: z.number().optional(),
+  sslPort: z.number().optional(),
+  eventsTimeout: z.number().optional(),
+  persistTraefikConfig: z.boolean().optional(),
+  domain: z.string().optional(),
   appDataPath: z.string().optional(),
 });
 
