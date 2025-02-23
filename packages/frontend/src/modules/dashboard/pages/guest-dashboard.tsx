@@ -39,15 +39,19 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
       url = `https://${app.domain}${info.url_suffix || ''}`;
     }
 
+    if (type === 'localDomain' && app.exposedLocal) {
+      url = `https://${app.id}.${localDomain}${info.url_suffix || ''}`;
+    }
+
     window.open(url, '_blank', 'noreferrer');
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <a href={app.id} className="col-sm-6 col-lg-4 app-link">
+        <div className="col-sm-6 col-lg-4 app-link">
           <AppTile key={app.id} info={info} status={app.status} updateAvailable={false} />
-        </a>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>{t('APP_DETAILS_CHOOSE_OPEN_METHOD')}</DropdownMenuLabel>
@@ -59,13 +63,13 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
             </DropdownMenuItem>
           )}
           {app.exposedLocal && (
-            <DropdownMenuItem onClick={() => handleOpen('local')}>
+            <DropdownMenuItem onClick={() => handleOpen('localDomain')}>
               <IconLock className="text-muted me-2" size={16} />
               {app.id}.{localDomain}
             </DropdownMenuItem>
           )}
           {(app.openPort || !info.dynamic_config) && (
-            <DropdownMenuItem onClick={() => handleOpen('local')}>
+            <DropdownMenuItem onClick={() => handleOpen('port')}>
               <IconLockOff className="text-muted me-2" size={16} />
               {hostname}:{info.port}
             </DropdownMenuItem>
