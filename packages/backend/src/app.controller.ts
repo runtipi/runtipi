@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { AppCatalogService } from './modules/apps/app-catalog.service';
 import { AuthGuard } from './modules/auth/auth.guard';
 import type { UserDto } from './modules/user/dto/user.dto';
+import path from 'node:path';
 
 @Controller()
 export class AppController {
@@ -42,6 +43,11 @@ export class AppController {
     const version = await this.appService.getVersion();
 
     const { userSettings } = this.configuration.getConfig();
+
+    const appDataPathArray = userSettings.appDataPath.split(path.sep);
+    appDataPathArray.pop();
+
+    userSettings.appDataPath = appDataPathArray.join(path.sep);
 
     const apps = await this.appCatalog.getAvailableApps();
 
