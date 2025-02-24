@@ -39,7 +39,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
       url = `https://${app.domain}${info.url_suffix || ''}`;
     }
 
-    if (type === 'localDomain' && app.exposedLocal) {
+    if (type === 'localDomain') {
       url = `https://${app.id}.${localDomain}${info.url_suffix || ''}`;
     }
 
@@ -49,7 +49,8 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <div className="col-sm-6 col-lg-4 app-link">
+        {/* biome-ignore lint/a11y/noNoninteractiveTabindex: works fine */}
+        <div tabIndex={0} className="col-sm-6 col-lg-4 app-link">
           <AppTile key={app.id} info={info} status={app.status} updateAvailable={false} />
         </div>
       </DropdownMenuTrigger>
@@ -62,7 +63,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
               {app.domain}
             </DropdownMenuItem>
           )}
-          {app.exposedLocal && (
+          {(app.exposedLocal || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('localDomain')}>
               <IconLock className="text-muted me-2" size={16} />
               {app.id}.{localDomain}
