@@ -1,3 +1,4 @@
+import { SESSION_COOKIE_NAME } from '@/common/constants';
 import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { Injectable, type NestMiddleware } from '@nestjs/common';
@@ -14,7 +15,7 @@ export class AuthMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, _: Response, next: NextFunction) {
-    const sessionId = req.cookies['tipi.sid'];
+    const sessionId = req.cookies[SESSION_COOKIE_NAME];
     const bearerToken = req.headers.authorization;
 
     if (sessionId) {

@@ -83,7 +83,7 @@ export class AuthController {
   @Post('/logout')
   async logout(@Res() res: Response, @Req() req: Request) {
     res.clearCookie(SESSION_COOKIE_NAME);
-    const sessionId = req.cookies['tipi.sid'];
+    const sessionId = req.cookies[SESSION_COOKIE_NAME];
 
     if (!sessionId) {
       return;
