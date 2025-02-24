@@ -39,7 +39,7 @@ export class AuthController {
       secure: false,
       sameSite: false,
       maxAge: SESSION_COOKIE_MAX_AGE,
-      domain: domain.length ? `.${domain.join('.')}` : undefined,
+      domain: validator.isFQDN(domain.join('.')) ? `.${domain.join('.')}` : undefined,
     });
   }
 
