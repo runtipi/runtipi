@@ -58,7 +58,7 @@ test('logged out users can see the apps on the guest dashboard', async ({ browse
   const locator = page.locator('text=Actual Budget');
   await expect(locator).not.toBeVisible();
 
-  await page.getByRole('link', { name: /Hello World/ }).click();
+  await page.getByText('Hello World', { exact: true }).click();
 
   const [newPage] = await Promise.all([context.waitForEvent('page'), page.getByRole('menuitem', { name: 'duckduckgo.com' }).click()]);
 

@@ -1,6 +1,7 @@
 import { SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
 import type { Request, Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
 import validator from 'validator';
@@ -28,19 +29,30 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   private setSessionCookie(res: Response, sessionId: string, host?: string) {
-    const domain = host?.split('.') ?? [];
+    try {
+      const domain = host?.split('.') ?? [];
 
-    if (validator.isFQDN(host ?? '') && domain.length > 2) {
-      domain.shift();
+      if (validator.isFQDN(host ?? '') && domain.length > 2) {
+        domain.shift();
+      }
+
+      res.cookie(SESSION_COOKIE_NAME, sessionId, {
+        httpOnly: true,
+        secure: false,
+        sameSite: false,
+        maxAge: SESSION_COOKIE_MAX_AGE,
+        domain: validator.isFQDN(domain.join('.')) ? `.${domain.join('.')}` : undefined,
+      });
+    } catch (error) {
+      Sentry.captureException(error, { extra: { host } });
+
+      res.cookie(SESSION_COOKIE_NAME, sessionId, {
+        httpOnly: true,
+        secure: false,
+        sameSite: false,
+        maxAge: SESSION_COOKIE_MAX_AGE,
+      });
     }
-
-    res.cookie(SESSION_COOKIE_NAME, sessionId, {
-      httpOnly: true,
-      secure: false,
-      sameSite: false,
-      maxAge: SESSION_COOKIE_MAX_AGE,
-      domain: domain.length ? `.${domain.join('.')}` : undefined,
-    });
   }
 
   @Post('/login')
@@ -83,7 +95,7 @@ export class AuthController {
   @Post('/logout')
   async logout(@Res() res: Response, @Req() req: Request) {
     res.clearCookie(SESSION_COOKIE_NAME);
-    const sessionId = req.cookies['tipi.sid'];
+    const sessionId = req.cookies[SESSION_COOKIE_NAME];
 
     if (!sessionId) {
       return;
