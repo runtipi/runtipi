@@ -13,7 +13,7 @@ import { QueueHealthIndicator } from './queue.health';
     {
       provide: AppEventsQueue,
       useFactory: (queueFactory: QueueFactory, config: ConfigurationService) => {
-        const timeout = config.get('userSettings').eventsTimeout;
+        const timeout = config.get('userSettings').eventsTimeout * 60 * 1000;
 
         return queueFactory.createQueue({
           queueName: 'app-events-queue',
@@ -28,7 +28,7 @@ import { QueueHealthIndicator } from './queue.health';
     {
       provide: RepoEventsQueue,
       useFactory: (queueFactory: QueueFactory, config: ConfigurationService) => {
-        const timeout = config.get('userSettings').eventsTimeout;
+        const timeout = config.get('userSettings').eventsTimeout * 60 * 1000;
 
         return queueFactory.createQueue({
           queueName: 'repo-queue',

@@ -91,7 +91,6 @@
     "@types/supertest": "^6.0.2",
     "@types/validator": "^13.12.2",
     "@types/web-push": "^3.6.4",
-    "@vercel/ncc": "^0.38.3",
     "@vitest/coverage-v8": "3.0.5",
     "drizzle-kit": "^0.30.4",
     "esbuild": "^0.24.2",

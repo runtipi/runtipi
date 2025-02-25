@@ -17,10 +17,11 @@ import { useTranslation } from 'react-i18next';
 import './guest-dashboard.css';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 
-const Tile = ({ data }: { data: GuestAppsDto['installed'][number] }) => {
+const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; localDomain: string }) => {
   const { t } = useTranslation();
 
   const { info, app } = data;
+
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
 
   const handleOpen = (type: string) => {
@@ -38,15 +39,21 @@ const Tile = ({ data }: { data: GuestAppsDto['installed'][number] }) => {
       url = `https://${app.domain}${info.url_suffix || ''}`;
     }
 
+    if (type === 'localDomain') {
+      // TODO: URN support
+      url = `https://${app.id}.${localDomain}${info.url_suffix || ''}`;
+    }
+
     window.open(url, '_blank', 'noreferrer');
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <a href={info.urn} className="col-sm-6 col-lg-4 app-link">
+        {/* biome-ignore lint/a11y/noNoninteractiveTabindex: works fine */}
+        <div tabIndex={0} className="col-sm-6 col-lg-4 app-link">
           <AppTile key={info.urn} info={info} status={app.status} updateAvailable={false} />
-        </a>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>{t('APP_DETAILS_CHOOSE_OPEN_METHOD')}</DropdownMenuLabel>
@@ -57,8 +64,14 @@ const Tile = ({ data }: { data: GuestAppsDto['installed'][number] }) => {
               {app.domain}
             </DropdownMenuItem>
           )}
+          {(app.exposedLocal || !info.dynamic_config) && (
+            <DropdownMenuItem onClick={() => handleOpen('localDomain')}>
+              <IconLock className="text-muted me-2" size={16} />
+              {app.id}.{localDomain}
+            </DropdownMenuItem>
+          )}
           {(app.openPort || !info.dynamic_config) && (
-            <DropdownMenuItem onClick={() => handleOpen('local')}>
+            <DropdownMenuItem onClick={() => handleOpen('port')}>
               <IconLockOff className="text-muted me-2" size={16} />
               {hostname}:{info.port}
             </DropdownMenuItem>
@@ -91,8 +104,8 @@ export const GuestDashboard = () => {
           <div className="container-xl">
             {data.installed.length === 0 && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
             <div className="row row-cards">
-              {data.installed.map((data) => {
-                return <Tile key={data.app.id} data={data} />;
+              {data.installed.map((appData) => {
+                return <Tile key={appData.app.id} data={appData} localDomain={data.localDomain} />;
               })}
             </div>
           </div>

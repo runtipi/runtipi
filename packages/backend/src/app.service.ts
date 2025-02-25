@@ -9,6 +9,7 @@ import { ConfigurationService } from './core/config/configuration.service';
 import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
+import { AppLifecycleService } from './modules/app-lifecycle/app-lifecycle.service';
 import { AppStoreService } from './modules/app-stores/app-store.service';
 import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
@@ -24,6 +25,7 @@ export class AppService {
     private readonly appStoreService: AppStoreService,
     private readonly marketplaceService: MarketplaceService,
     private readonly databaseService: DatabaseService,
+    private readonly appLifecycleService: AppLifecycleService,
   ) {}
 
   public async bootstrap() {
@@ -55,6 +57,7 @@ export class AppService {
 
       await this.copyAssets();
       await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
+      this.appLifecycleService.startAllApps();
     } catch (e) {
       this.logger.error(e);
       Sentry.captureException(e, { tags: { source: 'bootstrap' } });
@@ -177,8 +180,14 @@ export class AppService {
       (await this.filesystem.pathExists(path.join(tlsFolder, 'cert.pem'))) &&
       (await this.filesystem.pathExists(path.join(tlsFolder, 'key.pem')))
     ) {
-      this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
-      return;
+      // Check if the certificate is still valid
+      const { stdout } = await execAsync(`openssl x509 -checkend 86400 -noout -in ${tlsFolder}/cert.pem`);
+      if (stdout.includes('Certificate will not expire')) {
+        this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
+        return;
+      }
+
+      this.logger.warn(`TLS certificate for ${data.localDomain} is expired or will expire soon. Regenerating a new one...`);
     }
 
     // Empty out the folder

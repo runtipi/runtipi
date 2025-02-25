@@ -52,6 +52,7 @@ export type AppContextDto = {
     listenIp: string;
     timeZone: string;
     eventsTimeout: number;
+    advancedSettings: boolean;
   };
   user: {
     id: number;
@@ -109,6 +110,7 @@ export type PartialUserSettingsDto = {
   listenIp?: string;
   timeZone?: string;
   eventsTimeout?: number;
+  advancedSettings?: boolean;
 };
 
 export type AcknowledgeWelcomeBody = {
@@ -344,8 +346,10 @@ export type GuestAppsDto = {
       min_tipi_version?: string;
       created_at?: number;
       updated_at?: number;
+      force_pull?: boolean;
     };
   }>;
+  localDomain: string;
 };
 
 export type GetAppDto = {
@@ -437,6 +441,7 @@ export type GetAppDto = {
     min_tipi_version?: string;
     created_at?: number;
     updated_at?: number;
+    force_pull?: boolean;
   };
   metadata: {
     hasCustomConfig?: boolean;
