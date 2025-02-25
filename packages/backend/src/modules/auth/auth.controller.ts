@@ -21,14 +21,13 @@ import {
   SetupTotpBody,
   VerifyTotpBody,
 } from './dto/auth.dto';
-import { getCookieDomain } from './utils/domain';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  private setSessionCookie(res: Response, sessionId: string, host?: string, proto?: string) {
-    const domain = getCookieDomain(host);
+  private async setSessionCookie(res: Response, sessionId: string, host?: string, proto?: string) {
+    const domain = await this.authService.getCookieDomain(host);
 
     res.cookie(SESSION_COOKIE_NAME, sessionId, {
       httpOnly: true,
@@ -50,7 +49,7 @@ export class AuthController {
 
     const host = req.headers['x-forwarded-host'] as string | undefined;
     const proto = req.headers['x-forwarded-proto'] as string | undefined;
-    this.setSessionCookie(res, sessionId, host, proto);
+    await this.setSessionCookie(res, sessionId, host, proto);
 
     return { success: true };
   }
@@ -61,7 +60,7 @@ export class AuthController {
     const { sessionId } = await this.authService.verifyTotp(body);
 
     const host = req.headers['x-forwarded-host'] as string | undefined;
-    this.setSessionCookie(res, sessionId, host);
+    await this.setSessionCookie(res, sessionId, host);
 
     return { success: true };
   }
@@ -72,7 +71,7 @@ export class AuthController {
     const { sessionId } = await this.authService.register(body);
 
     const host = req.headers['x-forwarded-host'] as string | undefined;
-    this.setSessionCookie(res, sessionId, host);
+    await this.setSessionCookie(res, sessionId, host);
 
     return { success: true };
   }
