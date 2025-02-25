@@ -1,10 +1,8 @@
 import { SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
 import type { Request, Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
-import validator from 'validator';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import {
@@ -23,36 +21,22 @@ import {
   SetupTotpBody,
   VerifyTotpBody,
 } from './dto/auth.dto';
+import { getCookieDomain } from './utils/domain';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  private setSessionCookie(res: Response, sessionId: string, host?: string) {
-    try {
-      const domain = host?.split('.') ?? [];
+  private setSessionCookie(res: Response, sessionId: string, host?: string, proto?: string) {
+    const domain = getCookieDomain(host);
 
-      if (validator.isFQDN(host ?? '') && domain.length > 2) {
-        domain.shift();
-      }
-
-      res.cookie(SESSION_COOKIE_NAME, sessionId, {
-        httpOnly: true,
-        secure: false,
-        sameSite: false,
-        maxAge: SESSION_COOKIE_MAX_AGE,
-        domain: validator.isFQDN(domain.join('.')) ? `.${domain.join('.')}` : undefined,
-      });
-    } catch (error) {
-      Sentry.captureException(error, { extra: { host } });
-
-      res.cookie(SESSION_COOKIE_NAME, sessionId, {
-        httpOnly: true,
-        secure: false,
-        sameSite: false,
-        maxAge: SESSION_COOKIE_MAX_AGE,
-      });
-    }
+    res.cookie(SESSION_COOKIE_NAME, sessionId, {
+      httpOnly: true,
+      secure: Boolean(domain && proto === 'https'),
+      sameSite: 'lax',
+      maxAge: SESSION_COOKIE_MAX_AGE,
+      domain,
+    });
   }
 
   @Post('/login')
@@ -65,7 +49,8 @@ export class AuthController {
     }
 
     const host = req.headers['x-forwarded-host'] as string | undefined;
-    this.setSessionCookie(res, sessionId, host);
+    const proto = req.headers['x-forwarded-proto'] as string | undefined;
+    this.setSessionCookie(res, sessionId, host, proto);
 
     return { success: true };
   }
