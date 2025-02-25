@@ -26,7 +26,10 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  private async setSessionCookie(res: Response, sessionId: string, host?: string, proto?: string) {
+  private async setSessionCookie(res: Response, sessionId: string, req: Request) {
+    const host = req.headers['x-forwarded-host'] as string | undefined;
+    const proto = req.headers['x-forwarded-proto'] as string | undefined;
+
     const domain = await this.authService.getCookieDomain(host);
 
     res.cookie(SESSION_COOKIE_NAME, sessionId, {
@@ -47,9 +50,7 @@ export class AuthController {
       return { success: true, totpSessionId };
     }
 
-    const host = req.headers['x-forwarded-host'] as string | undefined;
-    const proto = req.headers['x-forwarded-proto'] as string | undefined;
-    await this.setSessionCookie(res, sessionId, host, proto);
+    await this.setSessionCookie(res, sessionId, req);
 
     return { success: true };
   }
@@ -59,8 +60,7 @@ export class AuthController {
   async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
     const { sessionId } = await this.authService.verifyTotp(body);
 
-    const host = req.headers['x-forwarded-host'] as string | undefined;
-    await this.setSessionCookie(res, sessionId, host);
+    await this.setSessionCookie(res, sessionId, req);
 
     return { success: true };
   }
@@ -70,8 +70,7 @@ export class AuthController {
   async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<RegisterDto> {
     const { sessionId } = await this.authService.register(body);
 
-    const host = req.headers['x-forwarded-host'] as string | undefined;
-    await this.setSessionCookie(res, sessionId, host);
+    await this.setSessionCookie(res, sessionId, req);
 
     return { success: true };
   }
