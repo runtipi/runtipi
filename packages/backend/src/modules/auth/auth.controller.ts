@@ -1,10 +1,8 @@
 import { SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
 import type { Request, Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
-import validator from 'validator';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import {
@@ -28,31 +26,19 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  private setSessionCookie(res: Response, sessionId: string, host?: string) {
-    try {
-      const domain = host?.split('.') ?? [];
+  private async setSessionCookie(res: Response, sessionId: string, req: Request) {
+    const host = req.headers['x-forwarded-host'] as string | undefined;
+    const proto = req.headers['x-forwarded-proto'] as string | undefined;
 
-      if (validator.isFQDN(host ?? '') && domain.length > 2) {
-        domain.shift();
-      }
+    const domain = await this.authService.getCookieDomain(host);
 
-      res.cookie(SESSION_COOKIE_NAME, sessionId, {
-        httpOnly: true,
-        secure: false,
-        sameSite: false,
-        maxAge: SESSION_COOKIE_MAX_AGE,
-        domain: validator.isFQDN(domain.join('.')) ? `.${domain.join('.')}` : undefined,
-      });
-    } catch (error) {
-      Sentry.captureException(error, { extra: { host } });
-
-      res.cookie(SESSION_COOKIE_NAME, sessionId, {
-        httpOnly: true,
-        secure: false,
-        sameSite: false,
-        maxAge: SESSION_COOKIE_MAX_AGE,
-      });
-    }
+    res.cookie(SESSION_COOKIE_NAME, sessionId, {
+      httpOnly: true,
+      secure: Boolean(domain && proto === 'https'),
+      sameSite: 'lax',
+      maxAge: SESSION_COOKIE_MAX_AGE,
+      domain,
+    });
   }
 
   @Post('/login')
@@ -64,8 +50,7 @@ export class AuthController {
       return { success: true, totpSessionId };
     }
 
-    const host = req.headers['x-forwarded-host'] as string | undefined;
-    this.setSessionCookie(res, sessionId, host);
+    await this.setSessionCookie(res, sessionId, req);
 
     return { success: true };
   }
@@ -75,8 +60,7 @@ export class AuthController {
   async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
     const { sessionId } = await this.authService.verifyTotp(body);
 
-    const host = req.headers['x-forwarded-host'] as string | undefined;
-    this.setSessionCookie(res, sessionId, host);
+    await this.setSessionCookie(res, sessionId, req);
 
     return { success: true };
   }
@@ -86,8 +70,7 @@ export class AuthController {
   async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<RegisterDto> {
     const { sessionId } = await this.authService.register(body);
 
-    const host = req.headers['x-forwarded-host'] as string | undefined;
-    this.setSessionCookie(res, sessionId, host);
+    await this.setSessionCookie(res, sessionId, req);
 
     return { success: true };
   }

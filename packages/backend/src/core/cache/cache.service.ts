@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import Keyv from 'keyv';
 import sqlite3 from 'sqlite3';
 
-const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+export const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
 @Injectable()
 export class CacheService {

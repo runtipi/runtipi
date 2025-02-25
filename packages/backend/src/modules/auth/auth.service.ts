@@ -1,14 +1,15 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
 import { TranslatableError } from '@/common/error/translatable-error';
-import { CacheService } from '@/core/cache/cache.service';
+import { CacheService, ONE_DAY_IN_SECONDS } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
-import validator from 'validator';
+import psl from 'psl';
+import validator, { isFQDN } from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
 import { TotpAuthenticator } from './utils/totp-authenticator';
@@ -23,6 +24,57 @@ export class AuthService {
     private cache: CacheService,
     private filesystem: FilesystemService,
   ) {}
+
+  private async isDomainInPSL(domain: string) {
+    try {
+      const cached = await this.cache.get(`psl:${domain}`);
+
+      if (typeof cached === 'string') {
+        return cached === 'true';
+      }
+
+      let cachedList = await this.cache.get('psl-list');
+
+      if (!cachedList) {
+        const url = 'https://publicsuffix.org/list/public_suffix_list.dat';
+        const data = await fetch(url);
+        const text = await data.text();
+        await this.cache.set('psl-list', text, ONE_DAY_IN_SECONDS * 30);
+        cachedList = text;
+      }
+
+      const lines = cachedList.split('\n');
+
+      const isListed = lines.some((line) => {
+        const trimmedLine = line.trim();
+        return trimmedLine === domain && !trimmedLine.startsWith('//') && trimmedLine !== '';
+      });
+
+      await this.cache.set(`psl:${domain}`, isListed ? 'true' : 'false', ONE_DAY_IN_SECONDS * 365);
+
+      return isListed;
+    } catch {
+      return false;
+    }
+  }
+
+  public async getCookieDomain(domain?: string) {
+    if (!domain || !isFQDN(domain)) {
+      return undefined;
+    }
+
+    const parsed = psl.parse(domain);
+    if (parsed.error) {
+      return undefined;
+    }
+
+    if (parsed.domain && (await this.isDomainInPSL(parsed.domain))) {
+      // If the domain is in the Public Suffix List, return the input domain
+      return parsed.input;
+    }
+
+    return `.${parsed.domain}`;
+  }
 
   /**
    * Given a username and password, login the user and return the session ID.
