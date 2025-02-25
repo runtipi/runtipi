@@ -51,6 +51,8 @@ export class AuthService {
       });
 
       await this.cache.set(`psl:${domain}`, isListed ? 'true' : 'false', ONE_DAY_IN_SECONDS * 365);
+
+      return isListed;
     } catch {
       return false;
     }
