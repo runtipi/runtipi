@@ -378,6 +378,7 @@ export type GetAppDto = {
     domain: string | null;
     isVisibleOnGuestDashboard: boolean;
     config?: {};
+    enableAuth?: boolean;
   } | null;
   info: {
     id: string;
