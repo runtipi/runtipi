@@ -1,3 +1,4 @@
+import { createAppUrn } from '@/common/helpers/app-helpers';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DockerComposeBuilder } from '../compose.builder';
 import type { ServiceInput } from '../schemas';
@@ -15,11 +16,12 @@ describe('DockerComposeBuilder', () => {
   it('should build a docker-compose file', () => {
     const serviceName = 'service';
     const service: ServiceInput = {
+      isMain: true,
       name: serviceName,
       image: 'image',
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, 'test');
+    const compose = composeBuilder.getDockerCompose([service], {}, createAppUrn('test', 'test'));
     expect(compose).toMatchSnapshot();
   });
 
@@ -35,7 +37,7 @@ describe('DockerComposeBuilder', () => {
       },
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, 'test');
+    const compose = composeBuilder.getDockerCompose([service], {}, createAppUrn('test', 'test'));
     expect(compose).toMatchSnapshot();
   });
 
@@ -46,7 +48,7 @@ describe('DockerComposeBuilder', () => {
       devices: ['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm'],
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, 'test');
+    const compose = composeBuilder.getDockerCompose([service], {}, createAppUrn('test', 'test'));
     expect(compose).toMatchSnapshot();
   });
 
@@ -57,7 +59,7 @@ describe('DockerComposeBuilder', () => {
       entrypoint: 'entrypoint',
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, 'test');
+    const compose = composeBuilder.getDockerCompose([service], {}, createAppUrn('test', 'test'));
 
     expect(compose).toMatchSnapshot();
   });
@@ -69,7 +71,7 @@ describe('DockerComposeBuilder', () => {
       entrypoint: ['entrypoint', 'arg1', 'arg2'],
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, 'test');
+    const compose = composeBuilder.getDockerCompose([service], {}, createAppUrn('test', 'test'));
 
     expect(compose).toMatchSnapshot();
   });
@@ -81,7 +83,7 @@ describe('DockerComposeBuilder', () => {
       logging: { driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } },
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, 'test');
+    const compose = composeBuilder.getDockerCompose([service], {}, createAppUrn('test', 'test'));
 
     expect(compose).toMatchSnapshot();
   });
@@ -90,6 +92,7 @@ describe('DockerComposeBuilder', () => {
     const service1: ServiceInput = {
       name: 'service1',
       image: 'image1',
+      isMain: true,
       internalPort: 80,
       addPorts: [{ containerPort: 8080, hostPort: 3400 }],
       extraHosts: ['host1', 'host2'],
@@ -132,7 +135,7 @@ describe('DockerComposeBuilder', () => {
       image: 'image2',
     };
 
-    const compose = composeBuilder.getDockerCompose([service1, service2], {}, 'test');
+    const compose = composeBuilder.getDockerCompose([service1, service2], {}, createAppUrn('test', 'test'));
 
     expect(compose).toMatchSnapshot();
   });
@@ -145,7 +148,7 @@ describe('DockerComposeBuilder', () => {
       isMain: true,
     };
 
-    const compose = composeBuilder.getDockerCompose([service], { exposed: true, exposedLocal: true, openPort: true }, 'test');
+    const compose = composeBuilder.getDockerCompose([service], { exposed: true, exposedLocal: true, openPort: true }, createAppUrn('test', 'test'));
 
     expect(compose).toMatchSnapshot();
   });
@@ -206,7 +209,7 @@ describe('DockerComposeBuilder', () => {
       ],
     };
 
-    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true }, 'test');
+    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true }, createAppUrn('ctfd', 'test'));
 
     expect(yaml).toMatchSnapshot();
   });

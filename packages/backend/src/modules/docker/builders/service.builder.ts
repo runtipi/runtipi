@@ -151,7 +151,12 @@ export class ServiceBuilder {
    * ```
    */
   setNetwork(network: string) {
-    this.service.networks = [network];
+    if (this.service.networks) {
+      this.service.networks.push(network);
+    } else {
+      this.service.networks = [network];
+    }
+
     return this;
   }
 
@@ -500,7 +505,7 @@ export class ServiceBuilder {
     const finalService = {
       image: this.service.image,
       command: this.service.command,
-      container_name: this.service.containerName,
+      name: this.service.containerName,
       restart: this.service.restart,
       networks: this.service.networks,
       network_mode: this.service.networkMode,

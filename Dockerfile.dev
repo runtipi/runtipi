@@ -9,7 +9,7 @@ RUN npm install pnpm@9.15.4 -g
 RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.32.4"
+ARG DOCKER_COMPOSE_VERSION="v2.33.1"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 
