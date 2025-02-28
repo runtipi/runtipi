@@ -62,8 +62,8 @@ describe('AppService', () => {
       const version = faker.system.semver();
       const latest = faker.system.semver();
       configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
-      cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(latest);
-      cacheService.get.calledWith('latestVersionBody').mockResolvedValueOnce('body');
+      cacheService.get.calledWith('latestVersion').mockReturnValueOnce(latest);
+      cacheService.get.calledWith('latestVersionBody').mockReturnValueOnce('body');
 
       // act
       const result = await appService.getVersion();
@@ -81,7 +81,7 @@ describe('AppService', () => {
       const body = faker.lorem.paragraph();
       configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
       cacheService.get.calledWith('latestVersion').mockReturnValueOnce(undefined);
-      cacheService.get.calledWith('latestVersionBody').mockResolvedValueOnce(undefined);
+      cacheService.get.calledWith('latestVersionBody').mockReturnValueOnce(undefined);
 
       const mockFetch = vi.fn();
 
@@ -104,7 +104,9 @@ describe('AppService', () => {
       // arrange
       const version = faker.system.semver();
       configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
-      cacheService.get.calledWith('latestVersion').mockRejectedValueOnce(new Error('error'));
+      cacheService.get.calledWith('latestVersion').mockImplementationOnce(() => {
+        throw new Error('error');
+      });
 
       // act
       const result = await appService.getVersion();
@@ -119,7 +121,7 @@ describe('AppService', () => {
       // arrange
       const version = faker.system.semver();
       configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
-      cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(undefined);
+      cacheService.get.calledWith('latestVersion').mockReturnValueOnce(undefined);
 
       server.use(
         http.get(LATEST_RELEASE_URL, () => {

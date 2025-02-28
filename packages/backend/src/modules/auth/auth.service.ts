@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
 import { TranslatableError } from '@/common/error/translatable-error';
-import { CacheService, ONE_DAY_IN_SECONDS } from '@/core/cache/cache.service';
+import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -24,39 +24,6 @@ export class AuthService {
     private filesystem: FilesystemService,
   ) {}
 
-  private async isDomainInPSL(domain: string) {
-    try {
-      const cached = this.cache.get(`psl:${domain}`);
-
-      if (typeof cached === 'string') {
-        return cached === 'true';
-      }
-
-      let cachedList = this.cache.get('psl-list');
-
-      if (!cachedList) {
-        const url = 'https://publicsuffix.org/list/public_suffix_list.dat';
-        const data = await fetch(url);
-        const text = await data.text();
-        this.cache.set('psl-list', text, ONE_DAY_IN_SECONDS * 30);
-        cachedList = text;
-      }
-
-      const lines = cachedList.split('\n');
-
-      const isListed = lines.some((line) => {
-        const trimmedLine = line.trim();
-        return trimmedLine === domain && !trimmedLine.startsWith('//') && trimmedLine !== '';
-      });
-
-      this.cache.set(`psl:${domain}`, isListed ? 'true' : 'false', ONE_DAY_IN_SECONDS * 365);
-
-      return isListed;
-    } catch {
-      return false;
-    }
-  }
-
   public async getCookieDomain(domain?: string) {
     if (!domain || !isFQDN(domain)) {
       return undefined;
@@ -67,16 +34,7 @@ export class AuthService {
       return undefined;
     }
 
-    if (parsed.domain && (await this.isDomainInPSL(parsed.domain))) {
-      if (parsed.subdomain) {
-        // If the domain is in the Public Suffix List, return the input domain
-        return `.${parsed.subdomain}.${parsed.domain}`;
-      }
-
-      return `.${parsed.input}`;
-    }
-
-    return `.${parsed.domain ?? parsed.input}`;
+    return `.${parsed.input}`;
   }
 
   /**

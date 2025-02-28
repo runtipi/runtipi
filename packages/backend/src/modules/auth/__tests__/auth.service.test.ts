@@ -36,22 +36,11 @@ describe('AuthService', () => {
       expect(result).toBeUndefined();
     });
 
-    it('should return with subdomain if domain is in public suffix list', async () => {
-      cacheService.get.calledWith('psl:duckdns.org').mockResolvedValue('true');
-
+    it('should return with subdomain', async () => {
       const domain = 'example.duckdns.org';
       const result = await authService.getCookieDomain(domain);
 
       expect(result).toBe(`.${domain}`);
-    });
-
-    it('should return without subdomain if domain is not in public suffix list', async () => {
-      cacheService.get.calledWith('psl:example.com').mockResolvedValue('false');
-
-      const domain = 'cool.example.com';
-      const result = await authService.getCookieDomain(domain);
-
-      expect(result).toBe('.example.com');
     });
 
     it('should return input if domain is not using a standard tld', async () => {
@@ -61,20 +50,11 @@ describe('AuthService', () => {
       expect(result).toBe(`.${domain}`);
     });
 
-    it('should return main domain when using multiple levels of subdomains', async () => {
-      cacheService.get.calledWith('psl:example.com').mockResolvedValue('false');
-      const domain = 'sub.sub.example.com';
-      const result = await authService.getCookieDomain(domain);
-
-      expect(result).toBe('.example.com');
-    });
-
-    it('should return first available subdomain when using multiple levels of subdomains in a public suffix', async () => {
-      cacheService.get.calledWith('psl:duckdns.org').mockResolvedValue('true');
+    it('should return all subdomains when using multiple levels of subdomains', async () => {
       const domain = 'sub.sub.duckdns.org';
       const result = await authService.getCookieDomain(domain);
 
-      expect(result).toBe('.sub.duckdns.org');
+      expect(result).toBe('.sub.sub.duckdns.org');
     });
   });
 });
