@@ -87,6 +87,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        uses: "./.github/actions/install-dependencies"
+
       - name: Create .env.local
         run: |
           echo "LOG_LEVEL=debug" > .env.local
@@ -103,9 +106,6 @@ jobs:
         run: |
           ./scripts/install.sh --version e2e --env-file ${{ github.workspace }}/.env.local
           cd ..
-
-      - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
 
       - name: Create .env.e2e file
         run: |
