@@ -19,7 +19,7 @@ export class AuthMiddleware implements NestMiddleware {
     const bearerToken = req.headers.authorization;
 
     if (sessionId) {
-      const userId = await this.cache.get(`session:${sessionId}`);
+      const userId = this.cache.get(`session:${sessionId}`);
       if (!Number.isNaN(Number(userId))) {
         const user = await this.userRepository.getUserDtoById(Number(userId));
         req.user = user;

@@ -9,6 +9,9 @@ export default defineConfig({
     setupFiles: ['./src/tests/vite.setup.ts'],
     coverage: { all: true, reporter: ['lcov', 'text-summary'] },
     reporters: ['default'],
+    env: {
+      NODE_OPTIONS: '--experimental-sqlite',
+    },
   },
   resolve: {},
 });

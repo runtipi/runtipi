@@ -1,8 +1,8 @@
 {
   "name": "runtipi",
-  "version": "3.9.3",
+  "version": "3.9.4",
   "description": "",
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.5.0",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo build",
@@ -35,6 +35,6 @@
     "zod": "^3.24.2"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@biomejs/biome", "@nestjs/core", "@sentry/cli", "@swc/core", "argon2", "esbuild", "msw", "sqlite3"]
+    "onlyBuiltDependencies": ["@biomejs/biome", "@nestjs/core", "@sentry/cli", "@swc/core", "argon2", "esbuild", "msw"]
   }
 }

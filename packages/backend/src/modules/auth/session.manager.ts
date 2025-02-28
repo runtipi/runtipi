@@ -17,8 +17,8 @@ export class SessionManager {
     const sessionId = crypto.randomUUID();
     const sessionKey = `session:${sessionId}`;
 
-    await this.cache.set(sessionKey, userId.toString(), this.COOKIE_MAX_AGE * 7);
-    await this.cache.set(`session:${userId}:${sessionId}`, sessionKey, this.COOKIE_MAX_AGE * 7);
+    this.cache.set(sessionKey, userId.toString(), this.COOKIE_MAX_AGE * 7);
+    this.cache.set(`session:${userId}:${sessionId}`, sessionKey, this.COOKIE_MAX_AGE * 7);
 
     return sessionId;
   }
@@ -33,11 +33,11 @@ export class SessionManager {
    */
   public async deleteSession(sessionId: string) {
     const sessionKey = `session:${sessionId}`;
-    const userId = await this.cache.get(sessionKey);
+    const userId = this.cache.get(sessionKey);
 
-    await this.cache.del(sessionKey);
+    this.cache.del(sessionKey);
     if (userId) {
-      await this.cache.del(`session:${userId}:${sessionId}`);
+      this.cache.del(`session:${userId}:${sessionId}`);
     }
   }
 
@@ -51,8 +51,8 @@ export class SessionManager {
 
     await Promise.all(
       sessions.map(async (session) => {
-        await this.cache.del(session.key);
-        if (session.val) await this.cache.del(session.val);
+        this.cache.del(session.key);
+        if (session.val) this.cache.del(session.val);
       }),
     );
   };
