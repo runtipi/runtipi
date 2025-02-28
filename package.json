@@ -1,6 +1,6 @@
 {
   "name": "runtipi",
-  "version": "3.9.3",
+  "version": "3.9.4",
   "description": "",
   "packageManager": "pnpm@10.5.0",
   "scripts": {
