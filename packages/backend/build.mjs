@@ -40,7 +40,6 @@ await esbuild.build({
     '@nestjs/websockets',
     'class-transformer',
     'i18next-fs-backend',
-    'sqlite3',
     'argon2',
   ],
   outfile: 'dist/main.js',

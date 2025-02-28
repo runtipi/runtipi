@@ -3,9 +3,7 @@ ARG ALPINE_VERSION="3.21"
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
-RUN apk add --no-cache curl git
-RUN npm install pnpm@10.4.1 -g
-
+RUN corepack enable pnpm && corepack install -g pnpm@latest-10
 RUN apk add --no-cache g++ make curl openssl git rabbitmq-server supervisor
 
 ARG TARGETARCH
@@ -36,7 +34,7 @@ COPY ./packages/frontend/package.json ./packages/frontend/package.json
 COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
 
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages

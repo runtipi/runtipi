@@ -27,19 +27,19 @@ export class AuthService {
 
   private async isDomainInPSL(domain: string) {
     try {
-      const cached = await this.cache.get(`psl:${domain}`);
+      const cached = this.cache.get(`psl:${domain}`);
 
       if (typeof cached === 'string') {
         return cached === 'true';
       }
 
-      let cachedList = await this.cache.get('psl-list');
+      let cachedList = this.cache.get('psl-list');
 
       if (!cachedList) {
         const url = 'https://publicsuffix.org/list/public_suffix_list.dat';
         const data = await fetch(url);
         const text = await data.text();
-        await this.cache.set('psl-list', text, ONE_DAY_IN_SECONDS * 30);
+        this.cache.set('psl-list', text, ONE_DAY_IN_SECONDS * 30);
         cachedList = text;
       }
 
@@ -50,7 +50,7 @@ export class AuthService {
         return trimmedLine === domain && !trimmedLine.startsWith('//') && trimmedLine !== '';
       });
 
-      await this.cache.set(`psl:${domain}`, isListed ? 'true' : 'false', ONE_DAY_IN_SECONDS * 365);
+      this.cache.set(`psl:${domain}`, isListed ? 'true' : 'false', ONE_DAY_IN_SECONDS * 365);
 
       return isListed;
     } catch {
@@ -100,7 +100,7 @@ export class AuthService {
 
     if (user.totpEnabled) {
       const totpSessionId = crypto.randomUUID();
-      await this.cache.set(totpSessionId, user.id.toString());
+      this.cache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
 
@@ -120,7 +120,7 @@ export class AuthService {
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
     const { totpSessionId, totpCode } = params;
-    const userId = await this.cache.get(totpSessionId);
+    const userId = this.cache.get(totpSessionId);
 
     if (!userId) {
       throw new TranslatableError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -145,7 +145,7 @@ export class AuthService {
 
     const sessionId = await this.sessionManager.createSession(user.id);
 
-    await this.cache.del(totpSessionId);
+    this.cache.del(totpSessionId);
 
     return {
       sessionId,

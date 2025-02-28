@@ -6,8 +6,8 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
-RUN npm install pnpm@10.4.1 -g
-RUN apk add --no-cache curl python3 py3-setuptools make g++ git
+RUN corepack enable pnpm && corepack install -g pnpm@latest-10
+RUN apk add --no-cache curl python3 make g++ git
 
 WORKDIR /deps
 
@@ -50,7 +50,7 @@ COPY ./packages/frontend/package.json ./packages/frontend/package.json
 COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
 
-RUN pnpm install -r --prefer-offline
+RUN pnpm install --frozen-lockfile -r --prefer-offline
 
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
@@ -67,7 +67,7 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install argon2 sqlite3 i18next-fs-backend class-transformer
+RUN npm install argon2 i18next-fs-backend class-transformer
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
