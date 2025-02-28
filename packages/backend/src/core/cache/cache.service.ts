@@ -51,6 +51,13 @@ export class CacheService {
   }
 
   public clear() {
+    const tableCheck = this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='keyv'").get();
+
+    if (!tableCheck) {
+      console.warn("Table 'keyv' does not exist — nothing to clear.");
+      return;
+    }
+
     const stmt = this.db.prepare('DELETE FROM keyv');
     stmt.run();
   }
