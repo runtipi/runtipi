@@ -69,11 +69,15 @@ export class AuthService {
     }
 
     if (parsed.domain && (await this.isDomainInPSL(parsed.domain))) {
-      // If the domain is in the Public Suffix List, return the input domain
-      return parsed.input;
+      if (parsed.subdomain) {
+        // If the domain is in the Public Suffix List, return the input domain
+        return `.${parsed.subdomain}.${parsed.domain}`;
+      }
+
+      return `.${parsed.input}`;
     }
 
-    return `.${parsed.domain}`;
+    return `.${parsed.domain ?? parsed.input}`;
   }
 
   /**
