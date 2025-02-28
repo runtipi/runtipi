@@ -9,6 +9,12 @@ export class CacheService {
 
   constructor() {
     this.db = new DatabaseSync('/cache/cache.sqlite');
+
+    const tableCheck = this.db.prepare("SELECT name FROM sqlite_master WHERE type='table'").get();
+
+    if (!tableCheck) {
+      this.db.exec('CREATE TABLE keyv (key TEXT PRIMARY KEY, value TEXT)');
+    }
   }
 
   public set(key: string, value: string, expiration = ONE_DAY_IN_SECONDS) {
@@ -51,13 +57,6 @@ export class CacheService {
   }
 
   public clear() {
-    const tableCheck = this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='keyv'").get();
-
-    if (!tableCheck) {
-      console.warn("Table 'keyv' does not exist — nothing to clear.");
-      return;
-    }
-
     const stmt = this.db.prepare('DELETE FROM keyv');
     stmt.run();
   }
