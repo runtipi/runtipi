@@ -1,55 +1,58 @@
-import KeyvSqlite from '@keyv/sqlite';
+import { DatabaseSync } from 'node:sqlite';
 import { Injectable } from '@nestjs/common';
-import Keyv from 'keyv';
-import sqlite3 from 'sqlite3';
 
-const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+export const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
 @Injectable()
 export class CacheService {
-  private client: Keyv<string>;
-  private backend: KeyvSqlite;
+  private db: DatabaseSync;
 
   constructor() {
-    this.backend = new KeyvSqlite('sqlite:///cache/cache.sqlite');
-    this.client = new Keyv({
-      store: this.backend,
-      ttl: ONE_DAY_IN_SECONDS,
-      namespace: 'cache',
-    });
-  }
-
-  public getClient() {
-    return this.client;
+    this.db = new DatabaseSync('/cache/cache.sqlite');
   }
 
   public set(key: string, value: string, expiration = ONE_DAY_IN_SECONDS) {
-    return this.client.set(key, value, expiration * 1000);
+    const stmt = this.db.prepare('INSERT OR REPLACE INTO keyv (key, value) VALUES (?, ?)');
+    stmt.run(key, JSON.stringify({ value, expiration: Math.max(Date.now() + expiration * 1000, expiration) }));
   }
 
   public get(key: string) {
-    return this.client.get<string>(key);
+    const query = this.db.prepare('SELECT * FROM keyv WHERE key = ?');
+    const row = query.get(key) as { value: string } | undefined;
+
+    if (!row) {
+      return undefined;
+    }
+
+    const { value, expiration = 0 } = JSON.parse(row.value) as { value: string; expiration: number };
+    if (expiration < Date.now()) {
+      this.del(key);
+      return undefined;
+    }
+
+    return value;
   }
 
   public del(key: string) {
-    return this.client.delete(key);
+    const stmt = this.db.prepare('DELETE FROM keyv WHERE key = ?');
+    stmt.run(key);
   }
 
   public async getByPrefix(prefix: string) {
-    const db = new sqlite3.Database('/cache/cache.sqlite');
+    try {
+      const db = new DatabaseSync('/cache/cache.sqlite');
+      const query = db.prepare('SELECT * FROM keyv WHERE key LIKE ?');
+      const rows = query.all(`cache:${prefix}%`) as { key: string; value: string }[];
 
-    return new Promise<{ key: string; val: string }[]>((resolve, reject) => {
-      db.all('SELECT * FROM keyv WHERE key LIKE ?', [`cache:${prefix}%`], (err, rows: { key: string; value: string }[]) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows.map((row) => ({ key: row.key, val: JSON.parse(row.value).value })));
-        }
-      });
-    });
+      return rows.map((row) => ({ key: row.key, val: JSON.parse(row.value).value }));
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }
 
   public clear() {
-    return this.client.clear();
+    const stmt = this.db.prepare('DELETE FROM keyv');
+    stmt.run();
   }
 }

@@ -80,7 +80,7 @@ describe('AppService', () => {
       const latest = faker.system.semver();
       const body = faker.lorem.paragraph();
       configurationService.getConfig.mockReturnValueOnce(fromPartial({ version }));
-      cacheService.get.calledWith('latestVersion').mockResolvedValueOnce(undefined);
+      cacheService.get.calledWith('latestVersion').mockReturnValueOnce(undefined);
       cacheService.get.calledWith('latestVersionBody').mockResolvedValueOnce(undefined);
 
       const mockFetch = vi.fn();

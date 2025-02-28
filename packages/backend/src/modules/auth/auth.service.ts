@@ -48,7 +48,7 @@ export class AuthService {
 
     if (user.totpEnabled) {
       const totpSessionId = crypto.randomUUID();
-      await this.cache.set(totpSessionId, user.id.toString());
+      this.cache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
 
@@ -68,7 +68,7 @@ export class AuthService {
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
     const { totpSessionId, totpCode } = params;
-    const userId = await this.cache.get(totpSessionId);
+    const userId = this.cache.get(totpSessionId);
 
     if (!userId) {
       throw new TranslatableError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -93,7 +93,7 @@ export class AuthService {
 
     const sessionId = await this.sessionManager.createSession(user.id);
 
-    await this.cache.del(totpSessionId);
+    this.cache.del(totpSessionId);
 
     return {
       sessionId,
