@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
-import { CacheService } from './core/cache/cache.service';
+import { CacheService, ONE_DAY_IN_SECONDS } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
 import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
@@ -38,12 +38,19 @@ export class AppService {
     this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
     this.logger.info('Generating system env file...');
 
+    const buster = this.cache.get('buster');
+    if (buster !== version) {
+      this.logger.info('Clearing cache...');
+      this.cache.clear();
+      this.cache.set('buster', version, ONE_DAY_IN_SECONDS * 365);
+    }
+
     const clone = await this.repos.cloneRepo(appsRepoUrl);
     if (!clone.success) {
       this.logger.error(`Failed to clone repo ${appsRepoUrl}`);
     }
 
-    if (process.env.NODE_ENV !== 'development') {
+    if (this.configuration.get('isProduction')) {
       const pull = await this.repos.pullRepo(appsRepoUrl);
       if (!pull.success) {
         this.logger.error(`Failed to pull repo ${appsRepoUrl}`);
@@ -56,15 +63,17 @@ export class AppService {
     await this.copyAssets();
     await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
 
-    this.appLifecycleService.startAllApps();
+    if (this.configuration.get('isProduction')) {
+      this.appLifecycleService.startAllApps();
+    }
   }
 
   public async getVersion() {
     const { version: currentVersion } = this.configuration.getConfig();
 
     try {
-      let version = (await this.cache.get('latestVersion')) ?? '';
-      let body = (await this.cache.get('latestVersionBody')) ?? '';
+      let version = this.cache.get('latestVersion') ?? '';
+      let body = this.cache.get('latestVersionBody') ?? '';
 
       if (!version) {
         version = currentVersion;
@@ -81,8 +90,8 @@ export class AppService {
           version = res.tag_name;
           body = res.body;
 
-          await this.cache.set('latestVersion', version, 60 * 60);
-          await this.cache.set('latestVersionBody', body, 60 * 60);
+          this.cache.set('latestVersion', version, 60 * 60);
+          this.cache.set('latestVersionBody', body, 60 * 60);
         });
       }
 

@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
 import { TranslatableError } from '@/common/error/translatable-error';
-import { CacheService, ONE_DAY_IN_SECONDS } from '@/core/cache/cache.service';
+import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -25,39 +25,6 @@ export class AuthService {
     private filesystem: FilesystemService,
   ) {}
 
-  private async isDomainInPSL(domain: string) {
-    try {
-      const cached = await this.cache.get(`psl:${domain}`);
-
-      if (typeof cached === 'string') {
-        return cached === 'true';
-      }
-
-      let cachedList = await this.cache.get('psl-list');
-
-      if (!cachedList) {
-        const url = 'https://publicsuffix.org/list/public_suffix_list.dat';
-        const data = await fetch(url);
-        const text = await data.text();
-        await this.cache.set('psl-list', text, ONE_DAY_IN_SECONDS * 30);
-        cachedList = text;
-      }
-
-      const lines = cachedList.split('\n');
-
-      const isListed = lines.some((line) => {
-        const trimmedLine = line.trim();
-        return trimmedLine === domain && !trimmedLine.startsWith('//') && trimmedLine !== '';
-      });
-
-      await this.cache.set(`psl:${domain}`, isListed ? 'true' : 'false', ONE_DAY_IN_SECONDS * 365);
-
-      return isListed;
-    } catch {
-      return false;
-    }
-  }
-
   public async getCookieDomain(domain?: string) {
     if (!domain || !isFQDN(domain)) {
       return undefined;
@@ -68,12 +35,7 @@ export class AuthService {
       return undefined;
     }
 
-    if (parsed.domain && (await this.isDomainInPSL(parsed.domain))) {
-      // If the domain is in the Public Suffix List, return the input domain
-      return parsed.input;
-    }
-
-    return `.${parsed.domain}`;
+    return `.${parsed.input}`;
   }
 
   /**
@@ -100,7 +62,7 @@ export class AuthService {
 
     if (user.totpEnabled) {
       const totpSessionId = crypto.randomUUID();
-      await this.cache.set(totpSessionId, user.id.toString());
+      this.cache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
 
@@ -120,7 +82,7 @@ export class AuthService {
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
     const { totpSessionId, totpCode } = params;
-    const userId = await this.cache.get(totpSessionId);
+    const userId = this.cache.get(totpSessionId);
 
     if (!userId) {
       throw new TranslatableError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -145,7 +107,7 @@ export class AuthService {
 
     const sessionId = await this.sessionManager.createSession(user.id);
 
-    await this.cache.del(totpSessionId);
+    this.cache.del(totpSessionId);
 
     return {
       sessionId,

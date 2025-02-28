@@ -34,7 +34,7 @@ export class AuthController {
 
     res.cookie(SESSION_COOKIE_NAME, sessionId, {
       httpOnly: true,
-      secure: Boolean(domain && proto === 'https'),
+      secure: Boolean(domain) && proto === 'https',
       sameSite: 'lax',
       maxAge: SESSION_COOKIE_MAX_AGE,
       domain,
