@@ -8,6 +8,7 @@ import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
+import psl from 'psl';
 import validator, { isFQDN } from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
@@ -24,7 +25,7 @@ export class AuthService {
     private filesystem: FilesystemService,
   ) {}
 
-  public async getCookieDomain(domain?: string) {
+  public getCookieDomain(domain?: string) {
     if (!domain || !isFQDN(domain)) {
       return undefined;
     }
