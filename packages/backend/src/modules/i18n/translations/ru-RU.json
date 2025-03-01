@@ -350,7 +350,7 @@
   "SETTINGS_GENERAL_ADVANCED_SETTINGS_MODAL_TITLE": "Включить расширенные настройки?",
   "SETTINGS_GENERAL_ADVANCED_SETTINGS_MODAL_SUBTITLE": "Расширенные настройки предназначены только для опытных пользователей. Неправильная конфигурация этих настроек может привести к сбою установки. Вы уверены, что хотите включить их?",
   "SETTINGS_GENERAL_SAVE_ALERT_TITLE": "Не забудьте сохранить настройки",
-  "SETTINGS_GENERAL_SAVE_ALERT_SUBTITLE": "It seems like you have edited the settings. Make sure to press the Update Settings button below to apply them.",
+  "SETTINGS_GENERAL_SAVE_ALERT_SUBTITLE": "Похоже, вы изменили настройки. Убедитесь, что нажали кнопку \"Обновить настройки\" ниже, чтобы применить их.",
   "SETTINGS_SECURITY_2FA_DISABLE_SUCCESS": "Двухфакторная аутентификация отключена",
   "SETTINGS_SECURITY_2FA_ENABLE_SUCCESS": "Двухфакторная аутентификация включена",
   "SETTINGS_SECURITY_2FA_SUBTITLE": "Двухфакторная аутентификация (2FA) добавляет дополнительный уровень безопасности вашей учетной записи.",
@@ -393,8 +393,8 @@
   "TIMEZONE_SELECTOR_PLACEHOLDER": "Выберите часовой пояс",
   "YES": "Да",
   "NO": "Нет",
-  "ACTIONS_CANCEL": "Cancel",
-  "ACTIONS_ENABLE": "Enable",
-  "WARNING": "Warning",
-  "CLEAR": "Clear"
+  "ACTIONS_CANCEL": "Отменить",
+  "ACTIONS_ENABLE": "Включить",
+  "WARNING": "Внимание",
+  "CLEAR": "Очистить"
 }
