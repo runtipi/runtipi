@@ -188,8 +188,8 @@ importers:
         specifier: ^11.0.10
         version: 11.0.10(@nestjs/common@11.0.10(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.10)(@nestjs/platform-express@11.0.10)
       '@sentry/core':
-        specifier: ^8.54.0
-        version: 8.55.0
+        specifier: ^9.3.0
+        version: 9.3.0
       '@swc/cli':
         specifier: 0.6.0
         version: 0.6.0(@swc/core@1.11.1(@swc/helpers@0.5.15))(chokidar@4.0.3)
@@ -2809,6 +2809,10 @@ packages:
     resolution: {integrity: sha512-6g7jpbefjHYs821Z+EBJ8r4Z7LT5h80YSWRJaylGS4nW5W5Z2KXzpdnyFarv37O7QjauzVC2E+PABmpkw5/JGA==}
     engines: {node: '>=14.18'}
 
+  '@sentry/core@9.3.0':
+    resolution: {integrity: sha512-SxQ4z7wTkfguvYb2ctNEMU9kVAbhl9ymfjhLnrvtygTwL5soLqAKdco/lX/4P9K9Osgb2Dl6urQWRl+AhzKVbQ==}
+    engines: {node: '>=18'}
+
   '@sentry/esbuild-plugin@3.2.1':
     resolution: {integrity: sha512-z6Zn/c1oxWHDMGga5t6MLERgDFnoJc7k1FFErATzezzYLbYZsO/9qQZxMIkT/lZgbS6+uvj/xfuUo+2tiHjfXg==}
     engines: {node: '>= 14'}
@@ -3702,6 +3706,9 @@ packages:
 
   caniuse-lite@1.0.30001700:
     resolution: {integrity: sha512-2S6XIXwaE7K7erT8dY+kLQcpa5ms63XlRkMkReXjle+kf6c5g38vyMl+Z5y8dSxOFDhcFe+nxnn261PLxBSQsQ==}
+
+  caniuse-lite@1.0.30001701:
+    resolution: {integrity: sha512-faRs/AW3jA9nTwmJBSO1PQ6L/EOgsB5HMQQq4iCu5zhPgVVgO/pZRHlmatwijZKetFw8/Pr4q6dEN8sJuq8qTw==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -9108,6 +9115,8 @@ snapshots:
 
   '@sentry/core@8.55.0': {}
 
+  '@sentry/core@9.3.0': {}
+
   '@sentry/esbuild-plugin@3.2.1(encoding@0.1.13)':
     dependencies:
       '@sentry/bundler-plugin-core': 3.2.1(encoding@0.1.13)
@@ -10114,6 +10123,8 @@ snapshots:
   camelcase@6.3.0: {}
 
   caniuse-lite@1.0.30001700: {}
+
+  caniuse-lite@1.0.30001701: {}
 
   ccount@2.0.1: {}
 
@@ -12146,7 +12157,7 @@ snapshots:
       '@swc/counter': 0.1.3
       '@swc/helpers': 0.5.15
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001700
+      caniuse-lite: 1.0.30001701
       postcss: 8.4.31
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
