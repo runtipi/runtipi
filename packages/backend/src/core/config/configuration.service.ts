@@ -54,7 +54,7 @@ export class ConfigurationService {
     this.config = this.configure();
   }
 
-  private configure() {
+  private getEnvMap() {
     let envFile = '';
     try {
       envFile = fs.readFileSync(this.envPath).toString();
@@ -62,7 +62,11 @@ export class ConfigurationService {
       console.error('❌ .env file not found');
     }
 
-    const envMap = this.envUtils.envStringToMap(envFile.toString());
+    return this.envUtils.envStringToMap(envFile.toString());
+  }
+
+  private configure() {
+    const envMap = this.getEnvMap();
     const conf = { ...Object.fromEntries(envMap), ...process.env } as Record<string, string>;
 
     const env = envSchema.safeParse(conf);
