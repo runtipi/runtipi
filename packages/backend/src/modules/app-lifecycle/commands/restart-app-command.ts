@@ -40,7 +40,8 @@ export class RestartAppCommand extends AppLifecycleCommand {
         await this.appHelpers.generateEnvFile(appUrn, form);
       }
 
-      await this.dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans --pull always');
+      const forcePull = config.force_pull ?? false;
+      await this.dockerService.composeApp(appUrn, `up --detach --force-recreate --remove-orphans ${forcePull ? '--pull always' : ''}`);
 
       this.logger.info(`App ${appUrn} restarted`);
 

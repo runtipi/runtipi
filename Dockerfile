@@ -6,14 +6,12 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
-
-RUN npm install pnpm@9.15.4 -g
+RUN corepack enable pnpm && corepack install -g pnpm@latest-10
 RUN apk add --no-cache curl python3 make g++ git
 
 WORKDIR /deps
 
 COPY ./pnpm-lock.yaml ./
-COPY ./patches ./patches
 RUN pnpm fetch
 
 # ---- RUNNER BASE ----
@@ -24,13 +22,11 @@ RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
 # ---- BUILDER ----
 FROM builder_base AS builder
 
-ARG SENTRY_AUTH_TOKEN
 ARG TIPI_VERSION
 ARG LOCAL
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.32.4"
+ARG DOCKER_COMPOSE_VERSION="v2.33.1"
 
-ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV SENTRY_RELEASE=${TIPI_VERSION}
 ENV TARGETARCH=${TARGETARCH}
 
@@ -53,9 +49,8 @@ COPY ./packages/backend/package.json ./packages/backend/package.json
 COPY ./packages/frontend/package.json ./packages/frontend/package.json
 COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
-COPY ./patches ./patches
 
-RUN pnpm install -r --prefer-offline
+RUN pnpm install --frozen-lockfile -r --prefer-offline
 
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
@@ -63,7 +58,7 @@ COPY ./packages ./packages
 RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
 RUN echo "LOCAL: ${LOCAL}"
 
-RUN npm run bundle
+RUN --mount=type=secret,id=sentry_token,env=SENTRY_AUTH_TOKEN npm run bundle
 
 # ---- RUNNER ----
 FROM runner_base AS runner
@@ -72,7 +67,7 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install argon2 sqlite3 i18next-fs-backend class-transformer
+RUN npm install argon2 i18next-fs-backend class-transformer
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./

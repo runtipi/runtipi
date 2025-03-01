@@ -400,4 +400,20 @@ export class AppLifecycleService {
 
     await Promise.all(updatePromises);
   }
+
+  async startAllApps() {
+    const apps = await this.appRepository.getApps();
+    const runningApps = apps.filter((app) => app.status === 'running');
+
+    const startPromises = runningApps.map(async (app) => {
+      try {
+        const appUrn = createAppUrn(app.appName, app.appStoreSlug);
+        await this.startApp({ appUrn });
+      } catch (e) {
+        this.logger.error(`Failed to start app ${app.id}`, e);
+      }
+    });
+
+    await Promise.all(startPromises);
+  }
 }

@@ -11,6 +11,9 @@ export default defineConfig({
     exclude: ['**/integration/**'],
     coverage: { all: true, reporter: ['lcov', 'text-summary'] },
     reporters: ['default'],
+    env: {
+      NODE_OPTIONS: '--experimental-sqlite',
+    },
   },
   resolve: {},
 });

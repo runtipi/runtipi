@@ -37,6 +37,7 @@ const envSchema = z.object({
   ROOT_FOLDER_HOST: z.string(),
   NGINX_PORT: z.coerce.number().default(80),
   NGINX_PORT_SSL: z.coerce.number().default(443),
+  ADVANCED_SETTINGS: z.string().transform((val) => val.toLowerCase() === 'true'),
 });
 
 @Injectable()
@@ -86,6 +87,7 @@ export class ConfigurationService {
       },
       logLevel: env.data.LOG_LEVEL,
       version: env.data.TIPI_VERSION,
+      isProduction: process.env.NODE_ENV === 'production',
       userSettings: {
         allowAutoThemes: env.data.ALLOW_AUTO_THEMES,
         allowErrorMonitoring: env.data.ALLOW_ERROR_MONITORING && process.env.NODE_ENV === 'production',
@@ -101,9 +103,10 @@ export class ConfigurationService {
         appsRepoUrl: env.data.APPS_REPO_URL,
         postgresPort: env.data.POSTGRES_PORT,
         dnsIp: env.data.DNS_IP,
-        appDataPath: path.join(env.data.RUNTIPI_APP_DATA_PATH, 'app-data'),
+        appDataPath: env.data.RUNTIPI_APP_DATA_PATH,
         persistTraefikConfig: env.data.PERSIST_TRAEFIK_CONFIG,
-        eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES * 60 * 1000,
+        eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES,
+        advancedSettings: env.data.ADVANCED_SETTINGS,
       },
       deprecatedAppsRepoId: env.data.APPS_REPO_ID, // @deprecated
       deprecatedAppsRepoUrl: env.data.APPS_REPO_URL, // @deprecated

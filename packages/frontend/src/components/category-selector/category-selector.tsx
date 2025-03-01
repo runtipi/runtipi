@@ -3,6 +3,7 @@ import { iconForCategory } from '@/modules/app/helpers/table-helpers';
 import type { AppCategory } from '@/types/app.types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IconX } from '@tabler/icons-react';
 
 interface Props {
   onSelect: (value?: AppCategory) => void;
@@ -39,6 +40,17 @@ export const CategorySelector = ({ onSelect, className, initialValue }: Props) =
         <SelectValue placeholder={t('APP_STORE_CHOOSE_CATEGORY')} />
       </SelectTrigger>
       <SelectContent>
+        {value && (
+          <>
+            <SelectItem key="clear" value="clear">
+              <span className="d-flex gap-2">
+                <IconX size={20} />
+                {t('CLEAR')}
+              </span>
+            </SelectItem>
+            <div className="dropdown-divider" />
+          </>
+        )}
         {options?.map(({ value: category, icon: CategoryIcon, label }) => (
           <SelectItem key={category} value={category}>
             <span className="d-flex gap-2">

@@ -23,6 +23,12 @@ export class StartAppCommand extends AppLifecycleCommand {
 
   public async execute(appUrn: AppUrn, form: AppEventFormInput, skipEnvGeneration = false) {
     try {
+      const config = await this.appFilesManager.getInstalledAppInfo(appUrn);
+
+      if (!config) {
+        return { success: true, message: 'App config not found. Skipping...' };
+      }
+
       this.logger.info(`Starting app ${appUrn}`);
 
       await this.ensureAppDir(appUrn, form);
@@ -32,7 +38,8 @@ export class StartAppCommand extends AppLifecycleCommand {
         await this.appHelpers.generateEnvFile(appUrn, form);
       }
 
-      await this.dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans --pull always');
+      const forcePull = config.force_pull ?? false;
+      await this.dockerService.composeApp(appUrn, `up --detach --force-recreate --remove-orphans ${forcePull ? '--pull always' : ''}`);
 
       this.logger.info(`App ${appUrn} started`);
 

@@ -80,8 +80,9 @@ export class DockerService {
    * @param {string} command - Command to execute
    */
   public composeApp = async (appUrn: AppUrn, command: string) => {
-    const { args, isCustomConfig } = await this.getBaseComposeArgsApp(appUrn);
+    let { args, isCustomConfig } = await this.getBaseComposeArgsApp(appUrn);
     args.push(...command.split(' '));
+    args = args.filter(Boolean);
 
     this.logger.info(`Running docker compose with args ${args.join(' ')}`);
 

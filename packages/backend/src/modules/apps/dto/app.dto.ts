@@ -41,6 +41,7 @@ export class GuestAppsDto extends createZodDto(
         info: AppInfoDto.schema,
       })
       .array(),
+    localDomain: z.string(),
   }),
 ) {}
 

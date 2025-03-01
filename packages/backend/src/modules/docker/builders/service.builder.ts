@@ -25,8 +25,8 @@ interface HealthCheck {
 }
 
 interface Ulimits {
-  nproc: number | { soft: number; hard: number };
-  nofile: number | { soft: number; hard: number };
+  nproc?: number | { soft: number; hard: number };
+  nofile?: number | { soft: number; hard: number };
 }
 
 interface Deploy {
@@ -87,6 +87,7 @@ export interface BuilderService {
   stopSignal?: string;
   stopGracePeriod?: string;
   stdinOpen?: boolean;
+  sysctls?: Record<string, number>;
 }
 
 export type BuiltService = ReturnType<typeof ServiceBuilder.prototype.build>;
@@ -474,6 +475,11 @@ export class ServiceBuilder {
     return this;
   }
 
+  setSysctls(sysctls?: Record<string, number>) {
+    this.service.sysctls = sysctls;
+    return this;
+  }
+
   /**
    * Builds the service object.
    * @returns The built service object.
@@ -530,6 +536,7 @@ export class ServiceBuilder {
       stop_signal: this.service.stopSignal,
       stop_grace_period: this.service.stopGracePeriod,
       stdin_open: this.service.stdinOpen,
+      sysctls: this.service.sysctls,
     };
 
     // Delete any undefined properties

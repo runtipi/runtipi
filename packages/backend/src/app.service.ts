@@ -4,11 +4,12 @@ import * as Sentry from '@sentry/nestjs';
 import { z } from 'zod';
 import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
-import { CacheService } from './core/cache/cache.service';
+import { CacheService, ONE_DAY_IN_SECONDS } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
 import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
+import { AppLifecycleService } from './modules/app-lifecycle/app-lifecycle.service';
 import { AppStoreService } from './modules/app-stores/app-store.service';
 import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
@@ -24,6 +25,7 @@ export class AppService {
     private readonly appStoreService: AppStoreService,
     private readonly marketplaceService: MarketplaceService,
     private readonly databaseService: DatabaseService,
+    private readonly appLifecycleService: AppLifecycleService,
   ) {}
 
   public async bootstrap() {
@@ -38,6 +40,13 @@ export class AppService {
 
       this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
       this.logger.info('Generating system env file...');
+
+      const buster = this.cache.get('buster');
+      if (buster !== version) {
+        this.logger.info('Clearing cache...');
+        this.cache.clear();
+        this.cache.set('buster', version, ONE_DAY_IN_SECONDS * 365);
+      }
 
       // Delete all repos for a clean start
       if (__prod__) {
@@ -55,6 +64,10 @@ export class AppService {
 
       await this.copyAssets();
       await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
+
+      if (__prod__) {
+        this.appLifecycleService.startAllApps();
+      }
     } catch (e) {
       this.logger.error(e);
       Sentry.captureException(e, { tags: { source: 'bootstrap' } });
@@ -65,8 +78,8 @@ export class AppService {
     const { version: currentVersion } = this.configuration.getConfig();
 
     try {
-      let version = (await this.cache.get('latestVersion')) ?? '';
-      let body = (await this.cache.get('latestVersionBody')) ?? '';
+      let version = this.cache.get('latestVersion') ?? '';
+      let body = this.cache.get('latestVersionBody') ?? '';
 
       if (!version) {
         version = currentVersion;
@@ -83,8 +96,8 @@ export class AppService {
           version = res.tag_name;
           body = res.body;
 
-          await this.cache.set('latestVersion', version, 60 * 60);
-          await this.cache.set('latestVersionBody', body, 60 * 60);
+          this.cache.set('latestVersion', version, 60 * 60);
+          this.cache.set('latestVersionBody', body, 60 * 60);
         });
       }
 
@@ -177,8 +190,14 @@ export class AppService {
       (await this.filesystem.pathExists(path.join(tlsFolder, 'cert.pem'))) &&
       (await this.filesystem.pathExists(path.join(tlsFolder, 'key.pem')))
     ) {
-      this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
-      return;
+      // Check if the certificate is still valid
+      const { stdout } = await execAsync(`openssl x509 -checkend 86400 -noout -in ${tlsFolder}/cert.pem`);
+      if (stdout.includes('Certificate will not expire')) {
+        this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
+        return;
+      }
+
+      this.logger.warn(`TLS certificate for ${data.localDomain} is expired or will expire soon. Regenerating a new one...`);
     }
 
     // Empty out the folder

@@ -22,6 +22,7 @@ export const settingsSchema = z.object({
   listenIp: z.string().ip().trim(),
   timeZone: z.string().trim(),
   eventsTimeout: z.coerce.number(),
+  advancedSettings: z.boolean(),
 });
 
 export class UserSettingsDto extends createZodDto(settingsSchema) {}

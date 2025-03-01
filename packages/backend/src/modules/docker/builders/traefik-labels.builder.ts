@@ -1,5 +1,5 @@
 interface TraefikLabelsArgs {
-  internalPort: number;
+  internalPort: number | string;
   appId: string;
   exposedLocal?: boolean;
   exposed?: boolean;

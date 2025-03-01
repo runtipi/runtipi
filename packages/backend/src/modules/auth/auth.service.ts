@@ -8,7 +8,8 @@ import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
-import validator from 'validator';
+import psl from 'psl';
+import validator, { isFQDN } from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
 import { TotpAuthenticator } from './utils/totp-authenticator';
@@ -23,6 +24,19 @@ export class AuthService {
     private cache: CacheService,
     private filesystem: FilesystemService,
   ) {}
+
+  public getCookieDomain(domain?: string) {
+    if (!domain || !isFQDN(domain)) {
+      return undefined;
+    }
+
+    const parsed = psl.parse(domain);
+    if (parsed.error) {
+      return undefined;
+    }
+
+    return `.${parsed.input}`;
+  }
 
   /**
    * Given a username and password, login the user and return the session ID.
@@ -48,7 +62,7 @@ export class AuthService {
 
     if (user.totpEnabled) {
       const totpSessionId = crypto.randomUUID();
-      await this.cache.set(totpSessionId, user.id.toString());
+      this.cache.set(totpSessionId, user.id.toString());
       return { totpSessionId };
     }
 
@@ -68,7 +82,7 @@ export class AuthService {
    */
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
     const { totpSessionId, totpCode } = params;
-    const userId = await this.cache.get(totpSessionId);
+    const userId = this.cache.get(totpSessionId);
 
     if (!userId) {
       throw new TranslatableError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -93,7 +107,7 @@ export class AuthService {
 
     const sessionId = await this.sessionManager.createSession(user.id);
 
-    await this.cache.del(totpSessionId);
+    this.cache.del(totpSessionId);
 
     return {
       sessionId,

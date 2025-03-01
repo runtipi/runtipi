@@ -1,8 +1,8 @@
 {
   "name": "runtipi",
-  "version": "3.8.4",
+  "version": "3.9.4",
   "description": "",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.5.0",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo build",
@@ -24,7 +24,7 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@hey-api/openapi-ts": "^0.64.4",
+    "@hey-api/openapi-ts": "^0.64.5",
     "@playwright/test": "^1.50.1",
     "@types/pg": "^8.11.11",
     "dotenv-cli": "^8.0.0",
@@ -36,8 +36,6 @@
     "zod": "^3.24.2"
   },
   "pnpm": {
-    "patchedDependencies": {
-      "@vercel/ncc": "patches/@vercel__ncc.patch"
-    }
+    "onlyBuiltDependencies": ["@biomejs/biome", "@nestjs/core", "@sentry/cli", "@swc/core", "argon2", "esbuild", "msw"]
   }
 }
