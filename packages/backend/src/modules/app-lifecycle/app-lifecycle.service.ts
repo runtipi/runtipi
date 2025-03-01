@@ -407,7 +407,8 @@ export class AppLifecycleService {
 
     const startPromises = runningApps.map(async (app) => {
       try {
-        await this.startApp({ appId: app.id });
+        const appUrn = createAppUrn(app.appName, app.appStoreSlug);
+        await this.startApp({ appUrn });
       } catch (e) {
         this.logger.error(`Failed to start app ${app.id}`, e);
       }

@@ -35,17 +35,18 @@ export const createMockAppInfo = (data: Partial<AppInfo> = {}): AppInfo => {
 };
 
 export const createMockApp = (data: Partial<App>): App => ({
-  id: faker.string.uuid(),
+  id: faker.number.int(),
+  appName: faker.lorem.words(2),
   config: {},
   createdAt: faker.date.past().toUTCString(),
+  appStoreSlug: faker.lorem.slug(),
   domain: null,
   enableAuth: false,
   exposed: false,
   exposedLocal: false,
   isVisibleOnGuestDashboard: false,
-  lastOpened: null,
-  numOpened: 0,
   openPort: true,
+  port: faker.number.int({ min: 1024, max: 65535 }),
   status: 'running',
   updatedAt: faker.date.recent().toUTCString(),
   version: 1,
