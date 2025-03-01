@@ -1,4 +1,4 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 import clsx from 'clsx';
 
 const alertVariants = cva('alert', {
@@ -14,11 +14,11 @@ const alertVariants = cva('alert', {
 });
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof alertVariants> {
-  dismisible?: boolean;
+  dismissible?: boolean;
 }
 
-const Alert = ({ className, dismisible, variant, ...props }: AlertProps) => (
-  <div className={clsx('alert', className, dismisible && 'alert-dismisible', alertVariants({ variant }))} {...props}>
+const Alert = ({ className, dismissible, variant, ...props }: AlertProps) => (
+  <div className={clsx('alert', className, dismissible && 'alert-dismissible', alertVariants({ variant }))} {...props}>
     {props.children}
   </div>
 );
@@ -27,7 +27,7 @@ Alert.displayName = 'Alert';
 const AlertTitle = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
   <h4 className={clsx('alert-title', className)} {...props} />
 );
-AlertTitle.displayName = 'AlertTitile';
+AlertTitle.displayName = 'AlertTitle';
 
 const AlertSubtitle = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={clsx('text-secondary', className)} {...props} />
