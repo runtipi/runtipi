@@ -333,6 +333,7 @@
   "SETTINGS_GENERAL_DOMAIN_HINT": "Expose your dashboard to a custom domain. Make sure you have A records pointing to the server's IP address.",
   "SETTINGS_GENERAL_LISTEN_IP": "Listen IP",
   "SETTINGS_GENERAL_LISTEN_IP_HINT": "The IP address on which the dashboard listens on.",
+  "SETTINGS_GENERAL_LOG_LEVEL": "Log level",
   "SETTINGS_GENERAL_PORT": "Port",
   "SETTINGS_GENERAL_PORT_HINT": "The port on which the dashboard listens on.",
   "SETTINGS_GENERAL_SSL_PORT": "Port (SSL)",
@@ -397,3 +398,4 @@
   "WARNING": "Warning",
   "CLEAR": "Clear"
 }
+

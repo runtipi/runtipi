@@ -3,6 +3,7 @@ import { AppInfoSimpleDto } from './modules/apps/dto/app-info.dto';
 import { UserDto } from './modules/user/dto/user.dto';
 
 import { z } from 'zod';
+import { LOG_LEVEL_ENUM } from './core/logger/logger.service';
 
 export const settingsSchema = z.object({
   dnsIp: z.string().ip().trim(),
@@ -23,6 +24,8 @@ export const settingsSchema = z.object({
   timeZone: z.string().trim(),
   eventsTimeout: z.coerce.number(),
   advancedSettings: z.boolean(),
+  logLevel: z.nativeEnum(LOG_LEVEL_ENUM),
+  experimental_insecureCookie: z.boolean().optional(),
 });
 
 export class UserSettingsDto extends createZodDto(settingsSchema) {}

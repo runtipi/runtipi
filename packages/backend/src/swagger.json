@@ -1537,6 +1537,24 @@
               },
               "advancedSettings": {
                 "type": "boolean"
+              },
+              "logLevel": {
+                "type": "string",
+                "enum": [
+                  "debug",
+                  "info",
+                  "warn",
+                  "error"
+                ],
+                "x-enumNames": [
+                  "debug",
+                  "info",
+                  "warn",
+                  "error"
+                ]
+              },
+              "experimental_insecureCookie": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -1557,7 +1575,8 @@
               "listenIp",
               "timeZone",
               "eventsTimeout",
-              "advancedSettings"
+              "advancedSettings",
+              "logLevel"
             ]
           },
           "user": {
@@ -1729,6 +1748,24 @@
             "type": "number"
           },
           "advancedSettings": {
+            "type": "boolean"
+          },
+          "logLevel": {
+            "type": "string",
+            "enum": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ],
+            "x-enumNames": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ]
+          },
+          "experimental_insecureCookie": {
             "type": "boolean"
           }
         }
