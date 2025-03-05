@@ -536,6 +536,7 @@ export class ServiceBuilder {
       stop_signal: this.service.stopSignal,
       stop_grace_period: this.service.stopGracePeriod,
       stdin_open: this.service.stdinOpen,
+      sysctls: this.service.sysctls,
     };
 
     // Delete any undefined properties
