@@ -4,6 +4,14 @@ import * as readline from 'node:readline';
 import { Injectable } from '@nestjs/common';
 import { type Logger, createLogger, format, transports } from 'winston';
 
+export const LOG_LEVEL_ENUM = {
+  debug: 'debug',
+  info: 'info',
+  warn: 'warn',
+  error: 'error',
+} as const;
+export type LogLevel = (typeof LOG_LEVEL_ENUM)[keyof typeof LOG_LEVEL_ENUM];
+
 const { printf, timestamp, combine, colorize, align } = format;
 
 const printFile = printf((info) => `${info.timestamp} - ${info.level} > ${info.message}`);
@@ -20,7 +28,7 @@ type Transports = transports.ConsoleTransportInstance | transports.FileTransport
  * @param {string} id - The id of the logger, used to identify the logger in the logs
  * @param {string} logsFolder - The folder where the logs will be stored
  */
-export const newLogger = (id: string, logsFolder: string, logLevel = 'info') => {
+export const newLogger = (id: string, logsFolder: string, logLevel: LogLevel = LOG_LEVEL_ENUM.info) => {
   const tr: Transports[] = [];
   const exceptionHandlers: Transports[] = [new transports.Console()];
 
@@ -59,8 +67,8 @@ export class LoggerService {
 
   private logsFolder: string;
 
-  constructor(id: string, folder: string) {
-    this.winstonLogger = newLogger(id, folder, process.env.LOG_LEVEL);
+  constructor(id: string, folder: string, logLevel: LogLevel) {
+    this.winstonLogger = newLogger(id, folder, logLevel);
     this.logsFolder = folder;
   }
 
@@ -137,7 +145,14 @@ export class LoggerService {
   };
 
   private log = (level: string, messages: unknown[]) => {
-    this.winstonLogger.log(level, messages.join(' '));
+    const stringMessages = messages.map((m) => {
+      if (typeof m === 'object') {
+        return JSON.stringify(m, null, 2);
+      }
+      return m;
+    });
+
+    this.winstonLogger.log(level, stringMessages.join(' '));
   };
 
   public error = (...message: unknown[]) => {

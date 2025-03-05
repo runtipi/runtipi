@@ -16,10 +16,19 @@ import validator from 'validator';
 import { z } from 'zod';
 import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-settings-modal';
 import './user-settings-form.css';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 
 const TimeZoneSelector = lazy(() =>
   import('@/components/timezone-selector/timezone-selector').then((module) => ({ default: module.TimeZoneSelector })),
 );
+
+const LOG_LEVEL_ENUM = {
+  debug: 'debug',
+  info: 'info',
+  warn: 'warn',
+  error: 'error',
+} as const;
+type LogLevel = (typeof LOG_LEVEL_ENUM)[keyof typeof LOG_LEVEL_ENUM];
 
 const settingsSchema = z.object({
   appsRepoUrl: z.string().optional(),
@@ -37,6 +46,7 @@ const settingsSchema = z.object({
   persistTraefikConfig: z.boolean().optional(),
   domain: z.string().optional(),
   appDataPath: z.string().optional(),
+  logLevel: z.nativeEnum(LOG_LEVEL_ENUM).optional(),
 });
 
 export type SettingsFormValues = {
@@ -55,6 +65,7 @@ export type SettingsFormValues = {
   persistTraefikConfig?: boolean;
   domain?: string;
   appDataPath?: string;
+  logLevel?: LogLevel;
 };
 
 interface IProps {
@@ -452,6 +463,27 @@ export const UserSettingsForm = (props: IProps) => {
                 }
                 error={errors.appDataPath?.message}
                 placeholder="/path/to/app/data"
+              />
+            </div>
+            <div className="mb-3">
+              <Controller
+                control={control}
+                name="logLevel"
+                defaultValue="info"
+                render={({ field: { onChange, value } }) => (
+                  <Select value={value} defaultValue="info" onValueChange={onChange}>
+                    <SelectTrigger className="mb-3" name="logLevel" label={t('SETTINGS_GENERAL_LOG_LEVEL')}>
+                      <SelectValue placeholder="Log level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(LOG_LEVEL_ENUM).map((level) => (
+                        <SelectItem key={level} value={level}>
+                          {level}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
             </div>
           </div>

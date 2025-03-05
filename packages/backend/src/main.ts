@@ -4,7 +4,7 @@ import { patchNestJsSwagger } from 'nestjs-zod';
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { type INestApplication, ValidationPipe } from '@nestjs/common';
+import { type INestApplication, type LogLevel, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
@@ -36,7 +36,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     abortOnError: true,
-    logger: ['error', 'warn', 'fatal'],
+    logger: [process.env.LOG_LEVEL as LogLevel, 'error', 'warn', 'fatal'],
   });
 
   const appService = app.get(AppService);
