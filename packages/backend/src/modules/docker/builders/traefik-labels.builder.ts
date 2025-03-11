@@ -1,7 +1,7 @@
 import type { TraefikOverride } from './schemas';
 
 interface TraefikLabelsArgs {
-  internalPort: number | string;
+  traefikPort: number | string;
   appId: string;
   exposedLocal?: boolean;
   exposed?: boolean;
@@ -17,7 +17,7 @@ export class TraefikLabelsBuilder {
       generated: true,
       'traefik.enable': false,
       [`traefik.http.middlewares.${params.appId}-web-redirect.redirectscheme.scheme`]: 'https',
-      [`traefik.http.services.${params.appId}.loadbalancer.server.port`]: `${params.internalPort}`,
+      [`traefik.http.services.${params.appId}.loadbalancer.server.port`]: `${params.traefikPort}`,
     };
   }
 
