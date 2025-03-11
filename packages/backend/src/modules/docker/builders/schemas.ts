@@ -55,10 +55,38 @@ const deploySchema = z.object({
   }),
 });
 
+const traefikWebSchema = z.object({
+  rule: z.string().optional(),
+  entryPoints: z.array(z.string()).optional(),
+  service: z.string().optional(),
+  middlewares: z.array(z.string()).optional(),
+});
+
+const traefikWebSecureSchema = z.object({
+  rule: z.string().optional(),
+  entryPoints: z.array(z.string()).optional(),
+  service: z.string().optional(),
+  certResolver: z.string().optional(),
+});
+
+const traefikOverrideSchema = z.object({
+  traefikWeb: traefikWebSchema.optional(),
+  traefikWebSecure: traefikWebSecureSchema.optional(),
+  traefikLocal: traefikWebSchema.optional(),
+  traefikLocalSecure: traefikWebSecureSchema
+    .omit({ certResolver: true })
+    .extend({
+      tls: z.boolean().optional(),
+    })
+    .optional(),
+});
+
 export const serviceSchema = z.object({
   image: z.string(),
   name: z.string(),
   internalPort: z.number().or(z.string()).optional(),
+  traefikPort: z.number().or(z.string()).optional(),
+  traefikOverrides: traefikOverrideSchema.optional(),
   isMain: z.boolean().optional(),
   networkMode: z.string().optional(),
   extraHosts: z.array(z.string()).optional(),
@@ -129,3 +157,6 @@ export const dynamicComposeSchema = z.object({
 export type DependsOn = z.output<typeof dependsOnSchema>;
 export type ServiceInput = z.input<typeof serviceSchema>;
 export type Service = z.output<typeof serviceSchema>;
+export type TraefikWeb = z.output<typeof traefikWebSchema>;
+export type TraefikWebSecure = z.output<typeof traefikWebSecureSchema>;
+export type TraefikOverride = z.output<typeof traefikOverrideSchema>;
