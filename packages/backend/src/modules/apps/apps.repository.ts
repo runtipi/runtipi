@@ -1,12 +1,12 @@
-import { DatabaseService } from '@/core/database/database.service';
+import { DATABASE, type Database } from '@/core/database/database.module';
 import { app } from '@/core/database/drizzle/schema';
 import type { AppStatus, NewApp } from '@/core/database/drizzle/types';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
 
 @Injectable()
 export class AppsRepository {
-  constructor(private db: DatabaseService) {}
+  constructor(@Inject(DATABASE) private db: Database) {}
 
   /**
    * Given an app id, return the app
@@ -14,7 +14,7 @@ export class AppsRepository {
    * @param {string} appId - The id of the app to return
    */
   public async getApp(appId: string) {
-    return this.db.db.query.app.findFirst({ where: eq(app.id, appId) });
+    return this.db.query.app.findFirst({ where: eq(app.id, appId) });
   }
 
   /**
@@ -24,7 +24,7 @@ export class AppsRepository {
    * @param {Partial<NewApp>} data - The data to update the app with
    */
   public async updateApp(appId: string, data: Partial<NewApp>) {
-    const updatedApps = await this.db.db.update(app).set(data).where(eq(app.id, appId)).returning().execute();
+    const updatedApps = await this.db.update(app).set(data).where(eq(app.id, appId)).returning().execute();
     return updatedApps[0];
   }
 
@@ -34,7 +34,7 @@ export class AppsRepository {
    * @param {string} appId - The id of the app to delete
    */
   public async deleteApp(appId: string) {
-    await this.db.db.delete(app).where(eq(app.id, appId)).execute();
+    await this.db.delete(app).where(eq(app.id, appId)).execute();
   }
 
   /**
@@ -43,7 +43,7 @@ export class AppsRepository {
    * @param {NewApp} data - The data to create the app with
    */
   public async createApp(data: NewApp) {
-    const newApps = await this.db.db.insert(app).values(data).returning().execute();
+    const newApps = await this.db.insert(app).values(data).returning().execute();
     return newApps[0];
   }
 
@@ -53,21 +53,21 @@ export class AppsRepository {
    * @param {AppStatus} status - The status of the apps to return
    */
   public async getAppsByStatus(status: AppStatus) {
-    return this.db.db.query.app.findMany({ where: eq(app.status, status), orderBy: asc(app.id) });
+    return this.db.query.app.findMany({ where: eq(app.status, status), orderBy: asc(app.id) });
   }
 
   /**
    * Returns all apps installed sorted by id ascending
    */
   public async getApps() {
-    return this.db.db.query.app.findMany({ orderBy: asc(app.id) });
+    return this.db.query.app.findMany({ orderBy: asc(app.id) });
   }
 
   /**
    * Returns all apps that are running and visible on guest dashboard sorted by id ascending
    */
   public async getGuestDashboardApps() {
-    return this.db.db.query.app.findMany({
+    return this.db.query.app.findMany({
       where: and(eq(app.status, 'running'), eq(app.isVisibleOnGuestDashboard, true)),
       orderBy: asc(app.id),
     });
@@ -80,7 +80,7 @@ export class AppsRepository {
    * @param {string} id - The id of the app to exclude
    */
   public async getAppsByDomain(domain: string, id: string) {
-    return this.db.db.query.app.findMany({ where: and(eq(app.domain, domain), eq(app.exposed, true), ne(app.id, id)) });
+    return this.db.query.app.findMany({ where: and(eq(app.domain, domain), eq(app.exposed, true), ne(app.id, id)) });
   }
 
   /**
@@ -90,6 +90,6 @@ export class AppsRepository {
    * @param {Partial<NewApp>} data - The data to update the apps with
    */
   public async updateAppsByStatusNotIn(statuses: AppStatus[], data: Partial<NewApp>) {
-    return this.db.db.update(app).set(data).where(notInArray(app.status, statuses)).returning().execute();
+    return this.db.update(app).set(data).where(notInArray(app.status, statuses)).returning().execute();
   }
 }
