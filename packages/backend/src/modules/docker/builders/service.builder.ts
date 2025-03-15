@@ -13,6 +13,8 @@ interface ServiceVolume {
   hostPath: string;
   containerPath: string;
   readOnly?: boolean;
+  shared?: boolean;
+  private?: boolean;
 }
 
 interface HealthCheck {
@@ -232,7 +234,14 @@ export class ServiceBuilder {
     }
 
     const readOnly = volume.readOnly ? ':ro' : '';
-    this.service.volumes.push(`${volume.hostPath}:${volume.containerPath}${readOnly}`);
+    const shared = volume.shared ? ':z' : '';
+    const privateVolume = volume.private ? ':Z' : '';
+
+    if ([readOnly, shared, privateVolume].filter((v) => v).length > 1) {
+      throw new Error('Only one of readOnly, shared, or private can be set');
+    }
+
+    this.service.volumes.push(`${volume.hostPath}:${volume.containerPath}${readOnly}${shared}${privateVolume}`);
     return this;
   }
 

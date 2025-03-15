@@ -81,6 +81,8 @@ export const serviceSchema = z.object({
         hostPath: z.string(),
         containerPath: z.string(),
         readOnly: z.boolean().optional(),
+        shared: z.boolean().optional(),
+        private: z.boolean().optional(),
       }),
     )
     .optional(),
