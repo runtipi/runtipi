@@ -167,6 +167,8 @@ describe('DockerComposeBuilder', () => {
             '{{RUNTIPI_APP_ID}}.service': true,
             'com.docker.compose.service': '{{RUNTIPI_APP_ID}}',
             '{{ RUNTIPI_APP_ID }}': '{{ RUNTIPI_APP_ID }}',
+            // Example of overriding
+            'traefik.http.middlewares.ctfd-web-redirect.redirectscheme.scheme': 'wrongscheme',
           },
         },
         {

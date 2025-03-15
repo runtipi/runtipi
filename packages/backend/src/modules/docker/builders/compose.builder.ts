@@ -95,9 +95,7 @@ export class DockerComposeBuilder {
       .setStopSignal(params.stopSignal)
       .setStopGracePeriod(params.stopGracePeriod)
       .setStdinOpen(params.stdinOpen)
-      .setSysctls(params.sysctls)
-      .setLabels({ 'runtipi.managed': true, ...params.extraLabels })
-      .interpolateVariables(params.name);
+      .setSysctls(params.sysctls);
 
     if (params.isMain) {
       if (form.openPort && params.internalPort) {
@@ -121,6 +119,8 @@ export class DockerComposeBuilder {
         service.setLabels(traefikLabels.build());
       }
     }
+
+    service.setLabels({ 'runtipi.managed': true, ...params.extraLabels }).interpolateVariables(params.name);
 
     return service.build();
   };
