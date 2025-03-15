@@ -122,7 +122,7 @@ export const serviceSchema = z.object({
   stopSignal: z.string().optional(),
   stopGracePeriod: z.string().optional(),
   stdinOpen: z.boolean().optional(),
-  extraLabels: z.record(z.string()).optional(),
+  extraLabels: z.record(z.string().or(z.boolean())).optional(),
 });
 
 export const dynamicComposeSchema = z.object({

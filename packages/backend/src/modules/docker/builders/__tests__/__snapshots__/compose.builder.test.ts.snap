@@ -19,6 +19,11 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
     depends_on:
       - ctfd-db
     labels:
+      runtipi.managed: true
+      some-label: some-value
+      ctfd.service: true
+      com.docker.compose.service: ctfd
+      ctfd: ctfd
       generated: true
       traefik.enable: false
       traefik.http.middlewares.ctfd-web-redirect.redirectscheme.scheme: https
@@ -42,6 +47,8 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       MYSQL_DATABASE: ctfd
     volumes:
       - \${APP_DATA_DIR}/data/db:/var/lib/mysql
+    labels:
+      runtipi.managed: true
   ctfd-redis:
     image: redis:4
     container_name: ctfd-redis
@@ -50,6 +57,8 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       - tipi_main_network
     volumes:
       - \${APP_DATA_DIR}/data/redis:/data
+    labels:
+      runtipi.managed: true
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
@@ -213,5 +222,17 @@ exports[`DockerComposeBuilder > should correctly format logging 1`] = `
       driver: json-file
       options:
         syslog-address: tcp://192.168.0.42:123
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly interpolate RUNTIPI_APP_ID in service labels 1`] = `
+"services:
+  service:
+    image: image
+    container_name: service
+    labels:
+      my-test-app.service: true
+      com.docker.compose.service: my-test-app
+      my-test-app: my-test-app
 "
 `;

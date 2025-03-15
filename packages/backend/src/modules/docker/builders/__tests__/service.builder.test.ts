@@ -46,4 +46,61 @@ describe('ServiceBuilder', () => {
     expect(service).not.toHaveProperty('ports');
     expect(service).not.toHaveProperty('networks');
   });
+
+  describe('interpolateVariables', () => {
+    it('should replace RUNTIPI_APP_ID in label values', () => {
+      const service = serviceBuilder
+        .setName('name')
+        .setImage('image')
+        .setLabels({ 'runtipi.app_id': '{{RUNTIPI_APP_ID}}' })
+        .interpolateVariables('my-app')
+        .build();
+
+      expect(service.labels).toEqual({ 'runtipi.app_id': 'my-app' });
+    });
+
+    it('should replace RUNTIPI_APP_ID in label keys', () => {
+      const service = serviceBuilder
+        .setName('name')
+        .setImage('image')
+        .setLabels({ '{{RUNTIPI_APP_ID}}': 'value' })
+        .interpolateVariables('my-app')
+        .build();
+
+      expect(service.labels).toEqual({ 'my-app': 'value' });
+    });
+
+    it('should replace RUNTIPI_APP_ID in both keys and values', () => {
+      const service = serviceBuilder
+        .setName('name')
+        .setImage('image')
+        .setLabels({ '{{RUNTIPI_APP_ID}}': '{{RUNTIPI_APP_ID}}' })
+        .interpolateVariables('my-app')
+        .build();
+
+      expect(service.labels).toEqual({ 'my-app': 'my-app' });
+    });
+
+    it('should handle spaces in the placeholder', () => {
+      const service = serviceBuilder
+        .setName('name')
+        .setImage('image')
+        .setLabels({ '{{ RUNTIPI_APP_ID }}': '{{ RUNTIPI_APP_ID }}' })
+        .interpolateVariables('my-app')
+        .build();
+
+      expect(service.labels).toEqual({ 'my-app': 'my-app' });
+    });
+
+    it('should handle multiple replacements in the same value', () => {
+      const service = serviceBuilder
+        .setName('name')
+        .setImage('image')
+        .setLabels({ test: '{{RUNTIPI_APP_ID}}-{{RUNTIPI_APP_ID}}' })
+        .interpolateVariables('my-app')
+        .build();
+
+      expect(service.labels).toEqual({ test: 'my-app-my-app' });
+    });
+  });
 });

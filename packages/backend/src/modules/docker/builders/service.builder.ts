@@ -489,6 +489,29 @@ export class ServiceBuilder {
     return this;
   }
 
+  /*
+   * Search through the labels and replace any {{ RUNTIPI_APP_ID }} or {{RUNTIPI_APP_ID}} with the appId.
+   * @param {string} appId The appId to replace the variables with.
+   *
+   * @example: { 'runtipi.app_id': '{{RUNTIPI_APP_ID}}' } => { 'runtipi.app_id': 'my-app' }
+   */
+  public interpolateVariables(appId: string) {
+    if (this.service.labels) {
+      const interpolatedLabels: Record<string, string | boolean> = {};
+
+      for (const [key, value] of Object.entries(this.service.labels)) {
+        const interpolatedKey = key.replace(/\{\{\s*RUNTIPI_APP_ID\s*\}\}/g, appId);
+        const interpolatedValue = typeof value === 'string' ? value.replace(/\{\{\s*RUNTIPI_APP_ID\s*\}\}/g, appId) : value;
+
+        interpolatedLabels[interpolatedKey] = interpolatedValue;
+      }
+
+      this.service.labels = interpolatedLabels;
+    }
+
+    return this;
+  }
+
   /**
    * Builds the service object.
    * @returns The built service object.
