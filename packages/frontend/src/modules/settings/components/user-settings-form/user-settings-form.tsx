@@ -42,10 +42,11 @@ const settingsSchema = z.object({
   listenIp: z.string().ip().optional(),
   port: z.number().min(1).max(65535).optional(),
   sslPort: z.number().min(1).max(65535).optional(),
-  eventsTimeout: z.number().min(1).optional(),
+  eventsTimeout: z.coerce.number().int().min(1).optional(),
   persistTraefikConfig: z.boolean().optional(),
   domain: z.string().optional(),
   appDataPath: z.string().optional(),
+  forwardAuthUrl: z.string().url().optional(),
   logLevel: z.nativeEnum(LOG_LEVEL_ENUM).optional(),
 });
 
@@ -65,6 +66,7 @@ export type SettingsFormValues = {
   persistTraefikConfig?: boolean;
   domain?: string;
   appDataPath?: string;
+  forwardAuthUrl?: string;
   logLevel?: LogLevel;
 };
 
@@ -463,6 +465,22 @@ export const UserSettingsForm = (props: IProps) => {
                 }
                 error={errors.appDataPath?.message}
                 placeholder="/path/to/app/data"
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('forwardAuthUrl')}
+                label={
+                  <>
+                    {t('SETTINGS_GENERAL_FORWARD_AUTH_URL')}
+                    <Tooltip className="tooltip" anchorSelect=".forward-auth-url-hint">
+                      {t('SETTINGS_GENERAL_FORWARD_AUTH_URL_HINT')}
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help forward-auth-url-hint')}>?</span>
+                  </>
+                }
+                error={errors.forwardAuthUrl?.message}
+                placeholder="https://auth.example.com"
               />
             </div>
             <div className="mb-3">

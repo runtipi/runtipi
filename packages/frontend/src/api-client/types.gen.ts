@@ -53,6 +53,9 @@ export type AppContextDto = {
     timeZone: string;
     eventsTimeout: number;
     advancedSettings: boolean;
+    forwardAuthUrl: string;
+    logLevel: 'debug' | 'info' | 'warn' | 'error';
+    experimental_insecureCookie?: boolean;
   };
   user: {
     id: number;
@@ -110,6 +113,9 @@ export type PartialUserSettingsDto = {
   timeZone?: string;
   eventsTimeout?: number;
   advancedSettings?: boolean;
+  forwardAuthUrl?: string;
+  logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  experimental_insecureCookie?: boolean;
 };
 
 export type AcknowledgeWelcomeBody = {
