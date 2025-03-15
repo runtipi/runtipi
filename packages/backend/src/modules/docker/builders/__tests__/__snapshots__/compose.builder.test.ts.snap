@@ -19,15 +19,15 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
     depends_on:
       - ctfd-db
     labels:
+      generated: true
+      traefik.enable: false
+      traefik.http.middlewares.ctfd-web-redirect.redirectscheme.scheme: wrongscheme
+      traefik.http.services.ctfd.loadbalancer.server.port: "8000"
       runtipi.managed: true
       some-label: some-value
       ctfd.service: true
       com.docker.compose.service: ctfd
       ctfd: ctfd
-      generated: true
-      traefik.enable: false
-      traefik.http.middlewares.ctfd-web-redirect.redirectscheme.scheme: https
-      traefik.http.services.ctfd.loadbalancer.server.port: "8000"
   ctfd-db:
     image: mariadb:10.4.12
     command:
