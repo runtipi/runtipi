@@ -95,7 +95,8 @@ export class DockerComposeBuilder {
       .setStopSignal(params.stopSignal)
       .setStopGracePeriod(params.stopGracePeriod)
       .setStdinOpen(params.stdinOpen)
-      .setSysctls(params.sysctls);
+      .setSysctls(params.sysctls)
+      .setLabels({ 'runtipi.managed': 'true', ...params.extraLabels });
 
     if (params.isMain) {
       if (form.openPort && params.internalPort) {
