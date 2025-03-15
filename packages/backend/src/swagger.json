@@ -1533,10 +1533,16 @@
                 "type": "string"
               },
               "eventsTimeout": {
-                "type": "number"
+                "type": "integer",
+                "minimum": 1,
+                "exclusiveMinimum": false
               },
               "advancedSettings": {
                 "type": "boolean"
+              },
+              "forwardAuthUrl": {
+                "type": "string",
+                "format": "uri"
               },
               "logLevel": {
                 "type": "string",
@@ -1576,6 +1582,7 @@
               "timeZone",
               "eventsTimeout",
               "advancedSettings",
+              "forwardAuthUrl",
               "logLevel"
             ]
           },
@@ -1745,10 +1752,16 @@
             "type": "string"
           },
           "eventsTimeout": {
-            "type": "number"
+            "type": "integer",
+            "minimum": 1,
+            "exclusiveMinimum": false
           },
           "advancedSettings": {
             "type": "boolean"
+          },
+          "forwardAuthUrl": {
+            "type": "string",
+            "format": "uri"
           },
           "logLevel": {
             "type": "string",

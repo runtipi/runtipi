@@ -110,6 +110,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', data.domain ?? envMap.get('DOMAIN') ?? 'example.com');
   envMap.set('RUNTIPI_APP_DATA_PATH', appDataPath ?? rootFolderHost);
+  envMap.set('RUNTIPI_FORWARD_AUTH_URL', data.forwardAuthUrl ?? envMap.get('RUNTIPI_FORWARD_AUTH_URL') ?? '');
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');

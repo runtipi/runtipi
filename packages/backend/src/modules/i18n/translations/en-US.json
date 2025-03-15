@@ -384,6 +384,8 @@
   "SETTINGS_SECURITY_TAB_TITLE": "Security",
   "SETTINGS_LOGS_TAB_TITLE": "Logs",
   "SETTINGS_TITLE": "Settings",
+  "SETTINGS_GENERAL_FORWARD_AUTH_URL": "Forward auth URL",
+  "SETTINGS_GENERAL_FORWARD_AUTH_URL_HINT": "URL to forward authentication requests to.",
   "SYSTEM_ERROR_COULD_NOT_GET_LATEST_VERSION": "Could not get latest version",
   "SYSTEM_ERROR_CURRENT_VERSION_IS_LATEST": "Current version is already up to date",
   "SYSTEM_ERROR_DEMO_MODE_LIMIT": "Only 6 apps can be installed in the demo mode. Please uninstall an other app to install a new one.",
@@ -398,4 +400,3 @@
   "WARNING": "Warning",
   "CLEAR": "Clear"
 }
-
