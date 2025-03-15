@@ -42,7 +42,7 @@ export class AuthController {
     this.logger.debug('Setting session cookie', { host, domain, proto, secure });
 
     if (this.config.get('userSettings').experimental.insecureCookie) {
-      this.logger.debug('Experimental: Insecure cookie');
+      this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
       res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
     } else {
       res.cookie(SESSION_COOKIE_NAME, sessionId, {
