@@ -107,11 +107,12 @@ export class DockerComposeBuilder {
 
       if (params.internalPort) {
         const traefikLabels = new TraefikLabelsBuilder({
-          internalPort: params.internalPort,
+          traefikPort: params.traefikPort ?? params.internalPort,
           appId: params.name,
           exposedLocal: form.exposedLocal,
           exposed: form.exposed,
           enableAuth: form.enableAuth,
+          overrides: params.traefikOverrides || {},
         })
           .addExposedLabels()
           .addExposedLocalLabels();
