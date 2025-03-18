@@ -33,6 +33,9 @@ export class AppService {
       await this.databaseService.migrate();
 
       const { version, userSettings, __prod__ } = this.configuration.getConfig();
+      const config = this.configuration.getConfig();
+      this.logger.info('Log level', config.userSettings.logLevel);
+      this.logger.debug('Starting with configuration', config);
 
       this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
 

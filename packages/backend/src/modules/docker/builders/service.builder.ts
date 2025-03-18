@@ -13,6 +13,8 @@ interface ServiceVolume {
   hostPath: string;
   containerPath: string;
   readOnly?: boolean;
+  shared?: boolean;
+  private?: boolean;
 }
 
 interface HealthCheck {
@@ -232,7 +234,14 @@ export class ServiceBuilder {
     }
 
     const readOnly = volume.readOnly ? ':ro' : '';
-    this.service.volumes.push(`${volume.hostPath}:${volume.containerPath}${readOnly}`);
+    const shared = volume.shared ? ':z' : '';
+    const privateVolume = volume.private ? ':Z' : '';
+
+    if ([readOnly, shared, privateVolume].filter((v) => v).length > 1) {
+      throw new Error('Only one of readOnly, shared, or private can be set');
+    }
+
+    this.service.volumes.push(`${volume.hostPath}:${volume.containerPath}${readOnly}${shared}${privateVolume}`);
     return this;
   }
 
@@ -477,6 +486,29 @@ export class ServiceBuilder {
 
   setSysctls(sysctls?: Record<string, number>) {
     this.service.sysctls = sysctls;
+    return this;
+  }
+
+  /*
+   * Search through the labels and replace any {{ RUNTIPI_APP_ID }} or {{RUNTIPI_APP_ID}} with the appId.
+   * @param {string} appId The appId to replace the variables with.
+   *
+   * @example: { 'runtipi.app_id': '{{RUNTIPI_APP_ID}}' } => { 'runtipi.app_id': 'my-app' }
+   */
+  public interpolateVariables(appId: string) {
+    if (this.service.labels) {
+      const interpolatedLabels: Record<string, string | boolean> = {};
+
+      for (const [key, value] of Object.entries(this.service.labels)) {
+        const interpolatedKey = key.replace(/\{\{\s*RUNTIPI_APP_ID\s*\}\}/g, appId);
+        const interpolatedValue = typeof value === 'string' ? value.replace(/\{\{\s*RUNTIPI_APP_ID\s*\}\}/g, appId) : value;
+
+        interpolatedLabels[interpolatedKey] = interpolatedValue;
+      }
+
+      this.service.labels = interpolatedLabels;
+    }
+
     return this;
   }
 

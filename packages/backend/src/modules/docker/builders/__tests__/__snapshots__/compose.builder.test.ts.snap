@@ -88,6 +88,8 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       - tipi_main_network
     volumes:
       - \${APP_DATA_DIR}/data/redis:/data
+    labels:
+      runtipi.managed: true
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
@@ -298,5 +300,17 @@ networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
     external: true
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly interpolate RUNTIPI_APP_ID in service labels 1`] = `
+"services:
+  service:
+    image: image
+    container_name: service
+    labels:
+      my-test-app.service: true
+      com.docker.compose.service: my-test-app
+      my-test-app: my-test-app
 "
 `;

@@ -81,6 +81,8 @@ export const serviceSchema = z.object({
         hostPath: z.string(),
         containerPath: z.string(),
         readOnly: z.boolean().optional(),
+        shared: z.boolean().optional(),
+        private: z.boolean().optional(),
       }),
     )
     .optional(),
@@ -120,6 +122,7 @@ export const serviceSchema = z.object({
   stopSignal: z.string().optional(),
   stopGracePeriod: z.string().optional(),
   stdinOpen: z.boolean().optional(),
+  extraLabels: z.record(z.string().or(z.boolean())).optional(),
 });
 
 export const dynamicComposeSchema = z.object({

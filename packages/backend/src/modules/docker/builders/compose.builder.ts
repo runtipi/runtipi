@@ -109,6 +109,8 @@ export class DockerComposeBuilder {
       }
     }
 
+    service.setLabels({ 'runtipi.managed': true, ...params.extraLabels }).interpolateVariables(params.name);
+
     return service.build();
   };
 

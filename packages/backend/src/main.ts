@@ -6,7 +6,7 @@ import { SpelunkerModule } from 'nestjs-spelunker';
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { type INestApplication, ValidationPipe } from '@nestjs/common';
+import { type INestApplication, type LogLevel, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
@@ -38,7 +38,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     abortOnError: true,
-    logger: ['error', 'warn', 'fatal'],
+    logger: [process.env.LOG_LEVEL as LogLevel, 'error', 'warn', 'fatal'],
   });
 
   if (process.env.NODE_ENV !== 'production') {

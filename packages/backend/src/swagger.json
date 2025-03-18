@@ -1659,9 +1659,33 @@
                 "type": "string"
               },
               "eventsTimeout": {
-                "type": "number"
+                "type": "integer",
+                "minimum": 1,
+                "exclusiveMinimum": false
               },
               "advancedSettings": {
+                "type": "boolean"
+              },
+              "forwardAuthUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "logLevel": {
+                "type": "string",
+                "enum": [
+                  "debug",
+                  "info",
+                  "warn",
+                  "error"
+                ],
+                "x-enumNames": [
+                  "debug",
+                  "info",
+                  "warn",
+                  "error"
+                ]
+              },
+              "experimental_insecureCookie": {
                 "type": "boolean"
               }
             },
@@ -1683,7 +1707,9 @@
               "listenIp",
               "timeZone",
               "eventsTimeout",
-              "advancedSettings"
+              "advancedSettings",
+              "forwardAuthUrl",
+              "logLevel"
             ]
           },
           "user": {
@@ -1856,9 +1882,33 @@
             "type": "string"
           },
           "eventsTimeout": {
-            "type": "number"
+            "type": "integer",
+            "minimum": 1,
+            "exclusiveMinimum": false
           },
           "advancedSettings": {
+            "type": "boolean"
+          },
+          "forwardAuthUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "logLevel": {
+            "type": "string",
+            "enum": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ],
+            "x-enumNames": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ]
+          },
+          "experimental_insecureCookie": {
             "type": "boolean"
           }
         }

@@ -1,5 +1,7 @@
 import { SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
+import { ConfigurationService } from '@/core/config/configuration.service';
+import { LoggerService } from '@/core/logger/logger.service';
 import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -24,21 +26,33 @@ import {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly logger: LoggerService,
+    private readonly config: ConfigurationService,
+  ) {}
 
   private async setSessionCookie(res: Response, sessionId: string, req: Request) {
     const host = req.headers['x-forwarded-host'] as string | undefined;
     const proto = req.headers['x-forwarded-proto'] as string | undefined;
-
     const domain = await this.authService.getCookieDomain(host);
+    const secure = Boolean(domain) && proto === 'https';
 
-    res.cookie(SESSION_COOKIE_NAME, sessionId, {
-      httpOnly: true,
-      secure: Boolean(domain) && proto === 'https',
-      sameSite: 'lax',
-      maxAge: SESSION_COOKIE_MAX_AGE,
-      domain,
-    });
+    this.logger.debug('Request headers', req.headers);
+    this.logger.debug('Setting session cookie', { host, domain, proto, secure });
+
+    if (this.config.get('userSettings').experimental.insecureCookie) {
+      this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
+      res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
+    } else {
+      res.cookie(SESSION_COOKIE_NAME, sessionId, {
+        httpOnly: true,
+        secure,
+        sameSite: 'lax',
+        maxAge: SESSION_COOKIE_MAX_AGE,
+        domain,
+      });
+    }
   }
 
   @Post('/login')
@@ -179,12 +193,15 @@ export class AuthController {
   @Get('/traefik')
   async traefik(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
+      this.logger.debug('User already logged in');
       return res.status(200).send();
     }
 
     const uri = req.headers['x-forwarded-uri'] as string;
     const proto = req.headers['x-forwarded-proto'] as string;
     const host = req.headers['x-forwarded-host'] as string;
+
+    this.logger.debug('Auth request', { uri, proto, host });
 
     const subdomains = host.split('.');
     const app = subdomains[0] ?? '';
@@ -195,6 +212,8 @@ export class AuthController {
     const loginUrl = new URL('/login', `${proto}://${rootDomain}`);
     loginUrl.searchParams.set('redirect_url', redirectUrl.toString());
     loginUrl.searchParams.set('app', app);
+
+    this.logger.debug('Redirecting to login', { loginUrl: loginUrl.toString(), redirectUrl: redirectUrl.toString(), app });
 
     return res.status(302).redirect(loginUrl.toString());
   }

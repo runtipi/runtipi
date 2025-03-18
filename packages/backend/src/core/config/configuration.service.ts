@@ -4,11 +4,11 @@ import { type PartialUserSettingsDto, settingsSchema } from '@/app.dto';
 import { APP_DATA_DIR, APP_DIR, ARCHITECTURES, DATA_DIR } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { EnvUtils } from '@/modules/env/env.utils';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import dotenv from 'dotenv';
 import { z } from 'zod';
-import { FilesystemService } from '../filesystem/filesystem.service';
+import { LOG_LEVEL_ENUM, type LogLevel, LoggerService } from '../logger/logger.service';
 
 const envSchema = z.object({
   POSTGRES_HOST: z.string(),
@@ -26,31 +26,33 @@ const envSchema = z.object({
   LOCAL_DOMAIN: z.string(),
   DNS_IP: z.string().default('9.9.9.9'),
   RUNTIPI_APP_DATA_PATH: z.string(),
+  RUNTIPI_FORWARD_AUTH_URL: z.string(),
   DEMO_MODE: z.string().transform((val) => val.toLowerCase() === 'true'),
   GUEST_DASHBOARD: z.string().transform((val) => val.toLowerCase() === 'true'),
   ALLOW_ERROR_MONITORING: z.string().transform((val) => val.toLowerCase() === 'true'),
   ALLOW_AUTO_THEMES: z.string().transform((val) => val.toLowerCase() === 'true'),
   PERSIST_TRAEFIK_CONFIG: z.string().transform((val) => val.toLowerCase() === 'true'),
   QUEUE_TIMEOUT_IN_MINUTES: z.coerce.number().default(5),
-  LOG_LEVEL: z.string().default('info'),
+  LOG_LEVEL: z.nativeEnum(LOG_LEVEL_ENUM).default('info').catch('info'),
   TZ: z.string(),
   ROOT_FOLDER_HOST: z.string(),
   NGINX_PORT: z.coerce.number().default(80),
   NGINX_PORT_SSL: z.coerce.number().default(443),
   ADVANCED_SETTINGS: z.string().transform((val) => val.toLowerCase() === 'true'),
+  // Experimental flags
+  EXPERIMENTAL_INSECURE_COOKIE: z.string().transform((val) => val.toLowerCase() === 'true'),
 });
 
 @Injectable()
 export class ConfigurationService {
   private config: ReturnType<typeof this.configure>;
   private envPath = path.join(DATA_DIR, '.env');
+  private logger: LoggerService;
 
   // Lowest level, cannot use any other service or module to avoid circular dependencies
-  constructor(
-    private readonly envUtils: EnvUtils,
-    private readonly filesystem: FilesystemService,
-  ) {
+  constructor(private readonly envUtils: EnvUtils) {
     dotenv.config({ path: this.envPath, override: true });
+    this.logger = new LoggerService('backend', path.join(DATA_DIR, 'logs'), process.env.LOG_LEVEL as LogLevel);
     this.config = this.configure();
   }
 
@@ -59,7 +61,7 @@ export class ConfigurationService {
     try {
       envFile = fs.readFileSync(this.envPath).toString();
     } catch (e) {
-      console.error('❌ .env file not found');
+      this.logger.error('❌ .env file not found');
     }
 
     return this.envUtils.envStringToMap(envFile.toString());
@@ -72,9 +74,11 @@ export class ConfigurationService {
     const env = envSchema.safeParse(conf);
 
     if (!env.success) {
-      console.error(env.error.errors);
+      this.logger.error(env.error.errors);
       throw new Error(`❌ Invalid environment variables ${JSON.stringify(env.error.flatten(), null, 2)}`);
     }
+
+    this.logger = new LoggerService('backend', path.join(DATA_DIR, 'logs'), env.data.LOG_LEVEL);
 
     return {
       database: {
@@ -108,9 +112,14 @@ export class ConfigurationService {
         postgresPort: env.data.POSTGRES_PORT,
         dnsIp: env.data.DNS_IP,
         appDataPath: env.data.RUNTIPI_APP_DATA_PATH,
+        forwardAuthUrl: env.data.RUNTIPI_FORWARD_AUTH_URL,
         persistTraefikConfig: env.data.PERSIST_TRAEFIK_CONFIG,
         eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES,
         advancedSettings: env.data.ADVANCED_SETTINGS,
+        logLevel: env.data.LOG_LEVEL,
+        experimental: {
+          insecureCookie: env.data.EXPERIMENTAL_INSECURE_COOKIE,
+        },
       },
       deprecatedAppsRepoId: env.data.APPS_REPO_ID, // @deprecated
       deprecatedAppsRepoUrl: env.data.APPS_REPO_URL, // @deprecated
@@ -137,21 +146,21 @@ export class ConfigurationService {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
 
-    this.initSentry({ release: this.config.version, allowSentry: Boolean(settings.allowErrorMonitoring) });
+    try {
+      this.initSentry({ release: this.config.version, allowSentry: Boolean(settings.allowErrorMonitoring) });
 
-    const settingsPath = path.join(DATA_DIR, 'state', 'settings.json');
+      const settingsPath = path.join(DATA_DIR, 'state', 'settings.json');
 
-    const currentSettings = await this.filesystem.readJsonFile(settingsPath, settingsSchema.partial());
+      const fileContent = await fs.promises.readFile(settingsPath, 'utf8');
+      const parsedContent = JSON.parse(fileContent);
+      const currentSettings = settingsSchema.partial().parse(parsedContent);
 
-    await this.filesystem.writeJsonFile(settingsPath, {
-      ...currentSettings,
-      ...settings,
-    });
-
-    this.config.userSettings = {
-      ...this.config.userSettings,
-      ...settings,
-    };
+      await fs.promises.writeFile(settingsPath, `${JSON.stringify({ ...currentSettings, ...settings }, null, 2)}`, 'utf8');
+      this.config.userSettings = { ...this.config.userSettings, ...settings };
+    } catch (error) {
+      this.logger.error('Failed to set user settings', error);
+      throw new InternalServerErrorException('Failed to set user settings');
+    }
   }
 
   public async initSentry(params: { release: string; allowSentry: boolean }) {

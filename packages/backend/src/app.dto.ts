@@ -2,6 +2,7 @@ import { createZodDto } from 'nestjs-zod';
 import { UserDto } from './modules/user/dto/user.dto';
 
 import { z } from 'zod';
+import { LOG_LEVEL_ENUM } from './core/logger/logger.service';
 import { AppInfoSimpleDto } from './modules/marketplace/dto/marketplace.dto';
 
 export const settingsSchema = z.object({
@@ -21,8 +22,11 @@ export const settingsSchema = z.object({
   sslPort: z.coerce.number(),
   listenIp: z.string().ip().trim(),
   timeZone: z.string().trim(),
-  eventsTimeout: z.coerce.number(),
+  eventsTimeout: z.coerce.number().int().min(1),
   advancedSettings: z.boolean(),
+  forwardAuthUrl: z.string().url().trim(),
+  logLevel: z.nativeEnum(LOG_LEVEL_ENUM),
+  experimental_insecureCookie: z.boolean().optional(),
 });
 
 export class UserSettingsDto extends createZodDto(settingsSchema) {}

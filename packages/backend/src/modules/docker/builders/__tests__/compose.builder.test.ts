@@ -86,6 +86,23 @@ describe('DockerComposeBuilder', () => {
     expect(compose).toMatchSnapshot();
   });
 
+  it('should correctly interpolate RUNTIPI_APP_ID in service labels', () => {
+    const service = serviceBuilder
+      .setName('service')
+      .setImage('image')
+      .setLabels({
+        '{{RUNTIPI_APP_ID}}.service': true,
+        'com.docker.compose.service': '{{RUNTIPI_APP_ID}}',
+        '{{ RUNTIPI_APP_ID }}': '{{ RUNTIPI_APP_ID }}',
+      })
+      .interpolateVariables('my-test-app')
+      .build();
+
+    const compose = composeBuilder.addService(service).build();
+
+    expect(compose).toMatchSnapshot();
+  });
+
   it('should correctly format a complex docker-compose file', () => {
     const service1: ServiceInput = {
       name: 'service1',
@@ -175,6 +192,14 @@ describe('DockerComposeBuilder', () => {
               containerPath: '/var/uploads',
             },
           ],
+          extraLabels: {
+            'some-label': 'some-value',
+            '{{RUNTIPI_APP_ID}}.service': true,
+            'com.docker.compose.service': '{{RUNTIPI_APP_ID}}',
+            '{{ RUNTIPI_APP_ID }}': '{{ RUNTIPI_APP_ID }}',
+            // Example of overriding
+            'traefik.http.middlewares.ctfd-web-redirect.redirectscheme.scheme': 'wrongscheme',
+          },
         },
         {
           name: 'ctfd-db',
