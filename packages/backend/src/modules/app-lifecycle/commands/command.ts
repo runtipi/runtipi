@@ -1,4 +1,3 @@
-import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
@@ -30,9 +29,8 @@ export class AppLifecycleCommand {
     if (composeJson.content && appInfo?.dynamic_config) {
       try {
         const { services } = dynamicComposeSchema.parse(composeJson.content);
-        const { appStoreId } = extractAppUrn(appUrn);
         const dockerComposeBuilder = new DockerComposeBuilder();
-        const composeFile = dockerComposeBuilder.getDockerCompose(services, form, appStoreId);
+        const composeFile = dockerComposeBuilder.getDockerCompose(services, form, appUrn);
 
         await this.appFilesManager.writeDockerComposeYml(appUrn, composeFile);
       } catch (err) {

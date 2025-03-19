@@ -14,7 +14,7 @@ describe('ServiceBuilder', () => {
     const image = faker.lorem.word();
     const service = serviceBuilder.setName(name).setImage(image).build();
 
-    expect(service).toHaveProperty('container_name', name);
+    expect(service).not.toHaveProperty('container_name');
     expect(service).toHaveProperty('image', image);
   });
 

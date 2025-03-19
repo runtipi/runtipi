@@ -145,10 +145,15 @@ export class LoggerService {
   };
 
   private log = (level: string, messages: unknown[]) => {
-    const stringMessages = messages.map((m) => {
+    const stringMessages = messages.flatMap((m) => {
+      if (m instanceof Error) {
+        return [m.message, m.stack];
+      }
+
       if (typeof m === 'object') {
         return JSON.stringify(m, null, 2);
       }
+
       return m;
     });
 
