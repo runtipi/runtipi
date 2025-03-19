@@ -67,7 +67,7 @@ export interface BuilderService {
   healthCheck?: HealthCheck;
   labels?: Record<string, string | boolean>;
   dependsOn?: DependsOn;
-  networks?: string[];
+  networks?: Record<string, { gw_priority: number }>;
   networkMode?: string;
   extraHosts?: string[];
   ulimits?: Ulimits;
@@ -153,8 +153,13 @@ export class ServiceBuilder {
    * service.addNetwork('tipi_main_network');
    * ```
    */
-  setNetwork(network: string) {
-    this.service.networks = [network];
+  setNetwork(network: string, priority = 0) {
+    if (!this.service.networks) {
+      this.service.networks = {};
+    }
+
+    this.service.networks[network] = { gw_priority: priority };
+
     return this;
   }
 
@@ -538,7 +543,7 @@ export class ServiceBuilder {
     const finalService = {
       image: this.service.image,
       command: this.service.command,
-      container_name: this.service.containerName,
+      name: this.service.containerName,
       restart: this.service.restart,
       networks: this.service.networks,
       network_mode: this.service.networkMode,
