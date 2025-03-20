@@ -39,6 +39,21 @@ services:
     networks:
       - tipi_main_network
 
+  runtipi-queue:
+    container_name: runtipi-queue
+    image: rabbitmq:4-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    environment:
+       RABBITMQ_DEFAULT_USER: tipi
+       RABBITMQ_DEFAULT_PASS: rabbitmq
+    networks:
+      - tipi_main_network
+
   runtipi:
     build:
       context: .
@@ -48,6 +63,8 @@ services:
         LOCAL: true
     depends_on:
       runtipi-db:
+        condition: service_healthy
+      runtipi-queue:
         condition: service_healthy
     container_name: runtipi
     restart: unless-stopped
@@ -83,6 +100,9 @@ services:
       NODE_ENV: production
       ROOT_FOLDER_HOST: ${PWD}
       POSTGRES_PASSWORD: postgres
+      RABBITMQ_USERNAME: tipi
+      RABBITMQ_PASSWORD: rabbitmq
+      RABBITMQ_HOST: runtipi-queue
       INTERNAL_IP: 127.0.0.1
       TIPI_VERSION: 0.0.0
       LOG_LEVEL: debug
