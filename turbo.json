@@ -19,7 +19,18 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["NODE_ENV", "LOCAL", "ROOT_FOLDER_HOST", "POSTGRES_PASSWORD", "INTERNAL_IP", "TIPI_VERSION", "LOG_LEVEL"]
+      "env": [
+        "NODE_ENV",
+        "LOCAL",
+        "ROOT_FOLDER_HOST",
+        "POSTGRES_PASSWORD",
+        "INTERNAL_IP",
+        "TIPI_VERSION",
+        "LOG_LEVEL",
+        "RABBITMQ_USERNAME",
+        "RABBITMQ_PASSWORD",
+        "RABBITMQ_HOST"
+      ]
     },
     "test": {
       "cache": false,

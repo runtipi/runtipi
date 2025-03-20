@@ -1,4 +1,5 @@
 import { setTimeout } from 'node:timers/promises';
+import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
@@ -11,12 +12,17 @@ export class QueueFactory {
   private rabbit: Connection;
   private connectionAttempts = 0;
 
-  public constructor(private readonly logger: LoggerService) {
+  public constructor(
+    private readonly logger: LoggerService,
+    private readonly config: ConfigurationService,
+  ) {
     this.initializeConnection();
   }
 
-  private initializeConnection() {
-    this.rabbit = new Connection({ url: 'amqp://guest:guest@localhost:5672' });
+  public async initializeConnection() {
+    const { host, password, username } = this.config.get('queue');
+
+    this.rabbit = new Connection({ hostname: host, username, password });
 
     this.rabbit.on('connection', () => {
       this.connectionAttempts = 0;
@@ -24,6 +30,7 @@ export class QueueFactory {
     });
 
     this.rabbit.on('error', async (error) => {
+      this.logger.error('RabbitMQ connection error', error);
       this.reconnect(error);
     });
   }

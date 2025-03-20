@@ -37,7 +37,7 @@ describe('App lifecycle', () => {
   let configurationService = mock<ConfigurationService>();
   let databaseService = mock<DatabaseService>();
   const loggerService = mock<LoggerService>();
-  const queueFactory = new QueueFactory(loggerService);
+  const queueFactory = new QueueFactory(loggerService, configurationService);
   const appEventsQueue = queueFactory.createQueue({
     queueName: 'app-events-queue',
     workers: 1,

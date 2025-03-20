@@ -16,6 +16,9 @@ const envSchema = z.object({
   POSTGRES_USERNAME: z.string(),
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_PORT: z.coerce.number().default(5432),
+  RABBITMQ_HOST: z.string(),
+  RABBITMQ_USERNAME: z.string(),
+  RABBITMQ_PASSWORD: z.string(),
   ARCHITECTURE: z.enum(ARCHITECTURES).default('amd64'),
   INTERNAL_IP: z.string(),
   TIPI_VERSION: z.string(),
@@ -87,6 +90,11 @@ export class ConfigurationService {
         username: env.data.POSTGRES_USERNAME,
         password: env.data.POSTGRES_PASSWORD,
         database: env.data.POSTGRES_DBNAME,
+      },
+      queue: {
+        host: env.data.RABBITMQ_HOST,
+        username: env.data.RABBITMQ_USERNAME,
+        password: env.data.RABBITMQ_PASSWORD,
       },
       directories: {
         dataDir: DATA_DIR,

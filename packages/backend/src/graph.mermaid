@@ -79,6 +79,13 @@ graph LR
   AppModule-->LoggerModule
   AppModule-->AppsModule
   AppsModule-->QueueModule
+  QueueModule-->TerminusModule
+  TerminusModule-->SentryModule
+  TerminusModule-->ConfigurationModule
+  TerminusModule-->DatabaseModule
+  TerminusModule-->CacheModule
+  TerminusModule-->LoggerModule
+  TerminusModule-->FilesystemModule
   QueueModule-->SentryModule
   QueueModule-->ConfigurationModule
   QueueModule-->DatabaseModule
@@ -166,12 +173,6 @@ graph LR
   AppModule-->BackupsModule
   AppModule-->HealthModule
   HealthModule-->TerminusModule
-  TerminusModule-->SentryModule
-  TerminusModule-->ConfigurationModule
-  TerminusModule-->DatabaseModule
-  TerminusModule-->CacheModule
-  TerminusModule-->LoggerModule
-  TerminusModule-->FilesystemModule
   HealthModule-->QueueModule
   HealthModule-->SentryModule
   HealthModule-->ConfigurationModule

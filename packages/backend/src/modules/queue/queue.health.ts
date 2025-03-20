@@ -1,22 +1,29 @@
+import { ConfigurationService } from '@/core/config/configuration.service';
 import { Injectable } from '@nestjs/common';
-import { HealthCheckError, HealthIndicator, type HealthIndicatorResult } from '@nestjs/terminus';
+import { type HealthIndicatorResult, HealthIndicatorService } from '@nestjs/terminus';
 import Connection from 'rabbitmq-client';
 
 @Injectable()
-export class QueueHealthIndicator extends HealthIndicator {
-  private connection = new Connection({
-    url: 'amqp://guest:guest@localhost:5672',
-    connectionTimeout: 30000,
-  });
+export class QueueHealthIndicator {
+  private connection;
+
+  constructor(
+    private readonly config: ConfigurationService,
+    private readonly healthIndicatorService: HealthIndicatorService,
+  ) {
+    const { host, password, username } = this.config.get('queue');
+
+    this.connection = new Connection({ hostname: host, username, password, connectionTimeout: 30000 });
+  }
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
+    const indicator = this.healthIndicatorService.check(key);
     const isHealthy = this.connection.ready;
 
-    const result = this.getStatus(key, isHealthy);
-
-    if (isHealthy) {
-      return result;
+    if (!isHealthy) {
+      return indicator.down();
     }
-    throw new HealthCheckError('Queue healthcheck failed', result);
+
+    return indicator.up();
   }
 }
