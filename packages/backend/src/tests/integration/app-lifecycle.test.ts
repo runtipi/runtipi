@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
 import { ConfigurationService } from '@/core/config/configuration.service';
+import { DATABASE } from '@/core/database/database.module';
 import { DatabaseService } from '@/core/database/database.service';
 import { appStore } from '@/core/database/drizzle/schema';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -67,6 +68,10 @@ describe('App lifecycle', () => {
         {
           provide: DatabaseService,
           useValue: databaseService,
+        },
+        {
+          provide: DATABASE,
+          useValue: db,
         },
         {
           provide: AppEventsQueue,
