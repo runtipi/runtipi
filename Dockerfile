@@ -17,7 +17,7 @@ RUN pnpm fetch
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
 
-RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
+RUN apk add --no-cache curl openssl git
 
 # ---- BUILDER ----
 FROM builder_base AS builder
@@ -88,4 +88,4 @@ COPY ./supervisord.prod.conf /etc/supervisord.conf
 
 EXPOSE 3000
 
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["npm", "run", "start"]
