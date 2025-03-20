@@ -1,4 +1,4 @@
-import { pullMutation } from '@/api-client/@tanstack/react-query.gen';
+import { pullAppStoreMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
@@ -12,7 +12,7 @@ export const UpdateRepoModal = () => {
   const { t } = useTranslation();
 
   const updateRepo = useMutation({
-    ...pullMutation(),
+    ...pullAppStoreMutation(),
     onSuccess: () => {
       toast.success(t('SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS'));
       UpdateRepoModalDisclosure.close();

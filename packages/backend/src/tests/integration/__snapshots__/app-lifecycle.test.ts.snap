@@ -1,0 +1,88 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App lifecycle > install app > should not delete an existing app-data folder even if the app is reinstalled 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     └─ test2/
+│        ├─ app.env
+│        └─ data/
+│           └─ test.txt
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ test/
+   │     └─ test2/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        └─ docker-compose.yml
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        └─ test2/
+   │           ├─ config.json
+   │           ├─ data/
+   │           └─ docker-compose.json
+   └─ state/
+      └─ seed"
+`;
+
+exports[`App lifecycle > install app > should successfully install app and create expected directory structure 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     └─ test/
+│        ├─ app.env
+│        └─ data/
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ test/
+   │     └─ test/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        └─ docker-compose.yml
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        └─ test/
+   │           ├─ config.json
+   │           ├─ data/
+   │           └─ docker-compose.json
+   └─ state/
+      └─ seed"
+`;
+
+exports[`App lifecycle > install app > should successfully install app and create expected directory structure 2`] = `
+"services:
+  test:
+    image: test
+    restart: unless-stopped
+    networks:
+      test_test_network:
+        gw_priority: 0
+      tipi_main_network:
+        gw_priority: 1
+    environment:
+      TEST: test
+    ports:
+      - \${APP_PORT}:80
+    labels:
+      generated: true
+      traefik.enable: false
+      traefik.http.middlewares.test_test-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.test_test.loadbalancer.server.port: "80"
+      runtipi.managed: true
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  test_test_network:
+    external: false
+
+"
+`;

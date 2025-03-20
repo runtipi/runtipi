@@ -40,6 +40,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
     }
 
     if (type === 'localDomain') {
+      // TODO: URN support
       url = `https://${app.id}.${localDomain}${info.url_suffix || ''}`;
     }
 
@@ -51,7 +52,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
       <DropdownMenuTrigger asChild>
         {/* biome-ignore lint/a11y/noNoninteractiveTabindex: works fine */}
         <div tabIndex={0} className="col-sm-6 col-lg-4 app-link">
-          <AppTile key={app.id} info={info} status={app.status} updateAvailable={false} />
+          <AppTile key={info.urn} info={info} status={app.status} updateAvailable={false} />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

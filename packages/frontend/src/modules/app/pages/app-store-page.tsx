@@ -1,21 +1,22 @@
-import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
-import { useAppStoreState } from '@/stores/app-store';
-import { useInfiniteScroll } from '@/lib/hooks/use-infinite-scroll';
-import { StoreTile } from '../components/store-tile/store-tile';
-import { searchAppsFn } from '@/lib/api/search-apps';
+import { searchAppsInfiniteOptions } from '@/api-client/@tanstack/react-query.gen';
 import { EmptyPage } from '@/components/empty-page/empty-page';
+import { useInfiniteScroll } from '@/lib/hooks/use-infinite-scroll';
+import { useAppStoreState } from '@/stores/app-store';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
+import { Navigate, useParams } from 'react-router';
+import { StoreTile } from '../components/store-tile/store-tile';
 
 export const AppStorePageSuspense = () => {
   return <div className="card px-3 pb-3" style={{ height: 4000 }} />;
 };
 
 export const AppStorePage = () => {
-  const { category, search } = useAppStoreState();
+  const params = useParams<{ storeId: string }>();
 
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = useInfiniteQuery({
-    queryFn: searchAppsFn({ search, category }),
-    queryKey: ['app-store', search, category],
-    initialPageParam: undefined,
+  const { category, search, storeId } = useAppStoreState();
+
+  const { data, hasNextPage, isFetchingNextPage, isFetching, fetchNextPage } = useInfiniteQuery({
+    ...searchAppsInfiniteOptions({ query: { search, category, pageSize: 24, storeId } }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     placeholderData: keepPreviousData,
   });
@@ -29,6 +30,10 @@ export const AppStorePage = () => {
     isFetching: isFetchingNextPage || isFetching,
   });
 
+  if (params.storeId) {
+    return <Navigate to={`/app-store?store=${params.storeId}`} />;
+  }
+
   if (isLoading) {
     return <AppStorePageSuspense />;
   }
@@ -41,7 +46,7 @@ export const AppStorePage = () => {
     <div className="card px-3 pb-3">
       <div className="row row-cards">
         {apps.map((app, index) => (
-          <div ref={index === apps.length - 1 ? lastElementRef : null} key={app.id} className="cursor-pointer col-sm-6 col-lg-4 p-2 mt-4">
+          <div ref={index === apps.length - 1 ? lastElementRef : null} key={app.urn} className="cursor-pointer col-sm-6 col-lg-4 p-2 mt-4">
             <StoreTile app={app} isLoading={isLoading} />
           </div>
         ))}

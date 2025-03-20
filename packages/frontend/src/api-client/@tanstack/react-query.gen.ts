@@ -24,10 +24,15 @@ import {
   traefik,
   getInstalledApps,
   getGuestApps,
+  getApp,
   searchApps,
-  getAppDetails,
   getImage,
-  pull,
+  pullAppStore,
+  createAppStore,
+  getAllAppStores,
+  getEnabledAppStores,
+  deleteAppStore,
+  updateAppStore,
   installApp,
   startApp,
   stopApp,
@@ -35,12 +40,12 @@ import {
   uninstallApp,
   resetApp,
   updateApp,
-  updateAllApps,
   updateAppConfig,
+  updateAllApps,
   backupApp,
   restoreAppBackup,
-  getAppBackups,
   deleteAppBackup,
+  getAppBackups,
   appEvents,
   appLogsEvents,
   runtipiLogsEvents,
@@ -79,12 +84,17 @@ import type {
   TraefikData,
   GetInstalledAppsData,
   GetGuestAppsData,
+  GetAppData,
   SearchAppsData,
   SearchAppsResponse,
-  GetAppDetailsData,
   GetImageData,
-  PullData,
-  PullResponse,
+  PullAppStoreData,
+  PullAppStoreResponse,
+  CreateAppStoreData,
+  GetAllAppStoresData,
+  GetEnabledAppStoresData,
+  DeleteAppStoreData,
+  UpdateAppStoreData,
   InstallAppData,
   StartAppData,
   StopAppData,
@@ -92,13 +102,13 @@ import type {
   UninstallAppData,
   ResetAppData,
   UpdateAppData,
-  UpdateAllAppsData,
   UpdateAppConfigData,
+  UpdateAllAppsData,
   BackupAppData,
   RestoreAppBackupData,
+  DeleteAppBackupData,
   GetAppBackupsData,
   GetAppBackupsResponse,
-  DeleteAppBackupData,
   AppEventsData,
   AppLogsEventsData,
   RuntipiLogsEventsData,
@@ -559,6 +569,23 @@ export const getGuestAppsOptions = (options?: Options<GetGuestAppsData>) => {
   });
 };
 
+export const getAppQueryKey = (options: Options<GetAppData>) => createQueryKey('getApp', options);
+
+export const getAppOptions = (options: Options<GetAppData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApp({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getAppQueryKey(options),
+  });
+};
+
 export const searchAppsQueryKey = (options?: Options<SearchAppsData>) => createQueryKey('searchApps', options);
 
 export const searchAppsOptions = (options?: Options<SearchAppsData>) => {
@@ -642,23 +669,6 @@ export const searchAppsInfiniteOptions = (options?: Options<SearchAppsData>) => 
   );
 };
 
-export const getAppDetailsQueryKey = (options: Options<GetAppDetailsData>) => createQueryKey('getAppDetails', options);
-
-export const getAppDetailsOptions = (options: Options<GetAppDetailsData>) => {
-  return queryOptions({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getAppDetails({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: getAppDetailsQueryKey(options),
-  });
-};
-
 export const getImageQueryKey = (options: Options<GetImageData>) => createQueryKey('getImage', options);
 
 export const getImageOptions = (options: Options<GetImageData>) => {
@@ -676,12 +686,12 @@ export const getImageOptions = (options: Options<GetImageData>) => {
   });
 };
 
-export const pullQueryKey = (options?: Options<PullData>) => createQueryKey('pull', options);
+export const pullAppStoreQueryKey = (options?: Options<PullAppStoreData>) => createQueryKey('pullAppStore', options);
 
-export const pullOptions = (options?: Options<PullData>) => {
+export const pullAppStoreOptions = (options?: Options<PullAppStoreData>) => {
   return queryOptions({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await pull({
+      const { data } = await pullAppStore({
         ...options,
         ...queryKey[0],
         signal,
@@ -689,14 +699,107 @@ export const pullOptions = (options?: Options<PullData>) => {
       });
       return data;
     },
-    queryKey: pullQueryKey(options),
+    queryKey: pullAppStoreQueryKey(options),
   });
 };
 
-export const pullMutation = (options?: Partial<Options<PullData>>) => {
-  const mutationOptions: UseMutationOptions<PullResponse, DefaultError, Options<PullData>> = {
+export const pullAppStoreMutation = (options?: Partial<Options<PullAppStoreData>>) => {
+  const mutationOptions: UseMutationOptions<PullAppStoreResponse, DefaultError, Options<PullAppStoreData>> = {
     mutationFn: async (localOptions) => {
-      const { data } = await pull({
+      const { data } = await pullAppStore({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const createAppStoreQueryKey = (options: Options<CreateAppStoreData>) => createQueryKey('createAppStore', options);
+
+export const createAppStoreOptions = (options: Options<CreateAppStoreData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await createAppStore({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: createAppStoreQueryKey(options),
+  });
+};
+
+export const createAppStoreMutation = (options?: Partial<Options<CreateAppStoreData>>) => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<CreateAppStoreData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await createAppStore({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const getAllAppStoresQueryKey = (options?: Options<GetAllAppStoresData>) => createQueryKey('getAllAppStores', options);
+
+export const getAllAppStoresOptions = (options?: Options<GetAllAppStoresData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getAllAppStores({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getAllAppStoresQueryKey(options),
+  });
+};
+
+export const getEnabledAppStoresQueryKey = (options?: Options<GetEnabledAppStoresData>) => createQueryKey('getEnabledAppStores', options);
+
+export const getEnabledAppStoresOptions = (options?: Options<GetEnabledAppStoresData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getEnabledAppStores({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getEnabledAppStoresQueryKey(options),
+  });
+};
+
+export const deleteAppStoreMutation = (options?: Partial<Options<DeleteAppStoreData>>) => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteAppStoreData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await deleteAppStore({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const updateAppStoreMutation = (options?: Partial<Options<UpdateAppStoreData>>) => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAppStoreData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await updateAppStore({
         ...options,
         ...localOptions,
         throwOnError: true,
@@ -890,10 +993,10 @@ export const updateAppMutation = (options?: Partial<Options<UpdateAppData>>) => 
   return mutationOptions;
 };
 
-export const updateAllAppsMutation = (options?: Partial<Options<UpdateAllAppsData>>) => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAllAppsData>> = {
+export const updateAppConfigMutation = (options?: Partial<Options<UpdateAppConfigData>>) => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAppConfigData>> = {
     mutationFn: async (localOptions) => {
-      const { data } = await updateAllApps({
+      const { data } = await updateAppConfig({
         ...options,
         ...localOptions,
         throwOnError: true,
@@ -904,10 +1007,10 @@ export const updateAllAppsMutation = (options?: Partial<Options<UpdateAllAppsDat
   return mutationOptions;
 };
 
-export const updateAppConfigMutation = (options?: Partial<Options<UpdateAppConfigData>>) => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAppConfigData>> = {
+export const updateAllAppsMutation = (options?: Partial<Options<UpdateAllAppsData>>) => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAllAppsData>> = {
     mutationFn: async (localOptions) => {
-      const { data } = await updateAppConfig({
+      const { data } = await updateAllApps({
         ...options,
         ...localOptions,
         throwOnError: true,
@@ -980,6 +1083,20 @@ export const restoreAppBackupMutation = (options?: Partial<Options<RestoreAppBac
   return mutationOptions;
 };
 
+export const deleteAppBackupMutation = (options?: Partial<Options<DeleteAppBackupData>>) => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await deleteAppBackup({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
 export const getAppBackupsQueryKey = (options: Options<GetAppBackupsData>) => createQueryKey('getAppBackups', options);
 
 export const getAppBackupsOptions = (options: Options<GetAppBackupsData>) => {
@@ -1032,20 +1149,6 @@ export const getAppBackupsInfiniteOptions = (options: Options<GetAppBackupsData>
       queryKey: getAppBackupsInfiniteQueryKey(options),
     },
   );
-};
-
-export const deleteAppBackupMutation = (options?: Partial<Options<DeleteAppBackupData>>) => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> = {
-    mutationFn: async (localOptions) => {
-      const { data } = await deleteAppBackup({
-        ...options,
-        ...localOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
 };
 
 export const appEventsQueryKey = (options?: Options<AppEventsData>) => createQueryKey('appEvents', options);

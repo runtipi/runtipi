@@ -2,14 +2,15 @@ import clsx from 'clsx';
 import type React from 'react';
 import './app-logo.css';
 
-export const AppLogo: React.FC<{ id?: string; url?: string; size?: number; className?: string; alt?: string; placeholder?: boolean }> = ({
-  id,
-  url,
-  size = 80,
-  className = '',
-  alt = '',
-}) => {
-  const logoUrl = id ? `/api/apps/${id}/image` : '/app-not-found.jpg';
+export const AppLogo: React.FC<{
+  urn?: string;
+  url?: string;
+  size?: number;
+  className?: string;
+  alt?: string;
+  placeholder?: boolean;
+}> = ({ urn, url, size = 80, className = '', alt = '' }) => {
+  const logoUrl = urn ? `/api/marketplace/apps/${urn}/image` : '/app-not-found.jpg';
 
   return (
     <div aria-label={alt} className={clsx('drop-shadow', className)} style={{ width: size, height: size, minWidth: size }}>

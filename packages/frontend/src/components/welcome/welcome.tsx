@@ -25,13 +25,13 @@ export const Welcome = ({ allowErrorMonitoring }: Props) => {
     <div className="page page-center">
       <div className="container container-tight py-4">
         <div className="text-center mb-4">
-          <img alt="Tipi logo" src={getLogo(true)} height={50} width={50} style={{ maxWidth: '100%', height: 'auto' }} />
+          <img alt="Runtipi logo" src={getLogo(true)} height={50} width={50} style={{ maxWidth: '100%', height: 'auto' }} />
         </div>
         <div className="card card-md">
           <div className="card-body">
             <h2 className="h2 text-center mb-4">Thanks for using Runtipi</h2>
             <p className="text-center mb-4">
-              Tipi is a free and open source project that is developed and maintained by a small team. If it helps you in any way, please consider
+              Runtipi is a free and open source project that is developed and maintained by a small team. If it helps you in any way, please consider
               supporting the project by{' '}
               <a target="_blank" href="https://github.com/runtipi/runtipi?sponsor=1" rel="noreferrer">
                 donating

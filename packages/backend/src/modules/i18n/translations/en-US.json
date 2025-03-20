@@ -38,6 +38,7 @@
   "APP_DETAILS_TITLE": "App details",
   "APP_DETAILS_VERSION": "Version",
   "APP_DETAILS_WEBSITE": "Website",
+  "APP_DETAILS_USER_CONFIG": "User config",
   "APP_ERROR_APP_FAILED_TO_INSTALL": "Failed to install app {{id}}, see logs for more details",
   "APP_ERROR_APP_FAILED_TO_RESET": "Failed to reset app {{id}}, see logs for more details",
   "APP_ERROR_APP_FAILED_TO_START": "Failed to start app {{id}}, see logs for more details",
@@ -393,10 +394,10 @@
   "SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN": "You must be logged in to perform this action",
   "TIMEZONE_SELECTOR_LABEL": "Timezone",
   "TIMEZONE_SELECTOR_PLACEHOLDER": "Select a timezone",
-  "ACTIONS_CANCEL": "Cancel",
-  "ACTIONS_ENABLE": "Enable",
   "YES": "Yes",
   "NO": "No",
+  "ACTIONS_CANCEL": "Cancel",
+  "ACTIONS_ENABLE": "Enable",
   "WARNING": "Warning",
   "CLEAR": "Clear"
 }

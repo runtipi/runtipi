@@ -25,7 +25,7 @@ export class AuthService {
     private filesystem: FilesystemService,
   ) {}
 
-  public async getCookieDomain(domain?: string) {
+  public getCookieDomain(domain?: string) {
     if (!domain || !isFQDN(domain)) {
       return undefined;
     }

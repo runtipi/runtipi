@@ -1,7 +1,7 @@
 import { Markdown } from '@/components/markdown/markdown';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { AppDetails, AppInfo } from '@/types/app.types';
+import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,10 +12,11 @@ const AppLogs = lazy(() => import('../app-logs/app-logs').then((module) => ({ de
 
 interface IProps {
   info: AppInfo;
-  app: AppDetails;
+  app?: AppDetails | null;
+  metadata?: AppMetadata;
 }
 
-export const AppDetailsTabs = ({ info, app }: IProps) => {
+export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
   const { t } = useTranslation();
 
   const [params] = useSearchParams();
@@ -35,10 +36,10 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
         <TabsTrigger onClick={() => handleTabChange('info')} value="info">
           {t('APP_DETAILS_BASE_INFO')}
         </TabsTrigger>
-        <TabsTrigger value="backups" onClick={() => handleTabChange('backups')} disabled={app.status === 'missing'}>
+        <TabsTrigger value="backups" onClick={() => handleTabChange('backups')} disabled={!app}>
           {t('APP_BACKUPS_TAB_TITLE')}
         </TabsTrigger>
-        <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={app.status === 'missing'}>
+        <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={!app}>
           {t('APP_LOGS_TAB_TITLE')}
         </TabsTrigger>
       </TabsList>
@@ -60,7 +61,7 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
       </TabsContent>
       <TabsContent value="backups">
         <Suspense>
-          <AppBackups info={info} status={app.status} />
+          <AppBackups info={info} status={app?.status ?? 'missing'} />
         </Suspense>
       </TabsContent>
       <TabsContent value="info">
@@ -100,12 +101,17 @@ export const AppDetailsTabs = ({ info, app }: IProps) => {
               </a>
             </DataGridItem>
           )}
+          {metadata && (
+            <DataGridItem title={t('APP_DETAILS_USER_CONFIG')}>
+              <b>{metadata.hasCustomConfig ? t('YES') : t('NO')}</b>
+            </DataGridItem>
+          )}
         </DataGrid>
       </TabsContent>
       <TabsContent value="logs">
-        {app.status === 'running' && (
+        {app?.status === 'running' && (
           <Suspense>
-            <AppLogs appId={info.id} />
+            <AppLogs appUrn={info.urn} />
           </Suspense>
         )}
       </TabsContent>

@@ -51,7 +51,7 @@ export class ConfigurationService {
 
   // Lowest level, cannot use any other service or module to avoid circular dependencies
   constructor(private readonly envUtils: EnvUtils) {
-    dotenv.config({ path: this.envPath });
+    dotenv.config({ path: this.envPath, override: true });
     this.logger = new LoggerService('backend', path.join(DATA_DIR, 'logs'), process.env.LOG_LEVEL as LogLevel);
     this.config = this.configure();
   }
@@ -121,14 +121,15 @@ export class ConfigurationService {
           insecureCookie: env.data.EXPERIMENTAL_INSECURE_COOKIE,
         },
       },
-      appsRepoId: env.data.APPS_REPO_ID,
-      appsRepoUrl: env.data.APPS_REPO_URL,
+      deprecatedAppsRepoId: env.data.APPS_REPO_ID, // @deprecated
+      deprecatedAppsRepoUrl: env.data.APPS_REPO_URL, // @deprecated
       architecture: env.data.ARCHITECTURE,
       demoMode: env.data.DEMO_MODE,
       rootFolderHost: env.data.ROOT_FOLDER_HOST,
       envFilePath: this.envPath,
       internalIp: env.data.INTERNAL_IP,
       jwtSecret: env.data.JWT_SECRET,
+      __prod__: process.env.NODE_ENV === 'production',
     };
   }
 
