@@ -73,7 +73,7 @@
     "@types/semver": "^7.5.8",
     "@types/validator": "^13.12.2",
     "@vitejs/plugin-react": "^4.3.4",
-    "globals": "^15.15.0",
+    "globals": "^16.0.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.2",
     "vitest": "^3.0.9"
