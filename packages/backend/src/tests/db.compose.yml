@@ -12,7 +12,7 @@ services:
 
   rabbitmq:
     container_name: test-rabbitmq
-    image: rabbitmq
+    image: rabbitmq:4-alpine
     restart: no
     ports:
       - 5672:5672
