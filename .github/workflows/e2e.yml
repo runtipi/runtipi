@@ -104,6 +104,8 @@ jobs:
       - name: Run install script
         if: ${{ !inputs.version }}
         run: |
+          mkdir -p runtipi/user-config
+          echo -e "services:\n  runtipi-db:\n    ports:\n      - 5432:5432" > runtipi/user-config/tipi-compose.yml
           ./scripts/install.sh --version e2e --env-file ${{ github.workspace }}/.env.local
           cd ..
 
