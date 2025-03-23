@@ -87,9 +87,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
-
       - name: Create .env.local
         run: |
           echo "LOG_LEVEL=debug" > .env.local
@@ -130,6 +127,9 @@ jobs:
       - name: Install Playwright Browsers
         if: steps.cache-playwright-binaries.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
+
+      - name: Install dependencies
+        uses: "./.github/actions/install-dependencies"
 
       - name: Run Playwright tests
         id: run-e2e
