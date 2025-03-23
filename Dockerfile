@@ -84,8 +84,6 @@ COPY --from=builder /app/packages/backend/src/core/database/drizzle ./assets/mig
 COPY --from=builder /app/packages/backend/src/modules/i18n/translations ./assets/translations
 COPY --from=builder /app/packages/frontend/dist ./assets/frontend
 
-COPY ./supervisord.prod.conf /etc/supervisord.conf
-
 EXPOSE 3000
 
 CMD ["npm", "run", "start"]
