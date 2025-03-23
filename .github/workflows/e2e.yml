@@ -53,7 +53,7 @@ jobs:
       - name: Download CLI form release on runtipi/cli repo
         run: |
           REPO="runtipi/cli"
-          VERSION="nightly"
+          VERSION=${{ inputs.version }}
 
           ASSETS_URL=$(curl -s \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -97,6 +97,8 @@ jobs:
       - name: Run install script
         if: ${{ inputs.version }}
         run: |
+          mkdir -p runtipi/user-config
+          echo -e "services:\n  runtipi-db:\n    ports:\n      - 5432:5432" > runtipi/user-config/tipi-compose.yml
           curl -s https://raw.githubusercontent.com/runtipi/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
           chmod +x install.sh
           ./install.sh --version ${{ inputs.version }} --asset runtipi-cli-linux-x86_64.tar.gz --env-file ${{ github.workspace }}/.env.local
