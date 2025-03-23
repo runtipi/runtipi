@@ -53,7 +53,7 @@ jobs:
       - name: Download CLI form release on runtipi/cli repo
         run: |
           REPO="runtipi/cli"
-          VERSION=${{ inputs.version }}
+          VERSION=nightly
 
           ASSETS_URL=$(curl -s \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
