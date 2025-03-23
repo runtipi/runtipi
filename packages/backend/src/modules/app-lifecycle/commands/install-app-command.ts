@@ -49,14 +49,15 @@ export class InstallAppCommand extends AppLifecycleCommand {
         this.logger.warn(`No prior containers to remove for app ${appUrn}`);
       }
 
-      try {
-        await this.dockerService.composeApp(appUrn, 'down --rmi all --remove-orphans');
-      } catch (err) {
-        this.logger.warn(`No prior containers to remove for app ${appUrn}`);
+      const config = await this.appFilesManager.getInstalledAppInfo(appUrn);
+
+      if (!config) {
+        return { success: true, message: 'App config not found. Skipping...' };
       }
 
       // run docker-compose up
-      await this.dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans --pull always');
+      const forcePull = config.force_pull ?? false;
+      await this.dockerService.composeApp(appUrn, `up --detach --force-recreate --remove-orphans ${forcePull ? '--pull always' : ''}`);
 
       return { success: true, message: `App ${appUrn} installed successfully` };
     } catch (err) {

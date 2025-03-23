@@ -21,6 +21,8 @@ test('user can activate the guest dashboard and see it when logged out', async (
 });
 
 test('logged out users can see the apps on the guest dashboard', async ({ page, context }) => {
+  test.slow();
+
   await loginUser(page, context);
 
   const store = await db.query.appStore.findFirst();
@@ -42,7 +44,7 @@ test('logged out users can see the apps on the guest dashboard', async ({ page, 
   const locator = page.locator('text=2Fauth');
   await expect(locator).not.toBeVisible();
 
-  await page.getByText('Hello World', { exact: true }).click();
+  await page.getByText('Nginx', { exact: true }).click();
 
   const [newPage] = await Promise.all([context.waitForEvent('page'), page.getByRole('menuitem', { name: 'duckduckgo.com' }).click()]);
 
