@@ -97,6 +97,7 @@ jobs:
       - name: Run install script
         if: ${{ inputs.version }}
         run: |
+          docker version
           mkdir -p runtipi/user-config
           echo -e "services:\n  runtipi-db:\n    ports:\n      - 5432:5432" > runtipi/user-config/tipi-compose.yml
           curl -s https://raw.githubusercontent.com/runtipi/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
