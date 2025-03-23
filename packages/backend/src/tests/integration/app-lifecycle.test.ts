@@ -34,9 +34,15 @@ describe('App lifecycle', () => {
   let appLifecycleService: AppLifecycleService;
   let marketplaceService: MarketplaceService;
   let appsRepository: AppsRepository;
-  let configurationService = mock<ConfigurationService>();
+  const configurationService = mock<ConfigurationService>();
   let databaseService = mock<DatabaseService>();
   const loggerService = mock<LoggerService>();
+  configurationService.get.calledWith('queue').mockRejectedValue({
+    host: 'localhost',
+    password: 'guest',
+    username: 'guest',
+  });
+
   const queueFactory = new QueueFactory(loggerService, configurationService);
   const appEventsQueue = queueFactory.createQueue({
     queueName: 'app-events-queue',
@@ -77,13 +83,16 @@ describe('App lifecycle', () => {
           provide: AppEventsQueue,
           useValue: appEventsQueue,
         },
+        {
+          provide: ConfigurationService,
+          useValue: configurationService,
+        },
       ],
     })
       .useMocker(mock)
       .compile();
 
     appLifecycleService = moduleRef.get(AppLifecycleService);
-    configurationService = moduleRef.get(ConfigurationService);
     databaseService = moduleRef.get(DatabaseService);
     marketplaceService = moduleRef.get(MarketplaceService);
     appsRepository = moduleRef.get(AppsRepository);
