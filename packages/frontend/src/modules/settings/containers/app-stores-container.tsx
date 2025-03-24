@@ -1,4 +1,5 @@
 import { getAllAppStoresOptions } from '@/api-client/@tanstack/react-query.gen';
+import { Alert, AlertSubtitle, AlertTitle } from '@/components/ui/Alert/Alert';
 import { IconAlertTriangle, IconBrandAppstore } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -18,17 +19,17 @@ export const AppStoresContainer = () => {
         <h2 className="mb-0">{t('SETTINGS_APPSTORES_TITLE')}</h2>
       </div>
       <p className="text-muted">{t('SETTINGS_APPSTORES_SUBTITLE')}</p>
-      <div className="alert alert-warning" role="alert">
+      <Alert variant="warning">
         <div className="d-flex align-items-center">
           <div className="me-3">
             <IconAlertTriangle stroke={2} />
           </div>
           <div>
-            <h4 className="alert-title">{t('COMMON_WARNING')}</h4>
-            <div className="text-secondary">{t('SETTINGS_APPSTORES_WARNING')}</div>
+            <AlertTitle>{t('COMMON_WARNING')}</AlertTitle>
+            <AlertSubtitle>{t('SETTINGS_APPSTORES_WARNING')}</AlertSubtitle>
           </div>
         </div>
-      </div>
+      </Alert>
       <AppStoresTable appStores={data.appStores} />
     </div>
   );

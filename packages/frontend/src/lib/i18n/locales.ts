@@ -66,7 +66,7 @@ export const getLocaleFromString = (locale?: string): Locale => {
 };
 
 export const getCurrentLocale = (): Locale => {
-  const cookieLocale = Cookies.get('tipi-locale');
+  const cookieLocale = Cookies.get('runtipi-locale');
 
   return getLocaleFromString(cookieLocale);
 };

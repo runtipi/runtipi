@@ -18,19 +18,19 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement>, Varian
 }
 
 const Alert = ({ className, dismissible, variant, ...props }: AlertProps) => (
-  <div className={clsx('alert', className, dismissible && 'alert-dismissible', alertVariants({ variant }))} {...props}>
+  <div className={clsx('alert alert-important', className, dismissible && 'alert-dismissible', alertVariants({ variant }))} {...props}>
     {props.children}
   </div>
 );
 Alert.displayName = 'Alert';
 
 const AlertTitle = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-  <h4 className={clsx('alert-title', className)} {...props} />
+  <h4 className={clsx('alert-heading', className)} {...props} />
 );
 AlertTitle.displayName = 'AlertTitle';
 
 const AlertSubtitle = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={clsx('text-secondary', className)} {...props} />
+  <div className={clsx('alert-description text-secondary', className)} {...props} />
 );
 AlertSubtitle.displayName = 'AlertSubtitle';
 
