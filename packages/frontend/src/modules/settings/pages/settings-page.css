@@ -1,0 +1,18 @@
+.hidden-tabs {
+  display: none;
+  flex-direction: row;
+}
+
+.dropdown-tabs {
+  display: block;
+}
+
+@media only screen and (min-width: 768px) {
+  .hidden-tabs {
+    display: flex;
+  }
+
+  .dropdown-tabs {
+    display: none;
+  }
+}
