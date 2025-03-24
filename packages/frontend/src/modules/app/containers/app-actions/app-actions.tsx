@@ -80,6 +80,9 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
 
+  const [appId, storeId] = info.urn.split(':');
+  const appLocalDomain = `${appId}-${storeId}.${localDomain}`;
+
   const buttons: React.JSX.Element[] = [];
 
   const startMutation = useMutation({
@@ -140,7 +143,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
           {(app?.exposedLocal || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('local_domain')}>
               <IconLock className="text-muted me-2" size={16} />
-              {info.id}.{localDomain}
+              {appLocalDomain}
             </DropdownMenuItem>
           )}
           {(app?.openPort || !info.dynamic_config) && (
@@ -208,7 +211,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
     }
 
     if (type === 'local_domain') {
-      url = `https://${info.id}.${localDomain}`;
+      url = `https://${appLocalDomain}${info.url_suffix || ''}`;
     }
 
     window.open(url, '_blank', 'noreferrer');

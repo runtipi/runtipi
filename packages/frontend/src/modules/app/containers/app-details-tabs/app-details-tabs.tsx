@@ -1,4 +1,5 @@
 import { Markdown } from '@/components/markdown/markdown';
+import { Alert, AlertSubtitle, AlertTitle } from '@/components/ui/Alert/Alert';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
@@ -58,17 +59,17 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
       </TabsList>
       <TabsContent value="description">
         {info.deprecated && (
-          <aside className="alert alert-danger" aria-live="assertive">
+          <Alert variant="danger" className="mb-4">
             <div className="d-flex">
               <div>
                 <IconAlertCircle />
               </div>
               <div className="ms-2">
-                <h4 className="alert-title">{t('APP_DETAILS_DEPRECATED_ALERT_TITLE')}</h4>
-                <div className="text-secondary">{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')} </div>
+                <AlertTitle>{t('APP_DETAILS_DEPRECATED_ALERT_TITLE')}</AlertTitle>
+                <AlertSubtitle>{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')}</AlertSubtitle>
               </div>
             </div>
-          </aside>
+          </Alert>
         )}
         <Markdown content={info.description || ''} className="markdown" />
       </TabsContent>

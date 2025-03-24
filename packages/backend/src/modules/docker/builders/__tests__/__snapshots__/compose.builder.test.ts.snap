@@ -15,6 +15,7 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
     labels:
       generated: true
       traefik.enable: true
+      traefik.docker.network: runtipi_tipi_main_network
       traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
       traefik.http.services.nginx_store-id.loadbalancer.server.port: "440"
       traefik.http.routers.nginx_store-id-insecure.rule: Host(\`\${APP_DOMAIN}\`)
@@ -66,6 +67,7 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
     labels:
       generated: true
       traefik.enable: false
+      traefik.docker.network: runtipi_tipi_main_network
       traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
       traefik.http.services.nginx_store-id.loadbalancer.server.port: "8000"
       runtipi.managed: true

@@ -31,7 +31,11 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
 
   const { isLoggedIn } = useUserContext();
 
-  const isLatest = semver.valid(version.current) && semver.valid(version.latest) && semver.gte(version.current, version.latest);
+  let isLatest = semver.valid(version.current) && semver.valid(version.latest) && semver.gte(version.current, version.latest);
+
+  if (version.current === 'nightly') {
+    isLatest = true;
+  }
 
   if (!user.hasSeenWelcome) {
     return <Welcome allowErrorMonitoring={userSettings.allowErrorMonitoring} />;
