@@ -72,9 +72,9 @@ exports[`App lifecycle > install app > should successfully install app and creat
     ports:
       - \${APP_PORT}:80
     labels:
-      traefik.docker.network: runtipi_tipi_main_network
       generated: true
       traefik.enable: false
+      traefik.docker.network: runtipi_tipi_main_network
       traefik.http.middlewares.test_test-web-redirect.redirectscheme.scheme: https
       traefik.http.services.test_test.loadbalancer.server.port: "80"
       runtipi.managed: true
