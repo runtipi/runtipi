@@ -14,6 +14,7 @@ export class TraefikLabelsBuilder {
     this.labels = {
       generated: true,
       'traefik.enable': false,
+      'traefik.docker.network': 'runtipi_tipi_main_network',
       [`traefik.http.middlewares.${params.appId}_${params.storeId}-web-redirect.redirectscheme.scheme`]: 'https',
       [`traefik.http.services.${params.appId}_${params.storeId}.loadbalancer.server.port`]: `${params.internalPort}`,
     };
