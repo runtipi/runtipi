@@ -13,6 +13,7 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
     ports:
       - \${APP_PORT}:440
     labels:
+      traefik.docker.network: runtipi_tipi_main_network
       generated: true
       traefik.enable: true
       traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
@@ -64,6 +65,7 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
     depends_on:
       - ctfd-db
     labels:
+      traefik.docker.network: runtipi_tipi_main_network
       generated: true
       traefik.enable: false
       traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
