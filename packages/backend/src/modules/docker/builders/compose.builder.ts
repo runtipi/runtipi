@@ -113,6 +113,10 @@ export class DockerComposeBuilder {
           .addExposedLabels()
           .addExposedLocalLabels();
 
+        service.setLabels({
+          'traefik.docker.network': 'runtipi_tipi_main_network',
+        });
+
         service.setLabels(traefikLabels.build());
       }
     }
