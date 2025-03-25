@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import './navbar.css';
 
 interface IProps {
   isUpdateAvailable?: boolean;
@@ -20,7 +21,7 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
     return (
       <li aria-label={title} data-testid={`nav-item-${name}`} className={itemClass}>
         <Link to={`/${name}`} className="nav-link">
-          <span className="nav-link-icon d-md-none d-lg-inline-block">
+          <span className={`nav-link-icon d-md-none d-lg-inline-block navbar-icon-${name}`}>
             <IconComponent size={24} />
           </span>
           <span className="nav-link-title">{title}</span>
