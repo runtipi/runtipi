@@ -1,6 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { useTranslation } from 'react-i18next';
 import { allTimezones, useTimezoneSelect } from 'react-timezone-select';
+import './timezone-selector.css';
 
 type IProps = {
   timeZone?: string;
@@ -36,7 +37,7 @@ export const TimeZoneSelector = (props: IProps) => {
       <SelectTrigger className="mb-3" name="timezone" label={t('TIMEZONE_SELECTOR_LABEL')}>
         <SelectValue placeholder={t('TIMEZONE_SELECTOR_PLACEHOLDER')} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="select-content">
         {options.map((option) => (
           <SelectItem key={option.value} value={option.value}>
             {option.label}
