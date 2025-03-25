@@ -57,6 +57,7 @@ interface Logging {
 }
 
 export interface BuilderService {
+  name: string;
   image: string;
   containerName: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
@@ -116,17 +117,32 @@ export class ServiceBuilder {
   }
 
   /**
-   * Sets the name of the container. Will be used as the `container_name` property as well as the key
-   * @param name The name of the container.
+   * Sets the name of the service.
+   * @param name The name of the service.
    *
    * @example
    * ```typescript
    * const service = new ServiceBuilder();
-   * service.setName('nginx-container');
+   * service.setName('nginx');
    * ```
    */
   setName(name: string) {
-    this.service.containerName = name;
+    this.service.name = name;
+    return this;
+  }
+
+  /**
+   * Sets the container name of the service.
+   * @param containerName The container name of the service.
+   *
+   * @example
+   * ```typescript
+   * const service = new ServiceBuilder();
+   * service.setContainerName('nginx-migrated');
+   * ```
+   */
+  setContainerName(containerName: string) {
+    this.service.containerName = containerName;
     return this;
   }
 
@@ -524,15 +540,16 @@ export class ServiceBuilder {
    * ```typescript
    * const service = new ServiceBuilder();
    * service.setImage('nginx:latest')
-   *  .setName('nginx-container')
+   *  .setName('nginx')
+   *  .setContainerName('nginx-migrated')
    *  .setRestartPolicy('always')
    *  .addNetwork('tipi_main_network')
    *  .build();
    *  ```
    */
   build() {
-    if (!this.service.containerName || !this.service.image) {
-      throw new Error('Service name and image are required');
+    if (!this.service.containerName || !this.service.image || !this.service.name) {
+      throw new Error('Service name, container name and image are required');
     }
 
     if (this.service.networkMode) {
@@ -543,7 +560,8 @@ export class ServiceBuilder {
     const finalService = {
       image: this.service.image,
       command: this.service.command,
-      name: this.service.containerName,
+      name: this.service.name,
+      container_name: this.service.containerName,
       restart: this.service.restart,
       networks: this.service.networks,
       network_mode: this.service.networkMode,
