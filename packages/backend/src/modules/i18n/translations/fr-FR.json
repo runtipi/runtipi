@@ -157,7 +157,7 @@
   "APP_UNINSTALL_FORM_WARNING": "Êtes-vous sûr ? Cette action ne peut pas être annulée.",
   "APP_UNINSTALL_SUCCESS": "Application {{id}} désinstallée avec succès",
   "APP_UPDATE_CONFIG_SUCCESS": "Configuration de l'application mise à jour avec succès. Redémarrez l'application pour appliquer les modifications",
-  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "App {{id}} update requires Runtipi version {{minVersion}} or higher. Please update your instance.",
+  "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "La mise à jour de l'application {{id}} nécessite une version de Runtipi {{minVersion}} ou supérieure. Veuillez mettre à jour votre instance.",
   "APP_UPDATE_FORM_SUBMIT": "Mettre à jour",
   "APP_UPDATE_FORM_SUBTITLE_1": "Mettre à jour l'application vers la dernière version :",
   "APP_UPDATE_FORM_SUBTITLE_2": "Assurez-vous que vous avez lu les notes de version de l'application et que vous avez sauvegardé vos données d'application.",
@@ -293,9 +293,9 @@
   "SETTINGS_ACTIONS_CURRENT_VERSION": "Version actuelle : {{version}}",
   "SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE": "Actions courantes à effectuer sur votre instance",
   "SETTINGS_ACTIONS_MAINTENANCE_TITLE": "Maintenance",
-  "SETTINGS_ACTIONS_NEW_VERSION": "A new version ({{version}}) of Runtipi is available",
+  "SETTINGS_ACTIONS_NEW_VERSION": "Une nouvelle version ({{version}}) de Runtipi est disponible",
   "SETTINGS_ACTIONS_RESTART": "Redémarrer",
-  "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Stay up to date with the latest version of Runtipi",
+  "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Restez à jour avec la dernière version de Runtipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Actions",
   "SETTINGS_ACTIONS_TITLE": "Actions",
   "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Mise à jour du dépôt",
@@ -322,7 +322,7 @@
   "SETTINGS_GENERAL_INVALID_IP": "Adresse IP invalide",
   "SETTINGS_GENERAL_INVALID_URL": "URL invalide",
   "SETTINGS_GENERAL_LANGUAGE": "Langue",
-  "SETTINGS_GENERAL_LANGUAGE_HELP_TRANSLATE": "Help translate Runtipi",
+  "SETTINGS_GENERAL_LANGUAGE_HELP_TRANSLATE": "Aidez à traduire Runtipi",
   "SETTINGS_GENERAL_LOCAL_DOMAIN": "Domaine local",
   "SETTINGS_GENERAL_LOCAL_DOMAIN_HINT": "Nom de domaine utilisé pour accéder aux applications dans votre réseau local. Vos applications seront accessibles sur app-name.local-domain.",
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "Paramètres mis à jour. Redémarrez votre instance pour appliquer les nouveaux paramètres.",
@@ -401,5 +401,5 @@
   "ACTIONS_ENABLE": "Activer",
   "WARNING": "Attention",
   "CLEAR": "Effacer",
-  "MORE": "More"
+  "MORE": "Plus"
 }
