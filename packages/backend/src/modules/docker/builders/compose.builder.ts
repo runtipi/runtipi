@@ -58,7 +58,7 @@ export class DockerComposeBuilder {
     service
       .setImage(params.image)
       .setName(params.name)
-      .setContainerName(`${appName}-${appStoreId}`)
+      .setContainerName(`${appName}-${params.name}-${appStoreId}`)
       .setEnvironment(params.environment)
       .setCommand(params.command)
       .setHealthCheck(params.healthCheck)
