@@ -1,7 +1,7 @@
 'use client';
 
 import * as SelectPrimitive from '@radix-ui/react-select';
-import { IconCheck, IconChevronDown, IconChevronUp, IconX } from '@tabler/icons-react';
+import { IconCheck, IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import clsx from 'clsx';
 import * as React from 'react';
 
@@ -49,19 +49,6 @@ const SelectTrigger = React.forwardRef<
         >
           {children}
         </SelectPrimitive.Trigger>
-        {value && (
-          <button
-            type="button"
-            aria-label="Clear selection"
-            onClick={(_) => {
-              onClear?.();
-            }}
-            className="btn btn-link position-absolute top-50 end-0 translate-middle-y"
-            style={{ marginRight: '1rem' }}
-          >
-            <IconX size={14} aria-hidden />
-          </button>
-        )}
       </div>
       {error && <div className="invalid-feedback">{error}</div>}
     </label>

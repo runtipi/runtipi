@@ -46,7 +46,7 @@ export const AddAppStoreDialog = () => {
   const formId = useId();
 
   return (
-    <div className="mt-2 align-self-end">
+    <div className="mt-3 align-self-end">
       <Button onClick={() => addAppStoreDisclosure.open()} intent="primary">
         Add App Store
       </Button>
@@ -67,7 +67,7 @@ export const AddAppStoreDialog = () => {
               />
               <Input
                 label={t('APP_STORE_ADD_FORM_URL')}
-                className="mt-2"
+                className="mt-3"
                 error={formState.errors.url?.message}
                 disabled={createAppStore.isPending}
                 type="text"
