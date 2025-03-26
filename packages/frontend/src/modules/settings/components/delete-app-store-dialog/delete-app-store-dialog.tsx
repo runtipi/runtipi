@@ -40,7 +40,8 @@ export const DeleteAppStoreDialog = ({ appStore }: Props) => {
           </DialogHeader>
           <DialogDescription className="text-center py-4">
             <IconAlertTriangle className="icon mb-2 text-danger icon-lg" />
-            <h3 className="text-muted">{t('APP_STORE_DELETE_DIALOG_WARNING', { name: appStore.name })}</h3>
+            <h3>{t('APP_STORE_DELETE_DIALOG_SUBTITLE')}</h3>
+            <span className="text-muted">{t('APP_STORE_DELETE_DIALOG_WARNING', { name: appStore.name })}</span>
           </DialogDescription>
           <DialogFooter>
             <Button loading={deleteAppStore.isPending} intent="danger" onClick={() => deleteAppStore.mutate({ path: { id: appStore.slug } })}>

@@ -14,7 +14,7 @@ export const AppStoresContainer = () => {
 
   return (
     <div className="card-body">
-      <div className="d-flex mb-2">
+      <div className="d-flex align-items-center mb-2">
         <IconBrandAppstore className="me-2" />
         <h2 className="mb-0">{t('SETTINGS_APPSTORES_TITLE')}</h2>
       </div>

@@ -39,9 +39,11 @@ export const AppStoresTable = ({ appStores }: Props) => {
                   {appStore.url}
                 </a>
               </TableCell>
-              <TableCell className="d-flex flex-row">
-                <EditAppStoreDialog appStore={appStore} />
-                <DeleteAppStoreDialog appStore={appStore} />
+              <TableCell>
+                <div className="d-flex flex-row">
+                  <EditAppStoreDialog appStore={appStore} />
+                  <DeleteAppStoreDialog appStore={appStore} />
+                </div>
               </TableCell>
             </TableRow>
           ))}
