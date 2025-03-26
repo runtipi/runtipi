@@ -1,15 +1,14 @@
 import { Markdown } from '@/components/markdown/markdown';
 import { Alert, AlertSubtitle, AlertTitle } from '@/components/ui/Alert/Alert';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/DropdownMenu';
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import { Suspense, lazy } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
-import './app-details-tabs.css';
-import React from 'react';
 
 const AppBackups = lazy(() => import('../app-backups/app-backups').then((module) => ({ default: module.AppBackups })));
 const AppLogs = lazy(() => import('../app-logs/app-logs').then((module) => ({ default: module.AppLogs })));
@@ -41,16 +40,14 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
         <TabsTrigger onClick={() => handleTabChange('info')} value="info">
           {t('APP_DETAILS_BASE_INFO')}
         </TabsTrigger>
-        <div className="hidden-tabs">
-          <TabsTrigger value="backups" onClick={() => handleTabChange('backups')} disabled={!app}>
-            {t('APP_BACKUPS_TAB_TITLE')}
-          </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={!app}>
-            {t('APP_LOGS_TAB_TITLE')}
-          </TabsTrigger>
-        </div>
+        <TabsTrigger value="backups" onClick={() => handleTabChange('backups')} disabled={!app} className="d-none d-md-block">
+          {t('APP_BACKUPS_TAB_TITLE')}
+        </TabsTrigger>
+        <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={!app} className="d-none d-md-block">
+          {t('APP_LOGS_TAB_TITLE')}
+        </TabsTrigger>
         <DropdownMenu>
-          <DropdownMenuTrigger className="nav-link dropdown-toggle dropdown-tabs">{t('MORE')}</DropdownMenuTrigger>
+          <DropdownMenuTrigger className="nav-link dropdown-toggle d-block d-md-none">{t('MORE')}</DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => handleTabChange('backups')}>{t('APP_BACKUPS_TAB_TITLE')}</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleTabChange('logs')}>{t('APP_LOGS_TAB_TITLE')}</DropdownMenuItem>
