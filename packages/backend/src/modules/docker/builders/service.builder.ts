@@ -548,7 +548,7 @@ export class ServiceBuilder {
    *  ```
    */
   build() {
-    if (!this.service.containerName || !this.service.image || !this.service.name) {
+    if (!this.service.image || !this.service.name) {
       throw new Error('Service name, container name and image are required');
     }
 

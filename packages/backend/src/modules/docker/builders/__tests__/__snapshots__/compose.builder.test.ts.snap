@@ -4,6 +4,7 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
 "services:
   service:
     image: image
+    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -48,6 +49,7 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
 "services:
   ctfd:
     image: ctfd/ctfd:3.7.5
+    container_name: nginx-ctfd-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -84,6 +86,7 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       - --collation-server=utf8mb4_unicode_ci
       - --wait_timeout=28800
       - --log-warnings=0
+    container_name: nginx-ctfd-db-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -99,6 +102,7 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       runtipi.managed: true
   ctfd-redis:
     image: redis:4
+    container_name: nginx-ctfd-redis-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -120,6 +124,7 @@ exports[`DockerComposeBuilder > should build a docker-compose file 1`] = `
 "services:
   service:
     image: image
+    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -140,6 +145,7 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
   service1:
     image: image1
     command: node index.js
+    container_name: nginx-service1-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -216,6 +222,7 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
     stdin_open: true
   service2:
     image: image2
+    container_name: nginx-service2-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -235,6 +242,7 @@ exports[`DockerComposeBuilder > should correctly format deploy resources 1`] = `
 "services:
   service:
     image: image
+    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -268,6 +276,7 @@ exports[`DockerComposeBuilder > should correctly format devices 1`] = `
 "services:
   service:
     image: image
+    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -290,6 +299,7 @@ exports[`DockerComposeBuilder > should correctly format entrypoint as array 1`] 
 "services:
   service:
     image: image
+    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -313,6 +323,7 @@ exports[`DockerComposeBuilder > should correctly format entrypoint as string 1`]
 "services:
   service:
     image: image
+    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -333,6 +344,7 @@ exports[`DockerComposeBuilder > should correctly format logging 1`] = `
 "services:
   service:
     image: image
+    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
