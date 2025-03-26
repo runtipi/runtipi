@@ -139,7 +139,7 @@
   "APP_STORE_EDIT_DIALOG_SUCCESS": "Appstore modifié avec succès",
   "APP_STORE_EDIT_DIALOG_ENABLED": "Activé",
   "APP_STORE_DELETE_DIALOG_TITLE": "Supprimer l'appstore",
-  "APP_STORE_DELETE_DIALOG_SUBTITLE": "Are you sure you want to delete this appstore?",
+  "APP_STORE_DELETE_DIALOG_SUBTITLE": "Êtes-vous sûr de vouloir supprimer cet appstore ?",
   "APP_STORE_DELETE_DIALOG_WARNING": "The appstore {{name}} will be deleted but your app data will be kept.",
   "APP_STORE_DELETE_DIALOG_SUBMIT": "Supprimer",
   "APP_STORE_DELETE_SUCCESS": "Appstore supprimé avec succès",
