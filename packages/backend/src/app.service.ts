@@ -63,7 +63,9 @@ export class AppService {
       await this.marketplaceService.initialize();
 
       // Every 15 minutes, check for updates to the apps repo
-      this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');
+      if (__prod__) {
+        this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');
+      }
 
       await this.copyAssets();
       await this.generateTlsCertificates({ localDomain: userSettings.localDomain });

@@ -113,7 +113,7 @@ export class ReposHelpers {
         return { success: false, message: `Repo ${repoUrl} does not exist` };
       }
 
-      this.logger.info(`Pulling repo ${repoUrl} to ${repoPath}`);
+      this.logger.debug(`Pulling repo ${repoUrl} to ${repoPath}`);
 
       this.logger.debug(`Executing: git config --global --add safe.directory ${repoPath}`);
       await execAsync(`git config --global --add safe.directory ${repoPath}`).then(({ stderr }) => {
@@ -138,7 +138,7 @@ export class ReposHelpers {
       this.logger.debug(`Executing: git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
       await execAsync(`git -C ${repoPath} fetch origin && git -C ${repoPath} reset --hard origin/${currentBranch}`);
 
-      this.logger.info(`Pulled repo ${repoUrl} to ${repoPath}`);
+      this.logger.debug(`Pulled repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
     } catch (err) {
       return this.handleRepoError(err);
