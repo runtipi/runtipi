@@ -131,6 +131,10 @@ client.interceptors.response.use(async (res) => {
   return res;
 });
 
+window.addEventListener('vite:preloadError', () => {
+  window.location.reload();
+});
+
 client.setConfig({
   credentials: 'include',
 });
