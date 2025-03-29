@@ -1,6 +1,5 @@
 services:
   runtipi-reverse-proxy:
-    container_name: runtipi-reverse-proxy
     depends_on:
       runtipi:
         condition: service_healthy
@@ -19,7 +18,6 @@ services:
       - tipi_main_network
 
   runtipi-db:
-    container_name: runtipi-db
     image: postgres:14
     restart: unless-stopped
     stop_grace_period: 1m
@@ -40,7 +38,6 @@ services:
       - tipi_main_network
 
   runtipi-queue:
-    container_name: runtipi-queue
     image: rabbitmq:4-alpine
     restart: unless-stopped
     healthcheck:
@@ -49,8 +46,8 @@ services:
       timeout: 3s
       retries: 20
     environment:
-       RABBITMQ_DEFAULT_USER: tipi
-       RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_USER: tipi
+      RABBITMQ_DEFAULT_PASS: rabbitmq
     networks:
       - tipi_main_network
 
@@ -63,7 +60,6 @@ services:
         condition: service_healthy
       runtipi-queue:
         condition: service_healthy
-    container_name: runtipi
     restart: unless-stopped
     healthcheck:
       start_period: 10s

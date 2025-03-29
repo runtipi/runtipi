@@ -1,6 +1,5 @@
 services:
   db:
-    container_name: test-db
     image: postgres:14
     restart: no
     ports:
@@ -11,7 +10,6 @@ services:
       POSTGRES_DB: postgres
 
   rabbitmq:
-    container_name: test-rabbitmq
     image: rabbitmq:4-alpine
     restart: no
     ports:
