@@ -16,11 +16,14 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import './guest-dashboard.css';
 import { EmptyPage } from '@/components/empty-page/empty-page';
+import { extractAppUrn } from '@/utils/app-helpers';
+import type { AppUrn } from '@/types/app.types';
 
 const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; localDomain: string }) => {
   const { t } = useTranslation();
 
   const { info, app } = data;
+  const { appName, appStoreId } = extractAppUrn(info.urn as AppUrn);
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
 
@@ -41,7 +44,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
 
     if (type === 'localDomain') {
       // TODO: URN support
-      url = `https://${app.id}.${localDomain}${info.url_suffix || ''}`;
+      url = `https://${appName}-${appStoreId}.${localDomain}${info.url_suffix || ''}`;
     }
 
     window.open(url, '_blank', 'noreferrer');
@@ -67,7 +70,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
           {(app.exposedLocal || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('localDomain')}>
               <IconLock className="text-muted me-2" size={16} />
-              {app.id}.{localDomain}
+              {appName}-{appStoreId}.{localDomain}
             </DropdownMenuItem>
           )}
           {(app.openPort || !info.dynamic_config) && (
