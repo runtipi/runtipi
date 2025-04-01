@@ -19,8 +19,8 @@ jobs:
 
       - name: Move translations
         run: |
-          mkdir -p dist/i18n/translation
-          mv packages/backend/src/modules/i18n/translations/* dist/i18n
+          mkdir -p dist/translations/i18n
+          mv packages/backend/src/modules/i18n/translations/* dist/translations/i18n
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -37,6 +37,11 @@ jobs:
         with:
           name: translations
 
+      - name: Debug
+        run: |
+          echo "Contents of cwd:"
+          ls -la
+
       - name: Install Wrangler CLI
         run: npm install -g wrangler
 
@@ -44,4 +49,4 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_PAGES_API_TOKEN }}
         run: |
-          wrangler pages deploy dist --project-name runtipi-translations --branch main
+          wrangler pages deploy translations --project-name runtipi-translations --branch main
