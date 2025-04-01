@@ -17,16 +17,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
       - name: Move translations
         run: |
           mkdir -p dist/i18n/translation
           mv packages/backend/src/modules/i18n/translations/* dist/i18n
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: translations
           path: dist
