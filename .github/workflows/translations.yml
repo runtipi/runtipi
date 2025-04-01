@@ -6,11 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -28,21 +23,28 @@ jobs:
       - name: Move translations
         run: |
           mkdir -p dist/i18n/translation
-          mv packages/backend/src/modules/i18n/translations/* dist/i18n/translation
+          mv packages/backend/src/modules/i18n/translations/* dist/i18n
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
+          name: translations
           path: dist
 
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
     runs-on: ubuntu-latest
-    name: Deploy
+    needs: build
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: translations
+
+      - name: Install Wrangler CLI
+        run: npm install -g wrangler
+
+      - name: Publish to Cloudflare Pages
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_PAGES_API_TOKEN }}
+        run: |
+          wrangler pages delpoy dist --project-name runtipi-translations --branch main
