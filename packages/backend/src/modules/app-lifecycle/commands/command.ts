@@ -17,16 +17,15 @@ export class AppLifecycleCommand {
   ) {}
 
   protected async ensureAppDir(appUrn: AppUrn, form: AppEventFormInput): Promise<void> {
-    const composeYaml = await this.appFilesManager.getDockerComposeYaml(appUrn);
+    const composeJson = await this.appFilesManager.getDockerComposeJson(appUrn);
 
-    if (!composeYaml.content) {
+    if (!composeJson.content) {
       await this.marketplaceService.copyAppFromRepoToInstalled(appUrn);
     }
 
     const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
-    const composeJson = await this.appFilesManager.getDockerComposeJson(appUrn);
 
-    if (composeJson.content && appInfo?.dynamic_config) {
+    if (appInfo?.dynamic_config) {
       try {
         const { services } = dynamicComposeSchema.parse(composeJson.content);
         const dockerComposeBuilder = new DockerComposeBuilder();
@@ -34,11 +33,12 @@ export class AppLifecycleCommand {
 
         await this.appFilesManager.writeDockerComposeYml(appUrn, composeFile);
       } catch (err) {
-        this.logger.error(`Error generating docker-compose.yml file for app ${appUrn}. Falling back to default docker-compose.yml`);
+        this.logger.error(`Error generating docker-compose.yml file for app ${appUrn}`);
         this.logger.error(err);
         Sentry.captureException(err, {
           tags: { appId: appUrn, event: 'ensure_app_dir' },
         });
+        throw new Error(`Error generating docker-compose.yml file for app ${appUrn}`);
       }
     }
 
