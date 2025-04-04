@@ -24,11 +24,11 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@hey-api/openapi-ts": "^0.65.0",
+    "@hey-api/openapi-ts": "^0.66.3",
     "@playwright/test": "^1.51.1",
     "@types/pg": "^8.11.11",
     "dotenv-cli": "^8.0.0",
-    "turbo": "^2.4.4"
+    "turbo": "^2.5.0"
   },
   "dependencies": {
     "argon2": "^0.41.1",
