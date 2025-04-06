@@ -1,20 +1,15 @@
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import ChainedBackend from 'i18next-chained-backend';
 import HttpBackend from 'i18next-http-backend';
 import type { PropsWithChildren } from 'react';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 
-const LocalBackend = new HttpBackend(null, {
+const Backend = new HttpBackend(null, {
   loadPath: '/api/i18n/locales/{{ns}}/{{lng}}.json',
 });
 
-const CDNBackend = new HttpBackend(null, {
-  loadPath: 'https://cdn.runtipi.io/i18n/{{lng}}.json',
-});
-
 i18n
-  .use(ChainedBackend)
+  .use(Backend)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
@@ -26,9 +21,6 @@ i18n
     load: 'currentOnly',
     interpolation: {
       escapeValue: false,
-    },
-    backend: {
-      backends: [CDNBackend, LocalBackend],
     },
   });
 
