@@ -27,7 +27,7 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) =>
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<FormValues>({
+  } = useForm({
     resolver: zodResolver(schema),
   });
 

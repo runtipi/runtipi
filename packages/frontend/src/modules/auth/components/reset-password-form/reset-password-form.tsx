@@ -35,7 +35,7 @@ export const ResetPasswordForm: React.FC<IProps> = ({ onSubmit, loading, onCance
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm({
     resolver: zodResolver(schema),
   });
 
