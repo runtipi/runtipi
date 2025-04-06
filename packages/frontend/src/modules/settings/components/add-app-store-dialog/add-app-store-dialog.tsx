@@ -23,7 +23,7 @@ export const AddAppStoreDialog = () => {
 
   type FormValues = z.infer<typeof schema>;
 
-  const { register, reset, handleSubmit, formState } = useForm<FormValues>({
+  const { register, reset, handleSubmit, formState } = useForm({
     resolver: zodResolver(schema),
   });
 

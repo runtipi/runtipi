@@ -34,7 +34,7 @@ export const RegisterForm: React.FC<IProps> = ({ onSubmit, loading }) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm({
     resolver: zodResolver(schema),
   });
 

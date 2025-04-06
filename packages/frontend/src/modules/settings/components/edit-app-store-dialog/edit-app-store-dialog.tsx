@@ -40,7 +40,7 @@ export const EditAppStoreDialog = ({ appStore }: Props) => {
     },
   });
 
-  const { register, control, handleSubmit, formState } = useForm<FormValues>({
+  const { register, control, handleSubmit, formState } = useForm({
     resolver: zodResolver(schema),
     values: appStore,
   });
