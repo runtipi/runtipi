@@ -6,7 +6,9 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 
 export const Markdown: React.FC<{ content: string; className: string }> = ({ content, className }) => (
-  <ReactMarkdown className={clsx('markdown', className)} remarkPlugins={[remarkBreaks, remarkGfm]} rehypePlugins={[rehypeRaw]}>
-    {content}
-  </ReactMarkdown>
+  <div className={clsx('markdown', className)}>
+    <ReactMarkdown remarkPlugins={[remarkBreaks, remarkGfm]} rehypePlugins={[rehypeRaw]}>
+      {content}
+    </ReactMarkdown>
+  </div>
 );
