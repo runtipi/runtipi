@@ -26,11 +26,11 @@ export class TraefikLabelsBuilder {
         'traefik.enable': true,
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.rule`]: 'Host(`${APP_DOMAIN}`)',
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.entrypoints`]: 'web',
-        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.service`]: `${this.params.appId}_${this.params.storeId}`,
-        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.middlewares`]: `${this.params.appId}_${this.params.storeId}-web-redirect`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.service`]: `${this.params.appId}-${this.params.storeId}`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.middlewares`]: `${this.params.appId}-${this.params.storeId}-web-redirect`,
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.rule`]: 'Host(`${APP_DOMAIN}`)',
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.entrypoints`]: 'websecure',
-        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.service`]: `${this.params.appId}_${this.params.storeId}`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.service`]: `${this.params.appId}-${this.params.storeId}`,
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.tls.certresolver`]: 'myresolver',
       });
 
@@ -49,11 +49,11 @@ export class TraefikLabelsBuilder {
         'traefik.enable': true,
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.rule`]: `Host(\`${this.params.appId}-${this.params.storeId}.\${LOCAL_DOMAIN}\`)`,
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.entrypoints`]: 'web',
-        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.service`]: `${this.params.appId}_${this.params.storeId}`,
-        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.middlewares`]: `${this.params.appId}_${this.params.storeId}-web-redirect`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.service`]: `${this.params.appId}-${this.params.storeId}`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.middlewares`]: `${this.params.appId}-${this.params.storeId}-web-redirect`,
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.rule`]: `Host(\`${this.params.appId}-${this.params.storeId}.\${LOCAL_DOMAIN}\`)`,
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.entrypoints`]: 'websecure',
-        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.service`]: `${this.params.appId}_${this.params.storeId}`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.service`]: `${this.params.appId}-${this.params.storeId}`,
         [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.tls`]: true,
       });
 

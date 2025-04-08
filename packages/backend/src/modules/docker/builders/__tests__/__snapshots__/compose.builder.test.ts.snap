@@ -21,19 +21,19 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
       traefik.http.services.nginx-store-id.loadbalancer.server.port: "440"
       traefik.http.routers.nginx-store-id-insecure.rule: Host(\`\${APP_DOMAIN}\`)
       traefik.http.routers.nginx-store-id-insecure.entrypoints: web
-      traefik.http.routers.nginx-store-id-insecure.service: nginx_store-id
-      traefik.http.routers.nginx-store-id-insecure.middlewares: nginx_store-id-web-redirect
+      traefik.http.routers.nginx-store-id-insecure.service: nginx-store-id
+      traefik.http.routers.nginx-store-id-insecure.middlewares: nginx-store-id-web-redirect
       traefik.http.routers.nginx-store-id.rule: Host(\`\${APP_DOMAIN}\`)
       traefik.http.routers.nginx-store-id.entrypoints: websecure
-      traefik.http.routers.nginx-store-id.service: nginx_store-id
+      traefik.http.routers.nginx-store-id.service: nginx-store-id
       traefik.http.routers.nginx-store-id.tls.certresolver: myresolver
       traefik.http.routers.nginx-store-id-local-insecure.rule: Host(\`nginx-store-id.\${LOCAL_DOMAIN}\`)
       traefik.http.routers.nginx-store-id-local-insecure.entrypoints: web
-      traefik.http.routers.nginx-store-id-local-insecure.service: nginx_store-id
-      traefik.http.routers.nginx-store-id-local-insecure.middlewares: nginx_store-id-web-redirect
+      traefik.http.routers.nginx-store-id-local-insecure.service: nginx-store-id
+      traefik.http.routers.nginx-store-id-local-insecure.middlewares: nginx-store-id-web-redirect
       traefik.http.routers.nginx-store-id-local.rule: Host(\`nginx-store-id.\${LOCAL_DOMAIN}\`)
       traefik.http.routers.nginx-store-id-local.entrypoints: websecure
-      traefik.http.routers.nginx-store-id-local.service: nginx_store-id
+      traefik.http.routers.nginx-store-id-local.service: nginx-store-id
       traefik.http.routers.nginx-store-id-local.tls: true
       runtipi.managed: true
 networks:
