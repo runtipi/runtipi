@@ -74,6 +74,8 @@ for app in apps/*; do
   sleep 3
 done
 
+read -p "🚨 Please go  to the Runtipi web interface and make sure all apps are stopped, then press enter to continue..." -r
+
 # Stop runtipi
 echo -e "\nStopping Runtipi...\n"
 
