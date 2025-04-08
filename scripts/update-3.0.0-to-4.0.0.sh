@@ -19,8 +19,14 @@ if [[ "$EUID" -ne 0 ]]; then
   exit 1
 fi
 
+# Check if in the correct directory
+if [[ "$(basename "$(pwd)")" != "runtipi" ]]; then
+  echo -e "❌ ${Red}You need to run this script from the runtipi directory!${ColorOff}"
+  exit 1
+fi
+
 current_version=$(cat VERSION)
-if [[ ! "$current_version" =~ ^3\..* ]]; then
+if [[ ! "$current_version" =~ ^v3\..* ]]; then
   echo -e "❌ ${Red}This script is only for migrating from version 3.x.x to 4.0.0${ColorOff}"
   echo -e "Current version: ${current_version}"
   exit 1
@@ -42,7 +48,6 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 echo -e "\n🔍 Checking for apps..."
-sleep 3
 
 for app in apps/*; do
   app=${app#apps/}
@@ -59,21 +64,18 @@ fi
 
 # Stop apps
 echo -e "🛑 Stopping apps..."
-sleep 3
 
-failed_stops=()
 for app in apps/*; do
   app=${app#apps/}
   echo -e "🛑 Stopping app: ${Green}$app${ColorOff}"
   if ! ./runtipi-cli app stop "$app"; then
     echo -e "${Red}Failed to stop $app${ColorOff}"
-    failed_stops+=("$app")
   fi
+  sleep 3
 done
 
 # Stop runtipi
 echo -e "\n🛑 Stopping Runtipi...\n"
-sleep 3
 
 if ! ./runtipi-cli stop; then
   echo -e "${Red}Failed to stop Runtipi${ColorOff}"
@@ -82,7 +84,7 @@ fi
 
 # Move app-data to backups
 echo -e "⏭️  Backing up data..."
-sleep 3
+sleep 5
 
 mkdir -p migration-backups
 
@@ -93,18 +95,8 @@ mv backups migration-backups/backups
 
 mkdir -p {app-data,apps,user-config,backups}
 
-# Update runtipi
-echo -e "🔄 Updating Runtipi...\n"
-sleep 3
-
-if ! ./runtipi-cli update v4.0.0; then
-  echo -e "${Red}Failed to update Runtipi${ColorOff}"
-  exit 1
-fi
-
 # Move apps
 echo -e "⏭️  Moving apps..."
-sleep 3
 
 REPO_ID=migrated
 
@@ -127,8 +119,29 @@ for app in migration-backups/apps/*; do
 done
 
 # Start runtipi
-echo -e "\n🚀 Migration complete! Restarting Runtipi...\n"
-sleep 3
+echo -e "\n🔄 Migration complete! Updating Runtipi to v4.0.0...\n"
 
-./runtipi-cli start
+ARCHITECTURE="$(uname -m)"
 
+ASSET="runtipi-cli-linux-x86_64.tar.gz"
+if [[ "$ARCHITECTURE" == "arm64" || "$ARCHITECTURE" == "aarch64" ]]; then
+  ASSET="runtipi-cli-linux-aarch64.tar.gz"
+fi
+
+URL="https://github.com/runtipi/runtipi/releases/download/v4.0.0/$ASSET"
+
+rm -f ./runtipi-cli
+
+if [[ "$ASSET" == *".tar.gz" ]]; then
+  curl --location "$URL" -o ./runtipi-cli.tar.gz
+  tar -xzf ./runtipi-cli.tar.gz
+
+  asset_name=$(tar -tzf ./runtipi-cli.tar.gz | head -n 1 | cut -f1 -d"/")
+  mv "./${asset_name}" ./runtipi-cli
+  rm ./runtipi-cli.tar.gz
+else
+  curl --location "$URL" -o ./runtipi-cli
+fi
+
+chmod +x ./runtipi-cli
+sudo ./runtipi-cli start
