@@ -33,11 +33,11 @@ Thanks to our generous sponsors for supporting the development of Runtipi:
 | CodeRabbit       |
 |------------------|
 | <img src="https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/sponsors/coderabbit.png" alt="CodeRabbit logo" width="200"/> |
-| [coderabbit.ai](https://coderabbit.ai) |
+| [coderabbit.ai](https://coderabbit.ai?utm_source=runtipi&utm_campaign=readme) |
 
 ## Getting started
 
-Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation?utm_source=github&utm_medium=README&utm_campaign=getting-started) for installation instructions, documentation and guides.
+Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation?utm_source=github&utm_campaign=readme) for installation instructions, documentation and guides.
 If you need more personalized help, visit our [Forums](https://forums.runtipi.io/) to get help from the community.
 
 ## Demo
@@ -49,7 +49,7 @@ You can try out a demo of Runtipi at [demo.runtipi.io](https://demo.runtipi.io) 
 
 ## 📚 Documentation
 
-You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.runtipi.io/docs/introduction?utm_source=github&utm_medium=README&utm_campaign=main-repo-docs)
+You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.runtipi.io/docs/introduction?utm_source=github&utm_campaign=readme)
 
 ## ❤ Contributing
 
@@ -72,10 +72,10 @@ Runtipi is licensed under the GNU General Public License v3.0. TL;DR — You may
 ## 🙏 Acknowledgements
 
 - [GitHub](https://github.com) - Thanks for generously giving us access to your full product suite
-- [Freepik](https://www.flaticon.com/free-icons/tipi) - Thanks for providing a free logo for the project
-- [Sentry](https://sentry.io) - Thanks for providing error tracking for the project
-- [Crowdin](https://crowdin.com) - Thanks for providing localization management for the project
-- [CodeRabbit](https://coderabbit.ai/) - Thanks for providing free AI code reviews in our Pull Requests
+- [Freepik](https://www.flaticon.com/free-icons/tipi?utm_source=runtipi&utm_campaign=readme) - Thanks for providing a free logo for the project
+- [Sentry](https://sentry.io?utm_source=runtipi&utm_campaign=readme) - Thanks for providing error tracking for the project
+- [Crowdin](https://crowdin.com?utm_source=runtipi&utm_campaign=readme) - Thanks for providing localization management for the project
+- [CodeRabbit](https://coderabbit.ai?utm_source=runtipi&utm_campaign=readme) - Thanks for providing free AI code reviews in our Pull Requests
 
 ## ✨ Contributors
 
