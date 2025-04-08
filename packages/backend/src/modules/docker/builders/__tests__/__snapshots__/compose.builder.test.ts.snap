@@ -17,24 +17,24 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
       generated: true
       traefik.enable: true
       traefik.docker.network: runtipi_tipi_main_network
-      traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
-      traefik.http.services.nginx_store-id.loadbalancer.server.port: "440"
-      traefik.http.routers.nginx_store-id-insecure.rule: Host(\`\${APP_DOMAIN}\`)
-      traefik.http.routers.nginx_store-id-insecure.entrypoints: web
-      traefik.http.routers.nginx_store-id-insecure.service: nginx_store-id
-      traefik.http.routers.nginx_store-id-insecure.middlewares: nginx_store-id-web-redirect
-      traefik.http.routers.nginx_store-id.rule: Host(\`\${APP_DOMAIN}\`)
-      traefik.http.routers.nginx_store-id.entrypoints: websecure
-      traefik.http.routers.nginx_store-id.service: nginx_store-id
-      traefik.http.routers.nginx_store-id.tls.certresolver: myresolver
-      traefik.http.routers.nginx_store-id-local-insecure.rule: Host(\`nginx-store-id.\${LOCAL_DOMAIN}\`)
-      traefik.http.routers.nginx_store-id-local-insecure.entrypoints: web
-      traefik.http.routers.nginx_store-id-local-insecure.service: nginx_store-id
-      traefik.http.routers.nginx_store-id-local-insecure.middlewares: nginx_store-id-web-redirect
-      traefik.http.routers.nginx_store-id-local.rule: Host(\`nginx-store-id.\${LOCAL_DOMAIN}\`)
-      traefik.http.routers.nginx_store-id-local.entrypoints: websecure
-      traefik.http.routers.nginx_store-id-local.service: nginx_store-id
-      traefik.http.routers.nginx_store-id-local.tls: true
+      traefik.http.middlewares.nginx-store-id-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.nginx-store-id.loadbalancer.server.port: "440"
+      traefik.http.routers.nginx-store-id-insecure.rule: Host(\`\${APP_DOMAIN}\`)
+      traefik.http.routers.nginx-store-id-insecure.entrypoints: web
+      traefik.http.routers.nginx-store-id-insecure.service: nginx_store-id
+      traefik.http.routers.nginx-store-id-insecure.middlewares: nginx_store-id-web-redirect
+      traefik.http.routers.nginx-store-id.rule: Host(\`\${APP_DOMAIN}\`)
+      traefik.http.routers.nginx-store-id.entrypoints: websecure
+      traefik.http.routers.nginx-store-id.service: nginx_store-id
+      traefik.http.routers.nginx-store-id.tls.certresolver: myresolver
+      traefik.http.routers.nginx-store-id-local-insecure.rule: Host(\`nginx-store-id.\${LOCAL_DOMAIN}\`)
+      traefik.http.routers.nginx-store-id-local-insecure.entrypoints: web
+      traefik.http.routers.nginx-store-id-local-insecure.service: nginx_store-id
+      traefik.http.routers.nginx-store-id-local-insecure.middlewares: nginx_store-id-web-redirect
+      traefik.http.routers.nginx-store-id-local.rule: Host(\`nginx-store-id.\${LOCAL_DOMAIN}\`)
+      traefik.http.routers.nginx-store-id-local.entrypoints: websecure
+      traefik.http.routers.nginx-store-id-local.service: nginx_store-id
+      traefik.http.routers.nginx-store-id-local.tls: true
       runtipi.managed: true
 networks:
   tipi_main_network:
@@ -70,13 +70,13 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       generated: true
       traefik.enable: false
       traefik.docker.network: runtipi_tipi_main_network
-      traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
-      traefik.http.services.nginx_store-id.loadbalancer.server.port: "8000"
+      traefik.http.middlewares.nginx-store-id-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.nginx-store-id.loadbalancer.server.port: "8000"
       runtipi.managed: true
       some-label: some-value
-      ctfd.service: true
-      com.docker.compose.service: ctfd
-      ctfd: ctfd
+      nginx-store-id.service: true
+      com.docker.compose.service: nginx-store-id
+      nginx-store-id: nginx-store-id
       traefik.http.middlewares.ctfd-web-redirect.redirectscheme.scheme: wrongscheme
   ctfd-db:
     image: mariadb:10.4.12
