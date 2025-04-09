@@ -19,6 +19,21 @@ if [[ "$EUID" -ne 0 ]]; then
   exit 1
 fi
 
+docker_version=$(docker -v)
+if [[ $docker_version =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
+  version=${BASH_REMATCH[0]}
+
+  major_version=${version%%.*}
+
+  if [ "$major_version" -lt 28 ]; then
+    echo "Error: Docker version $version is lower than required version 28. Please update Docker to at least version 28."
+    exit 1
+  fi
+else
+  echo "Error: Could not determine Docker version"
+  exit 1
+fi
+
 # Check if in the correct directory
 if [[ "$(basename "$(pwd)")" != "runtipi" ]]; then
   echo -e "${Red}You need to run this script from the runtipi directory!${ColorOff}"
