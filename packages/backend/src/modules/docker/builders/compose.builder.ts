@@ -102,7 +102,7 @@ export class DockerComposeBuilder {
         });
       }
 
-      if (params.internalPort) {
+      if (params.internalPort && params.networkMode === undefined) {
         const traefikLabels = new TraefikLabelsBuilder({
           storeId: appStoreId,
           appId: appName,
