@@ -34,9 +34,9 @@ else
   exit 1
 fi
 
-# Check if in the correct directory
-if [[ "$(basename "$(pwd)")" != "runtipi" ]]; then
-  echo -e "${Red}You need to run this script from the runtipi directory!${ColorOff}"
+# Check if runtipi-cli exists
+if [[ ! -f "runtipi-cli" ]]; then
+  echo -e "❌ ${Red}You need to run this script from the runtipi directory!${ColorOff}"
   exit 1
 fi
 
@@ -135,6 +135,10 @@ for app in migration-backups/apps/*; do
   fi
 done
 
+if [[ -f "migration-backups/user-config/tipi-compose.yml" ]]; then
+  mv migration-backups/user-config/tipi-compose.yml user-config/tipi-compose.yml
+fi
+
 # Start runtipi
 echo -e "\nMigration complete! Updating Runtipi to v4.0.0...\n"
 
@@ -162,3 +166,5 @@ fi
 
 chmod +x ./runtipi-cli
 sudo ./runtipi-cli start
+
+echo -e "🎉 Runtipi has been updated to v4.0.0! 🎉\nOnce you have confirmed everything is working, you can delete the migration-backups folder.\n"
