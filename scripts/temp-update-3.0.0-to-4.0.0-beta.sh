@@ -119,21 +119,17 @@ REPO_ID=migrated
 
 mkdir -p apps/$REPO_ID
 mkdir -p app-data/$REPO_ID
-mkdir -p user-config/$REPO_ID
-mkdir -p backups/$REPO_ID
 
-for app in migration-backups/apps/*; do
-  app=${app#migration-backups/apps/}
-  echo -e "⏭️  Moving app: ${Green}$app${ColorOff}"
-  mv migration-backups/apps/"$app" apps/$REPO_ID/"$app"
-  mv migration-backups/app-data/"$app" app-data/$REPO_ID/"$app"
-  if [[ -d "migration-backups/user-config/$app" ]]; then
-    mv migration-backups/user-config/"$app" user-config/$REPO_ID/"$app"
-  fi
-  if [[ -d "migration-backups/backups/$app" ]]; then
-    mv migration-backups/backups/"$app" backups/$REPO_ID/"$app"
-  fi
-done
+mv migration-backups/apps/* apps/$REPO_ID/
+mv migration-backups/app-data/* app-data/$REPO_ID/
+if [[ -d "migration-backups/user-config" ]]; then
+  mkdir -p user-config/$REPO_ID
+  mv migration-backups/user-config/* user-config/$REPO_ID/
+fi
+if [[ -d "migration-backups/backups" ]]; then
+  mkdir -p backups/$REPO_ID
+  mv migration-backups/backups/* backups/$REPO_ID/
+fi
 
 if [[ -f "migration-backups/user-config/tipi-compose.yml" ]]; then
   mv migration-backups/user-config/tipi-compose.yml user-config/tipi-compose.yml
