@@ -49,8 +49,8 @@ services:
       timeout: 3s
       retries: 20
     environment:
-       RABBITMQ_DEFAULT_USER: tipi
-       RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_USER: tipi
+      RABBITMQ_DEFAULT_PASS: rabbitmq
     networks:
       - tipi_main_network
 
@@ -110,6 +110,7 @@ services:
       - .env
     labels:
       # ---- General ----- #
+      runtipi.managed: true
       traefik.enable: true
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
 
