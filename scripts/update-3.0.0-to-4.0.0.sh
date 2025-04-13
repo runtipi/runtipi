@@ -11,71 +11,71 @@ Yellow='\e[33m'
 ColorOff='\e[0m'
 
 # Welcome message
-echo -e "👋 Welcome to the Runtipi migration script. It will automatically update everything to work with version ${Green}4.0.0${ColorOff}\n"
+echo -e "Welcome to the Runtipi migration script! It will automatically update everything to work with version ${Green}4.0.0${ColorOff}\n"
 
 # Check if running as root
 if [[ "$EUID" -ne 0 ]]; then
-  echo -e "❌ ${Red}Root is required for this script!${ColorOff}"
+  echo -e "${Red}Root is required for this script!${ColorOff}"
   exit 1
 fi
 
 # Check if in the correct directory
 if [[ "$(basename "$(pwd)")" != "runtipi" ]]; then
-  echo -e "❌ ${Red}You need to run this script from the runtipi directory!${ColorOff}"
+  echo -e "${Red}You need to run this script from the runtipi directory!${ColorOff}"
   exit 1
 fi
 
 current_version=$(cat VERSION)
 if [[ ! "$current_version" =~ ^v3\..* ]]; then
-  echo -e "❌ ${Red}This script is only for migrating from version 3.x.x to 4.0.0${ColorOff}"
+  echo -e "${Red}This script is only for migrating from version 3.x.x to 4.0.0${ColorOff}"
   echo -e "Current version: ${current_version}"
   exit 1
 fi
 
 # Verify app data
 if [[ -d "app-data/app-data" ]]; then
-  echo -e "❌ ${Red}You have an additional app-data folder, the script cannot continue with this folder, please seek help in our Discord or Forums for a guide on how to fix the issue.${ColorOff}"
+  echo -e "${Red}You have an additional app-data folder, the script cannot continue with this folder, please seek help in our Discord or Forums for a guide on how to fix the issue.${ColorOff}"
   exit 1
 fi
 
 # Backups warning
-echo -e "⚠️ ${Yellow}Warning:${ColorOff} Make sure you have backed up your data before continuing, if something goes wrong during the migration process, you can risk losing important data!"
-read -p "🚨 Do you want to continue? (y/n): " -r
+echo -e "${Yellow}Warning:${ColorOff} Make sure you have backed up your data before continuing, if something goes wrong during the migration process, you can risk losing important data!"
+read -p "Do you want to continue? (y/n): " -r
 
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-  echo -e "\n❌ ${Red}Migration cancelled!${ColorOff}"
+  echo -e "\n${Red}Migration cancelled!${ColorOff}"
   exit 1
 fi
 
-echo -e "\n🔍 Checking for apps..."
+echo -e "\nChecking for apps..."
 
 for app in apps/*; do
   app=${app#apps/}
-  echo -e "📦 Found app: ${Green}$app${ColorOff}"
+  echo -e "Found app: ${Green}$app${ColorOff}"
 done
 
-echo -e "\n⚠️ ${Yellow}Warning:${ColorOff} ensure all your apps are listed above, if not, please seek help in our Discord or Forums for a guide on how to fix the issue.${ColorOff}"
-read -p "🚨 Do you want to continue? (y/n): " -r
+echo -e "\n${Yellow}Warning:${ColorOff} ensure all your apps are listed above, if not, please seek help in our Discord or Forums for a guide on how to fix the issue.${ColorOff}"
+read -p "Do you want to continue? (y/n): " -r
 
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-  echo -e "\n❌ ${Red}Migration cancelled!${ColorOff}"
+  echo -e "\n${Red}Migration cancelled!${ColorOff}"
   exit 1
 fi
 
 # Stop apps
-echo -e "🛑 Stopping apps...\n"
+echo -e "Stopping apps...\n"
 
 for app in apps/*; do
   app=${app#apps/}
-  echo -ne "\033[K🛑 Stopping ${Green}$app${ColorOff}\r"
+  echo -ne "\033[KStopping ${Green}$app${ColorOff}\r"
   if ! ./runtipi-cli app stop "$app" > /dev/null 2>&1; then
-    echo -e "${Red}Failed to stop $app${ColorOff}"
+    echo -e "${Red}Failed to stop $app!${ColorOff}"
   fi
   sleep 3
 done
 
 # Stop runtipi
-echo -e "\n🛑 Stopping Runtipi...\n"
+echo -e "\nStopping Runtipi...\n"
 
 if ! ./runtipi-cli stop; then
   echo -e "${Red}Failed to stop Runtipi${ColorOff}"
@@ -83,7 +83,7 @@ if ! ./runtipi-cli stop; then
 fi
 
 # Move app-data to backups
-echo -e "⏭️  Backing up data..."
+echo -e "Backing up data..."
 sleep 5
 
 mkdir -p migration-backups
@@ -96,7 +96,6 @@ mv backups migration-backups/backups
 mkdir -p {app-data,apps,user-config,backups}
 
 # Move apps
-echo -e "⏭️  Moving apps..."
 echo -e "Moving apps...\n"
 
 REPO_ID=migrated
@@ -108,7 +107,6 @@ mkdir -p backups/$REPO_ID
 
 for app in migration-backups/apps/*; do
   app=${app#migration-backups/apps/}
-  echo -e "⏭️  Moving app: ${Green}$app${ColorOff}"
   echo -ne "\033[KMoving ${Green}$app${ColorOff}\r"
   mv migration-backups/apps/"$app" apps/$REPO_ID/"$app"
   mv migration-backups/app-data/"$app" app-data/$REPO_ID/"$app"
@@ -121,7 +119,7 @@ for app in migration-backups/apps/*; do
 done
 
 # Start runtipi
-echo -e "\n🔄 Migration complete! Updating Runtipi to v4.0.0...\n"
+echo -e "\nMigration complete! Updating Runtipi to v4.0.0...\n"
 
 ARCHITECTURE="$(uname -m)"
 
