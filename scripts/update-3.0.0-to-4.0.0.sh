@@ -63,12 +63,12 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 # Stop apps
-echo -e "🛑 Stopping apps..."
+echo -e "🛑 Stopping apps...\n"
 
 for app in apps/*; do
   app=${app#apps/}
-  echo -e "🛑 Stopping app: ${Green}$app${ColorOff}"
-  if ! ./runtipi-cli app stop "$app"; then
+  echo -ne "\033[K🛑 Stopping ${Green}$app${ColorOff}\r"
+  if ! ./runtipi-cli app stop "$app" > /dev/null 2>&1; then
     echo -e "${Red}Failed to stop $app${ColorOff}"
   fi
   sleep 3
@@ -97,6 +97,7 @@ mkdir -p {app-data,apps,user-config,backups}
 
 # Move apps
 echo -e "⏭️  Moving apps..."
+echo -e "Moving apps...\n"
 
 REPO_ID=migrated
 
@@ -108,6 +109,7 @@ mkdir -p backups/$REPO_ID
 for app in migration-backups/apps/*; do
   app=${app#migration-backups/apps/}
   echo -e "⏭️  Moving app: ${Green}$app${ColorOff}"
+  echo -ne "\033[KMoving ${Green}$app${ColorOff}\r"
   mv migration-backups/apps/"$app" apps/$REPO_ID/"$app"
   mv migration-backups/app-data/"$app" app-data/$REPO_ID/"$app"
   if [[ -d "migration-backups/user-config/$app" ]]; then
