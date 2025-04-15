@@ -2,6 +2,7 @@ import path from 'node:path';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import type { ConfigurationService } from '@/core/config/configuration.service';
+import type { AppStore } from '@/core/database/drizzle/types';
 import type { FilesystemService } from '@/core/filesystem/filesystem.service';
 import type { LoggerService } from '@/core/logger/logger.service';
 import type { AppUrn } from '@/types/app/app.types';
@@ -12,7 +13,7 @@ export class AppStoreFilesManager {
     private readonly configuration: ConfigurationService,
     private readonly filesystem: FilesystemService,
     private readonly logger: LoggerService,
-    private storeId: string,
+    public readonly storeConfig: AppStore,
   ) {}
 
   private getInstalledAppsFolder() {
@@ -23,7 +24,7 @@ export class AppStoreFilesManager {
 
   private getAppStoreFolder() {
     const { directories } = this.configuration.getConfig();
-    return path.join(directories.dataDir, 'repos', this.storeId, 'apps');
+    return path.join(directories.dataDir, 'repos', this.storeConfig.slug, 'apps');
   }
 
   public getAppPaths(appUrn: AppUrn) {
@@ -75,8 +76,8 @@ export class AppStoreFilesManager {
     const { appRepoDir, appDataDir, appInstalledDir } = this.getAppPaths(appUrn);
 
     if (!(await this.filesystem.pathExists(appRepoDir))) {
-      this.logger.error(`App ${appUrn} not found in repo ${this.storeId}`);
-      throw new Error(`App ${appUrn} not found in repo ${this.storeId}`);
+      this.logger.error(`App ${appUrn} not found in repo ${this.storeConfig.slug}`);
+      throw new Error(`App ${appUrn} not found in repo ${this.storeConfig.slug}`);
     }
 
     // delete eventual app folder if exists
@@ -92,7 +93,7 @@ export class AppStoreFilesManager {
     await this.filesystem.createDirectory(appDataDir);
 
     // Copy app folder from repo
-    this.logger.info(`Copying app ${appUrn} from repo ${this.storeId}`);
+    this.logger.info(`Copying app ${appUrn} from repo ${this.storeConfig.slug}`);
     await this.filesystem.copyDirectory(appRepoDir, appInstalledDir);
   }
 
@@ -126,14 +127,14 @@ export class AppStoreFilesManager {
     const appsRepoFolder = this.getAppStoreFolder();
 
     if (!(await this.filesystem.pathExists(appsRepoFolder))) {
-      this.logger.error(`Apps repo ${this.storeId} not found. Make sure your repo is configured correctly.`);
+      this.logger.error(`Apps repo ${this.storeConfig.slug} not found. Make sure your repo is configured correctly.`);
       return [];
     }
 
     const appsDir = await this.filesystem.listFiles(appsRepoFolder);
     const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
 
-    return appsDir.filter((app) => !skippedFiles.includes(app)).map((app) => `${app}:${this.storeId}` as AppUrn);
+    return appsDir.filter((app) => !skippedFiles.includes(app)).map((app) => `${app}:${this.storeConfig.slug}` as AppUrn);
   }
 
   /**
