@@ -2,8 +2,6 @@ import './instrument';
 
 import { patchNestJsSwagger } from 'nestjs-zod';
 
-import { SpelunkerModule } from 'nestjs-spelunker';
-
 import fs from 'node:fs';
 import path from 'node:path';
 import { type INestApplication, type LogLevel, ValidationPipe } from '@nestjs/common';
@@ -40,14 +38,6 @@ async function bootstrap() {
     abortOnError: true,
     logger: [process.env.LOG_LEVEL as LogLevel, 'error', 'warn', 'fatal'],
   });
-
-  if (process.env.NODE_ENV !== 'production') {
-    const tree = SpelunkerModule.explore(app);
-    const root = SpelunkerModule.graph(tree);
-    const edges = SpelunkerModule.findGraphEdges(root);
-    const mermaidEdges = edges.map(({ from, to }) => `  ${from.module.name}-->${to.module.name}`);
-    await fs.promises.writeFile(path.join(APP_DIR, 'packages', 'backend', 'src', 'graph.mermaid'), `graph LR\n${mermaidEdges.join('\n')}`);
-  }
 
   const appService = app.get(AppService);
   await appService.bootstrap();
