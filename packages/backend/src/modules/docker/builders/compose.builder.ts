@@ -46,8 +46,8 @@ export class DockerComposeBuilder {
     });
   }
 
-  private buildService = (params: Service, form: AppEventFormInput, appUrn: AppUrn) => {
-    const { appName, appStoreId } = extractAppUrn(appUrn);
+  private buildService = (params: Service, form: AppEventFormInput, appUrn: AppUrn, appName: string) => {
+    const { appName: appId, appStoreId } = extractAppUrn(appUrn);
     const result = serviceSchema.safeParse(params);
 
     if (!result.success) {
@@ -58,7 +58,6 @@ export class DockerComposeBuilder {
     service
       .setImage(params.image)
       .setName(params.name)
-      .setContainerName(`${appName}-${params.name}-${appStoreId}`)
       .setEnvironment(params.environment)
       .setCommand(params.command)
       .setHealthCheck(params.healthCheck)
@@ -88,7 +87,7 @@ export class DockerComposeBuilder {
       .setStopGracePeriod(params.stopGracePeriod)
       .setStdinOpen(params.stdinOpen)
       .setSysctls(params.sysctls)
-      .setNetwork(`${appName}_${appStoreId}_network`);
+      .setNetwork(`${appId}_${appStoreId}_network`);
 
     if (params.isMain || params.addToMainNetwork) {
       service.setNetwork('tipi_main_network', 1);
@@ -105,11 +104,12 @@ export class DockerComposeBuilder {
       if (params.internalPort) {
         const traefikLabels = new TraefikLabelsBuilder({
           storeId: appStoreId,
-          appId: appName,
+          appId: appId,
           internalPort: params.internalPort,
           exposedLocal: form.exposedLocal,
           exposed: form.exposed,
           enableAuth: form.enableAuth,
+          appName: appName,
         })
           .addExposedLabels()
           .addExposedLocalLabels();
@@ -123,10 +123,10 @@ export class DockerComposeBuilder {
     return service.build();
   };
 
-  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, appUrn: AppUrn) => {
-    const { appName, appStoreId } = extractAppUrn(appUrn);
+  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, appUrn: AppUrn, appName: string) => {
+    const { appName: appId, appStoreId } = extractAppUrn(appUrn);
 
-    const myServices = services.map((service) => this.buildService(service, form, appUrn));
+    const myServices = services.map((service) => this.buildService(service, form, appUrn, appName));
 
     const dockerCompose = this.addServices(myServices)
       .addNetwork({
@@ -135,7 +135,7 @@ export class DockerComposeBuilder {
         external: true,
       })
       .addNetwork({
-        key: `${appName}_${appStoreId}_network`,
+        key: `${appId}_${appStoreId}_network`,
         external: false,
       });
 

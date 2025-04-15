@@ -29,7 +29,7 @@ export class AppLifecycleCommand {
       try {
         const { services } = dynamicComposeSchema.parse(composeJson.content);
         const dockerComposeBuilder = new DockerComposeBuilder();
-        const composeFile = dockerComposeBuilder.getDockerCompose(services, form, appUrn);
+        const composeFile = dockerComposeBuilder.getDockerCompose(services, form, appUrn, appInfo.name);
 
         await this.appFilesManager.writeDockerComposeYml(appUrn, composeFile);
       } catch (err) {
