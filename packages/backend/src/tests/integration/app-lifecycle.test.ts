@@ -119,7 +119,7 @@ describe('App lifecycle', () => {
   describe('install app', () => {
     it('should successfully install app and create expected directory structure', async () => {
       // arrange
-      const appInfo = await createAppInStore('test', { id: 'test' });
+      const appInfo = await createAppInStore('test', { id: 'test', name: 'Test' });
       const appUrn = `${appInfo.id}:test` as AppUrn;
 
       // act
