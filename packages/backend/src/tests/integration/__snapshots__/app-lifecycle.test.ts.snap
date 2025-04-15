@@ -61,7 +61,6 @@ exports[`App lifecycle > install app > should successfully install app and creat
 "services:
   test:
     image: test
-    container_name: test-test-test
     restart: unless-stopped
     networks:
       test_test_network:
@@ -78,6 +77,8 @@ exports[`App lifecycle > install app > should successfully install app and creat
       traefik.docker.network: runtipi_tipi_main_network
       traefik.http.middlewares.test_test-web-redirect.redirectscheme.scheme: https
       traefik.http.services.test_test.loadbalancer.server.port: "80"
+      traefik.http.middlewares.test_test_headers.headers.customrequestheaders.x-runtipi-name: test
+      traefik.http.middlewares.test_test_headers.headers.customrequestheaders.x-runtipi-urn: test-test
       runtipi.managed: true
 networks:
   tipi_main_network:
