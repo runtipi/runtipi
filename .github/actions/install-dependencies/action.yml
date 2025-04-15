@@ -14,7 +14,7 @@ runs:
       name: Install pnpm
       id: pnpm-install
       with:
-        version: "10.5.0"
+        version: "10.8.0"
         run_install: false
 
     - name: Get pnpm store directory
