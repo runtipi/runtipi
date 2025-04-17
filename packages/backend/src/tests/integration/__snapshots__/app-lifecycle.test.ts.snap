@@ -61,7 +61,6 @@ exports[`App lifecycle > install app > should successfully install app and creat
 "services:
   test:
     image: test
-    container_name: test-test-test
     restart: unless-stopped
     networks:
       test_test_network:

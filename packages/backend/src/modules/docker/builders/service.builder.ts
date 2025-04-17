@@ -59,7 +59,6 @@ interface Logging {
 export interface BuilderService {
   name: string;
   image: string;
-  containerName: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
   environment?: Record<string, string | number>;
   command?: string | string[];
@@ -128,21 +127,6 @@ export class ServiceBuilder {
    */
   setName(name: string) {
     this.service.name = name;
-    return this;
-  }
-
-  /**
-   * Sets the container name of the service.
-   * @param containerName The container name of the service.
-   *
-   * @example
-   * ```typescript
-   * const service = new ServiceBuilder();
-   * service.setContainerName('nginx-migrated');
-   * ```
-   */
-  setContainerName(containerName: string) {
-    this.service.containerName = containerName;
     return this;
   }
 
@@ -561,7 +545,6 @@ export class ServiceBuilder {
       image: this.service.image,
       command: this.service.command,
       name: this.service.name,
-      container_name: this.service.containerName,
       restart: this.service.restart,
       networks: this.service.networks,
       network_mode: this.service.networkMode,
