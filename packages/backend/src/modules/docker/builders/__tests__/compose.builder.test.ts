@@ -22,7 +22,7 @@ describe('DockerComposeBuilder', () => {
       image: 'image',
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, 'Nginx');
     expect(compose).toMatchSnapshot();
   });
 
@@ -38,7 +38,7 @@ describe('DockerComposeBuilder', () => {
       },
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, 'Nginx');
     expect(compose).toMatchSnapshot();
   });
 
@@ -49,7 +49,7 @@ describe('DockerComposeBuilder', () => {
       devices: ['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm'],
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, 'Nginx');
     expect(compose).toMatchSnapshot();
   });
 
@@ -60,7 +60,7 @@ describe('DockerComposeBuilder', () => {
       entrypoint: 'entrypoint',
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, 'Nginx');
 
     expect(compose).toMatchSnapshot();
   });
@@ -72,7 +72,7 @@ describe('DockerComposeBuilder', () => {
       entrypoint: ['entrypoint', 'arg1', 'arg2'],
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, 'Nginx');
 
     expect(compose).toMatchSnapshot();
   });
@@ -84,7 +84,7 @@ describe('DockerComposeBuilder', () => {
       logging: { driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } },
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, 'Nginx');
 
     expect(compose).toMatchSnapshot();
   });
@@ -152,7 +152,7 @@ describe('DockerComposeBuilder', () => {
       image: 'image2',
     };
 
-    const compose = composeBuilder.getDockerCompose([service1, service2], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service1, service2], {}, urn, 'Nginx');
 
     expect(compose).toMatchSnapshot();
   });
@@ -165,7 +165,7 @@ describe('DockerComposeBuilder', () => {
       isMain: true,
     };
 
-    const compose = composeBuilder.getDockerCompose([service], { exposed: true, exposedLocal: true, openPort: true }, urn);
+    const compose = composeBuilder.getDockerCompose([service], { exposed: true, exposedLocal: true, openPort: true }, urn, 'Nginx');
 
     expect(compose).toMatchSnapshot();
   });
@@ -234,7 +234,7 @@ describe('DockerComposeBuilder', () => {
       ],
     };
 
-    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true }, urn);
+    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true }, urn, 'Nginx');
 
     expect(yaml).toMatchSnapshot();
   });

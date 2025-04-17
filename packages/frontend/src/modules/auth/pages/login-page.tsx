@@ -9,7 +9,6 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { LoginForm } from '../components/login-form';
 import { TotpForm } from '../components/totp-form/totp-form';
 
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const isSafeRedirect = (url: string) => new URL(url).host.endsWith(`.${window.location.host}`);
 
 export const LoginPage = () => {
@@ -18,9 +17,11 @@ export const LoginPage = () => {
 
   const [searchParams] = useSearchParams();
   const redirect_url = searchParams.get('redirect_url');
-  const app = searchParams.get('app');
+  const appName = searchParams.get('name');
+  // Use this in the future if you need the URN
+  // const appUrn = searchParams.get('urn');
 
-  const loginType = capitalize(app ?? '') || 'your account';
+  const loginType = appName || 'your account';
 
   const { t } = useTranslation();
   const navigate = useNavigate();

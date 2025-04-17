@@ -5,6 +5,7 @@ interface TraefikLabelsArgs {
   exposed?: boolean;
   storeId: string;
   enableAuth?: boolean;
+  appName?: string;
 }
 
 export class TraefikLabelsBuilder {
@@ -17,6 +18,8 @@ export class TraefikLabelsBuilder {
       'traefik.docker.network': 'runtipi_tipi_main_network',
       [`traefik.http.middlewares.${params.appId}_${params.storeId}-web-redirect.redirectscheme.scheme`]: 'https',
       [`traefik.http.services.${params.appId}_${params.storeId}.loadbalancer.server.port`]: `${params.internalPort}`,
+      [`traefik.http.middlewares.${this.params.appId}_${this.params.storeId}_headers.headers.customrequestheaders.x-runtipi-name`]: `${this.params.appName}`,
+      [`traefik.http.middlewares.${this.params.appId}_${this.params.storeId}_headers.headers.customrequestheaders.x-runtipi-urn`]: `${this.params.appId}-${this.params.storeId}`,
     };
   }
 
@@ -32,11 +35,12 @@ export class TraefikLabelsBuilder {
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.entrypoints`]: 'websecure',
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.service`]: `${this.params.appId}_${this.params.storeId}`,
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.tls.certresolver`]: 'myresolver',
+        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.middlewares`]: `${this.params.appId}_${this.params.storeId}_headers`,
       });
 
       if (this.params.enableAuth) {
         Object.assign(this.labels, {
-          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.middlewares`]: 'runtipi',
+          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.middlewares`]: `${this.params.appId}_${this.params.storeId}_headers,runtipi`,
         });
       }
     }
@@ -55,11 +59,12 @@ export class TraefikLabelsBuilder {
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.entrypoints`]: 'websecure',
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.service`]: `${this.params.appId}_${this.params.storeId}`,
         [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.tls`]: true,
+        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.middlewares`]: `${this.params.appId}_${this.params.storeId}_headers`,
       });
 
       if (this.params.enableAuth) {
         Object.assign(this.labels, {
-          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.middlewares`]: 'runtipi',
+          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.middlewares`]: `${this.params.appId}_${this.params.storeId}_headers,runtipi`,
         });
       }
     }

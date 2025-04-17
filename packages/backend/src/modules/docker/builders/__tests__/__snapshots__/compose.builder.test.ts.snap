@@ -4,7 +4,6 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
 "services:
   service:
     image: image
-    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -19,6 +18,8 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
       traefik.docker.network: runtipi_tipi_main_network
       traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
       traefik.http.services.nginx_store-id.loadbalancer.server.port: "440"
+      traefik.http.middlewares.nginx_store-id_headers.headers.customrequestheaders.x-runtipi-name: Nginx
+      traefik.http.middlewares.nginx_store-id_headers.headers.customrequestheaders.x-runtipi-urn: nginx-store-id
       traefik.http.routers.nginx_store-id-insecure.rule: Host(\`\${APP_DOMAIN}\`)
       traefik.http.routers.nginx_store-id-insecure.entrypoints: web
       traefik.http.routers.nginx_store-id-insecure.service: nginx_store-id
@@ -27,6 +28,7 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
       traefik.http.routers.nginx_store-id.entrypoints: websecure
       traefik.http.routers.nginx_store-id.service: nginx_store-id
       traefik.http.routers.nginx_store-id.tls.certresolver: myresolver
+      traefik.http.routers.nginx_store-id.middlewares: nginx_store-id_headers
       traefik.http.routers.nginx_store-id-local-insecure.rule: Host(\`nginx-store-id.\${LOCAL_DOMAIN}\`)
       traefik.http.routers.nginx_store-id-local-insecure.entrypoints: web
       traefik.http.routers.nginx_store-id-local-insecure.service: nginx_store-id
@@ -35,6 +37,7 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
       traefik.http.routers.nginx_store-id-local.entrypoints: websecure
       traefik.http.routers.nginx_store-id-local.service: nginx_store-id
       traefik.http.routers.nginx_store-id-local.tls: true
+      traefik.http.routers.nginx_store-id-local.middlewares: nginx_store-id_headers
       runtipi.managed: true
 networks:
   tipi_main_network:
@@ -49,7 +52,6 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
 "services:
   ctfd:
     image: ctfd/ctfd:3.7.5
-    container_name: nginx-ctfd-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -72,6 +74,8 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       traefik.docker.network: runtipi_tipi_main_network
       traefik.http.middlewares.nginx_store-id-web-redirect.redirectscheme.scheme: https
       traefik.http.services.nginx_store-id.loadbalancer.server.port: "8000"
+      traefik.http.middlewares.nginx_store-id_headers.headers.customrequestheaders.x-runtipi-name: Nginx
+      traefik.http.middlewares.nginx_store-id_headers.headers.customrequestheaders.x-runtipi-urn: nginx-store-id
       runtipi.managed: true
       some-label: some-value
       ctfd.service: true
@@ -86,7 +90,6 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       - --collation-server=utf8mb4_unicode_ci
       - --wait_timeout=28800
       - --log-warnings=0
-    container_name: nginx-ctfd-db-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -102,7 +105,6 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       runtipi.managed: true
   ctfd-redis:
     image: redis:4
-    container_name: nginx-ctfd-redis-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -124,7 +126,6 @@ exports[`DockerComposeBuilder > should build a docker-compose file 1`] = `
 "services:
   service:
     image: image
-    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -145,7 +146,6 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
   service1:
     image: image1
     command: node index.js
-    container_name: nginx-service1-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -222,7 +222,6 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
     stdin_open: true
   service2:
     image: image2
-    container_name: nginx-service2-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -242,7 +241,6 @@ exports[`DockerComposeBuilder > should correctly format deploy resources 1`] = `
 "services:
   service:
     image: image
-    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -276,7 +274,6 @@ exports[`DockerComposeBuilder > should correctly format devices 1`] = `
 "services:
   service:
     image: image
-    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -299,7 +296,6 @@ exports[`DockerComposeBuilder > should correctly format entrypoint as array 1`] 
 "services:
   service:
     image: image
-    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -323,7 +319,6 @@ exports[`DockerComposeBuilder > should correctly format entrypoint as string 1`]
 "services:
   service:
     image: image
-    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:
@@ -344,7 +339,6 @@ exports[`DockerComposeBuilder > should correctly format logging 1`] = `
 "services:
   service:
     image: image
-    container_name: nginx-service-store-id
     restart: unless-stopped
     networks:
       nginx_store-id_network:

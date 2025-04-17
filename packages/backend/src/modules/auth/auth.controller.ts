@@ -23,6 +23,7 @@ import {
   SetupTotpBody,
   VerifyTotpBody,
 } from './dto/auth.dto';
+import { capitalize } from '@/common/helpers/format-helpers';
 
 @Controller('auth')
 export class AuthController {
@@ -201,7 +202,10 @@ export class AuthController {
     const proto = req.headers['x-forwarded-proto'] as string;
     const host = req.headers['x-forwarded-host'] as string;
 
-    this.logger.debug('Auth request', { uri, proto, host });
+    const appName = req.headers['x-runtipi-name'] as string;
+    const appUrn = req.headers['x-runtipi-urn'] as string;
+
+    this.logger.debug('Auth request', { uri, proto, host, appName, appUrn });
 
     const subdomains = host.split('.');
     const app = subdomains[0] ?? '';
@@ -211,9 +215,10 @@ export class AuthController {
 
     const loginUrl = new URL('/login', `${proto}://${rootDomain}`);
     loginUrl.searchParams.set('redirect_url', redirectUrl.toString());
-    loginUrl.searchParams.set('app', app);
+    loginUrl.searchParams.set('name', appName ?? capitalize(subdomains[0] ?? ''));
+    loginUrl.searchParams.set('urn', appUrn ?? '');
 
-    this.logger.debug('Redirecting to login', { loginUrl: loginUrl.toString(), redirectUrl: redirectUrl.toString(), app });
+    this.logger.debug('Redirecting to login', { loginUrl: loginUrl.toString(), redirectUrl: redirectUrl.toString(), appName, appUrn });
 
     return res.status(302).redirect(loginUrl.toString());
   }
