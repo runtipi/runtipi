@@ -174,7 +174,7 @@ importers:
         version: 9.7.0
       '@nestjs/cli':
         specifier: ^11.0.6
-        version: 11.0.6(@swc/cli@0.7.2(@swc/core@1.11.21)(chokidar@4.0.3))(@swc/core@1.11.21)(@types/node@22.14.1)(esbuild@0.24.2)
+        version: 11.0.6(@swc/cli@0.6.0(@swc/core@1.11.21)(chokidar@4.0.3))(@swc/core@1.11.21)(@types/node@22.14.1)(esbuild@0.24.2)
       '@nestjs/schematics':
         specifier: ^11.0.5
         version: 11.0.5(chokidar@4.0.3)(typescript@5.8.3)
@@ -188,8 +188,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1(encoding@0.1.13)
       '@swc/cli':
-        specifier: 0.7.2
-        version: 0.7.2(@swc/core@1.11.21)(chokidar@4.0.3)
+        specifier: 0.6.0
+        version: 0.6.0(@swc/core@1.11.21)(chokidar@4.0.3)
       '@swc/core':
         specifier: ^1.11.21
         version: 1.11.21
@@ -2813,8 +2813,8 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@swc/cli@0.7.2':
-    resolution: {integrity: sha512-B73b2Orrd0tauaX3Jct9MxkAI79U3OMHzRB++x2wfyq+JPjgC6foJK6zyY2JI0vsTlaTbGpx9+hsowTQ8RtQFA==}
+  '@swc/cli@0.6.0':
+    resolution: {integrity: sha512-Q5FsI3Cw0fGMXhmsg7c08i4EmXCrcl+WnAxb6LYOLHw4JFFC3yzmx9LaXZ7QMbA+JZXbigU2TirI7RAfO0Qlnw==}
     engines: {node: '>= 16.14.0'}
     hasBin: true
     peerDependencies:
@@ -7998,7 +7998,7 @@ snapshots:
       '@nestjs/core': 11.0.20(@nestjs/common@11.0.20(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.0.20)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/swagger': 11.1.3(@nestjs/common@11.0.20(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.20)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)
 
-  '@nestjs/cli@11.0.6(@swc/cli@0.7.2(@swc/core@1.11.21)(chokidar@4.0.3))(@swc/core@1.11.21)(@types/node@22.14.1)(esbuild@0.24.2)':
+  '@nestjs/cli@11.0.6(@swc/cli@0.6.0(@swc/core@1.11.21)(chokidar@4.0.3))(@swc/core@1.11.21)(@types/node@22.14.1)(esbuild@0.24.2)':
     dependencies:
       '@angular-devkit/core': 19.2.6(chokidar@4.0.3)
       '@angular-devkit/schematics': 19.2.6(chokidar@4.0.3)
@@ -8020,7 +8020,7 @@ snapshots:
       webpack: 5.98.0(@swc/core@1.11.21)(esbuild@0.24.2)
       webpack-node-externals: 3.0.0
     optionalDependencies:
-      '@swc/cli': 0.7.2(@swc/core@1.11.21)(chokidar@4.0.3)
+      '@swc/cli': 0.6.0(@swc/core@1.11.21)(chokidar@4.0.3)
       '@swc/core': 1.11.21
     transitivePeerDependencies:
       - '@types/node'
@@ -9176,7 +9176,7 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@swc/cli@0.7.2(@swc/core@1.11.21)(chokidar@4.0.3)':
+  '@swc/cli@0.6.0(@swc/core@1.11.21)(chokidar@4.0.3)':
     dependencies:
       '@swc/core': 1.11.21
       '@swc/counter': 0.1.3
