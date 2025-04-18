@@ -1,5 +1,5 @@
 import { Markdown } from '@/components/markdown/markdown';
-import { Alert, AlertSubtitle, AlertTitle } from '@/components/ui/Alert/Alert';
+import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -57,14 +57,12 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
       <TabsContent value="description">
         {info.deprecated && (
           <Alert variant="danger" className="mb-4">
-            <div className="d-flex">
-              <div>
-                <IconAlertCircle />
-              </div>
-              <div className="ms-2">
-                <AlertTitle>{t('APP_DETAILS_DEPRECATED_ALERT_TITLE')}</AlertTitle>
-                <AlertSubtitle>{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')}</AlertSubtitle>
-              </div>
+            <AlertIcon>
+              <IconAlertCircle stroke={2} />
+            </AlertIcon>
+            <div>
+              <AlertHeading>{t('APP_DETAILS_DEPRECATED_ALERT_TITLE')}</AlertHeading>
+              <AlertDescription>{t('APP_DETAILS_DEPRECATED_ALERT_SUBTITLE')}</AlertDescription>
             </div>
           </Alert>
         )}

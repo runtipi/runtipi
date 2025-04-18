@@ -18,20 +18,27 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement>, Varian
 }
 
 const Alert = ({ className, dismissible, variant, ...props }: AlertProps) => (
-  <div className={clsx('alert alert-important', className, dismissible && 'alert-dismissible', alertVariants({ variant }))} {...props}>
+  <div className={clsx('alert', className, dismissible && 'alert-dismissible', alertVariants({ variant }))} role="alert" {...props}>
     {props.children}
   </div>
 );
 Alert.displayName = 'Alert';
 
-const AlertTitle = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+const AlertHeading = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
   <h4 className={clsx('alert-heading', className)} {...props} />
 );
-AlertTitle.displayName = 'AlertTitle';
+AlertHeading.displayName = 'AlertHeading';
 
-const AlertSubtitle = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={clsx('alert-description text-secondary', className)} {...props} />
+const AlertDescription = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={clsx('alert-description', className)} {...props} />
 );
-AlertSubtitle.displayName = 'AlertSubtitle';
+AlertDescription.displayName = 'AlertDescription';
 
-export { Alert, AlertTitle, AlertSubtitle };
+const AlertIcon = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={clsx('alert-icon', className)} {...props}>
+    {props.children}
+  </div>
+);
+AlertIcon.displayName = 'AlertIcon';
+
+export { Alert, AlertHeading, AlertDescription, AlertIcon };
