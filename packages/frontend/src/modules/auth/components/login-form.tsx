@@ -67,9 +67,11 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) =>
           className="mb-3 password-input"
           placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
         />
-        <Button disabled={isDisabled} loading={loading} type="submit" intent="primary" className="w-100">
-          {t('AUTH_LOGIN_SUBMIT')}
-        </Button>
+        <div className="form-footer">
+          <Button disabled={isDisabled} loading={loading} type="submit" intent="primary" className="w-100">
+            {t('AUTH_LOGIN_SUBMIT')}
+          </Button>
+        </div>
       </form>
     </>
   );

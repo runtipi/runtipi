@@ -19,8 +19,8 @@ export const AuthLayout = ({ children }: PropsWithChildren) => {
           <img
             alt="Runtipi logo"
             src={getLogo(allowAutoThemes)}
-            height={50}
-            width={50}
+            height={64}
+            width={64}
             style={{
               maxWidth: '100%',
               height: 'auto',

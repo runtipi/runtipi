@@ -39,38 +39,42 @@ export const RegisterForm: React.FC<IProps> = ({ onSubmit, loading }) => {
   });
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <h2 className="h2 text-center mb-3">{t('AUTH_REGISTER_TITLE')}</h2>
-      <Input
-        {...register('email')}
-        label={t('AUTH_FORM_EMAIL')}
-        error={errors.email?.message}
-        disabled={loading}
-        type="email"
-        className="mb-3"
-        placeholder={t('AUTH_FORM_EMAIL_PLACEHOLDER')}
-      />
-      <Input
-        {...register('password')}
-        label={t('AUTH_FORM_PASSWORD')}
-        error={errors.password?.message}
-        disabled={loading}
-        type="password"
-        className="mb-3"
-        placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
-      />
-      <Input
-        {...register('passwordConfirm')}
-        label={t('AUTH_FORM_PASSWORD_CONFIRMATION')}
-        error={errors.passwordConfirm?.message}
-        disabled={loading}
-        type="password"
-        className="mb-3"
-        placeholder={t('AUTH_FORM_PASSWORD_CONFIRMATION_PLACEHOLDER')}
-      />
-      <Button loading={loading} type="submit" intent="primary" className="w-100">
-        {t('AUTH_REGISTER_SUBMIT')}
-      </Button>
-    </form>
+    <>
+      <h2 className="h2 text-center mb-4">{t('AUTH_REGISTER_TITLE')}</h2>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Input
+          {...register('email')}
+          label={t('AUTH_FORM_EMAIL')}
+          error={errors.email?.message}
+          disabled={loading}
+          type="email"
+          className="mb-3"
+          placeholder={t('AUTH_FORM_EMAIL_PLACEHOLDER')}
+        />
+        <Input
+          {...register('password')}
+          label={t('AUTH_FORM_PASSWORD')}
+          error={errors.password?.message}
+          disabled={loading}
+          type="password"
+          className="mb-3"
+          placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
+        />
+        <Input
+          {...register('passwordConfirm')}
+          label={t('AUTH_FORM_PASSWORD_CONFIRMATION')}
+          error={errors.passwordConfirm?.message}
+          disabled={loading}
+          type="password"
+          className="mb-3"
+          placeholder={t('AUTH_FORM_PASSWORD_CONFIRMATION_PLACEHOLDER')}
+        />
+        <div className="form-footer">
+          <Button loading={loading} type="submit" intent="primary" className="w-100">
+            {t('AUTH_REGISTER_SUBMIT')}
+          </Button>
+        </div>
+      </form>
+    </>
   );
 };
