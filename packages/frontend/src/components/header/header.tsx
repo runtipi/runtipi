@@ -16,6 +16,7 @@ type HeaderProps = {
 
 export const Header = (props: HeaderProps) => {
   const setDarkMode = useUIStore((state) => state.setDarkMode);
+  const theme = useUIStore((state) => state.theme);
 
   const { isUpdateAvailable, allowAutoThemes, isLoggedIn } = props;
 
@@ -67,28 +68,35 @@ export const Header = (props: HeaderProps) => {
             </div>
           </div>
           <div style={{ zIndex: 1 }} className="d-flex">
-            <Tooltip className="tooltip" anchorSelect=".darkMode">
-              {t('HEADER_DARK_MODE')}
-            </Tooltip>
-            <button
-              type="button"
-              onClick={() => setDarkMode(true)}
-              className="darkMode nav-link px-0 hide-theme-dark cursor-pointer"
-              data-testid="dark-mode-toggle"
-            >
-              <IconMoon data-testid="icon-moon" size={20} />
-            </button>
-            <Tooltip className="tooltip" anchorSelect=".lightMode">
-              {t('HEADER_LIGHT_MODE')}
-            </Tooltip>
-            <button
-              type="button"
-              onClick={() => setDarkMode(false)}
-              className="lightMode nav-link px-0 hide-theme-light cursor-pointer"
-              data-testid="light-mode-toggle"
-            >
-              <IconSun data-testid="icon-sun" size={20} />
-            </button>
+            {theme === 'dark' ? (
+              <>
+                <Tooltip className="tooltip" anchorSelect=".lightMode">
+                  {t('HEADER_LIGHT_MODE')}
+                </Tooltip>
+                <button
+                  type="button"
+                  onClick={() => setDarkMode(false)}
+                  className="lightMode nav-link px-0 cursor-pointer"
+                  data-testid="light-mode-toggle"
+                >
+                  <IconSun data-testid="icon-sun" size={20} />
+                </button>
+              </>
+            ) : (
+              <>
+                <Tooltip className="tooltip" anchorSelect=".darkMode">
+                  {t('HEADER_DARK_MODE')}
+                </Tooltip>
+                <button
+                  type="button"
+                  onClick={() => setDarkMode(true)}
+                  className="darkMode nav-link px-0 cursor-pointer"
+                  data-testid="dark-mode-toggle"
+                >
+                  <IconMoon data-testid="icon-moon" size={20} />
+                </button>
+              </>
+            )}
             <Tooltip className="tooltip" anchorSelect=".logOut">
               {isLoggedIn ? t('HEADER_LOGOUT') : t('HEADER_LOGIN')}
             </Tooltip>
