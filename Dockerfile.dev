@@ -7,7 +7,7 @@ RUN corepack enable pnpm && corepack install -g pnpm@latest-10
 RUN apk add --no-cache g++ make curl openssl git
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.33.1"
+ARG DOCKER_COMPOSE_VERSION="v2.35.0"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 

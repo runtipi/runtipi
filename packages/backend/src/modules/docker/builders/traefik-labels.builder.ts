@@ -15,8 +15,8 @@ export class TraefikLabelsBuilder {
       generated: true,
       'traefik.enable': false,
       'traefik.docker.network': 'runtipi_tipi_main_network',
-      [`traefik.http.middlewares.${params.appId}_${params.storeId}-web-redirect.redirectscheme.scheme`]: 'https',
-      [`traefik.http.services.${params.appId}_${params.storeId}.loadbalancer.server.port`]: `${params.internalPort}`,
+      [`traefik.http.middlewares.${params.appId}-${params.storeId}-web-redirect.redirectscheme.scheme`]: 'https',
+      [`traefik.http.services.${params.appId}-${params.storeId}.loadbalancer.server.port`]: `${params.internalPort}`,
     };
   }
 
@@ -24,19 +24,19 @@ export class TraefikLabelsBuilder {
     if (this.params.exposed) {
       Object.assign(this.labels, {
         'traefik.enable': true,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-insecure.rule`]: 'Host(`${APP_DOMAIN}`)',
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-insecure.entrypoints`]: 'web',
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-insecure.service`]: `${this.params.appId}_${this.params.storeId}`,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-insecure.middlewares`]: `${this.params.appId}_${this.params.storeId}-web-redirect`,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.rule`]: 'Host(`${APP_DOMAIN}`)',
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.entrypoints`]: 'websecure',
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.service`]: `${this.params.appId}_${this.params.storeId}`,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.tls.certresolver`]: 'myresolver',
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.rule`]: 'Host(`${APP_DOMAIN}`)',
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.entrypoints`]: 'web',
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.service`]: `${this.params.appId}-${this.params.storeId}`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-insecure.middlewares`]: `${this.params.appId}-${this.params.storeId}-web-redirect`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.rule`]: 'Host(`${APP_DOMAIN}`)',
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.entrypoints`]: 'websecure',
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.service`]: `${this.params.appId}-${this.params.storeId}`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.tls.certresolver`]: 'myresolver',
       });
 
       if (this.params.enableAuth) {
         Object.assign(this.labels, {
-          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}.middlewares`]: 'runtipi',
+          [`traefik.http.routers.${this.params.appId}-${this.params.storeId}.middlewares`]: 'runtipi',
         });
       }
     }
@@ -47,19 +47,19 @@ export class TraefikLabelsBuilder {
     if (this.params.exposedLocal) {
       Object.assign(this.labels, {
         'traefik.enable': true,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local-insecure.rule`]: `Host(\`${this.params.appId}-${this.params.storeId}.\${LOCAL_DOMAIN}\`)`,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local-insecure.entrypoints`]: 'web',
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local-insecure.service`]: `${this.params.appId}_${this.params.storeId}`,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local-insecure.middlewares`]: `${this.params.appId}_${this.params.storeId}-web-redirect`,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.rule`]: `Host(\`${this.params.appId}-${this.params.storeId}.\${LOCAL_DOMAIN}\`)`,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.entrypoints`]: 'websecure',
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.service`]: `${this.params.appId}_${this.params.storeId}`,
-        [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.tls`]: true,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.rule`]: `Host(\`${this.params.appId}-${this.params.storeId}.\${LOCAL_DOMAIN}\`)`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.entrypoints`]: 'web',
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.service`]: `${this.params.appId}-${this.params.storeId}`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local-insecure.middlewares`]: `${this.params.appId}-${this.params.storeId}-web-redirect`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.rule`]: `Host(\`${this.params.appId}-${this.params.storeId}.\${LOCAL_DOMAIN}\`)`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.entrypoints`]: 'websecure',
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.service`]: `${this.params.appId}-${this.params.storeId}`,
+        [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.tls`]: true,
       });
 
       if (this.params.enableAuth) {
         Object.assign(this.labels, {
-          [`traefik.http.routers.${this.params.appId}_${this.params.storeId}-local.middlewares`]: 'runtipi',
+          [`traefik.http.routers.${this.params.appId}-${this.params.storeId}-local.middlewares`]: 'runtipi',
         });
       }
     }

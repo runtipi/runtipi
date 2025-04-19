@@ -181,7 +181,9 @@ export const appContextOptions = (options?: Options<AppContextData>) => {
   });
 };
 
-export const updateUserSettingsMutation = (options?: Partial<Options<UpdateUserSettingsData>>) => {
+export const updateUserSettingsMutation = (
+  options?: Partial<Options<UpdateUserSettingsData>>,
+): UseMutationOptions<unknown, DefaultError, Options<UpdateUserSettingsData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateUserSettingsData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await updateUserSettings({
@@ -195,7 +197,9 @@ export const updateUserSettingsMutation = (options?: Partial<Options<UpdateUserS
   return mutationOptions;
 };
 
-export const acknowledgeWelcomeMutation = (options?: Partial<Options<AcknowledgeWelcomeData>>) => {
+export const acknowledgeWelcomeMutation = (
+  options?: Partial<Options<AcknowledgeWelcomeData>>,
+): UseMutationOptions<unknown, DefaultError, Options<AcknowledgeWelcomeData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<AcknowledgeWelcomeData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await acknowledgeWelcome({
@@ -278,7 +282,7 @@ export const loginOptions = (options: Options<LoginData>) => {
   });
 };
 
-export const loginMutation = (options?: Partial<Options<LoginData>>) => {
+export const loginMutation = (options?: Partial<Options<LoginData>>): UseMutationOptions<LoginResponse, DefaultError, Options<LoginData>> => {
   const mutationOptions: UseMutationOptions<LoginResponse, DefaultError, Options<LoginData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await login({
@@ -309,7 +313,9 @@ export const verifyTotpOptions = (options: Options<VerifyTotpData>) => {
   });
 };
 
-export const verifyTotpMutation = (options?: Partial<Options<VerifyTotpData>>) => {
+export const verifyTotpMutation = (
+  options?: Partial<Options<VerifyTotpData>>,
+): UseMutationOptions<VerifyTotpResponse, DefaultError, Options<VerifyTotpData>> => {
   const mutationOptions: UseMutationOptions<VerifyTotpResponse, DefaultError, Options<VerifyTotpData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await verifyTotp({
@@ -340,7 +346,9 @@ export const registerOptions = (options: Options<RegisterData>) => {
   });
 };
 
-export const registerMutation = (options?: Partial<Options<RegisterData>>) => {
+export const registerMutation = (
+  options?: Partial<Options<RegisterData>>,
+): UseMutationOptions<RegisterResponse, DefaultError, Options<RegisterData>> => {
   const mutationOptions: UseMutationOptions<RegisterResponse, DefaultError, Options<RegisterData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await register({
@@ -371,7 +379,7 @@ export const logoutOptions = (options?: Options<LogoutData>) => {
   });
 };
 
-export const logoutMutation = (options?: Partial<Options<LogoutData>>) => {
+export const logoutMutation = (options?: Partial<Options<LogoutData>>): UseMutationOptions<unknown, DefaultError, Options<LogoutData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<LogoutData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await logout({
@@ -385,7 +393,9 @@ export const logoutMutation = (options?: Partial<Options<LogoutData>>) => {
   return mutationOptions;
 };
 
-export const changeUsernameMutation = (options?: Partial<Options<ChangeUsernameData>>) => {
+export const changeUsernameMutation = (
+  options?: Partial<Options<ChangeUsernameData>>,
+): UseMutationOptions<unknown, DefaultError, Options<ChangeUsernameData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<ChangeUsernameData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await changeUsername({
@@ -399,7 +409,9 @@ export const changeUsernameMutation = (options?: Partial<Options<ChangeUsernameD
   return mutationOptions;
 };
 
-export const changePasswordMutation = (options?: Partial<Options<ChangePasswordData>>) => {
+export const changePasswordMutation = (
+  options?: Partial<Options<ChangePasswordData>>,
+): UseMutationOptions<unknown, DefaultError, Options<ChangePasswordData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<ChangePasswordData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await changePassword({
@@ -413,7 +425,9 @@ export const changePasswordMutation = (options?: Partial<Options<ChangePasswordD
   return mutationOptions;
 };
 
-export const getTotpUriMutation = (options?: Partial<Options<GetTotpUriData>>) => {
+export const getTotpUriMutation = (
+  options?: Partial<Options<GetTotpUriData>>,
+): UseMutationOptions<GetTotpUriResponse, DefaultError, Options<GetTotpUriData>> => {
   const mutationOptions: UseMutationOptions<GetTotpUriResponse, DefaultError, Options<GetTotpUriData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await getTotpUri({
@@ -427,7 +441,7 @@ export const getTotpUriMutation = (options?: Partial<Options<GetTotpUriData>>) =
   return mutationOptions;
 };
 
-export const setupTotpMutation = (options?: Partial<Options<SetupTotpData>>) => {
+export const setupTotpMutation = (options?: Partial<Options<SetupTotpData>>): UseMutationOptions<unknown, DefaultError, Options<SetupTotpData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SetupTotpData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await setupTotp({
@@ -441,7 +455,9 @@ export const setupTotpMutation = (options?: Partial<Options<SetupTotpData>>) => 
   return mutationOptions;
 };
 
-export const disableTotpMutation = (options?: Partial<Options<DisableTotpData>>) => {
+export const disableTotpMutation = (
+  options?: Partial<Options<DisableTotpData>>,
+): UseMutationOptions<unknown, DefaultError, Options<DisableTotpData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DisableTotpData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await disableTotp({
@@ -455,7 +471,9 @@ export const disableTotpMutation = (options?: Partial<Options<DisableTotpData>>)
   return mutationOptions;
 };
 
-export const cancelResetPasswordMutation = (options?: Partial<Options<CancelResetPasswordData>>) => {
+export const cancelResetPasswordMutation = (
+  options?: Partial<Options<CancelResetPasswordData>>,
+): UseMutationOptions<unknown, DefaultError, Options<CancelResetPasswordData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<CancelResetPasswordData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await cancelResetPassword({
@@ -504,7 +522,9 @@ export const resetPasswordOptions = (options: Options<ResetPasswordData>) => {
   });
 };
 
-export const resetPasswordMutation = (options?: Partial<Options<ResetPasswordData>>) => {
+export const resetPasswordMutation = (
+  options?: Partial<Options<ResetPasswordData>>,
+): UseMutationOptions<ResetPasswordResponse, DefaultError, Options<ResetPasswordData>> => {
   const mutationOptions: UseMutationOptions<ResetPasswordResponse, DefaultError, Options<ResetPasswordData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await resetPassword({
@@ -703,7 +723,9 @@ export const pullAppStoreOptions = (options?: Options<PullAppStoreData>) => {
   });
 };
 
-export const pullAppStoreMutation = (options?: Partial<Options<PullAppStoreData>>) => {
+export const pullAppStoreMutation = (
+  options?: Partial<Options<PullAppStoreData>>,
+): UseMutationOptions<PullAppStoreResponse, DefaultError, Options<PullAppStoreData>> => {
   const mutationOptions: UseMutationOptions<PullAppStoreResponse, DefaultError, Options<PullAppStoreData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await pullAppStore({
@@ -734,7 +756,9 @@ export const createAppStoreOptions = (options: Options<CreateAppStoreData>) => {
   });
 };
 
-export const createAppStoreMutation = (options?: Partial<Options<CreateAppStoreData>>) => {
+export const createAppStoreMutation = (
+  options?: Partial<Options<CreateAppStoreData>>,
+): UseMutationOptions<unknown, DefaultError, Options<CreateAppStoreData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<CreateAppStoreData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await createAppStore({
@@ -782,7 +806,9 @@ export const getEnabledAppStoresOptions = (options?: Options<GetEnabledAppStores
   });
 };
 
-export const deleteAppStoreMutation = (options?: Partial<Options<DeleteAppStoreData>>) => {
+export const deleteAppStoreMutation = (
+  options?: Partial<Options<DeleteAppStoreData>>,
+): UseMutationOptions<unknown, DefaultError, Options<DeleteAppStoreData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteAppStoreData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await deleteAppStore({
@@ -796,7 +822,9 @@ export const deleteAppStoreMutation = (options?: Partial<Options<DeleteAppStoreD
   return mutationOptions;
 };
 
-export const updateAppStoreMutation = (options?: Partial<Options<UpdateAppStoreData>>) => {
+export const updateAppStoreMutation = (
+  options?: Partial<Options<UpdateAppStoreData>>,
+): UseMutationOptions<unknown, DefaultError, Options<UpdateAppStoreData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAppStoreData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await updateAppStore({
@@ -827,7 +855,9 @@ export const installAppOptions = (options: Options<InstallAppData>) => {
   });
 };
 
-export const installAppMutation = (options?: Partial<Options<InstallAppData>>) => {
+export const installAppMutation = (
+  options?: Partial<Options<InstallAppData>>,
+): UseMutationOptions<unknown, DefaultError, Options<InstallAppData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<InstallAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await installApp({
@@ -858,7 +888,7 @@ export const startAppOptions = (options: Options<StartAppData>) => {
   });
 };
 
-export const startAppMutation = (options?: Partial<Options<StartAppData>>) => {
+export const startAppMutation = (options?: Partial<Options<StartAppData>>): UseMutationOptions<unknown, DefaultError, Options<StartAppData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StartAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await startApp({
@@ -889,7 +919,7 @@ export const stopAppOptions = (options: Options<StopAppData>) => {
   });
 };
 
-export const stopAppMutation = (options?: Partial<Options<StopAppData>>) => {
+export const stopAppMutation = (options?: Partial<Options<StopAppData>>): UseMutationOptions<unknown, DefaultError, Options<StopAppData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StopAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await stopApp({
@@ -920,7 +950,9 @@ export const restartAppOptions = (options: Options<RestartAppData>) => {
   });
 };
 
-export const restartAppMutation = (options?: Partial<Options<RestartAppData>>) => {
+export const restartAppMutation = (
+  options?: Partial<Options<RestartAppData>>,
+): UseMutationOptions<unknown, DefaultError, Options<RestartAppData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<RestartAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await restartApp({
@@ -934,7 +966,9 @@ export const restartAppMutation = (options?: Partial<Options<RestartAppData>>) =
   return mutationOptions;
 };
 
-export const uninstallAppMutation = (options?: Partial<Options<UninstallAppData>>) => {
+export const uninstallAppMutation = (
+  options?: Partial<Options<UninstallAppData>>,
+): UseMutationOptions<unknown, DefaultError, Options<UninstallAppData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UninstallAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await uninstallApp({
@@ -965,7 +999,7 @@ export const resetAppOptions = (options: Options<ResetAppData>) => {
   });
 };
 
-export const resetAppMutation = (options?: Partial<Options<ResetAppData>>) => {
+export const resetAppMutation = (options?: Partial<Options<ResetAppData>>): UseMutationOptions<unknown, DefaultError, Options<ResetAppData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<ResetAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await resetApp({
@@ -979,7 +1013,7 @@ export const resetAppMutation = (options?: Partial<Options<ResetAppData>>) => {
   return mutationOptions;
 };
 
-export const updateAppMutation = (options?: Partial<Options<UpdateAppData>>) => {
+export const updateAppMutation = (options?: Partial<Options<UpdateAppData>>): UseMutationOptions<unknown, DefaultError, Options<UpdateAppData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await updateApp({
@@ -993,7 +1027,9 @@ export const updateAppMutation = (options?: Partial<Options<UpdateAppData>>) => 
   return mutationOptions;
 };
 
-export const updateAppConfigMutation = (options?: Partial<Options<UpdateAppConfigData>>) => {
+export const updateAppConfigMutation = (
+  options?: Partial<Options<UpdateAppConfigData>>,
+): UseMutationOptions<unknown, DefaultError, Options<UpdateAppConfigData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAppConfigData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await updateAppConfig({
@@ -1007,7 +1043,9 @@ export const updateAppConfigMutation = (options?: Partial<Options<UpdateAppConfi
   return mutationOptions;
 };
 
-export const updateAllAppsMutation = (options?: Partial<Options<UpdateAllAppsData>>) => {
+export const updateAllAppsMutation = (
+  options?: Partial<Options<UpdateAllAppsData>>,
+): UseMutationOptions<unknown, DefaultError, Options<UpdateAllAppsData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAllAppsData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await updateAllApps({
@@ -1038,7 +1076,7 @@ export const backupAppOptions = (options: Options<BackupAppData>) => {
   });
 };
 
-export const backupAppMutation = (options?: Partial<Options<BackupAppData>>) => {
+export const backupAppMutation = (options?: Partial<Options<BackupAppData>>): UseMutationOptions<unknown, DefaultError, Options<BackupAppData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<BackupAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await backupApp({
@@ -1069,7 +1107,9 @@ export const restoreAppBackupOptions = (options: Options<RestoreAppBackupData>) 
   });
 };
 
-export const restoreAppBackupMutation = (options?: Partial<Options<RestoreAppBackupData>>) => {
+export const restoreAppBackupMutation = (
+  options?: Partial<Options<RestoreAppBackupData>>,
+): UseMutationOptions<unknown, DefaultError, Options<RestoreAppBackupData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<RestoreAppBackupData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await restoreAppBackup({
@@ -1083,7 +1123,9 @@ export const restoreAppBackupMutation = (options?: Partial<Options<RestoreAppBac
   return mutationOptions;
 };
 
-export const deleteAppBackupMutation = (options?: Partial<Options<DeleteAppBackupData>>) => {
+export const deleteAppBackupMutation = (
+  options?: Partial<Options<DeleteAppBackupData>>,
+): UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await deleteAppBackup({
@@ -1236,7 +1278,9 @@ export const createLinkOptions = (options: Options<CreateLinkData>) => {
   });
 };
 
-export const createLinkMutation = (options?: Partial<Options<CreateLinkData>>) => {
+export const createLinkMutation = (
+  options?: Partial<Options<CreateLinkData>>,
+): UseMutationOptions<unknown, DefaultError, Options<CreateLinkData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<CreateLinkData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await createLink({
@@ -1250,7 +1294,9 @@ export const createLinkMutation = (options?: Partial<Options<CreateLinkData>>) =
   return mutationOptions;
 };
 
-export const deleteLinkMutation = (options?: Partial<Options<DeleteLinkData>>) => {
+export const deleteLinkMutation = (
+  options?: Partial<Options<DeleteLinkData>>,
+): UseMutationOptions<unknown, DefaultError, Options<DeleteLinkData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteLinkData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await deleteLink({
@@ -1264,7 +1310,7 @@ export const deleteLinkMutation = (options?: Partial<Options<DeleteLinkData>>) =
   return mutationOptions;
 };
 
-export const editLinkMutation = (options?: Partial<Options<EditLinkData>>) => {
+export const editLinkMutation = (options?: Partial<Options<EditLinkData>>): UseMutationOptions<unknown, DefaultError, Options<EditLinkData>> => {
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<EditLinkData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await editLink({

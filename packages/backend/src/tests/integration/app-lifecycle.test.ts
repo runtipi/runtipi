@@ -17,7 +17,6 @@ import { EnvUtils } from '@/modules/env/env.utils';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '@/modules/queue/entities/app-events';
 import { QueueFactory } from '@/modules/queue/queue.factory';
-import type { AppUrn } from '@/types/app/app.types';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -37,7 +36,7 @@ describe('App lifecycle', () => {
   const configurationService = mock<ConfigurationService>();
   let databaseService = mock<DatabaseService>();
   const loggerService = mock<LoggerService>();
-  configurationService.get.calledWith('queue').mockRejectedValue({
+  configurationService.get.calledWith('queue').mockReturnValue({
     host: 'localhost',
     password: 'guest',
     username: 'guest',
@@ -120,13 +119,12 @@ describe('App lifecycle', () => {
     it('should successfully install app and create expected directory structure', async () => {
       // arrange
       const appInfo = await createAppInStore('test', { id: 'test' });
-      const appUrn = `${appInfo.id}:test` as AppUrn;
 
       // act
-      await appLifecycleService.installApp({ appUrn, form: {} });
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
 
       await waitFor(async () => {
-        const app = await appsRepository.getAppByUrn(appUrn);
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
         expect(app?.status).toBe('running');
       });
 
@@ -139,15 +137,14 @@ describe('App lifecycle', () => {
     it('should not delete an existing app-data folder even if the app is reinstalled', async () => {
       // arrange
       const appInfo = await createAppInStore('test', { id: 'test2' });
-      const appUrn = `${appInfo.id}:test` as AppUrn;
 
       await fs.promises.mkdir(`${APP_DATA_DIR}/test/test2/data`, { recursive: true });
       await fs.promises.writeFile(`${APP_DATA_DIR}/test/test2/data/test.txt`, 'test');
 
-      await appLifecycleService.installApp({ appUrn, form: {} });
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
 
       await waitFor(async () => {
-        const app = await appsRepository.getAppByUrn(appUrn);
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
         expect(app?.status).toBe('running');
       });
 

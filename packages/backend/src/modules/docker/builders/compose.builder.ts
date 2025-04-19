@@ -58,7 +58,6 @@ export class DockerComposeBuilder {
     service
       .setImage(params.image)
       .setName(params.name)
-      .setContainerName(`${appName}-${params.name}-${appStoreId}`)
       .setEnvironment(params.environment)
       .setCommand(params.command)
       .setHealthCheck(params.healthCheck)
@@ -102,7 +101,7 @@ export class DockerComposeBuilder {
         });
       }
 
-      if (params.internalPort) {
+      if (params.internalPort && params.networkMode === undefined) {
         const traefikLabels = new TraefikLabelsBuilder({
           storeId: appStoreId,
           appId: appName,
@@ -118,7 +117,7 @@ export class DockerComposeBuilder {
       }
     }
 
-    service.setLabels({ 'runtipi.managed': true, ...params.extraLabels }).interpolateVariables(params.name);
+    service.setLabels({ 'runtipi.managed': true, ...params.extraLabels }).interpolateVariables(`${appName}-${appStoreId}`);
 
     return service.build();
   };

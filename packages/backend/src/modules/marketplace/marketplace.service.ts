@@ -45,10 +45,10 @@ export class MarketplaceService {
   async initialize() {
     this.stores.clear();
 
-    const stores = await this.appStoreService.getEnabledAppStores();
+    const stores = await this.appStoreService.getAllAppStores();
 
     for (const config of stores) {
-      const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config.slug);
+      const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config);
       this.stores.set(config.slug, store);
     }
 
@@ -78,8 +78,10 @@ export class MarketplaceService {
   async getAvailableAppUrns(): Promise<AppUrn[]> {
     const allUrns: AppUrn[] = [];
     for (const store of this.stores.values()) {
-      const urns = await store.getAvailableAppUrns();
-      allUrns.push(...urns);
+      if (store.storeConfig.enabled) {
+        const urns = await store.getAvailableAppUrns();
+        allUrns.push(...urns);
+      }
     }
     return allUrns.sort((a, b) => a.localeCompare(b));
   }
