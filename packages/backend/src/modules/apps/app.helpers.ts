@@ -47,7 +47,9 @@ export class AppHelpers {
     if (config.port) {
       envMap.set('APP_PORT', form.port ? String(form.port) : String(config.port));
     }
-    envMap.set('APP_ID', appUrn);
+    envMap.set('APP_URN', appUrn);
+    envMap.set('APP_ID', appName);
+    envMap.set('APP_STORE_ID', appStoreId);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
     envMap.set('APP_DATA_DIR', path.join(`${userSettings.appDataPath}/app-data`, appStoreId, appName));
 
@@ -91,8 +93,8 @@ export class AppHelpers {
       envMap.set('APP_HOST', form.domain);
       envMap.set('APP_PROTOCOL', 'https');
     } else if (form.exposedLocal && !form.openPort) {
-      envMap.set('APP_DOMAIN', `${config.id}.${envMap.get('LOCAL_DOMAIN')}`);
-      envMap.set('APP_HOST', `${config.id}.${envMap.get('LOCAL_DOMAIN')}`);
+      envMap.set('APP_DOMAIN', `${appName}-${appStoreId}.${envMap.get('LOCAL_DOMAIN')}`);
+      envMap.set('APP_HOST', `${appName}-${appStoreId}.${envMap.get('LOCAL_DOMAIN')}`);
       envMap.set('APP_PROTOCOL', 'https');
     } else {
       if (config.port) {
