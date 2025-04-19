@@ -48,7 +48,8 @@ export class AppHelpers {
       envMap.set('APP_PORT', form.port ? String(form.port) : String(config.port));
     }
     envMap.set('APP_URN', appUrn);
-    envMap.set('APP_ID', appName);
+    envMap.set('APP_ID', `${appName}-${appStoreId}`);
+    envMap.set('APP_NAME', appName);
     envMap.set('APP_STORE_ID', appStoreId);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
     envMap.set('APP_DATA_DIR', path.join(`${userSettings.appDataPath}/app-data`, appStoreId, appName));
