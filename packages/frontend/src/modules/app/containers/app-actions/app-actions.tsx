@@ -166,7 +166,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
       break;
     case 'running':
       buttons.push(StopButton, restartButton, SettingsButton);
-      if (!info.no_gui) {
+      if (!info.no_gui && (app?.exposedLocal || app?.openPort || app?.exposed)) {
         buttons.push(OpenButton);
       }
       if (updateAvailable) {
