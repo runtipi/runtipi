@@ -8,6 +8,8 @@ import { type SettingsFormValues, UserSettingsForm } from '../components/user-se
 import { useState } from 'react';
 import i18next from 'i18next';
 import type { Locale } from '@/lib/i18n/locales';
+import { useUIStore } from '@/stores/ui-store';
+import type { BaseThemes } from '../components/base-theme-selector/base-theme-selector';
 
 type Props = {
   initialValues?: SettingsFormValues;
@@ -15,6 +17,7 @@ type Props = {
 
 export const UserSettingsContainer = ({ initialValues }: Props) => {
   const currentLocale = i18next.language;
+  const currentBaseTheme = useUIStore((state) => state.themeBase);
   const { t } = useTranslation();
   const { refreshAppContext } = useAppContext();
   const [requireRestart, setRequireRestart] = useState(initialValues?.advancedSettings);
@@ -44,6 +47,7 @@ export const UserSettingsContainer = ({ initialValues }: Props) => {
       <UserSettingsForm
         initialValues={initialValues}
         currentLocale={currentLocale as Locale}
+        currentBaseTheme={currentBaseTheme as BaseThemes}
         loading={updateSettings.isPending}
         onSubmit={onSubmit}
       />

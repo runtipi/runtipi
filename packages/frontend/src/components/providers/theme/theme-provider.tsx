@@ -12,9 +12,20 @@ export const ThemeProvider = (props: Props) => {
   const { children, initialTheme } = props;
 
   const theme = useUIStore((state) => state.theme);
+  const themeBase = useUIStore((state) => state.themeBase);
+  const setThemeBase = useUIStore((state) => state.setThemeBase);
   const setDarkMode = useUIStore((state) => state.setDarkMode);
 
   useEffect(() => {
+    if (themeBase) {
+      Cookies.set('themeBase', themeBase, { path: '/', expires: 365 });
+      document.body.dataset.bsThemeBase = themeBase;
+    } else if (!Cookies.get('themeBase')) {
+      setThemeBase('gray');
+      Cookies.set('themeBase', 'gray', { path: '/', expires: 365 });
+      document.body.dataset.bsThemeBase = 'gray';
+    }
+
     if (theme) {
       Cookies.set('theme', theme || initialTheme || 'light', { path: '/', expires: 365 });
       document.body.dataset.bsTheme = theme;
@@ -28,7 +39,9 @@ export const ThemeProvider = (props: Props) => {
 
     const cookieTheme = Cookies.get('theme');
     setDarkMode(cookieTheme === 'dark');
-  }, [initialTheme, setDarkMode, theme]);
+    const cookieThemeBase = Cookies.get('themeBase');
+    setThemeBase(cookieThemeBase || 'gray');
+  }, [initialTheme, setDarkMode, theme, themeBase, setThemeBase]);
 
   return children;
 };

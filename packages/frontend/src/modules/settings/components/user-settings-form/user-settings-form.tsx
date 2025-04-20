@@ -18,6 +18,7 @@ import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-setti
 import './user-settings-form.css';
 import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
+import { BaseThemeSelector, type BaseThemes } from '../base-theme-selector/base-theme-selector';
 
 const TimeZoneSelector = lazy(() =>
   import('@/components/timezone-selector/timezone-selector').then((module) => ({ default: module.TimeZoneSelector })),
@@ -73,6 +74,7 @@ export type SettingsFormValues = {
 
 interface IProps {
   currentLocale?: Locale;
+  currentBaseTheme?: BaseThemes;
   onSubmit: (values: SettingsFormValues) => void;
   initialValues?: Partial<SettingsFormValues>;
   loading?: boolean;
@@ -80,7 +82,7 @@ interface IProps {
 }
 
 export const UserSettingsForm = (props: IProps) => {
-  const { onSubmit, initialValues, loading, currentLocale = 'en-US', submitErrors } = props;
+  const { onSubmit, initialValues, loading, currentLocale = 'en-US', submitErrors, currentBaseTheme = 'gray' } = props;
   const { t } = useTranslation();
   const advancedSettingsDisclosure = useDisclosure();
 
@@ -151,6 +153,7 @@ export const UserSettingsForm = (props: IProps) => {
         <h2 className="text-2xl font-bold mb-0">{t('SETTINGS_GENERAL_USER_SETTINGS')}</h2>
       </div>
       <LanguageSelector showLabel locale={currentLocale} />
+      <BaseThemeSelector baseTheme={currentBaseTheme} />
       <form className="flex flex-col mt-2" onSubmit={handleSubmit(validate)}>
         <div className="d-flex mb-2">
           <IconAdjustmentsAlt className="me-2" />
