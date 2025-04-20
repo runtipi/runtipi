@@ -109,8 +109,14 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_ARCHITECTURE_NOT_SUPPORTED', { id: appUrn, arch: architecture });
     }
 
-    if (!appInfo.exposable && exposed) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appUrn });
+    if (!appInfo.exposable) {
+      if (exposed || exposedLocal || enableAuth) {
+        this.logger.warn(`App ${appUrn} is not exposable, resetting proxy settings`);
+      }
+      parsedForm.exposed = false;
+      parsedForm.exposedLocal = false;
+      parsedForm.enableAuth = false;
+      parsedForm.domain = '';
     }
 
     if (appInfo.force_expose && !exposed) {
@@ -285,7 +291,7 @@ export class AppLifecycleService {
 
     const parsedForm = appFormSchema.parse(form);
 
-    const { exposed, domain } = parsedForm;
+    const { exposed, domain, exposedLocal, enableAuth } = parsedForm;
 
     if (exposed && !domain) {
       throw new TranslatableError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
@@ -307,8 +313,14 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
     }
 
-    if (!appInfo.exposable && exposed) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_EXPOSABLE', { id: appUrn });
+    if (!appInfo.exposable) {
+      if (exposed || exposedLocal || enableAuth) {
+        this.logger.warn(`App ${appUrn} is not exposable, resetting proxy settings`);
+      }
+      parsedForm.exposed = false;
+      parsedForm.exposedLocal = false;
+      parsedForm.enableAuth = false;
+      parsedForm.domain = '';
     }
 
     if (appInfo.force_expose && !exposed) {
