@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Отменить запрос на смену пароля",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Чтобы начать, запустите команду на вашем сервере и обновите эту страницу. Если вы уже сделали это, возможно, запрос на сброс пароля истёк. В этом случае повторите попытку",
   "AUTH_RESET_PASSWORD_SUBMIT": "Сбросить пароль",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Ваш пароль был сброшен. Теперь вы можете войти с новым паролем. Ваш адрес электронной почты {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Пароль сброшен",
   "AUTH_RESET_PASSWORD_TITLE": "Сбросить ваш пароль",
   "AUTH_TOTP_INSTRUCTIONS": "Введите код из приложения для аутентификации",
