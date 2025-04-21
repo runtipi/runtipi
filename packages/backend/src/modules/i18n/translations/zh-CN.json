@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "取消密码更改请求",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "请在您的服务器上运行此命令，然后刷新此页面。如果您之前已经这样做过，密码重置请求可能已过期。在这种情况下，请重试",
   "AUTH_RESET_PASSWORD_SUBMIT": "重置密码",
-  "AUTH_RESET_PASSWORD_SUCCESS": "您的密码已重置。您现在可以使用您的新密码登录。您的电子邮件 {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "密码重置",
   "AUTH_RESET_PASSWORD_TITLE": "重置您的密码",
   "AUTH_TOTP_INSTRUCTIONS": "请输入您的双重验证应用中显示的验证码",
