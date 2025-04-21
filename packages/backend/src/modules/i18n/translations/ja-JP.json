@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "パスワード変更リクエストをキャンセルする",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "To get started, run this command on your server and then refresh this page. If you have previously done so, the password reset request may have expired. In that case please retry",
   "AUTH_RESET_PASSWORD_SUBMIT": "パスワードをリセット",
-  "AUTH_RESET_PASSWORD_SUCCESS": "パスワードがリセットされました。新しいパスワードでログインできるようになりました。そして、メールアドレス {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "パスワードをリセットする",
   "AUTH_RESET_PASSWORD_TITLE": "パスワードをリセット",
   "AUTH_TOTP_INSTRUCTIONS": "認証アプリからコードを入力してください",
