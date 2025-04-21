@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Cancel·la la sol·licitud de canvi de contrasenya",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "To get started, run this command on your server and then refresh this page. If you have previously done so, the password reset request may have expired. In that case please retry",
   "AUTH_RESET_PASSWORD_SUBMIT": "Restableix la contrasenya",
-  "AUTH_RESET_PASSWORD_SUCCESS": "La teva contrasenya s'ha restablert. Ara pots iniciar sessió amb la nova contrasenya. I el correu electrònic {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "La contrasenya s'ha restablert",
   "AUTH_RESET_PASSWORD_TITLE": "Restableix la contrasenya",
   "AUTH_TOTP_INSTRUCTIONS": "Introduïu el codi de la vostra aplicació d'autenticació",
