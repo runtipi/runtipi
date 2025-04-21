@@ -23,23 +23,19 @@ export class AppLifecycleCommand {
       await this.marketplaceService.copyAppFromRepoToInstalled(appUrn);
     }
 
-    const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
+    try {
+      const { services } = dynamicComposeSchema.parse(composeJson.content);
+      const dockerComposeBuilder = new DockerComposeBuilder();
+      const composeFile = dockerComposeBuilder.getDockerCompose(services, form, appUrn);
 
-    if (appInfo?.dynamic_config) {
-      try {
-        const { services } = dynamicComposeSchema.parse(composeJson.content);
-        const dockerComposeBuilder = new DockerComposeBuilder();
-        const composeFile = dockerComposeBuilder.getDockerCompose(services, form, appUrn);
-
-        await this.appFilesManager.writeDockerComposeYml(appUrn, composeFile);
-      } catch (err) {
-        this.logger.error(`Error generating docker-compose.yml file for app ${appUrn}`);
-        this.logger.error(err);
-        Sentry.captureException(err, {
-          tags: { appId: appUrn, event: 'ensure_app_dir' },
-        });
-        throw new Error(`Error generating docker-compose.yml file for app ${appUrn}`);
-      }
+      await this.appFilesManager.writeDockerComposeYml(appUrn, composeFile);
+    } catch (err) {
+      this.logger.error(`Error generating docker-compose.yml file for app ${appUrn}`);
+      this.logger.error(err);
+      Sentry.captureException(err, {
+        tags: { appId: appUrn, event: 'ensure_app_dir' },
+      });
+      throw new Error(`Error generating docker-compose.yml file for app ${appUrn}. Falling back to static yml file.`);
     }
 
     // Set permissions
