@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Ακύρωση αιτήματος αλλαγής κωδικού πρόσβασης",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Για να ξεκινήσετε, εκτελέστε αυτή την εντολή στον διακομιστή σας και μετά ανανεώστε αυτή τη σελίδα. Αν το έχετε κάνει ήδη, η αίτηση επαναφοράς κωδικού πρόσβασης μπορεί να έχει λήξει. Σε αυτή την περίπτωση, παρακαλούμε δοκιμάστε ξανά",
   "AUTH_RESET_PASSWORD_SUBMIT": "Επαναφορά κωδικού πρόσβασης",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Ο κωδικός σας έχει επαναφερθεί. Μπορείτε τώρα να συνδεθείτε με τον καινούριο κωδικό πρόσβασης και τη διεύθυνση ηλεκτρονικού ταχυδρομείου {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Επαναφορά κωδικού πρόσβασης",
   "AUTH_RESET_PASSWORD_TITLE": "Επαναφέρετε τον κωδικό πρόσβασής σας",
   "AUTH_TOTP_INSTRUCTIONS": "Πληκτρολογήστε τον κωδικό από την εφαρμογή ταυτοποίησης",
