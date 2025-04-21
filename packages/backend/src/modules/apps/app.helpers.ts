@@ -68,7 +68,8 @@ export class AppHelpers {
       }
     }
 
-    config.form_fields.map(async (field) => {
+    // Process form fields
+    for (const field of config.form_fields) {
       const formValue = form[field.env_variable];
       const envVar = field.env_variable;
 
@@ -78,15 +79,14 @@ export class AppHelpers {
         if (existingAppEnvMap.has(envVar)) {
           envMap.set(envVar, existingAppEnvMap.get(envVar) as string);
         } else {
-          const length = field.min || 32;
+          const length = field.min ?? 32;
           const randomString = this.envUtils.createRandomString(field.env_variable, length, field.encoding);
-
           envMap.set(envVar, randomString);
         }
       } else if (field.required) {
         throw new Error(`Variable ${field.label || field.env_variable} is required`);
       }
-    });
+    }
 
     if (form.exposed && form.domain && typeof form.domain === 'string') {
       envMap.set('APP_EXPOSED', 'true');
