@@ -98,25 +98,25 @@ if [ -d "$repo_dir" ]; then
   for app_dir in "$repo_dir/apps/"*; do
     if [ -d "$app_dir" ]; then
       app_name=$(basename "$app_dir")
-      echo -ne "\033[KChecking ${Green}$app_name${ColorOff}\r"
+      echo -ne "\033[KChecking repository app ${Green}$app_name${ColorOff}\r"
 
       # Check config.json exists and has dynamic-config property
       config_file="$app_dir/config.json"
       if [ ! -f "$config_file" ]; then
-        echo -e "\n${Red}Error: $app_name is not a valid app, skipping...${ColorOff}"
+        echo -e "\n${Red}Error: $app_name is not a valid app in repository, skipping...${ColorOff}"
         continue
       fi
 
       # Check if dynamic-config is set to true using jq
       if ! jq -e '.dynamic_config == true' "$config_file" >/dev/null 2>&1; then
-        echo -e "\n${Red}Error: $app_name does not have dynamic_config set to true in config.json. Make sure you have correctly migrated and tested your custom apps with the dyamic config.${ColorOff}"
+        echo -e "\n${Red}Error: $app_name in repository does not have dynamic_config set to true in config.json. Make sure you have correctly migrated and tested your custom apps with the dynamic config.${ColorOff}"
         exit 1
       fi
 
       # Check docker-compose.json exists
       compose_file="$app_dir/docker-compose.json"
       if [ ! -f "$compose_file" ]; then
-        echo -e "\n${Red}Error: $app_name is missing docker-compose.json file. Make sure you have correctly migrated and tested your custom apps with the dyamic config.${ColorOff}"
+        echo -e "\n${Red}Error: $app_name in repository is missing docker-compose.json file. Make sure you have correctly migrated and tested your custom apps with the dynamic config.${ColorOff}"
         exit 1
       fi
     fi
@@ -125,6 +125,35 @@ else
   echo -e "\n${Red}Error: Repository directory $repo_dir not found${ColorOff}"
   exit 1
 fi
+
+# Validate installed apps configurations
+echo -e "\nValidating installed apps configurations..."
+for app_dir in apps/*; do
+  if [ -d "$app_dir" ]; then
+    app_name=$(basename "$app_dir")
+    echo -ne "\033[KChecking installed app ${Green}$app_name${ColorOff}\r"
+
+    # Check config.json exists and has dynamic-config property
+    config_file="$app_dir/config.json"
+    if [ ! -f "$config_file" ]; then
+      echo -e "\n${Red}Error: $app_name is not a valid installed app, skipping...${ColorOff}"
+      continue
+    fi
+
+    # Check if dynamic-config is set to true using jq
+    if ! jq -e '.dynamic_config == true' "$config_file" >/dev/null 2>&1; then
+      echo -e "\n${Red}Error: installed app $app_name does not have dynamic_config set to true in config.json. Make sure you have correctly migrated and tested your custom apps with the dynamic config.${ColorOff}"
+      exit 1
+    fi
+
+    # Check docker-compose.json exists
+    compose_file="$app_dir/docker-compose.json"
+    if [ ! -f "$compose_file" ]; then
+      echo -e "\n${Red}Error: installed app $app_name is missing docker-compose.json file. Make sure you have correctly migrated and tested your custom apps with the dynamic config.${ColorOff}"
+      exit 1
+    fi
+  fi
+done
 
 echo -e "\n${Green}All app configurations validated successfully${ColorOff}"
 read -p "Press enter to continue with the migration..." -r
