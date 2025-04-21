@@ -53,14 +53,7 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) =>
         <Input
           {...register('password')}
           name="password"
-          label={
-            <label htmlFor=".password-input" className="form-label">
-              {t('AUTH_FORM_PASSWORD')}
-              <span className="form-label-description">
-                <Link to="/reset-password">{t('AUTH_FORM_FORGOT')}</Link>
-              </span>
-            </label>
-          }
+          label={t('AUTH_FORM_PASSWORD')}
           error={errors.password?.message}
           disabled={loading}
           type="password"
@@ -71,6 +64,9 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) =>
           <Button disabled={isDisabled} loading={loading} type="submit" intent="primary" className="w-100">
             {t('AUTH_LOGIN_SUBMIT')}
           </Button>
+        </div>
+        <div className="form-text text-center">
+          <Link to="/reset-password">{t('AUTH_FORM_FORGOT')}</Link>
         </div>
       </form>
     </>
