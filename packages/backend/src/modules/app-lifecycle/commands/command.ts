@@ -18,9 +18,8 @@ export class AppLifecycleCommand {
 
   protected async ensureAppDir(appUrn: AppUrn, form: AppEventFormInput): Promise<void> {
     const composeJson = await this.appFilesManager.getDockerComposeJson(appUrn);
-    const composeYml = await this.appFilesManager.getDockerComposeYaml(appUrn);
 
-    if (!composeJson.content && !composeYml.content) {
+    if (!composeJson.content) {
       await this.marketplaceService.copyAppFromRepoToInstalled(appUrn);
     }
 
