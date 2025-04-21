@@ -116,7 +116,7 @@ export class AppLifecycleService {
       parsedForm.exposed = false;
       parsedForm.exposedLocal = false;
       parsedForm.enableAuth = false;
-      parsedForm.domain = '';
+      parsedForm.domain = undefined;
     }
 
     if (appInfo.force_expose && !exposed) {
@@ -320,7 +320,7 @@ export class AppLifecycleService {
       parsedForm.exposed = false;
       parsedForm.exposedLocal = false;
       parsedForm.enableAuth = false;
-      parsedForm.domain = '';
+      parsedForm.domain = undefined;
     }
 
     if (appInfo.force_expose && !exposed) {
