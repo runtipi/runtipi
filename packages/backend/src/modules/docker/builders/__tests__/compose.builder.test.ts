@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { DockerComposeBuilder } from '../compose.builder';
 import type { ServiceInput } from '../schemas';
 import { ServiceBuilder } from '../service.builder';
+import yaml from 'yaml';
 
 const urn = createAppUrn('nginx', 'store-id');
 
@@ -168,6 +169,36 @@ describe('DockerComposeBuilder', () => {
     const compose = composeBuilder.getDockerCompose([service], { exposed: true, exposedLocal: true, openPort: true }, urn);
 
     expect(compose).toMatchSnapshot();
+  });
+
+  it('should add traefik labels when service is exposed and has internalPort', () => {
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      internalPort: 440,
+      isMain: true,
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], { exposed: true }, urn);
+    const yamlObject = yaml.parse(compose);
+
+    expect(yamlObject.services.service.labels).toBeDefined();
+    expect(yamlObject.services.service.labels['traefik.enable']).toBe(true);
+    expect(yamlObject.services.service.labels['traefik.http.routers.nginx-store-id.rule']).toBeDefined();
+  });
+
+  it('should not add traefik labels when service is not exposed', () => {
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      internalPort: 440,
+      isMain: true,
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], { exposed: false, exposedLocal: false }, urn);
+    const yamlObject = yaml.parse(compose);
+
+    expect(yamlObject.services.service.labels).toEqual({ 'runtipi.managed': true });
   });
 
   it('should be able to parse a compose.json file', async () => {
