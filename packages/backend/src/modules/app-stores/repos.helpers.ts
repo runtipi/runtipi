@@ -104,6 +104,8 @@ export class ReposHelpers {
    */
   public pullRepo = async (repoUrl: string, slug: string) => {
     try {
+      await this.cloneRepo(repoUrl, slug);
+
       const { dataDir } = this.configuration.get('directories');
 
       const repoPath = path.join(dataDir, 'repos', slug);
