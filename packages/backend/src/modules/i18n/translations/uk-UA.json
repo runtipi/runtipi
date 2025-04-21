@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Скасувати запит на зміну пароля",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Щоб почати, запустіть цю команду на своєму сервері, а потім оновіть цю сторінку. Якщо ви раніше це вже робили, запит на скидання пароля може бути недійсним. У цьому випадку спробуйте ще раз",
   "AUTH_RESET_PASSWORD_SUBMIT": "Скинути пароль",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Ваш пароль було скинуто. Тепер ви можете увійти за допомогою нового паролю. І ваша ел. пошта {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Скинути пароль",
   "AUTH_RESET_PASSWORD_TITLE": "Скинути пароль",
   "AUTH_TOTP_INSTRUCTIONS": "Введіть код з вашого додатка для автентифікації",
