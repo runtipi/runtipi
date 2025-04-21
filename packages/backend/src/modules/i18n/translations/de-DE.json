@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Passwortänderung abbrechen",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Um zu beginnen, führe diesen Befehl auf deinem Server aus und aktualisiere dann diese Seite. Falls du das bereits zuvor getan hast, könnte die Anforderung zum Zurücksetzen des Passworts abgelaufen sein. In diesem Fall versuche es bitte erneut",
   "AUTH_RESET_PASSWORD_SUBMIT": "Zurücksetzen",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Ihr Passwort wurde gespeichert. Sie können sich nun mit Ihrem neuen Passwort und ihrer E-Mail {{email}} anmelden",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Passwort zurückgesetzt",
   "AUTH_RESET_PASSWORD_TITLE": "Passwort zurücksetzen",
   "AUTH_TOTP_INSTRUCTIONS": "Code aus der Authenticator-App eingeben",
