@@ -93,6 +93,8 @@ if [ -z "$REPO_ID" ]; then
   exit 1
 fi
 
+apt install -y jq
+
 repo_dir="repos/$REPO_ID"
 if [ -d "$repo_dir" ]; then
   for app_dir in "$repo_dir/apps/"*; do
