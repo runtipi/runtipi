@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Cancel password change request",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "To get started, run this command on your server and then refresh this page. If you have previously done so, the password reset request may have expired. In that case please retry",
   "AUTH_RESET_PASSWORD_SUBMIT": "Reset password",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password. And your email {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Password reset",
   "AUTH_RESET_PASSWORD_TITLE": "Reset your password",
   "AUTH_TOTP_INSTRUCTIONS": "Enter the code from your authenticator app",
