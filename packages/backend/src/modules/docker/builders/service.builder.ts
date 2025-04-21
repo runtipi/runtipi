@@ -525,7 +525,6 @@ export class ServiceBuilder {
    * const service = new ServiceBuilder();
    * service.setImage('nginx:latest')
    *  .setName('nginx')
-   *  .setContainerName('nginx-migrated')
    *  .setRestartPolicy('always')
    *  .addNetwork('tipi_main_network')
    *  .build();
