@@ -99,7 +99,7 @@ describe('AppHelpers', () => {
 
       // Assert
       expect(envMap.get('APP_PORT')).toBe('8080');
-      expect(envMap.get('APP_ID')).toBe(testAppUrn);
+      expect(envMap.get('APP_ID')).toBe('test-app-test-store');
       expect(envMap.get('ROOT_FOLDER_HOST')).toBe('/opt/runtipi');
       expect(envMap.get('APP_DATA_DIR')).toBe('/opt/runtipi/app-data/test-store/test-app');
     });
@@ -191,8 +191,8 @@ describe('AppHelpers', () => {
       });
 
       // Assert
-      expect(envMap.get('APP_DOMAIN')).toBe('test-app.local.test');
-      expect(envMap.get('APP_HOST')).toBe('test-app.local.test');
+      expect(envMap.get('APP_DOMAIN')).toBe('test-app-test-store.local.test');
+      expect(envMap.get('APP_HOST')).toBe('test-app-test-store.local.test');
       expect(envMap.get('APP_PROTOCOL')).toBe('https');
     });
 
