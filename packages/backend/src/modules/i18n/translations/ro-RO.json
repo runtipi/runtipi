@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Anulează cererea de modificare a parolei",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "To get started, run this command on your server and then refresh this page. If you have previously done so, the password reset request may have expired. In that case please retry",
   "AUTH_RESET_PASSWORD_SUBMIT": "Resetare parola",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Parola ta a fost resetată. Acum te poți conecta cu noua ta parolă. Și adresa de e-mail {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Parolă resetată",
   "AUTH_RESET_PASSWORD_TITLE": "Resetează-ţi parola",
   "AUTH_TOTP_INSTRUCTIONS": "Introdu codul din aplicația de autentificare",
