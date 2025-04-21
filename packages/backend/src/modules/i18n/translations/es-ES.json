@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Cancelar cambio de contraseña",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Ejecuta este comando en el servidor y recarga la página. Si ya has hecho esto previamente, es posible que la solicitud haya caducado. En ese caso, inténtelo de nuevo por favor",
   "AUTH_RESET_PASSWORD_SUBMIT": "Restablecer contraseña",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Su contraseña ha sido restablecida. Ya puedes iniciar sesión con tu nueva contraseña. Y tu correo electrónico {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Restablecer contraseña",
   "AUTH_RESET_PASSWORD_TITLE": "Restablece tu contraseña",
   "AUTH_TOTP_INSTRUCTIONS": "Enter the code from your authenticator app",
