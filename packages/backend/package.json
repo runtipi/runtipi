@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "author": "",
   "private": true,
@@ -34,7 +34,7 @@
     "@otplib/core": "^12.0.1",
     "@otplib/plugin-crypto": "^12.0.1",
     "@otplib/plugin-thirty-two": "^12.0.1",
-    "@runtipi/schemas": "workspace:*",
+    "@runtipi/common": "workspace:*",
     "@sentry/nestjs": "^9.13.0",
     "ansi-to-html": "^0.7.2",
     "argon2": "^0.41.1",
@@ -107,4 +107,3 @@
     "wait-for-expect": "^3.0.2"
   }
 }
-
