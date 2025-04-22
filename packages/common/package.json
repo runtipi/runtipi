@@ -1,6 +1,6 @@
 {
   "name": "@runtipi/common",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "",
   "files": [
     "dist"
@@ -8,10 +8,6 @@
   "type": "module",
   "main": "dist/index.js",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
     "./schemas": {
       "import": "./dist/schemas/index.js",
       "types": "./dist/schemas/index.d.ts"
@@ -19,9 +15,6 @@
   },
   "typesVersions": {
     "*": {
-      "*": [
-        "dist/*"
-      ],
       "schemas": [
         "dist/schemas/index.d.ts"
       ]
