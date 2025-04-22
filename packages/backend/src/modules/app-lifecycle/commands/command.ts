@@ -1,11 +1,11 @@
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
-import { dynamicComposeSchema } from '@/modules/docker/builders/schemas';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import type { AppUrn } from '@/types/app/app.types';
+import { dynamicComposeSchema } from '@runtipi/common/schemas';
 import * as Sentry from '@sentry/nestjs';
 
 export class AppLifecycleCommand {

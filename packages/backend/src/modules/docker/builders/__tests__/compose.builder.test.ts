@@ -1,9 +1,9 @@
 import { createAppUrn } from '@/common/helpers/app-helpers';
+import type { ServiceInput } from '@runtipi/common/schemas';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { DockerComposeBuilder } from '../compose.builder';
-import type { ServiceInput } from '../schemas';
-import { ServiceBuilder } from '../service.builder';
 import yaml from 'yaml';
+import { DockerComposeBuilder } from '../compose.builder';
+import { ServiceBuilder } from '../service.builder';
 
 const urn = createAppUrn('nginx', 'store-id');
 
