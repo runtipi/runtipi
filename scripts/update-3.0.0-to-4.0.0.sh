@@ -53,6 +53,11 @@ if [[ -d "app-data/app-data" ]]; then
   exit 1
 fi
 
+if ! command -v jq &>/dev/null; then
+  echo -e "${Red}Error: jq is not installed. Please install jq to continue. (e.g., sudo apt-get install jq)${ColorOff}"
+  exit 1
+fi
+
 # Backups warning
 echo -e "${Yellow}Warning:${ColorOff} Make sure you have backed up your data before continuing, if something goes wrong during the migration process, you can risk losing important data!"
 read -p "Do you want to continue? (y/n): " -r
@@ -92,8 +97,6 @@ if [ -z "$REPO_ID" ]; then
   echo -e "${Red}Error: APPS_REPO_ID not found in .env file${ColorOff}"
   exit 1
 fi
-
-apt install -y jq
 
 repo_dir="repos/$REPO_ID"
 if [ -d "$repo_dir" ]; then
