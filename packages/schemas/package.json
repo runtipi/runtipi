@@ -1,0 +1,29 @@
+{
+  "name": "@runtipi/schemas",
+  "version": "0.0.2",
+  "description": "",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepublishOnly": "npm run ci",
+    "build": "rm -rf dist && tsc",
+    "ci": "npm run build && npm run check-exports",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "local-release": "changeset version && changeset publish"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.8.0",
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@changesets/cli": "^2.29.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  }
+}
