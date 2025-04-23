@@ -5,7 +5,6 @@
   "packageManager": "pnpm@10.8.0",
   "scripts": {
     "dev": "turbo run dev",
-    "build:packages": "turbo run build --filter='./packages/*'",
     "bundle": "turbo bundle",
     "build": "turbo run build",
     "test": "turbo test",

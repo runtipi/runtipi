@@ -2,18 +2,18 @@
   "name": "@runtipi/common",
   "version": "0.8.0",
   "description": "",
-  "files": ["dist", "package.json"],
+  "files": ["dist", "package.json", "README.md"],
   "type": "module",
   "exports": {
     "./schemas": {
       "import": "./dist/schemas/index.js",
-      "types": "./dist/schemas/index.d.ts",
-      "default": "./dist/schemas/index.js"
+      "default": "./dist/schemas/index.js",
+      "types": "./dist/schemas/index.d.ts"
     },
     "./types": {
       "import": "./dist/types/index.js",
-      "types": "./dist/types/index.d.ts",
-      "default": "./dist/types/index.js"
+      "default": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
     }
   },
   "typesVersions": {
