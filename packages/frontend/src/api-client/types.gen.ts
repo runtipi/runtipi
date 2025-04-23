@@ -912,18 +912,18 @@ export type GetImageResponses = {
   200: unknown;
 };
 
-export type PullAppStoreData = {
+export type PullAppStoresData = {
   body?: never;
   path?: never;
   query?: never;
   url: '/api/marketplace/pull';
 };
 
-export type PullAppStoreResponses = {
+export type PullAppStoresResponses = {
   201: PullDto;
 };
 
-export type PullAppStoreResponse = PullAppStoreResponses[keyof PullAppStoreResponses];
+export type PullAppStoresResponse = PullAppStoresResponses[keyof PullAppStoresResponses];
 
 export type CreateAppStoreData = {
   body: CreateAppStoreBodyDto;
