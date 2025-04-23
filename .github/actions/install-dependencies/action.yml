@@ -34,3 +34,7 @@ runs:
     - name: Install dependencies
       shell: bash
       run: pnpm install
+
+    - name: Build
+      shell: bash
+      run: npm run build:packages
