@@ -24,8 +24,8 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@hey-api/openapi-ts": "^0.66.4",
-    "@playwright/test": "^1.51.1",
+    "@hey-api/openapi-ts": "^0.66.6",
+    "@playwright/test": "^1.52.0",
     "@types/pg": "^8.11.13",
     "dotenv-cli": "^8.0.0",
     "turbo": "^2.5.0"
@@ -33,7 +33,7 @@
   "dependencies": {
     "argon2": "^0.41.1",
     "drizzle-orm": "^0.42.0",
-    "zod": "^3.24.2"
+    "zod": "^3.24.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": ["@biomejs/biome", "@nestjs/core", "@sentry/cli", "@swc/core", "argon2", "esbuild", "msw", "sharp"]
