@@ -70,7 +70,7 @@ export class ReposHelpers {
       const repoPath = path.join(dataDir, 'repos', id);
 
       if (await this.filesystem.pathExists(repoPath)) {
-        this.logger.info(`Repo ${url} already exists`);
+        this.logger.debug(`Repo ${url} already exists`);
         return { success: true, message: '' };
       }
 
