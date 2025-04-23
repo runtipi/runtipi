@@ -14,8 +14,3 @@ export type CustomLink = LinksDto['links'][number];
 export type AppBackup = GetAppBackupsDto['data'][number];
 
 export type AppStore = GetAllAppStoresResponse['appStores'][number];
-
-export type AppUrn = `${string}:${string}` & {
-  readonly __type: 'urn';
-  split: (separator: ':') => [string, string];
-};

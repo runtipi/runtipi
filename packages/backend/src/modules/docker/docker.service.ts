@@ -3,8 +3,8 @@ import path from 'node:path';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import type { AppUrn } from '@/types/app/app.types';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
 import { AppFilesManager } from '../apps/app-files-manager';
 

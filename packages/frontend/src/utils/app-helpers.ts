@@ -1,4 +1,4 @@
-import type { AppUrn } from '@/types/app.types';
+import type { AppUrn } from '@runtipi/common/types';
 
 export const extractAppUrn = (id: AppUrn) => {
   const separatorIndex = id.indexOf(':');

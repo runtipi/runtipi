@@ -4,8 +4,8 @@ import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder'
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import type { AppUrn } from '@/types/app/app.types';
 import { dynamicComposeSchema } from '@runtipi/common/schemas';
+import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
 
 export class AppLifecycleCommand {
