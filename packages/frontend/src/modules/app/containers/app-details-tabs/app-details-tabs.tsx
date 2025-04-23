@@ -110,7 +110,7 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
               </a>
             </DataGridItem>
           )}
-          {metadata && (
+          {app && metadata && (
             <DataGridItem title={t('APP_DETAILS_USER_CONFIG')}>
               <b>{metadata.hasCustomConfig ? t('YES') : t('NO')}</b>
             </DataGridItem>
