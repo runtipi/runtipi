@@ -8,14 +8,12 @@
       "outputs": ["dist/"]
     },
     "bundle": {
-      "dependsOn": ["^bundle"],
+      "dependsOn": ["build", "^bundle"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/"]
     },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
     "dev": {
+      "dependsOn": ["build"],
       "cache": false,
       "persistent": true,
       "env": [
@@ -42,6 +40,9 @@
       "dependsOn": ["^test:integration"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["coverage/"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
     }
   }
 }

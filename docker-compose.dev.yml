@@ -12,8 +12,8 @@ services:
       - 8080:8080
     command: --providers.docker --log.level=DEBUG
     volumes:
-      - .internal/traefik:/etc/traefik
-      - .internal/traefik/shared:/shared
+      - ./.internal/traefik:/etc/traefik
+      - ./.internal/traefik/shared:/shared
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - tipi_main_network
@@ -90,7 +90,7 @@ services:
       - ${RUNTIPI_BACKUPS_PATH:-.internal}/backups:/data/backups
       # Static
       - ./.env:/data/.env
-      - ./cache:/cache
+      - ./.internal/cache:/cache
       - ./docker-compose.dev.yml:/data/docker-compose.yml
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/meminfo:/host/proc/meminfo:ro
@@ -101,7 +101,7 @@ services:
     environment:
       LOCAL: true
       NODE_ENV: development
-      ROOT_FOLDER_HOST: ${PWD}
+      ROOT_FOLDER_HOST: ${PWD}/.internal
       POSTGRES_PASSWORD: postgres
       RABBITMQ_USERNAME: tipi
       RABBITMQ_PASSWORD: rabbitmq
@@ -116,7 +116,6 @@ services:
       runtipi.managed: true
       traefik.enable: true
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
-
       # ---- Dashboard ----- #
       traefik.http.services.dashboard.loadbalancer.server.port: 8080
       # Local ip

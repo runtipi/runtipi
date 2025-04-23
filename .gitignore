@@ -84,6 +84,13 @@ public/js/*
 coverage
 docs/jira/
 
-.internal/
-
 docs/jira/
+
+.internal/cache/*
+.internal/apps/*
+.internal/backups/*
+.internal/repos/*
+.internal/state/*
+.internal/media/*
+.internal/traefik/*
+!.internal/cache/.gitkeep
