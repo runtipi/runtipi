@@ -1,7 +1,7 @@
 import { createAppUrn } from '@/common/helpers/app-helpers';
 import type { App } from '@/core/database/drizzle/types';
-import { APP_CATEGORIES, type AppCategory, type AppInfo } from '@/modules/marketplace/dto/marketplace.dto';
 import { faker } from '@faker-js/faker';
+import { APP_CATEGORIES, type AppCategory, type AppInfo } from '@runtipi/common/schemas';
 
 export const createMockAppInfo = (data: Partial<AppInfo> = {}): AppInfo => {
   const id = faker.string.uuid();

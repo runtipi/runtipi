@@ -1,6 +1,6 @@
 import { appFormSchema } from '@/modules/app-lifecycle/dto/app-lifecycle.dto';
-import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
+import type { AppUrn } from '@runtipi/common/types';
 import { type ZodStringDef, z } from 'zod';
 import { Queue } from '../queue.entity';
 

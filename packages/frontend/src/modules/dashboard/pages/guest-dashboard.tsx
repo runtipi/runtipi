@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import './guest-dashboard.css';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 import { extractAppUrn } from '@/utils/app-helpers';
-import type { AppUrn } from '@/types/app.types';
+import type { AppUrn } from '@runtipi/common/types';
 
 const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; localDomain: string }) => {
   const { t } = useTranslation();

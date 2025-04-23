@@ -4,9 +4,9 @@ import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
-import { appInfoSchema } from '../marketplace/dto/marketplace.dto';
+import { appInfoSchema } from '@runtipi/common/schemas';
+import type { AppUrn } from '@runtipi/common/types';
 
 @Injectable()
 export class AppFilesManager {

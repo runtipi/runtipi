@@ -3,7 +3,7 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { BackupManager } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
-import type { AppUrn } from '@/types/app/app.types';
+import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 
 export class BackupAppCommand extends AppLifecycleCommand {

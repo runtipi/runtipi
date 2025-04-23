@@ -1,8 +1,8 @@
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import type { AppUrn } from '@/types/app/app.types';
+import { type Service, type ServiceInput, serviceSchema } from '@runtipi/common/schemas';
+import type { AppUrn } from '@runtipi/common/types';
 import * as yaml from 'yaml';
-import { type Service, type ServiceInput, serviceSchema } from './schemas';
 import { type BuiltService, ServiceBuilder } from './service.builder';
 import { TraefikLabelsBuilder } from './traefik-labels.builder';
 
