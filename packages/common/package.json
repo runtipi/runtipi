@@ -1,6 +1,6 @@
 {
   "name": "@runtipi/common",
-  "version": "0.6.0",
+  "version": "0.8.0",
   "description": "",
   "files": [
     "dist"
@@ -11,12 +11,19 @@
     "./schemas": {
       "import": "./dist/schemas/index.js",
       "types": "./dist/schemas/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
     }
   },
   "typesVersions": {
     "*": {
       "schemas": [
         "dist/schemas/index.d.ts"
+      ],
+      "types": [
+        "dist/types/index.d.ts"
       ]
     }
   },

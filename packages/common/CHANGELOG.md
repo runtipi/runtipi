@@ -1,5 +1,16 @@
 # @runtipi/schemas
 
+## 0.8.0
+
+### Minor Changes
+
+- New schemas
+
+### Patch Changes
+
+- Schema changes
+- Initial release
+
 ## 0.6.0
 
 ### Minor Changes
