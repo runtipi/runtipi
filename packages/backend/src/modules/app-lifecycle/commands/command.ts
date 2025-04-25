@@ -7,6 +7,8 @@ import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import type { AppUrn } from '@/types/app/app.types';
 import * as Sentry from '@sentry/nestjs';
+import { ZodError } from 'zod';
+import { fromError } from 'zod-validation-error';
 
 export class AppLifecycleCommand {
   constructor(
@@ -31,6 +33,15 @@ export class AppLifecycleCommand {
       await this.appFilesManager.writeDockerComposeYml(appUrn, composeFile);
     } catch (err) {
       this.logger.error(`Error generating docker-compose.yml file for app ${appUrn}`);
+
+      if (err instanceof ZodError) {
+        this.logger.error(fromError(err).toString());
+        this.logger.error('Report this issue to the appstore maintainer.');
+        throw new Error(
+          `Error generating docker-compose.yml file for app ${appUrn}.\n${fromError(err).toString()}\nReport this issue to the appstore maintainer.`,
+        );
+      }
+
       this.logger.error(err);
       Sentry.captureException(err, {
         tags: { appId: appUrn, event: 'ensure_app_dir' },
