@@ -35,7 +35,7 @@ export class AppLifecycleCommand {
       Sentry.captureException(err, {
         tags: { appId: appUrn, event: 'ensure_app_dir' },
       });
-      throw new Error(`Error generating docker-compose.yml file for app ${appUrn}. Falling back to static yml file.`);
+      throw new Error(`Error generating docker-compose.yml file for app ${appUrn}.`);
     }
 
     // Set permissions
