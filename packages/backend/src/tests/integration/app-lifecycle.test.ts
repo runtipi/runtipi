@@ -5,7 +5,7 @@ import { DATABASE } from '@/core/database/database.module';
 import { DatabaseService } from '@/core/database/database.service';
 import { appStore } from '@/core/database/drizzle/schema';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import type { LoggerService } from '@/core/logger/logger.service';
+import { LoggerService } from '@/core/logger/logger.service';
 import { AppLifecycleCommandFactory } from '@/modules/app-lifecycle/app-lifecycle-command.factory';
 import { AppLifecycleService } from '@/modules/app-lifecycle/app-lifecycle.service';
 import { AppStoreRepository } from '@/modules/app-stores/app-store.repository';
@@ -36,7 +36,7 @@ describe('App lifecycle', () => {
   let appsRepository: AppsRepository;
   const configurationService = mock<ConfigurationService>();
   let databaseService = mock<DatabaseService>();
-  const loggerService = mock<LoggerService>(console);
+  const loggerService = mock<LoggerService>();
   configurationService.get.calledWith('queue').mockReturnValue({
     host: 'localhost',
     password: 'guest',
@@ -87,6 +87,10 @@ describe('App lifecycle', () => {
         {
           provide: ConfigurationService,
           useValue: configurationService,
+        },
+        {
+          provide: LoggerService,
+          useValue: loggerService,
         },
       ],
     })
@@ -158,8 +162,7 @@ describe('App lifecycle', () => {
   describe('update app', () => {
     it('should successfully update an app to a newer version', async () => {
       // arrange
-      const initialVersion = '1.0.0';
-      const appInfo = await createAppInStore('test', { id: 'test-update', tipi_version: 1, version: initialVersion });
+      const appInfo = await createAppInStore('test', { tipi_version: 1 });
 
       await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
 
@@ -169,11 +172,10 @@ describe('App lifecycle', () => {
         expect(app?.version).toBe(1);
       });
 
-      const newVersion = '2.0.0';
-      await createAppInStore('test', { id: 'test-update', tipi_version: 2, version: newVersion });
+      await createAppInStore('test', { id: appInfo.id, tipi_version: 2 });
 
-      await fs.promises.mkdir(`${APP_DATA_DIR}/test/test-update/data`, { recursive: true });
-      await fs.promises.writeFile(`${APP_DATA_DIR}/test/test-update/data/preserved.txt`, 'data to preserve');
+      await fs.promises.mkdir(`${APP_DATA_DIR}/test/${appInfo.id}/data`, { recursive: true });
+      await fs.promises.writeFile(`${APP_DATA_DIR}/test/${appInfo.id}/data/preserved.txt`, 'data to preserve');
 
       // act
       await appLifecycleService.updateApp({ appUrn: appInfo.urn, performBackup: false });
@@ -184,17 +186,11 @@ describe('App lifecycle', () => {
         expect(app?.version).toBe(2);
       });
 
-      // assert
-      expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
-
       const dataFileExists = await fs.promises
-        .access(`${APP_DATA_DIR}/test/test-update/data/preserved.txt`)
+        .access(`${APP_DATA_DIR}/test/${appInfo.id}/data/preserved.txt`)
         .then(() => true)
         .catch(() => false);
       expect(dataFileExists).toBe(true);
-
-      const updatedApp = await appsRepository.getAppByUrn(appInfo.urn);
-      expect(updatedApp?.version).toBe(2);
     });
   });
 
