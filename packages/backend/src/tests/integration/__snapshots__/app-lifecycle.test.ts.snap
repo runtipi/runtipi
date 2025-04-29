@@ -16,7 +16,9 @@ exports[`App lifecycle > install app > should not delete an existing app-data fo
    │        ├─ config.json
    │        ├─ data/
    │        ├─ docker-compose.json
-   │        └─ docker-compose.yml
+   │        ├─ docker-compose.yml
+   │        └─ metadata/
+   │           └─ description.md
    ├─ backups/
    ├─ repos/
    │  └─ test/
@@ -24,7 +26,9 @@ exports[`App lifecycle > install app > should not delete an existing app-data fo
    │        └─ test2/
    │           ├─ config.json
    │           ├─ data/
-   │           └─ docker-compose.json
+   │           ├─ docker-compose.json
+   │           └─ metadata/
+   │              └─ description.md
    └─ state/
       └─ seed"
 `;
@@ -44,7 +48,9 @@ exports[`App lifecycle > install app > should successfully install app and creat
    │        ├─ config.json
    │        ├─ data/
    │        ├─ docker-compose.json
-   │        └─ docker-compose.yml
+   │        ├─ docker-compose.yml
+   │        └─ metadata/
+   │           └─ description.md
    ├─ backups/
    ├─ repos/
    │  └─ test/
@@ -52,7 +58,9 @@ exports[`App lifecycle > install app > should successfully install app and creat
    │        └─ test/
    │           ├─ config.json
    │           ├─ data/
-   │           └─ docker-compose.json
+   │           ├─ docker-compose.json
+   │           └─ metadata/
+   │              └─ description.md
    └─ state/
       └─ seed"
 `;
@@ -104,17 +112,23 @@ exports[`App lifecycle > update all apps > should update multiple apps that have
    │     │  ├─ config.json
    │     │  ├─ data/
    │     │  ├─ docker-compose.json
-   │     │  └─ docker-compose.yml
+   │     │  ├─ docker-compose.yml
+   │     │  └─ metadata/
+   │     │     └─ description.md
    │     ├─ app2/
    │     │  ├─ config.json
    │     │  ├─ data/
    │     │  ├─ docker-compose.json
-   │     │  └─ docker-compose.yml
+   │     │  ├─ docker-compose.yml
+   │     │  └─ metadata/
+   │     │     └─ description.md
    │     └─ app3/
    │        ├─ config.json
    │        ├─ data/
    │        ├─ docker-compose.json
-   │        └─ docker-compose.yml
+   │        ├─ docker-compose.yml
+   │        └─ metadata/
+   │           └─ description.md
    ├─ backups/
    ├─ repos/
    │  └─ test/
@@ -122,44 +136,21 @@ exports[`App lifecycle > update all apps > should update multiple apps that have
    │        ├─ app1/
    │        │  ├─ config.json
    │        │  ├─ data/
-   │        │  └─ docker-compose.json
+   │        │  ├─ docker-compose.json
+   │        │  └─ metadata/
+   │        │     └─ description.md
    │        ├─ app2/
    │        │  ├─ config.json
    │        │  ├─ data/
-   │        │  └─ docker-compose.json
+   │        │  ├─ docker-compose.json
+   │        │  └─ metadata/
+   │        │     └─ description.md
    │        └─ app3/
    │           ├─ config.json
    │           ├─ data/
-   │           └─ docker-compose.json
-   └─ state/
-      └─ seed"
-`;
-
-exports[`App lifecycle > update app > should successfully update an app to a newer version 1`] = `
-"/
-├─ app-data/
-│  └─ test/
-│     └─ test-update/
-│        ├─ app.env
-│        └─ data/
-│           └─ preserved.txt
-└─ data/
-   ├─ .env
-   ├─ apps/
-   │  └─ test/
-   │     └─ test-update/
-   │        ├─ config.json
-   │        ├─ data/
-   │        ├─ docker-compose.json
-   │        └─ docker-compose.yml
-   ├─ backups/
-   ├─ repos/
-   │  └─ test/
-   │     └─ apps/
-   │        └─ test-update/
-   │           ├─ config.json
-   │           ├─ data/
-   │           └─ docker-compose.json
+   │           ├─ docker-compose.json
+   │           └─ metadata/
+   │              └─ description.md
    └─ state/
       └─ seed"
 `;
