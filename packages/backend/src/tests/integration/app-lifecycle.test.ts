@@ -36,7 +36,7 @@ describe('App lifecycle', () => {
   let appsRepository: AppsRepository;
   const configurationService = mock<ConfigurationService>();
   let databaseService = mock<DatabaseService>();
-  const loggerService = mock<LoggerService>();
+  const loggerService = mock<LoggerService>(console);
   configurationService.get.calledWith('queue').mockReturnValue({
     host: 'localhost',
     password: 'guest',
