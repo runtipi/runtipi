@@ -13,6 +13,7 @@ import { AppStoreService } from '@/modules/app-stores/app-store.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { AppsRepository } from '@/modules/apps/apps.repository';
+import { AppsService } from '@/modules/apps/apps.service';
 import { EnvUtils } from '@/modules/env/env.utils';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '@/modules/queue/entities/app-events';
@@ -70,6 +71,7 @@ describe('App lifecycle', () => {
         AppsRepository,
         EnvUtils,
         AppHelpers,
+        AppsService,
         {
           provide: DatabaseService,
           useValue: databaseService,
@@ -149,6 +151,100 @@ describe('App lifecycle', () => {
       });
 
       // assert
+      expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
+    });
+  });
+
+  describe('update app', () => {
+    it('should successfully update an app to a newer version', async () => {
+      // arrange
+      const initialVersion = '1.0.0';
+      const appInfo = await createAppInStore('test', { id: 'test-update', tipi_version: 1, version: initialVersion });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+        expect(app?.version).toBe(1);
+      });
+
+      const newVersion = '2.0.0';
+      await createAppInStore('test', { id: 'test-update', tipi_version: 2, version: newVersion });
+
+      await fs.promises.mkdir(`${APP_DATA_DIR}/test/test-update/data`, { recursive: true });
+      await fs.promises.writeFile(`${APP_DATA_DIR}/test/test-update/data/preserved.txt`, 'data to preserve');
+
+      // act
+      await appLifecycleService.updateApp({ appUrn: appInfo.urn, performBackup: false });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+        expect(app?.version).toBe(2);
+      });
+
+      // assert
+      expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
+
+      const dataFileExists = await fs.promises
+        .access(`${APP_DATA_DIR}/test/test-update/data/preserved.txt`)
+        .then(() => true)
+        .catch(() => false);
+      expect(dataFileExists).toBe(true);
+
+      const updatedApp = await appsRepository.getAppByUrn(appInfo.urn);
+      expect(updatedApp?.version).toBe(2);
+    });
+  });
+
+  describe('update all apps', () => {
+    it('should update multiple apps that have newer versions available', async () => {
+      // arrange
+      const app1Info = await createAppInStore('test', { id: 'app1', tipi_version: 1 });
+      const app2Info = await createAppInStore('test', { id: 'app2', tipi_version: 2 });
+      const app3Info = await createAppInStore('test', { id: 'app3', tipi_version: 3 });
+
+      await appLifecycleService.installApp({ appUrn: app1Info.urn, form: {} });
+      await appLifecycleService.installApp({ appUrn: app2Info.urn, form: {} });
+      await appLifecycleService.installApp({ appUrn: app3Info.urn, form: {} });
+
+      await waitFor(async () => {
+        const app1 = await appsRepository.getAppByUrn(app1Info.urn);
+        const app2 = await appsRepository.getAppByUrn(app2Info.urn);
+        const app3 = await appsRepository.getAppByUrn(app3Info.urn);
+        expect(app1?.status).toBe('running');
+        expect(app2?.status).toBe('running');
+        expect(app3?.status).toBe('running');
+      });
+
+      await createAppInStore('test', { id: 'app1', tipi_version: 2 });
+      await createAppInStore('test', { id: 'app3', tipi_version: 4 });
+
+      // act
+      await appLifecycleService.updateAllApps();
+
+      await waitFor(async () => {
+        const app1 = await appsRepository.getAppByUrn(app1Info.urn);
+        const app3 = await appsRepository.getAppByUrn(app3Info.urn);
+        expect(app1?.status).toBe('running');
+        expect(app1?.version).toBe(2);
+        expect(app3?.status).toBe('running');
+        expect(app3?.version).toBe(4);
+      });
+
+      // assert
+      const app1 = await appsRepository.getAppByUrn(app1Info.urn);
+      const app2 = await appsRepository.getAppByUrn(app2Info.urn);
+      const app3 = await appsRepository.getAppByUrn(app3Info.urn);
+
+      expect(app1?.version).toBe(2);
+      expect(app2?.version).toBe(2);
+      expect(app3?.version).toBe(4);
+
+      expect(app1?.status).toBe('running');
+      expect(app2?.status).toBe('running');
+      expect(app3?.status).toBe('running');
       expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
     });
   });

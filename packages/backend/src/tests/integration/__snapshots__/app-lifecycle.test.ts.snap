@@ -82,3 +82,84 @@ networks:
 
 "
 `;
+
+exports[`App lifecycle > update all apps > should update multiple apps that have newer versions available 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     ├─ app1/
+│     │  ├─ app.env
+│     │  └─ data/
+│     ├─ app2/
+│     │  ├─ app.env
+│     │  └─ data/
+│     └─ app3/
+│        ├─ app.env
+│        └─ data/
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ test/
+   │     ├─ app1/
+   │     │  ├─ config.json
+   │     │  ├─ data/
+   │     │  ├─ docker-compose.json
+   │     │  └─ docker-compose.yml
+   │     ├─ app2/
+   │     │  ├─ config.json
+   │     │  ├─ data/
+   │     │  ├─ docker-compose.json
+   │     │  └─ docker-compose.yml
+   │     └─ app3/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        └─ docker-compose.yml
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        ├─ app1/
+   │        │  ├─ config.json
+   │        │  ├─ data/
+   │        │  └─ docker-compose.json
+   │        ├─ app2/
+   │        │  ├─ config.json
+   │        │  ├─ data/
+   │        │  └─ docker-compose.json
+   │        └─ app3/
+   │           ├─ config.json
+   │           ├─ data/
+   │           └─ docker-compose.json
+   └─ state/
+      └─ seed"
+`;
+
+exports[`App lifecycle > update app > should successfully update an app to a newer version 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     └─ test-update/
+│        ├─ app.env
+│        └─ data/
+│           └─ preserved.txt
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ test/
+   │     └─ test-update/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        └─ docker-compose.yml
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        └─ test-update/
+   │           ├─ config.json
+   │           ├─ data/
+   │           └─ docker-compose.json
+   └─ state/
+      └─ seed"
+`;
