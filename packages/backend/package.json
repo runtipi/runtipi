@@ -16,7 +16,7 @@
     "start:prod": "node dist/main",
     "tsc": "tsc --noEmit",
     "test": "vitest --coverage --watch=false",
-    "test:integration": "CI=true vitest --allowOnly --watch=false --config ./vitest.integration.config.mts",
+    "test:integration": "vitest --watch=false --config ./vitest.integration.config.mts",
     "test:watch": "vitest",
     "test:db": "docker compose -f ./src/tests/db.compose.yml up -d",
     "studio": "drizzle-kit studio",
