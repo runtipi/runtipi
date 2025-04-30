@@ -1,17 +1,18 @@
+import { ConfigurationService } from '@/core/config/configuration.service';
 import { Module } from '@nestjs/common';
 import { EnvModule } from '../env/env.module';
+import { MarketplaceModule } from '../marketplace/marketplace.module';
 import { QueueModule } from '../queue/queue.module';
-import { AppCatalogService } from './app-catalog.service';
 import { AppFilesManager } from './app-files-manager';
 import { AppHelpers } from './app.helpers';
 import { AppsController } from './apps.controller';
 import { AppsRepository } from './apps.repository';
-import { ConfigurationService } from '@/core/config/configuration.service';
+import { AppsService } from './apps.service';
 
 @Module({
-  imports: [QueueModule, EnvModule],
+  imports: [QueueModule, EnvModule, MarketplaceModule],
   controllers: [AppsController],
-  providers: [AppFilesManager, AppCatalogService, AppsRepository, AppHelpers, ConfigurationService],
-  exports: [AppCatalogService, AppsRepository, AppFilesManager, AppHelpers],
+  providers: [AppFilesManager, AppsRepository, AppHelpers, AppsService, ConfigurationService],
+  exports: [AppsRepository, AppFilesManager, AppHelpers, AppsService],
 })
 export class AppsModule {}

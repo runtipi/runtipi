@@ -1,8 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { LOCALE_OPTIONS, type Locale, getLocaleFromString } from '@/lib/i18n/locales';
+import { locales, type Locale } from '@/lib/i18n/locales';
 import { IconExternalLink } from '@tabler/icons-react';
 import i18next from 'i18next';
-import Cookies from 'js-cookie';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,10 +30,8 @@ export const LanguageSelector = (props: IProps) => {
   const { showLabel = false } = props;
 
   const onChange = (newLocale: Locale) => {
-    const locale = getLocaleFromString(newLocale);
+    i18next.changeLanguage(newLocale);
     setLocale(newLocale);
-    Cookies.set('tipi-locale', locale, { expires: 365 });
-    i18next.changeLanguage(locale);
   };
 
   return (
@@ -43,9 +40,9 @@ export const LanguageSelector = (props: IProps) => {
         <SelectValue placeholder="Language" />
       </SelectTrigger>
       <SelectContent>
-        {LOCALE_OPTIONS.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
+        {Object.keys(locales).map((key) => (
+          <SelectItem key={key} value={key}>
+            {locales[key as Locale]}
           </SelectItem>
         ))}
       </SelectContent>

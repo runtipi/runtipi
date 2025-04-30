@@ -5,8 +5,9 @@ import type { Request } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { AcknowledgeWelcomeBody, AppContextDto, PartialUserSettingsDto, UserContextDto } from './app.dto';
 import { AppService } from './app.service';
-import { AppCatalogService } from './modules/apps/app-catalog.service';
+import { AppsService } from './modules/apps/apps.service';
 import { AuthGuard } from './modules/auth/auth.guard';
+import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import type { UserDto } from './modules/user/dto/user.dto';
 
 @Controller()
@@ -15,7 +16,8 @@ export class AppController {
     private readonly appService: AppService,
     private readonly userRepository: UserRepository,
     private readonly configuration: ConfigurationService,
-    private readonly appCatalog: AppCatalogService,
+    private readonly appsService: AppsService,
+    private readonly marketplaceService: MarketplaceService,
   ) {}
 
   @Get('/user-context')
@@ -43,12 +45,11 @@ export class AppController {
 
     const { userSettings } = this.configuration.getConfig();
 
-    const apps = await this.appCatalog.getAvailableApps();
+    const apps = await this.marketplaceService.getAvailableApps();
 
-    const installedApps = await this.appCatalog.getInstalledApps();
-
-    const updatesAvailable = installedApps.filter(({ app, updateInfo }) => {
-      return Number(app.version) < Number(updateInfo.latestVersion) && app.status !== 'updating';
+    const installedApps = await this.appsService.getInstalledApps();
+    const updatesAvailable = installedApps.filter(({ app, metadata }) => {
+      return Number(app.version) < Number(metadata?.latestVersion ?? 0) && app.status !== 'updating';
     });
 
     return { version, userSettings, user: req.user as UserDto, apps, updatesAvailable: updatesAvailable.length };

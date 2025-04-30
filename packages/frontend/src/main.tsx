@@ -68,10 +68,18 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: '/app-store/:appId',
+        path: '/app-store/:storeId/:appId',
         element: (
           <Suspense fallback={<AppStorePageSuspense />}>
             <AppDetailsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/app-store/:storeId',
+        element: (
+          <Suspense fallback={<AppStorePageSuspense />}>
+            <AppStorePage />
           </Suspense>
         ),
       },
@@ -84,7 +92,15 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: '/apps/:appId',
+        path: '/apps/:storeId',
+        element: (
+          <Suspense fallback={<AppStorePageSuspense />}>
+            <MyAppsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/apps/:storeId/:appId',
         element: (
           <Suspense fallback={<AppStorePageSuspense />}>
             <AppDetailsPage />
@@ -113,6 +129,10 @@ client.interceptors.response.use(async (res) => {
   }
 
   return res;
+});
+
+window.addEventListener('vite:preloadError', () => {
+  window.location.reload();
 });
 
 client.setConfig({

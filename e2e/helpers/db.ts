@@ -7,6 +7,7 @@ export const db = drizzle(connectionString, { schema });
 
 export const clearDatabase = async () => {
   // delete all data in table user
+  await db.delete(schema.link);
   await db.delete(schema.user);
   await db.delete(schema.app);
 };

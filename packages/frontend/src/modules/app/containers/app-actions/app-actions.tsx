@@ -27,7 +27,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import './app-actions.css';
 import { startAppMutation } from '@/api-client/@tanstack/react-query.gen';
-import type { AppDetails, AppInfo, AppUpdateInfo } from '@/types/app.types';
+import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
@@ -40,9 +40,9 @@ import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-d
 import { useAppStatus } from '../../helpers/use-app-status';
 
 interface IProps {
-  app: AppDetails;
+  app?: AppDetails | null;
   info: AppInfo;
-  updateInfo: AppUpdateInfo;
+  metadata: AppMetadata;
   localDomain?: string;
 }
 
@@ -65,7 +65,7 @@ const ActionButton: React.FC<BtnProps> = (props) => {
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
-export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
+export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
   const installDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const restartDisclosure = useDisclosure();
@@ -78,7 +78,10 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
   const { setOptimisticStatus } = useAppStatus();
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-  const updateAvailable = Number(app.version || 0) < Number(updateInfo?.latestVersion || 0);
+  const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
+
+  const [appId, storeId] = info.urn.split(':');
+  const appLocalDomain = `${appId}-${storeId}.${localDomain}`;
 
   const buttons: React.JSX.Element[] = [];
 
@@ -88,7 +91,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('starting', app.id);
+      setOptimisticStatus('starting', info.urn);
     },
   });
 
@@ -96,7 +99,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     <ActionButton
       key="start"
       IconComponent={IconPlayerPlay}
-      onClick={() => startMutation.mutate({ path: { id: app.id } })}
+      onClick={() => startMutation.mutate({ path: { urn: info.urn } })}
       title={t('APP_ACTION_START')}
       intent="success"
     />
@@ -131,22 +134,22 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
       <DropdownMenuContent>
         <DropdownMenuLabel>{t('APP_DETAILS_CHOOSE_OPEN_METHOD')}</DropdownMenuLabel>
         <DropdownMenuGroup>
-          {app.exposed && app.domain && (
+          {app?.exposed && app.domain && (
             <DropdownMenuItem onClick={() => handleOpen('domain')}>
               <IconLock className="text-green me-2" size={16} />
               {app.domain}
             </DropdownMenuItem>
           )}
-          {(app.exposedLocal || !info.dynamic_config) && (
+          {(app?.exposedLocal || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('local_domain')}>
               <IconLock className="text-muted me-2" size={16} />
-              {app.id}.{localDomain}
+              {appLocalDomain}
             </DropdownMenuItem>
           )}
-          {(app.openPort || !info.dynamic_config) && (
+          {(app?.openPort || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('local')}>
               <IconLockOff className="text-muted me-2" size={16} />
-              {hostname}:{info.port}
+              {hostname}:{app?.port ?? info.port}
             </DropdownMenuItem>
           )}
         </DropdownMenuGroup>
@@ -154,7 +157,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     </DropdownMenu>
   );
 
-  switch (app.status) {
+  switch (app?.status ?? 'missing') {
     case 'stopped':
       buttons.push(StartButton, RemoveButton, SettingsButton);
       if (updateAvailable) {
@@ -163,7 +166,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
       break;
     case 'running':
       buttons.push(StopButton, restartButton, SettingsButton);
-      if (!info.no_gui) {
+      if (!info.no_gui && (app?.exposedLocal || app?.openPort || app?.exposed)) {
         buttons.push(OpenButton);
       }
       if (updateAvailable) {
@@ -200,15 +203,15 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     if (typeof window !== 'undefined') {
       // Current domain
       const domain = window.location.hostname;
-      url = `${protocol}://${domain}:${info.port}${info.url_suffix || ''}`;
+      url = `${protocol}://${domain}:${app?.port ?? info.port}${info.url_suffix || ''}`;
     }
 
-    if (type === 'domain' && app.domain) {
+    if (type === 'domain' && app?.domain) {
       url = `https://${app.domain}${info.url_suffix || ''}`;
     }
 
     if (type === 'local_domain') {
-      url = `https://${app.id}.${localDomain}`;
+      url = `https://${appLocalDomain}${info.url_suffix || ''}`;
     }
 
     window.open(url, '_blank', 'noreferrer');
@@ -222,9 +225,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
     }, 300);
   };
 
-  const newVersion = [updateInfo?.latestDockerVersion ? `${updateInfo?.latestDockerVersion}` : '', `(${String(updateInfo?.latestVersion)})`].join(
-    ' ',
-  );
+  const newVersion = [metadata?.latestDockerVersion ? `${metadata?.latestDockerVersion}` : '', `(${String(metadata?.latestVersion)})`].join(' ');
 
   return (
     <>
@@ -238,7 +239,7 @@ export const AppActions = ({ app, info, localDomain, updateInfo }: IProps) => {
         isOpen={updateSettingsDisclosure.isOpen}
         onClose={updateSettingsDisclosure.close}
         info={info}
-        config={app.config ?? {}}
+        config={app?.config ?? {}}
         onReset={openResetAppModal}
       />
       <div className="mt-1 btn-list d-flex">

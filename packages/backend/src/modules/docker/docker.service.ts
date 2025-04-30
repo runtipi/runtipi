@@ -1,13 +1,12 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
-import { DEFAULT_REPO_URL } from '@/common/helpers/env-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { AppFilesManager } from '../apps/app-files-manager';
-import { ReposService } from '../repos/repos.service';
 
 @Injectable()
 export class DockerService {
@@ -16,38 +15,32 @@ export class DockerService {
     private readonly config: ConfigurationService,
     private readonly appFilesManager: AppFilesManager,
     private readonly filesystem: FilesystemService,
-    private readonly repoService: ReposService,
   ) {}
 
   /**
    * Get the base compose args for an app
-   * @param {string} appId - App name
+   * @param {string} appUrn - App name
    */
-  public getBaseComposeArgsApp = async (appId: string) => {
-    const { appsRepoId, directories } = this.config.getConfig();
+  public getBaseComposeArgsApp = async (appUrn: AppUrn) => {
+    let isCustomConfig = false;
 
-    let isCustomConfig = appsRepoId !== this.repoService.getRepoHash(DEFAULT_REPO_URL);
-
-    const appEnv = await this.appFilesManager.getAppEnv(appId);
+    const appEnv = await this.appFilesManager.getAppEnv(appUrn);
     const args: string[] = ['--env-file', appEnv.path];
 
     // User custom env file
-    const userEnvFile = await this.appFilesManager.getUserEnv(appId);
+    const userEnvFile = await this.appFilesManager.getUserEnv(appUrn);
     if (userEnvFile.content) {
       isCustomConfig = true;
       args.push('--env-file', userEnvFile.path);
     }
 
-    args.push('--project-name', appId);
+    args.push('--project-name', appUrn.replace(':', '_'));
 
-    const composeFile = await this.appFilesManager.getDockerComposeYaml(appId);
+    const composeFile = await this.appFilesManager.getDockerComposeYaml(appUrn);
     args.push('-f', composeFile.path);
 
-    const commonComposeFile = path.join(directories.dataDir, 'repos', appsRepoId, 'apps', 'docker-compose.common.yml');
-    args.push('-f', commonComposeFile);
-
     // User defined overrides
-    const userComposeFile = await this.appFilesManager.getUserComposeFile(appId);
+    const userComposeFile = await this.appFilesManager.getUserComposeFile(appUrn);
     if (userComposeFile.content) {
       isCustomConfig = true;
       args.push('--file', userComposeFile.path);
@@ -76,11 +69,11 @@ export class DockerService {
 
   /**
    * Helpers to execute docker compose commands
-   * @param {string} appId - App name
+   * @param {string} appUrn - App name
    * @param {string} command - Command to execute
    */
-  public composeApp = async (appId: string, command: string) => {
-    let { args, isCustomConfig } = await this.getBaseComposeArgsApp(appId);
+  public composeApp = async (appUrn: AppUrn, command: string) => {
+    let { args, isCustomConfig } = await this.getBaseComposeArgsApp(appUrn);
     args.push(...command.split(' '));
     args = args.filter(Boolean);
 
@@ -114,9 +107,9 @@ export class DockerService {
     return { success: true, stdout: stdout.join(''), stderr: stderr.join('') };
   };
 
-  public getLogsStream = async (maxLines: number, appId?: string) => {
+  public getLogsStream = async (maxLines: number, appUrn?: AppUrn) => {
     try {
-      const { args } = appId ? await this.getBaseComposeArgsApp(appId) : await this.getBaseComposeArgsRuntipi();
+      const { args } = appUrn ? await this.getBaseComposeArgsApp(appUrn) : await this.getBaseComposeArgsRuntipi();
 
       args.push('logs', '--follow', '-n', maxLines.toString());
 
@@ -132,7 +125,7 @@ export class DockerService {
       };
     } catch (error) {
       this.logger.error(`Error getting log stream: ${error}`);
-      Sentry.captureException(error, { tags: { source: 'docker log stream', appId } });
+      Sentry.captureException(error, { tags: { source: 'docker log stream', appUrn } });
       throw new InternalServerErrorException('Error getting log stream');
     }
   };

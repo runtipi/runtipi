@@ -53,7 +53,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   const envFile = await fs.promises.readFile(envFilePath, 'utf-8');
 
   const envMap: Map<string, string> = envUtils.envStringToMap(envFile);
-  envMap.set('NODE_ENV', process.env.NODE_ENV ?? 'production');
+  envMap.set('NODE_ENV', process.env.NODE_ENV || 'production');
 
   if (!fs.existsSync(settingsFilePath)) {
     await fs.promises.writeFile(settingsFilePath, JSON.stringify({}));
@@ -75,15 +75,15 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
     data.appsRepoUrl = DEFAULT_REPO_URL;
   }
 
-  const jwtSecret = envMap.get('JWT_SECRET') ?? envUtils.deriveEntropy('jwt_secret');
+  const jwtSecret = envMap.get('JWT_SECRET') || envUtils.deriveEntropy('jwt_secret');
 
-  const repoUrl = data.appsRepoUrl ?? envMap.get('APPS_REPO_URL') ?? DEFAULT_REPO_URL;
+  const repoUrl = data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL;
   const hash = crypto.createHash('sha256');
   hash.update(repoUrl);
   const repoId = hash.digest('hex');
 
-  const rootFolderHost = envMap.get('ROOT_FOLDER_HOST') ?? process.env.ROOT_FOLDER_HOST;
-  const internalIp = envMap.get('INTERNAL_IP') ?? '127.0.0.1';
+  const rootFolderHost = envMap.get('ROOT_FOLDER_HOST') || process.env.ROOT_FOLDER_HOST;
+  const internalIp = envMap.get('INTERNAL_IP') || '127.0.0.1';
 
   if (!rootFolderHost) {
     throw new Error(
@@ -92,7 +92,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   }
 
   // Ensure that the app data path does not contain the /app-data suffix
-  let appDataPath = data.appDataPath ?? envMap.get('RUNTIPI_APP_DATA_PATH');
+  let appDataPath = data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH');
   const appDataSegment = '/app-data';
 
   while (appDataPath?.endsWith(appDataSegment)) {
@@ -102,43 +102,43 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
 
   envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
   envMap.set('APPS_REPO_ID', repoId);
-  envMap.set('APPS_REPO_URL', data.appsRepoUrl ?? envMap.get('APPS_REPO_URL') ?? DEFAULT_REPO_URL);
-  envMap.set('TZ', data.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone);
-  envMap.set('INTERNAL_IP', data.listenIp ?? internalIp);
-  envMap.set('DNS_IP', data.dnsIp ?? envMap.get('DNS_IP') ?? '9.9.9.9');
+  envMap.set('APPS_REPO_URL', data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
+  envMap.set('TZ', data.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone);
+  envMap.set('INTERNAL_IP', data.listenIp || internalIp);
+  envMap.set('DNS_IP', data.dnsIp || envMap.get('DNS_IP') || '9.9.9.9');
   envMap.set('ARCHITECTURE', getArchitecture());
   envMap.set('JWT_SECRET', jwtSecret);
-  envMap.set('DOMAIN', data.domain ?? envMap.get('DOMAIN') ?? 'example.com');
-  envMap.set('RUNTIPI_APP_DATA_PATH', appDataPath ?? rootFolderHost);
-  envMap.set('RUNTIPI_FORWARD_AUTH_URL', data.forwardAuthUrl ?? envMap.get('RUNTIPI_FORWARD_AUTH_URL') ?? '');
+  envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
+  envMap.set('RUNTIPI_APP_DATA_PATH', appDataPath || rootFolderHost);
+  envMap.set('RUNTIPI_FORWARD_AUTH_URL', data.forwardAuthUrl || envMap.get('RUNTIPI_FORWARD_AUTH_URL') || 'http://runtipi:3000/api/auth/traefik');
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
   envMap.set('POSTGRES_PORT', String(5432));
-  envMap.set('DEMO_MODE', typeof data.demoMode === 'boolean' ? String(data.demoMode) : (envMap.get('DEMO_MODE') ?? 'false'));
-  envMap.set('GUEST_DASHBOARD', typeof data.guestDashboard === 'boolean' ? String(data.guestDashboard) : (envMap.get('GUEST_DASHBOARD') ?? 'false'));
-  envMap.set('LOCAL_DOMAIN', data.localDomain ?? envMap.get('LOCAL_DOMAIN') ?? 'tipi.lan');
+  envMap.set('DEMO_MODE', typeof data.demoMode === 'boolean' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
+  envMap.set('GUEST_DASHBOARD', typeof data.guestDashboard === 'boolean' ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
+  envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
   envMap.set(
     'ALLOW_AUTO_THEMES',
-    typeof data.allowAutoThemes === 'boolean' ? String(data.allowAutoThemes) : (envMap.get('ALLOW_AUTO_THEMES') ?? 'true'),
+    typeof data.allowAutoThemes === 'boolean' ? String(data.allowAutoThemes) : envMap.get('ALLOW_AUTO_THEMES') || 'true',
   );
   envMap.set(
     'ALLOW_ERROR_MONITORING',
-    typeof data.allowErrorMonitoring === 'boolean' ? String(data.allowErrorMonitoring) : (envMap.get('ALLOW_ERROR_MONITORING') ?? 'false'),
+    typeof data.allowErrorMonitoring === 'boolean' ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
   );
   envMap.set(
     'PERSIST_TRAEFIK_CONFIG',
-    typeof data.persistTraefikConfig === 'boolean' ? String(data.persistTraefikConfig) : (envMap.get('PERSIST_TRAEFIK_CONFIG') ?? 'false'),
+    typeof data.persistTraefikConfig === 'boolean' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
   envMap.set(
     'QUEUE_TIMEOUT_IN_MINUTES',
-    typeof data.eventsTimeout === 'number' ? String(data.eventsTimeout) : (envMap.get('QUEUE_TIMEOUT_IN_MINUTES') ?? '5'),
+    typeof data.eventsTimeout === 'number' ? String(data.eventsTimeout) : envMap.get('QUEUE_TIMEOUT_IN_MINUTES') || '5',
   );
   envMap.set(
     'ADVANCED_SETTINGS',
-    typeof data.advancedSettings === 'boolean' ? String(data.advancedSettings) : (envMap.get('ADVANCED_SETTINGS') ?? 'false'),
+    typeof data.advancedSettings === 'boolean' ? String(data.advancedSettings) : envMap.get('ADVANCED_SETTINGS') || 'false',
   );
-  envMap.set('LOG_LEVEL', data.logLevel ?? envMap.get('LOG_LEVEL') ?? 'info');
+  envMap.set('LOG_LEVEL', data.logLevel || envMap.get('LOG_LEVEL') || 'info');
   envMap.set('EXPERIMENTAL_INSECURE_COOKIE', data.experimental_insecureCookie ? 'true' : 'false');
 
   await fs.promises.writeFile(envFilePath, envUtils.envMapToString(envMap));

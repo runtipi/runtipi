@@ -1,4 +1,4 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 import clsx from 'clsx';
 
 const alertVariants = cva('alert', {
@@ -14,24 +14,31 @@ const alertVariants = cva('alert', {
 });
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof alertVariants> {
-  dismisible?: boolean;
+  dismissible?: boolean;
 }
 
-const Alert = ({ className, dismisible, variant, ...props }: AlertProps) => (
-  <div className={clsx('alert', className, dismisible && 'alert-dismisible', alertVariants({ variant }))} {...props}>
+const Alert = ({ className, dismissible, variant, ...props }: AlertProps) => (
+  <div className={clsx('alert', className, dismissible && 'alert-dismissible', alertVariants({ variant }))} role="alert" {...props}>
     {props.children}
   </div>
 );
 Alert.displayName = 'Alert';
 
-const AlertTitle = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-  <h4 className={clsx('alert-title', className)} {...props} />
+const AlertHeading = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h4 className={clsx('alert-heading', className)} {...props} />
 );
-AlertTitle.displayName = 'AlertTitile';
+AlertHeading.displayName = 'AlertHeading';
 
-const AlertSubtitle = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={clsx('text-secondary', className)} {...props} />
+const AlertDescription = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={clsx('alert-description', className)} {...props} />
 );
-AlertSubtitle.displayName = 'AlertSubtitle';
+AlertDescription.displayName = 'AlertDescription';
 
-export { Alert, AlertTitle, AlertSubtitle };
+const AlertIcon = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={clsx('alert-icon', className)} {...props}>
+    {props.children}
+  </div>
+);
+AlertIcon.displayName = 'AlertIcon';
+
+export { Alert, AlertHeading, AlertDescription, AlertIcon };

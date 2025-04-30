@@ -1,5 +1,6 @@
 import { DockerService } from '@/modules/docker/docker.service';
 import { colorizeLogs } from '@/modules/docker/helpers/colorize-logs';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable, type MessageEvent } from '@nestjs/common';
 import { Observable, Subject, interval } from 'rxjs';
 import { LoggerService } from '../logger/logger.service';
@@ -28,12 +29,12 @@ export class SSEService {
   /**
    * Emits an event to the specified topic.
    */
-  emit<T extends Topic>(topic: T, data: Extract<SSE, { topic: T }>['data'], appId?: string) {
+  emit<T extends Topic>(topic: T, data: Extract<SSE, { topic: T }>['data'], appUrn?: AppUrn) {
     let formattedTopic = topic;
 
-    if (appId) {
+    if (appUrn) {
       // We want to use this topic for a specific app
-      formattedTopic = `${topic}:${appId}` as T;
+      formattedTopic = `${topic}:${appUrn}` as T;
     }
 
     let currentTopic = this.topics.get(formattedTopic);
@@ -51,15 +52,15 @@ export class SSEService {
    * Gets an observable for the specified topic.
    * If the topic does not exist, it creates it.
    */
-  getTopicObservable(topic: Topic, appId?: string): Observable<MessageEvent> {
+  getTopicObservable(topic: Topic, appUrn?: AppUrn): Observable<MessageEvent> {
     let formattedTopic = topic;
 
-    if (appId) {
+    if (appUrn) {
       // We want to use this topic for a specific app
-      formattedTopic = `${topic}:${appId}` as Topic;
+      formattedTopic = `${topic}:${appUrn}` as Topic;
     }
 
-    let currentTopic = this.topics.get(topic);
+    let currentTopic = this.topics.get(formattedTopic);
     if (!currentTopic) {
       currentTopic = new Subject<MessageEvent>();
       this.topics.set(formattedTopic, currentTopic);
@@ -72,11 +73,11 @@ export class SSEService {
    * Creates an observable for logs stream.
    * It listens to the logs stream and emits the logs to the specified topic.
    */
-  async getLogStreamObservable(topic: Topic, maxLines: number, appId?: string): Promise<Observable<MessageEvent>> {
-    const { on, kill } = await this.dockerService.getLogsStream(maxLines, appId);
+  async getLogStreamObservable(topic: Topic, maxLines: number, appUrn?: AppUrn): Promise<Observable<MessageEvent>> {
+    const { on, kill } = await this.dockerService.getLogsStream(maxLines, appUrn);
 
     return new Observable((subscriber) => {
-      const observable = this.getTopicObservable(topic, appId);
+      const observable = this.getTopicObservable(topic, appUrn);
 
       const subscription = observable.subscribe({
         next: (event) => subscriber.next(event),
@@ -95,8 +96,8 @@ export class SSEService {
               .filter(Boolean),
           );
 
-          const payload = appId ? { appId, lines, event: 'newLogs' as const } : { lines, event: 'newLogs' as const };
-          this.emit(topic, payload, appId);
+          const payload = appUrn ? { appUrn, lines, event: 'newLogs' as const } : { lines, event: 'newLogs' as const };
+          this.emit(topic, payload, appUrn);
         } catch (error) {
           this.logger.error(`Error colorizing logs: ${error}`);
         }

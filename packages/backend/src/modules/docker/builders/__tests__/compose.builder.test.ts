@@ -1,7 +1,11 @@
+import { createAppUrn } from '@/common/helpers/app-helpers';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DockerComposeBuilder } from '../compose.builder';
 import type { ServiceInput } from '../schemas';
 import { ServiceBuilder } from '../service.builder';
+import yaml from 'yaml';
+
+const urn = createAppUrn('nginx', 'store-id');
 
 describe('DockerComposeBuilder', () => {
   let composeBuilder: DockerComposeBuilder;
@@ -14,60 +18,74 @@ describe('DockerComposeBuilder', () => {
 
   it('should build a docker-compose file', () => {
     const serviceName = 'service';
-    const service = serviceBuilder.setName(serviceName).setImage('image').build();
+    const service: ServiceInput = {
+      name: serviceName,
+      image: 'image',
+    };
 
-    composeBuilder.addService(service);
-
-    const compose = composeBuilder.build();
-
+    const compose = composeBuilder.getDockerCompose([service], {}, urn);
     expect(compose).toMatchSnapshot();
   });
 
   it('should correctly format deploy resources', () => {
-    const service = serviceBuilder
-      .setName('service')
-      .setImage('image')
-      .setDeploy({
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      deploy: {
         resources: {
           limits: { cpus: '0.50', memory: '50M', pids: 1 },
           reservations: { cpus: '0.25', memory: '20M', devices: [{ capabilities: ['gpu'], driver: 'nvidia', count: 'all' }] },
         },
-      })
-      .build();
+      },
+    };
 
-    const compose = composeBuilder.addService(service).build();
-
+    const compose = composeBuilder.getDockerCompose([service], {}, urn);
     expect(compose).toMatchSnapshot();
   });
 
   it('should correctly format devices', () => {
-    const service = serviceBuilder.setName('service').setImage('image').setDevices(['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm']).build();
-    const compose = composeBuilder.addService(service).build();
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      devices: ['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm'],
+    };
 
+    const compose = composeBuilder.getDockerCompose([service], {}, urn);
     expect(compose).toMatchSnapshot();
   });
 
   it('should correctly format entrypoint as string', () => {
-    const service = serviceBuilder.setName('service').setImage('image').setEntrypoint('entrypoint').build();
-    const compose = composeBuilder.addService(service).build();
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      entrypoint: 'entrypoint',
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], {}, urn);
 
     expect(compose).toMatchSnapshot();
   });
 
   it('should correctly format entrypoint as array', () => {
-    const service = serviceBuilder.setName('service').setImage('image').setEntrypoint(['entrypoint', 'arg1', 'arg2']).build();
-    const compose = composeBuilder.addService(service).build();
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      entrypoint: ['entrypoint', 'arg1', 'arg2'],
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], {}, urn);
 
     expect(compose).toMatchSnapshot();
   });
 
   it('should correctly format logging', () => {
-    const service = serviceBuilder
-      .setName('service')
-      .setImage('image')
-      .setLogging({ driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } })
-      .build();
-    const compose = composeBuilder.addService(service).build();
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      logging: { driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } },
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], {}, urn);
 
     expect(compose).toMatchSnapshot();
   });
@@ -90,51 +108,97 @@ describe('DockerComposeBuilder', () => {
   });
 
   it('should correctly format a complex docker-compose file', () => {
-    const service1 = serviceBuilder
-      .setName('service1')
-      .setImage('image1')
-      .setPort({ containerPort: 80, hostPort: 80 })
-      .setPort({ containerPort: 8080, hostPort: 9000 })
-      .setExtraHosts(['host1', 'host2'])
-      .setUlimits({ nproc: 1024, nofile: 65536 })
-      .setCommand('node index.js')
-      .setVolumes([
+    const service1: ServiceInput = {
+      name: 'service1',
+      image: 'image1',
+      internalPort: 80,
+      addPorts: [{ containerPort: 8080, hostPort: 3400 }],
+      extraHosts: ['host1', 'host2'],
+      ulimits: { nproc: 1024, nofile: 65536 },
+      command: 'node index.js',
+      volumes: [
         { hostPath: '/host/path', containerPath: '/container/path', readOnly: true },
         { hostPath: '/host/path2', containerPath: '/container/path2' },
-      ])
-      .setEnvironment({ NODE_ENV: 'production', PORT: 80, SOME_VAR: 'value' })
-      .setHealthCheck({ test: 'curl -f http://localhost/ || exit 1', interval: '1m30s', timeout: '10s', retries: 3, startPeriod: '40s' })
-      .setDependsOn(['service2'])
-      .setCapAdd(['SYS_ADMIN', 'NET_ADMIN'])
-      .setDeploy({
+      ],
+      environment: { NODE_ENV: 'production', PORT: 80, SOME_VAR: 'value' },
+      healthCheck: { test: 'curl -f http://localhost/ || exit 1', interval: '1m30s', timeout: '10s', retries: 3, startPeriod: '40s' },
+      dependsOn: ['service2'],
+      capAdd: ['SYS_ADMIN', 'NET_ADMIN'],
+      deploy: {
         resources: {
           limits: { cpus: '0.50', memory: '50M', pids: 1 },
           reservations: { cpus: '0.25', memory: '20M', devices: [{ capabilities: ['gpu'], driver: 'nvidia', count: 'all' }] },
         },
-      })
-      .setHostname('hostname')
-      .setDevices(['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm'])
-      .setEntrypoint(['entrypoint', 'arg1', 'arg2'])
-      .setPid('1')
-      .setPrivileged(true)
-      .setTty(true)
-      .setUser('user')
-      .setWorkingDir('/working/dir')
-      .setShmSize('1G')
-      .setCapDrop(['SYS_ADMIN', 'NET_ADMIN'])
-      .setLogging({ driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } })
-      .setReadOnly(true)
-      .setSecurityOpt(['label=disable', 'label=role:ROLE'])
-      .setStopSignal('SIGTERM')
-      .setStopGracePeriod('1m')
-      .setStdinOpen(true)
-      .build();
+      },
+      hostname: 'hostname',
+      devices: ['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm'],
+      entrypoint: ['entrypoint', 'arg1', 'arg2'],
+      pid: '1',
+      privileged: true,
+      tty: true,
+      user: 'user',
+      workingDir: '/working/dir',
+      shmSize: '1G',
+      capDrop: ['SYS_ADMIN', 'NET_ADMIN'],
+      logging: { driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } },
+      readOnly: true,
+      securityOpt: ['label=disable', 'label=role:ROLE'],
+      stopSignal: 'SIGTERM',
+      stopGracePeriod: '1m',
+      stdinOpen: true,
+    };
 
-    const service2 = new ServiceBuilder().setName('service2').setImage('image2').build();
+    const service2: ServiceInput = {
+      name: 'service2',
+      image: 'image2',
+    };
 
-    const compose = composeBuilder.addService(service1).addService(service2).addNetwork({ external: true, name: 'network' }).build();
+    const compose = composeBuilder.getDockerCompose([service1, service2], {}, urn);
 
     expect(compose).toMatchSnapshot();
+  });
+
+  it('should add correct traefik labels to the main service', () => {
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      internalPort: 440,
+      isMain: true,
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], { exposed: true, exposedLocal: true, openPort: true }, urn);
+
+    expect(compose).toMatchSnapshot();
+  });
+
+  it('should add traefik labels when service is exposed and has internalPort', () => {
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      internalPort: 440,
+      isMain: true,
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], { exposed: true }, urn);
+    const yamlObject = yaml.parse(compose);
+
+    expect(yamlObject.services.service.labels).toBeDefined();
+    expect(yamlObject.services.service.labels['traefik.enable']).toBe(true);
+    expect(yamlObject.services.service.labels['traefik.http.routers.nginx-store-id.rule']).toBeDefined();
+  });
+
+  it('should not add traefik labels when service is not exposed', () => {
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      internalPort: 440,
+      isMain: true,
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], { exposed: false, exposedLocal: false }, urn);
+    const yamlObject = yaml.parse(compose);
+
+    expect(yamlObject.services.service.labels).toEqual({ 'runtipi.managed': true });
   });
 
   it('should be able to parse a compose.json file', async () => {
@@ -201,7 +265,7 @@ describe('DockerComposeBuilder', () => {
       ],
     };
 
-    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true });
+    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true }, urn);
 
     expect(yaml).toMatchSnapshot();
   });

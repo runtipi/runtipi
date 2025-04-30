@@ -1,0 +1,21 @@
+services:
+  db:
+    container_name: test-db
+    image: postgres:14
+    restart: no
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+
+  rabbitmq:
+    container_name: test-rabbitmq
+    image: rabbitmq:4-alpine
+    restart: no
+    ports:
+      - 5672:5672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest

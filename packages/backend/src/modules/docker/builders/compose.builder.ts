@@ -1,25 +1,28 @@
+import { extractAppUrn } from '@/common/helpers/app-helpers';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import type { AppUrn } from '@/types/app/app.types';
 import * as yaml from 'yaml';
 import { type Service, type ServiceInput, serviceSchema } from './schemas';
 import { type BuiltService, ServiceBuilder } from './service.builder';
 import { TraefikLabelsBuilder } from './traefik-labels.builder';
 
 interface Network {
-  key?: string;
-  name: string;
+  key: string;
+  name?: string;
   external: boolean;
 }
 
 export class DockerComposeBuilder {
   private services: Record<string, BuiltService> = {};
-  private networks: Record<string, Network> = {};
+  private networks: Record<string, Omit<Network, 'key'>> = {};
 
   addService(service: BuiltService) {
-    this.services[service.container_name] = service;
+    const { name, ...rest } = service;
+    this.services[service.name] = rest as BuiltService;
     return this;
   }
 
-  addServices(services: BuiltService[]) {
+  private addServices(services: BuiltService[]) {
     for (const service of services) {
       this.addService(service);
     }
@@ -27,7 +30,7 @@ export class DockerComposeBuilder {
   }
 
   addNetwork(network: Network) {
-    this.networks[network.key || network.name] = {
+    this.networks[network.key] = {
       name: network.name,
       external: network.external,
     };
@@ -43,19 +46,8 @@ export class DockerComposeBuilder {
     });
   }
 
-  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput) => {
-    const myServices = services.map((service) => this.buildService(service, form));
-
-    const dockerCompose = new DockerComposeBuilder().addServices(myServices).addNetwork({
-      key: 'tipi_main_network',
-      name: 'runtipi_tipi_main_network',
-      external: true,
-    });
-
-    return dockerCompose.build();
-  };
-
-  private buildService = (params: Service, form: AppEventFormInput) => {
+  private buildService = (params: Service, form: AppEventFormInput, appUrn: AppUrn) => {
+    const { appName, appStoreId } = extractAppUrn(appUrn);
     const result = serviceSchema.safeParse(params);
 
     if (!result.success) {
@@ -75,7 +67,6 @@ export class DockerComposeBuilder {
       .setExtraHosts(params.extraHosts)
       .setUlimits(params.ulimits)
       .setPorts(params.addPorts)
-      .setNetwork('tipi_main_network')
       .setNetworkMode(params.networkMode)
       .setCapAdd(params.capAdd)
       .setDeploy(params.deploy)
@@ -95,7 +86,12 @@ export class DockerComposeBuilder {
       .setStopSignal(params.stopSignal)
       .setStopGracePeriod(params.stopGracePeriod)
       .setStdinOpen(params.stdinOpen)
-      .setSysctls(params.sysctls);
+      .setSysctls(params.sysctls)
+      .setNetwork(`${appName}_${appStoreId}_network`);
+
+    if (params.isMain || params.addToMainNetwork) {
+      service.setNetwork('tipi_main_network', 1);
+    }
 
     if (params.isMain) {
       if (form.openPort && params.internalPort) {
@@ -105,10 +101,11 @@ export class DockerComposeBuilder {
         });
       }
 
-      if (params.internalPort) {
+      if (params.internalPort && params.networkMode === undefined && (form.exposed || form.exposedLocal)) {
         const traefikLabels = new TraefikLabelsBuilder({
+          storeId: appStoreId,
+          appId: appName,
           internalPort: params.internalPort,
-          appId: params.name,
           exposedLocal: form.exposedLocal,
           exposed: form.exposed,
           enableAuth: form.enableAuth,
@@ -120,8 +117,27 @@ export class DockerComposeBuilder {
       }
     }
 
-    service.setLabels({ 'runtipi.managed': true, ...params.extraLabels }).interpolateVariables(params.name);
+    service.setLabels({ 'runtipi.managed': true, ...params.extraLabels }).interpolateVariables(`${appName}-${appStoreId}`);
 
     return service.build();
+  };
+
+  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, appUrn: AppUrn) => {
+    const { appName, appStoreId } = extractAppUrn(appUrn);
+
+    const myServices = services.map((service) => this.buildService(service, form, appUrn));
+
+    const dockerCompose = this.addServices(myServices)
+      .addNetwork({
+        key: 'tipi_main_network',
+        name: 'runtipi_tipi_main_network',
+        external: true,
+      })
+      .addNetwork({
+        key: `${appName}_${appStoreId}_network`,
+        external: false,
+      });
+
+    return dockerCompose.build();
   };
 }

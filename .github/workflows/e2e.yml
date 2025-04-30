@@ -53,7 +53,7 @@ jobs:
       - name: Download CLI form release on runtipi/cli repo
         run: |
           REPO="runtipi/cli"
-          VERSION="nightly"
+          VERSION=nightly
 
           ASSETS_URL=$(curl -s \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -87,9 +87,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
-
       - name: Create .env.local
         run: |
           echo "LOG_LEVEL=debug" > .env.local
@@ -97,6 +94,9 @@ jobs:
       - name: Run install script
         if: ${{ inputs.version }}
         run: |
+          docker version
+          mkdir -p runtipi/user-config
+          echo -e "services:\n  runtipi-db:\n    ports:\n      - 5432:5432" > runtipi/user-config/tipi-compose.yml
           curl -s https://raw.githubusercontent.com/runtipi/runtipi/${{ inputs.version }}/scripts/install.sh > install.sh
           chmod +x install.sh
           ./install.sh --version ${{ inputs.version }} --asset runtipi-cli-linux-x86_64.tar.gz --env-file ${{ github.workspace }}/.env.local
@@ -104,6 +104,8 @@ jobs:
       - name: Run install script
         if: ${{ !inputs.version }}
         run: |
+          mkdir -p runtipi/user-config
+          echo -e "services:\n  runtipi-db:\n    ports:\n      - 5432:5432" > runtipi/user-config/tipi-compose.yml
           ./scripts/install.sh --version e2e --env-file ${{ github.workspace }}/.env.local
           cd ..
 
@@ -127,6 +129,9 @@ jobs:
       - name: Install Playwright Browsers
         if: steps.cache-playwright-binaries.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
+
+      - name: Install dependencies
+        uses: "./.github/actions/install-dependencies"
 
       - name: Run Playwright tests
         id: run-e2e

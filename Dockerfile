@@ -17,7 +17,7 @@ RUN pnpm fetch
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
 
-RUN apk add --no-cache curl openssl git rabbitmq-server supervisor
+RUN apk add --no-cache curl openssl git
 
 # ---- BUILDER ----
 FROM builder_base AS builder
@@ -25,7 +25,7 @@ FROM builder_base AS builder
 ARG TIPI_VERSION
 ARG LOCAL
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.33.1"
+ARG DOCKER_COMPOSE_VERSION="v2.35.0"
 
 ENV SENTRY_RELEASE=${TIPI_VERSION}
 ENV TARGETARCH=${TARGETARCH}
@@ -84,8 +84,6 @@ COPY --from=builder /app/packages/backend/src/core/database/drizzle ./assets/mig
 COPY --from=builder /app/packages/backend/src/modules/i18n/translations ./assets/translations
 COPY --from=builder /app/packages/frontend/dist ./assets/frontend
 
-COPY ./supervisord.prod.conf /etc/supervisord.conf
-
 EXPOSE 3000
 
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["npm", "run", "start"]

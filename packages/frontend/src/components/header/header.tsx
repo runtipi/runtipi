@@ -3,6 +3,7 @@ import { getLogo } from '@/lib/theme/theme';
 import { useUIStore } from '@/stores/ui-store';
 import { IconBrandGithub, IconHeart, IconLogin, IconLogout, IconMoon, IconSun } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 import { Tooltip } from 'react-tooltip';
@@ -16,6 +17,7 @@ type HeaderProps = {
 
 export const Header = (props: HeaderProps) => {
   const setDarkMode = useUIStore((state) => state.setDarkMode);
+  const theme = useUIStore((state) => state.theme);
 
   const { isUpdateAvailable, allowAutoThemes, isLoggedIn } = props;
 
@@ -73,7 +75,9 @@ export const Header = (props: HeaderProps) => {
             <button
               type="button"
               onClick={() => setDarkMode(true)}
-              className="darkMode nav-link px-0 hide-theme-dark cursor-pointer"
+              className={clsx('darkMode nav-link px-0 cursor-pointer', {
+                'visually-hidden': theme === 'dark',
+              })}
               data-testid="dark-mode-toggle"
             >
               <IconMoon data-testid="icon-moon" size={20} />
@@ -84,7 +88,9 @@ export const Header = (props: HeaderProps) => {
             <button
               type="button"
               onClick={() => setDarkMode(false)}
-              className="lightMode nav-link px-0 hide-theme-light cursor-pointer"
+              className={clsx('lightMode nav-link px-0 cursor-pointer ', {
+                'visually-hidden': theme === 'light',
+              })}
               data-testid="light-mode-toggle"
             >
               <IconSun data-testid="icon-sun" size={20} />

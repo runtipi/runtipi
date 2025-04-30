@@ -1,6 +1,6 @@
 import path from 'node:path';
-
 import { Injectable } from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
 import { z } from 'zod';
 import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
@@ -10,8 +10,9 @@ import { DatabaseService } from './core/database/database.service';
 import { FilesystemService } from './core/filesystem/filesystem.service';
 import { LoggerService } from './core/logger/logger.service';
 import { AppLifecycleService } from './modules/app-lifecycle/app-lifecycle.service';
+import { AppStoreService } from './modules/app-stores/app-store.service';
+import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
-import { ReposService } from './modules/repos/repos.service';
 
 @Injectable()
 export class AppService {
@@ -19,56 +20,57 @@ export class AppService {
     private readonly cache: CacheService,
     private readonly configuration: ConfigurationService,
     private readonly logger: LoggerService,
-    private readonly repos: ReposService,
     private readonly repoQueue: RepoEventsQueue,
     private readonly filesystem: FilesystemService,
+    private readonly appStoreService: AppStoreService,
+    private readonly marketplaceService: MarketplaceService,
     private readonly databaseService: DatabaseService,
     private readonly appLifecycleService: AppLifecycleService,
   ) {}
 
   public async bootstrap() {
-    await this.databaseService.migrate();
+    try {
+      await this.databaseService.migrate();
 
-    const config = this.configuration.getConfig();
-    this.logger.info('Log level', config.userSettings.logLevel);
-    this.logger.debug('Starting with configuration', config);
+      const { version, userSettings, __prod__ } = this.configuration.getConfig();
+      const config = this.configuration.getConfig();
+      this.logger.info('Log level', config.userSettings.logLevel);
+      this.logger.debug('Starting with configuration', config);
 
-    const { version, appsRepoUrl, userSettings } = config;
+      this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
 
-    this.configuration.initSentry({ release: version, allowSentry: userSettings.allowErrorMonitoring });
+      await this.logger.flush();
 
-    await this.logger.flush();
+      this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
+      this.logger.info('Generating system env file...');
 
-    this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
-    this.logger.info('Generating system env file...');
-
-    const buster = this.cache.get('buster');
-    if (buster !== version) {
-      this.logger.info('Clearing cache...');
-      this.cache.clear();
-      this.cache.set('buster', version, ONE_DAY_IN_SECONDS * 365);
-    }
-
-    const clone = await this.repos.cloneRepo(appsRepoUrl);
-    if (!clone.success) {
-      this.logger.error(`Failed to clone repo ${appsRepoUrl}`);
-    }
-
-    if (this.configuration.get('isProduction')) {
-      const pull = await this.repos.pullRepo(appsRepoUrl);
-      if (!pull.success) {
-        this.logger.error(`Failed to pull repo ${appsRepoUrl}`);
+      const buster = this.cache.get('buster');
+      if (buster !== version) {
+        this.logger.info('Clearing cache...');
+        this.cache.clear();
+        this.cache.set('buster', version, ONE_DAY_IN_SECONDS * 365);
       }
-    }
 
-    // Every 15 minutes, check for updates to the apps repo
-    this.repoQueue.publishRepeatable({ command: 'update', url: appsRepoUrl }, '*/15 * * * *');
+      await this.appStoreService.migrateLegacyRepo();
 
-    await this.copyAssets();
-    await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
+      this.repoQueue.publish({ command: 'clone_all' });
 
-    if (this.configuration.get('isProduction')) {
-      this.appLifecycleService.startAllApps();
+      await this.marketplaceService.initialize();
+
+      // Every 15 minutes, check for updates to the apps repo
+      if (__prod__) {
+        this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');
+      }
+
+      await this.copyAssets();
+      await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
+
+      if (__prod__) {
+        this.appLifecycleService.startAllApps();
+      }
+    } catch (e) {
+      this.logger.error(e);
+      Sentry.captureException(e, { tags: { source: 'bootstrap' } });
     }
   }
 

@@ -3,14 +3,14 @@ import { Suspense, lazy, useRef, useState } from 'react';
 
 const LogsTerminal = lazy(() => import('@/components/logs-terminal/logs-terminal').then((module) => ({ default: module.LogsTerminal })));
 
-export const AppLogs = ({ appId }: { appId: string }) => {
+export const AppLogs = ({ appUrn }: { appUrn: string }) => {
   let nextId = 0;
   const [logs, setLogs] = useState<{ id: number; text: string }[]>([]);
   const maxLines = useRef(300);
 
   useSSE({
     topic: 'app-logs',
-    params: new URLSearchParams({ appId, maxLines: maxLines.current.toString() }),
+    params: new URLSearchParams({ appUrn, maxLines: maxLines.current.toString() }),
     onEvent: (data) => {
       setLogs((prevLogs) => {
         if (!data.lines) {

@@ -39,6 +39,21 @@ services:
     networks:
       - tipi_main_network
 
+  runtipi-queue:
+    container_name: runtipi-queue
+    image: rabbitmq:4-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    environment:
+      RABBITMQ_DEFAULT_USER: tipi
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+    networks:
+      - tipi_main_network
+
   runtipi:
     build:
       context: .
@@ -46,16 +61,18 @@ services:
     depends_on:
       runtipi-db:
         condition: service_healthy
+      runtipi-queue:
+        condition: service_healthy
     container_name: runtipi
     restart: unless-stopped
-    ports:
-      - 3000:8080
     healthcheck:
       start_period: 10s
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 5s
       timeout: 3s
       retries: 20
+    ports:
+      - 3000:8080
     volumes:
       # Hot reload
       - ./packages/backend/src:/app/packages/backend/src
@@ -85,6 +102,9 @@ services:
       NODE_ENV: development
       ROOT_FOLDER_HOST: ${PWD}
       POSTGRES_PASSWORD: postgres
+      RABBITMQ_USERNAME: tipi
+      RABBITMQ_PASSWORD: rabbitmq
+      RABBITMQ_HOST: runtipi-queue
       INTERNAL_IP: 127.0.0.1
       TIPI_VERSION: 0.0.0
       LOG_LEVEL: debug
@@ -92,6 +112,7 @@ services:
       - .env
     labels:
       # ---- General ----- #
+      runtipi.managed: true
       traefik.enable: true
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
 

@@ -82,7 +82,7 @@ const validateDomain = (domain?: unknown): ValidationError | undefined => {
 };
 
 export const validateAppConfig = (values: Record<string, unknown>, fields: FormField[]) => {
-  const { exposed, domain, ...config } = values;
+  const { exposed, openPort, domain, port, ...config } = values;
 
   const errors: Record<string, ValidationError | undefined> = {};
 
@@ -100,6 +100,10 @@ export const validateAppConfig = (values: Record<string, unknown>, fields: FormF
     if (error) {
       errors.domain = error;
     }
+  }
+
+  if (openPort && port && !validator.isPort(String(port))) {
+    errors.port = { messageKey: 'APP_INSTALL_FORM_ERROR_PORT', params: { port: String(port) } };
   }
 
   return errors;

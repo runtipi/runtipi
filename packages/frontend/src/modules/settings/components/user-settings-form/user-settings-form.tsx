@@ -16,6 +16,7 @@ import validator from 'validator';
 import { z } from 'zod';
 import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-settings-modal';
 import './user-settings-form.css';
+import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 
 const TimeZoneSelector = lazy(() =>
@@ -135,17 +136,15 @@ export const UserSettingsForm = (props: IProps) => {
   return (
     <>
       {isDirty && (
-        <div className="alert alert-info fade-in" role="alert">
-          <div className="d-flex">
-            <div>
-              <IconInfoCircle className="me-2" />
-            </div>
-            <div>
-              <h4 className="alert-title">{t('SETTINGS_GENERAL_SAVE_ALERT_TITLE')}</h4>
-              <div className="text-secondary">{t('SETTINGS_GENERAL_SAVE_ALERT_SUBTITLE')}</div>
-            </div>
+        <Alert variant="info" className="fade-in">
+          <AlertIcon>
+            <IconInfoCircle stroke={2} />
+          </AlertIcon>
+          <div>
+            <AlertHeading>{t('SETTINGS_GENERAL_SAVE_ALERT_TITLE')}</AlertHeading>
+            <AlertDescription>{t('SETTINGS_GENERAL_SAVE_ALERT_SUBTITLE')}</AlertDescription>
           </div>
-        </div>
+        </Alert>
       )}
       <div className="d-flex mb-2">
         <IconUser className="me-2" />

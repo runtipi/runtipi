@@ -1,0 +1,156 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App lifecycle > install app > should not delete an existing app-data folder even if the app is reinstalled 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     └─ test2/
+│        ├─ app.env
+│        └─ data/
+│           └─ test.txt
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ test/
+   │     └─ test2/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        ├─ docker-compose.yml
+   │        └─ metadata/
+   │           └─ description.md
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        └─ test2/
+   │           ├─ config.json
+   │           ├─ data/
+   │           ├─ docker-compose.json
+   │           └─ metadata/
+   │              └─ description.md
+   └─ state/
+      └─ seed"
+`;
+
+exports[`App lifecycle > install app > should successfully install app and create expected directory structure 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     └─ test/
+│        ├─ app.env
+│        └─ data/
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ test/
+   │     └─ test/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        ├─ docker-compose.yml
+   │        └─ metadata/
+   │           └─ description.md
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        └─ test/
+   │           ├─ config.json
+   │           ├─ data/
+   │           ├─ docker-compose.json
+   │           └─ metadata/
+   │              └─ description.md
+   └─ state/
+      └─ seed"
+`;
+
+exports[`App lifecycle > install app > should successfully install app and create expected directory structure 2`] = `
+"services:
+  test:
+    image: test
+    restart: unless-stopped
+    networks:
+      test_test_network:
+        gw_priority: 0
+      tipi_main_network:
+        gw_priority: 1
+    environment:
+      TEST: test
+    ports:
+      - \${APP_PORT}:80
+    labels:
+      runtipi.managed: true
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  test_test_network:
+    external: false
+
+"
+`;
+
+exports[`App lifecycle > update all apps > should update multiple apps that have newer versions available 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     ├─ app1/
+│     │  ├─ app.env
+│     │  └─ data/
+│     ├─ app2/
+│     │  ├─ app.env
+│     │  └─ data/
+│     └─ app3/
+│        ├─ app.env
+│        └─ data/
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ test/
+   │     ├─ app1/
+   │     │  ├─ config.json
+   │     │  ├─ data/
+   │     │  ├─ docker-compose.json
+   │     │  ├─ docker-compose.yml
+   │     │  └─ metadata/
+   │     │     └─ description.md
+   │     ├─ app2/
+   │     │  ├─ config.json
+   │     │  ├─ data/
+   │     │  ├─ docker-compose.json
+   │     │  ├─ docker-compose.yml
+   │     │  └─ metadata/
+   │     │     └─ description.md
+   │     └─ app3/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        ├─ docker-compose.yml
+   │        └─ metadata/
+   │           └─ description.md
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        ├─ app1/
+   │        │  ├─ config.json
+   │        │  ├─ data/
+   │        │  ├─ docker-compose.json
+   │        │  └─ metadata/
+   │        │     └─ description.md
+   │        ├─ app2/
+   │        │  ├─ config.json
+   │        │  ├─ data/
+   │        │  ├─ docker-compose.json
+   │        │  └─ metadata/
+   │        │     └─ description.md
+   │        └─ app3/
+   │           ├─ config.json
+   │           ├─ data/
+   │           ├─ docker-compose.json
+   │           └─ metadata/
+   │              └─ description.md
+   └─ state/
+      └─ seed"
+`;

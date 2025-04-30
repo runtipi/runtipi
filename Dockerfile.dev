@@ -4,10 +4,10 @@ ARG ALPINE_VERSION="3.21"
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
 RUN corepack enable pnpm && corepack install -g pnpm@latest-10
-RUN apk add --no-cache g++ make curl openssl git rabbitmq-server supervisor
+RUN apk add --no-cache g++ make curl openssl git
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.33.1"
+ARG DOCKER_COMPOSE_VERSION="v2.35.0"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 
@@ -41,8 +41,6 @@ COPY ./packages ./packages
 COPY ./packages/backend/assets ./assets
 COPY ./packages/backend/src/core/database/drizzle ./assets/migrations
 
-COPY ./supervisord.dev.conf /etc/supervisord.conf
-
 EXPOSE 3000
 
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["npm", "run", "dev"]

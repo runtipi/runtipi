@@ -523,10 +523,48 @@
         ]
       }
     },
-    "/api/apps/search": {
+    "/api/apps/{urn}": {
+      "get": {
+        "operationId": "getApp",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAppDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
+    "/api/marketplace/apps/search": {
       "get": {
         "operationId": "searchApps",
         "parameters": [
+          {
+            "name": "storeId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "category",
             "required": false,
@@ -590,13 +628,123 @@
           }
         },
         "tags": [
-          "Apps"
+          "Marketplace"
         ]
       }
     },
-    "/api/apps/{id}": {
+    "/api/marketplace/apps/{urn}/image": {
       "get": {
-        "operationId": "getAppDetails",
+        "operationId": "getImage",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/pull": {
+      "post": {
+        "operationId": "pullAppStores",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PullDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/create": {
+      "post": {
+        "operationId": "createAppStore",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppStoreBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/all": {
+      "get": {
+        "operationId": "getAllAppStores",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllAppStoresDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/enabled": {
+      "get": {
+        "operationId": "getEnabledAppStores",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllAppStoresDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/api/marketplace/{id}": {
+      "patch": {
+        "operationId": "updateAppStore",
         "parameters": [
           {
             "name": "id",
@@ -607,26 +755,27 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AppDetailsDto"
-                }
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAppStoreBodyDto"
               }
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "tags": [
-          "Apps"
+          "Marketplace"
         ]
-      }
-    },
-    "/api/apps/{id}/image": {
-      "get": {
-        "operationId": "getImage",
+      },
+      "delete": {
+        "operationId": "deleteAppStore",
         "parameters": [
           {
             "name": "id",
@@ -643,37 +792,16 @@
           }
         },
         "tags": [
-          "Apps"
+          "Marketplace"
         ]
       }
     },
-    "/api/repos/pull": {
-      "post": {
-        "operationId": "pull",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PullDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Repos"
-        ]
-      }
-    },
-    "/api/app-lifecycle/{id}/install": {
+    "/api/app-lifecycle/{urn}/install": {
       "post": {
         "operationId": "installApp",
         "parameters": [
           {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -701,12 +829,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/start": {
+    "/api/app-lifecycle/{urn}/start": {
       "post": {
         "operationId": "startApp",
         "parameters": [
           {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -724,12 +852,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/stop": {
+    "/api/app-lifecycle/{urn}/stop": {
       "post": {
         "operationId": "stopApp",
         "parameters": [
           {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -747,12 +875,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/restart": {
+    "/api/app-lifecycle/{urn}/restart": {
       "post": {
         "operationId": "restartApp",
         "parameters": [
           {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -770,12 +898,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/uninstall": {
+    "/api/app-lifecycle/{urn}/uninstall": {
       "delete": {
         "operationId": "uninstallApp",
         "parameters": [
           {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -803,12 +931,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/reset": {
+    "/api/app-lifecycle/{urn}/reset": {
       "post": {
         "operationId": "resetApp",
         "parameters": [
           {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -826,12 +954,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/update": {
+    "/api/app-lifecycle/{urn}/update": {
       "patch": {
         "operationId": "updateApp",
         "parameters": [
           {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -845,6 +973,39 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/UpdateAppBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{urn}/update-config": {
+      "patch": {
+        "operationId": "updateAppConfig",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppFormBody"
               }
             }
           }
@@ -873,45 +1034,12 @@
         ]
       }
     },
-    "/api/app-lifecycle/{id}/update-config": {
-      "patch": {
-        "operationId": "updateAppConfig",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AppFormBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "AppLifecycle"
-        ]
-      }
-    },
-    "/api/backups/{appid}/backup": {
+    "/api/backups/{urn}/backup": {
       "post": {
         "operationId": "backupApp",
         "parameters": [
           {
-            "name": "appid",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -929,12 +1057,12 @@
         ]
       }
     },
-    "/api/backups/{appid}/restore": {
+    "/api/backups/{urn}/restore": {
       "post": {
         "operationId": "restoreAppBackup",
         "parameters": [
           {
-            "name": "appid",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -962,12 +1090,12 @@
         ]
       }
     },
-    "/api/backups/{id}": {
+    "/api/backups/{urn}": {
       "get": {
         "operationId": "getAppBackups",
         "parameters": [
           {
-            "name": "id",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -1006,14 +1134,12 @@
         "tags": [
           "Backups"
         ]
-      }
-    },
-    "/api/backups/{appid}": {
+      },
       "delete": {
         "operationId": "deleteAppBackup",
         "parameters": [
           {
-            "name": "appid",
+            "name": "urn",
             "required": true,
             "in": "path",
             "schema": {
@@ -1067,19 +1193,19 @@
         "operationId": "appLogsEvents",
         "parameters": [
           {
-            "name": "appId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "maxLines",
             "required": false,
             "in": "query",
             "schema": {
               "type": "number"
+            }
+          },
+          {
+            "name": "appUrn",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1625,6 +1751,9 @@
                 "id": {
                   "type": "string"
                 },
+                "urn": {
+                  "type": "string"
+                },
                 "name": {
                   "type": "string"
                 },
@@ -1681,6 +1810,7 @@
               },
               "required": [
                 "id",
+                "urn",
                 "name",
                 "short_desc",
                 "available"
@@ -2026,7 +2156,11 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string"
+                      "type": "number"
+                    },
+                    "port": {
+                      "type": "number",
+                      "nullable": true
                     },
                     "status": {
                       "type": "string",
@@ -2044,14 +2178,6 @@
                         "backing_up",
                         "restoring"
                       ]
-                    },
-                    "lastOpened": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "numOpened": {
-                      "type": "number",
-                      "default": 0
                     },
                     "createdAt": {
                       "type": "string"
@@ -2088,8 +2214,8 @@
                   },
                   "required": [
                     "id",
+                    "port",
                     "status",
-                    "lastOpened",
                     "version",
                     "exposed",
                     "openPort",
@@ -2102,6 +2228,9 @@
                   "type": "object",
                   "properties": {
                     "id": {
+                      "type": "string"
+                    },
+                    "urn": {
                       "type": "string"
                     },
                     "name": {
@@ -2160,14 +2289,18 @@
                   },
                   "required": [
                     "id",
+                    "urn",
                     "name",
                     "short_desc",
                     "available"
                   ]
                 },
-                "updateInfo": {
+                "metadata": {
                   "type": "object",
                   "properties": {
+                    "hasCustomConfig": {
+                      "type": "boolean"
+                    },
                     "latestVersion": {
                       "type": "number"
                     },
@@ -2186,7 +2319,7 @@
               "required": [
                 "app",
                 "info",
-                "updateInfo"
+                "metadata"
               ]
             }
           }
@@ -2207,7 +2340,11 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string"
+                      "type": "number"
+                    },
+                    "port": {
+                      "type": "number",
+                      "nullable": true
                     },
                     "status": {
                       "type": "string",
@@ -2225,14 +2362,6 @@
                         "backing_up",
                         "restoring"
                       ]
-                    },
-                    "lastOpened": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "numOpened": {
-                      "type": "number",
-                      "default": 0
                     },
                     "createdAt": {
                       "type": "string"
@@ -2269,8 +2398,8 @@
                   },
                   "required": [
                     "id",
+                    "port",
                     "status",
-                    "lastOpened",
                     "version",
                     "exposed",
                     "openPort",
@@ -2283,6 +2412,9 @@
                   "type": "object",
                   "properties": {
                     "id": {
+                      "type": "string"
+                    },
+                    "urn": {
                       "type": "string"
                     },
                     "available": {
@@ -2509,6 +2641,7 @@
                   },
                   "required": [
                     "id",
+                    "urn",
                     "available",
                     "name",
                     "tipi_version",
@@ -2516,29 +2649,11 @@
                     "author",
                     "source"
                   ]
-                },
-                "updateInfo": {
-                  "type": "object",
-                  "properties": {
-                    "latestVersion": {
-                      "type": "number"
-                    },
-                    "minTipiVersion": {
-                      "type": "string"
-                    },
-                    "latestDockerVersion": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "latestVersion"
-                  ]
                 }
               },
               "required": [
                 "app",
-                "info",
-                "updateInfo"
+                "info"
               ]
             }
           },
@@ -2551,98 +2666,89 @@
           "localDomain"
         ]
       },
-      "SearchAppsDto": {
+      "GetAppDto": {
         "type": "object",
         "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "short_desc": {
-                  "type": "string"
-                },
-                "categories": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "network",
-                      "media",
-                      "development",
-                      "automation",
-                      "social",
-                      "utilities",
-                      "photography",
-                      "security",
-                      "featured",
-                      "books",
-                      "data",
-                      "music",
-                      "finance",
-                      "gaming",
-                      "ai"
-                    ]
-                  },
-                  "default": []
-                },
-                "deprecated": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "created_at": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "exclusiveMinimum": false,
-                  "default": 0
-                },
-                "supported_architectures": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "arm64",
-                      "amd64"
-                    ]
-                  }
-                },
-                "available": {
-                  "type": "boolean"
-                }
+          "app": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
               },
-              "required": [
-                "id",
-                "name",
-                "short_desc",
-                "available"
-              ]
-            }
+              "port": {
+                "type": "number",
+                "nullable": true
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "running",
+                  "stopped",
+                  "installing",
+                  "uninstalling",
+                  "stopping",
+                  "starting",
+                  "missing",
+                  "updating",
+                  "resetting",
+                  "restarting",
+                  "backing_up",
+                  "restoring"
+                ]
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "version": {
+                "type": "number"
+              },
+              "exposed": {
+                "type": "boolean"
+              },
+              "openPort": {
+                "type": "boolean"
+              },
+              "exposedLocal": {
+                "type": "boolean"
+              },
+              "domain": {
+                "type": "string",
+                "nullable": true
+              },
+              "isVisibleOnGuestDashboard": {
+                "type": "boolean"
+              },
+              "config": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "enableAuth": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "port",
+              "status",
+              "version",
+              "exposed",
+              "openPort",
+              "exposedLocal",
+              "domain",
+              "isVisibleOnGuestDashboard"
+            ],
+            "nullable": true
           },
-          "nextCursor": {
-            "type": "string"
-          },
-          "total": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "data",
-          "total"
-        ]
-      },
-      "AppDetailsDto": {
-        "type": "object",
-        "properties": {
           "info": {
             "type": "object",
             "properties": {
               "id": {
+                "type": "string"
+              },
+              "urn": {
                 "type": "string"
               },
               "available": {
@@ -2869,6 +2975,7 @@
             },
             "required": [
               "id",
+              "urn",
               "available",
               "name",
               "tipi_version",
@@ -2877,85 +2984,12 @@
               "source"
             ]
           },
-          "app": {
+          "metadata": {
             "type": "object",
             "properties": {
-              "id": {
-                "type": "string"
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "running",
-                  "stopped",
-                  "installing",
-                  "uninstalling",
-                  "stopping",
-                  "starting",
-                  "missing",
-                  "updating",
-                  "resetting",
-                  "restarting",
-                  "backing_up",
-                  "restoring"
-                ]
-              },
-              "lastOpened": {
-                "type": "string",
-                "nullable": true
-              },
-              "numOpened": {
-                "type": "number",
-                "default": 0
-              },
-              "createdAt": {
-                "type": "string"
-              },
-              "updatedAt": {
-                "type": "string"
-              },
-              "version": {
-                "type": "number"
-              },
-              "exposed": {
+              "hasCustomConfig": {
                 "type": "boolean"
               },
-              "openPort": {
-                "type": "boolean"
-              },
-              "exposedLocal": {
-                "type": "boolean"
-              },
-              "domain": {
-                "type": "string",
-                "nullable": true
-              },
-              "isVisibleOnGuestDashboard": {
-                "type": "boolean"
-              },
-              "config": {
-                "type": "object",
-                "additionalProperties": {}
-              },
-              "enableAuth": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "id",
-              "status",
-              "lastOpened",
-              "version",
-              "exposed",
-              "openPort",
-              "exposedLocal",
-              "domain",
-              "isVisibleOnGuestDashboard"
-            ]
-          },
-          "updateInfo": {
-            "type": "object",
-            "properties": {
               "latestVersion": {
                 "type": "number"
               },
@@ -2973,8 +3007,96 @@
         },
         "required": [
           "info",
-          "app",
-          "updateInfo"
+          "metadata"
+        ]
+      },
+      "SearchAppsDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "urn": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "short_desc": {
+                  "type": "string"
+                },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "network",
+                      "media",
+                      "development",
+                      "automation",
+                      "social",
+                      "utilities",
+                      "photography",
+                      "security",
+                      "featured",
+                      "books",
+                      "data",
+                      "music",
+                      "finance",
+                      "gaming",
+                      "ai"
+                    ]
+                  },
+                  "default": []
+                },
+                "deprecated": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "created_at": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "exclusiveMinimum": false,
+                  "default": 0
+                },
+                "supported_architectures": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "arm64",
+                      "amd64"
+                    ]
+                  }
+                },
+                "available": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "urn",
+                "name",
+                "short_desc",
+                "available"
+              ]
+            }
+          },
+          "nextCursor": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "data",
+          "total"
         ]
       },
       "PullDto": {
@@ -2988,9 +3110,82 @@
           "success"
         ]
       },
+      "CreateAppStoreBodyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "url"
+        ]
+      },
+      "AllAppStoresDto": {
+        "type": "object",
+        "properties": {
+          "appStores": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slug": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "slug",
+                "name",
+                "url",
+                "enabled"
+              ]
+            }
+          }
+        },
+        "required": [
+          "appStores"
+        ]
+      },
+      "UpdateAppStoreBodyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "enabled"
+        ]
+      },
       "AppFormBody": {
         "type": "object",
         "properties": {
+          "port": {
+            "type": "number",
+            "minimum": 1024,
+            "exclusiveMinimum": false,
+            "maximum": 65535,
+            "exclusiveMaximum": false
+          },
           "exposed": {
             "type": "boolean"
           },

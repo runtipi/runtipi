@@ -37,6 +37,13 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
     },
   });
 
+  const normalizeFormValues = (values: FormValues) => {
+    return {
+      ...values,
+      port: values.port ? Number(values.port) : undefined,
+    };
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -46,7 +53,7 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
         <ScrollArea maxheight={500}>
           <DialogDescription>
             <InstallForm
-              onSubmit={(values: FormValues) => updateConfig.mutate({ path: { id: info.id }, body: values })}
+              onSubmit={(values: FormValues) => updateConfig.mutate({ path: { urn: info.urn }, body: normalizeFormValues(values) })}
               formFields={info.form_fields}
               info={info}
               initialValues={{ ...config }}

@@ -1,11 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { app } from '../packages/backend/src/core/database/drizzle/schema';
-import { loginUser } from './fixtures/fixtures';
+import { installApp, loginUser } from './fixtures/fixtures';
 import { clearDatabase, db } from './helpers/db';
 import { setSettings } from './helpers/settings';
 
 test.beforeEach(async () => {
-  // test.fixme(true, 'Not working yet');
   await clearDatabase();
   await setSettings({});
 });
@@ -22,43 +20,31 @@ test('user can activate the guest dashboard and see it when logged out', async (
   await expect(page.getByText('No apps to display')).toBeVisible();
 });
 
-test('logged out users can see the apps on the guest dashboard', async ({ browser }) => {
-  await db.insert(app).values({
-    config: {},
-    isVisibleOnGuestDashboard: true,
-    id: 'hello-world',
-    exposed: true,
-    exposedLocal: true,
-    domain: 'duckduckgo.com',
-    status: 'running',
-    openPort: true,
-  });
-  await db.insert(app).values({
-    config: {},
-    openPort: true,
-    isVisibleOnGuestDashboard: false,
-    id: 'actual-budget',
-    exposed: false,
-    exposedLocal: false,
-    status: 'running',
-  });
-
-  const context = await browser.newContext();
-  const page = await context.newPage();
+test('logged out users can see the apps on the guest dashboard', async ({ page, context }) => {
+  test.slow();
 
   await loginUser(page, context);
-  await page.goto('/settings');
 
+  const store = await db.query.appStore.findFirst();
+
+  if (!store) {
+    throw new Error('No store found');
+  }
+
+  await installApp(page, store.slug, 'nginx', { visibleOnGuestDashboard: true, domain: 'duckduckgo.com' });
+  await installApp(page, store.slug, 'whoami', { visibleOnGuestDashboard: false });
+
+  await page.goto('/settings');
   await page.getByRole('tab', { name: 'Settings' }).click();
   await page.getByLabel('guestDashboard').setChecked(true);
   await page.getByRole('button', { name: 'Update settings' }).click();
   await page.getByTestId('logout-button').click();
 
-  await expect(page.getByText(/Hello World web server/)).toBeVisible();
-  const locator = page.locator('text=Actual Budget');
+  await expect(page.getByText(/Open-source simple and fast web server/)).toBeVisible();
+  const locator = page.locator('text=Whoami');
   await expect(locator).not.toBeVisible();
 
-  await page.getByText('Hello World', { exact: true }).click();
+  await page.getByText('Nginx', { exact: true }).click();
 
   const [newPage] = await Promise.all([context.waitForEvent('page'), page.getByRole('menuitem', { name: 'duckduckgo.com' }).click()]);
 

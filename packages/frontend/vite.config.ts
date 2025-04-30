@@ -16,9 +16,6 @@ export default defineConfig({
       project: 'runtipi-frontend',
     }),
   ],
-  optimizeDeps: {
-    include: ['geist/font/sans'],
-  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

@@ -57,8 +57,8 @@ interface Logging {
 }
 
 export interface BuilderService {
+  name: string;
   image: string;
-  containerName: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
   environment?: Record<string, string | number>;
   command?: string | string[];
@@ -67,7 +67,7 @@ export interface BuilderService {
   healthCheck?: HealthCheck;
   labels?: Record<string, string | boolean>;
   dependsOn?: DependsOn;
-  networks?: string[];
+  networks?: Record<string, { gw_priority: number }>;
   networkMode?: string;
   extraHosts?: string[];
   ulimits?: Ulimits;
@@ -116,17 +116,17 @@ export class ServiceBuilder {
   }
 
   /**
-   * Sets the name of the container. Will be used as the `container_name` property as well as the key
-   * @param name The name of the container.
+   * Sets the name of the service.
+   * @param name The name of the service.
    *
    * @example
    * ```typescript
    * const service = new ServiceBuilder();
-   * service.setName('nginx-container');
+   * service.setName('nginx');
    * ```
    */
   setName(name: string) {
-    this.service.containerName = name;
+    this.service.name = name;
     return this;
   }
 
@@ -153,8 +153,13 @@ export class ServiceBuilder {
    * service.addNetwork('tipi_main_network');
    * ```
    */
-  setNetwork(network: string) {
-    this.service.networks = [network];
+  setNetwork(network: string, priority = 0) {
+    if (!this.service.networks) {
+      this.service.networks = {};
+    }
+
+    this.service.networks[network] = { gw_priority: priority };
+
     return this;
   }
 
@@ -519,15 +524,15 @@ export class ServiceBuilder {
    * ```typescript
    * const service = new ServiceBuilder();
    * service.setImage('nginx:latest')
-   *  .setName('nginx-container')
+   *  .setName('nginx')
    *  .setRestartPolicy('always')
    *  .addNetwork('tipi_main_network')
    *  .build();
    *  ```
    */
   build() {
-    if (!this.service.containerName || !this.service.image) {
-      throw new Error('Service name and image are required');
+    if (!this.service.image || !this.service.name) {
+      throw new Error('Service name, container name and image are required');
     }
 
     if (this.service.networkMode) {
@@ -538,7 +543,7 @@ export class ServiceBuilder {
     const finalService = {
       image: this.service.image,
       command: this.service.command,
-      container_name: this.service.containerName,
+      name: this.service.name,
       restart: this.service.restart,
       networks: this.service.networks,
       network_mode: this.service.networkMode,

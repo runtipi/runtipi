@@ -44,7 +44,7 @@ export const ChangePasswordForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm({
     resolver: zodResolver(schema),
   });
 

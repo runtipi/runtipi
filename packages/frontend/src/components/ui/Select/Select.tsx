@@ -8,12 +8,17 @@ import * as React from 'react';
 type TriggerProps = {
   label?: string | React.ReactNode;
   error?: string;
+  onClear?: () => void;
 };
 
-const Select: React.FC<React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> & { label?: string; error?: string; className?: string }> = ({
-  children,
-  ...props
-}) => {
+const Select: React.FC<
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> & {
+    label?: string;
+    error?: string;
+    className?: string;
+    key?: string;
+  }
+> = ({ children, ...props }) => {
   return <SelectPrimitive.Root {...props}>{children}</SelectPrimitive.Root>;
 };
 
@@ -23,28 +28,32 @@ const SelectValue = SelectPrimitive.Value;
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & TriggerProps
->(({ className, error, label, children, value, ...props }, ref) => (
-  <label htmlFor={props.name} className={clsx('w-100', className)}>
-    {Boolean(label) && (
-      <span id={props.name} className="form-label">
-        {label}
-      </span>
-    )}
-    <SelectPrimitive.Trigger
-      id={props.name}
-      aria-labelledby={props.name}
-      ref={ref}
-      className={clsx('d-flex w-100 align-items-center justify-content-between form-select', {
-        'is-invalid is-invalid-lite': error,
-        'text-muted': !value,
-      })}
-      {...props}
-    >
-      {children}
-    </SelectPrimitive.Trigger>
-    {error && <div className="invalid-feedback">{error}</div>}
-  </label>
-));
+>(({ className, error, label, children, value, onClear, ...props }, ref) => {
+  return (
+    <label htmlFor={props.name} className={clsx('w-100', className)}>
+      {Boolean(label) && (
+        <span id={props.name} className="form-label">
+          {label}
+        </span>
+      )}
+      <div className="position-relative">
+        <SelectPrimitive.Trigger
+          id={props.name}
+          aria-labelledby={props.name}
+          ref={ref}
+          className={clsx('d-flex w-100 align-items-center justify-content-between form-select', {
+            'is-invalid is-invalid-lite': error,
+            'text-muted': !value,
+          })}
+          {...props}
+        >
+          {children}
+        </SelectPrimitive.Trigger>
+      </div>
+      {error && <div className="invalid-feedback">{error}</div>}
+    </label>
+  );
+});
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectContent = React.forwardRef<

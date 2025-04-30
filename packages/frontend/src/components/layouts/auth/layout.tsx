@@ -1,25 +1,26 @@
 import { LanguageSelector } from '@/components/language-selector/language-selector';
 import { useUserContext } from '@/context/user-context';
-import { getCurrentLocale } from '@/lib/i18n/locales';
+import type { Locale } from '@/lib/i18n/locales';
 import { getLogo } from '@/lib/theme/theme';
+import i18next from 'i18next';
 import type { PropsWithChildren } from 'react';
 
 export const AuthLayout = ({ children }: PropsWithChildren) => {
-  const locale = getCurrentLocale();
+  const locale = i18next.language;
 
   const { allowAutoThemes } = useUserContext();
   return (
     <div className="page page-center">
       <div className="position-absolute top-0 mt-3 end-0 me-1 pb-4">
-        <LanguageSelector locale={locale} />
+        <LanguageSelector locale={locale as Locale} />
       </div>
       <div className="container container-tight py-4">
         <div className="text-center mb-4">
           <img
-            alt="Tipi logo"
+            alt="Runtipi logo"
             src={getLogo(allowAutoThemes)}
-            height={50}
-            width={50}
+            height={64}
+            width={64}
             style={{
               maxWidth: '100%',
               height: 'auto',
