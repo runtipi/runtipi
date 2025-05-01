@@ -209,7 +209,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Anuluj żądanie zmiany hasła",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Aby rozpocząć, uruchom tę komendę na swoim serwerze, a następnie odśwież tę stronę. Jeśli wcześniej to zrobiłeś, prośba o zresetowanie hasła mogła wygasnąć. W takim przypadku spróbuj ponownie",
   "AUTH_RESET_PASSWORD_SUBMIT": "Zresetuj hasło",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Twoje hasło zostało zresetowane. Możesz się teraz zalogować przy użyciu twojego nowego hasła i nazwy użytkownika <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Resetowanie hasła",
   "AUTH_RESET_PASSWORD_TITLE": "Zresetuj swoje hasło",
   "AUTH_TOTP_INSTRUCTIONS": "Wprowadź kod z aplikacji uwierzytelniającej",
