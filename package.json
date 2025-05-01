@@ -1,6 +1,6 @@
 {
   "name": "runtipi",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "",
   "packageManager": "pnpm@10.8.0",
   "scripts": {
@@ -36,15 +36,6 @@
     "zod": "^3.24.2"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@biomejs/biome",
-      "@nestjs/core",
-      "@sentry/cli",
-      "@swc/core",
-      "argon2",
-      "esbuild",
-      "msw",
-      "sharp"
-    ]
+    "onlyBuiltDependencies": ["@biomejs/biome", "@nestjs/core", "@sentry/cli", "@swc/core", "argon2", "esbuild", "msw", "sharp"]
   }
 }

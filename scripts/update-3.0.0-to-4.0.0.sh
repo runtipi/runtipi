@@ -226,7 +226,7 @@ if [[ -f "migration-backups/user-config/tipi-compose.yml" ]]; then
 fi
 
 # Start runtipi
-echo -e "\nMigration complete! Updating Runtipi to v4.0.0...\n"
+echo -e "\nMigration complete! Updating Runtipi to v4.0.1...\n"
 
 ARCHITECTURE="$(uname -m)"
 
@@ -235,7 +235,7 @@ if [[ "$ARCHITECTURE" == "arm64" || "$ARCHITECTURE" == "aarch64" ]]; then
   ASSET="runtipi-cli-linux-aarch64.tar.gz"
 fi
 
-URL="https://github.com/runtipi/runtipi/releases/download/v4.0.0/$ASSET"
+URL="https://github.com/runtipi/runtipi/releases/download/v4.0.1/$ASSET"
 
 rm -f ./runtipi-cli
 
@@ -253,4 +253,4 @@ fi
 chmod +x ./runtipi-cli
 sudo ./runtipi-cli start
 
-echo -e "🎉 Runtipi has been updated to v4.0.0! 🎉\nOnce you have confirmed everything is working, you can delete the migration-backups folder.\n"
+echo -e "🎉 Runtipi has been updated to v4.0.1! 🎉\nOnce you have confirmed everything is working, you can delete the migration-backups folder.\n"
