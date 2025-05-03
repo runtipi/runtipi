@@ -115,11 +115,11 @@ jobs:
           echo "POSTGRES_PASSWORD=$(grep POSTGRES_PASSWORD runtipi/.env | cut -d '=' -f2)" >> .env.e2e
           echo "BASE_PATH=./runtipi" >> .env.e2e
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
       - name: Install dependencies
         uses: "./.github/actions/install-dependencies"
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
       - name: Run Playwright tests
         id: run-e2e
