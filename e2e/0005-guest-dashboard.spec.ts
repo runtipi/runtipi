@@ -32,7 +32,7 @@ test('logged out users can see the apps on the guest dashboard', async ({ page, 
   }
 
   await installApp(page, store.slug, 'nginx', { visibleOnGuestDashboard: true, domain: 'duckduckgo.com' });
-  await installApp(page, store.slug, '2fauth', { visibleOnGuestDashboard: false });
+  await installApp(page, store.slug, 'whoami', { visibleOnGuestDashboard: false });
 
   await page.goto('/settings');
   await page.getByRole('tab', { name: 'Settings' }).click();
@@ -41,7 +41,7 @@ test('logged out users can see the apps on the guest dashboard', async ({ page, 
   await page.getByTestId('logout-button').click();
 
   await expect(page.getByText(/Open-source simple and fast web server/)).toBeVisible();
-  const locator = page.locator('text=2Fauth');
+  const locator = page.locator('text=Whoami');
   await expect(locator).not.toBeVisible();
 
   await page.getByText('Nginx', { exact: true }).click();

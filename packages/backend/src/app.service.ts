@@ -51,11 +51,6 @@ export class AppService {
         this.cache.set('buster', version, ONE_DAY_IN_SECONDS * 365);
       }
 
-      // Delete all repos for a clean start
-      if (__prod__) {
-        await this.appStoreService.deleteAllRepos();
-      }
-
       await this.appStoreService.migrateLegacyRepo();
 
       this.repoQueue.publish({ command: 'clone_all' });

@@ -657,7 +657,7 @@
     },
     "/api/marketplace/pull": {
       "post": {
-        "operationId": "pullAppStore",
+        "operationId": "pullAppStores",
         "parameters": [],
         "responses": {
           "201": {

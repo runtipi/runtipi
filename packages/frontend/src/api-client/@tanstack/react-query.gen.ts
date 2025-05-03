@@ -27,7 +27,7 @@ import {
   getApp,
   searchApps,
   getImage,
-  pullAppStore,
+  pullAppStores,
   createAppStore,
   getAllAppStores,
   getEnabledAppStores,
@@ -88,8 +88,8 @@ import type {
   SearchAppsData,
   SearchAppsResponse,
   GetImageData,
-  PullAppStoreData,
-  PullAppStoreResponse,
+  PullAppStoresData,
+  PullAppStoresResponse,
   CreateAppStoreData,
   GetAllAppStoresData,
   GetEnabledAppStoresData,
@@ -706,12 +706,12 @@ export const getImageOptions = (options: Options<GetImageData>) => {
   });
 };
 
-export const pullAppStoreQueryKey = (options?: Options<PullAppStoreData>) => createQueryKey('pullAppStore', options);
+export const pullAppStoresQueryKey = (options?: Options<PullAppStoresData>) => createQueryKey('pullAppStores', options);
 
-export const pullAppStoreOptions = (options?: Options<PullAppStoreData>) => {
+export const pullAppStoresOptions = (options?: Options<PullAppStoresData>) => {
   return queryOptions({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await pullAppStore({
+      const { data } = await pullAppStores({
         ...options,
         ...queryKey[0],
         signal,
@@ -719,16 +719,16 @@ export const pullAppStoreOptions = (options?: Options<PullAppStoreData>) => {
       });
       return data;
     },
-    queryKey: pullAppStoreQueryKey(options),
+    queryKey: pullAppStoresQueryKey(options),
   });
 };
 
-export const pullAppStoreMutation = (
-  options?: Partial<Options<PullAppStoreData>>,
-): UseMutationOptions<PullAppStoreResponse, DefaultError, Options<PullAppStoreData>> => {
-  const mutationOptions: UseMutationOptions<PullAppStoreResponse, DefaultError, Options<PullAppStoreData>> = {
+export const pullAppStoresMutation = (
+  options?: Partial<Options<PullAppStoresData>>,
+): UseMutationOptions<PullAppStoresResponse, DefaultError, Options<PullAppStoresData>> => {
+  const mutationOptions: UseMutationOptions<PullAppStoresResponse, DefaultError, Options<PullAppStoresData>> = {
     mutationFn: async (localOptions) => {
-      const { data } = await pullAppStore({
+      const { data } = await pullAppStores({
         ...options,
         ...localOptions,
         throwOnError: true,

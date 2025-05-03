@@ -53,6 +53,11 @@ if [[ -d "app-data/app-data" ]]; then
   exit 1
 fi
 
+if ! command -v jq &>/dev/null; then
+  echo -e "${Red}Error: jq is not installed. Please install jq to continue. (e.g., sudo apt-get install jq)${ColorOff}"
+  exit 1
+fi
+
 # Backups warning
 echo -e "${Yellow}Warning:${ColorOff} Make sure you have backed up your data before continuing, if something goes wrong during the migration process, you can risk losing important data!"
 read -p "Do you want to continue? (y/n): " -r
@@ -221,7 +226,7 @@ if [[ -f "migration-backups/user-config/tipi-compose.yml" ]]; then
 fi
 
 # Start runtipi
-echo -e "\nMigration complete! Updating Runtipi to v4.0.0...\n"
+echo -e "\nMigration complete! Updating Runtipi to v4.0.3...\n"
 
 ARCHITECTURE="$(uname -m)"
 
@@ -230,7 +235,7 @@ if [[ "$ARCHITECTURE" == "arm64" || "$ARCHITECTURE" == "aarch64" ]]; then
   ASSET="runtipi-cli-linux-aarch64.tar.gz"
 fi
 
-URL="https://github.com/runtipi/runtipi/releases/download/v4.0.0/$ASSET"
+URL="https://github.com/runtipi/runtipi/releases/download/v4.0.3/$ASSET"
 
 rm -f ./runtipi-cli
 
@@ -248,4 +253,4 @@ fi
 chmod +x ./runtipi-cli
 sudo ./runtipi-cli start
 
-echo -e "🎉 Runtipi has been updated to v4.0.0! 🎉\nOnce you have confirmed everything is working, you can delete the migration-backups folder.\n"
+echo -e "🎉 Runtipi has been updated to v4.0.3! 🎉\nOnce you have confirmed everything is working, you can delete the migration-backups folder.\n"

@@ -1,4 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
+import { IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -21,6 +22,10 @@ export const StoreSelector = ({ onSelect, className, initialValue, stores }: Pro
   const [value, setValue] = useState(initialValue);
 
   const handleChange = (option: string) => {
+    if (option === 'clear') {
+      handleReset();
+      return;
+    }
     setValue(option);
     onSelect(option);
   };
@@ -37,6 +42,17 @@ export const StoreSelector = ({ onSelect, className, initialValue, stores }: Pro
         <SelectValue placeholder={t('APP_STORE_CHOOSE_STORE')} />
       </SelectTrigger>
       <SelectContent>
+        {value && (
+          <>
+            <SelectItem key="clear" value="clear">
+              <span className="d-flex gap-2">
+                <IconX size={20} />
+                {t('CLEAR')}
+              </span>
+            </SelectItem>
+            <div className="dropdown-divider" />
+          </>
+        )}
         {options?.map(({ value, label }) => (
           <SelectItem key={value} value={value.toString()}>
             <span className="d-flex gap-2">{label}</span>

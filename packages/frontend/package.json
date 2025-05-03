@@ -48,7 +48,7 @@
     "react-hot-toast": "^2.5.2",
     "react-i18next": "^15.4.0",
     "react-markdown": "^10.1.0",
-    "react-router": "^7.5.0",
+    "react-router": "^7.5.3",
     "react-timezone-select": "^3.2.8",
     "react-tooltip": "^5.28.1",
     "rehype-raw": "^7.0.0",
@@ -75,7 +75,7 @@
     "@vitejs/plugin-react": "^4.4.0",
     "globals": "^16.0.0",
     "typescript": "^5.8.3",
-    "vite": "^6.3.0",
-    "vitest": "^3.1.1"
+    "vite": "^6.3.4",
+    "vitest": "^3.1.2"
   }
 }

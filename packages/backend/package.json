@@ -46,6 +46,7 @@
     "drizzle-orm": "^0.42.0",
     "i18next": "^24.2.3",
     "i18next-fs-backend": "^2.6.0",
+    "isomorphic-git": "^1.30.1",
     "jsonwebtoken": "^9.0.2",
     "lodash.clonedeep": "^4.5.0",
     "minisearch": "^7.1.1",
@@ -64,7 +65,8 @@
     "web-push": "^3.6.7",
     "winston": "^3.17.0",
     "yaml": "^2.7.1",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
     "@anatine/esbuild-decorators": "^0.2.19",

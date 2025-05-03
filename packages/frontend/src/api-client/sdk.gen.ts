@@ -42,8 +42,8 @@ import type {
   SearchAppsData,
   SearchAppsResponse,
   GetImageData,
-  PullAppStoreData,
-  PullAppStoreResponse,
+  PullAppStoresData,
+  PullAppStoresResponse,
   CreateAppStoreData,
   GetAllAppStoresData,
   GetAllAppStoresResponse,
@@ -315,8 +315,8 @@ export const getImage = <ThrowOnError extends boolean = false>(options: Options<
   });
 };
 
-export const pullAppStore = <ThrowOnError extends boolean = false>(options?: Options<PullAppStoreData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).post<PullAppStoreResponse, unknown, ThrowOnError>({
+export const pullAppStores = <ThrowOnError extends boolean = false>(options?: Options<PullAppStoresData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).post<PullAppStoresResponse, unknown, ThrowOnError>({
     url: '/api/marketplace/pull',
     ...options,
   });

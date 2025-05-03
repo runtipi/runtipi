@@ -51,8 +51,10 @@ export class MarketplaceController {
   @Post('pull')
   @UseGuards(AuthGuard)
   @ZodSerializerDto(PullDto)
-  async pullAppStore(): Promise<PullDto> {
-    return this.appStoreService.pullRepositories();
+  async pullAppStores(): Promise<PullDto> {
+    const res = await this.appStoreService.pullRepositories();
+    await this.marketplaceService.initialize();
+    return res;
   }
 
   @Post('create')

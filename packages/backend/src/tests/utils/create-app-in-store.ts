@@ -1,15 +1,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { DATA_DIR } from '@/common/constants';
+import type { AppUrn } from '@/types/app/app.types';
 import { faker } from '@faker-js/faker';
 import type { AppInfo, AppInfoInput } from '@runtipi/common/schemas';
-import type { AppUrn } from '@runtipi/common/types';
 
 export const createAppInStore = async (storeId: string, app: Partial<AppInfo> = {}) => {
-  const id = app.id ?? faker.string.uuid();
+  const id = app.id ?? faker.lorem.words(3).split(' ').join('-').toLowerCase();
 
   const appInfo: AppInfoInput = {
-    id: faker.string.uuid(),
+    id,
     urn: `${id}:${storeId}` as AppUrn,
     name: faker.lorem.words(2),
     port: faker.number.int({ min: 1000, max: 9999 }),
@@ -53,8 +53,11 @@ export const createAppInStore = async (storeId: string, app: Partial<AppInfo> = 
   const appStorePath = `${DATA_DIR}/repos/${storeId}/apps/${appInfo.id}`;
 
   await fs.promises.mkdir(`${DATA_DIR}/repos/${storeId}/apps/${appInfo.id}/data`, { recursive: true });
+  await fs.promises.mkdir(`${DATA_DIR}/repos/${storeId}/apps/${appInfo.id}/metadata`, { recursive: true });
+
   await fs.promises.writeFile(path.join(appStorePath, 'config.json'), JSON.stringify(appInfo, null, 2));
   await fs.promises.writeFile(path.join(appStorePath, 'docker-compose.json'), JSON.stringify(composeJson, null, 2));
+  await fs.promises.writeFile(path.join(appStorePath, 'metadata', 'description.md'), 'test');
 
   return appInfo;
 };
