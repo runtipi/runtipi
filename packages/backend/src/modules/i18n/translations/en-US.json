@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "App {{id}} works only with exposed domain",
   "APP_ERROR_APP_NOT_EXPOSABLE": "App {{id}} is not exposable",
   "APP_ERROR_APP_NOT_FOUND": "App {{id}} not found",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {{arch}} is not supported by app {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domain {{domain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domain {{domain}} is not a valid domain",
@@ -403,3 +404,4 @@
   "CLEAR": "Clear",
   "MORE": "More"
 }
+

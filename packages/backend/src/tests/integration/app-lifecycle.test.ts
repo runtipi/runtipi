@@ -4,6 +4,7 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { DATABASE } from '@/core/database/database.module';
 import { DatabaseService } from '@/core/database/database.service';
 import { appStore } from '@/core/database/drizzle/schema';
+import { app as appTable } from '@/core/database/drizzle/schema';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppLifecycleCommandFactory } from '@/modules/app-lifecycle/app-lifecycle-command.factory';
@@ -22,6 +23,7 @@ import { AppEventsQueue, appEventResultSchema, appEventSchema } from '@/modules/
 import { QueueFactory } from '@/modules/queue/queue.factory';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
+import { eq } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import waitFor from 'wait-for-expect';
@@ -252,6 +254,39 @@ describe('App lifecycle', () => {
       expect(app2?.status).toBe('running');
       expect(app3?.status).toBe('running');
       expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
+    });
+  });
+
+  describe('app subnet assignment', () => {
+    it('should assign a subnet to an app when started if it has none', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'subnet-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      // Remove subnet value to simulate an app without a subnet
+      await db.update(appTable).set({ subnet: null }).where(eq(appTable.appName, appInfo.id)).execute();
+
+      let app = await appsRepository.getAppByUrn(appInfo.urn);
+      expect(app?.subnet).toBeNull();
+
+      // act
+      await appLifecycleService.startApp({ appUrn: appInfo.urn });
+
+      // assert
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      app = await appsRepository.getAppByUrn(appInfo.urn);
+      expect(app?.subnet).not.toBeNull();
+      expect(app?.subnet).toMatch(/^10\.128\.\d+\.0\/24$/);
     });
   });
 });
