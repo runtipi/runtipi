@@ -9,47 +9,43 @@ import type { AppUrn } from '@/types/app/app.types';
 import { AppLifecycleCommand } from './command';
 
 export class InstallAppCommand extends AppLifecycleCommand {
-  constructor(
-    logger: LoggerService,
-    appFilesManager: AppFilesManager,
-    dockerService: DockerService,
-    marketplaceService: MarketplaceService,
-    private readonly appHelpers: AppHelpers,
-    private readonly envUtils: EnvUtils,
-  ) {
-    super(logger, appFilesManager, dockerService, marketplaceService);
-  }
-
   public async execute(appUrn: AppUrn, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
+    const logger = this.moduleRef.get(LoggerService, { strict: false });
+    const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
+    const marketplaceService = this.moduleRef.get(MarketplaceService, { strict: false });
+    const dockerService = this.moduleRef.get(DockerService, { strict: false });
+    const appHelpers = this.moduleRef.get(AppHelpers, { strict: false });
+    const envUtils = this.moduleRef.get(EnvUtils, { strict: false });
+
     try {
       if (process.getuid && process.getgid) {
-        this.logger.info(`Installing app ${appUrn} as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`);
+        logger.info(`Installing app ${appUrn} as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`);
       } else {
-        this.logger.info(`Installing app ${appUrn}. No User ID or Group ID found.`);
+        logger.info(`Installing app ${appUrn}. No User ID or Group ID found.`);
       }
 
-      await this.marketplaceService.copyAppFromRepoToInstalled(appUrn);
+      await marketplaceService.copyAppFromRepoToInstalled(appUrn);
 
       // Create app.env file
-      this.logger.info(`Creating app.env file for app ${appUrn}`);
-      await this.appHelpers.generateEnvFile(appUrn, form);
+      logger.info(`Creating app.env file for app ${appUrn}`);
+      await appHelpers.generateEnvFile(appUrn, form);
 
       // Copy data dir
-      const appEnv = await this.appFilesManager.getAppEnv(appUrn);
-      const envMap = this.envUtils.envStringToMap(appEnv.content);
+      const appEnv = await appFilesManager.getAppEnv(appUrn);
+      const envMap = envUtils.envStringToMap(appEnv.content);
 
-      this.logger.info(`Copying data dir for app ${appUrn}`);
-      await this.marketplaceService.copyDataDir(appUrn, envMap);
+      logger.info(`Copying data dir for app ${appUrn}`);
+      await marketplaceService.copyDataDir(appUrn, envMap);
 
       await this.ensureAppDir(appUrn, form);
 
       try {
-        await this.dockerService.composeApp(appUrn, 'down --rmi all --remove-orphans');
+        await dockerService.composeApp(appUrn, 'down --rmi all --remove-orphans');
       } catch (err) {
-        this.logger.warn(`No prior containers to remove for app ${appUrn}`);
+        logger.warn(`No prior containers to remove for app ${appUrn}`);
       }
 
-      const config = await this.appFilesManager.getInstalledAppInfo(appUrn);
+      const config = await appFilesManager.getInstalledAppInfo(appUrn);
 
       if (!config) {
         return { success: true, message: 'App config not found. Skipping...' };
@@ -57,7 +53,7 @@ export class InstallAppCommand extends AppLifecycleCommand {
 
       // run docker-compose up
       const forcePull = config.force_pull ?? false;
-      await this.dockerService.composeApp(appUrn, `up --detach --force-recreate --remove-orphans ${forcePull ? '--pull always' : ''}`);
+      await dockerService.composeApp(appUrn, `up --detach --force-recreate --remove-orphans ${forcePull ? '--pull always' : ''}`);
 
       return { success: true, message: `App ${appUrn} installed successfully` };
     } catch (err) {
