@@ -6,6 +6,7 @@ import { DockerComposeBuilder } from '../compose.builder';
 import { ServiceBuilder } from '../service.builder';
 
 const urn = createAppUrn('nginx', 'store-id');
+const subnet = '10.128.1.0/24';
 
 describe('DockerComposeBuilder', () => {
   let composeBuilder: DockerComposeBuilder;
@@ -23,7 +24,7 @@ describe('DockerComposeBuilder', () => {
       image: 'image',
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
     expect(compose).toMatchSnapshot();
   });
 
@@ -39,7 +40,7 @@ describe('DockerComposeBuilder', () => {
       },
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
     expect(compose).toMatchSnapshot();
   });
 
@@ -50,7 +51,7 @@ describe('DockerComposeBuilder', () => {
       devices: ['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm'],
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
     expect(compose).toMatchSnapshot();
   });
 
@@ -61,7 +62,7 @@ describe('DockerComposeBuilder', () => {
       entrypoint: 'entrypoint',
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
 
     expect(compose).toMatchSnapshot();
   });
@@ -73,7 +74,7 @@ describe('DockerComposeBuilder', () => {
       entrypoint: ['entrypoint', 'arg1', 'arg2'],
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
 
     expect(compose).toMatchSnapshot();
   });
@@ -85,7 +86,7 @@ describe('DockerComposeBuilder', () => {
       logging: { driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } },
     };
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
 
     expect(compose).toMatchSnapshot();
   });
@@ -153,7 +154,7 @@ describe('DockerComposeBuilder', () => {
       image: 'image2',
     };
 
-    const compose = composeBuilder.getDockerCompose([service1, service2], {}, urn);
+    const compose = composeBuilder.getDockerCompose([service1, service2], {}, urn, subnet);
 
     expect(compose).toMatchSnapshot();
   });
@@ -166,7 +167,7 @@ describe('DockerComposeBuilder', () => {
       isMain: true,
     };
 
-    const compose = composeBuilder.getDockerCompose([service], { exposed: true, exposedLocal: true, openPort: true }, urn);
+    const compose = composeBuilder.getDockerCompose([service], { exposed: true, exposedLocal: true, openPort: true }, urn, subnet);
 
     expect(compose).toMatchSnapshot();
   });
@@ -179,7 +180,7 @@ describe('DockerComposeBuilder', () => {
       isMain: true,
     };
 
-    const compose = composeBuilder.getDockerCompose([service], { exposed: true }, urn);
+    const compose = composeBuilder.getDockerCompose([service], { exposed: true }, urn, subnet);
     const yamlObject = yaml.parse(compose);
 
     expect(yamlObject.services.service.labels).toBeDefined();
@@ -195,7 +196,7 @@ describe('DockerComposeBuilder', () => {
       isMain: true,
     };
 
-    const compose = composeBuilder.getDockerCompose([service], { exposed: false, exposedLocal: false }, urn);
+    const compose = composeBuilder.getDockerCompose([service], { exposed: false, exposedLocal: false }, urn, subnet);
     const yamlObject = yaml.parse(compose);
 
     expect(yamlObject.services.service.labels).toEqual({ 'runtipi.managed': true });
@@ -265,7 +266,7 @@ describe('DockerComposeBuilder', () => {
       ],
     };
 
-    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true }, urn);
+    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true }, urn, subnet);
 
     expect(yaml).toMatchSnapshot();
   });

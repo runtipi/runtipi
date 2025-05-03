@@ -382,12 +382,14 @@ export class AppLifecycleService {
       if (success) {
         const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
-        await this.appRepository.updateAppById(app.id, { status: appStatusBeforeUpdate, version: appInfo?.tipi_version });
         await this.updateAppConfig({ appUrn, form: app.config });
         this.sseService.emit('app', { event: 'update_success', appUrn });
 
         if (appStatusBeforeUpdate === 'running') {
+          await this.appRepository.updateAppById(app.id, { version: appInfo?.tipi_version });
           this.startApp({ appUrn });
+        } else {
+          await this.appRepository.updateAppById(app.id, { status: appStatusBeforeUpdate, version: appInfo?.tipi_version });
         }
       } else {
         this.logger.error(`Failed to update app ${appUrn}: ${message}`);

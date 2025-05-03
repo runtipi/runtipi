@@ -1,24 +1,25 @@
-import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import type { AppUrn } from '@runtipi/common/types';
+import { LoggerService } from '@/core/logger/logger.service';
+import { AppFilesManager } from '@/modules/apps/app-files-manager';
+import { DockerService } from '@/modules/docker/docker.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { AppLifecycleCommand } from './command';
 
 export class UninstallAppCommand extends AppLifecycleCommand {
-  public async execute(appUrn: AppUrn, form: AppEventFormInput) {
+  public async execute(appUrn: AppUrn): Promise<{ success: boolean; message: string }> {
+    const logger = this.moduleRef.get(LoggerService, { strict: false });
+    const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
+    const dockerService = this.moduleRef.get(DockerService, { strict: false });
+
     try {
-      this.logger.info(`Uninstalling app ${appUrn}`);
-      await this.ensureAppDir(appUrn, form);
+      logger.info(`Uninstalling app ${appUrn}`);
 
-      await this.dockerService.composeApp(appUrn, 'down --remove-orphans --volumes --rmi all').catch((err) => {
-        this.logger.warn(
-          `Could not fully uninstall app ${appUrn}. Some images may be in use by other apps or a folder has been deleted. Consider cleaning unused images docker system prune -a`,
-          err,
-        );
-      });
+      try {
+        await dockerService.composeApp(appUrn, 'down --remove-orphans -v');
+      } catch (err) {
+        logger.warn('Error taking down app', appUrn, err);
+      }
 
-      await this.appFilesManager.deleteAppFolder(appUrn);
-      await this.appFilesManager.deleteAppDataDir(appUrn);
-
-      this.logger.info(`App ${appUrn} uninstalled`);
+      await appFilesManager.deleteAppFolder(appUrn);
 
       return { success: true, message: `App ${appUrn} uninstalled successfully` };
     } catch (err) {

@@ -16,7 +16,9 @@ exports[`App lifecycle > install app > should not delete an existing app-data fo
    │        ├─ config.json
    │        ├─ data/
    │        ├─ docker-compose.json
-   │        └─ docker-compose.yml
+   │        ├─ docker-compose.yml
+   │        └─ metadata/
+   │           └─ description.md
    ├─ backups/
    ├─ repos/
    │  └─ test/
@@ -24,7 +26,9 @@ exports[`App lifecycle > install app > should not delete an existing app-data fo
    │        └─ test2/
    │           ├─ config.json
    │           ├─ data/
-   │           └─ docker-compose.json
+   │           ├─ docker-compose.json
+   │           └─ metadata/
+   │              └─ description.md
    └─ state/
       └─ seed"
 `;
@@ -44,7 +48,9 @@ exports[`App lifecycle > install app > should successfully install app and creat
    │        ├─ config.json
    │        ├─ data/
    │        ├─ docker-compose.json
-   │        └─ docker-compose.yml
+   │        ├─ docker-compose.yml
+   │        └─ metadata/
+   │           └─ description.md
    ├─ backups/
    ├─ repos/
    │  └─ test/
@@ -52,7 +58,9 @@ exports[`App lifecycle > install app > should successfully install app and creat
    │        └─ test/
    │           ├─ config.json
    │           ├─ data/
-   │           └─ docker-compose.json
+   │           ├─ docker-compose.json
+   │           └─ metadata/
+   │              └─ description.md
    └─ state/
       └─ seed"
 `;
@@ -79,6 +87,73 @@ networks:
     external: true
   test_test_network:
     external: false
+    ipam:
+      config:
+        - subnet: 10.128.10.0/24
 
 "
+`;
+
+exports[`App lifecycle > update all apps > should update multiple apps that have newer versions available 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     ├─ app1/
+│     │  ├─ app.env
+│     │  └─ data/
+│     ├─ app2/
+│     │  ├─ app.env
+│     │  └─ data/
+│     └─ app3/
+│        ├─ app.env
+│        └─ data/
+└─ data/
+   ├─ .env
+   ├─ apps/
+   │  └─ test/
+   │     ├─ app1/
+   │     │  ├─ config.json
+   │     │  ├─ data/
+   │     │  ├─ docker-compose.json
+   │     │  ├─ docker-compose.yml
+   │     │  └─ metadata/
+   │     │     └─ description.md
+   │     ├─ app2/
+   │     │  ├─ config.json
+   │     │  ├─ data/
+   │     │  ├─ docker-compose.json
+   │     │  ├─ docker-compose.yml
+   │     │  └─ metadata/
+   │     │     └─ description.md
+   │     └─ app3/
+   │        ├─ config.json
+   │        ├─ data/
+   │        ├─ docker-compose.json
+   │        ├─ docker-compose.yml
+   │        └─ metadata/
+   │           └─ description.md
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        ├─ app1/
+   │        │  ├─ config.json
+   │        │  ├─ data/
+   │        │  ├─ docker-compose.json
+   │        │  └─ metadata/
+   │        │     └─ description.md
+   │        ├─ app2/
+   │        │  ├─ config.json
+   │        │  ├─ data/
+   │        │  ├─ docker-compose.json
+   │        │  └─ metadata/
+   │        │     └─ description.md
+   │        └─ app3/
+   │           ├─ config.json
+   │           ├─ data/
+   │           ├─ docker-compose.json
+   │           └─ metadata/
+   │              └─ description.md
+   └─ state/
+      └─ seed"
 `;

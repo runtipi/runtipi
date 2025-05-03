@@ -25,6 +25,7 @@ import { AuthMiddleware } from './modules/auth/auth.middleware';
 import { BackupsModule } from './modules/backups/backups.module';
 import { LinksModule } from './modules/links/links.module';
 import { MarketplaceModule } from './modules/marketplace/marketplace.module';
+import { NetworkModule } from './modules/network/network.module';
 import { QueueModule } from './modules/queue/queue.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/user/user.module';
@@ -49,6 +50,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   HealthModule,
   MarketplaceModule,
   SSEModule,
+  NetworkModule,
 ];
 
 if (process.env.NODE_ENV === 'production') {
