@@ -502,6 +502,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "skajmer",
+      "name": "skajmer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64442855?v=4",
+      "profile": "https://github.com/skajmer",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
