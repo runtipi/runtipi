@@ -1,12 +1,6 @@
-import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import type { z } from 'zod';
-import { AppFilesManager } from '../apps/app-files-manager';
-import { AppHelpers } from '../apps/app.helpers';
-import { BackupManager } from '../backups/backup.manager';
-import { DockerService } from '../docker/docker.service';
-import { EnvUtils } from '../env/env.utils';
-import { MarketplaceService } from '../marketplace/marketplace.service';
 import type { appEventSchema } from '../queue/entities/app-events';
 import { BackupAppCommand } from './commands/backup-app-command';
 import { GenerateAppEnvCommand } from './commands/generate-env-command';
@@ -21,55 +15,32 @@ import { UpdateAppCommand } from './commands/update-app-command';
 
 @Injectable()
 export class AppLifecycleCommandFactory {
-  constructor(
-    private readonly appFilesManager: AppFilesManager,
-    private readonly logger: LoggerService,
-    private readonly appHelpers: AppHelpers,
-    private readonly envUtils: EnvUtils,
-    private readonly dockerService: DockerService,
-    private readonly backupManager: BackupManager,
-    private readonly marketplaceService: MarketplaceService,
-  ) {}
+  constructor(private readonly moduleRef: ModuleRef) {}
 
   createCommand(eventData: z.infer<typeof appEventSchema>) {
     const command = eventData.command;
 
     switch (command) {
       case 'install':
-        return new InstallAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers, this.envUtils);
+        return new InstallAppCommand(this.moduleRef);
       case 'start':
-        return new StartAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers);
+        return new StartAppCommand(this.moduleRef);
       case 'stop':
-        return new StopAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers);
+        return new StopAppCommand(this.moduleRef);
       case 'restart':
-        return new RestartAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers);
+        return new RestartAppCommand(this.moduleRef);
       case 'uninstall':
-        return new UninstallAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService);
+        return new UninstallAppCommand(this.moduleRef);
       case 'reset':
-        return new ResetAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers, this.envUtils);
+        return new ResetAppCommand(this.moduleRef);
       case 'backup':
-        return new BackupAppCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.backupManager);
+        return new BackupAppCommand(this.moduleRef);
       case 'restore':
-        return new RestoreAppCommand(
-          this.logger,
-          this.appFilesManager,
-          this.dockerService,
-          this.marketplaceService,
-          this.backupManager,
-          eventData.filename,
-        );
+        return new RestoreAppCommand(this.moduleRef, eventData.filename);
       case 'generate_env':
-        return new GenerateAppEnvCommand(this.logger, this.appFilesManager, this.dockerService, this.marketplaceService, this.appHelpers);
+        return new GenerateAppEnvCommand(this.moduleRef);
       case 'update':
-        return new UpdateAppCommand(
-          this.logger,
-          this.appFilesManager,
-          this.dockerService,
-          this.marketplaceService,
-          this.appHelpers,
-          this.backupManager,
-          eventData.performBackup,
-        );
+        return new UpdateAppCommand(this.moduleRef, eventData.performBackup);
       default:
         throw new Error(`Unknown command: ${command}`);
     }
