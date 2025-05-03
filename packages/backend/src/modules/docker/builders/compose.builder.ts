@@ -10,6 +10,12 @@ interface Network {
   key: string;
   name?: string;
   external: boolean;
+  subnet?: string;
+  ipam?: {
+    config: {
+      subnet: string;
+    }[];
+  };
 }
 
 export class DockerComposeBuilder {
@@ -30,10 +36,18 @@ export class DockerComposeBuilder {
   }
 
   addNetwork(network: Network) {
-    this.networks[network.key] = {
+    const networkConfig: Omit<Network, 'key'> = {
       name: network.name,
       external: network.external,
     };
+
+    if (network.subnet) {
+      networkConfig.ipam = {
+        config: [{ subnet: network.subnet }],
+      };
+    }
+
+    this.networks[network.key] = networkConfig;
     return this;
   }
 
@@ -122,7 +136,7 @@ export class DockerComposeBuilder {
     return service.build();
   };
 
-  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, appUrn: AppUrn) => {
+  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, appUrn: AppUrn, subnet: string) => {
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
     const myServices = services.map((service) => this.buildService(service, form, appUrn));
@@ -136,6 +150,7 @@ export class DockerComposeBuilder {
       .addNetwork({
         key: `${appName}_${appStoreId}_network`,
         external: false,
+        subnet,
       });
 
     return dockerCompose.build();

@@ -14,8 +14,10 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { AppsRepository } from '@/modules/apps/apps.repository';
 import { AppsService } from '@/modules/apps/apps.service';
+import { DockerService } from '@/modules/docker/docker.service';
 import { EnvUtils } from '@/modules/env/env.utils';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
+import { SubnetManagerService } from '@/modules/network/subnet-manager.service';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '@/modules/queue/entities/app-events';
 import { QueueFactory } from '@/modules/queue/queue.factory';
 import { Test } from '@nestjs/testing';
@@ -36,12 +38,15 @@ describe('App lifecycle', () => {
   let appsRepository: AppsRepository;
   const configurationService = mock<ConfigurationService>();
   let databaseService = mock<DatabaseService>();
+  const dockerService = mock<DockerService>();
   const loggerService = mock<LoggerService>();
+
   configurationService.get.calledWith('queue').mockReturnValue({
     host: 'localhost',
     password: 'guest',
     username: 'guest',
   });
+  dockerService.composeApp.mockResolvedValue({ success: true, stdout: '', stderr: '' });
 
   const queueFactory = new QueueFactory(loggerService, configurationService);
   const appEventsQueue = queueFactory.createQueue({
@@ -72,6 +77,11 @@ describe('App lifecycle', () => {
         EnvUtils,
         AppHelpers,
         AppsService,
+        SubnetManagerService,
+        {
+          provide: DockerService,
+          useValue: dockerService,
+        },
         {
           provide: DatabaseService,
           useValue: databaseService,
