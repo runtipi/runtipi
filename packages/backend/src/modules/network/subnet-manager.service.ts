@@ -1,7 +1,7 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { LoggerService } from '@/core/logger/logger.service';
-import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
+import type { AppUrn } from '@runtipi/common/types';
 import { AppsRepository } from '../apps/apps.repository';
 
 const BASE_SUBNET_PREFIX = '10.128';
