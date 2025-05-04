@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Denna åtgärd kan inte ångras",
   "DELETE_BACKUP_MODAL_SUBMIT": "Ta bort",
   "GUEST_DASHBOARD": "Gästkontrollpanelen",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Inga appar att visa",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Be administratören att lägga till appar i gästkontrollpanelen eller logga in för att se dina appar.",
   "HEADER_APPS": "Mina appar",
@@ -404,4 +405,3 @@
   "CLEAR": "Clear",
   "MORE": "Mer"
 }
-
