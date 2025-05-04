@@ -69,7 +69,6 @@ export class ReposHelpers {
       await fs.promises.mkdir(dirPath, { recursive: true });
     }
 
-    // Set directory permissions
     await fs.promises.chmod(dirPath, 0o755);
   }
 
@@ -84,6 +83,7 @@ export class ReposHelpers {
       const repoPath = path.join(dataDir, 'repos', id);
 
       if (await this.filesystem.pathExists(repoPath)) {
+        await this.ensureDirectoryWithPermissions(path.dirname(repoPath));
         this.logger.debug(`Repo ${url} already exists`);
         return { success: true, message: '' };
       }
@@ -99,7 +99,6 @@ export class ReposHelpers {
 
       await this.ensureDirectoryWithPermissions(path.dirname(repoPath));
       await git.clone({ fs, http, dir: repoPath, url: repoUrl, singleBranch: true, depth: 1, ref: branch || undefined });
-      await this.ensureDirectoryWithPermissions(repoPath);
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };

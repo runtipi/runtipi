@@ -2,33 +2,29 @@
   "name": "@runtipi/common",
   "version": "0.8.0",
   "description": "",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist", "package.json"],
   "type": "module",
-  "main": "dist/index.js",
   "exports": {
     "./schemas": {
       "import": "./dist/schemas/index.js",
-      "types": "./dist/schemas/index.d.ts"
+      "types": "./dist/schemas/index.d.ts",
+      "default": "./dist/schemas/index.js"
     },
     "./types": {
       "import": "./dist/types/index.js",
-      "types": "./dist/types/index.d.ts"
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
     }
   },
   "typesVersions": {
     "*": {
-      "schemas": [
-        "dist/schemas/index.d.ts"
-      ],
-      "types": [
-        "dist/types/index.d.ts"
-      ]
+      "schemas": ["dist/schemas/index.d.ts"],
+      "types": ["dist/types/index.d.ts"]
     }
   },
   "scripts": {
     "prepublishOnly": "npm run ci",
+    "dev": "tsc --noEmit --watch --preserveWatchOutput",
     "build": "rm -rf dist && tsc",
     "ci": "npm run build && npm run check-exports",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
