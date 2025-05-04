@@ -1,6 +1,6 @@
 import { getLogo } from '@/lib/theme/theme';
 import { useUIStore } from '@/stores/ui-store';
-import { IconBrandGithub, IconHeart, IconLogin, IconMoon, IconSun } from '@tabler/icons-react';
+import { IconBrandGithub, IconCertificate, IconHeart, IconLogin, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 import { Tooltip } from 'react-tooltip';
@@ -11,6 +11,10 @@ export const GuestHeader = () => {
   const { t } = useTranslation();
 
   const navigate = useNavigate();
+
+  const downloadCertificate = () => {
+    window.open('/api/system/certificate');
+  };
 
   return (
     <header className="text-white navbar navbar-expand-md navbar-dark navbar-overlap d-print-none" data-bs-theme="dark">
@@ -46,6 +50,17 @@ export const GuestHeader = () => {
             </div>
           </div>
           <div style={{ zIndex: 1 }} className="d-flex">
+            <Tooltip className="tooltip" anchorSelect=".downloadCert">
+              {t('GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP')}
+            </Tooltip>
+            <button
+              type="button"
+              onClick={downloadCertificate}
+              className="downloadCert nav-link px-0 cursor-pointer"
+              data-testid="download-certificate-button"
+            >
+              <IconCertificate size={20} />
+            </button>
             <Tooltip className="tooltip" anchorSelect=".darkMode">
               {t('HEADER_DARK_MODE')}
             </Tooltip>
