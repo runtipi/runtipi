@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Это действие нельзя будет отменить",
   "DELETE_BACKUP_MODAL_SUBMIT": "Удалить",
   "GUEST_DASHBOARD": "Гостевая панель",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Нет приложений",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Попросите администратора добавить приложения на гостевую панель или войдите, чтобы увидеть ваши приложения.",
   "HEADER_APPS": "Мои приложения",
@@ -404,4 +405,3 @@
   "CLEAR": "Очистить",
   "MORE": "Еще"
 }
-
