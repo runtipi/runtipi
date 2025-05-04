@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Uygulama {{id}} yalnızca açık domain ile çalışır",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Uygulama {{id}} açılamaz",
   "APP_ERROR_APP_NOT_FOUND": "Uygulama {{id}} bulunamadı",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Mimariniz {{arch}}, uygulama {{id}} tarafından desteklenmiyor",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domain {{domain}} zaten uygulama {{id}} tarafından kullanılıyor",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domain {{domain}} geçerli bir domain değil",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Runtipi'nin en son sürümüyle güncel kalın",
   "SETTINGS_ACTIONS_TAB_TITLE": "İşlemler",
   "SETTINGS_ACTIONS_TITLE": "İşlemler",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Depoyu Güncelle",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Uygulama mağazanızı güncellemek için bu düğmeyi kullanın",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Bu, deponuzu sıfırlayacak ve GitHub'dan en son değişiklikleri çekecektir",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Güncelle",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Uygulama mağazası deposu başarıyla güncellendi",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "Uygulama Mağazaları",
   "SETTINGS_APPSTORES_SUBTITLE": "Uygulama mağazaları ekleyin veya kaldırın",
   "SETTINGS_APPSTORES_TAB_TITLE": "Uygulama Mağazaları",
@@ -403,3 +404,4 @@
   "CLEAR": "Temizle",
   "MORE": "Daha Fazla"
 }
+
