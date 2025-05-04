@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "This action cannot be undone",
   "DELETE_BACKUP_MODAL_SUBMIT": "Delete",
   "GUEST_DASHBOARD": "Bảng điều khiển Khách",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Không có ứng dụng để hiển thị",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Yêu cầu người quản trị của bạn thêm ứng dụng vào bảng điều khiển khách hoặc đăng nhập để xem ứng dụng của bạn.",
   "HEADER_APPS": "Ứng dụng của tôi",
@@ -404,4 +405,3 @@
   "CLEAR": "Clear",
   "MORE": "More"
 }
-
