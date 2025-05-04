@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Αυτή η ενέργεια δεν μπορεί να ανεραιθεί",
   "DELETE_BACKUP_MODAL_SUBMIT": "Διαγραφή",
   "GUEST_DASHBOARD": "Πίνακας επισκεπτών",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Δεν υπάρχουν εφαρμογές για προβολή",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Ζητήστε από το διαχειριστή σας να προσθέσει εφαρμογές στον πίνακα επισκεπτών ή συνδεθείτε για να δείτε τις εφαρμογές σας.",
   "HEADER_APPS": "Οι εφαρμογές μου",
@@ -404,4 +405,3 @@
   "CLEAR": "Εκκαθάριση",
   "MORE": "Περισσότερα"
 }
-
