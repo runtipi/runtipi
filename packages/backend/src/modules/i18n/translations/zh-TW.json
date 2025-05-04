@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "此動作無法復原",
   "DELETE_BACKUP_MODAL_SUBMIT": "刪除",
   "GUEST_DASHBOARD": "訪客儀錶板",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "沒有應用程式可以顯示",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "請詢問你的管理員將應用程式加入來賓儀表板，或登入查看你的應用程式。",
   "HEADER_APPS": "我的應用程式",
@@ -404,4 +405,3 @@
   "CLEAR": "Clear",
   "MORE": "More"
 }
-
