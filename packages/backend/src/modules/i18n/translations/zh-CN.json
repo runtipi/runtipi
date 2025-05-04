@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "此操作无法撤消",
   "DELETE_BACKUP_MODAL_SUBMIT": "删除",
   "GUEST_DASHBOARD": "访客面板",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "无可显示的应用",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "请要求管理员将应用添加到访客仪表板，或登录以查看您的应用。",
   "HEADER_APPS": "我的应用",
@@ -404,4 +405,3 @@
   "CLEAR": "清除",
   "MORE": "更多"
 }
-
