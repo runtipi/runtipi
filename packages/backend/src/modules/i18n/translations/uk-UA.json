@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Цю дію не можна буде скасувати",
   "DELETE_BACKUP_MODAL_SUBMIT": "Видалити",
   "GUEST_DASHBOARD": "Гостьова панель",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Немає додатків для відображення",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Попросіть адміністратора додати додатки до керування гостьовою панелі або авторизуйтесь, щоб переглянути ваші додатки.",
   "HEADER_APPS": "Мої додатки",
@@ -404,4 +405,3 @@
   "CLEAR": "Очистити",
   "MORE": "Більше"
 }
-
