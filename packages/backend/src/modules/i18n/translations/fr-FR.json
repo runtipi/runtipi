@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Cette action ne peut pas être annulée",
   "DELETE_BACKUP_MODAL_SUBMIT": "Supprimer",
   "GUEST_DASHBOARD": "Tableau de bord invité",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Aucune app à afficher",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Demandez à votre administrateur d'ajouter des applications au tableau de bord invité ou connectez-vous pour voir vos applications.",
   "HEADER_APPS": "Mes Applications",
@@ -404,4 +405,3 @@
   "CLEAR": "Effacer",
   "MORE": "Plus"
 }
-
