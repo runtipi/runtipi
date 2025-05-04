@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "O Aplicativo {{id}} funciona apenas com um domínio público",
   "APP_ERROR_APP_NOT_EXPOSABLE": "O aplicativo {{id}} não pode ser exposto",
   "APP_ERROR_APP_NOT_FOUND": "Aplicativo {{id}} não encontrado",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Sua arquitetura {{arch}} não é compatível com o aplicativo {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "O domínio {{domain}} já está em uso pelo aplicativo {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "O domínio {{domain}} não é um domínio válido",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Mantenha-se atualizado com a última versão do Tipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Ações",
   "SETTINGS_ACTIONS_TITLE": "Ações",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Atualizar Repositório",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use este botão para atualizar sua loja de aplicativos",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Isso irá redefinir seu repositório e puxar as últimas alterações do GitHub",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Atualizar",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Repositório da Appstore atualizado com sucesso",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "Lojas de aplicativos",
   "SETTINGS_APPSTORES_SUBTITLE": "Adicionar ou remover loja de aplicativos",
   "SETTINGS_APPSTORES_TAB_TITLE": "Lojas de aplicativos",
@@ -403,3 +404,4 @@
   "CLEAR": "Limpar",
   "MORE": "Mais"
 }
+
