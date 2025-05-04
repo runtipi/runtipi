@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Diese Aktion kann nicht rückgängig gemacht werden",
   "DELETE_BACKUP_MODAL_SUBMIT": "Löschen",
   "GUEST_DASHBOARD": "Gast-Dashboard",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Keine Apps anzuzeigen",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Bitte deinen Administrator, Apps zum Gast-Dashboard hinzuzufügen, oder melde dich an, um deine Apps anzuzeigen.",
   "HEADER_APPS": "Meine Apps",
@@ -404,4 +405,3 @@
   "CLEAR": "Clear",
   "MORE": "More"
 }
-
