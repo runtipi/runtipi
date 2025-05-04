@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Доступ к приложению {{id}} возможен только по доменному имени",
   "APP_ERROR_APP_NOT_EXPOSABLE": "К приложению {{id}} невозможно получить доступ по доменному имени",
   "APP_ERROR_APP_NOT_FOUND": "Приложение {{id}} не найдено",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Ваша архитектура {{arch}} не поддерживается приложением {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Домен {{domain}} уже используется приложением {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Домен {{domain}} недопустим",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Будьте в курсе последних версий Runtipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Действия",
   "SETTINGS_ACTIONS_TITLE": "Действия",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Обновить репозиторий",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Используйте эту кнопку, чтобы обновить Appstore",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Это сбросит ваш репозиторий и загрузит последние изменения с GitHub",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Обновить",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstore успешно обновлен",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "Магазины приложений",
   "SETTINGS_APPSTORES_SUBTITLE": "Добавить или удалить магазины приложений",
   "SETTINGS_APPSTORES_TAB_TITLE": "Магазины приложений",
@@ -403,3 +404,4 @@
   "CLEAR": "Очистить",
   "MORE": "More"
 }
+
