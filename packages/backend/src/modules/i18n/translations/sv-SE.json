@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Appen {{id}} fungerar endast med exponerad domän",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Appen {{id}} kan inte exponeras",
   "APP_ERROR_APP_NOT_FOUND": "Appen {{id}} hittades inte",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Din arkitektur {{arch}} stöds inte av appen {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domän {{domain}} används redan av appen {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domän {{domain}} är inte en giltig domän",
@@ -209,7 +210,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Avbryta begäran om ändring av lösenord",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "För att komma igång, kör detta kommando på din server och uppdatera sedan den här sidan. Om du tidigare har gjort det, kan lösenordsåterställningsbegäran ha gått ut. I så fall, försök igen",
   "AUTH_RESET_PASSWORD_SUBMIT": "Återställ lösenord",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Ditt lösenord har återställts. Du kan nu logga in med ditt nya lösenord. Och din e-postadress {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Återställ lösenord",
   "AUTH_RESET_PASSWORD_TITLE": "Återställ ditt lösenord",
   "AUTH_TOTP_INSTRUCTIONS": "Ange koden från din autentiseringsapp",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Håll dig uppdaterad med den senaste versionen av Runtipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Handlingar",
   "SETTINGS_ACTIONS_TITLE": "Handlingar",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Uppdatera utvecklingskatalog",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Använd denna knapp för att uppdatera din appstore",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Detta kommer att återställa ditt utvecklingskatalog och dra de senaste ändringarna från GitHub",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Uppdatera",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstore utvecklingskatalog har uppdaterats",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "App Stores",
   "SETTINGS_APPSTORES_SUBTITLE": "Add or remove app stores",
   "SETTINGS_APPSTORES_TAB_TITLE": "App Stores",
@@ -403,3 +404,4 @@
   "CLEAR": "Clear",
   "MORE": "Mer"
 }
+

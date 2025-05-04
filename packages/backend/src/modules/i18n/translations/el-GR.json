@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Η εφαρμογή {{id}} λειτουργεί μόνο με εκτεθειμένο domain",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Η εφαρμογή {{id}} δεν μπορεί να εκτεθεί",
   "APP_ERROR_APP_NOT_FOUND": "Η εφαρμογή {{id}} δε βρέθηκε",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Η τύπος επεξεργαστή σας {{arch}} δεν υποστηρίζεται από την εφαρμογή {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Ο τομέας {{domain}} χρησιμοποιείται ήδη από την εφαρμογή {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Το domain {{domain}} δεν είναι έγκυρο",
@@ -209,7 +210,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Ακύρωση αιτήματος αλλαγής κωδικού πρόσβασης",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Για να ξεκινήσετε, εκτελέστε αυτή την εντολή στον διακομιστή σας και μετά ανανεώστε αυτή τη σελίδα. Αν το έχετε κάνει ήδη, η αίτηση επαναφοράς κωδικού πρόσβασης μπορεί να έχει λήξει. Σε αυτή την περίπτωση, παρακαλούμε δοκιμάστε ξανά",
   "AUTH_RESET_PASSWORD_SUBMIT": "Επαναφορά κωδικού πρόσβασης",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Ο κωδικός σας έχει επαναφερθεί. Μπορείτε τώρα να συνδεθείτε με τον καινούριο κωδικό πρόσβασης και τη διεύθυνση ηλεκτρονικού ταχυδρομείου {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Επαναφορά κωδικού πρόσβασης",
   "AUTH_RESET_PASSWORD_TITLE": "Επαναφέρετε τον κωδικό πρόσβασής σας",
   "AUTH_TOTP_INSTRUCTIONS": "Πληκτρολογήστε τον κωδικό από την εφαρμογή ταυτοποίησης",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Μείνετε ενημερωμένοι με την τελευταία έκδοση του Runtipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Ενέργειες",
   "SETTINGS_ACTIONS_TITLE": "Ενέργειες",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Ενημέρωση των repositories",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Χρησιμοποιήστε αυτό το κουμπί για να ενημερώσετε τα καταστήματα εφαρμογών σας",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Αυτό θα επαναφέρει το κατάστημα εφαρμογών σας και θα τραβήξει τις τελευταίες αλλαγές από το GitHub",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Ενημέρωση",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Το κατάστημα εφαρμογών ενημερώθηκε με επιτυχία",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "Κατάστημα εφαρμογών",
   "SETTINGS_APPSTORES_SUBTITLE": "Προσθήκη ή αφαίρεση καταστημάτων εφαρμογών",
   "SETTINGS_APPSTORES_TAB_TITLE": "Κατάστημα εφαρμογών",
@@ -403,3 +404,4 @@
   "CLEAR": "Εκκαθάριση",
   "MORE": "Περισσότερα"
 }
+

@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "L'application {{id}} ne fonctionne qu'avec un domaine exposé",
   "APP_ERROR_APP_NOT_EXPOSABLE": "L'application {{id}} n'est pas exposable",
   "APP_ERROR_APP_NOT_FOUND": "L'application {{id}} est introuvable",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Votre architecture {{arch}} n'est pas supportée par l'application {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Le domaine {{domain}} est déjà utilisé par l'application {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Le domaine {{domain}} n'est pas valide",
@@ -209,7 +210,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Annuler la demande de changement de mot de passe",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Pour commencer, exécutez cette commande sur votre serveur puis actualisez cette page. Si vous l'avez déjà fait, la demande de réinitialisation du mot de passe peut avoir expiré. Dans ce cas, veuillez réessayer.",
   "AUTH_RESET_PASSWORD_SUBMIT": "Réinitialiser",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe. Et votre e-mail {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Mot de passe réinitialisé",
   "AUTH_RESET_PASSWORD_TITLE": "Réinitialiser votre mot de passe",
   "AUTH_TOTP_INSTRUCTIONS": "Entrez le code de votre application d'authentification",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Restez à jour avec la dernière version de Runtipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Actions",
   "SETTINGS_ACTIONS_TITLE": "Actions",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Mise à jour du dépôt",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Utilisez ce bouton pour mettre à jour votre app store",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Cela va réinitialiser votre dépôt et récupérer les dernières modifications depuis GitHub",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Mettre à jour",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Le dépôt a été mit à jour avec succès",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "App Stores",
   "SETTINGS_APPSTORES_SUBTITLE": "Ajouter ou supprimer des App Stores",
   "SETTINGS_APPSTORES_TAB_TITLE": "App Stores",
@@ -403,3 +404,4 @@
   "CLEAR": "Effacer",
   "MORE": "Plus"
 }
+

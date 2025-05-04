@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Az {{id}} alkalmazás csak nyilvános domainnel működik",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Az {{id}} alkalmazás nem hozzáférhető",
   "APP_ERROR_APP_NOT_FOUND": "A(z) {{id}} alkalmazás nem található",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Az Ön {{arch}} architektúráját az {{id}} alkalmazás nem támogatja",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "A(z) {{domain}} domaint már használja a(z) {{id}} alkalmazás",
   "APP_ERROR_DOMAIN_NOT_VALID": "A(z) {{domain}} domain nem érvényes domain",
@@ -209,7 +210,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Jelszómódosítási kérés visszavonása",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "A kezdéshez futtassa ezt a parancsot a kiszolgálón, majd frissítse ezt az oldalt. Ha ezt már korábban megtette, akkor a jelszó-visszaállítási kérelem már lejárt. Ebben az esetben kérjük, próbálja meg újra",
   "AUTH_RESET_PASSWORD_SUBMIT": "Jelszó visszaállítása",
-  "AUTH_RESET_PASSWORD_SUCCESS": "A jelszava vissza lett állítva. Most már bejelentkezhet az új jelszavával. Ez az e-mail címe {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Jelszó visszaállítása",
   "AUTH_RESET_PASSWORD_TITLE": "Jelszó visszaállítása",
   "AUTH_TOTP_INSTRUCTIONS": "Írja be a kódot a hitelesítő alkalmazásból",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Tartsa naprakészen a Runtipi legújabb verzióját",
   "SETTINGS_ACTIONS_TAB_TITLE": "Műveletek",
   "SETTINGS_ACTIONS_TITLE": "Műveletek",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Repozitórium frissítése",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Használja ezt a gombot az appstore frissítéséhez",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Ez visszaállítja az adattárat, és a legfrissebb változásokat húzza le a GitHubról",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Frissítés",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Az Appstore tároló sikeresen frissült",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "Alkalmazásboltok",
   "SETTINGS_APPSTORES_SUBTITLE": "Alkalmazásboltok hozzáadása vagy eltávolítása",
   "SETTINGS_APPSTORES_TAB_TITLE": "Alkalmazásboltok",
@@ -403,3 +404,4 @@
   "CLEAR": "Törlés",
   "MORE": "Több"
 }
+

@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Aplikacja {{id}} działa tylko z udostępnioną domeną",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Aplikacji {{id}} nie można udostępnić",
   "APP_ERROR_APP_NOT_FOUND": "Aplikacja {{id}} nie została znaleziona",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "Brak dostępnych podsieci",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Twoja architektura {{arch}} nie jest obsługiwana przez aplikację {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domena {{domain}} jest już w użyciu przez aplikację {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domena {{domain}} nie jest poprawną domeną",
@@ -209,7 +210,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Anuluj żądanie zmiany hasła",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Aby rozpocząć, uruchom tę komendę na swoim serwerze, a następnie odśwież tę stronę. Jeśli wcześniej to zrobiłeś, prośba o zresetowanie hasła mogła wygasnąć. W takim przypadku spróbuj ponownie",
   "AUTH_RESET_PASSWORD_SUBMIT": "Zresetuj hasło",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Twoje hasło zostało zresetowane. Możesz teraz zalogować się przy użyciu nowego hasła. I e-mail {{email}}",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Twoje hasło zostało zresetowane. Możesz się teraz zalogować przy użyciu twojego nowego hasła i nazwy użytkownika <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Resetowanie hasła",
   "AUTH_RESET_PASSWORD_TITLE": "Zresetuj swoje hasło",
   "AUTH_TOTP_INSTRUCTIONS": "Wprowadź kod z aplikacji uwierzytelniającej",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Bądź na bieżąco z najnowszą wersją Runtipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Akcje",
   "SETTINGS_ACTIONS_TITLE": "Akcje",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Zaktualizuj Repozytorium",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Użyj tego przycisku, aby zaktualizować twój appstore",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "To zresetuje twoje repozytorium i pobierze najnowsze zmiany z GitHub'a",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Zaktualizuj App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Użyj tego przycisku, aby zaktualizować swoje appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "To zresetuje twoje appstores i pobierze najnowsze zmiany z GitHuba",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Zaktualizuj",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Repozytorium Appstore zaktualizowane pomyślnie",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores zaktualizowane pomyślnie",
   "SETTINGS_APPSTORES_TITLE": "App Stores",
   "SETTINGS_APPSTORES_SUBTITLE": "Dodaj lub usuń app stores",
   "SETTINGS_APPSTORES_TAB_TITLE": "App Stores",
@@ -403,3 +404,4 @@
   "CLEAR": "Wyczyść",
   "MORE": "Więcej"
 }
+
