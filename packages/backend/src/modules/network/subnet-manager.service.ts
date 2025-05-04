@@ -7,6 +7,7 @@ import { AppsRepository } from '../apps/apps.repository';
 const BASE_SUBNET_PREFIX = '10.128';
 const SUBNET_MASK = '/24';
 
+const MAX_RETRIES = 3;
 const RESERVED_SUBNET_MAX = 9;
 const MAX_SUBNET_OCTET = 254; // Maximum value for the third octet (x in 10.128.x.0/24)
 
@@ -22,7 +23,7 @@ export class SubnetManagerService {
    * @param appUrn The URN of the app to allocate a subnet for
    * @returns The allocated subnet with mask (e.g., 10.128.10.0/24)
    */
-  public async allocateSubnet(appUrn: AppUrn): Promise<string> {
+  public async allocateSubnet(appUrn: AppUrn, retryCount = 0): Promise<string> {
     const existingApp = await this.appsRepository.getAppByUrn(appUrn);
 
     if (!existingApp) {
@@ -44,9 +45,9 @@ export class SubnetManagerService {
     try {
       await this.appsRepository.updateAppById(existingApp.id, { subnet: nextSubnet });
     } catch (error) {
-      if (error instanceof Error && error.message.includes('unique constraint')) {
+      if (error instanceof Error && error.message.includes('unique constraint') && retryCount < MAX_RETRIES) {
         this.logger.error(`Subnet ${nextSubnet} is already allocated, retrying...`);
-        return this.allocateSubnet(appUrn);
+        return this.allocateSubnet(appUrn, retryCount + 1);
       }
       throw error;
     }
