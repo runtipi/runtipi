@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "App {{id}} 只能使用公开域名",
   "APP_ERROR_APP_NOT_EXPOSABLE": "App {{id}} 不可发布",
   "APP_ERROR_APP_NOT_FOUND": "找不到应用程序 {{id}}",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "应用程序 {{id}} 不支持您的架构 {{arch}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "域名 {{domain}} 已被应用程序 {{id}} 使用",
   "APP_ERROR_DOMAIN_NOT_VALID": "{{domain}} 不是有效域名",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "保持最新版本的 Tipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "操作",
   "SETTINGS_ACTIONS_TITLE": "操作",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "更新存储库",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "点击此按钮更新应用商店",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "这将重置您的代码库并从 GitHub 拉取最新更改",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "更新",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "应用商店存储库已成功更新",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "应用市场",
   "SETTINGS_APPSTORES_SUBTITLE": "添加或删除应用商店",
   "SETTINGS_APPSTORES_TAB_TITLE": "应用商店",
@@ -403,3 +404,4 @@
   "CLEAR": "清除",
   "MORE": "更多"
 }
+
