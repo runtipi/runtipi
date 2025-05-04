@@ -49,7 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Доступ к приложению {{id}} возможен только по доменному имени",
   "APP_ERROR_APP_NOT_EXPOSABLE": "К приложению {{id}} невозможно получить доступ по доменному имени",
   "APP_ERROR_APP_NOT_FOUND": "Приложение {{id}} не найдено",
-  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "Нет доступных подсетей",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Ваша архитектура {{arch}} не поддерживается приложением {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Домен {{domain}} уже используется приложением {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Домен {{domain}} недопустим",
@@ -210,7 +210,7 @@
   "AUTH_RESET_PASSWORD_CANCEL": "Отменить запрос на смену пароля",
   "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Чтобы начать, запустите команду на вашем сервере и обновите эту страницу. Если вы уже сделали это, возможно, запрос на сброс пароля истёк. В этом случае повторите попытку",
   "AUTH_RESET_PASSWORD_SUBMIT": "Сбросить пароль",
-  "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
+  "AUTH_RESET_PASSWORD_SUCCESS": "Ваш пароль был сброшен. Теперь вы можете войти с новым паролем и именем пользователя <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Пароль сброшен",
   "AUTH_RESET_PASSWORD_TITLE": "Сбросить ваш пароль",
   "AUTH_TOTP_INSTRUCTIONS": "Введите код из приложения для аутентификации",
@@ -299,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Будьте в курсе последних версий Runtipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Действия",
   "SETTINGS_ACTIONS_TITLE": "Действия",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Обновить магазины приложений",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Используйте эту кнопку, чтобы обновить ваши магазины",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Это сбросит ваши магазины и получит последние изменения с GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Обновить",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Магазин приложений успешно обновлен",
   "SETTINGS_APPSTORES_TITLE": "Магазины приложений",
   "SETTINGS_APPSTORES_SUBTITLE": "Добавить или удалить магазины приложений",
   "SETTINGS_APPSTORES_TAB_TITLE": "Магазины приложений",
@@ -402,6 +402,6 @@
   "ACTIONS_ENABLE": "Включить",
   "WARNING": "Внимание",
   "CLEAR": "Очистить",
-  "MORE": "More"
+  "MORE": "Еще"
 }
 
