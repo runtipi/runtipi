@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Esta ação não pode ser desfeita",
   "DELETE_BACKUP_MODAL_SUBMIT": "Deletar",
   "GUEST_DASHBOARD": "Painel de controle para visitantes",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Nenhum aplicativo instalado",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Peça ao seu administrador para adicionar aplicativos ao painel de visitantes ou fazer login para ver seus aplicativos.",
   "HEADER_APPS": "Meus aplicativos",
@@ -404,4 +405,3 @@
   "CLEAR": "Limpar",
   "MORE": "Mais"
 }
-
