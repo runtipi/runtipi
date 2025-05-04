@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Bu işlem geri alınamaz",
   "DELETE_BACKUP_MODAL_SUBMIT": "Sil",
   "GUEST_DASHBOARD": "Misafir Kontrol Paneli",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Gösterilecek uygulama yok",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Yöneticinizden misafir kontrol paneline uygulama eklemesini isteyin veya uygulamalarınızı görmek için giriş yapın.",
   "HEADER_APPS": "Uygulamalarım",
@@ -404,4 +405,3 @@
   "CLEAR": "Temizle",
   "MORE": "Daha Fazla"
 }
-
