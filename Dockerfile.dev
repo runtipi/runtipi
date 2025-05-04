@@ -30,6 +30,7 @@ COPY ./pnpm-lock.yaml ./
 RUN pnpm fetch
 
 COPY ./packages/backend/package.json ./packages/backend/package.json
+COPY ./packages/common/package.json ./packages/common/package.json
 COPY ./packages/frontend/package.json ./packages/frontend/package.json
 COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
@@ -40,6 +41,8 @@ COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
 COPY ./packages/backend/assets ./assets
 COPY ./packages/backend/src/core/database/drizzle ./assets/migrations
+
+RUN npm run build
 
 EXPOSE 3000
 

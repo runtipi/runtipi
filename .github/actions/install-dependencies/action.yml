@@ -37,4 +37,4 @@ runs:
 
     - name: Build
       shell: bash
-      run: npm run build:packages
+      run: npm run build
