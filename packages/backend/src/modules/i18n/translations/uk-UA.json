@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "Додаток {{id}} працює лише з відкритим доменом",
   "APP_ERROR_APP_NOT_EXPOSABLE": "Додаток {{id}} не можна відкрити для доступу",
   "APP_ERROR_APP_NOT_FOUND": "Додаток {{id}} не знайдено",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Ваша архітектура {{arch}} не підтримується додатком {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Домен {{domain}} вже використовується додатком {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Домен {{domain}} не є дійсним доменом",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Будьте в курсі останньої версії Runtipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Дії",
   "SETTINGS_ACTIONS_TITLE": "Дії",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Оновити репозиторій",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Використовуйте цю кнопку, щоб оновити свій магазин додатків",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Це призведе до скидання вашого репозиторію та витягне останні зміни з GitHub",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Оновити",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Репозиторій магазину додатків успішно оновлено",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "Магазини додатків",
   "SETTINGS_APPSTORES_SUBTITLE": "Додати або видалити магазини додатків",
   "SETTINGS_APPSTORES_TAB_TITLE": "Магазини додатків",
@@ -403,3 +404,4 @@
   "CLEAR": "Очистити",
   "MORE": "Більше"
 }
+
