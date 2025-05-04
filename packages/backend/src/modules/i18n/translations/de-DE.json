@@ -49,6 +49,7 @@
   "APP_ERROR_APP_FORCE_EXPOSED": "App {{id}} funktioniert nur mit veröffentlichter Domain",
   "APP_ERROR_APP_NOT_EXPOSABLE": "App {{id}} nicht veröffentlichbar",
   "APP_ERROR_APP_NOT_FOUND": "App {{id}} nicht gefunden",
+  "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Deine Architektur {{arch}} wird von der App {{id}} nicht unterstützt",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Die Domain {{domain}} ist bereits in Verwendung von der App {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Die Domain {{domain}} ist ungültig",
@@ -298,11 +299,11 @@
   "SETTINGS_ACTIONS_STAY_UP_TO_DATE": "Stay up to date with the latest version of Runtipi",
   "SETTINGS_ACTIONS_TAB_TITLE": "Aktionen",
   "SETTINGS_ACTIONS_TITLE": "Aktionen",
-  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Repository aktualisieren",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Nutzen Sie diesen Button, um Ihren App Store zu aktualisieren",
-  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "Dies wird Ihr Repository zurücksetzen und die neusten Änderungen von GitHub herunterladen",
+  "SETTINGS_ACTIONS_UPDATE_REPO_TITLE": "Update App Stores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUBTITLE": "Use this button to update your appstores",
+  "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_SUBTITLE": "This will reset your appstores and pull the latest changes from GitHub",
   "SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON": "Aktualisieren",
-  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "App Store Repository wurde erfolgreich aktualisiert",
+  "SETTINGS_ACTIONS_UPDATE_REPO_SUCCESS": "Appstores updated successfully",
   "SETTINGS_APPSTORES_TITLE": "App Store",
   "SETTINGS_APPSTORES_SUBTITLE": "App Stores hinzufügen oder entfernen",
   "SETTINGS_APPSTORES_TAB_TITLE": "App Stores",
@@ -403,3 +404,4 @@
   "CLEAR": "Clear",
   "MORE": "More"
 }
+
