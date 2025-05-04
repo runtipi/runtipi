@@ -41,7 +41,15 @@ export class SubnetManagerService {
       throw new TranslatableError('NETWORK_ERROR_NO_AVAILABLE_SUBNETS');
     }
 
-    await this.appsRepository.updateAppById(existingApp.id, { subnet: nextSubnet });
+    try {
+      await this.appsRepository.updateAppById(existingApp.id, { subnet: nextSubnet });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('unique constraint')) {
+        this.logger.error(`Subnet ${nextSubnet} is already allocated, retrying...`);
+        return this.allocateSubnet(appUrn);
+      }
+      throw error;
+    }
 
     this.logger.info(`Allocated subnet ${nextSubnet} for app ${appUrn}`);
     return nextSubnet;

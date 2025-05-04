@@ -1,0 +1,1 @@
+ALTER TABLE "app" ADD CONSTRAINT "app_subnet_unique" UNIQUE("subnet");
