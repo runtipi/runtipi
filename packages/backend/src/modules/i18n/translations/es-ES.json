@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Esta acción no se puede deshacer",
   "DELETE_BACKUP_MODAL_SUBMIT": "Eliminar",
   "GUEST_DASHBOARD": "Panel de invitado",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "No apps to display",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Ask your administrator to add apps to the guest dashboard or login to see your apps.",
   "HEADER_APPS": "Mis Apps",
@@ -404,4 +405,3 @@
   "CLEAR": "Clear",
   "MORE": "More"
 }
-
