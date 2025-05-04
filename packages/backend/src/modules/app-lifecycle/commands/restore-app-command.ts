@@ -20,8 +20,8 @@ export class RestoreAppCommand extends AppLifecycleCommand {
 
     try {
       // Stop the app
-      logger.info(`Stopping app ${appUrn}`);
-      await dockerService.composeApp(appUrn, 'rm --force --stop').catch((err) => {
+      logger.info(`Stopping app ${appUrn} for restore operation`);
+      await dockerService.composeApp(appUrn, 'stop').catch((err) => {
         logger.error(`Failed to stop app ${appUrn}: ${err.message}`);
       });
 

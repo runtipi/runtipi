@@ -5,9 +5,9 @@ import { BackupManager } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import type { ModuleRef } from '@nestjs/core';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
-import type { ModuleRef } from '@nestjs/core';
 
 export class UpdateAppCommand extends AppLifecycleCommand {
   constructor(
@@ -27,6 +27,7 @@ export class UpdateAppCommand extends AppLifecycleCommand {
 
     try {
       if (this.performBackup) {
+        await dockerService.composeApp(appUrn, 'stop');
         await backupManager.backupApp(appUrn);
       }
 

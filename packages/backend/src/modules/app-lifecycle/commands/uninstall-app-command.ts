@@ -14,7 +14,8 @@ export class UninstallAppCommand extends AppLifecycleCommand {
       logger.info(`Uninstalling app ${appUrn}`);
 
       try {
-        await dockerService.composeApp(appUrn, 'down --remove-orphans -v');
+        await dockerService.composeApp(appUrn, 'down --remove-orphans -v --rmi all');
+        logger.info(`Successfully cleaned up all Docker resources for ${appUrn}`);
       } catch (err) {
         logger.warn('Error taking down app', appUrn, err);
       }
