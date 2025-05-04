@@ -1,7 +1,7 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { AppsRepository } from '@/modules/apps/apps.repository';
-import type { AppUrn } from '@/types/app/app.types';
 import { Test } from '@nestjs/testing';
+import type { AppUrn } from '@runtipi/common/types';
 import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { mock, mockReset } from 'vitest-mock-extended';
