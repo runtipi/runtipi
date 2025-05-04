@@ -238,6 +238,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Tej akcji nie można cofnąć",
   "DELETE_BACKUP_MODAL_SUBMIT": "Usuń",
   "GUEST_DASHBOARD": "Panel gości",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Brak aplikacji do wyświetlenia",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Poproś swojego administratora, aby dodał aplikacje do panelu gości, lub zaloguj się, aby zobaczyć swoje aplikacje.",
   "HEADER_APPS": "Moje Aplikacje",
@@ -404,4 +405,3 @@
   "CLEAR": "Wyczyść",
   "MORE": "Więcej"
 }
-
