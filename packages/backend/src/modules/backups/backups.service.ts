@@ -74,7 +74,7 @@ export class BackupsService {
       if (success) {
         const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
-        if (restoredAppConfig?.tipi_version) {
+        if (typeof restoredAppConfig?.tipi_version === 'number') {
           await this.appsRepository.updateAppById(app.id, { version: restoredAppConfig?.tipi_version });
         }
 

@@ -58,7 +58,7 @@ export class BackupManager {
     this.logger.debug('stderr:', stderr);
     this.logger.debug('stdout:', stdout);
 
-    this.logger.info('Moving archive to backup directory...');
+    this.logger.info('Moving archive to backup directory...', backupDir);
 
     // Move the archive to the backup directory
     await this.filesystem.createDirectory(backupDir);
@@ -112,7 +112,10 @@ export class BackupManager {
     // Copy data from the backup folder
     await this.filesystem.copyDirectory(path.join(restoreDir, 'app-data'), appDataDir);
     await this.filesystem.copyDirectory(path.join(restoreDir, 'app'), appInstalledDir);
-    await this.filesystem.copyDirectory(path.join(restoreDir, 'user-config'), userConfigDir);
+
+    if (await this.filesystem.pathExists(path.join(restoreDir, 'user-config'))) {
+      await this.filesystem.copyDirectory(path.join(restoreDir, 'user-config'), userConfigDir);
+    }
 
     // Delete restore folder
     await this.filesystem.removeDirectory(restoreDir);
