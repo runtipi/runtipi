@@ -83,3 +83,5 @@ public/js/*
 
 coverage
 docs/
+
+.internal/

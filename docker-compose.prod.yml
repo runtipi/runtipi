@@ -12,8 +12,8 @@ services:
       - 8080:8080
     command: --providers.docker
     volumes:
-      - ./traefik:/etc/traefik
-      - ./traefik/shared:/shared
+      - .internal/traefik:/etc/traefik
+      - .internal/traefik/shared:/shared
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - tipi_main_network
@@ -76,18 +76,18 @@ services:
       retries: 20
     volumes:
       # Data
-      - ${RUNTIPI_MEDIA_PATH:-.}/media:/data/media
-      - ${RUNTIPI_STATE_PATH:-.}/state:/data/state
-      - ${RUNTIPI_REPOS_PATH:-.}/repos:/data/repos
-      - ${RUNTIPI_APPS_PATH:-.}/apps:/data/apps
-      - ${RUNTIPI_LOGS_PATH:-.}/logs:/data/logs
-      - ${RUNTIPI_TRAEFIK_PATH:-.}/traefik:/data/traefik
-      - ${RUNTIPI_USER_CONFIG_PATH:-.}/user-config:/data/user-config
-      - ${RUNTIPI_APP_DATA_PATH:-.}/app-data:/app-data
-      - ${RUNTIPI_BACKUPS_PATH:-.}/backups:/data/backups
+      - ${RUNTIPI_MEDIA_PATH:-.internal}/media:/data/media
+      - ${RUNTIPI_STATE_PATH:-.internal}/state:/data/state
+      - ${RUNTIPI_REPOS_PATH:-.internal}/repos:/data/repos
+      - ${RUNTIPI_APPS_PATH:-.internal}/apps:/data/apps
+      - ${RUNTIPI_LOGS_PATH:-.internal}/logs:/data/logs
+      - ${RUNTIPI_TRAEFIK_PATH:-.internal}/traefik:/data/traefik
+      - ${RUNTIPI_USER_CONFIG_PATH:-.internal}/user-config:/data/user-config
+      - ${RUNTIPI_APP_DATA_PATH:-.internal}/app-data:/app-data
+      - ${RUNTIPI_BACKUPS_PATH:-.internal}/backups:/data/backups
       # Static
       - ./.env:/data/.env
-      - ./cache:/cache
+      - .internal/cache:/cache
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/meminfo:/host/proc/meminfo:ro
       - ./docker-compose.prod.yml:/data/docker-compose.yml
