@@ -42,7 +42,7 @@
     "qrcode.react": "^4.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-error-boundary": "^5.0.0",
+    "react-error-boundary": "^6.0.0",
     "react-hook-form": "^7.56.2",
     "react-hot-toast": "^2.5.2",
     "react-i18next": "^15.5.1",
