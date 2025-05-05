@@ -3,4 +3,4 @@ export const testUser = {
   password: 'password',
 };
 
-export const BASE_PATH = process.env.BASE_PATH || '.';
+export const BASE_PATH = process.env.BASE_PATH || '.internal';
