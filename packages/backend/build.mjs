@@ -41,6 +41,7 @@ await esbuild.build({
     'class-transformer',
     'i18next-fs-backend',
     'argon2',
+    'cpu-features',
   ],
   outfile: 'dist/main.js',
 });

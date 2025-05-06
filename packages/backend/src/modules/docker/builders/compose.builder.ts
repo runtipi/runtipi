@@ -131,7 +131,7 @@ export class DockerComposeBuilder {
       }
     }
 
-    service.setLabels({ 'runtipi.managed': true, ...params.extraLabels }).interpolateVariables(`${appName}-${appStoreId}`);
+    service.setLabels({ 'runtipi.managed': true, 'runtipi.appurn': appUrn, ...params.extraLabels }).interpolateVariables(`${appName}-${appStoreId}`);
 
     return service.build();
   };
