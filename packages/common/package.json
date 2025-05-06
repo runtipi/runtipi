@@ -37,11 +37,11 @@
   "packageManager": "pnpm@10.8.0",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@changesets/cli": "^2.29.2",
+    "@changesets/cli": "^2.29.3",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "zod": "^3.24.3",
+    "zod": "^3.24.4",
     "zod-to-json-schema": "^3.24.5"
   }
 }
