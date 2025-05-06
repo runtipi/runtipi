@@ -8,17 +8,27 @@ import type { ModuleRef } from '@nestjs/core';
 import { dynamicComposeSchema } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
+import Dockerode from 'dockerode';
 import { ZodError } from 'zod';
 import { fromError } from 'zod-validation-error';
 
 export class AppLifecycleCommand {
-  constructor(protected moduleRef: ModuleRef) {}
+  constructor(
+    protected moduleRef: ModuleRef,
+    protected docker: Dockerode,
+  ) {}
 
   protected async ensureAppDir(appUrn: AppUrn, form: AppEventFormInput): Promise<void> {
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const marketplaceService = this.moduleRef.get(MarketplaceService, { strict: false });
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const subnetManager = this.moduleRef.get(SubnetManagerService, { strict: false });
+
+    const pruned = await this.docker
+      .pruneContainers({ filters: { label: [`runtipi.appurn=${appUrn}`] } })
+      .catch(() => ({ ContainersDeleted: [], SpaceReclaimed: 0 }));
+
+    logger.info('Pruned containers:', pruned.ContainersDeleted, 'Space reclaimed:', pruned.SpaceReclaimed / 1024 / 1024, 'MB');
 
     const composeJson = await appFilesManager.getDockerComposeJson(appUrn);
 

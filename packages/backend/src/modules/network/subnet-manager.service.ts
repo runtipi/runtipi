@@ -1,8 +1,10 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { LoggerService } from '@/core/logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
+import Dockerode from 'dockerode';
 import { AppsRepository } from '../apps/apps.repository';
+import { DOCKERODE } from '../docker/docker.module';
 
 const BASE_SUBNET_PREFIX = '10.128';
 const SUBNET_MASK = '/24';
@@ -16,6 +18,7 @@ export class SubnetManagerService {
   constructor(
     private readonly appsRepository: AppsRepository,
     private readonly logger: LoggerService,
+    @Inject(DOCKERODE) private docker: Dockerode,
   ) {}
 
   /**
@@ -30,14 +33,9 @@ export class SubnetManagerService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
     }
 
-    if (existingApp?.subnet) {
-      this.logger.info(`App ${appUrn} already has subnet ${existingApp.subnet}`);
-      return existingApp.subnet;
-    }
-
     const allocatedSubnets = await this.getAllocatedSubnets();
-
     const nextSubnet = this.findNextAvailableSubnet(allocatedSubnets);
+
     if (!nextSubnet) {
       throw new TranslatableError('NETWORK_ERROR_NO_AVAILABLE_SUBNETS');
     }
@@ -45,8 +43,8 @@ export class SubnetManagerService {
     try {
       await this.appsRepository.updateAppById(existingApp.id, { subnet: nextSubnet });
     } catch (error) {
-      if (error instanceof Error && error.message.includes('unique constraint') && retryCount < MAX_RETRIES) {
-        this.logger.error(`Subnet ${nextSubnet} is already allocated, retrying...`);
+      if (error instanceof Error && retryCount < MAX_RETRIES) {
+        this.logger.error(`Subnet ${nextSubnet} failed to be allocated, retrying...`);
         return this.allocateSubnet(appUrn, retryCount + 1);
       }
       throw error;
@@ -61,11 +59,12 @@ export class SubnetManagerService {
    * @returns Array of subnets in use
    */
   private async getAllocatedSubnets(): Promise<string[]> {
-    const apps = await this.appsRepository.getApps();
-    return apps
-      .filter((app) => app.subnet !== null)
-      .map((app) => app.subnet)
-      .filter((subnet): subnet is string => subnet !== null);
+    await this.docker.pruneNetworks().catch(() => ({}));
+    const networks = await this.docker.listNetworks();
+    return networks
+      .flatMap((network) => network.IPAM?.Config?.map((c) => c))
+      .map((c) => c?.Subnet)
+      .filter((c) => c !== undefined);
   }
 
   /**

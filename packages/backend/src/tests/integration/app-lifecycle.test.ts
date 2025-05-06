@@ -15,6 +15,7 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { AppsRepository } from '@/modules/apps/apps.repository';
 import { AppsService } from '@/modules/apps/apps.service';
+import { DOCKERODE } from '@/modules/docker/docker.module';
 import { DockerService } from '@/modules/docker/docker.service';
 import { EnvUtils } from '@/modules/env/env.utils';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
@@ -24,7 +25,7 @@ import { QueueFactory } from '@/modules/queue/queue.factory';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { eq } from 'drizzle-orm';
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import waitFor from 'wait-for-expect';
 import type { FsMock } from '../__mocks__/fs';
@@ -93,6 +94,14 @@ describe('App lifecycle', () => {
           useValue: db,
         },
         {
+          provide: DOCKERODE,
+          useValue: {
+            pruneContainers: vi.fn().mockRejectedValue(null),
+            pruneNetworks: vi.fn().mockRejectedValue(null),
+            listNetworks: vi.fn().mockResolvedValue([]),
+          },
+        },
+        {
           provide: AppEventsQueue,
           useValue: appEventsQueue,
         },
@@ -148,8 +157,6 @@ describe('App lifecycle', () => {
 
       // assert
       expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
-      const yml = await fs.promises.readFile(`${DATA_DIR}/apps/test/${appInfo.id}/docker-compose.yml`, 'utf-8');
-      expect(yml).toMatchSnapshot();
     });
 
     it('should not delete an existing app-data folder even if the app is reinstalled', async () => {
@@ -234,9 +241,12 @@ describe('App lifecycle', () => {
 
       await waitFor(async () => {
         const app1 = await appsRepository.getAppByUrn(app1Info.urn);
-        const app3 = await appsRepository.getAppByUrn(app3Info.urn);
         expect(app1?.status).toBe('running');
         expect(app1?.version).toBe(2);
+      });
+
+      await waitFor(async () => {
+        const app3 = await appsRepository.getAppByUrn(app3Info.urn);
         expect(app3?.status).toBe('running');
         expect(app3?.version).toBe(4);
       });

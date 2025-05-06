@@ -8,7 +8,7 @@ export default defineConfig({
   test: {
     setupFiles: ['./src/tests/vite.setup.ts'],
     include: ['src/**/*.test.ts'],
-    exclude: ['**/integration/**'],
+    exclude: ['**/integration/**', '**/.internal/**'],
     coverage: { all: true, reporter: ['lcov', 'text-summary'] },
     reporters: ['default'],
     env: {

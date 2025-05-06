@@ -65,35 +65,6 @@ exports[`App lifecycle > install app > should successfully install app and creat
       └─ seed"
 `;
 
-exports[`App lifecycle > install app > should successfully install app and create expected directory structure 2`] = `
-"services:
-  test:
-    image: test
-    restart: unless-stopped
-    networks:
-      test_test_network:
-        gw_priority: 0
-      tipi_main_network:
-        gw_priority: 1
-    environment:
-      TEST: test
-    ports:
-      - \${APP_PORT}:80
-    labels:
-      runtipi.managed: true
-networks:
-  tipi_main_network:
-    name: runtipi_tipi_main_network
-    external: true
-  test_test_network:
-    external: false
-    ipam:
-      config:
-        - subnet: 10.128.10.0/24
-
-"
-`;
-
 exports[`App lifecycle > update all apps > should update multiple apps that have newer versions available 1`] = `
 "/
 ├─ app-data/

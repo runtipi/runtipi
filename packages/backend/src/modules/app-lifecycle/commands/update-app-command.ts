@@ -7,14 +7,16 @@ import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import type { ModuleRef } from '@nestjs/core';
 import type { AppUrn } from '@runtipi/common/types';
+import type Dockerode from 'dockerode';
 import { AppLifecycleCommand } from './command';
 
 export class UpdateAppCommand extends AppLifecycleCommand {
   constructor(
     moduleRef: ModuleRef,
+    docker: Dockerode,
     private readonly performBackup: boolean = true,
   ) {
-    super(moduleRef);
+    super(moduleRef, docker);
   }
 
   public async execute(appUrn: AppUrn, form: AppEventFormInput) {
