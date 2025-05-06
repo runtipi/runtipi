@@ -222,7 +222,9 @@ export type MyAppsDto = {
       exposedLocal: boolean;
       domain: string | null;
       isVisibleOnGuestDashboard: boolean;
-      config?: {};
+      config?: {
+        [key: string]: unknown;
+      };
       enableAuth?: boolean;
     };
     info: {
@@ -287,7 +289,9 @@ export type GuestAppsDto = {
       exposedLocal: boolean;
       domain: string | null;
       isVisibleOnGuestDashboard: boolean;
-      config?: {};
+      config?: {
+        [key: string]: unknown;
+      };
       enableAuth?: boolean;
     };
     info: {
@@ -383,7 +387,9 @@ export type GetAppDto = {
     exposedLocal: boolean;
     domain: string | null;
     isVisibleOnGuestDashboard: boolean;
-    config?: {};
+    config?: {
+      [key: string]: unknown;
+    };
     enableAuth?: boolean;
   } | null;
   info: {

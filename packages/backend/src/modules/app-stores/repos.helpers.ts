@@ -116,6 +116,8 @@ export class ReposHelpers {
     try {
       await this.cloneRepo(repoUrl, slug);
 
+      const [remoteUrl] = this.getRepoBaseUrlAndBranch(repoUrl);
+
       const { dataDir } = this.configuration.get('directories');
       const repoPath = path.join(dataDir, 'repos', slug);
 
@@ -134,8 +136,10 @@ export class ReposHelpers {
       }
       const remoteBranchRef = `origin/${currentBranch}`;
 
-      await git.fetch({ fs, http, dir: repoPath, remote: 'origin', ref: currentBranch, depth: 1, singleBranch: true, tags: false });
+      const fetchResult = await git.fetch({ fs, http, dir: repoPath, url: remoteUrl, ref: currentBranch, depth: 1, singleBranch: true, tags: false });
+      this.logger.debug('Fetch result:', fetchResult, 'Current branch:', currentBranch);
       const targetSha = await git.resolveRef({ fs, dir: repoPath, ref: remoteBranchRef });
+      this.logger.debug('Target SHA:', targetSha);
       await git.branch({ fs, dir: repoPath, ref: currentBranch, object: targetSha, force: true });
       await git.checkout({ fs, dir: repoPath, ref: currentBranch, force: true });
 
