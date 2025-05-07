@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {{arch}} is not supported by app {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domain {{domain}} is already in use by app {{id}}",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domain {{domain}} is not a valid domain",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "앱이 노출되는 경우 도메인이 필요합니다",
   "APP_ERROR_INVALID_CONFIG": "앱 {{id}}의 config.json 파일이 유효하지 않습니다",
@@ -403,5 +404,8 @@
   "ACTIONS_ENABLE": "Enable",
   "WARNING": "Warning",
   "CLEAR": "Clear",
-  "MORE": "More"
+  "MORE": "More",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
