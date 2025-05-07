@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "Kullanılabilir alt ağ kalmadı",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Mimariniz {{arch}}, uygulama {{id}} tarafından desteklenmiyor",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domain {{domain}} zaten uygulama {{id}} tarafından kullanılıyor",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domain {{domain}} geçerli bir domain değil",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Uygulama açıldığında domain gereklidir",
   "APP_ERROR_INVALID_CONFIG": "Uygulama {{id}} geçersiz bir config.json dosyasına sahip",
@@ -403,5 +404,8 @@
   "ACTIONS_ENABLE": "Etkinleştir",
   "WARNING": "Uyarı",
   "CLEAR": "Temizle",
-  "MORE": "Daha Fazla"
+  "MORE": "Daha Fazla",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
