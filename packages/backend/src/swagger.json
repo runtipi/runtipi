@@ -2210,6 +2210,10 @@
                     },
                     "enableAuth": {
                       "type": "boolean"
+                    },
+                    "localSubdomain": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
@@ -2394,6 +2398,10 @@
                     },
                     "enableAuth": {
                       "type": "boolean"
+                    },
+                    "localSubdomain": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
@@ -2727,6 +2735,10 @@
               },
               "enableAuth": {
                 "type": "boolean"
+              },
+              "localSubdomain": {
+                "type": "string",
+                "nullable": true
               }
             },
             "required": [
@@ -3204,6 +3216,10 @@
           },
           "enableAuth": {
             "type": "boolean"
+          },
+          "localSubdomain": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9-]{1,63}$"
           }
         }
       },

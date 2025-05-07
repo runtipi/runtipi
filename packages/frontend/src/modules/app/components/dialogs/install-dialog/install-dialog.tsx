@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { useAppStatus } from '@/modules/app/helpers/use-app-status';
 import type { AppInfo } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 import type React from 'react';
 import { useId } from 'react';
@@ -12,7 +13,6 @@ import toast from 'react-hot-toast';
 import { Trans, useTranslation } from 'react-i18next';
 import { InstallFormButtons } from '../../install-form-buttons/install-form-buttons';
 import { type FormValues, InstallForm } from '../../install-form/install-form';
-import { IconAlertCircle } from '@tabler/icons-react';
 
 interface IProps {
   info: AppInfo;
@@ -40,6 +40,7 @@ export const InstallDialog: React.FC<IProps> = ({ info, isOpen, onClose }) => {
     return {
       ...values,
       port: values.port ? Number(values.port) : undefined,
+      localSubdomain: values.localSubdomain || undefined,
     };
   };
 

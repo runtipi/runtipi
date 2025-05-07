@@ -82,6 +82,6 @@ public/js/*
 /cache
 
 coverage
-docs/
+docs/jira/
 
 .internal/

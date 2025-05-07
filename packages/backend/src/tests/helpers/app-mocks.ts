@@ -51,5 +51,6 @@ export const createMockApp = (data: Partial<App>): App => ({
   updatedAt: faker.date.recent().toUTCString(),
   version: 1,
   subnet: null,
+  localSubdomain: null,
   ...data,
 });

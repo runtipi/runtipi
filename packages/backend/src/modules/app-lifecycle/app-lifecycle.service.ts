@@ -131,6 +131,17 @@ export class AppLifecycleService {
       }
     }
 
+    if (exposedLocal && parsedForm.localSubdomain) {
+      const appsWithSameLocalSubdomain = await this.appRepository.getAppsByLocalSubdomain(parsedForm.localSubdomain);
+
+      if (appsWithSameLocalSubdomain.length > 0) {
+        throw new TranslatableError('APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE', {
+          subdomain: parsedForm.localSubdomain,
+          id: appsWithSameLocalSubdomain[0]?.appName,
+        });
+      }
+    }
+
     if (appInfo?.min_tipi_version && valid(version) && lt(version, appInfo.min_tipi_version)) {
       throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appUrn, minVersion: appInfo.min_tipi_version });
     }
@@ -145,6 +156,7 @@ export class AppLifecycleService {
       version: appInfo.tipi_version,
       exposed: exposed ?? false,
       domain: domain ?? null,
+      localSubdomain: parsedForm.localSubdomain ?? null,
       openPort: openPort ?? false,
       exposedLocal: exposedLocal ?? false,
       appStoreSlug: appStoreId,
@@ -335,6 +347,17 @@ export class AppLifecycleService {
       }
     }
 
+    if (exposedLocal && parsedForm.localSubdomain) {
+      const appsWithSameLocalSubdomain = await this.appRepository.getAppsByLocalSubdomain(parsedForm.localSubdomain, app.id);
+
+      if (appsWithSameLocalSubdomain.length > 0) {
+        throw new TranslatableError('APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE', {
+          subdomain: parsedForm.localSubdomain,
+          id: appsWithSameLocalSubdomain[0]?.appName,
+        });
+      }
+    }
+
     const { success, message } = await this.appEventsQueue.publish({
       command: 'generate_env',
       appUrn,
@@ -352,6 +375,7 @@ export class AppLifecycleService {
       openPort: parsedForm.openPort,
       port: parsedForm.port ?? appInfo.port,
       domain: domain ?? null,
+      localSubdomain: parsedForm.localSubdomain ?? null,
       config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
       enableAuth: parsedForm.enableAuth ?? false,

@@ -1,4 +1,4 @@
-import { Input } from '@/components/ui/Input';
+import { Input, InputGroup } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
 import { useAppContext } from '@/context/app-context';
 import type { AppInfo, FormField } from '@/types/app.types';
@@ -26,6 +26,7 @@ export type FormValues = {
   exposedLocal: boolean;
   openPort: boolean;
   domain?: string;
+  localSubdomain?: string;
   isVisibleOnGuestDashboard?: boolean;
   enableAuth: boolean;
   [key: string]: unknown;
@@ -50,6 +51,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
   } = useForm<FormValues>({});
   const watchExposed = watch('exposed', false);
   const watchOpenPort = watch('openPort', true);
+  const watchExposedLocal = watch('exposedLocal', false);
 
   useEffect(() => {
     if (info.force_expose) {
@@ -178,6 +180,19 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
                 />
               )}
             />
+            {watchExposedLocal && (
+              <div className="mb-3">
+                <InputGroup
+                  groupPrefix="https://"
+                  groupSuffix={`.${localDomain}`}
+                  {...register('localSubdomain')}
+                  label={t('APP_INSTALL_FORM_LOCAL_SUBDOMAIN')}
+                  error={errors.localSubdomain?.message}
+                  disabled={loading}
+                  placeholder={info.urn.split(':').join('-')}
+                />
+              </div>
+            )}
             <Controller
               control={control}
               name="enableAuth"
