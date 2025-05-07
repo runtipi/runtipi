@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Your architecture {{arch}} is not supported by app {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Domeniul {{domain}} este deja utilizat de către aplicația {{id}}",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Domeniul {{domain}} nu este un domeniu valid",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domeniul este necesar în cazul în care aplicația este expusă",
   "APP_ERROR_INVALID_CONFIG": "Aplicația {{id}} are un fișier config.json nevalid",
@@ -403,5 +404,8 @@
   "ACTIONS_ENABLE": "Enable",
   "WARNING": "Warning",
   "CLEAR": "Clear",
-  "MORE": "More"
+  "MORE": "More",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
