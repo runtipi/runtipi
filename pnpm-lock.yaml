@@ -93,6 +93,9 @@ importers:
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
+      deepmerge:
+        specifier: ^4.3.1
+        version: 4.3.1
       dockerode:
         specifier: ^4.0.6
         version: 4.0.6

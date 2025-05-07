@@ -42,6 +42,14 @@ export const serviceSchema = z.object({
 
 export const dynamicComposeSchema = z.object({
     services: serviceSchema.array(),
+    overrides: z
+        .array(
+            z.object({
+                architecture: z.enum(["arm64", "amd64"]).optional(),
+                services: serviceSchema.partial().array(),
+            }),
+        )
+        .optional(),
 });
 
 export type DependsOn = z.output<typeof dependsOnSchema>;
@@ -112,19 +120,32 @@ The actual generation of Docker Compose files happens primarily in the
 
 1. Retrieves the application's Docker Compose JSON configuration
 2. Parses and validates it using the `dynamicComposeSchema`
-3. Creates a `DockerComposeBuilder` instance
-4. Allocates a subnet for the application
-5. Generates the Docker Compose YAML file
-6. Writes the file to disk for Docker to use
+3. Gets the current system architecture
+4. Applies any architecture-specific overrides to the services
+5. Creates a `DockerComposeBuilder` instance
+6. Allocates a subnet for the application
+7. Generates the Docker Compose YAML file
+8. Writes the file to disk for Docker to use
 
 ```typescript
 try {
-    const { services } = dynamicComposeSchema.parse(composeJson.content);
+    const { services, overrides } = dynamicComposeSchema.parse(
+        composeJson.content,
+    );
+    const architecture = configService.get("architecture");
+
+    // Merge architecture-specific overrides with base services
+    const mergedServices = mergeArchitectureOverrides(
+        services,
+        overrides,
+        architecture,
+    );
+
     const dockerComposeBuilder = new DockerComposeBuilder();
     const subnet = await subnetManager.allocateSubnet(appUrn);
 
     const composeFile = dockerComposeBuilder.getDockerCompose(
-        services,
+        mergedServices,
         form,
         appUrn,
         subnet,
@@ -156,6 +177,57 @@ The dynamic compose system automatically configures networking for applications:
    main Tipi network
 3. Services with `networkMode` set override the default networking behavior
 
+## Architecture-Specific Overrides
+
+The dynamic compose system supports architecture-specific service configurations
+through overrides. This feature allows app developers to provide different
+Docker images or configurations based on the host system's architecture (arm64
+or amd64).
+
+Key aspects of the architecture-specific overrides:
+
+1. **Schema Definition**: The `dynamicComposeSchema` includes an optional
+   `overrides` array where each override can specify an architecture and service
+   modifications
+2. **Runtime Merging**: During Docker Compose generation, the system detects the
+   current architecture and merges any matching overrides with the base services
+3. **Deep Merging**: Properties are deep-merged, with array properties being
+   completely replaced rather than appended
+
+Example configuration with architecture-specific overrides:
+
+```json
+{
+    "services": [
+        {
+            "name": "app",
+            "image": "app:latest",
+            "isMain": true,
+            "internalPort": 80
+        },
+        {
+            "name": "db",
+            "image": "mysql:latest"
+        }
+    ],
+    "overrides": [
+        {
+            "architecture": "arm64",
+            "services": [
+                {
+                    "name": "app",
+                    "image": "app:arm64-latest"
+                }
+            ]
+        }
+    ]
+}
+```
+
+In this example, when running on an arm64 system, the `app` service will use the
+`app:arm64-latest` image instead of `app:latest`. All other properties from the
+base service configuration are preserved.
+
 ## Traefik Integration
 
 For applications that need to be exposed to the internet, the system
@@ -183,6 +255,11 @@ When working with the dynamic compose system:
 2. Use the builder pattern for creating and modifying services
 3. Test changes with a variety of applications to ensure compatibility
 4. Be careful when modifying the schema as it may break existing apps
+5. When using architecture-specific overrides:
+   - Only specify the properties that need to be different for each architecture
+   - Test on both architectures when possible
+   - Consider backward compatibility for deployments without the overrides
+     feature
 
 ## Examples
 
@@ -254,6 +331,68 @@ When working with the dynamic compose system:
     ]
 }
 ```
+
+### Architecture-Specific Overrides
+
+```json
+{
+    "services": [
+        {
+            "name": "plex",
+            "image": "linuxserver/plex:latest",
+            "isMain": true,
+            "internalPort": 32400,
+            "volumes": [
+                {
+                    "hostPath": "${APP_DATA_DIR}/config",
+                    "containerPath": "/config"
+                },
+                {
+                    "hostPath": "${RUNTIPI_MEDIA_DIR}",
+                    "containerPath": "/media"
+                }
+            ]
+        }
+    ],
+    "overrides": [
+        {
+            "architecture": "arm64",
+            "services": [
+                {
+                    "name": "plex",
+                    "image": "linuxserver/plex:arm64v8-latest"
+                }
+            ]
+        },
+        {
+            "architecture": "amd64",
+            "services": [
+                {
+                    "name": "plex",
+                    "image": "linuxserver/plex:amd64-latest",
+                    "deploy": {
+                        "resources": {
+                            "reservations": {
+                                "devices": [
+                                    {
+                                        "capabilities": ["gpu"]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
+```
+
+In this example:
+
+- The base configuration works for any architecture
+- On arm64 systems, it uses a specific ARM-compatible image
+- On amd64 systems, it uses an AMD64-specific image and adds GPU capabilities
 
 ## Conclusion
 

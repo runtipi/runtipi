@@ -37,7 +37,19 @@
     "zod": "^3.24.3"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@biomejs/biome", "@nestjs/core", "@sentry/cli", "@swc/core", "argon2", "esbuild", "msw", "sharp"],
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "@nestjs/core",
+      "@sentry/cli",
+      "@swc/core",
+      "argon2",
+      "cpu-features",
+      "esbuild",
+      "msw",
+      "protobufjs",
+      "sharp",
+      "ssh2"
+    ],
     "ignoredBuiltDependencies": ["@scarf/scarf", "sqlite3"]
   }
 }
