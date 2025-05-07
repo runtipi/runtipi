@@ -226,6 +226,7 @@ export type MyAppsDto = {
         [key: string]: unknown;
       };
       enableAuth?: boolean;
+      localSubdomain?: string | null;
     };
     info: {
       id: string;
@@ -293,6 +294,7 @@ export type GuestAppsDto = {
         [key: string]: unknown;
       };
       enableAuth?: boolean;
+      localSubdomain?: string | null;
     };
     info: {
       id: string;
@@ -391,6 +393,7 @@ export type GetAppDto = {
       [key: string]: unknown;
     };
     enableAuth?: boolean;
+    localSubdomain?: string | null;
   } | null;
   info: {
     id: string;
@@ -527,6 +530,7 @@ export type AppFormBody = {
   domain?: string;
   isVisibleOnGuestDashboard?: boolean;
   enableAuth?: boolean;
+  customSubdomain?: string;
 };
 
 export type UninstallAppBody = {

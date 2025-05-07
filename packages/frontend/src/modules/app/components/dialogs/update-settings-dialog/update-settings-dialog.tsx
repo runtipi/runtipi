@@ -41,6 +41,7 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
     return {
       ...values,
       port: values.port ? Number(values.port) : undefined,
+      localSubdomain: values.localSubdomain || undefined,
     };
   };
 

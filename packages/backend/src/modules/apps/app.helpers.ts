@@ -94,8 +94,10 @@ export class AppHelpers {
       envMap.set('APP_HOST', form.domain);
       envMap.set('APP_PROTOCOL', 'https');
     } else if (form.exposedLocal && !form.openPort) {
-      envMap.set('APP_DOMAIN', `${appName}-${appStoreId}.${envMap.get('LOCAL_DOMAIN')}`);
-      envMap.set('APP_HOST', `${appName}-${appStoreId}.${envMap.get('LOCAL_DOMAIN')}`);
+      const subdomain = form.localSubdomain ? form.localSubdomain : `${appName}-${appStoreId}`;
+
+      envMap.set('APP_DOMAIN', `${subdomain}.${envMap.get('LOCAL_DOMAIN')}`);
+      envMap.set('APP_HOST', `${subdomain}.${envMap.get('LOCAL_DOMAIN')}`);
       envMap.set('APP_PROTOCOL', 'https');
     } else {
       if (config.port) {

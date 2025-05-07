@@ -58,6 +58,7 @@ export const app = pgTable('app', {
   appName: varchar('app_name').notNull(),
   enableAuth: boolean('enable_auth').default(false).notNull(),
   subnet: varchar(),
+  localSubdomain: varchar('local_subdomain'),
 });
 
 export const appRelations = relations(app, ({ one }) => ({

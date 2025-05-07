@@ -10,6 +10,10 @@ export const appFormSchema = z
     domain: z.string().optional(),
     isVisibleOnGuestDashboard: z.boolean().optional(),
     enableAuth: z.boolean().optional(),
+    localSubdomain: z
+      .string()
+      .regex(/^[a-zA-Z0-9-]{1,63}$/)
+      .optional(),
   })
   .extend({})
   .catchall(z.unknown());
