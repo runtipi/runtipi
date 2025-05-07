@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "應用程式 {{id}} 不支援你的 {{arch}} 架構",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "網域 {{domain}} 已被應用程式 {{id}} 使用",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "{{domain}} 不是有效網域",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "公開應用程式需要網域",
   "APP_ERROR_INVALID_CONFIG": "應用程式 {{id}} 的 config.json 文件無效",
@@ -403,5 +404,8 @@
   "ACTIONS_ENABLE": "Enable",
   "WARNING": "Warning",
   "CLEAR": "Clear",
-  "MORE": "More"
+  "MORE": "More",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
