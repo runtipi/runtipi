@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Η τύπος επεξεργαστή σας {{arch}} δεν υποστηρίζεται από την εφαρμογή {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Ο τομέας {{domain}} χρησιμοποιείται ήδη από την εφαρμογή {{id}}",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Το domain {{domain}} δεν είναι έγκυρο",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Ο τομέας απαιτείται εάν η εφαρμογή εκτεθεί",
   "APP_ERROR_INVALID_CONFIG": "Η εφαρμογή {{id}} δεν έχει έγκυρο αρχείο config.json",
@@ -403,5 +404,8 @@
   "ACTIONS_ENABLE": "Ενεργοποίηση",
   "WARNING": "Προσοχή",
   "CLEAR": "Εκκαθάριση",
-  "MORE": "Περισσότερα"
+  "MORE": "Περισσότερα",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
