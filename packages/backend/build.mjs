@@ -42,6 +42,7 @@ await esbuild.build({
     'i18next-fs-backend',
     'argon2',
     'cpu-features',
+    'ssh2',
   ],
   outfile: 'dist/main.js',
 });

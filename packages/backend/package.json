@@ -40,6 +40,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "cookie-parser": "^1.4.7",
+    "deepmerge": "^4.3.1",
     "dockerode": "^4.0.6",
     "dotenv": "^16.5.0",
     "dotenv-cli": "^8.0.0",

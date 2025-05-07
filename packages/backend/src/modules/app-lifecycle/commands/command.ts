@@ -1,3 +1,5 @@
+import { mergeArchitectureOverrides } from '@/common/helpers/compose-helpers';
+import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
@@ -23,6 +25,7 @@ export class AppLifecycleCommand {
     const marketplaceService = this.moduleRef.get(MarketplaceService, { strict: false });
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const subnetManager = this.moduleRef.get(SubnetManagerService, { strict: false });
+    const configService = this.moduleRef.get(ConfigurationService, { strict: false });
 
     const pruned = await this.docker
       .pruneContainers({ filters: { label: [`runtipi.appurn=${appUrn}`] } })
@@ -37,11 +40,16 @@ export class AppLifecycleCommand {
     }
 
     try {
-      const { services } = dynamicComposeSchema.parse(composeJson.content);
+      const { services, overrides } = dynamicComposeSchema.parse(composeJson.content);
+      const architecture = configService.get('architecture');
+
+      // Merge architecture-specific overrides with base services
+      const mergedServices = mergeArchitectureOverrides(services, overrides, architecture);
+
       const dockerComposeBuilder = new DockerComposeBuilder();
       const subnet = await subnetManager.allocateSubnet(appUrn);
 
-      const composeFile = dockerComposeBuilder.getDockerCompose(services, form, appUrn, subnet);
+      const composeFile = dockerComposeBuilder.getDockerCompose(mergedServices, form, appUrn, subnet);
 
       await appFilesManager.writeDockerComposeYml(appUrn, composeFile);
     } catch (err) {

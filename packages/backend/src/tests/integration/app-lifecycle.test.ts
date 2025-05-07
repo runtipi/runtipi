@@ -299,4 +299,49 @@ describe('App lifecycle', () => {
       expect(app?.subnet).toMatch(/^10\.128\.\d+\.0\/24$/);
     });
   });
+
+  describe('architecture-specific overrides', () => {
+    it('should apply architecture-specific overrides when generating docker-compose file', async () => {
+      // arrange
+      configurationService.get.calledWith('architecture').mockReturnValue('arm64');
+      const appInfo = await createAppInStore('test', { id: 'arch-test' });
+      const composeJson = {
+        services: [
+          {
+            name: 'app',
+            image: 'app:latest',
+            isMain: true,
+            internalPort: 80,
+          },
+        ],
+        overrides: [
+          {
+            architecture: 'arm64',
+            services: [
+              {
+                name: 'app',
+                image: 'app:arm64-latest',
+              },
+            ],
+          },
+        ],
+      };
+
+      await fs.promises.mkdir(`${DATA_DIR}/repos/test/apps/arch-test`, { recursive: true });
+      await fs.promises.writeFile(`${DATA_DIR}/repos/test/apps/arch-test/docker-compose.json`, JSON.stringify(composeJson));
+
+      // act
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      // assert
+      const composeFileContent = await fs.promises.readFile(`${DATA_DIR}/apps/test/arch-test/docker-compose.yml`, 'utf8');
+      expect(composeFileContent).toContain('app:arm64-latest');
+      expect(composeFileContent).not.toContain('app:latest');
+    });
+  });
 });

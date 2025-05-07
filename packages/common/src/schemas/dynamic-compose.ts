@@ -128,8 +128,17 @@ export const serviceSchema = z.object({
 
 export const dynamicComposeSchema = z.object({
   services: serviceSchema.array(),
+  overrides: z
+    .array(
+      z.object({
+        architecture: z.enum(['arm64', 'amd64']).optional(),
+        services: serviceSchema.partial().array(),
+      }),
+    )
+    .optional(),
 });
 
+export type DynamicCompose = z.output<typeof dynamicComposeSchema>;
 export type DependsOn = z.output<typeof dependsOnSchema>;
 export type ServiceInput = z.input<typeof serviceSchema>;
 export type Service = z.output<typeof serviceSchema>;

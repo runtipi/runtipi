@@ -70,7 +70,7 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install argon2 i18next-fs-backend class-transformer
+RUN npm install argon2 i18next-fs-backend class-transformer ssh2
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
