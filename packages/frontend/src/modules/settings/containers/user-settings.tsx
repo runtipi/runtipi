@@ -1,15 +1,15 @@
 import { updateUserSettingsMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useAppContext } from '@/context/app-context';
-import type { TranslatableError } from '@/types/error.types';
-import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
-import { useTranslation } from 'react-i18next';
-import { type SettingsFormValues, UserSettingsForm } from '../components/user-settings-form/user-settings-form';
-import { useState } from 'react';
-import i18next from 'i18next';
 import type { Locale } from '@/lib/i18n/locales';
 import { useUIStore } from '@/stores/ui-store';
-import type { BaseThemes } from '../components/base-theme-selector/base-theme-selector';
+import type { TranslatableError } from '@/types/error.types';
+import { useMutation } from '@tanstack/react-query';
+import i18next from 'i18next';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import type { ThemeBase } from '../components/base-theme-selector/base-theme-selector';
+import { type SettingsFormValues, UserSettingsForm } from '../components/user-settings-form/user-settings-form';
 
 type Props = {
   initialValues?: SettingsFormValues;
@@ -17,7 +17,7 @@ type Props = {
 
 export const UserSettingsContainer = ({ initialValues }: Props) => {
   const currentLocale = i18next.language;
-  const currentBaseTheme = useUIStore((state) => state.themeBase);
+  const currentThemeBase = useUIStore((state) => state.themeBase);
   const { t } = useTranslation();
   const { refreshAppContext } = useAppContext();
   const [requireRestart, setRequireRestart] = useState(initialValues?.advancedSettings);
@@ -47,7 +47,7 @@ export const UserSettingsContainer = ({ initialValues }: Props) => {
       <UserSettingsForm
         initialValues={initialValues}
         currentLocale={currentLocale as Locale}
-        currentBaseTheme={currentBaseTheme as BaseThemes}
+        currentBaseTheme={currentThemeBase as ThemeBase}
         loading={updateSettings.isPending}
         onSubmit={onSubmit}
       />
