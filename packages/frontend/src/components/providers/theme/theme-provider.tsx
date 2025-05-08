@@ -12,18 +12,21 @@ export const ThemeProvider = (props: Props) => {
   const { children, initialTheme } = props;
 
   const theme = useUIStore((state) => state.theme);
+  const primaryColor = useUIStore((state) => state.primaryColor);
   const themeBase = useUIStore((state) => state.themeBase);
   const setThemeBase = useUIStore((state) => state.setThemeBase);
+  const setPrimaryColor = useUIStore((state) => state.setPrimaryColor);
   const setDarkMode = useUIStore((state) => state.setDarkMode);
 
   useEffect(() => {
     if (themeBase) {
       Cookies.set('themeBase', themeBase, { path: '/', expires: 365 });
       document.body.dataset.bsThemeBase = themeBase;
-    } else if (!Cookies.get('themeBase')) {
-      setThemeBase('gray');
-      Cookies.set('themeBase', 'gray', { path: '/', expires: 365 });
-      document.body.dataset.bsThemeBase = 'gray';
+    }
+
+    if (primaryColor) {
+      Cookies.set('primaryColor', primaryColor, { path: '/', expires: 365 });
+      document.body.dataset.bsThemePrimary = primaryColor;
     }
 
     if (theme) {
@@ -41,7 +44,9 @@ export const ThemeProvider = (props: Props) => {
     setDarkMode(cookieTheme === 'dark');
     const cookieThemeBase = Cookies.get('themeBase');
     setThemeBase(cookieThemeBase || 'gray');
-  }, [initialTheme, setDarkMode, theme, themeBase, setThemeBase]);
+    const cookiePrimaryColor = Cookies.get('primaryColor');
+    setPrimaryColor(cookiePrimaryColor || 'blue');
+  }, [initialTheme, setDarkMode, theme, themeBase, primaryColor, setThemeBase, setPrimaryColor]);
 
   return children;
 };

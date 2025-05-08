@@ -18,7 +18,8 @@ import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-setti
 import './user-settings-form.css';
 import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { BaseThemeSelector, type BaseThemes } from '../base-theme-selector/base-theme-selector';
+import { type ThemeBase, ThemeBaseSelector } from '../base-theme-selector/base-theme-selector';
+import { ColorSelector, ThemeColor } from '../color-selector/color-selector';
 
 const TimeZoneSelector = lazy(() =>
   import('@/components/timezone-selector/timezone-selector').then((module) => ({ default: module.TimeZoneSelector })),
@@ -50,6 +51,7 @@ const settingsSchema = z.object({
   appDataPath: z.string().optional(),
   forwardAuthUrl: z.string().url().optional(),
   logLevel: z.nativeEnum(LOG_LEVEL_ENUM).optional(),
+  themeColor: z.nativeEnum(ThemeColor).optional(),
 });
 
 export type SettingsFormValues = {
@@ -70,11 +72,12 @@ export type SettingsFormValues = {
   appDataPath?: string;
   forwardAuthUrl?: string;
   logLevel?: LogLevel;
+  themeColor?: ThemeColor;
 };
 
 interface IProps {
   currentLocale?: Locale;
-  currentBaseTheme?: BaseThemes;
+  currentBaseTheme?: ThemeBase;
   onSubmit: (values: SettingsFormValues) => void;
   initialValues?: Partial<SettingsFormValues>;
   loading?: boolean;
@@ -153,7 +156,8 @@ export const UserSettingsForm = (props: IProps) => {
         <h2 className="text-2xl font-bold mb-0">{t('SETTINGS_GENERAL_USER_SETTINGS')}</h2>
       </div>
       <LanguageSelector showLabel locale={currentLocale} />
-      <BaseThemeSelector baseTheme={currentBaseTheme} />
+      <ThemeBaseSelector />
+      <ColorSelector label={t('SETTINGS_GENERAL_PRIMARY_COLOR')} />
       <form className="flex flex-col mt-2" onSubmit={handleSubmit(validate)}>
         <div className="d-flex mb-2">
           <IconAdjustmentsAlt className="me-2" />
