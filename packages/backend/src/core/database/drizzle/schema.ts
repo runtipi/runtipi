@@ -60,6 +60,7 @@ export const app = pgTable('app', {
   enableAuth: boolean('enable_auth').default(false).notNull(),
   subnet: varchar(),
   localSubdomain: varchar('local_subdomain'),
+  pendingRestart: boolean('pending_restart').default(false).notNull(),
 });
 
 export const appRelations = relations(app, ({ one }) => ({

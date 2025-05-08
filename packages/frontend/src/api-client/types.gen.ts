@@ -239,6 +239,7 @@ export type MyAppsDto = {
       };
       enableAuth?: boolean;
       localSubdomain?: string | null;
+      pendingRestart: boolean;
     };
     info: {
       id: string;
@@ -307,6 +308,7 @@ export type GuestAppsDto = {
       };
       enableAuth?: boolean;
       localSubdomain?: string | null;
+      pendingRestart: boolean;
     };
     info: {
       id: string;
@@ -406,6 +408,7 @@ export type GetAppDto = {
     };
     enableAuth?: boolean;
     localSubdomain?: string | null;
+    pendingRestart: boolean;
   } | null;
   info: {
     id: string;

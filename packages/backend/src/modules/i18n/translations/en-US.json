@@ -283,6 +283,7 @@
   "MY_APPS_UPDATE_ALL_FORM_TITLE": "Update all apps",
   "MY_APPS_UPDATE_ALL_IN_PROGRESS": "Updating all apps",
   "MY_APPS_UPDATE_AVAILABLE": "Update available",
+  "MY_APPS_PENDING_RESTART": "This app's configuration has changed. Restart the app to apply the changes.",
   "RUNTIPI": "Runtipi",
   "SERVER_ERROR_INVALID_LOCALE": "Invalid locale",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Not allowed in demo mode",
