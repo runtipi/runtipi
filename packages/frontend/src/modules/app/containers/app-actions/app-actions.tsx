@@ -30,6 +30,8 @@ import { startAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
+import clsx from 'clsx';
+import { Tooltip } from 'react-tooltip';
 import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
 import { ResetDialog } from '../../components/dialogs/reset-dialog/reset-dialog';
 import { RestartDialog } from '../../components/dialogs/restart-dialog/restart-dialog';
@@ -51,12 +53,12 @@ interface BtnProps extends ButtonProps {
 }
 
 const ActionButton: React.FC<BtnProps> = (props) => {
-  const { IconComponent, loading, title, ...rest } = props;
+  const { IconComponent, loading, title, className, ...rest } = props;
 
   const testId = loading ? 'action-button-loading' : undefined;
 
   return (
-    <Button data-testid={testId} loading={loading} {...rest} className="action-button">
+    <Button data-testid={testId} loading={loading} {...rest} className={clsx('action-button', className)}>
       {title}
       {IconComponent && <IconComponent className="ms-1" size={14} />}
     </Button>
@@ -114,7 +116,20 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
     <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={stopDisclosure.open} title={t('APP_ACTION_STOP')} intent="danger" />
   );
   const restartButton = (
-    <ActionButton key="restart" IconComponent={IconRotateClockwise} onClick={restartDisclosure.open} title={t('APP_ACTION_RESTART')} />
+    <Fragment key="restart">
+      {app?.pendingRestart && (
+        <Tooltip className="tooltip" anchorSelect=".pendingRestart">
+          {t('MY_APPS_PENDING_RESTART')}
+        </Tooltip>
+      )}
+      <ActionButton
+        IconComponent={IconRotateClockwise}
+        onClick={restartDisclosure.open}
+        title={t('APP_ACTION_RESTART')}
+        className="pendingRestart"
+        intent={app?.pendingRestart ? 'warning' : 'default'}
+      />
+    </Fragment>
   );
   const LoadingButton = <ActionButton key="loading" loading intent="success" title={t('APP_ACTION_LOADING')} />;
   const CancelButton = <ActionButton key="cancel" IconComponent={IconX} onClick={stopDisclosure.open} title={t('APP_ACTION_CANCEL')} />;

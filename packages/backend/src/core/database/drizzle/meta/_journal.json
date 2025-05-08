@@ -169,6 +169,13 @@
       "when": 1746804095231,
       "tag": "0023_petite_marauders",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1746894385320,
+      "tag": "0024_lovely_wolfsbane",
+      "breakpoints": true
     }
   ]
 }

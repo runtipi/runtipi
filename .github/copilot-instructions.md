@@ -7,3 +7,5 @@
   package. (e.g. `pnpm add deepmerge -f backend`).
 - When asked to add tests, do not add e2e tests unless explicitly requested.
   Focus on unit tests and integration tests.
+- When adding new translation keys, add it to the `en.json` and `en-US.json`
+  files. Do not add it to other language files.

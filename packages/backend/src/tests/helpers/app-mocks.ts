@@ -52,5 +52,6 @@ export const createMockApp = (data: Partial<App>): App => ({
   version: 1,
   subnet: null,
   localSubdomain: null,
+  pendingRestart: false,
   ...data,
 });

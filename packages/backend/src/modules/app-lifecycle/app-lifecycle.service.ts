@@ -47,6 +47,16 @@ export class AppLifecycleService {
     }
   }
 
+  /**
+   * Check if the configuration has changed in a way that requires a restart
+   */
+  private hasConfigChanged(oldConfig: Record<string, unknown>, newConfig: Record<string, unknown>): boolean {
+    const oldJSON = JSON.stringify(oldConfig);
+    const newJSON = JSON.stringify(newConfig);
+
+    return oldJSON !== newJSON;
+  }
+
   async startApp(params: { appUrn: AppUrn }) {
     const { appUrn } = params;
     const app = await this.appRepository.getAppByUrn(appUrn);
@@ -62,7 +72,7 @@ export class AppLifecycleService {
       if (success) {
         this.logger.info(`App ${appUrn} started successfully`);
         this.sseService.emit('app', { event: 'start_success', appUrn, appStatus: 'running' });
-        await this.appRepository.updateAppById(app.id, { status: 'running' });
+        await this.appRepository.updateAppById(app.id, { status: 'running', pendingRestart: false });
       } else {
         this.logger.error(`Failed to start app ${appUrn}: ${message}`);
         this.sseService.emit('app', { event: 'start_error', appUrn, appStatus: 'stopped', error: message });
@@ -225,7 +235,7 @@ export class AppLifecycleService {
       if (success) {
         this.logger.info(`App ${appUrn} restarted successfully`);
         this.sseService.emit('app', { event: 'restart_success', appUrn, appStatus: 'running' });
-        await this.appRepository.updateAppById(app.id, { status: 'running' });
+        await this.appRepository.updateAppById(app.id, { status: 'running', pendingRestart: false });
       } else {
         this.logger.error(`Failed to restart app ${appUrn}: ${message}`);
         this.sseService.emit('app', { event: 'restart_error', appUrn, appStatus: 'running', error: message });
@@ -369,7 +379,7 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appUrn }, HttpStatus.INTERNAL_SERVER_ERROR, { cause: message });
     }
 
-    await this.appRepository.updateAppById(app.id, {
+    const changed = await this.appRepository.updateAppById(app.id, {
       exposed: exposed ?? false,
       exposedLocal: parsedForm.exposedLocal ?? false,
       openPort: parsedForm.openPort,
@@ -380,6 +390,11 @@ export class AppLifecycleService {
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
       enableAuth: parsedForm.enableAuth ?? false,
     });
+
+    if (!changed?.pendingRestart) {
+      const pendingRestart = this.hasConfigChanged(app.config, changed?.config || {});
+      await this.appRepository.updateAppById(app.id, { pendingRestart });
+    }
   }
 
   public async updateApp(params: { appUrn: AppUrn; performBackup: boolean }) {
