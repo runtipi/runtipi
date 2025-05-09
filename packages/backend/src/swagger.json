@@ -1594,6 +1594,14 @@
           "allowErrorMonitoring": {
             "description": "Indicates if the app allows anonymous error monitoring",
             "type": "boolean"
+          },
+          "themeColor": {
+            "description": "The theme color of the app",
+            "type": "string"
+          },
+          "themeBase": {
+            "description": "The base theme of the app",
+            "type": "string"
           }
         },
         "required": [
@@ -1602,7 +1610,9 @@
           "isConfigured",
           "isGuestDashboardEnabled",
           "allowAutoThemes",
-          "allowErrorMonitoring"
+          "allowErrorMonitoring",
+          "themeColor",
+          "themeBase"
         ]
       },
       "AppContextDto": {
@@ -1705,6 +1715,12 @@
                   "warn",
                   "error"
                 ]
+              },
+              "themeBase": {
+                "type": "string"
+              },
+              "themeColor": {
+                "type": "string"
               },
               "experimental_insecureCookie": {
                 "type": "boolean"
@@ -1928,6 +1944,12 @@
               "warn",
               "error"
             ]
+          },
+          "themeBase": {
+            "type": "string"
+          },
+          "themeColor": {
+            "type": "string"
           },
           "experimental_insecureCookie": {
             "type": "boolean"

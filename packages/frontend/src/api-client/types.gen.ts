@@ -26,6 +26,14 @@ export type UserContextDto = {
    * Indicates if the app allows anonymous error monitoring
    */
   allowErrorMonitoring: boolean;
+  /**
+   * The theme color of the app
+   */
+  themeColor: string;
+  /**
+   * The base theme of the app
+   */
+  themeBase: string;
 };
 
 export type AppContextDto = {
@@ -55,6 +63,8 @@ export type AppContextDto = {
     advancedSettings: boolean;
     forwardAuthUrl: string;
     logLevel: 'debug' | 'info' | 'warn' | 'error';
+    themeBase?: string;
+    themeColor?: string;
     experimental_insecureCookie?: boolean;
   };
   user: {
@@ -116,6 +126,8 @@ export type PartialUserSettingsDto = {
   advancedSettings?: boolean;
   forwardAuthUrl?: string;
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  themeBase?: string;
+  themeColor?: string;
   experimental_insecureCookie?: boolean;
 };
 

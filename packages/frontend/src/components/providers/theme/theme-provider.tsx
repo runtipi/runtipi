@@ -1,3 +1,4 @@
+import { useUserContext } from '@/context/user-context';
 import { useUIStore } from '@/stores/ui-store';
 import Cookies from 'js-cookie';
 import type React from 'react';
@@ -10,23 +11,18 @@ type Props = {
 
 export const ThemeProvider = (props: Props) => {
   const { children, initialTheme } = props;
+  const { themeBase, themeColor } = useUserContext();
 
   const theme = useUIStore((state) => state.theme);
-  const primaryColor = useUIStore((state) => state.primaryColor);
-  const themeBase = useUIStore((state) => state.themeBase);
-  const setThemeBase = useUIStore((state) => state.setThemeBase);
-  const setPrimaryColor = useUIStore((state) => state.setPrimaryColor);
   const setDarkMode = useUIStore((state) => state.setDarkMode);
 
   useEffect(() => {
     if (themeBase) {
-      Cookies.set('themeBase', themeBase, { path: '/', expires: 365 });
       document.body.dataset.bsThemeBase = themeBase;
     }
 
-    if (primaryColor) {
-      Cookies.set('primaryColor', primaryColor, { path: '/', expires: 365 });
-      document.body.dataset.bsThemePrimary = primaryColor;
+    if (themeColor) {
+      document.body.dataset.bsThemePrimary = themeColor;
     }
 
     if (theme) {
@@ -42,11 +38,7 @@ export const ThemeProvider = (props: Props) => {
 
     const cookieTheme = Cookies.get('theme');
     setDarkMode(cookieTheme === 'dark');
-    const cookieThemeBase = Cookies.get('themeBase');
-    setThemeBase(cookieThemeBase || 'gray');
-    const cookiePrimaryColor = Cookies.get('primaryColor');
-    setPrimaryColor(cookiePrimaryColor || 'blue');
-  }, [initialTheme, setDarkMode, theme, themeBase, primaryColor, setThemeBase, setPrimaryColor]);
+  }, [initialTheme, setDarkMode, theme, themeBase, themeColor]);
 
   return children;
 };
