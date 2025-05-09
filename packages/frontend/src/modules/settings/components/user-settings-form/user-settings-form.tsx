@@ -18,8 +18,8 @@ import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-setti
 import './user-settings-form.css';
 import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { type ThemeBase, ThemeBaseSelector } from '../base-theme-selector/base-theme-selector';
-import { ColorSelector, ThemeColor } from '../color-selector/color-selector';
+import { ColorSelector, THEME_COLOR_ENUM, type ThemeColor } from '../color-selector/color-selector';
+import { THEME_BASE_ENUM, type ThemeBase, ThemeBaseSelector } from '../theme-base-selector/theme-base-selector';
 
 const TimeZoneSelector = lazy(() =>
   import('@/components/timezone-selector/timezone-selector').then((module) => ({ default: module.TimeZoneSelector })),
@@ -51,7 +51,8 @@ const settingsSchema = z.object({
   appDataPath: z.string().optional(),
   forwardAuthUrl: z.string().url().optional(),
   logLevel: z.nativeEnum(LOG_LEVEL_ENUM).optional(),
-  themeColor: z.nativeEnum(ThemeColor).optional(),
+  themeColor: z.nativeEnum(THEME_COLOR_ENUM).optional(),
+  themeBase: z.nativeEnum(THEME_BASE_ENUM).optional(),
 });
 
 export type SettingsFormValues = {
@@ -72,7 +73,8 @@ export type SettingsFormValues = {
   appDataPath?: string;
   forwardAuthUrl?: string;
   logLevel?: LogLevel;
-  themeColor?: ThemeColor;
+  themeColor?: string;
+  themeBase?: string;
 };
 
 interface IProps {
@@ -85,7 +87,7 @@ interface IProps {
 }
 
 export const UserSettingsForm = (props: IProps) => {
-  const { onSubmit, initialValues, loading, currentLocale = 'en-US', submitErrors, currentBaseTheme = 'gray' } = props;
+  const { onSubmit, initialValues, loading, currentLocale = 'en-US', submitErrors } = props;
   const { t } = useTranslation();
   const advancedSettingsDisclosure = useDisclosure();
 
@@ -156,8 +158,18 @@ export const UserSettingsForm = (props: IProps) => {
         <h2 className="text-2xl font-bold mb-0">{t('SETTINGS_GENERAL_USER_SETTINGS')}</h2>
       </div>
       <LanguageSelector showLabel locale={currentLocale} />
-      <ThemeBaseSelector />
-      <ColorSelector label={t('SETTINGS_GENERAL_PRIMARY_COLOR')} />
+      <Controller
+        control={control}
+        name="themeBase"
+        render={({ field: { onChange, value } }) => <ThemeBaseSelector value={value as ThemeBase} onChange={onChange} />}
+      />
+      <Controller
+        control={control}
+        name="themeColor"
+        render={({ field: { onChange, value } }) => (
+          <ColorSelector name="themeColor" label={t('SETTINGS_GENERAL_PRIMARY_COLOR')} value={value as ThemeColor} onChange={onChange} />
+        )}
+      />
       <form className="flex flex-col mt-2" onSubmit={handleSubmit(validate)}>
         <div className="d-flex mb-2">
           <IconAdjustmentsAlt className="me-2" />
