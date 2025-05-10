@@ -2,7 +2,7 @@
   "name": "runtipi",
   "version": "4.1.0",
   "description": "",
-  "packageManager": "pnpm@10.8.0",
+  "packageManager": "pnpm@10.10.0",
   "scripts": {
     "dev": "turbo run dev",
     "bundle": "turbo bundle",

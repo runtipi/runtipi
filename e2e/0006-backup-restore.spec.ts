@@ -11,7 +11,7 @@ test.beforeEach(async ({ page, context }) => {
   await loginUser(page, context);
 });
 
-test('user can backup and restore an app', async ({ page }) => {
+test('user can backup and restore an app', async ({ page, isMobile }) => {
   test.slow();
 
   const store = await db.query.appStore.findFirst();
@@ -31,7 +31,8 @@ test('user can backup and restore an app', async ({ page }) => {
   let dbapp = await db.query.app.findFirst({ where: eq(app.appName, 'whoami') });
   expect(dbapp?.version).toBe(0);
 
-  await page.getByRole('link', { name: 'Settings' }).click();
+  await page.goto('/settings');
+
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByRole('button', { name: 'Update' }).click();
   await expect(page.getByText('Appstores updated successfully')).toBeVisible({ timeout: 10000 });
@@ -47,9 +48,13 @@ test('user can backup and restore an app', async ({ page }) => {
   dbapp = await db.query.app.findFirst({ where: eq(app.appName, 'whoami') });
   expect(dbapp?.version).toBe(1);
 
-  await page.getByRole('tab', { name: 'Backups' }).click();
+  if (isMobile) {
+    await page.getByRole('button', { name: 'More' }).click();
+    await page.getByRole('menuitem', { name: 'Backups' }).click();
+  } else {
+    await page.getByRole('tab', { name: 'Backups' }).click();
+  }
 
-  await page.getByRole('tab', { name: 'Backups' }).click();
   await page.getByRole('button', { name: 'Restore' }).click();
   await page.getByRole('button', { name: 'Restore' }).click();
 
@@ -63,7 +68,7 @@ test('user can backup and restore an app', async ({ page }) => {
   expect(restoredConfig.tipi_version).toBe(0);
 });
 
-test('user config is preserved when restoring from a backup', async ({ page }) => {
+test('user config is preserved when restoring from a backup', async ({ page, isMobile }) => {
   test.slow();
 
   const store = await db.query.appStore.findFirst();
@@ -75,7 +80,13 @@ test('user config is preserved when restoring from a backup', async ({ page }) =
   await writeFile(path.join('user-config', store.slug, 'whoami', 'docker-compose.yml'), 'version: "3.9"');
 
   // Create a backup
-  await page.getByRole('tab', { name: 'Backups' }).click();
+  if (isMobile) {
+    await page.getByRole('button', { name: 'More' }).click();
+    await page.getByRole('menuitem', { name: 'Backups' }).click();
+  } else {
+    await page.getByRole('tab', { name: 'Backups' }).click();
+  }
+
   await page.getByRole('button', { name: 'Backup now' }).click();
   await expect(page.getByText('Backup Whoami')).toBeVisible();
   await page.getByRole('button', { name: 'Backup' }).click();
@@ -93,7 +104,6 @@ test('user config is preserved when restoring from a backup', async ({ page }) =
   expect(notFound).toBe(true);
 
   // Restore from backup
-  await page.getByRole('tab', { name: 'Backups' }).click();
   await page.getByRole('button', { name: 'Restore' }).click();
   await page.getByRole('button', { name: 'Restore' }).click();
 
