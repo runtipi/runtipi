@@ -1,7 +1,7 @@
 import { AppLogo } from '@/components/app-logo/app-logo';
 import { limitText } from '@/lib/helpers/text-helpers';
 import type { AppInfo, AppStatus as AppStatusType } from '@/types/app.types';
-import { IconAlertCircle, IconDownload, IconRotate } from '@tabler/icons-react';
+import { IconAlertCircle, IconDownload, IconRotateClockwise } from '@tabler/icons-react';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
@@ -52,7 +52,7 @@ export const AppTile: React.FC<{
               {t('MY_APPS_PENDING_RESTART')}
             </Tooltip>
             <div className="pendingRestart ribbon bg-warning ribbon-top">
-              <IconRotate size={20} />
+              <IconRotateClockwise size={20} />
             </div>
           </>
         )}
