@@ -7,13 +7,13 @@
   "exports": {
     "./schemas": {
       "import": "./dist/schemas/index.js",
-      "default": "./dist/schemas/index.js",
-      "types": "./dist/schemas/index.d.ts"
+      "types": "./dist/schemas/index.d.ts",
+      "default": "./dist/schemas/index.js"
     },
     "./types": {
       "import": "./dist/types/index.js",
-      "default": "./dist/types/index.js",
-      "types": "./dist/types/index.d.ts"
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
     }
   },
   "typesVersions": {
@@ -34,7 +34,7 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "packageManager": "pnpm@10.8.0",
+  "packageManager": "pnpm@10.10.0",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.1",
     "@changesets/cli": "^2.29.3",
