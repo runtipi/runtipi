@@ -52,7 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "Nessuna sottorete disponibile rimanente",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "L'architettura {{arch}} non è supportata dall'app {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Il dominio {{domain}} è già in uso dall'app {{id}}",
-  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Il sottodominio {{subdomain}} è già in uso dall'app {{id}}",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Il sotto-dominio {{subdomain}} è già in uso dall'app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Dominio {{domain}} non è un dominio valido",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Dominio richiesto quando l'app è esposta",
   "APP_ERROR_INVALID_CONFIG": "L'app {{id}} ha un file config.json non valido",
@@ -405,7 +405,7 @@
   "WARNING": "Attenzione",
   "CLEAR": "Pulisci",
   "MORE": "Altro",
-  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Sottodominio",
-  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
-  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Sotto-dominio",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Nome di sotto-dominio invalido",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Il sotto-dominio non è valido (sono ammessi solo lettere minuscole, numeri e trattini. Lunghezza massima 63 caratteri)"
 }
