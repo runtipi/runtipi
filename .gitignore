@@ -88,6 +88,8 @@ docs/jira/
 
 .internal/cache/*
 .internal/apps/*
+.internal/app-data/*
+.internal/user-config/*
 .internal/backups/*
 .internal/repos/*
 .internal/state/*

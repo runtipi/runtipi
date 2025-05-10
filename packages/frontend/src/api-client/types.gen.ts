@@ -530,7 +530,7 @@ export type AppFormBody = {
   domain?: string;
   isVisibleOnGuestDashboard?: boolean;
   enableAuth?: boolean;
-  customSubdomain?: string;
+  localSubdomain?: string;
 };
 
 export type UninstallAppBody = {
@@ -568,12 +568,14 @@ export type LinksDto = {
     url: string;
     iconUrl: string | null;
     userId: number;
+    isVisibleOnGuestDashboard?: boolean;
   }>;
 };
 
 export type LinkBodyDto = {
   title: string;
   url: string;
+  isVisibleOnGuestDashboard?: boolean;
   description?: string;
   iconUrl?: string;
 };
@@ -581,6 +583,7 @@ export type LinkBodyDto = {
 export type EditLinkBodyDto = {
   title: string;
   url: string;
+  isVisibleOnGuestDashboard?: boolean;
   description?: string;
   iconUrl?: string;
 };
@@ -1219,6 +1222,19 @@ export type RuntipiLogsEventsResponses = {
 };
 
 export type RuntipiLogsEventsResponse = RuntipiLogsEventsResponses[keyof RuntipiLogsEventsResponses];
+
+export type GetGuestLinksData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/links/guest';
+};
+
+export type GetGuestLinksResponses = {
+  200: LinksDto;
+};
+
+export type GetGuestLinksResponse = GetGuestLinksResponses[keyof GetGuestLinksResponses];
 
 export type GetLinksData = {
   body?: never;

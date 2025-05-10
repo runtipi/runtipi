@@ -8,11 +8,18 @@ import { LinksService } from './links.service';
 
 @Injectable()
 @Controller('links')
-@UseGuards(AuthGuard)
 export class LinksController {
   constructor(private readonly linksService: LinksService) {}
 
+  @Get('guest')
+  @ZodSerializerDto(LinksDto)
+  async getGuestLinks(): Promise<LinksDto> {
+    const links = await this.linksService.getGuestDashboardLinks();
+    return { links };
+  }
+
   @Get()
+  @UseGuards(AuthGuard)
   @ZodSerializerDto(LinksDto)
   async getLinks(@Req() req: Request): Promise<LinksDto> {
     const links = await this.linksService.getLinks(req.user?.id);
@@ -21,6 +28,7 @@ export class LinksController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   async createLink(@Body() body: LinkBodyDto, @Req() req: Request) {
     if (!req.user) {
       throw new TranslatableError('SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN');
@@ -30,6 +38,7 @@ export class LinksController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
   async editLink(@Param('id') id: number, @Body() body: EditLinkBodyDto, @Req() req: Request) {
     if (!req.user) {
       throw new TranslatableError('SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN');
@@ -39,6 +48,7 @@ export class LinksController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async deleteLink(@Param('id') id: number, @Req() req: Request) {
     if (!req.user) {
       throw new TranslatableError('SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN');

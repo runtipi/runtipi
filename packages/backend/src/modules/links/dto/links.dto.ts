@@ -8,6 +8,7 @@ export const linkSchema = z.object({
   url: z.string().url(),
   iconUrl: z.string().url().or(z.string().max(0)).nullable(),
   userId: z.number(),
+  isVisibleOnGuestDashboard: z.boolean().default(false),
 });
 
 export class LinkBodyDto extends createZodDto(
@@ -21,6 +22,7 @@ export class LinkBodyDto extends createZodDto(
     .extend({
       description: z.string().min(0).max(50).optional(),
       iconUrl: z.string().url().or(z.string().max(0)).optional(),
+      isVisibleOnGuestDashboard: z.boolean().optional().default(false),
     }),
 ) {}
 
@@ -35,6 +37,7 @@ export class EditLinkBodyDto extends createZodDto(
     .extend({
       description: z.string().min(0).max(50).optional(),
       iconUrl: z.string().url().or(z.string().max(0)).optional(),
+      isVisibleOnGuestDashboard: z.boolean().optional(),
     }),
 ) {}
 

@@ -32,4 +32,12 @@ export class LinksService {
 
     return this.linksRepository.getLinks(userId);
   }
+
+  /**
+   * Gets all links that are marked as visible on the guest dashboard.
+   * @returns An array of links that are visible on the guest dashboard.
+   */
+  public async getGuestDashboardLinks() {
+    return this.linksRepository.getGuestDashboardLinks();
+  }
 }

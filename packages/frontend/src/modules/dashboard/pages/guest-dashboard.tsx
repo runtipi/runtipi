@@ -1,5 +1,5 @@
 import type { GuestAppsDto } from '@/api-client';
-import { getGuestAppsOptions } from '@/api-client/@tanstack/react-query.gen';
+import { getGuestAppsOptions, getGuestLinksOptions } from '@/api-client/@tanstack/react-query.gen';
 import { GuestHeader } from '@/components/header/guest-header';
 import { PageTitle } from '@/components/page-title/page-title';
 import {
@@ -18,6 +18,7 @@ import './guest-dashboard.css';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 import { extractAppUrn } from '@/utils/app-helpers';
 import type { AppUrn } from '@runtipi/common/types';
+import { GuestLinkTile } from '../components/guest-link-tile';
 
 const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; localDomain: string }) => {
   const { t } = useTranslation();
@@ -86,9 +87,15 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
 };
 
 export const GuestDashboard = () => {
-  const { data } = useSuspenseQuery({
+  const { data: appsData } = useSuspenseQuery({
     ...getGuestAppsOptions(),
   });
+
+  const { data: linksData } = useSuspenseQuery({
+    ...getGuestLinksOptions(),
+  });
+
+  const hasContent = appsData.installed.length > 0 || linksData.links.length > 0;
 
   return (
     <div className="page">
@@ -105,11 +112,14 @@ export const GuestDashboard = () => {
         </div>
         <div className="page-body">
           <div className="container-xl">
-            {data.installed.length === 0 && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
+            {!hasContent && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
             <div className="row row-cards">
-              {data.installed.map((appData) => {
-                return <Tile key={appData.app.id} data={appData} localDomain={data.localDomain} />;
+              {appsData.installed.map((appData) => {
+                return <Tile key={appData.app.id} data={appData} localDomain={appsData.localDomain} />;
               })}
+              {linksData.links.map((link) => (
+                <GuestLinkTile key={link.id} link={link} />
+              ))}
             </div>
           </div>
         </div>

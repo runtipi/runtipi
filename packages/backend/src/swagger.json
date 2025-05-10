@@ -1256,6 +1256,27 @@
         ]
       }
     },
+    "/api/links/guest": {
+      "get": {
+        "operationId": "getGuestLinks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
     "/api/links": {
       "get": {
         "operationId": "getLinks",
@@ -3350,6 +3371,10 @@
                 },
                 "userId": {
                   "type": "number"
+                },
+                "isVisibleOnGuestDashboard": {
+                  "type": "boolean",
+                  "default": false
                 }
               },
               "required": [
@@ -3378,6 +3403,10 @@
           "url": {
             "type": "string",
             "format": "uri"
+          },
+          "isVisibleOnGuestDashboard": {
+            "type": "boolean",
+            "default": false
           },
           "description": {
             "type": "string",
@@ -3413,6 +3442,9 @@
           "url": {
             "type": "string",
             "format": "uri"
+          },
+          "isVisibleOnGuestDashboard": {
+            "type": "boolean"
           },
           "description": {
             "type": "string",

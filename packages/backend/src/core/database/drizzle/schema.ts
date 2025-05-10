@@ -28,6 +28,7 @@ export const link = pgTable('link', {
     .notNull()
     .references(() => user.id),
   description: varchar({ length: 50 }),
+  isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
 });
 
 const appConfig = customType<{ data: Record<string, unknown>; driverData: string }>({
