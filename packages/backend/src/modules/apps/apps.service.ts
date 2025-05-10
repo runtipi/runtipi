@@ -36,7 +36,9 @@ export class AppsService {
             this.logger.debug(`App ${app.id} not found in app files`);
             return null;
           }
-          return { app, info: appInfo, metadata: updateInfo };
+
+          const localSubdomain = app.localSubdomain || appUrn.split(':').join('-');
+          return { app, info: appInfo, metadata: { ...updateInfo, localSubdomain } };
         });
       }),
     );
@@ -81,8 +83,11 @@ export class AppsService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
     }
 
+    const localSubdomain = app?.localSubdomain || appUrn.split(':').join('-');
+
     const metadata = {
       hasCustomConfig,
+      localSubdomain,
       ...updateInfo,
     };
 

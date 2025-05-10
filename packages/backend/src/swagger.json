@@ -1602,6 +1602,10 @@
           "themeBase": {
             "description": "The base theme of the app",
             "type": "string"
+          },
+          "localDomain": {
+            "description": "The configured local domain",
+            "type": "string"
           }
         },
         "required": [
@@ -1612,7 +1616,8 @@
           "allowAutoThemes",
           "allowErrorMonitoring",
           "themeColor",
-          "themeBase"
+          "themeBase",
+          "localDomain"
         ]
       },
       "AppContextDto": {
@@ -2352,6 +2357,9 @@
                     "hasCustomConfig": {
                       "type": "boolean"
                     },
+                    "localSubdomain": {
+                      "type": "string"
+                    },
                     "latestVersion": {
                       "type": "number"
                     },
@@ -2363,6 +2371,7 @@
                     }
                   },
                   "required": [
+                    "localSubdomain",
                     "latestVersion"
                   ]
                 }
@@ -2708,21 +2717,42 @@
                     "author",
                     "source"
                   ]
+                },
+                "metadata": {
+                  "type": "object",
+                  "properties": {
+                    "hasCustomConfig": {
+                      "type": "boolean"
+                    },
+                    "localSubdomain": {
+                      "type": "string"
+                    },
+                    "latestVersion": {
+                      "type": "number"
+                    },
+                    "minTipiVersion": {
+                      "type": "string"
+                    },
+                    "latestDockerVersion": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "localSubdomain",
+                    "latestVersion"
+                  ]
                 }
               },
               "required": [
                 "app",
-                "info"
+                "info",
+                "metadata"
               ]
             }
-          },
-          "localDomain": {
-            "type": "string"
           }
         },
         "required": [
-          "installed",
-          "localDomain"
+          "installed"
         ]
       },
       "GetAppDto": {
@@ -3057,6 +3087,9 @@
               "hasCustomConfig": {
                 "type": "boolean"
               },
+              "localSubdomain": {
+                "type": "string"
+              },
               "latestVersion": {
                 "type": "number"
               },
@@ -3068,6 +3101,7 @@
               }
             },
             "required": [
+              "localSubdomain",
               "latestVersion"
             ]
           }
