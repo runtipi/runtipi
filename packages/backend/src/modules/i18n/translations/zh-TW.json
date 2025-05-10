@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "應用程式 {{id}} 不支援你的 {{arch}} 架構",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "網域 {{domain}} 已被應用程式 {{id}} 使用",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "{{domain}} 不是有效網域",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "公開應用程式需要網域",
   "APP_ERROR_INVALID_CONFIG": "應用程式 {{id}} 的 config.json 文件無效",
@@ -120,6 +121,7 @@
   "APP_STATUS_UPDATING": "正在更新",
   "APP_STATUS_BACKING_UP": "備份中",
   "APP_STATUS_RESTORING": "復原中",
+  "APP_STATUS_PENDING_RESTART": "Pending Restart",
   "APP_STOP_FORM_SUBMIT": "停止",
   "APP_STOP_FORM_SUBTITLE": "所有資料將被保留",
   "APP_STOP_FORM_TITLE": "停止{{name}}？",
@@ -238,6 +240,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "此動作無法復原",
   "DELETE_BACKUP_MODAL_SUBMIT": "刪除",
   "GUEST_DASHBOARD": "訪客儀錶板",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "沒有應用程式可以顯示",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "請詢問你的管理員將應用程式加入來賓儀表板，或登入查看你的應用程式。",
   "HEADER_APPS": "我的應用程式",
@@ -281,6 +284,7 @@
   "MY_APPS_UPDATE_ALL_FORM_TITLE": "更新全部應用程式",
   "MY_APPS_UPDATE_ALL_IN_PROGRESS": "正在更新全部應用程式",
   "MY_APPS_UPDATE_AVAILABLE": "有可用更新",
+  "MY_APPS_PENDING_RESTART": "This app's configuration has changed. Restart the app to apply the changes.",
   "RUNTIPI": "Runtipi",
   "SERVER_ERROR_INVALID_LOCALE": "語言環境無效",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Demo模式下禁止此動作",
@@ -308,6 +312,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "增加或移除應用程式商店",
   "SETTINGS_APPSTORES_TAB_TITLE": "應用程式商店",
   "SETTINGS_APPSTORES_WARNING": "Make sure you trust the appstores you add!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "允許自動主題",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "主題將會隨著年度的時間變化",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "允許匿名錯誤監控",
@@ -402,6 +408,8 @@
   "ACTIONS_ENABLE": "Enable",
   "WARNING": "Warning",
   "CLEAR": "Clear",
-  "MORE": "More"
+  "MORE": "More",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
-

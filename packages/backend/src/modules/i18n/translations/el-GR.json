@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Η τύπος επεξεργαστή σας {{arch}} δεν υποστηρίζεται από την εφαρμογή {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Ο τομέας {{domain}} χρησιμοποιείται ήδη από την εφαρμογή {{id}}",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Το domain {{domain}} δεν είναι έγκυρο",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Ο τομέας απαιτείται εάν η εφαρμογή εκτεθεί",
   "APP_ERROR_INVALID_CONFIG": "Η εφαρμογή {{id}} δεν έχει έγκυρο αρχείο config.json",
@@ -120,6 +121,7 @@
   "APP_STATUS_UPDATING": "Ενημέρωση",
   "APP_STATUS_BACKING_UP": "Δημιουργία αντίγραφου ασφαλείας",
   "APP_STATUS_RESTORING": "Επαναφορά",
+  "APP_STATUS_PENDING_RESTART": "Pending Restart",
   "APP_STOP_FORM_SUBMIT": "Παύση",
   "APP_STOP_FORM_SUBTITLE": "Όλα τα δεδομένα θα διατηρηθούν",
   "APP_STOP_FORM_TITLE": "Παύση {{name}};",
@@ -238,6 +240,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Αυτή η ενέργεια δεν μπορεί να ανεραιθεί",
   "DELETE_BACKUP_MODAL_SUBMIT": "Διαγραφή",
   "GUEST_DASHBOARD": "Πίνακας επισκεπτών",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Δεν υπάρχουν εφαρμογές για προβολή",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Ζητήστε από το διαχειριστή σας να προσθέσει εφαρμογές στον πίνακα επισκεπτών ή συνδεθείτε για να δείτε τις εφαρμογές σας.",
   "HEADER_APPS": "Οι εφαρμογές μου",
@@ -281,6 +284,7 @@
   "MY_APPS_UPDATE_ALL_FORM_TITLE": "Ενημέρωση όλων των εφαρμογών",
   "MY_APPS_UPDATE_ALL_IN_PROGRESS": "Ενημέρωση όλων των εφαρμογών",
   "MY_APPS_UPDATE_AVAILABLE": "Διαθέσιμη ενημέρωση",
+  "MY_APPS_PENDING_RESTART": "This app's configuration has changed. Restart the app to apply the changes.",
   "RUNTIPI": "Runtipi",
   "SERVER_ERROR_INVALID_LOCALE": "Μη έγκυρη ρύθμιση τοποθεσίας",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Δεν επιτρέπεται σε λειτουργία επίδειξης",
@@ -308,6 +312,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "Προσθήκη ή αφαίρεση καταστημάτων εφαρμογών",
   "SETTINGS_APPSTORES_TAB_TITLE": "Κατάστημα εφαρμογών",
   "SETTINGS_APPSTORES_WARNING": "Βεβαιωθείτε ότι εμπιστεύεστε τα appstores που προσθέτετε!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Επιτρέψτε αυτόματα θέματα",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Εκπλαγείτε από θέματα που αλλάζουν αυτόματα με βάση την εποχή του έτους.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Να επιτρέπεται η ανώνυμη παρακολούθηση σφαλμάτων",
@@ -402,6 +408,8 @@
   "ACTIONS_ENABLE": "Ενεργοποίηση",
   "WARNING": "Προσοχή",
   "CLEAR": "Εκκαθάριση",
-  "MORE": "Περισσότερα"
+  "MORE": "Περισσότερα",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
-
