@@ -310,6 +310,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "Додати або видалити магазини додатків",
   "SETTINGS_APPSTORES_TAB_TITLE": "Магазини додатків",
   "SETTINGS_APPSTORES_WARNING": "Переконайтесь, що довіряєте магазинам додатків, які додаєте!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Дозволити автоматичне змінення тем",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Будьте приємно здивовані темами, які автоматично змінюються залежно від часу року.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Дозволяти анонімний моніторинг помилок",
