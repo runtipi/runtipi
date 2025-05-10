@@ -14,8 +14,11 @@ export class LinksRepository {
    * @returns The newly added link.
    */
   public async addLink(link: LinkBodyDto, userId: number) {
-    const { title, description, url, iconUrl } = link;
-    const newLinks = await this.db.insert(linkTable).values({ title, description, url, iconUrl, userId }).returning();
+    const { title, description, url, iconUrl, isVisibleOnGuestDashboard } = link;
+    const newLinks = await this.db
+      .insert(linkTable)
+      .values({ title, description, url, iconUrl, userId, isVisibleOnGuestDashboard: isVisibleOnGuestDashboard || false })
+      .returning();
     return newLinks[0];
   }
 
@@ -26,11 +29,11 @@ export class LinksRepository {
    * @throws Error if no id is provided.
    */
   public async editLink(linkId: number, link: EditLinkBodyDto, userId: number) {
-    const { title, description, url, iconUrl } = link;
+    const { title, description, url, iconUrl, isVisibleOnGuestDashboard } = link;
 
     const updatedLinks = await this.db
       .update(linkTable)
-      .set({ title, description, url, iconUrl, updatedAt: new Date().toISOString() })
+      .set({ title, description, url, iconUrl, isVisibleOnGuestDashboard, updatedAt: new Date().toISOString() })
       .where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)))
       .returning();
 
@@ -52,5 +55,13 @@ export class LinksRepository {
    */
   public async getLinks(userId: number) {
     return this.db.select().from(linkTable).where(eq(linkTable.userId, userId)).orderBy(linkTable.id);
+  }
+
+  /**
+   * Retrieves all links visible on the guest dashboard.
+   * @returns An array of links that are visible on the guest dashboard.
+   */
+  public async getGuestDashboardLinks() {
+    return this.db.select().from(linkTable).where(eq(linkTable.isVisibleOnGuestDashboard, true)).orderBy(linkTable.id);
   }
 }

@@ -49,6 +49,7 @@ import {
   appEvents,
   appLogsEvents,
   runtipiLogsEvents,
+  getGuestLinks,
   getLinks,
   createLink,
   deleteLink,
@@ -112,6 +113,7 @@ import type {
   AppEventsData,
   AppLogsEventsData,
   RuntipiLogsEventsData,
+  GetGuestLinksData,
   GetLinksData,
   CreateLinkData,
   DeleteLinkData,
@@ -1241,6 +1243,23 @@ export const runtipiLogsEventsOptions = (options?: Options<RuntipiLogsEventsData
       return data;
     },
     queryKey: runtipiLogsEventsQueryKey(options),
+  });
+};
+
+export const getGuestLinksQueryKey = (options?: Options<GetGuestLinksData>) => createQueryKey('getGuestLinks', options);
+
+export const getGuestLinksOptions = (options?: Options<GetGuestLinksData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getGuestLinks({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getGuestLinksQueryKey(options),
   });
 };
 

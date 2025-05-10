@@ -71,6 +71,8 @@ import type {
   AppLogsEventsResponse,
   RuntipiLogsEventsData,
   RuntipiLogsEventsResponse,
+  GetGuestLinksData,
+  GetGuestLinksResponse,
   GetLinksData,
   GetLinksResponse,
   CreateLinkData,
@@ -497,6 +499,13 @@ export const appLogsEvents = <ThrowOnError extends boolean = false>(options: Opt
 export const runtipiLogsEvents = <ThrowOnError extends boolean = false>(options?: Options<RuntipiLogsEventsData, ThrowOnError>) => {
   return (options?.client ?? _heyApiClient).get<RuntipiLogsEventsResponse, unknown, ThrowOnError>({
     url: '/api/sse/runtipi-logs',
+    ...options,
+  });
+};
+
+export const getGuestLinks = <ThrowOnError extends boolean = false>(options?: Options<GetGuestLinksData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).get<GetGuestLinksResponse, unknown, ThrowOnError>({
+    url: '/api/links/guest',
     ...options,
   });
 };
