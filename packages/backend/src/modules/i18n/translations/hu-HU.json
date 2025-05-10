@@ -310,6 +310,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "Alkalmazásboltok hozzáadása vagy eltávolítása",
   "SETTINGS_APPSTORES_TAB_TITLE": "Alkalmazásboltok",
   "SETTINGS_APPSTORES_WARNING": "Győződjön meg róla, hogy megbízik a hozzáadott alkalmazásboltokban!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Automatikus témák engedélyezése",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Legyen meglepve a témákkal, amelyek az évszaknak megfelelően automatikusan változnak.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Anonim hibafigyelés engedélyezése",
