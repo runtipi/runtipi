@@ -310,6 +310,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "App Stores hinzufügen oder entfernen",
   "SETTINGS_APPSTORES_TAB_TITLE": "App Stores",
   "SETTINGS_APPSTORES_WARNING": "Stellen Sie sicher, dass Sie den hinzugefügten App Stores vertrauen!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Automatische Themes zulassen",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Lass dich von Themes überraschen, die sich automatisch je nach Jahreszeit ändern.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Anonymes Fehler-Monitoring zulassen",
