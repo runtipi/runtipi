@@ -310,6 +310,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "Add or remove app stores",
   "SETTINGS_APPSTORES_TAB_TITLE": "App Stores",
   "SETTINGS_APPSTORES_WARNING": "Make sure you trust the appstores you add!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Cho phép chủ đề tự động",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Hãy ngạc nhiên bởi các chủ đề thay đổi tự động dựa trên thời gian trong năm.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Cho phép theo dõi lỗi ẩn danh",
