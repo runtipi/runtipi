@@ -310,6 +310,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "Lägga till eller ta bort appbutiker",
   "SETTINGS_APPSTORES_TAB_TITLE": "Appbutiker",
   "SETTINGS_APPSTORES_WARNING": "Se till att du litar på de appbutiker du lägger till!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Tillåt automatiskt teman",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Bli förvånad över teman som förändras automatiskt baserat på tiden på året.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Tillåt anonym felövervakning",
