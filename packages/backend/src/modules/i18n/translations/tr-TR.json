@@ -310,6 +310,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "Uygulama mağazaları ekleyin veya kaldırın",
   "SETTINGS_APPSTORES_TAB_TITLE": "Uygulama Mağazaları",
   "SETTINGS_APPSTORES_WARNING": "Eklediğiniz uygulama mağazalarına güvendiğinizden emin olun!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Otomatik temalara izin ver",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Yılın zamanına göre otomatik olarak değişen temalarla şaşırmaya hazır olun.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Anonim hata izlemeye izin ver",
