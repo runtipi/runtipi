@@ -310,6 +310,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "Προσθήκη ή αφαίρεση καταστημάτων εφαρμογών",
   "SETTINGS_APPSTORES_TAB_TITLE": "Κατάστημα εφαρμογών",
   "SETTINGS_APPSTORES_WARNING": "Βεβαιωθείτε ότι εμπιστεύεστε τα appstores που προσθέτετε!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Επιτρέψτε αυτόματα θέματα",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Εκπλαγείτε από θέματα που αλλάζουν αυτόματα με βάση την εποχή του έτους.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Να επιτρέπεται η ανώνυμη παρακολούθηση σφαλμάτων",
