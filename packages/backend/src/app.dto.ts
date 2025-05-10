@@ -54,6 +54,7 @@ export class UserContextDto extends createZodDto(
     allowErrorMonitoring: z.boolean().describe('Indicates if the app allows anonymous error monitoring'),
     themeColor: z.string().describe('The theme color of the app'),
     themeBase: z.string().describe('The base theme of the app'),
+    localDomain: z.string().describe('The configured local domain'),
   }),
 ) {}
 

@@ -123,6 +123,7 @@ export class DockerComposeBuilder {
           exposedLocal: form.exposedLocal,
           exposed: form.exposed,
           enableAuth: form.enableAuth,
+          localSubdomain: form.localSubdomain,
         })
           .addExposedLabels()
           .addExposedLocalLabels();

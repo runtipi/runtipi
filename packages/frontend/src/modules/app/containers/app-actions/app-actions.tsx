@@ -82,8 +82,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
 
-  const [appId, storeId] = info.urn.split(':');
-  const appLocalDomain = app?.localSubdomain ? `${app.localSubdomain}.${localDomain}` : `${appId}-${storeId}.${localDomain}`;
+  const appLocalDomain = `${metadata.localSubdomain}.${localDomain}`;
 
   const buttons: React.JSX.Element[] = [];
 

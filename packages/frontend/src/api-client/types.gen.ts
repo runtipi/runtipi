@@ -34,6 +34,10 @@ export type UserContextDto = {
    * The base theme of the app
    */
   themeBase: string;
+  /**
+   * The configured local domain
+   */
+  localDomain: string;
 };
 
 export type AppContextDto = {
@@ -270,6 +274,7 @@ export type MyAppsDto = {
     };
     metadata: {
       hasCustomConfig?: boolean;
+      localSubdomain: string;
       latestVersion: number;
       minTipiVersion?: string;
       latestDockerVersion?: string;
@@ -374,8 +379,14 @@ export type GuestAppsDto = {
       updated_at?: number;
       force_pull?: boolean;
     };
+    metadata: {
+      hasCustomConfig?: boolean;
+      localSubdomain: string;
+      latestVersion: number;
+      minTipiVersion?: string;
+      latestDockerVersion?: string;
+    };
   }>;
-  localDomain: string;
 };
 
 export type GetAppDto = {
@@ -476,6 +487,7 @@ export type GetAppDto = {
   };
   metadata: {
     hasCustomConfig?: boolean;
+    localSubdomain: string;
     latestVersion: number;
     minTipiVersion?: string;
     latestDockerVersion?: string;

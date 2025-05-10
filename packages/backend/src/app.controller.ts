@@ -23,7 +23,7 @@ export class AppController {
   @Get('/user-context')
   @ZodSerializerDto(UserContextDto)
   async userContext(@Req() req: Request): Promise<UserContextDto> {
-    const { guestDashboard, allowAutoThemes, themeColor, themeBase, allowErrorMonitoring } = this.configuration.get('userSettings');
+    const { guestDashboard, allowAutoThemes, themeColor, themeBase, allowErrorMonitoring, localDomain } = this.configuration.get('userSettings');
     const version = await this.appService.getVersion();
     const operator = await this.userRepository.getFirstOperator();
 
@@ -36,6 +36,7 @@ export class AppController {
       themeColor,
       themeBase,
       version,
+      localDomain,
     };
   }
 

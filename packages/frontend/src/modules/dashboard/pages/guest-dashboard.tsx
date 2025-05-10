@@ -16,15 +16,13 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import './guest-dashboard.css';
 import { EmptyPage } from '@/components/empty-page/empty-page';
-import { extractAppUrn } from '@/utils/app-helpers';
-import type { AppUrn } from '@runtipi/common/types';
+import { useUserContext } from '@/context/user-context';
 import { GuestLinkTile } from '../components/guest-link-tile';
 
 const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; localDomain: string }) => {
   const { t } = useTranslation();
 
-  const { info, app } = data;
-  const { appName, appStoreId } = extractAppUrn(info.urn as AppUrn);
+  const { info, app, metadata } = data;
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
 
@@ -44,8 +42,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
     }
 
     if (type === 'localDomain') {
-      // TODO: URN support
-      url = `https://${appName}-${appStoreId}.${localDomain}${info.url_suffix || ''}`;
+      url = `https://${metadata.localSubdomain}.${localDomain}${info.url_suffix || ''}`;
     }
 
     window.open(url, '_blank', 'noreferrer');
@@ -71,7 +68,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
           {(app.exposedLocal || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('localDomain')}>
               <IconLock className="text-muted me-2" size={16} />
-              {appName}-{appStoreId}.{localDomain}
+              {metadata.localSubdomain}.{localDomain}
             </DropdownMenuItem>
           )}
           {(app.openPort || !info.dynamic_config) && (
@@ -87,6 +84,8 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
 };
 
 export const GuestDashboard = () => {
+  const { localDomain } = useUserContext();
+
   const { data: appsData } = useSuspenseQuery({
     ...getGuestAppsOptions(),
   });
@@ -115,7 +114,7 @@ export const GuestDashboard = () => {
             {!hasContent && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
             <div className="row row-cards">
               {appsData.installed.map((appData) => {
-                return <Tile key={appData.app.id} data={appData} localDomain={appsData.localDomain} />;
+                return <Tile key={appData.app.id} data={appData} localDomain={localDomain} />;
               })}
               {linksData.links.map((link) => (
                 <GuestLinkTile key={link.id} link={link} />

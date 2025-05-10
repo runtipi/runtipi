@@ -22,6 +22,7 @@ export class AppInfoDto extends createZodDto(appInfoSchema) {}
 export class MetadataDto extends createZodDto(
   z.object({
     hasCustomConfig: z.boolean().optional(),
+    localSubdomain: z.string(),
     latestVersion: z.number(),
     minTipiVersion: z.string().optional(),
     latestDockerVersion: z.string().optional(),
