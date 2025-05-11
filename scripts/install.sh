@@ -113,6 +113,7 @@ function install_docker() {
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     return 0
   elif [[ "${os}" == "centos" || "${os}" == "rocky" ]]; then # accurate as of Rocky Linux 9 and CentOS Stream 10 as they still use DNF4
+    sudo dnf4 -y install dnf-plugins-core
     sudo dnf4 config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     sudo dnf4 -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
     sudo systemctl start docker
