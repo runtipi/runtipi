@@ -4,7 +4,6 @@ import { ArchiveService } from '@/core/archive/archive.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppFilesManager } from '../apps/app-files-manager';

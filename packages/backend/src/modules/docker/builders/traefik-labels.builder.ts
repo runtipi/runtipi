@@ -1,7 +1,6 @@
 interface TraefikLabelsArgs {
   internalPort: number | string;
   appId: string;
-  storeId: string;
   exposedLocal?: boolean;
   exposed?: boolean;
   storeId: string;
