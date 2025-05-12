@@ -2,6 +2,7 @@ import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { SSEService } from '@/core/sse/sse.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';

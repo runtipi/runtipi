@@ -4,6 +4,7 @@ interface TraefikLabelsArgs {
   storeId: string;
   exposedLocal?: boolean;
   exposed?: boolean;
+  storeId: string;
   enableAuth?: boolean;
   localSubdomain?: string;
 }
