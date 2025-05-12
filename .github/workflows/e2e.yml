@@ -137,6 +137,9 @@ jobs:
       - name: Install dependencies
         uses: "./.github/actions/install-dependencies"
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Run Playwright tests
         id: run-e2e
         run: sudo npm run test:e2e
