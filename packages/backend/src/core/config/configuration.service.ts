@@ -127,8 +127,8 @@ export class ConfigurationService {
         eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES,
         advancedSettings: env.data.ADVANCED_SETTINGS,
         logLevel: env.data.LOG_LEVEL,
-        themeBase: env.data.THEME_BASE || 'gray',
-        themeColor: env.data.THEME_COLOR || 'blue',
+        themeBase: env.data.THEME_BASE,
+        themeColor: env.data.THEME_COLOR,
         experimental: {
           insecureCookie: env.data.EXPERIMENTAL_INSECURE_COOKIE,
         },

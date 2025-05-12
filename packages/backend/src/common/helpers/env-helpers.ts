@@ -140,6 +140,8 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   );
   envMap.set('LOG_LEVEL', data.logLevel || envMap.get('LOG_LEVEL') || 'info');
   envMap.set('EXPERIMENTAL_INSECURE_COOKIE', data.experimental_insecureCookie ? 'true' : 'false');
+  envMap.set('THEME_BASE', data.themeBase || envMap.get('THEME_BASE') || 'gray');
+  envMap.set('THEME_COLOR', data.themeColor || envMap.get('THEME_COLOR') || 'blue');
 
   await fs.promises.writeFile(envFilePath, envUtils.envMapToString(envMap));
 
