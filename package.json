@@ -1,12 +1,12 @@
 {
   "name": "runtipi",
-  "version": "4.0.3",
+  "version": "4.1.0",
   "description": "",
-  "packageManager": "pnpm@10.8.0",
+  "packageManager": "pnpm@10.10.0",
   "scripts": {
     "dev": "turbo run dev",
-    "build": "turbo build",
     "bundle": "turbo bundle",
+    "build": "turbo run build",
     "test": "turbo test",
     "test:integration": "turbo run test:integration",
     "start": "node ./main.js",
@@ -24,18 +24,31 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@hey-api/openapi-ts": "^0.66.4",
-    "@playwright/test": "^1.51.1",
-    "@types/pg": "^8.11.13",
+    "@hey-api/openapi-ts": "^0.67.3",
+    "@playwright/test": "^1.52.0",
+    "@types/pg": "^8.15.1",
     "dotenv-cli": "^8.0.0",
-    "turbo": "^2.5.0"
+    "turbo": "^2.5.3"
   },
   "dependencies": {
-    "argon2": "^0.41.1",
-    "drizzle-orm": "^0.42.0",
-    "zod": "^3.24.2"
+    "argon2": "^0.43.0",
+    "drizzle-orm": "^0.43.1",
+    "zod": "^3.24.4"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@biomejs/biome", "@nestjs/core", "@sentry/cli", "@swc/core", "argon2", "esbuild", "msw", "sharp"]
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "@nestjs/core",
+      "@sentry/cli",
+      "@swc/core",
+      "argon2",
+      "cpu-features",
+      "esbuild",
+      "msw",
+      "protobufjs",
+      "sharp",
+      "ssh2"
+    ],
+    "ignoredBuiltDependencies": ["@scarf/scarf", "sqlite3"]
   }
 }

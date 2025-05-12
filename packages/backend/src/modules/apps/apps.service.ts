@@ -2,8 +2,8 @@ import { TranslatableError } from '@/common/error/translatable-error';
 import { createAppUrn } from '@/common/helpers/app-helpers';
 import { pLimit } from '@/common/helpers/file-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
-import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
+import type { AppUrn } from '@runtipi/common/types';
 import { MarketplaceService } from '../marketplace/marketplace.service';
 import { AppFilesManager } from './app-files-manager';
 import { AppsRepository } from './apps.repository';
@@ -36,7 +36,9 @@ export class AppsService {
             this.logger.debug(`App ${app.id} not found in app files`);
             return null;
           }
-          return { app, info: appInfo, metadata: updateInfo };
+
+          const localSubdomain = app.localSubdomain || appUrn.split(':').join('-');
+          return { app, info: appInfo, metadata: { ...updateInfo, localSubdomain } };
         });
       }),
     );
@@ -81,8 +83,11 @@ export class AppsService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
     }
 
+    const localSubdomain = app?.localSubdomain || appUrn.split(':').join('-');
+
     const metadata = {
       hasCustomConfig,
+      localSubdomain,
       ...updateInfo,
     };
 

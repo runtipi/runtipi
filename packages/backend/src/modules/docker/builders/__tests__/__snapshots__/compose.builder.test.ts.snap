@@ -35,6 +35,7 @@ exports[`DockerComposeBuilder > should add correct traefik labels to the main se
       traefik.http.routers.nginx-store-id-local.service: nginx-store-id
       traefik.http.routers.nginx-store-id-local.tls: true
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
@@ -69,6 +70,7 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       - ctfd-db
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
       some-label: some-value
       nginx-store-id.service: true
       com.docker.compose.service: nginx-store-id
@@ -95,6 +97,7 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       - \${APP_DATA_DIR}/data/db:/var/lib/mysql
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
   ctfd-redis:
     image: redis:4
     restart: unless-stopped
@@ -105,6 +108,7 @@ exports[`DockerComposeBuilder > should be able to parse a compose.json file 1`] 
       - \${APP_DATA_DIR}/data/redis:/data
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
@@ -127,6 +131,7 @@ exports[`DockerComposeBuilder > should build a docker-compose file 1`] = `
         gw_priority: 0
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
@@ -173,6 +178,7 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
       - service2
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
     cap_add:
       - SYS_ADMIN
       - NET_ADMIN
@@ -226,6 +232,7 @@ exports[`DockerComposeBuilder > should correctly format a complex docker-compose
         gw_priority: 0
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
 networks:
   tipi_main_network:
     name: runtipi_tipi_main_network
@@ -248,6 +255,7 @@ exports[`DockerComposeBuilder > should correctly format deploy resources 1`] = `
         gw_priority: 0
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
     deploy:
       resources:
         limits:
@@ -284,6 +292,7 @@ exports[`DockerComposeBuilder > should correctly format devices 1`] = `
         gw_priority: 0
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
       - /dev/sda:/dev/xvda:rwm
@@ -309,6 +318,7 @@ exports[`DockerComposeBuilder > should correctly format entrypoint as array 1`] 
         gw_priority: 0
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
     entrypoint:
       - entrypoint
       - arg1
@@ -335,6 +345,7 @@ exports[`DockerComposeBuilder > should correctly format entrypoint as string 1`]
         gw_priority: 0
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
     entrypoint: entrypoint
 networks:
   tipi_main_network:
@@ -358,6 +369,7 @@ exports[`DockerComposeBuilder > should correctly format logging 1`] = `
         gw_priority: 0
     labels:
       runtipi.managed: true
+      runtipi.appurn: nginx:store-id
     logging:
       driver: json-file
       options:

@@ -3,7 +3,7 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { DockerService } from '@/modules/docker/docker.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import type { AppUrn } from '@/types/app/app.types';
+import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 
 export class StopAppCommand extends AppLifecycleCommand {
@@ -29,8 +29,9 @@ export class StopAppCommand extends AppLifecycleCommand {
         await appHelpers.generateEnvFile(appUrn, form);
       }
 
-      await dockerService.composeApp(appUrn, 'rm --force --stop');
-      logger.info(`App ${appUrn} stopped`);
+      await dockerService.composeApp(appUrn, 'down --remove-orphans');
+
+      logger.info(`App ${appUrn} stopped successfully`);
 
       return { success: true, message: `App ${appUrn} stopped successfully` };
     } catch (err) {

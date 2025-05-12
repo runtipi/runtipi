@@ -1,0 +1,47 @@
+{
+  "name": "@runtipi/common",
+  "version": "0.8.0",
+  "description": "",
+  "files": ["dist", "package.json", "README.md"],
+  "type": "module",
+  "exports": {
+    "./schemas": {
+      "import": "./dist/schemas/index.js",
+      "types": "./dist/schemas/index.d.ts",
+      "default": "./dist/schemas/index.js"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "schemas": ["dist/schemas/index.d.ts"],
+      "types": ["dist/types/index.d.ts"]
+    }
+  },
+  "scripts": {
+    "prepublishOnly": "npm run ci",
+    "dev": "tsc --noEmit --watch --preserveWatchOutput",
+    "build": "rm -rf dist && tsc",
+    "ci": "npm run build && npm run check-exports",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "local-release": "changeset version && changeset publish",
+    "tsc": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.10.0",
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.1",
+    "@changesets/cli": "^2.29.3",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "zod": "^3.24.4",
+    "zod-to-json-schema": "^3.24.5"
+  }
+}

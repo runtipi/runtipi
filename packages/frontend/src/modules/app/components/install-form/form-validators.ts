@@ -81,8 +81,22 @@ const validateDomain = (domain?: unknown): ValidationError | undefined => {
   return undefined;
 };
 
+const validateLocalSubdomain = (subdomain?: unknown): ValidationError | undefined => {
+  if (!subdomain) return undefined;
+
+  if (typeof subdomain !== 'string') {
+    return { messageKey: 'APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID' };
+  }
+
+  if (!validator.matches(subdomain, /^[a-zA-Z0-9-]{1,63}$/)) {
+    return { messageKey: 'APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT' };
+  }
+
+  return undefined;
+};
+
 export const validateAppConfig = (values: Record<string, unknown>, fields: FormField[]) => {
-  const { exposed, openPort, domain, port, ...config } = values;
+  const { exposed, exposedLocal, openPort, domain, localSubdomain, port, ...config } = values;
 
   const errors: Record<string, ValidationError | undefined> = {};
 
@@ -99,6 +113,14 @@ export const validateAppConfig = (values: Record<string, unknown>, fields: FormF
 
     if (error) {
       errors.domain = error;
+    }
+  }
+
+  if (exposedLocal && localSubdomain) {
+    const error = validateLocalSubdomain(localSubdomain);
+
+    if (error) {
+      errors.localSubdomain = error;
     }
   }
 

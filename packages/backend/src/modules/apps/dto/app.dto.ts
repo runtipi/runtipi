@@ -18,6 +18,8 @@ export class AppDto extends createZodDto(
     isVisibleOnGuestDashboard: z.boolean(),
     config: z.record(z.any()).optional(),
     enableAuth: z.boolean().optional(),
+    localSubdomain: z.string().nullish(),
+    pendingRestart: z.boolean(),
   }),
 ) {}
 
@@ -39,9 +41,9 @@ export class GuestAppsDto extends createZodDto(
       .object({
         app: AppDto.schema,
         info: AppInfoDto.schema,
+        metadata: MetadataDto.schema,
       })
       .array(),
-    localDomain: z.string(),
   }),
 ) {}
 

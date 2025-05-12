@@ -1,7 +1,7 @@
 # Runtipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-53-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-54-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -154,6 +154,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="http://www.bielfarias.com"><img src="https://avatars.githubusercontent.com/u/21142663?v=4?s=100" width="100px;" alt="Gabriel Farias Nunes"/><br /><sub><b>Gabriel Farias Nunes</b></sub></a><br /><a href="#translation-gabrielfariasnunes" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://apidiagram.com"><img src="https://avatars.githubusercontent.com/u/56985156?v=4?s=100" width="100px;" alt="Boogie Cigdemoglu"/><br /><sub><b>Boogie Cigdemoglu</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=bcigdemoglu" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Lancelot-Enguerrand"><img src="https://avatars.githubusercontent.com/u/18631550?v=4?s=100" width="100px;" alt="Lancelot"/><br /><sub><b>Lancelot</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=Lancelot-Enguerrand" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/skajmer"><img src="https://avatars.githubusercontent.com/u/64442855?v=4?s=100" width="100px;" alt="skajmer"/><br /><sub><b>skajmer</b></sub></a><br /><a href="#translation-skajmer" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>

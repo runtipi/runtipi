@@ -1,7 +1,7 @@
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import type { AppUrn } from '@/types/app/app.types';
+import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 
 export class GenerateAppEnvCommand extends AppLifecycleCommand {

@@ -30,7 +30,7 @@ export const MyAppsPage = () => {
     if (info.available) {
       return (
         <Link key={app.id} to={`/apps/${storeId}/${appName}`} className="col-sm-6 col-lg-4 my-apps-link">
-          <AppTile key={info.urn} status={app.status} info={info} updateAvailable={updateAvailable} />
+          <AppTile key={info.urn} status={app.status} info={info} updateAvailable={updateAvailable} pendingRestart={app.pendingRestart} />
         </Link>
       );
     }

@@ -82,3 +82,17 @@ public/js/*
 /cache
 
 coverage
+docs/jira/
+
+docs/jira/
+
+.internal/cache/*
+.internal/apps/*
+.internal/app-data/*
+.internal/user-config/*
+.internal/backups/*
+.internal/repos/*
+.internal/state/*
+.internal/media/*
+.internal/traefik/*
+!.internal/cache/.gitkeep

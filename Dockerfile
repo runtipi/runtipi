@@ -47,6 +47,7 @@ COPY ./pnpm-lock.yaml ./
 COPY ./package.json ./
 COPY ./packages/backend/package.json ./packages/backend/package.json
 COPY ./packages/frontend/package.json ./packages/frontend/package.json
+COPY ./packages/common/package.json ./packages/common/package.json
 COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
 
@@ -54,6 +55,8 @@ RUN pnpm install --frozen-lockfile -r --prefer-offline
 
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
+
+RUN pnpm build
 
 RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
 RUN echo "LOCAL: ${LOCAL}"
@@ -67,7 +70,7 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install argon2 i18next-fs-backend class-transformer
+RUN npm install argon2 i18next-fs-backend class-transformer ssh2
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./

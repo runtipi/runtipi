@@ -26,6 +26,8 @@ export const settingsSchema = z.object({
   advancedSettings: z.boolean(),
   forwardAuthUrl: z.string().url().trim(),
   logLevel: z.nativeEnum(LOG_LEVEL_ENUM),
+  themeBase: z.string().optional(),
+  themeColor: z.string().optional(),
   experimental_insecureCookie: z.boolean().optional(),
 });
 
@@ -50,6 +52,9 @@ export class UserContextDto extends createZodDto(
     isGuestDashboardEnabled: z.boolean().describe('Indicates if the guest dashboard is enabled'),
     allowAutoThemes: z.boolean().describe('Indicates if the app allows auto themes'),
     allowErrorMonitoring: z.boolean().describe('Indicates if the app allows anonymous error monitoring'),
+    themeColor: z.string().describe('The theme color of the app'),
+    themeBase: z.string().describe('The base theme of the app'),
+    localDomain: z.string().describe('The configured local domain'),
   }),
 ) {}
 

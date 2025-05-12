@@ -5,16 +5,19 @@ import { BackupManager } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import type { AppUrn } from '@/types/app/app.types';
+import type { ModuleRef } from '@nestjs/core';
+import type { AppUrn } from '@runtipi/common/types';
+import type Dockerode from 'dockerode';
 import { AppLifecycleCommand } from './command';
 import type { ModuleRef } from '@nestjs/core';
 
 export class UpdateAppCommand extends AppLifecycleCommand {
   constructor(
     moduleRef: ModuleRef,
+    docker: Dockerode,
     private readonly performBackup: boolean = true,
   ) {
-    super(moduleRef);
+    super(moduleRef, docker);
   }
 
   public async execute(appUrn: AppUrn, form: AppEventFormInput) {
@@ -27,6 +30,7 @@ export class UpdateAppCommand extends AppLifecycleCommand {
 
     try {
       if (this.performBackup) {
+        await dockerService.composeApp(appUrn, 'stop');
         await backupManager.backupApp(appUrn);
       }
 

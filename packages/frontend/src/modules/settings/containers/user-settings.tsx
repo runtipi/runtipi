@@ -1,13 +1,13 @@
 import { updateUserSettingsMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useAppContext } from '@/context/app-context';
+import type { Locale } from '@/lib/i18n/locales';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
+import i18next from 'i18next';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { type SettingsFormValues, UserSettingsForm } from '../components/user-settings-form/user-settings-form';
-import { useState } from 'react';
-import i18next from 'i18next';
-import type { Locale } from '@/lib/i18n/locales';
 
 type Props = {
   initialValues?: SettingsFormValues;
@@ -41,12 +41,7 @@ export const UserSettingsContainer = ({ initialValues }: Props) => {
 
   return (
     <div className="card-body">
-      <UserSettingsForm
-        initialValues={initialValues}
-        currentLocale={currentLocale as Locale}
-        loading={updateSettings.isPending}
-        onSubmit={onSubmit}
-      />
+      <UserSettingsForm initialValues={initialValues} currentLocale={currentLocale as Locale} onSubmit={onSubmit} />
     </div>
   );
 };

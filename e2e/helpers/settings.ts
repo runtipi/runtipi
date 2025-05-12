@@ -1,5 +1,5 @@
 import { promises } from 'node:fs';
-import path from 'node:path';
+import path, { dirname } from 'node:path';
 import type { z } from 'zod';
 import type { settingsSchema } from '../../packages/backend/src/app.dto';
 import { user } from '../../packages/backend/src/core/database/drizzle/schema';
@@ -34,4 +34,41 @@ export const unsetPasswordChangeRequest = async () => {
 export const setWelcomeSeen = async (seen: boolean) => {
   await db.update(user).set({ hasSeenWelcome: seen });
   return Promise.resolve();
+};
+
+export const writeFile = async (filePath: string, content: string) => {
+  const file = path.join(BASE_PATH, filePath);
+
+  if (!(await pathExists(dirname(file)))) {
+    await promises.mkdir(dirname(file), { recursive: true });
+  }
+  await promises.writeFile(file, content);
+  return true;
+};
+
+export const readFile = async (filePath: string) => {
+  const file = await promises.readFile(path.join(BASE_PATH, filePath), 'utf-8');
+  return file;
+};
+
+export const deleteFile = async (filePath: string) => {
+  const file = path.join(BASE_PATH, filePath);
+  await promises.unlink(file);
+};
+
+export const emptyDir = async (dirPath: string) => {
+  const dir = path.join(BASE_PATH, dirPath);
+  const files: string[] = await promises.readdir(dir).catch(() => []);
+
+  await Promise.all(
+    files.map(async (file) => {
+      const filePath = path.join(dir, file);
+      const stat = await promises.stat(filePath);
+      if (stat.isDirectory()) {
+        await promises.rm(filePath, { recursive: true, force: true });
+      } else {
+        await promises.unlink(filePath);
+      }
+    }),
+  );
 };

@@ -4,6 +4,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { SSEService } from '@/core/sse/sse.service';
 import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
+import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
@@ -74,7 +75,7 @@ export class BackupsService {
       if (success) {
         const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
-        if (restoredAppConfig?.tipi_version) {
+        if (typeof restoredAppConfig?.tipi_version === 'number') {
           await this.appsRepository.updateAppById(app.id, { version: restoredAppConfig?.tipi_version });
         }
 

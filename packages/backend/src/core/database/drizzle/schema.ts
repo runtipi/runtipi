@@ -28,6 +28,7 @@ export const link = pgTable('link', {
     .notNull()
     .references(() => user.id),
   description: varchar({ length: 50 }),
+  isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
 });
 
 const appConfig = customType<{ data: Record<string, unknown>; driverData: string }>({
@@ -58,6 +59,8 @@ export const app = pgTable('app', {
   appName: varchar('app_name').notNull(),
   enableAuth: boolean('enable_auth').default(false).notNull(),
   subnet: varchar(),
+  localSubdomain: varchar('local_subdomain'),
+  pendingRestart: boolean('pending_restart').default(false).notNull(),
 });
 
 export const appRelations = relations(app, ({ one }) => ({

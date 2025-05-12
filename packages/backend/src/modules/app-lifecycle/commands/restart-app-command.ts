@@ -3,7 +3,7 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { DockerService } from '@/modules/docker/docker.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import type { AppUrn } from '@/types/app/app.types';
+import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 
 export class RestartAppCommand extends AppLifecycleCommand {
@@ -24,7 +24,7 @@ export class RestartAppCommand extends AppLifecycleCommand {
 
       logger.info(`Stopping app ${appUrn}`);
 
-      await dockerService.composeApp(appUrn, 'rm --force --stop').catch((err) => {
+      await dockerService.composeApp(appUrn, 'down --remove-orphans').catch((err) => {
         logger.error(`Failed to stop app ${appUrn}: ${err.message}`);
       });
       await this.ensureAppDir(appUrn, form);

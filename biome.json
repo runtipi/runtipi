@@ -7,7 +7,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["dist/**", "public/**", "legacy/**"]
+    "ignore": ["dist/**", "public/**", "legacy/**", ".internal/**"]
   },
   "formatter": {
     "enabled": true,

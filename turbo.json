@@ -8,15 +8,12 @@
       "outputs": ["dist/"]
     },
     "bundle": {
-      "dependsOn": ["^bundle"],
+      "dependsOn": ["build", "^bundle"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/"],
-      "env": ["SENTRY_AUTH_TOKEN", "SENTRY_RELEASE"]
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
+      "outputs": ["dist/"]
     },
     "dev": {
+      "dependsOn": ["build"],
       "cache": false,
       "persistent": true,
       "env": [

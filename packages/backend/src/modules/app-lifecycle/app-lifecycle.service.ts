@@ -5,6 +5,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { SSEService } from '@/core/sse/sse.service';
 import type { AppUrn } from '@/types/app/app.types';
 import { HttpStatus, Injectable } from '@nestjs/common';
+import type { AppUrn } from '@runtipi/common/types';
 import { lt, valid } from 'semver';
 import semver from 'semver';
 import validator, { isFQDN } from 'validator';
@@ -47,6 +48,16 @@ export class AppLifecycleService {
     }
   }
 
+  /**
+   * Check if the configuration has changed in a way that requires a restart
+   */
+  private hasConfigChanged(oldConfig: Record<string, unknown>, newConfig: Record<string, unknown>): boolean {
+    const oldJSON = JSON.stringify(oldConfig);
+    const newJSON = JSON.stringify(newConfig);
+
+    return oldJSON !== newJSON;
+  }
+
   async startApp(params: { appUrn: AppUrn }) {
     const { appUrn } = params;
     const app = await this.appRepository.getAppByUrn(appUrn);
@@ -62,7 +73,7 @@ export class AppLifecycleService {
       if (success) {
         this.logger.info(`App ${appUrn} started successfully`);
         this.sseService.emit('app', { event: 'start_success', appUrn, appStatus: 'running' });
-        await this.appRepository.updateAppById(app.id, { status: 'running' });
+        await this.appRepository.updateAppById(app.id, { status: 'running', pendingRestart: false });
       } else {
         this.logger.error(`Failed to start app ${appUrn}: ${message}`);
         this.sseService.emit('app', { event: 'start_error', appUrn, appStatus: 'stopped', error: message });
@@ -131,6 +142,17 @@ export class AppLifecycleService {
       }
     }
 
+    if (exposedLocal && parsedForm.localSubdomain) {
+      const appsWithSameLocalSubdomain = await this.appRepository.getAppsByLocalSubdomain(parsedForm.localSubdomain);
+
+      if (appsWithSameLocalSubdomain.length > 0) {
+        throw new TranslatableError('APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE', {
+          subdomain: parsedForm.localSubdomain,
+          id: appsWithSameLocalSubdomain[0]?.appName,
+        });
+      }
+    }
+
     if (appInfo?.min_tipi_version && valid(version) && lt(version, appInfo.min_tipi_version)) {
       throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appUrn, minVersion: appInfo.min_tipi_version });
     }
@@ -145,6 +167,7 @@ export class AppLifecycleService {
       version: appInfo.tipi_version,
       exposed: exposed ?? false,
       domain: domain ?? null,
+      localSubdomain: parsedForm.localSubdomain ?? null,
       openPort: openPort ?? false,
       exposedLocal: exposedLocal ?? false,
       appStoreSlug: appStoreId,
@@ -213,7 +236,7 @@ export class AppLifecycleService {
       if (success) {
         this.logger.info(`App ${appUrn} restarted successfully`);
         this.sseService.emit('app', { event: 'restart_success', appUrn, appStatus: 'running' });
-        await this.appRepository.updateAppById(app.id, { status: 'running' });
+        await this.appRepository.updateAppById(app.id, { status: 'running', pendingRestart: false });
       } else {
         this.logger.error(`Failed to restart app ${appUrn}: ${message}`);
         this.sseService.emit('app', { event: 'restart_error', appUrn, appStatus: 'running', error: message });
@@ -335,6 +358,17 @@ export class AppLifecycleService {
       }
     }
 
+    if (exposedLocal && parsedForm.localSubdomain) {
+      const appsWithSameLocalSubdomain = await this.appRepository.getAppsByLocalSubdomain(parsedForm.localSubdomain, app.id);
+
+      if (appsWithSameLocalSubdomain.length > 0) {
+        throw new TranslatableError('APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE', {
+          subdomain: parsedForm.localSubdomain,
+          id: appsWithSameLocalSubdomain[0]?.appName,
+        });
+      }
+    }
+
     const { success, message } = await this.appEventsQueue.publish({
       command: 'generate_env',
       appUrn,
@@ -346,16 +380,22 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appUrn }, HttpStatus.INTERNAL_SERVER_ERROR, { cause: message });
     }
 
-    await this.appRepository.updateAppById(app.id, {
+    const changed = await this.appRepository.updateAppById(app.id, {
       exposed: exposed ?? false,
       exposedLocal: parsedForm.exposedLocal ?? false,
       openPort: parsedForm.openPort,
       port: parsedForm.port ?? appInfo.port,
       domain: domain ?? null,
+      localSubdomain: parsedForm.localSubdomain ?? null,
       config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
       enableAuth: parsedForm.enableAuth ?? false,
     });
+
+    if (!changed?.pendingRestart) {
+      const pendingRestart = this.hasConfigChanged(app.config, changed?.config || {});
+      await this.appRepository.updateAppById(app.id, { pendingRestart });
+    }
   }
 
   public async updateApp(params: { appUrn: AppUrn; performBackup: boolean }) {

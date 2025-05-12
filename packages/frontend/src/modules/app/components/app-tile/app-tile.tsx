@@ -1,7 +1,7 @@
 import { AppLogo } from '@/components/app-logo/app-logo';
 import { limitText } from '@/lib/helpers/text-helpers';
 import type { AppInfo, AppStatus as AppStatusType } from '@/types/app.types';
-import { IconAlertCircle, IconDownload } from '@tabler/icons-react';
+import { IconAlertCircle, IconDownload, IconRotateClockwise } from '@tabler/icons-react';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
@@ -9,7 +9,12 @@ import { AppStatus } from '../app-status/app-status';
 
 type AppTileInfo = Pick<AppInfo, 'urn' | 'name' | 'short_desc' | 'deprecated'>;
 
-export const AppTile: React.FC<{ info: AppTileInfo; status: AppStatusType; updateAvailable: boolean }> = ({ info, status, updateAvailable }) => {
+export const AppTile: React.FC<{
+  info: AppTileInfo;
+  status: AppStatusType;
+  updateAvailable: boolean;
+  pendingRestart?: boolean;
+}> = ({ info, status, updateAvailable, pendingRestart }) => {
   const { t } = useTranslation();
 
   return (
@@ -38,6 +43,16 @@ export const AppTile: React.FC<{ info: AppTileInfo; status: AppStatusType; updat
             </Tooltip>
             <div className="updateAvailable ribbon bg-green ribbon-top">
               <IconDownload size={20} />
+            </div>
+          </>
+        )}
+        {pendingRestart && (
+          <>
+            <Tooltip className="tooltip" anchorSelect=".pendingRestart">
+              {t('MY_APPS_PENDING_RESTART')}
+            </Tooltip>
+            <div className="pendingRestart ribbon bg-warning ribbon-top">
+              <IconRotateClockwise size={20} />
             </div>
           </>
         )}

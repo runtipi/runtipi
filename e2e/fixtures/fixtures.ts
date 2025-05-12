@@ -39,7 +39,7 @@ export const installApp = async (page: Page, storeSlug: string, appId: string, o
   // Install app
   await page.getByRole('button', { name: 'Install' }).click();
 
-  await expect(page.getByText('Display on guest dashboard')).toBeVisible();
+  await expect(page.getByText('Expose app on local network')).toBeVisible();
 
   if (opts.visibleOnGuestDashboard) {
     await page.getByLabel('isVisibleOnGuestDashboard').setChecked(true);

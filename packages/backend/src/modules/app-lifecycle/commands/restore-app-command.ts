@@ -1,16 +1,19 @@
 import { LoggerService } from '@/core/logger/logger.service';
 import { BackupManager } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
-import type { AppUrn } from '@/types/app/app.types';
+import type { ModuleRef } from '@nestjs/core';
+import type { AppUrn } from '@runtipi/common/types';
+import type Dockerode from 'dockerode';
 import { AppLifecycleCommand } from './command';
 import type { ModuleRef } from '@nestjs/core';
 
 export class RestoreAppCommand extends AppLifecycleCommand {
   constructor(
     moduleRef: ModuleRef,
+    docker: Dockerode,
     private readonly filename: string,
   ) {
-    super(moduleRef);
+    super(moduleRef, docker);
   }
 
   public async execute(appUrn: AppUrn): Promise<{ success: boolean; message: string }> {
@@ -20,8 +23,8 @@ export class RestoreAppCommand extends AppLifecycleCommand {
 
     try {
       // Stop the app
-      logger.info(`Stopping app ${appUrn}`);
-      await dockerService.composeApp(appUrn, 'rm --force --stop').catch((err) => {
+      logger.info(`Stopping app ${appUrn} for restore operation`);
+      await dockerService.composeApp(appUrn, 'stop').catch((err) => {
         logger.error(`Failed to stop app ${appUrn}: ${err.message}`);
       });
 

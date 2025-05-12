@@ -1256,6 +1256,27 @@
         ]
       }
     },
+    "/api/links/guest": {
+      "get": {
+        "operationId": "getGuestLinks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
     "/api/links": {
       "get": {
         "operationId": "getLinks",
@@ -1573,6 +1594,18 @@
           "allowErrorMonitoring": {
             "description": "Indicates if the app allows anonymous error monitoring",
             "type": "boolean"
+          },
+          "themeColor": {
+            "description": "The theme color of the app",
+            "type": "string"
+          },
+          "themeBase": {
+            "description": "The base theme of the app",
+            "type": "string"
+          },
+          "localDomain": {
+            "description": "The configured local domain",
+            "type": "string"
           }
         },
         "required": [
@@ -1581,7 +1614,10 @@
           "isConfigured",
           "isGuestDashboardEnabled",
           "allowAutoThemes",
-          "allowErrorMonitoring"
+          "allowErrorMonitoring",
+          "themeColor",
+          "themeBase",
+          "localDomain"
         ]
       },
       "AppContextDto": {
@@ -1684,6 +1720,12 @@
                   "warn",
                   "error"
                 ]
+              },
+              "themeBase": {
+                "type": "string"
+              },
+              "themeColor": {
+                "type": "string"
               },
               "experimental_insecureCookie": {
                 "type": "boolean"
@@ -1907,6 +1949,12 @@
               "warn",
               "error"
             ]
+          },
+          "themeBase": {
+            "type": "string"
+          },
+          "themeColor": {
+            "type": "string"
           },
           "experimental_insecureCookie": {
             "type": "boolean"
@@ -2210,6 +2258,13 @@
                     },
                     "enableAuth": {
                       "type": "boolean"
+                    },
+                    "localSubdomain": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "pendingRestart": {
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -2221,7 +2276,8 @@
                     "openPort",
                     "exposedLocal",
                     "domain",
-                    "isVisibleOnGuestDashboard"
+                    "isVisibleOnGuestDashboard",
+                    "pendingRestart"
                   ]
                 },
                 "info": {
@@ -2301,6 +2357,9 @@
                     "hasCustomConfig": {
                       "type": "boolean"
                     },
+                    "localSubdomain": {
+                      "type": "string"
+                    },
                     "latestVersion": {
                       "type": "number"
                     },
@@ -2312,6 +2371,7 @@
                     }
                   },
                   "required": [
+                    "localSubdomain",
                     "latestVersion"
                   ]
                 }
@@ -2394,6 +2454,13 @@
                     },
                     "enableAuth": {
                       "type": "boolean"
+                    },
+                    "localSubdomain": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "pendingRestart": {
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -2405,7 +2472,8 @@
                     "openPort",
                     "exposedLocal",
                     "domain",
-                    "isVisibleOnGuestDashboard"
+                    "isVisibleOnGuestDashboard",
+                    "pendingRestart"
                   ]
                 },
                 "info": {
@@ -2649,21 +2717,42 @@
                     "author",
                     "source"
                   ]
+                },
+                "metadata": {
+                  "type": "object",
+                  "properties": {
+                    "hasCustomConfig": {
+                      "type": "boolean"
+                    },
+                    "localSubdomain": {
+                      "type": "string"
+                    },
+                    "latestVersion": {
+                      "type": "number"
+                    },
+                    "minTipiVersion": {
+                      "type": "string"
+                    },
+                    "latestDockerVersion": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "localSubdomain",
+                    "latestVersion"
+                  ]
                 }
               },
               "required": [
                 "app",
-                "info"
+                "info",
+                "metadata"
               ]
             }
-          },
-          "localDomain": {
-            "type": "string"
           }
         },
         "required": [
-          "installed",
-          "localDomain"
+          "installed"
         ]
       },
       "GetAppDto": {
@@ -2727,6 +2816,13 @@
               },
               "enableAuth": {
                 "type": "boolean"
+              },
+              "localSubdomain": {
+                "type": "string",
+                "nullable": true
+              },
+              "pendingRestart": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -2738,7 +2834,8 @@
               "openPort",
               "exposedLocal",
               "domain",
-              "isVisibleOnGuestDashboard"
+              "isVisibleOnGuestDashboard",
+              "pendingRestart"
             ],
             "nullable": true
           },
@@ -2990,6 +3087,9 @@
               "hasCustomConfig": {
                 "type": "boolean"
               },
+              "localSubdomain": {
+                "type": "string"
+              },
               "latestVersion": {
                 "type": "number"
               },
@@ -3001,6 +3101,7 @@
               }
             },
             "required": [
+              "localSubdomain",
               "latestVersion"
             ]
           }
@@ -3204,6 +3305,10 @@
           },
           "enableAuth": {
             "type": "boolean"
+          },
+          "localSubdomain": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9-]{1,63}$"
           }
         }
       },
@@ -3334,6 +3439,10 @@
                 },
                 "userId": {
                   "type": "number"
+                },
+                "isVisibleOnGuestDashboard": {
+                  "type": "boolean",
+                  "default": false
                 }
               },
               "required": [
@@ -3362,6 +3471,10 @@
           "url": {
             "type": "string",
             "format": "uri"
+          },
+          "isVisibleOnGuestDashboard": {
+            "type": "boolean",
+            "default": false
           },
           "description": {
             "type": "string",
@@ -3397,6 +3510,9 @@
           "url": {
             "type": "string",
             "format": "uri"
+          },
+          "isVisibleOnGuestDashboard": {
+            "type": "boolean"
           },
           "description": {
             "type": "string",

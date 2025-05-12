@@ -26,6 +26,18 @@ export type UserContextDto = {
    * Indicates if the app allows anonymous error monitoring
    */
   allowErrorMonitoring: boolean;
+  /**
+   * The theme color of the app
+   */
+  themeColor: string;
+  /**
+   * The base theme of the app
+   */
+  themeBase: string;
+  /**
+   * The configured local domain
+   */
+  localDomain: string;
 };
 
 export type AppContextDto = {
@@ -55,6 +67,8 @@ export type AppContextDto = {
     advancedSettings: boolean;
     forwardAuthUrl: string;
     logLevel: 'debug' | 'info' | 'warn' | 'error';
+    themeBase?: string;
+    themeColor?: string;
     experimental_insecureCookie?: boolean;
   };
   user: {
@@ -116,6 +130,8 @@ export type PartialUserSettingsDto = {
   advancedSettings?: boolean;
   forwardAuthUrl?: string;
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  themeBase?: string;
+  themeColor?: string;
   experimental_insecureCookie?: boolean;
 };
 
@@ -222,8 +238,12 @@ export type MyAppsDto = {
       exposedLocal: boolean;
       domain: string | null;
       isVisibleOnGuestDashboard: boolean;
-      config?: {};
+      config?: {
+        [key: string]: unknown;
+      };
       enableAuth?: boolean;
+      localSubdomain?: string | null;
+      pendingRestart: boolean;
     };
     info: {
       id: string;
@@ -254,6 +274,7 @@ export type MyAppsDto = {
     };
     metadata: {
       hasCustomConfig?: boolean;
+      localSubdomain: string;
       latestVersion: number;
       minTipiVersion?: string;
       latestDockerVersion?: string;
@@ -287,8 +308,12 @@ export type GuestAppsDto = {
       exposedLocal: boolean;
       domain: string | null;
       isVisibleOnGuestDashboard: boolean;
-      config?: {};
+      config?: {
+        [key: string]: unknown;
+      };
       enableAuth?: boolean;
+      localSubdomain?: string | null;
+      pendingRestart: boolean;
     };
     info: {
       id: string;
@@ -354,8 +379,14 @@ export type GuestAppsDto = {
       updated_at?: number;
       force_pull?: boolean;
     };
+    metadata: {
+      hasCustomConfig?: boolean;
+      localSubdomain: string;
+      latestVersion: number;
+      minTipiVersion?: string;
+      latestDockerVersion?: string;
+    };
   }>;
-  localDomain: string;
 };
 
 export type GetAppDto = {
@@ -383,8 +414,12 @@ export type GetAppDto = {
     exposedLocal: boolean;
     domain: string | null;
     isVisibleOnGuestDashboard: boolean;
-    config?: {};
+    config?: {
+      [key: string]: unknown;
+    };
     enableAuth?: boolean;
+    localSubdomain?: string | null;
+    pendingRestart: boolean;
   } | null;
   info: {
     id: string;
@@ -452,6 +487,7 @@ export type GetAppDto = {
   };
   metadata: {
     hasCustomConfig?: boolean;
+    localSubdomain: string;
     latestVersion: number;
     minTipiVersion?: string;
     latestDockerVersion?: string;
@@ -521,6 +557,7 @@ export type AppFormBody = {
   domain?: string;
   isVisibleOnGuestDashboard?: boolean;
   enableAuth?: boolean;
+  localSubdomain?: string;
 };
 
 export type UninstallAppBody = {
@@ -558,12 +595,14 @@ export type LinksDto = {
     url: string;
     iconUrl: string | null;
     userId: number;
+    isVisibleOnGuestDashboard?: boolean;
   }>;
 };
 
 export type LinkBodyDto = {
   title: string;
   url: string;
+  isVisibleOnGuestDashboard?: boolean;
   description?: string;
   iconUrl?: string;
 };
@@ -571,6 +610,7 @@ export type LinkBodyDto = {
 export type EditLinkBodyDto = {
   title: string;
   url: string;
+  isVisibleOnGuestDashboard?: boolean;
   description?: string;
   iconUrl?: string;
 };
@@ -1209,6 +1249,19 @@ export type RuntipiLogsEventsResponses = {
 };
 
 export type RuntipiLogsEventsResponse = RuntipiLogsEventsResponses[keyof RuntipiLogsEventsResponses];
+
+export type GetGuestLinksData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/links/guest';
+};
+
+export type GetGuestLinksResponses = {
+  200: LinksDto;
+};
+
+export type GetGuestLinksResponse = GetGuestLinksResponses[keyof GetGuestLinksResponses];
 
 export type GetLinksData = {
   body?: never;

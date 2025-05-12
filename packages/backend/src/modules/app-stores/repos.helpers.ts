@@ -69,7 +69,6 @@ export class ReposHelpers {
       await fs.promises.mkdir(dirPath, { recursive: true });
     }
 
-    // Set directory permissions
     await fs.promises.chmod(dirPath, 0o755);
   }
 
@@ -84,6 +83,7 @@ export class ReposHelpers {
       const repoPath = path.join(dataDir, 'repos', id);
 
       if (await this.filesystem.pathExists(repoPath)) {
+        await this.ensureDirectoryWithPermissions(path.dirname(repoPath));
         this.logger.debug(`Repo ${url} already exists`);
         return { success: true, message: '' };
       }
@@ -99,7 +99,6 @@ export class ReposHelpers {
 
       await this.ensureDirectoryWithPermissions(path.dirname(repoPath));
       await git.clone({ fs, http, dir: repoPath, url: repoUrl, singleBranch: true, depth: 1, ref: branch || undefined });
-      await this.ensureDirectoryWithPermissions(repoPath);
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
@@ -116,6 +115,8 @@ export class ReposHelpers {
   public async pullRepo(repoUrl: string, slug: string) {
     try {
       await this.cloneRepo(repoUrl, slug);
+
+      const [remoteUrl] = this.getRepoBaseUrlAndBranch(repoUrl);
 
       const { dataDir } = this.configuration.get('directories');
       const repoPath = path.join(dataDir, 'repos', slug);
@@ -135,15 +136,18 @@ export class ReposHelpers {
       }
       const remoteBranchRef = `origin/${currentBranch}`;
 
-      await git.fetch({ fs, http, dir: repoPath, remote: 'origin', ref: currentBranch, depth: 1, singleBranch: true, tags: false });
+      const fetchResult = await git.fetch({ fs, http, dir: repoPath, url: remoteUrl, ref: currentBranch, depth: 1, singleBranch: true, tags: false });
+      this.logger.debug('Fetch result:', fetchResult, 'Current branch:', currentBranch);
       const targetSha = await git.resolveRef({ fs, dir: repoPath, ref: remoteBranchRef });
+      this.logger.debug('Target SHA:', targetSha);
       await git.branch({ fs, dir: repoPath, ref: currentBranch, object: targetSha, force: true });
       await git.checkout({ fs, dir: repoPath, ref: currentBranch, force: true });
 
       this.logger.debug(`Pulled repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
     } catch (err) {
-      return this.handleRepoError(err);
+      await this.deleteRepo(slug);
+      return this.cloneRepo(repoUrl, slug);
     }
   }
 

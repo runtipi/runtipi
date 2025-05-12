@@ -1,5 +1,5 @@
+import type { DependsOn, serviceSchema } from '@runtipi/common/schemas';
 import type { z } from 'zod';
-import type { DependsOn, serviceSchema } from './schemas';
 
 interface ServicePort {
   containerPort: number | string;

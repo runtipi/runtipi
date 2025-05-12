@@ -2,6 +2,7 @@ import { DockerService } from '@/modules/docker/docker.service';
 import { colorizeLogs } from '@/modules/docker/helpers/colorize-logs';
 import type { AppUrn } from '@/types/app/app.types';
 import { Injectable, type MessageEvent } from '@nestjs/common';
+import type { AppUrn } from '@runtipi/common/types';
 import { Observable, Subject, interval } from 'rxjs';
 import { LoggerService } from '../logger/logger.service';
 import type { SSE, Topic } from './dto/sse.dto';

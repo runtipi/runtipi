@@ -4,6 +4,7 @@ import { app } from '@/core/database/drizzle/schema';
 import type { AppStatus, NewApp } from '@/core/database/drizzle/types';
 import type { AppUrn } from '@/types/app/app.types';
 import { Inject, Injectable } from '@nestjs/common';
+import type { AppUrn } from '@runtipi/common/types';
 import { and, asc, eq, ne, notInArray } from 'drizzle-orm';
 
 @Injectable()
@@ -100,6 +101,23 @@ export class AppsRepository {
       return this.db.query.app.findMany({ where: and(eq(app.domain, domain), eq(app.exposed, true)) });
     }
     return this.db.query.app.findMany({ where: and(eq(app.domain, domain), eq(app.exposed, true), ne(app.id, id)) });
+  }
+
+  /**
+   * Given a local subdomain, return all apps that have this subdomain, have exposedLocal enabled and not the given id
+   *
+   * @param {string} localSubdomain - The local subdomain to search for
+   * @param {number} id - The id of the app to exclude
+   */
+  public async getAppsByLocalSubdomain(localSubdomain: string, id?: number) {
+    if (!id) {
+      return this.db.query.app.findMany({
+        where: and(eq(app.localSubdomain, localSubdomain), eq(app.exposedLocal, true)),
+      });
+    }
+    return this.db.query.app.findMany({
+      where: and(eq(app.localSubdomain, localSubdomain), eq(app.exposedLocal, true), ne(app.id, id)),
+    });
   }
 
   /**

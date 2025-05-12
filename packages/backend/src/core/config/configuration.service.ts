@@ -42,6 +42,8 @@ const envSchema = z.object({
   NGINX_PORT: z.coerce.number().default(80),
   NGINX_PORT_SSL: z.coerce.number().default(443),
   ADVANCED_SETTINGS: z.string().transform((val) => val.toLowerCase() === 'true'),
+  THEME_BASE: z.string().optional(),
+  THEME_COLOR: z.string().optional(),
   // Experimental flags
   EXPERIMENTAL_INSECURE_COOKIE: z.string().transform((val) => val.toLowerCase() === 'true'),
 });
@@ -125,6 +127,8 @@ export class ConfigurationService {
         eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES,
         advancedSettings: env.data.ADVANCED_SETTINGS,
         logLevel: env.data.LOG_LEVEL,
+        themeBase: env.data.THEME_BASE || 'gray',
+        themeColor: env.data.THEME_COLOR || 'blue',
         experimental: {
           insecureCookie: env.data.EXPERIMENTAL_INSECURE_COOKIE,
         },

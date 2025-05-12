@@ -1,8 +1,8 @@
 import { createAppUrn } from '@/common/helpers/app-helpers';
+import type { ServiceInput } from '@runtipi/common/schemas';
 import { beforeEach, describe, expect, it } from 'vitest';
 import yaml from 'yaml';
 import { DockerComposeBuilder } from '../compose.builder';
-import type { ServiceInput } from '../schemas';
 import { ServiceBuilder } from '../service.builder';
 
 const urn = createAppUrn('nginx', 'store-id');
@@ -199,7 +199,7 @@ describe('DockerComposeBuilder', () => {
     const compose = composeBuilder.getDockerCompose([service], { exposed: false, exposedLocal: false }, urn, subnet);
     const yamlObject = yaml.parse(compose);
 
-    expect(yamlObject.services.service.labels).toEqual({ 'runtipi.managed': true });
+    expect(yamlObject.services.service.labels).toEqual({ 'runtipi.managed': true, 'runtipi.appurn': urn });
   });
 
   it('should be able to parse a compose.json file', async () => {

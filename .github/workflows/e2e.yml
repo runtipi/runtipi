@@ -114,6 +114,25 @@ jobs:
           echo "SERVER_IP=$(hostname -I | awk '{print $1}')" > .env.e2e
           echo "POSTGRES_PASSWORD=$(grep POSTGRES_PASSWORD runtipi/.env | cut -d '=' -f2)" >> .env.e2e
           echo "BASE_PATH=./runtipi" >> .env.e2e
+          echo "HOME=/root" >> .env.e2e
+
+      - name: Install dependencies
+        uses: "./.github/actions/install-dependencies"
+
+      - name: Get installed playwright version
+        id: playwright-version
+        run: echo "version=$(node -e "console.log(require('./package.json').devDependencies['@playwright/test'])")" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright binaries
+        id: cache-playwright-binaries
+        uses: actions/cache@v4
+        with:
+          path: /root/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+
+      - name: Install Playwright Browsers
+        if: steps.cache-playwright-binaries.outputs.cache-hit != 'true'
+        run: sudo npx playwright install --with-deps
 
       - name: Install dependencies
         uses: "./.github/actions/install-dependencies"
@@ -123,13 +142,14 @@ jobs:
 
       - name: Run Playwright tests
         id: run-e2e
-        run: npm run test:e2e
+        run: sudo npm run test:e2e
 
       - name: Dump app logs in playwright-report folder
         if: always()
         run: |
-          mkdir -p playwright-report
-          cp ./runtipi/logs/* playwright-report/
+          id
+          sudo mkdir -p playwright-report
+          sudo cp ./runtipi/logs/* playwright-report/
 
       - uses: actions/upload-artifact@v4
         if: always()

@@ -5,11 +5,11 @@ import { AuthGuard } from '../auth/auth.guard';
 import { LoadDto } from './dto/system.dto';
 import { SystemService } from './system.service';
 
-@UseGuards(AuthGuard)
 @Controller('system')
 export class SystemController {
   constructor(private readonly systemService: SystemService) {}
 
+  @UseGuards(AuthGuard)
   @Get('/load')
   @ZodSerializerDto(LoadDto)
   async systemLoad(): Promise<LoadDto> {
