@@ -1,6 +1,4 @@
 ````markdown
-<!-- filepath: /Users/nicolas/Developer/runtipi/docs/tag-based-release-process.md -->
-
 # Runtipi Tag-Based Release Process
 
 This document describes the technical implementation of the Runtipi tag-based release process, from alpha to beta to final release.

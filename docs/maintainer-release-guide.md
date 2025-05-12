@@ -1,6 +1,4 @@
 ````markdown
-<!-- filepath: /Users/nicolas/Developer/runtipi/docs/maintainer-release-guide.md -->
-
 # Maintainer's Guide to Tag-Based Releases
 
 This guide provides step-by-step instructions for Runtipi maintainers on how to create new releases using the tag-based release process.
