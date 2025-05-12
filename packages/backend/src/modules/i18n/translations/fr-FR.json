@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Votre architecture {{arch}} n'est pas supportée par l'application {{id}}",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Le domaine {{domain}} est déjà utilisé par l'application {{id}}",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Le domaine {{domain}} n'est pas valide",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Le domaine est requis si l'application est exposée",
   "APP_ERROR_INVALID_CONFIG": "L'application {{id}} a un fichier config.json invalide",
@@ -120,6 +121,7 @@
   "APP_STATUS_UPDATING": "Mise à jour en cours",
   "APP_STATUS_BACKING_UP": "Sauvegarde en cours",
   "APP_STATUS_RESTORING": "Restauration en cours",
+  "APP_STATUS_PENDING_RESTART": "Pending Restart",
   "APP_STOP_FORM_SUBMIT": "Arrêter",
   "APP_STOP_FORM_SUBTITLE": "Toutes les données seront conservées",
   "APP_STOP_FORM_TITLE": "Arrêter {{name}}?",
@@ -238,6 +240,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Cette action ne peut pas être annulée",
   "DELETE_BACKUP_MODAL_SUBMIT": "Supprimer",
   "GUEST_DASHBOARD": "Tableau de bord invité",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Aucune app à afficher",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Demandez à votre administrateur d'ajouter des applications au tableau de bord invité ou connectez-vous pour voir vos applications.",
   "HEADER_APPS": "Mes Applications",
@@ -281,6 +284,7 @@
   "MY_APPS_UPDATE_ALL_FORM_TITLE": "Mettre à jour toutes les apps",
   "MY_APPS_UPDATE_ALL_IN_PROGRESS": "Mise à jour de toutes les applications en cours",
   "MY_APPS_UPDATE_AVAILABLE": "Mise à jour disponible",
+  "MY_APPS_PENDING_RESTART": "This app's configuration has changed. Restart the app to apply the changes.",
   "RUNTIPI": "Runtipi",
   "SERVER_ERROR_INVALID_LOCALE": "Langue invalide",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Non autorisé en mode démo",
@@ -308,6 +312,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "Ajouter ou supprimer des App Stores",
   "SETTINGS_APPSTORES_TAB_TITLE": "App Stores",
   "SETTINGS_APPSTORES_WARNING": "Assurez-vous de faire confiance aux App Stores que vous ajoutez !",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Autoriser les thèmes automatiques",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Soyez surpris par les thèmes qui changent automatiquement en fonction de la période de l'année.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Autoriser le suivi anonyme des erreurs",
@@ -402,6 +408,8 @@
   "ACTIONS_ENABLE": "Activer",
   "WARNING": "Attention",
   "CLEAR": "Effacer",
-  "MORE": "Plus"
+  "MORE": "Plus",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
-

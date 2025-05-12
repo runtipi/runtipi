@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Deine Architektur {{arch}} wird von der App {{id}} nicht unterstützt",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "Die Domain {{domain}} ist bereits in Verwendung von der App {{id}}",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "Die Domain {{domain}} ist ungültig",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Eine Domain ist erforderlich, wenn die App freigegeben ist",
   "APP_ERROR_INVALID_CONFIG": "Die App {{id}} hat eine ungültige config.json Datei",
@@ -120,6 +121,7 @@
   "APP_STATUS_UPDATING": "Aktualisieren",
   "APP_STATUS_BACKING_UP": "Sichern",
   "APP_STATUS_RESTORING": "Wiederherstellen",
+  "APP_STATUS_PENDING_RESTART": "Pending Restart",
   "APP_STOP_FORM_SUBMIT": "Anhalten",
   "APP_STOP_FORM_SUBTITLE": "Alle Daten werden aufbewahrt",
   "APP_STOP_FORM_TITLE": "{{name}} anhalten?",
@@ -238,6 +240,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Diese Aktion kann nicht rückgängig gemacht werden",
   "DELETE_BACKUP_MODAL_SUBMIT": "Löschen",
   "GUEST_DASHBOARD": "Gast-Dashboard",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Keine Apps anzuzeigen",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Bitte deinen Administrator, Apps zum Gast-Dashboard hinzuzufügen, oder melde dich an, um deine Apps anzuzeigen.",
   "HEADER_APPS": "Meine Apps",
@@ -281,6 +284,7 @@
   "MY_APPS_UPDATE_ALL_FORM_TITLE": "Alle Apps aktualisieren",
   "MY_APPS_UPDATE_ALL_IN_PROGRESS": "Alle Apps werden aktualisiert",
   "MY_APPS_UPDATE_AVAILABLE": "Aktualisierung verfügbar",
+  "MY_APPS_PENDING_RESTART": "This app's configuration has changed. Restart the app to apply the changes.",
   "RUNTIPI": "Runtipi",
   "SERVER_ERROR_INVALID_LOCALE": "Ungültige Region",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Im Demo-Modus nicht erlaubt",
@@ -308,6 +312,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "App Stores hinzufügen oder entfernen",
   "SETTINGS_APPSTORES_TAB_TITLE": "App Stores",
   "SETTINGS_APPSTORES_WARNING": "Stellen Sie sicher, dass Sie den hinzugefügten App Stores vertrauen!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Automatische Themes zulassen",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Lass dich von Themes überraschen, die sich automatisch je nach Jahreszeit ändern.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Anonymes Fehler-Monitoring zulassen",
@@ -402,6 +408,8 @@
   "ACTIONS_ENABLE": "Enable",
   "WARNING": "Warning",
   "CLEAR": "Clear",
-  "MORE": "More"
+  "MORE": "More",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
-
