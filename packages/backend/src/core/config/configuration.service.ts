@@ -42,8 +42,8 @@ const envSchema = z.object({
   NGINX_PORT: z.coerce.number().default(80),
   NGINX_PORT_SSL: z.coerce.number().default(443),
   ADVANCED_SETTINGS: z.string().transform((val) => val.toLowerCase() === 'true'),
-  THEME_BASE: z.string().optional(),
-  THEME_COLOR: z.string().optional(),
+  THEME_BASE: z.string(),
+  THEME_COLOR: z.string(),
   // Experimental flags
   EXPERIMENTAL_INSECURE_COOKIE: z.string().transform((val) => val.toLowerCase() === 'true'),
 });
