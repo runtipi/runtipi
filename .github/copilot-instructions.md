@@ -9,3 +9,5 @@
   Focus on unit tests and integration tests.
 - When adding new translation keys, add it to the `en.json` and `en-US.json`
   files. Do not add it to other language files.
+- If the part you worked on is documented in the `docs` folder, update the
+  documentation to reflect your changes.
