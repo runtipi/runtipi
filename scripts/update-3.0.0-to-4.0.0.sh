@@ -58,6 +58,12 @@ if ! command -v jq &>/dev/null; then
   exit 1
 fi
 
+# Ensure runtipi is running
+if ! ./runtipi-cli start; then
+  echo -e "${Red}Failed to start Runtipi${ColorOff}"
+  exit 1
+fi
+
 # Backups warning
 echo -e "${Yellow}Warning:${ColorOff} Make sure you have backed up your data before continuing, if something goes wrong during the migration process, you can risk losing important data!"
 read -p "Do you want to continue? (y/n): " -r

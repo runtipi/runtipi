@@ -1,4 +1,3 @@
-export const ARCHITECTURES = ['arm64', 'amd64'] as const;
 import { type ZodStringDef, z } from 'zod';
 import type { AppUrn } from '../types/app-urn.js';
 
@@ -20,6 +19,7 @@ export const APP_CATEGORIES = [
   'ai',
 ] as const;
 export type AppCategory = (typeof APP_CATEGORIES)[number];
+export const ARCHITECTURES = ['arm64', 'amd64'] as const;
 
 export const FIELD_TYPES = ['text', 'password', 'email', 'number', 'fqdn', 'ip', 'fqdnip', 'url', 'random', 'boolean'] as const;
 export type FieldType = (typeof FIELD_TYPES)[number];

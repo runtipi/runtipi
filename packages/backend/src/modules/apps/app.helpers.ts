@@ -2,6 +2,7 @@ import path from 'node:path';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import type { AppUrn } from '@/types/app/app.types';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { EnvUtils } from '../env/env.utils';

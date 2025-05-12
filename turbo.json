@@ -40,9 +40,6 @@
       "dependsOn": ["^test:integration"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["coverage/"]
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
     }
   }
 }

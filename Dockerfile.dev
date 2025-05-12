@@ -42,8 +42,6 @@ COPY ./packages ./packages
 COPY ./packages/backend/assets ./assets
 COPY ./packages/backend/src/core/database/drizzle ./assets/migrations
 
-RUN npm run build
-
 EXPOSE 3000
 
 CMD ["npm", "run", "dev"]
