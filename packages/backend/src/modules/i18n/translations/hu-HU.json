@@ -52,6 +52,7 @@
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "No available subnets left",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Az Ön {{arch}} architektúráját az {{id}} alkalmazás nem támogatja",
   "APP_ERROR_DOMAIN_ALREADY_IN_USE": "A(z) {{domain}} domaint már használja a(z) {{id}} alkalmazás",
+  "APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE": "Subdomain {{subdomain}} is already in use by app {{id}}",
   "APP_ERROR_DOMAIN_NOT_VALID": "A(z) {{domain}} domain nem érvényes domain",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domain szükséges, ha az alkalmazás exponálva van",
   "APP_ERROR_INVALID_CONFIG": "A(z) {{id}} alkalmazás érvénytelen config.json fájlt tartalmaz",
@@ -120,6 +121,7 @@
   "APP_STATUS_UPDATING": "Frissítés",
   "APP_STATUS_BACKING_UP": "Biztonsági mentés folyamatban",
   "APP_STATUS_RESTORING": "Visszaállítás",
+  "APP_STATUS_PENDING_RESTART": "Pending Restart",
   "APP_STOP_FORM_SUBMIT": "Megállít",
   "APP_STOP_FORM_SUBTITLE": "Minden adat megmarad",
   "APP_STOP_FORM_TITLE": "Megállít {{name}} ?",
@@ -238,6 +240,7 @@
   "DELETE_BACKUP_MODAL_SUBTITLE": "Ez a művelet nem vonható vissza",
   "DELETE_BACKUP_MODAL_SUBMIT": "Törlés",
   "GUEST_DASHBOARD": "Vendég műszerfal",
+  "GUEST_DASHBOARD_DOWNLOAD_CERTIFICATE_TOOLTIP": "Download the self-signed certificate to securely access apps",
   "GUEST_DASHBOARD_NO_APPS": "Nincs megjeleníthető alkalmazás",
   "GUEST_DASHBOARD_NO_APPS_SUBTITLE": "Kérje meg a rendszergazdát, hogy adjon hozzá alkalmazásokat a vendég műszerfalhoz, vagy jelentkezzen be az alkalmazások megtekintéséhez.",
   "HEADER_APPS": "Alkalmazásaim",
@@ -281,6 +284,7 @@
   "MY_APPS_UPDATE_ALL_FORM_TITLE": "Az összes alkalmazás frissítése",
   "MY_APPS_UPDATE_ALL_IN_PROGRESS": "Az összes alkalmazás frissítése",
   "MY_APPS_UPDATE_AVAILABLE": "Frissítés elérhető",
+  "MY_APPS_PENDING_RESTART": "This app's configuration has changed. Restart the app to apply the changes.",
   "RUNTIPI": "Runtipi",
   "SERVER_ERROR_INVALID_LOCALE": "Érvénytelen nyelvi beállítás",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Demó üzemmódban nem engedélyezett",
@@ -308,6 +312,8 @@
   "SETTINGS_APPSTORES_SUBTITLE": "Alkalmazásboltok hozzáadása vagy eltávolítása",
   "SETTINGS_APPSTORES_TAB_TITLE": "Alkalmazásboltok",
   "SETTINGS_APPSTORES_WARNING": "Győződjön meg róla, hogy megbízik a hozzáadott alkalmazásboltokban!",
+  "SETTINGS_GENERAL_BASE_THEME": "Base theme",
+  "SETTINGS_GENERAL_PRIMARY_COLOR": "Primary color",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES": "Automatikus témák engedélyezése",
   "SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT": "Legyen meglepve a témákkal, amelyek az évszaknak megfelelően automatikusan változnak.",
   "SETTINGS_GENERAL_ALLOW_ERROR_MONITORING": "Anonim hibafigyelés engedélyezése",
@@ -402,6 +408,8 @@
   "ACTIONS_ENABLE": "Engedélyez",
   "WARNING": "Figyelmeztetés",
   "CLEAR": "Törlés",
-  "MORE": "Több"
+  "MORE": "Több",
+  "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
 }
-
