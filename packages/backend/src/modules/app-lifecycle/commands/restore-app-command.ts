@@ -5,7 +5,6 @@ import type { ModuleRef } from '@nestjs/core';
 import type { AppUrn } from '@runtipi/common/types';
 import type Dockerode from 'dockerode';
 import { AppLifecycleCommand } from './command';
-import type { ModuleRef } from '@nestjs/core';
 
 export class RestoreAppCommand extends AppLifecycleCommand {
   constructor(
