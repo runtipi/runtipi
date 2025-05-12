@@ -144,7 +144,7 @@ jobs:
         uses: "./.github/actions/install-dependencies"
 
       - name: Chmod 777 runtipi
-        run: chmod -R 777 runtipi
+        run: sudo chmod -R 777 runtipi
 
       - name: Run Playwright tests
         id: run-e2e
