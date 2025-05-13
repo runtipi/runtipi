@@ -1,7 +1,7 @@
-import { EnvUtils } from '@/modules/env/env.utils';
+import { EnvUtils } from '@/modules/env/env.utils.js';
 import { Module } from '@nestjs/common';
-import { ConfigurationService } from '../config/configuration.service';
-import { EncryptionService } from './encryption.service';
+import { ConfigurationService } from '../config/configuration.service.js';
+import { EncryptionService } from './encryption.service.js';
 
 @Module({
   providers: [ConfigurationService, EncryptionService, EnvUtils],

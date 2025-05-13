@@ -1,10 +1,10 @@
 import fs from 'node:fs';
-import { AppService } from '@/app.service';
-import { APP_DATA_DIR, APP_DIR, DATA_DIR, LATEST_RELEASE_URL } from '@/common/constants';
-import { CacheService } from '@/core/cache/cache.service';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import type { FsMock } from '@/tests/__mocks__/fs';
+import { AppService } from '@/app.service.js';
+import { APP_DATA_DIR, APP_DIR, DATA_DIR, LATEST_RELEASE_URL } from '@/common/constants.js';
+import { CacheService } from '@/core/cache/cache.service.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import type { FsMock } from '@/tests/__mocks__/fs.js';
 import { faker } from '@faker-js/faker';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';

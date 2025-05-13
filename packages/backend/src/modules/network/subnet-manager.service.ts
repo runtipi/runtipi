@@ -1,10 +1,10 @@
-import { TranslatableError } from '@/common/error/translatable-error';
-import { LoggerService } from '@/core/logger/logger.service';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import Dockerode from 'dockerode';
-import { AppsRepository } from '../apps/apps.repository';
-import { DOCKERODE } from '../docker/docker.module';
+import { AppsRepository } from '../apps/apps.repository.js';
+import { DOCKERODE } from '../docker/docker.module.js';
 
 const BASE_SUBNET_PREFIX = '10.128';
 const SUBNET_MASK = '/24';

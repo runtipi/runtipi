@@ -1,5 +1,5 @@
-import { APP_STATUS } from '@/core/database/drizzle/types';
-import { AppInfoDto, AppInfoSimpleDto, MetadataDto } from '@/modules/marketplace/dto/marketplace.dto';
+import { APP_STATUS } from '@/core/database/drizzle/types.js';
+import { AppInfoDto, AppInfoSimpleDto, MetadataDto } from '@/modules/marketplace/dto/marketplace.dto.js';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 

@@ -1,4 +1,4 @@
-import { QueueHealthIndicator } from '@/modules/queue/queue.health';
+import { QueueHealthIndicator } from '@/modules/queue/queue.health.js';
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 

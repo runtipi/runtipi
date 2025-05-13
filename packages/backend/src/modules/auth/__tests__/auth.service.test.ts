@@ -1,8 +1,8 @@
-import { CacheService } from '@/core/cache/cache.service';
+import { CacheService } from '@/core/cache/cache.service.js';
 import { Test } from '@nestjs/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../auth.service.js';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -24,35 +24,35 @@ describe('AuthService', () => {
   });
 
   describe('getCookieDomain', () => {
-    it('should return undefined if the domain is localhost', async () => {
+    it('should return undefined if the domain is localhost', () => {
       const domain = 'localhost';
-      const result = await authService.getCookieDomain(domain);
+      const result = authService.getCookieDomain(domain);
       expect(result).toBeUndefined();
     });
 
-    it('should return undefined if the domain is an IP address', async () => {
+    it('should return undefined if the domain is an IP address', () => {
       const domain = '192.168.3.20';
-      const result = await authService.getCookieDomain(domain);
+      const result = authService.getCookieDomain(domain);
       expect(result).toBeUndefined();
     });
 
-    it('should return with subdomain', async () => {
+    it('should return with subdomain', () => {
       const domain = 'example.duckdns.org';
-      const result = await authService.getCookieDomain(domain);
+      const result = authService.getCookieDomain(domain);
 
       expect(result).toBe(`.${domain}`);
     });
 
-    it('should return input if domain is not using a standard tld', async () => {
+    it('should return input if domain is not using a standard tld', () => {
       const domain = 'example.whatever';
-      const result = await authService.getCookieDomain(domain);
+      const result = authService.getCookieDomain(domain);
 
       expect(result).toBe(`.${domain}`);
     });
 
-    it('should return all subdomains when using multiple levels of subdomains', async () => {
+    it('should return all subdomains when using multiple levels of subdomains', () => {
       const domain = 'sub.sub.duckdns.org';
-      const result = await authService.getCookieDomain(domain);
+      const result = authService.getCookieDomain(domain);
 
       expect(result).toBe('.sub.sub.duckdns.org');
     });

@@ -1,8 +1,8 @@
-import { appFormSchema } from '@/modules/app-lifecycle/dto/app-lifecycle.dto';
+import { appFormSchema } from '@/modules/app-lifecycle/dto/app-lifecycle.dto.js';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { type ZodStringDef, z } from 'zod';
-import { Queue } from '../queue.entity';
+import { Queue } from '../queue.entity.js';
 
 const commonAppCommandSchema = z.object({
   command: z.union([

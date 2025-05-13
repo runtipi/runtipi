@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { ServiceBuilder } from '../service.builder';
+import { ServiceBuilder } from '../service.builder.js';
 
 describe('ServiceBuilder', () => {
   let serviceBuilder: ServiceBuilder;

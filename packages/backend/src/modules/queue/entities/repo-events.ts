@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { Queue } from '../queue.entity';
+import { Queue } from '../queue.entity.js';
 
 const singleRepoCommandSchema = z.object({
   command: z.union([z.literal('clone'), z.literal('update')]),

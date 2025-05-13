@@ -1,14 +1,14 @@
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { UserRepository } from '@/modules/user/user.repository';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { UserRepository } from '@/modules/user/user.repository.js';
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { AcknowledgeWelcomeBody, AppContextDto, PartialUserSettingsDto, UserContextDto } from './app.dto';
-import { AppService } from './app.service';
-import { AppsService } from './modules/apps/apps.service';
-import { AuthGuard } from './modules/auth/auth.guard';
-import { MarketplaceService } from './modules/marketplace/marketplace.service';
-import type { UserDto } from './modules/user/dto/user.dto';
+import { AcknowledgeWelcomeBody, AppContextDto, PartialUserSettingsDto, UserContextDto } from './app.dto.js';
+import { AppService } from './app.service.js';
+import { AppsService } from './modules/apps/apps.service.js';
+import { AuthGuard } from './modules/auth/auth.guard.js';
+import { MarketplaceService } from './modules/marketplace/marketplace.service.js';
+import type { UserDto } from './modules/user/dto/user.dto.js';
 
 @Controller()
 export class AppController {

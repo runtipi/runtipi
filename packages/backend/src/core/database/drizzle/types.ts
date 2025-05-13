@@ -1,5 +1,5 @@
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { app, appStatusEnum, appStore, user } from './schema';
+import { app, appStatusEnum, appStore, user } from './schema.js';
 
 export const APP_STATUS = appStatusEnum.enumValues;
 export type AppStatus = (typeof APP_STATUS)[number];

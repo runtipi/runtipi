@@ -1,8 +1,8 @@
-import { castAppUrn } from '@/common/helpers/app-helpers';
+import { castAppUrn } from '@/common/helpers/app-helpers.js';
 import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../auth/auth.guard';
-import { AppLifecycleService } from './app-lifecycle.service';
-import { AppFormBody, UninstallAppBody, UpdateAppBody, appFormSchema } from './dto/app-lifecycle.dto';
+import { AuthGuard } from '../auth/auth.guard.js';
+import { AppLifecycleService } from './app-lifecycle.service.js';
+import { AppFormBody, UninstallAppBody, UpdateAppBody, appFormSchema } from './dto/app-lifecycle.dto.js';
 
 @UseGuards(AuthGuard)
 @Controller('app-lifecycle')

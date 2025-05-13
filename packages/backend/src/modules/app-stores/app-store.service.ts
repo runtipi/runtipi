@@ -1,12 +1,12 @@
-import { TranslatableError } from '@/common/error/translatable-error';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { LoggerService } from '@/core/logger/logger.service';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import slugify from 'slugify';
-import type { UpdateAppStoreBodyDto } from '../marketplace/dto/marketplace.dto';
-import { RepoEventsQueue } from '../queue/entities/repo-events';
-import { AppStoreRepository } from './app-store.repository';
-import { ReposHelpers } from './repos.helpers';
+import slugify from 'slug';
+import type { UpdateAppStoreBodyDto } from '../marketplace/dto/marketplace.dto.js';
+import { RepoEventsQueue } from '../queue/entities/repo-events.js';
+import { AppStoreRepository } from './app-store.repository.js';
+import { ReposHelpers } from './repos.helpers.js';
 
 @Injectable()
 export class AppStoreService {

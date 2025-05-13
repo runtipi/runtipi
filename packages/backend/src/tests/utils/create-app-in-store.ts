@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { DATA_DIR } from '@/common/constants';
+import { DATA_DIR } from '@/common/constants.js';
 import { faker } from '@faker-js/faker';
 import type { AppInfo, AppInfoInput } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';

@@ -1,11 +1,11 @@
 import { setTimeout } from 'node:timers/promises';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { LoggerService } from '@/core/logger/logger.service';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { Connection } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
-import { Queue } from './queue.entity';
+import { Queue } from './queue.entity.js';
 
 @Injectable()
 export class QueueFactory {

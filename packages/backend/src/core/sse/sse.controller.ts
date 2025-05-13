@@ -1,10 +1,10 @@
-import { castAppUrn } from '@/common/helpers/app-helpers';
-import { AuthGuard } from '@/modules/auth/auth.guard';
+import { castAppUrn } from '@/common/helpers/app-helpers.js';
+import { AuthGuard } from '@/modules/auth/auth.guard.js';
 import { Controller, type MessageEvent, Query, Sse, UseGuards } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
-import type { StreamAppLogsQueryDto, StreamRuntipiLogsQueryDto } from './dto/sse.dto';
-import { SSEService } from './sse.service';
+import type { StreamAppLogsQueryDto, StreamRuntipiLogsQueryDto } from './dto/sse.dto.js';
+import { SSEService } from './sse.service.js';
 
 @UseGuards(AuthGuard)
 @Controller('sse')

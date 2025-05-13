@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import { EOL } from 'node:os';
 import path from 'node:path';
-import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
-import { LoggerService } from '@/core/logger/logger.service';
+import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Injectable } from '@nestjs/common';
 import { ZodSchema } from 'zod';
 

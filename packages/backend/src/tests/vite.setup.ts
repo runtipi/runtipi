@@ -1,11 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { DATA_DIR } from '@/common/constants';
+import { DATA_DIR } from '@/common/constants.js';
 import { beforeEach, vi } from 'vitest';
-import type { FsMock } from './__mocks__/fs';
+import type { FsMock } from './__mocks__/fs.js';
 
 vi.mock('fs', async () => {
-  const { fsMock } = await import('./__mocks__/fs');
+  const { fsMock } = await import('./__mocks__/fs.js');
   return {
     ...fsMock,
   };

@@ -1,18 +1,18 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
-import { TranslatableError } from '@/common/error/translatable-error';
-import { CacheService } from '@/core/cache/cache.service';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { EncryptionService } from '@/core/encryption/encryption.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { UserRepository } from '@/modules/user/user.repository';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { CacheService } from '@/core/cache/cache.service.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { EncryptionService } from '@/core/encryption/encryption.service.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import { UserRepository } from '@/modules/user/user.repository.js';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import psl from 'psl';
 import validator, { isFQDN } from 'validator';
-import type { LoginBody, RegisterBody } from './dto/auth.dto';
-import { SessionManager } from './session.manager';
-import { TotpAuthenticator } from './utils/totp-authenticator';
+import type { LoginBody, RegisterBody } from './dto/auth.dto.js';
+import { SessionManager } from './session.manager.js';
+import { TotpAuthenticator } from './utils/totp-authenticator.js';
 
 @Injectable()
 export class AuthService {

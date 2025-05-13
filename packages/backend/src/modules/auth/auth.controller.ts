@@ -1,12 +1,12 @@
-import { SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants';
-import { TranslatableError } from '@/common/error/translatable-error';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { LoggerService } from '@/core/logger/logger.service';
+import { SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants.js';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { AuthGuard } from './auth.guard';
-import { AuthService } from './auth.service';
+import { AuthGuard } from './auth.guard.js';
+import { AuthService } from './auth.service.js';
 import {
   ChangePasswordBody,
   ChangeUsernameBody,
@@ -22,7 +22,7 @@ import {
   ResetPasswordDto,
   SetupTotpBody,
   VerifyTotpBody,
-} from './dto/auth.dto';
+} from './dto/auth.dto.js';
 
 @Controller('auth')
 export class AuthController {
@@ -32,10 +32,10 @@ export class AuthController {
     private readonly config: ConfigurationService,
   ) {}
 
-  private async setSessionCookie(res: Response, sessionId: string, req: Request) {
+  private setSessionCookie(res: Response, sessionId: string, req: Request) {
     const host = req.headers['x-forwarded-host'] as string | undefined;
     const proto = req.headers['x-forwarded-proto'] as string | undefined;
-    const domain = await this.authService.getCookieDomain(host);
+    const domain = this.authService.getCookieDomain(host);
     const secure = Boolean(domain) && proto === 'https';
 
     this.logger.debug('Request headers', req.headers);
@@ -64,7 +64,7 @@ export class AuthController {
       return { success: true, totpSessionId };
     }
 
-    await this.setSessionCookie(res, sessionId, req);
+    this.setSessionCookie(res, sessionId, req);
 
     return { success: true };
   }
@@ -74,7 +74,7 @@ export class AuthController {
   async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
     const { sessionId } = await this.authService.verifyTotp(body);
 
-    await this.setSessionCookie(res, sessionId, req);
+    this.setSessionCookie(res, sessionId, req);
 
     return { success: true };
   }
@@ -84,7 +84,7 @@ export class AuthController {
   async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<RegisterDto> {
     const { sessionId } = await this.authService.register(body);
 
-    await this.setSessionCookie(res, sessionId, req);
+    this.setSessionCookie(res, sessionId, req);
 
     return { success: true };
   }

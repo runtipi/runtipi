@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import Dockerode from 'dockerode';
-import { AppStoreModule } from '../app-stores/app-store.module';
-import { AppsModule } from '../apps/apps.module';
-import { DockerService } from './docker.service';
+import { AppStoreModule } from '../app-stores/app-store.module.js';
+import { AppsModule } from '../apps/apps.module.js';
+import { DockerService } from './docker.service.js';
 
 export const DOCKERODE = 'DOCKERODE_INSTANCE';
 

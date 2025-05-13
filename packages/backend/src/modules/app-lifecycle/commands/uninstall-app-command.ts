@@ -1,8 +1,8 @@
-import { LoggerService } from '@/core/logger/logger.service';
-import { AppFilesManager } from '@/modules/apps/app-files-manager';
-import { DockerService } from '@/modules/docker/docker.service';
+import { LoggerService } from '@/core/logger/logger.service.js';
+import { AppFilesManager } from '@/modules/apps/app-files-manager.js';
+import { DockerService } from '@/modules/docker/docker.service.js';
 import type { AppUrn } from '@runtipi/common/types';
-import { AppLifecycleCommand } from './command';
+import { AppLifecycleCommand } from './command.js';
 
 export class UninstallAppCommand extends AppLifecycleCommand {
   public async execute(appUrn: AppUrn): Promise<{ success: boolean; message: string }> {

@@ -1,14 +1,14 @@
-import { TranslatableError } from '@/common/error/translatable-error';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { LoggerService } from '@/core/logger/logger.service';
-import { SSEService } from '@/core/sse/sse.service';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
+import { SSEService } from '@/core/sse/sse.service.js';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
-import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
-import { AppFilesManager } from '../apps/app-files-manager';
-import { AppsRepository } from '../apps/apps.repository';
-import { AppEventsQueue } from '../queue/entities/app-events';
-import { BackupManager } from './backup.manager';
+import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service.js';
+import { AppFilesManager } from '../apps/app-files-manager.js';
+import { AppsRepository } from '../apps/apps.repository.js';
+import { AppEventsQueue } from '../queue/entities/app-events.js';
+import { BackupManager } from './backup.manager.js';
 
 @Injectable()
 export class BackupsService {

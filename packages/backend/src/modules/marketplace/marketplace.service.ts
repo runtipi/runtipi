@@ -1,14 +1,14 @@
-import type { Architecture } from '@/common/constants';
-import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { notEmpty, pLimit } from '@/common/helpers/file-helpers';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
+import type { Architecture } from '@/common/constants.js';
+import { extractAppUrn } from '@/common/helpers/app-helpers.js';
+import { notEmpty, pLimit } from '@/common/helpers/file-helpers.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import MiniSearch from 'minisearch';
-import { AppStoreFilesManager } from '../app-stores/app-store-files-manager';
-import { AppStoreService } from '../app-stores/app-store.service';
+import { AppStoreFilesManager } from '../app-stores/app-store-files-manager.js';
+import { AppStoreService } from '../app-stores/app-store.service.js';
 
 type AppList = Awaited<ReturnType<InstanceType<typeof MarketplaceService>['getAllAppFromStores']>>;
 

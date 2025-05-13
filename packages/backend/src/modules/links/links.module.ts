@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { LinksController } from './links.controller';
-import { LinksRepository } from './links.repository';
-import { LinksService } from './links.service';
+import { LinksController } from './links.controller.js';
+import { LinksRepository } from './links.repository.js';
+import { LinksService } from './links.service.js';
 
 @Module({
   imports: [],

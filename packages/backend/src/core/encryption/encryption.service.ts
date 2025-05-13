@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 
 import { Injectable } from '@nestjs/common';
-import { ConfigurationService } from '../config/configuration.service';
+import { ConfigurationService } from '../config/configuration.service.js';
 
 @Injectable()
 export class EncryptionService {

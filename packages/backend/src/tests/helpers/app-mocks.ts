@@ -1,5 +1,5 @@
-import { createAppUrn } from '@/common/helpers/app-helpers';
-import type { App } from '@/core/database/drizzle/types';
+import { createAppUrn } from '@/common/helpers/app-helpers.js';
+import type { App } from '@/core/database/drizzle/types.js';
 import { faker } from '@faker-js/faker';
 import { APP_CATEGORIES, type AppCategory, type AppInfo } from '@runtipi/common/schemas';
 

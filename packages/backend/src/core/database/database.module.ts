@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { DatabaseService } from './database.service';
+import { DatabaseService } from './database.service.js';
 
 export const DATABASE = 'DATABASE_INSTANCE';
 export type Database = DatabaseService['db'];

@@ -1,12 +1,12 @@
 import path from 'node:path';
-import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { ArchiveService } from '@/core/archive/archive.service';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
+import { extractAppUrn } from '@/common/helpers/app-helpers.js';
+import { ArchiveService } from '@/core/archive/archive.service.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
-import { AppFilesManager } from '../apps/app-files-manager';
+import { AppFilesManager } from '../apps/app-files-manager.js';
 
 @Injectable()
 export class BackupManager {

@@ -14,8 +14,10 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-    "module": "preserve",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
+    "sourceMap": true,
     "noEmit": false,
     "lib": [
       "es2022"

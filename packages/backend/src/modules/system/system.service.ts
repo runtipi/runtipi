@@ -1,6 +1,6 @@
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Injectable } from '@nestjs/common';
 import si from 'systeminformation';
 

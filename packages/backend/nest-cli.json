@@ -6,8 +6,6 @@
   "compilerOptions": {
     "plugins": ["@nestjs/swagger"],
     "deleteOutDir": true,
-    "typeCheck": true,
-    "builder": "swc",
     "assets": [
       {
         "include": "./src/core/database/migrations/*.sql",

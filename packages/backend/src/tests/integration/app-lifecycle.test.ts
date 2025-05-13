@@ -1,36 +1,37 @@
 import fs from 'node:fs';
-import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { DATABASE } from '@/core/database/database.module';
-import { DatabaseService } from '@/core/database/database.service';
-import { appStore } from '@/core/database/drizzle/schema';
-import { app as appTable } from '@/core/database/drizzle/schema';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
-import { AppLifecycleCommandFactory } from '@/modules/app-lifecycle/app-lifecycle-command.factory';
-import { AppLifecycleService } from '@/modules/app-lifecycle/app-lifecycle.service';
-import { AppStoreRepository } from '@/modules/app-stores/app-store.repository';
-import { AppStoreService } from '@/modules/app-stores/app-store.service';
-import { AppFilesManager } from '@/modules/apps/app-files-manager';
-import { AppHelpers } from '@/modules/apps/app.helpers';
-import { AppsRepository } from '@/modules/apps/apps.repository';
-import { AppsService } from '@/modules/apps/apps.service';
-import { DOCKERODE } from '@/modules/docker/docker.module';
-import { DockerService } from '@/modules/docker/docker.service';
-import { EnvUtils } from '@/modules/env/env.utils';
-import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
-import { SubnetManagerService } from '@/modules/network/subnet-manager.service';
-import { AppEventsQueue, appEventResultSchema, appEventSchema } from '@/modules/queue/entities/app-events';
-import { QueueFactory } from '@/modules/queue/queue.factory';
+import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { DATABASE } from '@/core/database/database.module.js';
+import { DatabaseService } from '@/core/database/database.service.js';
+import { appStore } from '@/core/database/drizzle/schema.js';
+import { app as appTable } from '@/core/database/drizzle/schema.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
+import { AppLifecycleCommandFactory } from '@/modules/app-lifecycle/app-lifecycle-command.factory.js';
+import { AppLifecycleService } from '@/modules/app-lifecycle/app-lifecycle.service.js';
+import { AppStoreRepository } from '@/modules/app-stores/app-store.repository.js';
+import { AppStoreService } from '@/modules/app-stores/app-store.service.js';
+import { AppFilesManager } from '@/modules/apps/app-files-manager.js';
+import { AppHelpers } from '@/modules/apps/app.helpers.js';
+import { AppsRepository } from '@/modules/apps/apps.repository.js';
+import { AppsService } from '@/modules/apps/apps.service.js';
+import { DOCKERODE } from '@/modules/docker/docker.module.js';
+import { DockerService } from '@/modules/docker/docker.service.js';
+import { EnvUtils } from '@/modules/env/env.utils.js';
+import { MarketplaceService } from '@/modules/marketplace/marketplace.service.js';
+import { SubnetManagerService } from '@/modules/network/subnet-manager.service.js';
+import { AppEventsQueue, appEventResultSchema, appEventSchema } from '@/modules/queue/entities/app-events.js';
+import { QueueFactory } from '@/modules/queue/queue.factory.js';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
+import { waitUntil } from 'async-wait-until';
 import { eq } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import waitFor from 'wait-for-expect';
-import type { FsMock } from '../__mocks__/fs';
-import { createAppInStore } from '../utils/create-app-in-store';
-import { type TestDatabase, cleanTestData, createTestDatabase } from '../utils/create-test-database';
+
+import type { FsMock } from '../__mocks__/fs.js';
+import { createAppInStore } from '../utils/create-app-in-store.js';
+import { type TestDatabase, cleanTestData, createTestDatabase } from '../utils/create-test-database.js';
 
 let db: TestDatabase;
 const DB_NAME = 'applifecycletest';
@@ -150,7 +151,7 @@ describe('App lifecycle', () => {
       // act
       await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
 
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app = await appsRepository.getAppByUrn(appInfo.urn);
         expect(app?.status).toBe('running');
       });
@@ -168,7 +169,7 @@ describe('App lifecycle', () => {
 
       await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
 
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app = await appsRepository.getAppByUrn(appInfo.urn);
         expect(app?.status).toBe('running');
       });
@@ -185,7 +186,7 @@ describe('App lifecycle', () => {
 
       await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
 
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app = await appsRepository.getAppByUrn(appInfo.urn);
         expect(app?.status).toBe('running');
         expect(app?.version).toBe(1);
@@ -199,7 +200,7 @@ describe('App lifecycle', () => {
       // act
       await appLifecycleService.updateApp({ appUrn: appInfo.urn, performBackup: false });
 
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app = await appsRepository.getAppByUrn(appInfo.urn);
         expect(app?.status).toBe('running');
         expect(app?.version).toBe(2);
@@ -224,7 +225,7 @@ describe('App lifecycle', () => {
       await appLifecycleService.installApp({ appUrn: app2Info.urn, form: {} });
       await appLifecycleService.installApp({ appUrn: app3Info.urn, form: {} });
 
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app1 = await appsRepository.getAppByUrn(app1Info.urn);
         const app2 = await appsRepository.getAppByUrn(app2Info.urn);
         const app3 = await appsRepository.getAppByUrn(app3Info.urn);
@@ -239,13 +240,13 @@ describe('App lifecycle', () => {
       // act
       await appLifecycleService.updateAllApps();
 
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app1 = await appsRepository.getAppByUrn(app1Info.urn);
         expect(app1?.status).toBe('running');
         expect(app1?.version).toBe(2);
       });
 
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app3 = await appsRepository.getAppByUrn(app3Info.urn);
         expect(app3?.status).toBe('running');
         expect(app3?.version).toBe(4);
@@ -274,7 +275,7 @@ describe('App lifecycle', () => {
 
       await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
 
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app = await appsRepository.getAppByUrn(appInfo.urn);
         expect(app?.status).toBe('running');
       });
@@ -289,7 +290,7 @@ describe('App lifecycle', () => {
       await appLifecycleService.startApp({ appUrn: appInfo.urn });
 
       // assert
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app = await appsRepository.getAppByUrn(appInfo.urn);
         expect(app?.status).toBe('running');
       });
@@ -333,7 +334,7 @@ describe('App lifecycle', () => {
       // act
       await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
 
-      await waitFor(async () => {
+      await waitUntil(async () => {
         const app = await appsRepository.getAppByUrn(appInfo.urn);
         expect(app?.status).toBe('running');
       });

@@ -1,5 +1,5 @@
 import { fs, vol } from 'memfs';
-import type { IMkdirOptions } from 'memfs/lib/node/types/options';
+import type { IMkdirOptions } from 'memfs/lib/node/types/options.js';
 
 const copyFolderRecursiveSync = (src: string, dest: string) => {
   const exists = vol.existsSync(src);

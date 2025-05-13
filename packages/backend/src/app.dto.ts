@@ -1,9 +1,9 @@
 import { createZodDto } from 'nestjs-zod';
-import { UserDto } from './modules/user/dto/user.dto';
+import { UserDto } from './modules/user/dto/user.dto.js';
 
 import { z } from 'zod';
-import { LOG_LEVEL_ENUM } from './core/logger/logger.service';
-import { AppInfoSimpleDto } from './modules/marketplace/dto/marketplace.dto';
+import { LOG_LEVEL_ENUM } from './core/logger/logger.service.js';
+import { AppInfoSimpleDto } from './modules/marketplace/dto/marketplace.dto.js';
 
 export const settingsSchema = z.object({
   dnsIp: z.string().ip().trim(),

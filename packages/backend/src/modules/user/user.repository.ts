@@ -1,6 +1,6 @@
-import { DATABASE, type Database } from '@/core/database/database.module';
-import { user } from '@/core/database/drizzle/schema';
-import type { NewUser } from '@/core/database/drizzle/types';
+import { DATABASE, type Database } from '@/core/database/database.module.js';
+import { user } from '@/core/database/drizzle/schema.js';
+import type { NewUser } from '@/core/database/drizzle/types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm/sql';
 

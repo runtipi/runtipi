@@ -1,7 +1,7 @@
-import type { Architecture } from '@/common/constants';
+import type { Architecture } from '@/common/constants.js';
 import type { ServiceInput } from '@runtipi/common/schemas';
 import { describe, expect, it } from 'vitest';
-import { mergeArchitectureOverrides } from '../compose-helpers';
+import { mergeArchitectureOverrides } from '../compose-helpers.js';
 
 describe('mergeArchitectureOverrides', () => {
   const baseServices: ServiceInput[] = [

@@ -1,14 +1,14 @@
-import { LoggerService } from '@/core/logger/logger.service';
-import { AppFilesManager } from '@/modules/apps/app-files-manager';
-import { AppHelpers } from '@/modules/apps/app.helpers';
-import { BackupManager } from '@/modules/backups/backup.manager';
-import { DockerService } from '@/modules/docker/docker.service';
-import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
-import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import { LoggerService } from '@/core/logger/logger.service.js';
+import { AppFilesManager } from '@/modules/apps/app-files-manager.js';
+import { AppHelpers } from '@/modules/apps/app.helpers.js';
+import { BackupManager } from '@/modules/backups/backup.manager.js';
+import { DockerService } from '@/modules/docker/docker.service.js';
+import { MarketplaceService } from '@/modules/marketplace/marketplace.service.js';
+import type { AppEventFormInput } from '@/modules/queue/entities/app-events.js';
 import type { ModuleRef } from '@nestjs/core';
 import type { AppUrn } from '@runtipi/common/types';
 import type Dockerode from 'dockerode';
-import { AppLifecycleCommand } from './command';
+import { AppLifecycleCommand } from './command.js';
 
 export class UpdateAppCommand extends AppLifecycleCommand {
   constructor(

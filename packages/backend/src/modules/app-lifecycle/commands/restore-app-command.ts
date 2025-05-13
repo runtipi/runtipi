@@ -1,10 +1,10 @@
-import { LoggerService } from '@/core/logger/logger.service';
-import { BackupManager } from '@/modules/backups/backup.manager';
-import { DockerService } from '@/modules/docker/docker.service';
+import { LoggerService } from '@/core/logger/logger.service.js';
+import { BackupManager } from '@/modules/backups/backup.manager.js';
+import { DockerService } from '@/modules/docker/docker.service.js';
 import type { ModuleRef } from '@nestjs/core';
 import type { AppUrn } from '@runtipi/common/types';
 import type Dockerode from 'dockerode';
-import { AppLifecycleCommand } from './command';
+import { AppLifecycleCommand } from './command.js';
 
 export class RestoreAppCommand extends AppLifecycleCommand {
   constructor(

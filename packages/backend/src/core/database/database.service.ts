@@ -2,9 +2,9 @@ import path from 'node:path';
 import { Injectable } from '@nestjs/common';
 import { type NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { ConfigurationService } from '../config/configuration.service';
-import { LoggerService } from '../logger/logger.service';
-import * as schema from './drizzle/schema';
+import { ConfigurationService } from '../config/configuration.service.js';
+import { LoggerService } from '../logger/logger.service.js';
+import * as schema from './drizzle/schema.js';
 
 @Injectable()
 export class DatabaseService {

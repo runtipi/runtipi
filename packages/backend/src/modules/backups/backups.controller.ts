@@ -1,10 +1,10 @@
-import { castAppUrn } from '@/common/helpers/app-helpers';
+import { castAppUrn } from '@/common/helpers/app-helpers.js';
 import { Body, Controller, Delete, Get, Injectable, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { AuthGuard } from '../auth/auth.guard';
-import { BackupsService } from './backups.service';
-import { DeleteAppBackupBodyDto, GetAppBackupsDto, GetAppBackupsQueryDto, RestoreAppBackupDto } from './dto/backups.dto';
+import { AuthGuard } from '../auth/auth.guard.js';
+import { BackupsService } from './backups.service.js';
+import { DeleteAppBackupBodyDto, GetAppBackupsDto, GetAppBackupsQueryDto, RestoreAppBackupDto } from './dto/backups.dto.js';
 
 @Injectable()
 @UseGuards(AuthGuard)

@@ -1,22 +1,22 @@
-import { TranslatableError } from '@/common/error/translatable-error';
-import { createAppUrn, extractAppUrn } from '@/common/helpers/app-helpers';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { LoggerService } from '@/core/logger/logger.service';
-import { SSEService } from '@/core/sse/sse.service';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { createAppUrn, extractAppUrn } from '@/common/helpers/app-helpers.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
+import { SSEService } from '@/core/sse/sse.service.js';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { lt, valid } from 'semver';
 import semver from 'semver';
 import validator, { isFQDN } from 'validator';
 import type { z } from 'zod';
-import { AppFilesManager } from '../apps/app-files-manager';
-import { AppsRepository } from '../apps/apps.repository';
-import { AppsService } from '../apps/apps.service';
-import { BackupManager } from '../backups/backup.manager';
-import { MarketplaceService } from '../marketplace/marketplace.service';
-import { AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events';
-import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
-import { appFormSchema } from './dto/app-lifecycle.dto';
+import { AppFilesManager } from '../apps/app-files-manager.js';
+import { AppsRepository } from '../apps/apps.repository.js';
+import { AppsService } from '../apps/apps.service.js';
+import { BackupManager } from '../backups/backup.manager.js';
+import { MarketplaceService } from '../marketplace/marketplace.service.js';
+import { AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events.js';
+import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory.js';
+import { appFormSchema } from './dto/app-lifecycle.dto.js';
 
 @Injectable()
 export class AppLifecycleService {

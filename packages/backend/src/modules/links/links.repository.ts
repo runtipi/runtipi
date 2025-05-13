@@ -1,8 +1,8 @@
-import { DATABASE, type Database } from '@/core/database/database.module';
-import { link as linkTable } from '@/core/database/drizzle/schema';
+import { DATABASE, type Database } from '@/core/database/database.module.js';
+import { link as linkTable } from '@/core/database/drizzle/schema.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import type { EditLinkBodyDto, LinkBodyDto } from './dto/links.dto';
+import type { EditLinkBodyDto, LinkBodyDto } from './dto/links.dto.js';
 
 @Injectable()
 export class LinksRepository {

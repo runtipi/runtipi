@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
 import crypto from 'node:crypto';
-import os from 'node:os';
-import webpush from 'web-push';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import { DATA_DIR } from '@/common/constants';
+import { DATA_DIR } from '@/common/constants.js';
+import { Injectable } from '@nestjs/common';
+import webpush from 'web-push';
 
 type RandomFieldEncoding = 'hex' | 'base64';
 

@@ -1,7 +1,7 @@
-import { ConfigurationService } from '@/core/config/configuration.service';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
 import { Injectable } from '@nestjs/common';
 import { type HealthIndicatorResult, HealthIndicatorService } from '@nestjs/terminus';
-import Connection from 'rabbitmq-client';
+import { Connection } from 'rabbitmq-client';
 
 @Injectable()
 export class QueueHealthIndicator {

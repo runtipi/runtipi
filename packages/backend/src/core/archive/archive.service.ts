@@ -1,4 +1,4 @@
-import { execAsync } from '@/common/helpers/exec-helpers';
+import { execAsync } from '@/common/helpers/exec-helpers.js';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

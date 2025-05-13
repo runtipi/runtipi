@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { QueueModule } from '../queue/queue.module';
-import { AppStoreRepository } from './app-store.repository';
-import { AppStoreService } from './app-store.service';
-import { ReposHelpers } from './repos.helpers';
+import { QueueModule } from '../queue/queue.module.js';
+import { AppStoreRepository } from './app-store.repository.js';
+import { AppStoreService } from './app-store.service.js';
+import { ReposHelpers } from './repos.helpers.js';
 
 @Module({
   imports: [QueueModule],

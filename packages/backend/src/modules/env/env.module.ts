@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { EnvUtils } from './env.utils';
+import { EnvUtils } from './env.utils.js';
 
 @Module({
   imports: [],

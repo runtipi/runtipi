@@ -1,3 +1,3 @@
-import type { AppUrn } from './app-urn.ts';
+import type { AppUrn } from './app-urn.js';
 
 export type { AppUrn };

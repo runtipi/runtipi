@@ -2,17 +2,17 @@ import path from 'node:path';
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { z } from 'zod';
-import { LATEST_RELEASE_URL } from './common/constants';
-import { execAsync } from './common/helpers/exec-helpers';
-import { CacheService, ONE_DAY_IN_SECONDS } from './core/cache/cache.service';
-import { ConfigurationService } from './core/config/configuration.service';
-import { DatabaseService } from './core/database/database.service';
-import { FilesystemService } from './core/filesystem/filesystem.service';
-import { LoggerService } from './core/logger/logger.service';
-import { AppLifecycleService } from './modules/app-lifecycle/app-lifecycle.service';
-import { AppStoreService } from './modules/app-stores/app-store.service';
-import { MarketplaceService } from './modules/marketplace/marketplace.service';
-import { RepoEventsQueue } from './modules/queue/entities/repo-events';
+import { LATEST_RELEASE_URL } from './common/constants.js';
+import { execAsync } from './common/helpers/exec-helpers.js';
+import { CacheService, ONE_DAY_IN_SECONDS } from './core/cache/cache.service.js';
+import { ConfigurationService } from './core/config/configuration.service.js';
+import { DatabaseService } from './core/database/database.service.js';
+import { FilesystemService } from './core/filesystem/filesystem.service.js';
+import { LoggerService } from './core/logger/logger.service.js';
+import { AppLifecycleService } from './modules/app-lifecycle/app-lifecycle.service.js';
+import { AppStoreService } from './modules/app-stores/app-store.service.js';
+import { MarketplaceService } from './modules/marketplace/marketplace.service.js';
+import { RepoEventsQueue } from './modules/queue/entities/repo-events.js';
 
 @Injectable()
 export class AppService {

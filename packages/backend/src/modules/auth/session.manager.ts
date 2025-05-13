@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { CacheService } from '@/core/cache/cache.service';
+import { CacheService } from '@/core/cache/cache.service.js';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

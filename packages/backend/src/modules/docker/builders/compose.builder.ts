@@ -1,10 +1,10 @@
-import { extractAppUrn } from '@/common/helpers/app-helpers';
-import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import { extractAppUrn } from '@/common/helpers/app-helpers.js';
+import type { AppEventFormInput } from '@/modules/queue/entities/app-events.js';
 import { type Service, type ServiceInput, serviceSchema } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import * as yaml from 'yaml';
-import { type BuiltService, ServiceBuilder } from './service.builder';
-import { TraefikLabelsBuilder } from './traefik-labels.builder';
+import { type BuiltService, ServiceBuilder } from './service.builder.js';
+import { TraefikLabelsBuilder } from './traefik-labels.builder.js';
 
 interface Network {
   key: string;

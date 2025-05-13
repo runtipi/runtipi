@@ -1,10 +1,10 @@
-import { ConfigurationService } from '@/core/config/configuration.service';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { AppEventsQueue, appEventResultSchema, appEventSchema } from './entities/app-events';
-import { RepoEventsQueue, repoCommandResultSchema, repoCommandSchema } from './entities/repo-events';
-import { QueueFactory } from './queue.factory';
-import { QueueHealthIndicator } from './queue.health';
+import { AppEventsQueue, appEventResultSchema, appEventSchema } from './entities/app-events.js';
+import { RepoEventsQueue, repoCommandResultSchema, repoCommandSchema } from './entities/repo-events.js';
+import { QueueFactory } from './queue.factory.js';
+import { QueueHealthIndicator } from './queue.health.js';
 
 @Module({
   imports: [TerminusModule],

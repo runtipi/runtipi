@@ -1,14 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { type PartialUserSettingsDto, settingsSchema } from '@/app.dto';
-import { APP_DATA_DIR, APP_DIR, ARCHITECTURES, DATA_DIR } from '@/common/constants';
-import { TranslatableError } from '@/common/error/translatable-error';
-import { EnvUtils } from '@/modules/env/env.utils';
+import { type PartialUserSettingsDto, settingsSchema } from '@/app.dto.js';
+import { APP_DATA_DIR, APP_DIR, ARCHITECTURES, DATA_DIR } from '@/common/constants.js';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { EnvUtils } from '@/modules/env/env.utils.js';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import dotenv from 'dotenv';
 import { z } from 'zod';
-import { LOG_LEVEL_ENUM, type LogLevel, LoggerService } from '../logger/logger.service';
+import { LOG_LEVEL_ENUM, type LogLevel, LoggerService } from '../logger/logger.service.js';
 
 const envSchema = z.object({
   POSTGRES_HOST: z.string(),
@@ -42,8 +42,8 @@ const envSchema = z.object({
   NGINX_PORT: z.coerce.number().default(80),
   NGINX_PORT_SSL: z.coerce.number().default(443),
   ADVANCED_SETTINGS: z.string().transform((val) => val.toLowerCase() === 'true'),
-  THEME_BASE: z.string(),
-  THEME_COLOR: z.string(),
+  THEME_BASE: z.string().optional(),
+  THEME_COLOR: z.string().optional(),
   // Experimental flags
   EXPERIMENTAL_INSECURE_COOKIE: z.string().transform((val) => val.toLowerCase() === 'true'),
 });
@@ -127,8 +127,8 @@ export class ConfigurationService {
         eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES,
         advancedSettings: env.data.ADVANCED_SETTINGS,
         logLevel: env.data.LOG_LEVEL,
-        themeBase: env.data.THEME_BASE,
-        themeColor: env.data.THEME_COLOR,
+        themeBase: env.data.THEME_BASE || 'gray',
+        themeColor: env.data.THEME_COLOR || 'blue',
         experimental: {
           insecureCookie: env.data.EXPERIMENTAL_INSECURE_COOKIE,
         },

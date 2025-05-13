@@ -1,12 +1,12 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
-import { AppFilesManager } from '../apps/app-files-manager';
+import { AppFilesManager } from '../apps/app-files-manager.js';
 
 @Injectable()
 export class DockerService {

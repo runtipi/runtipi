@@ -1,9 +1,9 @@
-import type { LoggerService } from '@/core/logger/logger.service';
+import type { LoggerService } from '@/core/logger/logger.service.js';
 import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import type { Request, Response } from 'express';
 import { ZodError } from 'zod';
-import { TranslatableError } from './translatable-error';
+import { TranslatableError } from './translatable-error.js';
 
 @Catch()
 export class MainExceptionFilter implements ExceptionFilter {

@@ -2,18 +2,18 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import type Dockerode from 'dockerode';
 import type { z } from 'zod';
-import { DOCKERODE } from '../docker/docker.module';
-import type { appEventSchema } from '../queue/entities/app-events';
-import { BackupAppCommand } from './commands/backup-app-command';
-import { GenerateAppEnvCommand } from './commands/generate-env-command';
-import { InstallAppCommand } from './commands/install-app-command';
-import { ResetAppCommand } from './commands/reset-app-command';
-import { RestartAppCommand } from './commands/restart-app-command';
-import { RestoreAppCommand } from './commands/restore-app-command';
-import { StartAppCommand } from './commands/start-app-command';
-import { StopAppCommand } from './commands/stop-app-command';
-import { UninstallAppCommand } from './commands/uninstall-app-command';
-import { UpdateAppCommand } from './commands/update-app-command';
+import { DOCKERODE } from '../docker/docker.module.js';
+import type { appEventSchema } from '../queue/entities/app-events.js';
+import { BackupAppCommand } from './commands/backup-app-command.js';
+import { GenerateAppEnvCommand } from './commands/generate-env-command.js';
+import { InstallAppCommand } from './commands/install-app-command.js';
+import { ResetAppCommand } from './commands/reset-app-command.js';
+import { RestartAppCommand } from './commands/restart-app-command.js';
+import { RestoreAppCommand } from './commands/restore-app-command.js';
+import { StartAppCommand } from './commands/start-app-command.js';
+import { StopAppCommand } from './commands/stop-app-command.js';
+import { UninstallAppCommand } from './commands/uninstall-app-command.js';
+import { UpdateAppCommand } from './commands/update-app-command.js';
 
 @Injectable()
 export class AppLifecycleCommandFactory {

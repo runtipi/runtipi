@@ -1,15 +1,15 @@
-import { createAppUrn } from '@/common/helpers/app-helpers';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { EnvUtils } from '@/modules/env/env.utils';
+import { createAppUrn } from '@/common/helpers/app-helpers.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import { EnvUtils } from '@/modules/env/env.utils.js';
 import { Test } from '@nestjs/testing';
 import type { AppInfo } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import { AppFilesManager } from '../app-files-manager';
-import { AppHelpers } from '../app.helpers';
+import { AppFilesManager } from '../app-files-manager.js';
+import { AppHelpers } from '../app.helpers.js';
 
 describe('AppHelpers', () => {
   let appHelpers: AppHelpers;

@@ -1,10 +1,10 @@
 import path from 'node:path';
-import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { execAsync } from '@/common/helpers/exec-helpers';
-import type { ConfigurationService } from '@/core/config/configuration.service';
-import type { AppStore } from '@/core/database/drizzle/types';
-import type { FilesystemService } from '@/core/filesystem/filesystem.service';
-import type { LoggerService } from '@/core/logger/logger.service';
+import { extractAppUrn } from '@/common/helpers/app-helpers.js';
+import { execAsync } from '@/common/helpers/exec-helpers.js';
+import type { ConfigurationService } from '@/core/config/configuration.service.js';
+import type { AppStore } from '@/core/database/drizzle/types.js';
+import type { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import type { LoggerService } from '@/core/logger/logger.service.js';
 import { appInfoSchema } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 

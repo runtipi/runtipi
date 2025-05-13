@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Client } from 'pg';
-import * as schema from '../../core/database/drizzle/schema';
+import * as schema from '../../core/database/drizzle/schema.js';
 
 export type TestDatabase = Awaited<ReturnType<typeof createTestDatabase>>;
 

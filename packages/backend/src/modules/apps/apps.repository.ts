@@ -1,7 +1,7 @@
-import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { DATABASE, type Database } from '@/core/database/database.module';
-import { app } from '@/core/database/drizzle/schema';
-import type { AppStatus, NewApp } from '@/core/database/drizzle/types';
+import { extractAppUrn } from '@/common/helpers/app-helpers.js';
+import { DATABASE, type Database } from '@/core/database/database.module.js';
+import { app } from '@/core/database/drizzle/schema.js';
+import type { AppStatus, NewApp } from '@/core/database/drizzle/types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { and, asc, eq, ne, notInArray } from 'drizzle-orm';

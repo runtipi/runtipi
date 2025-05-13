@@ -1,9 +1,9 @@
 import path from 'node:path';
-import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { execAsync } from '@/common/helpers/exec-helpers';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
+import { extractAppUrn } from '@/common/helpers/app-helpers.js';
+import { execAsync } from '@/common/helpers/exec-helpers.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Injectable } from '@nestjs/common';
 import { appInfoSchema } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';

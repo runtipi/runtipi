@@ -1,10 +1,10 @@
-import { TranslatableError } from '@/common/error/translatable-error';
+import { TranslatableError } from '@/common/error/translatable-error.js';
 import { Body, Controller, Delete, Get, Injectable, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { AuthGuard } from '../auth/auth.guard';
-import { EditLinkBodyDto, LinkBodyDto, LinksDto } from './dto/links.dto';
-import { LinksService } from './links.service';
+import { AuthGuard } from '../auth/auth.guard.js';
+import { EditLinkBodyDto, LinkBodyDto, LinksDto } from './dto/links.dto.js';
+import { LinksService } from './links.service.js';
 
 @Injectable()
 @Controller('links')

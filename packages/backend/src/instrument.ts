@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/nestjs';
-import { cleanseErrorData } from './common/helpers/error-helpers';
+import { cleanseErrorData } from './common/helpers/error-helpers.js';
 
 Sentry.init({
   release: process.env.TIPI_VERSION,

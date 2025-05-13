@@ -1,10 +1,10 @@
-import { DockerService } from '@/modules/docker/docker.service';
-import { colorizeLogs } from '@/modules/docker/helpers/colorize-logs';
+import { DockerService } from '@/modules/docker/docker.service.js';
+import { colorizeLogs } from '@/modules/docker/helpers/colorize-logs.js';
 import { Injectable, type MessageEvent } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { Observable, Subject, interval } from 'rxjs';
-import { LoggerService } from '../logger/logger.service';
-import type { SSE, Topic } from './dto/sse.dto';
+import { LoggerService } from '../logger/logger.service.js';
+import type { SSE, Topic } from './dto/sse.dto.js';
 
 @Injectable()
 export class SSEService {

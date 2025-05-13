@@ -1,12 +1,12 @@
-import { TranslatableError } from '@/common/error/translatable-error';
-import { createAppUrn } from '@/common/helpers/app-helpers';
-import { pLimit } from '@/common/helpers/file-helpers';
-import { LoggerService } from '@/core/logger/logger.service';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { createAppUrn } from '@/common/helpers/app-helpers.js';
+import { pLimit } from '@/common/helpers/file-helpers.js';
+import { LoggerService } from '@/core/logger/logger.service.js';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
-import { MarketplaceService } from '../marketplace/marketplace.service';
-import { AppFilesManager } from './app-files-manager';
-import { AppsRepository } from './apps.repository';
+import { MarketplaceService } from '../marketplace/marketplace.service.js';
+import { AppFilesManager } from './app-files-manager.js';
+import { AppsRepository } from './apps.repository.js';
 
 type AppList = Awaited<ReturnType<AppsRepository['getApps']>>;
 

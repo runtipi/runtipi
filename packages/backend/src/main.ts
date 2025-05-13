@@ -1,4 +1,4 @@
-import './instrument';
+import './instrument.js';
 
 import { patchNestJsSwagger } from 'nestjs-zod';
 
@@ -8,22 +8,19 @@ import { type INestApplication, type LogLevel, ValidationPipe } from '@nestjs/co
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
-import { AppModule } from './app.module';
-import { AppService } from './app.service';
-import { APP_DIR } from './common/constants';
-import { generateSystemEnvFile } from './common/helpers/env-helpers';
-import metadata from './metadata';
+import { AppModule } from './app.module.js';
+import { AppService } from './app.service.js';
+import { APP_DIR } from './common/constants.js';
+import { generateSystemEnvFile } from './common/helpers/env-helpers.js';
 
 async function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder().setTitle('Runtipi API').setDescription('API specs for Runtipi').setVersion('1.0').build();
-  await SwaggerModule.loadPluginMetadata(metadata);
 
   const document = SwaggerModule.createDocument(app, config, {
     operationIdFactory: (_: string, methodKey: string) => methodKey,
   });
   SwaggerModule.setup('api/docs', app, document);
 
-  // write the swagger.json file to the assets folder
   if (process.env.NODE_ENV !== 'production') {
     await fs.promises.writeFile(path.join(APP_DIR, 'packages', 'backend', 'src', 'swagger.json'), JSON.stringify(document, null, 2));
   }

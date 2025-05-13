@@ -1,12 +1,12 @@
 import path from 'node:path';
-import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import { extractAppUrn } from '@/common/helpers/app-helpers.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
+import { FilesystemService } from '@/core/filesystem/filesystem.service.js';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
-import { EnvUtils } from '../env/env.utils';
-import type { AppEventFormInput } from '../queue/entities/app-events';
-import { AppFilesManager } from './app-files-manager';
+import { EnvUtils } from '../env/env.utils.js';
+import type { AppEventFormInput } from '../queue/entities/app-events.js';
+import { AppFilesManager } from './app-files-manager.js';
 
 @Injectable()
 export class AppHelpers {

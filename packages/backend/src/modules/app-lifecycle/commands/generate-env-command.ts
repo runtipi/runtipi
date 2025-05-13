@@ -1,8 +1,8 @@
-import { LoggerService } from '@/core/logger/logger.service';
-import { AppHelpers } from '@/modules/apps/app.helpers';
-import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import { LoggerService } from '@/core/logger/logger.service.js';
+import { AppHelpers } from '@/modules/apps/app.helpers.js';
+import type { AppEventFormInput } from '@/modules/queue/entities/app-events.js';
 import type { AppUrn } from '@runtipi/common/types';
-import { AppLifecycleCommand } from './command';
+import { AppLifecycleCommand } from './command.js';
 
 export class GenerateAppEnvCommand extends AppLifecycleCommand {
   public async execute(appUrn: AppUrn, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {

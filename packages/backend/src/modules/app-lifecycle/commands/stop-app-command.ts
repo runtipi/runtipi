@@ -1,10 +1,10 @@
-import { LoggerService } from '@/core/logger/logger.service';
-import { AppFilesManager } from '@/modules/apps/app-files-manager';
-import { AppHelpers } from '@/modules/apps/app.helpers';
-import { DockerService } from '@/modules/docker/docker.service';
-import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
+import { LoggerService } from '@/core/logger/logger.service.js';
+import { AppFilesManager } from '@/modules/apps/app-files-manager.js';
+import { AppHelpers } from '@/modules/apps/app.helpers.js';
+import { DockerService } from '@/modules/docker/docker.service.js';
+import type { AppEventFormInput } from '@/modules/queue/entities/app-events.js';
 import type { AppUrn } from '@runtipi/common/types';
-import { AppLifecycleCommand } from './command';
+import { AppLifecycleCommand } from './command.js';
 
 export class StopAppCommand extends AppLifecycleCommand {
   public async execute(appUrn: AppUrn, form: AppEventFormInput, skipEnvGeneration = false) {

@@ -1,8 +1,8 @@
 import path from 'node:path';
-import { DATA_DIR } from '@/common/constants';
+import { DATA_DIR } from '@/common/constants.js';
 import { Global, Module } from '@nestjs/common';
-import { ConfigurationService } from '../config/configuration.service';
-import { LoggerService } from './logger.service';
+import { ConfigurationService } from '../config/configuration.service.js';
+import { LoggerService } from './logger.service.js';
 
 @Global()
 @Module({

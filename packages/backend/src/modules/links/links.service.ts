@@ -1,8 +1,8 @@
-import { TranslatableError } from '@/common/error/translatable-error';
-import { ConfigurationService } from '@/core/config/configuration.service';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
 import { Injectable } from '@nestjs/common';
-import type { EditLinkBodyDto, LinkBodyDto } from './dto/links.dto';
-import { LinksRepository } from './links.repository';
+import type { EditLinkBodyDto, LinkBodyDto } from './dto/links.dto.js';
+import { LinksRepository } from './links.repository.js';
 
 @Injectable()
 export class LinksService {

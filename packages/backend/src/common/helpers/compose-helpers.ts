@@ -1,4 +1,4 @@
-import type { Architecture } from '@/common/constants';
+import type { Architecture } from '@/common/constants.js';
 import { type DynamicCompose, type ServiceInput } from '@runtipi/common/schemas';
 import deepmerge from 'deepmerge';
 

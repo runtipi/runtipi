@@ -2,11 +2,11 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { settingsSchema } from '@/app.dto';
-import { type LogLevel, LoggerService } from '@/core/logger/logger.service';
-import { EnvUtils } from '@/modules/env/env.utils';
+import { settingsSchema } from '@/app.dto.js';
+import { type LogLevel, LoggerService } from '@/core/logger/logger.service.js';
+import { EnvUtils } from '@/modules/env/env.utils.js';
 import dotenv from 'dotenv';
-import { DATA_DIR } from '../constants';
+import { DATA_DIR } from '../constants.js';
 
 const OLD_DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
 export const DEFAULT_REPO_URL = 'https://github.com/runtipi/runtipi-appstore';

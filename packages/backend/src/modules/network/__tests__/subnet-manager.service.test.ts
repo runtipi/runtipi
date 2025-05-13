@@ -1,12 +1,12 @@
-import { TranslatableError } from '@/common/error/translatable-error';
-import { AppsRepository } from '@/modules/apps/apps.repository';
-import { DOCKERODE } from '@/modules/docker/docker.module';
+import { TranslatableError } from '@/common/error/translatable-error.js';
+import { AppsRepository } from '@/modules/apps/apps.repository.js';
+import { DOCKERODE } from '@/modules/docker/docker.module.js';
 import { Test } from '@nestjs/testing';
 import type { AppUrn } from '@runtipi/common/types';
 import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import { SubnetManagerService } from '../subnet-manager.service';
+import { SubnetManagerService } from '../subnet-manager.service.js';
 
 // Create a mock for Dockerode
 const dockerMock = {

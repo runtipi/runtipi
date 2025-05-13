@@ -1,4 +1,4 @@
-import type { LoggerService } from '@/core/logger/logger.service';
+import type { LoggerService } from '@/core/logger/logger.service.js';
 import * as Sentry from '@sentry/nestjs';
 import cron from 'node-cron';
 import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';

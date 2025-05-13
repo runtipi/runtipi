@@ -1,9 +1,9 @@
-import { castAppUrn } from '@/common/helpers/app-helpers';
+import { castAppUrn } from '@/common/helpers/app-helpers.js';
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { AuthGuard } from '../auth/auth.guard';
-import { AppsService } from './apps.service';
-import { GetAppDto, GuestAppsDto, MyAppsDto } from './dto/app.dto';
+import { AuthGuard } from '../auth/auth.guard.js';
+import { AppsService } from './apps.service.js';
+import { GetAppDto, GuestAppsDto, MyAppsDto } from './dto/app.dto.js';
 
 @Controller('apps')
 export class AppsController {

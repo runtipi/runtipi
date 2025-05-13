@@ -1,9 +1,9 @@
-import { DatabaseService } from '@/core/database/database.service';
-import { app, appStore } from '@/core/database/drizzle/schema';
-import type { NewAppStore } from '@/core/database/drizzle/types';
+import { DatabaseService } from '@/core/database/database.service.js';
+import { app, appStore } from '@/core/database/drizzle/schema.js';
+import type { NewAppStore } from '@/core/database/drizzle/types.js';
 import { Injectable } from '@nestjs/common';
 import { and, asc, count, eq } from 'drizzle-orm';
-import { ReposHelpers } from './repos.helpers';
+import { ReposHelpers } from './repos.helpers.js';
 
 @Injectable()
 export class AppStoreRepository {

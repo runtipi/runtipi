@@ -1,10 +1,10 @@
-import { SESSION_COOKIE_NAME } from '@/common/constants';
-import { CacheService } from '@/core/cache/cache.service';
-import { ConfigurationService } from '@/core/config/configuration.service';
+import { SESSION_COOKIE_NAME } from '@/common/constants.js';
+import { CacheService } from '@/core/cache/cache.service.js';
+import { ConfigurationService } from '@/core/config/configuration.service.js';
 import { Injectable, type NestMiddleware } from '@nestjs/common';
 import type { NextFunction, Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import { UserRepository } from '../user/user.repository';
+import { UserRepository } from '../user/user.repository.js';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {

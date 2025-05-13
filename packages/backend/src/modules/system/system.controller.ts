@@ -1,9 +1,9 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { AuthGuard } from '../auth/auth.guard';
-import { LoadDto } from './dto/system.dto';
-import { SystemService } from './system.service';
+import { AuthGuard } from '../auth/auth.guard.js';
+import { LoadDto } from './dto/system.dto.js';
+import { SystemService } from './system.service.js';
 
 @Controller('system')
 export class SystemController {

@@ -1,5 +1,5 @@
+import messages from '@/modules/i18n/translations/en.json' with { type: 'json' };
 import { HttpException, type HttpExceptionOptions } from '@nestjs/common';
-import messages from '@/modules/i18n/translations/en.json';
 
 type TranslationKey = keyof typeof messages;
 
