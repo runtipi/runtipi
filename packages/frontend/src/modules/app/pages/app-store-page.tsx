@@ -10,7 +10,7 @@ export const AppStorePageSuspense = () => {
   return <div className="card px-3 pb-3" style={{ height: 4000 }} />;
 };
 
-export const AppStorePage = () => {
+export default () => {
   const params = useParams<{ storeId: string }>();
 
   const { category, search, storeId } = useAppStoreState();
