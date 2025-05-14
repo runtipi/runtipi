@@ -28,3 +28,5 @@ public/js/*
 
 # Sentry Config File
 .env.sentry-build-plugin
+/.react-router/
+

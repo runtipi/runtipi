@@ -8,7 +8,7 @@ import { AppStatus } from '../components/app-status/app-status';
 import { AppActions } from '../containers/app-actions/app-actions';
 import { AppDetailsTabs } from '../containers/app-details-tabs/app-details-tabs';
 
-export const AppDetailsPage = () => {
+export default () => {
   const { t } = useTranslation();
 
   const { appId, storeId } = useParams<{ appId: string; storeId: string }>();

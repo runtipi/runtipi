@@ -8,7 +8,7 @@ import { AddLinkButton } from '../components/add-link-tile/add-link-tile';
 import { AppTile } from '../components/app-tile/app-tile';
 import { LinkTile } from '../components/link-tile/link-tile';
 
-export const MyAppsPage = () => {
+export default () => {
   const params = useParams<{ storeId: string }>();
 
   const { data: apps } = useSuspenseQuery({

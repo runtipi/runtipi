@@ -10,7 +10,7 @@ import { DashboardLayout, DashboardLayoutSuspense } from '../layouts/dashboard/l
 import { SSEProvider } from '../providers/sse/sse-provider';
 import { RouteWrapper } from './route-wrapper';
 
-export const AuthenticatedRoute = () => {
+export default () => {
   const { isLoggedIn, isGuestDashboardEnabled } = useUserContext();
 
   if (!isLoggedIn && !isGuestDashboardEnabled) {

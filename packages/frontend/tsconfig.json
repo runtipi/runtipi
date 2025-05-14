@@ -21,7 +21,13 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["@testing-library/jest-dom"]
+    "types": [
+      "@testing-library/jest-dom"
+    ],
+    "rootDirs": [
+      ".",
+      "./.react-router/types"
+    ]
   },
   "exclude": ["./src/api-client/**/*"]
 }
