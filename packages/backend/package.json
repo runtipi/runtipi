@@ -77,7 +77,7 @@
     "@nestjs/testing": "^11.1.0",
     "@sentry/core": "^9.17.0",
     "@sentry/esbuild-plugin": "^3.4.0",
-    "@swc/cli": "0.7.5",
+    "@swc/cli": "0.7.7",
     "@swc/core": "^1.11.24",
     "@total-typescript/shoehorn": "^0.1.2",
     "@types/cookie-parser": "^1.4.8",
