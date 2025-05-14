@@ -34,7 +34,7 @@
     "@otplib/plugin-crypto": "^12.0.1",
     "@otplib/plugin-thirty-two": "^12.0.1",
     "@runtipi/common": "workspace:*",
-    "@sentry/nestjs": "^9.17.0",
+    "@sentry/nestjs": "^9.18.0",
     "ansi-to-html": "^0.7.2",
     "argon2": "^0.43.0",
     "class-transformer": "^0.5.1",
