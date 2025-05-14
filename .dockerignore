@@ -18,4 +18,4 @@
 !**/vite.config.ts
 !**/index.html
 !**/build.mjs
-
+!**/react-router.config.ts

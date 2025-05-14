@@ -4,7 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { SystemStat } from '../components/system-stat';
 
-export const DashboardPage = () => {
+export default () => {
   const { t } = useTranslation();
   const { data } = useSuspenseQuery({
     ...systemLoadOptions(),
