@@ -43,11 +43,6 @@ services:
     container_name: runtipi-queue
     image: rabbitmq:4-alpine
     restart: unless-stopped
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping
-      interval: 5s
-      timeout: 3s
-      retries: 20
     environment:
       RABBITMQ_DEFAULT_USER: tipi
       RABBITMQ_DEFAULT_PASS: rabbitmq
@@ -65,7 +60,7 @@ services:
       runtipi-db:
         condition: service_healthy
       runtipi-queue:
-        condition: service_healthy
+        condition: service_started
     container_name: runtipi
     restart: unless-stopped
     healthcheck:
