@@ -73,7 +73,6 @@ jobs:
           images: ghcr.io/${{ github.repository_owner }}/runtipi
           tags: |
             type=raw,value=latest,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
-            type=latest,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
             type=semver,pattern={{version}},prefix=v
             type=semver,pattern={{major}},prefix=v,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
             type=semver,pattern={{major}}.{{minor}},prefix=v,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
