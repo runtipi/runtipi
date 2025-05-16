@@ -78,9 +78,6 @@ importers:
       '@sentry/nestjs':
         specifier: ^9.19.0
         version: 9.19.0(@nestjs/common@11.1.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.0)
-      '@sentry/profiling-node':
-        specifier: ^9.19.0
-        version: 9.19.0
       ansi-to-html:
         specifier: ^0.7.2
         version: 0.7.2
@@ -2784,10 +2781,6 @@ packages:
     resolution: {integrity: sha512-C2jBlGgYVGm8eXK38wlYQyd6NsHKaQlENg5fx8TDFMKWMNmLf6BmnPZ+y73OsFwcUtBz04CwZteybYB2GgYrvQ==}
     engines: {node: '>=18'}
 
-  '@sentry-internal/node-cpu-profiler@2.2.0':
-    resolution: {integrity: sha512-oLHVYurqZfADPh5hvmQYS5qx8t0UZzT2u6+/68VXsFruQEOnYJTODKgU3BVLmemRs3WE6kCJjPeFdHVYOQGSzQ==}
-    engines: {node: '>=18'}
-
   '@sentry-internal/replay-canvas@9.17.0':
     resolution: {integrity: sha512-w9AxBJIa+MbxDngvwnqouoJ/ezb7wNjxzFXtmaVtGp7hbC4yme/TOTNtFYg2J/ceQf3GMc8AfW5tsP6zU0R7gg==}
     engines: {node: '>=18'}
@@ -2887,11 +2880,6 @@ packages:
       '@opentelemetry/instrumentation': ^0.57.1 || ^0.200.0
       '@opentelemetry/sdk-trace-base': ^1.30.1 || ^2.0.0
       '@opentelemetry/semantic-conventions': ^1.30.0
-
-  '@sentry/profiling-node@9.19.0':
-    resolution: {integrity: sha512-wZLEsJt4Bp/hZuMBYeLXKKzOUKPW5+0XATLT2CI2J8KPHktLFggvmbgRES+p+aXZV3v4fSM2l0PSLmgiQbxy4A==}
-    engines: {node: '>=18'}
-    hasBin: true
 
   '@sentry/react@9.17.0':
     resolution: {integrity: sha512-hJOVUheFoUKr5e4vHxyKiu72FRgqmMTFIUG9myim8PH8mJYDqab7Z7cOt4dsBR86soKanaRB5PJq5jGFuipLfg==}
@@ -9514,11 +9502,6 @@ snapshots:
     dependencies:
       '@sentry/core': 9.17.0
 
-  '@sentry-internal/node-cpu-profiler@2.2.0':
-    dependencies:
-      detect-libc: 2.0.4
-      node-abi: 3.75.0
-
   '@sentry-internal/replay-canvas@9.17.0':
     dependencies:
       '@sentry-internal/replay': 9.17.0
@@ -9668,14 +9651,6 @@ snapshots:
       '@opentelemetry/sdk-trace-base': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/semantic-conventions': 1.33.0
       '@sentry/core': 9.19.0
-
-  '@sentry/profiling-node@9.19.0':
-    dependencies:
-      '@sentry-internal/node-cpu-profiler': 2.2.0
-      '@sentry/core': 9.19.0
-      '@sentry/node': 9.19.0
-    transitivePeerDependencies:
-      - supports-color
 
   '@sentry/react@9.17.0(react@19.1.0)':
     dependencies:
@@ -10991,7 +10966,8 @@ snapshots:
 
   detect-indent@6.1.0: {}
 
-  detect-libc@2.0.4: {}
+  detect-libc@2.0.4:
+    optional: true
 
   detect-node-es@1.1.0: {}
 
@@ -12884,6 +12860,7 @@ snapshots:
   node-abi@3.75.0:
     dependencies:
       semver: 7.7.1
+    optional: true
 
   node-abort-controller@3.1.1: {}
 
