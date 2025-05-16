@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_type: ${{ steps.set-type.outputs.release_type }}
-      is_prerelease: ${{ steps.set-type.outputs.is_prerelease }}
       is_latest: ${{ steps.set-type.outputs.is_latest }}
       tagname: ${{ github.ref_name }}
     steps:
@@ -22,15 +21,12 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/}
           if [[ $TAG == *-alpha* ]]; then
             echo "release_type=alpha" >> $GITHUB_OUTPUT
-            echo "is_prerelease=true" >> $GITHUB_OUTPUT
             echo "is_latest=false" >> $GITHUB_OUTPUT
           elif [[ $TAG == *-beta* ]]; then
             echo "release_type=beta" >> $GITHUB_OUTPUT
-            echo "is_prerelease=true" >> $GITHUB_OUTPUT
             echo "is_latest=false" >> $GITHUB_OUTPUT
           else
             echo "release_type=release" >> $GITHUB_OUTPUT
-            echo "is_prerelease=true" >> $GITHUB_OUTPUT
             echo "is_latest=true" >> $GITHUB_OUTPUT
           fi
 
@@ -74,14 +70,18 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set Docker tags
-        id: docker_meta
-        run: |
-          if [[ "${{ needs.determine-release-type.outputs.is_latest }}" == "true" ]]; then
-            echo "tags=ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.determine-release-type.outputs.tagname }},ghcr.io/${{ github.repository_owner }}/runtipi:latest" >> $GITHUB_OUTPUT
-          else
-            echo "tags=ghcr.io/${{ github.repository_owner }}/runtipi:${{ needs.determine-release-type.outputs.tagname }}" >> $GITHUB_OUTPUT
-          fi
+      - name: Docker meta
+        id: meta
+        needs: determine-release-type
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/runtipi
+          tags: |
+            type=latest,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
+            type=semver,pattern={{version}},prefix=v
+            type=semver,pattern={{major}},prefix=v,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
+            type=semver,pattern={{major}}.{{minor}},prefix=v,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}},prefix=v,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
 
       - name: Build and push images
         uses: docker/build-push-action@v6
@@ -93,7 +93,8 @@ jobs:
             TIPI_VERSION=${{ needs.determine-release-type.outputs.tagname }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ghcr.io/${{ github.repository_owner }}/runtipi
 
   build-cli:
     needs: [determine-release-type]
@@ -170,7 +171,7 @@ jobs:
           tag_name: ${{ needs.determine-release-type.outputs.tagname }}
           name: ${{ needs.determine-release-type.outputs.tagname }}
           draft: false
-          prerelease: ${{ needs.determine-release-type.outputs.is_prerelease }}
+          prerelease: true
           files: cli/runtipi-cli-*
 
   e2e-tests:
