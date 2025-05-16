@@ -7,13 +7,13 @@
   "exports": {
     "./schemas": {
       "import": "./dist/schemas/index.js",
-      "default": "./dist/schemas/index.js",
-      "types": "./dist/schemas/index.d.ts"
+      "types": "./dist/schemas/index.d.ts",
+      "default": "./dist/schemas/index.js"
     },
     "./types": {
       "import": "./dist/types/index.js",
-      "default": "./dist/types/index.js",
-      "types": "./dist/types/index.d.ts"
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
     }
   },
   "typesVersions": {
