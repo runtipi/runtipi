@@ -1,4 +1,4 @@
-name: Unified Release Workflow
+name: Release Workflow
 
 on:
   push:
@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_type: ${{ steps.set-type.outputs.release_type }}
-      is_latest: ${{ steps.set-type.outputs.is_latest }}
       tagname: ${{ github.ref_name }}
     steps:
       - name: Set release type
@@ -21,13 +20,10 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/}
           if [[ $TAG == *-alpha* ]]; then
             echo "release_type=alpha" >> $GITHUB_OUTPUT
-            echo "is_latest=false" >> $GITHUB_OUTPUT
           elif [[ $TAG == *-beta* ]]; then
             echo "release_type=beta" >> $GITHUB_OUTPUT
-            echo "is_latest=false" >> $GITHUB_OUTPUT
           else
             echo "release_type=release" >> $GITHUB_OUTPUT
-            echo "is_latest=true" >> $GITHUB_OUTPUT
           fi
 
   integration-tests:
@@ -76,6 +72,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_owner }}/runtipi
           tags: |
+            type=raw,value=latest,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
             type=latest,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
             type=semver,pattern={{version}},prefix=v
             type=semver,pattern={{major}},prefix=v,enable=${{ needs.determine-release-type.outputs.release_type == 'release' }}
