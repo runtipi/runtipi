@@ -52,7 +52,7 @@
     "lodash.clonedeep": "^4.5.0",
     "minisearch": "^7.1.1",
     "nestjs-zod": "^4.3.1",
-    "node-cron": "^3.0.3",
+    "node-cron": "^4.0.5",
     "pg": "^8.15.6",
     "psl": "^1.15.0",
     "rabbitmq-client": "^5.0.4",
