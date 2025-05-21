@@ -19,7 +19,13 @@ import { EmptyPage } from '@/components/empty-page/empty-page';
 import { useUserContext } from '@/context/user-context';
 import { GuestLinkTile } from '../components/guest-link-tile';
 
-const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; localDomain: string }) => {
+const Tile = ({
+  data,
+  localDomain,
+}: {
+  data: GuestAppsDto['installed'][number];
+  localDomain: string;
+}) => {
   const { t } = useTranslation();
 
   const { info, app, metadata } = data;
@@ -34,7 +40,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
     if (typeof window !== 'undefined') {
       // Current domain
       const domain = window.location.hostname;
-      url = `${protocol}://${domain}:${info.port}${info.url_suffix || ''}`;
+      url = `${protocol}://${domain}:${app.port ?? info.port}${info.url_suffix || ''}`;
     }
 
     if (type === 'domain' && app.domain) {
@@ -74,7 +80,7 @@ const Tile = ({ data, localDomain }: { data: GuestAppsDto['installed'][number]; 
           {(app.openPort || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('port')}>
               <IconLockOff className="text-muted me-2" size={16} />
-              {hostname}:{info.port}
+              {hostname}:{app.port ?? info.port}
             </DropdownMenuItem>
           )}
         </DropdownMenuGroup>
