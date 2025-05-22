@@ -121,7 +121,7 @@
   "APP_STATUS_UPDATING": "Aktualizowanie",
   "APP_STATUS_BACKING_UP": "Tworzenie kopii",
   "APP_STATUS_RESTORING": "Przywracanie",
-  "APP_STATUS_PENDING_RESTART": "Pending Restart",
+  "APP_STATUS_PENDING_RESTART": "Oczekuje na Restart",
   "APP_STOP_FORM_SUBMIT": "Zatrzymaj",
   "APP_STOP_FORM_SUBTITLE": "Wszystkie dane zostaną zachowane",
   "APP_STOP_FORM_TITLE": "Zatrzymać {{name}}?",
@@ -284,7 +284,7 @@
   "MY_APPS_UPDATE_ALL_FORM_TITLE": "Zaktualizuj wszystkie aplikacje",
   "MY_APPS_UPDATE_ALL_IN_PROGRESS": "Aktualizowanie wszystkich aplikacji",
   "MY_APPS_UPDATE_AVAILABLE": "Dostępna aktualizacja",
-  "MY_APPS_PENDING_RESTART": "This app's configuration has changed. Restart the app to apply the changes.",
+  "MY_APPS_PENDING_RESTART": "Konfiguracja tej aplikacji została zmieniona. Zrestartuj aplikację, aby zastosować zmiany.",
   "RUNTIPI": "Runtipi",
   "SERVER_ERROR_INVALID_LOCALE": "Niepoprawne ustawienia regionalne",
   "SERVER_ERROR_NOT_ALLOWED_IN_DEMO": "Niedozwolone w trybie demo",
@@ -413,3 +413,4 @@
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Nieprawidłowa subdomena",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomena nie jest prawidłowa (dozwolone są tylko małe litery, cyfry i myślniki. Maksymalna długość to 63 znaki)"
 }
+
