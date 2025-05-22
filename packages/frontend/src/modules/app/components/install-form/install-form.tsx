@@ -1,11 +1,17 @@
+import type { GetRandomPortResponse } from '@/api-client';
+import { getRandomPortMutation } from '@/api-client/@tanstack/react-query.gen';
+import { Button } from '@/components/ui/Button';
 import { Input, InputGroup } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
 import { useAppContext } from '@/context/app-context';
 import type { AppInfo, FormField } from '@/types/app.types';
+import type { TranslatableError } from '@/types/error.types';
+import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import type React from 'react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import { validateAppConfig } from './form-validators';
@@ -66,6 +72,16 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
       }
     }
   }, [initialValues, isDirty, setValue]);
+
+  const randomPortMutation = useMutation({
+    ...getRandomPortMutation(),
+    onError: (e: TranslatableError) => {
+      toast.error(t(e.message, e.intlParams));
+    },
+    onSuccess: (data: GetRandomPortResponse) => {
+      setValue('port', data.port.toString());
+    },
+  });
 
   const renderField = (field: FormField) => {
     return (
@@ -150,9 +166,21 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
               max={65535}
               {...register('port')}
               error={errors.port?.message}
-              disabled={loading}
+              disabled={loading || randomPortMutation.isPending}
               placeholder="8484"
-            />
+              className="flex-grow-1 input-group"
+            >
+              <Button
+                style={{
+                  height: 'unset',
+                }}
+                type="button"
+                onClick={() => randomPortMutation.mutate({})}
+                loading={loading || randomPortMutation.isPending}
+              >
+                {t('APP_INSTALL_FORM_RANDOM')}
+              </Button>
+            </Input>
             <span className="text-muted">{t('APP_INSTALL_FORM_PORT_HINT')}</span>
           </div>
         )}

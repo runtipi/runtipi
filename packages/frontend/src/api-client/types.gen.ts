@@ -389,6 +389,10 @@ export type GuestAppsDto = {
   }>;
 };
 
+export type GetRandomPortDto = {
+  port: number;
+};
+
 export type GetAppDto = {
   app?: {
     id: number;
@@ -889,6 +893,19 @@ export type GetGuestAppsResponses = {
 };
 
 export type GetGuestAppsResponse = GetGuestAppsResponses[keyof GetGuestAppsResponses];
+
+export type GetRandomPortData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/apps/random-port';
+};
+
+export type GetRandomPortResponses = {
+  201: GetRandomPortDto;
+};
+
+export type GetRandomPortResponse = GetRandomPortResponses[keyof GetRandomPortResponses];
 
 export type GetAppData = {
   body?: never;

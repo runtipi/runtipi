@@ -1,7 +1,7 @@
+import type { UserContextDto } from '@/api-client';
+import { userContextOptions, userContextQueryKey } from '@/api-client/@tanstack/react-query.gen';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
-import { userContextOptions, userContextQueryKey } from '@/api-client/@tanstack/react-query.gen';
-import type { UserContextDto } from '@/api-client';
 
 interface UserContextValue extends UserContextDto {
   refreshUserContext: () => Promise<void>;

@@ -1,6 +1,6 @@
+import { fireEvent, render, screen } from '@/tests/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { Switch } from './Switch';
-import { fireEvent, render, screen } from '@/tests/test-utils';
 
 describe('Switch', () => {
   it('renders the label', () => {

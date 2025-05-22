@@ -134,12 +134,8 @@
           "name": "app_app_store_slug_app_store_slug_fk",
           "tableFrom": "app",
           "tableTo": "app_store",
-          "columnsFrom": [
-            "app_store_slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["app_store_slug"],
+          "columnsTo": ["slug"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -214,9 +210,7 @@
         "app_store_hash_unique": {
           "name": "app_store_hash_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "hash"
-          ]
+          "columns": ["hash"]
         }
       },
       "policies": {},
@@ -291,12 +285,8 @@
           "name": "link_user_id_user_id_fk",
           "tableFrom": "link",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -415,10 +405,7 @@
     "public.update_status_enum": {
       "name": "update_status_enum",
       "schema": "public",
-      "values": [
-        "FAILED",
-        "SUCCESS"
-      ]
+      "values": ["FAILED", "SUCCESS"]
     }
   },
   "schemas": {},

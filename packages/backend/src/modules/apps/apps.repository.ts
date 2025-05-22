@@ -120,6 +120,19 @@ export class AppsRepository {
   }
 
   /**
+   * Given a port, return all apps that have this port, are open and not the given id
+   *
+   * @param {number} port - The port to search for
+   * @param {number} id - The id of the app to exclude
+   */
+  public async getAppsByPort(port: number, id?: number) {
+    if (!id) {
+      return this.db.query.app.findMany({ where: and(eq(app.port, port), eq(app.openPort, true)) });
+    }
+    return this.db.query.app.findMany({ where: and(eq(app.port, port), eq(app.openPort, true), ne(app.id, id)) });
+  }
+
+  /**
    * Given an array of app status, update all apps that have a status not in the array with new values
    *
    * @param {AppStatus[]} statuses - The statuses to exclude from the update

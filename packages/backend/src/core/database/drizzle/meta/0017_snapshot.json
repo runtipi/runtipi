@@ -111,9 +111,7 @@
       "uniqueConstraints": {
         "UQ_9478629fc093d229df09e560aea": {
           "name": "UQ_9478629fc093d229df09e560aea",
-          "columns": [
-            "id"
-          ],
+          "columns": ["id"],
           "nullsNotDistinct": false
         }
       },
@@ -181,13 +179,9 @@
         "FK_link_user_id": {
           "name": "FK_link_user_id",
           "tableFrom": "link",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "cascade"
         }
@@ -234,9 +228,7 @@
       "uniqueConstraints": {
         "migrations_name_key": {
           "name": "migrations_name_key",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "nullsNotDistinct": false
         }
       },
@@ -288,9 +280,7 @@
       "uniqueConstraints": {
         "UQ_6e7d7ecccdc972caa0ad33cb014": {
           "name": "UQ_6e7d7ecccdc972caa0ad33cb014",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "nullsNotDistinct": false
         }
       },
@@ -381,9 +371,7 @@
       "uniqueConstraints": {
         "UQ_78a916df40e02a9deb1c4b75edb": {
           "name": "UQ_78a916df40e02a9deb1c4b75edb",
-          "columns": [
-            "username"
-          ],
+          "columns": ["username"],
           "nullsNotDistinct": false
         }
       },
@@ -414,10 +402,7 @@
     "public.update_status_enum": {
       "name": "update_status_enum",
       "schema": "public",
-      "values": [
-        "FAILED",
-        "SUCCESS"
-      ]
+      "values": ["FAILED", "SUCCESS"]
     }
   },
   "schemas": {},

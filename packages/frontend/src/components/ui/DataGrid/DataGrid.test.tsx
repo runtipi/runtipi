@@ -1,7 +1,7 @@
+import { render, screen } from '@/tests/test-utils';
 import { describe, expect, it } from 'vitest';
 import { DataGrid } from './DataGrid';
 import { DataGridItem } from './DataGridItem';
-import { render, screen } from '@/tests/test-utils';
 
 describe('DataGrid', () => {
   it('should renders its children', () => {

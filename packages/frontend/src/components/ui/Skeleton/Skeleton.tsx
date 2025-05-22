@@ -1,20 +1,20 @@
-import * as React from 'react';
-import clsx from 'clsx';
 import { Slot } from '@radix-ui/react-slot';
+import clsx from 'clsx';
+import * as React from 'react';
 
 import './skeleton.css';
-import { inert } from '../helpers/inert.js';
 import { extractProps } from '../helpers/extract-props.js';
+import { inert } from '../helpers/inert.js';
 import { marginPropDefs } from '../props/margin.props.js';
 import { skeletonPropDefs } from './skeleton.props.js';
 
+import type { ComponentPropsWithout, RemovedProps } from '../helpers/component-props.js';
 import type { MarginProps } from '../props/margin.props.js';
 import type { GetPropDefTypes } from '../props/prop-def.js';
-import type { ComponentPropsWithout, RemovedProps } from '../helpers/component-props.js';
 
 type SkeletonElement = React.ElementRef<'span'>;
 type SkeletonOwnProps = GetPropDefTypes<typeof skeletonPropDefs>;
-interface SkeletonProps extends ComponentPropsWithout<'span', RemovedProps>, MarginProps, SkeletonOwnProps { }
+interface SkeletonProps extends ComponentPropsWithout<'span', RemovedProps>, MarginProps, SkeletonOwnProps {}
 const Skeleton = React.forwardRef<SkeletonElement, SkeletonProps>((props, forwardedRef) => {
   const { children, className, loading, ...skeletonProps } = extractProps(props, skeletonPropDefs, marginPropDefs);
 
