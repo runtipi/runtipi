@@ -29,6 +29,10 @@
     },
     "types": [
       "@testing-library/jest-dom"
+    ],
+    "rootDirs": [
+      ".",
+      "./.react-router/types"
     ]
   },
   "exclude": [

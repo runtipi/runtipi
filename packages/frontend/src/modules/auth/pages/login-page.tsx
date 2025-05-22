@@ -12,7 +12,7 @@ import { TotpForm } from '../components/totp-form/totp-form';
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const isSafeRedirect = (url: string) => new URL(url).host.endsWith(`.${window.location.host}`);
 
-export const LoginPage = () => {
+export default () => {
   const { isLoggedIn, isConfigured, refreshUserContext, setUserContext } = useUserContext();
   const [totpSessionId, setTotpSessionId] = useState<string | null>(null);
 

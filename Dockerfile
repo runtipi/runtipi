@@ -85,7 +85,7 @@ COPY --from=builder /app/packages/backend/node_modules/swagger-ui-dist/swagger-u
 COPY --from=builder /app/packages/backend/assets ./assets
 COPY --from=builder /app/packages/backend/src/core/database/drizzle ./assets/migrations
 COPY --from=builder /app/packages/backend/src/modules/i18n/translations ./assets/translations
-COPY --from=builder /app/packages/frontend/dist ./assets/frontend
+COPY --from=builder /app/packages/frontend/dist/client ./assets/frontend
 
 EXPOSE 3000
 

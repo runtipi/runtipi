@@ -12,7 +12,7 @@ const UserSettingsContainer = lazy(() => import('../containers/user-settings').t
 const SecurityContainer = lazy(() => import('../containers/security').then((module) => ({ default: module.SecurityContainer })));
 const LogsContainer = lazy(() => import('../containers/logs').then((module) => ({ default: module.LogsContainer })));
 
-export const SettingsPage = () => {
+export default () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
