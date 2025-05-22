@@ -1,9 +1,9 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { iconForCategory } from '@/modules/app/helpers/table-helpers';
 import type { AppCategory } from '@/types/app.types';
+import { IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IconX } from '@tabler/icons-react';
 
 interface Props {
   onSelect: (value?: AppCategory) => void;

@@ -105,9 +105,7 @@
         "UQ_9478629fc093d229df09e560aea": {
           "name": "UQ_9478629fc093d229df09e560aea",
           "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "policies": {},
@@ -175,12 +173,8 @@
           "name": "FK_link_user_id",
           "tableFrom": "link",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -228,9 +222,7 @@
         "migrations_name_key": {
           "name": "migrations_name_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -282,9 +274,7 @@
         "UQ_6e7d7ecccdc972caa0ad33cb014": {
           "name": "UQ_6e7d7ecccdc972caa0ad33cb014",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -375,9 +365,7 @@
         "UQ_78a916df40e02a9deb1c4b75edb": {
           "name": "UQ_78a916df40e02a9deb1c4b75edb",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         }
       },
       "policies": {},
@@ -407,10 +395,7 @@
     "public.update_status_enum": {
       "name": "update_status_enum",
       "schema": "public",
-      "values": [
-        "FAILED",
-        "SUCCESS"
-      ]
+      "values": ["FAILED", "SUCCESS"]
     }
   },
   "schemas": {},

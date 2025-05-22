@@ -1,9 +1,9 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppsService } from './apps.service';
-import { GetAppDto, GuestAppsDto, MyAppsDto } from './dto/app.dto';
+import { GetAppDto, GetRandomPortDto, GuestAppsDto, MyAppsDto } from './dto/app.dto';
 
 @Controller('apps')
 export class AppsController {
@@ -22,6 +22,14 @@ export class AppsController {
   async getGuestApps(): Promise<GuestAppsDto> {
     const guest = await this.appsService.getGuestDashboardApps();
     return { installed: guest };
+  }
+
+  @Post('random-port')
+  @UseGuards(AuthGuard)
+  @ZodSerializerDto(GetRandomPortDto)
+  async getRandomPort(): Promise<GetRandomPortDto> {
+    const port = await this.appsService.getRandomPort();
+    return { port: port };
   }
 
   @Get(':urn')

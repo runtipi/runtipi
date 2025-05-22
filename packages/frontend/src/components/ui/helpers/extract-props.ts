@@ -23,7 +23,7 @@ function mergePropDefs<T extends Record<string, PropDef>[]>(...args: T): Record<
  */
 
 // biome-ignore lint/suspicious/noExplicitAny: Reasoning: This function is a utility function that is used to extract props from a component.
-function extractProps<P extends { className?: string; style?: React.CSSProperties;[key: string]: any }, T extends Record<string, PropDef>[]>(
+function extractProps<P extends { className?: string; style?: React.CSSProperties; [key: string]: any }, T extends Record<string, PropDef>[]>(
   props: P,
   ...propDefs: T
 ): Omit<P & { className?: string; style?: React.CSSProperties }, PropDefsWithClassName<T[number]>> {

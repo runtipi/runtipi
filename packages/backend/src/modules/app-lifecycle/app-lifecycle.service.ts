@@ -152,11 +152,11 @@ export class AppLifecycleService {
       }
     }
 
-    if (openPort) {
-      const appsWithSamePort = await this.appRepository.getAppsByPort(port ?? appInfo.port);
+    if (openPort && port) {
+      const appsWithSamePort = await this.appRepository.getAppsByPort(port);
 
       if (appsWithSamePort.length > 0) {
-        throw new TranslatableError('APP_ERROR_PORT_ALREADY_IN_USE', { port: port ?? appInfo.port, id: appsWithSamePort[0]?.appName });
+        throw new TranslatableError('APP_ERROR_PORT_ALREADY_IN_USE', { port: port.toString(), id: appsWithSamePort[0]?.appName });
       }
     }
 
@@ -376,11 +376,11 @@ export class AppLifecycleService {
       }
     }
 
-    if (openPort) {
-      const appsWithSamePort = await this.appRepository.getAppsByPort(port ?? appInfo.port);
+    if (openPort && port) {
+      const appsWithSamePort = await this.appRepository.getAppsByPort(port);
 
       if (appsWithSamePort.length > 0) {
-        throw new TranslatableError('APP_ERROR_PORT_ALREADY_IN_USE', { port: port ?? appInfo.port, id: appsWithSamePort[0]?.appName });
+        throw new TranslatableError('APP_ERROR_PORT_ALREADY_IN_USE', { port: port.toString(), id: appsWithSamePort[0]?.appName });
       }
     }
 

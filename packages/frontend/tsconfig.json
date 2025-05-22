@@ -16,22 +16,12 @@
     "module": "preserve",
     "noEmit": true,
     "jsx": "preserve",
-    "lib": [
-      "es2022",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["es2022", "dom", "dom.iterable"],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "types": [
-      "@testing-library/jest-dom"
-    ]
+    "types": ["@testing-library/jest-dom"]
   },
-  "exclude": [
-    "./src/api-client/**/*"
-  ]
+  "exclude": ["./src/api-client/**/*"]
 }

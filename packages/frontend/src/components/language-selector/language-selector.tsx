@@ -1,5 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { locales, type Locale } from '@/lib/i18n/locales';
+import { type Locale, locales } from '@/lib/i18n/locales';
 import { IconExternalLink } from '@tabler/icons-react';
 import i18next from 'i18next';
 import React from 'react';
