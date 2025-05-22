@@ -94,7 +94,7 @@ export class AppLifecycleService {
     }
 
     const parsedForm = appFormSchema.parse(form);
-    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth } = parsedForm;
+    const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth, port } = parsedForm;
     const apps = await this.appRepository.getApps();
 
     if (demoMode && apps.length >= 6) {
@@ -149,6 +149,14 @@ export class AppLifecycleService {
           subdomain: parsedForm.localSubdomain,
           id: appsWithSameLocalSubdomain[0]?.appName,
         });
+      }
+    }
+
+    if (openPort) {
+      const appsWithSamePort = await this.appRepository.getAppsByPort(port ?? appInfo.port);
+
+      if (appsWithSamePort.length > 0) {
+        throw new TranslatableError('APP_ERROR_PORT_ALREADY_IN_USE', { port: port ?? appInfo.port, id: appsWithSamePort[0]?.appName });
       }
     }
 
@@ -313,7 +321,7 @@ export class AppLifecycleService {
 
     const parsedForm = appFormSchema.parse(form);
 
-    const { exposed, domain, exposedLocal, enableAuth } = parsedForm;
+    const { exposed, domain, exposedLocal, enableAuth, openPort, port } = parsedForm;
 
     if (exposed && !domain) {
       throw new TranslatableError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
@@ -365,6 +373,14 @@ export class AppLifecycleService {
           subdomain: parsedForm.localSubdomain,
           id: appsWithSameLocalSubdomain[0]?.appName,
         });
+      }
+    }
+
+    if (openPort) {
+      const appsWithSamePort = await this.appRepository.getAppsByPort(port ?? appInfo.port);
+
+      if (appsWithSamePort.length > 0) {
+        throw new TranslatableError('APP_ERROR_PORT_ALREADY_IN_USE', { port: port ?? appInfo.port, id: appsWithSamePort[0]?.appName });
       }
     }
 
