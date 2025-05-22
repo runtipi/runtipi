@@ -54,3 +54,9 @@ export class GetAppDto extends createZodDto(
     metadata: MetadataDto.schema,
   }),
 ) {}
+
+export class GetRandomPortDto extends createZodDto(
+  z.object({
+    port: z.number(),
+  }),
+) {}

@@ -32,7 +32,9 @@ export const DeleteLinkDialog: React.FC<DeleteLinkDialogProps> = ({ isOpen, onCl
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size="sm">
         <DialogHeader>
-          <DialogTitle>{t('LINKS_DELETE_TITLE')} {linkTitle}?</DialogTitle>
+          <DialogTitle>
+            {t('LINKS_DELETE_TITLE')} {linkTitle}?
+          </DialogTitle>
         </DialogHeader>
         <DialogDescription>
           <div className="text-muted">{t('LINKS_DELETE_SUBTITLE')}</div>
