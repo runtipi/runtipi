@@ -26,10 +26,9 @@ client.setConfig({
 export const links: Route.LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
   { rel: 'apple-touch-icon', sizes: '180x180', href: '/icons/apple-touch-icon.png' },
-  { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/icons/favicon-32x32.png' },
-  { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/icons/favicon-16x16.png' },
-  { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/icons/android-chrome-192x192.png' },
-  { rel: 'icon', type: 'image/png', sizes: '512x512', href: '/icons/android-chrome-512x512.png' },
+  { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/icons/favicon-96x96.png' },
+  { rel: 'icon', type: 'image/svg+xml', href: '/icons/favicon.svg' },
+  { rel: 'shortcut icon', href: '/icons/favicon.ico' },
   { rel: 'manifest', href: '/icons/site.webmanifest' },
 ];
 
