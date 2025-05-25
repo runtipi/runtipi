@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse } from 'react-router';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, redirect } from 'react-router';
 import type { Route } from './+types/root';
+import { userContext } from './api-client';
 import { client } from './api-client/client.gen';
 import stylesheet from './app.css?url';
 import { Providers } from './components/providers/providers';
@@ -31,6 +32,25 @@ export const links: Route.LinksFunction = () => [
   { rel: 'shortcut icon', href: '/icons/favicon.ico' },
   { rel: 'manifest', href: '/icons/site.webmanifest' },
 ];
+
+export async function clientLoader({ request }: Route.ActionArgs) {
+  const user = await userContext();
+
+  const url = new URL(request.url);
+  if (url.pathname !== '/') {
+    return user;
+  }
+
+  if (!user.data) {
+    return redirect('/register');
+  }
+
+  if (user.data?.isLoggedIn) {
+    return redirect('/dashboard');
+  }
+
+  return redirect('/login');
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {

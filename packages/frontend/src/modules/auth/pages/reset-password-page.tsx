@@ -2,13 +2,12 @@ import { cancelResetPasswordMutation, checkResetPasswordRequestOptions, resetPas
 import { Button } from '@/components/ui/Button';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import type React from 'react';
 import { toast } from 'react-hot-toast';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { ResetPasswordForm } from '../components/reset-password-form/reset-password-form';
 
-export const ResetPasswordPage: React.FC = () => {
+export default () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
