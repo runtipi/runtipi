@@ -377,7 +377,7 @@ export class AppLifecycleService {
     }
 
     if (openPort && port) {
-      const appsWithSamePort = await this.appRepository.getAppsByPort(port);
+      const appsWithSamePort = await this.appRepository.getAppsByPort(port, app.id);
 
       if (appsWithSamePort.length > 0) {
         throw new TranslatableError('APP_ERROR_PORT_ALREADY_IN_USE', { port: port.toString(), id: appsWithSamePort[0]?.appName });
