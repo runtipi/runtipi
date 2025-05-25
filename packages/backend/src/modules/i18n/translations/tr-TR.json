@@ -56,7 +56,7 @@
   "APP_ERROR_DOMAIN_NOT_VALID": "Domain {{domain}} geçerli bir domain değil",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Uygulama açıldığında domain gereklidir",
   "APP_ERROR_INVALID_CONFIG": "Uygulama {{id}} geçersiz bir config.json dosyasına sahip",
-  "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
+  "APP_ERROR_PORT_ALREADY_IN_USE": "{{port}} portu zaten {{id}} uygulaması tarafından kullanılıyor",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Bir seçenek seçin...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Misafir kontrol panelinde göster",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Domain adı",
@@ -413,5 +413,5 @@
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Alt domain",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Geçersiz alt domain",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Alt domain geçerli değil (sadece küçük harfler, sayılar ve tire işaretlerine izin verilir. Maksimum uzunluk 63 karakter)",
-  "APP_INSTALL_FORM_RANDOM": "Random"
+  "APP_INSTALL_FORM_RANDOM": "Rastgele"
 }
