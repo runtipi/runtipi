@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router';
 import { useUserContext } from './context/user-context';
 
-export const App = () => {
+export default () => {
   const { isLoggedIn, isConfigured, isGuestDashboardEnabled } = useUserContext();
 
   if (isLoggedIn || isGuestDashboardEnabled) {
