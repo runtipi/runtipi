@@ -44,7 +44,7 @@ const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit, initialValues, loading, formId }) => {
   const { t } = useTranslation();
   const { userSettings } = useAppContext();
-  const { guestDashboard, localDomain, internalIp } = userSettings;
+  const { guestDashboard, localDomain, internalIp, domain } = userSettings;
 
   const {
     register,
@@ -122,7 +122,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
             label={t('APP_INSTALL_FORM_DOMAIN_NAME')}
             error={errors.domain?.message}
             disabled={loading}
-            placeholder={t('APP_INSTALL_FORM_DOMAIN_NAME')}
+            placeholder={domain ? `${info.urn.split(':').join('-')}.${domain}` : `${info.urn.split(':').join('-')}.example.com`}
           />
           <span className="text-muted">{t('APP_INSTALL_FORM_DOMAIN_NAME_HINT')}</span>
         </div>
