@@ -5,7 +5,6 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "main": "./src/exports/index.ts",
   "scripts": {
     "dev": "nest start --watch --preserveWatchOutput",
     "bundle": "rm -rf dist && node build.mjs",

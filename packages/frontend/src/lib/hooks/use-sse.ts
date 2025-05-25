@@ -1,4 +1,4 @@
-import type { SSE, Topic } from 'backend';
+import type { SSE, Topic } from '@runtipi/common/schemas';
 import { useEffect, useRef } from 'react';
 
 type Props<T> = {

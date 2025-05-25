@@ -2,11 +2,13 @@ import path from 'node:path';
 import { reactRouter } from '@react-router/dev/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     reactRouter(),
+    tsconfigPaths(),
     sentryVitePlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
       release: {

@@ -3,15 +3,14 @@ import { type RouteConfig, index, layout, prefix, route } from '@react-router/de
 export default [
   // Unauthenticated routes
   layout('./components/routes/unauthenticated-route.tsx', [
-    index('./app.tsx'),
-    route('login', './modules/auth/pages/login-page.tsx'),
-    route('register', './modules/auth/pages/register-page.tsx'),
-    route('reset-password', './modules/auth/pages/reset-password-page.tsx'),
+    index('./app.tsx', { id: 'home' }),
+    route('login', './modules/auth/pages/login-page.tsx', { id: 'login' }),
+    route('register', './modules/auth/pages/register-page.tsx', { id: 'register' }),
+    route('reset-password', './modules/auth/pages/reset-password-page.tsx', { id: 'reset-password' }),
   ]),
-
   // Authenticated routes
   layout('./components/routes/authenticated-route.tsx', [
-    route('dashboard', './modules/dashboard/pages/dashboard.tsx'),
+    route('dashboard', './modules/dashboard/pages/dashboard.tsx', { id: 'dashboard' }),
 
     // App store routes
     ...prefix('app-store', [
@@ -28,6 +27,6 @@ export default [
     ]),
 
     // Settings route
-    ...prefix('settings', [index('./modules/settings/pages/settings-page.tsx')]),
+    ...prefix('settings', [index('./modules/settings/pages/settings-page.tsx', { id: 'settings' })]),
   ]),
 ] satisfies RouteConfig;
