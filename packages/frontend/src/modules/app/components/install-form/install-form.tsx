@@ -159,9 +159,14 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
         />
         {watchOpenPort && (
           <div className="mb-3">
-            <Input
+            <InputGroup
               type="number"
               defaultValue={info.port}
+              groupSuffix={
+                <Button type="button" onClick={() => randomPortMutation.mutate({})} loading={loading || randomPortMutation.isPending}>
+                  {t('APP_INSTALL_FORM_RANDOM')}
+                </Button>
+              }
               min={1024}
               max={65535}
               {...register('port')}
@@ -169,18 +174,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
               disabled={loading || randomPortMutation.isPending}
               placeholder="8484"
               className="flex-grow-1 input-group"
-            >
-              <Button
-                style={{
-                  height: 'unset',
-                }}
-                type="button"
-                onClick={() => randomPortMutation.mutate({})}
-                loading={loading || randomPortMutation.isPending}
-              >
-                {t('APP_INSTALL_FORM_RANDOM')}
-              </Button>
-            </Input>
+            />
             <span className="text-muted">{t('APP_INSTALL_FORM_PORT_HINT')}</span>
           </div>
         )}
