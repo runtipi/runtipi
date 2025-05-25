@@ -7,7 +7,7 @@
     "dev": "react-router dev",
     "bundle": "react-router build",
     "preview": "vite preview",
-    "tsc": "tsc --noEmit",
+    "tsc": "react-router typegen && tsc --noEmit",
     "postinstall": "./scripts/postinstall.sh"
   },
   "dependencies": {
