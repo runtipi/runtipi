@@ -10,28 +10,39 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const InputGroup = React.forwardRef<HTMLInputElement, IProps>(
-  ({ name, label, error, type = 'text', className, isInvalid, groupPrefix, groupSuffix, ...rest }, ref) => (
-    <div className={clsx(className)}>
-      {label && (
-        <label htmlFor={name} className="form-label">
-          {label}
-        </label>
-      )}
-      <div className="input-group">
-        {groupPrefix && <span className="input-group-text">{groupPrefix}</span>}
-        <input
-          suppressHydrationWarning
-          aria-label={name}
-          type={type}
-          name={name}
-          id={name}
-          ref={ref}
-          className={clsx('form-control', { 'is-invalid is-invalid-lite': error || isInvalid })}
-          {...rest}
-        />
-        {groupSuffix && <span className="input-group-text">{groupSuffix}</span>}
-        {error && <div className="invalid-feedback">{error}</div>}
+  ({ name, label, error, type = 'text', className, isInvalid, groupPrefix, groupSuffix, ...rest }, ref) => {
+    let prefix = groupPrefix;
+    if (typeof groupPrefix === 'string') {
+      prefix = <span className="input-group-text">{groupPrefix}</span>;
+    }
+    let suffix = groupSuffix;
+    if (typeof groupSuffix === 'string') {
+      suffix = <span className="input-group-text">{groupSuffix}</span>;
+    }
+
+    return (
+      <div className={clsx(className)}>
+        {label && (
+          <label htmlFor={name} className="form-label">
+            {label}
+          </label>
+        )}
+        <div className="input-group">
+          {prefix}
+          <input
+            suppressHydrationWarning
+            aria-label={name}
+            type={type}
+            name={name}
+            id={name}
+            ref={ref}
+            className={clsx('form-control', { 'is-invalid is-invalid-lite': error || isInvalid })}
+            {...rest}
+          />
+          {suffix}
+          {error && <div className="invalid-feedback">{error}</div>}
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 );
