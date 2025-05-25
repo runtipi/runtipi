@@ -94,17 +94,18 @@ export class AppsService {
     return { app, info, metadata };
   }
 
-  public async getRandomPort() {
-    for (let i = 0; i < 3; i++) {
-      const port = Math.floor(Math.random() * 65535) + 1025;
-
-      const apps = await this.appsRepository.getAppsByPort(port);
-
-      if (apps.length === 0) {
-        return port;
-      }
+  public async getRandomPort(tries = 3): Promise<number> {
+    if (tries <= 0) {
+      throw new Error('Failed to get random port after 3 tries');
     }
 
-    throw new Error('Failed to get random port after 3 tries');
+    const port = Math.floor(Math.random() * (65535 - 1025 + 1)) + 1025;
+    const apps = await this.appsRepository.getAppsByPort(port);
+
+    if (apps.length === 0) {
+      return port;
+    }
+
+    return this.getRandomPort(tries - 1);
   }
 }

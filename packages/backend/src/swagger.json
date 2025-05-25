@@ -17,7 +17,9 @@
             }
           }
         },
-        "tags": ["App"]
+        "tags": [
+          "App"
+        ]
       }
     },
     "/api/app-context": {
@@ -36,7 +38,9 @@
             }
           }
         },
-        "tags": ["App"]
+        "tags": [
+          "App"
+        ]
       }
     },
     "/api/user-settings": {
@@ -58,7 +62,9 @@
             "description": ""
           }
         },
-        "tags": ["App"]
+        "tags": [
+          "App"
+        ]
       }
     },
     "/api/acknowledge-welcome": {
@@ -80,7 +86,9 @@
             "description": ""
           }
         },
-        "tags": ["App"]
+        "tags": [
+          "App"
+        ]
       }
     },
     "/api/system/load": {
@@ -99,7 +107,9 @@
             }
           }
         },
-        "tags": ["System"]
+        "tags": [
+          "System"
+        ]
       }
     },
     "/api/system/certificate": {
@@ -111,7 +121,9 @@
             "description": ""
           }
         },
-        "tags": ["System"]
+        "tags": [
+          "System"
+        ]
       }
     },
     "/api/i18n/locales/{ns}/{lng}.json": {
@@ -147,7 +159,9 @@
             }
           }
         },
-        "tags": ["I18n"]
+        "tags": [
+          "I18n"
+        ]
       }
     },
     "/api/auth/login": {
@@ -176,7 +190,9 @@
             }
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/verify-totp": {
@@ -205,7 +221,9 @@
             }
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/register": {
@@ -234,7 +252,9 @@
             }
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/logout": {
@@ -246,7 +266,9 @@
             "description": ""
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/username": {
@@ -268,7 +290,9 @@
             "description": ""
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/password": {
@@ -290,7 +314,9 @@
             "description": ""
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/totp/get-uri": {
@@ -319,7 +345,9 @@
             }
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/totp/setup": {
@@ -341,7 +369,9 @@
             "description": ""
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/totp/disable": {
@@ -363,7 +393,9 @@
             "description": ""
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/reset-password": {
@@ -392,7 +424,9 @@
             }
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       },
       "delete": {
         "operationId": "cancelResetPassword",
@@ -402,7 +436,9 @@
             "description": ""
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       },
       "get": {
         "operationId": "checkResetPasswordRequest",
@@ -419,7 +455,9 @@
             }
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/traefik": {
@@ -438,7 +476,9 @@
             }
           }
         },
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/apps/installed": {
@@ -457,7 +497,9 @@
             }
           }
         },
-        "tags": ["Apps"]
+        "tags": [
+          "Apps"
+        ]
       }
     },
     "/api/apps/guest": {
@@ -476,7 +518,9 @@
             }
           }
         },
-        "tags": ["Apps"]
+        "tags": [
+          "Apps"
+        ]
       }
     },
     "/api/apps/random-port": {
@@ -495,7 +539,9 @@
             }
           }
         },
-        "tags": ["Apps"]
+        "tags": [
+          "Apps"
+        ]
       }
     },
     "/api/apps/{urn}": {
@@ -523,7 +569,9 @@
             }
           }
         },
-        "tags": ["Apps"]
+        "tags": [
+          "Apps"
+        ]
       }
     },
     "/api/marketplace/apps/search": {
@@ -600,7 +648,9 @@
             }
           }
         },
-        "tags": ["Marketplace"]
+        "tags": [
+          "Marketplace"
+        ]
       }
     },
     "/api/marketplace/apps/{urn}/image": {
@@ -621,7 +671,9 @@
             "description": ""
           }
         },
-        "tags": ["Marketplace"]
+        "tags": [
+          "Marketplace"
+        ]
       }
     },
     "/api/marketplace/pull": {
@@ -640,7 +692,9 @@
             }
           }
         },
-        "tags": ["Marketplace"]
+        "tags": [
+          "Marketplace"
+        ]
       }
     },
     "/api/marketplace/create": {
@@ -662,7 +716,9 @@
             "description": ""
           }
         },
-        "tags": ["Marketplace"]
+        "tags": [
+          "Marketplace"
+        ]
       }
     },
     "/api/marketplace/all": {
@@ -681,7 +737,9 @@
             }
           }
         },
-        "tags": ["Marketplace"]
+        "tags": [
+          "Marketplace"
+        ]
       }
     },
     "/api/marketplace/enabled": {
@@ -700,7 +758,9 @@
             }
           }
         },
-        "tags": ["Marketplace"]
+        "tags": [
+          "Marketplace"
+        ]
       }
     },
     "/api/marketplace/{id}": {
@@ -731,7 +791,9 @@
             "description": ""
           }
         },
-        "tags": ["Marketplace"]
+        "tags": [
+          "Marketplace"
+        ]
       },
       "delete": {
         "operationId": "deleteAppStore",
@@ -750,7 +812,9 @@
             "description": ""
           }
         },
-        "tags": ["Marketplace"]
+        "tags": [
+          "Marketplace"
+        ]
       }
     },
     "/api/app-lifecycle/{urn}/install": {
@@ -781,7 +845,9 @@
             "description": ""
           }
         },
-        "tags": ["AppLifecycle"]
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{urn}/start": {
@@ -802,7 +868,9 @@
             "description": ""
           }
         },
-        "tags": ["AppLifecycle"]
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{urn}/stop": {
@@ -823,7 +891,9 @@
             "description": ""
           }
         },
-        "tags": ["AppLifecycle"]
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{urn}/restart": {
@@ -844,7 +914,9 @@
             "description": ""
           }
         },
-        "tags": ["AppLifecycle"]
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{urn}/uninstall": {
@@ -875,7 +947,9 @@
             "description": ""
           }
         },
-        "tags": ["AppLifecycle"]
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{urn}/reset": {
@@ -896,7 +970,9 @@
             "description": ""
           }
         },
-        "tags": ["AppLifecycle"]
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{urn}/update": {
@@ -927,7 +1003,9 @@
             "description": ""
           }
         },
-        "tags": ["AppLifecycle"]
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/{urn}/update-config": {
@@ -958,7 +1036,9 @@
             "description": ""
           }
         },
-        "tags": ["AppLifecycle"]
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/app-lifecycle/update-all": {
@@ -970,7 +1050,9 @@
             "description": ""
           }
         },
-        "tags": ["AppLifecycle"]
+        "tags": [
+          "AppLifecycle"
+        ]
       }
     },
     "/api/backups/{urn}/backup": {
@@ -991,7 +1073,9 @@
             "description": ""
           }
         },
-        "tags": ["Backups"]
+        "tags": [
+          "Backups"
+        ]
       }
     },
     "/api/backups/{urn}/restore": {
@@ -1022,7 +1106,9 @@
             "description": ""
           }
         },
-        "tags": ["Backups"]
+        "tags": [
+          "Backups"
+        ]
       }
     },
     "/api/backups/{urn}": {
@@ -1066,7 +1152,9 @@
             }
           }
         },
-        "tags": ["Backups"]
+        "tags": [
+          "Backups"
+        ]
       },
       "delete": {
         "operationId": "deleteAppBackup",
@@ -1095,7 +1183,9 @@
             "description": ""
           }
         },
-        "tags": ["Backups"]
+        "tags": [
+          "Backups"
+        ]
       }
     },
     "/api/sse/app": {
@@ -1114,7 +1204,9 @@
             }
           }
         },
-        "tags": ["SSE"]
+        "tags": [
+          "SSE"
+        ]
       }
     },
     "/api/sse/app-logs": {
@@ -1150,7 +1242,9 @@
             }
           }
         },
-        "tags": ["SSE"]
+        "tags": [
+          "SSE"
+        ]
       }
     },
     "/api/sse/runtipi-logs": {
@@ -1178,7 +1272,9 @@
             }
           }
         },
-        "tags": ["SSE"]
+        "tags": [
+          "SSE"
+        ]
       }
     },
     "/api/links/guest": {
@@ -1197,7 +1293,9 @@
             }
           }
         },
-        "tags": ["Links"]
+        "tags": [
+          "Links"
+        ]
       }
     },
     "/api/links": {
@@ -1216,7 +1314,9 @@
             }
           }
         },
-        "tags": ["Links"]
+        "tags": [
+          "Links"
+        ]
       },
       "post": {
         "operationId": "createLink",
@@ -1236,7 +1336,9 @@
             "description": ""
           }
         },
-        "tags": ["Links"]
+        "tags": [
+          "Links"
+        ]
       }
     },
     "/api/links/{id}": {
@@ -1267,7 +1369,9 @@
             "description": ""
           }
         },
-        "tags": ["Links"]
+        "tags": [
+          "Links"
+        ]
       },
       "delete": {
         "operationId": "deleteLink",
@@ -1286,7 +1390,9 @@
             "description": ""
           }
         },
-        "tags": ["Links"]
+        "tags": [
+          "Links"
+        ]
       }
     },
     "/api/health": {
@@ -1314,7 +1420,9 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -1329,7 +1437,9 @@
                       "example": {},
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -1348,7 +1458,9 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -1382,7 +1494,9 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -1402,7 +1516,9 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -1425,7 +1541,9 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -1440,7 +1558,9 @@
             }
           }
         },
-        "tags": ["Health"]
+        "tags": [
+          "Health"
+        ]
       }
     }
   },
@@ -1470,7 +1590,11 @@
                 "type": "string"
               }
             },
-            "required": ["current", "latest", "body"]
+            "required": [
+              "current",
+              "latest",
+              "body"
+            ]
           },
           "isLoggedIn": {
             "description": "Indicates if the user is logged in",
@@ -1533,7 +1657,11 @@
                 "type": "string"
               }
             },
-            "required": ["current", "latest", "body"]
+            "required": [
+              "current",
+              "latest",
+              "body"
+            ]
           },
           "userSettings": {
             "type": "object",
@@ -1601,8 +1729,18 @@
               },
               "logLevel": {
                 "type": "string",
-                "enum": ["debug", "info", "warn", "error"],
-                "x-enumNames": ["debug", "info", "warn", "error"]
+                "enum": [
+                  "debug",
+                  "info",
+                  "warn",
+                  "error"
+                ],
+                "x-enumNames": [
+                  "debug",
+                  "info",
+                  "warn",
+                  "error"
+                ]
               },
               "themeBase": {
                 "type": "string"
@@ -1659,7 +1797,14 @@
                 "type": "boolean"
               }
             },
-            "required": ["id", "username", "totpEnabled", "locale", "operator", "hasSeenWelcome"]
+            "required": [
+              "id",
+              "username",
+              "totpEnabled",
+              "locale",
+              "operator",
+              "hasSeenWelcome"
+            ]
           },
           "apps": {
             "type": "array",
@@ -1716,21 +1861,36 @@
                   "type": "array",
                   "items": {
                     "type": "string",
-                    "enum": ["arm64", "amd64"]
+                    "enum": [
+                      "arm64",
+                      "amd64"
+                    ]
                   }
                 },
                 "available": {
                   "type": "boolean"
                 }
               },
-              "required": ["id", "urn", "name", "short_desc", "available"]
+              "required": [
+                "id",
+                "urn",
+                "name",
+                "short_desc",
+                "available"
+              ]
             }
           },
           "updatesAvailable": {
             "type": "number"
           }
         },
-        "required": ["version", "userSettings", "user", "apps", "updatesAvailable"]
+        "required": [
+          "version",
+          "userSettings",
+          "user",
+          "apps",
+          "updatesAvailable"
+        ]
       },
       "PartialUserSettingsDto": {
         "type": "object",
@@ -1798,8 +1958,18 @@
           },
           "logLevel": {
             "type": "string",
-            "enum": ["debug", "info", "warn", "error"],
-            "x-enumNames": ["debug", "info", "warn", "error"]
+            "enum": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ],
+            "x-enumNames": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ]
           },
           "themeBase": {
             "type": "string"
@@ -1819,7 +1989,9 @@
             "type": "boolean"
           }
         },
-        "required": ["allowErrorMonitoring"]
+        "required": [
+          "allowErrorMonitoring"
+        ]
       },
       "LoadDto": {
         "type": "object",
@@ -1866,7 +2038,10 @@
             "type": "string"
           }
         },
-        "required": ["username", "password"]
+        "required": [
+          "username",
+          "password"
+        ]
       },
       "LoginDto": {
         "type": "object",
@@ -1878,7 +2053,9 @@
             "type": "string"
           }
         },
-        "required": ["success"]
+        "required": [
+          "success"
+        ]
       },
       "VerifyTotpBody": {
         "type": "object",
@@ -1890,7 +2067,10 @@
             "type": "string"
           }
         },
-        "required": ["totpCode", "totpSessionId"]
+        "required": [
+          "totpCode",
+          "totpSessionId"
+        ]
       },
       "RegisterBody": {
         "type": "object",
@@ -1902,7 +2082,10 @@
             "type": "string"
           }
         },
-        "required": ["username", "password"]
+        "required": [
+          "username",
+          "password"
+        ]
       },
       "RegisterDto": {
         "type": "object",
@@ -1911,7 +2094,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"]
+        "required": [
+          "success"
+        ]
       },
       "ChangeUsernameBody": {
         "type": "object",
@@ -1923,7 +2108,10 @@
             "type": "string"
           }
         },
-        "required": ["newUsername", "password"]
+        "required": [
+          "newUsername",
+          "password"
+        ]
       },
       "ChangePasswordBody": {
         "type": "object",
@@ -1935,7 +2123,10 @@
             "type": "string"
           }
         },
-        "required": ["currentPassword", "newPassword"]
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
       },
       "GetTotpUriBody": {
         "type": "object",
@@ -1944,7 +2135,9 @@
             "type": "string"
           }
         },
-        "required": ["password"]
+        "required": [
+          "password"
+        ]
       },
       "GetTotpUriDto": {
         "type": "object",
@@ -1956,7 +2149,10 @@
             "type": "string"
           }
         },
-        "required": ["key", "uri"]
+        "required": [
+          "key",
+          "uri"
+        ]
       },
       "SetupTotpBody": {
         "type": "object",
@@ -1965,7 +2161,9 @@
             "type": "string"
           }
         },
-        "required": ["code"]
+        "required": [
+          "code"
+        ]
       },
       "DisableTotpBody": {
         "type": "object",
@@ -1974,7 +2172,9 @@
             "type": "string"
           }
         },
-        "required": ["password"]
+        "required": [
+          "password"
+        ]
       },
       "ResetPasswordBody": {
         "type": "object",
@@ -1983,7 +2183,9 @@
             "type": "string"
           }
         },
-        "required": ["newPassword"]
+        "required": [
+          "newPassword"
+        ]
       },
       "ResetPasswordDto": {
         "type": "object",
@@ -1995,7 +2197,10 @@
             "type": "string"
           }
         },
-        "required": ["success", "email"]
+        "required": [
+          "success",
+          "email"
+        ]
       },
       "CheckResetPasswordRequestDto": {
         "type": "object",
@@ -2004,7 +2209,9 @@
             "type": "boolean"
           }
         },
-        "required": ["isRequestPending"]
+        "required": [
+          "isRequestPending"
+        ]
       },
       "MyAppsDto": {
         "type": "object",
@@ -2147,14 +2354,23 @@
                       "type": "array",
                       "items": {
                         "type": "string",
-                        "enum": ["arm64", "amd64"]
+                        "enum": [
+                          "arm64",
+                          "amd64"
+                        ]
                       }
                     },
                     "available": {
                       "type": "boolean"
                     }
                   },
-                  "required": ["id", "urn", "name", "short_desc", "available"]
+                  "required": [
+                    "id",
+                    "urn",
+                    "name",
+                    "short_desc",
+                    "available"
+                  ]
                 },
                 "metadata": {
                   "type": "object",
@@ -2175,14 +2391,23 @@
                       "type": "string"
                     }
                   },
-                  "required": ["localSubdomain", "latestVersion"]
+                  "required": [
+                    "localSubdomain",
+                    "latestVersion"
+                  ]
                 }
               },
-              "required": ["app", "info", "metadata"]
+              "required": [
+                "app",
+                "info",
+                "metadata"
+              ]
             }
           }
         },
-        "required": ["installed"]
+        "required": [
+          "installed"
+        ]
       },
       "GuestAppsDto": {
         "type": "object",
@@ -2363,7 +2588,18 @@
                         "properties": {
                           "type": {
                             "type": "string",
-                            "enum": ["text", "password", "email", "number", "fqdn", "ip", "fqdnip", "url", "random", "boolean"]
+                            "enum": [
+                              "text",
+                              "password",
+                              "email",
+                              "number",
+                              "fqdn",
+                              "ip",
+                              "fqdnip",
+                              "url",
+                              "random",
+                              "boolean"
+                            ]
                           },
                           "label": {
                             "type": "string"
@@ -2392,7 +2628,10 @@
                                   "type": "string"
                                 }
                               },
-                              "required": ["label", "value"]
+                              "required": [
+                                "label",
+                                "value"
+                              ]
                             }
                           },
                           "required": {
@@ -2423,10 +2662,17 @@
                           },
                           "encoding": {
                             "type": "string",
-                            "enum": ["hex", "base64"]
+                            "enum": [
+                              "hex",
+                              "base64"
+                            ]
                           }
                         },
-                        "required": ["type", "label", "env_variable"]
+                        "required": [
+                          "type",
+                          "label",
+                          "env_variable"
+                        ]
                       },
                       "default": []
                     },
@@ -2446,7 +2692,10 @@
                       "type": "array",
                       "items": {
                         "type": "string",
-                        "enum": ["arm64", "amd64"]
+                        "enum": [
+                          "arm64",
+                          "amd64"
+                        ]
                       }
                     },
                     "uid": {
@@ -2479,7 +2728,16 @@
                       "default": false
                     }
                   },
-                  "required": ["id", "urn", "available", "name", "tipi_version", "short_desc", "author", "source"]
+                  "required": [
+                    "id",
+                    "urn",
+                    "available",
+                    "name",
+                    "tipi_version",
+                    "short_desc",
+                    "author",
+                    "source"
+                  ]
                 },
                 "metadata": {
                   "type": "object",
@@ -2500,14 +2758,23 @@
                       "type": "string"
                     }
                   },
-                  "required": ["localSubdomain", "latestVersion"]
+                  "required": [
+                    "localSubdomain",
+                    "latestVersion"
+                  ]
                 }
               },
-              "required": ["app", "info", "metadata"]
+              "required": [
+                "app",
+                "info",
+                "metadata"
+              ]
             }
           }
         },
-        "required": ["installed"]
+        "required": [
+          "installed"
+        ]
       },
       "GetRandomPortDto": {
         "type": "object",
@@ -2516,7 +2783,9 @@
             "type": "number"
           }
         },
-        "required": ["port"]
+        "required": [
+          "port"
+        ]
       },
       "GetAppDto": {
         "type": "object",
@@ -2693,7 +2962,18 @@
                   "properties": {
                     "type": {
                       "type": "string",
-                      "enum": ["text", "password", "email", "number", "fqdn", "ip", "fqdnip", "url", "random", "boolean"]
+                      "enum": [
+                        "text",
+                        "password",
+                        "email",
+                        "number",
+                        "fqdn",
+                        "ip",
+                        "fqdnip",
+                        "url",
+                        "random",
+                        "boolean"
+                      ]
                     },
                     "label": {
                       "type": "string"
@@ -2722,7 +3002,10 @@
                             "type": "string"
                           }
                         },
-                        "required": ["label", "value"]
+                        "required": [
+                          "label",
+                          "value"
+                        ]
                       }
                     },
                     "required": {
@@ -2753,10 +3036,17 @@
                     },
                     "encoding": {
                       "type": "string",
-                      "enum": ["hex", "base64"]
+                      "enum": [
+                        "hex",
+                        "base64"
+                      ]
                     }
                   },
-                  "required": ["type", "label", "env_variable"]
+                  "required": [
+                    "type",
+                    "label",
+                    "env_variable"
+                  ]
                 },
                 "default": []
               },
@@ -2776,7 +3066,10 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "enum": ["arm64", "amd64"]
+                  "enum": [
+                    "arm64",
+                    "amd64"
+                  ]
                 }
               },
               "uid": {
@@ -2809,7 +3102,16 @@
                 "default": false
               }
             },
-            "required": ["id", "urn", "available", "name", "tipi_version", "short_desc", "author", "source"]
+            "required": [
+              "id",
+              "urn",
+              "available",
+              "name",
+              "tipi_version",
+              "short_desc",
+              "author",
+              "source"
+            ]
           },
           "metadata": {
             "type": "object",
@@ -2830,10 +3132,16 @@
                 "type": "string"
               }
             },
-            "required": ["localSubdomain", "latestVersion"]
+            "required": [
+              "localSubdomain",
+              "latestVersion"
+            ]
           }
         },
-        "required": ["info", "metadata"]
+        "required": [
+          "info",
+          "metadata"
+        ]
       },
       "SearchAppsDto": {
         "type": "object",
@@ -2893,14 +3201,23 @@
                   "type": "array",
                   "items": {
                     "type": "string",
-                    "enum": ["arm64", "amd64"]
+                    "enum": [
+                      "arm64",
+                      "amd64"
+                    ]
                   }
                 },
                 "available": {
                   "type": "boolean"
                 }
               },
-              "required": ["id", "urn", "name", "short_desc", "available"]
+              "required": [
+                "id",
+                "urn",
+                "name",
+                "short_desc",
+                "available"
+              ]
             }
           },
           "nextCursor": {
@@ -2910,7 +3227,10 @@
             "type": "number"
           }
         },
-        "required": ["data", "total"]
+        "required": [
+          "data",
+          "total"
+        ]
       },
       "PullDto": {
         "type": "object",
@@ -2919,7 +3239,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"]
+        "required": [
+          "success"
+        ]
       },
       "CreateAppStoreBodyDto": {
         "type": "object",
@@ -2933,7 +3255,10 @@
             "type": "string"
           }
         },
-        "required": ["name", "url"]
+        "required": [
+          "name",
+          "url"
+        ]
       },
       "AllAppStoresDto": {
         "type": "object",
@@ -2956,11 +3281,18 @@
                   "type": "boolean"
                 }
               },
-              "required": ["slug", "name", "url", "enabled"]
+              "required": [
+                "slug",
+                "name",
+                "url",
+                "enabled"
+              ]
             }
           }
         },
-        "required": ["appStores"]
+        "required": [
+          "appStores"
+        ]
       },
       "UpdateAppStoreBodyDto": {
         "type": "object",
@@ -2972,7 +3304,10 @@
             "type": "boolean"
           }
         },
-        "required": ["name", "enabled"]
+        "required": [
+          "name",
+          "enabled"
+        ]
       },
       "AppFormBody": {
         "type": "object",
@@ -3016,7 +3351,9 @@
             "type": "boolean"
           }
         },
-        "required": ["removeBackups"]
+        "required": [
+          "removeBackups"
+        ]
       },
       "UpdateAppBody": {
         "type": "object",
@@ -3025,7 +3362,9 @@
             "type": "boolean"
           }
         },
-        "required": ["performBackup"]
+        "required": [
+          "performBackup"
+        ]
       },
       "RestoreAppBackupDto": {
         "type": "object",
@@ -3034,7 +3373,9 @@
             "type": "string"
           }
         },
-        "required": ["filename"]
+        "required": [
+          "filename"
+        ]
       },
       "GetAppBackupsDto": {
         "type": "object",
@@ -3054,7 +3395,11 @@
                   "type": "number"
                 }
               },
-              "required": ["id", "size", "date"]
+              "required": [
+                "id",
+                "size",
+                "date"
+              ]
             }
           },
           "total": {
@@ -3067,7 +3412,12 @@
             "type": "number"
           }
         },
-        "required": ["data", "total", "currentPage", "lastPage"]
+        "required": [
+          "data",
+          "total",
+          "currentPage",
+          "lastPage"
+        ]
       },
       "DeleteAppBackupBodyDto": {
         "type": "object",
@@ -3076,7 +3426,9 @@
             "type": "string"
           }
         },
-        "required": ["filename"]
+        "required": [
+          "filename"
+        ]
       },
       "LinksDto": {
         "type": "object",
@@ -3125,11 +3477,20 @@
                   "default": false
                 }
               },
-              "required": ["id", "title", "description", "url", "iconUrl", "userId"]
+              "required": [
+                "id",
+                "title",
+                "description",
+                "url",
+                "iconUrl",
+                "userId"
+              ]
             }
           }
         },
-        "required": ["links"]
+        "required": [
+          "links"
+        ]
       },
       "LinkBodyDto": {
         "type": "object",
@@ -3165,7 +3526,10 @@
             ]
           }
         },
-        "required": ["title", "url"]
+        "required": [
+          "title",
+          "url"
+        ]
       },
       "EditLinkBodyDto": {
         "type": "object",
@@ -3200,7 +3564,10 @@
             ]
           }
         },
-        "required": ["title", "url"]
+        "required": [
+          "title",
+          "url"
+        ]
       }
     }
   }
