@@ -13,7 +13,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    debug: import.meta.env.MODE === 'development',
+    debug: false,
     react: {
       useSuspense: true,
     },

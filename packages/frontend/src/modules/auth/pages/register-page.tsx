@@ -1,13 +1,26 @@
+import { userContext } from '@/api-client';
 import { registerMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useUserContext } from '@/context/user-context';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router';
+import { Navigate, redirect, useNavigate } from 'react-router';
 import { RegisterForm } from '../components/register-form';
 
-export const RegisterPage = () => {
+export async function clientLoader() {
+  const user = await userContext();
+
+  if (user.data?.isConfigured) {
+    return redirect('/login');
+  }
+
+  if (user.data?.isLoggedIn) {
+    return redirect('/dashboard');
+  }
+}
+
+export default () => {
   const { t } = useTranslation();
 
   const navigate = useNavigate();

@@ -1,3 +1,4 @@
+import { userContext } from '@/api-client';
 import { loginMutation, verifyTotpMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useUserContext } from '@/context/user-context';
 import type { TranslatableError } from '@/types/error.types';
@@ -5,12 +6,24 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate, useSearchParams } from 'react-router';
+import { Navigate, redirect, useNavigate, useSearchParams } from 'react-router';
 import { LoginForm } from '../components/login-form';
 import { TotpForm } from '../components/totp-form/totp-form';
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const isSafeRedirect = (url: string) => new URL(url).host.endsWith(`.${window.location.host}`);
+
+export async function clientLoader() {
+  const user = await userContext();
+
+  if (!user.data?.isConfigured) {
+    return redirect('/register');
+  }
+
+  if (user.data?.isLoggedIn) {
+    return redirect('/dashboard');
+  }
+}
 
 export default () => {
   const { isLoggedIn, isConfigured, refreshUserContext, setUserContext } = useUserContext();

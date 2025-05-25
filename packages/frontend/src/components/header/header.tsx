@@ -5,7 +5,7 @@ import { IconBrandGithub, IconHeart, IconLogin, IconLogout, IconMoon, IconSun } 
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import { Tooltip } from 'react-tooltip';
 import { NavBar } from '../navbar/navbar';
 
@@ -23,12 +23,10 @@ export const Header = (props: HeaderProps) => {
 
   const { t } = useTranslation();
 
-  const navigate = useNavigate();
-
   const logout = useMutation({
     ...logoutMutation(),
     onSuccess: () => {
-      navigate('/', { replace: true });
+      window.location.reload();
     },
   });
 
