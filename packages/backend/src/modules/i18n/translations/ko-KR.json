@@ -56,6 +56,7 @@
   "APP_ERROR_DOMAIN_NOT_VALID": "Domain {{domain}} is not a valid domain",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "앱이 노출되는 경우 도메인이 필요합니다",
   "APP_ERROR_INVALID_CONFIG": "앱 {{id}}의 config.json 파일이 유효하지 않습니다",
+  "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "옵션을 선택하세요...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "게스트 대시보드에 표시",
   "APP_INSTALL_FORM_DOMAIN_NAME": "도메인 이름",
@@ -411,5 +412,6 @@
   "MORE": "More",
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
-  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)",
+  "APP_INSTALL_FORM_RANDOM": "Random"
 }
