@@ -56,6 +56,7 @@
   "APP_ERROR_DOMAIN_NOT_VALID": "Dominio {{domain}} non è un dominio valido",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Dominio richiesto quando l'app è esposta",
   "APP_ERROR_INVALID_CONFIG": "L'app {{id}} ha un file config.json non valido",
+  "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Scegli un opzione...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Visualizza nella dashboard ospite",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Nome di dominio",
@@ -411,5 +412,6 @@
   "MORE": "Altro",
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Sotto-dominio",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Nome di sotto-dominio invalido",
-  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Il sotto-dominio non è valido (sono ammessi solo lettere minuscole, numeri e trattini. Lunghezza massima 63 caratteri)"
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Il sotto-dominio non è valido (sono ammessi solo lettere minuscole, numeri e trattini. Lunghezza massima 63 caratteri)",
+  "APP_INSTALL_FORM_RANDOM": "Random"
 }
