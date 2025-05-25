@@ -56,6 +56,7 @@
   "APP_ERROR_DOMAIN_NOT_VALID": "Domena {{domain}} nie jest poprawną domeną",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domena jest wymagana, jeśli aplikacja jest udostępniona",
   "APP_ERROR_INVALID_CONFIG": "Aplikacja {{id}} ma nieprawidłowy plik config.json",
+  "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} jest już używany przez aplikację {{id}}",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Wybierz opcję...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Wyświetlaj w panelu gości",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Nazwa domeny",
@@ -411,6 +412,6 @@
   "MORE": "Więcej",
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomena",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Nieprawidłowa subdomena",
-  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomena nie jest prawidłowa (dozwolone są tylko małe litery, cyfry i myślniki. Maksymalna długość to 63 znaki)"
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomena nie jest prawidłowa (dozwolone są tylko małe litery, cyfry i myślniki. Maksymalna długość to 63 znaki)",
+  "APP_INSTALL_FORM_RANDOM": "Losowy"
 }
-
