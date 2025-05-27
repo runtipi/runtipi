@@ -54,16 +54,15 @@ export async function clientLoader({ request }: Route.ActionArgs) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    window.addEventListener('vite:preloadError', () => {
+    const handlePreloadError = () => {
       window.location.reload();
-    });
+    };
+    window.addEventListener('vite:preloadError', handlePreloadError);
 
     return () => {
-      window.removeEventListener('vite:preloadError', () => {
-        window.location.reload();
-      });
+      window.removeEventListener('vite:preloadError', handlePreloadError);
     };
-  });
+  }, []);
 
   return (
     <html lang="en">
