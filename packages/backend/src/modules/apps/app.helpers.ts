@@ -73,7 +73,7 @@ export class AppHelpers {
       const formValue = form[field.env_variable];
       const envVar = field.env_variable;
 
-      if (!formValue && field.default) {
+      if (formValue === undefined && field.default) {
         envMap.set(envVar, String(field.default));
         continue;
       }
