@@ -21,6 +21,7 @@ export class UninstallAppCommand extends AppLifecycleCommand {
       }
 
       await appFilesManager.deleteAppFolder(appUrn);
+      await appFilesManager.deleteAppDataDir(appUrn);
 
       return { success: true, message: `App ${appUrn} uninstalled successfully` };
     } catch (err) {
