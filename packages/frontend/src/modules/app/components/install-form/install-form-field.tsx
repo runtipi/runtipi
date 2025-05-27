@@ -108,6 +108,7 @@ export const InstallFormField = (props: IProps) => {
       type={type}
       className="mb-3"
       placeholder={field.placeholder || field.label}
+      defaultValue={field.default as string}
     />
   );
 };
