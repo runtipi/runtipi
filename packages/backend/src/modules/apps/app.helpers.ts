@@ -80,16 +80,19 @@ export class AppHelpers {
 
       if (formValue || typeof formValue === 'boolean') {
         envMap.set(envVar, String(formValue));
+        continue;
       }
 
       if (field.type === 'random') {
         if (existingAppEnvMap.has(envVar)) {
           envMap.set(envVar, existingAppEnvMap.get(envVar) as string);
-        } else {
-          const length = field.min ?? 32;
-          const randomString = this.envUtils.createRandomString(field.env_variable, length, field.encoding);
-          envMap.set(envVar, randomString);
+          continue;
         }
+
+        const length = field.min ?? 32;
+        const randomString = this.envUtils.createRandomString(field.env_variable, length, field.encoding);
+        envMap.set(envVar, randomString);
+        continue;
       }
 
       if (formValue === undefined && field.required) {
