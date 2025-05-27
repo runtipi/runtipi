@@ -6,6 +6,8 @@ import { Switch } from '@/components/ui/Switch';
 import { useAppContext } from '@/context/app-context';
 import type { AppInfo, FormField } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
+import { extractAppUrn } from '@/utils/app-helpers';
+import type { AppUrn } from '@runtipi/common/types';
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import type React from 'react';
@@ -58,6 +60,8 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
   const watchExposed = watch('exposed', false);
   const watchOpenPort = watch('openPort', true);
   const watchExposedLocal = watch('exposedLocal', false);
+
+  const { appName, appStoreId } = extractAppUrn(info.urn as AppUrn);
 
   useEffect(() => {
     if (info.force_expose) {
@@ -122,7 +126,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
             label={t('APP_INSTALL_FORM_DOMAIN_NAME')}
             error={errors.domain?.message}
             disabled={loading}
-            placeholder={domain ? `${info.urn.split(':').join('-')}.${domain}` : `${info.urn.split(':').join('-')}.example.com`}
+            placeholder={domain ? `${appName}-${appStoreId}.${domain}` : `${appName}-${appStoreId}.example.com`}
           />
           <span className="text-muted">{t('APP_INSTALL_FORM_DOMAIN_NAME_HINT')}</span>
         </div>
