@@ -1,23 +1,28 @@
 import { execAsync } from '@/common/helpers/exec-helpers';
+import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ArchiveService {
+  constructor(private readonly logger: LoggerService) {}
+
   createTarGz = async (sourceDir: string, destinationFile: string) => {
-    return execAsync(`tar -czf ${destinationFile} -C ${sourceDir} .`);
+    const tarCommand = `tar -czf ${destinationFile} -C ${sourceDir} --preserve-permissions --acls --xattrs .`;
+    this.logger.debug(`Creating archive with command: ${tarCommand}`);
+    return execAsync(tarCommand);
   };
 
   extractTarGz = async (sourceFile: string, destinationDir: string) => {
     const fileType = await execAsync(`file --brief --mime-type ${sourceFile}`);
     const mimeType = fileType.stdout.trim();
 
-    let tarCommand = `tar -xzf ${sourceFile} -C ${destinationDir}`;
+    let tarCommand = `tar -xzf ${sourceFile} -C ${destinationDir} --preserve-permissions --preserve-order --acls --xattrs`;
 
-    // Support for legacy tarballs without the 'z' flag
     if (mimeType === 'application/x-tar') {
-      tarCommand = `tar -xf ${sourceFile} -C ${destinationDir}`;
+      tarCommand = `tar -xf ${sourceFile} -C ${destinationDir} --preserve-permissions --preserve-order --acls --xattrs`;
     }
 
+    this.logger.debug(`Extracting archive with command: ${tarCommand}`);
     return await execAsync(tarCommand);
   };
 }
