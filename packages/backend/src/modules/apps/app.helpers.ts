@@ -92,7 +92,7 @@ export class AppHelpers {
         }
       }
 
-      if (!formValue && field.required) {
+      if (formValue === undefined && field.required) {
         throw new Error(`Variable ${field.label || field.env_variable} is required`);
       }
     }
