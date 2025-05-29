@@ -57,8 +57,8 @@ export class AppLifecycleService {
     return oldJSON !== newJSON;
   }
 
-  async startApp(params: { appUrn: AppUrn }) {
-    const { appUrn } = params;
+  async startApp(params: { appUrn: AppUrn; skipPull?: boolean }) {
+    const { appUrn, skipPull } = params;
     const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
@@ -68,7 +68,7 @@ export class AppLifecycleService {
     await this.appRepository.updateAppById(app.id, { status: 'starting' });
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'starting' });
 
-    this.appEventsQueue.publish({ appUrn, command: 'start', form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ appUrn, command: 'start', form: { ...app.config, skipPull } }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appUrn} started successfully`);
         this.sseService.emit('app', { event: 'start_success', appUrn, appStatus: 'running' });
@@ -477,7 +477,7 @@ export class AppLifecycleService {
     const startPromises = runningApps.map(async (app) => {
       try {
         const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-        await this.startApp({ appUrn });
+        await this.startApp({ appUrn, skipPull: true });
       } catch (e) {
         this.logger.error(`Failed to start app ${app.id}`, e);
       }
