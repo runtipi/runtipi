@@ -43,7 +43,7 @@
     "dockerode": "^4.0.6",
     "dotenv": "^16.5.0",
     "dotenv-cli": "^8.0.0",
-    "drizzle-orm": "^0.43.1",
+    "drizzle-orm": "^0.44.0",
     "i18next": "^25.1.2",
     "i18next-fs-backend": "^2.6.0",
     "isomorphic-git": "^1.30.1",
