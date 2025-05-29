@@ -7,7 +7,7 @@ export class ArchiveService {
   constructor(private readonly logger: LoggerService) {}
 
   createTarGz = async (sourceDir: string, destinationFile: string) => {
-    const tarCommand = `tar -czf ${destinationFile} -C ${sourceDir} --preserve-permissions --acls --xattrs .`;
+    const tarCommand = `tar -czpf ${destinationFile} -C ${sourceDir} .`;
     this.logger.debug(`Creating archive with command: ${tarCommand}`);
     return execAsync(tarCommand);
   };
@@ -16,10 +16,10 @@ export class ArchiveService {
     const fileType = await execAsync(`file --brief --mime-type ${sourceFile}`);
     const mimeType = fileType.stdout.trim();
 
-    let tarCommand = `tar -xzf ${sourceFile} -C ${destinationDir} --preserve-permissions --preserve-order --acls --xattrs`;
+    let tarCommand = `tar -xzpf ${sourceFile} -C ${destinationDir}`;
 
     if (mimeType === 'application/x-tar') {
-      tarCommand = `tar -xf ${sourceFile} -C ${destinationDir} --preserve-permissions --preserve-order --acls --xattrs`;
+      tarCommand = `tar -xpf ${sourceFile} -C ${destinationDir}`;
     }
 
     this.logger.debug(`Extracting archive with command: ${tarCommand}`);
