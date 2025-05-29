@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { colorSchemeForCategory } from '../../helpers/table-helpers';
 
-export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean }> = ({ app, isLoading }) => {
+export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean; isInstalled: boolean }> = ({ app, isLoading, isInstalled }) => {
   const { t } = useTranslation();
 
   const isNew = (app.created_at ?? 0) + 14 * 24 * 60 * 60 * 1000 > Date.now();
@@ -26,7 +26,8 @@ export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean }> = (
             <h3 className="text-bold h-3 mb-2">
               <Skeleton loading={isLoading}>{limitText(app.name, 20)}</Skeleton>
             </h3>
-            {isNew ? <div className="text-white badge me-1 bg-green">{t('APP_NEW')}</div> : null}
+            {isNew && !isInstalled ? <div className="text-white badge me-1 bg-green">{t('APP_NEW')}</div> : null}
+            {isInstalled ? <div className='text-white badge me-1 bg-green'>{t('APP_INSTALLED')}</div> : null}
           </div>
           <p className="text-muted text-nowrap mb-2">
             <Skeleton loading={isLoading}>{limitText(app.short_desc, 30)}</Skeleton>
