@@ -16,7 +16,6 @@ const commonAppCommandSchema = z.object({
     z.literal('backup'),
   ]),
   appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
-  skipEnv: z.boolean().optional().default(false),
   form: appFormSchema,
 });
 

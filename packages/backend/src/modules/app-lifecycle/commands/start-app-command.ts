@@ -7,7 +7,7 @@ import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 
 export class StartAppCommand extends AppLifecycleCommand {
-  public async execute(appUrn: AppUrn, form: AppEventFormInput, skipEnvGeneration = false) {
+  public async execute(appUrn: AppUrn, form: AppEventFormInput) {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
@@ -24,12 +24,12 @@ export class StartAppCommand extends AppLifecycleCommand {
 
       await this.ensureAppDir(appUrn, form);
 
-      if (!skipEnvGeneration) {
+      if (!form.skipEnv) {
         logger.info(`Regenerating app.env file for app ${appUrn}`);
         await appHelpers.generateEnvFile(appUrn, form);
       }
 
-      const forcePull = config.force_pull ?? false;
+      const forcePull = !form.skipPull && config.force_pull;
       await dockerService.composeApp(appUrn, `up --detach --force-recreate --remove-orphans ${forcePull ? '--pull always' : ''}`);
 
       logger.info(`App ${appUrn} started`);

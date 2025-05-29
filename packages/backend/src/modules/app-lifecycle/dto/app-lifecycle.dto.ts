@@ -14,6 +14,8 @@ export const appFormSchema = z
       .string()
       .regex(/^[a-zA-Z0-9-]{1,63}$/)
       .optional(),
+    skipEnv: z.boolean().optional().default(false),
+    skipPull: z.boolean().optional().default(false),
   })
   .extend({})
   .catchall(z.unknown());

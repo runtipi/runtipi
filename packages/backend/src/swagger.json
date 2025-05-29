@@ -3341,6 +3341,14 @@
           "localSubdomain": {
             "type": "string",
             "pattern": "^[a-zA-Z0-9-]{1,63}$"
+          },
+          "skipEnv": {
+            "type": "boolean",
+            "default": false
+          },
+          "skipPull": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
