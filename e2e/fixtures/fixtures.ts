@@ -47,7 +47,7 @@ export const installApp = async (page: Page, storeSlug: string, appId: string, o
 
   if (opts.domain) {
     await page.getByLabel('exposed', { exact: true }).setChecked(true);
-    await page.getByPlaceholder('Domain name').fill(opts.domain);
+    await page.getByRole('textbox', { name: 'domain' }).fill(opts.domain);
   }
 
   await page.getByRole('button', { name: 'Install' }).click();
