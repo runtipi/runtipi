@@ -22,9 +22,11 @@ import { GuestLinkTile } from '../components/guest-link-tile';
 const Tile = ({
   data,
   localDomain,
+  sslPort,
 }: {
   data: GuestAppsDto['installed'][number];
   localDomain: string;
+  sslPort: number;
 }) => {
   const { t } = useTranslation();
 
@@ -44,11 +46,11 @@ const Tile = ({
     }
 
     if (type === 'domain' && app.domain) {
-      url = `https://${app.domain}${info.url_suffix || ''}`;
+      url = `https://${app.domain}${sslPort !== 443 ? `:${sslPort}` : ''}${info.url_suffix || ''}`;
     }
 
     if (type === 'localDomain') {
-      url = `https://${metadata.localSubdomain}.${localDomain}${info.url_suffix || ''}`;
+      url = `https://${metadata.localSubdomain}.${localDomain}${sslPort !== 443 ? `:${sslPort}` : ''}${info.url_suffix || ''}`;
     }
 
     window.open(url, '_blank', 'noreferrer');
@@ -69,12 +71,14 @@ const Tile = ({
             <DropdownMenuItem onClick={() => handleOpen('domain')}>
               <IconLock className="text-green me-2" size={16} />
               {app.domain}
+              {sslPort !== 443 ? `:${sslPort}` : ''}
             </DropdownMenuItem>
           )}
           {(app.exposedLocal || !info.dynamic_config) && (
             <DropdownMenuItem onClick={() => handleOpen('localDomain')}>
               <IconLock className="text-muted me-2" size={16} />
               {metadata.localSubdomain}.{localDomain}
+              {sslPort !== 443 ? `:${sslPort}` : ''}
             </DropdownMenuItem>
           )}
           {(app.openPort || !info.dynamic_config) && (
@@ -90,7 +94,7 @@ const Tile = ({
 };
 
 export const GuestDashboard = () => {
-  const { localDomain } = useUserContext();
+  const { localDomain, sslPort } = useUserContext();
 
   const { data: appsData } = useSuspenseQuery({
     ...getGuestAppsOptions(),
@@ -120,7 +124,7 @@ export const GuestDashboard = () => {
             {!hasContent && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
             <div className="row row-cards">
               {appsData.installed.map((appData) => {
-                return <Tile key={appData.app.id} data={appData} localDomain={localDomain} />;
+                return <Tile key={appData.app.id} data={appData} localDomain={localDomain} sslPort={sslPort} />;
               })}
               {linksData.links.map((link) => (
                 <GuestLinkTile key={link.id} link={link} />

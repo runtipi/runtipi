@@ -34,7 +34,7 @@ export default () => {
           <div className="mb-1">
             <AppStatus status={app?.status ?? 'missing'} />
           </div>
-          <AppActions app={app} metadata={metadata} info={info} localDomain={userSettings.localDomain} />
+          <AppActions app={app} metadata={metadata} info={info} localDomain={userSettings.localDomain} sslPort={userSettings.sslPort} />
         </div>
       </div>
       <AppDetailsTabs info={info} app={app} metadata={metadata} />

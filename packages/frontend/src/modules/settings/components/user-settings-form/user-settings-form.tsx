@@ -22,7 +22,9 @@ import { ColorSelector, THEME_COLOR_ENUM, type ThemeColor } from '../color-selec
 import { THEME_BASE_ENUM, type ThemeBase, ThemeBaseSelector } from '../theme-base-selector/theme-base-selector';
 
 const TimeZoneSelector = lazy(() =>
-  import('@/components/timezone-selector/timezone-selector').then((module) => ({ default: module.TimeZoneSelector })),
+  import('@/components/timezone-selector/timezone-selector').then((module) => ({
+    default: module.TimeZoneSelector,
+  })),
 );
 
 const LOG_LEVEL_ENUM = {
@@ -279,9 +281,9 @@ export const UserSettingsForm = (props: IProps) => {
                   {...rest}
                   label={
                     <>
-                      Advanced Settings
+                      {t('SETTINGS_GENERAL_ADVANCED_SETTINGS_TITLE')}
                       <Tooltip className="tooltip" anchorSelect=".advanced-settings-hint">
-                        Enable advanced settings for more control over your instance.
+                        {t('SETTINGS_GENERAL_ADVANCED_SETTINGS_SUBTITLE')}
                       </Tooltip>
                       <span className={clsx('ms-1 form-help advanced-settings-hint')}>?</span>
                     </>
@@ -332,7 +334,7 @@ export const UserSettingsForm = (props: IProps) => {
               </>
             }
             error={errors.localDomain?.message}
-            placeholder="tipi.local"
+            placeholder="tipi.lan"
             disabled={initialValues?.advancedSettings === false}
           />
           <Button className="mt-2 mb-2" onClick={downloadCertificate}>
@@ -362,9 +364,7 @@ export const UserSettingsForm = (props: IProps) => {
                       <>
                         {t('SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG')}
                         <Tooltip className="tooltip" anchorSelect=".persist-traefik-config-hint">
-                          {t(
-                            'Persist the Traefik configuration folder throughout restarts. This will allow you to customize the Traefik configuration.',
-                          )}
+                          {t('SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT')}
                         </Tooltip>
                         <span className={clsx('ms-1 form-help persist-traefik-config-hint')}>?</span>
                       </>
@@ -423,7 +423,9 @@ export const UserSettingsForm = (props: IProps) => {
             </div>
             <div className="mb-3">
               <Input
-                {...register('port')}
+                {...register('port', {
+                  valueAsNumber: true,
+                })}
                 label={
                   <>
                     {t('SETTINGS_GENERAL_PORT')}
@@ -435,11 +437,15 @@ export const UserSettingsForm = (props: IProps) => {
                 }
                 error={errors.port?.message}
                 placeholder="80"
+                type="number"
+                max={65535}
               />
             </div>
             <div className="mb-3">
               <Input
-                {...register('sslPort')}
+                {...register('sslPort', {
+                  valueAsNumber: true,
+                })}
                 label={
                   <>
                     {t('SETTINGS_GENERAL_SSL_PORT')}
@@ -451,11 +457,15 @@ export const UserSettingsForm = (props: IProps) => {
                 }
                 error={errors.sslPort?.message}
                 placeholder="443"
+                type="number"
+                max={65535}
               />
             </div>
             <div className="mb-3">
               <Input
-                {...register('eventsTimeout')}
+                {...register('eventsTimeout', {
+                  valueAsNumber: true,
+                })}
                 label={
                   <>
                     {t('SETTINGS_GENERAL_EVENTS_TIMEOUT')}
@@ -467,6 +477,7 @@ export const UserSettingsForm = (props: IProps) => {
                 }
                 error={errors.eventsTimeout?.message}
                 placeholder="5"
+                type="number"
               />
             </div>
             <div className="mb-3">

@@ -38,6 +38,10 @@ export type UserContextDto = {
    * The configured local domain
    */
   localDomain: string;
+  /**
+   * The SSL port for the app
+   */
+  sslPort: number;
 };
 
 export type AppContextDto = {
@@ -562,6 +566,8 @@ export type AppFormBody = {
   isVisibleOnGuestDashboard?: boolean;
   enableAuth?: boolean;
   localSubdomain?: string;
+  skipEnv?: boolean;
+  skipPull?: boolean;
 };
 
 export type UninstallAppBody = {

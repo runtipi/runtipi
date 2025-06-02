@@ -55,6 +55,7 @@ export class UserContextDto extends createZodDto(
     themeColor: z.string().describe('The theme color of the app'),
     themeBase: z.string().describe('The base theme of the app'),
     localDomain: z.string().describe('The configured local domain'),
+    sslPort: z.number().describe('The SSL port for the app'),
   }),
 ) {}
 
