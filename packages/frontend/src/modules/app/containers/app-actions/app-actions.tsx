@@ -46,6 +46,7 @@ interface IProps {
   info: AppInfo;
   metadata: AppMetadata;
   localDomain?: string;
+  sslPort?: number;
 }
 
 interface BtnProps extends ButtonProps {
@@ -67,7 +68,7 @@ const ActionButton: React.FC<BtnProps> = (props) => {
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
-export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
+export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps) => {
   const installDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const restartDisclosure = useDisclosure();
@@ -82,7 +83,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
 
-  const appLocalDomain = `${metadata.localSubdomain}.${localDomain}`;
+  const appLocalDomain = `${metadata.localSubdomain}.${localDomain}${sslPort !== 443 ? `:${sslPort}` : ''}`;
 
   const buttons: React.JSX.Element[] = [];
 
@@ -152,6 +153,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
             <DropdownMenuItem onClick={() => handleOpen('domain')}>
               <IconLock className="text-green me-2" size={16} />
               {app.domain}
+              {sslPort !== 443 ? `:${sslPort}` : ''}
             </DropdownMenuItem>
           )}
           {(app?.exposedLocal || !info.dynamic_config) && (
@@ -221,7 +223,7 @@ export const AppActions = ({ app, info, localDomain, metadata }: IProps) => {
     }
 
     if (type === 'domain' && app?.domain) {
-      url = `https://${app.domain}${info.url_suffix || ''}`;
+      url = `https://${app.domain}${sslPort !== 443 ? `:${sslPort}` : ''}${info.url_suffix || ''}`;
     }
 
     if (type === 'local_domain') {

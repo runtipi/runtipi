@@ -1627,6 +1627,10 @@
           "localDomain": {
             "description": "The configured local domain",
             "type": "string"
+          },
+          "sslPort": {
+            "description": "The SSL port for the app",
+            "type": "number"
           }
         },
         "required": [
@@ -1638,7 +1642,8 @@
           "allowErrorMonitoring",
           "themeColor",
           "themeBase",
-          "localDomain"
+          "localDomain",
+          "sslPort"
         ]
       },
       "AppContextDto": {

@@ -171,9 +171,10 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
                   {t('APP_INSTALL_FORM_RANDOM')}
                 </Button>
               }
-              min={1024}
               max={65535}
-              {...register('port')}
+              {...register('port', {
+                valueAsNumber: true,
+              })}
               error={errors.port?.message}
               disabled={loading || randomPortMutation.isPending}
               placeholder="8484"
