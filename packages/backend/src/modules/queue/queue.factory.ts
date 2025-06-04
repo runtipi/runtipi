@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { Connection } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
+import { EventPublisher } from './event.publisher';
 import { Queue } from './queue.entity';
 
 @Injectable()
@@ -60,6 +61,9 @@ export class QueueFactory {
     resultSchema?: R;
     timeout?: number;
   }) {
+    const publisher = new EventPublisher(this.rabbit, this.logger, params.queueName);
+    publisher.initialize();
+
     const { queueName, workers = 3, eventSchema, resultSchema = z.object({ success: z.boolean(), message: z.string() }), timeout } = params;
 
     const rpcClient = this.rabbit.createRPCClient({
@@ -68,6 +72,6 @@ export class QueueFactory {
       maxAttempts: 3,
     });
 
-    return new Queue(this.rabbit, rpcClient, queueName, workers, eventSchema, resultSchema, this.logger);
+    return new Queue(this.rabbit, rpcClient, publisher, queueName, workers, eventSchema, resultSchema, this.logger);
   }
 }

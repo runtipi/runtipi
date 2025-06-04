@@ -68,7 +68,8 @@ export class AppLifecycleService {
     await this.appRepository.updateAppById(app.id, { status: 'starting' });
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'starting' });
 
-    this.appEventsQueue.publish({ appUrn, command: 'start', form: { ...app.config, skipPull } }).then(async ({ success, message }) => {
+    const requestId = crypto.randomUUID();
+    this.appEventsQueue.publish({ appUrn, command: 'start', requestId, form: { ...app.config, skipPull } }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appUrn} started successfully`);
         this.sseService.emit('app', { event: 'start_success', appUrn, appStatus: 'running' });
@@ -79,9 +80,11 @@ export class AppLifecycleService {
         await this.appRepository.updateAppById(app.id, { status: 'stopped' });
       }
     });
+
+    return { requestId };
   }
 
-  async installApp(params: { appUrn: AppUrn; form: unknown }): Promise<void> {
+  async installApp(params: { appUrn: AppUrn; form: unknown }) {
     const { appUrn, form } = params;
     const { demoMode, version, architecture } = this.config.getConfig();
 
@@ -182,8 +185,8 @@ export class AppLifecycleService {
       enableAuth: enableAuth ?? false,
     });
 
-    // Send install command to the queue
-    this.appEventsQueue.publish({ appUrn, command: 'install', form: parsedForm }).then(async ({ success, message }) => {
+    const requestId = crypto.randomUUID();
+    this.appEventsQueue.publish({ appUrn, command: 'install', requestId, form: parsedForm }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appUrn} installed successfully`);
         this.sseService.emit('app', { event: 'install_success', appUrn, appStatus: 'running' });
@@ -194,6 +197,8 @@ export class AppLifecycleService {
         await this.appRepository.deleteAppById(createdApp.id);
       }
     });
+
+    return { requestId };
   }
 
   /**
@@ -211,8 +216,8 @@ export class AppLifecycleService {
 
     await this.appRepository.updateAppById(app.id, { status: 'stopping' });
 
-    // Send stop command to the queue
-    this.appEventsQueue.publish({ command: 'stop', appUrn, form: app.config }).then(async ({ success, message }) => {
+    const requestId = crypto.randomUUID();
+    this.appEventsQueue.publish({ command: 'stop', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.sseService.emit('app', { event: 'stop_success', appUrn, appStatus: 'stopped' });
         this.logger.info(`App ${appUrn} stopped successfully`);
@@ -223,6 +228,8 @@ export class AppLifecycleService {
         await this.appRepository.updateAppById(app.id, { status: 'running' });
       }
     });
+
+    return { requestId };
   }
 
   /**
@@ -239,7 +246,8 @@ export class AppLifecycleService {
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'restarting' });
     await this.appRepository.updateAppById(app.id, { status: 'restarting' });
 
-    this.appEventsQueue.publish({ command: 'restart', appUrn, form: app.config }).then(async ({ success, message }) => {
+    const requestId = crypto.randomUUID();
+    this.appEventsQueue.publish({ command: 'restart', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appUrn} restarted successfully`);
         this.sseService.emit('app', { event: 'restart_success', appUrn, appStatus: 'running' });
@@ -250,6 +258,8 @@ export class AppLifecycleService {
         await this.appRepository.updateAppById(app.id, { status: 'stopped' });
       }
     });
+
+    return { requestId };
   }
 
   /**
@@ -271,7 +281,8 @@ export class AppLifecycleService {
     await this.appRepository.updateAppById(app.id, { status: 'uninstalling' });
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'uninstalling' });
 
-    this.appEventsQueue.publish({ command: 'uninstall', appUrn, form: app.config }).then(async ({ success, message }) => {
+    const requestId = crypto.randomUUID();
+    this.appEventsQueue.publish({ command: 'uninstall', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appUrn} uninstalled successfully`);
         await this.appRepository.deleteAppById(app.id);
@@ -282,6 +293,8 @@ export class AppLifecycleService {
         await this.appRepository.updateAppById(app.id, { status: 'stopped' });
       }
     });
+
+    return { requestId };
   }
 
   /**
@@ -299,7 +312,8 @@ export class AppLifecycleService {
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'resetting' });
     await this.appRepository.updateAppById(app.id, { status: 'resetting' });
 
-    this.appEventsQueue.publish({ command: 'reset', appUrn, form: app.config }).then(async ({ success, message }) => {
+    const requestId = crypto.randomUUID();
+    this.appEventsQueue.publish({ command: 'reset', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appUrn} reset successfully`);
         this.sseService.emit('app', { event: 'reset_success', appUrn, appStatus: 'stopped' });
@@ -314,6 +328,8 @@ export class AppLifecycleService {
         await this.appRepository.updateAppById(app.id, { status: 'running' });
       }
     });
+
+    return { requestId };
   }
 
   public async updateAppConfig(params: { appUrn: AppUrn; form: unknown }) {
@@ -384,9 +400,11 @@ export class AppLifecycleService {
       }
     }
 
+    const requestId = crypto.randomUUID();
     const { success, message } = await this.appEventsQueue.publish({
       command: 'generate_env',
       appUrn,
+      requestId,
       form: parsedForm,
     });
 
@@ -411,6 +429,8 @@ export class AppLifecycleService {
       const pendingRestart = this.hasConfigChanged(app.config, changed?.config || {});
       await this.appRepository.updateAppById(app.id, { pendingRestart });
     }
+
+    return { requestId };
   }
 
   public async updateApp(params: { appUrn: AppUrn; performBackup: boolean }) {
@@ -433,7 +453,8 @@ export class AppLifecycleService {
     const appStatusBeforeUpdate = app.status;
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'updating' });
 
-    this.appEventsQueue.publish({ command: 'update', appUrn, form: app.config, performBackup }).then(async ({ success, message }) => {
+    const requestId = crypto.randomUUID();
+    this.appEventsQueue.publish({ command: 'update', appUrn, requestId, form: app.config, performBackup }).then(async ({ success, message }) => {
       if (success) {
         const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
@@ -452,6 +473,8 @@ export class AppLifecycleService {
         await this.appRepository.updateAppById(app.id, { status: 'stopped' });
       }
     });
+
+    return { requestId };
   }
 
   async updateAllApps() {
