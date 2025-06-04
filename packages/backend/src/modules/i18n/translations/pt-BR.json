@@ -56,7 +56,7 @@
   "APP_ERROR_DOMAIN_NOT_VALID": "O domínio {{domain}} não é um domínio válido",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "O Domínio é necessário se o aplicativo estiver exposto",
   "APP_ERROR_INVALID_CONFIG": "O arquivo de configuração do aplicativo {{id}} contém erros de sintaxe ",
-  "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
+  "APP_ERROR_PORT_ALREADY_IN_USE": "A Porta {{port}} já está em uso pelo aplicativo {{id}}",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Selecione uma opção...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Exibir no painel do convidado",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Nome do domínio",
@@ -413,5 +413,5 @@
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomínio",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Subdomínio inválido",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "O subdomínio não é válido (são permitidas apenas letras minúsculas, números e traços. Tamanho máximo de 63 caracteres)",
-  "APP_INSTALL_FORM_RANDOM": "Random"
+  "APP_INSTALL_FORM_RANDOM": "Aleatório"
 }
