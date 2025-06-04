@@ -54,13 +54,21 @@ import type {
   DeleteAppStoreData,
   UpdateAppStoreData,
   InstallAppData,
+  InstallAppResponse,
   StartAppData,
+  StartAppResponse,
   StopAppData,
+  StopAppResponse,
   RestartAppData,
+  RestartAppResponse,
   UninstallAppData,
+  UninstallAppResponse,
   ResetAppData,
+  ResetAppResponse,
   UpdateAppData,
+  UpdateAppResponse,
   UpdateAppConfigData,
+  UpdateAppConfigResponse,
   UpdateAllAppsData,
   BackupAppData,
   RestoreAppBackupData,
@@ -377,7 +385,7 @@ export const updateAppStore = <ThrowOnError extends boolean = false>(options: Op
 };
 
 export const installApp = <ThrowOnError extends boolean = false>(options: Options<InstallAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<InstallAppResponse, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/install',
     ...options,
     headers: {
@@ -388,28 +396,28 @@ export const installApp = <ThrowOnError extends boolean = false>(options: Option
 };
 
 export const startApp = <ThrowOnError extends boolean = false>(options: Options<StartAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<StartAppResponse, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/start',
     ...options,
   });
 };
 
 export const stopApp = <ThrowOnError extends boolean = false>(options: Options<StopAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<StopAppResponse, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/stop',
     ...options,
   });
 };
 
 export const restartApp = <ThrowOnError extends boolean = false>(options: Options<RestartAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<RestartAppResponse, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/restart',
     ...options,
   });
 };
 
 export const uninstallApp = <ThrowOnError extends boolean = false>(options: Options<UninstallAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).delete<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).delete<UninstallAppResponse, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/uninstall',
     ...options,
     headers: {
@@ -420,14 +428,14 @@ export const uninstallApp = <ThrowOnError extends boolean = false>(options: Opti
 };
 
 export const resetApp = <ThrowOnError extends boolean = false>(options: Options<ResetAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<ResetAppResponse, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/reset',
     ...options,
   });
 };
 
 export const updateApp = <ThrowOnError extends boolean = false>(options: Options<UpdateAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<UpdateAppResponse, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/update',
     ...options,
     headers: {
@@ -438,7 +446,7 @@ export const updateApp = <ThrowOnError extends boolean = false>(options: Options
 };
 
 export const updateAppConfig = <ThrowOnError extends boolean = false>(options: Options<UpdateAppConfigData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<UpdateAppConfigResponse, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/update-config',
     ...options,
     headers: {
