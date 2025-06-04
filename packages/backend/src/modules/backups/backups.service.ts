@@ -41,7 +41,8 @@ export class BackupsService {
     await this.appsRepository.updateAppById(app.id, { status: 'backing_up' });
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'backing_up' });
 
-    this.appEventsQueue.publish({ appUrn, command: 'backup', form: app.config }).then(async ({ success, message }) => {
+    const requestId = crypto.randomUUID();
+    this.appEventsQueue.publish({ appUrn, command: 'backup', requestId, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         if (appStatusBeforeUpdate === 'running') {
           await this.appLifecycle.startApp({ appUrn });
@@ -70,7 +71,8 @@ export class BackupsService {
     await this.appsRepository.updateAppById(app.id, { status: 'restoring' });
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'restoring' });
 
-    this.appEventsQueue.publish({ appUrn, command: 'restore', filename, form: app.config }).then(async ({ success, message }) => {
+    const requestId = crypto.randomUUID();
+    this.appEventsQueue.publish({ appUrn, command: 'restore', requestId, filename, form: app.config }).then(async ({ success, message }) => {
       if (success) {
         const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appUrn);
 

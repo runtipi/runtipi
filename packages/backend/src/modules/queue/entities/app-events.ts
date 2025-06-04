@@ -17,6 +17,7 @@ const commonAppCommandSchema = z.object({
   ]),
   appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
   form: appFormSchema,
+  requestId: z.string().uuid(),
 });
 
 const restoreAppCommandSchema = z.object({
@@ -24,6 +25,7 @@ const restoreAppCommandSchema = z.object({
   appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
   filename: z.string(),
   form: appFormSchema,
+  requestId: z.string().uuid(),
 });
 
 const updateAppCommandSchema = z.object({
@@ -31,6 +33,7 @@ const updateAppCommandSchema = z.object({
   appUrn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
   form: appFormSchema,
   performBackup: z.boolean().optional().default(true),
+  requestId: z.string().uuid(),
 });
 
 export const appEventSchema = commonAppCommandSchema.or(restoreAppCommandSchema).or(updateAppCommandSchema);

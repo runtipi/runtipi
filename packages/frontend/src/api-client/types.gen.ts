@@ -570,6 +570,10 @@ export type AppFormBody = {
   skipPull?: boolean;
 };
 
+export type LifecycleRequestDto = {
+  requestId: string;
+};
+
 export type UninstallAppBody = {
   removeBackups: boolean;
 };
@@ -1061,8 +1065,10 @@ export type InstallAppData = {
 };
 
 export type InstallAppResponses = {
-  201: unknown;
+  201: LifecycleRequestDto;
 };
+
+export type InstallAppResponse = InstallAppResponses[keyof InstallAppResponses];
 
 export type StartAppData = {
   body?: never;
@@ -1074,8 +1080,10 @@ export type StartAppData = {
 };
 
 export type StartAppResponses = {
-  201: unknown;
+  201: LifecycleRequestDto;
 };
+
+export type StartAppResponse = StartAppResponses[keyof StartAppResponses];
 
 export type StopAppData = {
   body?: never;
@@ -1087,8 +1095,10 @@ export type StopAppData = {
 };
 
 export type StopAppResponses = {
-  201: unknown;
+  201: LifecycleRequestDto;
 };
+
+export type StopAppResponse = StopAppResponses[keyof StopAppResponses];
 
 export type RestartAppData = {
   body?: never;
@@ -1100,8 +1110,10 @@ export type RestartAppData = {
 };
 
 export type RestartAppResponses = {
-  201: unknown;
+  201: LifecycleRequestDto;
 };
+
+export type RestartAppResponse = RestartAppResponses[keyof RestartAppResponses];
 
 export type UninstallAppData = {
   body: UninstallAppBody;
@@ -1113,8 +1125,10 @@ export type UninstallAppData = {
 };
 
 export type UninstallAppResponses = {
-  200: unknown;
+  200: LifecycleRequestDto;
 };
+
+export type UninstallAppResponse = UninstallAppResponses[keyof UninstallAppResponses];
 
 export type ResetAppData = {
   body?: never;
@@ -1126,8 +1140,10 @@ export type ResetAppData = {
 };
 
 export type ResetAppResponses = {
-  201: unknown;
+  201: LifecycleRequestDto;
 };
+
+export type ResetAppResponse = ResetAppResponses[keyof ResetAppResponses];
 
 export type UpdateAppData = {
   body: UpdateAppBody;
@@ -1139,8 +1155,10 @@ export type UpdateAppData = {
 };
 
 export type UpdateAppResponses = {
-  200: unknown;
+  200: LifecycleRequestDto;
 };
+
+export type UpdateAppResponse = UpdateAppResponses[keyof UpdateAppResponses];
 
 export type UpdateAppConfigData = {
   body: AppFormBody;
@@ -1152,8 +1170,10 @@ export type UpdateAppConfigData = {
 };
 
 export type UpdateAppConfigResponses = {
-  200: unknown;
+  200: LifecycleRequestDto;
 };
+
+export type UpdateAppConfigResponse = UpdateAppConfigResponses[keyof UpdateAppConfigResponses];
 
 export type UpdateAllAppsData = {
   body?: never;

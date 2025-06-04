@@ -100,13 +100,21 @@ import type {
   DeleteAppStoreData,
   UpdateAppStoreData,
   InstallAppData,
+  InstallAppResponse,
   StartAppData,
+  StartAppResponse,
   StopAppData,
+  StopAppResponse,
   RestartAppData,
+  RestartAppResponse,
   UninstallAppData,
+  UninstallAppResponse,
   ResetAppData,
+  ResetAppResponse,
   UpdateAppData,
+  UpdateAppResponse,
   UpdateAppConfigData,
+  UpdateAppConfigResponse,
   UpdateAllAppsData,
   BackupAppData,
   RestoreAppBackupData,
@@ -895,8 +903,8 @@ export const installAppOptions = (options: Options<InstallAppData>) => {
 
 export const installAppMutation = (
   options?: Partial<Options<InstallAppData>>,
-): UseMutationOptions<unknown, DefaultError, Options<InstallAppData>> => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<InstallAppData>> = {
+): UseMutationOptions<InstallAppResponse, DefaultError, Options<InstallAppData>> => {
+  const mutationOptions: UseMutationOptions<InstallAppResponse, DefaultError, Options<InstallAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await installApp({
         ...options,
@@ -926,8 +934,10 @@ export const startAppOptions = (options: Options<StartAppData>) => {
   });
 };
 
-export const startAppMutation = (options?: Partial<Options<StartAppData>>): UseMutationOptions<unknown, DefaultError, Options<StartAppData>> => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StartAppData>> = {
+export const startAppMutation = (
+  options?: Partial<Options<StartAppData>>,
+): UseMutationOptions<StartAppResponse, DefaultError, Options<StartAppData>> => {
+  const mutationOptions: UseMutationOptions<StartAppResponse, DefaultError, Options<StartAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await startApp({
         ...options,
@@ -957,8 +967,8 @@ export const stopAppOptions = (options: Options<StopAppData>) => {
   });
 };
 
-export const stopAppMutation = (options?: Partial<Options<StopAppData>>): UseMutationOptions<unknown, DefaultError, Options<StopAppData>> => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StopAppData>> = {
+export const stopAppMutation = (options?: Partial<Options<StopAppData>>): UseMutationOptions<StopAppResponse, DefaultError, Options<StopAppData>> => {
+  const mutationOptions: UseMutationOptions<StopAppResponse, DefaultError, Options<StopAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await stopApp({
         ...options,
@@ -990,8 +1000,8 @@ export const restartAppOptions = (options: Options<RestartAppData>) => {
 
 export const restartAppMutation = (
   options?: Partial<Options<RestartAppData>>,
-): UseMutationOptions<unknown, DefaultError, Options<RestartAppData>> => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<RestartAppData>> = {
+): UseMutationOptions<RestartAppResponse, DefaultError, Options<RestartAppData>> => {
+  const mutationOptions: UseMutationOptions<RestartAppResponse, DefaultError, Options<RestartAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await restartApp({
         ...options,
@@ -1006,8 +1016,8 @@ export const restartAppMutation = (
 
 export const uninstallAppMutation = (
   options?: Partial<Options<UninstallAppData>>,
-): UseMutationOptions<unknown, DefaultError, Options<UninstallAppData>> => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UninstallAppData>> = {
+): UseMutationOptions<UninstallAppResponse, DefaultError, Options<UninstallAppData>> => {
+  const mutationOptions: UseMutationOptions<UninstallAppResponse, DefaultError, Options<UninstallAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await uninstallApp({
         ...options,
@@ -1037,8 +1047,10 @@ export const resetAppOptions = (options: Options<ResetAppData>) => {
   });
 };
 
-export const resetAppMutation = (options?: Partial<Options<ResetAppData>>): UseMutationOptions<unknown, DefaultError, Options<ResetAppData>> => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<ResetAppData>> = {
+export const resetAppMutation = (
+  options?: Partial<Options<ResetAppData>>,
+): UseMutationOptions<ResetAppResponse, DefaultError, Options<ResetAppData>> => {
+  const mutationOptions: UseMutationOptions<ResetAppResponse, DefaultError, Options<ResetAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await resetApp({
         ...options,
@@ -1051,8 +1063,10 @@ export const resetAppMutation = (options?: Partial<Options<ResetAppData>>): UseM
   return mutationOptions;
 };
 
-export const updateAppMutation = (options?: Partial<Options<UpdateAppData>>): UseMutationOptions<unknown, DefaultError, Options<UpdateAppData>> => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAppData>> = {
+export const updateAppMutation = (
+  options?: Partial<Options<UpdateAppData>>,
+): UseMutationOptions<UpdateAppResponse, DefaultError, Options<UpdateAppData>> => {
+  const mutationOptions: UseMutationOptions<UpdateAppResponse, DefaultError, Options<UpdateAppData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await updateApp({
         ...options,
@@ -1067,8 +1081,8 @@ export const updateAppMutation = (options?: Partial<Options<UpdateAppData>>): Us
 
 export const updateAppConfigMutation = (
   options?: Partial<Options<UpdateAppConfigData>>,
-): UseMutationOptions<unknown, DefaultError, Options<UpdateAppConfigData>> => {
-  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAppConfigData>> = {
+): UseMutationOptions<UpdateAppConfigResponse, DefaultError, Options<UpdateAppConfigData>> => {
+  const mutationOptions: UseMutationOptions<UpdateAppConfigResponse, DefaultError, Options<UpdateAppConfigData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await updateAppConfig({
         ...options,

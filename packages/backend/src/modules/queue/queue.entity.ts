@@ -3,11 +3,13 @@ import * as Sentry from '@sentry/nestjs';
 import cron from 'node-cron';
 import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';
 import { type ZodSchema, z } from 'zod';
+import type { EventPublisher } from './event.publisher';
 
 export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; message: string }>> {
   constructor(
     private rabbit: Connection,
     private rpcClient: RPCClient,
+    private publisher: EventPublisher,
     private queueName: string,
     private workers: number,
     private eventSchema: T,
@@ -17,11 +19,30 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
 
   public onEvent(callback: (data: z.output<T> & { eventId: string }, reply: (response: z.input<R>) => Promise<void>) => Promise<void>) {
     this.rabbit.createConsumer({ queue: this.queueName, concurrency: this.workers }, async (req, reply) => {
+      let rpcSuccess = false;
+      let rpcResultMessage = '';
+
       try {
         await callback(req.body, reply);
+        rpcSuccess = true;
+        rpcResultMessage = 'RPC processed successfully.';
       } catch (error) {
         this.logger.error('Error in consumer callback:', error);
         await reply({ success: false, message: (error as Error)?.message });
+        rpcSuccess = false;
+        rpcResultMessage = error instanceof Error ? error.message : String(error);
+      } finally {
+        const eventToPublish = {
+          queueName: this.queueName,
+          requestData: req.body,
+          rpcStatus: rpcSuccess ? 'success' : 'failure',
+          rpcMessage: rpcResultMessage,
+          requestId: req.body.requestId,
+          timestamp: new Date().toISOString(),
+        };
+
+        const routingKey = `rpc.${rpcSuccess ? 'processed' : 'error'}.${this.queueName}`;
+        await this.publisher.publish(routingKey, eventToPublish);
       }
     });
   }

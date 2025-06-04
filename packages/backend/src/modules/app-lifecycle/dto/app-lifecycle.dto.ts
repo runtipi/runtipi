@@ -25,3 +25,5 @@ export class AppFormBody extends createZodDto(appFormSchema) {}
 export class UninstallAppBody extends createZodDto(z.object({ removeBackups: z.boolean() })) {}
 
 export class UpdateAppBody extends createZodDto(z.object({ performBackup: z.boolean() })) {}
+
+export class LifecycleRequestDto extends createZodDto(z.object({ requestId: z.string().uuid() })) {}

@@ -137,12 +137,6 @@ jobs:
       - name: Install dependencies
         uses: "./.github/actions/install-dependencies"
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
-
       - name: Chmod 777 runtipi
         run: sudo chmod -R 777 runtipi
 

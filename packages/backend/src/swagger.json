@@ -842,7 +842,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LifecycleRequestDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -865,7 +872,14 @@
         ],
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LifecycleRequestDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -888,7 +902,14 @@
         ],
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LifecycleRequestDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -911,7 +932,14 @@
         ],
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LifecycleRequestDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -944,7 +972,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LifecycleRequestDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -967,7 +1002,14 @@
         ],
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LifecycleRequestDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1000,7 +1042,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LifecycleRequestDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1033,7 +1082,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LifecycleRequestDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -3356,6 +3412,18 @@
             "default": false
           }
         }
+      },
+      "LifecycleRequestDto": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "requestId"
+        ]
       },
       "UninstallAppBody": {
         "type": "object",
