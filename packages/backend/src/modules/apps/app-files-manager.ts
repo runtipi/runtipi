@@ -83,7 +83,7 @@ export class AppFilesManager {
         content = await this.filesystem.readTextFile(dockerComposePath);
       }
     } catch (error) {
-      this.logger.error(`Error getting docker-compose.yml for installed app ${appUrn}: ${error}`);
+      this.logger.error(`Error getting docker-compose.yml for installed app ${appUrn}:`, error);
     }
 
     return { path: dockerComposePath, content };
@@ -104,7 +104,7 @@ export class AppFilesManager {
         content = await this.filesystem.readJsonFile(dockerComposePath);
       }
     } catch (error) {
-      this.logger.error(`Error getting docker-compose.json for installed app ${appUrn}: ${error}`);
+      this.logger.error(`Error getting docker-compose.json for installed app ${appUrn}:`, error);
     }
 
     return { path: dockerComposePath, content };

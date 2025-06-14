@@ -54,7 +54,7 @@ export class ReposHelpers {
     Sentry.captureException(err);
 
     if (err instanceof Error) {
-      this.logger.error(`An error occurred: ${err.message}`);
+      this.logger.error(err);
       return { success: false, message: err.message };
     }
 

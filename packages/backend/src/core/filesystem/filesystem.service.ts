@@ -51,7 +51,7 @@ export class FilesystemService {
 
       return parsedContent;
     } catch (error) {
-      this.logger.error(`Error reading file ${this.getSafeFilePath(filePath)}: ${error}`);
+      this.logger.error(`Error reading file ${this.getSafeFilePath(filePath)}:`, error);
       return null;
     }
   }
@@ -60,7 +60,7 @@ export class FilesystemService {
     try {
       return await fs.promises.readFile(this.getSafeFilePath(filePath), 'utf8');
     } catch (error) {
-      this.logger.error(`Error reading file ${this.getSafeFilePath(filePath)}: ${error}`);
+      this.logger.error(`Error reading file ${this.getSafeFilePath(filePath)}:`, error);
       return null;
     }
   }
@@ -69,7 +69,7 @@ export class FilesystemService {
     try {
       return await fs.promises.readFile(this.getSafeFilePath(filePath));
     } catch (error) {
-      this.logger.error(`Error reading file ${this.getSafeFilePath(filePath)}: ${error}`);
+      this.logger.error(`Error reading file ${this.getSafeFilePath(filePath)}:`, error);
       return null;
     }
   }
@@ -79,7 +79,7 @@ export class FilesystemService {
       await fs.promises.writeFile(this.getSafeFilePath(filePath), `${JSON.stringify(data, null, 2)}${EOL}`, 'utf8');
       return true;
     } catch (error) {
-      this.logger.error(`Error writing file ${this.getSafeFilePath(filePath)}: ${error}`);
+      this.logger.error(`Error writing file ${this.getSafeFilePath(filePath)}:`, error);
       return false;
     }
   }
@@ -90,7 +90,7 @@ export class FilesystemService {
       await fs.promises.writeFile(this.getSafeFilePath(filePath), `${content}${EOL}`, 'utf8');
       return true;
     } catch (error) {
-      this.logger.error(`Error writing file ${this.getSafeFilePath(filePath)}: ${error}`);
+      this.logger.error(`Error writing file ${this.getSafeFilePath(filePath)}:`, error);
       return false;
     }
   }
@@ -107,7 +107,7 @@ export class FilesystemService {
       await fs.promises.copyFile(this.getSafeFilePath(src), this.getSafeFilePath(dest));
       return true;
     } catch (error) {
-      this.logger.error(`Error copying file from ${this.getSafeFilePath(src)} to ${this.getSafeFilePath(dest)}: ${error}`);
+      this.logger.error(`Error copying file from ${this.getSafeFilePath(src)} to ${this.getSafeFilePath(dest)}:`, error);
       return false;
     }
   }
@@ -117,7 +117,7 @@ export class FilesystemService {
       await fs.promises.mkdir(this.getSafeFilePath(dirPath), { recursive: true });
       return true;
     } catch (error) {
-      this.logger.error(`Error creating directory ${this.getSafeFilePath(dirPath)}: ${error}`);
+      this.logger.error(`Error creating directory ${this.getSafeFilePath(dirPath)}:`, error);
       return false;
     }
   }
@@ -136,7 +136,7 @@ export class FilesystemService {
       await fs.promises.cp(this.getSafeFilePath(src), this.getSafeFilePath(dest), { recursive: true, ...options });
       return true;
     } catch (error) {
-      this.logger.error(`Error copying directory from ${this.getSafeFilePath(src)} to ${this.getSafeFilePath(dest)}: ${error}`);
+      this.logger.error(`Error copying directory from ${this.getSafeFilePath(src)} to ${this.getSafeFilePath(dest)}:`, error);
       return false;
     }
   }
@@ -146,7 +146,7 @@ export class FilesystemService {
       await fs.promises.rm(this.getSafeFilePath(dirPath), { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
       return true;
     } catch (error) {
-      this.logger.error(`Error removing directory ${this.getSafeFilePath(dirPath)}: ${error}`);
+      this.logger.error(`Error removing directory ${this.getSafeFilePath(dirPath)}:`, error);
       return false;
     }
   }
@@ -156,7 +156,7 @@ export class FilesystemService {
       await fs.promises.unlink(this.getSafeFilePath(filePath));
       return true;
     } catch (error) {
-      this.logger.error(`Error removing file ${this.getSafeFilePath(filePath)}: ${error}`);
+      this.logger.error(`Error removing file ${this.getSafeFilePath(filePath)}:`, error);
       return false;
     }
   }
@@ -165,7 +165,7 @@ export class FilesystemService {
     try {
       return await fs.promises.readdir(this.getSafeFilePath(dirPath));
     } catch (error) {
-      this.logger.error(`Error listing files in ${this.getSafeFilePath(dirPath)}: ${error}`);
+      this.logger.error(`Error listing files in ${this.getSafeFilePath(dirPath)}:`, error);
       return [];
     }
   }

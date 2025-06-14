@@ -124,7 +124,7 @@ export class DockerService {
         kill: () => logs.kill('SIGINT'),
       };
     } catch (error) {
-      this.logger.error(`Error getting log stream: ${error}`);
+      this.logger.error('Error getting log stream', error);
       Sentry.captureException(error, { tags: { source: 'docker log stream', appUrn } });
       throw new InternalServerErrorException('Error getting log stream');
     }

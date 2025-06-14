@@ -175,7 +175,7 @@ export class BackupManager {
 
       return backups;
     } catch (error) {
-      this.logger.error(`Error listing backups for app ${appUrn}: ${error}`);
+      this.logger.error(`Error listing backups for app ${appUrn}:`, error);
       return [];
     }
   }

@@ -25,7 +25,7 @@ export class RestartAppCommand extends AppLifecycleCommand {
       logger.info(`Stopping app ${appUrn}`);
 
       await dockerService.composeApp(appUrn, 'down --remove-orphans').catch((err) => {
-        logger.error(`Failed to stop app ${appUrn}: ${err.message}`);
+        logger.error(`Failed to stop app ${appUrn}:`, err);
       });
       await this.ensureAppDir(appUrn, form);
 
