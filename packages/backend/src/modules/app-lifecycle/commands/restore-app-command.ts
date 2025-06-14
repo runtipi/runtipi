@@ -24,7 +24,7 @@ export class RestoreAppCommand extends AppLifecycleCommand {
       // Stop the app
       logger.info(`Stopping app ${appUrn} for restore operation`);
       await dockerService.composeApp(appUrn, 'stop').catch((err) => {
-        logger.error(`Failed to stop app ${appUrn}: ${err.message}`);
+        logger.error(`Failed to stop app ${appUrn}:`, err);
       });
 
       await backupManager.restoreApp(appUrn, this.filename);

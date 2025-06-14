@@ -99,7 +99,7 @@ export class SSEService {
           const payload = appUrn ? { appUrn, lines, event: 'newLogs' as const } : { lines, event: 'newLogs' as const };
           this.emit(topic, payload, appUrn);
         } catch (error) {
-          this.logger.error(`Error colorizing logs: ${error}`);
+          this.logger.error('Error colorizing logs:', error);
         }
       });
 
