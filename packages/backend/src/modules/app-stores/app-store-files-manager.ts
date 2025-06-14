@@ -64,7 +64,7 @@ export class AppStoreFilesManager {
         }
       }
     } catch (error) {
-      this.logger.error(`Error getting app info from app store for ${appUrn}: ${error}`);
+      this.logger.error(`Error getting app info from app store for ${appUrn}:`, error);
     }
   }
 
