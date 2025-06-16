@@ -56,12 +56,12 @@
     "remark-gfm": "^4.0.1",
     "semver": "^7.7.1",
     "validator": "^13.15.0",
-    "zod": "^3.25.30",
+    "zod": "^3.25.65",
     "zustand": "5.0.5"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.7.0",
-    "@hey-api/openapi-ts": "^0.72.2",
+    "@hey-api/openapi-ts": "^0.73.0",
     "@react-router/dev": "^7.6.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
