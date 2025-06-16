@@ -3,94 +3,114 @@
 import type { Options as ClientOptions, TDataShape, Client } from '@hey-api/client-fetch';
 import type {
   UserContextData,
-  UserContextResponse,
+  UserContextResponses,
   AppContextData,
-  AppContextResponse,
+  AppContextResponses,
   UpdateUserSettingsData,
+  UpdateUserSettingsResponses,
   AcknowledgeWelcomeData,
+  AcknowledgeWelcomeResponses,
   SystemLoadData,
-  SystemLoadResponse,
+  SystemLoadResponses,
   DownloadLocalCertificateData,
+  DownloadLocalCertificateResponses,
   GetTranslationData,
-  GetTranslationResponse,
+  GetTranslationResponses,
   LoginData,
-  LoginResponse,
+  LoginResponses,
   VerifyTotpData,
-  VerifyTotpResponse,
+  VerifyTotpResponses,
   RegisterData,
-  RegisterResponse,
+  RegisterResponses,
   LogoutData,
+  LogoutResponses,
   ChangeUsernameData,
+  ChangeUsernameResponses,
   ChangePasswordData,
+  ChangePasswordResponses,
   GetTotpUriData,
-  GetTotpUriResponse,
+  GetTotpUriResponses,
   SetupTotpData,
+  SetupTotpResponses,
   DisableTotpData,
+  DisableTotpResponses,
   CancelResetPasswordData,
+  CancelResetPasswordResponses,
   CheckResetPasswordRequestData,
-  CheckResetPasswordRequestResponse,
+  CheckResetPasswordRequestResponses,
   ResetPasswordData,
-  ResetPasswordResponse,
+  ResetPasswordResponses,
   TraefikData,
-  TraefikResponse,
+  TraefikResponses,
   GetInstalledAppsData,
-  GetInstalledAppsResponse,
+  GetInstalledAppsResponses,
   GetGuestAppsData,
-  GetGuestAppsResponse,
+  GetGuestAppsResponses,
   GetRandomPortData,
-  GetRandomPortResponse,
+  GetRandomPortResponses,
   GetAppData,
-  GetAppResponse,
+  GetAppResponses,
   SearchAppsData,
-  SearchAppsResponse,
+  SearchAppsResponses,
   GetImageData,
+  GetImageResponses,
   PullAppStoresData,
-  PullAppStoresResponse,
+  PullAppStoresResponses,
   CreateAppStoreData,
+  CreateAppStoreResponses,
   GetAllAppStoresData,
-  GetAllAppStoresResponse,
+  GetAllAppStoresResponses,
   GetEnabledAppStoresData,
-  GetEnabledAppStoresResponse,
+  GetEnabledAppStoresResponses,
   DeleteAppStoreData,
+  DeleteAppStoreResponses,
   UpdateAppStoreData,
+  UpdateAppStoreResponses,
   InstallAppData,
-  InstallAppResponse,
+  InstallAppResponses,
   StartAppData,
-  StartAppResponse,
+  StartAppResponses,
   StopAppData,
-  StopAppResponse,
+  StopAppResponses,
   RestartAppData,
-  RestartAppResponse,
+  RestartAppResponses,
   UninstallAppData,
-  UninstallAppResponse,
+  UninstallAppResponses,
   ResetAppData,
-  ResetAppResponse,
+  ResetAppResponses,
   UpdateAppData,
-  UpdateAppResponse,
+  UpdateAppResponses,
   UpdateAppConfigData,
-  UpdateAppConfigResponse,
+  UpdateAppConfigResponses,
   UpdateAllAppsData,
+  UpdateAllAppsResponses,
   BackupAppData,
+  BackupAppResponses,
   RestoreAppBackupData,
+  RestoreAppBackupResponses,
   DeleteAppBackupData,
+  DeleteAppBackupResponses,
   GetAppBackupsData,
-  GetAppBackupsResponse,
+  GetAppBackupsResponses,
   AppEventsData,
-  AppEventsResponse,
+  AppEventsResponses,
   AppLogsEventsData,
-  AppLogsEventsResponse,
+  AppLogsEventsResponses,
   RuntipiLogsEventsData,
-  RuntipiLogsEventsResponse,
+  RuntipiLogsEventsResponses,
   GetGuestLinksData,
-  GetGuestLinksResponse,
+  GetGuestLinksResponses,
   GetLinksData,
-  GetLinksResponse,
+  GetLinksResponses,
   CreateLinkData,
+  CreateLinkResponses,
   DeleteLinkData,
+  DeleteLinkResponses,
   EditLinkData,
+  EditLinkResponses,
   CheckData,
-  CheckResponse,
-  CheckError,
+  CheckResponses,
+  CheckErrors,
 } from './types.gen';
 import { client as _heyApiClient } from './client.gen';
 
@@ -109,462 +129,462 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 };
 
 export const userContext = <ThrowOnError extends boolean = false>(options?: Options<UserContextData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<UserContextResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<UserContextResponses, unknown, ThrowOnError>({
     url: '/api/user-context',
     ...options,
   });
 };
 
 export const appContext = <ThrowOnError extends boolean = false>(options?: Options<AppContextData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<AppContextResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<AppContextResponses, unknown, ThrowOnError>({
     url: '/api/app-context',
     ...options,
   });
 };
 
 export const updateUserSettings = <ThrowOnError extends boolean = false>(options: Options<UpdateUserSettingsData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<UpdateUserSettingsResponses, unknown, ThrowOnError>({
     url: '/api/user-settings',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const acknowledgeWelcome = <ThrowOnError extends boolean = false>(options: Options<AcknowledgeWelcomeData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<AcknowledgeWelcomeResponses, unknown, ThrowOnError>({
     url: '/api/acknowledge-welcome',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const systemLoad = <ThrowOnError extends boolean = false>(options?: Options<SystemLoadData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<SystemLoadResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<SystemLoadResponses, unknown, ThrowOnError>({
     url: '/api/system/load',
     ...options,
   });
 };
 
 export const downloadLocalCertificate = <ThrowOnError extends boolean = false>(options?: Options<DownloadLocalCertificateData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<unknown, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<DownloadLocalCertificateResponses, unknown, ThrowOnError>({
     url: '/api/system/certificate',
     ...options,
   });
 };
 
 export const getTranslation = <ThrowOnError extends boolean = false>(options: Options<GetTranslationData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).get<GetTranslationResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).get<GetTranslationResponses, unknown, ThrowOnError>({
     url: '/api/i18n/locales/{ns}/{lng}.json',
     ...options,
   });
 };
 
 export const login = <ThrowOnError extends boolean = false>(options: Options<LoginData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<LoginResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<LoginResponses, unknown, ThrowOnError>({
     url: '/api/auth/login',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const verifyTotp = <ThrowOnError extends boolean = false>(options: Options<VerifyTotpData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<VerifyTotpResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<VerifyTotpResponses, unknown, ThrowOnError>({
     url: '/api/auth/verify-totp',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const register = <ThrowOnError extends boolean = false>(options: Options<RegisterData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<RegisterResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<RegisterResponses, unknown, ThrowOnError>({
     url: '/api/auth/register',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const logout = <ThrowOnError extends boolean = false>(options?: Options<LogoutData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).post<LogoutResponses, unknown, ThrowOnError>({
     url: '/api/auth/logout',
     ...options,
   });
 };
 
 export const changeUsername = <ThrowOnError extends boolean = false>(options: Options<ChangeUsernameData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<ChangeUsernameResponses, unknown, ThrowOnError>({
     url: '/api/auth/username',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const changePassword = <ThrowOnError extends boolean = false>(options: Options<ChangePasswordData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<ChangePasswordResponses, unknown, ThrowOnError>({
     url: '/api/auth/password',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const getTotpUri = <ThrowOnError extends boolean = false>(options: Options<GetTotpUriData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<GetTotpUriResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<GetTotpUriResponses, unknown, ThrowOnError>({
     url: '/api/auth/totp/get-uri',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const setupTotp = <ThrowOnError extends boolean = false>(options: Options<SetupTotpData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<SetupTotpResponses, unknown, ThrowOnError>({
     url: '/api/auth/totp/setup',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const disableTotp = <ThrowOnError extends boolean = false>(options: Options<DisableTotpData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<DisableTotpResponses, unknown, ThrowOnError>({
     url: '/api/auth/totp/disable',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const cancelResetPassword = <ThrowOnError extends boolean = false>(options?: Options<CancelResetPasswordData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).delete<unknown, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).delete<CancelResetPasswordResponses, unknown, ThrowOnError>({
     url: '/api/auth/reset-password',
     ...options,
   });
 };
 
 export const checkResetPasswordRequest = <ThrowOnError extends boolean = false>(options?: Options<CheckResetPasswordRequestData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<CheckResetPasswordRequestResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<CheckResetPasswordRequestResponses, unknown, ThrowOnError>({
     url: '/api/auth/reset-password',
     ...options,
   });
 };
 
 export const resetPassword = <ThrowOnError extends boolean = false>(options: Options<ResetPasswordData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<ResetPasswordResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<ResetPasswordResponses, unknown, ThrowOnError>({
     url: '/api/auth/reset-password',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const traefik = <ThrowOnError extends boolean = false>(options?: Options<TraefikData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<TraefikResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<TraefikResponses, unknown, ThrowOnError>({
     url: '/api/auth/traefik',
     ...options,
   });
 };
 
 export const getInstalledApps = <ThrowOnError extends boolean = false>(options?: Options<GetInstalledAppsData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<GetInstalledAppsResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<GetInstalledAppsResponses, unknown, ThrowOnError>({
     url: '/api/apps/installed',
     ...options,
   });
 };
 
 export const getGuestApps = <ThrowOnError extends boolean = false>(options?: Options<GetGuestAppsData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<GetGuestAppsResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<GetGuestAppsResponses, unknown, ThrowOnError>({
     url: '/api/apps/guest',
     ...options,
   });
 };
 
 export const getRandomPort = <ThrowOnError extends boolean = false>(options?: Options<GetRandomPortData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).post<GetRandomPortResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).post<GetRandomPortResponses, unknown, ThrowOnError>({
     url: '/api/apps/random-port',
     ...options,
   });
 };
 
 export const getApp = <ThrowOnError extends boolean = false>(options: Options<GetAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).get<GetAppResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).get<GetAppResponses, unknown, ThrowOnError>({
     url: '/api/apps/{urn}',
     ...options,
   });
 };
 
 export const searchApps = <ThrowOnError extends boolean = false>(options?: Options<SearchAppsData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<SearchAppsResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<SearchAppsResponses, unknown, ThrowOnError>({
     url: '/api/marketplace/apps/search',
     ...options,
   });
 };
 
 export const getImage = <ThrowOnError extends boolean = false>(options: Options<GetImageData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).get<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).get<GetImageResponses, unknown, ThrowOnError>({
     url: '/api/marketplace/apps/{urn}/image',
     ...options,
   });
 };
 
 export const pullAppStores = <ThrowOnError extends boolean = false>(options?: Options<PullAppStoresData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).post<PullAppStoresResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).post<PullAppStoresResponses, unknown, ThrowOnError>({
     url: '/api/marketplace/pull',
     ...options,
   });
 };
 
 export const createAppStore = <ThrowOnError extends boolean = false>(options: Options<CreateAppStoreData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<CreateAppStoreResponses, unknown, ThrowOnError>({
     url: '/api/marketplace/create',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const getAllAppStores = <ThrowOnError extends boolean = false>(options?: Options<GetAllAppStoresData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<GetAllAppStoresResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<GetAllAppStoresResponses, unknown, ThrowOnError>({
     url: '/api/marketplace/all',
     ...options,
   });
 };
 
 export const getEnabledAppStores = <ThrowOnError extends boolean = false>(options?: Options<GetEnabledAppStoresData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<GetEnabledAppStoresResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<GetEnabledAppStoresResponses, unknown, ThrowOnError>({
     url: '/api/marketplace/enabled',
     ...options,
   });
 };
 
 export const deleteAppStore = <ThrowOnError extends boolean = false>(options: Options<DeleteAppStoreData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).delete<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).delete<DeleteAppStoreResponses, unknown, ThrowOnError>({
     url: '/api/marketplace/{id}',
     ...options,
   });
 };
 
 export const updateAppStore = <ThrowOnError extends boolean = false>(options: Options<UpdateAppStoreData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<UpdateAppStoreResponses, unknown, ThrowOnError>({
     url: '/api/marketplace/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const installApp = <ThrowOnError extends boolean = false>(options: Options<InstallAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<InstallAppResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<InstallAppResponses, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/install',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const startApp = <ThrowOnError extends boolean = false>(options: Options<StartAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<StartAppResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<StartAppResponses, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/start',
     ...options,
   });
 };
 
 export const stopApp = <ThrowOnError extends boolean = false>(options: Options<StopAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<StopAppResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<StopAppResponses, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/stop',
     ...options,
   });
 };
 
 export const restartApp = <ThrowOnError extends boolean = false>(options: Options<RestartAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<RestartAppResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<RestartAppResponses, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/restart',
     ...options,
   });
 };
 
 export const uninstallApp = <ThrowOnError extends boolean = false>(options: Options<UninstallAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).delete<UninstallAppResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).delete<UninstallAppResponses, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/uninstall',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const resetApp = <ThrowOnError extends boolean = false>(options: Options<ResetAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<ResetAppResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<ResetAppResponses, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/reset',
     ...options,
   });
 };
 
 export const updateApp = <ThrowOnError extends boolean = false>(options: Options<UpdateAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<UpdateAppResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<UpdateAppResponses, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/update',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const updateAppConfig = <ThrowOnError extends boolean = false>(options: Options<UpdateAppConfigData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<UpdateAppConfigResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<UpdateAppConfigResponses, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/{urn}/update-config',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const updateAllApps = <ThrowOnError extends boolean = false>(options?: Options<UpdateAllAppsData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).patch<UpdateAllAppsResponses, unknown, ThrowOnError>({
     url: '/api/app-lifecycle/update-all',
     ...options,
   });
 };
 
 export const backupApp = <ThrowOnError extends boolean = false>(options: Options<BackupAppData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<BackupAppResponses, unknown, ThrowOnError>({
     url: '/api/backups/{urn}/backup',
     ...options,
   });
 };
 
 export const restoreAppBackup = <ThrowOnError extends boolean = false>(options: Options<RestoreAppBackupData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<RestoreAppBackupResponses, unknown, ThrowOnError>({
     url: '/api/backups/{urn}/restore',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const deleteAppBackup = <ThrowOnError extends boolean = false>(options: Options<DeleteAppBackupData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).delete<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).delete<DeleteAppBackupResponses, unknown, ThrowOnError>({
     url: '/api/backups/{urn}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const getAppBackups = <ThrowOnError extends boolean = false>(options: Options<GetAppBackupsData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).get<GetAppBackupsResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).get<GetAppBackupsResponses, unknown, ThrowOnError>({
     url: '/api/backups/{urn}',
     ...options,
   });
 };
 
 export const appEvents = <ThrowOnError extends boolean = false>(options?: Options<AppEventsData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<AppEventsResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<AppEventsResponses, unknown, ThrowOnError>({
     url: '/api/sse/app',
     ...options,
   });
 };
 
 export const appLogsEvents = <ThrowOnError extends boolean = false>(options: Options<AppLogsEventsData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).get<AppLogsEventsResponse, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).get<AppLogsEventsResponses, unknown, ThrowOnError>({
     url: '/api/sse/app-logs',
     ...options,
   });
 };
 
 export const runtipiLogsEvents = <ThrowOnError extends boolean = false>(options?: Options<RuntipiLogsEventsData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<RuntipiLogsEventsResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<RuntipiLogsEventsResponses, unknown, ThrowOnError>({
     url: '/api/sse/runtipi-logs',
     ...options,
   });
 };
 
 export const getGuestLinks = <ThrowOnError extends boolean = false>(options?: Options<GetGuestLinksData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<GetGuestLinksResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<GetGuestLinksResponses, unknown, ThrowOnError>({
     url: '/api/links/guest',
     ...options,
   });
 };
 
 export const getLinks = <ThrowOnError extends boolean = false>(options?: Options<GetLinksData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<GetLinksResponse, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<GetLinksResponses, unknown, ThrowOnError>({
     url: '/api/links',
     ...options,
   });
 };
 
 export const createLink = <ThrowOnError extends boolean = false>(options: Options<CreateLinkData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<CreateLinkResponses, unknown, ThrowOnError>({
     url: '/api/links',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const deleteLink = <ThrowOnError extends boolean = false>(options: Options<DeleteLinkData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).delete<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).delete<DeleteLinkResponses, unknown, ThrowOnError>({
     url: '/api/links/{id}',
     ...options,
   });
 };
 
 export const editLink = <ThrowOnError extends boolean = false>(options: Options<EditLinkData, ThrowOnError>) => {
-  return (options.client ?? _heyApiClient).patch<unknown, unknown, ThrowOnError>({
+  return (options.client ?? _heyApiClient).patch<EditLinkResponses, unknown, ThrowOnError>({
     url: '/api/links/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
+      ...options.headers,
     },
   });
 };
 
 export const check = <ThrowOnError extends boolean = false>(options?: Options<CheckData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).get<CheckResponse, CheckError, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).get<CheckResponses, CheckErrors, ThrowOnError>({
     url: '/api/health',
     ...options,
   });
