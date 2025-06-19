@@ -1,7 +1,7 @@
 # Runtipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-55-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-56-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -156,6 +156,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Lancelot-Enguerrand"><img src="https://avatars.githubusercontent.com/u/18631550?v=4?s=100" width="100px;" alt="Lancelot"/><br /><sub><b>Lancelot</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=Lancelot-Enguerrand" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/skajmer"><img src="https://avatars.githubusercontent.com/u/64442855?v=4?s=100" width="100px;" alt="skajmer"/><br /><sub><b>skajmer</b></sub></a><br /><a href="#translation-skajmer" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/AlphaRyz3"><img src="https://avatars.githubusercontent.com/u/71471476?v=4?s=100" width="100px;" alt="AlphaRyze"/><br /><sub><b>AlphaRyze</b></sub></a><br /><a href="#translation-AlphaRyz3" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jnth"><img src="https://avatars.githubusercontent.com/u/7796167?v=4?s=100" width="100px;" alt="Jonathan Virga"/><br /><sub><b>Jonathan Virga</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=jnth" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
