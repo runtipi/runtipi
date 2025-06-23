@@ -120,7 +120,7 @@ export const AppUserConfigEditors = ({ info, initialAppEnv, initialDockerCompose
             </div>
           </TabsContent>
           <TabsContent value="app-env">
-            <CodeMirror value={appEnv} height="400px" extensions={[yaml()]} onChange={(value) => setAppEnv(value)} theme={copilot} />
+            <CodeMirror value={appEnv} height="400px" onChange={(value) => setAppEnv(value)} theme={copilot} />
           </TabsContent>
         </Tabs>
       </div>
