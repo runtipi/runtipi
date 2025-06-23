@@ -12,6 +12,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 
 const AppBackups = lazy(() => import('../app-backups/app-backups').then((module) => ({ default: module.AppBackups })));
 const AppLogs = lazy(() => import('../app-logs/app-logs').then((module) => ({ default: module.AppLogs })));
+const AppUserConfig = lazy(() => import('../app-user-config/app-user-config').then((module) => ({ default: module.AppUserConfig })));
 
 interface IProps {
   info: AppInfo;
@@ -46,11 +47,15 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
         <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" disabled={!app} className="d-none d-md-block">
           {t('APP_LOGS_TAB_TITLE')}
         </TabsTrigger>
+        <TabsTrigger onClick={() => handleTabChange('user-config')} value="user-config" disabled={!app} className="d-none d-md-block">
+          {t('APP_USER_CONFIG_TAB_TITLE')}
+        </TabsTrigger>
         <DropdownMenu>
           <DropdownMenuTrigger className="nav-link dropdown-toggle d-block d-md-none">{t('MORE')}</DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => handleTabChange('backups')}>{t('APP_BACKUPS_TAB_TITLE')}</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleTabChange('logs')}>{t('APP_LOGS_TAB_TITLE')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleTabChange('user-config')}>{t('USER_CONFIG_TAB_TITLE')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </TabsList>
@@ -121,6 +126,13 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
         {app?.status === 'running' && (
           <Suspense>
             <AppLogs appUrn={info.urn} />
+          </Suspense>
+        )}
+      </TabsContent>
+      <TabsContent value="user-config">
+        {app && (
+          <Suspense>
+            <AppUserConfig info={info} />
           </Suspense>
         )}
       </TabsContent>

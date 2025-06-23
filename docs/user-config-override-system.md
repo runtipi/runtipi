@@ -118,4 +118,26 @@ This will be merged with the existing volumes defined for the Plex service.
   ```
 - **Updates**: Users are responsible for maintaining their override files. A Runtipi update might introduce changes that conflict with a user's custom configuration.
 
+## User Config Editor
+
+Starting with version 4.0.0, Runtipi includes a user-friendly interface for managing app-specific user configurations directly from the web UI. This feature allows advanced users to edit their `docker-compose.yml` and `app.env` files without needing direct access to the server's file system.
+
+### Accessing the User Config Editor
+
+The User Config Editor can be accessed from each app's detail page:
+
+1. Navigate to "My Apps" and select an app
+2. Click on the "User Config" tab
+3. You will see a toggle switch to enable/disable the user configuration for this app
+4. Use the tabbed interface to edit either the `docker-compose.yml` or `app.env` files
+5. Click "Save" to persist your changes
+
+### Enable/Disable User Config
+
+Each app has an independent flag to enable or disable its user configuration. When disabled, any custom configuration files for that app will be ignored during app startup, allowing you to quickly troubleshoot issues without deleting your configuration files.
+
+### Security and Safety
+
+The User Config Editor includes a warning message to remind users about the advanced nature of this feature. Incorrectly formatted YAML or environment variables can cause apps to fail on startup. Users should have a good understanding of Docker Compose and environment variable syntax before using this feature.
+
 This system provides a high degree of flexibility for customizing a Runtipi instance, making it adaptable to a wide range of use cases and environments.

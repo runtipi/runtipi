@@ -23,7 +23,7 @@ export default () => {
 
   return (
     <div className="card" data-testid="app-details">
-      <div className="card-header d-flex flex-column flex-md-row">
+      <div className="card-header d-flex flex-column flex-md-row border-0">
         <AppLogo urn={info?.urn} size={130} alt={info?.name} />
         <div className="w-100 d-flex flex-column ms-md-3 align-items-center align-items-md-start">
           <div>
