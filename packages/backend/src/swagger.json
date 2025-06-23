@@ -1618,6 +1618,117 @@
           "Health"
         ]
       }
+    },
+    "/api/user-config/{urn}": {
+      "get": {
+        "operationId": "getUserConfig",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserConfigDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get the user configuration for an app",
+        "tags": [
+          "User Config"
+        ]
+      },
+      "put": {
+        "operationId": "updateUserConfig",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserConfigDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update the user configuration for an app",
+        "tags": [
+          "User Config"
+        ]
+      }
+    },
+    "/api/user-config/{urn}/enable": {
+      "post": {
+        "operationId": "enableUserConfig",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Enable the user configuration for an app",
+        "tags": [
+          "User Config"
+        ]
+      }
+    },
+    "/api/user-config/{urn}/disable": {
+      "post": {
+        "operationId": "disableUserConfig",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Disable the user configuration for an app",
+        "tags": [
+          "User Config"
+        ]
+      }
     }
   },
   "info": {
@@ -3648,6 +3759,47 @@
         "required": [
           "title",
           "url"
+        ]
+      },
+      "GetUserConfigDto": {
+        "type": "object",
+        "properties": {
+          "dockerCompose": {
+            "description": "The content of the docker-compose.yml file.",
+            "type": "string",
+            "nullable": true
+          },
+          "appEnv": {
+            "description": "The content of the app.env file.",
+            "type": "string",
+            "nullable": true
+          },
+          "isEnabled": {
+            "description": "Whether the user configuration is enabled for the app.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "dockerCompose",
+          "appEnv",
+          "isEnabled"
+        ]
+      },
+      "UpdateUserConfigDto": {
+        "type": "object",
+        "properties": {
+          "dockerCompose": {
+            "description": "The content of the docker-compose.yml file.",
+            "type": "string"
+          },
+          "appEnv": {
+            "description": "The content of the app.env file.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dockerCompose",
+          "appEnv"
         ]
       }
     }

@@ -11,3 +11,6 @@
   files. Do not add it to other language files.
 - If the part you worked on is documented in the `docs` folder, update the
   documentation to reflect your changes.
+- Don't use return types in functions. Let TypeScript infer the return
+  type automatically.
+- ALWAYS use your tools to explore first the codebase before making assumptions.

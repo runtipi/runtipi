@@ -23,7 +23,7 @@
   "author": "",
   "license": "GNU General Public License v3.0",
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.4",
     "@hey-api/openapi-ts": "^0.72.2",
     "@playwright/test": "^1.52.0",
     "@types/pg": "^8.15.1",
@@ -49,6 +49,9 @@
       "sharp",
       "ssh2"
     ],
-    "ignoredBuiltDependencies": ["@scarf/scarf", "sqlite3"]
+    "ignoredBuiltDependencies": [
+      "@scarf/scarf",
+      "sqlite3"
+    ]
   }
 }

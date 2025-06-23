@@ -7,6 +7,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
 import { AppFilesManager } from '../apps/app-files-manager';
+import { AppsService } from '../apps/apps.service';
 
 @Injectable()
 export class DockerService {
@@ -15,6 +16,7 @@ export class DockerService {
     private readonly config: ConfigurationService,
     private readonly appFilesManager: AppFilesManager,
     private readonly filesystem: FilesystemService,
+    private readonly appsService: AppsService,
   ) {}
 
   /**
@@ -27,9 +29,12 @@ export class DockerService {
     const appEnv = await this.appFilesManager.getAppEnv(appUrn);
     const args: string[] = ['--env-file', appEnv.path];
 
+    const { app } = await this.appsService.getApp(appUrn);
+    const userConfigEnabled = app?.userConfigEnabled ?? true;
+
     // User custom env file
     const userEnvFile = await this.appFilesManager.getUserEnv(appUrn);
-    if (userEnvFile.content) {
+    if (userEnvFile.content && userConfigEnabled) {
       isCustomConfig = true;
       args.push('--env-file', userEnvFile.path);
     }
@@ -41,7 +46,7 @@ export class DockerService {
 
     // User defined overrides
     const userComposeFile = await this.appFilesManager.getUserComposeFile(appUrn);
-    if (userComposeFile.content) {
+    if (userComposeFile.content && userConfigEnabled) {
       isCustomConfig = true;
       args.push('--file', userComposeFile.path);
     }
