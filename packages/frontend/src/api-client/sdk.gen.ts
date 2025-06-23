@@ -111,6 +111,14 @@ import type {
   CheckData,
   CheckResponses,
   CheckErrors,
+  GetUserConfigData,
+  GetUserConfigResponses,
+  UpdateUserConfigData,
+  UpdateUserConfigResponses,
+  EnableUserConfigData,
+  EnableUserConfigResponses,
+  DisableUserConfigData,
+  DisableUserConfigResponses,
 } from './types.gen';
 import { client as _heyApiClient } from './client.gen';
 
@@ -586,6 +594,50 @@ export const editLink = <ThrowOnError extends boolean = false>(options: Options<
 export const check = <ThrowOnError extends boolean = false>(options?: Options<CheckData, ThrowOnError>) => {
   return (options?.client ?? _heyApiClient).get<CheckResponses, CheckErrors, ThrowOnError>({
     url: '/api/health',
+    ...options,
+  });
+};
+
+/**
+ * Get the user configuration for an app
+ */
+export const getUserConfig = <ThrowOnError extends boolean = false>(options: Options<GetUserConfigData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).get<GetUserConfigResponses, unknown, ThrowOnError>({
+    url: '/api/user-config/{urn}',
+    ...options,
+  });
+};
+
+/**
+ * Update the user configuration for an app
+ */
+export const updateUserConfig = <ThrowOnError extends boolean = false>(options: Options<UpdateUserConfigData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).put<UpdateUserConfigResponses, unknown, ThrowOnError>({
+    url: '/api/user-config/{urn}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Enable the user configuration for an app
+ */
+export const enableUserConfig = <ThrowOnError extends boolean = false>(options: Options<EnableUserConfigData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<EnableUserConfigResponses, unknown, ThrowOnError>({
+    url: '/api/user-config/{urn}/enable',
+    ...options,
+  });
+};
+
+/**
+ * Disable the user configuration for an app
+ */
+export const disableUserConfig = <ThrowOnError extends boolean = false>(options: Options<DisableUserConfigData, ThrowOnError>) => {
+  return (options.client ?? _heyApiClient).post<DisableUserConfigResponses, unknown, ThrowOnError>({
+    url: '/api/user-config/{urn}/disable',
     ...options,
   });
 };

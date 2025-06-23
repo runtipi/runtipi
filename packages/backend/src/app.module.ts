@@ -29,6 +29,7 @@ import { NetworkModule } from './modules/network/network.module';
 import { QueueModule } from './modules/queue/queue.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/user/user.module';
+import { UserConfigModule } from './modules/user-config/user-config.module';
 
 const imports: (DynamicModule | typeof I18nModule)[] = [
   SentryModule.forRoot(),
@@ -51,6 +52,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   MarketplaceModule,
   SSEModule,
   NetworkModule,
+  UserConfigModule,
 ];
 
 if (process.env.NODE_ENV === 'production') {

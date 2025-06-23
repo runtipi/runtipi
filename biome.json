@@ -7,7 +7,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["dist/**", "public/**", "legacy/**", ".internal/**"]
+    "includes": ["**", "!**/dist/**", "!**/public/**", "!**/legacy/**", "!**/.internal/**"]
   },
   "formatter": {
     "enabled": true,
@@ -17,11 +17,9 @@
     "lineEnding": "lf",
     "lineWidth": 150,
     "attributePosition": "auto",
-    "ignore": []
+    "includes": ["**"]
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "recommended": true } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -52,22 +50,33 @@
         },
         "useCollapsedElseIf": {
           "level": "warn"
-        }
+        },
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "suspicious": {
-        "noConsoleLog": {
-          "level": "error"
-        },
         "noEmptyBlockStatements": {
           "level": "error"
-        }
+        },
+        "noConsole": { "level": "error", "options": { "allow": ["error", "info", "warn"] } }
       }
     }
   },
   "overrides": [
     {
-      "include": ["**/*.test.ts", "**/*.test.tsx"],
+      "includes": ["**/*.test.ts", "**/*.test.tsx"],
       "linter": {
+        "domains": {
+          "test": "recommended"
+        },
         "rules": {
           "suspicious": {
             "noEmptyBlockStatements": {
@@ -78,7 +87,15 @@
       }
     },
     {
-      "include": ["packages/backend/**"],
+      "includes": ["**/packages/frontend/**"],
+      "linter": {
+        "domains": {
+          "react": "recommended"
+        }
+      }
+    },
+    {
+      "includes": ["**/packages/backend/**"],
       "linter": {
         "rules": {
           "style": {
@@ -97,6 +114,9 @@
   "javascript": {
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
+    },
+    "assist": {
+      "enabled": false
     },
     "formatter": {
       "jsxQuoteStyle": "double",

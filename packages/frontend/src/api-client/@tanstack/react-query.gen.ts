@@ -56,6 +56,10 @@ import {
   deleteLink,
   editLink,
   check,
+  getUserConfig,
+  updateUserConfig,
+  enableUserConfig,
+  disableUserConfig,
 } from '../sdk.gen';
 import { queryOptions, type UseMutationOptions, type DefaultError, infiniteQueryOptions, type InfiniteData } from '@tanstack/react-query';
 import type {
@@ -130,6 +134,10 @@ import type {
   DeleteLinkData,
   EditLinkData,
   CheckData,
+  GetUserConfigData,
+  UpdateUserConfigData,
+  EnableUserConfigData,
+  DisableUserConfigData,
 } from '../types.gen';
 import { client as _heyApiClient } from '../client.gen';
 
@@ -1410,4 +1418,121 @@ export const checkOptions = (options?: Options<CheckData>) => {
     },
     queryKey: checkQueryKey(options),
   });
+};
+
+export const getUserConfigQueryKey = (options: Options<GetUserConfigData>) => createQueryKey('getUserConfig', options);
+
+/**
+ * Get the user configuration for an app
+ */
+export const getUserConfigOptions = (options: Options<GetUserConfigData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getUserConfig({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getUserConfigQueryKey(options),
+  });
+};
+
+/**
+ * Update the user configuration for an app
+ */
+export const updateUserConfigMutation = (
+  options?: Partial<Options<UpdateUserConfigData>>,
+): UseMutationOptions<unknown, DefaultError, Options<UpdateUserConfigData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateUserConfigData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await updateUserConfig({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const enableUserConfigQueryKey = (options: Options<EnableUserConfigData>) => createQueryKey('enableUserConfig', options);
+
+/**
+ * Enable the user configuration for an app
+ */
+export const enableUserConfigOptions = (options: Options<EnableUserConfigData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await enableUserConfig({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: enableUserConfigQueryKey(options),
+  });
+};
+
+/**
+ * Enable the user configuration for an app
+ */
+export const enableUserConfigMutation = (
+  options?: Partial<Options<EnableUserConfigData>>,
+): UseMutationOptions<unknown, DefaultError, Options<EnableUserConfigData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<EnableUserConfigData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await enableUserConfig({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const disableUserConfigQueryKey = (options: Options<DisableUserConfigData>) => createQueryKey('disableUserConfig', options);
+
+/**
+ * Disable the user configuration for an app
+ */
+export const disableUserConfigOptions = (options: Options<DisableUserConfigData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await disableUserConfig({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: disableUserConfigQueryKey(options),
+  });
+};
+
+/**
+ * Disable the user configuration for an app
+ */
+export const disableUserConfigMutation = (
+  options?: Partial<Options<DisableUserConfigData>>,
+): UseMutationOptions<unknown, DefaultError, Options<DisableUserConfigData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DisableUserConfigData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await disableUserConfig({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
 };

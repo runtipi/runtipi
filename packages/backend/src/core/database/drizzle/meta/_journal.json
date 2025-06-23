@@ -176,6 +176,13 @@
       "when": 1746894385320,
       "tag": "0024_lovely_wolfsbane",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1750518801267,
+      "tag": "0025_stiff_devos",
+      "breakpoints": true
     }
   ]
 }

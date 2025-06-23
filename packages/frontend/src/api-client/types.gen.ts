@@ -629,6 +629,32 @@ export type EditLinkBodyDto = {
   iconUrl?: string;
 };
 
+export type GetUserConfigDto = {
+  /**
+   * The content of the docker-compose.yml file.
+   */
+  dockerCompose: string | null;
+  /**
+   * The content of the app.env file.
+   */
+  appEnv: string | null;
+  /**
+   * Whether the user configuration is enabled for the app.
+   */
+  isEnabled: boolean;
+};
+
+export type UpdateUserConfigDto = {
+  /**
+   * The content of the docker-compose.yml file.
+   */
+  dockerCompose: string;
+  /**
+   * The content of the app.env file.
+   */
+  appEnv: string;
+};
+
 export type UserContextData = {
   body?: never;
   path?: never;
@@ -1420,6 +1446,60 @@ export type CheckResponses = {
 };
 
 export type CheckResponse = CheckResponses[keyof CheckResponses];
+
+export type GetUserConfigData = {
+  body?: never;
+  path: {
+    urn: string;
+  };
+  query?: never;
+  url: '/api/user-config/{urn}';
+};
+
+export type GetUserConfigResponses = {
+  200: GetUserConfigDto;
+};
+
+export type GetUserConfigResponse = GetUserConfigResponses[keyof GetUserConfigResponses];
+
+export type UpdateUserConfigData = {
+  body: UpdateUserConfigDto;
+  path: {
+    urn: string;
+  };
+  query?: never;
+  url: '/api/user-config/{urn}';
+};
+
+export type UpdateUserConfigResponses = {
+  200: unknown;
+};
+
+export type EnableUserConfigData = {
+  body?: never;
+  path: {
+    urn: string;
+  };
+  query?: never;
+  url: '/api/user-config/{urn}/enable';
+};
+
+export type EnableUserConfigResponses = {
+  201: unknown;
+};
+
+export type DisableUserConfigData = {
+  body?: never;
+  path: {
+    urn: string;
+  };
+  query?: never;
+  url: '/api/user-config/{urn}/disable';
+};
+
+export type DisableUserConfigResponses = {
+  201: unknown;
+};
 
 export type ClientOptions = {
   baseUrl: string;
