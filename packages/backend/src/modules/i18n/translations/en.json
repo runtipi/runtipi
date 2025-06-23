@@ -97,6 +97,7 @@
   "USER_CONFIG_WARNING_TITLE": "Warning",
   "USER_CONFIG_WARNING_DESCRIPTION": "By editing the user config, you may break the app. Make sure you know what you are doing. If your app fails to start after editing the user config, look for the logs in the browser console or in the runtipi settings page.",
   "USER_CONFIG_ENABLE": "Enable user config",
+  "USER_CONFIG_UPDATE_SUCCESS": "User config updated successfully",
   "APP_NEW": "NEW",
   "APP_RESET_FORM_SUBMIT": "Reset",
   "APP_RESET_FORM_SUBTITLE": "All data for this app will be lost.",
