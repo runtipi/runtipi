@@ -11,6 +11,7 @@
     "postinstall": "./scripts/postinstall.sh"
   },
   "dependencies": {
+    "@codemirror/lang-yaml": "^6.1.2",
     "@hey-api/client-fetch": "^0.13.1",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-context-menu": "^2.2.14",
@@ -30,6 +31,8 @@
     "@tanstack/react-query": "^5.75.7",
     "@tanstack/react-query-devtools": "^5.75.7",
     "@uidotdev/usehooks": "^2.4.1",
+    "@uiw/codemirror-theme-copilot": "^4.23.13",
+    "@uiw/react-codemirror": "^4.23.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dompurify": "^3.2.5",
