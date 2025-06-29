@@ -418,5 +418,6 @@
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)",
-  "APP_INSTALL_FORM_RANDOM": "Random"
+  "APP_INSTALL_FORM_RANDOM": "Random",
+  "APP_INSTALLED": "Installed"
 }

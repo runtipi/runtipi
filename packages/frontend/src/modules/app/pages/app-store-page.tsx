@@ -1,8 +1,8 @@
-import { searchAppsInfiniteOptions } from '@/api-client/@tanstack/react-query.gen';
+import { getInstalledAppsOptions, searchAppsInfiniteOptions } from '@/api-client/@tanstack/react-query.gen';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 import { useInfiniteScroll } from '@/lib/hooks/use-infinite-scroll';
 import { useAppStoreState } from '@/stores/app-store';
-import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Navigate, useParams } from 'react-router';
 import { StoreTile } from '../components/store-tile/store-tile';
 
@@ -19,6 +19,10 @@ export default () => {
     ...searchAppsInfiniteOptions({ query: { search, category, pageSize: 24, storeId } }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     placeholderData: keepPreviousData,
+  });
+
+  const { data: installedApps } = useSuspenseQuery({
+    ...getInstalledAppsOptions(),
   });
 
   const isLoading = !data;
@@ -47,7 +51,7 @@ export default () => {
       <div className="row row-cards">
         {apps.map((app, index) => (
           <div ref={index === apps.length - 1 ? lastElementRef : null} key={app.urn} className="cursor-pointer col-sm-6 col-lg-4 p-2 mt-4">
-            <StoreTile app={app} isLoading={isLoading} />
+            <StoreTile app={app} isLoading={isLoading} isInstalled={installedApps.installed.some(installedApp => installedApp.info.urn === app.urn)} />
           </div>
         ))}
       </div>
