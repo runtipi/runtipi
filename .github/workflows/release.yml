@@ -108,7 +108,7 @@ jobs:
           workflow_inputs: '{ "version": "${{ needs.determine-release-type.outputs.tagname }}" }'
 
       - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
-        uses: Codex-/await-remote-run@v1.12.2
+        uses: Codex-/await-remote-run@v1.13.0
         with:
           token: ${{ secrets.PAT_CLI }}
           repo: cli
