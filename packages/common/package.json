@@ -41,7 +41,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "zod": "^3.25.30",
+    "zod": "^3.25.68",
     "zod-to-json-schema": "^3.24.5"
   }
 }
