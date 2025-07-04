@@ -7,10 +7,11 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isInvalid?: boolean;
   groupPrefix?: string | React.ReactNode;
   groupSuffix?: string | React.ReactNode;
+  groupClassName?: string;
 }
 
 export const InputGroup = React.forwardRef<HTMLInputElement, IProps>(
-  ({ name, label, error, type = 'text', className, isInvalid, groupPrefix, groupSuffix, ...rest }, ref) => {
+  ({ name, label, error, type = 'text', className, isInvalid, groupPrefix, groupSuffix, groupClassName, ...rest }, ref) => {
     let prefix = groupPrefix;
     if (typeof groupPrefix === 'string') {
       prefix = <span className="input-group-text">{groupPrefix}</span>;
@@ -27,7 +28,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, IProps>(
             {label}
           </label>
         )}
-        <div className="input-group">
+        <div className={clsx('input-group', groupClassName)}>
           {prefix}
           <input
             suppressHydrationWarning
