@@ -134,55 +134,9 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
     </>
   );
 
-  const renderDynamicConfigForm = () => {
+  const renderDynamicConfigProxyForm = () => {
     return (
       <>
-        <Controller
-          control={control}
-          name="openPort"
-          defaultValue={!info.force_expose}
-          disabled={info.force_expose}
-          render={({ field: { onChange, value, ref, ...props } }) => (
-            <Switch
-              {...props}
-              className="mb-3"
-              ref={ref}
-              checked={value}
-              onCheckedChange={onChange}
-              label={
-                <>
-                  {t('APP_INSTALL_FORM_OPEN_PORT')}
-                  <Tooltip className="tooltip" anchorSelect=".open-port-hint">
-                    {t('APP_INSTALL_FORM_OPEN_PORT_HINT', { port: info.port, internalIp })}
-                  </Tooltip>
-                  <span className={clsx('ms-1 form-help open-port-hint')}>?</span>
-                </>
-              }
-            />
-          )}
-        />
-        {watchOpenPort && (
-          <div className="mb-3">
-            <InputGroup
-              type="number"
-              defaultValue={info.port}
-              groupSuffix={
-                <Button type="button" onClick={() => randomPortMutation.mutate({})} loading={loading || randomPortMutation.isPending}>
-                  {t('APP_INSTALL_FORM_RANDOM')}
-                </Button>
-              }
-              max={65535}
-              {...register('port', {
-                valueAsNumber: true,
-              })}
-              error={errors.port?.message}
-              disabled={loading || randomPortMutation.isPending}
-              placeholder="8484"
-              className="flex-grow-1 input-group"
-            />
-            <span className="text-muted">{t('APP_INSTALL_FORM_PORT_HINT')}</span>
-          </div>
-        )}
         {info.exposable && (
           <>
             <Controller
@@ -283,10 +237,61 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           )}
         />
       )}
+      {info.dynamic_config && (
+        <div className="mb-3">
+          <h3>{t('APP_DETAILS_PORT')}</h3>
+          <Controller
+            control={control}
+            name="openPort"
+            defaultValue={!info.force_expose}
+            disabled={info.force_expose}
+            render={({ field: { onChange, value, ref, ...props } }) => (
+              <Switch
+                {...props}
+                className="mb-3"
+                ref={ref}
+                checked={value}
+                onCheckedChange={onChange}
+                label={
+                  <>
+                    {t('APP_INSTALL_FORM_OPEN_PORT')}
+                    <Tooltip className="tooltip" anchorSelect=".open-port-hint">
+                      {t('APP_INSTALL_FORM_OPEN_PORT_HINT', { port: info.port, internalIp })}
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help open-port-hint')}>?</span>
+                  </>
+                }
+              />
+            )}
+          />
+          {watchOpenPort && (
+            <div>
+              <InputGroup
+                type="number"
+                defaultValue={info.port}
+                groupSuffix={
+                  <Button type="button" onClick={() => randomPortMutation.mutate({})} loading={loading || randomPortMutation.isPending}>
+                    {t('APP_INSTALL_FORM_RANDOM')}
+                  </Button>
+                }
+                max={65535}
+                {...register('port', {
+                  valueAsNumber: true,
+                })}
+                error={errors.port?.message}
+                disabled={loading || randomPortMutation.isPending}
+                placeholder="8484"
+                className="flex-grow-1 input-group"
+              />
+              <span className="text-muted">{t('APP_INSTALL_FORM_PORT_HINT')}</span>
+            </div>
+          )}
+        </div>
+      )}
       {Boolean(info.port) && (
         <>
           {(info.exposable || info.dynamic_config) && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
-          {info.dynamic_config && renderDynamicConfigForm()}
+          {info.dynamic_config && renderDynamicConfigProxyForm()}
           {info.exposable && renderExposeForm()}
         </>
       )}
