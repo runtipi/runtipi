@@ -418,5 +418,9 @@
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Sous-domaine",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Sous-domaine invalide",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Le sous-domaine n'est pas valide (seules les lettres minuscules, les chiffres et les tirets sont autorisés. Longueur max : 63 caractères)",
-  "APP_INSTALL_FORM_RANDOM": "Aléatoire"
+  "APP_INSTALL_FORM_RANDOM": "Aléatoire",
+  "APP_INSTALL_FORM_SHOW_PASSWORD": "Show password",
+  "APP_INSTALL_FORM_HIDE_PASSWORD": "Hide password",
+  "SAVE": "Save",
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder."
 }
