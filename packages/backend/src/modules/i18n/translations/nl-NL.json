@@ -56,6 +56,7 @@
   "APP_ERROR_DOMAIN_NOT_VALID": "Domein {{domain}} is geen geldig domein",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domein is vereist als de app openbaar is",
   "APP_ERROR_INVALID_CONFIG": "App {{id}} heeft een ongeldig config.json bestand",
+  "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Kies een optie...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Weergeven op gastdashboard",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Domeinnaam",
@@ -92,6 +93,11 @@
   "APP_LOGS_TAB_MAX_LINES": "Max regels:",
   "APP_LOGS_TAB_TITLE": "Logs",
   "APP_LOGS_TAB_WRAP_LINES": "Wrap lines",
+  "APP_USER_CONFIG_TAB_TITLE": "Gebruikersinstellingen",
+  "USER_CONFIG_WARNING_TITLE": "Waarschuwing",
+  "USER_CONFIG_WARNING_DESCRIPTION": "Door het bewerken van het gebruikersinstellingen kan de app niet langer werken. Zorg ervoor dat u weet wat u doet. Als uw app niet start na het bewerken van de gebruikersinstellingen, zoek dan naar de logs in de browserconsole of op de runtipi instellingen-pagina.",
+  "USER_CONFIG_ENABLE": "Gebruikersinstellingen inschakelen",
+  "USER_CONFIG_UPDATE_SUCCESS": "Gebruikersinstellingen succesvol bijgewerkt",
   "APP_NEW": "NIEUW",
   "APP_RESET_FORM_SUBMIT": "Resetten",
   "APP_RESET_FORM_SUBTITLE": "Alle gegevens voor deze app zullen verloren gaan.",
@@ -411,5 +417,10 @@
   "MORE": "More",
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
-  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)",
+  "APP_INSTALL_FORM_RANDOM": "Random",
+  "APP_INSTALL_FORM_SHOW_PASSWORD": "Show password",
+  "APP_INSTALL_FORM_HIDE_PASSWORD": "Hide password",
+  "SAVE": "Save",
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder."
 }

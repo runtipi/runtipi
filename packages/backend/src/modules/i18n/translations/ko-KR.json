@@ -56,6 +56,7 @@
   "APP_ERROR_DOMAIN_NOT_VALID": "Domain {{domain}} is not a valid domain",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "앱이 노출되는 경우 도메인이 필요합니다",
   "APP_ERROR_INVALID_CONFIG": "앱 {{id}}의 config.json 파일이 유효하지 않습니다",
+  "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "옵션을 선택하세요...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "게스트 대시보드에 표시",
   "APP_INSTALL_FORM_DOMAIN_NAME": "도메인 이름",
@@ -92,6 +93,11 @@
   "APP_LOGS_TAB_MAX_LINES": "최대 줄 수:",
   "APP_LOGS_TAB_TITLE": "로그",
   "APP_LOGS_TAB_WRAP_LINES": "줄 바꿈",
+  "APP_USER_CONFIG_TAB_TITLE": "User config",
+  "USER_CONFIG_WARNING_TITLE": "Warning",
+  "USER_CONFIG_WARNING_DESCRIPTION": "By editing the user config, you may break the app. Make sure you know what you are doing. If your app fails to start after editing the user config, look for the logs in the browser console or in the runtipi settings page.",
+  "USER_CONFIG_ENABLE": "Enable user config",
+  "USER_CONFIG_UPDATE_SUCCESS": "User config updated successfully",
   "APP_NEW": "신규",
   "APP_RESET_FORM_SUBMIT": "초기화",
   "APP_RESET_FORM_SUBTITLE": "이 앱의 모든 데이터가 삭제됩니다.",
@@ -411,5 +417,10 @@
   "MORE": "More",
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Subdomain",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Invalid subdomain",
-  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)"
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Subdomain is not valid (only lowercase letters, numbers and dashes are allowed. Max length 63 characters)",
+  "APP_INSTALL_FORM_RANDOM": "Random",
+  "APP_INSTALL_FORM_SHOW_PASSWORD": "Show password",
+  "APP_INSTALL_FORM_HIDE_PASSWORD": "Hide password",
+  "SAVE": "Save",
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder."
 }

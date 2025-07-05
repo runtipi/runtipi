@@ -56,6 +56,7 @@
   "APP_ERROR_DOMAIN_NOT_VALID": "Домен {{domain}} не є дійсним доменом",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Домен є обов'язковим, якщо додаток відкритий для доступу",
   "APP_ERROR_INVALID_CONFIG": "Додаток {{id}} має неприпустимий файл config.json",
+  "APP_ERROR_PORT_ALREADY_IN_USE": "Порт {{port}} вже використовується додатком {{id}}",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Оберіть варіант...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Показувати на гостьовій панелі",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Доменне ім'я",
@@ -92,6 +93,11 @@
   "APP_LOGS_TAB_MAX_LINES": "Макс. рядків:",
   "APP_LOGS_TAB_TITLE": "Журнали",
   "APP_LOGS_TAB_WRAP_LINES": "Переносити рядки",
+  "APP_USER_CONFIG_TAB_TITLE": "User config",
+  "USER_CONFIG_WARNING_TITLE": "Warning",
+  "USER_CONFIG_WARNING_DESCRIPTION": "By editing the user config, you may break the app. Make sure you know what you are doing. If your app fails to start after editing the user config, look for the logs in the browser console or in the runtipi settings page.",
+  "USER_CONFIG_ENABLE": "Enable user config",
+  "USER_CONFIG_UPDATE_SUCCESS": "User config updated successfully",
   "APP_NEW": "НОВИНКА",
   "APP_RESET_FORM_SUBMIT": "Скинути",
   "APP_RESET_FORM_SUBTITLE": "Всі дані для цього додатка будуть втрачені.",
@@ -411,5 +417,10 @@
   "MORE": "Більше",
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Піддомен",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Недійсний піддомен",
-  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Піддомен не є припустимим (допускаються лише малі літери, цифри і тире. Максимальна довжина 63 символів)"
+  "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Піддомен не є припустимим (допускаються лише малі літери, цифри і тире. Максимальна довжина 63 символів)",
+  "APP_INSTALL_FORM_RANDOM": "Випадкове",
+  "APP_INSTALL_FORM_SHOW_PASSWORD": "Show password",
+  "APP_INSTALL_FORM_HIDE_PASSWORD": "Hide password",
+  "SAVE": "Save",
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder."
 }
