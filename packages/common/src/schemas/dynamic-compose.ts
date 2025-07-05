@@ -124,6 +124,7 @@ export const serviceSchema = z.object({
   stopGracePeriod: z.string().optional(),
   stdinOpen: z.boolean().optional(),
   extraLabels: z.record(z.string().or(z.boolean())).optional(),
+  dns: z.string().optional().or(z.array(z.string()).optional()),
 });
 
 export const dynamicComposeSchema = z.object({
