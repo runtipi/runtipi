@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/u
 import type { AppInfo } from '@/types/app.types';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   disableUserConfigMutation,
   enableUserConfigMutation,
@@ -109,18 +109,19 @@ export const AppUserConfigEditors = ({ info, initialAppEnv, initialDockerCompose
             <TabsTrigger value="app-env">app.env</TabsTrigger>
           </TabsList>
           <TabsContent value="docker-compose">
-            <CodeMirror value={dockerCompose} height="400px" extensions={[yaml()]} onChange={(value) => setDockerCompose(value)} theme={copilot} />
-            <div className="mt-2">
-              This is a{' '}
-              <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/compose-file/merge/">
-                docker merge
-              </a>{' '}
-              override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the{' '}
-              <code>apps</code> folder
-            </div>
+            <CodeMirror readOnly={!isEnabled} value={dockerCompose} height="400px" extensions={[yaml()]} onChange={(value) => setDockerCompose(value)} theme={copilot} />
+            <Trans
+              t={t}
+              i18nKey="USER_CONFIG_DOCKER_MERGE_DESCRIPTION"
+              components={{
+                a: <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/compose-file/merge/" />,
+                code: <code />,
+              }}
+              className='mt-2'
+            />
           </TabsContent>
           <TabsContent value="app-env">
-            <CodeMirror value={appEnv} height="400px" onChange={(value) => setAppEnv(value)} theme={copilot} />
+            <CodeMirror readOnly={!isEnabled} value={appEnv} height="400px" onChange={(value) => setAppEnv(value)} theme={copilot} />
           </TabsContent>
         </Tabs>
       </div>
