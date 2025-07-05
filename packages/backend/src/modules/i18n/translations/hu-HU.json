@@ -418,5 +418,9 @@
   "APP_INSTALL_FORM_LOCAL_SUBDOMAIN": "Aldomain",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Érvénytelen aldomain",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Az aldomain érvénytelen (csak kisbetűs betűk, számok és kötőjelek megengedettek. Maximális hossz: 63 karakter)",
-  "APP_INSTALL_FORM_RANDOM": "Véletlenszerű"
+  "APP_INSTALL_FORM_RANDOM": "Véletlenszerű",
+  "APP_INSTALL_FORM_SHOW_PASSWORD": "Show password",
+  "APP_INSTALL_FORM_HIDE_PASSWORD": "Hide password",
+  "SAVE": "Save",
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder."
 }
