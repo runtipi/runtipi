@@ -90,6 +90,7 @@ export interface BuilderService {
   stopGracePeriod?: string;
   stdinOpen?: boolean;
   sysctls?: Record<string, number>;
+  dns?: string | string[];
 }
 
 export type BuiltService = ReturnType<typeof ServiceBuilder.prototype.build>;
@@ -494,6 +495,11 @@ export class ServiceBuilder {
     return this;
   }
 
+  setDNS(dns?: string | string[]) {
+    this.service.dns = dns;
+    return this;
+  }
+
   /*
    * Search through the labels and replace any {{ RUNTIPI_APP_ID }} or {{RUNTIPI_APP_ID}} with the appId.
    * @param {string} appId The appId to replace the variables with.
@@ -574,6 +580,7 @@ export class ServiceBuilder {
       stop_grace_period: this.service.stopGracePeriod,
       stdin_open: this.service.stdinOpen,
       sysctls: this.service.sysctls,
+      dns: this.service.dns,
     };
 
     // Delete any undefined properties

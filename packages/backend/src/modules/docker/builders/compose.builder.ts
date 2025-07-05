@@ -101,6 +101,7 @@ export class DockerComposeBuilder {
       .setStopGracePeriod(params.stopGracePeriod)
       .setStdinOpen(params.stdinOpen)
       .setSysctls(params.sysctls)
+      .setDNS(params.dns)
       .setNetwork(`${appName}_${appStoreId}_network`);
 
     if (params.isMain || params.addToMainNetwork) {
