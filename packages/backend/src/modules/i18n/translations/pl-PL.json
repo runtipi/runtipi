@@ -421,6 +421,6 @@
   "APP_INSTALL_FORM_RANDOM": "Losuj",
   "APP_INSTALL_FORM_SHOW_PASSWORD": "Pokaż hasło",
   "APP_INSTALL_FORM_HIDE_PASSWORD": "Ukryj hasło",
-  "SAVE": "Save",
-  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder."
+  "SAVE": "Zapisz",
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "To jest plik nadpisywania <a>docker merge</a>. Zostanie on połączony z bazowym plikiem <code>docker-compose</code> aplikacji. Możesz znaleźć plik bazowy w folderze <code>apps</code>."
 }
