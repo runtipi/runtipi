@@ -1,4 +1,4 @@
-import { Input, InputGroup } from '@/components/ui/Input';
+import { Input } from '@/components/ui/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Switch } from '@/components/ui/Switch';
 import type { FormField } from '@/types/app.types';
@@ -7,8 +7,7 @@ import { type Control, Controller, type UseFormRegister } from 'react-hook-form'
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import type { FormValues } from './install-form';
-import React from 'react';
-import { Button } from '@/components/ui/Button';
+import { PasswordInput } from '@/components/ui/PasswordInput/PasswordInput';
 
 type IProps = {
   field: FormField;
@@ -27,7 +26,6 @@ type IProps = {
 export const InstallFormField = (props: IProps) => {
   const { field, control, register, initialValue, error, loading } = props;
   const { t } = useTranslation();
-  const [passwordVisible, setPasswordVisible] = React.useState(false);
 
   const label = (
     <>
@@ -103,24 +101,15 @@ export const InstallFormField = (props: IProps) => {
 
   if (field.type === 'password') {
     return (
-      <InputGroup
+      <PasswordInput
         key={field.env_variable}
         {...register(field.env_variable)}
         label={label}
         error={error}
         disabled={loading}
-        type={passwordVisible ? 'text' : 'password'}
         className="mb-3"
-        groupClassName="input-group-flat"
         placeholder={field.placeholder || field.label}
         defaultValue={field.default as string}
-        groupSuffix={
-          <span className="input-group-text">
-            <Button size="sm" variant="ghost" onClick={() => setPasswordVisible(!passwordVisible)} type="button">
-              {passwordVisible ? t('APP_INSTALL_FORM_HIDE_PASSWORD') : t('APP_INSTALL_FORM_SHOW_PASSWORD')}
-            </Button>
-          </span>
-        }
       />
     );
   }
