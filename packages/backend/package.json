@@ -41,7 +41,7 @@
     "cookie-parser": "^1.4.7",
     "deepmerge": "^4.3.1",
     "dockerode": "^4.0.6",
-    "dotenv": "^16.5.0",
+    "dotenv": "^17.0.1",
     "dotenv-cli": "^8.0.0",
     "drizzle-orm": "^0.44.2",
     "i18next": "^25.1.2",
