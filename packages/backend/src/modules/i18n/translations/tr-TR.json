@@ -419,8 +419,8 @@
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Geçersiz alt alan adı",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Alt alan adı geçerli değil (yalnızca küçük harfler, sayılar ve tirelere izin verilir. Maksimum uzunluk 63 karakterdir)",
   "APP_INSTALL_FORM_RANDOM": "Rastgele",
-  "APP_INSTALL_FORM_SHOW_PASSWORD": "Show password",
-  "APP_INSTALL_FORM_HIDE_PASSWORD": "Hide password",
-  "SAVE": "Save",
-  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder."
+  "APP_INSTALL_FORM_SHOW_PASSWORD": "Şifreyi göster",
+  "APP_INSTALL_FORM_HIDE_PASSWORD": "Şifreyi gizle",
+  "SAVE": "Kaydet",
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "Bu bir <a>docker birleştirme</a> geçersiz kılma dosyasıdır. Uygulamanın ana <code>docker-compose</code> dosyasıyla birleştirilecektir. Ana dosyayı <code>apps</code> klasöründe bulabilirsiniz."
 }
