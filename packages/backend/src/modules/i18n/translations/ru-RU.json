@@ -419,8 +419,8 @@
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID": "Недопустимый поддомен",
   "APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_FORMAT": "Поддомен не допустим (только строчные буквы, цифры и тире разрешены. Максимальная длина 63 символа)",
   "APP_INSTALL_FORM_RANDOM": "Случайный",
-  "APP_INSTALL_FORM_SHOW_PASSWORD": "Show password",
-  "APP_INSTALL_FORM_HIDE_PASSWORD": "Hide password",
-  "SAVE": "Save",
+  "APP_INSTALL_FORM_SHOW_PASSWORD": "Показать пароль",
+  "APP_INSTALL_FORM_HIDE_PASSWORD": "Скрыть пароль",
+  "SAVE": "Сохранить",
   "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder."
 }
