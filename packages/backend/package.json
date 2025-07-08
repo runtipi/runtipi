@@ -65,7 +65,7 @@
     "web-push": "^3.6.7",
     "winston": "^3.17.0",
     "yaml": "^2.7.1",
-    "zod": "^3.25.74",
+    "zod": "^3.25.76",
     "zod-validation-error": "^3.4.1"
   },
   "devDependencies": {

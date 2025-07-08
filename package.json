@@ -33,7 +33,7 @@
   "dependencies": {
     "argon2": "^0.43.0",
     "drizzle-orm": "^0.44.2",
-    "zod": "^3.25.74"
+    "zod": "^3.25.76"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

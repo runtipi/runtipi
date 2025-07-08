@@ -59,7 +59,7 @@
     "remark-gfm": "^4.0.1",
     "semver": "^7.7.1",
     "validator": "^13.15.0",
-    "zod": "^3.25.74",
+    "zod": "^3.25.76",
     "zustand": "5.0.6"
   },
   "devDependencies": {
