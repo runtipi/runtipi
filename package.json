@@ -31,7 +31,7 @@
     "turbo": "^2.5.3"
   },
   "dependencies": {
-    "argon2": "^0.43.0",
+    "argon2": "^0.43.1",
     "drizzle-orm": "^0.44.2",
     "zod": "^3.25.74"
   },
