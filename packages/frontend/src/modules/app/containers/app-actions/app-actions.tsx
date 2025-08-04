@@ -32,7 +32,7 @@ import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Tooltip } from 'react-tooltip';
-import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
+import { AppInstallWizard } from '../../components/app-install-wizard/AppInstallWizard';
 import { ResetDialog } from '../../components/dialogs/reset-dialog/reset-dialog';
 import { RestartDialog } from '../../components/dialogs/restart-dialog/restart-dialog';
 import { StopDialog } from '../../components/dialogs/stop-dialog/stop-dialog';
@@ -245,7 +245,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
 
   return (
     <>
-      <InstallDialog isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={info} />
+      <AppInstallWizard isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={info} />
       <StopDialog isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={info} />
       <RestartDialog isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} info={info} />
       <UninstallDialog isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={info} />
