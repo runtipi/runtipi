@@ -32,8 +32,8 @@ import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/unins
 import { UpdateDialog } from '../../components/dialogs/update-dialog/update-dialog';
 import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
-import { DrowdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
 import { Tooltip } from 'react-tooltip';
+import { DropdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
 
 interface IProps {
   app?: AppDetails | null;
@@ -101,26 +101,26 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const LoadingButton = <ActionButton key="loading" loading intent="success" title={t('APP_ACTION_LOADING')} />;
 
   const RemoveListItem = (
-    <DropdownMenuItem onClick={uninstallDisclosure.open}>
+    <DropdownMenuItem onClick={uninstallDisclosure.open} key="remove" className="text-danger">
       <IconTrash className="me-2" size={16} />
       {t('APP_ACTION_REMOVE')}
     </DropdownMenuItem>
   );
   const SettingsListItem = (
-    <DropdownMenuItem onClick={updateSettingsDisclosure.open}>
+    <DropdownMenuItem onClick={updateSettingsDisclosure.open} key="settings">
       <IconSettings className="me-2" size={16} />
       {t('APP_ACTION_SETTINGS')}
     </DropdownMenuItem>
   );
   const RestartListItem = (
-    <DropdownMenuItem onClick={restartDisclosure.open}>
+    <DropdownMenuItem onClick={restartDisclosure.open} key="restart">
       <IconRotateClockwise className="me-2" size={16} />
       {t('APP_ACTION_RESTART')}
       {app?.pendingRestart && <span className="badge badge-warning ms-2">{t('MY_APPS_PENDING_RESTART')}</span>}
     </DropdownMenuItem>
   );
   const UpdateListItem = (
-    <DropdownMenuItem onClick={updateDisclosure.open}>
+    <DropdownMenuItem onClick={updateDisclosure.open} key="update">
       <IconDownload className="me-2" size={16} />
       <div>
         {t('APP_ACTION_UPDATE')}
@@ -129,13 +129,13 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     </DropdownMenuItem>
   );
   const CancelListItem = (
-    <DropdownMenuItem onClick={stopDisclosure.open}>
+    <DropdownMenuItem onClick={stopDisclosure.open} key="cancel">
       <IconPlayerPause className="me-2" size={16} />
       {t('APP_ACTION_CANCEL')}
     </DropdownMenuItem>
   );
   const ResetListItem = (
-    <DropdownMenuItem onClick={resetAppDisclosure.open}>
+    <DropdownMenuItem onClick={resetAppDisclosure.open} key="reset" className="text-danger">
       <IconEraser className="me-2" size={16} />
       {t('APP_INSTALL_FORM_RESET')}
     </DropdownMenuItem>
@@ -285,21 +285,9 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuGroup>
-                {listItems.map((item) => (
-                  <DropdownMenuItem key={item.key} onClick={() => item.props.onClick?.()}>
-                    {item.props.children}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-              {listItemsDestructive.length > 0 ? <DrowdownMenuSeparator /> : null}
-              <DropdownMenuGroup>
-                {listItemsDestructive.map((item) => (
-                  <DropdownMenuItem key={item.key} onClick={() => item.props.onClick?.()} className="text-danger">
-                    {item.props.children}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
+              <DropdownMenuGroup>{listItems}</DropdownMenuGroup>
+              {listItemsDestructive.length > 0 ? <DropdownMenuSeparator /> : null}
+              <DropdownMenuGroup>{listItemsDestructive}</DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         )}

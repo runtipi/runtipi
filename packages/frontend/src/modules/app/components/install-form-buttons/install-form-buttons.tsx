@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/Button';
-import type { AppStatus } from '@/types/app.types';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -7,7 +6,6 @@ interface IProps {
   isEdit?: boolean;
   loading?: boolean;
   formId: string;
-  status?: AppStatus;
 }
 
 export const InstallFormButtons: React.FC<IProps> = ({ isEdit, loading, formId }) => {
