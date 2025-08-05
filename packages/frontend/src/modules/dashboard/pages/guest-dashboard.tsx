@@ -2,34 +2,16 @@ import type { GuestAppsDto } from '@/api-client';
 import { getGuestAppsOptions, getGuestLinksOptions } from '@/api-client/@tanstack/react-query.gen';
 import { GuestHeader } from '@/components/header/guest-header';
 import { PageTitle } from '@/components/page-title/page-title';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { AppTile } from '@/modules/app/components/app-tile/app-tile';
 import { IconLock, IconLockOff } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
 import './guest-dashboard.css';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 import { useUserContext } from '@/context/user-context';
 import { GuestLinkTile } from '../components/guest-link-tile';
 
-const Tile = ({
-  data,
-  localDomain,
-  sslPort,
-}: {
-  data: GuestAppsDto['installed'][number];
-  localDomain: string;
-  sslPort: number;
-}) => {
-  const { t } = useTranslation();
-
+const Tile = ({ data, localDomain, sslPort }: { data: GuestAppsDto['installed'][number]; localDomain: string; sslPort: number }) => {
   const { info, app, metadata } = data;
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
@@ -65,7 +47,6 @@ const Tile = ({
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>{t('APP_DETAILS_CHOOSE_OPEN_METHOD')}</DropdownMenuLabel>
         <DropdownMenuGroup>
           {app.exposed && app.domain && (
             <DropdownMenuItem onClick={() => handleOpen('domain')}>

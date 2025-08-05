@@ -14,14 +14,7 @@ import {
 import type React from 'react';
 import { createElement } from 'react';
 import { Button, type ButtonProps } from '@/components/ui/Button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +33,7 @@ import { UpdateDialog } from '../../components/dialogs/update-dialog/update-dial
 import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
 import { DrowdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
+import { Tooltip } from 'react-tooltip';
 
 interface IProps {
   app?: AppDetails | null;
@@ -161,7 +155,6 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>{t('APP_DETAILS_CHOOSE_OPEN_METHOD')}</DropdownMenuLabel>
         <DropdownMenuGroup>
           {app?.exposed && app.domain && (
             <DropdownMenuItem onClick={() => handleOpen('domain')}>
@@ -283,8 +276,12 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         {listItems.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="">
+              <Button>
                 <IconDots size={14} />
+                <Tooltip className="tooltip" anchorSelect=".updateAvailable">
+                  {t('MY_APPS_UPDATE_AVAILABLE')}
+                </Tooltip>
+                {updateAvailable && <span className="updateAvailable badge badge-dot bg-red badge-notification" />}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
