@@ -1,5 +1,7 @@
 import {
+  IconDots,
   IconDownload,
+  IconEraser,
   IconExternalLink,
   IconLock,
   IconLockOff,
@@ -8,11 +10,9 @@ import {
   IconRotateClockwise,
   IconSettings,
   IconTrash,
-  IconX,
 } from '@tabler/icons-react';
 import type React from 'react';
-import { Fragment } from 'react';
-
+import { createElement } from 'react';
 import { Button, type ButtonProps } from '@/components/ui/Button';
 import {
   DropdownMenu,
@@ -31,7 +31,6 @@ import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Tooltip } from 'react-tooltip';
 import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
 import { ResetDialog } from '../../components/dialogs/reset-dialog/reset-dialog';
 import { RestartDialog } from '../../components/dialogs/restart-dialog/restart-dialog';
@@ -40,6 +39,7 @@ import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/unins
 import { UpdateDialog } from '../../components/dialogs/update-dialog/update-dialog';
 import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
+import { DrowdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
 
 interface IProps {
   app?: AppDetails | null;
@@ -85,8 +85,6 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
 
   const appLocalDomain = `${metadata.localSubdomain}.${localDomain}${sslPort !== 443 ? `:${sslPort}` : ''}`;
 
-  const buttons: React.JSX.Element[] = [];
-
   const startMutation = useMutation({
     ...startAppMutation(),
     onError: (e: TranslatableError) => {
@@ -106,37 +104,53 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
       intent="success"
     />
   );
-  const RemoveButton = (
-    <ActionButton key="remove" IconComponent={IconTrash} onClick={uninstallDisclosure.open} title={t('APP_ACTION_REMOVE')} intent="danger" />
-  );
-  const SettingsButton = (
-    <ActionButton key="settings" IconComponent={IconSettings} onClick={updateSettingsDisclosure.open} title={t('APP_ACTION_SETTINGS')} />
-  );
-  const StopButton = (
-    <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={stopDisclosure.open} title={t('APP_ACTION_STOP')} intent="danger" />
-  );
-  const restartButton = (
-    <Fragment key="restart">
-      {app?.pendingRestart && (
-        <Tooltip className="tooltip" anchorSelect=".pendingRestart">
-          {t('MY_APPS_PENDING_RESTART')}
-        </Tooltip>
-      )}
-      <ActionButton
-        IconComponent={IconRotateClockwise}
-        onClick={restartDisclosure.open}
-        title={t('APP_ACTION_RESTART')}
-        className="pendingRestart"
-        intent={app?.pendingRestart ? 'warning' : 'default'}
-      />
-    </Fragment>
-  );
   const LoadingButton = <ActionButton key="loading" loading intent="success" title={t('APP_ACTION_LOADING')} />;
-  const CancelButton = <ActionButton key="cancel" IconComponent={IconX} onClick={stopDisclosure.open} title={t('APP_ACTION_CANCEL')} />;
-  const InstallButton = <ActionButton key="install" onClick={installDisclosure.open} title={t('APP_ACTION_INSTALL')} intent="success" />;
-  const UpdateButton = (
-    <ActionButton key="update" IconComponent={IconDownload} onClick={updateDisclosure.open} title={t('APP_ACTION_UPDATE')} intent="success" />
+
+  const RemoveListItem = (
+    <DropdownMenuItem onClick={uninstallDisclosure.open}>
+      <IconTrash className="me-2" size={16} />
+      {t('APP_ACTION_REMOVE')}
+    </DropdownMenuItem>
   );
+  const SettingsListItem = (
+    <DropdownMenuItem onClick={updateSettingsDisclosure.open}>
+      <IconSettings className="me-2" size={16} />
+      {t('APP_ACTION_SETTINGS')}
+    </DropdownMenuItem>
+  );
+  const RestartListItem = (
+    <DropdownMenuItem onClick={restartDisclosure.open}>
+      <IconRotateClockwise className="me-2" size={16} />
+      {t('APP_ACTION_RESTART')}
+      {app?.pendingRestart && <span className="badge badge-warning ms-2">{t('MY_APPS_PENDING_RESTART')}</span>}
+    </DropdownMenuItem>
+  );
+  const UpdateListItem = (
+    <DropdownMenuItem onClick={updateDisclosure.open}>
+      <IconDownload className="me-2" size={16} />
+      <div>
+        {t('APP_ACTION_UPDATE')}
+        <span className="ms-2 badge bg-red" />
+      </div>
+    </DropdownMenuItem>
+  );
+  const CancelListItem = (
+    <DropdownMenuItem onClick={stopDisclosure.open}>
+      <IconPlayerPause className="me-2" size={16} />
+      {t('APP_ACTION_CANCEL')}
+    </DropdownMenuItem>
+  );
+  const ResetListItem = (
+    <DropdownMenuItem onClick={resetAppDisclosure.open}>
+      <IconEraser className="me-2" size={16} />
+      {t('APP_INSTALL_FORM_RESET')}
+    </DropdownMenuItem>
+  );
+
+  const StopButton = (
+    <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={stopDisclosure.open} title={t('APP_ACTION_STOP')} intent="default" />
+  );
+  const InstallButton = <ActionButton key="install" onClick={installDisclosure.open} title={t('APP_ACTION_INSTALL')} intent="success" />;
 
   const OpenButton = (
     <DropdownMenu>
@@ -173,20 +187,33 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     </DropdownMenu>
   );
 
+  const buttons: React.JSX.Element[] = [];
+  const listItems: React.JSX.Element[] = [];
+  const listItemsDestructive: React.JSX.Element[] = [];
+
   switch (app?.status ?? 'missing') {
     case 'stopped':
-      buttons.push(StartButton, RemoveButton, SettingsButton);
+      buttons.push(StartButton);
+      listItems.push(SettingsListItem);
+      listItemsDestructive.push(ResetListItem);
+      listItemsDestructive.push(RemoveListItem);
       if (updateAvailable) {
-        buttons.push(UpdateButton);
+        listItems.push(UpdateListItem);
       }
       break;
     case 'running':
-      buttons.push(StopButton, restartButton, SettingsButton);
+      buttons.push(StopButton);
+      listItems.push(SettingsListItem);
+      listItems.push(RestartListItem);
+      listItemsDestructive.push(ResetListItem);
+      listItemsDestructive.push(RemoveListItem);
+
       if (!info.no_gui && (app?.exposedLocal || app?.openPort || app?.exposed)) {
         buttons.push(OpenButton);
       }
+
       if (updateAvailable) {
-        buttons.push(UpdateButton);
+        listItems.push(UpdateListItem);
       }
       break;
     case 'installing':
@@ -196,13 +223,10 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     case 'restarting':
     case 'updating':
     case 'resetting':
-      buttons.push(LoadingButton, CancelButton);
-      break;
     case 'backing_up':
-      buttons.push(LoadingButton, CancelButton);
-      break;
     case 'restoring':
-      buttons.push(LoadingButton, CancelButton);
+      buttons.push(LoadingButton);
+      listItems.push(CancelListItem);
       break;
     case 'missing':
       buttons.push(InstallButton);
@@ -233,14 +257,6 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     window.open(url, '_blank', 'noreferrer');
   };
 
-  const openResetAppModal = () => {
-    updateSettingsDisclosure.close();
-
-    setTimeout(() => {
-      resetAppDisclosure.open();
-    }, 300);
-  };
-
   const newVersion = [metadata?.latestDockerVersion ? `${metadata?.latestDockerVersion}` : '', `(${String(metadata?.latestVersion)})`].join(' ');
 
   return (
@@ -256,12 +272,40 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         onClose={updateSettingsDisclosure.close}
         info={info}
         config={app?.config ?? {}}
-        onReset={openResetAppModal}
       />
       <div className="mt-1 btn-list d-flex">
-        {buttons.map((button) => (
-          <Fragment key={button.key}>{button}</Fragment>
-        ))}
+        {buttons.map((button) => {
+          return createElement(button.type, {
+            ...button.props,
+            key: button.key,
+          });
+        })}
+        {listItems.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="">
+                <IconDots size={14} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                {listItems.map((item) => (
+                  <DropdownMenuItem key={item.key} onClick={() => item.props.onClick?.()}>
+                    {item.props.children}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+              {listItemsDestructive.length > 0 ? <DrowdownMenuSeparator /> : null}
+              <DropdownMenuGroup>
+                {listItemsDestructive.map((item) => (
+                  <DropdownMenuItem key={item.key} onClick={() => item.props.onClick?.()} className="text-danger">
+                    {item.props.children}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </>
   );

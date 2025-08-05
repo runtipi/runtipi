@@ -16,11 +16,10 @@ interface IProps {
   config: Record<string, unknown>;
   isOpen: boolean;
   onClose: () => void;
-  onReset: () => void;
   status?: AppStatus;
 }
 
-export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, onClose, onReset, status }) => {
+export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, onClose, status }) => {
   const { t } = useTranslation();
   const formId = useId();
 
@@ -63,7 +62,7 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
           </DialogDescription>
         </ScrollArea>
         <DialogFooter>
-          <InstallFormButtons loading={updateConfig.isPending} isEdit onReset={onReset} status={status} formId={formId} />
+          <InstallFormButtons loading={updateConfig.isPending} isEdit status={status} formId={formId} />
         </DialogFooter>
       </DialogContent>
     </Dialog>
