@@ -2,15 +2,13 @@ import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { SSEService } from '@/core/sse/sse.service';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
 import { AppEventsQueue } from '../queue/entities/app-events';
 import { BackupManager } from './backup.manager';
-import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
-import type { AsyncMutex } from '@/utils/mutex/async-mutex';
 
 @Injectable()
 export class BackupsService {
@@ -23,7 +21,6 @@ export class BackupsService {
     private appFilesManager: AppFilesManager,
     private backupManager: BackupManager,
     private readonly sseService: SSEService,
-    @Inject(APP_ASYNC_MUTEX) private mutex: AsyncMutex,
   ) {}
 
   public async backupApp(params: { appUrn: AppUrn }) {
@@ -45,10 +42,8 @@ export class BackupsService {
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'backing_up' });
 
     const requestId = crypto.randomUUID();
-    const release = await this.mutex.acquire(appUrn);
 
     this.appEventsQueue.publish({ appUrn, command: 'backup', requestId, form: app.config }).then(async ({ success, message }) => {
-      release();
       if (success) {
         if (appStatusBeforeUpdate === 'running') {
           await this.appLifecycle.startApp({ appUrn });
@@ -78,10 +73,8 @@ export class BackupsService {
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'restoring' });
 
     const requestId = crypto.randomUUID();
-    const release = await this.mutex.acquire(appUrn);
 
     this.appEventsQueue.publish({ appUrn, command: 'restore', requestId, filename, form: app.config }).then(async ({ success, message }) => {
-      release();
       if (success) {
         const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appUrn);
 

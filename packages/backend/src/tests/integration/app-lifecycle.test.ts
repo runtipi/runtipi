@@ -31,6 +31,8 @@ import waitFor from 'wait-for-expect';
 import type { FsMock } from '../__mocks__/fs';
 import { createAppInStore } from '../utils/create-app-in-store';
 import { type TestDatabase, cleanTestData, createTestDatabase } from '../utils/create-test-database';
+import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
+import { AsyncMutex } from '@/utils/mutex/async-mutex';
 
 let db: TestDatabase;
 const DB_NAME = 'applifecycletest';
@@ -81,6 +83,10 @@ describe('App lifecycle', () => {
         AppHelpers,
         AppsService,
         SubnetManagerService,
+        {
+          provide: APP_ASYNC_MUTEX,
+          useValue: new AsyncMutex(),
+        },
         {
           provide: DockerService,
           useValue: dockerService,
