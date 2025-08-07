@@ -3,7 +3,7 @@ import { createAppUrn, extractAppUrn } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { SSEService } from '@/core/sse/sse.service';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { lt, valid } from 'semver';
 import semver from 'semver';
@@ -17,6 +17,8 @@ import { MarketplaceService } from '../marketplace/marketplace.service';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { appFormSchema } from './dto/app-lifecycle.dto';
+import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
+import type { AsyncMutex } from '@/utils/mutex/async-mutex';
 
 @Injectable()
 export class AppLifecycleService {
@@ -31,12 +33,15 @@ export class AppLifecycleService {
     private readonly appFilesManager: AppFilesManager,
     private readonly sseService: SSEService,
     private readonly backupManager: BackupManager,
+    @Inject(APP_ASYNC_MUTEX) private mutex: AsyncMutex,
   ) {
     this.logger.debug('Subscribing to app events...');
     this.appEventsQueue.onEvent((data, reply) => this.invokeCommand(data, reply));
   }
 
   async invokeCommand(data: z.infer<typeof appEventSchema>, reply: (response: z.output<typeof appEventResultSchema>) => Promise<void>) {
+    const release = await this.mutex.acquire(data.appUrn);
+
     try {
       const command = this.commandFactory.createCommand(data);
       const { success, message } = await command.execute(data.appUrn, data.form);
@@ -44,6 +49,8 @@ export class AppLifecycleService {
     } catch (err) {
       this.logger.error('Error invoking command:', err);
       await reply({ success: false, message: String(err) });
+    } finally {
+      release();
     }
   }
 

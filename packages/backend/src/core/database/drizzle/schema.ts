@@ -58,7 +58,7 @@ export const app = pgTable('app', {
     .references(() => appStore.slug),
   appName: varchar('app_name').notNull(),
   enableAuth: boolean('enable_auth').default(false).notNull(),
-  subnet: varchar(),
+  subnet: varchar().unique(),
   localSubdomain: varchar('local_subdomain'),
   pendingRestart: boolean('pending_restart').default(false).notNull(),
   userConfigEnabled: boolean('user_config_enabled').default(true).notNull(),

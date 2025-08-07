@@ -18,7 +18,7 @@ import { QueueHealthIndicator } from './queue.health';
 
         return queueFactory.createQueue({
           queueName: 'app-events-queue',
-          workers: 1,
+          workers: 3,
           eventSchema: appEventSchema,
           resultSchema: appEventResultSchema,
           timeout: timeout,

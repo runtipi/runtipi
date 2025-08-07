@@ -6,12 +6,11 @@ import Dockerode from 'dockerode';
 import { AppsRepository } from '../apps/apps.repository';
 import { DOCKERODE } from '../docker/docker.module';
 
-const BASE_SUBNET_PREFIX = '10.128';
 const SUBNET_MASK = '/24';
-
 const MAX_RETRIES = 3;
-const RESERVED_SUBNET_MAX = 9;
-const MAX_SUBNET_OCTET = 254; // Maximum value for the third octet (x in 10.128.x.0/24)
+const STARTING_OCTET_2 = 128;
+const MAX_OCTET_VALUE = 254;
+const RESERVED_SUBNET_MAX_OCTET_3 = 9;
 
 @Injectable()
 export class SubnetManagerService {
@@ -59,12 +58,15 @@ export class SubnetManagerService {
    * @returns Array of subnets in use
    */
   private async getAllocatedSubnets(): Promise<string[]> {
+    const appSubnets = (await this.appsRepository.getApps().then((apps) => apps.map((app) => app.subnet))).filter((subnet) => subnet !== null);
+
     await this.docker.pruneNetworks().catch(() => ({}));
     const networks = await this.docker.listNetworks();
     return networks
       .flatMap((network) => network.IPAM?.Config?.map((c) => c))
       .map((c) => c?.Subnet)
-      .filter((c) => c !== undefined);
+      .filter((c) => c !== undefined)
+      .concat(appSubnets);
   }
 
   /**
@@ -73,20 +75,30 @@ export class SubnetManagerService {
    * @returns The next available subnet or null if all are used
    */
   private findNextAvailableSubnet(allocatedSubnets: string[]): string | null {
-    const usedThirdOctets = allocatedSubnets.map((subnet) => {
-      const match = subnet.match(/10\.128\.(\d+)\.0\/24/);
-      return match?.[1] ? Number.parseInt(match[1], 10) : null;
-    });
+    const usedOctetPairs = new Set<string>();
+    const subnetRegex = /^10\.(\d{1,3})\.(\d{1,3})\.0\/24$/;
 
-    let candidate = RESERVED_SUBNET_MAX + 1;
-
-    while (candidate <= MAX_SUBNET_OCTET) {
-      if (!usedThirdOctets.includes(candidate)) {
-        return `${BASE_SUBNET_PREFIX}.${candidate}.0${SUBNET_MASK}`;
+    for (const subnet of allocatedSubnets) {
+      const match = subnet.match(subnetRegex);
+      if (match) {
+        const octet2 = match[1];
+        const octet3 = match[2];
+        usedOctetPairs.add(`${octet2}.${octet3}`);
       }
-      candidate++;
     }
 
+    for (let y = STARTING_OCTET_2; y <= MAX_OCTET_VALUE; y++) {
+      const startOctet3 = y === STARTING_OCTET_2 ? RESERVED_SUBNET_MAX_OCTET_3 + 1 : 0;
+
+      for (let z = startOctet3; z <= MAX_OCTET_VALUE; z++) {
+        const candidatePair = `${y}.${z}`;
+        if (!usedOctetPairs.has(candidatePair)) {
+          return `10.${y}.${z}.0${SUBNET_MASK}`;
+        }
+      }
+    }
+
+    // All subnets in the 10.128.0.0 - 10.254.254.0 range are exhausted
     return null;
   }
 }

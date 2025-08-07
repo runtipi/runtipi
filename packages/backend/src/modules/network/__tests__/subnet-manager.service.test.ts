@@ -7,6 +7,7 @@ import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import { SubnetManagerService } from '../subnet-manager.service';
+import type Dockerode from 'dockerode';
 
 // Create a mock for Dockerode
 const dockerMock = {
@@ -31,6 +32,7 @@ describe('SubnetManagerService', () => {
     vi.clearAllMocks();
     dockerMock.listNetworks.mockReset().mockResolvedValue([]);
     dockerMock.pruneNetworks.mockReset().mockResolvedValue(undefined);
+    appsRepository.getApps.mockResolvedValue([]);
   });
 
   describe('allocateSubnet', () => {
@@ -92,10 +94,12 @@ describe('SubnetManagerService', () => {
 
       // Create mock for Docker with all subnets allocated
       const networkMocks = [];
-      for (let i = 10; i <= 254; i++) {
-        networkMocks.push({
-          IPAM: { Config: [{ Subnet: `10.128.${i}.0/24` }] },
-        });
+      for (let y = 128; y <= 254; y++) {
+        for (let z = 0; z <= 254; z++) {
+          networkMocks.push({
+            IPAM: { Config: [{ Subnet: `10.${y}.${z}.0/24` }] },
+          });
+        }
       }
       dockerMock.listNetworks.mockResolvedValue(networkMocks);
 
@@ -180,6 +184,35 @@ describe('SubnetManagerService', () => {
 
       // assert
       expect(result).toBe('10.128.12.0/24');
+    });
+
+    it('should increase the second octet when all third octets are used', async () => {
+      // arrange
+      const appUrn = 'app:test/app' as AppUrn;
+      const expectedSubnet = '10.129.0.0/24';
+      const networkMocks: Partial<Dockerode.NetworkInspectInfo>[] = [];
+
+      // Fill up the entire 10.128.x.0/24 range
+      for (let i = 0; i <= 254; i++) {
+        networkMocks.push(
+          fromPartial({
+            IPAM: { Config: [{ Subnet: `10.128.${i}.0/24` }] },
+          }),
+        );
+      }
+      dockerMock.listNetworks.mockResolvedValue(networkMocks);
+
+      appsRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 1, subnet: null }));
+      appsRepository.updateAppById.mockResolvedValue(fromPartial({ id: 1, subnet: expectedSubnet }));
+
+      // act
+      const result = await service.allocateSubnet(appUrn);
+
+      // assert
+      expect(result).toBe(expectedSubnet);
+      expect(appsRepository.updateAppById).toHaveBeenCalledWith(1, {
+        subnet: expectedSubnet,
+      });
     });
   });
 });
