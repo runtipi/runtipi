@@ -57,6 +57,7 @@
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "如果应用程序被暴露给公网则需要域名",
   "APP_ERROR_INVALID_CONFIG": "App {{id}} 有无效的 config.json 文件",
   "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
+  "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "选择一个选项...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "在访客面板上显示",
   "APP_INSTALL_FORM_DOMAIN_NAME": "域名",
