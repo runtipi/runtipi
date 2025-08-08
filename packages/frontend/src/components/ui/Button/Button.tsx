@@ -1,7 +1,7 @@
 import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps, cva } from 'class-variance-authority';
 import clsx from 'clsx';
-import * as React from 'react';
+import type * as React from 'react';
 
 const buttonVariants = cva('btn', {
   variants: {
@@ -67,25 +67,21 @@ const buttonVariants = cva('btn', {
   },
 });
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, intent, asChild = false, disabled, loading, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
-    return (
-      <Comp
-        disabled={disabled}
-        style={{ height: size ? 'auto' : '36px' }}
-        className={clsx(buttonVariants({ variant, size, intent, className }), { disabled: disabled || loading, 'btn-loading': loading }, className)}
-        ref={ref}
-        {...props}
-      />
-    );
-  },
-);
-Button.displayName = 'Button';
+const Button = ({ className, variant, size, intent, asChild = false, disabled, loading, ...props }: ButtonProps) => {
+  const Comp = asChild ? Slot : 'button';
+  return (
+    <Comp
+      disabled={disabled}
+      style={{ height: size ? 'auto' : '36px' }}
+      className={clsx(buttonVariants({ variant, size, intent, className }), { disabled: disabled || loading, 'btn-loading': loading }, className)}
+      {...props}
+    />
+  );
+};
 
 export { Button, buttonVariants };

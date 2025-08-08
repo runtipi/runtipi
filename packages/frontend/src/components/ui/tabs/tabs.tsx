@@ -2,46 +2,35 @@
 
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import clsx from 'clsx';
-import * as React from 'react';
+import type * as React from 'react';
 import './tabs.css';
 
-const Tabs = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Root>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>>(
-  ({ className, children, ...props }, ref) => (
-    <TabsPrimitive.Root ref={ref} className={clsx('card', className)} {...props}>
-      {children}
-    </TabsPrimitive.Root>
-  ),
+const Tabs = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) => (
+  <TabsPrimitive.Root className={clsx('card', className)} {...props}>
+    {children}
+  </TabsPrimitive.Root>
 );
 
-const TabsList = React.forwardRef<React.ElementRef<typeof TabsPrimitive.List>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>>(
-  ({ className, children, ...props }, ref) => (
-    <TabsPrimitive.List ref={ref} className={clsx('', className)} {...props}>
-      <div className="card-header">
-        <div className="nav nav-tabs card-header-tabs">{children}</div>
-      </div>
-    </TabsPrimitive.List>
-  ),
+const TabsList = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) => (
+  <TabsPrimitive.List className={clsx('', className)} {...props}>
+    <div className="card-header">
+      <div className="nav nav-tabs card-header-tabs">{children}</div>
+    </div>
+  </TabsPrimitive.List>
 );
-TabsList.displayName = TabsPrimitive.List.displayName;
 
-const TabsTrigger = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Trigger>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <TabsPrimitive.Trigger className={clsx('trigger nav-link', className)} {...props} ref={ref}>
-        <li className="nav-item">{children}</li>
-      </TabsPrimitive.Trigger>
-    );
-  },
-);
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
+const TabsTrigger = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) => {
+  return (
+    <TabsPrimitive.Trigger className={clsx('trigger nav-link', className)} {...props}>
+      <li className="nav-item">{children}</li>
+    </TabsPrimitive.Trigger>
+  );
+};
 
-const TabsContent = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Content>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>>(
-  ({ className, children, ...props }, ref) => (
-    <TabsPrimitive.Content className={clsx('', className)} {...props} ref={ref}>
-      <div className="card-body">{children}</div>
-    </TabsPrimitive.Content>
-  ),
+const TabsContent = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) => (
+  <TabsPrimitive.Content className={clsx('', className)} {...props}>
+    <div className="card-body">{children}</div>
+  </TabsPrimitive.Content>
 );
-TabsContent.displayName = TabsPrimitive.Content.displayName;
 
 export { Tabs, TabsList, TabsTrigger, TabsContent };

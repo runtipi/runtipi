@@ -2,7 +2,7 @@
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import clsx from 'clsx';
-import * as React from 'react';
+import type * as React from 'react';
 import './Dialog.css';
 
 type Sizes = 'sm' | 'md' | 'lg' | 'xl';
@@ -30,27 +30,21 @@ const DialogPortal = ({ children, ...props }: DialogPrimitive.DialogPortalProps 
 );
 DialogPortal.displayName = DialogPrimitive.Portal.displayName;
 
-const DialogOverlay = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => <DialogPrimitive.Overlay className={clsx('', className)} {...props} ref={ref} />);
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+const DialogOverlay = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) => (
+  <DialogPrimitive.Overlay className={clsx('', className)} {...props} />
+);
 
-const DialogContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & ModalProps
->(({ className, children, ...props }, ref) => (
+const DialogContent = ({ className, children, ...props }: React.ComponentProps<typeof DialogPrimitive.Content> & ModalProps) => (
   <DialogPortal type={props.type} size={props.size}>
     <DialogOverlay />
-    <DialogPrimitive.Content ref={ref} className={clsx('modal-content mt-1', className)} {...props}>
+    <DialogPrimitive.Content className={clsx('modal-content mt-1', className)} {...props}>
       {children}
       <DialogPrimitive.Close className="btn-close">
         <span data-testid="modal-close-button" className="btn-close" aria-label="Close" />
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
-));
-DialogContent.displayName = DialogPrimitive.Content.displayName;
+);
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div data-testid="modal-header" className={clsx('modal-header', className)} {...props} />
@@ -62,19 +56,14 @@ const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
 );
 DialogFooter.displayName = 'DialogFooter';
 
-const DialogTitle = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Title>, React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>>(
-  ({ className, ...props }, ref) => <DialogPrimitive.Title ref={ref} className={clsx('modal-title', className)} {...props} />,
+const DialogTitle = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) => (
+  <DialogPrimitive.Title className={clsx('modal-title', className)} {...props} />
 );
-DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
-const DialogDescription = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description ref={ref} asChild {...props}>
+const DialogDescription = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Description>) => (
+  <DialogPrimitive.Description asChild {...props}>
     <div className={clsx('modal-body', className)}>{props.children}</div>
   </DialogPrimitive.Description>
-));
-DialogDescription.displayName = DialogPrimitive.Description.displayName;
+);
 
 export { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription };

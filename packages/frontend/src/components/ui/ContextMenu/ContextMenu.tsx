@@ -3,7 +3,7 @@
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
 import { IconCheck, IconChevronRight, IconCircle } from '@tabler/icons-react';
 import clsx from 'clsx';
-import * as React from 'react';
+import type * as React from 'react';
 
 const ContextMenu = ContextMenuPrimitive.Root;
 
@@ -17,91 +17,74 @@ const ContextMenuSub = ContextMenuPrimitive.Sub;
 
 const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
 
-const ContextMenuSubTrigger = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.SubTrigger>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> & {
-    inset?: boolean;
-  }
->(({ className, inset, children, ...props }, ref) => (
-  <ContextMenuPrimitive.SubTrigger ref={ref} className={clsx('', inset && 'ps-2', className)} {...props}>
+const ContextMenuSubTrigger = ({
+  className,
+  inset,
+  children,
+  ...props
+}: React.ComponentProps<typeof ContextMenuPrimitive.SubTrigger> & {
+  inset?: boolean;
+}) => (
+  <ContextMenuPrimitive.SubTrigger className={clsx('', inset && 'ps-2', className)} {...props}>
     {children}
     <IconChevronRight className="" />
   </ContextMenuPrimitive.SubTrigger>
-));
-ContextMenuSubTrigger.displayName = ContextMenuPrimitive.SubTrigger.displayName;
+);
 
-const ContextMenuSubContent = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.SubContent>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubContent>
->(({ className, ...props }, ref) => <ContextMenuPrimitive.SubContent ref={ref} className={clsx('', className)} {...props} />);
-ContextMenuSubContent.displayName = ContextMenuPrimitive.SubContent.displayName;
+const ContextMenuSubContent = ({ className, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.SubContent>) => (
+  <ContextMenuPrimitive.SubContent className={clsx('', className)} {...props} />
+);
 
-const ContextMenuContent = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content>
->(({ className, ...props }, ref) => (
+const ContextMenuContent = ({ className, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.Content>) => (
   <ContextMenuPrimitive.Portal>
-    <ContextMenuPrimitive.Content ref={ref} className={clsx('dropdown-menu dropdown-menu-demo', className)} style={{ display: 'block' }} {...props} />
+    <ContextMenuPrimitive.Content className={clsx('dropdown-menu dropdown-menu-demo', className)} style={{ display: 'block' }} {...props} />
   </ContextMenuPrimitive.Portal>
-));
-ContextMenuContent.displayName = ContextMenuPrimitive.Content.displayName;
+);
 
-const ContextMenuItem = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & {
-    inset?: boolean;
-  }
->(({ className, inset, ...props }, ref) => (
-  <ContextMenuPrimitive.Item ref={ref} className={clsx('dropdown-item cursor-pointer', inset && 'ps-2', className)} {...props} />
-));
-ContextMenuItem.displayName = ContextMenuPrimitive.Item.displayName;
+const ContextMenuItem = ({
+  className,
+  inset,
+  ...props
+}: React.ComponentProps<typeof ContextMenuPrimitive.Item> & {
+  inset?: boolean;
+}) => <ContextMenuPrimitive.Item className={clsx('dropdown-item cursor-pointer', inset && 'ps-2', className)} {...props} />;
 
-const ContextMenuCheckboxItem = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem>
->(({ className, children, checked, ...props }, ref) => (
-  <ContextMenuPrimitive.CheckboxItem ref={ref} className={clsx('', className)} checked={checked} {...props}>
-    <span className="">
+const ContextMenuCheckboxItem = ({ className, children, checked, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>) => (
+  <ContextMenuPrimitive.CheckboxItem className={clsx('', className)} checked={checked} {...props}>
+    <span>
       <ContextMenuPrimitive.ItemIndicator>
-        <IconCheck className="" />
+        <IconCheck />
       </ContextMenuPrimitive.ItemIndicator>
     </span>
     {children}
   </ContextMenuPrimitive.CheckboxItem>
-));
-ContextMenuCheckboxItem.displayName = ContextMenuPrimitive.CheckboxItem.displayName;
+);
 
-const ContextMenuRadioItem = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem>
->(({ className, children, ...props }, ref) => (
-  <ContextMenuPrimitive.RadioItem ref={ref} className={clsx('', className)} {...props}>
-    <span className="">
+const ContextMenuRadioItem = ({ className, children, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.RadioItem>) => (
+  <ContextMenuPrimitive.RadioItem className={clsx('', className)} {...props}>
+    <span>
       <ContextMenuPrimitive.ItemIndicator>
-        <IconCircle className="" />
+        <IconCircle />
       </ContextMenuPrimitive.ItemIndicator>
     </span>
     {children}
   </ContextMenuPrimitive.RadioItem>
-));
-ContextMenuRadioItem.displayName = ContextMenuPrimitive.RadioItem.displayName;
+);
 
-const ContextMenuLabel = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Label>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Label> & {
-    inset?: boolean;
-  }
->(({ className, inset, ...props }, ref) => <ContextMenuPrimitive.Label ref={ref} className={clsx('', inset && 'ps-2', className)} {...props} />);
-ContextMenuLabel.displayName = ContextMenuPrimitive.Label.displayName;
+const ContextMenuLabel = ({
+  className,
+  inset,
+  ...props
+}: React.ComponentProps<typeof ContextMenuPrimitive.Label> & {
+  inset?: boolean;
+}) => <ContextMenuPrimitive.Label className={clsx('', { 'ps-2': inset }, className)} {...props} />;
 
-const ContextMenuSeparator = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Separator>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Separator>
->(({ className, ...props }, ref) => <ContextMenuPrimitive.Separator ref={ref} className={clsx('', className)} {...props} />);
-ContextMenuSeparator.displayName = ContextMenuPrimitive.Separator.displayName;
+const ContextMenuSeparator = ({ className, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.Separator>) => (
+  <ContextMenuPrimitive.Separator className={clsx('', className)} {...props} />
+);
 
 const ContextMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
-  return <span className={clsx('', className)} {...props} />;
+  return <span className={className} {...props} />;
 };
 ContextMenuShortcut.displayName = 'ContextMenuShortcut';
 

@@ -8,18 +8,15 @@ import { useTranslation } from 'react-i18next';
 type Props = ComponentProps<typeof InputGroup> & {};
 
 export const PasswordInput = (props: Props) => {
-  const { ref, key, ...rest } = props;
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const { t } = useTranslation();
 
   return (
     <InputGroup
-      key={key}
-      ref={ref}
       type={passwordVisible ? 'text' : 'password'}
       groupClassName="input-group-flat"
-      {...rest}
+      {...props}
       groupSuffix={
         <span className="input-group-text">
           <Tooltip className="tooltip" anchorSelect=".toggle-password-visibility">

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 
 import { IconChevronLeft, IconChevronRight, IconDots } from '@tabler/icons-react';
 import clsx from 'clsx';
@@ -10,15 +10,11 @@ const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
 );
 Pagination.displayName = 'Pagination';
 
-const PaginationContent = React.forwardRef<HTMLUListElement, React.ComponentProps<'ul'>>(({ className, ...props }, ref) => (
-  <ul ref={ref} className={clsx('pagination', className)} {...props} />
-));
-PaginationContent.displayName = 'PaginationContent';
+const PaginationContent = ({ className, ...props }: React.ComponentProps<'ul'>) => <ul className={clsx('pagination', className)} {...props} />;
 
-const PaginationItem = React.forwardRef<HTMLLIElement, React.ComponentProps<'li'> & { isActive?: boolean }>(
-  ({ className, isActive, ...props }, ref) => <li ref={ref} className={clsx('page-item', { active: isActive }, className)} {...props} />,
+const PaginationItem = ({ className, isActive, ...props }: React.ComponentProps<'li'> & { isActive?: boolean }) => (
+  <li className={clsx('page-item', { active: isActive }, className)} {...props} />
 );
-PaginationItem.displayName = 'PaginationItem';
 
 type PaginationLinkProps = {
   small?: boolean;

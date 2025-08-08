@@ -15,7 +15,11 @@ import type { GetPropDefTypes } from '../props/prop-def.js';
 type SkeletonElement = React.ElementRef<'span'>;
 type SkeletonOwnProps = GetPropDefTypes<typeof skeletonPropDefs>;
 interface SkeletonProps extends ComponentPropsWithout<'span', RemovedProps>, MarginProps, SkeletonOwnProps {}
-const Skeleton = React.forwardRef<SkeletonElement, SkeletonProps>((props, forwardedRef) => {
+
+// Separate the ref from the other props to avoid TypeScript errors
+type SkeletonComponentProps = SkeletonProps & { ref?: React.Ref<SkeletonElement> };
+
+const Skeleton = ({ ...props }: SkeletonComponentProps) => {
   const { children, className, loading, ...skeletonProps } = extractProps(props, skeletonPropDefs, marginPropDefs);
 
   if (!loading) return children;
@@ -24,7 +28,6 @@ const Skeleton = React.forwardRef<SkeletonElement, SkeletonProps>((props, forwar
 
   return (
     <Tag
-      ref={forwardedRef}
       aria-hidden
       className={clsx('rt-Skeleton', className)}
       data-inline-skeleton={React.isValidElement(children) ? undefined : true}
@@ -36,8 +39,7 @@ const Skeleton = React.forwardRef<SkeletonElement, SkeletonProps>((props, forwar
       {children}
     </Tag>
   );
-});
-Skeleton.displayName = 'Skeleton';
+};
 
 export { Skeleton };
 export type { SkeletonProps };
