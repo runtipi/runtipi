@@ -57,6 +57,7 @@
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domain is required if app is exposed",
   "APP_ERROR_INVALID_CONFIG": "App {{id}} has an invalid config.json file",
   "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
+  "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Choose an option...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Display on guest dashboard",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Domain name",
