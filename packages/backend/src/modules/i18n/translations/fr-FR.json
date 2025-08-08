@@ -57,6 +57,7 @@
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Le domaine est requis si l'application est exposée",
   "APP_ERROR_INVALID_CONFIG": "L'application {{id}} a un fichier config.json invalide",
   "APP_ERROR_PORT_ALREADY_IN_USE": "Le port {{port}} est déjà utilisé par l'application {{id}}",
+  "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Choisissez une option...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Afficher sur le tableau de bord invité",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Nom de domaine",
