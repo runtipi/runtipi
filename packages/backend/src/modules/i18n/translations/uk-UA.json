@@ -57,6 +57,7 @@
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Домен є обов'язковим, якщо додаток відкритий для доступу",
   "APP_ERROR_INVALID_CONFIG": "Додаток {{id}} має неприпустимий файл config.json",
   "APP_ERROR_PORT_ALREADY_IN_USE": "Порт {{port}} вже використовується додатком {{id}}",
+  "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Оберіть варіант...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Показувати на гостьовій панелі",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Доменне ім'я",
