@@ -5,9 +5,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { SSEService } from '@/core/sse/sse.service';
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
-import { lt, valid } from 'semver';
 import semver from 'semver';
-import validator, { isFQDN } from 'validator';
 import type { z } from 'zod';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
@@ -16,7 +14,7 @@ import { BackupManager } from '../backups/backup.manager';
 import { MarketplaceService } from '../marketplace/marketplace.service';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
-import { appFormSchema } from './dto/app-lifecycle.dto';
+import { AppPolicyService } from './app-policy.service';
 import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
 import type { AsyncMutex } from '@/utils/mutex/async-mutex';
 
@@ -33,6 +31,7 @@ export class AppLifecycleService {
     private readonly appFilesManager: AppFilesManager,
     private readonly sseService: SSEService,
     private readonly backupManager: BackupManager,
+    private readonly policy: AppPolicyService,
     @Inject(APP_ASYNC_MUTEX) private mutex: AsyncMutex,
   ) {
     this.logger.debug('Subscribing to app events...');
@@ -93,7 +92,6 @@ export class AppLifecycleService {
 
   async installApp(params: { appUrn: AppUrn; form: unknown }) {
     const { appUrn, form } = params;
-    const { demoMode, version, architecture } = this.config.getConfig();
 
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'installing' });
 
@@ -103,76 +101,9 @@ export class AppLifecycleService {
       return this.startApp({ appUrn });
     }
 
-    const parsedForm = appFormSchema.parse(form);
+    // Centralized validation + normalization
+    const { parsedForm, appInfo } = await this.policy.validateInstall(appUrn, form);
     const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth, port } = parsedForm;
-    const apps = await this.appRepository.getApps();
-
-    if (demoMode && apps.length >= 6) {
-      throw new TranslatableError('SYSTEM_ERROR_DEMO_MODE_LIMIT');
-    }
-
-    if (exposed && !domain) {
-      throw new TranslatableError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
-    }
-
-    if (domain && !isFQDN(domain)) {
-      throw new TranslatableError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
-    }
-
-    const appInfo = await this.marketplaceService.getAppInfoFromAppStore(appUrn);
-
-    if (!appInfo) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn }, HttpStatus.NOT_FOUND);
-    }
-
-    if (appInfo.supported_architectures?.length && !appInfo.supported_architectures.includes(architecture)) {
-      throw new TranslatableError('APP_ERROR_ARCHITECTURE_NOT_SUPPORTED', { id: appUrn, arch: architecture });
-    }
-
-    if (!appInfo.exposable) {
-      if (exposed || exposedLocal || enableAuth) {
-        this.logger.warn(`App ${appUrn} is not exposable, resetting proxy settings`);
-      }
-      parsedForm.exposed = false;
-      parsedForm.exposedLocal = false;
-      parsedForm.enableAuth = false;
-      parsedForm.domain = undefined;
-    }
-
-    if (appInfo.force_expose && !exposed) {
-      throw new TranslatableError('APP_ERROR_APP_FORCE_EXPOSED', { id: appUrn });
-    }
-
-    if (exposed && domain) {
-      const appsWithSameDomain = await this.appRepository.getAppsByDomain(domain);
-
-      if (appsWithSameDomain.length > 0) {
-        throw new TranslatableError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.appName });
-      }
-    }
-
-    if (exposedLocal && parsedForm.localSubdomain) {
-      const appsWithSameLocalSubdomain = await this.appRepository.getAppsByLocalSubdomain(parsedForm.localSubdomain);
-
-      if (appsWithSameLocalSubdomain.length > 0) {
-        throw new TranslatableError('APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE', {
-          subdomain: parsedForm.localSubdomain,
-          id: appsWithSameLocalSubdomain[0]?.appName,
-        });
-      }
-    }
-
-    if (openPort && port) {
-      const appsWithSamePort = await this.appRepository.getAppsByPort(port);
-
-      if (appsWithSamePort.length > 0) {
-        throw new TranslatableError('APP_ERROR_PORT_ALREADY_IN_USE', { port: port.toString(), id: appsWithSamePort[0]?.appName });
-      }
-    }
-
-    if (appInfo?.min_tipi_version && valid(version) && lt(version, appInfo.min_tipi_version)) {
-      throw new TranslatableError('APP_UPDATE_ERROR_MIN_TIPI_VERSION', { id: appUrn, minVersion: appInfo.min_tipi_version });
-    }
 
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
@@ -180,7 +111,7 @@ export class AppLifecycleService {
       appName,
       status: 'installing',
       config: parsedForm,
-      port: parsedForm.port ?? appInfo.port,
+      port: port ?? appInfo.port,
       version: appInfo.tipi_version,
       exposed: exposed ?? false,
       domain: domain ?? null,
@@ -342,70 +273,7 @@ export class AppLifecycleService {
   public async updateAppConfig(params: { appUrn: AppUrn; form: unknown }) {
     const { appUrn, form } = params;
 
-    const parsedForm = appFormSchema.parse(form);
-
-    const { exposed, domain, exposedLocal, enableAuth, openPort, port } = parsedForm;
-
-    if (exposed && !domain) {
-      throw new TranslatableError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
-    }
-
-    if (domain && !validator.isFQDN(domain)) {
-      throw new TranslatableError('APP_ERROR_DOMAIN_NOT_VALID');
-    }
-
-    const app = await this.appRepository.getAppByUrn(appUrn);
-
-    if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
-    }
-
-    const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
-
-    if (!appInfo) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
-    }
-
-    if (!appInfo.exposable) {
-      if (exposed || exposedLocal || enableAuth) {
-        this.logger.warn(`App ${appUrn} is not exposable, resetting proxy settings`);
-      }
-      parsedForm.exposed = false;
-      parsedForm.exposedLocal = false;
-      parsedForm.enableAuth = false;
-      parsedForm.domain = undefined;
-    }
-
-    if (appInfo.force_expose && !exposed) {
-      throw new TranslatableError('APP_ERROR_APP_FORCE_EXPOSED', { id: appUrn });
-    }
-
-    if (exposed && domain) {
-      const appsWithSameDomain = await this.appRepository.getAppsByDomain(domain, app.id);
-
-      if (appsWithSameDomain.length > 0) {
-        throw new TranslatableError('APP_ERROR_DOMAIN_ALREADY_IN_USE', { domain, id: appsWithSameDomain[0]?.appName });
-      }
-    }
-
-    if (exposedLocal && parsedForm.localSubdomain) {
-      const appsWithSameLocalSubdomain = await this.appRepository.getAppsByLocalSubdomain(parsedForm.localSubdomain, app.id);
-
-      if (appsWithSameLocalSubdomain.length > 0) {
-        throw new TranslatableError('APP_ERROR_LOCAL_SUBDOMAIN_ALREADY_IN_USE', {
-          subdomain: parsedForm.localSubdomain,
-          id: appsWithSameLocalSubdomain[0]?.appName,
-        });
-      }
-    }
-
-    if (openPort && port) {
-      const appsWithSamePort = await this.appRepository.getAppsByPort(port, app.id);
-
-      if (appsWithSamePort.length > 0) {
-        throw new TranslatableError('APP_ERROR_PORT_ALREADY_IN_USE', { port: port.toString(), id: appsWithSamePort[0]?.appName });
-      }
-    }
+    const { parsedForm, app, appInfo } = await this.policy.validateUpdate(appUrn, form);
 
     const requestId = crypto.randomUUID();
     const { success, message } = await this.appEventsQueue.publish({
@@ -419,6 +287,8 @@ export class AppLifecycleService {
       this.logger.error(`Failed to update app ${appUrn}: ${message}`);
       throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appUrn }, HttpStatus.INTERNAL_SERVER_ERROR, { cause: message });
     }
+
+    const { exposed, domain } = parsedForm;
 
     const changed = await this.appRepository.updateAppById(app.id, {
       exposed: exposed ?? false,
