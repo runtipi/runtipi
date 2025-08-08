@@ -57,7 +57,7 @@
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domena jest wymagana, jeśli aplikacja jest udostępniona",
   "APP_ERROR_INVALID_CONFIG": "Aplikacja {{id}} ma nieprawidłowy plik config.json",
   "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} jest już używany przez aplikację {{id}}",
-  "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
+  "APP_ERROR_EVENT_IN_PROGRESS": "Zdarzenie jest już w toku dla aplikacji {{id}}. Poczekaj, aż zakończy się lub przekroczy limit czasu.",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Wybierz opcję...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Wyświetlaj w panelu gości",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Nazwa domeny",
