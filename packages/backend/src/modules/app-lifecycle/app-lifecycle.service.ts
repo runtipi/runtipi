@@ -14,6 +14,7 @@ import { MarketplaceService } from '../marketplace/marketplace.service';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { AppPolicyService } from './app-policy.service';
+import { COMMAND_HANDLERS } from './command-handlers';
 import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
 import type { AsyncMutex } from '@/utils/mutex/async-mutex';
 import { AppNotifierService } from './app-notifier.service';
@@ -63,6 +64,33 @@ export class AppLifecycleService {
     return oldJSON !== newJSON;
   }
 
+  /**
+   * Centralized handler for command results published to the AppEventsQueue.
+   * It performs notifier emissions and standard repository status updates for common commands.
+   */
+  private async handleCommandResult(appId: number | null, appUrn: AppUrn, command: string, result: { success: boolean; message?: string }) {
+    const { success, message } = result;
+
+    const descriptor = COMMAND_HANDLERS[command];
+    const action = success ? descriptor?.success : descriptor?.failure;
+
+    if (action?.notifyEvent) {
+      if (success) {
+        this.notifier.notifySuccess(action.notifyEvent, appUrn, action.notifyPayload);
+      } else {
+        this.notifier.notifyError(action.notifyEvent, appUrn, message, action.notifyPayload);
+      }
+    }
+
+    if (action?.repoUpdate && appId) {
+      await this.appRepository.updateAppById(appId, action.repoUpdate);
+    }
+
+    if (action?.repoDelete && appId) {
+      await this.appRepository.deleteAppById(appId);
+    }
+  }
+
   async startApp(params: { appUrn: AppUrn; skipPull?: boolean }) {
     const { appUrn, skipPull } = params;
     const app = await this.appRepository.getAppByUrn(appUrn);
@@ -75,15 +103,9 @@ export class AppLifecycleService {
     this.notifier.notifyStatusChange(appUrn, 'starting');
 
     const requestId = crypto.randomUUID();
-    this.appEventsQueue.publish({ appUrn, command: 'start', requestId, form: { ...app.config, skipPull } }).then(async ({ success, message }) => {
-      if (success) {
-        this.notifier.notifySuccess('start_success', appUrn, { appStatus: 'running' });
-        await this.appRepository.updateAppById(app.id, { status: 'running', pendingRestart: false });
-      } else {
-        this.notifier.notifyError('start_error', appUrn, message, { appStatus: 'stopped' });
-        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
-      }
-    });
+    this.appEventsQueue
+      .publish({ appUrn, command: 'start', requestId, form: { ...app.config, skipPull } })
+      .then((result) => this.handleCommandResult(app.id, appUrn, 'start', result));
 
     return { requestId };
   }
@@ -99,7 +121,6 @@ export class AppLifecycleService {
       return this.startApp({ appUrn });
     }
 
-    // Centralized validation + normalization
     const { parsedForm, appInfo } = await this.policy.validateInstall(appUrn, form);
     const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth, port } = parsedForm;
 
@@ -122,15 +143,9 @@ export class AppLifecycleService {
     });
 
     const requestId = crypto.randomUUID();
-    this.appEventsQueue.publish({ appUrn, command: 'install', requestId, form: parsedForm }).then(async ({ success, message }) => {
-      if (success) {
-        this.notifier.notifySuccess('install_success', appUrn, { appStatus: 'running' });
-        await this.appRepository.updateAppById(createdApp.id, { status: 'running' });
-      } else {
-        this.notifier.notifyError('install_error', appUrn, message, { appStatus: 'missing' });
-        await this.appRepository.deleteAppById(createdApp.id);
-      }
-    });
+    this.appEventsQueue
+      .publish({ appUrn, command: 'install', requestId, form: parsedForm })
+      .then((result) => this.handleCommandResult(createdApp.id, appUrn, 'install', result));
 
     return { requestId };
   }
@@ -151,15 +166,9 @@ export class AppLifecycleService {
     await this.appRepository.updateAppById(app.id, { status: 'stopping' });
 
     const requestId = crypto.randomUUID();
-    this.appEventsQueue.publish({ command: 'stop', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
-      if (success) {
-        this.notifier.notifySuccess('stop_success', appUrn, { appStatus: 'stopped' });
-        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
-      } else {
-        this.notifier.notifyError('stop_error', appUrn, message, { appStatus: 'running' });
-        await this.appRepository.updateAppById(app.id, { status: 'running' });
-      }
-    });
+    this.appEventsQueue
+      .publish({ command: 'stop', appUrn, requestId, form: app.config })
+      .then((result) => this.handleCommandResult(app.id, appUrn, 'stop', result));
 
     return { requestId };
   }
@@ -179,15 +188,9 @@ export class AppLifecycleService {
     await this.appRepository.updateAppById(app.id, { status: 'restarting' });
 
     const requestId = crypto.randomUUID();
-    this.appEventsQueue.publish({ command: 'restart', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
-      if (success) {
-        this.notifier.notifySuccess('restart_success', appUrn, { appStatus: 'running' });
-        await this.appRepository.updateAppById(app.id, { status: 'running', pendingRestart: false });
-      } else {
-        this.notifier.notifyError('restart_error', appUrn, message, { appStatus: 'running' });
-        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
-      }
-    });
+    this.appEventsQueue
+      .publish({ command: 'restart', appUrn, requestId, form: app.config })
+      .then((result) => this.handleCommandResult(app.id, appUrn, 'restart', result));
 
     return { requestId };
   }
@@ -212,15 +215,9 @@ export class AppLifecycleService {
     this.notifier.notifyStatusChange(appUrn, 'uninstalling');
 
     const requestId = crypto.randomUUID();
-    this.appEventsQueue.publish({ command: 'uninstall', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
-      if (success) {
-        this.notifier.notifySuccess('uninstall_success', appUrn, { appStatus: 'missing' });
-        await this.appRepository.deleteAppById(app.id);
-      } else {
-        this.notifier.notifyError('uninstall_error', appUrn, message, { appStatus: 'stopped' });
-        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
-      }
-    });
+    this.appEventsQueue
+      .publish({ command: 'uninstall', appUrn, requestId, form: app.config })
+      .then((result) => this.handleCommandResult(app.id, appUrn, 'uninstall', result));
 
     return { requestId };
   }
@@ -241,16 +238,15 @@ export class AppLifecycleService {
     await this.appRepository.updateAppById(app.id, { status: 'resetting' });
 
     const requestId = crypto.randomUUID();
-    this.appEventsQueue.publish({ command: 'reset', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
-      if (success) {
-        this.notifier.notifySuccess('reset_success', appUrn, { appStatus: 'stopped' });
+    this.appEventsQueue.publish({ command: 'reset', appUrn, requestId, form: app.config }).then(async (result) => {
+      await this.handleCommandResult(app.id, appUrn, 'reset', result);
+      if (result.success) {
         if (appStatusBeforeReset === 'running') {
           this.startApp({ appUrn });
         } else {
           await this.appRepository.updateAppById(app.id, { status: appStatusBeforeReset });
         }
       } else {
-        this.notifier.notifyError('reset_error', appUrn, message, { appStatus: appStatusBeforeReset });
         await this.appRepository.updateAppById(app.id, { status: 'running' });
       }
     });
@@ -319,8 +315,10 @@ export class AppLifecycleService {
     this.notifier.notifyStatusChange(appUrn, 'updating');
 
     const requestId = crypto.randomUUID();
-    this.appEventsQueue.publish({ command: 'update', appUrn, requestId, form: app.config, performBackup }).then(async ({ success, message }) => {
-      if (success) {
+    this.appEventsQueue.publish({ command: 'update', appUrn, requestId, form: app.config, performBackup }).then(async (result) => {
+      await this.handleCommandResult(app.id, appUrn, 'update', result);
+
+      if (result.success) {
         const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
         await this.updateAppConfig({ appUrn, form: app.config });
@@ -333,7 +331,6 @@ export class AppLifecycleService {
           await this.appRepository.updateAppById(app.id, { status: appStatusBeforeUpdate, version: appInfo?.tipi_version });
         }
       } else {
-        this.notifier.notifyError('update_error', appUrn, message);
         await this.appRepository.updateAppById(app.id, { status: 'stopped' });
       }
     });
