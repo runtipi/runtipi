@@ -1,7 +1,6 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { SSEService } from '@/core/sse/sse.service';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
@@ -9,6 +8,7 @@ import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
 import { AppEventsQueue } from '../queue/entities/app-events';
 import { BackupManager } from './backup.manager';
+import { AppNotifierService } from '../app-lifecycle/app-notifier.service';
 
 @Injectable()
 export class BackupsService {
@@ -20,7 +20,7 @@ export class BackupsService {
     private appLifecycle: AppLifecycleService,
     private appFilesManager: AppFilesManager,
     private backupManager: BackupManager,
-    private readonly sseService: SSEService,
+    private notifier: AppNotifierService,
   ) {}
 
   public async backupApp(params: { appUrn: AppUrn }) {
@@ -39,7 +39,7 @@ export class BackupsService {
 
     // Run script
     await this.appsRepository.updateAppById(app.id, { status: 'backing_up' });
-    this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'backing_up' });
+    this.notifier.notifyStatusChange(appUrn, 'backing_up');
 
     const requestId = crypto.randomUUID();
 
@@ -49,7 +49,7 @@ export class BackupsService {
           await this.appLifecycle.startApp({ appUrn });
         } else {
           await this.appsRepository.updateAppById(app.id, { status: appStatusBeforeUpdate });
-          this.sseService.emit('app', { event: 'backup_success', appUrn, appStatus: 'stopped' });
+          this.notifier.notifySuccess('backup_success', appUrn, { appStatus: 'stopped' });
         }
       } else {
         this.logger.error(`Failed to backup app ${appUrn}: ${message}`);
@@ -70,7 +70,7 @@ export class BackupsService {
 
     // Run script
     await this.appsRepository.updateAppById(app.id, { status: 'restoring' });
-    this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'restoring' });
+    this.notifier.notifyStatusChange(appUrn, 'restoring');
 
     const requestId = crypto.randomUUID();
 
@@ -86,7 +86,7 @@ export class BackupsService {
           await this.appLifecycle.startApp({ appUrn });
         } else {
           await this.appsRepository.updateAppById(app.id, { status: appStatusBeforeUpdate });
-          this.sseService.emit('app', { event: 'restore_success', appUrn, appStatus: 'stopped' });
+          this.notifier.notifySuccess('restore_success', appUrn, { appStatus: 'stopped' });
         }
       } else {
         this.logger.error(`Failed to restore app ${appUrn}: ${message}`);
