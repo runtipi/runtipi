@@ -57,6 +57,7 @@
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domän krävs om appen är exponerad",
   "APP_ERROR_INVALID_CONFIG": "Appen {{id}} har en ogiltig config.json-fil",
   "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} används redan av appen {{id}}",
+  "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Välj ett alternativ...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Visa på gästkontrollpanelen",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Domännamn",
