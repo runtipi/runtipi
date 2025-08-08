@@ -57,6 +57,7 @@
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domain szükséges, ha az alkalmazás exponálva van",
   "APP_ERROR_INVALID_CONFIG": "A(z) {{id}} alkalmazás érvénytelen config.json fájlt tartalmaz",
   "APP_ERROR_PORT_ALREADY_IN_USE": "\"A(z) {{port}} port már használatban van a(z) {{id}} alkalmazás által",
+  "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Válasszon egy lehetőséget...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "A vendég műszerfalon való megjelenítés",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Domain név",
