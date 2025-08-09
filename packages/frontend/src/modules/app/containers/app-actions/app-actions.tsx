@@ -276,7 +276,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         {listItems.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button name="more">
+              <Button name="more" className="w-100">
                 <IconDots size={14} />
                 <Tooltip className="tooltip" anchorSelect=".updateAvailable">
                   {t('MY_APPS_UPDATE_AVAILABLE')}
