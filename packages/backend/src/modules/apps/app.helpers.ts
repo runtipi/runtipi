@@ -100,24 +100,31 @@ export class AppHelpers {
       }
     }
 
+    envMap.set('APP_EXPOSED', 'false');
+    envMap.set('APP_HOST', internalIp);
+    envMap.set('APP_PROTOCOL', 'http');
+
+    if (config.port && form.port) {
+      envMap.set('APP_DOMAIN', `${internalIp}:${form.port}`);
+    }
+
+    if (form.exposedLocal) {
+      const subdomain = form.localSubdomain ? form.localSubdomain : `${appName}-${appStoreId}`;
+      envMap.set('APP_LOCAL_DOMAIN', `${subdomain}.${envMap.get('LOCAL_DOMAIN')}`);
+
+      if (!form.openPort) {
+        envMap.set('APP_PROTOCOL', 'https');
+        envMap.set('APP_DOMAIN', `${subdomain}.${envMap.get('LOCAL_DOMAIN')}`);
+        envMap.set('APP_HOST', `${subdomain}.${envMap.get('LOCAL_DOMAIN')}`);
+      }
+    }
+
     if (form.exposed && form.domain && typeof form.domain === 'string') {
       envMap.set('APP_EXPOSED', 'true');
       envMap.set('APP_DOMAIN', form.domain);
       envMap.set('APP_HOST', form.domain);
+      envMap.set('APP_EXPOSED_DOMAIN', form.domain);
       envMap.set('APP_PROTOCOL', 'https');
-    } else if (form.exposedLocal && !form.openPort) {
-      const subdomain = form.localSubdomain ? form.localSubdomain : `${appName}-${appStoreId}`;
-
-      envMap.set('APP_DOMAIN', `${subdomain}.${envMap.get('LOCAL_DOMAIN')}`);
-      envMap.set('APP_HOST', `${subdomain}.${envMap.get('LOCAL_DOMAIN')}`);
-      envMap.set('APP_PROTOCOL', 'https');
-    } else {
-      if (config.port) {
-        envMap.set('APP_DOMAIN', `${internalIp}:${form.port}`);
-      }
-
-      envMap.set('APP_HOST', internalIp);
-      envMap.set('APP_PROTOCOL', 'http');
     }
 
     await this.appFilesManager.writeAppEnv(appUrn, this.envUtils.envMapToString(envMap));
