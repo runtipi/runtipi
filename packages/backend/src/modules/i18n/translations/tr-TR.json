@@ -57,7 +57,7 @@
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Uygulama dışarıdan erişime açılacaksa alan adı gereklidir",
   "APP_ERROR_INVALID_CONFIG": "{{id}} uygulaması geçersiz bir config.json dosyasına sahip",
   "APP_ERROR_PORT_ALREADY_IN_USE": "{{port}} portu, {{id}} uygulaması tarafından zaten kullanılıyor",
-  "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
+  "APP_ERROR_EVENT_IN_PROGRESS": "{{id}} uygulaması için zaten devam eden bir etkinlik var. Lütfen bitmesini veya zaman aşımına uğramasını bekleyin.",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Bir seçenek seçin...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Misafir panosunda göster",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Alan adı",
