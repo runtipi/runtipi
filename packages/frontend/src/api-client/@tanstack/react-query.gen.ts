@@ -60,6 +60,7 @@ import {
   updateUserConfig,
   enableUserConfig,
   disableUserConfig,
+  seedDatabase,
 } from '../sdk.gen';
 import { queryOptions, type UseMutationOptions, type DefaultError, infiniteQueryOptions, type InfiniteData } from '@tanstack/react-query';
 import type {
@@ -138,6 +139,7 @@ import type {
   UpdateUserConfigData,
   EnableUserConfigData,
   DisableUserConfigData,
+  SeedDatabaseData,
 } from '../types.gen';
 import { client as _heyApiClient } from '../client.gen';
 
@@ -1527,6 +1529,39 @@ export const disableUserConfigMutation = (
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DisableUserConfigData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await disableUserConfig({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const seedDatabaseQueryKey = (options?: Options<SeedDatabaseData>) => createQueryKey('seedDatabase', options);
+
+export const seedDatabaseOptions = (options?: Options<SeedDatabaseData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await seedDatabase({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: seedDatabaseQueryKey(options),
+  });
+};
+
+export const seedDatabaseMutation = (
+  options?: Partial<Options<SeedDatabaseData>>,
+): UseMutationOptions<unknown, DefaultError, Options<SeedDatabaseData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SeedDatabaseData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await seedDatabase({
         ...options,
         ...localOptions,
         throwOnError: true,

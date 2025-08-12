@@ -119,6 +119,8 @@ import type {
   EnableUserConfigResponses,
   DisableUserConfigData,
   DisableUserConfigResponses,
+  SeedDatabaseData,
+  SeedDatabaseResponses,
 } from './types.gen';
 import { client as _heyApiClient } from './client.gen';
 
@@ -638,6 +640,13 @@ export const enableUserConfig = <ThrowOnError extends boolean = false>(options: 
 export const disableUserConfig = <ThrowOnError extends boolean = false>(options: Options<DisableUserConfigData, ThrowOnError>) => {
   return (options.client ?? _heyApiClient).post<DisableUserConfigResponses, unknown, ThrowOnError>({
     url: '/api/user-config/{urn}/disable',
+    ...options,
+  });
+};
+
+export const seedDatabase = <ThrowOnError extends boolean = false>(options?: Options<SeedDatabaseData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).post<SeedDatabaseResponses, unknown, ThrowOnError>({
+    url: '/api/debug/seed',
     ...options,
   });
 };

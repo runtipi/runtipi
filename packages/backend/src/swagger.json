@@ -1729,6 +1729,20 @@
           "User Config"
         ]
       }
+    },
+    "/api/debug/seed": {
+      "post": {
+        "operationId": "seedDatabase",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
     }
   },
   "info": {
@@ -3519,6 +3533,10 @@
             "default": false
           },
           "skipPull": {
+            "type": "boolean",
+            "default": false
+          },
+          "skipRun": {
             "type": "boolean",
             "default": false
           }

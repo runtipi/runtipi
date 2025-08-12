@@ -91,8 +91,8 @@ export class AppLifecycleService {
     return { requestId };
   }
 
-  async installApp(params: { appUrn: AppUrn; form: unknown }) {
-    const { appUrn, form } = params;
+  async installApp(params: { appUrn: AppUrn; form: unknown; skipRun?: boolean }) {
+    const { appUrn, form, skipRun } = params;
     const { demoMode, version, architecture } = this.config.getConfig();
 
     this.sseService.emit('app', { event: 'status_change', appUrn, appStatus: 'installing' });
@@ -193,7 +193,8 @@ export class AppLifecycleService {
     });
 
     const requestId = crypto.randomUUID();
-    this.appEventsQueue.publish({ appUrn, command: 'install', requestId, form: parsedForm }).then(async ({ success, message }) => {
+
+    this.appEventsQueue.publish({ appUrn, command: 'install', requestId, form: { ...parsedForm, skipRun } }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appUrn} installed successfully`);
         this.sseService.emit('app', { event: 'install_success', appUrn, appStatus: 'running' });

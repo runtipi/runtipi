@@ -1501,6 +1501,17 @@ export type DisableUserConfigResponses = {
   201: unknown;
 };
 
+export type SeedDatabaseData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/debug/seed';
+};
+
+export type SeedDatabaseResponses = {
+  201: unknown;
+};
+
 export type ClientOptions = {
   baseUrl: string;
 };

@@ -40,7 +40,7 @@ export const createAppInStore = async (storeId: string, app: Partial<AppInfo> = 
     services: [
       {
         name: appInfo.id,
-        image: 'test',
+        image: 'nginx:latest',
         isMain: true,
         internalPort: 80,
         environment: {

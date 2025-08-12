@@ -20,7 +20,7 @@ const filterApp =
       return false;
     }
 
-    if (!app.supported_architectures) {
+    if (!app.supported_architectures?.length) {
       return true;
     }
 
@@ -141,7 +141,7 @@ export class MarketplaceService {
       this.invalidateCache();
     }
 
-    if (!this.appsAvailable) {
+    if (!this.appsAvailable?.length) {
       const apps = await this.getAllAppFromStores();
 
       this.appsAvailable = this.filterApps(apps);

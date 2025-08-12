@@ -148,7 +148,7 @@ export class ReposHelpers {
       this.logger.debug(`Pulled repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
     } catch (err) {
-      await this.deleteRepo(slug);
+      // await this.deleteRepo(slug);
       return this.cloneRepo(repoUrl, slug);
     }
   }

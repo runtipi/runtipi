@@ -23,6 +23,7 @@ import { AppStoreModule } from './modules/app-stores/app-store.module';
 import { AppsModule } from './modules/apps/apps.module';
 import { AuthMiddleware } from './modules/auth/auth.middleware';
 import { BackupsModule } from './modules/backups/backups.module';
+import { DebugModule } from './modules/debug/debug.module';
 import { LinksModule } from './modules/links/links.module';
 import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { NetworkModule } from './modules/network/network.module';
@@ -55,6 +56,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   NetworkModule,
   UserConfigModule,
   MutexModule,
+  DebugModule,
 ];
 
 if (process.env.NODE_ENV === 'production') {

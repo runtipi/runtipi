@@ -40,6 +40,10 @@ export class MarketplaceController {
   async getImage(@Param('urn') urn: string, @Res() res: Response) {
     const image = await this.marketplaceService.getAppImage(castAppUrn(urn));
 
+    if (!image) {
+      throw new BadRequestException('App image not found');
+    }
+
     res.set({
       'Content-Type': 'image/jpeg',
       'Cache-Control': 'public, max-age=86400',

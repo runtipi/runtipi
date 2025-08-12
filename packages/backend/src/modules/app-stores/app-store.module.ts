@@ -8,6 +8,6 @@ import { ReposHelpers } from './repos.helpers';
   imports: [QueueModule],
   controllers: [],
   providers: [AppStoreService, AppStoreRepository, ReposHelpers],
-  exports: [AppStoreService, ReposHelpers],
+  exports: [AppStoreService, ReposHelpers, AppStoreRepository],
 })
 export class AppStoreModule {}

@@ -261,7 +261,7 @@ export class AppStoreFilesManager {
     const defaultFilePath = path.join(appInstalledDir, 'metadata', 'logo.jpg');
     const appRepoFilePath = path.join(appRepoDir, 'metadata', 'logo.jpg');
 
-    let filePath = path.join(appDir, 'public', 'app-not-found.jpg');
+    let filePath = path.join(appDir, 'assets', 'app-not-found.jpg');
 
     if (await this.filesystem.pathExists(defaultFilePath)) {
       filePath = defaultFilePath;

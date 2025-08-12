@@ -53,6 +53,12 @@ export class InstallAppCommand extends AppLifecycleCommand {
 
       // run docker-compose up
       const forcePull = config.force_pull ?? false;
+
+      if (form.skipRun) {
+        logger.info(`Skipping docker-compose up for app ${appUrn} as per request`);
+        return { success: true, message: `App ${appUrn} installed successfully (skipped run)` };
+      }
+
       await dockerService.composeApp(appUrn, `up --detach --force-recreate --remove-orphans ${forcePull ? '--pull always' : ''}`);
 
       return { success: true, message: `App ${appUrn} installed successfully` };

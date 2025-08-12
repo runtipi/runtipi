@@ -8,6 +8,7 @@ import { I18nProvider } from './i18n/i18n-provider';
 import { SentryProvider } from './sentry/sentry-provider';
 import { AutoThemeProvider } from './theme/auto-theme-provider';
 import { ThemeProvider } from './theme/theme-provider';
+import { DebugPanel } from '../debug-panel/debug-panel';
 
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
@@ -56,6 +57,7 @@ export const Providers = ({ children }: PropsWithChildren) => {
         )}
       </QueryErrorResetBoundary>
       <ReactQueryDevtools initialIsOpen={false} />
+      <DebugPanel />
     </QueryClientProvider>
   );
 };

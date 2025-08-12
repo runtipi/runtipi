@@ -16,6 +16,7 @@ export const appFormSchema = z
       .optional(),
     skipEnv: z.boolean().optional().default(false),
     skipPull: z.boolean().optional().default(false),
+    skipRun: z.boolean().optional().default(false),
   })
   .extend({})
   .catchall(z.unknown());
