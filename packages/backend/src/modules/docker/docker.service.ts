@@ -1,6 +1,5 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
-import { setTimeout as wait } from 'timers/promises';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
@@ -9,12 +8,10 @@ import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsService } from '../apps/apps.service';
+import { Cooldown } from '@/utils/cooldown/cooldown';
 
 @Injectable()
 export class DockerService {
-  private lastComposeAppCall = 0;
-  private readonly composeCooldown = 1000;
-
   constructor(
     private readonly logger: LoggerService,
     private readonly config: ConfigurationService,
@@ -81,18 +78,8 @@ export class DockerService {
    * @param {string} appUrn - App name
    * @param {string} command - Command to execute
    */
-  public composeApp = async (appUrn: AppUrn, command: string) => {
-    const now = Date.now();
-    const timeSinceLast = now - this.lastComposeAppCall;
-
-    if (timeSinceLast < this.composeCooldown) {
-      const waitTime = this.composeCooldown - timeSinceLast;
-      this.logger.warn(`composeApp called too soon, waiting ${waitTime}ms`);
-      await wait(waitTime);
-    }
-
-    this.lastComposeAppCall = Date.now();
-
+  @Cooldown(1000)
+  public async composeApp(appUrn: AppUrn, command: string) {
     let { args, isCustomConfig } = await this.getBaseComposeArgsApp(appUrn);
     args.push(...command.split(' '));
     args = args.filter(Boolean);
@@ -125,7 +112,7 @@ export class DockerService {
     }
 
     return { success: true, stdout: stdout.join(''), stderr: stderr.join('') };
-  };
+  }
 
   public getLogsStream = async (maxLines: number, appUrn?: AppUrn) => {
     try {
