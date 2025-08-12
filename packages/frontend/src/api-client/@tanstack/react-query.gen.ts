@@ -61,6 +61,9 @@ import {
   enableUserConfig,
   disableUserConfig,
   seedDatabase,
+  setAllAppUpdateAvailable,
+  setAllAppSubnetToNull,
+  startAllApps,
 } from '../sdk.gen';
 import { queryOptions, type UseMutationOptions, type DefaultError, infiniteQueryOptions, type InfiniteData } from '@tanstack/react-query';
 import type {
@@ -140,6 +143,9 @@ import type {
   EnableUserConfigData,
   DisableUserConfigData,
   SeedDatabaseData,
+  SetAllAppUpdateAvailableData,
+  SetAllAppSubnetToNullData,
+  StartAllAppsData,
 } from '../types.gen';
 import { client as _heyApiClient } from '../client.gen';
 
@@ -1562,6 +1568,106 @@ export const seedDatabaseMutation = (
   const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SeedDatabaseData>> = {
     mutationFn: async (localOptions) => {
       const { data } = await seedDatabase({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const setAllAppUpdateAvailableQueryKey = (options?: Options<SetAllAppUpdateAvailableData>) =>
+  createQueryKey('setAllAppUpdateAvailable', options);
+
+export const setAllAppUpdateAvailableOptions = (options?: Options<SetAllAppUpdateAvailableData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await setAllAppUpdateAvailable({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: setAllAppUpdateAvailableQueryKey(options),
+  });
+};
+
+export const setAllAppUpdateAvailableMutation = (
+  options?: Partial<Options<SetAllAppUpdateAvailableData>>,
+): UseMutationOptions<unknown, DefaultError, Options<SetAllAppUpdateAvailableData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SetAllAppUpdateAvailableData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await setAllAppUpdateAvailable({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const setAllAppSubnetToNullQueryKey = (options?: Options<SetAllAppSubnetToNullData>) => createQueryKey('setAllAppSubnetToNull', options);
+
+export const setAllAppSubnetToNullOptions = (options?: Options<SetAllAppSubnetToNullData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await setAllAppSubnetToNull({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: setAllAppSubnetToNullQueryKey(options),
+  });
+};
+
+export const setAllAppSubnetToNullMutation = (
+  options?: Partial<Options<SetAllAppSubnetToNullData>>,
+): UseMutationOptions<unknown, DefaultError, Options<SetAllAppSubnetToNullData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SetAllAppSubnetToNullData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await setAllAppSubnetToNull({
+        ...options,
+        ...localOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const startAllAppsQueryKey = (options?: Options<StartAllAppsData>) => createQueryKey('startAllApps', options);
+
+export const startAllAppsOptions = (options?: Options<StartAllAppsData>) => {
+  return queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await startAllApps({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: startAllAppsQueryKey(options),
+  });
+};
+
+export const startAllAppsMutation = (
+  options?: Partial<Options<StartAllAppsData>>,
+): UseMutationOptions<unknown, DefaultError, Options<StartAllAppsData>> => {
+  const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StartAllAppsData>> = {
+    mutationFn: async (localOptions) => {
+      const { data } = await startAllApps({
         ...options,
         ...localOptions,
         throwOnError: true,

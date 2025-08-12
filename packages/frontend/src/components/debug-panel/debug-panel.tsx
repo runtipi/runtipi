@@ -1,26 +1,25 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { seedDatabaseMutation } from '@/api-client/@tanstack/react-query.gen';
+import {
+  seedDatabaseMutation,
+  setAllAppSubnetToNullMutation,
+  setAllAppUpdateAvailableMutation,
+  startAllAppsMutation,
+} from '@/api-client/@tanstack/react-query.gen';
 
 export const DebugPanel = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Check if we're in development mode
   const isDevelopment = import.meta.env.DEV;
 
-  // Track which keys are currently pressed
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
 
-  // Handle key down events
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    // Add pressed key to the set
     setPressedKeys((prev) => new Set(prev).add(event.key.toLowerCase()));
   }, []);
 
-  // Handle key up events
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
-    // Remove released key from the set
     setPressedKeys((prev) => {
       const newSet = new Set(prev);
       newSet.delete(event.key.toLowerCase());
@@ -28,7 +27,6 @@ export const DebugPanel = () => {
     });
   }, []);
 
-  // Check if d, e, v keys are pressed together
   useEffect(() => {
     const checkKeys = () => {
       if (pressedKeys.has('d') && pressedKeys.has('e') && pressedKeys.has('v')) {
@@ -39,9 +37,7 @@ export const DebugPanel = () => {
     checkKeys();
   }, [pressedKeys]);
 
-  // Setup event listeners
   useEffect(() => {
-    // Only add event listeners in development mode
     if (!isDevelopment) {
       return;
     }
@@ -55,7 +51,6 @@ export const DebugPanel = () => {
     };
   }, [handleKeyDown, handleKeyUp]);
 
-  // Seed database mutation
   const seedMutation = useMutation({
     ...seedDatabaseMutation(),
     onSuccess: () => {
@@ -66,16 +61,40 @@ export const DebugPanel = () => {
     },
   });
 
+  const startAllApps = useMutation({
+    ...startAllAppsMutation(),
+    onSuccess: () => {
+      toast.success('All apps started successfully!');
+    },
+    onError: () => {
+      toast.error('Failed to start all apps');
+    },
+  });
+
+  const subnetsMutation = useMutation({
+    ...setAllAppSubnetToNullMutation(),
+    onSuccess: () => {
+      toast.success('All app subnets set to null successfully!');
+    },
+    onError: () => {
+      toast.error('Failed to set all app subnets to null');
+    },
+  });
+
+  const versionMutation = useMutation({
+    ...setAllAppUpdateAvailableMutation(),
+    onSuccess: () => {
+      toast.success('All apps set to version 0 successfully!');
+    },
+    onError: () => {
+      toast.error('Failed to set all apps to version 0');
+    },
+  });
+
   // Don't render anything if not in development mode
   if (!isDevelopment) {
     return null;
   }
-
-  const handleSeed = () => {
-    if (confirm('Are you sure you want to seed the database? This will delete all existing apps.')) {
-      seedMutation.mutate();
-    }
-  };
 
   return (
     <>
@@ -127,29 +146,21 @@ export const DebugPanel = () => {
             </button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <button
-              type="button"
-              onClick={handleSeed}
-              disabled={seedMutation.isPending}
-              style={{
-                padding: '8px 12px',
-                backgroundColor: '#007acc',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: seedMutation.isPending ? 'not-allowed' : 'pointer',
-                opacity: seedMutation.isPending ? 0.7 : 1,
-              }}
-            >
+            <button type="button" onClick={() => seedMutation.mutate({})} disabled={seedMutation.isPending}>
               {seedMutation.isPending ? 'Seeding...' : 'Seed Database'}
             </button>
-            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#aaa' }}>
-              This will create 6 fake apps and a test user (test@test.com / password)
-            </p>
+            <button type="button" onClick={() => startAllApps.mutate({})} disabled={startAllApps.isPending}>
+              {startAllApps.isPending ? 'Starting...' : 'Start All Apps'}
+            </button>
+            <button type="button" onClick={() => subnetsMutation.mutate({})} disabled={subnetsMutation.isPending}>
+              {subnetsMutation.isPending ? 'Setting...' : 'Set All App Subnets to Null'}
+            </button>
+            <button type="button" onClick={() => versionMutation.mutate({})} disabled={versionMutation.isPending}>
+              {versionMutation.isPending ? 'Setting...' : 'Set All Apps to Version 0'}
+            </button>
           </div>
         </div>
       )}
     </>
   );
 };
-

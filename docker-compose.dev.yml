@@ -105,7 +105,8 @@ services:
       TIPI_VERSION: 0.0.0
       LOG_LEVEL: debug
     env_file:
-      - .env
+      - path: .env
+        required: false
     labels:
       # ---- General ----- #
       runtipi.managed: true

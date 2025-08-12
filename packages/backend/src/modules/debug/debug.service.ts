@@ -1,6 +1,6 @@
 import { DATABASE, type Database } from '@/core/database/database.module';
 import { app, appStore, user } from '@/core/database/drizzle/schema';
-import type { AppStatus, NewUser } from '@/core/database/drizzle/types';
+import type { NewUser } from '@/core/database/drizzle/types';
 import { Inject, Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import crypto from 'node:crypto';
@@ -57,5 +57,21 @@ export class DebugService {
     }
 
     return { userCreated: !existingUser };
+  }
+
+  public async setAllAppUpdateAvailable() {
+    await this.db.update(app).set({ version: 0 }).execute();
+
+    return { message: 'All apps set to version 0' };
+  }
+
+  public async setAllSubnetsToNull() {
+    await this.db.update(app).set({ subnet: null }).execute();
+
+    return { message: 'All app subnets set to null' };
+  }
+
+  public async startAllApps() {
+    await this.appLifecycleService.startAllApps();
   }
 }

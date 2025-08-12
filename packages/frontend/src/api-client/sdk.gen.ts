@@ -121,6 +121,12 @@ import type {
   DisableUserConfigResponses,
   SeedDatabaseData,
   SeedDatabaseResponses,
+  SetAllAppUpdateAvailableData,
+  SetAllAppUpdateAvailableResponses,
+  SetAllAppSubnetToNullData,
+  SetAllAppSubnetToNullResponses,
+  StartAllAppsData,
+  StartAllAppsResponses,
 } from './types.gen';
 import { client as _heyApiClient } from './client.gen';
 
@@ -647,6 +653,27 @@ export const disableUserConfig = <ThrowOnError extends boolean = false>(options:
 export const seedDatabase = <ThrowOnError extends boolean = false>(options?: Options<SeedDatabaseData, ThrowOnError>) => {
   return (options?.client ?? _heyApiClient).post<SeedDatabaseResponses, unknown, ThrowOnError>({
     url: '/api/debug/seed',
+    ...options,
+  });
+};
+
+export const setAllAppUpdateAvailable = <ThrowOnError extends boolean = false>(options?: Options<SetAllAppUpdateAvailableData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).post<SetAllAppUpdateAvailableResponses, unknown, ThrowOnError>({
+    url: '/api/debug/set-all-app-update-available',
+    ...options,
+  });
+};
+
+export const setAllAppSubnetToNull = <ThrowOnError extends boolean = false>(options?: Options<SetAllAppSubnetToNullData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).post<SetAllAppSubnetToNullResponses, unknown, ThrowOnError>({
+    url: '/api/debug/set-all-subnets-to-null',
+    ...options,
+  });
+};
+
+export const startAllApps = <ThrowOnError extends boolean = false>(options?: Options<StartAllAppsData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).post<StartAllAppsResponses, unknown, ThrowOnError>({
+    url: '/api/debug/start-all-apps',
     ...options,
   });
 };

@@ -568,6 +568,7 @@ export type AppFormBody = {
   localSubdomain?: string;
   skipEnv?: boolean;
   skipPull?: boolean;
+  skipRun?: boolean;
 };
 
 export type LifecycleRequestDto = {
@@ -1509,6 +1510,39 @@ export type SeedDatabaseData = {
 };
 
 export type SeedDatabaseResponses = {
+  201: unknown;
+};
+
+export type SetAllAppUpdateAvailableData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/debug/set-all-app-update-available';
+};
+
+export type SetAllAppUpdateAvailableResponses = {
+  201: unknown;
+};
+
+export type SetAllAppSubnetToNullData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/debug/set-all-subnets-to-null';
+};
+
+export type SetAllAppSubnetToNullResponses = {
+  201: unknown;
+};
+
+export type StartAllAppsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/debug/start-all-apps';
+};
+
+export type StartAllAppsResponses = {
   201: unknown;
 };
 

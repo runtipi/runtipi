@@ -1743,6 +1743,48 @@
           "Debug"
         ]
       }
+    },
+    "/api/debug/set-all-app-update-available": {
+      "post": {
+        "operationId": "setAllAppUpdateAvailable",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
+    },
+    "/api/debug/set-all-subnets-to-null": {
+      "post": {
+        "operationId": "setAllAppSubnetToNull",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
+    },
+    "/api/debug/start-all-apps": {
+      "post": {
+        "operationId": "startAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
     }
   },
   "info": {
