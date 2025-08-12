@@ -8,7 +8,7 @@ import { TraefikLabelsBuilder } from './traefik-labels.builder';
 
 interface Network {
   key: string;
-  name?: string;
+  name: string;
   external: boolean;
   subnet?: string;
   ipam?: {
@@ -151,6 +151,7 @@ export class DockerComposeBuilder {
       })
       .addNetwork({
         key: `${appName}_${appStoreId}_network`,
+        name: `${appName}_${appStoreId}_network`,
         external: false,
         subnet,
       });

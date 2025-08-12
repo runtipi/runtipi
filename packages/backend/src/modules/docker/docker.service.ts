@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
+import { setTimeout as wait } from 'timers/promises';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
@@ -11,6 +12,9 @@ import { AppsService } from '../apps/apps.service';
 
 @Injectable()
 export class DockerService {
+  private lastComposeAppCall = 0;
+  private readonly composeCooldown = 1000;
+
   constructor(
     private readonly logger: LoggerService,
     private readonly config: ConfigurationService,
@@ -78,6 +82,17 @@ export class DockerService {
    * @param {string} command - Command to execute
    */
   public composeApp = async (appUrn: AppUrn, command: string) => {
+    const now = Date.now();
+    const timeSinceLast = now - this.lastComposeAppCall;
+
+    if (timeSinceLast < this.composeCooldown) {
+      const waitTime = this.composeCooldown - timeSinceLast;
+      this.logger.warn(`composeApp called too soon, waiting ${waitTime}ms`);
+      await wait(waitTime);
+    }
+
+    this.lastComposeAppCall = Date.now();
+
     let { args, isCustomConfig } = await this.getBaseComposeArgsApp(appUrn);
     args.push(...command.split(' '));
     args = args.filter(Boolean);

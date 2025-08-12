@@ -36,7 +36,7 @@ export class DebugService {
       .execute();
 
     // Create fake apps
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= 12; i++) {
       const appInfo = await createAppInStore('default', { id: `app-${i}`, name: `App ${i}`, description: `Description for App ${i}` });
 
       await this.appLifecycleService.installApp({ appUrn: appInfo.urn, form: {}, skipRun: true });
