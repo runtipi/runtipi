@@ -300,7 +300,7 @@
   "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "En appstore med samma namn finns redan",
   "APP_STORE_CLONE_ERROR": "Error cloning app store at {{url}}. Is it a valid git repository?",
   "APP_STORE_CHOOSE_CATEGORY": "Välj en kategori",
-  "APP_STORE_CHOOSE_STORE": "Välj en appbutik",
+  "APP_STORE_CHOOSE_STORE": "Choose an appstore",
   "SETTINGS_ACTIONS_ALREADY_LATEST": "Redan uppdaterad",
   "SETTINGS_ACTIONS_CURRENT_VERSION": "Nuvarande version: {{version}}",
   "SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE": "Vanliga åtgärder att utföra på din instans",
