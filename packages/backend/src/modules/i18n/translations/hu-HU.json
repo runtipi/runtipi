@@ -300,7 +300,7 @@
   "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "Ugyanazzal a névvel rendelkező alkalmazásbolt már létezik",
   "APP_STORE_CLONE_ERROR": "Hiba az alkalmazásbolt klónozása során a(z) {{url}} címen. Ez egy érvényes git tároló?",
   "APP_STORE_CHOOSE_CATEGORY": "Válasszon egy kategóriát",
-  "APP_STORE_CHOOSE_STORE": "Válasszon egy alkalmazásboltot",
+  "APP_STORE_CHOOSE_STORE": "Choose an appstore",
   "SETTINGS_ACTIONS_ALREADY_LATEST": "Már naprakész",
   "SETTINGS_ACTIONS_CURRENT_VERSION": "Jelenlegi verzió: {{version}}",
   "SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE": "Általános műveletek ezen a példányon",
