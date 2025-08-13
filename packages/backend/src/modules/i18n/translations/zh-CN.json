@@ -300,7 +300,7 @@
   "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "具有相同名称的应用商店已存在",
   "APP_STORE_CLONE_ERROR": "从 {{url}} 克隆应用商店时出错。是否为有效的git仓库？",
   "APP_STORE_CHOOSE_CATEGORY": "选择类别",
-  "APP_STORE_CHOOSE_STORE": "选择应用商店",
+  "APP_STORE_CHOOSE_STORE": "Choose an appstore",
   "SETTINGS_ACTIONS_ALREADY_LATEST": "已是最新版本",
   "SETTINGS_ACTIONS_CURRENT_VERSION": "当前版本: {{version}}",
   "SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE": "在您的实例中执行的常见操作",
