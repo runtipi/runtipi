@@ -1,23 +1,25 @@
 import { setTimeout as wait } from 'node:timers/promises';
 
 export function Cooldown(ms: number) {
-  const lastCallMap: Map<string, number> = new Map();
-
-  return (_: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
+  let lastCall = 0;
+  let queue = Promise.resolve();
+  return (_: unknown, _propertyKey: string, descriptor: PropertyDescriptor) => {
     const original = descriptor.value;
     descriptor.value = async function (...args: unknown[]) {
-      const now = Date.now();
+      const gate = queue.then(async () => {
+        const now = Date.now();
+        const elapsed = now - lastCall;
+        const waitMs = ms - elapsed;
+        if (waitMs > 0) {
+          await wait(waitMs);
+        }
+        lastCall = Date.now();
+      });
 
-      const lastCall = lastCallMap.get(propertyKey) || 0;
-      const timeSinceLast = now - lastCall;
-
-      if (timeSinceLast < ms) {
-        const waitTime = ms - timeSinceLast;
-        await wait(waitTime);
-      }
-
-      lastCallMap.set(propertyKey, Date.now());
-
+      queue = gate.catch(() => {
+        // noop
+      });
+      await gate;
       return original.apply(this, args);
     };
   };

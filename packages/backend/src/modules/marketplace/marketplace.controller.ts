@@ -1,5 +1,5 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { APP_CATEGORIES } from '@runtipi/common/schemas';
 import type { Response } from 'express';
@@ -41,7 +41,7 @@ export class MarketplaceController {
     const image = await this.marketplaceService.getAppImage(castAppUrn(urn));
 
     if (!image) {
-      throw new BadRequestException('App image not found');
+      throw new NotFoundException('App image not found');
     }
 
     res.set({
