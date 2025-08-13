@@ -300,7 +300,7 @@
   "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "Un App Store avec le même nom existe déjà",
   "APP_STORE_CLONE_ERROR": "Erreur lors du clonage de l'App Store depuis {{url}}. Est-ce un dépôt git valide ?",
   "APP_STORE_CHOOSE_CATEGORY": "Choisissez une catégorie",
-  "APP_STORE_CHOOSE_STORE": "Choisissez un AppStore",
+  "APP_STORE_CHOOSE_STORE": "Choose an appstore",
   "SETTINGS_ACTIONS_ALREADY_LATEST": "Déjà à jour",
   "SETTINGS_ACTIONS_CURRENT_VERSION": "Version actuelle : {{version}}",
   "SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE": "Actions courantes à effectuer sur votre instance",
