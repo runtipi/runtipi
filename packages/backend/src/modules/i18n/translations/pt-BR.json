@@ -300,7 +300,7 @@
   "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "Já existe uma loja de aplicativos com o mesmo endereço",
   "APP_STORE_CLONE_ERROR": "Erro ao clonar a loja de aplicativos em {{url}}. É um repositório git válido?",
   "APP_STORE_CHOOSE_CATEGORY": "Selecione uma categoria",
-  "APP_STORE_CHOOSE_STORE": "Selecione uma Loja de aplicativos",
+  "APP_STORE_CHOOSE_STORE": "Choose an appstore",
   "SETTINGS_ACTIONS_ALREADY_LATEST": "Você já está na última versão",
   "SETTINGS_ACTIONS_CURRENT_VERSION": "Versão atual: {{version}}",
   "SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE": "Ações comuns a serem realizadas em sua instância",
