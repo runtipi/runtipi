@@ -56,7 +56,6 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   NetworkModule,
   UserConfigModule,
   MutexModule,
-  DebugModule,
 ];
 
 if (process.env.NODE_ENV === 'production') {
@@ -66,6 +65,8 @@ if (process.env.NODE_ENV === 'production') {
       exclude: ['/api*path'],
     }),
   );
+} else {
+  imports.push(DebugModule);
 }
 
 @Module({

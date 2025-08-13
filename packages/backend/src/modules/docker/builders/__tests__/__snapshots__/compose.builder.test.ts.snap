@@ -41,6 +41,7 @@ networks:
     name: runtipi_tipi_main_network
     external: true
   nginx_store-id_network:
+    name: nginx_store-id_network
     external: false
     ipam:
       config:
@@ -114,6 +115,7 @@ networks:
     name: runtipi_tipi_main_network
     external: true
   nginx_store-id_network:
+    name: nginx_store-id_network
     external: false
     ipam:
       config:
@@ -137,6 +139,7 @@ networks:
     name: runtipi_tipi_main_network
     external: true
   nginx_store-id_network:
+    name: nginx_store-id_network
     external: false
     ipam:
       config:
@@ -238,6 +241,7 @@ networks:
     name: runtipi_tipi_main_network
     external: true
   nginx_store-id_network:
+    name: nginx_store-id_network
     external: false
     ipam:
       config:
@@ -275,6 +279,7 @@ networks:
     name: runtipi_tipi_main_network
     external: true
   nginx_store-id_network:
+    name: nginx_store-id_network
     external: false
     ipam:
       config:
@@ -301,6 +306,7 @@ networks:
     name: runtipi_tipi_main_network
     external: true
   nginx_store-id_network:
+    name: nginx_store-id_network
     external: false
     ipam:
       config:
@@ -328,6 +334,7 @@ networks:
     name: runtipi_tipi_main_network
     external: true
   nginx_store-id_network:
+    name: nginx_store-id_network
     external: false
     ipam:
       config:
@@ -352,6 +359,7 @@ networks:
     name: runtipi_tipi_main_network
     external: true
   nginx_store-id_network:
+    name: nginx_store-id_network
     external: false
     ipam:
       config:
@@ -379,6 +387,7 @@ networks:
     name: runtipi_tipi_main_network
     external: true
   nginx_store-id_network:
+    name: nginx_store-id_network
     external: false
     ipam:
       config:
