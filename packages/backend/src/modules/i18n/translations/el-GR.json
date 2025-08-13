@@ -300,7 +300,7 @@
   "SERVER_ERROR_DUPLICATE_APP_STORE_NAME": "Υπάρχει ήδη ένα κατάστημα εφαρμογών με το ίδιο όνομα",
   "APP_STORE_CLONE_ERROR": "Σφάλμα κλωνοποίησης καταστήματος εφαρμογών στο {{url}}. Είναι ένα έγκυρο το git repository?",
   "APP_STORE_CHOOSE_CATEGORY": "Επιλέξτε κατηγορία",
-  "APP_STORE_CHOOSE_STORE": "Διαλέξτε κατάστημα εφαρμογών",
+  "APP_STORE_CHOOSE_STORE": "Choose an appstore",
   "SETTINGS_ACTIONS_ALREADY_LATEST": "Ήδη ενημερωμένο",
   "SETTINGS_ACTIONS_CURRENT_VERSION": "Τρέχουσα έκδοση: {{version}}",
   "SETTINGS_ACTIONS_MAINTENANCE_SUBTITLE": "Κοινές ενέργειες για να εκτελέσετε",
