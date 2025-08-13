@@ -65,10 +65,9 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
   useEffect(() => {
     if (info.force_expose) {
       setValue('exposed', true);
-      setValhe('openPort', false);
+      setValue('openPort', false);
     }
   }, [info.force_expose, setValue]);
-
   useEffect(() => {
     if (initialValues && !isDirty) {
       for (const [key, value] of Object.entries(initialValues)) {
