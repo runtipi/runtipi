@@ -65,6 +65,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
   useEffect(() => {
     if (info.force_expose) {
       setValue('exposed', true);
+      setValhe('openPort', false);
     }
   }, [info.force_expose, setValue]);
 
@@ -239,14 +240,13 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           )}
         />
       )}
-      {info.dynamic_config && (
+      {info.dynamic_config && info.force_expose && (
         <div className="mb-3">
           <h3>{t('APP_DETAILS_PORT')}</h3>
           <Controller
             control={control}
             name="openPort"
-            defaultValue={!info.force_expose}
-            disabled={info.force_expose}
+            defaultValue={true}
             render={({ field: { onChange, value, ref, ...props } }) => (
               <Switch
                 {...props}
