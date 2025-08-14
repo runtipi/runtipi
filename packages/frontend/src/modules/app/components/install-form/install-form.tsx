@@ -68,6 +68,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
       setValue('openPort', false);
     }
   }, [info.force_expose, setValue]);
+
   useEffect(() => {
     if (initialValues && !isDirty) {
       for (const [key, value] of Object.entries(initialValues)) {
@@ -239,13 +240,13 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           )}
         />
       )}
-      {info.dynamic_config && info.force_expose && (
+      {info.dynamic_config && (
         <div className="mb-3">
           <h3>{t('APP_DETAILS_PORT')}</h3>
           <Controller
             control={control}
             name="openPort"
-            defaultValue={true}
+            defaultValue={!info.force_expose}
             render={({ field: { onChange, value, ref, ...props } }) => (
               <Switch
                 {...props}
@@ -253,6 +254,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
                 ref={ref}
                 checked={value}
                 onCheckedChange={onChange}
+                disabled={info.force_expose}
                 label={
                   <>
                     {t('APP_INSTALL_FORM_OPEN_PORT')}
