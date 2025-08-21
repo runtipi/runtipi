@@ -10,6 +10,7 @@ import { AppsRepository } from '../apps/apps.repository';
 import { AppEventsQueue } from '../queue/entities/app-events';
 import { BackupManager } from './backup.manager';
 import { createAppUrn } from '@/common/helpers/app-helpers';
+import { Cooldown } from '@/utils/cooldown/cooldown';
 
 @Injectable()
 export class BackupsService {
@@ -24,6 +25,7 @@ export class BackupsService {
     private readonly sseService: SSEService,
   ) {}
 
+  @Cooldown(5000)
   public async backupApp(params: { appUrn: AppUrn }) {
     if (this.config.get('demoMode')) {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
