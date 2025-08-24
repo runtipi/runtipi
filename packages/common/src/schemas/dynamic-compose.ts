@@ -60,8 +60,15 @@ export const serviceSchemaV2 = z.object({
         hostPath: z.string('CUSTOM_APP_ERROR_HOST_PATH_REQUIRED'),
         containerPath: z.string('CUSTOM_APP_ERROR_CONTAINER_PATH_REQUIRED'),
         readOnly: z.boolean().optional(),
+        // Legacy boolean flags for backward compatibility
         shared: z.boolean().optional(),
         private: z.boolean().optional(),
+        // New bind mount propagation support
+        bind: z
+          .object({
+            propagation: z.enum(['rprivate', 'private', 'rshared', 'shared', 'rslave', 'slave']).optional(),
+          })
+          .optional(),
       }),
     )
     .optional(),

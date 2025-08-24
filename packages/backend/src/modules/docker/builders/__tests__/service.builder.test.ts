@@ -103,4 +103,165 @@ describe('ServiceBuilder', () => {
       expect(service.labels).toEqual({ test: 'my-app-my-app' });
     });
   });
+
+  describe('Volume Mount Propagation', () => {
+    let service: ServiceBuilder;
+
+    beforeEach(() => {
+      service = new ServiceBuilder().setName('test').setImage('test');
+    });
+
+    describe('Legacy boolean flags (backward compatibility)', () => {
+      it('should handle shared flag', () => {
+        const built = service
+          .setVolume({ hostPath: '/host', containerPath: '/container', shared: true })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container:z']);
+      });
+
+      it('should handle private flag', () => {
+        const built = service
+          .setVolume({ hostPath: '/host', containerPath: '/container', private: true })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container:Z']);
+      });
+
+      it('should throw error when both shared and private are set', () => {
+        expect(() => {
+          service.setVolume({ 
+            hostPath: '/host', 
+            containerPath: '/container', 
+            shared: true, 
+            private: true 
+          });
+        }).toThrowError('Only one of shared or private can be set');
+      });
+
+      it('should combine readOnly with legacy flags', () => {
+        const built = service
+          .setVolume({ hostPath: '/host', containerPath: '/container', readOnly: true, shared: true })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container:ro:z']);
+      });
+    });
+
+    describe('New bind mount propagation', () => {
+      it('should handle rshared propagation mode', () => {
+        const built = service
+          .setVolume({ 
+            hostPath: '/host', 
+            containerPath: '/container', 
+            bind: { propagation: 'rshared' } 
+          })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container:z']);
+      });
+
+      it('should handle shared propagation mode', () => {
+        const built = service
+          .setVolume({ 
+            hostPath: '/host', 
+            containerPath: '/container', 
+            bind: { propagation: 'shared' } 
+          })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container:z']);
+      });
+
+      it('should handle private propagation mode', () => {
+        const built = service
+          .setVolume({ 
+            hostPath: '/host', 
+            containerPath: '/container', 
+            bind: { propagation: 'private' } 
+          })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container:Z']);
+      });
+
+      it('should handle rprivate propagation mode', () => {
+        const built = service
+          .setVolume({ 
+            hostPath: '/host', 
+            containerPath: '/container', 
+            bind: { propagation: 'rprivate' } 
+          })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container']);
+      });
+
+      it('should handle rslave propagation mode', () => {
+        const built = service
+          .setVolume({ 
+            hostPath: '/host', 
+            containerPath: '/container', 
+            bind: { propagation: 'rslave' } 
+          })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container']);
+      });
+
+      it('should handle slave propagation mode', () => {
+        const built = service
+          .setVolume({ 
+            hostPath: '/host', 
+            containerPath: '/container', 
+            bind: { propagation: 'slave' } 
+          })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container:z']);
+      });
+
+      it('should combine readOnly with bind propagation', () => {
+        const built = service
+          .setVolume({ 
+            hostPath: '/host', 
+            containerPath: '/container', 
+            readOnly: true,
+            bind: { propagation: 'rshared' } 
+          })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container:ro:z']);
+      });
+
+      it('should throw error when mixing legacy flags with bind propagation', () => {
+        expect(() => {
+          service.setVolume({ 
+            hostPath: '/host', 
+            containerPath: '/container', 
+            shared: true,
+            bind: { propagation: 'rshared' } 
+          });
+        }).toThrowError('Cannot use both legacy flags (shared/private) and new bind.propagation simultaneously');
+      });
+    });
+
+    describe('Basic volume mounts', () => {
+      it('should handle basic volume without any flags', () => {
+        const built = service
+          .setVolume({ hostPath: '/host', containerPath: '/container' })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container']);
+      });
+
+      it('should handle readOnly alone', () => {
+        const built = service
+          .setVolume({ hostPath: '/host', containerPath: '/container', readOnly: true })
+          .build();
+
+        expect(built.volumes).toEqual(['/host:/container:ro']);
+      });
+    });
+  });
 });

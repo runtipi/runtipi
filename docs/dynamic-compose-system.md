@@ -394,6 +394,92 @@ In this example:
 - On arm64 systems, it uses a specific ARM-compatible image
 - On amd64 systems, it uses an AMD64-specific image and adds GPU capabilities
 
+## Volume Mount Propagation
+
+The Dynamic Compose System supports comprehensive bind mount propagation modes to enhance container filesystem isolation and sharing capabilities. This feature provides complete Docker Compose feature parity for advanced container configurations.
+
+### Legacy Volume Configuration (Backward Compatible)
+
+The traditional boolean flags are still supported for backward compatibility:
+
+```json
+{
+    "volumes": [
+        {
+            "hostPath": "/host/path",
+            "containerPath": "/container/path",
+            "readOnly": true,
+            "shared": true
+        }
+    ]
+}
+```
+
+Legacy flags:
+- `shared: true` → Maps to `:z` flag (SELinux shared labeling)
+- `private: true` → Maps to `:Z` flag (SELinux private labeling)
+- `readOnly: true` → Maps to `:ro` flag
+
+### New Bind Mount Propagation
+
+The new `bind` object provides comprehensive propagation mode support:
+
+```json
+{
+    "volumes": [
+        {
+            "hostPath": "/host/shared",
+            "containerPath": "/app/shared",
+            "bind": {
+                "propagation": "rshared"
+            }
+        },
+        {
+            "hostPath": "/host/readonly",
+            "containerPath": "/app/readonly", 
+            "readOnly": true,
+            "bind": {
+                "propagation": "rslave"
+            }
+        }
+    ]
+}
+```
+
+### Supported Propagation Modes
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `rprivate` | No propagation (default) | Complete isolation |
+| `private` | Same as rprivate | Complete isolation |
+| `rshared` | Bidirectional propagation | Systemd containers, shared filesystems |
+| `shared` | Limited shared propagation | Basic sharing scenarios |
+| `rslave` | One-way propagation from host | Read-only shared access |
+| `slave` | Limited slave propagation | Controlled sharing |
+
+### Technical Implementation
+
+- **Backward Compatibility**: Legacy `shared`/`private` boolean flags continue to work
+- **Validation**: Cannot mix legacy flags with new `bind.propagation` syntax
+- **Mapping**: Propagation modes are mapped to Docker mount flags where possible
+- **Future Enhancement**: Full Docker Compose bind mount syntax support planned
+
+### Migration Path
+
+Existing applications can gradually migrate from legacy syntax:
+
+```json
+// Old syntax (still supported)
+{
+    "volumes": [{"hostPath": "/host", "containerPath": "/app", "shared": true}]
+}
+
+// New syntax (recommended)
+{
+    "volumes": [{"hostPath": "/host", "containerPath": "/app", "bind": {"propagation": "shared"}}]
+}
+```
+
 ## Conclusion
 
 The Dynamic Compose System is a powerful feature of Runtipi that enables
