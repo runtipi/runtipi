@@ -270,4 +270,43 @@ describe('DockerComposeBuilder', () => {
 
     expect(yaml).toMatchSnapshot();
   });
+
+  it('should correctly format tmpfs with simple string array format', () => {
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      tmpfs: ['/tmp', '/var/run', '/var/log'],
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
+    expect(compose).toMatchSnapshot();
+  });
+
+  it('should correctly format tmpfs with object array format', () => {
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'image',
+      tmpfs: [
+        { path: '/tmp', size: '100m', noexec: true },
+        { path: '/var/run', size: '50m', nosuid: true, nodev: true },
+        { path: '/app/cache', size: '200m', uid: 1000, gid: 1000, mode: '755' },
+      ],
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
+    expect(compose).toMatchSnapshot();
+  });
+
+  it('should correctly format tmpfs in combination with readOnly containers', () => {
+    const service: ServiceInput = {
+      name: 'service',
+      image: 'secure-app:latest',
+      readOnly: true,
+      securityOpt: ['no-new-privileges=true'],
+      tmpfs: ['/tmp', '/var/run'],
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
+    expect(compose).toMatchSnapshot();
+  });
 });

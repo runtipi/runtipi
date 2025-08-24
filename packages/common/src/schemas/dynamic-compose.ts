@@ -29,6 +29,22 @@ const ulimitsSchema = z.object({
     .optional(),
 });
 
+const tmpfsSchema = z.union([
+  z.array(z.string()), // Simple format: ["/tmp", "/var/run"]
+  z.array(
+    z.object({
+      path: z.string(),
+      size: z.string().optional(),
+      noexec: z.boolean().optional(),
+      nosuid: z.boolean().optional(),
+      nodev: z.boolean().optional(),
+      uid: z.number().optional(),
+      gid: z.number().optional(),
+      mode: z.string().optional(),
+    }),
+  ), // Object format with options
+]);
+
 const deploySchema = z.object({
   resources: z.object({
     limits: z
@@ -125,6 +141,7 @@ export const serviceSchema = z.object({
   stdinOpen: z.boolean().optional(),
   extraLabels: z.record(z.string().or(z.boolean())).optional(),
   dns: z.string().optional().or(z.array(z.string()).optional()),
+  tmpfs: tmpfsSchema.optional(),
 });
 
 export const dynamicComposeSchema = z.object({

@@ -102,6 +102,7 @@ export class DockerComposeBuilder {
       .setStdinOpen(params.stdinOpen)
       .setSysctls(params.sysctls)
       .setDNS(params.dns)
+      .setTmpfs(params.tmpfs)
       .setNetwork(`${appName}_${appStoreId}_network`);
 
     if (params.isMain || params.addToMainNetwork) {

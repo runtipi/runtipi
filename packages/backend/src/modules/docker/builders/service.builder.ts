@@ -91,6 +91,7 @@ export interface BuilderService {
   stdinOpen?: boolean;
   sysctls?: Record<string, number>;
   dns?: string | string[];
+  tmpfs?: string[] | Record<string, Record<string, string | number | boolean>>;
 }
 
 export type BuiltService = ReturnType<typeof ServiceBuilder.prototype.build>;
@@ -500,6 +501,65 @@ export class ServiceBuilder {
     return this;
   }
 
+  /**
+   * Sets the tmpfs mounts for the service.
+   * @param {string[] | { path: string; size?: string; noexec?: boolean; nosuid?: boolean; nodev?: boolean; uid?: number; gid?: number; mode?: string; }[]} tmpfs The tmpfs mounts for the service.
+   * @example
+   * ```typescript
+   * const service = new ServiceBuilder();
+   * service.setTmpfs(['/tmp', '/var/run']);
+   * // or
+   * service.setTmpfs([
+   *   { path: '/tmp', size: '100m', noexec: true },
+   *   { path: '/var/run', size: '50m' }
+   * ]);
+   * ```
+   */
+  setTmpfs(
+    tmpfs?:
+      | string[]
+      | { path: string; size?: string; noexec?: boolean; nosuid?: boolean; nodev?: boolean; uid?: number; gid?: number; mode?: string }[],
+  ) {
+    if (!tmpfs) return this;
+
+    if (Array.isArray(tmpfs) && tmpfs.length > 0) {
+      if (typeof tmpfs[0] === 'string') {
+        // Simple string array format
+        this.service.tmpfs = tmpfs as string[];
+      } else {
+        // Object array format - convert to Docker Compose mapping format
+        const tmpfsMapping: Record<string, Record<string, string | number | boolean>> = {};
+
+        for (const item of tmpfs as {
+          path: string;
+          size?: string;
+          noexec?: boolean;
+          nosuid?: boolean;
+          nodev?: boolean;
+          uid?: number;
+          gid?: number;
+          mode?: string;
+        }[]) {
+          const options: Record<string, string | number | boolean> = {};
+
+          if (item.size) options.size = item.size;
+          if (item.noexec) options.noexec = item.noexec;
+          if (item.nosuid) options.nosuid = item.nosuid;
+          if (item.nodev) options.nodev = item.nodev;
+          if (item.uid !== undefined) options.uid = item.uid;
+          if (item.gid !== undefined) options.gid = item.gid;
+          if (item.mode) options.mode = item.mode;
+
+          tmpfsMapping[item.path] = options;
+        }
+
+        this.service.tmpfs = tmpfsMapping;
+      }
+    }
+
+    return this;
+  }
+
   /*
    * Search through the labels and replace any {{ RUNTIPI_APP_ID }} or {{RUNTIPI_APP_ID}} with the appId.
    * @param {string} appId The appId to replace the variables with.
@@ -581,6 +641,7 @@ export class ServiceBuilder {
       stdin_open: this.service.stdinOpen,
       sysctls: this.service.sysctls,
       dns: this.service.dns,
+      tmpfs: this.service.tmpfs,
     };
 
     // Delete any undefined properties
