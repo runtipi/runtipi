@@ -37,6 +37,19 @@ export const serviceSchema = z.object({
     internalPort: z.number().or(z.string()).optional(),
     isMain: z.boolean().optional(),
     networkMode: z.string().optional(),
+    tmpfs: z.union([
+        z.array(z.string()), // Simple format: ["/tmp", "/var/run"]
+        z.array(z.object({
+            path: z.string(),
+            size: z.string().optional(),
+            noexec: z.boolean().optional(),
+            nosuid: z.boolean().optional(),
+            nodev: z.boolean().optional(),
+            uid: z.number().optional(),
+            gid: z.number().optional(),
+            mode: z.string().optional(),
+        })), // Object format with options
+    ]).optional(),
     // ... other properties
 });
 
@@ -393,6 +406,73 @@ In this example:
 - The base configuration works for any architecture
 - On arm64 systems, it uses a specific ARM-compatible image
 - On amd64 systems, it uses an AMD64-specific image and adds GPU capabilities
+
+### Secure Read-Only Containers with tmpfs
+
+The tmpfs feature enables secure read-only container deployments by providing writable in-memory filesystem mounts. This is essential for security-hardened applications that run with `readOnly: true`.
+
+#### Simple tmpfs Format
+
+```json
+{
+    "services": [
+        {
+            "name": "secure-app",
+            "image": "secure-app:latest",
+            "readOnly": true,
+            "securityOpt": ["no-new-privileges=true"],
+            "tmpfs": ["/tmp", "/var/run", "/var/log"]
+        }
+    ]
+}
+```
+
+#### Advanced tmpfs with Options
+
+```json
+{
+    "services": [
+        {
+            "name": "secure-app",
+            "image": "secure-app:latest",
+            "readOnly": true,
+            "securityOpt": ["no-new-privileges=true"],
+            "tmpfs": [
+                {
+                    "path": "/tmp",
+                    "size": "100m",
+                    "noexec": true
+                },
+                {
+                    "path": "/var/run",
+                    "size": "50m",
+                    "nosuid": true,
+                    "nodev": true
+                },
+                {
+                    "path": "/app/cache",
+                    "size": "200m",
+                    "uid": 1000,
+                    "gid": 1000,
+                    "mode": "755"
+                }
+            ]
+        }
+    ]
+}
+```
+
+#### Supported tmpfs Options
+
+- `size`: Size limit for the tmpfs mount (e.g., "100m", "1g")
+- `noexec`: Prevent execution of any binaries
+- `nosuid`: Prevent honoring of set-user-id and set-group-id bits
+- `nodev`: Prevent access to device special files
+- `uid`: User ID for the mount owner
+- `gid`: Group ID for the mount owner
+- `mode`: File mode for the mount (e.g., "755", "644")
+
+This feature enables zero-trust container architectures and improves compliance with security best practices.
 
 ## Conclusion
 
