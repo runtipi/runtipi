@@ -1,13 +1,13 @@
 import { DATABASE, type Database } from '@/core/database/database.module';
-import { app, appStore, user } from '@/core/database/drizzle/schema';
-import type { NewUser } from '@/core/database/drizzle/types';
+import { app, appStore } from '@/core/database/drizzle/schema';
 import { Inject, Injectable } from '@nestjs/common';
-import * as argon2 from 'argon2';
-import crypto from 'node:crypto';
 import { createAppInStore } from '@/tests/utils/create-app-in-store';
 import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
 import { eq } from 'drizzle-orm';
 import { BackupsService } from '../backups/backups.service';
+import { AppStoreService } from '../app-stores/app-store.service';
+import { createAppUrn } from '@/common/helpers/app-helpers';
+import { updateAppInStore } from '@/tests/utils/update-app-in-store';
 
 @Injectable()
 export class DebugService {
@@ -15,61 +15,49 @@ export class DebugService {
     @Inject(DATABASE) private db: Database,
     private appLifecycleService: AppLifecycleService,
     private backupService: BackupsService,
+    private appstoreService: AppStoreService,
   ) {}
 
   public async seedDatabase() {
-    // Clean up existing apps
-    await this.db.delete(app).execute();
-    await this.db.delete(appStore).where(eq(appStore.slug, 'default')).execute().catch();
+    // Clean up
+    const apps = await this.db.select().from(app).where(eq(app.appStoreSlug, 'seed'));
+    for (const app of apps) {
+      await this.appLifecycleService.uninstallApp({ appUrn: createAppUrn(app.appName, app.appStoreSlug), removeBackups: true });
+    }
 
-    const hash = crypto.createHash('sha256');
-    hash.update('https://example.com');
-    const appStoreHash = hash.digest('hex');
+    if ((await this.db.select().from(appStore).where(eq(appStore.slug, 'seed'))).length > 0) {
+      let retries = 3;
+      while (retries > 0) {
+        if ((await this.db.select().from(app).where(eq(app.appStoreSlug, 'seed'))).length === 0) {
+          await this.appstoreService.deleteAppStore('seed');
+          break;
+        }
+        retries--;
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+    }
 
-    await this.db
-      .insert(appStore)
-      .values({
-        slug: 'default',
-        name: 'Seed',
-        url: 'https://example.com',
-        hash: appStoreHash,
-        branch: 'main',
-        enabled: true,
-      })
-      .execute();
+    await this.appstoreService.createAppStore({
+      name: 'seed',
+      url: 'https://github.com/runtipi/example-appstore',
+    });
 
     // Create fake apps
     for (let i = 1; i <= 12; i++) {
-      const appInfo = await createAppInStore('default', { id: `app-${i}`, name: `App ${i}`, description: `Description for App ${i}` });
+      const appInfo = await createAppInStore('seed', { id: `app-${i}`, name: `App ${i}`, description: `Description for App ${i}` });
 
       await this.appLifecycleService.installApp({ appUrn: appInfo.urn, form: {}, skipRun: true });
     }
-
-    // Create test user if it doesn't exist
-    const existingUser = await this.db.query.user.findFirst({ where: (user, { eq }) => eq(user.username, 'test@test.com') });
-    if (!existingUser) {
-      const hash = await argon2.hash('password');
-      await this.db
-        .insert(user)
-        .values({
-          username: 'test@test.com',
-          password: hash,
-          operator: true,
-        } as NewUser)
-        .execute();
-    }
-
-    return { userCreated: !existingUser };
   }
 
   public async setAllAppUpdateAvailable() {
-    await this.db.update(app).set({ version: 0 }).execute();
+    await this.db.update(app).set({ version: 0 }).where(eq(app.appStoreSlug, 'seed')).execute();
 
     return { message: 'All apps set to version 0' };
   }
 
   public async setAllSubnetsToNull() {
-    await this.db.update(app).set({ subnet: null }).execute();
+    await this.db.update(app).set({ subnet: null }).where(eq(app.appStoreSlug, 'seed')).execute();
 
     return { message: 'All app subnets set to null' };
   }
@@ -80,5 +68,13 @@ export class DebugService {
 
   public async backupAllApps() {
     await this.backupService.backupAllApps();
+  }
+
+  public async incrementAllAppVersions() {
+    const apps = await this.db.select().from(app).where(eq(app.appStoreSlug, 'seed'));
+
+    for (const app of apps) {
+      await updateAppInStore(app.appStoreSlug, app.appName, { tipi_version: app.version + 1 });
+    }
   }
 }

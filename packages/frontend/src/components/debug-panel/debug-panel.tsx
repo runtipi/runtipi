@@ -3,11 +3,15 @@ import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import {
   backupAllAppsMutation,
+  incrementAllAppVersionsMutation,
   seedDatabaseMutation,
   setAllAppSubnetToNullMutation,
   setAllAppUpdateAvailableMutation,
   startAllAppsMutation,
 } from '@/api-client/@tanstack/react-query.gen';
+import { Button } from '../ui/Button';
+import './debug-panel.css';
+import { IconX } from '@tabler/icons-react';
 
 export const DebugPanel = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -17,13 +21,17 @@ export const DebugPanel = () => {
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    setPressedKeys((prev) => new Set(prev).add(event.key.toLowerCase()));
+    if (event.key) {
+      setPressedKeys((prev) => new Set(prev).add(event.key.toLowerCase()));
+    }
   }, []);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     setPressedKeys((prev) => {
       const newSet = new Set(prev);
-      newSet.delete(event?.key?.toLowerCase());
+      if (event.key) {
+        newSet.delete(event.key.toLowerCase());
+      }
       return newSet;
     });
   }, []);
@@ -102,6 +110,16 @@ export const DebugPanel = () => {
     },
   });
 
+  const incrementAllAppVersions = useMutation({
+    ...incrementAllAppVersionsMutation(),
+    onSuccess: () => {
+      toast.success('App versions incremented successfully!');
+    },
+    onError: () => {
+      toast.error('Failed to increment app versions');
+    },
+  });
+
   // Don't render anything if not in development mode
   if (!isDevelopment) {
     return null;
@@ -110,68 +128,26 @@ export const DebugPanel = () => {
   return (
     <>
       {isVisible && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            width: '300px',
-            backgroundColor: '#1e1e1e',
-            color: '#fff',
-            borderRadius: '8px',
-            padding: '16px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
-            zIndex: 9999,
-            fontFamily: 'monospace',
-            fontSize: '14px',
-            border: '1px solid #444',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '12px',
-            }}
-          >
-            <h3 style={{ margin: 0, fontSize: '16px' }}>Debug Panel</h3>
-            <button
-              type="button"
-              onClick={() => setIsVisible(false)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#fff',
-                cursor: 'pointer',
-                fontSize: '18px',
-                padding: '0',
-                width: '24px',
-                height: '24px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              ×
-            </button>
+        <div className="card debug-panel">
+          <div className="card-header d-flex justify-content-between">
+            <h3 className="card-title">Developer Tools</h3>
+            <Button variant="ghost" intent="danger" size="sm" aria-label="Close" onClick={() => setIsVisible(false)}>
+              <IconX size={16} />
+            </Button>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <button type="button" onClick={() => seedMutation.mutate({})} disabled={seedMutation.isPending}>
-              {seedMutation.isPending ? 'Seeding...' : 'Seed Database'}
-            </button>
-            <button type="button" onClick={() => startAllApps.mutate({})} disabled={startAllApps.isPending}>
-              {startAllApps.isPending ? 'Starting...' : 'Start All Apps'}
-            </button>
-            <button type="button" onClick={() => subnetsMutation.mutate({})} disabled={subnetsMutation.isPending}>
-              {subnetsMutation.isPending ? 'Setting...' : 'Set All App Subnets to Null'}
-            </button>
-            <button type="button" onClick={() => versionMutation.mutate({})} disabled={versionMutation.isPending}>
-              {versionMutation.isPending ? 'Setting...' : 'Set All Apps to Version 0'}
-            </button>
-            <button type="button" onClick={() => backupAllApps.mutate({})} disabled={backupAllApps.isPending}>
-              {backupAllApps.isPending ? 'Backing up...' : 'Launch a backup of all apps at the same time'}
-            </button>
+          <div className="card-body d-flex flex-column" style={{ gap: '0.5rem' }}>
+            <Button onClick={() => seedMutation.mutate({})}>{seedMutation.isPending ? 'Seeding...' : 'Seed database'}</Button>
+            <Button onClick={() => startAllApps.mutate({})}>{startAllApps.isPending ? 'Starting all apps...' : 'Start all apps'}</Button>
+            <Button onClick={() => subnetsMutation.mutate({})}>
+              {subnetsMutation.isPending ? 'Setting subnets to null...' : 'Set all app subnets to null'}
+            </Button>
+            <Button onClick={() => versionMutation.mutate({})}>
+              {versionMutation.isPending ? 'Setting all apps to version 0...' : 'Set all apps to version 0'}
+            </Button>
+            <Button onClick={() => backupAllApps.mutate({})}>{backupAllApps.isPending ? 'Backing up all apps...' : 'Backup all apps'}</Button>
+            <Button onClick={() => incrementAllAppVersions.mutate({})}>
+              {incrementAllAppVersions.isPending ? 'Incrementing app versions...' : 'Increment all app versions'}
+            </Button>
           </div>
         </div>
       )}

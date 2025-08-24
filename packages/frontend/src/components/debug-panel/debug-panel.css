@@ -1,0 +1,15 @@
+.debug-panel {
+  position: fixed;
+  right: 1rem;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 9999;
+}
+
+@media (min-width: 576px) {
+  .debug-panel {
+    right: 0rem;
+    left: unset;
+    min-width: 25%;
+  }
+}

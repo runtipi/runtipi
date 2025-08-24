@@ -1843,6 +1843,20 @@
           "Debug"
         ]
       }
+    },
+    "/api/debug/increment-all-app-versions": {
+      "post": {
+        "operationId": "incrementAllAppVersions",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
     }
   },
   "info": {
