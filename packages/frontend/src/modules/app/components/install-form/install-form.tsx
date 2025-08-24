@@ -63,19 +63,19 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
   const { appName, appStoreId } = extractAppUrn(info.urn as AppUrn);
 
   useEffect(() => {
-    if (info.force_expose) {
-      setValue('exposed', true);
-      setValue('openPort', false);
-    }
-  }, [info.force_expose, setValue]);
-
-  useEffect(() => {
     if (initialValues && !isDirty) {
       for (const [key, value] of Object.entries(initialValues)) {
         setValue(key, value as string);
       }
     }
   }, [initialValues, isDirty, setValue]);
+
+  useEffect(() => {
+    if (info.force_expose) {
+      setValue('exposed', true);
+      setValue('openPort', false);
+    }
+  }, [info.force_expose, setValue]);
 
   const randomPortMutation = useMutation({
     ...getRandomPortMutation(),
