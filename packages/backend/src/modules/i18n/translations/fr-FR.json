@@ -47,7 +47,7 @@
   "APP_ERROR_APP_FAILED_TO_UNINSTALL": "Impossible de désinstaller l'application {{id}}, voir les logs pour plus de détails",
   "APP_ERROR_APP_FAILED_TO_UPDATE": "Impossible de mettre à jour l'application {{id}}, voir les logs pour plus de détails",
   "APP_ERROR_APP_FORCE_EXPOSED": "L'application {{id}} ne fonctionne qu'avec un domaine exposé",
-  "APP_ERROR_APP_NOT_EXPOSABLE": "L'application {{id}} n'est pas exposable",
+  "APP_ERROR_APP_NOT_EXPOSABLE": "L'application {{id}} ne peut pas être exposée",
   "APP_ERROR_APP_NOT_FOUND": "L'application {{id}} est introuvable",
   "NETWORK_ERROR_NO_AVAILABLE_SUBNETS": "Aucun sous-réseau disponible",
   "APP_ERROR_ARCHITECTURE_NOT_SUPPORTED": "Votre architecture {{arch}} n'est pas supportée par l'application {{id}}",
