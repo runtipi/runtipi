@@ -245,8 +245,8 @@ export class AppLifecycleService {
   /**
    * Restart an app by its ID
    */
-  public async restartApp(params: { appUrn: AppUrn }) {
-    const { appUrn } = params;
+  public async restartApp(params: { appUrn: AppUrn; skipPull?: boolean }) {
+    const { appUrn, skipPull } = params;
     const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
@@ -257,7 +257,7 @@ export class AppLifecycleService {
     await this.appRepository.updateAppById(app.id, { status: 'restarting' });
 
     const requestId = crypto.randomUUID();
-    this.appEventsQueue.publish({ command: 'restart', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ command: 'restart', appUrn, requestId, form: { ...app.config, skipPull } }).then(async ({ success, message }) => {
       if (success) {
         this.logger.info(`App ${appUrn} restarted successfully`);
         this.sseService.emit('app', { event: 'restart_success', appUrn, appStatus: 'running' });
@@ -501,7 +501,7 @@ export class AppLifecycleService {
     }
   }
 
-  async startAllApps() {
+  async restartAllApps() {
     const apps = await this.appRepository.getApps();
     const runningApps = apps.filter((app) => app.status === 'running');
 
@@ -509,7 +509,7 @@ export class AppLifecycleService {
       for (const app of runningApps) {
         try {
           const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-          this.startApp({ appUrn, skipPull: true });
+          this.restartApp({ appUrn, skipPull: true });
         } catch (e) {
           this.logger.error(`Failed to start app ${app.id}`, e);
         }

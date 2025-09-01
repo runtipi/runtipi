@@ -1786,9 +1786,9 @@
         ]
       }
     },
-    "/api/debug/start-all-apps": {
+    "/api/debug/restart-all-apps": {
       "post": {
-        "operationId": "startAllApps",
+        "operationId": "restartAllApps",
         "parameters": [],
         "responses": {
           "201": {

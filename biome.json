@@ -7,7 +7,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/dist/*", "!**/public/*", "!**/legacy/*", "!**/.internal/*", "!**/metadata.ts"]
+    "includes": ["**", "!**/dist/*", "!**/public/*", "!**/legacy/*", "!**/.internal/*", "!**/metadata.ts", "!**/api-client/**", "!**/swagger.json"]
   },
   "formatter": {
     "enabled": true,

@@ -74,8 +74,8 @@ export class DebugService {
     return { message: 'All app subnets set to null' };
   }
 
-  public async startAllApps() {
-    await this.appLifecycleService.startAllApps();
+  public async restartAllApps() {
+    await this.appLifecycleService.restartAllApps();
   }
 
   public async backupAllApps() {

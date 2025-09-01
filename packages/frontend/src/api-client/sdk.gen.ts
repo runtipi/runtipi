@@ -125,8 +125,8 @@ import type {
   SetAllAppUpdateAvailableResponses,
   SetAllAppSubnetToNullData,
   SetAllAppSubnetToNullResponses,
-  StartAllAppsData,
-  StartAllAppsResponses,
+  RestartAllAppsData,
+  RestartAllAppsResponses,
   BackupAllAppsData,
   BackupAllAppsResponses,
 } from './types.gen';
@@ -673,9 +673,9 @@ export const setAllAppSubnetToNull = <ThrowOnError extends boolean = false>(opti
   });
 };
 
-export const startAllApps = <ThrowOnError extends boolean = false>(options?: Options<StartAllAppsData, ThrowOnError>) => {
-  return (options?.client ?? _heyApiClient).post<StartAllAppsResponses, unknown, ThrowOnError>({
-    url: '/api/debug/start-all-apps',
+export const restartAllApps = <ThrowOnError extends boolean = false>(options?: Options<RestartAllAppsData, ThrowOnError>) => {
+  return (options?.client ?? _heyApiClient).post<RestartAllAppsResponses, unknown, ThrowOnError>({
+    url: '/api/debug/restart-all-apps',
     ...options,
   });
 };

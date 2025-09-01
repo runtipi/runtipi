@@ -6,7 +6,7 @@ import {
   seedDatabaseMutation,
   setAllAppSubnetToNullMutation,
   setAllAppUpdateAvailableMutation,
-  startAllAppsMutation,
+  restartAllAppsMutation,
 } from '@/api-client/@tanstack/react-query.gen';
 
 export const DebugPanel = () => {
@@ -62,8 +62,8 @@ export const DebugPanel = () => {
     },
   });
 
-  const startAllApps = useMutation({
-    ...startAllAppsMutation(),
+  const restartAllApps = useMutation({
+    ...restartAllAppsMutation(),
     onSuccess: () => {
       toast.success('All apps started successfully!');
     },
@@ -160,8 +160,8 @@ export const DebugPanel = () => {
             <button type="button" onClick={() => seedMutation.mutate({})} disabled={seedMutation.isPending}>
               {seedMutation.isPending ? 'Seeding...' : 'Seed Database'}
             </button>
-            <button type="button" onClick={() => startAllApps.mutate({})} disabled={startAllApps.isPending}>
-              {startAllApps.isPending ? 'Starting...' : 'Start All Apps'}
+            <button type="button" onClick={() => restartAllApps.mutate({})} disabled={restartAllApps.isPending}>
+              {restartAllApps.isPending ? 'Starting...' : 'Restart All Apps'}
             </button>
             <button type="button" onClick={() => subnetsMutation.mutate({})} disabled={subnetsMutation.isPending}>
               {subnetsMutation.isPending ? 'Setting...' : 'Set All App Subnets to Null'}

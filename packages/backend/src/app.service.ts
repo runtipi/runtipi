@@ -65,8 +65,8 @@ export class AppService {
       await this.copyAssets();
       await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
 
-      if (__prod__ && buster !== version) {
-        this.appLifecycleService.startAllApps();
+      if (__prod__ && (buster !== version || version === 'nightly')) {
+        this.appLifecycleService.restartAllApps();
       }
     } catch (e) {
       this.logger.error(e);

@@ -1543,14 +1543,14 @@ export type SetAllAppSubnetToNullResponses = {
   201: unknown;
 };
 
-export type StartAllAppsData = {
+export type RestartAllAppsData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/debug/start-all-apps';
+  url: '/api/debug/restart-all-apps';
 };
 
-export type StartAllAppsResponses = {
+export type RestartAllAppsResponses = {
   201: unknown;
 };
 
