@@ -245,6 +245,7 @@ export class AppLifecycleService {
   /**
    * Restart an app by its ID
    */
+  @Cooldown(3000)
   public async restartApp(params: { appUrn: AppUrn; skipPull?: boolean }) {
     const { appUrn, skipPull } = params;
     const app = await this.appRepository.getAppByUrn(appUrn);
@@ -494,7 +495,7 @@ export class AppLifecycleService {
     for (const { app } of availableUpdates) {
       try {
         const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-        this.updateApp({ appUrn, performBackup: true });
+        await this.updateApp({ appUrn, performBackup: true });
       } catch (e) {
         this.logger.error(`Failed to update app ${app.id}`, e);
       }
@@ -509,7 +510,7 @@ export class AppLifecycleService {
       for (const app of runningApps) {
         try {
           const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-          this.restartApp({ appUrn, skipPull: true });
+          await this.restartApp({ appUrn, skipPull: true });
         } catch (e) {
           this.logger.error(`Failed to start app ${app.id}`, e);
         }
