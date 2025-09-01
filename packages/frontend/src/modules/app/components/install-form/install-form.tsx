@@ -57,7 +57,7 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
     control,
   } = useForm<FormValues>({});
   const watchExposed = watch('exposed', false);
-  const watchOpenPort = watch('openPort', true);
+  const watchOpenPort = watch('openPort', !info.force_expose);
   const watchExposedLocal = watch('exposedLocal', false);
 
   const { appName, appStoreId } = extractAppUrn(info.urn as AppUrn);
@@ -68,14 +68,11 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
         setValue(key, value as string);
       }
     }
-  }, [initialValues, isDirty, setValue]);
-
-  useEffect(() => {
     if (info.force_expose) {
       setValue('exposed', true);
       setValue('openPort', false);
     }
-  }, [info.force_expose, setValue]);
+  }, [initialValues, isDirty, setValue, info.force_expose]);
 
   const randomPortMutation = useMutation({
     ...getRandomPortMutation(),
@@ -294,11 +291,15 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           )}
         </div>
       )}
-      {Boolean(info.port) && (
+      {info.exposable && (
         <>
-          {info.exposable && info.dynamic_config && <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>}
-          {info.dynamic_config && renderDynamicConfigProxyForm()}
-          {info.exposable && renderExposeForm()}
+          {info.dynamic_config && info.exposable && (
+            <>
+              <h3>{t('APP_INSTALL_FORM_REVERSE_PROXY')}</h3>
+              {renderDynamicConfigProxyForm()}
+            </>
+          )}
+          {renderExposeForm()}
         </>
       )}
     </form>
