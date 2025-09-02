@@ -58,11 +58,11 @@ export const UpdateAllButton = () => {
   });
 
   return (
-    <div className="d-flex align-items-end align-items-md-center flex-column flex-md-row justify-content-end">
+    <>
       <UpdateAllDialog isOpen={updateDisclosure.isOpen} onClose={() => updateDisclosure.close()} onConfirm={() => updateAll.mutate({})} />
       <Button intent="success" onClick={updateDisclosure.open}>
         {t('MY_APPS_UPDATE_ALL_FORM_SUBMIT')}
       </Button>
-    </div>
+    </>
   );
 };

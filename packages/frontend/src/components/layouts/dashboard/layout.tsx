@@ -47,21 +47,16 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
       <div className="page-wrapper">
         <div className="page-header d-print-none">
           <div className="container-xl">
-            <div className="d-flex flex-column flex-lg-row">
+            <div className="d-flex flex-row align-items-center justify-content-between">
               <div className="text-white title">
                 <PageTitle apps={apps} />
               </div>
-              <div className="flex-fill justify-content-end align-items-center mt-2">
-                <LayoutActions availableUpdates={updatesAvailable} />
-              </div>
+              <LayoutActions availableUpdates={updatesAvailable} />
             </div>
           </div>
         </div>
         <div className="page-body">
-          <div className="container-xl">
-            {children}
-            {/* {isInstanceInsecure() && <AtRiskBanner isInsecure />} */}
-          </div>
+          <div className="container-xl">{children}</div>
         </div>
       </div>
     </div>
