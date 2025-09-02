@@ -7,6 +7,8 @@ import { Welcome } from '@/components/welcome/welcome';
 import { useAppContext } from '@/context/app-context';
 import { useUserContext } from '@/context/user-context';
 import { LayoutActions } from './layout-actions';
+import { useLocation } from 'react-router';
+import clsx from 'clsx';
 
 export const DashboardLayoutSuspense = ({ children }: PropsWithChildren) => {
   return (
@@ -31,6 +33,8 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
 
   const { isLoggedIn } = useUserContext();
 
+  const location = useLocation();
+
   let isLatest = semver.valid(version.current) && semver.valid(version.latest) && semver.gte(version.current, version.latest);
 
   if (version.current === 'nightly') {
@@ -47,7 +51,7 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
       <div className="page-wrapper">
         <div className="page-header d-print-none">
           <div className="container-xl">
-            <div className="d-flex flex-row align-items-center justify-content-between">
+            <div className={clsx('d-flex', location.pathname === '/apps' ? 'flex-row align-items-center justify-content-between' : 'flex-column')}>
               <div className="text-white title">
                 <PageTitle apps={apps} />
               </div>
