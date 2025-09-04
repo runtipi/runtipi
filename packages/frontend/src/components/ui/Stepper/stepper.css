@@ -4,10 +4,19 @@
   border: none;
 }
 
+.step-button:focus-visible:before {
+  outline: 2px solid var(--color-primary, #1e66f5);
+  outline-offset: -1px;
+}
+
+.step-button {
+  cursor: pointer;
+}
+
 .steps {
   border-left: none;
-  padding-left: none;
-  margin-left: none;
+  padding-left: 0;
+  margin-left: 0;
   margin-bottom: 1rem;
 }
 

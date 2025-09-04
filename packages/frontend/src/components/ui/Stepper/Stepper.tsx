@@ -23,7 +23,11 @@ const StepComponent = ({
 }: StepComponentProps) => {
   return (
     <button
+      type="button"
       role="tab"
+      aria-selected={isActive}
+      id={`step-${currentStep}`}
+      aria-controls={`step-panel-${currentStep}`}
       className={clsx("step-item step-button", isActive && "active")}
       onClick={() => onStepChange(currentStep)}
     >
@@ -42,7 +46,7 @@ export const Stepper = ({ steps, stepComponents }: StepperProps) => {
       <div className="steps steps-counter w-full">
         {steps.map((step, index) => (
           <StepComponent
-            key={index}
+            key={step.id}
             currentStep={index}
             step={step}
             isActive={stepper.current.id === step.id}
