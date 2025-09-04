@@ -1,0 +1,21 @@
+.step-button {
+  background: none;
+  outline: none;
+  border: none;
+}
+
+.steps {
+  border-left: none;
+  padding-left: none;
+  margin-left: none;
+  margin-bottom: 1rem;
+}
+
+.step-item-text {
+  position: relative;
+  top: 0.25rem;
+}
+
+.steps-content {
+  margin-bottom: 1rem;
+}
