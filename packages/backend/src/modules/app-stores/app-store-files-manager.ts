@@ -94,6 +94,23 @@ export class AppStoreFilesManager {
     }
   }
 
+  public async getDockerComposeJson(appUrn: AppUrn) {
+    const { appRepoDir } = this.getAppPaths(appUrn);
+
+    const dockerComposePath = path.join(appRepoDir, 'docker-compose.json');
+
+    let content = null;
+    try {
+      if (await this.filesystem.pathExists(dockerComposePath)) {
+        content = await this.filesystem.readJsonFile(dockerComposePath);
+      }
+    } catch (error) {
+      this.logger.error(`Error getting docker-compose.json for app ${appUrn} from repo ${this.storeConfig.slug}:`, error);
+    }
+
+    return { path: dockerComposePath, content };
+  }
+
   /**
    * Copy the app from the repo to the installed apps folder
    * @param appUrn - The app id
@@ -138,16 +155,18 @@ export class AppStoreFilesManager {
    */
   public async getAppUpdateInfo(appUrn: AppUrn) {
     const config = await this.getAppInfoFromAppStore(appUrn);
+    const paths = this.getAppPaths(appUrn);
 
     if (config) {
       return {
+        ...paths,
         latestVersion: config.tipi_version,
         minTipiVersion: config.min_tipi_version,
         latestDockerVersion: config.version,
       };
     }
 
-    return { latestVersion: 0, latestDockerVersion: '0.0.0' };
+    return { latestVersion: 0, latestDockerVersion: '0.0.0', minTipiVersion: undefined, ...paths };
   }
 
   /**

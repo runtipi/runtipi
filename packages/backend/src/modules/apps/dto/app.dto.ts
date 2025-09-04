@@ -60,3 +60,10 @@ export class GetRandomPortDto extends createZodDto(
     port: z.number(),
   }),
 ) {}
+
+export class GetUpdateDiffDto extends createZodDto(
+  z.object({
+    current: z.string().nullable(),
+    new: z.string().nullable(),
+  }),
+) {}

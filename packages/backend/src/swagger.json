@@ -574,6 +574,36 @@
         ]
       }
     },
+    "/api/apps/{urn}/update-diff": {
+      "get": {
+        "operationId": "getAppUpdateDiff",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUpdateDiffDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
     "/api/marketplace/apps/search": {
       "get": {
         "operationId": "searchApps",
@@ -3397,6 +3427,23 @@
         "required": [
           "info",
           "metadata"
+        ]
+      },
+      "GetUpdateDiffDto": {
+        "type": "object",
+        "properties": {
+          "current": {
+            "type": "string",
+            "nullable": true
+          },
+          "new": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "current",
+          "new"
         ]
       },
       "SearchAppsDto": {

@@ -222,4 +222,9 @@ export class MarketplaceService {
     const { store } = this.getStoreFromUrn(appUrn);
     return store.copyDataDir(appUrn, envMap);
   }
+
+  public async getDockerComposeJson(appUrn: AppUrn) {
+    const { store } = this.getStoreFromUrn(appUrn);
+    return store.getDockerComposeJson(appUrn);
+  }
 }

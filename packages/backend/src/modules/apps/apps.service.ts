@@ -80,7 +80,7 @@ export class AppsService {
     }
 
     if (!info) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', {}, 404);
     }
 
     const localSubdomain = app?.localSubdomain || appUrn.split(':').join('-');
@@ -107,5 +107,22 @@ export class AppsService {
     }
 
     return this.getRandomPort(tries - 1);
+  }
+
+  public async getAppUpdateDiff(appUrn: AppUrn) {
+    const app = await this.appsRepository.getAppByUrn(appUrn);
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', {}, 404);
+    }
+
+    const [currentCompose, storeCompose] = await Promise.all([
+      this.appFilesManager.getDockerComposeJson(appUrn),
+      this.marketplaceService.getDockerComposeJson(appUrn),
+    ]);
+
+    return {
+      current: currentCompose.content ? JSON.stringify(currentCompose.content) : null,
+      new: storeCompose.content ? JSON.stringify(storeCompose.content) : null,
+    };
   }
 }

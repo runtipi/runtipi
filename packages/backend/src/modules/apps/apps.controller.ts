@@ -3,7 +3,7 @@ import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppsService } from './apps.service';
-import { GetAppDto, GetRandomPortDto, GuestAppsDto, MyAppsDto } from './dto/app.dto';
+import { GetAppDto, GetRandomPortDto, GetUpdateDiffDto, GuestAppsDto, MyAppsDto } from './dto/app.dto';
 
 @Controller('apps')
 export class AppsController {
@@ -37,5 +37,12 @@ export class AppsController {
   @ZodSerializerDto(GetAppDto)
   async getApp(@Param('urn') urn: string): Promise<GetAppDto> {
     return this.appsService.getApp(castAppUrn(urn));
+  }
+
+  @Get(':urn/update-diff')
+  @UseGuards(AuthGuard)
+  @ZodSerializerDto(GetUpdateDiffDto)
+  async getAppUpdateDiff(@Param('urn') urn: string): Promise<GetUpdateDiffDto> {
+    return this.appsService.getAppUpdateDiff(castAppUrn(urn));
   }
 }

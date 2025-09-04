@@ -402,6 +402,11 @@ export type GetAppDto = {
     };
 };
 
+export type GetUpdateDiffDto = {
+    current: string | null;
+    new: string | null;
+};
+
 export type SearchAppsDto = {
     data: Array<{
         id: string;
@@ -846,6 +851,21 @@ export type GetAppResponses = {
 };
 
 export type GetAppResponse = GetAppResponses[keyof GetAppResponses];
+
+export type GetAppUpdateDiffData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/update-diff';
+};
+
+export type GetAppUpdateDiffResponses = {
+    200: GetUpdateDiffDto;
+};
+
+export type GetAppUpdateDiffResponse = GetAppUpdateDiffResponses[keyof GetAppUpdateDiffResponses];
 
 export type SearchAppsData = {
     body?: never;
