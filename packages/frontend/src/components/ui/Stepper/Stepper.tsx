@@ -1,7 +1,7 @@
-import clsx from "clsx";
-import "./stepper.css";
-import { defineStepper } from "@stepperize/react";
-import type { Step } from "@stepperize/core";
+import clsx from 'clsx';
+import './stepper.css';
+import { defineStepper } from '@stepperize/react';
+import type { Step } from '@stepperize/core';
 
 interface StepperProps {
   steps: Step[];
@@ -15,12 +15,7 @@ interface StepComponentProps {
   onStepChange: (step: number) => void;
 }
 
-const StepComponent = ({
-  currentStep,
-  isActive,
-  step,
-  onStepChange,
-}: StepComponentProps) => {
+const StepComponent = ({ currentStep, isActive, step, onStepChange }: StepComponentProps) => {
   return (
     <button
       type="button"
@@ -28,7 +23,7 @@ const StepComponent = ({
       aria-selected={isActive}
       id={`step-${currentStep}`}
       aria-controls={`step-panel-${currentStep}`}
-      className={clsx("step-item step-button", isActive && "active")}
+      className={clsx('step-item step-button', isActive && 'active')}
       onClick={() => onStepChange(currentStep)}
     >
       <span className="step-item-text">{step.title}</span>
