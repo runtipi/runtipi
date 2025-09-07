@@ -58,7 +58,7 @@ export class AppFilesManager {
           return { ...parsedConfig.data, description };
         }
       }
-    } catch (error) {
+    } catch (_) {
       return null;
     }
   }
@@ -69,13 +69,8 @@ export class AppFilesManager {
    * @returns The content of docker-compose.yml as a string, or null if not found
    */
   public async getDockerComposeYaml(appUrn: AppUrn) {
-    const arch = this.configuration.get('architecture');
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    let dockerComposePath = path.join(appInstalledDir, 'docker-compose.yml');
-
-    if (arch === 'arm64' && (await this.filesystem.pathExists(path.join(appInstalledDir, 'docker-compose.arm64.yml')))) {
-      dockerComposePath = path.join(appInstalledDir, 'docker-compose.arm64.yml');
-    }
+    const dockerComposePath = path.join(appInstalledDir, 'docker-compose.yml');
 
     let content = null;
     try {
