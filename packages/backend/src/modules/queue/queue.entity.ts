@@ -2,10 +2,10 @@ import type { LoggerService } from '@/core/logger/logger.service';
 import * as Sentry from '@sentry/nestjs';
 import cron from 'node-cron';
 import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';
-import { type ZodSchema, z } from 'zod';
+import { z } from 'zod';
 import type { EventPublisher } from './event.publisher';
 
-export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; message: string }>> {
+export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; message: string }>> {
   constructor(
     private rabbit: Connection,
     private rpcClient: RPCClient,
@@ -47,7 +47,7 @@ export class Queue<T extends ZodSchema, R extends ZodSchema<{ success: boolean; 
     });
   }
 
-  async publish(event: z.input<T>): Promise<z.output<R>> {
+  async publish(event: z.input<T>): Promise<{ success: boolean; message: string } | z.infer<R>> {
     try {
       const eventData = this.eventSchema.safeParse(event);
 

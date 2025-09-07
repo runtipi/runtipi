@@ -1,8 +1,8 @@
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { AppEventsQueue, appEventResultSchema, appEventSchema } from './entities/app-events';
-import { RepoEventsQueue, repoCommandResultSchema, repoCommandSchema } from './entities/repo-events';
+import { AppEventsQueue, appEventSchema } from './entities/app-events';
+import { RepoEventsQueue, repoCommandSchema } from './entities/repo-events';
 import { QueueFactory } from './queue.factory';
 import { QueueHealthIndicator } from './queue.health';
 
@@ -20,7 +20,6 @@ import { QueueHealthIndicator } from './queue.health';
           queueName: 'app-events-queue',
           workers: 3,
           eventSchema: appEventSchema,
-          resultSchema: appEventResultSchema,
           timeout: timeout,
         });
       },
@@ -35,7 +34,6 @@ import { QueueHealthIndicator } from './queue.health';
           queueName: 'repo-queue',
           workers: 3,
           eventSchema: repoCommandSchema,
-          resultSchema: repoCommandResultSchema,
           timeout: timeout,
         });
       },

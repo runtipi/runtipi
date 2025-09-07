@@ -1,5 +1,5 @@
-import { type ZodStringDef, z } from 'zod';
-import type { AppUrn } from '../types/app-urn.js';
+import { z } from 'zod';
+import { zodAppUrn } from '../types/app-urn.js';
 
 export const APP_CATEGORIES = [
   'network',
@@ -45,7 +45,7 @@ export const formFieldSchema = z.object({
 
 export const appInfoSchema = z.object({
   id: z.string().refine((v) => v.split(':').length === 1),
-  urn: z.string().refine((v) => v.split(':').length === 2) as unknown as z.ZodType<AppUrn, ZodStringDef>,
+  urn: zodAppUrn,
   available: z.boolean(),
   deprecated: z.boolean().optional().default(false),
   port: z.number().min(1).max(65535).optional(),

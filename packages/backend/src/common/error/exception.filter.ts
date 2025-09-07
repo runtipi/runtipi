@@ -25,7 +25,7 @@ export class MainExceptionFilter implements ExceptionFilter {
     // @ts-expect-error
     const error = exception?.error;
     if (error instanceof ZodError) {
-      this.logger.error('Schema validation failed: ', request.path, JSON.stringify(error.errors, null, 2));
+      this.logger.error('Schema validation failed: ', request.path, JSON.stringify(error, null, 2));
     }
 
     if (exception instanceof Error && status !== HttpStatus.INTERNAL_SERVER_ERROR) {

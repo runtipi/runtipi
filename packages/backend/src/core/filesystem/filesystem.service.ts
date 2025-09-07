@@ -4,7 +4,7 @@ import path from 'node:path';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
-import { ZodSchema } from 'zod';
+import type z from 'zod';
 
 @Injectable()
 export class FilesystemService {
@@ -35,7 +35,7 @@ export class FilesystemService {
     throw new Error('File path is not allowed');
   }
 
-  async readJsonFile<T>(filePath: string, schema?: ZodSchema<T>): Promise<T | null> {
+  async readJsonFile<T>(filePath: string, schema?: z.ZodType<T>): Promise<T | null> {
     try {
       const fileContent = await fs.promises.readFile(this.getSafeFilePath(filePath), 'utf8');
       const parsedContent = JSON.parse(fileContent);

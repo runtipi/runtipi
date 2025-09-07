@@ -87,7 +87,7 @@ export const serviceSchema = z.object({
       }),
     )
     .optional(),
-  environment: z.record(z.union([z.string(), z.number()])).optional(),
+  environment: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
   sysctls: z.record(z.string(), z.number()).optional(),
   healthCheck: z
     .object({
@@ -115,7 +115,7 @@ export const serviceSchema = z.object({
   logging: z
     .object({
       driver: z.string(),
-      options: z.record(z.string()).optional(),
+      options: z.record(z.string(), z.string()).optional(),
     })
     .optional(),
   readOnly: z.boolean().optional(),
@@ -123,7 +123,7 @@ export const serviceSchema = z.object({
   stopSignal: z.string().optional(),
   stopGracePeriod: z.string().optional(),
   stdinOpen: z.boolean().optional(),
-  extraLabels: z.record(z.string().or(z.boolean())).optional(),
+  extraLabels: z.record(z.string(), z.string().or(z.boolean())).optional(),
   dns: z.string().optional().or(z.array(z.string()).optional()),
 });
 

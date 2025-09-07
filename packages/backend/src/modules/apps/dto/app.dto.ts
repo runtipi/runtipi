@@ -16,7 +16,7 @@ export class AppDto extends createZodDto(
     exposedLocal: z.boolean(),
     domain: z.string().nullable(),
     isVisibleOnGuestDashboard: z.boolean(),
-    config: z.record(z.any()).optional(),
+    config: z.record(z.string(), z.any()).optional(),
     enableAuth: z.boolean().optional(),
     localSubdomain: z.string().nullish(),
     pendingRestart: z.boolean(),

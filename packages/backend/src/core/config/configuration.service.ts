@@ -36,7 +36,7 @@ const envSchema = z.object({
   ALLOW_AUTO_THEMES: z.string().transform((val) => val.toLowerCase() === 'true'),
   PERSIST_TRAEFIK_CONFIG: z.string().transform((val) => val.toLowerCase() === 'true'),
   QUEUE_TIMEOUT_IN_MINUTES: z.coerce.number().default(5),
-  LOG_LEVEL: z.nativeEnum(LOG_LEVEL_ENUM).default('info').catch('info'),
+  LOG_LEVEL: z.enum(LOG_LEVEL_ENUM).default('info').catch('info'),
   TZ: z.string(),
   ROOT_FOLDER_HOST: z.string(),
   NGINX_PORT: z.coerce.number().default(80),
@@ -65,7 +65,7 @@ export class ConfigurationService {
     let envFile = '';
     try {
       envFile = fs.readFileSync(this.envPath).toString();
-    } catch (e) {
+    } catch (_) {
       this.logger.error('❌ .env file not found');
     }
 
@@ -79,8 +79,8 @@ export class ConfigurationService {
     const env = envSchema.safeParse(conf);
 
     if (!env.success) {
-      this.logger.error(env.error.errors);
-      throw new Error(`❌ Invalid environment variables ${JSON.stringify(env.error.flatten(), null, 2)}`);
+      this.logger.error(env.error);
+      throw new Error(`❌ Invalid environment variables ${JSON.stringify(env.error, null, 2)}`);
     }
 
     this.logger = new LoggerService('backend', path.join(DATA_DIR, 'logs'), env.data.LOG_LEVEL);

@@ -50,7 +50,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash.clonedeep": "^4.5.0",
     "minisearch": "^7.1.1",
-    "nestjs-zod": "^4.3.1",
+    "nestjs-zod": "^5.0.1",
     "node-cron": "^4.0.5",
     "octokit": "^5.0.3",
     "pg": "^8.15.6",

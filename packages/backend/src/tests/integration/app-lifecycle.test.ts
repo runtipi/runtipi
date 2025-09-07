@@ -20,7 +20,7 @@ import { DockerService } from '@/modules/docker/docker.service';
 import { EnvUtils } from '@/modules/env/env.utils';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { SubnetManagerService } from '@/modules/network/subnet-manager.service';
-import { AppEventsQueue, appEventResultSchema, appEventSchema } from '@/modules/queue/entities/app-events';
+import { AppEventsQueue, appEventSchema } from '@/modules/queue/entities/app-events';
 import { QueueFactory } from '@/modules/queue/queue.factory';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
@@ -58,7 +58,6 @@ describe('App lifecycle', () => {
     queueName: 'app-events-queue',
     workers: 1,
     eventSchema: appEventSchema,
-    resultSchema: appEventResultSchema,
   });
 
   beforeAll(async () => {

@@ -4,7 +4,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { Connection } from 'rabbitmq-client';
-import { type ZodSchema, z } from 'zod';
+import { z } from 'zod';
 import { EventPublisher } from './event.publisher';
 import { Queue } from './queue.entity';
 
@@ -54,17 +54,12 @@ export class QueueFactory {
     this.initializeConnection();
   }
 
-  public createQueue<T extends ZodSchema, R extends ZodSchema>(params: {
-    queueName: string;
-    workers?: number;
-    eventSchema: T;
-    resultSchema?: R;
-    timeout?: number;
-  }) {
+  public createQueue<T extends z.ZodType>(params: { queueName: string; workers?: number; eventSchema: T; timeout?: number }) {
     const publisher = new EventPublisher(this.rabbit, this.logger, params.queueName);
+    const resultSchema = z.object({ success: z.boolean(), message: z.string() });
     publisher.initialize();
 
-    const { queueName, workers = 3, eventSchema, resultSchema = z.object({ success: z.boolean(), message: z.string() }), timeout } = params;
+    const { queueName, workers = 3, eventSchema, timeout } = params;
 
     const rpcClient = this.rabbit.createRPCClient({
       timeout,
