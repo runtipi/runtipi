@@ -1869,12 +1869,31 @@
               },
               "body": {
                 "type": "string"
+              },
+              "releases": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string"
+                    },
+                    "body": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "body"
+                  ]
+                }
               }
             },
             "required": [
               "current",
               "latest",
-              "body"
+              "body",
+              "releases"
             ]
           },
           "isLoggedIn": {
@@ -1941,12 +1960,31 @@
               },
               "body": {
                 "type": "string"
+              },
+              "releases": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string"
+                    },
+                    "body": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "body"
+                  ]
+                }
               }
             },
             "required": [
               "current",
               "latest",
-              "body"
+              "body",
+              "releases"
             ]
           },
           "userSettings": {

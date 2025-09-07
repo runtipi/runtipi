@@ -9,15 +9,19 @@ export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
         _id: string;
         _infinite?: boolean;
+        tags?: ReadonlyArray<string>;
     }
 ];
 
-const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions, infinite?: boolean): [
+const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions, infinite?: boolean, tags?: ReadonlyArray<string>): [
     QueryKey<TOptions>[0]
 ] => {
-    const params: QueryKey<TOptions>[0] = { _id: id, baseUrl: (options?.client ?? _heyApiClient).getConfig().baseUrl } as QueryKey<TOptions>[0];
+    const params: QueryKey<TOptions>[0] = { _id: id, baseUrl: options?.baseUrl || (options?.client ?? _heyApiClient).getConfig().baseUrl } as QueryKey<TOptions>[0];
     if (infinite) {
         params._infinite = infinite;
+    }
+    if (tags) {
+        params.tags = tags;
     }
     if (options?.body) {
         params.body = options.body;
@@ -72,10 +76,10 @@ export const appContextOptions = (options?: Options<AppContextData>) => {
 
 export const updateUserSettingsMutation = (options?: Partial<Options<UpdateUserSettingsData>>): UseMutationOptions<unknown, DefaultError, Options<UpdateUserSettingsData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateUserSettingsData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await updateUserSettings({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -86,10 +90,10 @@ export const updateUserSettingsMutation = (options?: Partial<Options<UpdateUserS
 
 export const acknowledgeWelcomeMutation = (options?: Partial<Options<AcknowledgeWelcomeData>>): UseMutationOptions<unknown, DefaultError, Options<AcknowledgeWelcomeData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<AcknowledgeWelcomeData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await acknowledgeWelcome({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -149,91 +153,40 @@ export const getTranslationOptions = (options: Options<GetTranslationData>) => {
     });
 };
 
-export const loginQueryKey = (options: Options<LoginData>) => createQueryKey('login', options);
-
-export const loginOptions = (options: Options<LoginData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await login({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: loginQueryKey(options)
-    });
-};
-
 export const loginMutation = (options?: Partial<Options<LoginData>>): UseMutationOptions<LoginResponse, DefaultError, Options<LoginData>> => {
     const mutationOptions: UseMutationOptions<LoginResponse, DefaultError, Options<LoginData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await login({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const verifyTotpQueryKey = (options: Options<VerifyTotpData>) => createQueryKey('verifyTotp', options);
-
-export const verifyTotpOptions = (options: Options<VerifyTotpData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await verifyTotp({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: verifyTotpQueryKey(options)
-    });
 };
 
 export const verifyTotpMutation = (options?: Partial<Options<VerifyTotpData>>): UseMutationOptions<VerifyTotpResponse, DefaultError, Options<VerifyTotpData>> => {
     const mutationOptions: UseMutationOptions<VerifyTotpResponse, DefaultError, Options<VerifyTotpData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await verifyTotp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const registerQueryKey = (options: Options<RegisterData>) => createQueryKey('register', options);
-
-export const registerOptions = (options: Options<RegisterData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await register({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: registerQueryKey(options)
-    });
 };
 
 export const registerMutation = (options?: Partial<Options<RegisterData>>): UseMutationOptions<RegisterResponse, DefaultError, Options<RegisterData>> => {
     const mutationOptions: UseMutationOptions<RegisterResponse, DefaultError, Options<RegisterData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await register({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -242,29 +195,12 @@ export const registerMutation = (options?: Partial<Options<RegisterData>>): UseM
     return mutationOptions;
 };
 
-export const logoutQueryKey = (options?: Options<LogoutData>) => createQueryKey('logout', options);
-
-export const logoutOptions = (options?: Options<LogoutData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await logout({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: logoutQueryKey(options)
-    });
-};
-
 export const logoutMutation = (options?: Partial<Options<LogoutData>>): UseMutationOptions<unknown, DefaultError, Options<LogoutData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<LogoutData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await logout({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -275,10 +211,10 @@ export const logoutMutation = (options?: Partial<Options<LogoutData>>): UseMutat
 
 export const changeUsernameMutation = (options?: Partial<Options<ChangeUsernameData>>): UseMutationOptions<unknown, DefaultError, Options<ChangeUsernameData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<ChangeUsernameData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await changeUsername({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -289,10 +225,10 @@ export const changeUsernameMutation = (options?: Partial<Options<ChangeUsernameD
 
 export const changePasswordMutation = (options?: Partial<Options<ChangePasswordData>>): UseMutationOptions<unknown, DefaultError, Options<ChangePasswordData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<ChangePasswordData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await changePassword({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -303,10 +239,10 @@ export const changePasswordMutation = (options?: Partial<Options<ChangePasswordD
 
 export const getTotpUriMutation = (options?: Partial<Options<GetTotpUriData>>): UseMutationOptions<GetTotpUriResponse, DefaultError, Options<GetTotpUriData>> => {
     const mutationOptions: UseMutationOptions<GetTotpUriResponse, DefaultError, Options<GetTotpUriData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await getTotpUri({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -317,10 +253,10 @@ export const getTotpUriMutation = (options?: Partial<Options<GetTotpUriData>>): 
 
 export const setupTotpMutation = (options?: Partial<Options<SetupTotpData>>): UseMutationOptions<unknown, DefaultError, Options<SetupTotpData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SetupTotpData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await setupTotp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -331,10 +267,10 @@ export const setupTotpMutation = (options?: Partial<Options<SetupTotpData>>): Us
 
 export const disableTotpMutation = (options?: Partial<Options<DisableTotpData>>): UseMutationOptions<unknown, DefaultError, Options<DisableTotpData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DisableTotpData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await disableTotp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -345,10 +281,10 @@ export const disableTotpMutation = (options?: Partial<Options<DisableTotpData>>)
 
 export const cancelResetPasswordMutation = (options?: Partial<Options<CancelResetPasswordData>>): UseMutationOptions<unknown, DefaultError, Options<CancelResetPasswordData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<CancelResetPasswordData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await cancelResetPassword({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -374,29 +310,12 @@ export const checkResetPasswordRequestOptions = (options?: Options<CheckResetPas
     });
 };
 
-export const resetPasswordQueryKey = (options: Options<ResetPasswordData>) => createQueryKey('resetPassword', options);
-
-export const resetPasswordOptions = (options: Options<ResetPasswordData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await resetPassword({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: resetPasswordQueryKey(options)
-    });
-};
-
 export const resetPasswordMutation = (options?: Partial<Options<ResetPasswordData>>): UseMutationOptions<ResetPasswordResponse, DefaultError, Options<ResetPasswordData>> => {
     const mutationOptions: UseMutationOptions<ResetPasswordResponse, DefaultError, Options<ResetPasswordData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await resetPassword({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -456,29 +375,12 @@ export const getGuestAppsOptions = (options?: Options<GetGuestAppsData>) => {
     });
 };
 
-export const getRandomPortQueryKey = (options?: Options<GetRandomPortData>) => createQueryKey('getRandomPort', options);
-
-export const getRandomPortOptions = (options?: Options<GetRandomPortData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getRandomPort({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getRandomPortQueryKey(options)
-    });
-};
-
 export const getRandomPortMutation = (options?: Partial<Options<GetRandomPortData>>): UseMutationOptions<GetRandomPortResponse, DefaultError, Options<GetRandomPortData>> => {
     const mutationOptions: UseMutationOptions<GetRandomPortResponse, DefaultError, Options<GetRandomPortData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await getRandomPort({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -612,29 +514,12 @@ export const getImageOptions = (options: Options<GetImageData>) => {
     });
 };
 
-export const pullAppStoresQueryKey = (options?: Options<PullAppStoresData>) => createQueryKey('pullAppStores', options);
-
-export const pullAppStoresOptions = (options?: Options<PullAppStoresData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await pullAppStores({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: pullAppStoresQueryKey(options)
-    });
-};
-
 export const pullAppStoresMutation = (options?: Partial<Options<PullAppStoresData>>): UseMutationOptions<PullAppStoresResponse, DefaultError, Options<PullAppStoresData>> => {
     const mutationOptions: UseMutationOptions<PullAppStoresResponse, DefaultError, Options<PullAppStoresData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await pullAppStores({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -643,29 +528,12 @@ export const pullAppStoresMutation = (options?: Partial<Options<PullAppStoresDat
     return mutationOptions;
 };
 
-export const createAppStoreQueryKey = (options: Options<CreateAppStoreData>) => createQueryKey('createAppStore', options);
-
-export const createAppStoreOptions = (options: Options<CreateAppStoreData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await createAppStore({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: createAppStoreQueryKey(options)
-    });
-};
-
 export const createAppStoreMutation = (options?: Partial<Options<CreateAppStoreData>>): UseMutationOptions<unknown, DefaultError, Options<CreateAppStoreData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<CreateAppStoreData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await createAppStore({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -710,10 +578,10 @@ export const getEnabledAppStoresOptions = (options?: Options<GetEnabledAppStores
 
 export const deleteAppStoreMutation = (options?: Partial<Options<DeleteAppStoreData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteAppStoreData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteAppStoreData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await deleteAppStore({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -724,103 +592,52 @@ export const deleteAppStoreMutation = (options?: Partial<Options<DeleteAppStoreD
 
 export const updateAppStoreMutation = (options?: Partial<Options<UpdateAppStoreData>>): UseMutationOptions<unknown, DefaultError, Options<UpdateAppStoreData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAppStoreData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await updateAppStore({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const installAppQueryKey = (options: Options<InstallAppData>) => createQueryKey('installApp', options);
-
-export const installAppOptions = (options: Options<InstallAppData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await installApp({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: installAppQueryKey(options)
-    });
 };
 
 export const installAppMutation = (options?: Partial<Options<InstallAppData>>): UseMutationOptions<InstallAppResponse, DefaultError, Options<InstallAppData>> => {
     const mutationOptions: UseMutationOptions<InstallAppResponse, DefaultError, Options<InstallAppData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await installApp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const startAppQueryKey = (options: Options<StartAppData>) => createQueryKey('startApp', options);
-
-export const startAppOptions = (options: Options<StartAppData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await startApp({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: startAppQueryKey(options)
-    });
 };
 
 export const startAppMutation = (options?: Partial<Options<StartAppData>>): UseMutationOptions<StartAppResponse, DefaultError, Options<StartAppData>> => {
     const mutationOptions: UseMutationOptions<StartAppResponse, DefaultError, Options<StartAppData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await startApp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const stopAppQueryKey = (options: Options<StopAppData>) => createQueryKey('stopApp', options);
-
-export const stopAppOptions = (options: Options<StopAppData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await stopApp({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: stopAppQueryKey(options)
-    });
 };
 
 export const stopAppMutation = (options?: Partial<Options<StopAppData>>): UseMutationOptions<StopAppResponse, DefaultError, Options<StopAppData>> => {
     const mutationOptions: UseMutationOptions<StopAppResponse, DefaultError, Options<StopAppData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await stopApp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -829,29 +646,12 @@ export const stopAppMutation = (options?: Partial<Options<StopAppData>>): UseMut
     return mutationOptions;
 };
 
-export const restartAppQueryKey = (options: Options<RestartAppData>) => createQueryKey('restartApp', options);
-
-export const restartAppOptions = (options: Options<RestartAppData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await restartApp({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: restartAppQueryKey(options)
-    });
-};
-
 export const restartAppMutation = (options?: Partial<Options<RestartAppData>>): UseMutationOptions<RestartAppResponse, DefaultError, Options<RestartAppData>> => {
     const mutationOptions: UseMutationOptions<RestartAppResponse, DefaultError, Options<RestartAppData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await restartApp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -862,10 +662,10 @@ export const restartAppMutation = (options?: Partial<Options<RestartAppData>>): 
 
 export const uninstallAppMutation = (options?: Partial<Options<UninstallAppData>>): UseMutationOptions<UninstallAppResponse, DefaultError, Options<UninstallAppData>> => {
     const mutationOptions: UseMutationOptions<UninstallAppResponse, DefaultError, Options<UninstallAppData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await uninstallApp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -874,29 +674,12 @@ export const uninstallAppMutation = (options?: Partial<Options<UninstallAppData>
     return mutationOptions;
 };
 
-export const resetAppQueryKey = (options: Options<ResetAppData>) => createQueryKey('resetApp', options);
-
-export const resetAppOptions = (options: Options<ResetAppData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await resetApp({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: resetAppQueryKey(options)
-    });
-};
-
 export const resetAppMutation = (options?: Partial<Options<ResetAppData>>): UseMutationOptions<ResetAppResponse, DefaultError, Options<ResetAppData>> => {
     const mutationOptions: UseMutationOptions<ResetAppResponse, DefaultError, Options<ResetAppData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await resetApp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -907,10 +690,10 @@ export const resetAppMutation = (options?: Partial<Options<ResetAppData>>): UseM
 
 export const updateAppMutation = (options?: Partial<Options<UpdateAppData>>): UseMutationOptions<UpdateAppResponse, DefaultError, Options<UpdateAppData>> => {
     const mutationOptions: UseMutationOptions<UpdateAppResponse, DefaultError, Options<UpdateAppData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await updateApp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -921,10 +704,10 @@ export const updateAppMutation = (options?: Partial<Options<UpdateAppData>>): Us
 
 export const updateAppConfigMutation = (options?: Partial<Options<UpdateAppConfigData>>): UseMutationOptions<UpdateAppConfigResponse, DefaultError, Options<UpdateAppConfigData>> => {
     const mutationOptions: UseMutationOptions<UpdateAppConfigResponse, DefaultError, Options<UpdateAppConfigData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await updateAppConfig({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -935,41 +718,24 @@ export const updateAppConfigMutation = (options?: Partial<Options<UpdateAppConfi
 
 export const updateAllAppsMutation = (options?: Partial<Options<UpdateAllAppsData>>): UseMutationOptions<unknown, DefaultError, Options<UpdateAllAppsData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAllAppsData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await updateAllApps({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const backupAppQueryKey = (options: Options<BackupAppData>) => createQueryKey('backupApp', options);
-
-export const backupAppOptions = (options: Options<BackupAppData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await backupApp({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: backupAppQueryKey(options)
-    });
 };
 
 export const backupAppMutation = (options?: Partial<Options<BackupAppData>>): UseMutationOptions<BackupAppResponse, DefaultError, Options<BackupAppData>> => {
     const mutationOptions: UseMutationOptions<BackupAppResponse, DefaultError, Options<BackupAppData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await backupApp({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -978,29 +744,12 @@ export const backupAppMutation = (options?: Partial<Options<BackupAppData>>): Us
     return mutationOptions;
 };
 
-export const restoreAppBackupQueryKey = (options: Options<RestoreAppBackupData>) => createQueryKey('restoreAppBackup', options);
-
-export const restoreAppBackupOptions = (options: Options<RestoreAppBackupData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await restoreAppBackup({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: restoreAppBackupQueryKey(options)
-    });
-};
-
 export const restoreAppBackupMutation = (options?: Partial<Options<RestoreAppBackupData>>): UseMutationOptions<RestoreAppBackupResponse, DefaultError, Options<RestoreAppBackupData>> => {
     const mutationOptions: UseMutationOptions<RestoreAppBackupResponse, DefaultError, Options<RestoreAppBackupData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await restoreAppBackup({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -1011,10 +760,10 @@ export const restoreAppBackupMutation = (options?: Partial<Options<RestoreAppBac
 
 export const deleteAppBackupMutation = (options?: Partial<Options<DeleteAppBackupData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await deleteAppBackup({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -1151,29 +900,12 @@ export const getLinksOptions = (options?: Options<GetLinksData>) => {
     });
 };
 
-export const createLinkQueryKey = (options: Options<CreateLinkData>) => createQueryKey('createLink', options);
-
-export const createLinkOptions = (options: Options<CreateLinkData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await createLink({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: createLinkQueryKey(options)
-    });
-};
-
 export const createLinkMutation = (options?: Partial<Options<CreateLinkData>>): UseMutationOptions<unknown, DefaultError, Options<CreateLinkData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<CreateLinkData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await createLink({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -1184,10 +916,10 @@ export const createLinkMutation = (options?: Partial<Options<CreateLinkData>>): 
 
 export const deleteLinkMutation = (options?: Partial<Options<DeleteLinkData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteLinkData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteLinkData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await deleteLink({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -1198,10 +930,10 @@ export const deleteLinkMutation = (options?: Partial<Options<DeleteLinkData>>): 
 
 export const editLinkMutation = (options?: Partial<Options<EditLinkData>>): UseMutationOptions<unknown, DefaultError, Options<EditLinkData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<EditLinkData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await editLink({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -1252,36 +984,16 @@ export const getUserConfigOptions = (options: Options<GetUserConfigData>) => {
  */
 export const updateUserConfigMutation = (options?: Partial<Options<UpdateUserConfigData>>): UseMutationOptions<unknown, DefaultError, Options<UpdateUserConfigData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateUserConfigData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await updateUserConfig({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const enableUserConfigQueryKey = (options: Options<EnableUserConfigData>) => createQueryKey('enableUserConfig', options);
-
-/**
- * Enable the user configuration for an app
- */
-export const enableUserConfigOptions = (options: Options<EnableUserConfigData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await enableUserConfig({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: enableUserConfigQueryKey(options)
-    });
 };
 
 /**
@@ -1289,36 +1001,16 @@ export const enableUserConfigOptions = (options: Options<EnableUserConfigData>) 
  */
 export const enableUserConfigMutation = (options?: Partial<Options<EnableUserConfigData>>): UseMutationOptions<unknown, DefaultError, Options<EnableUserConfigData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<EnableUserConfigData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await enableUserConfig({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const disableUserConfigQueryKey = (options: Options<DisableUserConfigData>) => createQueryKey('disableUserConfig', options);
-
-/**
- * Disable the user configuration for an app
- */
-export const disableUserConfigOptions = (options: Options<DisableUserConfigData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await disableUserConfig({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: disableUserConfigQueryKey(options)
-    });
 };
 
 /**
@@ -1326,134 +1018,66 @@ export const disableUserConfigOptions = (options: Options<DisableUserConfigData>
  */
 export const disableUserConfigMutation = (options?: Partial<Options<DisableUserConfigData>>): UseMutationOptions<unknown, DefaultError, Options<DisableUserConfigData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DisableUserConfigData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await disableUserConfig({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const seedDatabaseQueryKey = (options?: Options<SeedDatabaseData>) => createQueryKey('seedDatabase', options);
-
-export const seedDatabaseOptions = (options?: Options<SeedDatabaseData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await seedDatabase({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: seedDatabaseQueryKey(options)
-    });
 };
 
 export const seedDatabaseMutation = (options?: Partial<Options<SeedDatabaseData>>): UseMutationOptions<unknown, DefaultError, Options<SeedDatabaseData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SeedDatabaseData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await seedDatabase({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const setAllAppUpdateAvailableQueryKey = (options?: Options<SetAllAppUpdateAvailableData>) => createQueryKey('setAllAppUpdateAvailable', options);
-
-export const setAllAppUpdateAvailableOptions = (options?: Options<SetAllAppUpdateAvailableData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await setAllAppUpdateAvailable({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: setAllAppUpdateAvailableQueryKey(options)
-    });
 };
 
 export const setAllAppUpdateAvailableMutation = (options?: Partial<Options<SetAllAppUpdateAvailableData>>): UseMutationOptions<unknown, DefaultError, Options<SetAllAppUpdateAvailableData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SetAllAppUpdateAvailableData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await setAllAppUpdateAvailable({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const setAllAppSubnetToNullQueryKey = (options?: Options<SetAllAppSubnetToNullData>) => createQueryKey('setAllAppSubnetToNull', options);
-
-export const setAllAppSubnetToNullOptions = (options?: Options<SetAllAppSubnetToNullData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await setAllAppSubnetToNull({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: setAllAppSubnetToNullQueryKey(options)
-    });
 };
 
 export const setAllAppSubnetToNullMutation = (options?: Partial<Options<SetAllAppSubnetToNullData>>): UseMutationOptions<unknown, DefaultError, Options<SetAllAppSubnetToNullData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SetAllAppSubnetToNullData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await setAllAppSubnetToNull({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
         }
     };
     return mutationOptions;
-};
-
-export const startAllAppsQueryKey = (options?: Options<StartAllAppsData>) => createQueryKey('startAllApps', options);
-
-export const startAllAppsOptions = (options?: Options<StartAllAppsData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await startAllApps({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: startAllAppsQueryKey(options)
-    });
 };
 
 export const startAllAppsMutation = (options?: Partial<Options<StartAllAppsData>>): UseMutationOptions<unknown, DefaultError, Options<StartAllAppsData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StartAllAppsData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await startAllApps({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
@@ -1462,29 +1086,12 @@ export const startAllAppsMutation = (options?: Partial<Options<StartAllAppsData>
     return mutationOptions;
 };
 
-export const backupAllAppsQueryKey = (options?: Options<BackupAllAppsData>) => createQueryKey('backupAllApps', options);
-
-export const backupAllAppsOptions = (options?: Options<BackupAllAppsData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await backupAllApps({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: backupAllAppsQueryKey(options)
-    });
-};
-
 export const backupAllAppsMutation = (options?: Partial<Options<BackupAllAppsData>>): UseMutationOptions<unknown, DefaultError, Options<BackupAllAppsData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<BackupAllAppsData>> = {
-        mutationFn: async (localOptions) => {
+        mutationFn: async (fnOptions) => {
             const { data } = await backupAllApps({
                 ...options,
-                ...localOptions,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;

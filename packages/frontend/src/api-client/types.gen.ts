@@ -5,6 +5,10 @@ export type UserContextDto = {
         current: string;
         latest: string;
         body: string;
+        releases: Array<{
+            version: string;
+            body: string;
+        }>;
     };
     /**
      * Indicates if the user is logged in
@@ -49,6 +53,10 @@ export type AppContextDto = {
         current: string;
         latest: string;
         body: string;
+        releases: Array<{
+            version: string;
+            body: string;
+        }>;
     };
     userSettings: {
         dnsIp: string;

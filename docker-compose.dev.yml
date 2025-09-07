@@ -102,7 +102,7 @@ services:
       RABBITMQ_PASSWORD: rabbitmq
       RABBITMQ_HOST: runtipi-queue
       INTERNAL_IP: 127.0.0.1
-      TIPI_VERSION: 0.0.0
+      TIPI_VERSION: 3.10.0
       LOG_LEVEL: debug
     env_file:
       - path: .env

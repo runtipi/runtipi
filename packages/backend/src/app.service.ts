@@ -1,8 +1,6 @@
 import path from 'node:path';
 import { Inject, Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
-import { z } from 'zod';
-import { LATEST_RELEASE_URL } from './common/constants';
 import { execAsync } from './common/helpers/exec-helpers';
 import { CacheService, ONE_DAY_IN_SECONDS } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
@@ -15,6 +13,7 @@ import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 import { DOCKERODE } from './modules/docker/docker.module';
 import Dockerode from 'dockerode';
+import { GithubService } from './utils/github/github.service';
 
 @Injectable()
 export class AppService {
@@ -28,6 +27,7 @@ export class AppService {
     private readonly marketplaceService: MarketplaceService,
     private readonly databaseService: DatabaseService,
     private readonly appLifecycleService: AppLifecycleService,
+    private readonly githubService: GithubService,
     @Inject(DOCKERODE) private docker: Dockerode,
   ) {}
 
@@ -81,39 +81,17 @@ export class AppService {
   public async getVersion() {
     const { version: currentVersion } = this.configuration.getConfig();
 
-    try {
-      let version = this.cache.get('latestVersion') ?? '';
-      let body = this.cache.get('latestVersionBody') ?? '';
+    const [githubRelease, releasesSince] = await Promise.all([
+      this.githubService.getLatestRelease('runtipi', 'runtipi'),
+      this.githubService.getReleasesSince('runtipi', 'runtipi', currentVersion),
+    ]);
 
-      if (!version) {
-        version = currentVersion;
-        // Fetch the latest version in the background
-        fetch(LATEST_RELEASE_URL).then(async (response) => {
-          if (!response.ok) {
-            this.logger.error(`Failed to fetch latest version from GitHub: ${response.statusText}`);
-            return;
-          }
-          const data = await response.json();
-
-          const res = z.object({ tag_name: z.string(), body: z.string() }).parse(data);
-
-          version = res.tag_name;
-          body = res.body;
-
-          this.cache.set('latestVersion', version, 60 * 60);
-          this.cache.set('latestVersionBody', body, 60 * 60);
-        });
-      }
-
-      return { current: currentVersion, latest: version, body };
-    } catch (e) {
-      this.logger.error(e);
-      return {
-        current: currentVersion,
-        latest: currentVersion,
-        body: '',
-      };
-    }
+    return {
+      current: currentVersion,
+      latest: githubRelease?.version || currentVersion,
+      body: githubRelease?.body ?? '',
+      releases: releasesSince,
+    };
   }
 
   public async copyAssets() {

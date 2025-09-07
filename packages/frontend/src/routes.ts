@@ -7,6 +7,7 @@ export default [
     route('register', './modules/auth/pages/register-page.tsx', { id: 'register' }),
     route('reset-password', './modules/auth/pages/reset-password-page.tsx', { id: 'reset-password' }),
   ]),
+  route('playground', './modules/playground/pages/playground-page.tsx', { id: 'playground' }),
   // Authenticated routes
   layout('./components/routes/authenticated-route.tsx', [
     route('dashboard', './modules/dashboard/pages/dashboard.tsx', { id: 'dashboard' }),

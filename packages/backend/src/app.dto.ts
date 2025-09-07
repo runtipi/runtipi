@@ -36,7 +36,12 @@ export class PartialUserSettingsDto extends createZodDto(settingsSchema.partial(
 
 export class AppContextDto extends createZodDto(
   z.object({
-    version: z.object({ current: z.string(), latest: z.string(), body: z.string() }),
+    version: z.object({
+      current: z.string(),
+      latest: z.string(),
+      body: z.string(),
+      releases: z.array(z.object({ version: z.string(), body: z.string() })),
+    }),
     userSettings: UserSettingsDto.schema,
     user: UserDto.schema,
     apps: AppInfoSimpleDto.schema.array(),
@@ -46,7 +51,12 @@ export class AppContextDto extends createZodDto(
 
 export class UserContextDto extends createZodDto(
   z.object({
-    version: z.object({ current: z.string(), latest: z.string(), body: z.string() }),
+    version: z.object({
+      current: z.string(),
+      latest: z.string(),
+      body: z.string(),
+      releases: z.array(z.object({ version: z.string(), body: z.string() })),
+    }),
     isLoggedIn: z.boolean().describe('Indicates if the user is logged in'),
     isConfigured: z.boolean().describe('Indicates if the app is already configured'),
     isGuestDashboardEnabled: z.boolean().describe('Indicates if the guest dashboard is enabled'),

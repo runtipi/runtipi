@@ -19,18 +19,21 @@ export const GeneralActionsContainer = () => {
 
     return (
       <div>
-        {version.body && (
-          <div className="mt-3 card col-12 col-md-8">
+        {version.releases?.map((release) => (
+          <div key={release.version} className="mt-3 card col-12 col-md-8">
             <div className="card-stamp">
               <div className="card-stamp-icon bg-yellow">
                 <IconStar size={80} />
               </div>
             </div>
+            <div className="card-header">
+              <h3 className="card-title">Version {release.version}</h3>
+            </div>
             <div className="card-body">
-              <Markdown className="" content={version.body} />
+              <Markdown className="" content={release.body} />
             </div>
           </div>
-        )}
+        ))}
       </div>
     );
   };
