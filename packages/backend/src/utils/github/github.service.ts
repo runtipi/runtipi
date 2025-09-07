@@ -1,4 +1,5 @@
 import { CacheService } from '@/core/cache/cache.service';
+import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { Octokit } from 'octokit';
@@ -19,6 +20,7 @@ export class GithubService {
   constructor(
     private readonly cache: CacheService,
     private readonly logger: LoggerService,
+    private readonly config: ConfigurationService,
   ) {}
 
   async timeout(ms: number) {
@@ -26,14 +28,16 @@ export class GithubService {
   }
 
   async getLatestRelease(owner: string, repo: string) {
+    const currentVersion = this.config.getConfig().version;
+
     let version = this.cache.get('latestVersion') ?? '';
     let body = this.cache.get('latestVersionBody') ?? '';
 
-    if (version && body) {
+    if (version) {
       return { version, body };
     }
 
-    const versionPromise = new Promise<{ version: string; body: string }>((resolve) => {
+    const versionPromise = new Promise<{ version: string; body: string } | null>((resolve) => {
       octokit.rest.repos
         .getLatestRelease({
           owner,
@@ -47,11 +51,15 @@ export class GithubService {
             version: res.data.tag_name,
             body: res.data.body ?? '',
           });
+        })
+        .catch((err) => {
+          this.logger.debug('GitHub API call failed, will use empty cache', err);
+          resolve(null);
         });
     });
 
     const result = await Promise.race([versionPromise, this.timeout(3000).then(() => null)]);
-    this.cache.set('latestVersion', result?.version ?? '', 60 * 60);
+    this.cache.set('latestVersion', result?.version ?? currentVersion, 60 * 60);
     this.cache.set('latestVersionBody', result?.body ?? '', 60 * 60);
     return result ?? { version: undefined, body: undefined };
   }
@@ -74,11 +82,15 @@ export class GithubService {
             .then((res) => {
               const fetchedReleases = res.data.map((release) => ({ ...release, body: release.body ?? '' }));
               resolve(fetchedReleases);
+            })
+            .catch((err) => {
+              this.logger.debug('GitHub API call failed, will use empty releases', err);
+              resolve([]);
             });
         });
 
         releases = await Promise.race([releasesPromise, this.timeout(3000).then(() => [])]);
-        this.cache.set(`releasesSince:${sinceTag}`, JSON.stringify(releases), 60 * 60 * 24);
+        this.cache.set(`releasesSince:${sinceTag}`, JSON.stringify(releases), 60 * 60);
       }
 
       const filtered = releases
