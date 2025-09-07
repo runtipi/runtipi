@@ -1463,14 +1463,14 @@ export type BackupAllAppsResponses = {
 };
 
 export type IncrementAllAppVersionsData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/api/debug/increment-all-app-versions';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/debug/increment-all-app-versions';
 };
 
 export type IncrementAllAppVersionsResponses = {
-  201: unknown;
+    201: unknown;
 };
 
 export type ClientOptions = {
