@@ -879,11 +879,11 @@ export type SearchAppsData = {
     body?: never;
     path?: never;
     query?: {
-        storeId?: string;
-        category?: 'network' | 'media' | 'development' | 'automation' | 'social' | 'utilities' | 'photography' | 'security' | 'featured' | 'books' | 'data' | 'music' | 'finance' | 'gaming' | 'ai';
-        cursor?: string;
-        pageSize?: number;
         search?: string;
+        pageSize?: number;
+        cursor?: string;
+        category?: 'network' | 'media' | 'development' | 'automation' | 'social' | 'utilities' | 'photography' | 'security' | 'featured' | 'books' | 'data' | 'music' | 'finance' | 'gaming' | 'ai';
+        storeId?: string;
     };
     url: '/api/marketplace/apps/search';
 };
@@ -1306,13 +1306,13 @@ export type CheckErrors = {
                 status: string;
                 [key: string]: unknown | string;
             };
-        } | null;
+        };
         error?: {
             [key: string]: {
                 status: string;
                 [key: string]: unknown | string;
             };
-        } | null;
+        };
         details?: {
             [key: string]: {
                 status: string;
@@ -1335,13 +1335,13 @@ export type CheckResponses = {
                 status: string;
                 [key: string]: unknown | string;
             };
-        } | null;
+        };
         error?: {
             [key: string]: {
                 status: string;
                 [key: string]: unknown | string;
             };
-        } | null;
+        };
         details?: {
             [key: string]: {
                 status: string;

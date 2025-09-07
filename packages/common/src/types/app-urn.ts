@@ -5,6 +5,4 @@ export type AppUrn = `${string}:${string}` & {
   split: (separator: ':') => [string, string];
 };
 
-export const zodAppUrn = z.custom<AppUrn>((v) => {
-  return typeof v === 'string' && v.split(':').length === 2;
-});
+export const zodAppUrn = z.string<AppUrn>();

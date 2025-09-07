@@ -14,13 +14,18 @@ import metadata from './metadata';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
 
 async function setupSwagger(app: INestApplication) {
-  const config = new DocumentBuilder().setTitle('Runtipi API').setDescription('API specs for Runtipi').setVersion('1.0').build();
+  const config = new DocumentBuilder()
+    .setTitle('Runtipi API')
+    .setDescription('API specs for Runtipi')
+    .setOpenAPIVersion('3.1.0')
+    .setVersion('1.0')
+    .build();
   await SwaggerModule.loadPluginMetadata(metadata);
 
   const document = SwaggerModule.createDocument(app, config, {
     operationIdFactory: (_: string, methodKey: string) => methodKey,
   });
-  SwaggerModule.setup('api/docs', app, cleanupOpenApiDoc(document));
+  SwaggerModule.setup('api/docs', app, cleanupOpenApiDoc(document, { version: '3.1' }));
 
   // write the swagger.json file to the assets folder
   if (process.env.NODE_ENV !== 'production') {

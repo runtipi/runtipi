@@ -2,7 +2,11 @@
   "name": "@runtipi/common",
   "version": "0.8.1",
   "description": "",
-  "files": ["dist", "package.json", "README.md"],
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "type": "module",
   "exports": {
     "./schemas": {
@@ -18,8 +22,12 @@
   },
   "typesVersions": {
     "*": {
-      "schemas": ["dist/schemas/index.d.ts"],
-      "types": ["dist/types/index.d.ts"]
+      "schemas": [
+        "dist/schemas/index.d.ts"
+      ],
+      "types": [
+        "dist/types/index.d.ts"
+      ]
     }
   },
   "scripts": {
