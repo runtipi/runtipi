@@ -239,10 +239,10 @@ export class ServiceBuilder {
    * // Legacy usage (backward compatible)
    * service.setVolume({ hostPath: '/path/to/host', containerPath: '/path/to/container', shared: true });
    * // New bind propagation usage
-   * service.setVolume({ 
-   *   hostPath: '/path/to/host', 
-   *   containerPath: '/path/to/container', 
-   *   bind: { propagation: 'rshared' } 
+   * service.setVolume({
+   *   hostPath: '/path/to/host',
+   *   containerPath: '/path/to/container',
+   *   bind: { propagation: 'rshared' }
    * });
    * ```
    */
@@ -252,13 +252,13 @@ export class ServiceBuilder {
     }
 
     const readOnly = volume.readOnly ? ':ro' : '';
-    
+
     // Handle new bind mount propagation mode
     let propagationFlag = '';
     if (volume.bind?.propagation) {
       // Map propagation modes to Docker mount flags
-      // Note: Docker currently uses :z and :Z flags for SELinux labeling, 
-      // not true mount propagation. Full bind mount propagation requires 
+      // Note: Docker currently uses :z and :Z flags for SELinux labeling,
+      // not true mount propagation. Full bind mount propagation requires
       // long-form Docker Compose syntax which would need additional implementation.
       // For now, we map to the closest available equivalent.
       switch (volume.bind.propagation) {
@@ -297,11 +297,11 @@ export class ServiceBuilder {
     // Validation: ensure only one propagation method is used
     const legacyFlags = [volume.shared, volume.private].filter(Boolean).length;
     const newBindFlag = volume.bind?.propagation ? 1 : 0;
-    
+
     if (legacyFlags > 1) {
       throw new Error('Only one of shared or private can be set');
     }
-    
+
     if (legacyFlags > 0 && newBindFlag > 0) {
       throw new Error('Cannot use both legacy flags (shared/private) and new bind.propagation simultaneously');
     }

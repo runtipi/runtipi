@@ -113,36 +113,30 @@ describe('ServiceBuilder', () => {
 
     describe('Legacy boolean flags (backward compatibility)', () => {
       it('should handle shared flag', () => {
-        const built = service
-          .setVolume({ hostPath: '/host', containerPath: '/container', shared: true })
-          .build();
+        const built = service.setVolume({ hostPath: '/host', containerPath: '/container', shared: true }).build();
 
         expect(built.volumes).toEqual(['/host:/container:z']);
       });
 
       it('should handle private flag', () => {
-        const built = service
-          .setVolume({ hostPath: '/host', containerPath: '/container', private: true })
-          .build();
+        const built = service.setVolume({ hostPath: '/host', containerPath: '/container', private: true }).build();
 
         expect(built.volumes).toEqual(['/host:/container:Z']);
       });
 
       it('should throw error when both shared and private are set', () => {
         expect(() => {
-          service.setVolume({ 
-            hostPath: '/host', 
-            containerPath: '/container', 
-            shared: true, 
-            private: true 
+          service.setVolume({
+            hostPath: '/host',
+            containerPath: '/container',
+            shared: true,
+            private: true,
           });
         }).toThrowError('Only one of shared or private can be set');
       });
 
       it('should combine readOnly with legacy flags', () => {
-        const built = service
-          .setVolume({ hostPath: '/host', containerPath: '/container', readOnly: true, shared: true })
-          .build();
+        const built = service.setVolume({ hostPath: '/host', containerPath: '/container', readOnly: true, shared: true }).build();
 
         expect(built.volumes).toEqual(['/host:/container:ro:z']);
       });
@@ -151,10 +145,10 @@ describe('ServiceBuilder', () => {
     describe('New bind mount propagation', () => {
       it('should handle rshared propagation mode', () => {
         const built = service
-          .setVolume({ 
-            hostPath: '/host', 
-            containerPath: '/container', 
-            bind: { propagation: 'rshared' } 
+          .setVolume({
+            hostPath: '/host',
+            containerPath: '/container',
+            bind: { propagation: 'rshared' },
           })
           .build();
 
@@ -163,10 +157,10 @@ describe('ServiceBuilder', () => {
 
       it('should handle shared propagation mode', () => {
         const built = service
-          .setVolume({ 
-            hostPath: '/host', 
-            containerPath: '/container', 
-            bind: { propagation: 'shared' } 
+          .setVolume({
+            hostPath: '/host',
+            containerPath: '/container',
+            bind: { propagation: 'shared' },
           })
           .build();
 
@@ -175,10 +169,10 @@ describe('ServiceBuilder', () => {
 
       it('should handle private propagation mode', () => {
         const built = service
-          .setVolume({ 
-            hostPath: '/host', 
-            containerPath: '/container', 
-            bind: { propagation: 'private' } 
+          .setVolume({
+            hostPath: '/host',
+            containerPath: '/container',
+            bind: { propagation: 'private' },
           })
           .build();
 
@@ -187,10 +181,10 @@ describe('ServiceBuilder', () => {
 
       it('should handle rprivate propagation mode', () => {
         const built = service
-          .setVolume({ 
-            hostPath: '/host', 
-            containerPath: '/container', 
-            bind: { propagation: 'rprivate' } 
+          .setVolume({
+            hostPath: '/host',
+            containerPath: '/container',
+            bind: { propagation: 'rprivate' },
           })
           .build();
 
@@ -199,10 +193,10 @@ describe('ServiceBuilder', () => {
 
       it('should handle rslave propagation mode', () => {
         const built = service
-          .setVolume({ 
-            hostPath: '/host', 
-            containerPath: '/container', 
-            bind: { propagation: 'rslave' } 
+          .setVolume({
+            hostPath: '/host',
+            containerPath: '/container',
+            bind: { propagation: 'rslave' },
           })
           .build();
 
@@ -211,10 +205,10 @@ describe('ServiceBuilder', () => {
 
       it('should handle slave propagation mode', () => {
         const built = service
-          .setVolume({ 
-            hostPath: '/host', 
-            containerPath: '/container', 
-            bind: { propagation: 'slave' } 
+          .setVolume({
+            hostPath: '/host',
+            containerPath: '/container',
+            bind: { propagation: 'slave' },
           })
           .build();
 
@@ -223,11 +217,11 @@ describe('ServiceBuilder', () => {
 
       it('should combine readOnly with bind propagation', () => {
         const built = service
-          .setVolume({ 
-            hostPath: '/host', 
-            containerPath: '/container', 
+          .setVolume({
+            hostPath: '/host',
+            containerPath: '/container',
             readOnly: true,
-            bind: { propagation: 'rshared' } 
+            bind: { propagation: 'rshared' },
           })
           .build();
 
@@ -236,11 +230,11 @@ describe('ServiceBuilder', () => {
 
       it('should throw error when mixing legacy flags with bind propagation', () => {
         expect(() => {
-          service.setVolume({ 
-            hostPath: '/host', 
-            containerPath: '/container', 
+          service.setVolume({
+            hostPath: '/host',
+            containerPath: '/container',
             shared: true,
-            bind: { propagation: 'rshared' } 
+            bind: { propagation: 'rshared' },
           });
         }).toThrowError('Cannot use both legacy flags (shared/private) and new bind.propagation simultaneously');
       });
@@ -248,17 +242,13 @@ describe('ServiceBuilder', () => {
 
     describe('Basic volume mounts', () => {
       it('should handle basic volume without any flags', () => {
-        const built = service
-          .setVolume({ hostPath: '/host', containerPath: '/container' })
-          .build();
+        const built = service.setVolume({ hostPath: '/host', containerPath: '/container' }).build();
 
         expect(built.volumes).toEqual(['/host:/container']);
       });
 
       it('should handle readOnly alone', () => {
-        const built = service
-          .setVolume({ hostPath: '/host', containerPath: '/container', readOnly: true })
-          .build();
+        const built = service.setVolume({ hostPath: '/host', containerPath: '/container', readOnly: true }).build();
 
         expect(built.volumes).toEqual(['/host:/container:ro']);
       });

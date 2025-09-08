@@ -11,7 +11,7 @@ export default defineConfig({
     coverage: { all: true, reporter: ['lcov', 'text-summary'] },
     reporters: ['default'],
     env: {
-      NODE_OPTIONS: '--experimental-sqlite',
+      // NODE_OPTIONS: '--experimental-sqlite', // Removed as this option is no longer allowed in newer Node.js versions
     },
   },
   resolve: {},
