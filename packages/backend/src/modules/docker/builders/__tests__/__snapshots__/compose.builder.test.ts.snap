@@ -395,6 +395,101 @@ networks:
 "
 `;
 
+exports[`DockerComposeBuilder > should correctly format tmpfs in combination with readOnly containers 1`] = `
+"services:
+  service:
+    image: secure-app:latest
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+      runtipi.appurn: nginx:store-id
+    read_only: true
+    security_opt:
+      - no-new-privileges=true
+    tmpfs:
+      - /tmp
+      - /var/run
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    name: nginx_store-id_network
+    external: false
+    ipam:
+      config:
+        - subnet: 10.128.1.0/24
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format tmpfs with object array format 1`] = `
+"services:
+  service:
+    image: image
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+      runtipi.appurn: nginx:store-id
+    tmpfs:
+      /tmp:
+        size: 100m
+        noexec: true
+      /var/run:
+        size: 50m
+        nosuid: true
+        nodev: true
+      /app/cache:
+        size: 200m
+        uid: 1000
+        gid: 1000
+        mode: "755"
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    name: nginx_store-id_network
+    external: false
+    ipam:
+      config:
+        - subnet: 10.128.1.0/24
+"
+`;
+
+exports[`DockerComposeBuilder > should correctly format tmpfs with simple string array format 1`] = `
+"services:
+  service:
+    image: image
+    restart: unless-stopped
+    networks:
+      nginx_store-id_network:
+        gw_priority: 0
+    labels:
+      runtipi.managed: true
+      runtipi.appurn: nginx:store-id
+    tmpfs:
+      - /tmp
+      - /var/run
+      - /var/log
+networks:
+  tipi_main_network:
+    name: runtipi_tipi_main_network
+    external: true
+  nginx_store-id_network:
+    name: nginx_store-id_network
+    external: false
+    ipam:
+      config:
+        - subnet: 10.128.1.0/24
+"
+`;
+
 exports[`DockerComposeBuilder > should correctly interpolate RUNTIPI_APP_ID in service labels 1`] = `
 "services:
   service:

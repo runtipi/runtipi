@@ -15,6 +15,17 @@ vi.mock('@/utils/cooldown/cooldown', () => ({
   Cooldown: () => vi.fn().mockImplementation((fn) => fn),
 }));
 
+vi.mock('node:sqlite', () => ({
+  DatabaseSync: vi.fn().mockImplementation(() => ({
+    prepare: vi.fn().mockReturnValue({
+      run: vi.fn(),
+      get: vi.fn().mockReturnValue(undefined),
+      all: vi.fn().mockReturnValue([]),
+    }),
+    exec: vi.fn(),
+  })),
+}));
+
 beforeEach(async () => {
   (fs as unknown as FsMock).__resetAllMocks();
 
