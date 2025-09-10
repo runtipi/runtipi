@@ -13,6 +13,7 @@
     "@codemirror/lang-yaml": "^6.1.2",
     "@hey-api/client-fetch": "^0.13.1",
     "@hookform/resolvers": "^5.0.1",
+    "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-context-menu": "^2.2.14",
     "@radix-ui/react-dialog": "^1.1.13",
     "@radix-ui/react-dropdown-menu": "^2.1.14",
