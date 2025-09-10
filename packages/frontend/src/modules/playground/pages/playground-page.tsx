@@ -1,9 +1,9 @@
-import { DockerComposeForm } from '../components/docker-compose-form';
+import { MultiServiceForm } from '../components/multi-service-form';
 
 export default function PlaygroundPage() {
   return (
     <div className="container">
-      <DockerComposeForm />
+      <MultiServiceForm />
     </div>
   );
 }

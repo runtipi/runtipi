@@ -86,6 +86,7 @@ export function AccordionTrigger({ className, children, ...props }: AccordionTri
   return (
     <div className="accordion-header">
       <button
+        type="button"
         id={triggerId}
         data-slot="accordion-trigger"
         className={cx('accordion-button', !isOpen && 'collapsed', className)}
