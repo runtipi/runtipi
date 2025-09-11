@@ -10,6 +10,7 @@
     "tsc": "react-router typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-yaml": "^6.1.2",
     "@codemirror/merge": "^6.10.2",
     "@hey-api/client-fetch": "^0.13.1",
@@ -35,6 +36,8 @@
     "@uidotdev/usehooks": "^2.4.1",
     "@uiw/codemirror-theme-copilot": "^4.23.13",
     "@uiw/react-codemirror": "^4.23.13",
+    "ajv": "^8.17.1",
+    "better-ajv-errors": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dompurify": "^3.2.5",
