@@ -152,7 +152,14 @@ describe('ServiceBuilder', () => {
           })
           .build();
 
-        expect(built.volumes).toEqual(['/host:/container:z']);
+        expect(built.volumes).toEqual([
+          {
+            type: 'bind',
+            source: '/host',
+            target: '/container',
+            bind: { propagation: 'rshared' },
+          },
+        ]);
       });
 
       it('should handle shared propagation mode', () => {
@@ -164,7 +171,14 @@ describe('ServiceBuilder', () => {
           })
           .build();
 
-        expect(built.volumes).toEqual(['/host:/container:z']);
+        expect(built.volumes).toEqual([
+          {
+            type: 'bind',
+            source: '/host',
+            target: '/container',
+            bind: { propagation: 'shared' },
+          },
+        ]);
       });
 
       it('should handle private propagation mode', () => {
@@ -176,7 +190,14 @@ describe('ServiceBuilder', () => {
           })
           .build();
 
-        expect(built.volumes).toEqual(['/host:/container:Z']);
+        expect(built.volumes).toEqual([
+          {
+            type: 'bind',
+            source: '/host',
+            target: '/container',
+            bind: { propagation: 'private' },
+          },
+        ]);
       });
 
       it('should handle rprivate propagation mode', () => {
@@ -188,7 +209,14 @@ describe('ServiceBuilder', () => {
           })
           .build();
 
-        expect(built.volumes).toEqual(['/host:/container']);
+        expect(built.volumes).toEqual([
+          {
+            type: 'bind',
+            source: '/host',
+            target: '/container',
+            bind: { propagation: 'rprivate' },
+          },
+        ]);
       });
 
       it('should handle rslave propagation mode', () => {
@@ -200,7 +228,14 @@ describe('ServiceBuilder', () => {
           })
           .build();
 
-        expect(built.volumes).toEqual(['/host:/container']);
+        expect(built.volumes).toEqual([
+          {
+            type: 'bind',
+            source: '/host',
+            target: '/container',
+            bind: { propagation: 'rslave' },
+          },
+        ]);
       });
 
       it('should handle slave propagation mode', () => {
@@ -212,7 +247,14 @@ describe('ServiceBuilder', () => {
           })
           .build();
 
-        expect(built.volumes).toEqual(['/host:/container:z']);
+        expect(built.volumes).toEqual([
+          {
+            type: 'bind',
+            source: '/host',
+            target: '/container',
+            bind: { propagation: 'slave' },
+          },
+        ]);
       });
 
       it('should combine readOnly with bind propagation', () => {
@@ -225,7 +267,15 @@ describe('ServiceBuilder', () => {
           })
           .build();
 
-        expect(built.volumes).toEqual(['/host:/container:ro:z']);
+        expect(built.volumes).toEqual([
+          {
+            type: 'bind',
+            source: '/host',
+            target: '/container',
+            read_only: true,
+            bind: { propagation: 'rshared' },
+          },
+        ]);
       });
 
       it('should throw error when mixing legacy flags with bind propagation', () => {

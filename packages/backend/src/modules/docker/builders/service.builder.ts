@@ -61,13 +61,25 @@ interface Logging {
   options?: Record<string, string>;
 }
 
+interface VolumeBindConfig {
+  propagation: 'rprivate' | 'private' | 'rshared' | 'shared' | 'rslave' | 'slave';
+}
+
+interface VolumeLongForm {
+  type: 'bind';
+  source: string;
+  target: string;
+  read_only?: boolean;
+  bind?: VolumeBindConfig;
+}
+
 export interface BuilderService {
   name: string;
   image: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
   environment?: Record<string, string | number | boolean>;
   command?: string | string[];
-  volumes?: string[];
+  volumes?: (string | VolumeLongForm)[];
   ports?: string[];
   healthCheck?: HealthCheck;
   labels?: Record<string, string | boolean>;
@@ -251,49 +263,6 @@ export class ServiceBuilder {
       this.service.volumes = [];
     }
 
-    const readOnly = volume.readOnly ? ':ro' : '';
-
-    // Handle new bind mount propagation mode
-    let propagationFlag = '';
-    if (volume.bind?.propagation) {
-      // Map propagation modes to Docker mount flags
-      // Note: Docker currently uses :z and :Z flags for SELinux labeling,
-      // not true mount propagation. Full bind mount propagation requires
-      // long-form Docker Compose syntax which would need additional implementation.
-      // For now, we map to the closest available equivalent.
-      switch (volume.bind.propagation) {
-        case 'shared':
-          propagationFlag = ':z';
-          break;
-        case 'private':
-          propagationFlag = ':Z';
-          break;
-        case 'rshared':
-          // rshared (recursive shared) - maps to shared for now
-          propagationFlag = ':z';
-          break;
-        case 'rslave':
-          // rslave (recursive slave) - no direct equivalent, keep empty for default
-          propagationFlag = '';
-          break;
-        case 'rprivate':
-          // rprivate (recursive private) - default behavior, no flag needed
-          propagationFlag = '';
-          break;
-        case 'slave':
-          // slave mode - limited shared propagation
-          propagationFlag = ':z';
-          break;
-        default:
-          propagationFlag = '';
-      }
-    } else {
-      // Backward compatibility: handle legacy boolean flags
-      const shared = volume.shared ? ':z' : '';
-      const privateVolume = volume.private ? ':Z' : '';
-      propagationFlag = shared + privateVolume;
-    }
-
     // Validation: ensure only one propagation method is used
     const legacyFlags = [volume.shared, volume.private].filter(Boolean).length;
     const newBindFlag = volume.bind?.propagation ? 1 : 0;
@@ -306,7 +275,31 @@ export class ServiceBuilder {
       throw new Error('Cannot use both legacy flags (shared/private) and new bind.propagation simultaneously');
     }
 
-    this.service.volumes.push(`${volume.hostPath}:${volume.containerPath}${readOnly}${propagationFlag}`);
+    // Handle new bind mount propagation mode with proper Docker Compose long-form syntax
+    if (volume.bind?.propagation) {
+      const longFormVolume: VolumeLongForm = {
+        type: 'bind',
+        source: volume.hostPath,
+        target: volume.containerPath,
+        read_only: volume.readOnly,
+        bind: {
+          propagation: volume.bind.propagation,
+        },
+      };
+      this.service.volumes.push(longFormVolume);
+    } else {
+      // Use short-form syntax for backward compatibility and legacy flags
+      const readOnly = volume.readOnly ? ':ro' : '';
+      
+      // Handle legacy boolean flags for SELinux labeling
+      let propagationFlag = '';
+      const shared = volume.shared ? ':z' : '';
+      const privateVolume = volume.private ? ':Z' : '';
+      propagationFlag = shared + privateVolume;
+
+      this.service.volumes.push(`${volume.hostPath}:${volume.containerPath}${readOnly}${propagationFlag}`);
+    }
+
     return this;
   }
 
