@@ -10,6 +10,19 @@
   border-bottom-color: var(--tblr-card-bg);
 }
 
+.trigger.disabled,
+.trigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.trigger.disabled:hover,
+.trigger:disabled:hover {
+  color: var(--tblr-text-muted);
+  border-color: transparent;
+}
+
 /* // .trigger[data-state='active'] { */
 /* //   background-color: var(--tblr-card-bg); */
 /* //   color: var(--tblr-nav-tabs-link-active-color); */

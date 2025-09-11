@@ -14,6 +14,7 @@ interface MultiServiceState {
   services: ServiceWithId[];
   activeTab: string;
   isValid: boolean;
+  isDirty: boolean;
 
   // Actions
   setActiveTab: (tab: string) => void;
@@ -23,6 +24,7 @@ interface MultiServiceState {
   updateFromJson: (services: MultiServiceFormData['services']) => void;
   validateServices: () => void;
   resetToDefaults: () => void;
+  setIsDirty: (dirty: boolean) => void;
 }
 
 const defaultService: ServiceFormData = {
@@ -93,9 +95,10 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   services: defaultServices,
   activeTab: '0',
   isValid: true,
+  isDirty: false,
 
   // Actions
-  setActiveTab: (tab: string) => set({ activeTab: tab }),
+  setActiveTab: (tab: string) => set({ activeTab: tab, isDirty: false }),
 
   addService: () => {
     const { services } = get();
@@ -107,6 +110,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
     const newServices = [...services, newService];
 
     set({
+      isDirty: false,
       services: newServices,
       activeTab: String(services.length),
     });
@@ -121,13 +125,14 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
     const newServices = services.filter((_, i) => i !== index);
     let newActiveTab = activeTab;
 
-    if (Number(activeTab) === index) {
+    if (Number(activeTab) === index || activeTab === 'json') {
       newActiveTab = '0';
     } else if (Number(activeTab) > index) {
       newActiveTab = String(Number(activeTab) - 1);
     }
 
     set({
+      isDirty: false,
       services: newServices,
       activeTab: newActiveTab,
     });
@@ -174,5 +179,8 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       services: defaultServices.map((service) => ({ ...service, _id: generateId() })),
       activeTab: '0',
       isValid: true,
+      isDirty: false,
     }),
+
+  setIsDirty: (dirty: boolean) => set({ isDirty: dirty }),
 }));

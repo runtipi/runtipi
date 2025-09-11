@@ -1,7 +1,7 @@
 import { dynamicComposeSchema, toJsonSchema } from '@runtipi/common/schemas';
 import betterAjvErrors from 'better-ajv-errors';
 import Ajv from 'ajv/dist/2020';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
@@ -11,13 +11,29 @@ import { Button } from '@/components/ui/Button';
 const schema = toJsonSchema(dynamicComposeSchema);
 
 export const JsonComposeEditor = () => {
-  const { services, updateFromJson } = useMultiServiceStore();
+  const { services, isDirty, updateFromJson, setIsDirty } = useMultiServiceStore();
   const [error, setError] = useState<string | undefined>(undefined);
-  const [isDirty, setIsDirty] = useState(false);
 
   const servicesWithoutIds = services.map(({ _id, ...rest }) => rest);
 
   const [value, setValue] = useState<string>(JSON.stringify({ services: servicesWithoutIds }, null, 2));
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        return 'You have made changes to the JSON. Do you want to confirm losing it?';
+      }
+    };
+
+    if (isDirty) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isDirty]);
 
   const validateInput = (value: string) => {
     setValue(value);
@@ -57,7 +73,14 @@ export const JsonComposeEditor = () => {
           theme={copilot}
         />
         {error && <pre className="whitespace-pre-wrap mt-2">{error}</pre>}
-        <Button type="button" disabled={!!error || !value} onClick={() => updateFromJson(JSON.parse(value || '{}').services)}>
+        <Button
+          type="button"
+          disabled={!!error || !value}
+          onClick={() => {
+            updateFromJson(JSON.parse(value || '{}').services);
+            setIsDirty(false);
+          }}
+        >
           Save JSON
         </Button>
       </div>
