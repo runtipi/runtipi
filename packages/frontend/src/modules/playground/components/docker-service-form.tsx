@@ -1,9 +1,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/Accordion/Accordion';
-import { serviceSchema } from '@runtipi/common/schemas';
+import type { dynamicComposeSchema, serviceSchema } from '@runtipi/common/schemas';
 import { IconArrowsDownUp, IconCloudDataConnection, IconServer, IconSettings, IconVariable } from '@tabler/icons-react';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import type { UseFormReturn } from 'react-hook-form';
 import { AdvancedConfig } from './elements/advanced';
 import { EnvironmentConfig } from './elements/environment';
 import { EssentialConfig } from './elements/essential';
@@ -16,35 +14,13 @@ type ServiceFormData = z.infer<typeof serviceSchema>;
 interface Props {
   serviceData: ServiceFormData;
   serviceIndex: number;
-  onServiceChange: (serviceData: ServiceFormData) => void;
   isMainService?: boolean;
+  form: UseFormReturn<z.infer<typeof dynamicComposeSchema>>;
 }
 
-export const DockerServiceForm = ({ serviceData, serviceIndex, onServiceChange, isMainService }: Props) => {
-  const form = useForm<ServiceFormData>({
-    resolver: zodResolver(serviceSchema),
-    defaultValues: serviceData,
-    mode: 'onChange',
-  });
-
-  const {
-    formState: { errors },
-    watch,
-    setValue,
-    register,
-    control,
-  } = form;
-
-  useEffect(() => {
-    const subscription = watch((values) => {
-      if (values) {
-        onServiceChange(values as ServiceFormData);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, onServiceChange]);
-
-  const hasErrors = Object.keys(errors).length > 0;
+export const DockerServiceForm = ({ form, serviceData, serviceIndex, isMainService }: Props) => {
+  const { formState, register, control } = form;
+  const { errors } = formState;
 
   return (
     <div className="service-form">
@@ -53,19 +29,9 @@ export const DockerServiceForm = ({ serviceData, serviceIndex, onServiceChange, 
           Service {serviceIndex + 1}: {serviceData.name || 'Unnamed Service'}
           {isMainService && <span className="badge bg-primary ms-2 text-white">Main Service</span>}
         </h4>
-        <p className="text-muted">Configure the Docker service settings below. The main service is typically the primary application container.</p>
-        {hasErrors && (
-          <div className="alert alert-warning">
-            <strong>This service has validation errors:</strong>
-            <ul className="mb-0 mt-1">
-              {Object.entries(errors).map(([field, error]) => (
-                <li key={field}>
-                  {field}: {typeof error === 'object' && error && 'message' in error ? String(error.message) : 'Invalid value'}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <p className="text-muted">
+          Configure the Docker service settings below. The main service is typically the primary application container where web traffic is directed.
+        </p>
       </div>
       <Accordion id={`accordion-service-${serviceIndex}`}>
         <AccordionItem value="essentials">
@@ -74,7 +40,7 @@ export const DockerServiceForm = ({ serviceData, serviceIndex, onServiceChange, 
             Essential configuration
           </AccordionTrigger>
           <AccordionContent>
-            <EssentialConfig register={register} />
+            <EssentialConfig errors={errors} serviceIndex={serviceIndex} register={register} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="environment">
@@ -83,7 +49,7 @@ export const DockerServiceForm = ({ serviceData, serviceIndex, onServiceChange, 
             Environment variables
           </AccordionTrigger>
           <AccordionContent>
-            <EnvironmentConfig setValue={setValue} watch={watch} />
+            <EnvironmentConfig errors={errors} serviceIndex={serviceIndex} register={register} control={control} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="volumes">
@@ -92,7 +58,7 @@ export const DockerServiceForm = ({ serviceData, serviceIndex, onServiceChange, 
             Volume mappings
           </AccordionTrigger>
           <AccordionContent>
-            <VolumesConfig setValue={setValue} watch={watch} />
+            <VolumesConfig errors={errors} serviceIndex={serviceIndex} control={control} register={register} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="ports">
@@ -101,7 +67,7 @@ export const DockerServiceForm = ({ serviceData, serviceIndex, onServiceChange, 
             Port mappings
           </AccordionTrigger>
           <AccordionContent>
-            <PortsConfig setValue={setValue} watch={watch} />
+            <PortsConfig errors={errors} serviceIndex={serviceIndex} control={control} register={register} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="advanced">
@@ -110,7 +76,7 @@ export const DockerServiceForm = ({ serviceData, serviceIndex, onServiceChange, 
             Advanced configuration
           </AccordionTrigger>
           <AccordionContent>
-            <AdvancedConfig register={register} control={control} />
+            <AdvancedConfig errors={errors} serviceIndex={serviceIndex} control={control} register={register} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

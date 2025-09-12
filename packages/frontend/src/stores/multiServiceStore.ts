@@ -15,6 +15,7 @@ interface MultiServiceState {
   activeTab: string;
   isValid: boolean;
   isDirty: boolean;
+  error: string;
 
   // Actions
   setActiveTab: (tab: string) => void;
@@ -32,7 +33,7 @@ const defaultService: ServiceFormData = {
   image: '',
   isMain: false,
   internalPort: 80,
-  environment: {},
+  environment: [],
   volumes: [],
   addPorts: [],
 };
@@ -44,45 +45,6 @@ const defaultServices: ServiceWithId[] = [
     image: 'nginx:alpine',
     isMain: true,
     internalPort: 80,
-    environment: {
-      NGINX_PORT: '80',
-    },
-    volumes: [
-      {
-        hostPath: '${APP_DATA_DIR}/html',
-        containerPath: '/usr/share/nginx/html',
-      },
-    ],
-    addPorts: [
-      {
-        hostPort: 8080,
-        containerPort: 80,
-      },
-    ],
-  },
-  {
-    _id: generateId(),
-    name: 'db',
-    image: 'postgres:15',
-    isMain: false,
-    internalPort: 5432,
-    environment: {
-      POSTGRES_DB: 'myapp',
-      POSTGRES_USER: 'myuser',
-      POSTGRES_PASSWORD: '${DB_PASSWORD}',
-    },
-    volumes: [
-      {
-        hostPath: '${APP_DATA_DIR}/postgres',
-        containerPath: '/var/lib/postgresql/data',
-      },
-    ],
-    healthCheck: {
-      test: 'pg_isready -U myuser -d myapp',
-      interval: '30s',
-      timeout: '10s',
-      retries: 3,
-    },
   },
 ];
 
@@ -91,17 +53,31 @@ function generateId(): string {
 }
 
 export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
-  // Initial state
   services: defaultServices,
   activeTab: '0',
   isValid: true,
   isDirty: false,
+  error: '',
+  setActiveTab: (tab: string) => {
+    const { activeTab, isDirty } = get();
 
-  // Actions
-  setActiveTab: (tab: string) => set({ activeTab: tab, isDirty: false }),
+    if (activeTab === 'json' && isDirty && tab !== 'json') {
+      if (!window.confirm('You have made changes to the JSON. Do you want to confirm losing them?')) {
+        return;
+      }
+    }
+
+    set({ activeTab: tab, isDirty: false });
+  },
 
   addService: () => {
-    const { services } = get();
+    const { services, activeTab, isDirty } = get();
+    if (activeTab === 'json' && isDirty) {
+      if (!window.confirm('You have made changes to the JSON. Do you want to confirm losing them?')) {
+        return;
+      }
+    }
+
     const newService: ServiceWithId = {
       ...defaultService,
       _id: generateId(),
@@ -119,7 +95,13 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   },
 
   removeService: (index: number) => {
-    const { services, activeTab } = get();
+    const { activeTab, isDirty, services } = get();
+    if (activeTab === 'json' && isDirty) {
+      if (!window.confirm('You have made changes to the JSON. Do you want to confirm losing them?')) {
+        return;
+      }
+    }
+
     if (services.length === 1) return;
 
     const newServices = services.filter((_, i) => i !== index);
@@ -167,6 +149,21 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
     try {
       const servicesWithoutIds = services.map(({ _id, ...service }) => service);
       dynamicComposeSchema.parse({ services: servicesWithoutIds });
+
+      // Ensure only one main service
+      const mainServices = servicesWithoutIds.filter((service) => service.isMain);
+      if (mainServices.length !== 1) {
+        set({ isValid: false, error: 'There must be exactly one main service.' });
+        return;
+      }
+
+      // Ensure unique service names
+      const names = servicesWithoutIds.map((service) => service.name);
+      const uniqueNames = new Set(names);
+      if (names.length !== uniqueNames.size) {
+        set({ isValid: false, error: 'Service names must be unique.' });
+        return;
+      }
 
       set({ isValid: true });
     } catch (_) {

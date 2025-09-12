@@ -1,22 +1,25 @@
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
-import type { serviceSchema } from '@runtipi/common/schemas';
-import type { UseFormRegister, Control } from 'react-hook-form';
+import type { dynamicComposeSchema } from '@runtipi/common/schemas';
+import type { UseFormRegister, Control, FieldErrors } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type z from 'zod';
 
 type Props = {
-  register: UseFormRegister<z.infer<typeof serviceSchema>>;
-  control: Control<z.infer<typeof serviceSchema>>;
+  register: UseFormRegister<z.infer<typeof dynamicComposeSchema>>;
+  control: Control<z.infer<typeof dynamicComposeSchema>>;
+  serviceIndex: number;
+  errors?: FieldErrors<z.infer<typeof dynamicComposeSchema>>;
 };
 
-export const AdvancedConfig = ({ register, control }: Props) => {
+export const AdvancedConfig = ({ register, errors, control, serviceIndex }: Props) => {
   return (
     <div className="row g-4">
       <div className="col-md-6">
         <Input
-          {...register('networkMode')}
+          {...register(`services.${serviceIndex}.networkMode`, { setValueAs: (v) => v.trim() || undefined })}
+          error={errors?.services?.[serviceIndex]?.networkMode?.message}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-network-mode">
@@ -30,7 +33,8 @@ export const AdvancedConfig = ({ register, control }: Props) => {
       </div>
       <div className="col-md-6">
         <Input
-          {...register('workingDir')}
+          {...register(`services.${serviceIndex}.workingDir`, { setValueAs: (v) => v || undefined })}
+          error={errors?.services?.[serviceIndex]?.workingDir?.message}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-working-dir">
@@ -44,7 +48,8 @@ export const AdvancedConfig = ({ register, control }: Props) => {
       </div>
       <div className="col-md-6">
         <Input
-          {...register('user')}
+          {...register(`services.${serviceIndex}.user`, { setValueAs: (v) => v.trim() || undefined })}
+          error={errors?.services?.[serviceIndex]?.user?.message}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-user">
@@ -58,7 +63,8 @@ export const AdvancedConfig = ({ register, control }: Props) => {
       </div>
       <div className="col-md-6">
         <Input
-          {...register('hostname')}
+          {...register(`services.${serviceIndex}.hostname`, { setValueAs: (v) => v.trim() || undefined })}
+          error={errors?.services?.[serviceIndex]?.hostname?.message}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-hostname">
@@ -71,10 +77,9 @@ export const AdvancedConfig = ({ register, control }: Props) => {
         />
       </div>
       <div className="col-md-6">
-        {/* Use Controller for Switch components to ensure proper boolean handling */}
         <Controller
           control={control}
-          name="privileged"
+          name={`services.${serviceIndex}.privileged`}
           defaultValue={false}
           render={({ field: { onChange, value, ref, ...rest } }) => (
             <Switch
