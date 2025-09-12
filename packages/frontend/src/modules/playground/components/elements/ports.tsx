@@ -1,100 +1,23 @@
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
-import type { serviceSchema } from '@runtipi/common/schemas';
-import type { UseFormSetValue, UseFormWatch } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import type { dynamicComposeSchema } from '@runtipi/common/schemas';
+import { Controller, useFieldArray, type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type z from 'zod';
 
-type PortMapping = {
-  id: string;
-  containerPort: string;
-  hostPort: string;
-  udp?: boolean;
-  tcp?: boolean;
-  interface?: string;
-};
-
 type Props = {
-  setValue: UseFormSetValue<z.infer<typeof serviceSchema>>;
-  watch: UseFormWatch<z.infer<typeof serviceSchema>>;
+  control: Control<z.infer<typeof dynamicComposeSchema>>;
+  register: UseFormRegister<z.infer<typeof dynamicComposeSchema>>;
+  serviceIndex: number;
+  errors?: FieldErrors<z.infer<typeof dynamicComposeSchema>>;
 };
 
-type PortObject = {
-  containerPort: number | string;
-  hostPort: number | string;
-  udp?: boolean;
-  tcp?: boolean;
-  interface?: string;
-};
-
-export const PortsConfig = ({ setValue, watch }: Props) => {
-  const [portMappings, setPortMappings] = useState<PortMapping[]>([]);
-  const [initialized, setInitialized] = useState(false);
-
-  const existingPorts = watch('addPorts') || [];
-
-  useEffect(() => {
-    if (!initialized && existingPorts.length > 0) {
-      const mappings: PortMapping[] = existingPorts.map((port) => ({
-        id: `port-${Date.now()}-${Math.random()}`,
-        containerPort: String(port.containerPort),
-        hostPort: String(port.hostPort),
-        udp: port.udp || false,
-        tcp: port.tcp || false,
-        interface: port.interface || '',
-      }));
-      setPortMappings(mappings);
-      setInitialized(true);
-    }
-  }, [existingPorts, initialized]);
-
-  const addPortMapping = () => {
-    const newMapping: PortMapping = {
-      id: `port-${Date.now()}-${Math.random()}`,
-      containerPort: '',
-      hostPort: '',
-      udp: false,
-      tcp: true,
-      interface: '',
-    };
-    setPortMappings([...portMappings, newMapping]);
-  };
-
-  const removePortMapping = (index: number) => {
-    const newMappings = portMappings.filter((_, i) => i !== index);
-    setPortMappings(newMappings);
-    updateFormValue(newMappings);
-  };
-
-  const updateMapping = (index: number, field: keyof PortMapping, value: string | boolean) => {
-    const newMappings = [...portMappings];
-
-    if (newMappings[index]) {
-      newMappings[index][field] = value as never;
-      setPortMappings(newMappings);
-      updateFormValue(newMappings);
-    }
-  };
-
-  const updateFormValue = (mappings: PortMapping[]) => {
-    const portsArray = mappings
-      .filter(({ containerPort, hostPort }) => containerPort.trim() && hostPort.trim())
-      .map(({ containerPort, hostPort, udp, tcp, interface: rinterface }) => {
-        const portObj: PortObject = {
-          containerPort: Number.isNaN(Number(containerPort)) ? containerPort.trim() : Number(containerPort),
-          hostPort: Number.isNaN(Number(hostPort)) ? hostPort.trim() : Number(hostPort),
-        };
-
-        if (udp) portObj.udp = udp;
-        if (tcp) portObj.tcp = tcp;
-        if (rinterface?.trim()) portObj.interface = rinterface.trim();
-        return portObj;
-      });
-
-    setValue('addPorts', portsArray);
-  };
+export const PortsConfig = ({ errors, serviceIndex, control, register }: Props) => {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `services.${serviceIndex}.addPorts`,
+  });
 
   return (
     <div className="row g-4">
@@ -106,16 +29,16 @@ export const PortsConfig = ({ setValue, watch }: Props) => {
             </Tooltip>
             {'Port Mappings'} <span className="ms-1 form-help my-ports">?</span>
           </div>
-          <Button type="button" onClick={addPortMapping} size="sm">
+          <Button type="button" onClick={() => append({ containerPort: 0, hostPort: 0 })} size="sm">
             Add Port
           </Button>
         </div>
-        {portMappings.map((mapping, index) => (
-          <div key={mapping.id} className="row g-2 mb-3 align-items-end border-bottom pb-3">
+        {fields.map((field, index) => (
+          <div key={field.id} className="row g-2 mb-3 align-items-end border-bottom pb-3">
             <div className="col-md-3">
               <Input
-                value={mapping.hostPort}
-                onChange={(e) => updateMapping(index, 'hostPort', e.target.value)}
+                {...register(`services.${serviceIndex}.addPorts.${index}.hostPort`, { valueAsNumber: true })}
+                error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.hostPort?.message}
                 placeholder="8080"
                 label={index === 0 ? 'Host Port' : undefined}
                 type="number"
@@ -125,8 +48,8 @@ export const PortsConfig = ({ setValue, watch }: Props) => {
             </div>
             <div className="col-md-3">
               <Input
-                value={mapping.containerPort}
-                onChange={(e) => updateMapping(index, 'containerPort', e.target.value)}
+                {...register(`services.${serviceIndex}.addPorts.${index}.containerPort`, { valueAsNumber: true })}
+                error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.containerPort?.message}
                 placeholder="8080"
                 label={index === 0 ? 'Container Port' : undefined}
                 type="number"
@@ -135,27 +58,41 @@ export const PortsConfig = ({ setValue, watch }: Props) => {
               />
             </div>
             <div className="col-md-2">
-              <Switch checked={mapping.tcp || false} onCheckedChange={(checked) => updateMapping(index, 'tcp', checked)} label="TCP" />
+              <Controller
+                control={control}
+                name={`services.${serviceIndex}.addPorts.${index}.tcp`}
+                defaultValue={true}
+                render={({ field: { onChange, value, ref, ...rest } }) => (
+                  <Switch ref={ref} checked={value} onCheckedChange={onChange} {...rest} label="TCP" />
+                )}
+              />
             </div>
             <div className="col-md-2">
-              <Switch checked={mapping.udp || false} onCheckedChange={(checked) => updateMapping(index, 'udp', checked)} label="UDP" />
+              <Controller
+                control={control}
+                name={`services.${serviceIndex}.addPorts.${index}.udp`}
+                defaultValue={true}
+                render={({ field: { onChange, value, ref, ...rest } }) => (
+                  <Switch ref={ref} checked={value} onCheckedChange={onChange} {...rest} label="UDP" />
+                )}
+              />
             </div>
             <div className="col-md-2">
-              <Button type="button" onClick={() => removePortMapping(index)} variant="outline" size="sm" className="w-100">
+              <Button type="button" onClick={() => remove(index)} variant="outline" size="sm" className="w-100">
                 Remove
               </Button>
             </div>
             <div className="col-md-6">
               <Input
-                value={mapping.interface || ''}
-                onChange={(e) => updateMapping(index, 'interface', e.target.value)}
+                {...register(`services.${serviceIndex}.addPorts.${index}.interface`, { setValueAs: (v) => v.trim() || undefined })}
+                error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.interface?.message}
                 placeholder="eth0"
                 label="Interface (optional)"
               />
             </div>
           </div>
         ))}
-        {portMappings.length === 0 && <div className="text-muted small">No port mappings added yet. Click "Add Port" to add one.</div>}
+        {fields.length === 0 && <div className="text-muted small">No port mappings added yet. Click "Add Port" to add one.</div>}
       </div>
     </div>
   );

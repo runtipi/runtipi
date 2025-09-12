@@ -1,88 +1,23 @@
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
-import type { serviceSchema } from '@runtipi/common/schemas';
-import type { UseFormSetValue, UseFormWatch } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import type { dynamicComposeSchema } from '@runtipi/common/schemas';
+import { Controller, useFieldArray, type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type z from 'zod';
 
-type Volume = {
-  id: string;
-  hostPath: string;
-  containerPath: string;
-  readOnly?: boolean;
-  shared?: boolean;
-  private?: boolean;
-};
-
 type Props = {
-  setValue: UseFormSetValue<z.infer<typeof serviceSchema>>;
-  watch: UseFormWatch<z.infer<typeof serviceSchema>>;
+  control: Control<z.infer<typeof dynamicComposeSchema>>;
+  register: UseFormRegister<z.infer<typeof dynamicComposeSchema>>;
+  serviceIndex: number;
+  errors?: FieldErrors<z.infer<typeof dynamicComposeSchema>>;
 };
 
-export const VolumesConfig = ({ setValue, watch }: Props) => {
-  const volumes = watch('volumes') || [];
-  const [volumeMappings, setVolumeMappings] = useState<Volume[]>([]);
-  const [initialized, setInitialized] = useState(false);
-
-  useEffect(() => {
-    if (!initialized && volumes.length > 0) {
-      const mappings: Volume[] = volumes.map((vol, index) => ({
-        id: `vol-${Date.now()}-${Math.random()}-${index}`,
-        hostPath: vol.hostPath || '',
-        containerPath: vol.containerPath || '',
-        readOnly: vol.readOnly,
-        shared: vol.shared,
-        private: vol.private,
-      }));
-      setVolumeMappings(mappings);
-      setInitialized(true);
-    }
-  }, [volumes, initialized]);
-
-  const addVolumeMapping = () => {
-    const newMapping: Volume = {
-      id: `vol-${Date.now()}-${Math.random()}`,
-      hostPath: '',
-      containerPath: '',
-      readOnly: false,
-      shared: false,
-      private: false,
-    };
-    setVolumeMappings([...volumeMappings, newMapping]);
-  };
-
-  const removeVolumeMapping = (index: number) => {
-    const newMappings = volumeMappings.filter((_, i) => i !== index);
-    setVolumeMappings(newMappings);
-    updateFormValue(newMappings);
-  };
-
-  const updateMapping = (index: number, field: keyof Volume, value: string | boolean) => {
-    const newMappings = [...volumeMappings];
-
-    if (newMappings[index]) {
-      newMappings[index][field] = value as never;
-
-      setVolumeMappings(newMappings);
-      updateFormValue(newMappings);
-    }
-  };
-
-  const updateFormValue = (mappings: Volume[]) => {
-    const volArray = mappings
-      .filter(({ hostPath, containerPath }) => hostPath.trim() && containerPath.trim())
-      .map(({ hostPath, containerPath, readOnly, shared, private: rprivate }) => ({
-        hostPath: hostPath.trim(),
-        containerPath: containerPath.trim(),
-        ...(readOnly && { readOnly }),
-        ...(shared && { shared }),
-        ...(rprivate && { private: rprivate }),
-      }));
-
-    setValue('volumes', volArray);
-  };
+export const VolumesConfig = ({ errors, serviceIndex, control, register }: Props) => {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `services.${serviceIndex}.volumes`,
+  });
 
   return (
     <div className="row g-4">
@@ -94,49 +29,60 @@ export const VolumesConfig = ({ setValue, watch }: Props) => {
             </Tooltip>
             {'Volume Mappings'} <span className="ms-1 form-help my-volumes">?</span>
           </div>
-          <Button type="button" onClick={addVolumeMapping} size="sm">
+          <Button type="button" onClick={() => append({ containerPath: '/', hostPath: '/' })} size="sm">
             Add Volume
           </Button>
         </div>
-        {volumeMappings.map((mapping, index) => (
-          <div key={mapping.id} className="row g-2 mb-3 align-items-end border-bottom pb-3">
+        {fields.map((field, index) => (
+          <div key={field.id} className="row g-2 mb-3 align-items-end border-bottom pb-3">
             <div className="col-md-5">
               <Input
-                value={mapping.hostPath}
-                onChange={(e) => updateMapping(index, 'hostPath', e.target.value)}
+                {...register(`services.${serviceIndex}.volumes.${index}.hostPath`, { setValueAs: (v) => v.trim() || undefined })}
+                error={errors?.services?.[serviceIndex]?.volumes?.[index]?.hostPath?.message}
                 placeholder="/host/path"
                 label={index === 0 ? 'Host Path' : undefined}
               />
             </div>
             <div className="col-md-5">
               <Input
-                value={mapping.containerPath}
-                onChange={(e) => updateMapping(index, 'containerPath', e.target.value)}
+                {...register(`services.${serviceIndex}.volumes.${index}.containerPath`, { setValueAs: (v) => v.trim() || undefined })}
+                error={errors?.services?.[serviceIndex]?.volumes?.[index]?.containerPath?.message}
                 placeholder="/container/path"
                 label={index === 0 ? 'Container Path' : undefined}
               />
             </div>
             <div className="col-md-2">
-              <Button type="button" onClick={() => removeVolumeMapping(index)} variant="outline" size="sm" className="w-100">
+              <Button type="button" onClick={() => remove(index)} variant="outline" size="sm" className="w-100">
                 Remove
               </Button>
             </div>
             <div className="col-md-4">
-              <Switch
-                checked={mapping.readOnly || false}
-                onCheckedChange={(checked) => updateMapping(index, 'readOnly', checked)}
-                label="Read Only"
+              <Controller
+                control={control}
+                name={`services.${serviceIndex}.volumes.${index}.readOnly`}
+                defaultValue={false}
+                render={({ field: { value, onChange } }) => <Switch checked={value || false} onCheckedChange={onChange} label="Read Only" />}
               />
             </div>
             <div className="col-md-4">
-              <Switch checked={mapping.shared || false} onCheckedChange={(checked) => updateMapping(index, 'shared', checked)} label="Shared" />
+              <Controller
+                control={control}
+                name={`services.${serviceIndex}.volumes.${index}.shared`}
+                defaultValue={false}
+                render={({ field: { value, onChange } }) => <Switch checked={value || false} onCheckedChange={onChange} label="Shared" />}
+              />
             </div>
             <div className="col-md-4">
-              <Switch checked={mapping.private || false} onCheckedChange={(checked) => updateMapping(index, 'private', checked)} label="Private" />
+              <Controller
+                control={control}
+                name={`services.${serviceIndex}.volumes.${index}.private`}
+                defaultValue={false}
+                render={({ field: { value, onChange } }) => <Switch checked={value || false} onCheckedChange={onChange} label="Private" />}
+              />
             </div>
           </div>
         ))}
-        {volumeMappings.length === 0 && <div className="text-muted small">No volume mappings added yet. Click "Add Volume" to add one.</div>}
+        {fields.length === 0 && <div className="text-muted small">No volume mappings added yet. Click "Add Volume" to add one.</div>}
       </div>
     </div>
   );

@@ -1,19 +1,22 @@
 import { Input } from '@/components/ui/Input';
-import type { serviceSchema } from '@runtipi/common/schemas';
-import type { UseFormRegister } from 'react-hook-form';
+import type { dynamicComposeSchema } from '@runtipi/common/schemas';
+import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type z from 'zod';
 
 type Props = {
-  register: UseFormRegister<z.infer<typeof serviceSchema>>;
+  register: UseFormRegister<z.infer<typeof dynamicComposeSchema>>;
+  serviceIndex: number;
+  errors?: FieldErrors<z.infer<typeof dynamicComposeSchema>>;
 };
 
-export const EssentialConfig = ({ register }: Props) => {
+export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
   return (
     <div className="row g-4">
       <div className="col-md-6">
         <Input
-          {...register('name')}
+          {...register(`services.${serviceIndex}.name`, { setValueAs: (v) => v.trim() || undefined })}
+          error={errors?.services?.[serviceIndex]?.name?.message}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-service">
@@ -27,6 +30,8 @@ export const EssentialConfig = ({ register }: Props) => {
       </div>
       <div className="col-md-6">
         <Input
+          {...register(`services.${serviceIndex}.image`, { setValueAs: (v) => v.trim() || undefined })}
+          error={errors?.services?.[serviceIndex]?.image?.message}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-image">
@@ -36,11 +41,12 @@ export const EssentialConfig = ({ register }: Props) => {
             </>
           }
           placeholder="nginx:latest"
-          {...register('image')}
         />
       </div>
       <div className="col-md-6">
         <Input
+          {...register(`services.${serviceIndex}.internalPort`, { valueAsNumber: true })}
+          error={errors?.services?.[serviceIndex]?.internalPort?.message}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-internal-port">
@@ -51,7 +57,6 @@ export const EssentialConfig = ({ register }: Props) => {
           }
           type="number"
           placeholder="8080"
-          {...register('internalPort')}
           min={1}
           max={65535}
         />

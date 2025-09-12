@@ -1,94 +1,63 @@
 import { Button } from '@/components/ui/Button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { dynamicComposeSchema, type serviceSchema } from '@runtipi/common/schemas';
-import { IconPlus, IconX, IconCheck, IconCode } from '@tabler/icons-react';
-import React, { useEffect } from 'react';
+import { dynamicComposeSchema } from '@runtipi/common/schemas';
+import { IconPlus, IconX, IconCode } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { DockerServiceForm } from './docker-service-form';
 import { JsonComposeEditor } from './json-compose-editor';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
-
-type MultiServiceFormData = z.infer<typeof dynamicComposeSchema>;
-type ServiceFormData = z.infer<typeof serviceSchema>;
+import { useEffect } from 'react';
 
 export const MultiServiceForm = () => {
-  const { services, activeTab, setActiveTab, isValid, isDirty, setIsDirty, addService, removeService, updateService } = useMultiServiceStore();
+  const { services, activeTab, setActiveTab, addService, removeService, updateService, isValid, error } = useMultiServiceStore();
 
-  const form = useForm<MultiServiceFormData>({
+  const form = useForm<z.infer<typeof dynamicComposeSchema>>({
     resolver: zodResolver(dynamicComposeSchema),
     defaultValues: {
       services,
     },
     mode: 'onSubmit',
+    reValidateMode: 'onChange',
   });
-
-  const handleTabChange = (newTab: string) => {
-    if (activeTab === 'json' && isDirty && newTab !== 'json') {
-      if (!window.confirm('You have made changes to the JSON. Do you want to confirm losing them?')) {
-        return;
-      }
-    }
-    setActiveTab(newTab);
-  };
-
-  const canLeaveJsonTab = () => {
-    if (activeTab === 'json' && isDirty) {
-      return window.confirm('You have made changes to the JSON. Do you want to confirm losing them?');
-    }
-    return true;
-  };
-
-  const confirmActionIfDirty = (action: () => void) => {
-    if (canLeaveJsonTab()) {
-      action();
-    }
-  };
 
   const {
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
+    getValues,
     setValue,
   } = form;
 
   useEffect(() => {
-    setValue(
-      'services',
-      services.map(({ _id, ...service }) => service),
-    );
+    setValue('services', services);
   }, [services, setValue]);
 
-  const onSubmit = async (data: MultiServiceFormData) => {
+  // biome-ignore lint/suspicious/noExplicitAny: We need any type here
+  function saveBeforeAction<T extends (...args: any[]) => any>(action: T) {
+    return (...args: Parameters<T>): ReturnType<T> => {
+      const values = getValues();
+      values.services.forEach((service, index) => {
+        updateService(index, service);
+      });
+
+      return action(...args);
+    };
+  }
+
+  const onSubmit = async (data: z.infer<typeof dynamicComposeSchema>) => {
     try {
       const res = dynamicComposeSchema.parse(data); // This will throw if validation fails
-      alert(`✅ Successfully validated ${res.services.length} services!`);
+      console.error(res);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       alert(`❌ Form submission failed: ${errorMessage}`);
     }
   };
 
-  const hasErrors = Object.keys(errors).length > 0;
-
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <div className="mb-4">
-        {hasErrors && (
-          <div className="alert alert-danger mt-3">
-            <strong>Form has errors:</strong>
-            <ul className="mb-0 mt-2">
-              {Object.entries(errors).map(([field, error]) => (
-                <li key={field}>
-                  {field}: {typeof error === 'object' && error && 'message' in error ? String(error.message) : 'Invalid value'}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
+      <Tabs value={activeTab} onValueChange={saveBeforeAction(setActiveTab)} className="w-full" defaultValue="0">
         <TabsList>
           {services.map((service, index) => (
             <TabsTrigger key={service._id} value={String(index)} className="position-relative">
@@ -103,7 +72,7 @@ export const MultiServiceForm = () => {
                   aria-label="Remove service"
                   onClick={(e) => {
                     e.stopPropagation();
-                    confirmActionIfDirty(() => removeService(index));
+                    saveBeforeAction(removeService)(index);
                   }}
                   style={{
                     background: 'none',
@@ -123,8 +92,8 @@ export const MultiServiceForm = () => {
             value="add-new"
             onClick={(e) => {
               e?.preventDefault();
-              confirmActionIfDirty(addService);
-              return false; // Prevent tab change
+              saveBeforeAction(addService)();
+              return false;
             }}
             className="text-muted"
           >
@@ -140,17 +109,12 @@ export const MultiServiceForm = () => {
 
         {services.map((service, index) => (
           <TabsContent key={service._id} value={String(index)}>
-            <DockerServiceForm
-              serviceData={service}
-              serviceIndex={index}
-              onServiceChange={(serviceData: ServiceFormData) => updateService(index, serviceData)}
-              isMainService={service.isMain}
-            />
+            <DockerServiceForm form={form} serviceData={service} serviceIndex={index} isMainService={service.isMain} />
           </TabsContent>
         ))}
 
         <TabsContent value="add-new">
-          <div>{/* Empty content for add-new tab */}</div>
+          <div />
         </TabsContent>
 
         <TabsContent value="json">
@@ -159,21 +123,6 @@ export const MultiServiceForm = () => {
       </Tabs>
 
       <div className="d-flex justify-content-between align-items-center mt-4 p-3 bg-light rounded">
-        <div className="d-flex align-items-center gap-3">
-          <div className="text-muted">
-            {isValid ? (
-              <span className="text-success">
-                <IconCheck size={16} className="me-1" />
-                All {services.length} service{services.length !== 1 ? 's' : ''} valid
-              </span>
-            ) : (
-              <span className="text-danger">❌ Please fix errors in the services above</span>
-            )}
-          </div>
-          <div className="text-muted">
-            Total services: <strong>{services.length}</strong>
-          </div>
-        </div>
         <Button type="submit" disabled={isSubmitting} className={isSubmitting ? 'loading' : ''}>
           {isSubmitting ? 'Validating...' : 'Validate All Services'}
         </Button>
