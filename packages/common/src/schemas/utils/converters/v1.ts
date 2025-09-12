@@ -1,7 +1,7 @@
-import { z } from 'zod';
-import { dynamicComposeSchemaV1 } from './utils/converters/v1.js';
+import z from 'zod';
+import type { dynamicComposeSchema, serviceSchema } from '../../dynamic-compose.js';
 
-export const serviceSchemaV2 = z.object({
+export const serviceSchemaV1 = z.object({
   image: z.string(),
   name: z.string(),
   internalPort: z.number().or(z.string()).optional(),
@@ -52,14 +52,7 @@ export const serviceSchemaV2 = z.object({
       }),
     )
     .optional(),
-  environment: z
-    .array(
-      z.object({
-        key: z.string().min(1),
-        value: z.string().min(1).or(z.number()),
-      }),
-    )
-    .optional(),
+  environment: z.record(z.string().min(1), z.union([z.string().min(1), z.number()])).optional(),
   sysctls: z.record(z.string(), z.number()).optional(),
   healthCheck: z
     .object({
@@ -135,26 +128,56 @@ export const serviceSchemaV2 = z.object({
   dns: z.string().optional().or(z.array(z.string()).optional()),
 });
 
-export const dynamicComposeSchemaV2 = z.object({
-  schemaVersion: z.literal(2),
-  services: serviceSchemaV2.array(),
+export const dynamicComposeSchemaV1 = z.object({
+  schemaVersion: z.literal(undefined),
+  services: serviceSchemaV1.array(),
   overrides: z
     .array(
       z.object({
         architecture: z.enum(['arm64', 'amd64']).optional(),
-        services: serviceSchemaV2.partial().array(),
+        services: serviceSchemaV1.partial().array(),
       }),
     )
     .optional(),
 });
 
-export const dynamicComposeUnion = z.discriminatedUnion('schemaVersion', [dynamicComposeSchemaV1, dynamicComposeSchemaV2]);
+const serviceV1ToLatest = (service: Partial<z.infer<typeof serviceSchemaV1>>): z.infer<typeof serviceSchema> => {
+  const { environment, ...rest } = service;
 
-// Change when introducing breaking changes
-export const serviceSchema = serviceSchemaV2;
-export const dynamicComposeSchema = dynamicComposeSchemaV2.omit({ schemaVersion: true });
+  const newService: Partial<z.infer<typeof serviceSchema>> = { ...rest };
 
-export type DynamicCompose = z.output<typeof dynamicComposeSchema>;
-export type DependsOn = z.output<typeof serviceSchemaV2.shape.dependsOn>;
-export type ServiceInput = z.input<typeof serviceSchema>;
-export type Service = z.output<typeof serviceSchema>;
+  if (environment) {
+    newService.environment = Object.entries(environment || {}).map(([key, value]) => ({ key, value }));
+  }
+
+  return { ...newService } as z.infer<typeof serviceSchema>;
+};
+
+const overrideV1ToLatest = (overrides: z.infer<typeof dynamicComposeSchemaV1>['overrides']): z.infer<typeof dynamicComposeSchema>['overrides'] => {
+  if (!overrides) return undefined;
+
+  const newOverrides: z.infer<typeof dynamicComposeSchema>['overrides'] = [];
+
+  for (const legacyOverride of overrides) {
+    const { architecture, services } = legacyOverride;
+    const newServices = services.map(serviceV1ToLatest);
+    newOverrides.push({ architecture, services: newServices });
+  }
+
+  return newOverrides;
+};
+
+export const composeV1ToLatest = (result: z.infer<typeof dynamicComposeSchemaV1>): z.infer<typeof dynamicComposeSchema> => {
+  const convertedServices = [];
+  let convertedOverrides: z.infer<typeof dynamicComposeSchema>['overrides'];
+
+  for (const service of result.services) {
+    convertedServices.push(serviceV1ToLatest(service));
+  }
+
+  if (result.overrides) {
+    convertedOverrides = overrideV1ToLatest(result.overrides);
+  }
+
+  return { services: convertedServices, overrides: convertedOverrides };
+};

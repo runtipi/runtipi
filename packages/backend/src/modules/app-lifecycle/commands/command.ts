@@ -7,7 +7,7 @@ import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { SubnetManagerService } from '@/modules/network/subnet-manager.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import type { ModuleRef } from '@nestjs/core';
-import { dynamicComposeSchema } from '@runtipi/common/schemas';
+import { parseComposeJson } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
 import Dockerode from 'dockerode';
@@ -40,7 +40,7 @@ export class AppLifecycleCommand {
     }
 
     try {
-      const { services, overrides } = dynamicComposeSchema.parse(composeJson.content);
+      const { services, overrides } = parseComposeJson(composeJson.content);
       const architecture = configService.get('architecture');
 
       // Merge architecture-specific overrides with base services
