@@ -49,7 +49,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "zod": "^4.1.5",
+    "zod": "^4.1.8",
     "zod-to-json-schema": "^3.24.5"
   }
 }
