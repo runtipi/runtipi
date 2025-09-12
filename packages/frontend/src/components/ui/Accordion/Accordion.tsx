@@ -70,9 +70,10 @@ export function AccordionItem({ value, defaultOpen, className, children, ...prop
  */
 type AccordionTriggerProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   className?: string;
+  hasError?: boolean;
 };
 
-export function AccordionTrigger({ className, children, ...props }: AccordionTriggerProps) {
+export function AccordionTrigger({ className, hasError, children, ...props }: AccordionTriggerProps) {
   const root = useContext(AccordionContext);
   const item = useContext(AccordionItemContext);
   if (!root || !item) {
@@ -89,7 +90,7 @@ export function AccordionTrigger({ className, children, ...props }: AccordionTri
         type="button"
         id={triggerId}
         data-slot="accordion-trigger"
-        className={cx('accordion-button', !isOpen && 'collapsed', className)}
+        className={cx('accordion-button', !isOpen && 'collapsed', hasError && 'border-danger text-danger', className)}
         data-bs-toggle="collapse"
         data-bs-target={`#${contentId}`}
         role="tab"

@@ -22,6 +22,36 @@ export const DockerServiceForm = ({ form, serviceData, serviceIndex, isMainServi
   const { formState, register, control } = form;
   const { errors } = formState;
 
+  const hasSectionErrors = (section: string): boolean => {
+    const serviceErrors = errors?.services?.[serviceIndex];
+    if (!serviceErrors) return false;
+
+    switch (section) {
+      case 'essentials':
+        return Boolean(serviceErrors.name || serviceErrors.image || serviceErrors.internalPort);
+      case 'environment':
+        return Boolean(
+          serviceErrors.environment && Array.isArray(serviceErrors.environment) && serviceErrors.environment.some((env) => env?.key || env?.value),
+        );
+      case 'volumes':
+        return Boolean(
+          serviceErrors.volumes && Array.isArray(serviceErrors.volumes) && serviceErrors.volumes.some((vol) => vol?.hostPath || vol?.containerPath),
+        );
+      case 'ports':
+        return Boolean(
+          serviceErrors.addPorts &&
+            Array.isArray(serviceErrors.addPorts) &&
+            serviceErrors.addPorts.some((port) => port?.hostPort || port?.containerPort || port?.interface),
+        );
+      case 'advanced':
+        return Boolean(
+          serviceErrors.networkMode || serviceErrors.workingDir || serviceErrors.user || serviceErrors.hostname || serviceErrors.privileged,
+        );
+      default:
+        return false;
+    }
+  };
+
   return (
     <div className="service-form">
       <div className="mb-3">
@@ -35,7 +65,7 @@ export const DockerServiceForm = ({ form, serviceData, serviceIndex, isMainServi
       </div>
       <Accordion id={`accordion-service-${serviceIndex}`}>
         <AccordionItem value="essentials">
-          <AccordionTrigger className="border-b">
+          <AccordionTrigger className="border-b" hasError={hasSectionErrors('essentials')}>
             <IconSettings className="me-2" />
             Essential configuration
           </AccordionTrigger>
@@ -44,7 +74,7 @@ export const DockerServiceForm = ({ form, serviceData, serviceIndex, isMainServi
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="environment">
-          <AccordionTrigger className="border-b">
+          <AccordionTrigger className="border-b" hasError={hasSectionErrors('environment')}>
             <IconVariable className="me-2" />
             Environment variables
           </AccordionTrigger>
@@ -53,7 +83,7 @@ export const DockerServiceForm = ({ form, serviceData, serviceIndex, isMainServi
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="volumes">
-          <AccordionTrigger className="border-b">
+          <AccordionTrigger className="border-b" hasError={hasSectionErrors('volumes')}>
             <IconServer className="me-2" />
             Volume mappings
           </AccordionTrigger>
@@ -62,7 +92,7 @@ export const DockerServiceForm = ({ form, serviceData, serviceIndex, isMainServi
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="ports">
-          <AccordionTrigger className="border-b">
+          <AccordionTrigger className="border-b" hasError={hasSectionErrors('ports')}>
             <IconArrowsDownUp className="me-2" />
             Port mappings
           </AccordionTrigger>
@@ -71,7 +101,7 @@ export const DockerServiceForm = ({ form, serviceData, serviceIndex, isMainServi
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="advanced">
-          <AccordionTrigger className="border-b">
+          <AccordionTrigger className="border-b" hasError={hasSectionErrors('advanced')}>
             <IconCloudDataConnection className="me-2" />
             Advanced configuration
           </AccordionTrigger>
