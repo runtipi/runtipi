@@ -23,6 +23,24 @@
   border-color: transparent;
 }
 
+/* Error state styling for tabs with validation errors */
+.trigger.text-danger {
+  color: var(--tblr-red) !important;
+  border-color: var(--tblr-red) !important;
+  font-weight: 500;
+}
+
+.trigger.text-danger:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-color: var(--tblr-red) !important;
+}
+
+.trigger[data-state="active"].text-danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-color: var(--tblr-red) !important;
+  border-bottom-color: rgba(220, 53, 69, 0.1) !important;
+}
+
 /* // .trigger[data-state='active'] { */
 /* //   background-color: var(--tblr-card-bg); */
 /* //   color: var(--tblr-nav-tabs-link-active-color); */

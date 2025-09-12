@@ -24,7 +24,7 @@ export const MultiServiceForm = () => {
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
     getValues,
     setValue,
   } = form;
@@ -45,9 +45,13 @@ export const MultiServiceForm = () => {
     };
   }
 
+  const hasServiceErrors = (serviceIndex: number): boolean => {
+    return Boolean(errors.services?.[serviceIndex]);
+  };
+
   const onSubmit = async (data: z.infer<typeof dynamicComposeSchema>) => {
     try {
-      const res = dynamicComposeSchema.parse(data); // This will throw if validation fails
+      const res = dynamicComposeSchema.parse(data);
       console.error(res);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -60,7 +64,11 @@ export const MultiServiceForm = () => {
       <Tabs value={activeTab} onValueChange={saveBeforeAction(setActiveTab)} className="w-full" defaultValue="0">
         <TabsList>
           {services.map((service, index) => (
-            <TabsTrigger key={service._id} value={String(index)} className="position-relative">
+            <TabsTrigger
+              key={service._id}
+              value={String(index)}
+              className={`position-relative ${hasServiceErrors(index) ? 'text-danger border-danger' : ''}`}
+            >
               <span className="me-2">
                 {service.name || `Service ${index + 1}`}
                 {service.isMain && <span className="badge bg-primary ms-1 text-xs text-white">Main</span>}
