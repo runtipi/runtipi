@@ -1,4 +1,5 @@
 import { dynamicComposeSchema, serviceSchema } from './dynamic-compose.js';
+import { parseComposeJson } from './utils/convert-legacy-schema.js';
 import type { DependsOn, DynamicCompose, Service, ServiceInput } from './dynamic-compose.js';
 
 import {
@@ -19,6 +20,7 @@ import { toJsonSchema } from './utils/to-json-schema.js';
 
 export {
   dynamicComposeSchema,
+  parseComposeJson,
   serviceSchema,
   toJsonSchema,
   APP_CATEGORIES,

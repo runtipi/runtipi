@@ -121,7 +121,11 @@ describe('DockerComposeBuilder', () => {
         { hostPath: '/host/path', containerPath: '/container/path', readOnly: true },
         { hostPath: '/host/path2', containerPath: '/container/path2' },
       ],
-      environment: { NODE_ENV: 'production', PORT: 80, SOME_VAR: 'value' },
+      environment: [
+        { key: 'NODE_ENV', value: 'production' },
+        { key: 'PORT', value: 80 },
+        { key: 'SOME_VAR', value: 'value' },
+      ],
       healthCheck: { test: 'curl -f http://localhost/ || exit 1', interval: '1m30s', timeout: '10s', retries: 3, startPeriod: '40s' },
       dependsOn: ['service2'],
       capAdd: ['SYS_ADMIN', 'NET_ADMIN'],
@@ -206,16 +210,16 @@ describe('DockerComposeBuilder', () => {
     const composeJson: { services: ServiceInput[] } = {
       services: [
         {
-          // @ts-expect-error
+          // @ts-expect-error testing extra fields
           something: 'crazy',
           name: 'ctfd',
           image: 'ctfd/ctfd:3.7.5',
           isMain: true,
           internalPort: 8000,
-          environment: {
-            UPLOAD_FOLDER: '/var/uploads',
-            DATABASE_URL: 'mysql+pymysql://tipi:${CTFD_MYSQL_DB_PASSWORD}@ctfd-db/ctfd',
-          },
+          environment: [
+            { key: 'UPLOAD_FOLDER', value: '/var/uploads' },
+            { key: 'DATABASE_URL', value: 'mysql+pymysql://tipi:${CTFD_MYSQL_DB_PASSWORD}@ctfd-db/ctfd' },
+          ],
           dependsOn: ['ctfd-db'],
           volumes: [
             {
@@ -239,12 +243,12 @@ describe('DockerComposeBuilder', () => {
         {
           name: 'ctfd-db',
           image: 'mariadb:10.4.12',
-          environment: {
-            MYSQL_ROOT_PASSWORD: '${CTFD_MYSQL_ROOT_PASSWORD}',
-            MYSQL_USER: 'tipi',
-            MYSQL_PASSWORD: '${CTFD_MYSQL_DB_PASSWORD}',
-            MYSQL_DATABASE: 'ctfd',
-          },
+          environment: [
+            { key: 'MYSQL_ROOT_PASSWORD', value: '${CTFD_MYSQL_ROOT_PASSWORD}' },
+            { key: 'MYSQL_USER', value: 'tipi' },
+            { key: 'MYSQL_PASSWORD', value: '${CTFD_MYSQL_DB_PASSWORD}' },
+            { key: 'MYSQL_DATABASE', value: 'ctfd' },
+          ],
           volumes: [
             {
               hostPath: '${APP_DATA_DIR}/data/db',

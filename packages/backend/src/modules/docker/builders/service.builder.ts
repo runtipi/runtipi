@@ -281,9 +281,14 @@ export class ServiceBuilder {
    * service.setEnvironment({ key: 'value' });
    * ```
    */
-  setEnvironment(environment?: Record<string, string | number>) {
-    if (environment) {
-      this.service.environment = { ...this.service.environment, ...environment };
+  setEnvironment(environment?: Array<{ key: string; value: string | number }>) {
+    if (environment && environment.length > 0) {
+      for (const env of environment) {
+        if (!this.service.environment) {
+          this.service.environment = {};
+        }
+        this.service.environment[env.key] = env.value;
+      }
     }
     return this;
   }
