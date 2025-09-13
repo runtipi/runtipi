@@ -8,10 +8,11 @@ import type { z } from 'zod';
 import { DockerServiceForm } from './docker-service-form';
 import { JsonComposeEditor } from './json-compose-editor';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export const MultiServiceForm = () => {
-  const { services, activeTab, setActiveTab, addService, removeService, updateService, isValid, error } = useMultiServiceStore();
+  const { services, activeService, setActiveService, addService, removeService, updateService, isValid, error } = useMultiServiceStore();
+  const [activeTab, setActiveTab] = useState('essentials');
 
   const form = useForm<z.infer<typeof dynamicComposeSchema>>({
     resolver: zodResolver(dynamicComposeSchema),
@@ -61,7 +62,7 @@ export const MultiServiceForm = () => {
 
   return (
     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <Tabs value={activeTab} onValueChange={saveBeforeAction(setActiveTab)} className="w-full" defaultValue="0">
+      <Tabs value={activeService} onValueChange={saveBeforeAction(setActiveService)} className="w-full" defaultValue="0">
         <TabsList>
           {services.map((service, index) => (
             <TabsTrigger

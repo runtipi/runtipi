@@ -12,13 +12,13 @@ interface ServiceWithId extends ServiceFormData {
 interface MultiServiceState {
   // State
   services: ServiceWithId[];
-  activeTab: string;
+  activeService: number | 'json';
   isValid: boolean;
   isDirty: boolean;
   error: string;
 
   // Actions
-  setActiveTab: (tab: string) => void;
+  setActiveService: (tab: number) => void;
   addService: () => void;
   removeService: (index: number) => void;
   updateService: (index: number, serviceData: ServiceFormData) => void;
@@ -54,25 +54,25 @@ function generateId(): string {
 
 export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   services: defaultServices,
-  activeTab: '0',
+  activeService: 0,
   isValid: true,
   isDirty: false,
   error: '',
-  setActiveTab: (tab: string) => {
-    const { activeTab, isDirty } = get();
+  setActiveService: (tab: number | 'json') => {
+    const { activeService, isDirty } = get();
 
-    if (activeTab === 'json' && isDirty && tab !== 'json') {
+    if (activeService === 'json' && isDirty && tab !== 'json') {
       if (!window.confirm('You have made changes to the JSON. Do you want to confirm losing them?')) {
         return;
       }
     }
 
-    set({ activeTab: tab, isDirty: false });
+    set({ activeService: tab, isDirty: false });
   },
 
   addService: () => {
-    const { services, activeTab, isDirty } = get();
-    if (activeTab === 'json' && isDirty) {
+    const { services, activeService, isDirty } = get();
+    if (activeService === 'json' && isDirty) {
       if (!window.confirm('You have made changes to the JSON. Do you want to confirm losing them?')) {
         return;
       }
@@ -88,15 +88,15 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
     set({
       isDirty: false,
       services: newServices,
-      activeTab: String(services.length),
+      activeService: services.length,
     });
 
     get().validateServices();
   },
 
   removeService: (index: number) => {
-    const { activeTab, isDirty, services } = get();
-    if (activeTab === 'json' && isDirty) {
+    const { activeService, isDirty, services } = get();
+    if (activeService === 'json' && isDirty) {
       if (!window.confirm('You have made changes to the JSON. Do you want to confirm losing them?')) {
         return;
       }
@@ -105,18 +105,18 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
     if (services.length === 1) return;
 
     const newServices = services.filter((_, i) => i !== index);
-    let newActiveTab = activeTab;
+    let newActiveTab = activeService;
 
-    if (Number(activeTab) === index || activeTab === 'json') {
-      newActiveTab = '0';
-    } else if (Number(activeTab) > index) {
-      newActiveTab = String(Number(activeTab) - 1);
+    if (activeService === index || activeService === 'json') {
+      newActiveTab = 0;
+    } else if (activeService > index) {
+      newActiveTab = activeService - 1;
     }
 
     set({
       isDirty: false,
       services: newServices,
-      activeTab: newActiveTab,
+      activeService: newActiveTab,
     });
     get().validateServices();
   },
@@ -174,7 +174,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   resetToDefaults: () =>
     set({
       services: defaultServices.map((service) => ({ ...service, _id: generateId() })),
-      activeTab: '0',
+      activeService: 0,
       isValid: true,
       isDirty: false,
     }),

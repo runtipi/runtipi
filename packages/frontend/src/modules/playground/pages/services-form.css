@@ -1,0 +1,37 @@
+.service-group {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.list-group .list-group-item.active {
+  color: var(--tblr-primary);
+}
+
+.nav-item .nav-link {
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  padding-top: 16px;
+  margin-top: -8px;
+}
+
+.nav-link-title {
+  margin-bottom: 0.3rem;
+}
+
+.nav-link-icon {
+  margin-bottom: 0.3rem;
+}
+
+.nav-item .nav-link.active {
+  padding-bottom: 10px;
+  color: var(--tblr-primary);
+  font-weight: 400;
+}
+
+.nav-item .nav-link:hover {
+  padding-bottom: 10px;
+}
+
+.main-container {
+  padding: 0px;
+}
