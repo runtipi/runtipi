@@ -1,3 +1,4 @@
+import { Checkbox } from '@/components/ui/Checkbox/Checkbox';
 import './elements.css';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -72,7 +73,7 @@ export const VolumesConfig = ({ errors, serviceIndex, control, register }: Props
                     control={control}
                     name={`services.${serviceIndex}.volumes.${index}.readOnly`}
                     defaultValue={false}
-                    render={({ field: { value, onChange } }) => <Switch className="mb-0" checked={value || false} onCheckedChange={onChange} />}
+                    render={({ field: { value, onChange } }) => <Checkbox className="mb-0" checked={value || false} onCheckedChange={onChange} />}
                   />
                 </TableCell>
                 <TableCell className="w-10">
@@ -80,7 +81,7 @@ export const VolumesConfig = ({ errors, serviceIndex, control, register }: Props
                     control={control}
                     name={`services.${serviceIndex}.volumes.${index}.shared`}
                     defaultValue={false}
-                    render={({ field: { value, onChange } }) => <Switch className="mb-0" checked={value || false} onCheckedChange={onChange} />}
+                    render={({ field: { value, onChange } }) => <Checkbox className="mb-0" checked={value || false} onCheckedChange={onChange} />}
                   />
                 </TableCell>
                 <TableCell className="w-10">
@@ -88,7 +89,7 @@ export const VolumesConfig = ({ errors, serviceIndex, control, register }: Props
                     control={control}
                     name={`services.${serviceIndex}.volumes.${index}.private`}
                     defaultValue={false}
-                    render={({ field: { value, onChange } }) => <Switch className="mb-0" checked={value || false} onCheckedChange={onChange} />}
+                    render={({ field: { value, onChange } }) => <Checkbox className="mb-0" checked={value || false} onCheckedChange={onChange} />}
                   />
                 </TableCell>
                 <TableCell className="w-1">

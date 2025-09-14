@@ -156,7 +156,7 @@ export default function PlaygroundPage() {
           </div>
           <div className="col col-12 col-md-10 mb-5">
             <div className="col">
-              <ul className="nav nav-underline mt-2 gap-4">
+              <ul className="nav nav-underline mt-2 gap-4 flex-nowrap overflow-auto">
                 {activeService !== 'json' && services[activeService] && tabs.map((tab) => renderTab(tab.id, tab.label, tab.icon, activeService))}
               </ul>
             </div>
