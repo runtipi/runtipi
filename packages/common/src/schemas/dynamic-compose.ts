@@ -4,7 +4,7 @@ import { dynamicComposeSchemaV1 } from './utils/converters/v1.js';
 export const serviceSchemaV2 = z.object({
   image: z.string(),
   name: z.string(),
-  internalPort: z.number().or(z.string()).optional(),
+  internalPort: z.number().min(1).max(65535),
   isMain: z.boolean().optional(),
   networkMode: z.string().optional(),
   extraHosts: z.array(z.string()).optional(),
@@ -32,8 +32,8 @@ export const serviceSchemaV2 = z.object({
   addPorts: z
     .array(
       z.object({
-        containerPort: z.number().or(z.string()),
-        hostPort: z.number().or(z.string()),
+        containerPort: z.number().min(1).max(65535),
+        hostPort: z.number().min(1).max(65535),
         udp: z.boolean().optional(),
         tcp: z.boolean().optional(),
         interface: z.string().optional(),
@@ -56,7 +56,7 @@ export const serviceSchemaV2 = z.object({
     .array(
       z.object({
         key: z.string().min(1),
-        value: z.string().min(1).or(z.number()),
+        value: z.string().min(1).or(z.number()).or(z.boolean()),
       }),
     )
     .optional(),
