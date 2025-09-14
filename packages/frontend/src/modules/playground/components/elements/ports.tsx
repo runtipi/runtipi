@@ -1,7 +1,11 @@
+import './elements.css';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import type { dynamicComposeSchema } from '@runtipi/common/schemas';
+import { IconX } from '@tabler/icons-react';
+import clsx from 'clsx';
 import { Controller, useFieldArray, type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type z from 'zod';
@@ -29,69 +33,83 @@ export const PortsConfig = ({ errors, serviceIndex, control, register }: Props) 
             </Tooltip>
             {'Port Mappings'} <span className="ms-1 form-help my-ports">?</span>
           </div>
-          <Button type="button" onClick={() => append({ containerPort: 0, hostPort: 0 })} size="sm">
+          <Button type="button" onClick={() => append({ containerPort: 8080, hostPort: 8080 })} size="sm">
             Add Port
           </Button>
         </div>
-        {fields.map((field, index) => (
-          <div key={field.id} className="row g-2 mb-3 align-items-end border-bottom pb-3">
-            <div className="col-md-3">
-              <Input
-                {...register(`services.${serviceIndex}.addPorts.${index}.hostPort`, { valueAsNumber: true })}
-                error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.hostPort?.message}
-                placeholder="8080"
-                label={index === 0 ? 'Host Port' : undefined}
-                type="number"
-                min={1}
-                max={65535}
-              />
-            </div>
-            <div className="col-md-3">
-              <Input
-                {...register(`services.${serviceIndex}.addPorts.${index}.containerPort`, { valueAsNumber: true })}
-                error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.containerPort?.message}
-                placeholder="8080"
-                label={index === 0 ? 'Container Port' : undefined}
-                type="number"
-                min={1}
-                max={65535}
-              />
-            </div>
-            <div className="col-md-2">
-              <Controller
-                control={control}
-                name={`services.${serviceIndex}.addPorts.${index}.tcp`}
-                defaultValue={true}
-                render={({ field: { onChange, value, ref, ...rest } }) => (
-                  <Switch ref={ref} checked={value} onCheckedChange={onChange} {...rest} label="TCP" />
-                )}
-              />
-            </div>
-            <div className="col-md-2">
-              <Controller
-                control={control}
-                name={`services.${serviceIndex}.addPorts.${index}.udp`}
-                defaultValue={true}
-                render={({ field: { onChange, value, ref, ...rest } }) => (
-                  <Switch ref={ref} checked={value} onCheckedChange={onChange} {...rest} label="UDP" />
-                )}
-              />
-            </div>
-            <div className="col-md-2">
-              <Button type="button" onClick={() => remove(index)} variant="outline" size="sm" className="w-100">
-                Remove
-              </Button>
-            </div>
-            <div className="col-md-6">
-              <Input
-                {...register(`services.${serviceIndex}.addPorts.${index}.interface`, { setValueAs: (v) => v.trim() || undefined })}
-                error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.interface?.message}
-                placeholder="eth0"
-                label="Interface (optional)"
-              />
-            </div>
-          </div>
-        ))}
+        <Table className={clsx('border p-1', { 'd-none': fields.length === 0 })}>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Host Port</TableHead>
+              <TableHead>Container Port</TableHead>
+              <TableHead>TCP</TableHead>
+              <TableHead>UDP</TableHead>
+              <TableHead>Interface</TableHead>
+              <TableHead />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {fields.map((field, index) => (
+              <TableRow key={field.id}>
+                <TableCell scope="row" className="w-30">
+                  <Input
+                    {...register(`services.${serviceIndex}.addPorts.${index}.hostPort`, { valueAsNumber: true })}
+                    error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.hostPort?.message}
+                    placeholder="8080"
+                    type="number"
+                    min={1}
+                    max={65535}
+                    className="table-row-input"
+                  />
+                </TableCell>
+                <TableCell className="w-30">
+                  <Input
+                    {...register(`services.${serviceIndex}.addPorts.${index}.containerPort`, { valueAsNumber: true })}
+                    error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.containerPort?.message}
+                    placeholder="8080"
+                    type="number"
+                    min={1}
+                    max={65535}
+                    className="table-row-input"
+                  />
+                </TableCell>
+                <TableCell className="w-10">
+                  <Controller
+                    control={control}
+                    name={`services.${serviceIndex}.addPorts.${index}.tcp`}
+                    defaultValue={true}
+                    render={({ field: { onChange, value, ref, ...rest } }) => (
+                      <Switch ref={ref} checked={value} onCheckedChange={onChange} {...rest} className="mb-0" />
+                    )}
+                  />
+                </TableCell>
+                <TableCell className="w-10">
+                  <Controller
+                    control={control}
+                    name={`services.${serviceIndex}.addPorts.${index}.udp`}
+                    defaultValue={true}
+                    render={({ field: { onChange, value, ref, ...rest } }) => (
+                      <Switch ref={ref} checked={value} onCheckedChange={onChange} {...rest} className="mb-0" />
+                    )}
+                  />
+                </TableCell>
+                <TableCell className="w-30">
+                  <Input
+                    {...register(`services.${serviceIndex}.addPorts.${index}.interface`, { setValueAs: (v) => v.trim() || undefined })}
+                    error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.interface?.message}
+                    placeholder="eth0"
+                  />
+                </TableCell>
+                <TableCell className="w-1">
+                  <Button type="button" size="sm" onClick={() => remove(index)} className="btn-action">
+                    <IconX size={16} />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
         {fields.length === 0 && <div className="text-muted small">No port mappings added yet. Click "Add Port" to add one.</div>}
       </div>
     </div>

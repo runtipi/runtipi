@@ -142,12 +142,22 @@ export const dynamicComposeSchemaV1 = z.object({
 });
 
 const serviceV1ToLatest = (service: Partial<z.infer<typeof serviceSchemaV1>>): z.infer<typeof serviceSchema> => {
-  const { environment, ...rest } = service;
+  const { environment, internalPort, addPorts, ...rest } = service;
 
   const newService: Partial<z.infer<typeof serviceSchema>> = { ...rest };
 
+  newService.internalPort = internalPort ? Number(internalPort) : undefined;
+
   if (environment) {
     newService.environment = Object.entries(environment || {}).map(([key, value]) => ({ key, value }));
+  }
+
+  if (addPorts) {
+    newService.addPorts = addPorts.map((port) => ({
+      ...port,
+      containerPort: Number(port.containerPort),
+      hostPort: Number(port.hostPort),
+    }));
   }
 
   return { ...newService } as z.infer<typeof serviceSchema>;
