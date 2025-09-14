@@ -1,3 +1,4 @@
+import './input.css';
 import clsx from 'clsx';
 import type React from 'react';
 
