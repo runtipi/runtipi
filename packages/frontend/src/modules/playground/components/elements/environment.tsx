@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import type { dynamicComposeSchema } from '@runtipi/common/schemas';
-import { IconTrash, IconX } from '@tabler/icons-react';
+import { IconX } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useFieldArray, type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';

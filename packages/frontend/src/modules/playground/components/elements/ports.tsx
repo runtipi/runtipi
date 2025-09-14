@@ -1,7 +1,7 @@
+import { Checkbox } from '@/components/ui/Checkbox/Checkbox';
 import './elements.css';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Switch } from '@/components/ui/Switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import type { dynamicComposeSchema } from '@runtipi/common/schemas';
 import { IconX } from '@tabler/icons-react';
@@ -79,7 +79,7 @@ export const PortsConfig = ({ errors, serviceIndex, control, register }: Props) 
                     name={`services.${serviceIndex}.addPorts.${index}.tcp`}
                     defaultValue={true}
                     render={({ field: { onChange, value, ref, ...rest } }) => (
-                      <Switch ref={ref} checked={value} onCheckedChange={onChange} {...rest} className="mb-0" />
+                      <Checkbox ref={ref} checked={value} onCheckedChange={onChange} {...rest} className="mb-0" />
                     )}
                   />
                 </TableCell>
@@ -89,7 +89,7 @@ export const PortsConfig = ({ errors, serviceIndex, control, register }: Props) 
                     name={`services.${serviceIndex}.addPorts.${index}.udp`}
                     defaultValue={true}
                     render={({ field: { onChange, value, ref, ...rest } }) => (
-                      <Switch ref={ref} checked={value} onCheckedChange={onChange} {...rest} className="mb-0" />
+                      <Checkbox ref={ref} checked={value} onCheckedChange={onChange} {...rest} className="mb-0" />
                     )}
                   />
                 </TableCell>
