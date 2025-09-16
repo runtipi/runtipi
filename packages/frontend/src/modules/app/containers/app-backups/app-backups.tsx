@@ -104,7 +104,7 @@ export const AppBackups = ({ info, status }: Props) => {
       toast.success(t('APP_BACKUP_SUCCESS', { id: info.urn }));
       restoreModalDisclosure.close();
       setIsUploadMode(false);
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('APP_BACKUP_ERROR', { id: info.urn }));
     }
   };
