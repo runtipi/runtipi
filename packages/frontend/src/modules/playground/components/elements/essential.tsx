@@ -3,6 +3,7 @@ import type { dynamicComposeSchema } from '@runtipi/common/schemas';
 import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type z from 'zod';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   register: UseFormRegister<z.infer<typeof dynamicComposeSchema>>;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
+  const { t } = useTranslation();
   return (
     <div className="row g-4">
       <div className="col-md-6">
@@ -20,9 +22,9 @@ export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-service">
-                Unique identifier for your service
+                {t('MULTI_SERVICE_ESSENTIALS_SERVICE_NAME_TOOLTIP')}
               </Tooltip>
-              {'Service name'} <span className="ms-1 form-help my-service">?</span>
+              {t('MULTI_SERVICE_ESSENTIALS_SERVICE_NAME')} <span className="ms-1 form-help my-service">?</span>
             </>
           }
           placeholder="my-service"
@@ -35,9 +37,9 @@ export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-image">
-                Docker image to use for the service
+                {t('MULTI_SERVICE_ESSENTIALS_IMAGE_TOOLTIP')}
               </Tooltip>
-              {'Image'} <span className="ms-1 form-help my-image">?</span>
+              {t('MULTI_SERVICE_ESSENTIALS_IMAGE')} <span className="ms-1 form-help my-image">?</span>
             </>
           }
           placeholder="nginx:latest"
@@ -50,9 +52,9 @@ export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-internal-port">
-                Port on which the service listens inside the container
+                {t('MULTI_SERVICE_ESSENTIALS_INTERNAL_PORT_TOOLTIP')}
               </Tooltip>
-              {'Internal Port'} <span className="ms-1 form-help my-internal-port">?</span>
+              {t('MULTI_SERVICE_ESSENTIALS_INTERNAL_PORT')} <span className="ms-1 form-help my-internal-port">?</span>
             </>
           }
           type="number"

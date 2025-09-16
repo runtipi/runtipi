@@ -7,10 +7,12 @@ import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import { copilot } from '@uiw/codemirror-theme-copilot';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from 'react-i18next';
 
 const schema = toJsonSchema(dynamicComposeSchema);
 
 export const JsonComposeEditor = () => {
+  const { t } = useTranslation();
   const { services, isDirty, updateFromJson, setIsDirty } = useMultiServiceStore();
   const [error, setError] = useState<string | undefined>(undefined);
 
@@ -57,7 +59,7 @@ export const JsonComposeEditor = () => {
         setError(formattedErrors);
       }
     } catch (_) {
-      setError('Invalid JSON format');
+      setError(t('MULTI_SERVICE_JSON_INVALID_FORMAT'));
     }
   };
 
@@ -65,7 +67,7 @@ export const JsonComposeEditor = () => {
     <div>
       <div className="w-full space-y-2">
         <CodeMirror
-          placeholder="Edit JSON here..."
+          placeholder={t('MULTI_SERVICE_JSON_EDIT_PLACEHOLDER')}
           value={value}
           height="400px"
           extensions={[json()]}
@@ -81,7 +83,7 @@ export const JsonComposeEditor = () => {
             setIsDirty(false);
           }}
         >
-          Save JSON
+          {t('MULTI_SERVICE_JSON_SAVE')}
         </Button>
       </div>
     </div>

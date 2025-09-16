@@ -5,6 +5,7 @@ import type { UseFormRegister, Control, FieldErrors } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type z from 'zod';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   register: UseFormRegister<z.infer<typeof dynamicComposeSchema>>;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export const AdvancedConfig = ({ register, errors, control, serviceIndex }: Props) => {
+  const { t } = useTranslation();
   return (
     <div className="row g-4">
       <div className="col-md-6">
@@ -23,9 +25,9 @@ export const AdvancedConfig = ({ register, errors, control, serviceIndex }: Prop
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-network-mode">
-                Docker network mode for the container
+                {t('MULTI_SERVICE_ADVANCED_NETWORK_MODE_TOOLTIP')}
               </Tooltip>
-              {'Network mode'} <span className="ms-1 form-help my-network-mode">?</span>
+              {t('MULTI_SERVICE_ADVANCED_NETWORK_MODE')} <span className="ms-1 form-help my-network-mode">?</span>
             </>
           }
           placeholder="bridge"
@@ -38,9 +40,9 @@ export const AdvancedConfig = ({ register, errors, control, serviceIndex }: Prop
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-working-dir">
-                Working directory inside the container
+                {t('MULTI_SERVICE_ADVANCED_WORKING_DIR_TOOLTIP')}
               </Tooltip>
-              {'Working directory'} <span className="ms-1 form-help my-working-dir">?</span>
+              {t('MULTI_SERVICE_ADVANCED_WORKING_DIR')} <span className="ms-1 form-help my-working-dir">?</span>
             </>
           }
           placeholder="/app"
@@ -53,9 +55,9 @@ export const AdvancedConfig = ({ register, errors, control, serviceIndex }: Prop
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-user">
-                User to run the container as
+                {t('MULTI_SERVICE_ADVANCED_USER_TOOLTIP')}
               </Tooltip>
-              {'User'} <span className="ms-1 form-help my-user">?</span>
+              {t('MULTI_SERVICE_ADVANCED_USER')} <span className="ms-1 form-help my-user">?</span>
             </>
           }
           placeholder="1000"
@@ -68,9 +70,9 @@ export const AdvancedConfig = ({ register, errors, control, serviceIndex }: Prop
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-hostname">
-                Hostname for the container
+                {t('MULTI_SERVICE_ADVANCED_HOSTNAME_TOOLTIP')}
               </Tooltip>
-              {'Hostname'} <span className="ms-1 form-help my-hostname">?</span>
+              {t('MULTI_SERVICE_ADVANCED_HOSTNAME')} <span className="ms-1 form-help my-hostname">?</span>
             </>
           }
           placeholder="my-container"
@@ -90,9 +92,9 @@ export const AdvancedConfig = ({ register, errors, control, serviceIndex }: Prop
               label={
                 <>
                   <Tooltip className="tooltip" anchorSelect=".my-privileged">
-                    Run container in privileged mode
+                    {t('MULTI_SERVICE_ADVANCED_PRIVILEGED_MODE_TOOLTIP')}
                   </Tooltip>
-                  {'Privileged Mode'} <span className="ms-1 form-help my-privileged">?</span>
+                  {t('MULTI_SERVICE_ADVANCED_PRIVILEGED_MODE')} <span className="ms-1 form-help my-privileged">?</span>
                 </>
               }
             />

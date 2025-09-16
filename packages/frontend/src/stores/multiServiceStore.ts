@@ -13,9 +13,9 @@ interface MultiServiceState {
   // State
   services: ServiceWithId[];
   activeService: number | 'json';
-  isValid: boolean;
   isDirty: boolean;
   error: string;
+  validate: (values: z.infer<typeof dynamicComposeSchema>) => boolean;
 
   // Actions
   setActiveService: (tab: number) => void;
@@ -23,7 +23,6 @@ interface MultiServiceState {
   removeService: (index: number) => void;
   updateService: (index: number, serviceData: ServiceFormData) => void;
   updateFromJson: (services: MultiServiceFormData['services']) => void;
-  validateServices: () => void;
   resetToDefaults: () => void;
   setIsDirty: (dirty: boolean) => void;
 }
@@ -55,9 +54,34 @@ function generateId(): string {
 export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   services: defaultServices,
   activeService: 0,
-  isValid: true,
   isDirty: false,
   error: '',
+  validate: (values: z.infer<typeof dynamicComposeSchema>) => {
+    const res = dynamicComposeSchema.safeParse(values);
+
+    if (!res.success) {
+      set({ error: 'Invalid configuration.' });
+      return false;
+    }
+
+    // Ensure only one main service
+    const mainServices = values.services.filter((service) => service.isMain);
+    if (mainServices.length !== 1) {
+      set({ error: 'There must be exactly one main service.' });
+      return false;
+    }
+
+    // Ensure unique service names
+    const names = values.services.map((service) => service.name);
+    const uniqueNames = new Set(names);
+    if (names.length !== uniqueNames.size) {
+      set({ error: 'Service names must be unique.' });
+      return false;
+    }
+
+    set({ error: '' });
+    return true;
+  },
   setActiveService: (tab: number | 'json') => {
     const { activeService, isDirty } = get();
 
@@ -91,7 +115,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       activeService: services.length,
     });
 
-    get().validateServices();
+    get().validate({ services: newServices });
   },
 
   removeService: (index: number) => {
@@ -118,7 +142,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       services: newServices,
       activeService: newActiveTab,
     });
-    get().validateServices();
+    get().validate({ services: newServices });
   },
 
   updateService: (index: number, serviceData: ServiceFormData) => {
@@ -129,7 +153,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       const newServices = [...services];
       newServices[index] = { ...serviceData, _id: existingService._id };
       set({ services: newServices });
-      get().validateServices();
+      get().validate({ services: newServices });
     }
   },
 
@@ -140,42 +164,13 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
     }));
 
     set({ services: servicesWithIds });
-    get().validateServices();
+    get().validate({ services: servicesWithIds });
   },
-
-  validateServices: () => {
-    const { services } = get();
-
-    try {
-      const servicesWithoutIds = services.map(({ _id, ...service }) => service);
-      dynamicComposeSchema.parse({ services: servicesWithoutIds });
-
-      // Ensure only one main service
-      const mainServices = servicesWithoutIds.filter((service) => service.isMain);
-      if (mainServices.length !== 1) {
-        set({ isValid: false, error: 'There must be exactly one main service.' });
-        return;
-      }
-
-      // Ensure unique service names
-      const names = servicesWithoutIds.map((service) => service.name);
-      const uniqueNames = new Set(names);
-      if (names.length !== uniqueNames.size) {
-        set({ isValid: false, error: 'Service names must be unique.' });
-        return;
-      }
-
-      set({ isValid: true });
-    } catch (_) {
-      set({ isValid: false });
-    }
-  },
-
   resetToDefaults: () =>
     set({
       services: defaultServices.map((service) => ({ ...service, _id: generateId() })),
       activeService: 0,
-      isValid: true,
+      error: '',
       isDirty: false,
     }),
 
