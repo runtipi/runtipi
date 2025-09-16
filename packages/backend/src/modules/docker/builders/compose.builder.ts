@@ -5,6 +5,7 @@ import type { AppUrn } from '@runtipi/common/types';
 import * as yaml from 'yaml';
 import { type BuiltService, ServiceBuilder } from './service.builder';
 import { TraefikLabelsBuilder } from './traefik-labels.builder';
+import z from 'zod';
 
 interface Network {
   key: string;
@@ -23,7 +24,7 @@ export class DockerComposeBuilder {
   private networks: Record<string, Omit<Network, 'key'>> = {};
 
   addService(service: BuiltService) {
-    const { name, ...rest } = service;
+    const { name: _, ...rest } = service;
     this.services[service.name] = rest as BuiltService;
     return this;
   }
@@ -65,7 +66,9 @@ export class DockerComposeBuilder {
     const result = serviceSchema.safeParse(params);
 
     if (!result.success) {
-      console.warn(`! Service ${params.name} has invalid schema: \n${JSON.stringify(result.error.flatten(), null, 2)}\nNotify the app maintainer`);
+      console.warn(
+        `! Service ${params.name} has invalid schema: \n${JSON.stringify(z.treeifyError(result.error), null, 2)}\nNotify the app maintainer`,
+      );
     }
 
     const service = new ServiceBuilder();

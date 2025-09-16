@@ -37,17 +37,24 @@ export const JsonComposeEditor = () => {
     };
   }, [isDirty]);
 
-  const validateInput = (value: string) => {
-    setValue(value);
-    setIsDirty(true);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only run on mount
+  useEffect(() => {
+    validateInput(value);
+  }, []);
 
-    if (!value) {
+  const validateInput = (newValue: string) => {
+    if (newValue !== value) {
+      setValue(newValue);
+      setIsDirty(true);
+    }
+
+    if (!newValue) {
       setError(undefined);
       return;
     }
 
     try {
-      const parsedValue = JSON.parse(value);
+      const parsedValue = JSON.parse(newValue);
       const ajv = new Ajv({ allErrors: true });
       const validate = ajv.compile(schema);
       const valid = validate(parsedValue);

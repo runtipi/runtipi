@@ -14,10 +14,13 @@ import { VolumesConfig } from './elements/volumes';
 import { EnvironmentConfig } from './elements/environment';
 import { EssentialConfig } from './elements/essential';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 export const MultiServiceForm = () => {
   const { t } = useTranslation();
-  const { services, activeService, setActiveService, addService, removeService, updateService, error, validate } = useMultiServiceStore();
+  const { services, activeService, setActiveService, addService, removeService, updateService, error, validate, isDirty, setIsDirty } =
+    useMultiServiceStore();
+  const [jsonEditorOpen, setJsonEditorOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('essentials');
 
   const tabs = [
@@ -40,6 +43,16 @@ export const MultiServiceForm = () => {
   // biome-ignore lint/suspicious/noExplicitAny: We need any type here
   function saveBeforeAction<T extends (...args: any[]) => any>(action: T) {
     return (...args: Parameters<T>): ReturnType<T> => {
+      if (isDirty && jsonEditorOpen) {
+        // eslint-disable-next-line no-alert
+        const confirmLeave = window.confirm(t('MULTI_SERVICE_UNSAVED_CHANGES_CONFIRM'));
+        if (!confirmLeave) {
+          return {} as ReturnType<T>;
+        }
+
+        setIsDirty(false);
+      }
+
       const values = form.getValues();
       values.services.forEach((service, index) => {
         updateService(index, service);
@@ -109,6 +122,7 @@ export const MultiServiceForm = () => {
 
     if (valid) {
       // Call mutation
+      toast.success('Should be valid! (mutation not implemented)');
     } else {
       console.error('Validation errors:', error);
     }
@@ -117,78 +131,95 @@ export const MultiServiceForm = () => {
   return (
     <form className="flex flex-col" onSubmit={form.handleSubmit(onSubmit)}>
       <div className="container main-container bg-white border rounded mt-4">
-        <div className="row ms-0 me-0">
-          <div className="col-12 col-md-2 border-end p-0">
-            <div className="d-flex justify-content-between align-items-center p-3">
-              <div className="fw-bold">{t('MULTI_SERVICE_SERVICES')}</div>
-              <IconPlus className="text-primary cursor-pointer" size={20} onClick={() => saveBeforeAction(addService)()} />
-            </div>
-            <div className="w-full border-top">
-              <div className="list-group list-group-transparent m-0">
-                {services.map((service, index) => (
-                  <button
-                    type="button"
-                    key={service._id}
-                    className={clsx('list-group-item list-group-item-action d-flex align-items-center', { active: index === activeService })}
-                    onClick={() => saveBeforeAction(setActiveService)(index)}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-full">
-                      <div>
-                        <span>{service.name || t('MULTI_SERVICE_SERVICE_NAME', { index: index + 1 })}</span>
-                        {serviceHasError(index) && <span className="ms-1 text-danger">*</span>}
+        {jsonEditorOpen && <JsonComposeEditor />}
+        {!jsonEditorOpen && (
+          <div className="row ms-0 me-0">
+            <div className="col-12 col-md-2 border-end p-0">
+              <div className="d-flex justify-content-between align-items-center p-3">
+                <div className="fw-bold">{t('MULTI_SERVICE_SERVICES')}</div>
+                <IconPlus className="text-primary cursor-pointer" size={20} onClick={() => saveBeforeAction(addService)()} />
+              </div>
+              <div className="w-full border-top">
+                <div className="list-group list-group-transparent m-0">
+                  {services.map((service, index) => (
+                    <button
+                      type="button"
+                      key={service._id}
+                      className={clsx('list-group-item list-group-item-action d-flex align-items-center', { active: index === activeService })}
+                      onClick={() => saveBeforeAction(setActiveService)(index)}
+                    >
+                      <div className="d-flex justify-content-between align-items-center w-full">
+                        <div>
+                          <span>{service.name || t('MULTI_SERVICE_SERVICE_NAME', { index: index + 1 })}</span>
+                          {serviceHasError(index) && <span className="ms-1 text-danger">*</span>}
+                        </div>
+                        {!service.isMain && (
+                          <button
+                            type="button"
+                            className="btn-close btn-close-white ms-2"
+                            aria-label={t('MULTI_SERVICE_REMOVE_SERVICE')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              saveBeforeAction(removeService)(index);
+                            }}
+                          >
+                            <IconX />
+                          </button>
+                        )}
                       </div>
-                      {!service.isMain && (
-                        <button
-                          type="button"
-                          className="btn-close btn-close-white ms-2"
-                          aria-label={t('MULTI_SERVICE_REMOVE_SERVICE')}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            saveBeforeAction(removeService)(index);
-                          }}
-                        >
-                          <IconX />
-                        </button>
-                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="col col-12 col-md-10 mb-5">
+              <div className="col">
+                <ul className="nav nav-underline pt-2 gap-4 flex-nowrap overflow-auto">
+                  {activeService !== 'json' && services[activeService] && tabs.map((tab) => renderTab(tab.id, tab.label, tab.icon, activeService))}
+                </ul>
+              </div>
+              <div className="col pt-4 px-3">
+                {services.map((service, index) => {
+                  return (
+                    <div key={service._id} className={clsx({ 'd-none': index !== activeService })}>
+                      <div className={clsx({ 'd-none': activeTab !== 'essentials' })}>
+                        <EssentialConfig register={form.register} serviceIndex={index} errors={form.formState.errors} />
+                      </div>
+                      <div className={clsx({ 'd-none': activeTab !== 'environment' })}>
+                        <EnvironmentConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
+                      </div>
+                      <div className={clsx({ 'd-none': activeTab !== 'volumes' })}>
+                        <VolumesConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
+                      </div>
+                      <div className={clsx({ 'd-none': activeTab !== 'ports' })}>
+                        <PortsConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
+                      </div>
+                      <div className={clsx({ 'd-none': activeTab !== 'advanced' })}>
+                        <AdvancedConfig register={form.register} serviceIndex={index} errors={form.formState.errors} control={form.control} />
+                      </div>
                     </div>
-                  </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
-          <div className="col col-12 col-md-10 mb-5">
-            <div className="col">
-              <ul className="nav nav-underline pt-2 gap-4 flex-nowrap overflow-auto">
-                {activeService !== 'json' && services[activeService] && tabs.map((tab) => renderTab(tab.id, tab.label, tab.icon, activeService))}
-              </ul>
-            </div>
-            <div className="col pt-4 px-3">
-              {services.map((service, index) => {
-                return (
-                  <div key={service._id} className={clsx({ 'd-none': index !== activeService })}>
-                    <div className={clsx({ 'd-none': activeTab !== 'essentials' })}>
-                      <EssentialConfig register={form.register} serviceIndex={index} errors={form.formState.errors} />
-                    </div>
-                    <div className={clsx({ 'd-none': activeTab !== 'environment' })}>
-                      <EnvironmentConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
-                    </div>
-                    <div className={clsx({ 'd-none': activeTab !== 'volumes' })}>
-                      <VolumesConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
-                    </div>
-                    <div className={clsx({ 'd-none': activeTab !== 'ports' })}>
-                      <PortsConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
-                    </div>
-                    <div className={clsx({ 'd-none': activeTab !== 'advanced' })}>
-                      <AdvancedConfig register={form.register} serviceIndex={index} errors={form.formState.errors} control={form.control} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        )}
         <div className="d-flex justify-content-between align-items-center mt-4 p-3 bg-light rounded-bottom">
-          <Button type="submit">{t('MULTI_SERVICE_VALIDATE_ALL_SERVICES')}</Button>
+          <Button disabled={jsonEditorOpen} type="submit">
+            {t('MULTI_SERVICE_VALIDATE_ALL_SERVICES')}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.clearErrors();
+              saveBeforeAction(setJsonEditorOpen)((v) => !v);
+            }}
+          >
+            <span className="d-flex align-items-center">{jsonEditorOpen ? t('MULTI_SERVICE_BACK_TO_FORM') : t('MULTI_SERVICE_JSON_EDITOR')}</span>
+          </Button>
         </div>
       </div>
     </form>
