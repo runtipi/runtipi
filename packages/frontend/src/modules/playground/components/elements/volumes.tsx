@@ -10,6 +10,7 @@ import clsx from 'clsx';
 import { Controller, useFieldArray, type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type z from 'zod';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   control: Control<z.infer<typeof dynamicComposeSchema>>;
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export const VolumesConfig = ({ errors, serviceIndex, control, register }: Props) => {
+  const { t } = useTranslation();
   const { fields, append, remove } = useFieldArray({
     control,
     name: `services.${serviceIndex}.volumes`,
@@ -30,22 +32,22 @@ export const VolumesConfig = ({ errors, serviceIndex, control, register }: Props
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div>
             <Tooltip className="tooltip" anchorSelect=".my-volumes">
-              Volume mappings for persistent storage
+              {t('MULTI_SERVICE_VOLUMES_TITLE_TOOLTIP')}
             </Tooltip>
-            {'Volume Mappings'} <span className="ms-1 form-help my-volumes">?</span>
+            {t('MULTI_SERVICE_VOLUMES_TITLE')} <span className="ms-1 form-help my-volumes">?</span>
           </div>
           <Button type="button" onClick={() => append({ containerPath: '/', hostPath: '/' })} size="sm">
-            Add Volume
+            {t('MULTI_SERVICE_VOLUMES_ADD_VOLUME')}
           </Button>
         </div>
         <Table className={clsx('border p-1', { 'd-none': fields.length === 0 })}>
           <TableHeader>
             <TableRow>
-              <TableHead>Host Path</TableHead>
-              <TableHead>Container Path</TableHead>
-              <TableHead>Read-only</TableHead>
-              <TableHead>Shared</TableHead>
-              <TableHead>Private</TableHead>
+              <TableHead>{t('MULTI_SERVICE_VOLUMES_HOST_PATH')}</TableHead>
+              <TableHead>{t('MULTI_SERVICE_VOLUMES_CONTAINER_PATH')}</TableHead>
+              <TableHead>{t('MULTI_SERVICE_VOLUMES_READ_ONLY')}</TableHead>
+              <TableHead>{t('MULTI_SERVICE_VOLUMES_SHARED')}</TableHead>
+              <TableHead>{t('MULTI_SERVICE_VOLUMES_PRIVATE')}</TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -101,7 +103,7 @@ export const VolumesConfig = ({ errors, serviceIndex, control, register }: Props
             ))}
           </TableBody>
         </Table>
-        {fields.length === 0 && <div className="text-muted small">No volume mappings added yet. Click "Add Volume" to add one.</div>}
+        {fields.length === 0 && <div className="text-muted small">{t('MULTI_SERVICE_VOLUMES_NO_VOLUMES')}</div>}
       </div>
     </div>
   );

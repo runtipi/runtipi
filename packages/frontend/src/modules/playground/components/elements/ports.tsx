@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import { Controller, useFieldArray, type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
 import type z from 'zod';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   control: Control<z.infer<typeof dynamicComposeSchema>>;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export const PortsConfig = ({ errors, serviceIndex, control, register }: Props) => {
+  const { t } = useTranslation();
   const { fields, append, remove } = useFieldArray({
     control,
     name: `services.${serviceIndex}.addPorts`,
@@ -29,22 +31,22 @@ export const PortsConfig = ({ errors, serviceIndex, control, register }: Props) 
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div>
             <Tooltip className="tooltip" anchorSelect=".my-ports">
-              Port mappings between host and container
+              {t('MULTI_SERVICE_PORTS_TITLE_TOOLTIP')}
             </Tooltip>
-            {'Port Mappings'} <span className="ms-1 form-help my-ports">?</span>
+            {t('MULTI_SERVICE_PORTS_TITLE')} <span className="ms-1 form-help my-ports">?</span>
           </div>
           <Button type="button" onClick={() => append({ containerPort: 8080, hostPort: 8080 })} size="sm">
-            Add Port
+            {t('MULTI_SERVICE_PORTS_ADD_PORT')}
           </Button>
         </div>
         <Table className={clsx('border p-1', { 'd-none': fields.length === 0 })}>
           <TableHeader>
             <TableRow>
-              <TableHead>Host Port</TableHead>
-              <TableHead>Container Port</TableHead>
-              <TableHead>TCP</TableHead>
-              <TableHead>UDP</TableHead>
-              <TableHead>Interface</TableHead>
+              <TableHead>{t('MULTI_SERVICE_PORTS_HOST_PORT')}</TableHead>
+              <TableHead>{t('MULTI_SERVICE_PORTS_CONTAINER_PORT')}</TableHead>
+              <TableHead>{t('MULTI_SERVICE_PORTS_TCP')}</TableHead>
+              <TableHead>{t('MULTI_SERVICE_PORTS_UDP')}</TableHead>
+              <TableHead>{t('MULTI_SERVICE_PORTS_INTERFACE')}</TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -110,7 +112,7 @@ export const PortsConfig = ({ errors, serviceIndex, control, register }: Props) 
           </TableBody>
         </Table>
 
-        {fields.length === 0 && <div className="text-muted small">No port mappings added yet. Click "Add Port" to add one.</div>}
+        {fields.length === 0 && <div className="text-muted small">{t('MULTI_SERVICE_PORTS_NO_PORTS')}</div>}
       </div>
     </div>
   );

@@ -1,18 +1,32 @@
 import { Button } from '@/components/ui/Button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { dynamicComposeSchema } from '@runtipi/common/schemas';
-import { IconPlus, IconX, IconCode } from '@tabler/icons-react';
+import { IconArrowsDownUp, IconCloudDataConnection, IconPlus, IconServer, IconSettings, IconVariable, IconX } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
-import { DockerServiceForm } from './docker-service-form';
 import { JsonComposeEditor } from './json-compose-editor';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import { useEffect, useState } from 'react';
+import clsx from 'clsx';
+import { AdvancedConfig } from './elements/advanced';
+import { PortsConfig } from './elements/ports';
+import { VolumesConfig } from './elements/volumes';
+import { EnvironmentConfig } from './elements/environment';
+import { EssentialConfig } from './elements/essential';
+import { useTranslation } from 'react-i18next';
 
 export const MultiServiceForm = () => {
-  const { services, activeService, setActiveService, addService, removeService, updateService, isValid, error } = useMultiServiceStore();
+  const { t } = useTranslation();
+  const { services, activeService, setActiveService, addService, removeService, updateService, error, validate } = useMultiServiceStore();
   const [activeTab, setActiveTab] = useState('essentials');
+
+  const tabs = [
+    { id: 'essentials', label: t('MULTI_SERVICE_TAB_ESSENTIALS'), icon: IconSettings },
+    { id: 'environment', label: t('MULTI_SERVICE_TAB_ENVIRONMENT'), icon: IconVariable },
+    { id: 'volumes', label: t('MULTI_SERVICE_TAB_VOLUMES'), icon: IconServer },
+    { id: 'ports', label: t('MULTI_SERVICE_TAB_PORTS'), icon: IconArrowsDownUp },
+    { id: 'advanced', label: t('MULTI_SERVICE_TAB_ADVANCED'), icon: IconCloudDataConnection },
+  ];
 
   const form = useForm<z.infer<typeof dynamicComposeSchema>>({
     resolver: zodResolver(dynamicComposeSchema),
@@ -23,21 +37,10 @@ export const MultiServiceForm = () => {
     reValidateMode: 'onChange',
   });
 
-  const {
-    handleSubmit,
-    formState: { isSubmitting, errors },
-    getValues,
-    setValue,
-  } = form;
-
-  useEffect(() => {
-    setValue('services', services);
-  }, [services, setValue]);
-
   // biome-ignore lint/suspicious/noExplicitAny: We need any type here
   function saveBeforeAction<T extends (...args: any[]) => any>(action: T) {
     return (...args: Parameters<T>): ReturnType<T> => {
-      const values = getValues();
+      const values = form.getValues();
       values.services.forEach((service, index) => {
         updateService(index, service);
       });
@@ -46,95 +49,147 @@ export const MultiServiceForm = () => {
     };
   }
 
-  const hasServiceErrors = (serviceIndex: number): boolean => {
-    return Boolean(errors.services?.[serviceIndex]);
+  useEffect(() => {
+    form.setValue('services', services);
+  }, [services, form.setValue]);
+
+  const hasSectionErrors = (section: string, index: number): boolean => {
+    const serviceErrors = form.formState.errors?.services?.[index];
+    if (!serviceErrors) return false;
+
+    switch (section) {
+      case 'essentials':
+        return Boolean(serviceErrors.name || serviceErrors.image || serviceErrors.internalPort);
+      case 'environment':
+        return Boolean(
+          serviceErrors.environment && Array.isArray(serviceErrors.environment) && serviceErrors.environment.some((env) => env?.key || env?.value),
+        );
+      case 'volumes':
+        return Boolean(
+          serviceErrors.volumes && Array.isArray(serviceErrors.volumes) && serviceErrors.volumes.some((vol) => vol?.hostPath || vol?.containerPath),
+        );
+      case 'ports':
+        return Boolean(
+          serviceErrors.addPorts &&
+            Array.isArray(serviceErrors.addPorts) &&
+            serviceErrors.addPorts.some((port) => port?.hostPort || port?.containerPort || port?.interface),
+        );
+      case 'advanced':
+        return Boolean(
+          serviceErrors.networkMode || serviceErrors.workingDir || serviceErrors.user || serviceErrors.hostname || serviceErrors.privileged,
+        );
+      default:
+        return false;
+    }
+  };
+
+  const serviceHasError = (index: number): boolean => {
+    return Boolean(form.formState.errors.services?.[index]);
+  };
+
+  const renderTab = (tabId: string, label: string, IconComponent: typeof IconSettings, index: number) => {
+    const isActive = activeTab === tabId;
+    const tabClass = clsx('nav-link', { active: isActive });
+
+    return (
+      <li className="nav-item" key={tabId}>
+        <button type="button" className={tabClass} aria-current="page" onClick={() => setActiveTab(tabId)}>
+          <span className="nav-link-icon">
+            <IconComponent size={24} />
+          </span>
+          <span className="nav-link-title">{label}</span>
+          {hasSectionErrors(tabId, index) && <span className="ms-1 text-danger">*</span>}
+        </button>
+      </li>
+    );
   };
 
   const onSubmit = async (data: z.infer<typeof dynamicComposeSchema>) => {
-    try {
-      const res = dynamicComposeSchema.parse(data);
-      console.error(res);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      alert(`❌ Form submission failed: ${errorMessage}`);
+    const valid = validate(data);
+
+    if (valid) {
+      // Call mutation
+    } else {
+      console.error('Validation errors:', error);
     }
   };
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <Tabs value={activeService} onValueChange={saveBeforeAction(setActiveService)} className="w-full" defaultValue="0">
-        <TabsList>
-          {services.map((service, index) => (
-            <TabsTrigger
-              key={service._id}
-              value={String(index)}
-              className={`position-relative ${hasServiceErrors(index) ? 'text-danger border-danger' : ''}`}
-            >
-              <span className="me-2">
-                {service.name || `Service ${index + 1}`}
-                {service.isMain && <span className="badge bg-primary ms-1 text-xs text-white">Main</span>}
-              </span>
-              {services.length > 1 && (
-                <button
-                  type="button"
-                  className="btn-close-white ms-2"
-                  aria-label="Remove service"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    saveBeforeAction(removeService)(index);
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'currentColor',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    padding: '2px',
-                  }}
-                >
-                  <IconX size={14} />
-                </button>
-              )}
-            </TabsTrigger>
-          ))}
-          <TabsTrigger
-            value="add-new"
-            onClick={(e) => {
-              e?.preventDefault();
-              saveBeforeAction(addService)();
-              return false;
-            }}
-            className="text-muted"
-          >
-            <IconPlus size={16} className="me-1" />
-            Add Service
-          </TabsTrigger>
-
-          <TabsTrigger value="json" className="text-muted ms-auto">
-            <IconCode size={16} className="me-1" />
-            JSON
-          </TabsTrigger>
-        </TabsList>
-
-        {services.map((service, index) => (
-          <TabsContent key={service._id} value={String(index)}>
-            <DockerServiceForm form={form} serviceData={service} serviceIndex={index} isMainService={service.isMain} />
-          </TabsContent>
-        ))}
-
-        <TabsContent value="add-new">
-          <div />
-        </TabsContent>
-
-        <TabsContent value="json">
-          <JsonComposeEditor />
-        </TabsContent>
-      </Tabs>
-
-      <div className="d-flex justify-content-between align-items-center mt-4 p-3 bg-light rounded">
-        <Button type="submit" disabled={isSubmitting} className={isSubmitting ? 'loading' : ''}>
-          {isSubmitting ? 'Validating...' : 'Validate All Services'}
-        </Button>
+    <form className="flex flex-col" onSubmit={form.handleSubmit(onSubmit)}>
+      <div className="container main-container bg-white border rounded mt-4">
+        <div className="row ms-0 me-0">
+          <div className="col-12 col-md-2 border-end p-0">
+            <div className="d-flex justify-content-between align-items-center p-3">
+              <div className="fw-bold">{t('MULTI_SERVICE_SERVICES')}</div>
+              <IconPlus className="text-primary cursor-pointer" size={20} onClick={() => saveBeforeAction(addService)()} />
+            </div>
+            <div className="w-full border-top">
+              <div className="list-group list-group-transparent m-0">
+                {services.map((service, index) => (
+                  <button
+                    type="button"
+                    key={service._id}
+                    className={clsx('list-group-item list-group-item-action d-flex align-items-center', { active: index === activeService })}
+                    onClick={() => saveBeforeAction(setActiveService)(index)}
+                  >
+                    <div className="d-flex justify-content-between align-items-center w-full">
+                      <div>
+                        <span>{service.name || t('MULTI_SERVICE_SERVICE_NAME', { index: index + 1 })}</span>
+                        {serviceHasError(index) && <span className="ms-1 text-danger">*</span>}
+                      </div>
+                      {!service.isMain && (
+                        <button
+                          type="button"
+                          className="btn-close btn-close-white ms-2"
+                          aria-label={t('MULTI_SERVICE_REMOVE_SERVICE')}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            saveBeforeAction(removeService)(index);
+                          }}
+                        >
+                          <IconX />
+                        </button>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="col col-12 col-md-10 mb-5">
+            <div className="col">
+              <ul className="nav nav-underline pt-2 gap-4 flex-nowrap overflow-auto">
+                {activeService !== 'json' && services[activeService] && tabs.map((tab) => renderTab(tab.id, tab.label, tab.icon, activeService))}
+              </ul>
+            </div>
+            <div className="col pt-4 px-3">
+              {services.map((service, index) => {
+                return (
+                  <div key={service._id} className={clsx({ 'd-none': index !== activeService })}>
+                    <div className={clsx({ 'd-none': activeTab !== 'essentials' })}>
+                      <EssentialConfig register={form.register} serviceIndex={index} errors={form.formState.errors} />
+                    </div>
+                    <div className={clsx({ 'd-none': activeTab !== 'environment' })}>
+                      <EnvironmentConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
+                    </div>
+                    <div className={clsx({ 'd-none': activeTab !== 'volumes' })}>
+                      <VolumesConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
+                    </div>
+                    <div className={clsx({ 'd-none': activeTab !== 'ports' })}>
+                      <PortsConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
+                    </div>
+                    <div className={clsx({ 'd-none': activeTab !== 'advanced' })}>
+                      <AdvancedConfig register={form.register} serviceIndex={index} errors={form.formState.errors} control={form.control} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        <div className="d-flex justify-content-between align-items-center mt-4 p-3 bg-light rounded-bottom">
+          <Button type="submit">{t('MULTI_SERVICE_VALIDATE_ALL_SERVICES')}</Button>
+        </div>
       </div>
     </form>
   );
