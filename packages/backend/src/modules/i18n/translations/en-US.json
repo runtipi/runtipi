@@ -436,7 +436,7 @@
   "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder.",
   "SYSTEM_ERROR_INVALID_BODY": "Invalid body"
   "MULTI_SERVICE_SERVICES": "Services",
-  "MULTI_SERVICE_VALIDATE_ALL_SERVICES": "Validate All Services",
+  "MULTI_SERVICE_VALIDATE_ALL_SERVICES": "Save all",
   "MULTI_SERVICE_SERVICE_NAME": "Service {{index}}",
   "MULTI_SERVICE_REMOVE_SERVICE": "Remove service",
   "MULTI_SERVICE_TAB_ESSENTIALS": "Essentials",
@@ -486,5 +486,9 @@
   "MULTI_SERVICE_ADVANCED_PRIVILEGED_MODE_TOOLTIP": "Run container in privileged mode",
   "MULTI_SERVICE_JSON_EDIT_PLACEHOLDER": "Edit JSON here...",
   "MULTI_SERVICE_JSON_INVALID_FORMAT": "Invalid JSON format",
-  "MULTI_SERVICE_JSON_SAVE": "Save JSON"
+  "MULTI_SERVICE_JSON_SAVE": "Save JSON",
+  "MULTI_SERVICE_JSON_EDITOR": "JSON Editor",
+  "MULTI_SERVICE_BACK_TO_FORM": "Back to form",
+  "MULTI_SERVICE_UNSAVED_CHANGES_CONFIRM": "You have unsaved changes. Are you sure you want to leave without saving?",
+  "MULTI_SERVICE_JSON_UPDATE_SUCCESS": "Service configuration updated successfully"
 }
