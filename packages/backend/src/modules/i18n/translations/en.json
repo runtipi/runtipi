@@ -490,5 +490,6 @@
   "MULTI_SERVICE_JSON_EDITOR": "JSON Editor",
   "MULTI_SERVICE_BACK_TO_FORM": "Back to form",
   "MULTI_SERVICE_UNSAVED_CHANGES_CONFIRM": "You have unsaved changes. Are you sure you want to leave without saving?",
-  "MULTI_SERVICE_JSON_UPDATE_SUCCESS": "Service configuration updated successfully"
+  "MULTI_SERVICE_JSON_UPDATE_SUCCESS": "Service configuration updated successfully",
+  "MULTI_SERVICE_JSON_REFERENCE": "Dynamic Compose Reference"
 }
