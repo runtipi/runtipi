@@ -179,4 +179,43 @@ export class BackupManager {
       return [];
     }
   }
+
+  /**
+   * Get the full path to a backup file
+   * @param appUrn - The app id
+   * @param filename - The filename of the backup
+   * @returns The full path to the backup file, or null if it doesn't exist
+   */
+  public async getBackupPath(appUrn: AppUrn, filename: string): Promise<string | null> {
+    const { dataDir } = this.config.get('directories');
+
+    const { appName, appStoreId } = extractAppUrn(appUrn);
+    const backupPath = path.join(dataDir, 'backups', appStoreId, appName, filename);
+
+    if (await this.filesystem.pathExists(backupPath)) {
+      return backupPath;
+    }
+
+    return null;
+  }
+
+  /**
+   * Save an uploaded backup file
+   * @param appUrn - The app id
+   * @param fileBuffer - The uploaded file buffer
+   * @param filename - The filename to save as
+   */
+  public async saveUploadedBackup(appUrn: AppUrn, fileBuffer: Buffer, filename: string): Promise<void> {
+    const { dataDir } = this.config.get('directories');
+
+    const { appName, appStoreId } = extractAppUrn(appUrn);
+    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
+    const backupPath = path.join(backupDir, filename);
+
+    // Create backup directory if it doesn't exist
+    await this.filesystem.createDirectory(backupDir);
+
+    // Write the file buffer to the backup path
+    await this.filesystem.writeFile(backupPath, fileBuffer);
+  }
 }

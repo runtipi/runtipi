@@ -1,6 +1,8 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
-import { Body, Controller, Delete, Get, Injectable, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Injectable, Param, Post, Query, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiQuery } from '@nestjs/swagger';
+import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { BackupsService } from './backups.service';
@@ -35,5 +37,16 @@ export class BackupsController {
   @Delete(':urn')
   async deleteAppBackup(@Param('urn') urn: string, @Body() body: DeleteAppBackupBodyDto) {
     return this.backupsService.deleteAppBackup({ appUrn: castAppUrn(urn), filename: body.filename });
+  }
+
+  @Get(':urn/download/:filename')
+  async downloadAppBackup(@Param('urn') urn: string, @Param('filename') filename: string, @Res() res: Response) {
+    return this.backupsService.downloadAppBackup({ appUrn: castAppUrn(urn), filename }, res);
+  }
+
+  @Post(':urn/upload')
+  @UseInterceptors(FileInterceptor('backup'))
+  async uploadAppBackup(@Param('urn') urn: string, @UploadedFile() file: Express.Multer.File): Promise<BackupRequestDto> {
+    return this.backupsService.uploadAndRestoreAppBackup({ appUrn: castAppUrn(urn), file });
   }
 }

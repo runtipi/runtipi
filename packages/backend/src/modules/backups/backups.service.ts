@@ -4,6 +4,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { SSEService } from '@/core/sse/sse.service';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
+import type { Response } from 'express';
 import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
@@ -122,6 +123,58 @@ export class BackupsService {
     const { appUrn, filename } = params;
 
     await this.backupManager.deleteBackup(appUrn, filename);
+  }
+
+  public async downloadAppBackup(params: { appUrn: AppUrn; filename: string }, res: Response): Promise<void> {
+    const { appUrn, filename } = params;
+
+    const backupPath = await this.backupManager.getBackupPath(appUrn, filename);
+
+    if (!backupPath) {
+      throw new TranslatableError('APP_ERROR_BACKUP_NOT_FOUND', { filename });
+    }
+
+    res.set({
+      'Content-Type': 'application/gzip',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    });
+
+    return res.download(backupPath);
+  }
+
+  public async uploadAndRestoreAppBackup(params: { appUrn: AppUrn; file: Express.Multer.File }) {
+    if (this.config.get('demoMode')) {
+      throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
+    }
+
+    const { appUrn, file } = params;
+
+    if (!file) {
+      throw new TranslatableError('APP_ERROR_NO_BACKUP_FILE_PROVIDED');
+    }
+
+    // Validate file type
+    if (!file.originalname.endsWith('.tar.gz')) {
+      throw new TranslatableError('APP_ERROR_INVALID_BACKUP_FILE_TYPE');
+    }
+
+    const app = await this.appsRepository.getAppByUrn(appUrn);
+
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
+    }
+
+    // Save the uploaded file temporarily and then restore from it
+    const tempFilename = `upload-${Date.now()}-${file.originalname}`;
+    await this.backupManager.saveUploadedBackup(appUrn, file.buffer, tempFilename);
+
+    // Now restore from the uploaded backup
+    const result = await this.restoreApp({ appUrn, filename: tempFilename });
+
+    // Clean up the temporary file after restore
+    await this.deleteAppBackup({ appUrn, filename: tempFilename });
+
+    return result;
   }
 
   async backupAllApps() {

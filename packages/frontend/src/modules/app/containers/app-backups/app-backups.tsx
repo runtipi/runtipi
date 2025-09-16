@@ -24,6 +24,7 @@ export const AppBackups = ({ info, status }: Props) => {
   const { t } = useTranslation();
   const [page, setPage] = React.useState(1);
   const [selectedBackup, setSelectedBackup] = React.useState<AppBackup | null>(null);
+  const [isUploadMode, setIsUploadMode] = React.useState(false);
 
   const backupModalDisclosure = useDisclosure();
   const restoreModalDisclosure = useDisclosure();
@@ -73,6 +74,47 @@ export const AppBackups = ({ info, status }: Props) => {
     deleteBackupModalDisclosure.open();
   };
 
+  const handleDownloadClick = (backup: AppBackup) => {
+    // Create a download link that will trigger the browser download
+    const downloadUrl = `/api/backups/${info.urn}/download/${backup.id}`;
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = backup.id;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleUploadRestore = async (file: File) => {
+    const formData = new FormData();
+    formData.append('backup', file);
+
+    try {
+      const response = await fetch(`/api/backups/${info.urn}/upload`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include', // Include cookies for authentication
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Upload failed');
+      }
+
+      toast.success(t('APP_BACKUP_SUCCESS', { id: info.urn }));
+      restoreModalDisclosure.close();
+      setIsUploadMode(false);
+    } catch (error) {
+      toast.error(t('APP_BACKUP_ERROR', { id: info.urn }));
+    }
+  };
+
+  const handleRestoreFromUpload = () => {
+    setSelectedBackup(null);
+    setIsUploadMode(true);
+    restoreModalDisclosure.open();
+  };
+
   const disableActions =
     status === 'missing' ||
     status === 'backing_up' ||
@@ -87,9 +129,14 @@ export const AppBackups = ({ info, status }: Props) => {
         <div className="">
           <h3 className="h3 mb-0">{t('BACKUPS_LIST')}</h3>
         </div>
-        <Button onClick={backupModalDisclosure.open} variant={disableActions ? 'default' : 'outline'} intent="primary" disabled={disableActions}>
-          {t('BACKUPS_LIST_BACKUP_NOW')}
-        </Button>
+        <div className="d-flex gap-2">
+          <Button onClick={handleRestoreFromUpload} variant={disableActions ? 'default' : 'outline'} intent="secondary" disabled={disableActions}>
+            {t('APP_RESTORE_UPLOAD_BACKUP')}
+          </Button>
+          <Button onClick={backupModalDisclosure.open} variant={disableActions ? 'default' : 'outline'} intent="primary" disabled={disableActions}>
+            {t('BACKUPS_LIST_BACKUP_NOW')}
+          </Button>
+        </div>
       </div>
       <Table>
         <TableHeader>
@@ -111,6 +158,16 @@ export const AppBackups = ({ info, status }: Props) => {
                 <DateFormat date={new Date(backup.date)} />
               </TableCell>
               <TableCell>
+                <Button
+                  size="sm"
+                  intent="secondary"
+                  variant="ghost"
+                  onClick={() => handleDownloadClick(backup)}
+                  disabled={disableActions}
+                  className="me-1"
+                >
+                  {t('BACKUPS_LIST_DOWNLOAD')}
+                </Button>
                 <Button
                   size="sm"
                   intent="primary"
@@ -146,10 +203,14 @@ export const AppBackups = ({ info, status }: Props) => {
       />
       <RestoreAppDialog
         appName={info.name}
-        backup={selectedBackup}
+        backup={isUploadMode ? null : selectedBackup}
         isOpen={restoreModalDisclosure.isOpen}
-        onClose={restoreModalDisclosure.close}
+        onClose={() => {
+          restoreModalDisclosure.close();
+          setIsUploadMode(false);
+        }}
         onConfirm={() => selectedBackup && restoreAppBackup.mutate({ path: { urn: info.urn }, body: { filename: selectedBackup.id } })}
+        onUploadConfirm={handleUploadRestore}
       />
       <DeleteAppBackupDialog
         backup={selectedBackup}
