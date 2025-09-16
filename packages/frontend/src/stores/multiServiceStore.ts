@@ -164,7 +164,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       _id: get().services[index]?._id || generateId(),
     }));
 
-    set({ services: servicesWithIds });
+    set({ services: servicesWithIds, isDirty: false });
     get().validate({ services: servicesWithIds });
 
     toast.success('MULTI_SERVICE_JSON_UPDATE_SUCCESS' /* i18n */);

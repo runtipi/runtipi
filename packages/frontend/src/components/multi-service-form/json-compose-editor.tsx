@@ -6,14 +6,17 @@ import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import { copilot } from '@uiw/codemirror-theme-copilot';
-import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 
 const schema = toJsonSchema(dynamicComposeSchema);
 
-export const JsonComposeEditor = () => {
+type Props = {
+  onChange: (json: string) => void;
+};
+
+export const JsonComposeEditor = ({ onChange }: Props) => {
   const { t } = useTranslation();
-  const { services, isDirty, updateFromJson, setIsDirty } = useMultiServiceStore();
+  const { services, isDirty, setIsDirty } = useMultiServiceStore();
   const [error, setError] = useState<string | undefined>(undefined);
 
   const servicesWithoutIds = services.map(({ _id, ...rest }) => rest);
@@ -68,6 +71,8 @@ export const JsonComposeEditor = () => {
     } catch (_) {
       setError(t('MULTI_SERVICE_JSON_INVALID_FORMAT'));
     }
+
+    onChange(newValue);
   };
 
   return (
@@ -82,16 +87,6 @@ export const JsonComposeEditor = () => {
           theme={copilot}
         />
         {error && <pre className="whitespace-pre-wrap mt-2">{error}</pre>}
-        <Button
-          type="button"
-          disabled={!!error || !value}
-          onClick={() => {
-            updateFromJson(JSON.parse(value || '{}').services);
-            setIsDirty(false);
-          }}
-        >
-          {t('MULTI_SERVICE_JSON_SAVE')}
-        </Button>
       </div>
     </div>
   );

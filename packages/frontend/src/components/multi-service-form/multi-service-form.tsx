@@ -1,3 +1,4 @@
+import './services-form.css';
 import { Button } from '@/components/ui/Button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { dynamicComposeSchema } from '@runtipi/common/schemas';
@@ -18,9 +19,21 @@ import toast from 'react-hot-toast';
 
 export const MultiServiceForm = () => {
   const { t } = useTranslation();
-  const { services, activeService, setActiveService, addService, removeService, updateService, error, validate, isDirty, setIsDirty } =
-    useMultiServiceStore();
+  const {
+    services,
+    updateFromJson,
+    activeService,
+    setActiveService,
+    addService,
+    removeService,
+    updateService,
+    error,
+    validate,
+    isDirty,
+    setIsDirty,
+  } = useMultiServiceStore();
   const [jsonEditorOpen, setJsonEditorOpen] = useState(false);
+  const [json, setJson] = useState('');
   const [activeTab, setActiveTab] = useState('essentials');
 
   const tabs = [
@@ -131,7 +144,7 @@ export const MultiServiceForm = () => {
   return (
     <form className="flex flex-col" onSubmit={form.handleSubmit(onSubmit)}>
       <div className="container main-container bg-white border rounded mt-4">
-        {jsonEditorOpen && <JsonComposeEditor />}
+        {jsonEditorOpen && <JsonComposeEditor onChange={setJson} />}
         {!jsonEditorOpen && (
           <div className="row ms-0 me-0">
             <div className="col-12 col-md-2 border-end p-0">
@@ -172,13 +185,13 @@ export const MultiServiceForm = () => {
                 </div>
               </div>
             </div>
-            <div className="col col-12 col-md-10 mb-5">
+            <div className="col col-12 col-md-10">
               <div className="col">
                 <ul className="nav nav-underline pt-2 gap-4 flex-nowrap overflow-auto">
                   {activeService !== 'json' && services[activeService] && tabs.map((tab) => renderTab(tab.id, tab.label, tab.icon, activeService))}
                 </ul>
               </div>
-              <div className="col pt-4 px-3">
+              <div className="col pt-4 px-3 pb-5">
                 {services.map((service, index) => {
                   return (
                     <div key={service._id} className={clsx({ 'd-none': index !== activeService })}>
@@ -204,10 +217,23 @@ export const MultiServiceForm = () => {
             </div>
           </div>
         )}
-        <div className="d-flex justify-content-between align-items-center mt-4 p-3 bg-light rounded-bottom">
-          <Button disabled={jsonEditorOpen} type="submit">
+        <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-bottom">
+          <Button disabled={jsonEditorOpen} type="submit" className={clsx({ 'd-none': jsonEditorOpen })} onClick={() => null}>
             {t('MULTI_SERVICE_VALIDATE_ALL_SERVICES')}
           </Button>
+          <Button className={clsx({ 'd-none': !jsonEditorOpen })} type="button" onClick={() => updateFromJson(JSON.parse(json).services)}>
+            {t('MULTI_SERVICE_JSON_SAVE')}
+          </Button>
+          <div className={clsx('text-muted small', { 'd-none': !jsonEditorOpen })}>
+            <a
+              href="https://runtipi.io/docs/reference/dynamic-compose"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted small underline-offset-2 hover:underline"
+            >
+              {t('MULTI_SERVICE_JSON_REFERENCE')}
+            </a>
+          </div>
           <Button
             type="button"
             variant="ghost"
