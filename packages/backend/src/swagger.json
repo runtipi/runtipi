@@ -4432,6 +4432,7 @@
             "type": "object",
             "properties": {
               "services": {
+                "minItems": 1,
                 "type": "array",
                 "items": {
                   "type": "object",

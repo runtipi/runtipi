@@ -56,22 +56,18 @@ export const PortsConfig = ({ errors, serviceIndex, control, register }: Props) 
                 <TableCell scope="row" className="w-30">
                   <Input
                     {...register(`services.${serviceIndex}.addPorts.${index}.hostPort`, { valueAsNumber: true })}
-                    error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.hostPort?.message}
+                    error={t(errors?.services?.[serviceIndex]?.addPorts?.[index]?.hostPort?.message as string)}
                     placeholder="8080"
                     type="number"
-                    min={1}
-                    max={65535}
                     className="table-row-input"
                   />
                 </TableCell>
                 <TableCell className="w-30">
                   <Input
                     {...register(`services.${serviceIndex}.addPorts.${index}.containerPort`, { valueAsNumber: true })}
-                    error={errors?.services?.[serviceIndex]?.addPorts?.[index]?.containerPort?.message}
+                    error={t(errors?.services?.[serviceIndex]?.addPorts?.[index]?.containerPort?.message as string)}
                     placeholder="8080"
                     type="number"
-                    min={1}
-                    max={65535}
                     className="table-row-input"
                   />
                 </TableCell>
