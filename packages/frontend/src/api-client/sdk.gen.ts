@@ -538,6 +538,31 @@ export const disableUserConfig = <ThrowOnError extends boolean = false>(options:
     });
 };
 
+export const getCustomApps = <ThrowOnError extends boolean = false>(options?: Options<GetCustomAppsData, ThrowOnError>) => {
+    return (options?.client ?? _heyApiClient).get<GetCustomAppsResponses, unknown, ThrowOnError>({
+        url: '/api/custom-apps',
+        ...options
+    });
+};
+
+export const createCustomApp = <ThrowOnError extends boolean = false>(options: Options<CreateCustomAppData, ThrowOnError>) => {
+    return (options.client ?? _heyApiClient).post<CreateCustomAppResponses, unknown, ThrowOnError>({
+        url: '/api/custom-apps',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const getCustomAppById = <ThrowOnError extends boolean = false>(options: Options<GetCustomAppByIdData, ThrowOnError>) => {
+    return (options.client ?? _heyApiClient).get<GetCustomAppByIdResponses, unknown, ThrowOnError>({
+        url: '/api/custom-apps/{appid}',
+        ...options
+    });
+};
+
 export const seedDatabase = <ThrowOnError extends boolean = false>(options?: Options<SeedDatabaseData, ThrowOnError>) => {
     return (options?.client ?? _heyApiClient).post<SeedDatabaseResponses, unknown, ThrowOnError>({
         url: '/api/debug/seed',
@@ -576,6 +601,13 @@ export const backupAllApps = <ThrowOnError extends boolean = false>(options?: Op
 export const incrementAllAppVersions = <ThrowOnError extends boolean = false>(options?: Options<IncrementAllAppVersionsData, ThrowOnError>) => {
     return (options?.client ?? _heyApiClient).post<IncrementAllAppVersionsResponses, unknown, ThrowOnError>({
         url: '/api/debug/increment-all-app-versions',
+        ...options
+    });
+};
+
+export const uninstallAllApps = <ThrowOnError extends boolean = false>(options?: Options<UninstallAllAppsData, ThrowOnError>) => {
+    return (options?.client ?? _heyApiClient).post<UninstallAllAppsResponses, unknown, ThrowOnError>({
+        url: '/api/debug/uninstall-all-apps',
         ...options
     });
 };

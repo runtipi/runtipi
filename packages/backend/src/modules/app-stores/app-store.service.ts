@@ -8,6 +8,8 @@ import { RepoEventsQueue } from '../queue/entities/repo-events';
 import { AppStoreRepository } from './app-store.repository';
 import { ReposHelpers } from './repos.helpers';
 
+const RESERVED_APP_STORE_SLUGS = ['_user'];
+
 @Injectable()
 export class AppStoreService {
   constructor(
@@ -125,6 +127,10 @@ export class AppStoreService {
   public async createAppStore(body: { url: string; name: string }) {
     if (this.config.get('demoMode')) {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
+    }
+
+    if (RESERVED_APP_STORE_SLUGS.includes(body.name.trim().toLowerCase())) {
+      throw new TranslatableError('SERVER_ERROR_APP_STORE_NAME_RESERVED', { name: body.name }, HttpStatus.BAD_REQUEST);
     }
 
     const hash = this.repoHelpers.getRepoHash(body.url);

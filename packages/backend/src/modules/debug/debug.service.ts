@@ -81,4 +81,15 @@ export class DebugService {
       await updateAppInStore(app.appStoreSlug, app.appName, { tipi_version: app.version + 1 });
     }
   }
+
+  public async uninstallAllApps() {
+    const apps = await this.db.select().from(app);
+
+    for (const installedApp of apps) {
+      const appUrn = createAppUrn(installedApp.appName, installedApp.appStoreSlug);
+      await this.appLifecycleService.uninstallApp({ appUrn, removeBackups: true });
+    }
+
+    return { message: `Started uninstalling ${apps.length} apps` };
+  }
 }

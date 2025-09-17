@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { dynamicComposeSchema, type serviceSchema } from '@runtipi/common/schemas';
 import type { z } from 'zod';
 import toast from 'react-hot-toast';
+import { t } from 'i18next';
 
 type MultiServiceFormData = z.infer<typeof dynamicComposeSchema>;
 type ServiceFormData = z.infer<typeof serviceSchema>;
@@ -167,7 +168,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
     set({ services: servicesWithIds, isDirty: false });
     get().validate({ services: servicesWithIds });
 
-    toast.success('MULTI_SERVICE_JSON_UPDATE_SUCCESS' /* i18n */);
+    toast.success(t('MULTI_SERVICE_JSON_UPDATE_SUCCESS'));
   },
   resetToDefaults: () =>
     set({

@@ -22,7 +22,7 @@ export class AppsRepository {
   public async getAppByUrn(appUrn: AppUrn) {
     const { appStoreId, appName } = extractAppUrn(appUrn);
 
-    return this.db.query.app.findFirst({ where: and(eq(app.appName, appName), eq(app.appStoreSlug, appStoreId)) });
+    return this.db.query.app.findFirst({ where: and(eq(app.appName, appName), eq(app.appStoreSlug, appStoreId)), with: { appStore: true } });
   }
 
   /**

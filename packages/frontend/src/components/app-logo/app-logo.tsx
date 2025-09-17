@@ -13,7 +13,7 @@ export const AppLogo: React.FC<{
   const logoUrl = urn ? `/api/marketplace/apps/${urn}/image` : '/app-not-found.jpg';
 
   return (
-    <div aria-label={alt} className={clsx('drop-shadow', className)} style={{ width: size, height: size, minWidth: size }}>
+    <div aria-description={alt} className={clsx('drop-shadow', className)} style={{ width: size, height: size, minWidth: size }}>
       {/* biome-ignore lint/a11y/noSvgWithoutTitle: Svg has no alt attibute */}
       <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <mask id="mask0" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">

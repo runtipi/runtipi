@@ -60,7 +60,7 @@ export interface BuilderService {
   name: string;
   image: string;
   restart: 'always' | 'unless-stopped' | 'on-failure';
-  environment?: Record<string, string | number>;
+  environment?: Record<string, string | number | boolean>;
   command?: string | string[];
   volumes?: string[];
   ports?: string[];
@@ -281,7 +281,7 @@ export class ServiceBuilder {
    * service.setEnvironment({ key: 'value' });
    * ```
    */
-  setEnvironment(environment?: Array<{ key: string; value: string | number }>) {
+  setEnvironment(environment?: Array<{ key: string; value: string | number | boolean }>) {
     if (environment && environment.length > 0) {
       for (const env of environment) {
         if (!this.service.environment) {

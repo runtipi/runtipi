@@ -8,6 +8,7 @@ import {
   setAllAppSubnetToNullMutation,
   setAllAppUpdateAvailableMutation,
   startAllAppsMutation,
+  uninstallAllAppsMutation,
 } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '../ui/Button';
 import './debug-panel.css';
@@ -120,6 +121,16 @@ export const DebugPanel = () => {
     },
   });
 
+  const uninstallAllApps = useMutation({
+    ...uninstallAllAppsMutation(),
+    onSuccess: () => {
+      toast.success('Uninstall of all apps started successfully!');
+    },
+    onError: () => {
+      toast.error('Failed to start uninstall of all apps');
+    },
+  });
+
   // Don't render anything if not in development mode
   if (!isDevelopment) {
     return null;
@@ -147,6 +158,9 @@ export const DebugPanel = () => {
             <Button onClick={() => backupAllApps.mutate({})}>{backupAllApps.isPending ? 'Backing up all apps...' : 'Backup all apps'}</Button>
             <Button onClick={() => incrementAllAppVersions.mutate({})}>
               {incrementAllAppVersions.isPending ? 'Incrementing app versions...' : 'Increment all app versions'}
+            </Button>
+            <Button onClick={() => uninstallAllApps.mutate({})} intent="danger">
+              {uninstallAllApps.isPending ? 'Uninstalling all apps...' : 'Uninstall all apps'}
             </Button>
           </div>
         </div>

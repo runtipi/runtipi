@@ -7,28 +7,28 @@
   color: var(--tblr-primary);
 }
 
-.nav-item .nav-link {
+.nav-item-c .nav-link {
   cursor: pointer;
   padding: 0.5rem 1rem;
   padding-top: 16px;
   margin-top: -8px;
 }
 
-.nav-link-title {
+.nav-link-title-c {
   margin-bottom: 0.3rem;
 }
 
-.nav-link-icon {
+.nav-link-icon-c {
   margin-bottom: 0.3rem;
 }
 
-.nav-item .nav-link.active {
+.nav-item-c .nav-link.active {
   padding-bottom: 10px;
   color: var(--tblr-primary);
   font-weight: 400;
 }
 
-.nav-item .nav-link:hover {
+.nav-item-c .nav-link:hover {
   padding-bottom: 10px;
 }
 

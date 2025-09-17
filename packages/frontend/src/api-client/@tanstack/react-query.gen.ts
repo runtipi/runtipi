@@ -1047,6 +1047,54 @@ export const disableUserConfigMutation = (options?: Partial<Options<DisableUserC
     return mutationOptions;
 };
 
+export const getCustomAppsQueryKey = (options?: Options<GetCustomAppsData>) => createQueryKey('getCustomApps', options);
+
+export const getCustomAppsOptions = (options?: Options<GetCustomAppsData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getCustomApps({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getCustomAppsQueryKey(options)
+    });
+};
+
+export const createCustomAppMutation = (options?: Partial<Options<CreateCustomAppData>>): UseMutationOptions<CreateCustomAppResponse, DefaultError, Options<CreateCustomAppData>> => {
+    const mutationOptions: UseMutationOptions<CreateCustomAppResponse, DefaultError, Options<CreateCustomAppData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createCustomApp({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const getCustomAppByIdQueryKey = (options: Options<GetCustomAppByIdData>) => createQueryKey('getCustomAppById', options);
+
+export const getCustomAppByIdOptions = (options: Options<GetCustomAppByIdData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getCustomAppById({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getCustomAppByIdQueryKey(options)
+    });
+};
+
 export const seedDatabaseMutation = (options?: Partial<Options<SeedDatabaseData>>): UseMutationOptions<unknown, DefaultError, Options<SeedDatabaseData>> => {
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<SeedDatabaseData>> = {
         mutationFn: async (fnOptions) => {
@@ -1121,6 +1169,20 @@ export const incrementAllAppVersionsMutation = (options?: Partial<Options<Increm
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<IncrementAllAppVersionsData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await incrementAllAppVersions({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const uninstallAllAppsMutation = (options?: Partial<Options<UninstallAllAppsData>>): UseMutationOptions<unknown, DefaultError, Options<UninstallAllAppsData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UninstallAllAppsData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await uninstallAllApps({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

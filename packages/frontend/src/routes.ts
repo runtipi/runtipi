@@ -22,7 +22,8 @@ export default [
     // My apps routes
     ...prefix('apps', [
       index('./modules/app/pages/my-apps-page.tsx', { id: 'my-apps' }),
-      route(':storeId', './modules/app/pages/my-apps-page.tsx', { id: 'my-apps-store' }),
+      route('create', './modules/app/pages/custom-app-create-page.tsx', { id: 'custom-app-create' }),
+      route(':appId', './modules/app/pages/custom-app-details-page.tsx', { id: 'custom-app' }),
       route(':storeId/:appId', './modules/app/pages/app-details-page.tsx', { id: 'app-details' }),
     ]),
 

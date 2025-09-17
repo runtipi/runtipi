@@ -22,6 +22,7 @@ describe('DockerComposeBuilder', () => {
     const service: ServiceInput = {
       name: serviceName,
       image: 'image',
+      internalPort: 80,
     };
 
     const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
@@ -32,6 +33,7 @@ describe('DockerComposeBuilder', () => {
     const service: ServiceInput = {
       name: 'service',
       image: 'image',
+      internalPort: 80,
       deploy: {
         resources: {
           limits: { cpus: '0.50', memory: '50M', pids: 1 },
@@ -48,6 +50,7 @@ describe('DockerComposeBuilder', () => {
     const service: ServiceInput = {
       name: 'service',
       image: 'image',
+      internalPort: 80,
       devices: ['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm'],
     };
 
@@ -59,6 +62,7 @@ describe('DockerComposeBuilder', () => {
     const service: ServiceInput = {
       name: 'service',
       image: 'image',
+      internalPort: 80,
       entrypoint: 'entrypoint',
     };
 
@@ -71,6 +75,7 @@ describe('DockerComposeBuilder', () => {
     const service: ServiceInput = {
       name: 'service',
       image: 'image',
+      internalPort: 80,
       entrypoint: ['entrypoint', 'arg1', 'arg2'],
     };
 
@@ -83,6 +88,7 @@ describe('DockerComposeBuilder', () => {
     const service: ServiceInput = {
       name: 'service',
       image: 'image',
+      internalPort: 80,
       logging: { driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } },
     };
 
@@ -156,6 +162,7 @@ describe('DockerComposeBuilder', () => {
     const service2: ServiceInput = {
       name: 'service2',
       image: 'image2',
+      internalPort: 443,
     };
 
     const compose = composeBuilder.getDockerCompose([service1, service2], {}, urn, subnet);
@@ -243,6 +250,7 @@ describe('DockerComposeBuilder', () => {
         {
           name: 'ctfd-db',
           image: 'mariadb:10.4.12',
+          internalPort: 3306,
           environment: [
             { key: 'MYSQL_ROOT_PASSWORD', value: '${CTFD_MYSQL_ROOT_PASSWORD}' },
             { key: 'MYSQL_USER', value: 'tipi' },
@@ -260,6 +268,7 @@ describe('DockerComposeBuilder', () => {
         {
           name: 'ctfd-redis',
           image: 'redis:4',
+          internalPort: 6379,
           volumes: [
             {
               hostPath: '${APP_DATA_DIR}/data/redis',
