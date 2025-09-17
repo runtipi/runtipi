@@ -57,7 +57,7 @@ export const VolumesConfig = ({ errors, serviceIndex, control, register }: Props
                 <TableCell scope="row" className="w-30">
                   <Input
                     {...register(`services.${serviceIndex}.volumes.${index}.hostPath`, { setValueAs: (v) => v.trim() || undefined })}
-                    error={errors?.services?.[serviceIndex]?.volumes?.[index]?.hostPath?.message}
+                    error={t(errors?.services?.[serviceIndex]?.volumes?.[index]?.hostPath?.message as string)}
                     placeholder="/host/path"
                     className="table-row-input"
                   />
@@ -65,7 +65,7 @@ export const VolumesConfig = ({ errors, serviceIndex, control, register }: Props
                 <TableCell className="w-30">
                   <Input
                     {...register(`services.${serviceIndex}.volumes.${index}.containerPath`, { setValueAs: (v) => v.trim() || undefined })}
-                    error={errors?.services?.[serviceIndex]?.volumes?.[index]?.containerPath?.message}
+                    error={t(errors?.services?.[serviceIndex]?.volumes?.[index]?.containerPath?.message as string)}
                     placeholder="/container/path"
                     className="table-row-input"
                   />

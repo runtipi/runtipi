@@ -18,7 +18,7 @@ export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
       <div className="col-md-6">
         <Input
           {...register(`services.${serviceIndex}.name`, { setValueAs: (v) => v.trim() || undefined })}
-          error={errors?.services?.[serviceIndex]?.name?.message}
+          error={t(errors?.services?.[serviceIndex]?.name?.message as string)}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-service">
@@ -33,7 +33,7 @@ export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
       <div className="col-md-6">
         <Input
           {...register(`services.${serviceIndex}.image`, { setValueAs: (v) => v.trim() || undefined })}
-          error={errors?.services?.[serviceIndex]?.image?.message}
+          error={t(errors?.services?.[serviceIndex]?.image?.message as string)}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-image">
@@ -48,7 +48,7 @@ export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
       <div className="col-md-6">
         <Input
           {...register(`services.${serviceIndex}.internalPort`, { valueAsNumber: true })}
-          error={errors?.services?.[serviceIndex]?.internalPort?.message}
+          error={t(errors?.services?.[serviceIndex]?.internalPort?.message as string)}
           label={
             <>
               <Tooltip className="tooltip" anchorSelect=".my-internal-port">
@@ -59,8 +59,6 @@ export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
           }
           type="number"
           placeholder="8080"
-          min={1}
-          max={65535}
         />
       </div>
     </div>

@@ -52,7 +52,7 @@ export const EnvironmentConfig = ({ errors, serviceIndex, control, register }: P
                 <TableCell scope="row" className="w-50">
                   <Input
                     {...register(`services.${serviceIndex}.environment.${index}.key`, { setValueAs: (v) => v.trim() || undefined })}
-                    error={errors?.services?.[serviceIndex]?.environment?.[index]?.key?.message}
+                    error={t(errors?.services?.[serviceIndex]?.environment?.[index]?.key?.message as string)}
                     placeholder="KEY"
                     className="table-row-input"
                   />
@@ -60,7 +60,7 @@ export const EnvironmentConfig = ({ errors, serviceIndex, control, register }: P
                 <TableCell className="w-50">
                   <Input
                     {...register(`services.${serviceIndex}.environment.${index}.value`, { setValueAs: (v) => v.trim() || undefined })}
-                    error={errors?.services?.[serviceIndex]?.environment?.[index]?.value?.message}
+                    error={t(errors?.services?.[serviceIndex]?.environment?.[index]?.value?.message as string)}
                     placeholder="value"
                     className="table-row-input"
                   />
