@@ -15,9 +15,12 @@ import { VolumesConfig } from './elements/volumes';
 import { EnvironmentConfig } from './elements/environment';
 import { EssentialConfig } from './elements/essential';
 import { useTranslation } from 'react-i18next';
-import toast from 'react-hot-toast';
 
-export const MultiServiceForm = () => {
+type Props = {
+  onSubmit?: (data: z.infer<typeof dynamicComposeSchema>) => void;
+};
+
+export const MultiServiceForm = ({ onSubmit }: Props) => {
   const { t } = useTranslation();
   const {
     services,
@@ -118,32 +121,31 @@ export const MultiServiceForm = () => {
     const tabClass = clsx('nav-link', { active: isActive });
 
     return (
-      <li className="nav-item" key={tabId}>
+      <li className="nav-item nav-item-c" key={tabId}>
         <button type="button" className={tabClass} aria-current="page" onClick={() => setActiveTab(tabId)}>
-          <span className="nav-link-icon">
+          <span className="nav-link-icon nav-link-icon-c">
             <IconComponent size={24} />
           </span>
-          <span className="nav-link-title">{label}</span>
+          <span className="nav-link-title nav-link-title-c">{label}</span>
           {hasSectionErrors(tabId, index) && <span className="ms-1 text-danger">*</span>}
         </button>
       </li>
     );
   };
 
-  const onSubmit = async (data: z.infer<typeof dynamicComposeSchema>) => {
+  const handleSubmit = async (data: z.infer<typeof dynamicComposeSchema>) => {
     const valid = validate(data);
 
     if (valid) {
-      // Call mutation
-      toast.success('Should be valid! (mutation not implemented)');
+      onSubmit?.(data);
     } else {
       console.error('Validation errors:', error);
     }
   };
 
   return (
-    <form className="flex flex-col" onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="container main-container bg-white border rounded mt-4">
+    <form className="flex flex-col" onSubmit={form.handleSubmit(handleSubmit)}>
+      <div className="main-container bg-white border rounded-3 mt-4 m-0">
         {jsonEditorOpen && <JsonComposeEditor onChange={setJson} />}
         {!jsonEditorOpen && (
           <div className="row ms-0 me-0">

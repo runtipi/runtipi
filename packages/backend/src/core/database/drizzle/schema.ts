@@ -53,9 +53,7 @@ export const app = pgTable('app', {
   openPort: boolean('open_port').default(true).notNull(),
   port: integer(),
   exposedLocal: boolean('exposed_local').default(true).notNull(),
-  appStoreSlug: varchar('app_store_slug')
-    .notNull()
-    .references(() => appStore.slug),
+  appStoreSlug: varchar('app_store_slug').notNull(),
   appName: varchar('app_name').notNull(),
   enableAuth: boolean('enable_auth').default(false).notNull(),
   subnet: varchar().unique(),

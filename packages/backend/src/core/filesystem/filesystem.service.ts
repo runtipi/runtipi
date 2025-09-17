@@ -35,7 +35,7 @@ export class FilesystemService {
     throw new Error('File path is not allowed');
   }
 
-  async readJsonFile<T>(filePath: string, schema?: z.ZodType<T>): Promise<T | null> {
+  async readJsonFile<T extends object>(filePath: string, schema?: z.ZodType<T>): Promise<T | null> {
     try {
       const fileContent = await fs.promises.readFile(this.getSafeFilePath(filePath), 'utf8');
       const parsedContent = JSON.parse(fileContent);

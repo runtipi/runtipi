@@ -569,6 +569,354 @@ export type UpdateUserConfigDto = {
     dockerCompose: string;
 };
 
+export type CreateCustomAppDto = {
+    name: string;
+    config: {
+        services: Array<{
+            image: string;
+            name: string;
+            internalPort: number;
+            isMain?: boolean;
+            networkMode?: string;
+            extraHosts?: Array<string>;
+            ulimits?: {
+                nproc?: number | {
+                    soft: number;
+                    hard: number;
+                };
+                nofile?: number | {
+                    soft: number;
+                    hard: number;
+                };
+                core?: number | {
+                    soft: number;
+                    hard: number;
+                };
+                memlock?: number | {
+                    soft: number;
+                    hard: number;
+                };
+            };
+            addToMainNetwork?: boolean;
+            addPorts?: Array<{
+                containerPort: number;
+                hostPort: number;
+                udp?: boolean;
+                tcp?: boolean;
+                interface?: string;
+            }>;
+            command?: string | Array<string>;
+            volumes?: Array<{
+                hostPath: string;
+                containerPath: string;
+                readOnly?: boolean;
+                shared?: boolean;
+                private?: boolean;
+            }>;
+            environment?: Array<{
+                key: string;
+                value: (string | number) | boolean;
+            }>;
+            sysctls?: {
+                [key: string]: number;
+            };
+            healthCheck?: {
+                test: string;
+                interval?: string;
+                timeout?: string;
+                retries?: number;
+                startInterval?: string;
+                startPeriod?: string;
+            };
+            dependsOn?: Array<string> | {
+                [key: string]: {
+                    condition: 'service_healthy' | 'service_started' | 'service_completed_successfully';
+                };
+            };
+            capAdd?: Array<string>;
+            deploy?: {
+                resources: {
+                    limits?: {
+                        cpus?: string;
+                        memory?: string;
+                        pids?: number;
+                    };
+                    reservations?: {
+                        cpus?: string;
+                        memory?: string;
+                        devices: Array<{
+                            capabilities: Array<string>;
+                            driver?: string;
+                            count?: 'all' | number;
+                            deviceIds?: Array<string>;
+                        }>;
+                    };
+                };
+            };
+            hostname?: string;
+            devices?: Array<string>;
+            entrypoint?: string | Array<string>;
+            pid?: string;
+            privileged?: boolean;
+            tty?: boolean;
+            user?: string;
+            workingDir?: string;
+            shmSize?: string;
+            capDrop?: Array<string>;
+            logging?: {
+                driver: string;
+                options?: {
+                    [key: string]: string;
+                };
+            };
+            readOnly?: boolean;
+            securityOpt?: Array<string>;
+            stopSignal?: string;
+            stopGracePeriod?: string;
+            stdinOpen?: boolean;
+            extraLabels?: {
+                [key: string]: string | boolean;
+            };
+            dns?: string | Array<string>;
+        }>;
+        overrides?: Array<{
+            architecture?: 'arm64' | 'amd64';
+            services: Array<{
+                image?: string;
+                name?: string;
+                internalPort?: number;
+                isMain?: boolean;
+                networkMode?: string;
+                extraHosts?: Array<string>;
+                ulimits?: {
+                    nproc?: number | {
+                        soft: number;
+                        hard: number;
+                    };
+                    nofile?: number | {
+                        soft: number;
+                        hard: number;
+                    };
+                    core?: number | {
+                        soft: number;
+                        hard: number;
+                    };
+                    memlock?: number | {
+                        soft: number;
+                        hard: number;
+                    };
+                };
+                addToMainNetwork?: boolean;
+                addPorts?: Array<{
+                    containerPort: number;
+                    hostPort: number;
+                    udp?: boolean;
+                    tcp?: boolean;
+                    interface?: string;
+                }>;
+                command?: string | Array<string>;
+                volumes?: Array<{
+                    hostPath: string;
+                    containerPath: string;
+                    readOnly?: boolean;
+                    shared?: boolean;
+                    private?: boolean;
+                }>;
+                environment?: Array<{
+                    key: string;
+                    value: (string | number) | boolean;
+                }>;
+                sysctls?: {
+                    [key: string]: number;
+                };
+                healthCheck?: {
+                    test: string;
+                    interval?: string;
+                    timeout?: string;
+                    retries?: number;
+                    startInterval?: string;
+                    startPeriod?: string;
+                };
+                dependsOn?: Array<string> | {
+                    [key: string]: {
+                        condition: 'service_healthy' | 'service_started' | 'service_completed_successfully';
+                    };
+                };
+                capAdd?: Array<string>;
+                deploy?: {
+                    resources: {
+                        limits?: {
+                            cpus?: string;
+                            memory?: string;
+                            pids?: number;
+                        };
+                        reservations?: {
+                            cpus?: string;
+                            memory?: string;
+                            devices: Array<{
+                                capabilities: Array<string>;
+                                driver?: string;
+                                count?: 'all' | number;
+                                deviceIds?: Array<string>;
+                            }>;
+                        };
+                    };
+                };
+                hostname?: string;
+                devices?: Array<string>;
+                entrypoint?: string | Array<string>;
+                pid?: string;
+                privileged?: boolean;
+                tty?: boolean;
+                user?: string;
+                workingDir?: string;
+                shmSize?: string;
+                capDrop?: Array<string>;
+                logging?: {
+                    driver: string;
+                    options?: {
+                        [key: string]: string;
+                    };
+                };
+                readOnly?: boolean;
+                securityOpt?: Array<string>;
+                stopSignal?: string;
+                stopGracePeriod?: string;
+                stdinOpen?: boolean;
+                extraLabels?: {
+                    [key: string]: string | boolean;
+                };
+                dns?: string | Array<string>;
+            }>;
+        }>;
+    };
+};
+
+export type CreateCustomAppResponseDto = {
+    appUrn: string;
+    appName: string;
+    storeId: string;
+};
+
+export type GetCustomAppsResponseDto = {
+    apps: Array<{
+        app: {
+            id: number;
+            port: number | null;
+            status: 'running' | 'stopped' | 'installing' | 'uninstalling' | 'stopping' | 'starting' | 'missing' | 'updating' | 'resetting' | 'restarting' | 'backing_up' | 'restoring';
+            createdAt?: string;
+            updatedAt?: string;
+            version: number;
+            exposed: boolean;
+            openPort: boolean;
+            exposedLocal: boolean;
+            domain: string | null;
+            isVisibleOnGuestDashboard: boolean;
+            config?: {
+                [key: string]: unknown;
+            };
+            enableAuth?: boolean;
+            localSubdomain?: string | null;
+            pendingRestart: boolean;
+        };
+        info: {
+            id: string;
+            urn: string;
+            name: string;
+            short_desc: string;
+            categories?: Array<'network' | 'media' | 'development' | 'automation' | 'social' | 'utilities' | 'photography' | 'security' | 'featured' | 'books' | 'data' | 'music' | 'finance' | 'gaming' | 'ai'>;
+            deprecated?: boolean;
+            created_at?: number;
+            supported_architectures?: Array<'arm64' | 'amd64'>;
+            available: boolean;
+        };
+        metadata: {
+            hasCustomConfig?: boolean;
+            localSubdomain: string;
+            latestVersion: number;
+            minTipiVersion?: string;
+            latestDockerVersion?: string;
+        };
+    }>;
+};
+
+export type GetCustomAppDto = {
+    app: {
+        id: number;
+        port: number | null;
+        status: 'running' | 'stopped' | 'installing' | 'uninstalling' | 'stopping' | 'starting' | 'missing' | 'updating' | 'resetting' | 'restarting' | 'backing_up' | 'restoring';
+        createdAt?: string;
+        updatedAt?: string;
+        version: number;
+        exposed: boolean;
+        openPort: boolean;
+        exposedLocal: boolean;
+        domain: string | null;
+        isVisibleOnGuestDashboard: boolean;
+        config?: {
+            [key: string]: unknown;
+        };
+        enableAuth?: boolean;
+        localSubdomain?: string | null;
+        pendingRestart: boolean;
+    };
+    info: {
+        id: string;
+        urn: string;
+        available: boolean;
+        deprecated?: boolean;
+        port?: number;
+        name: string;
+        description?: string;
+        version?: string;
+        tipi_version: number;
+        short_desc: string;
+        author: string;
+        source: string;
+        website?: string;
+        force_expose?: boolean;
+        generate_vapid_keys?: boolean;
+        categories?: Array<'network' | 'media' | 'development' | 'automation' | 'social' | 'utilities' | 'photography' | 'security' | 'featured' | 'books' | 'data' | 'music' | 'finance' | 'gaming' | 'ai'>;
+        url_suffix?: string;
+        form_fields?: Array<{
+            type: 'text' | 'password' | 'email' | 'number' | 'fqdn' | 'ip' | 'fqdnip' | 'url' | 'random' | 'boolean';
+            label: string;
+            placeholder?: string;
+            max?: number;
+            min?: number;
+            hint?: string;
+            options?: Array<{
+                label: string;
+                value: string;
+            }>;
+            required?: boolean;
+            default?: boolean | string | number;
+            regex?: string;
+            pattern_error?: string;
+            env_variable: string;
+            encoding?: 'hex' | 'base64';
+        }>;
+        https?: boolean;
+        exposable?: boolean;
+        no_gui?: boolean;
+        supported_architectures?: Array<'arm64' | 'amd64'>;
+        uid?: number;
+        gid?: number;
+        dynamic_config?: boolean;
+        min_tipi_version?: string;
+        created_at?: number;
+        updated_at?: number;
+        force_pull?: boolean;
+    };
+    metadata: {
+        hasCustomConfig?: boolean;
+        localSubdomain: string;
+        latestVersion: number;
+        minTipiVersion?: string;
+        latestDockerVersion?: string;
+    };
+};
+
 export type UserContextData = {
     body?: never;
     path?: never;
@@ -1398,6 +1746,47 @@ export type DisableUserConfigResponses = {
     201: unknown;
 };
 
+export type GetCustomAppsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/custom-apps';
+};
+
+export type GetCustomAppsResponses = {
+    200: GetCustomAppsResponseDto;
+};
+
+export type GetCustomAppsResponse = GetCustomAppsResponses[keyof GetCustomAppsResponses];
+
+export type CreateCustomAppData = {
+    body: CreateCustomAppDto;
+    path?: never;
+    query?: never;
+    url: '/api/custom-apps';
+};
+
+export type CreateCustomAppResponses = {
+    201: CreateCustomAppResponseDto;
+};
+
+export type CreateCustomAppResponse = CreateCustomAppResponses[keyof CreateCustomAppResponses];
+
+export type GetCustomAppByIdData = {
+    body?: never;
+    path: {
+        appid: string;
+    };
+    query?: never;
+    url: '/api/custom-apps/{appid}';
+};
+
+export type GetCustomAppByIdResponses = {
+    200: GetCustomAppDto;
+};
+
+export type GetCustomAppByIdResponse = GetCustomAppByIdResponses[keyof GetCustomAppByIdResponses];
+
 export type SeedDatabaseData = {
     body?: never;
     path?: never;
@@ -1461,6 +1850,17 @@ export type IncrementAllAppVersionsData = {
 };
 
 export type IncrementAllAppVersionsResponses = {
+    201: unknown;
+};
+
+export type UninstallAllAppsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/debug/uninstall-all-apps';
+};
+
+export type UninstallAllAppsResponses = {
     201: unknown;
 };
 

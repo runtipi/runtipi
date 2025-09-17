@@ -1,16 +1,15 @@
-import { Link, Navigate, useParams } from 'react-router';
+import { Link } from 'react-router';
 import './page.css';
 import { getInstalledAppsOptions, getLinksOptions } from '@/api-client/@tanstack/react-query.gen';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 import type { CustomLink } from '@/types/app.types';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { AddCustomAppButton } from '../components/add-custom-app-button/add-custom-app-button';
 import { AddLinkButton } from '../components/add-link-tile/add-link-tile';
 import { AppTile } from '../components/app-tile/app-tile';
 import { LinkTile } from '../components/link-tile/link-tile';
 
 export default () => {
-  const params = useParams<{ storeId: string }>();
-
   const { data: apps } = useSuspenseQuery({
     ...getInstalledAppsOptions(),
   });
@@ -46,10 +45,6 @@ export default () => {
     );
   };
 
-  if (params.storeId) {
-    return <Navigate to="/apps" />;
-  }
-
   return (
     <>
       {installed.length === 0 && customLinks.length === 0 && (
@@ -58,6 +53,7 @@ export default () => {
       <div className="row row-cards " data-testid="apps-list">
         {installed.map(renderApp)}
         {customLinks.map(renderLink)}
+        {installed.length > 0 ? <AddCustomAppButton /> : null}
         {installed.length > 0 ? <AddLinkButton /> : null}
       </div>
     </>

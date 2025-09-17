@@ -34,6 +34,7 @@ import { MutexModule } from './utils/mutex/mutex.module';
 import { DockerModule } from './modules/docker/docker.module';
 import { GithubModule } from './utils/github/github.module';
 import { ArkValidationPipe } from 'nestjs-arktype';
+import { CustomAppsModule } from './modules/custom-apps/custom-apps.module';
 
 const imports: (DynamicModule | typeof I18nModule)[] = [
   SentryModule.forRoot(),
@@ -60,6 +61,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   MutexModule,
   DockerModule,
   GithubModule,
+  CustomAppsModule,
 ];
 
 const { NODE_ENV } = process.env;

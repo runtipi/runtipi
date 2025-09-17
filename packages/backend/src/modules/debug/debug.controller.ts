@@ -48,4 +48,11 @@ export class DebugController {
   async incrementAllAppVersions() {
     return this.debugService.incrementAllAppVersions();
   }
+
+  @UseGuards(AuthGuard)
+  @UseGuards(DebugGuard)
+  @Post('uninstall-all-apps')
+  async uninstallAllApps() {
+    return this.debugService.uninstallAllApps();
+  }
 }
