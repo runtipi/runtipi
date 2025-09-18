@@ -62,7 +62,10 @@ RUN pnpm build
 RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
 RUN echo "LOCAL: ${LOCAL}"
 
-RUN --mount=type=secret,id=sentry_token,env=SENTRY_AUTH_TOKEN npm run bundle
+RUN npm run bundle
+RUN --mount=type=secret,id=sentry_token,env=SENTRY_AUTH_TOKEN if [ "${LOCAL}" != "true" ]; then \
+  pnpm -r sentry:sourcemaps; \
+  fi
 
 # ---- RUNNER ----
 FROM runner_base AS runner
@@ -71,7 +74,7 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install argon2 i18next-fs-backend class-transformer ssh2
+RUN npm install argon2
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
