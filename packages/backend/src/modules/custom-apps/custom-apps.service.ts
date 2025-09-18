@@ -8,11 +8,8 @@ import type { AppUrn } from '@runtipi/common/types';
 import path from 'node:path';
 import { AppsRepository } from '../apps/apps.repository';
 import type { CreateCustomAppDto } from './dto/custom-apps.dto';
-import { pLimit } from '@/common/helpers/file-helpers';
-import { AppFilesManager } from '../apps/app-files-manager';
 
 const APPS_FOLDER = '_user';
-type AppList = Awaited<ReturnType<AppsRepository['getApps']>>;
 
 @Injectable()
 export class CustomAppService {
@@ -21,7 +18,6 @@ export class CustomAppService {
     private readonly filesystem: FilesystemService,
     private readonly configService: ConfigurationService,
     private readonly appsRepository: AppsRepository,
-    private readonly appFilesManager: AppFilesManager,
   ) {}
 
   async createCustomApp(dto: CreateCustomAppDto): Promise<{ appUrn: AppUrn; appName: string; storeId: string }> {
@@ -61,53 +57,6 @@ export class CustomAppService {
       console.error(error);
       throw new TranslatableError('CUSTOM_APP_ERROR_CREATION_FAILED', { name }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
-  async getCustomApps() {
-    const apps = await this.appsRepository.getApps();
-    const customApps = apps.filter((app) => app.appStoreSlug === APPS_FOLDER);
-    const populatedApps = await this.populateAppInfo(customApps);
-
-    return populatedApps;
-  }
-
-  async getCustomAppById(id: string) {
-    const appUrn = createAppUrn(id, APPS_FOLDER);
-
-    const app = await this.appsRepository.getAppByUrn(appUrn);
-    if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id }, HttpStatus.NOT_FOUND);
-    }
-
-    const populatedApps = await this.populateAppInfo([app]);
-    if (populatedApps.length === 0) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id }, HttpStatus.NOT_FOUND);
-    }
-
-    return populatedApps[0] as NonNullable<Awaited<ReturnType<typeof this.populateAppInfo>>[0]>;
-  }
-
-  private async populateAppInfo(apps: AppList) {
-    const limit = pLimit(10);
-
-    const populatedApps = await Promise.all(
-      apps.map(async (app) => {
-        return limit(async () => {
-          const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-          const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
-
-          if (!appInfo) {
-            this.logger.debug(`App ${app.id} not found in app files`);
-            return null;
-          }
-
-          const localSubdomain = app.localSubdomain || appUrn.split(':').join('-');
-          return { app, info: appInfo, metadata: { localSubdomain, latestVersion: 0, latestDockerVersion: '0.0.0' } };
-        });
-      }),
-    );
-
-    return populatedApps.filter((app) => app !== null);
   }
 
   private async createAppDirectories(appUrn: AppUrn): Promise<void> {

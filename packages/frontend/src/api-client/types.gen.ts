@@ -803,125 +803,6 @@ export type CreateCustomAppResponseDto = {
     storeId: string;
 };
 
-export type GetCustomAppsResponseDto = {
-    apps: Array<{
-        app: {
-            id: number;
-            port: number | null;
-            status: 'running' | 'stopped' | 'installing' | 'uninstalling' | 'stopping' | 'starting' | 'missing' | 'updating' | 'resetting' | 'restarting' | 'backing_up' | 'restoring';
-            createdAt?: string;
-            updatedAt?: string;
-            version: number;
-            exposed: boolean;
-            openPort: boolean;
-            exposedLocal: boolean;
-            domain: string | null;
-            isVisibleOnGuestDashboard: boolean;
-            config?: {
-                [key: string]: unknown;
-            };
-            enableAuth?: boolean;
-            localSubdomain?: string | null;
-            pendingRestart: boolean;
-        };
-        info: {
-            id: string;
-            urn: string;
-            name: string;
-            short_desc: string;
-            categories?: Array<'network' | 'media' | 'development' | 'automation' | 'social' | 'utilities' | 'photography' | 'security' | 'featured' | 'books' | 'data' | 'music' | 'finance' | 'gaming' | 'ai'>;
-            deprecated?: boolean;
-            created_at?: number;
-            supported_architectures?: Array<'arm64' | 'amd64'>;
-            available: boolean;
-        };
-        metadata: {
-            hasCustomConfig?: boolean;
-            localSubdomain: string;
-            latestVersion: number;
-            minTipiVersion?: string;
-            latestDockerVersion?: string;
-        };
-    }>;
-};
-
-export type GetCustomAppDto = {
-    app: {
-        id: number;
-        port: number | null;
-        status: 'running' | 'stopped' | 'installing' | 'uninstalling' | 'stopping' | 'starting' | 'missing' | 'updating' | 'resetting' | 'restarting' | 'backing_up' | 'restoring';
-        createdAt?: string;
-        updatedAt?: string;
-        version: number;
-        exposed: boolean;
-        openPort: boolean;
-        exposedLocal: boolean;
-        domain: string | null;
-        isVisibleOnGuestDashboard: boolean;
-        config?: {
-            [key: string]: unknown;
-        };
-        enableAuth?: boolean;
-        localSubdomain?: string | null;
-        pendingRestart: boolean;
-    };
-    info: {
-        id: string;
-        urn: string;
-        available: boolean;
-        deprecated?: boolean;
-        port?: number;
-        name: string;
-        description?: string;
-        version?: string;
-        tipi_version: number;
-        short_desc: string;
-        author: string;
-        source: string;
-        website?: string;
-        force_expose?: boolean;
-        generate_vapid_keys?: boolean;
-        categories?: Array<'network' | 'media' | 'development' | 'automation' | 'social' | 'utilities' | 'photography' | 'security' | 'featured' | 'books' | 'data' | 'music' | 'finance' | 'gaming' | 'ai'>;
-        url_suffix?: string;
-        form_fields?: Array<{
-            type: 'text' | 'password' | 'email' | 'number' | 'fqdn' | 'ip' | 'fqdnip' | 'url' | 'random' | 'boolean';
-            label: string;
-            placeholder?: string;
-            max?: number;
-            min?: number;
-            hint?: string;
-            options?: Array<{
-                label: string;
-                value: string;
-            }>;
-            required?: boolean;
-            default?: boolean | string | number;
-            regex?: string;
-            pattern_error?: string;
-            env_variable: string;
-            encoding?: 'hex' | 'base64';
-        }>;
-        https?: boolean;
-        exposable?: boolean;
-        no_gui?: boolean;
-        supported_architectures?: Array<'arm64' | 'amd64'>;
-        uid?: number;
-        gid?: number;
-        dynamic_config?: boolean;
-        min_tipi_version?: string;
-        created_at?: number;
-        updated_at?: number;
-        force_pull?: boolean;
-    };
-    metadata: {
-        hasCustomConfig?: boolean;
-        localSubdomain: string;
-        latestVersion: number;
-        minTipiVersion?: string;
-        latestDockerVersion?: string;
-    };
-};
-
 export type UserContextData = {
     body?: never;
     path?: never;
@@ -1766,19 +1647,6 @@ export type DisableUserConfigResponses = {
     201: unknown;
 };
 
-export type GetCustomAppsData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/custom-apps';
-};
-
-export type GetCustomAppsResponses = {
-    200: GetCustomAppsResponseDto;
-};
-
-export type GetCustomAppsResponse = GetCustomAppsResponses[keyof GetCustomAppsResponses];
-
 export type CreateCustomAppData = {
     body: CreateCustomAppDto;
     path?: never;
@@ -1791,21 +1659,6 @@ export type CreateCustomAppResponses = {
 };
 
 export type CreateCustomAppResponse = CreateCustomAppResponses[keyof CreateCustomAppResponses];
-
-export type GetCustomAppByIdData = {
-    body?: never;
-    path: {
-        appid: string;
-    };
-    query?: never;
-    url: '/api/custom-apps/{appid}';
-};
-
-export type GetCustomAppByIdResponses = {
-    200: GetCustomAppDto;
-};
-
-export type GetCustomAppByIdResponse = GetCustomAppByIdResponses[keyof GetCustomAppByIdResponses];
 
 export type SeedDatabaseData = {
     body?: never;

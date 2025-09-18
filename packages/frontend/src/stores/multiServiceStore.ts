@@ -117,7 +117,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       activeService: services.length,
     });
 
-    get().validate({ services: newServices });
+    get().validate({ schemaVersion: 2, services: newServices });
   },
 
   removeService: (index: number) => {
@@ -144,7 +144,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       services: newServices,
       activeService: newActiveTab,
     });
-    get().validate({ services: newServices });
+    get().validate({ schemaVersion: 2, services: newServices });
   },
 
   updateService: (index: number, serviceData: ServiceFormData) => {
@@ -155,7 +155,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       const newServices = [...services];
       newServices[index] = { ...serviceData, _id: existingService._id };
       set({ services: newServices });
-      get().validate({ services: newServices });
+      get().validate({ schemaVersion: 2, services: newServices });
     }
   },
 
@@ -165,7 +165,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       _id: get().services[index]?._id || generateId(),
     }));
 
-    get().validate({ services: servicesWithIds });
+    get().validate({ schemaVersion: 2, services: servicesWithIds });
 
     const error = get().error;
     if (error) {

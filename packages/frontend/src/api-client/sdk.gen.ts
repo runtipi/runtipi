@@ -538,13 +538,6 @@ export const disableUserConfig = <ThrowOnError extends boolean = false>(options:
     });
 };
 
-export const getCustomApps = <ThrowOnError extends boolean = false>(options?: Options<GetCustomAppsData, ThrowOnError>) => {
-    return (options?.client ?? _heyApiClient).get<GetCustomAppsResponses, unknown, ThrowOnError>({
-        url: '/api/custom-apps',
-        ...options
-    });
-};
-
 export const createCustomApp = <ThrowOnError extends boolean = false>(options: Options<CreateCustomAppData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).post<CreateCustomAppResponses, unknown, ThrowOnError>({
         url: '/api/custom-apps',
@@ -553,13 +546,6 @@ export const createCustomApp = <ThrowOnError extends boolean = false>(options: O
             'Content-Type': 'application/json',
             ...options.headers
         }
-    });
-};
-
-export const getCustomAppById = <ThrowOnError extends boolean = false>(options: Options<GetCustomAppByIdData, ThrowOnError>) => {
-    return (options.client ?? _heyApiClient).get<GetCustomAppByIdResponses, unknown, ThrowOnError>({
-        url: '/api/custom-apps/{appid}',
-        ...options
     });
 };
 

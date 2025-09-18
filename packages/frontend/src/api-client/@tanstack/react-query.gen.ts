@@ -1047,23 +1047,6 @@ export const disableUserConfigMutation = (options?: Partial<Options<DisableUserC
     return mutationOptions;
 };
 
-export const getCustomAppsQueryKey = (options?: Options<GetCustomAppsData>) => createQueryKey('getCustomApps', options);
-
-export const getCustomAppsOptions = (options?: Options<GetCustomAppsData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getCustomApps({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getCustomAppsQueryKey(options)
-    });
-};
-
 export const createCustomAppMutation = (options?: Partial<Options<CreateCustomAppData>>): UseMutationOptions<CreateCustomAppResponse, DefaultError, Options<CreateCustomAppData>> => {
     const mutationOptions: UseMutationOptions<CreateCustomAppResponse, DefaultError, Options<CreateCustomAppData>> = {
         mutationFn: async (fnOptions) => {
@@ -1076,23 +1059,6 @@ export const createCustomAppMutation = (options?: Partial<Options<CreateCustomAp
         }
     };
     return mutationOptions;
-};
-
-export const getCustomAppByIdQueryKey = (options: Options<GetCustomAppByIdData>) => createQueryKey('getCustomAppById', options);
-
-export const getCustomAppByIdOptions = (options: Options<GetCustomAppByIdData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getCustomAppById({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getCustomAppByIdQueryKey(options)
-    });
 };
 
 export const seedDatabaseMutation = (options?: Partial<Options<SeedDatabaseData>>): UseMutationOptions<unknown, DefaultError, Options<SeedDatabaseData>> => {
