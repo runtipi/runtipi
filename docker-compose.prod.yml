@@ -92,7 +92,7 @@ services:
       - tipi_main_network
     environment:
       LOCAL: true
-      NODE_ENV: production
+      RUNTIPI_ENV: production
       ROOT_FOLDER_HOST: ${PWD}/.internal
       POSTGRES_PASSWORD: postgres
       RABBITMQ_USERNAME: tipi

@@ -18,7 +18,6 @@
     "outDir": "./dist",
     "noEmit": false,
     "lib": ["es2022"],
-    "typeRoots": ["./src/@types", "./node_modules/@types"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,

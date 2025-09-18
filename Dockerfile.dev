@@ -1,9 +1,7 @@
-ARG NODE_VERSION="jod"
-ARG ALPINE_VERSION="3.21"
+ARG BUN_VERSION="1.2"
 
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+FROM oven/bun:${BUN_VERSION}-alpine AS node_base
 
-RUN corepack enable pnpm && corepack install -g pnpm@latest-10
 RUN apk add --no-cache g++ make curl openssl git
 
 ARG TARGETARCH
@@ -25,17 +23,15 @@ RUN chmod +x docker-binary
 RUN mv docker-binary /usr/local/bin/docker-compose
 
 COPY ./package.json ./package.json
-COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY ./pnpm-lock.yaml ./
-RUN pnpm fetch
-
+COPY ./bun.lock ./
+COPY ./scripts/ ./scripts
 COPY ./packages/backend/package.json ./packages/backend/package.json
 COPY ./packages/frontend/package.json ./packages/frontend/package.json
 COPY ./packages/common/package.json ./packages/common/package.json
 COPY ./packages/frontend/scripts ./packages/frontend/scripts
 COPY ./packages/frontend/public ./packages/frontend/public
 
-RUN pnpm install --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
@@ -44,4 +40,4 @@ COPY ./packages/backend/src/core/database/drizzle ./assets/migrations
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev"]
+CMD ["bun", "run", "dev"]

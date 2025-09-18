@@ -7,8 +7,7 @@
     "dev": "react-router dev",
     "bundle": "react-router build",
     "preview": "vite preview",
-    "tsc": "react-router typegen && tsc --noEmit",
-    "postinstall": "./scripts/postinstall.sh"
+    "tsc": "react-router typegen && tsc --noEmit"
   },
   "dependencies": {
     "@codemirror/lang-yaml": "^6.1.2",

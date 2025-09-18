@@ -25,7 +25,7 @@ async function setupSwagger(app: INestApplication) {
   SwaggerModule.setup('api/docs', app, document);
 
   // write the swagger.json file to the assets folder
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.RUNTIPI_ENV !== 'production') {
     await fs.promises.writeFile(path.join(APP_DIR, 'packages', 'backend', 'src', 'swagger.json'), JSON.stringify(document, null, 2));
   }
 }

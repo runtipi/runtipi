@@ -57,7 +57,7 @@ export class ConfigurationService {
 
   // Lowest level, cannot use any other service or module to avoid circular dependencies
   constructor(private readonly envUtils: EnvUtils) {
-    dotenv.config({ path: this.envPath, override: true });
+    dotenv.config({ path: this.envPath, override: true, quiet: true });
     this.logger = new LoggerService('backend', path.join(DATA_DIR, 'logs'), process.env.LOG_LEVEL as LogLevel);
     this.config = this.configure();
   }
@@ -106,10 +106,10 @@ export class ConfigurationService {
       },
       logLevel: env.data.LOG_LEVEL,
       version: env.data.TIPI_VERSION,
-      isProduction: process.env.NODE_ENV === 'production',
+      isProduction: process.env.RUNTIPI_ENV === 'production',
       userSettings: {
         allowAutoThemes: env.data.ALLOW_AUTO_THEMES,
-        allowErrorMonitoring: env.data.ALLOW_ERROR_MONITORING && process.env.NODE_ENV === 'production',
+        allowErrorMonitoring: env.data.ALLOW_ERROR_MONITORING && process.env.RUNTIPI_ENV === 'production',
         demoMode: env.data.DEMO_MODE,
         guestDashboard: env.data.GUEST_DASHBOARD,
         timeZone: env.data.TZ,
@@ -142,7 +142,7 @@ export class ConfigurationService {
       envFilePath: this.envPath,
       internalIp: env.data.INTERNAL_IP,
       jwtSecret: env.data.JWT_SECRET,
-      __prod__: process.env.NODE_ENV === 'production',
+      __prod__: process.env.RUNTIPI_ENV === 'production',
     };
   }
 

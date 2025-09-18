@@ -17,7 +17,7 @@
       "cache": false,
       "persistent": true,
       "env": [
-        "NODE_ENV",
+        "RUNTIPI_ENV",
         "LOCAL",
         "ROOT_FOLDER_HOST",
         "POSTGRES_PASSWORD",

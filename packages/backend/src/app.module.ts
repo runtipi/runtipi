@@ -62,7 +62,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   GithubModule,
 ];
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.RUNTIPI_ENV === 'production') {
   imports.push(
     ServeStaticModule.forRoot({
       rootPath: path.join(APP_DIR, 'assets', 'frontend'),

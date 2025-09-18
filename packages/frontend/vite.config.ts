@@ -4,6 +4,16 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+const alias = {
+  '@': path.resolve(__dirname, './src'),
+  '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
+};
+
+if (process.env.NODE_ENV === 'production') {
+  // @ts-ignore
+  alias['react-dom/server'] = 'react-dom/server.node';
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -19,10 +29,7 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
-    },
+    alias,
   },
   server: {
     host: true,
