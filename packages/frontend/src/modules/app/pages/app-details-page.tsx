@@ -3,10 +3,19 @@ import { AppLogo } from '@/components/app-logo/app-logo';
 import { useAppContext } from '@/context/app-context';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { redirect, useParams } from 'react-router';
 import { AppStatus } from '../components/app-status/app-status';
 import { AppActions } from '../containers/app-actions/app-actions';
 import { AppDetailsTabs } from '../containers/app-details-tabs/app-details-tabs';
+import type { Route } from '.react-router/types/src/modules/app/pages/+types/app-details-page';
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  const { storeId } = params;
+
+  if (storeId === '_user') {
+    return redirect(`/apps/${params.appId}`);
+  }
+}
 
 export default () => {
   const { t } = useTranslation();

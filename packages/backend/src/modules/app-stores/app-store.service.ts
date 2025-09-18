@@ -8,7 +8,7 @@ import { RepoEventsQueue } from '../queue/entities/repo-events';
 import { AppStoreRepository } from './app-store.repository';
 import { ReposHelpers } from './repos.helpers';
 
-const RESERVED_APP_STORE_SLUGS = ['_user'];
+export const RESERVED_APP_STORE_SLUGS = ['_user'];
 
 @Injectable()
 export class AppStoreService {

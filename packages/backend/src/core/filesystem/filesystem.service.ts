@@ -51,7 +51,7 @@ export class FilesystemService {
 
       return parsedContent;
     } catch (error) {
-      this.logger.error(`Error reading file ${this.getSafeFilePath(filePath)}:`, error);
+      this.logger.debug(`Error reading file ${this.getSafeFilePath(filePath)}:`, error);
       return null;
     }
   }
@@ -60,7 +60,7 @@ export class FilesystemService {
     try {
       return await fs.promises.readFile(this.getSafeFilePath(filePath), 'utf8');
     } catch (error) {
-      this.logger.error(`Error reading file ${this.getSafeFilePath(filePath)}:`, error);
+      this.logger.debug(`Error reading file ${this.getSafeFilePath(filePath)}:`, error);
       return null;
     }
   }
@@ -69,7 +69,7 @@ export class FilesystemService {
     try {
       return await fs.promises.readFile(this.getSafeFilePath(filePath));
     } catch (error) {
-      this.logger.error(`Error reading file ${this.getSafeFilePath(filePath)}:`, error);
+      this.logger.debug(`Error reading file ${this.getSafeFilePath(filePath)}:`, error);
       return null;
     }
   }
