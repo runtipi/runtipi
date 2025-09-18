@@ -6,10 +6,24 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 # ---- BUILDER BASE ----
 FROM node_base AS builder_base
 
+WORKDIR /deps
+
+ARG TARGETARCH
+ARG DOCKER_COMPOSE_VERSION="v2.39.2"
+ENV TARGETARCH=${TARGETARCH}
+
 RUN corepack enable pnpm && corepack install -g pnpm@latest-10
 RUN apk add --no-cache curl python3 make g++ git
 
-WORKDIR /deps
+RUN echo "Building for ${TARGETARCH}"
+RUN if [ "${TARGETARCH}" = "arm64" ]; then \
+      curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
+      elif [ "${TARGETARCH}" = "amd64" ]; then \
+      curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-x86_64"; \
+      fi
+
+      RUN chmod +x docker-binary
+
 
 COPY ./pnpm-lock.yaml ./
 COPY ./pnpm-workspace.yaml ./
@@ -25,23 +39,10 @@ FROM builder_base AS builder
 
 ARG TIPI_VERSION
 ARG LOCAL
-ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.39.2"
 
 ENV SENTRY_RELEASE=${TIPI_VERSION}
-ENV TARGETARCH=${TARGETARCH}
 
 WORKDIR /app
-
-RUN echo "Building for ${TARGETARCH}"
-
-RUN if [ "${TARGETARCH}" = "arm64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
-  elif [ "${TARGETARCH}" = "amd64" ]; then \
-  curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-x86_64"; \
-  fi
-
-RUN chmod +x docker-binary
 
 COPY ./pnpm-workspace.yaml ./
 COPY ./pnpm-lock.yaml ./
@@ -67,6 +68,9 @@ RUN --mount=type=secret,id=sentry_token,env=SENTRY_AUTH_TOKEN if [ "${LOCAL}" !=
   pnpm -r sentry:sourcemaps; \
   fi
 
+RUN find ./packages/backend/dist -name "*.js.map" -type f -delete
+RUN find ./packages/frontend/dist -name "*.js.map" -type f -delete
+
 # ---- RUNNER ----
 FROM runner_base AS runner
 
@@ -74,11 +78,11 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install argon2
+RUN npm install --no-save --omit=dev argon2
 
+COPY --from=builder_base /deps/docker-binary /usr/local/bin/docker-compose
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
-COPY --from=builder /app/docker-binary /usr/local/bin/docker-compose
 
 # Swagger UI
 COPY --from=builder /app/packages/backend/node_modules/swagger-ui-dist/swagger-ui.css ./swagger-ui.css

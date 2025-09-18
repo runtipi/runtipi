@@ -8,7 +8,7 @@
   "type": "commonjs",
   "scripts": {
     "dev": "nest start --watch --preserveWatchOutput",
-    "bundle": "rm -rf dist && ncc build src/main.ts -o dist --external argon2 --source-map",
+    "bundle": "rm -rf dist && ncc build src/main.ts -o dist -e argon2 --minify --source-map --transpile-only",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
