@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 const schema = toJsonSchema(dynamicComposeSchema);
 
 type Props = {
-  onChange: (json: string) => void;
+  onChange: (json: string, error?: string) => void;
 };
 
 export const JsonComposeEditor = ({ onChange }: Props) => {
@@ -72,7 +72,7 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
       setError(t('MULTI_SERVICE_JSON_INVALID_FORMAT'));
     }
 
-    onChange(newValue);
+    onChange(newValue, error);
   };
 
   return (

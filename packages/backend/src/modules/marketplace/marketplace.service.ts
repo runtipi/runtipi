@@ -8,7 +8,7 @@ import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import MiniSearch from 'minisearch';
 import { AppStoreFilesManager } from '../app-stores/app-store-files-manager';
-import { AppStoreService } from '../app-stores/app-store.service';
+import { AppStoreService, RESERVED_APP_STORE_SLUGS } from '../app-stores/app-store.service';
 
 type AppList = Awaited<ReturnType<InstanceType<typeof MarketplaceService>['getAllAppFromStores']>>;
 
@@ -50,6 +50,23 @@ export class MarketplaceService {
     for (const config of stores) {
       const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config);
       this.stores.set(config.slug, store);
+    }
+
+    // TODO: This is a temporary fix to ensure that internal app stores are always present.
+    for (const reservedSlug of RESERVED_APP_STORE_SLUGS) {
+      if (!this.stores.has(reservedSlug)) {
+        const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, {
+          branch: 'main',
+          createdAt: '',
+          enabled: false,
+          hash: reservedSlug,
+          name: reservedSlug,
+          slug: reservedSlug,
+          url: 'https://example.com',
+          updatedAt: '',
+        });
+        this.stores.set(reservedSlug, store);
+      }
     }
 
     await this.appStoreService.pullRepositories();

@@ -60,7 +60,7 @@ interface TabsTriggerProps {
   value: string;
   className?: string;
   children: React.ReactNode;
-  onClick?: (event?: React.MouseEvent) => boolean | undefined;
+  onClick?: (event?: React.MouseEvent) => boolean | undefined | void;
   disabled?: boolean;
 }
 

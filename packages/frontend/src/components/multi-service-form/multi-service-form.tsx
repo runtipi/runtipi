@@ -15,6 +15,7 @@ import { VolumesConfig } from './elements/volumes';
 import { EnvironmentConfig } from './elements/environment';
 import { EssentialConfig } from './elements/essential';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 type Props = {
   onSubmit?: (data: z.infer<typeof dynamicComposeSchema>) => void;
@@ -36,7 +37,7 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
     setIsDirty,
   } = useMultiServiceStore();
   const [jsonEditorOpen, setJsonEditorOpen] = useState(false);
-  const [json, setJson] = useState('');
+  const [json, setJson] = useState<{ value: string; error?: string }>({ value: '', error: undefined });
   const [activeTab, setActiveTab] = useState('essentials');
 
   const tabs = [
@@ -139,14 +140,14 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
     if (valid) {
       onSubmit?.(data);
     } else {
-      console.error('Validation errors:', error);
+      toast.error(t(error));
     }
   };
 
   return (
     <form className="flex flex-col" onSubmit={form.handleSubmit(handleSubmit)}>
-      <div className="main-container bg-white border rounded-3 mt-4 m-0">
-        {jsonEditorOpen && <JsonComposeEditor onChange={setJson} />}
+      <div className="main-container bg-card border rounded-3 mt-4 m-0">
+        {jsonEditorOpen && <JsonComposeEditor onChange={(json, jsonError) => setJson({ value: json, error: jsonError })} />}
         {!jsonEditorOpen && (
           <div className="row ms-0 me-0">
             <div className="col-12 col-md-2 border-end p-0">
@@ -219,11 +220,19 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
             </div>
           </div>
         )}
-        <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-bottom">
-          <Button disabled={jsonEditorOpen} type="submit" className={clsx({ 'd-none': jsonEditorOpen })} onClick={() => null}>
+        <div className="d-flex justify-content-between align-items-center p-3 rounded-bottom border-top">
+          <Button disabled={jsonEditorOpen} type="submit" className={clsx({ 'd-none': jsonEditorOpen })}>
             {t('MULTI_SERVICE_VALIDATE_ALL_SERVICES')}
           </Button>
-          <Button className={clsx({ 'd-none': !jsonEditorOpen })} type="button" onClick={() => updateFromJson(JSON.parse(json).services)}>
+          <Button
+            className={clsx({ 'd-none': !jsonEditorOpen })}
+            type="button"
+            disabled={Boolean(json.error)}
+            onClick={() => {
+              form.clearErrors();
+              updateFromJson(JSON.parse(json.value).services);
+            }}
+          >
             {t('MULTI_SERVICE_JSON_SAVE')}
           </Button>
           <div className={clsx('text-muted small', { 'd-none': !jsonEditorOpen })}>
@@ -242,7 +251,6 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              form.clearErrors();
               saveBeforeAction(setJsonEditorOpen)((v) => !v);
             }}
           >

@@ -18,8 +18,16 @@
   margin-bottom: 0.3rem;
 }
 
+[data-bs-theme="dark"] .nav-link-title-c {
+  color: var(--tblr-gray-300);
+}
+
 .nav-link-icon-c {
   margin-bottom: 0.3rem;
+}
+
+[data-bs-theme="dark"] .nav-link-icon-c {
+  color: var(--tblr-gray-300);
 }
 
 .nav-item-c .nav-link.active {
@@ -34,4 +42,8 @@
 
 .main-container {
   padding: 0px;
+}
+
+.bg-card {
+  background-color: var(--tblr-bg-surface);
 }
