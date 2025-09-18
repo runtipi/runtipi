@@ -4,7 +4,7 @@ import { AppActions } from '../containers/app-actions/app-actions';
 import { AppStatus } from '../components/app-status/app-status';
 import { AppLogo } from '@/components/app-logo/app-logo';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { getCustomAppByIdOptions } from '@/api-client/@tanstack/react-query.gen';
+import { getAppOptions } from '@/api-client/@tanstack/react-query.gen';
 import { useAppContext } from '@/context/app-context';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +13,7 @@ export const CustomAppDetailsPage = () => {
   const { t } = useTranslation();
 
   const getApp = useSuspenseQuery({
-    ...getCustomAppByIdOptions({ path: { appid: params.appId ?? '' } }),
+    ...getAppOptions({ path: { urn: `${params.appId}:_user` } }),
   });
 
   const { userSettings } = useAppContext();

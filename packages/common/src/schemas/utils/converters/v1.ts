@@ -189,5 +189,5 @@ export const composeV1ToLatest = (result: z.infer<typeof dynamicComposeSchemaV1>
     convertedOverrides = overrideV1ToLatest(result.overrides);
   }
 
-  return { services: convertedServices, overrides: convertedOverrides };
+  return { schemaVersion: 2, services: convertedServices, overrides: convertedOverrides };
 };

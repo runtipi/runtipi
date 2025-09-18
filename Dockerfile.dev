@@ -5,14 +5,13 @@ FROM oven/bun:${BUN_VERSION}-alpine AS node_base
 RUN apk add --no-cache g++ make curl openssl git
 
 ARG TARGETARCH
-ARG DOCKER_COMPOSE_VERSION="v2.35.0"
+ARG DOCKER_COMPOSE_VERSION="v2.39.2"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 
 WORKDIR /app
 
 RUN echo "Building for ${TARGETARCH}"
-
 RUN if [ "${TARGETARCH}" = "arm64" ]; then \
   curl -L -o docker-binary "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-linux-aarch64"; \
   elif [ "${TARGETARCH}" = "amd64" ]; then \

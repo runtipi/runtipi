@@ -175,7 +175,7 @@ export const dynamicComposeUnion = z.discriminatedUnion('schemaVersion', [dynami
 
 // Change when introducing breaking changes
 export const serviceSchema = serviceSchemaV2;
-export const dynamicComposeSchema = dynamicComposeSchemaV2.omit({ schemaVersion: true });
+export const dynamicComposeSchema = dynamicComposeSchemaV2;
 
 export type DynamicCompose = z.output<typeof dynamicComposeSchema>;
 export type DependsOn = z.output<typeof serviceSchemaV2.shape.dependsOn>;
