@@ -5,7 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "bun --hot ./src/main.ts",
     "bundle": "rm -rf dist && bun build.ts",

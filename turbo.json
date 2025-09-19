@@ -12,6 +12,11 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/"]
     },
+    "tsc": {
+      "dependsOn": ["^tsc"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/"]
+    },
     "dev": {
       "dependsOn": ["build"],
       "cache": false,
