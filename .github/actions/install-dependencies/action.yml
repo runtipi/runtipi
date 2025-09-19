@@ -5,36 +5,23 @@ description: Install dependencies
 runs:
   using: "composite"
   steps:
-    - name: Install Node.js
-      uses: actions/setup-node@v4
+    - uses: oven-sh/setup-bun@v2
+      name: Install Bun
       with:
-        node-version: 22
+        version: "1.2.22"
 
-    - uses: pnpm/action-setup@v4.1.0
-      name: Install pnpm
-      id: pnpm-install
+    - name: Cache Bun cache
+      uses: actions/cache@v4
       with:
-        version: "10.10.0"
-        run_install: false
-
-    - name: Get pnpm store directory
-      shell: bash
-      id: pnpm-cache
-      run: |
-        echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-    - uses: actions/cache@v4
-      name: Setup pnpm cache
-      with:
-        path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml', '*/pnpm-lock.yaml') }}
+        path: ~/.bun/install/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
         restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+          ${{ runner.os }}-bun-
 
     - name: Install dependencies
       shell: bash
-      run: pnpm install
+      run: bun install --frozen-lockfile
 
     - name: Build
       shell: bash
-      run: npm run build
+      run: bun run build

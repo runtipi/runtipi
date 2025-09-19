@@ -1,8 +1,7 @@
 version: 2
 updates:
-  - package-ecosystem: 'npm'
+  - package-ecosystem: 'bun'
     directory: '/'
-    versioning-strategy: increase
     schedule:
       interval: 'daily'
     rebase-strategy: 'auto'
