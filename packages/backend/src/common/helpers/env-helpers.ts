@@ -7,6 +7,7 @@ import { type LogLevel, LoggerService } from '@/core/logger/logger.service';
 import { EnvUtils } from '@/modules/env/env.utils';
 import dotenv from 'dotenv';
 import { DATA_DIR } from '../constants';
+import { type } from 'arktype';
 
 const OLD_DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
 export const DEFAULT_REPO_URL = 'https://github.com/runtipi/runtipi-appstore';
@@ -61,23 +62,21 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
 
   const settingsFile = await fs.promises.readFile(settingsFilePath, 'utf-8');
 
-  const settings = settingsSchema.partial().safeParse(JSON.parse(settingsFile));
+  const settings = settingsSchema.partial()(JSON.parse(settingsFile));
 
-  if (!settings.success) {
-    throw new Error(`Invalid settings.json file: ${settings.error.message}`);
+  if (settings instanceof type.errors) {
+    throw new Error(`Invalid settings.json file: ${settings.summary}`);
   }
 
   await generateSeed();
 
-  const { data } = settings;
-
-  if (data.appsRepoUrl === OLD_DEFAULT_REPO_URL) {
-    data.appsRepoUrl = DEFAULT_REPO_URL;
+  if (settings.appsRepoUrl === OLD_DEFAULT_REPO_URL) {
+    settings.appsRepoUrl = DEFAULT_REPO_URL;
   }
 
   const jwtSecret = envMap.get('JWT_SECRET') || envUtils.deriveEntropy('jwt_secret');
 
-  const repoUrl = data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL;
+  const repoUrl = settings.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL;
   const hash = crypto.createHash('sha256');
   hash.update(repoUrl);
   const repoId = hash.digest('hex');
@@ -92,7 +91,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   }
 
   // Ensure that the app data path does not contain the /app-data suffix
-  let appDataPath = data.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH');
+  let appDataPath = settings.appDataPath || envMap.get('RUNTIPI_APP_DATA_PATH');
   const appDataSegment = '/app-data';
 
   while (appDataPath?.endsWith(appDataSegment)) {
@@ -102,46 +101,49 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
 
   envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
   envMap.set('APPS_REPO_ID', repoId);
-  envMap.set('APPS_REPO_URL', data.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
-  envMap.set('TZ', data.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone);
-  envMap.set('INTERNAL_IP', data.listenIp || internalIp);
-  envMap.set('DNS_IP', data.dnsIp || envMap.get('DNS_IP') || '9.9.9.9');
+  envMap.set('APPS_REPO_URL', settings.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
+  envMap.set('TZ', settings.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone);
+  envMap.set('INTERNAL_IP', settings.listenIp || internalIp);
+  envMap.set('DNS_IP', settings.dnsIp || envMap.get('DNS_IP') || '9.9.9.9');
   envMap.set('ARCHITECTURE', getArchitecture());
   envMap.set('JWT_SECRET', jwtSecret);
-  envMap.set('DOMAIN', data.domain || envMap.get('DOMAIN') || 'example.com');
+  envMap.set('DOMAIN', settings.domain || envMap.get('DOMAIN') || 'example.com');
   envMap.set('RUNTIPI_APP_DATA_PATH', appDataPath || rootFolderHost);
-  envMap.set('RUNTIPI_FORWARD_AUTH_URL', data.forwardAuthUrl || envMap.get('RUNTIPI_FORWARD_AUTH_URL') || 'http://runtipi:3000/api/auth/traefik');
+  envMap.set('RUNTIPI_FORWARD_AUTH_URL', settings.forwardAuthUrl || envMap.get('RUNTIPI_FORWARD_AUTH_URL') || 'http://runtipi:3000/api/auth/traefik');
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
   envMap.set('POSTGRES_PORT', String(5432));
-  envMap.set('DEMO_MODE', typeof data.demoMode === 'boolean' ? String(data.demoMode) : envMap.get('DEMO_MODE') || 'false');
-  envMap.set('GUEST_DASHBOARD', typeof data.guestDashboard === 'boolean' ? String(data.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false');
-  envMap.set('LOCAL_DOMAIN', data.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
+  envMap.set('DEMO_MODE', typeof settings.demoMode === 'boolean' ? String(settings.demoMode) : envMap.get('DEMO_MODE') || 'false');
+  envMap.set(
+    'GUEST_DASHBOARD',
+    typeof settings.guestDashboard === 'boolean' ? String(settings.guestDashboard) : envMap.get('GUEST_DASHBOARD') || 'false',
+  );
+  envMap.set('LOCAL_DOMAIN', settings.localDomain || envMap.get('LOCAL_DOMAIN') || 'tipi.lan');
   envMap.set(
     'ALLOW_AUTO_THEMES',
-    typeof data.allowAutoThemes === 'boolean' ? String(data.allowAutoThemes) : envMap.get('ALLOW_AUTO_THEMES') || 'true',
+    typeof settings.allowAutoThemes === 'boolean' ? String(settings.allowAutoThemes) : envMap.get('ALLOW_AUTO_THEMES') || 'true',
   );
   envMap.set(
     'ALLOW_ERROR_MONITORING',
-    typeof data.allowErrorMonitoring === 'boolean' ? String(data.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
+    typeof settings.allowErrorMonitoring === 'boolean' ? String(settings.allowErrorMonitoring) : envMap.get('ALLOW_ERROR_MONITORING') || 'false',
   );
   envMap.set(
     'PERSIST_TRAEFIK_CONFIG',
-    typeof data.persistTraefikConfig === 'boolean' ? String(data.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
+    typeof settings.persistTraefikConfig === 'boolean' ? String(settings.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
   envMap.set(
     'QUEUE_TIMEOUT_IN_MINUTES',
-    typeof data.eventsTimeout === 'number' ? String(data.eventsTimeout) : envMap.get('QUEUE_TIMEOUT_IN_MINUTES') || '5',
+    typeof settings.eventsTimeout === 'number' ? String(settings.eventsTimeout) : envMap.get('QUEUE_TIMEOUT_IN_MINUTES') || '5',
   );
   envMap.set(
     'ADVANCED_SETTINGS',
-    typeof data.advancedSettings === 'boolean' ? String(data.advancedSettings) : envMap.get('ADVANCED_SETTINGS') || 'false',
+    typeof settings.advancedSettings === 'boolean' ? String(settings.advancedSettings) : envMap.get('ADVANCED_SETTINGS') || 'false',
   );
-  envMap.set('LOG_LEVEL', data.logLevel || envMap.get('LOG_LEVEL') || 'info');
-  envMap.set('EXPERIMENTAL_INSECURE_COOKIE', data.experimental_insecureCookie ? 'true' : 'false');
-  envMap.set('THEME_BASE', data.themeBase || envMap.get('THEME_BASE') || 'gray');
-  envMap.set('THEME_COLOR', data.themeColor || envMap.get('THEME_COLOR') || 'blue');
+  envMap.set('LOG_LEVEL', settings.logLevel || envMap.get('LOG_LEVEL') || 'info');
+  envMap.set('EXPERIMENTAL_INSECURE_COOKIE', settings.experimental_insecureCookie ? 'true' : 'false');
+  envMap.set('THEME_BASE', settings.themeBase || envMap.get('THEME_BASE') || 'gray');
+  envMap.set('THEME_COLOR', settings.themeColor || envMap.get('THEME_COLOR') || 'blue');
 
   await fs.promises.writeFile(envFilePath, envUtils.envMapToString(envMap));
 

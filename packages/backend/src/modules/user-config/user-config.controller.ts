@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { castAppUrn } from '@/common/helpers/app-helpers';
 import { GetUserConfigDto, UpdateUserConfigDto } from './dto/user-config.dto';
 import { UserConfigService } from './user-config.service';
@@ -11,8 +11,10 @@ export class UserConfigController {
 
   @Get(':urn')
   @ApiOperation({ summary: 'Get the user configuration for an app' })
-  getUserConfig(@Param('urn') urn: string): Promise<GetUserConfigDto> {
-    return this.userConfigService.getUserConfig(castAppUrn(urn));
+  @ApiResponse({ type: GetUserConfigDto })
+  async getUserConfig(@Param('urn') urn: string) {
+    const res = await this.userConfigService.getUserConfig(castAppUrn(urn));
+    return GetUserConfigDto.parse(res);
   }
 
   @Put(':urn')

@@ -4,7 +4,6 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import {
@@ -23,6 +22,7 @@ import {
   SetupTotpBody,
   VerifyTotpBody,
 } from './dto/auth.dto';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -56,8 +56,8 @@ export class AuthController {
   }
 
   @Post('/login')
-  @ZodSerializerDto(LoginDto)
-  async login(@Body() body: LoginBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
+  @ApiResponse({ type: LoginDto })
+  async login(@Body() body: LoginBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId, totpSessionId } = await this.authService.login(body);
 
     if (totpSessionId) {
@@ -66,27 +66,27 @@ export class AuthController {
 
     await this.setSessionCookie(res, sessionId, req);
 
-    return { success: true };
+    return LoginDto.parse({ success: true });
   }
 
   @Post('/verify-totp')
-  @ZodSerializerDto(LoginDto)
-  async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<LoginDto> {
+  @ApiResponse({ type: LoginDto })
+  async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.verifyTotp(body);
 
     await this.setSessionCookie(res, sessionId, req);
 
-    return { success: true };
+    return LoginDto.parse({ success: true });
   }
 
   @Post('/register')
-  @ZodSerializerDto(RegisterDto)
-  async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request): Promise<RegisterDto> {
+  @ApiResponse({ type: RegisterDto })
+  async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.register(body);
 
     await this.setSessionCookie(res, sessionId, req);
 
-    return { success: true };
+    return RegisterDto.parse({ success: true });
   }
 
   @Post('/logout')
@@ -135,20 +135,21 @@ export class AuthController {
 
   @Patch('/totp/get-uri')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(GetTotpUriDto)
-  async getTotpUri(@Body() body: GetTotpUriBody, @Req() req: Request): Promise<GetTotpUriDto> {
+  @ApiResponse({ type: GetTotpUriDto })
+  async getTotpUri(@Body() body: GetTotpUriBody, @Req() req: Request) {
     const userId = req.user?.id;
 
     if (!userId) {
       throw new TranslatableError('SYSTEM_ERROR_YOU_MUST_BE_LOGGED_IN');
     }
 
-    return this.authService.getTotpUri({ userId, ...body });
+    const res = await this.authService.getTotpUri({ userId, ...body });
+    return GetTotpUriDto.parse(res);
   }
 
   @Patch('/totp/setup')
   @UseGuards(AuthGuard)
-  async setupTotp(@Body() body: SetupTotpBody, @Req() req: Request): Promise<void> {
+  async setupTotp(@Body() body: SetupTotpBody, @Req() req: Request) {
     const userId = req.user?.id;
 
     if (!userId) {
@@ -160,7 +161,7 @@ export class AuthController {
 
   @Patch('/totp/disable')
   @UseGuards(AuthGuard)
-  async disableTotp(@Body() body: DisableTotpBody, @Req() req: Request): Promise<void> {
+  async disableTotp(@Body() body: DisableTotpBody, @Req() req: Request) {
     const userId = req.user?.id;
 
     if (!userId) {
@@ -171,23 +172,24 @@ export class AuthController {
   }
 
   @Post('/reset-password')
-  @ZodSerializerDto(ResetPasswordDto)
-  async resetPassword(@Body() body: ResetPasswordBody): Promise<ResetPasswordDto> {
+  @ApiResponse({ type: ResetPasswordDto })
+  async resetPassword(@Body() body: ResetPasswordBody) {
     const { email } = await this.authService.changeOperatorPassword(body);
 
-    return { success: true, email };
+    return ResetPasswordDto.parse({ success: true, email });
   }
 
   @Delete('/reset-password')
-  async cancelResetPassword(): Promise<void> {
+  async cancelResetPassword() {
     await this.authService.cancelPasswordChangeRequest();
   }
 
   @Get('/reset-password')
-  async checkResetPasswordRequest(): Promise<CheckResetPasswordRequestDto> {
+  @ApiResponse({ type: CheckResetPasswordRequestDto })
+  async checkResetPasswordRequest() {
     const isPending = await this.authService.checkPasswordChangeRequest();
 
-    return { isRequestPending: isPending };
+    return CheckResetPasswordRequestDto.parse({ isRequestPending: isPending });
   }
 
   @Get('/traefik')

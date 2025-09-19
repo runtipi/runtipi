@@ -1,12 +1,19 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
 import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
-import { APP_CATEGORIES } from '@runtipi/common/schemas';
+import { ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
-import { ZodSerializerDto } from 'nestjs-zod';
 import { AppStoreService } from '../app-stores/app-store.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { AllAppStoresDto, CreateAppStoreBodyDto, PullDto, SearchAppsDto, SearchAppsQueryDto, UpdateAppStoreBodyDto } from './dto/marketplace.dto';
+import {
+  AllAppStoresDto,
+  AppStoreDto,
+  CreateAppStoreBodyDto,
+  PullDto,
+  SearchAppsDto,
+  SearchAppsQueryDto,
+  UpdateAppStoreBodyDto,
+  UpdateAppStoreDto,
+} from './dto/marketplace.dto';
 import { MarketplaceService } from './marketplace.service';
 
 @Controller('marketplace')
@@ -18,13 +25,8 @@ export class MarketplaceController {
 
   @Get('apps/search')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(SearchAppsDto)
-  @ApiQuery({ name: 'search', type: String, required: false })
-  @ApiQuery({ name: 'pageSize', type: Number, required: false })
-  @ApiQuery({ name: 'cursor', type: String, required: false })
-  @ApiQuery({ name: 'category', required: false, enum: APP_CATEGORIES })
-  @ApiQuery({ name: 'storeId', type: String, required: false })
-  async searchApps(@Query() query: SearchAppsQueryDto): Promise<SearchAppsDto> {
+  @ApiResponse({ type: SearchAppsDto })
+  async searchApps(@Query() query: SearchAppsQueryDto) {
     const { search, pageSize, cursor, category, storeId } = query;
 
     const size = pageSize ? Number(pageSize) : 24;
@@ -33,7 +35,7 @@ export class MarketplaceController {
     }
     const res = await this.marketplaceService.searchApps({ search, pageSize: size, cursor, category, storeId });
 
-    return res;
+    return SearchAppsDto.parse(res);
   }
 
   @Get('apps/:urn/image')
@@ -54,47 +56,49 @@ export class MarketplaceController {
 
   @Post('pull')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(PullDto)
-  async pullAppStores(): Promise<PullDto> {
+  @ApiResponse({ type: PullDto })
+  async pullAppStores() {
     const res = await this.appStoreService.pullRepositories();
     await this.marketplaceService.initialize();
-    return res;
+    return PullDto.parse(res);
   }
 
   @Post('create')
   @UseGuards(AuthGuard)
+  @ApiResponse({ type: AppStoreDto })
   async createAppStore(@Body() body: CreateAppStoreBodyDto) {
     const appStore = await this.appStoreService.createAppStore(body);
     await this.marketplaceService.initialize();
 
-    return { appStore };
+    return AppStoreDto.parse(appStore);
   }
 
   @Get('all')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(AllAppStoresDto)
-  async getAllAppStores(): Promise<AllAppStoresDto> {
+  @ApiResponse({ type: AllAppStoresDto })
+  async getAllAppStores() {
     const appStores = await this.appStoreService.getAllAppStores();
 
-    return { appStores };
+    return AllAppStoresDto.parse({ appStores });
   }
 
   @Get('enabled')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(AllAppStoresDto)
-  async getEnabledAppStores(): Promise<AllAppStoresDto> {
+  @ApiResponse({ type: AllAppStoresDto })
+  async getEnabledAppStores() {
     const appStores = await this.appStoreService.getEnabledAppStores();
 
-    return { appStores };
+    return AllAppStoresDto.parse({ appStores });
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard)
+  @ApiResponse({ type: UpdateAppStoreDto })
   async updateAppStore(@Param('id') id: string, @Body() body: UpdateAppStoreBodyDto) {
     await this.appStoreService.updateAppStore(id, body);
     await this.marketplaceService.initialize();
 
-    return { success: true };
+    return UpdateAppStoreDto.parse({ success: true });
   }
 
   @Delete(':id')

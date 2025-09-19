@@ -1,30 +1,37 @@
-import { createZodDto } from 'nestjs-zod';
-import { z } from 'zod';
+import { type } from 'arktype';
+import { createArkDto } from 'nestjs-arktype';
 
-export const appFormSchema = z
-  .object({
-    port: z.coerce.number().min(1024).max(65535).optional(),
-    exposed: z.boolean().optional(),
-    exposedLocal: z.boolean().optional(),
-    openPort: z.boolean().optional().default(true),
-    domain: z.string().optional(),
-    isVisibleOnGuestDashboard: z.boolean().optional(),
-    enableAuth: z.boolean().optional(),
-    localSubdomain: z
-      .string()
-      .regex(/^[a-zA-Z0-9-]{1,63}$/)
-      .optional(),
-    skipEnv: z.boolean().optional().default(false),
-    skipPull: z.boolean().optional().default(false),
-    skipRun: z.boolean().optional().default(false),
-  })
-  .extend({})
-  .catchall(z.unknown());
+export const appFormSchema = type({
+  port: 'number >= 1024 & number <= 65535?',
+  exposed: 'boolean?',
+  exposedLocal: 'boolean?',
+  openPort: 'boolean = true',
+  domain: 'string?',
+  isVisibleOnGuestDashboard: 'boolean?',
+  enableAuth: 'boolean?',
+  localSubdomain: '/^[a-zA-Z0-9-]{1,63}$/?',
+  skipEnv: 'boolean = false',
+  skipPull: 'boolean = false',
+  skipRun: 'boolean = false',
+  '[string]': 'unknown',
+});
 
-export class AppFormBody extends createZodDto(appFormSchema) {}
+const uninstallAppBodySchema = type({
+  removeBackups: 'boolean',
+});
 
-export class UninstallAppBody extends createZodDto(z.object({ removeBackups: z.boolean() })) {}
+const updateAppBodySchema = type({
+  performBackup: 'boolean',
+});
 
-export class UpdateAppBody extends createZodDto(z.object({ performBackup: z.boolean() })) {}
+const lifecycleRequestSchema = type({
+  requestId: 'string.uuid',
+});
 
-export class LifecycleRequestDto extends createZodDto(z.object({ requestId: z.string().uuid() })) {}
+export class AppFormBody extends createArkDto(appFormSchema, { name: 'AppFormBody', input: true }) {}
+
+export class UninstallAppBody extends createArkDto(uninstallAppBodySchema, { name: 'UninstallAppBody', input: true }) {}
+
+export class UpdateAppBody extends createArkDto(updateAppBodySchema, { name: 'UpdateAppBody', input: true }) {}
+
+export class LifecycleRequestDto extends createArkDto(lifecycleRequestSchema, { name: 'LifecycleRequestDto' }) {}

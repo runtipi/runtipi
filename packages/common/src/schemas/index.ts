@@ -1,7 +1,16 @@
 import { dynamicComposeSchema, serviceSchema } from './dynamic-compose.js';
 import type { DependsOn, DynamicCompose, Service, ServiceInput } from './dynamic-compose.js';
 
-import { APP_CATEGORIES, ARCHITECTURES, FIELD_TYPES, RANDOM_ENCODINGS, appInfoSchema, formFieldSchema } from './app-info.js';
+import {
+  APP_CATEGORIES,
+  ARCHITECTURES,
+  FIELD_TYPES,
+  RANDOM_ENCODINGS,
+  appInfoSchema,
+  formFieldSchema,
+  appInfoSchemaArk,
+  formFieldSchemaArk,
+} from './app-info.js';
 import type { AppCategory, AppInfo, AppInfoInput, FieldType, FormField, RandomEncoding } from './app-info.js';
 
 import { type SSE, type Topic, sseSchema } from './sse.js';
@@ -14,10 +23,12 @@ export {
   toJsonSchema,
   APP_CATEGORIES,
   formFieldSchema,
+  formFieldSchemaArk,
   RANDOM_ENCODINGS,
   FIELD_TYPES,
   ARCHITECTURES,
   appInfoSchema,
+  appInfoSchemaArk,
   sseSchema,
   type ServiceInput,
   type DependsOn,

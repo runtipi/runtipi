@@ -8,7 +8,7 @@ import type { AppUrn } from '@runtipi/common/types';
 import { lt, valid } from 'semver';
 import semver from 'semver';
 import validator, { isFQDN } from 'validator';
-import type { z } from 'zod';
+import { type } from 'arktype';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
 import { AppsService } from '../apps/apps.service';
@@ -19,6 +19,7 @@ import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { appFormSchema } from './dto/app-lifecycle.dto';
 import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
 import type { AsyncMutex } from '@/utils/mutex/async-mutex';
+import type z from 'zod';
 
 @Injectable()
 export class AppLifecycleService {
@@ -103,7 +104,11 @@ export class AppLifecycleService {
       return this.startApp({ appUrn });
     }
 
-    const parsedForm = appFormSchema.parse(form);
+    const parsedForm = appFormSchema(form);
+    if (parsedForm instanceof type.errors) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
+    }
+
     const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth, port } = parsedForm;
     const apps = await this.appRepository.getApps();
 
@@ -343,7 +348,11 @@ export class AppLifecycleService {
   public async updateAppConfig(params: { appUrn: AppUrn; form: unknown }) {
     const { appUrn, form } = params;
 
-    const parsedForm = appFormSchema.parse(form);
+    const parsedForm = appFormSchema(form);
+
+    if (parsedForm instanceof type.errors) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
+    }
 
     const { exposed, domain, exposedLocal, enableAuth, openPort, port } = parsedForm;
 

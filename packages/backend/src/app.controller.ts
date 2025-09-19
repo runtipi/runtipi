@@ -2,13 +2,13 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
-import { ZodSerializerDto } from 'nestjs-zod';
-import { AcknowledgeWelcomeBody, AppContextDto, PartialUserSettingsDto, UserContextDto } from './app.dto';
+import { AcknowledgeWelcomeBody, AppContextDto, UserSettingsBody, UserContextDto } from './app.dto';
 import { AppService } from './app.service';
 import { AppsService } from './modules/apps/apps.service';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import type { UserDto } from './modules/user/dto/user.dto';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller()
 export class AppController {
@@ -21,14 +21,14 @@ export class AppController {
   ) {}
 
   @Get('/user-context')
-  @ZodSerializerDto(UserContextDto)
-  async userContext(@Req() req: Request): Promise<UserContextDto> {
+  @ApiResponse({ type: UserContextDto })
+  async userContext(@Req() req: Request) {
     const { guestDashboard, allowAutoThemes, themeColor, themeBase, allowErrorMonitoring, localDomain, sslPort } =
       this.configuration.get('userSettings');
     const version = await this.appService.getVersion();
     const operator = await this.userRepository.getFirstOperator();
 
-    return {
+    return UserContextDto.parse({
       isLoggedIn: Boolean(req.user),
       isConfigured: Boolean(operator),
       isGuestDashboardEnabled: guestDashboard,
@@ -39,13 +39,13 @@ export class AppController {
       version,
       localDomain,
       sslPort,
-    };
+    });
   }
 
   @Get('/app-context')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(AppContextDto)
-  async appContext(@Req() req: Request): Promise<AppContextDto> {
+  @ApiResponse({ type: AppContextDto })
+  async appContext(@Req() req: Request) {
     const version = await this.appService.getVersion();
 
     const { userSettings } = this.configuration.getConfig();
@@ -57,18 +57,18 @@ export class AppController {
       return Number(app.version) < Number(metadata?.latestVersion ?? 0) && app.status !== 'updating';
     });
 
-    return { version, userSettings, user: req.user as UserDto, apps, updatesAvailable: updatesAvailable.length };
+    return AppContextDto.parse({ version, userSettings, user: req.user as UserDto, apps, updatesAvailable: updatesAvailable.length });
   }
 
   @Patch('/user-settings')
   @UseGuards(AuthGuard)
-  async updateUserSettings(@Body() body: PartialUserSettingsDto): Promise<void> {
+  async updateUserSettings(@Body() body: UserSettingsBody) {
     await this.configuration.setUserSettings(body);
   }
 
   @Patch('/acknowledge-welcome')
   @UseGuards(AuthGuard)
-  async acknowledgeWelcome(@Req() req: Request, @Body() body: AcknowledgeWelcomeBody): Promise<void> {
+  async acknowledgeWelcome(@Req() req: Request, @Body() body: AcknowledgeWelcomeBody) {
     if (!req.user) {
       return;
     }

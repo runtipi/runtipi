@@ -423,8 +423,8 @@ export const appEvents = <ThrowOnError extends boolean = false>(options?: Option
     });
 };
 
-export const appLogsEvents = <ThrowOnError extends boolean = false>(options: Options<AppLogsEventsData, ThrowOnError>) => {
-    return (options.client ?? _heyApiClient).get<AppLogsEventsResponses, unknown, ThrowOnError>({
+export const appLogsEvents = <ThrowOnError extends boolean = false>(options?: Options<AppLogsEventsData, ThrowOnError>) => {
+    return (options?.client ?? _heyApiClient).get<AppLogsEventsResponses, unknown, ThrowOnError>({
         url: '/api/sse/app-logs',
         ...options
     });

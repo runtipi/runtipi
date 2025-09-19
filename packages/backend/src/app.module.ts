@@ -5,10 +5,9 @@ import { DatabaseModule } from '@/core/database/database.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { I18nModule } from '@/modules/i18n/i18n.module';
 import { type DynamicModule, type MiddlewareConsumer, Module, type NestModule } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { SentryModule } from '@sentry/nestjs/setup';
-import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APP_DIR } from './common/constants';
@@ -34,6 +33,7 @@ import { UserConfigModule } from './modules/user-config/user-config.module';
 import { MutexModule } from './utils/mutex/mutex.module';
 import { DockerModule } from './modules/docker/docker.module';
 import { GithubModule } from './utils/github/github.module';
+import { ArkValidationPipe } from 'nestjs-arktype';
 
 const imports: (DynamicModule | typeof I18nModule)[] = [
   SentryModule.forRoot(),
@@ -77,10 +77,9 @@ if (process.env.NODE_ENV === 'production') {
   imports,
   providers: [
     AppService,
-    { provide: APP_INTERCEPTOR, useClass: ZodSerializerInterceptor },
     {
       provide: APP_PIPE,
-      useClass: ZodValidationPipe,
+      useClass: ArkValidationPipe,
     },
     {
       provide: APP_FILTER,

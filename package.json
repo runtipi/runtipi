@@ -8,6 +8,7 @@
     "dev": "turbo run dev",
     "bundle": "turbo bundle",
     "build": "turbo run build",
+    "tsc": "turbo run tsc",
     "test": "turbo test",
     "test:integration": "turbo run test:integration",
     "start": "node ./index.js",
@@ -29,7 +30,7 @@
     "@playwright/test": "^1.52.0",
     "@types/pg": "^8.15.1",
     "dotenv-cli": "^8.0.0",
-    "turbo": "^2.5.3"
+    "turbo": "^2.5.6"
   },
   "dependencies": {
     "argon2": "^0.44.0",

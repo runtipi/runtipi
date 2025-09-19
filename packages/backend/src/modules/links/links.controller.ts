@@ -1,10 +1,10 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { Body, Controller, Delete, Get, Injectable, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
-import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { EditLinkBodyDto, LinkBodyDto, LinksDto } from './dto/links.dto';
 import { LinksService } from './links.service';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Injectable()
 @Controller('links')
@@ -12,19 +12,19 @@ export class LinksController {
   constructor(private readonly linksService: LinksService) {}
 
   @Get('guest')
-  @ZodSerializerDto(LinksDto)
-  async getGuestLinks(): Promise<LinksDto> {
+  @ApiResponse({ type: LinksDto })
+  async getGuestLinks() {
     const links = await this.linksService.getGuestDashboardLinks();
-    return { links };
+    return LinksDto.parse({ links });
   }
 
   @Get()
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(LinksDto)
-  async getLinks(@Req() req: Request): Promise<LinksDto> {
+  @ApiResponse({ type: LinksDto })
+  async getLinks(@Req() req: Request) {
     const links = await this.linksService.getLinks(req.user?.id);
 
-    return { links };
+    return LinksDto.parse({ links });
   }
 
   @Post()

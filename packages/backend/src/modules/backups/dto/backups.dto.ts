@@ -1,40 +1,39 @@
-import { createZodDto } from 'nestjs-zod';
-import { z } from 'zod';
+import { type } from 'arktype';
+import { createArkDto } from 'nestjs-arktype';
 
-export class BackupDto extends createZodDto(
-  z.object({
-    id: z.string(),
-    size: z.number(),
-    date: z.number(),
-  }),
-) {}
+const backupSchema = type({
+  id: 'string',
+  size: 'number',
+  date: 'number',
+});
 
-export class RestoreAppBackupDto extends createZodDto(
-  z.object({
-    filename: z.string(),
-  }),
-) {}
+const restoreAppBackupSchema = type({
+  filename: 'string',
+});
 
-export class GetAppBackupsDto extends createZodDto(
-  z.object({
-    data: BackupDto.schema.array(),
-    total: z.number(),
-    currentPage: z.number(),
-    lastPage: z.number(),
-  }),
-) {}
+const getAppBackupsSchema = type({
+  data: backupSchema.array(),
+  total: 'number',
+  currentPage: 'number',
+  lastPage: 'number',
+});
 
-export class GetAppBackupsQueryDto extends createZodDto(
-  z.object({
-    page: z.coerce.number().optional(),
-    pageSize: z.coerce.number().optional(),
-  }),
-) {}
+const getAppBackupsQuerySchema = type({
+  page: type('number.integer | string.integer.parse').to('number').optional(),
+  pageSize: type('number.integer | string.integer.parse').to('number').optional(),
+});
 
-export class DeleteAppBackupBodyDto extends createZodDto(
-  z.object({
-    filename: z.string(),
-  }),
-) {}
+const deleteAppBackupBodySchema = type({
+  filename: 'string',
+});
 
-export class BackupRequestDto extends createZodDto(z.object({ requestId: z.string().uuid() })) {}
+const backupRequestSchema = type({
+  requestId: 'string.uuid',
+});
+
+export class BackupDto extends createArkDto(backupSchema, { name: 'BackupDto' }) {}
+export class RestoreAppBackupDto extends createArkDto(restoreAppBackupSchema, { name: 'RestoreAppBackupDto', input: true }) {}
+export class GetAppBackupsDto extends createArkDto(getAppBackupsSchema, { name: 'GetAppBackupsDto' }) {}
+export class GetAppBackupsQueryDto extends createArkDto(getAppBackupsQuerySchema, { name: 'GetAppBackupsQueryDto', input: true }) {}
+export class DeleteAppBackupBodyDto extends createArkDto(deleteAppBackupBodySchema, { name: 'DeleteAppBackupBodyDto', input: true }) {}
+export class BackupRequestDto extends createArkDto(backupRequestSchema, { name: 'BackupRequestDto' }) {}

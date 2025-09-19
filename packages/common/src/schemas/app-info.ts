@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { type } from 'arktype';
 import { zodAppUrn } from '../types/app-urn.js';
 
 export const APP_CATEGORIES = [
@@ -91,3 +92,59 @@ export const appInfoSchema = z.object({
 export type AppInfoInput = z.input<typeof appInfoSchema>;
 export type AppInfo = z.output<typeof appInfoSchema>;
 export type FormField = z.output<typeof formFieldSchema>;
+
+// ArkType equivalent schemas
+export const formFieldSchemaArk = type({
+  type: type.enumerated(...FIELD_TYPES),
+  label: 'string',
+  'placeholder?': 'string',
+  'max?': 'number',
+  'min?': 'number',
+  'hint?': 'string',
+  'options?': type({ label: 'string', value: 'string' }).array(),
+  required: 'boolean = false',
+  'default?': type.or('boolean', 'string', 'number'),
+  'regex?': 'string',
+  'pattern_error?': 'string',
+  env_variable: 'string',
+  'encoding?': type.enumerated(...RANDOM_ENCODINGS),
+});
+
+export const appInfoSchemaArk = type({
+  id: type('string').narrow((v, ctx) => (v.split(':').length === 1 ? true : ctx.mustBe('a string without colons'))),
+  urn: 'string', // simplified from zodAppUrn since it's essentially a string
+  available: 'boolean',
+  deprecated: 'boolean = false',
+  'port?': '1 <= number <= 65535',
+  name: 'string',
+  description: "string = ''",
+  version: "string = 'latest'",
+  tipi_version: 'number',
+  short_desc: 'string',
+  author: 'string',
+  source: 'string',
+  'website?': 'string',
+  force_expose: 'boolean = false',
+  generate_vapid_keys: 'boolean = false',
+  categories: type
+    .enumerated(...APP_CATEGORIES)
+    .array()
+    .default(() => []),
+  'url_suffix?': 'string',
+  form_fields: formFieldSchemaArk.array().default(() => []),
+  https: 'boolean = false',
+  exposable: 'boolean = false',
+  no_gui: 'boolean = false',
+  'supported_architectures?': type.enumerated(...ARCHITECTURES).array(),
+  'uid?': 'number',
+  'gid?': 'number',
+  dynamic_config: 'boolean = false',
+  'min_tipi_version?': 'string',
+  created_at: type('number.integer >= 0')
+    .narrow((v, ctx) => (v < Date.now() ? true : ctx.mustBe('a timestamp before now')))
+    .default(0),
+  updated_at: type('number.integer >= 0')
+    .narrow((v, ctx) => (v < Date.now() ? true : ctx.mustBe('a timestamp before now')))
+    .default(0),
+  force_pull: 'boolean = false',
+});

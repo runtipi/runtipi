@@ -1,9 +1,9 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
-import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { LoadDto } from './dto/system.dto';
 import { SystemService } from './system.service';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('system')
 export class SystemController {
@@ -11,10 +11,10 @@ export class SystemController {
 
   @UseGuards(AuthGuard)
   @Get('/load')
-  @ZodSerializerDto(LoadDto)
-  async systemLoad(): Promise<LoadDto> {
+  @ApiResponse({ type: LoadDto })
+  async systemLoad() {
     const res = await this.systemService.getSystemLoad();
-    return res;
+    return LoadDto.parse(res);
   }
 
   @Get('/certificate')

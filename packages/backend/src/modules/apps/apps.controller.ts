@@ -1,9 +1,9 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
 import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppsService } from './apps.service';
 import { GetAppDto, GetRandomPortDto, GetUpdateDiffDto, GuestAppsDto, MyAppsDto } from './dto/app.dto';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('apps')
 export class AppsController {
@@ -11,38 +11,40 @@ export class AppsController {
 
   @Get('installed')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(MyAppsDto)
-  async getInstalledApps(): Promise<MyAppsDto> {
+  @ApiResponse({ type: MyAppsDto })
+  async getInstalledApps() {
     const installed = await this.appsService.getInstalledApps();
-    return { installed };
+    return MyAppsDto.parse({ installed });
   }
 
   @Get('guest')
-  @ZodSerializerDto(GuestAppsDto)
-  async getGuestApps(): Promise<GuestAppsDto> {
+  @ApiResponse({ type: GuestAppsDto })
+  async getGuestApps() {
     const guest = await this.appsService.getGuestDashboardApps();
-    return { installed: guest };
+    return GuestAppsDto.parse({ installed: guest });
   }
 
   @Post('random-port')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(GetRandomPortDto)
-  async getRandomPort(): Promise<GetRandomPortDto> {
+  @ApiResponse({ type: GetRandomPortDto })
+  async getRandomPort() {
     const port = await this.appsService.getRandomPort();
-    return { port: port };
+    return GetRandomPortDto.parse({ port });
   }
 
   @Get(':urn')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(GetAppDto)
-  async getApp(@Param('urn') urn: string): Promise<GetAppDto> {
-    return this.appsService.getApp(castAppUrn(urn));
+  @ApiResponse({ type: GetAppDto })
+  async getApp(@Param('urn') urn: string) {
+    const res = await this.appsService.getApp(castAppUrn(urn));
+    return GetAppDto.parse(res);
   }
 
   @Get(':urn/update-diff')
   @UseGuards(AuthGuard)
-  @ZodSerializerDto(GetUpdateDiffDto)
-  async getAppUpdateDiff(@Param('urn') urn: string): Promise<GetUpdateDiffDto> {
-    return this.appsService.getAppUpdateDiff(castAppUrn(urn));
+  @ApiResponse({ type: GetUpdateDiffDto })
+  async getAppUpdateDiff(@Param('urn') urn: string) {
+    const res = await this.appsService.getAppUpdateDiff(castAppUrn(urn));
+    return GetUpdateDiffDto.parse(res);
   }
 }

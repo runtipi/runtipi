@@ -6,7 +6,7 @@
         "operationId": "userContext",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -27,7 +27,7 @@
         "operationId": "appContext",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -52,7 +52,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PartialUserSettingsDto"
+                "$ref": "#/components/schemas/UserSettingsBody"
               }
             }
           }
@@ -96,7 +96,7 @@
         "operationId": "systemLoad",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -149,14 +149,7 @@
         ],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -179,7 +172,7 @@
           }
         },
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -210,7 +203,7 @@
           }
         },
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -241,7 +234,7 @@
           }
         },
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -334,7 +327,7 @@
           }
         },
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -413,7 +406,7 @@
           }
         },
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -444,7 +437,7 @@
         "operationId": "checkResetPasswordRequest",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -466,14 +459,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -486,7 +472,7 @@
         "operationId": "getInstalledApps",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -507,7 +493,7 @@
         "operationId": "getGuestApps",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -528,7 +514,7 @@
         "operationId": "getRandomPort",
         "parameters": [],
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -558,7 +544,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -588,7 +574,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -609,19 +595,28 @@
         "operationId": "searchApps",
         "parameters": [
           {
-            "name": "search",
+            "name": "category",
             "required": false,
             "in": "query",
             "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "number"
+              "type": "string",
+              "enum": [
+                "ai",
+                "automation",
+                "books",
+                "data",
+                "development",
+                "featured",
+                "finance",
+                "gaming",
+                "media",
+                "music",
+                "network",
+                "photography",
+                "security",
+                "social",
+                "utilities"
+              ]
             }
           },
           {
@@ -633,27 +628,27 @@
             }
           },
           {
-            "name": "category",
+            "name": "pageSize",
             "required": false,
             "in": "query",
             "schema": {
-              "enum": [
-                "network",
-                "media",
-                "development",
-                "automation",
-                "social",
-                "utilities",
-                "photography",
-                "security",
-                "featured",
-                "books",
-                "data",
-                "music",
-                "finance",
-                "gaming",
-                "ai"
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^(?:(?!^-0$)-?(?:(?:0|[1-9]\\d*)))$"
+                }
               ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
               "type": "string"
             }
           },
@@ -667,7 +662,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -711,7 +706,7 @@
         "operationId": "pullAppStores",
         "parameters": [],
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -742,8 +737,15 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppStoreDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -756,7 +758,7 @@
         "operationId": "getAllAppStores",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -777,7 +779,7 @@
         "operationId": "getEnabledAppStores",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -817,8 +819,15 @@
           }
         },
         "responses": {
-          "200": {
-            "description": ""
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAppStoreDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -871,7 +880,7 @@
           }
         },
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -901,7 +910,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -931,7 +940,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -961,7 +970,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1001,7 +1010,7 @@
           }
         },
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1031,7 +1040,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1071,7 +1080,7 @@
           }
         },
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1111,7 +1120,7 @@
           }
         },
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1155,7 +1164,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1195,7 +1204,7 @@
           }
         },
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1228,7 +1237,16 @@
             "required": false,
             "in": "query",
             "schema": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^(?:(?!^-0$)-?(?:(?:0|[1-9]\\d*)))$"
+                }
+              ],
+              "type": "string"
             }
           },
           {
@@ -1236,12 +1254,21 @@
             "required": false,
             "in": "query",
             "schema": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^(?:(?!^-0$)-?(?:(?:0|[1-9]\\d*)))$"
+                }
+              ],
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1294,14 +1321,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -1312,34 +1332,10 @@
     "/api/sse/app-logs": {
       "get": {
         "operationId": "appLogsEvents",
-        "parameters": [
-          {
-            "name": "maxLines",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "appUrn",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -1350,26 +1346,10 @@
     "/api/sse/runtipi-logs": {
       "get": {
         "operationId": "runtipiLogsEvents",
-        "parameters": [
-          {
-            "name": "maxLines",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -1382,7 +1362,7 @@
         "operationId": "getGuestLinks",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1403,7 +1383,7 @@
         "operationId": "getLinks",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1677,7 +1657,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -1872,16 +1852,43 @@
       "UserContextDto": {
         "type": "object",
         "properties": {
+          "allowAutoThemes": {
+            "type": "boolean"
+          },
+          "allowErrorMonitoring": {
+            "type": "boolean"
+          },
+          "isConfigured": {
+            "type": "boolean"
+          },
+          "isGuestDashboardEnabled": {
+            "type": "boolean"
+          },
+          "isLoggedIn": {
+            "type": "boolean"
+          },
+          "localDomain": {
+            "type": "string"
+          },
+          "sslPort": {
+            "type": "number"
+          },
+          "themeBase": {
+            "type": "string"
+          },
+          "themeColor": {
+            "type": "string"
+          },
           "version": {
             "type": "object",
             "properties": {
+              "body": {
+                "type": "string"
+              },
               "current": {
                 "type": "string"
               },
               "latest": {
-                "type": "string"
-              },
-              "body": {
                 "type": "string"
               },
               "releases": {
@@ -1889,270 +1896,82 @@
                 "items": {
                   "type": "object",
                   "properties": {
-                    "version": {
+                    "body": {
                       "type": "string"
                     },
-                    "body": {
+                    "version": {
                       "type": "string"
                     }
                   },
                   "required": [
-                    "version",
-                    "body"
+                    "body",
+                    "version"
                   ]
                 }
               }
             },
             "required": [
+              "body",
               "current",
               "latest",
-              "body",
               "releases"
             ]
-          },
-          "isLoggedIn": {
-            "type": "boolean",
-            "description": "Indicates if the user is logged in"
-          },
-          "isConfigured": {
-            "type": "boolean",
-            "description": "Indicates if the app is already configured"
-          },
-          "isGuestDashboardEnabled": {
-            "type": "boolean",
-            "description": "Indicates if the guest dashboard is enabled"
-          },
-          "allowAutoThemes": {
-            "type": "boolean",
-            "description": "Indicates if the app allows auto themes"
-          },
-          "allowErrorMonitoring": {
-            "type": "boolean",
-            "description": "Indicates if the app allows anonymous error monitoring"
-          },
-          "themeColor": {
-            "type": "string",
-            "description": "The theme color of the app"
-          },
-          "themeBase": {
-            "type": "string",
-            "description": "The base theme of the app"
-          },
-          "localDomain": {
-            "type": "string",
-            "description": "The configured local domain"
-          },
-          "sslPort": {
-            "type": "number",
-            "description": "The SSL port for the app"
           }
         },
         "required": [
-          "version",
-          "isLoggedIn",
-          "isConfigured",
-          "isGuestDashboardEnabled",
           "allowAutoThemes",
           "allowErrorMonitoring",
-          "themeColor",
-          "themeBase",
+          "isConfigured",
+          "isGuestDashboardEnabled",
+          "isLoggedIn",
           "localDomain",
-          "sslPort"
+          "sslPort",
+          "themeBase",
+          "themeColor",
+          "version"
         ]
       },
       "AppContextDto": {
         "type": "object",
         "properties": {
-          "version": {
-            "type": "object",
-            "properties": {
-              "current": {
-                "type": "string"
-              },
-              "latest": {
-                "type": "string"
-              },
-              "body": {
-                "type": "string"
-              },
-              "releases": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "version": {
-                      "type": "string"
-                    },
-                    "body": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "version",
-                    "body"
-                  ]
-                }
-              }
-            },
-            "required": [
-              "current",
-              "latest",
-              "body",
-              "releases"
-            ]
-          },
-          "userSettings": {
-            "type": "object",
-            "properties": {
-              "dnsIp": {
-                "type": "string",
-                "format": "ipv4",
-                "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"
-              },
-              "internalIp": {
-                "type": "string",
-                "format": "ipv4",
-                "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"
-              },
-              "postgresPort": {
-                "type": "number"
-              },
-              "appsRepoUrl": {
-                "type": "string",
-                "format": "uri"
-              },
-              "domain": {
-                "type": "string"
-              },
-              "appDataPath": {
-                "type": "string"
-              },
-              "localDomain": {
-                "type": "string"
-              },
-              "demoMode": {
-                "type": "boolean"
-              },
-              "guestDashboard": {
-                "type": "boolean"
-              },
-              "allowAutoThemes": {
-                "type": "boolean"
-              },
-              "allowErrorMonitoring": {
-                "type": "boolean"
-              },
-              "persistTraefikConfig": {
-                "type": "boolean"
-              },
-              "port": {
-                "type": "number"
-              },
-              "sslPort": {
-                "type": "number"
-              },
-              "listenIp": {
-                "type": "string",
-                "format": "ipv4",
-                "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"
-              },
-              "timeZone": {
-                "type": "string"
-              },
-              "eventsTimeout": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991
-              },
-              "advancedSettings": {
-                "type": "boolean"
-              },
-              "forwardAuthUrl": {
-                "type": "string",
-                "format": "uri"
-              },
-              "logLevel": {
-                "type": "string",
-                "enum": [
-                  "debug",
-                  "info",
-                  "warn",
-                  "error"
-                ]
-              },
-              "themeBase": {
-                "type": "string"
-              },
-              "themeColor": {
-                "type": "string"
-              },
-              "experimental_insecureCookie": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "dnsIp",
-              "internalIp",
-              "postgresPort",
-              "appsRepoUrl",
-              "domain",
-              "appDataPath",
-              "localDomain",
-              "demoMode",
-              "guestDashboard",
-              "allowAutoThemes",
-              "allowErrorMonitoring",
-              "persistTraefikConfig",
-              "port",
-              "sslPort",
-              "listenIp",
-              "timeZone",
-              "eventsTimeout",
-              "advancedSettings",
-              "forwardAuthUrl",
-              "logLevel"
-            ]
-          },
-          "user": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "number"
-              },
-              "username": {
-                "type": "string"
-              },
-              "totpEnabled": {
-                "type": "boolean"
-              },
-              "locale": {
-                "type": "string"
-              },
-              "operator": {
-                "type": "boolean"
-              },
-              "hasSeenWelcome": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "id",
-              "username",
-              "totpEnabled",
-              "locale",
-              "operator",
-              "hasSeenWelcome"
-            ]
-          },
           "apps": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "id": {
-                  "type": "string"
+                "available": {
+                  "type": "boolean"
                 },
-                "urn": {
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "ai",
+                      "automation",
+                      "books",
+                      "data",
+                      "development",
+                      "featured",
+                      "finance",
+                      "gaming",
+                      "media",
+                      "music",
+                      "network",
+                      "photography",
+                      "security",
+                      "social",
+                      "utilities"
+                    ]
+                  }
+                },
+                "created_at": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "deprecated": {
+                  "type": "boolean"
+                },
+                "id": {
                   "type": "string"
                 },
                 "name": {
@@ -2161,108 +1980,239 @@
                 "short_desc": {
                   "type": "string"
                 },
-                "categories": {
-                  "default": [],
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "network",
-                      "media",
-                      "development",
-                      "automation",
-                      "social",
-                      "utilities",
-                      "photography",
-                      "security",
-                      "featured",
-                      "books",
-                      "data",
-                      "music",
-                      "finance",
-                      "gaming",
-                      "ai"
-                    ]
-                  }
-                },
-                "deprecated": {
-                  "default": false,
-                  "type": "boolean"
-                },
-                "created_at": {
-                  "default": 0,
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
+                "urn": {
+                  "type": "string"
                 },
                 "supported_architectures": {
                   "type": "array",
                   "items": {
-                    "type": "string",
                     "enum": [
-                      "arm64",
-                      "amd64"
+                      "amd64",
+                      "arm64"
                     ]
                   }
-                },
-                "available": {
-                  "type": "boolean"
                 }
               },
               "required": [
+                "available",
+                "categories",
+                "created_at",
+                "deprecated",
                 "id",
-                "urn",
                 "name",
                 "short_desc",
-                "available"
+                "urn"
               ]
             }
           },
           "updatesAvailable": {
             "type": "number"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "hasSeenWelcome": {
+                "type": "boolean"
+              },
+              "id": {
+                "type": "integer"
+              },
+              "locale": {
+                "type": "string",
+                "pattern": "^\\S.*\\S$|^\\S?$"
+              },
+              "operator": {
+                "type": "boolean"
+              },
+              "totpEnabled": {
+                "type": "boolean"
+              },
+              "username": {
+                "type": "string",
+                "pattern": "^\\S.*\\S$|^\\S?$"
+              }
+            },
+            "required": [
+              "hasSeenWelcome",
+              "id",
+              "locale",
+              "operator",
+              "totpEnabled",
+              "username"
+            ]
+          },
+          "userSettings": {
+            "type": "object",
+            "properties": {
+              "advancedSettings": {
+                "type": "boolean"
+              },
+              "allowAutoThemes": {
+                "type": "boolean"
+              },
+              "allowErrorMonitoring": {
+                "type": "boolean"
+              },
+              "appDataPath": {
+                "type": "string",
+                "pattern": "^\\S.*\\S$|^\\S?$"
+              },
+              "appsRepoUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "demoMode": {
+                "type": "boolean"
+              },
+              "dnsIp": {
+                "type": "string",
+                "pattern": "^((?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])[.]){3}(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$",
+                "format": "ipv4"
+              },
+              "domain": {
+                "type": "string",
+                "pattern": "^\\S.*\\S$|^\\S?$"
+              },
+              "eventsTimeout": {
+                "type": "number",
+                "maximum": 120,
+                "minimum": 1
+              },
+              "forwardAuthUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "guestDashboard": {
+                "type": "boolean"
+              },
+              "internalIp": {
+                "type": "string",
+                "pattern": "^((?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])[.]){3}(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$",
+                "format": "ipv4"
+              },
+              "listenIp": {
+                "type": "string",
+                "pattern": "^((?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])[.]){3}(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$",
+                "format": "ipv4"
+              },
+              "localDomain": {
+                "type": "string",
+                "pattern": "^\\S.*\\S$|^\\S?$"
+              },
+              "logLevel": {
+                "enum": [
+                  "debug",
+                  "error",
+                  "info",
+                  "warn"
+                ]
+              },
+              "persistTraefikConfig": {
+                "type": "boolean"
+              },
+              "port": {
+                "type": "number",
+                "maximum": 65535,
+                "minimum": 0
+              },
+              "postgresPort": {
+                "type": "integer",
+                "maximum": 65535,
+                "minimum": 0
+              },
+              "sslPort": {
+                "type": "number",
+                "maximum": 65535,
+                "minimum": 0
+              },
+              "timeZone": {
+                "type": "string",
+                "pattern": "^\\S.*\\S$|^\\S?$"
+              },
+              "experimental_insecureCookie": {
+                "type": "boolean"
+              },
+              "themeBase": {
+                "type": "string"
+              },
+              "themeColor": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "advancedSettings",
+              "allowAutoThemes",
+              "allowErrorMonitoring",
+              "appDataPath",
+              "appsRepoUrl",
+              "demoMode",
+              "dnsIp",
+              "domain",
+              "eventsTimeout",
+              "forwardAuthUrl",
+              "guestDashboard",
+              "internalIp",
+              "listenIp",
+              "localDomain",
+              "logLevel",
+              "persistTraefikConfig",
+              "port",
+              "postgresPort",
+              "sslPort",
+              "timeZone"
+            ]
+          },
+          "version": {
+            "type": "object",
+            "properties": {
+              "body": {
+                "type": "string"
+              },
+              "current": {
+                "type": "string"
+              },
+              "latest": {
+                "type": "string"
+              },
+              "releases": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "body": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "body",
+                    "version"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "body",
+              "current",
+              "latest",
+              "releases"
+            ]
           }
         },
         "required": [
-          "version",
-          "userSettings",
-          "user",
           "apps",
-          "updatesAvailable"
+          "updatesAvailable",
+          "user",
+          "userSettings",
+          "version"
         ]
       },
-      "PartialUserSettingsDto": {
+      "UserSettingsBody": {
         "type": "object",
         "properties": {
-          "dnsIp": {
-            "type": "string",
-            "format": "ipv4",
-            "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"
-          },
-          "internalIp": {
-            "type": "string",
-            "format": "ipv4",
-            "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"
-          },
-          "postgresPort": {
-            "type": "number"
-          },
-          "appsRepoUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "domain": {
-            "type": "string"
-          },
-          "appDataPath": {
-            "type": "string"
-          },
-          "localDomain": {
-            "type": "string"
-          },
-          "demoMode": {
-            "type": "boolean"
-          },
-          "guestDashboard": {
+          "advancedSettings": {
             "type": "boolean"
           },
           "allowAutoThemes": {
@@ -2271,42 +2221,95 @@
           "allowErrorMonitoring": {
             "type": "boolean"
           },
-          "persistTraefikConfig": {
+          "appDataPath": {
+            "type": "string"
+          },
+          "appsRepoUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "demoMode": {
             "type": "boolean"
           },
-          "port": {
-            "type": "number"
-          },
-          "sslPort": {
-            "type": "number"
-          },
-          "listenIp": {
+          "dnsIp": {
             "type": "string",
-            "format": "ipv4",
-            "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"
+            "pattern": "^((?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])[.]){3}(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$",
+            "format": "ipv4"
           },
-          "timeZone": {
+          "domain": {
             "type": "string"
           },
           "eventsTimeout": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?:(?!^-0$)-?(?:(?:0|[1-9]\\d*)))$"
+              }
+            ]
           },
-          "advancedSettings": {
+          "experimental_insecureCookie": {
             "type": "boolean"
           },
           "forwardAuthUrl": {
             "type": "string",
             "format": "uri"
           },
+          "guestDashboard": {
+            "type": "boolean"
+          },
+          "internalIp": {
+            "type": "string",
+            "pattern": "^((?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])[.]){3}(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$",
+            "format": "ipv4"
+          },
+          "listenIp": {
+            "type": "string",
+            "pattern": "^((?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])[.]){3}(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$",
+            "format": "ipv4"
+          },
+          "localDomain": {
+            "type": "string"
+          },
           "logLevel": {
             "type": "string",
             "enum": [
               "debug",
+              "error",
               "info",
-              "warn",
-              "error"
+              "warn"
+            ]
+          },
+          "persistTraefikConfig": {
+            "type": "boolean"
+          },
+          "port": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?:(?!^-0$)-?(?:(?:0|[1-9]\\d*)))$"
+              }
+            ]
+          },
+          "postgresPort": {
+            "type": "integer",
+            "maximum": 65535,
+            "minimum": 0
+          },
+          "sslPort": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?:(?!^-0$)-?(?:(?:0|[1-9]\\d*)))$"
+              }
             ]
           },
           "themeBase": {
@@ -2315,8 +2318,8 @@
           "themeColor": {
             "type": "string"
           },
-          "experimental_insecureCookie": {
-            "type": "boolean"
+          "timeZone": {
+            "type": "string"
           }
         }
       },
@@ -2334,8 +2337,7 @@
       "LoadDto": {
         "type": "object",
         "properties": {
-          "diskUsed": {
-            "default": 0,
+          "cpuLoad": {
             "anyOf": [
               {
                 "type": "number"
@@ -2343,12 +2345,9 @@
               {
                 "type": "null"
               }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
+            ]
           },
           "diskSize": {
-            "default": 0,
             "anyOf": [
               {
                 "type": "number"
@@ -2356,12 +2355,9 @@
               {
                 "type": "null"
               }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
+            ]
           },
-          "percentUsed": {
-            "default": 0,
+          "diskUsed": {
             "anyOf": [
               {
                 "type": "number"
@@ -2369,25 +2365,12 @@
               {
                 "type": "null"
               }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
-          },
-          "cpuLoad": {
-            "default": 0,
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
+            ]
           },
           "memoryTotal": {
-            "default": 0,
+            "type": "number"
+          },
+          "percentUsed": {
             "anyOf": [
               {
                 "type": "number"
@@ -2395,38 +2378,34 @@
               {
                 "type": "null"
               }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
+            ]
           },
           "percentUsedMemory": {
-            "default": 0,
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
+            "type": "number"
           }
-        }
+        },
+        "required": [
+          "cpuLoad",
+          "diskSize",
+          "diskUsed",
+          "memoryTotal",
+          "percentUsed",
+          "percentUsedMemory"
+        ]
       },
       "LoginBody": {
         "type": "object",
         "properties": {
-          "username": {
+          "password": {
             "type": "string"
           },
-          "password": {
+          "username": {
             "type": "string"
           }
         },
         "required": [
-          "username",
-          "password"
+          "password",
+          "username"
         ]
       },
       "LoginDto": {
@@ -2461,16 +2440,16 @@
       "RegisterBody": {
         "type": "object",
         "properties": {
-          "username": {
+          "password": {
             "type": "string"
           },
-          "password": {
+          "username": {
             "type": "string"
           }
         },
         "required": [
-          "username",
-          "password"
+          "password",
+          "username"
         ]
       },
       "RegisterDto": {
@@ -2576,16 +2555,16 @@
       "ResetPasswordDto": {
         "type": "object",
         "properties": {
-          "success": {
-            "type": "boolean"
-          },
           "email": {
             "type": "string"
+          },
+          "success": {
+            "type": "boolean"
           }
         },
         "required": [
-          "success",
-          "email"
+          "email",
+          "success"
         ]
       },
       "CheckResetPasswordRequestDto": {
@@ -2610,8 +2589,33 @@
                 "app": {
                   "type": "object",
                   "properties": {
+                    "domain": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "exposed": {
+                      "type": "boolean"
+                    },
+                    "exposedLocal": {
+                      "type": "boolean"
+                    },
                     "id": {
                       "type": "number"
+                    },
+                    "isVisibleOnGuestDashboard": {
+                      "type": "boolean"
+                    },
+                    "openPort": {
+                      "type": "boolean"
+                    },
+                    "pendingRestart": {
+                      "type": "boolean"
                     },
                     "port": {
                       "anyOf": [
@@ -2624,59 +2628,30 @@
                       ]
                     },
                     "status": {
-                      "type": "string",
                       "enum": [
-                        "running",
-                        "stopped",
+                        "backing_up",
                         "installing",
-                        "uninstalling",
-                        "stopping",
-                        "starting",
                         "missing",
-                        "updating",
                         "resetting",
                         "restarting",
-                        "backing_up",
-                        "restoring"
+                        "restoring",
+                        "running",
+                        "starting",
+                        "stopped",
+                        "stopping",
+                        "uninstalling",
+                        "updating"
                       ]
-                    },
-                    "createdAt": {
-                      "type": "string"
-                    },
-                    "updatedAt": {
-                      "type": "string"
                     },
                     "version": {
                       "type": "number"
                     },
-                    "exposed": {
-                      "type": "boolean"
-                    },
-                    "openPort": {
-                      "type": "boolean"
-                    },
-                    "exposedLocal": {
-                      "type": "boolean"
-                    },
-                    "domain": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "isVisibleOnGuestDashboard": {
-                      "type": "boolean"
-                    },
                     "config": {
                       "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
                       "additionalProperties": {}
+                    },
+                    "createdAt": {
+                      "type": "string"
                     },
                     "enableAuth": {
                       "type": "boolean"
@@ -2691,348 +2666,124 @@
                         }
                       ]
                     },
-                    "pendingRestart": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "port",
-                    "status",
-                    "version",
-                    "exposed",
-                    "openPort",
-                    "exposedLocal",
-                    "domain",
-                    "isVisibleOnGuestDashboard",
-                    "pendingRestart"
-                  ]
-                },
-                "info": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "urn": {
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "short_desc": {
-                      "type": "string"
-                    },
-                    "categories": {
-                      "default": [],
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "enum": [
-                          "network",
-                          "media",
-                          "development",
-                          "automation",
-                          "social",
-                          "utilities",
-                          "photography",
-                          "security",
-                          "featured",
-                          "books",
-                          "data",
-                          "music",
-                          "finance",
-                          "gaming",
-                          "ai"
-                        ]
-                      }
-                    },
-                    "deprecated": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "created_at": {
-                      "default": 0,
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "supported_architectures": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "enum": [
-                          "arm64",
-                          "amd64"
-                        ]
-                      }
-                    },
-                    "available": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "urn",
-                    "name",
-                    "short_desc",
-                    "available"
-                  ]
-                },
-                "metadata": {
-                  "type": "object",
-                  "properties": {
-                    "hasCustomConfig": {
-                      "type": "boolean"
-                    },
-                    "localSubdomain": {
-                      "type": "string"
-                    },
-                    "latestVersion": {
-                      "type": "number"
-                    },
-                    "minTipiVersion": {
-                      "type": "string"
-                    },
-                    "latestDockerVersion": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "localSubdomain",
-                    "latestVersion"
-                  ]
-                }
-              },
-              "required": [
-                "app",
-                "info",
-                "metadata"
-              ]
-            },
-            "x-nestjs_zod-has-null": true
-          }
-        },
-        "required": [
-          "installed"
-        ]
-      },
-      "GuestAppsDto": {
-        "type": "object",
-        "properties": {
-          "installed": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "app": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "number"
-                    },
-                    "port": {
-                      "anyOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "running",
-                        "stopped",
-                        "installing",
-                        "uninstalling",
-                        "stopping",
-                        "starting",
-                        "missing",
-                        "updating",
-                        "resetting",
-                        "restarting",
-                        "backing_up",
-                        "restoring"
-                      ]
-                    },
-                    "createdAt": {
-                      "type": "string"
-                    },
                     "updatedAt": {
                       "type": "string"
-                    },
-                    "version": {
-                      "type": "number"
-                    },
-                    "exposed": {
-                      "type": "boolean"
-                    },
-                    "openPort": {
-                      "type": "boolean"
-                    },
-                    "exposedLocal": {
-                      "type": "boolean"
-                    },
-                    "domain": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "isVisibleOnGuestDashboard": {
-                      "type": "boolean"
-                    },
-                    "config": {
-                      "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "enableAuth": {
-                      "type": "boolean"
-                    },
-                    "localSubdomain": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "pendingRestart": {
-                      "type": "boolean"
                     }
                   },
                   "required": [
+                    "domain",
+                    "exposed",
+                    "exposedLocal",
                     "id",
+                    "isVisibleOnGuestDashboard",
+                    "openPort",
+                    "pendingRestart",
                     "port",
                     "status",
-                    "version",
-                    "exposed",
-                    "openPort",
-                    "exposedLocal",
-                    "domain",
-                    "isVisibleOnGuestDashboard",
-                    "pendingRestart"
+                    "version"
                   ]
                 },
                 "info": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "urn": {
-                      "type": "string"
-                    },
-                    "available": {
-                      "type": "boolean"
-                    },
-                    "deprecated": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "port": {
-                      "type": "number",
-                      "minimum": 1,
-                      "maximum": 65535
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "description": {
-                      "default": "",
-                      "type": "string"
-                    },
-                    "version": {
-                      "default": "latest",
-                      "type": "string"
-                    },
-                    "tipi_version": {
-                      "type": "number"
-                    },
-                    "short_desc": {
-                      "type": "string"
-                    },
                     "author": {
                       "type": "string"
                     },
-                    "source": {
-                      "type": "string"
-                    },
-                    "website": {
-                      "type": "string"
-                    },
-                    "force_expose": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "generate_vapid_keys": {
-                      "default": false,
+                    "available": {
                       "type": "boolean"
                     },
                     "categories": {
-                      "default": [],
                       "type": "array",
                       "items": {
-                        "type": "string",
                         "enum": [
-                          "network",
-                          "media",
-                          "development",
+                          "ai",
                           "automation",
-                          "social",
-                          "utilities",
-                          "photography",
-                          "security",
-                          "featured",
                           "books",
                           "data",
-                          "music",
+                          "development",
+                          "featured",
                           "finance",
                           "gaming",
-                          "ai"
+                          "media",
+                          "music",
+                          "network",
+                          "photography",
+                          "security",
+                          "social",
+                          "utilities"
                         ]
                       }
                     },
-                    "url_suffix": {
+                    "created_at": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "deprecated": {
+                      "type": "boolean"
+                    },
+                    "description": {
                       "type": "string"
                     },
+                    "dynamic_config": {
+                      "type": "boolean"
+                    },
+                    "exposable": {
+                      "type": "boolean"
+                    },
+                    "force_expose": {
+                      "type": "boolean"
+                    },
+                    "force_pull": {
+                      "type": "boolean"
+                    },
                     "form_fields": {
-                      "default": [],
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "text",
-                              "password",
-                              "email",
-                              "number",
-                              "fqdn",
-                              "ip",
-                              "fqdnip",
-                              "url",
-                              "random",
-                              "boolean"
-                            ]
+                          "env_variable": {
+                            "type": "string"
                           },
                           "label": {
                             "type": "string"
                           },
-                          "placeholder": {
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "type": {
+                            "enum": [
+                              "boolean",
+                              "email",
+                              "fqdn",
+                              "fqdnip",
+                              "ip",
+                              "number",
+                              "password",
+                              "random",
+                              "text",
+                              "url"
+                            ]
+                          },
+                          "default": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "boolean"
+                              }
+                            ]
+                          },
+                          "encoding": {
+                            "enum": [
+                              "base64",
+                              "hex"
+                            ]
+                          },
+                          "hint": {
                             "type": "string"
                           },
                           "max": {
@@ -3040,9 +2791,6 @@
                           },
                           "min": {
                             "type": "number"
-                          },
-                          "hint": {
-                            "type": "string"
                           },
                           "options": {
                             "type": "array",
@@ -3062,132 +2810,139 @@
                               ]
                             }
                           },
-                          "required": {
-                            "default": false,
-                            "type": "boolean"
-                          },
-                          "default": {
-                            "anyOf": [
-                              {
-                                "type": "boolean"
-                              },
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "number"
-                              }
-                            ]
-                          },
-                          "regex": {
-                            "type": "string"
-                          },
                           "pattern_error": {
                             "type": "string"
                           },
-                          "env_variable": {
+                          "placeholder": {
                             "type": "string"
                           },
-                          "encoding": {
-                            "type": "string",
-                            "enum": [
-                              "hex",
-                              "base64"
-                            ]
+                          "regex": {
+                            "type": "string"
                           }
                         },
                         "required": [
-                          "type",
+                          "env_variable",
                           "label",
-                          "env_variable"
+                          "required",
+                          "type"
                         ]
                       }
                     },
-                    "https": {
-                      "default": false,
+                    "generate_vapid_keys": {
                       "type": "boolean"
                     },
-                    "exposable": {
-                      "default": false,
+                    "https": {
                       "type": "boolean"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
                     },
                     "no_gui": {
-                      "default": false,
                       "type": "boolean"
+                    },
+                    "short_desc": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "tipi_version": {
+                      "type": "number"
+                    },
+                    "updated_at": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "urn": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "gid": {
+                      "type": "number"
+                    },
+                    "min_tipi_version": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number",
+                      "maximum": 65535,
+                      "minimum": 1
                     },
                     "supported_architectures": {
                       "type": "array",
                       "items": {
-                        "type": "string",
                         "enum": [
-                          "arm64",
-                          "amd64"
+                          "amd64",
+                          "arm64"
                         ]
                       }
                     },
                     "uid": {
                       "type": "number"
                     },
-                    "gid": {
-                      "type": "number"
-                    },
-                    "dynamic_config": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "min_tipi_version": {
+                    "url_suffix": {
                       "type": "string"
                     },
-                    "created_at": {
-                      "default": 0,
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "updated_at": {
-                      "default": 0,
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "force_pull": {
-                      "default": false,
-                      "type": "boolean"
+                    "website": {
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "id",
-                    "urn",
-                    "available",
-                    "name",
-                    "tipi_version",
-                    "short_desc",
                     "author",
-                    "source"
+                    "available",
+                    "categories",
+                    "created_at",
+                    "deprecated",
+                    "description",
+                    "dynamic_config",
+                    "exposable",
+                    "force_expose",
+                    "force_pull",
+                    "form_fields",
+                    "generate_vapid_keys",
+                    "https",
+                    "id",
+                    "name",
+                    "no_gui",
+                    "short_desc",
+                    "source",
+                    "tipi_version",
+                    "updated_at",
+                    "urn",
+                    "version"
                   ]
                 },
                 "metadata": {
                   "type": "object",
                   "properties": {
-                    "hasCustomConfig": {
-                      "type": "boolean"
+                    "latestVersion": {
+                      "type": "number"
                     },
                     "localSubdomain": {
                       "type": "string"
                     },
-                    "latestVersion": {
-                      "type": "number"
-                    },
-                    "minTipiVersion": {
-                      "type": "string"
+                    "hasCustomConfig": {
+                      "type": "boolean"
                     },
                     "latestDockerVersion": {
                       "type": "string"
+                    },
+                    "minTipiVersion": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        }
+                      ]
                     }
                   },
                   "required": [
-                    "localSubdomain",
-                    "latestVersion"
+                    "latestVersion",
+                    "localSubdomain"
                   ]
                 }
               },
@@ -3196,8 +2951,387 @@
                 "info",
                 "metadata"
               ]
-            },
-            "x-nestjs_zod-has-null": true
+            }
+          }
+        },
+        "required": [
+          "installed"
+        ]
+      },
+      "GuestAppsDto": {
+        "type": "object",
+        "properties": {
+          "installed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "app": {
+                  "type": "object",
+                  "properties": {
+                    "domain": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "exposed": {
+                      "type": "boolean"
+                    },
+                    "exposedLocal": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "number"
+                    },
+                    "isVisibleOnGuestDashboard": {
+                      "type": "boolean"
+                    },
+                    "openPort": {
+                      "type": "boolean"
+                    },
+                    "pendingRestart": {
+                      "type": "boolean"
+                    },
+                    "port": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "backing_up",
+                        "installing",
+                        "missing",
+                        "resetting",
+                        "restarting",
+                        "restoring",
+                        "running",
+                        "starting",
+                        "stopped",
+                        "stopping",
+                        "uninstalling",
+                        "updating"
+                      ]
+                    },
+                    "version": {
+                      "type": "number"
+                    },
+                    "config": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "enableAuth": {
+                      "type": "boolean"
+                    },
+                    "localSubdomain": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "domain",
+                    "exposed",
+                    "exposedLocal",
+                    "id",
+                    "isVisibleOnGuestDashboard",
+                    "openPort",
+                    "pendingRestart",
+                    "port",
+                    "status",
+                    "version"
+                  ]
+                },
+                "info": {
+                  "type": "object",
+                  "properties": {
+                    "author": {
+                      "type": "string"
+                    },
+                    "available": {
+                      "type": "boolean"
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "ai",
+                          "automation",
+                          "books",
+                          "data",
+                          "development",
+                          "featured",
+                          "finance",
+                          "gaming",
+                          "media",
+                          "music",
+                          "network",
+                          "photography",
+                          "security",
+                          "social",
+                          "utilities"
+                        ]
+                      }
+                    },
+                    "created_at": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "deprecated": {
+                      "type": "boolean"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "dynamic_config": {
+                      "type": "boolean"
+                    },
+                    "exposable": {
+                      "type": "boolean"
+                    },
+                    "force_expose": {
+                      "type": "boolean"
+                    },
+                    "force_pull": {
+                      "type": "boolean"
+                    },
+                    "form_fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "env_variable": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "type": {
+                            "enum": [
+                              "boolean",
+                              "email",
+                              "fqdn",
+                              "fqdnip",
+                              "ip",
+                              "number",
+                              "password",
+                              "random",
+                              "text",
+                              "url"
+                            ]
+                          },
+                          "default": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "boolean"
+                              }
+                            ]
+                          },
+                          "encoding": {
+                            "enum": [
+                              "base64",
+                              "hex"
+                            ]
+                          },
+                          "hint": {
+                            "type": "string"
+                          },
+                          "max": {
+                            "type": "number"
+                          },
+                          "min": {
+                            "type": "number"
+                          },
+                          "options": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "value"
+                              ]
+                            }
+                          },
+                          "pattern_error": {
+                            "type": "string"
+                          },
+                          "placeholder": {
+                            "type": "string"
+                          },
+                          "regex": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "env_variable",
+                          "label",
+                          "required",
+                          "type"
+                        ]
+                      }
+                    },
+                    "generate_vapid_keys": {
+                      "type": "boolean"
+                    },
+                    "https": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "no_gui": {
+                      "type": "boolean"
+                    },
+                    "short_desc": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "tipi_version": {
+                      "type": "number"
+                    },
+                    "updated_at": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "urn": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "gid": {
+                      "type": "number"
+                    },
+                    "min_tipi_version": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number",
+                      "maximum": 65535,
+                      "minimum": 1
+                    },
+                    "supported_architectures": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "amd64",
+                          "arm64"
+                        ]
+                      }
+                    },
+                    "uid": {
+                      "type": "number"
+                    },
+                    "url_suffix": {
+                      "type": "string"
+                    },
+                    "website": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "author",
+                    "available",
+                    "categories",
+                    "created_at",
+                    "deprecated",
+                    "description",
+                    "dynamic_config",
+                    "exposable",
+                    "force_expose",
+                    "force_pull",
+                    "form_fields",
+                    "generate_vapid_keys",
+                    "https",
+                    "id",
+                    "name",
+                    "no_gui",
+                    "short_desc",
+                    "source",
+                    "tipi_version",
+                    "updated_at",
+                    "urn",
+                    "version"
+                  ]
+                },
+                "metadata": {
+                  "type": "object",
+                  "properties": {
+                    "latestVersion": {
+                      "type": "number"
+                    },
+                    "localSubdomain": {
+                      "type": "string"
+                    },
+                    "hasCustomConfig": {
+                      "type": "boolean"
+                    },
+                    "latestDockerVersion": {
+                      "type": "string"
+                    },
+                    "minTipiVersion": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "latestVersion",
+                    "localSubdomain"
+                  ]
+                }
+              },
+              "required": [
+                "app",
+                "info",
+                "metadata"
+              ]
+            }
           }
         },
         "required": [
@@ -3218,223 +3352,107 @@
       "GetAppDto": {
         "type": "object",
         "properties": {
-          "app": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number"
-                  },
-                  "port": {
-                    "anyOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "running",
-                      "stopped",
-                      "installing",
-                      "uninstalling",
-                      "stopping",
-                      "starting",
-                      "missing",
-                      "updating",
-                      "resetting",
-                      "restarting",
-                      "backing_up",
-                      "restoring"
-                    ]
-                  },
-                  "createdAt": {
-                    "type": "string"
-                  },
-                  "updatedAt": {
-                    "type": "string"
-                  },
-                  "version": {
-                    "type": "number"
-                  },
-                  "exposed": {
-                    "type": "boolean"
-                  },
-                  "openPort": {
-                    "type": "boolean"
-                  },
-                  "exposedLocal": {
-                    "type": "boolean"
-                  },
-                  "domain": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "isVisibleOnGuestDashboard": {
-                    "type": "boolean"
-                  },
-                  "config": {
-                    "type": "object",
-                    "propertyNames": {
-                      "type": "string"
-                    },
-                    "additionalProperties": {}
-                  },
-                  "enableAuth": {
-                    "type": "boolean"
-                  },
-                  "localSubdomain": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "pendingRestart": {
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "id",
-                  "port",
-                  "status",
-                  "version",
-                  "exposed",
-                  "openPort",
-                  "exposedLocal",
-                  "domain",
-                  "isVisibleOnGuestDashboard",
-                  "pendingRestart"
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
-          },
           "info": {
             "type": "object",
             "properties": {
-              "id": {
-                "type": "string"
-              },
-              "urn": {
+              "author": {
                 "type": "string"
               },
               "available": {
                 "type": "boolean"
               },
-              "deprecated": {
-                "default": false,
-                "type": "boolean"
-              },
-              "port": {
-                "type": "number",
-                "minimum": 1,
-                "maximum": 65535
-              },
-              "name": {
-                "type": "string"
-              },
-              "description": {
-                "default": "",
-                "type": "string"
-              },
-              "version": {
-                "default": "latest",
-                "type": "string"
-              },
-              "tipi_version": {
-                "type": "number"
-              },
-              "short_desc": {
-                "type": "string"
-              },
-              "author": {
-                "type": "string"
-              },
-              "source": {
-                "type": "string"
-              },
-              "website": {
-                "type": "string"
-              },
-              "force_expose": {
-                "default": false,
-                "type": "boolean"
-              },
-              "generate_vapid_keys": {
-                "default": false,
-                "type": "boolean"
-              },
               "categories": {
-                "default": [],
                 "type": "array",
                 "items": {
-                  "type": "string",
                   "enum": [
-                    "network",
-                    "media",
-                    "development",
+                    "ai",
                     "automation",
-                    "social",
-                    "utilities",
-                    "photography",
-                    "security",
-                    "featured",
                     "books",
                     "data",
-                    "music",
+                    "development",
+                    "featured",
                     "finance",
                     "gaming",
-                    "ai"
+                    "media",
+                    "music",
+                    "network",
+                    "photography",
+                    "security",
+                    "social",
+                    "utilities"
                   ]
                 }
               },
-              "url_suffix": {
+              "created_at": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "deprecated": {
+                "type": "boolean"
+              },
+              "description": {
                 "type": "string"
               },
+              "dynamic_config": {
+                "type": "boolean"
+              },
+              "exposable": {
+                "type": "boolean"
+              },
+              "force_expose": {
+                "type": "boolean"
+              },
+              "force_pull": {
+                "type": "boolean"
+              },
               "form_fields": {
-                "default": [],
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "text",
-                        "password",
-                        "email",
-                        "number",
-                        "fqdn",
-                        "ip",
-                        "fqdnip",
-                        "url",
-                        "random",
-                        "boolean"
-                      ]
+                    "env_variable": {
+                      "type": "string"
                     },
                     "label": {
                       "type": "string"
                     },
-                    "placeholder": {
+                    "required": {
+                      "type": "boolean"
+                    },
+                    "type": {
+                      "enum": [
+                        "boolean",
+                        "email",
+                        "fqdn",
+                        "fqdnip",
+                        "ip",
+                        "number",
+                        "password",
+                        "random",
+                        "text",
+                        "url"
+                      ]
+                    },
+                    "default": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "boolean"
+                        }
+                      ]
+                    },
+                    "encoding": {
+                      "enum": [
+                        "base64",
+                        "hex"
+                      ]
+                    },
+                    "hint": {
                       "type": "string"
                     },
                     "max": {
@@ -3442,9 +3460,6 @@
                     },
                     "min": {
                       "type": "number"
-                    },
-                    "hint": {
-                      "type": "string"
                     },
                     "options": {
                       "type": "array",
@@ -3464,135 +3479,244 @@
                         ]
                       }
                     },
-                    "required": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "default": {
-                      "anyOf": [
-                        {
-                          "type": "boolean"
-                        },
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "number"
-                        }
-                      ]
-                    },
-                    "regex": {
-                      "type": "string"
-                    },
                     "pattern_error": {
                       "type": "string"
                     },
-                    "env_variable": {
+                    "placeholder": {
                       "type": "string"
                     },
-                    "encoding": {
-                      "type": "string",
-                      "enum": [
-                        "hex",
-                        "base64"
-                      ]
+                    "regex": {
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "type",
+                    "env_variable",
                     "label",
-                    "env_variable"
+                    "required",
+                    "type"
                   ]
                 }
               },
-              "https": {
-                "default": false,
+              "generate_vapid_keys": {
                 "type": "boolean"
               },
-              "exposable": {
-                "default": false,
+              "https": {
                 "type": "boolean"
+              },
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
               },
               "no_gui": {
-                "default": false,
                 "type": "boolean"
+              },
+              "short_desc": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "tipi_version": {
+                "type": "number"
+              },
+              "updated_at": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "urn": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "gid": {
+                "type": "number"
+              },
+              "min_tipi_version": {
+                "type": "string"
+              },
+              "port": {
+                "type": "number",
+                "maximum": 65535,
+                "minimum": 1
               },
               "supported_architectures": {
                 "type": "array",
                 "items": {
-                  "type": "string",
                   "enum": [
-                    "arm64",
-                    "amd64"
+                    "amd64",
+                    "arm64"
                   ]
                 }
               },
               "uid": {
                 "type": "number"
               },
-              "gid": {
-                "type": "number"
-              },
-              "dynamic_config": {
-                "default": false,
-                "type": "boolean"
-              },
-              "min_tipi_version": {
+              "url_suffix": {
                 "type": "string"
               },
-              "created_at": {
-                "default": 0,
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "updated_at": {
-                "default": 0,
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "force_pull": {
-                "default": false,
-                "type": "boolean"
+              "website": {
+                "type": "string"
               }
             },
             "required": [
-              "id",
-              "urn",
-              "available",
-              "name",
-              "tipi_version",
-              "short_desc",
               "author",
-              "source"
-            ],
-            "x-nestjs_zod-has-null": true
+              "available",
+              "categories",
+              "created_at",
+              "deprecated",
+              "description",
+              "dynamic_config",
+              "exposable",
+              "force_expose",
+              "force_pull",
+              "form_fields",
+              "generate_vapid_keys",
+              "https",
+              "id",
+              "name",
+              "no_gui",
+              "short_desc",
+              "source",
+              "tipi_version",
+              "updated_at",
+              "urn",
+              "version"
+            ]
           },
           "metadata": {
             "type": "object",
             "properties": {
-              "hasCustomConfig": {
-                "type": "boolean"
+              "latestVersion": {
+                "type": "number"
               },
               "localSubdomain": {
                 "type": "string"
               },
-              "latestVersion": {
-                "type": "number"
-              },
-              "minTipiVersion": {
-                "type": "string"
+              "hasCustomConfig": {
+                "type": "boolean"
               },
               "latestDockerVersion": {
                 "type": "string"
+              },
+              "minTipiVersion": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  }
+                ]
               }
             },
             "required": [
-              "localSubdomain",
-              "latestVersion"
-            ],
-            "x-nestjs_zod-has-null": true
+              "latestVersion",
+              "localSubdomain"
+            ]
+          },
+          "app": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "domain": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "exposed": {
+                    "type": "boolean"
+                  },
+                  "exposedLocal": {
+                    "type": "boolean"
+                  },
+                  "id": {
+                    "type": "number"
+                  },
+                  "isVisibleOnGuestDashboard": {
+                    "type": "boolean"
+                  },
+                  "openPort": {
+                    "type": "boolean"
+                  },
+                  "pendingRestart": {
+                    "type": "boolean"
+                  },
+                  "port": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "status": {
+                    "enum": [
+                      "backing_up",
+                      "installing",
+                      "missing",
+                      "resetting",
+                      "restarting",
+                      "restoring",
+                      "running",
+                      "starting",
+                      "stopped",
+                      "stopping",
+                      "uninstalling",
+                      "updating"
+                    ]
+                  },
+                  "version": {
+                    "type": "number"
+                  },
+                  "config": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  },
+                  "enableAuth": {
+                    "type": "boolean"
+                  },
+                  "localSubdomain": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "updatedAt": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "domain",
+                  "exposed",
+                  "exposedLocal",
+                  "id",
+                  "isVisibleOnGuestDashboard",
+                  "openPort",
+                  "pendingRestart",
+                  "port",
+                  "status",
+                  "version"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -3611,9 +3735,7 @@
               {
                 "type": "null"
               }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
+            ]
           },
           "new": {
             "anyOf": [
@@ -3623,9 +3745,7 @@
               {
                 "type": "null"
               }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
+            ]
           }
         },
         "required": [
@@ -3641,10 +3761,39 @@
             "items": {
               "type": "object",
               "properties": {
-                "id": {
-                  "type": "string"
+                "available": {
+                  "type": "boolean"
                 },
-                "urn": {
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "ai",
+                      "automation",
+                      "books",
+                      "data",
+                      "development",
+                      "featured",
+                      "finance",
+                      "gaming",
+                      "media",
+                      "music",
+                      "network",
+                      "photography",
+                      "security",
+                      "social",
+                      "utilities"
+                    ]
+                  }
+                },
+                "created_at": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "deprecated": {
+                  "type": "boolean"
+                },
+                "id": {
                   "type": "string"
                 },
                 "name": {
@@ -3653,68 +3802,40 @@
                 "short_desc": {
                   "type": "string"
                 },
-                "categories": {
-                  "default": [],
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "network",
-                      "media",
-                      "development",
-                      "automation",
-                      "social",
-                      "utilities",
-                      "photography",
-                      "security",
-                      "featured",
-                      "books",
-                      "data",
-                      "music",
-                      "finance",
-                      "gaming",
-                      "ai"
-                    ]
-                  }
-                },
-                "deprecated": {
-                  "default": false,
-                  "type": "boolean"
-                },
-                "created_at": {
-                  "default": 0,
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
+                "urn": {
+                  "type": "string"
                 },
                 "supported_architectures": {
                   "type": "array",
                   "items": {
-                    "type": "string",
                     "enum": [
-                      "arm64",
-                      "amd64"
+                      "amd64",
+                      "arm64"
                     ]
                   }
-                },
-                "available": {
-                  "type": "boolean"
                 }
               },
               "required": [
+                "available",
+                "categories",
+                "created_at",
+                "deprecated",
                 "id",
-                "urn",
                 "name",
                 "short_desc",
-                "available"
+                "urn"
               ]
             }
           },
-          "nextCursor": {
-            "type": "string"
-          },
           "total": {
             "type": "number"
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ]
           }
         },
         "required": [
@@ -3738,15 +3859,39 @@
         "properties": {
           "name": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 16
+            "maxLength": 16,
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "name",
+          "url"
+        ]
+      },
+      "AppStoreDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
           },
           "url": {
             "type": "string"
           }
         },
         "required": [
+          "enabled",
           "name",
+          "slug",
           "url"
         ]
       },
@@ -3758,24 +3903,24 @@
             "items": {
               "type": "object",
               "properties": {
-                "slug": {
-                  "type": "string"
+                "enabled": {
+                  "type": "boolean"
                 },
                 "name": {
                   "type": "string"
                 },
-                "url": {
+                "slug": {
                   "type": "string"
                 },
-                "enabled": {
-                  "type": "boolean"
+                "url": {
+                  "type": "string"
                 }
               },
               "required": [
-                "slug",
+                "enabled",
                 "name",
-                "url",
-                "enabled"
+                "slug",
+                "url"
               ]
             }
           }
@@ -3787,25 +3932,53 @@
       "UpdateAppStoreBodyDto": {
         "type": "object",
         "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
           "name": {
             "type": "string"
-          },
-          "enabled": {
+          }
+        },
+        "required": [
+          "enabled",
+          "name"
+        ]
+      },
+      "UpdateAppStoreDto": {
+        "type": "object",
+        "properties": {
+          "success": {
             "type": "boolean"
           }
         },
         "required": [
-          "name",
-          "enabled"
+          "success"
         ]
       },
       "AppFormBody": {
         "type": "object",
         "properties": {
-          "port": {
-            "type": "number",
-            "minimum": 1024,
-            "maximum": 65535
+          "skipEnv": {
+            "type": "boolean",
+            "default": false
+          },
+          "skipPull": {
+            "type": "boolean",
+            "default": false
+          },
+          "skipRun": {
+            "type": "boolean",
+            "default": false
+          },
+          "openPort": {
+            "type": "boolean",
+            "default": true
+          },
+          "domain": {
+            "type": "string"
+          },
+          "enableAuth": {
+            "type": "boolean"
           },
           "exposed": {
             "type": "boolean"
@@ -3813,34 +3986,17 @@
           "exposedLocal": {
             "type": "boolean"
           },
-          "openPort": {
-            "default": true,
-            "type": "boolean"
-          },
-          "domain": {
-            "type": "string"
-          },
           "isVisibleOnGuestDashboard": {
-            "type": "boolean"
-          },
-          "enableAuth": {
             "type": "boolean"
           },
           "localSubdomain": {
             "type": "string",
             "pattern": "^[a-zA-Z0-9-]{1,63}$"
           },
-          "skipEnv": {
-            "default": false,
-            "type": "boolean"
-          },
-          "skipPull": {
-            "default": false,
-            "type": "boolean"
-          },
-          "skipRun": {
-            "default": false,
-            "type": "boolean"
+          "port": {
+            "type": "number",
+            "maximum": 65535,
+            "minimum": 1024
           }
         }
       },
@@ -3848,9 +4004,26 @@
         "type": "object",
         "properties": {
           "requestId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "a UUID",
+                "format": "uuid",
+                "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
+              },
+              {
+                "const": "00000000-0000-0000-0000-000000000000",
+                "description": "a UUID",
+                "format": "uuid"
+              },
+              {
+                "const": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+                "description": "a UUID",
+                "format": "uuid"
+              }
+            ],
+            "description": "a UUID",
+            "format": "uuid"
           }
         },
         "required": [
@@ -3883,9 +4056,26 @@
         "type": "object",
         "properties": {
           "requestId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "a UUID",
+                "format": "uuid",
+                "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
+              },
+              {
+                "const": "00000000-0000-0000-0000-000000000000",
+                "description": "a UUID",
+                "format": "uuid"
+              },
+              {
+                "const": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+                "description": "a UUID",
+                "format": "uuid"
+              }
+            ],
+            "description": "a UUID",
+            "format": "uuid"
           }
         },
         "required": [
@@ -3906,43 +4096,43 @@
       "GetAppBackupsDto": {
         "type": "object",
         "properties": {
+          "currentPage": {
+            "type": "number"
+          },
           "data": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
+                "date": {
+                  "type": "number"
+                },
                 "id": {
                   "type": "string"
                 },
                 "size": {
                   "type": "number"
-                },
-                "date": {
-                  "type": "number"
                 }
               },
               "required": [
+                "date",
                 "id",
-                "size",
-                "date"
+                "size"
               ]
             }
           },
-          "total": {
-            "type": "number"
-          },
-          "currentPage": {
-            "type": "number"
-          },
           "lastPage": {
+            "type": "number"
+          },
+          "total": {
             "type": "number"
           }
         },
         "required": [
-          "data",
-          "total",
           "currentPage",
-          "lastPage"
+          "data",
+          "lastPage",
+          "total"
         ]
       },
       "DeleteAppBackupBodyDto": {
@@ -3964,19 +4154,10 @@
             "items": {
               "type": "object",
               "properties": {
-                "id": {
-                  "type": "number"
-                },
-                "title": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 20
-                },
                 "description": {
                   "anyOf": [
                     {
                       "type": "string",
-                      "minLength": 0,
                       "maxLength": 50
                     },
                     {
@@ -3984,47 +4165,49 @@
                     }
                   ]
                 },
-                "url": {
-                  "type": "string",
-                  "format": "uri"
-                },
                 "iconUrl": {
                   "anyOf": [
                     {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "format": "uri"
-                        },
-                        {
-                          "type": "string",
-                          "maxLength": 0
-                        }
-                      ]
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "const": ""
                     },
                     {
                       "type": "null"
                     }
                   ]
                 },
-                "userId": {
+                "id": {
                   "type": "number"
                 },
                 "isVisibleOnGuestDashboard": {
-                  "default": false,
                   "type": "boolean"
+                },
+                "title": {
+                  "type": "string",
+                  "maxLength": 20,
+                  "minLength": 1
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "userId": {
+                  "type": "number"
                 }
               },
               "required": [
-                "id",
-                "title",
                 "description",
-                "url",
                 "iconUrl",
+                "id",
+                "isVisibleOnGuestDashboard",
+                "title",
+                "url",
                 "userId"
               ]
-            },
-            "x-nestjs_zod-has-null": true
+            }
           }
         },
         "required": [
@@ -4036,8 +4219,8 @@
         "properties": {
           "title": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 20
+            "maxLength": 20,
+            "minLength": 1
           },
           "url": {
             "type": "string",
@@ -4049,7 +4232,6 @@
           },
           "description": {
             "type": "string",
-            "minLength": 0,
             "maxLength": 50
           },
           "iconUrl": {
@@ -4057,13 +4239,8 @@
               {
                 "type": "string",
                 "format": "uri"
-              },
-              {
-                "type": "string",
-                "maxLength": 0
               }
-            ],
-            "x-nestjs_zod-empty-type": true
+            ]
           }
         },
         "required": [
@@ -4076,19 +4253,15 @@
         "properties": {
           "title": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 20
+            "maxLength": 20,
+            "minLength": 1
           },
           "url": {
             "type": "string",
             "format": "uri"
           },
-          "isVisibleOnGuestDashboard": {
-            "type": "boolean"
-          },
           "description": {
             "type": "string",
-            "minLength": 0,
             "maxLength": 50
           },
           "iconUrl": {
@@ -4096,13 +4269,11 @@
               {
                 "type": "string",
                 "format": "uri"
-              },
-              {
-                "type": "string",
-                "maxLength": 0
               }
-            ],
-            "x-nestjs_zod-empty-type": true
+            ]
+          },
+          "isVisibleOnGuestDashboard": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -4113,21 +4284,7 @@
       "GetUserConfigDto": {
         "type": "object",
         "properties": {
-          "dockerCompose": {
-            "description": "The content of the docker-compose.yml file.",
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
-          },
           "appEnv": {
-            "description": "The content of the app.env file.",
             "anyOf": [
               {
                 "type": "string"
@@ -4135,37 +4292,41 @@
               {
                 "type": "null"
               }
-            ],
-            "x-nestjs_zod-has-null": true,
-            "x-nestjs_zod-empty-type": true
+            ]
+          },
+          "dockerCompose": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "isEnabled": {
-            "type": "boolean",
-            "description": "Whether the user configuration is enabled for the app.",
-            "x-nestjs_zod-has-null": true
+            "type": "boolean"
           }
         },
         "required": [
-          "dockerCompose",
           "appEnv",
+          "dockerCompose",
           "isEnabled"
         ]
       },
       "UpdateUserConfigDto": {
         "type": "object",
         "properties": {
-          "dockerCompose": {
-            "type": "string",
-            "description": "The content of the docker-compose.yml file."
-          },
           "appEnv": {
-            "type": "string",
-            "description": "The content of the app.env file."
+            "type": "string"
+          },
+          "dockerCompose": {
+            "type": "string"
           }
         },
         "required": [
-          "dockerCompose",
-          "appEnv"
+          "appEnv",
+          "dockerCompose"
         ]
       }
     }

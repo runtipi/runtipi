@@ -1,72 +1,76 @@
-import { createZodDto } from 'nestjs-zod';
+import { type } from 'arktype';
+import { createArkDto } from 'nestjs-arktype';
+
 import { UserDto } from './modules/user/dto/user.dto';
 
-import { z } from 'zod';
 import { LOG_LEVEL_ENUM } from './core/logger/logger.service';
 import { AppInfoSimpleDto } from './modules/marketplace/dto/marketplace.dto';
 
-export const settingsSchema = z.object({
-  dnsIp: z.ipv4().trim(),
-  internalIp: z.ipv4().trim(),
-  postgresPort: z.coerce.number(),
-  appsRepoUrl: z.url().trim(),
-  domain: z.string().trim(),
-  appDataPath: z.string().trim(),
-  localDomain: z.string().trim(),
-  demoMode: z.boolean(),
-  guestDashboard: z.boolean(),
-  allowAutoThemes: z.boolean(),
-  allowErrorMonitoring: z.boolean(),
-  persistTraefikConfig: z.boolean(),
-  port: z.coerce.number(),
-  sslPort: z.coerce.number(),
-  listenIp: z.ipv4().trim(),
-  timeZone: z.string().trim(),
-  eventsTimeout: z.coerce.number().int().min(1),
-  advancedSettings: z.boolean(),
-  forwardAuthUrl: z.url().trim(),
-  logLevel: z.enum(LOG_LEVEL_ENUM),
-  themeBase: z.string().optional(),
-  themeColor: z.string().optional(),
-  experimental_insecureCookie: z.boolean().optional(),
+export const settingsSchema = type({
+  advancedSettings: 'boolean',
+  allowAutoThemes: 'boolean',
+  allowErrorMonitoring: 'boolean',
+  appDataPath: 'string.trim',
+  appsRepoUrl: 'string.url',
+  demoMode: 'boolean',
+  dnsIp: 'string.ip.v4',
+  domain: 'string.trim',
+  eventsTimeout: type('number.integer | string.integer.parse').to('1 <= number <= 120'),
+  forwardAuthUrl: 'string.url',
+  guestDashboard: 'boolean',
+  internalIp: 'string.ip.v4',
+  listenIp: 'string.ip.v4',
+  localDomain: 'string.trim',
+  logLevel: type.enumerated(...Object.values(LOG_LEVEL_ENUM)),
+  persistTraefikConfig: 'boolean',
+  port: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),
+  postgresPort: type('number.integer | string.integer').to('0 <= number <= 65535'),
+  sslPort: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),
+  timeZone: 'string.trim',
+  experimental_insecureCookie: 'boolean?',
+  themeBase: 'string?',
+  themeColor: 'string?',
 });
 
-export class UserSettingsDto extends createZodDto(settingsSchema) {}
-export class PartialUserSettingsDto extends createZodDto(settingsSchema.partial()) {}
+const versionSchema = type({
+  current: 'string',
+  latest: 'string',
+  body: 'string',
+  releases: type({ version: 'string', body: 'string' }).array(),
+});
 
-export class AppContextDto extends createZodDto(
-  z.object({
-    version: z.object({
-      current: z.string(),
-      latest: z.string(),
-      body: z.string(),
-      releases: z.array(z.object({ version: z.string(), body: z.string() })),
-    }),
-    userSettings: UserSettingsDto.schema,
-    user: UserDto.schema,
-    apps: AppInfoSimpleDto.schema.array(),
-    updatesAvailable: z.number(),
-  }),
-) {}
+const appContextSchema = type({
+  version: versionSchema,
+  userSettings: settingsSchema,
+  user: UserDto.schema,
+  apps: AppInfoSimpleDto.schema.array(),
+  updatesAvailable: 'number',
+});
 
-export class UserContextDto extends createZodDto(
-  z.object({
-    version: z.object({
-      current: z.string(),
-      latest: z.string(),
-      body: z.string(),
-      releases: z.array(z.object({ version: z.string(), body: z.string() })),
-    }),
-    isLoggedIn: z.boolean().describe('Indicates if the user is logged in'),
-    isConfigured: z.boolean().describe('Indicates if the app is already configured'),
-    isGuestDashboardEnabled: z.boolean().describe('Indicates if the guest dashboard is enabled'),
-    allowAutoThemes: z.boolean().describe('Indicates if the app allows auto themes'),
-    allowErrorMonitoring: z.boolean().describe('Indicates if the app allows anonymous error monitoring'),
-    themeColor: z.string().describe('The theme color of the app'),
-    themeBase: z.string().describe('The base theme of the app'),
-    localDomain: z.string().describe('The configured local domain'),
-    sslPort: z.number().describe('The SSL port for the app'),
-  }),
-) {}
+export class UserSettingsDto extends createArkDto(settingsSchema, { name: 'UserSettingsDto' }) {}
 
-export class AcknowledgeWelcomeBody extends createZodDto(z.object({ allowErrorMonitoring: z.boolean() })) {}
+export class UserSettingsBody extends createArkDto(settingsSchema.partial(), { name: 'PartialUserSettingsDto', input: true }) {}
+
+export class AppContextDto extends createArkDto(appContextSchema, { name: 'AppContextDto' }) {}
+
+const userContextDto = type({
+  version: {
+    current: 'string',
+    latest: 'string',
+    body: 'string',
+    releases: type({ version: 'string', body: 'string' }).array(),
+  },
+  isLoggedIn: 'boolean',
+  isConfigured: 'boolean',
+  isGuestDashboardEnabled: 'boolean',
+  allowAutoThemes: 'boolean',
+  allowErrorMonitoring: 'boolean',
+  themeColor: 'string',
+  themeBase: 'string',
+  localDomain: 'string',
+  sslPort: 'number',
+});
+
+export class UserContextDto extends createArkDto(userContextDto, { name: 'UserContextDto' }) {}
+
+export class AcknowledgeWelcomeBody extends createArkDto(type({ allowErrorMonitoring: 'boolean' }), { name: 'AcknowledgeWelcomeBody' }) {}

@@ -1,8 +1,26 @@
-import { appFormSchema } from '@/modules/app-lifecycle/dto/app-lifecycle.dto';
 import { Injectable } from '@nestjs/common';
 import { zodAppUrn } from '@runtipi/common/types';
 import { z } from 'zod';
 import { Queue } from '../queue.entity';
+
+const queueAppFormSchema = z
+  .object({
+    port: z.number().min(1024).max(65535).optional(),
+    exposed: z.boolean().optional(),
+    exposedLocal: z.boolean().optional(),
+    openPort: z.boolean().default(true),
+    domain: z.string().optional(),
+    isVisibleOnGuestDashboard: z.boolean().optional(),
+    enableAuth: z.boolean().optional(),
+    localSubdomain: z
+      .string()
+      .regex(/^[a-zA-Z0-9-]{1,63}$/)
+      .optional(),
+    skipEnv: z.boolean().default(false),
+    skipPull: z.boolean().default(false),
+    skipRun: z.boolean().default(false),
+  })
+  .catchall(z.unknown());
 
 const commonAppCommandSchema = z.object({
   command: z.union([
@@ -16,7 +34,7 @@ const commonAppCommandSchema = z.object({
     z.literal('backup'),
   ]),
   appUrn: zodAppUrn,
-  form: appFormSchema,
+  form: queueAppFormSchema,
   requestId: z.uuid(),
 });
 
@@ -24,14 +42,14 @@ const restoreAppCommandSchema = z.object({
   command: z.literal('restore'),
   appUrn: zodAppUrn,
   filename: z.string(),
-  form: appFormSchema,
+  form: queueAppFormSchema,
   requestId: z.uuid(),
 });
 
 const updateAppCommandSchema = z.object({
   command: z.literal('update'),
   appUrn: zodAppUrn,
-  form: appFormSchema,
+  form: queueAppFormSchema,
   performBackup: z.boolean().optional().default(true),
   requestId: z.uuid(),
 });

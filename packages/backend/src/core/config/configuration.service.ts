@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { type PartialUserSettingsDto, settingsSchema } from '@/app.dto';
+import { type UserSettingsBody, settingsSchema } from '@/app.dto';
 import { APP_DATA_DIR, APP_DIR, ARCHITECTURES, DATA_DIR } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { EnvUtils } from '@/modules/env/env.utils';
@@ -9,6 +9,7 @@ import * as Sentry from '@sentry/nestjs';
 import dotenv from 'dotenv';
 import { z } from 'zod';
 import { LOG_LEVEL_ENUM, type LogLevel, LoggerService } from '../logger/logger.service';
+import { type } from 'arktype';
 
 const envSchema = z.object({
   POSTGRES_HOST: z.string(),
@@ -153,7 +154,7 @@ export class ConfigurationService {
     return this.config[key];
   }
 
-  public async setUserSettings(settings: PartialUserSettingsDto) {
+  public async setUserSettings(settings: UserSettingsBody) {
     if (this.config.demoMode) {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
@@ -165,7 +166,11 @@ export class ConfigurationService {
 
       const fileContent = await fs.promises.readFile(settingsPath, 'utf8');
       const parsedContent = JSON.parse(fileContent);
-      const currentSettings = settingsSchema.partial().parse(parsedContent);
+      const currentSettingsResult = settingsSchema.partial()(parsedContent);
+      if (currentSettingsResult instanceof type.errors) {
+        throw currentSettingsResult.summary;
+      }
+      const currentSettings = currentSettingsResult;
 
       await fs.promises.writeFile(settingsPath, `${JSON.stringify({ ...currentSettings, ...settings }, null, 2)}`, 'utf8');
       this.config.userSettings = { ...this.config.userSettings, ...settings };

@@ -1,9 +1,9 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
 import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ZodSerializerDto } from 'nestjs-zod';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppLifecycleService } from './app-lifecycle.service';
-import { AppFormBody, LifecycleRequestDto, UninstallAppBody, UpdateAppBody, appFormSchema } from './dto/app-lifecycle.dto';
+import { AppFormBody, LifecycleRequestDto, UninstallAppBody, UpdateAppBody } from './dto/app-lifecycle.dto';
+import { ApiResponse } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard)
 @Controller('app-lifecycle')
@@ -11,53 +11,59 @@ export class AppLifecycleController {
   constructor(private readonly appLifecycleService: AppLifecycleService) {}
 
   @Post(':urn/install')
-  @ZodSerializerDto(LifecycleRequestDto)
-  async installApp(@Param('urn') urn: string, @Body() body: AppFormBody): Promise<LifecycleRequestDto> {
-    const form = appFormSchema.parse(body);
-
-    return this.appLifecycleService.installApp({ appUrn: castAppUrn(urn), form });
+  @ApiResponse({ type: LifecycleRequestDto })
+  async installApp(@Param('urn') urn: string, @Body() body: AppFormBody) {
+    const res = await this.appLifecycleService.installApp({ appUrn: castAppUrn(urn), form: body });
+    return LifecycleRequestDto.parse(res);
   }
 
   @Post(':urn/start')
-  @ZodSerializerDto(LifecycleRequestDto)
-  async startApp(@Param('urn') urn: string): Promise<LifecycleRequestDto> {
-    return this.appLifecycleService.startApp({ appUrn: castAppUrn(urn) });
+  @ApiResponse({ type: LifecycleRequestDto })
+  async startApp(@Param('urn') urn: string) {
+    const res = await this.appLifecycleService.startApp({ appUrn: castAppUrn(urn) });
+    return LifecycleRequestDto.parse(res);
   }
 
   @Post(':urn/stop')
-  @ZodSerializerDto(LifecycleRequestDto)
-  async stopApp(@Param('urn') urn: string): Promise<LifecycleRequestDto> {
-    return this.appLifecycleService.stopApp({ appUrn: castAppUrn(urn) });
+  @ApiResponse({ type: LifecycleRequestDto })
+  async stopApp(@Param('urn') urn: string) {
+    const res = await this.appLifecycleService.stopApp({ appUrn: castAppUrn(urn) });
+    return LifecycleRequestDto.parse(res);
   }
 
   @Post(':urn/restart')
-  @ZodSerializerDto(LifecycleRequestDto)
-  async restartApp(@Param('urn') urn: string): Promise<LifecycleRequestDto> {
-    return this.appLifecycleService.restartApp({ appUrn: castAppUrn(urn) });
+  @ApiResponse({ type: LifecycleRequestDto })
+  async restartApp(@Param('urn') urn: string) {
+    const res = await this.appLifecycleService.restartApp({ appUrn: castAppUrn(urn) });
+    return LifecycleRequestDto.parse(res);
   }
 
   @Delete(':urn/uninstall')
-  @ZodSerializerDto(LifecycleRequestDto)
-  async uninstallApp(@Param('urn') urn: string, @Body() body: UninstallAppBody): Promise<LifecycleRequestDto> {
-    return this.appLifecycleService.uninstallApp({ appUrn: castAppUrn(urn), removeBackups: body.removeBackups });
+  @ApiResponse({ type: LifecycleRequestDto })
+  async uninstallApp(@Param('urn') urn: string, @Body() body: UninstallAppBody) {
+    const res = await this.appLifecycleService.uninstallApp({ appUrn: castAppUrn(urn), removeBackups: body.removeBackups });
+    return LifecycleRequestDto.parse(res);
   }
 
   @Post(':urn/reset')
-  @ZodSerializerDto(LifecycleRequestDto)
-  async resetApp(@Param('urn') urn: string): Promise<LifecycleRequestDto> {
-    return this.appLifecycleService.resetApp({ appUrn: castAppUrn(urn) });
+  @ApiResponse({ type: LifecycleRequestDto })
+  async resetApp(@Param('urn') urn: string) {
+    const res = await this.appLifecycleService.resetApp({ appUrn: castAppUrn(urn) });
+    return LifecycleRequestDto.parse(res);
   }
 
   @Patch(':urn/update')
-  @ZodSerializerDto(LifecycleRequestDto)
-  async updateApp(@Param('urn') urn: string, @Body() body: UpdateAppBody): Promise<LifecycleRequestDto> {
-    return this.appLifecycleService.updateApp({ appUrn: castAppUrn(urn), performBackup: body.performBackup });
+  @ApiResponse({ type: LifecycleRequestDto })
+  async updateApp(@Param('urn') urn: string, @Body() body: UpdateAppBody) {
+    const res = await this.appLifecycleService.updateApp({ appUrn: castAppUrn(urn), performBackup: body.performBackup });
+    return LifecycleRequestDto.parse(res);
   }
 
   @Patch(':urn/update-config')
-  @ZodSerializerDto(LifecycleRequestDto)
-  async updateAppConfig(@Param('urn') urn: string, @Body() body: AppFormBody): Promise<LifecycleRequestDto> {
-    return this.appLifecycleService.updateAppConfig({ appUrn: castAppUrn(urn), form: body });
+  @ApiResponse({ type: LifecycleRequestDto })
+  async updateAppConfig(@Param('urn') urn: string, @Body() body: AppFormBody) {
+    const res = await this.appLifecycleService.updateAppConfig({ appUrn: castAppUrn(urn), form: body });
+    return LifecycleRequestDto.parse(res);
   }
 
   @Patch('update-all')
