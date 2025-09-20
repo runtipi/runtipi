@@ -195,7 +195,7 @@ export class MarketplaceService {
     const end = start + (pageSize ?? 24);
     const data = filteredApps.slice(start, end);
 
-    return { data, total: filteredApps.length, nextCursor: filteredApps[end]?.urn };
+    return { data, total: filteredApps.length, nextCursor: filteredApps[end]?.urn ?? null };
   }
 
   /**

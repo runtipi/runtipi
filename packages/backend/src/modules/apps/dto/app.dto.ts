@@ -17,7 +17,7 @@ const appSchema = type({
   isVisibleOnGuestDashboard: 'boolean',
   config: 'Record<string, unknown>?',
   enableAuth: 'boolean?',
-  localSubdomain: type('string').or('null').or('undefined').optional(),
+  localSubdomain: type('string').or('null').optional(),
   pendingRestart: 'boolean',
 });
 

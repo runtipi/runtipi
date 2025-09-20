@@ -6,7 +6,7 @@ const metadataSchema = type({
   hasCustomConfig: 'boolean?',
   localSubdomain: 'string',
   latestVersion: 'number',
-  minTipiVersion: type('string').or('undefined').optional(),
+  minTipiVersion: type('string').or('null').optional(),
   latestDockerVersion: 'string?',
 });
 
@@ -32,7 +32,7 @@ const simpleAppInfoSchema = appInfoSchemaArk.pick(
 
 const searchAppsResponseSchema = type({
   data: simpleAppInfoSchema.array(),
-  nextCursor: type('string').or('undefined').optional(),
+  nextCursor: type('string').or('null').optional(),
   total: 'number',
 });
 

@@ -24,7 +24,7 @@ export const settingsSchema = type({
   logLevel: type.enumerated(...Object.values(LOG_LEVEL_ENUM)),
   persistTraefikConfig: 'boolean',
   port: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),
-  postgresPort: type('number.integer | string.integer').to('0 <= number <= 65535'),
+  postgresPort: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),
   sslPort: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),
   timeZone: 'string.trim',
   experimental_insecureCookie: 'boolean?',

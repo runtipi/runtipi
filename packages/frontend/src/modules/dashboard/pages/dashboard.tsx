@@ -17,26 +17,26 @@ export default () => {
       <SystemStat
         isLoading={isLoading}
         title={t('DASHBOARD_DISK_SPACE_TITLE')}
-        metric={`${data?.diskUsed} GB`}
+        metric={`${data.diskUsed} GB`}
         subtitle={t('DASHBOARD_DISK_SPACE_SUBTITLE', { total: data?.diskSize })}
         icon={IconDatabase}
-        progress={data?.percentUsed ?? 0}
+        progress={data.percentUsed}
       />
       <SystemStat
         isLoading={isLoading}
         title={t('DASHBOARD_CPU_TITLE')}
-        metric={`${data.cpuLoad?.toFixed(2)}%`}
+        metric={`${data.cpuLoad.toFixed(2)}%`}
         subtitle={t('DASHBOARD_CPU_SUBTITLE')}
         icon={IconCpu}
-        progress={data?.cpuLoad ?? 0}
+        progress={data.cpuLoad}
       />
       <SystemStat
         isLoading={isLoading}
         title={t('DASHBOARD_MEMORY_TITLE')}
-        metric={`${data?.percentUsedMemory}%`}
-        subtitle={`${data?.memoryTotal} GB`}
+        metric={`${data.percentUsedMemory}%`}
+        subtitle={`${data.memoryTotal} GB`}
         icon={IconCircuitResistor}
-        progress={data?.percentUsedMemory ?? 0}
+        progress={data.percentUsedMemory}
       />
     </div>
   );

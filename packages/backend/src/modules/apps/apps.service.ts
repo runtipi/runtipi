@@ -91,7 +91,7 @@ export class AppsService {
       ...updateInfo,
     };
 
-    return { app, info, metadata };
+    return { app: app ?? null, info, metadata };
   }
 
   public async getRandomPort(tries = 3): Promise<number> {

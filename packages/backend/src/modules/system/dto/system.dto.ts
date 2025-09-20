@@ -2,10 +2,10 @@ import { type } from 'arktype';
 import { createArkDto } from 'nestjs-arktype';
 
 const loadSchema = type({
-  diskUsed: 'number | null = 0',
-  diskSize: 'number | null = 0',
-  percentUsed: 'number | null = 0',
-  cpuLoad: 'number | null = 0',
+  diskUsed: 'number = 0',
+  diskSize: 'number = 0',
+  percentUsed: 'number = 0',
+  cpuLoad: 'number = 0',
   memoryTotal: 'number = 0',
   percentUsedMemory: 'number = 0',
 });

@@ -161,12 +161,12 @@ export class AppStoreFilesManager {
       return {
         ...paths,
         latestVersion: config.tipi_version,
-        minTipiVersion: config.min_tipi_version,
+        minTipiVersion: config.min_tipi_version ?? null,
         latestDockerVersion: config.version,
       };
     }
 
-    return { latestVersion: 0, latestDockerVersion: '0.0.0', minTipiVersion: undefined, ...paths };
+    return { latestVersion: 0, latestDockerVersion: '0.0.0', minTipiVersion: null, ...paths };
   }
 
   /**

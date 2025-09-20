@@ -19,7 +19,7 @@ import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { appFormSchema } from './dto/app-lifecycle.dto';
 import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
 import type { AsyncMutex } from '@/utils/mutex/async-mutex';
-import type z from 'zod';
+import type { z } from 'zod';
 
 @Injectable()
 export class AppLifecycleService {
@@ -106,7 +106,7 @@ export class AppLifecycleService {
 
     const parsedForm = appFormSchema(form);
     if (parsedForm instanceof type.errors) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
+      throw new TranslatableError('SYSTEM_ERROR_INVALID_BODY', undefined, HttpStatus.BAD_REQUEST, { cause: parsedForm });
     }
 
     const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth, port } = parsedForm;
@@ -351,7 +351,7 @@ export class AppLifecycleService {
     const parsedForm = appFormSchema(form);
 
     if (parsedForm instanceof type.errors) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
+      throw new TranslatableError('SYSTEM_ERROR_INVALID_BODY', undefined, HttpStatus.BAD_REQUEST, { cause: parsedForm });
     }
 
     const { exposed, domain, exposedLocal, enableAuth, openPort, port } = parsedForm;

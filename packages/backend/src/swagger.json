@@ -2116,7 +2116,7 @@
                 "minimum": 0
               },
               "postgresPort": {
-                "type": "integer",
+                "type": "number",
                 "maximum": 65535,
                 "minimum": 0
               },
@@ -2297,9 +2297,15 @@
             ]
           },
           "postgresPort": {
-            "type": "integer",
-            "maximum": 65535,
-            "minimum": 0
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?:(?!^-0$)-?(?:(?:0|[1-9]\\d*)))$"
+              }
+            ]
           },
           "sslPort": {
             "anyOf": [
@@ -2338,47 +2344,19 @@
         "type": "object",
         "properties": {
           "cpuLoad": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "number"
           },
           "diskSize": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "number"
           },
           "diskUsed": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "number"
           },
           "memoryTotal": {
             "type": "number"
           },
           "percentUsed": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "number"
           },
           "percentUsedMemory": {
             "type": "number"
@@ -2936,6 +2914,9 @@
                       "anyOf": [
                         {
                           "type": "string"
+                        },
+                        {
+                          "type": "null"
                         }
                       ]
                     }
@@ -3316,6 +3297,9 @@
                       "anyOf": [
                         {
                           "type": "string"
+                        },
+                        {
+                          "type": "null"
                         }
                       ]
                     }
@@ -3605,6 +3589,9 @@
                 "anyOf": [
                   {
                     "type": "string"
+                  },
+                  {
+                    "type": "null"
                   }
                 ]
               }
@@ -3834,6 +3821,9 @@
             "anyOf": [
               {
                 "type": "string"
+              },
+              {
+                "type": "null"
               }
             ]
           }

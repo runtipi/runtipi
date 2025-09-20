@@ -97,7 +97,7 @@ export type UserSettingsBody = {
     logLevel?: 'debug' | 'error' | 'info' | 'warn';
     persistTraefikConfig?: boolean;
     port?: number | string;
-    postgresPort?: number;
+    postgresPort?: number | string;
     sslPort?: number | string;
     themeBase?: string;
     themeColor?: string;
@@ -109,11 +109,11 @@ export type AcknowledgeWelcomeBody = {
 };
 
 export type LoadDto = {
-    cpuLoad: number | null;
-    diskSize: number | null;
-    diskUsed: number | null;
+    cpuLoad: number;
+    diskSize: number;
+    diskUsed: number;
     memoryTotal: number;
-    percentUsed: number | null;
+    percentUsed: number;
     percentUsedMemory: number;
 };
 
@@ -255,7 +255,7 @@ export type MyAppsDto = {
             localSubdomain: string;
             hasCustomConfig?: boolean;
             latestDockerVersion?: string;
-            minTipiVersion?: string;
+            minTipiVersion?: string | null;
         };
     }>;
 };
@@ -334,7 +334,7 @@ export type GuestAppsDto = {
             localSubdomain: string;
             hasCustomConfig?: boolean;
             latestDockerVersion?: string;
-            minTipiVersion?: string;
+            minTipiVersion?: string | null;
         };
     }>;
 };
@@ -397,7 +397,7 @@ export type GetAppDto = {
         localSubdomain: string;
         hasCustomConfig?: boolean;
         latestDockerVersion?: string;
-        minTipiVersion?: string;
+        minTipiVersion?: string | null;
     };
     app?: {
         domain: string | null;
@@ -438,7 +438,7 @@ export type SearchAppsDto = {
         supported_architectures?: Array<'amd64' | 'arm64'>;
     }>;
     total: number;
-    nextCursor?: string;
+    nextCursor?: string | null;
 };
 
 export type PullDto = {
