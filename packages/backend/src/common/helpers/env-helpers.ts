@@ -54,7 +54,9 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   const envFile = await fs.promises.readFile(envFilePath, 'utf-8');
 
   const envMap: Map<string, string> = envUtils.envStringToMap(envFile);
-  envMap.set('RUNTIPI_ENV', process.env.RUNTIPI_ENV || 'production');
+
+  const { NODE_ENV } = process.env;
+  envMap.set('NODE_ENV', NODE_ENV || 'production');
 
   if (!fs.existsSync(settingsFilePath)) {
     await fs.promises.writeFile(settingsFilePath, JSON.stringify({}));

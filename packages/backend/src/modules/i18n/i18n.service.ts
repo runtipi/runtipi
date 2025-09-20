@@ -9,7 +9,8 @@ export class I18nService {
   constructor() {
     let directory = path.join(process.cwd(), 'assets', 'translations');
 
-    if (process.env.RUNTIPI_ENV !== 'production') {
+    const { NODE_ENV } = process.env;
+    if (NODE_ENV !== 'production') {
       directory = path.join(process.cwd(), 'src', 'modules', 'i18n', 'translations');
     }
 

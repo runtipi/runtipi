@@ -86,6 +86,8 @@ export class ConfigurationService {
 
     this.logger = new LoggerService('backend', path.join(DATA_DIR, 'logs'), env.data.LOG_LEVEL);
 
+    const { NODE_ENV } = process.env;
+
     return {
       database: {
         host: env.data.POSTGRES_HOST,
@@ -106,10 +108,10 @@ export class ConfigurationService {
       },
       logLevel: env.data.LOG_LEVEL,
       version: env.data.TIPI_VERSION,
-      isProduction: process.env.RUNTIPI_ENV === 'production',
+      isProduction: NODE_ENV === 'production',
       userSettings: {
         allowAutoThemes: env.data.ALLOW_AUTO_THEMES,
-        allowErrorMonitoring: env.data.ALLOW_ERROR_MONITORING && process.env.RUNTIPI_ENV === 'production',
+        allowErrorMonitoring: env.data.ALLOW_ERROR_MONITORING && NODE_ENV === 'production',
         demoMode: env.data.DEMO_MODE,
         guestDashboard: env.data.GUEST_DASHBOARD,
         timeZone: env.data.TZ,
@@ -142,7 +144,7 @@ export class ConfigurationService {
       envFilePath: this.envPath,
       internalIp: env.data.INTERNAL_IP,
       jwtSecret: env.data.JWT_SECRET,
-      __prod__: process.env.RUNTIPI_ENV === 'production',
+      __prod__: NODE_ENV === 'production',
     };
   }
 

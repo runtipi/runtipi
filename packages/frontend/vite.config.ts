@@ -9,7 +9,8 @@ const alias = {
   '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
 };
 
-if (process.env.NODE_ENV === 'production') {
+const { NODE_ENV } = process.env;
+if (NODE_ENV === 'production') {
   // @ts-expect-error
   alias['react-dom/server'] = 'react-dom/server.node';
 }
