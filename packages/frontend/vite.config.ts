@@ -10,7 +10,7 @@ const alias = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  // @ts-ignore
+  // @ts-expect-error
   alias['react-dom/server'] = 'react-dom/server.node';
 }
 
