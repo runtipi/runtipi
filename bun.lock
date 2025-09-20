@@ -6,7 +6,6 @@
       "dependencies": {
         "argon2": "^0.44.0",
         "drizzle-orm": "^0.44.2",
-        "nestjs-arktype": "^1.2.0",
         "zod": "^4.1.5",
       },
       "devDependencies": {
@@ -38,6 +37,7 @@
         "@sentry/nestjs": "^10.10.0",
         "ansi-to-html": "^0.7.2",
         "argon2": "^0.44.0",
+        "arktype": "^2.1.22",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.2",
         "cookie-parser": "^1.4.7",
@@ -52,7 +52,7 @@
         "jsonwebtoken": "^9.0.2",
         "lodash.clonedeep": "^4.5.0",
         "minisearch": "^7.1.1",
-        "nestjs-zod": "^5.0.1",
+        "nestjs-arktype": "^1.2.5",
         "node-cron": "^4.0.5",
         "octokit": "^5.0.3",
         "pg": "^8.15.6",
@@ -117,6 +117,7 @@
       "name": "@runtipi/common",
       "version": "0.8.1",
       "dependencies": {
+        "arktype": "^2.0.0",
         "zod": "^4.1.5",
         "zod-to-json-schema": "^3.24.5",
       },
@@ -2226,9 +2227,7 @@
 
     "neo-async": ["neo-async@2.6.2", "", {}, "sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw=="],
 
-    "nestjs-arktype": ["nestjs-arktype@1.2.0", "", { "peerDependencies": { "@nestjs/common": ">=11", "@nestjs/swagger": ">=11", "arktype": ">=2" } }, "sha512-OQhJEKCXJBRMV6TcL6Vf5dGreepElSS5vJUChyfpW5odl0QzlVWtyeKsbPdFf7CaD+tibJd1Is25rVW/OlP8Sg=="],
-
-    "nestjs-zod": ["nestjs-zod@5.0.1", "", { "dependencies": { "deepmerge": "^4.3.1" }, "peerDependencies": { "@nestjs/common": "^10.0.0 || ^11.0.0", "@nestjs/swagger": "^7.4.2 || ^8.0.0 || ^11.0.0", "rxjs": "^7.0.0", "zod": "^3.25.0 || ^4.0.0" }, "optionalPeers": ["@nestjs/swagger"] }, "sha512-IjK99tpK+04UobLJJA5tlHv94Ml3wNWiRr7pRVDFJ62Jy/c/aYhMQa90WKiy7qUcmIDMWyPHQpHQN/MehESOmw=="],
+    "nestjs-arktype": ["nestjs-arktype@1.2.5", "", { "peerDependencies": { "@nestjs/common": ">=11", "@nestjs/swagger": ">=11", "arktype": ">=2.1" } }, "sha512-4TBQH0i3dDrGnfkkVe0Yv/YygbIGd8i0ptCGmBIOVpUjwSD4BzscPEIv59Srd5GYehk6DbxXqoXQ7NyGIJ6zCA=="],
 
     "node-abort-controller": ["node-abort-controller@3.1.1", "", {}, "sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ=="],
 
