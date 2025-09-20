@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { type } from 'arktype';
-import { zodAppUrn } from '../types/app-urn.js';
+import { arkAppUrn, zodAppUrn } from '../types/app-urn.js';
 
 export const APP_CATEGORIES = [
   'network',
@@ -97,25 +97,25 @@ export type FormField = z.output<typeof formFieldSchema>;
 export const formFieldSchemaArk = type({
   type: type.enumerated(...FIELD_TYPES),
   label: 'string',
-  'placeholder?': 'string',
-  'max?': 'number',
-  'min?': 'number',
-  'hint?': 'string',
-  'options?': type({ label: 'string', value: 'string' }).array(),
+  placeholder: 'string?',
+  max: 'number?',
+  min: 'number?',
+  hint: 'string?',
+  options: type({ label: 'string', value: 'string' }).array().optional(),
   required: 'boolean = false',
-  'default?': type.or('boolean', 'string', 'number'),
-  'regex?': 'string',
-  'pattern_error?': 'string',
+  default: type.or('boolean', 'string', 'number').optional(),
+  regex: 'string?',
+  pattern_error: 'string?',
   env_variable: 'string',
-  'encoding?': type.enumerated(...RANDOM_ENCODINGS),
+  encoding: type.enumerated(...RANDOM_ENCODINGS).optional(),
 });
 
 export const appInfoSchemaArk = type({
   id: type('string').narrow((v, ctx) => (v.split(':').length === 1 ? true : ctx.mustBe('a string without colons'))),
-  urn: 'string', // simplified from zodAppUrn since it's essentially a string
+  urn: arkAppUrn,
   available: 'boolean',
   deprecated: 'boolean = false',
-  'port?': '1 <= number <= 65535',
+  port: '1 <= number <= 65535?',
   name: 'string',
   description: "string = ''",
   version: "string = 'latest'",
@@ -123,23 +123,26 @@ export const appInfoSchemaArk = type({
   short_desc: 'string',
   author: 'string',
   source: 'string',
-  'website?': 'string',
+  website: 'string?',
   force_expose: 'boolean = false',
   generate_vapid_keys: 'boolean = false',
   categories: type
     .enumerated(...APP_CATEGORIES)
     .array()
     .default(() => []),
-  'url_suffix?': 'string',
+  url_suffix: 'string?',
   form_fields: formFieldSchemaArk.array().default(() => []),
   https: 'boolean = false',
   exposable: 'boolean = false',
   no_gui: 'boolean = false',
-  'supported_architectures?': type.enumerated(...ARCHITECTURES).array(),
-  'uid?': 'number',
-  'gid?': 'number',
+  supported_architectures: type
+    .enumerated(...ARCHITECTURES)
+    .array()
+    .optional(),
+  uid: 'number?',
+  gid: 'number?',
   dynamic_config: 'boolean = false',
-  'min_tipi_version?': 'string',
+  min_tipi_version: 'string?',
   created_at: type('number.integer >= 0')
     .narrow((v, ctx) => (v < Date.now() ? true : ctx.mustBe('a timestamp before now')))
     .default(0),
