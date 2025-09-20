@@ -423,5 +423,6 @@
   "APP_INSTALL_FORM_SHOW_PASSWORD": "Показати пароль",
   "APP_INSTALL_FORM_HIDE_PASSWORD": "Приховати пароль",
   "SAVE": "Зберегти",
-  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "Це файл перевизначення <a>docker merge</a>. Він буде об’єднаний з базовим файлом <code>docker-compose</code> застосунку. Базовий файл можна знайти в каталозі <code>apps</code>."
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "Це файл перевизначення <a>docker merge</a>. Він буде об’єднаний з базовим файлом <code>docker-compose</code> застосунку. Базовий файл можна знайти в каталозі <code>apps</code>.",
+  "SYSTEM_ERROR_INVALID_BODY": "Invalid body"
 }
