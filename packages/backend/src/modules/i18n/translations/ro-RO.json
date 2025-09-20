@@ -423,5 +423,6 @@
   "APP_INSTALL_FORM_SHOW_PASSWORD": "Show password",
   "APP_INSTALL_FORM_HIDE_PASSWORD": "Hide password",
   "SAVE": "Save",
-  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder."
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "This is a <a>docker merge</a> override file. It will be merged with the base <code>docker-compose</code> file of the app. You can find the base file in the <code>apps</code> folder.",
+  "SYSTEM_ERROR_INVALID_BODY": "Invalid body"
 }
