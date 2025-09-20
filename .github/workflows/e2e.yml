@@ -133,14 +133,14 @@ jobs:
 
       - name: Install Playwright Browsers
         if: steps.cache-playwright-binaries.outputs.cache-hit != 'true'
-        run: bunx playwright install --with-deps
+        run: sudo env "PATH=$PATH" bunx playwright install --with-deps
 
       - name: Install dependencies
         uses: "./.github/actions/install-dependencies"
 
       - name: Run Playwright tests
         id: run-e2e
-        run: bun run test:e2e
+        run: sudo env "PATH=$PATH" bun run test:e2e
 
       - name: Dump app logs in playwright-report folder
         if: always()

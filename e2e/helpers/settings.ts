@@ -21,7 +21,7 @@ export const setSettings = async (settings: Partial<z.infer<typeof settingsSchem
 };
 
 export const setPassowrdChangeRequest = async () => {
-  await promises.writeFile(path.join(BASE_PATH, 'state', 'password-change-request'), `${new Date().getTime() / 1000}`);
+  await promises.writeFile(path.join(BASE_PATH, 'state', 'password-change-request'), `${Date.now() / 1000}`);
 };
 
 export const unsetPasswordChangeRequest = async () => {
