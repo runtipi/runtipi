@@ -50,7 +50,6 @@ RUN bun install --frozen-lockfile
 
 COPY ./turbo.json ./turbo.json
 COPY ./packages ./packages
-
 RUN bun run build
 
 RUN echo "TIPI_VERSION: ${SENTRY_RELEASE}"
@@ -72,7 +71,7 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN bun install argon2 class-transformer
+RUN bun install class-transformer
  
 COPY --from=builder_base /deps/docker-binary /usr/local/bin/docker-compose
 COPY --from=builder /app/package.json ./

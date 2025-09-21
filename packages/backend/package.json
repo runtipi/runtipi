@@ -33,7 +33,6 @@
     "@runtipi/common": "workspace:*",
     "@sentry/nestjs": "^10.10.0",
     "ansi-to-html": "^0.7.2",
-    "argon2": "^0.44.0",
     "arktype": "^2.1.22",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",

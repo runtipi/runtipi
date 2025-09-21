@@ -7,7 +7,6 @@ import { EncryptionService } from '@/core/encryption/encryption.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import * as argon2 from 'argon2';
 import psl from 'psl';
 import validator, { isFQDN } from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
@@ -54,7 +53,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND', {}, HttpStatus.BAD_REQUEST);
     }
 
-    const isPasswordValid = await argon2.verify(user.password, password);
+    const isPasswordValid = await Bun.password.verify(password, user.password);
 
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_CREDENTIALS', {}, HttpStatus.BAD_REQUEST);
@@ -143,7 +142,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_ALREADY_EXISTS', {}, HttpStatus.BAD_REQUEST);
     }
 
-    const hash = await argon2.hash(password);
+    const hash = await Bun.password.hash(password);
     const newUser = await this.userRepository.createUser({ username: email, password: hash, operator: true });
 
     if (!newUser) {
@@ -180,7 +179,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const valid = await argon2.verify(user.password, password);
+    const valid = await Bun.password.verify(password, user.password);
 
     if (!valid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
@@ -217,7 +216,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const valid = await argon2.verify(user.password, currentPassword);
+    const valid = await Bun.password.verify(currentPassword, user.password);
 
     if (!valid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
@@ -227,7 +226,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD_LENGTH');
     }
 
-    const hash = await argon2.hash(newPassword);
+    const hash = await Bun.password.hash(newPassword);
     await this.userRepository.updateUser(user.id, { password: hash });
     await this.sessionManager.destroyAllSessionsByUserId(user.id);
 
@@ -254,7 +253,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const isPasswordValid = await argon2.verify(user.password, password);
+    const isPasswordValid = await Bun.password.verify(password, user.password);
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
     }
@@ -320,7 +319,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_TOTP_NOT_ENABLED');
     }
 
-    const isPasswordValid = await argon2.verify(user.password, password);
+    const isPasswordValid = await Bun.password.verify(password, user.password);
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
     }
@@ -351,7 +350,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_OPERATOR_NOT_FOUND');
     }
 
-    const hash = await argon2.hash(newPassword);
+    const hash = await Bun.password.hash(newPassword);
 
     await this.userRepository.updateUser(user.id, { password: hash, totpEnabled: false, totpSecret: null });
 

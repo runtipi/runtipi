@@ -1,12 +1,11 @@
 import { type BrowserContext, type Page, expect } from '@playwright/test';
-import * as argon2 from 'argon2';
 import { user } from '../../packages/backend/src/core/database/drizzle/schema';
 import { testUser } from '../helpers/constants';
 import { db } from '../helpers/db';
 
 export const createTestUser = async () => {
   // Create user in database
-  const password = await argon2.hash(testUser.password);
+  const password = await Bun.password.hash(testUser.password);
   await db.insert(user).values({ password, username: testUser.email, operator: true, hasSeenWelcome: true });
 };
 

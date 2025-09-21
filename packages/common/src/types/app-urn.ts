@@ -1,5 +1,5 @@
 import { type } from 'arktype';
-import z from 'zod';
+import { z } from 'zod';
 
 export type AppUrn = `${string}:${string}` & {
   readonly __type: 'urn';
