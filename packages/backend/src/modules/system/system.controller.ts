@@ -14,7 +14,7 @@ export class SystemController {
   @ApiResponse({ type: LoadDto })
   async systemLoad() {
     const res = await this.systemService.getSystemLoad();
-    return LoadDto.parse(res);
+    return LoadDto.parse(res, { reportOnly: true });
   }
 
   @Get('/certificate')

@@ -5,8 +5,9 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
-import { appInfoSchema } from '@runtipi/common/schemas';
+import { appInfoSchema, appInfoSchemaArk } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
+import { type } from 'arktype';
 
 @Injectable()
 export class AppFilesManager {
@@ -45,17 +46,18 @@ export class AppFilesManager {
         const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
 
         const config = JSON.parse(configFile ?? '{}');
-        const parsedConfig = appInfoSchema.safeParse({ ...config, urn: appUrn });
+        const parsedConfig = appInfoSchemaArk({ ...config, urn: appUrn });
 
-        if (!parsedConfig.success) {
+        if (parsedConfig instanceof type.errors) {
           this.logger.debug(`App ${appUrn} config error:`);
-          this.logger.debug(parsedConfig.error);
+          this.logger.debug(parsedConfig.summary);
+          return null;
         }
 
-        if (parsedConfig.success && parsedConfig.data.available) {
+        if (parsedConfig.available) {
           const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
 
-          return { ...parsedConfig.data, description };
+          return { ...parsedConfig, description };
         }
       }
     } catch (_) {

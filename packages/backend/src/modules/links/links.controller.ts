@@ -15,7 +15,7 @@ export class LinksController {
   @ApiResponse({ type: LinksDto })
   async getGuestLinks() {
     const links = await this.linksService.getGuestDashboardLinks();
-    return LinksDto.parse({ links });
+    return LinksDto.parse({ links }, { reportOnly: true });
   }
 
   @Get()
@@ -24,7 +24,7 @@ export class LinksController {
   async getLinks(@Req() req: Request) {
     const links = await this.linksService.getLinks(req.user?.id);
 
-    return LinksDto.parse({ links });
+    return LinksDto.parse({ links }, { reportOnly: true });
   }
 
   @Post()

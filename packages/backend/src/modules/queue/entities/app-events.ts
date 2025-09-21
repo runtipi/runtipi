@@ -55,6 +55,7 @@ const updateAppCommandSchema = z.object({
 });
 
 export const appEventSchema = commonAppCommandSchema.or(restoreAppCommandSchema).or(updateAppCommandSchema);
+export type AppEvent = z.infer<typeof appEventSchema>;
 
 export const appEventResultSchema = z.object({
   success: z.boolean(),

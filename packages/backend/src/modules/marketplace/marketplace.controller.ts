@@ -35,7 +35,7 @@ export class MarketplaceController {
     }
     const res = await this.marketplaceService.searchApps({ search, pageSize: size, cursor, category, storeId });
 
-    return SearchAppsDto.parse(res);
+    return SearchAppsDto.parse(res, { reportOnly: true });
   }
 
   @Get('apps/:urn/image')
@@ -60,7 +60,7 @@ export class MarketplaceController {
   async pullAppStores() {
     const res = await this.appStoreService.pullRepositories();
     await this.marketplaceService.initialize();
-    return PullDto.parse(res);
+    return PullDto.parse(res, { reportOnly: true });
   }
 
   @Post('create')
@@ -70,7 +70,7 @@ export class MarketplaceController {
     const appStore = await this.appStoreService.createAppStore(body);
     await this.marketplaceService.initialize();
 
-    return AppStoreDto.parse(appStore);
+    return AppStoreDto.parse(appStore, { reportOnly: true });
   }
 
   @Get('all')
@@ -79,7 +79,7 @@ export class MarketplaceController {
   async getAllAppStores() {
     const appStores = await this.appStoreService.getAllAppStores();
 
-    return AllAppStoresDto.parse({ appStores });
+    return AllAppStoresDto.parse({ appStores }, { reportOnly: true });
   }
 
   @Get('enabled')
@@ -88,7 +88,7 @@ export class MarketplaceController {
   async getEnabledAppStores() {
     const appStores = await this.appStoreService.getEnabledAppStores();
 
-    return AllAppStoresDto.parse({ appStores });
+    return AllAppStoresDto.parse({ appStores }, { reportOnly: true });
   }
 
   @Patch(':id')
@@ -98,7 +98,7 @@ export class MarketplaceController {
     await this.appStoreService.updateAppStore(id, body);
     await this.marketplaceService.initialize();
 
-    return UpdateAppStoreDto.parse({ success: true });
+    return UpdateAppStoreDto.parse({ success: true }, { reportOnly: true });
   }
 
   @Delete(':id')

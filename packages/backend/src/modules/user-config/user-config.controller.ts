@@ -14,7 +14,7 @@ export class UserConfigController {
   @ApiResponse({ type: GetUserConfigDto })
   async getUserConfig(@Param('urn') urn: string) {
     const res = await this.userConfigService.getUserConfig(castAppUrn(urn));
-    return GetUserConfigDto.parse(res);
+    return GetUserConfigDto.parse(res, { reportOnly: true });
   }
 
   @Put(':urn')

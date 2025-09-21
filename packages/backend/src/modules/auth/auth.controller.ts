@@ -66,7 +66,7 @@ export class AuthController {
 
     await this.setSessionCookie(res, sessionId, req);
 
-    return LoginDto.parse({ success: true });
+    return LoginDto.parse({ success: true }, { reportOnly: true });
   }
 
   @Post('/verify-totp')
@@ -76,7 +76,7 @@ export class AuthController {
 
     await this.setSessionCookie(res, sessionId, req);
 
-    return LoginDto.parse({ success: true });
+    return LoginDto.parse({ success: true }, { reportOnly: true });
   }
 
   @Post('/register')
@@ -86,7 +86,7 @@ export class AuthController {
 
     await this.setSessionCookie(res, sessionId, req);
 
-    return RegisterDto.parse({ success: true });
+    return RegisterDto.parse({ success: true }, { reportOnly: true });
   }
 
   @Post('/logout')
@@ -144,7 +144,7 @@ export class AuthController {
     }
 
     const res = await this.authService.getTotpUri({ userId, ...body });
-    return GetTotpUriDto.parse(res);
+    return GetTotpUriDto.parse(res, { reportOnly: true });
   }
 
   @Patch('/totp/setup')
@@ -176,7 +176,7 @@ export class AuthController {
   async resetPassword(@Body() body: ResetPasswordBody) {
     const { email } = await this.authService.changeOperatorPassword(body);
 
-    return ResetPasswordDto.parse({ success: true, email });
+    return ResetPasswordDto.parse({ success: true, email }, { reportOnly: true });
   }
 
   @Delete('/reset-password')
@@ -189,7 +189,7 @@ export class AuthController {
   async checkResetPasswordRequest() {
     const isPending = await this.authService.checkPasswordChangeRequest();
 
-    return CheckResetPasswordRequestDto.parse({ isRequestPending: isPending });
+    return CheckResetPasswordRequestDto.parse({ isRequestPending: isPending }, { reportOnly: true });
   }
 
   @Get('/traefik')

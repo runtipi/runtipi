@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {
-    "dev": "bun --hot ./src/main.ts",
+    "dev": "bun --watch ./src/main.ts",
     "bundle": "rm -rf dist && bun build.ts",
     "tsc": "tsc --noEmit",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org runtipi --project runtipi-backend ./dist && sentry-cli sourcemaps upload --org runtipi --project runtipi-backend ./dist",
@@ -49,7 +49,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash.clonedeep": "^4.5.0",
     "minisearch": "^7.1.1",
-    "nestjs-arktype": "^1.2.5",
+    "nestjs-arktype": "^1.3.2",
     "node-cron": "^4.0.5",
     "octokit": "^5.0.3",
     "pg": "^8.15.6",
@@ -66,7 +66,7 @@
     "winston": "^3.17.0",
     "yaml": "^2.7.1",
     "zod": "^4.1.5",
-    "zod-validation-error": "^3.4.1"
+    "zod-validation-error": "^4.0.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.7.0",

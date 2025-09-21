@@ -3,6 +3,13 @@ await Bun.build({
   outdir: './dist',
   target: 'bun',
   env: 'disable',
+  sourcemap: 'linked',
+  minify: {
+    keepNames: true,
+    whitespace: true,
+    identifiers: true,
+    syntax: true,
+  },
   external: [
     'class-transformer',
     '@nestjs/typeorm',

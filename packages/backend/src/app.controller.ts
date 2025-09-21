@@ -28,18 +28,21 @@ export class AppController {
     const version = await this.appService.getVersion();
     const operator = await this.userRepository.getFirstOperator();
 
-    return UserContextDto.parse({
-      isLoggedIn: Boolean(req.user),
-      isConfigured: Boolean(operator),
-      isGuestDashboardEnabled: guestDashboard,
-      allowAutoThemes,
-      allowErrorMonitoring,
-      themeColor,
-      themeBase,
-      version,
-      localDomain,
-      sslPort,
-    });
+    return UserContextDto.parse(
+      {
+        isLoggedIn: Boolean(req.user),
+        isConfigured: Boolean(operator),
+        isGuestDashboardEnabled: guestDashboard,
+        allowAutoThemes,
+        allowErrorMonitoring,
+        themeColor,
+        themeBase,
+        version,
+        localDomain,
+        sslPort,
+      },
+      { reportOnly: true },
+    );
   }
 
   @Get('/app-context')
@@ -57,7 +60,10 @@ export class AppController {
       return Number(app.version) < Number(metadata?.latestVersion ?? 0) && app.status !== 'updating';
     });
 
-    return AppContextDto.parse({ version, userSettings, user: req.user as UserDto, apps, updatesAvailable: updatesAvailable.length });
+    return AppContextDto.parse(
+      { version, userSettings, user: req.user as UserDto, apps, updatesAvailable: updatesAvailable.length },
+      { reportOnly: true },
+    );
   }
 
   @Patch('/user-settings')

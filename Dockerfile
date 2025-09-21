@@ -78,11 +78,6 @@ COPY --from=builder_base /deps/docker-binary /usr/local/bin/docker-compose
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
 
-# Swagger UI
-COPY --from=builder /app/node_modules/swagger-ui-dist/swagger-ui.css ./swagger-ui.css
-COPY --from=builder /app/node_modules/swagger-ui-dist/swagger-ui-bundle.js ./swagger-ui-bundle.js
-COPY --from=builder /app/node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js ./swagger-ui-standalone-preset.js
-
 # Assets
 COPY --from=builder /app/packages/backend/assets ./assets
 COPY --from=builder /app/packages/backend/src/core/database/drizzle ./assets/migrations

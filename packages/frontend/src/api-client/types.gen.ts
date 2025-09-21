@@ -547,14 +547,14 @@ export type LinkBodyDto = {
     url: string;
     isVisibleOnGuestDashboard?: boolean;
     description?: string;
-    iconUrl?: string;
+    iconUrl?: string | '';
 };
 
 export type EditLinkBodyDto = {
     title: string;
     url: string;
     description?: string;
-    iconUrl?: string;
+    iconUrl?: string | '';
     isVisibleOnGuestDashboard?: boolean;
 };
 

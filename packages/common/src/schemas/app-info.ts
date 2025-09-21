@@ -88,11 +88,6 @@ export const appInfoSchema = z.object({
   force_pull: z.boolean().optional().default(false),
 });
 
-// Derived types
-export type AppInfoInput = z.input<typeof appInfoSchema>;
-export type AppInfo = z.output<typeof appInfoSchema>;
-export type FormField = z.output<typeof formFieldSchema>;
-
 // ArkType equivalent schemas
 export const formFieldSchemaArk = type({
   type: type.enumerated(...FIELD_TYPES),
@@ -151,3 +146,8 @@ export const appInfoSchemaArk = type({
     .default(0),
   force_pull: 'boolean = false',
 });
+
+// Derived types
+export type AppInfoInput = typeof appInfoSchemaArk.inferIn;
+export type AppInfo = typeof appInfoSchemaArk.infer;
+export type FormField = typeof formFieldSchemaArk.infer;

@@ -1,11 +1,5 @@
-import type { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { z } from 'zod';
 
 export const toJsonSchema = <T>(schema: z.ZodType<T>): object => {
-  const jsonSchema = zodToJsonSchema(schema, {
-    name: 'root',
-    allowedAdditionalProperties: true,
-  });
-
-  return jsonSchema;
+  return z.toJSONSchema(schema);
 };

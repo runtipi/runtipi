@@ -4229,6 +4229,9 @@
               {
                 "type": "string",
                 "format": "uri"
+              },
+              {
+                "const": ""
               }
             ]
           }
@@ -4259,6 +4262,9 @@
               {
                 "type": "string",
                 "format": "uri"
+              },
+              {
+                "const": ""
               }
             ]
           },
