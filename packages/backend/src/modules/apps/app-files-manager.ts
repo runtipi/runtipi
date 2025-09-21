@@ -63,6 +63,8 @@ export class AppFilesManager {
     } catch (_) {
       return null;
     }
+
+    return null;
   }
 
   /**
