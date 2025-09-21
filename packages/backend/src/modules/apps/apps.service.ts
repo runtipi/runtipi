@@ -76,7 +76,7 @@ export class AppsService {
     const hasCustomConfig = Boolean(userCompose.content) || Boolean(userEnv.content);
 
     if (!info) {
-      info = await this.marketplaceService.getAppInfoFromAppStore(appUrn);
+      info = (await this.marketplaceService.getAppInfoFromAppStore(appUrn)) ?? null;
     }
 
     if (!info) {
