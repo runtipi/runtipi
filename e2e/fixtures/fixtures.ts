@@ -5,8 +5,7 @@ import { db } from '../helpers/db';
 
 export const createTestUser = async () => {
   // Create user in database
-  const password = await Bun.password.hash(testUser.password);
-  await db.insert(user).values({ password, username: testUser.email, operator: true, hasSeenWelcome: true });
+  await db.insert(user).values({ password: testUser.hashedPassword, username: testUser.email, operator: true, hasSeenWelcome: true });
 };
 
 export const loginUser = async (page: Page, _: BrowserContext) => {

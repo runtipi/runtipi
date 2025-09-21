@@ -5,6 +5,7 @@ import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import { PasswordService } from '@/core/password/password.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import psl from 'psl';
@@ -22,6 +23,7 @@ export class AuthService {
     private encryption: EncryptionService,
     private cache: CacheService,
     private filesystem: FilesystemService,
+    private passwordService: PasswordService,
   ) {}
 
   public getCookieDomain(domain?: string) {
@@ -53,7 +55,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND', {}, HttpStatus.BAD_REQUEST);
     }
 
-    const isPasswordValid = await Bun.password.verify(password, user.password);
+    const isPasswordValid = await this.passwordService.verify(password, user.password);
 
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_CREDENTIALS', {}, HttpStatus.BAD_REQUEST);
@@ -142,7 +144,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_ALREADY_EXISTS', {}, HttpStatus.BAD_REQUEST);
     }
 
-    const hash = await Bun.password.hash(password);
+    const hash = await this.passwordService.hash(password);
     const newUser = await this.userRepository.createUser({ username: email, password: hash, operator: true });
 
     if (!newUser) {
@@ -179,7 +181,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const valid = await Bun.password.verify(password, user.password);
+    const valid = await this.passwordService.verify(password, user.password);
 
     if (!valid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
@@ -216,7 +218,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const valid = await Bun.password.verify(currentPassword, user.password);
+    const valid = await this.passwordService.verify(currentPassword, user.password);
 
     if (!valid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
@@ -226,7 +228,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD_LENGTH');
     }
 
-    const hash = await Bun.password.hash(newPassword);
+    const hash = await this.passwordService.hash(newPassword);
     await this.userRepository.updateUser(user.id, { password: hash });
     await this.sessionManager.destroyAllSessionsByUserId(user.id);
 
@@ -253,7 +255,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const isPasswordValid = await Bun.password.verify(password, user.password);
+    const isPasswordValid = await this.passwordService.verify(password, user.password);
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
     }
@@ -319,7 +321,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_TOTP_NOT_ENABLED');
     }
 
-    const isPasswordValid = await Bun.password.verify(password, user.password);
+    const isPasswordValid = await this.passwordService.verify(password, user.password);
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
     }
@@ -350,7 +352,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_OPERATOR_NOT_FOUND');
     }
 
-    const hash = await Bun.password.hash(newPassword);
+    const hash = await this.passwordService.hash(newPassword);
 
     await this.userRepository.updateUser(user.id, { password: hash, totpEnabled: false, totpSecret: null });
 

@@ -71,8 +71,6 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN bun install class-transformer
- 
 COPY --from=builder_base /deps/docker-binary /usr/local/bin/docker-compose
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
