@@ -3,7 +3,7 @@
   "version": "4.1.0",
   "description": "",
   "packageManager": "bun@1.2.22",
-  "type": "commonjs",
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
