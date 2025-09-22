@@ -38,6 +38,7 @@
     "@uiw/codemirror-theme-copilot": "^4.23.13",
     "@uiw/react-codemirror": "^4.23.13",
     "ajv": "^8.17.1",
+    "arktype": "^2.1.22",
     "better-ajv-errors": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

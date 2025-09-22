@@ -1769,7 +1769,7 @@
           }
         },
         "responses": {
-          "201": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -4373,139 +4373,28 @@
       "CreateCustomAppDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 50,
-            "pattern": "^[a-z0-9-]+$"
-          },
           "config": {
             "type": "object",
             "properties": {
+              "schemaVersion": {
+                "const": 2
+              },
               "services": {
-                "minItems": 1,
                 "type": "array",
+                "minItems": 1,
                 "items": {
                   "type": "object",
                   "properties": {
                     "image": {
                       "type": "string"
                     },
-                    "name": {
-                      "type": "string"
-                    },
                     "internalPort": {
                       "type": "number",
-                      "minimum": 1,
-                      "maximum": 65535
+                      "exclusiveMaximum": 65536,
+                      "exclusiveMinimum": 0
                     },
-                    "isMain": {
-                      "type": "boolean"
-                    },
-                    "networkMode": {
+                    "name": {
                       "type": "string"
-                    },
-                    "extraHosts": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "ulimits": {
-                      "type": "object",
-                      "properties": {
-                        "nproc": {
-                          "anyOf": [
-                            {
-                              "type": "number"
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "soft": {
-                                  "type": "number"
-                                },
-                                "hard": {
-                                  "type": "number"
-                                }
-                              },
-                              "required": [
-                                "soft",
-                                "hard"
-                              ]
-                            }
-                          ]
-                        },
-                        "nofile": {
-                          "anyOf": [
-                            {
-                              "type": "number"
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "soft": {
-                                  "type": "number"
-                                },
-                                "hard": {
-                                  "type": "number"
-                                }
-                              },
-                              "required": [
-                                "soft",
-                                "hard"
-                              ]
-                            }
-                          ]
-                        },
-                        "core": {
-                          "anyOf": [
-                            {
-                              "type": "number"
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "soft": {
-                                  "type": "number"
-                                },
-                                "hard": {
-                                  "type": "number"
-                                }
-                              },
-                              "required": [
-                                "soft",
-                                "hard"
-                              ]
-                            }
-                          ]
-                        },
-                        "memlock": {
-                          "anyOf": [
-                            {
-                              "type": "number"
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "soft": {
-                                  "type": "number"
-                                },
-                                "hard": {
-                                  "type": "number"
-                                }
-                              },
-                              "required": [
-                                "soft",
-                                "hard"
-                              ]
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "addToMainNetwork": {
-                      "type": "boolean"
                     },
                     "addPorts": {
                       "type": "array",
@@ -4514,28 +4403,43 @@
                         "properties": {
                           "containerPort": {
                             "type": "number",
-                            "minimum": 1,
-                            "maximum": 65535
+                            "exclusiveMaximum": 65536,
+                            "exclusiveMinimum": 0
                           },
                           "hostPort": {
                             "type": "number",
-                            "minimum": 1,
-                            "maximum": 65535
+                            "exclusiveMaximum": 65536,
+                            "exclusiveMinimum": 0
                           },
-                          "udp": {
-                            "type": "boolean"
+                          "interface": {
+                            "type": "string"
                           },
                           "tcp": {
                             "type": "boolean"
                           },
-                          "interface": {
-                            "type": "string"
+                          "udp": {
+                            "type": "boolean"
                           }
                         },
                         "required": [
                           "containerPort",
                           "hostPort"
                         ]
+                      }
+                    },
+                    "addToMainNetwork": {
+                      "type": "boolean"
+                    },
+                    "capAdd": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "capDrop": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
                       }
                     },
                     "command": {
@@ -4551,124 +4455,18 @@
                         }
                       ]
                     },
-                    "volumes": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "hostPath": {
-                            "type": "string"
-                          },
-                          "containerPath": {
-                            "type": "string"
-                          },
-                          "readOnly": {
-                            "type": "boolean"
-                          },
-                          "shared": {
-                            "type": "boolean"
-                          },
-                          "private": {
-                            "type": "boolean"
-                          }
-                        },
-                        "required": [
-                          "hostPath",
-                          "containerPath"
-                        ]
-                      }
-                    },
-                    "environment": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "key": {
-                            "type": "string",
-                            "minLength": 1
-                          },
-                          "value": {
-                            "anyOf": [
-                              {
-                                "anyOf": [
-                                  {
-                                    "type": "string",
-                                    "minLength": 1
-                                  },
-                                  {
-                                    "type": "number"
-                                  }
-                                ]
-                              },
-                              {
-                                "type": "boolean"
-                              }
-                            ]
-                          }
-                        },
-                        "required": [
-                          "key",
-                          "value"
-                        ]
-                      }
-                    },
-                    "sysctls": {
-                      "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {
-                        "type": "number"
-                      }
-                    },
-                    "healthCheck": {
-                      "type": "object",
-                      "properties": {
-                        "test": {
-                          "type": "string"
-                        },
-                        "interval": {
-                          "type": "string"
-                        },
-                        "timeout": {
-                          "type": "string"
-                        },
-                        "retries": {
-                          "type": "number"
-                        },
-                        "startInterval": {
-                          "type": "string"
-                        },
-                        "startPeriod": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "test"
-                      ]
-                    },
                     "dependsOn": {
                       "anyOf": [
                         {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        {
                           "type": "object",
-                          "propertyNames": {
-                            "type": "string"
-                          },
                           "additionalProperties": {
                             "type": "object",
                             "properties": {
                               "condition": {
-                                "type": "string",
                                 "enum": [
+                                  "service_completed_successfully",
                                   "service_healthy",
-                                  "service_started",
-                                  "service_completed_successfully"
+                                  "service_started"
                                 ]
                               }
                             },
@@ -4676,14 +4474,14 @@
                               "condition"
                             ]
                           }
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         }
                       ]
-                    },
-                    "capAdd": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
                     },
                     "deploy": {
                       "type": "object",
@@ -4711,9 +4509,6 @@
                                 "cpus": {
                                   "type": "string"
                                 },
-                                "memory": {
-                                  "type": "string"
-                                },
                                 "devices": {
                                   "type": "array",
                                   "items": {
@@ -4725,19 +4520,13 @@
                                           "type": "string"
                                         }
                                       },
-                                      "driver": {
-                                        "type": "string"
-                                      },
                                       "count": {
                                         "anyOf": [
                                           {
-                                            "type": "string",
-                                            "enum": [
-                                              "all"
-                                            ]
+                                            "type": "number"
                                           },
                                           {
-                                            "type": "number"
+                                            "const": "all"
                                           }
                                         ]
                                       },
@@ -4746,17 +4535,20 @@
                                         "items": {
                                           "type": "string"
                                         }
+                                      },
+                                      "driver": {
+                                        "type": "string"
                                       }
                                     },
                                     "required": [
                                       "capabilities"
                                     ]
                                   }
+                                },
+                                "memory": {
+                                  "type": "string"
                                 }
-                              },
-                              "required": [
-                                "devices"
-                              ]
+                              }
                             }
                           }
                         }
@@ -4765,104 +4557,10 @@
                         "resources"
                       ]
                     },
-                    "hostname": {
-                      "type": "string"
-                    },
                     "devices": {
                       "type": "array",
                       "items": {
                         "type": "string"
-                      }
-                    },
-                    "entrypoint": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        }
-                      ]
-                    },
-                    "pid": {
-                      "type": "string"
-                    },
-                    "privileged": {
-                      "type": "boolean"
-                    },
-                    "tty": {
-                      "type": "boolean"
-                    },
-                    "user": {
-                      "type": "string"
-                    },
-                    "workingDir": {
-                      "type": "string"
-                    },
-                    "shmSize": {
-                      "type": "string"
-                    },
-                    "capDrop": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "logging": {
-                      "type": "object",
-                      "properties": {
-                        "driver": {
-                          "type": "string"
-                        },
-                        "options": {
-                          "type": "object",
-                          "propertyNames": {
-                            "type": "string"
-                          },
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "required": [
-                        "driver"
-                      ]
-                    },
-                    "readOnly": {
-                      "type": "boolean"
-                    },
-                    "securityOpt": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "stopSignal": {
-                      "type": "string"
-                    },
-                    "stopGracePeriod": {
-                      "type": "string"
-                    },
-                    "stdinOpen": {
-                      "type": "boolean"
-                    },
-                    "extraLabels": {
-                      "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "boolean"
-                          }
-                        ]
                       }
                     },
                     "dns": {
@@ -4877,12 +4575,288 @@
                           }
                         }
                       ]
+                    },
+                    "entrypoint": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    },
+                    "environment": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "value": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "boolean"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "value"
+                        ]
+                      }
+                    },
+                    "extraHosts": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "extraLabels": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "boolean"
+                          }
+                        ]
+                      }
+                    },
+                    "healthCheck": {
+                      "type": "object",
+                      "properties": {
+                        "test": {
+                          "type": "string"
+                        },
+                        "interval": {
+                          "type": "string"
+                        },
+                        "retries": {
+                          "type": "number"
+                        },
+                        "startInterval": {
+                          "type": "string"
+                        },
+                        "startPeriod": {
+                          "type": "string"
+                        },
+                        "timeout": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "test"
+                      ]
+                    },
+                    "hostname": {
+                      "type": "string"
+                    },
+                    "isMain": {
+                      "type": "boolean"
+                    },
+                    "logging": {
+                      "type": "object",
+                      "properties": {
+                        "driver": {
+                          "type": "string"
+                        },
+                        "options": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "driver"
+                      ]
+                    },
+                    "networkMode": {
+                      "type": "string"
+                    },
+                    "pid": {
+                      "type": "string"
+                    },
+                    "privileged": {
+                      "type": "boolean"
+                    },
+                    "readOnly": {
+                      "type": "boolean"
+                    },
+                    "securityOpt": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "shmSize": {
+                      "type": "string"
+                    },
+                    "stdinOpen": {
+                      "type": "boolean"
+                    },
+                    "stopGracePeriod": {
+                      "type": "string"
+                    },
+                    "stopSignal": {
+                      "type": "string"
+                    },
+                    "sysctls": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    },
+                    "tty": {
+                      "type": "boolean"
+                    },
+                    "ulimits": {
+                      "type": "object",
+                      "properties": {
+                        "core": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "hard": {
+                                  "type": "number"
+                                },
+                                "soft": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "hard",
+                                "soft"
+                              ]
+                            }
+                          ]
+                        },
+                        "memlock": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "hard": {
+                                  "type": "number"
+                                },
+                                "soft": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "hard",
+                                "soft"
+                              ]
+                            }
+                          ]
+                        },
+                        "nofile": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "hard": {
+                                  "type": "number"
+                                },
+                                "soft": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "hard",
+                                "soft"
+                              ]
+                            }
+                          ]
+                        },
+                        "nproc": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "hard": {
+                                  "type": "number"
+                                },
+                                "soft": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "hard",
+                                "soft"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "user": {
+                      "type": "string"
+                    },
+                    "volumes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "containerPath": {
+                            "type": "string"
+                          },
+                          "hostPath": {
+                            "type": "string"
+                          },
+                          "private": {
+                            "type": "boolean"
+                          },
+                          "readOnly": {
+                            "type": "boolean"
+                          },
+                          "shared": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "containerPath",
+                          "hostPath"
+                        ]
+                      }
+                    },
+                    "workingDir": {
+                      "type": "string"
                     }
                   },
                   "required": [
                     "image",
-                    "name",
-                    "internalPort"
+                    "internalPort",
+                    "name"
                   ]
                 }
               },
@@ -4891,137 +4865,11 @@
                 "items": {
                   "type": "object",
                   "properties": {
-                    "architecture": {
-                      "type": "string",
-                      "enum": [
-                        "arm64",
-                        "amd64"
-                      ]
-                    },
                     "services": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "image": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "internalPort": {
-                            "type": "number",
-                            "minimum": 1,
-                            "maximum": 65535
-                          },
-                          "isMain": {
-                            "type": "boolean"
-                          },
-                          "networkMode": {
-                            "type": "string"
-                          },
-                          "extraHosts": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
-                          },
-                          "ulimits": {
-                            "type": "object",
-                            "properties": {
-                              "nproc": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "object",
-                                    "properties": {
-                                      "soft": {
-                                        "type": "number"
-                                      },
-                                      "hard": {
-                                        "type": "number"
-                                      }
-                                    },
-                                    "required": [
-                                      "soft",
-                                      "hard"
-                                    ]
-                                  }
-                                ]
-                              },
-                              "nofile": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "object",
-                                    "properties": {
-                                      "soft": {
-                                        "type": "number"
-                                      },
-                                      "hard": {
-                                        "type": "number"
-                                      }
-                                    },
-                                    "required": [
-                                      "soft",
-                                      "hard"
-                                    ]
-                                  }
-                                ]
-                              },
-                              "core": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "object",
-                                    "properties": {
-                                      "soft": {
-                                        "type": "number"
-                                      },
-                                      "hard": {
-                                        "type": "number"
-                                      }
-                                    },
-                                    "required": [
-                                      "soft",
-                                      "hard"
-                                    ]
-                                  }
-                                ]
-                              },
-                              "memlock": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "object",
-                                    "properties": {
-                                      "soft": {
-                                        "type": "number"
-                                      },
-                                      "hard": {
-                                        "type": "number"
-                                      }
-                                    },
-                                    "required": [
-                                      "soft",
-                                      "hard"
-                                    ]
-                                  }
-                                ]
-                              }
-                            }
-                          },
-                          "addToMainNetwork": {
-                            "type": "boolean"
-                          },
                           "addPorts": {
                             "type": "array",
                             "items": {
@@ -5029,28 +4877,43 @@
                               "properties": {
                                 "containerPort": {
                                   "type": "number",
-                                  "minimum": 1,
-                                  "maximum": 65535
+                                  "exclusiveMaximum": 65536,
+                                  "exclusiveMinimum": 0
                                 },
                                 "hostPort": {
                                   "type": "number",
-                                  "minimum": 1,
-                                  "maximum": 65535
+                                  "exclusiveMaximum": 65536,
+                                  "exclusiveMinimum": 0
                                 },
-                                "udp": {
-                                  "type": "boolean"
+                                "interface": {
+                                  "type": "string"
                                 },
                                 "tcp": {
                                   "type": "boolean"
                                 },
-                                "interface": {
-                                  "type": "string"
+                                "udp": {
+                                  "type": "boolean"
                                 }
                               },
                               "required": [
                                 "containerPort",
                                 "hostPort"
                               ]
+                            }
+                          },
+                          "addToMainNetwork": {
+                            "type": "boolean"
+                          },
+                          "capAdd": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "capDrop": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
                             }
                           },
                           "command": {
@@ -5066,124 +4929,18 @@
                               }
                             ]
                           },
-                          "volumes": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "hostPath": {
-                                  "type": "string"
-                                },
-                                "containerPath": {
-                                  "type": "string"
-                                },
-                                "readOnly": {
-                                  "type": "boolean"
-                                },
-                                "shared": {
-                                  "type": "boolean"
-                                },
-                                "private": {
-                                  "type": "boolean"
-                                }
-                              },
-                              "required": [
-                                "hostPath",
-                                "containerPath"
-                              ]
-                            }
-                          },
-                          "environment": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "key": {
-                                  "type": "string",
-                                  "minLength": 1
-                                },
-                                "value": {
-                                  "anyOf": [
-                                    {
-                                      "anyOf": [
-                                        {
-                                          "type": "string",
-                                          "minLength": 1
-                                        },
-                                        {
-                                          "type": "number"
-                                        }
-                                      ]
-                                    },
-                                    {
-                                      "type": "boolean"
-                                    }
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "key",
-                                "value"
-                              ]
-                            }
-                          },
-                          "sysctls": {
-                            "type": "object",
-                            "propertyNames": {
-                              "type": "string"
-                            },
-                            "additionalProperties": {
-                              "type": "number"
-                            }
-                          },
-                          "healthCheck": {
-                            "type": "object",
-                            "properties": {
-                              "test": {
-                                "type": "string"
-                              },
-                              "interval": {
-                                "type": "string"
-                              },
-                              "timeout": {
-                                "type": "string"
-                              },
-                              "retries": {
-                                "type": "number"
-                              },
-                              "startInterval": {
-                                "type": "string"
-                              },
-                              "startPeriod": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "test"
-                            ]
-                          },
                           "dependsOn": {
                             "anyOf": [
                               {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              },
-                              {
                                 "type": "object",
-                                "propertyNames": {
-                                  "type": "string"
-                                },
                                 "additionalProperties": {
                                   "type": "object",
                                   "properties": {
                                     "condition": {
-                                      "type": "string",
                                       "enum": [
+                                        "service_completed_successfully",
                                         "service_healthy",
-                                        "service_started",
-                                        "service_completed_successfully"
+                                        "service_started"
                                       ]
                                     }
                                   },
@@ -5191,14 +4948,14 @@
                                     "condition"
                                   ]
                                 }
+                              },
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               }
                             ]
-                          },
-                          "capAdd": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
                           },
                           "deploy": {
                             "type": "object",
@@ -5226,9 +4983,6 @@
                                       "cpus": {
                                         "type": "string"
                                       },
-                                      "memory": {
-                                        "type": "string"
-                                      },
                                       "devices": {
                                         "type": "array",
                                         "items": {
@@ -5240,19 +4994,13 @@
                                                 "type": "string"
                                               }
                                             },
-                                            "driver": {
-                                              "type": "string"
-                                            },
                                             "count": {
                                               "anyOf": [
                                                 {
-                                                  "type": "string",
-                                                  "enum": [
-                                                    "all"
-                                                  ]
+                                                  "type": "number"
                                                 },
                                                 {
-                                                  "type": "number"
+                                                  "const": "all"
                                                 }
                                               ]
                                             },
@@ -5261,17 +5009,20 @@
                                               "items": {
                                                 "type": "string"
                                               }
+                                            },
+                                            "driver": {
+                                              "type": "string"
                                             }
                                           },
                                           "required": [
                                             "capabilities"
                                           ]
                                         }
+                                      },
+                                      "memory": {
+                                        "type": "string"
                                       }
-                                    },
-                                    "required": [
-                                      "devices"
-                                    ]
+                                    }
                                   }
                                 }
                               }
@@ -5280,104 +5031,10 @@
                               "resources"
                             ]
                           },
-                          "hostname": {
-                            "type": "string"
-                          },
                           "devices": {
                             "type": "array",
                             "items": {
                               "type": "string"
-                            }
-                          },
-                          "entrypoint": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              }
-                            ]
-                          },
-                          "pid": {
-                            "type": "string"
-                          },
-                          "privileged": {
-                            "type": "boolean"
-                          },
-                          "tty": {
-                            "type": "boolean"
-                          },
-                          "user": {
-                            "type": "string"
-                          },
-                          "workingDir": {
-                            "type": "string"
-                          },
-                          "shmSize": {
-                            "type": "string"
-                          },
-                          "capDrop": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
-                          },
-                          "logging": {
-                            "type": "object",
-                            "properties": {
-                              "driver": {
-                                "type": "string"
-                              },
-                              "options": {
-                                "type": "object",
-                                "propertyNames": {
-                                  "type": "string"
-                                },
-                                "additionalProperties": {
-                                  "type": "string"
-                                }
-                              }
-                            },
-                            "required": [
-                              "driver"
-                            ]
-                          },
-                          "readOnly": {
-                            "type": "boolean"
-                          },
-                          "securityOpt": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
-                          },
-                          "stopSignal": {
-                            "type": "string"
-                          },
-                          "stopGracePeriod": {
-                            "type": "string"
-                          },
-                          "stdinOpen": {
-                            "type": "boolean"
-                          },
-                          "extraLabels": {
-                            "type": "object",
-                            "propertyNames": {
-                              "type": "string"
-                            },
-                            "additionalProperties": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "boolean"
-                                }
-                              ]
                             }
                           },
                           "dns": {
@@ -5392,9 +5049,302 @@
                                 }
                               }
                             ]
+                          },
+                          "entrypoint": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            ]
+                          },
+                          "environment": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    {
+                                      "type": "boolean"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "value"
+                              ]
+                            }
+                          },
+                          "extraHosts": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "extraLabels": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "boolean"
+                                }
+                              ]
+                            }
+                          },
+                          "healthCheck": {
+                            "type": "object",
+                            "properties": {
+                              "test": {
+                                "type": "string"
+                              },
+                              "interval": {
+                                "type": "string"
+                              },
+                              "retries": {
+                                "type": "number"
+                              },
+                              "startInterval": {
+                                "type": "string"
+                              },
+                              "startPeriod": {
+                                "type": "string"
+                              },
+                              "timeout": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "test"
+                            ]
+                          },
+                          "hostname": {
+                            "type": "string"
+                          },
+                          "image": {
+                            "type": "string"
+                          },
+                          "internalPort": {
+                            "type": "number",
+                            "exclusiveMaximum": 65536,
+                            "exclusiveMinimum": 0
+                          },
+                          "isMain": {
+                            "type": "boolean"
+                          },
+                          "logging": {
+                            "type": "object",
+                            "properties": {
+                              "driver": {
+                                "type": "string"
+                              },
+                              "options": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "driver"
+                            ]
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "networkMode": {
+                            "type": "string"
+                          },
+                          "pid": {
+                            "type": "string"
+                          },
+                          "privileged": {
+                            "type": "boolean"
+                          },
+                          "readOnly": {
+                            "type": "boolean"
+                          },
+                          "securityOpt": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "shmSize": {
+                            "type": "string"
+                          },
+                          "stdinOpen": {
+                            "type": "boolean"
+                          },
+                          "stopGracePeriod": {
+                            "type": "string"
+                          },
+                          "stopSignal": {
+                            "type": "string"
+                          },
+                          "sysctls": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "tty": {
+                            "type": "boolean"
+                          },
+                          "ulimits": {
+                            "type": "object",
+                            "properties": {
+                              "core": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "hard": {
+                                        "type": "number"
+                                      },
+                                      "soft": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "hard",
+                                      "soft"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "memlock": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "hard": {
+                                        "type": "number"
+                                      },
+                                      "soft": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "hard",
+                                      "soft"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "nofile": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "hard": {
+                                        "type": "number"
+                                      },
+                                      "soft": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "hard",
+                                      "soft"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "nproc": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "hard": {
+                                        "type": "number"
+                                      },
+                                      "soft": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "hard",
+                                      "soft"
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "user": {
+                            "type": "string"
+                          },
+                          "volumes": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "containerPath": {
+                                  "type": "string"
+                                },
+                                "hostPath": {
+                                  "type": "string"
+                                },
+                                "private": {
+                                  "type": "boolean"
+                                },
+                                "readOnly": {
+                                  "type": "boolean"
+                                },
+                                "shared": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "containerPath",
+                                "hostPath"
+                              ]
+                            }
+                          },
+                          "workingDir": {
+                            "type": "string"
                           }
                         }
                       }
+                    },
+                    "architecture": {
+                      "enum": [
+                        "amd64",
+                        "arm64"
+                      ]
                     }
                   },
                   "required": [
@@ -5404,22 +5354,26 @@
               }
             },
             "required": [
+              "schemaVersion",
               "services"
             ]
+          },
+          "name": {
+            "type": "string"
           }
         },
         "required": [
-          "name",
-          "config"
+          "config",
+          "name"
         ]
       },
       "CreateCustomAppResponseDto": {
         "type": "object",
         "properties": {
-          "appUrn": {
+          "appName": {
             "type": "string"
           },
-          "appName": {
+          "appUrn": {
             "type": "string"
           },
           "storeId": {
@@ -5427,8 +5381,8 @@
           }
         },
         "required": [
-          "appUrn",
           "appName",
+          "appUrn",
           "storeId"
         ]
       }

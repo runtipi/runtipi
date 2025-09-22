@@ -1,10 +1,9 @@
 import './services-form.css';
 import { Button } from '@/components/ui/Button';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { dynamicComposeSchema } from '@runtipi/common/schemas';
+import { arktypeResolver } from '@hookform/resolvers/arktype';
+import { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
 import { IconArrowsDownUp, IconCloudDataConnection, IconPlus, IconServer, IconSettings, IconVariable, IconX } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
 import { JsonComposeEditor } from './json-compose-editor';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import { useEffect, useState } from 'react';
@@ -18,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 
 type Props = {
-  onSubmit?: (data: z.infer<typeof dynamicComposeSchema>) => void;
+  onSubmit?: (data: typeof dynamicComposeSchemaArk.infer) => void;
 };
 
 export const MultiServiceForm = ({ onSubmit }: Props) => {
@@ -48,8 +47,8 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
     { id: 'advanced', label: t('MULTI_SERVICE_TAB_ADVANCED'), icon: IconCloudDataConnection },
   ];
 
-  const form = useForm<z.infer<typeof dynamicComposeSchema>>({
-    resolver: zodResolver(dynamicComposeSchema),
+  const form = useForm<typeof dynamicComposeSchemaArk.infer>({
+    resolver: arktypeResolver(dynamicComposeSchemaArk),
     defaultValues: {
       services,
     },
@@ -134,7 +133,7 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
     );
   };
 
-  const handleSubmit = async (data: z.infer<typeof dynamicComposeSchema>) => {
+  const handleSubmit = async (data: typeof dynamicComposeSchemaArk.infer) => {
     const valid = validate(data);
 
     if (valid) {

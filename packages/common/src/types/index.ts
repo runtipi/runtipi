@@ -1,3 +1,3 @@
-import { type AppUrn, zodAppUrn } from './app-urn.js';
+import { type AppUrn, zodAppUrn, arkAppUrn } from './app-urn.js';
 
-export { type AppUrn, zodAppUrn };
+export { type AppUrn, zodAppUrn, arkAppUrn };

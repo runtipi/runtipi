@@ -2,19 +2,18 @@ import './elements.css';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
-import type { dynamicComposeSchema } from '@runtipi/common/schemas';
+import type { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
 import { IconX } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useFieldArray, type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
-import type z from 'zod';
 import { useTranslation } from 'react-i18next';
 
 type Props = {
-  control: Control<z.infer<typeof dynamicComposeSchema>>;
-  register: UseFormRegister<z.infer<typeof dynamicComposeSchema>>;
+  control: Control<typeof dynamicComposeSchemaArk.infer>;
+  register: UseFormRegister<typeof dynamicComposeSchemaArk.infer>;
   serviceIndex: number;
-  errors?: FieldErrors<z.infer<typeof dynamicComposeSchema>>;
+  errors?: FieldErrors<typeof dynamicComposeSchemaArk.infer>;
 };
 
 export const EnvironmentConfig = ({ errors, serviceIndex, control, register }: Props) => {

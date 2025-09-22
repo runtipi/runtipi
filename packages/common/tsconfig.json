@@ -9,6 +9,7 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "strict": true,
+    "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "module": "NodeNext",
