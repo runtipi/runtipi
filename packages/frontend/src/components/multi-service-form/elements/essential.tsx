@@ -1,14 +1,13 @@
 import { Input } from '@/components/ui/Input';
-import type { dynamicComposeSchema } from '@runtipi/common/schemas';
+import type { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
 import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';
-import type z from 'zod';
 import { useTranslation } from 'react-i18next';
 
 type Props = {
-  register: UseFormRegister<z.infer<typeof dynamicComposeSchema>>;
+  register: UseFormRegister<typeof dynamicComposeSchemaArk.infer>;
   serviceIndex: number;
-  errors?: FieldErrors<z.infer<typeof dynamicComposeSchema>>;
+  errors?: FieldErrors<typeof dynamicComposeSchemaArk.infer>;
 };
 
 export const EssentialConfig = ({ register, errors, serviceIndex }: Props) => {
