@@ -8,7 +8,7 @@ import { json } from '@codemirror/lang-json';
 import { copilot } from '@uiw/codemirror-theme-copilot';
 import { useTranslation } from 'react-i18next';
 
-const schema = toJsonSchema(dynamicComposeSchema);
+const schema = toJsonSchema(dynamicComposeSchema.omit({ schemaVersion: true }));
 
 type Props = {
   onChange: (json: string, error?: string) => void;

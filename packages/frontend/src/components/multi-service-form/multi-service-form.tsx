@@ -134,6 +134,7 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
   };
 
   const handleSubmit = async (data: typeof dynamicComposeSchemaArk.infer) => {
+    console.log('Submitting data:', data);
     const valid = validate(data);
 
     if (valid) {

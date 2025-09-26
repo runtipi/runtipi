@@ -59,7 +59,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   isDirty: false,
   error: '',
   validate: (values: typeof dynamicComposeSchemaArk.infer) => {
-    const res = dynamicComposeSchemaArk(values);
+    const res = dynamicComposeSchemaArk.omit('schemaVersion')(values);
 
     if (res instanceof type.errors) {
       set({ error: 'Invalid configuration.' });
