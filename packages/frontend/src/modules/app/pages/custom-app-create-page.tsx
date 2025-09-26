@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
-import type { dynamicComposeSchema } from '@runtipi/common/schemas';
+import type { dynamicComposeSchema, dynamicComposeSchemaArk } from '@runtipi/common/schemas';
 import { MultiServiceForm } from '@/components/multi-service-form/multi-service-form';
 import { createCustomAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Input } from '@/components/ui/Input/Input';
@@ -34,7 +34,7 @@ export default () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof dynamicComposeSchema>) => {
+  const onSubmit = (data: typeof dynamicComposeSchemaArk.infer) => {
     const validation = appNameSchema.safeParse(appName);
     if (!validation.success) {
       const pretty = z.prettifyError(validation.error);

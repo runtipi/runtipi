@@ -61,7 +61,7 @@ export const serviceSchemaArk = type({
       'reservations?': {
         'cpus?': 'string',
         'memory?': 'string',
-        'devices?': type({
+        devices: type({
           capabilities: 'string[]',
           'driver?': 'string',
           'count?': "'all' | number",

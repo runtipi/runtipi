@@ -5414,7 +5414,10 @@
             ]
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "maxLength": 50,
+            "minLength": 1
           }
         },
         "required": [

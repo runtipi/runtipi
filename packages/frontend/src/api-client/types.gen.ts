@@ -575,70 +575,27 @@ export type UpdateUserConfigDto = {
 };
 
 export type CreateCustomAppDto = {
-    name: string;
     config: {
         services: Array<{
             image: string;
-            name: string;
             internalPort: number;
-            isMain?: boolean;
-            networkMode?: string;
-            extraHosts?: Array<string>;
-            ulimits?: {
-                nproc?: number | {
-                    soft: number;
-                    hard: number;
-                };
-                nofile?: number | {
-                    soft: number;
-                    hard: number;
-                };
-                core?: number | {
-                    soft: number;
-                    hard: number;
-                };
-                memlock?: number | {
-                    soft: number;
-                    hard: number;
-                };
-            };
-            addToMainNetwork?: boolean;
+            name: string;
             addPorts?: Array<{
                 containerPort: number;
                 hostPort: number;
-                udp?: boolean;
-                tcp?: boolean;
                 interface?: string;
+                tcp?: boolean;
+                udp?: boolean;
             }>;
-            command?: string | Array<string>;
-            volumes?: Array<{
-                hostPath: string;
-                containerPath: string;
-                readOnly?: boolean;
-                shared?: boolean;
-                private?: boolean;
-            }>;
-            environment?: Array<{
-                key: string;
-                value: (string | number) | boolean;
-            }>;
-            sysctls?: {
-                [key: string]: number;
-            };
-            healthCheck?: {
-                test: string;
-                interval?: string;
-                timeout?: string;
-                retries?: number;
-                startInterval?: string;
-                startPeriod?: string;
-            };
-            dependsOn?: Array<string> | {
-                [key: string]: {
-                    condition: 'service_healthy' | 'service_started' | 'service_completed_successfully';
-                };
-            };
+            addToMainNetwork?: boolean;
             capAdd?: Array<string>;
+            capDrop?: Array<string>;
+            command?: string | Array<string>;
+            dependsOn?: {
+                [key: string]: {
+                    condition: 'service_completed_successfully' | 'service_healthy' | 'service_started';
+                };
+            } | Array<string>;
             deploy?: {
                 resources: {
                     limits?: {
@@ -648,106 +605,102 @@ export type CreateCustomAppDto = {
                     };
                     reservations?: {
                         cpus?: string;
-                        memory?: string;
-                        devices: Array<{
+                        devices?: Array<{
                             capabilities: Array<string>;
-                            driver?: string;
-                            count?: 'all' | number;
+                            count?: number | 'all';
                             deviceIds?: Array<string>;
+                            driver?: string;
                         }>;
+                        memory?: string;
                     };
                 };
             };
-            hostname?: string;
             devices?: Array<string>;
+            dns?: string | Array<string>;
             entrypoint?: string | Array<string>;
-            pid?: string;
-            privileged?: boolean;
-            tty?: boolean;
-            user?: string;
-            workingDir?: string;
-            shmSize?: string;
-            capDrop?: Array<string>;
+            environment?: Array<{
+                key: string;
+                value: number | string | boolean;
+            }>;
+            extraHosts?: Array<string>;
+            extraLabels?: {
+                [key: string]: string | boolean;
+            };
+            healthCheck?: {
+                test: string;
+                interval?: string;
+                retries?: number;
+                startInterval?: string;
+                startPeriod?: string;
+                timeout?: string;
+            };
+            hostname?: string;
+            isMain?: boolean;
             logging?: {
                 driver: string;
                 options?: {
                     [key: string]: string;
                 };
             };
+            networkMode?: string;
+            pid?: string;
+            privileged?: boolean;
             readOnly?: boolean;
             securityOpt?: Array<string>;
-            stopSignal?: string;
-            stopGracePeriod?: string;
+            shmSize?: string;
             stdinOpen?: boolean;
-            extraLabels?: {
-                [key: string]: string | boolean;
+            stopGracePeriod?: string;
+            stopSignal?: string;
+            sysctls?: {
+                [key: string]: number;
             };
-            dns?: string | Array<string>;
+            tty?: boolean;
+            ulimits?: {
+                core?: number | {
+                    hard: number;
+                    soft: number;
+                };
+                memlock?: number | {
+                    hard: number;
+                    soft: number;
+                };
+                nofile?: number | {
+                    hard: number;
+                    soft: number;
+                };
+                nproc?: number | {
+                    hard: number;
+                    soft: number;
+                };
+            };
+            user?: string;
+            volumes?: Array<{
+                containerPath: string;
+                hostPath: string;
+                private?: boolean;
+                readOnly?: boolean;
+                shared?: boolean;
+            }>;
+            workingDir?: string;
         }>;
         overrides?: Array<{
-            architecture?: 'arm64' | 'amd64';
             services: Array<{
-                image?: string;
-                name?: string;
-                internalPort?: number;
-                isMain?: boolean;
-                networkMode?: string;
-                extraHosts?: Array<string>;
-                ulimits?: {
-                    nproc?: number | {
-                        soft: number;
-                        hard: number;
-                    };
-                    nofile?: number | {
-                        soft: number;
-                        hard: number;
-                    };
-                    core?: number | {
-                        soft: number;
-                        hard: number;
-                    };
-                    memlock?: number | {
-                        soft: number;
-                        hard: number;
-                    };
-                };
-                addToMainNetwork?: boolean;
                 addPorts?: Array<{
                     containerPort: number;
                     hostPort: number;
-                    udp?: boolean;
-                    tcp?: boolean;
                     interface?: string;
+                    tcp?: boolean;
+                    udp?: boolean;
                 }>;
-                command?: string | Array<string>;
-                volumes?: Array<{
-                    hostPath: string;
-                    containerPath: string;
-                    readOnly?: boolean;
-                    shared?: boolean;
-                    private?: boolean;
-                }>;
-                environment?: Array<{
-                    key: string;
-                    value: (string | number) | boolean;
-                }>;
-                sysctls?: {
-                    [key: string]: number;
-                };
-                healthCheck?: {
-                    test: string;
-                    interval?: string;
-                    timeout?: string;
-                    retries?: number;
-                    startInterval?: string;
-                    startPeriod?: string;
-                };
-                dependsOn?: Array<string> | {
-                    [key: string]: {
-                        condition: 'service_healthy' | 'service_started' | 'service_completed_successfully';
-                    };
-                };
+                addToMainNetwork?: boolean;
                 capAdd?: Array<string>;
+                capDrop?: Array<string>;
+                command?: string | Array<string>;
+                dependsOn?: {
+                    [key: string]: {
+                        condition: 'service_completed_successfully' | 'service_healthy' | 'service_started';
+                    };
+                } | Array<string>;
                 deploy?: {
                     resources: {
                         limits?: {
@@ -757,49 +710,96 @@ export type CreateCustomAppDto = {
                         };
                         reservations?: {
                             cpus?: string;
-                            memory?: string;
-                            devices: Array<{
+                            devices?: Array<{
                                 capabilities: Array<string>;
-                                driver?: string;
-                                count?: 'all' | number;
+                                count?: number | 'all';
                                 deviceIds?: Array<string>;
+                                driver?: string;
                             }>;
+                            memory?: string;
                         };
                     };
                 };
-                hostname?: string;
                 devices?: Array<string>;
+                dns?: string | Array<string>;
                 entrypoint?: string | Array<string>;
-                pid?: string;
-                privileged?: boolean;
-                tty?: boolean;
-                user?: string;
-                workingDir?: string;
-                shmSize?: string;
-                capDrop?: Array<string>;
+                environment?: Array<{
+                    key: string;
+                    value: number | string | boolean;
+                }>;
+                extraHosts?: Array<string>;
+                extraLabels?: {
+                    [key: string]: string | boolean;
+                };
+                healthCheck?: {
+                    test: string;
+                    interval?: string;
+                    retries?: number;
+                    startInterval?: string;
+                    startPeriod?: string;
+                    timeout?: string;
+                };
+                hostname?: string;
+                image?: string;
+                internalPort?: number;
+                isMain?: boolean;
                 logging?: {
                     driver: string;
                     options?: {
                         [key: string]: string;
                     };
                 };
+                name?: string;
+                networkMode?: string;
+                pid?: string;
+                privileged?: boolean;
                 readOnly?: boolean;
                 securityOpt?: Array<string>;
-                stopSignal?: string;
-                stopGracePeriod?: string;
+                shmSize?: string;
                 stdinOpen?: boolean;
-                extraLabels?: {
-                    [key: string]: string | boolean;
+                stopGracePeriod?: string;
+                stopSignal?: string;
+                sysctls?: {
+                    [key: string]: number;
                 };
-                dns?: string | Array<string>;
+                tty?: boolean;
+                ulimits?: {
+                    core?: number | {
+                        hard: number;
+                        soft: number;
+                    };
+                    memlock?: number | {
+                        hard: number;
+                        soft: number;
+                    };
+                    nofile?: number | {
+                        hard: number;
+                        soft: number;
+                    };
+                    nproc?: number | {
+                        hard: number;
+                        soft: number;
+                    };
+                };
+                user?: string;
+                volumes?: Array<{
+                    containerPath: string;
+                    hostPath: string;
+                    private?: boolean;
+                    readOnly?: boolean;
+                    shared?: boolean;
+                }>;
+                workingDir?: string;
             }>;
+            architecture?: 'amd64' | 'arm64';
         }>;
     };
+    name: string;
 };
 
 export type CreateCustomAppResponseDto = {
-    appUrn: string;
     appName: string;
+    appUrn: string;
     storeId: string;
 };
 
@@ -1655,7 +1655,7 @@ export type CreateCustomAppData = {
 };
 
 export type CreateCustomAppResponses = {
-    201: CreateCustomAppResponseDto;
+    default: CreateCustomAppResponseDto;
 };
 
 export type CreateCustomAppResponse = CreateCustomAppResponses[keyof CreateCustomAppResponses];

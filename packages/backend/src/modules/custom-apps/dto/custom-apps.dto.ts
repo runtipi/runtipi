@@ -3,10 +3,9 @@ import { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
 import { type } from 'arktype';
 
 export const createCustomAppSchema = type({
-  name: type('string')
+  name: type(/^[a-z0-9-]+$/)
     .lessThanLength(51)
-    .moreThanLength(0)
-    .pipe((s) => /^[a-z0-9-]+$/.test(s) && !s.startsWith('-') && !s.endsWith('-')),
+    .moreThanLength(0),
   config: dynamicComposeSchemaArk.omit('schemaVersion'),
 });
 
