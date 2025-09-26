@@ -7,7 +7,7 @@ export const createCustomAppSchema = type({
     .lessThanLength(51)
     .moreThanLength(0)
     .pipe((s) => /^[a-z0-9-]+$/.test(s) && !s.startsWith('-') && !s.endsWith('-')),
-  config: dynamicComposeSchemaArk,
+  config: dynamicComposeSchemaArk.omit('schemaVersion'),
 });
 
 export class CreateCustomAppDto extends createArkDto(createCustomAppSchema, { name: 'CreateCustomAppDto' }) {}

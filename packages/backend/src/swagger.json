@@ -4435,9 +4435,6 @@
           "config": {
             "type": "object",
             "properties": {
-              "schemaVersion": {
-                "const": 2
-              },
               "services": {
                 "type": "array",
                 "minItems": 1,
@@ -5413,7 +5410,6 @@
               }
             },
             "required": [
-              "schemaVersion",
               "services"
             ]
           },
