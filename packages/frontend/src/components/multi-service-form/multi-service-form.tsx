@@ -48,7 +48,7 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
   ];
 
   const form = useForm<typeof dynamicComposeSchemaArk.infer>({
-    resolver: arktypeResolver(dynamicComposeSchemaArk),
+    resolver: arktypeResolver(dynamicComposeSchemaArk.omit('schemaVersion')),
     defaultValues: {
       services,
     },
