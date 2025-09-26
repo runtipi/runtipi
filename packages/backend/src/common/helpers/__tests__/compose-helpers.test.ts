@@ -66,6 +66,7 @@ describe('mergeArchitectureOverrides', () => {
       {
         name: 'db',
         image: 'mysql:latest',
+        internalPort: 3306,
         environment: [{ key: 'MYSQL_ROOT_PASSWORD', value: 'password' }],
       },
     ];
@@ -101,6 +102,7 @@ describe('mergeArchitectureOverrides', () => {
       {
         name: 'db',
         image: 'mysql:latest',
+        internalPort: 3306,
         environment: [{ key: 'MYSQL_ROOT_PASSWORD', value: 'password' }],
       },
     ];
@@ -145,6 +147,7 @@ describe('mergeArchitectureOverrides', () => {
       {
         name: 'app',
         image: 'app:latest',
+        internalPort: 80,
         volumes: [
           {
             hostPath: '/arm64-data',

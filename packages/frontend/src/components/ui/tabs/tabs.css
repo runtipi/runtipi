@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/complexity/noImportantStyles: necessary for overriding tabler styles */
 .trigger[data-state="active"] {
   background-color: var(--tblr-card-bg);
   color: var(--tblr-nav-tabs-link-active-color);
