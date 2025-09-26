@@ -115,6 +115,7 @@ export class DockerComposeBuilder {
       if (form.openPort && params.internalPort) {
         service.setPort({
           containerPort: params.internalPort,
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: intended
           hostPort: '${APP_PORT}',
         });
       }

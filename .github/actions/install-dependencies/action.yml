@@ -10,13 +10,13 @@ runs:
       with:
         bun-version: "1.2.22"
 
-    - name: Cache Bun cache
-      uses: actions/cache@v4
-      with:
-        path: ~/.bun/install/cache
-        key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-bun-
+    # - name: Cache Bun cache
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: ~/.bun/install/cache
+    #     key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-bun-
 
     - name: Install dependencies
       shell: bash

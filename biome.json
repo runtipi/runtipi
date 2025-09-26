@@ -7,7 +7,17 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/dist/*", "!**/public/*", "!**/legacy/*", "!**/.internal/*", "!**/metadata.ts", "!**/api-client/**", "!**/swagger.json"]
+    "includes": [
+      "**",
+      "!**/dist/*",
+      "!**/public/*",
+      "!**/legacy/*",
+      "!**/.internal/*",
+      "!**/metadata.ts",
+      "!**/api-client",
+      "!**/swagger.json",
+      "!**/packages/backend/src/core/database/drizzle/meta"
+    ]
   },
   "formatter": {
     "enabled": true,

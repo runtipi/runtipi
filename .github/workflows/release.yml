@@ -37,6 +37,7 @@ jobs:
     secrets: inherit
 
   build-images:
+    timeout-minutes: 15
     needs: [determine-release-type, integration-tests, unit-tests]
     runs-on: ubuntu-latest
     steps:

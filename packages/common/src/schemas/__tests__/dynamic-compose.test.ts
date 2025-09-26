@@ -2,18 +2,21 @@ import { describe, it, expect } from 'vitest';
 
 import { serviceSchema as serviceSchemaZod, dynamicComposeSchema as dynamicComposeSchemaZod } from '../dynamic-compose.js';
 import { dynamicComposeSchemaArk, serviceSchemaArk } from '../dynamic-compose-ark.js';
+import type { ZodAny } from 'zod';
+import { type } from 'arktype';
 
 type ValidationResult<T> = { success: true; data: T } | { success: false };
 
-function safeParseZod<T>(schema: any, data: unknown): ValidationResult<T> {
+function safeParseZod<T>(schema: ZodAny, data: unknown): ValidationResult<T> {
   const result = schema.safeParse(data);
   return result.success ? { success: true, data: result.data } : { success: false };
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: excessive depth
 function safeParseArk<T>(schema: any, data: unknown): ValidationResult<T> {
   const result = schema(data);
 
-  if (result && result[' arkKind'] === 'errors') {
+  if (result instanceof type.errors) {
     return { success: false };
   }
 

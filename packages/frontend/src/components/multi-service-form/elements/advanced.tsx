@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
-import { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
+import type { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
 import type { UseFormRegister, Control, FieldErrors } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { Tooltip } from 'react-tooltip';

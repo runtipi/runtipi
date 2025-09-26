@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { type } from 'arktype';
-import { dynamicComposeSchemaArk, serviceSchemaArk } from '@runtipi/common/schemas';
+import { dynamicComposeSchemaArk, type serviceSchemaArk } from '@runtipi/common/schemas';
 import toast from 'react-hot-toast';
 import { t } from 'i18next';
 

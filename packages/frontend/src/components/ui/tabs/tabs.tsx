@@ -60,6 +60,7 @@ interface TabsTriggerProps {
   value: string;
   className?: string;
   children: React.ReactNode;
+  // biome-ignore lint/suspicious/noConfusingVoidType: false positive
   onClick?: (event?: React.MouseEvent) => boolean | undefined | void;
   disabled?: boolean;
 }
