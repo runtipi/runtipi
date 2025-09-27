@@ -1,31 +1,36 @@
-import path from 'node:path';
-import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { execAsync } from '@/common/helpers/exec-helpers';
-import type { ConfigurationService } from '@/core/config/configuration.service';
-import type { AppStore } from '@/core/database/drizzle/types';
-import type { FilesystemService } from '@/core/filesystem/filesystem.service';
-import type { LoggerService } from '@/core/logger/logger.service';
-import { appInfoSchema, appInfoSchemaArk } from '@runtipi/common/schemas';
-import type { AppUrn } from '@runtipi/common/types';
-import { type } from 'arktype';
+import path from "node:path";
+import { extractAppUrn } from "@/common/helpers/app-helpers";
+import { execAsync } from "@/common/helpers/exec-helpers";
+import type { ConfigurationService } from "@/core/config/configuration.service";
+import type { AppStore } from "@/core/database/drizzle/types";
+import type { FilesystemService } from "@/core/filesystem/filesystem.service";
+import type { LoggerService } from "@/core/logger/logger.service";
+import { appInfoSchema, appInfoSchemaArk } from "@runtipi/common/schemas";
+import type { AppUrn } from "@runtipi/common/types";
+import { type } from "arktype";
 
 export class AppStoreFilesManager {
   constructor(
     private readonly configuration: ConfigurationService,
     private readonly filesystem: FilesystemService,
     private readonly logger: LoggerService,
-    public readonly storeConfig: AppStore,
+    public readonly storeConfig: AppStore
   ) {}
 
   private getInstalledAppsFolder() {
     const { directories } = this.configuration.getConfig();
 
-    return path.join(directories.dataDir, 'apps');
+    return path.join(directories.dataDir, "apps");
   }
 
   private getAppStoreFolder() {
     const { directories } = this.configuration.getConfig();
-    return path.join(directories.dataDir, 'repos', this.storeConfig.slug, 'apps');
+    return path.join(
+      directories.dataDir,
+      "repos",
+      this.storeConfig.slug,
+      "apps"
+    );
   }
 
   public getAppPaths(appUrn: AppUrn) {
@@ -36,7 +41,11 @@ export class AppStoreFilesManager {
     return {
       appDataDir: path.join(directories.appDataDir, appStoreId, appName),
       appRepoDir: path.join(this.getAppStoreFolder(), appName),
-      appInstalledDir: path.join(this.getInstalledAppsFolder(), appStoreId, appName),
+      appInstalledDir: path.join(
+        this.getInstalledAppsFolder(),
+        appStoreId,
+        appName
+      ),
     };
   }
 
@@ -48,10 +57,14 @@ export class AppStoreFilesManager {
     try {
       const { appRepoDir } = this.getAppPaths(appUrn);
 
-      if (await this.filesystem.pathExists(path.join(appRepoDir, 'config.json'))) {
-        const configFile = await this.filesystem.readTextFile(path.join(appRepoDir, 'config.json'));
+      if (
+        await this.filesystem.pathExists(path.join(appRepoDir, "config.json"))
+      ) {
+        const configFile = await this.filesystem.readTextFile(
+          path.join(appRepoDir, "config.json")
+        );
 
-        const config = JSON.parse(configFile ?? '{}');
+        const config = JSON.parse(configFile ?? "{}");
         const parsedConfig = appInfoSchemaArk({ ...config, urn: appUrn });
 
         if (parsedConfig instanceof type.errors) {
@@ -61,12 +74,18 @@ export class AppStoreFilesManager {
         }
 
         if (parsedConfig.available) {
-          const description = (await this.filesystem.readTextFile(path.join(appRepoDir, 'metadata', 'description.md'))) ?? '';
+          const description =
+            (await this.filesystem.readTextFile(
+              path.join(appRepoDir, "metadata", "description.md")
+            )) ?? "";
           return { ...parsedConfig, description };
         }
       }
     } catch (error) {
-      this.logger.error(`Error getting app info from app store for ${appUrn}:`, error);
+      this.logger.error(
+        `Error getting app info from app store for ${appUrn}:`,
+        error
+      );
     }
   }
 
@@ -78,10 +97,16 @@ export class AppStoreFilesManager {
 
     const { appInstalledDir } = this.getAppPaths(appUrn);
 
-    if (await this.filesystem.pathExists(path.join(appInstalledDir, 'config.json'))) {
-      const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
+    if (
+      await this.filesystem.pathExists(
+        path.join(appInstalledDir, "config.json")
+      )
+    ) {
+      const configFile = await this.filesystem.readTextFile(
+        path.join(appInstalledDir, "config.json")
+      );
 
-      const config = JSON.parse(configFile ?? '{}');
+      const config = JSON.parse(configFile ?? "{}");
       const parsedConfig = appInfoSchema.safeParse({ ...config, urn: appUrn });
 
       if (!parsedConfig.success) {
@@ -90,7 +115,10 @@ export class AppStoreFilesManager {
       }
 
       if (parsedConfig.success && parsedConfig.data.available) {
-        const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
+        const description =
+          (await this.filesystem.readTextFile(
+            path.join(appInstalledDir, "metadata", "description.md")
+          )) ?? "";
         return { ...parsedConfig.data, description };
       }
     }
@@ -99,7 +127,7 @@ export class AppStoreFilesManager {
   public async getDockerComposeJson(appUrn: AppUrn) {
     const { appRepoDir } = this.getAppPaths(appUrn);
 
-    const dockerComposePath = path.join(appRepoDir, 'docker-compose.json');
+    const dockerComposePath = path.join(appRepoDir, "docker-compose.json");
 
     let content = null;
     try {
@@ -107,7 +135,10 @@ export class AppStoreFilesManager {
         content = await this.filesystem.readJsonFile(dockerComposePath);
       }
     } catch (error) {
-      this.logger.error(`Error getting docker-compose.json for app ${appUrn} from repo ${this.storeConfig.slug}:`, error);
+      this.logger.error(
+        `Error getting docker-compose.json for app ${appUrn} from repo ${this.storeConfig.slug}:`,
+        error
+      );
     }
 
     return { path: dockerComposePath, content };
@@ -118,16 +149,23 @@ export class AppStoreFilesManager {
    * @param appUrn - The app id
    */
   public async copyAppFromRepoToInstalled(appUrn: AppUrn) {
-    const { appRepoDir, appDataDir, appInstalledDir } = this.getAppPaths(appUrn);
+    const { appRepoDir, appDataDir, appInstalledDir } =
+      this.getAppPaths(appUrn);
 
     if (!(await this.filesystem.pathExists(appRepoDir))) {
       if (await this.filesystem.pathExists(appInstalledDir)) {
-        this.logger.warn(`App ${appUrn} already installed, but not found in repo ${this.storeConfig.slug}. Using installed version.`);
+        this.logger.warn(
+          `App ${appUrn} already installed, but not found in repo ${this.storeConfig.slug}. Using installed version.`
+        );
         return;
       }
 
-      this.logger.warn(`App ${appUrn} not found in repo ${this.storeConfig.slug}`);
-      throw new Error(`App ${appUrn} not found in repo ${this.storeConfig.slug}`);
+      this.logger.warn(
+        `App ${appUrn} not found in repo ${this.storeConfig.slug}`
+      );
+      throw new Error(
+        `App ${appUrn} not found in repo ${this.storeConfig.slug}`
+      );
     }
 
     // delete eventual app folder if exists
@@ -143,7 +181,9 @@ export class AppStoreFilesManager {
     await this.filesystem.createDirectory(appDataDir);
 
     // Copy app folder from repo
-    this.logger.info(`Copying app ${appUrn} from repo ${this.storeConfig.slug}`);
+    this.logger.info(
+      `Copying app ${appUrn} from repo ${this.storeConfig.slug}`
+    );
     await this.filesystem.copyDirectory(appRepoDir, appInstalledDir);
   }
 
@@ -168,7 +208,12 @@ export class AppStoreFilesManager {
       };
     }
 
-    return { latestVersion: 0, latestDockerVersion: '0.0.0', minTipiVersion: null, ...paths };
+    return {
+      latestVersion: 0,
+      latestDockerVersion: "0.0.0",
+      minTipiVersion: null,
+      ...paths,
+    };
   }
 
   /**
@@ -179,14 +224,23 @@ export class AppStoreFilesManager {
     const appsRepoFolder = this.getAppStoreFolder();
 
     if (!(await this.filesystem.pathExists(appsRepoFolder))) {
-      this.logger.error(`Apps repo ${this.storeConfig.slug} not found. Make sure your repo is configured correctly.`);
+      this.logger.error(
+        `Apps repo ${this.storeConfig.slug} not found. Make sure your repo is configured correctly.`
+      );
       return [];
     }
 
     const appsDir = await this.filesystem.listFiles(appsRepoFolder);
-    const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
+    const skippedFiles = [
+      "__tests__",
+      "docker-compose.common.yml",
+      "schema.json",
+      ".DS_Store",
+    ];
 
-    return appsDir.filter((app) => !skippedFiles.includes(app)).map((app) => `${app}:${this.storeConfig.slug}` as AppUrn);
+    return appsDir
+      .filter((app) => !skippedFiles.includes(app))
+      .map((app) => `${app}:${this.storeConfig.slug}` as AppUrn);
   }
 
   /**
@@ -199,8 +253,11 @@ export class AppStoreFilesManager {
     let renderedTemplate = template;
 
     envMap.forEach((value, key) => {
-      const safeKey = key.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-      renderedTemplate = renderedTemplate.replace(new RegExp(`{{${safeKey}}}`, 'g'), value);
+      const safeKey = key.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+      renderedTemplate = renderedTemplate.replace(
+        new RegExp(`{{${safeKey}}}`, "g"),
+        value
+      );
     });
 
     return renderedTemplate;
@@ -210,79 +267,97 @@ export class AppStoreFilesManager {
     const { appInstalledDir, appDataDir } = this.getAppPaths(appUrn);
 
     // return if app does not have a data directory
-    if (!(await this.filesystem.pathExists(path.join(appInstalledDir, 'data')))) {
+    if (
+      !(await this.filesystem.pathExists(path.join(appInstalledDir, "data")))
+    ) {
       return;
     }
 
     // Return if app has already a data directory
-    if (await this.filesystem.pathExists(path.join(appDataDir, 'data'))) {
+    if (await this.filesystem.pathExists(path.join(appDataDir, "data"))) {
       return;
     }
 
     // Create app-data folder
-    await this.filesystem.createDirectory(path.join(appDataDir, 'data'));
+    await this.filesystem.createDirectory(path.join(appDataDir, "data"));
 
-    const dataDir = await this.filesystem.listFiles(path.join(appInstalledDir, 'data'));
+    const dataDir = await this.filesystem.listFiles(
+      path.join(appInstalledDir, "data")
+    );
 
     const processFile = async (file: string) => {
-      if (file.endsWith('.template')) {
-        const template = await this.filesystem.readTextFile(path.join(appInstalledDir, 'data', file));
+      if (file.endsWith(".template")) {
+        const template = await this.filesystem.readTextFile(
+          path.join(appInstalledDir, "data", file)
+        );
         if (template) {
           const renderedTemplate = this.renderTemplate(template, envMap);
 
-          await this.filesystem.writeTextFile(path.join(appDataDir, 'data', file.replace('.template', '')), renderedTemplate);
+          await this.filesystem.writeTextFile(
+            path.join(appDataDir, "data", file.replace(".template", "")),
+            renderedTemplate
+          );
         }
       } else {
-        await this.filesystem.copyFile(path.join(appInstalledDir, 'data', file), path.join(appDataDir, 'data', file));
+        await this.filesystem.copyFile(
+          path.join(appInstalledDir, "data", file),
+          path.join(appDataDir, "data", file)
+        );
       }
     };
 
     const processDir = async (p: string) => {
-      await this.filesystem.createDirectory(path.join(appDataDir, 'data', p));
+      await this.filesystem.createDirectory(path.join(appDataDir, "data", p));
 
-      const files = await this.filesystem.listFiles(path.join(appInstalledDir, 'data', p));
+      const files = await this.filesystem.listFiles(
+        path.join(appInstalledDir, "data", p)
+      );
 
       await Promise.all(
         files.map(async (file) => {
-          const fullPath = path.join(appInstalledDir, 'data', p, file);
+          const fullPath = path.join(appInstalledDir, "data", p, file);
 
           if (await this.filesystem.isDirectory(fullPath)) {
             await processDir(path.join(p, file));
           } else {
             await processFile(path.join(p, file));
           }
-        }),
+        })
       );
     };
 
     await Promise.all(
       dataDir.map(async (file) => {
-        const fullPath = path.join(appInstalledDir, 'data', file);
+        const fullPath = path.join(appInstalledDir, "data", file);
 
         if (await this.filesystem.isDirectory(fullPath)) {
           await processDir(file);
         } else {
           await processFile(file);
         }
-      }),
+      })
     );
 
     // Remove any .gitkeep files from the app-data folder at any level
-    if (await this.filesystem.pathExists(path.join(appDataDir, 'data'))) {
-      await execAsync(`find ${appDataDir}/data -name .gitkeep -delete`).catch(() => {
-        this.logger.error(`Error removing .gitkeep files from ${appDataDir}/data`);
-      });
+    if (await this.filesystem.pathExists(path.join(appDataDir, "data"))) {
+      await execAsync(`find ${appDataDir}/data -name .gitkeep -delete`).catch(
+        () => {
+          this.logger.error(
+            `Error removing .gitkeep files from ${appDataDir}/data`
+          );
+        }
+      );
     }
   }
 
   public async getAppImage(appUrn: AppUrn) {
     const { appInstalledDir, appRepoDir } = this.getAppPaths(appUrn);
-    const { appDir } = this.configuration.get('directories');
+    const { appDir } = this.configuration.get("directories");
 
-    const defaultFilePath = path.join(appInstalledDir, 'metadata', 'logo.jpg');
-    const appRepoFilePath = path.join(appRepoDir, 'metadata', 'logo.jpg');
+    const defaultFilePath = path.join(appInstalledDir, "metadata", "logo.jpg");
+    const appRepoFilePath = path.join(appRepoDir, "metadata", "logo.jpg");
 
-    let filePath = path.join(appDir, 'assets', 'app-not-found.jpg');
+    let filePath = path.join(appDir, "assets", "app-not-found.jpg");
 
     if (await this.filesystem.pathExists(defaultFilePath)) {
       filePath = defaultFilePath;
@@ -292,5 +367,25 @@ export class AppStoreFilesManager {
 
     const file = await this.filesystem.readBinaryFile(filePath);
     return file;
+  }
+
+  public async getConfigJson(appUrn: AppUrn) {
+    const { appRepoDir } = this.getAppPaths(appUrn);
+
+    const configPath = path.join(appRepoDir, "config.json");
+
+    let content = null;
+    try {
+      if (await this.filesystem.pathExists(configPath)) {
+        content = await this.filesystem.readJsonFile(configPath);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error getting config.json for app ${appUrn} from repo ${this.storeConfig.slug}:`,
+        error
+      );
+    }
+
+    return { path: configPath, content };
   }
 }

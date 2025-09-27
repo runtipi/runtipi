@@ -560,9 +560,9 @@
         ]
       }
     },
-    "/api/apps/{urn}/update-diff": {
+    "/api/apps/{urn}/compose-diff": {
       "get": {
-        "operationId": "getAppUpdateDiff",
+        "operationId": "getAppComposeDiff",
         "parameters": [
           {
             "name": "urn",
@@ -579,7 +579,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetUpdateDiffDto"
+                  "$ref": "#/components/schemas/GetComposeDiffDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
+    "/api/apps/{urn}/config-diff": {
+      "get": {
+        "operationId": "getAppConfigDiff",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetConfigDiffDto"
                 }
               }
             }
@@ -3711,7 +3741,36 @@
           "metadata"
         ]
       },
-      "GetUpdateDiffDto": {
+      "GetComposeDiffDto": {
+        "type": "object",
+        "properties": {
+          "current": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "new": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "current",
+          "new"
+        ]
+      },
+      "GetConfigDiffDto": {
         "type": "object",
         "properties": {
           "current": {

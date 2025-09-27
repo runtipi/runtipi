@@ -1,18 +1,21 @@
-import type { Architecture } from '@/common/constants';
-import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { notEmpty, pLimit } from '@/common/helpers/file-helpers';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
-import { Injectable } from '@nestjs/common';
-import type { AppUrn } from '@runtipi/common/types';
-import MiniSearch from 'minisearch';
-import { AppStoreFilesManager } from '../app-stores/app-store-files-manager';
-import { AppStoreService } from '../app-stores/app-store.service';
+import type { Architecture } from "@/common/constants";
+import { extractAppUrn } from "@/common/helpers/app-helpers";
+import { notEmpty, pLimit } from "@/common/helpers/file-helpers";
+import { ConfigurationService } from "@/core/config/configuration.service";
+import { FilesystemService } from "@/core/filesystem/filesystem.service";
+import { LoggerService } from "@/core/logger/logger.service";
+import { Injectable } from "@nestjs/common";
+import type { AppUrn } from "@runtipi/common/types";
+import MiniSearch from "minisearch";
+import { AppStoreFilesManager } from "../app-stores/app-store-files-manager";
+import { AppStoreService } from "../app-stores/app-store.service";
 
-type AppList = Awaited<ReturnType<InstanceType<typeof MarketplaceService>['getAllAppFromStores']>>;
+type AppList = Awaited<
+  ReturnType<InstanceType<typeof MarketplaceService>["getAllAppFromStores"]>
+>;
 
-const sortApps = (a: AppList[number], b: AppList[number]) => a.urn.localeCompare(b.urn);
+const sortApps = (a: AppList[number], b: AppList[number]) =>
+  a.urn.localeCompare(b.urn);
 const filterApp =
   (architecture: Architecture) =>
   (app: AppList[number]): boolean => {
@@ -39,7 +42,7 @@ export class MarketplaceService {
     private readonly configuration: ConfigurationService,
     private readonly filesystem: FilesystemService,
     private readonly logger: LoggerService,
-    private readonly appStoreService: AppStoreService,
+    private readonly appStoreService: AppStoreService
   ) {}
 
   async initialize() {
@@ -48,14 +51,22 @@ export class MarketplaceService {
     const stores = await this.appStoreService.getAllAppStores();
 
     for (const config of stores) {
-      const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config);
+      const store = new AppStoreFilesManager(
+        this.configuration,
+        this.filesystem,
+        this.logger,
+        config
+      );
       this.stores.set(config.slug, store);
     }
 
     await this.appStoreService.pullRepositories();
     this.invalidateCache();
 
-    this.logger.debug('Marketplace service initialized with stores', Array.from(this.stores.keys()).join(', '));
+    this.logger.debug(
+      "Marketplace service initialized with stores",
+      Array.from(this.stores.keys()).join(", ")
+    );
   }
 
   private getStoreFromUrn(appUrn: AppUrn) {
@@ -106,7 +117,7 @@ export class MarketplaceService {
           const { store } = this.getStoreFromUrn(appUrn);
           return store.getAppInfoFromAppStore(appUrn);
         });
-      }),
+      })
     );
 
     return apps.filter(notEmpty);
@@ -137,7 +148,10 @@ export class MarketplaceService {
    * @returns All available apps
    */
   public async getAvailableApps(): Promise<AppList> {
-    if (this.cacheLastUpdated && Date.now() - this.cacheLastUpdated > this.cacheTimeout) {
+    if (
+      this.cacheLastUpdated &&
+      Date.now() - this.cacheLastUpdated > this.cacheTimeout
+    ) {
       this.invalidateCache();
     }
 
@@ -147,9 +161,9 @@ export class MarketplaceService {
       this.appsAvailable = this.filterApps(apps);
 
       this.miniSearch = new MiniSearch<(typeof this.appsAvailable)[number]>({
-        fields: ['name', 'short_desc', 'categories'],
-        storeFields: ['urn'],
-        idField: 'urn',
+        fields: ["name", "short_desc", "categories"],
+        storeFields: ["urn"],
+        idField: "urn",
         searchOptions: {
           boost: { name: 2 },
           fuzzy: 0.2,
@@ -169,7 +183,13 @@ export class MarketplaceService {
    * @param params - The search parameters
    * @returns The search results
    */
-  public async searchApps(params: { search?: string | null; category?: string | null; pageSize?: number; cursor?: string | null; storeId?: string }) {
+  public async searchApps(params: {
+    search?: string | null;
+    category?: string | null;
+    pageSize?: number;
+    cursor?: string | null;
+    storeId?: string;
+  }) {
     const { search, category, pageSize, cursor, storeId } = params;
 
     let filteredApps = await this.getAvailableApps();
@@ -182,20 +202,30 @@ export class MarketplaceService {
     }
 
     if (category) {
-      filteredApps = filteredApps.filter((app) => app.categories.some((c) => c === category));
+      filteredApps = filteredApps.filter((app) =>
+        app.categories.some((c) => c === category)
+      );
     }
 
     if (search && this.miniSearch) {
       const result = this.miniSearch.search(search);
       const searchIds = result.map((app) => app.id);
-      filteredApps = filteredApps.filter((app) => searchIds.includes(app.urn)).sort((a, b) => searchIds.indexOf(a.urn) - searchIds.indexOf(b.urn));
+      filteredApps = filteredApps
+        .filter((app) => searchIds.includes(app.urn))
+        .sort((a, b) => searchIds.indexOf(a.urn) - searchIds.indexOf(b.urn));
     }
 
-    const start = cursor ? filteredApps.findIndex((app) => app.urn === cursor) : 0;
+    const start = cursor
+      ? filteredApps.findIndex((app) => app.urn === cursor)
+      : 0;
     const end = start + (pageSize ?? 24);
     const data = filteredApps.slice(start, end);
 
-    return { data, total: filteredApps.length, nextCursor: filteredApps[end]?.urn ?? null };
+    return {
+      data,
+      total: filteredApps.length,
+      nextCursor: filteredApps[end]?.urn ?? null,
+    };
   }
 
   /**
@@ -226,5 +256,10 @@ export class MarketplaceService {
   public async getDockerComposeJson(appUrn: AppUrn) {
     const { store } = this.getStoreFromUrn(appUrn);
     return store.getDockerComposeJson(appUrn);
+  }
+
+  public async getConfigJson(appUrn: AppUrn) {
+    const { store } = this.getStoreFromUrn(appUrn);
+    return store.getConfigJson(appUrn);
   }
 }

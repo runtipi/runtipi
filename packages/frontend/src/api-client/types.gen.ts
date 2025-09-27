@@ -420,7 +420,12 @@ export type GetAppDto = {
     } | null;
 };
 
-export type GetUpdateDiffDto = {
+export type GetComposeDiffDto = {
+    current: string | null;
+    new: string | null;
+};
+
+export type GetConfigDiffDto = {
     current: string | null;
     new: string | null;
 };
@@ -864,20 +869,35 @@ export type GetAppResponses = {
 
 export type GetAppResponse = GetAppResponses[keyof GetAppResponses];
 
-export type GetAppUpdateDiffData = {
+export type GetAppComposeDiffData = {
     body?: never;
     path: {
         urn: string;
     };
     query?: never;
-    url: '/api/apps/{urn}/update-diff';
+    url: '/api/apps/{urn}/compose-diff';
 };
 
-export type GetAppUpdateDiffResponses = {
-    default: GetUpdateDiffDto;
+export type GetAppComposeDiffResponses = {
+    default: GetComposeDiffDto;
 };
 
-export type GetAppUpdateDiffResponse = GetAppUpdateDiffResponses[keyof GetAppUpdateDiffResponses];
+export type GetAppComposeDiffResponse = GetAppComposeDiffResponses[keyof GetAppComposeDiffResponses];
+
+export type GetAppConfigDiffData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/config-diff';
+};
+
+export type GetAppConfigDiffResponses = {
+    default: GetConfigDiffDto;
+};
+
+export type GetAppConfigDiffResponse = GetAppConfigDiffResponses[keyof GetAppConfigDiffResponses];
 
 export type SearchAppsData = {
     body?: never;
