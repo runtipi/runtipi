@@ -1,14 +1,14 @@
-import { TranslatableError } from "@/common/error/translatable-error";
-import { createAppUrn } from "@/common/helpers/app-helpers";
-import { pLimit } from "@/common/helpers/file-helpers";
-import { LoggerService } from "@/core/logger/logger.service";
-import { Injectable } from "@nestjs/common";
-import type { AppUrn } from "@runtipi/common/types";
-import { MarketplaceService } from "../marketplace/marketplace.service";
-import { AppFilesManager } from "./app-files-manager";
-import { AppsRepository } from "./apps.repository";
+import { TranslatableError } from '@/common/error/translatable-error';
+import { createAppUrn } from '@/common/helpers/app-helpers';
+import { pLimit } from '@/common/helpers/file-helpers';
+import { LoggerService } from '@/core/logger/logger.service';
+import { Injectable } from '@nestjs/common';
+import type { AppUrn } from '@runtipi/common/types';
+import { MarketplaceService } from '../marketplace/marketplace.service';
+import { AppFilesManager } from './app-files-manager';
+import { AppsRepository } from './apps.repository';
 
-type AppList = Awaited<ReturnType<AppsRepository["getApps"]>>;
+type AppList = Awaited<ReturnType<AppsRepository['getApps']>>;
 
 @Injectable()
 export class AppsService {
@@ -16,7 +16,7 @@ export class AppsService {
     private readonly appsRepository: AppsRepository,
     private readonly appFilesManager: AppFilesManager,
     private readonly logger: LoggerService,
-    private readonly marketplaceService: MarketplaceService
+    private readonly marketplaceService: MarketplaceService,
   ) {}
 
   private async populateAppInfo(apps: AppList) {
@@ -26,29 +26,25 @@ export class AppsService {
       apps.map(async (app) => {
         return limit(async () => {
           const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-          const appInfo =
-            await this.appFilesManager.getInstalledAppInfo(appUrn);
+          const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
-          const updateInfo = await this.marketplaceService
-            .getAppUpdateInfo(appUrn)
-            .catch((_) => {
-              return { latestVersion: 0, latestDockerVersion: "0.0.0" };
-            });
+          const updateInfo = await this.marketplaceService.getAppUpdateInfo(appUrn).catch((_) => {
+            return { latestVersion: 0, latestDockerVersion: '0.0.0' };
+          });
 
           if (!appInfo) {
             this.logger.debug(`App ${app.id} not found in app files`);
             return null;
           }
 
-          const localSubdomain =
-            app.localSubdomain || appUrn.split(":").join("-");
+          const localSubdomain = app.localSubdomain || appUrn.split(':').join('-');
           return {
             app,
             info: appInfo,
             metadata: { ...updateInfo, localSubdomain },
           };
         });
-      })
+      }),
     );
 
     return populatedApps.filter((app) => app !== null);
@@ -64,7 +60,7 @@ export class AppsService {
   }
 
   public async getGuestDashboardApps() {
-    this.logger.debug("Getting guest dashboard apps");
+    this.logger.debug('Getting guest dashboard apps');
     const apps = await this.appsRepository.getGuestDashboardApps();
     this.logger.debug(`Got ${apps.length} guest dashboard apps`);
 
@@ -73,29 +69,25 @@ export class AppsService {
 
   public async getApp(appUrn: AppUrn) {
     const app = await this.appsRepository.getAppByUrn(appUrn);
-    const updateInfo = await this.marketplaceService
-      .getAppUpdateInfo(appUrn)
-      .catch((_) => {
-        return { latestVersion: 0, latestDockerVersion: "0.0.0" };
-      });
+    const updateInfo = await this.marketplaceService.getAppUpdateInfo(appUrn).catch((_) => {
+      return { latestVersion: 0, latestDockerVersion: '0.0.0' };
+    });
 
     let info = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
     const userCompose = await this.appFilesManager.getUserComposeFile(appUrn);
     const userEnv = await this.appFilesManager.getUserEnv(appUrn);
-    const hasCustomConfig =
-      Boolean(userCompose.content) || Boolean(userEnv.content);
+    const hasCustomConfig = Boolean(userCompose.content) || Boolean(userEnv.content);
 
     if (!info) {
-      info =
-        (await this.marketplaceService.getAppInfoFromAppStore(appUrn)) ?? null;
+      info = (await this.marketplaceService.getAppInfoFromAppStore(appUrn)) ?? null;
     }
 
     if (!info) {
-      throw new TranslatableError("APP_ERROR_APP_NOT_FOUND", {}, 404);
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', {}, 404);
     }
 
-    const localSubdomain = app?.localSubdomain || appUrn.split(":").join("-");
+    const localSubdomain = app?.localSubdomain || appUrn.split(':').join('-');
 
     const metadata = {
       hasCustomConfig,
@@ -108,7 +100,7 @@ export class AppsService {
 
   public async getRandomPort(tries = 3): Promise<number> {
     if (tries <= 0) {
-      throw new Error("Failed to get random port after 3 tries");
+      throw new Error('Failed to get random port after 3 tries');
     }
 
     const port = Math.floor(Math.random() * (65535 - 1025 + 1)) + 1025;
@@ -124,7 +116,7 @@ export class AppsService {
   public async getAppComposeDiff(appUrn: AppUrn) {
     const app = await this.appsRepository.getAppByUrn(appUrn);
     if (!app) {
-      throw new TranslatableError("APP_ERROR_APP_NOT_FOUND", {}, 404);
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', {}, 404);
     }
 
     const [currentCompose, storeCompose] = await Promise.all([
@@ -133,19 +125,15 @@ export class AppsService {
     ]);
 
     return {
-      current: currentCompose.content
-        ? JSON.stringify(currentCompose.content, null, 2)
-        : null,
-      new: storeCompose.content
-        ? JSON.stringify(storeCompose.content, null, 2)
-        : null,
+      current: currentCompose.content ? JSON.stringify(currentCompose.content, null, 2) : null,
+      new: storeCompose.content ? JSON.stringify(storeCompose.content, null, 2) : null,
     };
   }
 
   public async getAppConfigDiff(appUrn: AppUrn) {
     const app = await this.appsRepository.getAppByUrn(appUrn);
     if (!app) {
-      throw new TranslatableError("APP_ERROR_APP_NOT_FOUND", {}, 404);
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', {}, 404);
     }
 
     const [currentConfig, storeConfig] = await Promise.all([
@@ -154,12 +142,8 @@ export class AppsService {
     ]);
 
     return {
-      current: currentConfig.content
-        ? JSON.stringify(currentConfig.content, null, 2)
-        : null,
-      new: storeConfig.content
-        ? JSON.stringify(storeConfig.content, null, 2)
-        : null,
+      current: currentConfig.content ? JSON.stringify(currentConfig.content, null, 2) : null,
+      new: storeConfig.content ? JSON.stringify(storeConfig.content, null, 2) : null,
     };
   }
 }

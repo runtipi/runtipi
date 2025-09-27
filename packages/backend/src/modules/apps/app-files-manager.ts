@@ -1,26 +1,26 @@
-import path from "node:path";
-import { extractAppUrn } from "@/common/helpers/app-helpers";
-import { execAsync } from "@/common/helpers/exec-helpers";
-import { ConfigurationService } from "@/core/config/configuration.service";
-import { FilesystemService } from "@/core/filesystem/filesystem.service";
-import { LoggerService } from "@/core/logger/logger.service";
-import { Injectable } from "@nestjs/common";
-import { appInfoSchemaArk } from "@runtipi/common/schemas";
-import type { AppUrn } from "@runtipi/common/types";
-import { type } from "arktype";
+import path from 'node:path';
+import { extractAppUrn } from '@/common/helpers/app-helpers';
+import { execAsync } from '@/common/helpers/exec-helpers';
+import { ConfigurationService } from '@/core/config/configuration.service';
+import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import { LoggerService } from '@/core/logger/logger.service';
+import { Injectable } from '@nestjs/common';
+import { appInfoSchemaArk } from '@runtipi/common/schemas';
+import type { AppUrn } from '@runtipi/common/types';
+import { type } from 'arktype';
 
 @Injectable()
 export class AppFilesManager {
   constructor(
     private readonly configuration: ConfigurationService,
     private readonly filesystem: FilesystemService,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
   ) {}
 
   private getInstalledAppsFolder() {
     const { directories } = this.configuration.getConfig();
 
-    return path.join(directories.dataDir, "apps");
+    return path.join(directories.dataDir, 'apps');
   }
 
   public getAppPaths(appUrn: AppUrn) {
@@ -30,11 +30,7 @@ export class AppFilesManager {
 
     return {
       appDataDir: path.join(directories.appDataDir, appStoreId, appName),
-      appInstalledDir: path.join(
-        this.getInstalledAppsFolder(),
-        appStoreId,
-        appName
-      ),
+      appInstalledDir: path.join(this.getInstalledAppsFolder(), appStoreId, appName),
     };
   }
 
@@ -46,16 +42,10 @@ export class AppFilesManager {
     try {
       const { appInstalledDir } = this.getAppPaths(appUrn);
 
-      if (
-        await this.filesystem.pathExists(
-          path.join(appInstalledDir, "config.json")
-        )
-      ) {
-        const configFile = await this.filesystem.readTextFile(
-          path.join(appInstalledDir, "config.json")
-        );
+      if (await this.filesystem.pathExists(path.join(appInstalledDir, 'config.json'))) {
+        const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
 
-        const config = JSON.parse(configFile ?? "{}");
+        const config = JSON.parse(configFile ?? '{}');
         const parsedConfig = appInfoSchemaArk({ ...config, urn: appUrn });
 
         if (parsedConfig instanceof type.errors) {
@@ -65,10 +55,7 @@ export class AppFilesManager {
         }
 
         if (parsedConfig.available) {
-          const description =
-            (await this.filesystem.readTextFile(
-              path.join(appInstalledDir, "metadata", "description.md")
-            )) ?? "";
+          const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
 
           return { ...parsedConfig, description };
         }
@@ -87,7 +74,7 @@ export class AppFilesManager {
    */
   public async getDockerComposeYaml(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    const dockerComposePath = path.join(appInstalledDir, "docker-compose.yml");
+    const dockerComposePath = path.join(appInstalledDir, 'docker-compose.yml');
 
     let content = null;
     try {
@@ -95,10 +82,7 @@ export class AppFilesManager {
         content = await this.filesystem.readTextFile(dockerComposePath);
       }
     } catch (error) {
-      this.logger.error(
-        `Error getting docker-compose.yml for installed app ${appUrn}:`,
-        error
-      );
+      this.logger.error(`Error getting docker-compose.yml for installed app ${appUrn}:`, error);
     }
 
     return { path: dockerComposePath, content };
@@ -111,7 +95,7 @@ export class AppFilesManager {
    */
   public async getDockerComposeJson(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    const dockerComposePath = path.join(appInstalledDir, "docker-compose.json");
+    const dockerComposePath = path.join(appInstalledDir, 'docker-compose.json');
 
     let content = null;
     try {
@@ -119,10 +103,7 @@ export class AppFilesManager {
         content = await this.filesystem.readJsonFile(dockerComposePath);
       }
     } catch (error) {
-      this.logger.error(
-        `Error getting docker-compose.json for installed app ${appUrn}:`,
-        error
-      );
+      this.logger.error(`Error getting docker-compose.json for installed app ${appUrn}:`, error);
     }
 
     return { path: dockerComposePath, content };
@@ -135,7 +116,7 @@ export class AppFilesManager {
    */
   public async writeDockerComposeYml(appUrn: AppUrn, composeFile: string) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    const dockerComposePath = path.join(appInstalledDir, "docker-compose.yml");
+    const dockerComposePath = path.join(appInstalledDir, 'docker-compose.yml');
 
     await this.filesystem.writeTextFile(dockerComposePath, composeFile);
   }
@@ -170,11 +151,11 @@ export class AppFilesManager {
   public async getAppEnv(appUrn: AppUrn) {
     const { appDataDir } = this.getAppPaths(appUrn);
 
-    const envPath = path.join(appDataDir, "app.env");
+    const envPath = path.join(appDataDir, 'app.env');
 
-    let env = "";
+    let env = '';
     if (await this.filesystem.pathExists(envPath)) {
-      env = (await this.filesystem.readTextFile(envPath)) ?? "";
+      env = (await this.filesystem.readTextFile(envPath)) ?? '';
     }
 
     return { path: envPath, content: env };
@@ -183,7 +164,7 @@ export class AppFilesManager {
   public async writeAppEnv(appUrn: AppUrn, env: string) {
     const { appDataDir } = this.getAppPaths(appUrn);
 
-    const envPath = path.join(appDataDir, "app.env");
+    const envPath = path.join(appDataDir, 'app.env');
 
     await this.filesystem.writeTextFile(envPath, env);
   }
@@ -197,13 +178,7 @@ export class AppFilesManager {
 
     const { appStoreId, appName } = extractAppUrn(appUrn);
 
-    const userEnvFile = path.join(
-      directories.dataDir,
-      "user-config",
-      appStoreId,
-      appName,
-      "app.env"
-    );
+    const userEnvFile = path.join(directories.dataDir, 'user-config', appStoreId, appName, 'app.env');
     let content = null;
 
     if (await this.filesystem.pathExists(userEnvFile)) {
@@ -222,13 +197,7 @@ export class AppFilesManager {
 
     const { appStoreId, appName } = extractAppUrn(appUrn);
 
-    const userComposeFile = path.join(
-      directories.dataDir,
-      "user-config",
-      appStoreId,
-      appName,
-      "docker-compose.yml"
-    );
+    const userComposeFile = path.join(directories.dataDir, 'user-config', appStoreId, appName, 'docker-compose.yml');
     let content = null;
 
     if (await this.filesystem.pathExists(userComposeFile)) {
@@ -245,7 +214,7 @@ export class AppFilesManager {
    */
   public async getConfigJson(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    const configPath = path.join(appInstalledDir, "config.json");
+    const configPath = path.join(appInstalledDir, 'config.json');
 
     let content = null;
     try {
@@ -253,10 +222,7 @@ export class AppFilesManager {
         content = await this.filesystem.readJsonFile(configPath);
       }
     } catch (error) {
-      this.logger.error(
-        `Error getting config.json for installed app ${appUrn}:`,
-        error
-      );
+      this.logger.error(`Error getting config.json for installed app ${appUrn}:`, error);
     }
 
     return { path: configPath, content };
