@@ -1,43 +1,26 @@
-import { updateAppMutation } from "@/api-client/@tanstack/react-query.gen";
-import { Button } from "@/components/ui/Button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/Dialog";
-import { Switch } from "@/components/ui/Switch";
-import type { AppInfo } from "@/types/app.types";
-import type { TranslatableError } from "@/types/error.types";
-import { useMutation } from "@tanstack/react-query";
-import type React from "react";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { Trans, useTranslation } from "react-i18next";
-import CodeMirror from "@uiw/react-codemirror";
-import { copilot } from "@uiw/codemirror-theme-copilot";
-import { unifiedMergeView } from "@codemirror/merge";
-import {
-  StepContent,
-  Stepper,
-  StepTrigger,
-  StepTriggerList,
-} from "@/components/ui/Stepper/Stepper";
-import type { Sizes } from "@/components/ui/Dialog/Dialog";
-import { motion } from "framer-motion";
-import {
-  Alert,
-  AlertDescription,
-  AlertHeading,
-  AlertIcon,
-} from "@/components/ui/Alert/Alert";
-import { IconInfoCircle } from "@tabler/icons-react";
+import { updateAppMutation } from '@/api-client/@tanstack/react-query.gen';
+import { Button } from '@/components/ui/Button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
+import { Switch } from '@/components/ui/Switch';
+import type { AppInfo } from '@/types/app.types';
+import type { TranslatableError } from '@/types/error.types';
+import { useMutation } from '@tanstack/react-query';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Trans, useTranslation } from 'react-i18next';
+import CodeMirror from '@uiw/react-codemirror';
+import { copilot } from '@uiw/codemirror-theme-copilot';
+import { unifiedMergeView } from '@codemirror/merge';
+import { StepContent, Stepper, StepTrigger, StepTriggerList } from '@/components/ui/Stepper/Stepper';
+import type { Sizes } from '@/components/ui/Dialog/Dialog';
+import { motion } from 'framer-motion';
+import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 interface IProps {
   newVersion: string;
-  info: Pick<AppInfo, "id" | "name" | "urn">;
+  info: Pick<AppInfo, 'id' | 'name' | 'urn'>;
   isOpen: boolean;
   onClose: () => void;
   newConfig: string;
@@ -47,22 +30,13 @@ interface IProps {
 }
 
 const SIZE_MAP: Record<number, Sizes> = {
-  0: "md",
-  1: "lg",
-  2: "lg",
-  3: "md",
+  0: 'md',
+  1: 'lg',
+  2: 'lg',
+  3: 'md',
 };
 
-export const UpdateDialog: React.FC<IProps> = ({
-  info,
-  newVersion,
-  isOpen,
-  newConfig,
-  currentConfig,
-  newCompose,
-  currentCompose,
-  onClose,
-}) => {
+export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, newConfig, currentConfig, newCompose, currentCompose, onClose }) => {
   const { t } = useTranslation();
   const [backupApp, setBackupApp] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
@@ -88,38 +62,16 @@ export const UpdateDialog: React.FC<IProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent size={SIZE_MAP[currentStep]}>
         <DialogHeader>
-          <DialogTitle>
-            {t("APP_UPDATE_FORM_TITLE", { name: info.name })}
-          </DialogTitle>
+          <DialogTitle>{t('APP_UPDATE_FORM_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            key={currentStep}
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} key={currentStep}>
             <Stepper currentStep={currentStep}>
               <StepTriggerList>
-                <StepTrigger
-                  step={0}
-                  title={t("APP_UPDATE_INFORMATION_TITLE")}
-                  onStepChange={setCurrentStep}
-                />
-                <StepTrigger
-                  step={1}
-                  title={t("APP_UPDATE_CONFIGURATION_TITLE")}
-                  onStepChange={setCurrentStep}
-                />
-                <StepTrigger
-                  step={2}
-                  title={t("APP_UPDATE_COMPOSE_TITLE")}
-                  onStepChange={setCurrentStep}
-                />
-                <StepTrigger
-                  step={3}
-                  title={t("APP_UPDATE_BACKUP_TITLE")}
-                  onStepChange={setCurrentStep}
-                />
+                <StepTrigger step={0} title={t('APP_UPDATE_INFORMATION_TITLE')} onStepChange={setCurrentStep} />
+                <StepTrigger step={1} title={t('APP_UPDATE_CONFIGURATION_TITLE')} onStepChange={setCurrentStep} />
+                <StepTrigger step={2} title={t('APP_UPDATE_COMPOSE_TITLE')} onStepChange={setCurrentStep} />
+                <StepTrigger step={3} title={t('APP_UPDATE_BACKUP_TITLE')} onStepChange={setCurrentStep} />
               </StepTriggerList>
               <div className="mt-2">
                 <StepContent step={0}>
@@ -136,9 +88,7 @@ export const UpdateDialog: React.FC<IProps> = ({
                   </div>
                 </StepContent>
                 <StepContent step={1}>
-                  <div className="text-muted">
-                    {t("APP_UPDATE_CONFIGURATION_SUBTITLE")}
-                  </div>
+                  <div className="text-muted">{t('APP_UPDATE_CONFIGURATION_SUBTITLE')}</div>
                   <CodeMirror
                     value={newConfig}
                     readOnly={true}
@@ -154,9 +104,7 @@ export const UpdateDialog: React.FC<IProps> = ({
                   />
                 </StepContent>
                 <StepContent step={2}>
-                  <div className="text-muted">
-                    {t("APP_UPDATE_COMPOSE_SUBTITLE")}
-                  </div>
+                  <div className="text-muted">{t('APP_UPDATE_COMPOSE_SUBTITLE')}</div>
                   <CodeMirror
                     value={newCompose}
                     readOnly={true}
@@ -175,25 +123,14 @@ export const UpdateDialog: React.FC<IProps> = ({
                       <IconInfoCircle stroke={2} />
                     </AlertIcon>
                     <div>
-                      <AlertHeading>
-                        {t("APP_UPDATE_COMPOSE_ALERT_TITLE")}
-                      </AlertHeading>
-                      <AlertDescription>
-                        {t("APP_UPDATE_COMPOSE_ALERT_SUBTITLE")}
-                      </AlertDescription>
+                      <AlertHeading>{t('APP_UPDATE_COMPOSE_ALERT_TITLE')}</AlertHeading>
+                      <AlertDescription>{t('APP_UPDATE_COMPOSE_ALERT_SUBTITLE')}</AlertDescription>
                     </div>
                   </Alert>
                 </StepContent>
                 <StepContent step={3}>
-                  <div className="text-muted">
-                    {t("APP_UPDATE_BACKUP_SUBTITLE")}
-                  </div>
-                  <Switch
-                    checked={backupApp}
-                    onCheckedChange={setBackupApp}
-                    label={t("APP_UPDATE_FORM_BACKUP")}
-                    className="mt-3"
-                  />
+                  <div className="text-muted">{t('APP_UPDATE_BACKUP_SUBTITLE')}</div>
+                  <Switch checked={backupApp} onCheckedChange={setBackupApp} label={t('APP_UPDATE_FORM_BACKUP')} className="mt-3" />
                 </StepContent>
               </div>
             </Stepper>
@@ -201,19 +138,13 @@ export const UpdateDialog: React.FC<IProps> = ({
         </DialogDescription>
         <DialogFooter>
           {currentStep > 0 && (
-            <Button
-              onClick={() => setCurrentStep((s) => s - 1)}
-              className="me-2"
-            >
-              {t("APP_UPDATE_FORM_BACK")}
+            <Button onClick={() => setCurrentStep((s) => s - 1)} className="me-2">
+              {t('APP_UPDATE_FORM_BACK')}
             </Button>
           )}
           {currentStep < 3 && (
-            <Button
-              variant="outline"
-              onClick={() => setCurrentStep((s) => s + 1)}
-            >
-              {t("APP_UPDATE_FORM_NEXT")}
+            <Button variant="outline" onClick={() => setCurrentStep((s) => s + 1)}>
+              {t('APP_UPDATE_FORM_NEXT')}
             </Button>
           )}
           {currentStep === 3 && (
@@ -226,7 +157,7 @@ export const UpdateDialog: React.FC<IProps> = ({
               }
               intent="success"
             >
-              {t("APP_UPDATE_FORM_SUBMIT")}
+              {t('APP_UPDATE_FORM_SUBMIT')}
             </Button>
           )}
         </DialogFooter>
