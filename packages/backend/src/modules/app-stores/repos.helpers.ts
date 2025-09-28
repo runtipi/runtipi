@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -71,7 +71,7 @@ export class ReposHelpers {
     }
 
     await fs.promises.chmod(dirPath, 0o755);
-    execSync(`git config --global --add safe.directory ${dirPath}`, {
+    execFileSync('git', ['config', '--global', '--add', 'safe.directory', dirPath], {
       stdio: 'ignore',
     });
   }
