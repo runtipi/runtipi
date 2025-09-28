@@ -10,30 +10,40 @@ import {
   IconRotateClockwise,
   IconSettings,
   IconTrash,
-} from '@tabler/icons-react';
-import type React from 'react';
-import { createElement } from 'react';
-import { Button, type ButtonProps } from '@/components/ui/Button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
-import { useDisclosure } from '@/lib/hooks/use-disclosure';
-import toast from 'react-hot-toast';
-import { useTranslation } from 'react-i18next';
-import './app-actions.css';
-import { getAppComposeDiffOptions, getAppConfigDiffOptions, startAppMutation } from '@/api-client/@tanstack/react-query.gen';
-import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
-import type { TranslatableError } from '@/types/error.types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import clsx from 'clsx';
-import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
-import { ResetDialog } from '../../components/dialogs/reset-dialog/reset-dialog';
-import { RestartDialog } from '../../components/dialogs/restart-dialog/restart-dialog';
-import { StopDialog } from '../../components/dialogs/stop-dialog/stop-dialog';
-import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/uninstall-dialog';
-import { UpdateDialog } from '../../components/dialogs/update-dialog/update-dialog';
-import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
-import { useAppStatus } from '../../helpers/use-app-status';
-import { Tooltip } from 'react-tooltip';
-import { DropdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
+} from "@tabler/icons-react";
+import type React from "react";
+import { createElement } from "react";
+import { Button, type ButtonProps } from "@/components/ui/Button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
+import { useDisclosure } from "@/lib/hooks/use-disclosure";
+import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import "./app-actions.css";
+import {
+  getAppComposeDiffOptions,
+  getAppConfigDiffOptions,
+  startAppMutation,
+} from "@/api-client/@tanstack/react-query.gen";
+import type { AppDetails, AppInfo, AppMetadata } from "@/types/app.types";
+import type { TranslatableError } from "@/types/error.types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import clsx from "clsx";
+import { InstallDialog } from "../../components/dialogs/install-dialog/install-dialog";
+import { ResetDialog } from "../../components/dialogs/reset-dialog/reset-dialog";
+import { RestartDialog } from "../../components/dialogs/restart-dialog/restart-dialog";
+import { StopDialog } from "../../components/dialogs/stop-dialog/stop-dialog";
+import { UninstallDialog } from "../../components/dialogs/uninstall-dialog/uninstall-dialog";
+import { UpdateDialog } from "../../components/dialogs/update-dialog/update-dialog";
+import { UpdateSettingsDialog } from "../../components/dialogs/update-settings-dialog/update-settings-dialog";
+import { useAppStatus } from "../../helpers/use-app-status";
+import { Tooltip } from "react-tooltip";
+import { DropdownMenuSeparator } from "@/components/ui/DropdownMenu/DropdownMenu";
 
 interface IProps {
   app?: AppDetails | null;
@@ -50,19 +60,30 @@ interface BtnProps extends ButtonProps {
 const ActionButton: React.FC<BtnProps> = (props) => {
   const { IconComponent, loading, title, className, ...rest } = props;
 
-  const testId = loading ? 'action-button-loading' : undefined;
+  const testId = loading ? "action-button-loading" : undefined;
 
   return (
-    <Button data-testid={testId} loading={loading} {...rest} className={clsx('action-button', className)}>
+    <Button
+      data-testid={testId}
+      loading={loading}
+      {...rest}
+      className={clsx("action-button", className)}
+    >
       {title}
       {IconComponent && <IconComponent className="ms-1" size={14} />}
     </Button>
   );
 };
 
-type OpenType = 'local' | 'domain' | 'local_domain';
+type OpenType = "local" | "domain" | "local_domain";
 
-export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps) => {
+export const AppActions = ({
+  app,
+  info,
+  localDomain,
+  metadata,
+  sslPort,
+}: IProps) => {
   const installDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const restartDisclosure = useDisclosure();
@@ -74,10 +95,12 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const { t } = useTranslation();
   const { setOptimisticStatus } = useAppStatus();
 
-  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-  const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
+  const hostname =
+    typeof window !== "undefined" ? window.location.hostname : "";
+  const updateAvailable =
+    Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
 
-  const appLocalDomain = `${metadata.localSubdomain}.${localDomain}${sslPort !== 443 ? `:${sslPort}` : ''}`;
+  const appLocalDomain = `${metadata.localSubdomain}.${localDomain}${sslPort !== 443 ? `:${sslPort}` : ""}`;
 
   const startMutation = useMutation({
     ...startAppMutation(),
@@ -85,7 +108,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      setOptimisticStatus('starting', info.urn);
+      setOptimisticStatus("starting", info.urn);
     },
   });
 
@@ -102,32 +125,47 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
       key="start"
       IconComponent={IconPlayerPlay}
       onClick={() => startMutation.mutate({ path: { urn: info.urn } })}
-      title={t('APP_ACTION_START')}
+      title={t("APP_ACTION_START")}
       intent="success"
     />
   );
-  const LoadingButton = <ActionButton key="loading" loading intent="success" title={t('APP_ACTION_LOADING')} />;
+  const LoadingButton = (
+    <ActionButton
+      key="loading"
+      loading
+      intent="success"
+      title={t("APP_ACTION_LOADING")}
+    />
+  );
 
   const RemoveListItem = (
-    <DropdownMenuItem onClick={uninstallDisclosure.open} key="remove" className="text-danger">
+    <DropdownMenuItem
+      onClick={uninstallDisclosure.open}
+      key="remove"
+      className="text-danger"
+    >
       <IconTrash className="me-2" size={16} />
-      {t('APP_ACTION_REMOVE')}
+      {t("APP_ACTION_REMOVE")}
     </DropdownMenuItem>
   );
   const SettingsListItem = (
     <DropdownMenuItem onClick={updateSettingsDisclosure.open} key="settings">
       <IconSettings className="me-2" size={16} />
-      {t('APP_ACTION_SETTINGS')}
+      {t("APP_ACTION_SETTINGS")}
     </DropdownMenuItem>
   );
   const RestartListItem = (
-    <DropdownMenuItem onClick={restartDisclosure.open} key="restart" className="configChanged">
+    <DropdownMenuItem
+      onClick={restartDisclosure.open}
+      key="restart"
+      className="configChanged"
+    >
       <IconRotateClockwise className="me-2" size={16} />
-      {t('APP_ACTION_RESTART')}
+      {t("APP_ACTION_RESTART")}
       {app?.pendingRestart && (
         <div>
           <Tooltip className="tooltip" anchorSelect=".configChanged">
-            {t('MY_APPS_PENDING_RESTART')}
+            {t("MY_APPS_PENDING_RESTART")}
           </Tooltip>
           <span className="ms-2 badge bg-red" />
         </div>
@@ -135,13 +173,17 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     </DropdownMenuItem>
   );
   const UpdateListItem = (
-    <DropdownMenuItem onClick={updateDisclosure.open} key="update" className="updateAvailable">
+    <DropdownMenuItem
+      onClick={updateDisclosure.open}
+      key="update"
+      className="updateAvailable"
+    >
       <IconDownload className="me-2" size={16} />
       <Tooltip className="tooltip" anchorSelect=".updateAvailable">
-        {t('MY_APPS_UPDATE_AVAILABLE')}
+        {t("MY_APPS_UPDATE_AVAILABLE")}
       </Tooltip>
       <div>
-        {t('APP_ACTION_UPDATE')}
+        {t("APP_ACTION_UPDATE")}
         <span className="ms-2 badge bg-red" />
       </div>
     </DropdownMenuItem>
@@ -149,46 +191,63 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const CancelListItem = (
     <DropdownMenuItem onClick={stopDisclosure.open} key="cancel">
       <IconPlayerPause className="me-2" size={16} />
-      {t('APP_ACTION_CANCEL')}
+      {t("APP_ACTION_CANCEL")}
     </DropdownMenuItem>
   );
   const ResetListItem = (
-    <DropdownMenuItem onClick={resetAppDisclosure.open} key="reset" className="text-danger">
+    <DropdownMenuItem
+      onClick={resetAppDisclosure.open}
+      key="reset"
+      className="text-danger"
+    >
       <IconEraser className="me-2" size={16} />
-      {t('APP_INSTALL_FORM_RESET')}
+      {t("APP_INSTALL_FORM_RESET")}
     </DropdownMenuItem>
   );
 
   const StopButton = (
-    <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={stopDisclosure.open} title={t('APP_ACTION_STOP')} intent="default" />
+    <ActionButton
+      key="stop"
+      IconComponent={IconPlayerPause}
+      onClick={stopDisclosure.open}
+      title={t("APP_ACTION_STOP")}
+      intent="default"
+    />
   );
-  const InstallButton = <ActionButton key="install" onClick={installDisclosure.open} title={t('APP_ACTION_INSTALL')} intent="success" />;
+  const InstallButton = (
+    <ActionButton
+      key="install"
+      onClick={installDisclosure.open}
+      title={t("APP_ACTION_INSTALL")}
+      intent="success"
+    />
+  );
 
   const OpenButton = (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className="action-button">
-          {t('APP_ACTION_OPEN')}
+          {t("APP_ACTION_OPEN")}
           <IconExternalLink className="ms-1" size={14} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
           {app?.exposed && app.domain && (
-            <DropdownMenuItem onClick={() => handleOpen('domain')}>
+            <DropdownMenuItem onClick={() => handleOpen("domain")}>
               <IconLock className="text-green me-2" size={16} />
               {app.domain}
-              {sslPort !== 443 ? `:${sslPort}` : ''}
+              {sslPort !== 443 ? `:${sslPort}` : ""}
             </DropdownMenuItem>
           )}
           {(app?.exposedLocal || !info.dynamic_config) && (
-            <DropdownMenuItem onClick={() => handleOpen('local_domain')}>
+            <DropdownMenuItem onClick={() => handleOpen("local_domain")}>
               <IconLock className="text-muted me-2" size={16} />
               {appLocalDomain}
             </DropdownMenuItem>
           )}
           {(app?.openPort || !info.dynamic_config) && (
-            <DropdownMenuItem onClick={() => handleOpen('local')}>
+            <DropdownMenuItem onClick={() => handleOpen("local")}>
               <IconLockOff className="text-muted me-2" size={16} />
               {hostname}:{app?.port ?? info.port}
             </DropdownMenuItem>
@@ -202,8 +261,8 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const listItems: React.JSX.Element[] = [];
   const listItemsDestructive: React.JSX.Element[] = [];
 
-  switch (app?.status ?? 'missing') {
-    case 'stopped':
+  switch (app?.status ?? "missing") {
+    case "stopped":
       buttons.push(StartButton);
       listItems.push(SettingsListItem);
       listItemsDestructive.push(ResetListItem);
@@ -212,14 +271,17 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         listItems.push(UpdateListItem);
       }
       break;
-    case 'running':
+    case "running":
       buttons.push(StopButton);
       listItems.push(SettingsListItem);
       listItems.push(RestartListItem);
       listItemsDestructive.push(ResetListItem);
       listItemsDestructive.push(RemoveListItem);
 
-      if (!info.no_gui && (app?.exposedLocal || app?.openPort || app?.exposed)) {
+      if (
+        !info.no_gui &&
+        (app?.exposedLocal || app?.openPort || app?.exposed)
+      ) {
         buttons.push(OpenButton);
       }
 
@@ -227,19 +289,19 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         listItems.push(UpdateListItem);
       }
       break;
-    case 'installing':
-    case 'uninstalling':
-    case 'starting':
-    case 'stopping':
-    case 'restarting':
-    case 'updating':
-    case 'resetting':
-    case 'backing_up':
-    case 'restoring':
+    case "installing":
+    case "uninstalling":
+    case "starting":
+    case "stopping":
+    case "restarting":
+    case "updating":
+    case "resetting":
+    case "backing_up":
+    case "restoring":
       buttons.push(LoadingButton);
       listItems.push(CancelListItem);
       break;
-    case 'missing':
+    case "missing":
       buttons.push(InstallButton);
       break;
     default:
@@ -247,46 +309,69 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   }
 
   const handleOpen = (type: OpenType) => {
-    let url = '';
+    let url = "";
     const { https } = info;
-    const protocol = https ? 'https' : 'http';
+    const protocol = https ? "https" : "http";
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // Current domain
       const domain = window.location.hostname;
-      url = `${protocol}://${domain}:${app?.port ?? info.port}${info.url_suffix || ''}`;
+      url = `${protocol}://${domain}:${app?.port ?? info.port}${info.url_suffix || ""}`;
     }
 
-    if (type === 'domain' && app?.domain) {
-      url = `https://${app.domain}${sslPort !== 443 ? `:${sslPort}` : ''}${info.url_suffix || ''}`;
+    if (type === "domain" && app?.domain) {
+      url = `https://${app.domain}${sslPort !== 443 ? `:${sslPort}` : ""}${info.url_suffix || ""}`;
     }
 
-    if (type === 'local_domain') {
-      url = `https://${appLocalDomain}${info.url_suffix || ''}`;
+    if (type === "local_domain") {
+      url = `https://${appLocalDomain}${info.url_suffix || ""}`;
     }
 
-    window.open(url, '_blank', 'noreferrer');
+    window.open(url, "_blank", "noreferrer");
   };
 
-  const newVersion = [metadata?.latestDockerVersion ? `${metadata?.latestDockerVersion}` : '', `(${String(metadata?.latestVersion)})`].join(' ');
+  const newVersion = [
+    metadata?.latestDockerVersion ? `${metadata?.latestDockerVersion}` : "",
+    `(${String(metadata?.latestVersion)})`,
+  ].join(" ");
 
   return (
     <>
-      <InstallDialog isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={info} />
-      <StopDialog isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={info} />
-      <RestartDialog isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} info={info} />
-      <UninstallDialog isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={info} />
+      <InstallDialog
+        isOpen={installDisclosure.isOpen}
+        onClose={installDisclosure.close}
+        info={info}
+      />
+      <StopDialog
+        isOpen={stopDisclosure.isOpen}
+        onClose={stopDisclosure.close}
+        info={info}
+      />
+      <RestartDialog
+        isOpen={restartDisclosure.isOpen}
+        onClose={restartDisclosure.close}
+        info={info}
+      />
+      <UninstallDialog
+        isOpen={uninstallDisclosure.isOpen}
+        onClose={uninstallDisclosure.close}
+        info={info}
+      />
       <UpdateDialog
         isOpen={updateDisclosure.isOpen}
         onClose={updateDisclosure.close}
         info={info}
         newVersion={newVersion}
-        newConfig={configDiff?.new ?? ''}
-        currentConfig={configDiff?.current ?? ''}
-        newCompose={composeDiff?.new ?? ''}
-        currentCompose={composeDiff?.current ?? ''}
+        newConfig={configDiff?.new ?? ""}
+        currentConfig={configDiff?.current ?? ""}
+        newCompose={composeDiff?.new ?? ""}
+        currentCompose={composeDiff?.current ?? ""}
       />
-      <ResetDialog isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={info} />
+      <ResetDialog
+        isOpen={resetAppDisclosure.isOpen}
+        onClose={resetAppDisclosure.close}
+        info={info}
+      />
       <UpdateSettingsDialog
         isOpen={updateSettingsDisclosure.isOpen}
         onClose={updateSettingsDisclosure.close}
@@ -305,12 +390,16 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
             <DropdownMenuTrigger asChild>
               <Button name="more" className="more-button">
                 <IconDots size={14} />
-                {(updateAvailable || app?.pendingRestart) && <span className="badge badge-dot bg-red badge-notification" />}
+                {(updateAvailable || app?.pendingRestart) && (
+                  <span className="badge badge-dot bg-red badge-notification" />
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuGroup>{listItems}</DropdownMenuGroup>
-              {listItemsDestructive.length > 0 ? <DropdownMenuSeparator /> : null}
+              {listItemsDestructive.length > 0 ? (
+                <DropdownMenuSeparator />
+              ) : null}
               <DropdownMenuGroup>{listItemsDestructive}</DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>

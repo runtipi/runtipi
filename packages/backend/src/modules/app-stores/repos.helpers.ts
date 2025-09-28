@@ -1,21 +1,21 @@
-import { execSync } from 'node:child_process';
-import crypto from 'node:crypto';
-import fs from 'node:fs';
-import path from 'node:path';
-import { ConfigurationService } from '@/core/config/configuration.service';
-import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
-import { Injectable } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
-import git from 'isomorphic-git';
-import http from 'isomorphic-git/http/node';
+import { execSync } from "node:child_process";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { ConfigurationService } from "@/core/config/configuration.service";
+import { FilesystemService } from "@/core/filesystem/filesystem.service";
+import { LoggerService } from "@/core/logger/logger.service";
+import { Injectable } from "@nestjs/common";
+import * as Sentry from "@sentry/nestjs";
+import git from "isomorphic-git";
+import http from "isomorphic-git/http/node";
 
 @Injectable()
 export class ReposHelpers {
   constructor(
     private readonly logger: LoggerService,
     private readonly configuration: ConfigurationService,
-    private readonly filesystem: FilesystemService,
+    private readonly filesystem: FilesystemService
   ) {}
 
   /**
@@ -24,9 +24,9 @@ export class ReposHelpers {
    * @param {string} repoUrl
    */
   public getRepoHash(repoUrl: string) {
-    const hash = crypto.createHash('sha256');
+    const hash = crypto.createHash("sha256");
     hash.update(repoUrl);
-    return hash.digest('hex');
+    return hash.digest("hex");
   }
 
   /**
@@ -35,11 +35,11 @@ export class ReposHelpers {
    * @returns An array containing the base URL and branch, or just the base URL if no branch is found.
    */
   private getRepoBaseUrlAndBranch(repoUrl: string) {
-    const treeIndex = repoUrl.indexOf('/tree/');
+    const treeIndex = repoUrl.indexOf("/tree/");
 
     if (treeIndex !== -1) {
       const baseUrl = repoUrl.substring(0, treeIndex);
-      const branch = repoUrl.substring(treeIndex + '/tree/'.length);
+      const branch = repoUrl.substring(treeIndex + "/tree/".length);
       return [baseUrl, branch];
     }
 
@@ -71,7 +71,9 @@ export class ReposHelpers {
     }
 
     await fs.promises.chmod(dirPath, 0o755);
-    execSync(`git config --global --add safe.directory ${dirPath}`, { stdio: 'ignore' });
+    execSync(`git config --global --add safe.directory ${dirPath}`, {
+      stdio: "ignore",
+    });
   }
 
   /**
@@ -81,13 +83,13 @@ export class ReposHelpers {
    */
   public async cloneRepo(url: string, id: string) {
     try {
-      const { dataDir } = this.configuration.get('directories');
-      const repoPath = path.join(dataDir, 'repos', id);
+      const { dataDir } = this.configuration.get("directories");
+      const repoPath = path.join(dataDir, "repos", id);
 
       if (await this.filesystem.pathExists(repoPath)) {
         await this.ensureDirectoryWithPermissions(path.dirname(repoPath));
         this.logger.debug(`Repo ${url} already exists`);
-        return { success: true, message: '' };
+        return { success: true, message: "" };
       }
 
       const [repoUrl, branch] = this.getRepoBaseUrlAndBranch(url);
@@ -97,13 +99,23 @@ export class ReposHelpers {
         return { success: false, message: `Invalid repo URL: ${url}` };
       }
 
-      this.logger.debug(`Cloning repo ${repoUrl}${branch ? ` on branch ${branch}` : ''} to ${repoPath}`);
+      this.logger.debug(
+        `Cloning repo ${repoUrl}${branch ? ` on branch ${branch}` : ""} to ${repoPath}`
+      );
 
       await this.ensureDirectoryWithPermissions(path.dirname(repoPath));
-      await git.clone({ fs, http, dir: repoPath, url: repoUrl, singleBranch: true, depth: 1, ref: branch || undefined });
+      await git.clone({
+        fs,
+        http,
+        dir: repoPath,
+        url: repoUrl,
+        singleBranch: true,
+        depth: 1,
+        ref: branch || undefined,
+      });
 
       this.logger.info(`Cloned repo ${repoUrl} to ${repoPath}`);
-      return { success: true, message: '' };
+      return { success: true, message: "" };
     } catch (err) {
       return this.handleRepoError(err);
     }
@@ -120,8 +132,8 @@ export class ReposHelpers {
 
       const [remoteUrl] = this.getRepoBaseUrlAndBranch(repoUrl);
 
-      const { dataDir } = this.configuration.get('directories');
-      const repoPath = path.join(dataDir, 'repos', slug);
+      const { dataDir } = this.configuration.get("directories");
+      const repoPath = path.join(dataDir, "repos", slug);
 
       if (!(await this.filesystem.pathExists(repoPath))) {
         this.logger.info(`Repo ${repoUrl} does not exist`);
@@ -130,25 +142,60 @@ export class ReposHelpers {
 
       this.logger.debug(`Pulling repo ${repoUrl} to ${repoPath}`);
 
-      const currentBranch = await git.currentBranch({ fs, dir: repoPath, fullname: false });
+      const currentBranch = await git.currentBranch({
+        fs,
+        dir: repoPath,
+        fullname: false,
+      });
       if (!currentBranch) {
-        this.logger.warn(`No current branch found for repo ${repoUrl}. Deleting and re-cloning.`);
+        this.logger.warn(
+          `No current branch found for repo ${repoUrl}. Deleting and re-cloning.`
+        );
         await this.deleteRepo(slug);
         return this.cloneRepo(repoUrl, slug);
       }
       const remoteBranchRef = `origin/${currentBranch}`;
 
-      const fetchResult = await git.fetch({ fs, http, dir: repoPath, url: remoteUrl, ref: currentBranch, depth: 1, singleBranch: true, tags: false });
-      this.logger.debug('Fetch result:', fetchResult, 'Current branch:', currentBranch);
-      const targetSha = await git.resolveRef({ fs, dir: repoPath, ref: remoteBranchRef });
-      this.logger.debug('Target SHA:', targetSha);
-      await git.branch({ fs, dir: repoPath, ref: currentBranch, object: targetSha, force: true });
-      await git.checkout({ fs, dir: repoPath, ref: currentBranch, force: true });
+      const fetchResult = await git.fetch({
+        fs,
+        http,
+        dir: repoPath,
+        url: remoteUrl,
+        ref: currentBranch,
+        depth: 1,
+        singleBranch: true,
+        tags: false,
+      });
+      this.logger.debug(
+        "Fetch result:",
+        fetchResult,
+        "Current branch:",
+        currentBranch
+      );
+      const targetSha = await git.resolveRef({
+        fs,
+        dir: repoPath,
+        ref: remoteBranchRef,
+      });
+      this.logger.debug("Target SHA:", targetSha);
+      await git.branch({
+        fs,
+        dir: repoPath,
+        ref: currentBranch,
+        object: targetSha,
+        force: true,
+      });
+      await git.checkout({
+        fs,
+        dir: repoPath,
+        ref: currentBranch,
+        force: true,
+      });
 
       this.logger.debug(`Pulled repo ${repoUrl} to ${repoPath}`);
-      return { success: true, message: '' };
+      return { success: true, message: "" };
     } catch (_) {
-      if (this.configuration.get('__prod__')) {
+      if (this.configuration.get("__prod__")) {
         await this.deleteRepo(slug);
       }
       return this.cloneRepo(repoUrl, slug);
@@ -160,8 +207,8 @@ export class ReposHelpers {
    */
   public async deleteRepo(id: string) {
     try {
-      const { dataDir } = this.configuration.get('directories');
-      const repoPath = path.join(dataDir, 'repos', id);
+      const { dataDir } = this.configuration.get("directories");
+      const repoPath = path.join(dataDir, "repos", id);
 
       if (!(await this.filesystem.pathExists(repoPath))) {
         this.logger.info(`Repo ${id} does not exist`);
@@ -172,20 +219,20 @@ export class ReposHelpers {
       await this.filesystem.removeDirectory(repoPath);
 
       this.logger.info(`Deleted repo ${id} from ${repoPath}`);
-      return { success: true, message: '' };
+      return { success: true, message: "" };
     } catch (err) {
       return this.handleRepoError(err);
     }
   }
 
   public async deleteAllRepos() {
-    const { dataDir } = this.configuration.get('directories');
-    const repos = await this.filesystem.listFiles(path.join(dataDir, 'repos'));
+    const { dataDir } = this.configuration.get("directories");
+    const repos = await this.filesystem.listFiles(path.join(dataDir, "repos"));
 
     for (const repo of repos) {
       await this.deleteRepo(repo);
     }
 
-    return { success: true, message: '' };
+    return { success: true, message: "" };
   }
 }
