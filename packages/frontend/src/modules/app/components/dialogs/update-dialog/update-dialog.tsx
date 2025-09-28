@@ -1,10 +1,10 @@
-import { updateAppMutation } from '@/api-client/@tanstack/react-query.gen';
+import { getAppComposeDiffOptions, getAppConfigDiffOptions, updateAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { Switch } from '@/components/ui/Switch';
 import type { AppInfo } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -22,16 +22,20 @@ interface IProps {
   info: Pick<AppInfo, 'id' | 'name' | 'urn'>;
   isOpen: boolean;
   onClose: () => void;
-  newConfig: string;
-  currentConfig: string;
-  newCompose: string;
-  currentCompose: string;
 }
 
-export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, newConfig, currentConfig, newCompose, currentCompose, onClose }) => {
+export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, onClose }) => {
   const { t } = useTranslation();
   const [backupApp, setBackupApp] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
+
+  const configDiff = useQuery({
+    ...getAppConfigDiffOptions({ path: { urn: info.urn } }),
+  }).data;
+
+  const composeDiff = useQuery({
+    ...getAppComposeDiffOptions({ path: { urn: info.urn } }),
+  }).data;
 
   useEffect(() => {
     if (isOpen) {
@@ -82,14 +86,14 @@ export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, newCo
                 <StepContent step={1}>
                   <div className="text-muted">{t('APP_UPDATE_CONFIGURATION_SUBTITLE')}</div>
                   <CodeMirror
-                    value={newConfig}
+                    value={configDiff?.new ?? ''}
                     readOnly={true}
                     height="400px"
                     theme={copilot}
                     className="mt-3"
                     extensions={[
                       unifiedMergeView({
-                        original: currentConfig,
+                        original: configDiff?.current ?? '',
                         mergeControls: false,
                       }),
                     ]}
@@ -98,14 +102,14 @@ export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, newCo
                 <StepContent step={2}>
                   <div className="text-muted">{t('APP_UPDATE_COMPOSE_SUBTITLE')}</div>
                   <CodeMirror
-                    value={newCompose}
+                    value={composeDiff?.new ?? ''}
                     readOnly={true}
                     height="400px"
                     theme={copilot}
                     className="mt-3"
                     extensions={[
                       unifiedMergeView({
-                        original: currentCompose,
+                        original: composeDiff?.current ?? '',
                         mergeControls: false,
                       }),
                     ]}

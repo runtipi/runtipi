@@ -19,10 +19,10 @@ import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import './app-actions.css';
-import { getAppComposeDiffOptions, getAppConfigDiffOptions, startAppMutation } from '@/api-client/@tanstack/react-query.gen';
+import { startAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
 import { ResetDialog } from '../../components/dialogs/reset-dialog/reset-dialog';
@@ -88,14 +88,6 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
       setOptimisticStatus('starting', info.urn);
     },
   });
-
-  const configDiff = useQuery({
-    ...getAppConfigDiffOptions({ path: { urn: info.urn } }),
-  }).data;
-
-  const composeDiff = useQuery({
-    ...getAppComposeDiffOptions({ path: { urn: info.urn } }),
-  }).data;
 
   const StartButton = (
     <ActionButton
@@ -276,16 +268,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
       <StopDialog isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={info} />
       <RestartDialog isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} info={info} />
       <UninstallDialog isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={info} />
-      <UpdateDialog
-        isOpen={updateDisclosure.isOpen}
-        onClose={updateDisclosure.close}
-        info={info}
-        newVersion={newVersion}
-        newConfig={configDiff?.new ?? ''}
-        currentConfig={configDiff?.current ?? ''}
-        newCompose={composeDiff?.new ?? ''}
-        currentCompose={composeDiff?.current ?? ''}
-      />
+      <UpdateDialog isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={info} newVersion={newVersion} />
       <ResetDialog isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={info} />
       <UpdateSettingsDialog
         isOpen={updateSettingsDisclosure.isOpen}
