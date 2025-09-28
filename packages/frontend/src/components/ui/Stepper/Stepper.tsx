@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { createContext, useContext } from 'react';
 import './stepper.css';
+import { Button } from '../Button';
 
 const StepperContext = createContext<number>(0);
 
@@ -23,10 +24,14 @@ interface StepTriggerProps {
 export const StepTrigger: React.FC<StepTriggerProps> = ({ step, title, disabled, onStepChange }) => {
   const currentStep = useContext(StepperContext);
   return (
-    <li className={clsx('breadcrumb-item ', currentStep === step && 'active', disabled && 'disabled')} onClick={() => onStepChange(step)}>
-      <a onClick={(e) => e.preventDefault()} className="breadcrumb-item link">
+    <li
+      className={clsx('breadcrumb-item d-flex align-items-center justify-content-center', currentStep === step && 'active', disabled && 'disabled')}
+      onClick={() => onStepChange(step)}
+      onKeyDown={() => onStepChange(step)}
+    >
+      <Button variant="link" type="button" onClick={(e) => e.preventDefault()} className="breadcrumb-item link">
         {title}
-      </a>
+      </Button>
     </li>
   );
 };

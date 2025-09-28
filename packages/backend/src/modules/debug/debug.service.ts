@@ -8,6 +8,7 @@ import { BackupsService } from '../backups/backups.service';
 import { AppStoreService } from '../app-stores/app-store.service';
 import { createAppUrn } from '@/common/helpers/app-helpers';
 import { updateAppInStore } from '@/tests/utils/update-app-in-store';
+import { MarketplaceService } from '../marketplace/marketplace.service';
 
 @Injectable()
 export class DebugService {
@@ -16,6 +17,7 @@ export class DebugService {
     private appLifecycleService: AppLifecycleService,
     private backupService: BackupsService,
     private appstoreService: AppStoreService,
+    private marketplaceService: MarketplaceService,
   ) {}
 
   public async seedDatabase() {
@@ -41,6 +43,8 @@ export class DebugService {
       name: 'seed',
       url: 'https://github.com/runtipi/example-appstore',
     });
+
+    await this.marketplaceService.initialize();
 
     // Create fake apps
     for (let i = 1; i <= 12; i++) {

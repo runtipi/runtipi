@@ -1,14 +1,16 @@
+import './Button.css';
 import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps, cva } from 'class-variance-authority';
 import clsx from 'clsx';
 import type * as React from 'react';
 
-const buttonVariants = cva('btn', {
+const buttonVariants = cva('', {
   variants: {
     variant: {
-      default: '',
-      ghost: 'btn-ghost-primary',
-      outline: 'btn-outline-primary',
+      default: 'btn',
+      ghost: 'btn btn-ghost-primary',
+      outline: 'btn btn-outline-primary',
+      link: 'btn-link',
     },
     intent: {
       default: '',

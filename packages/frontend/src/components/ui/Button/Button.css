@@ -1,0 +1,42 @@
+.btn-link {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+
+  display: inline;
+  font: inherit;
+  color: inherit;
+  text-decoration: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+  cursor: pointer;
+}
+
+.btn-link.link {
+  color: var(--link-color, #0a58ca);
+  text-decoration: none;
+}
+.btn-link.link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-item.active .btn-link.link {
+  color: inherit;
+  text-decoration: none;
+  cursor: default;
+}
+
+.breadcrumb-item.disabled .btn-link.link,
+.btn-link.link:disabled {
+  color: #6c757d;
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
+.btn-link.link:focus-visible {
+  outline: 2px solid #99c2ff;
+  outline-offset: 2px;
+}
