@@ -13,10 +13,9 @@ import CodeMirror from '@uiw/react-codemirror';
 import { copilot } from '@uiw/codemirror-theme-copilot';
 import { unifiedMergeView } from '@codemirror/merge';
 import { StepContent, Stepper, StepTrigger, StepTriggerList } from '@/components/ui/Stepper/Stepper';
-import type { Sizes } from '@/components/ui/Dialog/Dialog';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconChevronRight, IconInfoCircle } from '@tabler/icons-react';
 
 interface IProps {
   newVersion: string;
@@ -28,13 +27,6 @@ interface IProps {
   newCompose: string;
   currentCompose: string;
 }
-
-const SIZE_MAP: Record<number, Sizes> = {
-  0: 'md',
-  1: 'lg',
-  2: 'lg',
-  3: 'md',
-};
 
 export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, newConfig, currentConfig, newCompose, currentCompose, onClose }) => {
   const { t } = useTranslation();
@@ -60,7 +52,7 @@ export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, newCo
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent size={SIZE_MAP[currentStep]}>
+      <DialogContent size="lg">
         <DialogHeader>
           <DialogTitle>{t('APP_UPDATE_FORM_TITLE', { name: info.name })}</DialogTitle>
         </DialogHeader>
@@ -138,13 +130,14 @@ export const UpdateDialog: React.FC<IProps> = ({ info, newVersion, isOpen, newCo
         </DialogDescription>
         <DialogFooter>
           {currentStep > 0 && (
-            <Button onClick={() => setCurrentStep((s) => s - 1)} className="me-2">
+            <Button variant="link" onClick={() => setCurrentStep((s) => s - 1)} className="me-3">
               {t('APP_UPDATE_FORM_BACK')}
             </Button>
           )}
           {currentStep < 3 && (
-            <Button variant="outline" onClick={() => setCurrentStep((s) => s + 1)}>
+            <Button onClick={() => setCurrentStep((s) => s + 1)}>
               {t('APP_UPDATE_FORM_NEXT')}
+              <IconChevronRight className="ms-2 text-muted" size={12} />
             </Button>
           )}
           {currentStep === 3 && (
